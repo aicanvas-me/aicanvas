@@ -67,14 +67,12 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 <p align="center">
   <a href="https://aicanvas.me/components/tilted-coverflow"><img src="https://ik.imagekit.io/aitoolkit/tilted-coverflow.png" width="48%" alt="Tilted Coverflow: 3D coverflow card carousel of seven tilted photos, drag or arrows to focus any card" /></a>
   <a href="https://aicanvas.me/components/crypto-swap"><img src="https://ik.imagekit.io/aitoolkit/crypto-swap.png?v=2" width="48%" alt="Crypto Swap: token-swap widget with live exchange rates, price impact and an animated swap button" /></a>
-  <a href="https://aicanvas.me/components/particle-constellation"><img src="https://ik.imagekit.io/aitoolkit/particle-constellation.png" width="48%" alt="Spider Web: interactive silk web that reacts to your cursor" /></a>
-  <a href="https://aicanvas.me/components/cube-carousel"><img src="https://ik.imagekit.io/aitoolkit/cube-carousel.png" width="48%" alt="Cube Carousel: drag-to-spin 3D photo cube" /></a>
-  <a href="https://aicanvas.me/components/curious-ai"><img src="https://ik.imagekit.io/aitoolkit/curious-ai.png" width="48%" alt="Curious AI: morphing 3D AI orb that follows your cursor" /></a>
-  <a href="https://aicanvas.me/components/ripple-type"><img src="https://ik.imagekit.io/aitoolkit/ripple-type.png" width="48%" alt="Ripple Type: SVG text that ripples on toggle" /></a>
-  <a href="https://aicanvas.me/components/product-card-deck"><img src="https://ik.imagekit.io/aitoolkit/product-card-deck.png" width="48%" alt="Product Card Deck: flick-through draggable card deck" /></a>
-  <a href="https://aicanvas.me/components/glass-music-player"><img src="https://ik.imagekit.io/aitoolkit/glass-music-player.png" width="48%" alt="Glass Music Player: glass mini player with spinning vinyl" /></a>
-  <a href="https://aicanvas.me/components/andromeda-button"><img src="https://ik.imagekit.io/aitoolkit/andromeda-button.png" width="48%" alt="Andromeda Button: sci-fi blueprint button, five variants" /></a>
-  <a href="https://aicanvas.me/components/glass-dock"><img src="https://ik.imagekit.io/aitoolkit/glass-dock.png" width="48%" alt="Glass Dock: macOS-style dock with cursor magnification" /></a>
+  <a href="https://aicanvas.me/components/signature-pad"><img src="https://ik.imagekit.io/aitoolkit/signature-pad.png?v=2" width="48%" alt="Signature Pad: pill button morphs into a canvas to draw with mouse or touch" /></a>
+  <a href="https://aicanvas.me/components/cube-carousel"><img src="https://ik.imagekit.io/aitoolkit/cube-carousel.png?v=2" width="48%" alt="Cube Carousel: interactive 3D photo cube you drag to spin freely on both axes" /></a>
+  <a href="https://aicanvas.me/components/glass-ai-compose"><img src="https://ik.imagekit.io/aitoolkit/glass-ai-compose.png" width="48%" alt="Glass AI Composer: glassmorphism AI chat input with image upload, web search toggle and model switcher" /></a>
+  <a href="https://aicanvas.me/components/voice-chat-pill"><img src="https://ik.imagekit.io/aitoolkit/voice-chat-pill.png?v=2026050501" width="48%" alt="Live Session Pill: compact presence pill with an animated speaking indicator and overlapping avatars" /></a>
+  <a href="https://aicanvas.me/components/ai-job-cards"><img src="https://ik.imagekit.io/aitoolkit/ai-job-cards.png" width="48%" alt="AI Job Cards: three job card stacks with swipe-to-cycle, brand logos and a bookmark toggle" /></a>
+  <a href="https://aicanvas.me/components/andromeda-button"><img src="https://ik.imagekit.io/aitoolkit/andromeda-button.png?updatedAt=1775998697243" width="48%" alt="Andromeda Button: sci-fi blueprint button with five variants and three sizes" /></a>
 </p>
 
 <p align="center"><sub><a href="https://aicanvas.me">Browse all components at aicanvas.me</a></sub></p>
