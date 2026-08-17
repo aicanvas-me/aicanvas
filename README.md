@@ -4,25 +4,29 @@
   </a>
 </p>
 
-<h1 align="center">AI Canvas</h1>
+# AI Canvas
 
 <p align="center">
-  <b>Open-source animated React and Tailwind components, design systems, and templates.</b><br/>
-  Browse, copy, and ship. Or let your AI editor install them for you.
+  <em>Open-source animated React and Tailwind components, design systems, and templates.</em>
 </p>
 
 <p align="center">
-  <a href="https://github.com/uiNerd16/aicanvas/stargazers"><img src="https://img.shields.io/github/stars/uiNerd16/aicanvas?style=flat&logo=github" alt="GitHub stars" /></a>
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-A8B94D.svg" alt="License: MIT" /></a>
-  <a href="https://www.npmjs.com/package/@aicanvas/mcp"><img src="https://img.shields.io/npm/v/%40aicanvas%2Fmcp?logo=npm&label=%40aicanvas%2Fmcp" alt="@aicanvas/mcp on npm" /></a>
-  <img src="https://img.shields.io/badge/shadcn%20registry-%40aicanvas-000000.svg" alt="shadcn registry: @aicanvas" />
-</p>
-
-<p align="center">
-  <b><a href="https://aicanvas.me">Browse the live catalog at aicanvas.me</a></b>
+  <a href="https://aicanvas.me" title="Browse the live catalog"><img src="https://img.shields.io/badge/VISIT-aicanvas.me-56631F?style=for-the-badge&labelColor=0d1117" alt="Visit aicanvas.me" height="44" /></a>
 </p>
 
 A growing collection of animated React components, plus a token-driven design system and ready-made templates. Every component arrives as real source code in your project, with an AI remix prompt that works in any AI coding tool. Open core: the free library is MIT, and Premium is proprietary.
+
+<p align="center">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-56631F?style=for-the-badge&labelColor=0d1117" alt="License: MIT" height="32" /></a>
+  &nbsp;
+  <a href="https://aicanvas.me"><img src="https://img.shields.io/badge/COMPONENTS-80%2B%20free-56631F?style=for-the-badge&labelColor=0d1117" alt="80+ free components" height="32" /></a>
+  &nbsp;
+  <a href="#install"><img src="https://img.shields.io/badge/REGISTRY-%40aicanvas-56631F?style=for-the-badge&labelColor=0d1117" alt="shadcn registry: @aicanvas" height="32" /></a>
+  &nbsp;
+  <a href="https://www.npmjs.com/package/@aicanvas/mcp"><img src="https://img.shields.io/npm/v/%40aicanvas%2Fmcp?style=for-the-badge&label=MCP&labelColor=0d1117&color=56631F" alt="@aicanvas/mcp on npm" height="32" /></a>
+</p>
+
+<p align="center"><sub><a href="#install">Install</a> · <a href="#components">Components</a> · <a href="#examples">Examples</a> · <a href="#use-it-with-your-ai-editor-mcp">MCP</a> · <a href="#design-systems-and-templates">Design systems</a> · <a href="#repository-layout">Repo layout</a> · <a href="#common-questions">FAQ</a> · <a href="#license">License</a></sub></p>
 
 ## Install
 
@@ -58,58 +62,83 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 - **Built for AI workflows.** Install with the shadcn CLI, connect the MCP so your agent installs for you, or hand it a remix prompt that works in any AI coding tool.
 - **Animated by default.** Built with Framer Motion and Tailwind CSS, ready for the Next.js App Router or any modern React setup. 3D pieces use Three.js.
 
-AI Canvas is free to start. Premium unlocks design systems, templates, and closed-source components.
-
-## Featured components
+## Components
 
 <table>
   <tr>
     <td align="center" width="25%">
       <a href="https://aicanvas.me/components/particle-constellation"><img src="https://ik.imagekit.io/aitoolkit/particle-constellation.png" width="200" alt="Spider Web" /></a><br/>
       <a href="https://aicanvas.me/components/particle-constellation"><b>Spider Web</b></a><br/>
-      Interactive silk web that reacts to your cursor
+      <sub>Interactive silk web that reacts to your cursor</sub>
     </td>
     <td align="center" width="25%">
       <a href="https://aicanvas.me/components/cube-carousel"><img src="https://ik.imagekit.io/aitoolkit/cube-carousel.png" width="200" alt="Cube Carousel" /></a><br/>
       <a href="https://aicanvas.me/components/cube-carousel"><b>Cube Carousel</b></a><br/>
-      Drag-to-spin 3D photo cube
+      <sub>Drag-to-spin 3D photo cube</sub>
     </td>
     <td align="center" width="25%">
       <a href="https://aicanvas.me/components/curious-ai"><img src="https://ik.imagekit.io/aitoolkit/curious-ai.png" width="200" alt="Curious AI" /></a><br/>
       <a href="https://aicanvas.me/components/curious-ai"><b>Curious AI</b></a><br/>
-      Morphing 3D AI orb that follows your cursor
+      <sub>Morphing 3D AI orb that follows your cursor</sub>
     </td>
     <td align="center" width="25%">
       <a href="https://aicanvas.me/components/ripple-type"><img src="https://ik.imagekit.io/aitoolkit/ripple-type.png" width="200" alt="Ripple Type" /></a><br/>
       <a href="https://aicanvas.me/components/ripple-type"><b>Ripple Type</b></a><br/>
-      SVG text that ripples on toggle
+      <sub>SVG text that ripples on toggle</sub>
     </td>
   </tr>
   <tr>
     <td align="center" width="25%">
       <a href="https://aicanvas.me/components/product-card-deck"><img src="https://ik.imagekit.io/aitoolkit/product-card-deck.png" width="200" alt="Product Card Deck" /></a><br/>
       <a href="https://aicanvas.me/components/product-card-deck"><b>Product Card Deck</b></a><br/>
-      Flick-through draggable card deck
+      <sub>Flick-through draggable card deck</sub>
     </td>
     <td align="center" width="25%">
       <a href="https://aicanvas.me/components/glass-music-player"><img src="https://ik.imagekit.io/aitoolkit/glass-music-player.png" width="200" alt="Glass Music Player" /></a><br/>
       <a href="https://aicanvas.me/components/glass-music-player"><b>Glass Music Player</b></a><br/>
-      Glass mini player with spinning vinyl
+      <sub>Glass mini player with spinning vinyl</sub>
     </td>
     <td align="center" width="25%">
       <a href="https://aicanvas.me/components/andromeda-button"><img src="https://ik.imagekit.io/aitoolkit/andromeda-button.png" width="200" alt="Andromeda Button" /></a><br/>
       <a href="https://aicanvas.me/components/andromeda-button"><b>Andromeda Button</b></a><br/>
-      Sci-fi blueprint button, five variants
+      <sub>Sci-fi blueprint button, five variants</sub>
     </td>
     <td align="center" width="25%">
       <a href="https://aicanvas.me/components/glass-dock"><img src="https://ik.imagekit.io/aitoolkit/glass-dock.png" width="200" alt="Glass Dock" /></a><br/>
       <a href="https://aicanvas.me/components/glass-dock"><b>Glass Dock</b></a><br/>
-      macOS-style dock with cursor magnification
+      <sub>macOS-style dock with cursor magnification</sub>
     </td>
   </tr>
 </table>
 
-Browse all components at [aicanvas.me](https://aicanvas.me).
+<p align="center"><sub><a href="https://aicanvas.me">Browse all components at aicanvas.me</a></sub></p>
+
+## Examples
+
+Full screens built with **Andromeda**, the AI Canvas design system. Every panel, chart, and control on these pages is an Andromeda component reading the same token bundle.
+
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/design-systems/andromeda/templates/mission-control"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Mission%20control.png" width="100%" alt="Mission Control template" /></a><br/>
+      <a href="https://aicanvas.me/design-systems/andromeda/templates/mission-control"><b>Mission Control</b></a> · <sub>Sci-Fi</sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/design-systems/andromeda/templates/service-order"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Service%20order.png" width="100%" alt="Service Order template" /></a><br/>
+      <a href="https://aicanvas.me/design-systems/andromeda/templates/service-order"><b>Service Order</b></a> · <sub>Telecom</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/design-systems/andromeda/templates/resource-planning"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Resource%20planning.png" width="100%" alt="Resource Planning template" /></a><br/>
+      <a href="https://aicanvas.me/design-systems/andromeda/templates/resource-planning"><b>Resource Planning</b></a> · <sub>Operations</sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/design-systems/andromeda/templates/signal-room"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Signal%20Room.png" width="100%" alt="Signal Room template" /></a><br/>
+      <a href="https://aicanvas.me/design-systems/andromeda/templates/signal-room"><b>Signal Room</b></a> · <sub>Audio</sub>
+    </td>
+  </tr>
+</table>
 
 ## Use it with your AI editor (MCP)
 
@@ -156,6 +185,26 @@ The `@aicanvas` registry files served at `/r/*.json` are **generated at build ti
 ## Tech stack
 
 React and TypeScript, Tailwind CSS, and Framer Motion. Built for the Next.js App Router and works in any modern React setup. 3D components use Three.js.
+
+## Common Questions
+
+**Do I need an account?**
+Not to read the code. Every free component's full MIT source is in this repo, and you can copy it from any component page. A free account is only needed for the one-command `npx shadcn add` install, which writes a placeholder file when you are signed out.
+
+**Does it work outside Next.js?**
+Yes. Components are plain React and TypeScript with Tailwind and Framer Motion. The App Router is the default target, not a requirement.
+
+**Do I get a dependency or real code?**
+Real code. Installing copies the source into your project, so you own it and can change anything. There is no AI Canvas package to keep in sync.
+
+**Can I use it commercially?**
+Yes, the free library is MIT. Use it in commercial projects, modify it, and ship it without attribution. Premium components, design systems, and templates are proprietary under a separate license.
+
+**What is the remix prompt?**
+Every component ships with one comprehensive, platform-agnostic prompt. Paste it into any AI coding tool to rebuild that component your way instead of copying it as is.
+
+**How do I keep components up to date?**
+You do not have to. Once installed, the code is yours and never changes under you. Re-run the install command if you want the latest version of a component.
 
 ## Project status
 
