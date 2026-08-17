@@ -228,7 +228,7 @@ export function HomeClient({
     <div className="flex min-h-full flex-col bg-sand-200 dark:bg-sand-950">
 
       {/* ── Top bar (desktop only — mobile uses MobileNav) ── */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-300 bg-sand-200 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
+      <div className="sticky top-0 z-30 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-300 bg-sand-200 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
         {q && !category ? (
           <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
             {totalResults} {totalResults === 1 ? 'result' : 'results'}

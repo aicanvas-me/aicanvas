@@ -66,7 +66,7 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
     >
 
       {/* ── Top bar ── */}
-      <div className="sticky top-0 z-20 hidden h-14 shrink-0 items-center justify-between border-b border-sand-800 bg-sand-950 px-6 md:flex">
+      <div className="sticky top-0 z-30 hidden h-14 shrink-0 items-center justify-between border-b border-sand-800 bg-sand-950 px-6 md:flex">
         <span className="text-sm font-semibold text-sand-50">Overview</span>
         <HeaderSocials />
       </div>

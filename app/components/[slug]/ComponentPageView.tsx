@@ -515,7 +515,7 @@ export default function ComponentPageView({
   return (
     <>
       {/* Top stripe — sticky (desktop only; mobile uses MobileNav) */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-300 bg-sand-200 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
+      <div className="sticky top-0 z-30 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-300 bg-sand-200 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
         <Breadcrumbs crumbs={[{ label: 'Components & Blocks', href: '/components' }, { label: name }]} />
         <HeaderSocials />
       </div>
