@@ -7,11 +7,11 @@
 # AI Canvas
 
 <p align="center">
-  <em>Open-source animated React and Tailwind components, design systems, and templates.</em>
+  <a href="https://aicanvas.me" title="Browse the live catalog"><img src="assets/readme-buttons/btn-site.png" alt="Visit aicanvas.me" height="56" /></a>
 </p>
 
 <p align="center">
-  <a href="https://aicanvas.me" title="Browse the live catalog"><img src="assets/readme-buttons/btn-site.png" alt="Visit aicanvas.me" height="56" /></a>
+  <em>Finished Components, Not Headless Primitives</em>
 </p>
 
 A growing collection of animated React components, plus a token-driven design system and ready-made templates. Every component arrives as real source code in your project, with an AI remix prompt that works in any AI coding tool. Open core: the free library is MIT, and Premium is proprietary.
