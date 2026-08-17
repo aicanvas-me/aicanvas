@@ -43,7 +43,7 @@ npx shadcn@latest init        # new projects only
 npx shadcn@latest add @aicanvas/task-cards
 ```
 
-One-command installs use a free AI Canvas account: signed out, the CLI writes a small placeholder file instead of the component. [Sign up free](https://aicanvas.me/account/sign-up), then copy your personal install command from any component page. No account needed to read the code: every free component's full MIT source lives right here in this repo.
+One-command installs use a free AI Canvas account: signed out, the CLI writes a small placeholder file instead of the component. [Sign up free](https://aicanvas.me/account/sign-up), then copy your personal install command from any component page. No account needed to read the code: every component page shows its full source, free to read and copy.
 
 ### Three ways to use it
 
@@ -77,7 +77,7 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 
 ## Blocks
 
-Composed, multi-component page sections: pricing tables, hero banners, galleries. Same install, same MIT licence, just a larger unit of work than a single component.
+Composed, multi-component page sections: card decks, task boards, galleries. Same install, same MIT licence, just a larger unit of work than a single component.
 
 <p align="center">
   <a href="https://aicanvas.me/components/ai-job-cards"><img src="https://ik.imagekit.io/aitoolkit/ai-job-cards.png" width="48%" alt="AI Job Cards: three job card stacks with swipe-to-cycle, brand logos and a bookmark toggle" /></a>
@@ -113,11 +113,11 @@ Works with Claude Code, Codex, Cursor, and other MCP-compatible editors. The ser
 
 ## Repository layout
 
-This repo holds the full AI Canvas source: the website **and** every free component. The component source lives here, not just the site.
+This repo holds the AI Canvas source: the website **and** the free component library. The component source lives here, not just the site.
 
 | Path | What's there |
 | --- | --- |
-| [`components-workspace/<slug>/`](./components-workspace) | Each free component: `index.tsx` source, `prompts.ts` remix prompt, `spec.md` |
+| [`components-workspace/<slug>/`](./components-workspace) | Each free component: `index.tsx` source and its `prompts.ts` remix prompt, plus a `spec.md` on many |
 | [`design-systems/andromeda/`](./design-systems/andromeda) | The free Andromeda design system source: tokens, components, utilities |
 | [`app/`](./app) | The aicanvas.me website (Next.js App Router) |
 | [`scripts/generate-registry.mjs`](./scripts/generate-registry.mjs) | Builds the shadcn registry JSON from the sources above |
@@ -131,10 +131,10 @@ React and TypeScript, Tailwind CSS, and Framer Motion. Built for the Next.js App
 ## Common Questions
 
 **Do I need an account?**
-Not to read the code. Every free component's full MIT source is in this repo, and you can copy it from any component page. A free account is only needed for the one-command `npx shadcn add` install, which writes a placeholder file when you are signed out.
+Not to read the code. Every component page shows its full source, free to read and copy. Most of the free library also lives right here in this repo. A free account is only needed for the one-command `npx shadcn add` install, which writes a placeholder file when you are signed out.
 
 **Does it work outside Next.js?**
-Yes. Components are plain React and TypeScript with Tailwind and Framer Motion. The App Router is the default target, not a requirement.
+Yes. Components are plain React and TypeScript with Tailwind and Framer Motion. The App Router is the default target, not a requirement. A few components load their display font through `next/font/google`; outside Next.js, swap that import for your own font loader.
 
 **Do I get a dependency or real code?**
 Real code. Installing copies the source into your project, so you own it and can change anything. There is no AI Canvas package to keep in sync.
