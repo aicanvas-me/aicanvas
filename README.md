@@ -66,47 +66,43 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 
 <table>
   <tr>
-    <td align="center" width="25%">
-      <a href="https://aicanvas.me/components/particle-constellation"><img src="https://ik.imagekit.io/aitoolkit/particle-constellation.png" width="200" alt="Spider Web" /></a><br/>
-      <a href="https://aicanvas.me/components/particle-constellation"><b>Spider Web</b></a><br/>
-      <sub>Interactive silk web that reacts to your cursor</sub>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/components/particle-constellation"><img src="https://ik.imagekit.io/aitoolkit/particle-constellation.png" width="100%" alt="Spider Web" /></a><br/>
+      <a href="https://aicanvas.me/components/particle-constellation"><b>Spider Web</b></a> · <sub>Interactive silk web that reacts to your cursor</sub>
     </td>
-    <td align="center" width="25%">
-      <a href="https://aicanvas.me/components/cube-carousel"><img src="https://ik.imagekit.io/aitoolkit/cube-carousel.png" width="200" alt="Cube Carousel" /></a><br/>
-      <a href="https://aicanvas.me/components/cube-carousel"><b>Cube Carousel</b></a><br/>
-      <sub>Drag-to-spin 3D photo cube</sub>
-    </td>
-    <td align="center" width="25%">
-      <a href="https://aicanvas.me/components/curious-ai"><img src="https://ik.imagekit.io/aitoolkit/curious-ai.png" width="200" alt="Curious AI" /></a><br/>
-      <a href="https://aicanvas.me/components/curious-ai"><b>Curious AI</b></a><br/>
-      <sub>Morphing 3D AI orb that follows your cursor</sub>
-    </td>
-    <td align="center" width="25%">
-      <a href="https://aicanvas.me/components/ripple-type"><img src="https://ik.imagekit.io/aitoolkit/ripple-type.png" width="200" alt="Ripple Type" /></a><br/>
-      <a href="https://aicanvas.me/components/ripple-type"><b>Ripple Type</b></a><br/>
-      <sub>SVG text that ripples on toggle</sub>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/components/cube-carousel"><img src="https://ik.imagekit.io/aitoolkit/cube-carousel.png" width="100%" alt="Cube Carousel" /></a><br/>
+      <a href="https://aicanvas.me/components/cube-carousel"><b>Cube Carousel</b></a> · <sub>Drag-to-spin 3D photo cube</sub>
     </td>
   </tr>
   <tr>
-    <td align="center" width="25%">
-      <a href="https://aicanvas.me/components/product-card-deck"><img src="https://ik.imagekit.io/aitoolkit/product-card-deck.png" width="200" alt="Product Card Deck" /></a><br/>
-      <a href="https://aicanvas.me/components/product-card-deck"><b>Product Card Deck</b></a><br/>
-      <sub>Flick-through draggable card deck</sub>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/components/curious-ai"><img src="https://ik.imagekit.io/aitoolkit/curious-ai.png" width="100%" alt="Curious AI" /></a><br/>
+      <a href="https://aicanvas.me/components/curious-ai"><b>Curious AI</b></a> · <sub>Morphing 3D AI orb that follows your cursor</sub>
     </td>
-    <td align="center" width="25%">
-      <a href="https://aicanvas.me/components/glass-music-player"><img src="https://ik.imagekit.io/aitoolkit/glass-music-player.png" width="200" alt="Glass Music Player" /></a><br/>
-      <a href="https://aicanvas.me/components/glass-music-player"><b>Glass Music Player</b></a><br/>
-      <sub>Glass mini player with spinning vinyl</sub>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/components/ripple-type"><img src="https://ik.imagekit.io/aitoolkit/ripple-type.png" width="100%" alt="Ripple Type" /></a><br/>
+      <a href="https://aicanvas.me/components/ripple-type"><b>Ripple Type</b></a> · <sub>SVG text that ripples on toggle</sub>
     </td>
-    <td align="center" width="25%">
-      <a href="https://aicanvas.me/components/andromeda-button"><img src="https://ik.imagekit.io/aitoolkit/andromeda-button.png" width="200" alt="Andromeda Button" /></a><br/>
-      <a href="https://aicanvas.me/components/andromeda-button"><b>Andromeda Button</b></a><br/>
-      <sub>Sci-fi blueprint button, five variants</sub>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/components/product-card-deck"><img src="https://ik.imagekit.io/aitoolkit/product-card-deck.png" width="100%" alt="Product Card Deck" /></a><br/>
+      <a href="https://aicanvas.me/components/product-card-deck"><b>Product Card Deck</b></a> · <sub>Flick-through draggable card deck</sub>
     </td>
-    <td align="center" width="25%">
-      <a href="https://aicanvas.me/components/glass-dock"><img src="https://ik.imagekit.io/aitoolkit/glass-dock.png" width="200" alt="Glass Dock" /></a><br/>
-      <a href="https://aicanvas.me/components/glass-dock"><b>Glass Dock</b></a><br/>
-      <sub>macOS-style dock with cursor magnification</sub>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/components/glass-music-player"><img src="https://ik.imagekit.io/aitoolkit/glass-music-player.png" width="100%" alt="Glass Music Player" /></a><br/>
+      <a href="https://aicanvas.me/components/glass-music-player"><b>Glass Music Player</b></a> · <sub>Glass mini player with spinning vinyl</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/components/andromeda-button"><img src="https://ik.imagekit.io/aitoolkit/andromeda-button.png" width="100%" alt="Andromeda Button" /></a><br/>
+      <a href="https://aicanvas.me/components/andromeda-button"><b>Andromeda Button</b></a> · <sub>Sci-fi blueprint button, five variants</sub>
+    </td>
+    <td align="center" width="50%">
+      <a href="https://aicanvas.me/components/glass-dock"><img src="https://ik.imagekit.io/aitoolkit/glass-dock.png" width="100%" alt="Glass Dock" /></a><br/>
+      <a href="https://aicanvas.me/components/glass-dock"><b>Glass Dock</b></a> · <sub>macOS-style dock with cursor magnification</sub>
     </td>
   </tr>
 </table>
