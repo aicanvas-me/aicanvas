@@ -65,6 +65,8 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 ## Components
 
 <p align="center">
+  <a href="https://aicanvas.me/components/tilted-coverflow"><img src="https://ik.imagekit.io/aitoolkit/tilted-coverflow.png" width="48%" alt="Tilted Coverflow: 3D coverflow card carousel of seven tilted photos, drag or arrows to focus any card" /></a>
+  <a href="https://aicanvas.me/components/crypto-swap"><img src="https://ik.imagekit.io/aitoolkit/crypto-swap.png?v=2" width="48%" alt="Crypto Swap: token-swap widget with live exchange rates, price impact and an animated swap button" /></a>
   <a href="https://aicanvas.me/components/particle-constellation"><img src="https://ik.imagekit.io/aitoolkit/particle-constellation.png" width="48%" alt="Spider Web: interactive silk web that reacts to your cursor" /></a>
   <a href="https://aicanvas.me/components/cube-carousel"><img src="https://ik.imagekit.io/aitoolkit/cube-carousel.png" width="48%" alt="Cube Carousel: drag-to-spin 3D photo cube" /></a>
   <a href="https://aicanvas.me/components/curious-ai"><img src="https://ik.imagekit.io/aitoolkit/curious-ai.png" width="48%" alt="Curious AI: morphing 3D AI orb that follows your cursor" /></a>
