@@ -38,6 +38,12 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  * @property {string} name
  * @property {string} rootDir         Path from repo root. Layout is preserved verbatim
  *                                    so internal relative imports continue to resolve.
+ * @property {string} [injectedRootDir] Whole-system v2 tree injected at build time by
+ *                                    scripts/inject-premium.mjs (vault manifest key
+ *                                    `systems`). When it exists on disk the registry
+ *                                    generator reads the system from THERE instead of
+ *                                    `rootDir`; when it doesn't (fork, no PAT, older
+ *                                    pin) it falls back to the committed `rootDir`.
  * @property {string[]} tokenEntries  Foundation files (tokens, utils, system icons).
  *                                    Shipped as the `<slug>-tokens` registry item;
  *                                    every other item depends on it.
@@ -61,6 +67,7 @@ export const DESIGN_SYSTEMS = [
     slug: 'andromeda',
     name: 'Andromeda',
     rootDir: 'design-systems/andromeda',
+    injectedRootDir: 'design-systems/andromeda-v2',
     tokenEntries: [
       'tokens.ts',
       'components/lib/utils.ts',
@@ -101,19 +108,30 @@ export const DESIGN_SYSTEMS = [
       'components/UserCard.tsx',
       'components/UserMenu.tsx',
     ],
-    // v2 components — authored in the private vault (aicanvas-premium) and
-    // injected into design-systems/andromeda/components/ at build time by
-    // scripts/inject-premium.mjs. FREE single-component installs exactly like
-    // the v1 entries above (same registry:ui type → classified free by
-    // lib/registry/content-type.ts). Optional: absent files (degraded build,
-    // older premium pin) are skipped with a warning, never a build failure.
+    // v2-only components — authored in the private vault (aicanvas-premium) and
+    // reachable only through the injected `injectedRootDir` tree. FREE
+    // single-component installs exactly like the v1 entries above (same
+    // registry:ui type → classified free by lib/registry/content-type.ts).
+    // Optional because they have no committed counterpart: on a degraded build
+    // (fork, no PAT, older premium pin) the generator reads the v1 rootDir,
+    // finds them absent, and skips them with a warning instead of failing.
+    // The entries above ship in BOTH trees, so they are never optional.
     optionalSystemEntries: [
-      'components/MetricChart.tsx',
-      'components/Gauge.tsx',
-      'components/Waveform.tsx',
-      'components/MediaCard.tsx',
+      'components/Burst.tsx',
+      'components/ChoiceCard.tsx',
+      'components/ContourBackdrop.tsx',
       'components/DataTable.tsx',
+      'components/FunnelChart.tsx',
+      'components/Gauge.tsx',
+      'components/GridBackdrop.tsx',
+      'components/HorizonBackdrop.tsx',
+      'components/MediaCard.tsx',
+      'components/MetricChart.tsx',
       'components/MusicPlayer.tsx',
+      'components/Nodes.tsx',
+      'components/Orb.tsx',
+      'components/VoidBackdrop.tsx',
+      'components/Waveform.tsx',
     ],
     // Per-file slug overrides. Button.tsx's natural slug (andromeda-button) is
     // owned by the standalone in components-workspace/andromeda-button/, so the

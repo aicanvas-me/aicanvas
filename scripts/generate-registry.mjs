@@ -30,6 +30,14 @@ function isInjectedComponentPresent(abs) {
   }
 }
 
+// A design system's ACTIVE source root. The whole v2 tree is injected from the
+// vault into `injectedRootDir` (see scripts/inject-premium.mjs, manifest key
+// `systems`); when it is not there — fork, no PAT, older premium pin — the
+// committed v1 `rootDir` is read instead so the build stays green.
+function dsRoot(ds) {
+  return ds.injectedRootDir && existsSync(ds.injectedRootDir) ? ds.injectedRootDir : ds.rootDir
+}
+
 const wsDir = 'components-workspace'
 const outDir = 'registry-data'
 const SCHEMA = 'https://ui.shadcn.com/schema/registry-item.json'
@@ -323,7 +331,7 @@ for (const ds of DESIGN_SYSTEMS) {
     // Optional entries only reserve their name while the file is actually
     // present — a degraded run must let the stale-cleanup pass below delete
     // the previous run's JSON so /r and the gate manifest stay in sync.
-    if (optional && !isInjectedComponentPresent(resolve(ds.rootDir, entry))) continue
+    if (optional && !isInjectedComponentPresent(resolve(dsRoot(ds), entry))) continue
     const baseName = entry.split('/').pop()
     expectedNames.add(dsComponentSlug(ds, entry, baseName))
   }
@@ -522,7 +530,7 @@ const installContents = {}
 const templateContents = new Map()
 
 for (const ds of DESIGN_SYSTEMS) {
-  const rootDirAbs = resolve(ds.rootDir)
+  const rootDirAbs = resolve(dsRoot(ds))
   const tokenEntriesAbs = (ds.tokenEntries ?? []).map((p) => resolve(rootDirAbs, p))
   // Optional (build-time-injected v2) entries join the system exactly like the
   // committed ones when their file exists; when absent the build stays green —
@@ -869,9 +877,9 @@ const fillDescription = (p) => ({
 
 const propTables = {}
 for (const ds of DESIGN_SYSTEMS) {
-  const dsRoot = resolve(ds.rootDir)
+  const dsRootAbs = resolve(dsRoot(ds))
   for (const { path: entry } of dsAllEntries(ds)) {
-    const abs = resolve(dsRoot, entry)
+    const abs = resolve(dsRootAbs, entry)
     if (!isInjectedComponentPresent(abs)) continue // absent or degraded placeholder — skip, don't fail
     const base = entry.split('/').pop().replace(/\.(tsx|ts)$/, '')
     const tables = parseJsdocProps(readFileSync(abs, 'utf-8'))
