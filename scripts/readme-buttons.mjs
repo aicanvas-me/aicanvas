@@ -68,25 +68,13 @@ const html = (chip, iconSvg) => `<!doctype html><html><head><meta charset="utf-8
 </body></html>`
 
 /**
- * The mark is a three-tone faceted arrow: a gradient body plus two inner faces
- * painted for a light surface. Flattening it to one white would erase the
- * facets, so each tone is remapped to its own step of white instead. The inline
- * `style="fill:..."` on each path wins over the `fill` attribute, so it has to
- * come off first or nothing below has any effect.
+ * The brand mark, olive gradient and dark facets exactly as the site paints it.
+ * The chips around it are monochrome so the icon is the only colour in the row.
  */
-async function whiteMark() {
-  const TONE = { 'url(#paint0_linear_185_248)': '#FFFFFF', '#4F4F4C': '#FFFFFF', '#1E1E1E': '#6B6E73' }
-  let svg = (await readFile(join(ROOT, 'public', 'ai-canvas-icon-mono.svg'), 'utf8'))
+async function brandMark() {
+  return (await readFile(join(ROOT, 'public', 'ai-canvas-icon.svg'), 'utf8'))
     .replace(/<\?xml[^>]*\?>/g, '')
-    .replace(/\sstyle="[^"]*"/g, '')
-
-  for (const [from, to] of Object.entries(TONE)) {
-    svg = svg.replaceAll(`fill="${from}"`, `fill="${to}"`)
-  }
-  const leftover = svg.match(/fill="(?!none|#FFFFFF|#6B6E73)[^"]*"/g)
-  if (leftover) throw new Error(`unmapped icon fill: ${leftover.join(', ')}`)
-
-  return svg.replace(/<svg /, '<svg style="height:100%;width:auto;display:block" ')
+    .replace(/<svg /, '<svg style="height:100%;width:auto;display:block" ')
 }
 
 async function main() {
@@ -94,7 +82,7 @@ async function main() {
   const targets = only ? CHIPS.filter((c) => c.file.includes(only)) : CHIPS
   if (!targets.length) throw new Error(`no chip matches "${only}"`)
 
-  const iconSvg = await whiteMark()
+  const iconSvg = await brandMark()
 
   await mkdir(OUT, { recursive: true })
   const browser = await chromium.launch()
