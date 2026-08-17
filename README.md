@@ -161,8 +161,6 @@ React and TypeScript, Tailwind CSS, and Framer Motion. Built for the Next.js App
 
 AI Canvas is an actively maintained project. New components, design systems, and templates ship regularly. If AI Canvas saves you time, a star helps more builders find it.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=uiNerd16/aicanvas&type=Date)](https://star-history.com/#uiNerd16/aicanvas&Date)
-
 ## Contributing
 
 AI Canvas is open source under MIT. Issues, ideas, and pull requests are welcome. Open an issue to suggest a component or report a bug.
