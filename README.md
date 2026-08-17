@@ -26,7 +26,7 @@ A growing collection of animated React components, plus a token-driven design sy
   <a href="#use-it-with-your-ai-editor-mcp"><img src="assets/readme-buttons/btn-agents.png" alt="Works with Claude, Codex and Cursor" height="45" valign="middle" /></a>
 </p>
 
-<p align="center"><sub><a href="#install">Install</a> · <a href="#components">Components</a> · <a href="#examples">Examples</a> · <a href="#use-it-with-your-ai-editor-mcp">MCP</a> · <a href="#design-systems-and-templates">Design systems</a> · <a href="#repository-layout">Repo layout</a> · <a href="#common-questions">FAQ</a> · <a href="#license">License</a></sub></p>
+<p align="center"><sub><a href="#install">Install</a> · <a href="#components">Components</a> · <a href="#blocks">Blocks</a> · <a href="#templates">Templates</a> · <a href="#use-it-with-your-ai-editor-mcp">MCP</a> · <a href="#design-systems-and-templates">Design systems</a> · <a href="#repository-layout">Repo layout</a> · <a href="#common-questions">FAQ</a> · <a href="#license">License</a></sub></p>
 
 ## Install
 
@@ -57,7 +57,7 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 
 ## Why AI Canvas
 
-- **Open core, free to start.** The free library is MIT licensed, so you can use it in personal and commercial projects, modify it freely, and ship it without attribution. Premium components, design systems, and templates are proprietary.
+- **MIT licensed.** The free library is MIT, so you can use it in personal and commercial projects, modify it freely, and ship it without attribution. Premium components, design systems, and templates are proprietary.
 - **Full source, yours to keep.** Every component arrives as real React and TypeScript code in your codebase, not a black-box dependency. Restyle it, extend it, or ship it as is. It is yours.
 - **Built for AI workflows.** Install with the shadcn CLI, connect the MCP so your agent installs for you, or hand it a remix prompt that works in any AI coding tool.
 - **Animated by default.** Built with Framer Motion and Tailwind CSS, ready for the Next.js App Router or any modern React setup. 3D pieces use Three.js.
@@ -68,16 +68,28 @@ Browse the full catalog and copy the exact command for any component at [aicanva
   <a href="https://aicanvas.me/components/tilted-coverflow"><img src="https://ik.imagekit.io/aitoolkit/tilted-coverflow.png" width="48%" alt="Tilted Coverflow: 3D coverflow card carousel of seven tilted photos, drag or arrows to focus any card" /></a>
   <a href="https://aicanvas.me/components/crypto-swap"><img src="https://ik.imagekit.io/aitoolkit/crypto-swap.png?v=2" width="48%" alt="Crypto Swap: token-swap widget with live exchange rates, price impact and an animated swap button" /></a>
   <a href="https://aicanvas.me/components/signature-pad"><img src="https://ik.imagekit.io/aitoolkit/signature-pad.png?v=2" width="48%" alt="Signature Pad: pill button morphs into a canvas to draw with mouse or touch" /></a>
-  <a href="https://aicanvas.me/components/cube-carousel"><img src="https://ik.imagekit.io/aitoolkit/cube-carousel.png?v=2" width="48%" alt="Cube Carousel: interactive 3D photo cube you drag to spin freely on both axes" /></a>
+  <a href="https://aicanvas.me/components/product-card-deck"><img src="https://ik.imagekit.io/aitoolkit/product-card-deck.png?v=1" width="48%" alt="Product Card Deck: a draggable card deck you flick through one card at a time" /></a>
   <a href="https://aicanvas.me/components/glass-ai-compose"><img src="https://ik.imagekit.io/aitoolkit/glass-ai-compose.png" width="48%" alt="Glass AI Composer: glassmorphism AI chat input with image upload, web search toggle and model switcher" /></a>
   <a href="https://aicanvas.me/components/voice-chat-pill"><img src="https://ik.imagekit.io/aitoolkit/voice-chat-pill.png?v=2026050501" width="48%" alt="Live Session Pill: compact presence pill with an animated speaking indicator and overlapping avatars" /></a>
-  <a href="https://aicanvas.me/components/ai-job-cards"><img src="https://ik.imagekit.io/aitoolkit/ai-job-cards.png" width="48%" alt="AI Job Cards: three job card stacks with swipe-to-cycle, brand logos and a bookmark toggle" /></a>
   <a href="https://aicanvas.me/components/andromeda-button"><img src="https://ik.imagekit.io/aitoolkit/andromeda-button.png?updatedAt=1775998697243" width="48%" alt="Andromeda Button: sci-fi blueprint button with five variants and three sizes" /></a>
 </p>
 
 <p align="center"><sub><a href="https://aicanvas.me">Browse all components at aicanvas.me</a></sub></p>
 
-## Examples
+## Blocks
+
+Composed, multi-component page sections: pricing tables, hero banners, galleries. Same install, same MIT licence, just a larger unit of work than a single component.
+
+<p align="center">
+  <a href="https://aicanvas.me/components/ai-job-cards"><img src="https://ik.imagekit.io/aitoolkit/ai-job-cards.png" width="48%" alt="AI Job Cards: three job card stacks with swipe-to-cycle, brand logos and a bookmark toggle" /></a>
+  <a href="https://aicanvas.me/components/scroll-wipe-gallery"><img src="https://ik.imagekit.io/aitoolkit/scroll-wipe-gallery.png?v=2" width="48%" alt="Scroll Wipe Gallery: a gallery section that wipes between images as you scroll" /></a>
+  <a href="https://aicanvas.me/components/task-cards"><img src="https://ik.imagekit.io/aitoolkit/task-cards.png" width="48%" alt="Task Cards: a task board section with draggable cards" /></a>
+  <a href="https://aicanvas.me/components/slide-deck"><img src="https://ik.imagekit.io/aitoolkit/slide-deck.png" width="48%" alt="Slide Deck: a presentation-style slide section" /></a>
+</p>
+
+<p align="center"><sub><a href="https://aicanvas.me/components/category/blocks">Browse all blocks at aicanvas.me</a></sub></p>
+
+## Templates
 
 Full screens built with **Andromeda**, the AI Canvas design system. Every panel, chart, and control on these pages is an Andromeda component reading the same token bundle.
 
