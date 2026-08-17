@@ -11,19 +11,19 @@
 </p>
 
 <p align="center">
-  <a href="https://aicanvas.me" title="Browse the live catalog"><img src="https://img.shields.io/badge/VISIT-aicanvas.me-56631F?style=for-the-badge&labelColor=0d1117" alt="Visit aicanvas.me" height="44" /></a>
+  <a href="https://aicanvas.me" title="Browse the live catalog"><img src="assets/readme-buttons/btn-site.png" alt="Visit aicanvas.me" height="56" /></a>
 </p>
 
 A growing collection of animated React components, plus a token-driven design system and ready-made templates. Every component arrives as real source code in your project, with an AI remix prompt that works in any AI coding tool. Open core: the free library is MIT, and Premium is proprietary.
 
 <p align="center">
-  <a href="./LICENSE"><img src="https://img.shields.io/badge/LICENSE-MIT-56631F?style=for-the-badge&labelColor=0d1117" alt="License: MIT" height="32" /></a>
+  <a href="./LICENSE"><img src="assets/readme-buttons/btn-license.png" alt="License: MIT" height="45" valign="middle" /></a>
   &nbsp;
-  <a href="https://aicanvas.me"><img src="https://img.shields.io/badge/COMPONENTS-80%2B%20free-56631F?style=for-the-badge&labelColor=0d1117" alt="80+ free components" height="32" /></a>
+  <a href="https://aicanvas.me"><img src="assets/readme-buttons/btn-components.png" alt="80+ free components" height="45" valign="middle" /></a>
   &nbsp;
-  <a href="#install"><img src="https://img.shields.io/badge/REGISTRY-%40aicanvas-56631F?style=for-the-badge&labelColor=0d1117" alt="shadcn registry: @aicanvas" height="32" /></a>
+  <a href="#install"><img src="assets/readme-buttons/btn-registry.png" alt="shadcn registry: @aicanvas" height="45" valign="middle" /></a>
   &nbsp;
-  <a href="https://www.npmjs.com/package/@aicanvas/mcp"><img src="https://img.shields.io/npm/v/%40aicanvas%2Fmcp?style=for-the-badge&label=MCP&labelColor=0d1117&color=56631F" alt="@aicanvas/mcp on npm" height="32" /></a>
+  <a href="#use-it-with-your-ai-editor-mcp"><img src="assets/readme-buttons/btn-agents.png" alt="Works with Claude, Codex and Cursor" height="45" valign="middle" /></a>
 </p>
 
 <p align="center"><sub><a href="#install">Install</a> · <a href="#components">Components</a> · <a href="#examples">Examples</a> · <a href="#use-it-with-your-ai-editor-mcp">MCP</a> · <a href="#design-systems-and-templates">Design systems</a> · <a href="#repository-layout">Repo layout</a> · <a href="#common-questions">FAQ</a> · <a href="#license">License</a></sub></p>
