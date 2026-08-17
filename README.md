@@ -26,7 +26,7 @@ A growing collection of animated React components, plus a token-driven design sy
   <a href="#use-it-with-your-ai-editor-mcp"><img src="assets/readme-buttons/btn-agents.png" alt="Works with Claude, Codex and Cursor" height="45" valign="middle" /></a>
 </p>
 
-<p align="center"><sub><a href="#install">Install</a> · <a href="#components">Components</a> · <a href="#blocks">Blocks</a> · <a href="#templates">Templates</a> · <a href="#use-it-with-your-ai-editor-mcp">MCP</a> · <a href="#design-systems-and-templates">Design systems</a> · <a href="#repository-layout">Repo layout</a> · <a href="#common-questions">FAQ</a> · <a href="#license">License</a></sub></p>
+<p align="center"><sub><a href="#install">Install</a> · <a href="#components">Components</a> · <a href="#blocks">Blocks</a> · <a href="#use-it-with-your-ai-editor-mcp">MCP</a> · <a href="#repository-layout">Repo layout</a> · <a href="#common-questions">FAQ</a> · <a href="#license">License</a></sub></p>
 
 ## Install
 
@@ -67,11 +67,10 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 <p align="center">
   <a href="https://aicanvas.me/components/tilted-coverflow"><img src="https://ik.imagekit.io/aitoolkit/tilted-coverflow.png" width="48%" alt="Tilted Coverflow: 3D coverflow card carousel of seven tilted photos, drag or arrows to focus any card" /></a>
   <a href="https://aicanvas.me/components/crypto-swap"><img src="https://ik.imagekit.io/aitoolkit/crypto-swap.png?v=2" width="48%" alt="Crypto Swap: token-swap widget with live exchange rates, price impact and an animated swap button" /></a>
-  <a href="https://aicanvas.me/components/signature-pad"><img src="https://ik.imagekit.io/aitoolkit/signature-pad.png?v=2" width="48%" alt="Signature Pad: pill button morphs into a canvas to draw with mouse or touch" /></a>
+  <a href="https://aicanvas.me/components/signature-pad"><img src="https://ik.imagekit.io/aitoolkit/signature-pad.png?v=2&tr=w-846,h-480" width="48%" alt="Signature Pad: pill button morphs into a canvas to draw with mouse or touch" /></a>
   <a href="https://aicanvas.me/components/product-card-deck"><img src="https://ik.imagekit.io/aitoolkit/product-card-deck.png?v=1" width="48%" alt="Product Card Deck: a draggable card deck you flick through one card at a time" /></a>
   <a href="https://aicanvas.me/components/glass-ai-compose"><img src="https://ik.imagekit.io/aitoolkit/glass-ai-compose.png" width="48%" alt="Glass AI Composer: glassmorphism AI chat input with image upload, web search toggle and model switcher" /></a>
   <a href="https://aicanvas.me/components/voice-chat-pill"><img src="https://ik.imagekit.io/aitoolkit/voice-chat-pill.png?v=2026050501" width="48%" alt="Live Session Pill: compact presence pill with an animated speaking indicator and overlapping avatars" /></a>
-  <a href="https://aicanvas.me/components/andromeda-button"><img src="https://ik.imagekit.io/aitoolkit/andromeda-button.png?updatedAt=1775998697243" width="48%" alt="Andromeda Button: sci-fi blueprint button with five variants and three sizes" /></a>
 </p>
 
 <p align="center"><sub><a href="https://aicanvas.me">Browse all components at aicanvas.me</a></sub></p>
@@ -88,19 +87,6 @@ Composed, multi-component page sections: pricing tables, hero banners, galleries
 </p>
 
 <p align="center"><sub><a href="https://aicanvas.me/components/category/blocks">Browse all blocks at aicanvas.me</a></sub></p>
-
-## Templates
-
-Full screens built with **Andromeda**, the AI Canvas design system. Every panel, chart, and control on these pages is an Andromeda component reading the same token bundle.
-
-<p align="center">
-  <a href="https://aicanvas.me/design-systems/andromeda/templates/mission-control"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Mission%20control.png" width="48%" alt="Mission Control, a sci-fi operations template built with Andromeda" /></a>
-  <a href="https://aicanvas.me/design-systems/andromeda/templates/service-order"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Service%20order.png" width="48%" alt="Service Order, a telecom template built with Andromeda" /></a>
-  <a href="https://aicanvas.me/design-systems/andromeda/templates/resource-planning"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Resource%20planning.png" width="48%" alt="Resource Planning, an operations template built with Andromeda" /></a>
-  <a href="https://aicanvas.me/design-systems/andromeda/templates/signal-room"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Signal%20Room.png" width="48%" alt="Signal Room, an audio template built with Andromeda" /></a>
-</p>
-
-<p align="center"><sub><a href="https://aicanvas.me/design-systems/andromeda">See Andromeda at aicanvas.me</a></sub></p>
 
 ## Use it with your AI editor (MCP)
 
@@ -124,12 +110,6 @@ Or add it to your MCP config:
 ```
 
 Works with Claude Code, Codex, Cursor, and other MCP-compatible editors. The server is read-only and fetches the live registry at runtime, so new components reach your agent shortly after they ship. It returns published component metadata and source.
-
-## Design systems and templates
-
-Beyond standalone components, AI Canvas ships **Andromeda**, a token-driven sci-fi and blueprint design system, with ready-made templates like Mission Control, Service Order, Resource Planning, and Signal Room. Installing an Andromeda component brings its source code plus the shared token bundle it depends on.
-
-See it at [aicanvas.me/design-systems/andromeda](https://aicanvas.me/design-systems/andromeda).
 
 ## Repository layout
 
