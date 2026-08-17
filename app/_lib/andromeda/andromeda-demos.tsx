@@ -1,9 +1,17 @@
 // @ts-nocheck — design-systems components are not type-checked yet
 // (see design-systems/CLAUDE.md). Demos consume those components, so this
 // file inherits the same posture.
+//
+// CAPTURE-ONLY as of 2026-08-09. Its single remaining consumer is
+// app/andromeda-capture/[slug]/CaptureFrame.tsx, which shoots the 16:9 card
+// posters. The system page and the component pages now render from the matrix
+// declarations (app/_lib/andromeda/matrix/) instead. Flipping capture over too
+// would silently re-shoot every card poster, so that stays the maintainer's
+// call; until he makes it, this file is curation for the posters and nothing
+// else. Do not add a new consumer.
 'use client'
 
-import { useState } from 'react'
+import { Fragment, useState } from 'react'
 import {
   ArrowClockwise,
   Bell,
@@ -32,46 +40,47 @@ import {
   Warning,
 } from '@phosphor-icons/react'
 
-import { tokens } from '../../../design-systems/andromeda/tokens'
-import { Alert, AlertContent, AlertDescription, AlertIcon, AlertTitle } from '../../../design-systems/andromeda/components/Alert'
-import { Avatar } from '../../../design-systems/andromeda/components/Avatar'
-import { Badge } from '../../../design-systems/andromeda/components/Badge'
-import { Button } from '../../../design-systems/andromeda/components/Button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../../design-systems/andromeda/components/Card'
-import { Checkbox } from '../../../design-systems/andromeda/components/Checkbox'
-import { CornerMarkers } from '../../../design-systems/andromeda/components/CornerMarkers'
-import { DateRangePicker } from '../../../design-systems/andromeda/components/DateRangePicker'
-import { Drawer, DrawerBody, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '../../../design-systems/andromeda/components/Drawer'
-import { EmptyState, EmptyStateAction, EmptyStateDescription, EmptyStateIcon, EmptyStateTitle } from '../../../design-systems/andromeda/components/EmptyState'
-import { IconButton } from '../../../design-systems/andromeda/components/IconButton'
-import { Input } from '../../../design-systems/andromeda/components/Input'
-import { SearchField } from '../../../design-systems/andromeda/components/SearchField'
-import { NavItem } from '../../../design-systems/andromeda/components/NavItem'
-import { PanelHeader } from '../../../design-systems/andromeda/components/PanelHeader'
-import { PanelMenu } from '../../../design-systems/andromeda/components/PanelMenu'
-import { SegmentedControl } from '../../../design-systems/andromeda/components/SegmentedControl'
-import { ProgressBar } from '../../../design-systems/andromeda/components/ProgressBar'
-import { HeatGrid } from '../../../design-systems/andromeda/components/HeatGrid'
-import { RadarChart } from '../../../design-systems/andromeda/components/RadarChart'
-import { TrendChart } from '../../../design-systems/andromeda/components/TrendChart'
-import { Radio, RadioGroup } from '../../../design-systems/andromeda/components/Radio'
-import { Slider } from '../../../design-systems/andromeda/components/Slider'
-import { Spinner } from '../../../design-systems/andromeda/components/Spinner'
-import { StatTile } from '../../../design-systems/andromeda/components/StatTile'
-import { Tag } from '../../../design-systems/andromeda/components/Tag'
-import { Textarea } from '../../../design-systems/andromeda/components/Textarea'
-import { Toggle } from '../../../design-systems/andromeda/components/Toggle'
-import { Tooltip } from '../../../design-systems/andromeda/components/Tooltip'
-import { UserCard } from '../../../design-systems/andromeda/components/UserCard'
-import { UserMenu } from '../../../design-systems/andromeda/components/UserMenu'
-import { Planet } from '../../../design-systems/andromeda/components/Planet'
+import { tokens } from '../../lib/andromeda-v2.generated'
+import { Alert, AlertContent, AlertDescription, AlertIcon, AlertTitle } from '../../lib/andromeda-v2.generated'
+import { Avatar } from '../../lib/andromeda-v2.generated'
+import { Badge } from '../../lib/andromeda-v2.generated'
+import { Button } from '../../lib/andromeda-v2.generated'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../../lib/andromeda-v2.generated'
+import { Checkbox } from '../../lib/andromeda-v2.generated'
+import { ChoiceCard } from '../../lib/andromeda-v2.generated'
+import { CornerMarkers } from '../../lib/andromeda-v2.generated'
+import { DateRangePicker } from '../../lib/andromeda-v2.generated'
+import { Drawer, DrawerBody, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '../../lib/andromeda-v2.generated'
+import { EmptyState, EmptyStateAction, EmptyStateDescription, EmptyStateIcon, EmptyStateTitle } from '../../lib/andromeda-v2.generated'
+import { IconButton } from '../../lib/andromeda-v2.generated'
+import { Input } from '../../lib/andromeda-v2.generated'
+import { SearchField } from '../../lib/andromeda-v2.generated'
+import { NavItem } from '../../lib/andromeda-v2.generated'
+import { PanelHeader } from '../../lib/andromeda-v2.generated'
+import { PanelMenu } from '../../lib/andromeda-v2.generated'
+import { SegmentedControl } from '../../lib/andromeda-v2.generated'
+import { ProgressBar } from '../../lib/andromeda-v2.generated'
+import { HeatGrid } from '../../lib/andromeda-v2.generated'
+import { RadarChart } from '../../lib/andromeda-v2.generated'
+import { TrendChart } from '../../lib/andromeda-v2.generated'
+import { Radio, RadioGroup } from '../../lib/andromeda-v2.generated'
+import { Slider } from '../../lib/andromeda-v2.generated'
+import { Spinner } from '../../lib/andromeda-v2.generated'
+import { StatTile } from '../../lib/andromeda-v2.generated'
+import { Tag } from '../../lib/andromeda-v2.generated'
+import { Textarea } from '../../lib/andromeda-v2.generated'
+import { Toggle } from '../../lib/andromeda-v2.generated'
+import { Tooltip } from '../../lib/andromeda-v2.generated'
+import { UserCard } from '../../lib/andromeda-v2.generated'
+import { UserMenu } from '../../lib/andromeda-v2.generated'
+import { Planet } from '../../lib/andromeda-v2.generated'
 import {
   Table, TableHead, TableBody, TableRow, TableHeader, TableCell, TableStyles,
-} from '../../../design-systems/andromeda/components/Table'
+} from '../../lib/andromeda-v2.generated'
 // v2 components come from the build-time-injected shim (real re-exports when
 // injected, placeholder panels on degraded builds) — never import them from
 // design-systems/ directly. See scripts/inject-premium.mjs.
-import { MetricChart, Gauge, Waveform, MediaCard, DataTable, MusicPlayer } from '../../lib/andromeda-v2.generated'
+import { MetricChart, Gauge, Waveform, MediaCard, DataTable, MusicPlayer, FunnelChart, Orb, Nodes, Burst } from '../../lib/andromeda-v2.generated'
 
 // ─── Layout helpers ──────────────────────────────────────────────────────────
 
@@ -114,6 +123,68 @@ function Row({ label, children }: { label?: string; children: React.ReactNode })
   )
 }
 
+// ─── Size ramp ───────────────────────────────────────────────────────────────
+
+// THE way a component's size ladder is shown, on both the component page and
+// the system showcase. One definition, imported by both, so the two surfaces
+// cannot drift apart.
+//
+// A two-row grid, not a flex row of stacked columns. Stacked columns have
+// different total heights (a 24px control and a 40px control make 42px and 58px
+// columns), so no value of alignItems can put BOTH the controls and the captions
+// on a shared line — centring walks both edges, flex-end walks the tops. Here
+// row 1 holds every control and row 2 holds every caption, so the caption
+// baseline is shared by construction.
+//
+// The grid also means no slot-height constant. Row 1 auto-sizes to the
+// tallest control, which is the only thing that survives Spinner (14/20/28) and
+// Gauge (80/110/144) using the same helper.
+// direction='column' stacks the ramp instead, for components too wide to sit
+// three-across (UserCard, and anything else block-scale). The shared caption
+// LINE simply becomes a shared caption COLUMN — same guarantee, same grid, one
+// axis flipped.
+// No longer exported: the system page and the component pages used to import
+// this, and its lack of a state axis IS the drift this project removed. It
+// survives as a private helper of the poster demos below.
+function SizeRamp({ sizes = ['sm', 'md', 'lg'], render, direction = 'row' }) {
+  const column = direction === 'column'
+  return (
+    <div
+      style={{
+        display: 'grid',
+        ...(column
+          ? { gridTemplateColumns: 'max-content max-content', gridAutoFlow: 'row' }
+          : { gridTemplateRows: 'auto auto', gridAutoFlow: 'column', gridAutoColumns: 'max-content' }),
+        columnGap: tokens.spacing[column ? 3 : 5],
+        rowGap: tokens.spacing[column ? 3 : 2],
+        alignItems: 'center',
+        justifyItems: column ? 'start' : 'center',
+      }}
+    >
+      {sizes.map((s) => (
+        <Fragment key={s}>
+          {render(s)}
+          <span
+            style={{
+              fontFamily: tokens.typography.fontMono,
+              fontSize: tokens.typography.size.xs,
+              // Pins the caption box so font metrics cannot reintroduce drift.
+              lineHeight: tokens.typography.lineHeight.none,
+              color: tokens.color.text.faint,
+              textTransform: 'uppercase',
+              // One notch below the cell label's `widest`, so it reads as
+              // subordinate to the label above the ramp.
+              letterSpacing: tokens.typography.tracking.wider,
+            }}
+          >
+            {s}
+          </span>
+        </Fragment>
+      ))}
+    </div>
+  )
+}
+
 // ─── Per-slug demos ──────────────────────────────────────────────────────────
 
 function IconButtonDemo() {
@@ -126,9 +197,7 @@ function IconButtonDemo() {
         <IconButton variant="destructive" aria-label="Delete" icon={Trash} />
       </Row>
       <Row label="Sizes">
-        <IconButton size="sm" aria-label="Settings" icon={Gear} />
-        <IconButton size="md" aria-label="Settings" icon={Gear} />
-        <IconButton size="lg" aria-label="Settings" icon={Gear} />
+        <SizeRamp render={(s) => <IconButton size={s} aria-label={`Settings (${s})`} icon={Gear} />} />
       </Row>
       <Row label="Disabled">
         <IconButton aria-label="Settings" icon={Gear} disabled />
@@ -149,9 +218,7 @@ function ButtonDemo() {
         <Button variant="link">Link</Button>
       </Row>
       <Row label="Sizes">
-        <Button size="sm">Small</Button>
-        <Button size="md">Medium</Button>
-        <Button size="lg">Large</Button>
+        <SizeRamp render={(s) => <Button size={s}>Deploy</Button>} />
       </Row>
       <Row label="With icon">
         <Button icon={Bell}>Notifications</Button>
@@ -168,14 +235,19 @@ function ButtonDemo() {
 
 function BadgeDemo() {
   return (
-    <Row>
-      <Badge variant="default">Default</Badge>
-      <Badge variant="accent">Live</Badge>
-      <Badge variant="warning">Caution</Badge>
-      <Badge variant="fault">Fault</Badge>
-      <Badge variant="subtle">Subtle</Badge>
-      <Badge variant="outline">Outline</Badge>
-    </Row>
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <Row label="Variants">
+        <Badge variant="default">Default</Badge>
+        <Badge variant="accent">Live</Badge>
+        <Badge variant="warning">Caution</Badge>
+        <Badge variant="fault">Fault</Badge>
+        <Badge variant="subtle">Subtle</Badge>
+        <Badge variant="outline">Outline</Badge>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp render={(s) => <Badge size={s} variant="accent">Live</Badge>} />
+      </Row>
+    </div>
   )
 }
 
@@ -183,9 +255,7 @@ function AvatarDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
       <Row label="Sizes">
-        <Avatar name="Reza Quinn" size="sm" />
-        <Avatar name="Reza Quinn" size="md" />
-        <Avatar name="Reza Quinn" size="lg" />
+        <SizeRamp render={(s) => <Avatar name="Reza Quinn" size={s} />} />
       </Row>
       <Row label="With status">
         <Avatar name="Reza Quinn" status="online" />
@@ -202,7 +272,9 @@ function CardDemo() {
     <div
       style={{
         display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
+        // auto-fit, not '1fr 1fr': the pair stacks to one column rather than
+        // crushing both when the preview gets narrow.
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
         gap: tokens.spacing[5],
         width: '100%',
         maxWidth: 720,
@@ -305,19 +377,27 @@ function CornerMarkersDemo() {
 
 function InputDemo() {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: tokens.spacing[5],
-        width: '100%',
-        maxWidth: 720,
-      }}
-    >
-      <Input label="Callsign" placeholder="ENTER CALLSIGN" />
-      <Input label="Search" icon={MagnifyingGlass} placeholder="QUERY DATABASE" />
-      <Input label="Email" icon={Envelope} placeholder="OPERATOR@DOMAIN.COM" />
-      <Input label="Validation" defaultValue="INVALID" error="Field cannot be empty" />
+    <div style={{ width: '100%', maxWidth: 720 }}>
+      <Row label="Sizes">
+        <SizeRamp
+          direction="column"
+          render={(s) => <Input size={s} placeholder="ENTER CALLSIGN" style={{ width: 260 }} />}
+        />
+      </Row>
+      <div
+        style={{
+          display: 'grid',
+          // auto-fit so the pair stacks instead of squeezing on a narrow card
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: tokens.spacing[5],
+          width: '100%',
+        }}
+      >
+        <Input label="Callsign" placeholder="ENTER CALLSIGN" />
+        <Input label="Search" icon={MagnifyingGlass} placeholder="QUERY DATABASE" />
+        <Input label="Email" icon={Envelope} placeholder="OPERATOR@DOMAIN.COM" />
+        <Input label="Validation" defaultValue="INVALID" error="Field cannot be empty" />
+      </div>
     </div>
   )
 }
@@ -333,6 +413,12 @@ function SearchFieldDemo() {
         maxWidth: 520,
       }}
     >
+      <Row label="Sizes">
+        <SizeRamp
+          direction="column"
+          render={(s) => <SearchField size={s} placeholder="Search anything" style={{ width: 320 }} />}
+        />
+      </Row>
       <SearchField placeholder="Search anything" />
       <SearchField placeholder="Search tracks, channels, waveforms" shortcut="⌘ F" />
       <SearchField placeholder="No shortcut" shortcut={null} />
@@ -342,20 +428,55 @@ function SearchFieldDemo() {
 }
 
 function NavItemDemo() {
+  const items = [
+    { icon: Compass, label: 'Overview' },
+    { icon: Pulse, label: 'Activity' },
+    { icon: ChartLine, label: 'Reports' },
+    { icon: Bell, label: 'Alerts' },
+    { icon: Users, label: 'Members' },
+    { icon: Database, label: 'Logs' },
+    { icon: Gear, label: 'Settings' },
+  ]
   return (
-    <div
-      style={{
-        width: 260,
-        background: tokens.color.surface.raised,
-        position: 'relative',
-      }}
-    >
-      <CornerMarkers />
-      <NavItem icon={Compass} label="Overview" active />
-      <NavItem icon={Pulse} label="Activity" />
-      <NavItem icon={Users} label="Members" />
-      <NavItem icon={Database} label="Logs" />
-      <NavItem icon={Gear} label="Settings" />
+    <div style={{ display: 'flex', gap: tokens.spacing[5], alignItems: 'flex-start' }}>
+      <div
+        style={{
+          width: 260,
+          background: tokens.color.surface.raised,
+          position: 'relative',
+        }}
+      >
+        <CornerMarkers />
+        {items.map((item, i) => (
+          <NavItem key={item.label} icon={item.icon} label={item.label} active={i === 0} />
+        ))}
+      </div>
+
+      {/* The same list collapsed to an icon rail. Same component, no edge
+          square — a rail is too narrow for one to read as an edge, so the
+          accent glyph marks the current row. The label is still there for
+          screen readers. */}
+      <div
+        style={{
+          width: 56,
+          background: tokens.color.surface.raised,
+          position: 'relative',
+        }}
+      >
+        <CornerMarkers />
+        {items.map((item, i) => (
+          <Tooltip
+            key={item.label}
+            label={item.label}
+            position="right"
+            // inline-flex by default, which would shrink-wrap the row and
+            // leave the hover fill and tap target narrower than the rail.
+            style={{ display: 'flex', width: '100%' }}
+          >
+            <NavItem collapsed icon={item.icon} label={item.label} active={i === 0} />
+          </Tooltip>
+        ))}
+      </div>
     </div>
   )
 }
@@ -427,13 +548,53 @@ function MetricChartDemo() {
   )
 }
 
+// Two funnels, because the interesting thing about this chart is not its
+// shape but what its colour is allowed to mean.
+//
+// The first declares no tones, so every band rests in neutral ink: nothing
+// about any single stage is a reading, so nothing earns colour.
+// The second derives a tone per stage from that stage's own step conversion,
+// which is the only sanctioned reason a band changes colour — never to tell
+// the five stages apart, which the labels already do.
+const FUNNEL_TONE = (share: number) =>
+  share >= 0.85 ? 'accent' : share >= 0.75 ? 'warning' : 'fault'
+
+const FUNNEL_STAGES = [
+  { id: 'awareness', label: 'Awareness', value: 4100 },
+  { id: 'interest', label: 'Interest', value: 2957 },
+  { id: 'consideration', label: 'Consideration', value: 2184 },
+  { id: 'intent', label: 'Intent', value: 1038 },
+  { id: 'purchase', label: 'Purchase', value: 820 },
+]
+
+const FUNNEL_TONED = FUNNEL_STAGES.map((stage, i) => ({
+  ...stage,
+  tone: i === 0 ? 'accent' : FUNNEL_TONE(stage.value / FUNNEL_STAGES[i - 1].value),
+}))
+
+function FunnelChartDemo() {
+  return (
+    <div style={{ width: '100%' }}>
+      <Row label="Overall conversion">
+        <FunnelChart stages={FUNNEL_STAGES} height={160} style={{ width: '100%' }} />
+      </Row>
+      <Row label="Step conversion, tone from the data">
+        <FunnelChart
+          stages={FUNNEL_TONED}
+          percentOf="previous"
+          height={160}
+          style={{ width: '100%' }}
+        />
+      </Row>
+    </div>
+  )
+}
+
 function GaugeDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
       <Row label="Sizes">
-        <Gauge size="sm" />
-        <Gauge size="md" />
-        <Gauge size="lg" />
+        <SizeRamp render={(s) => <Gauge size={s} />} />
       </Row>
       <Row label="Variants">
         <Gauge variant="accent" value={82} label="CPU" />
@@ -495,9 +656,51 @@ function MusicPlayerDemo() {
 
 function PlanetDemo() {
   return (
-    <div style={{ width: '100%', maxWidth: 360, height: 300, position: 'relative', margin: '0 auto' }}>
+    <div style={{ width: '100%', maxWidth: 640, height: 460, position: 'relative', margin: '0 auto' }}>
       <Planet />
     </div>
+  )
+}
+
+// Orb, Nodes and Burst are Objects: set-pieces, one per surface, framed by the
+// system's own Card instead of floating on a bare page. One shared frame — the
+// only thing that differs between the three is the title and the body.
+// The box is deliberately large: an Object fills a surface, and at 280px it
+// reads as a widget instead.
+function ObjectPanel({ title, children }) {
+  return (
+    <Card style={{ width: '100%', maxWidth: 640, margin: '0 auto' }}>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+      </CardHeader>
+      <div style={{ padding: tokens.spacing[4] }}>
+        <div style={{ height: 420, position: 'relative' }}>{children}</div>
+      </div>
+    </Card>
+  )
+}
+
+function OrbDemo() {
+  return (
+    <ObjectPanel title="Core">
+      <Orb />
+    </ObjectPanel>
+  )
+}
+
+function NodesDemo() {
+  return (
+    <ObjectPanel title="Signal lattice">
+      <Nodes />
+    </ObjectPanel>
+  )
+}
+
+function BurstDemo() {
+  return (
+    <ObjectPanel title="Convergence">
+      <Burst />
+    </ObjectPanel>
   )
 }
 
@@ -521,6 +724,9 @@ function TagDemo() {
         <Tag variant="warning">Warning</Tag>
         <Tag variant="fault">Fault</Tag>
       </Row>
+      <Row label="Sizes">
+        <SizeRamp render={(s) => <Tag size={s} variant="accent">Accent</Tag>} />
+      </Row>
       <Row label="Dismissible">
         <Tag variant="default" onClose={() => {}}>Removable</Tag>
         <Tag variant="accent" onClose={() => {}}>Active filter</Tag>
@@ -531,12 +737,29 @@ function TagDemo() {
 
 function CheckboxDemo() {
   return (
-    <Row label="States">
-      <Checkbox label="Unchecked" />
-      <Checkbox label="Checked" defaultChecked />
-      <Checkbox label="Disabled" disabled />
-      <Checkbox label="Disabled checked" disabled defaultChecked />
-    </Row>
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <Row label="States">
+        <Checkbox label="Unchecked" />
+        <Checkbox label="Checked" defaultChecked />
+        <Checkbox label="Disabled" disabled />
+        <Checkbox label="Disabled checked" disabled defaultChecked />
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp sizes={['md', 'lg']} render={(s) => <Checkbox size={s} label={s} defaultChecked />} />
+      </Row>
+    </div>
+  )
+}
+
+function ChoiceCardDemo() {
+  // Capture scene: the selection moment — one committed card between two
+  // resting siblings, the approved matrix look at md.
+  return (
+    <div style={{ width: '100%', maxWidth: 480, display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <ChoiceCard control="radio" title="Standard orbit" description="Default trajectory, lowest fuel cost" value="standard" />
+      <ChoiceCard control="radio" title="Transfer window" description="Faster arrival, single burn commitment" value="transfer" defaultChecked />
+      <ChoiceCard control="radio" title="Manual approach" description="Full control, all corrections yours" value="manual" />
+    </div>
   )
 }
 
@@ -555,6 +778,9 @@ function RadioDemo() {
           <Radio value="ground" label="Ground" />
           <Radio value="disabled" label="Restricted" disabled />
         </RadioGroup>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp sizes={['md', 'lg']} render={(s) => <Radio size={s} label={s} defaultChecked />} />
       </Row>
       <Row label="Standalone">
         <Radio label="Standalone" defaultChecked />
@@ -634,12 +860,17 @@ function TooltipDemo() {
 
 function ToggleDemo() {
   return (
-    <Row label="States">
-      <Toggle label="Off" />
-      <Toggle label="On" defaultChecked />
-      <Toggle label="Disabled" disabled />
-      <Toggle label="Disabled on" disabled defaultChecked />
-    </Row>
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <Row label="States">
+        <Toggle label="Off" />
+        <Toggle label="On" defaultChecked />
+        <Toggle label="Disabled" disabled />
+        <Toggle label="Disabled on" disabled defaultChecked />
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp sizes={['md', 'lg']} render={(s) => <Toggle size={s} label={s} defaultChecked />} />
+      </Row>
+    </div>
   )
 }
 
@@ -647,9 +878,7 @@ function SpinnerDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
       <Row label="Sizes">
-        <Spinner size="sm" />
-        <Spinner size="md" />
-        <Spinner size="lg" />
+        <SizeRamp render={(s) => <Spinner size={s} />} />
       </Row>
       <Row label="Variants">
         <Spinner variant="default" />
@@ -666,6 +895,14 @@ function SliderDemo() {
   const [b, setB] = useState(38)
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5], width: '100%', maxWidth: 520 }}>
+      <Row label="Sizes">
+        <SizeRamp
+          direction="column"
+          // Slider's ladder starts at md; sm would index an entry that is gone.
+          sizes={['md', 'lg']}
+          render={(s) => <Slider size={s} value={64} showValue={false} style={{ width: 300 }} />}
+        />
+      </Row>
       <Slider label="Throttle" unit="%" value={a} onValueChange={setA} />
       <Slider label="Thrust Vector" unit="°" min={-30} max={30} value={b} onValueChange={setB} />
       <Slider label="Locked" value={50} disabled />
@@ -675,17 +912,25 @@ function SliderDemo() {
 
 function TextareaDemo() {
   return (
-    <div
-      style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr',
-        gap: tokens.spacing[5],
-        width: '100%',
-        maxWidth: 720,
-      }}
-    >
-      <Textarea label="Description" placeholder="ENTER DESCRIPTION…" rows={4} />
-      <Textarea label="Validation" defaultValue="TOO SHORT" error="Brief must be at least 80 characters" rows={4} />
+    <div style={{ width: '100%', maxWidth: 720 }}>
+      <Row label="Sizes">
+        <SizeRamp
+          direction="column"
+          render={(s) => <Textarea size={s} placeholder="ENTER DESCRIPTION…" rows={2} style={{ width: 300 }} />}
+        />
+      </Row>
+      <div
+        style={{
+          display: 'grid',
+          // auto-fit so the pair stacks instead of squeezing on a narrow card
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+          gap: tokens.spacing[5],
+          width: '100%',
+        }}
+      >
+        <Textarea label="Description" placeholder="ENTER DESCRIPTION…" rows={4} />
+        <Textarea label="Validation" defaultValue="TOO SHORT" error="Brief must be at least 80 characters" rows={4} />
+      </div>
     </div>
   )
 }
@@ -769,39 +1014,43 @@ function SegmentedControlDemo() {
   const [period, setPeriod] = useState('1w')
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
-      <Row label="Icons · sm">
-        <SegmentedControl
-          size="sm"
-          value={chartType}
-          onChange={setChartType}
-          options={[
-            { value: 'line', icon: ChartLine, ariaLabel: 'Line chart' },
-            { value: 'bars', icon: ChartBar,  ariaLabel: 'Bar chart' },
-          ]}
+      <Row label="Sizes">
+        <SizeRamp
+          render={(s) => (
+            <SegmentedControl
+              size={s}
+              // Distinct per instance: the sliding indicator is a shared
+              // layoutId, and three ramp instances would fight over one.
+              layoutGroupId={`andromeda-segmented-size-${s}`}
+              value={chartType}
+              onChange={setChartType}
+              options={[
+                { value: 'line', icon: ChartLine, ariaLabel: 'Line chart' },
+                { value: 'bars', icon: ChartBar,  ariaLabel: 'Bar chart' },
+              ]}
+            />
+          )}
         />
       </Row>
-      <Row label="Icons · lg">
-        <SegmentedControl
-          size="lg"
-          value={chartType}
-          onChange={setChartType}
-          options={[
-            { value: 'line', icon: ChartLine, ariaLabel: 'Line chart' },
-            { value: 'bars', icon: ChartBar,  ariaLabel: 'Bar chart' },
-          ]}
-        />
-      </Row>
-      <Row label="Labels">
-        <SegmentedControl
-          size="md"
-          value={period}
-          onChange={setPeriod}
-          options={[
-            { value: '1d',  label: '1D' },
-            { value: '1w',  label: '1W' },
-            { value: '1m',  label: '1M' },
-            { value: 'all', label: 'ALL' },
-          ]}
+      <Row label="Control group">
+        {/* Stacked: a four-segment lg strip runs past 250px, so three of them
+            will not sit three-across in this cell. */}
+        <SizeRamp
+          direction="column"
+          render={(s) => (
+            <SegmentedControl
+              size={s}
+              layoutGroupId={`andromeda-segmented-labels-${s}`}
+              value={period}
+              onChange={setPeriod}
+              options={[
+                { value: '1d',  label: '1D' },
+                { value: '1w',  label: '1W' },
+                { value: '1m',  label: '1M' },
+                { value: 'all', label: 'ALL' },
+              ]}
+            />
+          )}
         />
       </Row>
     </div>
@@ -835,6 +1084,26 @@ function PanelHeaderDemo() {
             }
           />
         </div>
+      </Row>
+      <Row label="Sizes">
+        {/* Stacked, and each rung gets its own fixed-width panel: a block
+            header has no intrinsic width, so a max-content ramp column would
+            otherwise shrink every panel to its own title. The actions control
+            matches the header rung by name, which is the pairing the
+            component's JSDoc prescribes. */}
+        <SizeRamp
+          direction="column"
+          render={(s) => (
+            <div style={{ width: 320, maxWidth: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+              <CornerMarkers />
+              <PanelHeader
+                size={s}
+                title={{ sm: 'Capacity', md: 'Requests', lg: 'Fleet Overview' }[s]}
+                actions={<IconButton size={s} variant="ghost" aria-label={`Refresh (${s})`} icon={ArrowClockwise} />}
+              />
+            </div>
+          )}
+        />
       </Row>
     </div>
   )
@@ -881,6 +1150,23 @@ function PanelMenuDemo() {
           />
         </Row>
       </div>
+      <div style={{ width: 200 }}>
+        <Row label="Trigger size">
+          <SizeRamp
+            render={(s) => (
+              <PanelMenu
+                size={s}
+                align="left"
+                ariaLabel={`Panel options (${s})`}
+                items={[
+                  { label: 'Refresh', icon: ArrowClockwise, onSelect: () => {} },
+                  { label: 'Export',  icon: Export,         onSelect: () => {} },
+                ]}
+              />
+            )}
+          />
+        </Row>
+      </div>
     </div>
   )
 }
@@ -913,6 +1199,60 @@ function DateRangePickerDemo() {
   )
 }
 
+// Andromeda law: dividers sit inset 12px from panel edges (rules.md "Section
+// dividers"). DrawerBody already pads content by var(--andromeda-3) = 12px,
+// so a full-width hairline here lands exactly on that inset with no extra
+// positioning needed.
+const PREFLIGHT_STYLE = {
+  groupLabel: {
+    fontFamily: 'var(--andromeda-font-mono)',
+    fontSize: 'var(--andromeda-text-sm)',
+    textTransform: 'uppercase' as const,
+    letterSpacing: 'var(--andromeda-tracking-wider)',
+    color: 'var(--andromeda-text-muted)',
+  },
+  lead: {
+    margin: 0,
+    fontFamily: 'var(--andromeda-font-sans)',
+    fontSize: 'var(--andromeda-text-md)',
+    color: 'var(--andromeda-text-secondary)',
+  },
+  // Native markers, not mark spans. A nested <ul> starts flush with its
+  // parent li's text by default, so the sub list's indent continues from
+  // the parent bullet's text with no extra math needed.
+  list: {
+    listStyle: 'disc' as const,
+    listStylePosition: 'outside' as const,
+    paddingLeft: '1.1em',
+    margin: 0,
+  },
+  subList: {
+    listStyle: 'circle' as const,
+    listStylePosition: 'outside' as const,
+    paddingLeft: '1.1em',
+    margin: 0,
+  },
+  // ::marker inherits color from the li itself; the text span below sets its
+  // own color, so only the marker takes this dimmer tone.
+  // Rhythm between items is a margin, not a flex gap: `display:flex` on a
+  // <ul> suppresses the native ::marker, which is the bullet itself. The
+  // li color only tints the marker — the text span keeps its own.
+  li:    { color: 'var(--andromeda-text-faint)',   marginBottom: 'var(--andromeda-2)' },
+  liLast:{ color: 'var(--andromeda-text-faint)',   marginBottom: 0 },
+  subLi: { color: 'var(--andromeda-border-bright)', marginBottom: 'var(--andromeda-1)' },
+  bulletText: {
+    fontFamily: 'var(--andromeda-font-sans)',
+    fontSize: 'var(--andromeda-text-md)',
+    color: 'var(--andromeda-text-secondary)',
+  },
+  subBulletText: {
+    fontFamily: 'var(--andromeda-font-sans)',
+    fontSize: 'var(--andromeda-text-sm)',
+    color: 'var(--andromeda-text-muted)',
+  },
+  divider: { height: 1, background: 'var(--andromeda-border-subtle)' },
+}
+
 function DrawerDemo() {
   const [open, setOpen] = useState(false)
   return (
@@ -928,15 +1268,52 @@ function DrawerDemo() {
         <DrawerBody>
           <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5] }}>
             <Input label="Callsign" placeholder="ENTER CALLSIGN" />
-            <Slider label="Throttle" unit="%" defaultValue={64} />
             <Toggle label="Autopilot" defaultChecked />
-            <Checkbox label="Confirm pre-flight checklist" defaultChecked />
-            <Textarea label="Notes" rows={3} placeholder="ADD A NOTE…" />
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--andromeda-3)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--andromeda-2)' }}>
+                <span style={PREFLIGHT_STYLE.groupLabel}>PRE-FLIGHT</span>
+                <p style={PREFLIGHT_STYLE.lead}>Confirm each item before the envelope is committed.</p>
+                <ul style={PREFLIGHT_STYLE.list}>
+                  <li style={PREFLIGHT_STYLE.li}>
+                    <span style={PREFLIGHT_STYLE.bulletText}>Callsign registered with control</span>
+                  </li>
+                  <li style={PREFLIGHT_STYLE.li}>
+                    <span style={PREFLIGHT_STYLE.bulletText}>Autopilot handshake verified</span>
+                    <ul style={PREFLIGHT_STYLE.subList}>
+                      <li style={PREFLIGHT_STYLE.subLi}>
+                        <span style={PREFLIGHT_STYLE.subBulletText}>Failsafe RTB armed</span>
+                      </li>
+                      <li style={PREFLIGHT_STYLE.subLi}>
+                        <span style={PREFLIGHT_STYLE.subBulletText}>Telemetry uplink at 100%</span>
+                      </li>
+                    </ul>
+                  </li>
+                  <li style={PREFLIGHT_STYLE.liLast}>
+                    <span style={PREFLIGHT_STYLE.bulletText}>Ceiling and G limits within class</span>
+                  </li>
+                </ul>
+              </div>
+              <div aria-hidden style={PREFLIGHT_STYLE.divider} />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--andromeda-2)' }}>
+                <span style={PREFLIGHT_STYLE.groupLabel}>LIMITS</span>
+                <ul style={PREFLIGHT_STYLE.list}>
+                  <li style={PREFLIGHT_STYLE.li}>
+                    <span style={PREFLIGHT_STYLE.bulletText}>Service ceiling 41,000 ft</span>
+                  </li>
+                  <li style={PREFLIGHT_STYLE.li}>
+                    <span style={PREFLIGHT_STYLE.bulletText}>Max sustained 2.5 G</span>
+                  </li>
+                  <li style={PREFLIGHT_STYLE.liLast}>
+                    <span style={PREFLIGHT_STYLE.bulletText}>Fuel margin 12% minimum</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </DrawerBody>
         <DrawerFooter>
-          <Button variant="outline" size="sm" onClick={() => setOpen(false)}>Cancel</Button>
           <Button size="sm" onClick={() => setOpen(false)}>Engage</Button>
+          <Button variant="outline" size="sm" onClick={() => setOpen(false)}>Cancel</Button>
         </DrawerFooter>
       </Drawer>
     </>
@@ -980,6 +1357,20 @@ function UserMenuDemo() {
           align="end"
         />
       </Row>
+      <Row label="Sizes">
+        <SizeRamp
+          render={(s) => (
+            <UserMenu
+              name="OPS-01"
+              src={USER_AVATAR_SRC}
+              status="online"
+              size={s}
+              items={USER_MENU_ITEMS}
+              ariaLabel={`User menu (${s})`}
+            />
+          )}
+        />
+      </Row>
     </div>
   )
 }
@@ -1017,6 +1408,29 @@ function UserCardDemo() {
           </div>
         </Row>
       </div>
+      <div style={{ width: 224 }}>
+        <Row label="Sizes">
+          {/* Stacked: three 200px cards will not sit three-across in this cell. */}
+          <SizeRamp
+            direction="column"
+            render={(s) => (
+              <div style={{ width: 200, background: tokens.color.surface.raised }}>
+                <UserCard
+                  name="Reza Quinn"
+                  role="Flight Director"
+                  src={USER_CARD_SRC}
+                  status="online"
+                  size={s}
+                  items={USER_MENU_ITEMS}
+                  placement="top"
+                  align="stretch"
+                  ariaLabel={`User card (${s})`}
+                />
+              </div>
+            )}
+          />
+        </Row>
+      </div>
     </div>
   )
 }
@@ -1030,10 +1444,12 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   button: ButtonDemo,
   card: CardDemo,
   checkbox: CheckboxDemo,
+  'choice-card': ChoiceCardDemo,
   'corner-markers': CornerMarkersDemo,
   'date-range-picker': DateRangePickerDemo,
   drawer: DrawerDemo,
   'empty-state': EmptyStateDemo,
+  'funnel-chart': FunnelChartDemo,
   gauge: GaugeDemo,
   'heat-grid': HeatGridDemo,
   'icon-button': IconButtonDemo,
@@ -1047,6 +1463,9 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'panel-header': PanelHeaderDemo,
   'panel-menu': PanelMenuDemo,
   planet: PlanetDemo,
+  orb: OrbDemo,
+  nodes: NodesDemo,
+  burst: BurstDemo,
   'search-field': SearchFieldDemo,
   'segmented-control': SegmentedControlDemo,
   'progress-bar': ProgressBarDemo,

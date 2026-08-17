@@ -8,7 +8,7 @@
 //
 // IDENTITY: pure AI Canvas — sand/olive tokens (Tailwind), Manrope (the site
 // --font-sans default), and the site's button system (buttonClasses). It
-// deliberately does NOT use Andromeda's tokens/mono/turquoise; the page is AI
+// deliberately does NOT use Andromeda's tokens/mono/blue accent; the page is AI
 // Canvas chrome that *presents* Andromeda. The scroll column (AndromedaContentColumn)
 // repaints the Andromeda void back to the AI Canvas page surface for this route.
 'use client'
@@ -83,7 +83,7 @@ function PreviewFill({ label }) {
 // the same brain.glb model as the live Brain page (BrainStoryV4.tsx),
 // reduced to just a slow spin: no drag, no firefly, no floating labels.
 // Locked to the site's olive-500 (AI Canvas chrome presenting the system,
-// per the file header — not Andromeda's own turquoise). Fails silent
+// per the file header — not Andromeda's own blue accent). Fails silent
 // (void background only) if WebGL or the model can't load.
 const BRAIN_MODEL_URL = '/models/brain.glb'
 const BRAIN_OLIVE_500 = '#A8B94D'

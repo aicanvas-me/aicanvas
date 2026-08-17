@@ -18,8 +18,10 @@
  *   - `systems`              whole v2 tree → design-systems/<slug>-v2/ (gitignored)
  *   - `freeSystemComponents` legacy per-file lane into design-systems/<slug>/
  *                            components/ (superseded for any slug in `systems`)
- * and always writes the app/lib/andromeda-v2.generated.tsx shim (real re-exports
- * when injected, placeholder panels on degraded builds).
+ * and always writes the three gitignored app/lib/andromeda-v2*.generated.tsx
+ * shims (components + tokens, component-lib helpers, template compositions):
+ * real re-exports when injected, the committed v1 tree or placeholder panels on
+ * degraded builds, so a fork with no vault still compiles and renders.
  */
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync, statSync, cpSync } from 'node:fs'
 import { join, dirname, resolve } from 'node:path'
@@ -30,6 +32,8 @@ const ROOT = process.cwd()
 const TARGET = join(ROOT, 'components-workspace-premium')
 const SHIM = join(ROOT, 'app/lib/premium-registry.generated.tsx')
 const V2_SHIM = join(ROOT, 'app/lib/andromeda-v2.generated.tsx')
+const V2_EXAMPLES_SHIM = join(ROOT, 'app/lib/andromeda-v2-examples.generated.tsx')
+const V2_HELPERS_SHIM = join(ROOT, 'app/lib/andromeda-v2-helpers.generated.tsx')
 const BRAIN_TEASER_MODULE = join(ROOT, 'app/lib/andromeda-brain-teaser.generated.ts')
 const REGISTRY_DATA = join(ROOT, 'registry-data')
 const PREMIUM_JSON = join(ROOT, 'registry-data/_premium.json')
@@ -135,6 +139,22 @@ function writeStubShim() {
 // new v2 component ships (it mirrors the vault manifest's
 // freeSystemComponents.andromeda).
 const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'DataTable', 'MusicPlayer']
+
+// Export names the app imports from the generated v2 shim that the COMMITTED v1
+// tree has no file for. On an injected build they arrive with their component;
+// on a degraded build each becomes a placeholder panel so a fork still compiles.
+// Mostly v2-only components, plus the two subcomponents v1's own files predate
+// (ChoiceCardGroup, EmptyStateMedia). UPDATE when app code imports a new
+// v2-only name — same contract as V2_FALLBACK_NAMES above.
+const V2_ONLY_NAMES = [
+  'Burst', 'ChoiceCard', 'ChoiceCardGroup', 'ContourBackdrop', 'EmptyStateMedia',
+  'FunnelChart', 'GridBackdrop', 'HorizonBackdrop', 'Nodes', 'Orb', 'VoidBackdrop',
+]
+
+// components/lib/* modules the HELPERS shim re-exports (both trees have them),
+// and the helper names only v2's copy implements.
+const V2_LIB_MODULES = ['utils', 'responsive']
+const V2_ONLY_HELPERS = ['toneFromValue']
 
 // Managed block markers in `git info/exclude` — doubles as the state that
 // remembers which files a previous run injected (for stale-file cleanup).
@@ -268,45 +288,140 @@ function writeFreeDsPlaceholders(system, expectedNames, injectedSet) {
   return written
 }
 
-// ALWAYS written (every run, including degraded/no-vault): injected names
-// re-export the real injected source; expected-but-not-injected names (fork,
-// missing PAT, older premium pin) become placeholder panels so the showcase
-// renders instead of crashing. Expected names come from the manifest when
-// reachable, else from V2_FALLBACK_NAMES. NOTE: this shim is Andromeda-specific;
-// a future second system with free components needs its own generated shim.
+// ALWAYS written (every run, including degraded/no-vault): the app's ONLY door
+// to v2 components and tokens, so no app file names a design-systems path a
+// vault-less build would not have. Injected names re-export the real source; on
+// a degraded build (fork, missing PAT, older premium pin) the committed v1 tree
+// stands in and the names it has no file for (V2_ONLY_NAMES) become placeholder
+// panels, so the pages render instead of crashing. NOTE: this shim is
+// Andromeda-specific; a future second system needs its own generated shim.
 //
 // `fromV2Tree` picks the source root: the whole-system tree (manifest `systems`)
 // when it was injected, else design-systems/andromeda — which is both the legacy
 // per-file lane's destination AND, on a degraded build, the committed v1 tree, so
 // forks keep compiling and render v1 styling.
-function writeV2Shim(injectedNames, manifest, fromV2Tree) {
-  const listed = manifest?.freeSystemComponents?.andromeda
-  const expected = [...new Set([
-    ...(Array.isArray(listed) ? listed : []),
-    ...V2_FALLBACK_NAMES,
-    ...injectedNames,
-  ])]
-  const injectedSet = new Set(injectedNames)
+function writeV2Shim(injectedNames, fromV2Tree) {
   const root = fromV2Tree ? '../../design-systems/andromeda-v2' : '../../design-systems/andromeda'
+  // `export *` rather than one named export per file: a component file also
+  // exports its parts (Card → CardHeader/CardTitle/…, Table → TableRow/…), and
+  // the app imports those by name. Starring the file means a new subcomponent in
+  // the vault needs no change here.
+  const names = fromV2Tree
+    ? injectedNames
+    // Degraded: star every COMMITTED v1 component file that is on disk (the
+    // degraded placeholders written just above are already among them), then
+    // fill the v2-only gaps below.
+    : readdirSync(join(ROOT, 'design-systems/andromeda/components'))
+        .filter((f) => /^[A-Z][A-Za-z0-9]*\.tsx$/.test(f))
+        .map((f) => f.replace(/\.tsx$/, ''))
+        .sort()
   const out = [
     '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
     '// Re-exports the Andromeda v2 components + tokens injected from the private',
-    '// vault. Components expected but not injected (degraded build) render a',
-    '// placeholder panel instead of crashing the showcase, and the tokens fall back',
-    '// to the committed v1 module so a fork still compiles and renders.',
+    '// vault. On a degraded build (fork, missing PAT, older premium pin) it falls',
+    '// back to the committed v1 tree, and the names v1 has no file for render a',
+    '// placeholder panel — so a fork still compiles and renders.',
     '// @ts-nocheck — re-exports untyped design-system sources.',
     '',
   ]
-  for (const name of expected) {
-    if (injectedSet.has(name)) {
-      out.push(`export { ${name} } from '${root}/components/${name}'`)
-    } else {
+  for (const name of names) out.push(`export * from '${root}/components/${name}'`)
+  if (!fromV2Tree) {
+    for (const name of V2_ONLY_NAMES) {
+      if (names.includes(name)) continue
       out.push(...placeholderFn(name))
     }
   }
-  out.push('', `export { tokens } from '${root}/tokens'`)
+  if (fromV2Tree) {
+    out.push('', `export { tokens } from '${root}/tokens'`)
+  } else {
+    // v1 called the two semantic colour scales orange/red; v2 renamed them
+    // warning/danger. App code is written against the v2 names, so alias them
+    // here rather than let a fork read undefined and throw at render — same
+    // colours, same roles, nothing invented. What v1 genuinely lacks (`control`)
+    // stays absent, and the one call site optional-chains it.
+    out.push(
+      '',
+      `import { tokens as v1Tokens } from '${root}/tokens'`,
+      'export const tokens = {',
+      '  ...v1Tokens,',
+      '  color: { ...v1Tokens.color, warning: v1Tokens.color.orange, danger: v1Tokens.color.red },',
+      '}',
+    )
+  }
   out.push('', `export const V2_COMPONENT_NAMES = ${JSON.stringify(injectedNames)}`, '')
   writeFileSync(V2_SHIM, out.join('\n'))
+}
+
+// ALWAYS written (every run) — the components/lib/* helpers app code reaches for
+// (andromedaVars, mq, toneFromValue), kept OUT of the shim above on purpose:
+// those helper modules import React hooks without a 'use client' directive, and
+// the components shim is imported by SERVER components (the template routes read
+// `tokens` from it), which makes a hook import there a build error. Only client
+// modules and tests import this one.
+function writeV2HelpersShim(fromV2Tree) {
+  const root = fromV2Tree ? '../../design-systems/andromeda-v2' : '../../design-systems/andromeda'
+  const out = [
+    '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
+    '// Andromeda v2 component-lib helpers, from the injected tree when there is',
+    '// one and the committed v1 lib otherwise. CLIENT/TEST ONLY — these modules',
+    '// use React hooks, so a server component must not import this shim.',
+    '// @ts-nocheck — re-exports untyped design-system sources.',
+    '',
+  ]
+  for (const lib of V2_LIB_MODULES) out.push(`export * from '${root}/components/lib/${lib}'`)
+  if (!fromV2Tree) {
+    // Helpers v1's lib has no implementation for. An explicit export shadows a
+    // star one, so this only ever wins while the real thing is genuinely absent.
+    // Inert on purpose: nothing RENDERS from these, and the one test that reads
+    // toneFromValue skips itself on a degraded build (V2_COMPONENT_NAMES empty).
+    const v1Utils = readFileSync(join(ROOT, 'design-systems/andromeda/components/lib/utils.ts'), 'utf8')
+    for (const name of V2_ONLY_HELPERS) {
+      if (v1Utils.includes(`export function ${name}`)) continue
+      out.push(`export const ${name} = (...args) => null`)
+    }
+  }
+  out.push('')
+  writeFileSync(V2_HELPERS_SHIM, out.join('\n'))
+}
+
+// ── Vault-authored template compositions ────────────────────────────────────
+// Exported name → example folder under design-systems/<tree>/examples/. The
+// template routes (app/design-systems/andromeda/templates/<slug>/page.tsx)
+// import their composition from the generated shim rather than the tree, so the
+// module resolves on EVERY build: the injected v2 example when there is one, the
+// committed v1 example when there isn't (forks keep their four templates), and a
+// placeholder panel for a v2-only composition like sign-in. Same committed-
+// fallback contract as V2_FALLBACK_NAMES — UPDATE when a template route lands.
+const V2_EXAMPLE_EXPORTS = {
+  MissionControl: 'mission-control',
+  ResourcePlanning: 'resource-planning',
+  ServiceOrder: 'service-order',
+  SignIn: 'sign-in',
+  SignalRoom: 'signal-room',
+}
+
+// ALWAYS written (every run, including degraded/no-vault) — see above.
+function writeV2ExamplesShim() {
+  const out = [
+    '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
+    '// Template compositions for the Andromeda template routes: the injected v2',
+    '// example, else the committed v1 one, else a placeholder panel.',
+    '// @ts-nocheck — re-exports untyped design-system sources.',
+    '',
+  ]
+  for (const [name, slug] of Object.entries(V2_EXAMPLE_EXPORTS)) {
+    const v2 = `design-systems/andromeda-v2/examples/${slug}`
+    const v1 = `design-systems/andromeda/examples/${slug}`
+    const from = existsSync(join(ROOT, v2, 'index.tsx'))
+      ? v2
+      : existsSync(join(ROOT, v1, 'index.tsx'))
+        ? v1
+        : null
+    if (from) out.push(`export { default as ${name} } from '../../${from}'`)
+    else out.push(...placeholderFn(name))
+  }
+  out.push('')
+  writeFileSync(V2_EXAMPLES_SHIM, out.join('\n'))
 }
 
 // ── Whole-system v2 trees (manifest key `systems`) ──────────────────────────
@@ -579,6 +694,8 @@ function collectBrain(source, slug) {
 rmSync(TARGET, { recursive: true, force: true })
 rmSync(SHIM, { force: true })
 rmSync(V2_SHIM, { force: true })
+rmSync(V2_EXAMPLES_SHIM, { force: true })
+rmSync(V2_HELPERS_SHIM, { force: true })
 rmSync(BRAIN_TEASER_MODULE, { force: true })
 rmSync(PREMIUM_JSON, { force: true })
 rmSync(BUILD_INFO, { force: true })
@@ -664,7 +781,9 @@ if (!source) {
   const freePlaceholders = writeFreeDsPlaceholders('andromeda', V2_FALLBACK_NAMES, new Set())
   cleanupFreeDs(freePlaceholders)
   syncGitExclude(freePlaceholders)
-  writeV2Shim([], null, false)
+  writeV2Shim([], false)
+  writeV2HelpersShim(false)
+  writeV2ExamplesShim()
   // Brain: no bundle (the page fail-closes to the paywall), but the paywall's
   // teaser module must still exist — write it from the committed fallback.
   writeBrainTeaser(null)
@@ -854,9 +973,10 @@ cleanupFreeDs(allFreePaths)  // previously injected, no longer in the manifest
 syncGitExclude(allFreePaths) // keep `git status` clean (skips silently without git)
 writeV2Shim(
   v2Components['andromeda'] ?? freeInjected['andromeda'] ?? [],
-  manifest,
   Boolean(v2Components['andromeda']),
 )
+writeV2HelpersShim(Boolean(v2Components['andromeda']))
+writeV2ExamplesShim()
 if (freePlaceholders.length > 0) {
   log(`wrote ${freePlaceholders.length} degraded placeholder(s) for expected-but-not-injected free component(s): ` +
     freePlaceholders.map((p) => p.split('/').pop().replace('.tsx', '')).join(', '))

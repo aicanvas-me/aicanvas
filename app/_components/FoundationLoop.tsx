@@ -13,13 +13,13 @@
 // Shared by the Andromeda overview page's "System" card and the homepage
 // Andromeda spotlight — extracted so both render the exact same preview
 // instead of drifting copies. Renders in Andromeda's own visual language
-// (surface.base void, JetBrains Mono, turquoise/orange/red scales), not the
+// (surface.base void, JetBrains Mono, blue/orange/red scales), not the
 // site's sand/olive tokens — intentional, since this IS a preview of the
 // system.
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-motion'
-import { tokens } from '../../design-systems/andromeda/tokens'
+import { tokens } from '../lib/andromeda-v2.generated'
 
 const C = tokens.color
 const FONT = tokens.typography.fontMono
@@ -100,9 +100,9 @@ const F_BLOCKS = [
   () => (
     <>
       <FKicker>Foundation · Colors</FKicker>
-      <FSwatchRow label="Accent · Turquoise" steps={[C.accent[100], C.accent[200], C.accent[300], C.accent[400], C.accent[500]]} />
-      <FSwatchRow label="Orange · Warning" steps={[C.orange[100], C.orange[200], C.orange[300], C.orange[400], C.orange[500]]} />
-      <FSwatchRow label="Red · Fault" steps={[C.red[100], C.red[200], C.red[300], C.red[400], C.red[500]]} />
+      <FSwatchRow label="Accent · Blue" steps={[C.accent[100], C.accent[200], C.accent[300], C.accent[400], C.accent[500]]} />
+      <FSwatchRow label="Warning · Amber" steps={[C.warning[100], C.warning[200], C.warning[300], C.warning[400], C.warning[500]]} />
+      <FSwatchRow label="Danger · Fault" steps={[C.danger[100], C.danger[200], C.danger[300], C.danger[400], C.danger[500]]} />
     </>
   ),
   // Semantic tokens (showcase: Usage Reference grid)
@@ -122,9 +122,9 @@ const F_BLOCKS = [
       <FTypeRow token="xs" px="10px" />
       <FTypeRow token="sm" px="12px" />
       <FTypeRow token="md" px="14px" />
-      <FTypeRow token="lg" px="15px" />
+      <FTypeRow token="lg" px="16px" />
       <FTypeRow token="xl" px="18px" />
-      <FTypeRow token="2xl" px="22px" />
+      <FTypeRow token="2xl" px="20px" />
     </>
   ),
   // Spacing scale (showcase: Foundation · Spacing)

@@ -19,9 +19,15 @@ import { SiteFooter } from '../../../components/SiteFooter'
 import { Button } from '../../../components/Button'
 import { SaveButton } from '../../../components/SaveButton'
 import { HighlightedCodeView } from '../../../components/HighlightedCodeView'
-import { AndromedaDemo } from '../../../_lib/andromeda/andromeda-demos'
+// The preview renders from the component's MATRIX DECLARATION, the same one
+// the system page renders, so the two surfaces cannot show different things.
+// This replaced a hand-written per-slug demo whose size ramp had no state axis,
+// which is why this page could not show Destructive at lg while the system page
+// could.
+import { MatrixPreview, matrixSectionHeading } from '../../../_lib/andromeda/matrix/Matrix'
+import { SPEC_BY_SLUG, matrixId } from '../../../_lib/andromeda/matrix'
 import { andromedaRegistrySlug } from '../../../_lib/andromeda/andromeda-meta'
-import { tokens } from '../../../../design-systems/andromeda/tokens'
+import { tokens } from '../../../lib/andromeda-v2.generated'
 import { trackInstall } from '../../../lib/track-install'
 import { useSession } from '../../../components/auth/SessionProvider'
 import { useAuthModal } from '../../../components/auth/AuthModalProvider'
@@ -45,6 +51,14 @@ interface Props {
   // place of the runnable command. Reading the source (Code tab) stays public.
   freeAccountGate?: boolean
 }
+
+// Same chip and panel chrome the sibling system's component pages use, so the
+// two read as one site.
+const coverageChip =
+  'rounded-lg bg-sand-200 px-2.5 py-1.5 text-xs font-semibold text-sand-600 transition-colors hover:bg-sand-300 hover:text-sand-900 dark:bg-sand-800 dark:text-sand-400 dark:hover:bg-sand-700 dark:hover:text-sand-50'
+
+const coveragePanel =
+  'rounded-2xl border border-sand-300 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
 
 export function AndromedaComponentView({
   slug,
@@ -85,6 +99,9 @@ export function AndromedaComponentView({
   }, [user])
   // Signed-out derives to null at render — no setState in the effect body.
   const userToken = user ? fetchedToken : null
+  // One lookup for the whole page: the preview, the fullscreen preview and the
+  // coverage chips all render from the same declaration.
+  const spec = SPEC_BY_SLUG[slug]
   const [tab, setTab] = useState<'preview' | 'code'>('preview')
   const [codeCopied, setCodeCopied] = useState(false)
   const [cliCopied, setCliCopied] = useState(false)
@@ -319,10 +336,14 @@ export function AndromedaComponentView({
         <div className="relative min-h-[420px]">
           {tab === 'preview' ? (
             <div
-              className="flex min-h-[420px] items-center justify-center overflow-auto p-8 sm:p-12"
+              /* Horizontal inset matches the tab bar above (px-3 sm:px-5) so the
+                 case cards line up with the Preview tab and the fullscreen
+                 button instead of sitting 28px inside them. Vertical padding
+                 stays generous: that is breathing room, not alignment. */
+              className="flex min-h-[420px] items-center justify-center overflow-auto px-3 py-8 sm:px-5 sm:py-12"
               style={{ backgroundColor: tokens.color.surface.base }}
             >
-              {!fullscreen && <AndromedaDemo slug={slug} />}
+              {!fullscreen && spec ? <MatrixPreview spec={spec} /> : null}
             </div>
           ) : (
             <div
@@ -362,6 +383,47 @@ export function AndromedaComponentView({
           </Button>
         </div>
       </div>
+
+      {/* ── Coverage ─────────────────────────────────────────────────────
+          Chips jump to the matching case in the preview above and light it,
+          which is what makes a 12-card preview navigable. Both lists come from
+          the same declaration the preview renders, so a chip can never point at
+          a case that is not there. */}
+      {spec ? (
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          {spec.variants.length > 0 && (
+            <section className={coveragePanel}>
+              <h2 className="text-sm font-semibold text-sand-900 dark:text-sand-50">{matrixSectionHeading('variant', spec.variants)}</h2>
+              <p className="mt-1.5 mb-4 text-xs leading-relaxed text-sand-600 dark:text-sand-400">
+                Supported configurations for this component.
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {spec.variants.map((c) => (
+                  <a key={c.label} href={`#${matrixId(spec.slug, 'variant', c.label)}`} className={coverageChip}>
+                    {c.label}
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {spec.states.length > 0 && (
+            <section className={coveragePanel}>
+              <h2 className="text-sm font-semibold text-sand-900 dark:text-sand-50">{matrixSectionHeading('state', spec.states)}</h2>
+              <p className="mt-1.5 mb-4 text-xs leading-relaxed text-sand-600 dark:text-sand-400">
+                Interaction states covered by the API and the style contract.
+              </p>
+              <div className="flex flex-wrap gap-1.5">
+                {spec.states.map((c) => (
+                  <a key={c.label} href={`#${matrixId(spec.slug, 'state', c.label)}`} className={coverageChip}>
+                    {c.label}
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+      ) : null}
 
       {/* ── Installation ─────────────────────────────────────────────── */}
       <section className="mt-12">
@@ -688,8 +750,9 @@ export function AndromedaComponentView({
             style={{ backgroundColor: tokens.color.surface.base }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex min-h-full items-center justify-center p-8 sm:p-12">
-              <AndromedaDemo slug={slug} />
+            {/* Same inset rule as the inline preview above. */}
+            <div className="flex min-h-full items-center justify-center px-3 py-8 sm:px-5 sm:py-12">
+              {spec ? <MatrixPreview spec={spec} /> : null}
             </div>
 
             <button

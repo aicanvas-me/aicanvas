@@ -95,6 +95,11 @@ app/lib/component-copy.premium.generated.ts
 # excluded via a git info/exclude block managed by scripts/inject-premium.mjs;
 # only the generated shim has a stable path to ignore:
 app/lib/andromeda-v2.generated.tsx
+# Same deal for the vault-authored template compositions the template routes
+# import (the injected v2 example, else the committed v1 one, else a placeholder),
+# and for the component-lib helpers (client-only, kept out of the shim above).
+app/lib/andromeda-v2-examples.generated.tsx
+app/lib/andromeda-v2-helpers.generated.tsx
 
 # Whole v2 design-system trees, injected from the vault (manifest key `systems`)
 # by scripts/inject-premium.mjs. One line per system — the slugs are static.

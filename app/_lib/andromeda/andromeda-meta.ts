@@ -61,6 +61,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/checkbox.png?v=3',
   },
   {
+    slug: 'choice-card',
+    name: 'Choice Card',
+    description:
+      'Selectable whole-surface card with a title, optional supporting text, and a Radio, Checkbox, or Toggle state mark. Controlled or uncontrolled; ChoiceCardGroup adds one-value selection, radiogroup semantics, and arrow-key roving focus.',
+    sourceFile: 'ChoiceCard.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/choice-card.png?v=1',
+  },
+  {
     slug: 'corner-markers',
     name: 'Corner Markers',
     description:
@@ -80,7 +88,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'drawer',
     name: 'Drawer',
     description:
-      'Slide-in panel on any side (left, right, top, or bottom), with focus trap and a size prop. Backdrop, ESC to close, body scroll lock, and the bracket motif. Portaled.',
+      'Slide-in panel from the left or right edge, with focus trap and a size prop. Backdrop, ESC to close, body scroll lock, and the bracket motif. Portaled.',
     sourceFile: 'Drawer.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/drawer.png?v=3',
   },
@@ -91,6 +99,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Centered icon + uppercase mono title + sans description + optional action. Built on Card so it inherits brackets.',
     sourceFile: 'EmptyState.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/empty-state.png?v=3',
+  },
+  {
+    slug: 'funnel-chart',
+    name: 'Funnel Chart',
+    description:
+      'Stage-to-stage conversion, where each stage is a subset of the one before it and the reading is the drop between neighbours. Bands taper from one stage into the next; a band rests in the tone its own data earns, and hovering one fades every other stage back rather than lighting that one up.',
+    sourceFile: 'FunnelChart.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/funnel-chart.png?v=1',
   },
   {
     slug: 'gauge',
@@ -264,7 +280,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'tag',
     name: 'Tag',
     description:
-      'Compact uppercase mono label. 4 variants. Optional dismiss button when onClose is provided.',
+      'Compact uppercase mono label. 4 variants × 3 sizes. Optional dismiss button when onClose is provided.',
     sourceFile: 'Tag.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/tag.png?v=3',
   },
@@ -324,6 +340,58 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     sourceFile: 'UserMenu.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/user-menu.png?v=3',
   },
+  {
+    slug: 'grid-backdrop',
+    name: 'GridBackdrop (WIP)',
+    description:
+      'The blueprint substrate: a hairline measuring grid with an optional heavier major line every Nth step, masked so it dies before the frame. Page background with fixed, section background without.',
+    sourceFile: 'GridBackdrop.tsx',
+  },
+  {
+    slug: 'void-backdrop',
+    name: 'VoidBackdrop (WIP)',
+    description:
+      'Directional falloff from surface.base to black, from one of four light origins. Nothing to read: it buys edge contrast back for hairline panels and sits under the structural backdrops.',
+    sourceFile: 'VoidBackdrop.tsx',
+  },
+  {
+    slug: 'horizon-backdrop',
+    name: 'HorizonBackdrop (WIP)',
+    description:
+      'A receding ground plane: hairlines that crowd at a horizon and open out toward the bottom edge, fading as fast as they converge. Section scale, for a chart row or a template header to sit on.',
+    sourceFile: 'HorizonBackdrop.tsx',
+  },
+  {
+    slug: 'contour-backdrop',
+    name: 'ContourBackdrop (WIP)',
+    description:
+      'Topographic hairlines from a deterministic noise field, sliced at evenly spaced thresholds by a single SVG filter. Seeded, so the same terrain renders every build. Fills its nearest positioned ancestor, or the viewport with fixed.',
+    sourceFile: 'ContourBackdrop.tsx',
+  },
+
+  // Objects — the system's sanctioned decorative class (Planet is its first
+  // member, above). Monochrome, transparent ground, one per surface.
+  {
+    slug: 'orb',
+    name: 'Orb',
+    description:
+      'One circle swept through a shared centre and projected over a full turn: two lobes of hairline loops that collapse to a single vertical line when the family turns edge on. Grey only on a transparent canvas, one revolution per 78 seconds, with light pulses riding the loops.',
+    sourceFile: 'Orb.tsx',
+  },
+  {
+    slug: 'nodes',
+    name: 'Nodes',
+    description:
+      'A hairline lattice with a survey glyph at every crossing, near invisible at rest. Light travels the lines and each crossing it reaches ignites and sends light onward, so every lit node is caused by one the viewer just watched arrive. Branching is subcritical, so cascades die out instead of flooding.',
+    sourceFile: 'Nodes.tsx',
+  },
+  {
+    slug: 'burst',
+    name: 'Burst',
+    description:
+      'Several hundred hairlines running from a spacing-step endpoint lattice down to one focal point below centre, gathered into angular bundles so dark wedges open between them. Pulses travel the strands and fire the dots they pass; the hot core is emergent overlap, never a painted glow.',
+    sourceFile: 'Burst.tsx',
+  },
 ]
 
 // Per-file registry-slug overrides. Button's natural slug (andromeda-button)
@@ -369,7 +437,7 @@ const TEMPLATE_ART: Record<string, string> = {
 const templateArt = (folder: string) =>
   `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_ART[folder] ?? '')}`
 
-// ponytail: static 4-entry mirror of the andromeda `templates` in
+// Static 4-entry mirror of the andromeda `templates` in
 // scripts/lib/design-systems.config.mjs (folder = registry slug minus the
 // "andromeda-" prefix, matching the route dirs). Kept here rather than derived
 // from the .mjs config so this stays a typed, Node-free, client-safe module.
@@ -409,7 +477,7 @@ export const ANDROMEDA_META = {
   name: 'Andromeda',
   tagline: 'Sci-fi blueprint design system',
   description:
-    'One typeface. Transparent surfaces over a void background. 1px corner brackets instead of card borders. Turquoise accent. A domain-agnostic visual language — works for fintech, crypto, AI, ops, dev tools, and anywhere an editorial, technical, high-density feel fits.',
+    'One typeface. Transparent surfaces over a void background. 1px corner brackets instead of card borders. Blue accent. A domain-agnostic visual language — works for fintech, crypto, AI, ops, dev tools, and anywhere an editorial, technical, high-density feel fits.',
   font: 'JetBrains Mono',
   accent: '#2DD4BF',
   void: '#0E0E0F',

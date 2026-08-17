@@ -1,6 +1,6 @@
 // @ts-nocheck — consumes Andromeda tokens which are not type-checked yet.
-import MissionControl from '../../../../../design-systems/andromeda/examples/mission-control'
-import { tokens } from '../../../../../design-systems/andromeda/tokens'
+import { MissionControl } from '../../../../lib/andromeda-v2-examples.generated'
+import { tokens } from '../../../../lib/andromeda-v2.generated'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for

@@ -1,6 +1,6 @@
 // @ts-nocheck — consumes Andromeda tokens which are not type-checked yet.
-import ServiceOrder from '../../../../../design-systems/andromeda/examples/service-order'
-import { tokens } from '../../../../../design-systems/andromeda/tokens'
+import { ServiceOrder } from '../../../../lib/andromeda-v2-examples.generated'
+import { tokens } from '../../../../lib/andromeda-v2.generated'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for

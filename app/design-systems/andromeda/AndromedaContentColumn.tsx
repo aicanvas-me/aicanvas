@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { IdeationTopBar } from '../../_components/IdeationTopBar'
-import { tokens } from '../../../design-systems/andromeda/tokens'
+import { tokens } from '../../lib/andromeda-v2.generated'
 
 // Template leaf routes own the full viewport (sidebar + topbar are suppressed).
 // On DESKTOP (md+) the template pins itself to 100vh and manages its own
@@ -48,7 +48,14 @@ export function AndromedaContentColumn({ children }: { children: ReactNode }) {
   return (
     <div className={className} style={style}>
       <IdeationTopBar />
-      {children}
+      {/* isolate: page content forms its OWN stacking context, so a component
+          z-index (menus mount at zIndex 1000) can never climb over the sticky
+          top bar above — the bar wins on its z-30 against this single unit.
+          The wrapper is flex-transparent (flex-1 min-h-0 column) so template
+          leaves keep their full-height math and normal pages keep flowing. */}
+      <div className="isolate flex min-h-0 flex-1 flex-col">
+        {children}
+      </div>
     </div>
   )
 }
