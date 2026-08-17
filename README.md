@@ -64,48 +64,16 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 
 ## Components
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/components/particle-constellation"><img src="https://ik.imagekit.io/aitoolkit/particle-constellation.png" width="100%" alt="Spider Web" /></a><br/>
-      <a href="https://aicanvas.me/components/particle-constellation"><b>Spider Web</b></a> · <sub>Interactive silk web that reacts to your cursor</sub>
-    </td>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/components/cube-carousel"><img src="https://ik.imagekit.io/aitoolkit/cube-carousel.png" width="100%" alt="Cube Carousel" /></a><br/>
-      <a href="https://aicanvas.me/components/cube-carousel"><b>Cube Carousel</b></a> · <sub>Drag-to-spin 3D photo cube</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/components/curious-ai"><img src="https://ik.imagekit.io/aitoolkit/curious-ai.png" width="100%" alt="Curious AI" /></a><br/>
-      <a href="https://aicanvas.me/components/curious-ai"><b>Curious AI</b></a> · <sub>Morphing 3D AI orb that follows your cursor</sub>
-    </td>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/components/ripple-type"><img src="https://ik.imagekit.io/aitoolkit/ripple-type.png" width="100%" alt="Ripple Type" /></a><br/>
-      <a href="https://aicanvas.me/components/ripple-type"><b>Ripple Type</b></a> · <sub>SVG text that ripples on toggle</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/components/product-card-deck"><img src="https://ik.imagekit.io/aitoolkit/product-card-deck.png" width="100%" alt="Product Card Deck" /></a><br/>
-      <a href="https://aicanvas.me/components/product-card-deck"><b>Product Card Deck</b></a> · <sub>Flick-through draggable card deck</sub>
-    </td>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/components/glass-music-player"><img src="https://ik.imagekit.io/aitoolkit/glass-music-player.png" width="100%" alt="Glass Music Player" /></a><br/>
-      <a href="https://aicanvas.me/components/glass-music-player"><b>Glass Music Player</b></a> · <sub>Glass mini player with spinning vinyl</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/components/andromeda-button"><img src="https://ik.imagekit.io/aitoolkit/andromeda-button.png" width="100%" alt="Andromeda Button" /></a><br/>
-      <a href="https://aicanvas.me/components/andromeda-button"><b>Andromeda Button</b></a> · <sub>Sci-fi blueprint button, five variants</sub>
-    </td>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/components/glass-dock"><img src="https://ik.imagekit.io/aitoolkit/glass-dock.png" width="100%" alt="Glass Dock" /></a><br/>
-      <a href="https://aicanvas.me/components/glass-dock"><b>Glass Dock</b></a> · <sub>macOS-style dock with cursor magnification</sub>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <a href="https://aicanvas.me/components/particle-constellation"><img src="https://ik.imagekit.io/aitoolkit/particle-constellation.png" width="48%" alt="Spider Web: interactive silk web that reacts to your cursor" /></a>
+  <a href="https://aicanvas.me/components/cube-carousel"><img src="https://ik.imagekit.io/aitoolkit/cube-carousel.png" width="48%" alt="Cube Carousel: drag-to-spin 3D photo cube" /></a>
+  <a href="https://aicanvas.me/components/curious-ai"><img src="https://ik.imagekit.io/aitoolkit/curious-ai.png" width="48%" alt="Curious AI: morphing 3D AI orb that follows your cursor" /></a>
+  <a href="https://aicanvas.me/components/ripple-type"><img src="https://ik.imagekit.io/aitoolkit/ripple-type.png" width="48%" alt="Ripple Type: SVG text that ripples on toggle" /></a>
+  <a href="https://aicanvas.me/components/product-card-deck"><img src="https://ik.imagekit.io/aitoolkit/product-card-deck.png" width="48%" alt="Product Card Deck: flick-through draggable card deck" /></a>
+  <a href="https://aicanvas.me/components/glass-music-player"><img src="https://ik.imagekit.io/aitoolkit/glass-music-player.png" width="48%" alt="Glass Music Player: glass mini player with spinning vinyl" /></a>
+  <a href="https://aicanvas.me/components/andromeda-button"><img src="https://ik.imagekit.io/aitoolkit/andromeda-button.png" width="48%" alt="Andromeda Button: sci-fi blueprint button, five variants" /></a>
+  <a href="https://aicanvas.me/components/glass-dock"><img src="https://ik.imagekit.io/aitoolkit/glass-dock.png" width="48%" alt="Glass Dock: macOS-style dock with cursor magnification" /></a>
+</p>
 
 <p align="center"><sub><a href="https://aicanvas.me">Browse all components at aicanvas.me</a></sub></p>
 
@@ -113,28 +81,14 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 
 Full screens built with **Andromeda**, the AI Canvas design system. Every panel, chart, and control on these pages is an Andromeda component reading the same token bundle.
 
-<table>
-  <tr>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/design-systems/andromeda/templates/mission-control"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Mission%20control.png" width="100%" alt="Mission Control template" /></a><br/>
-      <a href="https://aicanvas.me/design-systems/andromeda/templates/mission-control"><b>Mission Control</b></a> · <sub>Sci-Fi</sub>
-    </td>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/design-systems/andromeda/templates/service-order"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Service%20order.png" width="100%" alt="Service Order template" /></a><br/>
-      <a href="https://aicanvas.me/design-systems/andromeda/templates/service-order"><b>Service Order</b></a> · <sub>Telecom</sub>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/design-systems/andromeda/templates/resource-planning"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Resource%20planning.png" width="100%" alt="Resource Planning template" /></a><br/>
-      <a href="https://aicanvas.me/design-systems/andromeda/templates/resource-planning"><b>Resource Planning</b></a> · <sub>Operations</sub>
-    </td>
-    <td align="center" width="50%">
-      <a href="https://aicanvas.me/design-systems/andromeda/templates/signal-room"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Signal%20Room.png" width="100%" alt="Signal Room template" /></a><br/>
-      <a href="https://aicanvas.me/design-systems/andromeda/templates/signal-room"><b>Signal Room</b></a> · <sub>Audio</sub>
-    </td>
-  </tr>
-</table>
+<p align="center">
+  <a href="https://aicanvas.me/design-systems/andromeda/templates/mission-control"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Mission%20control.png" width="48%" alt="Mission Control, a sci-fi operations template built with Andromeda" /></a>
+  <a href="https://aicanvas.me/design-systems/andromeda/templates/service-order"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Service%20order.png" width="48%" alt="Service Order, a telecom template built with Andromeda" /></a>
+  <a href="https://aicanvas.me/design-systems/andromeda/templates/resource-planning"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Resource%20planning.png" width="48%" alt="Resource Planning, an operations template built with Andromeda" /></a>
+  <a href="https://aicanvas.me/design-systems/andromeda/templates/signal-room"><img src="https://ik.imagekit.io/aitoolkit/andromeda/templates/Signal%20Room.png" width="48%" alt="Signal Room, an audio template built with Andromeda" /></a>
+</p>
+
+<p align="center"><sub><a href="https://aicanvas.me/design-systems/andromeda">See Andromeda at aicanvas.me</a></sub></p>
 
 ## Use it with your AI editor (MCP)
 
