@@ -4,9 +4,9 @@ A sci-fi / blueprint design system for AI Canvas. Near-monochrome, JetBrains Mon
 
 ## Editions
 
-**Andromeda v1 (free, MIT).** The components and tokens in this folder are free to use, forever. Use them in anything, including commercial work.
+**Andromeda v1 (this folder): frozen, free, MIT.** The components and tokens here are v1, free to use forever in anything, including commercial work. v1 receives no new development.
 
-**Andromeda v2 (premium).** The full design brain (the deep rules and the build workflow), the template library, and one-command bulk install. Available to premium subscribers.
+**Andromeda v2 (the live system).** What aicanvas.me shows and installs today: every component rebuilt on the semantic token architecture. Single components are free with an account. The design brain, the template library, and one-command bulk install are for premium subscribers.
 
 Learn more: https://aicanvas.me/andromeda
 
