@@ -39,6 +39,19 @@ import { ANDROMEDA_COMPONENT_META } from '../../../../_lib/andromeda/andromeda-m
 import { MatrixBlock } from '../../../../_lib/andromeda/matrix/Matrix'
 import { SPEC_BY_SLUG } from '../../../../_lib/andromeda/matrix'
 import { SECTION_COPY } from '../section-copy'
+import { CATEGORY } from '../categories'
+
+// Review order: the gallery's taxonomy (categories.ts), in a fixed reading
+// order so charts sit with charts and objects with objects. Within a group,
+// the meta order holds. A slug missing from the map lands in Other, visible.
+const CATEGORY_ORDER = [
+  'Actions', 'Forms', 'Data display', 'Charts', 'Overlays', 'Feedback',
+  'Navigation', 'Surfaces', 'Media', 'Objects', 'Dynamic element', 'Other',
+] as const
+const GROUPED_META = CATEGORY_ORDER.map((category) => ({
+  category,
+  items: ANDROMEDA_COMPONENT_META.filter((m) => (CATEGORY[m.slug] ?? 'Other') === category),
+})).filter((g) => g.items.length > 0)
 import { ShowcaseInstall } from '../../../../_components/ShowcaseInstall'
 import { ShowcaseInstallCard } from '../../../../_components/ShowcaseInstallCard'
 
@@ -227,20 +240,36 @@ function ComponentRail() {
       >
         {ANDROMEDA_COMPONENT_META.length} components
       </span>
-      {ANDROMEDA_COMPONENT_META.map((m) => (
-        <a
-          key={m.slug}
-          href={`#c-${m.slug}`}
-          style={{
-            fontFamily: tokens.typography.fontMono,
-            fontSize: tokens.typography.size.xs,
-            letterSpacing: tokens.typography.tracking.wider,
-            textDecoration: 'none',
-            color: tokens.color.text.secondary,
-          }}
-        >
-          {m.name}
-        </a>
+      {GROUPED_META.map((g) => (
+        <Fragment key={g.category}>
+          <span
+            style={{
+              fontFamily: tokens.typography.fontMono,
+              fontSize: tokens.typography.size.xs,
+              color: tokens.color.text.muted,
+              textTransform: 'uppercase',
+              letterSpacing: tokens.typography.tracking.widest,
+              marginTop: tokens.spacing[3],
+            }}
+          >
+            {g.category}
+          </span>
+          {g.items.map((m) => (
+            <a
+              key={m.slug}
+              href={`#c-${m.slug}`}
+              style={{
+                fontFamily: tokens.typography.fontMono,
+                fontSize: tokens.typography.size.xs,
+                letterSpacing: tokens.typography.tracking.wider,
+                textDecoration: 'none',
+                color: tokens.color.text.secondary,
+              }}
+            >
+              {m.name}
+            </a>
+          ))}
+        </Fragment>
       ))}
     </nav>
   )
@@ -682,7 +711,23 @@ export default function AndromedaShowcase({
               gap: tokens.spacing[6],
             }}
           >
-            {ANDROMEDA_COMPONENT_META.map((m) => {
+            {GROUPED_META.map((g) => (
+              <Fragment key={g.category}>
+                <h2
+                  id={`cat-${g.category.toLowerCase().replace(/\s+/g, '-')}`}
+                  style={{
+                    fontFamily: tokens.typography.fontMono,
+                    fontSize: tokens.typography.size.textSm,
+                    color: tokens.color.text.muted,
+                    textTransform: 'uppercase',
+                    letterSpacing: tokens.typography.tracking.widest,
+                    margin: 0,
+                    marginTop: tokens.spacing[6],
+                  }}
+                >
+                  /// {g.category} · {g.items.length}
+                </h2>
+                {g.items.map((m) => {
               const spec = SPEC_BY_SLUG[m.slug]
               const copy = SECTION_COPY[m.slug]
               return (
@@ -701,7 +746,9 @@ export default function AndromedaShowcase({
                   {spec ? <MatrixBlock spec={spec} /> : null}
                 </Section>
               )
-            })}
+                })}
+              </Fragment>
+            ))}
           </div>
         </div>
 

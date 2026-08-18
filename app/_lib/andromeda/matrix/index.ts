@@ -53,11 +53,13 @@ import { waveform } from './waveform'
 
 export const SPECS: readonly MatrixSpec[] = [
   alert, avatar, badge, burst, button, card, checkbox, choiceCard, contourBackdrop,
-  cornerMarkers, dataTable, dateRangePicker, drawer, emptyState, funnelChart,
+  // The two tables sit together so their selected-row treatments are judged
+  // side by side.
+  cornerMarkers, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,
   gauge, gridBackdrop, heatGrid, horizonBackdrop, iconButton, input, mediaCard,
   metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet,
   progressBar, radarChart, radio, searchField, segmentedControl, slider, spinner,
-  statTile, table_, tag, textarea, toggle, tooltip, trendChart, userCard,
+  statTile, tag, textarea, toggle, tooltip, trendChart, userCard,
   userMenu, voidBackdrop, waveform,
 ]
 

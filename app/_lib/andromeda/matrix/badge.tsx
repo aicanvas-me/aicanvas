@@ -1,3 +1,4 @@
+import { Check } from '@phosphor-icons/react'
 import { Badge } from '../../../lib/andromeda-v2.generated'
 import type { MatrixSpec } from './types'
 
@@ -13,6 +14,8 @@ export const badge: MatrixSpec = {
     { label: 'Fault', props: { variant: 'fault' } },
     { label: 'Subtle', props: { variant: 'subtle' } },
     { label: 'Outline', props: { variant: 'outline' } },
+    { label: 'Icon', props: { variant: 'accent', icon: Check } },
+    { label: 'Icon fault', props: { variant: 'fault', icon: Check } },
   ],
   // A badge is a label, not a control: the source declares no hover, focus,
   // active or disabled treatment at all, so it gets no states grid rather than
