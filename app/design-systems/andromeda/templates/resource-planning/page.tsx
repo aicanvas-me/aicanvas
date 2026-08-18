@@ -31,7 +31,7 @@ export default async function ResourcePlanningTemplate({
       systemHref="/design-systems/andromeda"
     >
       <div
-        className="relative h-full min-h-full w-full md:overflow-hidden"
+        className="relative min-h-full w-full md:h-full md:overflow-hidden"
         style={{ backgroundColor: tokens.color.surface.base }}
       >
         <ResourcePlanning />

@@ -36,7 +36,7 @@ export default async function ServiceOrderTemplate({
           template leaves, so page-level scrolling never engages on desktop —
           a growing wrapper here would just clip below the fold. */}
       <div
-        className="relative h-full min-h-full w-full md:overflow-hidden"
+        className="relative min-h-full w-full md:h-full md:overflow-hidden"
         style={{ backgroundColor: tokens.color.surface.base }}
       >
         <ServiceOrder />
