@@ -104,7 +104,11 @@ const COLUMNS = [
             fontSize: tokens.typography.size.sm,
             color: tokens.color.text.muted,
             textTransform: 'uppercase',
-            letterSpacing: tokens.typography.tracking.widest,
+            // `wider`, not `widest`. Widest is the system's step for a lone
+            // micro-label with nothing to measure itself against; under a title
+            // it sets the caption almost as wide as the line above and the two
+            // stop reading as a pair.
+            letterSpacing: tokens.typography.tracking.wider,
             lineHeight: 'var(--andromeda-leading-none, 1)',
             whiteSpace: 'nowrap',
             overflow: 'hidden',
