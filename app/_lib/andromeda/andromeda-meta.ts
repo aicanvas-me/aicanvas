@@ -317,6 +317,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/tooltip.png?v=4',
   },
   {
+    slug: 'top-bar',
+    name: 'Top Bar',
+    description:
+      "The dashboard's top strip, in one fixed order: brand lockup, hairline divider, horizontal nav, spacer, then a right cluster of up to three slots — badge, cta, user.",
+    sourceFile: 'TopBar.tsx',
+  },
+  {
     slug: 'trend-chart',
     name: 'Trend Chart',
     description:

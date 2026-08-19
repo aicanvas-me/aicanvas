@@ -130,6 +130,7 @@ export const DESIGN_SYSTEMS = [
       'components/MusicPlayer.tsx',
       'components/Nodes.tsx',
       'components/Orb.tsx',
+      'components/TopBar.tsx',
       'components/VoidBackdrop.tsx',
       'components/Waveform.tsx',
     ],

@@ -6,7 +6,7 @@
 export const COMPONENT_COUNTS: Record<string, { variants: number; states: number }> = {
   'alert': { variants: 4, states: 0 },
   'avatar': { variants: 6, states: 1 },
-  'badge': { variants: 6, states: 0 },
+  'badge': { variants: 8, states: 0 },
   'burst': { variants: 2, states: 0 },
   'button': { variants: 6, states: 6 },
   'card': { variants: 4, states: 0 },
@@ -47,6 +47,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'textarea': { variants: 2, states: 5 },
   'toggle': { variants: 2, states: 5 },
   'tooltip': { variants: 4, states: 0 },
+  'top-bar': { variants: 3, states: 0 },
   'trend-chart': { variants: 3, states: 0 },
   'user-card': { variants: 4, states: 0 },
   'user-menu': { variants: 4, states: 0 },

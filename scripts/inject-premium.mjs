@@ -148,7 +148,7 @@ const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'Dat
 // v2-only name — same contract as V2_FALLBACK_NAMES above.
 const V2_ONLY_NAMES = [
   'Burst', 'ChoiceCard', 'ChoiceCardGroup', 'ContourBackdrop', 'EmptyStateMedia',
-  'FunnelChart', 'GridBackdrop', 'HorizonBackdrop', 'Nodes', 'Orb', 'VoidBackdrop',
+  'FunnelChart', 'GridBackdrop', 'HorizonBackdrop', 'Nodes', 'Orb', 'TopBar', 'VoidBackdrop',
 ]
 
 // components/lib/* modules the HELPERS shim re-exports (both trees have them),
@@ -495,7 +495,7 @@ const BRAIN_TEASER_FALLBACK = {
         'MetricChart', 'MusicPlayer', 'NavItem', 'PanelHeader', 'PanelMenu',
         'Planet', 'ProgressBar', 'RadarChart', 'Radio', 'SearchField',
         'SegmentedControl', 'Slider', 'Spinner', 'StatTile', 'Table', 'Tag',
-        'Textarea', 'Toggle', 'Tooltip', 'TrendChart', 'UserCard', 'UserMenu',
+        'Textarea', 'Toggle', 'Tooltip', 'TopBar', 'TrendChart', 'UserCard', 'UserMenu',
         'Waveform',
       ],
     },

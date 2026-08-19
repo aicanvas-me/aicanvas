@@ -45,6 +45,7 @@ import { tag } from './tag'
 import { textarea } from './textarea'
 import { toggle } from './toggle'
 import { tooltip } from './tooltip'
+import { topBar } from './top-bar'
 import { trendChart } from './trend-chart'
 import { userCard } from './user-card'
 import { userMenu } from './user-menu'
@@ -59,7 +60,7 @@ export const SPECS: readonly MatrixSpec[] = [
   gauge, gridBackdrop, heatGrid, horizonBackdrop, iconButton, input, mediaCard,
   metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet,
   progressBar, radarChart, radio, searchField, segmentedControl, slider, spinner,
-  statTile, tag, textarea, toggle, tooltip, trendChart, userCard,
+  statTile, tag, textarea, toggle, tooltip, topBar, trendChart, userCard,
   userMenu, voidBackdrop, waveform,
 ]
 
