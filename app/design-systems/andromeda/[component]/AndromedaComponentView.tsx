@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   ArrowLeft,
@@ -106,6 +107,10 @@ export function AndromedaComponentView({
   const [codeCopied, setCodeCopied] = useState(false)
   const [cliCopied, setCliCopied] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
+  // The full-screen preview is portalled to <body>, and document.body does not
+  // exist during the server render — so the portal waits for mount.
+  const [portalReady, setPortalReady] = useState(false)
+  useEffect(() => setPortalReady(true), [])
   const [installTab, setInstallTab] = useState<'cli' | 'manual'>('cli')
   const [pkgManager, setPkgManager] = useState<'pnpm' | 'npm' | 'yarn' | 'bun'>('npm')
   const [darkCopied, setDarkCopied] = useState(false)
@@ -729,43 +734,53 @@ export function AndromedaComponentView({
       <SiteFooter />
     </main>
 
-    <AnimatePresence>
-      {fullscreen && (
-        <motion.div
-          key="andromeda-fullscreen-backdrop"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 z-50 bg-black/75"
-          onClick={() => setFullscreen(false)}
-        >
+    {/* Portalled to <body>. The page content sits inside an `isolate` wrapper
+        (AndromedaContentColumn) that keeps component menus from climbing over
+        the sticky top bar — but a stacking context contains a `fixed` child
+        too, so the whole isolated unit competes with the bar as ONE layer and
+        this overlay could never win on its own z-index. Leaving the context
+        entirely is the fix; raising numbers inside it can only ever be a
+        stalemate. */}
+    {portalReady && createPortal(
+      <AnimatePresence>
+        {fullscreen && (
           <motion.div
-            key="andromeda-fullscreen-panel"
-            initial={{ opacity: 0, scale: 0.96 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.96 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-2xl sm:border sm:border-sand-800 sm:shadow-2xl"
-            style={{ backgroundColor: tokens.color.surface.base }}
-            onClick={(e) => e.stopPropagation()}
+            key="andromeda-fullscreen-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-50 bg-black/75"
+            onClick={() => setFullscreen(false)}
           >
-            {/* Same inset rule as the inline preview above. */}
-            <div className="flex min-h-full items-center justify-center px-3 py-8 sm:px-5 sm:py-12">
-              {spec ? <MatrixPreview spec={spec} /> : null}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setFullscreen(false)}
-              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
+            <motion.div
+              key="andromeda-fullscreen-panel"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-2xl sm:border sm:border-sand-800 sm:shadow-2xl"
+              style={{ backgroundColor: tokens.color.surface.base }}
+              onClick={(e) => e.stopPropagation()}
             >
-              <CornersIn weight="regular" size={17} />
-            </button>
+              {/* Same inset rule as the inline preview above. */}
+              <div className="flex min-h-full items-center justify-center px-3 py-8 sm:px-5 sm:py-12">
+                {spec ? <MatrixPreview spec={spec} /> : null}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setFullscreen(false)}
+                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
+              >
+                <CornersIn weight="regular" size={17} />
+              </button>
+            </motion.div>
           </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        )}
+      </AnimatePresence>,
+      document.body,
+    )}
 
     {/* ── CLI copied toast — matches the standalone component page ────────── */}
     <AnimatePresence>
