@@ -101,12 +101,36 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/empty-state.png?v=3',
   },
   {
-    slug: 'funnel-chart',
-    name: 'Funnel Chart',
+    slug: 'chart-funnel',
+    name: 'Chart Funnel',
     description:
       'Stage-to-stage conversion, where each stage is a subset of the one before it and the reading is the drop between neighbours. Bands taper from one stage into the next; a band rests in the tone its own data earns, and hovering one fades every other stage back rather than lighting that one up.',
     sourceFile: 'FunnelChart.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/funnel-chart.png?v=1',
+  },
+  {
+    slug: 'chart-metric',
+    name: 'Chart Metric',
+    description:
+      'Self-framed single-series telemetry panel: corner brackets, kicker and title header, and a status badge around one fitted-domain area chart. The fitted y-domain keeps non-zero-floor readings like altitude or latency filling the plot instead of flattening into a sliver.',
+    sourceFile: 'MetricChart.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/metric-chart.png?v=1',
+  },
+  {
+    slug: 'chart-radar',
+    name: 'Chart Radar',
+    description:
+      'Polygon spider chart for multi-axis system diagnostics. Single or multiple overlapping series.',
+    sourceFile: 'RadarChart.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/radar-chart.png?v=3',
+  },
+  {
+    slug: 'chart-trend',
+    name: 'Chart Trend',
+    description:
+      'The canonical multi-series time-series chart. One configurable component that renders as line, area, or bar with a built-in mode toggle, custom tooltip, and toggleable legend. Series colour follows the multi-series hierarchy (baseline / live / context / threshold). Scroll-gated reveal.',
+    sourceFile: 'TrendChart.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/trend-chart.png?v=3',
   },
   {
     slug: 'gauge',
@@ -139,14 +163,6 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Optional uppercase mono label, optional left icon, default + error states. Border transitions on focus.',
     sourceFile: 'Input.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/input.png?v=4',
-  },
-  {
-    slug: 'metric-chart',
-    name: 'Metric Chart',
-    description:
-      'Self-framed single-series telemetry panel: corner brackets, kicker and title header, and a status badge around one fitted-domain area chart. The fitted y-domain keeps non-zero-floor readings like altitude or latency filling the plot instead of flattening into a sliver.',
-    sourceFile: 'MetricChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/metric-chart.png?v=1',
   },
   {
     slug: 'waveform',
@@ -227,14 +243,6 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       '3 status variants. 30 skewed segments fill left to right with a scroll-gated staggered cascade.',
     sourceFile: 'ProgressBar.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/progress-bar.png?v=4',
-  },
-  {
-    slug: 'radar-chart',
-    name: 'Radar Chart',
-    description:
-      'Polygon spider chart for multi-axis system diagnostics. Single or multiple overlapping series.',
-    sourceFile: 'RadarChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/radar-chart.png?v=3',
   },
   {
     slug: 'radio',
@@ -324,14 +332,6 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     sourceFile: 'TopBar.tsx',
   },
   {
-    slug: 'trend-chart',
-    name: 'Trend Chart',
-    description:
-      'The canonical multi-series time-series chart. One configurable component that renders as line, area, or bar with a built-in mode toggle, custom tooltip, and toggleable legend. Series colour follows the multi-series hierarchy (baseline / live / context / threshold). Scroll-gated reveal.',
-    sourceFile: 'TrendChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/trend-chart.png?v=3',
-  },
-  {
     slug: 'user-card',
     name: 'User Card',
     description:
@@ -414,6 +414,11 @@ const ANDROMEDA_REGISTRY_SLUG_OVERRIDES: Record<string, string> = {
   // move, so the default `andromeda-${pageSlug}` no longer lands on it.
   'table-basic': 'andromeda-table',
   'table-data': 'andromeda-data-table',
+  // Same for the charts, renamed the same day so the family reads together.
+  'chart-funnel': 'andromeda-funnel-chart',
+  'chart-metric': 'andromeda-metric-chart',
+  'chart-radar': 'andromeda-radar-chart',
+  'chart-trend': 'andromeda-trend-chart',
 }
 
 export function andromedaRegistrySlug(pageSlug: string): string {

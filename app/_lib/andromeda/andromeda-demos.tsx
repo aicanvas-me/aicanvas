@@ -540,14 +540,6 @@ function HeatGridDemo() {
   )
 }
 
-function MetricChartDemo() {
-  return (
-    <div style={{ width: '100%', maxWidth: 640 }}>
-      <MetricChart label="/// Station" title="Orbital Altitude" unit="km" />
-    </div>
-  )
-}
-
 // Two funnels, because the interesting thing about this chart is not its
 // shape but what its colour is allowed to mean.
 //
@@ -556,8 +548,11 @@ function MetricChartDemo() {
 // The second derives a tone per stage from that stage's own step conversion,
 // which is the only sanctioned reason a band changes colour — never to tell
 // the five stages apart, which the labels already do.
+// Fault is reserved for the ONE step that actually falls out. At a 0.75 cut
+// every ordinary step read as a failure and three of five bands went red, which
+// left the genuinely bad step with nothing louder to say.
 const FUNNEL_TONE = (share: number) =>
-  share >= 0.85 ? 'accent' : share >= 0.75 ? 'warning' : 'fault'
+  share >= 0.85 ? 'accent' : share >= 0.6 ? 'warning' : 'fault'
 
 const FUNNEL_STAGES = [
   { id: 'awareness', label: 'Awareness', value: 4100 },
@@ -571,6 +566,14 @@ const FUNNEL_TONED = FUNNEL_STAGES.map((stage, i) => ({
   ...stage,
   tone: i === 0 ? 'accent' : FUNNEL_TONE(stage.value / FUNNEL_STAGES[i - 1].value),
 }))
+
+function MetricChartDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <MetricChart label="/// API" title="Response time" unit="ms" />
+    </div>
+  )
+}
 
 function FunnelChartDemo() {
   return (
@@ -1454,12 +1457,11 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'date-range-picker': DateRangePickerDemo,
   drawer: DrawerDemo,
   'empty-state': EmptyStateDemo,
-  'funnel-chart': FunnelChartDemo,
+  'chart-funnel': FunnelChartDemo,
   gauge: GaugeDemo,
   'heat-grid': HeatGridDemo,
   'icon-button': IconButtonDemo,
   input: InputDemo,
-  'metric-chart': MetricChartDemo,
   waveform: WaveformDemo,
   'media-card': MediaCardDemo,
   'table-data': DataTableDemo,
@@ -1474,13 +1476,14 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'search-field': SearchFieldDemo,
   'segmented-control': SegmentedControlDemo,
   'progress-bar': ProgressBarDemo,
-  'radar-chart': RadarChartDemo,
+  'chart-metric': MetricChartDemo,
+  'chart-radar': RadarChartDemo,
   radio: RadioDemo,
   slider: SliderDemo,
   spinner: SpinnerDemo,
   'stat-tile': StatTileDemo,
   tag: TagDemo,
-  'trend-chart': TrendChartDemo,
+  'chart-trend': TrendChartDemo,
   textarea: TextareaDemo,
   toggle: ToggleDemo,
   'table-basic': TableDemo,

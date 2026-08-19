@@ -13,14 +13,18 @@ const STAGES = [
 // Tone is DERIVED from each stage's own step conversion. That is the only
 // sanctioned reason a band takes colour — never to tell the five stages apart,
 // which the labels already do.
-const TONE = (share: number) => (share >= 0.85 ? 'accent' : share >= 0.75 ? 'warning' : 'fault')
+// Fault is reserved for the ONE step that actually falls out: at a 0.75 cut
+// every ordinary step in this funnel read as a failure, so three of five bands
+// went red and the one genuinely bad step (48%) had nothing left to say. 0.60
+// puts the two healthy-but-lossy steps on warning and keeps red for the drop.
+const TONE = (share: number) => (share >= 0.85 ? 'accent' : share >= 0.6 ? 'warning' : 'fault')
 const TONED = STAGES.map((stage, i) => ({
   ...stage,
   tone: i === 0 ? 'accent' : TONE(stage.value / STAGES[i - 1].value),
 }))
 
 export const funnelChart: MatrixSpec = {
-  slug: 'funnel-chart',
+  slug: 'chart-funnel',
   Component: FunnelChart,
   sizes: null,
   wide: true,

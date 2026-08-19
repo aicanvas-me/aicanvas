@@ -12,7 +12,7 @@ const DATA = [
 ]
 
 export const radarChart: MatrixSpec = {
-  slug: 'radar-chart',
+  slug: 'chart-radar',
   Component: RadarChart,
   sizes: null,
   wide: true,

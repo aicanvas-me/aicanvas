@@ -32,7 +32,7 @@ const framed = (props: Record<string, unknown>) => (
 )
 
 export const trendChart: MatrixSpec = {
-  slug: 'trend-chart',
+  slug: 'chart-trend',
   sizes: null,
   wide: true,
   render: (_size, props) => framed(props),

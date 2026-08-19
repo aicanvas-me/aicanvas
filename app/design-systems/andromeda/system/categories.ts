@@ -28,10 +28,10 @@ export const CATEGORY: Record<string, string> = {
   avatar: 'Data display',
 
   // Charts
-  'trend-chart': 'Charts',
-  'metric-chart': 'Charts',
-  'radar-chart': 'Charts',
-  'funnel-chart': 'Charts',
+  'chart-trend': 'Charts',
+  'chart-metric': 'Charts',
+  'chart-radar': 'Charts',
+  'chart-funnel': 'Charts',
   gauge: 'Charts',
   waveform: 'Charts',
 

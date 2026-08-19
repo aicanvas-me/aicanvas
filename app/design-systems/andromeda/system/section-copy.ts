@@ -114,25 +114,25 @@ export const SECTION_COPY: Record<string, SectionCopy> = {
     title: "Empty State",
     description: "Placeholder for a region that resolved to nothing: a table with zero rows, a first-run panel, a filter that matched nothing. Built on `Card`, so it brings its own corner-marker frame; compose it from `EmptyStateIcon`, `EmptyStateTitle`, `EmptyStateDescription` and `EmptyStateAction`. It states absence, not failure or loading, so the icon and text stay grey and the action slot holds one or two buttons at most.",
   },
-  'radar-chart': {
-    title: "Radar Chart",
+  'chart-metric': {
+    title: "Chart Metric",
+    kicker: "Component \u00b7 Charts",
+    description: "Self-framed panel for one live measurement over time: altitude, latency, a bounded percentage. It carries its own corner markers, header and status badge, and fits the y-domain to the data, so a non-zero floor is not crushed into a sliver; reach for `TrendChart` when you need more than one series, or a plot inside a panel you compose yourself. 3 variants, and they color the status badge only: chart ink stays neutral.",
+  },
+  'chart-radar': {
+    title: "Chart Radar",
     kicker: "Component \u00b7 Charts",
     description: "Radial spider chart for comparing up to four series across one shared set of axes, such as a ship systems diagnostic. Choose it when every series is measured on the same multi-axis profile; for values over time or over a category axis use `TrendChart`. It frames itself with a header, plot, and legend, so never wrap it in a `Card`.",
   },
-  'trend-chart': {
-    title: "Trend Chart",
+  'chart-trend': {
+    title: "Chart Trend",
     kicker: "Component \u00b7 Charts",
     description: "Multi-series time-series chart, up to four series, drawn as line, area, or bar from the built-in mode toggle; each series takes a `role` that sets its colour: `baseline` white, `live` accent, `context` faint, `threshold` red dashed. It renders content only, so wrap it in a `Card` or a corner-marked surface, and reach for `MetricChart` when a single series needs a panel with its own frame. 3 modes x 4 series roles.",
   },
-  'funnel-chart': {
-    title: "Funnel Chart",
+  'chart-funnel': {
+    title: "Chart Funnel",
     kicker: "Component \u00b7 Charts",
     description: "Stage-to-stage conversion where each stage is a subset of the one before it, and the taper between bands is the loss you read. Ordered categories that are independent of one another belong in `TrendChart` bar mode instead. Bands rest in neutral ink; `tone` says how healthy a stage is and has to be derived from the data, never one hue per stage. 5 tones \u00d7 2 percentage bases.",
-  },
-  'metric-chart': {
-    title: "Metric Chart",
-    kicker: "Component \u00b7 Charts",
-    description: "Self-framed panel for one live measurement over time: altitude, latency, a bounded percentage. It carries its own corner markers, header and status badge, and fits the y-domain to the data, so a non-zero floor is not crushed into a sliver; reach for `TrendChart` when you need more than one series, or a plot inside a panel you compose yourself. 3 variants, and they color the status badge only: chart ink stays neutral.",
   },
   'gauge': {
     title: "Gauge",
