@@ -5,5 +5,5 @@ import { redirect } from 'next/navigation'
 // a duplicate (see next.config.ts), so this points straight at the canonical
 // public route. Add a chooser back here when a second system goes live.
 export default function IdeationRoot() {
-  redirect('/design-systems/andromeda/system')
+  redirect('/design-systems/andromeda/components')
 }

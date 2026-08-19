@@ -142,55 +142,36 @@ export function DesignSystemsPole({
                       className="pointer-events-none absolute bottom-1 left-[15px] top-1 w-px bg-sand-300 dark:bg-sand-800"
                     />
                     <ul className="mt-0.5 space-y-0.5">
-                    {/* ── System (the full component gallery + install) ───── */}
+                    {/* ── Foundation, then Components — nav order is the
+                        2026-08-17 IA ruling: Foundation, Components, Templates,
+                        Brain. Neither carries the premium mark: the foundation
+                        is open, and single components are free-account. */}
                     <li className="mt-1">
                       <Link
-                        href={`/design-systems/${system.slug}/system`}
+                        href={`/design-systems/${system.slug}/foundation`}
                         onClick={onNavigate}
                         className={`flex items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-[13px] font-medium transition-colors ${
-                          pathname === `/design-systems/${system.slug}/system`
+                          pathname === `/design-systems/${system.slug}/foundation`
                             ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                             : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                         }`}
                       >
-                        <span className="flex-1 truncate">System</span>
-                        {/* Lightning marks premium (install is premium). */}
-                        <Lightning
-                          weight="regular"
-                          size={13}
-                          aria-hidden
-                          className="ml-auto shrink-0 text-sand-500 dark:text-sand-500"
-                        />
-                        <span className="sr-only">Premium</span>
+                        <span className="flex-1 truncate">Foundation</span>
                       </Link>
                     </li>
-                    {/* ── Brain (premium judgment layer) ─────────── */}
-                    {system.brain && (
-                      <li className="mt-1">
-                        <Link
-                          href={`/design-systems/${system.slug}/brain`}
-                          onClick={onNavigate}
-                          className={`flex items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-[13px] font-medium transition-colors ${
-                            pathname === `/design-systems/${system.slug}/brain` ||
-                            pathname.startsWith(`/design-systems/${system.slug}/brain/`)
-                              ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                              : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                          }`}
-                        >
-                          <span className="flex-1 truncate">Brain</span>
-                          {/* Lightning marks premium, same affordance as the
-                              template rows below. */}
-                          <Lightning
-                            weight="regular"
-                            size={13}
-                            aria-hidden
-                            className="ml-auto shrink-0 text-sand-500 dark:text-sand-500"
-                          />
-                          <span className="sr-only">Premium</span>
-                        </Link>
-                      </li>
-                    )}
-
+                    <li className="mt-1">
+                      <Link
+                        href={`/design-systems/${system.slug}/components`}
+                        onClick={onNavigate}
+                        className={`flex items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-[13px] font-medium transition-colors ${
+                          pathname === `/design-systems/${system.slug}/components`
+                            ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                            : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                        }`}
+                      >
+                        <span className="flex-1 truncate">Components</span>
+                      </Link>
+                    </li>
                     {/* ── Templates (label + flat list) ──────────── */}
                     <li className="mt-1">
                       <div className="pt-1.5 pb-0.5 pl-8 pr-2 text-xxs uppercase tracking-wider text-sand-500">
@@ -229,6 +210,33 @@ export function DesignSystemsPole({
                         })}
                       </ul>
                     </li>
+                    {/* ── Brain (premium judgment layer) ─────────── */}
+                    {system.brain && (
+                      <li className="mt-1">
+                        <Link
+                          href={`/design-systems/${system.slug}/brain`}
+                          onClick={onNavigate}
+                          className={`flex items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-[13px] font-medium transition-colors ${
+                            pathname === `/design-systems/${system.slug}/brain` ||
+                            pathname.startsWith(`/design-systems/${system.slug}/brain/`)
+                              ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                              : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                          }`}
+                        >
+                          <span className="flex-1 truncate">Brain</span>
+                          {/* Lightning marks premium, same affordance as the
+                              template rows below. */}
+                          <Lightning
+                            weight="regular"
+                            size={13}
+                            aria-hidden
+                            className="ml-auto shrink-0 text-sand-500 dark:text-sand-500"
+                          />
+                          <span className="sr-only">Premium</span>
+                        </Link>
+                      </li>
+                    )}
+
 
                     {/* ── Components (label + flat list) ──────── */}
                     {/* Shown whenever Andromeda is expanded; the list runs long,

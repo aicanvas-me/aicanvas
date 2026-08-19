@@ -324,7 +324,7 @@ export function AndromedaOverview() {
       {/* ── System showcase ───────────────────────────────────────────────── */}
       <motion.section className="mt-14" {...reveal}>
         <Link
-          href="/design-systems/andromeda/system"
+          href="/design-systems/andromeda/components"
           className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-100 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
         >
           <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">

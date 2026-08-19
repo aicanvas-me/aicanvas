@@ -19,7 +19,7 @@ export default function IdeationComponentsPlaceholder() {
 
       <div className="mt-10 flex flex-wrap gap-3">
         <Link
-          href="/design-systems/andromeda/system"
+          href="/design-systems/andromeda/components"
           className={buttonClasses({ variant: 'primary', size: 'md' })}
         >
           Open Andromeda

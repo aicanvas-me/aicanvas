@@ -16,6 +16,8 @@ import {
   Terminal,
 } from '@phosphor-icons/react'
 import { Step } from '../../../components/Step'
+import { AndromedaThemeToggle, useAndromedaPreviewTheme } from '../AndromedaThemeWrap'
+import { andromedaLightVars } from '../../../lib/andromeda-v2-helpers.generated'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { Button } from '../../../components/Button'
 import { SaveButton } from '../../../components/SaveButton'
@@ -107,6 +109,9 @@ export function AndromedaComponentView({
   const [codeCopied, setCodeCopied] = useState(false)
   const [cliCopied, setCliCopied] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
+  // Portalled overlay: React context crosses the portal, CSS inheritance does
+  // not, so the panel re-spreads the theme set itself (see the overlay style).
+  const previewTheme = useAndromedaPreviewTheme()
   // The full-screen preview is portalled to <body>, and document.body does not
   // exist during the server render — so the portal waits for mount.
   const [portalReady, setPortalReady] = useState(false)
@@ -326,6 +331,8 @@ export function AndromedaComponentView({
           </div>
 
           {tab === 'preview' && (
+            <div className="flex items-center gap-2">
+            <AndromedaThemeToggle />
             <div className="group/fullscreen relative">
               <Button variant="accent" size="md" iconOnly aria-label="Full screen" onClick={() => setFullscreen(true)}>
                 <CornersOut weight="regular" size={16} />
@@ -333,6 +340,7 @@ export function AndromedaComponentView({
               <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-700 bg-sand-800 px-2.5 py-1.5 text-xs text-sand-300 group-hover/fullscreen:block">
                 Full screen
               </div>
+            </div>
             </div>
           )}
         </div>
@@ -346,7 +354,8 @@ export function AndromedaComponentView({
                  button instead of sitting 28px inside them. Vertical padding
                  stays generous: that is breathing room, not alignment. */
               className="flex min-h-[420px] items-center justify-center overflow-auto px-3 py-8 sm:px-5 sm:py-12"
-              style={{ backgroundColor: tokens.color.surface.base }}
+              // The theme channel: light sets --at-surface-base on the wrap.
+              style={{ backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }}
             >
               {!fullscreen && spec ? <MatrixPreview spec={spec} /> : null}
             </div>
@@ -759,8 +768,14 @@ export function AndromedaComponentView({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              data-andromeda-theme={previewTheme?.theme ?? 'dark'}
               className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-2xl sm:border sm:border-sand-800 sm:shadow-2xl"
-              style={{ backgroundColor: tokens.color.surface.base }}
+              // React context crosses the portal, CSS inheritance does not,
+              // so the panel re-spreads the theme set itself.
+              style={{
+                ...(previewTheme?.theme === 'light' ? (andromedaLightVars() as React.CSSProperties) : null),
+                backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})`,
+              }}
               onClick={(e) => e.stopPropagation()}
             >
               {/* Same inset rule as the inline preview above. */}

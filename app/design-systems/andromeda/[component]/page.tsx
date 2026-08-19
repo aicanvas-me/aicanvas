@@ -6,6 +6,7 @@ import {
 } from '../../../_lib/andromeda/andromeda-registry'
 import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
 import { AndromedaComponentView } from './AndromedaComponentView'
+import { AndromedaThemeWrap } from '../AndromedaThemeWrap'
 
 export function generateStaticParams() {
   return ANDROMEDA_COMPONENTS.map((c) => ({ component: c.slug }))
@@ -54,13 +55,17 @@ export default async function AndromedaComponentPage({
   // demand from the gated /api/component-code endpoint, so access is decided
   // per user, never by a build-time flag.
   return (
-    <AndromedaComponentView
-      slug={entry.slug}
-      name={entry.name}
-      description={entry.description}
-      related={related}
-      propTables={propTables}
-      freeAccountGate={freeAccountGate}
-    />
+    // The theme provider sits ABOVE the view so the view's own hooks (the
+    // portalled full-screen overlay re-spreads the theme set) can read it.
+    <AndromedaThemeWrap>
+      <AndromedaComponentView
+        slug={entry.slug}
+        name={entry.name}
+        description={entry.description}
+        related={related}
+        propTables={propTables}
+        freeAccountGate={freeAccountGate}
+      />
+    </AndromedaThemeWrap>
   )
 }

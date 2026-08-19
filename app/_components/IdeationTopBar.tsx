@@ -54,7 +54,7 @@ function buildCrumbs(pathname: string): Crumb[] | null {
     return [DESIGN_SYSTEMS, { label: 'Andromeda', href: ANDROMEDA_OVERVIEW }, { label: meta?.name ?? prettify(slug) }]
   }
   // System → Design Systems · Andromeda / System
-  if (pathname === '/design-systems/andromeda/system') {
+  if (pathname === '/design-systems/andromeda/components') {
     return [DESIGN_SYSTEMS, { label: 'Andromeda', href: ANDROMEDA_OVERVIEW }, { label: 'System' }]
   }
   // Brain reader → Design Systems · Andromeda / Brain (Brain links to the story
@@ -102,7 +102,7 @@ export function IdeationTopBar() {
   // Lightning status pill. BrainViewer owns the brain slot; ShowcaseInstall
   // owns the showcase slot.
   const isBrainReader = pathname === '/design-systems/andromeda/brain/explore'
-  const isShowcase = pathname === '/design-systems/andromeda/system'
+  const isShowcase = pathname === '/design-systems/andromeda/components'
 
   return (
     <div className={headerClass}>

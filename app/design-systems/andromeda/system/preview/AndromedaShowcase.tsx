@@ -29,6 +29,7 @@ import { tokens } from '../../../../lib/andromeda-v2.generated'
 import { mq } from '../../../../lib/andromeda-v2-helpers.generated'
 import { buttonVariants } from '../../../../lib/andromeda-v2.generated'
 import { andromedaVars } from '../../../../lib/andromeda-v2-helpers.generated'
+import { AndromedaThemeWrap, AndromedaThemeToggle } from '../../AndromedaThemeWrap'
 import {
   Card,
   CardHeader,
@@ -288,7 +289,7 @@ export default function AndromedaShowcase({
 }: AndromedaShowcaseProps = {}) {
 
   return (
-    <>
+    <AndromedaThemeWrap>
     <ShowcaseInstall
       installs={[
         { slug: 'andromeda', label: 'All components' },
@@ -319,6 +320,11 @@ export default function AndromedaShowcase({
           gap: tokens.spacing[6],
         }}
       >
+        {/* Theme toggle — the review matrix is exactly where the second theme
+            is judged, so the switch lives at the top of it. */}
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <AndromedaThemeToggle />
+        </div>
         {/* Responsive reflow — desktop-first. The default (unqualified)
             rules ARE the desktop layout; the mq.md block collapses the dense
             two/three-column section grids to a single column below 768px, and
@@ -757,6 +763,6 @@ export default function AndromedaShowcase({
       </div>
       <SiteFooter />
     </div>
-    </>
+    </AndromedaThemeWrap>
   )
 }
