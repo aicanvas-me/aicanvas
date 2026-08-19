@@ -791,7 +791,14 @@ function RadioDemo() {
 }
 
 function TableDemo() {
-  const [sort, setSort] = useState<'asc' | 'desc'>('asc')
+  // Every header states that it sorts; only the active one states a direction.
+  // The primitive paints the marker and sets aria-sort — the reordering below
+  // is the caller's job, which is exactly the split this demo is showing.
+  const [sort, setSort] = useState<{ key: 'lvl' | 'vol'; dir: 'asc' | 'desc' } | null>({ key: 'lvl', dir: 'asc' })
+  const marker = (key: 'lvl' | 'vol') =>
+    sort?.key === key ? sort.dir : ('sortable' as const)
+  const toggle = (key: 'lvl' | 'vol') =>
+    setSort((prev) => (prev?.key === key ? { key, dir: prev.dir === 'asc' ? 'desc' : 'asc' } : { key, dir: 'asc' }))
   const rows = [
     { id: 'AB-00032734', part: 'X60 BJGJ29839281', source: 'US, Denver - 24071',       lvl: 66, vol: '10.9985' },
     { id: 'AB-00032612', part: 'X62 BAGJ28599202', source: 'US, New York - 25018',     lvl: 86, vol: '7.28699' },
@@ -806,14 +813,12 @@ function TableDemo() {
             <TableHeader>Order ID</TableHeader>
             <TableHeader>Part ID</TableHeader>
             <TableHeader>Source Location</TableHeader>
-            <TableHeader
-              sort={sort}
-              style={{ cursor: 'pointer' }}
-              onClick={() => setSort(s => s === 'asc' ? 'desc' : 'asc')}
-            >
+            <TableHeader sort={marker('lvl')} style={{ cursor: 'pointer' }} onClick={() => toggle('lvl')}>
               Source Level
             </TableHeader>
-            <TableHeader align="right">Total Volume</TableHeader>
+            <TableHeader sort={marker('vol')} style={{ cursor: 'pointer' }} onClick={() => toggle('vol')}>
+              Total Volume
+            </TableHeader>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -823,7 +828,7 @@ function TableDemo() {
               <TableCell>{r.part}</TableCell>
               <TableCell muted>{r.source}</TableCell>
               <TableCell>{r.lvl}%</TableCell>
-              <TableCell align="right">{r.vol}</TableCell>
+              <TableCell>{r.vol}</TableCell>
             </TableRow>
           ))}
         </TableBody>
@@ -1457,7 +1462,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'metric-chart': MetricChartDemo,
   waveform: WaveformDemo,
   'media-card': MediaCardDemo,
-  'data-table': DataTableDemo,
+  'table-data': DataTableDemo,
   'music-player': MusicPlayerDemo,
   'nav-item': NavItemDemo,
   'panel-header': PanelHeaderDemo,
@@ -1478,7 +1483,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'trend-chart': TrendChartDemo,
   textarea: TextareaDemo,
   toggle: ToggleDemo,
-  table: TableDemo,
+  'table-basic': TableDemo,
   tooltip: TooltipDemo,
   'user-card': UserCardDemo,
   'user-menu': UserMenuDemo,

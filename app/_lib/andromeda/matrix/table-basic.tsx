@@ -23,18 +23,22 @@ const ROWS = [
 // row lit reads as broken rather than hovered.
 const table = (
   _size: string | undefined,
-  { selectedRow, forceRow, force, hoverable = true }: Record<string, unknown> = {},
+  { selectedRow, forceRow, force, hoverable = true, sorted }: Record<string, unknown> = {},
 ) => (
   <div style={{ width: '100%', position: 'relative', background: tokens.color.surface.raised }}>
     <TableStyles />
     <Table>
       <TableHead>
+        {/* When the sort case is on, EVERY header states it. One column
+            carrying a caret while the rest carry nothing reads as an odd one
+            out rather than as an affordance: the neutral marker is what says
+            "this column sorts", and only the active one shows a direction. */}
         <TableRow hoverable={false}>
-          <TableHeader>Order ID</TableHeader>
-          <TableHeader>Part ID</TableHeader>
-          <TableHeader>Source location</TableHeader>
-          <TableHeader sort="asc">Source level</TableHeader>
-          <TableHeader align="right">Total volume</TableHeader>
+          <TableHeader sort={sorted ? 'sortable' : undefined}>Order ID</TableHeader>
+          <TableHeader sort={sorted ? 'sortable' : undefined}>Part ID</TableHeader>
+          <TableHeader sort={sorted ? 'sortable' : undefined}>Source location</TableHeader>
+          <TableHeader sort={sorted ? 'asc' : undefined}>Source level</TableHeader>
+          <TableHeader sort={sorted ? 'sortable' : undefined}>Total volume</TableHeader>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -49,7 +53,7 @@ const table = (
             <TableCell>{r.part}</TableCell>
             <TableCell muted>{r.source}</TableCell>
             <TableCell>{r.lvl}%</TableCell>
-            <TableCell align="right">{r.vol}</TableCell>
+            <TableCell>{r.vol}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -58,13 +62,16 @@ const table = (
 )
 
 export const table_: MatrixSpec = {
-  slug: 'table',
+  slug: 'table-basic',
   sizes: null,
   wide: true,
   render: table,
   variants: [
-    { label: 'Default', props: {} },
-    { label: 'Row selected', props: { selectedRow: 1 } },
+    // The default case carries a selected row: selection is the state this
+    // table is read for, and a case showing it separately only repeated this
+    // one with a single prop moved.
+    { label: 'Default', props: { selectedRow: 1 } },
+    { label: 'Sortable headers', props: { selectedRow: 1, sorted: true } },
     { label: 'Not hoverable', props: { hoverable: false } },
   ],
   states: [

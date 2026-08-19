@@ -149,10 +149,10 @@ export const SECTION_COPY: Record<string, SectionCopy> = {
     kicker: "Component \u00b7 Surfaces",
     description: "Image-backed content tile for mixes, channels, and featured items whose artwork is the recognition cue. It composes `Card` with `markers` off, adds a bottom scrim, a mono code tag, title and meta, and one corner control; the whole card is the hit target unless `action` is `none`, and the image zooms on hover while the frame and text hold still. 3 `action` modes: `play`, `cta`, `none`.",
   },
-  'data-table': {
-    title: "Data Table",
+  'table-data': {
+    title: "Table Data",
     kicker: "Component \u00b7 Data",
-    description: "Configuration-driven data grid: pass `columns` and `rows` to get dense mono cells, inset hairline dividers, row hover, and an accent left edge on the row named by `selectedRowKey`. Reach for Table instead when cells need bespoke structure that no shared column model can describe. Below the md breakpoint a `hideBelow` column folds into the per-row info tooltip or the primary column's sub-line, so the grid never grows a horizontal scrollbar.",
+    description: "Configuration-driven data grid: pass `columns` and `rows` to get dense mono cells, inset hairline dividers, row hover, and an accent left edge on the row named by `selectedRowKey`. Reach for Table Basic instead when cells need bespoke structure that no shared column model can describe. Below the md breakpoint a `hideBelow` column folds into the per-row info tooltip or the primary column's sub-line, so the grid never grows a horizontal scrollbar.",
   },
   'music-player': {
     title: "Music Player",
@@ -164,9 +164,9 @@ export const SECTION_COPY: Record<string, SectionCopy> = {
     kicker: "Component \u00b7 Objects",
     description: "Particle sphere rendered in Three.js on a transparent canvas, lit from one side and slowly rotating: a hero set piece for an active body or a next destination. It shows no value, so use `ProgressBar` or `HeatGrid` when a measurement is the point. Every particle takes its color from the accent ramp read at mount, so a themed page renders a themed planet, and reduced motion holds the sphere still.",
   },
-  'table': {
-    title: "Table",
-    description: "Compound primitive for dense tabular data: `Table`, `TableHead`, `TableBody`, `TableRow`, `TableHeader`, `TableCell`. Headers take `sort` for the caret and `aria-sort`, rows take `selected` for the accent left edge, and a wide table scrolls inside its panel instead of reflowing into cards. Reach for `DataTable` when a column config describes the records, and for `Table` when cells need bespoke structure; mount one `TableStyles` per page.",
+  'table-basic': {
+    title: "Table Basic",
+    description: "Compound primitive for dense tabular data: `Table`, `TableHead`, `TableBody`, `TableRow`, `TableHeader`, `TableCell`. Headers take `sort` for the caret and `aria-sort`, rows take `selected` for the accent left edge, and a wide table scrolls inside its panel instead of reflowing into cards. Reach for `DataTable` when a column config describes the records, and for this one when cells need bespoke structure; mount one `TableStyles` per page.",
   },
   'tooltip': {
     title: "Tooltip",

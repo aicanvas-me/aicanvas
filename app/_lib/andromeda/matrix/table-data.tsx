@@ -85,7 +85,12 @@ const COLUMNS = [
             color: tokens.color.text.primary,
             fontWeight: tokens.typography.weight.medium,
             letterSpacing: tokens.typography.tracking.tight,
-            lineHeight: 'var(--andromeda-leading-none, 1)',
+            // The ramp's paired leading, NOT leading-none. A 12px line box on
+            // 12px type crops the box to the glyphs, so the descender on a "g"
+            // paints outside it and lands on the line below — no gap can fix
+            // that, because the gap starts where the box ends. The caps line
+            // below has no descenders, so it keeps the dense setting.
+            lineHeight: tokens.typography.leading.textSm,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -120,13 +125,18 @@ const COLUMNS = [
 ]
 
 export const dataTable: MatrixSpec = {
-  slug: 'data-table',
+  slug: 'table-data',
   Component: DataTable,
   sizes: null,
   wide: true,
   // Row ids are kept as track-0N so the component's own `selectedRowKey`
   // default ('track-02') still lands on a row and the accent edge shows.
-  baseProps: { columns: COLUMNS, rows: ROWS },
+  // Capped and centred. `wide: true` gives the case the full section width,
+  // which a dense grid wants — but five of these seven columns state a fixed
+  // width, so every pixel past the cap lands in the one flexible column and the
+  // row reads as a title marooned from its own numbers. The cap is where the
+  // Track column still holds a two-line cell without going hollow.
+  baseProps: { columns: COLUMNS, rows: ROWS, style: { maxWidth: '960px', marginInline: 'auto' } },
   // The per-row info bubble is position:absolute with no portal, so it needs the
   // same two escapes a popover case needs: the body must not become a scroll
   // container, and the showcase section must not sit in a paint-contained box.

@@ -18,8 +18,8 @@ export const CATEGORY: Record<string, string> = {
   'date-range-picker': 'Forms',
 
   // Data display
-  table: 'Data display',
-  'data-table': 'Data display',
+  'table-basic': 'Data display',
+  'table-data': 'Data display',
   'stat-tile': 'Data display',
   'progress-bar': 'Data display',
   'heat-grid': 'Data display',

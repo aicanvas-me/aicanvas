@@ -165,10 +165,18 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/media-card.png?v=1',
   },
   {
-    slug: 'data-table',
-    name: 'Data Table',
+    slug: 'table-basic',
+    name: 'Table Basic',
     description:
-      'Configuration-driven data grid. Pass columns and rows to get hairline inset dividers, row hover, a selected-row accent edge, and a mobile column-priority fold that tucks low-priority columns behind a per-row info tooltip instead of a horizontal scrollbar.',
+      'Compound table primitive: Table / TableHead / TableBody / TableRow / TableHeader / TableCell. Sortable column headers, row hover highlight, selected-row accent edge. Render TableStyles once on the page to enable the hover styling.',
+    sourceFile: 'Table.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/table.png?v=3',
+  },
+  {
+    slug: 'table-data',
+    name: 'Table Data',
+    description:
+      'Configuration-driven data grid. Pass columns and rows to get row selection, sortable headers, hairline inset dividers, row hover, a selected-row accent edge, and a mobile column-priority fold that tucks low-priority columns behind a per-row info tooltip instead of a horizontal scrollbar.',
     sourceFile: 'DataTable.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/data-table.png?v=2',
   },
@@ -301,14 +309,6 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/toggle.png?v=3',
   },
   {
-    slug: 'table',
-    name: 'Table',
-    description:
-      'Compound data-table primitive: Table / TableHead / TableBody / TableRow / TableHeader / TableCell. Sortable column headers, row hover highlight, selected-row accent edge. Render TableStyles once on the page to enable the hover styling.',
-    sourceFile: 'Table.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/table.png?v=3',
-  },
-  {
     slug: 'tooltip',
     name: 'Tooltip',
     description:
@@ -407,7 +407,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
 // scripts/lib/design-systems.config.mjs `slugOverrides` — mirrored here (typed,
 // Node-free) for use by the component page (forward) and the Saved list
 // (reverse, to resolve a saved registry slug back to its page + display name).
-const ANDROMEDA_REGISTRY_SLUG_OVERRIDES: Record<string, string> = { button: 'andromeda-button-system' }
+const ANDROMEDA_REGISTRY_SLUG_OVERRIDES: Record<string, string> = {
+  button: 'andromeda-button-system',
+  // The two tables were renamed for the docs site (2026-08-19) so they read as a
+  // pair. The registry slug is derived from the vault FILENAME, which did not
+  // move, so the default `andromeda-${pageSlug}` no longer lands on it.
+  'table-basic': 'andromeda-table',
+  'table-data': 'andromeda-data-table',
+}
 
 export function andromedaRegistrySlug(pageSlug: string): string {
   return ANDROMEDA_REGISTRY_SLUG_OVERRIDES[pageSlug] ?? `andromeda-${pageSlug}`
