@@ -289,12 +289,22 @@ export function AndromedaComponentView({
   return (
     <>
     <main className="mx-auto w-full max-w-4xl px-4 pt-8 pb-8 sm:px-6 sm:pt-14">
-      {/* ── Header ──────────────────────────────────────────────────────── */}
+      {/* ── Header ───────────────────────────────────────────────────────
+          Ink comes off the Andromeda channel, not the sand scale: this block
+          sits on the content column's --at-surface-base ground, so it has to
+          follow the Andromeda toggle. Sand classes follow the SITE toggle
+          instead and go invisible the moment the two disagree. */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
+        <h1
+          className="text-3xl font-bold tracking-tight sm:text-4xl"
+          style={{ color: `var(--at-text-primary, ${tokens.color.text.primary})` }}
+        >
           {name}
         </h1>
-        <p className="mt-3 max-w-2xl text-base text-sand-600 dark:text-sand-400">
+        <p
+          className="mt-3 max-w-2xl text-base"
+          style={{ color: `var(--at-text-secondary, ${tokens.color.text.secondary})` }}
+        >
           {description}
         </p>
       </div>

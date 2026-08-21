@@ -364,14 +364,15 @@ export default function AndromedaShowcase({
         `}</style>
 
         {/* Page header — AI Canvas site style (Manrope), not the Andromeda mono
-            aesthetic of the demos below. Fixed light-on-dark colours because the
-            showcase surface is always the Andromeda void. */}
+            aesthetic of the demos below. Colours ride the --at- channel with the
+            dark literals as fallback: the showcase surface follows the theme
+            toggle, so light-on-dark values cannot be pinned here. */}
         <header style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
           <div
             style={{
               fontSize: 12,
               fontWeight: 600,
-              color: '#DAE4A0',
+              color: 'var(--at-text-secondary, #DAE4A0)',
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
               marginBottom: 10,
@@ -385,7 +386,7 @@ export default function AndromedaShowcase({
               margin: 0,
               fontSize: 'clamp(30px, 4.5vw, 42px)',
               fontWeight: 800,
-              color: '#F4F4FA',
+              color: 'var(--at-text-primary, #F4F4FA)',
               letterSpacing: '-0.02em',
               lineHeight: 1.05,
             }}
@@ -399,7 +400,7 @@ export default function AndromedaShowcase({
               fontSize: 16,
               fontWeight: 400,
               lineHeight: 1.6,
-              color: '#9B9B9E',
+              color: 'var(--at-text-secondary, #9B9B9E)',
             }}
           >
             Built for designers, developers, and teams who want a system, not a stylesheet. Tokens, components, templates, and a documented brain that keeps everyone aligned.
@@ -409,7 +410,7 @@ export default function AndromedaShowcase({
               marginTop: 16,
               fontSize: 11,
               fontWeight: 600,
-              color: '#7B7B7D',
+              color: 'var(--at-text-faint, #7B7B7D)',
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
             }}
@@ -423,6 +424,12 @@ export default function AndromedaShowcase({
           kicker="Foundation · Colors"
           description="Three brand hue palettes lead: accent (blue), warning (amber), danger (red), each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. The foundational greys follow: surface, border, text. Every alpha sits in a single row at the seam between the two halves."
         >
+          {/* Swatch chips paint the LITERAL printed beneath them, not the
+              themed property. A documentation chip whose fill came off the
+              channel would show one colour and caption another the moment a
+              theme is defined, which reads as an inverted ramp. The chip frame,
+              the label and the note stay on the channel: those are page ink,
+              not the specimen. A light specimen would be its own extra row. */}
           <Row label="Accent · Blue">
             {[
               { name: 'accent.100', color: tokens.color.accent[100], note: 'Highlighted text · pastel' },
@@ -432,7 +439,7 @@ export default function AndromedaShowcase({
               { name: 'accent.500', color: tokens.color.accent[500], note: 'Glow halos · tinted fills' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
@@ -449,7 +456,7 @@ export default function AndromedaShowcase({
               { name: 'warning.500', color: tokens.color.warning[500], note: 'Subtle fill' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
@@ -466,7 +473,7 @@ export default function AndromedaShowcase({
               { name: 'danger.500', color: tokens.color.danger[500], note: 'Subtle fill' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
@@ -482,7 +489,7 @@ export default function AndromedaShowcase({
               { name: 'surface.alpha', color: tokens.color.surface.alpha, note: 'Modal scrim · backdrop' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
@@ -499,7 +506,7 @@ export default function AndromedaShowcase({
               { name: 'surface.active',  color: tokens.color.surface.active,  note: 'Pressed state' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>

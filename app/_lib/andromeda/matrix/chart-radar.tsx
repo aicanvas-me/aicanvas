@@ -1,5 +1,4 @@
 import { RadarChart } from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
 import type { MatrixSpec } from './types'
 
 const DATA = [
@@ -25,7 +24,10 @@ export const radarChart: MatrixSpec = {
         title: 'System performance',
         description: 'Current system readiness',
         data: DATA,
-        series: [{ key: 'score', label: 'Readiness', color: tokens.color.accent[300] }],
+        // No `color`: recharts writes stroke/fill as SVG ATTRIBUTES, where a
+        // var() string cannot resolve, so a colour pinned here is frozen at the
+        // dark ramp. Left off, the chart resolves its own live series ink.
+        series: [{ key: 'score', label: 'Readiness' }],
       },
     },
   ],

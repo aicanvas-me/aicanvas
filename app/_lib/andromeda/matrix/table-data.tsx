@@ -42,7 +42,11 @@ function PeakBar({ value }) {
           bottom: 0,
           width: `${value}%`,
           // Solid mark, not a tint: a meter fill is a MARK. Over 85 reads hot.
-          background: value > 85 ? tokens.color.warning[300] : `var(--at-text-primary, ${tokens.color.text.primary})`,
+          // Both branches go through the theme channel — the hot one used to be
+          // a bare literal, so it stayed a dark-ramp amber on a light card.
+          background: value > 85
+            ? `var(--at-warning-300, ${tokens.color.warning[300]})`
+            : `var(--at-text-primary, ${tokens.color.text.primary})`,
         }}
       />
     </div>
