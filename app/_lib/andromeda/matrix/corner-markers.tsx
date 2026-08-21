@@ -13,7 +13,7 @@ export const cornerMarkers: MatrixSpec = {
         position: 'relative',
         width: 180,
         height: 100,
-        background: tokens.color.surface.raised,
+        background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
       }}
     >
       <CornerMarkers {...props} />

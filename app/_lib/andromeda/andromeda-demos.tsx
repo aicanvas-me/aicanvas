@@ -100,7 +100,7 @@ function Row({ label, children }: { label?: string; children: React.ReactNode })
             marginBottom: tokens.spacing[3],
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.faint,
+            color: `var(--at-text-faint, ${tokens.color.text.faint})`,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}
@@ -170,7 +170,7 @@ function SizeRamp({ sizes = ['sm', 'md', 'lg'], render, direction = 'row' }) {
               fontSize: tokens.typography.size.xs,
               // Pins the caption box so font metrics cannot reintroduce drift.
               lineHeight: tokens.typography.lineHeight.none,
-              color: tokens.color.text.faint,
+              color: `var(--at-text-faint, ${tokens.color.text.faint})`,
               textTransform: 'uppercase',
               // One notch below the cell label's `widest`, so it reads as
               // subordinate to the label above the ramp.
@@ -287,7 +287,7 @@ function CardDemo() {
               style={{
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.xs,
-                color: tokens.color.text.muted,
+                color: `var(--at-text-muted, ${tokens.color.text.muted})`,
                 textTransform: 'uppercase',
                 letterSpacing: tokens.typography.tracking.widest,
               }}
@@ -314,7 +314,7 @@ function CardDemo() {
               style={{
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.xs,
-                color: tokens.color.text.muted,
+                color: `var(--at-text-muted, ${tokens.color.text.muted})`,
                 textTransform: 'uppercase',
                 letterSpacing: tokens.typography.tracking.widest,
               }}
@@ -351,7 +351,7 @@ function CornerMarkersDemo() {
             position: 'relative',
             width: 180,
             height: 100,
-            background: tokens.color.surface.raised,
+            background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -362,7 +362,7 @@ function CornerMarkersDemo() {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.muted,
+              color: `var(--at-text-muted, ${tokens.color.text.muted})`,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
             }}
@@ -442,7 +442,7 @@ function NavItemDemo() {
       <div
         style={{
           width: 260,
-          background: tokens.color.surface.raised,
+          background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
           position: 'relative',
         }}
       >
@@ -459,7 +459,7 @@ function NavItemDemo() {
       <div
         style={{
           width: 56,
-          background: tokens.color.surface.raised,
+          background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
           position: 'relative',
         }}
       >
@@ -511,7 +511,7 @@ const TREND_DATA = Array.from({ length: 18 }, (_, i) => {
 
 function TrendChartDemo() {
   return (
-    <div style={{ position: 'relative', background: tokens.color.surface.raised, padding: tokens.spacing[5], width: '100%', maxWidth: 640 }}>
+    <div style={{ position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})`, padding: tokens.spacing[5], width: '100%', maxWidth: 640 }}>
       <CornerMarkers />
       <TrendChart
         data={TREND_DATA}
@@ -808,7 +808,7 @@ function TableDemo() {
     { id: 'AB-00032736', part: 'X61 BHH09027512',  source: 'US, San Francisco - 27381', lvl: 75, vol: '8.85221' },
   ]
   return (
-    <div style={{ width: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+    <div style={{ width: '100%', position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
       <TableStyles />
       <Table>
         <TableHead>
@@ -1069,13 +1069,13 @@ function PanelHeaderDemo() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5], width: '100%', maxWidth: 640 }}>
       <Row label="Title only">
-        <div style={{ width: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+        <div style={{ width: '100%', position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
           <CornerMarkers />
           <PanelHeader title="Capacity" />
         </div>
       </Row>
       <Row label="Title + actions (PanelMenu)">
-        <div style={{ width: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+        <div style={{ width: '100%', position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
           <CornerMarkers />
           <PanelHeader
             title="Requests"
@@ -1102,7 +1102,7 @@ function PanelHeaderDemo() {
         <SizeRamp
           direction="column"
           render={(s) => (
-            <div style={{ width: 320, maxWidth: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+            <div style={{ width: 320, maxWidth: '100%', position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
               <CornerMarkers />
               <PanelHeader
                 size={s}
@@ -1388,7 +1388,7 @@ function UserCardDemo() {
     <div style={{ display: 'flex', gap: tokens.spacing[8], alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
       <div style={{ width: 224 }}>
         <Row label="Open up">
-          <div style={{ width: '100%', background: tokens.color.surface.raised }}>
+          <div style={{ width: '100%', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
             <UserCard
               name="Reza Quinn"
               role="Flight Director"
@@ -1403,7 +1403,7 @@ function UserCardDemo() {
       </div>
       <div style={{ width: 224 }}>
         <Row label="Open down">
-          <div style={{ width: '100%', background: tokens.color.surface.raised }}>
+          <div style={{ width: '100%', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
             <UserCard
               name="Reza Quinn"
               role="Flight Director"
@@ -1422,7 +1422,7 @@ function UserCardDemo() {
           <SizeRamp
             direction="column"
             render={(s) => (
-              <div style={{ width: 200, background: tokens.color.surface.raised }}>
+              <div style={{ width: 200, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
                 <UserCard
                   name="Reza Quinn"
                   role="Flight Director"
@@ -1500,7 +1500,7 @@ export function AndromedaDemo({ slug }: { slug: string }) {
         style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.text.muted,
+          color: `var(--at-text-muted, ${tokens.color.text.muted})`,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.wider,
         }}

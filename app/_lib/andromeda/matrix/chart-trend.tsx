@@ -25,7 +25,7 @@ const DATA = Array.from({ length: 18 }, (_, i) => {
 })
 
 const framed = (props: Record<string, unknown>) => (
-  <div style={{ position: 'relative', background: tokens.color.surface.raised, padding: tokens.spacing[5], width: '100%' }}>
+  <div style={{ position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})`, padding: tokens.spacing[5], width: '100%' }}>
     <CornerMarkers />
     <TrendChart data={DATA} height={200} {...props} />
   </div>

@@ -9,7 +9,7 @@ import { CONTROL_STATES, type MatrixSpec } from './types'
 // A nav row has no intrinsic width — it fills its rail. Without a container it
 // shrink-wraps to its label and the hover fill reads as a chip, not a row.
 const rail = (props: Record<string, unknown>) => (
-  <div style={{ width: props.collapsed ? 56 : 220, background: tokens.color.surface.raised }}>
+  <div style={{ width: props.collapsed ? 56 : 220, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
     {props.collapsed ? (
       <Tooltip label="Overview" position="right" style={{ width: '100%' }}>
         <NavItem icon={Compass} label="Overview" {...props} />

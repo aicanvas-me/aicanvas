@@ -10,7 +10,7 @@ import type { MatrixSpec } from './types'
 // A block header has no intrinsic width, and its whole job is to sit on a
 // framed panel — so each cell supplies the panel it heads.
 const panel = (size: string | undefined, props: Record<string, unknown>) => (
-  <div style={{ width: 320, maxWidth: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+  <div style={{ width: 320, maxWidth: '100%', position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
     <CornerMarkers />
     <PanelHeader size={size} title="Requests" {...props} />
   </div>

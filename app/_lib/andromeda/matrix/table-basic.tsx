@@ -25,7 +25,7 @@ const table = (
   _size: string | undefined,
   { selectedRow, forceRow, force, hoverable = true, sorted }: Record<string, unknown> = {},
 ) => (
-  <div style={{ width: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+  <div style={{ width: '100%', position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
     <TableStyles />
     <Table>
       <TableHead>

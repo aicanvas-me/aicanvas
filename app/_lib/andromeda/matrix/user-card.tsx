@@ -43,7 +43,7 @@ export const userCard: MatrixSpec = {
     // its widest row, so a box narrower than the panel let the panel of one rung
     // slide over its neighbour. The box has to be at least as wide as what it
     // opens.
-    <div style={{ width: 360, minWidth: 0, background: tokens.color.surface.raised }}>
+    <div style={{ width: 360, minWidth: 0, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
       <UserCard
         name="Reza Quinn"
         role="Flight Director"
@@ -64,7 +64,7 @@ export const userCard: MatrixSpec = {
     {
       label: 'Open up',
       node: (
-        <div style={{ width: 360, minWidth: 0, background: tokens.color.surface.raised }}>
+        <div style={{ width: 360, minWidth: 0, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
           <UserCard name="Reza Quinn" role="Flight Director" src={SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="top" />
         </div>
       ),
@@ -72,7 +72,7 @@ export const userCard: MatrixSpec = {
     {
       label: 'Open down',
       node: (
-        <div style={{ width: 360, minWidth: 0, background: tokens.color.surface.raised }}>
+        <div style={{ width: 360, minWidth: 0, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
           <UserCard name="Reza Quinn" role="Flight Director" src={SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="bottom" />
         </div>
       ),

@@ -18,7 +18,7 @@ import { matrixId, REST, type MatrixCase, type MatrixSpec } from './types'
 // Neutral, not accent: accent is a MEASUREMENT in this system, and a jumped-to
 // card is a place, not a reading. Lightest neutral, 2px, matching the sibling
 // system's ink ring — a 1px border step was too quiet to find on a long page.
-const TARGET_INK = `var(--andromeda-text-primary, ${tokens.color.text.primary})`
+const TARGET_INK = `var(--andromeda-text-primary, var(--at-text-primary, ${tokens.color.text.primary}))`
 
 // Documentation chrome, NOT an Andromeda surface: the system's own radius scale
 // stops at 3px because square corners are its identity, and every card here is
@@ -30,7 +30,7 @@ const CARD_RADIUS = '12px'
 const head = {
   fontFamily: tokens.typography.fontMono,
   fontSize: tokens.typography.size.sm,
-  color: tokens.color.text.faint,
+  color: `var(--at-text-faint, ${tokens.color.text.faint})`,
   textTransform: 'uppercase' as const,
   letterSpacing: tokens.typography.tracking.widest,
 }
@@ -132,8 +132,8 @@ function CaseCard({
       style={{
         display: 'flex',
         flexDirection: 'column',
-        background: solo ? 'transparent' : tokens.color.surface.raised,
-        border: solo ? 'none' : `1px solid ${tokens.color.border.subtle}`,
+        background: solo ? 'transparent' : `var(--at-surface-raised, ${tokens.color.surface.raised})`,
+        border: solo ? 'none' : `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
         borderRadius: solo ? 0 : CARD_RADIUS,
         minWidth: 0,
       }}
@@ -142,12 +142,12 @@ function CaseCard({
       <div
         style={{
           padding: `${tokens.spacing[3]} ${tokens.spacing[4]}`,
-          borderBottom: `1px solid ${tokens.color.border.subtle}`,
+          borderBottom: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
           borderTopLeftRadius: CARD_RADIUS,
           borderTopRightRadius: CARD_RADIUS,
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.text.primary,
+          color: `var(--at-text-primary, ${tokens.color.text.primary})`,
           fontWeight: tokens.typography.weight.medium,
           letterSpacing: tokens.typography.tracking.wide,
         }}
@@ -302,7 +302,7 @@ function CaseSection({
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.md,
             fontWeight: tokens.typography.weight.medium,
-            color: tokens.color.text.primary,
+            color: `var(--at-text-primary, ${tokens.color.text.primary})`,
             letterSpacing: tokens.typography.tracking.wide,
           }}
         >

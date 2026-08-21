@@ -28,8 +28,8 @@ function PeakBar({ value }) {
         // 6px border-box = a 4px fill between the two hairlines.
         height: tokens.spacing[1.5],
         width: '88px',
-        background: tokens.color.surface.overlay,
-        border: `${tokens.border.thin} ${tokens.color.border.subtle}`,
+        background: `var(--at-surface-overlay, ${tokens.color.surface.overlay})`,
+        border: `${tokens.border.thin} var(--at-border-subtle, ${tokens.color.border.subtle})`,
         borderRadius: tokens.radius.frame,
         display: 'inline-block',
       }}
@@ -42,7 +42,7 @@ function PeakBar({ value }) {
           bottom: 0,
           width: `${value}%`,
           // Solid mark, not a tint: a meter fill is a MARK. Over 85 reads hot.
-          background: value > 85 ? tokens.color.warning[300] : tokens.color.text.primary,
+          background: value > 85 ? tokens.color.warning[300] : `var(--at-text-primary, ${tokens.color.text.primary})`,
         }}
       />
     </div>
@@ -71,7 +71,7 @@ const COLUMNS = [
       />
     ),
   },
-  { key: 'id', header: 'ID', width: '96px', hideBelow: 'md', fold: 'none', color: tokens.color.text.faint },
+  { key: 'id', header: 'ID', width: '96px', hideBelow: 'md', fold: 'none', color: `var(--at-text-faint, ${tokens.color.text.faint})` },
   {
     key: 'track',
     header: 'Track',
@@ -82,7 +82,7 @@ const COLUMNS = [
           style={{
             fontFamily: tokens.typography.fontSans,
             fontSize: tokens.typography.size.sm,
-            color: tokens.color.text.primary,
+            color: `var(--at-text-primary, ${tokens.color.text.primary})`,
             fontWeight: tokens.typography.weight.medium,
             letterSpacing: tokens.typography.tracking.tight,
             // The ramp's paired leading, NOT leading-none. A 12px line box on
@@ -102,7 +102,7 @@ const COLUMNS = [
           style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.sm,
-            color: tokens.color.text.muted,
+            color: `var(--at-text-muted, ${tokens.color.text.muted})`,
             textTransform: 'uppercase',
             // `wider`, not `widest`. Widest is the system's step for a lone
             // micro-label with nothing to measure itself against; under a title
@@ -120,12 +120,12 @@ const COLUMNS = [
       </div>
     ),
   },
-  { key: 'duration', header: 'Duration', width: '110px', hideBelow: 'md', fold: 'meta', color: tokens.color.text.primary },
-  { key: 'plays', header: 'Plays', width: '100px', hideBelow: 'md', fold: 'meta', infoValue: (r) => `${r.plays} plays`, color: tokens.color.text.primary },
+  { key: 'duration', header: 'Duration', width: '110px', hideBelow: 'md', fold: 'meta', color: `var(--at-text-primary, ${tokens.color.text.primary})` },
+  { key: 'plays', header: 'Plays', width: '100px', hideBelow: 'md', fold: 'meta', infoValue: (r) => `${r.plays} plays`, color: `var(--at-text-primary, ${tokens.color.text.primary})` },
   // The meter is the reason `infoValue` exists: a visual cell cannot fold into
   // a text bubble, so it hands over a string instead of its `render`.
   { key: 'peak', header: 'Peak', width: '124px', hideBelow: 'md', infoValue: (r) => `${r.peak}%`, render: (r) => <PeakBar value={r.peak} /> },
-  { key: 'last', header: 'Last', width: '84px', hideBelow: 'md', color: tokens.color.text.faint },
+  { key: 'last', header: 'Last', width: '84px', hideBelow: 'md', color: `var(--at-text-faint, ${tokens.color.text.faint})` },
 ]
 
 export const dataTable: MatrixSpec = {

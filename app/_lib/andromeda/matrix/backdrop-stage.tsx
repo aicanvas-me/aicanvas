@@ -11,7 +11,7 @@ import { tokens } from '../../../lib/andromeda-v2.generated'
 const label = {
   fontFamily: tokens.typography.fontMono,
   fontSize: tokens.typography.size.xs,
-  color: tokens.color.text.muted,
+  color: `var(--at-text-muted, ${tokens.color.text.muted})`,
   textTransform: 'uppercase' as const,
   letterSpacing: tokens.typography.tracking.wider,
 }
@@ -25,8 +25,8 @@ export function BackdropStage({ children, caption = 'Sector 07' }) {
         width: 360,
         height: 220,
         overflow: 'hidden',
-        background: tokens.color.surface.base,
-        border: `1px solid ${tokens.color.border.subtle}`,
+        background: `var(--at-surface-base, ${tokens.color.surface.base})`,
+        border: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
       }}
     >
       {children}
@@ -47,12 +47,12 @@ export function BackdropStage({ children, caption = 'Sector 07' }) {
         <div
           style={{
             alignSelf: 'flex-end',
-            background: tokens.color.surface.raised,
-            border: `1px solid ${tokens.color.border.subtle}`,
+            background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
+            border: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
             padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`,
           }}
         >
-          <span style={{ ...label, color: tokens.color.text.faint }}>Panel on backdrop</span>
+          <span style={{ ...label, color: `var(--at-text-faint, ${tokens.color.text.faint})` }}>Panel on backdrop</span>
         </div>
       </div>
     </div>
