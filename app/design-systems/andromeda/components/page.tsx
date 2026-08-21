@@ -20,8 +20,8 @@ export const metadata = {
   alternates: { canonical: '/design-systems/andromeda/components' },
 }
 
-// The catalog descriptions are two or three sentences, written for a component
-// page. A card wants the first one.
+// Catalog descriptions are one sentence, so this is a no-op today. It stays as
+// the guard: a card gets the first sentence if a longer one is ever written.
 const firstSentence = (text: string) => {
   const end = text.indexOf('. ')
   return end === -1 ? text : text.slice(0, end + 1)
