@@ -224,7 +224,7 @@ export function AndromedaComponentView({
       ) : (
         <pre
           className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed"
-          style={{ color: tokens.color.text.secondary }}
+          style={{ color: `var(--at-text-secondary, ${tokens.color.text.secondary})` }}
         >
           {codeState.code}
         </pre>
@@ -232,7 +232,7 @@ export function AndromedaComponentView({
     ) : (
       <div
         className="flex min-h-[200px] items-center justify-center text-sm"
-        style={{ color: tokens.color.text.faint }}
+        style={{ color: `var(--at-text-faint, ${tokens.color.text.faint})` }}
       >
         Loading source…
       </div>
@@ -363,7 +363,7 @@ export function AndromedaComponentView({
             <div
               className="min-h-[420px] overflow-auto p-5"
               style={{
-                backgroundColor: tokens.color.surface.base,
+                backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})`,
                 maxHeight: '70vh',
                 scrollbarWidth: 'thin',
               }}
@@ -690,7 +690,7 @@ export function AndromedaComponentView({
                     >
                       <div
                         className="relative aspect-video overflow-hidden"
-                        style={{ backgroundColor: tokens.color.surface.base }}
+                        style={{ backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }}
                       >
                         {c.image ? (
                           <img
@@ -715,7 +715,7 @@ export function AndromedaComponentView({
                                 style={{
                                   fontFamily: tokens.typography.fontMono,
                                   fontSize: tokens.typography.size.xs,
-                                  color: tokens.color.text.faint,
+                                  color: `var(--at-text-faint, ${tokens.color.text.faint})`,
                                   textTransform: 'uppercase',
                                   letterSpacing: tokens.typography.tracking.widest,
                                 }}

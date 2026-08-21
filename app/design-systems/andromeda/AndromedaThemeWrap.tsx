@@ -3,15 +3,18 @@
 // Light/dark wrap for the Andromeda PREVIEW surfaces (the /system/preview
 // matrix and the per-component pages). This is the consumer of the theme
 // channel: `andromedaVars()` emits every colour as var(--at-<name>, <dark>),
-// so a wrapper that defines the --at-* set retints every Andromeda root
-// inside it — no context, no component edits, and the site chrome around it
-// keeps NO relation to this toggle (plan ruling: the Andromeda theme is the
-// design system's own axis, not the site's).
+// so defining the --at-* set retints every Andromeda root — no component
+// edits, and the site chrome keeps NO relation to this toggle (plan ruling:
+// the Andromeda theme is the design system's own axis, not the site's; sand
+// chrome never reads an --at- var, so root-level vars cannot touch it).
 //
-// The --at-* set is spread as inline style, not a stylesheet, so it scopes to
-// exactly this subtree and two wraps on one page could disagree on purpose.
+// The set lands on documentElement, NOT on a mid-tree div, because that is
+// the system's swap contract: the Objects and useResolvedVars observe the
+// root's class/style/data-theme and re-resolve their canvas ink from computed
+// style. A mid-tree wrapper retints the pure-CSS var() chains but fires no
+// observer, so canvases and charts silently keep the old palette.
 
-import { createContext, useContext, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { Moon, Sun } from '@phosphor-icons/react'
 import { andromedaLightVars } from '../../lib/andromeda-v2-helpers.generated'
 
@@ -24,14 +27,22 @@ const ThemeCtx = createContext<{
 
 export function AndromedaThemeWrap({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<AndromedaTheme>('dark')
+
+  useEffect(() => {
+    if (theme !== 'light') return
+    const root = document.documentElement
+    const vars = andromedaLightVars() as Record<string, string>
+    for (const [name, value] of Object.entries(vars)) root.style.setProperty(name, value)
+    root.setAttribute('data-andromeda-theme', 'light')
+    return () => {
+      for (const name of Object.keys(vars)) root.style.removeProperty(name)
+      root.removeAttribute('data-andromeda-theme')
+    }
+  }, [theme])
+
   return (
     <ThemeCtx.Provider value={{ theme, setTheme }}>
-      <div
-        data-andromeda-theme={theme}
-        style={theme === 'light' ? (andromedaLightVars() as React.CSSProperties) : undefined}
-      >
-        {children}
-      </div>
+      <div data-andromeda-theme={theme}>{children}</div>
     </ThemeCtx.Provider>
   )
 }

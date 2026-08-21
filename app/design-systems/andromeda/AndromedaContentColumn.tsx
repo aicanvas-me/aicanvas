@@ -40,10 +40,10 @@ export function AndromedaContentColumn({ children }: { children: ReactNode }) {
       : 'aic-page-scroll flex flex-1 scroll-smooth flex-col overflow-y-auto'
 
   const style = isTemplate
-    ? { backgroundColor: tokens.color.surface.base }
+    ? { backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }
     : isOverview
       ? { scrollbarGutter: 'stable' }
-      : { backgroundColor: tokens.color.surface.base, scrollbarGutter: 'stable' }
+      : { backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})`, scrollbarGutter: 'stable' }
 
   return (
     <div className={className} style={style}>

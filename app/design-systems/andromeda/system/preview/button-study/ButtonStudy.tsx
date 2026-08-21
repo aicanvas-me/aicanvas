@@ -110,7 +110,7 @@ const STATES = [
 const label = {
   fontFamily: tokens.typography.fontMono,
   fontSize: tokens.typography.size.xs,
-  color: tokens.color.text.faint,
+  color: `var(--at-text-faint, ${tokens.color.text.faint})`,
   textTransform: 'uppercase' as const,
   letterSpacing: tokens.typography.tracking.wider,
 }
@@ -123,7 +123,7 @@ export function ButtonStudy() {
         ...andromedaVars(),
         minHeight: '100vh',
         boxSizing: 'border-box',
-        background: tokens.color.surface.base,
+        background: `var(--at-surface-base, ${tokens.color.surface.base})`,
         padding: `${tokens.spacing[10]} ${tokens.spacing[8]}`,
       }}
     >
@@ -133,7 +133,7 @@ export function ButtonStudy() {
             margin: 0,
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size['3xl'],
-            color: tokens.color.text.primary,
+            color: `var(--at-text-primary, ${tokens.color.text.primary})`,
             letterSpacing: tokens.typography.tracking.wide,
           }}
         >
@@ -146,7 +146,7 @@ export function ButtonStudy() {
             maxWidth: '70ch',
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.md,
-            color: tokens.color.text.secondary,
+            color: `var(--at-text-secondary, ${tokens.color.text.secondary})`,
             lineHeight: tokens.typography.lineHeight.relaxed,
           }}
         >
@@ -161,22 +161,22 @@ export function ButtonStudy() {
             <section
               key={c.id}
               style={{
-                background: tokens.color.surface.raised,
-                border: `1px solid ${tokens.color.border.subtle}`,
+                background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
+                border: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
                 borderRadius: '12px',
               }}
             >
               <div
                 style={{
                   padding: `${tokens.spacing[3]} ${tokens.spacing[5]}`,
-                  borderBottom: `1px solid ${tokens.color.border.subtle}`,
+                  borderBottom: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
                 }}
               >
                 <div
                   style={{
                     fontFamily: tokens.typography.fontMono,
                     fontSize: tokens.typography.size.md,
-                    color: tokens.color.text.primary,
+                    color: `var(--at-text-primary, ${tokens.color.text.primary})`,
                     letterSpacing: tokens.typography.tracking.wide,
                   }}
                 >
@@ -187,7 +187,7 @@ export function ButtonStudy() {
                     marginTop: tokens.spacing[1],
                     fontFamily: tokens.typography.fontMono,
                     fontSize: tokens.typography.size.sm,
-                    color: tokens.color.text.secondary,
+                    color: `var(--at-text-secondary, ${tokens.color.text.secondary})`,
                     lineHeight: tokens.typography.lineHeight.relaxed,
                   }}
                 >

@@ -74,7 +74,7 @@ const jetbrainsMono = JetBrains_Mono({
 function withCode(text: string) {
   return text.split(/(`[^`]+`)/g).map((part, i) =>
     part.length > 2 && part.startsWith('`') && part.endsWith('`') ? (
-      <code key={i} style={{ fontFamily: 'inherit', color: tokens.color.text.primary }}>
+      <code key={i} style={{ fontFamily: 'inherit', color: `var(--at-text-primary, ${tokens.color.text.primary})` }}>
         {part.slice(1, -1)}
       </code>
     ) : (
@@ -133,7 +133,7 @@ function Section({
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.sm,
-              color: tokens.color.text.muted,
+              color: `var(--at-text-muted, ${tokens.color.text.muted})`,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
             }}
@@ -169,7 +169,7 @@ function Section({
               // which is the UI-LABEL treatment — wrong for a paragraph, and
               // the reason every prop name in here lost its camel hump.
               fontSize: tokens.typography.size.md,
-              color: tokens.color.text.secondary,
+              color: `var(--at-text-secondary, ${tokens.color.text.secondary})`,
               letterSpacing: tokens.typography.tracking.normal,
               lineHeight: tokens.typography.lineHeight.relaxed,
             }}
@@ -192,7 +192,7 @@ function Row({ label, children }: { label?: string; children: ReactNode }) {
             marginBottom: tokens.spacing[3],
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.sm,
-            color: tokens.color.text.faint,
+            color: `var(--at-text-faint, ${tokens.color.text.faint})`,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}
@@ -233,7 +233,7 @@ function ComponentRail() {
         style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.muted,
+          color: `var(--at-text-muted, ${tokens.color.text.muted})`,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.widest,
           marginBottom: tokens.spacing[2],
@@ -247,7 +247,7 @@ function ComponentRail() {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.muted,
+              color: `var(--at-text-muted, ${tokens.color.text.muted})`,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
               marginTop: tokens.spacing[3],
@@ -264,7 +264,7 @@ function ComponentRail() {
                 fontSize: tokens.typography.size.xs,
                 letterSpacing: tokens.typography.tracking.wider,
                 textDecoration: 'none',
-                color: tokens.color.text.secondary,
+                color: `var(--at-text-secondary, ${tokens.color.text.secondary})`,
               }}
             >
               {m.name}
@@ -302,7 +302,7 @@ export default function AndromedaShowcase({
         minHeight: '100vh',
         width: '100%',
         boxSizing: 'border-box',
-        backgroundColor: tokens.color.surface.base,
+        backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})`,
         // All-longhand (no `padding` shorthand) so paddingBottom isn't clobbered.
         paddingTop: tokens.spacing[10],
         paddingLeft: tokens.spacing[8],
@@ -432,10 +432,10 @@ export default function AndromedaShowcase({
               { name: 'accent.500', color: tokens.color.accent[500], note: 'Glow halos · tinted fills' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
@@ -449,10 +449,10 @@ export default function AndromedaShowcase({
               { name: 'warning.500', color: tokens.color.warning[500], note: 'Subtle fill' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
@@ -466,10 +466,10 @@ export default function AndromedaShowcase({
               { name: 'danger.500', color: tokens.color.danger[500], note: 'Subtle fill' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
@@ -482,10 +482,10 @@ export default function AndromedaShowcase({
               { name: 'surface.alpha', color: tokens.color.surface.alpha, note: 'Modal scrim · backdrop' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
@@ -499,10 +499,10 @@ export default function AndromedaShowcase({
               { name: 'surface.active',  color: tokens.color.surface.active,  note: 'Pressed state' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: `var(--at-${name.replace('.', '-')}, ${color})`, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
@@ -515,10 +515,10 @@ export default function AndromedaShowcase({
               { name: 'border.strong', color: tokens.color.border.strong, note: 'High emphasis' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, border: `1px solid ${color}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, border: `1px solid var(--at-${name.replace('.', '-')}, ${color})`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
@@ -531,18 +531,18 @@ export default function AndromedaShowcase({
               { name: 'text.faint',     color: tokens.color.text.faint,     note: 'Labels · hints' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, border: `1px solid ${tokens.color.border.base}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: tokens.spacing[2] }}>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.md, color, letterSpacing: '0.1em' }}>Aa 01</span>
+                <div style={{ height: 48, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: tokens.spacing[2] }}>
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.md, color: `var(--at-${name.replace('.', '-')}, ${color})`, letterSpacing: '0.1em' }}>Aa 01</span>
                 </div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
 
           <div>
-            <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
+            <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
               Usage Reference
             </div>
             <div className="as-usage-grid" style={{ display: 'grid', gap: tokens.spacing[2] }}>
@@ -564,9 +564,9 @@ export default function AndromedaShowcase({
                 { role: 'Modal scrim',         token: 'surface.alpha' },
                 { role: 'Toned surface',       token: 'accent / warning / danger .alpha' },
               ].map(({ role, token }) => (
-                <div key={role} style={{ padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`, background: tokens.color.surface.raised, border: `1px solid ${tokens.color.border.subtle}` }}>
-                  <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider, marginBottom: tokens.spacing[1] }}>{role}</div>
-                  <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[100] }}>{token}</div>
+                <div key={role} style={{ padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`, background: `var(--at-surface-raised, ${tokens.color.surface.raised})`, border: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})` }}>
+                  <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-muted, ${tokens.color.text.muted})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider, marginBottom: tokens.spacing[1] }}>{role}</div>
+                  <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-100, ${tokens.color.accent[100]})` }}>{token}</div>
                 </div>
               ))}
             </div>
@@ -580,7 +580,7 @@ export default function AndromedaShowcase({
           description="JetBrains Mono is the only typeface. Both fontSans and fontMono resolve to it, and the distinction exists only for backward compatibility. Hierarchy comes from size, weight, and letter-spacing, not from switching families."
         >
           <div style={{ marginBottom: tokens.spacing[5] }}>
-            <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
+            <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
               Type Scale
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -596,11 +596,11 @@ export default function AndromedaShowcase({
                 { token: '5xl', px: '36px', usage: 'Dashboard hero readout' },
                 { token: '6xl', px: '48px', usage: 'Stat primary value' },
               ].map(({ token, px, usage }) => (
-                <div key={token} style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[4], padding: `${tokens.spacing[2]} 0`, borderBottom: `1px solid ${tokens.color.border.subtle}` }}>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest, width: 28, flexShrink: 0 }}>{token}</span>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, width: 32, flexShrink: 0 }}>{px}</span>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: px, color: tokens.color.text.primary, letterSpacing: tokens.typography.tracking.wide, lineHeight: 1.1, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}>ANDROMEDA</span>
-                  <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, flexShrink: 0, textAlign: 'right' }}>{usage}</span>
+                <div key={token} style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[4], padding: `${tokens.spacing[2]} 0`, borderBottom: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})` }}>
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-muted, ${tokens.color.text.muted})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest, width: 28, flexShrink: 0 }}>{token}</span>
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, width: 32, flexShrink: 0 }}>{px}</span>
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: px, color: `var(--at-text-primary, ${tokens.color.text.primary})`, letterSpacing: tokens.typography.tracking.wide, lineHeight: 1.1, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}>ANDROMEDA</span>
+                  <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, flexShrink: 0, textAlign: 'right' }}>{usage}</span>
                 </div>
               ))}
             </div>
@@ -615,9 +615,9 @@ export default function AndromedaShowcase({
               { name: 'bold',     val: 700 },
             ].map(({ name, val }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size['3xl'], fontWeight: val, color: tokens.color.text.primary, letterSpacing: tokens.typography.tracking.wider, marginBottom: tokens.spacing[1] }}>NOVA</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>weight.{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint }}>{val}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size['3xl'], fontWeight: val, color: `var(--at-text-primary, ${tokens.color.text.primary})`, letterSpacing: tokens.typography.tracking.wider, marginBottom: tokens.spacing[1] }}>NOVA</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>weight.{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})` }}>{val}</div>
               </div>
             ))}
           </Row>
@@ -631,10 +631,10 @@ export default function AndromedaShowcase({
               { name: 'widest', val: '0.22em',  usage: 'Kickers · row heads' },
             ].map(({ name, val, usage }) => (
               <div key={name} style={{ width: 160 }}>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.md, fontWeight: 500, color: tokens.color.text.primary, letterSpacing: val, textTransform: 'uppercase', marginBottom: tokens.spacing[1] }}>TRACKING</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>tracking.{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted }}>{val || '0'}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1] }}>{usage}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.md, fontWeight: 500, color: `var(--at-text-primary, ${tokens.color.text.primary})`, letterSpacing: val, textTransform: 'uppercase', marginBottom: tokens.spacing[1] }}>TRACKING</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>tracking.{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-muted, ${tokens.color.text.muted})` }}>{val || '0'}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1] }}>{usage}</div>
               </div>
             ))}
           </Row>
@@ -665,13 +665,13 @@ export default function AndromedaShowcase({
                   alignItems: 'center',
                   gap: tokens.spacing[4],
                   padding: `${tokens.spacing[2]} 0`,
-                  borderBottom: `1px solid ${tokens.color.border.subtle}`,
+                  borderBottom: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
                 }}
               >
-                <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest, width: 110, flexShrink: 0 }}>
+                <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-muted, ${tokens.color.text.muted})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest, width: 110, flexShrink: 0 }}>
                   {`spacing.${token}`}
                 </span>
-                <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, width: 36, flexShrink: 0 }}>
+                <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, width: 36, flexShrink: 0 }}>
                   {px}
                 </span>
                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}>
@@ -680,12 +680,12 @@ export default function AndromedaShowcase({
                     style={{
                       width: px,
                       height: 8,
-                      background: tokens.color.text.primary,
+                      background: `var(--at-text-primary, ${tokens.color.text.primary})`,
                       flexShrink: 0,
                     }}
                   />
                 </div>
-                <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, flexShrink: 0, textAlign: 'right' }}>
+                <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, flexShrink: 0, textAlign: 'right' }}>
                   {usage}
                 </span>
               </div>
@@ -724,7 +724,7 @@ export default function AndromedaShowcase({
                   style={{
                     fontFamily: tokens.typography.fontMono,
                     fontSize: tokens.typography.size.textSm,
-                    color: tokens.color.text.muted,
+                    color: `var(--at-text-muted, ${tokens.color.text.muted})`,
                     textTransform: 'uppercase',
                     letterSpacing: tokens.typography.tracking.widest,
                     margin: 0,

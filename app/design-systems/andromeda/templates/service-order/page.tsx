@@ -37,7 +37,7 @@ export default async function ServiceOrderTemplate({
           a growing wrapper here would just clip below the fold. */}
       <div
         className="relative min-h-full w-full md:h-full md:overflow-hidden"
-        style={{ backgroundColor: tokens.color.surface.base }}
+        style={{ backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }}
       >
         <ServiceOrder />
       </div>
