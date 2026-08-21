@@ -24,7 +24,7 @@ export const searchField: MatrixSpec = {
     { label: 'Default', props: {} },
     { label: 'Custom shortcut', props: { shortcut: '⌘ F' } },
     { label: 'No shortcut', props: { shortcut: null } },
-    { label: 'With value', props: { defaultValue: 'orbital launch' } },
+    { label: 'With value', props: { defaultValue: 'invoice 2043' } },
   ],
   states: [{ label: 'Disabled', props: { disabled: true } }],
   gaps: {

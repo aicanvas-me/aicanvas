@@ -33,7 +33,7 @@ export const mediaCard: MatrixSpec = {
       props: {
         layout: 'stacked',
         code: 'CH-12',
-        title: 'Reactor telemetry',
+        title: 'Late night',
         // A sentence, not a label: stacked's meta is body copy, and a two-word
         // stub would not show that the line wraps and reads as a description.
         meta: 'Continuous readings from the outer coil array, refreshed every few seconds.',
@@ -49,7 +49,7 @@ export const mediaCard: MatrixSpec = {
       props: {
         layout: 'stacked-pinned',
         code: 'CH-12',
-        title: 'Reactor telemetry',
+        title: 'Late night',
         meta: 'Continuous readings from the outer coil array, refreshed every few seconds.',
         action: 'cta',
         ctaLabel: 'Discover more',

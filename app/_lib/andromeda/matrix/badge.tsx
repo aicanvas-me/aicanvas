@@ -6,7 +6,7 @@ export const badge: MatrixSpec = {
   slug: 'badge',
   Component: Badge,
   sizes: ['sm', 'md', 'lg'],
-  children: 'Nominal',
+  children: 'Active',
   variants: [
     { label: 'Default', props: { variant: 'default' } },
     { label: 'Accent', props: { variant: 'accent' } },

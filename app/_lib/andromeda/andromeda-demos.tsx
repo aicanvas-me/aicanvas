@@ -223,7 +223,7 @@ function ButtonDemo() {
       <Row label="With icon">
         <Button icon={Bell}>Notifications</Button>
         <Button variant="outline" icon={Gear}>Settings</Button>
-        <Button variant="destructive" icon={Bell}>Abort</Button>
+        <Button variant="destructive" icon={Bell}>Delete</Button>
       </Row>
       <Row label="Disabled">
         <Button disabled>Default</Button>
@@ -329,7 +329,7 @@ function CardDemo() {
           <CardDescription>Tinted accent gradient surface.</CardDescription>
         </CardContent>
         <CardFooter>
-          <Button size="sm">Engage</Button>
+          <Button size="sm">Save</Button>
         </CardFooter>
       </Card>
     </div>
@@ -381,7 +381,7 @@ function InputDemo() {
       <Row label="Sizes">
         <SizeRamp
           direction="column"
-          render={(s) => <Input size={s} placeholder="ENTER CALLSIGN" style={{ width: 260 }} />}
+          render={(s) => <Input size={s} placeholder="Enter a display name" style={{ width: 260 }} />}
         />
       </Row>
       <div
@@ -393,9 +393,9 @@ function InputDemo() {
           width: '100%',
         }}
       >
-        <Input label="Callsign" placeholder="ENTER CALLSIGN" />
-        <Input label="Search" icon={MagnifyingGlass} placeholder="QUERY DATABASE" />
-        <Input label="Email" icon={Envelope} placeholder="OPERATOR@DOMAIN.COM" />
+        <Input label="Display name" placeholder="Enter a display name" />
+        <Input label="Search" icon={MagnifyingGlass} placeholder="Search" />
+        <Input label="Email" icon={Envelope} placeholder="you@company.com" />
         <Input label="Validation" defaultValue="INVALID" error="Field cannot be empty" />
       </div>
     </div>
@@ -422,7 +422,7 @@ function SearchFieldDemo() {
       <SearchField placeholder="Search anything" />
       <SearchField placeholder="Search tracks, channels, waveforms" shortcut="⌘ F" />
       <SearchField placeholder="No shortcut" shortcut={null} />
-      <SearchField defaultValue="orbital launch" />
+      <SearchField defaultValue="invoice 2043" />
     </div>
   )
 }
@@ -601,8 +601,8 @@ function GaugeDemo() {
       </Row>
       <Row label="Variants">
         <Gauge variant="accent" value={82} label="CPU" />
-        <Gauge variant="warning" value={64} label="FUEL" />
-        <Gauge variant="fault" value={12} label="O2" />
+        <Gauge variant="warning" value={64} label="BATTERY" />
+        <Gauge variant="fault" value={12} label="DISK FREE" />
       </Row>
     </div>
   )
@@ -759,9 +759,9 @@ function ChoiceCardDemo() {
   // resting siblings, the approved matrix look at md.
   return (
     <div style={{ width: '100%', maxWidth: 480, display: 'flex', flexDirection: 'column', gap: 12 }}>
-      <ChoiceCard control="radio" title="Standard orbit" description="Default trajectory, lowest fuel cost" value="standard" />
-      <ChoiceCard control="radio" title="Transfer window" description="Faster arrival, single burn commitment" value="transfer" defaultChecked />
-      <ChoiceCard control="radio" title="Manual approach" description="Full control, all corrections yours" value="manual" />
+      <ChoiceCard control="radio" title="Standard" description="Balanced speed and cost." value="standard" />
+      <ChoiceCard control="radio" title="Express" description="Faster, at a higher cost." value="express" defaultChecked />
+      <ChoiceCard control="radio" title="Custom" description="Full control over every setting." value="custom" />
     </div>
   )
 }
@@ -911,8 +911,8 @@ function SliderDemo() {
           render={(s) => <Slider size={s} value={64} showValue={false} style={{ width: 300 }} />}
         />
       </Row>
-      <Slider label="Throttle" unit="%" value={a} onValueChange={setA} />
-      <Slider label="Thrust Vector" unit="°" min={-30} max={30} value={b} onValueChange={setB} />
+      <Slider label="Volume" unit="%" value={a} onValueChange={setA} />
+      <Slider label="Rotation" unit="°" min={-30} max={30} value={b} onValueChange={setB} />
       <Slider label="Locked" value={50} disabled />
     </div>
   )
@@ -924,7 +924,7 @@ function TextareaDemo() {
       <Row label="Sizes">
         <SizeRamp
           direction="column"
-          render={(s) => <Textarea size={s} placeholder="ENTER DESCRIPTION…" rows={2} style={{ width: 300 }} />}
+          render={(s) => <Textarea size={s} placeholder="Add a description" rows={2} style={{ width: 300 }} />}
         />
       </Row>
       <div
@@ -936,7 +936,7 @@ function TextareaDemo() {
           width: '100%',
         }}
       >
-        <Textarea label="Description" placeholder="ENTER DESCRIPTION…" rows={4} />
+        <Textarea label="Description" placeholder="Add a description" rows={4} />
         <Textarea label="Validation" defaultValue="TOO SHORT" error="Brief must be at least 80 characters" rows={4} />
       </div>
     </div>
@@ -949,22 +949,22 @@ function AlertDemo() {
       <Alert variant="default">
         <AlertIcon><Info weight="light" /></AlertIcon>
         <AlertContent>
-          <AlertTitle>System nominal</AlertTitle>
-          <AlertDescription>All systems reporting in.</AlertDescription>
+          <AlertTitle>All good</AlertTitle>
+          <AlertDescription>Every service is running normally.</AlertDescription>
         </AlertContent>
       </Alert>
       <Alert variant="accent">
         <AlertIcon><Pulse weight="light" /></AlertIcon>
         <AlertContent>
           <AlertTitle>New activity</AlertTitle>
-          <AlertDescription>Burst received from VHCL-04.</AlertDescription>
+          <AlertDescription>3 new events in the last hour.</AlertDescription>
         </AlertContent>
       </Alert>
       <Alert variant="warning">
         <AlertIcon><Warning weight="light" /></AlertIcon>
         <AlertContent>
           <AlertTitle>Caution</AlertTitle>
-          <AlertDescription>Heat shield within 12% of operational limit.</AlertDescription>
+          <AlertDescription>Storage is at 88% of your limit.</AlertDescription>
         </AlertContent>
       </Alert>
       <Alert variant="fault">
@@ -984,7 +984,7 @@ function EmptyStateDemo() {
       <EmptyStateIcon><EnvelopeOpen weight="light" /></EmptyStateIcon>
       <EmptyStateTitle>No activity</EmptyStateTitle>
       <EmptyStateDescription>
-        Awaiting signal from the deep-space array. The next pass is in
+        Nothing has happened in the last 30 days. New events arrive
         approximately 14 minutes.
       </EmptyStateDescription>
       <EmptyStateAction>
@@ -998,11 +998,11 @@ function EmptyStateDemo() {
 function RadarChartDemo() {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: tokens.spacing[5], width: '100%' }}>
-      <RadarChart label="/// Systems" title="Ship Diagnostics" />
+      <RadarChart label="/// Services" title="Service health" />
       <RadarChart
         label="/// Performance"
         title="System Performance"
-        description="Current system readiness"
+        description="Current performance by area"
         data={[
           { axis: 'CPU', score: 94 },
           { axis: 'MEMORY', score: 81 },
@@ -1011,7 +1011,7 @@ function RadarChartDemo() {
           { axis: 'SECURITY', score: 65 },
           { axis: 'API', score: 90 },
         ]}
-        series={[{ key: 'score', label: 'Readiness', color: tokens.color.accent[300] }]}
+        series={[{ key: 'score', label: 'Score', color: tokens.color.accent[300] }]}
       />
     </div>
   )
@@ -1211,7 +1211,7 @@ function DateRangePickerDemo() {
 // dividers"). DrawerBody already pads content by var(--andromeda-3) = 12px,
 // so a full-width hairline here lands exactly on that inset with no extra
 // positioning needed.
-const PREFLIGHT_STYLE = {
+const CHECKLIST_STYLE = {
   groupLabel: {
     fontFamily: 'var(--andromeda-font-mono)',
     fontSize: 'var(--andromeda-text-sm)',
@@ -1270,49 +1270,49 @@ function DrawerDemo() {
       </Row>
       <Drawer open={open} onOpenChange={setOpen} side="right" size={420}>
         <DrawerHeader>
-          <DrawerTitle>System Parameters</DrawerTitle>
-          <DrawerDescription>Configure flight envelope</DrawerDescription>
+          <DrawerTitle>Workspace settings</DrawerTitle>
+          <DrawerDescription>Configure how this workspace behaves</DrawerDescription>
         </DrawerHeader>
         <DrawerBody>
           <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5] }}>
-            <Input label="Callsign" placeholder="ENTER CALLSIGN" />
-            <Toggle label="Autopilot" defaultChecked />
+            <Input label="Display name" placeholder="Enter a display name" />
+            <Toggle label="Auto-save" defaultChecked />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--andromeda-3)' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--andromeda-2)' }}>
-                <span style={PREFLIGHT_STYLE.groupLabel}>PRE-FLIGHT</span>
-                <p style={PREFLIGHT_STYLE.lead}>Confirm each item before the envelope is committed.</p>
-                <ul style={PREFLIGHT_STYLE.list}>
-                  <li style={PREFLIGHT_STYLE.li}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Callsign registered with control</span>
+                <span style={CHECKLIST_STYLE.groupLabel}>CHECKLIST</span>
+                <p style={CHECKLIST_STYLE.lead}>Confirm each item before saving.</p>
+                <ul style={CHECKLIST_STYLE.list}>
+                  <li style={CHECKLIST_STYLE.li}>
+                    <span style={CHECKLIST_STYLE.bulletText}>Display name is available</span>
                   </li>
-                  <li style={PREFLIGHT_STYLE.li}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Autopilot handshake verified</span>
-                    <ul style={PREFLIGHT_STYLE.subList}>
-                      <li style={PREFLIGHT_STYLE.subLi}>
-                        <span style={PREFLIGHT_STYLE.subBulletText}>Failsafe RTB armed</span>
+                  <li style={CHECKLIST_STYLE.li}>
+                    <span style={CHECKLIST_STYLE.bulletText}>Auto-save is connected</span>
+                    <ul style={CHECKLIST_STYLE.subList}>
+                      <li style={CHECKLIST_STYLE.subLi}>
+                        <span style={CHECKLIST_STYLE.subBulletText}>Backups run nightly</span>
                       </li>
-                      <li style={PREFLIGHT_STYLE.subLi}>
-                        <span style={PREFLIGHT_STYLE.subBulletText}>Telemetry uplink at 100%</span>
+                      <li style={CHECKLIST_STYLE.subLi}>
+                        <span style={CHECKLIST_STYLE.subBulletText}>Sync is up to date</span>
                       </li>
                     </ul>
                   </li>
-                  <li style={PREFLIGHT_STYLE.liLast}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Ceiling and G limits within class</span>
+                  <li style={CHECKLIST_STYLE.liLast}>
+                    <span style={CHECKLIST_STYLE.bulletText}>Usage is within your plan</span>
                   </li>
                 </ul>
               </div>
-              <div aria-hidden style={PREFLIGHT_STYLE.divider} />
+              <div aria-hidden style={CHECKLIST_STYLE.divider} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--andromeda-2)' }}>
-                <span style={PREFLIGHT_STYLE.groupLabel}>LIMITS</span>
-                <ul style={PREFLIGHT_STYLE.list}>
-                  <li style={PREFLIGHT_STYLE.li}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Service ceiling 41,000 ft</span>
+                <span style={CHECKLIST_STYLE.groupLabel}>LIMITS</span>
+                <ul style={CHECKLIST_STYLE.list}>
+                  <li style={CHECKLIST_STYLE.li}>
+                    <span style={CHECKLIST_STYLE.bulletText}>50 GB of storage</span>
                   </li>
-                  <li style={PREFLIGHT_STYLE.li}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Max sustained 2.5 G</span>
+                  <li style={CHECKLIST_STYLE.li}>
+                    <span style={CHECKLIST_STYLE.bulletText}>10 seats included</span>
                   </li>
-                  <li style={PREFLIGHT_STYLE.liLast}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Fuel margin 12% minimum</span>
+                  <li style={CHECKLIST_STYLE.liLast}>
+                    <span style={CHECKLIST_STYLE.bulletText}>20% of storage kept free</span>
                   </li>
                 </ul>
               </div>
@@ -1320,7 +1320,7 @@ function DrawerDemo() {
           </div>
         </DrawerBody>
         <DrawerFooter>
-          <Button size="sm" onClick={() => setOpen(false)}>Engage</Button>
+          <Button size="sm" onClick={() => setOpen(false)}>Save</Button>
           <Button variant="outline" size="sm" onClick={() => setOpen(false)}>Cancel</Button>
         </DrawerFooter>
       </Drawer>
@@ -1391,7 +1391,7 @@ function UserCardDemo() {
           <div style={{ width: '100%', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
             <UserCard
               name="Reza Quinn"
-              role="Flight Director"
+              role="Product Designer"
               src={USER_CARD_SRC}
               status="online"
               items={USER_MENU_ITEMS}
@@ -1406,7 +1406,7 @@ function UserCardDemo() {
           <div style={{ width: '100%', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
             <UserCard
               name="Reza Quinn"
-              role="Flight Director"
+              role="Product Designer"
               src={USER_CARD_SRC}
               status="online"
               items={USER_MENU_ITEMS}
@@ -1425,7 +1425,7 @@ function UserCardDemo() {
               <div style={{ width: 200, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
                 <UserCard
                   name="Reza Quinn"
-                  role="Flight Director"
+                  role="Product Designer"
                   src={USER_CARD_SRC}
                   status="online"
                   size={s}

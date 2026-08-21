@@ -37,17 +37,17 @@ export const alert: MatrixSpec = {
     {
       label: 'Default',
       props: { variant: 'default' },
-      children: body(Info, 'System nominal', 'All systems reporting in.'),
+      children: body(Info, 'All good', 'Every service is running normally.'),
     },
     {
       label: 'Accent',
       props: { variant: 'accent' },
-      children: body(Pulse, 'New activity', 'Burst received from VHCL-04.'),
+      children: body(Pulse, 'New activity', '3 new events in the last hour.'),
     },
     {
       label: 'Warning',
       props: { variant: 'warning' },
-      children: body(Warning, 'Caution', 'Heat shield within 12% of limit.'),
+      children: body(Warning, 'Caution', 'Storage is at 88% of your limit.'),
     },
     {
       label: 'Fault',

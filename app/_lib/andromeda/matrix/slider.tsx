@@ -11,14 +11,14 @@ import type { MatrixSpec } from './types'
 // tracking it. Carried over from the system page's hand-written section in the
 // 2026-08-09 collapse.
 function LiveSlider() {
-  const [throttle, setThrottle] = useState(64)
+  const [volume, setVolume] = useState(64)
   const [vector, setVector] = useState(12)
   const [budget, setBudget] = useState<[number, number]>([190, 800])
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5], width: '100%' }}>
-      <Slider label="Throttle" unit="%" value={throttle} onValueChange={setThrottle} />
-      <Slider label="Thrust vector" unit="°" min={-30} max={30} value={vector} onValueChange={setVector} />
-      <Slider label="Mission budget" unit=" CR" min={0} max={1000} step={10} value={budget} onValueChange={setBudget} />
+      <Slider label="Volume" unit="%" value={volume} onValueChange={setVolume} />
+      <Slider label="Rotation" unit="°" min={-30} max={30} value={vector} onValueChange={setVector} />
+      <Slider label="Price range" unit=" USD" min={0} max={1000} step={10} value={budget} onValueChange={setBudget} />
     </div>
   )
 }
@@ -42,11 +42,11 @@ export const slider: MatrixSpec = {
   variants: [
     { label: 'Live', node: <LiveSlider /> },
     { label: 'Default', props: { showValue: false } },
-    { label: 'Labelled', props: { label: 'Throttle', unit: '%' } },
+    { label: 'Labelled', props: { label: 'Volume', unit: '%' } },
     { label: 'At minimum', props: { value: 0, showValue: false } },
     // A tuple enters two-thumb mode. Worth its own case at every rung: the pair
     // anchors by its inner edges, and sm is where a 6px thumb makes that read.
-    { label: 'Two thumbs', props: { label: 'Mission budget', unit: ' CR', min: 0, max: 1000, step: 10, value: [190, 800] } },
+    { label: 'Two thumbs', props: { label: 'Price range', unit: ' USD', min: 0, max: 1000, step: 10, value: [190, 800] } },
   ],
   states: [
     // Both live on the thumb: a 1.25 scale on hover and an accent ring on

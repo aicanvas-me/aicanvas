@@ -16,18 +16,18 @@ export const radarChart: MatrixSpec = {
   sizes: null,
   wide: true,
   variants: [
-    { label: 'Defaults', props: { label: '/// Systems', title: 'Ship diagnostics' } },
+    { label: 'Defaults', props: { label: '/// Services', title: 'Service health' } },
     {
       label: 'Own data',
       props: {
         label: '/// Performance',
         title: 'System performance',
-        description: 'Current system readiness',
+        description: 'Current performance by area',
         data: DATA,
         // No `color`: recharts writes stroke/fill as SVG ATTRIBUTES, where a
         // var() string cannot resolve, so a colour pinned here is frozen at the
         // dark ramp. Left off, the chart resolves its own live series ink.
-        series: [{ key: 'score', label: 'Readiness' }],
+        series: [{ key: 'score', label: 'Score' }],
       },
     },
   ],

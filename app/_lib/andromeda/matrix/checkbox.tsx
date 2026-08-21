@@ -5,7 +5,7 @@ export const checkbox: MatrixSpec = {
   slug: 'checkbox',
   Component: Checkbox,
   sizes: ['md', 'lg'],
-  baseProps: { label: 'Pre-flight' },
+  baseProps: { label: 'Email notifications' },
   variants: [
     { label: 'Unchecked', props: {} },
     { label: 'Checked', props: { defaultChecked: true } },

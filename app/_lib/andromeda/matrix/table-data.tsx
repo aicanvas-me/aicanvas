@@ -15,9 +15,9 @@ import type { MatrixSpec } from './types'
 // mirror that consumer's SHAPE — a `render` cell, a two-line primary, a visual
 // cell that folds to text — without importing its data or its player state.
 const ROWS = [
-  { id: 'track-01', track: 'Signal Drift',  artist: 'Vela Array',    duration: '03:42', plays: '128.4K', peak: 62, last: 'T-02m' },
-  { id: 'track-02', track: 'Night Transit', artist: 'Polar Relay',   duration: '04:18', plays: '96.8K',  peak: 91, last: 'T-17m' },
-  { id: 'track-03', track: 'Low Orbit',     artist: 'Kepler Static', duration: '02:56', plays: '74.2K',  peak: 48, last: 'T-41m' },
+  { id: 'track-01', track: 'Night Drive',  artist: 'The Meridians',    duration: '03:42', plays: '128.4K', peak: 62, last: '2m ago' },
+  { id: 'track-02', track: 'Slow Light', artist: 'Ada Reyes',   duration: '04:18', plays: '96.8K',  peak: 91, last: '17m ago' },
+  { id: 'track-03', track: 'Open Water',     artist: 'Kestrel', duration: '02:56', plays: '74.2K',  peak: 48, last: '41m ago' },
 ]
 
 function PeakBar({ value }) {

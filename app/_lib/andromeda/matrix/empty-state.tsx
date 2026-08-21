@@ -42,7 +42,7 @@ export const emptyState: MatrixSpec = {
           </EmptyStateIcon>
           <EmptyStateTitle>No activity</EmptyStateTitle>
           <EmptyStateDescription>
-            Awaiting signal. The next pass is in about 14 minutes.
+            Events from the last 30 days will appear here.
           </EmptyStateDescription>
           <EmptyStateAction>
             <Button size="sm">Open log</Button>
@@ -62,7 +62,7 @@ export const emptyState: MatrixSpec = {
             <EnvelopeOpen weight="light" />
           </EmptyStateIcon>
           <EmptyStateTitle>No activity</EmptyStateTitle>
-          <EmptyStateDescription>Awaiting signal from the deep-space array.</EmptyStateDescription>
+          <EmptyStateDescription>Nothing has happened in the last 30 days.</EmptyStateDescription>
         </>
       ),
     },
@@ -74,9 +74,9 @@ export const emptyState: MatrixSpec = {
           <EmptyStateIcon>
             <EnvelopeOpen weight="light" />
           </EmptyStateIcon>
-          <EmptyStateTitle>No payload detected</EmptyStateTitle>
+          <EmptyStateTitle>No files yet</EmptyStateTitle>
           <EmptyStateDescription>
-            Drop a mission file here to begin.
+            Drop a file here to get started.
           </EmptyStateDescription>
         </>
       ),
@@ -89,9 +89,9 @@ export const emptyState: MatrixSpec = {
           <EmptyStateMedia>
             <Avatar name="Reza Quinn" src={PORTRAIT} size="lg" />
           </EmptyStateMedia>
-          <EmptyStateTitle>No watch assigned</EmptyStateTitle>
+          <EmptyStateTitle>No tasks assigned</EmptyStateTitle>
           <EmptyStateDescription>
-            Reza Quinn is awaiting a telemetry window.
+            Reza Quinn has nothing scheduled this week.
           </EmptyStateDescription>
         </>
       ),

@@ -11,29 +11,29 @@ import { tokens } from '../../../lib/andromeda-v2.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
 function LiveRadioChoiceCards() {
-  const [value, setValue] = useState('autonomous')
+  const [value, setValue] = useState('automatic')
 
   return (
     // Two columns: a choice group is a comparison, and side by side is how
     // two options get compared. One short line each keeps the pair scannable
     // at a glance instead of turning the row into a paragraph.
     <ChoiceCardGroup
-      aria-label="Flight control mode"
+      aria-label="Deployment mode"
       value={value}
       onValueChange={setValue}
       className="grid grid-cols-2 gap-[var(--andromeda-3)]"
     >
       <ChoiceCard
         control="radio"
-        value="autonomous"
-        title="Autonomous flight"
-        description="Applies approved vectors."
+        value="automatic"
+        title="Automatic"
+        description="Deploys every approved change."
       />
       <ChoiceCard
         control="radio"
-        value="crew"
-        title="Crew-directed flight"
-        description="Crew confirms each vector."
+        value="manual"
+        title="Manual"
+        description="You confirm each change."
       />
     </ChoiceCardGroup>
   )
@@ -49,8 +49,8 @@ export const choiceCard: MatrixSpec = {
   statePairColumns: true,
   baseProps: {
     control: 'checkbox',
-    title: 'Retain telemetry',
-    description: 'Archive the sensor stream.',
+    title: 'Keep activity history',
+    description: 'Store events for 90 days.',
   },
   variants: [
     { label: 'Radio group', node: <LiveRadioChoiceCards /> },
@@ -76,14 +76,14 @@ export const choiceCard: MatrixSpec = {
         >
           <ChoiceCard
             control="checkbox"
-            title="Retain telemetry"
-            description="Archive the sensor stream."
+            title="Keep activity history"
+            description="Store events for 90 days."
             defaultChecked
           />
           <ChoiceCard
             control="checkbox"
-            title="Relay diagnostics"
-            description="Forward fault codes home."
+            title="Send crash reports"
+            description="Share errors so we can fix them."
           />
         </div>
       ),
@@ -105,14 +105,14 @@ export const choiceCard: MatrixSpec = {
         >
           <ChoiceCard
             control="toggle"
-            title="Beacon uplink"
-            description="Transmit status to the relay."
+            title="Status updates"
+            description="Post status to your team channel."
             defaultChecked
           />
           <ChoiceCard
             control="toggle"
-            title="Night watch"
-            description="Dim the deck between shifts."
+            title="Night mode"
+            description="Dim the interface after hours."
           />
         </div>
       ),

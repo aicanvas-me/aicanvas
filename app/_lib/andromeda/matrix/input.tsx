@@ -63,7 +63,7 @@ export const input: MatrixSpec = {
       props: {
         label: 'Password',
         type: 'password',
-        defaultValue: 'ORBITAL-7742',
+        defaultValue: 'ND-8830',
         icon: Lock,
       },
     },
@@ -77,6 +77,6 @@ export const input: MatrixSpec = {
     // border comes from focus:, only the ring comes from focus-visible:, so
     // forcing one without the other would show a state users never see.
     { label: 'Error focus', props: { error: 'Value out of range' }, force: 'focus' },
-    { label: 'Filled', props: { defaultValue: 'ORBITAL-7742' } },
+    { label: 'Filled', props: { defaultValue: 'ND-8830' } },
   ],
 }

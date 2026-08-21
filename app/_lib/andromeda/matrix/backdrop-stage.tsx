@@ -17,7 +17,7 @@ const label = {
 }
 
 /** children = the backdrop; caption = the mono line that proves legibility on it. */
-export function BackdropStage({ children, caption = 'Sector 07' }) {
+export function BackdropStage({ children, caption = 'Dashboard' }) {
   return (
     <div
       style={{

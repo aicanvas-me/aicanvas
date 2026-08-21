@@ -46,7 +46,7 @@ export const userCard: MatrixSpec = {
     <div style={{ width: 360, minWidth: 0, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
       <UserCard
         name="Reza Quinn"
-        role="Flight Director"
+        role="Product Designer"
         src={SRC}
         status="online"
         size={size}
@@ -65,7 +65,7 @@ export const userCard: MatrixSpec = {
       label: 'Open up',
       node: (
         <div style={{ width: 360, minWidth: 0, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
-          <UserCard name="Reza Quinn" role="Flight Director" src={SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="top" />
+          <UserCard name="Reza Quinn" role="Product Designer" src={SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="top" />
         </div>
       ),
     },
@@ -73,7 +73,7 @@ export const userCard: MatrixSpec = {
       label: 'Open down',
       node: (
         <div style={{ width: 360, minWidth: 0, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
-          <UserCard name="Reza Quinn" role="Flight Director" src={SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="bottom" />
+          <UserCard name="Reza Quinn" role="Product Designer" src={SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="bottom" />
         </div>
       ),
     },

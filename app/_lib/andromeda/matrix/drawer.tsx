@@ -20,7 +20,7 @@ import type { MatrixSpec } from './types'
 // dividers"). DrawerBody already pads content by var(--andromeda-3) = 12px,
 // so a full-width hairline here lands exactly on that inset with no extra
 // positioning needed.
-const PREFLIGHT_STYLE = {
+const CHECKLIST_STYLE = {
   groupLabel: {
     fontFamily: 'var(--andromeda-font-mono)',
     fontSize: 'var(--andromeda-text-sm)',
@@ -83,49 +83,49 @@ function DrawerCase({ side }: { side: string }) {
       </Button>
       <Drawer open={open} onOpenChange={setOpen} side={side} size={420}>
         <DrawerHeader>
-          <DrawerTitle>System parameters</DrawerTitle>
-          <DrawerDescription>Configure flight envelope</DrawerDescription>
+          <DrawerTitle>Workspace settings</DrawerTitle>
+          <DrawerDescription>Configure how this workspace behaves</DrawerDescription>
         </DrawerHeader>
         <DrawerBody>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            <Input label="Callsign" placeholder="ENTER CALLSIGN" />
-            <Toggle label="Autopilot" defaultChecked />
+            <Input label="Display name" placeholder="Enter a display name" />
+            <Toggle label="Auto-save" defaultChecked />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--andromeda-3)' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--andromeda-2)' }}>
-                <span style={PREFLIGHT_STYLE.groupLabel}>PRE-FLIGHT</span>
-                <p style={PREFLIGHT_STYLE.lead}>Confirm each item before the envelope is committed.</p>
-                <ul style={PREFLIGHT_STYLE.list}>
-                  <li style={PREFLIGHT_STYLE.li}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Callsign registered with control</span>
+                <span style={CHECKLIST_STYLE.groupLabel}>CHECKLIST</span>
+                <p style={CHECKLIST_STYLE.lead}>Confirm each item before saving.</p>
+                <ul style={CHECKLIST_STYLE.list}>
+                  <li style={CHECKLIST_STYLE.li}>
+                    <span style={CHECKLIST_STYLE.bulletText}>Display name is available</span>
                   </li>
-                  <li style={PREFLIGHT_STYLE.li}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Autopilot handshake verified</span>
-                    <ul style={PREFLIGHT_STYLE.subList}>
-                      <li style={PREFLIGHT_STYLE.subLi}>
-                        <span style={PREFLIGHT_STYLE.subBulletText}>Failsafe RTB armed</span>
+                  <li style={CHECKLIST_STYLE.li}>
+                    <span style={CHECKLIST_STYLE.bulletText}>Auto-save is connected</span>
+                    <ul style={CHECKLIST_STYLE.subList}>
+                      <li style={CHECKLIST_STYLE.subLi}>
+                        <span style={CHECKLIST_STYLE.subBulletText}>Backups run nightly</span>
                       </li>
-                      <li style={PREFLIGHT_STYLE.subLi}>
-                        <span style={PREFLIGHT_STYLE.subBulletText}>Telemetry uplink at 100%</span>
+                      <li style={CHECKLIST_STYLE.subLi}>
+                        <span style={CHECKLIST_STYLE.subBulletText}>Sync is up to date</span>
                       </li>
                     </ul>
                   </li>
-                  <li style={PREFLIGHT_STYLE.liLast}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Ceiling and G limits within class</span>
+                  <li style={CHECKLIST_STYLE.liLast}>
+                    <span style={CHECKLIST_STYLE.bulletText}>Usage is within your plan</span>
                   </li>
                 </ul>
               </div>
-              <div aria-hidden style={PREFLIGHT_STYLE.divider} />
+              <div aria-hidden style={CHECKLIST_STYLE.divider} />
               <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--andromeda-2)' }}>
-                <span style={PREFLIGHT_STYLE.groupLabel}>LIMITS</span>
-                <ul style={PREFLIGHT_STYLE.list}>
-                  <li style={PREFLIGHT_STYLE.li}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Service ceiling 41,000 ft</span>
+                <span style={CHECKLIST_STYLE.groupLabel}>LIMITS</span>
+                <ul style={CHECKLIST_STYLE.list}>
+                  <li style={CHECKLIST_STYLE.li}>
+                    <span style={CHECKLIST_STYLE.bulletText}>50 GB of storage</span>
                   </li>
-                  <li style={PREFLIGHT_STYLE.li}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Max sustained 2.5 G</span>
+                  <li style={CHECKLIST_STYLE.li}>
+                    <span style={CHECKLIST_STYLE.bulletText}>10 seats included</span>
                   </li>
-                  <li style={PREFLIGHT_STYLE.liLast}>
-                    <span style={PREFLIGHT_STYLE.bulletText}>Fuel margin 12% minimum</span>
+                  <li style={CHECKLIST_STYLE.liLast}>
+                    <span style={CHECKLIST_STYLE.bulletText}>20% of storage kept free</span>
                   </li>
                 </ul>
               </div>
@@ -134,7 +134,7 @@ function DrawerCase({ side }: { side: string }) {
         </DrawerBody>
         <DrawerFooter>
           <Button size="sm" onClick={() => setOpen(false)}>
-            Engage
+            Save
           </Button>
           <Button variant="outline" size="sm" onClick={() => setOpen(false)}>
             Cancel
