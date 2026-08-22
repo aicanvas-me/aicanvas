@@ -21,6 +21,7 @@ import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { Button, buttonClasses } from '../components/Button'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
+import { AndromedaThemeToggle } from '../design-systems/andromeda/AndromedaThemeWrap'
 import dynamic from 'next/dynamic'
 // The dot-grid standalone, reused as the mobile preview backdrop. Loaded
 // dynamically (client-only) so it never enters the initial page bundle — it
@@ -459,8 +460,11 @@ function TopBar({
 
         {/* Device toggles (Desktop / Mobile) + Replay — sized to match the
             right-side buttons (~32px). Shown from md up; the cluster hides on a
-            real phone, where you already see the responsive layout. */}
-        <div className="hidden items-center gap-0.5 justify-self-center rounded-lg border border-sand-300 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
+            real phone, where you already see the responsive layout. The theme
+            toggle beside it renders only inside an AndromedaThemeWrap, so
+            other systems' templates carry no dead control. */}
+        <div className="hidden items-center gap-2 justify-self-center md:flex">
+        <div className="flex items-center gap-0.5 rounded-lg border border-sand-300 bg-sand-100 p-0.5 dark:border-sand-800 dark:bg-sand-900">
           {DEVICE_ORDER.map(({ key, label, icon: Icon }) => {
             const active = device === key
             return (
@@ -490,6 +494,8 @@ function TopBar({
           >
             <ArrowClockwise weight="regular" size={15} />
           </button>
+        </div>
+        <AndromedaThemeToggle />
         </div>
 
         {/* Right — entitlement CTA + auth */}

@@ -1,6 +1,7 @@
 // @ts-nocheck — consumes Andromeda tokens which are not type-checked yet.
 import { ServiceOrder } from '../../../../lib/andromeda-v2-examples.generated'
 import { tokens } from '../../../../lib/andromeda-v2.generated'
+import { AndromedaThemeWrap } from '../../AndromedaThemeWrap'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
@@ -23,6 +24,7 @@ export default async function ServiceOrderTemplate({
 }) {
   const frame = (await searchParams).frame === '1'
   return (
+    <AndromedaThemeWrap>
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-service-order"
@@ -42,5 +44,6 @@ export default async function ServiceOrderTemplate({
         <ServiceOrder />
       </div>
     </TemplatePreviewShell>
+    </AndromedaThemeWrap>
   )
 }
