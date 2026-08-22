@@ -24,7 +24,7 @@ export default async function SignalRoomTemplate({
 }) {
   const frame = (await searchParams).frame === '1'
   return (
-    <AndromedaThemeWrap>
+    <AndromedaThemeWrap className="contents">
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-signal-room"

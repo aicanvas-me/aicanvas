@@ -19,7 +19,7 @@ export default async function SignInTemplate({
 }) {
   const frame = (await searchParams).frame === '1'
   return (
-    <AndromedaThemeWrap>
+    <AndromedaThemeWrap className="contents">
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-sign-in"

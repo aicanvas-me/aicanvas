@@ -25,7 +25,11 @@ const ThemeCtx = createContext<{
   setTheme: (t: AndromedaTheme) => void
 } | null>(null)
 
-export function AndromedaThemeWrap({ children }: { children: ReactNode }) {
+// `className` lets a caller decide what box the carrier div is. The template
+// pages pass `contents`: their shell is a percentage-height flex item of the
+// Andromeda layout row, and a plain div in between breaks that chain, so the
+// template's own scroll region never gets a bounded height.
+export function AndromedaThemeWrap({ children, className }: { children: ReactNode; className?: string }) {
   const [theme, setTheme] = useState<AndromedaTheme>('dark')
 
   useEffect(() => {
@@ -42,7 +46,7 @@ export function AndromedaThemeWrap({ children }: { children: ReactNode }) {
 
   return (
     <ThemeCtx.Provider value={{ theme, setTheme }}>
-      <div data-andromeda-theme={theme}>{children}</div>
+      <div data-andromeda-theme={theme} className={className}>{children}</div>
     </ThemeCtx.Provider>
   )
 }
