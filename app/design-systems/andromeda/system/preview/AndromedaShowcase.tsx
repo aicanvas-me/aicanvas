@@ -20,7 +20,7 @@
 // components and have nothing to declare.
 'use client'
 
-import { Fragment, type ReactNode } from 'react'
+import { Fragment, useRef, type ReactNode } from 'react'
 import Link from 'next/link'
 import { JetBrains_Mono } from 'next/font/google'
 import { ArrowUpRight } from '@phosphor-icons/react'
@@ -28,7 +28,7 @@ import { SiteFooter } from '../../../../components/SiteFooter'
 import { tokens } from '../../../../lib/andromeda-v2.generated'
 import { mq } from '../../../../lib/andromeda-v2-helpers.generated'
 import { buttonVariants } from '../../../../lib/andromeda-v2.generated'
-import { andromedaVars } from '../../../../lib/andromeda-v2-helpers.generated'
+import { andromedaVars, useResolvedVars } from '../../../../lib/andromeda-v2-helpers.generated'
 import { AndromedaThemeWrap, AndromedaThemeToggle } from '../../AndromedaThemeWrap'
 import {
   Card,
@@ -180,6 +180,125 @@ function Section({
         {children}
       </CardContent>
     </Card>
+  )
+}
+
+// ─── The neutral ladder ──────────────────────────────────────────────────────
+// The greys are ONE ladder of thirteen steps, numbered by depth in the stack
+// rather than by lightness: 100 is the page ground and 1300 the strongest ink
+// in BOTH themes, which is what lets a step number keep its meaning when the
+// ground inverts. Every surface, border and text role is a name for one of
+// these steps, so the three rows under this one are not more colours — they
+// are the same thirteen values under the names components actually read.
+const NEUTRAL_STEPS = [
+  { step: 100,  roles: 'surface.base', note: 'Page ground · template global background' },
+  { step: 200,  roles: 'surface.raised', note: 'Cards · panels · template section background' },
+  { step: 300,  roles: 'surface.overlay · surface.floating', note: 'Menus · tooltips · anything that floats' },
+  { step: 400,  roles: 'surface.hover', note: 'Hover ground' },
+  { step: 500,  roles: 'border.subtle', note: 'Dividers' },
+  { step: 600,  roles: 'surface.active', note: 'Pressed ground' },
+  { step: 700,  roles: 'border.base', note: 'Default edge' },
+  { step: 800,  roles: 'border.bright · border.floating', note: 'Hover edge · floating edge' },
+  { step: 900,  roles: 'border.strong', note: 'High-emphasis edge' },
+  { step: 1000, roles: 'text.faint', note: 'Labels · hints' },
+  { step: 1100, roles: 'text.muted', note: 'Kickers · metadata' },
+  { step: 1200, roles: 'text.secondary', note: 'Body · descriptions' },
+  { step: 1300, roles: 'text.primary', note: 'Headings · values' },
+] as const
+
+// Module scope: a fresh object each render would resubscribe the observer every
+// frame. The keys are the step numbers, so a row reads its own live value.
+const NEUTRAL_VAR_NAMES = Object.fromEntries(
+  NEUTRAL_STEPS.map(({ step }) => [String(step), `--andromeda-neutral-${step}`]),
+)
+
+function NeutralLadder() {
+  const hostRef = useRef(null)
+  // Every Section is a Card, and Card spreads andromedaVars() on its root, so
+  // the whole --andromeda-* set resolves here. Reading it back is what keeps
+  // the printed value and the painted swatch the same fact in either theme —
+  // the hue chips above deliberately do the opposite and pin their literal.
+  const live = useResolvedVars(hostRef, NEUTRAL_VAR_NAMES)
+
+  return (
+    <div ref={hostRef} style={{ width: '100%' }}>
+      {NEUTRAL_STEPS.map(({ step, roles, note }, i) => (
+        <div
+          key={step}
+          className="as-neutral-row"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '72px 132px minmax(0, 1fr) auto',
+            alignItems: 'center',
+            gap: tokens.spacing[3],
+            paddingTop: tokens.spacing[2],
+            paddingBottom: tokens.spacing[2],
+            borderTop: i === 0 ? 'none' : `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
+          }}
+        >
+          <div
+            style={{
+              height: 32,
+              background: `var(--andromeda-neutral-${step}, ${tokens.color.neutral[step]})`,
+              border: `1px solid var(--at-border-base, ${tokens.color.border.base})`,
+            }}
+          />
+          <div
+            style={{
+              fontFamily: tokens.typography.fontMono,
+              fontSize: tokens.typography.size.xs,
+              color: `var(--at-text-primary, ${tokens.color.text.primary})`,
+              textTransform: 'uppercase',
+              letterSpacing: tokens.typography.tracking.wider,
+            }}
+          >
+            Neutral {step}
+          </div>
+          <div>
+            <div
+              style={{
+                fontFamily: tokens.typography.fontMono,
+                fontSize: tokens.typography.size.xs,
+                color: `var(--at-text-secondary, ${tokens.color.text.secondary})`,
+              }}
+            >
+              {roles}
+            </div>
+            <div
+              style={{
+                fontFamily: tokens.typography.fontMono,
+                fontSize: tokens.typography.size.xs,
+                color: `var(--at-text-faint, ${tokens.color.text.faint})`,
+                marginTop: tokens.spacing[1],
+              }}
+            >
+              {note}
+            </div>
+          </div>
+          <div
+            style={{
+              fontFamily: tokens.typography.fontMono,
+              fontSize: tokens.typography.size.xs,
+              color: `var(--at-accent-400, ${tokens.color.accent[400]})`,
+              wordBreak: 'break-all',
+              textAlign: 'right',
+            }}
+          >
+            {live?.[String(step)] ?? tokens.color.neutral[step]}
+          </div>
+        </div>
+      ))}
+      <div
+        style={{
+          marginTop: tokens.spacing[3],
+          fontFamily: tokens.typography.fontMono,
+          fontSize: tokens.typography.size.xs,
+          color: `var(--at-text-faint, ${tokens.color.text.faint})`,
+        }}
+      >
+        scrim is a name, not a step on this ladder: it darkens whatever sits behind it, in either theme.
+      </div>
+    </div>
   )
 }
 
@@ -422,7 +541,7 @@ export default function AndromedaShowcase({
         <Section
           title="Color Palette"
           kicker="Foundation · Colors"
-          description="Three brand hue palettes lead: accent (blue), warning (amber), danger (red), each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. The foundational greys follow: surface, border, text. Every alpha sits in a single row at the seam between the two halves."
+          description="Three brand hue palettes lead: accent (blue), warning (amber), danger (red), each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. Then the greys, which are one ladder of thirteen steps from 100 (page ground) to 1300 (strongest ink) — the surface, border and text rows after it are names pointing into that ladder, not more colours. Every alpha sits in a single row at the seam between the two halves."
         >
           {/* Swatch chips paint the LITERAL printed beneath them, not the
               themed property. A documentation chip whose fill came off the
@@ -495,6 +614,10 @@ export default function AndromedaShowcase({
                 <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
+          </Row>
+
+          <Row label="Neutral ladder · 13 steps">
+            <NeutralLadder />
           </Row>
 
           <Row label="Surfaces">
