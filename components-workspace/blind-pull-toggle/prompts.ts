@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named BlindPullToggle — a dark/light mode toggle styled as a window-blind with a pull cord. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
+Create a React client component named BlindPullToggle, a dark/light mode toggle styled as a window-blind with a pull cord. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
 Layout: fills parent (flex h-full w-full items-center justify-center). Background is theme-aware: #110F0C (dark) / #EDEAE5 (light).
 
@@ -34,7 +34,7 @@ Cord below button (flex-col, centered, cursor pointer, calls same handler): a 2p
 
 Use useAnimate + stagger from framer-motion. handleToggle (guarded by animating flag):
 1) animate('.cord-line', {height: round(size*0.65)}, {duration:0.1, ease:[0.4,0,1,1]})
-2) animate('.cord-line', {height: round(size*0.30)}, {type:'spring', stiffness:300, damping:18}) — fire and forget
+2) animate('.cord-line', {height: round(size*0.30)}, {type:'spring', stiffness:300, damping:18}), fire and forget
 3) await animate('.slat', {scaleY:0}, {delay: stagger(0.04), duration:0.1, ease:'easeIn'})
 4) flip toggleDark
 5) await animate('.slat', {scaleY:1}, {delay: stagger(0.04), duration:0.13, ease:'easeOut'})

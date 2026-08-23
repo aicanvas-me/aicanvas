@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassDock\` — a macOS-style frosted glass dock with distance-based magnification, notification-style tinted icon badges, and frosted tooltips.
+Create a React client component named \`GlassDock\`, a macOS-style frosted glass dock with distance-based magnification, notification-style tinted icon badges, and frosted tooltips.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -38,7 +38,7 @@ GlassDock: const mouseX = useMotionValue(-200). Dock motion.div:
 - onMouseMove: mouseX.set(e.clientX); onMouseLeave: mouseX.set(-200)
 - className "relative isolate mx-auto flex items-end gap-2 rounded-3xl px-4 pb-3 pt-3"
 - style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', boxShadow '0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)'
-- Separate blur layer: pointer-events-none absolute inset-0 z-[-1] rounded-3xl, style { backdropFilter:'blur(24px) saturate(1.8)', WebkitBackdropFilter same } — non-animating layer so magnification frames don't re-blur.
+- Separate blur layer: pointer-events-none absolute inset-0 z-[-1] rounded-3xl, style { backdropFilter:'blur(24px) saturate(1.8)', WebkitBackdropFilter same }. Non-animating layer so magnification frames don't re-blur.
 - Map DOCK_ITEMS to DockItem.
 
 DockItem props: { icon: Icon, color, label, mouseX, index }.
@@ -52,7 +52,7 @@ Outer motion.div: className "group relative flex cursor-pointer flex-col items-c
 
 Tooltip motion.div: className "pointer-events-none absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium text-white/90 opacity-0 group-hover:opacity-100", style background 'rgba(255,255,255,0.1)', backdropFilter 'blur(16px)', border '1px solid rgba(255,255,255,0.1)', transition 'opacity 0.15s'.
 
-Icon badge motion.div (notification-style tinted — NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "flex items-center justify-center". Inside: <Icon size={22} weight="regular" style={{color}} />.
+Icon badge motion.div (notification-style tinted, NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "flex items-center justify-center". Inside: <Icon size={22} weight="regular" style={{color}} />.
 
 Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, MusicNote, Coffee, Leaf, Star, Moon, Flame, Cloud from @phosphor-icons/react (all weight="regular").
 

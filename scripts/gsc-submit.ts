@@ -33,33 +33,14 @@
 import fs from 'fs'
 import path from 'path'
 import { google } from 'googleapis'
-import { GAXIOS_OPTS, guardedCall } from './gsc-net.ts'
+import { GAXIOS_OPTS, errMessage, guardedCall } from './gsc-net.ts'
 
-// ─────────────────────────────────────────────────────────────────────
-// .env.local loader (mirrors gsc-audit.ts to avoid a dotenv dependency)
-// ─────────────────────────────────────────────────────────────────────
-function loadDotEnvLocal() {
-  const envPath = path.join(process.cwd(), '.env.local')
-  if (!fs.existsSync(envPath)) return
-  const text = fs.readFileSync(envPath, 'utf8')
-  for (const rawLine of text.split('\n')) {
-    const line = rawLine.trim()
-    if (!line || line.startsWith('#')) continue
-    const eq = line.indexOf('=')
-    if (eq < 0) continue
-    const key = line.slice(0, eq).trim()
-    let value = line.slice(eq + 1).trim()
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1)
-    }
-    if (process.env[key] === undefined) process.env[key] = value
-  }
-}
 
-loadDotEnvLocal()
+// Secrets come from .env.local when present; variables already in the
+// environment win, the same precedence as before.
+try {
+  process.loadEnvFile('.env.local')
+} catch {}
 
 const CREDS = process.env.GOOGLE_APPLICATION_CREDENTIALS
 const OUTPUT_DIR = path.join(process.cwd(), 'scripts', 'gsc-output')
@@ -163,9 +144,9 @@ async function submitSingleUrl(url: string, dryRun: boolean) {
     )
     entry.notifyTime = res.data.urlNotificationMetadata?.latestUpdate?.notifyTime ?? null
     process.stdout.write(`OK\n`)
-  } catch (err: any) {
+  } catch (err: unknown) {
     entry.status = 'error'
-    entry.error = err?.message || String(err)
+    entry.error = errMessage(err)
     process.stdout.write(`ERROR: ${entry.error}\n`)
   }
 
@@ -282,8 +263,8 @@ async function main() {
       })
       success++
       process.stdout.write(`OK\n`)
-    } catch (err: any) {
-      const message = err?.message || String(err)
+    } catch (err: unknown) {
+      const message = errMessage(err)
       log.push({
         url: e.url,
         submittedAt: new Date().toISOString(),
@@ -318,6 +299,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error('\nFAILED:', err?.message || err)
+  console.error('\nFAILED:', errMessage(err))
   process.exit(1)
 })

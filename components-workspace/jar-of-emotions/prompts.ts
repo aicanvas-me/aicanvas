@@ -58,7 +58,7 @@ Use Matter.Runner.run + requestAnimationFrame tick that calls setRenderTick(t+1)
 
 **Static bodies:**
 - Jar left/right inner walls (JAR_WALL_THICKNESS=24px, from collar to bottom)
-- Curved jar floor: 6 angled rectangle segments tracing points (30,218)→(40,226)→(65,233)→(100,236)→(135,233)→(160,226)→(170,218) in SVG coords — scale to container coords, center each segment between adjacent pts, angle = atan2(dy,dx)
+- Curved jar floor: 6 angled rectangle segments tracing points (30,218)→(40,226)→(65,233)→(100,236)→(135,233)→(160,226)→(170,218) in SVG coords. Scale to container coords, center each segment between adjacent pts, angle = atan2(dy,dx)
 - Button floors: one thin rectangle per button, at the button's top edge
 - Outer walls: left, right, floor, top ceiling
 

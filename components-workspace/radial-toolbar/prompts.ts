@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`RadialToolbar\` — a persistent circular EDIT button that opens a 6-wedge radial pie menu of text-formatting tools.
+Create a React client component named \`RadialToolbar\`, a persistent circular EDIT button that opens a 6-wedge radial pie menu of text-formatting tools.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -32,7 +32,7 @@ import { X, TextB, TextItalic, TextUnderline, TextStrikethrough, LinkSimple, Pal
 ## Geometry constants (exact)
 \`\`\`
 const CX = 120, CY = 120
-const R_IN  = 30   // exactly half the 60px button — wedges touch the button, no gap
+const R_IN  = 30   // exactly half the 60px button, wedges touch the button, no gap
 const R_OUT = 114
 const R_ICON = 78
 const GAP = 0
@@ -99,7 +99,7 @@ Enter \`{ opacity:0, y:8, scale:0.9 }\` → \`{ opacity:1, y:0, scale:1 }\`, exi
 
 Inside: \`<labelTool.Icon size={11} weight="regular" color={activeId===labelTool.id ? (isDark?'#e4e4e7':'#2E2A24') : (isDark?'#71717a':'#9E9890')} />\`, \`<span className="text-xs font-medium" style={{ color: isDark?'#a1a1aa':'#736D65' }}>{labelTool.label}</span>\`, and if \`activeId===labelTool.id\` a \`motion.span className="h-1 w-1 rounded-full" style={{ background: isDark?'#ffffff':'#1C1916' }} initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:600, damping:20 }} />\`.
 
-Use Manrope font. The button must remain visible at all times — opening only adds the wheel around it, never replaces it.
+Use Manrope font. The button must remain visible at all times. Opening only adds the wheel around it, never replaces it.
 
 ## Typography
 - Font: project default sans-serif

@@ -48,12 +48,12 @@ export function getPaddle(): Promise<Paddle | undefined> {
               }
               if (!res.ok) {
                 console.error('[paddle] activation deferred to webhook, status', res.status)
-                alert('Payment received. Your account is being activated — this can take a minute. Refresh shortly; contact support if it persists.')
+                alert('Payment received. Your account is being activated, this can take a minute. Refresh shortly; contact support if it persists.')
               }
               window.location.reload()
             })
             .catch(() => {
-              alert('Payment received. Your account is being activated — refresh in a minute.')
+              alert('Payment received. Your account is being activated. Refresh in a minute.')
               window.location.reload()
             })
         }

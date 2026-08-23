@@ -56,9 +56,7 @@ function Cell({ label, children, last = false }) {
 // ── Headline number ───────────────────────────────────────────────
 // The delta speaks StatTile's language: the ▲/▼ glyph is the direction of the
 // move, the colour is the judgment of it, and `polarity` is what separates the
-// two (see color-philosophy → "delta colour is a judgment"). This used to hard-
-// code ▲ and accent, which reads correctly only while every delta happens to be
-// positive — the first negative number would have rendered "▲ -1.4%" in green.
+// two (see color-philosophy → "delta colour is a judgment").
 function BigValue({ value, suffix, delta, polarity = 'higher-is-better' }) {
   const hasDelta = typeof delta === 'number' && Number.isFinite(delta);
   // Decide neutral on the number the reader actually sees, not the raw one:

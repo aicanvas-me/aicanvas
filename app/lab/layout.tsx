@@ -23,7 +23,7 @@ export default function LabLayout({
         <div className="flex items-center gap-2.5">
           <Link
             href="/"
-            aria-label="AI Canvas — home"
+            aria-label="AI Canvas home"
             className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50"
           >
             <img

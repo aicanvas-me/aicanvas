@@ -10,11 +10,11 @@ const SPEC = `Create \`components-workspace/voice-chat-pill/index.tsx\`. Export 
 
 A \`motion.button\` ref'd as \`pillRef\`, pill-shaped (rounded-full), no bottom inset border.
 
-**Colors (inverted per theme — same pattern as new-project-modal):**
+**Colors (inverted per theme, same pattern as new-project-modal):**
 - Light theme: bg \`#1a1a18\`, hover \`#2d2d2b\`
 - Dark theme: \`dark:bg-[#e0dfd8]\`, \`dark:hover:bg-[#d4d3cc]\`
 
-**Box shadow (pill):** \`0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)\` — subtle drop, no inset border.
+**Box shadow (pill):** \`0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)\`. Subtle drop, no inset border.
 
 **Hover/tap:** \`whileHover={{ scale: 1.04 }}\`, \`whileTap={{ scale: 0.96 }}\`, spring stiffness 400 damping 28. When modal is open, button fades out (opacity 0, scale 0.85, duration 0.18) and disables pointer events.
 
@@ -22,14 +22,14 @@ A \`motion.button\` ref'd as \`pillRef\`, pill-shaped (rounded-full), no bottom 
 
 **Pill contents (left → right):**
 
-1. **Speaking icon** — 36×36 rounded-full circle:
+1. **Speaking icon**, a 36×36 rounded-full circle:
    - Light theme: bg \`#f1f1f0\`, icon color \`#1a1a18\`
    - Dark theme: \`dark:bg-[#1a1a18]\`, \`dark:text-[#f1f1f0]\`
    - Contains 4 animated vertical bars (\`SpeakingBars\` component, size 14).
 
-2. **Avatar stack** — 4 overlapping circles (32×32), negative margin \`-10px\`, z-index decreasing. Each wrapped in \`motion.span\` that animates \`y: -1.5, scale: 1.06\` when this avatar is the current speaker (spring 380/24). Ring: \`ring-2 ring-[#1a1a18] dark:ring-[#e0dfd8]\` (matches pill bg per theme).
+2. **Avatar stack**: 4 overlapping circles (32×32), negative margin \`-10px\`, z-index decreasing. Each wrapped in \`motion.span\` that animates \`y: -1.5, scale: 1.06\` when this avatar is the current speaker (spring 380/24). Ring: \`ring-2 ring-[#1a1a18] dark:ring-[#e0dfd8]\` (matches pill bg per theme).
 
-3. **Count + chevron** — \`+{hiddenCount}\` and \`<CaretDown weight="bold" size={13} />\` in a flex span. Color: \`text-[#f1f1f0] dark:text-[#1a1a18]\`.
+3. **Count + chevron**: \`+{hiddenCount}\` and \`<CaretDown weight="bold" size={13} />\` in a flex span. Color: \`text-[#f1f1f0] dark:text-[#1a1a18]\`.
 
 ---
 
@@ -44,7 +44,7 @@ A \`motion.button\` ref'd as \`pillRef\`, pill-shaped (rounded-full), no bottom 
 
 ## Auto-rotating speaker
 
-\`useEffect\` with \`setInterval\` — every 2400ms, advance \`speakerId\` by 1 through all 8 participants. Both the collapsed pill (avatar lift) and the modal grid badge stay in sync.
+\`useEffect\` with \`setInterval\`: every 2400ms, advance \`speakerId\` by 1 through all 8 participants. Both the collapsed pill (avatar lift) and the modal grid badge stay in sync.
 
 ---
 
@@ -73,7 +73,7 @@ Fixed inset-0 div, z-40, \`bg-black/25 backdrop-blur-[3px]\`. Fade in/out 0.22s.
 
 ---
 
-## Modal — pill-to-card morph
+## Modal: pill-to-card morph
 
 Centered fixed div z-50. \`motion.div\` morphs from pill origin:
 - Compute: \`targetW = Math.min(440, window.innerWidth - 32)\`, \`initialOffsetX\`, \`initialOffsetY\`, \`initialScaleX = origin.w / targetW\`.
@@ -81,7 +81,7 @@ Centered fixed div z-50. \`motion.div\` morphs from pill origin:
 - \`animate\`: all zeroed, scaleX:1, scaleY:1, borderRadius:28, opacity:1.
 - \`exit\`: reverses to initial but opacity:0.
 - \`transition\`: \`MORPH = { type:'spring', stiffness:320, damping:30, mass:1 }\` for default; borderRadius: duration 0.32 ease [0.32,0.72,0.34,1]; opacity: 0.18.
-- **Box shadow (modal):** \`0px 16px 56px rgba(0,0,0,0.14)\` — soft ambient, no inset border.
+- **Box shadow (modal):** \`0px 16px 56px rgba(0,0,0,0.14)\`. Soft ambient, no inset border.
 - Card: \`bg-[#f1f1f0]\`, max-width 440px, padding px-6 pb-6 pt-6, rounded-[28px].
 
 **Inner stagger:** \`motion.div\` with hidden/show/exit variants, staggerChildren 0.05, show delay 0.18.

@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named PillToggle — a classic iOS-style pill switch with a plain white circular thumb and a track that transitions from gray to green as the thumb slides. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
+Create a React client component named PillToggle, a classic iOS-style pill switch with a plain white circular thumb and a track that transitions from gray to green as the thumb slides. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
 Constants: MAX_TRACK_W = 80, MIN_TRACK_W = 48.
 
@@ -32,7 +32,7 @@ Colors: offTrack '#3D3A3A' dark / '#D1D1D6' light. trackColor = useTransform(thu
 
 handleToggle (useCallback, guards on animating): setAnimating(true); target = isOn ? offX : onX; isOnRef.current = !isOn; setIsOn(v=>!v); await animate(thumbX, target, {type:'spring', stiffness:500, damping:36}); setAnimating(false).
 
-JSX: wrapper motion.div initial {opacity:0, scale:0.88} animate {opacity:1, scale:1} transition {duration:0.4, ease:[0.34, 1.56, 0.64, 1]} className "select-none". Inside motion.button onClick={handleToggle} style {width:trackW, height:trackH, borderRadius:trackH/2, backgroundColor:trackColor, boxShadow:trackInset, position:'relative', cursor:'pointer', border:'none', outline:'none', display:'block'} whileTap {scale:0.96} transition {type:'spring', stiffness:400, damping:28}. Inside the button: motion.div thumb style {position:'absolute', top:pad, x:thumbX, width:thumb, height:thumb, borderRadius:'50%', background:'white', boxShadow:thumbShadow}. No icons, no children inside the thumb — minimal and clean.
+JSX: wrapper motion.div initial {opacity:0, scale:0.88} animate {opacity:1, scale:1} transition {duration:0.4, ease:[0.34, 1.56, 0.64, 1]} className "select-none". Inside motion.button onClick={handleToggle} style {width:trackW, height:trackH, borderRadius:trackH/2, backgroundColor:trackColor, boxShadow:trackInset, position:'relative', cursor:'pointer', border:'none', outline:'none', display:'block'} whileTap {scale:0.96} transition {type:'spring', stiffness:400, damping:28}. Inside the button: motion.div thumb style {position:'absolute', top:pad, x:thumbX, width:thumb, height:thumb, borderRadius:'50%', background:'white', boxShadow:thumbShadow}. No icons, no children inside the thumb. Minimal and clean.
 
 ## Typography
 - Font: project default sans-serif`,

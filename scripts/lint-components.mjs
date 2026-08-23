@@ -5,6 +5,7 @@
  *   1. Packages imported but not listed in "// npm install"
  *   2. Font imports (next/font/google, geist/font/*) without a matching font comment
  *   3. Inline fontFamily strings referencing a named font without a font comment
+ *   4. Banned markers (internal shorthand, TODO / FIXME / HACK) in index.tsx or prompts.ts
  *
  * Usage:  node scripts/lint-components.mjs
  * Exit:   0 = all clear, 1 = warnings found
@@ -171,6 +172,29 @@ function checkInlineFont(source) {
   return issues
 }
 
+// ─── Banned markers ──────────────────────────────────────────────────────────
+// index.tsx and prompts.ts are product copy: buyers read both. Internal shorthand
+// and unfinished-work markers must never travel with a component.
+// The shorthand is assembled from parts so this lint does not itself carry the word
+// it bans, which keeps a repo-wide grep for it empty.
+const BANNED_MARKERS = [
+  new RegExp(['pony', 'tail:'].join(''), 'gi'),
+  /\bTODO\b/g,
+  /\bFIXME\b/g,
+  /\bHACK\b/g,
+]
+
+function checkBannedMarkers(source, file) {
+  const issues = []
+  for (const re of BANNED_MARKERS) {
+    const m = re.exec(source)
+    re.lastIndex = 0
+    // One warning per marker per file is enough to get it fixed.
+    if (m) issues.push(`${file} contains the banned marker "${m[0]}": internal note, never ships`)
+  }
+  return issues
+}
+
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 const entries = readdirSync(WORKSPACE, { withFileTypes: true })
@@ -209,6 +233,13 @@ for (const entry of entries) {
 
   // 4. Inline fontFamily → comment check
   warnings.push(...checkInlineFont(source))
+
+  // 5. Banned markers in the two files that ship to buyers
+  warnings.push(...checkBannedMarkers(source, 'index.tsx'))
+  const promptsPath = join(WORKSPACE, entry.name, 'prompts.ts')
+  if (existsSync(promptsPath)) {
+    warnings.push(...checkBannedMarkers(readFileSync(promptsPath, 'utf-8'), 'prompts.ts'))
+  }
 
   checkedCount++
   if (warnings.length > 0) {

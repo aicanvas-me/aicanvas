@@ -15,7 +15,7 @@ Stage size: clamp(300px, 50vw, 560px), centred in a min-h-screen container.
 Card dimensions: 240 × 138 px.
 
 --- IDLE ANIMATION ---
-A single shared useMotionValue<number> (degrees) advances in useAnimationFrame at 360/45 deg/s (one revolution per 45 s), mod-clamped to [0,360). Each card's pivot div receives a rotate(\${slotAngle + idleRotation}deg) transform via a useMotionValueEvent listener (FOLLOW mode — no spring lag).
+A single shared useMotionValue<number> (degrees) advances in useAnimationFrame at 360/45 deg/s (one revolution per 45 s), mod-clamped to [0,360). Each card's pivot div receives a rotate(\${slotAngle + idleRotation}deg) transform via a useMotionValueEvent listener (FOLLOW mode, no spring lag).
 
 --- CARD VISUAL ---
 Each card is a two-layer structure:
@@ -25,7 +25,7 @@ Each card is a two-layer structure:
   Header row: Phosphor icon (14px, weight="regular", color=DARK) + title text (12px, weight 500, #1a1a1a). 8px gap, 6px left padding.
 
   Inner panel: background #f7f7f5, border-radius 20px, padding 12px, inner shadow 0px 1px 12px rgba(0,0,0,0.25). Two rows:
-    Top: pill (right-aligned) — background DARK, white text 10px semibold, padding 5px 10px, border-radius 999px.
+    Top: pill (right-aligned), background DARK, white text 10px semibold, padding 5px 10px, border-radius 999px.
     Bottom: left side has LABEL (10px, 600, #1a1a1a, letter-spacing 0.48px) above VALUE (23px, 600, color=DARK, letter-spacing -0.28px). Right side has a 54×36 sparkline SVG.
 
 Sparkline: 4-point Catmull-Rom cubic bezier curve (smooth, no kinks). Area fill with linearGradient (DARK at 12% opacity top → 0% bottom). Stroke: DARK, 1.5px, round caps/joins. No end dot.
@@ -42,8 +42,8 @@ Sparkline: 4-point Catmull-Rom cubic bezier curve (smooth, no kinks). Area fill 
 | 6 | Distance  | THIS WEEK  | 8.4 km | +1.2 km  | #FAD79C | #E8B040      | #875706 | Path       | [24, 12, 20, 6]                 |
 
 --- CLICK INTERACTION ---
-engagedIndex: number | null — single useState in parent.
-topIndex: number | null — tracks last-clicked card for persistent z-order.
+engagedIndex: number | null, a single useState in parent.
+topIndex: number | null, tracks the last-clicked card for persistent z-order.
 
 Click a card: it glides to the canvas centre, lifts forward (translateZ 120px), scales to 1.18×. Click again or tap outside to release.
 
@@ -52,7 +52,7 @@ Per-card springs:
   lift (0→120): LIFT_SPRING
   scale (1→1.18): LIFT_SPRING
 
-Card body transform: translate(\${-50*cf}%, calc(-50% - (50%)*(1-cf))) — interpolates from bottom-left slot to centred on anchor as centeringFactor goes 0→1.
+Card body transform: translate(\${-50*cf}%, calc(-50% - (50%)*(1-cf))). This interpolates from bottom-left slot to centred on anchor as centeringFactor goes 0→1.
 
 --- ROTATION: SHORTEST PATH ---
 Each card tracks a per-card cardRotation MotionValue with two modes:
@@ -67,7 +67,7 @@ Each card tracks a per-card cardRotation MotionValue with two modes:
 --- DUAL THEME ---
   import useTheme from ThemeProvider.
   Dark bg: #1A1A19. Light bg: #F0F0E8.
-  Card visuals (gradients, panel) are self-contained — no theme switching needed inside cards.
+  Card visuals (gradients, panel) are self-contained, so no theme switching is needed inside cards.
 
 --- REDUCED MOTION ---
   prefers-reduced-motion: freeze idle rotation at start angle, lift Z → 30px, scale → 1.06, dim siblings 70%.`,

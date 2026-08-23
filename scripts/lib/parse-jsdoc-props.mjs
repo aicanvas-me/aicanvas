@@ -3,8 +3,8 @@
  * design-system components already carry into structured prop rows, so the
  * component pages can render a props table without a typing pass or a docgen
  * dependency (react-docgen-typescript would need the files typed first and
- * floods the table with inherited DOM props). 31/33 components ship these
- * blocks today; the two without simply yield no table.
+ * floods the table with inherited DOM props). The blocks are hand-authored, so
+ * a component file without one simply yields no table.
  *
  * Zero-dependency, string-only — the same shape as the other scripts/ generators
  * (generate-component-codes.mjs, generate-registry.mjs). A component file may
@@ -170,7 +170,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     }
     if (names.length > 1) multi.push(`${f} → ${names.join(', ')}`)
   }
-  // 31/33 carry @typedef today (Reviewer-confirmed); guard the floor.
+  // Guard the floor: a big drop here means the parser stopped matching, not
+  // that the blocks were removed by hand.
   assert(withProps >= 28, `expected >=28 components with props, got ${withProps}/${files.length}`)
   const tableTables = parseJsdocProps(readFileSync(join(dir, 'Table.tsx'), 'utf-8'))
   assert(Object.keys(tableTables).length >= 3, 'Table compound blocks not all parsed')

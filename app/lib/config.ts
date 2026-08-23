@@ -18,7 +18,3 @@ export const CONTACT_FROM = 'AI Canvas <contact@aicanvas.me>'
 // Sender for system / lifecycle emails we send ourselves (welcome, etc.). Matches
 // the from-address Supabase auth emails use, so they read as one product voice.
 export const NOREPLY_FROM = 'AI Canvas <noreply@aicanvas.me>'
-
-// Update this date whenever you push new components to production.
-// Any component with badge: 'New' will show the badge for 96 hours from this date.
-export const LAST_DEPLOY = '2026-04-18'

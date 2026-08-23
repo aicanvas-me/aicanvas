@@ -7,7 +7,7 @@ import 'server-only'
  * sandbox made activation 403 silently). Defaults to sandbox — production is
  * an explicit opt-in.
  */
-export function paddleEnv(): 'sandbox' | 'production' {
+function paddleEnv(): 'sandbox' | 'production' {
   const v = process.env.PADDLE_ENV ?? process.env.NEXT_PUBLIC_PADDLE_ENV ?? 'sandbox'
   return v === 'production' ? 'production' : 'sandbox'
 }

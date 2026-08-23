@@ -1,6 +1,8 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import type { Group, Mesh, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
+import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 const MODEL_URL = '/models/brain.glb'
 
@@ -26,10 +28,10 @@ export function BrainRender({ height = 400 }: { height?: number }) {
     if (!host) return
     let alive = true
     let raf = 0
-    let renderer: any
-    let scene: any
-    let camera: any
-    let rig: any
+    let renderer: WebGLRenderer
+    let scene: Scene
+    let camera: PerspectiveCamera
+    let rig: Group | undefined
     let onResize = () => {}
 
     ;(async () => {
@@ -55,7 +57,7 @@ export function BrainRender({ height = 400 }: { height?: number }) {
       })
       const zoneDirs = ZONES.map((z) => new THREE.Vector3(z.dir[0], z.dir[1], z.dir[2]).normalize())
 
-      new GLTFLoader().load(MODEL_URL, (gltf: any) => {
+      new GLTFLoader().load(MODEL_URL, (gltf: GLTF) => {
         if (!alive) return
         const model = gltf.scene
         model.updateWorldMatrix(true, true)
@@ -65,15 +67,18 @@ export function BrainRender({ height = 400 }: { height?: number }) {
         sph = new THREE.Box3().setFromObject(model).getBoundingSphere(new THREE.Sphere())
         model.position.sub(sph.center)
 
-        model.traverse((o: any) => {
-          if (!o.isMesh) return
-          const geo = o.geometry
+        model.traverse((o) => {
+          // Duck-typed on purpose: instanceof breaks when two copies of three load.
+          const mesh = o as Mesh
+          if (!mesh.isMesh) return
+          const geo = mesh.geometry
           const pos = geo.attributes.position
           // Local centre so each vertex direction is measured from the brain's middle.
           geo.computeBoundingBox()
-          const cx = (geo.boundingBox.min.x + geo.boundingBox.max.x) / 2
-          const cy = (geo.boundingBox.min.y + geo.boundingBox.max.y) / 2
-          const cz = (geo.boundingBox.min.z + geo.boundingBox.max.z) / 2
+          const box = geo.boundingBox!
+          const cx = (box.min.x + box.max.x) / 2
+          const cy = (box.min.y + box.max.y) / 2
+          const cz = (box.min.z + box.max.z) / 2
           const colors = new Float32Array(pos.count * 3)
           const d = new THREE.Vector3()
           for (let i = 0; i < pos.count; i++) {
@@ -98,7 +103,7 @@ export function BrainRender({ height = 400 }: { height?: number }) {
             colors[i * 3 + 2] = b
           }
           geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
-          o.material = new THREE.MeshBasicMaterial({ wireframe: true, vertexColors: true })
+          mesh.material = new THREE.MeshBasicMaterial({ wireframe: true, vertexColors: true })
         })
 
         rig = new THREE.Group()

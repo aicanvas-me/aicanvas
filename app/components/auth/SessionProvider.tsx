@@ -128,8 +128,11 @@ export function SessionProvider({
 
   useEffect(() => {
     const supabase = createClient()
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      const next = session?.user ?? null
+      // A token refresh delivers the same user as a new object; keep the old
+      // reference so everything keyed on `user` does not refetch every hour.
+      setUser((prev) => (event !== 'USER_UPDATED' && prev?.id === next?.id ? prev : next))
     })
     return () => data.subscription.unsubscribe()
   }, [])

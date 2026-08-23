@@ -35,12 +35,12 @@ Implementation:
 '--half-d': 'calc(var(--d) / 2)',
 \`\`\`
 - Six faces with transforms:
-  - Front:  \`translateZ(var(--half-d))\` — W × H
-  - Back:   \`rotateY(180deg) translateZ(var(--half-d))\` — W × H
-  - Top:    \`rotateX(90deg) translateZ(var(--half-h))\` — W × H
-  - Bottom: \`rotateX(-90deg) translateZ(var(--half-h))\` — W × H
-  - Right:  \`rotateY(90deg) translateZ(var(--half-w))\` — D × H, centered horizontally with \`left: calc((var(--w) - var(--d)) / 2)\`
-  - Left:   \`rotateY(-90deg) translateZ(var(--half-w))\` — D × H, same centering
+  - Front:  \`translateZ(var(--half-d))\`, W × H
+  - Back:   \`rotateY(180deg) translateZ(var(--half-d))\`, W × H
+  - Top:    \`rotateX(90deg) translateZ(var(--half-h))\`, W × H
+  - Bottom: \`rotateX(-90deg) translateZ(var(--half-h))\`, W × H
+  - Right:  \`rotateY(90deg) translateZ(var(--half-w))\`, D × H, centered horizontally with \`left: calc((var(--w) - var(--d)) / 2)\`
+  - Left:   \`rotateY(-90deg) translateZ(var(--half-w))\`, D × H, same centering
 - Each face needs \`transformStyle: 'preserve-3d'\` on its parent, \`backfaceVisibility: 'hidden'\` on itself.
 - Set \`touchAction: 'none'\` on the drag motion.div so touch drags don't scroll the page.
 - Use six Unsplash photos (any 16:9 + square crops at \`images.unsplash.com/photo-<id>?w=960&h=540&fit=crop&auto=format&q=80\` for wide, \`?w=720&h=720\` for square).

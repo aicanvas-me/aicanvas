@@ -21,7 +21,7 @@ A full-bleed canvas renders a grid of horizontal and vertical lines that undulat
 Constants:
 \`\`\`
 SPACING      = 32      // px between grid points at rest
-BASE_AMP     = 30      // px — resting wave amplitude
+BASE_AMP     = 30      // px, resting wave amplitude
 WAVE_FREQ    = 0.007   // ~900px wavelength
 HOVER_BOOST  = 1.5     // global amp multiplier on full hover
 LOCAL_AMP    = 60      // px repulsion strength
@@ -57,8 +57,8 @@ Draw horizontal lines: for each row, beginPath, moveTo displaced(0,r), lineTo di
 Standard DPR setup. ResizeObserver rebuilds. Mouse handlers on outer div update mouseRef to canvas-local coords; onMouseLeave/onTouchEnd set to null. Theme detection: walk closest('[data-card-theme]'), fallback to documentElement.dark; MutationObserver on both; mirror into isDarkRef + isDark state.
 
 JSX: outer div relative h-full w-full overflow-hidden, bg '#110F0C' dark / '#F5F1EA' light. Canvas absolute inset-0 width/height 100%. Centered overlay:
-- "Distortion Grid" — 22px 700 -0.02em, color rgba(255,255,255,0.45) dark / rgba(28,25,22,0.45) light
-- "hover to warp" — 11px 600 uppercase 0.12em, color rgba(255,255,255,0.18) dark / rgba(28,25,22,0.22) light
+- "Distortion Grid": 22px 700 -0.02em, color rgba(255,255,255,0.45) dark / rgba(28,25,22,0.45) light
+- "hover to warp": 11px 600 uppercase 0.12em, color rgba(255,255,255,0.18) dark / rgba(28,25,22,0.22) light
 
 Cleanup: alive=false, cancelAnimationFrame, ro.disconnect, observer.disconnect.
 

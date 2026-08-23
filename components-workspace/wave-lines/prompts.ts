@@ -65,8 +65,8 @@ useState isDark + isDarkRef + observer (closest data-card-theme → documentElem
 
 ## JSX
 div ref containerRef relative h-full w-full overflow-hidden, bg per theme, mouse/touch handlers on div. Canvas absolute inset-0 100%/100%. Overlay pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2:
-- span "Wave Lines" — color dark rgba(255,255,255,0.45) / light rgba(28,25,22,0.45), fontSize 22, fontWeight 700, letterSpacing -0.02em
-- span "hover to fold" — color dark rgba(255,255,255,0.18) / light rgba(28,25,22,0.22), fontSize 11, fontWeight 600, uppercase, letterSpacing 0.12em
+- span "Wave Lines": color dark rgba(255,255,255,0.45) / light rgba(28,25,22,0.45), fontSize 22, fontWeight 700, letterSpacing -0.02em
+- span "hover to fold": color dark rgba(255,255,255,0.18) / light rgba(28,25,22,0.22), fontSize 11, fontWeight 600, uppercase, letterSpacing 0.12em
 
 Cleanup: alive=false; cancelAnimationFrame; ResizeObserver on canvas.parentElement; observer.disconnect.
 

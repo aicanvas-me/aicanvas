@@ -46,7 +46,7 @@ function useBlink() {
           setOpacity(1);
           schedule();
         }, BLINK_OFF_MS);
-        // ponytail: 1800/800 are bespoke blink-cadence jitter, no token
+        // 1800/800 are bespoke blink-cadence jitter, no token
       }, 1800 + Math.random() * 800);
     }
     schedule();
@@ -61,7 +61,7 @@ const badgeVariants = cva(
     // max-w-full + min-w-0 keep a long label from forcing horizontal scroll
     // when the Badge sits in a stacked (single-column) layout; the label
     // span truncates instead (see render below).
-    // ponytail: 5px gap and 2px pad are identity constants, no token
+    // 5px gap and 2px pad are identity constants, no token
     'inline-flex items-center gap-[5px] select-none whitespace-nowrap',
     'max-w-full min-w-0',
     'rounded-[var(--andromeda-radius-frame,0px)]',

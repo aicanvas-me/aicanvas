@@ -239,7 +239,7 @@ export const Radio = forwardRef(function Radio(
         >
           {checked ? (
             <span
-              // ponytail: identity constant, no token (6px mark geometry)
+              // Identity constant, no token (6px mark geometry)
               className="block w-[6px] h-[6px]"
               style={{
                 background: 'var(--andromeda-accent-300)',

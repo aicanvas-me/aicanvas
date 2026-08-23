@@ -2,7 +2,7 @@ import type { SubStatus } from './tier'
 
 // Paddle `data.status` -> our SubStatus. Unknown statuses map to undefined so
 // the caller can ignore the event (never guess a status from the event name).
-export const PADDLE_STATUS: Record<string, SubStatus> = {
+const PADDLE_STATUS: Record<string, SubStatus> = {
   active: 'active',
   trialing: 'trialing',
   past_due: 'past_due',

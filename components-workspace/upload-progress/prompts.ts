@@ -18,23 +18,23 @@ Four states: \`uploading\`, \`paused\`, \`complete\`, \`idle\`
 **Idle:** A pill button ("Upload Files") centered. Dark bg / light text in light mode; inverted in dark. Spring scale hover/tap. Clicking starts a simulated upload.
 
 **Uploading / Paused / Complete:** A rounded card (\`borderRadius: 28\`, \`boxShadow: '0px 16px 56px rgba(0,0,0,0.14)'\`, overflow hidden, position relative):
-- Card bg: \`#f1f1f0\` (same in both themes — card is always light)
-- Do NOT use Framer Motion's \`layout\` prop on the card. The file list height spring drives the resize naturally — adding \`layout\` causes competing transforms and the corner radius snaps on collapse.
+- Card bg: \`#f1f1f0\` (same in both themes, the card is always light)
+- Do NOT use Framer Motion's \`layout\` prop on the card. The file list height spring drives the resize naturally. Adding \`layout\` causes competing transforms and the corner radius snaps on collapse.
 
 ### Collapsed view
 - Title: "Uploading 3 files" (18px bold) or "Upload complete"
 - Subtitle (14px medium, muted \`#6c6c6c\`, \`whitespace-nowrap\`): \`"XX% · Ns left"\` / \`"XX% · Paused"\` / \`"Upload complete"\`. Use \`key={status}\` on the AnimatePresence child so it only animates on state transitions, not on every percentage tick. Use the short \`Ns left\` format (not \`N seconds left\`) so the subtitle never wraps and the card height stays stable.
 - **Bottom bar**: 6px tall, full width flush at card bottom. Track \`#e4e4dc\`. Fill animates between \`#6366f1\` (uploading) and \`#f59e0b\` (paused) with a 0.35s ease transition. While uploading, a white gradient shimmer (\`linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)\`) sweeps left-to-right across the fill on a 1.6s loop with a 0.8s delay between sweeps. Shimmer stops (animate x stays at -100%) when paused.
-- No background fill/sweep on the card body — the bar is the only progress indicator in collapsed view.
+- No background fill/sweep on the card body. The bar is the only progress indicator in collapsed view.
 
 ### Expanded view
 - Title + 4 icon buttons in header, no subtitle
 - Divider (1px at mx-6) below header
 - 3 file rows: filename bold left, "XX% · Ns left" muted right, individual 3px progress bar under each row
 - Each file bar fill also transitions between \`#6366f1\` and \`#f59e0b\` matching the paused state
-- File list height animates via AnimatePresence with spring transition (stiffness 380, damping 38) for height, opacity 0.16s. No overflow:hidden on the file list — let the card's overflow handle clipping for smooth corner animation on collapse.
+- File list height animates via AnimatePresence with spring transition (stiffness 380, damping 38) for height, opacity 0.16s. No overflow:hidden on the file list. Let the card's overflow handle clipping for smooth corner animation on collapse.
 
-### 4 action buttons (top-right) — order matters
+### 4 action buttons (top-right): order matters
 All 36px circles (\`size-9\`), bg \`#ededea\`, icon \`#6c6c6c\`. Spring hover scale 1.12, tap 0.88.
 
 Order from left to right:

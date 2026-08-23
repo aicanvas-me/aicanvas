@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named FloatingCards — a swipeable deck of 3 travel destination cards. The front card is draggable downward; releasing it past a threshold flings it off-screen and the next card slides to the front. Each card shows a hotels count that animates up from 0 when it becomes the front card. Theme-aware (light + dark). Write as a single self-contained React client component. Inline everything (you may keep one small inline useCountUp hook and a HotelsCounter sub-component in the same file). 'use client' at the top. No 'any' types.
+Create a React client component named FloatingCards, a swipeable deck of 3 travel destination cards. The front card is draggable downward; releasing it past a threshold flings it off-screen and the next card slides to the front. Each card shows a hotels count that animates up from 0 when it becomes the front card. Theme-aware (light + dark). Write as a single self-contained React client component. Inline everything (you may keep one small inline useCountUp hook and a HotelsCounter sub-component in the same file). 'use client' at the top. No 'any' types.
 
 Imports: useRef, useState, useEffect from 'react'; motion from 'framer-motion'; { Buildings, ArrowUpRight } from '@phosphor-icons/react'.
 
@@ -34,11 +34,11 @@ POSITIONS (slot 0 = back, 1 = middle, 2 = front):
 
 useCountUp(target, active): const [value, setValue] = useState(0). useEffect([active, target]): if !active -> setValue(0); return. duration=900, steps=40, interval=duration/steps, step=0. setInterval: step++; setValue(Math.round((step/steps)*target)); if step>=steps clearInterval. Cleanup: clearInterval(id). Return value.
 
-HotelsCounter({target, active}): const value = useCountUp(target, active). Render a flex row gap 5 with a Buildings icon (weight='regular', size=16, color #E8E8DF opacity 0.55) and a span (fontSize 10, fontWeight 500, color 'rgba(255,255,255,0.55)', letterSpacing '0.04em', fontVariantNumeric 'tabular-nums') that reads 'hotels <value>' — the number is wrapped in its own span with color 'rgba(255,255,255,0.85)' and marginLeft 2.
+HotelsCounter({target, active}): const value = useCountUp(target, active). Render a flex row gap 5 with a Buildings icon (weight='regular', size=16, color #E8E8DF opacity 0.55) and a span (fontSize 10, fontWeight 500, color 'rgba(255,255,255,0.55)', letterSpacing '0.04em', fontVariantNumeric 'tabular-nums') that reads 'hotels <value>'. The number is wrapped in its own span with color 'rgba(255,255,255,0.85)' and marginLeft 2.
 
-Component state: containerRef: HTMLDivElement. isDark=true. order: [number, number, number] init [0,1,2] — order[positionIndex] = cardIndex. isShuffling=false. exitingCard: number|null = null.
+Component state: containerRef: HTMLDivElement. isDark=true. order: [number, number, number] init [0,1,2] (order[positionIndex] = cardIndex). isShuffling=false. exitingCard: number|null = null.
 
-Theme detection: useEffect on mount — find containerRef.current.closest('[data-card-theme]'); setIsDark based on that card's 'dark' class else documentElement.classList.contains('dark'). MutationObserver on documentElement AND on the card wrapper if present, attributeFilter ['class']. Disconnect on cleanup.
+Theme detection: useEffect on mount. Find containerRef.current.closest('[data-card-theme]'); setIsDark based on that card's 'dark' class else documentElement.classList.contains('dark'). MutationObserver on documentElement AND on the card wrapper if present, attributeFilter ['class']. Disconnect on cleanup.
 
 Layout root: div ref={containerRef} className="relative flex h-full w-full items-center justify-center overflow-hidden" style={{background: isDark ? '#110F0C' : '#F5F1EA'}}.
 
@@ -73,7 +73,7 @@ Key details:
 - Only the front card is draggable and only when not shuffling.
 - HotelsCounter resets to 0 and counts back up whenever its active prop becomes true (not just on mount).
 - The exit threshold is offset.y > 80 OR velocity.y > 400.
-- After the exit animation finishes, cycle order: new order = [prev[2], prev[0], prev[1]] — the front card moves to the back.
+- After the exit animation finishes, cycle order: new order = [prev[2], prev[0], prev[1]]. The front card moves to the back.
 - The icon header row uses a 16px Buildings icon (not 18), paired with the word "hotels" and the animated number.
 
 ## Typography

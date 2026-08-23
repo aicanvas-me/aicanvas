@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`TextBlurReveal\` — words animate into view one by one with a blur-to-sharp entrance over a dark dot-grid background, followed by a subtext line and a gradient CTA button. Plays once on mount, no loop.
+Create a React client component named \`TextBlurReveal\`: words animate into view one by one with a blur-to-sharp entrance over a dark dot-grid background, followed by a subtext line and a gradient CTA button. Plays once on mount, no loop.
 
 Write this as a single self-contained \`'use client'\` file. No props on the exported component. No \`any\` types.
 
@@ -34,7 +34,7 @@ const SHOW_BUTTON_AT = LAST_WORD_END + 150  // 1300 ms
 \`\`\`
 
 ## State & timing
-\`showCTA: boolean\` (default false). \`useEffect([], [])\`: single-run on mount — \`const t = setTimeout(() => setShowCTA(true), SHOW_BUTTON_AT)\`. Return \`() => clearTimeout(t)\`. Animation plays once, no loop.
+\`showCTA: boolean\` (default false). \`useEffect([], [])\`: single-run on mount: \`const t = setTimeout(() => setShowCTA(true), SHOW_BUTTON_AT)\`. Return \`() => clearTimeout(t)\`. Animation plays once, no loop.
 
 ## Background
 Root: \`relative flex h-full w-full flex-col items-center justify-center gap-5 overflow-hidden\`.
@@ -44,7 +44,7 @@ Dot grid (pointer-events-none absolute inset-0): \`backgroundImage: 'radial-grad
 Indigo glow (pointer-events-none absolute inset-0 flex items-center justify-center): inner div \`h-40 w-80 rounded-full bg-indigo-600/20 blur-3xl\`.
 
 ## Animated words
-\`relative flex flex-wrap justify-center gap-x-[0.4em] gap-y-1\`. Map WORDS — each is a \`motion.span\` with \`key={i}\`:
+\`relative flex flex-wrap justify-center gap-x-[0.4em] gap-y-1\`. Map WORDS. Each is a \`motion.span\` with \`key={i}\`:
 - \`initial={{ opacity: 0, y: 22, filter: 'blur(14px)' }}\`
 - \`animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}\`
 - \`transition={{ duration: DURATION / 1000, delay: (i * STAGGER) / 1000, ease: [0.21, 0.47, 0.32, 0.98] }}\`

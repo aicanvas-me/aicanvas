@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassSidebar\` — a glass-morphism vertical sidebar that springs between a collapsed icon rail and an expanded label state.
+Create a React client component named \`GlassSidebar\`, a glass-morphism vertical sidebar that springs between a collapsed icon rail and an expanded label state.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -35,7 +35,7 @@ Nav items (Phosphor, \`weight="regular"\`):
 - \`Gear\` / "Settings" / #C9A96E
 - \`User\` / "Profile" / #FF7B54
 
-Panel: \`rounded-3xl px-2.5 py-3\`, glass —
+Panel: \`rounded-3xl px-2.5 py-3\`, glass:
 - \`background: rgba(255,255,255,0.06)\`
 - \`border: 1px solid rgba(255,255,255,0.1)\`
 - \`boxShadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)\`

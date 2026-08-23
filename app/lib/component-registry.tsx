@@ -307,7 +307,7 @@ const COMPONENTS_RAW: ComponentEntry[] = [
     slug: 'pill-toggle',
     image: 'https://ik.imagekit.io/aitoolkit/pill-toggle.png',
     name: 'Pill Toggle',
-    description: 'A minimal iOS-style slider toggle — thumb glides between off (grey) and on (green) with a snappy spring. Fully responsive.',
+    description: 'A minimal iOS-style slider toggle: thumb glides between off (grey) and on (green) with a snappy spring. Fully responsive.',
     tags: [
       { label: 'Buttons & Toggles', accent: true },
       { label: 'Motion' },
@@ -322,7 +322,7 @@ const COMPONENTS_RAW: ComponentEntry[] = [
     slug: 'mark-toggle',
     image: 'https://ik.imagekit.io/aitoolkit/mark-toggle.png',
     name: 'Mark Toggle',
-    description: 'An iOS-style pill toggle in warm earth and sand tones — the thumb carries a small icon that morphs from X to checkmark as it slides across.',
+    description: 'An iOS-style pill toggle in warm earth and sand tones: the thumb carries a small icon that morphs from X to checkmark as it slides across.',
     tags: [
       { label: 'Buttons & Toggles', accent: true },
       { label: 'Motion' },
@@ -337,7 +337,7 @@ const COMPONENTS_RAW: ComponentEntry[] = [
     slug: 'taga-toggle',
     image: 'https://ik.imagekit.io/aitoolkit/taga-toggle.png',
     name: 'Taga Toggle',
-    description: 'A playful pill toggle with an expressive face on the thumb — dead (×× eyes, flat mouth) when off, happy (arc eyes, big smile) when on. Track warms from grey to yellow.',
+    description: 'A playful pill toggle with an expressive face on the thumb: dead (×× eyes, flat mouth) when off, happy (arc eyes, big smile) when on. Track warms from grey to yellow.',
     tags: [
       { label: 'Buttons & Toggles', accent: true },
       { label: 'Motion' },
@@ -352,7 +352,7 @@ const COMPONENTS_RAW: ComponentEntry[] = [
     slug: 'blind-pull-toggle',
     image: 'https://ik.imagekit.io/aitoolkit/blind-pull-toggle.png',
     name: 'Blind Pull Toggle',
-    description: 'A dark/light mode toggle styled as a window-blind pull cord — click to yank the cord and watch the icon swap through a venetian-blind slat animation.',
+    description: 'A dark/light mode toggle styled as a window-blind pull cord. Click to yank the cord and watch the icon swap through a venetian-blind slat animation.',
     tags: [
       { label: 'Buttons & Toggles', accent: true },
       { label: 'Motion' },
@@ -532,7 +532,7 @@ Requirements:
 - Import useEffect, useRef from react; import * as THREE from 'three'
 - PARTICLE_COUNT = 9000
 - makeSprite(): creates a 64×64 canvas with radial white→transparent gradient, returns THREE.CanvasTexture
-- colorFromY(ny): returns [r,g,b] — ny≥0: warm gold [1, 0.55+ny*0.37, ny*0.63]; ny<0: silver [v,v,v+...] where v=0.38+(-ny)*0.62
+- colorFromY(ny): returns [r,g,b]. For ny≥0: warm gold [1, 0.55+ny*0.37, ny*0.63]; ny<0: silver [v,v,v+...] where v=0.38+(-ny)*0.62
 - useEffect: create scene, PerspectiveCamera(52, W/H, 0.1, 100), camera.position.z=2.9
 - WebGLRenderer, setClearColor(0x000000), appendChild to container div
 - Fill positions/colors Float32Arrays using spherical coords (acos(2*rand-1), 2π*rand) with r±0.07 jitter
@@ -549,7 +549,7 @@ Requirements:
 - Import useEffect, useRef from react; import * as THREE from 'three'
 - PARTICLE_COUNT = 9000
 - makeSprite(): creates a 64×64 canvas with radial white→transparent gradient, returns THREE.CanvasTexture
-- colorFromY(ny): returns [r,g,b] — ny≥0: warm gold [1, 0.55+ny*0.37, ny*0.63]; ny<0: silver [v,v,v+...] where v=0.38+(-ny)*0.62
+- colorFromY(ny): returns [r,g,b]. For ny≥0: warm gold [1, 0.55+ny*0.37, ny*0.63]; ny<0: silver [v,v,v+...] where v=0.38+(-ny)*0.62
 - useEffect: create scene, PerspectiveCamera(52, W/H, 0.1, 100), camera.position.z=2.9
 - WebGLRenderer, setClearColor(0x000000), appendChild to container div
 - Fill positions/colors Float32Arrays using spherical coords (acos(2*rand-1), 2π*rand) with r±0.07 jitter
@@ -567,7 +567,7 @@ Requirements:
     image: 'https://ik.imagekit.io/aitoolkit/polaroid-stack.png',
     name: 'Polaroid Stack',
     description:
-      'Five polaroid photo cards stacked in a casual pile — click to fan them out in a spring-animated arc, hover to lift, click a card to spotlight it.',
+      'Five polaroid photo cards stacked in a casual pile. Click to fan them out in a spring-animated arc, hover to lift, click a card to spotlight it.',
     tags: [
       { label: 'Cards & Modals', accent: true },
       { label: 'Motion' },
@@ -641,7 +641,7 @@ Requirements:
     slug: 'scramble-text',
     image: 'https://ik.imagekit.io/aitoolkit/scramble-text.png?v=3',
     name: 'Scramble Text',
-    description: 'Two words scramble continuously in a pixel cipher. Hover the container to decrypt them one by one — mouse out and they snap back to noise.',
+    description: 'Two words scramble continuously in a pixel cipher. Hover the container to decrypt them one by one. Mouse out and they snap back to noise.',
     tags: [
       { label: 'Typography', accent: true },
       { label: 'Interactive' },
@@ -945,7 +945,7 @@ Requirements:
   {
     slug: 'meet-the-crew',
     name: 'Meet the Crew',
-    description: 'A swipeable portrait card stack perfect for introducing a team, showcasing crew members, or picking an avatar. Four stacked cards fan out with soft rotations — drag to browse, tap to choose. Drop in your own photos and names for an About Us section, a character selector, or an onboarding profile picker.',
+    description: 'A swipeable portrait card stack perfect for introducing a team, showcasing crew members, or picking an avatar. Four stacked cards fan out with soft rotations: drag to browse, tap to choose. Drop in your own photos and names for an About Us section, a character selector, or an onboarding profile picker.',
     image: 'https://ik.imagekit.io/aitoolkit/meet-the-crew.png',
     tags: [
       { label: 'Cards & Modals', accent: true },
@@ -961,7 +961,7 @@ Requirements:
     slug: 'task-cards',
     image: 'https://ik.imagekit.io/aitoolkit/task-cards.png',
     name: 'Task Cards',
-    description: 'A swipeable project task card stack where each card has a unique accent colour, status badge, and due date. Drag left or right to cycle through tasks — springs back the dismissed card to the bottom of the deck.',
+    description: 'A swipeable project task card stack where each card has a unique accent colour, status badge, and due date. Drag left or right to cycle through tasks. The dismissed card springs back to the bottom of the deck.',
     tags: [
       { label: 'Cards & Modals', accent: true },
       { label: 'Blocks', accent: true },
@@ -1122,7 +1122,7 @@ Requirements:
   {
     slug: 'wild-morph',
     name: 'Wild Morph',
-    description: 'Italic SVG word that warps under the cursor — a spring-physics text animation.',
+    description: 'Italic SVG word that warps under the cursor, a spring-physics text animation.',
     tags: [
       { label: 'Typography', accent: true },
       { label: 'Interactive' },
@@ -1152,7 +1152,7 @@ Requirements:
   {
     slug: 'halo-type',
     name: 'Halo Type',
-    description: 'Rotating 3D ring text animation — the front arc reads upright, the back arc upside-down.',
+    description: 'Rotating 3D ring text animation: the front arc reads upright, the back arc upside-down.',
     tags: [
       { label: 'Typography', accent: true },
       { label: '3D & Shaders', accent: true },
@@ -1168,7 +1168,7 @@ Requirements:
   {
     slug: 'slice-type',
     name: 'Slice Type',
-    description: 'A typographic magic trick. At rest you read one ambiguous word; hover and it splits into two — LIGHT lifting up, NIGHT sinking down, the shared letters resolving into separate glyphs.',
+    description: 'A typographic magic trick. At rest you read one ambiguous word; hover and it splits into two: LIGHT lifting up, NIGHT sinking down, the shared letters resolving into separate glyphs.',
     tags: [
       { label: 'Typography', accent: true },
       { label: 'Animation' },
@@ -1183,7 +1183,7 @@ Requirements:
   {
     slug: 'stack-tower',
     name: 'Stack Tower',
-    description: 'A column of 12 stacked words that reads as a rotating 3D cylinder — 2D transforms skew, scale and shift each row so the rotation travels down the stack. Hover lights one row in warm orange without breaking the rhythm.',
+    description: 'A column of 12 stacked words that reads as a rotating 3D cylinder. 2D transforms skew, scale and shift each row so the rotation travels down the stack. Hover lights one row in warm orange without breaking the rhythm.',
     tags: [
       { label: 'Typography', accent: true },
       { label: 'Animation' },
@@ -1198,7 +1198,7 @@ Requirements:
   {
     slug: 'ripple-type',
     name: 'Ripple Type',
-    description: 'SVG text animation warped by a turbulence filter. Toggle the fan — letters ripple.',
+    description: 'SVG text animation warped by a turbulence filter. Toggle the fan and letters ripple.',
     tags: [
       { label: 'Typography', accent: true },
       { label: 'Animation' },
@@ -1213,7 +1213,7 @@ Requirements:
   {
     slug: 'radial-cards',
     name: 'Radial Cards',
-    description: 'Seven health-metric cards bloom into a slowly rotating flower — tap any petal to pull it forward and read your stats up close.',
+    description: 'Seven health-metric cards bloom into a slowly rotating flower. Tap any petal to pull it forward and read your stats up close.',
     tags: [
       { label: 'Cards & Modals', accent: true },
       { label: 'Animation' },
@@ -1228,7 +1228,7 @@ Requirements:
   {
     slug: 'new-project-modal',
     name: 'New Project Modal',
-    description: 'A pill button that morphs into a soft-UI project creation form — title, description, 7-swatch color label picker, Private toggle, and a checkmark-confirm Create button.',
+    description: 'A pill button that morphs into a soft-UI project creation form: title, description, 7-swatch color label picker, Private toggle, and a checkmark-confirm Create button.',
     tags: [
       { label: 'Cards & Modals', accent: true },
       { label: 'Modal' },
@@ -1243,7 +1243,7 @@ Requirements:
   {
     slug: 'voice-chat-pill',
     name: 'Live Session Pill',
-    description: 'A compact live-session presence pill with an animated speaking indicator and overlapping avatars — clicks open a soft-UI modal showing all participants with a Join Now button.',
+    description: 'A compact live-session presence pill with an animated speaking indicator and overlapping avatars. Clicks open a soft-UI modal showing all participants with a Join Now button.',
     tags: [
       { label: 'Cards & Modals', accent: true },
       { label: 'Modal' },
@@ -1258,7 +1258,7 @@ Requirements:
   {
     slug: 'upload-progress',
     name: 'Upload Progress',
-    description: 'A collapsible file upload widget with a shimmer progress bar — indigo while uploading, amber on pause. Expand to see per-file rows with live progress, time remaining, and pause, resume, refresh, and stop controls.',
+    description: 'A collapsible file upload widget with a shimmer progress bar (indigo while uploading, amber on pause). Expand to see per-file rows with live progress, time remaining, and pause, resume, refresh, and stop controls.',
     tags: [
       { label: 'Widgets', accent: true },
       { label: 'Interactive' },
@@ -1273,7 +1273,7 @@ Requirements:
   {
     slug: 'signature-pad',
     name: 'Signature Pad',
-    description: 'A signature pad widget — pill button morphs into a canvas to draw with mouse or touch.',
+    description: 'A signature pad widget: pill button morphs into a canvas to draw with mouse or touch.',
     tags: [
       { label: 'Widgets', accent: true },
       { label: 'Modal' },

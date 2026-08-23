@@ -36,7 +36,7 @@ const TOUCH_TARGET_STYLE = `
 const trackVariants = cva(
   [
     'relative inline-flex items-center shrink-0',
-    // ponytail: identity constant, no token — 34x18 track / 12px thumb / 2px inset geometry is the switch's fixed shape
+    // Identity constant, no token: the 34x18 track / 12px thumb / 2px inset geometry is the switch's fixed shape
     'w-[34px] h-[18px]',
     'border-[length:var(--andromeda-border-width,1px)] border-solid',
     'rounded-[var(--andromeda-radius-frame,0px)]',

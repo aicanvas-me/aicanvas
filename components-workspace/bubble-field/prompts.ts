@@ -47,8 +47,8 @@ Standard DPR: dpr = devicePixelRatio || 1; canvas.width = round(rect.width*dpr);
 Theme detection: walk \`containerRef.current.closest('[data-card-theme]')\`; if found read its \`dark\` class, otherwise read \`document.documentElement.classList.contains('dark')\`. MutationObserver on both for class changes. Mirror into isDarkRef (for the RAF loop) and isDark state (for JSX bg).
 
 JSX: outer div relative h-full w-full overflow-hidden, inline background '#110F0C' dark / '#F5F1EA' light. Canvas absolute inset-0 width/height 100%. Centered pointer-events-none overlay with:
-- "Bubble Field" — fontSize 22, fontWeight 700, letterSpacing -0.02em, color rgba(255,255,255,0.45) dark / rgba(28,25,22,0.45) light
-- "hover to burst" — fontSize 11, fontWeight 600, textTransform uppercase, letterSpacing 0.12em, color rgba(255,255,255,0.18) dark / rgba(28,25,22,0.22) light
+- "Bubble Field": fontSize 22, fontWeight 700, letterSpacing -0.02em, color rgba(255,255,255,0.45) dark / rgba(28,25,22,0.45) light
+- "hover to burst": fontSize 11, fontWeight 600, textTransform uppercase, letterSpacing 0.12em, color rgba(255,255,255,0.18) dark / rgba(28,25,22,0.22) light
 
 Cleanup: alive=false, cancelAnimationFrame, ro.disconnect, observer.disconnect.
 

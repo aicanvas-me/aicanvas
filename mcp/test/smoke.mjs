@@ -11,10 +11,8 @@
  *     node test/smoke.mjs                             # against dev server
  */
 
-import { spawn } from 'node:child_process'
 import { setTimeout as sleep } from 'node:timers/promises'
-
-const SERVER = new URL('../dist/index.js', import.meta.url).pathname
+import { McpClient } from './client.mjs'
 
 let pass = 0
 let fail = 0
@@ -33,75 +31,6 @@ function record(name, ok, detail) {
 
 function section(title) {
   console.log(`\n── ${title} ─────────────────────────────────────────────`)
-}
-
-// ── JSON-RPC client ──────────────────────────────────────────────────────────
-
-class McpClient {
-  constructor() {
-    this.proc = spawn('node', [SERVER], {
-      stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env },
-    })
-    this.buf = ''
-    this.pending = new Map()
-    this.nextId = 1
-    this.stderr = ''
-
-    this.proc.stdout.setEncoding('utf-8')
-    this.proc.stdout.on('data', (chunk) => {
-      this.buf += chunk
-      let nl
-      while ((nl = this.buf.indexOf('\n')) !== -1) {
-        const line = this.buf.slice(0, nl).trim()
-        this.buf = this.buf.slice(nl + 1)
-        if (!line) continue
-        try {
-          const msg = JSON.parse(line)
-          if (msg.id != null && this.pending.has(msg.id)) {
-            const { resolve } = this.pending.get(msg.id)
-            this.pending.delete(msg.id)
-            resolve(msg)
-          }
-        } catch (e) {
-          // ignore parse errors — log to stderr
-          this.stderr += `[parse-error] ${line}\n`
-        }
-      }
-    })
-    this.proc.stderr.setEncoding('utf-8')
-    this.proc.stderr.on('data', (chunk) => {
-      this.stderr += chunk
-    })
-  }
-
-  request(method, params) {
-    const id = this.nextId++
-    const msg = { jsonrpc: '2.0', id, method, params }
-    return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => {
-        this.pending.delete(id)
-        reject(new Error(`timeout: ${method}`))
-      }, 15000)
-      this.pending.set(id, {
-        resolve: (m) => {
-          clearTimeout(timer)
-          resolve(m)
-        },
-      })
-      this.proc.stdin.write(JSON.stringify(msg) + '\n')
-    })
-  }
-
-  notify(method, params) {
-    const msg = { jsonrpc: '2.0', method, params }
-    this.proc.stdin.write(JSON.stringify(msg) + '\n')
-  }
-
-  async close() {
-    this.proc.stdin.end()
-    await new Promise((r) => this.proc.once('exit', r))
-  }
 }
 
 async function callTool(client, name, args) {

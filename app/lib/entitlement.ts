@@ -13,8 +13,10 @@ export interface Entitlement {
 type AdminClient = ReturnType<typeof createAdminClient>
 
 /**
- * Resolve a request to a tier + user. The single entry point Plan 3's gate
+ * Resolve a request to a tier + user. The single entry point the registry gate
  * calls. Token path first (CLI/MCP), then the website session (cookies).
+ * Tokens do not expire: they only identify the account, and premium is
+ * derived live from the subscription below.
  */
 export async function getEntitlement(req: Request): Promise<Entitlement> {
   const token = extractToken(req)
@@ -23,14 +25,11 @@ export async function getEntitlement(req: Request): Promise<Entitlement> {
     const admin = createAdminClient()
     const { data: key } = await admin
       .from('user_api_keys')
-      .select('user_id, expires_at')
+      .select('user_id')
       .eq('token', token)
       .eq('revoked', false)
       .maybeSingle()
     if (!key) return { tier: 'anonymous', userId: null } // bad/revoked token
-    if (key.expires_at && new Date(key.expires_at) < new Date()) {
-      return { tier: 'anonymous', userId: null } // expired — rotate in settings
-    }
     // Fire-and-forget usage stamp so leaked-token anomalies are detectable.
     void admin
       .from('user_api_keys')

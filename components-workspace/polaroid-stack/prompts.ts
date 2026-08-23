@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named PolaroidStack — a pile of five small polaroid cards that fans out into an arc on click, lets you hover/select individual cards, then restacks on another click. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
+Create a React client component named PolaroidStack, a pile of five small polaroid cards that fans out into an arc on click, lets you hover/select individual cards, then restacks on another click. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
 Constants: CARD_W = 110, CARD_H = 140.
 
@@ -51,7 +51,7 @@ Inside the frame: a "photo" div flexShrink 0 height 93 with background \`linear-
 
 Toggle hint: motion.p keyed on \`\${String(fanned)}-\${String(selectedId !== null)}\` initial {opacity:0, y:4} animate {opacity:1, y:0} transition {duration:0.3} className "absolute bottom-6 text-xs text-zinc-500" pointer-events-none fontFamily 'var(--font-sans, sans-serif)' letterSpacing 0.03em. Text: !fanned ? 'click to fan out' : selectedId !== null ? 'click card again to deselect' : 'click a card · click bg to stack'.
 
-Note: this component uses a fixed dark background (#0a0a0a / bg-zinc-950) and does not support a separate light mode — matches the reference.
+Note: this component uses a fixed dark background (#0a0a0a / bg-zinc-950) and does not support a separate light mode. This matches the reference.
 
 ## Typography
 - Font: project default sans-serif

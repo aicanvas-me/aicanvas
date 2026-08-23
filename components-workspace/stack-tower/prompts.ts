@@ -9,7 +9,7 @@ Build a single-file React component called \`StackTower\` with \`'use client'\` 
 
 ## Concept
 
-A vertical column of 12 stacked text rows that reads as a 3D cylinder rotating around its vertical axis — built entirely from 2D CSS transforms (translateX + skewX + scale). The rotation "travels" down the stack because each row's phase is offset from the one above. Hover any row to highlight it in an orange accent; motion rhythm is untouched.
+A vertical column of 12 stacked text rows that reads as a 3D cylinder rotating around its vertical axis, built entirely from 2D CSS transforms (translateX + skewX + scale). The rotation "travels" down the stack because each row's phase is offset from the one above. Hover any row to highlight it in an orange accent; motion rhythm is untouched.
 
 ---
 
@@ -17,7 +17,7 @@ A vertical column of 12 stacked text rows that reads as a 3D cylinder rotating a
 
 Single full-viewport container: \`flex min-h-screen w-full items-center justify-center overflow-hidden\`. Background inline-styled per theme. Inside it, a centred flex column capped at \`width: 'min(92vw, 620px)'\` holds the 12 rows.
 
-**Dual theme — inverted palette, raw hex only:**
+**Dual theme, inverted palette, raw hex only:**
 - Dark: bg \`#0A0A0A\`, fg \`#EFEEE6\`, dim (back-face) \`#3A3936\`
 - Light: bg \`#EFEEE6\`, fg \`#0A0A0A\`, dim \`#C7C3B8\`
 - Hover accent (both themes): \`#F16D14\` (warm orange)
@@ -39,12 +39,12 @@ Row \`i\` renders \`WORDS[i % 2]\`. Each row uses Manrope-ish heavy display sans
 
 ## The rotation math
 
-Each row owns a Framer Motion \`MotionValue<number>\` called \`phase\`. All phases advance at **exactly the same rate** — hover does NOT modulate speed. Per-row "where am I on the cylinder" is derived from a fixed offset:
+Each row owns a Framer Motion \`MotionValue<number>\` called \`phase\`. All phases advance at **exactly the same rate**. Hover does NOT modulate speed. Per-row "where am I on the cylinder" is derived from a fixed offset:
 
 \`\`\`ts
 const SECONDS_PER_CYCLE = 5
 const AMPLITUDE_PX = 22
-const rowOffset = rowIndex * 0.35 // radians — rotation travels down the stack
+const rowOffset = rowIndex * 0.35 // radians, rotation travels down the stack
 \`\`\`
 
 Per frame, each row reads its phase and computes:
@@ -53,7 +53,7 @@ Per frame, each row reads its phase and computes:
 const local = phase * Math.PI * 2 + rowOffset
 const scaleX = 0.55 + 0.45 * Math.cos(local)          // 0.10 → 1.00 → 0.10
 const shiftX = Math.sin(local) * AMPLITUDE_PX         // horizontal swing
-const skewX  = Math.sin(local) * 6                    // degrees — barrel
+const skewX  = Math.sin(local) * 6                    // degrees, barrel
 const boost  = 1 + hoverAccent * 0.10                 // hover scale pop
 transform = \`translateX(\${shiftX}px) skewX(\${skewX}deg) scale(\${Math.max(0.08, scaleX) * boost}, \${boost})\`
 \`\`\`
@@ -72,7 +72,7 @@ Write a tiny \`mix(a, b, t)\` helper that parses \`#RRGGBB\` with \`parseInt(hex
 
 ## Central animation loop
 
-One \`useAnimationFrame\` in the parent — NOT one per row. Children subscribe to per-row MotionValues via \`useTransform\`; the parent owns phase advancement and hover easing.
+One \`useAnimationFrame\` in the parent, NOT one per row. Children subscribe to per-row MotionValues via \`useTransform\`; the parent owns phase advancement and hover easing.
 
 \`\`\`ts
 const HOVER_EASE_RATE = 10 // 1/s
@@ -91,11 +91,11 @@ useAnimationFrame((t) => {
 })
 \`\`\`
 
-Create the per-row MotionValues with \`useMemo(() => Array.from({length: ROW_COUNT}, () => motionValue(0)), [])\` — the plain \`motionValue\` factory, not the hook.
+Create the per-row MotionValues with \`useMemo(() => Array.from({length: ROW_COUNT}, () => motionValue(0)), [])\`, the plain \`motionValue\` factory, not the hook.
 
 ---
 
-## Hover tracking — critical for smoothness
+## Hover tracking: critical for smoothness
 
 Store the hovered row index in a **ref**, not state:
 
@@ -107,7 +107,7 @@ const handleLeave = (i) => { if (hoveredIndexRef.current === i) hoveredIndexRef.
 
 This is load-bearing: using \`useState\` here re-renders the whole stack on every hover change, which visibly hiccups the rotation. Refs avoid that.
 
-Each row wraps its \`<motion.div>\` in an outer pointer-target \`<div>\` with \`width: 100%\`, \`display: flex\`, \`justifyContent: 'center'\`, \`cursor: 'pointer'\`, \`touchAction: 'none'\`, and handlers \`onPointerEnter/Leave/Down/Up/Cancel\`. The outer div stays a stable rectangle even when the inner \`<motion.div>\` scales down to 0.08× — so hover targeting never fails.
+Each row wraps its \`<motion.div>\` in an outer pointer-target \`<div>\` with \`width: 100%\`, \`display: flex\`, \`justifyContent: 'center'\`, \`cursor: 'pointer'\`, \`touchAction: 'none'\`, and handlers \`onPointerEnter/Leave/Down/Up/Cancel\`. The outer div stays a stable rectangle even when the inner \`<motion.div>\` scales down to 0.08×, so hover targeting never fails.
 
 ---
 
@@ -125,7 +125,7 @@ Respect \`(prefers-reduced-motion: reduce)\`: when set, freeze every row's phase
 
 ## Cleanup
 
-Every \`MutationObserver\` disconnected on unmount. No other listeners or RAFs to clean — Framer Motion handles \`useAnimationFrame\` cleanup automatically.
+Every \`MutationObserver\` disconnected on unmount. No other listeners or RAFs to clean. Framer Motion handles \`useAnimationFrame\` cleanup automatically.
 
 The whole component is one file with a default export.`,
 

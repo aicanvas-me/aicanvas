@@ -1,17 +1,11 @@
 'use client'
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react'
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode, useRef } from 'react'
 import { X } from '@phosphor-icons/react'
 import { PremiumCards } from './PremiumCards'
 import { PaymentMethods } from './PaymentMethods'
 import { track } from '../../lib/analytics'
+import { useDialogFocus } from '../useDialogFocus'
 
 // ─── PaywallModalProvider ───────────────────────────────────────────────────
 // Global, full-screen upgrade modal — the paywall equivalent of AuthModal.
@@ -76,6 +70,14 @@ function PaywallModalView({
       ? null
       : 'Unlock this with a Premium subscription.'
 
+  // Keyboard: Tab stays inside the card, focus returns on close, and the card
+  // itself takes focus on open so screen readers land in the dialog.
+  const panelRef = useRef<HTMLDivElement>(null)
+  useDialogFocus(panelRef, true)
+  useEffect(() => {
+    panelRef.current?.focus()
+  }, [])
+
   // Lock body scroll + close on Escape while open. Backdrop clicks also close
   // (this is a soft upgrade pitch, not a flow you must complete).
   useEffect(() => {
@@ -105,7 +107,11 @@ function PaywallModalView({
       />
 
       {/* Width hugs the content: just the single Premium card + padding. */}
-      <div className="relative z-10 my-auto w-full max-w-lg rounded-2xl bg-sand-950 p-6 shadow-2xl sm:p-8">
+      <div
+        ref={panelRef}
+        tabIndex={-1}
+        className="relative z-10 my-auto w-full max-w-lg rounded-2xl bg-sand-950 p-6 shadow-2xl outline-none sm:p-8"
+      >
         <button
           type="button"
           onClick={onClose}

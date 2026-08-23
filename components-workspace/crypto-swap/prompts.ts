@@ -8,17 +8,17 @@ STACK
 - React + TypeScript, Tailwind CSS v4, Framer Motion, @phosphor-icons/react (always weight="regular" unless noted). No other dependencies.
 - One default-exported component in a single file. 'use client' at the top. Add a comment: // npm install framer-motion @phosphor-icons/react
 - Root element: className="flex min-h-screen w-full items-center justify-center px-4 py-10" with the page background set via inline style. Center the card.
-- Must be fully responsive down to 320px wide, and respect prefers-reduced-motion (use Framer Motion's useReducedMotion — gate every animation: reduced motion gets instant snaps / plain crossfades, no springs, no spinners spinning, no live drift).
+- Must be fully responsive down to 320px wide, and respect prefers-reduced-motion (use Framer Motion's useReducedMotion and gate every animation: reduced motion gets instant snaps / plain crossfades, no springs, no spinners spinning, no live drift).
 - No external coin-icon library: inline the brand coin SVGs (see below).
 
 LAYOUT (a single unified tray with uniform 8px spacing)
 - One rounded container ("tray") holding FOUR stacked blocks with uniform spacing: the tray's inner padding is 8px on every side (p-2) and the gap between the four blocks is also 8px (gap-2). The tray has a large radius (rounded-[28px]) and a soft drop shadow, NO border.
 - Card max width 360px.
 - The four blocks, top to bottom:
-  1. SELL card — inner block, rounded-3xl, px-4 py-3, fill one notch lighter than the tray, no border.
-  2. BUY card — same styling as Sell.
-  3. DETAILS / rate accordion — inner block, rounded-3xl, overflow-hidden, same fill.
-  4. SWAP button — full-width CTA, height 48px, rounded-3xl.
+  1. SELL card: inner block, rounded-3xl, px-4 py-3, fill one notch lighter than the tray, no border.
+  2. BUY card: same styling as Sell.
+  3. DETAILS / rate accordion: inner block, rounded-3xl, overflow-hidden, same fill.
+  4. SWAP button: full-width CTA, height 48px, rounded-3xl.
 - A circular FLIP button (44×44) is absolutely centered over the 8px seam between the Sell and Buy cards (left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2, z-10). It has a 4px ring in the TRAY color (via box-shadow, not a border) so it reads cleanly over the seam, plus a soft drop shadow.
 
 THEME (inline hex, dual light/dark, no design tokens)
@@ -29,11 +29,11 @@ Read the 'dark' class on <html> and stay in sync with a MutationObserver (attrib
 - Token pill fill: dark #2A2A2E / light #FFFFFF (soft 1px shadow)
 - Primary/value text: dark #ECECEC / light #16160F
 - Muted/label text: dark #8A8A86 / light #6B6B62
-- ACCENT = PERIWINKLE: dark #AEB6EC / light #9AA6EA — used on the Swap CTA fill, the Max chip, the active slippage chip, and the active token row (as a ~16% tint: rgba(174,182,236,0.16) dark / rgba(154,166,234,0.16) light). Periwinkle CTA text is near-black #0A0A0A.
+- ACCENT = PERIWINKLE: dark #AEB6EC / light #9AA6EA, used on the Swap CTA fill, the Max chip, the active slippage chip, and the active token row (as a ~16% tint: rgba(174,182,236,0.16) dark / rgba(154,166,234,0.16) light). Periwinkle CTA text is near-black #0A0A0A.
 - Flip button: dark = #2A2A2E circle with #ECECEC icon; light = #0A0A0A (black) circle with #FFFFFF icon.
 - Trend up green #16C784 / #0FA968, trend down red #EA3943 / #E5484D, flat grey #8E8E84 / #6E6E66.
 - Success green: dark #22C55E / light #0FA968, with near-black text/check (#0A0A0A).
-- All surfaces are BORDERLESS — separate them by fill contrast + soft shadows only. Dividers inside a block are faint fill lines (inset box-shadow), not borders.
+- All surfaces are BORDERLESS: separate them by fill contrast + soft shadows only. Dividers inside a block are faint fill lines (inset box-shadow), not borders.
 
 TYPE & SPACING DISCIPLINE
 - Type scale (px): 10 · 12 · 14 · 16 · 20 · 24 · 28. No off-grid sizes.
@@ -54,7 +54,7 @@ Each token: { symbol, name, usdPrice, basePrice (seed = usdPrice, the 24h baseli
 Defaults: Sell = ETH, Buy = USDC. Default sell amount = "1".
 
 COIN ICONS (inline, no dependency)
-Inline a real, brand-colored circular coin SVG per symbol (small circular brand marks). Use the public-domain CC0 cryptocurrency-icons set (spothq/cryptocurrency-icons, svg/color/<symbol>.svg) — copy the markup verbatim, convert SVG attributes to valid JSX (fill-rule→fillRule, fill-opacity→fillOpacity), keep the 0 0 32 32 viewBox, render at the requested size with borderRadius 50%, role="img" aria-hidden. Coin marks are identical in light and dark (logos don't theme). Any symbol without an inlined mark falls back to a gradient disc (the two-stop gradient) showing 1–2 letters of the symbol — so there are zero external image deps.
+Inline a real, brand-colored circular coin SVG per symbol (small circular brand marks). Use the public-domain CC0 cryptocurrency-icons set (spothq/cryptocurrency-icons, svg/color/<symbol>.svg). Copy the markup verbatim, convert SVG attributes to valid JSX (fill-rule→fillRule, fill-opacity→fillOpacity), keep the 0 0 32 32 viewBox, render at the requested size with borderRadius 50%, role="img" aria-hidden. Coin marks are identical in light and dark (logos don't theme). Any symbol without an inlined mark falls back to a gradient disc (the two-stop gradient) showing 1–2 letters of the symbol, so there are zero external image deps.
 
 SELL CARD
 - Label "Sell" (12px muted).
@@ -64,31 +64,31 @@ SELL CARD
 - "Max" chip = periwinkle tint fill, periwinkle text (dark #C7CDF2 / light #4A57B8). Clicking it fills the input with the full balance (truncated to the adaptive precision so it never displays a misleading "0"). 44px hit area, visible chip kept compact, pointer-only hover brightens the tint.
 
 BUY CARD
-- Label "Buy". The amount is COMPUTED, not editable — render it with an animated number transition (a Framer Motion useMotionValue + useTransform that tweens over 0.5s with ease [0.22,1,0.36,1]; SKIP the tween when the relative change is <0.1% so the live price drift doesn't continuously re-animate; snap instantly under reduced motion). Wrap it in role="status" aria-live="polite" with an aria-label naming the value + symbol. Dim the value (use muted color) when there's no amount.
+- Label "Buy". The amount is COMPUTED, not editable. Render it with an animated number transition (a Framer Motion useMotionValue + useTransform that tweens over 0.5s with ease [0.22,1,0.36,1]; SKIP the tween when the relative change is <0.1% so the live price drift doesn't continuously re-animate; snap instantly under reduced motion). Wrap it in role="status" aria-live="polite" with an aria-label naming the value + symbol. Dim the value (use muted color) when there's no amount.
 - Bottom row: just the 24h trend chip (no balance/Max on Buy).
 
 SWAP MATH (a coherent constant-product-ish DEX model)
 - sellAmount = parseFloat(input) || 0; sellUsd = sellAmount × sellPrice.
 - midRate = sellPrice / buyPrice (buy units per 1 sell unit).
 - idealBuy = sellAmount × midRate.
-- priceImpact = sellAmount > 0 ? clamp(sellUsd / POOL_DEPTH_USD, IMPACT_FLOOR, IMPACT_CAP) : 0, where POOL_DEPTH_USD = 25_000_000, IMPACT_FLOOR = 0.0005 (0.05%), IMPACT_CAP = 0.05 (5%). So bigger trades eat more of the book — a ~$68k trade nudges ~0.27%, a multi-million trade clamps near the cap.
+- priceImpact = sellAmount > 0 ? clamp(sellUsd / POOL_DEPTH_USD, IMPACT_FLOOR, IMPACT_CAP) : 0, where POOL_DEPTH_USD = 25_000_000, IMPACT_FLOOR = 0.0005 (0.05%), IMPACT_CAP = 0.05 (5%). So bigger trades eat more of the book: a ~$68k trade nudges ~0.27%, a multi-million trade clamps near the cap.
 - buyAmount = idealBuy × (1 − priceImpact)  ← the received side is slightly LESS than ideal.
 - minReceived = buyAmount × (1 − slippage).
 - Network fee is a SEPARATE estimate (NETWORK_FEE_BASE_USD = 2.4, paid in the native token) and does NOT reduce the output.
 
-NUMBER FORMATTING (adaptive precision — never a misleading "0")
-- formatTokenAmount: thousands separators, trailing zeros trimmed, with magnitude-adaptive max fraction digits — abs ≥ 1 → 2 decimals; 0.01–1 → 4; <0.01 (nonzero) → 8. So 64308.33 stays 2 decimals, 1.50→"1.5", 2.00→"2", and a tiny 0.0000147 keeps its digits instead of flattening to "0". A genuine 0 or non-finite → "0".
+NUMBER FORMATTING (adaptive precision, never a misleading "0")
+- formatTokenAmount: thousands separators, trailing zeros trimmed, with magnitude-adaptive max fraction digits: abs ≥ 1 → 2 decimals; 0.01–1 → 4; <0.01 (nonzero) → 8. So 64308.33 stays 2 decimals, 1.50→"1.5", 2.00→"2", and a tiny 0.0000147 keeps its digits instead of flattening to "0". A genuine 0 or non-finite → "0".
 - A "cap for input" helper truncates (not rounds) a precise amount to the adaptive digit count and trims trailing zeros / a dangling dot for seeding the Sell field (used by flip + Max); if truncation would zero out a nonzero value, fall back to value.toPrecision(4) so a tiny amount stays seedable. Returns "" for a genuine 0.
 - formatUsd: en-US currency, 2 decimals.
-- formatRate: adaptive — abs ≥1000 → 2; ≥1 → 4; ≥0.01 → 6; else 8 decimals.
-- 24h change is rendered SIGN-LESS (e.g. "2.41%") — direction is shown only by the caret (CaretUp/CaretDown, weight="fill", 12px) + red/green color. Within ±0.05% it reads flat/neutral (grey, no caret) — so the ~0% stablecoins read flat.
+- formatRate: adaptive, abs ≥1000 → 2; ≥1 → 4; ≥0.01 → 6; else 8 decimals.
+- 24h change is rendered SIGN-LESS (e.g. "2.41%"). Direction is shown only by the caret (CaretUp/CaretDown, weight="fill", 12px) + red/green color. Within ±0.05% it reads flat/neutral (grey, no caret), so the ~0% stablecoins read flat.
 
-TOKEN PICKER (a compact, component-bounded dropdown — this is a key detail)
+TOKEN PICKER (a compact, component-bounded dropdown, and this is a key detail)
 - Clicking a pill TOGGLES that side's picker (open if closed; close if already open for that side). Only one picker open at a time.
 - The dropdown is a single list portaled to <body> (so the card's transformed Framer-Motion wrapper can't clip it), but its WIDTH and POSITION are computed from the COMPONENT box, never the viewport:
   - width + left = the card's exact width/left (it spans the whole component).
   - it opens just UNDER the clicked pill with an 8px gap, but FLIPS UP (seated above the pill) when ~3 rows below would spill past the card's bottom edge, so it always stays inside the component bounds. Its max height never exceeds the card height.
-  - Measure in a useLayoutEffect (synchronous first measurement avoids a ghost-row scroll bug). RE-ANCHOR on reflow with a ResizeObserver on the card AND the trigger pill (the vertically-centered card re-centers whenever its height changes — expanding the accordion, opening a popover, the success state — which moves the pill), plus window scroll (capture) + resize listeners. Only commit a new position when the geometry actually moved past a ~0.5px epsilon (anti-thrash).
+  - Measure in a useLayoutEffect (synchronous first measurement avoids a ghost-row scroll bug). RE-ANCHOR on reflow with a ResizeObserver on the card AND the trigger pill (the vertically-centered card re-centers whenever its height changes, so expanding the accordion, opening a popover, or entering the success state moves the pill), plus window scroll (capture) + resize listeners. Only commit a new position when the geometry actually moved past a ~0.5px epsilon (anti-thrash).
 - Rows: compact 48px tall (clears the 44px touch min), gap 4px, with ~3 rows visible before it scrolls. Each row: coin icon (32px) + name (14px semibold) + symbol (12px muted) on the left; balance (14px semibold tabular) + trend chip on the right. The active token's row gets the periwinkle tint.
 - A VISIBLE custom scrollbar (not the thin auto-hide default): WebKit via Tailwind arbitrary variants ([&::-webkit-scrollbar]:w-2, rounded thumb #46464C dark / #C9C9BC light, transparent track) written as COMPLETE literal class strings so JIT detects them; Firefox via inline scrollbarWidth 'thin' + scrollbarColor. [scrollbar-gutter:stable].
 - Full listbox a11y: the panel is role="listbox" aria-label="Select a token" with aria-activedescendant; each row is a role="option" button with aria-selected + a per-symbol id; the trigger pill is aria-haspopup="listbox" aria-controls={listId} aria-expanded. Roving tabindex (only the active option is tabbable). On open, focus the active option (preventScroll). Arrow Up/Down/Home/End move the active option; Enter/Space select; Tab is trapped + wraps within the panel. On close, restore focus to the pill ONLY if focus was still inside the panel (so a tap-close doesn't steal focus). Esc and click-outside close (treat both the card and the portaled dropdown as "inside").
@@ -101,14 +101,14 @@ TOKEN PILL
 
 DETAILS / RATE ACCORDION (COLLAPSED BY DEFAULT)
 - Collapsed it shows only a fixed 48px rate row (so it reads as one block the same height as the Swap button):
-  - LEFT: a button "1 {SELL} = {rate} {BUY}" with an ArrowsLeftRight icon — tap to INVERT the rate (rate becomes 1/midRate; swap the from/to symbols). The text crossfades+slides on invert (AnimatePresence mode="wait", 0.26s ease [0.22,1,0.36,1]).
+  - LEFT: a button "1 {SELL} = {rate} {BUY}" with an ArrowsLeftRight icon. Tap to INVERT the rate (rate becomes 1/midRate; swap the from/to symbols). The text crossfades+slides on invert (AnimatePresence mode="wait", 0.26s ease [0.22,1,0.36,1]).
   - RIGHT: a chevron (CaretDown) toggle that rotates 180° (spring 360/26) and expands the breakdown. aria-expanded.
   - The whole row gets a faint pointer-only hover-lift.
 - Expanded breakdown (animate height auto + opacity, 0.28s ease [0.22,1,0.36,1]; a faint inset top divider line):
-  - "Price impact": -{impact}% colored by severity — green <0.5%, amber (#F5A524 dark / #C77700 light) 0.5–2%, red >2%. Show "—" when no amount.
+  - "Price impact": -{impact}% colored by severity: green <0.5%, amber (#F5A524 dark / #C77700 light) 0.5–2%, red >2%. Show an em dash when no amount.
   - "Network fee": ~{usd}, animated number, jitters live (see drift).
   - "Max slippage": a gear chip showing the current tolerance ("Auto (0.5%)" or "0.5%"). Tapping it opens a small popover ABOVE the chip (bottom: calc(100% + 6px), spring 420/30) with options: Auto (0.5%) · 0.1% · 0.5% · 1.0%. Default = Auto (0.005). The active option is periwinkle-tinted. Esc + click-outside close it. Changing slippage updates Min received.
-  - "Min received": {amount} {BUY}, or "—" when no amount.
+  - "Min received": {amount} {BUY}, or an em dash when no amount.
 
 FLIP BUTTON
 - The 44×44 circle straddling the Sell/Buy seam. Clicking it: swaps the sell/buy SYMBOLS and carries the computed buy amount up into the Sell input (cap-for-input precision; empty if zero). The ArrowsDownUp icon (18px) rotates via a motion value.
@@ -134,7 +134,7 @@ LIVE PRICE DRIFT (skip entirely under reduced motion)
 CONSTANTS RECAP
 PRICE_DRIFT_MS 3000 · SWAP_SWAPPING_MS 900 · SWAP_SUCCESS_MS 1600 · POOL_DEPTH_USD 25_000_000 · IMPACT_FLOOR 0.0005 · IMPACT_CAP 0.05 · NETWORK_FEE_BASE_USD 2.4 · DEFAULT_SLIPPAGE 0.005 (Auto) · slippage options [Auto 0.005, 0.1% 0.001, 0.5% 0.005, 1.0% 0.01] · default sell "1" · picker ROW_HEIGHT 48, VISIBLE_ROWS 3, ROW_GAP 4, dropdown gap 8 · flip spring 320/22 · caret/toggle springs 360/26 · pill hover spring 400/26 · flip hover spring 400/24 · success check spring 520/16 · slippage popover spring 420/30 · picker open spring 360/30 · periwinkle #AEB6EC dark / #9AA6EA light · page #0A0A0A / #E6E6E3 · tray #141416 / #FFFFFF · inner #1D1D20 / #F2F2EF.
 
-Make it feel like a real, polished DEX swap widget — smooth, responsive, accessible, and gorgeous in BOTH light and dark.`
+Make it feel like a real, polished DEX swap widget: smooth, responsive, accessible, and gorgeous in BOTH light and dark.`
 
 export const prompts: Partial<Record<Platform, string>> = {
   'Claude Code': `Before building, verify the project is set up for this stack and scaffold anything missing:
@@ -142,7 +142,7 @@ export const prompts: Partial<Record<Platform, string>> = {
 - If the project isn't initialized for this, use the shadcn CLI to scaffold the base (e.g. \`npx shadcn@latest init\`) so Tailwind v4 + TS + React are wired up before you write the component.
 - Install deps: \`npm install framer-motion @phosphor-icons/react\`.
 
-Then build the component. Inline EVERYTHING into a single file — one default-exported component, all helpers, types, the token table, and the inlined coin SVGs in the same module. Trust idiomatic React + Framer Motion; you don't need scaffolding files or comments explaining basics.
+Then build the component. Inline EVERYTHING into a single file: one default-exported component, all helpers, types, the token table, and the inlined coin SVGs in the same module. Trust idiomatic React + Framer Motion; you don't need scaffolding files or comments explaining basics.
 
 ${SPEC}`,
   Lovable: SPEC,

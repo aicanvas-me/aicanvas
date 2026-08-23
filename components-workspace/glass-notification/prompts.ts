@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassNotification\` — a swipeable frosted-glass notification stack with a header, counter badge, Reset button, and empty state.
+Create a React client component named \`GlassNotification\`, a swipeable frosted-glass notification stack with a header, counter badge, Reset button, and empty state.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 

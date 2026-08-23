@@ -58,6 +58,7 @@ export async function GET(req: NextRequest) {
     try {
       const res = await fetch(`${paddleApiBase()}/subscriptions/${row.paddle_subscription_id}`, {
         headers: { Authorization: `Bearer ${apiKey}` },
+        signal: AbortSignal.timeout(10_000), // a hang counts as failed, retried tomorrow
       })
       if (res.status === 429 || res.status >= 500) { failed++; continue } // transient — retry tomorrow
       if (!res.ok) { skipped++; continue }                                 // 404 etc — don't guess, leave as-is

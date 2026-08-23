@@ -21,13 +21,12 @@
  *   - search_components surfaces a DS component
  */
 
-import { spawn } from 'node:child_process'
 import { createServer } from 'node:http'
 import { readFile } from 'node:fs/promises'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { McpClient } from './client.mjs'
 
-const SERVER = new URL('../dist/index.js', import.meta.url).pathname
 const BAD_URL = 'http://127.0.0.1:1/r' // Port 1 — guaranteed unreachable
 // registry-data/ lives at the repo root, two levels up from mcp/test/.
 const REGISTRY_DATA_DIR = new URL('../../registry-data/', import.meta.url).pathname
@@ -44,76 +43,6 @@ function record(name, ok, detail) {
     fail++
     failures.push(`${name}: ${detail}`)
     console.log(`  ✗ ${name}  — ${detail}`)
-  }
-}
-
-class McpClient {
-  constructor(registryBase = BAD_URL, extraEnv = {}) {
-    this.proc = spawn('node', [SERVER], {
-      stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env, AICANVAS_REGISTRY_BASE: registryBase, ...extraEnv },
-    })
-    this.buf = ''
-    this.pending = new Map()
-    this.nextId = 1
-    this.stderr = ''
-
-    this.proc.stdout.setEncoding('utf-8')
-    this.proc.stdout.on('data', (chunk) => {
-      this.buf += chunk
-      let nl
-      while ((nl = this.buf.indexOf('\n')) !== -1) {
-        const line = this.buf.slice(0, nl).trim()
-        this.buf = this.buf.slice(nl + 1)
-        if (!line) continue
-        try {
-          const msg = JSON.parse(line)
-          if (msg.id != null && this.pending.has(msg.id)) {
-            const { resolve } = this.pending.get(msg.id)
-            this.pending.delete(msg.id)
-            resolve(msg)
-          }
-        } catch {}
-      }
-    })
-    this.proc.stderr.setEncoding('utf-8')
-    this.proc.stderr.on('data', (chunk) => {
-      this.stderr += chunk
-    })
-  }
-
-  request(method, params) {
-    const id = this.nextId++
-    return new Promise((resolve, reject) => {
-      const timer = setTimeout(() => {
-        this.pending.delete(id)
-        reject(new Error(`timeout: ${method}`))
-      }, 30000)
-      this.pending.set(id, {
-        resolve: (m) => {
-          clearTimeout(timer)
-          resolve(m)
-        },
-      })
-      this.proc.stdin.write(
-        JSON.stringify({ jsonrpc: '2.0', id, method, params }) + '\n',
-      )
-    })
-  }
-
-  notify(method, params) {
-    this.proc.stdin.write(
-      JSON.stringify({ jsonrpc: '2.0', method, params }) + '\n',
-    )
-  }
-
-  async close() {
-    this.proc.stdin.end()
-    await new Promise((r) => this.proc.once('exit', r))
-  }
-
-  isAlive() {
-    return this.proc.exitCode == null
   }
 }
 
@@ -145,7 +74,20 @@ function startLocalRegistry() {
   })
 }
 
-const client = new McpClient()
+// ── Version literal ──────────────────────────────────────────────────────────
+// The version lives in four places (package.json, server.json twice, and the
+// MCP_VERSION literal the server reports); a release that bumps only some of
+// them ships a server that announces the wrong version.
+{
+  const here = new URL('.', import.meta.url)
+  const pkg = JSON.parse(readFileSync(new URL('../package.json', here), 'utf-8')).version
+  const srv = JSON.parse(readFileSync(new URL('../server.json', here), 'utf-8'))
+  const literal = readFileSync(new URL('../src/index.ts', here), 'utf-8').match(/const MCP_VERSION = '([^']+)'/)?.[1]
+  const all = [pkg, srv.version, srv.packages?.[0]?.version, literal]
+  record('version literal matches package.json and server.json', all.every((v) => v === pkg), all.join(' / '))
+}
+
+const client = new McpClient({ registryBase: BAD_URL, timeoutMs: 30000 })
 let local = null
 let localClient = null
 let tokenClient = null
@@ -233,7 +175,7 @@ try {
 
   local = await startLocalRegistry()
   console.log(`\n── Phase B: server pointed at local registry ${local.base} ──`)
-  localClient = new McpClient(local.base)
+  localClient = new McpClient({ registryBase: local.base, timeoutMs: 30000 })
 
   const initB = await localClient.request('initialize', {
     protocolVersion: '2025-03-26',
@@ -363,7 +305,7 @@ try {
   // bare @aicanvas form would run anonymously in the user's shell and install
   // a placeholder).
   const TOKEN = 'aic_' + '0123456789abcdef'.repeat(3)
-  tokenClient = new McpClient(local.base, { AICANVAS_TOKEN: TOKEN })
+  tokenClient = new McpClient({ registryBase: local.base, extraEnv: { AICANVAS_TOKEN: TOKEN }, timeoutMs: 30000 })
   const initT = await tokenClient.request('initialize', {
     protocolVersion: '2025-03-26',
     capabilities: {},

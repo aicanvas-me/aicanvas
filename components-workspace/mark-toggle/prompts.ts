@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named MarkToggle — an iOS-style pill toggle in earth/sand tones whose white thumb carries a small icon that morphs from X (off) to Check (on) as it slides across. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
+Create a React client component named MarkToggle, an iOS-style pill toggle in earth/sand tones whose white thumb carries a small icon that morphs from X (off) to Check (on) as it slides across. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
 Constants: MAX_TRACK_W = 80, MIN_TRACK_W = 48. State: isOn=false, animating=false, pageIsDark=true, trackW=80. Refs: containerRef, isOnRef=false. MotionValue thumbX = useMotionValue(offX).
 

@@ -14,34 +14,18 @@
 
 import { chromium } from 'playwright'
 import { mkdir, readFile, rm } from 'fs/promises'
-import { existsSync, readFileSync } from 'fs'
+import { readFileSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-// ─── .env.local loader (avoids adding dotenv as a dependency) ──────────────────
-function loadDotEnvLocal() {
-  const envPath = path.join(process.cwd(), '.env.local')
-  if (!existsSync(envPath)) return
-  for (const rawLine of readFileSync(envPath, 'utf8').split('\n')) {
-    const line = rawLine.trim()
-    if (!line || line.startsWith('#')) continue
-    const eq = line.indexOf('=')
-    if (eq < 0) continue
-    const key = line.slice(0, eq).trim()
-    let value = line.slice(eq + 1).trim()
-    if (
-      (value.startsWith('"') && value.endsWith('"')) ||
-      (value.startsWith("'") && value.endsWith("'"))
-    ) {
-      value = value.slice(1, -1)
-    }
-    if (process.env[key] === undefined) process.env[key] = value
-  }
-}
 
-loadDotEnvLocal()
+// Secrets come from .env.local when present; variables already in the
+// environment win, the same precedence as before.
+try {
+  process.loadEnvFile('.env.local')
+} catch {}
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 

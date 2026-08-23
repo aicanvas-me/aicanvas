@@ -334,7 +334,7 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
   'polaroid-stack': {
     useCases: ['Image gallery', 'Portfolio', 'Wedding site'],
     about:
-      'Polaroid Stack is five photo cards in the casual pile a friend would leave on a desk, slightly rotated, slightly offset. Click the stack and they fan out in a spring-animated arc; hover individual cards to lift them; click a specific card to bring it forward as the focal point. Motion drives the fan-out, the lift, and the spotlight transitions. It is a warm, personal way to display a small photo set — perfect for portfolios, about pages, wedding sites, and product pages where the photo itself is part of the brand.',
+      'Polaroid Stack is five photo cards in the casual pile a friend would leave on a desk, slightly rotated, slightly offset. Click the stack and they fan out in a spring-animated arc; hover individual cards to lift them; click a specific card to bring it forward as the focal point. Motion drives the fan-out, the lift, and the spotlight transitions. It is a warm, personal way to display a small photo set, perfect for portfolios, about pages, wedding sites, and product pages where the photo itself is part of the brand.',
   },
   'glass-card': {
     useCases: ['Marketing site', 'Dashboard', 'Pricing'],
@@ -359,7 +359,7 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
   'slide-deck': {
     useCases: ['Image gallery', 'Editorial', 'Portfolio'],
     about:
-      'Slide Deck is a four-slide editorial card stack you navigate by drag or by tapping the side arrows. Each slide springs into place with a Motion transition that hands focus to the new card while easing the previous one back. The cards themselves take rich content — image, headline, subhead, footer — so the same component works for an image gallery, a long-form editorial preview, a portfolio carousel, or a multi-step product story.',
+      'Slide Deck is a four-slide editorial card stack you navigate by drag or by tapping the side arrows. Each slide springs into place with a Motion transition that hands focus to the new card while easing the previous one back. The cards themselves take rich content (image, headline, subhead, footer), so the same component works for an image gallery, a long-form editorial preview, a portfolio carousel, or a multi-step product story.',
   },
   'label-cards': {
     useCases: ['Mood board', 'Branding showcase', 'Empty state'],
@@ -446,7 +446,7 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
   'responsive-letters': {
     useCases: ['Hero section', 'Editorial', 'Type specimen'],
     about:
-      'Responsive Letters is interactive variable-font typography where each letter responds to cursor proximity by morphing its weight, width, italic angle, letter-spacing, and skew — together, a deformation-under-pressure effect that makes the headline feel like an elastic material. Motion drives the per-letter property animation, and the variable-font axes do the rendering, so the cost stays in CSS rather than canvas. It is built for hero headlines, type specimens, and editorial covers where the typeface itself is the protagonist.',
+      'Responsive Letters is interactive variable-font typography where each letter responds to cursor proximity by morphing its weight, width, italic angle, letter-spacing, and skew. Together they read as a deformation-under-pressure effect that makes the headline feel like an elastic material. Motion drives the per-letter property animation, and the variable-font axes do the rendering, so the cost stays in CSS rather than canvas. It is built for hero headlines, type specimens, and editorial covers where the typeface itself is the protagonist.',
   },
   'good-vibes': {
     useCases: ['Hero section', 'Portfolio', 'Marketing site'],
@@ -476,7 +476,7 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
   'slice-type': {
     useCases: ['Hero section', 'Editorial', 'Brand site'],
     about:
-      'Slice Type is a typographic magic trick: at rest you read one ambiguous word, but as you hover the letters slice horizontally — LIGHT lifting up, NIGHT sinking down — and the shared glyphs resolve into two separate words. The split is driven by Motion handling the vertical translations, with a canvas layer for the gradient masking that makes the cut feel clean. Use it for hero sections, brand sites, and editorial layouts where the headline itself is the surprise.',
+      'Slice Type is a typographic magic trick: at rest you read one ambiguous word, but as you hover the letters slice horizontally (LIGHT lifting up, NIGHT sinking down) and the shared glyphs resolve into two separate words. The split is driven by Motion handling the vertical translations, with a canvas layer for the gradient masking that makes the cut feel clean. Use it for hero sections, brand sites, and editorial layouts where the headline itself is the surprise.',
   },
   'stack-tower': {
     useCases: ['Hero section', 'Type specimen', 'Portfolio'],
@@ -542,7 +542,7 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
   'voice-chat-pill': {
     useCases: ['Collaboration tool', 'SaaS', 'Game UI'],
     about:
-      'Live Session Pill is a compact presence indicator with an animated speaking pulse and overlapping participant avatars, that opens into a soft-UI modal when tapped — showing every participant with a Join Now button. Motion drives both the speaking pulse and the pill-to-modal expansion. It slots into collaboration tools, multiplayer game lobbies, design-tool comment threads, and any product where live presence deserves a compact, glanceable affordance with a fast path to joining the conversation.',
+      'Live Session Pill is a compact presence indicator with an animated speaking pulse and overlapping participant avatars, that opens into a soft-UI modal when tapped, showing every participant with a Join Now button. Motion drives both the speaking pulse and the pill-to-modal expansion. It slots into collaboration tools, multiplayer game lobbies, design-tool comment threads, and any product where live presence deserves a compact, glanceable affordance with a fast path to joining the conversation.',
   },
   'product-card-deck': {
     useCases: ['Product showcase', 'E-commerce', 'Lookbook'],
@@ -552,7 +552,7 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
   'crypto-swap': {
     useCases: ['DeFi app', 'Crypto dashboard', 'Web3 landing'],
     about:
-      'Crypto Swap is a Uniswap-style token-swap card for trading one crypto asset for another, not a fiat exchange — the dollar figures are reference valuations used only to derive the rate. Type a Sell amount, pick two tokens from a contained dropdown of real brand coin icons, and the Buy side recomputes live with an animated number that reflects a pool-depth price-impact model, a separate network-fee estimate, and a slippage-driven minimum received. A flip button swaps the direction and carries the amount across, each token shows its 24h trend, and the periwinkle Swap button runs an idle to swapping to success state machine with a check, glow, and spark burst. Motion drives every transition and Tailwind handles the borderless dual-theme surfaces, with adaptive decimal precision, full listbox keyboard accessibility, and reduced-motion support throughout. It is a polished fit for a DeFi app, a crypto dashboard widget, or a Web3 landing page.',
+      'Crypto Swap is a Uniswap-style token-swap card for trading one crypto asset for another, not a fiat exchange. The dollar figures are reference valuations used only to derive the rate. Type a Sell amount, pick two tokens from a contained dropdown of real brand coin icons, and the Buy side recomputes live with an animated number that reflects a pool-depth price-impact model, a separate network-fee estimate, and a slippage-driven minimum received. A flip button swaps the direction and carries the amount across, each token shows its 24h trend, and the periwinkle Swap button runs an idle to swapping to success state machine with a check, glow, and spark burst. Motion drives every transition and Tailwind handles the borderless dual-theme surfaces, with adaptive decimal precision, full listbox keyboard accessibility, and reduced-motion support throughout. It is a polished fit for a DeFi app, a crypto dashboard widget, or a Web3 landing page.',
   },
   'mood-tracker': {
     useCases: ['Wellness app', 'Journaling app', 'Employee check-in'],

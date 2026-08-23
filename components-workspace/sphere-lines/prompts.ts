@@ -29,7 +29,7 @@ A canvas-rendered wireframe sphere of latitude rings. A narrow traveling wave ba
 - BACK_A = 0.05 (dim back arc alpha)
 - ALPHA_MIN = 0.12, ALPHA_MAX = 0.40 (front line alpha at pole vs equator)
 - LW_MIN = 0.35, LW_MAX = 0.90
-- BAND_SIGMA = 0.35 (radians — gaussian width of traveling band)
+- BAND_SIGMA = 0.35 (radians, gaussian width of traveling band)
 - BAND_FREQ = 2.5
 - HOVER_RADIUS = 90 px, HOVER_AMP = 0.45
 - TWO_PI = Math.PI*2

@@ -21,7 +21,7 @@ const tagVariants = cva(
     'inline-flex items-center select-none whitespace-nowrap',
     'max-w-full min-w-0',
     'gap-[var(--andromeda-2)]',
-    // ponytail: identity constant — 3px vertical pad is off the spacing grid by design
+    // Identity constant: the 3px vertical pad is off the spacing grid by design
     'px-[var(--andromeda-2)] py-[3px]',
     'border-[length:var(--andromeda-border-width,1px)] border-solid',
     'rounded-[var(--andromeda-radius-frame,0px)]',

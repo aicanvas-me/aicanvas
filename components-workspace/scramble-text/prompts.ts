@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`ScrambleText\`. 'use client' at the top. TypeScript strict, no \`any\`. Extract a \`useScramble\` hook and a \`Crosshair\` component — do not inline everything.
+Create a React client component named \`ScrambleText\`. 'use client' at the top. TypeScript strict, no \`any\`. Extract a \`useScramble\` hook and a \`Crosshair\` component. Do not inline everything.
 
 ## Font
 import localFont from 'next/font/local'
@@ -28,14 +28,14 @@ const WORDS = ['DECRYPT', 'ACCESS']
 
 ## Types and helpers
 interface CharState { display: string; resolved: boolean }
-function randomChar(): string — picks a random char from CHARSET, fallback 'X'
-const makeScrambled = (word: string): CharState[] — maps each char to { display: randomChar(), resolved: false }
+function randomChar(): string. Picks a random char from CHARSET, fallback 'X'
+const makeScrambled = (word: string): CharState[]. Maps each char to { display: randomChar(), resolved: false }
 
 ## useScramble(word: string, isHovered: boolean): CharState[]
 - State: chars initialized with makeScrambled(word)
 - Effect on [isHovered, word]:
   - Declare cancelled, timeouts array, scrambleInterval
-  - startScrambleInterval(resolvedSet: Set<number>): clears old interval, starts new one at 60ms — on each tick, replaces unresolved chars with randomChar()
+  - startScrambleInterval(resolvedSet: Set<number>): clears old interval, starts new one at 60ms, and on each tick replaces unresolved chars with randomChar()
   - if isHovered: startScrambleInterval with empty resolvedSet; then forEach char of word, schedule a timeout at 80 + i*100ms that adds i to resolvedSet, sets that char to { display: letter, resolved: true }, and stops the interval once all chars are resolved
   - else: reset chars to makeScrambled(word), startScrambleInterval with empty Set
   - cleanup: cancelled=true, clear all timeouts, clear interval

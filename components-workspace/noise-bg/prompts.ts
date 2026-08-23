@@ -52,8 +52,8 @@ Detect via closest('[data-card-theme]').classList.contains('dark'), fallback doc
 
 ## JSX
 Root div relative h-full w-full overflow-hidden, inline background dark '#110F0C' / light '#F5F1EA', mouse/touch handlers. Canvas absolute inset-0 100%/100%. Overlay pointer-events-none absolute inset-0 flex flex-col items-center justify-center gap-2 with two spans:
-- "Noise" — color dark rgba(255,255,255,0.45) / light rgba(28,25,22,0.45), fontSize 22, fontWeight 700, letterSpacing -0.02em
-- "hover to illuminate" — color dark rgba(255,255,255,0.18) / light rgba(28,25,22,0.22), fontSize 11, fontWeight 600, textTransform uppercase, letterSpacing 0.12em
+- "Noise": color dark rgba(255,255,255,0.45) / light rgba(28,25,22,0.45), fontSize 22, fontWeight 700, letterSpacing -0.02em
+- "hover to illuminate": color dark rgba(255,255,255,0.18) / light rgba(28,25,22,0.22), fontSize 11, fontWeight 600, textTransform uppercase, letterSpacing 0.12em
 
 Cleanup: alive flag, cancelAnimationFrame, ResizeObserver.disconnect, observer.disconnect.
 

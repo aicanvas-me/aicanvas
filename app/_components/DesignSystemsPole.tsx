@@ -59,7 +59,7 @@ export function DesignSystemsPole({
   // Templates) on every page, not only when you're inside the system — so the
   // design system reads as first-class in the rail. The per-component list stays
   // gated to an active visit so the promoted view stays compact.
-  // ponytail: expands every SYSTEMS entry; only Andromeda exists today.
+  // Expands every SYSTEMS entry; only Andromeda exists today.
   promoteDS?: boolean
   // Fired when any leaf link is tapped. The mobile drawer passes setOpen(false)
   // so it closes immediately on tap. Templates now navigate in the SAME tab

@@ -689,7 +689,7 @@ export default function StickerWall() {
                 maxWidth: '46ch',
               }}
             >
-              Drop a note, toss an emoji, drag anything around. Real physics, no rules — just leave your mark on the wall.
+              Drop a note, toss an emoji, drag anything around. Real physics, no rules. Just leave your mark on the wall.
             </p>
           </div>
           <div

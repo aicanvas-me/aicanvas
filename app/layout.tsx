@@ -41,7 +41,7 @@ const GLOBAL_DESCRIPTION = `Open-core registry of ${TOTAL} animated React compon
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'AI Canvas — Animated React Components with AI Reproduction Prompts',
+    default: 'AI Canvas - Animated React Components with AI Reproduction Prompts',
     template: '%s | AI Canvas',
   },
   description: GLOBAL_DESCRIPTION,
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: 'AI Canvas',
-    title: 'AI Canvas — Animated React Components with AI Reproduction Prompts',
+    title: 'AI Canvas - Animated React Components with AI Reproduction Prompts',
     description: GLOBAL_DESCRIPTION,
     url: SITE_URL,
     locale: 'en_US',
@@ -78,7 +78,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Canvas — Animated React Components with AI Reproduction Prompts',
+    title: 'AI Canvas - Animated React Components with AI Reproduction Prompts',
     description: GLOBAL_DESCRIPTION,
     images: ['/og-aug2026-aicanvas.me.png'],
   },

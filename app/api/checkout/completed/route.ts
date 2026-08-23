@@ -40,7 +40,10 @@ export async function POST(req: NextRequest) {
   // Server-to-server: fetch the transaction and verify it is real, paid, ours.
   const res = await fetch(`${paddleApiBase()}/transactions/${transactionId}`, {
     headers: { Authorization: `Bearer ${apiKey}` },
-  })
+    signal: AbortSignal.timeout(10_000),
+  }).catch(() => null)
+  // No answer is not "unknown": the webhook still provisions, the overlay may retry.
+  if (!res) return NextResponse.json({ error: 'paddle unavailable' }, { status: 503 })
   if (!res.ok) return NextResponse.json({ error: 'unknown transaction' }, { status: 403 })
   const { data: txn } = await res.json()
 
@@ -91,6 +94,10 @@ export async function POST(req: NextRequest) {
   else if (interval === 'month') patch.plan = 'monthly'
   if (txn?.customer_id) patch.paddle_customer_id = txn.customer_id
   if (txn?.subscription_id) patch.paddle_subscription_id = txn.subscription_id
+  // Period end from the transaction's billing period, so a row the webhook
+  // never reaches still expires on its own instead of staying premium forever.
+  const periodEnd: unknown = txn?.billing_period?.ends_at
+  if (typeof periodEnd === 'string' && periodEnd) patch.current_period_end = periodEnd
 
   const { error } = await admin
     .from('user_subscriptions')

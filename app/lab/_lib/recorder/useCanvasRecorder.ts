@@ -1,15 +1,10 @@
 'use client'
 
-// Live canvas recording → MP4/H.264 via MediaBunny (wraps WebCodecs + an
-// MP4 muxer in one package). Reusable across LAB tools — pass any
-// HTMLCanvasElement to start(). All work is local: no upload, no server.
-//
-// MediaBunny uses the same WebCodecs primitives we used directly before
-// (mp4-muxer + raw VideoEncoder). The swap is in-place to A/B the encoder
-// pipeline at the same bandwidth target; the external hook interface,
-// 20-second cap, color-boost pass, gl.finish() stale-texture fix, and
-// backpressure behaviour are all preserved so the page-level UI doesn't
-// change.
+// Live canvas recording to MP4/H.264 via MediaBunny (WebCodecs plus an MP4
+// muxer in one package). Reusable across LAB tools: pass any HTMLCanvasElement
+// to start(). All work is local: no upload, no server. The hook keeps a
+// 20-second cap, a color-boost pass, a gl.finish() call against stale
+// textures, and encoder backpressure.
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {

@@ -11,6 +11,9 @@ function isKnownTool(v: unknown): v is KnownTool {
 
 // Lab presets — list / create / rename / delete.
 // All access is RLS-scoped to the authenticated user's auth.uid().
+// Per-user cap so one account cannot fill the table; a preset can legitimately
+// be large (inlined image data), so the cap is on rows, not bytes.
+const MAX_PRESETS_PER_USER = 100
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
@@ -50,6 +53,14 @@ export async function POST(request: NextRequest) {
   }
   if (!body.config || typeof body.config !== 'object') {
     return NextResponse.json({ error: 'config required' }, { status: 400 })
+  }
+
+  const { count } = await supabase
+    .from('lab_presets')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', user.id)
+  if ((count ?? 0) >= MAX_PRESETS_PER_USER) {
+    return NextResponse.json({ error: 'preset limit reached, delete one first' }, { status: 400 })
   }
 
   const { data, error } = await supabase

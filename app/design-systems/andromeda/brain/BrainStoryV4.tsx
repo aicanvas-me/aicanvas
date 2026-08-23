@@ -16,6 +16,8 @@
 // ============================================================
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import type { Group, Mesh, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
+import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import { Rotate3d } from 'lucide-react'
@@ -61,7 +63,7 @@ const SECTION_ZONES: { dir: [number, number, number]; hex: string }[] = [
 // light. toneMapped false because this scene renders through ACES filmic at 1.1
 // exposure, which compresses and desaturates what it touches, while the premium
 // reader has no tone mapping. Opting out is what makes the two brains match.
-const makeBrainMaterial = (T: any) =>
+const makeBrainMaterial = (T: typeof import('three')) =>
   new T.MeshBasicMaterial({ wireframe: true, vertexColors: true, toneMapped: false })
 
 // ── editorial copy helpers ──────────────────────────────────────────────────
@@ -368,8 +370,8 @@ function BrainFlow() {
 // (index, inventory, tool) arrives as a count with no names. These are the
 // three at the current pin. The moment inject-premium ships its index and tools
 // sections the names come from the data and this list stops being read.
-// ponytail: hand-listed until then, sliced to REMAINDER so it can never claim
-// more files than the brain actually has.
+// Hand-listed until then, sliced to REMAINDER so it can never claim more
+// files than the brain actually has.
 const ENTRY_FILES = ['rules.md', 'INVENTORY.md', 'check-colors']
 
 // The explorer's rail: every section, plus the entry layer the sections do not
@@ -554,7 +556,7 @@ export function BrainStoryV4() {
     const host = hostRef.current
     if (!host) return
     let alive = true, raf = 0
-    let renderer: any, scene: any, camera: any
+    let renderer: WebGLRenderer, scene: Scene, camera: PerspectiveCamera
     let onResize = () => {}
     let cleanupInput = () => {}
 
@@ -568,8 +570,8 @@ export function BrainStoryV4() {
       // one-time, mount-only constrained-device/connection check — a lower
       // static pixel-ratio cap for slow connections or low core counts. Not a
       // live watchdog: decided once here and never revisited.
-      const conn = (navigator as any).connection
-      const isConstrained = conn?.saveData || ['slow-2g', '2g', '3g'].includes(conn?.effectiveType) || (navigator.hardwareConcurrency ?? 8) <= 4
+      const conn = (navigator as Navigator & { connection?: { saveData?: boolean; effectiveType?: string } }).connection
+      const isConstrained = conn?.saveData || ['slow-2g', '2g', '3g'].includes(conn?.effectiveType ?? '') || (navigator.hardwareConcurrency ?? 8) <= 4
 
       let W = host.clientWidth || 800, H = host.clientHeight || 600
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' })
@@ -597,14 +599,15 @@ export function BrainStoryV4() {
       // scene exists (onLoad only needs scene.add(model) + THREE + the state
       // below), BEFORE the GPU-bound PMREM/env-map generation and lights/camera
       // setup that used to run first and delay the fetch for no reason.
-      let brainRoot: any = null, radius = 1, ready = false
-      const brainMeshes: any[] = []
+      let brainRoot: Group | null = null, radius = 1, ready = false
+      const brainMeshes: Mesh[] = []
 
       const loader = new GLTFLoader()
-      loader.load(MODEL_URL, (gltf: any) => {
+      loader.load(MODEL_URL, (gltf: GLTF) => {
         if (!alive) return
         const model = gltf.scene
-        model.traverse((o: any) => { if (o.isMesh) brainMeshes.push(o) })
+        // Duck-typed on purpose: instanceof breaks when two copies of three load.
+        model.traverse((o) => { const m = o as Mesh; if (m.isMesh) brainMeshes.push(m) })
         scene.add(model)
         // Poly models are often authored off-origin and at arbitrary scale.
         // Update world matrices first, then normalize to unit radius + recenter,
@@ -640,7 +643,7 @@ export function BrainStoryV4() {
           if (!geo?.attributes?.position || geo.attributes.color) continue
           const pos = geo.attributes.position
           geo.computeBoundingBox()
-          const bb = geo.boundingBox
+          const bb = geo.boundingBox!
           const cx = (bb.min.x + bb.max.x) / 2
           const cy = (bb.min.y + bb.max.y) / 2
           const cz = (bb.min.z + bb.max.z) / 2

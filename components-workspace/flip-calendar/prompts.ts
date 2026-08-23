@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named FlipCalendar — a draggable flip-clock-style day calendar in rich blue gradients with parallax mouse tilt, a glowing scan line during flips, and a small hint "↑ swipe ↓" below it. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files (you may keep one small inline Half sub-component in the same file). 'use client' at the top. No 'any' types.
+Create a React client component named FlipCalendar, a draggable flip-clock-style day calendar in rich blue gradients with parallax mouse tilt, a glowing scan line during flips, and a small hint "↑ swipe ↓" below it. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files (you may keep one small inline Half sub-component in the same file). 'use client' at the top. No 'any' types.
 
 Constants: FLIP_MS = 220. fmt(n) returns String(n).padStart(2,'0').
 

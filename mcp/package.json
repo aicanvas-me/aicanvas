@@ -2,7 +2,7 @@
   "name": "@aicanvas/mcp",
   "version": "0.2.4",
   "mcpName": "io.github.uiNerd16/aicanvas",
-  "description": "Model Context Protocol server for AI Canvas \u2014 search, inspect, and install components from the aicanvas.me registry directly from your AI editor.",
+  "description": "Model Context Protocol server for AI Canvas: search, inspect, and install components from the aicanvas.me registry directly from your AI editor.",
   "keywords": [
     "mcp",
     "model-context-protocol",

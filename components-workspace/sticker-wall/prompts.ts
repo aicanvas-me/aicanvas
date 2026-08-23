@@ -1,6 +1,6 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
-const SPEC = `Create a React client component named \`StickerWall\` — a full-viewport physical feedback wall where text cards and emoji stickers pile up, collide, and can be dragged/tossed with real physics. A centered input lets visitors submit a note that falls in from above and joins the pile.
+const SPEC = `Create a React client component named \`StickerWall\`, a full-viewport physical feedback wall where text cards and emoji stickers pile up, collide, and can be dragged/tossed with real physics. A centered input lets visitors submit a note that falls in from above and joins the pile.
 
 Write this as a single self-contained 'use client' TypeScript file. Inline everything, no helper files. Default export \`StickerWall\`. No 'any' types.
 
@@ -76,7 +76,7 @@ Inline a \`useIsomorphicLayoutEffect\` (= \`useLayoutEffect\` on the client, \`u
 - When \`isDark\` changes, re-assign each existing sticker's \`color\` field from the new palette (via a \`useEffect([isDark])\`). Keep \`paletteRef\` in sync too.
 
 ## Root layout
-- Outer wrapper: \`flex h-full w-full items-center justify-center\` with inline \`style={{ background: bg }}\`. The component fills its parent — the parent must define height (e.g. \`h-screen\` or \`h-[480px]\`). Do NOT use \`min-h-screen\`: the matter-js floor wall sits at the canvas bottom edge; a taller-than-visible canvas pushes bodies below the fold.
+- Outer wrapper: \`flex h-full w-full items-center justify-center\` with inline \`style={{ background: bg }}\`. The component fills its parent, so the parent must define height (e.g. \`h-screen\` or \`h-[480px]\`). Do NOT use \`min-h-screen\`: the matter-js floor wall sits at the canvas bottom edge; a taller-than-visible canvas pushes bodies below the fold.
 - Inside: a \`motion.div\` (containerRef) \`relative h-full w-full overflow-hidden\` with \`style={{ background: bg, touchAction: 'none' }}\`. Mount animation: \`initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, ease: 'easeOut' }}\`.
 - Children: \`<canvas>\` absolute inset-0 (display block, 100% w/h) + \`<form>\` overlay.
 
@@ -87,7 +87,7 @@ Inline a \`useIsomorphicLayoutEffect\` (= \`useLayoutEffect\` on the client, \`u
 - h2 "Feedback Wall": \`color: titleColor\`, \`fontSize: clamp(32px, 6vw, 56px)\`, fontWeight 800, letterSpacing -0.02em, lineHeight 1, margin 0.
   - \`titleColor\` = \`rgba(255,255,255,0.95)\` dark / \`rgba(17,24,39,0.95)\` light.
   - \`textShadow\` = \`0 2px 20px rgba(0,0,0,0.4)\` dark / \`0 2px 20px rgba(17,24,39,0.08)\` light.
-- p subtitle "Drop a note, toss an emoji, drag anything around. Real physics, no rules — just leave your mark on the wall.":
+- p subtitle "Drop a note, toss an emoji, drag anything around. Real physics, no rules. Just leave your mark on the wall.":
   - \`color: subtitleColor\` = \`rgba(255,255,255,0.7)\` / \`rgba(17,24,39,0.7)\`. 16px, weight 500, letterSpacing -0.005em, lineHeight 1.45, maxWidth 46ch.
 
 ### Input pill (pointer-events-auto)
@@ -96,7 +96,7 @@ Inline a \`useIsomorphicLayoutEffect\` (= \`useLayoutEffect\` on the client, \`u
 - \`border\`: 2px solid \`rgba(255,255,255,0.7)\` dark / \`rgba(17,24,39,0.12)\` light.
 - \`boxShadow\`: \`0 6px 14px rgba(0,0,0,0.25), 0 2px 0 rgba(0,0,0,0.08)\` dark / \`0 6px 14px rgba(17,24,39,0.12), 0 2px 0 rgba(17,24,39,0.04)\` light.
 
-CSS class rules (emit via a scoped \`<style>\` block — needed for pseudo-states):
+CSS class rules (emit via a scoped \`<style>\` block, needed for pseudo-states):
 \`\`\`css
 .sticker-wall-pill {
   transition: background 180ms ease, border-color 180ms ease,
@@ -119,13 +119,13 @@ CSS class rules (emit via a scoped \`<style>\` block — needed for pseudo-state
 \`\`\`
 
 Inside the pill:
-- \`<input type="text" maxLength={80} placeholder="Leave feedback…">\` — flex-1, transparent bg, px-4 py-2, text-sm (14px), weight 500, outline-none.
+- \`<input type="text" maxLength={80} placeholder="Leave feedback…">\`: flex-1, transparent bg, px-4 py-2, text-sm (14px), weight 500, outline-none.
   - \`color\`: \`rgba(255,255,255,0.95)\` dark / \`rgba(17,24,39,0.95)\` light.
   - Placeholder color via \`.sticker-wall-input::placeholder { color: <placeholderColor>; }\` in the scoped style block.
     - \`placeholderColor\`: \`rgba(255,255,255,0.55)\` dark / \`rgba(17,24,39,0.5)\` light.
 
 ### Send button
-\`<button type="submit">\` — class \`sticker-wall-send\`, \`flex items-center rounded-2xl px-5 py-2 text-sm tracking-wide\`.
+\`<button type="submit">\`: class \`sticker-wall-send\`, \`flex items-center rounded-2xl px-5 py-2 text-sm tracking-wide\`.
 - \`background\`: \`#8A9CF4\` (periwinkle, same in both themes).
 - \`color\` (text): \`#111827\` dark / \`#FFFFFF\` light.
 - \`border\`: 1px solid rgba(255,255,255,0.12).
@@ -148,7 +148,7 @@ CSS for the Send button (in the same scoped \`<style>\` block):
 \`\`\`
 
 ## Physics engine (matter-js, dynamic-imported)
-Boot sequence inside a single \`useEffect([], [])\` — dynamic-import matter-js, then:
+Boot sequence inside a single \`useEffect([], [])\`: dynamic-import matter-js, then:
 1. Create engine: \`Matter.Engine.create({ gravity: { x: 0, y: 1, scale: GRAVITY_SCALE } })\`; set \`engine.timing.timeScale = 0.6\`.
 2. \`runner = Matter.Runner.create(); Matter.Runner.run(runner, engine)\`.
 3. Call \`resize()\` (sets up canvas size) THEN create mouse:
@@ -159,7 +159,7 @@ Boot sequence inside a single \`useEffect([], [])\` — dynamic-import matter-js
 7. Start the \`requestAnimationFrame\` loop.
 
 ### Walls (invisible static bodies, 60px thick)
-Four rectangles: top (above canvas), bottom (floor), left, right. Each extends ±WALL_THICKNESS on the cross-axis so corners overlap. Rebuild on every resize — remove old walls, create new ones.
+Four rectangles: top (above canvas), bottom (floor), left, right. Each extends ±WALL_THICKNESS on the cross-axis so corners overlap. Rebuild on every resize: remove old walls, create new ones.
 
 ### resize()
 - Read \`container.clientWidth / clientHeight\` (fallback 480×480).
@@ -185,7 +185,7 @@ Set \`ctx.font = '600 15px ui-sans-serif, system-ui, -apple-system, Segoe UI, Ma
 ## Custom 2D canvas renderer (no Matter.Render)
 Each frame via rAF:
 1. \`ctx.setTransform(dpr,0,0,dpr,0,0)\`.
-2. Fill canvas with \`BG_DARK\` or \`BG_LIGHT\` (from \`isDarkRef.current\`) — full clear, no trails.
+2. Fill canvas with \`BG_DARK\` or \`BG_LIGHT\` (from \`isDarkRef.current\`). Full clear, no trails.
 3. Scan stickers in reverse for fade pruning (see Sticker cap section above).
 4. For each sticker:
    - \`alpha = fadeStart ? max(0, 1 - dt/FADE_MS) : 1\`.
@@ -197,7 +197,7 @@ Each frame via rAF:
      - emoji: font \`'42px ui-sans-serif, system-ui, -apple-system, Segoe UI, "Apple Color Emoji", "Segoe UI Emoji", sans-serif'\`. textAlign center, textBaseline middle. Draw at (0, 2).
    - \`ctx.restore()\`.
 
-\`roundedRect\` helper — draws a rounded rectangle path (no fill/stroke):
+\`roundedRect\` helper: draws a rounded rectangle path (no fill/stroke):
 \`\`\`ts
 function roundedRect(ctx, x, y, w, h, r) {
   const rr = Math.min(r, w / 2, h / 2)
@@ -228,9 +228,9 @@ function roundedRect(ctx, x, y, w, h, r) {
 - Null out \`matterRef\`, \`engineRef\`, \`worldRef\`, \`measureCtxRef\`; reset \`stickersRef.current = []\`.
 
 ## Mobile + a11y
-- \`touchAction: 'none'\` on the motion wrapper — prevents page scroll on touch-drag.
+- \`touchAction: 'none'\` on the motion wrapper prevents page scroll on touch-drag.
 - matter-js Mouse handles touch events natively. No hover-only affordances.
-- Input pill sits in the lower third of the viewport (paddingBottom 18vh) — reachable by thumbs.
+- Input pill sits in the lower third of the viewport (paddingBottom 18vh), reachable by thumbs.
 - Canvas is DPR-aware via ResizeObserver; never hardcoded dimensions.
 
 ## Typography

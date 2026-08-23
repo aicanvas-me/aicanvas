@@ -45,7 +45,7 @@ function computeTitle(entry: ComponentEntry): string {
   const accentTag = entry.tags.find((t) => t.accent)
   const category = accentTag?.label ?? ''
   const descriptor = DESCRIPTOR_PREFIXES[category] ?? 'Animated'
-  return `${entry.name} — ${descriptor} React Component`
+  return `${entry.name} - ${descriptor} React Component`
 }
 
 function computeMetaDescription(entry: ComponentEntry, isPremium: boolean): string {
@@ -115,7 +115,7 @@ export async function generateMetadata({
             images: [
               {
                 url: entry.image,
-                alt: `${entry.name} — ${firstSentenceOf(entry.description)}`,
+                alt: `${entry.name}. ${firstSentenceOf(entry.description)}`,
               },
             ],
           }
@@ -266,8 +266,8 @@ export default async function Page({
     }
     if (!viewerIsPremium) {
       const split = splitPromptAtPaywall(fullPrompt)
-      // ponytail: no recognisable scaffold → withhold the prompt whole, which
-      // hides the Remix panel entirely. Deliberate: unredactable is not the
+      // No recognisable scaffold, so withhold the prompt whole, which hides
+      // the Remix panel entirely. Deliberate: unredactable is not the
       // same as harmless. Add a fallback teaser only if a premium prompt ever
       // legitimately ships without the scaffold.
       prompts = split ? { 'Claude Code': split.head } : {}

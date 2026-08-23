@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassTabBar\` — a glass-morphism pill tab bar with five icon-and-label tabs and a sliding active glow.
+Create a React client component named \`GlassTabBar\`, a glass-morphism pill tab bar with five icon-and-label tabs and a sliding active glow.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -29,7 +29,7 @@ Tabs (Phosphor, \`weight="regular"\`):
 - \`ChatCircle\` / "Messages" / #FF5C8A
 - \`User\` / "Profile" / #B388FF
 
-Pill container: \`motion.div\` \`relative isolate flex w-[380px] items-center justify-around rounded-full px-5 py-2.5\` —
+Pill container: \`motion.div\` \`relative isolate flex w-[380px] items-center justify-around rounded-full px-5 py-2.5\`:
 - \`background: rgba(255,255,255,0.07)\`
 - \`border: 1px solid rgba(255,255,255,0.11)\`
 - \`boxShadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.07)\`

@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassModal\` — a frosted-glass upgrade modal centered on a dark scene, with staggered entrance, warm amber accents, and an animated close button.
+Create a React client component named \`GlassModal\`, a frosted-glass upgrade modal centered on a dark scene, with staggered entrance, warm amber accents, and an animated close button.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -39,7 +39,7 @@ Close button (motion.button): absolute right-4 top-4 z-10 h-8 w-8 rounded-full, 
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
-1) Icon badge (motion.div) — notification-style tinted: className "mb-5 flex h-16 w-16 items-center justify-center rounded-xl", style background '#FFA03218' border '1px solid #FFA03222'. Entrance: initial {scale:0, rotate:-20}, animate {scale:1, rotate:0}, transition {type:'spring', stiffness:300, damping:18, delay:0.15}. Child: <ShieldCheck size={28} weight="regular" style={{color:'#FFA032'}} />.
+1) Icon badge (motion.div), notification-style tinted: className "mb-5 flex h-16 w-16 items-center justify-center rounded-xl", style background '#FFA03218' border '1px solid #FFA03222'. Entrance: initial {scale:0, rotate:-20}, animate {scale:1, rotate:0}, transition {type:'spring', stiffness:300, damping:18, delay:0.15}. Child: <ShieldCheck size={28} weight="regular" style={{color:'#FFA032'}} />.
 
 2) Heading motion.h2: "Upgrade to Pro", className "mb-2 text-lg font-semibold text-white/90", initial {opacity:0, y:8} animate {opacity:1, y:0} transition {delay:0.2}.
 

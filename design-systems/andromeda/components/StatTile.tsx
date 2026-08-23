@@ -325,7 +325,7 @@ export const StatTile = forwardRef(function StatTile(
           {code ? <span className={codeClass}>{code}</span> : null}
         </div>
 
-        {/* Value + unit. ponytail: 0.4s + ease-out are identity constants for the reveal, no token */}
+        {/* Value + unit. The 0.4s ease-out reveal is an identity constant, no token */}
         <div
           className="flex items-baseline gap-[var(--andromeda-2)]"
           style={{ animation: 'andromeda-value-in 0.4s ease-out both', animationDelay: 'var(--andromeda-duration-fast, 80ms)' }}

@@ -16,13 +16,13 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassSlider\` — a frosted glass Display panel with four gradient-filled sliders.
+Create a React client component named \`GlassSlider\`, a frosted glass Display panel with four gradient-filled sliders.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
 Background: full-bleed \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png?updatedAt=1775226802133\`, \`object-cover opacity-60\`, over \`bg-[#1A1A19]\`.
 
-Panel: \`w-[calc(100%-32px)] max-w-[360px]\` \`rounded-3xl px-7 py-8\` \`flex-col gap-7\`, glass —
+Panel: \`w-[calc(100%-32px)] max-w-[360px]\` \`rounded-3xl px-7 py-8\` \`flex-col gap-7\`, glass:
 - \`background: rgba(255,255,255,0.08)\`
 - \`border: 1px solid rgba(255,255,255,0.1)\`
 - \`boxShadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)\`

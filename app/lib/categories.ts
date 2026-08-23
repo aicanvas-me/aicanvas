@@ -126,8 +126,6 @@ export const CATEGORIES: readonly Category[] = [
   },
 ] as const
 
-export const CATEGORY_LABELS = CATEGORIES.map((c) => c.label) as readonly string[]
-
 export function getCategoryBySlug(slug: string): Category | undefined {
   return CATEGORIES.find((c) => c.slug === slug)
 }
