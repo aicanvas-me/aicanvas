@@ -14,7 +14,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`NeonClock\`: a cyan 7-segment LCD-style clock rendered in SVG. Shows HH:MM:SS with a steady colon between HH/MM and a blinking colon between MM/SS (half-size). AM/PM indicator stacks above the seconds. Day-of-week row and long-form date beneath. Subtle LCD pixel grid overlay. Always dark — background #060a0a.
+Create a React client component named \`NeonClock\`: a cyan 7-segment LCD-style clock rendered in SVG. Shows HH:MM:SS with a steady colon between HH/MM and a blinking colon between MM/SS (half-size). AM/PM indicator stacks above the seconds. Day-of-week row and long-form date beneath. Subtle LCD pixel grid overlay. Always dark, background #060a0a.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -35,7 +35,7 @@ Verticals span full height: aEnd=aY, gTop=gY-GP, gEnd=gY+T+GP, dTop=dY+T.
 SHAPES array in order a,b,c,d,e,f,g:
 [hPts(aY), vPts(rX,aEnd,gTop), vPts(rX,gEnd,dTop), hPts(dY), vPts(lX,gEnd,dTop), vPts(lX,aEnd,gTop), hPts(gY)]
 
-SEG map (Record<string,boolean[]>) for '0'..'9' — standard 7-seg lookup [a,b,c,d,e,f,g]:
+SEG map (Record<string,boolean[]>) for '0'..'9', a standard 7-seg lookup [a,b,c,d,e,f,g]:
 '0':[1,1,1,1,1,1,0] '1':[0,1,1,0,0,0,0] '2':[1,1,0,1,1,0,1] '3':[1,1,1,1,0,0,1] '4':[0,1,1,0,0,1,1] '5':[1,0,1,1,0,1,1] '6':[1,0,1,1,1,1,1] '7':[1,1,1,0,0,0,0] '8':[1,1,1,1,1,1,1] '9':[1,1,1,1,0,1,1]
 
 Digit({char,size}): svg viewBox 0 0 42 80, width=size, height=round(size*80/42), style display:block overflow:visible flexShrink:0. For each SHAPES poly: fill CYAN if seg on else CYAN_OFF; if on add style filter:GLOW_SVG.
@@ -49,8 +49,8 @@ Size constants: BIG=50, SML=24, GAP=3, COLON_BIG=round(50*0.44)=22, COLON_SML=ro
 
 State: now=useState(getNow), colonOn=useState(true). useEffect setInterval 1000ms: setNow(getNow()); setColonOn(c=>!c). Cleanup clearInterval.
 
-Layout: root div relative flex h-full w-full select-none items-center justify-center overflow-hidden, background BG, fontFamily '"Courier New", Courier, monospace'. Inside: a left-anchored flex-column (alignItems flex-start) wrapper — centered as a whole.
-- Time row: flex alignItems flex-end gap 3 — Digit h[0], Digit h[1], ColonDots dim=false size=BIG, Digit m[0], Digit m[1], ColonDots dim={!colonOn} size=SML, then stacked column (alignItems flex-end) containing:
+Layout: root div relative flex h-full w-full select-none items-center justify-center overflow-hidden, background BG, fontFamily '"Courier New", Courier, monospace'. Inside: a left-anchored flex-column (alignItems flex-start) wrapper, centered as a whole.
+- Time row: flex alignItems flex-end gap 3, holding Digit h[0], Digit h[1], ColonDots dim=false size=BIG, Digit m[0], Digit m[1], ColonDots dim={!colonOn} size=SML, then stacked column (alignItems flex-end) containing:
   - AM/PM row: flex gap 6 fontSize 13 letterSpacing 0.08em marginBottom 3. Two spans "AM" and "PM". Active one uses color CYAN + textShadow GLOW_TXT; inactive uses CYAN_IDLE, textShadow none.
   - Seconds row: flex gap 3, Digit s[0] size SML, Digit s[1] size SML.
 - Days row: flex justifyContent space-between width TIME_W marginTop 13 fontSize 13 letterSpacing 0.05em. Map DAYS, color CYAN + GLOW_TXT when i===dow else CYAN_IDLE.

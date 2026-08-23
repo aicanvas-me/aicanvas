@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassStepper\` — three frosted glass stepper pills (Quantity, Guests, Volume) with animated number transitions.
+Create a React client component named \`GlassStepper\`, three frosted glass stepper pills (Quantity, Guests, Volume) with animated number transitions.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -30,7 +30,7 @@ Three steppers side by side (wrap on mobile) with \`gap-5 px-4\`:
 Each field: width 132px, flex-col.
 - Label header row (\`mb-2 flex items-baseline justify-between px-1\`): label \`text-[10px] font-semibold uppercase tracking-widest text-white/40\`, value readout \`text-[10px] font-semibold tabular-nums\` color \`\${color}88\`, showing \`{value} / {max}\`.
 
-Pill: \`relative isolate overflow-hidden rounded-2xl\` with glass —
+Pill: \`relative isolate overflow-hidden rounded-2xl\` with glass:
 - \`background: rgba(255,255,255,0.08)\`
 - \`border: 1px solid rgba(255,255,255,0.1)\`
 - \`boxShadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)\`

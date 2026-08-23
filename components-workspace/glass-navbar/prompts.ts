@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassNavbar\` — a responsive frosted-glass pill navbar with layoutId active highlight, warm gradient CTA, and a mobile hamburger dropdown.
+Create a React client component named \`GlassNavbar\`, a responsive frosted-glass pill navbar with layoutId active highlight, warm gradient CTA, and a mobile hamburger dropdown.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -26,11 +26,11 @@ Background image (absolute inset-0 object-cover opacity-60 pointer-events-none):
 Constants:
 - NAV_ITEMS = ['Products', 'About', 'Blog']
 - glassStyle = { background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.12)', boxShadow:'0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.1)' }
-- glassBlur  = { backdropFilter:'blur(24px) saturate(1.8)', WebkitBackdropFilter:'blur(24px) saturate(1.8)' } — applied on a separate child layer (so the spinning logo doesn't repaint the blur every frame)
+- glassBlur  = { backdropFilter:'blur(24px) saturate(1.8)', WebkitBackdropFilter:'blur(24px) saturate(1.8)' }, applied on a separate child layer (so the spinning logo doesn't repaint the blur every frame)
 - ctaStyle = { background:'linear-gradient(135deg, rgba(255,160,50,0.75), rgba(220,60,40,0.6))', border:'1px solid rgba(255,180,80,0.25)', boxShadow:'0 2px 16px rgba(220,80,30,0.4)' }
 - ctaHoverStyle = { background:'linear-gradient(135deg, rgba(255,180,80,0.9), rgba(235,75,45,0.8))', boxShadow:'0 4px 24px rgba(220,80,30,0.6)' }
 
-State: active (number|null, default null — nothing selected), hovered (number|null), menuOpen (boolean).
+State: active (number|null, default null, nothing selected), hovered (number|null), menuOpen (boolean).
 
 Root: relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]. Background <img>. Column wrapper: relative flex w-[calc(100%-2rem)] max-w-[720px] flex-col.
 
@@ -40,7 +40,7 @@ Logo div (flex items-center gap-2 px-3 cursor-pointer, onClick setActive(null)):
 
 flex-1 spacer.
 
-Desktop group (hidden items-center gap-1 sm:flex): each NAV_ITEM → motion.button relative cursor-pointer rounded-full px-5 py-2 text-sm font-medium. Style color: (active===i || hovered===i) ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)'. onHoverStart/End sets hovered. onClick sets active. whileTap {scale:0.97}. If active===i, render motion.div layoutId="glass-nav-active" absolute inset-0 rounded-full, style bg 'rgba(255,255,255,0.12)' border '1px solid rgba(255,255,255,0.1)', transition {type:'spring', stiffness:400, damping:30}. Label span: relative z-10. (No hover background — text color change only.)
+Desktop group (hidden items-center gap-1 sm:flex): each NAV_ITEM → motion.button relative cursor-pointer rounded-full px-5 py-2 text-sm font-medium. Style color: (active===i || hovered===i) ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)'. onHoverStart/End sets hovered. onClick sets active. whileTap {scale:0.97}. If active===i, render motion.div layoutId="glass-nav-active" absolute inset-0 rounded-full, style bg 'rgba(255,255,255,0.12)' border '1px solid rgba(255,255,255,0.1)', transition {type:'spring', stiffness:400, damping:30}. Label span: relative z-10. (No hover background, text color change only.)
 
 "Get Started" motion.button (ml-2 rounded-full px-5 py-2 text-sm font-semibold text-white cursor-pointer): style=ctaStyle. whileHover {scale:1.04, ...ctaHoverStyle}. whileTap {scale:0.96}. transition {duration:0.25, ease:[0.25,0.1,0.25,1]}.
 

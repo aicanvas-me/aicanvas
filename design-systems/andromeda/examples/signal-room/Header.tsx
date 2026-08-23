@@ -87,7 +87,7 @@ export function Header({ sectionTitle = 'Library', motionProps }) {
             flexShrink: 0,
             background: tokens.color.accent[400],
             border: `${tokens.border.thin} ${tokens.color.accent[400]}`,
-            // ponytail: bespoke radius (6px, not the 8px glow token) — leave literal
+            // Bespoke glow blur (6px, not the 8px glow token), left literal
             boxShadow: `0 0 6px ${tokens.color.accent[500]}`,
           }}
         />

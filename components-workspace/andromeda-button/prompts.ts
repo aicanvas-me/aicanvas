@@ -4,7 +4,7 @@ export const prompts: Partial<Record<Platform, string>> = {
   'Claude Code': `// npm install class-variance-authority clsx tailwind-merge @carbon/icons-react
 
 Root element must use min-h-screen.
-The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
+The root ships full height with min-h-screen and the CLI install delivers it exactly as shown, so a standalone paste needs no change. Drop it into a container of your own and that container needs a real height, or the root collapses and takes its absolute layers with it.
 
 Before building, verify your project has the following setup:
 - React / Next.js
@@ -16,38 +16,38 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Build a Andromeda Button — a sci-fi / blueprint-style button with shadcn-style variants, fully self-contained in a single file. The button should feel like it belongs on a dark mission-control UI: transparent fills, 1px hairline borders, electric-blue accent, JetBrains Mono uppercase label with wide letter-spacing.
+Build a Andromeda Button, a sci-fi / blueprint-style button with shadcn-style variants, fully self-contained in a single file. The button should feel like it belongs on a dark mission-control UI: transparent fills, 1px hairline borders, electric-blue accent, JetBrains Mono uppercase label with wide letter-spacing.
 
 ## File structure
-Single file: \`andromeda-button.tsx\`. No external component library except Radix Slot (\`@radix-ui/react-slot\`), cva (\`class-variance-authority\`), clsx, and tailwind-merge — all of which are already in most Next.js starters. Do not extract helpers into separate files.
+Single file: \`andromeda-button.tsx\`. No external component library except Radix Slot (\`@radix-ui/react-slot\`), cva (\`class-variance-authority\`), clsx, and tailwind-merge, all of which are already in most Next.js starters. Do not extract helpers into separate files.
 
 ## Required dependencies
 - \`react\` (with \`forwardRef\`)
-- \`@radix-ui/react-slot\` — for \`asChild\`
-- \`class-variance-authority\` — for the variants object
-- \`clsx\` + \`tailwind-merge\` — for the \`cn\` helper
+- \`@radix-ui/react-slot\`: for \`asChild\`
+- \`class-variance-authority\`: for the variants object
+- \`clsx\` + \`tailwind-merge\`: for the \`cn\` helper
 - Tailwind CSS v4 (the button is fully styled via arbitrary-value Tailwind classes referencing CSS custom properties)
 
 ## Visual spec
 Render a dark container (\`background: #0E0E0F\`) showing three buttons stacked vertically with 12px gap:
-1. \`<Button variant="default">Launch</Button>\` — electric-blue accent fill, accent border, glow on hover
-2. \`<Button variant="outline">Cancel</Button>\` — transparent, white hairline border, subtle raised surface on hover
-3. \`<Button variant="ghost" size="sm">Learn more</Button>\` — no border, label only, subtle background on hover
+1. \`<Button variant="default">Launch</Button>\`: electric-blue accent fill, accent border, glow on hover
+2. \`<Button variant="outline">Cancel</Button>\`: transparent, white hairline border, subtle raised surface on hover
+3. \`<Button variant="ghost" size="sm">Learn more</Button>\`: no border, label only, subtle background on hover
 
 ## Variants (cva)
 5 variants × 3 sizes. Every state expressed as Tailwind arbitrary-value classes referencing \`var(--andromeda-...)\` custom properties. The properties are emitted onto the button's own style prop by a helper \`andromedaVars()\` (below), so each button is self-contained.
 
 Variants:
-- \`default\` — text \`var(--andromeda-accent-base)\`, bg \`var(--andromeda-accent-glow-soft)\`, border \`var(--andromeda-accent-dim)\`, hover brightens everything and adds a 16px glow shadow
-- \`outline\` — text \`var(--andromeda-text-primary)\`, bg \`var(--andromeda-surface-raised)\`, border \`var(--andromeda-border-base)\`, hover surface + brighter border
-- \`ghost\` — transparent bg & border, text \`var(--andromeda-text-secondary)\`, hover brightens text and fills background
-- \`destructive\` — red-tinted version of default, uses \`var(--andromeda-fault-*)\` tokens
-- \`link\` — transparent, accent text, underline on hover, no focus ring
+- \`default\`: text \`var(--andromeda-accent-base)\`, bg \`var(--andromeda-accent-glow-soft)\`, border \`var(--andromeda-accent-dim)\`, hover brightens everything and adds a 16px glow shadow
+- \`outline\`: text \`var(--andromeda-text-primary)\`, bg \`var(--andromeda-surface-raised)\`, border \`var(--andromeda-border-base)\`, hover surface + brighter border
+- \`ghost\`: transparent bg & border, text \`var(--andromeda-text-secondary)\`, hover brightens text and fills background
+- \`destructive\`: red-tinted version of default, uses \`var(--andromeda-fault-*)\` tokens
+- \`link\`: transparent, accent text, underline on hover, no focus ring
 
 Sizes:
-- \`sm\` — px-3 py-[5px], text-[10px]
-- \`md\` — px-4 py-2, text-[12px]
-- \`lg\` — px-5 py-[11px], text-[14px]
+- \`sm\`: px-3 py-[5px], text-[10px]
+- \`md\`: px-4 py-2, text-[12px]
+- \`lg\`: px-5 py-[11px], text-[14px]
 
 Default variants: \`variant: 'default'\`, \`size: 'md'\`.
 
@@ -104,8 +104,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 ) { ... })
 \`\`\`
 
-- \`asChild: boolean\` — when true, renders via Radix Slot (merges props/styles into the only child)
-- \`icon?: React.ComponentType<{ size?: number }>\` — optional icon component rendered before children; size 16/18/20 for sm/md/lg
+- \`asChild: boolean\`. When true, renders via Radix Slot (merges props/styles into the only child)
+- \`icon?: React.ComponentType<{ size?: number }>\`. Optional icon component rendered before children; size 16/18/20 for sm/md/lg
 - All other \`ButtonHTMLAttributes<HTMLButtonElement>\` are passed through via \`...props\`
 
 ## Page wrapper

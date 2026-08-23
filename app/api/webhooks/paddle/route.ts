@@ -25,6 +25,7 @@ async function fetchPaddleCustomerEmail(customerId: string): Promise<EmailLookup
   try {
     const res = await fetch(`${paddleApiBase()}/customers/${customerId}`, {
       headers: { Authorization: `Bearer ${apiKey}` },
+      signal: AbortSignal.timeout(10_000), // a hang is transient too: Paddle retries
     })
     // 429/5xx = transient. A 404 right after subscription.activated is usually
     // the customer record not yet being queryable (eventual consistency), so
@@ -292,6 +293,7 @@ export async function POST(req: NextRequest) {
             : welcomeToPremiumEmail()
           const sendRes = await fetch('https://api.resend.com/emails', {
             method: 'POST',
+            signal: AbortSignal.timeout(10_000),
             headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ from: NOREPLY_FROM, to: [user.email], subject: mail.subject, html: mail.html }),
           })

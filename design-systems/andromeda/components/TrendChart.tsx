@@ -166,8 +166,8 @@ function LegendChip({ color, label, active, onClick }) {
   );
 }
 
-// ponytail: identity constants — tick letterSpacing (0.05em, off the tracking
-// scale) and the numeric fontSize/swatch sizes stay literal for pixel identity.
+// Identity constants: tick letterSpacing (0.05em, off the tracking scale)
+// and the numeric fontSize/swatch sizes stay literal for pixel identity.
 const AXIS_TICK = {
   fontFamily: tokens.typography.fontMono,
   fontSize: parseInt(tokens.typography.size.xs, 10),

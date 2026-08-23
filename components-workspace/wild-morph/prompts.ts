@@ -11,13 +11,13 @@ Build a single-file React component called \`WildMorph\` with \`'use client'\` a
 
 Single full-viewport container (\`min-h-screen w-full flex items-center justify-center\`). The container IS both the background and the interaction zone.
 
-**Dual theme — inverted palette:**
+**Dual theme, inverted palette:**
 - Dark mode: background \`#1a1a19\`, text \`#efeee6\`
 - Light mode: background \`#efeee6\`, text \`#1a1a19\`
 
 Detect theme via \`element.closest('[data-card-theme]')\` first (for isolated card previews), falling back to \`document.documentElement.classList.contains('dark')\`. Use a MutationObserver walking up the ancestor chain to react to theme changes.
 
-Inside, centered: a single italic word in the Anton font (loaded via \`@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap')\` injected as a \`<style>\` tag). Responsive font size: JS-computed \`clamp(64px, 12vw, 144px)\`, recalculated on \`resize\`. Use raw hex values and inline styles — no Tailwind design tokens inside the component.
+Inside, centered: a single italic word in the Anton font (loaded via \`@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap')\` injected as a \`<style>\` tag). Responsive font size: JS-computed \`clamp(64px, 12vw, 144px)\`, recalculated on \`resize\`. Use raw hex values and inline styles, no Tailwind design tokens inside the component.
 
 The word defaults to \`'wild'\` and is configurable via a \`text\` prop. Render the word as SVG \`<text>\` (not an HTML span) so glyphs re-rasterize at native resolution under extreme stretch. Measure the text's bounding box via \`getBBox()\` after each font-size/text change and use those pixel dimensions to size the \`<svg>\` element exactly.
 
@@ -25,7 +25,7 @@ The word defaults to \`'wild'\` and is configurable via a \`text\` prop. Render 
 
 ## Warp technique: 2D homography → CSS matrix3d
 
-Maintain **eight Framer Motion \`MotionValue<number>\`s** — one X and one Y offset per corner: \`tlX, tlY, trX, trY, blX, blY, brX, brY\`. All start at 0.
+Maintain **eight Framer Motion \`MotionValue<number>\`s**, one X and one Y offset per corner: \`tlX, tlY, trX, trY, blX, blY, brX, brY\`. All start at 0.
 
 On every frame (subscribe via \`useMotionValueEvent\` on all eight), recompute a \`matrix3d\` string and imperatively write it to \`warpRef.current.style.transform\`. Do NOT use \`<motion.div>\` or re-render; drive the DOM directly.
 
@@ -54,12 +54,12 @@ Track natural element size with a \`ResizeObserver\` on the warp container and s
 
 Three modes tracked in a ref (\`'none' | 'top' | 'bottom'\`):
 
-- **\`none\`** — pointer outside; all 8 offsets → 0.
-- **\`top\`** — pointer in the **upper half**: TL and TR corners pull up + outward; BL and BR stay pinned at 0.
+- **\`none\`** (pointer outside): all 8 offsets → 0.
+- **\`top\`** (pointer in the **upper half**): TL and TR corners pull up + outward; BL and BR stay pinned at 0.
   - \`tlX = -1.0 × w\`, \`tlY = -1.55 × h\`
   - \`trX = +1.05 × w\`, \`trY = -1.48 × h\`
   - \`blX = blY = brX = brY = 0\`
-- **\`bottom\`** — pointer in the **lower half**: BL and BR pull down + outward; TL and TR stay pinned at 0.
+- **\`bottom\`** (pointer in the **lower half**): BL and BR pull down + outward; TL and TR stay pinned at 0.
   - \`blX = -1.0 × w\`, \`blY = +1.55 × h\`
   - \`brX = +1.05 × w\`, \`brY = +1.48 × h\`
   - \`tlX = tlY = trX = trY = 0\`
@@ -72,8 +72,8 @@ Determine mode from the pointer's \`clientY\` vs the container's bounding rect m
 
 Use Framer Motion's imperative \`animate(motionValue, target, options)\`:
 
-- **Enter / midline cross**: \`{ type: 'spring', stiffness: 280, damping: 14, mass: 1.8 }\` — underdamped; corners overshoot and bounce 2–3 times.
-- **Release**: \`{ type: 'spring', stiffness: 280, damping: 16, mass: 1.8 }\` — slightly more damped, settles gently.
+- **Enter / midline cross**: \`{ type: 'spring', stiffness: 280, damping: 14, mass: 1.8 }\`. Underdamped: corners overshoot and bounce 2–3 times.
+- **Release**: \`{ type: 'spring', stiffness: 280, damping: 16, mass: 1.8 }\`. Slightly more damped, settles gently.
 
 On every mode change: cancel all 8 in-flight animations (store \`AnimationPlaybackControls[]\` in a ref), then start fresh animations for all 8 motion values.
 
@@ -81,7 +81,7 @@ On every mode change: cancel all 8 in-flight animations (store \`AnimationPlayba
 
 ## Pointer handling
 
-Unified pointer events on the container — no separate touch handlers needed:
+Unified pointer events on the container, no separate touch handlers needed:
 - \`onPointerDown\`: call \`e.currentTarget.setPointerCapture(e.pointerId)\` then apply mode from \`e.clientY\`.
 - \`onPointerMove\`: apply mode from \`e.clientY\`.
 - \`onPointerUp\` / \`onPointerLeave\` / \`onPointerCancel\`: return to rest.

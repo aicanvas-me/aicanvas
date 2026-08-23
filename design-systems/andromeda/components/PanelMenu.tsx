@@ -46,7 +46,7 @@ import { andromedaVars } from './lib/utils';
  * @property {React.CSSProperties} [style] Inline styles merged onto the wrapper element.
  */
 
-const ITEM_HEIGHT = 26; // ponytail: identity constant, no token
+const ITEM_HEIGHT = 26; // identity constant, no token
 
 // Layout effect on the client (runs before paint so the flip lands without a
 // flash), plain effect on the server (avoids the useLayoutEffect SSR warning
@@ -59,7 +59,7 @@ const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffec
 // scrolls internally instead of spilling off the bottom edge. boxSizing keeps
 // the border inside that cap.
 const MENU_PANEL_STYLE = {
-  minWidth: '160px', // ponytail: identity constant, no token
+  minWidth: '160px', // identity constant, no token
   maxWidth: `calc(100vw - ${tokens.spacing[4]})`,
   maxHeight: `calc(100vh - ${tokens.spacing[4]})`,
   overflowY: 'auto',

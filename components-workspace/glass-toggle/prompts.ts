@@ -16,13 +16,13 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassToggle\` — a glass Preferences panel with five iOS-style toggle rows, each animating its track color and thumb position with Framer Motion springs.
+Create a React client component named \`GlassToggle\`, a glass Preferences panel with five iOS-style toggle rows, each animating its track color and thumb position with Framer Motion springs.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
 Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png\`, \`object-cover opacity-60\`, over \`bg-[#1A1A19]\`.
 
-Panel: 320px wide, \`rounded-3xl px-7 py-7 flex-col gap-5\`, glass —
+Panel: 320px wide, \`rounded-3xl px-7 py-7 flex-col gap-5\`, glass:
 - \`background: rgba(255,255,255,0.06)\`
 - \`border: 1px solid rgba(255,255,255,0.1)\`
 - \`boxShadow: 0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08)\`
@@ -43,7 +43,7 @@ Between each toggle row place a thin divider: \`h-[1px] w-full bg rgba(255,255,2
 
 Each Toggle row: \`motion.div flex items-center justify-between\`, entrance \`{ opacity:0, x:-16 }\` → \`{ opacity:1, x:0 }\`, spring \`{ stiffness: 200, damping: 22, delay }\`.
 
-Left column: label \`text-sm font-medium text-white/60\`; below it a small state text \`text-[11px]\` — "On" when on (color = toggle color), "Off" when off (color \`rgba(255,255,255,0.25)\`, opacity 0.5).
+Left column: label \`text-sm font-medium text-white/60\`; below it a small state text \`text-[11px]\`: "On" when on (color = toggle color), "Off" when off (color \`rgba(255,255,255,0.25)\`, opacity 0.5).
 
 Right: button 56x32 \`rounded-full\`, whileTap scale 0.95.
 - Use a \`useSpring(defaultOn ? 1 : 0, { stiffness: 300, damping: 22 })\` progress motion value, updated in a \`useEffect\` when \`on\` changes.

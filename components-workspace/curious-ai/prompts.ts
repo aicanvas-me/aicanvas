@@ -23,10 +23,10 @@ Three.js scene (in useEffect with cleanup)
 - Animation loop using THREE.Clock; rotation.y += dt * 0.04, rotation.x += dt * 0.015
 - Cleanup: cancelAnimationFrame, dispose geometry/material/renderer, remove canvas
 
-ShaderMaterial — uniforms
+ShaderMaterial: uniforms
 - uTime: 0
 - uActive: 0 (0..1, smoothly lerped toward "alert")
-- uLook: Vector2(0, 0) — current look direction (-1..1)
+- uLook: Vector2(0, 0), current look direction (-1..1)
 - uReduce: 1 (0 freezes motion)
 - uBase: dark teal Color (0.050, 0.075, 0.085) in dark mode; (0.075, 0.105, 0.120) in light
 - uRimA: cyan Color (0.380, 0.860, 0.940)
@@ -46,7 +46,7 @@ Vertex shader (GLSL)
 - displacement = (nLow*0.66 + nMid*0.34) * mix(0.20, 0.34, uActive) + bulge + breath; pos += normal * displacement.
 - vViewPos = (modelViewMatrix * vec4(pos, 1)).xyz; vNormal = normalize(normalMatrix * normal); vViewDir = normalize(-mv.xyz).
 
-Fragment shader (GLSL) — includes the SAME snoise(vec3) function for speckle sampling.
+Fragment shader (GLSL): includes the SAME snoise(vec3) function for speckle sampling.
 - Derive true surface normal from view-position derivatives:
   vec3 n = normalize(cross(dFdx(vViewPos), dFdy(vViewPos)));
   vec3 v = normalize(-vViewPos);
@@ -70,7 +70,7 @@ Fragment shader (GLSL) — includes the SAME snoise(vec3) function for speckle s
   col += speckColor * speckMask * speckBody * 0.85
 - gl_FragColor = vec4(col, 1.0)
 
-Pointer / activity handling — events on the OUTER container (not the stage), so eyes drift toward the cursor anywhere on the page
+Pointer / activity handling: events on the OUTER container (not the stage), so eyes drift toward the cursor anywhere on the page
 - Compute cursor coords relative to the stage centre:
   rect = stageRef.getBoundingClientRect(); centerX, centerY at rect centre; radius = rect.width / 2.
   nx = clamp((clientX - centerX) / radius, -1, 1); ny = clamp((clientY - centerY) / radius, -1, 1).
@@ -83,7 +83,7 @@ Pointer / activity handling — events on the OUTER container (not the stage), s
 - pointerup uses a 500 ms grace period before treating as leave (handles taps).
 - Bind pointermove / pointerenter / pointerleave / pointerdown / pointerup / pointercancel.
 
-Idle look-around script — runs unless hoverActive is true
+Idle look-around script: runs unless hoverActive is true
 - Sequence: { x:-0.65, y:0, dur:2400 } → { x:0.32, y:0, dur:2800 } → { x:-0.24, y:0, dur:2200 } → { x:0, y:-0.55, dur:2800 } → { x:0, y:0, dur:2600 } → repeat.
 - Each step calls setTimeout(step, dur). If !hoverActive, lookTargetRef = current step's (x,y).
 - Clean up the timeout on unmount.
@@ -96,7 +96,7 @@ RAF loop drives everything from lookCurrentRef
 - Eye offset: range = canvasWidth * 0.18; eyeX.set(lc.x * range); eyeY.set(lc.y * range).
 - The eye motion must out-pace the orb lean so eyes carry the personality.
 
-Eyes — two vertical pink pills
+Eyes: two vertical pink pills
 - A motion.div wrapper sits centred in the stage with width 11% and height 15% of the stage, translated by useSpring versions of eyeX/eyeY ({ stiffness: 200, damping: 22, mass: 0.4 }).
 - Layout: flex justify-between, two child Eye components.
 - Each Eye is a motion.div with width 32% (of wrapper), height 100%, borderRadius 9999, background = eye colour (rgba(255, 140, 245, 0.85) in dark, rgba(255, 150, 248, 0.88) in light).

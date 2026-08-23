@@ -39,7 +39,7 @@ Independent review of every built or modified component before the user previews
 - [ ] Readable text is at least 14px
 
 ### 6. Icons
-- [ ] Phosphor imports from `@phosphor-icons/react`, every instance `weight="regular"` (mistake #002)
+- [ ] Phosphor imports from `@phosphor-icons/react`, `weight="regular"` everywhere except small glyphs (a checkmark or an X a few pixels across may use `bold` or `fill`) (mistake #002)
 
 ### 7. prompts.ts
 - [ ] Exports `prompts` typed `Partial<Record<Platform, string>>`; `Platform` imported from `../../app/components/ComponentCard` (verify the union against that file, not docs)

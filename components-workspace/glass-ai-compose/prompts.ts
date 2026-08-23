@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassAiCompose\` — a glassmorphism AI prompt composer with per-model theming, textarea, image uploads, web-search toggle, and a layoutId model switcher.
+Create a React client component named \`GlassAiCompose\`, a glassmorphism AI prompt composer with per-model theming, textarea, image uploads, web-search toggle, and a layoutId model switcher.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -50,7 +50,7 @@ Root: relative flex h-full w-full items-center justify-center overflow-hidden bg
 
 Panel (motion.div, ref=containerRef wraps inner), className \`relative isolate overflow-hidden rounded-2xl\`, w-[calc(100%-2rem)] max-w-[420px].
 - animate boxShadow: isActive ? ACTIVE_GLOW : glassPanel.boxShadow, transition = reducedMotion ? {duration:0.15} : {type:'spring', stiffness:350, damping:28}.
-- style: glassPanel background + border (not boxShadow — it's animated).
+- style: glassPanel background + border (not boxShadow, it's animated).
 - Separate blur layer: pointer-events-none absolute inset-0 z-[-1] rounded-2xl style=glassBlur.
 - Top highlight: absolute left-6 right-6 top-0 h-[1px] \`linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent)\`.
 

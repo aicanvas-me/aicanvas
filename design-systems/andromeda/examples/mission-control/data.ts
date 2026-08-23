@@ -77,13 +77,6 @@ export const vehicles = [
   { callsign: 'HORIZON',    type: 'Orbiter',   status: 'active',  distance: '220 km',  lastContact: '8s ago'  },
 ];
 
-export const vehicleStatusVariant = {
-  active:  'nominal',
-  standby: 'default',
-  caution: 'caution',
-  fault:   'fault',
-};
-
 export const vehicleStatusLabel = {
   active:  'Active',
   standby: 'Standby',

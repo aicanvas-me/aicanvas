@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`TagaToggle\` — a playful pill toggle with an expressive face drawn on the thumb. Off = dead face (×× eyes, flat mouth). On = happy face (squinted arc eyes, big smile).
+Create a React client component named \`TagaToggle\`, a playful pill toggle with an expressive face drawn on the thumb. Off = dead face (×× eyes, flat mouth). On = happy face (squinted arc eyes, big smile).
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -28,7 +28,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, animate } from '
 \`\`\`
 
 ## Constants
-\`MAX_TRACK_W = 80\`, \`MIN_TRACK_W = 48\`, \`FACE_COLOR = '#4A3F35'\` (warm dark — legible on white in both themes).
+\`MAX_TRACK_W = 80\`, \`MIN_TRACK_W = 48\`, \`FACE_COLOR = '#4A3F35'\` (warm dark, legible on white in both themes).
 
 ## Derived dimensions (from \`trackW\` state)
 \`trackH = round(trackW * 0.58)\`
@@ -48,10 +48,10 @@ import { motion, AnimatePresence, useMotionValue, useTransform, animate } from '
 Keep a \`isOnRef = useRef(false)\` synchronized with \`isOn\` to read in the resize snap effect.
 
 ## Theme + resize detection (single useEffect)
-Get \`containerRef.current\`. Theme: find \`closest('[data-card-theme]')\` → if found use \`.classList.contains('dark')\`, else \`document.documentElement.classList.contains('dark')\`. MutationObserver on both. Resize: \`ResizeObserver\` on the container — compute \`s = max(MIN_TRACK_W, min(MAX_TRACK_W, round(min(el.offsetWidth, el.offsetHeight) * 0.18)))\` → \`setTrackW(s)\`. Cleanup disconnects both.
+Get \`containerRef.current\`. Theme: find \`closest('[data-card-theme]')\` → if found use \`.classList.contains('dark')\`, else \`document.documentElement.classList.contains('dark')\`. MutationObserver on both. Resize: \`ResizeObserver\` on the container, compute \`s = max(MIN_TRACK_W, min(MAX_TRACK_W, round(min(el.offsetWidth, el.offsetHeight) * 0.18)))\` → \`setTrackW(s)\`. Cleanup disconnects both.
 
 ## Resize snap (separate useEffect on trackW)
-\`thumbX.set(isOnRef.current ? onX : offX)\` — snaps the thumb instantly when the track resizes.
+\`thumbX.set(isOnRef.current ? onX : offX)\` snaps the thumb instantly when the track resizes.
 
 ## Toggle handler
 \`handleToggle\` (async, guarded by \`animating\`): set animating true, compute target (\`isOn ? offX : onX\`), update \`isOnRef\`, toggle \`isOn\`, \`await animate(thumbX, target, { type:'spring', stiffness:500, damping:36 })\`, set animating false.
@@ -62,7 +62,7 @@ Get \`containerRef.current\`. Theme: find \`closest('[data-card-theme]')\` → i
 \`thumbShadow = pageIsDark ? '0 3px 8px rgba(0,0,0,0.50), 0 1px 3px rgba(0,0,0,0.30)' : '0 3px 8px rgba(0,0,0,0.18), 0 1px 3px rgba(0,0,0,0.10)'\`
 
 ## Face SVG paths
-Mouth (IMPORTANT — both share M+Q structure for smooth Framer Motion path interpolation):
+Mouth (IMPORTANT: both share M+Q structure for smooth Framer Motion path interpolation):
 - Off (flat): \`'M -0.40,0.43 Q 0,0.43 0.40,0.43'\`
 - On (smile): \`'M -0.40,0.15 Q 0,0.50 0.40,0.15'\`
 
@@ -90,7 +90,7 @@ Thumb: \`motion.div\` inside the track. \`style={{ position:'absolute', top:pad,
 
 Inside thumb: \`<svg viewBox="-1 -1 2 2" width={faceSize} height={faceSize}>\`:
 - Two \`AnimatePresence mode="wait"\` blocks (left eye, right eye), each choosing happy arc path or dead × group based on \`isOn\`. Enter/exit: \`initial/exit { opacity:0, scale:0.3 }\`, \`animate { opacity:1, scale:1 }\`, transition = eyeSpring.
-- \`<motion.path d={mouthPath} stroke={FACE_COLOR} strokeWidth={0.13} strokeLinecap="round" fill="none" transition={{ duration:0.28, ease:'easeInOut' }} />\` — the path \`d\` attribute is set to either the flat or smile path. Because both share the same M+Q structure, Framer Motion interpolates between them smoothly.
+- \`<motion.path d={mouthPath} stroke={FACE_COLOR} strokeWidth={0.13} strokeLinecap="round" fill="none" transition={{ duration:0.28, ease:'easeInOut' }} />\`. The path \`d\` attribute is set to either the flat or smile path. Because both share the same M+Q structure, Framer Motion interpolates between them smoothly.
 
 Use Manrope font.
 

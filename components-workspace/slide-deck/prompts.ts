@@ -18,7 +18,7 @@ If any are missing, set up via the shadcn CLI:
 
 Create \`components-workspace/slide-deck/index.tsx\`. Export a named function \`SlideDeck\`. Single file, \`'use client'\`, no \`any\`.
 
-A swipeable editorial card deck — 4 cards always mounted in a layered stack. The top 3 are visible (y-offset + scale gives depth). Swiping forward flies the top card out left and reveals the one behind it. Swiping backward slides the new card in from the right, on top.
+A swipeable editorial card deck with 4 cards always mounted in a layered stack. The top 3 are visible (y-offset + scale gives depth). Swiping forward flies the top card out left and reveals the one behind it. Swiping backward slides the new card in from the right, on top.
 
 ## Slides
 \`\`\`ts
@@ -47,12 +47,12 @@ const OFFSCREEN = { x:0, y:30, scale:0.88, opacity:0 }
 offset = (slide.id - current + 4) % 4. Cards at offset 0/1/2 use STACK; offset 3 uses OFFSCREEN.
 
 ## Navigation state
-- \`exitInfo: { slideId, xTarget } | null\` — forward only: departed card flies to xTarget (-380)
-- \`enterFromRight: number | null\` — backward only: entering card's id
+- \`exitInfo: { slideId, xTarget } | null\`, forward only: departed card flies to xTarget (-380)
+- \`enterFromRight: number | null\`, backward only: entering card's id
 
 Forward (dir=1): set exitInfo (xTarget:-380). The card at offset 3 (SLIDES.length-1) with matching slideId is isExiting=true → animTarget {x:-380,y:0,scale:0.88,opacity:0}, zIndex 15.
 
-Backward (dir=-1): set enterFromRight to newIdx's slideId. The card becoming offset 0 gets key \`\${id}-right\` and initial \`{x:380,opacity:0,scale:0.88,y:0}\` so Framer Motion starts it off-screen right. Give it zIndex 20 (highest). No exitInfo — the old front card just springs back to STACK[1].
+Backward (dir=-1): set enterFromRight to newIdx's slideId. The card becoming offset 0 gets key \`\${id}-right\` and initial \`{x:380,opacity:0,scale:0.88,y:0}\` so Framer Motion starts it off-screen right. Give it zIndex 20 (highest). No exitInfo, so the old front card just springs back to STACK[1].
 
 Clear both with onAnimationComplete using functional setState.
 
@@ -72,7 +72,7 @@ Spring: stiffness 300, damping 28. Drag x-axis on offset-0 card only, dragElasti
 
 ## Card content layout
 Padding 24px 28px 28px, flex column, space-between.
-- Top row: label (10px, 700, 0.12em tracking, uppercase, textMuted) — slide counter "XX / 04" (11px, 700, textMuted)
+- Top row: label (10px, 700, 0.12em tracking, uppercase, textMuted), then slide counter "XX / 04" (11px, 700, textMuted)
 - Bottom: big slide number (88px, 900, lineHeight 0.85, -0.05em tracking, accent colour) then title (26px, 800, lineHeight 1.15, -0.03em, pre-line, textPrimary)
 
 ## Geometric decorations (ShapeDecor component)

@@ -9,11 +9,11 @@ Build a single-file React component called \`SliceType\` with \`'use client'\` a
 
 ## Concept
 
-A typographic magic trick using two words that share a tail skeleton: \`LIGHT\` and \`NIGHT\`. At rest you see one ambiguous hybrid word — the top half of LIGHT fused with the bottom half of NIGHT. The shared I/G/H/T letters align seamlessly; only the L/N leading glyph forms an ambiguous splice at the midline. On hover, the top word lifts up and the bottom word sinks down, both fully revealed. Simultaneously, the background inverts from dark to light — NIGHT becomes LIGHT.
+A typographic magic trick using two words that share a tail skeleton: \`LIGHT\` and \`NIGHT\`. At rest you see one ambiguous hybrid word: the top half of LIGHT fused with the bottom half of NIGHT. The shared I/G/H/T letters align seamlessly; only the L/N leading glyph forms an ambiguous splice at the midline. On hover, the top word lifts up and the bottom word sinks down, both fully revealed. Simultaneously, the background inverts from dark to light, and NIGHT becomes LIGHT.
 
 ---
 
-## Always dark at rest — no theme prop
+## Always dark at rest: no theme prop
 
 The component is always in **NIGHT mode at rest** (dark background, light text) regardless of the site's global theme. On hover it inverts to **LIGHT mode** in sync with the word reveal. Do not use a theme toggle or detect the global dark class.
 
@@ -39,11 +39,11 @@ Root: \`<motion.div>\` with \`flex min-h-screen w-full items-center justify-cent
 
 Inside, a single \`<div ref={containerRef} className="relative">\` that holds everything:
 
-1. **Spacer** — an invisible \`<span>\` rendering \`NIGHT\` (the wider word) to set the container width.
-2. **Top word wrapper** — a \`<motion.div>\` with \`position: absolute; inset: 0\` carrying the clip-path and vertical lift. Inside it:
+1. **Spacer**: an invisible \`<span>\` rendering \`NIGHT\` (the wider word) to set the container width.
+2. **Top word wrapper**: a \`<motion.div>\` with \`position: absolute; inset: 0\` carrying the clip-path and vertical lift. Inside it:
    - \`<motion.span ref={lRef}>\` for the **L**, with \`position: absolute; top: 0; left: 0\` and an animated \`x\`.
    - \`<span ref={ightRef}>\` for **IGHT**, with \`position: absolute; top: 0; right: 0\`.
-3. **Bottom word** — a \`<motion.span>\` with \`position: absolute; inset: 0; textAlign: 'right'\` carrying its own clip-path and vertical shift. Renders \`NIGHT\`.
+3. **Bottom word**: a \`<motion.span>\` with \`position: absolute; inset: 0; textAlign: 'right'\` carrying its own clip-path and vertical shift. Renders \`NIGHT\`.
 
 ---
 
@@ -67,7 +67,7 @@ const sharedTextStyle: React.CSSProperties = {
 ## Engagement and animation
 
 \`\`\`ts
-const OPEN_OFFSET = 0.65 // fraction of element height — how far words travel apart
+const OPEN_OFFSET = 0.65 // fraction of element height, how far words travel apart
 const engage = useMotionValue(0)
 const engageSmooth = useSpring(engage, { stiffness: 140, damping: 18, mass: 0.9 })
 \`\`\`
@@ -88,10 +88,10 @@ const botY    = useTransform(engageSmooth, (e) => \`\${OPEN_OFFSET * 100 * e}%\`
 
 ## The L alignment trick
 
-The L and IGHT are **separate absolutely-positioned elements** — not a single text run. At rest:
+The L and IGHT are **separate absolutely-positioned elements**, not a single text run. At rest:
 - L is pinned at \`left: 0\` (same x as NIGHT's N). This merges L's top-half vertical stroke with N's bottom-half vertical into one continuous line.
 - IGHT is pinned at \`right: 0\`. Its characters match NIGHT's IGHT exactly.
-- Real layout space exists between L and IGHT — equal to N's width minus L's width.
+- Real layout space exists between L and IGHT, equal to N's width minus L's width.
 
 On hover the L translates right to its natural touching-IGHT position so the word reads LIGHT.
 
@@ -114,7 +114,7 @@ useLayoutEffect(() => {
 }, [])
 \`\`\`
 
-**L's x-translate** — includes a tiny nudge to compensate for font side-bearing:
+**L's x-translate** includes a tiny nudge to compensate for font side-bearing:
 \`\`\`ts
 const L_REST_NUDGE_PX = -1.5
 const lX = useTransform(

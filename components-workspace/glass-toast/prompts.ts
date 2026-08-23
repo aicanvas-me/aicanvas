@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassToast\` — four trigger buttons (Success / Error / Warning / Info) that spawn glass-morphism toast cards in the bottom-right with a draining progress bar.
+Create a React client component named \`GlassToast\`, four trigger buttons (Success / Error / Warning / Info) that spawn glass-morphism toast cards in the bottom-right with a draining progress bar.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -54,7 +54,7 @@ Progress bar: \`absolute bottom-0 left-0 right-0 h-[2px]\`, inner div \`origin-l
 
 Enforce \`MAX_TOASTS\` by slicing oldest. Triggers call \`addToast(variant)\`.
 
-Respect \`useReducedMotion\` — fall back to opacity fades.
+Respect \`useReducedMotion\`: fall back to opacity fades.
 
 Use Manrope font.
 

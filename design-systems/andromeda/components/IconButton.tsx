@@ -128,8 +128,8 @@ const iconButtonVariants = cva(
   },
 );
 
-// ponytail: not tokens.iconSize — that scale (12/16/18/22) doesn't contain 14,
-// and mapping by shifted names (md button -> iconSize.sm) would drift if the
+// Not tokens.iconSize: that scale (12/16/18/22) doesn't contain 14, and
+// mapping by shifted names (md button -> iconSize.sm) would drift if the
 // icon grid is retuned. Deliberate per-button-size glyph scale.
 const ICON_SIZE = { sm: 14, md: 16, lg: 20 };
 

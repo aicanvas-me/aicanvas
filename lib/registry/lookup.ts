@@ -28,7 +28,9 @@ export function loadContentLookup(): ContentLookup {
     cached = buildLookup(JSON.parse(raw) as GateManifest)
   } catch (err) {
     console.error('[registry gate] _manifest.json missing/unreadable — DEGRADED, failing closed:', err)
-    cached = buildLookup({
+    // Not cached on purpose: the next request retries the read, so a transient
+    // failure does not leave this instance degraded for the rest of its life.
+    const fallback = buildLookup({
       systemSlugs: ['andromeda'],
       designSystemSlugs: [],
       templateSlugs: [
@@ -40,7 +42,8 @@ export function loadContentLookup(): ContentLookup {
       premiumSlugs: [],
       brainSlugs: [],
     })
-    cached.degraded = true
+    fallback.degraded = true
+    return fallback
   }
   return cached
 }

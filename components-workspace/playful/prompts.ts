@@ -16,12 +16,12 @@ export const prompts: Partial<Record<Platform, string>> = {
   - Row 1: "STAY"
   - Row 2: "WEIRD"
 - Use Science Gothic font from next/font/google with subsets: ['latin']
-- Font size: clamp(1.6rem, 16vw, 9.6rem) — fluid, ~60-70% of viewport width
+- Font size: clamp(1.6rem, 16vw, 9.6rem) (fluid, ~60-70% of viewport width)
 - Font weight: 700 (bold)
 - Line height: 1
 - Each letter is an inline-block element with select-none
 
-### Theme Support (Dark & Light) — INVERTED
+### Theme Support (Dark & Light): INVERTED
 - Dark mode (default):
   - Background: #1A1A19 (sand-950, near-black)
   - Text color: #869631 (olive-600)
@@ -51,7 +51,7 @@ Each letter animates 3 properties based on cursor distance:
 - Map to rotation direction: rotateDirection = sin(angle)
 - Interpolate: targetRotate = 75 × influence × rotateDirection
 
-#### TranslateY (CSS custom property --translate-y) — ALTERNATING
+#### TranslateY (CSS custom property --translate-y): ALTERNATING
 - Max: ±100px
 - **Even-indexed letters (0, 2, 4, ...) jump UP** (negative Y, translate -100px at max)
 - **Odd-indexed letters (1, 3, 5, ...) drop DOWN** (positive Y, translate +100px at max)
@@ -102,7 +102,7 @@ Main Playful component:
 3. Clears cursor on onMouseLeave + onTouchEnd (with 600ms delay so touch users can see effect)
 4. Runs animation loop in useEffect that initializes state per letter and cleans up RAF on unmount
 
-### Layout — Two rows stacked
+### Layout: Two rows stacked
 - Outer container: flex flex-col items-center justify-center gap-2 sm:gap-4
 - Each row: flex flex-nowrap items-center justify-center gap-1 sm:gap-2
 - Row 1 maps letters with key index i, ref stored at lettersRef.current[i]

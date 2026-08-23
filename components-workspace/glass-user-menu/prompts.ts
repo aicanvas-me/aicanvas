@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassUserMenu\` — a glass user-menu trigger over an ethereal orange flower background that opens a frosted glass dropdown grouped into Account, Workspace, and a Log Out row.
+Create a React client component named \`GlassUserMenu\`, a glass user-menu trigger over an ethereal orange flower background that opens a frosted glass dropdown grouped into Account, Workspace, and a Log Out row.
 
 Write this as a single self-contained React client component. Inline everything. One inner \`MenuItem\` and one inner \`LogOutItem\` subcomponent are OK. 'use client' at the top. No 'any' types.
 
@@ -36,10 +36,10 @@ Write this as a single self-contained React client component. Inline everything.
 \`ACTIVE_GLOW = '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 1.5px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.08)'\`
 
 ## Trigger
-\`motion.button\` \`relative isolate flex cursor-pointer items-center gap-2 rounded-2xl px-4 py-2.5\` with \`glassPanel\` style and a separate non-animating blur layer (absolute inset-0 z-[-1] rounded-2xl). \`whileHover { scale: 1.02 }\`, \`whileTap { scale: 0.97 }\`. Animate \`boxShadow\` between \`glassPanel.boxShadow\` and \`ACTIVE_GLOW\` based on \`open\`, spring \`{ stiffness: 300, damping: 26 }\`. Inside: 32×32 \`<img src={USER.avatar} alt={USER.name} className="h-8 w-8 shrink-0 rounded-full object-cover" />\`; name span \`text-sm font-semibold text-white/80\`; \`<CaretUpDown size={16} weight="regular" className="text-white/40" />\` — no animation wrapper. Click toggles \`open\`.
+\`motion.button\` \`relative isolate flex cursor-pointer items-center gap-2 rounded-2xl px-4 py-2.5\` with \`glassPanel\` style and a separate non-animating blur layer (absolute inset-0 z-[-1] rounded-2xl). \`whileHover { scale: 1.02 }\`, \`whileTap { scale: 0.97 }\`. Animate \`boxShadow\` between \`glassPanel.boxShadow\` and \`ACTIVE_GLOW\` based on \`open\`, spring \`{ stiffness: 300, damping: 26 }\`. Inside: 32×32 \`<img src={USER.avatar} alt={USER.name} className="h-8 w-8 shrink-0 rounded-full object-cover" />\`; name span \`text-sm font-semibold text-white/80\`; \`<CaretUpDown size={16} weight="regular" className="text-white/40" />\`. No animation wrapper. Click toggles \`open\`.
 
 ## Dropdown
-\`AnimatePresence\` around a \`motion.div\` rendered when \`open\`. \`absolute left-full top-0 ml-2 w-[min(256px,calc(100vw-32px))] rounded-2xl p-2\` with style \`{ ...glassPanel, ...glassPanelBlur, transformOrigin: 'top left' }\` — opens to the right of the trigger, blur applied directly, no child blur div. Initial \`{ opacity: 0, scale: 0.95, x: -8, filter: 'blur(4px)' }\`, animate to \`{ opacity: 1, scale: 1, x: 0, filter: 'blur(0px)' }\`, exit reverse, transition spring \`{ stiffness: 350, damping: 28 }\`. Left-edge highlight: \`absolute bottom-6 left-0 top-6 w-[1px]\` background \`linear-gradient(180deg, transparent, rgba(255,255,255,0.18), transparent)\`.
+\`AnimatePresence\` around a \`motion.div\` rendered when \`open\`. \`absolute left-full top-0 ml-2 w-[min(256px,calc(100vw-32px))] rounded-2xl p-2\` with style \`{ ...glassPanel, ...glassPanelBlur, transformOrigin: 'top left' }\`, opens to the right of the trigger, blur applied directly, no child blur div. Initial \`{ opacity: 0, scale: 0.95, x: -8, filter: 'blur(4px)' }\`, animate to \`{ opacity: 1, scale: 1, x: 0, filter: 'blur(0px)' }\`, exit reverse, transition spring \`{ stiffness: 350, damping: 28 }\`. Left-edge highlight: \`absolute bottom-6 left-0 top-6 w-[1px]\` background \`linear-gradient(180deg, transparent, rgba(255,255,255,0.18), transparent)\`.
 
 For each group: \`<p className="mb-0.5 px-3 pt-1 text-[10px] font-semibold uppercase tracking-widest text-white/25">{group.label}</p>\`, then map items to \`<MenuItem />\`. After Account+Workspace, render a divider \`mx-2 my-1.5 h-[1px]\` background \`rgba(255,255,255,0.07)\`, then \`<LogOutItem />\`.
 
@@ -50,7 +50,7 @@ Outer \`motion.div\` \`flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5\`
 Same shape as MenuItem but red: badge background \`#FF5A5A18\` border \`#FF5A5A22\`, SignOut icon color \`#FF5A5A\`, label color \`rgba(255,90,90,0.95)\` hovered or \`rgba(255,90,90,0.70)\` idle.
 
 ## Outside-click close
-Wrap dropdown in a \`ref\` div. \`useEffect\` while open: add \`mousedown\` and \`touchstart\` document listeners; if \`!ref.current.contains(target)\` set \`open = false\`. Cleanup removes both. No 'any' types — type the listener event as \`MouseEvent | TouchEvent\`.
+Wrap dropdown in a \`ref\` div. \`useEffect\` while open: add \`mousedown\` and \`touchstart\` document listeners; if \`!ref.current.contains(target)\` set \`open = false\`. Cleanup removes both. No 'any' types: type the listener event as \`MouseEvent | TouchEvent\`.
 
 Use Manrope font.
 

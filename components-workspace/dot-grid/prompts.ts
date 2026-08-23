@@ -42,13 +42,13 @@ dotRGB = dark ? '255,255,255' : '28,25,22'.
 Standard DPR canvas setup. ResizeObserver on canvas.parentElement rebuilds grid.
 
 ## Pointer tracking (WINDOW-LEVEL, not on the div)
-Register passive listeners on window: \`mousemove\`, \`touchmove\`, \`touchend\`, \`touchcancel\`, plus \`document.addEventListener('mouseleave', clear)\`. On move, read \`canvasRef.current.getBoundingClientRect()\` and write \`{x: clientX - rect.left, y: clientY - rect.top}\` to mouseRef. touchend/touchcancel/mouseleave set to null. This is different from other canvas components — do not attach handlers to the outer div.
+Register passive listeners on window: \`mousemove\`, \`touchmove\`, \`touchend\`, \`touchcancel\`, plus \`document.addEventListener('mouseleave', clear)\`. On move, read \`canvasRef.current.getBoundingClientRect()\` and write \`{x: clientX - rect.left, y: clientY - rect.top}\` to mouseRef. touchend/touchcancel/mouseleave set to null. This is different from other canvas components. Do not attach handlers to the outer div.
 
 Theme detection: walk containerRef.closest('[data-card-theme]'), fallback to documentElement. MutationObserver on both. Mirror into isDarkRef + isDark state.
 
-JSX: outer div (NO pointer handlers — tracking is on window), relative h-full w-full overflow-hidden, bg '#110F0C' dark / '#F5F1EA' light. Canvas absolute inset-0 width/height 100%. If \`showLabel\` is true, render centered pointer-events-none overlay:
-- "Dot Grid" — fontSize 22, fontWeight 700, letterSpacing -0.02em, color rgba(255,255,255,0.45) dark / rgba(28,25,22,0.45) light
-- "hover to illuminate" — fontSize 11, fontWeight 600, textTransform uppercase, letterSpacing 0.12em, color rgba(255,255,255,0.18) dark / rgba(28,25,22,0.22) light
+JSX: outer div (NO pointer handlers, tracking is on window), relative h-full w-full overflow-hidden, bg '#110F0C' dark / '#F5F1EA' light. Canvas absolute inset-0 width/height 100%. If \`showLabel\` is true, render centered pointer-events-none overlay:
+- "Dot Grid": fontSize 22, fontWeight 700, letterSpacing -0.02em, color rgba(255,255,255,0.45) dark / rgba(28,25,22,0.45) light
+- "hover to illuminate": fontSize 11, fontWeight 600, textTransform uppercase, letterSpacing 0.12em, color rgba(255,255,255,0.18) dark / rgba(28,25,22,0.22) light
 
 Cleanup: alive=false, cancelAnimationFrame, ro.disconnect, observer.disconnect, remove all window/document listeners.
 

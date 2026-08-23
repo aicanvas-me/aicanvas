@@ -43,7 +43,7 @@ Per frame:
   - Spring: vx += (restX - x)*SPRING_K; vy += (restY - y)*SPRING_K.
   - vx *= 1 - DAMPING; vy *= 1 - DAMPING. Integrate. Draw arc radius DOT_RADIUS.
 
-Theme: detect via closest('[data-card-theme]').classList.contains('dark'), fallback documentElement. MutationObserver on both. Background: dark '#110F0C', light '#F5F1EA' — set via container inline style.
+Theme: detect via closest('[data-card-theme]').classList.contains('dark'), fallback documentElement. MutationObserver on both. Background: dark '#110F0C', light '#F5F1EA', set via container inline style.
 
 Root: div ref relative h-full w-full overflow-hidden with mouse/touch handlers updating mouseRef to { x: clientX-rect.left, y: clientY-rect.top }; leave/end sets null. Canvas absolute inset-0 100%/100%.
 

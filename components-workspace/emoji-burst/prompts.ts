@@ -36,7 +36,7 @@ Imports:
 \`const PARTICLE_COUNT = 18\`. Module-level \`let uid = 0\`.
 
 ## Particle interface
-\`{ id, emoji, angle (radians), distance (px), rotation (deg), size (rem), duration (seconds) }\`. No delay field — all particles fire simultaneously.
+\`{ id, emoji, angle (radians), distance (px), rotation (deg), size (rem), duration (seconds) }\`. No delay field: all particles fire simultaneously.
 
 ## State
 \`particles: Particle[]\` (setParticles), \`setIdx: number\` (setSetIdx, starts 0), \`isPopping: boolean\`. \`currentSet = SETS[setIdx % SETS.length]\`.

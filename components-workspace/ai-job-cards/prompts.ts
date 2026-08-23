@@ -4,7 +4,7 @@ export const prompts: Partial<Record<Platform, string>> = {
   'Claude Code': `// npm install framer-motion @phosphor-icons/react
 
 Root element: className="flex min-h-screen w-full items-center justify-center"
-The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
+The root ships full height with min-h-screen and the CLI install delivers it exactly as shown, so a standalone paste needs no change. Drop it into a container of your own and that container needs a real height, or the root collapses and takes its absolute layers with it.
 
 Before building, verify your project has the following setup:
 - React / Next.js
@@ -19,7 +19,7 @@ If any are missing, set up via the shadcn CLI:
 Build an AI Job Cards component in a single 'use client' TypeScript file.
 
 ## What it is
-Three stacked card columns — one each for Anthropic, Perplexity, and Google. Each column is a stack of 3 overlapping job cards. The front card is fully visible; the middle and back cards peek below it like a fan. Drag or swipe the front card up or down to cycle to the next card in that column.
+Three stacked card columns, one each for Anthropic, Perplexity, and Google. Each column is a stack of 3 overlapping job cards. The front card is fully visible; the middle and back cards peek below it like a fan. Drag or swipe the front card up or down to cycle to the next card in that column.
 
 ## Layout
 - Pale blue-grey outer bg (#CADBDD light / #0d0d0c dark), padding: clamp(16px, 5%, 40px)
@@ -27,10 +27,10 @@ Three stacked card columns — one each for Anthropic, Perplexity, and Google. E
 - Stacks max-width 760px
 
 ## Card anatomy (top → bottom)
-1. Rate badge ($120/hr) left — BookmarkSimple icon (phosphor) top-right, click to toggle filled/outline + scale-pop spring
-2. Job title (bold 20px, up to 2 lines, maxWidth 72%) — vertical pagination dots column on the right
+1. Rate badge ($120/hr) left, BookmarkSimple icon (phosphor) top-right, click to toggle filled/outline + scale-pop spring
+2. Job title (bold 20px, up to 2 lines, maxWidth 72%), vertical pagination dots column on the right
 3. Divider
-4. Brand logo (24px inline SVG) + company + role label — dark pill "View" button
+4. Brand logo (24px inline SVG) + company + role label, dark pill "View" button
 
 ## Stack constants
 \`\`\`ts
@@ -61,7 +61,7 @@ const SLOTS = [
 - Bookmark filled = #e05c6a; dot active = #E5E5E0 (dark) / #2a2a28 (light)
 - View button: dark pill in light, light pill in dark
 
-## Brand logos (inline SVG — no external libs)
+## Brand logos (inline SVG, no external libs)
 - Anthropic: Claude anthropic spiral, fill #d97757
 - Perplexity: Bootstrap Icons P star mark, fill white (dark) / #1C1C1C (light)
 - Google: Gemini 4-pointed star with gradient #4893FC → #969DFF → #BD99FE

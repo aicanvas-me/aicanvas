@@ -7,7 +7,7 @@ const SPEC = `Build a self-contained "New Project Modal" React component. Export
 npm install framer-motion @phosphor-icons/react
 \`\`\`
 
-## Colour palette (raw hex — no design tokens)
+## Colour palette (raw hex, no design tokens)
 - Page bg: \`#E8E8DF\` light / \`#1A1A19\` dark
 - Card bg: \`#f1f1f0\`
 - Input bg: \`#f8f8f8\`
@@ -37,7 +37,7 @@ const COLORS = [
 \`open\`, \`origin: { x, y, w, h } | null\`, \`title\`, \`description\`, \`isPrivate: false\`, \`titleError: false\`, \`color: string | null\`. Plus \`buttonRef\` for BoundingClientRect and \`titleRef\` for auto-focus.
 
 ## Trigger button
-Pill-shaped \`motion.button\` (rounded-full), Phosphor \`Plus\` icon (size 18, weight="bold") + label "New Project", 16px semibold, font-sans. Dark bg \`#1a1a18\` / light text \`#f1f1f0\` (inverted in dark mode). Drop shadow only — no border.
+Pill-shaped \`motion.button\` (rounded-full), Phosphor \`Plus\` icon (size 18, weight="bold") + label "New Project", 16px semibold, font-sans. Dark bg \`#1a1a18\` / light text \`#f1f1f0\` (inverted in dark mode). Drop shadow only, no border.
 
 - On click: capture \`buttonRef.current.getBoundingClientRect()\` → store as \`origin\`, then \`setOpen(true)\`.
 - When open: \`animate={{ opacity: 0, scale: 0.85 }}\`, \`pointerEvents: none\`.
@@ -46,7 +46,7 @@ Pill-shaped \`motion.button\` (rounded-full), Phosphor \`Plus\` icon (size 18, w
 ## Backdrop
 \`AnimatePresence\` → fixed inset-0 z-40, \`bg-black/25 backdrop-blur-[3px]\`, opacity 0↔1, duration 0.22. Click calls \`close()\`.
 
-## Modal — ModalCard component
+## Modal: ModalCard component
 Split into its own function that receives all form state and handlers.
 
 ### Morph animation (pill → centred card)
@@ -83,7 +83,7 @@ Two pill inputs h-[52px] rounded-full bg-[#f8f8f8] px-5, font-sans 15px medium, 
 - Description: optional, no validation.
 
 ### Color picker (mt-4, flex gap-2)
-7 swatches — one "None" + 6 from COLORS. Swatch component:
+7 swatches: one "None" + 6 from COLORS. Swatch component:
 - size-[22px] rounded-full, spring scale animation.
 - Selected: \`boxShadow: '0 0 0 2px #f1f1f0, 0 0 0 3.5px <color>'\` (white gap + colour ring). None ring uses \`#6c6c6c\`.
 - animate={{ scale: selected ? 1.1 : 1 }}, whileHover scale 1.2, whileTap scale 0.88.
@@ -94,17 +94,17 @@ Two pill inputs h-[52px] rounded-full bg-[#f8f8f8] px-5, font-sans 15px medium, 
 ### Footer (mt-4, flex justify-between items-center)
 **Private toggle:** button that toggles \`isPrivate\`. Square checkbox size-7 rounded-lg border border-[#1a1a18]. animate backgroundColor \`#f8f8f8\` ↔ \`#6c6c6c\` (checked), duration 0.15. Check icon size 14 weight bold color \`#f1f1f0\` springs in/out (scale 0.4→1, rotate -10→0, spring 500/26, AnimatePresence mode="wait"). Label "Private" (15px semibold, \`#1a1a18\`).
 
-**Create button:** CreateButton component — rounded-full px-7 py-3 bg \`#1a1a18\` text \`#f2f1ec\` 15px bold. On click: run \`onValidate()\` (sets titleError if empty, returns false). If valid: \`confirming=true\`, animate scale→0.96 bg→\`#3a3a38\`, swap label → Check icon (size 16, spring 400/22) via AnimatePresence mode="wait". After 600ms: \`confirming=false\`, call \`onConfirm()\`.
+**Create button:** CreateButton component, rounded-full px-7 py-3 bg \`#1a1a18\` text \`#f2f1ec\` 15px bold. On click: run \`onValidate()\` (sets titleError if empty, returns false). If valid: \`confirming=true\`, animate scale→0.96 bg→\`#3a3a38\`, swap label → Check icon (size 16, spring 400/22) via AnimatePresence mode="wait". After 600ms: \`confirming=false\`, call \`onConfirm()\`.
 
 ### close() resets
 title='', description='', isPrivate=false, titleError=false, color=null.
 
 ## Mobile
-\`targetW = Math.min(480, window.innerWidth - 32)\` — card fills screen with 16px side margins on small screens.`
+\`targetW = Math.min(480, window.innerWidth - 32)\`: the card fills screen with 16px side margins on small screens.`
 
 export const prompts: Partial<Record<Platform, string>> = {
   'Claude Code': `Root element: className="flex min-h-screen w-full items-center justify-center bg-[#E8E8DF] dark:bg-[#1A1A19]"
-The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
+The root ships full height with min-h-screen and the CLI install delivers it exactly as shown, so a standalone paste needs no change. Drop it into a container of your own and that container needs a real height, or the root collapses and takes its absolute layers with it.
 
 Before building, verify your project has the following setup:
 - React / Next.js with TypeScript

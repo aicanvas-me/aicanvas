@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 Create a React client component named \`GridLines\`. Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
-A full-bleed canvas of a dot grid connected by horizontal and vertical lines. The cursor does TWO things: (1) it brightens nearby dots and segments via a Gaussian halo, and (2) it bulges the grid outward via a lens influence that peaks at mid-distance and fades at the cursor itself and at the edge of R — the grid visibly warps like a magnifying lens as lines bend through the displaced dots.
+A full-bleed canvas of a dot grid connected by horizontal and vertical lines. The cursor does TWO things: (1) it brightens nearby dots and segments via a Gaussian halo, and (2) it bulges the grid outward via a lens influence that peaks at mid-distance and fades at the cursor itself and at the edge of R. The grid visibly warps like a magnifying lens as lines bend through the displaced dots.
 
 Constants:
 \`\`\`
@@ -48,23 +48,23 @@ baseA     = isDark ? BASE_A : 0.22
 lineRestA = isDark ? LINE_A_DARK : LINE_A_LIGHT
 \`\`\`
 
-Pass 1 — per dot:
+Pass 1, per dot:
 \`\`\`
 dx = d.x - mx; dy = d.y - my
 dist2 = dx*dx + dy*dy
 dist  = Math.sqrt(dist2)
 
-// Brightness — Gaussian halo
+// Brightness: Gaussian halo
 tgtB = dist2 < r2 ? Math.exp(-dist2 / (r2 * 0.45)) : 0
 d.b += (tgtB > d.b ? 0.16 : 0.07) * (tgtB - d.b)
 if d.b < 0.004: d.b = 0
 
-// Lens — sin(πt) bell curve peaking at mid-distance
+// Lens: sin(πt) bell curve peaking at mid-distance
 tgtL = dist < R ? Math.sin(Math.PI * (dist / R)) : 0
 d.l += (tgtL > d.l ? 0.18 : 0.08) * (tgtL - d.l)
 if d.l < 0.004: d.l = 0
 
-// Displaced position — pushed outward along the cursor→dot ray
+// Displaced position: pushed outward along the cursor→dot ray
 if dist > 0.5 and d.l > 0.004:
   push = lensPush * d.l
   ux = dx / dist; uy = dy / dist
@@ -75,7 +75,7 @@ else:
   d.py = d.y
 \`\`\`
 
-Pass 2 — draw lines through displaced dot positions:
+Pass 2, draw lines through displaced dot positions:
 \`\`\`
 for seg in [...hSegs, ...vSegs]:
   segB  = (seg.a.b + seg.b.b) / 2
@@ -85,7 +85,7 @@ for seg in [...hSegs, ...vSegs]:
   beginPath; moveTo(seg.a.px, seg.a.py); lineTo(seg.b.px, seg.b.py); stroke
 \`\`\`
 
-Pass 3 — draw dots on top at displaced positions:
+Pass 3, draw dots on top at displaced positions:
 \`\`\`
 for d in dots:
   alpha = baseA + (PEAK_A - baseA) * d.b
@@ -99,8 +99,8 @@ Standard DPR canvas setup. ResizeObserver on canvas.parentElement rebuilds grid.
 Theme detection: walk containerRef.closest('[data-card-theme]'), fallback documentElement. MutationObserver on both. Mirror into isDarkRef + isDark state.
 
 JSX: outer div relative h-full w-full overflow-hidden, bg '#110F0C' dark / '#F5F1EA' light. Canvas absolute inset-0 width/height 100%. Centered pointer-events-none overlay:
-- "Grid Lines" — fontSize 22, fontWeight 700, letterSpacing -0.02em, color rgba(255,255,255,0.45) dark / rgba(28,25,22,0.45) light
-- "hover to illuminate" — fontSize 11, fontWeight 600, textTransform uppercase, letterSpacing 0.12em, color rgba(255,255,255,0.18) dark / rgba(28,25,22,0.22) light
+- "Grid Lines": fontSize 22, fontWeight 700, letterSpacing -0.02em, color rgba(255,255,255,0.45) dark / rgba(28,25,22,0.45) light
+- "hover to illuminate": fontSize 11, fontWeight 600, textTransform uppercase, letterSpacing 0.12em, color rgba(255,255,255,0.18) dark / rgba(28,25,22,0.22) light
 
 Cleanup: alive=false, cancelAnimationFrame, ro.disconnect, observer.disconnect.
 

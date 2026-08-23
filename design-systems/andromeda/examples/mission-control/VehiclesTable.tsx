@@ -12,8 +12,7 @@ import { Button } from '../../components/Button';
 import { rowContainer, rowItem } from '../../components/lib/motion';
 import { vehicles, vehicleStatusLabel } from './data';
 
-// Local map: data status → new Badge variants
-// (data.js still uses the legacy 'nominal'/'caution' values)
+// Local map: data status → Badge variant
 const vehicleBadgeVariant = {
   active:  'accent',
   standby: 'default',

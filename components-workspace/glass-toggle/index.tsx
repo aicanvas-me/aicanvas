@@ -71,9 +71,9 @@ function Toggle({
         onClick={() => setOn(!on)}
         className="relative h-8 w-14 cursor-pointer rounded-full p-0"
         style={{
-          background: trackBg as unknown as string,
+          background: trackBg,
           border: '1px solid',
-          borderColor: trackBorder as unknown as string,
+          borderColor: trackBorder,
           boxShadow: on ? `0 0 20px ${color}15, inset 0 1px 2px rgba(0,0,0,0.1)` : 'inset 0 1px 2px rgba(0,0,0,0.2)',
         }}
         whileTap={{ scale: 0.95 }}

@@ -36,8 +36,8 @@ const LOCK_START = LOCKED_HEADINGS[0]
  * when the prompt is NOT in a recognisable scaffold — callers must then withhold
  * the prompt whole.
  *
- * Failing closed matters: the scaffold is not enforced for premium prompts
- * (scripts/prompts-scaffold-scope.json scopes free slugs only), so "no headings
+ * Failing closed matters: the scaffold is enforced per listed slug
+ * (scripts/prompts-scaffold-scope.json), not for every prompt, so "no headings
  * found" means "cannot safely redact", never "nothing to redact".
  */
 /**

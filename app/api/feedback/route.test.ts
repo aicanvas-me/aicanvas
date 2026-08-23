@@ -167,3 +167,12 @@ describe('POST /api/feedback', () => {
     expect(codes.at(-1)).toBe(429)
   })
 })
+
+describe('POST /api/feedback when Resend does not answer', () => {
+  it('a timed-out send returns 502 instead of crashing the route', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => { throw new DOMException('timeout', 'TimeoutError') }))
+    vi.spyOn(console, 'error').mockImplementation(() => {})
+    const res = await post({ category: 'general', message: 'hello' })
+    expect(res.status).toBe(502)
+  })
+})

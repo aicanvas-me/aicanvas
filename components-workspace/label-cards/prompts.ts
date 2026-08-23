@@ -18,7 +18,7 @@ If any are missing, set up via the shadcn CLI:
 
 Build a "Label Cards" component in React + Framer Motion ('use client', single file).
 
-Five 16:9 label cards (base 300×169px) scattered at random angles across the canvas. Each card has a bold solid-colour background. Tap any card to spring it to centre; tap again to release. All cards stay fully visible at all times — no fading.
+Five 16:9 label cards (base 300×169px) scattered at random angles across the canvas. Each card has a bold solid-colour background. Tap any card to spring it to centre; tap again to release. All cards stay fully visible at all times, no fading.
 
 **Card data (5 entries):**
 | title | sub1 | sub2 | since | bg | fg |
@@ -54,7 +54,7 @@ Multiply ALL px values (font sizes, padding, gap, border widths, scatter offsets
 **Animation:**
 - Idle → selected: spring { stiffness: 340, damping: 28 }, animate to x:0, y:0, rotate:0, scale:1.05, zIndex:10
 - Selected → idle: spring { stiffness: 240, damping: 24 }
-- No hover effects — cards only respond to click/tap
+- No hover effects: cards only respond to click/tap
 - Hint text "tap a card to focus" fades out (opacity 0) when any card is selected
 
 Container: \`className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#E8E8DF] dark:bg-[#1A1A19]"\` with a subtle 28px dot-grid background pattern.

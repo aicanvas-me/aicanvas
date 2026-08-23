@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassMusicPlayer\` — a frosted-glass "Now Playing" card with an animated vinyl disc, RAF-driven progress bar, pagination dots, and full playback controls.
+Create a React client component named \`GlassMusicPlayer\`, a frosted-glass "Now Playing" card with an animated vinyl disc, RAF-driven progress bar, pagination dots, and full playback controls.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -53,16 +53,16 @@ Inside (flex flex-col items-center px-7 pb-7 pt-6):
    - "Now Playing" span text-[10px] font-semibold uppercase tracking-[0.18em] color 'rgba(255,255,255,0.4)'.
    - Heart motion.button size=20 weight={liked?'fill':'regular'}, animate color liked?track.color:'rgba(255,255,255,0.35)', transition {duration:0.2}, whileHover {scale:1.15} whileTap {scale:0.85}. onClick toggle liked.
 
-2) Album disc — AnimatePresence mode="wait" key=trackIdx → motion.div initial {opacity:0, scale:0.85} animate {opacity:1, scale:1} exit {opacity:0, scale:0.85} transition {type:'spring', stiffness:260, damping:26} className "relative mb-7".
+2) Album disc: AnimatePresence mode="wait" key=trackIdx → motion.div initial {opacity:0, scale:0.85} animate {opacity:1, scale:1} exit {opacity:0, scale:0.85} transition {type:'spring', stiffness:260, damping:26} className "relative mb-7".
    Ambient glow div: absolute inset-0 rounded-full, background track.color, opacity 0.18, filter 'blur(28px)', transform 'scale(1.15)'.
    Disc: relative flex h-44 w-44 items-center justify-center rounded-full, style background \`radial-gradient(circle at 38% 35%, \${track.color}28, \${track.color}08 60%, transparent)\`, border \`1.5px solid \${track.color}25\`, boxShadow \`0 0 0 8px rgba(255,255,255,0.03), 0 12px 40px rgba(0,0,0,0.5)\`.
    Inner motion.div animate {rotate: playing ? 360 : 0}, transition {duration:4, repeat:Infinity, ease:'linear'}, className "relative h-28 w-28". Four ring divs at scales [1, 0.78, 0.58, 0.38]: absolute inset-0 rounded-full, transform scale, border \`1px solid \${track.color}\${i===0?'30':i===1?'1e':'14'}\`. Center hole: h-5 w-5 absolute centered, radial-gradient track.color cc→66, boxShadow \`0 0 10px \${track.color}55\`.
 
-3) Track info — AnimatePresence mode="wait" key=trackIdx → motion.div initial {opacity:0, y:10, filter:'blur(4px)'} animate {opacity:1, y:0, filter:'blur(0px)'} exit {opacity:0, y:-10, filter:'blur(4px)'} transition {type:'spring', duration:0.4, bounce:0} className "mb-4 flex flex-col items-center gap-1". <h3 text-lg font-bold tracking-tight text-white/95>{title}</h3> + <p text-[13px] font-medium color rgba(255,255,255,0.38)>{artist}</p>.
+3) Track info: AnimatePresence mode="wait" key=trackIdx → motion.div initial {opacity:0, y:10, filter:'blur(4px)'} animate {opacity:1, y:0, filter:'blur(0px)'} exit {opacity:0, y:-10, filter:'blur(4px)'} transition {type:'spring', duration:0.4, bounce:0} className "mb-4 flex flex-col items-center gap-1". <h3 text-lg font-bold tracking-tight text-white/95>{title}</h3> + <p text-[13px] font-medium color rgba(255,255,255,0.38)>{artist}</p>.
 
 4) Pagination dots: mb-5 flex items-center gap-[7px]. Each motion.button animate {width: i===trackIdx?20:5, opacity: i===trackIdx?0.5:0.22, backgroundColor: i===trackIdx?track.color:'#ffffff'} transition {type:'spring', stiffness:400, damping:28} className "h-[5px] cursor-pointer rounded-full" style {minWidth:5}. onClick: reset progress, setTrackIdx(i).
 
-5) Progress bar mb-5 w-full: track div relative h-[3px] w-full overflow-hidden rounded-full, bg 'rgba(255,255,255,0.07)'. Fill motion.div absolute left-0 top-0 h-full rounded-full, style {width:barWidth, background:\`linear-gradient(90deg, \${track.color}70, \${track.color}dd)\`}. Below: flex justify-between — two spans text-[10px] font-medium tabular-nums color 'rgba(255,255,255,0.28)': formatTime(elapsed), formatTime(track.duration).
+5) Progress bar mb-5 w-full: track div relative h-[3px] w-full overflow-hidden rounded-full, bg 'rgba(255,255,255,0.07)'. Fill motion.div absolute left-0 top-0 h-full rounded-full, style {width:barWidth, background:\`linear-gradient(90deg, \${track.color}70, \${track.color}dd)\`}. Below: flex justify-between, two spans text-[10px] font-medium tabular-nums color 'rgba(255,255,255,0.28)': formatTime(elapsed), formatTime(track.duration).
 
 6) Controls row flex w-full items-center justify-between:
    - Shuffle motion.button size=19 weight="regular" onClick toggle shuffled, animate color shuffled?track.color:'rgba(255,255,255,0.35)' transition {duration:0.2}, whileHover {scale:1.15, color: shuffled?track.color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.

@@ -69,7 +69,7 @@ JSX:
       {/* Red fill on top */}
       <div className="absolute inset-y-0 left-0 rounded-full" style={{ width: \`\${progress}%\`, background:'linear-gradient(to right, #6b0000, #be1c1c 50%, #e03030)', boxShadow:'inset 0 1px 3px rgba(255,255,255,0.1)' }}/>
 
-      {/* Heat shimmer exhaust — only when taxiing & progress>30 */}
+      {/* Heat shimmer exhaust, only when taxiing & progress>30 */}
       {phase === 'taxiing' && progress > 30 && (
         <motion.div className="pointer-events-none absolute top-1/2 -translate-y-1/2 rounded-full" style={{ right: \`calc(\${100 - planePct}% + 26px)\`, width: Math.min(((progress-30)/70)*56, 56), height: 22, background:'radial-gradient(ellipse at right, rgba(255,140,20,0.3), transparent)', filter:'blur(8px)' }} animate={{opacity:[0.3,0.75,0.2,0.65,0.3]}} transition={{duration:0.2, repeat:Infinity}}/>
       )}
@@ -92,7 +92,7 @@ JSX:
         <span className="text-sm font-semibold sm:text-base" style={{color:'#9E9890'}}>%</span>
       </div>
       <span className="text-[10px] font-semibold uppercase tracking-widest sm:text-[11px]" style={{color: isDark?'#736D65':'#9E9890'}}>
-        {phase === 'takeoff' ? 'Taking off!' : phase === 'resetting' ? '—' : 'Preparing for takeoff'}
+        {phase === 'takeoff' ? 'Taking off!' : phase === 'resetting' ? '...' : 'Preparing for takeoff'}
       </span>
     </div>
   </div>

@@ -138,7 +138,7 @@ function SpaceTick({ x, y, payload, cx, cy }) {
       dominantBaseline="central"
       style={{
         fontFamily: tokens.typography.fontMono,
-        // ponytail: identity constant — 9px polar tick is off the text scale
+        // Identity constant: the 9px polar tick is off the text scale
         fontSize: '9px',
         fill: tokens.color.text.muted,
         textTransform: 'uppercase',

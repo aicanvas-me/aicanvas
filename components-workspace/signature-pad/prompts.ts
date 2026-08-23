@@ -2,7 +2,7 @@ import type { Platform } from '../../app/components/ComponentCard'
 
 const SPEC = `Create \`components-workspace/signature-pad/index.tsx\`. Export a default function \`SignaturePad\`. Single file, \`'use client'\` at top.
 
-**Container:** Root \`<div>\` with \`flex min-h-screen w-full items-center justify-center p-6\`. Inline style \`backgroundColor\` swaps on theme — \`#E8E8DF\` (light) / \`#1A1A19\` (dark). Track theme via \`isDark\` state (default \`false\`) updated in a \`useEffect\` MutationObserver on \`document.documentElement\` (and on \`closest('[data-card-theme]')\`) reading the \`dark\` class. SSR starts \`false\` to avoid hydration mismatch.
+**Container:** Root \`<div>\` with \`flex min-h-screen w-full items-center justify-center p-6\`. Inline style \`backgroundColor\` swaps on theme: \`#E8E8DF\` (light) / \`#1A1A19\` (dark). Track theme via \`isDark\` state (default \`false\`) updated in a \`useEffect\` MutationObserver on \`document.documentElement\` (and on \`closest('[data-card-theme]')\`) reading the \`dark\` class. SSR starts \`false\` to avoid hydration mismatch.
 
 ---
 
@@ -10,7 +10,7 @@ const SPEC = `Create \`components-workspace/signature-pad/index.tsx\`. Export a 
 
 This is a **button-morphs-into-modal** pattern (same family as new-project-modal / voice-chat-pill). User clicks the trigger pill → pill scales to 0 + opacity 0 while a fixed-position card morphs from the pill's bounding rect into a centered 480px-wide modal. On Save: button morphs to a check, then the whole modal collapses back to the pill.
 
-State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\` — captured \`getBoundingClientRect()\` of the pill on click), \`isDark\` (bool). Modal is a child component so its drawing state resets on close/reopen.
+State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\`, the captured \`getBoundingClientRect()\` of the pill on click), \`isDark\` (bool). Modal is a child component so its drawing state resets on close/reopen.
 
 ---
 
@@ -18,7 +18,7 @@ State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\` —
 
 \`motion.button\` ref'd as \`buttonRef\`, pill-shaped (\`borderRadius: 9999\`).
 
-**Colors — inverted per theme** (dark pill on light page, light pill on dark page):
+**Colors, inverted per theme** (dark pill on light page, light pill on dark page):
 - Light theme: bg \`#1a1a18\`, hover \`#2d2d2b\`, text \`#f1f1f0\`. Inner icon tile: bg \`#f1f1f0\`, icon \`#1a1a18\`.
 - Dark theme: bg \`#e0dfd8\`, hover \`#d4d3cc\`, text \`#1a1a18\`. Inner icon tile: bg \`#1a1a18\`, icon \`#f1f1f0\`.
 
@@ -27,7 +27,7 @@ State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\` —
 **Animation:** \`animate={{ opacity: open ? 0 : 1, scale: open ? 0.85 : 1, backgroundColor }}\`. When open: \`transition={{ duration: 0.18 }}\` and \`pointerEvents: 'none'\`. When closed: spring stiffness 400 damping 28. \`whileHover={{ scale: 1.03, backgroundColor: hover }}\`, \`whileTap={{ scale: 0.97 }}\`.
 
 **Layout:** \`flex items-center gap-3 py-2 pl-2 pr-5 font-sans text-[15px] font-semibold\`. Children:
-1. Icon tile — \`flex size-9 shrink-0 items-center justify-center rounded-full\`. Phosphor \`<Signature size={18} weight="regular" />\` inside.
+1. Icon tile: \`flex size-9 shrink-0 items-center justify-center rounded-full\`. Phosphor \`<Signature size={18} weight="regular" />\` inside.
 2. Text "Create your digital signature".
 
 **On click:** capture \`buttonRef.getBoundingClientRect()\` into \`origin\`, then \`setOpen(true)\`.
@@ -40,7 +40,7 @@ Fixed inset-0 div, z-40, fade in/out 0.22s. Style: \`backgroundColor: 'rgba(0,0,
 
 ---
 
-## Modal — pill-to-card morph
+## Modal: pill-to-card morph
 
 The modal palette is **always cream-light** regardless of \`isDark\` (mirrors voice-chat-pill behavior). Constants:
 \`\`\`ts
@@ -66,7 +66,7 @@ Centered fixed div z-50, \`onClick={onClose}\`. Inner \`motion.div\` morphs from
 - Style: \`borderRadius: 28\`, \`willChange: 'transform, border-radius'\`, \`backgroundColor: surfaceBg\`, \`boxShadow: '0px 16px 56px rgba(0,0,0,0.18)'\`.
 - Class: \`w-full max-w-[480px] px-6 pb-6 pt-6\`.
 
-**Inner stagger** — wrap header + canvas + footer in a \`motion.div\` with variants \`{ hidden: { opacity:0 }, show: { opacity:1, transition: { delay:0.18, staggerChildren:0.055 } }, exit: { opacity:0, transition: { duration:0.08 } } }\`, \`initial="hidden" animate="show" exit="exit"\`.
+**Inner stagger**: wrap header + canvas + footer in a \`motion.div\` with variants \`{ hidden: { opacity:0 }, show: { opacity:1, transition: { delay:0.18, staggerChildren:0.055 } }, exit: { opacity:0, transition: { duration:0.08 } } }\`, \`initial="hidden" animate="show" exit="exit"\`.
 
 ---
 
@@ -75,12 +75,12 @@ Centered fixed div z-50, \`onClick={onClose}\`. Inner \`motion.div\` morphs from
 \`flex items-start justify-between gap-3\`, \`mb-5\`.
 
 **Left** (\`flex items-start gap-3\`):
-- Icon tile — \`flex size-10 shrink-0 items-center justify-center rounded-full\`, \`backgroundColor: fieldBg\`, \`color: titleColor\`. Phosphor \`<Signature size={20} weight="regular" />\`.
+- Icon tile: \`flex size-10 shrink-0 items-center justify-center rounded-full\`, \`backgroundColor: fieldBg\`, \`color: titleColor\`. Phosphor \`<Signature size={20} weight="regular" />\`.
 - Title block (\`flex flex-col gap-0.5\`):
-  - "Create your digital signature" — \`font-sans text-[17px] font-bold leading-tight\`, color \`titleColor\`.
-  - "Draw using your mouse or finger" — \`font-sans text-[13px] font-medium\`, color \`labelColor\`.
+  - "Create your digital signature": \`font-sans text-[17px] font-bold leading-tight\`, color \`titleColor\`.
+  - "Draw using your mouse or finger": \`font-sans text-[13px] font-medium\`, color \`labelColor\`.
 
-**Right** — close button (\`flex size-9 shrink-0 items-center justify-center rounded-full\`), \`backgroundColor: fieldBg\`, \`color: labelColor\`. \`whileHover={{ scale:1.1, backgroundColor: fieldHover }}\`, \`whileTap={{ scale:0.88 }}\`, spring 400/26. Phosphor \`<X size={16} weight="bold" />\`. \`onClick={onClose}\`.
+**Right**: close button (\`flex size-9 shrink-0 items-center justify-center rounded-full\`), \`backgroundColor: fieldBg\`, \`color: labelColor\`. \`whileHover={{ scale:1.1, backgroundColor: fieldHover }}\`, \`whileTap={{ scale:0.88 }}\`, spring 400/26. Phosphor \`<X size={16} weight="bold" />\`. \`onClick={onClose}\`.
 
 ---
 
@@ -93,15 +93,15 @@ Wrapper \`relative mb-3\`.
 
 **Canvas** (absolute inset-0, \`touch-none\`, cursor crosshair):
 - Pointer event handlers for \`onPointerDown / Move / Up / Cancel / Leave\`.
-- DPR-aware sizing: read \`container.clientWidth / clientHeight\` (NOT \`getBoundingClientRect\` — the morph animation transforms the parent, and bounding rect is post-transform). \`canvas.width = floor(clientWidth * dpr)\`, \`canvas.height = floor(clientHeight * dpr)\`, \`canvas.style.width = clientWidth + 'px'\`, \`canvas.style.height = clientHeight + 'px'\`. Then \`ctx.setTransform(dpr, 0, 0, dpr, 0, 0)\`.
+- DPR-aware sizing: read \`container.clientWidth / clientHeight\` (NOT \`getBoundingClientRect\`, since the morph animation transforms the parent, and bounding rect is post-transform). \`canvas.width = floor(clientWidth * dpr)\`, \`canvas.height = floor(clientHeight * dpr)\`, \`canvas.style.width = clientWidth + 'px'\`, \`canvas.style.height = clientHeight + 'px'\`. Then \`ctx.setTransform(dpr, 0, 0, dpr, 0, 0)\`.
 - Re-run setup via a \`ResizeObserver\` on the container.
 
-**Drawing model** — \`Stroke = { x: number; y: number; t: number }[]\`. Maintain \`strokesRef: Stroke[]\` (all completed + current strokes), \`currentRef: Stroke\` (in-progress), \`drawingRef: boolean\`, \`sizeRef: { w, h }\`.
+**Drawing model**: \`Stroke = { x: number; y: number; t: number }[]\`. Maintain \`strokesRef: Stroke[]\` (all completed + current strokes), \`currentRef: Stroke\` (in-progress), \`drawingRef: boolean\`, \`sizeRef: { w, h }\`.
 - \`onPointerDown\`: \`preventDefault\`, \`setPointerCapture\`, push a new stroke with one point, set \`hasInk\` true.
 - \`onPointerMove\`: append point to current stroke, draw the latest segment incrementally.
 - \`onPointerUp/Cancel/Leave\`: \`releasePointerCapture\`, \`drawingRef = false\`.
 
-**Smooth strokes** — quadratic curves to the midpoint between successive points:
+**Smooth strokes**: quadratic curves to the midpoint between successive points:
 \`\`\`
 const mid = { x: (prev.x + curr.x)/2, y: (prev.y + curr.y)/2 }
 ctx.beginPath()
@@ -115,7 +115,7 @@ ctx.quadraticCurveTo(prev.x, prev.y, mid.x, mid.y)
 ctx.stroke()
 \`\`\`
 
-**Velocity-tapered width** — line width depends on pointer speed (slow = thicker):
+**Velocity-tapered width**: line width depends on pointer speed (slow = thicker):
 \`\`\`
 const MIN_W = 1.1, MAX_W = 2.6
 function widthForVelocity(prev, curr) {
@@ -135,13 +135,13 @@ A full \`redrawAll\` (replays all strokes from the array) runs after \`setupCanv
 
 ---
 
-## Below the canvas — date + clear row
+## Below the canvas: date + clear row
 
 \`mt-2 flex h-7 items-center justify-between\`.
 
-**Left** — date stamp. Lazy-set in a \`useEffect\` (\`new Date().toLocaleDateString(undefined, { month:'long', day:'numeric', year:'numeric' })\`) so SSR renders empty, no hydration mismatch. \`font-sans text-[12px] font-medium tabular-nums\`, color \`labelColor\` opacity 0.7.
+**Left**: date stamp. Lazy-set in a \`useEffect\` (\`new Date().toLocaleDateString(undefined, { month:'long', day:'numeric', year:'numeric' })\`) so SSR renders empty, no hydration mismatch. \`font-sans text-[12px] font-medium tabular-nums\`, color \`labelColor\` opacity 0.7.
 
-**Right** — \`Clear\` button, \`AnimatePresence\` fades it in (\`initial:{opacity:0,x:6}\`, \`animate:{opacity:1,x:0}\`, \`exit:{opacity:0,x:6}\`, 0.18s) only when \`hasInk && !confirming\`. Style \`flex items-center gap-1.5 rounded-full px-2 py-1 font-sans text-[13px] font-semibold\`, color \`labelColor\`. Phosphor \`<Eraser size={14} weight="regular" />\` + label "Clear". \`onClick\` clears \`strokesRef\`/\`currentRef\`, sets \`hasInk=false\`, calls \`redrawAll\`.
+**Right**: \`Clear\` button, \`AnimatePresence\` fades it in (\`initial:{opacity:0,x:6}\`, \`animate:{opacity:1,x:0}\`, \`exit:{opacity:0,x:6}\`, 0.18s) only when \`hasInk && !confirming\`. Style \`flex items-center gap-1.5 rounded-full px-2 py-1 font-sans text-[13px] font-semibold\`, color \`labelColor\`. Phosphor \`<Eraser size={14} weight="regular" />\` + label "Clear". \`onClick\` clears \`strokesRef\`/\`currentRef\`, sets \`hasInk=false\`, calls \`redrawAll\`.
 
 ---
 
@@ -149,14 +149,14 @@ A full \`redrawAll\` (replays all strokes from the array) runs after \`setupCanv
 
 \`flex items-center justify-end gap-2\`.
 
-**Cancel** — pill button \`rounded-full px-5 py-3 font-sans text-[15px] font-bold\`, \`backgroundColor: fieldBg\`, \`color: titleColor\`. Hover \`backgroundColor: fieldHover\`, scale 1.04. Tap scale 0.96. Spring 400/26. Disabled during \`confirming\` (opacity 0.5). \`onClick={onClose}\`.
+**Cancel**: pill button \`rounded-full px-5 py-3 font-sans text-[15px] font-bold\`, \`backgroundColor: fieldBg\`, \`color: titleColor\`. Hover \`backgroundColor: fieldHover\`, scale 1.04. Tap scale 0.96. Spring 400/26. Disabled during \`confirming\` (opacity 0.5). \`onClick={onClose}\`.
 
-**Save signature** (primary) — pill button, \`min-w-[148px] flex items-center justify-center rounded-full px-7 py-3 font-sans text-[15px] font-bold\`, \`backgroundColor: primaryBg\`, \`color: primaryFg\`. Disabled when \`!hasInk\` (opacity 0.4) or while \`confirming\`. Hover scale 1.05, tap 0.96. Spring 500/40.
+**Save signature** (primary): pill button, \`min-w-[148px] flex items-center justify-center rounded-full px-7 py-3 font-sans text-[15px] font-bold\`, \`backgroundColor: primaryBg\`, \`color: primaryFg\`. Disabled when \`!hasInk\` (opacity 0.4) or while \`confirming\`. Hover scale 1.05, tap 0.96. Spring 500/40.
 
 **Save flow:**
 1. \`onClick\` → \`setConfirming(true)\`.
 2. Button label is replaced via \`<AnimatePresence mode="wait">\` with a centered \`<Check size={16} weight="bold" />\` (initial \`{opacity:0,scale:0.5}\`, animate \`{opacity:1,scale:1}\`, exit \`{opacity:0,scale:0.5}\`, spring 400/22). The button itself animates \`scale: 0.96\`.
-3. After ~1100ms, call \`onClose()\` — the modal exit-animates back to the pill, the pill fades back in. Drawing state resets because \`ModalCard\` unmounts.
+3. After ~1100ms, call \`onClose()\`. The modal exit-animates back to the pill, the pill fades back in. Drawing state resets because \`ModalCard\` unmounts.
 
 ---
 
@@ -187,7 +187,7 @@ const MAX_W = 2.6
 
 ## Notes
 - Single root element (no Fragment) so the registry root-detector can read its attributes.
-- Hardcoded hex colors throughout — do NOT import design tokens or a theme provider; the component must be self-contained for copy-paste install.
+- Hardcoded hex colors throughout. Do NOT import design tokens or a theme provider; the component must be self-contained for copy-paste install.
 - Mobile-friendly: pointer events cover mouse + touch + pen; no fixed widths/heights.`
 
 export const prompts: Partial<Record<Platform, string>> = {

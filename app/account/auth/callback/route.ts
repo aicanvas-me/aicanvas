@@ -62,8 +62,11 @@ async function maybeSendWelcome(
     if (markErr) return // couldn't claim the flag → don't send; a later login retries
 
     const mail = welcomeEmail()
+    // This send sits on the sign-in redirect, so it gets a short cap: a slow
+    // Resend costs at most three seconds of sign-in, never the sign-in itself.
     await fetch('https://api.resend.com/emails', {
       method: 'POST',
+      signal: AbortSignal.timeout(3_000),
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({ from: NOREPLY_FROM, to: [user.email], subject: mail.subject, html: mail.html }),
     })

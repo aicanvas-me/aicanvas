@@ -23,9 +23,9 @@ export async function GET() {
 
   const res = await fetch(
     `${paddleApiBase()}/customers/${sub.paddle_customer_id}/portal-sessions`,
-    { method: 'POST', headers: { Authorization: `Bearer ${apiKey}` } },
-  )
-  if (!res.ok) return NextResponse.json({ url: null })
+    { method: 'POST', headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(10_000) },
+  ).catch(() => null)
+  if (!res?.ok) return NextResponse.json({ url: null })
   const j = await res.json()
   return NextResponse.json({ url: j?.data?.urls?.general?.overview ?? null })
 }

@@ -43,6 +43,7 @@ export async function syncBrevoContact(
     const res = await fetch(`${BREVO_API}/contacts`, {
       method: 'POST',
       headers: h,
+      signal: AbortSignal.timeout(10_000),
       body: JSON.stringify({
         email,
         updateEnabled: true,

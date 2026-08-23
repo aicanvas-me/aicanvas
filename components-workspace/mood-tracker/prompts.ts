@@ -14,7 +14,7 @@ STACK
 - React + TypeScript (strict, no \`any\`).
 - Tailwind CSS v4 for layout/utility classes.
 - Framer Motion is the ONLY external dependency (\`npm install framer-motion\`).
-- No icon library — all six faces AND the Save/check/bookmark icons are inline SVG.
+- No icon library: all six faces AND the Save/check/bookmark icons are inline SVG.
 - Default export \`function MoodTracker()\`. Root element is the only one with
   \`min-h-screen\`: \`className="flex min-h-screen w-full items-center justify-center p-4"\`,
   with an inline page background (dark \`#0E0E10\`, light \`#EDEDE7\`). The card sits
@@ -29,27 +29,27 @@ DESIGN SCALE (strict)
   allowed). Tailwind gap-2=8, gap-3=12, gap-4=16, p-4=16, etc.
 - 44px minimum touch target on the slider track and every legend/Save button.
 
-THE SIX MOODS — in this exact slider/legend order. Each is a DISTINCT inline SVG
+THE SIX MOODS, in this exact slider/legend order. Each is a DISTINCT inline SVG
 character (own body shape + color + expression) drawn on a 0–64 viewBox; they share
 one eye/mouth vocabulary so they read as a set. Default-selected mood is index 2 (Happy).
 A shared facial stroke width of 2.6 is used for most features.
-  1. Frustrated — color \`#CB5E3E\` (red). Rounded-square body (rx 16) with a subtle
+  1. Frustrated: color \`#CB5E3E\` (red). Rounded-square body (rx 16) with a subtle
      top-down white sheen overlay (~0.18 opacity). Angry down-slanted V brows, two
      small filled eyes (r 3.4), a tense flat grimace mouth. Feature ink \`#5A1E0E\`.
-  2. Surprised — color \`#E5A85E\` (tan). Scalloped flower/cloud body built from a chain
+  2. Surprised: color \`#E5A85E\` (tan). Scalloped flower/cloud body built from a chain
      of 9 quadratic-arc lobes (inner radius 21, outer radius 26, centered at 32,32).
      Wide round open eyes (white r 5 + ink pupil r 2.4), a small open "o" mouth
      (ellipse rx 3.4 ry 4.4). Feature ink \`#6B3F12\`.
-  3. Happy — color \`#F2D44E\` (yellow). Circle body (r 25). Two upward-arc smiling eyes,
+  3. Happy: color \`#F2D44E\` (yellow). Circle body (r 25). Two upward-arc smiling eyes,
      a big filled open grin, plus rosy cheeks (\`#F0926B\` r 4, ~0.7 opacity). Feature ink
      \`#6E5806\`.
-  4. Uneasy — color \`#A9C95E\` (green). Lumpy wavy organic blob (cubic-curve loop).
+  4. Uneasy: color \`#A9C95E\` (green). Lumpy wavy organic blob (cubic-curve loop).
      Slightly worried eyes (small filled circles + tiny upper-lid arcs), a squiggly wavy
      mouth (\`Q…T…T\` path). Feature ink \`#3F551A\`.
-  5. Sad — color \`#8AC7D8\` (light blue). Dome / rounded-top half-shape (rounded top,
+  5. Sad: color \`#8AC7D8\` (light blue). Dome / rounded-top half-shape (rounded top,
      flatter bottom). Downturned eyes (arcs curving down), a single light tear
      (\`#E6F4F8\`), a frown. Feature ink \`#1E5663\`.
-  6. Anxious — color \`#BA8FD4\` (lavender). Rounded-diamond body (a 45°-rotated square with
+  6. Anxious: color \`#BA8FD4\` (lavender). Rounded-diamond body (a 45°-rotated square with
      soft corners). Worried slanted brows, two small uneasy eyes (r 3.2), a small frown.
      Feature ink \`#4A2A66\`.
 
@@ -58,7 +58,7 @@ COLOR / LERP HELPERS (inline, no libs)
 - \`tintHex(hex, t)\` = lerp toward white \`#FFFFFF\` (lighten).
 - \`shadeHex(hex, t)\` = lerp toward a soft dark neutral \`DARK_NEUTRAL = '#1B1B22'\`
   (NEVER near-black, so dark theme stays colored, not muddy).
-- \`inkHex(hex)\` = lerp toward near-black \`#14140F\` by 0.82 — a deep, mood-tinted ink
+- \`inkHex(hex)\` = lerp toward near-black \`#14140F\` by 0.82, a deep, mood-tinted ink
   that stays AA-legible on a soft same-hue wash while keeping a trace of hue.
 - \`clamp(n, lo, hi)\`.
 
@@ -76,7 +76,7 @@ white; dark → toward the soft dark neutral). Exact lerp amounts:
 
 LAYOUT (top to bottom inside the card; content layer above an ambient glow)
 - AMBIENT GLOW: a pointer-events-none absolute-inset radial-gradient of the mood color
-  blooming behind the panel — \`radial-gradient(120% 70% at 50% 28%, {color}{alpha} 0%, {color}00 60%)\`
+  blooming behind the panel: \`radial-gradient(120% 70% at 50% 28%, {color}{alpha} 0%, {color}00 60%)\`
   with alpha hex \`24\` (dark) / \`1F\` (light). Transitions background 0.5s ease.
 - HEADER ROW (flex, space-between): left = "How are you feeling?" (16px, font-bold) over a
   subtitle "Today · 6-day streak" (12px, subColor, marginTop 6). Right = the SAVE BUTTON.
@@ -93,7 +93,7 @@ LAYOUT (top to bottom inside the card; content layer above an ambient glow)
       Tint slot 'base' uses baseTint, 'soft' uses softTint. Each blob drifts forever via
       Framer Motion: animate x:[0, dx, -dx*0.6, 0], y:[0, -dy, dy*0.7, 0], repeat Infinity,
       easeInOut, its own duration.
-    • READABILITY LIFT: an absolute-inset gradient keeping the feeling word legible —
+    • READABILITY LIFT: an absolute-inset gradient keeping the feeling word legible:
       dark: \`radial-gradient(120% 90% at 50% 40%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 100%)\`;
       light: \`radial-gradient(120% 90% at 50% 42%, rgba(255,255,255,0.32) 0%, rgba(255,255,255,0) 62%)\`.
     • BIG FACE: in a clamp(96px, 30vw, 140px) square, render the current mood's SVG at
@@ -107,7 +107,7 @@ LAYOUT (top to bottom inside the card; content layer above an ambient glow)
       {opacity:1, y:0, blur(0)} → exit {opacity:0, y:-8, blur(4px)}, 0.26s easeOut.
       NO number anywhere.
 - SEGMENTED SLIDER: label "Drag to set your mood" (12px, subColor) above a track that
-  is the slider control itself — role="slider", tabIndex 0, height 44 (the hit area),
+  is the slider control itself: role="slider", tabIndex 0, height 44 (the hit area),
   touch-none, select-none, cursor-pointer. ARIA: aria-valuemin 1, aria-valuemax 6,
   aria-valuenow = index+1, aria-valuetext = current mood label, aria-describedby the
   feeling-word id, aria-label "Mood".
@@ -136,7 +136,7 @@ SAVE BUTTON STATE MACHINE
   current mood (\`{color}26\` dark / \`{color}1F\` light), inset 1px ring of the mood color,
   text = \`#F2F2F0\` (dark) / inkHex(color) (light). whileHover scale 1.04 + brightness-110
   (pointer devices only), whileTap scale 0.94, spring {stiffness:480, damping:28}.
-- ON CLICK: morph to CONFIRMING for ~1.6s — background/ring/text become a calm success
+- ON CLICK: morph to CONFIRMING for ~1.6s, background/ring/text become a calm success
   green \`CONFIRM_GREEN = '#3FA66A'\` (bg \`{green}33\` dark / \`{green}24\` light, ring \`{green}55\`),
   the icon swaps to an inline check, the label becomes "Recorded", and the pill does a
   one-shot scale pop [1, 1.12, 1] over 0.36s. Color/bg/ring transition 0.3s ease.

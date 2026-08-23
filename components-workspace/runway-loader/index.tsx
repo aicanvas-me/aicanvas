@@ -268,7 +268,7 @@ export default function RunwayLoader() {
             {phase === 'takeoff'
               ? 'Taking off!'
               : phase === 'resetting'
-                ? '—'
+                ? '...'
                 : 'Preparing for takeoff'}
           </span>
         </div>

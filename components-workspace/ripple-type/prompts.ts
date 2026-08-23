@@ -9,7 +9,7 @@ Build a single-file React component called \`RippleType\` with \`'use client'\` 
 
 ## Concept
 
-A kinetic-typography piece: the word \`RIPPLE\` rendered as large SVG text with an SVG turbulence + displacement-map filter that distorts the letters like rippling liquid. To the left of the word sits a small fan icon with an OFF/ON label below it. Click the fan to toggle. When ON, the displacement intensity ramps up over a second, the noise pattern morphs continuously, the fan blades spin, and the word skews to the right. When OFF, intensity decays (faster than the ramp-up), the blades coast to a stop, and the word settles back upright. Pure React + Framer Motion — no Three.js, no canvas, no other libraries.
+A kinetic-typography piece: the word \`RIPPLE\` rendered as large SVG text with an SVG turbulence + displacement-map filter that distorts the letters like rippling liquid. To the left of the word sits a small fan icon with an OFF/ON label below it. Click the fan to toggle. When ON, the displacement intensity ramps up over a second, the noise pattern morphs continuously, the fan blades spin, and the word skews to the right. When OFF, intensity decays (faster than the ramp-up), the blades coast to a stop, and the word settles back upright. Pure React + Framer Motion, no Three.js, no canvas, no other libraries.
 
 ---
 
@@ -18,7 +18,7 @@ A kinetic-typography piece: the word \`RIPPLE\` rendered as large SVG text with 
 \`\`\`ts
 const WORD = 'RIPPLE'
 
-// Amplitude ramp — 1 unit/sec up, 2.5 units/sec down.
+// Amplitude ramp: 1 unit/sec up, 2.5 units/sec down.
 const LEVEL_COUNT       = 1
 const LEVEL_RAMP        = 1.0
 const LEVEL_DECAY       = 2.5
@@ -28,7 +28,7 @@ const REST_FREQ         = 0.001  // baseFrequency at rest
 const HOVER_FREQ        = 0.009  // baseFrequency target at full intensity
 const RIPPLE_PHASE_RATE = 0.9    // radians/sec the noise morphs at full intensity
 
-// Fan spin — 2π / 0.6s ≈ 10.47 rad/s at full speed.
+// Fan spin: 2π / 0.6s ≈ 10.47 rad/s at full speed.
 const FAN_FULL_RATE    = (Math.PI * 2) / 0.6
 const FAN_REDUCED_RATE = (Math.PI * 2) / 2.0
 \`\`\`
@@ -37,7 +37,7 @@ const FAN_REDUCED_RATE = (Math.PI * 2) / 2.0
 
 ## Theme & colors (raw hex, no Tailwind tokens)
 
-Dual theme — the component listens for theme on a \`[data-card-theme]\` ancestor first (required for isolated card previews), falling back to \`document.documentElement.classList.contains('dark')\`.
+Dual theme: the component listens for theme on a \`[data-card-theme]\` ancestor first (required for isolated card previews), falling back to \`document.documentElement.classList.contains('dark')\`.
 
 - Dark: bg \`#0A0A0A\`, fg \`#EFEEE6\`, fan stroke \`#EFEEE6\`
 - Light: bg \`#EFEEE6\`, fg \`#0A0A0A\`, fan stroke \`#0A0A0A\`
@@ -47,7 +47,7 @@ Vignette behind the layout:
 - Light: \`radial-gradient(70% 55% at 50% 50%, rgba(10,10,10,0.05) 0%, rgba(239,238,230,0) 70%)\`
 
 Inline \`useTheme(ref)\` hook:
-1. From \`ref.current\`, walk up to find the closest \`[data-card-theme]\` ancestor — if found, theme = that attribute.
+1. From \`ref.current\`, walk up to find the closest \`[data-card-theme]\` ancestor. If found, theme = that attribute.
 2. Otherwise, theme = \`html.dark\` ? 'dark' : 'light'.
 3. Attach a \`MutationObserver\` to every ancestor from the root up to \`<html>\`, filtered to \`['class', 'data-card-theme']\`, re-reading on any change. Disconnect all observers on cleanup.
 
@@ -59,7 +59,7 @@ OFF/ON label uses fixed semantic colors (independent of theme): OFF = \`#EF4444\
 
 - Root: \`relative min-h-screen w-full overflow-hidden\`, \`backgroundColor: bg\`.
 - Vignette: an absolute \`inset: 0\` div behind everything with \`background: vignette\` and \`pointerEvents: 'none'\`.
-- Single content wrapper (absolute \`inset: 0\`): \`display: flex; flexDirection: 'row'; alignItems: 'center'; justifyContent: 'center'; gap: 'clamp(14px, 3vw, 32px)'\`. Fan and text sit on one row at every viewport — never stack into a column.
+- Single content wrapper (absolute \`inset: 0\`): \`display: flex; flexDirection: 'row'; alignItems: 'center'; justifyContent: 'center'; gap: 'clamp(14px, 3vw, 32px)'\`. Fan and text sit on one row at every viewport, never stacking into a column.
 
 ---
 
@@ -89,11 +89,11 @@ Inside \`<defs>\`, one filter:
 </filter>
 \`\`\`
 
-The filter id must be unique per instance — use \`useId()\` and replace \`':'\` with \`'-'\` to keep it valid for \`url(#…)\` references. \`numOctaves={1}\` is intentional (a single octave gives the smooth liquid look — higher counts get noisy and chattery).
+The filter id must be unique per instance: use \`useId()\` and replace \`':'\` with \`'-'\` to keep it valid for \`url(#…)\` references. \`numOctaves={1}\` is intentional (a single octave gives the smooth liquid look, higher counts get noisy and chattery).
 
 Then \`<g filter={\\\`url(#\${filterId})\\\`} fill={fg}>\` containing one \`<text x="250" y="140" textAnchor="middle">RIPPLE</text>\` with system sans (\`'ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif'\`), fontWeight 900, fontSize 140, letterSpacing \`-0.04em\`, \`userSelect: 'none'\`.
 
-The outer \`<svg>\` itself has a \`textSvgRef\` — its CSS transform is \`skewX(...)\` (see animation loop).
+The outer \`<svg>\` itself has a \`textSvgRef\`. Its CSS transform is \`skewX(...)\` (see animation loop).
 
 ---
 
@@ -121,7 +121,7 @@ Refs:
 10. Skew: \`skew = reducedMotion ? 0 : intensity * 13\` (degrees). \`textSvgRef.current.style.transform = \\\`skewX(\${skew}deg)\\\`\`.
 11. Blade spin: \`rate = reducedMotion ? FAN_REDUCED_RATE : FAN_FULL_RATE\`; \`fanAngleRef.current += rate * intensity * dt\`; wrap > 2π. \`bladesRef.current.style.transform = \\\`rotate(\${fanAngleRef.current * 180 / Math.PI}deg)\\\`\`.
 
-All filter attribute updates and transforms are written imperatively — no JSX state for animation values, no useState for per-frame data. This avoids React re-render churn at 60fps.
+All filter attribute updates and transforms are written imperatively, with no JSX state for animation values, no useState for per-frame data. This avoids React re-render churn at 60fps.
 
 ---
 
@@ -129,16 +129,16 @@ All filter attribute updates and transforms are written imperatively — no JSX 
 
 If \`(prefers-reduced-motion: reduce)\`:
 - \`peakScale\` clamps to 14 (instead of 36) so the displacement is gentler.
-- \`skew\` is forced to 0 — the word never tilts.
+- \`skew\` is forced to 0, so the word never tilts.
 - Blade rate falls to one revolution every 2 seconds (vs ~0.6s).
 
-The fan toggle still works; the ramp/decay still happens — only peak amplitudes are reduced.
+The fan toggle still works; the ramp/decay still happens. Only peak amplitudes are reduced.
 
 ---
 
 ## Mobile
 
-Single row at every breakpoint — never stack into a column. Fan size, text size, and gap all use \`clamp()\` so the layout fluidly compresses. The text SVG width is \`min(55vw, 500px)\`, so even at 320 px viewport the word and fan both fit on one line.
+Single row at every breakpoint, never stacking into a column. Fan size, text size, and gap all use \`clamp()\` so the layout fluidly compresses. The text SVG width is \`min(55vw, 500px)\`, so even at 320 px viewport the word and fan both fit on one line.
 
 ---
 

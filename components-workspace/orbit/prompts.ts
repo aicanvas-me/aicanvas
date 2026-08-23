@@ -2,7 +2,7 @@ import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
   'Claude Code': `Root element: className="flex min-h-screen w-full items-center justify-center"
-The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
+The root ships full height with min-h-screen and the CLI install delivers it exactly as shown, so a standalone paste needs no change. Drop it into a container of your own and that container needs a real height, or the root collapses and takes its absolute layers with it.
 
 Create a circular typography component where a looping phrase rotates continuously around a wheel, with letters responding to cursor proximity.
 
@@ -17,7 +17,7 @@ Create a circular typography component where a looping phrase rotates continuous
 ### Typography & Text
 - Text content: "KEEP MOVING • KEEP MOVING • " repeated twice to fill the circle (FULL_TEXT = BASE_TEXT + BASE_TEXT)
 - Use Anton font from next/font/google with subsets: ['latin'], weight: '400'
-- Font size: size * 0.076 (proportional to container — calibrated for Anton's character widths at 56 chars)
+- Font size: size * 0.076 (proportional to container, calibrated for Anton's character widths at 56 chars)
 - Each letter is an inline-block span with userSelect: none
 
 ### Theme Support (Dark & Light)
@@ -33,13 +33,13 @@ Create a circular typography component where a looping phrase rotates continuous
 ### Circular Layout
 - Container (wheelRef): position relative, width/height clamp(200px, 48vw, 420px)
 - Measure container size with ResizeObserver + useLayoutEffect (setSize on mount and resize)
-- Each letter — outer span:
+- Each letter, outer span:
   - position absolute
   - angle = (i / TOTAL) * 2π - π/2 (start from 12 o'clock)
   - x = radius + textRadius * cos(angle), y = radius + textRadius * sin(angle)
   - transform: translate(-50%, -50%) rotate(\${rotDeg}deg) where rotDeg = angle * 180/π + 90
   - textRadius = radius * 0.88
-- Each letter — inner span (ref'd):
+- Each letter, inner span (ref'd):
   - handles hover animation via CSS custom properties
   - transform: translate(var(--push-x, 0px), var(--push-y, 0px)) scale(var(--scale, 1))
 

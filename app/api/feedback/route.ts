@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { CONTACT_INBOX, CONTACT_FROM } from '@/app/lib/config'
-import { emailShell, emailText } from '@/app/lib/email/shell'
+import { ipFromHeaders } from '@/app/lib/quota'
+import { emailShell, emailText, escapeHtml } from '@/app/lib/email/shell'
 import { createClient } from '@/app/lib/supabase/server'
 
 export const runtime = 'nodejs'
@@ -25,8 +26,8 @@ export const runtime = 'nodejs'
 // + strict validation + a best-effort per-instance throttle. Serverless instances
 // are ephemeral and unshared, so the throttle is a speed bump, not a guarantee.
 // This form is linked more widely than /contact, so it will attract more bots.
-// ponytail: add Cloudflare Turnstile or a shared KV counter if spam actually
-// shows up — not before.
+// Add Cloudflare Turnstile or a shared KV counter if spam actually shows up,
+// not before.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -64,15 +65,6 @@ function rateLimited(ip: string): boolean {
     }
   }
   return recent.length > MAX_PER_WINDOW
-}
-
-function escapeHtml(s: string): string {
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
 }
 
 /** Trim, coerce to string, and cap length. Guards every free-text field. */
@@ -129,10 +121,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Feedback form is not configured yet.' }, { status: 503 })
   }
 
-  const ip =
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    req.headers.get('x-real-ip') ||
-    'unknown'
+  const ip = ipFromHeaders(req.headers) ?? 'unknown'
   if (rateLimited(ip)) {
     return NextResponse.json(
       { error: 'Too many messages from here. Please try again in a few minutes.' },
@@ -198,6 +187,7 @@ export async function POST(req: NextRequest) {
 
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
+    signal: AbortSignal.timeout(10_000),
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
@@ -221,11 +211,11 @@ export async function POST(req: NextRequest) {
         .filter(Boolean)
         .join('\n'),
     }),
-  })
+  }).catch(() => null)
 
-  if (!res.ok) {
-    const detail = await res.text().catch(() => '')
-    console.error('[api/feedback] Resend send failed:', res.status, detail)
+  if (!res?.ok) {
+    const detail = res ? await res.text().catch(() => '') : 'no response within 10s'
+    console.error('[api/feedback] Resend send failed:', res?.status ?? 0, detail)
     return NextResponse.json(
       { error: 'Could not send your feedback right now. Please try again shortly.' },
       { status: 502 },

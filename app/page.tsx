@@ -43,8 +43,8 @@ export default async function HomePage() {
   const FEATURED_SLUGS = ['tilted-coverflow', 'product-card-deck', 'interactive-card-stack', 'voice-chat-pill', 'sticker-wall']
   const carouselItems = FEATURED_SLUGS
     .map((slug) => COMPONENT_META.find((c) => c.slug === slug))
-    .filter(Boolean)
-    .map((c) => ({ slug: c!.slug, name: c!.name, description: c!.description, tags: c!.tags, image: c!.image, badge: c!.badge }))
+    .filter((c) => c !== undefined)
+    .map((c) => ({ slug: c.slug, name: c.name, description: c.description, tags: c.tags, image: c.image, badge: c.badge }))
 
   return <HomePageClient total={total} pulls={pulls} carouselItems={carouselItems} />
 }

@@ -31,6 +31,16 @@ const LIGHT = {
 }
 const CLS = { primary: 'ac-heading', secondary: 'ac-body', muted: 'ac-footer' } as const
 
+/** HTML-escape a dynamic value before it lands inside an email body. */
+export function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 /** Returns `class="…" style="…"` attributes for an adaptive text element.
  *  Pair the semantic kind with any extra inline style (size, margin, weight). */
 export function emailText(kind: keyof typeof LIGHT, extra = ''): string {

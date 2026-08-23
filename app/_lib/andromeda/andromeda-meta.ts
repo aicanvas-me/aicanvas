@@ -369,12 +369,12 @@ const TEMPLATE_ART: Record<string, string> = {
 const templateArt = (folder: string) =>
   `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_ART[folder] ?? '')}`
 
-// ponytail: static 4-entry mirror of the andromeda `templates` in
+// Static 4-entry mirror of the andromeda `templates` in
 // scripts/lib/design-systems.config.mjs (folder = registry slug minus the
 // "andromeda-" prefix, matching the route dirs). Kept here rather than derived
 // from the .mjs config so this stays a typed, Node-free, client-safe module.
-// Blurbs are the same copy AndromedaOverview.tsx shows on its template cards —
-// keep the two in sync (fixed set, changes rarely).
+// Blurbs are the same copy AndromedaOverview.tsx shows on its template cards.
+// Keep the two in sync (fixed set, changes rarely).
 export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
   {
     folder: 'mission-control',

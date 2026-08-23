@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassTags\` — a wrapped row of glass-morphism tag pills with individually colored selection states.
+Create a React client component named \`GlassTags\`, a wrapped row of glass-morphism tag pills with individually colored selection states.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 

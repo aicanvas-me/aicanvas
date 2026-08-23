@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a React client component named \`GlassCard\` — three frosted-glass feature cards with 3D mouse-tilt, rotating gradient border, and notification-style tinted icon badges over an orange-flower background.
+Create a React client component named \`GlassCard\`, three frosted-glass feature cards with 3D mouse-tilt, rotating gradient border, and notification-style tinted icon badges over an orange-flower background.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
@@ -24,9 +24,9 @@ Background (absolute inset-0 object-cover opacity-60 pointer-events-none):
 \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png?updatedAt=1775226802133\`
 
 CARDS (title, subtitle, color, gradient pair, cta, Icon):
-1. Analytics — "Real-time metrics and insights for your application." — #5B8FF9 / '#5B8FF9, #A78BFA' — "View Dashboard" — ChartLineUp
-2. Automation — "Streamline your workflows with intelligent triggers." — #FF6BF5 / '#FF6BF5, #FF6680' — "Create Workflow" — Lightning
-3. Security — "Enterprise-grade protection for your data." — #FF7B54 / '#FF7B54, #FFBE0B' — "View Report" — ShieldCheck
+1. Analytics | "Real-time metrics and insights for your application." | #5B8FF9 / '#5B8FF9, #A78BFA' | "View Dashboard" | ChartLineUp
+2. Automation | "Streamline your workflows with intelligent triggers." | #FF6BF5 / '#FF6BF5, #FF6680' | "Create Workflow" | Lightning
+3. Security | "Enterprise-grade protection for your data." | #FF7B54 / '#FF7B54, #FFBE0B' | "View Report" | ShieldCheck
 
 Root: relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]. Inside: background <img>, then a flex-wrap gap-6 px-6 row mapping cards.
 

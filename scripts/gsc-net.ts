@@ -18,6 +18,11 @@ export const GAXIOS_OPTS = { timeout: REQUEST_TIMEOUT_MS }
 
 // Reject if `promise` doesn't settle within `ms`. Backstop ceiling: guarantees
 // the caller unblocks even if the underlying client's own timer never fires.
+/** The message of anything a catch block receives, Error or not. */
+export function errMessage(e: unknown): string {
+  return e instanceof Error ? e.message : String(e)
+}
+
 export function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   let timer: ReturnType<typeof setTimeout>
   const timeout = new Promise<never>((_, reject) => {

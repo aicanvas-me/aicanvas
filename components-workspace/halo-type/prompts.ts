@@ -5,7 +5,7 @@ export const prompts: Partial<Record<Platform, string>> = {
 
 Build a single-file React component called \`HaloType\` with \`'use client'\` at the top. Install dependency: \`framer-motion\`.
 
-This is a kinetic-typography component: a horizontal ring of text (a tilted halo) that continuously rotates on its Y-axis. Each character on the front arc reads upright in the foreground color; each character on the back arc reads upside-down in a dimmer color. The ring is pure CSS 3D — no Three.js, no WebGL.
+This is a kinetic-typography component: a horizontal ring of text (a tilted halo) that continuously rotates on its Y-axis. Each character on the front arc reads upright in the foreground color; each character on the back arc reads upside-down in a dimmer color. The ring is pure CSS 3D, no Three.js, no WebGL.
 
 ---
 
@@ -13,8 +13,8 @@ This is a kinetic-typography component: a horizontal ring of text (a tilted halo
 
 \`\`\`ts
 const PHRASE = 'COPY ✦ PASTE ✦ SHIP ✦ REPEAT ✦ '
-const TILT_REST = 24          // rotateX at rest — a flat-ish ellipse
-const TILT_HOVER = 24         // rotateX while hovered — no tilt change on hover
+const TILT_REST = 24          // rotateX at rest, a flat-ish ellipse
+const TILT_HOVER = 24         // rotateX while hovered, no tilt change on hover
 const SECONDS_PER_TURN = 14   // full rotation duration at rest
 const SPEED_HOVER = 0.3       // hover slows spin to 30% of rest speed
 const RADIUS_FRACTION = 0.35  // ring radius ≈ 35% of min(w, h) → diameter ≈ 70%
@@ -31,7 +31,7 @@ Dual theme, raw hex only (no Tailwind tokens inside the component). Back-arc let
 - **Light**: bg \`#F5F1E8\`, fg \`#0A0A0A\`, fgBack \`#6A655C\`
 
 Detect theme with an inline \`useTheme(ref)\` hook that:
-1. Walks up from \`ref.current\` to find the nearest \`[data-card-theme]\` ancestor — if present, theme = that attribute (\`'dark'\` or \`'light'\`). This is required so the component works inside an isolated card preview that has its own theme toggle.
+1. Walks up from \`ref.current\` to find the nearest \`[data-card-theme]\` ancestor. If present, theme = that attribute (\`'dark'\` or \`'light'\`). This is required so the component works inside an isolated card preview that has its own theme toggle.
 2. Otherwise, theme = \`document.documentElement.classList.contains('dark') ? 'dark' : 'light'\`.
 3. Attaches a \`MutationObserver\` on every ancestor from the root element up to \`<html>\`, observing \`attributes\` filtered to \`['class', 'data-card-theme']\`, so the component re-reads theme on any change in the chain. Disconnect all observers on cleanup.
 
@@ -46,7 +46,7 @@ Add a soft radial vignette under the ring:
 - Root: \`flex min-h-screen w-full items-center justify-center\`, background = bg.
 - Wrapper (inside root): \`relative flex h-[min(100vh,100vw)] w-full items-center justify-center overflow-hidden\`. This is where pointer events are bound and where the edge mask lives.
   - Apply \`touchAction: 'none'\`.
-  - Apply \`maskImage\` and \`WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)'\` so the extreme left/right edges of the stage fade out — this hides any residual seam pixels at the ±90° transition.
+  - Apply \`maskImage\` and \`WebkitMaskImage: 'linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%)'\` so the extreme left/right edges of the stage fade out. This hides any residual seam pixels at the ±90° transition.
 - Perspective stage (child of wrapper, centered): a square \`size × size\` div with \`perspective: 1200px\`, \`perspectiveOrigin: '50% 50%'\`, \`position: relative\`.
 - Ring container (child of stage): \`position: absolute; inset: 0; transformStyle: 'preserve-3d'; willChange: 'transform'\`. Its transform comes from two MotionValues (see below).
 
@@ -61,7 +61,7 @@ Derived geometry:
 
 ## Per-character width measurement (critical)
 
-Equal angular spacing looks broken — \`I\` gets the same slice as \`W\`. Fix this with DOM-based measurement.
+Equal angular spacing looks broken: \`I\` gets the same slice as \`W\`. Fix this with DOM-based measurement.
 
 Render a hidden absolute-positioned \`<span>\` sibling with \`visibility: hidden\`, \`pointerEvents: 'none'\`, \`whiteSpace: 'pre'\`, and the exact same font stack, weight (800), line-height (1), and letter-spacing (\`-0.01em\`) as the live glyphs. Inside it, map \`PHRASE.split('')\` to one \`<span data-m-char="" style={{ display: 'inline-block', whiteSpace: 'pre', fontSize: ch === '✦' ? fontSize * STAR_SCALE : fontSize }}>{ch}</span>\` per character.
 
@@ -90,7 +90,7 @@ Motion state (Framer Motion):
 - \`tilt = useTransform(engagementSmooth, [0, 1], [TILT_REST, TILT_HOVER])\`.
 - \`speedMul = useTransform(engagementSmooth, [0, 1], [1, SPEED_HOVER])\`.
 - \`rotateY = useMotionValue(0)\`.
-- \`ringTransform = useTransform([tilt, rotateY], ([x, y]) => \\\`rotateX(\${x}deg) rotateY(\${y}deg)\\\`)\` — this is the ring container's \`transform\`.
+- \`ringTransform = useTransform([tilt, rotateY], ([x, y]) => \\\`rotateX(\${x}deg) rotateY(\${y}deg)\\\`)\`. This is the ring container's \`transform\`.
 
 Animation loop via \`useAnimationFrame((t) => {...})\`:
 - If \`prefers-reduced-motion: reduce\` (tracked in state via \`matchMedia\`): \`rotateY.set(30)\` and skip the integrator so the ring freezes at 30°, both arcs visible.
@@ -103,7 +103,7 @@ Animation loop via \`useAnimationFrame((t) => {...})\`:
   - \`backOpacity = c < 0 ? -c : 0\`
   - Write these imperatively: \`frontRefs.current[i].style.opacity = String(frontOpacity)\` and \`backRefs.current[i].style.opacity = String(backOpacity)\`.
 
-Do NOT set opacity in JSX \`style\` — on any React re-render (theme change, resize) the letters would flash to 0 and pop in again.
+Do NOT set opacity in JSX \`style\`: on any React re-render (theme change, resize) the letters would flash to 0 and pop in again.
 
 ---
 
@@ -113,7 +113,7 @@ For each character \`ch\` at index \`i\` with angle \`a = charAngles[i]\`:
 - Compute \`base = \\\`translate(-50%, -50%) rotateY(\${a}deg) translateZ(\${radius}px)\\\`\`.
 - Compute \`glyphSize = ch === '✦' ? fontSize * STAR_SCALE : fontSize\`.
 - Shared glyph style: \`position: absolute; top: 50%; left: 50%; transformOrigin: '50% 50%'; fontFamily: 'var(--font-sans), ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif'; fontWeight: 800; fontSize: glyphSize; lineHeight: 1; letterSpacing: '-0.01em'; userSelect: 'none'; whiteSpace: 'pre'\`.
-  - \`transformOrigin: '50% 50%'\` is LOAD-BEARING. With the default \`0 0\`, a narrow letter like \`I\` ends up at a different 3D position than a wide letter at the same ring-angle — it looks like SHIP's \`I\` floats on a different plane.
+  - \`transformOrigin: '50% 50%'\` is LOAD-BEARING. With the default \`0 0\`, a narrow letter like \`I\` ends up at a different 3D position than a wide letter at the same ring-angle. It looks like SHIP's \`I\` floats on a different plane.
 - Render two \`<span>\`s inside a \`React.Fragment\`:
   - **Front twin**: \`transform: base\`, \`color: fg\`. Store in \`frontRefs.current[i]\`.
   - **Back twin**: \`transform: \\\`\${base} rotateY(180deg) rotateZ(180deg)\\\`\`, \`color: fgBack\`. Store in \`backRefs.current[i]\`. The \`rotateY(180) rotateZ(180)\` composition makes the back glyph face inward AND flip upright-reversed, so it reads upside-down on the back arc rather than mirror-flipped.
@@ -126,14 +126,14 @@ Set \`aria-label={PHRASE.trim()}\` on the ring container for screen readers.
 
 ## Pointer handling
 
-Unified pointer events on the wrapper — cover both mouse and touch in one set of handlers:
+Unified pointer events on the wrapper, cover both mouse and touch in one set of handlers:
 - \`onPointerEnter\` → \`engagement.set(1)\`
 - \`onPointerLeave\` → \`engagement.set(0)\`
 - \`onPointerDown\` → \`engagement.set(1)\`
 - \`onPointerUp\` → \`engagement.set(0)\`
 - \`onPointerCancel\` → \`engagement.set(0)\`
 
-Hover lowers spin speed to 30% (via \`SPEED_HOVER\` feeding \`speedMul\`) but the tilt stays identical at 24° — the rest/hover tilt is the same by design so hover feels like "slow to read" rather than "tip forward".
+Hover lowers spin speed to 30% (via \`SPEED_HOVER\` feeding \`speedMul\`) but the tilt stays identical at 24°. The rest/hover tilt is the same by design so hover feels like "slow to read" rather than "tip forward".
 
 ---
 

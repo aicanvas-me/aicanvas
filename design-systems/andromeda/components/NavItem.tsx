@@ -151,7 +151,7 @@ export const NavItem = forwardRef(function NavItem(
               height: 'var(--andromeda-1, 4px)',
               flexShrink: 0,
               background: 'var(--andromeda-accent-300)',
-              // ponytail: glow offsets are identity constants, no token
+              // Glow offsets are identity constants, no token
               boxShadow: '-2px 0 8px var(--andromeda-accent-500)',
             }}
           />

@@ -43,6 +43,19 @@ const nextConfig: NextConfig = {
     // parent /brain route is the public story and needs no bundle.
     "/design-systems/andromeda/brain/explore": ["./registry-data/*.json"],
   },
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          // SAMEORIGIN, not DENY: block and template previews iframe their own origin.
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       { source: "/r", destination: "/components", permanent: true },

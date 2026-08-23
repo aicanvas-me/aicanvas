@@ -59,7 +59,7 @@ These live at the project root, one level up from this file:
 - Design a distinct but cohesive light version — lighter surface, darker/adjusted accent colors that maintain contrast on light backgrounds.
 - **Be creative** — components are visual showcases. You are NOT required to use the site's sand/olive design tokens inside component internals. Use whatever colors, gradients, and styles make the component look its best in both modes.
 - Use **Framer Motion** for all animations — no CSS-only keyframes
-- Use `@phosphor-icons/react` with `weight="regular"` for any icons
+- Use `@phosphor-icons/react` with `weight="regular"` for any icons. Small glyphs (a checkmark or an X only a few pixels across) may use `bold` or `fill` where regular reads too thin.
 - No hardcoded widths/heights — components must look good in a 480×480 preview box
 
 ### prompts.ts

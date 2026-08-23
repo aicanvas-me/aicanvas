@@ -100,7 +100,7 @@ Main GoodVibes component:
 - Container: flex, min-h-screen, w-full, items-center, justify-center
 - Letter gaps: gap-4 (sm:gap-6) for mobile responsiveness and word separation
 - Component must fill viewport and work on all screen sizes from 320px to 1200px
-- No hardcoded widths/heights — use clamp() and Tailwind fluid utilities
+- No hardcoded widths/heights: use clamp() and Tailwind fluid utilities
 
 ### Code Structure
 - Single file component exported as default function GoodVibes
