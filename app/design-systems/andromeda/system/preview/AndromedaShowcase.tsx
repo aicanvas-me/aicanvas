@@ -302,6 +302,127 @@ function NeutralLadder() {
   )
 }
 
+// ── Colour specimens ──────────────────────────────────────────────────────
+// A specimen reads its own value off the channel: the chip paints
+// var(--andromeda-<token>) and the caption prints what that resolved to, so
+// both halves are the same fact in either theme. This is the contract
+// NeutralLadder already keeps. The chips used to pin the dark literal on the
+// grounds that a themed fill would caption one colour and paint another —
+// true of a literal caption, but it also made the light theme invisible on
+// the page that documents it, and a palette you cannot see is one you cannot
+// review. Printing the RESOLVED value keeps the pair honest instead.
+const cssVarName = (token) => `--andromeda-${token.replace(/\./g, '-')}`
+const literalOf = (token) => token.split('.').reduce((o, k) => o?.[k], tokens.color)
+
+// `names` is a useEffect dep inside useResolvedVars, so each row's map is
+// built ONCE here. Rebuilt per render it would resubscribe the observer every
+// frame — the same trap NEUTRAL_VAR_NAMES avoids.
+const swatchRow = (label, kind, items) => ({
+  label,
+  kind,
+  items,
+  vars: Object.fromEntries(items.map(({ token }) => [token, cssVarName(token)])),
+})
+
+const FAMILY_NOTES = ['Pastel · highlight', 'Light · emphasis', 'Solid · icon · base', 'Border · ring', 'Subtle fill']
+const familyItems = (family, notes = FAMILY_NOTES) =>
+  [100, 200, 300, 400, 500].map((stop, i) => ({ token: `${family}.${stop}`, note: notes[i] }))
+
+const COLOR_ROWS_TOP = [
+  swatchRow('Accent · Blue', 'fill', familyItems('accent', [
+    'Highlighted text · pastel', 'Light emphasis', 'Active · selected · base', 'Focus borders · dim', 'Glow halos · tinted fills',
+  ])),
+  swatchRow('Green · Success', 'fill', familyItems('success')),
+  swatchRow('Orange · Warning', 'fill', familyItems('warning')),
+  swatchRow('Red · Fault', 'fill', familyItems('danger')),
+  swatchRow('Alpha · Layered Tints', 'fill', [
+    { token: 'accent.alpha',  note: 'Blue selection · highlight' },
+    { token: 'success.alpha', note: 'Healthy overlay · positive tint' },
+    { token: 'warning.alpha', note: 'Warning overlay · caution tint' },
+    { token: 'danger.alpha',  note: 'Fault overlay · error tint' },
+    { token: 'surface.alpha', note: 'Modal scrim · backdrop' },
+  ]),
+]
+
+const COLOR_ROWS_BOTTOM = [
+  swatchRow('Surfaces', 'fill', [
+    { token: 'surface.base',    note: 'Page void · root' },
+    { token: 'surface.raised',  note: 'Cards · panels' },
+    { token: 'surface.overlay', note: 'Dropdowns · tips' },
+    { token: 'surface.hover',   note: 'Hover state' },
+    { token: 'surface.active',  note: 'Pressed state' },
+  ]),
+  swatchRow('Borders', 'border', [
+    { token: 'border.subtle', note: 'Dividers' },
+    { token: 'border.base',   note: 'Default edges' },
+    { token: 'border.bright', note: 'Focus · hover' },
+    { token: 'border.strong', note: 'High emphasis' },
+  ]),
+  swatchRow('Text', 'text', [
+    { token: 'text.primary',   note: 'Headings · values' },
+    { token: 'text.secondary', note: 'Body · descriptions' },
+    { token: 'text.muted',     note: 'Kickers · metadata' },
+    { token: 'text.faint',     note: 'Labels · hints' },
+  ]),
+]
+
+const captionStyle = {
+  fontFamily: tokens.typography.fontMono,
+  fontSize: tokens.typography.size.xs,
+  color: `var(--at-text-secondary, ${tokens.color.text.secondary})`,
+  textTransform: 'uppercase',
+  letterSpacing: tokens.typography.tracking.wider,
+}
+
+function SwatchRow({ row }) {
+  const hostRef = useRef(null)
+  const live = useResolvedVars(hostRef, row.vars)
+
+  return (
+    <div ref={hostRef}>
+      <Row label={row.label}>
+        {row.items.map(({ token, note }) => {
+          const painted = `var(${cssVarName(token)}, ${literalOf(token)})`
+          return (
+            <div key={token} style={{ width: 148 }}>
+              {row.kind === 'text' ? (
+                <div
+                  style={{
+                    height: 48,
+                    border: `1px solid var(--at-border-base, ${tokens.color.border.base})`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginBottom: tokens.spacing[2],
+                  }}
+                >
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.md, color: painted, letterSpacing: '0.1em' }}>
+                    Aa 01
+                  </span>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    height: 48,
+                    marginBottom: tokens.spacing[2],
+                    background: row.kind === 'border' ? 'transparent' : painted,
+                    border: row.kind === 'border' ? `1px solid ${painted}` : `1px solid var(--at-border-base, ${tokens.color.border.base})`,
+                  }}
+                />
+              )}
+              <div style={captionStyle}>{token}</div>
+              <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+              <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>
+                {live?.[token] ?? literalOf(token)}
+              </div>
+            </div>
+          )
+        })}
+      </Row>
+    </div>
+  )
+}
+
 function Row({ label, children }: { label?: string; children: ReactNode }) {
   return (
     <div style={{ marginBottom: tokens.spacing[5] }}>
@@ -541,7 +662,7 @@ export default function AndromedaShowcase({
         <Section
           title="Color Palette"
           kicker="Foundation · Colors"
-          description="Three brand hue palettes lead: accent (blue), warning (amber), danger (red), each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. Then the greys, which are one ladder of thirteen steps from 100 (page ground) to 1300 (strongest ink) — the surface, border and text rows after it are names pointing into that ladder, not more colours. Every alpha sits in a single row at the seam between the two halves."
+          description="Four hue families lead: accent (blue), success (green), warning (amber), danger (red), each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. Every chip below paints the live token and prints what it resolved to, so this section reads the theme you are looking at rather than the dark one. Then the greys, which are one ladder of thirteen steps from 100 (page ground) to 1300 (strongest ink) — the surface, border and text rows after it are names pointing into that ladder, not more colours. Every alpha sits in a single row at the seam between the two halves."
         >
           {/* Swatch chips paint the LITERAL printed beneath them, not the
               themed property. A documentation chip whose fill came off the
@@ -549,127 +670,13 @@ export default function AndromedaShowcase({
               theme is defined, which reads as an inverted ramp. The chip frame,
               the label and the note stay on the channel: those are page ink,
               not the specimen. A light specimen would be its own extra row. */}
-          <Row label="Accent · Blue">
-            {[
-              { name: 'accent.100', color: tokens.color.accent[100], note: 'Highlighted text · pastel' },
-              { name: 'accent.200', color: tokens.color.accent[200], note: 'Light emphasis' },
-              { name: 'accent.300', color: tokens.color.accent[300], note: 'Active · selected · base' },
-              { name: 'accent.400', color: tokens.color.accent[400], note: 'Focus borders · dim' },
-              { name: 'accent.500', color: tokens.color.accent[500], note: 'Glow halos · tinted fills' },
-            ].map(({ name, color, note }) => (
-              <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
-              </div>
-            ))}
-          </Row>
-
-          <Row label="Orange · Warning">
-            {[
-              { name: 'warning.100', color: tokens.color.warning[100], note: 'Pastel · highlight' },
-              { name: 'warning.200', color: tokens.color.warning[200], note: 'Light · emphasis' },
-              { name: 'warning.300', color: tokens.color.warning[300], note: 'Solid · icon · base' },
-              { name: 'warning.400', color: tokens.color.warning[400], note: 'Border · ring' },
-              { name: 'warning.500', color: tokens.color.warning[500], note: 'Subtle fill' },
-            ].map(({ name, color, note }) => (
-              <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
-              </div>
-            ))}
-          </Row>
-
-          <Row label="Red · Fault">
-            {[
-              { name: 'danger.100', color: tokens.color.danger[100], note: 'Pastel · highlight' },
-              { name: 'danger.200', color: tokens.color.danger[200], note: 'Light · emphasis' },
-              { name: 'danger.300', color: tokens.color.danger[300], note: 'Solid · icon · base' },
-              { name: 'danger.400', color: tokens.color.danger[400], note: 'Border · ring' },
-              { name: 'danger.500', color: tokens.color.danger[500], note: 'Subtle fill' },
-            ].map(({ name, color, note }) => (
-              <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
-              </div>
-            ))}
-          </Row>
-
-          <Row label="Alpha · Layered Tints">
-            {[
-              { name: 'accent.alpha',  color: tokens.color.accent.alpha,  note: 'Blue selection · highlight' },
-              { name: 'warning.alpha', color: tokens.color.warning.alpha,   note: 'Warning overlay · caution tint' },
-              { name: 'danger.alpha',     color: tokens.color.danger.alpha,     note: 'Fault overlay · error tint' },
-              { name: 'surface.alpha', color: tokens.color.surface.alpha, note: 'Modal scrim · backdrop' },
-            ].map(({ name, color, note }) => (
-              <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
-              </div>
-            ))}
-          </Row>
+          {COLOR_ROWS_TOP.map((row) => <SwatchRow key={row.label} row={row} />)}
 
           <Row label="Neutral ladder · 13 steps">
             <NeutralLadder />
           </Row>
 
-          <Row label="Surfaces">
-            {[
-              { name: 'surface.base',    color: tokens.color.surface.base,    note: 'Page void · root' },
-              { name: 'surface.raised',  color: tokens.color.surface.raised,  note: 'Cards · panels' },
-              { name: 'surface.overlay', color: tokens.color.surface.overlay, note: 'Dropdowns · tips' },
-              { name: 'surface.hover',   color: tokens.color.surface.hover,   note: 'Hover state' },
-              { name: 'surface.active',  color: tokens.color.surface.active,  note: 'Pressed state' },
-            ].map(({ name, color, note }) => (
-              <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
-              </div>
-            ))}
-          </Row>
-
-          <Row label="Borders">
-            {[
-              { name: 'border.subtle', color: tokens.color.border.subtle, note: 'Dividers' },
-              { name: 'border.base',   color: tokens.color.border.base,   note: 'Default edges' },
-              { name: 'border.bright', color: tokens.color.border.bright, note: 'Focus · hover' },
-              { name: 'border.strong', color: tokens.color.border.strong, note: 'High emphasis' },
-            ].map(({ name, color, note }) => (
-              <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, border: `1px solid var(--at-${name.replace('.', '-')}, ${color})`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
-              </div>
-            ))}
-          </Row>
-
-          <Row label="Text">
-            {[
-              { name: 'text.primary',   color: tokens.color.text.primary,   note: 'Headings · values' },
-              { name: 'text.secondary', color: tokens.color.text.secondary, note: 'Body · descriptions' },
-              { name: 'text.muted',     color: tokens.color.text.muted,     note: 'Kickers · metadata' },
-              { name: 'text.faint',     color: tokens.color.text.faint,     note: 'Labels · hints' },
-            ].map(({ name, color, note }) => (
-              <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, border: `1px solid var(--at-border-base, ${tokens.color.border.base})`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: tokens.spacing[2] }}>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.md, color: `var(--at-${name.replace('.', '-')}, ${color})`, letterSpacing: '0.1em' }}>Aa 01</span>
-                </div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-secondary, ${tokens.color.text.secondary})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-accent-400, ${tokens.color.accent[400]})`, marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
-              </div>
-            ))}
-          </Row>
+          {COLOR_ROWS_BOTTOM.map((row) => <SwatchRow key={row.label} row={row} />)}
 
           <div>
             <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
