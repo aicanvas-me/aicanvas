@@ -8,6 +8,7 @@
 // Client component for one reason: `tokens` comes through the injected-v2
 // shim, whose modules carry 'use client' — the same pattern the component
 // demos use. Everything here renders statically all the same.
+import { SiteFooter } from '../../../components/SiteFooter'
 import { tokens } from '../../../lib/andromeda-v2.generated'
 import { AndromedaThemeToggle } from '../AndromedaThemeWrap'
 
@@ -47,20 +48,20 @@ const FAMILIES = [
 
 const FAMILY_STOPS = [100, 200, 300, 400, 500] as const
 
-const TYPE_RAMP = [
-  ['textXs', '10 / 14'],
-  ['textSm', '12 / 18'],
-  ['textMd', '14 / 20'],
-  ['textLg', '16 / 24'],
-  ['textXl', '18 / 28'],
-  ['text2xl', '20 / 30'],
-  ['displayXs', '24 / 32'],
-  ['displaySm', '30 / 38'],
-  ['displayMd', '36 / 44'],
-  ['displayLg', '48 / 60'],
-  ['displayXl', '60 / 72'],
-  ['display2xl', '72 / 90'],
+// Read off the tokens, never re-typed: a hand-copied ramp is a page that
+// starts lying the first time a size moves.
+const TYPE_ROLES = [
+  'textXs', 'textSm', 'textMd', 'textLg', 'textXl', 'text2xl',
+  'displayXs', 'displaySm', 'displayMd', 'displayLg', 'displayXl', 'display2xl',
 ] as const
+
+const px = (value: string) => value.replace('px', '')
+
+const TYPE_RAMP = TYPE_ROLES.map((role) => {
+  const size = (tokens.typography.size as Record<string, string>)[role]
+  const lead = (tokens.typography.leading as Record<string, string>)[role]
+  return [role, `${px(size)} / ${px(lead)}`] as const
+})
 
 const SPACING_STEPS = [1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12] as const
 
@@ -75,24 +76,55 @@ const SEMANTIC_GROUPS = [
   ['chart', 'baseline, live, context, threshold, grid, and the stacked ramp'],
 ] as const
 
+// Ligatures off: this is a literal identifier, and Manrope would fuse the two
+// hyphens that make it a custom property into one dash.
+function Code({ children }: { children: React.ReactNode }) {
+  return (
+    <code className="font-semibold text-sand-900 [font-variant-ligatures:none] dark:text-sand-50">
+      {children}
+    </code>
+  )
+}
+
+// Bodies are JSX, not strings, so a CSS custom property can be a code span.
+// Manrope ligates a double hyphen into one long dash, which turned
+// `--component-role` into a property name that does not exist.
 const LAYERS = [
   {
     n: '1',
     title: 'Primitives',
-    body:
-      'The neutral ladder and four hue families. A theme author retunes these; a component never reads them. The neutrals are numbered by depth in the stack, not by lightness — 100 is the page ground and 1300 the strongest ink — so the numbering keeps its meaning when the ground inverts.',
+    body: (
+      <>
+        The neutral ladder and four hue families. A theme author retunes these; a component
+        never reads them. The neutrals are numbered by depth in the stack, not by lightness:
+        100 is the page ground and 1300 the strongest ink, so the numbering keeps its meaning
+        when the ground inverts.
+      </>
+    ),
   },
   {
     n: '2',
     title: 'Semantic',
-    body:
-      'The sentence a screen author says: status.danger.text, surface.raised, focus.ring. Every component reads this layer and only this layer. A semantic token exists only where two good authors would genuinely differ — where a ladder rule already decides, the rule teaches and no token is minted.',
+    body: (
+      <>
+        The sentence a screen author says: status.danger.text, surface.raised, focus.ring.
+        Every component reads this layer and only this layer. A semantic token exists only
+        where two good authors would genuinely differ. Where a ladder rule already decides,
+        the rule teaches and no token is minted.
+      </>
+    ),
   },
   {
     n: '3',
     title: 'Component wires',
-    body:
-      'A --component-role custom property inside the one file that owns it, pointing at exactly one semantic token. It exists only where the element that knows the variant is not the element that paints the colour, so the wiring never leaves the file you are reading.',
+    body: (
+      <>
+        A <Code>--component-role</Code> custom property inside the one file that owns it,
+        pointing at exactly one semantic token. It exists only where the element that knows
+        the variant is not the element that paints the colour, so the wiring never leaves the
+        file you are reading.
+      </>
+    ),
   },
 ] as const
 
@@ -176,9 +208,9 @@ export function FoundationView() {
       {/* ── Families ── */}
       <SectionHeading>Four hue families</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        Five stops each, 100 light to 500 deep, plus two alphas and a guaranteed-contrast
-        `on` ink. Colour is never the only channel: a tone always rides with a glyph,
-        a position, or a label.
+        Five stops each, 100 through 500, plus two alphas and a guaranteed-contrast{' '}
+        <Code>on</Code> ink. Which end of the ramp reads light flips with the theme. Colour is
+        never the only channel: a tone always rides with a glyph, a position, or a label.
       </p>
       <div className="space-y-3">
         {FAMILIES.map((f) => (
@@ -230,7 +262,7 @@ export function FoundationView() {
       {/* ── Typography ── */}
       <SectionHeading>The type ramp</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        A role names a size AND its leading — adopting one means taking both. Text roles
+        A role names a size AND its leading, so adopting one means taking both. Text roles
         for UI and reading, display roles for hero numerals and headings.
       </p>
       <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
@@ -278,6 +310,8 @@ export function FoundationView() {
           )
         })}
       </div>
+
+      <SiteFooter />
     </main>
   )
 }
