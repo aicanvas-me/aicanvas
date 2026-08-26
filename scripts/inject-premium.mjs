@@ -369,6 +369,14 @@ function writeV2HelpersShim(fromV2Tree) {
     '',
   ]
   for (const lib of V2_LIB_MODULES) out.push(`export * from '${root}/components/lib/${lib}'`)
+  // Named palette snapshots (the dev-only theme dock lists them). v2-tree only:
+  // the committed v1 lib has no such folder, and a missing module is a hard
+  // build error where a missing named export is merely inert.
+  out.push(
+    fromV2Tree
+      ? `export * from '${root}/components/lib/palettes'`
+      : 'export const ANDROMEDA_PALETTES = {}',
+  )
   if (!fromV2Tree) {
     // Helpers v1's lib has no implementation for. An explicit export shadows a
     // star one, so this only ever wins while the real thing is genuinely absent.

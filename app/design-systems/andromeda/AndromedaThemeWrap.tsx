@@ -18,7 +18,7 @@ import { createContext, useContext, useEffect, useId, useState, type ReactNode }
 import { motion } from 'framer-motion'
 import { Moon, Palette, Sun } from '@phosphor-icons/react'
 import { tokens } from '../../lib/andromeda-v2.generated'
-import { andromedaLightVars, andromedaVars } from '../../lib/andromeda-v2-helpers.generated'
+import { ANDROMEDA_PALETTES, andromedaLightVars, andromedaVars } from '../../lib/andromeda-v2-helpers.generated'
 
 type AndromedaTheme = 'dark' | 'light'
 
@@ -27,7 +27,15 @@ const ThemeCtx = createContext<{
   setTheme: (t: AndromedaTheme) => void
   knobs: Knobs
   setKnobs: (next: Knobs | ((k: Knobs) => Knobs)) => void
+  palette: string
+  setPalette: (name: string) => void
 } | null>(null)
+
+// 'current' is the live token set. Every other name is a frozen snapshot from
+// the vault (_tools/snapshot-palette.mjs), so a named version can be put back
+// on screen without touching a single token.
+const LIVE = 'current'
+const PALETTE_NAMES: string[] = [LIVE, ...Object.keys(ANDROMEDA_PALETTES ?? {})]
 
 // `className` lets a caller decide what box the carrier div is. The template
 // pages pass `contents`: their shell is a percentage-height flex item of the
@@ -36,17 +44,21 @@ const ThemeCtx = createContext<{
 export function AndromedaThemeWrap({ children, className }: { children: ReactNode; className?: string }) {
   const [theme, setTheme] = useState<AndromedaTheme>('dark')
   const [knobs, setKnobs] = useState<Knobs>(DEFAULTS)
+  const [palette, setPalette] = useState<string>(LIVE)
 
   // ONE writer for the whole --at- set. The palette tuner sets knobs and this
   // effect re-emits; a second effect writing the same properties would race
   // this one on every theme flip and a reset would strip the light set with it.
   useEffect(() => {
     const tuned = isTuned(knobs)
-    // Dark and untuned is the authored palette, which the var() fallbacks
-    // already resolve to. Emitting nothing keeps that path byte-identical.
-    if (theme !== 'light' && !tuned) return
+    const snapshot = palette === LIVE ? null : ANDROMEDA_PALETTES?.[palette]
+    // Dark, untuned and on the live palette is the authored set, which the
+    // var() fallbacks already resolve to. Emitting nothing keeps it identical.
+    if (theme !== 'light' && !tuned && !snapshot) return
     const root = document.documentElement
-    const base = baseSet(theme)
+    // A snapshot replaces the base outright: it IS a resolved set, so the
+    // knobs still apply on top and a version can be tuned like any other.
+    const base = (snapshot?.[theme] as Record<string, string> | undefined) ?? baseSet(theme)
     const names = Object.keys(base)
     for (const name of names) {
       root.style.setProperty(name, tuned ? retint(base[name], knobs) : base[name])
@@ -56,10 +68,10 @@ export function AndromedaThemeWrap({ children, className }: { children: ReactNod
       for (const name of names) root.style.removeProperty(name)
       root.removeAttribute('data-andromeda-theme')
     }
-  }, [theme, knobs])
+  }, [theme, knobs, palette])
 
   return (
-    <ThemeCtx.Provider value={{ theme, setTheme, knobs, setKnobs }}>
+    <ThemeCtx.Provider value={{ theme, setTheme, knobs, setKnobs, palette, setPalette }}>
       <div data-andromeda-theme={theme} className={className}>{children}</div>
       <AndromedaPaletteTuner />
     </ThemeCtx.Provider>
@@ -269,7 +281,7 @@ export function AndromedaPaletteTuner() {
   const ctx = useContext(ThemeCtx)
   const [open, setOpen] = useState(false)
   if (!DEV_ONLY || !ctx) return null
-  const { theme, knobs, setKnobs } = ctx
+  const { theme, knobs, setKnobs, palette, setPalette } = ctx
   const touched = isTuned(knobs)
 
   const set = (patch: Partial<Knobs>) => setKnobs((k) => ({ ...k, ...patch }))
@@ -280,6 +292,29 @@ export function AndromedaPaletteTuner() {
     <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2">
       {open ? (
         <div className="w-72 rounded-lg border border-sand-300 bg-sand-100 p-3 shadow-xl dark:border-sand-800 dark:bg-sand-900">
+          {PALETTE_NAMES.length > 1 ? (
+            <div className="mb-3 border-b border-sand-300 pb-3 dark:border-sand-800">
+              <span className="mb-1.5 block text-[10px] uppercase tracking-wider text-sand-500">
+                Version
+              </span>
+              <div className="flex flex-wrap gap-1">
+                {PALETTE_NAMES.map((name) => (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => setPalette(name)}
+                    className={`rounded-md px-2 py-1 text-[11px] font-semibold transition-colors ${
+                      palette === name
+                        ? 'bg-sand-50 text-sand-900 shadow-sm dark:bg-sand-800 dark:text-sand-50'
+                        : 'text-sand-500 hover:text-sand-800 dark:hover:text-sand-100'
+                    }`}
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : null}
           <p className="mb-2 text-[10px] uppercase tracking-wider text-sand-500">
             Hue and chroma only. Lightness is what holds the contrast, so it never moves.
           </p>
@@ -352,6 +387,7 @@ export function AndromedaPaletteTuner() {
       >
         <Palette size={15} weight="regular" />
         Palette
+        {palette !== LIVE ? <span className="text-[10px] normal-case text-olive-600 dark:text-olive-400">{palette}</span> : null}
         {touched ? <span className="h-1.5 w-1.5 rounded-full bg-olive-500" /> : null}
       </button>
     </div>
