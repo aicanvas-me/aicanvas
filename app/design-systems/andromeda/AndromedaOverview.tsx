@@ -23,6 +23,7 @@ import { optimizeImageKitUrl } from '../../lib/imagekit'
 import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoop } from '../../_components/FoundationLoop'
+import { AndromedaThemeToggle } from './AndromedaThemeWrap'
 
 // Short blurbs for the four shipped templates — keyed by registry slug.
 const TEMPLATE_BLURBS = {
@@ -323,6 +324,15 @@ export function AndromedaOverview() {
 
       {/* ── System showcase ───────────────────────────────────────────────── */}
       <motion.section className="mt-14" {...reveal}>
+        {/* Outside the card, because the card is one big link and a button
+            cannot nest inside it. It moves the palette of the live preview
+            inside; the captured thumbnails further down cannot follow. */}
+        <div className="mb-3 flex items-center justify-end gap-2">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-sand-500">
+            Palette
+          </span>
+          <AndromedaThemeToggle />
+        </div>
         <Link
           href="/design-systems/andromeda/components"
           className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-100 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"

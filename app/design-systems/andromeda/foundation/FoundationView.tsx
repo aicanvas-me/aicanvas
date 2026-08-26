@@ -9,19 +9,40 @@
 // shim, whose modules carry 'use client' — the same pattern the component
 // demos use. Everything here renders statically all the same.
 import { tokens } from '../../../lib/andromeda-v2.generated'
+import { AndromedaThemeToggle } from '../AndromedaThemeWrap'
+
+// ── the theme channel ───────────────────────────────────────────────────────
+// Every swatch paints `var(--at-<name>, <dark value>)`. With no light ancestor
+// the fallback resolves and the page is pixel-identical to before; the wrap in
+// page.tsx defines the --at-* set and the same swatch shows the light value.
+// This is the system's own swap contract, not a second one for this page.
+const themed = (name: string, value: string) => `var(--at-${name}, ${value})`
 
 // ── data pulled once from tokens.ts ─────────────────────────────────────────
 
-const NEUTRALS = Array.from({ length: 13 }, (_, i) => ({
-  stop: i,
-  value: (tokens.color.neutral as Record<number, string>)[i],
+// The ladder is numbered by DEPTH on a 100 grid: 100 is the page ground, 1300
+// the strongest ink. (It used to read 0-12 here, which matched no token — the
+// thirteen swatches painted nothing at all.)
+const NEUTRAL_STOPS = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300] as const
+
+const NEUTRALS = NEUTRAL_STOPS.map((stop) => ({
+  stop,
+  value: (tokens.color.neutral as Record<number, string>)[stop],
 }))
 
+// The ink a stop's own label needs. Depth numbering is the role map in both
+// themes, so one rule holds for both: the ground-side stops take the deepest
+// ink, the ink-side stops take the ground.
+const INK = tokens.color.neutral[1300]
+const GROUND = tokens.color.neutral[100]
+const labelInk = (stop: number) =>
+  stop < 1000 ? themed('neutral-1300', INK) : themed('neutral-100', GROUND)
+
 const FAMILIES = [
-  { name: 'Brand', note: 'the live series, the primary action', ramp: tokens.color.brand },
-  { name: 'Success', note: 'this moved the good way', ramp: tokens.color.success },
-  { name: 'Warning', note: 'caution, degraded, restricted', ramp: tokens.color.warning },
-  { name: 'Danger', note: 'loss, fault, threshold breach', ramp: tokens.color.danger },
+  { name: 'Brand', key: 'brand', note: 'the live series, the primary action', ramp: tokens.color.brand },
+  { name: 'Success', key: 'success', note: 'this moved the good way', ramp: tokens.color.success },
+  { name: 'Warning', key: 'warning', note: 'caution, degraded, restricted', ramp: tokens.color.warning },
+  { name: 'Danger', key: 'danger', note: 'loss, fault, threshold breach', ramp: tokens.color.danger },
 ] as const
 
 const FAMILY_STOPS = [100, 200, 300, 400, 500] as const
@@ -59,7 +80,7 @@ const LAYERS = [
     n: '1',
     title: 'Primitives',
     body:
-      'The neutral ladder and four hue families. A theme author retunes these; a component never reads them. The neutrals are numbered by depth in the stack, not by lightness — 0 is the page ground and 12 the strongest ink — so the numbering keeps its meaning when the ground inverts.',
+      'The neutral ladder and four hue families. A theme author retunes these; a component never reads them. The neutrals are numbered by depth in the stack, not by lightness — 100 is the page ground and 1300 the strongest ink — so the numbering keeps its meaning when the ground inverts.',
   },
   {
     n: '2',
@@ -86,12 +107,24 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 export function FoundationView() {
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-8 pb-20 sm:px-6 sm:pt-14">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-olive-600 dark:text-olive-400">
-        Andromeda · Foundation
-      </p>
-      <h1 className="text-3xl font-extrabold text-sand-900 dark:text-sand-50 sm:text-4xl">
-        The primitives
-      </h1>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-olive-600 dark:text-olive-400">
+            Andromeda · Foundation
+          </p>
+          <h1 className="text-3xl font-extrabold text-sand-900 dark:text-sand-50 sm:text-4xl">
+            The primitives
+          </h1>
+        </div>
+        {/* Labelled, because a bare Light/Dark chip on a sand page reads as the
+            site's own theme switch. This one moves the palette below it. */}
+        <div className="flex shrink-0 items-center gap-2">
+          <span className="hidden text-[11px] font-semibold uppercase tracking-wider text-sand-500 sm:block">
+            Palette
+          </span>
+          <AndromedaThemeToggle />
+        </div>
+      </div>
       <p className="mt-3 max-w-2xl text-sand-600 dark:text-sand-400">
         Every Andromeda component is built from the values on this page, read through a
         three-layer token architecture. This is the what; the judgment layer that teaches
@@ -118,16 +151,20 @@ export function FoundationView() {
       {/* ── Neutrals ── */}
       <SectionHeading>The neutral ladder</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        Thirteen greys, numbered by depth: 0 is the page ground, 12 the strongest ink.
+        Thirteen greys, numbered by depth: 100 is the page ground, 1300 the strongest ink.
         Surfaces, borders and text are all roles pointing into this one ladder.
       </p>
       <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
         <div className="flex">
           {NEUTRALS.map((n) => (
-            <div key={n.stop} className="group relative h-20 flex-1" style={{ backgroundColor: n.value }}>
+            <div
+              key={n.stop}
+              className="group relative h-20 flex-1"
+              style={{ backgroundColor: themed(`neutral-${n.stop}`, n.value) }}
+            >
               <span
                 className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-semibold"
-                style={{ color: n.stop < 7 ? NEUTRALS[12].value : NEUTRALS[0].value }}
+                style={{ color: labelInk(n.stop) }}
               >
                 {n.stop}
               </span>
@@ -155,8 +192,13 @@ export function FoundationView() {
                 <div
                   key={stop}
                   className="flex-1"
-                  style={{ backgroundColor: (f.ramp as Record<number, string>)[stop] }}
-                  title={`${f.name.toLowerCase()}.${stop}`}
+                  style={{
+                    backgroundColor: themed(
+                      `${f.key}-${stop}`,
+                      (f.ramp as Record<number, string>)[stop],
+                    ),
+                  }}
+                  title={`${f.key}.${stop}`}
                 />
               ))}
             </div>
