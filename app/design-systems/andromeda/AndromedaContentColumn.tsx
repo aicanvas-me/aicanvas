@@ -14,16 +14,20 @@ import { tokens } from '../../lib/andromeda-v2.generated'
 // content height), so the COLUMN becomes the scroller (`overflow-y: auto` +
 // `min-h-0` so the flex child can shrink below content and actually scroll).
 const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
-// The Andromeda overview (the system root /design-systems/andromeda) is AI
-// Canvas chrome (sand/olive), so its scroll column takes the AI Canvas page
+// The three chrome pages — the system root, Foundation and Components — are AI
+// Canvas chrome (sand/olive), so their scroll column takes the AI Canvas page
 // surface, not the Andromeda void. The background must live on the scroll
 // container (not a min-h-full child) so it always covers the full scrollable
 // height — a child can two-tone when content overflows.
-const OVERVIEW_RE = /^\/design-systems\/andromeda\/?$/
+//
+// It also keeps the palette toggle honest on those pages: the Andromeda ground
+// is the one surface a sand page must NOT borrow, or flipping the palette moves
+// the ground out from under chrome that still reads the site's own theme.
+const CHROME_RE = /^\/design-systems\/andromeda(\/(foundation|components))?\/?$/
 export function AndromedaContentColumn({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? ''
   const isTemplate = TEMPLATE_LEAF_RE.test(pathname)
-  const isOverview = OVERVIEW_RE.test(pathname)
+  const isChrome = CHROME_RE.test(pathname)
 
   // No bottom padding on template leaves: the old `pb-28` was terminal-scroll
   // clearance for the retired floating TemplateChrome widget. Templates now
@@ -35,13 +39,13 @@ export function AndromedaContentColumn({ children }: { children: ReactNode }) {
   // belongs — the panels, tables and menus INSIDE the page.
   const className = isTemplate
     ? 'aic-page-scroll flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto md:overflow-y-hidden'
-    : isOverview
+    : isChrome
       ? 'aic-page-scroll flex flex-1 scroll-smooth flex-col overflow-y-auto bg-sand-200 dark:bg-sand-950'
       : 'aic-page-scroll flex flex-1 scroll-smooth flex-col overflow-y-auto'
 
   const style = isTemplate
     ? { backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }
-    : isOverview
+    : isChrome
       ? { scrollbarGutter: 'stable' }
       : { backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})`, scrollbarGutter: 'stable' }
 
