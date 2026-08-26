@@ -29,12 +29,15 @@ const ThemeCtx = createContext<{
   setKnobs: (next: Knobs | ((k: Knobs) => Knobs)) => void
   palette: string
   setPalette: (name: string) => void
+  dockOpen: boolean
+  setDockOpen: (next: boolean | ((o: boolean) => boolean)) => void
 } | null>(null)
 
 // 'current' is the live token set. Every other name is a frozen snapshot from
 // the vault (_tools/snapshot-palette.mjs), so a named version can be put back
 // on screen without touching a single token.
 const LIVE = 'current'
+const DOCK_STORE = 'andromeda-theme-dock'
 const PALETTE_NAMES: string[] = [LIVE, ...Object.keys(ANDROMEDA_PALETTES ?? {})]
 
 // `className` lets a caller decide what box the carrier div is. The template
@@ -45,6 +48,39 @@ export function AndromedaThemeWrap({ children, className }: { children: ReactNod
   const [theme, setTheme] = useState<AndromedaTheme>('dark')
   const [knobs, setKnobs] = useState<Knobs>(DEFAULTS)
   const [palette, setPalette] = useState<string>(LIVE)
+  const [dockOpen, setDockOpen] = useState(false)
+
+  // The dock remembers itself. It is a tool you leave open across a whole
+  // afternoon of looking, and it used to reset on every navigation because all
+  // of its state was React state. Restored on mount, never during render: a
+  // value read from storage while rendering would not match the server's HTML.
+  // Theme is deliberately NOT persisted — that control ships to visitors, and
+  // what it remembers is a product decision, not a tooling one.
+  useEffect(() => {
+    if (!DEV_ONLY) return
+    try {
+      const saved = JSON.parse(window.localStorage.getItem(DOCK_STORE) ?? 'null')
+      if (!saved) return
+      if (typeof saved.open === 'boolean') setDockOpen(saved.open)
+      if (typeof saved.palette === 'string') setPalette(saved.palette)
+      if (saved.knobs) setKnobs({ ...DEFAULTS, ...saved.knobs })
+    } catch {
+      // Private windows, blocked site data, a half-written value: the dock
+      // opens at its defaults rather than taking the page down with it.
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!DEV_ONLY) return
+    try {
+      window.localStorage.setItem(
+        DOCK_STORE,
+        JSON.stringify({ open: dockOpen, palette, knobs }),
+      )
+    } catch {
+      // Storage full or refused. Losing the memory is not worth an error.
+    }
+  }, [dockOpen, palette, knobs])
 
   // ONE writer for the whole --at- set. The palette tuner sets knobs and this
   // effect re-emits; a second effect writing the same properties would race
@@ -71,7 +107,9 @@ export function AndromedaThemeWrap({ children, className }: { children: ReactNod
   }, [theme, knobs, palette])
 
   return (
-    <ThemeCtx.Provider value={{ theme, setTheme, knobs, setKnobs, palette, setPalette }}>
+    <ThemeCtx.Provider
+      value={{ theme, setTheme, knobs, setKnobs, palette, setPalette, dockOpen, setDockOpen }}
+    >
       <div data-andromeda-theme={theme} className={className}>{children}</div>
       <AndromedaPaletteTuner />
     </ThemeCtx.Provider>
@@ -279,9 +317,8 @@ function Slider({
 
 export function AndromedaPaletteTuner() {
   const ctx = useContext(ThemeCtx)
-  const [open, setOpen] = useState(false)
   if (!DEV_ONLY || !ctx) return null
-  const { theme, knobs, setKnobs, palette, setPalette } = ctx
+  const { theme, knobs, setKnobs, palette, setPalette, dockOpen: open, setDockOpen: setOpen } = ctx
   const touched = isTuned(knobs)
 
   const set = (patch: Partial<Knobs>) => setKnobs((k) => ({ ...k, ...patch }))
