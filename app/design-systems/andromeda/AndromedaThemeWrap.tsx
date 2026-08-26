@@ -14,7 +14,8 @@
 // style. A mid-tree wrapper retints the pure-CSS var() chains but fires no
 // observer, so canvases and charts silently keep the old palette.
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useId, useState, type ReactNode } from 'react'
+import { motion } from 'framer-motion'
 import { Moon, Sun } from '@phosphor-icons/react'
 import { andromedaLightVars } from '../../lib/andromeda-v2-helpers.generated'
 
@@ -51,9 +52,6 @@ export function AndromedaThemeWrap({ children, className }: { children: ReactNod
   )
 }
 
-// The control. Site-chrome styled (sand), because it is page chrome ABOUT the
-// design system, not design-system content. Renders nothing when mounted
-// outside a wrap, so shared page shells can carry it unconditionally.
 // For page code OUTSIDE the DOM subtree (a portalled overlay): React context
 // crosses a portal where CSS inheritance cannot, so the overlay reads the
 // theme here and spreads the vars on its own root.
@@ -61,23 +59,68 @@ export function useAndromedaPreviewTheme() {
   return useContext(ThemeCtx)
 }
 
-export function AndromedaThemeToggle({ className = '' }: { className?: string }) {
+const THEMES = [
+  { key: 'light' as const, label: 'Light theme', icon: Sun },
+  { key: 'dark' as const, label: 'Dark theme', icon: Moon },
+]
+
+// Site-chrome styled (sand), because it is page chrome ABOUT the design system,
+// not design-system content. Renders nothing outside a wrap, so shared page
+// shells can carry it unconditionally.
+//
+// Both themes are on the control and the current one is lit, the same shape as
+// the Desktop/Mobile device toggle in the template top bar. A one-button switch
+// that named the OTHER theme read as a label of the current state to half the
+// people who saw it. The selected chip slides between the two on the site's own
+// switch spring (app/components/Toggle.tsx).
+export function AndromedaThemeToggle({ className = '', label }: { className?: string; label?: string }) {
   const ctx = useContext(ThemeCtx)
+  // Instance-scoped: two toggles mounted at once (a page header and a portalled
+  // overlay) would otherwise share one chip and animate it between them.
+  const chipId = useId()
   if (!ctx) return null
   const { theme, setTheme } = ctx
-  const next = theme === 'dark' ? 'light' : 'dark'
-  const Icon = theme === 'dark' ? Sun : Moon
+
   return (
-    <button
-      type="button"
-      onClick={() => setTheme(next)}
-      aria-label={`Preview in ${next} theme`}
-      aria-pressed={theme === 'light'}
-      className={`flex h-9 items-center gap-2 rounded-lg border border-sand-700 bg-sand-900/95 px-3 text-xs font-semibold uppercase tracking-wider text-sand-400 transition-colors hover:border-sand-500 hover:text-sand-100 ${className}`}
+    <div
+      role="group"
+      aria-label="Andromeda theme"
+      className={`flex items-center gap-0.5 rounded-lg border border-sand-300 bg-sand-100 p-0.5 dark:border-sand-800 dark:bg-sand-900 ${className}`}
     >
-      <Icon size={15} weight="regular" />
-      {theme === 'dark' ? 'Light' : 'Dark'}
-    </button>
+      {label ? (
+        <span className="px-2 text-[11px] font-semibold uppercase tracking-wider text-sand-500">
+          {label}
+        </span>
+      ) : null}
+      {THEMES.map(({ key, label: name, icon: Icon }) => {
+        const active = theme === key
+        return (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setTheme(key)}
+            aria-label={name}
+            aria-pressed={active}
+            title={name}
+            className={`relative flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
+              active
+                ? 'text-sand-900 dark:text-sand-50'
+                : 'text-sand-500 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100'
+            }`}
+          >
+            {active ? (
+              <motion.span
+                aria-hidden
+                layoutId={chipId}
+                transition={{ type: 'spring', stiffness: 500, damping: 36 }}
+                className="absolute inset-0 rounded-md bg-sand-50 shadow-sm dark:bg-sand-800"
+              />
+            ) : null}
+            <Icon weight="regular" size={16} className="relative" />
+          </button>
+        )
+      })}
+    </div>
   )
 }
 
@@ -89,11 +132,8 @@ export function AndromedaThemeDock() {
   const ctx = useContext(ThemeCtx)
   if (!ctx) return null
   return (
-    <div className="fixed bottom-5 right-5 z-40 flex items-center gap-3 rounded-xl border border-sand-300 bg-sand-100/95 py-1.5 pl-4 pr-1.5 shadow-lg backdrop-blur-sm dark:border-sand-800 dark:bg-sand-900/95">
-      <span className="text-[11px] font-semibold uppercase tracking-wider text-sand-500">
-        Theme
-      </span>
-      <AndromedaThemeToggle />
+    <div className="fixed bottom-5 right-5 z-40 rounded-lg shadow-lg">
+      <AndromedaThemeToggle label="Theme" />
     </div>
   )
 }

@@ -328,11 +328,8 @@ export function AndromedaOverview() {
             control reaches only the live preview in this one card, and a
             page-level float would promise the whole page follows it. Outside
             the card because the card is one big link. */}
-        <div className="mb-3 flex items-center justify-end gap-2">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-sand-500">
-            Theme
-          </span>
-          <AndromedaThemeToggle />
+        <div className="mb-3 flex items-center justify-end">
+          <AndromedaThemeToggle label="Theme" />
         </div>
         <Link
           href="/design-systems/andromeda/components"
