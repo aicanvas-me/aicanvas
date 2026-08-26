@@ -80,3 +80,20 @@ export function AndromedaThemeToggle({ className = '' }: { className?: string })
     </button>
   )
 }
+
+// The dock: the same control, floating bottom-right instead of pinned beside a
+// heading. On a page whose whole content is specimens the switch belongs to the
+// page, not to the section it happens to sit next to, and floating keeps it
+// reachable at any scroll depth. Named Theme, because that is what it moves.
+export function AndromedaThemeDock() {
+  const ctx = useContext(ThemeCtx)
+  if (!ctx) return null
+  return (
+    <div className="fixed bottom-5 right-5 z-40 flex items-center gap-3 rounded-xl border border-sand-300 bg-sand-100/95 py-1.5 pl-4 pr-1.5 shadow-lg backdrop-blur-sm dark:border-sand-800 dark:bg-sand-900/95">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-sand-500">
+        Theme
+      </span>
+      <AndromedaThemeToggle />
+    </div>
+  )
+}

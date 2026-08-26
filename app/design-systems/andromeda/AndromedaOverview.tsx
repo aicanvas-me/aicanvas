@@ -324,12 +324,13 @@ export function AndromedaOverview() {
 
       {/* ── System showcase ───────────────────────────────────────────────── */}
       <motion.section className="mt-14" {...reveal}>
-        {/* Outside the card, because the card is one big link and a button
-            cannot nest inside it. It moves the palette of the live preview
-            inside; the captured thumbnails further down cannot follow. */}
+        {/* Inline, not the floating dock the Foundation page uses: here the
+            control reaches only the live preview in this one card, and a
+            page-level float would promise the whole page follows it. Outside
+            the card because the card is one big link. */}
         <div className="mb-3 flex items-center justify-end gap-2">
           <span className="text-[11px] font-semibold uppercase tracking-wider text-sand-500">
-            Palette
+            Theme
           </span>
           <AndromedaThemeToggle />
         </div>

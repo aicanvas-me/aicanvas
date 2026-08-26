@@ -10,7 +10,7 @@
 // demos use. Everything here renders statically all the same.
 import { SiteFooter } from '../../../components/SiteFooter'
 import { tokens } from '../../../lib/andromeda-v2.generated'
-import { AndromedaThemeToggle } from '../AndromedaThemeWrap'
+import { AndromedaThemeDock } from '../AndromedaThemeWrap'
 
 // ── the theme channel ───────────────────────────────────────────────────────
 // Every swatch paints `var(--at-<name>, <dark value>)`. With no light ancestor
@@ -139,24 +139,13 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 export function FoundationView() {
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-8 pb-20 sm:px-6 sm:pt-14">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-olive-600 dark:text-olive-400">
-            Andromeda · Foundation
-          </p>
-          <h1 className="text-3xl font-extrabold text-sand-900 dark:text-sand-50 sm:text-4xl">
-            The primitives
-          </h1>
-        </div>
-        {/* Labelled, because a bare Light/Dark chip on a sand page reads as the
-            site's own theme switch. This one moves the palette below it. */}
-        <div className="flex shrink-0 items-center gap-2">
-          <span className="hidden text-[11px] font-semibold uppercase tracking-wider text-sand-500 sm:block">
-            Palette
-          </span>
-          <AndromedaThemeToggle />
-        </div>
-      </div>
+      <AndromedaThemeDock />
+      <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-olive-600 dark:text-olive-400">
+        Andromeda · Foundation
+      </p>
+      <h1 className="text-3xl font-extrabold text-sand-900 dark:text-sand-50 sm:text-4xl">
+        The primitives
+      </h1>
       <p className="mt-3 max-w-2xl text-sand-600 dark:text-sand-400">
         Every Andromeda component is built from the values on this page, read through a
         three-layer token architecture. This is the what; the judgment layer that teaches
