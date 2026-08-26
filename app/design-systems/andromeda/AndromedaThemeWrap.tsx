@@ -16,14 +16,17 @@
 
 import { createContext, useContext, useEffect, useId, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { Moon, Sun } from '@phosphor-icons/react'
-import { andromedaLightVars } from '../../lib/andromeda-v2-helpers.generated'
+import { Moon, Palette, Sun } from '@phosphor-icons/react'
+import { tokens } from '../../lib/andromeda-v2.generated'
+import { andromedaLightVars, andromedaVars } from '../../lib/andromeda-v2-helpers.generated'
 
 type AndromedaTheme = 'dark' | 'light'
 
 const ThemeCtx = createContext<{
   theme: AndromedaTheme
   setTheme: (t: AndromedaTheme) => void
+  knobs: Knobs
+  setKnobs: (next: Knobs | ((k: Knobs) => Knobs)) => void
 } | null>(null)
 
 // `className` lets a caller decide what box the carrier div is. The template
@@ -32,22 +35,33 @@ const ThemeCtx = createContext<{
 // template's own scroll region never gets a bounded height.
 export function AndromedaThemeWrap({ children, className }: { children: ReactNode; className?: string }) {
   const [theme, setTheme] = useState<AndromedaTheme>('dark')
+  const [knobs, setKnobs] = useState<Knobs>(DEFAULTS)
 
+  // ONE writer for the whole --at- set. The palette tuner sets knobs and this
+  // effect re-emits; a second effect writing the same properties would race
+  // this one on every theme flip and a reset would strip the light set with it.
   useEffect(() => {
-    if (theme !== 'light') return
+    const tuned = isTuned(knobs)
+    // Dark and untuned is the authored palette, which the var() fallbacks
+    // already resolve to. Emitting nothing keeps that path byte-identical.
+    if (theme !== 'light' && !tuned) return
     const root = document.documentElement
-    const vars = andromedaLightVars() as Record<string, string>
-    for (const [name, value] of Object.entries(vars)) root.style.setProperty(name, value)
-    root.setAttribute('data-andromeda-theme', 'light')
+    const base = baseSet(theme)
+    const names = Object.keys(base)
+    for (const name of names) {
+      root.style.setProperty(name, tuned ? retint(base[name], knobs) : base[name])
+    }
+    if (theme === 'light') root.setAttribute('data-andromeda-theme', 'light')
     return () => {
-      for (const name of Object.keys(vars)) root.style.removeProperty(name)
+      for (const name of names) root.style.removeProperty(name)
       root.removeAttribute('data-andromeda-theme')
     }
-  }, [theme])
+  }, [theme, knobs])
 
   return (
-    <ThemeCtx.Provider value={{ theme, setTheme }}>
+    <ThemeCtx.Provider value={{ theme, setTheme, knobs, setKnobs }}>
       <div data-andromeda-theme={theme} className={className}>{children}</div>
+      <AndromedaPaletteTuner />
     </ThemeCtx.Provider>
   )
 }
@@ -132,8 +146,214 @@ export function AndromedaThemeDock() {
   const ctx = useContext(ThemeCtx)
   if (!ctx) return null
   return (
-    <div className="fixed bottom-5 right-5 z-40 rounded-lg shadow-lg">
+    <div className="fixed bottom-16 right-5 z-40 rounded-lg shadow-lg">
       <AndromedaThemeToggle label="Theme" />
+    </div>
+  )
+}
+
+// ── Palette tuner ───────────────────────────────────────────────────────────
+// DEV ONLY. A colour experiment used to mean editing tokens.ts and rebuilding.
+// Every value in this system is oklch and every colour already travels the
+// --at- channel, so a palette can be explored in the browser instead: rotate a
+// family's hue, scale its chroma, and the whole 13-stop neutral ladder and all
+// five family stops move together with their LIGHTNESS UNTOUCHED. Lightness is
+// what carries the contrast guarantees and the depth ordering, so keeping it
+// fixed is what makes this safe to play with.
+//
+// Values are classified by what they ARE, not by their name: near-zero chroma
+// is the neutral column, anything else belongs to the family whose hue it sits
+// nearest. That way semantic vars (surface.raised, status.danger.text) follow
+// their primitive without a name map to keep in sync.
+const DEV_ONLY = process.env.NODE_ENV !== 'production'
+
+const OKLCH = /oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)\s*(\/\s*[\d.]+\s*)?\)/g
+const NEUTRAL_CHROMA_MAX = 0.02
+
+type Family = 'brand' | 'success' | 'warning' | 'danger'
+const FAMILY_ORDER: Family[] = ['brand', 'success', 'warning', 'danger']
+
+// Each family's own hue, read off its mid stop rather than typed in, so this
+// keeps working when the palette it is tuning changes underneath it.
+function hueOf(value: string): number {
+  OKLCH.lastIndex = 0
+  const m = OKLCH.exec(String(value))
+  return m ? Number(m[3]) : 0
+}
+const BASE_HUE: Record<Family, number> = {
+  brand: hueOf(tokens.color.brand[300]),
+  success: hueOf(tokens.color.success[300]),
+  warning: hueOf(tokens.color.warning[300]),
+  danger: hueOf(tokens.color.danger[300]),
+}
+const BASE_NEUTRAL_HUE = hueOf(tokens.color.neutral[100])
+
+type Knobs = {
+  hue: Record<Family, number>
+  chroma: Record<Family, number>
+  neutralHue: number
+  neutralChroma: number
+}
+const NEUTRAL_BASE_CHROMA = 1
+const DEFAULTS: Knobs = {
+  hue: { ...BASE_HUE },
+  chroma: { brand: 1, success: 1, warning: 1, danger: 1 },
+  neutralHue: BASE_NEUTRAL_HUE,
+  neutralChroma: NEUTRAL_BASE_CHROMA,
+}
+
+const isTuned = (k: Knobs) => JSON.stringify(k) !== JSON.stringify(DEFAULTS)
+
+const arc = (a: number, b: number) => {
+  const d = Math.abs(((a - b) % 360 + 360) % 360)
+  return Math.min(d, 360 - d)
+}
+
+function familyOf(hue: number): Family {
+  return FAMILY_ORDER.reduce((best, f) =>
+    arc(hue, BASE_HUE[f]) < arc(hue, BASE_HUE[best]) ? f : best, FAMILY_ORDER[0])
+}
+
+// One value in, one value out. A gradient string carries several colours, so
+// every oklch inside it is rewritten in place and the geometry is left alone.
+function retint(value: string, k: Knobs): string {
+  return String(value).replace(OKLCH, (whole, l, c, h, alpha) => {
+    const chroma = Number(c)
+    const hue = Number(h)
+    const a = alpha ? ` ${alpha.trim()}` : ''
+    if (chroma <= NEUTRAL_CHROMA_MAX) {
+      return `oklch(${l} ${(chroma * k.neutralChroma).toFixed(3)} ${k.neutralHue.toFixed(1)}${a})`
+    }
+    const family = familyOf(hue)
+    const next = Math.min(0.4, chroma * k.chroma[family])
+    return `oklch(${l} ${next.toFixed(3)} ${k.hue[family].toFixed(1)}${a})`
+  })
+}
+
+// The dark set lives inside andromedaVars() as each var's fallback; the light
+// set is already a plain map. Either way this is the base the knobs transform.
+function baseSet(theme: 'dark' | 'light'): Record<string, string> {
+  if (theme === 'light') return andromedaLightVars() as Record<string, string>
+  const out: Record<string, string> = {}
+  for (const value of Object.values(andromedaVars())) {
+    const m = /^var\((--at-[a-z0-9-]+), (.*)\)$/.exec(String(value))
+    if (m) out[m[1]] = m[2]
+  }
+  return out
+}
+
+function Slider({
+  label, value, min, max, step, onChange, readout,
+}: {
+  label: string; value: number; min: number; max: number; step: number
+  onChange: (n: number) => void; readout: string
+}) {
+  return (
+    <label className="flex items-center gap-2">
+      <span className="w-10 shrink-0 text-[10px] uppercase tracking-wider text-sand-500">{label}</span>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="h-1 flex-1 cursor-pointer accent-olive-500"
+      />
+      <span className="w-9 shrink-0 text-right text-[10px] tabular-nums text-sand-500">{readout}</span>
+    </label>
+  )
+}
+
+export function AndromedaPaletteTuner() {
+  const ctx = useContext(ThemeCtx)
+  const [open, setOpen] = useState(false)
+  if (!DEV_ONLY || !ctx) return null
+  const { theme, knobs, setKnobs } = ctx
+  const touched = isTuned(knobs)
+
+  const set = (patch: Partial<Knobs>) => setKnobs((k) => ({ ...k, ...patch }))
+  const setFamily = (key: 'hue' | 'chroma', family: Family, n: number) =>
+    setKnobs((k) => ({ ...k, [key]: { ...k[key], [family]: n } }))
+
+  return (
+    <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-2">
+      {open ? (
+        <div className="w-72 rounded-lg border border-sand-300 bg-sand-100 p-3 shadow-xl dark:border-sand-800 dark:bg-sand-900">
+          <p className="mb-2 text-[10px] uppercase tracking-wider text-sand-500">
+            Hue and chroma only. Lightness is what holds the contrast, so it never moves.
+          </p>
+          <div className="space-y-3">
+            {FAMILY_ORDER.map((family) => (
+              <div key={family} className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="h-3 w-3 shrink-0 rounded-sm"
+                    style={{ background: retint(tokens.color[family][300], knobs) }}
+                  />
+                  <span className="text-[11px] font-semibold capitalize text-sand-800 dark:text-sand-200">
+                    {family}
+                  </span>
+                </div>
+                <Slider
+                  label="Hue" value={knobs.hue[family]} min={0} max={360} step={1}
+                  onChange={(n) => setFamily('hue', family, n)}
+                  readout={`${Math.round(knobs.hue[family])}`}
+                />
+                <Slider
+                  label="Chroma" value={knobs.chroma[family]} min={0} max={2} step={0.05}
+                  onChange={(n) => setFamily('chroma', family, n)}
+                  readout={knobs.chroma[family].toFixed(2)}
+                />
+              </div>
+            ))}
+            <div className="space-y-1 border-t border-sand-300 pt-2 dark:border-sand-800">
+              <span className="text-[11px] font-semibold text-sand-800 dark:text-sand-200">Neutrals</span>
+              <Slider
+                label="Hue" value={knobs.neutralHue} min={0} max={360} step={1}
+                onChange={(n) => set({ neutralHue: n })}
+                readout={`${Math.round(knobs.neutralHue)}`}
+              />
+              <Slider
+                label="Tint" value={knobs.neutralChroma} min={0} max={6} step={0.1}
+                onChange={(n) => set({ neutralChroma: n })}
+                readout={knobs.neutralChroma.toFixed(1)}
+              />
+            </div>
+          </div>
+          <div className="mt-3 flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setKnobs(DEFAULTS)}
+              className="text-[11px] font-semibold text-sand-500 transition-colors hover:text-sand-800 dark:hover:text-sand-100"
+            >
+              Reset
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const base = baseSet(theme)
+                const out = Object.fromEntries(
+                  Object.keys(base).map((n) => [n, retint(base[n], knobs)]),
+                )
+                navigator.clipboard?.writeText(JSON.stringify(out, null, 2))
+              }}
+              className="text-[11px] font-semibold text-olive-600 transition-colors hover:text-olive-500 dark:text-olive-400"
+            >
+              Copy values
+            </button>
+          </div>
+        </div>
+      ) : null}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex h-9 items-center gap-2 rounded-lg border border-sand-300 bg-sand-100 px-3 text-xs font-semibold uppercase tracking-wider text-sand-600 shadow-lg transition-colors hover:text-sand-900 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:text-sand-100"
+      >
+        <Palette size={15} weight="regular" />
+        Palette
+        {touched ? <span className="h-1.5 w-1.5 rounded-full bg-olive-500" /> : null}
+      </button>
     </div>
   )
 }
