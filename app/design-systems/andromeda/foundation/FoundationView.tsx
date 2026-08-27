@@ -149,6 +149,43 @@ const DARK_GROUND = tokens.color.neutral[100]
 // The light page ground, read from the light set rather than restated.
 const LIGHT_GROUND = LIGHT_VARS['--at-neutral-100'] ?? '#ffffff'
 
+// ── Every colour, both themes ───────────────────────────────────────────────
+// Enumerated from the dark var set rather than listed by hand, so a token added
+// to the system appears here on its own. Only colour-bearing vars carry the
+// var(--at-…, value) shape, which is exactly the set the theme can touch.
+const GROUP_ORDER = [
+  ['neutral', 'Neutrals', 'numbered by depth in the stack, not by lightness, so 100 is the page ground in both themes and the ladder never folds'],
+  ['text', 'Text', 'the four neutral inks'],
+  ['surface', 'Surfaces', 'grounds and the steps a fill climbs under the pointer'],
+  ['border', 'Borders', 'the hairline ladder'],
+  ['brand', 'Brand ramp', 'the primitive stops every brand role points at'],
+  ['status', 'Status', 'four tones, six roles each'],
+  ['action', 'Actions', 'what a control does'],
+  ['focus', 'Focus', 'the ring and its glow'],
+  ['selection', 'Selection', 'checked, selected, current'],
+  ['chart', 'Chart ink', 'roles, not series numbers'],
+  ['gradient', 'Gradients', 'composed values, swapped stop by stop'],
+] as const
+
+const ALL_COLOURS = GROUP_ORDER.map(([prefix, title, note]) => {
+  const rows = Object.entries(DARK_VARS)
+    .filter(([name, value]) => /^var\(--at-/.test(String(value)))
+    .filter(([name]) => name.startsWith(`--andromeda-${prefix}-`))
+    .map(([name, value]) => {
+      const dark = stripVar(value)
+      const atName = name.replace('--andromeda-', '--at-')
+      const light = LIGHT_VARS[atName] ?? dark
+      return {
+        token: name.replace('--andromeda-', ''),
+        dark,
+        light,
+        same: dark === light,
+      }
+    })
+  return { prefix, title, note, rows }
+}).filter((g) => g.rows.length > 0)
+
+
 const SPACING_STEPS = [1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12] as const
 
 const SEMANTIC_GROUPS = [
@@ -393,6 +430,55 @@ export function FoundationView() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* ── Every colour, both themes ── */}
+      <SectionHeading>Every colour, both themes</SectionHeading>
+      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
+        The whole set, dark on the left of each pair and light on the right. Enumerated from
+        the live token set rather than listed by hand, so a colour added to the system shows
+        up here on its own. A pair marked <em>same</em> is deliberately theme invariant: a
+        scrim darkens what is behind it whatever the theme, and a solid fill that carries pale
+        text has to stay deep in both.
+      </p>
+      <div className="space-y-6">
+        {ALL_COLOURS.map((group) => (
+          <div key={group.prefix}>
+            <p className="mb-1 text-[13px] font-bold text-sand-900 dark:text-sand-50">{group.title}</p>
+            <p className="mb-2 text-[12px] leading-relaxed text-sand-500">{group.note}</p>
+            <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
+              {group.rows.map((r, i) => (
+                <div
+                  key={r.token}
+                  className={`flex items-center gap-3 px-4 py-2 ${
+                    i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : ''
+                  }`}
+                >
+                  <code className="min-w-0 flex-1 truncate text-[12px] text-sand-700 dark:text-sand-300">
+                    {r.token}
+                  </code>
+                  {r.same ? (
+                    <span className="text-[11px] uppercase tracking-wider text-sand-500">same</span>
+                  ) : null}
+                  <span
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded"
+                    style={{ background: DARK_GROUND }}
+                    title="dark"
+                  >
+                    <span className="h-3 w-3 rounded-sm" style={{ background: r.dark }} />
+                  </span>
+                  <span
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded"
+                    style={{ background: LIGHT_GROUND }}
+                    title="light"
+                  >
+                    <span className="h-3 w-3 rounded-sm" style={{ background: r.light }} />
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* ── Accessibility ── */}
