@@ -588,7 +588,7 @@ export function FoundationView() {
                 {step}
               </code>
               <div
-                className="h-3 rounded-sm bg-olive-500 dark:bg-olive-400"
+                className="h-3 rounded-sm bg-sand-400 dark:bg-sand-600"
                 style={{ width: `calc(${value} * 4)` }}
               />
               <span className="text-[12px] tabular-nums text-sand-500">{value}</span>
