@@ -238,35 +238,6 @@ export function FoundationView() {
         when and how to use each value ships with the Brain.
       </p>
 
-      {/* ── Accessibility ── */}
-      <div className="mt-8 rounded-xl border border-olive-600/40 bg-olive-500/5 p-5 dark:border-olive-400/30">
-        <p className="mb-1 text-xs font-semibold uppercase tracking-widest text-olive-700 dark:text-olive-400">
-          Accessibility
-        </p>
-        <h2 className="mb-2 text-lg font-bold text-sand-900 dark:text-sand-50">
-          Every colour pair in this system meets WCAG 2.2 level AA
-        </h2>
-        <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-          Not as an aspiration. The ratios are measured by a script on every change, in both
-          themes, and a pair that drops below its minimum fails the build rather than shipping.
-          Contrast is the one thing in this system that overrules a design decision, including
-          the family pivot below.
-        </p>
-        <div className="grid gap-3 sm:grid-cols-3">
-          {[
-            ['4.5 : 1', 'Normal text', 'Anything under 24px, or under 18.66px bold. Almost all of our text. WCAG 1.4.3.'],
-            ['3.0 : 1', 'Large text and non-text', 'Display sizes, and every icon, border, chart line, dot and focus ring. WCAG 1.4.3 and 1.4.11.'],
-            ['7.0 : 1', 'AAA, where it lands', 'Not a target we hold the whole system to, but the neutral inks clear it comfortably.'],
-          ].map(([ratio, who, what]) => (
-            <div key={ratio} className="rounded-lg border border-sand-300 bg-sand-100 p-3 dark:border-sand-800 dark:bg-sand-900">
-              <p className="text-base font-bold tabular-nums text-sand-900 dark:text-sand-50">{ratio}</p>
-              <p className="text-[13px] font-semibold text-sand-700 dark:text-sand-300">{who}</p>
-              <p className="mt-1 text-[12px] leading-relaxed text-sand-500">{what}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {/* ── The three layers ── */}
       <SectionHeading>Three layers</SectionHeading>
       <div className="grid gap-4 sm:grid-cols-3">
@@ -363,6 +334,89 @@ export function FoundationView() {
         ))}
       </div>
 
+      {/* ── The family pivot ── */}
+      <SectionHeading>How a family crosses the themes</SectionHeading>
+      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
+        A family ramp mirrors around its middle when the theme flips. 100 and 500 swap, 200
+        and 400 swap, and 300 is the pivot that never moves. The one thing that overrules the
+        mirror is <strong className="font-semibold text-sand-900 dark:text-sand-50">WCAG</strong>.
+        Where the mirrored value misses its contrast minimum on the light page ground it steps
+        toward the deep end until it clears. That is the whole reason the text row below reads
+        300 &rarr; 500 rather than 300 &rarr; 400: on the light ground the 400 stop measures 3.97
+        for brand, 4.21 for success and 3.12 for warning, all under the 4.5 that normal text
+        requires, so they step again. Danger reaches 4.86 at 400 and stops there. The row under
+        it lands on 400 everywhere because a mark is a non-text object and needs 3.0, not 4.5.
+        Both columns are resolved from the same functions the site paints with, so they cannot
+        drift from what you see.
+      </p>
+      <div className="overflow-x-auto rounded-xl border border-sand-300 dark:border-sand-800">
+        <div className="min-w-[44rem]">
+          <div className="grid grid-cols-[13rem_repeat(4,1fr)] gap-x-4 border-b border-sand-300 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-sand-500 dark:border-sand-800">
+            <span>Role</span>
+            {TONES.map((t) => (
+              <span key={t.tone}>{t.name}</span>
+            ))}
+          </div>
+          {PIVOT_TABLE.map(({ suffix, title, what, cells }, i) => (
+            <div
+              key={suffix}
+              className={`grid grid-cols-[13rem_repeat(4,1fr)] gap-x-4 px-4 py-3 ${
+                i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : ''
+              }`}
+            >
+              <div>
+                <p className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">{title}</p>
+                <p className="text-[11px] leading-tight text-sand-500">{what}</p>
+              </div>
+              {cells.map((c) => (
+                <div key={c.name} className="flex items-center gap-2">
+                  {/* dark ground on the left, light ground on the right, same swatch size */}
+                  <span
+                    className="flex h-7 w-7 items-center justify-center rounded"
+                    style={{ backgroundColor: DARK_GROUND }}
+                    title={`dark ${c.darkStop}`}
+                  >
+                    <span className="h-3.5 w-3.5 rounded-sm" style={{ backgroundColor: c.dark }} />
+                  </span>
+                  <span
+                    className="flex h-7 w-7 items-center justify-center rounded"
+                    style={{ backgroundColor: LIGHT_GROUND }}
+                    title={`light ${c.lightStop}`}
+                  >
+                    <span className="h-3.5 w-3.5 rounded-sm" style={{ backgroundColor: c.light }} />
+                  </span>
+                  <span className="text-[12px] tabular-nums text-sand-500">
+                    {c.darkStop} &rarr; {c.lightStop}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Accessibility ── */}
+      <SectionHeading>Accessibility</SectionHeading>
+      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
+        Every colour pair in this system meets WCAG 2.2 level AA. Not as an aspiration: the
+        ratios are measured by a script on every change, in both themes, and a pair that drops
+        below its minimum fails the build rather than shipping. Contrast is the one thing here
+        that overrules a design decision, including the family pivot above.
+      </p>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {[
+          ['4.5 : 1', 'Normal text', 'Anything under 24px, or under 18.66px bold. Almost all of our text. WCAG 1.4.3.'],
+          ['3.0 : 1', 'Large text and non-text', 'Display sizes, and every icon, border, chart line, dot and focus ring. WCAG 1.4.3 and 1.4.11.'],
+          ['7.0 : 1', 'AAA, where it lands', 'Not a target we hold the whole system to, but the neutral inks clear it comfortably.'],
+        ].map(([ratio, who, what]) => (
+          <div key={ratio} className="rounded-xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
+            <p className="text-base font-bold tabular-nums text-sand-900 dark:text-sand-50">{ratio}</p>
+            <p className="text-[13px] font-semibold text-sand-700 dark:text-sand-300">{who}</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-sand-500">{what}</p>
+          </div>
+        ))}
+      </div>
+
       {/* ── Typography ── */}
       <SectionHeading>The type ramp</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
@@ -427,67 +481,6 @@ export function FoundationView() {
         <p className="mt-1.5 text-[12px] text-sand-500">
           column heads, axis and legend labels, kickers, stat captions
         </p>
-      </div>
-
-      {/* ── The family pivot ── */}
-      <SectionHeading>How a family crosses the themes</SectionHeading>
-      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        A family ramp mirrors around its middle when the theme flips. 100 and 500 swap, 200
-        and 400 swap, and 300 is the pivot that never moves. The one thing that overrules the
-        mirror is <strong className="font-semibold text-sand-900 dark:text-sand-50">WCAG</strong>.
-        Where the mirrored value misses its contrast minimum on the light page ground it steps
-        toward the deep end until it clears. That is the whole reason the text row below reads
-        300 &rarr; 500 rather than 300 &rarr; 400: on the light ground the 400 stop measures 3.97
-        for brand, 4.21 for success and 3.12 for warning, all under the 4.5 that normal text
-        requires, so they step again. Danger reaches 4.86 at 400 and stops there. The row under
-        it lands on 400 everywhere because a mark is a non-text object and needs 3.0, not 4.5.
-        Both columns are resolved from the same functions the site paints with, so they cannot
-        drift from what you see.
-      </p>
-      <div className="overflow-x-auto rounded-xl border border-sand-300 dark:border-sand-800">
-        <div className="min-w-[44rem]">
-          <div className="grid grid-cols-[13rem_repeat(4,1fr)] gap-x-4 border-b border-sand-300 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-sand-500 dark:border-sand-800">
-            <span>Role</span>
-            {TONES.map((t) => (
-              <span key={t.tone}>{t.name}</span>
-            ))}
-          </div>
-          {PIVOT_TABLE.map(({ suffix, title, what, cells }, i) => (
-            <div
-              key={suffix}
-              className={`grid grid-cols-[13rem_repeat(4,1fr)] gap-x-4 px-4 py-3 ${
-                i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : ''
-              }`}
-            >
-              <div>
-                <p className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">{title}</p>
-                <p className="text-[11px] leading-tight text-sand-500">{what}</p>
-              </div>
-              {cells.map((c) => (
-                <div key={c.name} className="flex items-center gap-2">
-                  {/* dark ground on the left, light ground on the right, same swatch size */}
-                  <span
-                    className="flex h-7 w-7 items-center justify-center rounded"
-                    style={{ backgroundColor: DARK_GROUND }}
-                    title={`dark ${c.darkStop}`}
-                  >
-                    <span className="h-3.5 w-3.5 rounded-sm" style={{ backgroundColor: c.dark }} />
-                  </span>
-                  <span
-                    className="flex h-7 w-7 items-center justify-center rounded"
-                    style={{ backgroundColor: LIGHT_GROUND }}
-                    title={`light ${c.lightStop}`}
-                  >
-                    <span className="h-3.5 w-3.5 rounded-sm" style={{ backgroundColor: c.light }} />
-                  </span>
-                  <span className="text-[12px] tabular-nums text-sand-500">
-                    {c.darkStop} &rarr; {c.lightStop}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* ── Spacing ── */}
