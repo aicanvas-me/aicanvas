@@ -29,7 +29,7 @@ import { tokens } from '../../../../lib/andromeda-v2.generated'
 import { mq } from '../../../../lib/andromeda-v2-helpers.generated'
 import { buttonVariants } from '../../../../lib/andromeda-v2.generated'
 import { andromedaVars, useResolvedVars } from '../../../../lib/andromeda-v2-helpers.generated'
-import { AndromedaThemeWrap, AndromedaThemeToggle } from '../../AndromedaThemeWrap'
+import { AndromedaThemeWrap, AndromedaThemeDock } from '../../AndromedaThemeWrap'
 import {
   Card,
   CardHeader,
@@ -530,6 +530,7 @@ export default function AndromedaShowcase({
 
   return (
     <AndromedaThemeWrap>
+    <AndromedaThemeDock />
     <ShowcaseInstall
       installs={[
         { slug: 'andromeda', label: 'All components' },
@@ -560,11 +561,6 @@ export default function AndromedaShowcase({
           gap: tokens.spacing[6],
         }}
       >
-        {/* Theme toggle — the review matrix is exactly where the second theme
-            is judged, so the switch lives at the top of it. */}
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <AndromedaThemeToggle />
-        </div>
         {/* Responsive reflow — desktop-first. The default (unqualified)
             rules ARE the desktop layout; the mq.md block collapses the dense
             two/three-column section grids to a single column below 768px, and
@@ -714,32 +710,29 @@ export default function AndromedaShowcase({
         <Section
           title="Typography"
           kicker="Foundation · Type"
-          description="JetBrains Mono is the only typeface. Both fontSans and fontMono resolve to it, and the distinction exists only for backward compatibility. Hierarchy comes from size, weight, and letter-spacing, not from switching families."
+          description="Manrope is the default face; JetBrains Mono stays in the system as the mono face, for content that genuinely needs fixed advance widths. A step on the ramp names three values, not one: a size, its leading, and its tracking. Tracking is a function of size, open at the small end and pulled in at the display end. Weight is the second axis."
         >
           <div style={{ marginBottom: tokens.spacing[5] }}>
             <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
               Type Scale
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {[
-                { token: 'xs',  px: '10px', usage: 'Data labels · kickers · row headers' },
-                { token: 'sm',  px: '12px', usage: 'Descriptions · captions · error text' },
-                { token: 'md',  px: '14px', usage: 'UI body · card descriptions' },
-                { token: 'lg',  px: '16px', usage: 'Card titles · nav labels · size="lg" controls' },
-                { token: 'xl',  px: '18px', usage: 'Section headings' },
-                { token: '2xl', px: '20px', usage: 'Large panel headers' },
-                { token: '3xl', px: '22px', usage: 'Sub-page headings' },
-                { token: '4xl', px: '28px', usage: 'Showcase page title' },
-                { token: '5xl', px: '36px', usage: 'Dashboard hero readout' },
-                { token: '6xl', px: '48px', usage: 'Stat primary value' },
-              ].map(({ token, px, usage }) => (
-                <div key={token} style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[4], padding: `${tokens.spacing[2]} 0`, borderBottom: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})` }}>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-muted, ${tokens.color.text.muted})`, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest, width: 28, flexShrink: 0 }}>{token}</span>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, width: 32, flexShrink: 0 }}>{px}</span>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: px, color: `var(--at-text-primary, ${tokens.color.text.primary})`, letterSpacing: tokens.typography.tracking.wide, lineHeight: 1.1, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}>ANDROMEDA</span>
-                  <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, flexShrink: 0, textAlign: 'right' }}>{usage}</span>
-                </div>
-              ))}
+              {/* Read off the ramp, never re-typed. The old table hardcoded its px
+                  values and carried a usage column in prose, which is exactly the
+                  second source of truth the roles work was meant to end. */}
+              {(['textXs','textSm','textMd','textLg','textXl','text2xl','displayXs','displaySm','displayMd','displayLg','displayXl','display2xl'] as const).map((step) => {
+                const size = tokens.typography.size[step];
+                const lead = tokens.typography.leading[step];
+                const track = (tokens.typography.tracking as Record<string, string>)[step];
+                return (
+                  <div key={step} style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[4], padding: `${tokens.spacing[2]} 0`, borderBottom: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})` }}>
+                    <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-muted, ${tokens.color.text.muted})`, letterSpacing: tokens.typography.tracking.wider, width: 92, flexShrink: 0 }}>{step}</span>
+                    <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, width: 72, flexShrink: 0 }}>{size} / {lead}</span>
+                    <span style={{ fontFamily: tokens.typography.fontSans, fontSize: size, lineHeight: lead, letterSpacing: track, color: `var(--at-text-primary, ${tokens.color.text.primary})`, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}>Andromeda</span>
+                    <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, flexShrink: 0, textAlign: 'right' }}>{track}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

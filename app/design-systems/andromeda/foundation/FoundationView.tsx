@@ -57,45 +57,29 @@ const TYPE_ROLES = [
 
 const px = (value: string) => value.replace('px', '')
 
-const TYPE_RAMP = TYPE_ROLES.map((role) => {
-  const size = (tokens.typography.size as Record<string, string>)[role]
-  const lead = (tokens.typography.leading as Record<string, string>)[role]
-  return [role, `${px(size)} / ${px(lead)}`] as const
+const TYPE_RAMP = TYPE_ROLES.map((step) => {
+  const size = (tokens.typography.size as Record<string, string>)[step]
+  const lead = (tokens.typography.leading as Record<string, string>)[step]
+  const track = (tokens.typography.tracking as Record<string, string>)[step]
+  return [step, `${px(size)} / ${px(lead)}`, track] as const
 })
 
-// Layer 2 for type. Same contract as the ramp above: every value is read off
-// the token, never re-typed, so a role that moves moves this page with it. The
-// key is typed against the token, so deleting or renaming a role fails the
-// build here instead of white-screening this page at render.
-const TYPE_ROLE_SPECIMENS: ReadonlyArray<
-  readonly [keyof typeof tokens.typography.role, string, string]
-> = [
-  // Sentence case on purpose: the uppercase you read below is the ROLE doing
-  // its work, not a shouty string. It is the only property that tells `label`
-  // and `meta` apart at a glance, both being 10 / 14.
-  ['label', 'Bearing', 'column heads, axis and legend labels, kickers, stat captions'],
-  ['meta', '04:21 · 12 units', 'unit suffixes, timestamps, counts'],
-  ['body', 'The panel reads at twelve pixels.', 'running copy inside a panel'],
-  ['bodyStrong', 'The selected row.', 'selected row, emphasised term, active tab'],
-  ['panelTitle', 'Reactor core', 'the title of one panel'],
-  ['sectionTitle', 'Mission control', 'the title of a region holding several panels'],
-]
+// The one named style. Everything else in the system is a step plus a weight,
+// read straight off the ramp above; `label` exists only because it carries a
+// property the ramp deliberately does not, which is case. Read off the token,
+// never re-typed, and typed against it so removing the style fails the build
+// here instead of white-screening this page.
+const LABEL = tokens.typography.role.label
 
 const nameOf = (scale: Record<string, string | number>, value: string | number) =>
   Object.entries(scale).find(([, v]) => v === value)?.[0] ?? String(value)
 
-const TYPE_ROLES_TABLE = TYPE_ROLE_SPECIMENS.map(([key, specimen, use]) => {
-  const style = tokens.typography.role[key]
-  const recipe = [
-    `${px(style.fontSize)} / ${px(style.lineHeight)}`,
-    nameOf(tokens.typography.weight, style.fontWeight),
-    nameOf(tokens.typography.tracking, style.letterSpacing),
-    'textTransform' in style && style.textTransform === 'uppercase' ? 'uppercase' : null,
-  ]
-    .filter(Boolean)
-    .join(' · ')
-  return { key, specimen, use, style, recipe }
-})
+const LABEL_RECIPE = [
+  `${px(LABEL.fontSize)} / ${px(LABEL.lineHeight)}`,
+  nameOf(tokens.typography.weight, LABEL.fontWeight),
+  nameOf(tokens.typography.tracking, LABEL.letterSpacing),
+  'uppercase',
+].join(' · ')
 
 const SPACING_STEPS = [1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12] as const
 
@@ -285,60 +269,53 @@ export function FoundationView() {
       {/* ── Typography ── */}
       <SectionHeading>The type ramp</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        A role names a size AND its leading, so adopting one means taking both. Text roles
-        for UI and reading, display roles for hero numerals and headings.
+        A step names three values, not one: a size, its leading, and its tracking. Taking a
+        step means taking all three. Tracking is a function of size here, open at the small
+        end where letterforms crowd and pulled in at the display end where large type sets
+        loose. Weight is the second axis and stays a component&rsquo;s choice.
       </p>
       <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
-        <div className="grid grid-cols-2 gap-x-4 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-sand-500 sm:grid-cols-4">
-          <span>Role</span>
-          <span>size / leading</span>
-          <span className="hidden sm:block">Role</span>
-          <span className="hidden sm:block">size / leading</span>
+        <div className="grid grid-cols-[1fr_auto_auto] gap-x-6 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-sand-500">
+          <span>Step</span>
+          <span className="text-right">size / leading</span>
+          <span className="text-right">tracking</span>
         </div>
-        <div className="grid grid-cols-1 border-t border-sand-300 dark:border-sand-800 sm:grid-cols-2">
-          {TYPE_RAMP.map(([role, pair], i) => (
-            <div
-              key={role}
-              className={`flex items-baseline justify-between px-4 py-2 ${
-                i > 0 ? 'border-t border-sand-300 dark:border-sand-800 sm:[&:nth-child(2)]:border-t-0' : ''
-              }`}
-            >
-              <code className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">{role}</code>
-              <span className="text-[13px] tabular-nums text-sand-600 dark:text-sand-400">{pair}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* ── Type roles ── */}
-      <SectionHeading>Type roles</SectionHeading>
-      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        The ramp above is ingredients. A role is the finished dish: family, size, leading,
-        weight, tracking and case as one object, named for what the text <em>is</em>. A
-        component spreads a role and overrides at most one property. Roles carry no colour,
-        so ink stays a separate decision.
-      </p>
-      <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
-        {TYPE_ROLES_TABLE.map(({ key, specimen, use, style, recipe }, i) => (
+        {TYPE_RAMP.map(([step, pair, track], i) => (
           <div
-            key={key}
-            className={`px-4 py-4 ${i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : ''}`}
+            key={step}
+            className={`grid grid-cols-[1fr_auto_auto] items-baseline gap-x-6 px-4 py-2 ${
+              i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : 'border-t border-sand-300 dark:border-sand-800'
+            }`}
           >
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-              <code className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">
-                role.{key}
-              </code>
-              <span className="text-[12px] tabular-nums text-sand-500">{recipe}</span>
-            </div>
-            <p
-              className="mt-2 text-sand-900 dark:text-sand-50"
-              style={style as React.CSSProperties}
-            >
-              {specimen}
-            </p>
-            <p className="mt-1.5 text-[12px] text-sand-500">{use}</p>
+            <code className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">{step}</code>
+            <span className="text-right text-[13px] tabular-nums text-sand-600 dark:text-sand-400">{pair}</span>
+            <span className="text-right text-[13px] tabular-nums text-sand-500">{track}</span>
           </div>
         ))}
+      </div>
+
+      {/* ── The one named style ── */}
+      <SectionHeading>The one named style</SectionHeading>
+      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
+        Everything in the system is a step plus a weight. There is exactly one exception,
+        because it carries something the ramp deliberately does not: case. Uppercase is a
+        decision a component makes, not a property of a size, so it lives here and nowhere
+        else. It carries no colour either, so ink stays a separate decision.
+      </p>
+      <div className="rounded-xl border border-sand-300 px-4 py-4 dark:border-sand-800">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <code className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">
+            typography.role.label
+          </code>
+          <span className="text-[12px] tabular-nums text-sand-500">{LABEL_RECIPE}</span>
+        </div>
+        {/* Sentence case on purpose: the uppercase you read is the style doing its work. */}
+        <p className="mt-2 text-sand-900 dark:text-sand-50" style={LABEL as React.CSSProperties}>
+          Bearing
+        </p>
+        <p className="mt-1.5 text-[12px] text-sand-500">
+          column heads, axis and legend labels, kickers, stat captions
+        </p>
       </div>
 
       {/* ── Spacing ── */}
