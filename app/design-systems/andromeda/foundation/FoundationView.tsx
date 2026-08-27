@@ -57,11 +57,31 @@ const TYPE_ROLES = [
 
 const px = (value: string) => value.replace('px', '')
 
+// px to rem at the browser default root, the way Untitled UI states both on
+// every row of its own scale. The token stays the source; rem is derived here
+// so a size that moves cannot leave a stale rem behind.
+const rem = (value: string) => `${+(parseFloat(value) / 16).toFixed(4)}rem`
+
+// Tracking is authored in em. The percent is the same number read the way type
+// tools state it, which is how Untitled UI writes its display rows as -2%.
+const pct = (value: string) => {
+  const n = parseFloat(value)
+  return n === 0 ? '0' : `${+(n * 100).toFixed(2)}%`
+}
+
 const TYPE_RAMP = TYPE_ROLES.map((step) => {
   const size = (tokens.typography.size as Record<string, string>)[step]
   const lead = (tokens.typography.leading as Record<string, string>)[step]
   const track = (tokens.typography.tracking as Record<string, string>)[step]
-  return [step, `${px(size)} / ${px(lead)}`, track] as const
+  return {
+    step,
+    size,
+    lead,
+    track,
+    sizeText: `${size} / ${rem(size)}`,
+    leadText: `${lead} / ${rem(lead)}`,
+    trackText: parseFloat(track) === 0 ? '0' : `${track} / ${pct(track)}`,
+  }
 })
 
 // The one named style. Everything else in the system is a step plus a weight,
@@ -274,24 +294,38 @@ export function FoundationView() {
         end where letterforms crowd and pulled in at the display end where large type sets
         loose. Weight is the second axis and stays a component&rsquo;s choice.
       </p>
-      <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
-        <div className="grid grid-cols-[1fr_auto_auto] gap-x-6 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-sand-500">
-          <span>Step</span>
-          <span className="text-right">size / leading</span>
-          <span className="text-right">tracking</span>
-        </div>
-        {TYPE_RAMP.map(([step, pair, track], i) => (
-          <div
-            key={step}
-            className={`grid grid-cols-[1fr_auto_auto] items-baseline gap-x-6 px-4 py-2 ${
-              i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : 'border-t border-sand-300 dark:border-sand-800'
-            }`}
-          >
-            <code className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">{step}</code>
-            <span className="text-right text-[13px] tabular-nums text-sand-600 dark:text-sand-400">{pair}</span>
-            <span className="text-right text-[13px] tabular-nums text-sand-500">{track}</span>
+      {/* The specimen is the point, so it gets the flexible column and the
+          numbers are pinned right. Wide on purpose: the row scrolls inside its
+          own container rather than squeezing the display steps. */}
+      <div className="overflow-x-auto rounded-xl border border-sand-300 dark:border-sand-800">
+        <div className="min-w-[46rem]">
+          <div className="grid grid-cols-[7rem_1fr_9rem_9rem_8rem] gap-x-6 border-b border-sand-300 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-sand-500 dark:border-sand-800">
+            <span>Step</span>
+            <span>Specimen</span>
+            <span className="text-right">Size</span>
+            <span className="text-right">Line height</span>
+            <span className="text-right">Tracking</span>
           </div>
-        ))}
+          {TYPE_RAMP.map(({ step, size, lead, track, sizeText, leadText, trackText }, i) => (
+            <div
+              key={step}
+              className={`grid grid-cols-[7rem_1fr_9rem_9rem_8rem] items-center gap-x-6 px-4 py-3 ${
+                i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : ''
+              }`}
+            >
+              <code className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">{step}</code>
+              <span
+                className="overflow-hidden whitespace-nowrap text-sand-900 dark:text-sand-50"
+                style={{ fontSize: size, lineHeight: lead, letterSpacing: track }}
+              >
+                Andromeda
+              </span>
+              <span className="text-right text-[12px] tabular-nums text-sand-600 dark:text-sand-400">{sizeText}</span>
+              <span className="text-right text-[12px] tabular-nums text-sand-600 dark:text-sand-400">{leadText}</span>
+              <span className="text-right text-[12px] tabular-nums text-sand-500">{trackText}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ── The one named style ── */}
