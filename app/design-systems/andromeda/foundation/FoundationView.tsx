@@ -63,6 +63,40 @@ const TYPE_RAMP = TYPE_ROLES.map((role) => {
   return [role, `${px(size)} / ${px(lead)}`] as const
 })
 
+// Layer 2 for type. Same contract as the ramp above: every value is read off
+// the token, never re-typed, so a role that moves moves this page with it. The
+// key is typed against the token, so deleting or renaming a role fails the
+// build here instead of white-screening this page at render.
+const TYPE_ROLE_SPECIMENS: ReadonlyArray<
+  readonly [keyof typeof tokens.typography.role, string, string]
+> = [
+  // Sentence case on purpose: the uppercase you read below is the ROLE doing
+  // its work, not a shouty string. It is the only property that tells `label`
+  // and `meta` apart at a glance, both being 10 / 14.
+  ['label', 'Bearing', 'column heads, axis and legend labels, kickers, stat captions'],
+  ['meta', '04:21 · 12 units', 'unit suffixes, timestamps, counts'],
+  ['body', 'The panel reads at twelve pixels.', 'running copy inside a panel'],
+  ['bodyStrong', 'The selected row.', 'selected row, emphasised term, active tab'],
+  ['panelTitle', 'Reactor core', 'the title of one panel'],
+  ['sectionTitle', 'Mission control', 'the title of a region holding several panels'],
+]
+
+const nameOf = (scale: Record<string, string | number>, value: string | number) =>
+  Object.entries(scale).find(([, v]) => v === value)?.[0] ?? String(value)
+
+const TYPE_ROLES_TABLE = TYPE_ROLE_SPECIMENS.map(([key, specimen, use]) => {
+  const style = tokens.typography.role[key]
+  const recipe = [
+    `${px(style.fontSize)} / ${px(style.lineHeight)}`,
+    nameOf(tokens.typography.weight, style.fontWeight),
+    nameOf(tokens.typography.tracking, style.letterSpacing),
+    'textTransform' in style && style.textTransform === 'uppercase' ? 'uppercase' : null,
+  ]
+    .filter(Boolean)
+    .join(' · ')
+  return { key, specimen, use, style, recipe }
+})
+
 const SPACING_STEPS = [1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12] as const
 
 const SEMANTIC_GROUPS = [
@@ -274,6 +308,37 @@ export function FoundationView() {
             </div>
           ))}
         </div>
+      </div>
+
+      {/* ── Type roles ── */}
+      <SectionHeading>Type roles</SectionHeading>
+      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
+        The ramp above is ingredients. A role is the finished dish: family, size, leading,
+        weight, tracking and case as one object, named for what the text <em>is</em>. A
+        component spreads a role and overrides at most one property. Roles carry no colour,
+        so ink stays a separate decision.
+      </p>
+      <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
+        {TYPE_ROLES_TABLE.map(({ key, specimen, use, style, recipe }, i) => (
+          <div
+            key={key}
+            className={`px-4 py-4 ${i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : ''}`}
+          >
+            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+              <code className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">
+                role.{key}
+              </code>
+              <span className="text-[12px] tabular-nums text-sand-500">{recipe}</span>
+            </div>
+            <p
+              className="mt-2 text-sand-900 dark:text-sand-50"
+              style={style as React.CSSProperties}
+            >
+              {specimen}
+            </p>
+            <p className="mt-1.5 text-[12px] text-sand-500">{use}</p>
+          </div>
+        ))}
       </div>
 
       {/* ── Spacing ── */}
