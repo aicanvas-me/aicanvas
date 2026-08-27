@@ -446,13 +446,17 @@ export function FoundationView() {
           <div key={group.prefix}>
             <p className="mb-1 text-[13px] font-bold text-sand-900 dark:text-sand-50">{group.title}</p>
             <p className="mb-2 text-[12px] leading-relaxed text-sand-500">{group.note}</p>
-            <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
+            {/* Two per row from sm up: these lists run to fourteen entries and a
+                single column left most of the width empty. The first row of each
+                column keeps its top border off, and the right column carries a
+                divider so the pair still reads as one table. */}
+            <div className="grid grid-cols-1 overflow-hidden rounded-xl border border-sand-300 sm:grid-cols-2 dark:border-sand-800">
               {group.rows.map((r, i) => (
                 <div
                   key={r.token}
-                  className={`flex items-center gap-3 px-4 py-2 ${
-                    i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : ''
-                  }`}
+                  className={`flex items-center gap-3 border-sand-300 px-4 py-2 dark:border-sand-800 ${
+                    i > 0 ? 'border-t sm:[&:nth-child(2)]:border-t-0' : ''
+                  } sm:[&:nth-child(even)]:border-l`}
                 >
                   <code className="min-w-0 flex-1 truncate text-[12px] text-sand-700 dark:text-sand-300">
                     {r.token}
