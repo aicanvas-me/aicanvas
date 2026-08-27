@@ -11,6 +11,7 @@
 import { SiteFooter } from '../../../components/SiteFooter'
 import { tokens } from '../../../lib/andromeda-v2.generated'
 import { AndromedaThemeDock } from '../AndromedaThemeWrap'
+import { andromedaVars, andromedaLightVars } from '../../../lib/andromeda-v2-helpers.generated'
 
 // ── the theme channel ───────────────────────────────────────────────────────
 // Every swatch paints `var(--at-<name>, <dark value>)`. With no light ancestor
@@ -100,6 +101,53 @@ const LABEL_RECIPE = [
   nameOf(tokens.typography.tracking, LABEL.letterSpacing),
   'uppercase',
 ].join(' · ')
+
+// ── The family pivot ────────────────────────────────────────────────────────
+// Both columns are RESOLVED from the same functions the site paints with, so
+// this table cannot drift from the theme: the dark set is what a component
+// renders with no wrapper, the light set is what a light ancestor overrides it
+// with. The stop numbers are recovered by matching each value back against its
+// ramp, so they are read, never re-typed.
+const DARK_VARS = andromedaVars() as Record<string, string>
+const LIGHT_VARS = andromedaLightVars() as Record<string, string>
+
+const stripVar = (value: string) => {
+  const m = /^var\([^,]+,\s*(.*)\)$/.exec(String(value))
+  return m ? m[1] : String(value)
+}
+
+const TONES = [
+  { tone: 'info', name: 'Brand', ramp: tokens.color.brand },
+  { tone: 'success', name: 'Success', ramp: tokens.color.success },
+  { tone: 'warning', name: 'Warning', ramp: tokens.color.warning },
+  { tone: 'danger', name: 'Danger', ramp: tokens.color.danger },
+] as const
+
+const PIVOT_ROLES = [
+  ['text', 'Ink you read', 'text sitting on a grey ground'],
+  ['on-muted', 'Its second line', 'the quieter half of that text'],
+  ['mark', 'Marks and borders', 'a lit slat, a dot, a chart line, a frame'],
+  ['fill', 'The bed it sits on', 'a rail, a filled chip'],
+] as const
+
+const stopOf = (ramp: Record<string, string>, value: string) =>
+  Object.entries(ramp).find(([, v]) => v === value)?.[0] ?? '—'
+
+const PIVOT_TABLE = PIVOT_ROLES.map(([suffix, title, what]) => ({
+  suffix,
+  title,
+  what,
+  cells: TONES.map(({ tone, name, ramp }) => {
+    const dark = stripVar(DARK_VARS[`--andromeda-status-${tone}-${suffix}`] ?? '')
+    const light = LIGHT_VARS[`--at-status-${tone}-${suffix}`] ?? ''
+    const r = ramp as unknown as Record<string, string>
+    return { name, dark, light, darkStop: stopOf(r, dark), lightStop: stopOf(r, light) }
+  }),
+}))
+
+const DARK_GROUND = tokens.color.neutral[100]
+// The light page ground, read from the light set rather than restated.
+const LIGHT_GROUND = LIGHT_VARS['--at-neutral-100'] ?? '#ffffff'
 
 const SPACING_STEPS = [1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12] as const
 
@@ -350,6 +398,62 @@ export function FoundationView() {
         <p className="mt-1.5 text-[12px] text-sand-500">
           column heads, axis and legend labels, kickers, stat captions
         </p>
+      </div>
+
+      {/* ── The family pivot ── */}
+      <SectionHeading>How a family crosses the themes</SectionHeading>
+      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
+        A family ramp mirrors around its middle when the theme flips. 100 and 500 swap, 200
+        and 400 swap, and 300 is the pivot that never moves. The one thing that overrules the
+        mirror is contrast: where the mirrored value misses its floor on the light page
+        ground it steps toward the deep end until it clears, 3.0 for a mark and 4.5 for
+        anything read. Both columns below are resolved from the same functions the site
+        paints with, so they cannot drift from what you see.
+      </p>
+      <div className="overflow-x-auto rounded-xl border border-sand-300 dark:border-sand-800">
+        <div className="min-w-[44rem]">
+          <div className="grid grid-cols-[13rem_repeat(4,1fr)] gap-x-4 border-b border-sand-300 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-sand-500 dark:border-sand-800">
+            <span>Role</span>
+            {TONES.map((t) => (
+              <span key={t.tone}>{t.name}</span>
+            ))}
+          </div>
+          {PIVOT_TABLE.map(({ suffix, title, what, cells }, i) => (
+            <div
+              key={suffix}
+              className={`grid grid-cols-[13rem_repeat(4,1fr)] gap-x-4 px-4 py-3 ${
+                i > 0 ? 'border-t border-sand-300 dark:border-sand-800' : ''
+              }`}
+            >
+              <div>
+                <p className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">{title}</p>
+                <p className="text-[11px] leading-tight text-sand-500">{what}</p>
+              </div>
+              {cells.map((c) => (
+                <div key={c.name} className="flex items-center gap-2">
+                  {/* dark ground on the left, light ground on the right, same swatch size */}
+                  <span
+                    className="flex h-7 w-7 items-center justify-center rounded"
+                    style={{ backgroundColor: DARK_GROUND }}
+                    title={`dark ${c.darkStop}`}
+                  >
+                    <span className="h-3.5 w-3.5 rounded-sm" style={{ backgroundColor: c.dark }} />
+                  </span>
+                  <span
+                    className="flex h-7 w-7 items-center justify-center rounded"
+                    style={{ backgroundColor: LIGHT_GROUND }}
+                    title={`light ${c.lightStop}`}
+                  >
+                    <span className="h-3.5 w-3.5 rounded-sm" style={{ backgroundColor: c.light }} />
+                  </span>
+                  <span className="text-[12px] tabular-nums text-sand-500">
+                    {c.darkStop} &rarr; {c.lightStop}
+                  </span>
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ── Spacing ── */}
