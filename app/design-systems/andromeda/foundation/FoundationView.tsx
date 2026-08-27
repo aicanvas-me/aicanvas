@@ -318,7 +318,7 @@ export function FoundationView() {
                 className="overflow-hidden whitespace-nowrap text-sand-900 dark:text-sand-50"
                 style={{ fontSize: size, lineHeight: lead, letterSpacing: track }}
               >
-                Andromeda
+                Aa
               </span>
               <span className="text-right text-[12px] tabular-nums text-sand-600 dark:text-sand-400">{sizeText}</span>
               <span className="text-right text-[12px] tabular-nums text-sand-600 dark:text-sand-400">{leadText}</span>

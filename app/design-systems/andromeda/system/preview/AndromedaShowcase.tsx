@@ -728,7 +728,7 @@ export default function AndromedaShowcase({
                   <div key={step} style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[4], padding: `${tokens.spacing[2]} 0`, borderBottom: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})` }}>
                     <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-muted, ${tokens.color.text.muted})`, letterSpacing: tokens.typography.tracking.wider, width: 92, flexShrink: 0 }}>{step}</span>
                     <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, width: 72, flexShrink: 0 }}>{size} / {lead}</span>
-                    <span style={{ fontFamily: tokens.typography.fontSans, fontSize: size, lineHeight: lead, letterSpacing: track, color: `var(--at-text-primary, ${tokens.color.text.primary})`, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}>Andromeda</span>
+                    <span style={{ fontFamily: tokens.typography.fontSans, fontSize: size, lineHeight: lead, letterSpacing: track, color: `var(--at-text-primary, ${tokens.color.text.primary})`, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}>Aa</span>
                     <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: `var(--at-text-faint, ${tokens.color.text.faint})`, flexShrink: 0, textAlign: 'right' }}>{track}</span>
                   </div>
                 );
