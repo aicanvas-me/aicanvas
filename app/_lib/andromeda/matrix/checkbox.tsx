@@ -9,6 +9,13 @@ export const checkbox: MatrixSpec = {
   variants: [
     { label: 'Unchecked', props: {} },
     { label: 'Checked', props: { defaultChecked: true } },
+    {
+      label: 'With description',
+      props: {
+        defaultChecked: true,
+        description: 'We only email you about incidents on your own services.',
+      },
+    },
   ],
   states: [
     ...CONTROL_STATES,

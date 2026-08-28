@@ -13,6 +13,13 @@ export const radio: MatrixSpec = {
   variants: [
     { label: 'Off', props: {} },
     { label: 'On', props: { defaultChecked: true } },
+    {
+      label: 'With description',
+      props: {
+        defaultChecked: true,
+        description: 'Runs on the schedule you set, without asking again.',
+      },
+    },
   ],
   states: [
     ...CONTROL_STATES,
