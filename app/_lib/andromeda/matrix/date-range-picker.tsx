@@ -10,16 +10,16 @@ import type { MatrixSpec } from './types'
 // every build is a diff that never settles. That fixes the STARTING value only;
 // each case seeds its own state from these and moves from there.
 const RANGE = { start: new Date(2026, 6, 20), end: new Date(2026, 7, 20) }
-const SHORT = { start: new Date(2026, 7, 1), end: new Date(2026, 7, 14) }
 const SINGLE_DAY = { start: new Date(2026, 7, 20), end: new Date(2026, 7, 20) }
-const LAST_7_DAYS = { start: new Date(2026, 7, 14), end: new Date(2026, 7, 20) }
-const LAST_30_DAYS = { start: new Date(2026, 6, 22), end: new Date(2026, 7, 20) }
-const Q3_2026 = { start: new Date(2026, 6, 1), end: new Date(2026, 8, 30) }
+const LAST_3_DAYS = { start: new Date(2026, 7, 18), end: new Date(2026, 7, 20) }
+const LAST_WEEK = { start: new Date(2026, 7, 14), end: new Date(2026, 7, 20) }
+const LAST_MONTH = { start: new Date(2026, 6, 22), end: new Date(2026, 7, 20) }
+// Three presets, one row. A preset strip that wraps reads as a second control
+// under the calendar rather than as the calendar's own shortcuts.
 const PRESETS = [
-  { label: 'Sprint 34', range: SHORT },
-  { label: 'Last 7 days', range: LAST_7_DAYS },
-  { label: 'Last 30 days', range: LAST_30_DAYS },
-  { label: 'Q3 2026', range: Q3_2026 },
+  { label: 'Last 3 days', range: LAST_3_DAYS },
+  { label: 'Last week', range: LAST_WEEK },
+  { label: 'Last month', range: LAST_MONTH },
 ]
 
 // Anchor-then-confirm is a two-click behaviour with a hover preview in between,
@@ -55,7 +55,7 @@ export const dateRangePicker: MatrixSpec = {
   render: (_size, props) => <LiveDateRangePicker {...props} />,
   variants: [
     { label: 'Live' },
-    { label: 'With preset', props: { value: LAST_30_DAYS, presetLabel: 'Last 30 days', presets: PRESETS, staticOpen: true } },
+    { label: 'With preset', props: { value: LAST_MONTH, presetLabel: 'Last month', presets: PRESETS, staticOpen: true } },
     { label: 'Single day', props: { value: SINGLE_DAY } },
     { label: 'Open', props: { staticOpen: true } },
   ],
