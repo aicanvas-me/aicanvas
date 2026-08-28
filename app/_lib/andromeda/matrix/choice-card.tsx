@@ -130,5 +130,32 @@ export const choiceCard: MatrixSpec = {
       label: 'Disabled selected',
       props: { disabled: true, defaultChecked: true },
     },
+    // The GROUP's own disabled prop, which cascades to every card in it. Shown
+    // as a composition because one card cannot demonstrate a prop that belongs
+    // to the set.
+    {
+      label: 'Disabled group',
+      node: (
+        <ChoiceCardGroup
+          disabled
+          defaultValue="automatic"
+          aria-label="Deployment mode"
+          className="grid grid-cols-2 gap-[var(--andromeda-3)]"
+        >
+          <ChoiceCard
+            control="radio"
+            value="automatic"
+            title="Automatic"
+            description="Deploys every approved change."
+          />
+          <ChoiceCard
+            control="radio"
+            value="manual"
+            title="Manual"
+            description="You confirm each change."
+          />
+        </ChoiceCardGroup>
+      ),
+    },
   ],
 }

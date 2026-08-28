@@ -297,7 +297,12 @@ function CaseCard({
   solo?: boolean
 }) {
   const sizes = kind === 'variant' && spec.sizes && !c.node ? spec.sizes : null
-  const withBaseline = kind === 'state' && c.label !== REST.label && !c.node
+  // A disabled case shows ALONE. The baseline exists so a subtle shift reads
+  // against the default, but beside a dimmed control it does the opposite: the
+  // live instance under a "Disabled" heading invites the click that the case is
+  // there to say is impossible.
+  const disabledCase = (c.props as { disabled?: unknown } | undefined)?.disabled === true
+  const withBaseline = kind === 'state' && c.label !== REST.label && !c.node && !disabledCase
 
   // The card stays: it is what separates one case from the next on a long page.
   // Only a SOLO case drops it, since a lone box inside the page panel is a frame
