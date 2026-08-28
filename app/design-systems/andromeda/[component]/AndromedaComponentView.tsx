@@ -27,7 +27,7 @@ import { HighlightedCodeView } from '../../../components/HighlightedCodeView'
 // This replaced a hand-written per-slug demo whose size ramp had no state axis,
 // which is why this page could not show Destructive at lg while the system page
 // could.
-import { MatrixPreview, matrixSectionHeading } from '../../../_lib/andromeda/matrix/Matrix'
+import { MatrixPreview, MatrixSolo, matrixSectionHeading } from '../../../_lib/andromeda/matrix/Matrix'
 import { SPEC_BY_SLUG, matrixId } from '../../../_lib/andromeda/matrix'
 import { andromedaRegistrySlug } from '../../../_lib/andromeda/andromeda-meta'
 import { tokens } from '../../../lib/andromeda-v2.generated'
@@ -62,6 +62,19 @@ const coverageChip =
 
 const coveragePanel =
   'rounded-2xl border border-sand-300 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
+
+// The case the top frame leads with. Ruled 2026-08-28 for EVERY v2 component,
+// after the pilot on date-range-picker: the frame shows ONE live instance and
+// the full set sits below the coverage chips, instead of the frame carrying the
+// whole contact sheet.
+//
+// 'Live' is the reserved label for a case that is genuinely interactive
+// (matrix/types.ts), which is exactly what a hero wants. Only four specs
+// declare one; MatrixSolo falls back to the first case for the rest, and that
+// case is the component at rest in all 46 of them (Default, Initials, Playing).
+// A spec that later opens with something unrepresentative fixes it by ORDERING
+// its cases, not by a list of exceptions here.
+const SOLO_HERO_CASE = 'Live'
 
 export function AndromedaComponentView({
   slug,
@@ -367,7 +380,7 @@ export function AndromedaComponentView({
               // The theme channel: light sets --at-surface-base on the wrap.
               style={{ backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }}
             >
-              {!fullscreen && spec ? <MatrixPreview spec={spec} /> : null}
+              {!fullscreen && spec ? <MatrixSolo spec={spec} label={SOLO_HERO_CASE} /> : null}
             </div>
           ) : (
             <div
@@ -447,6 +460,24 @@ export function AndromedaComponentView({
             </section>
           )}
         </div>
+      ) : null}
+
+      {/* ── Examples (solo-hero pilot) ───────────────────────────────────
+          When the frame above leads with one live instance, the full set has
+          to land somewhere: here, below the chips that jump into it. The
+          anchor ids come from the same matrixId() the chips call, so a chip
+          still targets a real card and :target still lights it.
+
+          NO wrapper heading and NO panel around it (ruled 2026-08-28): the
+          matrix already prints "Configurations" and "States" over its own
+          sections, so an "Examples" heading above them was a third name for
+          the same thing, and a bordered box inset the cards from a column
+          they should sit directly in. The section is a bare margin now — the
+          cards carry their own frames. */}
+      {spec ? (
+        <section className="mt-12">
+          <MatrixPreview spec={spec} />
+        </section>
       ) : null}
 
       {/* ── Installation ─────────────────────────────────────────────── */}
