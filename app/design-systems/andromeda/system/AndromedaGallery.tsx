@@ -2,7 +2,7 @@
 
 // Andromeda gallery INDEX — the public /system page. Same editorial rhythm as
 // the Lumen gallery: category eyebrow, oversized display heading, lede, one
-// search field, then category sections of numbered cards linking to the
+// search field, then category sections of cards linking to the
 // component pages. AI Canvas chrome (sand/olive, Manrope), so it reads as a
 // site page and follows the light/dark toggle.
 //
@@ -11,7 +11,7 @@
 // page is site chrome.
 import { useMemo, useState } from 'react'
 import Link from 'next/link'
-import { MagnifyingGlass } from '@phosphor-icons/react'
+import { ArrowUpRight, MagnifyingGlass } from '@phosphor-icons/react'
 
 export type GalleryItem = {
   slug: string
@@ -51,14 +51,6 @@ export function AndromedaGallery({
     return { matches, byCategory: byCategory(matches) }
   }, [components, query])
 
-  // Stable 01…40 numbering from the full list, so a card keeps its number while
-  // the list is filtered — numbering per filtered section would renumber cards
-  // as you type.
-  const numbers = useMemo(
-    () => new Map(components.map((c, i) => [c.slug, String(i + 1).padStart(2, '0')])),
-    [components],
-  )
-
   return (
     <main className="mx-auto w-full max-w-6xl px-4 pt-8 pb-16 sm:px-6 sm:pt-14">
       <header className="border-b border-sand-300 pb-10 dark:border-sand-800">
@@ -76,7 +68,7 @@ export function AndromedaGallery({
           ships its variants and its interaction states.
         </p>
 
-        <label className="mt-8 flex max-w-md items-center gap-3 rounded-xl border border-sand-300 bg-sand-100 px-4 py-3 focus-within:border-olive-500 dark:border-sand-800 dark:bg-sand-900">
+        <label className="mt-8 flex max-w-md items-center gap-3 rounded-xl border border-sand-300 bg-sand-100 px-4 py-3 transition-colors hover:border-sand-400 focus-within:border-olive-500 focus-within:ring-2 focus-within:ring-olive-500/20 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600">
           <MagnifyingGlass weight="regular" size={18} className="shrink-0 text-sand-500" />
           <span className="sr-only">Search Andromeda components</span>
           <input
@@ -109,14 +101,18 @@ export function AndromedaGallery({
               <Link
                 key={item.slug}
                 href={`/design-systems/andromeda/${item.slug}`}
-                className="flex flex-col rounded-2xl border border-sand-300 bg-sand-100 p-4 transition-colors hover:border-olive-500 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-olive-400"
+                className="group flex flex-col rounded-2xl border border-sand-300 bg-sand-100 p-4 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600"
               >
-                <span className="text-xxs font-bold tabular-nums text-sand-500">
-                  {numbers.get(item.slug)}
-                </span>
-                <h3 className="mt-2 text-base font-bold text-sand-900 dark:text-sand-50">
-                  {item.name}
-                </h3>
+                <div className="flex items-start justify-between gap-3">
+                  <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">
+                    {item.name}
+                  </h3>
+                  <ArrowUpRight
+                    weight="regular"
+                    size={16}
+                    className="mt-0.5 shrink-0 text-sand-400 transition-colors group-hover:text-sand-700 dark:text-sand-500 dark:group-hover:text-sand-300"
+                  />
+                </div>
                 <p className="mt-1.5 flex-1 text-xs leading-relaxed text-sand-600 dark:text-sand-400">
                   {item.description}
                 </p>
