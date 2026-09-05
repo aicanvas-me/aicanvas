@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { CheckCircle, Lightning, Lock } from '@phosphor-icons/react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { buttonClasses } from '../Button'
 import { TerminatorCool, TerminatorSkull } from '../auth/TerminatorReveal'
 import { useSession } from '../auth/SessionProvider'
@@ -22,6 +23,12 @@ const FREE_FEATURES = [
   'MCP server for Claude Code, Codex and Cursor',
   'Lab access with presets and export',
   'Save your favorite components',
+]
+
+// The toggle's two options, with the fill each one wears when selected.
+const CYCLES = [
+  { key: 'monthly' as const, fill: 'bg-sand-100 dark:bg-sand-800' },
+  { key: 'yearly' as const, fill: 'bg-olive-500' },
 ]
 
 const PREMIUM_FEATURES = [
@@ -46,6 +53,7 @@ export function PremiumCards({
   className?: string
 }) {
   const { user } = useSession()
+  const reduceMotion = useReducedMotion()
   const [cycle, setCycle] = useState<'monthly' | 'yearly'>('yearly')
   const price = cycle === 'yearly' ? '$49.99' : '$8.99'
   const suffix = cycle === 'yearly' ? 'year' : 'month'
@@ -153,30 +161,54 @@ export function PremiumCards({
 
           {/* Billing cycle toggle + struck yearly-anchor price sit side by side. */}
           <div className="mt-3 flex items-center gap-3">
-          {/* Billing cycle toggle — defaults to Yearly; the selected option is highlighted. */}
+          {/* Billing cycle toggle — defaults to Yearly. The highlight is one
+              element that slides between the two options (shared layoutId), so
+              the eye follows the selection instead of watching one box blink
+              off and another blink on. It resizes as it travels, because the
+              two labels are different widths. */}
           <div className="inline-flex rounded-lg border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950">
-            <button
-              type="button"
-              onClick={() => setCycle('monthly')}
-              className={`rounded-md px-3 py-1 text-xs font-semibold transition-colors ${
-                cycle === 'monthly'
-                  ? 'bg-sand-100 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                  : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              type="button"
-              onClick={() => setCycle('yearly')}
-              className={`rounded-md px-3 py-1 text-xs font-semibold transition-colors ${
-                cycle === 'yearly'
-                  ? 'bg-olive-500 text-sand-950'
-                  : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
-              }`}
-            >
-              Yearly <span className={cycle === 'yearly' ? 'opacity-80' : 'text-olive-600 dark:text-olive-400'}>· save 54%</span>
-            </button>
+            {CYCLES.map(({ key, fill }) => {
+              const selected = cycle === key
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setCycle(key)}
+                  aria-pressed={selected}
+                  className={`relative rounded-md px-3 py-1 text-xs font-semibold transition-colors ${
+                    selected
+                      ? key === 'yearly'
+                        ? 'text-sand-950'
+                        : 'text-sand-900 dark:text-sand-50'
+                      : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
+                  }`}
+                >
+                  {selected && (
+                    <motion.span
+                      layoutId="billing-cycle-pill"
+                      className={`absolute inset-0 rounded-md ${fill}`}
+                      transition={
+                        reduceMotion
+                          ? { duration: 0 }
+                          : { type: 'spring', stiffness: 420, damping: 34, mass: 0.7 }
+                      }
+                    />
+                  )}
+                  <span className="relative">
+                    {key === 'monthly' ? (
+                      'Monthly'
+                    ) : (
+                      <>
+                        Yearly{' '}
+                        <span className={selected ? 'opacity-80' : 'text-olive-600 dark:text-olive-400'}>
+                          · save 54%
+                        </span>
+                      </>
+                    )}
+                  </span>
+                </button>
+              )
+            })}
           </div>
           {/* Yearly anchor: 12 x $8.99 monthly, struck through so the saving reads in money. */}
           {cycle === 'yearly' && (
