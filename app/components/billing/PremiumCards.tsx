@@ -73,8 +73,8 @@ export function PremiumCards({
   const iconBox = compact ? 'h-12 w-12' : 'h-16 w-16'
   const heading = compact ? 'text-2xl' : 'text-3xl'
   const priceText = compact ? 'text-4xl' : 'text-4xl sm:text-5xl'
-  const cardPad = compact ? 'px-4 pt-5 pb-5' : 'px-4 pt-6 pb-6 sm:px-5 sm:pt-7'
-  const listPad = compact ? 'px-4 py-4' : 'px-4 py-6 sm:px-5'
+  const cardPad = compact ? 'px-3 pt-5 pb-5' : 'px-3 pt-6 pb-6 sm:px-3.5 sm:pt-7'
+  const listPad = compact ? 'px-3 py-4' : 'px-3 py-6 sm:px-3.5'
 
   return (
     <>
