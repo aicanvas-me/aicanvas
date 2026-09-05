@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import Link from 'next/link'
 import { CheckCircle, Lightning, Lock } from '@phosphor-icons/react'
 import { motion, useReducedMotion } from 'framer-motion'
@@ -52,6 +52,11 @@ export function PremiumCards({
 }) {
   const { user } = useSession()
   const reduceMotion = useReducedMotion()
+  // Per-instance, because two of these can be mounted at once: the home page
+  // section and the paywall modal that lives in the root layout. A shared
+  // layoutId would make framer treat both highlights as one element and fly it
+  // from the page into the modal.
+  const pillId = useId()
   const [cycle, setCycle] = useState<'monthly' | 'yearly'>('yearly')
   const price = cycle === 'yearly' ? '$49.99' : '$8.99'
   const suffix = cycle === 'yearly' ? 'year' : 'month'
@@ -181,7 +186,7 @@ export function PremiumCards({
                 >
                   {selected && (
                     <motion.span
-                      layoutId="billing-cycle-pill"
+                      layoutId={`billing-cycle-pill-${pillId}`}
                       className="absolute inset-0 rounded-md bg-olive-500"
                       transition={
                         reduceMotion
