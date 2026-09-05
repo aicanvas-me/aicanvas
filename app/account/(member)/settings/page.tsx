@@ -1,5 +1,4 @@
 import { createClient } from '../../../lib/supabase/server'
-import { AvatarSection } from './AvatarSection'
 import { SettingsForm } from './SettingsForm'
 import { PasswordSection } from './PasswordSection'
 import { AccountBilling } from './AccountBilling'
@@ -54,7 +53,6 @@ export default async function SettingsPage() {
 
   return (
     <div className="space-y-4">
-      <AvatarSection />
       <SettingsForm initial={initial} />
       <PasswordSection hasPassword={hasPassword} email={user.email ?? ''} />
       <AccountBilling />

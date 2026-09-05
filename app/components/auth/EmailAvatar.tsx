@@ -54,10 +54,10 @@ type Props = {
 }
 
 export function EmailAvatar({ email, photoUrl, className = '' }: Props) {
-  // A circle everywhere except where the caller asks for another radius (the
-  // topbar draws a rounded rectangle). Tested rather than merged: two radius
-  // utilities on one element are settled by their order in the stylesheet, not
-  // by the order they are written here, so rounded-full would quietly win.
+  // A circle unless the caller asks for another radius. Tested rather than
+  // merged: two radius utilities on one element are settled by their order in
+  // the stylesheet, not by the order they are written here, so rounded-full
+  // would quietly win over anything a caller passed.
   const radius = className.split(' ').some((c) => c === 'rounded' || c.startsWith('rounded-'))
     ? ''
     : 'rounded-full'

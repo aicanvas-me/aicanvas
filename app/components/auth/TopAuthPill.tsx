@@ -65,7 +65,7 @@ export function TopAuthPill() {
           aria-expanded={open}
           className="group flex cursor-pointer items-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
         >
-          <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-6 w-6 rounded-md text-xs" />
+          <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-6 w-6 text-xs" />
           <CaretUpDown
             size={12}
             weight="regular"

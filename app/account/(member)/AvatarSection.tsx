@@ -3,10 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Check } from '@phosphor-icons/react'
-import { useSession } from '../../../components/auth/SessionProvider'
-import { EmailAvatar, photoFromUser } from '../../../components/auth/EmailAvatar'
-import { createClient } from '../../../lib/supabase/client'
-import { USER_AVATAR_IDS, userAvatarUrl } from '../../../lib/user-avatars'
+import { useSession } from '../../components/auth/SessionProvider'
+import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
+import { createClient } from '../../lib/supabase/client'
+import { USER_AVATAR_IDS, userAvatarUrl } from '../../lib/user-avatars'
 
 // ─── AvatarSection ────────────────────────────────────────────────────────────
 // Lets a signed-in person swap the badge in the top bar for one of the
@@ -48,14 +48,14 @@ export function AvatarSection() {
     router.refresh()
   }
 
-  const tile = 'relative flex h-14 w-14 items-center justify-center rounded-xl transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 motion-reduce:transition-none disabled:opacity-50'
+  const tile = 'relative flex h-14 w-14 items-center justify-center rounded-full transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 motion-reduce:transition-none disabled:opacity-50'
   const ring = (selected: boolean) =>
     selected ? 'ring-2 ring-olive-500 ring-offset-2 ring-offset-sand-100 dark:ring-offset-sand-900' : ''
 
   return (
-    <section className="rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
-      <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">Avatar</h2>
-      <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
+    <section className="rounded-xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
+      <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">Avatar</h2>
+      <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
         Pick one of ours, or keep the photo from your sign-in provider.
       </p>
 
@@ -72,7 +72,7 @@ export function AvatarSection() {
           <EmailAvatar
             email={email}
             photoUrl={photoFromUser({ user_metadata: { ...user.user_metadata, custom_avatar: null } })}
-            className="h-14 w-14 rounded-xl text-lg"
+            className="h-14 w-14 text-lg"
           />
           {current === null && <Selected />}
         </button>
@@ -87,7 +87,7 @@ export function AvatarSection() {
             aria-label={`Use avatar ${id.replace('avatar-', '')}`}
             className={`${tile} ${ring(current === id)}`}
           >
-            <EmailAvatar email={email} photoUrl={userAvatarUrl(id, 128)} className="h-14 w-14 rounded-xl" />
+            <EmailAvatar email={email} photoUrl={userAvatarUrl(id, 128)} className="h-14 w-14" />
             {current === id && <Selected />}
           </button>
         ))}
