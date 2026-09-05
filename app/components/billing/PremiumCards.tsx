@@ -25,11 +25,9 @@ const FREE_FEATURES = [
   'Save your favorite components',
 ]
 
-// The toggle's two options, with the fill each one wears when selected.
-const CYCLES = [
-  { key: 'monthly' as const, fill: 'bg-white shadow-sm dark:bg-sand-800 dark:shadow-none' },
-  { key: 'yearly' as const, fill: 'bg-olive-500' },
-]
+// The toggle's two options. One olive fill for both: the highlight keeps its
+// colour and only travels, so nothing about it changes except where it is.
+const CYCLES = ['monthly', 'yearly'] as const
 
 const PREMIUM_FEATURES = [
   'Every premium component and block, one command install',
@@ -167,7 +165,7 @@ export function PremiumCards({
               off and another blink on. It resizes as it travels, because the
               two labels are different widths. */}
           <div className="inline-flex rounded-lg border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950">
-            {CYCLES.map(({ key, fill }) => {
+            {CYCLES.map((key) => {
               const selected = cycle === key
               return (
                 <button
@@ -177,16 +175,14 @@ export function PremiumCards({
                   aria-pressed={selected}
                   className={`relative rounded-md px-3 py-1 text-xs font-semibold transition-colors ${
                     selected
-                      ? key === 'yearly'
-                        ? 'text-sand-950'
-                        : 'text-sand-900 dark:text-sand-50'
+                      ? 'text-sand-950'
                       : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
                   {selected && (
                     <motion.span
                       layoutId="billing-cycle-pill"
-                      className={`absolute inset-0 rounded-md ${fill}`}
+                      className="absolute inset-0 rounded-md bg-olive-500"
                       transition={
                         reduceMotion
                           ? { duration: 0 }
