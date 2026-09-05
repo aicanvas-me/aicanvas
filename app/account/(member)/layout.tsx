@@ -35,7 +35,7 @@ export default async function MemberLayout({ children }: { children: ReactNode }
       <AccountTopBar />
       <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
         <div className="mb-6 flex items-center gap-4 sm:mb-8">
-          <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-12 w-12 shrink-0 sm:h-16 sm:w-16" />
+          <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-12 w-12 shrink-0 text-xl sm:h-16 sm:w-16 sm:text-2xl" />
           <div className="min-w-0">
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold text-sand-900 dark:text-sand-50 sm:text-3xl">Your account</h1>

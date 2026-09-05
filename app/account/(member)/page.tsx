@@ -1,4 +1,5 @@
 import { createClient } from '../../lib/supabase/server'
+import { AvatarSection } from './AvatarSection'
 import { SignOutButton } from './SignOutButton'
 
 export default async function AccountPage() {
@@ -27,6 +28,8 @@ export default async function AccountPage() {
           </div>
         </dl>
       </div>
+
+      <AvatarSection />
 
       <div className="rounded-xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
         <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">Session</h2>

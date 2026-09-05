@@ -464,7 +464,7 @@ export function MobileNav({
                   <XLogo weight="regular" size={20} />
                 </a>
                 {/* Far edge: a site setting, not a third social link. */}
-                <ThemeToggle className="ml-auto" />
+                <ThemeToggle className="ml-auto" size="md" />
               </div>
 
               {/* Auth row */}

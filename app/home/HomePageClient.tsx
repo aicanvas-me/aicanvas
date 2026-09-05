@@ -25,6 +25,8 @@ import { Reveal } from './Reveal'
 import { StackedCards, AnimatedCount, WireIcons, FeaturedCarousel, FaqAccordion } from './islands'
 import type { ComponentMeta } from '../lib/component-registry'
 import { GITHUB_URL } from '../lib/config'
+import { premiumEnabled } from '../../lib/flags'
+import { PremiumCards } from '../components/billing/PremiumCards'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -35,6 +37,8 @@ interface Props {
   pulls: number
   carouselItems: ComponentMeta[]
 }
+
+const PREMIUM = premiumEnabled()
 
 // ─── HomePageClient ────────────────────────────────────────────────────────────
 
@@ -530,6 +534,28 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
             <FaqAccordion />
           </div>
         </section>
+
+        {/* ── Pricing ── */}
+        {/* The same <PremiumCards /> that /pricing renders, so the plans, the
+            prices, the billing cycle switch and the entitlement-aware CTA can
+            never drift between the two pages. Premium off = no section: the
+            site is then fully free and has nothing to sell here. */}
+        {PREMIUM && (
+          <section className="mt-16 sm:mt-24">
+            <Reveal className="text-center">
+              <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Pricing</p>
+              <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">
+                The free library stays free.
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
+                Every free component ships its full source and its remix prompt, installed
+                with one command. Premium adds the closed-source components, blocks,
+                design systems and templates.
+              </p>
+            </Reveal>
+            <PremiumCards />
+          </section>
+        )}
 
         {/* ── Final CTA ── */}
         <section className="mt-16 sm:mt-24">
