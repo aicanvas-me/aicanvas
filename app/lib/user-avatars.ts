@@ -13,10 +13,15 @@
 const BASE = 'https://ik.imagekit.io/aitoolkit/user-avatars'
 const COUNT = 22
 
+// Withdrawn from the picker. Ids are never renumbered or reused: an account
+// stores the id it picked, so shifting the numbers would hand people a
+// different face than the one they chose.
+const RETIRED = new Set(['avatar-02'])
+
 export const USER_AVATAR_IDS = Array.from(
   { length: COUNT },
   (_, i) => `avatar-${String(i + 1).padStart(2, '0')}`,
-)
+).filter((id) => !RETIRED.has(id))
 
 export function isUserAvatarId(value: unknown): value is string {
   return typeof value === 'string' && USER_AVATAR_IDS.includes(value)
