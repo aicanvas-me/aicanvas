@@ -1,5 +1,5 @@
 // ─── User avatars ─────────────────────────────────────────────────────────────
-// The illustrated avatars a signed-in person can pick in /account/settings.
+// The illustrated avatars a signed-in person can pick on /account.
 // The art lives on ImageKit under /user-avatars (upload it with
 // scripts/upload-user-avatars.mjs), so adding to the set is a matter of
 // dropping new files in that folder and raising COUNT.
@@ -28,10 +28,11 @@ export function isUserAvatarId(value: unknown): value is string {
 }
 
 /**
- * Art is square and 1500px; ImageKit resizes on the fly. Ask for twice the
- * drawn size so it stays sharp on retina, and keep the size list short so the
- * CDN caches a handful of variants instead of one per call site.
+ * Art is square and 1500px; ImageKit resizes on the fly. 128 is twice the
+ * largest draw on the site (the 64px account header), so it stays sharp on
+ * retina, and one size for every call site means the CDN caches one variant
+ * and a visitor downloads the art once.
  */
-export function userAvatarUrl(id: string, px: 64 | 128 | 256 = 128) {
+export function userAvatarUrl(id: string, px = 128) {
   return `${BASE}/${id}.png?tr=w-${px},h-${px}`
 }

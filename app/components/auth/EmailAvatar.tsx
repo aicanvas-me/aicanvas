@@ -14,13 +14,13 @@ import { isUserAvatarId, userAvatarUrl } from '../../lib/user-avatars'
 type UserLike = { user_metadata?: Record<string, unknown> | null } | null | undefined
 
 /**
- * The avatar the person picked in /account/settings, if any. Stored on the
+ * The avatar the person picked in /account, if any. Stored on the
  * account (user_metadata.custom_avatar) as a catalogue id, so it beats the
  * provider photo: an explicit choice outranks whatever Google had on file.
  */
-export function pickedAvatarFromUser(user: UserLike): string | undefined {
+function pickedAvatarFromUser(user: UserLike): string | undefined {
   const id = user?.user_metadata?.custom_avatar
-  return isUserAvatarId(id) ? userAvatarUrl(id, 256) : undefined
+  return isUserAvatarId(id) ? userAvatarUrl(id) : undefined
 }
 
 // Google hands us a 96px photo (…=s96-c). The largest circle we draw is 64px,
@@ -32,7 +32,8 @@ const PHOTO_PX = 128
  * Profile photo URL an OAuth provider stored on the account, if any. Supabase
  * writes Google's picture claim into user_metadata at sign-in under both
  * `avatar_url` and `picture`; neither is present for email/password accounts.
- * Only a plain https URL is accepted, since the value lands in a CSS url().
+ * Only a plain https URL is accepted: it is written straight into an <img>
+ * src, and nothing else about the account has vetted it.
  */
 export function photoFromUser(user: UserLike): string | undefined {
   const picked = pickedAvatarFromUser(user)
@@ -55,13 +56,6 @@ type Props = {
 }
 
 export function EmailAvatar({ email, photoUrl, className = '' }: Props) {
-  // A circle unless the caller asks for another radius. Tested rather than
-  // merged: two radius utilities on one element are settled by their order in
-  // the stylesheet, not by the order they are written here, so rounded-full
-  // would quietly win over anything a caller passed.
-  const radius = className.split(' ').some((c) => c === 'rounded' || c.startsWith('rounded-'))
-    ? ''
-    : 'rounded-full'
   const initial = (email.trim()[0] ?? '?').toUpperCase()
   return (
     <span
@@ -71,7 +65,7 @@ export function EmailAvatar({ email, photoUrl, className = '' }: Props) {
       // transparent corners — the halo that made every avatar look ragged.
       className={`relative flex items-center justify-center overflow-hidden border border-sand-200 font-semibold leading-none dark:border-sand-800 ${
         photoUrl ? 'text-sand-700 dark:text-sand-300' : 'bg-olive-500 text-sand-950'
-      } ${radius} ${className}`}
+      } rounded-full ${className}`}
     >
       {/* Always rendered, and covered by the picture when there is one, so a
           photo that never arrives (a dead provider URL, an offline moment)

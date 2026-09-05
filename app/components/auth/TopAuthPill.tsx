@@ -55,9 +55,8 @@ export function TopAuthPill() {
     <div className="relative" ref={ref}>
         {/* Avatar only, and no button chrome around it: the photo is already a
             solid shape, so a border and a background would only draw a box
-            around a box. A rounded rectangle rather than a circle, to sit with
-            the square icon buttons in the same bar. The up/down caret next to
-            it is what says the thing opens a menu. */}
+            around a box. The up/down caret next to it is what says the thing
+            opens a menu. */}
         <button
           type="button"
           onClick={() => setOpen((v) => !v)}

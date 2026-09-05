@@ -14,9 +14,8 @@ import { USER_AVATAR_IDS, userAvatarUrl } from '../../lib/user-avatars'
 // (user_metadata.custom_avatar), written with the user's own session, so there
 // is no table, no API route and no server round trip beyond Supabase's own.
 //
-// The tiles are the real EmailAvatar rather than plain <img>: the picker then
-// shows exactly what the top bar will show, including the tile behind art with
-// transparent corners.
+// The tiles are the real EmailAvatar rather than plain <img>, so the picker
+// shows exactly what the top bar will show.
 
 export function AvatarSection() {
   const { user } = useSession()
@@ -36,12 +35,21 @@ export function AvatarSection() {
     if (saving) return
     setSaving(id ?? 'default')
     setFailed(false)
-    const supabase = createClient()
-    const { error } = await supabase.auth.updateUser({ data: { custom_avatar: id } })
-    setSaving(null)
-    if (error) {
+    // finally, not a plain await: supabase-js returns { error } for auth
+    // failures but THROWS for anything else, and a throw here would leave every
+    // tile disabled with no message and no way back short of a reload.
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.updateUser({ data: { custom_avatar: id } })
+      if (error) {
+        setFailed(true)
+        return
+      }
+    } catch {
       setFailed(true)
       return
+    } finally {
+      setSaving(null)
     }
     // The top bar follows the session on its own (USER_UPDATED); this is for
     // the server-rendered account header one level up.
@@ -87,7 +95,7 @@ export function AvatarSection() {
             aria-label={`Use avatar ${id.replace('avatar-', '')}`}
             className={`${tile} ${ring(current === id)}`}
           >
-            <EmailAvatar email={email} photoUrl={userAvatarUrl(id, 128)} className="h-14 w-14" />
+            <EmailAvatar email={email} photoUrl={userAvatarUrl(id)} className="h-14 w-14 text-lg" />
             {current === id && <Selected />}
           </button>
         ))}

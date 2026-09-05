@@ -165,10 +165,10 @@ export function PremiumCards({
           {/* Billing cycle toggle + struck yearly-anchor price sit side by side. */}
           <div className="mt-3 flex items-center gap-3">
           {/* Billing cycle toggle — defaults to Yearly. The highlight is one
-              element that slides between the two options (shared layoutId), so
-              the eye follows the selection instead of watching one box blink
-              off and another blink on. It resizes as it travels, because the
-              two labels are different widths. */}
+              element that slides between the two options, so the eye follows
+              the selection instead of watching one box blink off and another
+              blink on. It resizes as it travels, because the two labels are
+              different widths. */}
           <div className="inline-flex rounded-lg border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950">
             {CYCLES.map((key) => {
               const selected = cycle === key
