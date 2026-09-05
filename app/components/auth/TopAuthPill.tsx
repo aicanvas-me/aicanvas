@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { CaretDown, ClockClockwise, Flask, Gear, Heart, Lightning, SignIn, SignOut, User } from '@phosphor-icons/react'
+import { CaretUpDown, ClockClockwise, Flask, Gear, Heart, Lightning, SignIn, SignOut, User } from '@phosphor-icons/react'
 import { useSession } from './SessionProvider'
 import { useAuthModal } from './AuthModalProvider'
 import { createClient } from '../../lib/supabase/client'
@@ -53,15 +53,25 @@ export function TopAuthPill() {
 
   return (
     <div className="relative" ref={ref}>
-        <Button
-          variant="outline"
-          size="xs"
+        {/* Avatar only, and no button chrome around it: the photo is already a
+            solid shape, so a border and a background would only draw a box
+            around a box. A rounded rectangle rather than a circle, to sit with
+            the square icon buttons in the same bar. The up/down caret next to
+            it is what says the thing opens a menu. */}
+        <button
+          type="button"
           onClick={() => setOpen((v) => !v)}
           aria-label={`Account menu for ${email}`}
+          aria-expanded={open}
+          className="group flex cursor-pointer items-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
         >
-          <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-4 w-4" />
-          <CaretDown size={10} weight="regular" className={`transition-transform ${open ? '-rotate-180' : ''}`} />
-        </Button>
+          <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-6 w-6 rounded-md text-xs" />
+          <CaretUpDown
+            size={12}
+            weight="regular"
+            className="text-sand-500 transition-colors group-hover:text-sand-700 dark:text-sand-400 dark:group-hover:text-sand-200"
+          />
+        </button>
         {open && (
           <div className="absolute right-0 top-full mt-1 w-48 overflow-hidden rounded-lg border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
             <div className="border-b border-sand-200 px-3 py-2 text-xs text-sand-600 dark:border-sand-800 dark:text-sand-400">

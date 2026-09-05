@@ -1,38 +1,26 @@
 // ─── EmailAvatar ─────────────────────────────────────────────────────────────
 // Identity glyph for the signed-in user. When the account has a profile photo
-// (Google fills one in at sign-in) it is painted on top; otherwise the circle
-// falls back to a deterministic gradient seeded by the email hash — same email
-// always renders the same two-hue gradient at the same angle, no storage
-// required. Used in the top pill, the sidebar menu and the account header.
+// (Google fills one in at sign-in) it is painted on top; otherwise the badge is
+// a flat cyan-500 tile carrying the first letter of the address. Used in the
+// top pill, the sidebar menu and the account header.
 //
-// The photo is a CSS background layer stacked OVER the gradient rather than an
-// <img>, so a missing, slow or dead photo URL degrades to the gradient with no
+// The photo is a CSS background layer stacked OVER that tile rather than an
+// <img>, so a missing, slow or dead photo URL degrades to the letter with no
 // client JS and no error handler — this component stays server-renderable.
-//
-// Saturation and lightness are clamped to a muted mid-tone range so the
-// gradient sits comfortably alongside the sand/olive palette in both themes.
-// Hue and angle are derived from a 32-bit FNV-1a hash of the email so the
-// distribution covers the wheel without bias from short or alphabetic inputs.
 
-function hashEmail(email: string): number {
-  let h = 2166136261
-  const lower = email.toLowerCase()
-  for (let i = 0; i < lower.length; i++) {
-    h = Math.imul(h ^ lower.charCodeAt(i), 16777619)
-  }
-  return h >>> 0
-}
-
-function gradientFromEmail(email: string) {
-  const h = hashEmail(email)
-  // Two hues 60–120° apart for visible duotone without clashing.
-  const hue1 = h % 360
-  const hue2 = (hue1 + 60 + ((h >>> 9) % 60)) % 360
-  const angle = (h >>> 18) % 360
-  return { hue1, hue2, angle }
-}
+import { isUserAvatarId, userAvatarUrl } from '../../lib/user-avatars'
 
 type UserLike = { user_metadata?: Record<string, unknown> | null } | null | undefined
+
+/**
+ * The avatar the person picked in /account/settings, if any. Stored on the
+ * account (user_metadata.custom_avatar) as a catalogue id, so it beats the
+ * provider photo: an explicit choice outranks whatever Google had on file.
+ */
+export function pickedAvatarFromUser(user: UserLike): string | undefined {
+  const id = user?.user_metadata?.custom_avatar
+  return isUserAvatarId(id) ? userAvatarUrl(id, 256) : undefined
+}
 
 // Google hands us a 96px photo (…=s96-c). The largest circle we draw is 64px,
 // so ask for 128 — sharp on retina, and one URL for every size on the page
@@ -46,6 +34,8 @@ const PHOTO_PX = 128
  * Only a plain https URL is accepted, since the value lands in a CSS url().
  */
 export function photoFromUser(user: UserLike): string | undefined {
+  const picked = pickedAvatarFromUser(user)
+  if (picked) return picked
   const meta = user?.user_metadata
   if (!meta) return undefined
   const url = meta.avatar_url ?? meta.picture
@@ -64,15 +54,24 @@ type Props = {
 }
 
 export function EmailAvatar({ email, photoUrl, className = '' }: Props) {
-  const { hue1, hue2, angle } = gradientFromEmail(email)
-  const gradient = `linear-gradient(${angle}deg, hsl(${hue1} 55% 55%), hsl(${hue2} 55% 40%))`
+  // A circle everywhere except where the caller asks for another radius (the
+  // topbar draws a rounded rectangle). Tested rather than merged: two radius
+  // utilities on one element are settled by their order in the stylesheet, not
+  // by the order they are written here, so rounded-full would quietly win.
+  const radius = className.split(' ').some((c) => c === 'rounded' || c.startsWith('rounded-'))
+    ? ''
+    : 'rounded-full'
+  const initial = (email.trim()[0] ?? '?').toUpperCase()
   return (
     <span
       aria-hidden="true"
-      className={`block rounded-full bg-cover bg-center bg-no-repeat ${className}`}
-      style={{
-        backgroundImage: photoUrl ? `url("${photoUrl}"), ${gradient}` : gradient,
-      }}
-    />
+      className={`flex items-center justify-center overflow-hidden bg-cyan-500 bg-cover bg-center bg-no-repeat font-semibold leading-none text-sand-950 ${radius} ${className}`}
+      style={photoUrl ? { backgroundImage: `url("${photoUrl}")` } : undefined}
+    >
+      {/* Hidden behind the photo when there is one; drawn on the cyan tile when
+          there is not. Sized from the caller's text-* class so one glyph works
+          from the 24px topbar badge up to the 64px account header. */}
+      {photoUrl ? null : initial}
+    </span>
   )
 }
