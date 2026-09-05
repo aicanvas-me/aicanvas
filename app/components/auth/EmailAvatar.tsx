@@ -1,7 +1,7 @@
 // ─── EmailAvatar ─────────────────────────────────────────────────────────────
 // Identity glyph for the signed-in user. When the account has a profile photo
 // (Google fills one in at sign-in) it is painted on top; otherwise the badge is
-// a flat cyan-500 tile carrying the first letter of the address. Used in the
+// a flat olive-500 tile carrying the first letter of the address. Used in the
 // top pill, the sidebar menu and the account header.
 //
 // The photo is a CSS background layer stacked OVER that tile rather than an
@@ -65,10 +65,10 @@ export function EmailAvatar({ email, photoUrl, className = '' }: Props) {
   return (
     <span
       aria-hidden="true"
-      className={`flex items-center justify-center overflow-hidden bg-cyan-500 bg-cover bg-center bg-no-repeat font-semibold leading-none text-sand-950 ${radius} ${className}`}
+      className={`flex items-center justify-center overflow-hidden border border-sand-200 bg-olive-500 bg-cover bg-center bg-no-repeat font-semibold leading-none text-sand-950 dark:border-sand-800 ${radius} ${className}`}
       style={photoUrl ? { backgroundImage: `url("${photoUrl}")` } : undefined}
     >
-      {/* Hidden behind the photo when there is one; drawn on the cyan tile when
+      {/* Hidden behind the photo when there is one; drawn on the olive tile when
           there is not. Sized from the caller's text-* class so one glyph works
           from the 24px topbar badge up to the 64px account header. */}
       {photoUrl ? null : initial}
