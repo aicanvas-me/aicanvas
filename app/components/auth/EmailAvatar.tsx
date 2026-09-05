@@ -4,9 +4,10 @@
 // a flat olive-500 tile carrying the first letter of the address. Used in the
 // top pill, the sidebar menu and the account header.
 //
-// The photo is a CSS background layer stacked OVER that tile rather than an
-// <img>, so a missing, slow or dead photo URL degrades to the letter with no
-// client JS and no error handler — this component stays server-renderable.
+// The photo is a plain <img> stacked over the letter, not a CSS background: a
+// picture that never arrives leaves the letter showing, with no client JS and
+// no error handler — this component stays server-renderable. next/image is the
+// wrong tool here (arbitrary provider hosts, 24px draws, no layout to reserve).
 
 import { isUserAvatarId, userAvatarUrl } from '../../lib/user-avatars'
 
@@ -65,13 +66,30 @@ export function EmailAvatar({ email, photoUrl, className = '' }: Props) {
   return (
     <span
       aria-hidden="true"
-      className={`flex items-center justify-center overflow-hidden border border-sand-200 bg-olive-500 bg-cover bg-center bg-no-repeat font-semibold leading-none text-sand-950 dark:border-sand-800 ${radius} ${className}`}
-      style={photoUrl ? { backgroundImage: `url("${photoUrl}")` } : undefined}
+      // The olive tile belongs to the LETTER state only. Painting it behind a
+      // picture too put a rim of olive around avatar art drawn as a circle on
+      // transparent corners — the halo that made every avatar look ragged.
+      className={`relative flex items-center justify-center overflow-hidden border border-sand-200 font-semibold leading-none dark:border-sand-800 ${
+        photoUrl ? 'text-sand-700 dark:text-sand-300' : 'bg-olive-500 text-sand-950'
+      } ${radius} ${className}`}
     >
-      {/* Hidden behind the photo when there is one; drawn on the olive tile when
-          there is not. Sized from the caller's text-* class so one glyph works
-          from the 24px topbar badge up to the 64px account header. */}
-      {photoUrl ? null : initial}
+      {/* Always rendered, and covered by the picture when there is one, so a
+          photo that never arrives (a dead provider URL, an offline moment)
+          degrades to the initial instead of an empty ring. */}
+      {initial}
+      {photoUrl && (
+        // An arbitrary provider host drawn at 24-64px with no layout to
+        // reserve: next/image buys nothing here.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={photoUrl}
+          alt=""
+          // Provider photo hosts hand back a 403 for some referrers; the avatar
+          // needs no referrer to be sent at all.
+          referrerPolicy="no-referrer"
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
     </span>
   )
 }
