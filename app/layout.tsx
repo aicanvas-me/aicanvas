@@ -156,6 +156,23 @@ export default async function RootLayout({
         data-frame=""
         className={`${manrope.variable} ${geistMono.variable} ${GeistPixelCircle.variable} h-full antialiased`}
       >
+        <head>
+          {/* A framed document carries no theme of its own, and this branch
+              cannot know the visitor's: it renders for the iframe request,
+              which arrives before the embedding page has told anyone anything.
+              The parent document is same-origin (the branch is gated on it),
+              so the frame can simply read the theme off the page embedding it,
+              synchronously, before the first paint. [data-frame-light] is what
+              globals.css keys the light preview surface AND the Andromeda light
+              channel on, so a light visitor's phone preview is light from the
+              first paint instead of flashing dark until AndromedaThemeSync's
+              effect lands after hydration. AndromedaThemeSync still owns every
+              LATER change (the visitor toggling the site theme with the preview
+              open). Only design-system routes: a block preview pins its own
+              theme through [data-card-theme] and must not be dragged to the
+              site's. An attribute, not a class, so hydration leaves it alone. */}
+          <script dangerouslySetInnerHTML={{ __html: `try{if(location.pathname.indexOf('/design-systems/')===0&&parent!==self&&!parent.document.documentElement.classList.contains('dark'))document.documentElement.setAttribute('data-frame-light','')}catch(e){}` }} />
+        </head>
         {/* No overflow-hidden and no scroll column: a framed template preview
             pans its own document, and the site's chrome is what owns that
             scroller on the full page. */}
@@ -201,7 +218,14 @@ export default async function RootLayout({
             attribute, not a class: React reconciles the html className during
             hydration (which strips classes the JSX doesn't know), but leaves
             other attributes alone. */}
-        <script dangerouslySetInnerHTML={{ __html: `if(/[?&]frame=1(?:&|$)/.test(location.search))document.documentElement.setAttribute('data-frame','')` }} />
+        {/* The light marker rides along for the same reason it is set in the
+            iframe branch above: a light visitor must not eat a dark flash in
+            the phone preview. Only design-system routes — a block preview
+            frames /preview/<slug>?frame=1 and pins its own [data-card-theme].
+            This branch only runs when the browser withheld Sec-Fetch (the
+            branch above handles every modern one), and here the theme is
+            already known server-side, so it is baked into the script. */}
+        <script dangerouslySetInnerHTML={{ __html: `if(/[?&]frame=1(?:&|$)/.test(location.search)){document.documentElement.setAttribute('data-frame','')${theme === 'light' ? `;if(location.pathname.indexOf('/design-systems/')===0)document.documentElement.setAttribute('data-frame-light','')` : ''}}` }} />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}

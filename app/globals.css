@@ -415,7 +415,15 @@ html[data-frame][data-frame-light] {
    block drifts from the tokens. Scoped on purpose: only Andromeda's own
    routes (.andromeda-theme-scope on their layout) follow the site theme, so a
    free-lane Andromeda component on the always-dark preview stage stays dark;
-   [data-frame] documents mirror their parent via AndromedaThemeSync instead. */
+   a [data-frame] document (the mobile-preview iframe) has no theme state of
+   its own, so it mirrors the embedding page through [data-frame-light], set
+   pre-paint by the head script in the root layout's iframe branch and kept in
+   step afterwards by AndromedaThemeSync. Carrying the channel here rather than
+   writing it from JS is what makes the framed light theme correct on the very
+   first paint instead of after hydration.
+   The selfcheck keys on the .andromeda-theme-scope selector, so it stays the
+   last one in this list. */
+html[data-frame][data-frame-light],
 html:not(.dark):not([data-frame]) .andromeda-theme-scope {
   --andromeda-theme-text-primary: #1A1A1C;
   --andromeda-theme-text-secondary: #4A4A4D;
