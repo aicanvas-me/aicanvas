@@ -27,7 +27,7 @@ const FREE_FEATURES = [
 
 // The toggle's two options, with the fill each one wears when selected.
 const CYCLES = [
-  { key: 'monthly' as const, fill: 'bg-sand-100 dark:bg-sand-800' },
+  { key: 'monthly' as const, fill: 'bg-white shadow-sm dark:bg-sand-800 dark:shadow-none' },
   { key: 'yearly' as const, fill: 'bg-olive-500' },
 ]
 
