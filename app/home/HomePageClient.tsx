@@ -16,6 +16,7 @@ import {
   Sparkle,
   Fire,
   CaretRight,
+  Check,
 } from '@phosphor-icons/react/dist/ssr'
 import { buttonClasses } from '../components/buttonClasses'
 import { HeaderSocials } from '../components/HeaderSocials'
@@ -25,6 +26,7 @@ import { Reveal } from './Reveal'
 import { StackedCards, AnimatedCount, WireIcons, FeaturedCarousel, FaqAccordion } from './islands'
 import type { ComponentMeta } from '../lib/component-registry'
 import { GITHUB_URL } from '../lib/config'
+import { premiumEnabled } from '../../lib/flags'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -35,6 +37,24 @@ interface Props {
   pulls: number
   carouselItems: ComponentMeta[]
 }
+
+// Short versions of the /pricing bullets. Kept short on purpose: this is the
+// summary that sends people to /pricing, not a second copy of that page.
+const FREE_POINTS = [
+  'Full source of every free component',
+  'Unlimited one-command installs',
+  'Remix with AI on every free component',
+  'MCP server and Lab access',
+]
+
+const PREMIUM_POINTS = [
+  'Every premium component and block',
+  'Full design systems, tokens to templates',
+  'All premium templates, source included',
+  'New premium releases as they ship',
+]
+
+const PREMIUM = premiumEnabled()
 
 // ─── HomePageClient ────────────────────────────────────────────────────────────
 
@@ -528,6 +548,84 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
 
             {/* Accordion cards (client island — only the open/close state) */}
             <FaqAccordion />
+          </div>
+        </section>
+
+        {/* ── Pricing ── */}
+        {/* A summary, not the checkout: the live plan cards, the billing cycle
+            switch and Paddle all stay on /pricing, so the homepage keeps
+            shipping static HTML with no billing JS. Prices are the ones those
+            cards charge; change them in both places or not at all. */}
+        <section className="mt-16 sm:mt-24">
+          <Reveal>
+            <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Pricing</p>
+            <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">
+              The free library stays free.
+            </h2>
+            <p className="mt-3 max-w-2xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
+              Every free component ships its full source and its remix prompt, installed
+              with one command.{PREMIUM ? ' Premium adds the closed-source components, blocks, design systems and templates.' : ''}
+            </p>
+          </Reveal>
+
+          <div className={`mt-8 grid gap-4 ${PREMIUM ? 'md:grid-cols-2' : ''}`}>
+            <Reveal
+              y={12}
+              className="flex flex-col rounded-2xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900"
+            >
+              <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">Free</p>
+              <p className="mt-2 text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50">
+                $0
+              </p>
+              <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">Free forever, no card.</p>
+              <ul className="mt-5 space-y-2.5">
+                {FREE_POINTS.map((point) => (
+                  <li key={point} className="flex gap-2 text-sm text-sand-700 dark:text-sand-300">
+                    <Check weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+                    {point}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/components"
+                className={`${buttonClasses({ variant: 'outline', size: 'md' })} mt-6 self-start`}
+              >
+                Browse components
+                <ArrowRight weight="regular" size={14} />
+              </Link>
+            </Reveal>
+
+            {PREMIUM && (
+              <Reveal
+                y={12}
+                delay={0.08}
+                className="flex flex-col rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-6 ring-1 ring-inset ring-olive-500/10"
+              >
+                <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">Premium</p>
+                <p className="mt-2 text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50">
+                  $49.99
+                  <span className="text-base font-semibold text-sand-600 dark:text-sand-400"> / year</span>
+                </p>
+                <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
+                  About $4.17 a month, or $8.99 billed monthly.
+                </p>
+                <ul className="mt-5 space-y-2.5">
+                  {PREMIUM_POINTS.map((point) => (
+                    <li key={point} className="flex gap-2 text-sm text-sand-700 dark:text-sand-300">
+                      <Check weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+                      {point}
+                    </li>
+                  ))}
+                </ul>
+                <Link
+                  href="/pricing"
+                  className={`${buttonClasses({ variant: 'primary', size: 'md' })} mt-6 self-start`}
+                >
+                  See Premium
+                  <ArrowRight weight="regular" size={14} />
+                </Link>
+              </Reveal>
+            )}
           </div>
         </section>
 
