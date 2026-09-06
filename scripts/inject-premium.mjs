@@ -550,7 +550,7 @@ let tmpClone = ''
 if (!source && process.env.GITHUB_PAT_PREMIUM) {
   tmpClone = '/tmp/aicanvas-premium-inject'
   rmSync(tmpClone, { recursive: true, force: true })
-  const remote = `https://x-access-token:${process.env.GITHUB_PAT_PREMIUM}@github.com/uiNerd16/aicanvas-premium.git`
+  const remote = `https://x-access-token:${process.env.GITHUB_PAT_PREMIUM}@github.com/aicanvas-me/aicanvas-premium.git`
   try {
     execSync(`git clone --depth 1 ${remote} "${tmpClone}"`, { stdio: 'pipe' })
   } catch (e) {

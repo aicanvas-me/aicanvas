@@ -12,7 +12,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/uiNerd16/aicanvas/stargazers"><img src="https://img.shields.io/github/stars/uiNerd16/aicanvas?style=flat&logo=github" alt="GitHub stars" /></a>
+  <a href="https://github.com/aicanvas-me/aicanvas/stargazers"><img src="https://img.shields.io/github/stars/aicanvas-me/aicanvas?style=flat&logo=github" alt="GitHub stars" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-A8B94D.svg" alt="License: MIT" /></a>
   <a href="https://www.npmjs.com/package/@aicanvas/mcp"><img src="https://img.shields.io/npm/v/%40aicanvas%2Fmcp?logo=npm&label=%40aicanvas%2Fmcp" alt="@aicanvas/mcp on npm" /></a>
   <img src="https://img.shields.io/badge/shadcn%20registry-%40aicanvas-000000.svg" alt="shadcn registry: @aicanvas" />
@@ -161,7 +161,7 @@ React and TypeScript, Tailwind CSS, and Framer Motion. Built for the Next.js App
 
 AI Canvas is an actively maintained project. New components, design systems, and templates ship regularly. If AI Canvas saves you time, a star helps more builders find it.
 
-[![Star History Chart](https://api.star-history.com/svg?repos=uiNerd16/aicanvas&type=Date)](https://star-history.com/#uiNerd16/aicanvas&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=aicanvas-me/aicanvas&type=Date)](https://star-history.com/#aicanvas-me/aicanvas&Date)
 
 ## Contributing
 
