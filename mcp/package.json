@@ -28,7 +28,7 @@
   "homepage": "https://aicanvas.me",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uiNerd16/aicanvas.git",
+    "url": "https://github.com/aicanvas-me/aicanvas.git",
     "directory": "mcp"
   },
   "license": "MIT",

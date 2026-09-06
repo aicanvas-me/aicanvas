@@ -1,4 +1,4 @@
-export const GITHUB_URL = 'https://github.com/uiNerd16/aicanvas'
+export const GITHUB_URL = 'https://github.com/aicanvas-me/aicanvas'
 export const X_URL = 'https://x.com/uiNerd'
 export const SITE_URL = 'https://aicanvas.me'
 // Public-facing contact address shown on the legal pages (Impressum, Privacy,
