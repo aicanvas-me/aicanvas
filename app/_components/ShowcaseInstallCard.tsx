@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Check, Copy, Lightning } from '@phosphor-icons/react'
-import { useSession } from '../components/auth/SessionProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
+import { useInstallToken } from '../_lib/useInstallToken'
 
 // The two packages, as a toggle (the "two actions"). Everything is the default.
 const PACKAGES = [
@@ -45,7 +45,6 @@ const MONO = "var(--font-mono, var(--font-jetbrains-mono)), 'Geist Mono', monosp
 // "Get the brain" card, but with the two packages (All components / Everything)
 // as a toggle. Premium-gated: a resolved free/anon tier sees an Unlock CTA.
 export function ShowcaseInstallCard() {
-  const { user } = useSession()
   const status = usePremiumStatus()
   // Premium AND the in-flight 'unknown' window see the command; only a resolved
   // free/anon tier sees the Unlock pitch (never flash upsell at a subscriber).
@@ -53,25 +52,7 @@ export function ShowcaseInstallCard() {
   const [slug, setSlug] = useState('andromeda-all')
   const [copied, setCopied] = useState(false)
 
-  const [token, setToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [user])
-  const userToken = user ? token : null
+  const userToken = useInstallToken()
   const reference = (masked: boolean) =>
     userToken
       ? `"https://aicanvas.me/r/${slug}.json?token=${masked ? 'aic_••••••••' : userToken}"`

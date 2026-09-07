@@ -20,7 +20,8 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Lightning, Robot, Wrench, CaretDow
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
 import type { Group, Mesh, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { Button, buttonClasses } from '../../components/Button'
+import { Button } from '../../components/Button'
+import { buttonClasses } from '../../components/buttonClasses'
 import { SiteFooter } from '../../components/SiteFooter'
 import { optimizeImageKitUrl } from '../../lib/imagekit'
 import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
@@ -60,26 +61,6 @@ const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
   // (no resize / quality optimization). Filenames have spaces, so encode them.
   image: `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_IMAGE_FILE[t.slug] ?? '')}?tr=orig-true`,
 }))
-
-// AI Canvas component-preview fill — dark sand-900 surface with the site's
-// dot-grid motif and a centered Manrope label. Screenshot-ready (drop an <img>
-// over it later). Rendered as absolute children of a `relative` image box.
-function PreviewFill({ label }: { label: string }) {
-  return (
-    <>
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
-          backgroundSize: '22px 22px',
-        }}
-      />
-      <div className="absolute inset-0 flex items-center justify-center px-4 text-center">
-        <span className="text-sm font-medium text-sand-500">{label}</span>
-      </div>
-    </>
-  )
-}
 
 // ── BrainWireframePreview ────────────────────────────────────────────
 // Decorative auto-rotating 3D preview for the Brain card's right half —

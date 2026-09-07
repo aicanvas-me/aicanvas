@@ -12,10 +12,6 @@ import { HeaderSocials } from '../components/HeaderSocials'
 // sends a branded email from contact@aicanvas.me to the project inbox with
 // reply_to set to the visitor. Replaces the old mailto: links in the nav.
 //
-// Follows the site theme like every other long-form page. It used to be dark
-// only, which cost nothing back when the site had no light mode to follow, and
-// it also pinned the scroll parent dark from JS. Both are gone.
-//
 // Layout: the page is a flex column so the footer is pushed to the bottom when
 // the content is short (e.g. the success state). The footer lives INSIDE <main>
 // so it shares the same max-width + horizontal padding as the content and their
