@@ -107,3 +107,6 @@ app/lib/andromeda-brain-teaser.generated.ts
 
 # unlighthouse scan output (npm run speed)
 .unlighthouse/
+
+# Dev-only Studio (aicanvas-studio install). Never ships.
+/app/studio/

@@ -1,15 +1,21 @@
 // ─── EmailAvatar ─────────────────────────────────────────────────────────────
-// Identity glyph for the signed-in user. When the account has a profile photo
-// (Google fills one in at sign-in) it is painted on top; otherwise the badge is
-// a flat olive-500 tile carrying the first letter of the address. Used in the
-// top pill, the sidebar menu and the account header.
+// Identity glyph for the signed-in user. Used in the top pill, the sidebar
+// menu and the account header. Three states, one at a time:
+//   picture   a picked catalogue avatar or the provider (Google) photo, drawn
+//             alone; the letter is never painted under it, because catalogue
+//             art has transparent areas inside the circle and a letter behind
+//             it showed through.
+//   letter    no photo URL: a flat olive-500 tile with the first letter of the
+//             address.
+//   fallback  a photo URL that fails to load (dead provider URL, offline):
+//             AvatarPicture swaps in the same olive tile with the letter.
 //
-// The photo is a plain <img> stacked over the letter, not a CSS background: a
-// picture that never arrives leaves the letter showing, with no client JS and
-// no error handler — this component stays server-renderable. next/image is the
-// wrong tool here (arbitrary provider hosts, 24px draws, no layout to reserve).
+// This module stays free of 'use client' so photoFromUser and EmailAvatar can
+// be called from server components (the account layout is one). The only
+// client state, "did the image fail", lives in AvatarPicture.
 
 import { isUserAvatarId, userAvatarUrl } from '../../lib/user-avatars'
+import { AvatarPicture } from './AvatarPicture'
 
 type UserLike = { user_metadata?: Record<string, unknown> | null } | null | undefined
 
@@ -62,28 +68,12 @@ export function EmailAvatar({ email, photoUrl, className = '' }: Props) {
       aria-hidden="true"
       // The olive tile belongs to the LETTER state only. Painting it behind a
       // picture too put a rim of olive around avatar art drawn as a circle on
-      // transparent corners — the halo that made every avatar look ragged.
+      // transparent corners, the halo that made every avatar look ragged.
       className={`relative flex items-center justify-center overflow-hidden border border-sand-200 font-semibold leading-none dark:border-sand-800 ${
-        photoUrl ? 'text-sand-700 dark:text-sand-300' : 'bg-olive-500 text-sand-950'
+        photoUrl ? '' : 'bg-olive-500 text-sand-950'
       } rounded-full ${className}`}
     >
-      {/* Always rendered, and covered by the picture when there is one, so a
-          photo that never arrives (a dead provider URL, an offline moment)
-          degrades to the initial instead of an empty ring. */}
-      {initial}
-      {photoUrl && (
-        // An arbitrary provider host drawn at 24-64px with no layout to
-        // reserve: next/image buys nothing here.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={photoUrl}
-          alt=""
-          // Provider photo hosts hand back a 403 for some referrers; the avatar
-          // needs no referrer to be sent at all.
-          referrerPolicy="no-referrer"
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
+      {photoUrl ? <AvatarPicture src={photoUrl} initial={initial} /> : initial}
     </span>
   )
 }
