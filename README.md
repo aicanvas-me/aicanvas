@@ -95,7 +95,7 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 
 ## Blocks
 
-Composed, multi-component page sections: card decks, task boards, galleries. Same install, same MIT licence, just a larger unit of work than a single component.
+Composed, multi-component page sections: card decks, task boards, galleries. Same install, same MIT license, just a larger unit of work than a single component.
 
 <p align="center">
   <a href="https://aicanvas.me/components/ai-job-cards"><img src="https://ik.imagekit.io/aitoolkit/ai-job-cards.png" width="48%" alt="AI Job Cards: three job card stacks with swipe-to-cycle, brand logos and a bookmark toggle" /></a>
@@ -158,7 +158,7 @@ Yes. Components are plain React and TypeScript with Tailwind and Framer Motion. 
 Real code. Installing copies the source into your project, so you own it and can change anything. There is no AI Canvas package to keep in sync.
 
 **Can I use it commercially?**
-Yes, the free library is MIT. Use it in commercial projects, modify it, and ship it without attribution. Premium components, design systems, and templates are proprietary under a separate license.
+Yes, the free library is MIT. Use it in commercial projects, modify it, and ship it without attribution. Premium is licensed separately, see [License](#license).
 
 **What is the remix prompt?**
 Every component ships with one comprehensive, platform-agnostic prompt. Paste it into any AI coding tool to rebuild that component your way instead of copying it as is.
