@@ -7,7 +7,7 @@
  * and is referenced from README.md at its 1x height.
  *
  *   node scripts/readme-buttons.mjs          # render every chip
- *   node scripts/readme-buttons.mjs mit      # render one, by file name
+ *   node scripts/readme-buttons.mjs license  # render one, by file name
  */
 import { chromium } from 'playwright'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'

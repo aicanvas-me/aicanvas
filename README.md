@@ -61,7 +61,7 @@ No account is needed to read the code: every component page shows its full sourc
 
 ### Requirements
 
-Tailwind CSS **v4**, React 19 and Motion. Components are written against Tailwind v4 tokens and will not render correctly on v3. The Next.js App Router is the default target, not a requirement.
+Tailwind CSS **v4**, React 19 and Framer Motion. Components are written against Tailwind v4 tokens and will not render correctly on v3. The Next.js App Router is the default target, not a requirement.
 
 ### Three ways to use it
 
