@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Input
 // shadcn/ui-aligned API: className, ref, ...props passthrough.
@@ -10,6 +9,8 @@
 'use client';
 
 import { forwardRef, useId } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { cva } from 'class-variance-authority';
 import { cn, andromedaVars } from './lib/utils';
 
@@ -64,8 +65,17 @@ const inputVariants = cva(
  * @property {string} [wrapperClassName] Class name forwarded to the outer wrapper.
  */
 
+type InputOwnProps = {
+  label?: string;
+  icon?: PhosphorIcon;
+  error?: string;
+  wrapperClassName?: string;
+};
+
+export type InputProps = InputOwnProps & Omit<ComponentPropsWithoutRef<'input'>, keyof InputOwnProps>;
+
 /** @type {React.ForwardRefExoticComponent<InputProps & React.InputHTMLAttributes<HTMLInputElement>>} */
-export const Input = forwardRef(function Input(
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     className,
     wrapperClassName,

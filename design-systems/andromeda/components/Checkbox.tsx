@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Checkbox
 // shadcn/ui-aligned API: forwardRef, controlled (`checked`) or
@@ -10,6 +9,7 @@
 'use client';
 
 import { forwardRef, useId, useState, useEffect } from 'react';
+import type { ChangeEvent, ComponentPropsWithoutRef } from 'react';
 import { Check } from '@phosphor-icons/react';
 
 function useSpacePopIn() {
@@ -104,8 +104,18 @@ const labelClass = cn(
  * @property {string}  [id]                    Id applied to the input and inline label, auto-generated if omitted.
  */
 
+type CheckboxProps = Omit<
+  ComponentPropsWithoutRef<'input'>,
+  'onChange' | 'type' | 'checked' | 'defaultChecked'
+> & {
+  checked?: boolean;
+  defaultChecked?: boolean;
+  onCheckedChange?: (next: boolean) => void;
+  label?: string;
+};
+
 /** @type {React.ForwardRefExoticComponent<CheckboxProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'|'type'>>} */
-export const Checkbox = forwardRef(function Checkbox(
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
   {
     className,
     checked: controlledChecked,
@@ -126,7 +136,7 @@ export const Checkbox = forwardRef(function Checkbox(
   const [internal, setInternal] = useState(defaultChecked);
   const checked = isControlled ? controlledChecked : internal;
 
-  function handleChange(e) {
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
     const next = e.target.checked;
     if (!isControlled) setInternal(next);
     onCheckedChange?.(next);

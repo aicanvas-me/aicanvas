@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: SegmentedControl
 // shadcn/ui-aligned API: controlled `value` / `onChange`, options
@@ -11,8 +10,11 @@
 'use client';
 
 import { forwardRef, useId } from 'react';
+import type { ComponentPropsWithoutRef, ComponentType } from 'react';
 import { motion } from 'framer-motion';
-import { cn, andromedaVars, easingArray } from './lib/utils';
+import type { Transition } from 'framer-motion';
+import type { IconWeight } from '@phosphor-icons/react';
+import { cn, andromedaVars, easingArray, themeColor } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
 
@@ -64,9 +66,9 @@ const ICON_PX = {
   lg: 18,
 };
 
-const ms = (v) => parseInt(v, 10) / 1000;
+const ms = (v: string) => parseInt(v, 10) / 1000;
 // framer boundary: derived from tokens, cannot follow runtime var overrides
-const INDICATOR_TX = {
+const INDICATOR_TX: Transition = {
   duration: ms(tokens.motion.duration.slow),
   ease: easingArray(tokens.motion.easing.standard),
 };
@@ -78,6 +80,13 @@ const INDICATOR_TX = {
  * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon] Icon component rendered in the segment, optionally alongside its label.
  * @property {string} [ariaLabel] Accessible name for the segment, falling back to label when omitted.
  */
+
+type SegmentOption = {
+  value: string;
+  label?: string;
+  icon?: ComponentType<{ size?: number; weight?: IconWeight }>;
+  ariaLabel?: string;
+};
 
 /**
  * @typedef {object} SegmentedControlProps
@@ -95,8 +104,16 @@ const INDICATOR_TX = {
  * @property {React.CSSProperties} [style] Inline styles merged onto the root element.
  */
 
+type SegmentedControlProps = Omit<ComponentPropsWithoutRef<'div'>, 'onChange'> & {
+  value: string;
+  onChange: (next: string) => void;
+  options: SegmentOption[];
+  size?: 'sm' | 'md' | 'lg';
+  layoutGroupId?: string;
+};
+
 /** @type {React.ForwardRefExoticComponent<SegmentedControlProps & React.HTMLAttributes<HTMLDivElement>>} */
-export const SegmentedControl = forwardRef(function SegmentedControl(
+export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps>(function SegmentedControl(
   { className, value, onChange, options, size = 'md', layoutGroupId, style, ...props },
   ref,
 ) {
@@ -120,9 +137,9 @@ export const SegmentedControl = forwardRef(function SegmentedControl(
       style={{
         ...andromedaVars(),
         height: `var(${cellVar}, ${cellSize}px)`,
-        border: `${tokens.border.thin} ${tokens.color.border.base}`,
+        border: `${tokens.border.thin} ${themeColor.border.base}`,
         borderRadius: tokens.radius.frame,
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         ...style,
       }}
       {...props}
@@ -152,7 +169,7 @@ export const SegmentedControl = forwardRef(function SegmentedControl(
               padding: showLabel ? `0 ${tokens.spacing[3]}` : 0,
               background: 'transparent',
               border: 'none',
-              borderLeft: i === 0 ? 'none' : `${tokens.border.thin} ${tokens.color.border.base}`,
+              borderLeft: i === 0 ? 'none' : `${tokens.border.thin} ${themeColor.border.base}`,
               cursor: 'pointer',
               flexShrink: 0,
               // A segment never wraps its label — a wrapped label breaks the
@@ -164,7 +181,7 @@ export const SegmentedControl = forwardRef(function SegmentedControl(
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.sm,
               fontWeight: active ? tokens.typography.weight.medium : tokens.typography.weight.regular,
-              color: active ? tokens.color.text.primary : tokens.color.text.muted,
+              color: active ? themeColor.text.primary : themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.wider,
               transition: `color ${tokens.motion.duration.normal} ${tokens.motion.easing.out}`,
@@ -181,7 +198,7 @@ export const SegmentedControl = forwardRef(function SegmentedControl(
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: tokens.color.surface.active,
+                  background: themeColor.surface.active,
                   zIndex: 0,
                   pointerEvents: 'none',
                 }}

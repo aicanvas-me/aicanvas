@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: IconButton
 // Square, label-less companion to Button. Same variant + size
@@ -10,8 +9,12 @@
 'use client';
 
 import { forwardRef } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion } from 'framer-motion';
+import type { HTMLMotionProps, TargetAndTransition, Transition } from 'framer-motion';
 import { cva } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { cn, andromedaVars, easingArray } from './lib/utils';
 import { useReducedMotion } from './lib/motion';
 import { mq } from './lib/responsive';
@@ -47,14 +50,14 @@ const TOUCH_TARGET_STYLE = `
   }
 `;
 
-const ms = (v) => parseInt(v, 10) / 1000;
+const ms = (v: string) => parseInt(v, 10) / 1000;
 // framer boundary: derived from tokens, cannot follow runtime var overrides
-const HOVER_TX = { duration: ms(tokens.motion.duration.normal), ease: easingArray(tokens.motion.easing.out) };
-const PRESS_TX = { duration: ms(tokens.motion.duration.fast),   ease: easingArray(tokens.motion.easing.in) };
-const HOVER_LIFT = { y: -1, filter: 'brightness(1.05)', transition: HOVER_TX };
+const HOVER_TX: Transition = { duration: ms(tokens.motion.duration.normal), ease: easingArray(tokens.motion.easing.out) };
+const PRESS_TX: Transition = { duration: ms(tokens.motion.duration.fast),   ease: easingArray(tokens.motion.easing.in) };
+const HOVER_LIFT: TargetAndTransition = { y: -1, filter: 'brightness(1.05)', transition: HOVER_TX };
 // IconButton is denser than Button so its press is a touch deeper, matching
 // the original 0.95 active scale that signalled the squeeze on a small target.
-const PRESS_DOWN = { scale: 0.95, transition: PRESS_TX };
+const PRESS_DOWN: TargetAndTransition = { scale: 0.95, transition: PRESS_TX };
 
 const iconButtonVariants = cva(
   [
@@ -131,7 +134,7 @@ const iconButtonVariants = cva(
 // Not tokens.iconSize: that scale (12/16/18/22) doesn't contain 14, and
 // mapping by shifted names (md button -> iconSize.sm) would drift if the
 // icon grid is retuned. Deliberate per-button-size glyph scale.
-const ICON_SIZE = { sm: 14, md: 16, lg: 20 };
+const ICON_SIZE: Record<NonNullable<VariantProps<typeof iconButtonVariants>['size']>, number> = { sm: 14, md: 16, lg: 20 };
 
 /**
  * @typedef {object} IconButtonProps
@@ -148,8 +151,20 @@ const ICON_SIZE = { sm: 14, md: 16, lg: 20 };
  * @property {(e: React.MouseEvent<HTMLButtonElement>) => void} [onClick]
  */
 
+type IconButtonOwnProps = {
+  variant?: NonNullable<VariantProps<typeof iconButtonVariants>['variant']>;
+  size?: NonNullable<VariantProps<typeof iconButtonVariants>['size']>;
+  icon?: PhosphorIcon;
+  children?: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+};
+
+export type IconButtonProps = IconButtonOwnProps &
+  Omit<HTMLMotionProps<'button'>, keyof IconButtonOwnProps>;
+
 /** @type {React.ForwardRefExoticComponent<IconButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>>} */
-export const IconButton = forwardRef(function IconButton(
+export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
   {
     className,
     variant = 'outline',

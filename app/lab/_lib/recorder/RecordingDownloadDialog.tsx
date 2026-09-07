@@ -106,7 +106,7 @@ export function RecordingDownloadDialog({
         className="absolute inset-0 bg-sand-950/80 backdrop-blur-sm"
         onClick={savingFps !== null ? undefined : onCancel}
       />
-      <div className="relative z-10 w-full max-w-lg rounded-xl border border-sand-300 bg-sand-100 p-7 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+      <div className="relative z-10 w-full max-w-lg rounded-xl border border-sand-300 bg-sand-50 p-7 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
         <Button
           variant="icon"
           size="md"
@@ -199,7 +199,7 @@ function DownloadCard({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="group relative flex flex-col items-start gap-2 rounded-lg border border-sand-300 bg-sand-50 p-4 text-left transition-colors hover:border-olive-500 hover:bg-sand-50 disabled:cursor-not-allowed disabled:opacity-60 dark:border-sand-700 dark:bg-sand-800 dark:hover:border-olive-400 dark:hover:bg-sand-800"
+      className="group relative flex flex-col items-start gap-2 rounded-lg border border-sand-300 bg-sand-100 p-4 text-left transition-colors hover:border-olive-500 hover:bg-sand-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-sand-700 dark:bg-sand-800 dark:hover:border-olive-400 dark:hover:bg-sand-800"
     >
       <div className="flex w-full items-center justify-between">
         <div className="text-sand-700 dark:text-sand-300">{icon}</div>

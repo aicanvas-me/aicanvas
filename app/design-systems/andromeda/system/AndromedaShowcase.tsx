@@ -1,12 +1,9 @@
-// @ts-nocheck — showcase consumes JSX design-system components whose
-// forwardRef wrappers lack TypeScript prop types in a .tsx context.
-//
 // Sibling component (NOT a route file). Both the showcase route and
 // the ideation Andromeda landing render this so the body lives in one
 // place.
 'use client'
 
-import { useState, type ReactNode } from 'react'
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import Link from 'next/link'
 import { JetBrains_Mono } from 'next/font/google'
 import { SiteFooter } from '../../../components/SiteFooter'
@@ -38,7 +35,8 @@ import {
   SignOut,
   UserCircle,
 } from '@phosphor-icons/react'
-import { tokens } from '../../../../design-systems/andromeda/tokens'
+import { tokens, light } from '../../../../design-systems/andromeda/tokens'
+import { subscribeToTheme } from '../../../../design-systems/andromeda/components/lib/theme'
 import { mq } from '../../../../design-systems/andromeda/components/lib/responsive'
 import { Button, buttonVariants } from '../../../../design-systems/andromeda/components/Button'
 import { IconButton } from '../../../../design-systems/andromeda/components/IconButton'
@@ -120,6 +118,33 @@ const jetbrainsMono = JetBrains_Mono({
 // Organic demo telemetry for the Trend Chart — deterministic (no Math.random)
 // so SSR and client agree. Real day-to-day variance: allocated wanders, used
 // tracks at a varying fraction so the gap weaves, reserved holds roughly flat.
+// The showcase documents the palette itself, so unlike every other Andromeda
+// surface it reads the ACTIVE theme's literal values rather than painting
+// through the theme channel. A swatch and the hex printed under it have to
+// agree, and `var(--andromeda-theme-accent-300, #0FCFB2)` is not a hex.
+//
+// It follows the CHANNEL rather than the site's dark class, because this
+// component also renders on routes that do not apply the Andromeda theme.
+// There the components below stay dark, and the gallery has to say so.
+function useAndromedaColors() {
+  const [themed, setThemed] = useState(false)
+  useEffect(() => {
+    // The channel lives on the layout's .andromeda-theme-scope div, never on
+    // <html>, so probe the scope element; a page without the scope (the
+    // ideation landing) reads as unthemed and stays dark, which is true.
+    const read = () => {
+      const scope = document.querySelector('.andromeda-theme-scope')
+      setThemed(
+        !!scope
+        && !!getComputedStyle(scope).getPropertyValue('--andromeda-theme-surface-base').trim(),
+      )
+    }
+    read()
+    return subscribeToTheme(read)
+  }, [])
+  return themed ? light.color : tokens.color
+}
+
 const _tcFract = (x: number) => x - Math.floor(x)
 const _tcNoise = (i: number, s: number) => _tcFract(Math.sin((i + 1) * 12.9898 + s * 78.233) * 43758.5453)
 const _tcClamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v))
@@ -166,6 +191,7 @@ function Section({
   allowOverflow?: boolean
   children: ReactNode
 }) {
+  const c = useAndromedaColors()
   return (
     <Card
       // Perf: the showcase is a very tall single page, so let the browser skip
@@ -183,12 +209,12 @@ function Section({
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.muted,
+              color: c.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
             }}
           >
-            /// {kicker ?? 'Component'}
+            {'/// '}{kicker ?? 'Component'}
           </span>
           <CardTitle>{title}</CardTitle>
         </div>
@@ -199,7 +225,7 @@ function Section({
           <Link
             href={`/design-systems/andromeda/${slug}`}
             className={buttonVariants({ variant: 'ghost', size: 'sm' })}
-            style={andromedaVars()}
+            style={andromedaVars() as CSSProperties}
           >
             Open {title}
             <ArrowUpRight weight="regular" size={14} />
@@ -214,7 +240,7 @@ function Section({
               marginBottom: tokens.spacing[6],
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.muted,
+              color: c.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.wide,
               lineHeight: 1.6,
@@ -230,6 +256,7 @@ function Section({
 }
 
 function Row({ label, children }: { label?: string; children: ReactNode }) {
+  const c = useAndromedaColors()
   return (
     <div style={{ marginBottom: tokens.spacing[5] }}>
       {label ? (
@@ -238,7 +265,7 @@ function Row({ label, children }: { label?: string; children: ReactNode }) {
             marginBottom: tokens.spacing[3],
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.faint,
+            color: c.text.faint,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}
@@ -271,6 +298,7 @@ export default function AndromedaShowcase({
   componentCount = 0,
   templateCount = 0,
 }: AndromedaShowcaseProps = {}) {
+  const c = useAndromedaColors()
   // Local interactive state used by the live demos below.
   const [drawerOpen, setDrawerOpen] = useState(false)
   const [sliderValue, setSliderValue] = useState(64)
@@ -299,7 +327,13 @@ export default function AndromedaShowcase({
         minHeight: '100vh',
         width: '100%',
         boxSizing: 'border-box',
-        backgroundColor: tokens.color.surface.base,
+        // No ground of its own. This page is site chrome, not a template, so the
+        // page ground belongs to AndromedaContentColumn (bg-sand-50 / sand-950)
+        // and the shell lets it through. Painting Andromeda's own surface.base
+        // here put a seam in the light theme, where the two grounds are one
+        // step apart (#F4F4F5 against sand-50 #F4F4FA); in dark they are the
+        // same value, which is why only light ever showed it. The Section
+        // cards still lift off it on surface.raised, so depth is unchanged.
         // All-longhand (no `padding` shorthand) so paddingBottom isn't clobbered.
         paddingTop: tokens.spacing[10],
         paddingLeft: tokens.spacing[8],
@@ -356,14 +390,14 @@ export default function AndromedaShowcase({
         `}</style>
 
         {/* Page header — AI Canvas site style (Manrope), not the Andromeda mono
-            aesthetic of the demos below. Fixed light-on-dark colours because the
-            showcase surface is always the Andromeda void. */}
+            aesthetic of the demos below. Site sand/olive pairs so the header follows
+            the site theme like the rest of the page. */}
         <header style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
           <div
+            className="text-olive-600 dark:text-olive-400"
             style={{
               fontSize: 12,
               fontWeight: 600,
-              color: '#DAE4A0',
               textTransform: 'uppercase',
               letterSpacing: '0.12em',
               marginBottom: 10,
@@ -372,12 +406,11 @@ export default function AndromedaShowcase({
             Andromeda
           </div>
           <h1
-            className="as-title"
+            className="as-title text-sand-900 dark:text-sand-50"
             style={{
               margin: 0,
               fontSize: 'clamp(30px, 4.5vw, 42px)',
               fontWeight: 800,
-              color: '#F4F4FA',
               letterSpacing: '-0.02em',
               lineHeight: 1.05,
             }}
@@ -385,23 +418,23 @@ export default function AndromedaShowcase({
             System
           </h1>
           <p
+            className="text-sand-600 dark:text-sand-400"
             style={{
               margin: '16px 0 0 0',
               maxWidth: '56ch',
               fontSize: 16,
               fontWeight: 400,
               lineHeight: 1.6,
-              color: '#9B9B9E',
             }}
           >
             Built for designers, developers, and teams who want a system, not a stylesheet. Tokens, components, templates, and a documented brain that keeps everyone aligned.
           </p>
           <div
+            className="text-sand-500"
             style={{
               marginTop: 16,
               fontSize: 11,
               fontWeight: 600,
-              color: '#7B7B7D',
               textTransform: 'uppercase',
               letterSpacing: '0.1em',
             }}
@@ -418,125 +451,125 @@ export default function AndromedaShowcase({
         >
           <Row label="Accent · Turquoise">
             {[
-              { name: 'accent.100', color: tokens.color.accent[100], note: 'Highlighted text · pastel' },
-              { name: 'accent.200', color: tokens.color.accent[200], note: 'Light emphasis' },
-              { name: 'accent.300', color: tokens.color.accent[300], note: 'Active · selected · base' },
-              { name: 'accent.400', color: tokens.color.accent[400], note: 'Focus borders · dim' },
-              { name: 'accent.500', color: tokens.color.accent[500], note: 'Glow halos · tinted fills' },
+              { name: 'accent.100', color: c.accent[100], note: 'Highlighted text · pastel' },
+              { name: 'accent.200', color: c.accent[200], note: 'Light emphasis' },
+              { name: 'accent.300', color: c.accent[300], note: 'Active · selected · base' },
+              { name: 'accent.400', color: c.accent[400], note: 'Focus borders · dim' },
+              { name: 'accent.500', color: c.accent[500], note: 'Glow halos · tinted fills' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: color, border: `1px solid ${c.border.base}`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
 
           <Row label="Orange · Warning">
             {[
-              { name: 'orange.100', color: tokens.color.orange[100], note: 'Pastel · highlight' },
-              { name: 'orange.200', color: tokens.color.orange[200], note: 'Light · emphasis' },
-              { name: 'orange.300', color: tokens.color.orange[300], note: 'Solid · icon · base' },
-              { name: 'orange.400', color: tokens.color.orange[400], note: 'Border · ring' },
-              { name: 'orange.500', color: tokens.color.orange[500], note: 'Subtle fill' },
+              { name: 'orange.100', color: c.orange[100], note: 'Pastel · highlight' },
+              { name: 'orange.200', color: c.orange[200], note: 'Light · emphasis' },
+              { name: 'orange.300', color: c.orange[300], note: 'Solid · icon · base' },
+              { name: 'orange.400', color: c.orange[400], note: 'Border · ring' },
+              { name: 'orange.500', color: c.orange[500], note: 'Subtle fill' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: color, border: `1px solid ${c.border.base}`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
 
           <Row label="Red · Fault">
             {[
-              { name: 'red.100', color: tokens.color.red[100], note: 'Pastel · highlight' },
-              { name: 'red.200', color: tokens.color.red[200], note: 'Light · emphasis' },
-              { name: 'red.300', color: tokens.color.red[300], note: 'Solid · icon · base' },
-              { name: 'red.400', color: tokens.color.red[400], note: 'Border · ring' },
-              { name: 'red.500', color: tokens.color.red[500], note: 'Subtle fill' },
+              { name: 'red.100', color: c.red[100], note: 'Pastel · highlight' },
+              { name: 'red.200', color: c.red[200], note: 'Light · emphasis' },
+              { name: 'red.300', color: c.red[300], note: 'Solid · icon · base' },
+              { name: 'red.400', color: c.red[400], note: 'Border · ring' },
+              { name: 'red.500', color: c.red[500], note: 'Subtle fill' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: color, border: `1px solid ${c.border.base}`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
 
           <Row label="Alpha · Layered Tints">
             {[
-              { name: 'accent.alpha',  color: tokens.color.accent.alpha,  note: 'Turquoise selection · highlight' },
-              { name: 'orange.alpha', color: tokens.color.orange.alpha,   note: 'Warning overlay · caution tint' },
-              { name: 'red.alpha',     color: tokens.color.red.alpha,     note: 'Fault overlay · error tint' },
-              { name: 'surface.alpha', color: tokens.color.surface.alpha, note: 'Modal scrim · backdrop' },
-              { name: 'border.alpha',  color: tokens.color.border.alpha,  note: 'Glassy edge · sheen' },
+              { name: 'accent.alpha',  color: c.accent.alpha,  note: 'Turquoise selection · highlight' },
+              { name: 'orange.alpha', color: c.orange.alpha,   note: 'Warning overlay · caution tint' },
+              { name: 'red.alpha',     color: c.red.alpha,     note: 'Fault overlay · error tint' },
+              { name: 'surface.alpha', color: c.surface.alpha, note: 'Modal scrim · backdrop' },
+              { name: 'border.alpha',  color: c.border.alpha,  note: 'Glassy edge · sheen' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: color, border: `1px solid ${c.border.base}`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
 
           <Row label="Surfaces">
             {[
-              { name: 'surface.base',    color: tokens.color.surface.base,    note: 'Page void · root' },
-              { name: 'surface.raised',  color: tokens.color.surface.raised,  note: 'Cards · panels' },
-              { name: 'surface.overlay', color: tokens.color.surface.overlay, note: 'Dropdowns · tips' },
-              { name: 'surface.hover',   color: tokens.color.surface.hover,   note: 'Hover state' },
-              { name: 'surface.active',  color: tokens.color.surface.active,  note: 'Pressed state' },
+              { name: 'surface.base',    color: c.surface.base,    note: 'Page void · root' },
+              { name: 'surface.raised',  color: c.surface.raised,  note: 'Cards · panels' },
+              { name: 'surface.overlay', color: c.surface.overlay, note: 'Dropdowns · tips' },
+              { name: 'surface.hover',   color: c.surface.hover,   note: 'Hover state' },
+              { name: 'surface.active',  color: c.surface.active,  note: 'Pressed state' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, background: color, border: `1px solid ${tokens.color.border.base}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ height: 48, background: color, border: `1px solid ${c.border.base}`, marginBottom: tokens.spacing[2] }} />
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
 
           <Row label="Borders">
             {[
-              { name: 'border.subtle', color: tokens.color.border.subtle, note: 'Dividers' },
-              { name: 'border.base',   color: tokens.color.border.base,   note: 'Default edges' },
-              { name: 'border.bright', color: tokens.color.border.bright, note: 'Focus · hover' },
-              { name: 'border.strong', color: tokens.color.border.strong, note: 'High emphasis' },
+              { name: 'border.subtle', color: c.border.subtle, note: 'Dividers' },
+              { name: 'border.base',   color: c.border.base,   note: 'Default edges' },
+              { name: 'border.bright', color: c.border.bright, note: 'Focus · hover' },
+              { name: 'border.strong', color: c.border.strong, note: 'High emphasis' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
                 <div style={{ height: 48, border: `1px solid ${color}`, marginBottom: tokens.spacing[2] }} />
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
 
           <Row label="Text">
             {[
-              { name: 'text.primary',   color: tokens.color.text.primary,   note: 'Headings · values' },
-              { name: 'text.secondary', color: tokens.color.text.secondary, note: 'Body · descriptions' },
-              { name: 'text.muted',     color: tokens.color.text.muted,     note: 'Kickers · metadata' },
-              { name: 'text.faint',     color: tokens.color.text.faint,     note: 'Labels · hints' },
+              { name: 'text.primary',   color: c.text.primary,   note: 'Headings · values' },
+              { name: 'text.secondary', color: c.text.secondary, note: 'Body · descriptions' },
+              { name: 'text.muted',     color: c.text.muted,     note: 'Kickers · metadata' },
+              { name: 'text.faint',     color: c.text.faint,     note: 'Labels · hints' },
             ].map(({ name, color, note }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ height: 48, border: `1px solid ${tokens.color.border.base}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: tokens.spacing[2] }}>
+                <div style={{ height: 48, border: `1px solid ${c.border.base}`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: tokens.spacing[2] }}>
                   <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.md, color, letterSpacing: '0.1em' }}>Aa 01</span>
                 </div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, marginTop: tokens.spacing[1], minHeight: 28 }}>{note}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.accent[400], marginTop: tokens.spacing[1], wordBreak: 'break-all' }}>{color}</div>
               </div>
             ))}
           </Row>
 
           <div>
-            <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
+            <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
               Usage Reference
             </div>
             <div className="as-usage-grid" style={{ display: 'grid', gap: tokens.spacing[2] }}>
@@ -559,9 +592,9 @@ export default function AndromedaShowcase({
                 { role: 'Glassy edge',         token: 'border.alpha' },
                 { role: 'Selection sheen',     token: 'color.alpha' },
               ].map(({ role, token }) => (
-                <div key={role} style={{ padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`, background: tokens.color.surface.raised, border: `1px solid ${tokens.color.border.subtle}` }}>
-                  <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider, marginBottom: tokens.spacing[1] }}>{role}</div>
-                  <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.accent[100] }}>{token}</div>
+                <div key={role} style={{ padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`, background: c.surface.raised, border: `1px solid ${c.border.subtle}` }}>
+                  <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider, marginBottom: tokens.spacing[1] }}>{role}</div>
+                  <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.accent[100] }}>{token}</div>
                 </div>
               ))}
             </div>
@@ -575,7 +608,7 @@ export default function AndromedaShowcase({
           description="JetBrains Mono is the only typeface. Both fontSans and fontMono resolve to it — the distinction exists only for backward compatibility. Hierarchy comes from size, weight, and letter-spacing, not from switching families."
         >
           <div style={{ marginBottom: tokens.spacing[5] }}>
-            <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
+            <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
               Type Scale
             </div>
             <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -590,11 +623,11 @@ export default function AndromedaShowcase({
                 { token: '4xl', px: '36px', usage: 'Dashboard hero readout' },
                 { token: '5xl', px: '48px', usage: 'Stat primary value' },
               ].map(({ token, px, usage }) => (
-                <div key={token} style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[4], padding: `${tokens.spacing[2]} 0`, borderBottom: `1px solid ${tokens.color.border.subtle}` }}>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest, width: 28, flexShrink: 0 }}>{token}</span>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, width: 32, flexShrink: 0 }}>{px}</span>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: px, color: tokens.color.text.primary, letterSpacing: tokens.typography.tracking.wide, lineHeight: 1.1, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}>ANDROMEDA</span>
-                  <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, flexShrink: 0, textAlign: 'right' }}>{usage}</span>
+                <div key={token} style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[4], padding: `${tokens.spacing[2]} 0`, borderBottom: `1px solid ${c.border.subtle}` }}>
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest, width: 28, flexShrink: 0 }}>{token}</span>
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, width: 32, flexShrink: 0 }}>{px}</span>
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: px, color: c.text.primary, letterSpacing: tokens.typography.tracking.wide, lineHeight: 1.1, flex: 1, overflow: 'hidden', whiteSpace: 'nowrap' }}>ANDROMEDA</span>
+                  <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, flexShrink: 0, textAlign: 'right' }}>{usage}</span>
                 </div>
               ))}
             </div>
@@ -609,9 +642,9 @@ export default function AndromedaShowcase({
               { name: 'bold',     val: 700 },
             ].map(({ name, val }) => (
               <div key={name} style={{ width: 148 }}>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size['2xl'], fontWeight: val, color: tokens.color.text.primary, letterSpacing: tokens.typography.tracking.wider, marginBottom: tokens.spacing[1] }}>NOVA</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>weight.{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint }}>{val}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size['2xl'], fontWeight: val, color: c.text.primary, letterSpacing: tokens.typography.tracking.wider, marginBottom: tokens.spacing[1] }}>NOVA</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>weight.{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint }}>{val}</div>
               </div>
             ))}
           </Row>
@@ -625,10 +658,10 @@ export default function AndromedaShowcase({
               { name: 'widest', val: '0.22em',  usage: 'Kickers · row heads' },
             ].map(({ name, val, usage }) => (
               <div key={name} style={{ width: 160 }}>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.md, fontWeight: 500, color: tokens.color.text.primary, letterSpacing: val, textTransform: 'uppercase', marginBottom: tokens.spacing[1] }}>TRACKING</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>tracking.{name}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted }}>{val || '0'}</div>
-                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, marginTop: tokens.spacing[1] }}>{usage}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.md, fontWeight: 500, color: c.text.primary, letterSpacing: val, textTransform: 'uppercase', marginBottom: tokens.spacing[1] }}>TRACKING</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.secondary, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>tracking.{name}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.muted }}>{val || '0'}</div>
+                <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, marginTop: tokens.spacing[1] }}>{usage}</div>
               </div>
             ))}
           </Row>
@@ -659,13 +692,13 @@ export default function AndromedaShowcase({
                   alignItems: 'center',
                   gap: tokens.spacing[4],
                   padding: `${tokens.spacing[2]} 0`,
-                  borderBottom: `1px solid ${tokens.color.border.subtle}`,
+                  borderBottom: `1px solid ${c.border.subtle}`,
                 }}
               >
-                <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest, width: 110, flexShrink: 0 }}>
+                <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest, width: 110, flexShrink: 0 }}>
                   {`spacing.${token}`}
                 </span>
-                <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, width: 36, flexShrink: 0 }}>
+                <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, width: 36, flexShrink: 0 }}>
                   {px}
                 </span>
                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', minWidth: 0 }}>
@@ -674,12 +707,12 @@ export default function AndromedaShowcase({
                     style={{
                       width: px,
                       height: 8,
-                      background: tokens.color.text.primary,
+                      background: c.text.primary,
                       flexShrink: 0,
                     }}
                   />
                 </div>
-                <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.faint, flexShrink: 0, textAlign: 'right' }}>
+                <span className="as-scale-usage" style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, flexShrink: 0, textAlign: 'right' }}>
                   {usage}
                 </span>
               </div>
@@ -767,11 +800,11 @@ export default function AndromedaShowcase({
               marginBottom: tokens.spacing[3],
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.faint,
+              color: c.text.faint,
               textTransform: 'uppercase' as const,
               letterSpacing: tokens.typography.tracking.widest,
             };
-            const panelStyle = { width: 320, maxWidth: '100%', position: 'relative' as const, background: tokens.color.surface.raised };
+            const panelStyle = { width: 320, maxWidth: '100%', position: 'relative' as const, background: c.surface.raised };
             return (
               <div style={{
                 display: 'flex',
@@ -829,7 +862,7 @@ export default function AndromedaShowcase({
               marginBottom: tokens.spacing[3],
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.faint,
+              color: c.text.faint,
               textTransform: 'uppercase' as const,
               letterSpacing: tokens.typography.tracking.widest,
             };
@@ -942,12 +975,12 @@ export default function AndromedaShowcase({
                     style={{
                       fontFamily: tokens.typography.fontMono,
                       fontSize: tokens.typography.size.xs,
-                      color: tokens.color.text.muted,
+                      color: c.text.muted,
                       textTransform: 'uppercase',
                       letterSpacing: tokens.typography.tracking.widest,
                     }}
                   >
-                    /// Default
+                    {'/// Default'}
                   </span>
                   <CardTitle>Default card</CardTitle>
                 </div>
@@ -973,12 +1006,12 @@ export default function AndromedaShowcase({
                     style={{
                       fontFamily: tokens.typography.fontMono,
                       fontSize: tokens.typography.size.xs,
-                      color: tokens.color.text.muted,
+                      color: c.text.muted,
                       textTransform: 'uppercase',
                       letterSpacing: tokens.typography.tracking.widest,
                     }}
                   >
-                    /// Glow
+                    {'/// Glow'}
                   </span>
                   <CardTitle>Highlight card</CardTitle>
                 </div>
@@ -987,7 +1020,7 @@ export default function AndromedaShowcase({
               <CardContent>
                 <CardDescription>
                   Tinted accent gradient surface. Use for the card you want to
-                  draw the user's eye to first.
+                  draw the user&apos;s eye to first.
                 </CardDescription>
               </CardContent>
               <CardFooter>
@@ -1008,7 +1041,7 @@ export default function AndromedaShowcase({
               { label: 'Default', props: {} },
               { label: 'Larger', props: { size: 18 } },
               { label: 'Inset 6px', props: { offset: 6 } },
-              { label: 'Accent', props: { color: tokens.color.accent[300] } },
+              { label: 'Accent', props: { color: c.accent[300] } },
             ].map(({ label, props }) => (
               <div
                 key={label}
@@ -1016,7 +1049,7 @@ export default function AndromedaShowcase({
                   position: 'relative',
                   width: 180,
                   height: 100,
-                  background: tokens.color.surface.raised,
+                  background: c.surface.raised,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -1027,7 +1060,7 @@ export default function AndromedaShowcase({
                   style={{
                     fontFamily: tokens.typography.fontMono,
                     fontSize: tokens.typography.size.xs,
-                    color: tokens.color.text.muted,
+                    color: c.text.muted,
                     textTransform: 'uppercase',
                     letterSpacing: tokens.typography.tracking.widest,
                   }}
@@ -1098,7 +1131,7 @@ export default function AndromedaShowcase({
           <div
             style={{
               width: 260,
-              background: tokens.color.surface.raised,
+              background: c.surface.raised,
               position: 'relative',
             }}
           >
@@ -1522,7 +1555,7 @@ export default function AndromedaShowcase({
                 { axis: 'SECURITY', score: 65 },
                 { axis: 'API',      score: 90 },
               ]}
-              series={[{ key: 'score', label: 'Readiness', color: tokens.color.accent[300] }]}
+              series={[{ key: 'score', label: 'Readiness', color: c.accent[300] }]}
             />
           </div>
         </Section>
@@ -1534,7 +1567,7 @@ export default function AndromedaShowcase({
           kicker="Component · Charts"
           description="The canonical multi-series time-series chart. One component, line / area / bar via the mode toggle, with a custom tooltip and toggleable legend. Series colour follows the multi-series hierarchy: baseline (white), live (accent), context (faint), threshold (red dashed). Built on recharts; scroll-gated left-to-right reveal."
         >
-          <div style={{ position: 'relative', background: tokens.color.surface.raised, padding: tokens.spacing[5] }}>
+          <div style={{ position: 'relative', background: c.surface.raised, padding: tokens.spacing[5] }}>
             <CornerMarkers />
             <TrendChart
               title="Allocation vs usage"
@@ -1655,7 +1688,7 @@ export default function AndromedaShowcase({
             <Card>
               <CardHeader>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[1] }}>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>/// Body</span>
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>{'/// Body'}</span>
                   <CardTitle>Solo</CardTitle>
                 </div>
               </CardHeader>
@@ -1668,7 +1701,7 @@ export default function AndromedaShowcase({
             <Card>
               <CardHeader>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[1] }}>
-                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>/// Heading</span>
+                  <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>{'/// Heading'}</span>
                   <CardTitle>Next Destination</CardTitle>
                 </div>
                 <Badge variant="accent">LOCKED</Badge>
@@ -1679,8 +1712,8 @@ export default function AndromedaShowcase({
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[3] }}>
                   <div>
-                    <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>Target</div>
-                    <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xl, color: tokens.color.text.primary, fontWeight: tokens.typography.weight.bold, letterSpacing: tokens.typography.tracking.wider, marginTop: tokens.spacing[1] }}>KEPLER-186F</div>
+                    <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>Target</div>
+                    <div style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xl, color: c.text.primary, fontWeight: tokens.typography.weight.bold, letterSpacing: tokens.typography.tracking.wider, marginTop: tokens.spacing[1] }}>KEPLER-186F</div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[2] }}>
                     {[
@@ -1689,9 +1722,9 @@ export default function AndromedaShowcase({
                       { label: 'Bearing',  value: '042.7°'    },
                       { label: 'Class',    value: 'M-Dwarf'   },
                     ].map(({ label, value }) => (
-                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: `1px solid ${tokens.color.border.subtle}`, paddingBottom: tokens.spacing[2] }}>
-                        <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: tokens.color.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{label}</span>
-                        <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.sm, color: tokens.color.text.primary, letterSpacing: tokens.typography.tracking.wide }}>{value}</span>
+                      <div key={label} style={{ display: 'flex', justifyContent: 'space-between', borderBottom: `1px solid ${c.border.subtle}`, paddingBottom: tokens.spacing[2] }}>
+                        <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.muted, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.wider }}>{label}</span>
+                        <span style={{ fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.sm, color: c.text.primary, letterSpacing: tokens.typography.tracking.wide }}>{value}</span>
                       </div>
                     ))}
                   </div>
@@ -1747,7 +1780,7 @@ export default function AndromedaShowcase({
         <Section
           title="Tooltip"
           slug="tooltip"
-          description="Hover label for icon-only controls. Wraps any child and floats a mono uppercase label above (or below) it. Shows on keyboard focus too, carries role='tooltip', and clamps itself away from the viewport edges. No portal, so it stays in the nearest stacking context."
+          description="Hover label for icon-only controls. Wraps any child and floats a mono uppercase label above (or below) it. Shows on keyboard focus too, carries role='tooltip', and clamps itself away from the viewport edges. Inline by default, so it stays in the nearest stacking context; pass portal to lift it to the body when the trigger sits in a panel that clips or scrolls."
         >
           <Row label="Position · top (default)">
             <Tooltip label="Refresh">
@@ -1773,6 +1806,32 @@ export default function AndromedaShowcase({
             <Tooltip label="Settings" position="bottom">
               <IconButton aria-label="Settings" icon={Gear} />
             </Tooltip>
+          </Row>
+          <Row label="Portal · trigger inside a scrolling panel">
+            {/* The panel below clips and scrolls, which is exactly what an
+                inline tooltip cannot survive: it gets cut at the edge and
+                summons a horizontal scrollbar for as long as it is open.
+                `portal` lifts the label to <body> instead. */}
+            <div
+              style={{
+                display: 'flex',
+                gap: tokens.spacing[3],
+                padding: tokens.spacing[3],
+                maxWidth: '260px',
+                overflow: 'auto',
+                border: `${tokens.border.thin} ${c.border.subtle}`,
+              }}
+            >
+              <Tooltip label="Refresh" portal>
+                <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+              </Tooltip>
+              <Tooltip label="Settings" portal>
+                <IconButton aria-label="Settings" icon={Gear} />
+              </Tooltip>
+              <Tooltip label="Notifications" portal>
+                <IconButton aria-label="Notifications" icon={Bell} />
+              </Tooltip>
+            </div>
           </Row>
         </Section>
 
@@ -1901,7 +1960,7 @@ export default function AndromedaShowcase({
               >
                 <div style={{ width: 224 }}>
                   <Row label="Open down">
-                    <div style={{ width: '100%', background: tokens.color.surface.raised }}>
+                    <div style={{ width: '100%', background: c.surface.raised }}>
                       <UserCard
                         name="Reza Quinn"
                         role="Flight Director"
@@ -1917,7 +1976,7 @@ export default function AndromedaShowcase({
                 </div>
                 <div style={{ width: 224 }}>
                   <Row label="Open up">
-                    <div style={{ width: '100%', background: tokens.color.surface.raised }}>
+                    <div style={{ width: '100%', background: c.surface.raised }}>
                       <UserCard
                         name="Reza Quinn"
                         role="Flight Director"

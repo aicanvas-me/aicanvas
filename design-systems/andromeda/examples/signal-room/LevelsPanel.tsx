@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SIGNAL ROOM: Output levels
 // Right column under the hero — a vertical stack of channel
@@ -10,6 +9,7 @@
 // ============================================================
 
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { Card } from '../../components/Card';
 import { PanelHeader } from '../../components/PanelHeader';
 import { Badge } from '../../components/Badge';
@@ -48,7 +48,7 @@ export function LevelsPanel() {
                   style={{
                     fontFamily: tokens.typography.fontMono,
                     fontSize: tokens.typography.size.xs,
-                    color: tokens.color.text.primary,
+                    color: themeColor.text.primary,
                     fontWeight: tokens.typography.weight.medium,
                     textTransform: 'uppercase',
                     letterSpacing: tokens.typography.tracking.wider,
@@ -76,7 +76,7 @@ export function LevelsPanel() {
                   style={{
                     fontFamily: tokens.typography.fontMono,
                     fontSize: tokens.typography.size.xs,
-                    color: tokens.color.text.faint,
+                    color: themeColor.text.faint,
                     letterSpacing: tokens.typography.tracking.wider,
                     flexShrink: 0,
                     width: '32px',

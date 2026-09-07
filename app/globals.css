@@ -7,12 +7,36 @@
    explicitly — Tailwind tolerates the dir being absent (free-only builds). */
 @source "../components-workspace-premium";
 
-/* Class-based dark mode — toggle .dark on <html> instead of OS preference */
-@variant dark (&:where(.dark, .dark *):not([data-card-theme="light"] *));
+/* ── Theme scope contract ──────────────────────────────────────────────────
+   Two independent scopes decide what "dark" means, and the nearest one wins.
+
+   1. SITE scope — `.dark` on <html>, written only by ThemeProvider and mirrored
+      into the `theme` cookie. Owns the chrome: nav, pages, cards, footer.
+   2. PREVIEW scope — `[data-card-theme]` plus a matching `dark` class on the
+      SAME element, written only by the local state of a component or block
+      preview. Owns everything inside that preview box and nothing else.
+
+   Both directions have to hold, and both are in the selector below:
+
+     site dark  + preview light → the wrapper AND its subtree drop out of dark
+     site light + preview dark  → the wrapper's own `dark` class turns it back on
+
+   The second one is why this cannot just key off <html>. The site had a theme
+   toggle once and it was deleted, because it and the preview toggles both wrote
+   <html>: flipping one component to dark took the whole site with it. Keeping
+   the two scopes apart is the entire fix, so if this selector is ever edited,
+   check both directions before believing it.
+
+   The JS side of the same contract lives in the components themselves: they
+   read `closest('[data-card-theme]')` first and only fall back to <html> when
+   there is no preview wrapper above them. That fallback is what makes a
+   copy-pasted component work in someone else's project, so keep the attribute
+   and the class on one element or the two halves disagree. */
+@variant dark (&:where(.dark, .dark *):not([data-card-theme="light"], [data-card-theme="light"] *));
 
 :root {
-  --background: #EDEAE5;
-  --foreground: #1C1916;
+  --background: #F4F4FA;
+  --foreground: #1B1B1C;
 }
 
 /* Tell the browser which way the page leans, so every control it draws for us
@@ -22,7 +46,18 @@
 html {
   color-scheme: light;
 }
-html.dark {
+.dark {
+  color-scheme: dark;
+}
+/* The same two scopes as the dark variant, and for the same reason. color-scheme
+   is what the browser draws its own controls and scrollbars from, and it is
+   inherited, so a preview wrapper has to restate it or a light preview on a dark
+   site gets dark native controls inside it. This is not covered by @variant dark:
+   that only governs Tailwind `dark:` utilities, not hand-written CSS. */
+[data-card-theme="light"] {
+  color-scheme: light;
+}
+[data-card-theme="dark"] {
   color-scheme: dark;
 }
 
@@ -35,8 +70,8 @@ html.dark {
    in, on .app-scroll-column, by the element that actually scrolls. */
 
 .dark {
-  --background: #1A1712;
-  --foreground: #F0EBE3;
+  --background: #0E0E0F;
+  --foreground: #F4F4FA;
 }
 
 @theme inline {
@@ -54,9 +89,9 @@ html.dark {
 
   /* ── Sand scale — neutral cool gray (Phosphor-inspired) ── */
   --color-sand-50:  #F4F4FA;
-  --color-sand-100: #E3E3E8;
-  --color-sand-200: #D0D0D4;
-  --color-sand-300: #B7B7BA;
+  --color-sand-100: #EEEEF3;
+  --color-sand-200: #DFDFE3;
+  --color-sand-300: #CACACD;
   --color-sand-400: #9B9B9E;
   --color-sand-500: #7B7B7D;
   --color-sand-600: #575759;
@@ -72,6 +107,14 @@ html.dark {
   /* Deep end of the olive ramp. Dark enough to carry sand-50 text at about
      6:1, which is what the selection highlight needs to stay readable. */
   --color-olive-700: #56631F;
+  /* Light-mode accent hover. The ramp above was drawn to glow on sand-950, so
+     its brightest steps land between 1.2:1 and 3:1 on a light page. This deep
+     step reads clearly everywhere: 6.1:1 on the darkest light surface we would
+     consider and 7.4:1 on the lightest, while still olive rather than
+     near-black.
+     Light mode uses olive-600 for accent text (chosen by eye over the
+     higher-contrast 700) and this for its hover; dark mode never touches it. */
+  --color-olive-800: #4A551A;
 
   /* ── Ember accent — secondary (attention, rhythm) ── */
   --color-ember-400: #FFB574;
@@ -99,13 +142,28 @@ body {
    var(--background) (#1A1712, warm brown) inside the phone frame until the
    template streams in. Pin the framed document to the preview surface
    (sand-950) from the very first paint. */
-html[data-frame] {
+html[data-frame]:not([data-frame-light]) {
   color-scheme: dark;
 }
-html[data-frame],
-html[data-frame] body {
+html[data-frame]:not([data-frame-light]),
+html[data-frame]:not([data-frame-light]) body {
   background: #0e0e0f !important;
   transition: none !important;
+}
+/* ...unless the framed document is a LIGHT preview. The overlay inside it paints
+   light either way, but without this the html behind it stays #0e0e0f and, worse,
+   color-scheme stays dark, so every native control in a light block composition
+   is drawn dark. The wrapper is server-rendered from ?theme=, so :has() matches
+   on the first paint and no flash is introduced. */
+html[data-frame]:has([data-card-theme="light"]),
+html[data-frame][data-frame-light],
+html[data-frame]:has([data-card-theme="light"]) body,
+html[data-frame][data-frame-light] body {
+  background: var(--color-sand-50) !important;
+}
+html[data-frame]:has([data-card-theme="light"]),
+html[data-frame][data-frame-light] {
+  color-scheme: light;
 }
 
 /* ── Text selection ── */
@@ -118,6 +176,56 @@ html[data-frame] body {
 ::selection {
   background-color: var(--color-olive-700);
   color: var(--color-sand-50);
+}
+
+/* ── Theme switch cross-fade ── */
+/* ThemeProvider wraps the dark-class flip in a view transition: the browser
+   snapshots the old paint and dissolves it into the new one. The duration
+   below is that dissolve. .theme-switching rides along for the flip to turn
+   off per-element transitions, so the new theme is fully settled underneath
+   the fade rather than still animating in patches. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 320ms;
+  animation-timing-function: ease-in-out;
+}
+
+/* Preview scope stays sovereign: a [data-card-theme] wrapper and everything
+   inside it keeps its transitions during a SITE flip (the site must never
+   reach into a preview). [data-theme-keep-transition] exempts the theme
+   toggle's own icon cross-fade, the one animation the flip should show. */
+.theme-switching
+  *:not(
+    [data-card-theme],
+    [data-card-theme] *,
+    [data-theme-keep-transition],
+    [data-theme-keep-transition] *
+  ) {
+  transition: none !important;
+}
+
+/* ── Page-enter transition ── */
+/* Played on the scroll column by app/components/PageEnterFade.tsx on
+   client-side navigations: a 200ms fade. Keep the duration in sync with
+   ENTER_MS there. */
+.aic-page-enter {
+  animation: aicPageFade 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes aicPageFade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aic-page-enter {
+    animation: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
 }
 
 /* ── Page scroll column ── */
@@ -201,7 +309,15 @@ html[data-frame] body {
   .dark * {
     scrollbar-color: var(--color-sand-800) transparent;
   }
-  /* Must come after `.dark *` — same specificity, so source order decides. */
+  /* Preview scope beats site scope, matching the dark variant. Equal specificity
+     to `.dark *`, so these have to sit after it. */
+  [data-card-theme="light"] * {
+    scrollbar-color: var(--color-sand-300) transparent;
+  }
+  [data-card-theme="dark"] * {
+    scrollbar-color: var(--color-sand-800) transparent;
+  }
+  /* Must come after the rules above — same specificity, so source order decides. */
   .aic-page-scroll {
     scrollbar-width: auto;
     scrollbar-color: auto;
@@ -291,4 +407,62 @@ html[data-frame] body {
 @media (prefers-reduced-motion: reduce) {
   .aic-beam-tail,
   .aic-beam-head { animation: none; opacity: 0; }
+}
+
+/* ── Andromeda light channel ──────────────────────────────────────────────────
+   Generated from the light palette in design-systems/andromeda/tokens.ts via
+   andromedaLightVars(); _tools/light-contrast.selfcheck.mjs fails when this
+   block drifts from the tokens. Scoped on purpose: only Andromeda's own
+   routes (.andromeda-theme-scope on their layout) follow the site theme, so a
+   free-lane Andromeda component on the always-dark preview stage stays dark;
+   a [data-frame] document (the mobile-preview iframe) has no theme state of
+   its own, so it mirrors the embedding page through [data-frame-light], set
+   pre-paint by the head script in the root layout's iframe branch and kept in
+   step afterwards by AndromedaThemeSync. Carrying the channel here rather than
+   writing it from JS is what makes the framed light theme correct on the very
+   first paint instead of after hydration.
+   The selfcheck keys on the .andromeda-theme-scope selector, so it stays the
+   last one in this list. */
+html[data-frame][data-frame-light],
+html:not(.dark):not([data-frame]) .andromeda-theme-scope {
+  --andromeda-theme-text-primary: #1A1A1C;
+  --andromeda-theme-text-secondary: #4A4A4D;
+  --andromeda-theme-text-muted: #5A5A5E;
+  --andromeda-theme-text-faint: #89898D;
+  --andromeda-theme-surface-base: #F4F4F5;
+  --andromeda-theme-surface-raised: #FAFAFB;
+  --andromeda-theme-surface-overlay: #FFFFFF;
+  --andromeda-theme-surface-hover: #ECECEE;
+  --andromeda-theme-surface-active: #E3E3E5;
+  --andromeda-theme-surface-alpha: rgba(0, 0, 0, 0.45);
+  --andromeda-theme-border-subtle: #E5E5E7;
+  --andromeda-theme-border-base: #C8C8CB;
+  --andromeda-theme-border-bright: #A5A5A9;
+  --andromeda-theme-border-strong: #6F6F73;
+  --andromeda-theme-border-alpha: rgba(0, 0, 0, 0.14);
+  --andromeda-theme-accent-100: #0D4239;
+  --andromeda-theme-accent-200: #0D5D51;
+  --andromeda-theme-accent-300: #0B7A6A;
+  --andromeda-theme-accent-400: #3DBA9C;
+  --andromeda-theme-accent-500: #D7F7EF;
+  --andromeda-theme-accent-alpha: rgba(11, 122, 106, 0.22);
+  --andromeda-theme-accent-on: #0D4239;
+  --andromeda-theme-red-100: #5C1414;
+  --andromeda-theme-red-200: #9A2121;
+  --andromeda-theme-red-300: #C22B2B;
+  --andromeda-theme-red-400: #F5A3A3;
+  --andromeda-theme-red-500: #FBDADA;
+  --andromeda-theme-red-alpha: rgba(194, 43, 43, 0.22);
+  --andromeda-theme-red-on: #5C1414;
+  --andromeda-theme-orange-100: #4A3410;
+  --andromeda-theme-orange-200: #7A5310;
+  --andromeda-theme-orange-300: #8F6000;
+  --andromeda-theme-orange-400: #F3C878;
+  --andromeda-theme-orange-500: #FBE8C7;
+  --andromeda-theme-orange-alpha: rgba(143, 96, 0, 0.22);
+  --andromeda-theme-orange-on: #4A3410;
+  --andromeda-theme-gradient-accent-fade: linear-gradient(180deg, #E3F4F0 0%, #F4F4F5 100%);
+  --andromeda-theme-gradient-accent-sweep: radial-gradient(ellipse 80% 70% at 0% 0%, #DDF2EC 0%, #E9F5F1 25%, #FAFAFB 65%);
+  --andromeda-theme-gradient-surface-soft: linear-gradient(180deg, #FFFFFF 0%, #F1F1F2 100%);
+  --andromeda-theme-shadow-color: rgba(17, 17, 20, 0.16);
 }

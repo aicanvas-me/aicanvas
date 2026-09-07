@@ -19,7 +19,7 @@ function AnswerText({ item }: { item: FaqItem }) {
       {a.slice(0, idx)}
       <Link
         href={link.href}
-        className="font-medium text-olive-600 underline decoration-olive-500/40 underline-offset-2 transition-colors hover:text-olive-500 dark:text-olive-400 dark:hover:text-olive-300"
+        className="font-medium text-olive-600 underline decoration-olive-500/40 underline-offset-2 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
       >
         {link.label}
       </Link>
@@ -42,7 +42,7 @@ function QuestionText({ item }: { item: FaqItem }) {
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        className="text-olive-600 underline decoration-olive-500/40 underline-offset-2 transition-colors hover:text-olive-500 dark:text-olive-400 dark:hover:text-olive-300"
+        className="text-olive-600 underline decoration-olive-500/40 underline-offset-2 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
       >
         {qLink.label}
       </a>
@@ -51,10 +51,9 @@ function QuestionText({ item }: { item: FaqItem }) {
   )
 }
 
-// Reusable numbered FAQ accordion — the same card style as /faq, but theme-
-// adaptive (light + dark) so it fits surfaces like /pricing. Self-contained open
-// state; the first item opens by default. /faq keeps its own multi-category
-// renderer in FaqView (always-dark), so that page is unaffected.
+// Reusable numbered FAQ accordion — the same card style as /faq. Self-contained
+// open state; the first item opens by default. /faq keeps its own multi-category
+// renderer in FaqView, so that page is unaffected.
 export function FaqAccordion({
   items,
   idPrefix = 'faq',
@@ -84,8 +83,8 @@ export function FaqAccordion({
             transition={{ duration: 0.3 }}
             className={`rounded-xl border transition-colors ${
               isOpen
-                ? 'border-sand-400 bg-sand-100 dark:border-sand-700 dark:bg-sand-900'
-                : 'border-sand-300 bg-sand-100/60 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900/50 dark:hover:border-sand-700'
+                ? 'border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900'
+                : 'border-sand-200 bg-sand-100/60 hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900/50 dark:hover:border-sand-700'
             }`}
           >
             {/* Row div toggles (so the question can hold a real anchor);
@@ -96,7 +95,7 @@ export function FaqAccordion({
             >
               <span
                 className={`w-7 shrink-0 text-sm font-bold tabular-nums ${
-                  isOpen ? 'text-olive-600 dark:text-olive-400' : 'text-sand-400 dark:text-sand-600'
+                  isOpen ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-600'
                 }`}
               >
                 {String(i + 1).padStart(2, '0')}
@@ -115,7 +114,7 @@ export function FaqAccordion({
                   weight="regular"
                   size={16}
                   className={`transition-transform duration-200 ${
-                    isOpen ? 'rotate-90 text-olive-600 dark:text-olive-400' : 'text-sand-400 dark:text-sand-600'
+                    isOpen ? 'rotate-90 text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-600'
                   }`}
                 />
               </button>

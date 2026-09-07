@@ -1,12 +1,20 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: ProgressBar
 // colorVariants: primary | success | warning | error | purple
 // ============================================================
 
+import type { ReactNode } from 'react';
 import { tokens } from '../tokens';
 
-export function ProgressBar({ label, value, colorVariant = 'primary' }) {
+export type ProgressBarColorVariant = 'primary' | 'success' | 'warning' | 'error' | 'purple';
+
+export type ProgressBarProps = {
+  label?: ReactNode;
+  value: number;
+  colorVariant?: ProgressBarColorVariant;
+};
+
+export function ProgressBar({ label, value, colorVariant = 'primary' }: ProgressBarProps) {
   const fillColors = {
     primary: tokens.color.primary[50],
     success: tokens.color.success[50],

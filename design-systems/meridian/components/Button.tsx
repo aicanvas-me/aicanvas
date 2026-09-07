@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Button
 // variants: primary | secondary | subtle | ghost
@@ -6,12 +5,26 @@
 // ============================================================
 
 import { useState } from 'react';
+import type { CSSProperties, MouseEventHandler, ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { tokens } from '../tokens';
 
-export function Button({ variant = 'primary', size = 'md', icon: Icon, children, onClick, disabled }) {
+export type ButtonVariant = 'primary' | 'secondary' | 'subtle' | 'ghost';
+export type ButtonSize = 'sm' | 'md' | 'lg';
+
+export type ButtonProps = {
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  icon?: LucideIcon;
+  children?: ReactNode;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  disabled?: boolean;
+};
+
+export function Button({ variant = 'primary', size = 'md', icon: Icon, children, onClick, disabled }: ButtonProps) {
   const [hovered, setHovered] = useState(false);
 
-  const baseStyle = {
+  const baseStyle: CSSProperties = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: tokens.spacing[2],

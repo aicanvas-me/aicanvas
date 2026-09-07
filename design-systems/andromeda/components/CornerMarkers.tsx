@@ -1,11 +1,10 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: CornerMarkers
 // shadcn/ui-aligned API: forwardRef, className, ...props.
 // Defining motif of Andromeda — four L-shaped brackets that hug
 // each corner of the nearest position:relative ancestor.
 // Geometry comes from `tokens.marker.{size,offset,borderWidth}`.
-// Color defaults to `tokens.color.border.bright` — every bracket
+// Color defaults to `themeColor.border.bright` — every bracket
 // in the system uses this same value so the motif stays consistent.
 //
 // Each bracket curves at its OUTER corner to match the system frame
@@ -19,7 +18,8 @@
 'use client';
 
 import { forwardRef } from 'react';
-import { cn } from './lib/utils';
+import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
+import { cn, themeColor } from './lib/utils';
 import { tokens } from '../tokens';
 
 /**
@@ -27,13 +27,35 @@ import { tokens } from '../tokens';
  * @property {number} [size]        px square the bracket lives inside; defaults to tokens.marker.size
  * @property {number} [offset]      px inset from the corner; defaults to tokens.marker.offset
  * @property {number} [borderWidth] px stroke thickness; defaults to tokens.marker.borderWidth
- * @property {string} [color]       any CSS color; defaults to tokens.color.border.bright
+ * @property {string} [color]       any CSS color; defaults to themeColor.border.bright
  * @property {number} [radius]      px corner curve; defaults to the --andromeda-radius-frame token
  * @property {string} [className]
  */
 
+export type CornerMarkersProps = ComponentPropsWithoutRef<'div'> & {
+  size?: number;
+  offset?: number;
+  borderWidth?: number;
+  color?: string;
+  radius?: number;
+};
+
+type MarkerRadiusProp = Extract<
+  keyof CSSProperties,
+  'borderTopLeftRadius' | 'borderTopRightRadius' | 'borderBottomLeftRadius' | 'borderBottomRightRadius'
+>;
+
+type MarkerPosition = {
+  key: string;
+  radiusProp: MarkerRadiusProp;
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
+};
+
 /** @type {React.ForwardRefExoticComponent<CornerMarkersProps & React.HTMLAttributes<HTMLDivElement>>} */
-export const CornerMarkers = forwardRef(function CornerMarkers(
+export const CornerMarkers = forwardRef<HTMLDivElement, CornerMarkersProps>(function CornerMarkers(
   { size, offset, borderWidth, color, radius, className, ...props },
   ref,
 ) {
@@ -46,7 +68,7 @@ export const CornerMarkers = forwardRef(function CornerMarkers(
   const bw = borderWidth != null ? `${borderWidth}px` : `var(--andromeda-marker-width, ${tokens.marker.borderWidth}px)`;
   // The defining motif must follow a theme like its own stroke width does;
   // the explicit color prop still wins (var only when no prop given).
-  const c  = color       ?? `var(--andromeda-border-bright, ${tokens.color.border.bright})`;
+  const c  = color       ?? `var(--andromeda-border-bright, ${themeColor.border.bright})`;
   // Corner curve. Same explicit-prop-wins-over-var rule as the stroke width.
   // The bracket is `s` px square, so the browser clamps the curve to that box
   // — a large frame radius just fills the bracket into a quarter-round.
@@ -54,7 +76,7 @@ export const CornerMarkers = forwardRef(function CornerMarkers(
 
   // Each marker is an L-shape: only the two borders that meet at its corner,
   // and the OUTER corner (where they meet) carries the curve.
-  const positions = [
+  const positions: MarkerPosition[] = [
     { key: 'tl', radiusProp: 'borderTopLeftRadius',     top:    o, left:  o },
     { key: 'tr', radiusProp: 'borderTopRightRadius',    top:    o, right: o },
     { key: 'bl', radiusProp: 'borderBottomLeftRadius',  bottom: o, left:  o },

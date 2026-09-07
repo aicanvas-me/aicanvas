@@ -23,9 +23,10 @@ export function getPaddle(): Promise<Paddle | undefined> {
       token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN ?? '',
       // Verified-optimistic activation: on success we POST the transaction id
       // to be checked against the Paddle API server-side before any DB write
-      // (a session alone never grants premium). Only reload on a confirmed
-      // activation; otherwise tell the user the webhook will finish it —
-      // a blind reload would silently dump a paying user back on a Free view.
+      // (a session alone never grants premium). Only leave for /welcome on a
+      // confirmed response; otherwise tell the user the webhook will finish it —
+      // a blind redirect would silently dump a paying user on a claim page that
+      // cannot explain the delay.
       eventCallback: (e) => {
         if (e?.name && CHECKOUT_STEPS.has(e.name)) {
           beacon('Checkout Step', { step: e.name })
@@ -37,20 +38,18 @@ export function getPaddle(): Promise<Paddle | undefined> {
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ transactionId }),
           })
-            .then(async (res) => {
-              const body = (await res.json().catch(() => null)) as { status?: string } | null
-              // Anonymous buyer: no session to activate. Send them to the claim
-              // page ("check your email") — the webhook creates the account and
-              // mails the magic link.
-              if (body?.status === 'pending-claim') {
-                window.location.href = '/welcome'
-                return
-              }
+            .then((res) => {
               if (!res.ok) {
                 console.error('[paddle] activation deferred to webhook, status', res.status)
                 alert('Payment received. Your account is being activated, this can take a minute. Refresh shortly; contact support if it persists.')
+                window.location.reload()
+                return
               }
-              window.location.reload()
+              // Confirmed fast-path activation (signed-in) and anonymous
+              // pending-claim both land on /welcome — the state-aware
+              // post-purchase page: Premium quickstart (token + install
+              // command) for a live session, the claim form otherwise.
+              window.location.href = '/welcome'
             })
             .catch(() => {
               alert('Payment received. Your account is being activated. Refresh in a minute.')

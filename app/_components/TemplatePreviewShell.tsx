@@ -18,10 +18,12 @@ import { useSession } from '../components/auth/SessionProvider'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { Button, buttonClasses } from '../components/Button'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
 import dynamic from 'next/dynamic'
+import { useTheme } from '../components/ThemeProvider'
 // The dot-grid standalone, reused as the mobile preview backdrop. Loaded
 // dynamically (client-only) so it never enters the initial page bundle — it
 // ships only when a desktop user opens the Mobile preview. The page an end user
@@ -222,35 +224,43 @@ function FramePayload({ children }: { children: ReactNode }) {
   }, [])
 
   return (
-    <div className="mc-frame-viewport relative h-full w-full">
+    <div className="aic-tpl-host mc-frame-viewport relative h-full w-full">
       <style>{`
-        /* Kill the "cream flash": the framed document is ALWAYS the dark
-           Andromeda surface. The app paints body via background:var(--background),
-           which is a warm cream (#EDEAE5) in the LIGHT theme, and body carries a
-           0.2s background-color transition. During the iframe's load+hydration the
-           'dark' class can blip off for a frame (the root layout documents this),
-           and the transition stretches that blip into a visible 200ms cream fade
-           across the whole phone screen before the dashboard covers it. Force the
-           frame's html/body to the surface color with NO transition so no cream
-           can ever show, and set color-scheme:dark so the browser's own default
-           canvas is dark while this document is still loading. Scoped to the
-           iframe — the main site's theme-toggle transition is untouched. */
-        html { color-scheme: dark; }
-        html, body {
+        /* Kill the light flash: the framed document is ALWAYS the dark
+           Andromeda surface, whatever theme the visitor has chosen. The app
+           paints body via background:var(--background) with a 0.2s transition,
+           and this document's own <html> carries no theme class at all (the
+           root layout's iframe branch ships none), so without this the phone
+           screen fades through the light page colour before the dashboard
+           covers it. Force html/body to the surface with NO transition, and set
+           color-scheme:dark so the browser's default canvas is dark while the
+           document is still loading. Scoped to the iframe — the site's own
+           theme transition is untouched. */
+        html:not([data-frame-light]) { color-scheme: dark; }
+        html:not([data-frame-light]), html:not([data-frame-light]) body {
           background: #0E0E0F !important;
           transition: none !important;
         }
-        /* html/body alone is NOT enough: the root layout also paints theme
-           backgrounds on inner wrapper divs (body's flex column, the content
-           column's bg-sand-200 dark:bg-sand-950). The SSR HTML ships with the
-           'dark' class, but for a LIGHT-theme visitor ThemeProvider strips it
-           after hydration — those wrappers flip to light sand while the
-           composition's entrance animation is still fading in, which reads as
-           a cream/yellow flash filling the phone screen. Force every ancestor
-           of the frame viewport to the dark surface too; :has() matches
-           ancestors only, so the composition's own surfaces are untouched. */
-        body *:has(.mc-frame-viewport) {
+        html[data-frame-light], html[data-frame-light] body {
+          background: #F4F4F5 !important;
+          transition: none !important;
+        }
+        /* html/body alone is NOT enough on the fallback path. A browser that
+           does not send Sec-Fetch-Dest gets the full site shell instead of the
+           iframe branch, and that shell paints theme backgrounds on inner
+           wrapper divs (body's flex column, the content column's
+           bg-sand-200 dark:bg-sand-950). For a light-theme visitor those
+           wrappers are light sand while the composition's entrance animation is
+           still fading in, which reads as a flash filling the phone screen.
+           Force every ancestor of the frame viewport to the dark surface too;
+           :has() matches ancestors only, so the composition's own surfaces are
+           untouched. */
+        html:not([data-frame-light]) body *:has(.mc-frame-viewport) {
           background: #0E0E0F !important;
+          transition: none !important;
+        }
+        html[data-frame-light] body *:has(.mc-frame-viewport) {
+          background: #F4F4F5 !important;
           transition: none !important;
         }
         /* Overlay-style scrollbars: hide the bar AND drop the reserved 18px
@@ -298,6 +308,9 @@ function PreviewChrome({
   // Honour the OS "reduce motion" setting — the device-toggle crossfade/scale
   // below collapses to an instant swap when it's on.
   const reduce = useReducedMotion()
+  // The phone stage follows the site theme: light ground behind a light frame.
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const reload = () =>
     device === 'desktop'
       ? setDesktopNonce((n) => n + 1)
@@ -338,7 +351,7 @@ function PreviewChrome({
           key={desktopNonce}
           aria-hidden={device !== 'desktop'}
           inert={device !== 'desktop'}
-          className="isolate h-full w-full"
+          className="aic-tpl-host isolate h-full w-full"
         >
           {children}
         </div>
@@ -354,7 +367,7 @@ function PreviewChrome({
           {device !== 'desktop' && (
             <motion.div
               key="mobile-frame"
-              className="absolute inset-0 z-10 flex items-stretch justify-center overflow-hidden bg-sand-950 p-4 md:p-6"
+              className="absolute inset-0 z-10 flex items-stretch justify-center overflow-hidden bg-sand-50 p-4 md:p-6 dark:bg-sand-950"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
@@ -365,16 +378,18 @@ function PreviewChrome({
                   the frame; it tracks the cursor at the window level regardless,
                   so dots in the margin still light up as you move the mouse. */}
               <div className="pointer-events-none absolute inset-0">
-                {/* Themed to match the page: seamless sand-950 backdrop, faint
-                    sand-neutral dots that light up to the olive accent near the
-                    cursor. Raw rgb values (a canvas can't read Tailwind tokens);
-                    the token each value maps to is noted inline below. */}
+                {/* Themed to match the page: a seamless page-ground backdrop,
+                    faint sand-neutral dots that light up to the olive accent
+                    near the cursor. Raw rgb values (a canvas can't read
+                    Tailwind tokens); the token each value maps to is noted
+                    inline below. The grid reads these live, so a toggle
+                    repaints it. */}
                 <InteractiveDotGrid
                   showLabel={false}
                   colors={{
-                    background: '#0E0E0F', // sand-950 — matches bg-sand-950 backdrop
+                    background: isDark ? '#0E0E0F' : '#F4F4FA', // sand-950 / sand-50 — matches the backdrop
                     dot: '123,123,125', //     sand-500 — faint neutral grid
-                    highlight: '218,228,160', // olive-400 — accent, lit near the cursor
+                    highlight: isDark ? '218,228,160' : '134,150,49', // olive-400 / olive-600 — accent, lit near the cursor
                     baseAlpha: 0.22,
                     peakAlpha: 0.95,
                   }}
@@ -390,9 +405,10 @@ function PreviewChrome({
                 // otherwise index DEVICES with a non-frame key. colorScheme
                 // keeps the browser's own pre-load iframe canvas dark, so the
                 // network round-trip can't blink white before the document
-                // paints.
-                style={{ width: DEVICES.phone.width, colorScheme: 'dark' }}
-                className="relative h-full max-w-full shrink-0 rounded-2xl border border-sand-800 bg-sand-950 shadow-2xl"
+                // paints. It follows the site theme, as the frame's own
+                // document does (AndromedaThemeSync mirrors the parent).
+                style={{ width: DEVICES.phone.width, colorScheme: theme }}
+                className="relative h-full max-w-full shrink-0 rounded-2xl border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-800 dark:bg-sand-950"
                 initial={{ scale: reduce ? 1 : 0.985 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: reduce ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -422,12 +438,12 @@ function TopBar({
   onReload: () => void
 }) {
   return (
-    <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center border-b border-sand-300 bg-sand-200/90 backdrop-blur dark:border-sand-800 dark:bg-sand-950/90">
+    <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center border-b border-sand-200 bg-sand-50/90 backdrop-blur dark:border-sand-800 dark:bg-sand-950/90">
       {/* Logo block — mirrors the site Sidebar rail exactly (w-60, px-4, gap-2,
           wordmark always shown) and carries the SAME full-height border-r the
           sidebar draws. Keeps the logo in the identical spot and makes the
           divider read as one continuous line with the rest of the site. */}
-      <div className="flex h-full w-auto shrink-0 items-center border-r border-sand-300 px-4 md:w-60 dark:border-sand-800">
+      <div className="flex h-full w-auto shrink-0 items-center border-r border-sand-200 px-4 md:w-60 dark:border-sand-800">
         <Link
           href="/"
           aria-label="AI Canvas home"
@@ -453,14 +469,14 @@ function TopBar({
           >
             {systemName}
           </Link>
-          <span className="mx-1 shrink-0 text-sand-400 dark:text-sand-600">/</span>
+          <span className="mx-1 shrink-0 text-sand-600 dark:text-sand-600">/</span>
           <TemplateSwitcher templateSlug={templateSlug} templateName={templateName} />
         </nav>
 
         {/* Device toggles (Desktop / Mobile) + Replay — sized to match the
             right-side buttons (~32px). Shown from md up; the cluster hides on a
             real phone, where you already see the responsive layout. */}
-        <div className="hidden items-center gap-0.5 justify-self-center rounded-lg border border-sand-300 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
+        <div className="hidden items-center gap-0.5 justify-self-center rounded-lg border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
           {DEVICE_ORDER.map(({ key, label, icon: Icon }) => {
             const active = device === key
             return (
@@ -472,28 +488,29 @@ function TopBar({
                 aria-pressed={active}
                 className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
                   active
-                    ? 'bg-sand-50 text-sand-900 shadow-sm dark:bg-sand-800 dark:text-sand-50'
-                    : 'text-sand-500 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100'
+                    ? 'bg-sand-100 text-sand-900 shadow-sm dark:bg-sand-800 dark:text-sand-50'
+                    : 'text-sand-600 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100'
                 }`}
               >
                 <Icon weight="regular" size={16} />
               </button>
             )
           })}
-          <span className="mx-0.5 h-4 w-px bg-sand-300 dark:bg-sand-700" aria-hidden />
+          <span className="mx-0.5 h-4 w-px bg-sand-200 dark:bg-sand-700" aria-hidden />
           <button
             type="button"
             onClick={onReload}
             aria-label="Replay animation"
             title="Replay animation"
-            className="flex h-7 w-7 items-center justify-center rounded-md text-sand-500 transition-colors hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100"
+            className="flex h-7 w-7 items-center justify-center rounded-md text-sand-600 transition-colors hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100"
           >
             <ArrowClockwise weight="regular" size={15} />
           </button>
         </div>
 
-        {/* Right — entitlement CTA + auth */}
+        {/* Right — theme toggle + entitlement CTA + auth */}
         <div className="flex items-center justify-end gap-2">
+          <ThemeToggle />
           <RightCluster
             templateSlug={templateSlug}
             systemName={systemName}
@@ -544,7 +561,7 @@ function TemplateSwitcher({
 
   // Nothing to switch to → keep the original static olive crumb.
   if (!systemSlug || siblings.length < 2) {
-    return <span className="text-olive-500">{templateName}</span>
+    return <span className="text-olive-600 dark:text-olive-500">{templateName}</span>
   }
 
   return (
@@ -555,7 +572,7 @@ function TemplateSwitcher({
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Switch template"
-        className="flex min-w-0 items-center gap-1 rounded-md text-olive-500 transition-colors hover:text-olive-600 dark:hover:text-olive-300"
+        className="flex min-w-0 items-center gap-1 rounded-md text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-300"
       >
         <span className="truncate">{templateName}</span>
         <CaretUpDown weight="regular" size={14} className="shrink-0 opacity-70" />
@@ -566,7 +583,7 @@ function TemplateSwitcher({
           phone-width menu never runs off the right edge; desktop viewports keep
           the full 260px (100vw-170px is >260 there, so min() picks 260). */}
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-[min(260px,calc(100vw-170px))] overflow-hidden rounded-xl border border-sand-300 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute left-0 top-full z-50 mt-2 w-[min(260px,calc(100vw-170px))] overflow-hidden rounded-xl border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           {siblings.map((t) => {
             const active = t.slug === templateSlug
             const folder = t.slug.startsWith(`${systemSlug}-`)
@@ -581,12 +598,12 @@ function TemplateSwitcher({
                 className={`flex items-center justify-between gap-3 px-3 py-2 text-sm transition-colors ${
                   active
                     ? 'font-semibold text-olive-600 dark:text-olive-400'
-                    : 'text-sand-700 hover:bg-sand-200/70 dark:text-sand-300 dark:hover:bg-sand-800/70'
+                    : 'text-sand-700 hover:bg-sand-50/70 dark:text-sand-300 dark:hover:bg-sand-800/70'
                 }`}
               >
                 <span className="truncate">{t.name}</span>
                 {active && (
-                  <Check weight="bold" size={14} className="shrink-0 text-olive-500 dark:text-olive-400" />
+                  <Check weight="bold" size={14} className="shrink-0 text-olive-600 dark:text-olive-400" />
                 )}
               </Link>
             )
@@ -629,10 +646,8 @@ function RightCluster({
 
       {/* The site-wide auth control (HeaderSocials → TopAuthPill): the
           avatar-with-chevron dropdown, or "Sign in" when signed out — identical
-          to every other page header. The Lightning status pill is suppressed
-          here (showStatusPill={false}); this bar carries its own Install /
-          Unlock CTA, so the pill would only duplicate the upgrade path. */}
-      <TopAuthPill showStatusPill={false} />
+          to every other page header. */}
+      <TopAuthPill />
     </>
   )
 }
@@ -740,11 +755,11 @@ function InstallButton({
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-xl border border-sand-300 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-xl border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   CLI install
                 </span>
                 <span className="rounded-md border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
@@ -759,7 +774,7 @@ function InstallButton({
               >
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-olive-500 dark:text-olive-400" />
+                    <Check weight="regular" size={13} className="text-olive-600 dark:text-olive-400" />
                     Copied
                   </>
                 ) : (
@@ -770,13 +785,13 @@ function InstallButton({
                 )}
               </Button>
             </div>
-            <div className="rounded-lg bg-sand-950 px-4 py-3">
-              <code className="block break-all font-mono text-xs text-sand-300">{cliCommandMasked}</code>
+            <div className="rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
+              <code className="block break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-olive-500 dark:text-olive-400" />
+                  <Check weight="bold" size={12} className="shrink-0 text-olive-600 dark:text-olive-400" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

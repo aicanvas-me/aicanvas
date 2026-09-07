@@ -9,7 +9,6 @@ import { buttonClasses } from './Button'
 // ─── Types (also used by ComponentPageView + registry) ────────────────────────
 
 export type Platform = 'Claude Code' | 'Lovable' | 'V0'
-export const PLATFORMS: Platform[] = ['Claude Code', 'Lovable', 'V0']
 
 export interface Tag {
   label: string
@@ -38,7 +37,7 @@ export function ComponentCard({ name, description, href, image, badge, slug, pos
     <Link
       href={href}
       onClick={() => track('Component Card Click', { component: slug, position, source })}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-950 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl hover:shadow-sand-300/60 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:hover:shadow-2xl dark:hover:shadow-black/50"
+      className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 shadow-sm transition-all duration-200 hover:border-sand-300 hover:shadow-xl hover:shadow-sand-300/60 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:hover:shadow-2xl dark:hover:shadow-black/50"
     >
       {/* Image — extends slightly behind the content panel. Save action
           intentionally lives on the component detail page only; keeping it
@@ -101,7 +100,7 @@ export function ComponentCard({ name, description, href, image, badge, slug, pos
             we use group-hover so hovering anywhere on the card lights it
             up with the same shift as a real outline button's :hover. */}
         <div className="mt-auto pt-1">
-          <span className={`${buttonClasses({ variant: 'outline', size: 'md', fullWidth: true })} text-xs group-hover:border-sand-400 group-hover:text-sand-900 dark:group-hover:border-sand-600 dark:group-hover:text-sand-100`}>
+          <span className={`${buttonClasses({ variant: 'outline', size: 'md', fullWidth: true })} text-xs group-hover:border-sand-300 group-hover:text-sand-900 dark:group-hover:border-sand-600 dark:group-hover:text-sand-100`}>
             {cta}
             <ArrowRight weight="regular" size={14} className="transition-transform group-hover:translate-x-0.5" />
           </span>

@@ -84,7 +84,7 @@ export async function GET(req: NextRequest) {
   // Shiki hiccup — the client falls back to a plain <pre>.
   let highlighted: string | undefined
   try {
-    highlighted = await codeToHtml(code, { lang: 'tsx', theme: 'github-dark' })
+    highlighted = await codeToHtml(code, { lang: 'tsx', themes: { light: 'github-light', dark: 'github-dark' } })
   } catch (err) {
     console.error('[component-code] highlight failed, serving raw:', err)
   }

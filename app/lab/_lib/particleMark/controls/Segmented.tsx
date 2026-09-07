@@ -35,7 +35,7 @@ export function Segmented<T extends string>({
             aria-label={renderOption ? opt : undefined}
             className={`flex flex-1 items-center justify-center rounded-md px-2 text-xs font-semibold transition-colors ${
               active
-                ? 'bg-sand-50 text-sand-900 shadow-sm dark:bg-sand-100 dark:text-sand-900'
+                ? 'bg-sand-100 text-sand-900 shadow-sm dark:bg-sand-100 dark:text-sand-900'
                 : 'text-sand-600 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-200'
             }`}
           >

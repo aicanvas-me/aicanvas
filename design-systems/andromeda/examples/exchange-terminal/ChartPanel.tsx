@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // EXCHANGE TERMINAL · ChartPanel
 // Custom SVG candlestick chart + MA polylines + volume strip below.
@@ -8,13 +7,14 @@
 
 import { Eye, EyeSlash, X, ArrowsOutSimple, ListBullets } from '@phosphor-icons/react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { IconButton } from '../../components/IconButton';
 import { mq } from '../../components/lib/responsive';
 import { Dropdown } from './Dropdown';
 import { candles, last, maSeries } from './data';
 
-function InsetDivider({ side = 'bottom' }) {
+function InsetDivider({ side = 'bottom' }: { side?: 'top' | 'bottom' }) {
   return (
     <span
       aria-hidden
@@ -24,7 +24,7 @@ function InsetDivider({ side = 'bottom' }) {
         right: tokens.spacing[3],
         [side]: 0,
         height: '1px',
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
         pointerEvents: 'none',
       }}
     />
@@ -69,16 +69,16 @@ const yLabels = (() => {
   return out;
 })();
 
-const cx = (i) => i + 0.5;
-const cy = (p) => yMax - p;
+const cx = (i: number) => i + 0.5;
+const cy = (p: number) => yMax - p;
 
 const MA_COLORS = {
-  5:  tokens.color.accent[200],
-  10: tokens.color.orange[200],
-  20: tokens.color.red[200],
+  5:  themeColor.accent[200],
+  10: themeColor.orange[200],
+  20: themeColor.red[200],
 };
 
-function maPath(series) {
+function maPath(series: (number | null)[]) {
   let started = false;
   let d = '';
   for (let i = 0; i < N; i++) {
@@ -90,13 +90,13 @@ function maPath(series) {
   return d.trim();
 }
 
-const fmtNum = (n, d = 2) =>
+const fmtNum = (n: number | null, d = 2) =>
   n == null
     ? '—'
     : n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 
 // ── Chart header ─────────────────────────────────────────────────
-function TimeframeChip({ label, active }) {
+function TimeframeChip({ label, active }: { label: string; active?: boolean }) {
   return (
     <button
       type="button"
@@ -113,7 +113,7 @@ function TimeframeChip({ label, active }) {
         fontSize: tokens.typography.size.sm,
         textTransform: 'uppercase',
         letterSpacing: tokens.typography.tracking.wider,
-        color: active ? tokens.color.accent[200] : tokens.color.text.secondary,
+        color: active ? themeColor.accent[200] : themeColor.text.secondary,
       }}
     >
       {label}
@@ -121,7 +121,7 @@ function TimeframeChip({ label, active }) {
   );
 }
 
-function ViewTab({ label, active }) {
+function ViewTab({ label, active }: { label: string; active?: boolean }) {
   return (
     <button
       type="button"
@@ -137,7 +137,7 @@ function ViewTab({ label, active }) {
         fontSize: tokens.typography.size.sm,
         textTransform: 'uppercase',
         letterSpacing: tokens.typography.tracking.wider,
-        color: active ? tokens.color.text.primary : tokens.color.text.muted,
+        color: active ? themeColor.text.primary : themeColor.text.muted,
         fontWeight: active ? tokens.typography.weight.medium : tokens.typography.weight.regular,
       }}
     >
@@ -151,7 +151,7 @@ function ViewTab({ label, active }) {
             right: 0,
             bottom: 0,
             height: '1px',
-            background: tokens.color.accent[300],
+            background: themeColor.accent[300],
           }}
         />
       ) : null}
@@ -185,7 +185,7 @@ function ChartHeader() {
           alignItems: 'center',
           gap: tokens.spacing[1],
           padding: `0 ${tokens.spacing[3]}`,
-          borderRight: `${tokens.border.thin} ${tokens.color.border.subtle}`,
+          borderRight: `${tokens.border.thin} ${themeColor.border.subtle}`,
           flexShrink: 0,
         }}
       >
@@ -211,16 +211,16 @@ function ChartHeader() {
 }
 
 // ── OHLC + MA legend ─────────────────────────────────────────────
-function LegendKV({ label, value, valueColor }) {
+function LegendKV({ label, value, valueColor }: { label: string; value: string; valueColor?: string }) {
   return (
     <span style={{ display: 'inline-flex', gap: tokens.spacing[1], alignItems: 'baseline' }}>
-      <span style={{ color: tokens.color.text.muted }}>{label}</span>
-      <span style={{ color: valueColor ?? tokens.color.text.primary }}>{value}</span>
+      <span style={{ color: themeColor.text.muted }}>{label}</span>
+      <span style={{ color: valueColor ?? themeColor.text.primary }}>{value}</span>
     </span>
   );
 }
 
-function LegendMA({ label, color, value }) {
+function LegendMA({ label, color, value }: { label: string; color: string; value: string }) {
   return (
     <span style={{ display: 'inline-flex', gap: tokens.spacing[1], alignItems: 'baseline' }}>
       <span style={{ color }}>{label}:</span>
@@ -238,7 +238,7 @@ function LegendDivider() {
       style={{
         width: '1px',
         height: tokens.spacing[3],
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
       }}
     />
   );
@@ -265,7 +265,7 @@ function LegendStrip() {
       }}
     >
       <InsetDivider />
-      <span style={{ color: tokens.color.text.muted }}>2026/05/01</span>
+      <span style={{ color: themeColor.text.muted }}>2026/05/01</span>
 
       <LegendDivider />
 
@@ -281,12 +281,12 @@ function LegendStrip() {
       <LegendKV
         label="CHANGE"
         value={`${change >= 0 ? '+' : ''}${fmtNum(change, 2)}%`}
-        valueColor={change >= 0 ? tokens.color.accent[200] : tokens.color.red[200]}
+        valueColor={change >= 0 ? themeColor.accent[200] : themeColor.red[200]}
       />
       <LegendKV
         label="AMPLITUDE"
         value={`${fmtNum(amplitude, 2)}%`}
-        valueColor={tokens.color.orange[200]}
+        valueColor={themeColor.orange[200]}
       />
 
       <span style={{ flex: 1 }} />
@@ -298,7 +298,7 @@ function LegendStrip() {
 
       <LegendDivider />
 
-      <span style={{ display: 'flex', gap: tokens.spacing[2], color: tokens.color.text.faint }}>
+      <span style={{ display: 'flex', gap: tokens.spacing[2], color: themeColor.text.faint }}>
         <Eye weight="regular" size={13} />
         <EyeSlash weight="regular" size={13} />
         <X weight="regular" size={13} />
@@ -319,7 +319,7 @@ function CandlesSvg() {
         <line
           key={`gy-${p}`}
           x1={0} x2={N} y1={cy(p)} y2={cy(p)}
-          stroke={tokens.color.border.subtle}
+          style={{ stroke: themeColor.border.subtle }}
           strokeWidth={1}
           strokeDasharray="2 4"
           vectorEffect="non-scaling-stroke"
@@ -328,7 +328,7 @@ function CandlesSvg() {
 
       {candles.map((c, i) => {
         const up      = c.c >= c.o;
-        const color   = up ? tokens.color.accent[300] : tokens.color.red[300];
+        const color   = up ? themeColor.accent[300] : themeColor.red[300];
         const bodyTop = cy(Math.max(c.o, c.c));
         const bodyBot = cy(Math.min(c.o, c.c));
         const bodyH   = Math.max(bodyBot - bodyTop, yRange * 0.0006);
@@ -337,21 +337,21 @@ function CandlesSvg() {
           <g key={`k-${i}`}>
             <line
               x1={x} x2={x} y1={cy(c.h)} y2={cy(c.l)}
-              stroke={color}
+              style={{ stroke: color }}
               strokeWidth={1}
               vectorEffect="non-scaling-stroke"
             />
-            <rect x={x - 0.38} width={0.76} y={bodyTop} height={bodyH} fill={color} />
+            <rect x={x - 0.38} width={0.76} y={bodyTop} height={bodyH} style={{ fill: color }} />
           </g>
         );
       })}
 
-      {[5, 10, 20].map((p) => (
+      {([5, 10, 20] as const).map((p) => (
         <path
           key={`ma-${p}`}
           d={maPath(maSeries[p])}
           fill="none"
-          stroke={MA_COLORS[p]}
+          style={{ stroke: MA_COLORS[p] }}
           strokeWidth={1.5}
           vectorEffect="non-scaling-stroke"
         />
@@ -359,7 +359,7 @@ function CandlesSvg() {
 
       <line
         x1={0} x2={N} y1={cy(last.c)} y2={cy(last.c)}
-        stroke={tokens.color.accent[300]}
+        style={{ stroke: themeColor.accent[300] }}
         strokeWidth={1}
         strokeDasharray="2 3"
         vectorEffect="non-scaling-stroke"
@@ -384,15 +384,14 @@ function VolumeSvg() {
     >
       {candles.map((c, i) => {
         const up    = c.c >= c.o;
-        const fill  = up ? tokens.color.accent[300] : tokens.color.red[300];
-        const tint  = up ? tokens.color.accent.alpha : tokens.color.red.alpha;
+        const fill  = up ? themeColor.accent[300] : themeColor.red[300];
+        const tint  = up ? themeColor.accent.alpha : themeColor.red.alpha;
         return (
           <rect
             key={`v-${i}`}
             x={cx(i) - 0.32} width={0.64}
             y={volMax - c.v} height={c.v}
-            fill={tint}
-            stroke={fill}
+            style={{ fill: tint, stroke: fill }}
             strokeWidth={1}
             vectorEffect="non-scaling-stroke"
           />
@@ -406,7 +405,7 @@ function VolumeSvg() {
 const LABEL_STYLE = {
   fontFamily: tokens.typography.fontMono,
   fontSize: tokens.typography.size.sm,
-  color: tokens.color.text.muted,
+  color: themeColor.text.muted,
   letterSpacing: tokens.typography.tracking.wide,
 };
 
@@ -448,8 +447,8 @@ function YAxisLabels() {
           right: 0,
           transform: 'translateY(-50%)',
           padding: `${tokens.spacing[1]} ${tokens.spacing[2]}`,
-          background: tokens.color.accent[400],
-          color: tokens.color.text.primary,
+          background: themeColor.accent[400],
+          color: themeColor.text.primary,
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
           letterSpacing: tokens.typography.tracking.wide,
@@ -504,7 +503,7 @@ function XAxisLabels() {
 
 // ── Volume legend ─────────────────────────────────────────────────
 function VolumeLegend() {
-  const fmt = (n) => (n >= 1000 ? `${(n / 1000).toFixed(3)}K` : `${n.toFixed(0)}`);
+  const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(3)}K` : `${n.toFixed(0)}`);
   return (
     <div
       style={{
@@ -521,9 +520,9 @@ function VolumeLegend() {
         letterSpacing: tokens.typography.tracking.wide,
       }}
     >
-      <span style={{ color: tokens.color.text.muted }}>VOL</span>
-      <span style={{ color: tokens.color.accent[200] }}>{fmt(last.v)}</span>
-      <span style={{ display: 'flex', gap: tokens.spacing[2], color: tokens.color.text.faint }}>
+      <span style={{ color: themeColor.text.muted }}>VOL</span>
+      <span style={{ color: themeColor.accent[200] }}>{fmt(last.v)}</span>
+      <span style={{ display: 'flex', gap: tokens.spacing[2], color: themeColor.text.faint }}>
         <Eye weight="regular" size={13} />
         <EyeSlash weight="regular" size={13} />
         <X weight="regular" size={13} />
@@ -538,7 +537,7 @@ export function ChartPanel() {
     <div
       style={{
         position: 'relative',
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         display: 'flex',
         flexDirection: 'column',
         flex: 1,
@@ -572,7 +571,7 @@ export function ChartPanel() {
           <YAxisLabels />
         </div>
 
-        <div style={{ flexShrink: 0, height: '1px', background: tokens.color.border.subtle }} />
+        <div style={{ flexShrink: 0, height: '1px', background: themeColor.border.subtle }} />
 
         {/* Volume area — fixed height so it stays compact */}
         <div

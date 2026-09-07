@@ -1,6 +1,5 @@
-// @ts-nocheck — consumes Andromeda tokens which are not type-checked yet.
 import ResourcePlanning from '../../../../../design-systems/andromeda/examples/resource-planning'
-import { tokens } from '../../../../../design-systems/andromeda/tokens'
+import { themeColor } from '../../../../../design-systems/andromeda/components/lib/utils'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
@@ -32,7 +31,7 @@ export default async function ResourcePlanningTemplate({
     >
       <div
         className="relative h-full min-h-full w-full md:overflow-hidden"
-        style={{ backgroundColor: tokens.color.surface.base }}
+        style={{ backgroundColor: themeColor.surface.base }}
       >
         <ResourcePlanning />
       </div>

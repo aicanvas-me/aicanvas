@@ -26,6 +26,8 @@ import type { ReactNode } from 'react'
 import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
 import { Button, buttonClasses } from './Button'
+import { ThemeToggle } from './ThemeToggle'
+import { isPinnedDarkRoute } from '../lib/pinned-dark'
 import { SignedIn } from './auth/SignedIn'
 import { SignedOut } from './auth/SignedOut'
 import { UserMenu } from './auth/UserMenu'
@@ -155,10 +157,15 @@ export function MobileNav({
     TEMPLATE_LEAF_RE.test(pathname ?? '')
   if (hideMobileNav) return null
 
+  // On a route that pins itself dark, this drawer is the one piece of site
+  // chrome still rendering from the root layout, so a light-theme visitor gets
+  // a light bar sitting on top of a dark page. Wear the route's theme instead.
+  const pinnedDark = isPinnedDarkRoute(pathname)
+
   return (
-    <>
+    <div className={pinnedDark ? 'dark contents' : 'contents'}>
       {/* ── Mobile top bar ── */}
-      <div className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-sand-300 bg-sand-200 px-4 dark:border-sand-800 dark:bg-sand-950 md:hidden">
+      <div className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-sand-200 bg-sand-50 px-4 dark:border-sand-800 dark:bg-sand-950 md:hidden">
         <Link href="/" className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/ai-canvas-icon.svg" alt="" width={18} height={15} className="shrink-0" />
@@ -192,10 +199,10 @@ export function MobileNav({
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
-              className="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-sand-200 shadow-2xl dark:bg-sand-950 md:hidden"
+              className="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-sand-50 shadow-2xl dark:bg-sand-950 md:hidden"
             >
               {/* Drawer header */}
-              <div className="flex h-16 shrink-0 items-center justify-between border-b border-sand-300 px-4 dark:border-sand-800">
+              <div className="flex h-16 shrink-0 items-center justify-between border-b border-sand-200 px-4 dark:border-sand-800">
                 <Link
                   href="/"
                   className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50"
@@ -216,7 +223,7 @@ export function MobileNav({
                   <MagnifyingGlass
                     weight="regular"
                     size={14}
-                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sand-400 dark:text-sand-500"
+                    className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sand-600 dark:text-sand-500"
                   />
                   <input
                     ref={searchInputRef}
@@ -226,14 +233,14 @@ export function MobileNav({
                     placeholder="Search..."
                     // 16px font-size prevents iOS Safari from auto-zooming on focus.
                     style={{ fontSize: 16 }}
-                    className="w-full rounded-lg border border-sand-300 bg-sand-100 py-1.5 pl-8 pr-8 text-sand-900 outline-none transition-colors placeholder:text-sand-400 hover:border-sand-400 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-600 dark:focus:border-olive-500 dark:focus:ring-olive-500/20"
+                    className="w-full rounded-lg border border-sand-200 bg-sand-100 py-1.5 pl-8 pr-8 text-sand-900 outline-none transition-colors placeholder:text-sand-600 hover:border-sand-300 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-600 dark:focus:border-olive-500 dark:focus:ring-olive-500/20"
                   />
                   {searchValue && (
                     <button
                       type="button"
                       onClick={clearSearch}
                       aria-label="Clear search"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-sand-400 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-sand-600 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
                     >
                       <X weight="regular" size={13} />
                     </button>
@@ -271,8 +278,8 @@ export function MobileNav({
                           onClick={() => setOpen(false)}
                           className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
                             activeCategory === 'All Components'
-                              ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                              : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                              ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                              : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                           }`}
                         >
                           <span>{section.icon}</span>
@@ -285,14 +292,14 @@ export function MobileNav({
                           disabled={isDisabled}
                           className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
                             isDisabled
-                              ? 'cursor-not-allowed text-sand-400/60 dark:text-sand-600/60'
-                              : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                              ? 'cursor-not-allowed text-sand-600/60 dark:text-sand-600/60'
+                              : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                           }`}
                         >
                           <span className={isDisabled ? 'opacity-40' : ''}>{section.icon}</span>
                           <span className="flex-1 text-left">
                             {section.title}
-                            {isDisabled && <span className="ml-1 text-xs font-normal text-sand-400 dark:text-sand-700">· soon</span>}
+                            {isDisabled && <span className="ml-1 text-xs font-normal text-sand-600 dark:text-sand-700">· soon</span>}
                           </span>
                           {!isDisabled && <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />}
                         </button>
@@ -313,8 +320,8 @@ export function MobileNav({
                                   onClick={() => setOpen(false)}
                                   className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
                                     isActive
-                                      ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                                      : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                                      ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                                      : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                                   }`}
                                 >
                                   <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
@@ -328,7 +335,7 @@ export function MobileNav({
                               <button
                                 type="button"
                                 onClick={() => setShowAllCats((v) => !v)}
-                                className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-500 transition-colors hover:bg-sand-300/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
+                                className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
                               >
                                 <CaretDown
                                   size={12}
@@ -356,15 +363,15 @@ export function MobileNav({
                 />
 
                 {/* Lab, Get MCP, Pricing, About — follows same pattern as section headers */}
-                <div className="mb-3 h-px bg-sand-300 dark:bg-sand-800" />
+                <div className="mb-3 h-px bg-sand-200 dark:bg-sand-800" />
                 <div className="mb-3">
                   <Link
                     href="/lab"
                     onClick={() => setOpen(false)}
                     className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
                       pathname?.startsWith('/lab')
-                        ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                     }`}
                   >
                     <span><Flask weight="regular" size={16} /></span>
@@ -375,8 +382,8 @@ export function MobileNav({
                     onClick={() => setOpen(false)}
                     className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
                       pathname === '/mcp'
-                        ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                     }`}
                   >
                     <span><Plug weight="regular" size={16} /></span>
@@ -387,8 +394,8 @@ export function MobileNav({
                     onClick={() => setOpen(false)}
                     className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
                       pathname === '/pricing'
-                        ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                     }`}
                   >
                     <span><PiggyBank weight="regular" size={16} /></span>
@@ -399,8 +406,8 @@ export function MobileNav({
                     onClick={() => setOpen(false)}
                     className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
                       pathname === '/about'
-                        ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                     }`}
                   >
                     <span><Info weight="regular" size={16} /></span>
@@ -411,8 +418,8 @@ export function MobileNav({
                     onClick={() => setOpen(false)}
                     className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
                       pathname === '/faq'
-                        ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                     }`}
                   >
                     <span><Question weight="regular" size={16} /></span>
@@ -420,7 +427,7 @@ export function MobileNav({
                   </Link>
                   <Link
                     href="/contact"
-                    className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
+                    className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                   >
                     <span><EnvelopeSimple weight="regular" size={16} /></span>
                     <span className="flex-1">Contact</span>
@@ -428,7 +435,7 @@ export function MobileNav({
                   <Link
                     href="/feedback"
                     onClick={() => setOpen(false)}
-                    className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
+                    className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                   >
                     <span><ChatCircleText weight="regular" size={16} /></span>
                     <span className="flex-1">Feedback</span>
@@ -456,10 +463,12 @@ export function MobileNav({
                 >
                   <XLogo weight="regular" size={20} />
                 </a>
+                {/* Far edge: a site setting, not a third social link. */}
+                <ThemeToggle className="ml-auto" size="md" />
               </div>
 
               {/* Auth row */}
-              <div className="shrink-0 border-t border-sand-300 px-3 py-3 dark:border-sand-800">
+              <div className="shrink-0 border-t border-sand-200 px-3 py-3 dark:border-sand-800">
                 <SignedIn>
                   <UserMenu />
                 </SignedIn>
@@ -471,6 +480,6 @@ export function MobileNav({
           </>
         )}
       </AnimatePresence>
-    </>
+    </div>
   )
 }

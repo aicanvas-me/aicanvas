@@ -1,6 +1,3 @@
-// @ts-nocheck — consumes untyped design-system tokens + uses JS-style block
-// helpers (no prop types), same posture as its source AndromedaOverview.tsx
-// and andromeda-demos.tsx. Strip after a proper typing pass on design-systems/.
 'use client'
 
 // A looping window into Andromeda's foundation. Cycles four blocks — Colors →
@@ -18,24 +15,26 @@
 // system.
 
 import { useState, useEffect, useRef } from 'react'
+import type { ReactNode } from 'react'
 import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-motion'
+import type { Variants } from 'framer-motion'
 import { tokens } from '../../design-systems/andromeda/tokens'
 
 const C = tokens.color
 const FONT = tokens.typography.fontMono
 
-const rowV = {
+const rowV: Variants = {
   hidden: { opacity: 0, y: 18 },
   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.16, 1, 0.3, 1] } },
   exit: { opacity: 0, y: -18, transition: { duration: 0.3, ease: [0.4, 0, 1, 1] } },
 }
-const containerV = {
+const containerV: Variants = {
   hidden: {},
   show: { transition: { staggerChildren: 0.07, delayChildren: 0.04 } },
   exit: { transition: { staggerChildren: 0.04 } },
 }
 
-function FKicker({ children }) {
+function FKicker({ children }: { children: ReactNode }) {
   return (
     <motion.div
       variants={rowV}
@@ -46,7 +45,7 @@ function FKicker({ children }) {
   )
 }
 
-function FSwatchRow({ label, steps }) {
+function FSwatchRow({ label, steps }: { label: string; steps: string[] }) {
   return (
     <motion.div variants={rowV} style={{ marginBottom: 12 }}>
       <div style={{ fontFamily: FONT, fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.text.faint, marginBottom: 6 }}>{label}</div>
@@ -62,7 +61,7 @@ function FSwatchRow({ label, steps }) {
   )
 }
 
-function FSemRow({ pair }) {
+function FSemRow({ pair }: { pair: string[][] }) {
   return (
     <motion.div variants={rowV} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: 8 }}>
       {pair.map(([role, token]) => (
@@ -75,7 +74,7 @@ function FSemRow({ pair }) {
   )
 }
 
-function FTypeRow({ token, px }) {
+function FTypeRow({ token, px }: { token: string; px: string }) {
   return (
     <motion.div variants={rowV} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '5px 0', borderBottom: `1px solid ${C.border.subtle}` }}>
       <span style={{ fontFamily: FONT, fontSize: 9, letterSpacing: '0.2em', textTransform: 'uppercase', color: C.text.muted, width: 24, flexShrink: 0 }}>{token}</span>
@@ -85,7 +84,7 @@ function FTypeRow({ token, px }) {
   )
 }
 
-function FSpaceRow({ token, px }) {
+function FSpaceRow({ token, px }: { token: string; px: string }) {
   return (
     <motion.div variants={rowV} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '5px 0', borderBottom: `1px solid ${C.border.subtle}` }}>
       <span style={{ fontFamily: FONT, fontSize: 9, letterSpacing: '0.18em', textTransform: 'uppercase', color: C.text.muted, width: 64, flexShrink: 0 }}>{`spacing.${token}`}</span>

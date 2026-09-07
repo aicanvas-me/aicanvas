@@ -94,7 +94,7 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
         <div>
           <label
             htmlFor="password"
-            className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400"
+            className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
           >
             New password
           </label>
@@ -113,7 +113,7 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
         <div>
           <label
             htmlFor="confirm"
-            className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400"
+            className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
           >
             Confirm new password
           </label>

@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // MISSION CONTROL DEMO DATA
 // ============================================================
@@ -66,7 +65,7 @@ export const systems = [
   { name: 'Power Grid',   status: 'nominal', value: 87  },
   { name: 'Thermal',      status: 'fault',   value: 92  },
   { name: 'Life Support', status: 'nominal', value: 100 },
-];
+] as const;
 
 // ---- Vehicles table ----
 export const vehicles = [
@@ -75,7 +74,7 @@ export const vehicles = [
   { callsign: 'KEPLER-2',   type: 'Telescope', status: 'active',  distance: '1.5 AU',  lastContact: '32s ago' },
   { callsign: 'VOYAGER-X',  type: 'Probe',     status: 'caution', distance: '18.2 AU', lastContact: '6h ago'  },
   { callsign: 'HORIZON',    type: 'Orbiter',   status: 'active',  distance: '220 km',  lastContact: '8s ago'  },
-];
+] as const;
 
 export const vehicleStatusLabel = {
   active:  'Active',
@@ -98,7 +97,7 @@ export const commsLog = [
   { dir: 'down',  from: 'KEPLER-2',  text: 'Imaging window closed',          time: 'T-4h'  },
   { dir: 'up',    from: 'ARES-1',    text: 'Override accepted by flight',    time: 'T-5h'  },
   { dir: 'down',  from: 'VOYAGER-X', text: 'Heartbeat — partial frame',      time: 'T-5h 40m' },
-];
+] as const;
 
 // ---- Telemetry: 24h time-series (sampled hourly to match altitudeData) ----
 const TIMESTAMPS_24H = [

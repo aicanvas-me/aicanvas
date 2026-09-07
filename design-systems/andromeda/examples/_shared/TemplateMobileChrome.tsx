@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SHARED TEMPLATE MOBILE CHROME
 //
@@ -23,19 +22,23 @@
 
 'use client';
 
+import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { List, UserCircle, Gear, Keyboard, SignOut } from '@phosphor-icons/react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { useCascadeProps } from '../../components/lib/motion';
 import { IconButton } from '../../components/IconButton';
 import { Drawer, DrawerBody } from '../../components/Drawer';
 import { UserCard } from '../../components/UserCard';
+import type { UserCardProps } from '../../components/UserCard';
+import type { UserMenuItem } from '../../components/UserMenu';
 import { AndromedaIcon } from '../../AndromedaIcon';
 
 // Generic account menu — same set the desktop sidebars use. Templates can
 // override via `user.items`, but they all share this by default.
-const DEFAULT_USER_MENU_ITEMS = [
+const DEFAULT_USER_MENU_ITEMS: UserMenuItem[] = [
   { id: 'profile', label: 'Profile', icon: UserCircle },
   { id: 'preferences', label: 'Preferences', icon: Gear },
   { id: 'shortcuts', label: 'Keyboard Shortcuts', icon: Keyboard },
@@ -46,7 +49,7 @@ const DEFAULT_USER_MENU_ITEMS = [
 // Brand lockup — icon + "Andromeda" over the template name, mono uppercase.
 // Mirrors the desktop sidebar's logo block (examples/*/Sidebar.tsx) so the
 // top bar and drawer header read identically to the web sidebar.
-function Brand({ templateName, iconSize }) {
+function Brand({ templateName, iconSize }: { templateName: string; iconSize: number }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[3], minWidth: 0 }}>
       <AndromedaIcon size={iconSize} />
@@ -54,7 +57,7 @@ function Brand({ templateName, iconSize }) {
         <span style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.primary,
+          color: themeColor.text.primary,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.widest,
           fontWeight: tokens.typography.weight.semibold,
@@ -64,7 +67,7 @@ function Brand({ templateName, iconSize }) {
         <span style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.muted,
+          color: themeColor.text.muted,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.widest,
           overflow: 'hidden',
@@ -90,7 +93,11 @@ function Brand({ templateName, iconSize }) {
 // toggle. Index 0 is always right: the bar is the topmost mobile element,
 // and the desktop index-0 siblings (sidebars) are display:none below md,
 // so the two never share a visible cascade slot.
-export function MobileTopBar({ templateName, onMenuOpen, menuOpen = false }) {
+export function MobileTopBar({ templateName, onMenuOpen, menuOpen = false }: {
+  templateName: string;
+  onMenuOpen?: () => void;
+  menuOpen?: boolean;
+}) {
   const cascade = useCascadeProps(0);
   return (
     <motion.div
@@ -104,8 +111,8 @@ export function MobileTopBar({ templateName, onMenuOpen, menuOpen = false }) {
         justifyContent: 'space-between',
         gap: tokens.spacing[3],
         padding: `0 ${tokens.spacing[4]}`,
-        background: tokens.color.surface.raised,
-        borderBottom: `${tokens.border.thin} ${tokens.color.border.subtle}`,
+        background: themeColor.surface.raised,
+        borderBottom: `${tokens.border.thin} ${themeColor.border.subtle}`,
         display: 'none',
       }}
     >
@@ -121,7 +128,7 @@ export function MobileTopBar({ templateName, onMenuOpen, menuOpen = false }) {
         style={{
           flexShrink: 0,
           ...(menuOpen
-            ? { background: tokens.color.surface.active, color: tokens.color.text.primary }
+            ? { background: themeColor.surface.active, color: themeColor.text.primary }
             : null),
         }}
       />
@@ -132,9 +139,19 @@ export function MobileTopBar({ templateName, onMenuOpen, menuOpen = false }) {
   );
 }
 
+type MobileDrawerUser = Pick<UserCardProps, 'name' | 'role' | 'src' | 'status'> & {
+  items?: UserCardProps['items'];
+};
+
 // Mobile drawer: mirrors the desktop sidebar — logo header, the template's
 // nav (children), and a bottom user block. Left side, 70vw.
-export function MobileDrawer({ open, onOpenChange, templateName, user, children }) {
+export function MobileDrawer({ open, onOpenChange, templateName, user, children }: {
+  open: boolean;
+  onOpenChange?: (next: boolean) => void;
+  templateName: string;
+  user?: MobileDrawerUser;
+  children?: ReactNode;
+}) {
   return (
     <Drawer open={open} onOpenChange={onOpenChange} side="left" size="70vw">
       {/* Logo header — mirrors the sidebar logo block. */}
@@ -145,7 +162,7 @@ export function MobileDrawer({ open, onOpenChange, templateName, user, children 
         alignItems: 'center',
         gap: tokens.spacing[3],
         padding: `${tokens.spacing[4]} ${tokens.spacing[3]}`,
-        borderBottom: `${tokens.border.thin} ${tokens.color.border.subtle}`,
+        borderBottom: `${tokens.border.thin} ${themeColor.border.subtle}`,
       }}>
         <Brand templateName={templateName} iconSize={28} />
       </div>
@@ -160,7 +177,7 @@ export function MobileDrawer({ open, onOpenChange, templateName, user, children 
         <div style={{
           position: 'relative',
           flexShrink: 0,
-          borderTop: `${tokens.border.thin} ${tokens.color.border.subtle}`,
+          borderTop: `${tokens.border.thin} ${themeColor.border.subtle}`,
         }}>
           <UserCard
             name={user.name}

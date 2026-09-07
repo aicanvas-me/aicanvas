@@ -11,6 +11,6 @@ When fleshed out, this file should cover:
 - **Variant naming and surface semantics.** How to decide variant names (`default` | `outline` | `ghost` | `destructive` | `link`), how to think about surface layers (base / raised / overlay / hover / active), and how to avoid accidentally re-inventing shadcn.
 - **When a component belongs in a DS vs. as a standalone.** If the component is a showpiece (experimental motion, novel interaction, one-off aesthetic) → standalone. If it's a primitive that a real product could compose into a UI (button, input, card, dialog) → design system.
 - **The promotion mechanism.** A DS component can be promoted to the homepage grid via a thin re-export wrapper in `components-workspace/`. See `components-workspace/skills/promotion-guide.md`.
-- **TypeScript status.** All DS files currently have a `// @ts-nocheck` header because they were renamed from `.jsx` without proper typing. Don't strip the header unless you're doing a full typing pass for that component. See `design-systems/CLAUDE.md` for context.
+- **TypeScript status.** All DS files are properly typed and the folder is tsc-checked (no `@ts-nocheck`). Give any new file real prop types from the start. See `design-systems/CLAUDE.md`.
 
 TODO: replace this stub with real content once at least one new DS component has been built end-to-end under the new folder structure, so the workflow can be documented from experience rather than guessed.

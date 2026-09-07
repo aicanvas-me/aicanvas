@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SERVICE ORDER · ItemsPanel
 // Bottom section of the page. Three stacked strips:
@@ -14,6 +13,7 @@
 'use client';
 
 import { useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import {
   Funnel,
@@ -29,11 +29,13 @@ import {
 } from '@phosphor-icons/react';
 
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Checkbox } from '../../components/Checkbox';
 import { IconButton } from '../../components/IconButton';
 import { ProgressBar } from '../../components/ProgressBar';
+import type { ProgressBarProps } from '../../components/ProgressBar';
 import { Tag } from '../../components/Tag';
 import { PanelMenu } from '../../components/PanelMenu';
 import { Tooltip } from '../../components/Tooltip';
@@ -50,7 +52,7 @@ function InsetDivider({ side = 'bottom' }) {
         right: tokens.spacing[3],
         [side]: 0,
         height: 'var(--andromeda-border-width, 1px)',
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
         pointerEvents: 'none',
       }}
     />
@@ -59,7 +61,7 @@ function InsetDivider({ side = 'bottom' }) {
 
 // Inset row separator for tables — drawn via background-image because TR
 // borders don't render under border-collapse:collapse.
-const ROW_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${tokens.color.border.subtle} ${tokens.spacing[3]}, ${tokens.color.border.subtle} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
+const ROW_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${themeColor.border.subtle} ${tokens.spacing[3]}, ${themeColor.border.subtle} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
 const rowSeparatorStyle = {
   backgroundImage: ROW_INSET_LINE,
   backgroundSize: '100% var(--andromeda-border-width, 1px)',
@@ -74,17 +76,17 @@ function HoverStyles() {
       /* off-token: hover transitions use the 'ease' keyword (no matching
          Andromeda easing token) and 100ms (no duration token) — left literal. */
       .so-tab        { transition: color 140ms ease; }
-      .so-tab:hover  { color: ${tokens.color.text.primary} !important; }
+      .so-tab:hover  { color: ${themeColor.text.primary} !important; }
 
       .so-row        { transition: background-color 100ms ease; cursor: pointer; }
-      .so-row:hover  { background-color: ${tokens.color.surface.hover} !important; }
-      .so-row.is-selected:hover { background-color: ${tokens.color.surface.active} !important; }
+      .so-row:hover  { background-color: ${themeColor.surface.hover} !important; }
+      .so-row.is-selected:hover { background-color: ${themeColor.surface.active} !important; }
 
       .so-link       { transition: color 140ms ease; }
-      .so-link:hover { color: ${tokens.color.text.primary} !important; text-decoration: underline; }
+      .so-link:hover { color: ${themeColor.text.primary} !important; text-decoration: underline; }
 
       .so-icon-btn   { transition: color 140ms ease, background-color 140ms ease; }
-      .so-icon-btn:hover { color: ${tokens.color.text.primary} !important; background-color: ${tokens.color.surface.hover} !important; }
+      .so-icon-btn:hover { color: ${themeColor.text.primary} !important; background-color: ${themeColor.surface.hover} !important; }
     `}</style>
   );
 }
@@ -94,7 +96,7 @@ function HoverStyles() {
 // narrow viewport (faithful stack — same treatment as the table below it,
 // never a wrap or a re-skin). The inset divider stays edge-aligned because
 // it's a sibling outside the scroll container.
-function TabStrip({ value, onChange }) {
+function TabStrip({ value, onChange }: { value: string; onChange: (id: string) => void }) {
   return (
     <div
       style={{
@@ -130,7 +132,7 @@ function TabStrip({ value, onChange }) {
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.sm,
               fontWeight: active ? tokens.typography.weight.semibold : tokens.typography.weight.regular,
-              color: active ? tokens.color.text.primary : tokens.color.text.muted,
+              color: active ? themeColor.text.primary : themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.wider,
             }}
@@ -139,7 +141,7 @@ function TabStrip({ value, onChange }) {
             <span
               style={{
                 fontSize: tokens.typography.size.xs,
-                color: tokens.color.text.faint,
+                color: themeColor.text.faint,
                 letterSpacing: tokens.typography.tracking.wide,
               }}
             >
@@ -154,7 +156,7 @@ function TabStrip({ value, onChange }) {
                   right: 0,
                   bottom: '-1px',
                   height: '2px',
-                  background: tokens.color.accent[300],
+                  background: themeColor.accent[300],
                 }}
               />
             ) : null}
@@ -166,7 +168,7 @@ function TabStrip({ value, onChange }) {
 }
 
 // ── Filter row (funnel + label + chips + kebab) ────────────────────
-function FilterRow({ chips, onRemoveChip }) {
+function FilterRow({ chips, onRemoveChip }: { chips: string[]; onRemoveChip: (label: string) => void }) {
   return (
     <div
       style={{
@@ -179,13 +181,13 @@ function FilterRow({ chips, onRemoveChip }) {
       }}
     >
       <InsetDivider />
-      <Funnel weight="regular" size={14} color={tokens.color.text.muted} style={{ flexShrink: 0 }} />
+      <Funnel weight="regular" size={14} style={{ color: themeColor.text.muted, flexShrink: 0 }} />
       <span
         className="so-filter-label"
         style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.muted,
+          color: themeColor.text.muted,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.widest,
           // Shrink + truncate so the funnel, chips scroller and action
@@ -205,7 +207,7 @@ function FilterRow({ chips, onRemoveChip }) {
         style={{
           width: 'var(--andromeda-border-width, 1px)',
           height: tokens.spacing[5],
-          background: tokens.color.border.subtle,
+          background: themeColor.border.subtle,
           flexShrink: 0,
         }}
       />
@@ -251,7 +253,11 @@ function FilterRow({ chips, onRemoveChip }) {
 }
 
 // ── Sortable column header ────────────────────────────────────────
-function ColHeader({ children, align = 'left', sort }) {
+function ColHeader({ children, align = 'left', sort }: {
+  children?: ReactNode;
+  align?: CSSProperties['textAlign'];
+  sort?: 'asc' | 'desc' | 'sortable';
+}) {
   // sort: 'asc' | 'desc' | 'sortable' | undefined
   const sortIcon =
     sort === 'asc'  ? <CaretUp     weight="bold" size={10} /> :
@@ -270,12 +276,11 @@ function ColHeader({ children, align = 'left', sort }) {
         fontFamily: tokens.typography.fontMono,
         fontSize: tokens.typography.size.xs,
         fontWeight: tokens.typography.weight.medium,
-        color: sorted ? tokens.color.text.primary : tokens.color.text.muted,
+        color: sorted ? themeColor.text.primary : themeColor.text.muted,
         textTransform: 'uppercase',
         letterSpacing: tokens.typography.tracking.widest,
         lineHeight: 'var(--andromeda-leading-none, 1)',
         whiteSpace: 'nowrap',
-        verticalAlign: 'middle',
       }}
     >
       <span
@@ -290,7 +295,7 @@ function ColHeader({ children, align = 'left', sort }) {
       >
         {children}
         {sortIcon ? (
-          <span style={{ color: sorted ? tokens.color.text.primary : tokens.color.text.faint, display: 'inline-flex' }}>
+          <span style={{ color: sorted ? themeColor.text.primary : themeColor.text.faint, display: 'inline-flex' }}>
             {sortIcon}
           </span>
         ) : null}
@@ -299,14 +304,20 @@ function ColHeader({ children, align = 'left', sort }) {
   );
 }
 
-function loadVariant(v) {
+function loadVariant(v: number): ProgressBarProps['variant'] {
   if (v >= 85) return 'fault';
   if (v >= 60) return 'warning';
   return 'default';
 }
 
 // ── Table cell helper ──────────────────────────────────────────────
-function Cell({ children, align = 'left', muted = false, mono = true, nowrap = true }) {
+function Cell({ children, align = 'left', muted = false, mono = true, nowrap = true }: {
+  children?: ReactNode;
+  align?: CSSProperties['textAlign'];
+  muted?: boolean;
+  mono?: boolean;
+  nowrap?: boolean;
+}) {
   return (
     <td
       style={{
@@ -315,7 +326,7 @@ function Cell({ children, align = 'left', muted = false, mono = true, nowrap = t
         padding: `${tokens.spacing[3]} ${tokens.spacing[3]}`,
         fontFamily: mono ? tokens.typography.fontMono : tokens.typography.fontSans,
         fontSize: tokens.typography.size.sm,
-        color: muted ? tokens.color.text.secondary : tokens.color.text.primary,
+        color: muted ? themeColor.text.secondary : themeColor.text.primary,
         letterSpacing: tokens.typography.tracking.wide,
         whiteSpace: nowrap ? 'nowrap' : 'normal',
         lineHeight: 'var(--andromeda-leading-none, 1)',
@@ -334,11 +345,11 @@ export function ItemsPanel() {
 
   const allSelected = productRows.length > 0 && productRows.every((r) => selected.has(r.id));
 
-  function removeChip(label) {
+  function removeChip(label: string) {
     setChips((prev) => prev.filter((c) => c !== label));
   }
 
-  function toggleRow(id) {
+  function toggleRow(id: string) {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id);
@@ -347,7 +358,7 @@ export function ItemsPanel() {
     });
   }
 
-  function toggleAll(next) {
+  function toggleAll(next: boolean) {
     setSelected(() => {
       if (next) return new Set(productRows.map((r) => r.id));
       return new Set();
@@ -358,7 +369,7 @@ export function ItemsPanel() {
     <div
       style={{
         position: 'relative',
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         display: 'flex',
         flexDirection: 'column',
         flex: 1,
@@ -421,9 +432,9 @@ export function ItemsPanel() {
                   className={`so-row${isSelected ? ' is-selected' : ''}`}
                   onClick={() => toggleRow(r.id)}
                   style={{
-                    backgroundColor: isSelected ? tokens.color.surface.active : 'transparent',
+                    backgroundColor: isSelected ? themeColor.surface.active : 'transparent',
                     ...rowSeparatorStyle,
-                    boxShadow: isSelected ? `inset 2px 0 0 0 ${tokens.color.accent[300]}` : undefined,
+                    boxShadow: isSelected ? `inset 2px 0 0 0 ${themeColor.accent[300]}` : undefined,
                   }}
                 >
                   <td

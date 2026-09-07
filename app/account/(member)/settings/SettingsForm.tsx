@@ -71,7 +71,7 @@ function Pill({
       className={`inline-flex items-center gap-1.5 rounded-lg border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
         active
           ? 'border-olive-500 bg-olive-500/15 text-olive-600 dark:text-olive-400'
-          : 'border-sand-300 bg-sand-50 text-sand-700 hover:border-sand-400 hover:text-sand-900 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100'
+          : 'border-sand-200 bg-sand-100 text-sand-700 hover:border-sand-300 hover:text-sand-900 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100'
       }`}
     >
       {active && <Check weight="bold" size={12} />}
@@ -102,7 +102,7 @@ function Field<T extends string>({
   }
 
   return (
-    <div className="rounded-xl border border-sand-300 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
+    <div className="rounded-xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
       <div className="text-lg font-bold text-sand-900 dark:text-sand-50">{label}</div>
       <div className="mt-1 text-sm text-sand-600 dark:text-sand-400">{description}</div>
       <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -130,7 +130,7 @@ function BooleanField({
   onSelect: (value: boolean) => Promise<void>
 }) {
   return (
-    <div className="rounded-xl border border-sand-300 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
+    <div className="rounded-xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
       <div className="text-lg font-bold text-sand-900 dark:text-sand-50">{label}</div>
       <div className="mt-1 text-sm text-sand-600 dark:text-sand-400">{description}</div>
       <div className="mt-4 flex flex-wrap items-center gap-2">

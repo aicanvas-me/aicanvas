@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Card
 // shadcn/ui-aligned compound component:
@@ -10,9 +9,12 @@
 'use client';
 
 import { forwardRef } from 'react';
+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { cva } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
 import { cn, andromedaVars } from './lib/utils';
 import { CornerMarkers } from './CornerMarkers';
+import type { CornerMarkersProps } from './CornerMarkers';
 
 const cardVariants = cva(
   [
@@ -55,8 +57,15 @@ const cardVariants = cva(
  * @property {React.CSSProperties} [style]
  */
 
+export type CardProps = ComponentPropsWithoutRef<'div'> &
+  VariantProps<typeof cardVariants> & {
+    markers?: boolean;
+    markerProps?: CornerMarkersProps;
+    children?: ReactNode;
+  };
+
 /** @type {React.ForwardRefExoticComponent<CardProps & React.HTMLAttributes<HTMLDivElement>>} */
-export const Card = forwardRef(function Card(
+export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
   { className, variant = 'default', bordered = false, markers = true, markerProps, children, style, ...props },
   ref,
 ) {
@@ -83,8 +92,10 @@ export const Card = forwardRef(function Card(
  * @property {React.CSSProperties} [style]
  */
 
+export type CardSectionProps = ComponentPropsWithoutRef<'div'>;
+
 /** @type {React.ForwardRefExoticComponent<CardSectionProps & React.HTMLAttributes<HTMLDivElement>>} */
-export const CardHeader = forwardRef(function CardHeader(
+export const CardHeader = forwardRef<HTMLDivElement, CardSectionProps>(function CardHeader(
   { className, children, ...props },
   ref,
 ) {
@@ -111,7 +122,7 @@ export const CardHeader = forwardRef(function CardHeader(
 });
 
 /** @type {React.ForwardRefExoticComponent<CardSectionProps & React.HTMLAttributes<HTMLDivElement>>} */
-export const CardContent = forwardRef(function CardContent(
+export const CardContent = forwardRef<HTMLDivElement, CardSectionProps>(function CardContent(
   { className, children, ...props },
   ref,
 ) {
@@ -128,7 +139,7 @@ export const CardContent = forwardRef(function CardContent(
 });
 
 /** @type {React.ForwardRefExoticComponent<CardSectionProps & React.HTMLAttributes<HTMLDivElement>>} */
-export const CardFooter = forwardRef(function CardFooter(
+export const CardFooter = forwardRef<HTMLDivElement, CardSectionProps>(function CardFooter(
   { className, children, ...props },
   ref,
 ) {
@@ -155,7 +166,7 @@ export const CardFooter = forwardRef(function CardFooter(
 });
 
 /** @type {React.ForwardRefExoticComponent<{ children?: React.ReactNode, className?: string } & React.HTMLAttributes<HTMLHeadingElement>>} */
-export const CardTitle = forwardRef(function CardTitle(
+export const CardTitle = forwardRef<HTMLHeadingElement, ComponentPropsWithoutRef<'h3'>>(function CardTitle(
   { className, children, ...props },
   ref,
 ) {
@@ -180,7 +191,7 @@ export const CardTitle = forwardRef(function CardTitle(
 });
 
 /** @type {React.ForwardRefExoticComponent<{ children?: React.ReactNode, className?: string } & React.HTMLAttributes<HTMLParagraphElement>>} */
-export const CardDescription = forwardRef(function CardDescription(
+export const CardDescription = forwardRef<HTMLParagraphElement, ComponentPropsWithoutRef<'p'>>(function CardDescription(
   { className, children, ...props },
   ref,
 ) {

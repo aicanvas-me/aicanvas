@@ -14,6 +14,22 @@ const POSTHOG_HOST = process.env.POSTHOG_HOST ?? 'https://us.i.posthog.com'
 
 export const posthogConfigured = Boolean(POSTHOG_KEY)
 
+// Plain and URL-encoded (%40) email shapes. Server error messages are the one
+// place a real address can reach an otherwise anonymous pipeline: a throw inside
+// the checkout or webhook path routinely quotes the customer it was handling.
+// SiteBeacon carries its own copy of these for the browser side, deliberately —
+// this module must never be pulled into a client bundle.
+//
+// The class excludes `/` and `:` so a URL is never mistaken for an address:
+// without that, a stack frame written as `fn@https://host/file.js:1:2` matches
+// end to end and the whole frame is replaced by the placeholder.
+const EMAIL = /[^\s@\/:]+(?:@|%40)[^\s@\/:]+\.[^\s@\/:]+/gi
+// Install tokens ride in the query string of every personal /r/ URL, and an
+// error quoting one would otherwise store it forever.
+const TOKEN = /([?&](?:token|api[_-]?key|secret)=)[^\s&"']+/gi
+
+export const scrubSecrets = (s: string) => s.replace(EMAIL, '[email]').replace(TOKEN, '$1[redacted]')
+
 export async function phCapture(
   event: string,
   properties: Record<string, unknown>,

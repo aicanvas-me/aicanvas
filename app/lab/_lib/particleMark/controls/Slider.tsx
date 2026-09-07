@@ -41,7 +41,7 @@ export function Slider({
         aria-label={label}
         className="absolute inset-0 z-10 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
       />
-      <div className="relative flex h-7 items-center overflow-hidden rounded-lg border border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
+      <div className="relative flex h-7 items-center overflow-hidden rounded-lg border border-sand-300 bg-sand-50 dark:border-sand-800 dark:bg-sand-900">
         {/* Tick marks — 8 evenly spaced thin lines behind the fill. As the
             fill grows leftward it paints over them, leaving ticks visible
             only on the empty right side of the slider. */}

@@ -1,6 +1,5 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { CONTACT_EMAIL } from '../lib/config'
 import { SiteFooter } from '../components/SiteFooter'
@@ -16,20 +15,11 @@ import { HeaderSocials } from '../components/HeaderSocials'
 // Controller info and supervisory authority live in /impressum and below.
 
 export default function PrivacyPage() {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const scrollParent = ref.current?.parentElement
-    if (scrollParent) {
-      scrollParent.style.backgroundColor = 'var(--color-sand-950)'
-      return () => { scrollParent.style.backgroundColor = '' }
-    }
-  }, [])
-
   return (
-    <div ref={ref} className="min-h-full bg-sand-950">
-      <header className="sticky top-0 z-50 hidden h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-800 bg-sand-950 px-6 md:grid">
+    <div className="min-h-full bg-sand-50 dark:bg-sand-950">
+      <header className="sticky top-0 z-50 hidden h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 dark:border-sand-800 bg-sand-50 dark:bg-sand-950 px-6 md:grid">
         <div />
-        <Link href="/privacy" className="text-sm font-semibold text-olive-500 transition-colors hover:text-olive-400">
+        <Link href="/privacy" className="text-sm font-semibold text-olive-600 dark:text-olive-500 transition-colors hover:text-olive-800 dark:hover:text-olive-400">
           /Privacy
         </Link>
         <div className="flex items-center justify-end">
@@ -39,13 +29,13 @@ export default function PrivacyPage() {
 
       <main className="relative mx-auto max-w-3xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         <p className="mb-6 text-sm font-semibold md:hidden">
-          <span className="text-olive-500">/Privacy</span>
+          <span className="text-olive-600 dark:text-olive-500">/Privacy</span>
         </p>
 
-        <h1 className="text-3xl font-extrabold tracking-tight text-sand-50 sm:text-4xl">
+        <h1 className="text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
           Privacy Policy
         </h1>
-        <p className="mt-3 text-sm text-sand-500">
+        <p className="mt-3 text-sm text-sand-600 dark:text-sand-500">
           Last updated: 2026-08-16. This policy describes how AI Canvas processes
           personal data, in line with the EU General Data Protection Regulation
           (GDPR / DSGVO) and the German Bundesdatenschutzgesetz (BDSG).
@@ -53,15 +43,15 @@ export default function PrivacyPage() {
 
         {/* ── 1. Controller ─────────────────────────────────────────────── */}
         <section className="mt-12">
-          <h2 className="text-lg font-bold text-sand-50">1. Controller</h2>
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">1. Controller</h2>
           {/* Art. 13(1)(a) GDPR requires the controller's IDENTITY here, not a
               role label, and a link to the Impressum does not substitute for
               it — the privacy policy must carry the name on its own. */}
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             The controller responsible for the processing of personal data on
             this site is:
           </p>
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             AI Canvas, Inhaber Alexandru Daniel Tatu
             <br />
             c/o flexdienst – #21685
@@ -72,7 +62,7 @@ export default function PrivacyPage() {
             <br />
             Deutschland
             <br />
-            <a href={`mailto:${CONTACT_EMAIL}`} className="text-olive-400 hover:underline">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="text-olive-600 dark:text-olive-400 hover:underline">
               {CONTACT_EMAIL}
             </a>
           </p>
@@ -80,14 +70,14 @@ export default function PrivacyPage() {
 
         {/* ── 1b. Payments and the install token ────────────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
             1b. Payments and the install token
           </h2>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Payments via Paddle (independent controller)
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             Premium purchases are processed by Paddle (Paddle.com Market Ltd, and
             Paddle, Inc.) as our reseller and Merchant of Record. For your
             purchase, Paddle is the seller of record and acts as an independent
@@ -99,7 +89,7 @@ export default function PrivacyPage() {
               href="https://www.paddle.com/legal/privacy"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-olive-400 hover:underline"
+              className="text-olive-600 dark:text-olive-400 hover:underline"
             >
               its own privacy policy
             </a>
@@ -108,13 +98,13 @@ export default function PrivacyPage() {
             may be processed outside the EU under Paddle&apos;s own safeguards.
           </p>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Per-user install token
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             When you have an account we issue a per-user install token (a key that
             begins with{' '}
-            <code className="rounded bg-sand-900 px-1 py-0.5 text-xs text-sand-300">aic_</code>
+            <code className="rounded bg-sand-100 dark:bg-sand-900 px-1 py-0.5 text-xs text-sand-700 dark:text-sand-300">aic_</code>
             ). The CLI and the AI Canvas MCP send this token when you install a
             component so we can recognise your account and unlock any Premium
             content you are entitled to. The token is tied to your identity, so we
@@ -130,12 +120,12 @@ export default function PrivacyPage() {
 
         {/* ── 2. What we collect and why ────────────────────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">2. What we collect</h2>
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">2. What we collect</h2>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Account data
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             When you create an account we store your email address and a salted,
             bcrypt-hashed version of your password. If you sign in with Google we
             store the Google account identifier, email, and name returned by
@@ -147,10 +137,10 @@ export default function PrivacyPage() {
             to; you claim it by signing in with that email.
           </p>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Usage data tied to your account
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             While signed in, we record which components you save (saved
             components), which CLI install commands you copy (install history,
             including the package manager you used), and your interface
@@ -164,10 +154,10 @@ export default function PrivacyPage() {
             and deleted with it.
           </p>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Subscription &amp; billing data
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             When you take out a Premium subscription, payment is handled by our
             payment provider and Merchant of Record, Paddle (Section 5). You enter
             your card and billing details at Paddle&apos;s checkout; those details
@@ -181,26 +171,26 @@ export default function PrivacyPage() {
             process the details you submit there in order to end your subscription.
           </p>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Contact form
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             When you write to us through the contact form we receive the name,
             email address, subject, and message you submit. We use them solely to
             read and answer your enquiry. The message is delivered to our inbox by
             Resend (see Section 5) with your email set as the reply-to address.
           </p>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Feedback form
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             When you send feedback we receive the category you picked, the
             optional rating, your message, your email address, and, for bug
             reports, the page or component you named. We use them to read your
             feedback and, where an answer is needed, to reply to you.
           </p>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             So that bug reports are actually reproducible, we attach three
             technical details to the message: the page you came from, your
             browser window size, and your browser&apos;s user-agent string. If you
@@ -212,10 +202,10 @@ export default function PrivacyPage() {
             issues, performance of our contract with you (Art. 6 (1)(b) GDPR).
           </p>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Technical data (everyone)
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             Our hosting provider Vercel records standard server logs containing IP
             address, user-agent string, and timestamp for each request. These
             logs are short-lived and used to detect abuse and operate the
@@ -226,19 +216,21 @@ export default function PrivacyPage() {
             also measure site usage ourselves, without cookies: our own server
             collects page views (path, referrer, country and region), clicks on
             key buttons (for example copying an install command), searches on
-            the site (the typed query and its result count), and script errors,
+            the site (the typed query and its result count), script errors in
+            your browser, and errors raised on our own server while handling a
+            request (the affected route, the error message and an error id),
             and stores them as anonymous events in our analytics tool. Every
             such event carries at most a country and region. Nothing is stored
             on or read from your device for this, no visitor identifier is
             created, and your IP address never reaches the analytics store.
           </p>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Anonymous registry hits
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             Requests to the public component registry endpoints (paths under{' '}
-            <code className="rounded bg-sand-900 px-1 py-0.5 text-xs text-sand-300">/r/</code>
+            <code className="rounded bg-sand-100 dark:bg-sand-900 px-1 py-0.5 text-xs text-sand-700 dark:text-sand-300">/r/</code>
             ) are made by the shadcn CLI and the AI Canvas MCP. If you are signed
             in, the command you copied carries your account API token so the pull
             unlocks any premium content you are entitled to. We count these
@@ -252,16 +244,16 @@ export default function PrivacyPage() {
             cookies. Signup abuse is limited through email confirmation.
           </p>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Marketing communications preference
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             Accounts receive our occasional product newsletter until they
             unsubscribe. We store your subscription status (subscribed, not
             yet decided, or unsubscribed) plus the timestamp of your last
             change. Unsubscribing, via the link in any newsletter or the
             toggle in{' '}
-            <code className="rounded bg-sand-900 px-1 py-0.5 text-xs text-sand-300">
+            <code className="rounded bg-sand-100 dark:bg-sand-900 px-1 py-0.5 text-xs text-sand-700 dark:text-sand-300">
               /account/settings
             </code>
             , takes effect immediately and is permanent: an unsubscribed
@@ -270,15 +262,15 @@ export default function PrivacyPage() {
             necessary to provide the account service.
           </p>
 
-          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-300">
+          <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
             Children
           </h3>
-          <p className="mt-2 leading-relaxed text-sand-400">
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             AI Canvas is a developer tool aimed at adults. We do not knowingly
             collect personal data from children under 16. If you believe a
             child under 16 has created an account or otherwise provided
             personal data to AI Canvas, email{' '}
-            <a href={`mailto:${CONTACT_EMAIL}`} className="text-olive-400 hover:underline">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="text-olive-600 dark:text-olive-400 hover:underline">
               {CONTACT_EMAIL}
             </a>{' '}
             and we will delete the account and the data.
@@ -287,22 +279,22 @@ export default function PrivacyPage() {
 
         {/* ── 3. Legal basis ─────────────────────────────────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">3. Legal basis</h2>
-          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-400">
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">3. Legal basis</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-600 dark:text-sand-400">
             <li>
-              <strong className="text-sand-200">Account &amp; usage data:</strong>{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Account &amp; usage data:</strong>{' '}
               Art. 6 (1)(b) GDPR. Processing is necessary to provide the AI
               Canvas account service you signed up for.
             </li>
             <li>
-              <strong className="text-sand-200">Server logs &amp; anonymous analytics:</strong>{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Server logs &amp; anonymous analytics:</strong>{' '}
               Art. 6 (1)(f) GDPR. Legitimate interest in operating, securing,
               and understanding usage of the service. We balance this against
               your interests by using only cookieless, anonymous event counting
               with no visitor identifier and no cross-site tracking.
             </li>
             <li>
-              <strong className="text-sand-200">Anonymous registry
+              <strong className="text-sand-700 dark:text-sand-200">Anonymous registry
               hits:</strong>{' '}
               Art. 6 (1)(f) GDPR. Legitimate interest in operating the service.
               Anonymous requests are counted as anonymous events with no
@@ -310,14 +302,14 @@ export default function PrivacyPage() {
               are tied to your account.
             </li>
             <li>
-              <strong className="text-sand-200">Contact form:</strong>{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Contact form:</strong>{' '}
               Art. 6 (1)(f) GDPR: legitimate interest in answering an enquiry you
               chose to send us. We process only the name, email, subject, and
               message you provide, and keep them no longer than needed to deal
               with the matter.
             </li>
             <li>
-              <strong className="text-sand-200">Marketing communications:</strong>{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Marketing communications:</strong>{' '}
               § 7 (3) UWG (existing-customer exception under German competition
               law, as interpreted by the ECJ in Case C-654/23). Marketing is
               limited to AI Canvas&apos;s own products and services. You can
@@ -326,7 +318,7 @@ export default function PrivacyPage() {
               immediately.
             </li>
             <li>
-              <strong className="text-sand-200">Subscription &amp; billing:</strong>{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Subscription &amp; billing:</strong>{' '}
               Art. 6 (1)(b) GDPR. Processing your subscription metadata is
               necessary to perform the Premium contract you entered into. Keeping
               billing and accounting records for the statutory period rests on
@@ -334,7 +326,7 @@ export default function PrivacyPage() {
               German commercial and tax law).
             </li>
             <li>
-              <strong className="text-sand-200">Bot protection on the cancellation
+              <strong className="text-sand-700 dark:text-sand-200">Bot protection on the cancellation
               form:</strong>{' '}
               Art. 6 (1)(f) GDPR. Legitimate interest in protecting the login-free
               cancellation form from automated abuse. The check (Cloudflare
@@ -345,10 +337,10 @@ export default function PrivacyPage() {
 
         {/* ── 4. Required data and automated decisions ───────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
             4. Required data and automated decisions
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             Providing your email and password (or a Google account, if you sign
             in with Google) is necessary to create and use an AI Canvas account.
             If you do not provide them, you cannot create an account, but
@@ -357,7 +349,7 @@ export default function PrivacyPage() {
             a free account. There is no statutory obligation to provide any
             data.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             We do not use automated decision-making, including profiling, in the
             sense of Art. 22 GDPR. No decisions affecting you are made
             automatically based on your data.
@@ -366,56 +358,56 @@ export default function PrivacyPage() {
 
         {/* ── 5. Processors ──────────────────────────────────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">5. Processors</h2>
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">5. Processors</h2>
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             We use the following service providers to operate AI Canvas. Each is
             bound by a Data Processing Agreement (DPA) and processes data only on
             our instructions. Where data leaves the EU, transfers are protected
             by the EU Standard Contractual Clauses.
           </p>
-          <ul className="mt-4 space-y-3 leading-relaxed text-sand-400">
+          <ul className="mt-4 space-y-3 leading-relaxed text-sand-600 dark:text-sand-400">
             <li>
-              <strong className="text-sand-200">Vercel Inc.</strong> (USA):
+              <strong className="text-sand-700 dark:text-sand-200">Vercel Inc.</strong>{' '}(USA):
               hosting, request logs, cookieless Web Analytics, performance
               measurement (Speed Insights). Edge serving from Frankfurt where
               possible.
             </li>
             <li>
-              <strong className="text-sand-200">Supabase Inc.</strong> (USA):
+              <strong className="text-sand-700 dark:text-sand-200">Supabase Inc.</strong>{' '}(USA):
               authentication and account database. It also generates the account
               emails (sign-up confirmation, magic links, password reset), which
               are delivered via Resend (below). EU-region project where available.
             </li>
             <li>
-              <strong className="text-sand-200">Resend (Resend, Inc.)</strong> (USA):
+              <strong className="text-sand-700 dark:text-sand-200">Resend (Resend, Inc.)</strong>{' '}(USA):
               delivers our outbound email: the account emails above and any
               message you send through the contact form. Mail is sent via Amazon
               SES in the EU region (Ireland) and authenticated with SPF/DKIM; we
               use no open- or click-tracking.
             </li>
             <li>
-              <strong className="text-sand-200">Google Ireland Ltd.</strong> (EU) /{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Google Ireland Ltd.</strong>{' '}(EU) /{' '}
               Google LLC (USA): only if you choose &ldquo;Sign in with Google.&rdquo;
               Google authenticates you and returns your email, name, and profile
               identifier to us. Google&apos;s own privacy policy applies to their
               processing.
             </li>
             <li>
-              <strong className="text-sand-200">ImageKit (Raw Engineering Inc.)</strong>:{' '}
+              <strong className="text-sand-700 dark:text-sand-200">ImageKit (Raw Engineering Inc.)</strong>:{' '}
               delivers component preview screenshots from its image CDN. Your
               browser loads these images directly, so ImageKit technically
               receives your IP address and browser type, like any image host.
               We send it no account data; it serves only public image URLs.
             </li>
             <li>
-              <strong className="text-sand-200">Brevo (Sendinblue GmbH)</strong> (EU,
+              <strong className="text-sand-700 dark:text-sand-200">Brevo (Sendinblue GmbH)</strong>{' '}(EU,
               Germany): our newsletter platform. It stores the email address
               (and, for Google sign-ins, the name) of newsletter recipients and
               delivers the newsletter. Unsubscribes are synced back to us
               automatically.
             </li>
             <li>
-              <strong className="text-sand-200">Paddle.com Market Ltd</strong> (UK) /{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Paddle.com Market Ltd</strong>{' '}(UK) /{' '}
               Paddle, Inc. (USA): our payment provider and Merchant of Record for
               Premium subscriptions. Paddle handles checkout, payment processing,
               billing, sales tax and VAT, and refunds, and processes the billing
@@ -423,7 +415,7 @@ export default function PrivacyPage() {
               policy. Legal basis: Art. 6(1)(b) GDPR (performance of the contract).
             </li>
             <li>
-              <strong className="text-sand-200">Cloudflare, Inc.</strong> (USA):
+              <strong className="text-sand-700 dark:text-sand-200">Cloudflare, Inc.</strong>{' '}(USA):
               provides the cookieless bot-protection check (Turnstile) on the
               login-free cancellation form. To assess whether a request is
               automated, Cloudflare receives the visitor&apos;s IP address and
@@ -435,30 +427,30 @@ export default function PrivacyPage() {
 
         {/* ── 6. Retention ───────────────────────────────────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">6. Retention</h2>
-          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-400">
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">6. Retention</h2>
+          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-600 dark:text-sand-400">
             <li>
-              <strong className="text-sand-200">Account data</strong> is kept for
+              <strong className="text-sand-700 dark:text-sand-200">Account data</strong>{' '}is kept for
               as long as your account exists. When you delete your account, your
               account row, saved components, install history, and preferences
               are removed via cascade.
             </li>
             <li>
-              <strong className="text-sand-200">Contact messages</strong> are kept
+              <strong className="text-sand-700 dark:text-sand-200">Contact messages</strong>{' '}are kept
               only as long as needed to handle your enquiry and any follow-up,
               then deleted.
             </li>
             <li>
-              <strong className="text-sand-200">Server logs</strong> are kept for
+              <strong className="text-sand-700 dark:text-sand-200">Server logs</strong>{' '}are kept for
               the period set by Vercel&apos;s default log retention (typically a few
               weeks).
             </li>
             <li>
-              <strong className="text-sand-200">Anonymous analytics events</strong>{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Anonymous analytics events</strong>{' '}
               are not tied to your identity and are kept indefinitely.
             </li>
             <li>
-              <strong className="text-sand-200">Billing and accounting records</strong>{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Billing and accounting records</strong>{' '}
               that we must keep under German commercial and tax law (HGB § 257,
               AO § 147) are retained for the statutory period, generally six to ten
               years depending on the record type, even after you delete your
@@ -471,11 +463,11 @@ export default function PrivacyPage() {
 
         {/* ── 7. Your rights ─────────────────────────────────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">7. Your rights</h2>
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">7. Your rights</h2>
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             Under GDPR you have the right to:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-400">
+          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-600 dark:text-sand-400">
             <li>Access the personal data we hold about you (Art. 15)</li>
             <li>Request correction of inaccurate data (Art. 16)</li>
             <li>Request deletion of your data (Art. 17, &ldquo;right to be forgotten&rdquo;)</li>
@@ -483,9 +475,9 @@ export default function PrivacyPage() {
             <li>Receive your data in a portable, machine-readable format (Art. 20)</li>
             <li>Withdraw consent at any time, where processing is based on consent</li>
           </ul>
-          <p className="mt-4 leading-relaxed text-sand-400">
+          <p className="mt-4 leading-relaxed text-sand-600 dark:text-sand-400">
             To exercise any of these rights, email{' '}
-            <a href={`mailto:${CONTACT_EMAIL}`} className="text-olive-400 hover:underline">
+            <a href={`mailto:${CONTACT_EMAIL}`} className="text-olive-600 dark:text-olive-400 hover:underline">
               {CONTACT_EMAIL}
             </a>
             . We respond within 30 days. Before acting on a rights request we
@@ -497,34 +489,42 @@ export default function PrivacyPage() {
 
         {/* ── 8. Cookies and local storage ───────────────────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
             8. Cookies and local storage
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             AI Canvas sets only strictly necessary cookies on its own site. We use
             no tracking or advertising cookies and set nothing on your device that
             requires consent under § 25 (2) TDDDG, so there is no cookie banner.
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-400">
+          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-600 dark:text-sand-400">
             <li>
-              <strong className="text-sand-200">Authentication session cookie</strong>{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Authentication session cookie</strong>{' '}
               (set by Supabase): keeps you signed in. Removed on sign-out or
               expiry.
             </li>
             <li>
-              <strong className="text-sand-200">Lab work-in-progress snapshot</strong>{' '}
+              <strong className="text-sand-700 dark:text-sand-200">Theme preference cookie</strong>{' '}
+              (set by us): remembers whether you chose the light or the dark
+              version of the site, so pages load in the theme you picked instead
+              of flashing the other one first. It holds the word light or dark
+              and nothing else, and it is written only when you use the theme
+              switch.
+            </li>
+            <li>
+              <strong className="text-sand-700 dark:text-sand-200">Lab work-in-progress snapshot</strong>{' '}
               (localStorage): if you use a Lab tool while signed out and hit an
               action that needs an account, your current tool settings are
               briefly saved on your device so nothing is lost while you sign in,
               then removed.
             </li>
           </ul>
-          <p className="mt-3 leading-relaxed text-sand-400">
-            Both are exempt from the consent requirement of § 25 (2) TDDDG /
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+            All three are exempt from the consent requirement of § 25 (2) TDDDG /
             TTDSG because they are strictly necessary to deliver the
             functionality you actively requested.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             Two third-party features deliberately avoid setting cookies on our
             site: the bot-protection check on the cancellation form (Cloudflare
             Turnstile) is cookieless, and the Premium checkout opens only when you
@@ -536,10 +536,10 @@ export default function PrivacyPage() {
 
         {/* ── 9. Right to lodge a complaint ──────────────────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
             9. Right to lodge a complaint
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             You have the right to lodge a complaint with a data protection
             supervisory authority. For the Creator, that&apos;s the Bayerisches
             Landesamt für Datenschutzaufsicht (BayLDA).
@@ -548,8 +548,8 @@ export default function PrivacyPage() {
 
         {/* ── 10. Changes ────────────────────────────────────────────────── */}
         <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-50">10. Changes</h2>
-          <p className="mt-3 leading-relaxed text-sand-400">
+          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">10. Changes</h2>
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             We update this policy when our processing changes. The &ldquo;Last
             updated&rdquo; date at the top of this page reflects the most recent
             revision. For significant changes affecting signed-in users we will

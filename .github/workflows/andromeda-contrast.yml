@@ -1,0 +1,39 @@
+# Advisory backstop for the Andromeda light theme.
+#
+# Runs the WCAG contrast selfcheck (both themes) and the globals.css channel
+# drift check whenever Andromeda colour sources change. Like lint-prompts, it
+# is SAFE to fail: GitHub Actions cannot block a Vercel deploy, so a red run
+# never gates production and never touches premium subscriber safety.
+#
+# Node 22.18+ is required: the selfcheck imports TypeScript sources directly
+# and relies on Node's built-in type stripping (on by default since 22.18).
+name: andromeda-contrast
+
+on:
+  pull_request:
+    paths:
+      - 'design-systems/andromeda/tokens.ts'
+      - 'design-systems/andromeda/components/**'
+      - 'design-systems/andromeda/_tools/**'
+      - 'app/globals.css'
+  push:
+    branches: [main]
+    paths:
+      - 'design-systems/andromeda/tokens.ts'
+      - 'design-systems/andromeda/components/**'
+      - 'design-systems/andromeda/_tools/**'
+      - 'app/globals.css'
+  workflow_dispatch:
+
+jobs:
+  andromeda-contrast:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      # The selfcheck imports component sources, which pull runtime packages.
+      - run: npm ci --no-audit --no-fund
+      - run: npm run andromeda:contrast

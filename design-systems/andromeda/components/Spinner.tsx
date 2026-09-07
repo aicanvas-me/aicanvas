@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Spinner
 // 3×3 grid of square pixels with a "snake game" trail running
@@ -15,6 +14,7 @@
 'use client';
 
 import { forwardRef, useEffect } from 'react';
+import type { ComponentPropsWithoutRef, CSSProperties, ReactElement } from 'react';
 import { tokens } from '../tokens';
 import { andromedaVars } from './lib/utils';
 
@@ -73,8 +73,14 @@ const STEP_MS = DURATION_MS / STEPS;
  * @property {React.CSSProperties} [style]
  */
 
+export type SpinnerProps = ComponentPropsWithoutRef<'span'> & {
+  variant?: keyof typeof colorByVariant;
+  size?: keyof typeof SIZE_MAP;
+  label?: string;
+};
+
 /** @type {React.ForwardRefExoticComponent<SpinnerProps & React.HTMLAttributes<HTMLSpanElement>>} */
-export const Spinner = forwardRef(function Spinner(
+export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinner(
   { className, variant = 'default', size = 'md', label = 'Loading', style, ...props },
   ref,
 ) {
@@ -82,9 +88,11 @@ export const Spinner = forwardRef(function Spinner(
 
   const sz = SIZE_MAP[size] ?? SIZE_MAP.md;
   const bright = colorByVariant[variant] ?? colorByVariant.default;
-  const dim = `var(--andromeda-text-faint, ${tokens.color.text.faint})`;
+  // Resting cells are quiet graphics, not text: border weight, not text ink,
+  // so they recede on both grounds instead of reading as solid blocks.
+  const dim = `var(--andromeda-border-base, ${tokens.color.border.base})`;
 
-  const cells = [];
+  const cells: ReactElement[] = [];
   for (let r = 0; r < 3; r++) {
     for (let c = 0; c < 3; c++) {
       const peri = PERIMETER_ORDER.findIndex(([pr, pc]) => pr === r && pc === c);
@@ -128,7 +136,7 @@ export const Spinner = forwardRef(function Spinner(
         width:  `${sz.wrap}px`,
         height: `${sz.wrap}px`,
         ...style,
-      }}
+      } as CSSProperties}
       {...props}
     >
       {cells}

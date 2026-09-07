@@ -600,7 +600,7 @@ export default function ParticleMarkLabPage() {
               )}
             </Button>
             {exportMenuOpen && (
-              <div className="absolute bottom-full left-0 z-40 mb-2 w-full overflow-hidden rounded-lg border border-sand-300 bg-sand-100 shadow-xl dark:border-sand-700 dark:bg-sand-900">
+              <div className="absolute bottom-full left-0 z-40 mb-2 w-full overflow-hidden rounded-lg border border-sand-300 bg-sand-50 shadow-xl dark:border-sand-700 dark:bg-sand-900">
                 <button
                   type="button"
                   onClick={() => {

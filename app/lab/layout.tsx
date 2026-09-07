@@ -16,7 +16,10 @@ export default function LabLayout({
 }) {
   return (
     <LabNavActionsProvider>
-    <div className="relative flex h-full w-full flex-col bg-sand-200 dark:bg-sand-950">
+    {/* Pinned dark, on purpose. LAB paints with its own palette and has no
+        light rendering, so it opts out of the site theme with a scoped `dark`
+        class rather than by touching <html>. */}
+    <div className="dark relative flex h-full w-full flex-col bg-sand-950">
       <header className="sticky top-0 z-30 relative flex h-14 shrink-0 items-center justify-between border-b border-sand-300 bg-sand-200/90 px-4 backdrop-blur dark:border-sand-800 dark:bg-sand-950/90">
         <LabNavCenterSlot />
         {/* Left: icon + "AI Canvas" (links home, lighter) + divider + "LAB" badge (darker) */}

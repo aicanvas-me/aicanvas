@@ -61,7 +61,7 @@ export function PresetMenu({ presets, loading, signedIn, onLoad, onRename, onDel
       </Button>
 
       {open && (
-        <div className="absolute left-0 right-0 z-30 mt-1 max-h-72 overflow-y-auto rounded-md border border-sand-300 bg-sand-50 shadow-lg dark:border-sand-700 dark:bg-sand-900">
+        <div className="absolute left-0 right-0 z-30 mt-1 max-h-72 overflow-y-auto rounded-md border border-sand-300 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
           {!signedIn && (
             <p className="px-3 py-3 text-xs text-sand-500">
               Sign in to save and reload your tunes.
@@ -118,7 +118,7 @@ function PresetRow({
       <button
         type="button"
         onClick={onLoad}
-        className="flex-1 truncate rounded px-2 py-1.5 text-left text-sm text-sand-800 hover:bg-sand-100 dark:text-sand-100 dark:hover:bg-sand-800"
+        className="flex-1 truncate rounded px-2 py-1.5 text-left text-sm text-sand-800 hover:bg-sand-50 dark:text-sand-100 dark:hover:bg-sand-800"
         title={preset.name}
       >
         {preset.name}
@@ -128,7 +128,7 @@ function PresetRow({
         onClick={onRename}
         aria-label={`Rename ${preset.name}`}
         title="Rename"
-        className="rounded p-1.5 text-sand-500 transition-colors hover:bg-sand-100 hover:text-sand-900 dark:hover:bg-sand-800 dark:hover:text-sand-100"
+        className="rounded p-1.5 text-sand-500 transition-colors hover:bg-sand-50 hover:text-sand-900 dark:hover:bg-sand-800 dark:hover:text-sand-100"
       >
         <PencilSimple size={14} weight="regular" />
       </button>

@@ -92,7 +92,7 @@ const STATUS_STYLES: Record<Status, string> = {
   planned:
     'border-sand-300 bg-sand-200/60 text-sand-600 dark:border-sand-700 dark:bg-sand-800/60 dark:text-sand-400',
   live:
-    'border-olive-500/30 bg-olive-500/15 text-olive-700 dark:text-olive-300',
+    'border-olive-500/30 bg-olive-500/15 text-olive-600 dark:text-olive-300',
 }
 
 // Display label for the status pill. Decoupled from the status key so we can
@@ -157,7 +157,7 @@ export default function LabPage() {
                 ? 'border-olive-500/40 hover:border-olive-500/60 dark:border-olive-400/40 dark:hover:border-olive-400/60'
                 : 'border-sand-300 hover:border-sand-400 dark:border-sand-800 dark:hover:border-sand-700'
               const card = (
-                <article className={`group flex h-full items-stretch overflow-hidden rounded-2xl border bg-sand-100 transition-all duration-200 hover:shadow-md dark:bg-sand-900 dark:hover:shadow-black/30 ${cardChromeClasses}`}>
+                <article className={`group flex h-full items-stretch overflow-hidden rounded-2xl border bg-sand-50 transition-all duration-200 hover:shadow-md dark:bg-sand-900 dark:hover:shadow-black/30 ${cardChromeClasses}`}>
                   {/* Thumbnail — flush to the card's top, bottom, and left
                       edges. The article's `overflow-hidden` + `rounded-2xl`
                       clip the thumbnail's left corners to follow the card's
@@ -197,7 +197,7 @@ export default function LabPage() {
                       ComponentCard, rotated 90° (left/right instead of
                       top/bottom). Type sizes match the standalone card
                       (16px title, 14px desc, 12px CTA). */}
-                  <div className="relative -ml-4 flex flex-1 flex-col gap-1.5 rounded-l-2xl bg-sand-100 py-3.5 pl-7 pr-4 shadow-[-8px_0_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[-8px_0_24px_rgba(0,0,0,0.25)] sm:py-4 sm:pl-8 sm:pr-5">
+                  <div className="relative -ml-4 flex flex-1 flex-col gap-1.5 rounded-l-2xl bg-sand-50 py-3.5 pl-7 pr-4 shadow-[-8px_0_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[-8px_0_24px_rgba(0,0,0,0.25)] sm:py-4 sm:pl-8 sm:pr-5">
                     <div className="flex items-start justify-between gap-3">
                       <h3 className="font-bold text-sand-900 dark:text-sand-50">
                         {tool.name}

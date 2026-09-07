@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import {
   Bug,
@@ -30,15 +30,15 @@ import { HeaderSocials } from '../components/HeaderSocials'
 //
 // Deep links preset the form: /feedback?type=bug&from=scroll-wipe-gallery
 //
-// Always-dark like /contact, /privacy and /terms: colors are hardcoded to the
-// sand-950 palette (no `dark:` variants) because the page renders dark
-// regardless of site theme. The useEffect paints the scroll parent so overscroll
-// stays dark. The footer lives INSIDE <main> so its edges line up with content.
+// Follows the site theme like every other long-form page. It used to be dark
+// only, which cost nothing back when the site had no light mode to follow, and
+// it also pinned the scroll parent dark from JS. Both are gone. The footer lives
+// INSIDE <main> so its edges line up with content.
 
 const INPUT_CLASS =
-  'w-full rounded-lg border border-sand-800 bg-sand-950 px-3 py-2 text-base text-sand-50 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm'
+  'w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 md:text-sm'
 const LABEL_CLASS =
-  'mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-400'
+  'mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400'
 
 type CategoryId = 'general' | 'bug' | 'billing' | 'other'
 
@@ -104,22 +104,11 @@ const CHIP_BASE =
 
 function chipTone(selected: boolean): string {
   return selected
-    ? 'border-olive-500 bg-olive-500/10 text-sand-50'
-    : 'border-sand-800 bg-sand-950 text-sand-300 hover:border-sand-700 hover:text-sand-100'
+    ? 'border-olive-500 bg-olive-500/10 text-sand-900 dark:text-sand-50'
+    : 'border-sand-300 bg-sand-200 text-sand-700 hover:border-sand-400 hover:text-sand-900 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-100'
 }
 
 export default function FeedbackPage() {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const scrollParent = ref.current?.parentElement
-    if (scrollParent) {
-      scrollParent.style.backgroundColor = 'var(--color-sand-950)'
-      return () => {
-        scrollParent.style.backgroundColor = ''
-      }
-    }
-  }, [])
-
   const [category, setCategory] = useState<CategoryId>('general')
   // The rating is optional, but a range input always holds a value. `rated`
   // tracks whether it was actually touched, so an untouched slider sends
@@ -184,12 +173,12 @@ export default function FeedbackPage() {
   }
 
   return (
-    <div ref={ref} className="flex min-h-full flex-col bg-sand-950">
-      <header className="sticky top-0 z-50 hidden h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-800 bg-sand-950 px-6 md:grid">
+    <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
+      <header className="sticky top-0 z-50 hidden h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:grid">
         <div />
         <Link
           href="/feedback"
-          className="text-sm font-semibold text-olive-500 transition-colors hover:text-olive-400"
+          className="text-sm font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-400"
         >
           /Feedback
         </Link>
@@ -201,13 +190,13 @@ export default function FeedbackPage() {
       <main className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         <div className="flex-1">
           <p className="mb-6 text-sm font-semibold md:hidden">
-            <span className="text-olive-500">/Feedback</span>
+            <span className="text-olive-600 dark:text-olive-500">/Feedback</span>
           </p>
 
-          <h1 className="text-center text-3xl font-extrabold tracking-tight text-sand-50 sm:text-4xl">
+          <h1 className="text-center text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
             Feedback
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-sand-400">
+          <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-sand-600 dark:text-sand-400">
             One thing we should fix, build, or stop doing. Pick a category and
             say it in a sentence. We read every one, and this is what decides
             what we work on next.
@@ -216,16 +205,16 @@ export default function FeedbackPage() {
           {sent ? (
             <div className="mx-auto mt-8 w-full max-w-xl rounded-2xl border border-olive-500/30 bg-olive-500/10 p-6">
               <div className="flex items-start gap-3">
-                <CheckCircle weight="regular" size={22} className="mt-0.5 shrink-0 text-olive-400" />
+                <CheckCircle weight="regular" size={22} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
                 <div>
-                  <h2 className="text-base font-bold text-sand-50">Got it, thank you</h2>
-                  <p className="mt-1 text-sm leading-relaxed text-sand-300">
+                  <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">Got it, thank you</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
                     We read every single one. If it needs an answer we&apos;ll
-                    write to <strong className="text-sand-100">{email}</strong>.
+                    write to <strong className="text-sand-900 dark:text-sand-100">{email}</strong>.
                   </p>
                   <Link
                     href="/components"
-                    className="mt-4 inline-block text-sm font-semibold text-olive-400 transition-colors hover:text-olive-300"
+                    className="mt-4 inline-block text-sm font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
                   >
                     Back to components
                   </Link>
@@ -235,7 +224,7 @@ export default function FeedbackPage() {
           ) : (
             <form
               onSubmit={handleSubmit}
-              className="mx-auto mt-8 w-full max-w-xl space-y-5 rounded-2xl border border-sand-800 bg-sand-900 p-6 sm:p-8"
+              className="mx-auto mt-8 w-full max-w-xl space-y-5 rounded-2xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900 sm:p-8"
             >
               {/* Honeypot: off-screen, hidden from humans and assistive tech. */}
               <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden">
@@ -278,7 +267,7 @@ export default function FeedbackPage() {
                       How has AI Canvas been so far?
                     </label>
                     <span
-                      className={`text-xs font-semibold tabular-nums ${rated ? 'text-olive-400' : 'text-sand-500'}`}
+                      className={`text-xs font-semibold tabular-nums ${rated ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-500'}`}
                     >
                       {rated ? `${score} / 10` : 'optional'}
                     </span>
@@ -314,7 +303,7 @@ export default function FeedbackPage() {
                     />
                   </div>
 
-                  <div className="mt-1 flex justify-between text-xs text-sand-500">
+                  <div className="mt-1 flex justify-between text-xs text-sand-600 dark:text-sand-500">
                     <span>Rough</span>
                     <span>Great</span>
                   </div>
@@ -347,7 +336,7 @@ export default function FeedbackPage() {
                       : 'Your feedback'}{' '}
                   {/* Decorative: the required state itself comes from the input's
                       `required` attribute, which is what assistive tech reads. */}
-                  <span aria-hidden="true" className="text-olive-400">*</span>
+                  <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
                 </label>
                 <textarea
                   id="message"
@@ -370,7 +359,7 @@ export default function FeedbackPage() {
               <div>
                 <label htmlFor="email" className={LABEL_CLASS}>
                   {category === 'billing' ? 'Email used at checkout' : 'Email'}{' '}
-                  <span aria-hidden="true" className="text-olive-400">*</span>
+                  <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
                 </label>
                 <input
                   id="email"
@@ -386,7 +375,7 @@ export default function FeedbackPage() {
               </div>
 
               {error && (
-                <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
                   {error}
                 </div>
               )}
@@ -399,16 +388,16 @@ export default function FeedbackPage() {
                   Feedback form section of /privacy rather than on the form, so
                   this link is the point-of-collection notice. Keep it. */}
               <div className="space-y-1.5 text-center">
-                <p className="text-xs leading-relaxed text-sand-400">
+                <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">
                   Good or bad, we read and appreciate every message. Honest
                   feedback is what keeps pushing AI Canvas forward.
                 </p>
                 {/* Only true while the route uses the address for reply_to and
                     nothing else: no Brevo call, no list. If the form is ever
                     wired to the newsletter, this line has to change. */}
-                <p className="text-xs leading-relaxed text-sand-500">
+                <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-500">
                   We only use your email to reply.{' '}
-                  <Link href="/privacy" className="underline underline-offset-2 hover:text-sand-300">
+                  <Link href="/privacy" className="underline underline-offset-2 hover:text-sand-900 dark:hover:text-sand-300">
                     Privacy policy
                   </Link>
                 </p>

@@ -140,7 +140,7 @@ export function SavedList({ initial }: { initial: SavedRow[] }) {
           {visible.map((row) => (
             <li
               key={row.slug}
-              className="flex items-center gap-4 rounded-xl border border-sand-300 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+              className="flex items-center gap-4 rounded-xl border border-sand-200 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
             >
               <Link
                 href={hrefFor(row)}
@@ -153,7 +153,7 @@ export function SavedList({ initial }: { initial: SavedRow[] }) {
                     {row.name}
                   </div>
                   {row.system && (
-                    <div className="mt-0.5 truncate text-xs text-sand-500 dark:text-sand-400">
+                    <div className="mt-0.5 truncate text-xs text-sand-600 dark:text-sand-400">
                       {row.system} system
                     </div>
                   )}
@@ -187,7 +187,7 @@ export function SavedList({ initial }: { initial: SavedRow[] }) {
 // arrive with zero saves or unsave their last item in this session.
 function EmptyState() {
   return (
-    <div className="rounded-xl border border-sand-300 bg-sand-100 p-12 text-center dark:border-sand-800 dark:bg-sand-900">
+    <div className="rounded-xl border border-sand-200 bg-sand-100 p-12 text-center dark:border-sand-800 dark:bg-sand-900">
       <p className="text-sm text-sand-600 dark:text-sand-400">
         You haven&apos;t saved anything yet.
       </p>
@@ -207,7 +207,7 @@ function EmptyState() {
 // placeholder for rows the registry has no image for.
 function SavedThumbnail({ src, alt }: { src: string | null; alt: string }) {
   return (
-    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-md bg-sand-950 ring-1 ring-sand-300 dark:ring-sand-800">
+    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-md bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt={alt} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
@@ -218,11 +218,11 @@ function SavedThumbnail({ src, alt }: { src: string | null; alt: string }) {
 
 function FilteredEmptyState({ onReset }: { onReset: () => void }) {
   return (
-    <div className="rounded-xl border border-dashed border-sand-300 bg-transparent p-10 text-center dark:border-sand-800">
+    <div className="rounded-xl border border-dashed border-sand-200 bg-transparent p-10 text-center dark:border-sand-800">
       <p className="text-sm text-sand-600 dark:text-sand-400">
         This collection is empty.
       </p>
-      <p className="mt-2 text-xs text-sand-500">
+      <p className="mt-2 text-xs text-sand-600 dark:text-sand-500">
         Save more components, or move an existing save in from its per-row dropdown.
       </p>
       <div className="mt-5 flex flex-wrap items-center justify-center gap-2">
@@ -343,9 +343,9 @@ function FolderTabs({
               onKeyDown={(e) => { if (e.key === 'Escape') { setDraft(''); setCreating(false) } }}
               placeholder="Folder name…"
               maxLength={40}
-              className="w-full rounded-md border border-olive-500 bg-sand-50 px-2 py-1 text-base text-sand-900 outline-none md:text-xs dark:bg-sand-900 dark:text-sand-50"
+              className="w-full rounded-md border border-olive-500 bg-sand-100 px-2 py-1 text-base text-sand-900 outline-none md:text-xs dark:bg-sand-900 dark:text-sand-50"
             />
-            <p className="text-center text-[10px] text-sand-500">Enter to create · Esc to cancel</p>
+            <p className="text-center text-[10px] text-sand-600 dark:text-sand-500">Enter to create · Esc to cancel</p>
           </form>
         ) : (
           hasAnySaves && (
@@ -418,7 +418,7 @@ function Folder({
           >
             {label}
           </span>
-          <span className="text-[10px] leading-none text-sand-500">({count})</span>
+          <span className="text-[10px] leading-none text-sand-600 dark:text-sand-500">({count})</span>
         </div>
       </button>
       {onDelete && (
@@ -427,7 +427,7 @@ function Folder({
           onClick={(e) => { e.stopPropagation(); onDelete() }}
           aria-label={`Delete ${label} folder`}
           title={`Delete ${label}`}
-          className="absolute right-2 top-0 flex h-5 w-5 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 opacity-0 shadow-sm transition-all hover:border-red-400 hover:bg-red-500 hover:text-white focus-visible:opacity-100 group-hover:opacity-100 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-200 dark:hover:border-red-500 dark:hover:bg-red-600"
+          className="absolute right-2 top-0 flex h-5 w-5 items-center justify-center rounded-full border border-sand-200 bg-sand-100 text-sand-700 opacity-0 shadow-sm transition-all hover:border-red-400 hover:bg-red-500 hover:text-white focus-visible:opacity-100 group-hover:opacity-100 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-200 dark:hover:border-red-500 dark:hover:bg-red-600"
         >
           <X size={10} weight="bold" />
         </button>
@@ -467,7 +467,7 @@ function CollectionPicker({
         className={`flex shrink-0 items-center gap-1 rounded-lg border px-2.5 py-1 text-xs font-semibold transition-colors ${
           value
             ? 'border-olive-500/40 bg-olive-500/10 text-olive-600 dark:text-olive-400'
-            : 'border-dashed border-sand-300 bg-transparent text-sand-500 hover:border-sand-400 hover:text-sand-700 dark:border-sand-700 dark:text-sand-500 dark:hover:border-sand-600 dark:hover:text-sand-300'
+            : 'border-dashed border-sand-200 bg-transparent text-sand-600 hover:border-sand-300 hover:text-sand-700 dark:border-sand-700 dark:text-sand-500 dark:hover:border-sand-600 dark:hover:text-sand-300'
         }`}
       >
         {value ?? 'Add to collection'}
@@ -483,12 +483,12 @@ function CollectionPicker({
             onClick={() => { setOpen(false); setDraft('') }}
             className="fixed inset-0 z-30 cursor-default"
           />
-          <div className="absolute right-0 top-full z-40 mt-1 w-56 overflow-hidden rounded-lg border border-sand-300 bg-sand-50 shadow-lg dark:border-sand-700 dark:bg-sand-900">
+          <div className="absolute right-0 top-full z-40 mt-1 w-56 overflow-hidden rounded-lg border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
             {value && (
               <button
                 type="button"
                 onClick={() => commit(null)}
-                className="flex w-full items-center gap-2 border-b border-sand-300 px-3 py-2 text-xs font-medium text-sand-600 transition-colors hover:bg-sand-200 dark:border-sand-800 dark:text-sand-400 dark:hover:bg-sand-800"
+                className="flex w-full items-center gap-2 border-b border-sand-200 px-3 py-2 text-xs font-medium text-sand-600 transition-colors hover:bg-sand-50 dark:border-sand-800 dark:text-sand-400 dark:hover:bg-sand-800"
               >
                 <X size={12} weight="regular" />
                 Remove from collection
@@ -500,7 +500,7 @@ function CollectionPicker({
                   <button
                     type="button"
                     onClick={() => commit(name)}
-                    className={`flex w-full items-center justify-between px-3 py-2 text-xs font-medium transition-colors hover:bg-sand-200 dark:hover:bg-sand-800 ${
+                    className={`flex w-full items-center justify-between px-3 py-2 text-xs font-medium transition-colors hover:bg-sand-50 dark:hover:bg-sand-800 ${
                       value === name
                         ? 'text-olive-600 dark:text-olive-400'
                         : 'text-sand-700 dark:text-sand-300'
@@ -514,7 +514,7 @@ function CollectionPicker({
             </ul>
             <form
               onSubmit={(e) => { e.preventDefault(); commitDraft() }}
-              className="flex items-center gap-1.5 border-t border-sand-300 bg-sand-100 px-2 py-2 dark:border-sand-800 dark:bg-sand-950"
+              className="flex items-center gap-1.5 border-t border-sand-200 bg-sand-100 px-2 py-2 dark:border-sand-800 dark:bg-sand-950"
             >
               <input
                 type="text"
@@ -522,7 +522,7 @@ function CollectionPicker({
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="New collection…"
-                className="flex-1 rounded-md border border-sand-300 bg-white px-2 py-1 text-base text-sand-900 outline-none focus:border-olive-500 md:text-xs dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50"
+                className="flex-1 rounded-md border border-sand-200 bg-white px-2 py-1 text-base text-sand-900 outline-none focus:border-olive-500 md:text-xs dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50"
                 maxLength={40}
               />
               <button

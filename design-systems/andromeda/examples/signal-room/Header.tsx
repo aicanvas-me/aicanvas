@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SIGNAL ROOM: Header
 // Section label left, command-K search center, transmit-status
@@ -14,12 +13,19 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import type { MotionProps } from 'framer-motion';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { SearchField } from '../../components/SearchField';
 
-export function Header({ sectionTitle = 'Library', motionProps }) {
+type HeaderProps = {
+  sectionTitle?: string;
+  motionProps?: MotionProps;
+};
+
+export function Header({ sectionTitle = 'Library', motionProps }: HeaderProps) {
   return (
     <motion.header
       {...(motionProps ?? {})}
@@ -28,7 +34,7 @@ export function Header({ sectionTitle = 'Library', motionProps }) {
         position: 'relative',
         height: tokens.layout.headerHeight,
         flexShrink: 0,
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         display: 'flex',
         alignItems: 'center',
         padding: `0 ${tokens.spacing[6]}`,
@@ -45,12 +51,12 @@ export function Header({ sectionTitle = 'Library', motionProps }) {
           style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.muted,
+            color: themeColor.text.muted,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}
         >
-          /// Section
+          {'/// Section'}
         </span>
         <h1
           style={{
@@ -58,7 +64,7 @@ export function Header({ sectionTitle = 'Library', motionProps }) {
             fontFamily: tokens.typography.fontSans,
             fontSize: tokens.typography.size.lg,
             fontWeight: tokens.typography.weight.semibold,
-            color: tokens.color.text.primary,
+            color: themeColor.text.primary,
             letterSpacing: '-0.01em',
           }}
         >
@@ -85,10 +91,10 @@ export function Header({ sectionTitle = 'Library', motionProps }) {
             width: '6px',
             height: '6px',
             flexShrink: 0,
-            background: tokens.color.accent[400],
-            border: `${tokens.border.thin} ${tokens.color.accent[400]}`,
+            background: themeColor.accent[400],
+            border: `${tokens.border.thin} ${themeColor.accent[400]}`,
             // Bespoke glow blur (6px, not the 8px glow token), left literal
-            boxShadow: `0 0 6px ${tokens.color.accent[500]}`,
+            boxShadow: `0 0 6px ${themeColor.accent[500]}`,
           }}
         />
         <span
@@ -96,7 +102,7 @@ export function Header({ sectionTitle = 'Library', motionProps }) {
           style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.accent[100],
+            color: themeColor.accent[100],
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.wider,
           }}

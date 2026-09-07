@@ -346,7 +346,17 @@ export default function CuriousAi() {
     const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100)
     camera.position.z = 4.4
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    // Throws outright when the browser cannot hand back a WebGL context:
+    // hardware acceleration switched off, an older or virtualised machine, or
+    // too many live contexts on one page. Thrown from inside an effect it takes
+    // the surrounding page down with it, so an empty frame is the better
+    // failure.
+    let renderer: THREE.WebGLRenderer
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+    } catch {
+      return
+    }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setSize(W, H)
     renderer.setClearColor(0x000000, 0)
@@ -440,6 +450,12 @@ export default function CuriousAi() {
       ro.disconnect()
       geo.dispose()
       mat.dispose()
+      // Hand the GPU context back explicitly: dispose() frees the scene but
+      // leaves the context alive, and a browser grants only about sixteen per
+      // page, so remounting a few times exhausts them.
+      try {
+        renderer.forceContextLoss()
+      } catch {}
       renderer.dispose()
       if (host.contains(renderer.domElement)) host.removeChild(renderer.domElement)
     }

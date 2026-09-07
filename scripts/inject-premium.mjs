@@ -274,7 +274,7 @@ function writeV2Shim(injectedNames, manifest) {
     '// Re-exports the FREE Andromeda v2 components injected from the private vault',
     '// (manifest key `freeSystemComponents`). Components expected but not injected',
     '// (degraded build) render a placeholder panel instead of crashing the showcase.',
-    '// @ts-nocheck — re-exports untyped design-system sources.',
+    '// @ts-nocheck: placeholder branches on degraded builds are untyped.',
     '',
   ]
   for (const name of expected) {
@@ -550,7 +550,7 @@ let tmpClone = ''
 if (!source && process.env.GITHUB_PAT_PREMIUM) {
   tmpClone = '/tmp/aicanvas-premium-inject'
   rmSync(tmpClone, { recursive: true, force: true })
-  const remote = `https://x-access-token:${process.env.GITHUB_PAT_PREMIUM}@github.com/uiNerd16/aicanvas-premium.git`
+  const remote = `https://x-access-token:${process.env.GITHUB_PAT_PREMIUM}@github.com/aicanvas-me/aicanvas-premium.git`
   try {
     execSync(`git clone --depth 1 ${remote} "${tmpClone}"`, { stdio: 'pipe' })
   } catch (e) {

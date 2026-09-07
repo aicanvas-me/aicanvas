@@ -32,7 +32,7 @@ export default async function SavedPage() {
 
   if (raw.length === 0) {
     return (
-      <div className="rounded-xl border border-sand-300 bg-sand-100 p-12 text-center dark:border-sand-800 dark:bg-sand-900">
+      <div className="rounded-xl border border-sand-200 bg-sand-100 p-12 text-center dark:border-sand-800 dark:bg-sand-900">
         <p className="text-sm text-sand-600 dark:text-sand-400">
           You haven&apos;t saved anything yet.
         </p>

@@ -89,7 +89,7 @@ export function PresetSaveDialog({
         className="absolute inset-0 bg-sand-950/80 backdrop-blur-sm"
         onClick={onCancel}
       />
-      <div className="relative z-10 w-full max-w-md rounded-xl border border-sand-300 bg-sand-100 p-8 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+      <div className="relative z-10 w-full max-w-md rounded-xl border border-sand-300 bg-sand-50 p-8 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
         <Button
           variant="icon"
           size="md"
@@ -119,7 +119,7 @@ export function PresetSaveDialog({
               onChange={(e) => setName(e.target.value)}
               maxLength={80}
               placeholder="e.g. Brand Blue Particles"
-              className="w-full rounded-md border border-sand-300 bg-sand-50 px-3 py-2.5 text-base text-sand-900 placeholder:text-sand-400 focus:border-olive-500 focus:outline-none focus:ring-1 focus:ring-olive-500 md:text-sm dark:border-sand-700 dark:bg-sand-800 dark:text-sand-50"
+              className="w-full rounded-md border border-sand-300 bg-sand-100 px-3 py-2.5 text-base text-sand-900 placeholder:text-sand-400 focus:border-olive-500 focus:outline-none focus:ring-1 focus:ring-olive-500 md:text-sm dark:border-sand-700 dark:bg-sand-800 dark:text-sand-50"
             />
           </div>
 

@@ -55,7 +55,7 @@ export function RecordButton({
         type="button"
         disabled
         aria-label="Saving recording"
-        className={`${BASE} cursor-not-allowed border border-sand-300 bg-sand-100/90 text-sand-500 dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-500`}
+        className={`${BASE} cursor-not-allowed border border-sand-300 bg-sand-50/90 text-sand-500 dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-500`}
       >
         <Stop weight="fill" size={11} />
         Saving…
@@ -69,7 +69,7 @@ export function RecordButton({
       onClick={onClick}
       disabled={!supported}
       aria-label="Record MP4"
-      className={`${BASE} border border-sand-300 bg-sand-100/90 text-sand-800 hover:border-sand-400 disabled:cursor-not-allowed disabled:opacity-50 dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-100 dark:hover:border-sand-600`}
+      className={`${BASE} border border-sand-300 bg-sand-50/90 text-sand-800 hover:border-sand-400 disabled:cursor-not-allowed disabled:opacity-50 dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-100 dark:hover:border-sand-600`}
     >
       <Record weight="fill" size={11} className="text-red-500" />
       Record MP4

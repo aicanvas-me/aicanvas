@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // ANDROMEDA · brand icon
 // Two-path mark: gray triangle + turquoise blade. Source SVG is
@@ -7,7 +6,14 @@
 // never deforms regardless of where it's dropped in.
 // ============================================================
 
-export function AndromedaIcon({ size = 24, mono = false, style = undefined, ...props }) {
+import type { SVGProps } from 'react';
+
+type AndromedaIconProps = {
+  size?: number;
+  mono?: boolean;
+} & SVGProps<SVGSVGElement>;
+
+export function AndromedaIcon({ size = 24, mono = false, style = undefined, ...props }: AndromedaIconProps) {
   const width = size;
   const height = (size * 24) / 28;
 

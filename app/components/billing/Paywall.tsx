@@ -44,12 +44,19 @@ export function Paywall({
   teaser = FAUX_SOURCE,
   name,
   subtitle = DEFAULT_SUBTITLE,
+  appearance = 'dark',
 }: {
   reason: PaywallReason
   limit?: number
   teaser?: string
   name?: string
   subtitle?: string
+  /**
+   * 'dark' (default) keeps the wall a dark slab in both site themes - right
+   * for the Code tab, which renders dark either way. 'themed' follows the
+   * site theme - right for the remix panel, whose surface is themed.
+   */
+  appearance?: 'dark' | 'themed'
 }) {
   const { open } = useAuthModal()
   const { user } = useSession()
@@ -57,6 +64,23 @@ export function Paywall({
   // Named when the caller knows what it is gating; the fallback carries no type
   // noun, because this lock also covers blocks and templates.
   const title = name ? `Unlock ${name}` : 'Premium content'
+
+  // No ground of its own: the teaser shows the surrounding slab at the top and
+  // the overlay gradient fades it out, so the wall blends in instead of
+  // starting on a hard edge.
+  const themed = appearance === 'themed'
+  const overlay = themed
+    ? 'bg-gradient-to-b from-sand-300/0 via-sand-300/85 to-sand-300 dark:from-sand-950/0 dark:via-sand-950/85 dark:to-sand-950'
+    : 'bg-gradient-to-b from-sand-950/0 via-sand-950/85 to-sand-950'
+  const chip = themed
+    ? 'border-sand-400 bg-sand-200 dark:border-sand-800 dark:bg-sand-900'
+    : 'border-sand-800 bg-sand-900'
+  const lockIcon = themed ? 'text-olive-600 dark:text-olive-400' : 'text-olive-400'
+  const heading = themed ? 'text-sand-900 dark:text-sand-50' : 'text-sand-50'
+  const sub = themed ? 'text-sand-600 dark:text-sand-400' : 'text-sand-400'
+  const login = themed
+    ? 'border-sand-500 text-sand-700 hover:border-sand-600 hover:text-sand-900 dark:border-sand-700 dark:text-sand-200 dark:hover:border-sand-600 dark:hover:text-sand-50'
+    : 'border-sand-700 text-sand-200 hover:border-sand-600 hover:text-sand-50'
 
   return (
     <div className="relative min-h-[360px] w-full overflow-hidden">
@@ -66,15 +90,14 @@ export function Paywall({
       >
         {teaser}
       </pre>
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-sand-950/0 via-sand-950/85 to-sand-950 px-4 text-center">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-sand-800 bg-sand-900">
-          <LockSimple weight="regular" size={20} className="text-olive-400" />
+      <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center ${overlay}`}>
+        <div className={`flex h-11 w-11 items-center justify-center rounded-full border ${chip}`}>
+          <LockSimple weight="regular" size={20} className={lockIcon} />
         </div>
-        <h3 className="text-base font-bold text-sand-50">{title}</h3>
-        <p className="max-w-xs text-sm leading-relaxed text-sand-400">{subtitle}</p>
-        {/* Fixed dark skin, not buttonClasses: this panel is bg-sand-950 in both
-            site themes, so the outline variant's light-mode default would put
-            sand-700 text on black. */}
+        <h3 className={`text-base font-bold ${heading}`}>{title}</h3>
+        <p className={`max-w-xs text-sm leading-relaxed ${sub}`}>{subtitle}</p>
+        {/* Hand-skinned, not buttonClasses: the wall pairs its buttons with its
+            own ground per appearance. */}
         <div className="mt-1 flex items-center gap-2">
           <Link
             href="/pricing"
@@ -86,7 +109,7 @@ export function Paywall({
             <button
               type="button"
               onClick={() => open()}
-              className="rounded-lg border border-sand-700 px-4 py-2 text-sm font-semibold text-sand-200 transition-colors hover:border-sand-600 hover:text-sand-50"
+              className={`rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${login}`}
             >
               Log in
             </button>

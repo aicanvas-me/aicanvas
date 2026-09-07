@@ -116,7 +116,7 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
       className={`relative flex flex-col rounded-3xl border bg-sand-100 p-2 dark:bg-sand-900 ${
         plan.featured
           ? 'border-olive-500/50 dark:border-olive-500/40'
-          : 'border-sand-300 dark:border-sand-800'
+          : 'border-sand-200 dark:border-sand-800'
       }`}
     >
       {/* Top — icon + name row, tagline below, then price, CTA */}
@@ -137,7 +137,7 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
           <span className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">
             {plan.priceLabel}
           </span>
-          <span className="text-sm font-medium text-sand-500">
+          <span className="text-sm font-medium text-sand-600 dark:text-sand-500">
             / {plan.priceSuffix}
           </span>
         </div>
@@ -155,8 +155,8 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
       </div>
 
       {/* Bottom — features inset */}
-      <div className="flex-1 rounded-2xl bg-sand-200/70 px-5 py-6 dark:bg-sand-950 sm:px-6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-500">
+      <div className="flex-1 rounded-2xl bg-sand-50/70 px-5 py-6 dark:bg-sand-950 sm:px-6">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">
           {plan.listLabel}
         </p>
         <ul className="mt-4 space-y-3">
@@ -171,7 +171,7 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
                 className={`mt-0.5 shrink-0 ${
                   plan.featured
                     ? 'text-olive-600 dark:text-olive-400'
-                    : 'text-sand-400 dark:text-sand-300'
+                    : 'text-sand-600 dark:text-sand-300'
                 }`}
               />
               <span>{feature}</span>
@@ -215,13 +215,13 @@ const PRICING_FAQ: FaqItem[] = [
 export default function PricingPage() {
   const premium = premiumEnabled()
   return (
-    <div className="flex min-h-full flex-col bg-sand-200 dark:bg-sand-950">
+    <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
       {/* ── Top bar — mirrors /About: olive /Pricing centered, HeaderSocials right ── */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-300 bg-sand-200 px-6 dark:border-sand-800 dark:bg-sand-950 md:grid">
+      <div className="sticky top-0 z-10 hidden h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:grid">
         <div />
         <Link
           href="/pricing"
-          className="text-sm font-semibold text-olive-500 transition-colors hover:text-olive-400"
+          className="text-sm font-semibold text-olive-600 transition-colors dark:text-olive-500 dark:hover:text-olive-400"
         >
           /Pricing
         </Link>
@@ -233,13 +233,13 @@ export default function PricingPage() {
       <main className="relative mx-auto w-full max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         {/* Mobile breadcrumb */}
         <p className="mb-6 text-sm font-semibold md:hidden">
-          <span className="text-olive-500">/Pricing</span>
+          <span className="text-olive-600 dark:text-olive-500">/Pricing</span>
         </p>
 
         {/* ── Hero ── */}
         <Section className="text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
-            <Sparkle weight="regular" size={12} className="text-olive-500 dark:text-olive-400" />
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-sand-200 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
+            <Sparkle weight="regular" size={12} className="text-olive-600 dark:text-olive-400" />
             Our Pricing Plan
           </span>
           <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50">

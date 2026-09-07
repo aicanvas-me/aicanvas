@@ -1,12 +1,22 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Card
 // padding variants: none | sm | md | lg
 // ============================================================
 
+import type { CSSProperties, ReactNode } from 'react';
 import { tokens } from '../tokens';
 
-export function Card({ children, header, footer, padding = 'md', style: extraStyle }) {
+export type CardPadding = 'none' | 'sm' | 'md' | 'lg';
+
+export type CardProps = {
+  children?: ReactNode;
+  header?: ReactNode;
+  footer?: ReactNode;
+  padding?: CardPadding;
+  style?: CSSProperties;
+};
+
+export function Card({ children, header, footer, padding = 'md', style: extraStyle }: CardProps) {
   const paddingValues = {
     none: '0',
     sm:   tokens.spacing[3],

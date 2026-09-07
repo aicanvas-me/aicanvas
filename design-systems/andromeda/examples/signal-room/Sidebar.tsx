@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SIGNAL ROOM: Sidebar
 // Console nav + pinned channels list + user card. Mirrors the
@@ -16,6 +15,7 @@
 // ============================================================
 
 import { motion, LayoutGroup } from 'framer-motion';
+import type { MotionProps } from 'framer-motion';
 import {
   UserCircle,
   Gear,
@@ -23,13 +23,16 @@ import {
   SignOut,
 } from '@phosphor-icons/react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { NavItem } from '../../components/NavItem';
+import type { UserMenuItem } from '../../components/UserMenu';
 import { UserCard } from '../../components/UserCard';
 import { AndromedaIcon } from '../../AndromedaIcon';
 import { navItems, channels } from './data';
+import type { Channel } from './data';
 
-function InsetDivider({ side = 'bottom' }) {
+function InsetDivider({ side = 'bottom' }: { side?: 'top' | 'bottom' }) {
   return (
     <span
       aria-hidden
@@ -39,14 +42,14 @@ function InsetDivider({ side = 'bottom' }) {
         right: tokens.spacing[3],
         [side]: 0,
         height: 'var(--andromeda-border-width, 1px)',
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
         pointerEvents: 'none',
       }}
     />
   );
 }
 
-const userMenuItems = [
+const userMenuItems: UserMenuItem[] = [
   { id: 'profile',     label: 'Profile',             icon: UserCircle },
   { id: 'preferences', label: 'Preferences',         icon: Gear },
   { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
@@ -58,13 +61,13 @@ const userMenuItems = [
 // channel's signal (accent = live, orange = hot, red = offline), the one place
 // colour is allowed on the rail. Unknown status falls back to a neutral pale dot.
 const STATUS_DOT = {
-  nominal: tokens.color.accent[300],
-  caution: tokens.color.orange[300],
-  fault:   tokens.color.red[300],
+  nominal: themeColor.accent[300],
+  caution: themeColor.orange[300],
+  fault:   themeColor.red[300],
 };
 
-function ChannelRow({ ch }) {
-  const dot = STATUS_DOT[ch.status] ?? tokens.color.text.muted;
+function ChannelRow({ ch }: { ch: Channel }) {
+  const dot = STATUS_DOT[ch.status] ?? themeColor.text.muted;
   return (
     <div
       style={{
@@ -82,9 +85,9 @@ function ChannelRow({ ch }) {
           width: '24px',
           height: '24px',
           flexShrink: 0,
-          border: `${tokens.border.thin} ${tokens.color.border.subtle}`,
+          border: `${tokens.border.thin} ${themeColor.border.subtle}`,
           borderRadius: tokens.radius.frame,
-          background: tokens.color.surface.overlay,
+          background: themeColor.surface.overlay,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -105,7 +108,7 @@ function ChannelRow({ ch }) {
           style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.primary,
+            color: themeColor.text.primary,
             letterSpacing: tokens.typography.tracking.wide,
             whiteSpace: 'nowrap',
             overflow: 'hidden',
@@ -118,7 +121,7 @@ function ChannelRow({ ch }) {
           style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.faint,
+            color: themeColor.text.faint,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}
@@ -136,7 +139,13 @@ function ChannelRow({ ch }) {
 // active dot slides between siblings; the desktop aside and the drawer get
 // distinct group ids so a mounted-but-hidden copy can't fight the visible one
 // for the shared layout animation.
-export function SidebarNav({ activeNav, onNavChange, layoutGroupId = 'signal-room-sidebar' }) {
+type SidebarNavProps = {
+  activeNav: string;
+  onNavChange: (id: string) => void;
+  layoutGroupId?: string;
+};
+
+export function SidebarNav({ activeNav, onNavChange, layoutGroupId = 'signal-room-sidebar' }: SidebarNavProps) {
   return (
     <>
       {/* Section label */}
@@ -145,12 +154,12 @@ export function SidebarNav({ activeNav, onNavChange, layoutGroupId = 'signal-roo
           padding: `${tokens.spacing[3]} ${tokens.spacing[3]} ${tokens.spacing[2]}`,
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.faint,
+          color: themeColor.text.faint,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.widest,
         }}
       >
-        /// Console
+        {'/// Console'}
       </div>
 
       {/* Primary nav */}
@@ -186,12 +195,12 @@ export function SidebarNav({ activeNav, onNavChange, layoutGroupId = 'signal-roo
             padding: `0 ${tokens.spacing[3]} ${tokens.spacing[2]}`,
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.faint,
+            color: themeColor.text.faint,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}
         >
-          /// Channels
+          {'/// Channels'}
         </div>
         <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
           {channels.slice(0, 3).map(ch => (
@@ -203,7 +212,14 @@ export function SidebarNav({ activeNav, onNavChange, layoutGroupId = 'signal-roo
   );
 }
 
-export function Sidebar({ activeNav, onNavChange, motionProps, className }) {
+type SidebarProps = {
+  activeNav: string;
+  onNavChange: (id: string) => void;
+  motionProps?: MotionProps;
+  className?: string;
+};
+
+export function Sidebar({ activeNav, onNavChange, motionProps, className }: SidebarProps) {
   return (
     <motion.aside
       {...(motionProps ?? {})}
@@ -212,7 +228,7 @@ export function Sidebar({ activeNav, onNavChange, motionProps, className }) {
         position: 'relative',
         width: tokens.layout.sidebarWidth,
         flexShrink: 0,
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         display: 'flex',
         flexDirection: 'column',
         backdropFilter: 'blur(var(--andromeda-blur-sm, 2px))',
@@ -238,7 +254,7 @@ export function Sidebar({ activeNav, onNavChange, motionProps, className }) {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.primary,
+              color: themeColor.text.primary,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
               fontWeight: tokens.typography.weight.semibold,
@@ -250,7 +266,7 @@ export function Sidebar({ activeNav, onNavChange, motionProps, className }) {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.muted,
+              color: themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
             }}

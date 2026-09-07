@@ -1,12 +1,17 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Tag
 // ============================================================
 
 import { X } from 'lucide-react';
+import type { MouseEventHandler, ReactNode } from 'react';
 import { tokens } from '../tokens';
 
-export function Tag({ children, onClose }) {
+export type TagProps = {
+  children?: ReactNode;
+  onClose?: MouseEventHandler<HTMLButtonElement>;
+};
+
+export function Tag({ children, onClose }: TagProps) {
   return (
     <span style={{
       display: 'inline-flex',

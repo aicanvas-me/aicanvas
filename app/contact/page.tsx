@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { CheckCircle } from '@phosphor-icons/react'
 import { Button } from '../components/Button'
@@ -12,9 +12,9 @@ import { HeaderSocials } from '../components/HeaderSocials'
 // sends a branded email from contact@aicanvas.me to the project inbox with
 // reply_to set to the visitor. Replaces the old mailto: links in the nav.
 //
-// Always-dark like /privacy and /terms: colors are hardcoded to the sand-950
-// palette (no `dark:` variants) because the page renders dark regardless of the
-// site theme. The useEffect paints the scroll parent so overscroll stays dark.
+// Follows the site theme like every other long-form page. It used to be dark
+// only, which cost nothing back when the site had no light mode to follow, and
+// it also pinned the scroll parent dark from JS. Both are gone.
 //
 // Layout: the page is a flex column so the footer is pushed to the bottom when
 // the content is short (e.g. the success state). The footer lives INSIDE <main>
@@ -22,22 +22,11 @@ import { HeaderSocials } from '../components/HeaderSocials'
 // left/right edges line up (matching /privacy and /terms).
 
 const INPUT_CLASS =
-  'w-full rounded-lg border border-sand-800 bg-sand-950 px-3 py-2 text-base text-sand-50 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm'
+  'w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 md:text-sm'
 const LABEL_CLASS =
-  'mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-400'
+  'mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400'
 
 export default function ContactPage() {
-  const ref = useRef<HTMLDivElement>(null)
-  useEffect(() => {
-    const scrollParent = ref.current?.parentElement
-    if (scrollParent) {
-      scrollParent.style.backgroundColor = 'var(--color-sand-950)'
-      return () => {
-        scrollParent.style.backgroundColor = ''
-      }
-    }
-  }, [])
-
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [subject, setSubject] = useState('')
@@ -71,12 +60,12 @@ export default function ContactPage() {
   }
 
   return (
-    <div ref={ref} className="flex min-h-full flex-col bg-sand-950">
-      <header className="sticky top-0 z-50 hidden h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-800 bg-sand-950 px-6 md:grid">
+    <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
+      <header className="sticky top-0 z-50 hidden h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:grid">
         <div />
         <Link
           href="/contact"
-          className="text-sm font-semibold text-olive-500 transition-colors hover:text-olive-400"
+          className="text-sm font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-400"
         >
           /Contact
         </Link>
@@ -88,13 +77,13 @@ export default function ContactPage() {
       <main className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         <div className="flex-1">
           <p className="mb-6 text-sm font-semibold md:hidden">
-            <span className="text-olive-500">/Contact</span>
+            <span className="text-olive-600 dark:text-olive-500">/Contact</span>
           </p>
 
-          <h1 className="text-center text-3xl font-extrabold tracking-tight text-sand-50 sm:text-4xl">
+          <h1 className="text-center text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
             Contact
           </h1>
-          <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-sand-400">
+          <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-sand-600 dark:text-sand-400">
             Have a question, spotted a bug, or want a component built? Send a
             message and it lands straight in our inbox. We read every one and
             reply by email, usually within a day or two.
@@ -103,12 +92,12 @@ export default function ContactPage() {
           {sent ? (
             <div className="mx-auto mt-8 w-full max-w-xl rounded-2xl border border-olive-500/30 bg-olive-500/10 p-6">
               <div className="flex items-start gap-3">
-                <CheckCircle weight="regular" size={22} className="mt-0.5 shrink-0 text-olive-400" />
+                <CheckCircle weight="regular" size={22} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
                 <div>
-                  <h2 className="text-base font-bold text-sand-50">Message sent</h2>
-                  <p className="mt-1 text-sm leading-relaxed text-sand-300">
+                  <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">Message sent</h2>
+                  <p className="mt-1 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
                     Thanks, {name || 'there'}. Your message is on its way and we&apos;ll
-                    reply to <strong className="text-sand-100">{email}</strong>. No
+                    reply to <strong className="text-sand-900 dark:text-sand-100">{email}</strong>. No
                     account or follow-up needed on your end.
                   </p>
                 </div>
@@ -117,7 +106,7 @@ export default function ContactPage() {
           ) : (
             <form
               onSubmit={handleSubmit}
-              className="mx-auto mt-8 w-full max-w-xl space-y-4 rounded-2xl border border-sand-800 bg-sand-900 p-6 sm:p-8"
+              className="mx-auto mt-8 w-full max-w-xl space-y-4 rounded-2xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900 sm:p-8"
             >
               {/* Honeypot: off-screen, hidden from humans and assistive tech. */}
               <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden">
@@ -138,7 +127,7 @@ export default function ContactPage() {
                     the required state assistive tech announces comes from each
                     input's `required` attribute. Matches /feedback. */}
                 <label htmlFor="name" className={LABEL_CLASS}>
-                  Name <span aria-hidden="true" className="text-olive-400">*</span>
+                  Name <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
                 </label>
                 <input
                   id="name"
@@ -156,7 +145,7 @@ export default function ContactPage() {
 
               <div>
                 <label htmlFor="email" className={LABEL_CLASS}>
-                  Email <span aria-hidden="true" className="text-olive-400">*</span>
+                  Email <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
                 </label>
                 <input
                   id="email"
@@ -173,7 +162,7 @@ export default function ContactPage() {
 
               <div>
                 <label htmlFor="subject" className={LABEL_CLASS}>
-                  Subject <span aria-hidden="true" className="text-olive-400">*</span>
+                  Subject <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
                 </label>
                 <input
                   id="subject"
@@ -189,7 +178,7 @@ export default function ContactPage() {
 
               <div>
                 <label htmlFor="message" className={LABEL_CLASS}>
-                  Message <span aria-hidden="true" className="text-olive-400">*</span>
+                  Message <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
                 </label>
                 <textarea
                   id="message"
@@ -204,7 +193,7 @@ export default function ContactPage() {
               </div>
 
               {error && (
-                <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-300">
+                <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
                   {error}
                 </div>
               )}
@@ -215,9 +204,9 @@ export default function ContactPage() {
 
               {/* Matches /feedback. Only true while the route uses the address
                   for reply_to and nothing else: no Brevo call, no list. */}
-              <p className="text-center text-xs leading-relaxed text-sand-500">
+              <p className="text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
                 We only use your email to reply.{' '}
-                <Link href="/privacy" className="underline underline-offset-2 hover:text-sand-300">
+                <Link href="/privacy" className="underline underline-offset-2 hover:text-sand-900 dark:hover:text-sand-300">
                   Privacy policy
                 </Link>
               </p>

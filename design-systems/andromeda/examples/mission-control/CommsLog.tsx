@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // MISSION CONTROL: Row 3 right — Comms Log
 // ============================================================
@@ -6,6 +5,7 @@
 import { ArrowDown, ArrowUp, Warning } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { Card, CardHeader } from '../../components/Card';
 import { Button } from '../../components/Button';
 import { rowContainer, rowItem } from '../../components/lib/motion';
@@ -14,7 +14,7 @@ import { commsLog } from './data';
 // Inset divider line — 12px transparent stops at each end so the divider
 // reads as a deliberate inset, never edge-to-edge. See `rules.md` →
 // Section dividers.
-const ROW_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${tokens.color.border.subtle} ${tokens.spacing[3]}, ${tokens.color.border.subtle} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
+const ROW_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${themeColor.border.subtle} ${tokens.spacing[3]}, ${themeColor.border.subtle} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
 const rowSeparatorStyle = {
   backgroundImage: ROW_INSET_LINE,
   backgroundSize: '100% 1px',
@@ -26,27 +26,27 @@ const dirConfig = {
   down: {
     icon:  ArrowDown,
     label: 'DN',
-    color: tokens.color.accent[100],
-    bg:    tokens.color.accent[500],
-    border:tokens.color.accent[400],
+    color: themeColor.accent[100],
+    bg:    themeColor.accent[500],
+    border:themeColor.accent[400],
   },
   up: {
     icon:  ArrowUp,
     label: 'UP',
-    color: tokens.color.text.primary,
-    bg:    tokens.color.surface.raised,
-    border:tokens.color.border.base,
+    color: themeColor.text.primary,
+    bg:    themeColor.surface.raised,
+    border:themeColor.border.base,
   },
   alert: {
     icon:  Warning,
     label: '!',
-    color: tokens.color.orange[300],
-    bg:    tokens.color.orange[500],
-    border:tokens.color.orange[400],
+    color: themeColor.orange[300],
+    bg:    themeColor.orange[500],
+    border:themeColor.orange[400],
   },
 };
 
-function CommsItem({ entry, isLast }) {
+function CommsItem({ entry, isLast }: { entry: (typeof commsLog)[number]; isLast: boolean }) {
   const cfg = dirConfig[entry.dir];
   const Icon = cfg.icon;
 
@@ -98,7 +98,7 @@ function CommsItem({ entry, isLast }) {
           <span style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.muted,
+            color: themeColor.text.muted,
             letterSpacing: tokens.typography.tracking.wide,
             flexShrink: 0,
           }}>
@@ -108,7 +108,7 @@ function CommsItem({ entry, isLast }) {
         <div style={{
           fontFamily: tokens.typography.fontSans,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.text.secondary,
+          color: themeColor.text.secondary,
           lineHeight: tokens.typography.lineHeight.snug,
         }}>
           {entry.text}
@@ -126,16 +126,16 @@ export function CommsLog() {
           <span style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.muted,
+            color: themeColor.text.muted,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}>
-            /// Channel
+            {'/// Channel'}
           </span>
           <span style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.md,
-            color: tokens.color.text.primary,
+            color: themeColor.text.primary,
             fontWeight: tokens.typography.weight.medium,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.wider,

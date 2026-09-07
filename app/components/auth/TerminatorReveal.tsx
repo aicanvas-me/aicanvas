@@ -17,7 +17,7 @@ export function TerminatorReveal() {
       beforeHeadline={<>I&apos;ll be back.</>}
       afterHeadline={
         <>
-          <span className="text-olive-500 dark:text-olive-400">Told</span> you.
+          <span className="text-olive-600 dark:text-olive-400">Told</span> you.
         </>
       }
     />

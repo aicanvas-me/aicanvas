@@ -40,19 +40,27 @@ This repository is public. A leaked secret is exposed the moment it is committed
 
 ## Design system (site chrome)
 
-- **Default theme**: dark. Light/dark toggle persists to `localStorage` via `ThemeProvider`; dark mode is class-based (`.dark` on `<html>`, Tailwind v4 `@variant dark`). Aesthetic: Phosphor-inspired — neutral cool-gray surfaces, editorial typography, olive accent.
+- **Default theme**: dark. The toggle lives at the bottom of the left rail and persists to a `theme` cookie, read server-side in `app/layout.tsx` so the first byte carries the right class and there is no flash. Dark is class-based (`.dark` on `<html>`, Tailwind v4 `@variant dark`). Aesthetic: Phosphor-inspired — neutral cool-gray surfaces, editorial typography, olive accent.
+- **Site theme and preview theme are separate scopes, and the relationship is one-directional.** `ThemeProvider` is the only writer of `<html>` and the cookie; a component or block preview owns its own `[data-card-theme]` wrapper and never touches either. The site SEEDS a preview (a preview opens in whatever the site is set to) until the visitor uses the preview's own toggle, after which that preview is pinned. So the site can move a preview; a preview can never move the site. The `@variant dark` selector at the top of `app/globals.css` is what keeps them apart, and its comment explains both directions. Do not make a preview call into `ThemeProvider`: that is the exact bug that got the first site toggle deleted.
 - **Full token reference** (sand + olive scales, hex values, typography table, spacing grid): `supervisor/skills/site-design-tokens.md` — the single source of truth for site-chrome styling.
 
 Semantic quick reference:
 
 | Role | Light | Dark |
 |---|---|---|
-| Page background | `bg-sand-200` | `dark:bg-sand-950` |
+| Page background | `bg-sand-50` | `dark:bg-sand-950` |
 | Card / surface | `bg-sand-100` | `dark:bg-sand-900` |
 | Primary text | `text-sand-900` | `dark:text-sand-50` |
+| Body text | `text-sand-700` | `dark:text-sand-300` |
 | Secondary text | `text-sand-600` | `dark:text-sand-400` |
-| Border | `border-sand-300` | `dark:border-sand-800` |
-| Accent | `text-olive-500` | `dark:text-olive-400` |
+| Border | `border-sand-200` | `dark:border-sand-800` |
+| Border hover | `border-sand-300` | `dark:border-sand-700` |
+| Accent text | `text-olive-600` | `dark:text-olive-400` |
+| Accent hover | `text-olive-800` | `dark:text-olive-300` |
+
+The olive ramp was drawn to glow on `sand-950`, so olive-400 and olive-500 cannot carry accent text on a light page. Light accent text is `olive-600` (a deliberate design call at roughly 3:1, carried by size and weight), its hover is `olive-800`, and `olive-700` is the selection highlight. `bg-olive-500` stays the accent FILL in both themes, always with `text-sand-950` on it; a tiny decorative fill may deepen to `olive-700` on light. `text-sand-500` is not a text colour in light mode (3.9:1); it survives only on a decorative glyph.
+
+This table is for NEW code. When adding a light half to an element that already had only a dark value, keep that element's existing dark value exactly and change only the light base: dark is the default theme and must not shift. `lib/theme/scope.test.ts` guards the scope contract itself.
 
 - Olive buttons use `text-sand-950`, never white (contrast). Component preview backgrounds are always `bg-sand-950` regardless of theme. Typography weights: 800 hero h1, 700 section headings, 600 UI labels/buttons, 400 body.
 

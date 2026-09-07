@@ -41,6 +41,11 @@ function useDarkMode(ref: React.RefObject<HTMLElement | null>) {
     update()
     const obs = new MutationObserver(update)
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    // Watch the card wrapper too. Its own light/dark switch changes only the
+    // wrapper, never <html>, so observing the document alone leaves this stuck
+    // on whatever it read first.
+    const scope = el.closest('[data-card-theme]')
+    if (scope) obs.observe(scope, { attributes: true, attributeFilter: ['class', 'data-card-theme'] })
     return () => obs.disconnect()
   }, [ref])
   return isDark

@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // RESOURCE PLANNING · DEMO DATA
 // ============================================================
@@ -39,9 +38,9 @@ export const activeAllocations = {
 // wanders, used tracks at a varying fraction so the gap weaves open and shut,
 // reserved holds roughly flat. Deterministic (no Math.random) so SSR and the
 // client render identical points — a mismatch would hydrate-error.
-const _fract = (x) => x - Math.floor(x);
-const _noise = (i, s) => _fract(Math.sin((i + 1) * 12.9898 + s * 78.233) * 43758.5453); // [0,1)
-const _clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+const _fract = (x: number) => x - Math.floor(x);
+const _noise = (i: number, s: number) => _fract(Math.sin((i + 1) * 12.9898 + s * 78.233) * 43758.5453); // [0,1)
+const _clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
 export const allocationSeries = Array.from({ length: 31 }, (_, i) => {
   const trend  = 8600 + Math.sin(i / 5) * 900;       // slow rolling baseline

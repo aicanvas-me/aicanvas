@@ -1,13 +1,25 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: StatTile
 // ============================================================
 
 import { TrendingUp, TrendingDown } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { tokens } from '../tokens';
 import { Card } from './Card';
 
-export function StatTile({ label, value, delta, deltaLabel, icon: Icon, colorVariant = 'primary' }) {
+export type StatTileColorVariant = 'primary' | 'success' | 'warning' | 'purple' | 'teal';
+
+export type StatTileProps = {
+  label?: ReactNode;
+  value?: ReactNode;
+  delta: number;
+  deltaLabel?: ReactNode;
+  icon?: LucideIcon;
+  colorVariant?: StatTileColorVariant;
+};
+
+export function StatTile({ label, value, delta, deltaLabel, icon: Icon, colorVariant = 'primary' }: StatTileProps) {
   const isPositive = delta >= 0;
   const TrendIcon = isPositive ? TrendingUp : TrendingDown;
   const trendColor = isPositive ? tokens.color.success[50] : tokens.color.error[50];

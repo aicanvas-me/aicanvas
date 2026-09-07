@@ -23,7 +23,7 @@ export function PropsTable({ propTables }: { propTables: PropTable[] }) {
   return (
     <section className="mt-12">
       <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">Props</h2>
-      <p className="mb-4 mt-1 text-sm text-sand-500 dark:text-sand-400">
+      <p className="mb-4 mt-1 text-sm text-sand-600 dark:text-sand-400">
         Every prop this component accepts. Any other prop is forwarded to the
         underlying element.
       </p>
@@ -31,11 +31,11 @@ export function PropsTable({ propTables }: { propTables: PropTable[] }) {
         {propTables.map((t) => (
           <div key={t.table}>
             {propTables.length > 1 && (
-              <h3 className="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400">
+              <h3 className="mb-2 font-mono text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                 {t.table}
               </h3>
             )}
-            <div className="overflow-x-auto rounded-xl border border-sand-300 dark:border-sand-800">
+            <div className="overflow-x-auto rounded-xl border border-sand-200 dark:border-sand-800">
               {/* table-fixed + shared colgroup: every table on the page uses
                   identical column widths, so stacked tables (compound
                   components) line up and the Description column stays bounded
@@ -48,7 +48,7 @@ export function PropsTable({ propTables }: { propTables: PropTable[] }) {
                   <col className="w-[32%]" />
                 </colgroup>
                 <thead>
-                  <tr className="border-b border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
+                  <tr className="border-b border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
                     <th className="px-4 py-2.5 font-semibold text-sand-700 dark:text-sand-300">Prop</th>
                     <th className="px-4 py-2.5 font-semibold text-sand-700 dark:text-sand-300">Type</th>
                     <th className="px-4 py-2.5 font-semibold text-sand-700 dark:text-sand-300">Default</th>
@@ -66,7 +66,7 @@ export function PropsTable({ propTables }: { propTables: PropTable[] }) {
                           {p.name}
                         </span>
                         {!p.optional && (
-                          <span className="ml-1.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-olive-500 dark:text-olive-400">
+                          <span className="ml-1.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-olive-600 dark:text-olive-400">
                             req
                           </span>
                         )}
@@ -76,7 +76,7 @@ export function PropsTable({ propTables }: { propTables: PropTable[] }) {
                           {p.type}
                         </code>
                       </td>
-                      <td className="break-words px-4 py-3 align-top font-mono text-xs text-sand-500 dark:text-sand-400">
+                      <td className="break-words px-4 py-3 align-top font-mono text-xs text-sand-600 dark:text-sand-400">
                         {p.default || '-'}
                       </td>
                       <td className="px-4 py-3 align-top text-sm text-sand-600 dark:text-sand-400">

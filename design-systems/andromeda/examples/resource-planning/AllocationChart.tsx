@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // RESOURCE PLANNING · AllocationChart
 // Thin composition over the global TrendChart: the panel frame
@@ -12,13 +11,15 @@
 'use client';
 
 import { useState } from 'react';
+import type { ComponentProps } from 'react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Toggle } from '../../components/Toggle';
 import { TrendChart } from '../../components/TrendChart';
 import { allocationSeries } from './data';
 
-const SERIES = [
+const SERIES: ComponentProps<typeof TrendChart>['series'] = [
   { key: 'allocated', label: 'Allocated', role: 'baseline' },
   { key: 'used',      label: 'Used',      role: 'live' },
   { key: 'reserved',  label: 'Reserved',  role: 'context' },
@@ -31,7 +32,7 @@ export function AllocationChart() {
     <div
       style={{
         position: 'relative',
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         display: 'flex',
         flexDirection: 'column',
         flex: 1,
@@ -55,7 +56,7 @@ export function AllocationChart() {
               gap: tokens.spacing[2],
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.sm,
-              color: tokens.color.text.muted,
+              color: themeColor.text.muted,
               letterSpacing: tokens.typography.tracking.wide,
             }}
           >

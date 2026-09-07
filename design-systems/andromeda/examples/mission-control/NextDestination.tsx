@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // MISSION CONTROL · Next Destination widget
 // Full-width row that sits under the VehiclesTable + CommsLog row.
@@ -9,6 +8,7 @@
 
 import { ArrowRight, MapTrifold } from '@phosphor-icons/react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { Card, CardHeader, CardTitle } from '../../components/Card';
 import { Badge } from '../../components/Badge';
@@ -33,11 +33,11 @@ export function NextDestination() {
           <span style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.muted,
+            color: themeColor.text.muted,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}>
-            /// Heading
+            {'/// Heading'}
           </span>
           <CardTitle>Next Destination</CardTitle>
         </div>
@@ -66,7 +66,7 @@ export function NextDestination() {
           style={{
             position: 'relative',
             minHeight: 280,
-            borderRight: `${tokens.border.thin} ${tokens.color.border.subtle}`,
+            borderRight: `${tokens.border.thin} ${themeColor.border.subtle}`,
             paddingRight: tokens.spacing[5],
           }}
         >
@@ -77,7 +77,7 @@ export function NextDestination() {
             left: 0, bottom: 0,
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.faint,
+            color: themeColor.text.faint,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}>
@@ -92,7 +92,7 @@ export function NextDestination() {
             <div style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.muted,
+              color: themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
               marginBottom: tokens.spacing[1],
@@ -103,7 +103,7 @@ export function NextDestination() {
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size['3xl'],
               fontWeight: tokens.typography.weight.bold,
-              color: tokens.color.text.primary,
+              color: themeColor.text.primary,
               letterSpacing: tokens.typography.tracking.wider,
               lineHeight: tokens.typography.lineHeight.tight,
             }}>
@@ -123,13 +123,13 @@ export function NextDestination() {
                   padding: `${tokens.spacing[2]} 0`,
                   borderBottom: i === readouts.length - 1
                     ? 'none'
-                    : `${tokens.border.thin} ${tokens.color.border.subtle}`,
+                    : `${tokens.border.thin} ${themeColor.border.subtle}`,
                 }}
               >
                 <span style={{
                   fontFamily: tokens.typography.fontMono,
                   fontSize: tokens.typography.size.xs,
-                  color: tokens.color.text.muted,
+                  color: themeColor.text.muted,
                   textTransform: 'uppercase',
                   letterSpacing: tokens.typography.tracking.wider,
                 }}>
@@ -138,7 +138,7 @@ export function NextDestination() {
                 <span style={{
                   fontFamily: tokens.typography.fontMono,
                   fontSize: tokens.typography.size.sm,
-                  color: tokens.color.text.primary,
+                  color: themeColor.text.primary,
                   letterSpacing: tokens.typography.tracking.wide,
                 }}>
                   {value}
@@ -176,7 +176,7 @@ export function NextDestination() {
           .mc-dest-planet {
             border-right: none !important;
             padding-right: 0 !important;
-            border-bottom: ${tokens.border.thin} ${tokens.color.border.subtle} !important;
+            border-bottom: ${tokens.border.thin} ${themeColor.border.subtle} !important;
             padding-bottom: ${tokens.spacing[4]} !important;
           }
         }

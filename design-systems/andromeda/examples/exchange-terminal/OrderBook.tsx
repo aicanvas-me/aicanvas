@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // EXCHANGE TERMINAL · OrderBook
 // ============================================================
@@ -7,12 +6,13 @@
 
 import { Funnel, Printer } from '@phosphor-icons/react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { IconButton } from '../../components/IconButton';
 import { Dropdown } from './Dropdown';
 import { asks, bids, tape } from './data';
 
-function InsetDivider({ side = 'bottom' }) {
+function InsetDivider({ side = 'bottom' }: { side?: 'top' | 'bottom' }) {
   return (
     <span
       aria-hidden
@@ -22,14 +22,14 @@ function InsetDivider({ side = 'bottom' }) {
         right: tokens.spacing[3],
         [side]: 0,
         height: '1px',
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
         pointerEvents: 'none',
       }}
     />
   );
 }
 
-const num = (n, d = 3) =>
+const num = (n: number, d = 3) =>
   n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 
 // Shared text style for all data rows.
@@ -43,14 +43,14 @@ const ROW_TEXT = {
 const COL_HEADER = {
   fontFamily: tokens.typography.fontMono,
   fontSize: tokens.typography.size.sm,
-  color: tokens.color.text.muted,
+  color: themeColor.text.muted,
   textTransform: 'uppercase',
   letterSpacing: tokens.typography.tracking.widest,
 };
 
-function DepthRow({ row, side, depth }) {
-  const tint = side === 'ask' ? tokens.color.red.alpha : tokens.color.accent.alpha;
-  const priceColor = side === 'ask' ? tokens.color.red[200] : tokens.color.accent[200];
+function DepthRow({ row, side, depth }: { row: (typeof asks)[number]; side: 'ask' | 'bid'; depth: number }) {
+  const tint = side === 'ask' ? themeColor.red.alpha : themeColor.accent.alpha;
+  const priceColor = side === 'ask' ? themeColor.red[200] : themeColor.accent[200];
   return (
     <div
       className="ex-row"
@@ -76,23 +76,23 @@ function DepthRow({ row, side, depth }) {
         }}
       />
       <span style={{ position: 'relative', color: priceColor }}>{num(row.p, 2)}</span>
-      <span style={{ position: 'relative', color: tokens.color.text.secondary, textAlign: 'right' }}>
+      <span style={{ position: 'relative', color: themeColor.text.secondary, textAlign: 'right' }}>
         {num(row.a, 3)}
       </span>
-      <span style={{ position: 'relative', color: tokens.color.text.secondary, textAlign: 'right' }}>
+      <span style={{ position: 'relative', color: themeColor.text.secondary, textAlign: 'right' }}>
         {num(row.t, 3)}
       </span>
     </div>
   );
 }
 
-function maxAmount(rows) {
+function maxAmount(rows: (typeof asks)[number][]) {
   return rows.reduce((m, r) => Math.max(m, r.a), 0);
 }
 
 // Two small coloured bars stacked — represents both / asks / bids view mode.
 // Used as `children` of IconButton (custom glyph, not a phosphor icon).
-function ModeIcon({ topColor, botColor }) {
+function ModeIcon({ topColor, botColor }: { topColor: string; botColor: string }) {
   return (
     <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
       <span style={{ width: tokens.spacing[3], height: '3px', background: topColor }} />
@@ -111,7 +111,7 @@ export function OrderBook() {
     <div
       style={{
         position: 'relative',
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         display: 'flex',
         flexDirection: 'column',
         flex: 1,
@@ -132,13 +132,13 @@ export function OrderBook() {
       >
         <InsetDivider />
         <IconButton aria-label="Both sides" variant="default" size="sm">
-          <ModeIcon topColor={tokens.color.red[300]} botColor={tokens.color.accent[300]} />
+          <ModeIcon topColor={themeColor.red[300]} botColor={themeColor.accent[300]} />
         </IconButton>
         <IconButton aria-label="Asks only" variant="outline" size="sm">
-          <ModeIcon topColor={tokens.color.red[300]} botColor={tokens.color.text.faint} />
+          <ModeIcon topColor={themeColor.red[300]} botColor={themeColor.text.faint} />
         </IconButton>
         <IconButton aria-label="Bids only" variant="outline" size="sm">
-          <ModeIcon topColor={tokens.color.text.faint} botColor={tokens.color.accent[300]} />
+          <ModeIcon topColor={themeColor.text.faint} botColor={themeColor.accent[300]} />
         </IconButton>
 
         <div style={{ flex: 1 }} />
@@ -190,7 +190,7 @@ export function OrderBook() {
         style={{
           position: 'relative',
           padding: `${tokens.spacing[3]} ${tokens.spacing[4]}`,
-          background: tokens.color.surface.overlay,
+          background: themeColor.surface.overlay,
           display: 'flex',
           alignItems: 'baseline',
           gap: tokens.spacing[3],
@@ -203,7 +203,7 @@ export function OrderBook() {
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xl,   // 18px — hero readout
             fontWeight: tokens.typography.weight.semibold,
-            color: tokens.color.accent[200],
+            color: themeColor.accent[200],
             letterSpacing: tokens.typography.tracking.wide,
           }}
         >
@@ -213,7 +213,7 @@ export function OrderBook() {
           style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.sm,
-            color: tokens.color.text.muted,
+            color: themeColor.text.muted,
             letterSpacing: tokens.typography.tracking.wide,
           }}
         >
@@ -224,14 +224,14 @@ export function OrderBook() {
           style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.sm,
-            color: tokens.color.text.faint,
+            color: themeColor.text.faint,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}
         >
           More
         </span>
-        <Funnel weight="regular" size={14} style={{ color: tokens.color.accent[300] }} />
+        <Funnel weight="regular" size={14} style={{ color: themeColor.accent[300] }} />
       </div>
 
       {/* Bids */}

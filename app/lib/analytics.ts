@@ -7,8 +7,15 @@ type EventMap = {
   'Remix Open': { component: string }
   // Replaced 'Remix Platform Click' — the per-platform dropdown is gone;
   // one general prompt is copied from the Remix panel instead.
-  'Remix Prompt Copy': { component: string }
-  'CLI Copy': { component: string }
+  //
+  // `ok` is whether the clipboard write actually succeeded. Both of these used
+  // to fire before the write was attempted, so the counts measured intent to
+  // copy and were then read as proof the copy worked. The browser refuses the
+  // write often enough that the difference matters, and the two are worth
+  // telling apart: a copy button that silently does nothing looks, from here,
+  // exactly like a copy button working perfectly.
+  'Remix Prompt Copy': { component: string; ok: boolean }
+  'CLI Copy': { component: string; ok: boolean }
   'Install Tab Switch': { component: string; tab: 'cli' | 'manual' }
   'Fullscreen Open': { component: string }
   'System Install Tier Click': { component: string; system: string }
@@ -17,7 +24,7 @@ type EventMap = {
   'Install Gate Shown': Record<string, never>
   'Sign Up': Record<string, never>
   'Search': { query: string; results: number }
-  'MCP Token Copy': Record<string, never>
+  'MCP Token Copy': { ok: boolean }
   'Manage Subscription Open': Record<string, never>
   'Checkout Step': { step: string }
 }

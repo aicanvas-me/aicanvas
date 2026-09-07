@@ -104,11 +104,11 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
           <div className="mt-6 space-y-3">
             <GoogleSignInButton next={next} label="Sign up with Google" />
             <div className="flex items-center gap-3" aria-hidden="true">
-              <span className="h-px flex-1 bg-sand-300 dark:bg-sand-800" />
-              <span className="text-xs uppercase tracking-wider text-sand-500 dark:text-sand-500">
+              <span className="h-px flex-1 bg-sand-200 dark:bg-sand-800" />
+              <span className="text-xs uppercase tracking-wider text-sand-600 dark:text-sand-500">
                 or
               </span>
-              <span className="h-px flex-1 bg-sand-300 dark:bg-sand-800" />
+              <span className="h-px flex-1 bg-sand-200 dark:bg-sand-800" />
             </div>
           </div>
 
@@ -117,7 +117,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               <div>
                 <label
                   htmlFor="email"
-                  className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400"
+                  className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
                 >
                   Email
                 </label>
@@ -130,14 +130,14 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
                   placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-400 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
+                  className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
                 />
               </div>
 
               <div>
                 <label
                   htmlFor="password"
-                  className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400"
+                  className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
                 >
                   Password
                 </label>
@@ -177,14 +177,14 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               <button
                 type="button"
                 onClick={onSwitchToSignIn}
-                className="font-semibold text-olive-500 hover:underline dark:text-olive-400"
+                className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
               >
                 Sign in
               </button>
             ) : (
               <Link
                 href={`/account/sign-in?next=${encodeURIComponent(next)}`}
-                className="font-semibold text-olive-500 hover:underline dark:text-olive-400"
+                className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
               >
                 Sign in
               </Link>
@@ -199,7 +199,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               separate marketing notice is required. The Art. 8 age-16
               confirmation was also dropped — developer-tool audience with
               negligible under-16 risk. */}
-          <p className="mt-6 text-xs leading-relaxed text-sand-500 dark:text-sand-500">
+          <p className="mt-6 text-xs leading-relaxed text-sand-600 dark:text-sand-500">
             By creating an account you agree to our{' '}
             <Link
               href="/terms"

@@ -1,12 +1,22 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Input
 // ============================================================
 
 import { useState } from 'react';
+import type { ChangeEventHandler, ReactNode } from 'react';
+import type { LucideIcon } from 'lucide-react';
 import { tokens } from '../tokens';
 
-export function Input({ label, placeholder, icon: Icon, error, value, onChange }) {
+export type InputProps = {
+  label?: ReactNode;
+  placeholder?: string;
+  icon?: LucideIcon;
+  error?: ReactNode;
+  value?: string;
+  onChange?: ChangeEventHandler<HTMLInputElement>;
+};
+
+export function Input({ label, placeholder, icon: Icon, error, value, onChange }: InputProps) {
   const [focused, setFocused] = useState(false);
 
   const borderColor = error

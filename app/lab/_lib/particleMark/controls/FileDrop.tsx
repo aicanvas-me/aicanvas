@@ -62,7 +62,7 @@ export function FileDrop({ accept, onFile, fileName, onClear }: FileDropProps) {
 
   if (fileName) {
     return (
-      <div className="flex items-center justify-between gap-2 rounded-lg border border-sand-300 bg-sand-50 px-3 py-1.5 dark:border-sand-700 dark:bg-sand-800">
+      <div className="flex items-center justify-between gap-2 rounded-lg border border-sand-300 bg-sand-100 px-3 py-1.5 dark:border-sand-700 dark:bg-sand-800">
         <span className="truncate text-xs text-sand-700 dark:text-sand-300" title={fileName}>
           {fileName}
         </span>
@@ -98,7 +98,7 @@ export function FileDrop({ accept, onFile, fileName, onClear }: FileDropProps) {
       className={`flex w-full items-center gap-2.5 rounded-lg border border-dashed px-3 py-2.5 text-left text-xs transition-colors ${
         dragOver
           ? 'border-olive-500 bg-olive-500/10 text-sand-800 dark:text-sand-100'
-          : 'border-sand-400 bg-sand-50/40 text-sand-600 hover:border-sand-500 hover:bg-sand-50 dark:border-sand-700 dark:bg-sand-800/40 dark:text-sand-400 dark:hover:border-sand-600 dark:hover:bg-sand-800/80'
+          : 'border-sand-400 bg-sand-100/40 text-sand-600 hover:border-sand-500 hover:bg-sand-100 dark:border-sand-700 dark:bg-sand-800/40 dark:text-sand-400 dark:hover:border-sand-600 dark:hover:bg-sand-800/80'
       }`}
     >
       <ImageIcon size={16} weight="regular" className="shrink-0" />

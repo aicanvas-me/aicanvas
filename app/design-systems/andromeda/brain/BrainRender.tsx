@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
+import { useTheme, type Theme } from '@/app/components/ThemeProvider'
 import type { Group, Mesh, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
@@ -10,11 +11,13 @@ const MODEL_URL = '/models/brain.glb'
 // wireframe as per-vertex colours (blended by region, so the wires shade from
 // one into the next); the labels sit together in a fixed legend, not floating
 // on the brain.
-const ZONES = [
-  { label: 'Index', dir: [0.2, 0.9, 0.35], hex: '#a78bfa' }, // purple
-  { label: 'Foundations', dir: [-0.9, 0.05, 0.4], hex: '#38bdf8' }, // cyan
-  { label: 'Components', dir: [0.9, 0.05, 0.4], hex: '#fb923c' }, // orange
-  { label: 'Skills', dir: [0.0, -0.7, 0.7], hex: '#a3e635' }, // lime
+// Light takes the same hues a few stops deeper so the hairlines hold on a
+// pale ground. Kept in step with BrainStoryV4's SECTION_ZONES.
+const ZONES: { label: string; dir: [number, number, number]; hex: Record<Theme, string> }[] = [
+  { label: 'Index', dir: [0.2, 0.9, 0.35], hex: { dark: '#a78bfa', light: '#7c3aed' } }, // purple
+  { label: 'Foundations', dir: [-0.9, 0.05, 0.4], hex: { dark: '#38bdf8', light: '#0284c7' } }, // cyan
+  { label: 'Components', dir: [0.9, 0.05, 0.4], hex: { dark: '#fb923c', light: '#ea580c' } }, // orange
+  { label: 'Skills', dir: [0.0, -0.7, 0.7], hex: { dark: '#a3e635', light: '#65a30d' } }, // lime
 ]
 
 // Wireframe brain for the reader's Brain Index landing: a multi-colour wireframe
@@ -22,6 +25,9 @@ const ZONES = [
 // Client-only Three.js; the reader only mounts for premium users.
 export function BrainRender({ height = 400 }: { height?: number }) {
   const hostRef = useRef<HTMLDivElement>(null)
+  // ponytail: a theme switch rebuilds the scene (the model comes from cache);
+  // repainting in place is the ceiling, and this view sits behind the paywall.
+  const { theme } = useTheme()
 
   useEffect(() => {
     const host = hostRef.current
@@ -52,7 +58,7 @@ export function BrainRender({ height = 400 }: { height?: number }) {
 
       // Linear-space RGB of each zone colour (three stores hex as linear internally).
       const zoneCols = ZONES.map((z) => {
-        const c = new THREE.Color(z.hex)
+        const c = new THREE.Color(z.hex[theme])
         return [c.r, c.g, c.b] as [number, number, number]
       })
       const zoneDirs = ZONES.map((z) => new THREE.Vector3(z.dir[0], z.dir[1], z.dir[2]).normalize())
@@ -148,7 +154,7 @@ export function BrainRender({ height = 400 }: { height?: number }) {
         if (renderer?.domElement && host.contains(renderer.domElement)) host.removeChild(renderer.domElement)
       } catch {}
     }
-  }, [height])
+  }, [height, theme])
 
   return (
     <div style={{ position: 'relative', width: '100%', height, pointerEvents: 'none' }} aria-hidden>
@@ -168,8 +174,8 @@ export function BrainRender({ height = 400 }: { height?: number }) {
       >
         {ZONES.map((z) => (
           <div key={z.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 4, height: 4, borderRadius: 4, background: z.hex, flexShrink: 0 }} />
-            <span style={{ color: z.hex, letterSpacing: '0.04em' }}>{z.label}</span>
+            <span style={{ width: 4, height: 4, borderRadius: 4, background: z.hex[theme], flexShrink: 0 }} />
+            <span style={{ color: z.hex[theme], letterSpacing: '0.04em' }}>{z.label}</span>
           </div>
         ))}
       </div>

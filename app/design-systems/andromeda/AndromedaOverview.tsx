@@ -1,4 +1,3 @@
-// @ts-nocheck — consumes the JSDoc-typed Andromeda config/meta (no TS prop types).
 //
 // Andromeda OVERVIEW — the product landing for the system: hero → system
 // showcase → the brain → templates grid → components grid. This IS the system
@@ -14,9 +13,13 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
+import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { ArrowLeft, ArrowRight, ArrowUpRight, Lightning, Robot, Wrench, CaretDown } from '@phosphor-icons/react'
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
+import type { Group, Mesh, WebGLRenderer } from 'three'
+import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Button, buttonClasses } from '../../components/Button'
 import { SiteFooter } from '../../components/SiteFooter'
 import { optimizeImageKitUrl } from '../../lib/imagekit'
@@ -25,7 +28,7 @@ import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoop } from '../../_components/FoundationLoop'
 
 // Short blurbs for the four shipped templates — keyed by registry slug.
-const TEMPLATE_BLURBS = {
+const TEMPLATE_BLURBS: Record<string, string> = {
   'andromeda-mission-control':
     'Spacecraft telemetry: live altitude, vehicle roster, comms log, and a system-status readout in one mission view.',
   'andromeda-service-order':
@@ -39,7 +42,7 @@ const TEMPLATE_BLURBS = {
 // Card art uploaded to ImageKit (andromeda/templates/). Filenames are kept
 // exactly as uploaded — capitalized, with spaces — so they're URL-encoded when
 // building the src.
-const TEMPLATE_IMAGE_FILE = {
+const TEMPLATE_IMAGE_FILE: Record<string, string> = {
   'andromeda-mission-control': 'Mission control.png',
   'andromeda-service-order': 'Service order.png',
   'andromeda-resource-planning': 'Resource planning.png',
@@ -61,7 +64,7 @@ const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
 // AI Canvas component-preview fill — dark sand-900 surface with the site's
 // dot-grid motif and a centered Manrope label. Screenshot-ready (drop an <img>
 // over it later). Rendered as absolute children of a `relative` image box.
-function PreviewFill({ label }) {
+function PreviewFill({ label }: { label: string }) {
   return (
     <>
       <div
@@ -90,7 +93,7 @@ const BRAIN_OLIVE_500 = '#A8B94D'
 const BRAIN_VOID = '#0E0E0F'
 
 function BrainWireframePreview() {
-  const hostRef = useRef(null)
+  const hostRef = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
 
   useEffect(() => {
@@ -98,7 +101,7 @@ function BrainWireframePreview() {
     if (!host) return
     let alive = true
     let raf = 0
-    let renderer
+    let renderer: WebGLRenderer | undefined
     let onResize = () => {}
 
     ;(async () => {
@@ -111,6 +114,7 @@ function BrainWireframePreview() {
       let W = host.clientWidth || 400
       let H = host.clientHeight || 300
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'low-power' })
+      const r = renderer
       renderer.setSize(W, H)
       renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5))
       host.appendChild(renderer.domElement)
@@ -129,14 +133,14 @@ function BrainWireframePreview() {
       onResize = () => {
         W = host.clientWidth || W
         H = host.clientHeight || H
-        renderer.setSize(W, H)
+        r.setSize(W, H)
         camera.aspect = W / H
         camera.updateProjectionMatrix()
       }
       window.addEventListener('resize', onResize)
 
-      let brainRoot = null
-      new GLTFLoader().load(BRAIN_MODEL_URL, (gltf) => {
+      let brainRoot: Group | null = null
+      new GLTFLoader().load(BRAIN_MODEL_URL, (gltf: GLTF) => {
         if (!alive) return
         const model = gltf.scene
         // Normalize scale + recenter via bounding sphere — same two-pass
@@ -150,8 +154,10 @@ function BrainWireframePreview() {
         sphere = box.getBoundingSphere(new THREE.Sphere())
         model.position.sub(sphere.center)
         model.traverse((o) => {
-          if (o.isMesh) {
-            o.material = new THREE.MeshStandardMaterial({
+          // Duck-typed on purpose: instanceof breaks when two copies of three load.
+          const mesh = o as Mesh
+          if (mesh.isMesh) {
+            mesh.material = new THREE.MeshStandardMaterial({
               color: new THREE.Color(BRAIN_OLIVE_500),
               wireframe: true,
               emissive: new THREE.Color(BRAIN_OLIVE_500),
@@ -170,10 +176,14 @@ function BrainWireframePreview() {
         raf = requestAnimationFrame(loop)
         const dt = Math.min(clock.getDelta(), 1 / 30)
         if (brainRoot && !reduce) brainRoot.rotation.y += dt * 0.25
-        renderer.render(scene, camera)
+        r.render(scene, camera)
       }
       loop()
-    })()
+      // Constructing the renderer above throws on a browser with no webgl2
+      // context, and an async block with nothing attached turns that into an
+      // unhandled rejection. The decoration simply does not appear; the page
+      // around it is unaffected.
+    })().catch(() => {})
 
     return () => {
       alive = false
@@ -196,7 +206,17 @@ function BrainWireframePreview() {
 // stroke). Icon + label + chevron cluster on the LEFT; clicking toggles the
 // description and the dashed frame extends with it (the SVG tracks the container
 // height via calc(100%)). Click-toggled so touch works; honors reduced-motion.
-function ValueItem({ icon: Icon, heading, children, delay = 0 }) {
+function ValueItem({
+  icon: Icon,
+  heading,
+  children,
+  delay = 0,
+}: {
+  icon: PhosphorIcon
+  heading: string
+  children: ReactNode
+  delay?: number
+}) {
   const [open, setOpen] = useState(false)
   return (
     <div className="vp-item relative rounded-2xl p-5" style={{ animationDelay: `${delay}ms` }}>
@@ -213,7 +233,7 @@ function ValueItem({ icon: Icon, heading, children, delay = 0 }) {
           {/* Icon chip — same aesthetic as the home-page steps: neutral surface,
               1px border, soft drop shadow. Dark mode matches that section exactly;
               light mode gets the neutral equivalent. */}
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sand-300 bg-sand-100 text-sand-600 shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sand-300 bg-sand-50 text-sand-600 shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
             <Icon weight="regular" size={16} />
           </span>
           <span className="text-base font-bold text-sand-900 dark:text-sand-50">{heading}</span>
@@ -241,7 +261,7 @@ const reveal = {
   initial: { opacity: 0, y: 10 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.2 },
-  transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] },
+  transition: { duration: 0.35, ease: [0.16, 1, 0.3, 1] as const },
 }
 
 export function AndromedaOverview() {
@@ -259,7 +279,7 @@ export function AndromedaOverview() {
   const compCanGoNext =
     compStart < ANDROMEDA_COMPONENT_META.length - COMPONENTS_PER_PAGE
 
-  function pageComponents(dir) {
+  function pageComponents(dir: number) {
     setCompDir(dir)
     setCompStart((s) =>
       dir === 1
@@ -325,7 +345,7 @@ export function AndromedaOverview() {
       <motion.section className="mt-14" {...reveal}>
         <Link
           href="/design-systems/andromeda/system"
-          className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-100 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
+          className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
         >
           <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">
             <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
@@ -355,7 +375,7 @@ export function AndromedaOverview() {
       <motion.section className="mt-14" {...reveal}>
         <Link
           href="/design-systems/andromeda/brain"
-          className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-100 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
+          className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
         >
           <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px] sm:w-1/2">
             <BrainWireframePreview />
@@ -395,7 +415,7 @@ export function AndromedaOverview() {
             <Link
               key={t.slug}
               href={`/design-systems/andromeda/templates/${t.folder}`}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-950 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl hover:shadow-sand-300/60 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:hover:shadow-2xl dark:hover:shadow-black/50"
+              className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl hover:shadow-sand-300/60 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:hover:shadow-2xl dark:hover:shadow-black/50"
             >
               <div className="relative aspect-video overflow-hidden bg-sand-900">
                 {/* Premium badge — same Aceternity-style pill as premium
@@ -419,7 +439,7 @@ export function AndromedaOverview() {
                   className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 />
               </div>
-              <div className="relative -mt-4 flex flex-1 flex-col gap-3 rounded-t-2xl bg-sand-100 p-5 shadow-[0_-8px_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[0_-8px_24px_rgba(0,0,0,0.25)]">
+              <div className="relative -mt-4 flex flex-1 flex-col gap-3 rounded-t-2xl bg-sand-50 p-5 shadow-[0_-8px_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[0_-8px_24px_rgba(0,0,0,0.25)]">
                 <div>
                   <h3 className="font-bold text-sand-900 dark:text-sand-50">{t.name}</h3>
                   <p className="mt-1 line-clamp-2 text-sm font-normal text-sand-600 dark:text-sand-400">{t.blurb}</p>
@@ -501,7 +521,7 @@ export function AndromedaOverview() {
                 >
                   <Link
                     href={`/design-systems/andromeda/${c.slug}`}
-                    className="group flex flex-col overflow-hidden rounded-xl border border-sand-300 bg-sand-100 transition-colors duration-200 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+                    className="group flex flex-col overflow-hidden rounded-xl border border-sand-300 bg-sand-50 transition-colors duration-200 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
                   >
                     <div className="relative aspect-video overflow-hidden bg-sand-950">
                       {c.image ? (

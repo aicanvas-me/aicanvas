@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // RESOURCE PLANNING · RequestsTable
 // Filter tabs, search field, and the request log itself. Rows
@@ -10,13 +9,14 @@
 'use client';
 
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
 import { MagnifyingGlass, CaretUp } from '@phosphor-icons/react';
 import { tokens } from '../../tokens';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Checkbox } from '../../components/Checkbox';
 import { rowContainer, rowItem } from '../../components/lib/motion';
-import { easingArray } from '../../components/lib/utils';
+import { easingArray, themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { requestRows, filterTabs } from './data';
 
@@ -30,14 +30,14 @@ function InsetDivider({ side = 'bottom' }) {
         right: tokens.spacing[3],
         [side]: 0,
         height: 'var(--andromeda-border-width, 1px)',
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
         pointerEvents: 'none',
       }}
     />
   );
 }
 
-const ROW_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${tokens.color.border.subtle} ${tokens.spacing[3]}, ${tokens.color.border.subtle} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
+const ROW_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${themeColor.border.subtle} ${tokens.spacing[3]}, ${themeColor.border.subtle} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
 const rowSeparatorStyle = {
   backgroundImage: ROW_INSET_LINE,
   backgroundSize: '100% var(--andromeda-border-width, 1px)',
@@ -50,13 +50,20 @@ const rowSeparatorStyle = {
 // motion.span with a shared `layoutId`. Framer animates it between
 // tabs as `active` flips — the wrapping <LayoutGroup> in the parent
 // scopes the layoutId so two filter strips don't fight each other.
-const ms = (v) => parseInt(v, 10) / 1000;
+const ms = (v: string) => parseInt(v, 10) / 1000;
 const FILTER_TX = {
   duration: ms(tokens.motion.duration.slow),
   ease: easingArray(tokens.motion.easing.standard),
 };
 
-function FilterTab({ label, count, active, onClick }) {
+type FilterTabProps = {
+  label: string;
+  count: number;
+  active: boolean;
+  onClick: () => void;
+};
+
+function FilterTab({ label, count, active, onClick }: FilterTabProps) {
   return (
     <button
       type="button"
@@ -73,7 +80,7 @@ function FilterTab({ label, count, active, onClick }) {
         cursor: 'pointer',
         fontFamily: tokens.typography.fontMono,
         fontSize: tokens.typography.size.sm,
-        color: active ? tokens.color.text.primary : tokens.color.text.muted,
+        color: active ? themeColor.text.primary : themeColor.text.muted,
         textTransform: 'uppercase',
         letterSpacing: tokens.typography.tracking.wider,
         transition: `color var(--andromeda-duration-normal) var(--andromeda-easing-out)`,
@@ -87,8 +94,8 @@ function FilterTab({ label, count, active, onClick }) {
           style={{
             position: 'absolute',
             inset: 0,
-            background: tokens.color.surface.active,
-            border: `${tokens.border.thin} ${tokens.color.border.bright}`,
+            background: themeColor.surface.active,
+            border: `${tokens.border.thin} ${themeColor.border.bright}`,
             borderRadius: tokens.radius.frame,
             zIndex: 0,
             pointerEvents: 'none',
@@ -100,7 +107,7 @@ function FilterTab({ label, count, active, onClick }) {
         <span
           style={{
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.faint,
+            color: themeColor.text.faint,
             letterSpacing: tokens.typography.tracking.wide,
           }}
         >
@@ -115,7 +122,13 @@ function FilterTab({ label, count, active, onClick }) {
 // verticalAlign:'top' so the header label's top edge aligns with the
 // checkbox column's top edge (which also uses 'top'); padding-top
 // matches the row cells so the rhythm reads as a single grid.
-function ColHeader({ children, sorted, align = 'left' }) {
+type ColHeaderProps = {
+  children: ReactNode;
+  sorted?: boolean;
+  align?: 'left' | 'right';
+};
+
+function ColHeader({ children, sorted, align = 'left' }: ColHeaderProps) {
   return (
     <th
       style={{
@@ -125,7 +138,7 @@ function ColHeader({ children, sorted, align = 'left' }) {
         fontFamily: tokens.typography.fontMono,
         fontSize: tokens.typography.size.xs,
         fontWeight: tokens.typography.weight.medium,
-        color: sorted ? tokens.color.text.primary : tokens.color.text.muted,
+        color: sorted ? themeColor.text.primary : themeColor.text.muted,
         textTransform: 'uppercase',
         letterSpacing: tokens.typography.tracking.widest,
         lineHeight: 'var(--andromeda-leading-none, 1)',
@@ -144,7 +157,7 @@ function ColHeader({ children, sorted, align = 'left' }) {
 export function RequestsTable() {
   const [activeFilter, setActiveFilter] = useState('pending');
   const [query, setQuery] = useState('');
-  const [selected, setSelected] = useState(() => new Set());
+  const [selected, setSelected] = useState(() => new Set<string>());
 
   const filtered = requestRows.filter((r) => {
     if (activeFilter !== 'all' && activeFilter !== 'recent' && r.status !== activeFilter) return false;
@@ -158,7 +171,7 @@ export function RequestsTable() {
   const filteredKeys = filtered.map((r) => r.team);
   const allSelected = filteredKeys.length > 0 && filteredKeys.every((k) => selected.has(k));
 
-  function toggleRow(key) {
+  function toggleRow(key: string) {
     setSelected((prev) => {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
@@ -167,7 +180,7 @@ export function RequestsTable() {
     });
   }
 
-  function toggleAll(next) {
+  function toggleAll(next: boolean) {
     setSelected((prev) => {
       const out = new Set(prev);
       if (next) filteredKeys.forEach((k) => out.add(k));
@@ -180,7 +193,7 @@ export function RequestsTable() {
     <div
       style={{
         position: 'relative',
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         display: 'flex',
         flexDirection: 'column',
         flex: 1,
@@ -225,9 +238,9 @@ export function RequestsTable() {
             flexShrink: 0,
             padding: `0 ${tokens.spacing[2]}`,
             background: 'transparent',
-            border: `${tokens.border.thin} ${tokens.color.border.base}`,
+            border: `${tokens.border.thin} ${themeColor.border.base}`,
             borderRadius: tokens.radius.frame,
-            color: tokens.color.text.muted,
+            color: themeColor.text.muted,
           }}
         >
           <MagnifyingGlass weight="regular" size={14} />
@@ -243,7 +256,7 @@ export function RequestsTable() {
               background: 'transparent',
               border: 'none',
               outline: 'none',
-              color: tokens.color.text.primary,
+              color: themeColor.text.primary,
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
               letterSpacing: tokens.typography.tracking.wider,
@@ -344,7 +357,7 @@ export function RequestsTable() {
                             top: tokens.spacing[1],
                             bottom: tokens.spacing[1],
                             width: '2px',
-                            background: tokens.color.accent[300],
+                            background: themeColor.accent[300],
                             transformOrigin: 'left',
                             pointerEvents: 'none',
                           }}
@@ -369,7 +382,7 @@ export function RequestsTable() {
                         style={{
                           fontFamily: tokens.typography.fontMono,
                           fontSize: tokens.typography.size.sm,
-                          color: tokens.color.text.primary,
+                          color: themeColor.text.primary,
                           letterSpacing: tokens.typography.tracking.wide,
                           lineHeight: 'var(--andromeda-leading-none, 1)',
                           height: '16px',
@@ -383,7 +396,7 @@ export function RequestsTable() {
                         style={{
                           fontFamily: tokens.typography.fontMono,
                           fontSize: tokens.typography.size.xs,
-                          color: tokens.color.text.muted,
+                          color: themeColor.text.muted,
                           letterSpacing: tokens.typography.tracking.wide,
                           lineHeight: 'var(--andromeda-leading-none, 1)',
                         }}
@@ -397,7 +410,7 @@ export function RequestsTable() {
                       padding: `${tokens.spacing[3]} ${tokens.spacing[3]}`,
                       fontFamily: tokens.typography.fontMono,
                       fontSize: tokens.typography.size.sm,
-                      color: tokens.color.text.secondary,
+                      color: themeColor.text.secondary,
                       letterSpacing: tokens.typography.tracking.wide,
                       whiteSpace: 'nowrap',
                       verticalAlign: 'top',
@@ -414,7 +427,7 @@ export function RequestsTable() {
                       fontFamily: tokens.typography.fontMono,
                       fontSize: tokens.typography.size.sm,
                       fontWeight: tokens.typography.weight.medium,
-                      color: tokens.color.text.primary,
+                      color: themeColor.text.primary,
                       letterSpacing: tokens.typography.tracking.wide,
                       whiteSpace: 'nowrap',
                       verticalAlign: 'top',

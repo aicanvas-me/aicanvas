@@ -2,8 +2,10 @@
 
 import { usePathname } from 'next/navigation'
 import { HeaderSocials } from '../components/HeaderSocials'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { Breadcrumbs, type Crumb } from '../components/Breadcrumbs'
+import { isPinnedDarkRoute } from '../lib/pinned-dark'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 
 // The sticky top-bar breadcrumb for design-system + ideation routes. One
@@ -81,7 +83,7 @@ function buildCrumbs(pathname: string): Crumb[] | null {
 }
 
 const headerClass =
-  'sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-300 bg-sand-200 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex'
+  'sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex'
 
 export function IdeationTopBar() {
   const pathname = usePathname() ?? '/ideation'
@@ -98,24 +100,28 @@ export function IdeationTopBar() {
   if (!crumbs) return null
 
   // The Brain READER and the Showcase mirror the template top bar: install
-  // control(s) portaled into a slot next to the auth pill, replacing the
-  // Lightning status pill. BrainViewer owns the brain slot; ShowcaseInstall
-  // owns the showcase slot.
+  // control(s) portaled into a slot next to the auth pill. BrainViewer owns
+  // the brain slot; ShowcaseInstall owns the showcase slot.
   const isBrainReader = pathname === '/design-systems/andromeda/brain/explore'
   const isShowcase = pathname === '/design-systems/andromeda/system'
 
+  // Pinned-dark surfaces keep a dark bar over a dark page in either site theme.
   return (
-    <div className={headerClass}>
+    <div className={isPinnedDarkRoute(pathname) ? `dark ${headerClass}` : headerClass}>
       <Breadcrumbs crumbs={crumbs} />
+      {/* Right cluster order whenever a bar carries a CTA: theme toggle,
+          then the CTA, then the user. */}
       {isBrainReader ? (
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <div id="brain-install-slot" />
-          <TopAuthPill showStatusPill={false} />
+          <TopAuthPill />
         </div>
       ) : isShowcase ? (
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <div id="andromeda-install-slot" />
-          <TopAuthPill showStatusPill={false} />
+          <TopAuthPill />
         </div>
       ) : (
         <HeaderSocials />

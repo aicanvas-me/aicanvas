@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Radio (Choicebox)
 // shadcn/ui-aligned API: forwardRef, controlled (`checked`) or
@@ -14,6 +13,7 @@
 'use client';
 
 import { forwardRef, useId, useState, createContext, useContext, useEffect } from 'react';
+import type { ChangeEventHandler, ComponentPropsWithoutRef } from 'react';
 
 function useSpacePopIn() {
   useEffect(() => {
@@ -95,7 +95,14 @@ const labelClass = cn(
 );
 
 // ── Group context ───────────────────────────────────────────────────────────
-const RadioGroupContext = createContext(/** @type {null | { name: string, value: string|undefined, onValueChange: (v: string) => void, disabled?: boolean }} */ (null));
+type RadioGroupContextValue = {
+  name: string;
+  value: string | undefined;
+  onValueChange: (v: string) => void;
+  disabled?: boolean;
+};
+
+const RadioGroupContext = createContext<RadioGroupContextValue | null>(null);
 
 /**
  * @typedef {object} RadioGroupProps
@@ -109,6 +116,14 @@ const RadioGroupContext = createContext(/** @type {null | { name: string, value:
  * @property {React.CSSProperties} [style] Inline styles merged onto the group wrapper.
  */
 
+type RadioGroupProps = Omit<ComponentPropsWithoutRef<'div'>, 'defaultValue' | 'onChange'> & {
+  name?: string;
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (next: string) => void;
+  disabled?: boolean;
+};
+
 export function RadioGroup({
   name,
   value: controlledValue,
@@ -119,14 +134,14 @@ export function RadioGroup({
   className,
   style,
   ...props
-}) {
+}: RadioGroupProps) {
   const reactId = useId();
   const groupName = name ?? `andromeda-radio-${reactId}`;
   const isControlled = controlledValue !== undefined;
   const [internal, setInternal] = useState(defaultValue);
   const value = isControlled ? controlledValue : internal;
 
-  function handleChange(next) {
+  function handleChange(next: string) {
     if (!isControlled) setInternal(next);
     onValueChange?.(next);
   }
@@ -161,8 +176,19 @@ export function RadioGroup({
  * @property {string}  [name]                Native input name that groups radios; falls back to the group's name.
  */
 
+type RadioProps = Omit<
+  ComponentPropsWithoutRef<'input'>,
+  'onChange' | 'type' | 'value' | 'checked' | 'defaultChecked'
+> & {
+  value?: string;
+  checked?: boolean;
+  defaultChecked?: boolean;
+  onCheckedChange?: (next: boolean) => void;
+  label?: string;
+};
+
 /** @type {React.ForwardRefExoticComponent<RadioProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'|'type'>>} */
-export const Radio = forwardRef(function Radio(
+export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   {
     className,
     value,
@@ -186,16 +212,18 @@ export const Radio = forwardRef(function Radio(
   // Standalone fallback state when this Radio is rendered outside a group.
   const [internal, setInternal] = useState(defaultChecked);
 
-  let checked;
+  let checked: boolean;
   let disabled = disabledProp;
   let name = nameProp;
-  let onChange;
+  let onChange: ChangeEventHandler<HTMLInputElement>;
 
   if (group) {
     checked = group.value === value;
     disabled = disabled || group.disabled;
     name = name ?? group.name;
-    onChange = () => { group.onValueChange(value); onCheckedChange?.(true); };
+    // Inside a RadioGroup, value is required by the contract above; standalone
+    // radios never reach this call.
+    onChange = () => { group.onValueChange(value as string); onCheckedChange?.(true); };
   } else {
     const isControlled = controlledChecked !== undefined;
     checked = isControlled ? controlledChecked : internal;

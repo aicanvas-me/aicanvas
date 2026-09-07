@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { JetBrains_Mono } from 'next/font/google'
 import { AndromedaDemo } from '../../_lib/andromeda/andromeda-demos'
-import { tokens } from '../../../design-systems/andromeda/tokens'
+import { themeColor } from '../../../design-systems/andromeda/components/lib/utils'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -94,7 +94,7 @@ export function CaptureFrame({ slug }: { slug: string }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: tokens.color.surface.base,
+        background: themeColor.surface.base,
         backgroundImage:
           'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
         backgroundSize: '22px 22px',

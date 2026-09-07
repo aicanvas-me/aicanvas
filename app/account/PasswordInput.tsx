@@ -25,7 +25,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, Props>(function Passwo
         ref={ref}
         id={id}
         type={visible ? 'text' : 'password'}
-        className={`w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 pr-10 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-400 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 ${className}`}
+        className={`w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 pr-10 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 ${className}`}
         {...rest}
       />
       <Button

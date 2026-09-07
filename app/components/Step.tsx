@@ -18,7 +18,7 @@ export function Step({
 }) {
   return (
     <div className="relative flex items-start gap-4">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sand-300 bg-sand-100 text-xs font-bold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-sand-200 bg-sand-100 text-xs font-bold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300">
         {number}
       </div>
       {!isLast && (

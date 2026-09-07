@@ -19,7 +19,7 @@ export function NerdToHero() {
       afterHeadline={
         <>
           YOU just got{' '}
-          <span className="text-olive-500 dark:text-olive-400">superpowers</span>
+          <span className="text-olive-600 dark:text-olive-400">superpowers</span>
           .
         </>
       }

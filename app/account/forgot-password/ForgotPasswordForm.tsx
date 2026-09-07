@@ -56,7 +56,7 @@ export function ForgotPasswordForm() {
             <div>
               <label
                 htmlFor="email"
-                className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400"
+                className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
               >
                 Email
               </label>
@@ -69,7 +69,7 @@ export function ForgotPasswordForm() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-400 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-700 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-600"
+                className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-700 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-600"
               />
             </div>
 
@@ -95,7 +95,7 @@ export function ForgotPasswordForm() {
         Remembered it?{' '}
         <Link
           href="/account/sign-in"
-          className="font-semibold text-olive-500 hover:underline dark:text-olive-400"
+          className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
         >
           Sign in
         </Link>

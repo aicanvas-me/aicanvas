@@ -1,6 +1,3 @@
-// @ts-nocheck — design-systems components are not type-checked yet
-// (see design-systems/CLAUDE.md). Demos consume those components, so this
-// file inherits the same posture.
 'use client'
 
 import { useState } from 'react'
@@ -33,6 +30,7 @@ import {
 } from '@phosphor-icons/react'
 
 import { tokens } from '../../../design-systems/andromeda/tokens'
+import { themeColor } from '../../../design-systems/andromeda/components/lib/utils'
 import { Alert, AlertContent, AlertDescription, AlertIcon, AlertTitle } from '../../../design-systems/andromeda/components/Alert'
 import { Avatar } from '../../../design-systems/andromeda/components/Avatar'
 import { Badge } from '../../../design-systems/andromeda/components/Badge'
@@ -91,7 +89,7 @@ function Row({ label, children }: { label?: string; children: React.ReactNode })
             marginBottom: tokens.spacing[3],
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.faint,
+            color: themeColor.text.faint,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}
@@ -215,12 +213,12 @@ function CardDemo() {
               style={{
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.xs,
-                color: tokens.color.text.muted,
+                color: themeColor.text.muted,
                 textTransform: 'uppercase',
                 letterSpacing: tokens.typography.tracking.widest,
               }}
             >
-              /// Default
+              {'/// Default'}
             </span>
             <CardTitle>Default card</CardTitle>
           </div>
@@ -242,12 +240,12 @@ function CardDemo() {
               style={{
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.xs,
-                color: tokens.color.text.muted,
+                color: themeColor.text.muted,
                 textTransform: 'uppercase',
                 letterSpacing: tokens.typography.tracking.widest,
               }}
             >
-              /// Glow
+              {'/// Glow'}
             </span>
             <CardTitle>Highlight card</CardTitle>
           </div>
@@ -271,7 +269,7 @@ function CornerMarkersDemo() {
         { label: 'Default', props: {} },
         { label: 'Larger', props: { size: 18 } },
         { label: 'Inset 6px', props: { offset: 6 } },
-        { label: 'Accent', props: { color: tokens.color.accent[300] } },
+        { label: 'Accent', props: { color: themeColor.accent[300] } },
       ].map(({ label, props }) => (
         <div
           key={label}
@@ -279,7 +277,7 @@ function CornerMarkersDemo() {
             position: 'relative',
             width: 180,
             height: 100,
-            background: tokens.color.surface.raised,
+            background: themeColor.surface.raised,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -290,7 +288,7 @@ function CornerMarkersDemo() {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.muted,
+              color: themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
             }}
@@ -346,7 +344,7 @@ function NavItemDemo() {
     <div
       style={{
         width: 260,
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         position: 'relative',
       }}
     >
@@ -371,9 +369,9 @@ function ProgressBarDemo() {
 }
 
 // Organic demo telemetry — deterministic (no Math.random) so SSR/client agree.
-const _tdFract = (x) => x - Math.floor(x)
-const _tdNoise = (i, s) => _tdFract(Math.sin((i + 1) * 12.9898 + s * 78.233) * 43758.5453)
-const _tdClamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v))
+const _tdFract = (x: number) => x - Math.floor(x)
+const _tdNoise = (i: number, s: number) => _tdFract(Math.sin((i + 1) * 12.9898 + s * 78.233) * 43758.5453)
+const _tdClamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v))
 const TREND_DATA = Array.from({ length: 18 }, (_, i) => {
   const planned = _tdClamp(
     Math.round(120 + Math.sin(i / 4) * 14 + Math.sin(i / 1.7 + 1) * 9 + (_tdNoise(i, 1) - 0.5) * 26),
@@ -390,7 +388,7 @@ const TREND_DATA = Array.from({ length: 18 }, (_, i) => {
 
 function TrendChartDemo() {
   return (
-    <div style={{ position: 'relative', background: tokens.color.surface.raised, padding: tokens.spacing[5], width: '100%', maxWidth: 640 }}>
+    <div style={{ position: 'relative', background: themeColor.surface.raised, padding: tokens.spacing[5], width: '100%', maxWidth: 640 }}>
       <CornerMarkers />
       <TrendChart
         data={TREND_DATA}
@@ -572,7 +570,7 @@ function TableDemo() {
     { id: 'AB-00032736', part: 'X61 BHH09027512',  source: 'US, San Francisco - 27381', lvl: 75, vol: '8.85221' },
   ]
   return (
-    <div style={{ width: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+    <div style={{ width: '100%', position: 'relative', background: themeColor.surface.raised }}>
       <TableStyles />
       <Table>
         <TableHead>
@@ -746,6 +744,9 @@ function RadarChartDemo() {
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: tokens.spacing[5], width: '100%' }}>
       <RadarChart label="/// Systems" title="Ship Diagnostics" />
+      {/* The series carries no explicit color: an unnamed series already draws
+          the accent, and leaving it out lets RadarChart resolve the themed
+          value rather than baking a dark literal into an SVG attribute. */}
       <RadarChart
         label="/// Performance"
         title="System Performance"
@@ -758,7 +759,7 @@ function RadarChartDemo() {
           { axis: 'SECURITY', score: 65 },
           { axis: 'API', score: 90 },
         ]}
-        series={[{ key: 'score', label: 'Readiness', color: tokens.color.accent[300] }]}
+        series={[{ key: 'score', label: 'Readiness' }]}
       />
     </div>
   )
@@ -812,13 +813,13 @@ function PanelHeaderDemo() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5], width: '100%', maxWidth: 640 }}>
       <Row label="Title only">
-        <div style={{ width: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+        <div style={{ width: '100%', position: 'relative', background: themeColor.surface.raised }}>
           <CornerMarkers />
           <PanelHeader title="Capacity" />
         </div>
       </Row>
       <Row label="Title + actions (PanelMenu)">
-        <div style={{ width: '100%', position: 'relative', background: tokens.color.surface.raised }}>
+        <div style={{ width: '100%', position: 'relative', background: themeColor.surface.raised }}>
           <CornerMarkers />
           <PanelHeader
             title="Requests"
@@ -847,7 +848,7 @@ function PanelMenuDemo() {
         <Row label="Default · panel actions">
           <PanelMenu
             align="left"
-            defaultOpen
+            staticOpen
             items={[
               { label: 'Refresh',   icon: ArrowClockwise, onSelect: () => {} },
               { label: 'Configure', icon: Sliders,        onSelect: () => {} },
@@ -862,7 +863,7 @@ function PanelMenuDemo() {
         <Row label="With submenu">
           <PanelMenu
             align="left"
-            defaultOpen
+            staticOpen
             items={[
               { label: 'Edit', icon: Pencil, onSelect: () => {} },
               { label: 'Copy', icon: Copy,   onSelect: () => {} },
@@ -896,7 +897,7 @@ function DateRangePickerDemo() {
       <Row label="Range">
         <DateRangePicker
           value={range}
-          presetLabel={presetLabel}
+          presetLabel={presetLabel ?? undefined}
           onChange={(next) => {
             setRange(next)
             setPresetLabel(null)
@@ -989,7 +990,7 @@ function UserCardDemo() {
     <div style={{ display: 'flex', gap: tokens.spacing[8], alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', width: '100%' }}>
       <div style={{ width: 224 }}>
         <Row label="Open up">
-          <div style={{ width: '100%', background: tokens.color.surface.raised }}>
+          <div style={{ width: '100%', background: themeColor.surface.raised }}>
             <UserCard
               name="Reza Quinn"
               role="Flight Director"
@@ -1004,7 +1005,7 @@ function UserCardDemo() {
       </div>
       <div style={{ width: 224 }}>
         <Row label="Open down">
-          <div style={{ width: '100%', background: tokens.color.surface.raised }}>
+          <div style={{ width: '100%', background: themeColor.surface.raised }}>
             <UserCard
               name="Reza Quinn"
               role="Flight Director"
@@ -1073,12 +1074,12 @@ export function AndromedaDemo({ slug }: { slug: string }) {
         style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.text.muted,
+          color: themeColor.text.muted,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.wider,
         }}
       >
-        /// No demo wired for "{slug}"
+        {'/// No demo wired for "'}{slug}{'"'}
       </div>
     )
   }

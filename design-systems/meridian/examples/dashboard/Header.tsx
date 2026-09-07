@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // DASHBOARD: Header
 // ============================================================
@@ -9,7 +8,12 @@ import { tokens } from '../../tokens';
 import { Input } from '../../components/Input';
 import { Avatar } from '../../components/Avatar';
 
-export function Header({ searchValue, onSearchChange }) {
+export type HeaderProps = {
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+};
+
+export function Header({ searchValue, onSearchChange }: HeaderProps) {
   const [notifHovered, setNotifHovered] = useState(false);
 
   return (

@@ -25,6 +25,8 @@ import { Reveal } from './Reveal'
 import { StackedCards, AnimatedCount, WireIcons, FeaturedCarousel, FaqAccordion } from './islands'
 import type { ComponentMeta } from '../lib/component-registry'
 import { GITHUB_URL } from '../lib/config'
+import { premiumEnabled } from '../../lib/flags'
+import { PremiumCards } from '../components/billing/PremiumCards'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -35,6 +37,8 @@ interface Props {
   pulls: number
   carouselItems: ComponentMeta[]
 }
+
+const PREMIUM = premiumEnabled()
 
 // ─── HomePageClient ────────────────────────────────────────────────────────────
 
@@ -62,12 +66,12 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
       // so there the column scrolls and keeps its gutter. That is the whole
       // difference between the two pages.) See .app-scroll-column in globals.css.
       data-owns-scroll
-      className="aic-page-scroll flex min-h-full flex-col overflow-x-hidden bg-sand-950"
+      className="aic-page-scroll flex min-h-full flex-col overflow-x-hidden bg-sand-50 dark:bg-sand-950"
     >
 
       {/* ── Top bar ── */}
-      <div className="sticky top-0 z-20 hidden h-14 shrink-0 items-center justify-between border-b border-sand-800 bg-sand-950 px-6 md:flex">
-        <span className="text-sm font-semibold text-sand-50">Overview</span>
+      <div className="sticky top-0 z-20 hidden h-14 shrink-0 items-center justify-between border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
+        <span className="text-sm font-semibold text-sand-900 dark:text-sand-50">Overview</span>
         <HeaderSocials />
       </div>
 
@@ -78,14 +82,14 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
           <StackedCards />
 
           <span
-            className="aic-hero-rise mb-5 inline-flex items-center rounded-full border border-sand-700 bg-sand-900 px-3 py-1 text-xs font-semibold text-sand-300"
+            className="aic-hero-rise mb-5 inline-flex items-center rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300"
             style={{ animationDelay: '0.1s' }}
           >
             One command, zero tokens
           </span>
 
           <h1
-            className="aic-hero-slide text-balance text-2xl font-extrabold tracking-tight text-sand-50 sm:text-4xl"
+            className="aic-hero-slide text-balance text-2xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl"
             style={{ animationDelay: '0.18s' }}
           >
             AI
@@ -98,11 +102,11 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
             />
             {' '}Native Components and Blocks,
             <br />
-            <span className="mt-2 inline-block text-olive-500">Design Systems and Templates</span>
+            <span className="mt-2 inline-block text-olive-600 dark:text-olive-500">Design Systems and Templates</span>
           </h1>
 
           <p
-            className="aic-hero-rise mt-4 max-w-2xl text-base leading-relaxed text-sand-400"
+            className="aic-hero-rise mt-4 max-w-2xl text-base leading-relaxed text-sand-600 dark:text-sand-400"
             style={{ animationDelay: '0.26s' }}
           >
             Copy one shadcn CLI command and a finished component, block, or complete
@@ -123,7 +127,7 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
             </Link>
             <Link
               href="/mcp"
-              className="flex items-center gap-1.5 rounded-xl border border-sand-700 px-5 py-2.5 text-sm font-semibold text-sand-300 transition-colors hover:border-sand-600 hover:text-sand-100"
+              className="flex items-center gap-1.5 rounded-xl border border-sand-300 px-5 py-2.5 text-sm font-semibold text-sand-700 transition-colors hover:border-sand-500 hover:text-sand-900 dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
             >
               Get MCP
             </Link>
@@ -165,33 +169,30 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
               fill="none"
             >
               <rect
-                className="aic-beam-tail"
+                className="aic-beam-tail stroke-sand-600 dark:stroke-[#D6E2FF]"
                 x="0"
                 y="0"
                 width="100%"
                 height="100%"
                 rx="24"
                 pathLength={100}
-                stroke="#D6E2FF"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeDasharray="26 74"
                 opacity={0.22}
               />
               <rect
-                className="aic-beam-head"
+                className="aic-beam-head stroke-sand-600 [filter:drop-shadow(0_0_5px_rgba(87,87,89,0.35))] dark:stroke-[#D6E2FF] dark:[filter:drop-shadow(0_0_5px_rgba(214,226,255,0.65))]"
                 x="0"
                 y="0"
                 width="100%"
                 height="100%"
                 rx="24"
                 pathLength={100}
-                stroke="#D6E2FF"
                 strokeWidth="1.75"
                 strokeLinecap="round"
                 strokeDasharray="7 93"
                 opacity={0.9}
-                style={{ filter: 'drop-shadow(0 0 5px rgba(214,226,255,0.65))' }}
               />
             </svg>
 
@@ -216,22 +217,22 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
                   }}
                 />
                 <div className="relative">
-                  <span className="inline-flex items-center gap-2 rounded-full bg-sand-800/70 px-2.5 py-1 text-[10px] font-semibold text-sand-200">
+                  <span className="inline-flex items-center gap-2 rounded-full bg-sand-100/70 px-2.5 py-1 text-[10px] font-semibold text-sand-900 dark:bg-sand-800/70 dark:text-sand-200">
                     {/* The pulsing dot carries the "alive" feeling so the words
                         do not have to overpromise: the cache window is 24h, so
                         "Live" would be false. See REVALIDATE_SECONDS. */}
                     <span className="relative flex h-1.5 w-1.5" aria-hidden>
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-olive-400 opacity-75" />
-                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-olive-400" />
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-olive-700 opacity-75 dark:bg-olive-400" />
+                      <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-olive-700 dark:bg-olive-400" />
                     </span>
                     Updates daily
                   </span>
 
                   <div className="mt-3">
-                    <span className="block text-3xl font-extrabold tabular-nums leading-none text-sand-50 sm:text-4xl">
+                    <span className="block text-3xl font-extrabold tabular-nums leading-none text-sand-900 dark:text-sand-50 sm:text-4xl">
                       <AnimatedCount to={pulls} suffix="" />
                     </span>
-                    <span className="mt-1.5 block text-sm font-semibold text-sand-100 sm:text-base">
+                    <span className="mt-1.5 block text-sm font-semibold text-sand-900 dark:text-sand-100 sm:text-base">
                       Requests served
                     </span>
                   </div>
@@ -239,7 +240,7 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
                   {/* Hairline separating the headline stat from its breakdown.
                       border-t rather than an <hr>: it is decoration, not a
                       thematic break, so it stays out of the a11y tree. */}
-                  <p className="mt-3 border-t border-sand-800/70 pt-3 text-[13px] leading-relaxed text-sand-500">
+                  <p className="mt-3 border-t border-sand-200/70 pt-3 text-[13px] leading-relaxed text-sand-600 dark:border-sand-800/70 dark:text-sand-500">
                     Every component, block &amp; design system install.
                     <br />
                     Every AI agent fetching source.
@@ -306,10 +307,10 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
                             text-2xl extrabold is ~52px, so a narrower box lets it
                             overflow and collide with its label while "120" still
                             looks fine. */}
-                        <span className="w-[3.5rem] shrink-0 text-xl font-extrabold tabular-nums leading-none text-sand-50 sm:text-2xl">
+                        <span className="w-[3.5rem] shrink-0 text-xl font-extrabold tabular-nums leading-none text-sand-900 dark:text-sand-50 sm:text-2xl">
                           {count !== undefined ? <AnimatedCount to={count} suffix="" /> : text}
                         </span>
-                        <span className="text-[13px] font-medium leading-snug text-sand-300 transition-colors group-hover:text-sand-100">
+                        <span className="text-[13px] font-medium leading-snug text-sand-700 transition-colors group-hover:text-sand-900 dark:text-sand-300 dark:group-hover:text-sand-100">
                           {label}
                         </span>
                         {/* ml-auto pins the arrow to the right edge regardless of
@@ -318,7 +319,7 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
                           weight="regular"
                           size={13}
                           aria-hidden
-                          className="ml-auto shrink-0 text-sand-600 transition-all group-hover:translate-x-0.5 group-hover:text-sand-300"
+                          className="ml-auto shrink-0 text-sand-600 transition-all group-hover:translate-x-0.5 group-hover:text-sand-800 dark:group-hover:text-sand-300"
                         />
                       </Link>
                     </li>
@@ -339,7 +340,7 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
           <Reveal>
             <Link
               href="/design-systems/andromeda"
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-800 bg-sand-900 transition-all duration-200 hover:border-sand-700 sm:flex-row"
+              className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 transition-all duration-200 hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
             >
               <span
                 aria-hidden
@@ -348,9 +349,9 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
                 <Fire weight="fill" size={15} />
               </span>
               <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">
-                <span className="text-xs font-semibold uppercase tracking-wider text-olive-400">Featured</span>
-                <h2 className="text-2xl font-bold tracking-tight text-sand-50">Andromeda • Design System</h2>
-                <p className="text-sm leading-relaxed text-sand-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">Featured</span>
+                <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Andromeda • Design System</h2>
+                <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
                   A complete design system for dashboards, control panels, and data-dense
                   interfaces. Components, templates, and the rules that keep them all speaking the
                   same visual language.
@@ -378,10 +379,10 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
         <section id="audience" className="mt-16 sm:mt-24 scroll-mt-24">
           <Reveal className="mb-8">
             <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Built for everyone</p>
-            <h2 className="mt-1 text-xl font-bold text-sand-50">
+            <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">
               For developers. For designers. For makers. For your AI agent.
             </h2>
-            <p className="mt-3 text-base leading-relaxed text-sand-400">
+            <p className="mt-3 text-base leading-relaxed text-sand-600 dark:text-sand-400">
               Most component libraries serve one kind of person. AI Canvas installs the same finished code for everyone who builds, and every install costs zero AI tokens instead of burning them on a from-scratch generation. Drop a component in with the shadcn CLI, reshape it with an AI agent, or let an agent browse and install it for you.
             </p>
           </Reveal>
@@ -393,43 +394,43 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
                 audience: 'Developers',
                 description: 'Drop finished, typed components into your project with one command. No boilerplate, no screenshot to rebuild, and no tokens spent generating what already works.',
                 badges: ['TypeScript', 'Motion', 'Tailwind CSS'],
-                badgeStyle: 'text-sand-500 ring-sand-800',
+                badgeStyle: 'text-sand-600 ring-sand-300 dark:text-sand-500 dark:ring-sand-800',
               },
               {
                 icon: <Palette weight="regular" size={18} />,
                 audience: 'Designers',
                 description: 'Start from something already crafted, then reshape it in your AI agent, Cursor, Claude Code, or Codex, whichever you use: the colors, the layout, the motion, fast, without rebuilding it from scratch.',
                 badges: ['Cursor', 'Claude Code', 'Codex'],
-                badgeStyle: 'text-olive-500 ring-olive-500/30 bg-olive-500/5',
+                badgeStyle: 'text-olive-600 ring-olive-500/30 bg-olive-500/5 dark:text-olive-500',
               },
               {
                 icon: <RocketLaunch weight="regular" size={18} />,
                 audience: 'Makers & Founders',
                 description: 'Building with AI in Lovable, V0, Cursor, or any AI agent? Hand it real, polished components to install so your product ships fast and does not look generated, with no tokens spent regenerating UI from scratch.',
                 badges: ['No-code', 'AI-built', 'Real code'],
-                badgeStyle: 'text-sand-400 ring-sand-700',
+                badgeStyle: 'text-sand-600 ring-sand-400 dark:text-sand-400 dark:ring-sand-700',
               },
               {
                 icon: <Sparkle weight="regular" size={18} />,
                 audience: 'AI agents',
                 description: 'Point your agent at the AI Canvas MCP and it browses, inspects, and installs finished components for you: fewer tokens, no writing UI from scratch, and you keep control. Works with any MCP client, Claude Code, Cursor, Codex, Copilot, Gemini, and more.',
                 badges: ['MCP', 'Agent-ready', 'No copy-paste'],
-                badgeStyle: 'text-sand-400 ring-sand-700',
+                badgeStyle: 'text-sand-600 ring-sand-400 dark:text-sand-400 dark:ring-sand-700',
               },
             ].map(({ icon, audience, description, badges, badgeStyle }, i) => (
               <Reveal
                 key={audience}
                 y={14}
                 delay={i * 0.08}
-                className="flex flex-col rounded-xl border border-sand-800 bg-sand-900 p-5"
+                className="flex flex-col rounded-xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900"
               >
                 <div className="mb-3 flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sand-800 text-sand-300">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sand-100 text-sand-700 dark:bg-sand-800 dark:text-sand-300">
                     {icon}
                   </div>
-                  <span className="text-sm font-bold text-sand-50">{audience}</span>
+                  <span className="text-sm font-bold text-sand-900 dark:text-sand-50">{audience}</span>
                 </div>
-                <p className="flex-1 text-base leading-relaxed text-sand-400">{description}</p>
+                <p className="flex-1 text-base leading-relaxed text-sand-600 dark:text-sand-400">{description}</p>
                 <div className="mt-4 flex flex-wrap gap-1.5">
                   {badges.map((badge) => (
                     <span
@@ -449,7 +450,7 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
         <section id="how-remix" className="mt-16 sm:mt-24">
           <Reveal className="mb-8">
             <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">How it works</p>
-            <h2 className="mt-1 text-xl font-bold text-sand-50">Three steps. Your way.</h2>
+            <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">Three steps. Your way.</h2>
           </Reveal>
 
           <div className="relative flex flex-col gap-0">
@@ -492,16 +493,16 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
                 className="flex items-start gap-5 py-5"
               >
                 {/* Node on the timeline */}
-                <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sand-700 bg-sand-900 text-sand-300 shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
+                <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sand-300 bg-sand-100 text-sand-700 shadow-[0_2px_10px_rgba(0,0,0,0.08)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
                   {step.icon}
                 </div>
                 {/* Content */}
                 <div className="flex-1 pt-0.5">
                   <div className="flex items-center gap-2.5">
-                    <span className="text-base font-bold tabular-nums text-olive-500">{step.num}</span>
-                    <h3 className="text-base font-bold text-sand-50">{step.title}</h3>
+                    <span className="text-base font-bold tabular-nums text-olive-600 dark:text-olive-500">{step.num}</span>
+                    <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">{step.title}</h3>
                   </div>
-                  <p className="mt-1.5 text-base leading-relaxed text-sand-500">{step.desc}</p>
+                  <p className="mt-1.5 text-base leading-relaxed text-sand-600 dark:text-sand-500">{step.desc}</p>
                 </div>
               </Reveal>
             ))}
@@ -515,14 +516,14 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
             {/* Intro rail, sticky on desktop */}
             <Reveal className="self-start sm:sticky sm:top-24">
               <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">FAQ</p>
-              <h2 className="mt-1 text-xl font-bold text-sand-50">Questions, answered.</h2>
-              <p className="mt-3 text-base leading-relaxed text-sand-400">
+              <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">Questions, answered.</h2>
+              <p className="mt-3 text-base leading-relaxed text-sand-600 dark:text-sand-400">
                 The short version of everything people ask before shipping their
                 first component.
               </p>
               <Link
                 href="/faq"
-                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-olive-500 transition-colors hover:text-olive-400"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-400"
               >
                 See all FAQs
                 <CaretRight weight="regular" size={14} />
@@ -533,6 +534,28 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
             <FaqAccordion />
           </div>
         </section>
+
+        {/* ── Pricing ── */}
+        {/* The same <PremiumCards /> that /pricing renders, so the plans, the
+            prices, the billing cycle switch and the entitlement-aware CTA can
+            never drift between the two pages. Premium off = no section: the
+            site is then fully free and has nothing to sell here. */}
+        {PREMIUM && (
+          <section className="mt-16 sm:mt-24">
+            <Reveal className="text-center">
+              <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Pricing</p>
+              <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">
+                The free library stays free.
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
+                Every free component ships its full source and its remix prompt, installed
+                with one command. Premium adds the closed-source components, blocks,
+                design systems and templates.
+              </p>
+            </Reveal>
+            <PremiumCards />
+          </section>
+        )}
 
         {/* ── Final CTA ── */}
         <section className="mt-16 sm:mt-24">
@@ -546,10 +569,10 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
             <p className="relative text-xs font-semibold uppercase tracking-wider text-sand-600">
               Ready to build?
             </p>
-            <h2 className="relative mt-2 text-xl font-bold text-sand-50">
+            <h2 className="relative mt-2 text-xl font-bold text-sand-900 dark:text-sand-50">
               One command from your next screen.
             </h2>
-            <p className="relative mt-2 text-base text-sand-500">
+            <p className="relative mt-2 text-base text-sand-600 dark:text-sand-500">
               {componentTotal}+ components and design systems, each one command away. Copy it
               yourself, or tell your agent to install it. No tokens spent generating what
               already works.

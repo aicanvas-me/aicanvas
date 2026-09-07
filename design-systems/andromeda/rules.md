@@ -8,7 +8,7 @@ Updates land here the moment a new rule is discovered. Never let the same correc
 
 ## Identity
 
-Andromeda is a sci-fi / blueprint design system for engineering dashboards, mission-critical UIs, and tools that look at live data. Near-monochrome, hairline borders, transparent surfaces. Color is reserved for measurement and primary action — never decoration. JetBrains Mono throughout, uppercase tracking for UI labels, sentence case for buttons.
+Andromeda is a sci-fi / blueprint design system for engineering dashboards, mission-critical UIs, and tools that look at live data. Near-monochrome, hairline borders, transparent surfaces. Color is reserved for measurement and primary action — never decoration. JetBrains Mono throughout, uppercase tracking for UI labels, sentence case for buttons. Dark is the default ground; a light theme ships from the same token contract (see Theming).
 
 Built for designers, developers, and teams who want a system, not a stylesheet — so people (and AI agents) extending it produce output that fits, on the first try.
 
@@ -59,21 +59,74 @@ Andromeda is a near-monochrome system. Color is reserved for meaning, never deco
 
 ### Hierarchy of greys
 
-`text.primary` (#F2F2F2) → `text.secondary` (#A8A8A8) → `text.muted` (#7A7A7A) → `text.faint` (#5A5A5A)
+`text.primary` → `text.secondary` → `text.muted` → `text.faint`, in descending contrast against the surface they sit on.
 
-Use the lightest weight that still reads at the intended distance. Default body copy is `text.secondary`. Tight UI labels are `text.muted`. Decorative or peripheral text is `text.faint`.
+Use the quietest weight that still reads at the intended distance. Default body copy is `text.secondary`. Tight UI labels are `text.muted`. Decorative or peripheral text is `text.faint`.
+
+`must` — Name the role, never the ink. `text.primary` is near-white on dark and near-black on light; a rule that says "white" or quotes a hex is wrong on one of the two themes the moment it is written.
 
 ### The accent stops
 
-| Stop | Hex | Used for |
+Every hue family (accent, red, orange) runs the same five stops, ordered by contrast against the ground: `100` sits furthest from it, `500` closest. Which end is bright and which is deep flips with the theme; the ordering, and therefore every rule below, does not.
+
+| Stop | Reads as | Used for |
 |---|---|---|
-| `accent-100` | brightest pastel | reserved — currently unused |
-| `accent-200` | bright | button borders, MA(5) line |
-| `accent-300` | mid | active nav text, timer, delta arrow, indicator dot |
-| `accent-400` | base | button bg, badge bg variant, last-price flag |
-| `accent-500` | deep | accent badge bg, focus ring, gradient peak |
+| `accent-100` | maximum contrast against the ground | text and icons on an accent fill (this is what `accent-on` resolves to) |
+| `accent-200` | high contrast | hover ink on quiet controls |
+| `accent-300` | the signal stop | active nav text, timer, delta arrow, indicator dot, selection edge bar |
+| `accent-400` | the visible mid tone | control borders, focus ring, heat steps, the online dot |
+| `accent-500` | the tinted fill | button and badge fills, selected calendar cell, glow tint |
 
 When unsure, prefer `accent-300` — it's the system's signal color.
+
+---
+
+## Theming
+
+Andromeda ships two themes: **dark**, the default, and **light**. They are one palette contract, not two systems — same token names, same stops, same roles. Every other rule in this file is written once and holds on both.
+
+### The channel
+
+Every color leaves `andromedaVars()` as `var(--andromeda-theme-<name>, <dark literal>)` (see `themed` and `themeColor` in `components/lib/utils.ts`). With nothing defined the fallback renders, pixel for pixel, the dark system that was always there, so dark needs zero setup. Define the `--andromeda-theme-*` set on any ancestor and that whole subtree flips; `andromedaLightVars()` is that set for the light palette. Remove it and the subtree falls back to dark.
+
+The indirection exists because Andromeda paints from inline custom properties, and an inline value is the end of the cascade: no ancestor can talk a baked literal out of a component. The theme channel is the seam that lets one element retint everything beneath it.
+
+Colors only. Sizes, spacing, motion, and geometry carry no theme — a light page is the same layout in different ink.
+
+`must` — An overlay that portals to `<body>` (PanelMenu, Drawer) leaves the channel-defining ancestor behind. It copies the channel it inherited at its trigger onto the portaled root with `inheritedThemeVars(el)`, so the overlay paints as the surface it came from. A fixed box inside a Card is laid out against the Card, not the viewport (the backdrop blur makes it a containing block): measure the box's own 0,0 before converting viewport coords.
+
+### Light keeps the distance, not the lightness
+
+`must` — The light palette is not the dark one inverted channel by channel. Each stop keeps its contrast DISTANCE from the ground, so the scale reads the same way it always did and simply runs the other direction:
+
+- The `100` stops become the deep inks (they were the brightest pastels)
+- `300` stays the stop you draw with
+- `400` is the visible mid tone: heat steps, marked borders, the online dot
+- `500` is the pale tinted fill (it was the deep fill)
+- `on` stays the `100` stop: the guaranteed foreground for a `500` fill, on either theme
+- `surface.alpha` never inverts. A scrim is dark ink on both themes, because its job is to bury the page behind a modal, not to match it.
+
+Surfaces follow the same logic: `raised` and `overlay` lift away from `base`, `hover` and `active` step further from it, and "further" means lighter on dark and darker on light. Elevation ink retunes too: near-black on dark, a soft grey cast on light, because the same offsets read far heavier over a pale ground.
+
+`must` — Write rules in stops and roles. "An `accent-500` fill with `accent-on` text" is true on both themes; "the pale accent fill", "one step lighter", and any hex are true on at most one.
+
+### The gate
+
+`must` — Any change to either palette passes the contrast self-check on BOTH themes before it lands:
+
+```
+node design-systems/andromeda/_tools/light-contrast.selfcheck.mjs
+```
+
+It walks the pairings the components actually paint, flattens translucent tokens onto the ground they sit over, and exits non-zero on the first failure. A pairing that clears WCAG AA on dark and fails on light is a broken palette, not a light-theme caveat.
+
+### Two patterns every component owes the theme
+
+`must` — **The component ROOT spreads `andromedaVars()`.** The vars have to land on the component's own element (or on the primitive it composes, e.g. an `EmptyState` whose root is a `Card`), never only on a template wrapper. That is what makes a component theme when someone installs it and renders it bare: it reads the `--andromeda-theme-*` channel from whatever ancestor defines it, and falls back to dark when nothing does. A component that borrows its vars from a parent looks correct in the showcase and paints unthemed the moment it leaves one.
+
+`must` — **Colors that leave CSS are resolved at runtime.** `var()` is only substituted for CSS declarations, so four sinks never see the theme: SVG presentation ATTRIBUTES (`stroke=`, `fill=`, `stopColor=`, usually fixable by moving the color into `style`, where the CSS property does resolve), libraries that hand their props straight to those attributes (recharts), anything leaving CSS entirely (canvas 2d, WebGL, three.js), and JS color animation (framer). Those read the RESOLVED custom property off a live element inside the themed subtree, and re-read it when the theme moves. Use `useResolvedColors` + `subscribeToTheme` (`components/lib/theme.ts`): they render the dark fallbacks on the server and the first client paint so hydration matches, then resolve, and they watch BOTH the `class` and the `style` attribute on `documentElement` — a host app flips a theme by changing a class, and the properties that class drives can land in the inline style a tick later, so watching only one reads the old palette back.
+
+`should` — Prefer moving a color into `style` over resolving it. Resolution is the escape hatch for sinks that genuinely cannot substitute a `var()`, not a shortcut around the cascade.
 
 ---
 
@@ -145,22 +198,33 @@ Reference: `examples/exchange-terminal/` filter row
 
 | Variant | Background | Border | Text |
 |---|---|---|---|
-| `default` | `accent-400` | `accent-200` | `text.primary` |
+| `default` | `accent-500` | `accent-400` | `accent-on` |
 | `outline` | `surface.raised` | `border.base` | `text.primary` |
 | `ghost` | transparent | transparent | `text.secondary` |
-| `destructive` | `red-500` | `red-400` | `text.primary` |
+| `destructive` | `red-500` | `red-400` | `red-on` |
 | `link` | transparent | transparent | `text.primary` |
 
 - Default size in examples: `md`. Use `sm` only for dense legend rows or overflow chips.
-- Hover lifts the border one stop and adds an 8px short-radius glow tinted in the bg color.
+- Hover deepens the border one stop (`accent-400` → `accent-300`) and adds an 8px short-radius glow tinted in the bg color.
 - `must` — No glow on `outline`, `ghost`, or `link` variants.
+
+### Button and IconButton share one variant recipe — `must`
+
+The two primitives are the same control at two shapes, so their colored variants come from one recipe. Change one, change both.
+
+- **`default`** — `accent-500` fill (the family's tinted fill), `accent-400` border, border deepens to `accent-300` on hover and press, `accent-500` glow on hover.
+- **`destructive`** — the same shape mirrored in red: `red-500` fill, `red-400` border, `red-300` on hover, `red-400` glow.
+- Foreground comes from the family's `on` token, never from `text.primary`. `accent-on` / `red-on` track the accent family rather than the neutral ramp, so a theme that retunes the fill keeps the label legible without a second edit. This is the one sanctioned exception to "button text is always `text.primary`": the fill and its foreground are a matched pair.
+- The neutral variants (`outline`, `ghost`, `link`) stay on the surface/border ramp and carry no glow.
+
+`must` — Don't fill a button with a `-400` stop. `-400` is the visible mid tone, the border and marker weight; a `-400` fill is a solid block of hue on both themes and reads as decoration rather than a control.
 
 ---
 
 ## Badges
 
 - `must` — Text is always `text.primary` on every variant. Background carries the meaning.
-- `must` — `Tag` follows the same rule: its label is `text.primary` on every variant; the fill + border carry the meaning, never the label color. (The `-500` variant backgrounds are dark, so near-white primary text clears WCAG AA.) Do not tint Tag/Badge label text with accent/warning/fault stops — accent on text is reserved for live measurements.
+- `must` — `Tag` follows the same rule: its label is `text.primary` on every variant; the fill + border carry the meaning, never the label color. (Each `-500` background is the family's quiet fill on whichever theme is running, so `text.primary` clears WCAG AA over it on both, and the contrast self-check measures every one of these pairings.) Do not tint Tag/Badge label text with accent/warning/fault stops — accent on text is reserved for live measurements.
 - The blinking 4×4 dot at the start of the badge takes the variant color, not the text.
 - `should` — The dot's blink honors `prefers-reduced-motion` (holds steady when the user opts out); the blink is a liveness cue, not load-bearing.
 
@@ -173,7 +237,7 @@ Reference: `examples/exchange-terminal/` filter row
 | `subtle` | `surface.overlay` | `text.faint` |
 | `outline` | transparent + `border.bright` | `text.primary` |
 
-Default bg `surface.active` (#232325) is intentionally lighter than `surface.raised` so the badge separates from the card it sits on.
+Default bg `surface.active` sits one step further from the ground than `surface.raised` (lighter on dark, darker on light), so the badge separates from the card it sits on.
 
 ---
 
@@ -181,7 +245,7 @@ Default bg `surface.active` (#232325) is intentionally lighter than `surface.rai
 
 ### Single-series
 
-- Line stroke: `text.primary` (white)
+- Line stroke: `text.primary`
 - Area fill: linear gradient from `text.primary` at 0.12 opacity → 0 opacity
 - Active dot on hover: `text.primary` fill, `border.base` stroke, r=4
 - The variant prop only changes the BADGE in the chart header — the chart ink stays neutral
@@ -206,6 +270,7 @@ The active dot for each series matches its line color so the user can identify w
 - Grid lines: `border.subtle`, dashed `2 4`, horizontal only by default
 - Axis text: `text.muted`
 - `must` — No glow on any chart element
+- `must` — Chart colors are RESOLVED, not passed as tokens. Recharts hands `stroke` / `fill` / `stopColor` straight to SVG attributes, which never substitute a `var()`, so a themed token reaches them as an unparseable string and the series paints black or vanishes. Read the resolved values with `useResolvedColors` (see Theming) and pass those.
 
 Chart ink is neutral by default because the chart itself is the data. Color enters only when it carries semantic meaning that the eye must distinguish at a glance.
 
@@ -221,6 +286,15 @@ Chart ink is neutral by default because the chart itself is the data. Color ente
 - Empty: `surface.overlay` bg, `border.subtle` border
 - Fill animation: stagger in groups of 3, 120ms cascade, 400ms transition
 - Label / value row above the bar uses mono uppercase, `text.secondary` label + `text.primary` value
+
+---
+
+## Spinner
+
+- The 3×3 grid runs a single bright cell around the perimeter; the centre cell never animates.
+- Variants colour the bright phase only: `default` → `text.primary`, `accent` → `accent-300`, `warning` → `orange-300`, `fault` → `red-300`.
+- `must` — Resting cells take the border weight (`border.base`), not text ink. A spinner is a quiet graphic, not a block of type: at `text.faint` or above, the eight dim cells read as a solid filled square on a light ground and the trail disappears into it. `border.base` recedes on both grounds, which is exactly what a hairline weight is for.
+- Bright and dim are set once as two custom properties on the root and shared by all nine cells, so a variant retints the trail and nothing else. Don't give the centre cell or the resting perimeter its own colour.
 
 ---
 
@@ -247,7 +321,7 @@ Chart ink is neutral by default because the chart itself is the data. Color ente
 - Default: `surface.raised` bg, no perimeter stroke, corner markers as the frame
 - Glow: `gradient.accentSweep` bg, `accent-500` border, corner markers
 - The accentSweep gradient is a barely-visible teal whisper — if it reads as a colored card it's too strong
-- `CornerMarkers` default to grey (`color.border.bright`, `#5B5B5C`), not the accent. The grey frame is the system's resting motif; turquoise corner brackets are opt-in (pass an accent `color` prop) and reserved for surfaces that genuinely need to draw the eye, never the default.
+- `CornerMarkers` default to the neutral frame stop (`color.border.bright`), not the accent. The grey frame is the system's resting motif; turquoise corner brackets are opt-in (pass an accent `color` prop) and reserved for surfaces that genuinely need to draw the eye, never the default.
 - CardHeader, CardContent, CardFooter use consistent padding from `tokens.spacing` — never override
 
 ### Frames don't nest
@@ -469,7 +543,7 @@ The threshold that matters most is `md` (768px): **below it, Andromeda stacks.**
 
 - `must` — **Bento grids collapse to a single column below `md`.** `grid-template-columns: minmax(0,2fr) minmax(0,1fr)` becomes `minmax(0,1fr)`; rows flow top-to-bottom in source order. Verify the source order reads sensibly stacked — headline/primary panel first, peripheral panels last.
 - `must` — **A stacked template scrolls via the route column below `md`, not via the shell.** On desktop a template shell pins to `100vh`/`100%` + `overflow:hidden` and aligns its bento seams, with inner regions self-scrolling. Stacked on a phone the shell grows past the viewport, and an in-shell `overflow-y:auto` on a `height:auto` shell can't engage (no bounded height) — so the route wrapper (`app/design-systems/andromeda/AndromedaContentColumn.tsx`) flips to `overflow-y:auto` + `min-h-0` below `md` and becomes the page scroller, with bottom padding to clear the fixed `TemplateChrome` bar. Don't try to make the `height:auto` shell itself the mobile scroller, and don't leave the column `overflow:hidden` on phones (content gets clipped with nothing to scroll). **The template's page wrapper (`app/design-systems/andromeda/templates/*/page.tsx`) must NOT re-pin the height on mobile either** — a wrapper left at `h-full overflow-hidden` clips the tall shell and starves the column of overflow (this silently breaks scroll even when the shell and column are correct). Use `relative w-full min-h-full md:h-full md:overflow-hidden` so the wrapper grows on phones and only pins on desktop.
-- `must` — **Below `md`, every template hides its desktop chrome and renders the SHARED mobile chrome** (`examples/_shared/TemplateMobileChrome` → `MobileTopBar` + `MobileDrawer`), so all four templates share ONE mobile nav (no per-template drift). `MobileTopBar` is exactly two elements: the brand lockup (Andromeda icon + "Andromeda" over the template name) on the left, a hamburger on the right — nothing else (no section title, clock, search, status, badges, or actions on mobile). `MobileDrawer` (`side="left"`, `size="70vw"`) MIRRORS the desktop sidebar: a logo header (same brand lockup), the template's nav rows (rendered as `NavItem`s for consistency), and a bottom user block (`UserCard` with name + role). Render-both-and-CSS-hide: the desktop bar is `display:none` below `md`; the shared chrome is `display:none` at `md+`. Reuse the existing `Drawer` — never invent a second drawer. `MobileTopBar` joins the entrance cascade at index 0 (its root is a `motion.div` with `useCascadeProps(0)`): every element visible at first paint must be cascade-gated, because the desktop chrome all is — an exempt bar pops in ALONE on the dark pre-hydration frame and hangs over an empty screen until hydration starts the cascade (the mobile-preview "lone top bar" glitch). Index 0 never collides with the desktop index-0 sidebars — they are `display:none` below `md`.
+- `must` — **Below `md`, every template hides its desktop chrome and renders the SHARED mobile chrome** (`examples/_shared/TemplateMobileChrome` → `MobileTopBar` + `MobileDrawer`), so all four templates share ONE mobile nav (no per-template drift). `MobileTopBar` is exactly two elements: the brand lockup (Andromeda icon + "Andromeda" over the template name) on the left, a hamburger on the right — nothing else (no section title, clock, search, status, badges, or actions on mobile). `MobileDrawer` (`side="left"`, `size="70vw"`) MIRRORS the desktop sidebar: a logo header (same brand lockup), the template's nav rows (rendered as `NavItem`s for consistency), and a bottom user block (`UserCard` with name + role). Render-both-and-CSS-hide: the desktop bar is `display:none` below `md`; the shared chrome is `display:none` at `md+`. Reuse the existing `Drawer` — never invent a second drawer. `MobileTopBar` joins the entrance cascade at index 0 (its root is a `motion.div` with `useCascadeProps(0)`): every element visible at first paint must be cascade-gated, because the desktop chrome all is — an exempt bar pops in ALONE on the pre-hydration frame and hangs over an empty screen until hydration starts the cascade (the mobile-preview "lone top bar" glitch). Index 0 never collides with the desktop index-0 sidebars — they are `display:none` below `md`.
 - `must` — **Wide tables scroll horizontally inside their panel; never reflow into cards.** The `Table`'s existing `overflow-x: auto` wrapper carries the columns, and the panel never grows past the viewport (`minWidth: 0` on the grid item, per the Layout rule). Transforming rows into stacked cards is the "full mobile transform" we explicitly did NOT choose.
 - `should` — **Display type steps down on phones.** Step the template's *largest hero display reading* down one stop below `sm` via `mq.sm` — that's whatever the dominant headline number actually is (often `3xl` in the existing dashboards, sometimes `4xl`/`5xl`), not literally only the two largest tokens. Only the single dominant reading steps down; secondary values hold. Body, label, and UI type stay fixed — the mono UI is already compact.
 - `should` — **Grow the touch target on coarse pointers, never the desktop chrome.** Under `${mq.coarse}` enlarge the *hit area* toward `spacing[10]` (40px) while the rendered control keeps its desktop size — raising the element's own `min-height` is wrong, it visibly inflates the chrome on touch laptops. Use the established techniques: a centered transparent `::before` overlay on `Button`/`IconButton` (and on the `Slider` *track*); a `min-height` on the full-bleed `NavItem` *row* (content stays centered); growing the invisible native `<input>`'s square (keep its `z-10`) on `Checkbox`/`Radio`/`Toggle`. `SegmentedControl` is deliberately exempt — a height bump fights its fixed-height row and sliding `layoutId` indicator, so enlarging its segments needs explicit design intent first. `must` — For dense `sm`-size clusters, cap the overlay floor at `spacing[8]` (32px), not 40px: a 40px overlay on a 24px control overflows 8px per side, so two adjacent overlays at the system's standard gaps (`spacing[2]`–`spacing[3]`) overlap and a seam tap fires the wrong control.
@@ -496,8 +570,8 @@ Every interactive element (button, menu item, nav, segment, dropdown trigger) sh
 | State          | Trigger                          | Visual                                                        |
 |----------------|----------------------------------|---------------------------------------------------------------|
 | **default**    | none                             | base color/background                                         |
-| **hover**      | cursor over (pointer devices)    | one step lighter bg (`surface.hover`), text → `text.primary`  |
-| **pressed**    | mouse-down / `:active`           | one step darker still (`surface.active`)                      |
+| **hover**      | cursor over (pointer devices)    | bg one step further from the ground (`surface.hover`), text → `text.primary` |
+| **pressed**    | mouse-down / `:active`           | one step further still (`surface.active`)                     |
 | **selected**   | persistent state (radio/toggle)  | matches pressed bg + medium font weight                       |
 | **focus**      | keyboard navigation              | inner 1px `accent.400` ring — never the default browser ring  |
 
@@ -572,9 +646,9 @@ Floating panels triggered from a chip or button:
 - **`must` — Interactive trigger-menus portal to the top layer.** A real product menu/dropdown (`PanelMenu` in a table, an overflow menu, a combobox) MUST render through a portal to `<body>` with `position: fixed` coordinates computed from the trigger rect. Rendering it inline (absolute, inside the trigger's row/panel) means it gets clipped by any ancestor `overflow`, AND it stacks UNDER later sibling rows (each animated row is its own stacking context, so a `z-index` on the inline menu can't beat them). A portal puts it above everything. Because the portaled menu lives outside the trigger wrapper, the outside-click dismisser must check BOTH the wrapper ref and the menu ref (else clicking an item reads as an outside click and closes before the item fires). Recompute the fixed coords on `scroll` (capture phase, to catch ancestor scroll) and `resize` so it stays pinned. Guard the portal behind a mounted flag (`createPortal` needs `document`).
 - **`must` — Flip up when a downward menu wouldn't fit on screen.** The same menus must open ABOVE the trigger when a downward placement would fall off the bottom of the viewport — the classic case is the kebab on the last row of a scrolled table. Decide in the same layout effect that computes the fixed coords: compare `triggerRect.bottom + menuHeight` against `window.innerHeight`; anchor the menu above the trigger only when down doesn't fit and up does. A menu that opens off-screen is broken, and an inline downward off-screen menu also adds phantom scroll height to an `overflow:auto` container (a "ghost row" appears) — portaling + flipping fixes both. Use the isomorphic-layout-effect pattern so server-rendered menus don't trip the SSR `useLayoutEffect` warning.
 - **`should` — Scroll containers need a bottom gutter.** A `overflow:auto` list/table whose last row can end flush against fixed bottom chrome needs `paddingBottom` so the final row scrolls fully into view instead of stopping half-hidden.
-- Backgrounds are solid: `surface.raised` for the panel, never alpha. The drop shadow (`0 8px 32px surface.base`) is the only depth cue.
+- Backgrounds are solid: `surface.raised` for the panel, never alpha. The drop shadow is the only depth cue, and it comes from a shadow tier (`--andromeda-shadow-md` for menus and popovers), never a hand-rolled offset. The tiers draw their ink from `effect.shadowColor`, which the theme retunes, so a hand-rolled near-black shadow turns into a smudge on a light ground.
 - **Frame: `must` — a popover panel uses EITHER a 1px `border.base` border OR `<CornerMarkers />`, never both.** Stacking the two frames looks busy and contradicts the "one frame per surface" principle. Default for menu-style popovers (`UserMenu`, dropdowns, comboboxes, date-pickers): the solid 1px border. Reserve CornerMarkers for popovers whose content is itself framed material (e.g. a mini-panel that contains a Card), where the corners read as the panel's own bracketing rather than a second border on top of the first.
-- The trigger gets `data-state="open"` while the panel is mounted, with a one-step-darker background (`surface.hover`) so the row reads as "pressed and held" — matches the "Stateful triggers" rule above.
+- The trigger gets `data-state="open"` while the panel is mounted, with the hover-step background (`surface.hover`) so the row reads as "pressed and held" — matches the "Stateful triggers" rule above.
 - ESC and document `mousedown` outside the wrapper close the panel. Listeners are attached only while open and removed on close — never as session-wide globals.
 - The CaretDown indicator rotates 180° on open. 140ms ease. The rotation is the only animation needed to communicate the state change; no fade-in for the panel itself unless the system later adds one consistently across all popovers.
 - **Showcase/docs `defaultOpen` vs `staticOpen` — `should`.** Every popover (`PanelMenu`, `UserMenu`, `UserCard`, `DateRangePicker`) ships two pre-opened modes. `defaultOpen` renders open but keeps the outside-click + ESC dismissers, so the FIRST click anywhere on the page closes it — and when a docs page shows several popovers open at once, any interaction (including opening a different one) collapses all the others. That cross-dismiss reads as a bug. For pages that display multiple popovers open simultaneously, use **`staticOpen`** (pins open, skips the dismissers) so each demo stays independent — interacting with one never resets the others. Reserve `defaultOpen` for showing a single popover's initial state where dismiss-on-click is itself the thing being demonstrated. `staticOpen` is docs-only — never ship it in product UI, where a popover must dismiss.
@@ -884,7 +958,7 @@ When unsure, these are the safe choices. Each can be overridden with reason; wit
 | Component size in a row | `md` (32px height) | `sm` for dense legend rows / overflow chips; `lg` for primary actions in hero rows |
 | Button variant | `outline` | `default` for primary action (one per region); `destructive` for irreversible; `ghost`/`link` for de-emphasised secondary |
 | Body text color | `text.secondary` | `text.primary` for headlines + key values; `text.muted` for tight UI labels; `text.faint` for peripheral / decorative |
-| Accent stop | `accent-300` | `accent-200` for borders/lines; `accent-400` for solid fills; `accent-500` for badge bg + focus ring |
+| Accent stop | `accent-300` | `accent-400` for control borders + the focus ring; `accent-500` for tinted fills (buttons, badges); `accent-200` for hover ink on quiet controls |
 | Card variant | base (`surface.raised`) | glow variant only for cards that highlight a live measurement |
 | Chart series ink | `text.primary` (single) | See "Multi-series" rule for color hierarchy |
 | Padding around panel content | `tokens.spacing[2]` (8px) clearance from corner markers | Larger only when the panel feels cramped |
@@ -917,7 +991,7 @@ Pick the right component when two could plausibly fit. These are the most common
 
 - Primary action, one per region: `variant="default"` (accent fill, glow on hover)
 - Secondary actions: `variant="outline"` (transparent + border)
-- Tertiary / dismissive: `variant="ghost"` (no border, no fill, hover lightens)
+- Tertiary / dismissive: `variant="ghost"` (no border, no fill, hover raises the surface one step)
 - Irreversible (delete, abort, dispatch): `variant="destructive"` (red fill)
 - Inline link-style action: `variant="link"` (underlined, no chrome)
 - When unsure: `outline`. Outline is the safe wallpaper of the system.
@@ -954,7 +1028,7 @@ Token-driven typography is half the system's identity; copy convention is the ot
 - Don't promote a DS component to a homepage standalone speculatively — promotion is a per-component user decision
 - Don't position content at offset 0 inside a panel with corner markers
 - Don't use `translateX(-50%)` on the first or last X-axis label
-- Don't strip `@ts-nocheck` partially — all-or-nothing per file
+- Don't add `@ts-nocheck` to any design-system file; the folder is fully typed and tsc-checked
 - Don't import `meridian/` tokens or components into `andromeda/`, or vice versa
 - Don't add a `// New` badge to any component (system retired 2026-04-19)
 - Don't comment WHAT the code does — names handle that. Comments only explain non-obvious WHY.

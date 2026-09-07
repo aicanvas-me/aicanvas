@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { IdeationTopBar } from '../../_components/IdeationTopBar'
-import { tokens } from '../../../design-systems/andromeda/tokens'
+import { themeColor } from '../../../design-systems/andromeda/components/lib/utils'
 
 // Template leaf routes own the full viewport (sidebar + topbar are suppressed).
 // On DESKTOP (md+) the template pins itself to 100vh and manages its own
@@ -14,16 +14,14 @@ import { tokens } from '../../../design-systems/andromeda/tokens'
 // content height), so the COLUMN becomes the scroller (`overflow-y: auto` +
 // `min-h-0` so the flex child can shrink below content and actually scroll).
 const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
-// The Andromeda overview (the system root /design-systems/andromeda) is AI
-// Canvas chrome (sand/olive), so its scroll column takes the AI Canvas page
-// surface, not the Andromeda void. The background must live on the scroll
-// container (not a min-h-full child) so it always covers the full scrollable
-// height — a child can two-tone when content overflows.
-const OVERVIEW_RE = /^\/design-systems\/andromeda\/?$/
+// Every non-template route is AI Canvas chrome (sand/olive), so its scroll
+// column takes the AI Canvas page surface, not the Andromeda void. The
+// background must live on the scroll container (not a min-h-full child) so it
+// always covers the full scrollable height; a child can two-tone when content
+// overflows.
 export function AndromedaContentColumn({ children }: { children: ReactNode }) {
   const pathname = usePathname() ?? ''
   const isTemplate = TEMPLATE_LEAF_RE.test(pathname)
-  const isOverview = OVERVIEW_RE.test(pathname)
 
   // No bottom padding on template leaves: the old `pb-28` was terminal-scroll
   // clearance for the retired floating TemplateChrome widget. Templates now
@@ -35,15 +33,14 @@ export function AndromedaContentColumn({ children }: { children: ReactNode }) {
   // belongs — the panels, tables and menus INSIDE the page.
   const className = isTemplate
     ? 'aic-page-scroll flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto md:overflow-y-hidden'
-    : isOverview
-      ? 'aic-page-scroll flex flex-1 scroll-smooth flex-col overflow-y-auto bg-sand-200 dark:bg-sand-950'
-      : 'aic-page-scroll flex flex-1 scroll-smooth flex-col overflow-y-auto'
+    : 'aic-page-scroll flex flex-1 scroll-smooth flex-col overflow-y-auto bg-sand-50 dark:bg-sand-950'
 
+  // Templates own the viewport and paint the Andromeda void through the theme
+  // channel. Every other route is site chrome: the column takes the global
+  // page ground so it matches the sidebar and the top bar in both themes.
   const style = isTemplate
-    ? { backgroundColor: tokens.color.surface.base }
-    : isOverview
-      ? { scrollbarGutter: 'stable' }
-      : { backgroundColor: tokens.color.surface.base, scrollbarGutter: 'stable' }
+    ? { backgroundColor: themeColor.surface.base }
+    : { scrollbarGutter: 'stable' }
 
   return (
     <div className={className} style={style}>

@@ -37,7 +37,7 @@ const VARIANTS: Record<ButtonVariant, string> = {
   // olive text). Emphasized but lighter than solid primary — for a control you
   // want noticed without shouting.
   accent:
-    'border border-olive-500/25 bg-olive-500/10 text-olive-600 hover:border-olive-500/40 hover:bg-olive-500/20 dark:text-olive-400',
+    'border border-olive-600/40 bg-olive-500/10 text-olive-600 hover:border-olive-600/60 hover:bg-olive-500/20 dark:border-olive-500/25 dark:text-olive-400 dark:hover:border-olive-500/40',
   outline:
     'border border-sand-300 bg-transparent text-sand-700 hover:border-sand-400 hover:text-sand-900 dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100',
   icon:

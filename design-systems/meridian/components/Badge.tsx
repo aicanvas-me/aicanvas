@@ -1,12 +1,19 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Badge
 // variants: default | success | warning | error | info | purple
 // ============================================================
 
+import type { ReactNode } from 'react';
 import { tokens } from '../tokens';
 
-export function Badge({ variant = 'default', children }) {
+export type BadgeVariant = 'default' | 'success' | 'warning' | 'error' | 'info' | 'purple';
+
+export type BadgeProps = {
+  variant?: BadgeVariant;
+  children?: ReactNode;
+};
+
+export function Badge({ variant = 'default', children }: BadgeProps) {
   const variantStyles = {
     default: { bg: tokens.color.neutral[40],   color: tokens.color.neutral[90]   },
     success: { bg: tokens.color.success[10],   color: tokens.color.success[50]   },

@@ -54,7 +54,17 @@ export default function ParticleSphere() {
     const camera   = new THREE.PerspectiveCamera(52, W / H, 0.1, 100)
     camera.position.z = 2.9
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true })
+    // Throws outright when the browser cannot hand back a WebGL context:
+    // hardware acceleration switched off, an older or virtualised machine, or
+    // too many live contexts on one page. Thrown from inside an effect it takes
+    // the surrounding page down with it, so an empty frame is the better
+    // failure.
+    let renderer: THREE.WebGLRenderer
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true })
+    } catch {
+      return
+    }
     renderer.setSize(W, H)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setClearColor(0x000000)
@@ -119,6 +129,12 @@ export default function ParticleSphere() {
       geo.dispose()
       mat.dispose()
       sprite.dispose()
+      // Hand the GPU context back explicitly: dispose() frees the scene but
+      // leaves the context alive, and a browser grants only about sixteen per
+      // page, so remounting a few times exhausts them.
+      try {
+        renderer.forceContextLoss()
+      } catch {}
       renderer.dispose()
       if (container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement)

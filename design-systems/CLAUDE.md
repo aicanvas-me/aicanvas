@@ -31,19 +31,14 @@ Before writing or modifying ANY component inside `design-systems/<system>/`:
 6. **Examples are examples, not library code.** Files under `<system>/examples/` demonstrate how a system composes into a real UI (mission-control dashboard, editorial dashboard). Don't import FROM `examples/` INTO `components/` — data flows the other way.
 7. **When the user corrects a design decision, write the rule back to `rules.md` immediately.** The brain is a living document — every correction should land before the session ends, so the same mistake never costs time twice.
 
-## TypeScript status — important
+## TypeScript status
 
-Every file in this folder has a `// @ts-nocheck` header and the `design-systems/` folder is listed in `tsconfig.exclude`. **This is intentional** and here is why:
+Every tracked file in this folder is real TypeScript: typed props, typed `forwardRef` signatures, no `@ts-nocheck`. The folder is part of the tsc program (it is NOT in `tsconfig.exclude`), so `npx tsc --noEmit` checks all of it, including systems no page imports yet.
 
-- The Andromeda and Meridian components originated as JSDoc-annotated `.jsx` files
-- They were renamed to `.tsx` / `.ts` for extension consistency with the rest of the codebase
-- They were NOT properly typed during the rename — that was out of scope for the restructure session
-- Next.js still compiles them at runtime via SWC, so they work correctly in the browser
-- A future dedicated "typing pass" session will strip `@ts-nocheck` from one component at a time as real TypeScript prop types are added
-
-**If you are modifying a component here, do NOT remove the `@ts-nocheck` header** unless you are committing to: adding full prop interfaces, genericizing `forwardRef` signatures, typing every `...rest` spread, and resolving every latent error that the strict checker will surface for that file. Partial typing passes will break the page — all-or-nothing per file.
-
-The showcase page at `app/design-systems/andromeda/showcase/page.tsx` also has a `@ts-nocheck` header for the same reason. It can be removed after the DS components it imports from are properly typed.
+- Components export their prop types; examples annotate their data against those exported types.
+- Do NOT add a `@ts-nocheck` header to any file here. If the checker complains, fix the types.
+- The JSDoc `@typedef` blocks above components feed the auto-generated props tables; keep them in sync with the TS types.
+- Vault-injected free-lane files (MetricChart, Gauge, Waveform, MediaCard, DataTable, MusicPlayer and vault-side examples) are copied in at build time; their typing lives in the vault source, not here.
 
 ## Promotion to standalones
 

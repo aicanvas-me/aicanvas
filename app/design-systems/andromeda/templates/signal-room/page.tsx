@@ -1,6 +1,5 @@
-// @ts-nocheck — consumes Andromeda tokens which are not type-checked yet.
 import SignalRoom from '../../../../../design-systems/andromeda/examples/signal-room'
-import { tokens } from '../../../../../design-systems/andromeda/tokens'
+import { themeColor } from '../../../../../design-systems/andromeda/components/lib/utils'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
@@ -32,7 +31,7 @@ export default async function SignalRoomTemplate({
     >
       <div
         className="relative h-full min-h-full w-full md:overflow-hidden"
-        style={{ backgroundColor: tokens.color.surface.base }}
+        style={{ backgroundColor: themeColor.surface.base }}
       >
         <SignalRoom />
       </div>

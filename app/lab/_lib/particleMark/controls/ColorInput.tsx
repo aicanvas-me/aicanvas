@@ -136,7 +136,7 @@ export function ColorInput({
       onClick={() => setOpen((o) => !o)}
       aria-haspopup="dialog"
       aria-expanded={open}
-      className="inline-flex items-center gap-2 rounded-md border border-sand-300 bg-sand-50 px-2 py-1.5 transition-colors hover:border-sand-400 dark:border-sand-700 dark:bg-sand-800 dark:hover:border-sand-600"
+      className="inline-flex items-center gap-2 rounded-md border border-sand-300 bg-sand-100 px-2 py-1.5 transition-colors hover:border-sand-400 dark:border-sand-700 dark:bg-sand-800 dark:hover:border-sand-600"
     >
       <span
         className="h-5 w-5 rounded border border-sand-400 dark:border-sand-600"
@@ -157,7 +157,7 @@ export function ColorInput({
         <div
           ref={popoverRef}
           role="dialog"
-          className={`particle-color-popover absolute z-50 mt-2 w-[220px] rounded-lg border border-sand-300 bg-sand-100 p-3 shadow-lg dark:border-sand-700 dark:bg-sand-900 ${
+          className={`particle-color-popover absolute z-50 mt-2 w-[220px] rounded-lg border border-sand-300 bg-sand-50 p-3 shadow-lg dark:border-sand-700 dark:bg-sand-900 ${
             anchor === 'right' ? 'right-0' : 'left-0'
           }`}
         >
@@ -168,7 +168,7 @@ export function ColorInput({
               color={value}
               onChange={onChange}
               prefixed={false}
-              className="w-full flex-1 rounded-md border border-sand-300 bg-sand-50 px-2 py-1.5 font-mono text-xs uppercase text-sand-800 outline-none transition-colors focus:border-olive-500 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-100"
+              className="w-full flex-1 rounded-md border border-sand-300 bg-sand-100 px-2 py-1.5 font-mono text-xs uppercase text-sand-800 outline-none transition-colors focus:border-olive-500 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-100"
             />
             {eyedropperAvailable && (
               <button
@@ -176,7 +176,7 @@ export function ColorInput({
                 onClick={pickFromScreen}
                 aria-label="Pick a colour from the screen"
                 title="Pick from screen"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-sand-300 bg-sand-50 text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-50"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-sand-300 bg-sand-100 text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-50"
               >
                 <Eyedropper size={14} weight="regular" />
               </button>
