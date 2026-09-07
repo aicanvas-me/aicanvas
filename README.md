@@ -14,7 +14,7 @@
   <em>Finished Components, Not Headless Primitives</em>
 </p>
 
-A growing collection of animated React components, plus a token-driven design system and ready-made templates. Every component arrives as real source code in your project, with an AI remix prompt that works in any AI coding tool. Open core: the free library is MIT, and Premium is proprietary.
+A growing collection of animated React components and composed page blocks, installed as real source code in your project rather than as a dependency.
 
 <p align="center">
   <a href="./LICENSE"><img src="assets/readme-buttons/btn-license.png" alt="License: MIT" height="45" valign="middle" /></a>
@@ -24,6 +24,8 @@ A growing collection of animated React components, plus a token-driven design sy
   <a href="#install"><img src="assets/readme-buttons/btn-registry.png" alt="shadcn registry: @aicanvas" height="45" valign="middle" /></a>
   &nbsp;
   <a href="#use-it-with-your-ai-editor-mcp"><img src="assets/readme-buttons/btn-agents.png" alt="Works with Claude, Codex and Cursor" height="45" valign="middle" /></a>
+  &nbsp;
+  <a href="https://github.com/aicanvas-me/aicanvas"><img src="assets/readme-buttons/btn-github.png" alt="aicanvas-me on GitHub" height="45" valign="middle" /></a>
 </p>
 
 <p align="center"><sub><a href="#install">Install</a> · <a href="#components">Components</a> · <a href="#blocks">Blocks</a> · <a href="#use-it-with-your-ai-editor-mcp">MCP</a> · <a href="#repository-layout">Repo layout</a> · <a href="#common-questions">FAQ</a> · <a href="#license">License</a></sub></p>
@@ -148,13 +150,11 @@ Every component ships with one comprehensive, platform-agnostic prompt. Paste it
 **How do I keep components up to date?**
 You do not have to. Once installed, the code is yours and never changes under you. Re-run the install command if you want the latest version of a component.
 
-## Project status
-
-AI Canvas is an actively maintained project. New components, design systems, and templates ship regularly. If AI Canvas saves you time, a star helps more builders find it.
-
 ## Contributing
 
-AI Canvas is open source under MIT. Issues, ideas, and pull requests are welcome. Open an issue to suggest a component or report a bug.
+AI Canvas is actively maintained and new components ship regularly. Issues, ideas, and pull requests are welcome: open an issue to suggest a component or report a bug.
+
+If AI Canvas saves you time, [a star](https://github.com/aicanvas-me/aicanvas/stargazers) helps more builders find it.
 
 ## License
 

@@ -34,7 +34,12 @@ const CHIPS = [
   { file: 'btn-components', label: 'Components', value: '80+ Free', height: 46 },
   { file: 'btn-registry', label: 'Registry', value: '@aicanvas', height: 46 },
   { file: 'btn-agents', label: 'Agents', value: 'Claude • Codex • Cursor', height: 46 },
+  { file: 'btn-github', label: 'GitHub', value: 'aicanvas-me', height: 46 },
 ]
+
+// The components chip carries the only value that moves. It reads "80+", which can
+// only ever understate, so it stays true as the catalog grows; re-run this script
+// when the next round number is worth claiming.
 
 const css = (h) => `
   @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap');
