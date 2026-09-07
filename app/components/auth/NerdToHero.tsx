@@ -33,7 +33,7 @@ export function NerdToHero() {
 // secondary highlight. Here they're rewritten to read --ic-stroke / --ic-tint
 // from the parent so they can theme without losing the two-tone face reveal.
 
-export function NerdSvg() {
+function NerdSvg() {
   return (
     <svg
       viewBox="0 0 40 49.627"
@@ -64,7 +64,7 @@ export function NerdSvg() {
   )
 }
 
-export function SuperheroSvg() {
+function SuperheroSvg() {
   return (
     <svg
       viewBox="0 0 40 50"

@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import { formatAuthError } from '../../lib/auth-errors'
 import { PasswordInput } from '../PasswordInput'
-import { Button, buttonClasses } from '../../components/Button'
+import { Button } from '../../components/Button'
+import { buttonClasses } from '../../components/buttonClasses'
 import { AuthPagePopup } from '../AuthPagePopup'
 
 // ─── ResetPasswordForm ───────────────────────────────────────────────────────
