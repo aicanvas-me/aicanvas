@@ -97,7 +97,7 @@ Browse the full catalog and copy the exact command for any component at [aicanva
 
 ## Blocks
 
-Composed, multi-component page sections: card decks, task boards, galleries. Same install, same MIT license, just a larger unit of work than a single component.
+Composed, multi-component page sections: card decks, task boards, galleries. Same install as a single component, just a larger unit of work. The four below are MIT, like the rest of the free library; the catalog also carries Premium blocks.
 
 <p align="center">
   <a href="https://aicanvas.me/components/ai-job-cards"><img src="https://ik.imagekit.io/aitoolkit/ai-job-cards.png" width="48%" alt="AI Job Cards: three job card stacks with swipe-to-cycle, brand logos and a bookmark toggle" /></a>
