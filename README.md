@@ -45,7 +45,23 @@ npx shadcn@latest init        # new projects only
 npx shadcn@latest add @aicanvas/task-cards
 ```
 
-One-command installs use a free AI Canvas account: signed out, the CLI writes a small placeholder file instead of the component. [Sign up free](https://aicanvas.me/account/sign-up), then copy your personal install command from any component page. No account needed to read the code: every component page shows its full source, free to read and copy.
+Installs are tied to a free AI Canvas account. Signed out, the CLI writes a small placeholder file instead of the component, so authenticate once first:
+
+1. [Sign up free](https://aicanvas.me/account/sign-up) and copy your token from [account settings](https://aicanvas.me/account/settings).
+2. Put it in `.env.local` as `AICANVAS_TOKEN`.
+3. Add the registry to your project's `components.json`, once:
+
+```json
+{ "registries": { "@aicanvas": { "url": "https://aicanvas.me/r/{name}.json", "params": { "token": "${AICANVAS_TOKEN}" } } } }
+```
+
+Every `npx shadcn@latest add @aicanvas/<slug>` is authenticated after that. Each component page also shows a ready tokenized command when you are signed in.
+
+No account is needed to read the code: every component page shows its full source, free to read and copy.
+
+### Requirements
+
+Tailwind CSS **v4**, React 19 and Motion. Components are written against Tailwind v4 tokens and will not render correctly on v3. The Next.js App Router is the default target, not a requirement.
 
 ### Three ways to use it
 
