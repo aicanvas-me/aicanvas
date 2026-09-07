@@ -3,9 +3,6 @@ import { JetBrains_Mono } from 'next/font/google'
 import { Sidebar } from '../../components/Sidebar'
 import { AndromedaContentColumn } from './AndromedaContentColumn'
 import { AndromedaThemeSync } from './AndromedaThemeSync'
-// Registry-free nav counts (generated) so the client Sidebar never pulls the
-// heavy registry (keeps three.js etc. out of the bundle).
-import { CATEGORY_COUNTS, TOTAL_COMPONENTS } from '../../lib/component-nav.generated'
 
 // JetBrains Mono is the only font in the Andromeda design system.
 // Loading it at the layout level makes --font-jetbrains-mono available
@@ -42,7 +39,7 @@ export default function AndromedaLayout({ children }: { children: ReactNode }) {
           the global MobileNav drawer takes over on mobile. */}
       <Suspense fallback={null}>
         <div className="hidden md:flex">
-          <Sidebar embedded promoteDS counts={CATEGORY_COUNTS} total={TOTAL_COMPONENTS} />
+          <Sidebar embedded promoteDS />
         </div>
       </Suspense>
       <AndromedaContentColumn>{children}</AndromedaContentColumn>
