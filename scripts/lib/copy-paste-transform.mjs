@@ -1,34 +1,22 @@
 /**
- * Shared copy-paste-readiness transform for component source code.
- *
- * Both `generate-component-codes.mjs` and `generate-registry.mjs` apply this
- * before shipping component source to end users (via the website "Copy Code"
- * button or via the shadcn registry JSON consumed by `shadcn add` / the MCP).
- *
- * `validate-registry-json.ts` mirrors this logic in TS to verify byte-for-byte
- * parity between source and shipped JSON. The TS twin must stay in sync.
+ * Shared copy-paste-readiness transform for component source code, applied by
+ * `generate-component-codes.mjs` and `generate-registry.mjs` before shipping
+ * source to end users (the website "Copy Code" button, and the shadcn registry
+ * JSON consumed by `shadcn add` and the MCP).
  */
 
 /**
- * Make a component's source code copy-paste ready by replacing `h-full` with
- * `min-h-screen` ON THE ROOT JSX ELEMENT ONLY.
+ * Make a component's source copy-paste ready by replacing `h-full` with
+ * `min-h-screen` ON THE ROOT JSX ELEMENT ONLY: the first `className="..."` after
+ * the `return (` of `export default function`.
  *
- * The root element is detected as the first `className="..."` after the
- * `return (` of `export default function` in the file content.
+ * Root-only, because a root `h-full` relies on a parent height chain no fresh
+ * project provides, so the component collapses when pasted. Inner elements
+ * legitimately use `h-full` to fill their container (a progress-bar fill, an
+ * avatar inside a card), and rewriting those makes them try to be viewport-tall.
  *
- * Why root-only: components that author with `h-full` on root rely on a parent
- * height chain. When copy-pasted into a fresh project, no parent provides
- * height, so they collapse — switching root to `min-h-screen` ensures the
- * component fills the viewport standalone.
- *
- * Why NOT global (the previous behavior): inner elements legitimately use
- * `h-full` to fill their container — e.g. a 3px progress-bar fill, or an
- * avatar image inside a card. Replacing those with `min-h-screen` makes them
- * try to be viewport-tall, blowing up layouts (see `upload-progress` dome bug).
- *
- * If detection fails at any step (no `export default function`, no `return`,
- * no className), returns content unchanged — safer to ship `h-full` as-is than
- * to mis-transform.
+ * Returns the content unchanged if detection fails at any step: shipping
+ * `h-full` as-is beats mis-transforming.
  *
  * @param {string} content - Component source file content
  * @returns {string} The content with the root className transformed (if applicable)
@@ -39,8 +27,7 @@ export function transformRootHeightClass(content) {
 
   const exportPos = exportMatch.index
 
-  // Find the JSX return — `return (` followed (after whitespace/comments) by `<`.
-  // This filters out useEffect cleanup `return () => {}` and similar.
+  // The JSX return, not a useEffect cleanup: `return (` followed by `<`.
   const returnEndPos = findJSXReturnContentStart(content, exportPos)
   if (returnEndPos === -1) return content
 
@@ -72,14 +59,10 @@ export function transformRootHeightClass(content) {
 }
 
 /**
- * Find the position right after `return (` of the JSX return statement,
- * starting search from `startPos`. The "JSX return" is distinguished from
- * other `return (` patterns (e.g. useEffect cleanups returning a function:
- * `return () => {...}`) by requiring that the next non-whitespace,
- * non-comment character after `(` is `<` (start of a JSX element or fragment).
- *
- * Returns the byte position immediately after the matching `(`, or -1 if no
- * JSX return is found.
+ * Position immediately after the `(` of the JSX return, searching from
+ * `startPos`, or -1 if there is none. A JSX return is distinguished from other
+ * `return (` patterns (a useEffect cleanup `return () => {...}`) by requiring the
+ * next non-whitespace, non-comment character after `(` to be `<`.
  */
 export function findJSXReturnContentStart(content, startPos) {
   const re = /return\s*\(/g
@@ -91,14 +74,12 @@ export function findJSXReturnContentStart(content, startPos) {
     while (i < content.length) {
       const ch = content[i]
       if (/\s/.test(ch)) { i++; continue }
-      // Skip /* block comment */
       if (ch === '/' && content[i + 1] === '*') {
         const end = content.indexOf('*/', i + 2)
         if (end === -1) return -1
         i = end + 2
         continue
       }
-      // Skip // line comment
       if (ch === '/' && content[i + 1] === '/') {
         const end = content.indexOf('\n', i + 2)
         if (end === -1) return -1
@@ -107,7 +88,7 @@ export function findJSXReturnContentStart(content, startPos) {
       }
       // First real char: must be `<` for a JSX return
       if (ch === '<') return afterParen
-      // Anything else (e.g. `)` for `() =>`, `{` for `({...})`) — not JSX, try next
+      // Anything else (`)` for `() =>`, `{` for `({...})`) is not JSX, try next.
       break
     }
   }
