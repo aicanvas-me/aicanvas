@@ -20,19 +20,14 @@ export const metadata: Metadata = {
 // card says thank you — this page only exists because someone just paid.
 const THANKS_CARDS = ['Thank you', 'Merci', 'Danke', 'Gracias', 'Grazie', 'ありがとう', '谢谢', 'Tack', '♥']
 
-// ─── /welcome ─────────────────────────────────────────────────────────────────
-// THE post-purchase page — every confirmed Paddle checkout lands here (signed-in
-// fast-path and anonymous pending-claim alike; see app/lib/paddle/client.ts).
-// State-aware, three views:
-//   • no session      → the claim form: the webhook provisioned a passwordless
-//     account under the checkout email; enter it, get a one-time sign-in link.
-//     Deliberately NO OAuth here — a Google login under a different address
-//     creates a fresh free account and shows a paying buyer the paywall.
-//   • session, premium → advantage first (every install command carries your
-//     token), browse CTAs, then the quiet terminal/MCP helper card.
-//   • session, free    → mismatch view: this account holds no Premium; claim
-//     the checkout-email account instead (or see plans).
-// Claiming is self-service, so a lost/delayed claim email is never a lockout.
+// THE post-purchase page: every confirmed Paddle checkout lands here, signed-in
+// fast-path and anonymous pending-claim alike. Three views: no session gets the
+// claim form (the webhook provisioned a passwordless account under the checkout
+// email), a premium session gets the token-carrying install commands, a free
+// session gets the mismatch view. Deliberately NO OAuth on the claim form: a
+// Google login under a different address creates a fresh free account and shows
+// a paying buyer the paywall. Claiming is self-service, so a lost or delayed
+// claim email is never a lockout.
 
 export default async function WelcomePage() {
   // Fail SOFT to the claim view: this page must render for a buyer even when
