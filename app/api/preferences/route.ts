@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '../../lib/supabase/server'
+import { sessionUser, unauthenticated } from '../../lib/require-user'
 import { createAdminClient } from '../../lib/supabase/admin'
 import { syncBrevoContact } from '../../lib/brevo'
 import type { AiPlatform, PackageManager } from '../../lib/supabase/types'
@@ -8,8 +8,7 @@ const PKG_VALUES: PackageManager[] = ['pnpm', 'npm', 'yarn', 'bun']
 const AI_VALUES: AiPlatform[] = ['Claude Code', 'Lovable', 'V0']
 
 export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { supabase, user } = await sessionUser()
   if (!user) return NextResponse.json({ preferences: null })
 
   const { data, error } = await supabase
@@ -45,9 +44,8 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  const { supabase, user } = await sessionUser()
+  if (!user) return unauthenticated()
 
   const body = await request.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'invalid body' }, { status: 400 })
