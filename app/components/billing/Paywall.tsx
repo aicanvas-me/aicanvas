@@ -90,9 +90,14 @@ export function Paywall({
   const lockIcon = themed ? 'text-olive-700 dark:text-olive-400' : 'text-olive-400'
   const heading = themed ? 'text-sand-900 dark:text-sand-50' : 'text-sand-50'
   const sub = themed ? 'text-sand-600 dark:text-sand-400' : 'text-sand-400'
+  // transition-colors lives per appearance, not on the button, because only the
+  // themed half changes colour on a theme flip. CSS cannot tell a theme flip
+  // from a hover, so a themed button that eases its hover also eases the flip
+  // and lands after the panel behind it. Snapping both is the trade. The dark
+  // half has no dark: variants, so it never moved on a flip and keeps its ease.
   const login = themed
     ? 'border-sand-500 text-sand-700 hover:border-sand-600 hover:text-sand-900 dark:border-sand-700 dark:text-sand-200 dark:hover:border-sand-600 dark:hover:text-sand-50'
-    : 'border-sand-700 text-sand-200 hover:border-sand-600 hover:text-sand-50'
+    : 'transition-colors border-sand-700 text-sand-200 hover:border-sand-600 hover:text-sand-50'
 
   return (
     <div className="relative min-h-[360px] w-full overflow-hidden">
@@ -121,7 +126,7 @@ export function Paywall({
             <button
               type="button"
               onClick={() => open()}
-              className={`rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${login}`}
+              className={`rounded-lg border px-4 py-2 text-sm font-semibold ${login}`}
             >
               Log in
             </button>
