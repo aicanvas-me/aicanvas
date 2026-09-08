@@ -338,7 +338,8 @@ export function AndromedaComponentView({
               // variable, so the ground and the wall on it cannot drift apart.
               className="min-h-[420px] overflow-auto p-5 [--paywall-surface:var(--color-sand-50)] dark:[--paywall-surface:var(--color-sand-950)]"
               style={{
-                backgroundColor: 'var(--paywall-surface)',
+                // Fallback so a dropped class can never paint transparent.
+                backgroundColor: 'var(--paywall-surface, var(--color-sand-50))',
                 maxHeight: '70vh',
                 scrollbarWidth: 'thin',
               }}
