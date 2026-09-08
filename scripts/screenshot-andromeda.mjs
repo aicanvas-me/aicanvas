@@ -13,10 +13,11 @@
  */
 
 import { chromium } from 'playwright'
-import { mkdir, readFile, rm } from 'fs/promises'
+import { mkdir, rm } from 'fs/promises'
 import { readFileSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { uploadToImageKit } from './lib/imagekit.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -45,7 +46,6 @@ if (!IMAGEKIT_PRIVATE) {
   console.error('Missing IMAGEKIT_PRIVATE_KEY. Add it to .env.local (private_… key from the ImageKit dashboard).')
   process.exit(1)
 }
-const IMAGEKIT_UPLOAD = 'https://upload.imagekit.io/api/v1/files/upload'
 const IMAGEKIT_FOLDER = '/andromeda'
 const TEMP_DIR = path.join(__dirname, '../.screenshots-tmp-andromeda')
 const SETTLE_MS = 1800 // let scroll-gated charts reveal + animations settle
@@ -66,42 +66,6 @@ const INTERACTIONS = {
     await frame.locator('button').first().hover()
     await page.waitForTimeout(450)
   },
-}
-
-// ─── ImageKit upload ──────────────────────────────────────────────────────────
-
-async function upload(localPath, fileName) {
-  const fileData = await readFile(localPath)
-  const base64 = fileData.toString('base64')
-  const auth = Buffer.from(`${IMAGEKIT_PRIVATE}:`).toString('base64')
-
-  const body = new FormData()
-  body.append('file', `data:image/png;base64,${base64}`)
-  body.append('fileName', fileName)
-  body.append('folder', IMAGEKIT_FOLDER)
-  body.append('useUniqueFileName', 'false')
-  body.append('overwriteFile', 'true')
-
-  const res = await fetch(IMAGEKIT_UPLOAD, {
-    method: 'POST',
-    headers: { Authorization: `Basic ${auth}` },
-    body,
-  })
-
-  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`)
-  const { url } = await res.json()
-
-  // Purge CDN cache so the new image is served immediately
-  await fetch('https://api.imagekit.io/v1/files/purge', {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${auth}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ url }),
-  })
-
-  return url
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -145,7 +109,12 @@ async function main() {
 
       await frame.screenshot({ path: localPath })
 
-      const url = await upload(localPath, fileName)
+      const url = await uploadToImageKit({
+        localPath,
+        fileName,
+        privateKey: IMAGEKIT_PRIVATE,
+        folder: IMAGEKIT_FOLDER,
+      })
       console.log(`✓  ${url}`)
       results.push({ slug, url })
       ok++

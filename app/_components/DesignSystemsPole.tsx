@@ -44,9 +44,6 @@ const SYSTEMS = [
 // fill the viewport. Exported so the sidebars can suppress themselves on them.
 export const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
 
-// Per-row New/Updated pills live in ./NavBadge now. None are shown today —
-// import it and drop one in a row when something is worth flagging again.
-
 export function DesignSystemsPole({
   collapsed,
   onToggle,

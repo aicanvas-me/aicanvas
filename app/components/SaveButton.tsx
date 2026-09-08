@@ -4,7 +4,7 @@ import { Heart } from '@phosphor-icons/react'
 import { usePathname } from 'next/navigation'
 import { useSession } from './auth/SessionProvider'
 import { useAuthModal } from './auth/AuthModalProvider'
-import { Button, buttonClasses } from './Button'
+import { Button } from './Button'
 
 // ─── SaveButton ───────────────────────────────────────────────────────────────
 // Heart toggle for saving a component. Renders as a 32×32 icon-only Button

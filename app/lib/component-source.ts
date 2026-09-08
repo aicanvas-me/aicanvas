@@ -4,15 +4,11 @@ import { getAndromedaComponent } from '@/app/_lib/andromeda/andromeda-registry'
 import { andromedaPageSlug } from '@/app/_lib/andromeda/andromeda-meta'
 
 /**
- * Returns the raw source string for a component slug, or null if unknown.
- *
- * - Standalones: from the generated code map (does not duplicate source).
- * - Individual design-system components (now free-metered, e.g.
- *   `andromeda-checkbox`): resolved from the system registry via
- *   andromedaPageSlug(), which also handles the rare per-component slugOverride
- *   (e.g. Button.tsx ships as `andromeda-button-system` because the free
- *   standalone owns `andromeda-button`). Templates + whole-system aggregates
- *   are NOT served here — the gate 402s those before the source is ever needed.
+ * Raw source for a component slug, or null if unknown. Standalones come from the
+ * generated code map; design-system components resolve through
+ * andromedaPageSlug(), which handles the rare slugOverride (Button.tsx ships as
+ * `andromeda-button-system` because the free standalone owns `andromeda-button`).
+ * Templates and whole-system aggregates never reach here: the gate 402s those.
  */
 export async function getComponentCode(slug: string): Promise<string | null> {
   const map = componentCodes as Record<string, string>

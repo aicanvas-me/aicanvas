@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { CaretDown, Check, Plus, PushPinSlash, X } from '@phosphor-icons/react'
-import { Button, buttonClasses } from '../../../components/Button'
-import { andromedaPageSlug } from '../../../_lib/andromeda/andromeda-meta'
+import { Button } from '../../../components/Button'
+import { buttonClasses } from '../../../components/buttonClasses'
+import { itemHref } from '../itemHref'
 
 export type SavedRow = {
   slug: string
@@ -17,12 +18,6 @@ export type SavedRow = {
   // design-system templates) — the card renders a neutral fallback then.
   name: string
   image: string | null
-}
-
-function hrefFor(row: SavedRow) {
-  return row.system === 'andromeda'
-    ? `/design-systems/andromeda/${andromedaPageSlug(row.slug)}`
-    : `/components/${row.slug}`
 }
 
 export function SavedList({ initial }: { initial: SavedRow[] }) {
@@ -143,7 +138,7 @@ export function SavedList({ initial }: { initial: SavedRow[] }) {
               className="flex items-center gap-4 rounded-xl border border-sand-200 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
             >
               <Link
-                href={hrefFor(row)}
+                href={itemHref(row)}
                 className="group flex min-w-0 flex-1 items-center gap-4"
                 aria-label={`Open ${row.name}`}
               >

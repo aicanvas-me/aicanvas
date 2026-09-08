@@ -4,11 +4,12 @@ import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Check, Copy, Lightning, Terminal } from '@phosphor-icons/react'
-import { useSession } from '../components/auth/SessionProvider'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
-import { Button, buttonClasses } from '../components/Button'
+import { Button } from '../components/Button'
+import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
+import { useInstallToken } from '../_lib/useInstallToken'
 
 interface InstallAction {
   slug: string
@@ -42,7 +43,6 @@ export function ShowcaseInstall({ installs }: { installs: InstallAction[] }) {
 // Self-contained button group + popover (own state, so the desktop portal and
 // the mobile fallback never share a popover).
 function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
-  const { user } = useSession()
   const { open: openPaywall } = usePaywallModal()
   const status = usePremiumStatus()
   // Premium AND the in-flight 'unknown' window see the CLI popover; only a
@@ -57,25 +57,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   // Tokenized command so the registry attributes the pull to the account
   // (these are premium; a bare command would 402). Masked on screen; copy
   // writes the real token.
-  const [token, setToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [user])
-  const userToken = user ? token : null
+  const userToken = useInstallToken()
   const commandFor = (slug: string, masked: boolean) => {
     const r = userToken
       ? `"https://aicanvas.me/r/${slug}.json?token=${masked ? 'aic_••••••••' : userToken}"`

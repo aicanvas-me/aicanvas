@@ -35,8 +35,7 @@ const DEFAULT_SUBTITLE = 'The full source and the remix prompt ship with Premium
  * Inline locked state rendered where withheld content would be — the Code tab,
  * and the withheld blocks of a premium prompt. Shows a blurred teaser over two
  * CTAs: buy, and (signed out only) log in, since a subscriber who lands here
- * logged out has no other way in from this panel. Props are kept for the call
- * sites even though the lock no longer varies by reason. `teaser` overrides the
+ * logged out has no other way in from this panel. `teaser` overrides the
  * blurred decoration so it matches whatever was withheld; `name` titles the
  * lock with the thing being unlocked.
  */
@@ -46,8 +45,6 @@ export function Paywall({
   subtitle = DEFAULT_SUBTITLE,
   appearance = 'dark',
 }: {
-  reason: PaywallReason
-  limit?: number
   teaser?: string
   name?: string
   subtitle?: string

@@ -19,7 +19,7 @@ npm run validate:registry -- particle-sphere
 
 ## What it checks
 
-1. **JSON file exists** at `public/r/<slug>.json`
+1. **JSON file exists** at `registry-data/<slug>.json`
 2. **Schema validity**: Has required shadcn fields (`$schema`, `name`, `type`, `files`)
 3. **Content parity**: JSON's `files[0].content` matches `components-workspace/<slug>/index.tsx` byte-for-byte
 4. **Slug match**: JSON's `name` equals the folder name
@@ -38,7 +38,7 @@ The script prints the specific check that failed and why. Example outputs:
 
 ```
 ✗ JSON check failed for ai-job-cards:
-  Content parity mismatch: public/r/ai-job-cards.json content does not match 
+  Content parity mismatch: registry-data/ai-job-cards.json content does not match 
   components-workspace/ai-job-cards/index.tsx. The component source may have 
   changed after the registry build. Re-run the registry build script.
 ```

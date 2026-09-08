@@ -26,9 +26,10 @@ import { tokens } from '../../../../design-systems/andromeda/tokens'
 import { themeColor } from '../../../../design-systems/andromeda/components/lib/utils'
 import { trackInstall } from '../../../lib/track-install'
 import { useSession } from '../../../components/auth/SessionProvider'
+import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useAuthModal } from '../../../components/auth/AuthModalProvider'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
-import { Paywall, type PaywallReason } from '../../../components/billing/Paywall'
+import { Paywall } from '../../../components/billing/Paywall'
 import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
 
@@ -68,25 +69,8 @@ export function AndromedaComponentView({
 
   // Personalized install: when signed in, the copied command carries the
   // user's API token so the registry attributes the pull to the account.
-  // Signed out = plain @aicanvas command. The token route is resilient
-  // (returns null on any error), so this is a no-op fallback to the anonymous
-  // command rather than a break.
-  const [fetchedToken, setFetchedToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => { if (!cancelled) setFetchedToken(d?.token ?? null) })
-        .catch(() => {})
-    refresh()
-    // Re-fetch on focus so a token rotated in another tab isn't left stale here.
-    window.addEventListener('focus', refresh)
-    return () => { cancelled = true; window.removeEventListener('focus', refresh) }
-  }, [user])
-  // Signed-out derives to null at render — no setState in the effect body.
-  const userToken = user ? fetchedToken : null
+  // Signed out = plain @aicanvas command.
+  const userToken = useInstallToken()
   const [tab, setTab] = useState<'preview' | 'code'>('preview')
   const [codeCopied, setCodeCopied] = useState(false)
   const [cliCopied, setCliCopied] = useState(false)
@@ -104,19 +88,14 @@ export function AndromedaComponentView({
   type CodeState =
     | { status: 'idle' | 'loading' }
     | { status: 'ready'; code: string; highlighted?: string }
-    | { status: 'locked'; reason: PaywallReason; limit?: number }
+    | { status: 'locked' }
   const [codeState, setCodeState] = useState<CodeState>({ status: 'idle' })
   const openCode = useCallback(async () => {
     setCodeState({ status: 'loading' })
     try {
       const res = await fetch(`/api/component-code?slug=${registrySlug}`)
-      if (res.status === 402) {
-        const { limit } = await res.json().catch(() => ({}))
-        setCodeState({ status: 'locked', reason: 'premium-only', limit })
-        return
-      }
       if (!res.ok) {
-        setCodeState({ status: 'locked', reason: 'premium-only' })
+        setCodeState({ status: 'locked' })
         return
       }
       // The endpoint highlights server-side and returns both; keep `highlighted`
@@ -125,7 +104,7 @@ export function AndromedaComponentView({
       const { code, highlighted } = await res.json()
       setCodeState({ status: 'ready', code: code ?? '', highlighted })
     } catch {
-      setCodeState({ status: 'locked', reason: 'premium-only' })
+      setCodeState({ status: 'locked' })
     }
   }, [registrySlug])
   // Fetch the first time the source becomes visible (Code tab or Manual tab).
@@ -184,8 +163,6 @@ export function AndromedaComponentView({
   const renderCodePane = () =>
     codeState.status === 'locked' ? (
       <Paywall
-        reason={codeState.reason}
-        limit={codeState.limit}
         name={name}
         // Both grounds this pane renders on are light-aware, so the wall follows
         // them rather than staying a dark slab. Each of the two wrappers names

@@ -6,6 +6,7 @@ import ComponentPageView from './ComponentPageView'
 import { HighlightedCode } from '../../components/HighlightedCode'
 import { GITHUB_URL, SITE_URL } from '../../lib/config'
 import { collectionsForComponent } from '../../lib/collections'
+import { buildBreadcrumbJsonLd } from '../../lib/page-metadata'
 import { classifyContent } from '@/lib/registry/content-type'
 import { loadContentLookup } from '@/lib/registry/lookup'
 import { splitPromptAtPaywall } from '@/lib/registry/prompt-blocks'
@@ -48,6 +49,21 @@ function computeTitle(entry: ComponentEntry): string {
   return `${entry.name} - ${descriptor} React Component`
 }
 
+// A degraded lookup fails closed (treated as premium) so nothing ever claims
+// "Free and open source" over closed content.
+function classifyPremium(slug: string) {
+  const lookup = loadContentLookup()
+  const contentType = classifyContent(slug, lookup)
+  return {
+    contentType,
+    isPremium:
+      lookup.degraded === true ||
+      contentType === 'premium-standalone' ||
+      contentType === 'design-system' ||
+      contentType === 'template',
+  }
+}
+
 function computeMetaDescription(entry: ComponentEntry, isPremium: boolean): string {
   const max = 150
   const base = entry.description.length > max
@@ -73,16 +89,7 @@ export async function generateMetadata({
 
   const accentTag = entry.tags.find((t) => t.accent)
   const category = accentTag?.label ?? 'Component'
-  // Mirror the page-level isPremium classification so the meta never claims
-  // "Free and open source" on premium (closed-source) content. A degraded
-  // lookup fails closed (treated as premium) so we never overclaim.
-  const lookup = loadContentLookup()
-  const contentType = classifyContent(slug, lookup)
-  const isPremium =
-    lookup.degraded === true ||
-    contentType === 'premium-standalone' ||
-    contentType === 'design-system' ||
-    contentType === 'template'
+  const { isPremium } = classifyPremium(slug)
   const title = computeTitle(entry)
   const description = computeMetaDescription(entry, isPremium)
   const url = `${SITE_URL}/components/${slug}`
@@ -233,13 +240,7 @@ export default async function Page({
   // premium; free content keeps today's behaviour (everything ships in
   // permissive mode for SEO). A degraded lookup (missing manifest) withholds
   // for everything, to fail closed rather than risk a leak.
-  const lookup = loadContentLookup()
-  const contentType = classifyContent(slug, lookup)
-  const isPremium =
-    lookup.degraded === true ||
-    contentType === 'premium-standalone' ||
-    contentType === 'design-system' ||
-    contentType === 'template'
+  const { contentType, isPremium } = classifyPremium(slug)
   const withholdSource = isPremium || enforcing
 
   // ── Prompt gate ──────────────────────────────────────────────────────────
@@ -336,15 +337,11 @@ export default async function Page({
     },
   }
 
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-      { '@type': 'ListItem', position: 2, name: 'Components & Blocks', item: `${SITE_URL}/components` },
-      { '@type': 'ListItem', position: 3, name: entry.name, item: url },
-    ],
-  }
+  const breadcrumbSchema = buildBreadcrumbJsonLd([
+    { name: 'Home', item: SITE_URL },
+    { name: 'Components & Blocks', item: `${SITE_URL}/components` },
+    { name: entry.name, item: url },
+  ])
 
   return (
     <>

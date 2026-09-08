@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { CaretRight, ArrowRight } from '@phosphor-icons/react'
-import { buttonClasses } from '../components/Button'
+import { buttonClasses } from '../components/buttonClasses'
 import { SiteFooter } from '../components/SiteFooter'
 import { HeaderSocials } from '../components/HeaderSocials'
 
