@@ -279,7 +279,7 @@ export function AndromedaComponentView({
       </div>
 
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
-      <div ref={mainCardRef} className="overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
+      <div ref={mainCardRef} className="overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
         {/* Tab bar */}
         <div className="flex items-center justify-between border-b border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           <div className="flex items-center gap-0.5">
