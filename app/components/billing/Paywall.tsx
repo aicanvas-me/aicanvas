@@ -53,8 +53,10 @@ export function Paywall({
   subtitle?: string
   /**
    * 'dark' (default) keeps the wall a dark slab in both site themes - right
-   * for the Code tab, which renders dark either way. 'themed' follows the
-   * site theme - right for the remix panel, whose surface is themed.
+   * for a surface that is dark either way. 'themed' fades into the surface it
+   * was dropped on: that surface names its own colour, both halves, in
+   * --paywall-surface. A themed caller that names nothing gets the remix
+   * panel's ground, which is what every themed caller sat on before.
    */
   appearance?: 'dark' | 'themed'
 }) {
@@ -67,10 +69,15 @@ export function Paywall({
 
   // No ground of its own: the teaser shows the surrounding slab at the top and
   // the overlay gradient fades it out, so the wall blends in instead of
-  // starting on a hard edge.
+  // starting on a hard edge. A themed wall fades to the surface it actually
+  // sits on rather than a fixed grey, because those surfaces differ - the code
+  // panel is near-white, the remix panel a step darker - and a fade to the
+  // wrong one reads as a band across the panel. The surface names its colour
+  // in --paywall-surface; --paywall-fallback is the remix panel's ground, kept
+  // as the default so a caller that names nothing looks exactly as it did.
   const themed = appearance === 'themed'
   const overlay = themed
-    ? 'bg-gradient-to-b from-sand-300/0 via-sand-300/85 to-sand-300 dark:from-sand-950/0 dark:via-sand-950/85 dark:to-sand-950'
+    ? '[--paywall-fallback:var(--color-sand-300)] dark:[--paywall-fallback:var(--color-sand-950)] bg-gradient-to-b from-[var(--paywall-surface,var(--paywall-fallback))]/0 via-[var(--paywall-surface,var(--paywall-fallback))]/85 to-[var(--paywall-surface,var(--paywall-fallback))]'
     : 'bg-gradient-to-b from-sand-950/0 via-sand-950/85 to-sand-950'
   const chip = themed
     ? 'border-sand-400 bg-sand-200 dark:border-sand-800 dark:bg-sand-900'
