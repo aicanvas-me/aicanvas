@@ -17,9 +17,7 @@ import { DevBranchBadge } from './components/DevBranchBadge'
 import { PageEnterFade } from './components/PageEnterFade'
 import { SiteBeacon } from './components/SiteBeacon'
 import { PaddlePaymentLink } from './components/billing/PaddlePaymentLink'
-// Registry-free nav counts (generated) — keeps the heavy component-registry,
-// and the three.js/matter-js it references, out of the shared client bundle.
-import { CATEGORY_COUNTS, TOTAL_COMPONENTS } from './lib/component-nav.generated'
+import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
 import { GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
 
@@ -245,12 +243,12 @@ export default async function RootLayout({
               {/* Desktop sidebar — hidden on mobile */}
               <Suspense fallback={null}>
                 <div className="hidden md:flex">
-                  <Sidebar promoteDS counts={CATEGORY_COUNTS} total={TOTAL_COMPONENTS} />
+                  <Sidebar promoteDS />
                 </div>
               </Suspense>
               {/* Mobile nav — visible only below md */}
               <Suspense fallback={null}>
-                <MobileNav promoteDS counts={CATEGORY_COUNTS} total={TOTAL_COMPONENTS} />
+                <MobileNav promoteDS />
               </Suspense>
               {/* Content area scrolls independently of the sidebar.
                   .app-scroll-column (globals.css) reserves the scrollbar

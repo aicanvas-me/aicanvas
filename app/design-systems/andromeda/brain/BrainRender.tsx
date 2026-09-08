@@ -7,11 +7,9 @@ import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 const MODEL_URL = '/models/brain.glb'
 
-// The four brain sections and their colours. The colours are baked into the
-// wireframe as per-vertex colours (blended by region, so the wires shade from
-// one into the next); the labels sit together in a fixed legend, not floating
-// on the brain.
-// Light takes the same hues a few stops deeper so the hairlines hold on a
+// The four brain sections and their colours, baked into the wireframe as
+// per-vertex colours blended by region, so the wires shade from one into the
+// next. Light takes the same hues a few stops deeper so the hairlines hold on a
 // pale ground. Kept in step with BrainStoryV4's SECTION_ZONES.
 const ZONES: { label: string; dir: [number, number, number]; hex: Record<Theme, string> }[] = [
   { label: 'Index', dir: [0.2, 0.9, 0.35], hex: { dark: '#a78bfa', light: '#7c3aed' } }, // purple
@@ -20,13 +18,12 @@ const ZONES: { label: string; dir: [number, number, number]; hex: Record<Theme, 
   { label: 'Skills', dir: [0.0, -0.7, 0.7], hex: { dark: '#a3e635', light: '#65a30d' } }, // lime
 ]
 
-// Wireframe brain for the reader's Brain Index landing: a multi-colour wireframe
-// (the four section colours blended across the wires) tumbling on a tilted axis.
-// Client-only Three.js; the reader only mounts for premium users.
+// Wireframe brain for the reader's Brain Index landing, tumbling on a tilted
+// axis. Client-only Three.js; the reader only mounts for premium users.
 export function BrainRender({ height = 400 }: { height?: number }) {
   const hostRef = useRef<HTMLDivElement>(null)
-  // ponytail: a theme switch rebuilds the scene (the model comes from cache);
-  // repainting in place is the ceiling, and this view sits behind the paywall.
+  // A theme switch rebuilds the scene (the model comes from cache); repainting in
+  // place is the ceiling, and this view sits behind the paywall.
   const { theme } = useTheme()
 
   useEffect(() => {
@@ -159,7 +156,6 @@ export function BrainRender({ height = 400 }: { height?: number }) {
   return (
     <div style={{ position: 'relative', width: '100%', height, pointerEvents: 'none' }} aria-hidden>
       <div ref={hostRef} style={{ width: '100%', height }} />
-      {/* Fixed legend — one place, colour + section. */}
       <div
         style={{
           position: 'absolute',

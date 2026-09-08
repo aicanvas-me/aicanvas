@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { CONTACT_INBOX, CONTACT_FROM } from '@/app/lib/config'
 import { ipFromHeaders } from '@/app/lib/quota'
+import { rateLimiter } from '@/app/lib/rate-limit'
 import { emailShell, emailText, escapeHtml } from '@/app/lib/email/shell'
-import { createClient } from '@/app/lib/supabase/server'
+import { sessionUser } from '@/app/lib/require-user'
 
 export const runtime = 'nodejs'
 
@@ -48,24 +49,7 @@ const CATEGORY_LABEL: Record<Category, string> = {
   other: 'Something else',
 }
 
-// Best-effort, per-instance rate limit (mirrors app/api/contact).
-const WINDOW_MS = 10 * 60 * 1000
-const MAX_PER_WINDOW = 4
-const hits = new Map<string, number[]>()
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now()
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS)
-  recent.push(now)
-  hits.set(ip, recent)
-  // Opportunistic cleanup so the Map doesn't grow without bound.
-  if (hits.size > 5000) {
-    for (const [k, v] of hits) {
-      if (v.every((t) => now - t >= WINDOW_MS)) hits.delete(k)
-    }
-  }
-  return recent.length > MAX_PER_WINDOW
-}
+const rateLimited = rateLimiter(4)
 
 /** Trim, coerce to string, and cap length. Guards every free-text field. */
 function field(v: unknown, max: number): string {
@@ -178,9 +162,8 @@ export async function POST(req: NextRequest) {
   // Signed-in identity, if any. Best-effort by design: a feedback submission must
   // never fail because the auth lookup hiccuped.
   try {
-    const supabase = await createClient()
-    const { data } = await supabase.auth.getUser()
-    context.push(`Account: ${data.user?.email ?? 'not signed in'}`)
+    const { user } = await sessionUser()
+    context.push(`Account: ${user?.email ?? 'not signed in'}`)
   } catch {
     context.push('Account: lookup failed')
   }

@@ -1,12 +1,13 @@
 'use client'
 
-import { useEffect, useId, useState } from 'react'
+import { useId, useState } from 'react'
 import Link from 'next/link'
 import { CheckCircle, Lightning, Lock } from '@phosphor-icons/react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { buttonClasses } from '../Button'
+import { buttonClasses } from '../buttonClasses'
 import { TerminatorCool, TerminatorSkull } from '../auth/TerminatorReveal'
 import { useSession } from '../auth/SessionProvider'
+import { usePremiumStatus } from './usePremiumStatus'
 import { UpgradeButton } from './UpgradeButton'
 
 // Single source of truth for the Free / Premium cards. Rendered full-size on
@@ -64,21 +65,9 @@ export function PremiumCards({
   // shows how low the effective monthly cost is. Only shown on the yearly cycle.
   const perMonthHint = cycle === 'yearly' ? '$4.17/mo' : null
 
-  // Reflect the real subscription so a premium user isn't pitched "Go Premium".
-  // Tri-state: while 'unknown' (loading or backend error) render a neutral
-  // disabled CTA instead of flashing the wrong one. Signed-out derives to
-  // 'not-premium' at render time.
-  const [fetchedState, setFetchedState] = useState<'unknown' | 'premium' | 'not-premium'>('unknown')
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    fetch('/api/me/entitlement')
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d) => { if (!cancelled) setFetchedState(d?.tier === 'premium' ? 'premium' : 'not-premium') })
-      .catch(() => { if (!cancelled) setFetchedState('unknown') })
-    return () => { cancelled = true }
-  }, [user])
-  const premiumState: 'unknown' | 'premium' | 'not-premium' = user ? fetchedState : 'not-premium'
+  // Reflect the real subscription so a premium user isn't pitched "Go Premium";
+  // 'unknown' renders a neutral disabled CTA instead of flashing the wrong one.
+  const premiumState = usePremiumStatus()
 
   const showFree = show === 'both'
   const iconBox = compact ? 'h-12 w-12' : 'h-16 w-16'

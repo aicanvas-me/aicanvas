@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Check, Copy, DownloadSimple, Terminal } from '@phosphor-icons/react'
 import { zipSync, strToU8 } from 'fflate'
 import { Button } from '../../../components/Button'
 import { BrainRender } from './BrainRender'
+import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useCopied } from '@/app/components/useCopied'
 
 // AI Canvas site tokens: sand neutrals + olive accent, Manrope UI + Geist mono for code.
@@ -307,11 +308,10 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
       if (!target) return
       e.preventDefault()
       const rel = target.getAttribute('data-brain-file') ?? ''
-      const found = files.find((f) => {
-        const parts = f.path.split('/')
+      const found = files.find((f) =>
         // Match by the tail segments in the href (e.g. "foundations/build-workflow.md")
-        return f.path.endsWith(rel.replace(/^\.\.\//, '').replace(/^\.\//, ''))
-      })
+        f.path.endsWith(rel.replace(/^\.\.\//, '').replace(/^\.\//, '')),
+      )
       if (found) setActiveFile(found)
     },
     [files],
@@ -558,23 +558,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
 // update (a no-op on first run, an in-place refresh on re-runs — without it the
 // CLI prompts per existing file).
 function useBrainInstallCommand() {
-  const [token, setToken] = useState<string | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [])
+  const token = useInstallToken()
   const reference = token
     ? `"https://aicanvas.me/r/andromeda-brain.json?token=${token}"`
     : '@aicanvas/andromeda-brain'

@@ -1,7 +1,7 @@
 'use client'
 
 import { Moon, Sun } from '@phosphor-icons/react'
-import { buttonClasses } from './Button'
+import { buttonClasses } from './buttonClasses'
 import { useTheme } from './ThemeProvider'
 
 /**

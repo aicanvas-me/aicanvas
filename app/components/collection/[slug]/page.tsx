@@ -10,6 +10,7 @@ import {
 } from '../../../lib/collections'
 import { SITE_URL } from '../../../lib/config'
 import { buildItemListJsonLd } from '../../../lib/jsonld'
+import { buildBreadcrumbJsonLd, pageMetadata } from '../../../lib/page-metadata'
 
 export function generateStaticParams() {
   return COLLECTIONS.map((c) => ({ slug: c.slug }))
@@ -26,33 +27,13 @@ export async function generateMetadata({
   const collection = getCollectionBySlug(slug)
   if (!collection) return {}
 
-  const url = `${SITE_URL}/components/collection/${collection.slug}`
-
-  return {
+  return pageMetadata({
     title: { absolute: collection.title },
+    social: collection.title,
     description: collection.description,
-    alternates: { canonical: url },
-    openGraph: {
-      title: collection.title,
-      description: collection.description,
-      url,
-      type: 'website',
-      images: [
-        {
-          url: '/og-aug2026-aicanvas.me.png',
-          width: 2400,
-          height: 1260,
-          alt: `AI Canvas: ${collection.h1}`,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: collection.title,
-      description: collection.description,
-      images: ['/og-aug2026-aicanvas.me.png'],
-    },
-  }
+    url: `${SITE_URL}/components/collection/${collection.slug}`,
+    imageAlt: `AI Canvas: ${collection.h1}`,
+  })
 }
 
 export default async function CollectionPage({
@@ -70,24 +51,10 @@ export default async function CollectionPage({
 
   const url = `${SITE_URL}/components/collection/${collection.slug}`
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Components & Blocks',
-        item: `${SITE_URL}/components`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: collection.h1,
-        item: url,
-      },
-    ],
-  }
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Components & Blocks', item: `${SITE_URL}/components` },
+    { name: collection.h1, item: url },
+  ])
 
   const itemListJsonLd = buildItemListJsonLd({
     name: collection.h1,

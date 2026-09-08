@@ -30,10 +30,7 @@ import { HeaderSocials } from '../components/HeaderSocials'
 //
 // Deep links preset the form: /feedback?type=bug&from=scroll-wipe-gallery
 //
-// Follows the site theme like every other long-form page. It used to be dark
-// only, which cost nothing back when the site had no light mode to follow, and
-// it also pinned the scroll parent dark from JS. Both are gone. The footer lives
-// INSIDE <main> so its edges line up with content.
+// The footer lives INSIDE <main> so its edges line up with content.
 
 const INPUT_CLASS =
   'w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 md:text-sm'

@@ -3,15 +3,11 @@
 import { useCallback, useState } from 'react'
 
 /**
- * Write `text` to the clipboard, resolving to whether it worked. Never rejects.
- *
- * Copy buttons route through here. A bare
- * `navigator.clipboard.writeText(...)` left unawaited is a floating promise,
- * and the browser refuses the write more often than it looks: no permission,
- * the document not focused, a non-secure context. That refusal surfaces as an
- * unhandled rejection carrying a message the browser wrote rather than one of
- * ours, which is indistinguishable from third-party extension noise by the time
- * it reaches the error beacon.
+ * Write `text` to the clipboard, resolving to whether it worked. Never rejects:
+ * the browser refuses the write more often than it looks (no permission, the
+ * document not focused, a non-secure context), and an unawaited call surfaces
+ * that as an unhandled rejection indistinguishable from extension noise by the
+ * time it reaches the error beacon.
  */
 export async function copyText(text: string): Promise<boolean> {
   try {
@@ -23,9 +19,8 @@ export async function copyText(text: string): Promise<boolean> {
 }
 
 /**
- * Copy `text` to the clipboard and report "copied" for a moment, the pattern
- * every copy button on the site follows. `reset` clears the state early, for
- * example when the surrounding menu closes.
+ * Copy `text` and report "copied" for a moment, the pattern every copy button on
+ * the site follows. `reset` clears the state early, e.g. when a menu closes.
  */
 export function useCopied(text: string, ms = 2000) {
   const [copied, setCopied] = useState(false)

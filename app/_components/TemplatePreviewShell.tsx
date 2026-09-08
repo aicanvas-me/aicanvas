@@ -14,12 +14,13 @@ import {
   Monitor,
   Terminal,
 } from '@phosphor-icons/react'
-import { useSession } from '../components/auth/SessionProvider'
+import { useInstallToken } from '../_lib/useInstallToken'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { ThemeToggle } from '../components/ThemeToggle'
-import { Button, buttonClasses } from '../components/Button'
+import { Button } from '../components/Button'
+import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
 import dynamic from 'next/dynamic'
@@ -663,7 +664,6 @@ function InstallButton({
   systemName: string
   description?: string[]
 }) {
-  const { user } = useSession()
   const { open: openPaywall } = usePaywallModal()
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -672,26 +672,7 @@ function InstallButton({
   // Tokenized install for signed-in users so the registry attributes the pull
   // to the account (templates are premium — a plain command would 402). The
   // token is masked on screen; copy writes the real one.
-  const [fetchedToken, setFetchedToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setFetchedToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [user])
-
-  const userToken = user ? fetchedToken : null
+  const userToken = useInstallToken()
   const installReference = userToken
     ? `"https://aicanvas.me/r/${templateSlug}.json?token=${userToken}"`
     : `@aicanvas/${templateSlug}`

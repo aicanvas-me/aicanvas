@@ -1,73 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-
-/**
- * TS twin of `scripts/lib/copy-paste-transform.mjs#transformRootHeightClass`.
- * Must stay in sync — this validator compares JSON content against source
- * with the SAME transform applied. See the .mjs file for full rationale.
- */
-function findJSXReturnContentStart(content: string, startPos: number): number {
-  const re = /return\s*\(/g
-  re.lastIndex = startPos
-  let match
-  while ((match = re.exec(content)) !== null) {
-    const afterParen = match.index + match[0].length
-    let i = afterParen
-    while (i < content.length) {
-      const ch = content[i]
-      if (/\s/.test(ch)) { i++; continue }
-      if (ch === '/' && content[i + 1] === '*') {
-        const end = content.indexOf('*/', i + 2)
-        if (end === -1) return -1
-        i = end + 2
-        continue
-      }
-      if (ch === '/' && content[i + 1] === '/') {
-        const end = content.indexOf('\n', i + 2)
-        if (end === -1) return -1
-        i = end + 1
-        continue
-      }
-      if (ch === '<') return afterParen
-      break
-    }
-  }
-  return -1
-}
-
-function transformRootHeightClass(content: string): string {
-  const exportMatch = content.match(/export\s+default\s+function/)
-  if (!exportMatch || exportMatch.index === undefined) return content
-
-  const exportPos = exportMatch.index
-  const returnEndPos = findJSXReturnContentStart(content, exportPos)
-  if (returnEndPos === -1) return content
-  const afterReturn = content.slice(returnEndPos)
-
-  const classNameRegex = /className\s*=\s*(["'])([^"']*?)\1/
-  const classNameMatch = afterReturn.match(classNameRegex)
-  if (!classNameMatch || classNameMatch.index === undefined) return content
-
-  const fullMatch = classNameMatch[0]
-  const quote = classNameMatch[1]
-  const classNameValue = classNameMatch[2]
-
-  if (!/\bh-full\b/.test(classNameValue)) return content
-
-  const transformedValue = classNameValue.replace(/\bh-full\b/g, 'min-h-screen')
-  if (transformedValue === classNameValue) return content
-
-  const transformedClassName = `className=${quote}${transformedValue}${quote}`
-
-  const matchAbsoluteStart = returnEndPos + classNameMatch.index
-  const matchAbsoluteEnd = matchAbsoluteStart + fullMatch.length
-
-  return (
-    content.slice(0, matchAbsoluteStart) +
-    transformedClassName +
-    content.slice(matchAbsoluteEnd)
-  )
-}
+import { transformRootHeightClass } from './lib/copy-paste-transform.mjs'
 
 interface ShadCNFile {
   target: string
@@ -94,7 +27,7 @@ async function validateRegistryJSON(slug: string): Promise<ValidationResult> {
   if (!fs.existsSync(jsonPath)) {
     return {
       success: false,
-      reason: `JSON file not found at public/r/${slug}.json. Did you run the registry build script after wiring the component?`,
+      reason: `JSON file not found at registry-data/${slug}.json. Did you run the registry build script after wiring the component?`,
     }
   }
 
@@ -106,7 +39,7 @@ async function validateRegistryJSON(slug: string): Promise<ValidationResult> {
   } catch (err) {
     return {
       success: false,
-      reason: `public/r/${slug}.json is invalid JSON: ${err instanceof Error ? err.message : String(err)}`,
+      reason: `registry-data/${slug}.json is invalid JSON: ${err instanceof Error ? err.message : String(err)}`,
     }
   }
 
@@ -116,14 +49,14 @@ async function validateRegistryJSON(slug: string): Promise<ValidationResult> {
   if (missingFields.length > 0) {
     return {
       success: false,
-      reason: `public/r/${slug}.json is missing required shadcn fields: ${missingFields.join(', ')}`,
+      reason: `registry-data/${slug}.json is missing required shadcn fields: ${missingFields.join(', ')}`,
     }
   }
 
   if (!Array.isArray(json.files) || json.files.length === 0) {
     return {
       success: false,
-      reason: `public/r/${slug}.json must have at least one entry in the 'files' array`,
+      reason: `registry-data/${slug}.json must have at least one entry in the 'files' array`,
     }
   }
 
@@ -163,7 +96,7 @@ async function validateRegistryJSON(slug: string): Promise<ValidationResult> {
     const jsonLines = jsonContent.split('\n').length
     return {
       success: false,
-      reason: `Content parity mismatch: public/r/${slug}.json content (${jsonLines} lines) does not match components-workspace/${slug}/index.tsx (${sourceLines} lines). The component source may have changed after the registry build. Re-run the registry build script and verify the build completed without errors.`,
+      reason: `Content parity mismatch: registry-data/${slug}.json content (${jsonLines} lines) does not match components-workspace/${slug}/index.tsx (${sourceLines} lines). The component source may have changed after the registry build. Re-run the registry build script and verify the build completed without errors.`,
     }
   }
 

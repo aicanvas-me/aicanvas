@@ -1,13 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState, useTransition } from 'react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { ArrowElbowDownRight, CaretDown, ChatCircleText, DiamondsFour, EnvelopeSimple, Flask, GithubLogo, Info, MagnifyingGlass, PiggyBank, Plug, Question, X, XLogo } from '@phosphor-icons/react'
+import { useEffect, useState } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { ArrowElbowDownRight, CaretDown, DiamondsFour, GithubLogo, MagnifyingGlass, X, XLogo } from '@phosphor-icons/react'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import type { ReactNode } from 'react'
 import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
-import { buttonClasses } from './Button'
+import { buttonClasses } from './buttonClasses'
+import { SecondaryNav } from './SecondaryNav'
+import { useComponentSearch } from './useComponentSearch'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
 
 // ── Tier structure ────────────────────────────────────────────────────────
@@ -35,8 +37,6 @@ const SECTIONS: Section[] = [
 export function Sidebar({
   embedded = false,
   promoteDS = false,
-  counts,
-  total,
 }: {
   embedded?: boolean
   // promoteDS: the "promote the design system" landing behavior — caps the
@@ -44,12 +44,7 @@ export function Sidebar({
   // and auto-expands Andromeda's System/Brain/Templates. Off by default; flip it
   // on in the root layout + MobileNav to apply site-wide.
   promoteDS?: boolean
-  // Server-computed nav counts (passed by the layout) so this client component
-  // never imports the heavy COMPONENTS registry.
-  counts: Record<string, number>
-  total: number
 }) {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const isHome = pathname === '/components'
@@ -126,48 +121,7 @@ export function Sidebar({
     })
   }
 
-  // ── Search ──────────────────────────────────────────────────────────────
-  // Local state is the source of truth while typing; URL is written via a
-  // debounced effect so fast keystrokes can't fight themselves.
-  const urlQuery = searchParams.get('q') ?? ''
-  const [searchValue, setSearchValue] = useState(urlQuery)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const [, startTransition] = useTransition()
-
-  // Tracks the last value we pushed into the URL. When urlQuery matches, the
-  // change came from us — don't overwrite local state. When it doesn't match,
-  // it's an external change (back/forward, category click) — sync.
-  const lastPushed = useRef(urlQuery)
-
-  useEffect(() => {
-    // Never overwrite while the user is actively editing. Fast typing can put
-    // two debounced pushes in flight; if the older Transition commits after
-    // lastPushed advances to the newer value, a naive check would misread it
-    // as external and clobber the input ("last letter disappears, then
-    // reappears"). While focused, the input is the source of truth — any URL
-    // change is either our own push landing or will be reconciled on blur.
-    if (document.activeElement === searchInputRef.current) return
-    if (urlQuery === lastPushed.current) return
-    setSearchValue(urlQuery)
-    lastPushed.current = urlQuery
-  }, [urlQuery])
-
-  // Debounced write: local searchValue → URL.
-  useEffect(() => {
-    if (searchValue === urlQuery) return
-    const timer = setTimeout(() => {
-      lastPushed.current = searchValue
-      const params = new URLSearchParams(searchParams.toString())
-      if (searchValue) params.set('q', searchValue)
-      else params.delete('q')
-      const qs = params.toString()
-      startTransition(() => {
-        router.replace(qs ? `/components?${qs}` : '/components', { scroll: false })
-      })
-    }, 150)
-    return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue])
+  const { searchValue, setSearchValue, searchInputRef, clearSearch } = useComponentSearch()
 
   // ⌘K / Ctrl+K focuses the search input.
   useEffect(() => {
@@ -179,12 +133,7 @@ export function Sidebar({
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [])
-
-  const clearSearch = () => {
-    setSearchValue('')
-    searchInputRef.current?.focus()
-  }
+  }, [searchInputRef])
 
   if (hideSidebar) return null
 
@@ -391,75 +340,7 @@ export function Sidebar({
         {/* Inset divider (padded left/right via the container's px-3) */}
         <div className="mb-2 border-t border-sand-200 dark:border-sand-800" />
         <div className="space-y-0.5">
-          <Link
-            href="/lab"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname?.startsWith('/lab')
-                ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <Flask weight="regular" size={16} />
-            <span>Lab</span>
-          </Link>
-          <Link
-            href="/mcp"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname === '/mcp'
-                ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <Plug weight="regular" size={16} />
-            <span>Get MCP</span>
-          </Link>
-          <Link
-            href="/pricing"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname === '/pricing'
-                ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <PiggyBank weight="regular" size={16} />
-            <span>Pricing</span>
-          </Link>
-          <Link
-            href="/about"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname === '/about'
-                ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <Info weight="regular" size={16} />
-            <span>About</span>
-          </Link>
-          <Link
-            href="/faq"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname === '/faq'
-                ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <Question weight="regular" size={16} />
-            <span>FAQ</span>
-          </Link>
-          <Link
-            href="/contact"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-          >
-            <EnvelopeSimple weight="regular" size={16} />
-            <span>Contact</span>
-          </Link>
-          <Link
-            href="/feedback"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-          >
-            <ChatCircleText weight="regular" size={16} />
-            <span>Feedback</span>
-          </Link>
+          <SecondaryNav pathname={pathname} variant="rail" />
         </div>
       </div>
 

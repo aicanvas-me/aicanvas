@@ -1,4 +1,4 @@
-export interface PropRow {
+interface PropRow {
   name: string
   type: string
   optional: boolean

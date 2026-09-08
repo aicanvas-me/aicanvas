@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowRight, ImageSquare, Lightning, SealCheck } from '@phosphor-icons/react'
 import { track, type CardSource } from '../lib/analytics'
 import { optimizeImageKitUrl } from '../lib/imagekit'
-import { buttonClasses } from './Button'
+import { buttonClasses } from './buttonClasses'
 
 // ─── Types (also used by ComponentPageView + registry) ────────────────────────
 

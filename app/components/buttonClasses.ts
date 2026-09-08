@@ -2,8 +2,8 @@
 // Kept separate from Button.tsx (which is 'use client') so Server Components
 // can compute classNames for <a>/<Link> elements that look like buttons.
 
-export type ButtonVariant = 'primary' | 'accent' | 'outline' | 'icon' | 'link' | 'destructive'
-export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
+type ButtonVariant = 'primary' | 'accent' | 'outline' | 'icon' | 'link' | 'destructive'
+type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 export type ButtonOptions = {
   variant?: ButtonVariant

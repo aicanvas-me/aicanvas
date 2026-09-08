@@ -73,12 +73,6 @@ interface AuditFile {
   entries: AuditEntry[]
 }
 
-// Categories that gsc-submit.ts should target by default.
-export const SUBMITTABLE: ReadonlyArray<Category> = [
-  'Discovered, awaiting crawl',
-  'Unknown to Google',
-]
-
 // ─────────────────────────────────────────────────────────────────────
 // Sitemap fetch + parse
 // ─────────────────────────────────────────────────────────────────────
@@ -99,7 +93,7 @@ async function fetchSitemapUrls(siteUrl: string): Promise<{ sitemapUrl: string; 
 // ─────────────────────────────────────────────────────────────────────
 // Classification
 // ─────────────────────────────────────────────────────────────────────
-function classify(r: NonNullable<AuditEntry['verdict']> extends never ? never : AuditEntry): Category {
+function classify(r: AuditEntry): Category {
   // Defensive: if inspection itself failed
   if (r.error) return 'Inspection failed'
   const cov = (r.coverageState || '').toLowerCase()
