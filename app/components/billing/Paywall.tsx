@@ -50,8 +50,10 @@ export function Paywall({
   subtitle?: string
   /**
    * 'dark' (default) keeps the wall a dark slab in both site themes - right
-   * for the Code tab, which renders dark either way. 'themed' follows the
-   * site theme - right for the remix panel, whose surface is themed.
+   * for a surface that is dark either way. 'themed' fades into the surface it
+   * was dropped on: that surface names its own colour, both halves, in
+   * --paywall-surface. A themed caller that names nothing gets the remix
+   * panel's ground, which is what every themed caller sat on before.
    */
   appearance?: 'dark' | 'themed'
 }) {
@@ -64,15 +66,28 @@ export function Paywall({
 
   // No ground of its own: the teaser shows the surrounding slab at the top and
   // the overlay gradient fades it out, so the wall blends in instead of
-  // starting on a hard edge.
+  // starting on a hard edge. A themed wall fades to the surface it actually
+  // sits on rather than a fixed grey, because those surfaces differ - the code
+  // panel is near-white, the remix panel a step darker - and a fade to the
+  // wrong one reads as a band across the panel. The surface names its colour
+  // in --paywall-surface; --paywall-fallback is the remix panel's ground, kept
+  // as the default so a caller that names nothing looks exactly as it did.
   const themed = appearance === 'themed'
   const overlay = themed
-    ? 'bg-gradient-to-b from-sand-300/0 via-sand-300/85 to-sand-300 dark:from-sand-950/0 dark:via-sand-950/85 dark:to-sand-950'
+    ? '[--paywall-fallback:var(--color-sand-300)] dark:[--paywall-fallback:var(--color-sand-950)] bg-gradient-to-b from-[var(--paywall-surface,var(--paywall-fallback))]/0 via-[var(--paywall-surface,var(--paywall-fallback))]/85 to-[var(--paywall-surface,var(--paywall-fallback))]'
     : 'bg-gradient-to-b from-sand-950/0 via-sand-950/85 to-sand-950'
+  // The chip is a tint of the same ground, not a fixed grey, for the reason the
+  // fade is: a fixed fill flattens against a ground that matches it and floats
+  // against one that does not. 90% reads as the same slight step down on every
+  // themed ground, 62% gives the ring the separation border-sand-400 used to.
+  // Dark keeps its literals, so it cannot move.
   const chip = themed
-    ? 'border-sand-400 bg-sand-200 dark:border-sand-800 dark:bg-sand-900'
+    ? 'border-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_62%,#000)] bg-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_90%,#000)] dark:border-sand-800 dark:bg-sand-900'
     : 'border-sand-800 bg-sand-900'
-  const lockIcon = themed ? 'text-olive-600 dark:text-olive-400' : 'text-olive-400'
+  // Stepping the fill down costs the glyph contrast, so it steps down with it:
+  // olive-600 fell to 1.6-2.5:1 on the new fills, olive-700 clears 3:1 on all
+  // three themed grounds.
+  const lockIcon = themed ? 'text-olive-700 dark:text-olive-400' : 'text-olive-400'
   const heading = themed ? 'text-sand-900 dark:text-sand-50' : 'text-sand-50'
   const sub = themed ? 'text-sand-600 dark:text-sand-400' : 'text-sand-400'
   const login = themed

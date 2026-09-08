@@ -617,22 +617,24 @@ export default function ComponentPageView({
               {/* Preview / Code tabs */}
               <div className="flex items-center gap-0.5">
                 <button
+                  type="button"
                   onClick={() => setActiveTab('preview')}
                   className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'preview'
-                      ? 'bg-sand-50 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                      ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                      : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
                   <Eye weight="regular" size={15} />
                   Preview
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveTab('code')}
                   className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'code'
-                      ? 'bg-sand-50 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                      ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                      : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
                   <Code weight="regular" size={15} />
@@ -807,10 +809,9 @@ export default function ComponentPageView({
                 initial={false}
                 animate={{ opacity: activeTab === 'code' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
-                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-950 p-5"
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 transition-colors duration-300 [--paywall-surface:var(--color-sand-50)] [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)] dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
-                  scrollbarColor: '#4A453F transparent',
                   pointerEvents: activeTab === 'code' ? 'auto' : 'none',
                 }}
                 aria-hidden={activeTab !== 'code'}
@@ -819,17 +820,17 @@ export default function ComponentPageView({
                   // Real gating (Plan 3): source fetched on demand from the
                   // gated endpoint. 402 -> paywall; otherwise plain source.
                   codeState.status === 'locked' ? (
-                    <Paywall name={name} />
+                    <Paywall name={name} appearance="themed" />
                   ) : codeState.status === 'ready' ? (
                     codeState.highlighted ? (
                       <HighlightedCodeView html={codeState.highlighted} />
                     ) : (
-                      <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-sand-200">
+                      <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-sand-800 dark:text-sand-200">
                         {codeState.code}
                       </pre>
                     )
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-sand-500">
+                    <div className="flex h-full items-center justify-center text-sm text-sand-600 dark:text-sand-500">
                       Loading source…
                     </div>
                   )
@@ -837,7 +838,7 @@ export default function ComponentPageView({
                   // Not enforcing: source is server-rendered (SEO preserved).
                   // Plan 0's stub paywall previews states in dev when the
                   // premium flag is on; otherwise it is always null.
-                  paywallReason ? <Paywall name={name} /> : highlightedCode
+                  paywallReason ? <Paywall name={name} appearance="themed" /> : highlightedCode
                 )}
               </motion.div>
             </div>
@@ -923,7 +924,7 @@ export default function ComponentPageView({
                     className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                       installTab === 'cli'
                         ? 'text-sand-900 dark:text-sand-50'
-                        : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                        : 'text-sand-600 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                     }`}
                   >
                     CLI
@@ -939,7 +940,7 @@ export default function ComponentPageView({
                     className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                       installTab === 'manual'
                         ? 'text-sand-900 dark:text-sand-50'
-                        : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                        : 'text-sand-600 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                     }`}
                   >
                     Manual

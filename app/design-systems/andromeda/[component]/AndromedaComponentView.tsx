@@ -164,6 +164,11 @@ export function AndromedaComponentView({
     codeState.status === 'locked' ? (
       <Paywall
         name={name}
+        // Both grounds this pane renders on are light-aware, so the wall follows
+        // them rather than staying a dark slab. Each of the two wrappers names
+        // its own colour in --paywall-surface and this inherits whichever one it
+        // landed inside.
+        appearance="themed"
         // Remix with AI is deliberately not offered on system components (see
         // the note further down), so the default sub-copy would promise a
         // prompt this page does not have.
@@ -251,9 +256,9 @@ export function AndromedaComponentView({
       </div>
 
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
-      <div ref={mainCardRef} className="overflow-hidden rounded-2xl border border-sand-300 bg-sand-50 dark:border-sand-800 dark:bg-sand-900">
+      <div ref={mainCardRef} className="overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
         {/* Tab bar */}
-        <div className="flex items-center justify-between border-b border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-between border-b border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           <div className="flex items-center gap-0.5">
             <button
               type="button"
@@ -261,7 +266,7 @@ export function AndromedaComponentView({
               className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'preview'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                  : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                  : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
               <Eye weight="regular" size={15} />
@@ -273,7 +278,7 @@ export function AndromedaComponentView({
               className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'code'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                  : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                  : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
               <Code weight="regular" size={15} />
@@ -299,16 +304,19 @@ export function AndromedaComponentView({
         <div className="relative isolate min-h-[420px]">
           {tab === 'preview' ? (
             <div
-              className="flex min-h-[420px] items-center justify-center overflow-auto p-8 sm:p-12"
-              style={{ backgroundColor: themeColor.surface.base }}
+              className="flex min-h-[420px] items-center justify-center overflow-auto bg-sand-50 p-8 dark:bg-sand-950 sm:p-12"
             >
               {!fullscreen && <AndromedaDemo slug={slug} />}
             </div>
           ) : (
             <div
-              className="min-h-[420px] overflow-auto p-5"
+              // One source, not two copies of one value: the pane PAINTS
+              // --paywall-surface and the wall inside fades to that same
+              // variable, so the ground and the wall on it cannot drift apart.
+              className="min-h-[420px] overflow-auto p-5 [--paywall-surface:var(--color-sand-50)] dark:[--paywall-surface:var(--color-sand-950)]"
               style={{
-                backgroundColor: themeColor.surface.base,
+                // Fallback so a dropped class can never paint transparent.
+                backgroundColor: 'var(--paywall-surface, var(--color-sand-50))',
                 maxHeight: '70vh',
                 scrollbarWidth: 'thin',
               }}
@@ -322,7 +330,7 @@ export function AndromedaComponentView({
             Remix with AI deliberately omitted because mutating a system
             component breaks the system contract. Users compose AT the
             system level, not per-component. */}
-        <div className="flex items-center justify-end gap-2 border-t border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           {/* Save — signed out, opens the same soft-gate modal as Copy CLI.
               Keyed on the REGISTRY slug (not the page slug) so the Button
               override (andromeda-button-system) can't collide with the free
@@ -468,7 +476,7 @@ export function AndromedaComponentView({
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Copy and paste the following code into your project:
                   </p>
-                  <div className="relative rounded-lg bg-sand-200 dark:bg-sand-950">
+                  <div className="relative rounded-lg bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
                     <div className="flex items-center justify-between border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                         {name}.tsx
