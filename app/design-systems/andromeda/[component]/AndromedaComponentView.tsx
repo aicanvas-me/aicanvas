@@ -289,7 +289,7 @@ export function AndromedaComponentView({
               className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'preview'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                  : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                  : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
               <Eye weight="regular" size={15} />
@@ -301,7 +301,7 @@ export function AndromedaComponentView({
               className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'code'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                  : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                  : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
               <Code weight="regular" size={15} />

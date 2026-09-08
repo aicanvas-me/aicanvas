@@ -621,22 +621,24 @@ export default function ComponentPageView({
               {/* Preview / Code tabs */}
               <div className="flex items-center gap-0.5">
                 <button
+                  type="button"
                   onClick={() => setActiveTab('preview')}
                   className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'preview'
-                      ? 'bg-sand-50 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                      ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                      : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
                   <Eye weight="regular" size={15} />
                   Preview
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveTab('code')}
                   className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'code'
-                      ? 'bg-sand-50 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                      ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                      : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
                   <Code weight="regular" size={15} />
