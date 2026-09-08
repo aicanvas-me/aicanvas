@@ -809,7 +809,7 @@ export default function ComponentPageView({
                 initial={false}
                 animate={{ opacity: activeTab === 'code' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
-                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 transition-colors duration-300 [--paywall-surface:var(--color-sand-50)] [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)] dark:[scrollbar-color:#4A453F_transparent]"
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 [--paywall-surface:var(--color-sand-50)] [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)] dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
                   pointerEvents: activeTab === 'code' ? 'auto' : 'none',
