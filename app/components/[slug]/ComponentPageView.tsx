@@ -811,7 +811,7 @@ export default function ComponentPageView({
                 initial={false}
                 animate={{ opacity: activeTab === 'code' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
-                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-100 p-5 [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[scrollbar-color:#4A453F_transparent]"
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
                   pointerEvents: activeTab === 'code' ? 'auto' : 'none',
@@ -822,7 +822,7 @@ export default function ComponentPageView({
                   // Real gating (Plan 3): source fetched on demand from the
                   // gated endpoint. 402 -> paywall; otherwise plain source.
                   codeState.status === 'locked' ? (
-                    <Paywall reason={codeState.reason} limit={codeState.limit} name={name} />
+                    <Paywall reason={codeState.reason} limit={codeState.limit} name={name} appearance="themed" />
                   ) : codeState.status === 'ready' ? (
                     codeState.highlighted ? (
                       <HighlightedCodeView html={codeState.highlighted} />
@@ -840,7 +840,7 @@ export default function ComponentPageView({
                   // Not enforcing: source is server-rendered (SEO preserved).
                   // Plan 0's stub paywall previews states in dev when the
                   // premium flag is on; otherwise it is always null.
-                  paywallReason ? <Paywall reason={paywallReason} name={name} /> : highlightedCode
+                  paywallReason ? <Paywall reason={paywallReason} name={name} appearance="themed" /> : highlightedCode
                 )}
               </motion.div>
             </div>
