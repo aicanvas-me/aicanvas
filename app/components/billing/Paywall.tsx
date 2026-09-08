@@ -79,10 +79,18 @@ export function Paywall({
   const overlay = themed
     ? '[--paywall-fallback:var(--color-sand-300)] dark:[--paywall-fallback:var(--color-sand-950)] bg-gradient-to-b from-[var(--paywall-surface,var(--paywall-fallback))]/0 via-[var(--paywall-surface,var(--paywall-fallback))]/85 to-[var(--paywall-surface,var(--paywall-fallback))]'
     : 'bg-gradient-to-b from-sand-950/0 via-sand-950/85 to-sand-950'
+  // The chip is a tint of the same ground, not a fixed grey, for the reason the
+  // fade is: a fixed fill flattens against a ground that matches it and floats
+  // against one that does not. 90% reads as the same slight step down on every
+  // themed ground, 62% gives the ring the separation border-sand-400 used to.
+  // Dark keeps its literals, so it cannot move.
   const chip = themed
-    ? 'border-sand-400 bg-sand-200 dark:border-sand-800 dark:bg-sand-900'
+    ? 'border-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_62%,#000)] bg-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_90%,#000)] dark:border-sand-800 dark:bg-sand-900'
     : 'border-sand-800 bg-sand-900'
-  const lockIcon = themed ? 'text-olive-600 dark:text-olive-400' : 'text-olive-400'
+  // Stepping the fill down costs the glyph contrast, so it steps down with it:
+  // olive-600 fell to 1.6-2.5:1 on the new fills, olive-700 clears 3:1 on all
+  // three themed grounds.
+  const lockIcon = themed ? 'text-olive-700 dark:text-olive-400' : 'text-olive-400'
   const heading = themed ? 'text-sand-900 dark:text-sand-50' : 'text-sand-50'
   const sub = themed ? 'text-sand-600 dark:text-sand-400' : 'text-sand-400'
   const login = themed
