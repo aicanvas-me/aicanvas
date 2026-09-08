@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -327,22 +327,21 @@ export function AndromedaComponentView({
         <div className="relative isolate min-h-[420px]">
           {tab === 'preview' ? (
             <div
-              className="flex min-h-[420px] items-center justify-center overflow-auto p-8 sm:p-12"
-              style={{ backgroundColor: themeColor.surface.base }}
+              className="flex min-h-[420px] items-center justify-center overflow-auto bg-sand-50 p-8 dark:bg-sand-950 sm:p-12"
             >
               {!fullscreen && <AndromedaDemo slug={slug} />}
             </div>
           ) : (
             <div
-              className="min-h-[420px] overflow-auto p-5"
-              // The paywall fades to this exact ground. Read from the same
-              // themeColor value as the background so the two cannot drift.
+              // One source, not two copies of one value: the pane PAINTS
+              // --paywall-surface and the wall inside fades to that same
+              // variable, so the ground and the wall on it cannot drift apart.
+              className="min-h-[420px] overflow-auto p-5 [--paywall-surface:var(--color-sand-50)] dark:[--paywall-surface:var(--color-sand-950)]"
               style={{
-                backgroundColor: themeColor.surface.base,
-                '--paywall-surface': themeColor.surface.base,
+                backgroundColor: 'var(--paywall-surface)',
                 maxHeight: '70vh',
                 scrollbarWidth: 'thin',
-              } as CSSProperties}
+              }}
             >
               {renderCodePane()}
             </div>
