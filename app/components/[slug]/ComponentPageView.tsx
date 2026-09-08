@@ -929,7 +929,7 @@ export default function ComponentPageView({
                     className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                       installTab === 'cli'
                         ? 'text-sand-900 dark:text-sand-50'
-                        : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                        : 'text-sand-600 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                     }`}
                   >
                     CLI
@@ -945,7 +945,7 @@ export default function ComponentPageView({
                     className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                       installTab === 'manual'
                         ? 'text-sand-900 dark:text-sand-50'
-                        : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                        : 'text-sand-600 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                     }`}
                   >
                     Manual
