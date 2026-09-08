@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -187,6 +187,11 @@ export function AndromedaComponentView({
         reason={codeState.reason}
         limit={codeState.limit}
         name={name}
+        // Both grounds this pane renders on are light-aware, so the wall follows
+        // them rather than staying a dark slab. Each of the two wrappers names
+        // its own colour in --paywall-surface and this inherits whichever one it
+        // landed inside.
+        appearance="themed"
         // Remix with AI is deliberately not offered on system components (see
         // the note further down), so the default sub-copy would promise a
         // prompt this page does not have.
@@ -330,11 +335,14 @@ export function AndromedaComponentView({
           ) : (
             <div
               className="min-h-[420px] overflow-auto p-5"
+              // The paywall fades to this exact ground. Read from the same
+              // themeColor value as the background so the two cannot drift.
               style={{
                 backgroundColor: themeColor.surface.base,
+                '--paywall-surface': themeColor.surface.base,
                 maxHeight: '70vh',
                 scrollbarWidth: 'thin',
-              }}
+              } as CSSProperties}
             >
               {renderCodePane()}
             </div>
@@ -491,7 +499,7 @@ export function AndromedaComponentView({
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Copy and paste the following code into your project:
                   </p>
-                  <div className="relative rounded-lg bg-sand-200 dark:bg-sand-950">
+                  <div className="relative rounded-lg bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
                     <div className="flex items-center justify-between border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                         {name}.tsx
