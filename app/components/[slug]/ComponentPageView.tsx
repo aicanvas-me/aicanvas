@@ -811,10 +811,9 @@ export default function ComponentPageView({
                 initial={false}
                 animate={{ opacity: activeTab === 'code' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
-                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-950 p-5"
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-100 p-5 [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
-                  scrollbarColor: '#4A453F transparent',
                   pointerEvents: activeTab === 'code' ? 'auto' : 'none',
                 }}
                 aria-hidden={activeTab !== 'code'}
@@ -828,12 +827,12 @@ export default function ComponentPageView({
                     codeState.highlighted ? (
                       <HighlightedCodeView html={codeState.highlighted} />
                     ) : (
-                      <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-sand-200">
+                      <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-sand-800 dark:text-sand-200">
                         {codeState.code}
                       </pre>
                     )
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-sand-500">
+                    <div className="flex h-full items-center justify-center text-sm text-sand-600 dark:text-sand-500">
                       Loading source…
                     </div>
                   )
