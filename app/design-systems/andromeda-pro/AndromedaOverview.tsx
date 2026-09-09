@@ -22,37 +22,44 @@ import { SiteFooter } from '../../components/SiteFooter'
 import { optimizeImageKitUrl } from '../../lib/imagekit'
 import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda-pro/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
-import { FoundationLoop } from '../../_components/FoundationLoop'
+import { FoundationLoopPro } from '../../_components/FoundationLoopPro'
 import { AndromedaThemeToggle } from './AndromedaThemeWrap'
 
 // Short blurbs for the four shipped templates — keyed by registry slug.
 const TEMPLATE_BLURBS = {
-  'andromeda-mission-control':
+  'andromeda-pro-mission-control':
     'Spacecraft telemetry: live altitude, vehicle roster, comms log, and a system-status readout in one mission view.',
-  'andromeda-service-order':
+  'andromeda-pro-service-order':
     'A field-service work order: an SLA gauge, line items, and order metadata.',
-  'andromeda-resource-planning':
+  'andromeda-pro-resource-planning':
     'Capacity, allocation trend, and request triage across teams on one planning board.',
-  'andromeda-signal-room':
+  'andromeda-pro-signal-room':
     'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
+  'andromeda-pro-sign-in':
+    'An authentication screen: credential entry, provider options, and inline validation.',
 }
 
 // Card art uploaded to ImageKit (andromeda/templates/). Filenames are kept
 // exactly as uploaded — capitalized, with spaces — so they're URL-encoded when
 // building the src.
 const TEMPLATE_IMAGE_FILE = {
-  'andromeda-mission-control': 'Mission control.png',
-  'andromeda-service-order': 'Service order.png',
-  'andromeda-resource-planning': 'Resource planning.png',
-  'andromeda-signal-room': 'Signal Room.png',
+  'andromeda-pro-mission-control': 'Mission control.png',
+  'andromeda-pro-service-order': 'Service order.png',
+  'andromeda-pro-resource-planning': 'Resource planning.png',
+  'andromeda-pro-signal-room': 'Signal Room.png',
+  // Sign In has no card art uploaded yet; the encoder handles the empty name
+  // and the card renders without an image rather than pointing at a 404.
+  'andromeda-pro-sign-in': '',
 }
 
-const andromeda = DESIGN_SYSTEMS.find((s) => s.slug === 'andromeda')
+// Pro's OWN config entry. Reading Legacy's here listed Legacy's four templates
+// under Legacy slugs and silently dropped Sign In, which has a live route.
+const andromeda = DESIGN_SYSTEMS.find((s) => s.slug === 'andromeda-pro')
 const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
   slug: t.slug,
   name: t.name,
   domain: t.domain,
-  folder: t.slug.replace(/^andromeda-/, ''),
+  folder: t.slug.replace(/^andromeda-pro-/, ''),
   blurb: TEMPLATE_BLURBS[t.slug] ?? '',
   // Uncompressed template card art — tr=orig-true serves the untouched original
   // (no resize / quality optimization). Filenames have spaces, so encode them.
@@ -354,7 +361,7 @@ export function AndromedaOverview() {
             </div>
           </div>
           <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px] sm:w-1/2">
-            <FoundationLoop />
+            <FoundationLoopPro />
           </div>
         </Link>
       </motion.section>

@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { CaretDown, Check, Plus, PushPinSlash, X } from '@phosphor-icons/react'
 import { Button, buttonClasses } from '../../../components/Button'
-import { andromedaPageSlug } from '../../../_lib/andromeda-pro/andromeda-meta'
+import { andromedaPageSlug } from '../../../_lib/andromeda/andromeda-meta'
+import { andromedaPageSlug as andromedaProPageSlug } from '../../../_lib/andromeda-pro/andromeda-meta'
 
 export type SavedRow = {
   slug: string
@@ -19,10 +20,13 @@ export type SavedRow = {
   image: string | null
 }
 
+// Each system maps its OWN registry slug to its own page slug: Pro renames
+// several of them (andromeda-table -> table-basic, andromeda-radar-chart ->
+// chart-radar), so running a Legacy row through Pro's map produced a 404.
 function hrefFor(row: SavedRow) {
-  return row.system === 'andromeda'
-    ? `/design-systems/andromeda/${andromedaPageSlug(row.slug)}`
-    : `/components/${row.slug}`
+  if (row.system === 'andromeda') return `/design-systems/andromeda/${andromedaPageSlug(row.slug)}`
+  if (row.system === 'andromeda-pro') return `/design-systems/andromeda-pro/${andromedaProPageSlug(row.slug)}`
+  return `/components/${row.slug}`
 }
 
 export function SavedList({ initial }: { initial: SavedRow[] }) {

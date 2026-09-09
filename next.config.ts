@@ -42,6 +42,10 @@ const nextConfig: NextConfig = {
     // at request time (underscore-prefixed, so /r can never serve it). The
     // parent /brain route is the public story and needs no bundle.
     "/design-systems/andromeda/brain/explore": ["./registry-data/*.json"],
+    // Andromeda Pro's reader does the same fs read at request time; without its
+    // own entry the JSON is not traced into the serverless bundle and the route
+    // fails in production.
+    "/design-systems/andromeda-pro/brain/explore": ["./registry-data/*.json"],
   },
   async headers() {
     return [

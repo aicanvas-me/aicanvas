@@ -92,7 +92,7 @@ function buildCrumbs(pathname: string): Crumb[] | null {
     return [
       DESIGN_SYSTEMS,
       { label: SYSTEM_LABELS[system], href: overviewHref(system) },
-      { label: section === 'components' ? 'System' : prettify(section) },
+      { label: prettify(section) },
     ]
   }
   // Fallback — a generic breadcrumb from the path segments (legacy /ideation/*).
@@ -125,10 +125,13 @@ export function IdeationTopBar() {
   // control(s) portaled into a slot next to the auth pill, replacing the
   // Lightning status pill. BrainViewer owns the brain slot; ShowcaseInstall
   // owns the showcase slot.
-  // Either system's brain reader gets the install slot; only Pro has a
-  // /components grid, so that is the only showcase route there is.
+  // Either system's brain reader gets the install slot. The showcase slot
+  // belongs to whichever route actually mounts ShowcaseInstall: Andromeda
+  // Legacy's /system grid. Pro's /components grid renders AndromedaGallery,
+  // which mounts no install control, so claiming the slot there only painted an
+  // empty box and hid the status pill.
   const isBrainReader = BRAIN_READER_RE.test(pathname)
-  const isShowcase = pathname === '/design-systems/andromeda-pro/components'
+  const isShowcase = pathname === '/design-systems/andromeda/system'
 
   return (
     <div className={headerClass}>

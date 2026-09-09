@@ -597,7 +597,7 @@ function BrainInstallButton({
   }, [open])
 
   const bullets = [
-    `All ${fileCount} rule files${sizeKb ? ` (~${sizeKb} KB)` : ''} into design-systems/andromeda/ in your project.`,
+    `All ${fileCount} rule files${sizeKb ? ` (~${sizeKb} KB)` : ''} into design-systems/andromeda-pro/ in your project.`,
     'Your AI agent reads them there. Re-run the command to update.',
   ]
 
@@ -682,7 +682,7 @@ function BrainInstallCard({
   const { copied, copy } = useCopied(cliCommand)
 
   const bullets = [
-    `All ${fileCount} rule files${sizeKb ? ` (~${sizeKb} KB)` : ''} into design-systems/andromeda/ in your project.`,
+    `All ${fileCount} rule files${sizeKb ? ` (~${sizeKb} KB)` : ''} into design-systems/andromeda-pro/ in your project.`,
     'Your AI agent reads them there. Re-run the command to update.',
   ]
 

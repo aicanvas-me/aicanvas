@@ -14,14 +14,13 @@ import { SPECS } from './index'
 import { MatrixBlock } from './Matrix'
 import type { MatrixCase, MatrixSpec } from './types'
 
-// The v2 sources the matrix actually renders arrive injected from the vault
-// (design-systems.config.mjs calls this the `injectedRootDir`); the committed v1
-// tree is the fallback so a checkout without the vault still runs what it can.
-// Every read below is existsSync-guarded, so an absent file skips its check.
-const INJECTED_DIR = join(process.cwd(), 'design-systems/andromeda-v2/components')
-const COMPONENT_DIR = existsSync(INJECTED_DIR)
-  ? INJECTED_DIR
-  : join(process.cwd(), 'design-systems/andromeda/components')
+// This matrix renders Andromeda PRO, whose sources arrive injected from the
+// vault. There is deliberately no fallback to Andromeda Legacy's committed
+// tree: the two systems have different components and different token shapes,
+// so falling back checked Pro's matrix against Legacy's source and reported
+// mismatches that meant nothing. Without the injected tree the file reads are
+// existsSync-guarded and their checks simply skip.
+const COMPONENT_DIR = join(process.cwd(), 'design-systems/andromeda-v2/components')
 
 // The UNDECLARED migration allowlist that lived here is gone: every component
 // is declared, so the catalog check below is now an exact match in both

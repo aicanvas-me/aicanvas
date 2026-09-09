@@ -30,12 +30,10 @@ function isInjectedComponentPresent(abs) {
   }
 }
 
-// A design system's ACTIVE source root. The whole v2 tree is injected from the
-// vault into `injectedRootDir` (see scripts/inject-premium.mjs, manifest key
-// `systems`); when it is not there — fork, no PAT, older premium pin — the
-// committed v1 `rootDir` is read instead so the build stays green.
+// A design system's source root. Each system now owns one: Andromeda Legacy
+// reads its committed tree, Andromeda Pro reads the tree the vault injects.
 function dsRoot(ds) {
-  return ds.injectedRootDir && existsSync(ds.injectedRootDir) ? ds.injectedRootDir : ds.rootDir
+  return ds.rootDir
 }
 
 // Systems this build can actually read. An injected-only system (Andromeda Pro,

@@ -2,7 +2,11 @@ import Link from 'next/link'
 import { createClient } from '../../../lib/supabase/server'
 import type { InstallHistoryRow } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
-import { andromedaPageSlug, getAndromedaComponentMeta } from '../../../_lib/andromeda-pro/andromeda-meta'
+import { andromedaPageSlug, getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
+import {
+  andromedaPageSlug as andromedaProPageSlug,
+  getAndromedaComponentMeta as getAndromedaProComponentMeta,
+} from '../../../_lib/andromeda-pro/andromeda-meta'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 
 // ─── Activity page ──────────────────────────────────────────────────────────
@@ -11,10 +15,11 @@ import { optimizeImageKitUrl } from '../../../lib/imagekit'
 // timestamp on the right. The underlying route is still /account/history
 // (label was renamed to "Activity" in AccountTabs; the URL stays for now).
 
+// Each system maps its OWN registry slug to its own page slug; see SavedList.
 function hrefFor(row: InstallHistoryRow): string {
-  return row.system === 'andromeda'
-    ? `/design-systems/andromeda/${andromedaPageSlug(row.slug)}`
-    : `/components/${row.slug}`
+  if (row.system === 'andromeda') return `/design-systems/andromeda/${andromedaPageSlug(row.slug)}`
+  if (row.system === 'andromeda-pro') return `/design-systems/andromeda-pro/${andromedaProPageSlug(row.slug)}`
+  return `/components/${row.slug}`
 }
 
 function formatTimestamp(iso: string): string {
@@ -95,7 +100,13 @@ export default async function HistoryPage() {
       <ul className="space-y-2">
         {rows.map((row) => {
           const entry = bySlug.get(row.slug)
-          const andromedaEntry = !entry && row.system === 'andromeda' ? getAndromedaComponentMeta(row.slug) : undefined
+          const andromedaEntry = entry
+            ? undefined
+            : row.system === 'andromeda'
+              ? getAndromedaComponentMeta(row.slug)
+              : row.system === 'andromeda-pro'
+                ? getAndromedaProComponentMeta(row.slug)
+                : undefined
           const name = entry?.name ?? andromedaEntry?.name ?? row.slug
           const image = entry?.image
             ? optimizeImageKitUrl(entry.image, 'thumb')

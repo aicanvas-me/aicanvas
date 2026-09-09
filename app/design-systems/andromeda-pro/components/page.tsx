@@ -28,7 +28,7 @@ const firstSentence = (text: string) => {
 }
 
 export default function ShowcasePage() {
-  const andromeda = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda')
+  const andromeda = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-pro')
 
   // Plain data only — the client gallery filters and groups, so nothing but
   // strings and numbers crosses the boundary.

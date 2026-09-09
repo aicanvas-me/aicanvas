@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 export default function AndromedaPreviewPage() {
   if (!DEV_ONLY) notFound()
 
-  const andromeda = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda')
+  const andromeda = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-pro')
   return (
     <AndromedaShowcase
       componentCount={ANDROMEDA_COMPONENT_META.length}

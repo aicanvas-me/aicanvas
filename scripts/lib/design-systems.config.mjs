@@ -38,12 +38,6 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  * @property {string} name
  * @property {string} rootDir         Path from repo root. Layout is preserved verbatim
  *                                    so internal relative imports continue to resolve.
- * @property {string} [injectedRootDir] Whole-system v2 tree injected at build time by
- *                                    scripts/inject-premium.mjs (vault manifest key
- *                                    `systems`). When it exists on disk the registry
- *                                    generator reads the system from THERE instead of
- *                                    `rootDir`; when it doesn't (fork, no PAT, older
- *                                    pin) it falls back to the committed `rootDir`.
  * @property {string[]} tokenEntries  Foundation files (tokens, utils, system icons).
  *                                    Shipped as the `<slug>-tokens` registry item;
  *                                    every other item depends on it.
@@ -110,17 +104,13 @@ export const DESIGN_SYSTEMS = [
       'components/UserCard.tsx',
       'components/UserMenu.tsx',
     ],
-    // v2-only components — authored in the private vault (aicanvas-premium) and
-    // reachable only through the injected `injectedRootDir` tree. FREE
-    // single-component installs exactly like the v1 entries above (same
-    // registry:ui type → classified free by lib/registry/content-type.ts).
-    // Optional because they have no committed counterpart: on a degraded build
-    // (fork, no PAT, older premium pin) the generator reads the v1 rootDir,
-    // finds them absent, and skips them with a warning instead of failing.
-    // The entries above ship in BOTH trees, so they are never optional.
-    // The six vault-authored free-lane components. They have no committed
-    // counterpart, so on a degraded build (fork, no PAT, older premium pin) the
-    // generator skips them with a warning instead of failing.
+    // The six vault-authored free-lane components: authored in the private vault
+    // and injected into this tree at build time (manifest key
+    // `freeSystemComponents`). They install FREE exactly like the committed
+    // entries above (same registry:ui type → classified free by
+    // lib/registry/content-type.ts). Optional because they have no committed
+    // counterpart: on a degraded build (fork, no PAT, older premium pin) the
+    // generator finds them absent and skips them with a warning.
     optionalSystemEntries: [
       'components/MetricChart.tsx',
       'components/Gauge.tsx',
