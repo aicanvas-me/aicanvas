@@ -381,7 +381,7 @@ export function Sidebar({
         })}
 
         {/* ── Design Systems pole (shared, identical on every page) ── */}
-        <DesignSystemsPole collapsed={collapsedDS} onToggle={toggleDS} promoteDS={promoteDS} />
+        <DesignSystemsPole collapsed={collapsedDS} onToggle={toggleDS} />
 
       </nav>
 

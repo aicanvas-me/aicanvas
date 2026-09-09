@@ -352,7 +352,6 @@ export function MobileNav({
                   collapsed={collapsedDS}
                   onToggle={() => setCollapsedDS((prev) => !prev)}
                   onNavigate={() => setOpen(false)}
-                  promoteDS={promoteDS}
                 />
 
                 {/* Lab, Get MCP, Pricing, About — follows same pattern as section headers */}

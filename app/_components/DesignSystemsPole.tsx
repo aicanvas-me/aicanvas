@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import type { ReactElement } from 'react'
-import { ArrowElbowDownRight, Cube, Lightning } from '@phosphor-icons/react'
+import { useState, type ReactElement } from 'react'
+import { ArrowElbowDownRight, CaretDown, Cube, Lightning } from '@phosphor-icons/react'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
@@ -30,24 +30,6 @@ const SYSTEM_ICONS: Record<string, (props: { size?: number }) => ReactElement> =
 // (MIT) and Andromeda Pro. Neither replaces the other and neither redirects to the other.
 const SYSTEMS = [
   {
-    slug: 'andromeda',
-    name: 'Andromeda Legacy',
-    // Has a premium Brain page at /design-systems/<slug>/brain (rules +
-    // foundations + per-component intelligence).
-    brain: true,
-    // Legacy ships exactly the rail production ships: one System row, premium
-    // marked, then Brain. It has no /foundation or /components route.
-    sections: [{ slug: 'system', label: 'System', premium: true }],
-    components: ANDROMEDA_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
-    templates: [
-      { slug: 'signal-room', name: 'Signal Room', domain: 'Audio' },
-      { slug: 'mission-control', name: 'Mission Control', domain: 'Sci-Fi' },
-      { slug: 'service-order', name: 'Service Order', domain: 'Telecom' },
-      // exchange-terminal — hidden, source preserved (see design-systems.config.mjs)
-      { slug: 'resource-planning', name: 'Resource Planning', domain: 'Operations' },
-    ],
-  },
-  {
     slug: 'andromeda-pro',
     name: 'Andromeda Pro',
     brain: true,
@@ -67,6 +49,24 @@ const SYSTEMS = [
       { slug: 'sign-in', name: 'Sign In', domain: 'Auth' },
     ],
   },
+  {
+    slug: 'andromeda',
+    name: 'Andromeda Legacy',
+    // Has a premium Brain page at /design-systems/<slug>/brain (rules +
+    // foundations + per-component intelligence).
+    brain: true,
+    // Legacy ships exactly the rail production ships: one System row, premium
+    // marked, then Brain. It has no /foundation or /components route.
+    sections: [{ slug: 'system', label: 'System', premium: true }],
+    components: ANDROMEDA_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
+    templates: [
+      { slug: 'signal-room', name: 'Signal Room', domain: 'Audio' },
+      { slug: 'mission-control', name: 'Mission Control', domain: 'Sci-Fi' },
+      { slug: 'service-order', name: 'Service Order', domain: 'Telecom' },
+      // exchange-terminal — hidden, source preserved (see design-systems.config.mjs)
+      { slug: 'resource-planning', name: 'Resource Planning', domain: 'Operations' },
+    ],
+  },
 ] as const
 
 // Template routes are full-screen — chrome is suppressed to let the composition
@@ -80,16 +80,9 @@ export function DesignSystemsPole({
   collapsed,
   onToggle,
   onNavigate,
-  promoteDS = false,
 }: {
   collapsed: boolean
   onToggle: () => void
-  // promoteDS: auto-expand each system's headline children (System / Brain /
-  // Templates) on every page, not only when you're inside the system — so the
-  // design system reads as first-class in the rail. The per-component list stays
-  // gated to an active visit so the promoted view stays compact.
-  // Expands every SYSTEMS entry; only Andromeda exists today.
-  promoteDS?: boolean
   // Fired when any leaf link is tapped. The mobile drawer passes setOpen(false)
   // so it closes immediately on tap. Templates now navigate in the SAME tab
   // (the TemplatePreviewShell top bar carries you back), so a route change also
@@ -103,6 +96,11 @@ export function DesignSystemsPole({
   // examples, and per-component pages all live under /design-systems/<slug>.
   // Longest slug first: 'andromeda' is a prefix of 'andromeda-pro', so a plain
   // startsWith would light up Legacy on every Pro page.
+  // Every system starts CLOSED. `open` only ever holds a system the visitor
+  // has toggled by hand, so the default stays closed across navigations; the
+  // system you are currently inside opens on its own (below) so the rail never
+  // hides where you are.
+  const [open, setOpen] = useState<Record<string, boolean>>({})
   const activeSystem = [...SYSTEMS]
     .sort((a, b) => b.slug.length - a.slug.length)
     .find((s) => pathname === `/design-systems/${s.slug}` || pathname.startsWith(`/design-systems/${s.slug}/`))
@@ -137,36 +135,57 @@ export function DesignSystemsPole({
             // own child row below, so highlighting both read as a double-select.
             const systemActive = pathname === `/design-systems/${system.slug}`
             const systemSelected = activeSystem?.slug === system.slug
-            // Expanded shows System/Brain/Templates; the per-component list
-            // below stays gated to systemSelected so the promoted rail is short.
-            const expanded = systemSelected || promoteDS
+            // Closed by default. A hand toggle wins in both directions; with
+            // no toggle yet, only the system you are inside opens.
+            const expanded = open[system.slug] ?? systemSelected
             return (
               <li key={system.slug}>
-                <Link
-                  href={`/design-systems/${system.slug}`}
-                  onClick={onNavigate}
-                  className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
+                {/* Two targets on one row: the name navigates to the system,
+                    the caret opens it in place. A button inside a link is not
+                    valid markup, so they sit side by side and share the row's
+                    hover ground. */}
+                <div
+                  className={`group flex items-center gap-2 rounded-md pr-1 text-sm font-medium transition-colors ${
                     systemActive
                       ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                   }`}
                 >
-                  {/* Arrow at px-2 lines up exactly with the parent Design
-                      Systems pole's Cube icon above (both start 8px from the
-                      left edge), so the row reads as a sibling of the pole
-                      header rather than a deeply-nested item. */}
-                  <ArrowElbowDownRight
-                    weight="regular"
-                    size={12}
-                    className="shrink-0 text-sand-300 dark:text-sand-700"
-                  />
-                  {SYSTEM_ICONS[system.slug] && (
-                    <span className="shrink-0">
-                      {SYSTEM_ICONS[system.slug]({ size: 14 })}
-                    </span>
-                  )}
-                  <span className="flex-1 font-semibold">{system.name}</span>
-                </Link>
+                  <Link
+                    href={`/design-systems/${system.slug}`}
+                    onClick={onNavigate}
+                    className="flex min-w-0 flex-1 items-center gap-2 px-2 py-1.5"
+                  >
+                    {/* Arrow at px-2 lines up exactly with the parent Design
+                        Systems pole's Cube icon above (both start 8px from the
+                        left edge), so the row reads as a sibling of the pole
+                        header rather than a deeply-nested item. */}
+                    <ArrowElbowDownRight
+                      weight="regular"
+                      size={12}
+                      className="shrink-0 text-sand-300 dark:text-sand-700"
+                    />
+                    {SYSTEM_ICONS[system.slug] && (
+                      <span className="shrink-0">
+                        {SYSTEM_ICONS[system.slug]({ size: 14 })}
+                      </span>
+                    )}
+                    <span className="min-w-0 flex-1 truncate font-semibold">{system.name}</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setOpen((o) => ({ ...o, [system.slug]: !expanded }))}
+                    aria-expanded={expanded}
+                    aria-label={`${expanded ? 'Collapse' : 'Expand'} ${system.name}`}
+                    className="-mr-0.5 shrink-0 rounded p-1 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-100"
+                  >
+                    <CaretDown
+                      size={12}
+                      weight="regular"
+                      className={`shrink-0 transition-transform ${expanded ? '' : '-rotate-90'}`}
+                    />
+                  </button>
+                </div>
                 {expanded && (
                   <div className="relative">
                     {/* Nesting rail — groups System / Brain / Templates / Components under Andromeda */}
