@@ -100,7 +100,7 @@ export function AndromedaGallery({
             {items.map((item) => (
               <Link
                 key={item.slug}
-                href={`/design-systems/andromeda/${item.slug}`}
+                href={`/design-systems/andromeda-pro/${item.slug}`}
                 className="group flex flex-col rounded-2xl border border-sand-300 bg-sand-100 p-4 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600"
               >
                 <div className="flex items-start justify-between gap-3">

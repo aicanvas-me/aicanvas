@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Table
 // Compound primitive for dense data tables:
@@ -14,9 +13,10 @@
 'use client';
 
 import { forwardRef, useEffect } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 import { CaretUp, CaretDown, CaretUpDown } from '@phosphor-icons/react';
 import { tokens } from '../tokens';
-import { andromedaVars } from './lib/utils';
+import { andromedaVars, themeColor } from './lib/utils';
 import { mq } from './lib/responsive';
 
 // ── Global hover stylesheet ────────────────────────────────────────
@@ -65,10 +65,10 @@ export function TableStyles() {
 // Linear-gradient bottom line that insets 12px from each side.
 // Used as a TR background-image so it survives border-collapse:collapse
 // (real TR borders don't render under collapse).
-const ROW_INSET_LINE = `linear-gradient(to right, transparent var(--andromeda-3, ${tokens.spacing[3]}), var(--andromeda-border-subtle, ${tokens.color.border.subtle}) var(--andromeda-3, ${tokens.spacing[3]}), var(--andromeda-border-subtle, ${tokens.color.border.subtle}) calc(100% - var(--andromeda-3, ${tokens.spacing[3]})), transparent calc(100% - var(--andromeda-3, ${tokens.spacing[3]})))`;
+const ROW_INSET_LINE = `linear-gradient(to right, transparent var(--andromeda-3, ${tokens.spacing[3]}), var(--andromeda-border-subtle, ${themeColor.border.subtle}) var(--andromeda-3, ${tokens.spacing[3]}), var(--andromeda-border-subtle, ${themeColor.border.subtle}) calc(100% - var(--andromeda-3, ${tokens.spacing[3]})), transparent calc(100% - var(--andromeda-3, ${tokens.spacing[3]})))`;
 
 // ── Table ──────────────────────────────────────────────────────────
-export const Table = forwardRef(function Table(
+export const Table = forwardRef<HTMLTableElement, ComponentPropsWithoutRef<'table'>>(function Table(
   { className, style, children, ...props },
   ref,
 ) {
@@ -102,13 +102,17 @@ export const Table = forwardRef(function Table(
 });
 
 // ── TableHead / TableBody ──────────────────────────────────────────
-export const TableHead = forwardRef(function TableHead({ children, ...props }, ref) {
-  return <thead ref={ref} {...props}>{children}</thead>;
-});
+export const TableHead = forwardRef<HTMLTableSectionElement, ComponentPropsWithoutRef<'thead'>>(
+  function TableHead({ children, ...props }, ref) {
+    return <thead ref={ref} {...props}>{children}</thead>;
+  },
+);
 
-export const TableBody = forwardRef(function TableBody({ children, ...props }, ref) {
-  return <tbody ref={ref} {...props}>{children}</tbody>;
-});
+export const TableBody = forwardRef<HTMLTableSectionElement, ComponentPropsWithoutRef<'tbody'>>(
+  function TableBody({ children, ...props }, ref) {
+    return <tbody ref={ref} {...props}>{children}</tbody>;
+  },
+);
 
 // ── TableRow ───────────────────────────────────────────────────────
 /**
@@ -116,7 +120,12 @@ export const TableBody = forwardRef(function TableBody({ children, ...props }, r
  * @property {boolean} [selected=false]  Applies surface.active bg + accent-300 left edge.
  * @property {boolean} [hoverable=true] Adds the hover-lift class (default true).
  */
-export const TableRow = forwardRef(function TableRow(
+type TableRowProps = ComponentPropsWithoutRef<'tr'> & {
+  selected?: boolean;
+  hoverable?: boolean;
+};
+
+export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function TableRow(
   { selected = false, hoverable = true, className = '', style, children, ...props },
   ref,
 ) {
@@ -125,12 +134,12 @@ export const TableRow = forwardRef(function TableRow(
       ref={ref}
       className={`andro-tr${hoverable ? ' andro-tr-hover' : ''}${className ? ` ${className}` : ''}`}
       style={{
-        backgroundColor: selected ? tokens.color.surface.active : 'transparent',
+        backgroundColor: selected ? themeColor.surface.active : 'transparent',
         backgroundImage: ROW_INSET_LINE,
         backgroundSize: '100% 1px',
         backgroundPosition: 'bottom',
         backgroundRepeat: 'no-repeat',
-        boxShadow: selected ? `inset 2px 0 0 0 var(--andromeda-accent-300, ${tokens.color.accent[300]})` : undefined,
+        boxShadow: selected ? `inset 2px 0 0 0 var(--andromeda-accent-300, ${themeColor.accent[300]})` : undefined,
         ...style,
       }}
       {...props}
@@ -146,7 +155,12 @@ export const TableRow = forwardRef(function TableRow(
  * @property {'asc'|'desc'|'sortable'|undefined} [sort]  Column sort state; picks the matching caret and sets aria-sort.
  * @property {'left'|'right'|'center'} [align='left']  Horizontal text alignment of the header cell.
  */
-export const TableHeader = forwardRef(function TableHeader(
+type TableHeaderProps = Omit<ComponentPropsWithoutRef<'th'>, 'align'> & {
+  sort?: 'asc' | 'desc' | 'sortable';
+  align?: 'left' | 'right' | 'center';
+};
+
+export const TableHeader = forwardRef<HTMLTableCellElement, TableHeaderProps>(function TableHeader(
   { sort, align = 'left', children, style, ...props },
   ref,
 ) {
@@ -175,7 +189,7 @@ export const TableHeader = forwardRef(function TableHeader(
         fontFamily: tokens.typography.fontMono,
         fontSize: tokens.typography.size.xs,
         fontWeight: tokens.typography.weight.medium,
-        color: sorted ? tokens.color.text.primary : tokens.color.text.muted,
+        color: sorted ? themeColor.text.primary : themeColor.text.muted,
         textTransform: 'uppercase',
         letterSpacing: tokens.typography.tracking.widest,
         lineHeight: 'var(--andromeda-leading-none, 1)',
@@ -187,7 +201,7 @@ export const TableHeader = forwardRef(function TableHeader(
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[1] }}>
         {children}
         {sortIcon ? (
-          <span style={{ color: sorted ? tokens.color.text.primary : tokens.color.text.faint, display: 'inline-flex' }}>
+          <span style={{ color: sorted ? themeColor.text.primary : themeColor.text.faint, display: 'inline-flex' }}>
             {sortIcon}
           </span>
         ) : null}
@@ -203,7 +217,13 @@ export const TableHeader = forwardRef(function TableHeader(
  * @property {boolean} [muted=false]  Uses text.secondary instead of text.primary.
  * @property {boolean} [nowrap=true]  Keeps the cell content on a single line when true.
  */
-export const TableCell = forwardRef(function TableCell(
+type TableCellProps = Omit<ComponentPropsWithoutRef<'td'>, 'align'> & {
+  align?: 'left' | 'right' | 'center';
+  muted?: boolean;
+  nowrap?: boolean;
+};
+
+export const TableCell = forwardRef<HTMLTableCellElement, TableCellProps>(function TableCell(
   { align = 'left', muted = false, nowrap = true, children, style, ...props },
   ref,
 ) {
@@ -216,7 +236,7 @@ export const TableCell = forwardRef(function TableCell(
         padding: `${tokens.spacing[3]} ${tokens.spacing[3]}`,
         fontFamily: tokens.typography.fontMono,
         fontSize: tokens.typography.size.sm,
-        color: muted ? tokens.color.text.secondary : tokens.color.text.primary,
+        color: muted ? themeColor.text.secondary : themeColor.text.primary,
         letterSpacing: tokens.typography.tracking.wide,
         whiteSpace: nowrap ? 'nowrap' : 'normal',
         lineHeight: 1,

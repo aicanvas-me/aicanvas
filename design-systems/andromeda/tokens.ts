@@ -1,13 +1,7 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 //
-// Andromeda v1: free and open source (MIT). These components and tokens
-// are free to use, forever. This public repo is frozen at v1; new
-// Andromeda components are developed privately and are not published
-// here (they stay free to use via the platform).
-//
-// Andromeda v2 is premium: the full design brain (deep rules + build
-// workflow), the template library, and one-command bulk install.
-// https://aicanvas.me/andromeda
+// Andromeda: free and open source (MIT). These components and tokens are
+// free to use, forever. Andromeda Pro, the expanded premium system, lives
+// at https://aicanvas.me/andromeda.
 //
 // ============================================================
 // ANDROMEDA DESIGN TOKENS
@@ -196,10 +190,13 @@ export const tokens = {
     shadowY:     '10px',
     shadowBlur:  '24px',
     // Tier strings reference the primitive vars (with the token defaults as
-    // fallbacks) so tuning any primitive reflows all three tiers live.
-    shadowSm: 'var(--andromeda-shadow-x, 0px) calc(var(--andromeda-shadow-y, 10px) * 0.4) calc(var(--andromeda-shadow-blur, 24px) * 0.4) var(--andromeda-shadow-color, rgba(0, 0, 0, 0.45))',
-    shadowMd: 'var(--andromeda-shadow-x, 0px) calc(var(--andromeda-shadow-y, 10px) * 0.8) calc(var(--andromeda-shadow-blur, 24px) * 0.9) var(--andromeda-shadow-color, rgba(0, 0, 0, 0.45))',
-    shadowLg: 'var(--andromeda-shadow-x, 0px) var(--andromeda-shadow-y, 10px) var(--andromeda-shadow-blur, 24px) var(--andromeda-shadow-color, rgba(0, 0, 0, 0.45))',
+    // fallbacks) so tuning any primitive reflows all three tiers live. The
+    // color slot carries a SECOND fallback, --andromeda-theme-shadow-color, so
+    // a tier used outside an andromedaVars() subtree still follows the theme
+    // instead of dropping straight to the dark ink.
+    shadowSm: 'var(--andromeda-shadow-x, 0px) calc(var(--andromeda-shadow-y, 10px) * 0.4) calc(var(--andromeda-shadow-blur, 24px) * 0.4) var(--andromeda-shadow-color, var(--andromeda-theme-shadow-color, rgba(0, 0, 0, 0.45)))',
+    shadowMd: 'var(--andromeda-shadow-x, 0px) calc(var(--andromeda-shadow-y, 10px) * 0.8) calc(var(--andromeda-shadow-blur, 24px) * 0.9) var(--andromeda-shadow-color, var(--andromeda-theme-shadow-color, rgba(0, 0, 0, 0.45)))',
+    shadowLg: 'var(--andromeda-shadow-x, 0px) var(--andromeda-shadow-y, 10px) var(--andromeda-shadow-blur, 24px) var(--andromeda-shadow-color, var(--andromeda-theme-shadow-color, rgba(0, 0, 0, 0.45)))',
   },
   // Chart constants shared by TrendChart / MetricChart / RadarChart / Gauge.
   // lineWidth/dash are recharts sinks (numbers/strings, var-incapable — keep
@@ -302,5 +299,97 @@ export const tokens = {
       // segments are visually adjacent — looser would read as choppy.
       progressBar: '120ms',
     },
+  },
+};
+
+// ============================================================
+// LIGHT THEME
+// The same color contract as tokens.color, retuned for a light
+// ground. Every stop keeps its contrast DISTANCE from the ground
+// rather than its absolute lightness, so the scale reads the same
+// way it always did and simply runs the other direction: the 100
+// stops become the deep inks, 400/500 become the pale washes, `on`
+// stays the 100 stop (the guaranteed foreground for a 500 fill),
+// and each alpha tint derives from the light 300. surface.alpha is
+// the exception: a scrim is dark ink on both themes, because its
+// job is to bury the page behind a modal, not to match it.
+//
+// Applied by handing andromedaLightVars() (components/lib/utils.ts)
+// to any ancestor: it defines the --andromeda-theme-* channel that
+// andromedaVars() reads through, so one element flips a whole
+// subtree. Nothing defined = the dark values above.
+// ============================================================
+
+export const light = {
+  color: {
+    // Contrast on light surface.base: primary 15.8:1, secondary 8.0:1,
+    // muted 6.3:1, faint 3.2:1 (AA-large), the dark ladder mirrored.
+    text: {
+      primary:   '#1A1A1C',
+      secondary: '#4A4A4D',
+      muted:     '#5A5A5E',
+      faint:     '#89898D',
+    },
+    // Surfaces run the other way: base is the lightest page ground a
+    // panel can sit on, and raised/overlay lift toward white. hover and
+    // active step DOWN instead of up, which is how depth reads on light.
+    surface: {
+      base:    '#F4F4F5',
+      raised:  '#FAFAFB',
+      overlay: '#FFFFFF',
+      hover:   '#ECECEE',
+      active:  '#E3E3E5',
+      alpha:   'rgba(0, 0, 0, 0.45)',
+    },
+    // Borders: the same four weights, darkening toward `strong`.
+    border: {
+      subtle: '#E5E5E7',
+      base:   '#C8C8CB',
+      bright: '#A5A5A9',
+      strong: '#6F6F73',
+      alpha:  'rgba(0, 0, 0, 0.14)',
+    },
+    // Accent, turquoise, inked. 100 is the deepest (text on a 500 fill),
+    // 300 stays the base you draw with, 400 is the visible mid green
+    // (heat steps, marked borders, the online dot), 500 is the pale
+    // tinted fill.
+    accent: {
+      100:   '#0D4239',
+      200:   '#0D5D51',
+      300:   '#0B7A6A',
+      400:   '#3DBA9C',
+      500:   '#D7F7EF',
+      alpha: 'rgba(11, 122, 106, 0.22)',
+      on:    '#0D4239',
+    },
+    red: {
+      100:   '#5C1414',
+      200:   '#9A2121',
+      300:   '#C22B2B',
+      400:   '#F5A3A3',
+      500:   '#FBDADA',
+      alpha: 'rgba(194, 43, 43, 0.22)',
+      on:    '#5C1414',
+    },
+    orange: {
+      100:   '#4A3410',
+      200:   '#7A5310',
+      300:   '#8F6000',
+      400:   '#F3C878',
+      500:   '#FBE8C7',
+      alpha: 'rgba(143, 96, 0, 0.22)',
+      on:    '#4A3410',
+    },
+    // Same three gradients, same shapes, fading to the light grounds.
+    gradient: {
+      accentFade:  'linear-gradient(180deg, #E3F4F0 0%, #F4F4F5 100%)',
+      accentSweep: 'radial-gradient(ellipse 80% 70% at 0% 0%, #DDF2EC 0%, #E9F5F1 25%, #FAFAFB 65%)',
+      surfaceSoft: 'linear-gradient(180deg, #FFFFFF 0%, #F1F1F2 100%)',
+    },
+  },
+  effect: {
+    // Elevation on light is a soft grey cast, not the near-black the dark
+    // theme uses: the same offsets read far heavier over a pale ground.
+    shadowColor: 'rgba(17, 17, 20, 0.16)',
   },
 };

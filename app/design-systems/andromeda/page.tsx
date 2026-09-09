@@ -4,7 +4,6 @@
 // /design-systems/andromeda/system; the former /overview preview URL
 // 308-redirects (permanent) here (next.config.ts).
 import { AndromedaOverview } from './AndromedaOverview'
-import { AndromedaThemeWrap } from './AndromedaThemeWrap'
 import { ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
 
 export const metadata = {
@@ -14,13 +13,6 @@ export const metadata = {
   alternates: { canonical: '/design-systems/andromeda' },
 }
 
-// Wrapped so the one live Andromeda surface on this page, the System card's
-// foundation loop, can follow a palette toggle. The template and component
-// thumbnails beside it are captured images and stay as shot.
 export default function AndromedaPage() {
-  return (
-    <AndromedaThemeWrap>
-      <AndromedaOverview />
-    </AndromedaThemeWrap>
-  )
+  return <AndromedaOverview />
 }

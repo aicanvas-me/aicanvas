@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: SearchField
 // Command-bar-style search input with an optional ⌘-K shortcut chip.
@@ -10,8 +9,11 @@
 'use client';
 
 import { forwardRef, useState } from 'react';
+import type { ChangeEvent, ComponentPropsWithoutRef, CSSProperties } from 'react';
 import { MagnifyingGlass } from '@phosphor-icons/react';
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { tokens } from '../tokens';
+import { andromedaVars, themeColor } from './lib/utils';
 
 /**
  * @typedef {object} SearchFieldProps
@@ -27,8 +29,24 @@ import { tokens } from '../tokens';
  * @property {boolean} [disabled] Disables the field: dims it to the disabled opacity, shows a not-allowed cursor, and disables the underlying input.
  */
 
+type SearchFieldOwnProps = {
+  placeholder?: string;
+  shortcut?: string | null;
+  icon?: PhosphorIcon | null;
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (next: string) => void;
+  ariaLabel?: string;
+  className?: string;
+  style?: CSSProperties;
+  disabled?: boolean;
+};
+
+export type SearchFieldProps = SearchFieldOwnProps &
+  Omit<ComponentPropsWithoutRef<'input'>, keyof SearchFieldOwnProps | 'onChange'>;
+
 /** @type {React.ForwardRefExoticComponent<SearchFieldProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue' | 'onChange'>>} */
-export const SearchField = forwardRef(function SearchField(
+export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
   {
     placeholder = 'Search anything',
     shortcut = '⌘ K',
@@ -74,7 +92,7 @@ export const SearchField = forwardRef(function SearchField(
     ? 'var(--andromeda-text-primary, #F5F5F5)'
     : 'var(--andromeda-text-muted, #9A9A9A)';
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const next = e.target.value;
     if (!isControlled) setUncontrolledValue(next);
     onValueChange?.(next);
@@ -86,6 +104,7 @@ export const SearchField = forwardRef(function SearchField(
       onMouseEnter={() => setIsHover(true)}
       onMouseLeave={() => setIsHover(false)}
       style={{
+        ...andromedaVars(),
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
@@ -146,7 +165,7 @@ export const SearchField = forwardRef(function SearchField(
               pointerEvents: 'none',
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.md,
-              color: tokens.color.text.muted,
+              color: themeColor.text.muted,
               letterSpacing: tokens.typography.tracking.wide,
               whiteSpace: 'nowrap',
               overflow: 'hidden',
@@ -179,7 +198,7 @@ export const SearchField = forwardRef(function SearchField(
             background: 'transparent',
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.md,
-            color: tokens.color.text.primary,
+            color: themeColor.text.primary,
             letterSpacing: tokens.typography.tracking.wide,
             caretColor: 'var(--andromeda-accent-400, #109380)',
           }}
@@ -193,9 +212,9 @@ export const SearchField = forwardRef(function SearchField(
             flexShrink: 0,
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.faint,
+            color: themeColor.text.faint,
             padding: `${tokens.spacing[1]} ${tokens.spacing[2]}`,
-            border: `${tokens.border.thin} ${tokens.color.border.subtle}`,
+            border: `${tokens.border.thin} ${themeColor.border.subtle}`,
             borderRadius: tokens.radius.frame,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,

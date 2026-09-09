@@ -9,7 +9,7 @@ import { buttonClasses } from '../components/Button'
 import { SiteFooter } from '../components/SiteFooter'
 import { HeaderSocials } from '../components/HeaderSocials'
 import { TOTAL_COMPONENTS } from '../lib/component-nav.generated'
-import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 
 function Section({
   children,

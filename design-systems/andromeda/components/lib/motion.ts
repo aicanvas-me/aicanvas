@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SHARED MOTION PRIMITIVES (framer-motion grounded)
 //
@@ -18,11 +17,12 @@
 'use client';
 
 import { useReducedMotion as fmUseReducedMotion } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import { tokens } from '../../tokens';
 
 // Helper — token strings like '400ms' or '60ms' parsed to seconds for
 // framer-motion (which expects seconds, not ms).
-const toSeconds = (msString) => parseInt(msString, 10) / 1000;
+const toSeconds = (msString: string) => parseInt(msString, 10) / 1000;
 
 // Re-export framer-motion's reduced-motion hook so consumers don't need
 // to import from two places.
@@ -32,7 +32,7 @@ export const useReducedMotion = fmUseReducedMotion;
 // Token-driven equivalent of tokens.motion.easing.out — the standard
 // entrance curve (fast start, soft landing). Framer-motion accepts an
 // array of four numbers as a cubic-bezier.
-const EASE_OUT = [0, 0, 0.2, 1];
+const EASE_OUT: [number, number, number, number] = [0, 0, 0.2, 1];
 
 /**
  * useCascadeProps — returns framer-motion props for an element entering
@@ -68,7 +68,7 @@ const EASE_OUT = [0, 0, 0.2, 1];
  * @param {number} [opts.distance] Translate distance in px (default 8)
  * @returns {object}               Spread onto a `motion.X` element
  */
-export function useCascadeProps(index = 0, opts) {
+export function useCascadeProps(index = 0, opts?: { distance?: number }) {
   const distance = opts?.distance ?? 8;
   const reducedMotion = useReducedMotion();
 
@@ -101,7 +101,7 @@ export function useCascadeProps(index = 0, opts) {
  * For cascades that cross parent boundaries (Mission Control's Sidebar +
  * Header live in separate columns), use `useCascadeProps(index)` instead.
  */
-export const cascadeContainer = {
+export const cascadeContainer: Variants = {
   hidden: {},
   visible: {
     transition: {
@@ -110,7 +110,7 @@ export const cascadeContainer = {
   },
 };
 
-export const cascadeItem = {
+export const cascadeItem: Variants = {
   hidden: { opacity: 0, y: 8 },
   visible: {
     opacity: 1,
@@ -145,7 +145,7 @@ export const cascadeItem = {
  * intersection, not on mount — long tables below the fold reveal as
  * the user scrolls to them, not invisibly off-screen.
  */
-export const rowContainer = {
+export const rowContainer: Variants = {
   hidden: {},
   visible: {
     transition: {
@@ -159,7 +159,7 @@ export const rowContainer = {
 // can trigger sub-pixel reflow and brief horizontal scrollbar flashes when
 // the table sits inside an `overflow-x: auto` container. Opacity-only sidesteps
 // that entirely; the stagger timing carries the reveal on its own.
-export const rowItem = {
+export const rowItem: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -176,7 +176,7 @@ export const rowItem = {
     opacity: 0,
     transition: {
       duration: toSeconds(tokens.motion.duration.normal),
-      ease: [0.4, 0, 1, 1], // tokens.motion.easing.in
+      ease: [0.4, 0, 1, 1] as [number, number, number, number], // tokens.motion.easing.in
     },
   },
 };
@@ -192,7 +192,7 @@ export const rowItem = {
  * @param {number} [paddingMs=0]    Extra wait after the slide-in completes
  * @returns {number}                Delay in ms
  */
-export function useStaggeredDelay(index, paddingMs = 0) {
+export function useStaggeredDelay(index: number, paddingMs = 0) {
   const staggerMs = parseInt(tokens.motion.stagger.cascade, 10);
   const cascadeMs = parseInt(tokens.motion.duration.cascade, 10);
   return index * staggerMs + cascadeMs + paddingMs;

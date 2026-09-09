@@ -7,7 +7,7 @@
 // design-system component (three.js included) into an index page that renders
 // none of them.
 import { SiteFooter } from '../../../components/SiteFooter'
-import { ANDROMEDA_COMPONENT_META } from '../../../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META } from '../../../_lib/andromeda-pro/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../../scripts/lib/design-systems.config.mjs'
 import { AndromedaGallery } from '../system/AndromedaGallery'
 import { CATEGORY } from '../system/categories'
@@ -17,7 +17,7 @@ export const metadata = {
   title: 'Components · Andromeda Design System',
   description:
     'Every Andromeda component: forms, data display, charts, overlays, feedback, navigation and surfaces, each with its variants and its interaction states.',
-  alternates: { canonical: '/design-systems/andromeda/components' },
+  alternates: { canonical: '/design-systems/andromeda-pro/components' },
 }
 
 // Catalog descriptions are one sentence, so this is a no-op today. It stays as

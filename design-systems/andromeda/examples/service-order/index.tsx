@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SERVICE ORDER
 // Composition shell. Top bar (brand + nav + connection + avatar),
@@ -32,6 +31,7 @@ import {
 } from '@phosphor-icons/react';
 import { motion, LayoutGroup } from 'framer-motion';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Badge } from '../../components/Badge';
@@ -39,6 +39,7 @@ import { IconButton } from '../../components/IconButton';
 import { NavItem } from '../../components/NavItem';
 import { Tooltip } from '../../components/Tooltip';
 import { UserMenu } from '../../components/UserMenu';
+import type { UserMenuItem } from '../../components/UserMenu';
 import { MobileTopBar, MobileDrawer } from '../_shared/TemplateMobileChrome';
 import { useCascadeProps } from '../../components/lib/motion';
 import { AndromedaIcon } from '../../AndromedaIcon';
@@ -53,7 +54,7 @@ function HoverStyles() {
     <style>{`
       /* off-token: 'ease' keyword (no matching Andromeda easing token) — left literal */
       .so-nav        { transition: color 140ms ease; }
-      .so-nav:hover  { color: ${tokens.color.text.primary} !important; }
+      .so-nav:hover  { color: ${themeColor.text.primary} !important; }
     `}</style>
   );
 }
@@ -64,7 +65,7 @@ function HoverStyles() {
 // Drawer nav (mobile) — the same nav items as the desktop strip, rendered as
 // Andromeda NavItems inside the left Drawer so the drawer reads like the other
 // templates' drawers. LayoutGroup scopes NavItem's active-dot layoutId.
-function SoDrawerNav({ onNavigate }) {
+function SoDrawerNav({ onNavigate }: { onNavigate: () => void }) {
   return (
     <LayoutGroup id="so-drawer-nav">
       <nav style={{ display: 'flex', flexDirection: 'column' }}>
@@ -76,7 +77,10 @@ function SoDrawerNav({ onNavigate }) {
   );
 }
 
-function NavLinks({ orientation = 'horizontal', onNavigate }) {
+function NavLinks({ orientation = 'horizontal', onNavigate }: {
+  orientation?: 'horizontal' | 'vertical';
+  onNavigate?: () => void;
+}) {
   const vertical = orientation === 'vertical';
   return (
     <nav
@@ -100,14 +104,14 @@ function NavLinks({ orientation = 'horizontal', onNavigate }) {
               padding: vertical
                 ? `${tokens.spacing[3]} ${tokens.spacing[4]}`
                 : `${tokens.spacing[2]} 0`,
-              background: vertical && active ? tokens.color.surface.active : 'transparent',
+              background: vertical && active ? themeColor.surface.active : 'transparent',
               border: 'none',
               cursor: 'pointer',
               textAlign: 'left',
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.sm,
               fontWeight: active ? tokens.typography.weight.semibold : tokens.typography.weight.regular,
-              color: active ? tokens.color.text.primary : tokens.color.text.muted,
+              color: active ? themeColor.text.primary : themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.wider,
             }}
@@ -124,7 +128,7 @@ function NavLinks({ orientation = 'horizontal', onNavigate }) {
                         top: tokens.spacing[2],
                         bottom: tokens.spacing[2],
                         width: '2px',
-                        background: tokens.color.accent[300],
+                        background: themeColor.accent[300],
                       }
                     : {
                         position: 'absolute',
@@ -132,7 +136,7 @@ function NavLinks({ orientation = 'horizontal', onNavigate }) {
                         right: 0,
                         bottom: '-2px',
                         height: '2px',
-                        background: tokens.color.accent[300],
+                        background: themeColor.accent[300],
                       }
                 }
               />
@@ -145,7 +149,7 @@ function NavLinks({ orientation = 'horizontal', onNavigate }) {
 }
 
 // ── User menu items (shared shape with mission-control / resource-planning) ─
-const userMenuItems = [
+const userMenuItems: UserMenuItem[] = [
   { id: 'profile',     label: 'Profile',             icon: UserCircle },
   { id: 'preferences', label: 'Preferences',         icon: Gear },
   { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
@@ -166,7 +170,7 @@ function TopBar() {
         alignItems: 'center',
         gap: tokens.spacing[5],
         padding: `0 ${tokens.spacing[6]}`,
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
       }}
     >
       <CornerMarkers />
@@ -179,7 +183,7 @@ function TopBar() {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.primary,
+              color: themeColor.text.primary,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
               fontWeight: tokens.typography.weight.semibold,
@@ -191,7 +195,7 @@ function TopBar() {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.muted,
+              color: themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
             }}
@@ -201,7 +205,7 @@ function TopBar() {
         </div>
       </div>
 
-      <span className="so-nav-divider" aria-hidden style={{ width: 'var(--andromeda-border-width, 1px)', height: tokens.spacing[6], background: tokens.color.border.base, flexShrink: 0 }} />
+      <span className="so-nav-divider" aria-hidden style={{ width: 'var(--andromeda-border-width, 1px)', height: tokens.spacing[6], background: themeColor.border.base, flexShrink: 0 }} />
 
       {/* Inline nav — hidden below `mq.md`, where the hamburger + Drawer take over. */}
       <div className="so-inline-nav" style={{ display: 'flex', alignItems: 'center' }}>
@@ -219,7 +223,7 @@ function TopBar() {
           style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.sm,
-            color: tokens.color.text.secondary,
+            color: themeColor.text.secondary,
             letterSpacing: tokens.typography.tracking.wider,
           }}
         >
@@ -260,7 +264,7 @@ function PageHeaderStrip() {
         flexWrap: 'wrap',
         gap: tokens.spacing[3],
         padding: `${tokens.spacing[3]} ${tokens.spacing[6]}`,
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
       }}
     >
       <CornerMarkers />
@@ -270,7 +274,7 @@ function PageHeaderStrip() {
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.md,
           fontWeight: tokens.typography.weight.semibold,
-          color: tokens.color.text.primary,
+          color: themeColor.text.primary,
           letterSpacing: tokens.typography.tracking.wider,
           textTransform: 'uppercase',
         }}
@@ -282,9 +286,9 @@ function PageHeaderStrip() {
 
       <div className="so-page-header-cluster" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: tokens.spacing[5] }}>
         {[
-          { label: 'Issues',    value: pageMetrics[0].value, icon: Warning,      color: tokens.color.orange[300] },
-          { label: 'Accidents', value: pageMetrics[2].value, icon: XCircle,      color: tokens.color.red[300]    },
-          { label: 'Resolved',  value: pageMetrics[1].value, icon: CheckCircle,  color: tokens.color.accent[300] },
+          { label: 'Issues',    value: pageMetrics[0].value, icon: Warning,      color: themeColor.orange[300] },
+          { label: 'Accidents', value: pageMetrics[2].value, icon: XCircle,      color: themeColor.red[300]    },
+          { label: 'Resolved',  value: pageMetrics[1].value, icon: CheckCircle,  color: themeColor.accent[300] },
         ].map(({ label, value, icon: Icon, color }) => (
           <span
             key={label}
@@ -299,13 +303,13 @@ function PageHeaderStrip() {
               textTransform: 'uppercase',
             }}
           >
-            <Icon weight="regular" size={14} color={color} />
+            <Icon weight="regular" size={14} style={{ color }} />
             {label}
             <span style={{ color }}>{value}</span>
           </span>
         ))}
 
-        <span aria-hidden style={{ width: 'var(--andromeda-border-width, 1px)', height: tokens.spacing[5], background: tokens.color.border.base }} />
+        <span aria-hidden style={{ width: 'var(--andromeda-border-width, 1px)', height: tokens.spacing[5], background: themeColor.border.base }} />
 
         <Tooltip label="Refresh"><IconButton aria-label="Refresh" variant="ghost" size="sm" icon={ArrowsClockwise} /></Tooltip>
         <Tooltip label="Hide"><IconButton aria-label="Hide"    variant="ghost" size="sm" icon={EyeSlash} /></Tooltip>
@@ -363,9 +367,9 @@ export default function ServiceOrder() {
         // than the visible area and eats the right padding (left looks fine, right
         // is clipped). Matches mission-control / signal-room.
         width: '100%',
-        background: tokens.color.surface.base,
+        background: themeColor.surface.base,
         fontFamily: tokens.typography.fontSans,
-        color: tokens.color.text.primary,
+        color: themeColor.text.primary,
         overflow: 'hidden',
         gap: tokens.spacing[3],
         padding: tokens.spacing[6],
@@ -442,6 +446,14 @@ export default function ServiceOrder() {
       </MobileDrawer>
 
       <style>{`
+        /* Standalone hosts (a CLI install into a fresh app): pin the shell to the
+           viewport exactly like the on-site preview does — the dashboard owns the
+           screen, panels scroll internally, the sidebar stays full-height, and
+           the host page never shows through. The AI Canvas preview opts out via
+           .aic-tpl-host: there the surrounding shell sizes this element. The
+           mobile block below still releases the pin on phones. */
+        .so-shell { height: 100dvh !important; min-height: 100dvh; }
+        .aic-tpl-host .so-shell { height: 100% !important; min-height: 0; }
         ${mq.md} {
           /* Below md the shell releases its desktop pin: it grows to content
              height and the ROUTE COLUMN scrolls the page as one document
@@ -452,6 +464,10 @@ export default function ServiceOrder() {
             min-height: 100dvh !important;
             overflow: visible !important;
           }
+          /* The on-site opt-out above is more specific than .so-shell, so the
+             phone release must be repeated at that specificity or the site's
+             mobile preview would stay pinned. */
+          .aic-tpl-host .so-shell { height: auto !important; }
           .so-main { overflow-y: visible !important; }
           /* Bento collapses to a single column; the two panels stack
              top-to-bottom (metadata, then SLA) in source order. */

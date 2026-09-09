@@ -1,8 +1,7 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // MISSION CONTROL
-// Composition shell. Background is intentionally transparent —
-// drop in any image at the page route level.
+// Composition shell. Paints its own surface and, on standalone hosts,
+// pins itself to the viewport (see the <style> block at the bottom).
 //
 // Only the Overview section is wired up. The other sidebar items
 // (Telemetry, Vehicles, Comms, Anomalies, Maintenance) remain
@@ -27,6 +26,7 @@
 
 import { useState } from 'react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { useCascadeProps } from '../../components/lib/motion';
 import { Sidebar, SidebarNav } from './Sidebar';
@@ -42,7 +42,7 @@ export default function MissionControl() {
 
   // Inert handler: non-overview ids are ignored, active stays on overview.
   // Selecting a nav item from the mobile drawer also closes the drawer.
-  const handleNavChange = (id) => {
+  const handleNavChange = (id: string) => {
     setNavOpen(false);
     if (id === 'overview') return;
   };
@@ -61,9 +61,13 @@ export default function MissionControl() {
         display: 'flex',
         height: '100%',
         width: '100%',
-        background: 'transparent',
+        // Paint our own surface: a CLI install lands in an arbitrary host page
+        // (often white), and a transparent shell bleeds the host through every
+        // gutter. The AI Canvas preview paints this same surface behind us, so
+        // on-site rendering is unchanged.
+        background: themeColor.surface.base,
         fontFamily: tokens.typography.fontSans,
-        color: tokens.color.text.primary,
+        color: themeColor.text.primary,
         overflow: 'hidden',
         gap: tokens.spacing[4],
         padding: tokens.spacing[4],
@@ -133,6 +137,14 @@ export default function MissionControl() {
       </MobileDrawer>
 
       <style>{`
+        /* Standalone hosts (a CLI install into a fresh app): pin the shell to the
+           viewport exactly like the on-site preview does — the dashboard owns the
+           screen, panels scroll internally, the sidebar stays full-height, and
+           the host page never shows through. The AI Canvas preview opts out via
+           .aic-tpl-host: there the surrounding shell sizes this element. The
+           mobile block below still releases the pin on phones. */
+        .mc-shell { height: 100dvh !important; min-height: 100dvh; }
+        .aic-tpl-host .mc-shell { height: 100% !important; min-height: 0; }
         ${mq.md} {
           /* Stack the shell top-to-bottom AND release its desktop 100vh pin:
              below md the dashboard grows to its stacked height and the route
@@ -148,6 +160,10 @@ export default function MissionControl() {
             gap: ${tokens.spacing[3]} !important;
             padding: ${tokens.spacing[3]} !important;
           }
+          /* The on-site opt-out above is more specific than .mc-shell, so the
+             phone release must be repeated at that specificity or the site's
+             mobile preview would stay pinned. */
+          .aic-tpl-host .mc-shell { height: auto !important; }
           /* Desktop sidebar hidden — its content lives in the Drawer. */
           .mc-sidebar { display: none !important; }
           .mc-main-col { overflow: visible !important; gap: ${tokens.spacing[3]} !important; }

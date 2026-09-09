@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: HeatGrid
 // A 2-D matrix fill gauge — the cousin of ProgressBar. A grid of
@@ -23,27 +22,31 @@
 'use client';
 
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 import { useInView } from 'framer-motion';
 import { tokens } from '../tokens';
 import { andromedaVars } from './lib/utils';
 import { useReducedMotion } from './lib/motion';
 
+/** Fill step of a single cell, from empty (0) to the bright frontier (3). */
+type Intensity = 0 | 1 | 2 | 3;
+
 // intensity → fill: 0 = empty, 1 = dim (base), 2 = mid, 3 = bright (frontier).
 // Both sinks are inline CSS, so var-with-fallback lets the cells follow a theme
 // natively (no revarnish needed); the fallback keeps the default pixel-exact.
-const INTENSITY_COLOR = {
+const INTENSITY_COLOR: Record<Intensity, { bg: string; border: string }> = {
   0: { bg: `var(--andromeda-surface-overlay, ${tokens.color.surface.overlay})`, border: `var(--andromeda-border-subtle, ${tokens.color.border.subtle})` },
   1: { bg: `var(--andromeda-accent-500, ${tokens.color.accent[500]})`,          border: `var(--andromeda-accent-400, ${tokens.color.accent[400]})` },
   2: { bg: `var(--andromeda-accent-400, ${tokens.color.accent[400]})`,          border: `var(--andromeda-accent-300, ${tokens.color.accent[300]})` },
   3: { bg: `var(--andromeda-accent-300, ${tokens.color.accent[300]})`,          border: `var(--andromeda-accent-200, ${tokens.color.accent[200]})` },
 };
 
-const msNum = (v) => parseInt(v, 10); // "120ms" → 120
+const msNum = (v: string) => parseInt(v, 10); // "120ms" → 120
 
 // Compute the fill map for a value. Cells fill bottom-centre first in a
 // widening pyramid; intensity ramps dim (base, low rank) → bright (frontier,
 // high rank). Returns { "r-c": intensity } for every cell.
-function buildFillMap(value, cols, rows) {
+function buildFillMap(value: number, cols: number, rows: number): Record<string, Intensity> {
   const center = (cols - 1) / 2;
   const cells = [];
   for (let r = 0; r < rows; r++) {
@@ -66,9 +69,9 @@ function buildFillMap(value, cols, rows) {
   const maxRank = ranks.length ? Math.max(...ranks) : 0;
   const span = maxRank - minRank || 1;
 
-  const map = {};
+  const map: Record<string, Intensity> = {};
   order.forEach((cell, i) => {
-    let intensity = 0;
+    let intensity: Intensity = 0;
     if (i < target) {
       // Closer to the frontier (higher rank) → brighter.
       const frac = (cell.rank - minRank) / span;
@@ -93,8 +96,19 @@ function buildFillMap(value, cols, rows) {
  * @property {React.CSSProperties} [style] Inline styles merged onto the root element.
  */
 
+type HeatGridProps = ComponentPropsWithoutRef<'div'> & {
+  value?: number;
+  cols?: number;
+  rows?: number;
+  cellSize?: number;
+  gap?: number;
+  showValue?: boolean;
+  unit?: string;
+  label?: string;
+};
+
 /** @type {React.ForwardRefExoticComponent<HeatGridProps & React.HTMLAttributes<HTMLDivElement>>} */
-export const HeatGrid = forwardRef(function HeatGrid(
+export const HeatGrid = forwardRef<HTMLDivElement, HeatGridProps>(function HeatGrid(
   {
     value = 0,
     cols = 7,
@@ -110,7 +124,7 @@ export const HeatGrid = forwardRef(function HeatGrid(
   },
   ref,
 ) {
-  const innerRef = useRef(null);
+  const innerRef = useRef<HTMLDivElement | null>(null);
   const reducedMotion = useReducedMotion();
   const inView = useInView(innerRef, { once: true, margin: '-10% 0px' });
   // Reduced motion → render filled immediately; otherwise wait until on-screen.
@@ -142,7 +156,7 @@ export const HeatGrid = forwardRef(function HeatGrid(
   // Stagger only during the one-shot entrance; live updates crossfade together.
   const inEntrance = revealed && !entered && !reducedMotion;
 
-  const setRefs = (node) => {
+  const setRefs = (node: HTMLDivElement | null) => {
     innerRef.current = node;
     if (typeof ref === 'function') ref(node);
     else if (ref) ref.current = node;

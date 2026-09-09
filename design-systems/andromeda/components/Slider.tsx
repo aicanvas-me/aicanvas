@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Slider
 // shadcn/ui-aligned API: forwardRef, controlled (`value`) /
@@ -21,14 +20,19 @@ import {
   useRef,
   useState,
 } from 'react';
+import type {
+  ComponentPropsWithoutRef,
+  KeyboardEvent as ReactKeyboardEvent,
+  PointerEvent as ReactPointerEvent,
+} from 'react';
 import { cn, andromedaVars } from './lib/utils';
 import { mq } from './lib/responsive';
 
-function clamp(n, min, max) {
+function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
 
-function snap(n, step) {
+function snap(n: number, step: number) {
   if (!step || step <= 0) return n;
   return Math.round(n / step) * step;
 }
@@ -50,8 +54,21 @@ function snap(n, step) {
  * @property {string} [id]                   Id for the slider track; auto-generated when omitted.
  */
 
+type SliderProps = Omit<ComponentPropsWithoutRef<'div'>, 'onChange' | 'defaultValue'> & {
+  value?: number;
+  defaultValue?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  onValueChange?: (next: number) => void;
+  label?: string;
+  showValue?: boolean;
+  unit?: string;
+  disabled?: boolean;
+};
+
 /** @type {React.ForwardRefExoticComponent<SliderProps & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>>} */
-export const Slider = forwardRef(function Slider(
+export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
   {
     className,
     value: controlledValue,
@@ -78,11 +95,11 @@ export const Slider = forwardRef(function Slider(
   );
   const value = clamp(isControlled ? controlledValue : internal, min, max);
 
-  const trackRef = useRef(/** @type {HTMLDivElement|null} */ (null));
+  const trackRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
 
   const setValue = useCallback(
-    (next) => {
+    (next: number) => {
       const snapped = clamp(snap(next, step), min, max);
       if (snapped === value) return;
       if (!isControlled) setInternal(snapped);
@@ -92,7 +109,7 @@ export const Slider = forwardRef(function Slider(
   );
 
   const valueFromClientX = useCallback(
-    (clientX) => {
+    (clientX: number) => {
       const track = trackRef.current;
       if (!track) return value;
       const rect = track.getBoundingClientRect();
@@ -106,7 +123,7 @@ export const Slider = forwardRef(function Slider(
   useEffect(() => {
     if (disabled) return undefined;
 
-    const onPointerMove = (e) => {
+    const onPointerMove = (e: PointerEvent) => {
       if (!draggingRef.current) return;
       setValue(valueFromClientX(e.clientX));
     };
@@ -124,14 +141,14 @@ export const Slider = forwardRef(function Slider(
     };
   }, [disabled, setValue, valueFromClientX]);
 
-  function handlePointerDown(e) {
+  function handlePointerDown(e: ReactPointerEvent<HTMLDivElement>) {
     if (disabled) return;
     e.currentTarget.setPointerCapture?.(e.pointerId);
     draggingRef.current = true;
     setValue(valueFromClientX(e.clientX));
   }
 
-  function handleKeyDown(e) {
+  function handleKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
     if (disabled) return;
     const big = (max - min) / 10;
     switch (e.key) {

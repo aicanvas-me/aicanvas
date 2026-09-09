@@ -4,7 +4,7 @@
 // for the design-system overview. Lives at the app root so it escapes the
 // Andromeda layout's sidebar + topbar chrome.
 import { notFound } from 'next/navigation'
-import { ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda-pro/andromeda-meta'
 import { CaptureFrame } from './CaptureFrame'
 
 export function generateStaticParams() {

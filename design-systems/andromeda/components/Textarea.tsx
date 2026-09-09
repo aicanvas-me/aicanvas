@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Textarea
 // shadcn/ui-aligned API: forwardRef, label, error, ...props.
@@ -9,6 +8,7 @@
 'use client';
 
 import { forwardRef, useId } from 'react';
+import type { ComponentPropsWithoutRef } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn, andromedaVars } from './lib/utils';
 
@@ -57,8 +57,17 @@ const textareaVariants = cva(
  * @property {string} [wrapperClassName] Forwarded to the outer wrapper.
  */
 
+type TextareaOwnProps = {
+  label?: string;
+  error?: string;
+  wrapperClassName?: string;
+};
+
+export type TextareaProps = TextareaOwnProps &
+  Omit<ComponentPropsWithoutRef<'textarea'>, keyof TextareaOwnProps>;
+
 /** @type {React.ForwardRefExoticComponent<TextareaProps & React.TextareaHTMLAttributes<HTMLTextAreaElement>>} */
-export const Textarea = forwardRef(function Textarea(
+export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
   {
     className,
     wrapperClassName,

@@ -27,9 +27,19 @@ import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
 import { HeaderSocials } from '@/app/components/HeaderSocials'
 import { SiteFooter } from '@/app/components/SiteFooter'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
+import { useTheme, type Theme } from '@/app/components/ThemeProvider'
 
 // AI Canvas site palette: sand neutrals + olive accent, Manrope + mono fonts.
-const C = { base: '#0E0E0F', node: '#9B9B9E', reason: '#B7B7BA', bright: '#F4F4FA', accent: '#DAE4A0', accentBtn: '#A8B94D', muted: '#7B7B7D' }
+// One palette per site theme; the page reads them through CSS variables (see
+// brainVars below) so everything flips with the `dark` class on <html>. The
+// WebGL brain cannot read a variable and takes the literal for its theme.
+const PALETTE = {
+  dark:  { base: '#0E0E0F', node: '#9B9B9E', reason: '#B7B7BA', bright: '#F4F4FA', accent: '#DAE4A0', accentBtn: '#A8B94D', muted: '#7B7B7D', panel: '#1B1B1C', line: '#2D2D2E', lineSoft: 'rgba(45,45,46,0.6)', halo: 'rgba(0,0,0,0.9)', haloStrong: 'rgba(0,0,0,0.95)' },
+  light: { base: '#F4F4FA', node: '#575759', reason: '#373738', bright: '#1B1B1C', accent: '#869631', accentBtn: '#869631', muted: '#7B7B7D', panel: '#EEEEF3', line: '#DFDFE3', lineSoft: 'rgba(223,223,227,0.6)', halo: 'rgba(244,244,250,0.9)', haloStrong: 'rgba(244,244,250,0.95)' },
+} as const satisfies Record<Theme, Record<string, string>>
+type BrainColor = keyof typeof PALETTE.dark
+const C = Object.fromEntries((Object.keys(PALETTE.dark) as BrainColor[]).map((k) => [k, `var(--brain-${k})`])) as Record<BrainColor, string>
+const brainVars = (t: Theme) => (Object.keys(PALETTE[t]) as BrainColor[]).map((k) => `--brain-${k}: ${PALETTE[t][k]};`).join(' ')
 const SANS = "var(--font-sans), 'Manrope', system-ui, sans-serif"
 const MONO = "var(--font-mono, var(--font-jetbrains-mono)), 'Geist Mono', monospace"
 const MODEL_URL = '/models/brain.glb'
@@ -50,11 +60,13 @@ function mulberry32(seed: number) { return function () { seed |= 0; seed = (seed
 // The four corpus sections and their colours, identical to the premium reader's
 // BrainRender.tsx. Kept in step with that file: if the reader's palette moves,
 // this moves with it, or the hero and the reader stop being the same brain.
-const SECTION_ZONES: { dir: [number, number, number]; hex: string }[] = [
-  { dir: [0.2, 0.9, 0.35], hex: '#a78bfa' },   // Index, purple
-  { dir: [-0.9, 0.05, 0.4], hex: '#38bdf8' },  // Foundations, cyan
-  { dir: [0.9, 0.05, 0.4], hex: '#fb923c' },   // Components, orange
-  { dir: [0.0, -0.7, 0.7], hex: '#a3e635' },   // Skills, lime
+// Light takes the same four hues a few stops deeper: a pale hairline on a pale
+// ground is no wire at all.
+const SECTION_ZONES: { dir: [number, number, number]; hex: Record<Theme, string> }[] = [
+  { dir: [0.2, 0.9, 0.35], hex: { dark: '#a78bfa', light: '#7c3aed' } },   // Index, purple
+  { dir: [-0.9, 0.05, 0.4], hex: { dark: '#38bdf8', light: '#0284c7' } },  // Foundations, cyan
+  { dir: [0.9, 0.05, 0.4], hex: { dark: '#fb923c', light: '#ea580c' } },   // Components, orange
+  { dir: [0.0, -0.7, 0.7], hex: { dark: '#a3e635', light: '#65a30d' } },   // Skills, lime
 ]
 
 
@@ -67,11 +79,11 @@ const makeBrainMaterial = (T: typeof import('three')) =>
   new T.MeshBasicMaterial({ wireframe: true, vertexColors: true, toneMapped: false })
 
 // ── editorial copy helpers ──────────────────────────────────────────────────
-// sand tokens: sand-900 #1B1B1C surface, sand-800 #2D2D2E border
-const PANEL: React.CSSProperties = { background: 'transparent', border: '1px solid #2D2D2E', borderRadius: 16, padding: '24px 28px' }
+// sand tokens: panel = card surface (sand-900 / sand-100), line = border (sand-800 / sand-200)
+const PANEL: React.CSSProperties = { background: 'transparent', border: `1px solid ${C.line}`, borderRadius: 16, padding: '24px 28px' }
 // Smaller sibling of PANEL — the solid-surface card treatment reused by the
 // bento side tiles and the "How it works" benefit cards.
-const PANEL_SOLID: React.CSSProperties = { background: '#1B1B1C', border: '1px solid #2D2D2E', borderRadius: 12, padding: 20 }
+const PANEL_SOLID: React.CSSProperties = { background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 20 }
 // Section description, matching the homepage: text-base, leading-relaxed,
 // sand-400, mt-3, and the max-w-2xl measure the homepage sets on its own
 // description. 672 of the 896 column keeps a comfortable line length instead of
@@ -84,7 +96,7 @@ const SECTION_DESC: React.CSSProperties = {
   margin: '12px 0 0',
 }
 function Chip({ children }: { children: React.ReactNode }) {
-  return <span style={{ fontFamily: MONO, fontSize: 12, color: C.reason, background: '#1B1B1C', border: '1px solid #2D2D2E', borderRadius: 6, padding: '3px 9px', whiteSpace: 'nowrap', display: 'inline-block' }}>{children}</span>
+  return <span style={{ fontFamily: MONO, fontSize: 12, color: C.reason, background: C.panel, border: `1px solid ${C.line}`, borderRadius: 6, padding: '3px 9px', whiteSpace: 'nowrap', display: 'inline-block' }}>{children}</span>
 }
 // The full corpus manifest, derived from the teaser itself rather than a
 // hand-listed three, so a section added to the brain shows up here instead of
@@ -231,8 +243,8 @@ function FlowLinks({ mode }: { mode: 'in' | 'out' }) {
               zero-area bounding box is not rendered at all under the default,
               which is what made the flat connectors disappear. */}
           <linearGradient id={`flow-${mode}`} gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={LINK_W} y2="0">
-            <stop offset="0%" stopColor={mode === 'in' ? '#2D2D2E' : '#7B7B7D'} />
-            <stop offset="100%" stopColor={mode === 'in' ? '#7B7B7D' : '#2D2D2E'} />
+            <stop offset="0%" style={{ stopColor: mode === 'in' ? C.line : C.muted }} />
+            <stop offset="100%" style={{ stopColor: mode === 'in' ? C.muted : C.line }} />
           </linearGradient>
         </defs>
         {rows.map((r) => (
@@ -258,8 +270,8 @@ function BrainFlow() {
     flexDirection: 'column',
     justifyContent: 'center',
     padding: '0 14px',
-    background: '#1B1B1C',
-    border: '1px solid #2D2D2E',
+    background: C.panel,
+    border: `1px solid ${C.line}`,
     borderRadius: 10,
   }
   const head: React.CSSProperties = {
@@ -330,14 +342,16 @@ function BrainFlow() {
         <FlowLinks mode="in" />
 
         <div className="flow-mid">
-          {/* The focal card. Painted sand-950, the same colour the image's own
-              background is, so the artwork has no visible edge. */}
+          {/* The focal card. Painted the page ground, which on dark is the
+              image's own background; on light the .brain-wire blend hides the
+              image ground instead, so the artwork has no visible edge either way. */}
           {/* Border stays 1px, as every card here is. Full-strength olive read
               heavy beside the sand hairlines around it, so it is dialled back to
               a true hairline that still marks this as the focal card. */}
           <div style={{ ...node, height: CARD_H, width: '100%', padding: `${CARD_PAD_TOP}px 0 ${CARD_PAD_BOTTOM}px`, alignItems: 'center', justifyContent: 'flex-start', background: C.base, borderColor: 'rgba(168,185,77,0.55)' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
+              className="brain-wire"
               src="/andromeda-brain-wire.webp"
               alt=""
               width={IMG_W}
@@ -403,10 +417,10 @@ function CorpusExplorer() {
         /* Hover and selected match the site's left nav: sand-800 at 60% on
            hover, solid sand-800 when selected. */
         .corpus-rail-item { width: 100%; text-align: left; background: none; border: none; cursor: pointer; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 16px 18px; border-radius: 0 8px 8px 0; transition: background 0.15s ease, color 0.15s ease; }
-        .corpus-rail-item:hover { background: rgba(45,45,46,0.6); }
-        .corpus-rail-item[aria-current='true'] { background: #2D2D2E; }
+        .corpus-rail-item:hover { background: ${C.lineSoft}; }
+        .corpus-rail-item[aria-current='true'] { background: ${C.line}; }
         .corpus-file { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; transition: background 0.15s ease; }
-        .corpus-file:hover { background: #1B1B1C; }
+        .corpus-file:hover { background: ${C.panel}; }
         @media (max-width: 760px) {
           .corpus-explorer { grid-template-columns: 1fr; }
           .corpus-files { grid-template-columns: 1fr !important; }
@@ -416,7 +430,7 @@ function CorpusExplorer() {
         {/* alignSelf start, so the rail keeps its own height. Stretching it to
             the grid row made its rule run on past the last item whenever the
             pane was the taller of the two. */}
-        <div style={{ borderLeft: '1px solid #2D2D2E', alignSelf: 'start' }}>
+        <div style={{ borderLeft: `1px solid ${C.line}`, alignSelf: 'start' }}>
           {EXPLORER.map((s, i) => (
             <button
               key={s.id}
@@ -492,7 +506,7 @@ function BenefitCard({ benefit, delay }: { benefit: (typeof BENEFITS)[number]; d
       style={{ display: 'flex', flexDirection: 'column', ...PANEL_SOLID }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-        <div style={{ display: 'flex', width: 32, height: 32, flexShrink: 0, alignItems: 'center', justifyContent: 'center', borderRadius: 8, background: '#2D2D2E', color: C.reason }}>
+        <div style={{ display: 'flex', width: 32, height: 32, flexShrink: 0, alignItems: 'center', justifyContent: 'center', borderRadius: 8, background: C.line, color: C.reason }}>
           {benefit.icon}
         </div>
         <span style={{ fontSize: 14, fontWeight: 700, color: C.bright }}>{benefit.label}</span>
@@ -512,6 +526,15 @@ export function BrainStoryV4() {
   const heroSmooth = useRef<Array<{ x: number; y: number } | undefined>>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [loadProgress, setLoadProgress] = useState(0)
+  // The scene is built once; a theme switch only re-clears the ground and
+  // repaints the wire colours through this hook into the running scene.
+  const { theme } = useTheme()
+  const themeRef = useRef<Theme>(theme)
+  const repaintRef = useRef<((t: Theme) => void) | null>(null)
+  useEffect(() => {
+    themeRef.current = theme
+    repaintRef.current?.(theme)
+  }, [theme])
 
   // Premium subscribers already have the brain — re-label the CTA into the
   // viewer instead of pitching an upgrade. Treat the in-flight 'unknown' state
@@ -587,13 +610,13 @@ export function BrainStoryV4() {
       // (alpha:false) canvas with an uninitialized buffer composites as a
       // WHITE flash on some GPUs. Clear it to the void immediately, and keep
       // the canvas transparent until the first real frames fade it in.
-      renderer.setClearColor(new THREE.Color(C.base), 1)
+      renderer.setClearColor(new THREE.Color(PALETTE[themeRef.current].base), 1)
       renderer.clear()
       renderer.domElement.style.opacity = '0'
       renderer.domElement.style.transition = 'opacity 0.6s ease'
       host.appendChild(renderer.domElement)
 
-      scene = new THREE.Scene(); scene.background = new THREE.Color(C.base)
+      scene = new THREE.Scene(); scene.background = new THREE.Color(PALETTE[themeRef.current].base)
 
       // kick the GLTF fetch off as early as correctness allows — right after
       // scene exists (onLoad only needs scene.add(model) + THREE + the state
@@ -633,45 +656,61 @@ export function BrainStoryV4() {
         // colour buffer wants. An earlier pass here used setHSL, whose default
         // colour space is the working one, so sRGB-intended values went in
         // untranslated and the whole mesh washed out toward white.
-        const zoneCols = SECTION_ZONES.map((z) => {
-          const c = new THREE.Color(z.hex)
-          return [c.r, c.g, c.b] as [number, number, number]
-        })
         const zoneDirs = SECTION_ZONES.map((z) => new THREE.Vector3(z.dir[0], z.dir[1], z.dir[2]).normalize())
-        for (const mesh of brainMeshes) {
-          const geo = mesh.geometry
-          if (!geo?.attributes?.position || geo.attributes.color) continue
-          const pos = geo.attributes.position
-          geo.computeBoundingBox()
-          const bb = geo.boundingBox!
-          const cx = (bb.min.x + bb.max.x) / 2
-          const cy = (bb.min.y + bb.max.y) / 2
-          const cz = (bb.min.z + bb.max.z) / 2
-          const colors = new Float32Array(pos.count * 3)
-          const d = new THREE.Vector3()
-          for (let i = 0; i < pos.count; i++) {
-            d.set(pos.getX(i) - cx, pos.getY(i) - cy, pos.getZ(i) - cz).normalize()
-            let wsum = 0
-            const w = [0, 0, 0, 0]
-            for (let k = 0; k < 4; k++) {
-              const dot = Math.max(0, d.dot(zoneDirs[k]))
-              // cubed so each section holds its own area, plus an epsilon so no
-              // wire on the far side goes fully black
-              w[k] = dot * dot * dot + 0.04
-              wsum += w[k]
+        // Geometries this pass has painted. A colour attribute that arrived
+        // with the model is authored and stays; ours is rewritten in place.
+        const painted = new WeakSet<Mesh['geometry']>()
+        const paint = (t: Theme) => {
+          const zoneCols = SECTION_ZONES.map((z) => {
+            const c = new THREE.Color(z.hex[t])
+            return [c.r, c.g, c.b] as [number, number, number]
+          })
+          for (const mesh of brainMeshes) {
+            const geo = mesh.geometry
+            if (!geo?.attributes?.position) continue
+            if (geo.attributes.color && !painted.has(geo)) continue
+            const pos = geo.attributes.position
+            geo.computeBoundingBox()
+            const bb = geo.boundingBox!
+            const cx = (bb.min.x + bb.max.x) / 2
+            const cy = (bb.min.y + bb.max.y) / 2
+            const cz = (bb.min.z + bb.max.z) / 2
+            const existing = painted.has(geo) ? geo.attributes.color : null
+            const colors = existing ? (existing.array as Float32Array) : new Float32Array(pos.count * 3)
+            const d = new THREE.Vector3()
+            for (let i = 0; i < pos.count; i++) {
+              d.set(pos.getX(i) - cx, pos.getY(i) - cy, pos.getZ(i) - cz).normalize()
+              let wsum = 0
+              const w = [0, 0, 0, 0]
+              for (let k = 0; k < 4; k++) {
+                const dot = Math.max(0, d.dot(zoneDirs[k]))
+                // cubed so each section holds its own area, plus an epsilon so no
+                // wire on the far side goes fully black
+                w[k] = dot * dot * dot + 0.04
+                wsum += w[k]
+              }
+              let r = 0, g = 0, b = 0
+              for (let k = 0; k < 4; k++) {
+                const t2 = w[k] / wsum
+                r += zoneCols[k][0] * t2
+                g += zoneCols[k][1] * t2
+                b += zoneCols[k][2] * t2
+              }
+              colors[i * 3] = r
+              colors[i * 3 + 1] = g
+              colors[i * 3 + 2] = b
             }
-            let r = 0, g = 0, b = 0
-            for (let k = 0; k < 4; k++) {
-              const t = w[k] / wsum
-              r += zoneCols[k][0] * t
-              g += zoneCols[k][1] * t
-              b += zoneCols[k][2] * t
-            }
-            colors[i * 3] = r
-            colors[i * 3 + 1] = g
-            colors[i * 3 + 2] = b
+            if (existing) existing.needsUpdate = true
+            else geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+            painted.add(geo)
           }
-          geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+        }
+        paint(themeRef.current)
+        repaintRef.current = (t) => {
+          if (!alive) return
+          renderer.setClearColor(new THREE.Color(PALETTE[t].base), 1)
+          scene.background = new THREE.Color(PALETTE[t].base)
+          paint(t)
         }
 
         for (const mesh of brainMeshes) mesh.material = makeBrainMaterial(THREE)
@@ -812,7 +851,7 @@ export function BrainStoryV4() {
     })().catch(() => { if (alive) setStatus('error') })
 
     return () => {
-      alive = false; cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); cleanupInput()
+      alive = false; repaintRef.current = null; cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); cleanupInput()
       // forceContextLoss releases the actual WebGL context (browsers cap ~16);
       // dispose() alone leaks it, so repeated mounts of the story would run out.
       try { try { renderer?.forceContextLoss() } catch {} renderer?.dispose(); if (renderer?.domElement && host.contains(renderer.domElement)) host.removeChild(renderer.domElement) } catch {}
@@ -820,16 +859,28 @@ export function BrainStoryV4() {
   }, [dirs])
 
   return (
-    <div style={{ minHeight: '100vh', background: C.base, display: 'flex', flexDirection: 'column' }}>
+    // The whole page paints from the --brain-* variables, light by default and
+    // dark under the site's `dark` class, so it follows the site toggle like
+    // every other Andromeda route.
+    <div className="brain-story" style={{ minHeight: '100vh', background: C.base, display: 'flex', flexDirection: 'column' }}>
+      <style>{`
+        .brain-story { ${brainVars('light')} }
+        .dark .brain-story { ${brainVars('dark')} }
+        /* The wire artwork bakes a sand-950 ground. On light it is inverted
+           (hue-rotate keeps the wire colours), pushed to a white ground and
+           multiplied in, so the card shows the wire and no rectangle. */
+        .brain-wire { filter: invert(1) hue-rotate(180deg) brightness(1.06); mix-blend-mode: multiply; }
+        .dark .brain-wire { filter: none; mix-blend-mode: normal; }
+      `}</style>
       {/* top tab — left-aligned breadcrumb (Andromeda -> overview, current page
           in olive), consistent with the content pages' breadcrumb pattern. */}
-      <header className="sticky top-0 z-50 hidden h-14 items-center justify-between gap-4 border-b border-sand-800 bg-sand-950 px-6 md:flex">
+      <header className="sticky top-0 z-50 hidden h-14 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 md:flex dark:border-sand-800 dark:bg-sand-950">
         <nav aria-label="Breadcrumb" className="min-w-0 truncate text-sm font-semibold">
-          <Link href="/design-systems/andromeda" className="text-sand-400 transition-colors hover:text-sand-100">
+          <Link href="/design-systems/andromeda" className="text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100">
             Andromeda
           </Link>
-          <span className="mx-1 text-sand-600">/</span>
-          <span className="text-olive-500">Andromeda Brain</span>
+          <span className="mx-1 text-sand-400 dark:text-sand-600">/</span>
+          <span className="text-olive-600 dark:text-olive-500">Andromeda Brain</span>
         </nav>
         <div className="flex items-center justify-end">
           <HeaderSocials />
@@ -850,7 +901,7 @@ export function BrainStoryV4() {
             <div
               key={txt}
               ref={(el) => { labelEls.current[i] = el }}
-              style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: MONO, fontSize: 12, letterSpacing: '0.02em', color: C.node, whiteSpace: 'nowrap', textShadow: '0 0 8px rgba(0,0,0,0.9)', willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
+              style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: MONO, fontSize: 12, letterSpacing: '0.02em', color: C.node, whiteSpace: 'nowrap', textShadow: `0 0 8px ${C.halo}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
             >
               {txt}
             </div>
@@ -862,7 +913,7 @@ export function BrainStoryV4() {
             <div
               key={txt}
               ref={(el) => { heroEls.current[i] = el }}
-              style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: SANS, fontSize: 20, fontWeight: 700, letterSpacing: '-0.01em', color: C.bright, whiteSpace: 'nowrap', textShadow: '0 0 14px rgba(0,0,0,0.95)', willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
+              style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: SANS, fontSize: 20, fontWeight: 700, letterSpacing: '-0.01em', color: C.bright, whiteSpace: 'nowrap', textShadow: `0 0 14px ${C.haloStrong}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
             >
               {txt}
             </div>
@@ -1014,22 +1065,22 @@ export function BrainStoryV4() {
               .cmp-left { border-right: none !important; }
             }
           `}</style>
-          <div style={{ border: '1px solid #2D2D2E', borderRadius: 16, overflow: 'hidden' }}>
+          <div style={{ border: `1px solid ${C.line}`, borderRadius: 16, overflow: 'hidden' }}>
             <div className="cmp-grid">
-              <div className="cmp-cell cmp-left" style={{ borderRight: '1px solid #2D2D2E', borderBottom: '1px solid #2D2D2E', fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted }}>
+              <div className="cmp-cell cmp-left" style={{ borderRight: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`, fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted }}>
                 Classic design system
               </div>
-              <div className="cmp-cell" style={{ borderBottom: '1px solid #2D2D2E', background: 'rgba(168,185,77,0.05)', fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>
+              <div className="cmp-cell" style={{ borderBottom: `1px solid ${C.line}`, background: 'rgba(168,185,77,0.05)', fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>
                 AI-native design system
               </div>
             </div>
             {COMPARE.map((row, i) => (
               <div key={i} className="cmp-grid">
-                <div className="cmp-cell cmp-left" style={{ borderRight: '1px solid #2D2D2E', borderTop: i === 0 ? 'none' : '1px solid #2D2D2E' }}>
+                <div className="cmp-cell cmp-left" style={{ borderRight: `1px solid ${C.line}`, borderTop: i === 0 ? 'none' : `1px solid ${C.line}` }}>
                   <XIcon weight="regular" size={15} color={C.muted} style={{ flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 14, color: C.node, lineHeight: 1.5 }}>{row.classic}</span>
                 </div>
-                <div className="cmp-cell" style={{ borderTop: i === 0 ? 'none' : '1px solid #2D2D2E', background: 'rgba(168,185,77,0.05)' }}>
+                <div className="cmp-cell" style={{ borderTop: i === 0 ? 'none' : `1px solid ${C.line}`, background: 'rgba(168,185,77,0.05)' }}>
                   <Check weight="regular" size={15} color={C.accentBtn} style={{ flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 14, color: C.bright, lineHeight: 1.5 }}>{row.native}</span>
                 </div>
@@ -1038,7 +1089,7 @@ export function BrainStoryV4() {
           </div>
           {/* A typed asterisk rather than a 16px icon: it reads as a footnote
               marker on the sentence, which is what it is. */}
-          <div style={{ marginTop: 20, border: '1px solid #2D2D2E', borderRadius: 16, padding: '16px 24px', background: 'rgba(168,185,77,0.05)' }}>
+          <div style={{ marginTop: 20, border: `1px solid ${C.line}`, borderRadius: 16, padding: '16px 24px', background: 'rgba(168,185,77,0.05)' }}>
             <p style={{ fontSize: 14, fontWeight: 600, color: C.accentBtn, lineHeight: 1.5, margin: 0 }}>
               <span style={{ marginRight: 6 }}>*</span>
               The agent builds fast and accurate. You stay in the loop, and you decide what ships.
@@ -1095,13 +1146,13 @@ export function BrainStoryV4() {
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
             </div>
-            <p className="relative text-xs font-semibold uppercase tracking-wider text-sand-600">
+            <p className="relative text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-600">
               How to get it
             </p>
-            <h2 className="relative mt-2 text-xl font-bold text-sand-50">
+            <h2 className="relative mt-2 text-xl font-bold text-sand-900 dark:text-sand-50">
               Andromeda components are free for everyone.
             </h2>
-            <p className="relative mt-2 text-base text-sand-500">
+            <p className="relative mt-2 text-base text-sand-600 dark:text-sand-500">
               The brain is the premium layer: one install puts all {BRAIN_TEASER.totalFiles} files in your project, and the web reader keeps every rule a click away while you work.
             </p>
             <div className="relative mt-6 flex flex-wrap items-center justify-center gap-3">

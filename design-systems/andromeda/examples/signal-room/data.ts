@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SIGNAL ROOM DEMO DATA
 // A music app re-interpreted as an audio transmission control
@@ -36,7 +35,9 @@ export const channels = [
   { id: 'deep-focus',    code: 'CH-12', name: 'Deep Focus',    tracks: 100, bitrate: 256, status: 'fault'   },
   { id: 'road-trip',     code: 'CH-18', name: 'Road Trip',     tracks: 42,  bitrate: 320, status: 'nominal' },
   { id: 'liked-radio',   code: 'CH-21', name: 'Liked Radio',   tracks: 75,  bitrate: 256, status: 'nominal' },
-];
+] as const;
+
+export type Channel = (typeof channels)[number];
 
 // ---- Now Transmitting: hero readouts (replaces "Sound without limits") ----
 // The ▲/▼ glyph reports the direction of the move; `polarity` says which
@@ -47,7 +48,7 @@ export const channels = [
 export const nowTransmittingStats = [
   { code: 'SIG-01', label: 'Signal',  value: '98',  unit: '%',    delta: 0.4,  deltaLabel: 'lock'    },
   { code: 'SIG-02', label: 'Bitrate', value: '320', unit: 'KBPS', delta: 0,    deltaLabel: 'stable'  },
-  { code: 'SIG-03', label: 'Latency', value: '12',  unit: 'MS',   delta: -1,   polarity: 'lower-is-better', deltaLabel: 'last 60s'},
+  { code: 'SIG-03', label: 'Latency', value: '12',  unit: 'MS',   delta: -1,   polarity: 'lower-is-better' as const, deltaLabel: 'last 60s'},
   { code: 'SIG-04', label: 'Channel', value: '04',  unit: 'LIVE', delta: 0,    deltaLabel: 'nominal' },
 ];
 
@@ -67,6 +68,8 @@ export const mixes = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/signal-room/mix-04.webp' },
 ];
 
+export type Mix = (typeof mixes)[number];
+
 // ---- Recent transmissions table (replaces "Jump back in") ----
 export const recentTransmissions = [
   { id: 'REC-2041', track: 'Blinding Lights', artist: 'The Weeknd',    duration: '3:20', plays: 142, peak: 86, last: 'T-02m' },
@@ -78,6 +81,8 @@ export const recentTransmissions = [
   { id: 'REC-2019', track: 'As It Was',       artist: 'Harry Styles',  duration: '2:47', plays: 168, peak: 84, last: 'T-4h'  },
 ];
 
+export type Transmission = (typeof recentTransmissions)[number];
+
 // ---- Output levels panel (replaces equalizer / volume meters) ----
 export const channelLevels = [
   { name: 'Master Out',  status: 'nominal', value: 88  },
@@ -86,25 +91,25 @@ export const channelLevels = [
   { name: 'High Mid',    status: 'caution', value: 92  },
   { name: 'Treble',      status: 'nominal', value: 70  },
   { name: 'Air',         status: 'nominal', value: 52  },
-];
+] as const;
 
 export const levelStatusVariant = {
   nominal: 'accent',
   caution: 'warning',
   fault:   'fault',
-};
+} as const;
 
 export const levelStatusLabel = {
   nominal: 'OK',
   caution: 'Hot',
   fault:   'Clip',
-};
+} as const;
 
 export const levelProgressVariant = {
   nominal: 'default',
   caution: 'warning',
   fault:   'fault',
-};
+} as const;
 
 // ---- Transport: currently playing track ----
 export const nowPlaying = {
@@ -116,4 +121,15 @@ export const nowPlaying = {
   code:     'TX-001',
   bitrate:  320,
   plays:    '2.1k',
+};
+
+// The normalized shape the bottom player consumes, whichever source (mix card
+// or transmission row) was played.
+export type PlayerTrack = {
+  title: string;
+  subtitle: string;
+  code: string;
+  cover: string | null;
+  duration: number;
+  plays: string | number;
 };

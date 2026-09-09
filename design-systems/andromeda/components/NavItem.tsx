@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: NavItem
 // shadcn/ui-aligned API: variant/state, asChild, forwardRef, cva.
@@ -11,9 +10,12 @@
 'use client';
 
 import { forwardRef } from 'react';
+import type { ComponentPropsWithoutRef, CSSProperties, ElementType, ReactNode } from 'react';
 import { Slot } from '@radix-ui/react-slot';
 import { motion } from 'framer-motion';
+import type { Transition } from 'framer-motion';
 import { cva } from 'class-variance-authority';
+import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
 import { cn, andromedaVars, easingArray } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
@@ -34,9 +36,9 @@ const TOUCH_TARGET_STYLE = `
 // Sliding-indicator transition — token-driven. The active dot uses framer's
 // `layoutId` to animate between sibling NavItems when wrapped in a
 // <LayoutGroup>. See the Andromeda motion rules.
-const ms = (v) => parseInt(v, 10) / 1000;
+const ms = (v: string) => parseInt(v, 10) / 1000;
 // framer boundary: derived from tokens, cannot follow runtime var overrides
-const INDICATOR_TX = {
+const INDICATOR_TX: Transition = {
   duration: ms(tokens.motion.duration.slow),
   ease: easingArray(tokens.motion.easing.standard),
 };
@@ -106,8 +108,22 @@ const navItemVariants = cva(
  * @property {React.CSSProperties} [style] Inline styles merged onto the root element.
  */
 
+type NavItemOwnProps = {
+  icon?: PhosphorIcon;
+  label: ReactNode;
+  active?: boolean;
+  mono?: boolean;
+  asChild?: boolean;
+  layoutGroupId?: string;
+  className?: string;
+  style?: CSSProperties;
+};
+
+export type NavItemProps = NavItemOwnProps &
+  Omit<ComponentPropsWithoutRef<'button'>, keyof NavItemOwnProps>;
+
 /** @type {React.ForwardRefExoticComponent<NavItemProps & React.ButtonHTMLAttributes<HTMLButtonElement>>} */
-export const NavItem = forwardRef(function NavItem(
+export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavItem(
   {
     className,
     icon: Icon,
@@ -122,7 +138,7 @@ export const NavItem = forwardRef(function NavItem(
   },
   ref,
 ) {
-  const Comp = asChild ? Slot : 'button';
+  const Comp: ElementType = asChild ? Slot : 'button';
 
   return (
     <>

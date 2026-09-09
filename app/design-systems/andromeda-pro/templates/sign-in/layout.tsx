@@ -6,7 +6,7 @@ export const metadata = {
   title: 'Sign In · Andromeda Template',
   description:
     'A split-screen authentication screen built with Andromeda: email and password, federated sign-in, and the Burst object filling the right half.',
-  alternates: { canonical: '/design-systems/andromeda/templates/sign-in' },
+  alternates: { canonical: '/design-systems/andromeda-pro/templates/sign-in' },
 }
 
 export default function SignInTemplateLayout({ children }: { children: ReactNode }) {

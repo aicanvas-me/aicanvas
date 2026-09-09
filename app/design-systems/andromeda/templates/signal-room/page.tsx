@@ -1,7 +1,5 @@
-// @ts-nocheck — consumes Andromeda tokens which are not type-checked yet.
-import { SignalRoom } from '../../../../lib/andromeda-v2-examples.generated'
-import { tokens } from '../../../../lib/andromeda-v2.generated'
-import { AndromedaThemeWrap } from '../../AndromedaThemeWrap'
+import SignalRoom from '../../../../../design-systems/andromeda/examples/signal-room'
+import { themeColor } from '../../../../../design-systems/andromeda/components/lib/utils'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
@@ -24,7 +22,6 @@ export default async function SignalRoomTemplate({
 }) {
   const frame = (await searchParams).frame === '1'
   return (
-    <AndromedaThemeWrap className="contents">
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-signal-room"
@@ -33,12 +30,11 @@ export default async function SignalRoomTemplate({
       systemHref="/design-systems/andromeda"
     >
       <div
-        className="relative min-h-full w-full md:h-full md:overflow-hidden"
-        style={{ backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }}
+        className="relative h-full min-h-full w-full md:overflow-hidden"
+        style={{ backgroundColor: themeColor.surface.base }}
       >
         <SignalRoom />
       </div>
     </TemplatePreviewShell>
-    </AndromedaThemeWrap>
   )
 }

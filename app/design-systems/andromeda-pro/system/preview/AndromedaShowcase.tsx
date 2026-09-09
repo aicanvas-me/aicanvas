@@ -14,7 +14,7 @@
 // sections, ~1900 lines of them, beside the per-component pages' own
 // hand-written demos. Two hand-written bodies is what made the two surfaces
 // drift, so the components are now ONE LOOP over the matrix declarations
-// (app/_lib/andromeda/matrix/) that the per-component pages also render. The
+// (app/_lib/andromeda-pro/matrix/) that the per-component pages also render. The
 // curated section copy survives verbatim in section-copy.ts; the FOUNDATION
 // blocks below stay hand-authored, because they document tokens rather than
 // components and have nothing to declare.
@@ -36,9 +36,9 @@ import {
   CardContent,
   CardTitle,
 } from '../../../../lib/andromeda-v2.generated'
-import { ANDROMEDA_COMPONENT_META } from '../../../../_lib/andromeda/andromeda-meta'
-import { MatrixBlock } from '../../../../_lib/andromeda/matrix/Matrix'
-import { SPEC_BY_SLUG } from '../../../../_lib/andromeda/matrix'
+import { ANDROMEDA_COMPONENT_META } from '../../../../_lib/andromeda-pro/andromeda-meta'
+import { MatrixBlock } from '../../../../_lib/andromeda-pro/matrix/Matrix'
+import { SPEC_BY_SLUG } from '../../../../_lib/andromeda-pro/matrix'
 import { SECTION_COPY } from '../section-copy'
 import { CATEGORY } from '../categories'
 
@@ -97,7 +97,7 @@ function Section({
   kicker?: string
   description?: string
   // When provided, renders a right-aligned "Open <title>" link in the
-  // header pointing at /design-systems/andromeda/<slug>. Foundation
+  // header pointing at /design-systems/andromeda-pro/<slug>. Foundation
   // sections (Color Palette, Typography) omit this and have no button.
   slug?: string
   // Skip content-visibility for sections whose demo opens an INLINE docs
@@ -148,7 +148,7 @@ function Section({
           // which doesn't tolerate the Button's internal `{icon}{children}`
           // rendering when asChild is true.
           <Link
-            href={`/design-systems/andromeda/${slug}`}
+            href={`/design-systems/andromeda-pro/${slug}`}
             className={buttonVariants({ variant: 'ghost', size: 'md' })}
             style={andromedaVars()}
           >

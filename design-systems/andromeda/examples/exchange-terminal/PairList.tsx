@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // EXCHANGE TERMINAL · PairList + MarketTrades
 // ============================================================
@@ -8,6 +7,7 @@
 import { Star, MagnifyingGlass } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { rowContainer, rowItem } from '../../components/lib/motion';
 import { Dropdown } from './Dropdown';
@@ -29,13 +29,13 @@ const ROW_TEXT = {
 const COL_HEADER = {
   fontFamily: tokens.typography.fontMono,
   fontSize: tokens.typography.size.sm,
-  color: tokens.color.text.muted,
+  color: themeColor.text.muted,
   textTransform: 'uppercase',
   letterSpacing: tokens.typography.tracking.normal,
   whiteSpace: 'nowrap',
 };
 
-function InsetDivider({ side = 'bottom' }) {
+function InsetDivider({ side = 'bottom' }: { side?: 'top' | 'bottom' }) {
   return (
     <span
       aria-hidden
@@ -45,14 +45,14 @@ function InsetDivider({ side = 'bottom' }) {
         right: tokens.spacing[3],
         [side]: 0,
         height: '1px',
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
         pointerEvents: 'none',
       }}
     />
   );
 }
 
-function TabButton({ label, active, hasMenu, leadingStar }) {
+function TabButton({ label, active, hasMenu, leadingStar }: { label: string; active?: boolean; hasMenu?: boolean; leadingStar?: boolean }) {
   return (
     <button
       type="button"
@@ -69,7 +69,7 @@ function TabButton({ label, active, hasMenu, leadingStar }) {
         fontSize: tokens.typography.size.sm,
         textTransform: 'uppercase',
         letterSpacing: tokens.typography.tracking.normal,
-        color: active ? tokens.color.text.primary : tokens.color.text.muted,
+        color: active ? themeColor.text.primary : themeColor.text.muted,
         fontWeight: active
           ? tokens.typography.weight.medium
           : tokens.typography.weight.regular,
@@ -77,10 +77,10 @@ function TabButton({ label, active, hasMenu, leadingStar }) {
       }}
     >
       {leadingStar ? (
-        <Star weight="regular" size={13} style={{ color: tokens.color.text.faint }} />
+        <Star weight="regular" size={13} style={{ color: themeColor.text.faint }} />
       ) : null}
       {label}
-      {hasMenu ? <span style={{ color: tokens.color.text.faint }}>▾</span> : null}
+      {hasMenu ? <span style={{ color: themeColor.text.faint }}>▾</span> : null}
       {active ? (
         <span
           aria-hidden
@@ -90,7 +90,7 @@ function TabButton({ label, active, hasMenu, leadingStar }) {
             right: tokens.spacing[2],
             bottom: 0,
             height: '1px',
-            background: tokens.color.accent[300],
+            background: themeColor.accent[300],
           }}
         />
       ) : null}
@@ -98,11 +98,11 @@ function TabButton({ label, active, hasMenu, leadingStar }) {
   );
 }
 
-const fmtPrice = (n) => n.toFixed(3);
+const fmtPrice = (n: number) => n.toFixed(3);
 
-function PairRow({ row }) {
+function PairRow({ row }: { row: (typeof pairs)[number] }) {
   const pos = row.chg >= 0;
-  const changeColor = pos ? tokens.color.accent[200] : tokens.color.red[200];
+  const changeColor = pos ? themeColor.accent[200] : themeColor.red[200];
   return (
     <motion.div
       variants={rowItem}
@@ -117,15 +117,15 @@ function PairRow({ row }) {
       }}
     >
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[1] }}>
-        <Star weight="regular" size={11} style={{ color: tokens.color.text.faint, flexShrink: 0 }} />
-        <span style={{ color: tokens.color.text.primary }}>{row.sym}</span>
-        <span style={{ color: tokens.color.text.faint }}>/BTC</span>
+        <Star weight="regular" size={11} style={{ color: themeColor.text.faint, flexShrink: 0 }} />
+        <span style={{ color: themeColor.text.primary }}>{row.sym}</span>
+        <span style={{ color: themeColor.text.faint }}>/BTC</span>
         {row.lev ? (
           <span
             style={{
               padding: `${tokens.spacing[1]} ${tokens.spacing[2]}`,
-              background: tokens.color.orange.alpha,
-              color: tokens.color.orange[200],
+              background: themeColor.orange.alpha,
+              color: themeColor.orange[200],
               fontSize: tokens.typography.size.xs,
               letterSpacing: tokens.typography.tracking.wide,
               borderRadius: tokens.radius.sm,
@@ -136,7 +136,7 @@ function PairRow({ row }) {
           </span>
         ) : null}
       </span>
-      <span style={{ color: tokens.color.text.primary, textAlign: 'right' }}>
+      <span style={{ color: themeColor.text.primary, textAlign: 'right' }}>
         {fmtPrice(row.last)}
       </span>
       <span style={{ color: changeColor, textAlign: 'right' }}>
@@ -146,9 +146,9 @@ function PairRow({ row }) {
   );
 }
 
-function TradeRow({ row }) {
+function TradeRow({ row }: { row: (typeof trades)[number] }) {
   const pos = row.side === 'buy';
-  const priceColor = pos ? tokens.color.accent[200] : tokens.color.red[200];
+  const priceColor = pos ? themeColor.accent[200] : themeColor.red[200];
   return (
     <div
       className="ex-row"
@@ -162,15 +162,15 @@ function TradeRow({ row }) {
       }}
     >
       <span style={{ color: priceColor }}>{row.p.toFixed(2)}</span>
-      <span style={{ color: tokens.color.text.secondary, textAlign: 'right' }}>
+      <span style={{ color: themeColor.text.secondary, textAlign: 'right' }}>
         {row.a.toFixed(3)}
       </span>
-      <span style={{ color: tokens.color.text.muted, textAlign: 'right' }}>{row.t}</span>
+      <span style={{ color: themeColor.text.muted, textAlign: 'right' }}>{row.t}</span>
     </div>
   );
 }
 
-function ColumnHeaders({ template, labels }) {
+function ColumnHeaders({ template, labels }: { template: string; labels: string[] }) {
   return (
     <div
       style={{
@@ -185,7 +185,7 @@ function ColumnHeaders({ template, labels }) {
         <span key={l} style={{ textAlign: i === 0 ? 'left' : 'right' }}>
           {l}
           {i > 0 ? (
-            <span style={{ marginLeft: tokens.spacing[1], color: tokens.color.text.faint }}>↕</span>
+            <span style={{ marginLeft: tokens.spacing[1], color: themeColor.text.faint }}>↕</span>
           ) : null}
         </span>
       ))}
@@ -199,7 +199,7 @@ export function PairList() {
     <div
       style={{
         position: 'relative',
-        background: tokens.color.surface.overlay,
+        background: themeColor.surface.overlay,
         display: 'flex',
         flexDirection: 'column',
         flex: 1,
@@ -248,11 +248,11 @@ export function PairList() {
             flex: 1,
             minWidth: 0,
             padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`,
-            background: tokens.color.surface.hover,
-            border: `${tokens.border.thin} ${tokens.color.border.base}`,
+            background: themeColor.surface.hover,
+            border: `${tokens.border.thin} ${themeColor.border.base}`,
           }}
         >
-          <MagnifyingGlass weight="regular" size={13} style={{ color: tokens.color.text.faint, flexShrink: 0 }} />
+          <MagnifyingGlass weight="regular" size={13} style={{ color: themeColor.text.faint, flexShrink: 0 }} />
           <input
             type="text"
             placeholder="Search"
@@ -264,7 +264,7 @@ export function PairList() {
               outline: 'none',
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.sm,
-              color: tokens.color.text.primary,
+              color: themeColor.text.primary,
               letterSpacing: tokens.typography.tracking.wide,
             }}
           />
@@ -282,12 +282,12 @@ export function PairList() {
             flexShrink: 0,
           }}
         >
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[1], color: tokens.color.accent[200] }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: tokens.color.accent[300] }} />
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[1], color: themeColor.accent[200] }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: themeColor.accent[300] }} />
             Change
           </span>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[1], color: tokens.color.text.muted }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', border: `${tokens.border.thin} ${tokens.color.border.bright}` }} />
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[1], color: themeColor.text.muted }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', border: `${tokens.border.thin} ${themeColor.border.bright}` }} />
             Volume
           </span>
         </div>
@@ -308,7 +308,7 @@ export function PairList() {
       </motion.div>
 
       {/* Market Trades */}
-      <div style={{ borderTop: `${tokens.border.thin} ${tokens.color.border.subtle}` }}>
+      <div style={{ borderTop: `${tokens.border.thin} ${themeColor.border.subtle}` }}>
         <div
           style={{
             display: 'flex',
@@ -322,10 +322,10 @@ export function PairList() {
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.md,       // 14px — section label
               fontWeight: tokens.typography.weight.semibold,
-              color: tokens.color.text.primary,
+              color: themeColor.text.primary,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.wider,
-              borderBottom: `1px solid ${tokens.color.accent[300]}`,
+              borderBottom: `1px solid ${themeColor.accent[300]}`,
               paddingBottom: tokens.spacing[1],
             }}
           >
@@ -335,7 +335,7 @@ export function PairList() {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.md,
-              color: tokens.color.text.muted,
+              color: themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.wider,
             }}

@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // EXCHANGE TERMINAL
 // ============================================================
@@ -16,6 +15,7 @@ import {
 } from '@phosphor-icons/react';
 import { motion } from 'framer-motion';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Avatar } from '../../components/Avatar';
 import { IconButton } from '../../components/IconButton';
@@ -26,6 +26,7 @@ import {
   DrawerDescription,
   DrawerBody,
 } from '../../components/Drawer';
+import type { DrawerProps } from '../../components/Drawer';
 import { useCascadeProps } from '../../components/lib/motion';
 import { mq } from '../../components/lib/responsive';
 import { AndromedaIcon } from '../../AndromedaIcon';
@@ -42,19 +43,19 @@ function HoverStyles() {
   return (
     <style>{`
       .ex-btn-hover { transition: background 140ms ease, color 140ms ease, border-color 140ms ease; }
-      .ex-btn-hover:hover { color: ${tokens.color.text.primary} !important; }
+      .ex-btn-hover:hover { color: ${themeColor.text.primary} !important; }
 
       .ex-icon-btn { transition: background 140ms ease, color 140ms ease, border-color 140ms ease; }
-      .ex-icon-btn:hover { background: ${tokens.color.surface.active} !important; color: ${tokens.color.accent[200]} !important; border-color: ${tokens.color.border.bright} !important; }
+      .ex-icon-btn:hover { background: ${themeColor.surface.active} !important; color: ${themeColor.accent[200]} !important; border-color: ${themeColor.border.bright} !important; }
 
       .ex-row { transition: background 100ms ease; cursor: pointer; }
-      .ex-row:hover { background: ${tokens.color.surface.hover}; }
+      .ex-row:hover { background: ${themeColor.surface.hover}; }
 
       .ex-menu-item-hover { transition: background 100ms ease, color 100ms ease; }
-      .ex-menu-item-hover:hover { background: ${tokens.color.surface.hover} !important; color: ${tokens.color.text.primary} !important; }
+      .ex-menu-item-hover:hover { background: ${themeColor.surface.hover} !important; color: ${themeColor.text.primary} !important; }
 
       .ex-link { transition: color 140ms ease; }
-      .ex-link:hover { color: ${tokens.color.accent[300]} !important; }
+      .ex-link:hover { color: ${themeColor.accent[300]} !important; }
 
       /* ── Responsive (desktop-first; step DOWN via max-width) ──────────── */
 
@@ -112,7 +113,7 @@ const NAV_MENUS = {
   'Finance':     ['Earn', 'Pool', 'Loans', 'BNB Vault', 'Liquidity Farming'],
 };
 
-function TopBar({ onMenu }) {
+function TopBar({ onMenu }: { onMenu: () => void }) {
   return (
     <header
       style={{
@@ -123,7 +124,7 @@ function TopBar({ onMenu }) {
         alignItems: 'center',
         gap: tokens.spacing[4],
         padding: `0 ${tokens.spacing[6]}`,
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
       }}
     >
       <CornerMarkers />
@@ -142,7 +143,7 @@ function TopBar({ onMenu }) {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.primary,
+              color: themeColor.text.primary,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
               fontWeight: tokens.typography.weight.semibold,
@@ -154,7 +155,7 @@ function TopBar({ onMenu }) {
             style={{
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
-              color: tokens.color.text.muted,
+              color: themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.widest,
             }}
@@ -179,8 +180,8 @@ function TopBar({ onMenu }) {
             <span
               style={{
                 padding: `0 ${tokens.spacing[1]}`,
-                background: tokens.color.accent.alpha,
-                color: tokens.color.accent[200],
+                background: themeColor.accent.alpha,
+                color: themeColor.accent[200],
                 fontSize: tokens.typography.size.xs,
                 borderRadius: tokens.radius.sm,
               }}
@@ -202,7 +203,7 @@ function TopBar({ onMenu }) {
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.sm,
             fontWeight: tokens.typography.weight.medium,
-            color: tokens.color.text.primary,
+            color: themeColor.text.primary,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.wider,
           }}
@@ -228,12 +229,12 @@ function TopBar({ onMenu }) {
             alignItems: 'center',
             height: tokens.spacing[8],
             padding: `0 ${tokens.spacing[3]}`,
-            background: tokens.color.surface.hover,
-            border: `${tokens.border.thin} ${tokens.color.border.base}`,
+            background: themeColor.surface.hover,
+            border: `${tokens.border.thin} ${themeColor.border.base}`,
             cursor: 'pointer',
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.sm,
-            color: tokens.color.text.primary,
+            color: themeColor.text.primary,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.wider,
             flexShrink: 0,
@@ -249,20 +250,20 @@ function TopBar({ onMenu }) {
 }
 
 // ─── PairHeader ────────────────────────────────────────────────────────────
-const fmt = (n, d = 2) =>
+const fmt = (n: number, d = 2) =>
   n.toLocaleString('en-US', { minimumFractionDigits: d, maximumFractionDigits: d });
 
 // Demoted stat — small label above small value. Used only for the
 // secondary metrics (24h high/low/volumes) which sit at tier-2 of the
 // PairHeader hierarchy below the hero price.
-function Stat({ label, value }) {
+function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[1], minWidth: 0 }}>
       <span
         style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.muted,
+          color: themeColor.text.muted,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.widest,
         }}
@@ -273,7 +274,7 @@ function Stat({ label, value }) {
         style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.text.primary,
+          color: themeColor.text.primary,
           letterSpacing: tokens.typography.tracking.wide,
           fontWeight: tokens.typography.weight.medium,
           whiteSpace: 'nowrap',
@@ -294,7 +295,7 @@ function VRule() {
       style={{
         width: '1px',
         height: tokens.spacing[8],
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
         flexShrink: 0,
       }}
     />
@@ -303,7 +304,7 @@ function VRule() {
 
 function PairHeader() {
   const pos = pair.changePct24h >= 0;
-  const changeColor = pos ? tokens.color.accent[200] : tokens.color.red[200];
+  const changeColor = pos ? themeColor.accent[200] : themeColor.red[200];
 
   return (
     <div
@@ -315,7 +316,7 @@ function PairHeader() {
         alignItems: 'center',
         gap: tokens.spacing[6],
         padding: `${tokens.spacing[4]} ${tokens.spacing[6]}`,
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
       }}
     >
       <CornerMarkers />
@@ -330,7 +331,7 @@ function PairHeader() {
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xl,
             fontWeight: tokens.typography.weight.bold,
-            color: tokens.color.text.primary,
+            color: themeColor.text.primary,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.wider,
           }}
@@ -339,8 +340,8 @@ function PairHeader() {
           <span
             style={{
               padding: `${tokens.spacing[1]} ${tokens.spacing[2]}`,
-              background: tokens.color.orange.alpha,
-              color: tokens.color.orange[200],
+              background: themeColor.orange.alpha,
+              color: themeColor.orange[200],
               fontSize: tokens.typography.size.xs,
               fontWeight: tokens.typography.weight.medium,
               letterSpacing: tokens.typography.tracking.wide,
@@ -357,7 +358,7 @@ function PairHeader() {
             gap: tokens.spacing[1],
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.muted,
+            color: themeColor.text.muted,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}
@@ -396,7 +397,7 @@ function PairHeader() {
             letterSpacing: tokens.typography.tracking.wide,
           }}
         >
-          <span style={{ color: tokens.color.text.muted }}>${fmt(pair.priceUsd)}</span>
+          <span style={{ color: themeColor.text.muted }}>${fmt(pair.priceUsd)}</span>
           <span style={{ color: changeColor, fontWeight: tokens.typography.weight.medium }}>
             {pos ? '+' : ''}{fmt(pair.change24h)}
           </span>
@@ -437,7 +438,7 @@ function PairHeader() {
           cursor: 'pointer',
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.accent[200],
+          color: themeColor.accent[200],
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.wider,
           whiteSpace: 'nowrap',
@@ -466,7 +467,7 @@ function OrderTabs() {
         gap: tokens.spacing[6],
         padding: `0 ${tokens.spacing[6]}`,
         height: tokens.spacing[10],            // 40px
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
       }}
     >
       <CornerMarkers />
@@ -489,7 +490,7 @@ function OrderTabs() {
               fontWeight: active
                 ? tokens.typography.weight.semibold
                 : tokens.typography.weight.regular,
-              color: active ? tokens.color.text.primary : tokens.color.text.muted,
+              color: active ? themeColor.text.primary : themeColor.text.muted,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.wider,
             }}
@@ -504,7 +505,7 @@ function OrderTabs() {
                   right: 0,
                   bottom: 0,
                   height: '2px',
-                  background: tokens.color.accent[300],
+                  background: themeColor.accent[300],
                 }}
               />
             ) : null}
@@ -517,13 +518,13 @@ function OrderTabs() {
         style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.faint,
+          color: themeColor.text.faint,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.widest,
           whiteSpace: 'nowrap',
         }}
       >
-        /// Andromeda Exchange
+        {'/// Andromeda Exchange'}
       </span>
     </div>
   );
@@ -531,7 +532,7 @@ function OrderTabs() {
 
 // ─── Composition ───────────────────────────────────────────────────────────
 // ─── Drawer nav — the same NAV_MENUS as the desktop TopBar, stacked. ─────────
-function NavDrawer({ open, onOpenChange }) {
+function NavDrawer({ open, onOpenChange }: Pick<DrawerProps, 'open' | 'onOpenChange'>) {
   return (
     <Drawer open={open} onOpenChange={onOpenChange} side="left" size={280}>
       <DrawerHeader>
@@ -547,7 +548,7 @@ function NavDrawer({ open, onOpenChange }) {
                   fontFamily: tokens.typography.fontMono,
                   fontSize: tokens.typography.size.xs,
                   fontWeight: tokens.typography.weight.semibold,
-                  color: tokens.color.text.primary,
+                  color: themeColor.text.primary,
                   textTransform: 'uppercase',
                   letterSpacing: tokens.typography.tracking.widest,
                 }}
@@ -570,7 +571,7 @@ function NavDrawer({ open, onOpenChange }) {
                       cursor: 'pointer',
                       fontFamily: tokens.typography.fontMono,
                       fontSize: tokens.typography.size.sm,
-                      color: tokens.color.text.secondary,
+                      color: themeColor.text.secondary,
                       textTransform: 'uppercase',
                       letterSpacing: tokens.typography.tracking.wide,
                     }}
@@ -596,7 +597,7 @@ function NavDrawer({ open, onOpenChange }) {
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.sm,
               fontWeight: tokens.typography.weight.medium,
-              color: tokens.color.text.primary,
+              color: themeColor.text.primary,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.wider,
             }}
@@ -632,9 +633,9 @@ export default function ExchangeTerminal() {
         flexDirection: 'column',
         height: '100vh',
         width: '100%',
-        background: tokens.color.surface.base,
+        background: themeColor.surface.base,
         fontFamily: tokens.typography.fontSans,
-        color: tokens.color.text.primary,
+        color: themeColor.text.primary,
         overflow: 'hidden',
         gap: '12px',
         padding: '24px',

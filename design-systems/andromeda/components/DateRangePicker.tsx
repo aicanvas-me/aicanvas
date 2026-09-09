@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: DateRangePicker
 // Trigger chip → expandable calendar panel positioned below.
@@ -24,9 +23,14 @@
 'use client';
 
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
+import type {
+  CSSProperties,
+  ComponentPropsWithoutRef,
+  KeyboardEvent as ReactKeyboardEvent,
+} from 'react';
 import { CalendarBlank, CaretDown, CaretLeft, CaretRight } from '@phosphor-icons/react';
 import { tokens } from '../tokens';
-import { cn } from './lib/utils';
+import { andromedaVars, cn } from './lib/utils';
 import { mq } from './lib/responsive';
 
 // Color values used in the calendar's INLINE styles as var-with-fallback, so
@@ -53,14 +57,18 @@ const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'S
 const MONTHS_LONG  = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
 const DOW = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 
-function startOfDay(d) {
+type DateRange = { start: Date; end: Date | null };
+
+function startOfDay(d: Date): Date;
+function startOfDay(d: Date | null | undefined): Date | null;
+function startOfDay(d: Date | null | undefined): Date | null {
   if (!d) return null;
   const x = new Date(d);
   x.setHours(0, 0, 0, 0);
   return x;
 }
 
-function isSameDay(a, b) {
+function isSameDay(a: Date | null | undefined, b: Date | null | undefined) {
   if (!a || !b) return false;
   return (
     a.getFullYear() === b.getFullYear() &&
@@ -69,13 +77,13 @@ function isSameDay(a, b) {
   );
 }
 
-function compareDays(a, b) {
+function compareDays(a: Date, b: Date) {
   if (a.getFullYear() !== b.getFullYear()) return a.getFullYear() - b.getFullYear();
   if (a.getMonth()    !== b.getMonth())    return a.getMonth()    - b.getMonth();
   return a.getDate() - b.getDate();
 }
 
-function addDays(d, n) {
+function addDays(d: Date, n: number) {
   const x = new Date(d);
   x.setDate(x.getDate() + n);
   x.setHours(0, 0, 0, 0);
@@ -83,11 +91,11 @@ function addDays(d, n) {
 }
 
 // Monday-first weekday index: Mon=0 … Sun=6
-function weekdayIndex(d) {
+function weekdayIndex(d: Date) {
   return (d.getDay() + 6) % 7;
 }
 
-function buildMonthGrid(viewDate) {
+function buildMonthGrid(viewDate: Date) {
   const year  = viewDate.getFullYear();
   const month = viewDate.getMonth();
   const first = new Date(year, month, 1);
@@ -100,9 +108,9 @@ function buildMonthGrid(viewDate) {
   });
 }
 
-function formatRangeChip(range) {
+function formatRangeChip(range: DateRange | null | undefined) {
   if (!range || !range.start) return 'Any dates';
-  const fmt = (d) => `${MONTHS_SHORT[d.getMonth()]} ${d.getDate()}`;
+  const fmt = (d: Date) => `${MONTHS_SHORT[d.getMonth()]} ${d.getDate()}`;
   if (!range.end || isSameDay(range.start, range.end)) return fmt(range.start);
   return `${fmt(range.start)} → ${fmt(range.end)}`;
 }
@@ -184,13 +192,21 @@ function PickerStyles() {
  * @property {string} [className] Additional CSS classes applied to the root element.
  * @property {React.CSSProperties} [style] Inline styles applied to the root element.
  */
-export const DateRangePicker = forwardRef(function DateRangePicker(
+type DateRangePickerProps = Omit<ComponentPropsWithoutRef<'div'>, 'onChange'> & {
+  value?: DateRange;
+  onChange?: (range: { start: Date; end: Date }) => void;
+  presetLabel?: string;
+  defaultOpen?: boolean;
+  staticOpen?: boolean;
+};
+
+export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(function DateRangePicker(
   { value, onChange, presetLabel, defaultOpen = false, staticOpen = false, className, style, ...props },
   ref,
 ) {
   const [open, setOpen]         = useState(defaultOpen || staticOpen);
-  const [anchor, setAnchor]     = useState(null);
-  const [hover, setHover]       = useState(null);
+  const [anchor, setAnchor]     = useState<Date | null>(null);
+  const [hover, setHover]       = useState<Date | null>(null);
   const [viewDate, setViewDate] = useState(() => {
     const seed = value?.start ?? new Date();
     return new Date(seed.getFullYear(), seed.getMonth(), 1);
@@ -208,14 +224,20 @@ export const DateRangePicker = forwardRef(function DateRangePicker(
     if (t.getMonth() === vd.getMonth() && t.getFullYear() === vd.getFullYear()) return t;
     return startOfDay(vd);
   });
-  const wrapRef = useRef(null);
+  const wrapRef = useRef<HTMLDivElement | null>(null);
   // Map of day-key → button node, used to move real DOM focus after a
   // keyboard move flushes focusedDay state.
-  const dayRefs = useRef(new Map());
+  const dayRefs = useRef(new Map<number, HTMLButtonElement>());
   // Tracks whether the last focusedDay change came from a keyboard event,
   // so we only steal focus on intentional arrow/Home/End/PageUp/Down moves
   // (never on open — see the staticOpen docs-mode requirement).
   const keyboardMoveRef = useRef(false);
+
+  function close() {
+    setOpen(false);
+    setAnchor(null);
+    setHover(null);
+  }
 
   // Click-outside + ESC to dismiss. Only attaches when open to avoid
   // listening across the entire app lifetime. staticOpen pins the panel
@@ -223,10 +245,10 @@ export const DateRangePicker = forwardRef(function DateRangePicker(
   // skip the dismissers entirely in that mode.
   useEffect(() => {
     if (!open || staticOpen) return undefined;
-    const handleDown = (e) => {
-      if (wrapRef.current && !wrapRef.current.contains(e.target)) close();
+    const handleDown = (e: MouseEvent) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) close();
     };
-    const handleKey = (e) => {
+    const handleKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
     };
     document.addEventListener('mousedown', handleDown);
@@ -257,13 +279,7 @@ export const DateRangePicker = forwardRef(function DateRangePicker(
     keyboardMoveRef.current = false;
   }, [focusedDay, open]);
 
-  function close() {
-    setOpen(false);
-    setAnchor(null);
-    setHover(null);
-  }
-
-  function handleDayClick(day) {
+  function handleDayClick(day: Date) {
     if (!anchor) {
       setAnchor(day);
       setHover(day);
@@ -283,7 +299,7 @@ export const DateRangePicker = forwardRef(function DateRangePicker(
   // Roving-tabindex keyboard navigation across the day grid. Computes the
   // next focus target, syncs viewDate if it crosses a month boundary, and
   // flags keyboardMoveRef so the focus effect moves real DOM focus.
-  function moveFocus(next) {
+  function moveFocus(next: Date) {
     keyboardMoveRef.current = true;
     if (next.getMonth() !== viewDate.getMonth() || next.getFullYear() !== viewDate.getFullYear()) {
       setViewDate(new Date(next.getFullYear(), next.getMonth(), 1));
@@ -291,7 +307,7 @@ export const DateRangePicker = forwardRef(function DateRangePicker(
     setFocusedDay(next);
   }
 
-  function handleGridKeyDown(e) {
+  function handleGridKeyDown(e: ReactKeyboardEvent<HTMLButtonElement>) {
     const f = focusedDay;
     switch (e.key) {
       case 'ArrowLeft':  e.preventDefault(); moveFocus(addDays(f, -1)); break;
@@ -319,7 +335,7 @@ export const DateRangePicker = forwardRef(function DateRangePicker(
   // timezone) disagree about which cell is today for part of every day — a
   // hydration mismatch on the `style` attribute of two buttons. Null until
   // mounted means the marker simply appears a frame later, which nobody sees.
-  const [today, setToday] = useState(null);
+  const [today, setToday] = useState<Date | null>(null);
   useEffect(() => { setToday(startOfDay(new Date())); }, []);
 
   // While anchor is set, the visible "range" is the in-progress preview.
@@ -342,7 +358,7 @@ export const DateRangePicker = forwardRef(function DateRangePicker(
         else if (ref) ref.current = node;
       }}
       className={cn('adp-root', className)}
-      style={{ position: 'relative', display: 'inline-flex', ...style }}
+      style={{ ...andromedaVars(), position: 'relative', display: 'inline-flex', ...style }}
       {...props}
     >
       <PickerStyles />
@@ -515,7 +531,7 @@ export const DateRangePicker = forwardRef(function DateRangePicker(
 
               const dataState = selected ? 'selected' : inRange ? 'inrange' : 'default';
 
-              const cellStyle = {
+              const cellStyle: CSSProperties = {
                 position: 'relative',
                 width:  `var(--andromeda-8, 32px)`,
                 height: `var(--andromeda-8, 32px)`,

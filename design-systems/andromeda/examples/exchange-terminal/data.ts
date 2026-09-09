@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // EXCHANGE TERMINAL — sample data
 // All numbers are static and deterministic so the screenshot stays
@@ -27,7 +26,7 @@ export const candles = (() => {
     seed = (seed * 1664525 + 1013904223) >>> 0;
     return ((seed >>> 8) & 0xffff) / 0xffff;
   };
-  const rng = (lo, hi) => lo + rand() * (hi - lo);
+  const rng = (lo: number, hi: number) => lo + rand() * (hi - lo);
 
   // ── Waypoints (index → target close price) ──────────────────────────
   // Three up-waves with corrections compressed into 30 candles.
@@ -43,7 +42,7 @@ export const candles = (() => {
   ];
 
   // Linear interpolation of target price between waypoints.
-  function targetAt(i) {
+  function targetAt(i: number) {
     for (let k = 0; k < WP.length - 1; k++) {
       const [i0, p0] = WP[k];
       const [i1, p1] = WP[k + 1];
@@ -55,7 +54,7 @@ export const candles = (() => {
   }
 
   // Determine dominant trend direction at candle i (up / down).
-  function trendDir(i) {
+  function trendDir(i: number) {
     for (let k = 0; k < WP.length - 1; k++) {
       if (i >= WP[k][0] && i < WP[k + 1][0]) {
         return WP[k + 1][1] > WP[k][1] ? 1 : -1;
@@ -154,7 +153,7 @@ export const candles = (() => {
   return out;
 })();
 
-function round(n) { return Math.round(n * 100) / 100; }
+function round(n: number) { return Math.round(n * 100) / 100; }
 
 // Convenience: the "last" candle drives the header readouts.
 export const last = candles[candles.length - 1];
@@ -244,7 +243,7 @@ export const trades = [
 
 // ─── Moving averages ────────────────────────────────────────────────────────
 // Used both inside the chart polylines and the legend readout.
-export function movingAverage(period) {
+export function movingAverage(period: number) {
   const out = [];
   for (let i = 0; i < candles.length; i++) {
     if (i < period - 1) { out.push(null); continue; }

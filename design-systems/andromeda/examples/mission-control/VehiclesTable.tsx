@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // MISSION CONTROL: Row 3 left — Vehicles Table
 // ============================================================
@@ -6,14 +5,18 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { Card, CardHeader } from '../../components/Card';
 import { Badge } from '../../components/Badge';
+import type { BadgeProps } from '../../components/Badge';
 import { Button } from '../../components/Button';
 import { rowContainer, rowItem } from '../../components/lib/motion';
 import { vehicles, vehicleStatusLabel } from './data';
 
+type Vehicle = (typeof vehicles)[number];
+
 // Local map: data status → Badge variant
-const vehicleBadgeVariant = {
+const vehicleBadgeVariant: Record<keyof typeof vehicleStatusLabel, BadgeProps['variant']> = {
   active:  'accent',
   standby: 'default',
   caution: 'warning',
@@ -24,8 +27,8 @@ const vehicleBadgeVariant = {
 // reads as a deliberate inset, never edge-to-edge. TR borders don't render
 // under `border-collapse: collapse`, so the line is delivered as a
 // background-image gradient instead. See `rules.md` → Section dividers.
-const ROW_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${tokens.color.border.subtle} ${tokens.spacing[3]}, ${tokens.color.border.subtle} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
-const HEADER_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${tokens.color.border.base} ${tokens.spacing[3]}, ${tokens.color.border.base} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
+const ROW_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${themeColor.border.subtle} ${tokens.spacing[3]}, ${themeColor.border.subtle} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
+const HEADER_INSET_LINE = `linear-gradient(to right, transparent ${tokens.spacing[3]}, ${themeColor.border.base} ${tokens.spacing[3]}, ${themeColor.border.base} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
 const rowSeparatorStyle = {
   backgroundImage: ROW_INSET_LINE,
   backgroundSize: '100% 1px',
@@ -39,7 +42,7 @@ const headerSeparatorStyle = {
   backgroundRepeat: 'no-repeat',
 };
 
-function VehicleRow({ vehicle, isLast }) {
+function VehicleRow({ vehicle, isLast }: { vehicle: Vehicle; isLast: boolean }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -49,7 +52,7 @@ function VehicleRow({ vehicle, isLast }) {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
-        background: hovered ? tokens.color.surface.hover : 'transparent',
+        background: hovered ? themeColor.surface.hover : 'transparent',
         transition: 'background 0.15s ease',
         ...(isLast ? null : rowSeparatorStyle),
       }}
@@ -59,7 +62,7 @@ function VehicleRow({ vehicle, isLast }) {
         <span style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.text.primary,
+          color: themeColor.text.primary,
           fontWeight: tokens.typography.weight.medium,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.wider,
@@ -72,7 +75,7 @@ function VehicleRow({ vehicle, isLast }) {
         <span style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.muted,
+          color: themeColor.text.muted,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.wider,
         }}>
@@ -90,7 +93,7 @@ function VehicleRow({ vehicle, isLast }) {
         <span style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.text.secondary,
+          color: themeColor.text.secondary,
           letterSpacing: tokens.typography.tracking.wide,
         }}>
           {vehicle.distance}
@@ -101,7 +104,7 @@ function VehicleRow({ vehicle, isLast }) {
         <span style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.muted,
+          color: themeColor.text.muted,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.wide,
         }}>
@@ -112,7 +115,7 @@ function VehicleRow({ vehicle, isLast }) {
   );
 }
 
-export function VehiclesTable({ className }) {
+export function VehiclesTable({ className }: { className?: string }) {
   return (
     <Card className={className} style={{ flex: '0 0 calc(65% - 10px)', minWidth: 0 }}>
       <CardHeader>
@@ -120,16 +123,16 @@ export function VehiclesTable({ className }) {
           <span style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xs,
-            color: tokens.color.text.muted,
+            color: themeColor.text.muted,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.widest,
           }}>
-            /// Fleet
+            {'/// Fleet'}
           </span>
           <span style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.md,
-            color: tokens.color.text.primary,
+            color: themeColor.text.primary,
             fontWeight: tokens.typography.weight.medium,
             textTransform: 'uppercase',
             letterSpacing: tokens.typography.tracking.wider,
@@ -152,13 +155,13 @@ export function VehiclesTable({ className }) {
         <table style={{ width: 'max-content', minWidth: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={headerSeparatorStyle}>
-            {[
+            {([
               { label: 'Callsign',     align: 'left'  },
               { label: 'Type',         align: 'left'  },
               { label: 'Status',       align: 'left'  },
               { label: 'Distance',     align: 'right' },
               { label: 'Last Contact', align: 'right' },
-            ].map((col, i) => (
+            ] as const).map((col, i) => (
               <th key={i} style={{
                 padding: `${tokens.spacing[3]} ${tokens.spacing[3]}`,
                 textAlign: col.align,
@@ -166,7 +169,7 @@ export function VehiclesTable({ className }) {
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.xs,
                 fontWeight: tokens.typography.weight.medium,
-                color: tokens.color.text.faint,
+                color: themeColor.text.faint,
                 textTransform: 'uppercase',
                 letterSpacing: tokens.typography.tracking.widest,
               }}>

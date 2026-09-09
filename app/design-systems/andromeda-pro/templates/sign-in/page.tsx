@@ -25,7 +25,7 @@ export default async function SignInTemplate({
       templateSlug="andromeda-sign-in"
       templateName="Sign In"
       systemName="Andromeda"
-      systemHref="/design-systems/andromeda"
+      systemHref="/design-systems/andromeda-pro"
     >
       <div
         className="relative min-h-full w-full md:h-full md:overflow-hidden"

@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { CaretDown, Check, Plus, PushPinSlash, X } from '@phosphor-icons/react'
 import { Button, buttonClasses } from '../../../components/Button'
-import { andromedaPageSlug } from '../../../_lib/andromeda/andromeda-meta'
+import { andromedaPageSlug } from '../../../_lib/andromeda-pro/andromeda-meta'
 
 export type SavedRow = {
   slug: string

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import type { ReactElement } from 'react'
 import { ArrowElbowDownRight, Cube, Lightning } from '@phosphor-icons/react'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
 
 // ── Shared "Design Systems" sidebar pole ────────────────────────────────────
@@ -19,9 +20,14 @@ import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
 // sidebar nav; rendered in mono mode so the icon inherits the row's text color.
 const SYSTEM_ICONS: Record<string, (props: { size?: number }) => ReactElement> = {
   andromeda: ({ size = 14 }) => <AndromedaIcon size={size} mono />,
+  // Both systems carry the same brand mark: Pro is the same family, told apart
+  // by its name in the row, not by a second logo.
+  'andromeda-pro': ({ size = 14 }) => <AndromedaIcon size={size} mono />,
 }
 
 // Design systems shown under the Design Systems pole.
+// Two systems live side by side, each at its own routes: Andromeda (MIT) and
+// Andromeda Pro. Neither replaces the other and neither redirects to the other.
 const SYSTEMS = [
   {
     slug: 'andromeda',
@@ -36,6 +42,19 @@ const SYSTEMS = [
       { slug: 'service-order', name: 'Service Order', domain: 'Telecom' },
       // exchange-terminal — hidden, source preserved (see design-systems.config.mjs)
       { slug: 'resource-planning', name: 'Resource Planning', domain: 'Operations' },
+    ],
+  },
+  {
+    slug: 'andromeda-pro',
+    name: 'Andromeda Pro',
+    brain: true,
+    components: ANDROMEDA_PRO_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
+    templates: [
+      { slug: 'signal-room', name: 'Signal Room', domain: 'Audio' },
+      { slug: 'mission-control', name: 'Mission Control', domain: 'Sci-Fi' },
+      { slug: 'service-order', name: 'Service Order', domain: 'Telecom' },
+      { slug: 'resource-planning', name: 'Resource Planning', domain: 'Operations' },
+      { slug: 'sign-in', name: 'Sign In', domain: 'Auth' },
     ],
   },
 ] as const

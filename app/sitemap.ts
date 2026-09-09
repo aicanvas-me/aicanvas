@@ -3,7 +3,7 @@ import { COMPONENTS } from './lib/component-registry'
 import { CATEGORIES } from './lib/categories'
 import { COLLECTIONS, collectionMembers } from './lib/collections'
 import { SITE_URL } from './lib/config'
-import { ANDROMEDA_COMPONENT_META } from './_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META } from './_lib/andromeda-pro/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../scripts/lib/design-systems.config.mjs'
 
 // No `lastModified`. Every entry used to emit `new Date()`, i.e. the build

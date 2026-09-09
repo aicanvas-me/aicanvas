@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SIGNAL ROOM
 // A music-app composition re-interpreted as an audio
@@ -30,6 +29,7 @@
 
 import { useState } from 'react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { useCascadeProps } from '../../components/lib/motion';
 import { Sidebar, SidebarNav } from './Sidebar';
@@ -41,20 +41,21 @@ import { RecentTransmissions } from './RecentTransmissions';
 import { LevelsPanel } from './LevelsPanel';
 import { Transport } from './Transport';
 import { nowPlaying } from './data';
+import type { Mix, PlayerTrack, Transmission } from './data';
 import { motion } from 'framer-motion';
 import { MobileTopBar, MobileDrawer } from '../_shared/TemplateMobileChrome';
 
 // Normalize a source item (mix card / transmission row) to the shape the
 // bottom player consumes: title, subtitle, code, cover (image url or null →
 // glyph), duration in seconds.
-const parseDur = (d) => {
+const parseDur = (d: string) => {
   const [m, s] = String(d).split(':').map(Number);
   return (m || 0) * 60 + (s || 0);
 };
-const mixToNowPlaying = (mix) => ({
+const mixToNowPlaying = (mix: Mix): PlayerTrack => ({
   title: mix.name, subtitle: mix.desc, code: mix.code, cover: mix.image, duration: 221, plays: mix.plays,
 });
-const recToNowPlaying = (r) => ({
+const recToNowPlaying = (r: Transmission): PlayerTrack => ({
   title: r.track, subtitle: r.artist, code: r.id, cover: null, duration: parseDur(r.duration), plays: r.plays,
 });
 
@@ -67,7 +68,7 @@ export default function SignalRoom() {
   // The one source of truth for the player. Pressing play on a routine card or
   // a transmission row sets `current` and starts playback; the Transport bar
   // (cover + title + transport state) reflects it.
-  const [current, setCurrent] = useState(() => ({
+  const [current, setCurrent] = useState<PlayerTrack>(() => ({
     title: nowPlaying.track,
     subtitle: nowPlaying.artist,
     code: nowPlaying.code,
@@ -79,11 +80,11 @@ export default function SignalRoom() {
   const togglePlay = () => setIsPlaying((p) => !p);
   // Clicking the already-current item toggles play/pause; a different item
   // switches to it and starts playing.
-  const playMix = (mix) => {
+  const playMix = (mix: Mix) => {
     if (current.code === mix.code) togglePlay();
     else { setCurrent(mixToNowPlaying(mix)); setIsPlaying(true); }
   };
-  const playRec = (r) => {
+  const playRec = (r: Transmission) => {
     if (current.code === r.id) togglePlay();
     else { setCurrent(recToNowPlaying(r)); setIsPlaying(true); }
   };
@@ -101,7 +102,7 @@ export default function SignalRoom() {
   const transportMotion = useCascadeProps(6);
 
   // Selecting a nav item from the mobile drawer also closes the drawer.
-  const handleNavChange = (id) => { setActiveNav(id); setNavOpen(false); };
+  const handleNavChange = (id: string) => { setActiveNav(id); setNavOpen(false); };
 
   return (
     <div
@@ -110,9 +111,13 @@ export default function SignalRoom() {
         display: 'flex',
         height: '100%',
         width: '100%',
-        background: 'transparent',
+        // Paint our own surface: a CLI install lands in an arbitrary host page
+        // (often white), and a transparent shell bleeds the host through every
+        // gutter. The AI Canvas preview paints this same surface behind us, so
+        // on-site rendering is unchanged.
+        background: themeColor.surface.base,
         fontFamily: tokens.typography.fontSans,
-        color: tokens.color.text.primary,
+        color: themeColor.text.primary,
         overflow: 'hidden',
         gap: tokens.spacing[4],
         padding: tokens.spacing[4],
@@ -213,6 +218,14 @@ export default function SignalRoom() {
       </MobileDrawer>
 
       <style>{`
+        /* Standalone hosts (a CLI install into a fresh app): pin the shell to the
+           viewport exactly like the on-site preview does — the dashboard owns the
+           screen, panels scroll internally, the sidebar stays full-height, and
+           the host page never shows through. The AI Canvas preview opts out via
+           .aic-tpl-host: there the surrounding shell sizes this element. The
+           mobile block below still releases the pin on phones. */
+        .sr-shell { height: 100dvh !important; min-height: 100dvh; }
+        .aic-tpl-host .sr-shell { height: 100% !important; min-height: 0; }
         ${mq.md} {
           /* Stack the shell AND release its desktop 100vh pin: below md the
              page grows to its stacked height and the route column scrolls it as
@@ -228,6 +241,10 @@ export default function SignalRoom() {
             gap: ${tokens.spacing[3]} !important;
             padding: ${tokens.spacing[3]} !important;
           }
+          /* The on-site opt-out above is more specific than .sr-shell, so the
+             phone release must be repeated at that specificity or the site's
+             mobile preview would stay pinned. */
+          .aic-tpl-host .sr-shell { height: auto !important; }
           /* Desktop sidebar hidden — its content lives in the Drawer. */
           .sr-sidebar { display: none !important; }
           .sr-main-col { overflow: visible !important; gap: ${tokens.spacing[3]} !important; }

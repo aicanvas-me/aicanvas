@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SERVICE ORDER · OrderMetadataPanel
 // Left panel — standalone. Header strip with Order ID, countdown
@@ -11,6 +10,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Pencil, FileText, Clock, CaretDown } from '@phosphor-icons/react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { CornerMarkers } from '../../components/CornerMarkers';
 
@@ -25,7 +25,7 @@ function InsetDivider({ side = 'bottom' }) {
         right: tokens.spacing[3],
         [side]: 0,
         height: 'var(--andromeda-border-width, 1px)',
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
         pointerEvents: 'none',
       }}
     />
@@ -34,19 +34,19 @@ function InsetDivider({ side = 'bottom' }) {
 
 const FOLLOW_UP_OPTIONS = ['02:00 Hours', '04:00 Hours', '12:00 Hours', '24:00 Hours'];
 
-function FollowUpDropdown({ initial = '24:00 Hours' }) {
+function FollowUpDropdown({ initial = '24:00 Hours' }: { initial?: string }) {
   const [value, setValue] = useState(initial);
   const [open, setOpen] = useState(false);
   const [custom, setCustom] = useState('');
-  const wrapperRef = useRef(null);
-  const inputRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!open) return;
-    function handleDown(e) {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) setOpen(false);
+    function handleDown(e: MouseEvent) {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) setOpen(false);
     }
-    function handleKey(e) {
+    function handleKey(e: KeyboardEvent) {
       if (e.key === 'Escape') setOpen(false);
     }
     document.addEventListener('mousedown', handleDown);
@@ -69,13 +69,13 @@ function FollowUpDropdown({ initial = '24:00 Hours' }) {
           justifyContent: 'space-between',
           gap: tokens.spacing[2],
           padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`,
-          background: open ? tokens.color.surface.hover : tokens.color.surface.overlay,
-          border: `${tokens.border.thin} ${open ? tokens.color.border.bright : tokens.color.border.base}`,
+          background: open ? themeColor.surface.hover : themeColor.surface.overlay,
+          border: `${tokens.border.thin} ${open ? themeColor.border.bright : themeColor.border.base}`,
           borderRadius: tokens.radius.frame,
           cursor: 'pointer',
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.text.primary,
+          color: themeColor.text.primary,
           letterSpacing: tokens.typography.tracking.wide,
           width: '100%',
           // off-token: 140ms + 'ease' — no matching motion token, left literal
@@ -99,9 +99,9 @@ function FollowUpDropdown({ initial = '24:00 Hours' }) {
             left: 0,
             right: 0,
             zIndex: 50,
-            background: tokens.color.surface.raised,
-            border: `${tokens.border.thin} ${tokens.color.border.base}`,
-            boxShadow: `0 8px 32px ${tokens.color.surface.base}`,
+            background: themeColor.surface.raised,
+            border: `${tokens.border.thin} ${themeColor.border.base}`,
+            boxShadow: 'var(--andromeda-shadow-md, 0 8px 21.6px rgba(0, 0, 0, 0.45))',
           }}
         >
           <CornerMarkers />
@@ -114,26 +114,26 @@ function FollowUpDropdown({ initial = '24:00 Hours' }) {
                 display: 'block',
                 width: '100%',
                 padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`,
-                background: opt === value ? tokens.color.surface.active : 'transparent',
+                background: opt === value ? themeColor.surface.active : 'transparent',
                 border: 'none',
                 cursor: 'pointer',
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.sm,
-                color: opt === value ? tokens.color.text.primary : tokens.color.text.secondary,
+                color: opt === value ? themeColor.text.primary : themeColor.text.secondary,
                 letterSpacing: tokens.typography.tracking.wide,
                 textAlign: 'left',
                 // off-token: 100ms + 'ease' — no matching motion token, left literal
                 transition: 'background 100ms ease, color 100ms ease',
               }}
-              onMouseEnter={(e) => { if (opt !== value) { e.currentTarget.style.background = tokens.color.surface.hover; e.currentTarget.style.color = tokens.color.text.primary; }}}
-              onMouseLeave={(e) => { if (opt !== value) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = tokens.color.text.secondary; }}}
+              onMouseEnter={(e) => { if (opt !== value) { e.currentTarget.style.background = themeColor.surface.hover; e.currentTarget.style.color = themeColor.text.primary; }}}
+              onMouseLeave={(e) => { if (opt !== value) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = themeColor.text.secondary; }}}
             >
               {opt}
             </button>
           ))}
 
           {/* Custom input — separated by a divider */}
-          <div style={{ borderTop: `${tokens.border.thin} ${tokens.color.border.subtle}`, padding: tokens.spacing[2] }}>
+          <div style={{ borderTop: `${tokens.border.thin} ${themeColor.border.subtle}`, padding: tokens.spacing[2] }}>
             <input
               ref={inputRef}
               type="text"
@@ -156,18 +156,18 @@ function FollowUpDropdown({ initial = '24:00 Hours' }) {
                 display: 'block',
                 width: '100%',
                 padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`,
-                background: tokens.color.surface.overlay,
-                border: `${tokens.border.thin} ${tokens.color.border.base}`,
+                background: themeColor.surface.overlay,
+                border: `${tokens.border.thin} ${themeColor.border.base}`,
                 borderRadius: tokens.radius.frame,
                 outline: 'none',
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.sm,
-                color: tokens.color.text.primary,
+                color: themeColor.text.primary,
                 letterSpacing: tokens.typography.tracking.wide,
                 boxSizing: 'border-box',
               }}
-              onFocus={(e) => { e.currentTarget.style.borderColor = tokens.color.border.bright; }}
-              onBlur={(e) => { e.currentTarget.style.borderColor = tokens.color.border.base; }}
+              onFocus={(e) => { e.currentTarget.style.borderColor = themeColor.border.bright; }}
+              onBlur={(e) => { e.currentTarget.style.borderColor = themeColor.border.base; }}
             />
           </div>
         </div>
@@ -178,12 +178,12 @@ function FollowUpDropdown({ initial = '24:00 Hours' }) {
 import { Button } from '../../components/Button';
 import { order, orderMetadata } from './data';
 
-function parseSeconds(hms) {
+function parseSeconds(hms: string) {
   const [h, m, s] = hms.split(':').map(Number);
   return h * 3600 + m * 60 + s;
 }
 
-function formatSeconds(total) {
+function formatSeconds(total: number) {
   const h = Math.floor(total / 3600);
   const m = Math.floor((total % 3600) / 60);
   const s = total % 60;
@@ -217,7 +217,7 @@ function HeaderStrip() {
         style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.muted,
+          color: themeColor.text.muted,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.widest,
         }}
@@ -229,7 +229,7 @@ function HeaderStrip() {
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.lg,
           fontWeight: tokens.typography.weight.semibold,
-          color: tokens.color.text.primary,
+          color: themeColor.text.primary,
           letterSpacing: tokens.typography.tracking.wide,
         }}
       >
@@ -243,12 +243,12 @@ function HeaderStrip() {
           alignItems: 'center',
           gap: tokens.spacing[2],
           padding: `${tokens.spacing[1]} ${tokens.spacing[3]}`,
-          background: tokens.color.surface.overlay,
-          border: `${tokens.border.thin} ${tokens.color.border.base}`,
+          background: themeColor.surface.overlay,
+          border: `${tokens.border.thin} ${themeColor.border.base}`,
           borderRadius: tokens.radius.frame,
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.sm,
-          color: tokens.color.accent[300],
+          color: themeColor.accent[300],
           letterSpacing: tokens.typography.tracking.wider,
         }}
       >
@@ -281,7 +281,7 @@ function HeaderStrip() {
 }
 
 // ── Metadata cell ──────────────────────────────────────────────────
-function MetaCell({ label, value, type }) {
+function MetaCell({ label, value, type }: { label: string; value: string; type?: string }) {
   if (type === 'spacer') return <div />;
 
   return (
@@ -290,7 +290,7 @@ function MetaCell({ label, value, type }) {
         style={{
           fontFamily: tokens.typography.fontMono,
           fontSize: tokens.typography.size.xs,
-          color: tokens.color.text.muted,
+          color: themeColor.text.muted,
           textTransform: 'uppercase',
           letterSpacing: tokens.typography.tracking.widest,
           lineHeight: 'var(--andromeda-leading-none, 1)',
@@ -306,7 +306,7 @@ function MetaCell({ label, value, type }) {
           style={{
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.sm,
-            color: type === 'link' ? tokens.color.accent[300] : tokens.color.text.primary,
+            color: type === 'link' ? themeColor.accent[300] : themeColor.text.primary,
             letterSpacing: tokens.typography.tracking.wide,
             cursor: type === 'link' ? 'pointer' : 'default',
           }}
@@ -324,7 +324,7 @@ export function OrderMetadataPanel() {
     <div
       style={{
         position: 'relative',
-        background: tokens.color.surface.raised,
+        background: themeColor.surface.raised,
         display: 'flex',
         flexDirection: 'column',
         // Fill the grid cell so this always matches the SlaPanel's height in

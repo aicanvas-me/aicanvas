@@ -35,8 +35,7 @@ const DEFAULT_SUBTITLE = 'The full source and the remix prompt ship with Premium
  * Inline locked state rendered where withheld content would be — the Code tab,
  * and the withheld blocks of a premium prompt. Shows a blurred teaser over two
  * CTAs: buy, and (signed out only) log in, since a subscriber who lands here
- * logged out has no other way in from this panel. Props are kept for the call
- * sites even though the lock no longer varies by reason. `teaser` overrides the
+ * logged out has no other way in from this panel. `teaser` overrides the
  * blurred decoration so it matches whatever was withheld; `name` titles the
  * lock with the thing being unlocked.
  */
@@ -44,12 +43,23 @@ export function Paywall({
   teaser = FAUX_SOURCE,
   name,
   subtitle = DEFAULT_SUBTITLE,
+  appearance = 'dark',
 }: {
-  reason: PaywallReason
+  // Accepted but unused: the lock no longer varies by reason, and callers still
+  // pass what they know so the call site reads as the gate it is.
+  reason?: PaywallReason
   limit?: number
   teaser?: string
   name?: string
   subtitle?: string
+  /**
+   * 'dark' (default) keeps the wall a dark slab in both site themes - right
+   * for a surface that is dark either way. 'themed' fades into the surface it
+   * was dropped on: that surface names its own colour, both halves, in
+   * --paywall-surface. A themed caller that names nothing gets the remix
+   * panel's ground, which is what every themed caller sat on before.
+   */
+  appearance?: 'dark' | 'themed'
 }) {
   const { open } = useAuthModal()
   const { user } = useSession()
@@ -57,6 +67,41 @@ export function Paywall({
   // Named when the caller knows what it is gating; the fallback carries no type
   // noun, because this lock also covers blocks and templates.
   const title = name ? `Unlock ${name}` : 'Premium content'
+
+  // No ground of its own: the teaser shows the surrounding slab at the top and
+  // the overlay gradient fades it out, so the wall blends in instead of
+  // starting on a hard edge. A themed wall fades to the surface it actually
+  // sits on rather than a fixed grey, because those surfaces differ - the code
+  // panel is near-white, the remix panel a step darker - and a fade to the
+  // wrong one reads as a band across the panel. The surface names its colour
+  // in --paywall-surface; --paywall-fallback is the remix panel's ground, kept
+  // as the default so a caller that names nothing looks exactly as it did.
+  const themed = appearance === 'themed'
+  const overlay = themed
+    ? '[--paywall-fallback:var(--color-sand-300)] dark:[--paywall-fallback:var(--color-sand-950)] bg-gradient-to-b from-[var(--paywall-surface,var(--paywall-fallback))]/0 via-[var(--paywall-surface,var(--paywall-fallback))]/85 to-[var(--paywall-surface,var(--paywall-fallback))]'
+    : 'bg-gradient-to-b from-sand-950/0 via-sand-950/85 to-sand-950'
+  // The chip is a tint of the same ground, not a fixed grey, for the reason the
+  // fade is: a fixed fill flattens against a ground that matches it and floats
+  // against one that does not. 90% reads as the same slight step down on every
+  // themed ground, 62% gives the ring the separation border-sand-400 used to.
+  // Dark keeps its literals, so it cannot move.
+  const chip = themed
+    ? 'border-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_62%,#000)] bg-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_90%,#000)] dark:border-sand-800 dark:bg-sand-900'
+    : 'border-sand-800 bg-sand-900'
+  // Stepping the fill down costs the glyph contrast, so it steps down with it:
+  // olive-600 fell to 1.6-2.5:1 on the new fills, olive-700 clears 3:1 on all
+  // three themed grounds.
+  const lockIcon = themed ? 'text-olive-700 dark:text-olive-400' : 'text-olive-400'
+  const heading = themed ? 'text-sand-900 dark:text-sand-50' : 'text-sand-50'
+  const sub = themed ? 'text-sand-600 dark:text-sand-400' : 'text-sand-400'
+  // transition-colors lives per appearance, not on the button, because only the
+  // themed half changes colour on a theme flip. CSS cannot tell a theme flip
+  // from a hover, so a themed button that eases its hover also eases the flip
+  // and lands after the panel behind it. Snapping both is the trade. The dark
+  // half has no dark: variants, so it never moved on a flip and keeps its ease.
+  const login = themed
+    ? 'border-sand-500 text-sand-700 hover:border-sand-600 hover:text-sand-900 dark:border-sand-700 dark:text-sand-200 dark:hover:border-sand-600 dark:hover:text-sand-50'
+    : 'transition-colors border-sand-700 text-sand-200 hover:border-sand-600 hover:text-sand-50'
 
   return (
     <div className="relative min-h-[360px] w-full overflow-hidden">
@@ -66,15 +111,14 @@ export function Paywall({
       >
         {teaser}
       </pre>
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-sand-950/0 via-sand-950/85 to-sand-950 px-4 text-center">
-        <div className="flex h-11 w-11 items-center justify-center rounded-full border border-sand-800 bg-sand-900">
-          <LockSimple weight="regular" size={20} className="text-olive-400" />
+      <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center ${overlay}`}>
+        <div className={`flex h-11 w-11 items-center justify-center rounded-full border ${chip}`}>
+          <LockSimple weight="regular" size={20} className={lockIcon} />
         </div>
-        <h3 className="text-base font-bold text-sand-50">{title}</h3>
-        <p className="max-w-xs text-sm leading-relaxed text-sand-400">{subtitle}</p>
-        {/* Fixed dark skin, not buttonClasses: this panel is bg-sand-950 in both
-            site themes, so the outline variant's light-mode default would put
-            sand-700 text on black. */}
+        <h3 className={`text-base font-bold ${heading}`}>{title}</h3>
+        <p className={`max-w-xs text-sm leading-relaxed ${sub}`}>{subtitle}</p>
+        {/* Hand-skinned, not buttonClasses: the wall pairs its buttons with its
+            own ground per appearance. */}
         <div className="mt-1 flex items-center gap-2">
           <Link
             href="/pricing"
@@ -86,7 +130,7 @@ export function Paywall({
             <button
               type="button"
               onClick={() => open()}
-              className="rounded-lg border border-sand-700 px-4 py-2 text-sm font-semibold text-sand-200 transition-colors hover:border-sand-600 hover:text-sand-50"
+              className={`rounded-lg border px-4 py-2 text-sm font-semibold ${login}`}
             >
               Log in
             </button>

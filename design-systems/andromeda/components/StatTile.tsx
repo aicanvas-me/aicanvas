@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: StatTile
 // shadcn/ui-aligned API: forwardRef, className passthrough.
@@ -17,18 +16,19 @@
 'use client';
 
 import { forwardRef, useEffect, useRef, useState } from 'react'; // useRef kept for useCountUp's RAF tracking
+import type { ComponentPropsWithoutRef } from 'react';
 import { useInView, AnimatePresence, motion } from 'framer-motion';
 import { cn, andromedaVars } from './lib/utils';
 import { useReducedMotion } from './lib/motion';
 import { tokens } from '../tokens';
 import { Card, CardContent } from './Card';
 
-const ms = (v) => parseInt(v, 10) / 1000;
+const ms = (v: string) => parseInt(v, 10) / 1000;
 // Count-up duration in ms, read from tokens.motion.duration.countup (single source of truth).
 const COUNTUP_MS = parseInt(tokens.motion.duration.countup, 10);
 // Inline cubic-beziers — framer wants arrays, tokens.motion.easing values are
 // CSS strings. Keep these in sync with tokens.motion.easing.sharp.
-const SHARP_EASE = [0.4, 0, 0.6, 1];
+const SHARP_EASE: [number, number, number, number] = [0.4, 0, 0.6, 1];
 
 // ── DigitRoller ──────────────────────────────────────────────────────────────
 // Renders a number/string as a row of fixed-width slots; when the value
@@ -39,7 +39,12 @@ const SHARP_EASE = [0.4, 0, 0.6, 1];
 // Width per slot is `1ch`, paired with `font-variant-numeric: tabular-nums`
 // so digits and punctuation align in a column. Sans-serif punctuation can
 // be slightly narrower than 1ch but tabular-nums makes digits match exactly.
-function DigitSlot({ char, reduced }) {
+type DigitSlotProps = {
+  char: string;
+  reduced?: boolean | null;
+};
+
+function DigitSlot({ char, reduced }: DigitSlotProps) {
   if (reduced) {
     return <span style={{ display: 'inline-block' }}>{char}</span>;
   }
@@ -78,7 +83,13 @@ function DigitSlot({ char, reduced }) {
   );
 }
 
-function DigitRoller({ value, className, reduced }) {
+type DigitRollerProps = {
+  value: string | number;
+  className?: string;
+  reduced?: boolean | null;
+};
+
+function DigitRoller({ value, className, reduced }: DigitRollerProps) {
   const chars = String(value).split('');
   return (
     <span
@@ -116,7 +127,7 @@ function useStatTileStyles() {
 }
 
 // ── easeOutExpo ──────────────────────────────────────────────────────────────
-function easeOutExpo(t) {
+function easeOutExpo(t: number) {
   return t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
 }
 
@@ -137,16 +148,16 @@ function easeOutExpo(t) {
 // gates the animation so tiles below the fold don't burn their reveal
 // off-screen. Templates with multi-screen height get the count-up at
 // the moment the user actually sees the value.
-function useCountUp(rawValue, duration = COUNTUP_MS, live = false, inView = true) {
-  const num = parseFloat(rawValue);
+function useCountUp(rawValue: string | number, duration = COUNTUP_MS, live = false, inView = true) {
+  const num = parseFloat(rawValue as string);
   const isNumeric = !isNaN(num);
   const decimals = isNumeric
     ? (String(rawValue).split('.')[1] ?? '').length
     : 0;
 
   const [display, setDisplay] = useState(isNumeric ? '0' : rawValue);
-  const rafRef = useRef(null);
-  const startRef = useRef(null);
+  const rafRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null);
   const hasMountedRef = useRef(false);
 
   useEffect(() => {
@@ -169,7 +180,7 @@ function useCountUp(rawValue, duration = COUNTUP_MS, live = false, inView = true
     const timeout = setTimeout(() => {
       startRef.current = null;
 
-      function tick(now) {
+      function tick(now: number) {
         if (!startRef.current) startRef.current = now;
         const elapsed = now - startRef.current;
         const t = Math.min(elapsed / duration, 1);
@@ -270,8 +281,20 @@ const deltaBaseClass = cn(
  * @property {React.CSSProperties} [style] Inline styles merged onto the root Card.
  */
 
+export type StatTileProps = ComponentPropsWithoutRef<'div'> & {
+  label: string;
+  value: string | number;
+  unit?: string;
+  delta?: number;
+  polarity?: 'higher-is-better' | 'lower-is-better' | 'none';
+  deltaLabel?: string;
+  code?: string;
+  live?: boolean;
+  liveRoll?: boolean;
+};
+
 /** @type {React.ForwardRefExoticComponent<StatTileProps & React.HTMLAttributes<HTMLDivElement>>} */
-export const StatTile = forwardRef(function StatTile(
+export const StatTile = forwardRef<HTMLDivElement, StatTileProps>(function StatTile(
   { className, label, value, unit, delta, polarity = 'higher-is-better', deltaLabel, code, live = false, liveRoll = false, style, ...props },
   outerRef,
 ) {
@@ -280,8 +303,8 @@ export const StatTile = forwardRef(function StatTile(
   // Scroll-aware count-up. The tile only animates its value once it enters
   // the viewport — telemetry rows below the fold wait for the scroll, then
   // play the count-up where the user can see it.
-  const internalRef = useRef(null);
-  const setRefs = (node) => {
+  const internalRef = useRef<HTMLDivElement | null>(null);
+  const setRefs = (node: HTMLDivElement | null) => {
     internalRef.current = node;
     if (typeof outerRef === 'function') outerRef(node);
     else if (outerRef) outerRef.current = node;

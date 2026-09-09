@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: UserCard
 // User card menu — the same popover as `UserMenu`, but the trigger
@@ -22,11 +21,12 @@
 'use client';
 
 import { forwardRef, useState } from 'react';
+import type { ComponentProps, ComponentPropsWithoutRef, RefObject } from 'react';
 import { motion } from 'framer-motion';
 import { CaretUpDown } from '@phosphor-icons/react';
 import { tokens } from '../tokens';
 import { Avatar } from './Avatar';
-import { andromedaVars, easingArray } from './lib/utils';
+import { andromedaVars, easingArray, themeColor } from './lib/utils';
 import {
   UserMenuPanel,
   UserMenuStyles,
@@ -36,7 +36,7 @@ import {
 // Motion locals — same convention as Drawer / UserMenu: keep every
 // duration + easing referenced to a token while adapting to the shape
 // framer-motion expects (seconds + 4-tuple bezier).
-const toSeconds = (ms) => parseInt(ms, 10) / 1000;
+const toSeconds = (ms: string) => parseInt(ms, 10) / 1000;
 // framer boundary: derived from tokens, cannot follow runtime var overrides
 const EASE_STANDARD = easingArray(tokens.motion.easing.standard);
 
@@ -57,8 +57,22 @@ const EASE_STANDARD = easingArray(tokens.motion.easing.standard);
  * @property {React.CSSProperties} [style] Inline styles merged onto the card's root element.
  */
 
+export type UserCardProps = ComponentPropsWithoutRef<'div'> & {
+  name: string;
+  role?: string;
+  src?: string;
+  status?: 'online' | 'caution' | 'fault' | 'offline';
+  avatarSize?: 'sm' | 'md' | 'lg';
+  items: ComponentProps<typeof UserMenuPanel>['items'];
+  placement?: 'top' | 'bottom';
+  align?: 'start' | 'end' | 'stretch';
+  defaultOpen?: boolean;
+  staticOpen?: boolean;
+  ariaLabel?: string;
+};
+
 /** @type {React.ForwardRefExoticComponent<UserCardProps>} */
-export const UserCard = forwardRef(function UserCard(
+export const UserCard = forwardRef<HTMLDivElement, UserCardProps>(function UserCard(
   {
     name,
     role,
@@ -83,8 +97,8 @@ export const UserCard = forwardRef(function UserCard(
 
   return (
     <div
-      ref={(node) => {
-        wrapperRef.current = node;
+      ref={(node: HTMLDivElement | null) => {
+        (wrapperRef as RefObject<HTMLDivElement | null>).current = node;
         if (typeof ref === 'function') ref(node);
         else if (ref) ref.current = node;
       }}
@@ -96,7 +110,7 @@ export const UserCard = forwardRef(function UserCard(
       <button
         type="button"
         aria-label={ariaLabel}
-        {...triggerProps}
+        {...(triggerProps as ComponentPropsWithoutRef<'button'>)}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         onFocus={() => setHover(true)}
@@ -111,7 +125,7 @@ export const UserCard = forwardRef(function UserCard(
           alignItems: 'center',
           gap: tokens.spacing[3],
           cursor: 'pointer',
-          background: highlight ? tokens.color.surface.hover : 'transparent',
+          background: highlight ? themeColor.surface.hover : 'transparent',
           transition: `background var(--andromeda-duration-fast, ${tokens.motion.duration.fast}) var(--andromeda-easing-standard, ${tokens.motion.easing.standard})`,
         }}
       >
@@ -122,7 +136,7 @@ export const UserCard = forwardRef(function UserCard(
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.xs,
               fontWeight: tokens.typography.weight.semibold,
-              color: tokens.color.text.primary,
+              color: themeColor.text.primary,
               textTransform: 'uppercase',
               letterSpacing: tokens.typography.tracking.wider,
               overflow: 'hidden',
@@ -137,7 +151,7 @@ export const UserCard = forwardRef(function UserCard(
               style={{
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.xs,
-                color: tokens.color.text.muted,
+                color: themeColor.text.muted,
                 textTransform: 'uppercase',
                 letterSpacing: tokens.typography.tracking.wide,
               }}
@@ -155,7 +169,7 @@ export const UserCard = forwardRef(function UserCard(
           }}
           style={{
             display: 'inline-flex',
-            color: highlight ? tokens.color.text.secondary : tokens.color.text.faint,
+            color: highlight ? themeColor.text.secondary : themeColor.text.faint,
             transition: `color var(--andromeda-duration-fast, ${tokens.motion.duration.fast}) var(--andromeda-easing-standard, ${tokens.motion.easing.standard})`,
           }}
         >

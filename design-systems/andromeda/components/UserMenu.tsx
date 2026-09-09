@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: UserMenu
 // Avatar-trigger user menu. Click the avatar (with a small
@@ -25,30 +24,36 @@
 'use client';
 
 import { forwardRef, useEffect, useRef, useState } from 'react';
+import type {
+  ComponentPropsWithoutRef,
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+} from 'react';
 import { motion } from 'framer-motion';
 import { CaretUpDown } from '@phosphor-icons/react';
+import type { Icon } from '@phosphor-icons/react';
 import { tokens } from '../tokens';
 import { Avatar } from './Avatar';
-import { andromedaVars } from './lib/utils';
+import { andromedaVars, themeColor } from './lib/utils';
 import { mq } from './lib/responsive';
 
 // Motion locals — framer-motion takes seconds + a 4-tuple bezier, but
 // `tokens.motion` exposes ms strings and CSS cubic-bezier() strings.
 // These two helpers keep every value traceable to a token while
 // adapting to framer's shape (same convention as Drawer.tsx).
-const toSeconds = (ms) => parseInt(ms, 10) / 1000;
-const EASE_STANDARD = [0.4, 0, 0.2, 1]; // tokens.motion.easing.standard
+const toSeconds = (ms: string) => parseInt(ms, 10) / 1000;
+const EASE_STANDARD: [number, number, number, number] = [0.4, 0, 0.2, 1]; // tokens.motion.easing.standard
 
 // Roving arrow-key navigation for the `role="menu"` panel. Queries the
 // menuitem buttons, finds the focused one, and moves focus up/down with
 // wrap-around; Home/End jump to first/last. Separators are ignored because
 // they are not `role="menuitem"` buttons. Bound to the panel's onKeyDown.
-function handleMenuKeyDown(e) {
+function handleMenuKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
   const itemsList = Array.from(
-    e.currentTarget.querySelectorAll('button[role="menuitem"]'),
+    e.currentTarget.querySelectorAll<HTMLElement>('button[role="menuitem"]'),
   );
   if (itemsList.length === 0) return;
-  const idx = itemsList.indexOf(document.activeElement);
+  const idx = itemsList.indexOf(document.activeElement as HTMLElement);
 
   if (e.key === 'ArrowDown') {
     e.preventDefault();
@@ -75,6 +80,15 @@ function handleMenuKeyDown(e) {
  * @property {'separator'} [type]      Set to 'separator' to render a divider instead of an item.
  */
 
+export type UserMenuItem = {
+  id?: string;
+  label?: string;
+  icon?: Icon;
+  onSelect?: () => void;
+  destructive?: boolean;
+  type?: 'separator';
+};
+
 /**
  * Shared state hook — owns the open/close lifecycle, the wrapper ref,
  * and the listeners for outside-click + Escape. Used by both
@@ -90,17 +104,17 @@ function handleMenuKeyDown(e) {
  */
 export function useUserMenuPanel(initialOpen = false, staticOpen = false) {
   const [open, setOpen] = useState(initialOpen || staticOpen);
-  const wrapperRef = useRef(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   // The element to return focus to on close — captured when the trigger
   // toggles the menu open (interactive open only).
-  const returnFocusRef = useRef(null);
+  const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open || staticOpen) return;
-    const onClick = (e) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(e.target)) setOpen(false);
+    const onClick = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node | null)) setOpen(false);
     };
-    const onKey = (e) => { if (e.key === 'Escape') setOpen(false); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
     document.addEventListener('mousedown', onClick);
     document.addEventListener('keydown', onKey);
     return () => {
@@ -115,7 +129,7 @@ export function useUserMenuPanel(initialOpen = false, staticOpen = false) {
   // need threading through every trigger component.
   useEffect(() => {
     if (!open || staticOpen) return;
-    const first = wrapperRef.current?.querySelector('[role="menu"] button[role="menuitem"]');
+    const first = wrapperRef.current?.querySelector<HTMLElement>('[role="menu"] button[role="menuitem"]');
     if (first) first.focus();
   }, [open, staticOpen]);
 
@@ -128,16 +142,16 @@ export function useUserMenuPanel(initialOpen = false, staticOpen = false) {
     if (target) target.focus();
   }, [open, staticOpen]);
 
-  const toggle = (e) => {
+  const toggle = (e?: ReactMouseEvent<HTMLElement>) => {
     // Capture the trigger as the focus-return target before opening.
     if (!open && !staticOpen) {
-      returnFocusRef.current = e?.currentTarget ?? document.activeElement;
+      returnFocusRef.current = e?.currentTarget ?? (document.activeElement as HTMLElement | null);
     }
     setOpen((o) => !o);
   };
   const close = () => setOpen(false);
   const triggerProps = {
-    'aria-haspopup': 'menu',
+    'aria-haspopup': 'menu' as const,
     'aria-expanded': open,
     'data-state': open ? 'open' : 'closed',
     onClick: toggle,
@@ -146,7 +160,7 @@ export function useUserMenuPanel(initialOpen = false, staticOpen = false) {
   return { open, toggle, close, wrapperRef, triggerProps };
 }
 
-function UserMenuItemRow({ item, onClose }) {
+function UserMenuItemRow({ item, onClose }: { item: UserMenuItem; onClose: () => void }) {
   if (item.type === 'separator') {
     return (
       <div
@@ -154,13 +168,13 @@ function UserMenuItemRow({ item, onClose }) {
         style={{
           height: '1px',
           margin: `${tokens.spacing[1]} 0`,
-          background: tokens.color.border.subtle,
+          background: themeColor.border.subtle,
         }}
       />
     );
   }
   const Icon = item.icon;
-  const baseColor = item.destructive ? tokens.color.red[300] : tokens.color.text.secondary;
+  const baseColor = item.destructive ? themeColor.red[300] : themeColor.text.secondary;
   return (
     <button
       type="button"
@@ -199,7 +213,15 @@ function UserMenuItemRow({ item, onClose }) {
  * Visibility, placement, and alignment are controlled by props so
  * each trigger component can pick its own canonical defaults.
  */
-export function UserMenuPanel({ open, items, placement = 'bottom', align = 'start', panelMinWidth = 200, ariaLabel = 'User menu', onClose }) {
+export function UserMenuPanel({ open, items, placement = 'bottom', align = 'start', panelMinWidth = 200, ariaLabel = 'User menu', onClose }: {
+  open: boolean;
+  items: UserMenuItem[];
+  placement?: 'top' | 'bottom';
+  align?: 'start' | 'end' | 'stretch';
+  panelMinWidth?: number;
+  ariaLabel?: string;
+  onClose: () => void;
+}) {
   if (!open) return null;
   const vertical =
     placement === 'top'
@@ -228,8 +250,8 @@ export function UserMenuPanel({ open, items, placement = 'bottom', align = 'star
         // scroll on a phone. box-sizing keeps the border inside that cap.
         maxWidth: `calc(100vw - ${tokens.spacing[4]})`,
         boxSizing: 'border-box',
-        background: tokens.color.surface.raised,
-        border: `${tokens.border.thin} ${tokens.color.border.base}`,
+        background: themeColor.surface.raised,
+        border: `${tokens.border.thin} ${themeColor.border.base}`,
         borderRadius: tokens.radius.frame,
         padding: tokens.spacing[1],
         zIndex: 1000,
@@ -289,7 +311,7 @@ export { UserMenuStyles };
  * @typedef {object} UserMenuProps
  * @property {string} name             Display name; passed to Avatar for the initial fallback.
  * @property {string} [src]            Avatar image URL.
- * @property {'online'|'busy'|'away'|'offline'} [status] Presence state; passed to Avatar for the status dot.
+ * @property {'online'|'caution'|'fault'|'offline'} [status] Presence state; passed to Avatar for the status dot.
  * @property {'sm'|'md'|'lg'} [avatarSize='md'] Size of the trigger avatar.
  * @property {UserMenuItem[]} items The menu rows to render, including separators.
  * @property {'top'|'bottom'} [placement='bottom'] Whether the panel opens below or above the trigger.
@@ -301,8 +323,21 @@ export { UserMenuStyles };
  * @property {React.CSSProperties} [style] Inline styles merged onto the wrapper element.
  */
 
+export type UserMenuProps = ComponentPropsWithoutRef<'div'> & {
+  name: string;
+  src?: string;
+  status?: 'online' | 'caution' | 'fault' | 'offline';
+  avatarSize?: 'sm' | 'md' | 'lg';
+  items: UserMenuItem[];
+  placement?: 'top' | 'bottom';
+  align?: 'start' | 'end';
+  defaultOpen?: boolean;
+  staticOpen?: boolean;
+  ariaLabel?: string;
+};
+
 /** @type {React.ForwardRefExoticComponent<UserMenuProps>} */
-export const UserMenu = forwardRef(function UserMenu(
+export const UserMenu = forwardRef<HTMLDivElement, UserMenuProps>(function UserMenu(
   {
     name,
     src,
@@ -352,7 +387,7 @@ export const UserMenu = forwardRef(function UserMenu(
           gap: tokens.spacing[2],
           padding: `${tokens.spacing[1]} ${tokens.spacing[2]}`,
           cursor: 'pointer',
-          background: highlight ? tokens.color.surface.hover : 'transparent',
+          background: highlight ? themeColor.surface.hover : 'transparent',
           transition: `background ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}`,
         }}
       >
@@ -366,7 +401,7 @@ export const UserMenu = forwardRef(function UserMenu(
           }}
           style={{
             display: 'inline-flex',
-            color: highlight ? tokens.color.text.secondary : tokens.color.text.faint,
+            color: highlight ? themeColor.text.secondary : themeColor.text.faint,
             transition: `color ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}`,
           }}
         >

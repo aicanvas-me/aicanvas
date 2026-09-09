@@ -3,12 +3,12 @@
 // baseline. INTERNAL. Not a product page — the public /system is a gallery of
 // cards, the same shape Lumen uses.
 //
-// It lives under /design-systems/andromeda/system so it inherits that layout's
+// It lives under /design-systems/andromeda-pro/system so it inherits that layout's
 // rail and top bar for free.
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import AndromedaShowcase from './AndromedaShowcase'
-import { ANDROMEDA_COMPONENT_META } from '../../../../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META } from '../../../../_lib/andromeda-pro/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../../../scripts/lib/design-systems.config.mjs'
 
 // Never in production: the route does not exist there, so there is nothing to

@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SERVICE ORDER · SlaPanel
 // Right panel — standalone. surface.raised bg, accent corner
@@ -16,6 +15,7 @@
 import { useEffect, useState } from 'react';
 import { PushPin, X, ArrowUpRight } from '@phosphor-icons/react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { Card } from '../../components/Card';
 import { Button } from '../../components/Button';
@@ -42,7 +42,7 @@ function InsetDivider({ side = 'bottom' }) {
         right: tokens.spacing[3],
         [side]: 0,
         height: 'var(--andromeda-border-width, 1px)',
-        background: tokens.color.border.subtle,
+        background: themeColor.border.subtle,
         pointerEvents: 'none',
       }}
     />
@@ -60,10 +60,10 @@ export function SlaPanel() {
   useEffect(() => {
     // After the grid has finished its stagger, count up the percentage to the
     // initial value. Then hand off to the live drift.
-    let rafId;
+    let rafId: number | undefined;
     const startTimer = setTimeout(() => {
       const start = performance.now();
-      const tick = (now) => {
+      const tick = (now: number) => {
         const t = Math.min(1, (now - start) / PERCENT_DURATION);
         // ease-out cubic — fast start, gentle settle
         const eased = 1 - Math.pow(1 - t, 3);
@@ -108,7 +108,7 @@ export function SlaPanel() {
   return (
     <Card
       variant="default"
-      markerProps={{ color: tokens.color.accent[300] }}
+      markerProps={{ color: themeColor.accent[300] }}
       style={{
         display: 'flex',
         flexDirection: 'column',
@@ -130,7 +130,7 @@ export function SlaPanel() {
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size.xl,
             fontWeight: tokens.typography.weight.semibold,
-            color: tokens.color.text.primary,
+            color: themeColor.text.primary,
             letterSpacing: tokens.typography.tracking.tight,
           }}
         >
@@ -163,7 +163,7 @@ export function SlaPanel() {
             fontFamily: tokens.typography.fontMono,
             fontSize: tokens.typography.size['4xl'],
             fontWeight: tokens.typography.weight.bold,
-            color: tokens.color.accent[300],
+            color: themeColor.accent[300],
             letterSpacing: tokens.typography.tracking.tight,
             lineHeight: tokens.typography.lineHeight.tight,
             fontVariantNumeric: 'tabular-nums',
@@ -214,7 +214,7 @@ export function SlaPanel() {
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size['2xl'],
                 fontWeight: tokens.typography.weight.bold,
-                color: tokens.color.text.primary,
+                color: themeColor.text.primary,
                 letterSpacing: tokens.typography.tracking.tight,
                 lineHeight: tokens.typography.lineHeight.tight,
               }}
@@ -225,7 +225,7 @@ export function SlaPanel() {
               style={{
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.xs,
-                color: tokens.color.text.muted,
+                color: themeColor.text.muted,
                 textTransform: 'uppercase',
                 letterSpacing: tokens.typography.tracking.wider,
                 lineHeight: tokens.typography.lineHeight.snug,

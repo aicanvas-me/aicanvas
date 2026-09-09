@@ -21,7 +21,7 @@ import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { Button, buttonClasses } from '../components/Button'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
-import { AndromedaThemeToggle } from '../design-systems/andromeda/AndromedaThemeWrap'
+import { AndromedaThemeToggle } from '../design-systems/andromeda-pro/AndromedaThemeWrap'
 import dynamic from 'next/dynamic'
 // The dot-grid standalone, reused as the mobile preview backdrop. Loaded
 // dynamically (client-only) so it never enters the initial page bundle — it

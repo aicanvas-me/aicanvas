@@ -1,7 +1,7 @@
 import 'server-only'
 import { componentCodes } from '@/app/lib/component-codes.generated'
-import { getAndromedaComponent } from '@/app/_lib/andromeda/andromeda-registry'
-import { andromedaPageSlug } from '@/app/_lib/andromeda/andromeda-meta'
+import { getAndromedaComponent } from '@/app/_lib/andromeda-pro/andromeda-registry'
+import { andromedaPageSlug } from '@/app/_lib/andromeda-pro/andromeda-meta'
 
 /**
  * Returns the raw source string for a component slug, or null if unknown.

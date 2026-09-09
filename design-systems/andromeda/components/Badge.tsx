@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Badge
 // shadcn/ui-aligned API: variant prop, cva, forwardRef.
@@ -17,7 +16,9 @@
 'use client';
 
 import { forwardRef, useEffect, useRef, useState } from 'react';
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react';
 import { cva } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
 import { cn, andromedaVars } from './lib/utils';
 import { useReducedMotion } from './lib/motion';
 import { tokens } from '../tokens';
@@ -32,7 +33,7 @@ const BLINK_OFF_MS = parseFloat(tokens.motion.duration.slow); // 200ms
 function useBlink() {
   const reducedMotion = useReducedMotion();
   const [opacity, setOpacity] = useState(1);
-  const timerRef = useRef(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (reducedMotion) {
@@ -50,7 +51,7 @@ function useBlink() {
       }, 1800 + Math.random() * 800);
     }
     schedule();
-    return () => clearTimeout(timerRef.current);
+    return () => clearTimeout(timerRef.current!);
   }, [reducedMotion]);
 
   return opacity;
@@ -108,9 +109,11 @@ const badgeVariants = cva(
   },
 );
 
+type BadgeVariant = NonNullable<VariantProps<typeof badgeVariants>['variant']>;
+
 // Dot color per variant — the dot is the per-variant signal (text is always
 // text.primary across variants, so the colored dot, not the label, carries meaning).
-const dotColor = {
+const dotColor: Record<BadgeVariant, string> = {
   default: 'var(--andromeda-text-muted)',
   accent:  'var(--andromeda-accent-300)',
   warning: 'var(--andromeda-orange-300)',
@@ -127,8 +130,17 @@ const dotColor = {
  * @property {React.CSSProperties} [style]
  */
 
+type BadgeOwnProps = {
+  variant?: BadgeVariant;
+  children?: ReactNode;
+  className?: string;
+  style?: CSSProperties;
+};
+
+export type BadgeProps = BadgeOwnProps & Omit<ComponentPropsWithoutRef<'span'>, keyof BadgeOwnProps>;
+
 /** @type {React.ForwardRefExoticComponent<BadgeProps & React.HTMLAttributes<HTMLSpanElement>>} */
-export const Badge = forwardRef(function Badge(
+export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   { className, variant = 'default', children, style, ...props },
   ref,
 ) {

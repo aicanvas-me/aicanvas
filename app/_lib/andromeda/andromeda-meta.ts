@@ -16,7 +16,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'alert',
     name: 'Alert',
     description:
-      'Displays a status message in the flow of the page, at a severity from note to fault.',
+      'Banner-style status component for inline messages. Default, accent, warning, fault — each with its own per-variant color set. Severity-aware ARIA (warning and fault announce assertively, the rest politely) and compound parts: AlertIcon, AlertContent, AlertTitle, AlertDescription.',
     sourceFile: 'Alert.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/alert.png?v=5',
   },
@@ -24,7 +24,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'avatar',
     name: 'Avatar',
     description:
-      'Represents a person as a square image tile that falls back to their initials.',
+      'Square tile in 3 sizes. Shows an image when src is provided, with a fallback to initials; optional status bar in 4 states.',
     sourceFile: 'Avatar.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/avatar.png?v=3',
   },
@@ -32,7 +32,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'badge',
     name: 'Badge',
     description:
-      'Displays the state a row or cell reports, such as online, queued, or fault.',
+      '6 variants for status, metric tags, and inline labels. A leading per-variant status dot blinks on a loop to carry the signal, and holds steady when reduced motion is requested.',
     sourceFile: 'Badge.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/badge.png?v=3',
   },
@@ -40,7 +40,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'button',
     name: 'Button',
     description:
-      'Triggers an action or event, at the level of emphasis the action deserves.',
+      '5 variants × 3 sizes with full hover, focus, active, and disabled coverage. shadcn/ui-aligned API: variant, size, asChild.',
     sourceFile: 'Button.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/button.png?v=4',
   },
@@ -48,7 +48,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'card',
     name: 'Card',
     description:
-      'Frames a region of related content with corner brackets instead of a border.',
+      'Compound primitive: Card / Header / Content / Footer / Title / Description. Corner brackets do the framing by default, with a bordered toggle for a continuous 1px border and a glow variant that adds an accent tint.',
     sourceFile: 'Card.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/card.png?v=4',
   },
@@ -56,23 +56,15 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'checkbox',
     name: 'Checkbox',
     description:
-      'Selects any number of options from a set, or turns a single one on and off.',
+      'Square boolean control. Controlled or uncontrolled. Inline label, accent fill on checked, an accent focus ring, a press scale, a pop-in on the checkmark, and a 40px touch target on coarse pointers.',
     sourceFile: 'Checkbox.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/checkbox.png?v=3',
-  },
-  {
-    slug: 'choice-card',
-    name: 'Choice Card',
-    description:
-      'Presents an option as a whole selectable card with a title and a supporting line.',
-    sourceFile: 'ChoiceCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/choice-card.png?v=1',
   },
   {
     slug: 'corner-markers',
     name: 'Corner Markers',
     description:
-      'Frames any container with the four L-shaped brackets that stand in for a border.',
+      'The defining motif. 4 L-shaped brackets at the corners of the nearest position:relative ancestor.',
     sourceFile: 'CornerMarkers.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/corner-markers.png?v=3',
   },
@@ -80,7 +72,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'date-range-picker',
     name: 'Date Range Picker',
     description:
-      'Selects a start and an end date from a calendar popover.',
+      'Trigger chip + drop-down calendar panel. Anchor-then-confirm range selection with hover preview, Monday-first grid, ESC and click-outside to close.',
     sourceFile: 'DateRangePicker.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/date-range-picker.png?v=4',
   },
@@ -88,7 +80,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'drawer',
     name: 'Drawer',
     description:
-      'Displays content in a panel that slides in from the edge of the screen.',
+      'Slide-in panel on any side (left, right, top, or bottom), with focus trap and a size prop. Backdrop, ESC to close, body scroll lock, and the bracket motif. Portaled.',
     sourceFile: 'Drawer.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/drawer.png?v=3',
   },
@@ -96,47 +88,15 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'empty-state',
     name: 'Empty State',
     description:
-      'Explains why a region has nothing to show, and offers the way out.',
+      'Centered icon + uppercase mono title + sans description + optional action. Built on Card so it inherits brackets.',
     sourceFile: 'EmptyState.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/empty-state.png?v=3',
-  },
-  {
-    slug: 'chart-funnel',
-    name: 'Chart Funnel',
-    description:
-      'Charts how much of a population survives each stage of a sequence.',
-    sourceFile: 'FunnelChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/funnel-chart.png?v=1',
-  },
-  {
-    slug: 'chart-metric',
-    name: 'Chart Metric',
-    description:
-      'Charts one measurement over time in a panel that frames itself.',
-    sourceFile: 'MetricChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/metric-chart.png?v=1',
-  },
-  {
-    slug: 'chart-radar',
-    name: 'Chart Radar',
-    description:
-      'Compares several series across one shared set of axes.',
-    sourceFile: 'RadarChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/radar-chart.png?v=3',
-  },
-  {
-    slug: 'chart-trend',
-    name: 'Chart Trend',
-    description:
-      'Charts several series over time as lines, areas, or bars.',
-    sourceFile: 'TrendChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/trend-chart.png?v=3',
   },
   {
     slug: 'gauge',
     name: 'Gauge',
     description:
-      'Displays a single bounded reading as a radial arc.',
+      'Radial percentage gauge. A single measurement arc over a subtle track with a centered mono readout, in 3 sizes and 3 semantic color variants; the arc sweeps in and the value counts up in sync on first view.',
     sourceFile: 'Gauge.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/gauge.png?v=1',
   },
@@ -144,7 +104,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'heat-grid',
     name: 'Heat Grid',
     description:
-      'Displays a single bounded reading as a matrix of cells that fill as it rises.',
+      'A 2-D matrix fill gauge — the cousin of ProgressBar. Cells fill from the bottom-centre outward in a widening pyramid as the value rises, with a dim-to-bright accent ramp toward the wave front. Scroll-gated fill, optional percentage readout.',
     sourceFile: 'HeatGrid.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/heat-grid.png?v=4',
   },
@@ -152,7 +112,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'icon-button',
     name: 'Icon Button',
     description:
-      'Triggers an action with an icon alone, for controls whose glyph reads as the label.',
+      'Square label-less companion to Button. Same variant + size vocabulary so it lines up with Button on the same baseline.',
     sourceFile: 'IconButton.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/icon-button.png?v=3',
   },
@@ -160,15 +120,23 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'input',
     name: 'Input',
     description:
-      'Collects a single line of text.',
+      'Optional uppercase mono label, optional left icon, default + error states. Border transitions on focus.',
     sourceFile: 'Input.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/input.png?v=4',
+  },
+  {
+    slug: 'metric-chart',
+    name: 'Metric Chart',
+    description:
+      'Self-framed single-series telemetry panel: corner brackets, kicker and title header, and a status badge around one fitted-domain area chart. The fitted y-domain keeps non-zero-floor readings like altitude or latency filling the plot instead of flattening into a sliver.',
+    sourceFile: 'MetricChart.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/metric-chart.png?v=1',
   },
   {
     slug: 'waveform',
     name: 'Waveform',
     description:
-      'Displays a live signal as a moving trace, showing that a feed is running.',
+      'Live signal waveform. A fluid SVG of a morphing polyline over mirrored level bars and a dashed centreline, animating to signal an active feed and holding a static frame when paused or reduced-motion. One primary series ink; colour only when the wave itself is the live measurement.',
     sourceFile: 'Waveform.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/waveform.png?v=1',
   },
@@ -176,23 +144,15 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'media-card',
     name: 'Media Card',
     description:
-      'Presents an item on its own artwork, for content the image identifies.',
+      'Image-backed content tile. A full-bleed photo under a soft bottom scrim, a mono code tag, title and meta, and one corner action — Play, a CTA, or none. Composes the Card frame with markers off, so the image carries the card identity.',
     sourceFile: 'MediaCard.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/media-card.png?v=1',
   },
   {
-    slug: 'table-basic',
-    name: 'Table Basic',
+    slug: 'data-table',
+    name: 'Data Table',
     description:
-      'Builds a table row by row, for cells that need their own structure.',
-    sourceFile: 'Table.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/table.png?v=3',
-  },
-  {
-    slug: 'table-data',
-    name: 'Table Data',
-    description:
-      'Renders a table from a column definition and a set of rows.',
+      'Configuration-driven data grid. Pass columns and rows to get hairline inset dividers, row hover, a selected-row accent edge, and a mobile column-priority fold that tucks low-priority columns behind a per-row info tooltip instead of a horizontal scrollbar.',
     sourceFile: 'DataTable.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/data-table.png?v=2',
   },
@@ -200,7 +160,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'music-player',
     name: 'Music Player',
     description:
-      'Controls playback in one bar: track identity, transport, and a scrub slider.',
+      'Block-scale transport bar. Track identity, the full transport cluster, a scrub slider with elapsed and remaining readouts, and like, lyrics, and volume controls — assembled from Andromeda primitives, driven by props with a live demo fallback.',
     sourceFile: 'MusicPlayer.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/music-player.png?v=2',
   },
@@ -208,7 +168,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'nav-item',
     name: 'Nav Item',
     description:
-      'Links to one destination in a sidebar, in full or icon-only form.',
+      'Sidebar item with icon, active state, right-edge indicator dot. Mono label by default; sans available.',
     sourceFile: 'NavItem.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/nav-item.png?v=4',
   },
@@ -216,7 +176,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'panel-header',
     name: 'Panel Header',
     description:
-      'Titles a dashboard panel and holds the actions that belong to it.',
+      'Title row for top-level dashboard panels. Sentence-case mono title on the left, optional actions slot on the right (PanelMenu, IconButton, Button). Inset bottom divider.',
     sourceFile: 'PanelHeader.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/panel-header.png?v=3',
   },
@@ -224,7 +184,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'panel-menu',
     name: 'Panel Menu',
     description:
-      "Collects a panel's secondary actions behind a kebab trigger.",
+      'Kebab-trigger overflow menu for panel headers. Items can have icons, separators, and a single level of right-flyout submenu. Closes on outside click and Escape.',
     sourceFile: 'PanelMenu.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/panel-menu.png?v=4',
   },
@@ -232,7 +192,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'planet',
     name: 'Planet',
     description:
-      'Renders a slowly rotating particle sphere as a hero object.',
+      'A slowly rotating 3D particle sphere built with Three.js, lit from one side, with every particle colored from the Andromeda accent ramp so it follows the system palette. The canvas is transparent, so drop it inside a Card and the void shows through.',
     sourceFile: 'Planet.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/planet.png?v=1',
   },
@@ -240,15 +200,23 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'progress-bar',
     name: 'Progress Bar',
     description:
-      'Displays a single bounded reading as a horizontal meter.',
+      '3 status variants. 30 skewed segments fill left to right with a scroll-gated staggered cascade.',
     sourceFile: 'ProgressBar.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/progress-bar.png?v=4',
+  },
+  {
+    slug: 'radar-chart',
+    name: 'Radar Chart',
+    description:
+      'Polygon spider chart for multi-axis system diagnostics. Single or multiple overlapping series.',
+    sourceFile: 'RadarChart.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/radar-chart.png?v=3',
   },
   {
     slug: 'radio',
     name: 'Radio',
     description:
-      'Selects exactly one option from a small set that stays visible.',
+      'Mutually-exclusive square radio. Standalone or inside a RadioGroup wiring up name, value, onValueChange.',
     sourceFile: 'Radio.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/radio.png?v=3',
   },
@@ -256,7 +224,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'search-field',
     name: 'Search Field',
     description:
-      'Collects a search query, with room for a keyboard shortcut hint.',
+      'Command-bar-style search input with optional ⌘-K shortcut chip. Five states — idle, hover, focus, text-inactive (placeholder), text-active (typed). Controlled or uncontrolled.',
     sourceFile: 'SearchField.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/search-field.png?v=4',
   },
@@ -264,7 +232,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'segmented-control',
     name: 'Segmented Control',
     description:
-      'Switches between a few mutually exclusive views or modes.',
+      'Row of icon-or-label buttons that share a single border. The active background slides between segments on selection. Sized sm/md/lg to match the row baseline.',
     sourceFile: 'SegmentedControl.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/segmented-control.png?v=3',
   },
@@ -272,7 +240,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'slider',
     name: 'Slider',
     description:
-      'Sets one continuous value by dragging along a track.',
+      'Custom horizontal range. Pointer drag + full keyboard support. ARIA-compliant.',
     sourceFile: 'Slider.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/slider.png?v=4',
   },
@@ -280,7 +248,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'spinner',
     name: 'Spinner',
     description:
-      'Signals that work is running when the remaining time is unknown.',
+      'A 3x3 pixel grid with a snake-game trail cycling via a single CSS keyframe, running on the compositor. 4 color variants and 3 sizes.',
     sourceFile: 'Spinner.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/spinner.png?v=3',
   },
@@ -288,7 +256,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'stat-tile',
     name: 'Stat Tile',
     description:
-      'Displays one headline number with its unit and its change.',
+      'Stat readout built on Card. Big numeric value, optional unit, optional ▲/▼ delta whose glyph carries the direction and whose color carries the judgment: set polarity to lower-is-better and a falling response time reads as the improvement it is, or none for a reading with no good/bad sense. Scroll-aware count-up on first view, a live mode that snaps to new values, a per-digit odometer roll (liveRoll), and a top-right code identifier prop.',
     sourceFile: 'StatTile.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/stat-tile.png?v=3',
   },
@@ -296,7 +264,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'tag',
     name: 'Tag',
     description:
-      'Labels content for categorizing or filtering, and can be dismissed.',
+      'Compact uppercase mono label. 4 variants. Optional dismiss button when onClose is provided.',
     sourceFile: 'Tag.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/tag.png?v=3',
   },
@@ -304,7 +272,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'textarea',
     name: 'Textarea',
     description:
-      'Collects text that runs to more than one line.',
+      'Multi-line counterpart to Input. Same border / focus / error behavior, vertical resize.',
     sourceFile: 'Textarea.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/textarea.png?v=3',
   },
@@ -312,30 +280,39 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'toggle',
     name: 'Toggle',
     description:
-      'Switches a setting that takes effect the moment it flips.',
+      'Sharp rectangular track + sliding rectangular thumb. Same vocabulary as Checkbox, but feels like a hardware switch.',
     sourceFile: 'Toggle.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/toggle.png?v=3',
+  },
+  {
+    slug: 'table',
+    name: 'Table',
+    description:
+      'Compound data-table primitive: Table / TableHead / TableBody / TableRow / TableHeader / TableCell. Sortable column headers, row hover highlight, selected-row accent edge. Render TableStyles once on the page to enable the hover styling.',
+    sourceFile: 'Table.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/table.png?v=3',
   },
   {
     slug: 'tooltip',
     name: 'Tooltip',
     description:
-      'Names a control that carries no text of its own, on hover or focus.',
+      'Hover label for icon-only controls. Wraps any child, floats above or below, sharp corners, mono uppercase text. Shows on keyboard focus too, carries role="tooltip", and clamps itself away from the viewport edges.',
     sourceFile: 'Tooltip.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/tooltip.png?v=4',
   },
   {
-    slug: 'top-bar',
-    name: 'Top Bar',
+    slug: 'trend-chart',
+    name: 'Trend Chart',
     description:
-      'Spans the top of a dashboard with the brand, the nav, and the account cluster.',
-    sourceFile: 'TopBar.tsx',
+      'The canonical multi-series time-series chart. One configurable component that renders as line, area, or bar with a built-in mode toggle, custom tooltip, and toggleable legend. Series colour follows the multi-series hierarchy (baseline / live / context / threshold). Scroll-gated reveal.',
+    sourceFile: 'TrendChart.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda/trend-chart.png?v=3',
   },
   {
     slug: 'user-card',
     name: 'User Card',
     description:
-      'Opens the account menu from a row that names the signed-in user and their role.',
+      'Wider user trigger that shows avatar, name, and role alongside the chevron, the canonical bottom-of-sidebar identity card. Same popover as User Menu, with menu rows supplied by the caller via an `items` prop; opens upward by default and stretches to the card width.',
     sourceFile: 'UserCard.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/user-card.png?v=3',
   },
@@ -343,61 +320,9 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'user-menu',
     name: 'User Menu',
     description:
-      "Opens the account menu from the signed-in user's avatar.",
+      'Avatar-trigger popover whose menu rows are supplied by the caller via an `items` prop. Designed for top-bar slots where space is tight. Opens downward and right-aligned by default; closes on outside-click and Escape.',
     sourceFile: 'UserMenu.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/user-menu.png?v=3',
-  },
-  {
-    slug: 'grid-backdrop',
-    name: 'GridBackdrop (WIP)',
-    description:
-      'Lays a hairline measuring grid behind a page or a section.',
-    sourceFile: 'GridBackdrop.tsx',
-  },
-  {
-    slug: 'void-backdrop',
-    name: 'VoidBackdrop (WIP)',
-    description:
-      'Darkens a surface away from one light origin, so hairline panels keep their edge.',
-    sourceFile: 'VoidBackdrop.tsx',
-  },
-  {
-    slug: 'horizon-backdrop',
-    name: 'HorizonBackdrop (WIP)',
-    description:
-      'Lays a receding ground plane behind a section, converging at a horizon.',
-    sourceFile: 'HorizonBackdrop.tsx',
-  },
-  {
-    slug: 'contour-backdrop',
-    name: 'ContourBackdrop (WIP)',
-    description:
-      'Lays seeded topographic hairlines behind a surface.',
-    sourceFile: 'ContourBackdrop.tsx',
-  },
-
-  // Objects — the system's sanctioned decorative class (Planet is its first
-  // member, above). Monochrome, transparent ground, one per surface.
-  {
-    slug: 'orb',
-    name: 'Orb',
-    description:
-      'Sweeps one circle through a full turn into a sphere of hairline loops.',
-    sourceFile: 'Orb.tsx',
-  },
-  {
-    slug: 'nodes',
-    name: 'Nodes',
-    description:
-      'Spreads light across a hairline lattice, one crossing igniting the next.',
-    sourceFile: 'Nodes.tsx',
-  },
-  {
-    slug: 'burst',
-    name: 'Burst',
-    description:
-      'Draws hundreds of hairlines converging on a single focal point.',
-    sourceFile: 'Burst.tsx',
   },
 ]
 
@@ -407,19 +332,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
 // scripts/lib/design-systems.config.mjs `slugOverrides` — mirrored here (typed,
 // Node-free) for use by the component page (forward) and the Saved list
 // (reverse, to resolve a saved registry slug back to its page + display name).
-const ANDROMEDA_REGISTRY_SLUG_OVERRIDES: Record<string, string> = {
-  button: 'andromeda-button-system',
-  // The two tables were renamed for the docs site (2026-08-19) so they read as a
-  // pair. The registry slug is derived from the vault FILENAME, which did not
-  // move, so the default `andromeda-${pageSlug}` no longer lands on it.
-  'table-basic': 'andromeda-table',
-  'table-data': 'andromeda-data-table',
-  // Same for the charts, renamed the same day so the family reads together.
-  'chart-funnel': 'andromeda-funnel-chart',
-  'chart-metric': 'andromeda-metric-chart',
-  'chart-radar': 'andromeda-radar-chart',
-  'chart-trend': 'andromeda-trend-chart',
-}
+const ANDROMEDA_REGISTRY_SLUG_OVERRIDES: Record<string, string> = { button: 'andromeda-button-system' }
 
 export function andromedaRegistrySlug(pageSlug: string): string {
   return ANDROMEDA_REGISTRY_SLUG_OVERRIDES[pageSlug] ?? `andromeda-${pageSlug}`
@@ -496,7 +409,7 @@ export const ANDROMEDA_META = {
   name: 'Andromeda',
   tagline: 'Sci-fi blueprint design system',
   description:
-    'One typeface. Transparent surfaces over a void background. 1px corner brackets instead of card borders. Blue accent. A domain-agnostic visual language — works for fintech, crypto, AI, ops, dev tools, and anywhere an editorial, technical, high-density feel fits.',
+    'One typeface. Transparent surfaces over a void background. 1px corner brackets instead of card borders. Turquoise accent. A domain-agnostic visual language — works for fintech, crypto, AI, ops, dev tools, and anywhere an editorial, technical, high-density feel fits.',
   font: 'JetBrains Mono',
   accent: '#2DD4BF',
   void: '#0E0E0F',

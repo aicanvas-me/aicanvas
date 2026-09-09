@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { createClient } from '../../../lib/supabase/server'
 import type { InstallHistoryRow } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
-import { andromedaPageSlug, getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
+import { andromedaPageSlug, getAndromedaComponentMeta } from '../../../_lib/andromeda-pro/andromeda-meta'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 
 // ─── Activity page ──────────────────────────────────────────────────────────

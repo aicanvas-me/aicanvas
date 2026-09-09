@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // COMPONENT: Alert
 // shadcn/ui-aligned API: forwardRef, variant, cva, compound parts.
@@ -17,7 +16,9 @@
 'use client';
 
 import { forwardRef } from 'react';
+import type { ComponentPropsWithoutRef, ReactNode } from 'react';
 import { cva } from 'class-variance-authority';
+import type { VariantProps } from 'class-variance-authority';
 import { cn, andromedaVars } from './lib/utils';
 
 const alertVariants = cva(
@@ -76,8 +77,13 @@ const alertVariants = cva(
  * @property {React.CSSProperties} [style]
  */
 
+export type AlertProps = ComponentPropsWithoutRef<'div'> &
+  VariantProps<typeof alertVariants> & {
+    children?: ReactNode;
+  };
+
 /** @type {React.ForwardRefExoticComponent<AlertProps & React.HTMLAttributes<HTMLDivElement>>} */
-export const Alert = forwardRef(function Alert(
+export const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
   { className, variant = 'default', children, style, ...props },
   ref,
 ) {
@@ -99,7 +105,7 @@ export const Alert = forwardRef(function Alert(
 });
 
 /** Icon slot — recolors any child SVG to the variant's icon color. */
-export const AlertIcon = forwardRef(function AlertIcon(
+export const AlertIcon = forwardRef<HTMLSpanElement, ComponentPropsWithoutRef<'span'>>(function AlertIcon(
   { className, children, ...props },
   ref,
 ) {
@@ -121,7 +127,7 @@ export const AlertIcon = forwardRef(function AlertIcon(
   );
 });
 
-export const AlertContent = forwardRef(function AlertContent(
+export const AlertContent = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<'div'>>(function AlertContent(
   { className, children, ...props },
   ref,
 ) {
@@ -137,7 +143,7 @@ export const AlertContent = forwardRef(function AlertContent(
   );
 });
 
-export const AlertTitle = forwardRef(function AlertTitle(
+export const AlertTitle = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<'div'>>(function AlertTitle(
   { className, children, ...props },
   ref,
 ) {
@@ -160,7 +166,7 @@ export const AlertTitle = forwardRef(function AlertTitle(
   );
 });
 
-export const AlertDescription = forwardRef(function AlertDescription(
+export const AlertDescription = forwardRef<HTMLDivElement, ComponentPropsWithoutRef<'div'>>(function AlertDescription(
   { className, children, ...props },
   ref,
 ) {

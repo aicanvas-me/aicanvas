@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // SIGNAL ROOM: Now Transmitting
 // Hero panel. Replaces the Spotify "Sound without limits"
@@ -17,6 +16,7 @@
 
 import { Play, Heart } from '@phosphor-icons/react';
 import { tokens } from '../../tokens';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { Card } from '../../components/Card';
 import { PanelHeader } from '../../components/PanelHeader';
@@ -54,12 +54,12 @@ export function NowTransmitting() {
                 style={{
                   fontFamily: tokens.typography.fontMono,
                   fontSize: tokens.typography.size.xs,
-                  color: tokens.color.text.muted,
+                  color: themeColor.text.muted,
                   textTransform: 'uppercase',
                   letterSpacing: tokens.typography.tracking.widest,
                 }}
               >
-                /// Featured stream
+                {'/// Featured stream'}
               </span>
               <h2
                 className="sr-hero-title"
@@ -68,7 +68,7 @@ export function NowTransmitting() {
                   fontFamily: tokens.typography.fontSans,
                   fontSize: tokens.typography.size['3xl'],
                   fontWeight: tokens.typography.weight.semibold,
-                  color: tokens.color.text.primary,
+                  color: themeColor.text.primary,
                   letterSpacing: '-0.02em',
                   lineHeight: tokens.typography.lineHeight.tight,
                 }}
@@ -80,7 +80,7 @@ export function NowTransmitting() {
                   margin: 0,
                   fontFamily: tokens.typography.fontSans,
                   fontSize: tokens.typography.size.sm,
-                  color: tokens.color.text.secondary,
+                  color: themeColor.text.secondary,
                   lineHeight: tokens.typography.lineHeight.normal,
                   maxWidth: '40ch',
                 }}
@@ -116,18 +116,18 @@ export function NowTransmitting() {
                 style={{
                   fontFamily: tokens.typography.fontMono,
                   fontSize: tokens.typography.size.xs,
-                  color: tokens.color.text.muted,
+                  color: themeColor.text.muted,
                   textTransform: 'uppercase',
                   letterSpacing: tokens.typography.tracking.widest,
                 }}
               >
-                /// Waveform
+                {'/// Waveform'}
               </span>
               <span
                 style={{
                   fontFamily: tokens.typography.fontMono,
                   fontSize: tokens.typography.size.xs,
-                  color: tokens.color.text.faint,
+                  color: themeColor.text.faint,
                   textTransform: 'uppercase',
                   letterSpacing: tokens.typography.tracking.widest,
                 }}
@@ -142,7 +142,7 @@ export function NowTransmitting() {
                 justifyContent: 'space-between',
                 fontFamily: tokens.typography.fontMono,
                 fontSize: tokens.typography.size.xs,
-                color: tokens.color.text.faint,
+                color: themeColor.text.faint,
                 textTransform: 'uppercase',
                 letterSpacing: tokens.typography.tracking.widest,
               }}
