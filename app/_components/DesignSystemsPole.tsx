@@ -77,12 +77,8 @@ export const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
 // import it and drop one in a row when something is worth flagging again.
 
 export function DesignSystemsPole({
-  collapsed,
-  onToggle,
   onNavigate,
 }: {
-  collapsed: boolean
-  onToggle: () => void
   // Fired when any leaf link is tapped. The mobile drawer passes setOpen(false)
   // so it closes immediately on tap. Templates now navigate in the SAME tab
   // (the TemplatePreviewShell top bar carries you back), so a route change also
@@ -104,8 +100,10 @@ export function DesignSystemsPole({
   const activeSystem = [...SYSTEMS]
     .sort((a, b) => b.slug.length - a.slug.length)
     .find((s) => pathname === `/design-systems/${s.slug}` || pathname.startsWith(`/design-systems/${s.slug}/`))
+  // Each system has its own component list; looking the active leaf up in one
+  // fixed list left every Pro-only component (Burst, Orb, the charts) unlit.
   const activeAndromedaComponent = activeSystem
-    ? ANDROMEDA_COMPONENT_META.find(
+    ? activeSystem.components.find(
         (c) => pathname === `/design-systems/${activeSystem.slug}/${c.slug}`,
       )
     : null
@@ -120,16 +118,14 @@ export function DesignSystemsPole({
 
   return (
     <div className="mb-3">
-      <button
-        type="button"
-        onClick={onToggle}
-        className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100`}
-      >
+      {/* A label, not a control. Collapsing now lives on each system row, so a
+          second collapse here could hide both systems behind a header that
+          carries no caret and no way back. */}
+      <div className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 dark:text-sand-300">
         <Cube weight="regular" size={16} />
         <span className="flex-1 text-left">Design Systems</span>
-      </button>
-      {!collapsed && (
-        <ul className="space-y-0.5">
+      </div>
+      <ul className="space-y-0.5">
           {SYSTEMS.map((system) => {
             // Only the bare overview highlights the system row; /system has its
             // own child row below, so highlighting both read as a double-select.
@@ -349,8 +345,7 @@ export function DesignSystemsPole({
               </li>
             )
           })}
-        </ul>
-      )}
+      </ul>
     </div>
   )
 }

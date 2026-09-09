@@ -89,11 +89,8 @@ export function Sidebar({
   // Are we inside a design-system path? The overview, showcase, examples, and
   // per-component pages all live under `/design-systems/<slug>/...`.
   const onDesignSystems = pathname?.startsWith('/design-systems') || false
-  // The DS pole opens by default everywhere, so Andromeda + Meridian are
-  // visible without a click (it was already open on design-system paths; this
-  // also opens it on the home / components pages). The user can still collapse
-  // it, and the mutual-exclusion toggles below still apply on interaction.
-  const [collapsedDS, setCollapsedDS] = useState(false)
+  // The Design Systems pole no longer collapses as a whole: each system row
+  // owns its own caret, so both systems stay listed at all times.
 
   // ── Embedded (design-systems / ideation) mutual-exclusion ─────────────────
   // In embedded mode the Components pole is a collapsible button (mirrors the
@@ -103,28 +100,7 @@ export function Sidebar({
   const onComponents = !onDesignSystems
   const [collapsedComponents, setCollapsedComponents] = useState(!onComponents)
 
-  const toggleDS = () => {
-    if (!embedded) {
-      setCollapsedDS((prev) => !prev)
-      return
-    }
-    setCollapsedDS((prev) => {
-      if (prev) {
-        setCollapsedComponents(true)
-        return false
-      }
-      return true
-    })
-  }
-  const toggleComponents = () => {
-    setCollapsedComponents((prev) => {
-      if (prev) {
-        setCollapsedDS(true)
-        return false
-      }
-      return true
-    })
-  }
+  const toggleComponents = () => setCollapsedComponents((prev) => !prev)
 
   // ── Search ──────────────────────────────────────────────────────────────
   // Local state is the source of truth while typing; URL is written via a
@@ -381,7 +357,7 @@ export function Sidebar({
         })}
 
         {/* ── Design Systems pole (shared, identical on every page) ── */}
-        <DesignSystemsPole collapsed={collapsedDS} onToggle={toggleDS} />
+        <DesignSystemsPole />
 
       </nav>
 
