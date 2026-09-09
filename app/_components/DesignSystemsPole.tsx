@@ -26,12 +26,12 @@ const SYSTEM_ICONS: Record<string, (props: { size?: number }) => ReactElement> =
 }
 
 // Design systems shown under the Design Systems pole.
-// Two systems live side by side, each at its own routes: Andromeda (MIT) and
-// Andromeda Pro. Neither replaces the other and neither redirects to the other.
+// Two systems live side by side, each at its own routes: Andromeda Legacy
+// (MIT) and Andromeda Pro. Neither replaces the other and neither redirects to the other.
 const SYSTEMS = [
   {
     slug: 'andromeda',
-    name: 'Andromeda',
+    name: 'Andromeda Legacy',
     // Has a premium Brain page at /design-systems/<slug>/brain (rules +
     // foundations + per-component intelligence).
     brain: true,

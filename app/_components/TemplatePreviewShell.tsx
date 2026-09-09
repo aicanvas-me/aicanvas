@@ -71,7 +71,7 @@ const DEVICE_ORDER: { key: Device; label: string; icon: ComponentType<{ weight?:
 interface TemplatePreviewShellProps {
   templateSlug: string // registry slug, e.g. 'andromeda-mission-control'
   templateName: string // e.g. 'Mission Control'
-  systemName: string // e.g. 'Andromeda'
+  systemName: string // e.g. 'Andromeda Legacy'
   systemHref: string // where the system-name crumb links, e.g. the showcase
   frame?: boolean // true when this render is the iframe payload (?frame=1); resolved from searchParams on the server by the page and passed in, so the framed HTML is bare from the very first paint (no chrome flash)
   description?: string[] // overrides the install-popover bullet copy

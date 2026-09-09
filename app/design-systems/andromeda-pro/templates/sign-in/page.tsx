@@ -24,7 +24,7 @@ export default async function SignInTemplate({
       frame={frame}
       templateSlug="andromeda-sign-in"
       templateName="Sign In"
-      systemName="Andromeda"
+      systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"
     >
       <div

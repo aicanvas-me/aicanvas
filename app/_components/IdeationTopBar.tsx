@@ -16,7 +16,7 @@ const SEGMENT_NAMES: Record<string, string> = {
   ideation: 'Ideation',
   components: 'Components',
   'design-systems': 'Design Systems',
-  andromeda: 'Andromeda',
+  andromeda: 'Andromeda Legacy',
   'andromeda-pro': 'Andromeda Pro',
   showcase: 'Showcase',
   examples: 'See It in Action',
@@ -31,7 +31,7 @@ const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
 // its own route namespace, so every crumb below is built from the system slug
 // in the path rather than from a single hardcoded system.
 const SYSTEM_LABELS: Record<string, string> = {
-  andromeda: 'Andromeda',
+  andromeda: 'Andromeda Legacy',
   'andromeda-pro': 'Andromeda Pro',
 }
 const SYSTEM_ALT = Object.keys(SYSTEM_LABELS).join('|')

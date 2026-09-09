@@ -29,7 +29,7 @@ export default async function SignalRoomTemplate({
       frame={frame}
       templateSlug="andromeda-signal-room"
       templateName="Signal Room"
-      systemName="Andromeda"
+      systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"
     >
       <div

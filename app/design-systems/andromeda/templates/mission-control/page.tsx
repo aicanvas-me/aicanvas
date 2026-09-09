@@ -26,7 +26,7 @@ export default async function MissionControlTemplate({
       frame={frame}
       templateSlug="andromeda-mission-control"
       templateName="Mission Control"
-      systemName="Andromeda"
+      systemName="Andromeda Legacy"
       systemHref="/design-systems/andromeda"
     >
       <div

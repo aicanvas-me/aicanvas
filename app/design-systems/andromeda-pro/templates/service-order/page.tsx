@@ -29,7 +29,7 @@ export default async function ServiceOrderTemplate({
       frame={frame}
       templateSlug="andromeda-service-order"
       templateName="Service Order"
-      systemName="Andromeda"
+      systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"
     >
       {/* Pinned pattern, same as the other templates: the composition fills

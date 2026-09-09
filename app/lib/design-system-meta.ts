@@ -24,7 +24,7 @@ export interface DesignSystemMeta {
 export const DESIGN_SYSTEM_META: Record<DesignSystemSlug, DesignSystemMeta> = {
   andromeda: {
     slug: 'andromeda',
-    name: 'Andromeda',
+    name: 'Andromeda Legacy',
     templates: [
       { slug: 'andromeda-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi' },
       { slug: 'andromeda-service-order',     name: 'Service Order',     domain: 'Telecom' },

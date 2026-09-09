@@ -29,7 +29,7 @@ export default async function ResourcePlanningTemplate({
       frame={frame}
       templateSlug="andromeda-resource-planning"
       templateName="Resource Planning"
-      systemName="Andromeda"
+      systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"
     >
       <div

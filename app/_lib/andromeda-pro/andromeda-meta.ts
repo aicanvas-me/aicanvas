@@ -493,7 +493,7 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
 ]
 
 export const ANDROMEDA_META = {
-  name: 'Andromeda',
+  name: 'Andromeda Pro',
   tagline: 'Sci-fi blueprint design system',
   description:
     'One typeface. Transparent surfaces over a void background. 1px corner brackets instead of card borders. Blue accent. A domain-agnostic visual language — works for fintech, crypto, AI, ops, dev tools, and anywhere an editorial, technical, high-density feel fits.',
