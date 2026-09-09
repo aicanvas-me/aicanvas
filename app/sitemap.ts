@@ -3,7 +3,8 @@ import { COMPONENTS } from './lib/component-registry'
 import { CATEGORIES } from './lib/categories'
 import { COLLECTIONS, collectionMembers } from './lib/collections'
 import { SITE_URL } from './lib/config'
-import { ANDROMEDA_COMPONENT_META } from './_lib/andromeda-pro/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META } from './_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from './_lib/andromeda-pro/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../scripts/lib/design-systems.config.mjs'
 
 // No `lastModified`. Every entry used to emit `new Date()`, i.e. the build
@@ -40,6 +41,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // (/design-systems/<slug>), followed by /foundation and the /components grid
   // and its template routes. Generated from the shared config so new systems
   // and templates land in the sitemap automatically.
+  // Each system lists only the section routes it actually has. Andromeda Legacy
+  // ships /system; Andromeda Pro ships /foundation and /components. Emitting one
+  // system's IA for both advertised URLs that 404.
+  const SYSTEM_SECTIONS: Record<string, string[]> = {
+    andromeda: ['system'],
+    'andromeda-pro': ['foundation', 'components'],
+  }
   const designSystemPages: MetadataRoute.Sitemap = DESIGN_SYSTEMS.flatMap(
     (s: { slug: string; templates?: { slug: string }[] }) => [
       {
@@ -47,16 +55,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
         changeFrequency: 'weekly' as const,
         priority: 0.9,
       },
-      {
-        url: `${SITE_URL}/design-systems/${s.slug}/foundation`,
+      ...(SYSTEM_SECTIONS[s.slug] ?? []).map((section) => ({
+        url: `${SITE_URL}/design-systems/${s.slug}/${section}`,
         changeFrequency: 'monthly' as const,
-        priority: 0.7,
-      },
-      {
-        url: `${SITE_URL}/design-systems/${s.slug}/components`,
-        changeFrequency: 'weekly' as const,
         priority: 0.8,
-      },
+      })),
       ...(s.templates ?? []).map((t) => ({
         url: `${SITE_URL}/design-systems/${s.slug}/templates/${t.slug.replace(
           new RegExp(`^${s.slug}-`),
@@ -68,14 +71,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ],
   )
 
-  // Andromeda per-component pages (/design-systems/andromeda/<component>).
-  const andromedaComponentPages: MetadataRoute.Sitemap = ANDROMEDA_COMPONENT_META.map(
-    (c: { slug: string }) => ({
-      url: `${SITE_URL}/design-systems/andromeda/${c.slug}`,
-      changeFrequency: 'monthly' as const,
-      priority: 0.6,
-    }),
-  )
+  // Per-component pages, each system under its own prefix. Pairing Pro's list
+  // with Legacy's prefix put 15 dead URLs in the sitemap.
+  const andromedaComponentPages: MetadataRoute.Sitemap = [
+    ...ANDROMEDA_COMPONENT_META.map((c: { slug: string }) => `/design-systems/andromeda/${c.slug}`),
+    ...ANDROMEDA_PRO_COMPONENT_META.map((c: { slug: string }) => `/design-systems/andromeda-pro/${c.slug}`),
+  ].map((path) => ({
+    url: `${SITE_URL}${path}`,
+    changeFrequency: 'monthly' as const,
+    priority: 0.6,
+  }))
 
   return [
     {

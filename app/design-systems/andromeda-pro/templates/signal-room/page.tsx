@@ -27,7 +27,7 @@ export default async function SignalRoomTemplate({
     <AndromedaThemeWrap className="contents">
     <TemplatePreviewShell
       frame={frame}
-      templateSlug="andromeda-signal-room"
+      templateSlug="andromeda-pro-signal-room"
       templateName="Signal Room"
       systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"

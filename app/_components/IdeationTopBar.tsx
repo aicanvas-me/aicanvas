@@ -4,7 +4,8 @@ import { usePathname } from 'next/navigation'
 import { HeaderSocials } from '../components/HeaderSocials'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { Breadcrumbs, type Crumb } from '../components/Breadcrumbs'
-import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 
 // The sticky top-bar breadcrumb for design-system + ideation routes. One
 // consistent, left-aligned trail so a visitor can click straight up the tree —
@@ -61,9 +62,10 @@ function buildCrumbs(pathname: string): Crumb[] | null {
   const componentMatch = pathname.match(ANDROMEDA_COMPONENT_RE)
   if (componentMatch) {
     const [, system, slug] = componentMatch
-    // The shared meta array describes the Pro set; the MIT system falls back to
-    // the prettified slug until it carries meta of its own.
-    const meta = system === 'andromeda-pro' ? ANDROMEDA_COMPONENT_META.find((c) => c.slug === slug) : undefined
+    // Each system names its own components, so the crumb reads the list that
+    // belongs to the system in the path.
+    const list = system === 'andromeda-pro' ? ANDROMEDA_PRO_COMPONENT_META : ANDROMEDA_COMPONENT_META
+    const meta = list.find((c) => c.slug === slug)
     return [
       DESIGN_SYSTEMS,
       { label: SYSTEM_LABELS[system], href: overviewHref(system) },
@@ -123,8 +125,10 @@ export function IdeationTopBar() {
   // control(s) portaled into a slot next to the auth pill, replacing the
   // Lightning status pill. BrainViewer owns the brain slot; ShowcaseInstall
   // owns the showcase slot.
-  const isBrainReader = pathname === '/design-systems/andromeda/brain/explore'
-  const isShowcase = pathname === '/design-systems/andromeda/components'
+  // Either system's brain reader gets the install slot; only Pro has a
+  // /components grid, so that is the only showcase route there is.
+  const isBrainReader = BRAIN_READER_RE.test(pathname)
+  const isShowcase = pathname === '/design-systems/andromeda-pro/components'
 
   return (
     <div className={headerClass}>

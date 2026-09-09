@@ -495,7 +495,13 @@ function TopBar({
             <ArrowClockwise weight="regular" size={15} />
           </button>
         </div>
-        <AndromedaThemeToggle />
+        {/* Andromeda Pro's templates carry their own two-theme wrapper, so the
+            toggle belongs to them alone. Andromeda Legacy's templates have no
+            such wrapper (they follow the site via AndromedaThemeSync), and a
+            toggle over them controlled nothing. */}
+        {getDesignSystemTemplateMeta(templateSlug)?.system.slug === 'andromeda-pro' && (
+          <AndromedaThemeToggle />
+        )}
         </div>
 
         {/* Right — entitlement CTA + auth */}

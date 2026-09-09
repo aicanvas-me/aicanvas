@@ -212,15 +212,19 @@ function syncGitExclude(paths) {
 // written by a run that injected over the committed v1 files (48 names, one per
 // committed component) would otherwise make this pass delete those committed
 // files the first time the whole-system lane runs.
+// Everything git already tracks under design-systems/. Committed source is the
+// repo's own; the vault only ever FILLS GAPS in it, never overwrites it.
+let trackedDsFiles = new Set()
+try {
+  trackedDsFiles = new Set(
+    execSync('git ls-files design-systems', { stdio: ['ignore', 'pipe', 'ignore'] })
+      .toString().split('\n').map((l) => l.trim()).filter(Boolean),
+  )
+} catch { /* no git — nothing is tracked to protect */ }
+
 function cleanupFreeDs(currentPaths) {
   const current = new Set(currentPaths)
-  let tracked = new Set()
-  try {
-    tracked = new Set(
-      execSync('git ls-files design-systems', { stdio: ['ignore', 'pipe', 'ignore'] })
-        .toString().split('\n').map((l) => l.trim()).filter(Boolean),
-    )
-  } catch { /* no git — nothing is tracked to protect */ }
+  const tracked = trackedDsFiles
   for (const prev of readExcludedFreeDs()) {
     if (current.has(prev) || tracked.has(prev)) continue
     if (!/^design-systems\/[a-z0-9-]+\/components\/[A-Za-z][A-Za-z0-9]*\.tsx$/.test(prev)) continue
@@ -270,6 +274,10 @@ function writeFreeDsPlaceholders(system, expectedNames, injectedSet) {
   for (const name of expectedNames) {
     if (injectedSet.has(name)) continue
     const rel = `design-systems/${system}/components/${name}.tsx`
+    // A name the repo already carries as committed source needs no placeholder:
+    // the real file is right there. Writing one would replace published MIT
+    // source with a stub, which is worse than the gap it was meant to fill.
+    if (trackedDsFiles.has(rel)) continue
     const outFile = join(ROOT, rel)
     mkdirSync(dirname(outFile), { recursive: true })
     writeFileSync(outFile, [
@@ -936,16 +944,22 @@ for (const [system, names] of Object.entries(freeMap)) {
     console.error('[inject-premium] invalid system slug in freeSystemComponents: ' + JSON.stringify(system))
     process.exit(1)
   }
-  // Superseded by the whole-system lane above: the tree already landed under
-  // design-systems/<system>-v2/. The manifest key stays — it now only declares
-  // which component NAMES are on the free-account lane for the /r gate.
-  if (v2Systems.includes(system)) continue
+  // NOT superseded by the whole-system lane. Andromeda Legacy and Andromeda Pro
+  // are two separate systems now: the whole-system lane fills Pro's tree under
+  // design-systems/<system>-v2/, while this lane puts the free-lane components
+  // into LEGACY's committed tree, which is where its pages and registry read
+  // them from. Skipping it here left Legacy with degraded placeholders.
   for (const name of Array.isArray(names) ? names : []) {
     if (!/^[A-Za-z][A-Za-z0-9]*$/.test(name)) {
       console.error('[inject-premium] invalid component name in freeSystemComponents: ' + JSON.stringify(name))
       process.exit(1)
     }
     const rel = `design-systems/${system}/components/${name}.tsx`
+    // The manifest's free lane still lists every Pro component, but a name the
+    // repo already carries as committed MIT source is Legacy's own: writing the
+    // vault's version over it would silently replace 33 published MIT files
+    // with Pro source. Committed always wins; the vault fills the gaps only.
+    if (trackedDsFiles.has(rel)) continue
     const src = join(source, rel)
     // Mirror of the standalone bijection check: a manifest-listed file missing
     // from the vault source is a broken publish — fail loud, never ship a
@@ -972,7 +986,7 @@ for (const [system, names] of Object.entries(freeMap)) {
 // (signal-room, service-order, …) import but that were never tracked.
 const andromedaInjected = new Set(freeInjected['andromeda'] ?? [])
 const andromedaExpected = [...new Set([
-  ...(Array.isArray(freeMap['andromeda']) && !v2Systems.includes('andromeda') ? freeMap['andromeda'] : []),
+  ...(Array.isArray(freeMap['andromeda']) ? freeMap['andromeda'] : []),
   ...V2_FALLBACK_NAMES,
 ])]
 const freePlaceholders = writeFreeDsPlaceholders('andromeda', andromedaExpected, andromedaInjected)

@@ -9,7 +9,8 @@ import { buttonClasses } from '../components/Button'
 import { SiteFooter } from '../components/SiteFooter'
 import { HeaderSocials } from '../components/HeaderSocials'
 import { TOTAL_COMPONENTS } from '../lib/component-nav.generated'
-import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 
 function Section({
   children,
@@ -47,10 +48,12 @@ function PullQuote({ children }: { children: React.ReactNode }) {
 }
 
 export default function AboutPage() {
-  // Mirrors the home CTA count: registry components + Andromeda system components.
-  // TOTAL_COMPONENTS is a generated constant equal to COMPONENT_META.length, so we
-  // get the live number without shipping the heavy meta array to this route.
-  const componentTotal = TOTAL_COMPONENTS + ANDROMEDA_COMPONENT_META.length
+  // Mirrors the home CTA count: registry components + BOTH design systems'
+  // components. TOTAL_COMPONENTS is a generated constant equal to
+  // COMPONENT_META.length, so we get the live number without shipping the heavy
+  // meta array to this route.
+  const componentTotal =
+    TOTAL_COMPONENTS + ANDROMEDA_COMPONENT_META.length + ANDROMEDA_PRO_COMPONENT_META.length
 
   // Set bg on the parent scroll container so there's no color bleed
   const ref = useRef<HTMLDivElement>(null)

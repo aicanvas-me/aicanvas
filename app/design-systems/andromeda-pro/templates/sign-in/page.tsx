@@ -22,7 +22,7 @@ export default async function SignInTemplate({
     <AndromedaThemeWrap className="contents">
     <TemplatePreviewShell
       frame={frame}
-      templateSlug="andromeda-sign-in"
+      templateSlug="andromeda-pro-sign-in"
       templateName="Sign In"
       systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"

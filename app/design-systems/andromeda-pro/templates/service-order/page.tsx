@@ -27,7 +27,7 @@ export default async function ServiceOrderTemplate({
     <AndromedaThemeWrap className="contents">
     <TemplatePreviewShell
       frame={frame}
-      templateSlug="andromeda-service-order"
+      templateSlug="andromeda-pro-service-order"
       templateName="Service Order"
       systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"

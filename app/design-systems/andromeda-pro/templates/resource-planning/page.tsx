@@ -27,7 +27,7 @@ export default async function ResourcePlanningTemplate({
     <AndromedaThemeWrap className="contents">
     <TemplatePreviewShell
       frame={frame}
-      templateSlug="andromeda-resource-planning"
+      templateSlug="andromeda-pro-resource-planning"
       templateName="Resource Planning"
       systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"

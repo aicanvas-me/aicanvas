@@ -27,7 +27,7 @@ export default async function MissionControlTemplate({
     <AndromedaThemeWrap className="contents">
     <TemplatePreviewShell
       frame={frame}
-      templateSlug="andromeda-mission-control"
+      templateSlug="andromeda-pro-mission-control"
       templateName="Mission Control"
       systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"
