@@ -35,6 +35,9 @@ const SYSTEMS = [
     // Has a premium Brain page at /design-systems/<slug>/brain (rules +
     // foundations + per-component intelligence).
     brain: true,
+    // Legacy ships exactly the rail production ships: one System row, premium
+    // marked, then Brain. It has no /foundation or /components route.
+    sections: [{ slug: 'system', label: 'System', premium: true }],
     components: ANDROMEDA_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
     templates: [
       { slug: 'signal-room', name: 'Signal Room', domain: 'Audio' },
@@ -48,6 +51,13 @@ const SYSTEMS = [
     slug: 'andromeda-pro',
     name: 'Andromeda Pro',
     brain: true,
+    // Pro follows the 2026-08-17 IA: Foundation, then Components. Neither
+    // carries the premium mark - the foundation is open and single components
+    // are free to explore.
+    sections: [
+      { slug: 'foundation', label: 'Foundation', premium: false },
+      { slug: 'components', label: 'Components', premium: false },
+    ],
     components: ANDROMEDA_PRO_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
     templates: [
       { slug: 'signal-room', name: 'Signal Room', domain: 'Audio' },
@@ -91,7 +101,11 @@ export function DesignSystemsPole({
 
   // Active leaves inside the Design Systems pole: the overview, showcase,
   // examples, and per-component pages all live under /design-systems/<slug>.
-  const activeSystem = SYSTEMS.find((s) => pathname.startsWith(`/design-systems/${s.slug}`))
+  // Longest slug first: 'andromeda' is a prefix of 'andromeda-pro', so a plain
+  // startsWith would light up Legacy on every Pro page.
+  const activeSystem = [...SYSTEMS]
+    .sort((a, b) => b.slug.length - a.slug.length)
+    .find((s) => pathname === `/design-systems/${s.slug}` || pathname.startsWith(`/design-systems/${s.slug}/`))
   const activeAndromedaComponent = activeSystem
     ? ANDROMEDA_COMPONENT_META.find(
         (c) => pathname === `/design-systems/${activeSystem.slug}/${c.slug}`,
@@ -161,36 +175,60 @@ export function DesignSystemsPole({
                       className="pointer-events-none absolute bottom-1 left-[15px] top-1 w-px bg-sand-300 dark:bg-sand-800"
                     />
                     <ul className="mt-0.5 space-y-0.5">
-                    {/* ── Foundation, then Components — nav order is the
-                        2026-08-17 IA ruling: Foundation, Components, Templates,
-                        Brain. Neither carries the premium mark: the foundation
-                        is open, and single components are free-account. */}
-                    <li className="mt-1">
-                      <Link
-                        href={`/design-systems/${system.slug}/foundation`}
-                        onClick={onNavigate}
-                        className={`flex items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-[13px] font-medium transition-colors ${
-                          pathname === `/design-systems/${system.slug}/foundation`
-                            ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                            : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                        }`}
-                      >
-                        <span className="flex-1 truncate">Foundation</span>
-                      </Link>
-                    </li>
-                    <li className="mt-1">
-                      <Link
-                        href={`/design-systems/${system.slug}/components`}
-                        onClick={onNavigate}
-                        className={`flex items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-[13px] font-medium transition-colors ${
-                          pathname === `/design-systems/${system.slug}/components`
-                            ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                            : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                        }`}
-                      >
-                        <span className="flex-1 truncate">Components</span>
-                      </Link>
-                    </li>
+                    {/* ── Section rows, per system. Each system names its own
+                        because they do not share an IA: Legacy has System,
+                        Pro has Foundation then Components. */}
+                    {system.sections.map((section) => (
+                      <li key={section.slug} className="mt-1">
+                        <Link
+                          href={`/design-systems/${system.slug}/${section.slug}`}
+                          onClick={onNavigate}
+                          className={`flex items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-[13px] font-medium transition-colors ${
+                            pathname === `/design-systems/${system.slug}/${section.slug}`
+                              ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                              : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                          }`}
+                        >
+                          <span className="flex-1 truncate">{section.label}</span>
+                          {/* Lightning marks premium (install is premium). */}
+                          {section.premium && (
+                            <>
+                              <Lightning
+                                weight="regular"
+                                size={13}
+                                aria-hidden
+                                className="ml-auto shrink-0 text-sand-600 dark:text-sand-500"
+                              />
+                              <span className="sr-only">Premium</span>
+                            </>
+                          )}
+                        </Link>
+                      </li>
+                    ))}
+                    {/* ── Brain (premium judgment layer) ─────────── */}
+                    {system.brain && (
+                      <li className="mt-1">
+                        <Link
+                          href={`/design-systems/${system.slug}/brain`}
+                          onClick={onNavigate}
+                          className={`flex items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-[13px] font-medium transition-colors ${
+                            pathname === `/design-systems/${system.slug}/brain` ||
+                            pathname.startsWith(`/design-systems/${system.slug}/brain/`)
+                              ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                              : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                          }`}
+                        >
+                          <span className="flex-1 truncate">Brain</span>
+                          <Lightning
+                            weight="regular"
+                            size={13}
+                            aria-hidden
+                            className="ml-auto shrink-0 text-sand-600 dark:text-sand-500"
+                          />
+                          <span className="sr-only">Premium</span>
+                        </Link>
+                      </li>
+                    )}
                     {/* ── Templates (label + flat list) ──────────── */}
                     <li className="mt-1">
                       <div className="pt-1.5 pb-0.5 pl-8 pr-2 text-xxs uppercase tracking-wider text-sand-500">
