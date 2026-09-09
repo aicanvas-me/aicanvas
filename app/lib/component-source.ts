@@ -17,19 +17,27 @@ import { andromedaPageSlug as legacyPageSlug } from '@/app/_lib/andromeda/androm
  *   the components only Legacy has. Templates + whole-system aggregates
  *   are NOT served here — the gate 402s those before the source is ever needed.
  */
-export async function getComponentCode(slug: string): Promise<string | null> {
+export type DesignSystem = 'andromeda' | 'andromeda-pro'
+
+export async function getComponentCode(
+  slug: string,
+  system?: DesignSystem,
+): Promise<string | null> {
   const map = componentCodes as Record<string, string>
   if (map[slug] != null) return map[slug]
 
   if (slug.startsWith('andromeda-')) {
-    const entry = getAndromedaComponent(andromedaPageSlug(slug))
-    if (entry) return entry.code
-    // Andromeda Legacy and Andromeda Pro share the `andromeda-` registry
-    // namespace but not their component lists, so a slug Pro does not know may
-    // still be a Legacy one: table, data-table, and the metric/trend/radar
-    // charts all live only in Legacy and returned null here before.
-    const legacy = getLegacyComponent(legacyPageSlug(slug))
-    if (legacy) return legacy.code
+    // Legacy and Pro share the `andromeda-` registry namespace but not their
+    // component lists, so the SYSTEM decides which tree answers. Callers that
+    // name one get exactly that tree; a caller that names none (the CLI, older
+    // links) keeps the old behaviour: Pro first, then Legacy for the names only
+    // Legacy has (table, data-table, and the metric/trend/radar charts).
+    const fromPro = () => getAndromedaComponent(andromedaPageSlug(slug))?.code
+    const fromLegacy = () => getLegacyComponent(legacyPageSlug(slug))?.code
+
+    if (system === 'andromeda') return fromLegacy() ?? null
+    if (system === 'andromeda-pro') return fromPro() ?? null
+    return fromPro() ?? fromLegacy() ?? null
   }
 
   return null

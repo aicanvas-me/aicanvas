@@ -93,7 +93,7 @@ export function AndromedaComponentView({
   const openCode = useCallback(async () => {
     setCodeState({ status: 'loading' })
     try {
-      const res = await fetch(`/api/component-code?slug=${registrySlug}`)
+      const res = await fetch(`/api/component-code?slug=${registrySlug}&system=andromeda`)
       if (!res.ok) {
         setCodeState({ status: 'locked' })
         return

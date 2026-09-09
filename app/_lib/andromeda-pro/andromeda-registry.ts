@@ -16,10 +16,14 @@ import {
 
 export { ANDROMEDA_META, type AndromedaComponentMeta } from './andromeda-meta'
 
+// Andromeda Pro's source is the INJECTED vault tree, never Legacy's committed
+// one. Reading Legacy's here served Legacy source for shared names and a
+// "Source not found" line for every Pro-only component. readSource() below
+// still falls back to that line, so a degraded build stays green.
 const COMPONENTS_ROOT = join(
   process.cwd(),
   'design-systems',
-  'andromeda',
+  'andromeda-v2',
   'components',
 )
 

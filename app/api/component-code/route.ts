@@ -3,7 +3,7 @@ import { getEntitlement } from '@/app/lib/entitlement'
 import { classifyContent } from '@/lib/registry/content-type'
 import { loadContentLookup } from '@/lib/registry/lookup'
 import { premiumEnabled } from '@/lib/flags'
-import { getComponentCode } from '@/app/lib/component-source'
+import { getComponentCode, type DesignSystem } from '@/app/lib/component-source'
 import { codeToHtml } from 'shiki'
 
 export const runtime = 'nodejs'
@@ -19,12 +19,19 @@ const NO_STORE = { 'Cache-Control': 'private, no-store' }
  * flag (no upgrade path without it).
  */
 export async function GET(req: NextRequest) {
-  const slug = new URL(req.url).searchParams.get('slug') ?? ''
+  const params = new URL(req.url).searchParams
+  const slug = params.get('slug') ?? ''
   if (!/^[a-z0-9-]+$/.test(slug)) {
     return NextResponse.json({ error: 'bad slug' }, { status: 400, headers: NO_STORE })
   }
+  // Andromeda Legacy and Andromeda Pro share the registry namespace, so the
+  // caller names which one it is asking about. Anything else is ignored rather
+  // than rejected, keeping older links working.
+  const asked = params.get('system')
+  const system: DesignSystem | undefined =
+    asked === 'andromeda' || asked === 'andromeda-pro' ? asked : undefined
 
-  const code = await getComponentCode(slug)
+  const code = await getComponentCode(slug, system)
   if (code == null) {
     return NextResponse.json({ error: 'not found' }, { status: 404, headers: NO_STORE })
   }

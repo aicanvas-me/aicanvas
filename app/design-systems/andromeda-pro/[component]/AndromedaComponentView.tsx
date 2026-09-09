@@ -148,7 +148,7 @@ export function AndromedaComponentView({
   const openCode = useCallback(async () => {
     setCodeState({ status: 'loading' })
     try {
-      const res = await fetch(`/api/component-code?slug=${registrySlug}`)
+      const res = await fetch(`/api/component-code?slug=${registrySlug}&system=andromeda-pro`)
       if (res.status === 402) {
         const { limit } = await res.json().catch(() => ({}))
         setCodeState({ status: 'locked', reason: 'premium-only', limit })
