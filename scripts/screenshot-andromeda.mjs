@@ -31,7 +31,7 @@ try {
 
 // Slugs are the single source of truth in andromeda-meta.ts — parse them out so
 // this list can never drift from the metadata the overview grid renders.
-const META_PATH = path.join(__dirname, '../app/_lib/andromeda/andromeda-meta.ts')
+const META_PATH = path.join(__dirname, '../app/_lib/andromeda-pro/andromeda-meta.ts')
 const ALL_SLUGS = [
   ...readFileSync(META_PATH, 'utf8').matchAll(/slug:\s*'([^']+)'/g),
 ].map((m) => m[1])

@@ -15,7 +15,7 @@ if (!key) { console.error('IMAGEKIT_PRIVATE_KEY is not set'); process.exit(1) }
 const auth = Buffer.from(key + ':').toString('base64')
 const SRC_FOLDER = '/andromeda/New Screenshoots'
 const WIDTH = 1280
-const META_PATH = 'app/_lib/andromeda/andromeda-meta.ts'
+const META_PATH = 'app/_lib/andromeda-pro/andromeda-meta.ts'
 const arg = process.argv[2]
 if (!arg) { console.error('usage: node scripts/replace-andromeda-shot.mjs <slug> | --all'); process.exit(1) }
 const only = arg === '--all' ? undefined : arg
