@@ -927,7 +927,22 @@ for (const system of v2Systems) {
   )
 }
 
-// ── 4b. Free design-system components (v2) ──────────────────────────────────
+// ── 4b. Free design-system components ───────────────────────────────────────
+// These land in Andromeda LEGACY's committed tree, so they must be written
+// against Legacy's tokens and lib. In production that is automatic: the pin is
+// one vault sha and its versions are the Legacy-shaped ones. In DEV, when
+// PREMIUM_LOCAL_PATH points at the Andromeda Pro branch, that branch's copies
+// are written against PRO's lib instead (Waveform imports useResolvedVars,
+// which Legacy's utils does not export) and every page rendering them 500s.
+// PREMIUM_FREE_LANE_PATH lets dev read this lane from vault main while the
+// whole-system lane above still reads the Pro branch. Unset in production, so
+// the pinned source is used exactly as before.
+const freeSource = process.env.PREMIUM_FREE_LANE_PATH
+  ? resolve(process.env.PREMIUM_FREE_LANE_PATH)
+  : source
+if (freeSource !== source) {
+  log(`free-lane source override: ${freeSource}`)
+}
 // manifest.freeSystemComponents: { <system>: [<ComponentName>, ...] }.
 // Copied into the public design-systems tree (marker-stripped, like the
 // standalones) so relative imports ('../tokens', './lib/utils', './Badge')
@@ -960,11 +975,17 @@ for (const [system, names] of Object.entries(freeMap)) {
     // vault's version over it would silently replace 33 published MIT files
     // with Pro source. Committed always wins; the vault fills the gaps only.
     if (trackedDsFiles.has(rel)) continue
-    const src = join(source, rel)
+    const src = join(freeSource, rel)
     // Mirror of the standalone bijection check: a manifest-listed file missing
     // from the vault source is a broken publish — fail loud, never ship a
     // showcase that imports a component that does not exist.
     if (!existsSync(src)) {
+      // With a deliberate free-lane override the source is a DIFFERENT vault sha
+      // than the manifest came from, so a name it does not carry is expected:
+      // the manifest lists every Pro component, and vault main only holds the
+      // few that Andromeda Legacy actually ships. Without an override the source
+      // and the manifest are one sha, and a gap is a broken publish: fail loud.
+      if (freeSource !== source) continue
       console.error(`[inject-premium] freeSystemComponents lists "${system}/${name}" but ${rel} is missing from the premium source`)
       process.exit(1)
     }
