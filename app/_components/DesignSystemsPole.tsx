@@ -187,6 +187,23 @@ export function DesignSystemsPole({
                       className="pointer-events-none absolute bottom-1 left-[15px] top-1 w-px bg-sand-200 dark:bg-sand-800"
                     />
                     <ul className="mt-0.5 space-y-0.5">
+                    {/* ── Overview: the system's own landing page, above every
+                        section. Exact-match active state (not startsWith) so
+                        it lights up only on `/design-systems/<slug>` itself,
+                        never on a child page underneath it. */}
+                    <li className="mt-1">
+                      <Link
+                        href={`/design-systems/${system.slug}`}
+                        onClick={onNavigate}
+                        className={`flex items-center gap-2 rounded-md py-1.5 pl-8 pr-2 text-[13px] font-medium transition-colors ${
+                          pathname === `/design-systems/${system.slug}`
+                            ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                            : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                        }`}
+                      >
+                        <span className="flex-1 truncate">Overview</span>
+                      </Link>
+                    </li>
                     {/* ── Section rows, per system. Each system names its own
                         because they do not share an IA: Legacy has System,
                         Pro has Foundation then Components. */}
