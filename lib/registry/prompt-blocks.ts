@@ -99,3 +99,14 @@ export function splitSystemPromptAtPaywall(prompt: string): { head: string } | n
   if (head.length > prompt.length * 0.4) return null
   return { head }
 }
+
+// ponytail: prose-brief fallback; retire when all 49 Pro prompts are scaffold prompts.
+/**
+ * The paywall seam for an ANDROMEDA PRO prompt, which may be either shape while
+ * the 49 are rewritten one by one: a scaffold prompt cuts at the fixed seven-block
+ * seam, and a prose brief still on the old shape falls back to the structural cut.
+ */
+export function splitProPromptAtPaywall(prompt: string): { head: string } | null {
+  const isScaffold = headingHits(prompt, '## 1. Setup').length > 0
+  return isScaffold ? splitPromptAtPaywall(prompt) : splitSystemPromptAtPaywall(prompt)
+}

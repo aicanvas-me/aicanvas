@@ -10,7 +10,7 @@ import { AndromedaThemeWrap } from '../AndromedaThemeWrap'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { getSessionEntitlement } from '../../../lib/entitlement'
-import { splitSystemPromptAtPaywall } from '../../../../lib/registry/prompt-blocks'
+import { splitProPromptAtPaywall } from '../../../../lib/registry/prompt-blocks'
 
 /**
  * The remix prompt for one Andromeda Pro component, or null.
@@ -81,11 +81,12 @@ export default async function AndromedaComponentPage({
   // ── Prompt gate ──────────────────────────────────────────────────────────
   // Andromeda Pro is free to explore, PAID to install (ruling 2026-08-30, names
   // 2026-09-10), and its remix prompt is paid content like its source. A viewer
-  // without a premium entitlement gets the opening and the first section only;
-  // everything that actually rebuilds the component is dropped HERE, server
-  // side, and never reaches the client. The bytes cannot be recovered from the
-  // page. Same fail-closed posture as /r: an entitlement read that throws is
-  // treated as not entitled.
+  // without a premium entitlement gets the free teaser only — blocks 1-2 for a
+  // rewritten scaffold prompt, or the opening paragraphs for one still a prose
+  // brief — and everything that actually rebuilds the component is dropped
+  // HERE, server side, and never reaches the client. The bytes cannot be
+  // recovered from the page. Same fail-closed posture as /r: an entitlement
+  // read that throws is treated as not entitled.
   const fullPrompt = readSystemPrompt(entry.sourceFile)
   let promptLocked = false
   let remixPrompt = fullPrompt
@@ -98,7 +99,7 @@ export default async function AndromedaComponentPage({
       // render, never the reverse.
     }
     if (!viewerIsPremium) {
-      const split = splitSystemPromptAtPaywall(fullPrompt)
+      const split = splitProPromptAtPaywall(fullPrompt)
       // Unredactable is not the same as harmless: with no known seam the prompt
       // is withheld whole, which hides the panel.
       remixPrompt = split ? split.head : null

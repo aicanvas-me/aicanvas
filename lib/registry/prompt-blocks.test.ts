@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { splitPromptAtPaywall, splitSystemPromptAtPaywall } from './prompt-blocks'
+import { splitPromptAtPaywall, splitSystemPromptAtPaywall, splitProPromptAtPaywall } from './prompt-blocks'
 
 const SCAFFOLD = [
   '## 1. Setup',
@@ -131,5 +131,32 @@ describe('splitSystemPromptAtPaywall', () => {
     const r = splitSystemPromptAtPaywall(prompt)
     expect(r!.head).not.toContain('oklch(0.7 0.1 200)')
     expect(r!.head.length / prompt.length).toBeLessThan(0.4)
+  })
+})
+
+describe('splitProPromptAtPaywall', () => {
+  const body = 'x'.repeat(400)
+
+  it('cuts a scaffold prompt at block 3, keeping blocks 1 and 2', () => {
+    const split = splitProPromptAtPaywall(SCAFFOLD)
+    expect(split).not.toBeNull()
+    expect(split!.head).toContain('## 2. Constants')
+    expect(split!.head).not.toContain('## 3. State')
+    expect(split!.head).not.toContain('rootRef')
+  })
+
+  it('falls back to the structural cut for a prose brief', () => {
+    const r = splitProPromptAtPaywall(`Intro line.\n\n## API\n${body}\n\n## Colour\n${body}`)
+    expect(r?.head).toBe('Intro line.')
+    expect(r?.head).not.toContain('## API')
+  })
+
+  it('fails closed when a scaffold prompt repeats the cut heading', () => {
+    // Two "## 3. State" starts are ambiguous, so refuse rather than guess.
+    expect(splitProPromptAtPaywall(`## 3. State\nleaked\n${SCAFFOLD}`)).toBeNull()
+  })
+
+  it('fails closed when there is no heading to cut at', () => {
+    expect(splitProPromptAtPaywall('Build a card. Use framer-motion.')).toBeNull()
   })
 })
