@@ -36,9 +36,10 @@ import { trackInstall } from '../../../lib/track-install'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
 import { useSession } from '../../../components/auth/SessionProvider'
-import { useAuthModal } from '../../../components/auth/AuthModalProvider'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 import { Paywall, type PaywallReason } from '../../../components/billing/Paywall'
+import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
+import { usePaywallModal } from '../../../components/billing/PaywallModalProvider'
 import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
 import { RemixPanel } from '../../../_components/RemixPanel'
@@ -53,9 +54,10 @@ interface Props {
   // Prop tables parsed from the component's @typedef JSDoc at build time.
   // Empty for the few components without a @typedef block — section is hidden.
   propTables?: AndromedaPropTable[]
-  // Account-gated install: when on, a signed-out visitor of this FREE
-  // design-system component sees a "create a free account to install" CTA in
-  // place of the runnable command. Reading the source (Code tab) stays public.
+  // Unused by Andromeda Pro: this tier is paid-to-install for every component
+  // (ruling 2026-08-30) — there is no free-account gate here, only the
+  // premium gate below. Kept only so this view's prop shape matches the
+  // shared page contract; the page still passes it.
   freeAccountGate?: boolean
   /**
    * The component's remix prompt, already cut at the paywall server-side. Null
@@ -94,12 +96,10 @@ export function AndromedaComponentView({
   description,
   related,
   propTables = [],
-  freeAccountGate = false,
   remixPrompt = null,
   promptLocked = false,
 }: Props) {
   const { preferences, user } = useSession()
-  const { open: openAuthModal } = useAuthModal()
   // The registry slug is normally `andromeda-<metaSlug>`. The lone exception is the
   // slugOverride (scripts/lib/design-systems.config.mjs): Button.tsx ships as the
   // registry item `andromeda-button-system` because the free standalone owns
@@ -268,6 +268,16 @@ export function AndromedaComponentView({
       </div>
     )
 
+  // Paid-to-install (ruling 2026-08-30, names 2026-09-10): every Andromeda Pro
+  // component is premium content, so the install command is gated on the
+  // viewer's subscription, never on a free account. 'unknown' (entitlement
+  // still loading) does NOT gate, so a subscriber's click is never swallowed
+  // while /api/me/entitlement resolves — mirrors the standalone component
+  // page's premium gate exactly (app/components/[slug]/ComponentPageView.tsx).
+  const premiumStatus = usePremiumStatus()
+  const needsPremium = premiumStatus === 'not-premium'
+  const { open: openPaywallModal } = usePaywallModal()
+
   // Andromeda ships through the published @aicanvas shadcn registry, so this
   // command installs a real component — it mirrors the standalone pattern for
   // a consistent layout.
@@ -278,34 +288,23 @@ export function AndromedaComponentView({
   const installReference = userToken
     ? `"https://aicanvas.me/r/${registrySlug}.json?token=${userToken}"`
     : `@aicanvas/${registrySlug}`
-  const installReferenceMasked = userToken
+  // Deliberately stricter than `needsPremium`, which stays open while
+  // entitlement loads so a subscriber's click is never swallowed. That is
+  // right for an action and wrong for text on screen — masking the SLUG here
+  // whenever status isn't confirmed 'premium' matches the standalone page's
+  // `installMasked` split exactly.
+  const installMasked = premiumStatus !== 'premium'
+  const installReferenceMasked = installMasked
+    ? `@aicanvas/${'•'.repeat(12)}`
+    : userToken
     ? `"https://aicanvas.me/r/${registrySlug}.json?token=aic_••••••••"`
     : `@aicanvas/${registrySlug}`
   const cliCommand = `npx shadcn@latest add ${installReference}`
 
-  // Account-gated install: a FREE design-system component, signed out, with the
-  // gate active needs a free account before the one-command install works
-  // (unlimited, uncounted). Reading the source stays public. We use `user` from
-  // useSession (immediate) rather than userToken (async, would flash the CTA on
-  // first paint).
-  const needsFreeAccount = !!freeAccountGate && !user
-
-  // Open the Lab-style gate modal (two-button pitch, then sign-in / sign-up),
-  // returning the visitor here after they create their free account. The install
-  // UI stays fully visible; only the COPY actions route here when signed out.
-  function promptFreeAccount() {
-    openAuthModal({
-      mode: 'gate',
-      next: `/design-systems/andromeda-pro/${slug}`,
-      title: 'Grab this component.',
-      subtitle: 'Sign in or create a free account to install with one command. Free and unlimited.',
-    })
-  }
-
   async function copyCli() {
-    // Soft gate: signed-out + gated → open the auth modal instead of copying.
-    if (needsFreeAccount) {
-      promptFreeAccount()
+    // Premium gate: non-premium visitors get the upgrade modal, not a copy.
+    if (needsPremium) {
+      openPaywallModal({ reason: 'premium-only' })
       return
     }
     trackInstall(registrySlug, 'andromeda-pro', pkgManager)
@@ -448,8 +447,8 @@ export function AndromedaComponentView({
           )}
 
           {/* Copy CLI — the button and command stay visible at all times; when
-              the install is account-gated and the visitor is signed out,
-              copyCli() opens the auth modal instead of copying. */}
+              the visitor isn't a confirmed subscriber, copyCli() opens the
+              premium paywall modal instead of copying. */}
           <Button variant="primary" size="sm" onClick={copyCli}>
             {cliCopied ? (
               <Check weight="regular" size={15} />
@@ -566,8 +565,8 @@ export function AndromedaComponentView({
             {installTab === 'cli' ? (
               <div className="space-y-6">
                 {/* Step 1 — shadcn add. The command + package-manager row stay
-                    visible at all times. When the install is account-gated and
-                    the visitor is signed out, the copy button opens the auth
+                    visible at all times. When the visitor isn't a confirmed
+                    subscriber, the copy button opens the premium paywall
                     modal instead of copying. */}
                 <Step number={1}>
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
@@ -596,9 +595,9 @@ export function AndromedaComponentView({
                       <button
                         type="button"
                         onClick={() => {
-                          // Soft gate: signed-out + gated → open the auth modal
-                          // instead of copying.
-                          if (needsFreeAccount) { promptFreeAccount(); return }
+                          // Premium gate: non-premium visitors get the upgrade
+                          // modal, not a copy.
+                          if (needsPremium) { openPaywallModal({ reason: 'premium-only' }); return }
                           const cmd = pkgManager === 'pnpm'
                             ? `pnpm dlx shadcn@latest add ${installReference}`
                             : pkgManager === 'bun'
@@ -925,7 +924,7 @@ export function AndromedaComponentView({
       cliReference={installReferenceMasked}
       cliCopied={cliCopied}
       onCopyCli={copyCli}
-      needsFreeAccount={needsFreeAccount}
+      needsPremium={needsPremium}
     />
     </>
   )
