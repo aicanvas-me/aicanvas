@@ -13,11 +13,8 @@ import {
   CornersIn,
   CornersOut,
   Eye,
-  Lightning,
-  LockSimple,
   Sparkle,
   Terminal,
-  X,
 } from '@phosphor-icons/react'
 import { Step } from '../../../components/Step'
 import { AndromedaThemeToggle, useAndromedaPreviewTheme } from '../AndromedaThemeWrap'
@@ -38,13 +35,13 @@ import { tokens } from '../../../lib/andromeda-pro.generated'
 import { trackInstall } from '../../../lib/track-install'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
-import { usePaywallModal } from '../../../components/billing/PaywallModalProvider'
 import { useSession } from '../../../components/auth/SessionProvider'
 import { useAuthModal } from '../../../components/auth/AuthModalProvider'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 import { Paywall, type PaywallReason } from '../../../components/billing/Paywall'
 import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
+import { RemixPanel } from '../../../_components/RemixPanel'
 
 type RelatedItem = { slug: string; name: string; image?: string }
 
@@ -139,8 +136,6 @@ export function AndromedaComponentView({
   const [codeCopied, setCodeCopied] = useState(false)
   const [cliCopied, setCliCopied] = useState(false)
   const [remixOpen, setRemixOpen] = useState(false)
-  const { open: openPaywallModal } = usePaywallModal()
-  const [promptCopied, setPromptCopied] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
   // Portalled overlay: React context crosses the portal, CSS inheritance does
   // not, so the panel re-spreads the theme set itself (see the overlay style).
@@ -220,17 +215,16 @@ export function AndromedaComponentView({
     )
   }
 
-  // Escape closes the fullscreen preview and the Remix panel, innermost first.
+  // Escape closes the fullscreen preview. The Remix panel closes itself on
+  // Escape (RemixPanel owns that, plus its own scroll lock and focus move).
   useEffect(() => {
-    if (!fullscreen && !remixOpen) return
+    if (!fullscreen) return
     function onKey(e: KeyboardEvent) {
-      if (e.key !== 'Escape') return
-      if (remixOpen) setRemixOpen(false)
-      else setFullscreen(false)
+      if (e.key === 'Escape') setFullscreen(false)
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [fullscreen, remixOpen])
+  }, [fullscreen])
 
   async function copyCode() {
     if (codeState.status !== 'ready') return
@@ -314,12 +308,15 @@ export function AndromedaComponentView({
       promptFreeAccount()
       return
     }
-    try {
-      trackInstall(registrySlug, 'andromeda-pro', pkgManager)
-      await navigator.clipboard.writeText(cliCommand)
-      setCliCopied(true)
-      setTimeout(() => setCliCopied(false), 2000)
-    } catch {}
+    trackInstall(registrySlug, 'andromeda-pro', pkgManager)
+    // The event is sent either way, so the total still counts everyone who
+    // asked for the command; `ok` separates the ones who actually got it —
+    // matches the standalone component page's copyCli.
+    const ok = await copyText(cliCommand)
+    track('CLI Copy', { component: registrySlug, ok })
+    if (!ok) return
+    setCliCopied(true)
+    setTimeout(() => setCliCopied(false), 2000)
   }
 
   return (
@@ -914,108 +911,22 @@ export function AndromedaComponentView({
 
     {/* Remix panel — the prompt that rebuilds this component in any AI tool.
         What arrived is already cut server-side, so a locked viewer literally
-        does not have the withheld bytes on the page. */}
-    <AnimatePresence>
-      {remixOpen && remixPrompt && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex justify-end bg-sand-950/50"
-          onClick={() => setRemixOpen(false)}
-        >
-          <motion.aside
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 260 }}
-            onClick={(e) => e.stopPropagation()}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="andromeda-remix-title"
-            className="flex h-full w-full max-w-xl flex-col overflow-y-auto bg-sand-50 p-6 dark:bg-sand-900"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2
-                  id="andromeda-remix-title"
-                  className="flex items-center gap-2 text-base font-bold text-sand-900 dark:text-sand-50"
-                >
-                  Remix {name} with AI
-                  <span className="inline-flex items-center gap-1 rounded-full border border-olive-500/40 px-2 py-0.5 text-xxs font-semibold uppercase tracking-wider text-olive-700 dark:text-olive-400">
-                    <Lightning weight="regular" size={11} />
-                    Premium
-                  </span>
-                </h2>
-                <p className="mt-1 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                  Written against the real source. Works in Claude, Cursor, ChatGPT, or any AI tool you use.
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setRemixOpen(false)}
-                aria-label="Close"
-                className="shrink-0 rounded-lg border border-sand-300 p-2 text-sand-600 transition-colors hover:text-sand-900 dark:border-sand-700 dark:text-sand-400 dark:hover:text-sand-100"
-              >
-                <X weight="regular" size={16} />
-              </button>
-            </div>
-
-            <div className="mt-6 flex items-center justify-between gap-3">
-              <h3 className="text-sm font-semibold text-sand-900 dark:text-sand-50">
-                AI prompt for {name}
-              </h3>
-              {promptLocked ? (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openPaywallModal({ reason: 'premium-only' })}
-                >
-                  <LockSimple weight="regular" size={14} />
-                  Unlock full prompt
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    void copyText(remixPrompt).then((ok) => {
-                      track('Remix Prompt Copy', { component: registrySlug, ok })
-                      if (!ok) return
-                      setPromptCopied(true)
-                      setTimeout(() => setPromptCopied(false), 2000)
-                    })
-                  }}
-                >
-                  {promptCopied ? <Check weight="regular" size={14} /> : <Copy weight="regular" size={14} />}
-                  {promptCopied ? 'Copied!' : 'Copy prompt'}
-                </Button>
-              )}
-            </div>
-
-            <div className="relative mt-3">
-              <pre
-                className={`overflow-x-auto whitespace-pre-wrap rounded-xl bg-sand-200 p-4 font-mono text-xs leading-relaxed text-sand-800 dark:bg-sand-950 dark:text-sand-300 ${
-                  promptLocked ? '[mask-image:linear-gradient(to_bottom,black_55%,transparent)]' : ''
-                }`}
-              >
-                {remixPrompt}
-              </pre>
-              {promptLocked && (
-                <div className="absolute inset-x-0 bottom-0 [--paywall-surface:var(--color-sand-200)] dark:[--paywall-surface:var(--color-sand-950)]">
-                  <Paywall
-                    reason="premium-only"
-                    appearance="themed"
-                    name={name}
-                    subtitle="The full prompt ships with Premium."
-                  />
-                </div>
-              )}
-            </div>
-          </motion.aside>
-        </motion.div>
-      )}
-    </AnimatePresence>
+        does not have the withheld bytes on the page. Shared with the
+        standalone component page's Remix drawer (app/_components/RemixPanel)
+        so the two can't drift apart again. */}
+    <RemixPanel
+      open={remixOpen}
+      onClose={() => setRemixOpen(false)}
+      name={name}
+      slug={registrySlug}
+      prompt={remixPrompt}
+      promptLocked={promptLocked}
+      premium
+      cliReference={installReferenceMasked}
+      cliCopied={cliCopied}
+      onCopyCli={copyCli}
+      needsFreeAccount={needsFreeAccount}
+    />
     </>
   )
 }
