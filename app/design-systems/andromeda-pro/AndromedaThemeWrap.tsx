@@ -8,13 +8,15 @@
 // the Andromeda theme is the design system's own axis, not the site's; sand
 // chrome never reads an --at- var, so root-level vars cannot touch it).
 //
-// The set lands on documentElement, NOT on a mid-tree div, because that is
-// the system's swap contract: the Objects and useResolvedVars observe the
-// root's class/style/data-theme and re-resolve their canvas ink from computed
-// style. A mid-tree wrapper retints the pure-CSS var() chains but fires no
-// observer, so canvases and charts silently keep the old palette.
+// The set lands on THIS WRAPPER, never on documentElement. A preview owns its
+// own wrapper and must not reach <html> — one preview retinting the whole page
+// is the scope break lib/theme/scope.test.ts guards. The canvas components
+// (Burst, Orb, Nodes, Planet, the city map) and useResolvedVars follow the same
+// element via themeScope() in the system's lib, so a swap still fires their
+// observers and their ink re-resolves; before that helper existed the vars had
+// to sit on the root for those observers to see them at all.
 
-import { createContext, useContext, useEffect, useId, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Moon, Palette, Sun } from '@phosphor-icons/react'
 import { tokens } from '../../lib/andromeda-v2.generated'
@@ -82,6 +84,9 @@ export function AndromedaThemeWrap({ children, className }: { children: ReactNod
     }
   }, [dockOpen, palette, knobs])
 
+  // The element the whole --at- set is written to: this wrapper, never <html>.
+  const hostRef = useRef<HTMLDivElement>(null)
+
   // ONE writer for the whole --at- set. The palette tuner sets knobs and this
   // effect re-emits; a second effect writing the same properties would race
   // this one on every theme flip and a reset would strip the light set with it.
@@ -91,7 +96,8 @@ export function AndromedaThemeWrap({ children, className }: { children: ReactNod
     // Dark, untuned and on the live palette is the authored set, which the
     // var() fallbacks already resolve to. Emitting nothing keeps it identical.
     if (theme !== 'light' && !tuned && !snapshot) return
-    const root = document.documentElement
+    const root = hostRef.current
+    if (!root) return
     // A snapshot replaces the base outright: it IS a resolved set, so the
     // knobs still apply on top and a version can be tuned like any other.
     const base = (snapshot?.[theme] as Record<string, string> | undefined) ?? baseSet(theme)
@@ -99,10 +105,11 @@ export function AndromedaThemeWrap({ children, className }: { children: ReactNod
     for (const name of names) {
       root.style.setProperty(name, tuned ? retint(base[name], knobs) : base[name])
     }
-    if (theme === 'light') root.setAttribute('data-andromeda-theme', 'light')
+    // data-andromeda-theme is rendered on this same element by React below, so
+    // the effect no longer sets or clears it — doing both would fight React and
+    // strip the attribute the watchers key off.
     return () => {
       for (const name of names) root.style.removeProperty(name)
-      root.removeAttribute('data-andromeda-theme')
     }
   }, [theme, knobs, palette])
 
@@ -110,7 +117,7 @@ export function AndromedaThemeWrap({ children, className }: { children: ReactNod
     <ThemeCtx.Provider
       value={{ theme, setTheme, knobs, setKnobs, palette, setPalette, dockOpen, setDockOpen }}
     >
-      <div data-andromeda-theme={theme} className={className}>{children}</div>
+      <div ref={hostRef} data-andromeda-theme={theme} className={className}>{children}</div>
       <AndromedaPaletteTuner />
     </ThemeCtx.Provider>
   )
