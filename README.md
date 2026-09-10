@@ -7,7 +7,7 @@
 # AI Canvas
 
 <p align="center">
-  <a href="https://aicanvas.me" title="Browse the live catalog"><img src="assets/readme-buttons/btn-site.png" alt="Visit aicanvas.me" height="56" /></a>
+  <a href="https://aicanvas.me" title="Browse the live catalog"><img src="assets/readme-buttons/btn-site.png" alt="Visit aicanvas.me" width="240" height="56" /></a>
 </p>
 
 <p align="center">
@@ -17,17 +17,17 @@
 A growing collection of animated React components and composed page blocks, installed as real source code in your project rather than as a dependency.
 
 <p align="center">
-  <a href="./LICENSE"><img src="assets/readme-buttons/btn-license.png" alt="License: MIT" height="45" valign="middle" /></a>
+  <a href="./LICENSE"><img src="assets/readme-buttons/btn-license.png" alt="License: MIT" width="154" height="45" valign="middle" /></a>
   &nbsp;
-  <a href="https://aicanvas.me"><img src="assets/readme-buttons/btn-components.png" alt="80+ free components" height="45" valign="middle" /></a>
+  <a href="https://aicanvas.me"><img src="assets/readme-buttons/btn-components.png" alt="80+ free components" width="228" height="45" valign="middle" /></a>
   &nbsp;
-  <a href="#install"><img src="assets/readme-buttons/btn-registry.png" alt="shadcn registry: @aicanvas" height="45" valign="middle" /></a>
+  <a href="#install"><img src="assets/readme-buttons/btn-registry.png" alt="shadcn registry: @aicanvas" width="218" height="45" valign="middle" /></a>
   &nbsp;
-  <a href="#use-it-with-your-ai-editor-mcp"><img src="assets/readme-buttons/btn-agents.png" alt="Works with Claude, Codex and Cursor" height="45" valign="middle" /></a>
+  <a href="#use-it-with-your-ai-editor-mcp"><img src="assets/readme-buttons/btn-agents.png" alt="Works with Claude, Codex and Cursor" width="319" height="45" valign="middle" /></a>
   &nbsp;
-  <a href="https://mcpservers.org/servers/uinerd16/aicanvas"><img src="assets/readme-buttons/btn-mcpservers.png" alt="Listed on mcpservers.org" height="45" valign="middle" /></a>
+  <a href="https://mcpservers.org/servers/uinerd16/aicanvas"><img src="assets/readme-buttons/btn-mcpservers.png" alt="Listed on mcpservers.org" width="259" height="45" valign="middle" /></a>
   &nbsp;
-  <a href="https://github.com/aicanvas-me/aicanvas"><img src="assets/readme-buttons/btn-github.png" alt="aicanvas-me on GitHub" height="45" valign="middle" /></a>
+  <a href="https://github.com/aicanvas-me/aicanvas"><img src="assets/readme-buttons/btn-github.png" alt="aicanvas-me on GitHub" width="220" height="45" valign="middle" /></a>
 </p>
 
 <p align="center"><sub><a href="#install">Install</a> · <a href="#components">Components</a> · <a href="#blocks">Blocks</a> · <a href="#use-it-with-your-ai-editor-mcp">MCP</a> · <a href="#repository-layout">Repo layout</a> · <a href="#common-questions">FAQ</a> · <a href="#license">License</a></sub></p>
