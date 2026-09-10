@@ -982,20 +982,38 @@ export function AndromedaComponentView({
         What arrived is already cut server-side, so a locked viewer literally
         does not have the withheld bytes on the page. Shared with the
         standalone component page's Remix drawer (app/_components/RemixPanel)
-        so the two can't drift apart again. */}
-    <RemixPanel
-      open={remixOpen}
-      onClose={() => setRemixOpen(false)}
-      name={name}
-      slug={registrySlug}
-      prompt={remixPrompt}
-      promptLocked={promptLocked}
-      premium
-      cliReference={installReferenceMasked}
-      cliCopied={cliCopied}
-      onCopyCli={copyCli}
-      needsPremium={needsPremium}
-    />
+        so the two can't drift apart again.
+
+        Portalled to <body> once mounted, same reason as the fullscreen
+        preview above: this page's content sits inside the `isolate` wrapper
+        in AndromedaContentColumn, which traps a `fixed` descendant's
+        stacking under the sticky top bar no matter how high its own z-index
+        climbs — the standalone component page has no such ancestor, which is
+        why the identical RemixPanel isn't trapped there. Unlike the
+        fullscreen preview, this panel's prompt is SEO content and must stay
+        in the server-rendered HTML, and document.body doesn't exist during
+        SSR — so it renders INLINE for that first paint (byte-identical to
+        the server markup, so hydration never sees a mismatch) and hands off
+        to the portal on the very next tick, before hydration finishes wiring
+        the "Remix with AI" button that could ever open it. */}
+    {(() => {
+      const panel = (
+        <RemixPanel
+          open={remixOpen}
+          onClose={() => setRemixOpen(false)}
+          name={name}
+          slug={registrySlug}
+          prompt={remixPrompt}
+          promptLocked={promptLocked}
+          premium
+          cliReference={installReferenceMasked}
+          cliCopied={cliCopied}
+          onCopyCli={copyCli}
+          needsPremium={needsPremium}
+        />
+      )
+      return portalReady ? createPortal(panel, document.body) : panel
+    })()}
     </>
   )
 }
