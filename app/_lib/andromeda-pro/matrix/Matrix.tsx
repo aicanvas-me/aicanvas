@@ -7,7 +7,7 @@
 // impossible rather than merely discouraged.
 'use client'
 
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import { matrixId, REST, type MatrixCase, type MatrixSpec } from './types'
 
 // The card chrome is styled from tokens in JS, so nothing above it writes the

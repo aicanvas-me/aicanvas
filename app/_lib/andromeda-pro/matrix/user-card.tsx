@@ -1,8 +1,8 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
 import { Gear, Keyboard, SignOut, UserCircle } from '@phosphor-icons/react'
-import { UserCard } from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { UserCard } from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const ITEMS = [

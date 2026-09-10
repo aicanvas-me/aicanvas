@@ -15,26 +15,36 @@
  * gitignored app/lib/premium-registry.generated.tsx registration shim.
  *
  * It ALSO injects design-system material authored in the vault:
- *   - `systems`              whole v2 tree → design-systems/<slug>-v2/ (gitignored)
- *   - `freeSystemComponents` legacy per-file lane into design-systems/<slug>/
- *                            components/ (superseded for any slug in `systems`)
- * and always writes the three gitignored app/lib/andromeda-v2*.generated.tsx
- * shims (components + tokens, component-lib helpers, template compositions):
- * real re-exports when injected, the committed v1 tree or placeholder panels on
- * degraded builds, so a fork with no vault still compiles and renders.
+ *   - `systems`              whole tree per slug → that DESIGN_SYSTEMS entry's
+ *                            rootDir (gitignored, e.g. design-systems/andromeda-pro/)
+ *   - `freeSystemComponents` per-file lane into Andromeda LEGACY's committed
+ *                            tree (design-systems/andromeda/components/)
+ * and always writes the gitignored app/lib/andromeda-v2.generated.tsx (Andromeda
+ * Legacy's bridge for the vault-authored free-lane components) and the Andromeda
+ * Pro shims (app/lib/andromeda-pro*.generated.tsx: components + tokens, helpers,
+ * template compositions): real re-exports when injected, the committed Legacy
+ * tree or placeholder panels on degraded builds, so a fork with no vault still
+ * compiles and renders.
  */
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync, statSync, cpSync } from 'node:fs'
 import { join, dirname, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
-import { FREE_DS_PLACEHOLDER_SENTINEL } from './lib/design-systems.config.mjs'
+import { FREE_DS_PLACEHOLDER_SENTINEL, DESIGN_SYSTEMS } from './lib/design-systems.config.mjs'
 
 const ROOT = process.cwd()
 const TARGET = join(ROOT, 'components-workspace-premium')
 const SHIM = join(ROOT, 'app/lib/premium-registry.generated.tsx')
+// Andromeda LEGACY's free-lane bridge — production contract, name unchanged:
+// app/_lib/andromeda/andromeda-demos.tsx and
+// app/design-systems/andromeda/system/AndromedaShowcase.tsx import the 6
+// free-lane names from it and must never be edited to point elsewhere.
 const V2_SHIM = join(ROOT, 'app/lib/andromeda-v2.generated.tsx')
-const V2_EXAMPLES_SHIM = join(ROOT, 'app/lib/andromeda-v2-examples.generated.tsx')
-const V2_HELPERS_SHIM = join(ROOT, 'app/lib/andromeda-v2-helpers.generated.tsx')
+// Andromeda PRO's own shims — separate slug, separate files.
+const V2_PRO_SHIM = join(ROOT, 'app/lib/andromeda-pro.generated.tsx')
+const V2_PRO_EXAMPLES_SHIM = join(ROOT, 'app/lib/andromeda-pro-examples.generated.tsx')
+const V2_PRO_HELPERS_SHIM = join(ROOT, 'app/lib/andromeda-pro-helpers.generated.tsx')
 const BRAIN_TEASER_MODULE = join(ROOT, 'app/lib/andromeda-brain-teaser.generated.ts')
+const BRAIN_TEASER_PRO_MODULE = join(ROOT, 'app/lib/andromeda-pro-brain-teaser.generated.ts')
 const REGISTRY_DATA = join(ROOT, 'registry-data')
 const PREMIUM_JSON = join(ROOT, 'registry-data/_premium.json')
 const PREMIUM_LOCK = join(ROOT, 'premium.lock.json')
@@ -215,11 +225,13 @@ function syncGitExclude(paths) {
 // Everything git already tracks under design-systems/. Committed source is the
 // repo's own; the vault only ever FILLS GAPS in it, never overwrites it.
 let trackedDsFiles = new Set()
+let trackedDsFilesOk = false
 try {
   trackedDsFiles = new Set(
     execSync('git ls-files design-systems', { stdio: ['ignore', 'pipe', 'ignore'] })
       .toString().split('\n').map((l) => l.trim()).filter(Boolean),
   )
+  trackedDsFilesOk = true
 } catch { /* no git — nothing is tracked to protect */ }
 
 function cleanupFreeDs(currentPaths) {
@@ -301,15 +313,14 @@ function writeFreeDsPlaceholders(system, expectedNames, injectedSet) {
 // vault-less build would not have. Injected names re-export the real source; on
 // a degraded build (fork, missing PAT, older premium pin) the committed v1 tree
 // stands in and the names it has no file for (V2_ONLY_NAMES) become placeholder
-// panels, so the pages render instead of crashing. NOTE: this shim is
-// Andromeda-specific; a future second system needs its own generated shim.
+// panels, so the pages render instead of crashing.
 //
-// `fromV2Tree` picks the source root: the whole-system tree (manifest `systems`)
-// when it was injected, else design-systems/andromeda — which is both the legacy
-// per-file lane's destination AND, on a degraded build, the committed v1 tree, so
-// forks keep compiling and render v1 styling.
-function writeV2Shim(injectedNames, fromV2Tree) {
-  const root = fromV2Tree ? '../../design-systems/andromeda-v2' : '../../design-systems/andromeda'
+// Shared by both the Andromeda Legacy shim (writeLegacyV2Shim, `root` always the
+// committed tree) and the Andromeda Pro shim (writeProV2Shim, `root` the
+// injected tree when there is one). `fromV2Tree` picks the export strategy:
+// star the injected names when true, else star every committed v1 component
+// file on disk and fill the v2-only gaps with placeholders.
+function writeShimFile(outFile, root, injectedNames, fromV2Tree, headerLines) {
   // `export *` rather than one named export per file: a component file also
   // exports its parts (Card → CardHeader/CardTitle/…, Table → TableRow/…), and
   // the app imports those by name. Starring the file means a new subcomponent in
@@ -323,15 +334,7 @@ function writeV2Shim(injectedNames, fromV2Tree) {
         .filter((f) => /^[A-Z][A-Za-z0-9]*\.tsx$/.test(f))
         .map((f) => f.replace(/\.tsx$/, ''))
         .sort()
-  const out = [
-    '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
-    '// Re-exports the Andromeda Pro components + tokens injected from the private',
-    '// vault. On a degraded build (fork, missing PAT, older premium pin) it falls',
-    '// back to the committed Andromeda Legacy tree, and any name Legacy has no',
-    '// file for renders a placeholder panel, so a fork still compiles.',
-    '// @ts-nocheck — re-exports untyped design-system sources.',
-    '',
-  ]
+  const out = [...headerLines]
   for (const name of names) out.push(`export * from '${root}/components/${name}'`)
   if (!fromV2Tree) {
     for (const name of V2_ONLY_NAMES) {
@@ -357,7 +360,46 @@ function writeV2Shim(injectedNames, fromV2Tree) {
     )
   }
   out.push('', `export const V2_COMPONENT_NAMES = ${JSON.stringify(injectedNames)}`, '')
-  writeFileSync(V2_SHIM, out.join('\n'))
+  writeFileSync(outFile, out.join('\n'))
+}
+
+// Andromeda LEGACY's bridge for the vault-authored free-lane components
+// (freeSystemComponents.andromeda: MetricChart, Gauge, Waveform, MediaCard,
+// DataTable, MusicPlayer). Root is ALWAYS the committed Legacy tree — Legacy
+// never has a whole-system injection of its own — so this is a production
+// contract: app/_lib/andromeda/andromeda-demos.tsx and
+// app/design-systems/andromeda/system/AndromedaShowcase.tsx import the 6
+// free-lane names from it on every build, injected or degraded.
+function writeLegacyV2Shim(freeInjectedNames) {
+  writeShimFile(V2_SHIM, '../../design-systems/andromeda', freeInjectedNames, false, [
+    '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
+    "// Andromeda Legacy's bridge for the vault-authored free-lane components",
+    '// (freeSystemComponents.andromeda). Re-exports the injected MetricChart,',
+    '// Gauge, Waveform, MediaCard, DataTable and MusicPlayer alongside the',
+    '// committed Legacy component set, so andromeda-demos.tsx and',
+    '// AndromedaShowcase.tsx always resolve. On a degraded build (no vault, or',
+    '// an older pin) every v2-only name is a placeholder panel instead.',
+    '// @ts-nocheck — re-exports untyped design-system sources.',
+    '',
+  ])
+}
+
+// Andromeda PRO's components + tokens shim. `fromV2Tree` is true only when the
+// whole-system lane actually injected design-systems/andromeda-pro/; otherwise
+// this falls back to the same committed Andromeda Legacy tree Legacy's own
+// shim uses, so Pro-tree app files still compile on a fork or a pin predating
+// the Pro system.
+function writeProV2Shim(injectedNames, fromV2Tree) {
+  const root = fromV2Tree ? '../../design-systems/andromeda-pro' : '../../design-systems/andromeda'
+  writeShimFile(V2_PRO_SHIM, root, injectedNames, fromV2Tree, [
+    '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
+    '// Re-exports the Andromeda Pro components + tokens injected from the private',
+    '// vault. On a degraded build (fork, missing PAT, older premium pin) it falls',
+    '// back to the committed Andromeda Legacy tree, and any name Legacy has no',
+    '// file for renders a placeholder panel, so a fork still compiles.',
+    '// @ts-nocheck — re-exports untyped design-system sources.',
+    '',
+  ])
 }
 
 // ALWAYS written (every run) — the components/lib/* helpers app code reaches for
@@ -365,14 +407,16 @@ function writeV2Shim(injectedNames, fromV2Tree) {
 // those helper modules import React hooks without a 'use client' directive, and
 // the components shim is imported by SERVER components (the template routes read
 // `tokens` from it), which makes a hook import there a build error. Only client
-// modules and tests import this one.
-function writeV2HelpersShim(fromV2Tree) {
-  const root = fromV2Tree ? '../../design-systems/andromeda-v2' : '../../design-systems/andromeda'
+// modules and tests import this one. Andromeda Pro only — Legacy has no helpers
+// shim of its own (nothing in the Legacy tree imports it).
+function writeProHelpersShim(fromV2Tree) {
+  const root = fromV2Tree ? '../../design-systems/andromeda-pro' : '../../design-systems/andromeda'
   const out = [
     '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
-    '// Andromeda v2 component-lib helpers, from the injected tree when there is',
-    '// one and the committed v1 lib otherwise. CLIENT/TEST ONLY — these modules',
-    '// use React hooks, so a server component must not import this shim.',
+    '// Andromeda Pro component-lib helpers, from the injected tree when there is',
+    '// one and the committed Andromeda Legacy lib otherwise. CLIENT/TEST ONLY —',
+    '// these modules use React hooks, so a server component must not import this',
+    '// shim.',
     '// @ts-nocheck — re-exports untyped design-system sources.',
     '',
   ]
@@ -397,17 +441,18 @@ function writeV2HelpersShim(fromV2Tree) {
     }
   }
   out.push('')
-  writeFileSync(V2_HELPERS_SHIM, out.join('\n'))
+  writeFileSync(V2_PRO_HELPERS_SHIM, out.join('\n'))
 }
 
 // ── Vault-authored template compositions ────────────────────────────────────
 // Exported name → example folder under design-systems/<tree>/examples/. The
-// template routes (app/design-systems/andromeda/templates/<slug>/page.tsx)
-// import their composition from the generated shim rather than the tree, so the
-// module resolves on EVERY build: the injected v2 example when there is one, the
-// committed v1 example when there isn't (forks keep their four templates), and a
-// placeholder panel for a v2-only composition like sign-in. Same committed-
-// fallback contract as V2_FALLBACK_NAMES — UPDATE when a template route lands.
+// Andromeda Pro template routes (app/design-systems/andromeda-pro/templates/
+// <slug>/page.tsx) import their composition from the generated shim rather than
+// the tree, so the module resolves on EVERY build: the injected Pro example when
+// there is one, the committed Legacy example when there isn't (forks keep their
+// four templates), and a placeholder panel for a Pro-only composition like
+// sign-in. Same committed-fallback contract as V2_FALLBACK_NAMES — UPDATE when a
+// template route lands.
 const V2_EXAMPLE_EXPORTS = {
   MissionControl: 'mission-control',
   ResourcePlanning: 'resource-planning',
@@ -416,28 +461,30 @@ const V2_EXAMPLE_EXPORTS = {
   SignalRoom: 'signal-room',
 }
 
-// ALWAYS written (every run, including degraded/no-vault) — see above.
-function writeV2ExamplesShim() {
+// ALWAYS written (every run, including degraded/no-vault) — see above. Andromeda
+// Pro only — nothing in the Legacy tree imports an examples shim.
+function writeProExamplesShim() {
   const out = [
     '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
-    '// Template compositions for the Andromeda template routes: the injected v2',
-    '// example, else the committed v1 one, else a placeholder panel.',
+    '// Template compositions for the Andromeda Pro template routes: the injected',
+    '// Pro example, else the committed Andromeda Legacy one, else a placeholder',
+    '// panel.',
     '// @ts-nocheck — re-exports untyped design-system sources.',
     '',
   ]
   for (const [name, slug] of Object.entries(V2_EXAMPLE_EXPORTS)) {
-    const v2 = `design-systems/andromeda-v2/examples/${slug}`
-    const v1 = `design-systems/andromeda/examples/${slug}`
-    const from = existsSync(join(ROOT, v2, 'index.tsx'))
-      ? v2
-      : existsSync(join(ROOT, v1, 'index.tsx'))
-        ? v1
+    const pro = `design-systems/andromeda-pro/examples/${slug}`
+    const legacy = `design-systems/andromeda/examples/${slug}`
+    const from = existsSync(join(ROOT, pro, 'index.tsx'))
+      ? pro
+      : existsSync(join(ROOT, legacy, 'index.tsx'))
+        ? legacy
         : null
     if (from) out.push(`export { default as ${name} } from '../../${from}'`)
     else out.push(...placeholderFn(name))
   }
   out.push('')
-  writeFileSync(V2_EXAMPLES_SHIM, out.join('\n'))
+  writeFileSync(V2_PRO_EXAMPLES_SHIM, out.join('\n'))
 }
 
 // ── Whole-system v2 trees (manifest key `systems`) ──────────────────────────
@@ -606,11 +653,13 @@ function buildTeaserSections(files, slug) {
 
 // ALWAYS written (every run, including degraded/no-vault): the brain paywall
 // statically imports BRAIN_TEASER, so the module must exist on every build.
-// Structure only (file names + counts) — never brain content.
-function writeBrainTeaser(teaser) {
+// Structure only (file names + counts) — never brain content. One call per
+// slug (Legacy → BRAIN_TEASER_MODULE, Pro → BRAIN_TEASER_PRO_MODULE); both fall
+// back to the same BRAIN_TEASER_FALLBACK snapshot when their slug wasn't bundled.
+function writeBrainTeaser(outFile, teaser) {
   const data = teaser ?? BRAIN_TEASER_FALLBACK
   writeFileSync(
-    BRAIN_TEASER_MODULE,
+    outFile,
     [
       '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
       '// Structure-only teaser for the Andromeda Brain paywall: section labels, file',
@@ -710,9 +759,11 @@ function collectBrain(source, slug) {
 rmSync(TARGET, { recursive: true, force: true })
 rmSync(SHIM, { force: true })
 rmSync(V2_SHIM, { force: true })
-rmSync(V2_EXAMPLES_SHIM, { force: true })
-rmSync(V2_HELPERS_SHIM, { force: true })
+rmSync(V2_PRO_SHIM, { force: true })
+rmSync(V2_PRO_EXAMPLES_SHIM, { force: true })
+rmSync(V2_PRO_HELPERS_SHIM, { force: true })
 rmSync(BRAIN_TEASER_MODULE, { force: true })
+rmSync(BRAIN_TEASER_PRO_MODULE, { force: true })
 rmSync(PREMIUM_JSON, { force: true })
 rmSync(BUILD_INFO, { force: true })
 // Stale brain files from a previous run: the underscore-prefixed page bundle
@@ -726,14 +777,30 @@ try {
     if (/^_?[a-z0-9-]+-brain\.json$/.test(f)) rmSync(join(REGISTRY_DATA, f), { force: true })
   }
 } catch { /* registry-data not created yet */ }
-// Injected whole-system trees (design-systems/<slug>-v2/) — cleared up front so
-// a removed slug, a renamed component, or a degraded run leaves nothing behind.
-// Matched by the `-v2` suffix rather than the manifest, which isn't read yet.
-try {
-  for (const d of readdirSync(join(ROOT, 'design-systems'))) {
-    if (d.endsWith('-v2')) rmSync(join(ROOT, 'design-systems', d), { recursive: true, force: true })
+// Injected-only whole-system trees (DESIGN_SYSTEMS entries with skipIfMissing,
+// e.g. design-systems/andromeda-pro/) — cleared up front so a removed slug, a
+// renamed component, or a degraded run leaves nothing behind. Guarded by
+// trackedDsFiles rather than the manifest (not read yet): a rootDir that
+// genuinely carries committed source is never touched, even if it were
+// mistakenly marked skipIfMissing. When git ls-files failed (trackedDsFilesOk
+// false, e.g. no git in a Vercel build container) this must SKIP rather than
+// risk deleting real source it has no way to verify is absent.
+if (trackedDsFilesOk) {
+  for (const ds of DESIGN_SYSTEMS) {
+    if (!ds.skipIfMissing) continue
+    const prefix = ds.rootDir + '/'
+    const hasTrackedSource = [...trackedDsFiles].some((f) => f.startsWith(prefix))
+    if (!hasTrackedSource) rmSync(join(ROOT, ds.rootDir), { recursive: true, force: true })
   }
-} catch { /* no design-systems dir */ }
+} else {
+  log('warning: git ls-files failed — skipping injected-only design-system cleanup (would otherwise risk deleting committed source it cannot verify is absent).')
+}
+// One-time leftovers from the pre-split layout (design-systems/<slug>-v2/ and
+// the old shared Pro shim names) — force-removed unconditionally so a stale
+// worktree self-heals even though nothing writes these paths anymore.
+rmSync(join(ROOT, 'design-systems/andromeda-v2'), { recursive: true, force: true })
+rmSync(join(ROOT, 'app/lib/andromeda-v2-examples.generated.tsx'), { force: true })
+rmSync(join(ROOT, 'app/lib/andromeda-v2-helpers.generated.tsx'), { force: true })
 mkdirSync(TARGET, { recursive: true })
 
 // ── 1. Resolve the source ──────────────────────────────────────────────────
@@ -797,12 +864,14 @@ if (!source) {
   const freePlaceholders = writeFreeDsPlaceholders('andromeda', V2_FALLBACK_NAMES, new Set())
   cleanupFreeDs(freePlaceholders)
   syncGitExclude(freePlaceholders)
-  writeV2Shim([], false)
-  writeV2HelpersShim(false)
-  writeV2ExamplesShim()
+  writeLegacyV2Shim([])
+  writeProV2Shim([], false)
+  writeProHelpersShim(false)
+  writeProExamplesShim()
   // Brain: no bundle (the page fail-closes to the paywall), but the paywall's
-  // teaser module must still exist — write it from the committed fallback.
-  writeBrainTeaser(null)
+  // teaser modules must still exist — write both from the committed fallback.
+  writeBrainTeaser(BRAIN_TEASER_MODULE, null)
+  writeBrainTeaser(BRAIN_TEASER_PRO_MODULE, null)
   log('no PREMIUM_LOCAL_PATH and no GITHUB_PAT_PREMIUM — free-only build (skip).')
   process.exit(0)
 }
@@ -896,15 +965,33 @@ if (JSON.stringify(folderSlugs) !== JSON.stringify(manifestSlugs)) {
   process.exit(1)
 }
 
-// ── 4a. Whole-system v2 trees (manifest key `systems`) ──────────────────────
-// The vault's design-systems/<slug>/ copied wholesale (code only) to the
-// gitignored design-systems/<slug>-v2/. Absent/empty key → no-op, so a
-// production pin on an older vault sha still builds green on the lane below.
+// ── 4a. Whole-system trees (manifest key `systems`) ─────────────────────────
+// The vault's design-systems/<slug>/ copied wholesale (code only) to that
+// slug's own DESIGN_SYSTEMS entry (an injected-only system, rootDir e.g.
+// design-systems/andromeda-pro/). Absent/empty key → no-op, so a production
+// pin on an older vault sha still builds green on the lane below.
 const v2Systems = Array.isArray(manifest.systems) ? [...manifest.systems] : []
 const v2Components = {} // system → [ComponentName], from what actually landed
 for (const system of v2Systems) {
   if (!/^[a-z0-9-]+$/.test(system)) {
     console.error('[inject-premium] invalid system slug in systems: ' + JSON.stringify(system))
+    process.exit(1)
+  }
+  const ds = DESIGN_SYSTEMS.find((d) => d.slug === system)
+  if (!ds || !ds.skipIfMissing) {
+    console.error(
+      `[inject-premium] manifest systems lists "${system}" but the site declares no ` +
+        `injected-only design system "${system}" (scripts/lib/design-systems.config.mjs ` +
+        'needs a DESIGN_SYSTEMS entry for it with skipIfMissing: true)',
+    )
+    process.exit(1)
+  }
+  if ([...trackedDsFiles].some((f) => f.startsWith(ds.rootDir + '/'))) {
+    console.error(
+      `[inject-premium] refusing to inject whole-system "${system}" over committed source ` +
+        `under ${ds.rootDir}/ — an injected-only system must never share a rootDir with ` +
+        'tracked files',
+    )
     process.exit(1)
   }
   const srcDir = join(source, 'design-systems', system)
@@ -915,14 +1002,14 @@ for (const system of v2Systems) {
     console.error(`[inject-premium] manifest systems lists "${system}" but design-systems/${system}/tokens.ts is missing from the premium source`)
     process.exit(1)
   }
-  const outDir = join(ROOT, 'design-systems', `${system}-v2`)
+  const outDir = join(ROOT, ds.rootDir)
   const fileCount = copySystemTree(srcDir, outDir)
   v2Components[system] = readdirSync(join(outDir, 'components'))
     .filter((f) => /^[A-Z][A-Za-z0-9]*\.tsx$/.test(f))
     .map((f) => f.replace(/\.tsx$/, ''))
     .sort()
   log(
-    `injected system "${system}": ${fileCount} file(s) → design-systems/${system}-v2/ ` +
+    `injected system "${system}": ${fileCount} file(s) → ${ds.rootDir}/ ` +
       `(${v2Components[system].length} components)`,
   )
 }
@@ -1000,11 +1087,12 @@ for (const [system, names] of Object.entries(freeMap)) {
 // Fill any expected-but-not-injected gap with sentinel placeholders so direct
 // importers resolve even on a partial pin. On a full build (all names injected)
 // this writes nothing, so freePaths and the registry output are unchanged.
-// On the v2 lane the manifest list is NOT the expected set here — those names
-// live under design-systems/andromeda-v2/ now, and most of them also name a
-// COMMITTED v1 file that a placeholder would overwrite. Only V2_FALLBACK_NAMES
-// still need a file in the v1 tree: they are the names the committed v1 examples
-// (signal-room, service-order, …) import but that were never tracked.
+// On the whole-system lane the manifest list is NOT the expected set here —
+// those names live under Andromeda Pro's own rootDir (design-systems/
+// andromeda-pro/) now, and most of them also name a COMMITTED v1 file that a
+// placeholder would overwrite. Only V2_FALLBACK_NAMES still need a file in the
+// v1 tree: they are the names the committed v1 examples (signal-room,
+// service-order, …) import but that were never tracked.
 const andromedaInjected = new Set(freeInjected['andromeda'] ?? [])
 const andromedaExpected = [...new Set([
   ...(Array.isArray(freeMap['andromeda']) ? freeMap['andromeda'] : []),
@@ -1014,12 +1102,19 @@ const freePlaceholders = writeFreeDsPlaceholders('andromeda', andromedaExpected,
 const allFreePaths = [...freePaths, ...freePlaceholders]
 cleanupFreeDs(allFreePaths)  // previously injected, no longer in the manifest
 syncGitExclude(allFreePaths) // keep `git status` clean (skips silently without git)
-writeV2Shim(
-  v2Components['andromeda'] ?? freeInjected['andromeda'] ?? [],
-  Boolean(v2Components['andromeda']),
+// Andromeda Legacy's own shim: always the degraded/committed-tree branch (Legacy
+// never has a whole-system injection), fed by the free-lane names actually
+// injected above.
+writeLegacyV2Shim(freeInjected['andromeda'] ?? [])
+// Andromeda Pro's shims: the whole-system tree when "andromeda-pro" was
+// injected (v2Components keyed by slug), else the same degraded fallback as
+// Legacy so Pro-tree app files still compile.
+writeProV2Shim(
+  v2Components['andromeda-pro'] ?? freeInjected['andromeda-pro'] ?? [],
+  Boolean(v2Components['andromeda-pro']),
 )
-writeV2HelpersShim(Boolean(v2Components['andromeda']))
-writeV2ExamplesShim()
+writeProHelpersShim(Boolean(v2Components['andromeda-pro']))
+writeProExamplesShim()
 if (freePlaceholders.length > 0) {
   log(`wrote ${freePlaceholders.length} degraded placeholder(s) for expected-but-not-injected free component(s): ` +
     freePlaceholders.map((p) => p.split('/').pop().replace('.tsx', '')).join(', '))
@@ -1065,9 +1160,16 @@ for (const system of v2Systems) {
     ? `bundled ${n} remix prompt(s) for "${system}" → registry-data/_${system}-prompts.json`
     : `no remix prompts in the source for "${system}" — empty bundle, panels stay hidden`)
 }
+// A design system declared in the site config but NOT in this run's manifest
+// systems (e.g. Legacy, which never gets a prompts bundle; or Pro on a
+// degraded/pre-split pin) must not keep a stale bundle from an earlier run.
+for (const ds of DESIGN_SYSTEMS) {
+  if (v2Systems.includes(ds.slug)) continue
+  rmSync(join(REGISTRY_DATA, `_${ds.slug}-prompts.json`), { force: true })
+}
 
 const brainSlugs = []
-let andromedaTeaser = null
+const brainTeasers = {} // slug → teaser, for the per-slug paywall teaser modules below
 for (const slug of brains) {
   if (!/^[a-z0-9-]+$/.test(slug)) {
     console.error('[inject-premium] invalid brain slug in manifest: ' + JSON.stringify(slug))
@@ -1112,11 +1214,12 @@ for (const slug of brains) {
       2,
     ) + '\n',
   )
-  if (slug === 'andromeda') andromedaTeaser = teaser
+  brainTeasers[slug] = teaser
   brainSlugs.push(slug)
   log(`bundled brain "${slug}": ${files.length} file(s) → registry-data/_${slug}-brain.json + servable ${slug}-brain.json`)
 }
-writeBrainTeaser(andromedaTeaser)
+writeBrainTeaser(BRAIN_TEASER_MODULE, brainTeasers['andromeda'] ?? null)
+writeBrainTeaser(BRAIN_TEASER_PRO_MODULE, brainTeasers['andromeda-pro'] ?? null)
 
 // ── 5. _premium.json — feeds the /r gate's premiumSlugs ────────────────────
 // `standalones` feeds premiumSlugs exactly as before; `freeSystemComponents`

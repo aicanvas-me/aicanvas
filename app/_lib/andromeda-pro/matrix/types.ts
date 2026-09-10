@@ -46,8 +46,11 @@ export type MatrixCase = {
 export type MatrixSpec = {
   /** Must match a slug in ANDROMEDA_COMPONENT_META. */
   slug: string
-  /** Required unless render is given. v2 components import from andromeda-v2.generated. */
-  Component?: ComponentType<Record<string, unknown>>
+  /** Required unless render is given. Pro components import from andromeda-pro.generated. */
+  // A spec renders whatever props its variants declare, so the component is not
+  // narrowed here: forwardRef components with required props (StatTile,
+  // ProgressBar) are specs too.
+  Component?: ComponentType<any>
   /** null = no size axis for variants. States always render once, at md, Rest first. */
   sizes: readonly ('sm' | 'md' | 'lg')[] | null
   baseProps?: Record<string, unknown>

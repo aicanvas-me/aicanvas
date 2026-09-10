@@ -1,6 +1,6 @@
 // v2 component: imported through the build-time shim, never from design-systems/
 // directly, so a degraded (free-only) build still compiles.
-import { Gauge } from '../../../lib/andromeda-v2.generated'
+import { Gauge } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const gauge: MatrixSpec = {

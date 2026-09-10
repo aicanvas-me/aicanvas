@@ -3,7 +3,7 @@
 'use client'
 
 import { useState } from 'react'
-import { DateRangePicker } from '../../../lib/andromeda-v2.generated'
+import { DateRangePicker } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // Fixed dates, never `new Date()`: a matrix that renders a different month on

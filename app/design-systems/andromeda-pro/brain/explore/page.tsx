@@ -67,7 +67,7 @@ export default async function AndromedaBrainReaderPage() {
   let files: BrainRegistryFile[] = []
   try {
     const raw = readFileSync(
-      join(process.cwd(), 'registry-data', '_andromeda-brain.json'),
+      join(process.cwd(), 'registry-data', '_andromeda-pro-brain.json'),
       'utf8',
     )
     const parsed = JSON.parse(raw)

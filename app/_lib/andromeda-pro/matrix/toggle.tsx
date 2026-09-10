@@ -1,4 +1,4 @@
-import { Toggle } from '../../../lib/andromeda-v2.generated'
+import { Toggle } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
 export const toggle: MatrixSpec = {

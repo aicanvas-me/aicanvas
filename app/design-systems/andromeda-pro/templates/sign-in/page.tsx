@@ -1,6 +1,6 @@
 // @ts-nocheck — consumes Andromeda tokens which are not type-checked yet.
-import { SignIn } from '../../../../lib/andromeda-v2-examples.generated'
-import { tokens } from '../../../../lib/andromeda-v2.generated'
+import { SignIn } from '../../../../lib/andromeda-pro-examples.generated'
+import { tokens } from '../../../../lib/andromeda-pro.generated'
 import { AndromedaThemeWrap } from '../../AndromedaThemeWrap'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
 

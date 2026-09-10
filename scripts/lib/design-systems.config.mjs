@@ -154,10 +154,11 @@ export const DESIGN_SYSTEMS = [
     // whole premium library installs for nothing.
     paidToInstall: true,
     // Andromeda Pro has NO committed source: its whole tree is injected from
-    // the vault by scripts/inject-premium.mjs (manifest key `systems`). On a
-    // build without that injection the tree is absent and the generator skips
-    // the system entirely rather than emitting half of it.
-    rootDir: 'design-systems/andromeda-v2',
+    // the vault (design-systems/andromeda-pro/) by scripts/inject-premium.mjs
+    // (manifest key `systems`). On a build without that injection the tree is
+    // absent and the generator skips the system entirely rather than emitting
+    // half of it.
+    rootDir: 'design-systems/andromeda-pro',
     skipIfMissing: true,
     tokenEntries: [
       'tokens.ts',

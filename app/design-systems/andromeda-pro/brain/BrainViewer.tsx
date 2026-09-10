@@ -553,12 +553,12 @@ function useBrainInstallCommand() {
     }
   }, [])
   const reference = token
-    ? `"https://aicanvas.me/r/andromeda-brain.json?token=${token}"`
-    : '@aicanvas/andromeda-brain'
-  const referenceMasked = `"https://aicanvas.me/r/andromeda-brain.json?token=aic_••••••••"`
+    ? `"https://aicanvas.me/r/andromeda-pro-brain.json?token=${token}"`
+    : '@aicanvas/andromeda-pro-brain'
+  const referenceMasked = `"https://aicanvas.me/r/andromeda-pro-brain.json?token=aic_••••••••"`
   return {
     cliCommand: `npx shadcn@latest add --overwrite ${reference}`,
-    cliCommandMasked: `npx shadcn@latest add --overwrite ${token ? referenceMasked : '@aicanvas/andromeda-brain'}`,
+    cliCommandMasked: `npx shadcn@latest add --overwrite ${token ? referenceMasked : '@aicanvas/andromeda-pro-brain'}`,
   }
 }
 

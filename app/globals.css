@@ -8,10 +8,10 @@
 @source "../components-workspace-premium";
 
 /* Same reason for the whole Andromeda Pro tree: inject-premium writes it to the
-   gitignored design-systems/andromeda-v2/, so auto-detection skips it and any
-   utility the v2 sources introduce would never be generated. The committed v1
-   tree beside it is tracked, so it is detected on its own. */
-@source "../design-systems/andromeda-v2";
+   gitignored design-systems/andromeda-pro/, so auto-detection skips it and any
+   utility the Pro sources introduce would never be generated. The committed
+   Andromeda Legacy tree beside it is tracked, so it is detected on its own. */
+@source "../design-systems/andromeda-pro";
 
 /* Class-based dark mode — toggle .dark on <html> instead of OS preference */
 

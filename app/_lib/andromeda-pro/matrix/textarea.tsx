@@ -1,4 +1,4 @@
-import { Textarea } from '../../../lib/andromeda-v2.generated'
+import { Textarea } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
 export const textarea: MatrixSpec = {

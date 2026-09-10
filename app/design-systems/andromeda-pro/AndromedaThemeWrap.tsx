@@ -17,8 +17,8 @@
 import { createContext, useContext, useEffect, useId, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Moon, Palette, Sun } from '@phosphor-icons/react'
-import { tokens } from '../../lib/andromeda-v2.generated'
-import { ANDROMEDA_PALETTES, andromedaLightVars, andromedaVars } from '../../lib/andromeda-v2-helpers.generated'
+import { tokens } from '../../lib/andromeda-pro.generated'
+import { ANDROMEDA_PALETTES, andromedaLightVars, andromedaVars } from '../../lib/andromeda-pro-helpers.generated'
 
 type AndromedaTheme = 'dark' | 'light'
 

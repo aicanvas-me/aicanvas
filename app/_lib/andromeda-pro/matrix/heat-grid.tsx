@@ -3,10 +3,10 @@
 'use client'
 
 import { useState } from 'react'
-import { HeatGrid } from '../../../lib/andromeda-v2.generated'
-import { Button } from '../../../lib/andromeda-v2.generated'
-import { Slider } from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { HeatGrid } from '../../../lib/andromeda-pro.generated'
+import { Button } from '../../../lib/andromeda-pro.generated'
+import { Slider } from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // The one thing a still cell cannot show: the gauge stays live after its first

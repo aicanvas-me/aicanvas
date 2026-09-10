@@ -1,4 +1,4 @@
-import { StatTile } from '../../../lib/andromeda-v2.generated'
+import { StatTile } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const statTile: MatrixSpec = {

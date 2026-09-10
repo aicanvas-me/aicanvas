@@ -7,7 +7,7 @@ import {
   AlertContent,
   AlertTitle,
   AlertDescription,
-} from '../../../lib/andromeda-v2.generated'
+} from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // Each variant carries its own icon and copy, because the severity is the

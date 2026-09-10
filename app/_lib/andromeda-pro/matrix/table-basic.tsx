@@ -8,8 +8,8 @@ import {
   TableHeader,
   TableCell,
   TableStyles,
-} from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+} from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const ROWS = [

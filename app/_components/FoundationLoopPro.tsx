@@ -20,8 +20,8 @@ import { useState, useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 import { motion, AnimatePresence, useReducedMotion, useInView } from 'framer-motion'
 import type { Variants } from 'framer-motion'
-import { tokens } from '../lib/andromeda-v2.generated'
-import { useResolvedVars } from '../lib/andromeda-v2-helpers.generated'
+import { tokens } from '../lib/andromeda-pro.generated'
+import { useResolvedVars } from '../lib/andromeda-pro-helpers.generated'
 
 const C = tokens.color
 const FONT = tokens.typography.fontMono

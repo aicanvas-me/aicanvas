@@ -8,9 +8,9 @@ import {
   EmptyStateTitle,
   EmptyStateDescription,
   EmptyStateAction,
-} from '../../../lib/andromeda-v2.generated'
-import { Avatar } from '../../../lib/andromeda-v2.generated'
-import { Button } from '../../../lib/andromeda-v2.generated'
+} from '../../../lib/andromeda-pro.generated'
+import { Avatar } from '../../../lib/andromeda-pro.generated'
+import { Button } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // Reused from Avatar's image configuration so the two component pages exercise

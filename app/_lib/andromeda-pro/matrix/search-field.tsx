@@ -1,4 +1,4 @@
-import { SearchField } from '../../../lib/andromeda-v2.generated'
+import { SearchField } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const searchField: MatrixSpec = {

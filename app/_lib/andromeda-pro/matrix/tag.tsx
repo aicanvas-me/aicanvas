@@ -1,4 +1,4 @@
-import { Tag } from '../../../lib/andromeda-v2.generated'
+import { Tag } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const noop = () => {}

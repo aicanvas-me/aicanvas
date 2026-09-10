@@ -1,4 +1,4 @@
-import { Checkbox } from '../../../lib/andromeda-v2.generated'
+import { Checkbox } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
 export const checkbox: MatrixSpec = {

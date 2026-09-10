@@ -1,9 +1,9 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
 import { Compass } from '@phosphor-icons/react'
-import { NavItem } from '../../../lib/andromeda-v2.generated'
-import { Tooltip } from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { NavItem } from '../../../lib/andromeda-pro.generated'
+import { Tooltip } from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
 // A nav row has no intrinsic width — it fills its rail. Without a container it

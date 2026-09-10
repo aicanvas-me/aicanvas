@@ -23,7 +23,7 @@ export { ANDROMEDA_META, type AndromedaComponentMeta } from './andromeda-meta'
 const COMPONENTS_ROOT = join(
   process.cwd(),
   'design-systems',
-  'andromeda-v2',
+  'andromeda-pro',
   'components',
 )
 

@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { IdeationTopBar } from '../../_components/IdeationTopBar'
-import { tokens } from '../../lib/andromeda-v2.generated'
+import { tokens } from '../../lib/andromeda-pro.generated'
 
 // Template leaf routes own the full viewport (sidebar + topbar are suppressed).
 // On DESKTOP (md+) the template pins itself to 100vh and manages its own

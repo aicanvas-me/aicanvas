@@ -1,6 +1,6 @@
 // @ts-nocheck — authors JSX against untyped design-system components.
 // v2 component: imported through the build-time shim.
-import { GridBackdrop } from '../../../lib/andromeda-v2.generated'
+import { GridBackdrop } from '../../../lib/andromeda-pro.generated'
 import { BackdropStage } from './backdrop-stage'
 import type { MatrixSpec } from './types'
 

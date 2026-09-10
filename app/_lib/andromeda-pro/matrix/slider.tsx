@@ -3,8 +3,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Slider } from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { Slider } from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // Static cells show where the thumb can sit; only a live one shows the readout

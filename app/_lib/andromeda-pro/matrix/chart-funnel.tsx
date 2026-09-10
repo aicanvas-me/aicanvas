@@ -1,5 +1,5 @@
 // v2 component: imported through the build-time shim.
-import { FunnelChart } from '../../../lib/andromeda-v2.generated'
+import { FunnelChart } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const STAGES = [

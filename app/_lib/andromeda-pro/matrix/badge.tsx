@@ -1,5 +1,5 @@
 import { Check, WarningOctagon } from '@phosphor-icons/react'
-import { Badge } from '../../../lib/andromeda-v2.generated'
+import { Badge } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const badge: MatrixSpec = {

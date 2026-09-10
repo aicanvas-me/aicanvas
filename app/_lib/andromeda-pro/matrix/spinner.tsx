@@ -1,4 +1,4 @@
-import { Spinner } from '../../../lib/andromeda-v2.generated'
+import { Spinner } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const spinner: MatrixSpec = {

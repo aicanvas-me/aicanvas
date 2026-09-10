@@ -1,5 +1,5 @@
 import { Lightning } from '@phosphor-icons/react'
-import { IconButton } from '../../../lib/andromeda-v2.generated'
+import { IconButton } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
 export const iconButton: MatrixSpec = {

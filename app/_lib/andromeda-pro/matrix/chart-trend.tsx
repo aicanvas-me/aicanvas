@@ -1,8 +1,8 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
-import { TrendChart } from '../../../lib/andromeda-v2.generated'
-import { CornerMarkers } from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { TrendChart } from '../../../lib/andromeda-pro.generated'
+import { CornerMarkers } from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // Deterministic demo telemetry — no Math.random, so SSR and client agree and

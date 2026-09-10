@@ -1,5 +1,5 @@
 // v2 component: imported through the build-time shim.
-import { MetricChart } from '../../../lib/andromeda-v2.generated'
+import { MetricChart } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const metricChart: MatrixSpec = {

@@ -6,7 +6,7 @@
 // hairline panel and a label sitting on it. Shared rather than copied four
 // times because it is review chrome, not system surface — the components
 // themselves duplicate deliberately (see the note in GridBackdrop).
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 
 const label = {
   fontFamily: tokens.typography.fontMono,

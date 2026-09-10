@@ -1,4 +1,4 @@
-import { Avatar } from '../../../lib/andromeda-v2.generated'
+import { Avatar } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // The portrait Mission Control already gives Reza Quinn, so the photo case and

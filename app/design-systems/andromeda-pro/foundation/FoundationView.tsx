@@ -9,9 +9,9 @@
 // shim, whose modules carry 'use client' — the same pattern the component
 // demos use. Everything here renders statically all the same.
 import { SiteFooter } from '../../../components/SiteFooter'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import { AndromedaThemeDock } from '../AndromedaThemeWrap'
-import { andromedaVars, andromedaLightVars } from '../../../lib/andromeda-v2-helpers.generated'
+import { andromedaVars, andromedaLightVars } from '../../../lib/andromeda-pro-helpers.generated'
 
 // ── the theme channel ───────────────────────────────────────────────────────
 // Every swatch paints `var(--at-<name>, <dark value>)`. With no light ancestor

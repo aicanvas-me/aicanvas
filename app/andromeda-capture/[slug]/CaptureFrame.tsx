@@ -9,7 +9,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { JetBrains_Mono } from 'next/font/google'
 import { AndromedaDemo } from '../../_lib/andromeda-pro/andromeda-demos'
-import { tokens } from '../../lib/andromeda-v2.generated'
+import { tokens } from '../../lib/andromeda-pro.generated'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],

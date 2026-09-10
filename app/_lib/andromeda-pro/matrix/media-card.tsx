@@ -1,5 +1,5 @@
 // v2 component: imported through the build-time shim.
-import { MediaCard } from '../../../lib/andromeda-v2.generated'
+import { MediaCard } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // Two photos for the whole section, alternating. The cases differ by ACTION and

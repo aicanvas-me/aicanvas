@@ -9,8 +9,8 @@
 // depending on which of warning/fault is larger. Boundaries are inclusive, so
 // they are asserted exactly on the line, not near it.
 import { describe, expect, it } from 'vitest'
-import { V2_COMPONENT_NAMES } from '../../lib/andromeda-v2.generated'
-import { toneFromValue } from '../../lib/andromeda-v2-helpers.generated'
+import { V2_COMPONENT_NAMES } from '../../lib/andromeda-pro.generated'
+import { toneFromValue } from '../../lib/andromeda-pro-helpers.generated'
 
 // The helper is vault-authored, so a checkout without it has nothing to assert.
 // An empty V2_COMPONENT_NAMES is exactly that build, and the shim hands out an

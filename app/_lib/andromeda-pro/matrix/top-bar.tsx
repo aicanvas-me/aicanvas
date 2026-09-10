@@ -4,9 +4,9 @@
 
 import { useState } from 'react'
 import { Gear, Keyboard, SignOut, UserCircle } from '@phosphor-icons/react'
-import { TopBar } from '../../../lib/andromeda-v2.generated'
-import { Button } from '../../../lib/andromeda-v2.generated'
-import { UserMenu } from '../../../lib/andromeda-v2.generated'
+import { TopBar } from '../../../lib/andromeda-pro.generated'
+import { Button } from '../../../lib/andromeda-pro.generated'
+import { UserMenu } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const LABELS = ['Overview', 'Requests', 'History']

@@ -16,9 +16,9 @@
 // framer half of hover and press (the -1px lift, the 0.98 scale) is JS and
 // cannot be forced, so it is absent from every candidate equally — which is
 // fine, because this is a colour decision.
-import { Button } from '../../../../../lib/andromeda-v2.generated'
-import { andromedaVars } from '../../../../../lib/andromeda-v2-helpers.generated'
-import { tokens } from '../../../../../lib/andromeda-v2.generated'
+import { Button } from '../../../../../lib/andromeda-pro.generated'
+import { andromedaVars } from '../../../../../lib/andromeda-pro-helpers.generated'
+import { tokens } from '../../../../../lib/andromeda-pro.generated'
 
 // Class strings are written out in FULL, never built from tokens by
 // interpolation. Tailwind scans source text: a class assembled at runtime is

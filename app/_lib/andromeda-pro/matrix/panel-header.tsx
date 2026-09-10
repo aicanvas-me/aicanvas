@@ -1,10 +1,10 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
 import { CornersOut } from '@phosphor-icons/react'
-import { PanelHeader } from '../../../lib/andromeda-v2.generated'
-import { IconButton } from '../../../lib/andromeda-v2.generated'
-import { CornerMarkers } from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { PanelHeader } from '../../../lib/andromeda-pro.generated'
+import { IconButton } from '../../../lib/andromeda-pro.generated'
+import { CornerMarkers } from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // A block header has no intrinsic width, and its whole job is to sit on a

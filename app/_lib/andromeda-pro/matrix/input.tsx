@@ -4,7 +4,7 @@
 
 import { useState } from 'react'
 import { Envelope, Eye, EyeSlash, Lock } from '@phosphor-icons/react'
-import { Input } from '../../../lib/andromeda-v2.generated'
+import { Input } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
 const BASE_PROPS = { label: 'Node ID', placeholder: 'ND-4471' }

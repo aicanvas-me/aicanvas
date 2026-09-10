@@ -20,7 +20,7 @@ import type { MatrixCase, MatrixSpec } from './types'
 // so falling back checked Pro's matrix against Legacy's source and reported
 // mismatches that meant nothing. Without the injected tree the file reads are
 // existsSync-guarded and their checks simply skip.
-const COMPONENT_DIR = join(process.cwd(), 'design-systems/andromeda-v2/components')
+const COMPONENT_DIR = join(process.cwd(), 'design-systems/andromeda-pro/components')
 
 // The UNDECLARED migration allowlist that lived here is gone: every component
 // is declared, so the catalog check below is now an exact match in both

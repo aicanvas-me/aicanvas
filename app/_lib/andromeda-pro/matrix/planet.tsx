@@ -1,6 +1,6 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
-import { Planet } from '../../../lib/andromeda-v2.generated'
+import { Planet } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const planet: MatrixSpec = {

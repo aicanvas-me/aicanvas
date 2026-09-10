@@ -1,5 +1,5 @@
 // v2 component: imported through the build-time shim.
-import { Waveform } from '../../../lib/andromeda-v2.generated'
+import { Waveform } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const waveform: MatrixSpec = {

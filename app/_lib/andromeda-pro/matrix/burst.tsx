@@ -1,6 +1,6 @@
 // @ts-nocheck — authors JSX against untyped design-system components.
 // v2 component: imported through the build-time shim.
-import { Burst } from '../../../lib/andromeda-v2.generated'
+import { Burst } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const burst: MatrixSpec = {

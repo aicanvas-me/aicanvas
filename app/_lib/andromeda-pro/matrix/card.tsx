@@ -7,9 +7,9 @@ import {
   CardFooter,
   CardTitle,
   CardDescription,
-} from '../../../lib/andromeda-v2.generated'
-import { Badge } from '../../../lib/andromeda-v2.generated'
-import { Button } from '../../../lib/andromeda-v2.generated'
+} from '../../../lib/andromeda-pro.generated'
+import { Badge } from '../../../lib/andromeda-pro.generated'
+import { Button } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const body = (title: string, description: string, badge: string, badgeVariant: string) => (

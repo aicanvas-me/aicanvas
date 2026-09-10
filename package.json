@@ -8,7 +8,7 @@
     "predev": "node scripts/check-deps.mjs",
     "dev": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs && next dev -p 3001 --turbopack",
     "dev:webpack": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs && next dev -p 3001 --webpack",
-    "build": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs && next build",
+    "build": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs && NODE_OPTIONS=--max-old-space-size=4096 next build",
     "start": "next start",
     "publish-premium": "node scripts/publish-premium.mjs",
     "lint": "eslint",

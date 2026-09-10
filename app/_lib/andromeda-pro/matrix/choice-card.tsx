@@ -6,8 +6,8 @@ import { useState } from 'react'
 import {
   ChoiceCard,
   ChoiceCardGroup,
-} from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+} from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
 function LiveRadioChoiceCards() {

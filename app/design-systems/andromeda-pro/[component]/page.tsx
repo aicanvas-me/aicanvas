@@ -22,7 +22,7 @@ import { splitSystemPromptAtPaywall } from '../../../../lib/registry/prompt-bloc
  */
 function readSystemPrompt(sourceFile: string): string | null {
   try {
-    const raw = readFileSync(join(process.cwd(), 'registry-data', '_andromeda-prompts.json'), 'utf8')
+    const raw = readFileSync(join(process.cwd(), 'registry-data', '_andromeda-pro-prompts.json'), 'utf8')
     const { prompts } = JSON.parse(raw) as { prompts: Record<string, string> }
     return prompts[sourceFile.replace(/\.tsx?$/, '')] ?? null
   } catch {
@@ -30,7 +30,7 @@ function readSystemPrompt(sourceFile: string): string | null {
     // is not fatal. It IS logged: the same catch also covers a bundle that was
     // built but not traced into the serverless function, which otherwise makes
     // every Remix panel vanish in production with nothing to show for it.
-    console.warn('[andromeda-pro] no remix-prompt bundle at registry-data/_andromeda-prompts.json')
+    console.warn('[andromeda-pro] no remix-prompt bundle at registry-data/_andromeda-pro-prompts.json')
     return null
   }
 }

@@ -2,9 +2,9 @@
 // components. Data-only specs in this directory need no such line.
 import { Play } from '@phosphor-icons/react'
 // v2 component: imported through the build-time shim.
-import { DataTable } from '../../../lib/andromeda-v2.generated'
-import { IconButton } from '../../../lib/andromeda-v2.generated'
-import { tokens } from '../../../lib/andromeda-v2.generated'
+import { DataTable } from '../../../lib/andromeda-pro.generated'
+import { IconButton } from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // The component ships DEFAULT_COLUMNS/DEFAULT_ROWS so it renders from bare

@@ -10,10 +10,10 @@ import {
   DrawerDescription,
   DrawerBody,
   DrawerFooter,
-} from '../../../lib/andromeda-v2.generated'
-import { Button } from '../../../lib/andromeda-v2.generated'
-import { Input } from '../../../lib/andromeda-v2.generated'
-import { Toggle } from '../../../lib/andromeda-v2.generated'
+} from '../../../lib/andromeda-pro.generated'
+import { Button } from '../../../lib/andromeda-pro.generated'
+import { Input } from '../../../lib/andromeda-pro.generated'
+import { Toggle } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // Andromeda law: dividers sit inset 12px from panel edges (rules.md "Section

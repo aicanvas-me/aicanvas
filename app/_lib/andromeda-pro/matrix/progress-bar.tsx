@@ -1,4 +1,4 @@
-import { ProgressBar } from '../../../lib/andromeda-v2.generated'
+import { ProgressBar } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const progressBar: MatrixSpec = {

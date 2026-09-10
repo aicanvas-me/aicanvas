@@ -1,4 +1,4 @@
-import { RadarChart } from '../../../lib/andromeda-v2.generated'
+import { RadarChart } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const DATA = [

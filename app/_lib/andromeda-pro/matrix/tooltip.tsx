@@ -1,8 +1,8 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
 import { ArrowClockwise } from '@phosphor-icons/react'
-import { Tooltip } from '../../../lib/andromeda-v2.generated'
-import { IconButton } from '../../../lib/andromeda-v2.generated'
+import { Tooltip } from '../../../lib/andromeda-pro.generated'
+import { IconButton } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const tooltip: MatrixSpec = {

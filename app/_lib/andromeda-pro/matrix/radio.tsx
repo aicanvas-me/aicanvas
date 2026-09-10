@@ -2,7 +2,7 @@
 // components. Data-only specs in this directory need no such line.
 'use client'
 
-import { Radio, RadioGroup } from '../../../lib/andromeda-v2.generated'
+import { Radio, RadioGroup } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
 export const radio: MatrixSpec = {

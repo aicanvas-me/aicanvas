@@ -1,7 +1,7 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
 import { ArrowClockwise, Copy, Database, Export, EyeSlash, Pencil, Sliders, Star, Clock, Trash } from '@phosphor-icons/react'
-import { PanelMenu } from '../../../lib/andromeda-v2.generated'
+import { PanelMenu } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const noop = () => {}

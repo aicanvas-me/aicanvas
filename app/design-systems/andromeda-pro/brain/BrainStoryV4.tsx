@@ -26,7 +26,7 @@ import { buttonClasses } from '@/app/components/buttonClasses'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
 import { HeaderSocials } from '@/app/components/HeaderSocials'
 import { SiteFooter } from '@/app/components/SiteFooter'
-import { BRAIN_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
+import { BRAIN_TEASER } from '@/app/lib/andromeda-pro-brain-teaser.generated'
 
 // AI Canvas site palette: sand neutrals + olive accent, Manrope + mono fonts.
 const C = { base: '#0E0E0F', node: '#9B9B9E', reason: '#B7B7BA', bright: '#F4F4FA', accent: '#DAE4A0', accentBtn: '#A8B94D', muted: '#7B7B7D' }

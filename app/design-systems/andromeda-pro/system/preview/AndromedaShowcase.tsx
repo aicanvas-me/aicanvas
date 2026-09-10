@@ -25,17 +25,17 @@ import Link from 'next/link'
 import { JetBrains_Mono } from 'next/font/google'
 import { ArrowUpRight } from '@phosphor-icons/react'
 import { SiteFooter } from '../../../../components/SiteFooter'
-import { tokens } from '../../../../lib/andromeda-v2.generated'
-import { mq } from '../../../../lib/andromeda-v2-helpers.generated'
-import { buttonVariants } from '../../../../lib/andromeda-v2.generated'
-import { andromedaVars, useResolvedVars } from '../../../../lib/andromeda-v2-helpers.generated'
+import { tokens } from '../../../../lib/andromeda-pro.generated'
+import { mq } from '../../../../lib/andromeda-pro-helpers.generated'
+import { buttonVariants } from '../../../../lib/andromeda-pro.generated'
+import { andromedaVars, useResolvedVars } from '../../../../lib/andromeda-pro-helpers.generated'
 import { AndromedaThemeWrap, AndromedaThemeDock } from '../../AndromedaThemeWrap'
 import {
   Card,
   CardHeader,
   CardContent,
   CardTitle,
-} from '../../../../lib/andromeda-v2.generated'
+} from '../../../../lib/andromeda-pro.generated'
 import { ANDROMEDA_COMPONENT_META } from '../../../../_lib/andromeda-pro/andromeda-meta'
 import { MatrixBlock } from '../../../../_lib/andromeda-pro/matrix/Matrix'
 import { SPEC_BY_SLUG } from '../../../../_lib/andromeda-pro/matrix'
