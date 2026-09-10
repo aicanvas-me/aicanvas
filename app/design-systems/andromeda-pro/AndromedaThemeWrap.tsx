@@ -14,7 +14,7 @@
 // style. A mid-tree wrapper retints the pure-CSS var() chains but fires no
 // observer, so canvases and charts silently keep the old palette.
 
-import { createContext, useContext, useEffect, useId, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useId, useMemo, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Moon, Sun } from '@phosphor-icons/react'
 import { andromedaLightVars } from '../../lib/andromeda-pro-helpers.generated'
@@ -30,8 +30,27 @@ const ThemeCtx = createContext<{
 // pages pass `contents`: their shell is a percentage-height flex item of the
 // Andromeda layout row, and a plain div in between breaks that chain, so the
 // template's own scroll region never gets a bounded height.
-export function AndromedaThemeWrap({ children, className }: { children: ReactNode; className?: string }) {
-  const [theme, setTheme] = useState<AndromedaTheme>('dark')
+export function AndromedaThemeWrap({
+  children,
+  className,
+  initialTheme = 'dark',
+}: {
+  children: ReactNode
+  className?: string
+  /**
+   * The site's OWN theme (its `theme` cookie), read by the server page and
+   * threaded down so the preview OPENS in it — the site rule's seed (a
+   * preview opens in whatever the site is set to; only the visitor's own
+   * toggle pins it after that, see the file banner). A caller that passes
+   * nothing keeps this component's original dark-anchored default.
+   */
+  initialTheme?: AndromedaTheme
+}) {
+  const [theme, setTheme] = useState<AndromedaTheme>(initialTheme)
+
+  // The full light set, computed once: shared by the SSR seed below and the
+  // effect's imperative write, so the two can never drift apart.
+  const lightVars = useMemo(() => andromedaLightVars() as Record<string, string>, [])
 
   // Dark, untuned is the authored set, which the var() fallbacks already
   // resolve to. Emitting nothing keeps it identical; only light needs an
@@ -39,20 +58,36 @@ export function AndromedaThemeWrap({ children, className }: { children: ReactNod
   useEffect(() => {
     if (theme !== 'light') return
     const root = document.documentElement
-    const base = andromedaLightVars() as Record<string, string>
-    const names = Object.keys(base)
+    const names = Object.keys(lightVars)
     for (const name of names) {
-      root.style.setProperty(name, base[name])
+      root.style.setProperty(name, lightVars[name])
     }
     root.setAttribute('data-andromeda-theme', 'light')
     return () => {
       for (const name of names) root.style.removeProperty(name)
       root.removeAttribute('data-andromeda-theme')
     }
-  }, [theme])
+  }, [theme, lightVars])
 
   return (
     <ThemeCtx.Provider value={{ theme, setTheme }}>
+      {/* Server-rendered seed for the light set. The effect above is what the
+          canvas Objects observe (it mutates documentElement itself), but it
+          only fires after hydration, one tick past first paint — so a preview
+          seeded light straight from the site cookie would otherwise flash the
+          dark var() fallback for that one frame. A `:root` rule needs no
+          script and no mid-tree wrapper (the reason that would be wrong is
+          the file banner above: a style TAG's selector still resolves through
+          documentElement regardless of where the tag sits in the DOM). Keyed
+          off the CURRENT theme, not the seed, so switching back to dark drops
+          it in the same render. Once hydration's effect sets the identical
+          values as inline documentElement style, that wins the cascade and
+          nothing visibly changes. */}
+      {theme === 'light' ? (
+        <style>{`:root{${Object.entries(lightVars)
+          .map(([name, value]) => `${name}:${value}`)
+          .join(';')}}`}</style>
+      ) : null}
       <div data-andromeda-theme={theme} className={className}>{children}</div>
     </ThemeCtx.Provider>
   )
