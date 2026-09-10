@@ -46,6 +46,11 @@ const nextConfig: NextConfig = {
     // own entry the JSON is not traced into the serverless bundle and the route
     // fails in production.
     "/design-systems/andromeda-pro/brain/explore": ["./registry-data/*.json"],
+    // The component page reads the bundled remix prompts with fs at request
+    // time, same as the readers above. Without its own entry the JSON is not
+    // traced into the serverless bundle, the read throws ENOENT, and the Remix
+    // panel silently disappears for everyone, subscribers included.
+    "/design-systems/andromeda-pro/[component]": ["./registry-data/*.json"],
   },
   async headers() {
     return [

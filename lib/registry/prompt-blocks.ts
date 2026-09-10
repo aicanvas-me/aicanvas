@@ -74,8 +74,10 @@ export function splitPromptAtPaywall(prompt: string): { head: string } | null {
  * whole rather than guessing where to stop.
  */
 export function splitSystemPromptAtPaywall(prompt: string): { head: string } | null {
-  // Headings at line start only, so a `## ` quoted inside a fenced code block
-  // in the opening cannot move the cut.
+  // Headings at line start only. A `## ` inside a fenced code block DOES still
+  // match, which moves the cut earlier or drops below two matches and withholds
+  // the prompt whole. Both directions are safe: the seam can only ever ship
+  // less, never more.
   const heads: number[] = []
   const re = /^##\s+\S.*$/gm
   for (let m = re.exec(prompt); m; m = re.exec(prompt)) heads.push(m.index)
