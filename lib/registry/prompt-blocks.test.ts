@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { splitPromptAtPaywall } from './prompt-blocks'
+import { splitPromptAtPaywall, splitSystemPromptAtPaywall } from './prompt-blocks'
 
 const SCAFFOLD = [
   '## 1. Setup',
@@ -92,5 +92,44 @@ describe('splitPromptAtPaywall', () => {
     expect(out!.head).not.toContain('SECRET-STATE')
     expect(out!.head).not.toContain('SECRET-TREE')
     expect(out!.head).toContain('## 2. Constants')
+  })
+})
+
+describe('splitSystemPromptAtPaywall', () => {
+  const body = 'x'.repeat(400)
+
+  it('keeps the opening and withholds from the first heading on', () => {
+    const r = splitSystemPromptAtPaywall(`Intro line.\n\n## API\n${body}\n\n## Colour\n${body}`)
+    expect(r?.head).toBe('Intro line.')
+    expect(r?.head).not.toContain('## API')
+  })
+
+  it('withholds whole when there is no heading to cut at', () => {
+    expect(splitSystemPromptAtPaywall(`Intro only, no sections.\n\n${body}`)).toBeNull()
+  })
+
+  it('withholds whole when the opening IS most of the prompt', () => {
+    // Nothing left to sell: shipping this head would ship the brief.
+    expect(splitSystemPromptAtPaywall(`${body}\n\n## Tail\nshort`)).toBeNull()
+  })
+
+  it('never lets a section survive the cut', () => {
+    const r = splitSystemPromptAtPaywall(`Intro.\n\n## One\n${body}\n\n## Two\n${body}`)
+    expect(r).not.toBeNull()
+    expect(r!.head.match(/^##\s/gm)).toBeNull()
+  })
+
+  it('treats a fenced heading as a real one, cutting earlier rather than later', () => {
+    // Safe direction: the seam may ship less than intended, never more.
+    const r = splitSystemPromptAtPaywall(`Intro.\n\n\`\`\`md\n## Not a section\n\`\`\`\n\n## Real\n${body}`)
+    expect(r?.head).toBe('Intro.\n\n```md')
+  })
+
+  it('withholds the component palette on a real compound prompt', () => {
+    // Regression for the seam that shipped 69% of Alert, all 21 colours, free.
+    const prompt = `Build **Alert**: a banner. It sits on oklch(0.135 0.002 286.2).\n\n## API\nvariant\n\n## Colour\n${'accent oklch(0.7 0.1 200) '.repeat(40)}`
+    const r = splitSystemPromptAtPaywall(prompt)
+    expect(r!.head).not.toContain('oklch(0.7 0.1 200)')
+    expect(r!.head.length / prompt.length).toBeLessThan(0.4)
   })
 })

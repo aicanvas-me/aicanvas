@@ -62,16 +62,23 @@ export function splitPromptAtPaywall(prompt: string): { head: string } | null {
  * `## Geometry`, `## Motion`, …), so the fixed seven-block cut above matches
  * none of them and would withhold every one whole.
  *
- * The seam here is structural rather than named: the opening paragraphs plus
- * the FIRST section are public, everything from the second heading on is
- * withheld. The opening says what the component is and the first section is
- * almost always its prop table — enough to judge whether it is worth paying
- * for — while the values, geometry and motion that actually rebuild it sit
- * below the cut.
+ * The seam here is structural rather than named: ONLY the opening paragraphs
+ * are public, and everything from the first heading on is withheld. The opening
+ * says what the component is and what it is for, which is enough to judge
+ * whether it is worth paying for.
  *
- * Fails closed, like its scaffold sibling: a prompt with fewer than two
- * headings cannot be redacted at a known seam, so the caller withholds it
- * whole rather than guessing where to stop.
+ * The cut sat one heading later until 2026-09-10, on the reasoning that a first
+ * section is "almost always the prop table". Measured against all 44 authored
+ * prompts that was false for the compound components: it shipped 69% of Alert
+ * free, including all 21 of its oklch values and every geometry number, leaving
+ * a withheld tail with no colour in it at all. Card was 63%, EmptyState 54%.
+ * The first heading is the only position that holds for every prompt, because
+ * heading NAMES differ per component and nothing guarantees what section one
+ * contains.
+ *
+ * Fails closed, like its scaffold sibling: a prompt with no heading, or one
+ * whose opening is more than 40% of the whole, cannot be redacted at a known
+ * seam, so the caller withholds it whole rather than guessing where to stop.
  */
 export function splitSystemPromptAtPaywall(prompt: string): { head: string } | null {
   // Headings at line start only. A `## ` inside a fenced code block DOES still
@@ -81,11 +88,14 @@ export function splitSystemPromptAtPaywall(prompt: string): { head: string } | n
   const heads: number[] = []
   const re = /^##\s+\S.*$/gm
   for (let m = re.exec(prompt); m; m = re.exec(prompt)) heads.push(m.index)
-  if (heads.length < 2) return null
+  if (heads.length < 1) return null
 
-  const head = prompt.slice(0, heads[1]).trimEnd()
-  // Assert on the output: exactly one section may survive the cut.
-  const kept = head.match(/^##\s+\S.*$/gm) ?? []
-  if (kept.length !== 1) return null
+  const head = prompt.slice(0, heads[0]).trimEnd()
+  // Assert on the output: no section may survive the cut at all.
+  if ((head.match(/^##\s+\S.*$/gm) ?? []).length !== 0) return null
+  // An opening that is itself the whole brief is not a teaser. A prompt whose
+  // text is mostly above its first heading cannot be redacted at this seam, so
+  // withhold it whole rather than ship most of it.
+  if (head.length > prompt.length * 0.4) return null
   return { head }
 }

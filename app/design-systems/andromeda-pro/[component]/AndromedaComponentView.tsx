@@ -37,6 +37,7 @@ import { andromedaRegistrySlug } from '../../../_lib/andromeda-pro/andromeda-met
 import { tokens } from '../../../lib/andromeda-v2.generated'
 import { trackInstall } from '../../../lib/track-install'
 import { track } from '../../../lib/analytics'
+import { copyText } from '../../../components/useCopied'
 import { usePaywallModal } from '../../../components/billing/PaywallModalProvider'
 import { useSession } from '../../../components/auth/SessionProvider'
 import { useAuthModal } from '../../../components/auth/AuthModalProvider'
@@ -219,14 +220,17 @@ export function AndromedaComponentView({
     )
   }
 
+  // Escape closes the fullscreen preview and the Remix panel, innermost first.
   useEffect(() => {
-    if (!fullscreen) return
+    if (!fullscreen && !remixOpen) return
     function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setFullscreen(false)
+      if (e.key !== 'Escape') return
+      if (remixOpen) setRemixOpen(false)
+      else setFullscreen(false)
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [fullscreen])
+  }, [fullscreen, remixOpen])
 
   async function copyCode() {
     if (codeState.status !== 'ready') return
@@ -917,7 +921,7 @@ export function AndromedaComponentView({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[1200] flex justify-end bg-sand-950/50"
+          className="fixed inset-0 z-50 flex justify-end bg-sand-950/50"
           onClick={() => setRemixOpen(false)}
         >
           <motion.aside
@@ -926,11 +930,17 @@ export function AndromedaComponentView({
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 30, stiffness: 260 }}
             onClick={(e) => e.stopPropagation()}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="andromeda-remix-title"
             className="flex h-full w-full max-w-xl flex-col overflow-y-auto bg-sand-50 p-6 dark:bg-sand-900"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="flex items-center gap-2 text-lg font-bold text-sand-900 dark:text-sand-50">
+                <h2
+                  id="andromeda-remix-title"
+                  className="flex items-center gap-2 text-base font-bold text-sand-900 dark:text-sand-50"
+                >
                   Remix {name} with AI
                   <span className="inline-flex items-center gap-1 rounded-full border border-olive-500/40 px-2 py-0.5 text-xxs font-semibold uppercase tracking-wider text-olive-700 dark:text-olive-400">
                     <Lightning weight="regular" size={11} />
@@ -969,7 +979,9 @@ export function AndromedaComponentView({
                   variant="outline"
                   size="sm"
                   onClick={() => {
-                    void navigator.clipboard.writeText(remixPrompt).then(() => {
+                    void copyText(remixPrompt).then((ok) => {
+                      track('Remix Prompt Copy', { component: registrySlug, ok })
+                      if (!ok) return
                       setPromptCopied(true)
                       setTimeout(() => setPromptCopied(false), 2000)
                     })

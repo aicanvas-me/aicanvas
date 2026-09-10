@@ -28,7 +28,7 @@ export function Component({ value, onChange }: Props) {
 
 // Default sub-copy. True for standalones and blocks, where the source AND the
 // build blocks of the prompt are both withheld. Surfaces that gate only one of
-// the two (Andromeda components carry no remix prompt at all) pass their own.
+// the two Andromeda component views pass their own.
 const DEFAULT_SUBTITLE = 'The full source and the remix prompt ship with Premium.'
 
 /**

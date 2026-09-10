@@ -26,6 +26,11 @@ function readSystemPrompt(sourceFile: string): string | null {
     const { prompts } = JSON.parse(raw) as { prompts: Record<string, string> }
     return prompts[sourceFile.replace(/\.tsx?$/, '')] ?? null
   } catch {
+    // Absent is the normal state until the prompts land in the vault, so this
+    // is not fatal. It IS logged: the same catch also covers a bundle that was
+    // built but not traced into the serverless function, which otherwise makes
+    // every Remix panel vanish in production with nothing to show for it.
+    console.warn('[andromeda-pro] no remix-prompt bundle at registry-data/_andromeda-prompts.json')
     return null
   }
 }
