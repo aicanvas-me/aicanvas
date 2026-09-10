@@ -25,6 +25,8 @@ A growing collection of animated React components and composed page blocks, inst
   &nbsp;
   <a href="#use-it-with-your-ai-editor-mcp"><img src="assets/readme-buttons/btn-agents.png" alt="Works with Claude, Codex and Cursor" height="45" valign="middle" /></a>
   &nbsp;
+  <a href="https://mcpservers.org/servers/uinerd16/aicanvas"><img src="assets/readme-buttons/btn-mcpservers.png" alt="Listed on mcpservers.org" height="45" valign="middle" /></a>
+  &nbsp;
   <a href="https://github.com/aicanvas-me/aicanvas"><img src="assets/readme-buttons/btn-github.png" alt="aicanvas-me on GitHub" height="45" valign="middle" /></a>
 </p>
 
