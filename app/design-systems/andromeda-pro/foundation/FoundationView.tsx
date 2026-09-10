@@ -10,14 +10,14 @@
 // demos use. Everything here renders statically all the same.
 import { SiteFooter } from '../../../components/SiteFooter'
 import { tokens } from '../../../lib/andromeda-pro.generated'
-import { AndromedaThemeDock } from '../AndromedaThemeWrap'
 import { andromedaVars, andromedaLightVars } from '../../../lib/andromeda-pro-helpers.generated'
 
 // ── the theme channel ───────────────────────────────────────────────────────
-// Every swatch paints `var(--at-<name>, <dark value>)`. With no light ancestor
-// the fallback resolves and the page is pixel-identical to before; the wrap in
-// page.tsx defines the --at-* set and the same swatch shows the light value.
-// This is the system's own swap contract, not a second one for this page.
+// Every swatch paints `var(--at-<name>, <dark value>)`. With no themed
+// ancestor the fallback resolves, i.e. dark. Each specimen below sets its own
+// local --at-* set on a light AND a dark wrapper (see ThemeBlock) so both
+// renderings show at once — this is the system's own swap contract, not a
+// second one for this page, just scoped to a div instead of documentElement.
 const themed = (name: string, value: string) => `var(--at-${name}, ${value})`
 
 // ── data pulled once from tokens.ts ─────────────────────────────────────────
@@ -114,6 +114,44 @@ const LIGHT_VARS = andromedaLightVars() as Record<string, string>
 const stripVar = (value: string) => {
   const m = /^var\([^,]+,\s*(.*)\)$/.exec(String(value))
   return m ? m[1] : String(value)
+}
+
+// ── Local light/dark wrapper ────────────────────────────────────────────────
+// The page used to carry one floating dock that flipped a single --at-* set
+// on documentElement (AndromedaThemeWrap); a reader had to toggle it to see
+// the other theme. Now both themes render at once, so each specimen gets its
+// own pair of wrappers that pin the FULL --at-* set for one theme on a plain
+// div — same channel, same two helpers, just scoped locally instead of to the
+// document. `themed()` calls inside keep working unchanged: they already read
+// through var(--at-<name>, <dark literal>), so whichever wrapper a swatch sits
+// under is the value it shows. (Only safe because nothing on this page reads
+// a computed style in JS — see the note above ALL_COLOURS.)
+const DARK_AT_VARS: Record<string, string> = Object.fromEntries(
+  Object.entries(DARK_VARS)
+    .filter(([, v]) => /^var\(--at-/.test(String(v)))
+    .map(([name, v]) => [name.replace('--andromeda-', '--at-'), stripVar(v)]),
+)
+
+const THEME_STYLE = {
+  light: LIGHT_VARS as React.CSSProperties,
+  dark: DARK_AT_VARS as React.CSSProperties,
+}
+
+const THEME_ORDER = ['light', 'dark'] as const
+
+function ThemeBlock({
+  theme,
+  children,
+}: {
+  theme: (typeof THEME_ORDER)[number]
+  children: React.ReactNode
+}) {
+  return (
+    <div>
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-sand-500">{theme}</p>
+      <div style={THEME_STYLE[theme]}>{children}</div>
+    </div>
+  )
 }
 
 const TONES = [
@@ -262,7 +300,6 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 export function FoundationView() {
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-8 pb-20 sm:px-6 sm:pt-14">
-      <AndromedaThemeDock />
       <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-olive-600 dark:text-olive-400">
         Andromeda · Foundation
       </p>
@@ -298,23 +335,29 @@ export function FoundationView() {
         Thirteen greys, numbered by depth: 100 is the page ground, 1300 the strongest ink.
         Surfaces, borders and text are all roles pointing into this one ladder.
       </p>
-      <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
-        <div className="flex">
-          {NEUTRALS.map((n) => (
-            <div
-              key={n.stop}
-              className="group relative h-20 flex-1"
-              style={{ backgroundColor: themed(`neutral-${n.stop}`, n.value) }}
-            >
-              <span
-                className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-semibold"
-                style={{ color: labelInk(n.stop) }}
-              >
-                {n.stop}
-              </span>
+      <div className="space-y-5">
+        {THEME_ORDER.map((theme) => (
+          <ThemeBlock key={theme} theme={theme}>
+            <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
+              <div className="flex">
+                {NEUTRALS.map((n) => (
+                  <div
+                    key={n.stop}
+                    className="group relative h-20 flex-1"
+                    style={{ backgroundColor: themed(`neutral-${n.stop}`, n.value) }}
+                  >
+                    <span
+                      className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] font-semibold"
+                      style={{ color: labelInk(n.stop) }}
+                    >
+                      {n.stop}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
+          </ThemeBlock>
+        ))}
       </div>
 
       {/* ── Families ── */}
@@ -324,26 +367,32 @@ export function FoundationView() {
         <Code>on</Code> ink. Which end of the ramp reads light flips with the theme. Colour is
         never the only channel: a tone always rides with a glyph, a position, or a label.
       </p>
-      <div className="space-y-3">
+      <div className="space-y-6">
         {FAMILIES.map((f) => (
-          <div key={f.name} className="flex items-center gap-4">
-            <div className="w-24 shrink-0">
+          <div key={f.name} className="flex items-start gap-4">
+            <div className="w-24 shrink-0 pt-1">
               <p className="text-sm font-bold text-sand-900 dark:text-sand-50">{f.name}</p>
               <p className="text-[11px] leading-tight text-sand-500">{f.note}</p>
             </div>
-            <div className="flex h-12 flex-1 overflow-hidden rounded-lg border border-sand-300 dark:border-sand-800">
-              {FAMILY_STOPS.map((stop) => (
-                <div
-                  key={stop}
-                  className="flex-1"
-                  style={{
-                    backgroundColor: themed(
-                      `${f.key}-${stop}`,
-                      (f.ramp as Record<number, string>)[stop],
-                    ),
-                  }}
-                  title={`${f.key}.${stop}`}
-                />
+            <div className="flex-1 space-y-3">
+              {THEME_ORDER.map((theme) => (
+                <ThemeBlock key={theme} theme={theme}>
+                  <div className="flex h-12 overflow-hidden rounded-lg border border-sand-300 dark:border-sand-800">
+                    {FAMILY_STOPS.map((stop) => (
+                      <div
+                        key={stop}
+                        className="flex-1"
+                        style={{
+                          backgroundColor: themed(
+                            `${f.key}-${stop}`,
+                            (f.ramp as Record<number, string>)[stop],
+                          ),
+                        }}
+                        title={`${f.key}.${stop}`}
+                      />
+                    ))}
+                  </div>
+                </ThemeBlock>
               ))}
             </div>
           </div>

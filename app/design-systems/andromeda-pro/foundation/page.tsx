@@ -3,7 +3,6 @@
 // shape law, the palette-generation recipe — is brain material and never
 // appears here (plan ruling 2026-08-17).
 import { FoundationView } from './FoundationView'
-import { AndromedaThemeWrap } from '../AndromedaThemeWrap'
 
 export const metadata = {
   title: 'Foundation · Andromeda Design System',
@@ -12,14 +11,9 @@ export const metadata = {
   alternates: { canonical: '/design-systems/andromeda-pro/foundation' },
 }
 
-// The wrap is what makes the palette toggle possible: it defines the --at-*
-// set on documentElement, and every swatch below paints through that channel.
-// The page chrome around them stays sand: the Andromeda theme is the design
-// system's own axis, never the site's.
+// No theme wrap here: every colour specimen on this page shows its own light
+// AND dark rendering inline (each scoped to a local --at-* wrapper), so there
+// is no toggle state left for a page-level wrap to carry.
 export default function FoundationPage() {
-  return (
-    <AndromedaThemeWrap>
-      <FoundationView />
-    </AndromedaThemeWrap>
-  )
+  return <FoundationView />
 }
