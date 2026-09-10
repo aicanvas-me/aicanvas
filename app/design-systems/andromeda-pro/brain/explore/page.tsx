@@ -9,9 +9,9 @@ import { BrainViewer } from '../BrainViewer'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Andromeda Brain: Premium Design Intelligence',
+  title: 'Andromeda Pro Brain: Premium Design Intelligence',
   description:
-    'The judgment layer for Andromeda: foundations and per-component rules, the intelligence behind every build decision.',
+    'The judgment layer for Andromeda Pro: foundations and per-component rules, the intelligence behind every build decision.',
   robots: { index: false, follow: false },
 }
 

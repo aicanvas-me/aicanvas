@@ -99,7 +99,7 @@ const REMAINDER = BRAIN_TEASER.totalFiles - SECTIONED
 // without a gloss rather than with a wrong one.
 const GLOSS: Record<string, string> = {
   foundations: 'How the system thinks. Color, layout, spacing, motion, states, voice.',
-  'component-rules': 'One file per component, holding the decisions that make it Andromeda instead of generic.',
+  'component-rules': 'One file per component, holding the decisions that make it Andromeda Pro instead of generic.',
   skills: 'Working modes for the agent: build with the system, and review work against it.',
   index: 'The entry point, and the inventory of what already exists so the agent stops reinventing components.',
   tools: 'A conformance check the agent can run against its own output.',
@@ -346,7 +346,7 @@ function BrainFlow() {
               decoding="async"
               style={{ display: 'block' }}
             />
-            <span style={{ fontSize: 13, fontWeight: 700, color: C.bright, marginTop: IMG_GAP }}>Andromeda Brain</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: C.bright, marginTop: IMG_GAP }}>Andromeda Pro Brain</span>
             <span style={{ fontFamily: MONO, fontSize: 11, color: C.accent, marginTop: 2 }}>{BRAIN_TEASER.totalFiles} files</span>
           </div>
         </div>
@@ -826,10 +826,10 @@ export function BrainStoryV4() {
       <header className="sticky top-0 z-50 hidden h-14 items-center justify-between gap-4 border-b border-sand-800 bg-sand-950 px-6 md:flex">
         <nav aria-label="Breadcrumb" className="min-w-0 truncate text-sm font-semibold">
           <Link href="/design-systems/andromeda-pro" className="text-sand-400 transition-colors hover:text-sand-100">
-            Andromeda
+            Andromeda Pro
           </Link>
           <span className="mx-1 text-sand-600">/</span>
-          <span className="text-olive-500">Andromeda Brain</span>
+          <span className="text-olive-500">Andromeda Pro Brain</span>
         </nav>
         <div className="flex items-center justify-end">
           <HeaderSocials />
@@ -888,7 +888,7 @@ export function BrainStoryV4() {
           transition={{ duration: 0.35, delay: 0.1 }}
           style={{ fontSize: 'clamp(24px,4.5vw,36px)', color: C.bright, fontWeight: 800, letterSpacing: '-0.025em', margin: 0, lineHeight: 1.1 }}
         >
-          The Andromeda <span style={{ color: C.accentBtn }}>Brain</span>
+          The Andromeda Pro <span style={{ color: C.accentBtn }}>Brain</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -911,7 +911,7 @@ export function BrainStoryV4() {
             <ArrowRight weight="regular" size={14} />
           </Link>
           <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-            Explore Andromeda
+            Explore Andromeda Pro
           </Link>
         </motion.div>
       </div>
@@ -971,7 +971,7 @@ export function BrainStoryV4() {
               <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>02 · Go beyond</span>
               <h3 style={{ fontSize: 18, color: C.bright, fontWeight: 700, letterSpacing: '-0.01em', margin: '16px 0 0' }}>Past the screens that already exist</h3>
               <p style={{ fontSize: 14, color: C.node, lineHeight: 1.625, margin: '10px 0 0' }}>
-                Because the rules are written down, your agent can create new work that is still unmistakably Andromeda.
+                Because the rules are written down, your agent can create new work that is still unmistakably Andromeda Pro.
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 18 }}>
                 <Chip>Compose layouts</Chip>
@@ -1099,7 +1099,7 @@ export function BrainStoryV4() {
               How to get it
             </p>
             <h2 className="relative mt-2 text-xl font-bold text-sand-50">
-              Andromeda components are free for everyone.
+              Andromeda Pro is free to explore.
             </h2>
             <p className="relative mt-2 text-base text-sand-500">
               The brain is the premium layer: one install puts all {BRAIN_TEASER.totalFiles} files in your project, and the web reader keeps every rule a click away while you work.
@@ -1110,7 +1110,7 @@ export function BrainStoryV4() {
                 <ArrowRight weight="regular" size={14} />
               </Link>
               <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-                Explore Andromeda
+                Explore Andromeda Pro
               </Link>
             </div>
           </div>
