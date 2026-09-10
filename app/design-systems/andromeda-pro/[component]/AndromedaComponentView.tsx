@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
+  ArrowClockwise,
   ArrowLeft,
   ArrowRight,
   Check,
@@ -13,11 +14,13 @@ import {
   CornersIn,
   CornersOut,
   Eye,
+  Moon,
   Sparkle,
+  Sun,
   Terminal,
 } from '@phosphor-icons/react'
 import { Step } from '../../../components/Step'
-import { AndromedaThemeToggle, useAndromedaPreviewTheme } from '../AndromedaThemeWrap'
+import { useAndromedaPreviewTheme } from '../AndromedaThemeWrap'
 import { andromedaLightVars } from '../../../lib/andromeda-pro-helpers.generated'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { Button } from '../../../components/Button'
@@ -137,6 +140,10 @@ export function AndromedaComponentView({
   const [cliCopied, setCliCopied] = useState(false)
   const [remixOpen, setRemixOpen] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
+  // Bumped by the refresh control to force a remount of the previewed
+  // instance (key={previewKey} below), the same replay-the-animation trick
+  // as the standalone component page's refreshPreview().
+  const [previewKey, setPreviewKey] = useState(0)
   // Portalled overlay: React context crosses the portal, CSS inheritance does
   // not, so the panel re-spreads the theme set itself (see the overlay style).
   const previewTheme = useAndromedaPreviewTheme()
@@ -225,6 +232,10 @@ export function AndromedaComponentView({
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [fullscreen])
+
+  function refreshPreview() {
+    setPreviewKey((k) => k + 1)
+  }
 
   async function copyCode() {
     if (codeState.status !== 'ready') return
@@ -369,16 +380,78 @@ export function AndromedaComponentView({
           </div>
 
           {tab === 'preview' && (
-            <div className="flex items-center gap-2">
-            <AndromedaThemeToggle />
-            <div className="group/fullscreen relative">
-              <Button variant="accent" size="md" iconOnly aria-label="Full screen" onClick={() => setFullscreen(true)}>
-                <CornersOut weight="regular" size={16} />
-              </Button>
-              <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-700 bg-sand-800 px-2.5 py-1.5 text-xs text-sand-300 group-hover/fullscreen:block">
-                Full screen
+            <div className="flex items-center gap-0.5 sm:gap-2">
+              {/* Theme toggle — one icon-only button whose icon and tooltip
+                  swap with the current preview theme, matching the standalone
+                  component page's control (app/components/[slug]/ComponentPageView.tsx).
+                  Replaces the old sun+moon segmented pair (AndromedaThemeToggle):
+                  the maintainer's ruling 2026-09-10 is that Pro's preview card
+                  shows the same three top-right controls the standalone does. */}
+              <div className="group/toggle relative">
+                <Button
+                  variant="outline"
+                  size="md"
+                  iconOnly
+                  onClick={() => previewTheme?.setTheme(previewTheme.theme === 'dark' ? 'light' : 'dark')}
+                  className="overflow-hidden"
+                  // Named for the PREVIEW, not the site: the nav's own toggle already
+                  // carries "Switch to light theme", and two controls answering to the
+                  // same name is the one thing a screen-reader user cannot tell apart.
+                  aria-label={
+                    previewTheme?.theme === 'dark'
+                      ? 'Switch the preview to light theme'
+                      : 'Switch the preview to dark theme'
+                  }
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    {previewTheme?.theme === 'dark' ? (
+                      <motion.span
+                        key="moon"
+                        initial={{ y: 12, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -12, opacity: 0 }}
+                        transition={{ duration: 0.18 }}
+                      >
+                        <Moon weight="regular" size={16} />
+                      </motion.span>
+                    ) : (
+                      <motion.span
+                        key="sun"
+                        initial={{ y: 12, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -12, opacity: 0 }}
+                        transition={{ duration: 0.18 }}
+                      >
+                        <Sun weight="regular" size={16} />
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </Button>
+                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/toggle:block">
+                  {previewTheme?.theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
+                </div>
               </div>
-            </div>
+
+              {/* Refresh — remounts the previewed instance via previewKey so
+                  an animated component replays, mirroring the standalone's
+                  refreshPreview(). */}
+              <div className="group/refresh relative">
+                <Button variant="outline" size="md" iconOnly onClick={refreshPreview} aria-label="Restart animation">
+                  <ArrowClockwise weight="regular" size={16} />
+                </Button>
+                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/refresh:block">
+                  Refresh
+                </div>
+              </div>
+
+              <div className="group/fullscreen relative">
+                <Button variant="accent" size="md" iconOnly aria-label="Full screen" onClick={() => setFullscreen(true)}>
+                  <CornersOut weight="regular" size={16} />
+                </Button>
+                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
+                  Full screen
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -395,7 +468,7 @@ export function AndromedaComponentView({
               // The theme channel: light sets --at-surface-base on the wrap.
               style={{ backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }}
             >
-              {!fullscreen && spec ? <MatrixSolo spec={spec} label={SOLO_HERO_CASE} /> : null}
+              {!fullscreen && spec ? <MatrixSolo key={previewKey} spec={spec} label={SOLO_HERO_CASE} /> : null}
             </div>
           ) : (
             <div
@@ -862,6 +935,7 @@ export function AndromedaComponentView({
               <button
                 type="button"
                 onClick={() => setFullscreen(false)}
+                aria-label="Close fullscreen preview"
                 className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
               >
                 <CornersIn weight="regular" size={17} />
