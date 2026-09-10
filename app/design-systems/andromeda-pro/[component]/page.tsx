@@ -7,6 +7,28 @@ import {
 import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
 import { AndromedaComponentView } from './AndromedaComponentView'
 import { AndromedaThemeWrap } from '../AndromedaThemeWrap'
+import { readFileSync } from 'fs'
+import { join } from 'path'
+import { getSessionEntitlement } from '../../../lib/entitlement'
+import { splitSystemPromptAtPaywall } from '../../../../lib/registry/prompt-blocks'
+
+/**
+ * The remix prompt for one Andromeda Pro component, or null.
+ *
+ * Bundled by scripts/inject-premium.mjs from the vault into an underscore-
+ * prefixed file the /r route can never serve, and read here at request time.
+ * Absent or unreadable means no prompt: the page renders no Remix panel, which
+ * is the state every page was in before this lane existed.
+ */
+function readSystemPrompt(sourceFile: string): string | null {
+  try {
+    const raw = readFileSync(join(process.cwd(), 'registry-data', '_andromeda-prompts.json'), 'utf8')
+    const { prompts } = JSON.parse(raw) as { prompts: Record<string, string> }
+    return prompts[sourceFile.replace(/\.tsx?$/, '')] ?? null
+  } catch {
+    return null
+  }
+}
 
 export function generateStaticParams() {
   return ANDROMEDA_COMPONENTS.map((c) => ({ component: c.slug }))
@@ -51,6 +73,34 @@ export default async function AndromedaComponentPage({
   // public either way. Threaded to the client so the install CTAs swap.
   const freeAccountGate = process.env.FREE_ACCOUNT_GATE === 'on'
 
+  // ── Prompt gate ──────────────────────────────────────────────────────────
+  // Andromeda Pro is free to explore, PAID to install (ruling 2026-08-30, names
+  // 2026-09-10), and its remix prompt is paid content like its source. A viewer
+  // without a premium entitlement gets the opening and the first section only;
+  // everything that actually rebuilds the component is dropped HERE, server
+  // side, and never reaches the client. The bytes cannot be recovered from the
+  // page. Same fail-closed posture as /r: an entitlement read that throws is
+  // treated as not entitled.
+  const fullPrompt = readSystemPrompt(entry.sourceFile)
+  let promptLocked = false
+  let remixPrompt = fullPrompt
+  if (fullPrompt) {
+    let viewerIsPremium = false
+    try {
+      viewerIsPremium = (await getSessionEntitlement()).tier === 'premium'
+    } catch {
+      // Fail CLOSED. Worst case a subscriber sees the public head for one
+      // render, never the reverse.
+    }
+    if (!viewerIsPremium) {
+      const split = splitSystemPromptAtPaywall(fullPrompt)
+      // Unredactable is not the same as harmless: with no known seam the prompt
+      // is withheld whole, which hides the panel.
+      remixPrompt = split ? split.head : null
+      promptLocked = true
+    }
+  }
+
   // Source is NOT shipped in this page's HTML — the Code tab fetches it on
   // demand from the gated /api/component-code endpoint, so access is decided
   // per user, never by a build-time flag.
@@ -65,6 +115,8 @@ export default async function AndromedaComponentPage({
         related={related}
         propTables={propTables}
         freeAccountGate={freeAccountGate}
+        remixPrompt={remixPrompt}
+        promptLocked={promptLocked}
       />
     </AndromedaThemeWrap>
   )

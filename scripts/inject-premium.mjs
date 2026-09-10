@@ -1037,6 +1037,35 @@ if (freePaths.length > 0) {
 // gated brain page, and write the paywall teaser module (names/counts only).
 // Absent/empty key → no bundle, fallback teaser (older pins stay green).
 const brains = Array.isArray(manifest.brains) ? [...manifest.brains] : []
+// ── Design-system remix prompts ─────────────────────────────────────────────
+// One hand-written markdown brief per Andromeda Pro component, authored in the
+// vault at design-systems/<system>/prompts/<Name>.md. This is PAID content: it
+// lands in an underscore-prefixed file, which the /r route's filename regex
+// refuses to serve, and reaches a page only through the server-side gate in
+// app/design-systems/andromeda-pro/[component]/page.tsx.
+//
+// Absent-tolerant on purpose: the prompts are being authored on their own vault
+// branch, so a source without them writes an empty bundle and every page simply
+// renders no Remix panel, exactly as it did before this lane existed.
+for (const system of v2Systems) {
+  const promptDir = join(source, 'design-systems', system, 'prompts')
+  const prompts = {}
+  if (existsSync(promptDir)) {
+    for (const f of readdirSync(promptDir).sort()) {
+      if (!/^[A-Z][A-Za-z0-9]*\.md$/.test(f)) continue
+      prompts[f.replace(/\.md$/, '')] = stripMarkerBlock(readFileSync(join(promptDir, f), 'utf8'))
+    }
+  }
+  writeFileSync(
+    join(REGISTRY_DATA, `_${system}-prompts.json`),
+    JSON.stringify({ generatedAt: builtSha ?? 'local', prompts }, null, 2) + '\n',
+  )
+  const n = Object.keys(prompts).length
+  log(n > 0
+    ? `bundled ${n} remix prompt(s) for "${system}" → registry-data/_${system}-prompts.json`
+    : `no remix prompts in the source for "${system}" — empty bundle, panels stay hidden`)
+}
+
 const brainSlugs = []
 let andromedaTeaser = null
 for (const slug of brains) {

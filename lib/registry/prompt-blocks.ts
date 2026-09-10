@@ -53,3 +53,37 @@ export function splitPromptAtPaywall(prompt: string): { head: string } | null {
   if (LOCKED_HEADINGS.some((h) => headingHits(head, h).length > 0)) return null
   return { head }
 }
+
+/**
+ * The paywall seam for a DESIGN-SYSTEM prompt.
+ *
+ * These are not scaffold prompts. Each is one hand-written markdown brief,
+ * 400 to 900 words, whose section headings differ per component (`## API`,
+ * `## Geometry`, `## Motion`, …), so the fixed seven-block cut above matches
+ * none of them and would withhold every one whole.
+ *
+ * The seam here is structural rather than named: the opening paragraphs plus
+ * the FIRST section are public, everything from the second heading on is
+ * withheld. The opening says what the component is and the first section is
+ * almost always its prop table — enough to judge whether it is worth paying
+ * for — while the values, geometry and motion that actually rebuild it sit
+ * below the cut.
+ *
+ * Fails closed, like its scaffold sibling: a prompt with fewer than two
+ * headings cannot be redacted at a known seam, so the caller withholds it
+ * whole rather than guessing where to stop.
+ */
+export function splitSystemPromptAtPaywall(prompt: string): { head: string } | null {
+  // Headings at line start only, so a `## ` quoted inside a fenced code block
+  // in the opening cannot move the cut.
+  const heads: number[] = []
+  const re = /^##\s+\S.*$/gm
+  for (let m = re.exec(prompt); m; m = re.exec(prompt)) heads.push(m.index)
+  if (heads.length < 2) return null
+
+  const head = prompt.slice(0, heads[1]).trimEnd()
+  // Assert on the output: exactly one section may survive the cut.
+  const kept = head.match(/^##\s+\S.*$/gm) ?? []
+  if (kept.length !== 1) return null
+  return { head }
+}

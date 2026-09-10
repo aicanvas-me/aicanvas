@@ -303,6 +303,10 @@ try {
     expectedNames.add(`${b}-brain`)
   }
 } catch { /* no _premium.json — no brain files to preserve */ }
+// The remix-prompt bundles inject-premium writes, one per whole-system design
+// system. Underscore-prefixed so /r can never serve them; reserved here or the
+// stale-file sweep below deletes them on every generate.
+for (const ds of SYSTEMS) expectedNames.add(`_${ds.slug}-prompts`)
 // Reserve filenames for design systems (tokens + per-component + system +
 // templates) so they survive the stale-file cleanup pass.
 function componentSlug(systemSlug, fileBaseName) {

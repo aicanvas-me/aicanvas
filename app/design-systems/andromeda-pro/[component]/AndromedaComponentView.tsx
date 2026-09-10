@@ -13,7 +13,11 @@ import {
   CornersIn,
   CornersOut,
   Eye,
+  Lightning,
+  LockSimple,
+  Sparkle,
   Terminal,
+  X,
 } from '@phosphor-icons/react'
 import { Step } from '../../../components/Step'
 import { AndromedaThemeToggle, useAndromedaPreviewTheme } from '../AndromedaThemeWrap'
@@ -32,6 +36,8 @@ import { SPEC_BY_SLUG, matrixId } from '../../../_lib/andromeda-pro/matrix'
 import { andromedaRegistrySlug } from '../../../_lib/andromeda-pro/andromeda-meta'
 import { tokens } from '../../../lib/andromeda-v2.generated'
 import { trackInstall } from '../../../lib/track-install'
+import { track } from '../../../lib/analytics'
+import { usePaywallModal } from '../../../components/billing/PaywallModalProvider'
 import { useSession } from '../../../components/auth/SessionProvider'
 import { useAuthModal } from '../../../components/auth/AuthModalProvider'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
@@ -53,6 +59,14 @@ interface Props {
   // design-system component sees a "create a free account to install" CTA in
   // place of the runnable command. Reading the source (Code tab) stays public.
   freeAccountGate?: boolean
+  /**
+   * The component's remix prompt, already cut at the paywall server-side. Null
+   * when the vault ships none for this component, or when the prompt had no
+   * seam to cut at — either way the Remix affordance is not offered at all.
+   */
+  remixPrompt?: string | null
+  /** True when what arrived is the free head, not the whole prompt. */
+  promptLocked?: boolean
 }
 
 // Same chip and panel chrome the sibling system's component pages use, so the
@@ -83,6 +97,8 @@ export function AndromedaComponentView({
   related,
   propTables = [],
   freeAccountGate = false,
+  remixPrompt = null,
+  promptLocked = false,
 }: Props) {
   const { preferences, user } = useSession()
   const { open: openAuthModal } = useAuthModal()
@@ -121,6 +137,9 @@ export function AndromedaComponentView({
   const [tab, setTab] = useState<'preview' | 'code'>('preview')
   const [codeCopied, setCodeCopied] = useState(false)
   const [cliCopied, setCliCopied] = useState(false)
+  const [remixOpen, setRemixOpen] = useState(false)
+  const { open: openPaywallModal } = usePaywallModal()
+  const [promptCopied, setPromptCopied] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
   // Portalled overlay: React context crosses the portal, CSS inheritance does
   // not, so the panel re-spreads the theme set itself (see the overlay style).
@@ -396,16 +415,36 @@ export function AndromedaComponentView({
           )}
         </div>
 
-        {/* Action bar — Andromeda system components are coherence-oriented;
-            Remix with AI deliberately omitted because mutating a system
-            component breaks the system contract. Users compose AT the
-            system level, not per-component. */}
+        {/* Action bar. Remix with AI was omitted here for a long time on the
+            reasoning that mutating a system component breaks the system
+            contract and that people compose AT the system level. The maintainer
+            reversed that on 2026-09-10 for Andromeda Pro: the prompt is part of
+            what the tier sells, so it is offered per component, behind the same
+            paywall as the source. Andromeda Legacy keeps the original
+            behaviour and has no Remix button. */}
         <div className="flex items-center justify-end gap-2 border-t border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           {/* Save — signed out, opens the same soft-gate modal as Copy CLI.
               Keyed on the REGISTRY slug (not the page slug) so the Button
               override (andromeda-button-system) can't collide with the free
               standalone's own save entry (andromeda-button). */}
           <SaveButton slug={registrySlug} system="andromeda-pro" />
+
+          {/* Remix with AI — only when a prompt actually exists for this
+              component. No prompt, no button: an affordance that opens an
+              empty panel is worse than none. */}
+          {remixPrompt && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                track('Remix Open', { component: registrySlug })
+                setRemixOpen(true)
+              }}
+            >
+              <Sparkle weight="regular" size={15} />
+              Remix with AI
+            </Button>
+          )}
 
           {/* Copy CLI — the button and command stay visible at all times; when
               the install is account-gated and the visitor is signed out,
@@ -865,6 +904,103 @@ export function AndromedaComponentView({
               </p>
             </div>
           </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+
+    {/* Remix panel — the prompt that rebuilds this component in any AI tool.
+        What arrived is already cut server-side, so a locked viewer literally
+        does not have the withheld bytes on the page. */}
+    <AnimatePresence>
+      {remixOpen && remixPrompt && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[1200] flex justify-end bg-sand-950/50"
+          onClick={() => setRemixOpen(false)}
+        >
+          <motion.aside
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'spring', damping: 30, stiffness: 260 }}
+            onClick={(e) => e.stopPropagation()}
+            className="flex h-full w-full max-w-xl flex-col overflow-y-auto bg-sand-50 p-6 dark:bg-sand-900"
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="flex items-center gap-2 text-lg font-bold text-sand-900 dark:text-sand-50">
+                  Remix {name} with AI
+                  <span className="inline-flex items-center gap-1 rounded-full border border-olive-500/40 px-2 py-0.5 text-xxs font-semibold uppercase tracking-wider text-olive-700 dark:text-olive-400">
+                    <Lightning weight="regular" size={11} />
+                    Premium
+                  </span>
+                </h2>
+                <p className="mt-1 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  Written against the real source. Works in Claude, Cursor, ChatGPT, or any AI tool you use.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRemixOpen(false)}
+                aria-label="Close"
+                className="shrink-0 rounded-lg border border-sand-300 p-2 text-sand-600 transition-colors hover:text-sand-900 dark:border-sand-700 dark:text-sand-400 dark:hover:text-sand-100"
+              >
+                <X weight="regular" size={16} />
+              </button>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between gap-3">
+              <h3 className="text-sm font-semibold text-sand-900 dark:text-sand-50">
+                AI prompt for {name}
+              </h3>
+              {promptLocked ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openPaywallModal({ reason: 'premium-only' })}
+                >
+                  <LockSimple weight="regular" size={14} />
+                  Unlock full prompt
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    void navigator.clipboard.writeText(remixPrompt).then(() => {
+                      setPromptCopied(true)
+                      setTimeout(() => setPromptCopied(false), 2000)
+                    })
+                  }}
+                >
+                  {promptCopied ? <Check weight="regular" size={14} /> : <Copy weight="regular" size={14} />}
+                  {promptCopied ? 'Copied!' : 'Copy prompt'}
+                </Button>
+              )}
+            </div>
+
+            <div className="relative mt-3">
+              <pre
+                className={`overflow-x-auto whitespace-pre-wrap rounded-xl bg-sand-200 p-4 font-mono text-xs leading-relaxed text-sand-800 dark:bg-sand-950 dark:text-sand-300 ${
+                  promptLocked ? '[mask-image:linear-gradient(to_bottom,black_55%,transparent)]' : ''
+                }`}
+              >
+                {remixPrompt}
+              </pre>
+              {promptLocked && (
+                <div className="absolute inset-x-0 bottom-0 [--paywall-surface:var(--color-sand-200)] dark:[--paywall-surface:var(--color-sand-950)]">
+                  <Paywall
+                    reason="premium-only"
+                    appearance="themed"
+                    name={name}
+                    subtitle="The full prompt ships with Premium."
+                  />
+                </div>
+              )}
+            </div>
+          </motion.aside>
         </motion.div>
       )}
     </AnimatePresence>
