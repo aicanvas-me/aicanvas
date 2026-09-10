@@ -970,6 +970,7 @@ const FREE_GATE_NOTE = 'Free account required to install; source is free to read
 const PREMIUM_GATE_NOTE = 'Requires AI Canvas Premium to install.'
 const gate = {
   systems: new Set(manifest.systemSlugs),
+  paidSystems: new Set(manifest.paidSystemSlugs),
   dsComponents: new Set(manifest.designSystemSlugs),
   templates: new Set(manifest.templateSlugs),
   premiumStandalones: new Set(manifest.premiumSlugs),
@@ -980,8 +981,17 @@ function gateNoteFor(name) {
   if (gate.templates.has(name)) return PREMIUM_GATE_NOTE
   if (gate.brains.has(name)) return PREMIUM_GATE_NOTE
   for (const system of gate.systems) {
-    if (name === `${system}-tokens`) return null // meta: free, anonymous install
+    // A PAID system's foundation is premium like the rest of it; only a free
+    // system's tokens are the anonymous shared dependency. This branch must
+    // stay in step with classifyContent(), or the catalog advertises a free
+    // install for something /r gates.
+    if (name === `${system}-tokens`) {
+      return gate.paidSystems.has(system) ? PREMIUM_GATE_NOTE : null
+    }
     if (name === system || name === `${system}-all`) return PREMIUM_GATE_NOTE
+  }
+  for (const system of gate.paidSystems) {
+    if (name.startsWith(`${system}-`) && gate.dsComponents.has(name)) return PREMIUM_GATE_NOTE
   }
   if (gate.dsComponents.has(name)) return FREE_GATE_NOTE
   if (gate.premiumStandalones.has(name)) return PREMIUM_GATE_NOTE
