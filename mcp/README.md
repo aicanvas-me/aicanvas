@@ -1,6 +1,6 @@
 # `@aicanvas/mcp`
 
-[![Listed on mcpservers.org](https://mcpservers.org/badge.svg)](https://mcpservers.org/servers/uinerd16/aicanvas)
+<a href="https://mcpservers.org/servers/uinerd16/aicanvas"><img src="https://raw.githubusercontent.com/aicanvas-me/aicanvas/main/assets/readme-buttons/btn-mcpservers-sm.png" alt="Listed on mcpservers.org" height="28" /></a>
 
 Model Context Protocol server for [AI Canvas](https://aicanvas.me). Lets your AI editor (Claude Code, Cursor, Claude Desktop, Codex) discover and install AI Canvas components without leaving the chat.
 
