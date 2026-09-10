@@ -12,6 +12,7 @@ import { DESIGN_SYSTEMS } from '../../../../scripts/lib/design-systems.config.mj
 import { AndromedaGallery } from '../system/AndromedaGallery'
 import { CATEGORY } from '../system/categories'
 import { COMPONENT_COUNTS } from '../system/component-counts'
+import { firstSentence } from '../system/first-sentence'
 
 export const metadata = {
   title: 'Components · Andromeda Design System',
@@ -22,11 +23,6 @@ export const metadata = {
 
 // Catalog descriptions are one sentence, so this is a no-op today. It stays as
 // the guard: a card gets the first sentence if a longer one is ever written.
-const firstSentence = (text: string) => {
-  const end = text.indexOf('. ')
-  return end === -1 ? text : text.slice(0, end + 1)
-}
-
 export default function ShowcasePage() {
   const andromeda = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-pro')
 

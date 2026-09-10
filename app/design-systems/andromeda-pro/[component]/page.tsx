@@ -9,6 +9,7 @@ import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
 import { AndromedaComponentView } from './AndromedaComponentView'
 import { AndromedaThemeWrap } from '../AndromedaThemeWrap'
 import { COMPONENT_COUNTS } from '../system/component-counts'
+import { firstSentence } from '../system/first-sentence'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { getSessionEntitlement } from '../../../lib/entitlement'
@@ -50,7 +51,7 @@ export async function generateMetadata({
   const entry = getAndromedaComponent(component)
   if (!entry) return {}
   return {
-    title: `${entry.name} · Andromeda Design System`,
+    title: `${entry.name} · Andromeda Pro Design System`,
     description: entry.description,
     alternates: { canonical: `/design-systems/andromeda-pro/${entry.slug}` },
   }
@@ -78,7 +79,10 @@ export default async function AndromedaComponentPage({
     (c) => ({
       slug: c.slug,
       name: c.name,
-      description: c.description,
+      // First sentence only, exactly as the index page cuts it: the card is the
+      // same component on both surfaces, so a two-sentence description must not
+      // make this one taller than its twin.
+      description: firstSentence(c.description),
       variants: COMPONENT_COUNTS[c.slug]?.variants ?? 0,
       states: COMPONENT_COUNTS[c.slug]?.states ?? 0,
     }),

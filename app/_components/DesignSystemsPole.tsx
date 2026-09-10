@@ -124,9 +124,11 @@ export function DesignSystemsPole({
       </div>
       <ul className="space-y-0.5">
           {SYSTEMS.map((system) => {
-            // Only the bare overview highlights the system row; /system has its
-            // own child row below, so highlighting both read as a double-select.
-            const systemActive = pathname === `/design-systems/${system.slug}`
+            // The system row never highlights: every page under it, the bare
+            // overview included, now has its own child row (Overview, added
+            // 2026-09-10). It used to light on the overview path, which is the
+            // same path the Overview child claims, so both lit at once and the
+            // pole read as a double-select.
             const systemSelected = activeSystem?.slug === system.slug
             // Closed by default. A hand toggle wins in both directions; with
             // no toggle yet, only the system you are inside opens.
@@ -138,11 +140,7 @@ export function DesignSystemsPole({
                     valid markup, so they sit side by side and share the row's
                     hover ground. */}
                 <div
-                  className={`group flex items-center gap-2 rounded-md pr-1 text-sm font-medium transition-colors ${
-                    systemActive
-                      ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                  }`}
+                  className="group flex items-center gap-2 rounded-md pr-1 text-sm font-medium text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                 >
                   <Link
                     href={`/design-systems/${system.slug}`}
