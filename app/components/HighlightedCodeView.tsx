@@ -8,7 +8,7 @@
 export function HighlightedCodeView({ html }: { html: string }) {
   return (
     <div
-      className="font-mono text-[13px] leading-relaxed [&_pre]:!bg-transparent [&_pre]:m-0 [&_pre]:p-0 [&_pre]:whitespace-pre-wrap [&_pre]:break-words"
+      className="font-mono text-[13px] leading-relaxed [&_pre]:!bg-transparent [&_pre]:m-0 [&_pre]:p-0 [&_pre]:whitespace-pre-wrap [&_pre]:break-words dark:[&_pre]:!text-[var(--shiki-dark)] dark:[&_span]:!text-[var(--shiki-dark)]"
       dangerouslySetInnerHTML={{ __html: html }}
     />
   )

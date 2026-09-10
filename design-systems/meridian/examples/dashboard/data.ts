@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // MERIDIAN DEMO DATA
 // ============================================================
@@ -36,21 +35,21 @@ export const projects = [
   { name: 'Mobile App Rewrite',      status: 'active',  owner: 'Sam Reyes', progress: 92, due: 'May 10' },
   { name: 'Data Pipeline',           status: 'info',    owner: 'Morgan T.', progress: 60, due: 'Apr 22' },
   { name: 'Auth Service',            status: 'error',   owner: 'Alex Kim',  progress: 30, due: 'Apr 12' },
-];
+] as const;
 
 export const statusBadgeVariant = {
   active:  'success',
   warning: 'warning',
   error:   'error',
   info:    'info',
-};
+} as const;
 
 export const statusBadgeLabel = {
   active:  'Active',
   warning: 'At Risk',
   error:   'Blocked',
   info:    'In Review',
-};
+} as const;
 
 // ---- Activity feed ----
 export const activities = [

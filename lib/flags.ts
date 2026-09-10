@@ -3,26 +3,19 @@ export function isPremiumEnabled(raw: string | undefined): boolean {
   return raw === 'true'
 }
 
-/**
- * Master switch for all premium/subscription UI (and, later, enforcement).
- * Off = today's fully-free site. This is also the kill switch.
- * NEXT_PUBLIC_ so client components can branch on it; the value is inlined
- * at build time on both server and client.
- */
+/** Master switch and kill switch for all premium UI. NEXT_PUBLIC_ so client
+ *  components can branch on it; the value is inlined at build time. */
 export function premiumEnabled(): boolean {
   return isPremiumEnabled(process.env.NEXT_PUBLIC_PREMIUM_ENABLED)
 }
 
 /** Pure reader for the checkout coming-soon flag; defaults to off. */
-export function isCheckoutComingSoon(raw: string | undefined): boolean {
+function isCheckoutComingSoon(raw: string | undefined): boolean {
   return raw === 'true'
 }
 
-/**
- * When true, the upgrade CTA renders as a disabled "Coming soon" button even
- * if Paddle is configured. Flip to false (and set the live Paddle keys) to go
- * live. NEXT_PUBLIC_ so the client button can branch.
- */
+/** Renders the upgrade CTA as a disabled "Coming soon" button even when Paddle
+ *  is configured. NEXT_PUBLIC_ so the client button can branch. */
 export function checkoutComingSoon(): boolean {
   return isCheckoutComingSoon(process.env.NEXT_PUBLIC_CHECKOUT_COMING_SOON)
 }

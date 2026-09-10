@@ -12,11 +12,11 @@ const linkCls = 'transition-colors hover:text-sand-700 dark:hover:text-sand-200'
 
 export function SiteFooter() {
   return (
-    <footer className="mt-8 border-t border-sand-300 pt-8 dark:border-sand-800">
-      <p className="text-xs text-sand-500">© 2026 AI Canvas - AI Native Components, Design Systems and Templates</p>
+    <footer className="mt-8 border-t border-sand-200 pt-8 dark:border-sand-800">
+      <p className="text-xs text-sand-600 dark:text-sand-500">© 2026 AI Canvas - AI Native Components, Design Systems and Templates</p>
       <nav
         aria-label="Footer"
-        className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-sand-500"
+        className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-sand-600 dark:text-sand-500"
       >
         <Link href="/components" className={linkCls}>
           Components

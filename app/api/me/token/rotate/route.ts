@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { randomBytes } from 'node:crypto'
-import { createClient } from '@/app/lib/supabase/server'
+import { sessionUser, unauthenticated } from '@/app/lib/require-user'
 import { createAdminClient } from '@/app/lib/supabase/admin'
 
 export const runtime = 'nodejs'
@@ -12,9 +12,8 @@ export const runtime = 'nodejs'
  * fix for a leaked token. Tokens never expire on their own.
  */
 export async function POST() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  const { user } = await sessionUser()
+  if (!user) return unauthenticated()
 
   const token = 'aic_' + randomBytes(24).toString('hex')
   const admin = createAdminClient()

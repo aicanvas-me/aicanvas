@@ -47,8 +47,10 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
 
     expect(res.status).toBe(200)
     expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
-    // Steers the user to create a free account.
+    // Steers the user to create a free account, and existing accounts to the
+    // tokened install command in settings.
     expect(body).toContain('account/sign-up')
+    expect(body).toContain('account/settings')
     // ZERO real source: the stub must not leak the component's actual code.
     expect(body).not.toContain('useState')
     expect(body).not.toContain('useEffect')
@@ -137,6 +139,8 @@ describe.skipIf(!brainAvailable)('GET /r/andromeda-brain.json — mode-independe
     expect(item.files).toHaveLength(1)
     expect(item.files[0].target).toContain('BRAIN-LOCKED.md')
     expect(item.files[0].content).toContain('aicanvas.me/pricing')
+    // A subscribed-but-untokened CLI must learn where its command lives.
+    expect(item.files[0].content).toContain('account/settings')
   })
 
   it("signed-in 'free' tier → same locked placeholder", async () => {
@@ -204,6 +208,8 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
 
     expect(res.status).toBe(200) // never a cryptic 402
     expect(body).toContain('aicanvas.me/pricing')
+    // A subscribed-but-untokened CLI must learn where its command lives.
+    expect(body).toContain('account/settings')
     // EVERY file's content is the placeholder — zero real component source
     // (the real file paths remain, but their bodies are all stubbed out).
     const item = JSON.parse(body)

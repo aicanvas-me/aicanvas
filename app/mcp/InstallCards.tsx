@@ -123,7 +123,7 @@ const SCOPES: { id: Scope; label: string; desc: React.ReactNode }[] = [
     desc: (
       <>
         Run this in your project root. Saved to{' '}
-        <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+        <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
           .mcp.json
         </code>{' '}
         and shared through git, so everyone on the project gets it. Best for
@@ -164,10 +164,10 @@ function Toast({ message }: { message: string | null }) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 12, opacity: 0 }}
           transition={{ type: 'spring', stiffness: 380, damping: 30 }}
-          className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-2 rounded-full border border-sand-300 bg-sand-50/95 px-4 py-2.5 text-sm font-semibold text-sand-900 shadow-xl backdrop-blur dark:border-sand-700 dark:bg-sand-800/95 dark:text-sand-50"
+          className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-2 rounded-full border border-sand-200 bg-sand-100/95 px-4 py-2.5 text-sm font-semibold text-sand-900 shadow-xl backdrop-blur dark:border-sand-700 dark:bg-sand-800/95 dark:text-sand-50"
           role="status"
         >
-          <Check weight="regular" size={15} className="text-olive-500" />
+          <Check weight="regular" size={15} className="text-olive-600 dark:text-olive-500" />
           {message}
         </motion.div>
       ) : null}
@@ -192,20 +192,20 @@ function CodeBlock({
 }) {
   return (
     <div
-      className={`flex gap-3 rounded-lg bg-sand-950 px-4 py-3.5 ${
+      className={`flex gap-3 rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3.5 ${
         multiline ? 'items-start' : 'items-center justify-between'
       }`}
     >
       {multiline ? (
         <pre
-          className="min-w-0 flex-1 overflow-x-auto font-mono text-sm leading-relaxed text-sand-300"
+          className="min-w-0 flex-1 overflow-x-auto font-mono text-sm leading-relaxed text-sand-700 dark:text-sand-300"
           style={NO_LIGATURES}
         >
           {command}
         </pre>
       ) : (
         <code
-          className="block min-w-0 flex-1 overflow-x-auto font-mono text-sm text-sand-300"
+          className="block min-w-0 flex-1 overflow-x-auto font-mono text-sm text-sand-700 dark:text-sand-300"
           style={NO_LIGATURES}
         >
           {command}
@@ -214,7 +214,7 @@ function CodeBlock({
       <button
         type="button"
         onClick={onCopy}
-        className="shrink-0 rounded-md p-1.5 text-sand-500 transition-all hover:text-sand-200 active:scale-90"
+        className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
         aria-label={`Copy ${label}`}
       >
         {copied ? (
@@ -285,9 +285,9 @@ export function InstallCards() {
         How to install the MCP
       </h2>
       {/* Tabbed install widget — matches the per-component "Add to your project" */}
-      <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
+      <div className="overflow-hidden rounded-xl border border-sand-200 dark:border-sand-800">
         {/* Tool toggle — Claude Code / Codex / Cursor */}
-        <div className="flex gap-1.5 border-b border-sand-300 bg-sand-100 p-1.5 dark:border-sand-800 dark:bg-sand-900">
+        <div className="flex gap-1.5 border-b border-sand-200 bg-sand-100 p-1.5 dark:border-sand-800 dark:bg-sand-900">
           {TOOLS.map((t) => {
             const active = tool === t.id
             return (
@@ -303,7 +303,7 @@ export function InstallCards() {
                 className={`relative flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 text-xs font-semibold transition-colors sm:gap-2 sm:px-4 sm:text-sm ${
                   active
                     ? 'text-sand-900 dark:text-sand-50'
-                    : 'text-sand-500 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
+                    : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
                 }`}
               >
                 {active && (
@@ -324,7 +324,7 @@ export function InstallCards() {
 
         {/* Scope tabs — Claude Code only (Codex/Cursor have no --scope) */}
         {tool === 'claude' && (
-          <div className="flex overflow-x-auto border-b border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
+          <div className="flex overflow-x-auto border-b border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
             {SCOPES.map((s) => {
               const active = scope === s.id
               return (
@@ -336,14 +336,14 @@ export function InstallCards() {
                   className={`relative whitespace-nowrap px-4 py-2.5 text-sm font-semibold transition-colors ${
                     active
                       ? 'text-sand-900 dark:text-sand-50'
-                      : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                      : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
                   {s.label}
                   {active && (
                     <motion.span
                       layoutId="mcpScopeUnderline"
-                      className="absolute inset-x-0 -bottom-px h-px bg-sand-900 dark:bg-sand-50"
+                      className="absolute inset-x-0 -bottom-px h-0.5 bg-sand-900 dark:h-px dark:bg-sand-50"
                       transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                     />
                   )}
@@ -371,11 +371,11 @@ export function InstallCards() {
                 </a>
                 <p className="mb-2.5 mt-5 text-sm text-sand-600 dark:text-sand-400">
                   Or paste this into{' '}
-                  <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                  <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                     ~/.cursor/mcp.json
                   </code>{' '}
                   (global) or{' '}
-                  <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                  <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                     .cursor/mcp.json
                   </code>{' '}
                   (one project):
@@ -418,7 +418,7 @@ export function InstallCards() {
               </>
             )}
             {tokenLoaded && (userToken ? (
-              <p className="mt-3 text-sm text-sand-500 dark:text-sand-400">
+              <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">
                 Your token is baked into the command above, so installs can pull
                 source. View or rotate it in your{' '}
                 <Link
@@ -430,7 +430,7 @@ export function InstallCards() {
                 .
               </p>
             ) : (
-              <p className="mt-3 text-sm text-sand-500 dark:text-sand-400">
+              <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">
                 <Link
                   href="/account/settings"
                   className="font-medium text-sand-700 underline underline-offset-2 hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-50"
@@ -448,7 +448,7 @@ export function InstallCards() {
             <p className="text-sm text-sand-600 dark:text-sand-400">
               {isCursor ? 'Reload the Cursor window.' : `Restart ${toolLabel}.`}{' '}
               The{' '}
-              <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+              <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                 aicanvas
               </code>{' '}
               MCP loads automatically.
@@ -460,7 +460,7 @@ export function InstallCards() {
               <p className="text-sm text-sand-600 dark:text-sand-400">
                 Test it. Ask {askLabel}:
               </p>
-              <span className="ml-auto shrink-0 rounded-full bg-sand-200 px-2 py-0.5 text-xs font-medium text-sand-400 dark:bg-sand-800 dark:text-sand-500">
+              <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">
                 Optional
               </span>
             </div>

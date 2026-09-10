@@ -19,9 +19,9 @@ function readScale(prefix: string): { token: string; hex: string }[] {
 }
 
 const SAND_USAGE: Record<string, string> = {
-  'sand-50': 'Elevated surfaces, hover fills',
+  'sand-50': 'Page background (light)',
   'sand-100': 'Card background (light), input fills',
-  'sand-200': 'Page background (light)',
+  'sand-200': 'Code and install slabs (light)',
   'sand-300': 'Borders (light), dividers',
   'sand-400': 'Muted borders, placeholder icons',
   'sand-500': 'Secondary text (light)',
@@ -35,7 +35,9 @@ const SAND_USAGE: Record<string, string> = {
 const OLIVE_USAGE: Record<string, string> = {
   'olive-400': 'Hover accent, gradient end',
   'olive-500': 'Primary accent: buttons, badges, logo',
-  'olive-600': 'Pressed or darker accent state',
+  'olive-600': 'Light-mode accent text, pressed state',
+  'olive-700': 'Selection highlight',
+  'olive-800': 'Light-mode accent hover',
 }
 
 const EMBER_USAGE: Record<string, string> = {
@@ -72,14 +74,16 @@ const TYPOGRAPHY = [
 // ─── Semantic mappings ───────────────────────────────────────────────────────
 
 const SEMANTIC_ROLES = [
-  { role: 'Page background', light: 'bg-sand-200', dark: 'bg-sand-950' },
+  { role: 'Page background', light: 'bg-sand-50', dark: 'bg-sand-950' },
   { role: 'Card / surface', light: 'bg-sand-100', dark: 'bg-sand-900' },
-  { role: 'Elevated (navbar)', light: 'bg-sand-200/90', dark: 'bg-sand-950/90' },
+  { role: 'Elevated (navbar)', light: 'bg-sand-50/90', dark: 'bg-sand-950/90' },
   { role: 'Primary text', light: 'text-sand-900', dark: 'text-sand-50' },
+  { role: 'Body text', light: 'text-sand-700', dark: 'text-sand-300' },
   { role: 'Secondary text', light: 'text-sand-600', dark: 'text-sand-400' },
-  { role: 'Border default', light: 'border-sand-300', dark: 'border-sand-800' },
-  { role: 'Border hover', light: 'border-sand-400', dark: 'border-sand-700' },
-  { role: 'Accent', light: 'text-olive-500', dark: 'text-olive-400' },
+  { role: 'Border default', light: 'border-sand-200', dark: 'border-sand-800' },
+  { role: 'Border hover', light: 'border-sand-300', dark: 'border-sand-700' },
+  { role: 'Accent', light: 'text-olive-600', dark: 'text-olive-400' },
+  { role: 'Accent hover', light: 'text-olive-800', dark: 'text-olive-300' },
   { role: 'Secondary accent', light: 'text-ember-500', dark: 'text-ember-400' },
   { role: 'Highlight (occasional)', light: 'text-cyan-600', dark: 'text-cyan-400' },
 ]
@@ -122,15 +126,15 @@ function ColorSwatch({ hex, token, usage }: Swatch) {
   return (
     <div className="flex items-center gap-4">
       <div
-        className="h-12 w-12 shrink-0 rounded-xl border border-sand-300 dark:border-sand-700"
+        className="h-12 w-12 shrink-0 rounded-xl border border-sand-200 dark:border-sand-700"
         style={{ background: hex }}
       />
       <div className="min-w-0">
         <div className="flex items-baseline gap-2">
           <span className="font-mono text-sm font-semibold text-sand-900 dark:text-sand-100">{token}</span>
-          <span className="font-mono text-xs text-sand-500">{hex}</span>
+          <span className="font-mono text-xs text-sand-600 dark:text-sand-500">{hex}</span>
         </div>
-        <p className="text-xs text-sand-500 dark:text-sand-400">{usage}</p>
+        <p className="text-xs text-sand-600 dark:text-sand-400">{usage}</p>
       </div>
     </div>
   )
@@ -222,7 +226,7 @@ export default function DesignSystemPage() {
       {/* ── Semantic Mappings ── */}
       <section className="mb-16">
         <SectionTitle>Semantic Mappings</SectionTitle>
-        <div className="overflow-hidden rounded-2xl border border-sand-300 dark:border-sand-800">
+        <div className="overflow-hidden rounded-2xl border border-sand-200 dark:border-sand-800">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-sand-100 dark:bg-sand-900">
@@ -235,7 +239,7 @@ export default function DesignSystemPage() {
               {SEMANTIC_ROLES.map((row, i) => (
                 <tr
                   key={row.role}
-                  className={i % 2 === 0 ? 'bg-sand-50 dark:bg-sand-950' : 'bg-sand-100 dark:bg-sand-900'}
+                  className={i % 2 === 0 ? 'bg-sand-100 dark:bg-sand-950' : 'bg-sand-50 dark:bg-sand-900'}
                 >
                   <td className="px-4 py-3 text-sand-900 dark:text-sand-100">{row.role}</td>
                   <td className="px-4 py-3 font-mono text-xs text-sand-600 dark:text-sand-400">{row.light}</td>
@@ -250,19 +254,19 @@ export default function DesignSystemPage() {
       {/* ── Typography ── */}
       <section className="mb-16">
         <SectionTitle>Typography</SectionTitle>
-        <p className="mb-6 text-sm text-sand-500 dark:text-sand-400">
+        <p className="mb-6 text-sm text-sand-600 dark:text-sand-400">
           Font: <span className="font-semibold text-sand-700 dark:text-sand-200">Manrope</span>, loaded via next/font/google and registered as <code className="rounded bg-sand-100 px-1.5 py-0.5 font-mono text-xs dark:bg-sand-800">--font-sans</code>
         </p>
         <div className="flex flex-col gap-6">
           {TYPOGRAPHY.map((t) => (
             <div
               key={t.weight}
-              className="rounded-2xl border border-sand-300 p-6 dark:border-sand-800"
+              className="rounded-2xl border border-sand-200 p-6 dark:border-sand-800"
             >
               <div className="mb-2 flex items-baseline gap-3">
-                <span className="font-mono text-xs text-olive-500">{t.weight}</span>
+                <span className="font-mono text-xs text-olive-600 dark:text-olive-500">{t.weight}</span>
                 <span className="text-sm font-semibold text-sand-700 dark:text-sand-300">{t.name}</span>
-                <span className="text-xs text-sand-500">{t.usage}</span>
+                <span className="text-xs text-sand-600 dark:text-sand-500">{t.usage}</span>
               </div>
               <p
                 className="text-sand-900 dark:text-sand-50"
@@ -285,7 +289,7 @@ export default function DesignSystemPage() {
                 className="rounded-lg bg-olive-500"
                 style={{ width: s, height: s }}
               />
-              <span className="font-mono text-[10px] text-sand-500">{s}px</span>
+              <span className="font-mono text-[10px] text-sand-600 dark:text-sand-500">{s}px</span>
             </div>
           ))}
         </div>
@@ -302,7 +306,7 @@ export default function DesignSystemPage() {
                 style={{ borderRadius: r.value }}
               />
               <span className="font-mono text-xs font-semibold text-sand-700 dark:text-sand-300">{r.name}</span>
-              <span className="font-mono text-[10px] text-sand-500">{r.value}</span>
+              <span className="font-mono text-[10px] text-sand-600 dark:text-sand-500">{r.value}</span>
             </div>
           ))}
         </div>
@@ -311,7 +315,7 @@ export default function DesignSystemPage() {
       {/* ── Brand Assets ── */}
       <section className="mb-16">
         <SectionTitle>Brand Assets</SectionTitle>
-        <p className="mb-6 text-sm text-sand-500 dark:text-sand-400">
+        <p className="mb-6 text-sm text-sand-600 dark:text-sand-400">
           Download the AI Canvas logo and icon. SVG scales cleanly for any size; PNG is ready to drop in. Please keep the proportions and do not recolor the mark.
         </p>
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -321,16 +325,16 @@ export default function DesignSystemPage() {
           ].map((asset) => (
             <div
               key={asset.name}
-              className="overflow-hidden rounded-2xl border border-sand-300 dark:border-sand-800"
+              className="overflow-hidden rounded-2xl border border-sand-200 dark:border-sand-800"
             >
-              <div className="flex h-44 items-center justify-center bg-sand-50 dark:bg-sand-100">
+              <div className="flex h-44 items-center justify-center bg-sand-100 dark:bg-sand-100">
                 <img
                   src={asset.svg}
                   alt={`AI Canvas ${asset.name}`}
                   className={`${asset.height} w-auto`}
                 />
               </div>
-              <div className="flex items-center justify-between gap-3 border-t border-sand-300 px-5 py-4 dark:border-sand-800">
+              <div className="flex items-center justify-between gap-3 border-t border-sand-200 px-5 py-4 dark:border-sand-800">
                 <span className="text-sm font-semibold text-sand-900 dark:text-sand-100">{asset.name}</span>
                 <div className="flex gap-2">
                   <a
@@ -343,7 +347,7 @@ export default function DesignSystemPage() {
                   <a
                     href={asset.png}
                     download
-                    className="rounded-lg border border-sand-300 px-3.5 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:bg-sand-100 dark:border-sand-700 dark:text-sand-300 dark:hover:bg-sand-800"
+                    className="rounded-lg border border-sand-200 px-3.5 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:bg-sand-100 dark:border-sand-700 dark:text-sand-300 dark:hover:bg-sand-800"
                   >
                     PNG
                   </a>
@@ -368,10 +372,10 @@ export default function DesignSystemPage() {
           ].map((tech) => (
             <div
               key={tech.name}
-              className="rounded-2xl border border-sand-300 px-5 py-4 dark:border-sand-800"
+              className="rounded-2xl border border-sand-200 px-5 py-4 dark:border-sand-800"
             >
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-100">{tech.name}</p>
-              <p className="text-xs text-sand-500 dark:text-sand-400">{tech.detail}</p>
+              <p className="text-xs text-sand-600 dark:text-sand-400">{tech.detail}</p>
             </div>
           ))}
         </div>

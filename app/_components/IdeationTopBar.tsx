@@ -2,8 +2,10 @@
 
 import { usePathname } from 'next/navigation'
 import { HeaderSocials } from '../components/HeaderSocials'
+import { ThemeToggle } from '../components/ThemeToggle'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { Breadcrumbs, type Crumb } from '../components/Breadcrumbs'
+import { isPinnedDarkRoute } from '../lib/pinned-dark'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 
@@ -105,7 +107,7 @@ function buildCrumbs(pathname: string): Crumb[] | null {
 }
 
 const headerClass =
-  'sticky top-0 z-30 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-300 bg-sand-200 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex'
+  'sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex'
 
 export function IdeationTopBar() {
   const pathname = usePathname() ?? '/ideation'
@@ -133,18 +135,23 @@ export function IdeationTopBar() {
   const isBrainReader = BRAIN_READER_RE.test(pathname)
   const isShowcase = pathname === '/design-systems/andromeda/system'
 
+  // Pinned-dark surfaces keep a dark bar over a dark page in either site theme.
   return (
-    <div className={headerClass}>
+    <div className={isPinnedDarkRoute(pathname) ? `dark ${headerClass}` : headerClass}>
       <Breadcrumbs crumbs={crumbs} />
+      {/* Right cluster order whenever a bar carries a CTA: theme toggle,
+          then the CTA, then the user. */}
       {isBrainReader ? (
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <div id="brain-install-slot" />
-          <TopAuthPill showStatusPill={false} />
+          <TopAuthPill />
         </div>
       ) : isShowcase ? (
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <div id="andromeda-install-slot" />
-          <TopAuthPill showStatusPill={false} />
+          <TopAuthPill />
         </div>
       ) : (
         <HeaderSocials />

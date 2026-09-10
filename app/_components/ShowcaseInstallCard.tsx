@@ -1,11 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import { Check, Copy, Lightning } from '@phosphor-icons/react'
-import { useSession } from '../components/auth/SessionProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
+import { useInstallToken } from '../_lib/useInstallToken'
 
 // The two packages, as a toggle (the "two actions"). Everything is the default.
 const PACKAGES = [
@@ -13,13 +13,30 @@ const PACKAGES = [
   { slug: 'andromeda', label: 'All components' },
 ]
 
-// AI Canvas site tokens (fixed light-on-dark; the showcase surface is always
-// the Andromeda void), matching the brain's "Get the brain" card.
+// AI Canvas site tokens as --si-* variables, light by default and dark under
+// the site's `dark` class, matching the brain's "Get the brain" card.
+const PALETTE = {
+  light: {
+    'surface-base': '#F4F4FA', 'surface-raised': '#EEEEF3',
+    'text-primary': '#1B1B1C', 'text-secondary': '#575759', 'text-faint': '#7B7B7D',
+    'accent-400': '#A8B94D', 'accent-300': '#869631', 'accent-on': '#0E0E0F',
+    'border-subtle': '#DFDFE3', 'border-base': '#CACACD',
+  },
+  dark: {
+    'surface-base': '#0E0E0F', 'surface-raised': '#1B1B1C',
+    'text-primary': '#F4F4FA', 'text-secondary': '#9B9B9E', 'text-faint': '#7B7B7D',
+    'accent-400': '#A8B94D', 'accent-300': '#DAE4A0', 'accent-on': '#0E0E0F',
+    'border-subtle': '#2D2D2E', 'border-base': '#373738',
+  },
+} as const
+type CardColor = keyof typeof PALETTE.dark
+const v = (k: CardColor) => `var(--si-${k})`
+const cardVars = (t: 'light' | 'dark') => (Object.keys(PALETTE[t]) as CardColor[]).map((k) => `--si-${k}: ${PALETTE[t][k]};`).join(' ')
 const C = {
-  surface: { base: '#0E0E0F', raised: '#1B1B1C' },
-  text: { primary: '#F4F4FA', secondary: '#9B9B9E', faint: '#7B7B7D' },
-  accent: { 400: '#A8B94D', 300: '#DAE4A0' },
-  border: { subtle: '#2D2D2E', base: '#373738' },
+  surface: { base: v('surface-base'), raised: v('surface-raised') },
+  text: { primary: v('text-primary'), secondary: v('text-secondary'), faint: v('text-faint') },
+  accent: { 400: v('accent-400'), 300: v('accent-300'), on: v('accent-on') },
+  border: { subtle: v('border-subtle'), base: v('border-base') },
 }
 const SANS = "var(--font-sans), 'Manrope', system-ui, sans-serif"
 const MONO = "var(--font-mono, var(--font-jetbrains-mono)), 'Geist Mono', monospace"
@@ -28,7 +45,6 @@ const MONO = "var(--font-mono, var(--font-jetbrains-mono)), 'Geist Mono', monosp
 // "Get the brain" card, but with the two packages (All components / Everything)
 // as a toggle. Premium-gated: a resolved free/anon tier sees an Unlock CTA.
 export function ShowcaseInstallCard() {
-  const { user } = useSession()
   const status = usePremiumStatus()
   // Premium AND the in-flight 'unknown' window see the command; only a resolved
   // free/anon tier sees the Unlock pitch (never flash upsell at a subscriber).
@@ -36,25 +52,7 @@ export function ShowcaseInstallCard() {
   const [slug, setSlug] = useState('andromeda-all')
   const [copied, setCopied] = useState(false)
 
-  const [token, setToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [user])
-  const userToken = user ? token : null
+  const userToken = useInstallToken()
   const reference = (masked: boolean) =>
     userToken
       ? `"https://aicanvas.me/r/${slug}.json?token=${masked ? 'aic_••••••••' : userToken}"`
@@ -73,6 +71,7 @@ export function ShowcaseInstallCard() {
 
   return (
     <div
+      className="si-card"
       style={{
         margin: '48px 0 0',
         border: `1px solid ${C.border.subtle}`,
@@ -82,7 +81,7 @@ export function ShowcaseInstallCard() {
         fontFamily: SANS,
       }}
     >
-      <style>{`.si-dl{transition:background .12s}.si-dl:hover{background:${C.accent[300]} !important}`}</style>
+      <style>{`.si-card{${cardVars('light')}}.dark .si-card{${cardVars('dark')}}.si-dl{transition:background .12s}.si-dl:hover{background:${C.accent[300]} !important}`}</style>
       <div style={{ fontSize: 15, fontWeight: 600, color: C.text.primary, marginBottom: 12 }}>
         Get the system
       </div>
@@ -159,7 +158,7 @@ export function ShowcaseInstallCard() {
               alignItems: 'center',
               gap: 6,
               background: C.accent[400],
-              color: C.surface.base,
+              color: C.accent.on,
               fontWeight: 600,
               fontSize: 13,
               fontFamily: SANS,
@@ -182,7 +181,7 @@ export function ShowcaseInstallCard() {
             alignItems: 'center',
             gap: 6,
             background: C.accent[400],
-            color: C.surface.base,
+            color: C.accent.on,
             fontWeight: 600,
             fontSize: 13,
             fontFamily: SANS,

@@ -1,7 +1,7 @@
 {
   "name": "@aicanvas/mcp",
-  "version": "0.2.4",
-  "mcpName": "io.github.uiNerd16/aicanvas",
+  "version": "0.2.5",
+  "mcpName": "io.github.aicanvas-me/aicanvas",
   "description": "Model Context Protocol server for AI Canvas: search, inspect, and install components from the aicanvas.me registry directly from your AI editor.",
   "keywords": [
     "mcp",
@@ -28,7 +28,7 @@
   "homepage": "https://aicanvas.me",
   "repository": {
     "type": "git",
-    "url": "https://github.com/uiNerd16/aicanvas.git",
+    "url": "https://github.com/aicanvas-me/aicanvas.git",
     "directory": "mcp"
   },
   "license": "MIT",

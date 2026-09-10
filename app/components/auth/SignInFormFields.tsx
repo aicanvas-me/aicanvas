@@ -120,7 +120,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
         <button
           type="button"
           onClick={() => setMagicSent(false)}
-          className="mt-4 text-sm font-semibold text-olive-500 hover:underline dark:text-olive-400"
+          className="mt-4 text-sm font-semibold text-olive-600 hover:underline dark:text-olive-400"
         >
           Use a different email
         </button>
@@ -135,11 +135,11 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
       <div className="mt-6 space-y-3">
         <GoogleSignInButton next={next} label="Sign in with Google" />
         <div className="flex items-center gap-3" aria-hidden="true">
-          <span className="h-px flex-1 bg-sand-300 dark:bg-sand-800" />
-          <span className="text-xs uppercase tracking-wider text-sand-500 dark:text-sand-500">
+          <span className="h-px flex-1 bg-sand-200 dark:bg-sand-800" />
+          <span className="text-xs uppercase tracking-wider text-sand-600 dark:text-sand-500">
             or
           </span>
-          <span className="h-px flex-1 bg-sand-300 dark:bg-sand-800" />
+          <span className="h-px flex-1 bg-sand-200 dark:bg-sand-800" />
         </div>
       </div>
 
@@ -148,7 +148,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           <div>
             <label
               htmlFor="email"
-              className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400"
+              className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
             >
               Email
             </label>
@@ -161,14 +161,14 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-400 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
+              className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
             />
           </div>
 
           <div>
             <label
               htmlFor="password"
-              className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400"
+              className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
             >
               Password
             </label>
@@ -182,7 +182,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
             />
             <Link
               href="/account/forgot-password"
-              className="mt-2 inline-block text-xs font-semibold text-olive-500 hover:underline dark:text-olive-400"
+              className="mt-2 inline-block text-xs font-semibold text-olive-600 hover:underline dark:text-olive-400"
             >
               Forgot password?
             </Link>
@@ -225,14 +225,14 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           <button
             type="button"
             onClick={onSwitchToSignUp}
-            className="font-semibold text-olive-500 hover:underline dark:text-olive-400"
+            className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
           >
             Create an account
           </button>
         ) : (
           <Link
             href={`/account/sign-up?next=${encodeURIComponent(next)}`}
-            className="font-semibold text-olive-500 hover:underline dark:text-olive-400"
+            className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
           >
             Create an account
           </Link>
@@ -243,7 +243,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           paths above. Lighter than the sign-up footer because the user
           already accepted the Terms / Privacy / marketing notice when they
           first created the account. */}
-      <p className="mt-6 text-xs leading-relaxed text-sand-500 dark:text-sand-500">
+      <p className="mt-6 text-xs leading-relaxed text-sand-600 dark:text-sand-500">
         By continuing, you agree to our{' '}
         <Link
           href="/terms"

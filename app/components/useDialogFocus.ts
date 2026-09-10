@@ -2,6 +2,8 @@
 
 import { useEffect, type RefObject } from 'react'
 
+// Focusable selector: anything keyboard users can land on. The Tab handler uses
+// this to find the first/last elements inside the dialog for wrap-around.
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
 

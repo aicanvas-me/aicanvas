@@ -136,7 +136,7 @@ The full source code for each component is fetched on demand from `/r/<slug>.jso
 ## Local development
 
 ```bash
-git clone https://github.com/uiNerd16/aicanvas.git
+git clone https://github.com/aicanvas-me/aicanvas.git
 cd aicanvas/mcp
 npm install
 npm run build

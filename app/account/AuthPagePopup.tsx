@@ -33,7 +33,7 @@ export function AuthPagePopup({ children, closeHref = '/' }: Props) {
         aria-hidden="true"
         className="absolute inset-0 bg-sand-950/80 backdrop-blur-sm"
       />
-      <div className="relative z-10 w-full max-w-md rounded-xl border border-sand-300 bg-sand-100 p-8 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+      <div className="relative z-10 w-full max-w-md rounded-xl border border-sand-200 bg-sand-100 p-8 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
         <Button
           variant="icon"
           size="md"

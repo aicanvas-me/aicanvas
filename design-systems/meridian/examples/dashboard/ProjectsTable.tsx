@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // DASHBOARD: Row 3 left — Projects Table
 // ============================================================
@@ -13,7 +12,12 @@ import { ProgressBar } from '../../components/ProgressBar';
 import { Button } from '../../components/Button';
 import { projects, statusBadgeVariant, statusBadgeLabel } from './data';
 
-function ProjectRow({ project, isLast }) {
+type ProjectRowProps = {
+  project: (typeof projects)[number];
+  isLast: boolean;
+};
+
+function ProjectRow({ project, isLast }: ProjectRowProps) {
   const [hovered, setHovered] = useState(false);
   const [menuHovered, setMenuHovered] = useState(false);
 

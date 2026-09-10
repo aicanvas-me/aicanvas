@@ -142,7 +142,7 @@ export function MobileControlSheet({ children }: MobileControlSheetProps) {
         onDragEnd={onDragEnd}
         style={{ y, height: `${SHEET_HEIGHT_VH}vh` }}
         initial={false}
-        className="fixed inset-x-0 bottom-0 z-40 flex flex-col rounded-t-2xl border-t border-sand-300 bg-sand-100 shadow-[0_-12px_40px_-8px_rgba(0,0,0,0.25)] dark:border-sand-700 dark:bg-sand-900"
+        className="fixed inset-x-0 bottom-0 z-40 flex flex-col rounded-t-2xl border-t border-sand-300 bg-sand-50 shadow-[0_-12px_40px_-8px_rgba(0,0,0,0.25)] dark:border-sand-700 dark:bg-sand-900"
       >
         {/* Drag affordance — the only region that initiates the drag, so the
             content area can scroll without yanking the whole sheet. */}

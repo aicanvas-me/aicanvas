@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import { getPaddle } from '../../lib/paddle/client'
+import { CHECKOUT_SETTINGS, getPaddle } from '../../lib/paddle/client'
 
 /**
  * Completes Paddle default payment links (aicanvas.me?_ptxn=txn_...) — the URL
@@ -17,12 +17,8 @@ export function PaddlePaymentLink() {
     const transactionId = new URLSearchParams(window.location.search).get('_ptxn')
     if (!transactionId || !process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN) return
     getPaddle().then((paddle) =>
-      // Same settings as UpgradeButton; completion runs the shared
-      // eventCallback in getPaddle (verified activation / claim flow).
-      paddle?.Checkout.open({
-        transactionId,
-        settings: { displayMode: 'overlay', theme: 'light', showAddDiscounts: false },
-      })
+      // Completion runs the shared eventCallback in getPaddle (verified activation / claim flow).
+      paddle?.Checkout.open({ transactionId, settings: CHECKOUT_SETTINGS })
     )
   }, [])
   return null

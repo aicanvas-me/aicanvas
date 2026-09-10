@@ -3,7 +3,7 @@
 import { forwardRef } from 'react'
 import type { ButtonHTMLAttributes } from 'react'
 import { buttonClasses } from './buttonClasses'
-import type { ButtonOptions, ButtonVariant, ButtonSize } from './buttonClasses'
+import type { ButtonOptions } from './buttonClasses'
 
 // ─── Button ───────────────────────────────────────────────────────────────────
 // The one button. Five variants × four sizes. If a new use site doesn't fit
@@ -17,9 +17,6 @@ import type { ButtonOptions, ButtonVariant, ButtonSize } from './buttonClasses'
 //
 //   <Button variant="primary" size="md" onClick={...}>Save</Button>
 //   <Link href="/x" className={buttonClasses({ variant: 'primary', size: 'lg' })}>Browse</Link>
-
-export { buttonClasses }
-export type { ButtonOptions, ButtonVariant, ButtonSize }
 
 type ButtonProps = ButtonOptions & ButtonHTMLAttributes<HTMLButtonElement>
 

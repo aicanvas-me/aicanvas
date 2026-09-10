@@ -6,6 +6,7 @@ import { COMPONENT_META } from '../../../lib/component-meta.generated'
 import { CATEGORIES, getCategoryBySlug } from '../../../lib/categories'
 import { SITE_URL } from '../../../lib/config'
 import { buildItemListJsonLd } from '../../../lib/jsonld'
+import { buildBreadcrumbJsonLd, pageMetadata } from '../../../lib/page-metadata'
 
 export function generateStaticParams() {
   return CATEGORIES.map((c) => ({ slug: c.slug }))
@@ -22,33 +23,13 @@ export async function generateMetadata({
   const category = getCategoryBySlug(slug)
   if (!category) return {}
 
-  const url = `${SITE_URL}/components/category/${category.slug}`
-
-  return {
+  return pageMetadata({
     title: { absolute: category.title },
+    social: category.title,
     description: category.description,
-    alternates: { canonical: url },
-    openGraph: {
-      title: category.title,
-      description: category.description,
-      url,
-      type: 'website',
-      images: [
-        {
-          url: '/og-aug2026-aicanvas.me.png',
-          width: 2400,
-          height: 1260,
-          alt: `AI Canvas: ${category.h1}`,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: category.title,
-      description: category.description,
-      images: ['/og-aug2026-aicanvas.me.png'],
-    },
-  }
+    url: `${SITE_URL}/components/category/${category.slug}`,
+    imageAlt: `AI Canvas: ${category.h1}`,
+  })
 }
 
 export default async function CategoryPage({
@@ -64,24 +45,13 @@ export default async function CategoryPage({
     c.tags.some((t) => t.accent && t.label === category.label),
   )
 
-  const breadcrumbJsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Components & Blocks',
-        item: `${SITE_URL}/components`,
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: category.label,
-        item: `${SITE_URL}/components/category/${category.slug}`,
-      },
-    ],
-  }
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: 'Components & Blocks', item: `${SITE_URL}/components` },
+    {
+      name: category.label,
+      item: `${SITE_URL}/components/category/${category.slug}`,
+    },
+  ])
 
   // Names every component the category actually lists, so the page is
   // described as a collection rather than left to be inferred from the card

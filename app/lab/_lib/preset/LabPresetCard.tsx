@@ -23,7 +23,7 @@ export function LabPresetCard({ href, name, tool, createdAt, config }: Props) {
   return (
     <Link
       href={href}
-      className="block h-full rounded-xl border border-sand-300 bg-sand-100 p-3 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+      className="block h-full rounded-xl border border-sand-300 bg-sand-50 p-3 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
     >
       {tool === '60k-particles' ? (
         <PresetThumb serialized={config} />

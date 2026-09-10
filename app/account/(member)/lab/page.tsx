@@ -62,7 +62,7 @@ export default async function MadeInLabPage() {
             <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
               {TOOL_NAMES[tool] ?? tool}
             </h2>
-            <span className="text-xs text-sand-500">{rows.length} preset{rows.length === 1 ? '' : 's'}</span>
+            <span className="text-xs text-sand-600 dark:text-sand-500">{rows.length} preset{rows.length === 1 ? '' : 's'}</span>
           </header>
           <ul className="grid gap-3 sm:grid-cols-2">
             {rows.map((p) => (
@@ -85,8 +85,8 @@ export default async function MadeInLabPage() {
 
 function EmptyState() {
   return (
-    <div className="rounded-xl border border-dashed border-sand-300 bg-sand-100/40 p-10 text-center dark:border-sand-800 dark:bg-sand-900/40">
-      <Flask size={40} weight="regular" className="mx-auto text-sand-400" />
+    <div className="rounded-xl border border-dashed border-sand-200 bg-sand-100/40 p-10 text-center dark:border-sand-800 dark:bg-sand-900/40">
+      <Flask size={40} weight="regular" className="mx-auto text-sand-600 dark:text-sand-400" />
       <h2 className="mt-4 text-lg font-bold text-sand-900 dark:text-sand-50">Nothing saved yet</h2>
       <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
         Experiment in a lab tool, save what you like. This page becomes your collection.

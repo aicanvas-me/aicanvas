@@ -28,7 +28,7 @@ The wrapper's exported function matches the folder in PascalCase: `andromeda-but
 
 **This is the pattern that makes promotion work at all.** The rest of the guide depends on understanding it.
 
-All `design-systems/*/components/*.tsx` files have a `// @ts-nocheck` header (see `design-systems/CLAUDE.md` for why). When a strict-TypeScript file like a standalone wrapper imports from them, TypeScript's type inference runs on the untyped `forwardRef(function(...))` signature and resolves it to `ForwardRefExoticComponent<RefAttributes<unknown>>` — no `children`, no `variant`, no `size`, no anything. Any attempt to use the imported component with props throws `TS2322` / `TS7031` errors immediately.
+Historical context: `design-systems/*/components/*.tsx` files used to carry a `// @ts-nocheck` header, so TypeScript resolved their `forwardRef(function(...))` signatures to `ForwardRefExoticComponent<RefAttributes<unknown>>` and rejected every prop at the wrapper's call site. The DS typing pass removed the pragmas and added real prop types, so this failure mode is gone for new wrappers.
 
 The fix: **cast at the import boundary.** Define a minimal structural type for the props you care about, import the raw component under a different name, and cast it once.
 
@@ -58,7 +58,7 @@ Rules for writing the boundary type:
 - **`icon` props that accept React components must be typed as `ComponentType<{ size?: number }>`** (or whatever props the icon receives) — not as `ReactNode`. Icons are components, not elements.
 - **Name the raw import `RawButton` / `RawCard` / etc.** and re-alias to the clean name after the cast. That way the rest of the file reads like normal React code — `<Button variant="default">` not `<RawButton variant="default">`.
 
-**This pattern will become unnecessary** once the DS gets a proper typing pass (the `@ts-nocheck` headers come off, real prop interfaces are added). Until then, every promotion wrapper does boundary retyping. Document any new prop shapes in this file as you add them.
+**The typing pass has landed**: DS components now export real prop interfaces, so NEW promotion wrappers import and use them directly with no boundary cast. Existing wrappers keep their casts (harmless); remove one opportunistically when you touch its wrapper anyway.
 
 ## Pattern 2 — Replicate the DS showcase, don't reinvent the preview
 

@@ -50,13 +50,13 @@ AI Canvas is in the official shadcn registry directory; `aicanvas.me/r/*.json` i
 
 1. **Never rename the slug of an integrated component** — the slug is the URL; renames break every external install. Applies during refactors too.
 2. **Never delete an integrated component without explicit user authorization** — even a brief delete-and-replace 404s the slug.
-3. **JSON integrity**: regenerate after ANY source change (byte-for-byte parity is enforced); regenerate deps when imports change; never hand-edit `public/r/*.json`; build failures block publication.
+3. **JSON integrity**: regenerate after ANY source change (byte-for-byte parity is enforced); regenerate deps when imports change; never hand-edit `registry-data/*.json`; build failures block publication.
 4. **Screenshots**: cache-bust (`?v=N`) whenever visuals change; clear `.next/cache` before capturing; a real ImageKit URL is required before push — no placeholders.
 5. **After a deploy**: spot-check `curl https://aicanvas.me/r/<slug>.json`. A malformed JSON in production is an incident — fix or roll back immediately.
 
 ## Hard gates
 
 - Integration requires: review PASS this session + non-empty `prompts.ts` + `spec.md` present.
-- Publication requires: JSON check PASS on the freshly built `public/r/<slug>.json`.
+- Publication requires: JSON check PASS on the freshly built `registry-data/<slug>.json`.
 - Preserve all existing registry entries — append-only.
 - The component inventory is `app/lib/component-registry.tsx` + live `/r/<slug>.json` checks; there is no separate status file to maintain.

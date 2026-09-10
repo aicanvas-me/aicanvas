@@ -2,11 +2,9 @@ import Link from 'next/link'
 import { createClient } from '../../../lib/supabase/server'
 import type { InstallHistoryRow } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
-import { andromedaPageSlug, getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
-import {
-  andromedaPageSlug as andromedaProPageSlug,
-  getAndromedaComponentMeta as getAndromedaProComponentMeta,
-} from '../../../_lib/andromeda-pro/andromeda-meta'
+import { getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
+import { getAndromedaComponentMeta as getAndromedaProComponentMeta } from '../../../_lib/andromeda-pro/andromeda-meta'
+import { itemHref } from '../itemHref'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 
 // ─── Activity page ──────────────────────────────────────────────────────────
@@ -14,13 +12,6 @@ import { optimizeImageKitUrl } from '../../../lib/imagekit'
 // small gap, thumbnail at the start, component name + subtitle, relative
 // timestamp on the right. The underlying route is still /account/history
 // (label was renamed to "Activity" in AccountTabs; the URL stays for now).
-
-// Each system maps its OWN registry slug to its own page slug; see SavedList.
-function hrefFor(row: InstallHistoryRow): string {
-  if (row.system === 'andromeda') return `/design-systems/andromeda/${andromedaPageSlug(row.slug)}`
-  if (row.system === 'andromeda-pro') return `/design-systems/andromeda-pro/${andromedaProPageSlug(row.slug)}`
-  return `/components/${row.slug}`
-}
 
 function formatTimestamp(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', {
@@ -41,7 +32,7 @@ const ROW_GRID =
 
 function ActivityThumbnail({ src }: { src: string | null }) {
   return (
-    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-md bg-sand-950 ring-1 ring-sand-300 dark:ring-sand-800">
+    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-md bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
@@ -65,7 +56,7 @@ export default async function HistoryPage() {
 
   if (rows.length === 0) {
     return (
-      <div className="rounded-xl border border-sand-300 bg-sand-100 p-12 text-center dark:border-sand-800 dark:bg-sand-900">
+      <div className="rounded-xl border border-sand-200 bg-sand-100 p-12 text-center dark:border-sand-800 dark:bg-sand-900">
         <p className="text-sm text-sand-600 dark:text-sand-400">
           No install history yet. Copy a CLI command from any component and it&apos;ll show up here.
         </p>
@@ -87,7 +78,7 @@ export default async function HistoryPage() {
           transparent border mirrors the row card's 1px border so the inner
           content sits at the same x-position in both. */}
       <div
-        className={`${ROW_GRID} border border-transparent px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400`}
+        className={`${ROW_GRID} border border-transparent px-3 pb-2 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400`}
       >
         {/* Component label spans the thumbnail column + name column so it
             sits at the far left, above where the thumbnail starts. */}
@@ -116,8 +107,8 @@ export default async function HistoryPage() {
           return (
             <li key={row.id}>
               <Link
-                href={hrefFor(row)}
-                className={`${ROW_GRID} rounded-xl border border-sand-300 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700`}
+                href={itemHref(row)}
+                className={`${ROW_GRID} rounded-xl border border-sand-200 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700`}
                 aria-label={`Open ${name}`}
               >
                 <ActivityThumbnail src={image} />
@@ -130,7 +121,7 @@ export default async function HistoryPage() {
                 </div>
                 <time
                   dateTime={row.copied_at}
-                  className="shrink-0 whitespace-nowrap text-right text-xs font-medium text-sand-500 dark:text-sand-400"
+                  className="shrink-0 whitespace-nowrap text-right text-xs font-medium text-sand-600 dark:text-sand-400"
                 >
                   {formatTimestamp(row.copied_at)}
                 </time>

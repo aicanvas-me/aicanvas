@@ -8,29 +8,13 @@
 //
 // PNG is always lossless, so no quality knob is exposed.
 
+import { computeFit } from './fit'
+
 export type ImageScale = '1x' | '2x'
 
 const SCALE_DIMENSIONS: Record<ImageScale, { width: number; height: number }> = {
   '1x': { width: 1920, height: 1080 },
   '2x': { width: 3840, height: 2160 },
-}
-
-export function getImageDimensions(scale: ImageScale) {
-  return SCALE_DIMENSIONS[scale]
-}
-
-function computeFit(srcW: number, srcH: number, dstW: number, dstH: number) {
-  if (srcW <= 0 || srcH <= 0) return { x: 0, y: 0, w: dstW, h: dstH }
-  const srcAspect = srcW / srcH
-  const dstAspect = dstW / dstH
-  if (srcAspect > dstAspect) {
-    const w = dstW
-    const h = Math.round(dstW / srcAspect)
-    return { x: 0, y: Math.round((dstH - h) / 2), w, h }
-  }
-  const h = dstH
-  const w = Math.round(dstH * srcAspect)
-  return { x: Math.round((dstW - w) / 2), y: 0, w, h }
 }
 
 export async function exportCanvasImage(

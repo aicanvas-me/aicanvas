@@ -1,4 +1,3 @@
-// @ts-nocheck — design-systems/ is not type-checked (see design-systems/CLAUDE.md). Strip this after a proper typing pass.
 // ============================================================
 // DASHBOARD: Row 3 right — Activity Feed
 // ============================================================
@@ -9,7 +8,12 @@ import { Avatar } from '../../components/Avatar';
 import { Button } from '../../components/Button';
 import { activities } from './data';
 
-function ActivityItem({ activity, isLast }) {
+type ActivityItemProps = {
+  activity: (typeof activities)[number];
+  isLast: boolean;
+};
+
+function ActivityItem({ activity, isLast }: ActivityItemProps) {
   return (
     <div style={{
       display: 'flex',

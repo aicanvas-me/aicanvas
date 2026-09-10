@@ -88,7 +88,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
           className={`shrink-0 rounded-lg border transition-colors duration-200 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-olive-500/40 ${
             checked
               ? 'border-olive-500 bg-olive-500/15'
-              : 'border-sand-300 bg-sand-50 dark:border-sand-700 dark:bg-sand-800'
+              : 'border-sand-200 bg-sand-100 dark:border-sand-700 dark:bg-sand-800'
           } ${disabled ? 'pointer-events-none opacity-50' : ''} ${className}`}
         >
           <motion.span

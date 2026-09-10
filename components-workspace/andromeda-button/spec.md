@@ -25,7 +25,7 @@ All interactive states are driven by the underlying Andromeda Button component: 
 - This is a re-export wrapper around `design-systems/andromeda/components/Button.tsx`. Do not modify the wrapper's underlying component logic — if the button needs to change, change it in the Andromeda source, not here.
 - `next/font/google` loads JetBrains Mono at module scope (client component). The font variable is applied to the wrapper's container so the Andromeda `--andromeda-font-mono` token resolves to it.
 - The wrapper breaks the standard `bg-sand-100 dark:bg-sand-950` container convention because Andromeda is an intrinsically dark design system. A dark background is required for the aesthetic to render.
-- Because `design-systems/` is listed in `tsconfig.exclude` and the Andromeda Button file has a `// @ts-nocheck` header, tsc sees `Button` as loosely-typed. This is expected and documented in `design-systems/CLAUDE.md`.
+- The Andromeda Button exports real prop types and `design-systems/` is tsc-checked, so tsc sees `Button` fully typed; the wrapper's boundary cast survives from the earlier untyped era and is harmless.
 
 ## Approval
 

@@ -8,8 +8,7 @@ export type PremiumStatus = 'unknown' | 'premium' | 'not-premium'
 /**
  * Client-side premium status via /api/me/entitlement (session-scoped). Returns
  * 'unknown' while loading or on a backend error so callers can avoid flashing
- * the wrong CTA; signed-out derives to 'not-premium' at render (no setState in
- * the effect body — keeps it lint-clean, matching PremiumCards).
+ * the wrong CTA; signed-out derives to 'not-premium' at render.
  */
 export function usePremiumStatus(): PremiumStatus {
   const { user } = useSession()

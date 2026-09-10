@@ -4,11 +4,12 @@ import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Check, Copy, Lightning, Terminal } from '@phosphor-icons/react'
-import { useSession } from '../components/auth/SessionProvider'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
-import { Button, buttonClasses } from '../components/Button'
+import { Button } from '../components/Button'
+import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
+import { useInstallToken } from '../_lib/useInstallToken'
 
 interface InstallAction {
   slug: string
@@ -42,7 +43,6 @@ export function ShowcaseInstall({ installs }: { installs: InstallAction[] }) {
 // Self-contained button group + popover (own state, so the desktop portal and
 // the mobile fallback never share a popover).
 function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
-  const { user } = useSession()
   const { open: openPaywall } = usePaywallModal()
   const status = usePremiumStatus()
   // Premium AND the in-flight 'unknown' window see the CLI popover; only a
@@ -57,25 +57,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   // Tokenized command so the registry attributes the pull to the account
   // (these are premium; a bare command would 402). Masked on screen; copy
   // writes the real token.
-  const [token, setToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [user])
-  const userToken = user ? token : null
+  const userToken = useInstallToken()
   const commandFor = (slug: string, masked: boolean) => {
     const r = userToken
       ? `"https://aicanvas.me/r/${slug}.json?token=${masked ? 'aic_••••••••' : userToken}"`
@@ -149,11 +131,11 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
       ))}
 
       {active && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-xl border border-sand-300 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-xl border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400">
+                <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   {active.label}
                 </span>
                 <span className="rounded-md border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
@@ -163,7 +145,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
               <Button variant="outline" size="xs" onClick={handleCopy} aria-label="Copy CLI command">
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-olive-500 dark:text-olive-400" />
+                    <Check weight="regular" size={13} className="text-olive-600 dark:text-olive-400" />
                     Copied
                   </>
                 ) : (
@@ -174,13 +156,13 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
                 )}
               </Button>
             </div>
-            <div className="rounded-lg bg-sand-950 px-4 py-3">
-              <code className="block break-all font-mono text-xs text-sand-300">{cliCommandMasked}</code>
+            <div className="rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
+              <code className="block break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-olive-500 dark:text-olive-400" />
+                  <Check weight="bold" size={12} className="shrink-0 text-olive-600 dark:text-olive-400" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

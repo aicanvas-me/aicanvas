@@ -24,7 +24,7 @@ export function PaymentMethods({ className }: { className?: string }) {
         href="https://www.paddle.com/"
         target="_blank"
         rel="noopener noreferrer"
-        className="ml-1 text-xs text-sand-500 underline-offset-2 hover:underline dark:text-sand-400"
+        className="ml-1 text-xs text-sand-600 underline-offset-2 hover:underline dark:text-sand-400"
       >
         powered by Paddle
       </a>

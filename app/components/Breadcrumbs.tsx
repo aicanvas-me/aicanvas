@@ -24,12 +24,12 @@ export function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
         return (
           <span key={`${c.label}-${i}`} className="flex min-w-0 items-center">
             {i > 0 && (
-              <span aria-hidden className="mx-1 shrink-0 text-sand-400 dark:text-sand-600">
+              <span aria-hidden className="mx-1 shrink-0 text-sand-600 dark:text-sand-600">
                 /
               </span>
             )}
             {isLast ? (
-              <span aria-current="page" className="truncate text-olive-500">
+              <span aria-current="page" className="truncate text-olive-600 dark:text-olive-500">
                 {c.label}
               </span>
             ) : c.href ? (

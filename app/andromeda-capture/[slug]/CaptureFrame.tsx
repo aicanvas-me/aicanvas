@@ -94,6 +94,8 @@ export function CaptureFrame({ slug }: { slug: string }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        // Pro's own ground. Legacy's themeColor helper does not exist in the Pro
+        // tree; the equivalent is the surface rung on Pro's tokens.
         background: tokens.color.surface.base,
         backgroundImage:
           'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',

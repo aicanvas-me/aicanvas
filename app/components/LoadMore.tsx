@@ -25,7 +25,7 @@ export function LoadMore({ hasMore, remaining, onLoadMore }: LoadMoreProps) {
         <ArrowDown weight="regular" size={15} />
         Load more
       </Button>
-      <span className="text-xs text-sand-400 dark:text-sand-600">
+      <span className="text-xs text-sand-600 dark:text-sand-600">
         {remaining} more component{remaining !== 1 ? 's' : ''}
       </span>
     </div>

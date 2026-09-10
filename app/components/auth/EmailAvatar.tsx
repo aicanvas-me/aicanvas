@@ -1,46 +1,68 @@
-// ─── EmailAvatar ─────────────────────────────────────────────────────────────
-// Deterministic gradient circle seeded by the email hash — same email always
-// renders the same two-hue gradient at the same angle, no storage required.
-// Used wherever a user identity glyph is needed (top pill, sidebar menu,
-// account page header).
+// Identity glyph for the signed-in user. Three states: a picked catalogue avatar
+// or the provider photo drawn alone (never a letter under it, catalogue art has
+// transparent areas the letter showed through); a flat olive-500 tile with the
+// first letter when there is no photo URL; and that same tile when a photo URL
+// fails to load.
 //
-// Saturation and lightness are clamped to a muted mid-tone range so the
-// gradient sits comfortably alongside the sand/olive palette in both themes.
-// Hue and angle are derived from a 32-bit FNV-1a hash of the email so the
-// distribution covers the wheel without bias from short or alphabetic inputs.
+// No 'use client' here, so photoFromUser and EmailAvatar can be called from
+// server components. The only client state, "did the image fail", lives in
+// AvatarPicture.
 
-function hashEmail(email: string): number {
-  let h = 2166136261
-  const lower = email.toLowerCase()
-  for (let i = 0; i < lower.length; i++) {
-    h = Math.imul(h ^ lower.charCodeAt(i), 16777619)
-  }
-  return h >>> 0
+import { isUserAvatarId, userAvatarUrl } from '../../lib/user-avatars'
+import { AvatarPicture } from './AvatarPicture'
+
+type UserLike = { user_metadata?: Record<string, unknown> | null } | null | undefined
+
+/**
+ * The avatar the person picked in /account, stored on the account as a catalogue
+ * id. It beats the provider photo: an explicit choice outranks Google's.
+ */
+function pickedAvatarFromUser(user: UserLike): string | undefined {
+  const id = user?.user_metadata?.custom_avatar
+  return isUserAvatarId(id) ? userAvatarUrl(id) : undefined
 }
 
-function gradientFromEmail(email: string) {
-  const h = hashEmail(email)
-  // Two hues 60–120° apart for visible duotone without clashing.
-  const hue1 = h % 360
-  const hue2 = (hue1 + 60 + ((h >>> 9) % 60)) % 360
-  const angle = (h >>> 18) % 360
-  return { hue1, hue2, angle }
+// Google hands us a 96px photo and the largest circle we draw is 64px, so ask
+// for 128: sharp on retina, and one URL for every size means one download.
+const PHOTO_PX = 128
+
+/**
+ * Profile photo URL an OAuth provider stored on the account, if any. Supabase
+ * writes Google's picture claim under both `avatar_url` and `picture`. Only a
+ * plain https URL is accepted: it goes straight into an <img> src unvetted.
+ */
+export function photoFromUser(user: UserLike): string | undefined {
+  const picked = pickedAvatarFromUser(user)
+  if (picked) return picked
+  const meta = user?.user_metadata
+  if (!meta) return undefined
+  const url = meta.avatar_url ?? meta.picture
+  if (typeof url !== 'string') return undefined
+  if (!/^https:\/\/[^\s'"()\\]+$/.test(url)) return undefined
+  // googleusercontent takes the size as a path suffix, so replace whatever came
+  // with the URL. `-c` crops to a square, which the circle wants.
+  if (!/^https:\/\/[a-z0-9-]+\.googleusercontent\.com\//.test(url)) return url
+  return `${url.replace(/=[-\w]*$/, '')}=s${PHOTO_PX}-c`
 }
 
 type Props = {
   email: string
+  photoUrl?: string
   className?: string
 }
 
-export function EmailAvatar({ email, className = '' }: Props) {
-  const { hue1, hue2, angle } = gradientFromEmail(email)
+export function EmailAvatar({ email, photoUrl, className = '' }: Props) {
+  const initial = (email.trim()[0] ?? '?').toUpperCase()
   return (
     <span
       aria-hidden="true"
-      className={`block rounded-full ${className}`}
-      style={{
-        background: `linear-gradient(${angle}deg, hsl(${hue1} 55% 55%), hsl(${hue2} 55% 40%))`,
-      }}
-    />
+      // The olive tile belongs to the LETTER state only: behind a picture it put
+      // an olive rim around art drawn as a circle on transparent corners.
+      className={`relative flex items-center justify-center overflow-hidden border border-sand-200 font-semibold leading-none dark:border-sand-800 ${
+        photoUrl ? '' : 'bg-olive-500 text-sand-950'
+      } rounded-full ${className}`}
+    >
+      {photoUrl ? <AvatarPicture src={photoUrl} initial={initial} /> : initial}
+    </span>
   )
 }

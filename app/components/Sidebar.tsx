@@ -1,13 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef, useState, useTransition } from 'react'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { ArrowElbowDownRight, CaretDown, ChatCircleText, DiamondsFour, EnvelopeSimple, Flask, GithubLogo, Info, MagnifyingGlass, PiggyBank, Plug, Question, X, XLogo } from '@phosphor-icons/react'
+import { useEffect, useState } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { ArrowElbowDownRight, CaretDown, DiamondsFour, GithubLogo, MagnifyingGlass, X, XLogo } from '@phosphor-icons/react'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import type { ReactNode } from 'react'
 import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
-import { buttonClasses } from './Button'
+import { buttonClasses } from './buttonClasses'
+import { SecondaryNav } from './SecondaryNav'
+import { useComponentSearch } from './useComponentSearch'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
 
 // ── Tier structure ────────────────────────────────────────────────────────
@@ -35,8 +37,6 @@ const SECTIONS: Section[] = [
 export function Sidebar({
   embedded = false,
   promoteDS = false,
-  counts,
-  total,
 }: {
   embedded?: boolean
   // promoteDS: the "promote the design system" landing behavior — caps the
@@ -44,12 +44,7 @@ export function Sidebar({
   // and auto-expands Andromeda's System/Brain/Templates. Off by default; flip it
   // on in the root layout + MobileNav to apply site-wide.
   promoteDS?: boolean
-  // Server-computed nav counts (passed by the layout) so this client component
-  // never imports the heavy COMPONENTS registry.
-  counts: Record<string, number>
-  total: number
 }) {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const pathname = usePathname()
   const isHome = pathname === '/components'
@@ -102,48 +97,7 @@ export function Sidebar({
 
   const toggleComponents = () => setCollapsedComponents((prev) => !prev)
 
-  // ── Search ──────────────────────────────────────────────────────────────
-  // Local state is the source of truth while typing; URL is written via a
-  // debounced effect so fast keystrokes can't fight themselves.
-  const urlQuery = searchParams.get('q') ?? ''
-  const [searchValue, setSearchValue] = useState(urlQuery)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const [, startTransition] = useTransition()
-
-  // Tracks the last value we pushed into the URL. When urlQuery matches, the
-  // change came from us — don't overwrite local state. When it doesn't match,
-  // it's an external change (back/forward, category click) — sync.
-  const lastPushed = useRef(urlQuery)
-
-  useEffect(() => {
-    // Never overwrite while the user is actively editing. Fast typing can put
-    // two debounced pushes in flight; if the older Transition commits after
-    // lastPushed advances to the newer value, a naive check would misread it
-    // as external and clobber the input ("last letter disappears, then
-    // reappears"). While focused, the input is the source of truth — any URL
-    // change is either our own push landing or will be reconciled on blur.
-    if (document.activeElement === searchInputRef.current) return
-    if (urlQuery === lastPushed.current) return
-    setSearchValue(urlQuery)
-    lastPushed.current = urlQuery
-  }, [urlQuery])
-
-  // Debounced write: local searchValue → URL.
-  useEffect(() => {
-    if (searchValue === urlQuery) return
-    const timer = setTimeout(() => {
-      lastPushed.current = searchValue
-      const params = new URLSearchParams(searchParams.toString())
-      if (searchValue) params.set('q', searchValue)
-      else params.delete('q')
-      const qs = params.toString()
-      startTransition(() => {
-        router.replace(qs ? `/components?${qs}` : '/components', { scroll: false })
-      })
-    }, 150)
-    return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue])
+  const { searchValue, setSearchValue, searchInputRef, clearSearch } = useComponentSearch()
 
   // ⌘K / Ctrl+K focuses the search input.
   useEffect(() => {
@@ -155,12 +109,7 @@ export function Sidebar({
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [])
-
-  const clearSearch = () => {
-    setSearchValue('')
-    searchInputRef.current?.focus()
-  }
+  }, [searchInputRef])
 
   if (hideSidebar) return null
 
@@ -170,10 +119,10 @@ export function Sidebar({
   if (embedded && TEMPLATE_LEAF_RE.test(pathname ?? '')) return null
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col border-r border-sand-300 bg-sand-200 dark:border-sand-800 dark:bg-sand-950">
+    <aside className="flex h-full w-60 shrink-0 flex-col border-r border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
 
       {/* ── Logo ── */}
-      <div className="flex h-14 shrink-0 items-center border-b border-sand-300 px-4 dark:border-sand-800">
+      <div className="flex h-14 shrink-0 items-center border-b border-sand-200 px-4 dark:border-sand-800">
         <Link
           href="/"
           className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50"
@@ -189,7 +138,7 @@ export function Sidebar({
           <MagnifyingGlass
             weight="regular"
             size={14}
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sand-400 dark:text-sand-500"
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sand-600 dark:text-sand-500"
           />
           <input
             ref={searchInputRef}
@@ -197,14 +146,14 @@ export function Sidebar({
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
             placeholder="Search…"
-            className="w-full rounded-lg border border-sand-300 bg-sand-100 py-1.5 pl-8 pr-8 text-sm text-sand-900 outline-none transition-colors placeholder:text-sand-400 hover:border-sand-400 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-600 dark:focus:border-olive-500 dark:focus:ring-olive-500/20"
+            className="w-full rounded-lg border border-sand-200 bg-sand-100 py-1.5 pl-8 pr-8 text-sm text-sand-900 outline-none transition-colors placeholder:text-sand-600 hover:border-sand-300 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-600 dark:focus:border-olive-500 dark:focus:ring-olive-500/20"
           />
           {searchValue && (
             <button
               type="button"
               onClick={clearSearch}
               aria-label="Clear search"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-sand-400 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-sand-600 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
             >
               <X weight="regular" size={13} />
             </button>
@@ -253,7 +202,7 @@ export function Sidebar({
                 <button
                   type="button"
                   onClick={toggleComponents}
-                  className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
+                  className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                 >
                   <span>{section.icon}</span>
                   <span className="flex-1 whitespace-nowrap text-left">Components &amp; Blocks</span>
@@ -264,8 +213,8 @@ export function Sidebar({
                   href="/components"
                   className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
                     activeCategory === 'All Components'
-                      ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                      ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                      : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                   }`}
                 >
                   <span>{section.icon}</span>
@@ -278,14 +227,14 @@ export function Sidebar({
                   disabled={isDisabled}
                   className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
                     isDisabled
-                      ? 'cursor-not-allowed text-sand-400/60 dark:text-sand-600/60'
-                      : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                      ? 'cursor-not-allowed text-sand-600/60 dark:text-sand-600/60'
+                      : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                   }`}
                 >
                   <span className={isDisabled ? 'opacity-40' : ''}>{section.icon}</span>
                   <span className="flex-1 text-left">
                     {section.title}
-                    {isDisabled && <span className="ml-1 text-xs font-normal text-sand-400 dark:text-sand-700">· soon</span>}
+                    {isDisabled && <span className="ml-1 text-xs font-normal text-sand-600 dark:text-sand-700">· soon</span>}
                   </span>
                   {!isDisabled && <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />}
                 </button>
@@ -301,8 +250,8 @@ export function Sidebar({
                         href="/components"
                         className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
                           activeCategory === 'All Components'
-                            ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                            : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                            ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                            : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                         }`}
                       >
                         <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
@@ -322,8 +271,8 @@ export function Sidebar({
                           href={href}
                           className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
                             isActive
-                              ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                              : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                              ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                              : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                           }`}
                         >
                           <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
@@ -337,7 +286,7 @@ export function Sidebar({
                       <button
                         type="button"
                         onClick={() => setShowAllCats((v) => !v)}
-                        className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-500 transition-colors hover:bg-sand-300/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
+                        className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
                       >
                         <CaretDown
                           size={12}
@@ -365,77 +314,9 @@ export function Sidebar({
              above scrolls the long Andromeda component list ── */}
       <div className="shrink-0 px-3 pt-2 pb-1">
         {/* Inset divider (padded left/right via the container's px-3) */}
-        <div className="mb-2 border-t border-sand-300 dark:border-sand-800" />
+        <div className="mb-2 border-t border-sand-200 dark:border-sand-800" />
         <div className="space-y-0.5">
-          <Link
-            href="/lab"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname?.startsWith('/lab')
-                ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <Flask weight="regular" size={16} />
-            <span>Lab</span>
-          </Link>
-          <Link
-            href="/mcp"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname === '/mcp'
-                ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <Plug weight="regular" size={16} />
-            <span>Get MCP</span>
-          </Link>
-          <Link
-            href="/pricing"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname === '/pricing'
-                ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <PiggyBank weight="regular" size={16} />
-            <span>Pricing</span>
-          </Link>
-          <Link
-            href="/about"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname === '/about'
-                ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <Info weight="regular" size={16} />
-            <span>About</span>
-          </Link>
-          <Link
-            href="/faq"
-            className={`flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-              pathname === '/faq'
-                ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-            }`}
-          >
-            <Question weight="regular" size={16} />
-            <span>FAQ</span>
-          </Link>
-          <Link
-            href="/contact"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-          >
-            <EnvelopeSimple weight="regular" size={16} />
-            <span>Contact</span>
-          </Link>
-          <Link
-            href="/feedback"
-            className="flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-          >
-            <ChatCircleText weight="regular" size={16} />
-            <span>Feedback</span>
-          </Link>
+          <SecondaryNav pathname={pathname} variant="rail" />
         </div>
       </div>
 

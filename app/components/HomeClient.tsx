@@ -13,6 +13,7 @@ import { SiteFooter } from './SiteFooter'
 import { INITIAL_LOAD, LOAD_MORE_SIZE } from './LoadMore'
 import { LoadMore } from './LoadMore'
 import type { ComponentMeta } from '../lib/component-registry'
+import { searchTokens, matchesQuery, effectiveTokens } from '../lib/search-match'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
 import {
   ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META,
@@ -88,6 +89,22 @@ function findSuggestions(query: string, vocab: string[], max = 3): string[] {
   return out
 }
 
+// Category keywords folded into each group's searchable text, so the type words
+// themselves match: "template(s)"/"dashboard(s)" surface every template,
+// "andromeda"/"component(s)"/"design system(s)" surface the components. Not
+// shown anywhere — matching only.
+const COMPONENT_KW = 'andromeda components design systems'
+const TEMPLATE_KW = 'andromeda templates dashboards design systems'
+// Per system, so each one's entries match on its own name too ("andromeda pro"
+// finds Pro's set) and carry its own URL prefix. One flat array over a single
+// system was how 15 of these links came to point at the wrong system.
+const SYSTEM_TEXT = SEARCHABLE_SYSTEMS.map((sys) => ({
+  components: sys.components.map((c) => `${c.name} ${c.description} ${sys.label} ${COMPONENT_KW}`),
+  templates: sys.templates.map((t) => `${t.name} ${t.description} ${sys.label} ${TEMPLATE_KW}`),
+}))
+const ANDROMEDA_TEXT = SYSTEM_TEXT.flatMap((t) => t.components)
+const TEMPLATE_TEXT = SYSTEM_TEXT.flatMap((t) => t.templates)
+
 // ─── HomeClient ───────────────────────────────────────────────────────────────
 
 export function HomeClient({
@@ -110,13 +127,27 @@ export function HomeClient({
   const category      = categoryLabel ?? searchParams.get('category') ?? ''
 
   const q = query.trim().toLowerCase()
+
+  // One searchable string per component: name, description and tag labels, so a
+  // query word can match any of them. See app/lib/search-match.ts for why the
+  // query is matched word by word rather than as one phrase.
+  const gridText = useMemo(
+    () =>
+      components.map(
+        (c) => `${c.name} ${c.description} ${c.tags.map((t) => t.label).join(' ')}`,
+      ),
+    [components],
+  )
+  // Everything this page can match, so a query that finds nothing relaxes
+  // against the same set the grid and the extra group are filtered from.
+  const corpus = useMemo(
+    () => (category ? gridText : [...gridText, ...ANDROMEDA_TEXT, ...TEMPLATE_TEXT]),
+    [gridText, category],
+  )
+  const tokens = useMemo(() => effectiveTokens(searchTokens(q), corpus), [q, corpus])
+
   const filtered = q
-    ? components.filter(
-        (c) =>
-          c.name.toLowerCase().includes(q) ||
-          c.description.toLowerCase().includes(q) ||
-          c.tags.some((t) => t.label.toLowerCase().includes(q)),
-      )
+    ? components.filter((_, i) => matchesQuery(gridText[i], tokens))
     : components
 
   // ── Beyond the standalone catalog ──────────────────────────────────────────
@@ -126,17 +157,11 @@ export function HomeClient({
   // active query also scans those two meta sources and they render as their own
   // group below the grid, reusing ComponentCard so the aesthetic matches. They
   // link out to their own pages. Andromeda components are Free; templates Premium.
-  // Category keywords folded into each group's searchable text, so the type
-  // words themselves match: "template(s)"/"dashboard(s)" surface every template,
-  // "andromeda"/"component(s)"/"design system(s)" surface the components. Not
-  // shown anywhere — matching only.
-  const COMPONENT_KW = 'andromeda components design systems'
-  const TEMPLATE_KW = 'andromeda templates dashboards design systems'
   const extras =
     q && !category
-      ? SEARCHABLE_SYSTEMS.flatMap((sys) => [
+      ? SEARCHABLE_SYSTEMS.flatMap((sys, si) => [
           ...sys.components
-            .filter((c) => `${c.name} ${c.description} ${sys.label} ${COMPONENT_KW}`.toLowerCase().includes(q))
+            .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].components[i], tokens))
             .map((c) => ({
               key: `${sys.slug}-${c.slug}`,
               name: c.name,
@@ -147,7 +172,7 @@ export function HomeClient({
               cta: 'View Component',
             })),
           ...sys.templates
-            .filter((t) => `${t.name} ${t.description} ${sys.label} ${TEMPLATE_KW}`.toLowerCase().includes(q))
+            .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].templates[i], tokens))
             .map((t) => ({
               key: `${sys.slug}-template-${t.folder}`,
               name: t.name,
@@ -237,14 +262,14 @@ export function HomeClient({
   const emptyPhrase = EMPTY_BEATS[emptyIdx].phrase
 
   return (
-    <div className="flex min-h-full flex-col bg-sand-200 dark:bg-sand-950">
+    <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
 
       {/* ── Top bar (desktop only — mobile uses MobileNav) ── */}
-      <div className="sticky top-0 z-30 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-300 bg-sand-200 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
+      <div className="sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
         {q && !category ? (
           <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
             {totalResults} {totalResults === 1 ? 'result' : 'results'}
-            <span className="text-sand-400 dark:text-sand-500"> for </span>
+            <span className="text-sand-600 dark:text-sand-500"> for </span>
             <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
           </p>
         ) : (
@@ -262,7 +287,7 @@ export function HomeClient({
       </div>
 
       {/* ── Grid ── */}
-      <div className="flex flex-1 flex-col bg-sand-200 px-4 pt-4 dark:bg-sand-950 md:px-6 md:pt-6">
+      <div className="flex flex-1 flex-col bg-sand-50 px-4 pt-4 dark:bg-sand-950 md:px-6 md:pt-6">
         {/* Mobile breadcrumb — shown above cards on small screens */}
         <p className="mb-4 text-sm font-semibold md:hidden">
           {q && !category ? (
@@ -273,7 +298,7 @@ export function HomeClient({
           ) : (
             <>
               <Link href="/components" className="text-sand-900 transition-colors hover:text-sand-600 dark:text-sand-50 dark:hover:text-sand-400">Components &amp; Blocks</Link>
-              {category && <span className="text-olive-500">/{category}</span>}
+              {category && <span className="text-olive-600 dark:text-olive-500">/{category}</span>}
             </>
           )}
         </p>
@@ -293,7 +318,7 @@ export function HomeClient({
                 ("Components & blocks" + "Design systems & templates") read as a
                 consistent pair. Browsing shows no title (the top bar names it). */}
             {q && !category && (
-              <h2 className="mx-auto mb-4 w-full max-w-[1800px] text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-500">
+              <h2 className="mx-auto mb-4 w-full max-w-[1800px] text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
                 Components &amp; blocks
               </h2>
             )}
@@ -335,7 +360,7 @@ export function HomeClient({
             item's own page. ── */}
         {extras.length > 0 && (
           <div className="mx-auto mt-10 w-full max-w-[1800px]">
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-500">
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
               Design systems &amp; templates
             </h2>
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
@@ -383,7 +408,7 @@ export function HomeClient({
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="flex items-center justify-center"
                 >
-                  <EmptyIcon weight="thin" size={48} className="text-olive-500" />
+                  <EmptyIcon weight="thin" size={48} className="text-olive-600 dark:text-olive-500" />
                 </motion.span>
               </AnimatePresence>
             </div>
@@ -399,7 +424,7 @@ export function HomeClient({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
                   transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="text-sm leading-relaxed text-sand-500 dark:text-sand-400"
+                  className="text-sm leading-relaxed text-sand-600 dark:text-sand-400"
                 >
                   {emptyPhrase}
                 </motion.p>
@@ -415,7 +440,7 @@ export function HomeClient({
             {/* "Did you mean?" chips */}
             {suggestions.length > 0 && (
               <div className="mt-6 w-full">
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-sand-400 dark:text-sand-600">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-600">
                   Did you mean
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-2">
@@ -438,7 +463,7 @@ export function HomeClient({
             {suggestions.length === 0 && (
               <button
                 onClick={clearSearch}
-                className="mt-8 rounded-lg border border-sand-300 bg-sand-100 px-4 py-2 text-sm font-semibold text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 active:scale-95 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
+                className="mt-8 rounded-lg border border-sand-200 bg-sand-100 px-4 py-2 text-sm font-semibold text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 active:scale-95 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
               >
                 Browse all components
               </button>
