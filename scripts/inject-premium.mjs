@@ -24,7 +24,9 @@
  * Pro shims (app/lib/andromeda-pro*.generated.tsx: components + tokens, helpers,
  * template compositions): real re-exports when injected, the committed Legacy
  * tree or placeholder panels on degraded builds, so a fork with no vault still
- * compiles and renders.
+ * compiles and renders. On a degraded Pro build every re-exported name is also
+ * typed `any` (values still come from Legacy at runtime) so Pro's app files are
+ * never typechecked against Legacy's prop/token shapes.
  */
 import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync, statSync, cpSync } from 'node:fs'
 import { join, dirname, resolve } from 'node:path'
@@ -164,7 +166,10 @@ const V2_ONLY_NAMES = [
 // components/lib/* modules the HELPERS shim re-exports (both trees have them),
 // and the helper names only v2's copy implements.
 const V2_LIB_MODULES = ['utils', 'responsive']
-const V2_ONLY_HELPERS = ['toneFromValue']
+// useResolvedVars: Pro-only (system/preview/AndromedaShowcase.tsx,
+// FoundationLoopPro.tsx, AndromedaThemeWrap.tsx) — Legacy's utils.ts has no
+// implementation. Same contract as V2_ONLY_NAMES/V2_FALLBACK_NAMES above.
+const V2_ONLY_HELPERS = ['toneFromValue', 'useResolvedVars']
 
 // Managed block markers in `git info/exclude` — doubles as the state that
 // remembers which files a previous run injected (for stale-file cleanup).
@@ -272,6 +277,44 @@ function placeholderFn(name) {
   ]
 }
 
+// Same placeholder body as placeholderFn (same visible text, same panel), but
+// exported as `export const <name>: any = ...` instead of `export function
+// <name>`, for degraded shims that must not let ANY exported binding — even a
+// placeholder — carry an inferred type. Used only by the Pro components shim's
+// any-typed degraded branch (writeShimFile below); Legacy's own shim keeps
+// placeholderFn's plain `export function` form unchanged.
+function placeholderAnyBlock(name) {
+  const fnName = `${name}Placeholder`
+  const lines = placeholderFn(name)
+  lines[0] = `function ${fnName}(props) {`
+  return [...lines, `export const ${name}: any = ${fnName}`]
+}
+
+// Regex-based export-binding scan for a component/lib source file: every name
+// a consumer can `import { X } from` it, i.e. what `export * from` already
+// carries today. NOT a real parser, but the source files this is used against
+// (design-systems/andromeda/components/*.tsx and components/lib/*.ts) are
+// plain `export const|function|class|let NAME` declarations plus the odd
+// `export { a, b as c }` list — regex holds for that shape. Deliberately
+// excludes `export type`/`export interface` (never a value) and `export
+// default` (an anonymous default is never what `export *` surfaces either, so
+// the any-typed degraded shim below must not invent one).
+function extractExportedBindings(text) {
+  const names = new Set()
+  for (const m of text.matchAll(/^export (?:const|let|class|function)\s+([A-Za-z_$][\w$]*)/gm)) {
+    names.add(m[1])
+  }
+  for (const m of text.matchAll(/^export \{([^}]+)\}/gm)) {
+    for (const item of m[1].split(',')) {
+      const trimmed = item.trim()
+      if (!trimmed) continue
+      const asMatch = trimmed.match(/^[\w$]+\s+as\s+([\w$]+)$/)
+      names.add(asMatch ? asMatch[1] : trimmed)
+    }
+  }
+  return [...names]
+}
+
 // Degraded/partial builds: a free-lane component was EXPECTED (manifest or the
 // fallback list) but NOT injected (no vault, or a pin predating it). Write a
 // sentinel-marked placeholder FILE at its design-system path so direct importers
@@ -320,7 +363,15 @@ function writeFreeDsPlaceholders(system, expectedNames, injectedSet) {
 // injected tree when there is one). `fromV2Tree` picks the export strategy:
 // star the injected names when true, else star every committed v1 component
 // file on disk and fill the v2-only gaps with placeholders.
-function writeShimFile(outFile, root, injectedNames, fromV2Tree, headerLines) {
+//
+// `anyTypedDegraded` (Pro's degraded call ONLY — Legacy always passes false,
+// and its output must stay byte-for-byte what it always was: production
+// contract, andromeda-demos.tsx/AndromedaShowcase.tsx depend on it) swaps the
+// degraded branch's `export *` for named `any`-typed re-exports: Legacy's
+// components still run the page at runtime, but the exported TYPES are `any`,
+// so Pro's app files (written against Pro's prop/token shapes) are never
+// typechecked against Legacy's narrower ones. See the module header comment.
+function writeShimFile(outFile, root, injectedNames, fromV2Tree, headerLines, anyTypedDegraded = false) {
   // `export *` rather than one named export per file: a component file also
   // exports its parts (Card → CardHeader/CardTitle/…, Table → TableRow/…), and
   // the app imports those by name. Starring the file means a new subcomponent in
@@ -335,11 +386,29 @@ function writeShimFile(outFile, root, injectedNames, fromV2Tree, headerLines) {
         .map((f) => f.replace(/\.tsx$/, ''))
         .sort()
   const out = [...headerLines]
-  for (const name of names) out.push(`export * from '${root}/components/${name}'`)
-  if (!fromV2Tree) {
+  if (!fromV2Tree && anyTypedDegraded) {
+    // Pro degraded: import each committed Legacy component file as a namespace
+    // and re-export every binding it has (regex-scanned, same set `export *`
+    // would carry) as `export const <Binding>: any = (L_<Name> as any).<Binding>`.
+    for (const name of names) {
+      const alias = `L_${name}`
+      const text = readFileSync(join(ROOT, 'design-systems/andromeda/components', `${name}.tsx`), 'utf8')
+      out.push(`import * as ${alias} from '${root}/components/${name}'`)
+      for (const binding of extractExportedBindings(text)) {
+        out.push(`export const ${binding}: any = (${alias} as any).${binding}`)
+      }
+    }
     for (const name of V2_ONLY_NAMES) {
       if (names.includes(name)) continue
-      out.push(...placeholderFn(name))
+      out.push(...placeholderAnyBlock(name))
+    }
+  } else {
+    for (const name of names) out.push(`export * from '${root}/components/${name}'`)
+    if (!fromV2Tree) {
+      for (const name of V2_ONLY_NAMES) {
+        if (names.includes(name)) continue
+        out.push(...placeholderFn(name))
+      }
     }
   }
   if (fromV2Tree) {
@@ -350,10 +419,13 @@ function writeShimFile(outFile, root, injectedNames, fromV2Tree, headerLines) {
     // here rather than let a fork read undefined and throw at render — same
     // colours, same roles, nothing invented. What v1 genuinely lacks (`control`)
     // stays absent, and the one call site optional-chains it.
+    // anyTypedDegraded (Pro only) types the merged object `any` — same runtime
+    // value, but Pro's token shape (brand/success/neutral/role/…, which v1
+    // genuinely lacks) is never checked against it.
     out.push(
       '',
       `import { tokens as v1Tokens } from '${root}/tokens'`,
-      'export const tokens = {',
+      `export const tokens${anyTypedDegraded ? ': any' : ''} = {`,
       '  ...v1Tokens,',
       '  color: { ...v1Tokens.color, warning: v1Tokens.color.orange, danger: v1Tokens.color.red },',
       '}',
@@ -388,18 +460,31 @@ function writeLegacyV2Shim(freeInjectedNames) {
 // whole-system lane actually injected design-systems/andromeda-pro/; otherwise
 // this falls back to the same committed Andromeda Legacy tree Legacy's own
 // shim uses, so Pro-tree app files still compile on a fork or a pin predating
-// the Pro system.
+// the Pro system. Degraded build keeps Legacy at RUNTIME but exports every
+// name as `any` so Pro's app files are not typechecked against Legacy's
+// shapes (component props, and the token object's brand/success/neutral/role
+// fields Legacy genuinely lacks) — without this a degraded build renders fine
+// but `next build`'s typecheck fails on Pro's ~74 app files.
 function writeProV2Shim(injectedNames, fromV2Tree) {
   const root = fromV2Tree ? '../../design-systems/andromeda-pro' : '../../design-systems/andromeda'
-  writeShimFile(V2_PRO_SHIM, root, injectedNames, fromV2Tree, [
-    '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
-    '// Re-exports the Andromeda Pro components + tokens injected from the private',
-    '// vault. On a degraded build (fork, missing PAT, older premium pin) it falls',
-    '// back to the committed Andromeda Legacy tree, and any name Legacy has no',
-    '// file for renders a placeholder panel, so a fork still compiles.',
-    '// @ts-nocheck — re-exports untyped design-system sources.',
-    '',
-  ])
+  writeShimFile(
+    V2_PRO_SHIM,
+    root,
+    injectedNames,
+    fromV2Tree,
+    [
+      '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
+      '// Re-exports the Andromeda Pro components + tokens injected from the private',
+      '// vault. On a degraded build (fork, missing PAT, older premium pin) it falls',
+      '// back to the committed Andromeda Legacy tree at RUNTIME, but exports every',
+      '// name typed `any` — so Pro app files are never typechecked against Legacy\'s',
+      '// prop/token shapes — and any name Legacy has no file for renders a',
+      '// placeholder panel (also `any`), so a fork still compiles.',
+      '// @ts-nocheck — re-exports untyped design-system sources.',
+      '',
+    ],
+    true,
+  )
 }
 
 // ALWAYS written (every run) — the components/lib/* helpers app code reaches for
@@ -408,7 +493,10 @@ function writeProV2Shim(injectedNames, fromV2Tree) {
 // the components shim is imported by SERVER components (the template routes read
 // `tokens` from it), which makes a hook import there a build error. Only client
 // modules and tests import this one. Andromeda Pro only — Legacy has no helpers
-// shim of its own (nothing in the Legacy tree imports it).
+// shim of its own (nothing in the Legacy tree imports it), so (unlike the
+// components shim above) BOTH branches here are Pro-only: the degraded branch
+// can freely export every name typed `any` — Legacy's helpers still run at
+// runtime, but Pro's app files are never typechecked against Legacy's shapes.
 function writeProHelpersShim(fromV2Tree) {
   const root = fromV2Tree ? '../../design-systems/andromeda-pro' : '../../design-systems/andromeda'
   const out = [
@@ -416,28 +504,41 @@ function writeProHelpersShim(fromV2Tree) {
     '// Andromeda Pro component-lib helpers, from the injected tree when there is',
     '// one and the committed Andromeda Legacy lib otherwise. CLIENT/TEST ONLY —',
     '// these modules use React hooks, so a server component must not import this',
-    '// shim.',
+    '// shim. Degraded build keeps Legacy at runtime but exports every name typed',
+    '// `any`, so Pro app files are not typechecked against Legacy\'s shapes.',
     '// @ts-nocheck — re-exports untyped design-system sources.',
     '',
   ]
-  for (const lib of V2_LIB_MODULES) out.push(`export * from '${root}/components/lib/${lib}'`)
-  // Named palette snapshots (the dev-only theme dock lists them). v2-tree only:
-  // the committed v1 lib has no such folder, and a missing module is a hard
-  // build error where a missing named export is merely inert.
-  out.push(
-    fromV2Tree
-      ? `export * from '${root}/components/lib/palettes'`
-      : 'export const ANDROMEDA_PALETTES = {}',
-  )
-  if (!fromV2Tree) {
+  if (fromV2Tree) {
+    for (const lib of V2_LIB_MODULES) out.push(`export * from '${root}/components/lib/${lib}'`)
+    // Named palette snapshots (the dev-only theme dock lists them). v2-tree
+    // only: the committed v1 lib has no such folder.
+    out.push(`export * from '${root}/components/lib/palettes'`)
+  } else {
+    // Degraded: import each committed Legacy lib module as a namespace and
+    // re-export every binding it has (regex-scanned) as `any`, same treatment
+    // as the components shim's degraded branch above.
+    for (const lib of V2_LIB_MODULES) {
+      const alias = `L_${lib}`
+      const text = readFileSync(join(ROOT, 'design-systems/andromeda/components/lib', `${lib}.ts`), 'utf8')
+      out.push(`import * as ${alias} from '${root}/components/lib/${lib}'`)
+      for (const binding of extractExportedBindings(text)) {
+        out.push(`export const ${binding}: any = (${alias} as any).${binding}`)
+      }
+    }
+    // A missing module (no such folder in v1) would be a hard build error
+    // where a missing named export is merely inert, so this stays a plain
+    // empty-object fallback rather than an import.
+    out.push('export const ANDROMEDA_PALETTES: any = {}')
     // Helpers v1's lib has no implementation for. An explicit export shadows a
-    // star one, so this only ever wins while the real thing is genuinely absent.
-    // Inert on purpose: nothing RENDERS from these, and the one test that reads
-    // toneFromValue skips itself on a degraded build (V2_COMPONENT_NAMES empty).
+    // star/any one above, so this only ever wins while the real thing is
+    // genuinely absent. Inert on purpose: nothing RENDERS from these, and the
+    // one test that reads toneFromValue skips itself on a degraded build
+    // (V2_COMPONENT_NAMES empty).
     const v1Utils = readFileSync(join(ROOT, 'design-systems/andromeda/components/lib/utils.ts'), 'utf8')
     for (const name of V2_ONLY_HELPERS) {
       if (v1Utils.includes(`export function ${name}`)) continue
-      out.push(`export const ${name} = (...args) => null`)
+      out.push(`export const ${name}: any = (...args) => null`)
     }
   }
   out.push('')
@@ -462,26 +563,29 @@ const V2_EXAMPLE_EXPORTS = {
 }
 
 // ALWAYS written (every run, including degraded/no-vault) — see above. Andromeda
-// Pro only — nothing in the Legacy tree imports an examples shim.
+// Pro only — nothing in the Legacy tree imports an examples shim. A Legacy
+// fallback export is typed `any` (same runtime composition, untyped against
+// Pro's shape); the real injected-Pro export keeps its normal typed form.
 function writeProExamplesShim() {
   const out = [
     '// AUTO-GENERATED by scripts/inject-premium.mjs — gitignored, never committed.',
     '// Template compositions for the Andromeda Pro template routes: the injected',
-    '// Pro example, else the committed Andromeda Legacy one, else a placeholder',
-    '// panel.',
+    '// Pro example, else the committed Andromeda Legacy one (typed `any`, so it is',
+    '// not typechecked against Pro\'s shape), else a placeholder panel (also `any`).',
     '// @ts-nocheck — re-exports untyped design-system sources.',
     '',
   ]
   for (const [name, slug] of Object.entries(V2_EXAMPLE_EXPORTS)) {
     const pro = `design-systems/andromeda-pro/examples/${slug}`
     const legacy = `design-systems/andromeda/examples/${slug}`
-    const from = existsSync(join(ROOT, pro, 'index.tsx'))
-      ? pro
-      : existsSync(join(ROOT, legacy, 'index.tsx'))
-        ? legacy
-        : null
-    if (from) out.push(`export { default as ${name} } from '../../${from}'`)
-    else out.push(...placeholderFn(name))
+    if (existsSync(join(ROOT, pro, 'index.tsx'))) {
+      out.push(`export { default as ${name} } from '../../${pro}'`)
+    } else if (existsSync(join(ROOT, legacy, 'index.tsx'))) {
+      out.push(`import ${name}_Legacy from '../../${legacy}'`)
+      out.push(`export const ${name}: any = ${name}_Legacy`)
+    } else {
+      out.push(...placeholderAnyBlock(name))
+    }
   }
   out.push('')
   writeFileSync(V2_PRO_EXAMPLES_SHIM, out.join('\n'))
