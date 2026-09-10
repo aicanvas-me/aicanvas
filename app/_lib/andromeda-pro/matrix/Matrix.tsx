@@ -478,19 +478,34 @@ function CaseSection({
           marginBottom: tokens.spacing[4],
         }}
       >
+        {/* Section heading + count sit on the PAGE ground (this row is above
+            the card grid below, not inside a CaseCard), so both read off the
+            site's sand scale — same rule as the h2 headings the sibling
+            coverage panels use in AndromedaComponentView. The per-card
+            caption below (see `head`, used by Instance) stays on the
+            Andromeda channel: that text sits inside the still-dark
+            CaseCard, a separate surface this fix does not touch. */}
         <h3
+          className="text-sand-900 dark:text-sand-50"
           style={{
             margin: 0,
             fontFamily: tokens.typography.fontSans,
             fontSize: tokens.typography.size.md,
             fontWeight: tokens.typography.weight.medium,
-            color: `var(--at-text-primary, ${tokens.color.text.primary})`,
             letterSpacing: tokens.typography.tracking.wide,
           }}
         >
           {heading}
         </h3>
-        <span style={head}>
+        <span
+          className="text-sand-600 dark:text-sand-400"
+          style={{
+            fontFamily: tokens.typography.fontSans,
+            fontSize: tokens.typography.size.sm,
+            textTransform: 'uppercase',
+            letterSpacing: tokens.typography.tracking.widest,
+          }}
+        >
           {cases.length} {cases.length === 1 ? 'example' : 'examples'}
         </span>
       </div>
