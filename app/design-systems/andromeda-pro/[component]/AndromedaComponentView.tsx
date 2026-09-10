@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -39,7 +38,7 @@ import { trackInstall } from '../../../lib/track-install'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
 import { useSession } from '../../../components/auth/SessionProvider'
-import { optimizeImageKitUrl } from '../../../lib/imagekit'
+import { AndromedaComponentCard } from '../system/AndromedaComponentCard'
 import { Paywall, type PaywallReason } from '../../../components/billing/Paywall'
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
 import { usePaywallModal } from '../../../components/billing/PaywallModalProvider'
@@ -47,7 +46,9 @@ import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
 import { RemixPanel } from '../../../_components/RemixPanel'
 
-type RelatedItem = { slug: string; name: string; image?: string }
+// Matches the Pro components index card's data shape (system/AndromedaGallery
+// GalleryItem) so [component]/page.tsx and this view share one contract.
+type RelatedItem = { slug: string; name: string; description: string; variants: number; states: number }
 
 interface Props {
   slug: string
@@ -772,12 +773,15 @@ export function AndromedaComponentView({
       {/* ── Props ──────────────────────────────────────────────────────── */}
       <PropsTable propTables={propTables} />
 
-      {/* ── More Andromeda components ──────────────────────────────────── */}
+      {/* ── More Andromeda Pro components ─────────────────────────────────
+          Cards are the exact ones the components index page renders
+          (system/AndromedaComponentCard), not a captured image — see that
+          file's header comment for why the two can't drift apart. */}
       {related.length > 0 && (
         <section className="mt-16">
           <div className="mb-5 flex items-end justify-between gap-4">
             <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
-              More Andromeda components
+              More Andromeda Pro components
             </h2>
             {canPaginate && (
               <div className="flex shrink-0 items-center gap-1.5">
@@ -833,54 +837,13 @@ export function AndromedaComponentView({
                     }}
                     className="relative"
                   >
-                    <Link
-                      href={`/design-systems/andromeda-pro/${c.slug}`}
-                      className="group flex flex-col overflow-hidden rounded-xl border border-sand-300 bg-sand-100 transition-colors duration-200 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
-                    >
-                      <div
-                        className="relative aspect-video overflow-hidden"
-                        style={{ backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }}
-                      >
-                        {c.image ? (
-                          <img
-                            src={optimizeImageKitUrl(c.image, 'card')}
-                            alt={c.name}
-                            loading="lazy"
-                            decoding="async"
-                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                          />
-                        ) : (
-                          <>
-                            <div
-                              className="absolute inset-0"
-                              style={{
-                                backgroundImage:
-                                  'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
-                                backgroundSize: '18px 18px',
-                              }}
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center">
-                              <span
-                                style={{
-                                  fontFamily: tokens.typography.fontMono,
-                                  fontSize: tokens.typography.size.xs,
-                                  color: `var(--at-text-faint, ${tokens.color.text.faint})`,
-                                  textTransform: 'uppercase',
-                                  letterSpacing: tokens.typography.tracking.widest,
-                                }}
-                              >
-                                /// {c.slug}
-                              </span>
-                            </div>
-                          </>
-                        )}
-                      </div>
-                      <div className="px-3 py-2.5">
-                        <h3 className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">
-                          {c.name}
-                        </h3>
-                      </div>
-                    </Link>
+                    <AndromedaComponentCard
+                      slug={c.slug}
+                      name={c.name}
+                      description={c.description}
+                      variants={c.variants}
+                      states={c.states}
+                    />
                   </motion.div>
                 ))}
               </AnimatePresence>

@@ -8,6 +8,7 @@ import {
 import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
 import { AndromedaComponentView } from './AndromedaComponentView'
 import { AndromedaThemeWrap } from '../AndromedaThemeWrap'
+import { COMPONENT_COUNTS } from '../system/component-counts'
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import { getSessionEntitlement } from '../../../lib/entitlement'
@@ -69,8 +70,18 @@ export default async function AndromedaComponentPage({
   // toggle pins it after that — see AndromedaThemeWrap's `initialTheme`.
   const siteTheme = (await cookies()).get('theme')?.value === 'light' ? 'light' : 'dark'
 
+  // Same shape as the Pro components index card (system/AndromedaGallery.tsx):
+  // name, one-line description, and the variant/state counts from
+  // COMPONENT_COUNTS — the same generated source the index page reads — so a
+  // component's chip numbers can never diverge between the two surfaces.
   const related = ANDROMEDA_COMPONENTS.filter((c) => c.slug !== entry.slug).map(
-    (c) => ({ slug: c.slug, name: c.name, image: c.image }),
+    (c) => ({
+      slug: c.slug,
+      name: c.name,
+      description: c.description,
+      variants: COMPONENT_COUNTS[c.slug]?.variants ?? 0,
+      states: COMPONENT_COUNTS[c.slug]?.states ?? 0,
+    }),
   )
 
   // Prop tables parsed from the component's @typedef JSDoc at build time, keyed

@@ -10,8 +10,8 @@
 // the mono type belong to the component pages and the internal preview. This
 // page is site chrome.
 import { useMemo, useState } from 'react'
-import Link from 'next/link'
-import { ArrowUpRight, MagnifyingGlass } from '@phosphor-icons/react'
+import { MagnifyingGlass } from '@phosphor-icons/react'
+import { AndromedaComponentCard } from './AndromedaComponentCard'
 
 export type GalleryItem = {
   slug: string
@@ -98,39 +98,14 @@ export function AndromedaGallery({
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
-              <Link
+              <AndromedaComponentCard
                 key={item.slug}
-                href={`/design-systems/andromeda-pro/${item.slug}`}
-                className="group flex flex-col rounded-2xl border border-sand-300 bg-sand-100 p-4 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">
-                    {item.name}
-                  </h3>
-                  <ArrowUpRight
-                    weight="regular"
-                    size={16}
-                    className="mt-0.5 shrink-0 text-sand-400 transition-colors group-hover:text-sand-700 dark:text-sand-500 dark:group-hover:text-sand-300"
-                  />
-                </div>
-                <p className="mt-1.5 flex-1 text-xs leading-relaxed text-sand-600 dark:text-sand-400">
-                  {item.description}
-                </p>
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {/* One canonical look is not a count: "1 variants" reads as a
-                      component that lost the other two. */}
-                  {item.variants > 1 && (
-                    <span className="rounded-md bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
-                      {item.variants} variants
-                    </span>
-                  )}
-                  {item.states > 0 && (
-                    <span className="rounded-md bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
-                      {item.states} states
-                    </span>
-                  )}
-                </div>
-              </Link>
+                slug={item.slug}
+                name={item.name}
+                description={item.description}
+                variants={item.variants}
+                states={item.states}
+              />
             ))}
           </div>
         </section>
