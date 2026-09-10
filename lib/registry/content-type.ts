@@ -14,6 +14,12 @@ export interface ContentLookup {
   templateSlugs: Set<string>
   /** Bare system names whose whole-system aggregates are premium (e.g. andromeda). */
   systemSlugs: Set<string>
+  /**
+   * Bare system names whose EVERY item is paid-to-install — components and the
+   * token foundation included, not just the aggregates (e.g. andromeda-pro).
+   * A free MIT system is absent from this set and keeps the free lane.
+   */
+  paidSystemSlugs: Set<string>
   /** Slugs of premium-only STANDALONE components (closed-source, born premium). */
   premiumSlugs: Set<string>
   /** Slugs of gated design-system BRAIN items (e.g. andromeda-brain). */
@@ -61,8 +67,21 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
   // free installs of those components, so classifying it 'meta' keeps it free +
   // uncounted, while the aggregates and templates stay premium.
   for (const system of lookup.systemSlugs) {
-    if (slug === `${system}-tokens`) return 'meta'
+    // A paid system's foundation is NOT the free shared dependency the
+    // exception below was written for: it is that system's tokens, and handing
+    // it out publicly hands out the palette the system is sold on.
+    if (slug === `${system}-tokens`) {
+      return lookup.paidSystemSlugs.has(system) ? 'premium-standalone' : 'meta'
+    }
     if (slug === system || slug === `${system}-all`) return 'design-system'
+  }
+
+  // A paid system's individual components gate binary and fail-closed, exactly
+  // like a premium standalone: free to explore on the site, paid to install.
+  for (const system of lookup.paidSystemSlugs) {
+    if (slug.startsWith(`${system}-`) && lookup.designSystemSlugs.has(slug)) {
+      return 'premium-standalone'
+    }
   }
 
   // Individual design-system components are FREE like standalones: the source is

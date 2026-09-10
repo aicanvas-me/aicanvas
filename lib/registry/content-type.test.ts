@@ -2,14 +2,33 @@ import { describe, it, expect } from 'vitest'
 import { classifyContent, type ContentLookup } from './content-type'
 
 const lookup: ContentLookup = {
-  designSystemSlugs: new Set(['andromeda-card']),
+  designSystemSlugs: new Set(['andromeda-card', 'andromeda-pro-card', 'andromeda-pro-burst']),
   templateSlugs: new Set(['andromeda-mission-control', 'andromeda-service-order']),
-  systemSlugs: new Set(['andromeda']),
+  systemSlugs: new Set(['andromeda', 'andromeda-pro']),
+  paidSystemSlugs: new Set(['andromeda-pro']),
   premiumSlugs: new Set(['aurora-pricing-table']),
   brainSlugs: new Set(['andromeda-brain']),
 }
 
 describe('classifyContent', () => {
+  // Andromeda Pro is free to explore, PAID TO INSTALL (ruling 2026-08-30). Its
+  // components and its token foundation must never classify into a free lane.
+  it('gates a paid system\'s components, while the free system\'s stay free', () => {
+    expect(classifyContent('andromeda-card', lookup)).toBe('design-system-component')
+    expect(classifyContent('andromeda-pro-card', lookup)).toBe('premium-standalone')
+    expect(classifyContent('andromeda-pro-burst.json', lookup)).toBe('premium-standalone')
+  })
+
+  it('gates a paid system\'s token foundation but not a free one\'s', () => {
+    expect(classifyContent('andromeda-tokens', lookup)).toBe('meta')
+    expect(classifyContent('andromeda-pro-tokens', lookup)).toBe('premium-standalone')
+  })
+
+  it('keeps a paid system\'s aggregates premium', () => {
+    expect(classifyContent('andromeda-pro', lookup)).toBe('design-system')
+    expect(classifyContent('andromeda-pro-all', lookup)).toBe('design-system')
+  })
+
   it('classifies a plain standalone', () => {
     expect(classifyContent('glass-navbar', lookup)).toBe('standalone')
   })

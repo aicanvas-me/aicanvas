@@ -52,11 +52,20 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  *                                    (degraded build / older premium pin) the
  *                                    generator skips them with a warning instead of
  *                                    failing.
+ * @property {boolean} [paidToInstall] Every item this system emits (components,
+ *                                    tokens, aggregates, templates) requires a
+ *                                    premium entitlement to INSTALL. Browsing
+ *                                    the pages stays free. Andromeda Legacy is
+ *                                    MIT and omits this; Andromeda Pro sets it.
  * @property {boolean} [skipIfMissing] Skip the whole system when its root is not
  *                                    on disk (an injected-only system on a build
  *                                    with no vault access), instead of failing.
  * @property {DesignSystemTemplate[]} templates
  */
+
+// NOTE: this module is imported by CLIENT components, so it must stay free of
+// `node:` imports. Anything needing the filesystem (e.g. "is this system's tree
+// actually on disk") belongs in app/lib/available-design-systems.ts instead.
 
 /** @type {DesignSystem[]} */
 export const DESIGN_SYSTEMS = [
@@ -149,6 +158,10 @@ export const DESIGN_SYSTEMS = [
   {
     slug: 'andromeda-pro',
     name: 'Andromeda Pro',
+    // Free to explore, paid to install (ruling 2026-08-30). Without this every
+    // andromeda-pro-* item classifies as a free design-system component and the
+    // whole premium library installs for nothing.
+    paidToInstall: true,
     // Andromeda Pro has NO committed source: its whole tree is injected from
     // the vault by scripts/inject-premium.mjs (manifest key `systems`). On a
     // build without that injection the tree is absent and the generator skips

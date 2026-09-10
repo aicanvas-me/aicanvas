@@ -408,26 +408,31 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
 // Node-free) for use by the component page (forward) and the Saved list
 // (reverse, to resolve a saved registry slug back to its page + display name).
 const ANDROMEDA_REGISTRY_SLUG_OVERRIDES: Record<string, string> = {
-  button: 'andromeda-button-system',
+  // Andromeda Pro owns the `andromeda-pro-` namespace, so Button needs no
+  // override here: nothing collides with the free standalone that owns
+  // `andromeda-button`. What DOES still need overriding is every page slug that
+  // diverges from its source FILENAME, because the generator derives the
+  // registry slug from the filename. Pointing these at `andromeda-*` handed
+  // buyers an install command for Andromeda Legacy's free MIT component.
+  //
   // The two tables were renamed for the docs site (2026-08-19) so they read as a
-  // pair. The registry slug is derived from the vault FILENAME, which did not
-  // move, so the default `andromeda-${pageSlug}` no longer lands on it.
-  'table-basic': 'andromeda-table',
-  'table-data': 'andromeda-data-table',
+  // pair; the vault filenames did not move.
+  'table-basic': 'andromeda-pro-table',
+  'table-data': 'andromeda-pro-data-table',
   // Same for the charts, renamed the same day so the family reads together.
-  'chart-funnel': 'andromeda-funnel-chart',
-  'chart-metric': 'andromeda-metric-chart',
-  'chart-radar': 'andromeda-radar-chart',
-  'chart-trend': 'andromeda-trend-chart',
+  'chart-funnel': 'andromeda-pro-funnel-chart',
+  'chart-metric': 'andromeda-pro-metric-chart',
+  'chart-radar': 'andromeda-pro-radar-chart',
+  'chart-trend': 'andromeda-pro-trend-chart',
 }
 
 export function andromedaRegistrySlug(pageSlug: string): string {
-  return ANDROMEDA_REGISTRY_SLUG_OVERRIDES[pageSlug] ?? `andromeda-${pageSlug}`
+  return ANDROMEDA_REGISTRY_SLUG_OVERRIDES[pageSlug] ?? `andromeda-pro-${pageSlug}`
 }
 
 export function andromedaPageSlug(registrySlug: string): string {
   const override = Object.entries(ANDROMEDA_REGISTRY_SLUG_OVERRIDES).find(([, v]) => v === registrySlug)
-  return override ? override[0] : registrySlug.replace(/^andromeda-/, '')
+  return override ? override[0] : registrySlug.replace(/^andromeda-pro-/, '')
 }
 
 export function getAndromedaComponentMeta(registrySlug: string): AndromedaComponentMeta | undefined {

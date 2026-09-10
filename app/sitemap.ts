@@ -5,7 +5,7 @@ import { COLLECTIONS, collectionMembers } from './lib/collections'
 import { SITE_URL } from './lib/config'
 import { ANDROMEDA_COMPONENT_META } from './_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from './_lib/andromeda-pro/andromeda-meta'
-import { DESIGN_SYSTEMS } from '../scripts/lib/design-systems.config.mjs'
+import { availableDesignSystems } from './lib/available-design-systems'
 
 // No `lastModified`. Every entry used to emit `new Date()`, i.e. the build
 // timestamp, so all 154 URLs claimed to change on every deploy. Google only
@@ -48,7 +48,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     andromeda: ['system'],
     'andromeda-pro': ['foundation', 'components'],
   }
-  const designSystemPages: MetadataRoute.Sitemap = DESIGN_SYSTEMS.flatMap(
+  const designSystemPages: MetadataRoute.Sitemap = availableDesignSystems().flatMap(
     (s: { slug: string; templates?: { slug: string }[] }) => [
       {
         url: `${SITE_URL}/design-systems/${s.slug}`,

@@ -1,8 +1,7 @@
 import { COMPONENTS } from '../lib/component-registry'
 import { COLLECTIONS, collectionMembers } from '../lib/collections'
 import { SITE_URL } from '../lib/config'
-import { DESIGN_SYSTEMS } from '../../scripts/lib/design-systems.config.mjs'
-import { existsSync } from 'fs'
+import { availableDesignSystems } from '../lib/available-design-systems'
 
 export const dynamic = 'force-static'
 
@@ -67,10 +66,7 @@ AI agents can browse and install AI Canvas components through the official MCP s
     andromeda: '/showcase',
     'andromeda-pro': '/components',
   }
-  const systems = DESIGN_SYSTEMS.filter(
-    (s: { slug: string; skipIfMissing?: boolean; rootDir: string }) =>
-      !s.skipIfMissing || existsSync(s.rootDir),
-  ).map(
+  const systems = availableDesignSystems().map(
     (s: {
       slug: string
       name: string

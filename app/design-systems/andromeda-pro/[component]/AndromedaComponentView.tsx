@@ -292,7 +292,7 @@ export function AndromedaComponentView({
       return
     }
     try {
-      trackInstall(registrySlug, 'andromeda', pkgManager)
+      trackInstall(registrySlug, 'andromeda-pro', pkgManager)
       await navigator.clipboard.writeText(cliCommand)
       setCliCopied(true)
       setTimeout(() => setCliCopied(false), 2000)
@@ -405,7 +405,7 @@ export function AndromedaComponentView({
               Keyed on the REGISTRY slug (not the page slug) so the Button
               override (andromeda-button-system) can't collide with the free
               standalone's own save entry (andromeda-button). */}
-          <SaveButton slug={registrySlug} system="andromeda" />
+          <SaveButton slug={registrySlug} system="andromeda-pro" />
 
           {/* Copy CLI — the button and command stay visible at all times; when
               the install is account-gated and the visitor is signed out,
@@ -567,7 +567,7 @@ export function AndromedaComponentView({
                             ? `yarn dlx shadcn@latest add ${installReference}`
                             : `npx shadcn@latest add ${installReference}`
                           navigator.clipboard.writeText(cmd)
-                          trackInstall(registrySlug, 'andromeda', pkgManager)
+                          trackInstall(registrySlug, 'andromeda-pro', pkgManager)
                           setCliCopied(true)
                           setTimeout(() => setCliCopied(false), 2000)
                         }}

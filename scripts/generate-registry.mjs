@@ -523,6 +523,10 @@ try {
 // /r route's filename regex rejects leading underscores, so it is not servable.
 const manifest = {
   systemSlugs: [],
+  // Systems whose every item is paid-to-install (design-systems.config.mjs
+  // `paidToInstall`). The gate reads this to tell a free MIT system's
+  // components from a premium system's.
+  paidSystemSlugs: SYSTEMS.filter((ds) => ds.paidToInstall).map((ds) => ds.slug).sort(),
   designSystemSlugs: [],
   templateSlugs: [],
   premiumSlugs,

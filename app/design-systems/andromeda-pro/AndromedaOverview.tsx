@@ -47,8 +47,8 @@ const TEMPLATE_IMAGE_FILE = {
   'andromeda-pro-service-order': 'Service order.png',
   'andromeda-pro-resource-planning': 'Resource planning.png',
   'andromeda-pro-signal-room': 'Signal Room.png',
-  // Sign In has no card art uploaded yet; the encoder handles the empty name
-  // and the card renders without an image rather than pointing at a 404.
+  // Sign In has no card art uploaded yet. An empty entry means "no image": the
+  // card falls back to its own dark panel instead of a broken-image glyph.
   'andromeda-pro-sign-in': '',
 }
 
@@ -63,7 +63,11 @@ const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
   blurb: TEMPLATE_BLURBS[t.slug] ?? '',
   // Uncompressed template card art — tr=orig-true serves the untouched original
   // (no resize / quality optimization). Filenames have spaces, so encode them.
-  image: `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_IMAGE_FILE[t.slug] ?? '')}?tr=orig-true`,
+  // A template with no art yet gets null, NOT a URL with an empty filename:
+  // that resolved to the folder itself and painted a broken-image glyph.
+  image: TEMPLATE_IMAGE_FILE[t.slug]
+    ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_IMAGE_FILE[t.slug])}?tr=orig-true`
+    : null,
 }))
 
 // AI Canvas component-preview fill — dark sand-900 surface with the site's
@@ -426,13 +430,15 @@ export function AndromedaOverview() {
                     </span>
                   </span>
                 </div>
-                <img
-                  src={t.image}
-                  alt={t.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                />
+                {t.image && (
+                  <img
+                    src={t.image}
+                    alt={t.name}
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  />
+                )}
               </div>
               <div className="relative -mt-4 flex flex-1 flex-col gap-3 rounded-t-2xl bg-sand-100 p-5 shadow-[0_-8px_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[0_-8px_24px_rgba(0,0,0,0.25)]">
                 <div>

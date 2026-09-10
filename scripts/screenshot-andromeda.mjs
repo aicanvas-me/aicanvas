@@ -1,6 +1,11 @@
 /**
- * Capture Andromeda design-system component screenshots and upload them to
- * ImageKit under the `andromeda/` folder.
+ * Capture Andromeda PRO design-system component screenshots and upload them to
+ * ImageKit under the `andromeda-pro/` folder.
+ *
+ * The folder is per SYSTEM on purpose. This script reads Andromeda Pro's meta,
+ * and Andromeda Legacy's live card art sits under `andromeda/`: sharing one
+ * folder meant a Pro shoot silently overwrote Legacy's published images and
+ * left Legacy with no way to be re-shot at all.
  *
  * Each component is rendered fit-scaled in a 1280×720 void frame by the
  * /andromeda-capture/<slug> route, so every card gets uniform 16:9 art.
@@ -46,7 +51,7 @@ if (!IMAGEKIT_PRIVATE) {
   process.exit(1)
 }
 const IMAGEKIT_UPLOAD = 'https://upload.imagekit.io/api/v1/files/upload'
-const IMAGEKIT_FOLDER = '/andromeda'
+const IMAGEKIT_FOLDER = '/andromeda-pro'
 const TEMP_DIR = path.join(__dirname, '../.screenshots-tmp-andromeda')
 const SETTLE_MS = 1800 // let scroll-gated charts reveal + animations settle
 
@@ -159,7 +164,7 @@ async function main() {
   await browser.close()
   await rm(TEMP_DIR, { recursive: true, force: true })
 
-  console.log(`\n${ok} uploaded, ${fail} failed → https://ik.imagekit.io/aitoolkit/andromeda/`)
+  console.log(`\n${ok} uploaded, ${fail} failed → https://ik.imagekit.io/aitoolkit/andromeda-pro/`)
 
   // Emit a slug→url map so the URLs can be wired straight into andromeda-meta.ts
   const map = Object.fromEntries(results.filter((r) => r.url).map((r) => [r.slug, r.url]))
