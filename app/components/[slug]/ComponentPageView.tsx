@@ -17,7 +17,7 @@ import {
   Sun,
   Moon,
   CornersOut,
-  CornersIn,
+  X,
   ArrowClockwise,
   Terminal,
   Sparkle,
@@ -1511,7 +1511,7 @@ export default function ComponentPageView({
               aria-label="Close fullscreen preview"
               className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95 sm:top-14 sm:right-14"
             >
-              <CornersIn weight="regular" size={17} />
+              <X weight="regular" size={16} />
             </button>
           </motion.div>
         )}

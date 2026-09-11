@@ -10,13 +10,13 @@ import {
   Check,
   Code,
   Copy,
-  CornersIn,
   CornersOut,
   Eye,
   Moon,
   Sparkle,
   Sun,
   Terminal,
+  X,
 } from '@phosphor-icons/react'
 import { Step } from '../../../components/Step'
 import { useAndromedaPreviewTheme } from '../AndromedaThemeWrap'
@@ -917,7 +917,7 @@ export function AndromedaComponentView({
                 aria-label="Close fullscreen preview"
                 className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
               >
-                <CornersIn weight="regular" size={17} />
+                <X weight="regular" size={16} />
               </button>
             </motion.div>
           </motion.div>
