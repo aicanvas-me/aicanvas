@@ -288,7 +288,7 @@ export function AndromedaComponentView({
 
           {tab === 'preview' && (
             <div className="group/fullscreen relative">
-              <Button variant="accent" size="md" iconOnly aria-label="Full screen" onClick={() => setFullscreen(true)}>
+              <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={() => setFullscreen(true)}>
                 <CornersOut weight="regular" size={16} />
               </Button>
               <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-700 bg-sand-800 px-2.5 py-1.5 text-xs text-sand-300 group-hover/fullscreen:block">

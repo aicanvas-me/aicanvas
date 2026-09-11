@@ -666,11 +666,12 @@ export default function ComponentPageView({
                 {/* Fullscreen — preview only */}
                 {activeTab === 'preview' && (
                   <div className="group/fullscreen relative">
-                    {/* Soft-olive accent (the active-tag look) so the fullscreen
-                        action stands out from the outline theme/refresh buttons
-                        beside it without shouting like a solid primary. */}
+                    {/* Solid olive, the strongest control on the card. The soft
+                        accent it used before all but vanished on the light
+                        theme, and full screen is the view people most need to
+                        find. */}
                     <Button
-                      variant="accent"
+                      variant="primary"
                       size="md"
                       iconOnly
                       aria-label="Full screen"
