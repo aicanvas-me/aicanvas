@@ -140,16 +140,21 @@ export function DesignSystemsPole({
             const expanded = open[system.slug] ?? systemSelected
             return (
               <li key={system.slug}>
-                {/* Two targets on one row: the name navigates to the system,
-                    the caret opens it in place. A button inside a link is not
-                    valid markup, so they sit side by side and share the row's
-                    hover ground. */}
+                {/* Two targets on one row: the name navigates to the system
+                    and opens it, the caret opens or closes it in place. The
+                    name always opens, so a caret-close made earlier cannot
+                    leave you on the overview with its pages hidden. A button
+                    inside a link is not valid markup, so they sit side by side
+                    and share the row's hover ground. */}
                 <div
                   className="group flex items-center gap-2 rounded-md pr-1 text-sm font-medium text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                 >
                   <Link
                     href={`/design-systems/${system.slug}`}
-                    onClick={onNavigate}
+                    onClick={() => {
+                      setOpen((o) => ({ ...o, [system.slug]: true }))
+                      onNavigate?.()
+                    }}
                     className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-7 pr-2"
                   >
                     {/* Arrow at pl-7 starts under the family row's brand mark,
