@@ -45,13 +45,23 @@ import { andromedaLightVars, andromedaVars } from '../../../lib/andromeda-pro-he
 // ── The two pinned token sets, built once ───────────────────────────
 const AT_FALLBACK = /^var\((--at-[a-z0-9-]+), (.*)\)$/
 
+const LIGHT_VARS = andromedaLightVars()
+
 // The dark set is the authored one: each var(--at-x, <dark>) fallback IS the
-// dark value, so group 2 of the match is the literal to pin.
+// dark value, so group 2 of the match is the literal to pin. The pin covers
+// every key either set names, so a key the light set adds later cannot leak a
+// light root's value into the dark half. A light-only key has no dark literal
+// (--at-selection-active-text today), so it pins `initial`: that drops the
+// inherited value and the consumer's own var() fallback, the dark one, applies.
 function pinnedDarkVars(): Record<string, string> {
-  const out: Record<string, string> = {}
+  const dark: Record<string, string> = {}
   for (const value of Object.values(andromedaVars())) {
     const m = AT_FALLBACK.exec(String(value))
-    if (m) out[m[1]] = m[2]
+    if (m) dark[m[1]] = m[2]
+  }
+  const out: Record<string, string> = {}
+  for (const name of new Set([...Object.keys(dark), ...Object.keys(LIGHT_VARS)])) {
+    out[name] = dark[name] ?? 'initial'
   }
   return out
 }
@@ -66,7 +76,7 @@ const PAINT = {
   fontFamily: 'var(--andromeda-font-sans)',
 }
 const DARK_LAYER_STYLE = { ...ANDROMEDA_VARS, ...pinnedDarkVars(), ...PAINT } as CSSProperties
-const LIGHT_LAYER_STYLE = { ...ANDROMEDA_VARS, ...andromedaLightVars(), ...PAINT } as CSSProperties
+const LIGHT_LAYER_STYLE = { ...ANDROMEDA_VARS, ...LIGHT_VARS, ...PAINT } as CSSProperties
 
 // Two-layer drop shadow, lit from straight above, so the divider and grip read
 // on both the dark and the light half.
@@ -80,8 +90,8 @@ type ThemeCompareProps = {
   introSweep?: boolean
   /** Accessible name of the grip. */
   label?: string
-  /** Id of the heading that names the stage group. Without it, `label` names it. */
-  labelledBy?: string
+  /** Accessible name of the stage group. */
+  stageLabel?: string
   /** Visually hidden description of what the stage shows. */
   description?: string
   darkLabel?: string
@@ -93,7 +103,7 @@ export function ThemeCompare({
   mode = 'flat',
   introSweep = false,
   label = 'Compare light and dark themes',
-  labelledBy,
+  stageLabel = 'Andromeda Pro in light and dark',
   description,
   darkLabel = 'Dark',
   lightLabel = 'Light',
@@ -170,7 +180,7 @@ export function ThemeCompare({
   }
 
   // ── Pointer: press anywhere, then drag ──────────────────────────
-  const dragRef = useRef<{ id: number; touch: boolean; moved: boolean } | null>(null)
+  const dragRef = useRef<{ id: number; touch: boolean; from: number } | null>(null)
 
   const setFromClientX = (clientX: number) => {
     const stage = stageRef.current
@@ -183,30 +193,29 @@ export function ThemeCompare({
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return
     takeOver()
-    dragRef.current = { id: e.pointerId, touch: e.pointerType === 'touch', moved: false }
+    const touch = e.pointerType === 'touch'
+    dragRef.current = { id: e.pointerId, touch, from: pos.get() }
     e.currentTarget.setPointerCapture(e.pointerId)
-    // A touch does not jump on press: with touch-action pan-y a vertical swipe
-    // becomes a page scroll (and a pointercancel), and must not move the
-    // divider on the way. It jumps on its first horizontal move, or on release
-    // for a plain tap (see onPointerUp). Mouse and pen jump straight to the press.
-    if (e.pointerType !== 'touch') {
+    // Every press jumps the divider to the press point. A touch leaves the
+    // default alone: touch-action pan-y still hands a vertical swipe to the
+    // page, and onPointerCancel puts the divider back when it does.
+    setFromClientX(e.clientX)
+    if (!touch) {
       e.preventDefault()
-      setFromClientX(e.clientX)
       gripRef.current?.focus({ preventScroll: true })
     }
   }
 
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
-    const drag = dragRef.current
-    if (!drag || drag.id !== e.pointerId) return
-    drag.moved = true
+    if (dragRef.current?.id !== e.pointerId) return
     setFromClientX(e.clientX)
   }
 
-  // A touch tap (released with no move and no cancel) jumps the divider there.
-  const onPointerUp = (e: PointerEvent<HTMLDivElement>) => {
+  // The browser cancels a touch it took for a page scroll. That swipe was never
+  // meant for the divider, so it goes back to where the press found it.
+  const onPointerCancel = (e: PointerEvent<HTMLDivElement>) => {
     const drag = dragRef.current
-    if (drag && drag.id === e.pointerId && drag.touch && !drag.moved) setFromClientX(e.clientX)
+    if (drag && drag.id === e.pointerId && drag.touch) pos.set(drag.from)
     endDrag(e)
   }
 
@@ -257,13 +266,12 @@ export function ThemeCompare({
         <div
           ref={stageRef}
           role="group"
-          aria-labelledby={labelledBy}
-          aria-label={labelledBy ? undefined : label}
+          aria-label={stageLabel}
           aria-describedby={description ? descId : undefined}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
-          onPointerUp={onPointerUp}
-          onPointerCancel={endDrag}
+          onPointerUp={endDrag}
+          onPointerCancel={onPointerCancel}
           className="relative isolate cursor-ew-resize touch-pan-y select-none overflow-hidden rounded-xl"
         >
           {description ? (

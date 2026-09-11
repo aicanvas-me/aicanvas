@@ -216,7 +216,6 @@ export function OverviewA({ featured, templates, counts }: OverviewAProps) {
             mode="tilted"
             introSweep
             label="Compare light and dark themes"
-            labelledBy="stage-heading"
             description="The same service orders screen in the dark and light themes"
           />
         </div>

@@ -35,6 +35,7 @@ import {
   TableStyles,
   Toggle,
   TopBar,
+  tokens,
   type BadgeProps,
   type DataTableProps,
 } from '../../../lib/andromeda-pro.generated'
@@ -109,6 +110,18 @@ function DesktopScene() {
   )
 }
 
+// Phone table geometry. On a 400px phone the table gets 310px (16px page
+// gutters, the frame's 1px border and 12px padding, this scene's 16px), and at
+// the stock 20px cell padding a nowrap Task beside a Waiting parts badge needs
+// about 400. So the outer edges take 12px, where the row hairline already
+// starts, the seam between the two columns takes 8px, and Task wraps onto a
+// second line instead of pushing the badges out of view.
+const PHONE_EDGE = tokens.spacing[3]
+const PHONE_SEAM = tokens.spacing[2]
+const PHONE_TASK = { padding: `${PHONE_EDGE} ${PHONE_SEAM} ${PHONE_EDGE} ${PHONE_EDGE}` }
+const PHONE_TASK_TEXT = { ...PHONE_TASK, lineHeight: tokens.typography.leading.textSm }
+const PHONE_STATUS = { padding: `${PHONE_EDGE} ${PHONE_EDGE} ${PHONE_EDGE} ${PHONE_SEAM}` }
+
 function PhoneScene() {
   return (
     <div className="relative">
@@ -122,15 +135,19 @@ function PhoneScene() {
         <Table>
           <TableHead>
             <TableRow hoverable={false}>
-              <TableHeader>Task</TableHeader>
-              <TableHeader align="right">Status</TableHeader>
+              <TableHeader style={PHONE_TASK}>Task</TableHeader>
+              <TableHeader align="right" style={PHONE_STATUS}>
+                Status
+              </TableHeader>
             </TableRow>
           </TableHead>
           <TableBody>
             {ORDERS.slice(0, 3).map((o) => (
               <TableRow key={o.id} hoverable={false}>
-                <TableCell>{o.task}</TableCell>
-                <TableCell align="right" nowrap>
+                <TableCell nowrap={false} style={PHONE_TASK_TEXT}>
+                  {o.task}
+                </TableCell>
+                <TableCell align="right" nowrap style={PHONE_STATUS}>
                   <StatusBadge status={o.status} />
                 </TableCell>
               </TableRow>
