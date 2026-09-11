@@ -646,8 +646,8 @@ export function AndromedaComponentView({
                     </code>{' '}
                     first to set up Tailwind and path aliases.
                   </p>
-                  <div className="overflow-hidden rounded-lg bg-sand-950">
-                    <div className="flex items-center gap-1 border-b border-sand-800 px-4 py-2">
+                  <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
+                    <div className="flex items-center gap-1 border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                         <button
                           key={pm}
@@ -655,8 +655,8 @@ export function AndromedaComponentView({
                           onClick={() => { setPkgManager(pm); setCliCopied(false) }}
                           className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                             pkgManager === pm
-                              ? 'bg-sand-800 text-sand-100'
-                              : 'text-sand-500 hover:text-sand-300'
+                              ? 'bg-sand-300 text-sand-900 dark:bg-sand-800 dark:text-sand-100'
+                              : 'text-sand-600 hover:text-sand-800 dark:text-sand-500 dark:hover:text-sand-300'
                           }`}
                         >
                           {pm}
@@ -680,7 +680,7 @@ export function AndromedaComponentView({
                           setCliCopied(true)
                           setTimeout(() => setCliCopied(false), 2000)
                         }}
-                        className="ml-auto shrink-0 rounded-md p-1.5 text-sand-500 transition-all hover:text-sand-200 active:scale-90"
+                        className="ml-auto shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {cliCopied
                           ? <Check weight="regular" size={14} className="text-olive-500" />
@@ -688,7 +688,7 @@ export function AndromedaComponentView({
                       </button>
                     </div>
                     <div className="px-4 py-3.5">
-                      <code className="break-all font-mono text-sm text-sand-300">
+                      <code className="break-all font-mono text-sm text-sand-800 dark:text-sand-300">
                         {pkgManager === 'pnpm'
                           ? `pnpm dlx shadcn@latest add ${installReferenceMasked}`
                           : pkgManager === 'bun'
@@ -715,12 +715,12 @@ export function AndromedaComponentView({
                       </code>{' '}
                       element:
                     </p>
-                    <span className="ml-auto shrink-0 rounded-full bg-sand-200 px-2 py-0.5 text-xs font-medium text-sand-400 dark:bg-sand-800 dark:text-sand-500">
+                    <span className="ml-auto shrink-0 rounded-full bg-sand-200 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">
                       Optional
                     </span>
                   </div>
-                  <div className="flex items-center justify-between rounded-lg bg-sand-950 px-4 py-3">
-                    <code className="font-mono text-sm text-sand-300">{'<html class="dark">'}</code>
+                  <div className="flex items-center justify-between rounded-lg bg-sand-200 px-4 py-3 dark:bg-sand-950">
+                    <code className="font-mono text-sm text-sand-800 dark:text-sand-300">{'<html class="dark">'}</code>
                     <button
                       type="button"
                       onClick={() => {
@@ -728,7 +728,7 @@ export function AndromedaComponentView({
                         setDarkCopied(true)
                         setTimeout(() => setDarkCopied(false), 2000)
                       }}
-                      className="shrink-0 rounded-md p-1.5 text-sand-500 transition-all hover:text-sand-200 active:scale-90"
+                      className="shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                     >
                       {darkCopied
                         ? <Check weight="regular" size={14} className="text-olive-500" />
@@ -744,22 +744,22 @@ export function AndromedaComponentView({
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Copy and paste the following code into your project:
                   </p>
-                  <div className="relative rounded-lg bg-sand-950">
-                    <div className="flex items-center justify-between border-b border-sand-800 px-4 py-2">
-                      <span className="font-mono text-xs text-sand-500">
+                  <div className="relative rounded-lg bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
+                    <div className="flex items-center justify-between border-b border-sand-300 px-4 py-2 dark:border-sand-800">
+                      <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                         {name}.tsx
                       </span>
                       <button
                         type="button"
                         onClick={copyCode}
-                        className="shrink-0 rounded-md p-1.5 text-sand-500 transition-all hover:text-sand-200 active:scale-90"
+                        className="shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {codeCopied
                           ? <Check weight="regular" size={14} className="text-olive-500" />
                           : <Copy weight="regular" size={14} />}
                       </button>
                     </div>
-                    <div className="max-h-96 overflow-auto p-4" style={{ scrollbarWidth: 'thin', scrollbarColor: '#4A453F transparent' }}>
+                    <div className="max-h-96 overflow-auto p-4 [scrollbar-color:#C4BFB7_transparent] dark:[scrollbar-color:#4A453F_transparent]" style={{ scrollbarWidth: 'thin' }}>
                       {renderCodePane()}
                     </div>
                   </div>
