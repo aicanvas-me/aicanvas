@@ -283,7 +283,7 @@ export function AndromedaOverview() {
           <h1 className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">
             {ANDROMEDA_META.name}
           </h1>
-          <SystemTierChip tier="mit" />
+          <SystemTierChip tier="mit" label="MIT License" />
         </div>
         <p className="mt-4 text-base leading-relaxed text-sand-600 dark:text-sand-300 sm:text-lg">
           A complete design system for dashboards, control panels, data-dense tools, and anything
