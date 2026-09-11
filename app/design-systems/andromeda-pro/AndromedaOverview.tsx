@@ -25,6 +25,7 @@ import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda-p
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoopPro } from '../../_components/FoundationLoopPro'
 import { AndromedaThemeToggle } from './AndromedaThemeWrap'
+import { SystemTierChip } from '../../_components/SystemTierChip'
 
 // Short blurbs for the four shipped templates — keyed by registry slug.
 const TEMPLATE_BLURBS = {
@@ -285,8 +286,9 @@ export function AndromedaOverview() {
     <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
       {/* ── Hero ────────────────────────────────────────────────────────── */}
       <header className="max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+        <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
           Design system
+          <SystemTierChip tier="pro" />
         </p>
         <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">
           {ANDROMEDA_META.name}
