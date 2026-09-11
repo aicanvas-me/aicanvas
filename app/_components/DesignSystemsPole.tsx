@@ -159,7 +159,17 @@ export function DesignSystemsPole({
                         setOpen((o) => ({ ...o, [system.slug]: false }))
                         return
                       }
-                      setOpen((o) => ({ ...o, [system.slug]: true }))
+                      // Inside this system with its list closed: open it now.
+                      // Headed to the other system: only drop any old hand
+                      // toggle, so its list opens when that page arrives.
+                      // Opening it on the click showed both lists at once for
+                      // a beat and made the rail jump.
+                      setOpen((o) => {
+                        const next = { ...o }
+                        if (systemSelected) next[system.slug] = true
+                        else delete next[system.slug]
+                        return next
+                      })
                       onNavigate?.()
                     }}
                     className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-7 pr-2"
