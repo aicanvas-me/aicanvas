@@ -1,20 +1,41 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Check, Copy, DownloadSimple, Terminal } from '@phosphor-icons/react'
 import { zipSync, strToU8 } from 'fflate'
 import { Button } from '../../../components/Button'
 import { BrainRender } from './BrainRender'
+import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useCopied } from '@/app/components/useCopied'
 
 // AI Canvas site tokens: sand neutrals + olive accent, Manrope UI + Geist mono for code.
+// One flat palette per site theme, read through CSS variables (brainVars) so
+// the reader follows the `dark` class on <html>. accent.fill/on are the one
+// olive button: olive-500 with sand-950 ink in both themes, per the site rule.
+const PALETTE = {
+  dark: {
+    'surface-base': '#0E0E0F', 'surface-raised': '#1B1B1C', 'surface-hover': '#232325', 'surface-active': '#2D2D2E',
+    'text-primary': '#F4F4FA', 'text-secondary': '#9B9B9E', 'text-muted': '#9B9B9E', 'text-faint': '#7B7B7D',
+    'accent-100': '#EAF0C8', 'accent-300': '#DAE4A0', 'accent-400': '#A8B94D', 'accent-500': '#869631', 'accent-fill': '#A8B94D', 'accent-on': '#0E0E0F',
+    'border-subtle': '#2D2D2E', 'border-base': '#373738',
+  },
+  light: {
+    'surface-base': '#F4F4FA', 'surface-raised': '#EEEEF3', 'surface-hover': '#DFDFE3', 'surface-active': '#CACACD',
+    'text-primary': '#1B1B1C', 'text-secondary': '#575759', 'text-muted': '#575759', 'text-faint': '#7B7B7D',
+    'accent-100': '#4A551A', 'accent-300': '#869631', 'accent-400': '#869631', 'accent-500': '#A8B94D', 'accent-fill': '#A8B94D', 'accent-on': '#0E0E0F',
+    'border-subtle': '#DFDFE3', 'border-base': '#CACACD',
+  },
+} as const
+type ReaderColor = keyof typeof PALETTE.dark
+const v = (k: ReaderColor) => `var(--brain-${k})`
 const C = {
-  surface: { base: '#0E0E0F', raised: '#1B1B1C', hover: '#232325', active: '#2D2D2E' },
-  text: { primary: '#F4F4FA', secondary: '#9B9B9E', muted: '#9B9B9E', faint: '#7B7B7D' },
-  accent: { 100: '#EAF0C8', 300: '#DAE4A0', 400: '#A8B94D', 500: '#869631' },
-  border: { subtle: '#2D2D2E', base: '#373738' },
+  surface: { base: v('surface-base'), raised: v('surface-raised'), hover: v('surface-hover'), active: v('surface-active') },
+  text: { primary: v('text-primary'), secondary: v('text-secondary'), muted: v('text-muted'), faint: v('text-faint') },
+  accent: { 100: v('accent-100'), 300: v('accent-300'), 400: v('accent-400'), 500: v('accent-500'), fill: v('accent-fill'), on: v('accent-on') },
+  border: { subtle: v('border-subtle'), base: v('border-base') },
 }
+const brainVars = (t: 'light' | 'dark') => (Object.keys(PALETTE[t]) as ReaderColor[]).map((k) => `--brain-${k}: ${PALETTE[t][k]};`).join(' ')
 const SANS = "var(--font-sans), 'Manrope', system-ui, sans-serif"
 const MONO = "var(--font-mono, var(--font-jetbrains-mono)), 'Geist Mono', monospace"
 const FONT = SANS
@@ -99,7 +120,7 @@ function renderMd(raw: string): string {
 
   // Protect fenced code blocks first
   const blocks: string[] = []
-  let text = md.replace(/```[\w]*\n([\s\S]*?)```/gm, (_, code) => {
+  const text = md.replace(/```[\w]*\n([\s\S]*?)```/gm, (_, code) => {
     const i = blocks.length
     blocks.push(
       `<pre style="background:${C.surface.raised};border:1px solid ${C.border.subtle};padding:14px 18px;overflow-x:auto;font-size:12px;line-height:1.75;margin:14px 0;font-family:${MONO}"><code>${esc(code).trimEnd()}</code></pre>`,
@@ -287,11 +308,10 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
       if (!target) return
       e.preventDefault()
       const rel = target.getAttribute('data-brain-file') ?? ''
-      const found = files.find((f) => {
-        const parts = f.path.split('/')
+      const found = files.find((f) =>
         // Match by the tail segments in the href (e.g. "foundations/build-workflow.md")
-        return f.path.endsWith(rel.replace(/^\.\.\//, '').replace(/^\.\//, ''))
-      })
+        f.path.endsWith(rel.replace(/^\.\.\//, '').replace(/^\.\//, '')),
+      )
       if (found) setActiveFile(found)
     },
     [files],
@@ -348,6 +368,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
     // stays reachable by being sticky under the 56px top bar instead of owning
     // its own full-height scroll region.
     <div
+      className="brain-reader"
       style={{
         display: 'flex',
         flexDirection: 'row-reverse',
@@ -356,6 +377,8 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
       }}
     >
       <style>{`
+        .brain-reader { ${brainVars('light')} }
+        .dark .brain-reader { ${brainVars('dark')} }
         .brain-nav-item { transition: background 0.1s, color 0.1s; }
         .brain-nav-item:hover { background: ${C.surface.hover} !important; color: ${C.text.secondary} !important; }
         .brain-nav-item.active { background: ${C.surface.raised} !important; color: ${C.text.primary} !important; }
@@ -535,23 +558,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
 // update (a no-op on first run, an in-place refresh on re-runs — without it the
 // CLI prompts per existing file).
 function useBrainInstallCommand() {
-  const [token, setToken] = useState<string | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [])
+  const token = useInstallToken()
   const reference = token
     ? `"https://aicanvas.me/r/andromeda-pro-brain.json?token=${token}"`
     : '@aicanvas/andromeda-pro-brain'
@@ -736,8 +743,8 @@ function BrainInstallCard({
             display: 'inline-flex',
             alignItems: 'center',
             gap: 6,
-            background: C.accent[400],
-            color: C.surface.base,
+            background: C.accent.fill,
+            color: C.accent.on,
             fontWeight: 600,
             fontSize: 13,
             fontFamily: FONT,

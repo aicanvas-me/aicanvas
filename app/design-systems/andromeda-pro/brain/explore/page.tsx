@@ -77,8 +77,8 @@ export default async function AndromedaBrainReaderPage() {
     // Premium user, unreadable/empty bundle (degraded build). Never redirect a
     // paying subscriber to the pitch page; tell them plainly instead.
     return (
-      <div style={{ flex: 1, padding: '40px 48px', maxWidth: 720, color: '#A3A3A3', fontFamily: "var(--font-jetbrains-mono, 'JetBrains Mono Variable'), 'JetBrains Mono', monospace" }}>
-        <h1 style={{ fontSize: 15, color: '#F5F5F5', marginBottom: 12 }}>Brain temporarily unavailable</h1>
+      <div className="flex-1 bg-sand-50 text-sand-600 dark:bg-sand-950 dark:text-sand-400" style={{ padding: '40px 48px', maxWidth: 720, fontFamily: "var(--font-jetbrains-mono, 'JetBrains Mono Variable'), 'JetBrains Mono', monospace" }}>
+        <h1 className="text-sand-900 dark:text-sand-50" style={{ fontSize: 15, marginBottom: 12 }}>Brain temporarily unavailable</h1>
         <p style={{ fontSize: 13, lineHeight: 1.6 }}>
           Your Premium access is active, but the Brain files could not be loaded
           on this deployment. This resolves on the next build. If it persists,
@@ -88,5 +88,12 @@ export default async function AndromedaBrainReaderPage() {
     )
   }
 
-  return <BrainViewer files={files} />
+  // The reader paints from its own palette in both themes (see BrainViewer);
+  // the page ground belongs to the scroll column (AndromedaContentColumn), so
+  // it holds past this box's height.
+  return (
+    <div className="flex flex-col">
+      <BrainViewer files={files} />
+    </div>
+  )
 }
