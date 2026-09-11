@@ -10,7 +10,7 @@ export function SystemTierChip({ tier }: { tier: 'pro' | 'mit' }) {
           : 'text-sand-600 ring-sand-300 dark:text-sand-400 dark:ring-sand-700'
       }`}
     >
-      {tier === 'pro' ? 'Pro' : 'MIT'}
+      {tier === 'pro' ? 'Premium' : 'MIT'}
     </span>
   )
 }
