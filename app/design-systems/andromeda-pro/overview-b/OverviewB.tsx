@@ -429,7 +429,7 @@ export function OverviewB({
               </p>
               <div className="mt-6">
                 <Link href="/design-systems/andromeda-pro/brain" className={BTN_SECONDARY}>
-                  Tour the Brain
+                  Explore the Brain
                   <ArrowRight weight="regular" aria-hidden className="size-4" />
                 </Link>
               </div>
