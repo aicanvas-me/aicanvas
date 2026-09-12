@@ -1,6 +1,7 @@
 // Overview variant B: state the deal, make it exact in a ledger, then prove it.
 // Site chrome throughout (sand, olive, Manrope). The only surfaces drawn in
-// Andromeda's own tokens are the compare stage and the Brain preview.
+// Andromeda's own tokens are the compare stage, the foundation wells and the
+// Brain preview.
 'use client'
 
 import { Fragment, type ReactNode } from 'react'
@@ -11,6 +12,7 @@ import { SiteFooter } from '../../../components/SiteFooter'
 import { SystemTierChip } from '../../../_components/SystemTierChip'
 import { AndromedaComponentCard } from '../system/AndromedaComponentCard'
 import { ThemeCompare } from './ThemeCompare'
+import { FoundationLayers } from './FoundationLayers'
 import { Inventory } from './Inventory'
 import { BrainWireframe } from './BrainWireframe'
 import { BENTO_TILES } from './CompareBento'
@@ -358,6 +360,7 @@ export function OverviewB({
           <div className="mt-8">
             <ThemeCompare />
           </div>
+          <FoundationLayers />
           <WithPremium>the CLI installs all of it, tokens included.</WithPremium>
         </section>
 
