@@ -62,11 +62,12 @@ const TEMPLATE_BLURBS: Record<string, string> = {
 // andromeda/templates/ folder. New art is a one-line edit here. An EMPTY string
 // means "no art yet": the card keeps its dark fallback panel, because a URL
 // built from an empty filename resolves to the folder and paints a broken image.
+// The Pro art sits on brand-500; Legacy's cards keep their own files.
 export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
-  'andromeda-pro-mission-control': 'Mission control.png',
-  'andromeda-pro-service-order': 'Service order.png',
-  'andromeda-pro-resource-planning': 'Resource planning.png',
-  'andromeda-pro-signal-room': 'Signal Room.png',
+  'andromeda-pro-mission-control': 'Mission_control_pro.png',
+  'andromeda-pro-service-order': 'Service_order_pro.png',
+  'andromeda-pro-resource-planning': 'Resource_planning_pro.png',
+  'andromeda-pro-signal-room': 'Signal_Room_pro.png',
   'andromeda-pro-sign-in': '',
 }
 
