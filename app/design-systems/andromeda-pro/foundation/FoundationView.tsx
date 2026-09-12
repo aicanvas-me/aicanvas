@@ -1,9 +1,10 @@
 'use client'
 
 // Foundation — the WHAT of the Andromeda token system, on site chrome
-// (sand/olive, Manrope), same editorial rhythm as the components gallery. No
-// Andromeda component renders here: swatches and bars are plain painted divs
-// showing the primitive VALUES, which is exactly what this page is for.
+// (sand/olive, Manrope), same editorial rhythm as the components gallery.
+// Swatches and bars are plain painted divs showing the primitive VALUES, which
+// is what this page is for. The one Andromeda component is the Badge inside
+// the shared layer cards.
 //
 // Client component for one reason: `tokens` comes through the injected-v2
 // shim, whose modules carry 'use client' — the same pattern the component
@@ -127,8 +128,9 @@ const stripVar = (value: string) => {
 // div — same channel, same two helpers, just scoped locally instead of to the
 // document. `themed()` calls inside keep working unchanged: they already read
 // through var(--at-<name>, <dark literal>), so whichever wrapper a swatch sits
-// under is the value it shows. (Only safe because nothing on this page reads
-// a computed style in JS — see the note above ALL_COLOURS.)
+// under is the value it shows. The swatch tooltip reads a computed style, but
+// only the swatch's own resolved background, which is exactly what this
+// scoping produces.
 const DARK_AT_VARS: Record<string, string> = Object.fromEntries(
   Object.entries(DARK_VARS)
     .filter(([, v]) => /^var\(--at-/.test(String(v)))
@@ -210,7 +212,7 @@ const GROUP_ORDER = [
 
 const ALL_COLOURS = GROUP_ORDER.map(([prefix, title, note]) => {
   const rows = Object.entries(DARK_VARS)
-    .filter(([name, value]) => /^var\(--at-/.test(String(value)))
+    .filter(([, value]) => /^var\(--at-/.test(String(value)))
     .filter(([name]) => name.startsWith(`--andromeda-${prefix}-`))
     .map(([name, value]) => {
       const dark = stripVar(value)
@@ -265,15 +267,15 @@ export function FoundationView() {
     <main ref={mainRef} className="mx-auto w-full max-w-4xl px-4 pt-8 pb-20 sm:px-6 sm:pt-14">
       <SwatchTooltip root={mainRef} />
       <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-olive-600 dark:text-olive-400">
-        Andromeda · Foundation
+        Andromeda Pro · Foundation
       </p>
       <h1 className="text-3xl font-extrabold text-sand-900 dark:text-sand-50 sm:text-4xl">
         The primitives
       </h1>
       <p className="mt-3 max-w-2xl text-sand-600 dark:text-sand-400">
-        Every Andromeda component is built from the values on this page, read through a
-        three-layer token architecture. This is the what; the judgment layer that teaches
-        when and how to use each value ships with the Brain.
+        Every Andromeda Pro component is built from the values on this page, read through
+        three layers of tokens. This page is the what. The Brain teaches when and how to use
+        each value.
       </p>
 
       {/* ── The three layers ── */}
@@ -299,7 +301,7 @@ export function FoundationView() {
       {/* ── Neutrals ── */}
       <SectionHeading>The neutral ladder</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        Thirteen greys, numbered by depth: 100 is the page ground, 1300 the strongest ink.
+        Thirteen grays, numbered by depth: 100 is the page ground, 1300 the strongest ink.
         Surfaces, borders and text are all roles pointing into this one ladder.
       </p>
       <div className="space-y-5">
@@ -332,8 +334,9 @@ export function FoundationView() {
       <SectionHeading>Four hue families</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
         Five stops each, 100 through 500, plus two alphas and a guaranteed-contrast{' '}
-        <Code>on</Code> ink. Which end of the ramp reads light flips with the theme. Colour is
-        never the only channel: a tone always rides with a glyph, a position, or a label.
+        <Code>on</Code> ink. The ramp itself is the same in both themes; what flips is which
+        stop a role points at, shown further down. Color is never the only channel: a tone
+        always rides with a glyph, a position or a label.
       </p>
       <div className="space-y-6">
         {FAMILIES.map((f) => (
@@ -391,8 +394,9 @@ export function FoundationView() {
       {/* ── The family pivot ── */}
       <SectionHeading>How a family crosses the themes</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        A family ramp mirrors around its middle when the theme flips. 100 and 500 swap, 200
-        and 400 swap, and 300 is the pivot that never moves. The one thing that overrules the
+        When the theme flips, a role&rsquo;s stop mirrors around the middle of its family: 100
+        and 500 swap, 200 and 400 swap, and 300 is the pivot. Fills stop at 200 rather than 100,
+        because 100 barely stands off the light page. The one thing that overrules the
         mirror is <strong className="font-semibold text-sand-900 dark:text-sand-50">WCAG</strong>.
         Where the mirrored value misses its contrast minimum on the light page ground it steps
         toward the deep end until it clears. That is the whole reason the text row below reads
@@ -452,10 +456,10 @@ export function FoundationView() {
       </div>
 
       {/* ── Every colour, both themes ── */}
-      <SectionHeading>Every colour, both themes</SectionHeading>
+      <SectionHeading>Every color, both themes</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
         The whole set, dark on the left of each pair and light on the right. Enumerated from
-        the live token set rather than listed by hand, so a colour added to the system shows
+        the live token set rather than listed by hand, so a color added to the system shows
         up here on its own. A pair marked <em>same</em> is deliberately theme invariant: a
         scrim darkens what is behind it whatever the theme, and a solid fill that carries pale
         text has to stay deep in both.
@@ -509,16 +513,15 @@ export function FoundationView() {
       {/* ── Accessibility ── */}
       <SectionHeading>Accessibility</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        Every colour pair in this system meets WCAG 2.2 level AA. Not as an aspiration: the
-        ratios are measured by a script on every change, in both themes, and a pair that drops
-        below its minimum fails the build rather than shipping. Contrast is the one thing here
-        that overrules a design decision, including the family pivot above.
+        Every color pair in this system meets WCAG 2.2 level AA, in both themes. The ratios are
+        measured by a contrast script, not judged by eye, and contrast is the one thing here that
+        overrules a design decision, including the family pivot above.
       </p>
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           ['4.5 : 1', 'Normal text', 'Anything under 24px, or under 18.66px bold. Almost all of our text. WCAG 1.4.3.'],
           ['3.0 : 1', 'Large text and non-text', 'Display sizes, and every icon, border, chart line, dot and focus ring. WCAG 1.4.3 and 1.4.11.'],
-          ['7.0 : 1', 'AAA, where it lands', 'Not a target we hold the whole system to, but the neutral inks clear it comfortably.'],
+          ['7.0 : 1', 'AAA, where it lands', 'Not a target for the whole system, but the primary, secondary and muted text inks clear it in both themes.'],
         ].map(([ratio, who, what]) => (
           <div key={ratio} className="rounded-xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
             <p className="text-base font-bold tabular-nums text-sand-900 dark:text-sand-50">{ratio}</p>
@@ -576,7 +579,7 @@ export function FoundationView() {
         Everything in the system is a step plus a weight. There is exactly one exception,
         because it carries something the ramp deliberately does not: case. Uppercase is a
         decision a component makes, not a property of a size, so it lives here and nowhere
-        else. It carries no colour either, so ink stays a separate decision.
+        else. It carries no color either, so ink stays a separate decision.
       </p>
       <div className="rounded-xl border border-sand-300 px-4 py-4 dark:border-sand-800">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">

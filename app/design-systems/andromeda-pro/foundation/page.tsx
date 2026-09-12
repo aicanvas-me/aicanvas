@@ -5,9 +5,9 @@
 import { FoundationView } from './FoundationView'
 
 export const metadata = {
-  title: 'Foundation · Andromeda Design System',
+  title: 'Foundation · Andromeda Pro',
   description:
-    'The Andromeda primitives: the depth-numbered neutral ladder, four hue families, the paired type ramp, the spacing grid, and the three-layer token architecture every component is built on.',
+    'The Andromeda Pro primitives: the depth-numbered neutral ladder, four hue families, the paired type ramp, the spacing grid and the three-layer token architecture every component is built on.',
   alternates: { canonical: '/design-systems/andromeda-pro/foundation' },
 }
 

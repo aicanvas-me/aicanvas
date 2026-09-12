@@ -10,7 +10,7 @@
 // highlighted stop is recovered by matching the role's resolved value back
 // against the brand ramp, per theme, so the cards cannot drift from tokens.ts.
 
-import { useSyncExternalStore, type CSSProperties, type ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowDown, ArrowRight } from '@phosphor-icons/react'
 import { buttonClasses } from '../../../components/buttonClasses'
@@ -57,21 +57,6 @@ const WELL: Record<Theme, CSSProperties> = {
 }
 const MONO: CSSProperties = { fontFamily: tokens.typography.fontMono }
 
-// The site's own theme, read and never written: the <html> class belongs to
-// ThemeProvider. Used only where no preview theme exists. Dark on the server,
-// which is the site default.
-const subscribeHtmlClass = (cb: () => void) => {
-  const mo = new MutationObserver(cb)
-  mo.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-  return () => mo.disconnect()
-}
-const useSiteTheme = () =>
-  useSyncExternalStore<Theme>(
-    subscribeHtmlClass,
-    () => (document.documentElement.classList.contains('dark') ? 'dark' : 'light'),
-    () => 'dark',
-  )
-
 function LayerCard({
   n,
   title,
@@ -83,18 +68,32 @@ function LayerCard({
   n: number
   title: string
   caption: ReactNode
-  theme: Theme
+  theme: Theme | 'site'
   onPage: boolean
-  children: ReactNode
+  children: (theme: Theme) => ReactNode
 }) {
   // Inside the overview panel a card steps down to the page ground; placed
   // straight on the page ground it steps up to the surface instead.
   const surface = onPage ? 'bg-sand-100 dark:bg-sand-900' : 'bg-sand-50 dark:bg-sand-950'
   return (
     <li className={`flex min-w-0 flex-col rounded-xl border border-sand-200 p-3 dark:border-sand-800 ${surface}`}>
-      <div className="flex h-20 items-center justify-center px-3" style={WELL[theme]}>
-        {children}
-      </div>
+      {theme === 'site' ? (
+        // No preview theme on this page: both wells are in the HTML and the
+        // site's own dark class picks one, so the first paint is already right
+        // and the site theme is never read in JS.
+        <>
+          <div className="flex h-20 items-center justify-center px-3 dark:hidden" style={WELL.light}>
+            {children('light')}
+          </div>
+          <div className="hidden h-20 items-center justify-center px-3 dark:flex" style={WELL.dark}>
+            {children('dark')}
+          </div>
+        </>
+      ) : (
+        <div className="flex h-20 items-center justify-center px-3" style={WELL[theme]}>
+          {children(theme)}
+        </div>
+      )}
       <p className="mt-3 px-1 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
         Layer {n}
       </p>
@@ -128,12 +127,9 @@ export function LayerCards({
   onPage?: boolean
   className?: string
 }) {
-  // The preview theme where a page has one (overview), the site theme where it
-  // does not (Foundation).
-  const preview = useAndromedaPreviewTheme()?.theme
-  const site = useSiteTheme()
-  const theme: Theme = preview ?? site
-  const active = ACTIVE_STOP[theme]
+  // The preview theme where a page has one (overview); the site's dark class
+  // where it does not (Foundation).
+  const theme = useAndromedaPreviewTheme()?.theme ?? 'site'
 
   return (
     // A row from lg only: below it the content column sits beside the site
@@ -142,51 +138,58 @@ export function LayerCards({
       className={`grid grid-cols-1 gap-2 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] ${className}`}
     >
       <LayerCard n={1} title="Primitives" caption={captions[0]} theme={theme} onPage={onPage}>
-        <div className="flex w-full gap-1">
-          {RAMP_STOPS.map((stop) => (
-            <div key={stop} className="flex min-w-0 flex-1 flex-col items-center gap-1.5">
-              <span
-                className="h-6 w-full"
-                style={{
-                  background: `var(--andromeda-brand-${stop})`,
-                  borderRadius: 2,
-                  outline: stop === active ? '1px solid var(--andromeda-text-primary)' : undefined,
-                  outlineOffset: 2,
-                }}
-              />
-              <span
-                className="text-[10px]"
-                style={{ ...MONO, color: stop === active ? 'var(--andromeda-text-primary)' : 'var(--andromeda-text-muted)' }}
-              >
-                {stop}
-              </span>
-            </div>
-          ))}
-        </div>
+        {(t) => (
+          <div className="flex w-full gap-1">
+            {RAMP_STOPS.map((stop) => (
+              <div key={stop} className="flex min-w-0 flex-1 flex-col items-center gap-1.5">
+                <span
+                  className="h-6 w-full"
+                  style={{
+                    background: `var(--andromeda-brand-${stop})`,
+                    borderRadius: 2,
+                    outline: stop === ACTIVE_STOP[t] ? '1px solid var(--andromeda-text-primary)' : undefined,
+                    outlineOffset: 2,
+                  }}
+                />
+                <span
+                  className="text-[10px]"
+                  style={{
+                    ...MONO,
+                    color: stop === ACTIVE_STOP[t] ? 'var(--andromeda-text-primary)' : 'var(--andromeda-text-muted)',
+                  }}
+                >
+                  {stop}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </LayerCard>
       <Step />
       <LayerCard n={2} title="Semantic" caption={captions[1]} theme={theme} onPage={onPage}>
-        <div className="flex min-w-0 flex-col items-center gap-1.5">
-          <span className="flex min-w-0 items-center gap-2">
-            <span
-              aria-hidden
-              className="size-3 shrink-0"
-              style={{ background: `var(--andromeda-${ROLE})`, borderRadius: 2 }}
-            />
-            <span className="truncate text-xs" style={{ ...MONO, color: 'var(--andromeda-text-primary)' }}>
-              {ROLE_NAME}
+        {(t) => (
+          <div className="flex min-w-0 flex-col items-center gap-1.5">
+            <span className="flex min-w-0 items-center gap-2">
+              <span
+                aria-hidden
+                className="size-3 shrink-0"
+                style={{ background: `var(--andromeda-${ROLE})`, borderRadius: 2 }}
+              />
+              <span className="truncate text-xs" style={{ ...MONO, color: 'var(--andromeda-text-primary)' }}>
+                {ROLE_NAME}
+              </span>
             </span>
-          </span>
-          {active ? (
-            <span className="text-[10px]" style={{ ...MONO, color: 'var(--andromeda-text-muted)' }}>
-              brand {active}
-            </span>
-          ) : null}
-        </div>
+            {ACTIVE_STOP[t] ? (
+              <span className="text-[10px]" style={{ ...MONO, color: 'var(--andromeda-text-muted)' }}>
+                brand {ACTIVE_STOP[t]}
+              </span>
+            ) : null}
+          </div>
+        )}
       </LayerCard>
       <Step />
       <LayerCard n={3} title="Component wires" caption={captions[2]} theme={theme} onPage={onPage}>
-        <Badge variant="accent">Live</Badge>
+        {() => <Badge variant="accent">Live</Badge>}
       </LayerCard>
     </ol>
   )
