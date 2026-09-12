@@ -192,7 +192,11 @@ const BODY_H = 196
 // The sliver of the front document that shows below its own tab at rest.
 const FRONT_LIP = 16
 const LAST_Y = PITCH * (DOCS.length - 1)
-const STACK_H = LAST_Y + TAB_H + FRONT_LIP
+// The drawer's back rim needs room to show. Without it the topmost document
+// sits exactly on the line, the rim is hidden under it, and the drawer reads
+// as two walls that never meet.
+const RIM = 14
+const STACK_H = RIM + LAST_Y + TAB_H + FRONT_LIP
 
 // The taper: the document at the back of the drawer is this share of the
 // width and the one at the front runs the full width. It is drawn with a
@@ -278,7 +282,8 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
           strokeWidth={1}
         >
           <path
-            d={`M ${(1 - BACK_WIDTH) * 50} 0 L 0 100 M ${100 - (1 - BACK_WIDTH) * 50} 0 L 100 100`}
+            // Closed: rim across the back, then a wall down each side.
+            d={`M 0 100 L ${(1 - BACK_WIDTH) * 50} 0 H ${100 - (1 - BACK_WIDTH) * 50} L 100 100`}
             vectorEffect="non-scaling-stroke"
           />
         </svg>
@@ -296,7 +301,7 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
                 key={doc.key}
                 // Nothing here takes the pointer. The strips below do that.
                 className="pointer-events-none absolute inset-x-0"
-                style={{ top: y, zIndex: isOpen ? DOCS.length * 2 + 4 : i + 1 }}
+                style={{ top: RIM + y, zIndex: isOpen ? DOCS.length * 2 + 4 : i + 1 }}
                 initial={false}
                 animate={{ y: isOpen ? -y : 0 }}
                 transition={travel}
@@ -378,17 +383,25 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
                 onBlur={() => setLit((k) => (k === doc.key ? null : k))}
                 onClick={() => setOpen((k) => (k === doc.key ? null : doc.key))}
                 className="absolute inset-x-0 cursor-pointer focus-visible:outline-none"
-                style={{ top: y, height: PITCH, zIndex: DOCS.length + 2 + i }}
+                style={{ top: RIM + y, height: PITCH, zIndex: DOCS.length + 2 + i }}
               />
             )
           })}
         </div>
       </div>
 
-      {/* The drawer front. */}
+      {/* The drawer front, with its label printed on it. An olive pill here
+          read as a button, and nothing on the drawer front is clickable. */}
       <div className="relative flex h-14 items-center justify-center rounded-b-xl border border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900">
-        <span className="rounded-md bg-olive-500 px-3 py-1 text-xs font-semibold text-sand-950">
-          Andromeda Pro
+        <span className="flex items-center gap-3">
+          <span aria-hidden className="size-1.5 rounded-full bg-olive-500" />
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-sand-700 dark:text-sand-300">
+            Andromeda Pro
+          </span>
+          <span aria-hidden className="h-3 w-px bg-sand-300 dark:bg-sand-700" />
+          <span className="text-xs uppercase tracking-[0.2em] text-sand-600 dark:text-sand-400">
+            Design system
+          </span>
         </span>
       </div>
     </div>
