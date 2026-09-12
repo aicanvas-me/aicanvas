@@ -73,6 +73,10 @@ const DOCS: Doc[] = [
 const LINE = 'stroke-sand-400 dark:stroke-sand-600'
 const OLIVE_LINE = 'stroke-olive-500'
 const OLIVE = 'fill-olive-500'
+// The open card's own background. A mark is only ever seen while its document
+// is out, and an out document is always the tinted surface, so a shape filled
+// with this occludes cleanly instead of letting the stack show through.
+const CARD = 'fill-sand-200 dark:fill-sand-800'
 
 function Mark({ k }: { k: keyof OverviewStats }) {
   const s = { fill: 'none', vectorEffect: 'non-scaling-stroke' as const }
@@ -85,18 +89,27 @@ function Mark({ k }: { k: keyof OverviewStats }) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      {/* Components: a kit of unlike parts, not a grid of identical squares. */}
+      {/* Components: six unlike parts on one grid, two rows of three, each
+          centred in its own cell. The first pass scattered them and trailed
+          loose rules underneath, which read as clutter rather than a kit. */}
       {k === 'components' && (
         <>
-          <rect x={8} y={14} width={42} height={18} rx={9} {...s} className={LINE} />
-          <rect x={58} y={14} width={66} height={18} rx={5} {...s} className={LINE} />
-          <path d="M 66 23 h 22" {...s} className={LINE} />
-          <circle cx={20} cy={60} r={12} {...s} className={LINE} />
-          <rect x={40} y={49} width={38} height={22} rx={11} {...s} className={LINE} />
-          <circle cx={67} cy={60} r={7} className={OLIVE} />
-          <path d="M 90 70 v -10 M 102 70 v -20 M 114 70 v -6" {...s} className={LINE} />
-          <path d="M 86 78 h 32" {...s} className={LINE} />
-          <path d="M 8 86 h 30 M 46 86 h 52" {...s} className={LINE} />
+          {/* button */}
+          <rect x={12} y={21} width={32} height={16} rx={8} {...s} className={LINE} />
+          {/* input */}
+          <rect x={50} y={21} width={32} height={16} rx={4} {...s} className={LINE} />
+          <path d="M 56 29 h 13" {...s} className={LINE} />
+          {/* toggle, on */}
+          <rect x={88} y={21} width={32} height={16} rx={8} {...s} className={LINE} />
+          <circle cx={112} cy={29} r={5.5} className={OLIVE} />
+          {/* avatar */}
+          <circle cx={28} cy={73} r={9} {...s} className={LINE} />
+          {/* checkbox */}
+          <rect x={57} y={64} width={18} height={18} rx={4} {...s} className={LINE} />
+          <path d="M 61.5 73 l 3.5 3.5 l 6.5 -7.5" {...s} className={LINE} />
+          {/* chart */}
+          <path d="M 92 82 h 26" {...s} className={LINE} />
+          <path d="M 97 82 v -9 M 105 82 v -17 M 113 82 v -12" {...s} className={LINE} />
         </>
       )}
 
@@ -146,12 +159,14 @@ function Mark({ k }: { k: keyof OverviewStats }) {
         </>
       )}
 
-      {/* Templates: finished screens, stacked the way the drawer stacks. */}
+      {/* Templates: three finished screens, each a closed card. They were
+          open paths that trailed off at the left; closing them means the two
+          behind carry the card's own fill so the front one occludes them. */}
       {k === 'templates' && (
         <>
-          <path d="M 34 16 h 72 a 6 6 0 0 1 6 6 v 6" {...s} className={LINE} />
-          <path d="M 24 26 h 84 a 6 6 0 0 1 6 6 v 6" {...s} className={LINE} />
-          <rect x={14} y={36} width={104} height={54} rx={7} {...s} className={LINE} />
+          <rect x={34} y={14} width={84} height={56} rx={7} vectorEffect="non-scaling-stroke" className={`${CARD} ${LINE}`} />
+          <rect x={24} y={25} width={94} height={56} rx={7} vectorEffect="non-scaling-stroke" className={`${CARD} ${LINE}`} />
+          <rect x={14} y={36} width={104} height={54} rx={7} vectorEffect="non-scaling-stroke" className={`${CARD} ${LINE}`} />
           <path d="M 14 50 h 104 M 44 50 v 40" {...s} className={LINE} />
           <rect x={52} y={58} width={26} height={14} rx={3} className={OLIVE} />
           <path d="M 86 65 h 22 M 52 80 h 56" {...s} className={LINE} />
