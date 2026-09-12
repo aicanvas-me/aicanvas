@@ -98,9 +98,21 @@ export function BrainWireframe() {
           return out.copy(stops[i]).lerp(stops[i + 1], x - i)
         }
 
-        const camera = new THREE.PerspectiveCamera(38, W / H, 0.01, 100)
-        camera.position.set(0, 0.2, 2.6)
-        camera.lookAt(0, 0, 0)
+        // The camera backs off until the model's unit sphere, times FIT, fits
+        // the narrower side of the box, so the brain keeps the same share of
+        // the card whether the card is wide (phones) or tall (two columns).
+        const FOV = 38
+        const FIT = 1.1
+        const camera = new THREE.PerspectiveCamera(FOV, W / H, 0.01, 100)
+        const frame = () => {
+          const halfV = THREE.MathUtils.degToRad(FOV / 2)
+          const halfH = Math.atan(Math.tan(halfV) * camera.aspect)
+          const d = FIT / Math.tan(Math.min(halfV, halfH))
+          camera.position.set(0, d * 0.08, d)
+          camera.lookAt(0, 0, 0)
+          camera.updateProjectionMatrix()
+        }
+        frame()
 
         let brainRoot: Object3D | null = null
         const clock = new THREE.Clock()
@@ -126,7 +138,7 @@ export function BrainWireframe() {
           H = host.clientHeight || H
           r.setSize(W, H)
           camera.aspect = W / H
-          camera.updateProjectionMatrix()
+          frame()
           kick()
         })
         resizeObserver.observe(host)
@@ -186,8 +198,13 @@ export function BrainWireframe() {
               mesh.geometry = geometry
               mesh.material = material
             })
-            scene.add(model)
-            brainRoot = model
+            // The recentring moved the model, not its pivot, so spinning the
+            // model itself would swing it around its old origin and drift it
+            // sideways. A pivot at the origin spins it in place.
+            const pivot = new THREE.Group()
+            pivot.add(model)
+            scene.add(pivot)
+            brainRoot = pivot
             kick()
           },
           undefined,
