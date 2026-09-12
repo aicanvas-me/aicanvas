@@ -116,9 +116,9 @@ export function IdeationTopBar() {
   // topbar disappears there.
   if (TEMPLATE_LEAF_RE.test(pathname)) return null
 
-  // The Brain LANDING renders its own full-page header (BrainStoryV4) — no app
-  // breadcrumb bar over it.
-  if (BRAIN_LANDING_RE.test(pathname)) return null
+  // Legacy's Brain landing renders its own full-page header, so no app bar over
+  // it. Pro's landing has none and takes the section breadcrumb like Foundation.
+  if (BRAIN_LANDING_RE.exec(pathname)?.[1] === 'andromeda') return null
 
   const crumbs = buildCrumbs(pathname)
   if (!crumbs) return null

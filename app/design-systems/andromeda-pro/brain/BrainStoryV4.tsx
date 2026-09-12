@@ -1,41 +1,42 @@
 'use client'
 
 // ============================================================
-// Andromeda Brain — story page V4 (Three.js · the brain).
-// Same choreography as V3, but the hero is an actual BRAIN, drawn
-// as a wireframe carrying the four section colours (see the paint
-// step in the loader). Floating labels ride the brain's rotation
-// and light up as an invisible focus passes them; the orbiting
-// bulb that used to play that role was removed.
+// Andromeda Pro Brain: the story page. A hero in the overview's shape, then a
+// stage where the brain turns in the void, painted in the same brand ramp as
+// the overview's BrainWireframe (brand 400 at the stem up to a light neutral
+// at the crown), so the two pages show one object. Floating labels ride the
+// brain's rotation and light up as an invisible focus passes them.
 //
-// Model: low-poly "Brain" by Poly by Google, CC BY 3.0 (via Poly
-// Pizza) — geometry-only, re-materialed here. Asset lives in
-// /public/models/brain.glb (git-excluded; keep the on-page credit
-// if this ships). Label text derives from BRAIN_TEASER (real
-// folder, names only — never brain CONTENT). Safe for free/anon.
+// Model: low-poly Brain by Poly by Google, CC BY 3.0 (via Poly Pizza),
+// geometry only, re-materialed here. Asset lives in /public/models/brain.glb;
+// the attribution the license asks for is on /credits. Every count and label
+// derives from BRAIN_TEASER (section labels and file names only, never brain
+// content), so the page is safe for free and anonymous visitors.
 // ============================================================
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import type { Group, Mesh, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import type { Mesh } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { motion, useInView } from 'framer-motion'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
 import { Rotate3d } from 'lucide-react'
-import { ArrowRight, Fire, Target, Gauge, Check, X as XIcon } from '@phosphor-icons/react'
+import { Check, LockSimple, X as XIcon } from '@phosphor-icons/react'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
-import { HeaderSocials } from '@/app/components/HeaderSocials'
 import { SiteFooter } from '@/app/components/SiteFooter'
+import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-pro-brain-teaser.generated'
-import { useTheme, type Theme } from '@/app/components/ThemeProvider'
+import { tokens } from '@/app/lib/andromeda-pro.generated'
+import type { Theme } from '@/app/components/ThemeProvider'
+import { BRAIN_GROUND, LINE_STOPS, oklchToLinearSrgb } from '../overview-b/BrainWireframe'
 
-// AI Canvas site palette: sand neutrals + olive accent, Manrope + mono fonts.
-// One palette per site theme; the page reads them through CSS variables (see
-// brainVars below) so everything flips with the `dark` class on <html>. The
-// WebGL brain cannot read a variable and takes the literal for its theme.
+// The flow diagram's connector gradients and travelling dots paint from these.
+// They sit inside an SVG stop and a CSS string, where a Tailwind class cannot
+// reach, so they ride CSS variables (see brainVars below) that flip with the
+// `dark` class on <html>.
 const PALETTE = {
-  dark:  { base: '#0E0E0F', node: '#9B9B9E', reason: '#B7B7BA', bright: '#F4F4FA', accent: '#DAE4A0', accentBtn: '#A8B94D', muted: '#7B7B7D', panel: '#1B1B1C', line: '#2D2D2E', lineSoft: 'rgba(45,45,46,0.6)', halo: 'rgba(0,0,0,0.9)', haloStrong: 'rgba(0,0,0,0.95)' },
-  light: { base: '#F4F4FA', node: '#575759', reason: '#373738', bright: '#1B1B1C', accent: '#869631', accentBtn: '#869631', muted: '#7B7B7D', panel: '#EEEEF3', line: '#DFDFE3', lineSoft: 'rgba(223,223,227,0.6)', halo: 'rgba(244,244,250,0.9)', haloStrong: 'rgba(244,244,250,0.95)' },
+  dark:  { accent: 'var(--color-olive-400)', accentBtn: 'var(--color-olive-500)', muted: 'var(--color-sand-500)', line: 'var(--color-sand-800)' },
+  light: { accent: 'var(--color-olive-600)', accentBtn: 'var(--color-olive-600)', muted: 'var(--color-sand-500)', line: 'var(--color-sand-200)' },
 } as const satisfies Record<Theme, Record<string, string>>
 type BrainColor = keyof typeof PALETTE.dark
 const C = Object.fromEntries((Object.keys(PALETTE.dark) as BrainColor[]).map((k) => [k, `var(--brain-${k})`])) as Record<BrainColor, string>
@@ -44,122 +45,169 @@ const SANS = "var(--font-sans), 'Manrope', system-ui, sans-serif"
 const MONO = "var(--font-mono, var(--font-jetbrains-mono)), 'Geist Mono', monospace"
 const MODEL_URL = '/models/brain.glb'
 
-const FND: readonly string[] = BRAIN_TEASER.sections.find((s) => s.id === 'foundations')?.files ?? []
-const CMP: readonly string[] = BRAIN_TEASER.sections.find((s) => s.id === 'component-rules')?.files ?? []
-const take = (arr: readonly string[], n: number) => { const step = Math.max(1, Math.floor(arr.length / n)); const o: string[] = []; for (let i = 0; i < arr.length && o.length < n; i += step) o.push(arr[i]); return o }
-const LABELS: string[] = [
-  ...take(FND, 6), ...take(CMP, 12),
-  'color is measurement', 'one frame per surface', 'must · should · may', 'movement signals data',
-]
+// The stage is the void in both site themes, like the overview's brain card,
+// so its inks are fixed instead of following the site palette.
+const STAGE_INK = {
+  label: '#9B9B9E',
+  hero: '#F4F4FA',
+  lit: tokens.color.brand[300],
+  halo: 'rgba(0,0,0,0.9)',
+  status: '#7B7B7D',
+}
 
-// Bigger, higher-hierarchy "hero" labels — the headline concepts of the brain.
-const HERO_LABELS = ['Foundations', 'Component', 'Rules', 'Design Intent', 'tokens']
+// Medium buttons, class for class with the overview hero.
+const BTN_PRIMARY = `${buttonClasses({ variant: 'primary', size: 'md' })} h-10`
+const BTN_SECONDARY = `${buttonClasses({ variant: 'outline', size: 'md' })} h-10`
+// The overview's card surface.
+const PANEL_CLASS = 'rounded-2xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
+const PANEL_SHADOW =
+  'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
+
+// Counts in running copy read as words; anything past twenty stays a numeral.
+const NUMBER_WORDS = [
+  'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+  'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty',
+]
+const numberWord = (n: number) => NUMBER_WORDS[n] ?? String(n)
+const capitalWord = (n: number) => {
+  const w = numberWord(n)
+  return w.charAt(0).toUpperCase() + w.slice(1)
+}
+
+const filesOf = (id: string): readonly string[] =>
+  (BRAIN_TEASER.sections as readonly { id: string; files: readonly string[] }[]).find((s) => s.id === id)?.files ?? []
+const FND = filesOf('foundations')
+const CMP = filesOf('component-rules')
+const SKILLS = filesOf('skills')
+const TOOLS = filesOf('tools')
+
+// One string, not counts interleaved with JSX text: the split form hydrated
+// with a space missing on the overview page.
+const HERO_BODY = `${BRAIN_TEASER.totalFiles} files your AI agent reads before it builds: the system's rules and inventory, ${numberWord(FND.length)} foundations, a rule file for each of the ${numberWord(CMP.length)} components, ${numberWord(SKILLS.length)} skills and ${numberWord(TOOLS.length)} tools. Every file name is open on this page. Premium puts the files in your project.`
+
+const take = (arr: readonly string[], n: number) => { const step = Math.max(1, Math.floor(arr.length / n)); const o: string[] = []; for (let i = 0; i < arr.length && o.length < n; i += step) o.push(arr[i]); return o }
+// Deduplicated because the labels double as React keys, and nothing stops a
+// foundation and a component rule from one day sharing a name.
+const LABELS: string[] = [...new Set([
+  ...take(FND, 6), ...take(CMP, 10), ...SKILLS,
+  ...['verify-andromeda', 'light-contrast.selfcheck'].filter((name) => TOOLS.includes(name)),
+  'must · should · may', 'color is measurement',
+])]
+
+const sentenceCase = (label: string) => {
+  const i = label.indexOf(' ')
+  return i < 0 ? label : label.slice(0, i) + label.slice(i).toLowerCase()
+}
+
+// Bigger, higher-hierarchy "hero" labels: the brain's own sections.
+const HERO_LABELS: string[] = BRAIN_TEASER.sections.map((s) => sentenceCase(s.label))
 
 function mulberry32(seed: number) { return function () { seed |= 0; seed = (seed + 0x6d2b79f5) | 0; let t = Math.imul(seed ^ (seed >>> 15), 1 | seed); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296 } }
 
-// The four corpus sections and their colours, identical to the premium reader's
-// BrainRender.tsx. Kept in step with that file: if the reader's palette moves,
-// this moves with it, or the hero and the reader stop being the same brain.
-// Light takes the same four hues a few stops deeper: a pale hairline on a pale
-// ground is no wire at all.
-const SECTION_ZONES: { dir: [number, number, number]; hex: Record<Theme, string> }[] = [
-  { dir: [0.2, 0.9, 0.35], hex: { dark: '#a78bfa', light: '#7c3aed' } },   // Index, purple
-  { dir: [-0.9, 0.05, 0.4], hex: { dark: '#38bdf8', light: '#0284c7' } },  // Foundations, cyan
-  { dir: [0.9, 0.05, 0.4], hex: { dark: '#fb923c', light: '#ea580c' } },   // Components, orange
-  { dir: [0.0, -0.7, 0.7], hex: { dark: '#a3e635', light: '#65a30d' } },   // Skills, lime
-]
-
-
-// The brain's one and only look. Unlit on purpose: the vertex colours painted
-// onto the geometry carry it, and a lit material would wash them toward the
-// light. toneMapped false because this scene renders through ACES filmic at 1.1
-// exposure, which compresses and desaturates what it touches, while the premium
-// reader has no tone mapping. Opting out is what makes the two brains match.
-const makeBrainMaterial = (T: typeof import('three')) =>
-  new T.MeshBasicMaterial({ wireframe: true, vertexColors: true, toneMapped: false })
-
 // ── editorial copy helpers ──────────────────────────────────────────────────
-// sand tokens: panel = card surface (sand-900 / sand-100), line = border (sand-800 / sand-200)
-const PANEL: React.CSSProperties = { background: 'transparent', border: `1px solid ${C.line}`, borderRadius: 16, padding: '24px 28px' }
-// Smaller sibling of PANEL — the solid-surface card treatment reused by the
-// bento side tiles and the "How it works" benefit cards.
-const PANEL_SOLID: React.CSSProperties = { background: C.panel, border: `1px solid ${C.line}`, borderRadius: 12, padding: 20 }
-// Section description, matching the homepage: text-base, leading-relaxed,
-// sand-400, mt-3, and the max-w-2xl measure the homepage sets on its own
-// description. 672 of the 896 column keeps a comfortable line length instead of
-// running the full width.
-const SECTION_DESC: React.CSSProperties = {
-  fontSize: 16,
-  color: C.node,
-  lineHeight: 1.625,
-  maxWidth: 672,
-  margin: '12px 0 0',
+// Column, overline and section head, class for class with the overview page, so
+// the two routes share one editorial frame.
+function Container({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return <div className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>{children}</div>
 }
-function Chip({ children }: { children: React.ReactNode }) {
-  return <span style={{ fontFamily: MONO, fontSize: 12, color: C.reason, background: C.panel, border: `1px solid ${C.line}`, borderRadius: 6, padding: '3px 9px', whiteSpace: 'nowrap', display: 'inline-block' }}>{children}</span>
-}
-// The full corpus manifest, derived from the teaser itself rather than a
-// hand-listed three, so a section added to the brain shows up here instead of
-// being counted in the total and rendered nowhere. REMAINDER is the entry
-// layer the sections do not cover (the index the agent opens first, the
-// component inventory, the conformance tool); it self-corrects as the brain
-// grows, and disappears entirely once every file has a section.
-const MANIFEST = BRAIN_TEASER.sections as readonly { id: string; label: string; files: readonly string[] }[]
-const SECTIONED = MANIFEST.reduce((n, s) => n + s.files.length, 0)
-const REMAINDER = BRAIN_TEASER.totalFiles - SECTIONED
-// One line per known section. An unknown id (the list is growing) renders
-// without a gloss rather than with a wrong one.
-const GLOSS: Record<string, string> = {
-  foundations: 'How the system thinks. Color, layout, spacing, motion, states, voice.',
-  'component-rules': 'One file per component, holding the decisions that make it Andromeda Pro instead of generic.',
-  skills: 'Working modes for the agent: build with the system, and review work against it.',
-  index: 'The entry point, and the inventory of what already exists so the agent stops reinventing components.',
-  tools: 'A conformance check the agent can run against its own output.',
-}
-// These describe how the agent works, not what you end up with. The flow
-// diagram above already names the outcomes, and when these read as outcomes too
-// the page made the same three promises twice within a screen of each other.
-const BENEFITS = [
-  { label: 'Faster', icon: <Gauge weight="regular" size={18} />, body: 'It starts from decisions that are already written down, instead of trying options until one looks right.' },
-  { label: 'Accurate', icon: <Target weight="regular" size={18} />, body: 'It reaches for the components that already exist before it invents anything new.' },
-  { label: 'Efficient', icon: <Fire weight="regular" size={18} />, body: 'No tokens burned exploring ground the system already settled.' },
-]
 
-// Classic workflow pains (left) vs what an AI-native system delivers (right).
-// Right-side claims stay to what Andromeda + the Brain actually ship — code,
-// tokens, and machine-readable rules. No Figma-to-code bridge is implied.
-const COMPARE = [
-  { classic: 'Documentation nobody reads, if it exists at all', native: 'Rules written down in a form your agent reads' },
-  { classic: 'Designers in Figma, developers in code, intent lost in the handoff', native: 'No handoff: the system is already code and tokens' },
-  { classic: 'Weeks from a mock-up to a production-ready screen', native: 'On-brand screens from the system on the first prompt' },
-  { classic: 'New screens drift off-brand as the team grows', native: 'New work builds against the same rules, so it holds' },
-  { classic: 'Every change is another Figma to code round trip', native: 'Change a token, and everything built on it follows' },
-]
-
-// Section separator: the AI Canvas wire mark, three across, like the homepage divider.
-function WireDivider() {
+function Overline({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', gap: 64, margin: '48px 0' }} aria-hidden>
-      {[0, 1, 2].map((i) => (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img key={i} src="/ai-canvas-wire.svg" alt="" width={28} height={24} />
-      ))}
+    <p className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">{children}</p>
+  )
+}
+
+function SectionHead({ overline, title, sub, id }: { overline: string; title: React.ReactNode; sub?: React.ReactNode; id: string }) {
+  return (
+    <div className="max-w-2xl">
+      <Overline>{overline}</Overline>
+      {/* The h2 carries the anchor id, so its scroll margin has to clear the
+          sticky bar (64px on phones), the overline above it (24px) and the
+          32px the Section reveal still has to rise after the jump lands. */}
+      <h2 id={id} className="mt-2 scroll-mt-32 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+        {title}
+      </h2>
+      {sub ? <p className="mt-2 text-base leading-relaxed text-sand-600 dark:text-sand-400">{sub}</p> : null}
     </div>
   )
 }
 
+const MANIFEST = BRAIN_TEASER.sections as readonly { id: string; label: string; files: readonly string[] }[]
+// Keyed by section id. An unknown id (the list is growing) renders without a
+// gloss or suffix rather than with a wrong one.
+const GLOSS: Record<string, string> = {
+  index: 'Where the agent starts. The rules set the system-wide laws, and the inventory lists what already exists, so it reuses a component before inventing one.',
+  foundations: 'How the system thinks: color, type, spacing, layout, motion, states, theming, charts and voice.',
+  'component-rules': 'One file per component, holding the decisions that make it Andromeda Pro instead of generic.',
+  skills: `${capitalWord(SKILLS.length)} working modes. One builds with the system, the other reviews a finished build against every must rule.`,
+  tools: 'Scripts the agent runs on its own work: a done-gate for finished screens, contrast checks for both themes and a palette snapshot.',
+}
+// The teaser publishes bare names; these put back the suffix each file has on
+// disk, so a name here matches the one the agent actually opens.
+const SUFFIX: Record<string, string> = {
+  index: '.md',
+  foundations: '.md',
+  'component-rules': '.rules.md',
+  skills: '/SKILL.md',
+  tools: '.mjs',
+}
+// A chip names a file only if the teaser has it, so a file the brain drops
+// leaves its step instead of being advertised. Skills and tools stay bare to
+// keep the chips short.
+const fileChip = (sectionId: string, file: string) =>
+  !filesOf(sectionId).includes(file) ? null
+  : sectionId === 'skills' || sectionId === 'tools' ? file
+  : file + (SUFFIX[sectionId] ?? '')
+
+// The agent's loop, in the order the two skills run it.
+const LOOP = [
+  {
+    title: 'Start at the index',
+    line: "It reads the system's rules first, then checks the inventory, so it reuses a component before inventing one.",
+    chips: [['index', 'rules'], ['index', 'INVENTORY']],
+  },
+  {
+    title: 'Open what the task needs',
+    line: 'Only the foundations and component rules this screen touches, never a guess from generic taste.',
+    chips: [['foundations', 'layout'], ['component-rules', 'Button']],
+  },
+  {
+    title: 'Build on the tokens',
+    line: 'The building skill keeps every value on a token, and a quick color check runs while it works.',
+    chips: [['skills', 'building-with-andromeda']],
+  },
+  {
+    title: 'Check before it says done',
+    line: 'The done-gate runs on the finished screen, then the review skill walks every must rule.',
+    chips: [['tools', 'verify-andromeda'], ['skills', 'reviewing-against-andromeda']],
+  },
+].map((step) => ({
+  ...step,
+  chips: step.chips.map(([sectionId, file]) => fileChip(sectionId, file)).filter((c): c is string => c !== null),
+}))
+
+// Right-side claims stay to what Andromeda Pro and the Brain actually ship:
+// code, tokens and written rules. No design-tool-to-code bridge is implied.
+const COMPARE = [
+  { classic: 'Docs written for people, skipped by agents', brain: 'Rules written for the agent that builds' },
+  { classic: 'Intent lost between the mock-up and the code', brain: 'No handoff: the system is already code and tokens' },
+  { classic: 'Every new screen drifts a little further off-brand', brain: 'Every screen is built against the same rules' },
+  { classic: 'Done means it looked right once', brain: 'Done means it passed the done-gate' },
+  { classic: 'A change means another design-to-code round trip', brain: 'Change a token and everything built on it follows' },
+]
+
 // The flow diagram: what goes in, the judgment in the middle, what comes out.
 // Counts come from the teaser so the picture cannot drift from the corpus.
 const FLOW_IN = [
-  { title: 'Tokens', sub: 'the values' },
-  { title: 'Components', sub: `${MANIFEST.find((s) => s.id === 'component-rules')?.files.length ?? 0} ready to use` },
+  { title: 'Tokens', sub: 'three layers' },
+  { title: 'Components', sub: `${CMP.length} with their own rules` },
   { title: 'Your prompt', sub: 'what you want built' },
 ]
 // Three things you get, in widening scope: this screen, the whole surface, and
 // every screen after. The middle used to read "Decisions, not guesses", which
 // described the process rather than naming something you walk away with.
 const FLOW_OUT = [
-  { title: 'On-brand screen', sub: 'first try, not the fifth' },
+  { title: 'On-brand screen', sub: 'checked before it is done' },
   { title: 'Consistent everywhere', sub: 'color, motion, spacing' },
   { title: 'Same rules next time', sub: 'no drift as you grow' },
 ]
@@ -178,13 +226,10 @@ const Y_BOT = FLOW_H - ROW_H / 2
 // SVG is 1:1 with CSS pixels, the same path strings drive the HTML dots on top.
 const LINK_W = 104
 
-// The centre card, and the wireframe brain across the top of it. The source PNG
-// is 732x660 and 400KB, and nearly a third of that height is empty margin; it
-// ships trimmed to its content box, resized to 2x display size and converted to
-// WebP, which is 7.7KB. Trimming is what closes the gap under the artwork, and
-// the display size is set so the brain itself renders exactly as before. Its
-// background is rgb(14,14,15), the sand-950 the card is painted, so the image
-// has no visible edge.
+// The centre card, and the wireframe brain across the top of it: a still of the
+// brand-ramp brain, stored at 2x display size. Its ground is a flat
+// rgb(14,14,15), the sand-950 the card is painted in both site themes, so the
+// image has no visible edge either way.
 const IMG_W = 78
 const IMG_H = 65
 const CARD_PAD_TOP = 14
@@ -263,25 +308,19 @@ function FlowLinks({ mode }: { mode: 'in' | 'out' }) {
   )
 }
 
+const FLOW_NODE = 'flex flex-col justify-center rounded-[10px] border border-sand-200 bg-sand-100 px-3.5 dark:border-sand-800 dark:bg-sand-900'
+const FLOW_HEAD = 'mb-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-sand-600 dark:text-sand-400'
+
+function FlowNode({ title, sub }: { title: string; sub: string }) {
+  return (
+    <div className={FLOW_NODE} style={{ height: ROW_H }}>
+      <span className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">{title}</span>
+      <span className="mt-px text-[11px] text-sand-600 dark:text-sand-400">{sub}</span>
+    </div>
+  )
+}
+
 function BrainFlow() {
-  const node: React.CSSProperties = {
-    height: ROW_H,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: '0 14px',
-    background: C.panel,
-    border: `1px solid ${C.line}`,
-    borderRadius: 10,
-  }
-  const head: React.CSSProperties = {
-    fontFamily: MONO,
-    fontSize: 10,
-    letterSpacing: '0.14em',
-    textTransform: 'uppercase',
-    color: C.muted,
-    margin: '0 0 10px',
-  }
   return (
     <>
       <style>{`
@@ -312,7 +351,9 @@ function BrainFlow() {
         @media (prefers-reduced-motion: reduce) {
           .flow-dot { display: none; }
         }
-        @media (max-width: 760px) {
+        /* Stack below lg: from 768px the site rail takes 240px, and the five
+           column grid needs about 610px of its own. */
+        @media (max-width: 1023px) {
           .flow-heads { display: none; }
           .flow-grid { grid-template-columns: 1fr; gap: ${ROW_GAP}px; }
           .flow-link { display: none; }
@@ -322,37 +363,34 @@ function BrainFlow() {
       {/* A touch more air than when a paragraph sat above: the diagram is the
           section's body now, not a figure under prose. */}
       <div className="flow-heads" style={{ marginTop: 36 }}>
-        <p style={head}>What goes in</p>
+        <p className={FLOW_HEAD}>What goes in</p>
         <span />
-        <p style={{ ...head, textAlign: 'center' }}>The judgment</p>
+        <p className={`${FLOW_HEAD} text-center`}>The judgment</p>
         <span />
-        <p style={{ ...head, textAlign: 'right' }}>What comes out</p>
+        <p className={`${FLOW_HEAD} text-right`}>What comes out</p>
       </div>
 
       <div className="flow-grid">
         <div className="flow-col">
           {FLOW_IN.map((n) => (
-            <div key={n.title} style={node}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: C.bright }}>{n.title}</span>
-              <span style={{ fontSize: 11, color: C.muted, marginTop: 1 }}>{n.sub}</span>
-            </div>
+            <FlowNode key={n.title} {...n} />
           ))}
         </div>
 
         <FlowLinks mode="in" />
 
         <div className="flow-mid">
-          {/* The focal card. Painted the page ground, which on dark is the
-              image's own background; on light the .brain-wire blend hides the
-              image ground instead, so the artwork has no visible edge either way. */}
-          {/* Border stays 1px, as every card here is. Full-strength olive read
-              heavy beside the sand hairlines around it, so it is dialled back to
-              a true hairline that still marks this as the focal card. */}
-          <div style={{ ...node, height: CARD_H, width: '100%', padding: `${CARD_PAD_TOP}px 0 ${CARD_PAD_BOTTOM}px`, alignItems: 'center', justifyContent: 'flex-start', background: C.base, borderColor: 'rgba(168,185,77,0.55)' }}>
+          {/* The focal card is the void in both site themes, like the hero
+              stage, so its inks are fixed for the dark ground. The olive border
+              stays a hairline: full strength read heavy beside the sand
+              hairlines around it. */}
+          <div
+            className="flex w-full flex-col items-center justify-start rounded-[10px] border border-olive-500/40 bg-sand-950"
+            style={{ height: CARD_H, padding: `${CARD_PAD_TOP}px 0 ${CARD_PAD_BOTTOM}px` }}
+          >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              className="brain-wire"
-              src="/andromeda-brain-wire.webp"
+              src="/andromeda-pro-brain-wire.webp"
               alt=""
               width={IMG_W}
               height={IMG_H}
@@ -360,8 +398,8 @@ function BrainFlow() {
               decoding="async"
               style={{ display: 'block' }}
             />
-            <span style={{ fontSize: 13, fontWeight: 700, color: C.bright, marginTop: IMG_GAP }}>Andromeda Pro Brain</span>
-            <span style={{ fontFamily: MONO, fontSize: 11, color: C.accent, marginTop: 2 }}>{BRAIN_TEASER.totalFiles} files</span>
+            <span className="text-[13px] font-bold text-sand-50" style={{ marginTop: IMG_GAP }}>Andromeda Pro Brain</span>
+            <span className="mt-0.5 font-mono text-[11px] text-olive-400">{`${BRAIN_TEASER.totalFiles} files`}</span>
           </div>
         </div>
 
@@ -369,10 +407,7 @@ function BrainFlow() {
 
         <div className="flow-col">
           {FLOW_OUT.map((n) => (
-            <div key={n.title} style={node}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: C.bright }}>{n.title}</span>
-              <span style={{ fontSize: 11, color: C.muted, marginTop: 1 }}>{n.sub}</span>
-            </div>
+            <FlowNode key={n.title} {...n} />
           ))}
         </div>
       </div>
@@ -380,102 +415,176 @@ function BrainFlow() {
   )
 }
 
-// The teaser publishes names for the sectioned files only, so the entry layer
-// (index, inventory, tool) arrives as a count with no names. These are the
-// three at the current pin. The moment inject-premium ships its index and tools
-// sections the names come from the data and this list stops being read.
-// Hand-listed until then, sliced to REMAINDER so it can never claim more
-// files than the brain actually has.
-const ENTRY_FILES = ['rules.md', 'INVENTORY.md', 'check-colors']
+// Tailwind's lg: the site rail takes 240px from md, so the two-column explorer
+// only fits from here. Server snapshot is false, matching the stacked layout
+// the server renders.
+const LG_QUERY = '(min-width: 1024px)'
+const subscribeLg = (onChange: () => void) => {
+  const mql = window.matchMedia(LG_QUERY)
+  mql.addEventListener('change', onChange)
+  return () => mql.removeEventListener('change', onChange)
+}
+const useLgUp = () => useSyncExternalStore(subscribeLg, () => window.matchMedia(LG_QUERY).matches, () => false)
 
-// The explorer's rail: every section, plus the entry layer the sections do not
-// cover yet, so the rail always accounts for all 56 files.
-const EXPLORER = [
-  ...MANIFEST.map((s) => ({ id: s.id, label: s.label, count: s.files.length, files: s.files, gloss: GLOSS[s.id] })),
-  ...(REMAINDER > 0
-    ? [{
-        id: 'index-tooling',
-        label: 'Index and tooling',
-        count: REMAINDER,
-        files: ENTRY_FILES.slice(0, REMAINDER) as readonly string[],
-        gloss: 'The entry point the agent opens first, the inventory of what already exists so it stops reinventing components, and a conformance tool it can run against its own output.',
-      }]
-    : []),
-]
+const DEFAULT_TAB = 'component-rules'
+const PANEL_ID = 'brain-corpus-panel'
+const tabId = (id: string) => `brain-corpus-tab-${id}`
+// On a phone the names run one column, so a 49-name section is a long scroll.
+// Past this many they wait behind a button; from sm every name shows.
+const PHONE_PREVIEW = 12
+// Characters of 13px mono (about 7.8px each) one name column holds at the
+// narrowest width a layout starts at, so a longer name drops a column instead
+// of truncating: two columns at 640px, two or three at 1280px beside the rail.
+const SM_TWO_COL_CHARS = 31
+const XL_TWO_COL_CHARS = 41
+const XL_THREE_COL_CHARS = 26
 
-// Section rail on the left, that section's file names on the right, every name
-// locked. Two columns, not three, so a 39-name list stays readable at this
-// width. A rail entry the teaser gives no names for (the entry layer, until its
-// section ships) shows its gloss instead of an empty grid.
 function CorpusExplorer() {
-  const [active, setActive] = useState(0)
-  const sec = EXPLORER[active]
+  const [activeId, setActiveId] = useState(() => (MANIFEST.some((s) => s.id === DEFAULT_TAB) ? DEFAULT_TAB : MANIFEST[0]?.id))
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const lgUp = useLgUp()
+  const [expanded, setExpanded] = useState(false)
+  const activeIndex = Math.max(0, MANIFEST.findIndex((s) => s.id === activeId))
+  const rowRef = useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
+  const hasScrolled = useRef(false)
+  // Below lg the default tab sits past the right edge of a phone row. Scroll
+  // the row itself: scrollIntoView would also move the page vertically. The
+  // first pass is instant so nothing slides on load.
+  useEffect(() => {
+    const row = rowRef.current
+    const tab = tabRefs.current[activeIndex]
+    const instant = !hasScrolled.current || reduce
+    hasScrolled.current = true
+    if (!row || !tab || row.scrollWidth <= row.clientWidth) return
+    const left = tab.offsetLeft
+    const right = left + tab.offsetWidth
+    const target =
+      left < row.scrollLeft ? left
+      : right > row.scrollLeft + row.clientWidth ? right - row.clientWidth
+      : row.scrollLeft
+    if (target !== row.scrollLeft) row.scrollTo({ left: target, behavior: instant ? 'auto' : 'smooth' })
+  }, [activeIndex, reduce])
+  // "Show all" removes itself on click, so focus moves to the first name it
+  // revealed instead of falling back to the document.
+  const firstRevealedRef = useRef<HTMLLIElement>(null)
+  useEffect(() => {
+    if (expanded) firstRevealedRef.current?.focus()
+  }, [expanded])
+  const sec = MANIFEST[activeIndex]
+  if (!sec) return null
+  const suffix = SUFFIX[sec.id] ?? ''
+  const gloss = GLOSS[sec.id]
+  const longest = Math.max(0, ...sec.files.map((f) => f.length + suffix.length))
+  const smCols = longest <= SM_TWO_COL_CHARS ? 'sm:grid-cols-2' : ''
+  const xlCols = longest <= XL_THREE_COL_CHARS ? 'xl:grid-cols-3' : longest <= XL_TWO_COL_CHARS ? 'xl:grid-cols-2' : ''
+  const select = (id: string) => {
+    setActiveId(id)
+    setExpanded(false)
+  }
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const last = MANIFEST.length - 1
+    const next =
+      e.key === 'ArrowDown' || e.key === 'ArrowRight' ? (activeIndex === last ? 0 : activeIndex + 1)
+      : e.key === 'ArrowUp' || e.key === 'ArrowLeft' ? (activeIndex === 0 ? last : activeIndex - 1)
+      : e.key === 'Home' ? 0
+      : e.key === 'End' ? last
+      : -1
+    if (next < 0) return
+    e.preventDefault()
+    select(MANIFEST[next].id)
+    tabRefs.current[next]?.focus()
+  }
+
   return (
-    <>
-      <style>{`
-        .corpus-explorer { display: grid; grid-template-columns: 260px 1fr; gap: 24px; }
-        /* Hover and selected match the site's left nav: sand-800 at 60% on
-           hover, solid sand-800 when selected. */
-        .corpus-rail-item { width: 100%; text-align: left; background: none; border: none; cursor: pointer; display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 16px 18px; border-radius: 0 8px 8px 0; transition: background 0.15s ease, color 0.15s ease; }
-        .corpus-rail-item:hover { background: ${C.lineSoft}; }
-        .corpus-rail-item[aria-current='true'] { background: ${C.line}; }
-        .corpus-file { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; transition: background 0.15s ease; }
-        .corpus-file:hover { background: ${C.panel}; }
-        @media (max-width: 760px) {
-          .corpus-explorer { grid-template-columns: 1fr; }
-          .corpus-files { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
-      <div className="corpus-explorer" style={{ marginTop: 32 }}>
-        {/* alignSelf start, so the rail keeps its own height. Stretching it to
-            the grid row made its rule run on past the last item whenever the
-            pane was the taller of the two. */}
-        <div style={{ borderLeft: `1px solid ${C.line}`, alignSelf: 'start' }}>
-          {EXPLORER.map((s, i) => (
+    <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-[200px_minmax(0,1fr)]">
+      {/* Below lg a scrolling row, so five tabs do not stack into a tall column
+          on a phone before the names even start. */}
+      {/* relative makes the row each tab's offsetParent, which the scroll
+          effect above measures against. */}
+      <div
+        ref={rowRef}
+        role="tablist"
+        aria-label="Brain sections"
+        aria-orientation={lgUp ? 'vertical' : 'horizontal'}
+        onKeyDown={onKeyDown}
+        className="relative flex gap-1 overflow-x-auto [scrollbar-width:none] lg:flex-col lg:self-start lg:overflow-visible"
+      >
+        {MANIFEST.map((s, i) => {
+          const selected = i === activeIndex
+          return (
             <button
               key={s.id}
+              ref={(el) => { tabRefs.current[i] = el }}
               type="button"
-              className="corpus-rail-item"
-              onClick={() => setActive(i)}
-              aria-current={i === active}
-              style={{
-                borderLeft: `2px solid ${i === active ? C.accentBtn : 'transparent'}`,
-                marginLeft: -1,
-              }}
+              role="tab"
+              id={tabId(s.id)}
+              aria-selected={selected}
+              aria-controls={PANEL_ID}
+              tabIndex={selected ? 0 : -1}
+              onClick={() => select(s.id)}
+              className={`flex shrink-0 items-baseline justify-between gap-3 rounded-lg px-4 py-3 text-left text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 ${
+                selected
+                  ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                  : 'text-sand-600 hover:bg-sand-200/60 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-50'
+              }`}
             >
-              <span style={{ fontFamily: MONO, fontSize: 12, letterSpacing: '0.14em', textTransform: 'uppercase', color: i === active ? C.bright : C.muted }}>
-                {s.label}
+              <span>{sentenceCase(s.label)}</span>
+              <span
+                className={`font-mono text-xs tabular-nums ${
+                  selected ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-400'
+                }`}
+              >
+                {s.files.length}
               </span>
-              <span style={{ fontFamily: MONO, fontSize: 13, fontWeight: 700, color: C.accent, opacity: i === active ? 1 : 0.55 }}>{s.count}</span>
             </button>
-          ))}
-        </div>
+          )
+        })}
+      </div>
 
-        <div style={{ ...PANEL, padding: 20 }}>
-          {sec.files.length > 0 ? (
-            <div className="corpus-files" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
-              {sec.files.map((f) => (
-                <div key={f} className="corpus-file">
-                  {/* One marker shape and one colour everywhere, so the pane
-                      reads as a set rather than four different treatments. */}
-                  <span aria-hidden style={{ width: 8, height: 8, borderRadius: 2, background: C.accent, flexShrink: 0 }} />
-                  <span style={{ fontFamily: MONO, fontSize: 13, color: C.node }}>{f}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p style={{ fontSize: 15, lineHeight: 1.7, color: C.node, margin: 0, padding: '10px 12px' }}>{sec.gloss}</p>
-          )}
+      <div role="tabpanel" id={PANEL_ID} aria-labelledby={tabId(sec.id)} className={`${PANEL_CLASS} ${PANEL_SHADOW} p-4 sm:p-6`}>
+        {gloss ? <p className="max-w-2xl text-sm leading-relaxed text-sand-700 dark:text-sand-300">{gloss}</p> : null}
+        {/* No hairline without a gloss above it to divide from. */}
+        <div className={gloss ? 'mt-4 border-t border-sand-200 pt-4 dark:border-sand-800' : undefined}>
+          <ul className={`grid min-h-[12rem] grid-cols-1 content-start gap-x-4 ${smCols} ${xlCols}`}>
+            {sec.files.map((f, i) => {
+              const name = f + suffix
+              return (
+                // Hidden with CSS, not left out, so the server HTML lists every name.
+                <li
+                  key={f}
+                  ref={i === PHONE_PREVIEW ? firstRevealedRef : undefined}
+                  tabIndex={i === PHONE_PREVIEW ? -1 : undefined}
+                  className={`flex min-w-0 items-center gap-2 rounded py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 ${!expanded && i >= PHONE_PREVIEW ? 'max-sm:hidden' : ''}`}
+                >
+                  <LockSimple weight="regular" size={14} aria-hidden className="shrink-0 text-sand-400 dark:text-sand-600" />
+                  <span title={name} className="truncate font-mono text-[13px] text-sand-700 dark:text-sand-300">
+                    {name}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+          {!expanded && sec.files.length > PHONE_PREVIEW ? (
+            <button
+              type="button"
+              onClick={() => setExpanded(true)}
+              className="mt-2 rounded text-sm font-semibold text-olive-600 hover:text-olive-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:hidden dark:text-olive-400 dark:hover:text-olive-300"
+            >
+              {`Show all ${sec.files.length} files`}
+            </button>
+          ) : null}
+          <p className="sr-only">File contents are part of Premium.</p>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
-// Scroll-reveal wrapper — same recipe as the site's Section component on
-// /pricing and /about (fade + rise on first entry, once: true). Kept local
-// since this page styles with inline style objects, not Tailwind className.
-function Section({ children, className, style, delay = 0 }: { children: React.ReactNode; className?: string; style?: React.CSSProperties; delay?: number }) {
+// Scroll-reveal wrapper, the same recipe as the site's Section component on
+// /pricing and /about (fade + rise on first entry, once: true).
+function Section({ children, className, 'aria-labelledby': labelledBy }: { children: React.ReactNode; className?: string; 'aria-labelledby'?: string }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-80px' })
   return (
@@ -483,36 +592,12 @@ function Section({ children, className, style, delay = 0 }: { children: React.Re
       ref={ref}
       initial={{ opacity: 0, y: 32 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
-      transition={{ duration: 0.6, delay, ease: [0.25, 0.1, 0.25, 1] }}
+      transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
       className={className}
-      style={style}
+      aria-labelledby={labelledBy}
     >
       {children}
     </motion.section>
-  )
-}
-
-// Card-level reveal — smaller offset/duration than Section, matching the
-// site's PlanCard sibling-stagger recipe (explicit delay = base + i * step).
-function BenefitCard({ benefit, delay }: { benefit: (typeof BENEFITS)[number]; delay: number }) {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: true, margin: '-60px' })
-  return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 24 }}
-      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-      transition={{ duration: 0.55, delay, ease: [0.25, 0.1, 0.25, 1] }}
-      style={{ display: 'flex', flexDirection: 'column', ...PANEL_SOLID }}
-    >
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-        <div style={{ display: 'flex', width: 32, height: 32, flexShrink: 0, alignItems: 'center', justifyContent: 'center', borderRadius: 8, background: C.line, color: C.reason }}>
-          {benefit.icon}
-        </div>
-        <span style={{ fontSize: 14, fontWeight: 700, color: C.bright }}>{benefit.label}</span>
-      </div>
-      <p style={{ flex: 1, fontSize: 14, color: C.node, lineHeight: 1.625, margin: 0 }}>{benefit.body}</p>
-    </motion.div>
   )
 }
 
@@ -526,15 +611,15 @@ export function BrainStoryV4() {
   const heroSmooth = useRef<Array<{ x: number; y: number } | undefined>>([])
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [loadProgress, setLoadProgress] = useState(0)
-  // The scene is built once; a theme switch only re-clears the ground and
-  // repaints the wire colours through this hook into the running scene.
-  const { theme } = useTheme()
-  const themeRef = useRef<Theme>(theme)
-  const repaintRef = useRef<((t: Theme) => void) | null>(null)
+  // Read through a ref so toggling reduced motion never rebuilds the WebGL
+  // context; kickRef draws a frame (and restarts the loop if motion is allowed).
+  const reduce = useReducedMotion()
+  const reduceRef = useRef(reduce)
+  const kickRef = useRef<() => void>(() => {})
   useEffect(() => {
-    themeRef.current = theme
-    repaintRef.current?.(theme)
-  }, [theme])
+    reduceRef.current = reduce
+    kickRef.current()
+  }, [reduce])
 
   // Premium subscribers already have the brain — re-label the CTA into the
   // viewer instead of pitching an upgrade. Treat the in-flight 'unknown' state
@@ -543,7 +628,7 @@ export function BrainStoryV4() {
   // TemplateChrome/TopAuthPill. Anon/free derive to 'not-premium' synchronously,
   // and /explore is server-gated, so this never grants a free user access.
   const canOpen = usePremiumStatus() !== 'not-premium'
-  const ctaLabel = canOpen ? 'Read the brain' : 'Get the brain with premium'
+  const ctaLabel = canOpen ? 'Open the reader' : 'Get Premium'
   const ctaHref = canOpen ? '/design-systems/andromeda-pro/brain/explore' : '/pricing'
 
   // label positions spread over the WHOLE sphere around the brain (top, bottom, left, right,
@@ -578,9 +663,10 @@ export function BrainStoryV4() {
   useEffect(() => {
     const host = hostRef.current
     if (!host) return
-    let alive = true, raf = 0
-    let renderer: WebGLRenderer, scene: Scene, camera: PerspectiveCamera
-    let onResize = () => {}
+    let alive = true, raf = 0, visible = false
+    let renderer: import('three').WebGLRenderer | undefined
+    let resizeObserver: ResizeObserver | undefined
+    let viewObserver: IntersectionObserver | undefined
     let cleanupInput = () => {}
 
     ;(async () => {
@@ -597,158 +683,159 @@ export function BrainStoryV4() {
       const isConstrained = conn?.saveData || ['slow-2g', '2g', '3g'].includes(conn?.effectiveType ?? '') || (navigator.hardwareConcurrency ?? 8) <= 4
 
       let W = host.clientWidth || 800, H = host.clientHeight || 600
-      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: 'high-performance' })
-      // Cap at 2, matching the premium reader. It used to cap at 1.5, so on a
-      // retina screen the canvas rendered below native and the browser upscaled
-      // it: every hairline wire came out thick and soft. A wireframe is nothing
-      // but hairlines, so it pays that cost far harder than a solid mesh would,
-      // and the scene is much cheaper now that the lights and the environment
-      // map are gone. Constrained devices still get less.
-      renderer.setSize(W, H); renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isConstrained ? 1.5 : 2))
-      renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1
-      // The render loop only starts once the model lands, and an opaque
-      // (alpha:false) canvas with an uninitialized buffer composites as a
-      // WHITE flash on some GPUs. Clear it to the void immediately, and keep
-      // the canvas transparent until the first real frames fade it in.
-      renderer.setClearColor(new THREE.Color(PALETTE[themeRef.current].base), 1)
-      renderer.clear()
-      renderer.domElement.style.opacity = '0'
-      renderer.domElement.style.transition = 'opacity 0.6s ease'
-      host.appendChild(renderer.domElement)
+      // Transparent canvas: the void ground is the stage's CSS background. No
+      // tone mapping, so the ramp reads exactly as it does on the overview.
+      const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' })
+      renderer = r
+      r.setClearColor(0x000000, 0)
+      // Cap at 2: a wireframe is nothing but hairlines, and below native
+      // resolution the browser upscales them thick and soft. Constrained
+      // devices still get less.
+      r.setSize(W, H); r.setPixelRatio(Math.min(window.devicePixelRatio || 1, isConstrained ? 1.5 : 2))
+      r.domElement.style.opacity = '0'
+      r.domElement.style.transition = 'opacity 0.6s ease'
+      host.appendChild(r.domElement)
 
-      scene = new THREE.Scene(); scene.background = new THREE.Color(PALETTE[themeRef.current].base)
-
-      // kick the GLTF fetch off as early as correctness allows — right after
-      // scene exists (onLoad only needs scene.add(model) + THREE + the state
-      // below), BEFORE the GPU-bound PMREM/env-map generation and lights/camera
-      // setup that used to run first and delay the fetch for no reason.
-      let brainRoot: Group | null = null, radius = 1, ready = false
-      const brainMeshes: Mesh[] = []
-
-      const loader = new GLTFLoader()
-      loader.load(MODEL_URL, (gltf: GLTF) => {
-        if (!alive) return
-        const model = gltf.scene
-        // Duck-typed on purpose: instanceof breaks when two copies of three load.
-        model.traverse((o) => { const m = o as Mesh; if (m.isMesh) brainMeshes.push(m) })
-        scene.add(model)
-        // Poly models are often authored off-origin and at arbitrary scale.
-        // Update world matrices first, then normalize to unit radius + recenter,
-        // so the camera framing is reliable regardless of the source model.
-        model.updateWorldMatrix(true, true)
-        let mbox = new THREE.Box3().setFromObject(model)
-        let msph = mbox.getBoundingSphere(new THREE.Sphere())
-        model.scale.setScalar(1 / (msph.radius || 1))
-        model.updateWorldMatrix(true, true)
-        mbox = new THREE.Box3().setFromObject(model)
-        msph = mbox.getBoundingSphere(new THREE.Sphere())
-        model.position.sub(msph.center)
-        radius = 1
-        brainRoot = model
-
-        // Radiant wireframe, painted the same way the premium reader paints its
-        // brain (BrainRender.tsx): the four section colours blended by how
-        // closely each vertex faces each section. Same palette, same weighting,
-        // so the hero and the reader are recognisably the same object, and the
-        // colours mean something rather than being a decorative rainbow.
-        //
-        // new THREE.Color(hex) yields LINEAR channels, which is what a vertex
-        // colour buffer wants. An earlier pass here used setHSL, whose default
-        // colour space is the working one, so sRGB-intended values went in
-        // untranslated and the whole mesh washed out toward white.
-        const zoneDirs = SECTION_ZONES.map((z) => new THREE.Vector3(z.dir[0], z.dir[1], z.dir[2]).normalize())
-        // Geometries this pass has painted. A colour attribute that arrived
-        // with the model is authored and stays; ours is rewritten in place.
-        const painted = new WeakSet<Mesh['geometry']>()
-        const paint = (t: Theme) => {
-          const zoneCols = SECTION_ZONES.map((z) => {
-            const c = new THREE.Color(z.hex[t])
-            return [c.r, c.g, c.b] as [number, number, number]
-          })
-          for (const mesh of brainMeshes) {
-            const geo = mesh.geometry
-            if (!geo?.attributes?.position) continue
-            if (geo.attributes.color && !painted.has(geo)) continue
-            const pos = geo.attributes.position
-            geo.computeBoundingBox()
-            const bb = geo.boundingBox!
-            const cx = (bb.min.x + bb.max.x) / 2
-            const cy = (bb.min.y + bb.max.y) / 2
-            const cz = (bb.min.z + bb.max.z) / 2
-            const existing = painted.has(geo) ? geo.attributes.color : null
-            const colors = existing ? (existing.array as Float32Array) : new Float32Array(pos.count * 3)
-            const d = new THREE.Vector3()
-            for (let i = 0; i < pos.count; i++) {
-              d.set(pos.getX(i) - cx, pos.getY(i) - cy, pos.getZ(i) - cz).normalize()
-              let wsum = 0
-              const w = [0, 0, 0, 0]
-              for (let k = 0; k < 4; k++) {
-                const dot = Math.max(0, d.dot(zoneDirs[k]))
-                // cubed so each section holds its own area, plus an epsilon so no
-                // wire on the far side goes fully black
-                w[k] = dot * dot * dot + 0.04
-                wsum += w[k]
-              }
-              let r = 0, g = 0, b = 0
-              for (let k = 0; k < 4; k++) {
-                const t2 = w[k] / wsum
-                r += zoneCols[k][0] * t2
-                g += zoneCols[k][1] * t2
-                b += zoneCols[k][2] * t2
-              }
-              colors[i * 3] = r
-              colors[i * 3 + 1] = g
-              colors[i * 3 + 2] = b
-            }
-            if (existing) existing.needsUpdate = true
-            else geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
-            painted.add(geo)
-          }
-        }
-        paint(themeRef.current)
-        repaintRef.current = (t) => {
-          if (!alive) return
-          renderer.setClearColor(new THREE.Color(PALETTE[t].base), 1)
-          scene.background = new THREE.Color(PALETTE[t].base)
-          paint(t)
-        }
-
-        for (const mesh of brainMeshes) mesh.material = makeBrainMaterial(THREE)
-
-        // The orbiting bulb and its point light are gone. The wireframe is
-        // unlit, so that light lit nothing; all it did was fly a bright dot
-        // across the scene. Its path survives below as an invisible focus, which
-        // is what still walks the glow along the labels.
-
-        ready = true; setStatus('ready')
-        // fade the canvas in over the first rendered frames
-        requestAnimationFrame(() => { renderer.domElement.style.opacity = '1' })
-        // the render loop only starts once there's something to actually
-        // render — no more compositing an empty scene while the asset streams in.
-        loop()
-      }, (event: ProgressEvent) => {
-        if (alive && event.total) setLoadProgress(Math.round((event.loaded / event.total) * 100))
-      }, () => { if (alive) setStatus('error') })
-
-      // No lights and no environment map. The brain is an unlit wireframe, so
-      // every one of them rendered nothing; generating the PMREM environment
-      // alone was real work on every mount.
-
-      camera = new THREE.PerspectiveCamera(38, W / H, 0.01, 100)
+      const scene = new THREE.Scene()
+      const camera = new THREE.PerspectiveCamera(38, W / H, 0.01, 100)
       camera.position.set(0, 0.3, 3)
 
-      onResize = () => {
-        W = host.clientWidth || W; H = host.clientHeight || H
-        renderer.setSize(W, H); camera.aspect = W / H; camera.updateProjectionMatrix()
+      const stops = LINE_STOPS.map((css) =>
+        new THREE.Color().setRGB(...oklchToLinearSrgb(css), THREE.LinearSRGBColorSpace),
+      )
+      const colorAt = (t: number, out: InstanceType<typeof THREE.Color>) => {
+        const x = Math.min(Math.max(t, 0), 1) * (stops.length - 1)
+        const i = Math.min(Math.floor(x), stops.length - 2)
+        return out.copy(stops[i]).lerp(stops[i + 1], x - i)
       }
-      window.addEventListener('resize', onResize)
 
-      // drag-to-spin state (replaces the old hover-to-chase). Idle is untouched.
+      let brainRoot: import('three').Group | null = null, ready = false
+      const radius = 1
+
+      // drag-to-spin state. Idle motion is separate and stops under reduced motion.
       const spin = { active: false, lastX: 0, lastY: 0, rotX: 0, rotY: 0, velY: 0 }
+      // Under reduced motion the loop stops once input settles; this keeps it
+      // drawing long enough for the eased labels to land.
+      let lastInputAt = 0
+
+      let runningT = 0
+      // Frame time from performance.now(): THREE.Clock is deprecated.
+      let last = performance.now()
+      const flyPos = new THREE.Vector3(), wp = new THREE.Vector3(), projScratch = new THREE.Vector3()
+      const spinEuler = new THREE.Euler(), spinQuat = new THREE.Quaternion()
+
+      const tick = () => {
+        raf = 0
+        const now = performance.now()
+        // cap dt so a CPU stall pauses motion instead of teleporting it; a real
+        // clock instead of a frame-count assumption is what keeps drag inertia
+        // and label positions deterministic in time.
+        const dt = Math.min((now - last) / 1000, 1 / 30)
+        last = now
+        const still = reduceRef.current === true
+        // Reduced motion freezes time: no idle orbit, no focus travel.
+        if (!still) runningT += dt
+        const t = runningT
+        const transitionDuration = spin.active ? '0ms' : '90ms, 140ms'
+        const R = radius
+
+        // Invisible focus on an organic (non-linear) orbit. Nothing renders
+        // here; the labels below use its position to decide which are lit.
+        const a1 = t * 0.62, a2 = t * 0.37
+        flyPos.set(
+          Math.cos(a1) * R * 0.98 + Math.sin(a2 * 1.3) * R * 0.16,
+          Math.sin(a1 * 0.8) * R * 0.42 + Math.cos(t * 0.9) * R * 0.12 + R * 0.12,
+          Math.sin(a1) * R * 0.98 + Math.cos(a2 * 0.7) * R * 0.16,
+        )
+
+        // camera: the idle orbit. Backed off on a portrait stage, so a phone
+        // keeps the brain's full width in frame.
+        const orb = t * 0.12, d = (R * 2.6) / Math.min(1, camera.aspect)
+        camera.position.set(Math.sin(orb) * d, R * 0.35, Math.cos(orb) * d)
+        camera.lookAt(0, R * 0.05, 0)
+
+        // drag-to-spin the brain, with release inertia (decay rate is per
+        // real second via dt * 60, not per frame — same feel at any fps)
+        if (!spin.active) { spin.rotY += spin.velY; spin.velY *= Math.pow(0.94, dt * 60) }
+        if (brainRoot) brainRoot.rotation.set(spin.rotX, spin.rotY, 0)
+        spinQuat.setFromEuler(spinEuler.set(spin.rotX, spin.rotY, 0))
+        const activity = Math.min(1, Math.abs(spin.velY) * 34 + (spin.active ? 0.7 : 0))
+
+        // labels: rotate WITH the brain (dragging carries them past the focus), light up near it
+        const ease = 1 - Math.exp(-18 * dt)
+        for (let i = 0; i < dirs.length; i++) {
+          const el = labelEls.current[i]; if (!el) continue
+          wp.set(dirs[i][0], dirs[i][1], dirs[i][2]).multiplyScalar(R).applyQuaternion(spinQuat)
+          const near = 1 - Math.min(1, wp.distanceTo(flyPos) / (R * 0.9))
+          projScratch.copy(wp).project(camera)
+          const behind = projScratch.z > 1
+          const targetX = Math.max(70, Math.min(W - 70, (projScratch.x * 0.5 + 0.5) * W)), targetY = (-projScratch.y * 0.5 + 0.5) * H
+          let sm = labelSmooth.current[i]
+          if (!sm) { sm = { x: targetX, y: targetY }; labelSmooth.current[i] = sm }
+          sm.x += (targetX - sm.x) * ease; sm.y += (targetY - sm.y) * ease
+          const op = behind ? 0 : Math.min(1, 0.12 + 0.88 * near * near + activity * 0.5)
+          el.style.transform = `translate(-50%,-50%) translate(${Math.round(sm.x)}px,${Math.round(sm.y)}px) scale(${0.9 + near * 0.25})`
+          el.style.opacity = String(op)
+          el.style.color = near > 0.55 ? STAGE_INK.lit : STAGE_INK.label
+          el.style.transitionDuration = transitionDuration
+        }
+
+        // hero labels — bigger, brighter, always fairly present
+        for (let i = 0; i < heroDirs.length; i++) {
+          const el = heroEls.current[i]; if (!el) continue
+          wp.set(heroDirs[i][0], heroDirs[i][1], heroDirs[i][2]).multiplyScalar(R).applyQuaternion(spinQuat)
+          const near = 1 - Math.min(1, wp.distanceTo(flyPos) / (R * 1.1))
+          projScratch.copy(wp).project(camera)
+          const behind = projScratch.z > 1
+          const targetX = Math.max(110, Math.min(W - 110, (projScratch.x * 0.5 + 0.5) * W)), targetY = (-projScratch.y * 0.5 + 0.5) * H
+          let sm = heroSmooth.current[i]
+          if (!sm) { sm = { x: targetX, y: targetY }; heroSmooth.current[i] = sm }
+          sm.x += (targetX - sm.x) * ease; sm.y += (targetY - sm.y) * ease
+          const op = behind ? 0 : Math.min(1, 0.42 + 0.58 * near + activity * 0.4)
+          el.style.transform = `translate(-50%,-50%) translate(${Math.round(sm.x)}px,${Math.round(sm.y)}px) scale(${0.96 + near * 0.14})`
+          el.style.opacity = String(op)
+          el.style.color = near > 0.5 ? STAGE_INK.lit : STAGE_INK.hero
+          el.style.transitionDuration = transitionDuration
+        }
+
+        r.render(scene, camera)
+        const settling = spin.active || Math.abs(spin.velY) > 1e-4 || now - lastInputAt < 500
+        if (alive && visible && (!still || settling)) raf = requestAnimationFrame(tick)
+      }
+      // Starts one frame, and the loop if motion is allowed. Nothing to draw
+      // until the model lands.
+      const kick = () => {
+        if (!alive || !ready || raf) return
+        last = performance.now() // drop the time spent paused, so nothing jumps
+        raf = requestAnimationFrame(tick)
+      }
+      kickRef.current = kick
+
+      // The stage changes size with its breakpoints and with the site rail, so
+      // follow the box itself rather than the window.
+      resizeObserver = new ResizeObserver(() => {
+        W = host.clientWidth || W; H = host.clientHeight || H
+        r.setSize(W, H); camera.aspect = W / H; camera.updateProjectionMatrix()
+        // Counts as input, so a frozen loop keeps drawing until the eased
+        // labels reach their new spots.
+        lastInputAt = performance.now()
+        kick()
+      })
+      resizeObserver.observe(host)
+
+      // The loop only runs while the stage is on screen.
+      viewObserver = new IntersectionObserver(([entry]) => {
+        visible = entry?.isIntersecting ?? false
+        if (visible) kick()
+      })
+      viewObserver.observe(host)
+
       const onDown = (e: PointerEvent) => {
         spin.active = true; spin.lastX = e.clientX; spin.lastY = e.clientY; spin.velY = 0
+        lastInputAt = performance.now()
         try { host.setPointerCapture(e.pointerId) } catch {}
         host.style.cursor = 'grabbing'
+        kick()
       }
       const onMove = (e: PointerEvent) => {
         if (!spin.active) return
@@ -757,421 +844,318 @@ export function BrainStoryV4() {
         spin.velY = dx * 0.006
         spin.rotY += spin.velY
         spin.rotX = Math.max(-0.7, Math.min(0.7, spin.rotX + dy * 0.006))
+        lastInputAt = performance.now()
+        kick()
       }
-      const onUp = () => { spin.active = false; host.style.cursor = 'grab' }
+      const onUp = () => {
+        if (!spin.active) return
+        spin.active = false; host.style.cursor = 'grab'
+        lastInputAt = performance.now()
+        kick()
+      }
       host.addEventListener('pointerdown', onDown)
       window.addEventListener('pointermove', onMove)
       window.addEventListener('pointerup', onUp)
+      // touch-action pan-y hands a vertical swipe to the page, which ends the
+      // drag with pointercancel instead of pointerup; without these the spin
+      // would stay active forever.
+      window.addEventListener('pointercancel', onUp)
+      host.addEventListener('lostpointercapture', onUp)
       cleanupInput = () => {
         host.removeEventListener('pointerdown', onDown)
         window.removeEventListener('pointermove', onMove)
         window.removeEventListener('pointerup', onUp)
+        window.removeEventListener('pointercancel', onUp)
+        host.removeEventListener('lostpointercapture', onUp)
       }
 
-      const clock = new THREE.Clock()
-      let runningT = 0
-      const flyPos = new THREE.Vector3(), wp = new THREE.Vector3(), projScratch = new THREE.Vector3()
-      const spinEuler = new THREE.Euler(), spinQuat = new THREE.Quaternion()
+      new GLTFLoader().load(MODEL_URL, (gltf: GLTF) => {
+        if (!alive) return
+        const model = gltf.scene
+        // Poly models are often authored off-origin and at arbitrary scale.
+        // Normalize to unit radius and recenter, so the camera framing is
+        // reliable regardless of the source model.
+        model.updateWorldMatrix(true, true)
+        let box = new THREE.Box3().setFromObject(model)
+        let sphere = box.getBoundingSphere(new THREE.Sphere())
+        model.scale.setScalar(1 / (sphere.radius || 1))
+        model.updateWorldMatrix(true, true)
+        box = new THREE.Box3().setFromObject(model)
+        sphere = box.getBoundingSphere(new THREE.Sphere())
+        model.position.sub(sphere.center)
+        model.updateWorldMatrix(true, true)
+        box = new THREE.Box3().setFromObject(model)
+        const size = box.getSize(new THREE.Vector3())
 
-      const loop = () => {
-        raf = requestAnimationFrame(loop)
-        // cap dt so a CPU stall / backgrounded tab pauses motion instead of
-        // teleporting it; a real clock instead of a frame-count assumption is
-        // what keeps drag inertia and label positions deterministic in time.
-        const dt = Math.min(clock.getDelta(), 1 / 30)
-        runningT += dt
-        const t = runningT
-        const transitionDuration = spin.active ? '0ms' : '90ms, 140ms'
-
-        if (ready) {
-          const R = radius
-          // Invisible focus on an organic (non-linear) orbit. Nothing renders
-          // here any more; the labels below use its position to decide which of
-          // them is currently lit.
-          const a1 = t * 0.62, a2 = t * 0.37
-          flyPos.set(
-            Math.cos(a1) * R * 0.98 + Math.sin(a2 * 1.3) * R * 0.16,
-            Math.sin(a1 * 0.8) * R * 0.42 + Math.cos(t * 0.9) * R * 0.12 + R * 0.12,
-            Math.sin(a1) * R * 0.98 + Math.cos(a2 * 0.7) * R * 0.16,
-          )
-
-          // camera: the idle orbit only (the default state — unchanged)
-          const orb = t * 0.12, d = R * 2.6
-          camera.position.set(Math.sin(orb) * d, R * 0.35, Math.cos(orb) * d)
-          camera.lookAt(0, R * 0.05, 0)
-
-          // drag-to-spin the brain, with release inertia (decay rate is per
-          // real second via dt * 60, not per frame — same feel at any fps)
-          if (!spin.active) { spin.rotY += spin.velY; spin.velY *= Math.pow(0.94, dt * 60) }
-          if (brainRoot) brainRoot.rotation.set(spin.rotX, spin.rotY, 0)
-          spinQuat.setFromEuler(spinEuler.set(spin.rotX, spin.rotY, 0))
-          const activity = Math.min(1, Math.abs(spin.velY) * 34 + (spin.active ? 0.7 : 0))
-
-          // labels: rotate WITH the brain (dragging carries them past the focus), light up near it
-          const ease = 1 - Math.exp(-18 * dt)
-          for (let i = 0; i < dirs.length; i++) {
-            const el = labelEls.current[i]; if (!el) continue
-            wp.set(dirs[i][0], dirs[i][1], dirs[i][2]).multiplyScalar(R).applyQuaternion(spinQuat)
-            const near = 1 - Math.min(1, wp.distanceTo(flyPos) / (R * 0.9))
-            projScratch.copy(wp).project(camera)
-            const behind = projScratch.z > 1
-            const targetX = Math.max(70, Math.min(W - 70, (projScratch.x * 0.5 + 0.5) * W)), targetY = (-projScratch.y * 0.5 + 0.5) * H
-            let sm = labelSmooth.current[i]
-            if (!sm) { sm = { x: targetX, y: targetY }; labelSmooth.current[i] = sm }
-            sm.x += (targetX - sm.x) * ease; sm.y += (targetY - sm.y) * ease
-            const op = behind ? 0 : Math.min(1, 0.12 + 0.88 * near * near + activity * 0.5)
-            el.style.transform = `translate(-50%,-50%) translate(${Math.round(sm.x)}px,${Math.round(sm.y)}px) scale(${0.9 + near * 0.25})`
-            el.style.opacity = String(op)
-            el.style.color = near > 0.55 ? C.accent : C.node
-            el.style.transitionDuration = transitionDuration
+        // The overview's ramp, painted by height: brand 400 at the stem up to a
+        // light neutral at the crown. One unlit material for every mesh, so the
+        // ramp reads exactly.
+        const material = new THREE.MeshBasicMaterial({
+          vertexColors: true,
+          wireframe: true,
+          transparent: true,
+          opacity: 1,
+          depthWrite: false,
+        })
+        const v = new THREE.Vector3()
+        const c = new THREE.Color()
+        model.traverse((o) => {
+          // Duck-typed on purpose: instanceof breaks when two copies of three load.
+          const mesh = o as Mesh
+          if (!mesh.isMesh) return
+          // A copy per mesh, so writing its colours never touches a shared
+          // geometry the model reuses elsewhere.
+          const geometry = mesh.geometry.clone()
+          const pos = geometry.getAttribute('position')
+          const colors = new Float32Array(pos.count * 3)
+          for (let i = 0; i < pos.count; i++) {
+            v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld)
+            colorAt((v.y - box.min.y) / (size.y || 1), c).toArray(colors, i * 3)
           }
+          geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
+          mesh.geometry = geometry
+          mesh.material = material
+        })
+        // The recentring moved the model, not its pivot, so rotating the model
+        // itself would swing it around its old origin and pull it off the
+        // labels. A pivot at the origin turns it in place.
+        const pivot = new THREE.Group()
+        pivot.add(model)
+        scene.add(pivot)
+        brainRoot = pivot
 
-          // hero labels — bigger, brighter, always fairly present
-          for (let i = 0; i < heroDirs.length; i++) {
-            const el = heroEls.current[i]; if (!el) continue
-            wp.set(heroDirs[i][0], heroDirs[i][1], heroDirs[i][2]).multiplyScalar(R).applyQuaternion(spinQuat)
-            const near = 1 - Math.min(1, wp.distanceTo(flyPos) / (R * 1.1))
-            projScratch.copy(wp).project(camera)
-            const behind = projScratch.z > 1
-            const targetX = Math.max(110, Math.min(W - 110, (projScratch.x * 0.5 + 0.5) * W)), targetY = (-projScratch.y * 0.5 + 0.5) * H
-            let sm = heroSmooth.current[i]
-            if (!sm) { sm = { x: targetX, y: targetY }; heroSmooth.current[i] = sm }
-            sm.x += (targetX - sm.x) * ease; sm.y += (targetY - sm.y) * ease
-            const op = behind ? 0 : Math.min(1, 0.42 + 0.58 * near + activity * 0.4)
-            el.style.transform = `translate(-50%,-50%) translate(${Math.round(sm.x)}px,${Math.round(sm.y)}px) scale(${0.96 + near * 0.14})`
-            el.style.opacity = String(op)
-            el.style.color = near > 0.5 ? C.accent : C.bright
-            el.style.transitionDuration = transitionDuration
-          }
-        }
-        renderer.render(scene, camera)
-      }
-      // first loop() call now happens inside the GLTF onLoad callback above,
-      // once ready — see the "ready = true" line.
+        ready = true; setStatus('ready')
+        // fade the canvas in over the first rendered frames
+        requestAnimationFrame(() => { r.domElement.style.opacity = '1' })
+        kick()
+      }, (event: ProgressEvent) => {
+        if (alive && event.total) setLoadProgress(Math.round((event.loaded / event.total) * 100))
+      }, () => { if (alive) setStatus('error') })
     })().catch(() => { if (alive) setStatus('error') })
 
     return () => {
-      alive = false; repaintRef.current = null; cancelAnimationFrame(raf); window.removeEventListener('resize', onResize); cleanupInput()
+      alive = false; kickRef.current = () => {}
+      cancelAnimationFrame(raf); resizeObserver?.disconnect(); viewObserver?.disconnect(); cleanupInput()
       // forceContextLoss releases the actual WebGL context (browsers cap ~16);
       // dispose() alone leaks it, so repeated mounts of the story would run out.
       try { try { renderer?.forceContextLoss() } catch {} renderer?.dispose(); if (renderer?.domElement && host.contains(renderer.domElement)) host.removeChild(renderer.domElement) } catch {}
     }
-  }, [dirs])
+  }, [dirs, heroDirs])
 
   return (
-    // The whole page paints from the --brain-* variables, light by default and
-    // dark under the site's `dark` class, so it follows the site toggle like
-    // every other Andromeda route.
-    <div className="brain-story" style={{ minHeight: '100vh', background: C.base, display: 'flex', flexDirection: 'column' }}>
+    <div className="brain-story flex min-h-screen flex-col bg-sand-50 dark:bg-sand-950">
       <style>{`
         .brain-story { ${brainVars('light')} }
         .dark .brain-story { ${brainVars('dark')} }
-        /* The wire artwork bakes a sand-950 ground. On light it is inverted
-           (hue-rotate keeps the wire colours), pushed to a white ground and
-           multiplied in, so the card shows the wire and no rectangle. */
-        .brain-wire { filter: invert(1) hue-rotate(180deg) brightness(1.06); mix-blend-mode: multiply; }
-        .dark .brain-wire { filter: none; mix-blend-mode: normal; }
       `}</style>
-      {/* top tab — left-aligned breadcrumb (Andromeda -> overview, current page
-          in olive), consistent with the content pages' breadcrumb pattern. */}
-      <header className="sticky top-0 z-50 hidden h-14 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 md:flex dark:border-sand-800 dark:bg-sand-950">
-        <nav aria-label="Breadcrumb" className="min-w-0 truncate text-sm font-semibold">
-          <Link href="/design-systems/andromeda-pro" className="text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100">
-            Andromeda Pro
-          </Link>
-          <span className="mx-1 text-sand-400 dark:text-sand-600">/</span>
-          <span className="text-olive-600 dark:text-olive-500">Andromeda Pro Brain</span>
-        </nav>
-        <div className="flex items-center justify-end">
-          <HeaderSocials />
-        </div>
-      </header>
 
-      {/* 3D hero — centered, top */}
-      <div style={{ position: 'relative', height: '64vh', minHeight: 420 }}>
-        <div
-          ref={hostRef}
-          style={{ position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'pan-y' }}
-        />
-        {/* The appearance stepper is gone: the brain has one look now, the
-            gradient wireframe, so there was nothing left to step through. */}
-        {/* floating labels layer */}
-        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-          {LABELS.map((txt, i) => (
-            <div
-              key={txt}
-              ref={(el) => { labelEls.current[i] = el }}
-              style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: MONO, fontSize: 12, letterSpacing: '0.02em', color: C.node, whiteSpace: 'nowrap', textShadow: `0 0 8px ${C.halo}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
+      <Container className="pt-10 sm:pt-16">
+        {/* ── Hero, in the overview hero's shape ── */}
+        <section aria-labelledby="brain-hero" className="max-w-3xl">
+          <Overline>Built for agents</Overline>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <h1
+              id="brain-hero"
+              className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl"
             >
-              {txt}
-            </div>
-          ))}
-        </div>
-        {/* hero labels layer (bigger / higher hierarchy) */}
-        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-          {HERO_LABELS.map((txt, i) => (
-            <div
-              key={txt}
-              ref={(el) => { heroEls.current[i] = el }}
-              style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: SANS, fontSize: 20, fontWeight: 700, letterSpacing: '-0.01em', color: C.bright, whiteSpace: 'nowrap', textShadow: `0 0 14px ${C.haloStrong}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
-            >
-              {txt}
-            </div>
-          ))}
-        </div>
-        {status !== 'ready' && (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted }}>
-            {status === 'error' ? 'Scene unavailable' : loadProgress > 0 ? `Loading the brain… ${loadProgress}%` : 'Loading the brain…'}
+              Andromeda Pro Brain
+            </h1>
+            <SystemTierChip tier="pro" />
           </div>
-        )}
-        {/* drag affordance: a static rotate-3d icon (olive) */}
-        <div style={{ position: 'absolute', left: 0, right: 0, bottom: 16, display: 'flex', justifyContent: 'center', pointerEvents: 'none' }}>
-          <Rotate3d size={26} color={C.accent} strokeWidth={1.5} />
-        </div>
-      </div>
-
-      {/* ── Hero caption (centered) — homepage hero sizes: h1 text-2xl sm:text-4xl, sub text-base ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', fontFamily: SANS, padding: '28px 24px 0' }}>
-        {/* Slide-in entrance, same rhythm as the homepage hero (fade + rise, staggered) */}
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.1 }}
-          style={{ fontSize: 'clamp(24px,4.5vw,36px)', color: C.bright, fontWeight: 800, letterSpacing: '-0.025em', margin: 0, lineHeight: 1.1 }}
-        >
-          The Andromeda Pro <span style={{ color: C.accentBtn }}>Brain</span>
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.18 }}
-          style={{ fontSize: 16, color: C.node, maxWidth: 576, lineHeight: 1.625, margin: '16px 0 0', fontWeight: 400 }}
-        >
-          Tokens and components are the pieces. The brain is the judgment that assembles them: every foundation, component rule, skill and tool your AI agent reads, so what it builds already matches the system instead of a guess.
-        </motion.p>
-        {/* two CTAs, same hierarchy as the homepage hero (primary olive + outline). Premium
-            branch: the gate routes premium users to the brain viewer when this becomes the real page. */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.26 }}
-          style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginTop: 24 }}
-        >
-          <Link href={ctaHref} className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-            {ctaLabel}
-            <ArrowRight weight="regular" size={14} />
-          </Link>
-          <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-            Explore Andromeda Pro
-          </Link>
-        </motion.div>
-      </div>
-
-      {/* 3-icon wire divider directly below the hero */}
-      <WireDivider />
-
-      {/* ── Editorial sections (left-aligned, framed panels). max-w-4xl (896) + sm:px-6, matches the homepage content column. ── */}
-      <div style={{ width: '100%', maxWidth: 896, margin: '0 auto', padding: '8px 24px 8px', fontFamily: SANS }}>
-
-        {/* Why it exists — the system is built to grow */}
-        <Section>
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted, margin: 0 }}>Why it exists</p>
-          <h2 style={{ fontSize: 20, color: C.bright, fontWeight: 700, letterSpacing: '-0.01em', margin: '6px 0 0' }}>
-            Built to grow, not to freeze
-          </h2>
-          <style>{`
-            .why-bento {
-              display: grid;
-              grid-template-columns: repeat(24, minmax(0, 1fr));
-              grid-template-areas:
-                "grow grow grow grow grow grow grow grow grow grow beyond beyond beyond beyond beyond beyond beyond beyond beyond beyond beyond beyond beyond beyond"
-                "grow grow grow grow grow grow grow grow grow grow experiment experiment experiment experiment experiment experiment experiment trust trust trust trust trust trust trust";
-              gap: 14px;
-              margin-top: 24px;
-            }
-            .why-bento-grow { grid-area: grow; }
-            .why-bento-beyond { grid-area: beyond; }
-            .why-bento-experiment { grid-area: experiment; }
-            .why-bento-trust { grid-area: trust; }
-            @media (max-width: 720px) {
-              .why-bento {
-                grid-template-columns: 1fr;
-                grid-template-areas: none;
-              }
-              .why-bento-grow,
-              .why-bento-beyond,
-              .why-bento-experiment,
-              .why-bento-trust { grid-area: auto; }
-            }
-          `}</style>
-
-          <div className="why-bento">
-            <div className="why-bento-grow" style={{ ...PANEL, minHeight: 236, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>01 · Built to evolve</span>
-              <div style={{ marginTop: 40 }}>
-                <p style={{ fontSize: 'clamp(24px,3.5vw,34px)', color: C.bright, fontWeight: 700, letterSpacing: '-0.03em', lineHeight: 1.08, margin: 0 }}>
-                  A system that grows with the work.
-                </p>
-                <p style={{ fontSize: 14, color: C.node, lineHeight: 1.625, margin: '16px 0 0' }}>
-                  Most design systems hand you a fixed kit and stop. The brain is built the other way: to grow, not freeze.
-                </p>
-              </div>
-            </div>
-
-            <div className="why-bento-beyond" style={{ ...PANEL_SOLID }}>
-              <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>02 · Go beyond</span>
-              <h3 style={{ fontSize: 18, color: C.bright, fontWeight: 700, letterSpacing: '-0.01em', margin: '16px 0 0' }}>Past the screens that already exist</h3>
-              <p style={{ fontSize: 14, color: C.node, lineHeight: 1.625, margin: '10px 0 0' }}>
-                Because the rules are written down, your agent can create new work that is still unmistakably Andromeda Pro.
-              </p>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 18 }}>
-                <Chip>Compose layouts</Chip>
-                <Chip>Extend patterns</Chip>
-                <Chip>Explore components</Chip>
-              </div>
-            </div>
-
-            <div className="why-bento-experiment" style={{ ...PANEL_SOLID, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>03 · Experiment fast</span>
-              <p style={{ fontSize: 20, color: C.bright, fontWeight: 700, letterSpacing: '-0.02em', lineHeight: 1.25, margin: 0 }}>
-                Try an idea.<br />Push it further.
-              </p>
-            </div>
-
-            <div className="why-bento-trust" style={{ ...PANEL_SOLID, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-              <span style={{ fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>Built on the rules</span>
-              <p style={{ fontSize: 14, color: C.reason, lineHeight: 1.625, margin: '24px 0 0' }}>
-                Trust that what comes back belongs to the system because it was built against the same rules.
-              </p>
-            </div>
-          </div>
-        </Section>
-
-        {/* Classic vs AI-native — the workflow contrast */}
-        <Section className="mt-16 sm:mt-24">
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted, margin: 0 }}>The difference</p>
-          <h2 style={{ fontSize: 20, color: C.bright, fontWeight: 700, letterSpacing: '-0.01em', margin: '6px 0 0' }}>
-            Where the classic workflow leaks
-          </h2>
-          <p style={{ ...SECTION_DESC, margin: '12px 0 24px' }}>
-            The classic workflow loses time and intent at every step from Figma to production. When the system is already code and tokens, those steps disappear.
+          <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
+            Components are the pieces. The Brain is the judgment.
           </p>
+          <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">{HERO_BODY}</p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href={ctaHref} className={BTN_PRIMARY}>
+              {ctaLabel}
+            </Link>
+            <Link href="#brain-corpus" className={BTN_SECONDARY}>
+              See what&apos;s inside
+            </Link>
+          </div>
+        </section>
 
-          <style>{`
-            .cmp-grid { display: grid; grid-template-columns: 1fr 1fr; }
-            .cmp-cell { padding: 14px 18px; display: flex; gap: 10px; align-items: flex-start; }
-            @media (max-width: 600px) {
-              .cmp-grid { grid-template-columns: 1fr; }
-              .cmp-left { border-right: none !important; }
-            }
-          `}</style>
-          <div style={{ border: `1px solid ${C.line}`, borderRadius: 16, overflow: 'hidden' }}>
-            <div className="cmp-grid">
-              <div className="cmp-cell cmp-left" style={{ borderRight: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`, fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted }}>
-                Classic design system
-              </div>
-              <div className="cmp-cell" style={{ borderBottom: `1px solid ${C.line}`, background: 'rgba(168,185,77,0.05)', fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>
-                AI-native design system
-              </div>
-            </div>
-            {COMPARE.map((row, i) => (
-              <div key={i} className="cmp-grid">
-                <div className="cmp-cell cmp-left" style={{ borderRight: `1px solid ${C.line}`, borderTop: i === 0 ? 'none' : `1px solid ${C.line}` }}>
-                  <XIcon weight="regular" size={15} color={C.muted} style={{ flexShrink: 0, marginTop: 2 }} />
-                  <span style={{ fontSize: 14, color: C.node, lineHeight: 1.5 }}>{row.classic}</span>
-                </div>
-                <div className="cmp-cell" style={{ borderTop: i === 0 ? 'none' : `1px solid ${C.line}`, background: 'rgba(168,185,77,0.05)' }}>
-                  <Check weight="regular" size={15} color={C.accentBtn} style={{ flexShrink: 0, marginTop: 2 }} />
-                  <span style={{ fontSize: 14, color: C.bright, lineHeight: 1.5 }}>{row.native}</span>
-                </div>
+        {/* ── The stage: the void in both site themes, like the overview's brain card ── */}
+        <div
+          className={`relative mt-10 h-[380px] overflow-hidden rounded-2xl border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
+          style={{ background: BRAIN_GROUND }}
+        >
+          <div
+            ref={hostRef}
+            style={{ position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'pan-y' }}
+          />
+          {/* floating labels layer */}
+          <div aria-hidden style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+            {LABELS.map((txt, i) => (
+              <div
+                key={txt}
+                ref={(el) => { labelEls.current[i] = el }}
+                style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: MONO, fontSize: 12, letterSpacing: '0.02em', color: STAGE_INK.label, whiteSpace: 'nowrap', textShadow: `0 0 8px ${STAGE_INK.halo}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
+              >
+                {txt}
               </div>
             ))}
           </div>
-          {/* A typed asterisk rather than a 16px icon: it reads as a footnote
-              marker on the sentence, which is what it is. */}
-          <div style={{ marginTop: 20, border: `1px solid ${C.line}`, borderRadius: 16, padding: '16px 24px', background: 'rgba(168,185,77,0.05)' }}>
-            <p style={{ fontSize: 14, fontWeight: 600, color: C.accentBtn, lineHeight: 1.5, margin: 0 }}>
-              <span style={{ marginRight: 6 }}>*</span>
-              The agent builds fast and accurate. You stay in the loop, and you decide what ships.
-            </p>
+          {/* hero labels layer (bigger / higher hierarchy) */}
+          <div aria-hidden style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+            {HERO_LABELS.map((txt, i) => (
+              <div
+                key={txt}
+                ref={(el) => { heroEls.current[i] = el }}
+                style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: SANS, fontSize: 20, fontWeight: 700, letterSpacing: '-0.01em', color: STAGE_INK.hero, whiteSpace: 'nowrap', textShadow: `0 0 14px ${STAGE_INK.halo}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
+              >
+                {txt}
+              </div>
+            ))}
           </div>
+          {status !== 'ready' && (
+            <div aria-hidden style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: STAGE_INK.status }}>
+              {status === 'error' ? 'Scene unavailable' : loadProgress > 0 ? `Loading the brain… ${loadProgress}%` : 'Loading the brain…'}
+            </div>
+          )}
+          {/* Drag affordance, a static rotate-3d icon. In the corner because the
+              hero labels pass through the bottom centre. */}
+          <div style={{ position: 'absolute', right: 16, bottom: 16, pointerEvents: 'none' }}>
+            <Rotate3d size={26} color={STAGE_INK.lit} strokeWidth={1.5} />
+          </div>
+        </div>
+
+        {/* Classic vs the Brain: the workflow contrast */}
+        <Section className="mt-20" aria-labelledby="brain-difference">
+          <SectionHead
+            id="brain-difference"
+            overline="The difference"
+            title="Where the classic workflow leaks."
+            sub="A design system made for people loses intent at every handoff. One made for agents is already code, tokens and written rules."
+          />
+
+          <div className={`mt-8 overflow-hidden ${PANEL_CLASS} ${PANEL_SHADOW}`}>
+            <table className="w-full table-fixed border-collapse text-left">
+              <thead>
+                <tr>
+                  <th scope="col" className="px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-sand-600 sm:px-5 dark:text-sand-400">
+                    Classic design system
+                  </th>
+                  {/* The lifted column, like the overview ledger's Premium
+                      column: one surface, no colour. */}
+                  <th scope="col" className="border-l border-sand-200 bg-sand-50 px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-olive-600 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-olive-400">
+                    With the Brain
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARE.map((row) => (
+                  <tr key={row.classic}>
+                    <td className="border-t border-sand-200 px-4 py-3.5 align-top text-sm leading-relaxed text-sand-600 sm:px-5 dark:border-sand-800 dark:text-sand-400">
+                      <div className="flex gap-2.5">
+                        <XIcon weight="regular" size={15} aria-hidden className="mt-0.5 shrink-0 text-sand-400 dark:text-sand-600" />
+                        <span className="min-w-0 break-words">{row.classic}</span>
+                      </div>
+                    </td>
+                    <td className="border-l border-t border-sand-200 bg-sand-50 px-4 py-3.5 align-top text-sm leading-relaxed text-sand-900 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50">
+                      <div className="flex gap-2.5">
+                        <Check weight="regular" size={15} aria-hidden className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+                        <span className="min-w-0 break-words">{row.brain}</span>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">
+            Your agent does the building. You stay in the loop, and you decide what ships.
+          </p>
         </Section>
 
         {/* What it is */}
-        <Section className="mt-16 sm:mt-24">
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted, margin: 0 }}>The design brain</p>
-          <h2 style={{ fontSize: 20, color: C.bright, fontWeight: 700, letterSpacing: '-0.01em', margin: '6px 0 0' }}>
-            The taste lives in the system, not the prompt
-          </h2>
+        <Section className="mt-20" aria-labelledby="brain-flow">
+          <SectionHead id="brain-flow" overline="The design brain" title="The taste lives in the system, not the prompt." />
           {/* Kicker, headline, diagram. No paragraph: the picture is the
               explanation, and prose above it only said the same thing first. */}
 
           <BrainFlow />
         </Section>
 
-        {/* Browse the corpus — rail plus locked file names */}
-        <Section className="mt-16 sm:mt-24">
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted, margin: 0 }}>The corpus</p>
-          <h2 style={{ fontSize: 20, color: C.bright, fontWeight: 700, letterSpacing: '-0.01em', margin: '6px 0 0' }}>
-            <span style={{ color: C.accentBtn }}>{BRAIN_TEASER.totalFiles} files</span> the agent reads before it writes a line.
-          </h2>
-          <p style={{ ...SECTION_DESC }}>
-            Not documentation for you. Rules for the machine: when a color is allowed to carry meaning, how far a panel may breathe, what every state owes the user. The names are open. The judgment inside them ships with Premium.
-          </p>
+        {/* What's inside: section tabs and every file name, locked */}
+        <Section className="mt-20" aria-labelledby="brain-corpus">
+          <SectionHead
+            id="brain-corpus"
+            overline="What's inside"
+            title={`The ${BRAIN_TEASER.totalFiles} files your agent reads first.`}
+            sub="Rules written for the machine: when a color may carry meaning, how far a panel may breathe, what every state owes the user. The names are open. What is written inside them ships with Premium."
+          />
 
           <CorpusExplorer />
         </Section>
 
         {/* How it works */}
-        <Section className="mt-16 sm:mt-24">
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted, margin: 0 }}>How it works</p>
-          <h2 style={{ fontSize: 20, color: C.bright, fontWeight: 700, letterSpacing: '-0.01em', margin: '6px 0 0' }}>
-            Your agent reads it, not you
-          </h2>
-          <p style={{ ...SECTION_DESC }}>
-            Nobody has to learn the system or keep it in their head. The agent opens the files the task needs, and builds against them.
-          </p>
-          <div style={{ marginTop: 24, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 14 }}>
-            {BENEFITS.map((benefit, i) => (
-              <BenefitCard key={benefit.label} benefit={benefit} delay={0.1 + i * 0.08} />
+        <Section className="mt-20" aria-labelledby="brain-how">
+          <SectionHead
+            id="brain-how"
+            overline="How it works"
+            title="Your agent reads it, not you."
+            sub={`Nobody has to learn the system or keep it in their head. The ${numberWord(SKILLS.length)} skills walk your agent through the same four steps on every build.`}
+          />
+          {/* Two columns at most: four beside the rail leave a card about 190px
+              inside, and the longest chip needs about 196px on one line. */}
+          <ol className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {LOOP.map((step, i) => (
+              <li key={step.title} className={`${PANEL_CLASS} flex flex-col p-5`}>
+                <span aria-hidden className="font-mono text-xs font-semibold tabular-nums text-olive-600 dark:text-olive-400">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h3 className="mt-3 text-base font-bold text-sand-900 dark:text-sand-50">{step.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{step.line}</p>
+                {step.chips.length > 0 ? (
+                  <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
+                    {step.chips.map((chip) => (
+                      <span
+                        key={chip}
+                        className="rounded-md border border-sand-200 bg-sand-50 px-2 py-0.5 font-mono text-[11px] text-sand-700 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-300"
+                      >
+                        {chip}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
+              </li>
             ))}
-          </div>
+          </ol>
         </Section>
 
-        {/* Closing CTA — the homepage's final-CTA panel, class for class, so the
-            two pages close the same way. The primary button stays premium-aware:
-            a subscriber gets the reader, everyone else gets pricing. */}
-        <Section className="mt-16 sm:mt-24" style={{ marginBottom: 8 }}>
-          <div className="relative overflow-hidden rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10">
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
-            </div>
-            <p className="relative text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-600">
-              How to get it
-            </p>
-            <h2 className="relative mt-2 text-xl font-bold text-sand-900 dark:text-sand-50">
-              Andromeda Pro is free to explore.
-            </h2>
-            <p className="relative mt-2 text-base text-sand-600 dark:text-sand-500">
-              The brain is the premium layer: one install puts all {BRAIN_TEASER.totalFiles} files in your project, and the web reader keeps every rule a click away while you work.
-            </p>
-            <div className="relative mt-6 flex flex-wrap items-center justify-center gap-3">
-              <Link href={ctaHref} className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-                {ctaLabel}
-                <ArrowRight weight="regular" size={14} />
-              </Link>
-              <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-                Explore Andromeda Pro
-              </Link>
-            </div>
+        {/* Closing card, class for class with the overview's, so the two pages
+            close the same way. The primary button stays premium-aware: a
+            subscriber gets the reader, everyone else gets pricing. */}
+        <Section
+          aria-labelledby="brain-get"
+          className="relative mt-20 overflow-hidden rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
+        >
+          <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
+          </div>
+          <h2 id="brain-get" className="relative text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+            Give your agent the Brain.
+          </h2>
+          <p className="relative mt-2 text-base text-sand-700 dark:text-sand-300">
+            {`One command installs all ${BRAIN_TEASER.totalFiles} files in your project, and running it again updates them. Premium also opens the reader, with every rule a click away while you work.`}
+          </p>
+          <div className="relative mt-6 flex flex-wrap justify-center gap-3">
+            <Link href={ctaHref} className={BTN_PRIMARY}>
+              {ctaLabel}
+            </Link>
+            <Link href="/design-systems/andromeda-pro" className={BTN_SECONDARY}>
+              Explore Andromeda Pro
+            </Link>
           </div>
         </Section>
-      </div>
+      </Container>
 
       {/* footer, consistent with the content pages */}
-      <div style={{ width: '100%', maxWidth: 896, margin: '0 auto', padding: '0 24px 24px', fontFamily: SANS }}>
+      <Container className="mt-16 pb-10">
         <SiteFooter />
-      </div>
+      </Container>
     </div>
   )
 }
