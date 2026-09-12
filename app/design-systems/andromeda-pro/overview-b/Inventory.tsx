@@ -185,11 +185,17 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
                       : 'bg-sand-100 dark:bg-sand-900'
                   } ${isOpen ? OPEN_SHADOW : ''}`}
                   // An open document swallows clicks so reading it is not a
-                  // click outside the drawer.
-                  style={{ height: BODY_H, pointerEvents: isOpen ? 'auto' : 'none' }}
+                  // click outside the drawer, and a click anywhere on it files
+                  // it back: the whole card is the way out, not just its tab.
+                  style={{
+                    height: BODY_H,
+                    pointerEvents: isOpen ? 'auto' : 'none',
+                    cursor: isOpen ? 'pointer' : undefined,
+                  }}
                   initial={false}
                   animate={{ scaleX: isOpen ? 1 : widthAt(y) }}
                   transition={travel}
+                  onClick={() => isOpen && setOpen(null)}
                 >
                   {/* The copy stays in the page and fades with the pull. A
                       filed document shows a bare face: the band between two
