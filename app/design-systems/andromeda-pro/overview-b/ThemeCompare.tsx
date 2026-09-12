@@ -12,8 +12,8 @@
 // chart and Object components re-resolve from documentElement and would ignore
 // a layer's local set.
 
-import { useEffect, useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react'
-import { animate, motion, useInView, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'framer-motion'
+import { useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react'
+import { motion, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'framer-motion'
 import { DotsSixVertical } from '@phosphor-icons/react'
 import { andromedaLightVars, andromedaVars } from '../../../lib/andromeda-pro-helpers.generated'
 import { CompareBento } from './CompareBento'
@@ -94,21 +94,11 @@ export function ThemeCompare() {
   const dragging = useRef(false)
   const pending = useRef<{ id: number; x: number; y: number } | null>(null)
   const touched = useRef(false)
-  const intro = useRef<ReturnType<typeof animate> | null>(null)
-  const inView = useInView(areaRef, { once: true, amount: 0.5 })
-
-  // One sweep on first view, so the gesture explains itself. Skipped under
-  // reduced motion and never replayed once the visitor has touched it.
-  useEffect(() => {
-    if (!inView || reduce || touched.current) return
-    intro.current = animate(pos, [50, 75, 25, 50], { duration: 2, ease: 'easeInOut', times: [0, 0.3, 0.7, 1] })
-    return () => intro.current?.stop()
-  }, [inView, reduce, pos])
-
+  // No intro sweep. The line used to run itself left and right on first
+  // scroll to explain the gesture; it read as the page glitching, so the
+  // control is silent now and only ever moves under the pointer.
   const takeOver = () => {
     touched.current = true
-    intro.current?.stop()
-    intro.current = null
   }
 
   const moveTo = (clientX: number) => {
@@ -130,7 +120,7 @@ export function ThemeCompare() {
   // Mouse, or any press on the grip: the line jumps there and follows the
   // drag. Touch and pen elsewhere on the stage wait until the gesture is
   // clearly sideways, so a vertical scroll through the section never moves
-  // the line or cancels the intro.
+  // the line.
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (e.pointerType === 'mouse' && e.button !== 0) return
     const onGrip = e.target instanceof Element && e.target.closest('[role="slider"]') !== null
