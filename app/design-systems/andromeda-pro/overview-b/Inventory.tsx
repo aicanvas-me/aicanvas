@@ -1,17 +1,19 @@
-// The inventory drawer: the four counts filed as documents in an open drawer.
-// Each document is a folder with a tab carrying its number and its label; the
-// stack tapers the way an open drawer does, narrow at the back and full width
-// at the front.
+// The inventory drawer: every count the system can state, filed as one
+// document. There are no blank documents in it, so the drawer is exactly as
+// deep as there are numbers to show.
 //
-// Every folder body is already full height, most of it hidden behind the
-// folders in front. Opening one lifts it up the drawer until it clears them,
-// which is why the description appears to slide out: nothing resizes, the
-// folder simply rises. Folders nearer the front keep their higher stacking
-// order, so they still cover its lower edge, the way they would on a desk.
+// Opening one slides that document out of the drawer and nothing else moves.
+// It travels to the same slot at the same size every time, widening to the
+// full width as it comes forward, because a file pulled toward you reads
+// larger than the ones still filed behind it. At rest each document is
+// already full height with its copy in it, hidden behind the documents in
+// front, so opening reveals rather than builds.
 //
-// The server HTML carries every number and description, so the counts and the
-// copy are in the page whether or not anything is opened. Reduced motion drops
-// the travel and the folder just appears in its open place.
+// Two earlier motions were wrong and are not worth repeating. Lifting the
+// document without raising it over the stack carries its body up with the
+// tab, so whatever covered it goes on covering it. Pushing the documents in
+// front of it down instead needs a drawer deep enough to swallow them, which
+// meant padding the front with blank documents.
 'use client'
 
 import { useState } from 'react'
@@ -33,7 +35,17 @@ const DOCS: Doc[] = [
   {
     key: 'variants',
     label: 'variants',
-    line: 'Sizes, tones and states already drawn, so none of it is left to improvise.',
+    line: 'Sizes and tones already drawn, so none of it is left for you to improvise.',
+  },
+  {
+    key: 'states',
+    label: 'states',
+    line: 'Hover, focus, disabled, loading and error, specified on the components that have them.',
+  },
+  {
+    key: 'families',
+    label: 'families',
+    line: 'Forms, data display, charts, overlays, feedback, actions, navigation, surfaces and more.',
   },
   {
     key: 'templates',
@@ -47,55 +59,33 @@ const DOCS: Doc[] = [
   },
 ]
 
-// The drawer's rhythm, in pixels down the stack. An edge is a folder with
-// nothing filed on its tab: it gives the drawer its depth, so only its top
-// line ever shows.
-const EDGE_STEP = 9
-const DOC_STEP = 46
-const EDGES_TOP = 3
-const EDGES_BETWEEN = 2
-const EDGES_BOTTOM = 16
+const PITCH = 46
+const TAB_H = 34
 const BODY_H = 150
-// Opening a folder leaves it where it is and slides everything in front of it
-// REVEAL down and out of the bottom of the drawer. The two alternatives both
-// failed: lifting the folder carries its body up with the tab, so whatever
-// covered it goes on covering it, and lifting it clear of the stack puts it
-// over every other tab, so no second folder can be reached. The cost of
-// pushing is depth: the drawer has to be deep enough to hold one open folder,
-// which is what the run of edges at the front is for.
-const REVEAL = 154
+// The sliver of the front document that shows below its own tab at rest.
+const FRONT_LIP = 16
+const LAST_Y = PITCH * (DOCS.length - 1)
+const STACK_H = LAST_Y + TAB_H + FRONT_LIP
 
-// The taper: the folder at the back of the drawer is this share of the width,
-// the one at the front runs the full width.
-const BACK_WIDTH = 72
+// The taper: the document at the back of the drawer is this share of the
+// width and the one at the front runs the full width. It is drawn with a
+// horizontal scale rather than a width, so opening a document can animate
+// back to full size without laying the page out on every frame. Only the
+// document's face is scaled; the tabs stay one size, as real tabs would.
+const BACK_WIDTH = 0.72
+const widthAt = (y: number) => BACK_WIDTH + (1 - BACK_WIDTH) * (y / LAST_Y)
+
+// Tab positions across the drawer. Every one clears the narrowest document's
+// left edge, so no tab hangs off the back of the stack.
+const TAB_X = ['16%', '44%', '24%', '52%', '20%', '48%']
 
 // One folder tab, drawn as an open path so the fill closes along the bottom
-// but the stroke never draws a line between the tab and the folder body.
+// but the stroke never draws a line between the tab and the document.
 const TAB_PATH =
   'M 0 34 C 7 34 11 30 14 23 L 18 11 C 20 4 25 0 32 0 L 176 0 C 183 0 188 4 190 11 L 194 23 C 197 30 201 34 208 34'
 
-const TAB_X = ['8%', '44%', '20%', '52%']
-
-type Row = { y: number; width: number; doc: Doc | null }
-
-function layout(): { rows: Row[]; height: number } {
-  const kinds: (Doc | null)[] = []
-  for (let i = 0; i < EDGES_TOP; i++) kinds.push(null)
-  DOCS.forEach((doc, i) => {
-    kinds.push(doc)
-    if (i < DOCS.length - 1) for (let e = 0; e < EDGES_BETWEEN; e++) kinds.push(null)
-  })
-  for (let i = 0; i < EDGES_BOTTOM; i++) kinds.push(null)
-
-  const rows: Row[] = []
-  let y = 0
-  for (const doc of kinds) {
-    rows.push({ y, width: 0, doc })
-    y += doc ? DOC_STEP : EDGE_STEP
-  }
-  for (const row of rows) row.width = BACK_WIDTH + (100 - BACK_WIDTH) * (row.y / y)
-  return { rows, height: y }
-}
+const OPEN_SHADOW =
+  'shadow-[0_2px_4px_rgba(0,0,0,0.08),0_18px_40px_rgba(0,0,0,0.14)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.45),0_18px_40px_rgba(0,0,0,0.60)]'
 
 function Tab({ number, label }: { number: number; label: string }) {
   return (
@@ -120,20 +110,11 @@ function Tab({ number, label }: { number: number; label: string }) {
 export function Inventory({ stats }: { stats: OverviewStats }) {
   const reduce = useReducedMotion() ?? false
   const [open, setOpen] = useState<string | null>(null)
-  const { rows, height: stackHeight } = layout()
-  // Opening a folder pushes the folders in FRONT of it down and leaves it where
-  // it is. Lifting the folder instead looked right near the front of the drawer
-  // and revealed nothing at the back, because the body rose with the tab and
-  // the folders covering it went on covering it. Raising the open folder over
-  // the stack fixed the reveal and broke the drawer: it covered every other
-  // tab, so no second folder could be reached.
-  const openRow = rows.findIndex((r) => r.doc !== null && r.doc.key === open)
   const travel = reduce ? { duration: 0 } : { duration: 0.42, ease: [0.22, 1, 0.36, 1] as const }
-  let docIndex = -1
 
   return (
     <div className="select-none">
-      <div className="relative" style={{ height: stackHeight }}>
+      <div className="relative" style={{ height: STACK_H }}>
         {/* The drawer: the walls follow the taper of the stack. */}
         <svg
           viewBox="0 0 100 100"
@@ -144,85 +125,85 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
           strokeWidth={1}
         >
           <path
-            d={`M ${(100 - BACK_WIDTH) / 2} 0 L 0 100 M ${100 - (100 - BACK_WIDTH) / 2} 0 L 100 100`}
+            d={`M ${(1 - BACK_WIDTH) * 50} 0 L 0 100 M ${100 - (1 - BACK_WIDTH) * 50} 0 L 100 100`}
             vectorEffect="non-scaling-stroke"
           />
         </svg>
 
-        <div className="absolute inset-0 overflow-hidden">
-          {rows.map((row, i) => {
-            const pushed = openRow >= 0 && i > openRow
-            const common = {
-              position: 'absolute' as const,
-              left: `${(100 - row.width) / 2}%`,
-              width: `${row.width}%`,
-              zIndex: i + 1,
-              top: row.y,
-            }
-
-            if (!row.doc) {
-              return (
-                <motion.div
-                  key={`edge-${i}`}
-                  aria-hidden
-                  style={{ ...common, height: BODY_H }}
-                  animate={{ y: pushed ? REVEAL : 0 }}
-                  transition={travel}
-                  className="rounded-t-2xl border border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900"
-                />
-              )
-            }
-
-            docIndex += 1
-            const d = docIndex
-            const doc = row.doc
+        {/* clip, not hidden: an overflow-hidden box is still programmatically
+            scrollable, and focusing a document inside it scrolled the whole
+            stack out of place on the keyboard path. */}
+        <div className="absolute inset-0 overflow-clip">
+          {DOCS.map((doc, i) => {
+            const y = i * PITCH
             const isOpen = open === doc.key
 
             return (
               <motion.div
                 key={doc.key}
-                style={common}
-                animate={{ y: pushed ? REVEAL : 0 }}
+                className="absolute inset-x-0"
+                // The z has to live on this element: its own transform makes a
+                // stacking context, so a z-index set inside it can never lift
+                // the document over the ones still in the drawer.
+                style={{ top: y, zIndex: isOpen ? DOCS.length + 1 : i + 1 }}
+                initial={false}
+                animate={{ y: isOpen ? -y : 0 }}
                 transition={travel}
               >
-                <button
-                  type="button"
-                  aria-expanded={isOpen}
-                  aria-controls={`inv-${doc.key}`}
-                  // An explicit name: the folder's own copy is the panel's, not the
-                  // button's, and reading all of it back on focus would bury the label.
-                  aria-label={`${stats[doc.key]} ${doc.label}`}
-                  // A pointer that can hover opens on the way past. Touch has no
-                  // hover, and fires enter and leave around the tap, so it toggles.
-                  onPointerEnter={(e) => e.pointerType === 'mouse' && setOpen(doc.key)}
-                  onPointerLeave={(e) =>
-                    e.pointerType === 'mouse' && setOpen((k) => (k === doc.key ? null : k))
-                  }
-                  onFocus={() => setOpen(doc.key)}
-                  onBlur={() => setOpen((k) => (k === doc.key ? null : k))}
-                  onClick={() => setOpen((k) => (k === doc.key ? null : doc.key))}
-                  className="block w-full cursor-pointer text-left focus-visible:outline-none"
-                >
-                  <span aria-hidden className="relative z-10 block" style={{ marginLeft: TAB_X[d] }}>
-                    <Tab number={stats[doc.key]} label={doc.label} />
-                  </span>
-                  <span
-                    id={`inv-${doc.key}`}
-                    className={`-mt-px block rounded-2xl border border-sand-300 bg-sand-100 p-5 transition-shadow dark:border-sand-700 dark:bg-sand-900 sm:p-6 ${
-                      isOpen
-                        ? 'shadow-[0_2px_4px_rgba(0,0,0,0.08),0_18px_40px_rgba(0,0,0,0.14)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.45),0_18px_40px_rgba(0,0,0,0.60)]'
-                        : ''
-                    }`}
-                    style={{ height: BODY_H }}
+                <div className="relative">
+                  <button
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={`inv-${doc.key}`}
+                    // An explicit name: the document's copy belongs to the panel,
+                    // not to the button, and reading all of it back on focus
+                    // would bury the label.
+                    aria-label={`${stats[doc.key]} ${doc.label}`}
+                    // A pointer that can hover opens on the way past. Touch has
+                    // no hover and fires enter and leave around the tap, so it
+                    // toggles instead.
+                    onPointerEnter={(e) => e.pointerType === 'mouse' && setOpen(doc.key)}
+                    onPointerLeave={(e) =>
+                      e.pointerType === 'mouse' && setOpen((k) => (k === doc.key ? null : k))
+                    }
+                    onFocus={() => setOpen(doc.key)}
+                    onBlur={() => setOpen((k) => (k === doc.key ? null : k))}
+                    onClick={() => setOpen((k) => (k === doc.key ? null : doc.key))}
+                    className="block w-full cursor-pointer text-left focus-visible:outline-none"
                   >
-                    <span className="block text-lg font-bold text-sand-900 dark:text-sand-50">
-                      {stats[doc.key]} {doc.label}
+                    <span aria-hidden className="relative z-10 block" style={{ marginLeft: TAB_X[i] }}>
+                      <Tab number={stats[doc.key]} label={doc.label} />
                     </span>
-                    <span className="mt-2 block max-w-lg text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                      {doc.line}
-                    </span>
-                  </span>
-                </button>
+                    <motion.span
+                      id={`inv-${doc.key}`}
+                      className={`-mt-px block origin-top overflow-hidden rounded-2xl border border-sand-300 bg-sand-100 p-5 dark:border-sand-700 dark:bg-sand-900 sm:p-6 ${
+                        isOpen ? OPEN_SHADOW : ''
+                      }`}
+                      style={{ height: BODY_H }}
+                      initial={false}
+                      animate={{ scaleX: isOpen ? 1 : widthAt(y) }}
+                      transition={travel}
+                    >
+                      {/* The copy stays in the page and fades with the pull.
+                          A filed document shows a bare face: the band between
+                          two tabs is its own face, and any copy sitting there
+                          reads as a caption on the document in front. */}
+                      <motion.span
+                        className="block"
+                        initial={false}
+                        animate={{ opacity: isOpen ? 1 : 0 }}
+                        transition={travel}
+                      >
+                        <span className="block text-lg font-bold text-sand-900 dark:text-sand-50">
+                          {stats[doc.key]} {doc.label}
+                        </span>
+                        <span className="mt-2 block max-w-lg text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                          {doc.line}
+                        </span>
+                      </motion.span>
+                    </motion.span>
+                  </button>
+                </div>
               </motion.div>
             )
           })}

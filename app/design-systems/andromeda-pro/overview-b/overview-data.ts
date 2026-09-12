@@ -17,6 +17,8 @@ export type Family = { name: string; count: number }
 export type OverviewStats = {
   components: number
   variants: number
+  states: number
+  families: number
   templates: number
   themes: number
 }

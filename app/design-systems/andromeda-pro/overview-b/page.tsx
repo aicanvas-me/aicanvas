@@ -75,6 +75,8 @@ export default async function AndromedaOverviewBPage() {
   const stats: OverviewStats = {
     components: components.length,
     variants: Object.values(COMPONENT_COUNTS).reduce((sum, c) => sum + c.variants, 0),
+    states: Object.values(COMPONENT_COUNTS).reduce((sum, c) => sum + c.states, 0),
+    families: families.length,
     templates: TEMPLATES.length,
     // Dark and light: the two sets andromedaVars() and andromedaLightVars() emit.
     themes: 2,
