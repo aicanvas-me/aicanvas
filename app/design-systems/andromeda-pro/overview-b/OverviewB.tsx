@@ -123,7 +123,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
     <Link
       href={`/design-systems/andromeda-pro/templates/${t.folder}`}
       className={`group flex flex-col rounded-2xl border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
-        lead ? 'md:col-span-2' : ''
+        lead ? 'lg:col-span-2' : ''
       }`}
     >
       <div className={`relative overflow-hidden rounded-xl bg-sand-900 ${lead ? 'aspect-video' : 'aspect-[16/10]'}`}>
@@ -225,9 +225,9 @@ export function OverviewB({
             See all of it running. Take it home with Premium.
           </p>
           <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
-            {stats.components} components, {stats.variants} variants and {stats.templates} templates for
-            dashboards and control rooms, in light and dark. Every one runs on this site for free. Premium adds
-            the code, the CLI install, the remix prompts, the Brain&apos;s rule files and template installs.
+            {/* One string, not numbers interleaved with JSX text: the split form
+                hydrated with the space before "templates" missing on the server. */}
+            {`${stats.components} components, ${stats.variants} variants and ${stats.templates} templates for dashboards and control rooms, in light and dark. Every one runs on this site for free. Premium adds the code, the CLI install, the remix prompts, the Brain's rule files and template installs.`}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/pricing" className={BTN_PRIMARY}>
@@ -394,7 +394,9 @@ export function OverviewB({
 
         {/* ── 6. The Brain ─────────────────────────────────────────────── */}
         <section aria-labelledby="ovb-brain" className="mt-20">
-          <div className={`grid grid-cols-1 gap-8 p-6 sm:p-8 md:grid-cols-2 ${PANEL} ${PANEL_SHADOW}`}>
+          {/* Two columns from lg: beside the site rail at md the text column was
+              too narrow to read. The same holds for the template grid below. */}
+          <div className={`grid grid-cols-1 gap-8 p-6 sm:p-8 lg:grid-cols-2 ${PANEL} ${PANEL_SHADOW}`}>
             <div className="flex flex-col justify-center">
               <Overline>Built for agents</Overline>
               <h2
@@ -433,7 +435,7 @@ export function OverviewB({
                 </Link>
               </div>
             </div>
-            <div className="relative h-60 overflow-hidden rounded-xl md:h-auto md:min-h-[360px]">
+            <div className="relative h-60 overflow-hidden rounded-xl sm:h-72 lg:h-auto lg:min-h-[360px]">
               <BrainWireframe />
             </div>
           </div>
@@ -447,7 +449,7 @@ export function OverviewB({
             title={`${capitalWord(TEMPLATES.length)} finished screens, built from the system.`}
             sub="A live signal room, mission telemetry, work orders, capacity planning and sign-in. Open any one and watch it run."
           />
-          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
             {TEMPLATES.map((t, i) => (
               <TemplateCard key={t.slug} t={t} lead={i === 0} />
             ))}

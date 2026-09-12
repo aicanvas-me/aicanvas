@@ -42,13 +42,17 @@ import {
 
 // What each tile shows. The section copy counts tiles and components from this
 // list, so the numbers on the page always match the stage.
+// `wide`: the tile spans both columns of the two-column stage (sm to xl). Beside
+// the site rail a half-width Data tile clips its status column, and Status
+// spans with it so the last row has no hole. Three columns wait for xl: at lg
+// the rail leaves each tile too narrow for the field and the progress bar.
 export const BENTO_TILES = [
-  { name: 'Buttons', parts: ['Button', 'IconButton'], onPhone: true },
-  { name: 'Fields', parts: ['Input', 'SearchField'], onPhone: false },
-  { name: 'Controls', parts: ['Toggle', 'Checkbox', 'Radio'], onPhone: true },
-  { name: 'Metrics', parts: ['StatTile', 'ProgressBar'], onPhone: false },
-  { name: 'Data', parts: ['Table', 'Badge'], onPhone: true },
-  { name: 'Status', parts: ['Tag', 'Avatar', 'Alert'], onPhone: false },
+  { name: 'Buttons', parts: ['Button', 'IconButton'], onPhone: true, wide: false },
+  { name: 'Fields', parts: ['Input', 'SearchField'], onPhone: false, wide: false },
+  { name: 'Controls', parts: ['Toggle', 'Checkbox', 'Radio'], onPhone: true, wide: false },
+  { name: 'Metrics', parts: ['StatTile', 'ProgressBar'], onPhone: false, wide: false },
+  { name: 'Data', parts: ['Table', 'Badge'], onPhone: true, wide: true },
+  { name: 'Status', parts: ['Tag', 'Avatar', 'Alert'], onPhone: false, wide: true },
 ] as const
 
 type TileName = (typeof BENTO_TILES)[number]['name']
@@ -85,9 +89,13 @@ function GroupLabel({ children }: { children: ReactNode }) {
 }
 
 function Tile({ name, children }: { name: TileName; children: ReactNode }) {
-  const onPhone = BENTO_TILES.find((t) => t.name === name)?.onPhone ?? true
+  const tile = BENTO_TILES.find((t) => t.name === name)
+  const onPhone = tile?.onPhone ?? true
   return (
-    <div className={`${onPhone ? 'flex' : 'hidden sm:flex'} min-w-0 flex-col gap-4 p-4`} style={TILE_STYLE}>
+    <div
+      className={`${onPhone ? 'flex' : 'hidden sm:flex'} ${tile?.wide ? 'sm:col-span-2 xl:col-span-1' : ''} min-w-0 flex-col gap-4 p-4`}
+      style={TILE_STYLE}
+    >
       <p
         className="text-[10px] font-semibold uppercase tracking-wider"
         style={{ color: 'var(--at-text-muted)', fontFamily: tokens.typography.fontMono }}
@@ -101,7 +109,7 @@ function Tile({ name, children }: { name: TileName; children: ReactNode }) {
 
 export function CompareBento() {
   return (
-    <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 xl:grid-cols-3">
       <Tile name="Buttons">
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm">Deploy</Button>
@@ -136,7 +144,10 @@ export function CompareBento() {
       </Tile>
 
       <Tile name="Metrics">
-        <StatTile label="Uplink" value={98.4} unit="%" delta={1.2} deltaLabel="vs last hour" />
+        {/* liveRoll, not the count-up: the count-up starts when the tile scrolls
+            into view, and the light copy sits under a clip that never reads as
+            in view, so it stayed on 0 while the dark copy reached 98.4. */}
+        <StatTile label="Uplink" value={98.4} unit="%" delta={1.2} deltaLabel="vs last hour" liveRoll />
         <ProgressBar label="Buffer" value={62} />
       </Tile>
 

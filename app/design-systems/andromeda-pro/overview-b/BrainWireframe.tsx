@@ -30,6 +30,26 @@ const LINE_STOPS = [BRAND[400], BRAND[300], NEUTRAL[1100], NEUTRAL[1200]]
 
 const withAlpha = (oklch: string, alpha: number) => oklch.replace(')', ` / ${alpha})`)
 
+// WebGL takes no oklch, so each stop goes OKLCH -> OKLab -> linear sRGB here
+// (Ottosson's matrices), clamped to the gamut. Reading pixels back off a
+// canvas did the same job but stalled the GPU.
+function oklchToLinearSrgb(css: string): [number, number, number] {
+  const m = /oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)/.exec(css)
+  if (!m) return [0.5, 0.5, 0.5]
+  const [L, C, h] = [+m[1], +m[2], (+m[3] * Math.PI) / 180]
+  const a = C * Math.cos(h)
+  const b = C * Math.sin(h)
+  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3
+  const mm = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3
+  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3
+  const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1)
+  return [
+    clamp01(4.0767416621 * l - 3.3077115913 * mm + 0.2309699292 * s),
+    clamp01(-1.2684380046 * l + 2.6097574011 * mm - 0.3413193965 * s),
+    clamp01(-0.0041960863 * l - 0.7034186147 * mm + 1.707614701 * s),
+  ]
+}
+
 // Barely-there brand light behind the model: a glow where the brain sits and
 // two faint sweeps from opposite corners, over the void.
 const GROUND = [
@@ -82,18 +102,9 @@ export function BrainWireframe() {
 
         const scene = new THREE.Scene()
 
-        // WebGL cannot read oklch, so the browser resolves each stop to sRGB
-        // through a 1px canvas.
-        const probe = document.createElement('canvas').getContext('2d', { willReadFrequently: true })
-        const toColor = (css: string) => {
-          if (!probe) return new THREE.Color(0x888888)
-          probe.clearRect(0, 0, 1, 1)
-          probe.fillStyle = css
-          probe.fillRect(0, 0, 1, 1)
-          const [red, green, blue] = probe.getImageData(0, 0, 1, 1).data
-          return new THREE.Color().setStyle(`rgb(${red}, ${green}, ${blue})`)
-        }
-        const stops = LINE_STOPS.map(toColor)
+        const stops = LINE_STOPS.map((css) =>
+          new THREE.Color().setRGB(...oklchToLinearSrgb(css), THREE.LinearSRGBColorSpace),
+        )
         const colorAt = (t: number, out: InstanceType<typeof THREE.Color>) => {
           const x = Math.min(Math.max(t, 0), 1) * (stops.length - 1)
           const i = Math.min(Math.floor(x), stops.length - 2)
@@ -117,18 +128,25 @@ export function BrainWireframe() {
         frame()
 
         let brainRoot: Object3D | null = null
-        const clock = new THREE.Clock()
+        // Frame time from performance.now(): THREE.Clock is deprecated.
+        let last = performance.now()
+        const delta = () => {
+          const now = performance.now()
+          const dt = (now - last) / 1000
+          last = now
+          return dt
+        }
 
         const tick = () => {
           raf = 0
-          const dt = Math.min(clock.getDelta(), 1 / 30)
+          const dt = Math.min(delta(), 1 / 30)
           if (brainRoot && !reduceRef.current) brainRoot.rotation.y += dt * 0.25
           r.render(scene, camera)
           if (alive && visible && !reduceRef.current) raf = requestAnimationFrame(tick)
         }
         const kick = () => {
           if (!alive || raf) return
-          clock.getDelta() // drop the time spent paused, so the spin never jumps
+          delta() // drop the time spent paused, so the spin never jumps
           raf = requestAnimationFrame(tick)
         }
         kickRef.current = kick

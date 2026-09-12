@@ -68,8 +68,8 @@ function LayerCard({ n, title, caption, children }: { n: number; title: string; 
 function Step() {
   return (
     <li aria-hidden className="flex items-center justify-center text-sand-400 dark:text-sand-600">
-      <ArrowDown weight="regular" className="size-4 sm:hidden" />
-      <ArrowRight weight="regular" className="hidden size-4 sm:block" />
+      <ArrowDown weight="regular" className="size-4 lg:hidden" />
+      <ArrowRight weight="regular" className="hidden size-4 lg:block" />
     </li>
   )
 }
@@ -96,7 +96,9 @@ export function FoundationLayers() {
         </Link>
       </div>
 
-      <ol className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]">
+      {/* A row from lg only: below it the content column sits beside the site
+          rail and three cards squeeze the swatch labels together. */}
+      <ol className="mt-5 grid grid-cols-1 gap-2 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]">
         <LayerCard n={1} title="Primitives" caption="Raw values: a gray ladder and four hue families.">
           <div className="flex w-full gap-1">
             {RAMP_STOPS.map((stop) => (
