@@ -11,6 +11,7 @@
 import { useRef } from 'react'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { SwatchTooltip } from './SwatchTooltip'
+import { LayerCards } from '../overview-b/FoundationLayers'
 import { tokens } from '../../../lib/andromeda-pro.generated'
 import { andromedaVars, andromedaLightVars } from '../../../lib/andromeda-pro-helpers.generated'
 
@@ -249,47 +250,6 @@ function Code({ children }: { children: React.ReactNode }) {
   )
 }
 
-// Bodies are JSX, not strings, so a CSS custom property can be a code span.
-// Manrope ligates a double hyphen into one long dash, which turned
-// `--component-role` into a property name that does not exist.
-const LAYERS = [
-  {
-    n: '1',
-    title: 'Primitives',
-    body: (
-      <>
-        The neutral ladder and four hue families. A theme author retunes these; a component
-        never reads them. The neutrals are numbered by depth in the stack, not by lightness:
-        100 is the page ground and 1300 the strongest ink, so the numbering keeps its meaning
-        when the ground inverts.
-      </>
-    ),
-  },
-  {
-    n: '2',
-    title: 'Semantic',
-    body: (
-      <>
-        The sentence a screen author says: status.danger.text, surface.raised, focus.ring.
-        Every component reads this layer and only this layer. A semantic token exists only
-        where two good authors would genuinely differ. Where a ladder rule already decides,
-        the rule teaches and no token is minted.
-      </>
-    ),
-  },
-  {
-    n: '3',
-    title: 'Component wires',
-    body: (
-      <>
-        A <Code>--component-role</Code> custom property inside the one file that owns it,
-        pointing at exactly one semantic token. It exists only where the element that knows
-        the variant is not the element that paints the colour, so the wiring never leaves the
-        file you are reading.
-      </>
-    ),
-  },
-] as const
 
 // ── page ─────────────────────────────────────────────────────────────────────
 
@@ -318,20 +278,23 @@ export function FoundationView() {
 
       {/* ── The three layers ── */}
       <SectionHeading>Three layers</SectionHeading>
-      <div className="grid gap-4 sm:grid-cols-3">
-        {LAYERS.map((l) => (
-          <div
-            key={l.n}
-            className="rounded-xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900"
-          >
-            <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-sand-500">
-              Layer {l.n}
-            </p>
-            <h3 className="mb-2 text-sm font-bold text-sand-900 dark:text-sand-50">{l.title}</h3>
-            <p className="text-[13px] leading-relaxed text-sand-600 dark:text-sand-400">{l.body}</p>
-          </div>
-        ))}
-      </div>
+      {/* The same cards as the overview, one colour followed through all three.
+          Code spans because Manrope ligates the double hyphen of a custom
+          property into one dash. */}
+      <LayerCards
+        onPage
+        captions={[
+          'The neutral ladder and four hue families. A theme retunes these; a component never reads them.',
+          <>
+            Named roles such as <Code>status.danger.text</Code>. Every component reads this layer and only
+            this one.
+          </>,
+          <>
+            A <Code>--component-role</Code> variable in the one file that owns it, pointing at exactly one
+            role. The wiring never leaves that file.
+          </>,
+        ]}
+      />
 
       {/* ── Neutrals ── */}
       <SectionHeading>The neutral ladder</SectionHeading>
