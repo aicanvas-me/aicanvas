@@ -8,7 +8,9 @@
 // Client component for one reason: `tokens` comes through the injected-v2
 // shim, whose modules carry 'use client' — the same pattern the component
 // demos use. Everything here renders statically all the same.
+import { useRef } from 'react'
 import { SiteFooter } from '../../../components/SiteFooter'
+import { SwatchTooltip } from './SwatchTooltip'
 import { tokens } from '../../../lib/andromeda-pro.generated'
 import { andromedaVars, andromedaLightVars } from '../../../lib/andromeda-pro-helpers.generated'
 
@@ -298,8 +300,10 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 }
 
 export function FoundationView() {
+  const mainRef = useRef<HTMLElement>(null)
   return (
-    <main className="mx-auto w-full max-w-4xl px-4 pt-8 pb-20 sm:px-6 sm:pt-14">
+    <main ref={mainRef} className="mx-auto w-full max-w-4xl px-4 pt-8 pb-20 sm:px-6 sm:pt-14">
+      <SwatchTooltip root={mainRef} />
       <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-olive-600 dark:text-olive-400">
         Andromeda · Foundation
       </p>
@@ -344,6 +348,7 @@ export function FoundationView() {
                   <div
                     key={n.stop}
                     className="group relative h-20 flex-1"
+                    data-swatch={`neutral-${n.stop}`}
                     style={{ backgroundColor: themed(`neutral-${n.stop}`, n.value) }}
                   >
                     <span
@@ -388,7 +393,7 @@ export function FoundationView() {
                             (f.ramp as Record<number, string>)[stop],
                           ),
                         }}
-                        title={`${f.key}.${stop}`}
+                        data-swatch={`${f.key}-${stop}`}
                       />
                     ))}
                   </div>
@@ -460,14 +465,16 @@ export function FoundationView() {
                   <span
                     className="flex h-7 w-7 items-center justify-center rounded"
                     style={{ backgroundColor: DARK_GROUND }}
-                    title={`dark ${c.darkStop}`}
+                    data-swatch={`${c.name} ${suffix} · dark ${c.darkStop}`}
+                    data-swatch-value={c.dark}
                   >
                     <span className="h-3.5 w-3.5 rounded-sm" style={{ backgroundColor: c.dark }} />
                   </span>
                   <span
                     className="flex h-7 w-7 items-center justify-center rounded"
                     style={{ backgroundColor: LIGHT_GROUND }}
-                    title={`light ${c.lightStop}`}
+                    data-swatch={`${c.name} ${suffix} · light ${c.lightStop}`}
+                    data-swatch-value={c.light}
                   >
                     <span className="h-3.5 w-3.5 rounded-sm" style={{ backgroundColor: c.light }} />
                   </span>
@@ -516,14 +523,16 @@ export function FoundationView() {
                   <span
                     className="flex h-6 w-6 shrink-0 items-center justify-center rounded"
                     style={{ background: DARK_GROUND }}
-                    title="dark"
+                    data-swatch={`${r.token} · dark`}
+                    data-swatch-value={r.dark}
                   >
                     <span className="h-3 w-3 rounded-sm" style={{ background: r.dark }} />
                   </span>
                   <span
                     className="flex h-6 w-6 shrink-0 items-center justify-center rounded"
                     style={{ background: LIGHT_GROUND }}
-                    title="light"
+                    data-swatch={`${r.token} · light`}
+                    data-swatch-value={r.light}
                   >
                     <span className="h-3 w-3 rounded-sm" style={{ background: r.light }} />
                   </span>
