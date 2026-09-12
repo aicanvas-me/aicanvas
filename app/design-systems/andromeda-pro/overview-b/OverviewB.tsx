@@ -116,7 +116,9 @@ function WithPremium({ children }: { children: ReactNode }) {
 }
 
 // The template bento: the lead card spans both columns at 16:9, the rest sit
-// at 16:10 beside it.
+// at 16:10 beside it. The art is 16:9 with the screenshot inset from the top
+// and left, so it is pinned to its top-left corner: a narrower frame crops the
+// right edge, where the screenshot already runs off, never the inset.
 function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
   return (
     <Link
@@ -132,7 +134,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
             alt={`${t.name} template`}
             loading="lazy"
             decoding="async"
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-out motion-safe:group-hover:scale-[1.02]"
+            className="absolute inset-0 h-full w-full origin-top-left object-cover object-[left_top] transition-transform duration-200 ease-out motion-safe:group-hover:scale-[1.02]"
           />
         ) : (
           // No art yet: a quiet dark panel, never a broken-image glyph.
