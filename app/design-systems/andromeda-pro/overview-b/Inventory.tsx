@@ -16,7 +16,7 @@
 // meant padding the front with blank documents.
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import type { OverviewStats } from './overview-data'
 
@@ -87,14 +87,16 @@ const TAB_PATH =
 const OPEN_SHADOW =
   'shadow-[0_2px_4px_rgba(0,0,0,0.08),0_18px_40px_rgba(0,0,0,0.14)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.45),0_18px_40px_rgba(0,0,0,0.60)]'
 
-function Tab({ number, label }: { number: number; label: string }) {
+function Tab({ number, label, lit }: { number: number; label: string; lit: boolean }) {
   return (
     <span className="pointer-events-none relative block h-[28px] w-[152px] sm:h-[34px] sm:w-[208px]">
       <svg
         viewBox="0 0 208 34"
         preserveAspectRatio="none"
         aria-hidden
-        className="absolute inset-0 h-full w-full fill-sand-100 stroke-sand-300 dark:fill-sand-900 dark:stroke-sand-700"
+        className={`absolute inset-0 h-full w-full stroke-sand-300 transition-colors duration-150 dark:stroke-sand-700 ${
+          lit ? 'fill-sand-200 dark:fill-sand-800' : 'fill-sand-100 dark:fill-sand-900'
+        }`}
         strokeWidth={1}
       >
         <path d={TAB_PATH} vectorEffect="non-scaling-stroke" />
@@ -110,37 +112,34 @@ function Tab({ number, label }: { number: number; label: string }) {
 export function Inventory({ stats }: { stats: OverviewStats }) {
   const reduce = useReducedMotion() ?? false
   const [open, setOpen] = useState<string | null>(null)
+  const [lit, setLit] = useState<string | null>(null)
+  const root = useRef<HTMLDivElement>(null)
   const travel = reduce ? { duration: 0 } : { duration: 0.42, ease: [0.22, 1, 0.36, 1] as const }
 
-  // What opens a document is a hit strip parked at its slot, NOT the document
-  // itself. Hanging the pointer off the document made it flicker forever: the
-  // document slides out from under the cursor, the pointer leaves it, it
-  // closes, it comes back under the cursor, and it opens again. The strip
-  // never moves, so the pointer stays on it however far the document travels.
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const cancelClose = () => {
-    if (closeTimer.current) {
-      clearTimeout(closeTimer.current)
-      closeTimer.current = null
+  // Hover only tints a document. The click is what pulls it out, and a click
+  // anywhere off the drawer files it back. Opening on hover was wrong twice
+  // over: the document slides out from under the cursor, so the pointer
+  // leaves it, it closes, it comes back under the cursor and opens again.
+  // The pointer still belongs to a hit strip parked at each slot rather than
+  // to the document, so the tint does not chase the document either.
+  useEffect(() => {
+    if (!open) return
+    const away = (e: PointerEvent) => {
+      if (!root.current?.contains(e.target as Node)) setOpen(null)
     }
-  }
-  const openNow = useCallback((key: string) => {
-    cancelClose()
-    setOpen(key)
-  }, [])
-  // A beat before closing, so crossing the seam from the strip to the open
-  // document does not read as a close and a reopen.
-  const closeSoon = useCallback((key: string) => {
-    cancelClose()
-    closeTimer.current = setTimeout(() => {
-      setOpen((cur) => (cur === key ? null : cur))
-      closeTimer.current = null
-    }, 120)
-  }, [])
-  useEffect(() => cancelClose, [])
+    const esc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(null)
+    }
+    document.addEventListener('pointerdown', away)
+    document.addEventListener('keydown', esc)
+    return () => {
+      document.removeEventListener('pointerdown', away)
+      document.removeEventListener('keydown', esc)
+    }
+  }, [open])
 
   return (
-    <div className="select-none">
+    <div ref={root} className="select-none">
       <div className="relative" style={{ height: STACK_H }}>
         {/* The drawer: the walls follow the taper of the stack. */}
         <svg
@@ -176,21 +175,21 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
                 transition={travel}
               >
                 <span aria-hidden className="relative z-10 block" style={{ marginLeft: TAB_X[i] }}>
-                  <Tab number={stats[doc.key]} label={doc.label} />
+                  <Tab number={stats[doc.key]} label={doc.label} lit={lit === doc.key || isOpen} />
                 </span>
                 <motion.span
                   id={`inv-${doc.key}`}
-                  className={`-mt-px block origin-top overflow-hidden rounded-2xl border border-sand-300 bg-sand-100 p-5 dark:border-sand-700 dark:bg-sand-900 sm:p-6 ${
-                    isOpen ? OPEN_SHADOW : ''
-                  }`}
-                  // Once it is out, the document holds the hover itself, so
-                  // reading it does not hand the drawer to the slot underneath.
+                  className={`-mt-px block origin-top overflow-hidden rounded-2xl border border-sand-300 p-5 transition-colors duration-150 dark:border-sand-700 sm:p-6 ${
+                    lit === doc.key || isOpen
+                      ? 'bg-sand-200 dark:bg-sand-800'
+                      : 'bg-sand-100 dark:bg-sand-900'
+                  } ${isOpen ? OPEN_SHADOW : ''}`}
+                  // An open document swallows clicks so reading it is not a
+                  // click outside the drawer.
                   style={{ height: BODY_H, pointerEvents: isOpen ? 'auto' : 'none' }}
                   initial={false}
                   animate={{ scaleX: isOpen ? 1 : widthAt(y) }}
                   transition={travel}
-                  onPointerEnter={(e) => e.pointerType === 'mouse' && openNow(doc.key)}
-                  onPointerLeave={(e) => e.pointerType === 'mouse' && closeSoon(doc.key)}
                 >
                   {/* The copy stays in the page and fades with the pull. A
                       filed document shows a bare face: the band between two
@@ -230,11 +229,11 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
                 aria-label={`${stats[doc.key]} ${doc.label}`}
                 // A pointer that can hover opens on the way past. Touch has no
                 // hover and fires enter and leave around the tap, so it toggles.
-                onPointerEnter={(e) => e.pointerType === 'mouse' && openNow(doc.key)}
-                onPointerLeave={(e) => e.pointerType === 'mouse' && closeSoon(doc.key)}
-                onFocus={() => openNow(doc.key)}
-                onBlur={() => closeSoon(doc.key)}
-                onClick={() => (isOpen ? closeSoon(doc.key) : openNow(doc.key))}
+                onPointerEnter={() => setLit(doc.key)}
+                onPointerLeave={() => setLit((k) => (k === doc.key ? null : k))}
+                onFocus={() => setLit(doc.key)}
+                onBlur={() => setLit((k) => (k === doc.key ? null : k))}
+                onClick={() => setOpen((k) => (k === doc.key ? null : doc.key))}
                 className="absolute inset-x-0 cursor-pointer focus-visible:outline-none"
                 style={{ top: y, height: PITCH, zIndex: DOCS.length + 2 + i }}
               />
