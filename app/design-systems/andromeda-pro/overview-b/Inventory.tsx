@@ -16,7 +16,7 @@
 // meant padding the front with blank documents.
 'use client'
 
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import type { OverviewStats } from './overview-data'
 
@@ -112,6 +112,33 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
   const [open, setOpen] = useState<string | null>(null)
   const travel = reduce ? { duration: 0 } : { duration: 0.42, ease: [0.22, 1, 0.36, 1] as const }
 
+  // What opens a document is a hit strip parked at its slot, NOT the document
+  // itself. Hanging the pointer off the document made it flicker forever: the
+  // document slides out from under the cursor, the pointer leaves it, it
+  // closes, it comes back under the cursor, and it opens again. The strip
+  // never moves, so the pointer stays on it however far the document travels.
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const cancelClose = () => {
+    if (closeTimer.current) {
+      clearTimeout(closeTimer.current)
+      closeTimer.current = null
+    }
+  }
+  const openNow = useCallback((key: string) => {
+    cancelClose()
+    setOpen(key)
+  }, [])
+  // A beat before closing, so crossing the seam from the strip to the open
+  // document does not read as a close and a reopen.
+  const closeSoon = useCallback((key: string) => {
+    cancelClose()
+    closeTimer.current = setTimeout(() => {
+      setOpen((cur) => (cur === key ? null : cur))
+      closeTimer.current = null
+    }, 120)
+  }, [])
+  useEffect(() => cancelClose, [])
+
   return (
     <div className="select-none">
       <div className="relative" style={{ height: STACK_H }}>
@@ -141,70 +168,76 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
             return (
               <motion.div
                 key={doc.key}
-                className="absolute inset-x-0"
-                // The z has to live on this element: its own transform makes a
-                // stacking context, so a z-index set inside it can never lift
-                // the document over the ones still in the drawer.
-                style={{ top: y, zIndex: isOpen ? DOCS.length + 1 : i + 1 }}
+                // Nothing here takes the pointer. The strips below do that.
+                className="pointer-events-none absolute inset-x-0"
+                style={{ top: y, zIndex: isOpen ? DOCS.length * 2 + 4 : i + 1 }}
                 initial={false}
                 animate={{ y: isOpen ? -y : 0 }}
                 transition={travel}
               >
-                <div className="relative">
-                  <button
-                    type="button"
-                    aria-expanded={isOpen}
-                    aria-controls={`inv-${doc.key}`}
-                    // An explicit name: the document's copy belongs to the panel,
-                    // not to the button, and reading all of it back on focus
-                    // would bury the label.
-                    aria-label={`${stats[doc.key]} ${doc.label}`}
-                    // A pointer that can hover opens on the way past. Touch has
-                    // no hover and fires enter and leave around the tap, so it
-                    // toggles instead.
-                    onPointerEnter={(e) => e.pointerType === 'mouse' && setOpen(doc.key)}
-                    onPointerLeave={(e) =>
-                      e.pointerType === 'mouse' && setOpen((k) => (k === doc.key ? null : k))
-                    }
-                    onFocus={() => setOpen(doc.key)}
-                    onBlur={() => setOpen((k) => (k === doc.key ? null : k))}
-                    onClick={() => setOpen((k) => (k === doc.key ? null : doc.key))}
-                    className="block w-full cursor-pointer text-left focus-visible:outline-none"
+                <span aria-hidden className="relative z-10 block" style={{ marginLeft: TAB_X[i] }}>
+                  <Tab number={stats[doc.key]} label={doc.label} />
+                </span>
+                <motion.span
+                  id={`inv-${doc.key}`}
+                  className={`-mt-px block origin-top overflow-hidden rounded-2xl border border-sand-300 bg-sand-100 p-5 dark:border-sand-700 dark:bg-sand-900 sm:p-6 ${
+                    isOpen ? OPEN_SHADOW : ''
+                  }`}
+                  // Once it is out, the document holds the hover itself, so
+                  // reading it does not hand the drawer to the slot underneath.
+                  style={{ height: BODY_H, pointerEvents: isOpen ? 'auto' : 'none' }}
+                  initial={false}
+                  animate={{ scaleX: isOpen ? 1 : widthAt(y) }}
+                  transition={travel}
+                  onPointerEnter={(e) => e.pointerType === 'mouse' && openNow(doc.key)}
+                  onPointerLeave={(e) => e.pointerType === 'mouse' && closeSoon(doc.key)}
+                >
+                  {/* The copy stays in the page and fades with the pull. A
+                      filed document shows a bare face: the band between two
+                      tabs is its own face, and copy sitting there reads as a
+                      caption on the document in front. */}
+                  <motion.span
+                    className="block"
+                    initial={false}
+                    animate={{ opacity: isOpen ? 1 : 0 }}
+                    transition={travel}
                   >
-                    <span aria-hidden className="relative z-10 block" style={{ marginLeft: TAB_X[i] }}>
-                      <Tab number={stats[doc.key]} label={doc.label} />
+                    <span className="block text-lg font-bold text-sand-900 dark:text-sand-50">
+                      {stats[doc.key]} {doc.label}
                     </span>
-                    <motion.span
-                      id={`inv-${doc.key}`}
-                      className={`-mt-px block origin-top overflow-hidden rounded-2xl border border-sand-300 bg-sand-100 p-5 dark:border-sand-700 dark:bg-sand-900 sm:p-6 ${
-                        isOpen ? OPEN_SHADOW : ''
-                      }`}
-                      style={{ height: BODY_H }}
-                      initial={false}
-                      animate={{ scaleX: isOpen ? 1 : widthAt(y) }}
-                      transition={travel}
-                    >
-                      {/* The copy stays in the page and fades with the pull.
-                          A filed document shows a bare face: the band between
-                          two tabs is its own face, and any copy sitting there
-                          reads as a caption on the document in front. */}
-                      <motion.span
-                        className="block"
-                        initial={false}
-                        animate={{ opacity: isOpen ? 1 : 0 }}
-                        transition={travel}
-                      >
-                        <span className="block text-lg font-bold text-sand-900 dark:text-sand-50">
-                          {stats[doc.key]} {doc.label}
-                        </span>
-                        <span className="mt-2 block max-w-lg text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                          {doc.line}
-                        </span>
-                      </motion.span>
-                    </motion.span>
-                  </button>
-                </div>
+                    <span className="mt-2 block max-w-lg text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                      {doc.line}
+                    </span>
+                  </motion.span>
+                </motion.span>
               </motion.div>
+            )
+          })}
+
+          {/* The hit strips: one per slot, parked, never moving. */}
+          {DOCS.map((doc, i) => {
+            const y = i * PITCH
+            const isOpen = open === doc.key
+            return (
+              <button
+                key={`grip-${doc.key}`}
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={`inv-${doc.key}`}
+                // An explicit name: the document's copy belongs to the panel,
+                // not to the button, and reading all of it back on focus would
+                // bury the label.
+                aria-label={`${stats[doc.key]} ${doc.label}`}
+                // A pointer that can hover opens on the way past. Touch has no
+                // hover and fires enter and leave around the tap, so it toggles.
+                onPointerEnter={(e) => e.pointerType === 'mouse' && openNow(doc.key)}
+                onPointerLeave={(e) => e.pointerType === 'mouse' && closeSoon(doc.key)}
+                onFocus={() => openNow(doc.key)}
+                onBlur={() => closeSoon(doc.key)}
+                onClick={() => (isOpen ? closeSoon(doc.key) : openNow(doc.key))}
+                className="absolute inset-x-0 cursor-pointer focus-visible:outline-none"
+                style={{ top: y, height: PITCH, zIndex: DOCS.length + 2 + i }}
+              />
             )
           })}
         </div>
