@@ -86,9 +86,10 @@ const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
       domain: t.domain ?? '',
       folder: t.slug.replace(/^andromeda-pro-/, ''),
       blurb: TEMPLATE_BLURBS[t.slug] ?? '',
-      // tr=orig-true serves the untouched original. Filenames carry spaces.
+      // tr=orig-true serves the untouched original. v busts the browser cache
+      // when the art is re-shot under the same name.
       image: file
-        ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?tr=orig-true`
+        ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?tr=orig-true&v=2`
         : null,
     }
   },
