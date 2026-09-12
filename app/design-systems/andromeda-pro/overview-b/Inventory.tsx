@@ -66,77 +66,105 @@ const DOCS: Doc[] = [
   },
 ]
 
-// One minimal drawing per document, in the same two inks as the drawer: a thin
-// neutral line for the structure and a single olive mark for the count itself.
-// Line art rather than an icon, so it reads as a diagram of the number.
-const MARK_LINE = 'stroke-sand-400 dark:stroke-sand-600'
-const MARK_FILL = 'fill-olive-500'
+// One drawing per document, in the drawer's own two inks: a thin neutral line
+// for the structure and a single olive mark for the thing being counted. Each
+// one is a diagram of its number rather than an icon of its subject, so it
+// says something the copy does not.
+const LINE = 'stroke-sand-400 dark:stroke-sand-600'
+const OLIVE_LINE = 'stroke-olive-500'
+const OLIVE = 'fill-olive-500'
 
 function Mark({ k }: { k: keyof OverviewStats }) {
-  const common = { fill: 'none', strokeWidth: 1.25, vectorEffect: 'non-scaling-stroke' as const }
+  const s = { fill: 'none', vectorEffect: 'non-scaling-stroke' as const }
   return (
-    <svg viewBox="0 0 132 104" aria-hidden className="h-[104px] w-[132px]">
-      {k === 'components' &&
-        [0, 1, 2].map((r) =>
-          [0, 1, 2].map((c) => (
-            <rect
-              key={`${r}-${c}`}
-              x={10 + c * 40}
-              y={10 + r * 30}
-              width={32}
-              height={22}
-              rx={5}
-              {...common}
-              className={r === 1 && c === 1 ? MARK_FILL : MARK_LINE}
-              strokeWidth={r === 1 && c === 1 ? 0 : 1.25}
-            />
-          )),
-        )}
+    <svg
+      viewBox="0 0 132 104"
+      aria-hidden
+      className="h-[104px] w-[132px]"
+      strokeWidth={1.25}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Components: a kit of unlike parts, not a grid of identical squares. */}
+      {k === 'components' && (
+        <>
+          <rect x={8} y={14} width={42} height={18} rx={9} {...s} className={LINE} />
+          <rect x={58} y={14} width={66} height={18} rx={5} {...s} className={LINE} />
+          <path d="M 66 23 h 22" {...s} className={LINE} />
+          <circle cx={20} cy={60} r={12} {...s} className={LINE} />
+          <rect x={40} y={49} width={38} height={22} rx={11} {...s} className={LINE} />
+          <circle cx={67} cy={60} r={7} className={OLIVE} />
+          <path d="M 90 70 v -10 M 102 70 v -20 M 114 70 v -6" {...s} className={LINE} />
+          <path d="M 86 78 h 32" {...s} className={LINE} />
+          <path d="M 8 86 h 30 M 46 86 h 52" {...s} className={LINE} />
+        </>
+      )}
+
+      {/* Variants: one part at every size the system draws it. A fan of
+          rotated copies was tried and tangles in the middle. */}
       {k === 'variants' &&
-        [0, 1, 2, 3, 4].map((i) => (
+        [
+          [112, 68, 14],
+          [86, 52, 11],
+          [60, 36, 8],
+          [36, 22, 6],
+          [16, 10, 4],
+        ].map(([w, h, r], i) => (
           <rect
-            key={i}
-            x={10 + i * 24}
-            y={72 - i * 13}
-            width={16}
-            height={20 + i * 13}
-            rx={4}
-            {...common}
-            className={i === 4 ? MARK_FILL : MARK_LINE}
-            strokeWidth={i === 4 ? 0 : 1.25}
+            key={w}
+            x={66 - w / 2}
+            y={52 - h / 2}
+            width={w}
+            height={h}
+            rx={r}
+            {...s}
+            className={i === 3 ? OLIVE_LINE : LINE}
           />
         ))}
+
+      {/* States: one control drawn four ways. Rest, held, blocked, focused. */}
       {k === 'states' && (
         <>
-          {[0, 1, 2, 3].map((i) => (
-            <circle key={i} cx={22 + i * 30} cy={52} r={13} {...common} className={MARK_LINE} />
-          ))}
-          <circle cx={22} cy={52} r={5} className={MARK_FILL} />
-          <path d="M 39 52 h 4 M 69 52 h 4 M 99 52 h 4" {...common} className={MARK_LINE} />
-          <circle cx={52} cy={52} r={13} {...common} className={MARK_FILL} fillOpacity={0.25} strokeWidth={0} />
+          <rect x={12} y={20} width={44} height={22} rx={6} {...s} className={LINE} />
+          <rect x={76} y={20} width={44} height={22} rx={6} className={OLIVE} />
+          <rect x={12} y={62} width={44} height={22} rx={6} {...s} className={LINE} strokeDasharray="3 4" />
+          <rect x={76} y={62} width={44} height={22} rx={6} {...s} className={LINE} />
+          <rect x={71} y={57} width={54} height={32} rx={10} {...s} className={OLIVE_LINE} />
         </>
       )}
+
+      {/* Families: the taxonomy the index is built from, as a spine. */}
       {k === 'families' && (
         <>
-          <rect x={8} y={18} width={50} height={30} rx={8} {...common} className={MARK_LINE} />
-          <rect x={68} y={18} width={56} height={30} rx={8} {...common} className={MARK_LINE} />
-          <rect x={8} y={58} width={56} height={30} rx={8} {...common} className={MARK_LINE} />
-          <rect x={74} y={58} width={50} height={30} rx={8} {...common} className={MARK_FILL} strokeWidth={0} />
+          <circle cx={13} cy={52} r={5} {...s} className={LINE} />
+          <path d="M 18 52 h 12" {...s} className={LINE} />
+          <path d="M 30 24 v 56" {...s} className={LINE} />
+          <path d="M 30 24 h 14 M 30 52 h 14 M 30 80 h 14" {...s} className={LINE} />
+          <rect x={44} y={15} width={52} height={18} rx={5} {...s} className={LINE} />
+          <rect x={44} y={43} width={70} height={18} rx={5} className={OLIVE} />
+          <rect x={44} y={71} width={58} height={18} rx={5} {...s} className={LINE} />
         </>
       )}
+
+      {/* Templates: finished screens, stacked the way the drawer stacks. */}
       {k === 'templates' && (
         <>
-          <rect x={8} y={12} width={116} height={80} rx={8} {...common} className={MARK_LINE} />
-          <path d="M 8 30 h 116 M 42 30 v 62" {...common} className={MARK_LINE} />
-          <rect x={50} y={40} width={30} height={18} rx={4} className={MARK_FILL} />
-          <path d="M 88 44 h 26 M 50 68 h 64 M 50 78 h 44" {...common} className={MARK_LINE} />
+          <path d="M 34 16 h 72 a 6 6 0 0 1 6 6 v 6" {...s} className={LINE} />
+          <path d="M 24 26 h 84 a 6 6 0 0 1 6 6 v 6" {...s} className={LINE} />
+          <rect x={14} y={36} width={104} height={54} rx={7} {...s} className={LINE} />
+          <path d="M 14 50 h 104 M 44 50 v 40" {...s} className={LINE} />
+          <rect x={52} y={58} width={26} height={14} rx={3} className={OLIVE} />
+          <path d="M 86 65 h 22 M 52 80 h 56" {...s} className={LINE} />
+          <path d="M 22 58 h 14 M 22 66 h 14 M 22 74 h 10" {...s} className={LINE} />
         </>
       )}
+
+      {/* Themes: two treatments, one set of tokens, sharing the middle. */}
       {k === 'themes' && (
         <>
-          <circle cx={66} cy={52} r={34} {...common} className={MARK_LINE} />
-          <path d="M 66 18 a 34 34 0 0 1 0 68 z" className={MARK_FILL} />
-          <path d="M 66 18 v 68" {...common} className={MARK_LINE} />
+          <circle cx={82} cy={52} r={28} className={OLIVE} />
+          <circle cx={50} cy={52} r={28} {...s} className={LINE} />
+          <circle cx={82} cy={52} r={28} {...s} className={OLIVE_LINE} />
         </>
       )}
     </svg>
