@@ -5,12 +5,12 @@
 
 import { Fragment, type ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Check, Minus } from '@phosphor-icons/react'
+import { ArrowRight, Brain, ChatText, Check, Minus, TerminalWindow, type Icon } from '@phosphor-icons/react'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { SystemTierChip } from '../../../_components/SystemTierChip'
+import { AndromedaComponentCard } from '../system/AndromedaComponentCard'
 import { ThemeCompare } from './ThemeCompare'
-import { ComponentFilter } from './ComponentFilter'
 import { Inventory } from './Inventory'
 import { BrainWireframe } from './BrainWireframe'
 import { BENTO_TILES } from './CompareBento'
@@ -20,6 +20,7 @@ import {
   type Family,
   type OverviewComponent,
   type OverviewStats,
+  type OverviewTemplate,
 } from './overview-data'
 
 // Medium buttons are 40px tall with 14px text and 16px side padding.
@@ -63,9 +64,24 @@ const LEDGER_ROWS: { label: string; free: boolean }[] = [
   { label: "The Brain's rule files, ready for your agent", free: false },
 ]
 
-const EXCERPT_MASK = 'linear-gradient(to bottom, #000 50%, transparent)'
-// The Remix card's stand-in when the prompt bundle is missing: decorative lines.
-const PROMPT_LINE_WIDTHS = [92, 78, 86, 0, 88, 64, 82, 70]
+// What the Brain gives an agent, in the order it matters.
+const BRAIN_POINTS: { icon: Icon; title: string; line: string }[] = [
+  {
+    icon: Brain,
+    title: 'Foundations and rules',
+    line: 'Colour, type, spacing and motion, written as rules an agent follows.',
+  },
+  {
+    icon: ChatText,
+    title: 'A remix prompt per component',
+    line: 'Ask for a variation in any AI tool and it stays on the system.',
+  },
+  {
+    icon: TerminalWindow,
+    title: 'One-command install',
+    line: 'The CLI drops components straight into your repo.',
+  },
+]
 
 function Container({ children, className = '' }: { children: ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>{children}</div>
@@ -97,6 +113,63 @@ function WithPremium({ children }: { children: ReactNode }) {
   )
 }
 
+// The template bento: the lead card spans both columns at 16:9, the rest sit
+// at 16:10 beside it.
+function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
+  return (
+    <Link
+      href={`/design-systems/andromeda-pro/templates/${t.folder}`}
+      className={`group flex flex-col rounded-2xl border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
+        lead ? 'md:col-span-2' : ''
+      }`}
+    >
+      <div className={`relative overflow-hidden rounded-xl bg-sand-900 ${lead ? 'aspect-video' : 'aspect-[16/10]'}`}>
+        {t.image ? (
+          <img
+            src={t.image}
+            alt={`${t.name} template`}
+            loading="lazy"
+            decoding="async"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-200 ease-out motion-safe:group-hover:scale-[1.02]"
+          />
+        ) : (
+          // No art yet: a quiet dark panel, never a broken-image glyph.
+          <div
+            aria-hidden
+            className="absolute inset-0 bg-sand-950"
+            style={{
+              backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
+              backgroundSize: '20px 20px',
+            }}
+          />
+        )}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-sand-950/10 dark:ring-sand-50/10"
+        />
+      </div>
+      <div className="flex flex-1 flex-col px-2 pb-2 pt-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="rounded-md bg-sand-200 px-2 py-0.5 text-xs font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
+            Premium template
+          </span>
+          {t.domain ? <span className="text-xs text-sand-600 dark:text-sand-400">{t.domain}</span> : null}
+        </div>
+        <h3 className="mt-3 text-base font-bold text-sand-900 dark:text-sand-50">{t.name}</h3>
+        <p className="mt-1 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{t.blurb}</p>
+        <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-olive-600 transition-colors group-hover:text-olive-800 dark:text-olive-400 dark:group-hover:text-olive-300">
+          View template
+          <ArrowRight
+            weight="regular"
+            aria-hidden
+            className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5"
+          />
+        </span>
+      </div>
+    </Link>
+  )
+}
+
 function LedgerMark({ included, column }: { included: boolean; column: string }) {
   return included ? (
     <>
@@ -115,21 +188,20 @@ export function OverviewB({
   components,
   families,
   stats,
-  promptExcerpt,
   legacyComponents,
 }: {
   components: OverviewComponent[]
   families: Family[]
   stats: OverviewStats
-  promptExcerpt: string | null
   legacyComponents: number
 }) {
   const ledgerRowCount = LEDGER_ROWS.length + 2
-  const templateNames = TEMPLATES.map((t) => t.name)
-  const templateList =
-    templateNames.length > 1
-      ? `${templateNames.slice(0, -1).join(', ')} and ${templateNames[templateNames.length - 1]}`
-      : templateNames.join('')
+  // The curated nine, in the order the curated list sets. A slug missing from
+  // the live metadata is skipped rather than rendering a hole.
+  const featured = CURATED_SLUGS.flatMap((slug) => {
+    const c = components.find((x) => x.slug === slug)
+    return c ? [c] : []
+  })
 
   return (
     <main className="w-full pt-10 sm:pt-16">
@@ -287,105 +359,80 @@ export function OverviewB({
           <WithPremium>the CLI installs all of it, tokens included.</WithPremium>
         </section>
 
-        {/* ── 5. Components with real filters ─────────────────────────── */}
+        {/* ── 5. Components ───────────────────────────────────────── */}
         <section aria-labelledby="ovb-components" className="mt-20">
           <SectionHead
             id="ovb-components"
             overline="Components"
-            title={`${stats.components} components across ${families.length} families.`}
-            sub="Pick a family. Every card opens the component running live, with its variants and states."
+            title={`${stats.components} components. ${stats.variants} variants. All running.`}
+            sub="Forms, tables, charts, overlays and navigation, each with its states worked out. Open any card and use it live."
           />
-          <div className="mt-8">
-            <ComponentFilter components={components} families={families} curated={CURATED_SLUGS} />
+          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {featured.map((c) => (
+              <AndromedaComponentCard
+                key={c.slug}
+                slug={c.slug}
+                name={c.name}
+                description={c.description}
+                variants={c.variants}
+                states={c.states}
+              />
+            ))}
           </div>
-          <div className="mt-6">
+          <div className="mt-8">
             <Link href="/design-systems/andromeda-pro/components" className={BTN_SECONDARY}>
               See all {stats.components} components
+              <ArrowRight weight="regular" aria-hidden className="size-4" />
             </Link>
           </div>
           <WithPremium>the code view and a one-command install on every component.</WithPremium>
         </section>
 
-        {/* ── 6. Built for AI ──────────────────────────────────────────── */}
-        <section aria-labelledby="ovb-ai" className="mt-20">
-          <SectionHead
-            id="ovb-ai"
-            overline="Built for AI"
-            title="Components are the parts. The Brain is the judgment."
-            sub="Two things that make an AI agent build like it knows the system."
-          />
-          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
-            {/* Static cards: only the buttons inside link. */}
-            <div className={`flex flex-col p-5 sm:p-6 ${PANEL}`}>
-              <div className="relative h-[180px] overflow-hidden rounded-xl">
-                <BrainWireframe />
-              </div>
-              <div className="mt-5">
-                <Overline>The Brain</Overline>
-                <h3 className="mt-2 text-lg font-bold text-sand-900 dark:text-sand-50">
-                  Your agent builds in the system, not near it.
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                  Foundations, component rules and skills, written for an AI agent to read before it builds, so
-                  what it makes already matches Andromeda Pro.
-                </p>
-              </div>
-              <div className="mt-auto pt-5">
+        {/* ── 6. The Brain ─────────────────────────────────────────────── */}
+        <section aria-labelledby="ovb-brain" className="mt-20">
+          <div className={`grid grid-cols-1 gap-8 p-6 sm:p-8 md:grid-cols-2 ${PANEL} ${PANEL_SHADOW}`}>
+            <div className="flex flex-col justify-center">
+              <Overline>Built for agents</Overline>
+              <h2
+                id="ovb-brain"
+                className="mt-2 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50"
+              >
+                Your agent reads the rules first.
+              </h2>
+              <p className="mt-3 text-base leading-relaxed text-sand-700 dark:text-sand-300">
+                The Brain holds the foundations, component rules and skills an AI agent reads before it
+                writes a line. Every component also carries its own remix prompt. What your agent builds
+                already matches the system.
+              </p>
+              <ul className="mt-6 flex flex-col gap-4">
+                {BRAIN_POINTS.map(({ icon: PointIcon, title, line }) => (
+                  <li key={title} className="flex gap-3">
+                    <PointIcon
+                      weight="regular"
+                      aria-hidden
+                      className="mt-0.5 size-5 shrink-0 text-olive-600 dark:text-olive-400"
+                    />
+                    <div>
+                      <p className="text-base font-semibold text-sand-900 dark:text-sand-50">{title}</p>
+                      <p className="mt-0.5 text-sm text-sand-600 dark:text-sand-400">{line}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-6 text-sm text-sand-600 dark:text-sand-400">
+                Remix prompts and the CLI install come with Premium.
+              </p>
+              <div className="mt-6">
                 <Link href="/design-systems/andromeda-pro/brain" className={BTN_SECONDARY}>
                   Tour the Brain
+                  <ArrowRight weight="regular" aria-hidden className="size-4" />
                 </Link>
               </div>
             </div>
-
-            <div className={`flex flex-col p-5 sm:p-6 ${PANEL}`}>
-              {/* Same 180px slot as the Brain preview, so the two cards stay
-                  equal. Without the prompt bundle it keeps a neutral stand-in
-                  of prompt lines instead of collapsing. */}
-              <div className="relative h-[180px] overflow-hidden rounded-xl border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
-                {promptExcerpt ? (
-                  <figure className="h-full">
-                    <pre
-                      className="h-full overflow-hidden whitespace-pre-wrap break-words p-4 font-mono text-sm leading-6 text-sand-700 dark:text-sand-300"
-                      style={{ maskImage: EXCERPT_MASK, WebkitMaskImage: EXCERPT_MASK }}
-                    >
-                      {promptExcerpt}
-                    </pre>
-                    <figcaption className="sr-only">The opening lines of the Button remix prompt</figcaption>
-                  </figure>
-                ) : (
-                  <div
-                    aria-hidden
-                    className="flex h-full flex-col gap-3 p-4"
-                    style={{ maskImage: EXCERPT_MASK, WebkitMaskImage: EXCERPT_MASK }}
-                  >
-                    {PROMPT_LINE_WIDTHS.map((w, i) => (
-                      <span
-                        key={i}
-                        className="h-2.5 shrink-0 rounded-full bg-sand-200 dark:bg-sand-800"
-                        style={{ width: `${w}%` }}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-              <div className="mt-5">
-                <Overline>Remix prompts</Overline>
-                <h3 className="mt-2 text-lg font-bold text-sand-900 dark:text-sand-50">
-                  A remix prompt for every component.
-                </h3>
-                <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                  Paste it into any AI tool and ask for a variation. It keeps the tokens, the states and the
-                  spacing.
-                </p>
-              </div>
-              <div className="mt-auto pt-5">
-                <Link href="/design-systems/andromeda-pro/button" className={BTN_SECONDARY}>
-                  View a component
-                </Link>
-              </div>
+            <div className="relative h-60 overflow-hidden rounded-xl md:h-auto md:min-h-[360px]">
+              <BrainWireframe />
             </div>
           </div>
-          <WithPremium>the full rule files and every prompt.</WithPremium>
         </section>
 
         {/* ── 7. Templates ─────────────────────────────────────────────── */}
@@ -393,80 +440,38 @@ export function OverviewB({
           <SectionHead
             id="ovb-templates"
             overline="Templates"
-            title={`${capitalWord(TEMPLATES.length)} templates. Open one and it runs.`}
-            sub={`${templateList}. Preview each one live. Premium installs the whole screen.`}
+            title={`${capitalWord(TEMPLATES.length)} finished screens, built from the system.`}
+            sub="A live signal room, mission telemetry, work orders, capacity planning and sign-in. Open any one and watch it run."
           />
-          <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {TEMPLATES.map((t) => (
-              <Link
-                key={t.slug}
-                href={`/design-systems/andromeda-pro/templates/${t.folder}`}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden bg-sand-950">
-                  {t.image ? (
-                    <img
-                      src={t.image}
-                      alt={`${t.name} template`}
-                      loading="lazy"
-                      decoding="async"
-                      className="absolute inset-0 h-full w-full object-cover"
-                    />
-                  ) : (
-                    <>
-                      <div
-                        aria-hidden
-                        className="absolute inset-0"
-                        style={{
-                          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.05) 1px, transparent 1px)',
-                          backgroundSize: '20px 20px',
-                        }}
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-sm font-semibold text-sand-500">{t.name}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-                <div className="flex flex-1 flex-col p-5">
-                  <span className="self-start rounded-full bg-sand-200 px-2.5 py-1 text-xs font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
-                    Premium template
-                  </span>
-                  <h3 className="mt-3 text-lg font-bold text-sand-900 dark:text-sand-50">{t.name}</h3>
-                  {t.domain ? (
-                    <p className="mt-0.5 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
-                      {t.domain}
-                    </p>
-                  ) : null}
-                  <p className="mt-2 line-clamp-2 text-sm text-sand-600 dark:text-sand-400">{t.blurb}</p>
-                  <span className="mt-auto flex items-center gap-1.5 pt-4 text-sm font-semibold text-olive-600 dark:text-olive-400">
-                    View template
-                    <ArrowRight
-                      weight="regular"
-                      aria-hidden
-                      className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5"
-                    />
-                  </span>
-                </div>
-              </Link>
+          <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+            {TEMPLATES.map((t, i) => (
+              <TemplateCard key={t.slug} t={t} lead={i === 0} />
             ))}
           </div>
         </section>
       </Container>
 
       {/* ── 8. Closing price band ──────────────────────────────────────── */}
-      <section
-        aria-labelledby="ovb-price"
-        className="mt-20 border-y border-sand-200 bg-sand-100 py-12 dark:border-sand-800 dark:bg-sand-900"
-      >
-        <Container className="flex flex-col items-center text-center">
-          <h2 id="ovb-price" className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+      {/* Same closing card as the homepage's final CTA: inside the container,
+          not a full-bleed band. */}
+      <Container className="mt-20">
+        <section
+          aria-labelledby="ovb-price"
+          className="relative overflow-hidden rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
+        >
+          <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
+          </div>
+          <h2
+            id="ovb-price"
+            className="relative text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50"
+          >
             Put Andromeda Pro in your project.
           </h2>
-          <p className="mt-2 text-base text-sand-700 dark:text-sand-300">
+          <p className="relative mt-2 text-base text-sand-700 dark:text-sand-300">
             ${PRICE_MONTH} a month, or ${PRICE_YEAR} a year. Yearly works out to ${PRICE_YEAR_PER_MONTH} a month.
           </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <div className="relative mt-6 flex flex-wrap justify-center gap-3">
             <Link href="/pricing" className={BTN_PRIMARY}>
               Get Premium
             </Link>
@@ -474,7 +479,7 @@ export function OverviewB({
               Explore every component
             </Link>
           </div>
-          <p className="mt-8 text-sm text-sand-600 dark:text-sand-400">
+          <p className="relative mt-8 text-sm text-sand-600 dark:text-sand-400">
             Andromeda Legacy, {legacyComponents} components under the MIT license, stays live and supported.{' '}
             <Link
               href="/design-systems/andromeda"
@@ -483,11 +488,11 @@ export function OverviewB({
               Visit Andromeda Legacy
             </Link>
           </p>
-        </Container>
-      </section>
+        </section>
+      </Container>
 
       {/* ── 9. Footer ──────────────────────────────────────────────────── */}
-      <Container className="pb-10">
+      <Container className="mt-16 pb-10">
         <SiteFooter />
       </Container>
     </main>

@@ -72,7 +72,11 @@ export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
 
 const pro = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-pro')
 
-export const TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
+// The lead card of the template bento spans both columns, so it is listed
+// first and the grid never has to reorder.
+const LEAD_TEMPLATE = 'andromeda-pro-signal-room'
+
+const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
   (t: { slug: string; name: string; domain?: string }) => {
     const file = TEMPLATE_IMAGE_FILE[t.slug]
     return {
@@ -88,3 +92,8 @@ export const TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
     }
   },
 )
+
+export const TEMPLATES: OverviewTemplate[] = [
+  ...BUILT_TEMPLATES.filter((t) => t.slug === LEAD_TEMPLATE),
+  ...BUILT_TEMPLATES.filter((t) => t.slug !== LEAD_TEMPLATE),
+]

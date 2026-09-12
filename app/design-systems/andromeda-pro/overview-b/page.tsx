@@ -6,15 +6,12 @@
 // the components index reads, so no number on the page is typed by hand.
 import type { Metadata } from 'next'
 import { cookies } from 'next/headers'
-import { readFileSync } from 'fs'
-import { join } from 'path'
 import { AndromedaThemeWrap } from '../AndromedaThemeWrap'
 import { ANDROMEDA_COMPONENT_META } from '../../../_lib/andromeda-pro/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as LEGACY_COMPONENT_META } from '../../../_lib/andromeda/andromeda-meta'
 import { CATEGORY } from '../system/categories'
 import { COMPONENT_COUNTS } from '../system/component-counts'
 import { firstSentence } from '../system/first-sentence'
-import { splitProPromptAtPaywall } from '../../../../lib/registry/prompt-blocks'
 import { OverviewB } from './OverviewB'
 import { TEMPLATES, type Family, type OverviewComponent, type OverviewStats } from './overview-data'
 
@@ -22,33 +19,6 @@ export const metadata: Metadata = {
   title: 'Andromeda Pro Overview B',
   description: 'Review variant of the Andromeda Pro overview.',
   robots: { index: false, follow: false },
-}
-
-// The opening prose of one component's remix prompt, for the Remix card. Only
-// the free head is read: the same paywall cut the component page applies to a
-// visitor without Premium, so this excerpt is text that is already public.
-// It stops at the first markdown heading and drops the markdown marks, so it
-// reads as prose rather than an unrendered doc. Returns null when the bundle
-// is absent (a build without it traced), and the card shows its fallback.
-function readPromptExcerpt(sourceName: string): string | null {
-  try {
-    const raw = readFileSync(join(process.cwd(), 'registry-data', '_andromeda-pro-prompts.json'), 'utf8')
-    const { prompts } = JSON.parse(raw) as { prompts: Record<string, string> }
-    const full = prompts[sourceName]
-    if (!full) return null
-    const split = splitProPromptAtPaywall(full)
-    if (!split) return null
-    const opening = split.head.split(/^#{1,6}\s/m)[0] ?? ''
-    const paragraphs = opening
-      .replace(/\*\*|__|`/g, '')
-      .replace(/\s*[—–]\s*/g, ', ')
-      .split(/\n\s*\n/)
-      .map((p) => p.replace(/\s+/g, ' ').trim())
-      .filter(Boolean)
-    return paragraphs.length ? paragraphs.join('\n\n') : null
-  } catch {
-    return null
-  }
 }
 
 export default async function AndromedaOverviewBPage() {
@@ -88,7 +58,6 @@ export default async function AndromedaOverviewBPage() {
         components={components}
         families={families}
         stats={stats}
-        promptExcerpt={readPromptExcerpt('Button')}
         // Same source the Legacy overview counts from.
         legacyComponents={LEGACY_COMPONENT_META.length}
       />
