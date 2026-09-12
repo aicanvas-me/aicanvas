@@ -54,12 +54,16 @@ const EDGE_STEP = 9
 const DOC_STEP = 46
 const EDGES_TOP = 3
 const EDGES_BETWEEN = 2
-const EDGES_BOTTOM = 22
-const BODY_H = 168
-// How far the folders in front travel when one opens. The room they move into
-// is the run of edges at the front of the drawer, which slide out of the
-// bottom: the drawer keeps its height, so opening one never moves the page.
-const REVEAL = 172
+const EDGES_BOTTOM = 16
+const BODY_H = 150
+// Opening a folder leaves it where it is and slides everything in front of it
+// REVEAL down and out of the bottom of the drawer. The two alternatives both
+// failed: lifting the folder carries its body up with the tab, so whatever
+// covered it goes on covering it, and lifting it clear of the stack puts it
+// over every other tab, so no second folder can be reached. The cost of
+// pushing is depth: the drawer has to be deep enough to hold one open folder,
+// which is what the run of edges at the front is for.
+const REVEAL = 154
 
 // The taper: the folder at the back of the drawer is this share of the width,
 // the one at the front runs the full width.
