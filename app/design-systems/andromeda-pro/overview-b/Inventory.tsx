@@ -54,10 +54,12 @@ const EDGE_STEP = 9
 const DOC_STEP = 46
 const EDGES_TOP = 3
 const EDGES_BETWEEN = 2
-const EDGES_BOTTOM = 3
-const BODY_H = 200
-// Where an opened folder comes to rest, clear of the folders at the back.
-const OPEN_Y = 30
+const EDGES_BOTTOM = 22
+const BODY_H = 168
+// How far the folders in front travel when one opens. The room they move into
+// is the run of edges at the front of the drawer, which slide out of the
+// bottom: the drawer keeps its height, so opening one never moves the page.
+const REVEAL = 172
 
 // The taper: the folder at the back of the drawer is this share of the width,
 // the one at the front runs the full width.
@@ -114,13 +116,21 @@ function Tab({ number, label }: { number: number; label: string }) {
 export function Inventory({ stats }: { stats: OverviewStats }) {
   const reduce = useReducedMotion() ?? false
   const [open, setOpen] = useState<string | null>(null)
-  const { rows, height } = layout()
+  const { rows, height: stackHeight } = layout()
+  // Opening a folder pushes the folders in FRONT of it down and leaves it where
+  // it is. Lifting the folder instead looked right near the front of the drawer
+  // and revealed nothing at the back, because the body rose with the tab and
+  // the folders covering it went on covering it. Raising the open folder over
+  // the stack fixed the reveal and broke the drawer: it covered every other
+  // tab, so no second folder could be reached.
+  const openRow = rows.findIndex((r) => r.doc !== null && r.doc.key === open)
+  const travel = reduce ? { duration: 0 } : { duration: 0.42, ease: [0.22, 1, 0.36, 1] as const }
   let docIndex = -1
 
   return (
     <div className="select-none">
-      {/* The drawer: the two walls follow the taper of the stack inside it. */}
-      <div className="relative" style={{ height }}>
+      <div className="relative" style={{ height: stackHeight }}>
+        {/* The drawer: the walls follow the taper of the stack. */}
         <svg
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
@@ -137,19 +147,23 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
 
         <div className="absolute inset-0 overflow-hidden">
           {rows.map((row, i) => {
+            const pushed = openRow >= 0 && i > openRow
             const common = {
               position: 'absolute' as const,
               left: `${(100 - row.width) / 2}%`,
               width: `${row.width}%`,
               zIndex: i + 1,
+              top: row.y,
             }
 
             if (!row.doc) {
               return (
-                <div
+                <motion.div
                   key={`edge-${i}`}
                   aria-hidden
-                  style={{ ...common, top: row.y, height: BODY_H }}
+                  style={{ ...common, height: BODY_H }}
+                  animate={{ y: pushed ? REVEAL : 0 }}
+                  transition={travel}
                   className="rounded-t-2xl border border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900"
                 />
               )
@@ -159,14 +173,13 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
             const d = docIndex
             const doc = row.doc
             const isOpen = open === doc.key
-            const rise = isOpen ? OPEN_Y - row.y : 0
 
             return (
               <motion.div
                 key={doc.key}
-                style={{ ...common, top: row.y }}
-                animate={{ y: rise }}
-                transition={reduce ? { duration: 0 } : { duration: 0.42, ease: [0.22, 1, 0.36, 1] }}
+                style={common}
+                animate={{ y: pushed ? REVEAL : 0 }}
+                transition={travel}
               >
                 <button
                   type="button"
