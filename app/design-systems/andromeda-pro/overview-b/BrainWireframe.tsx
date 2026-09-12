@@ -3,8 +3,9 @@
 // A slow-spinning wireframe of the Brain model for the Built for AI card. The
 // same brain.glb as the Brain page, reduced to a spin: no drag, no labels.
 // The crown is a light neutral and the lines fade down through brand 300 and
-// 400 to brand-500 at the stem. Lines add where they cross, so the dense core
-// glows brighter on its own. Fails silent (the ground
+// 400 to brand-500 at the stem. Lines blend normally rather than adding, so
+// dense areas settle on the ramp colour instead of burning to white or flat
+// cyan and the fade stays soft. Fails silent (the ground
 // only) when WebGL or the model cannot load.
 //
 // The loop only runs while the card is on screen, and under reduced motion it
@@ -25,7 +26,7 @@ const BRAIN_VOID = '#0E0E0F'
 const BRAND = tokens.color.brand
 const NEUTRAL = tokens.color.neutral
 // Stem to crown: blue at the base, a light neutral over the top.
-const LINE_STOPS = [BRAND[500], BRAND[400], BRAND[300], NEUTRAL[1100], NEUTRAL[1200]]
+const LINE_STOPS = [BRAND[500], BRAND[400], BRAND[300], NEUTRAL[1000], NEUTRAL[1100]]
 
 const withAlpha = (oklch: string, alpha: number) => oklch.replace(')', ` / ${alpha})`)
 
@@ -169,14 +170,12 @@ export function BrainWireframe() {
             const size = box.getSize(new THREE.Vector3())
             const v = new THREE.Vector3()
             const c = new THREE.Color()
-            // One material for every mesh: unlit, so the ramp reads exactly,
-            // and additive, so crossings brighten.
+            // One material for every mesh: unlit, so the ramp reads exactly.
             const material = new THREE.MeshBasicMaterial({
               vertexColors: true,
               wireframe: true,
               transparent: true,
-              opacity: 0.6,
-              blending: THREE.AdditiveBlending,
+              opacity: 0.7,
               depthWrite: false,
             })
             model.traverse((o) => {
