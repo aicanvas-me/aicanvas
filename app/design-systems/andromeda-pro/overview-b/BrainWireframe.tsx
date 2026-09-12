@@ -2,8 +2,8 @@
 
 // A slow-spinning wireframe of the Brain model for the Built for AI card. The
 // same brain.glb as the Brain page, reduced to a spin: no drag, no labels.
-// The crown is a light neutral and the lines fade down through brand 300 and
-// 400 to brand-500 at the stem. Lines blend normally rather than adding, so
+// The crown is a light neutral and the lines fade down through brand 300 to
+// brand 400 at the stem. Lines blend normally rather than adding, so
 // dense areas settle on the ramp colour instead of burning to white or flat
 // cyan and the fade stays soft. Fails silent (the ground
 // only) when WebGL or the model cannot load.
@@ -26,14 +26,14 @@ const BRAIN_VOID = '#0E0E0F'
 const BRAND = tokens.color.brand
 const NEUTRAL = tokens.color.neutral
 // Stem to crown: blue at the base, a light neutral over the top.
-const LINE_STOPS = [BRAND[500], BRAND[400], BRAND[300], NEUTRAL[1000], NEUTRAL[1100]]
+const LINE_STOPS = [BRAND[400], BRAND[300], NEUTRAL[1100], NEUTRAL[1200]]
 
 const withAlpha = (oklch: string, alpha: number) => oklch.replace(')', ` / ${alpha})`)
 
 // Barely-there brand light behind the model: a glow where the brain sits and
 // two faint sweeps from opposite corners, over the void.
 const GROUND = [
-  `radial-gradient(ellipse 60% 55% at 50% 48%, ${withAlpha(BRAND[500], 0.2)} 0%, transparent 70%)`,
+  `radial-gradient(ellipse 60% 55% at 50% 48%, ${withAlpha(BRAND[500], 0.3)} 0%, transparent 70%)`,
   `radial-gradient(ellipse 80% 70% at 0% 0%, ${withAlpha(BRAND[400], 0.1)} 0%, transparent 60%)`,
   `radial-gradient(ellipse 70% 60% at 100% 100%, ${withAlpha(BRAND[500], 0.12)} 0%, transparent 60%)`,
   BRAIN_VOID,
@@ -175,7 +175,7 @@ export function BrainWireframe() {
               vertexColors: true,
               wireframe: true,
               transparent: true,
-              opacity: 0.7,
+              opacity: 1,
               depthWrite: false,
             })
             model.traverse((o) => {
