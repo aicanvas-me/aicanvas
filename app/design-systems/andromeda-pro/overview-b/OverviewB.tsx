@@ -208,16 +208,18 @@ export function OverviewB({
       {/* ── 1. Hero ─────────────────────────────────────────── */}
       <Container>
         <section aria-labelledby="ovb-hero" className="max-w-3xl">
-          <div className="flex items-center gap-2">
-            <Overline>Design system</Overline>
+          <Overline>Design system</Overline>
+          {/* Same hero row as Legacy: the chip sits beside the h1, not inside
+              it, so the heading stays the system's name alone. */}
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <h1
+              id="ovb-hero"
+              className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl"
+            >
+              Andromeda Pro
+            </h1>
             <SystemTierChip tier="pro" />
           </div>
-          <h1
-            id="ovb-hero"
-            className="mt-3 text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl"
-          >
-            Andromeda Pro
-          </h1>
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
             See all of it running. Take it home with Premium.
           </p>
