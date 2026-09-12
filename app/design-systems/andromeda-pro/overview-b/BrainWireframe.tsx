@@ -2,9 +2,9 @@
 
 // A slow-spinning wireframe of the Brain model for the Built for AI card. The
 // same brain.glb as the Brain page, reduced to a spin: no drag, no labels.
-// Painted in Andromeda Pro's brand ramp: brand-500 carries the mass and the
-// lines lift through 400 and 300 to 200 toward the crown. Lines add where they
-// cross, so the dense core glows brighter on its own. Fails silent (the ground
+// The crown is a light neutral and the lines fade down through brand 300 and
+// 400 to brand-500 at the stem. Lines add where they cross, so the dense core
+// glows brighter on its own. Fails silent (the ground
 // only) when WebGL or the model cannot load.
 //
 // The loop only runs while the card is on screen, and under reduced motion it
@@ -20,11 +20,12 @@ import { tokens } from '../../../lib/andromeda-pro.generated'
 const BRAIN_MODEL_URL = '/models/brain.glb'
 const BRAIN_VOID = '#0E0E0F'
 
-// The brand ramp is a primitive, the same value in both themes, so reading it
-// once from tokens.ts is safe here: the card is always drawn on the dark void.
+// Primitives read once from tokens.ts. Safe here because the card is always
+// drawn on the dark void, so the dark-authored neutral stops are the right ink.
 const BRAND = tokens.color.brand
-// Base to crown. Most of the model sits low in the ramp.
-const LINE_STOPS = [BRAND[500], BRAND[500], BRAND[400], BRAND[300], BRAND[200]]
+const NEUTRAL = tokens.color.neutral
+// Stem to crown: blue at the base, a light neutral over the top.
+const LINE_STOPS = [BRAND[500], BRAND[400], BRAND[300], NEUTRAL[1100], NEUTRAL[1200]]
 
 const withAlpha = (oklch: string, alpha: number) => oklch.replace(')', ` / ${alpha})`)
 
@@ -174,7 +175,7 @@ export function BrainWireframe() {
               vertexColors: true,
               wireframe: true,
               transparent: true,
-              opacity: 0.75,
+              opacity: 0.6,
               blending: THREE.AdditiveBlending,
               depthWrite: false,
             })
@@ -188,11 +189,10 @@ export function BrainWireframe() {
               const colors = new Float32Array(pos.count * 3)
               for (let i = 0; i < pos.count; i++) {
                 v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld)
-                // Height carries most of the ramp; a little front-to-back
-                // depth makes the shades drift as the model turns.
+                // Height alone: the spin turns around the vertical axis, so a
+                // top-to-bottom fade holds still while the model turns.
                 const ny = (v.y - box.min.y) / (size.y || 1)
-                const nx = (v.x - box.min.x) / (size.x || 1)
-                colorAt(ny * 0.75 + nx * 0.25, c).toArray(colors, i * 3)
+                colorAt(ny, c).toArray(colors, i * 3)
               }
               geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
               mesh.geometry = geometry
