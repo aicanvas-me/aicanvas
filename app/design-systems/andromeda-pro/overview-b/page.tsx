@@ -56,7 +56,6 @@ export default async function AndromedaOverviewBPage() {
     <AndromedaThemeWrap initialTheme={siteTheme}>
       <OverviewB
         components={components}
-        families={families}
         stats={stats}
         // Same source the Legacy overview counts from.
         legacyComponents={LEGACY_COMPONENT_META.length}

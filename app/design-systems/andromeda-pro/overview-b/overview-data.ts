@@ -47,15 +47,15 @@ export const CURATED_SLUGS = [
 
 const TEMPLATE_BLURBS: Record<string, string> = {
   'andromeda-pro-mission-control':
-    'Spacecraft telemetry: live altitude, vehicle roster, comms log, and a system-status readout in one mission view.',
+    'Spacecraft telemetry: live altitude, a vehicle roster, a comms log and a system-status readout in one mission view.',
   'andromeda-pro-service-order':
-    'A field-service work order: an SLA gauge, line items, and order metadata.',
+    'A field-service work order: an SLA gauge, line items and order metadata.',
   'andromeda-pro-resource-planning':
-    'Capacity, allocation trend, and request triage across teams on one planning board.',
+    'Capacity, allocation trend and request triage across teams on one planning board.',
   'andromeda-pro-signal-room':
-    'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
+    'A broadcast control room: now transmitting, channel levels, mixes and a transport bar.',
   'andromeda-pro-sign-in':
-    'An authentication screen: credential entry, provider options, and inline validation.',
+    'An authentication screen: provider sign-in, email and password fields and a forgotten-password link.',
 }
 
 // The card art slot for each template, a filename in ImageKit's

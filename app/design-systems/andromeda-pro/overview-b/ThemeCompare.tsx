@@ -13,7 +13,7 @@
 // a layer's local set.
 
 import { useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react'
-import { motion, useMotionValue, useMotionValueEvent, useReducedMotion, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useMotionValueEvent, useTransform } from 'framer-motion'
 import { DotsSixVertical } from '@phosphor-icons/react'
 import { andromedaLightVars, andromedaVars } from '../../../lib/andromeda-pro-helpers.generated'
 import { CompareBento } from './CompareBento'
@@ -54,7 +54,6 @@ const clamp = (v: number) => Math.min(100, Math.max(0, v))
 const LINE_SHADOW = 'shadow-[0_1px_2px_rgba(0,0,0,0.30),0_4px_12px_rgba(0,0,0,0.25)]'
 
 export function ThemeCompare() {
-  const reduce = useReducedMotion()
   const descId = useId()
   const pos = useMotionValue(50)
   const [now, setNow] = useState(50)

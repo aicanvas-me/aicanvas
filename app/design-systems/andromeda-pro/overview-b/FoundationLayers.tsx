@@ -97,7 +97,7 @@ export function FoundationLayers() {
       </div>
 
       <ol className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]">
-        <LayerCard n={1} title="Primitives" caption="Raw values: a grey ladder and four hue families.">
+        <LayerCard n={1} title="Primitives" caption="Raw values: a gray ladder and four hue families.">
           <div className="flex w-full gap-1">
             {RAMP_STOPS.map((stop) => (
               <div key={stop} className="flex min-w-0 flex-1 flex-col items-center gap-1.5">
@@ -141,7 +141,7 @@ export function FoundationLayers() {
           </div>
         </LayerCard>
         <Step />
-        <LayerCard n={3} title="Component wires" caption="Each part points at one role.">
+        <LayerCard n={3} title="Component wires" caption="A variable inside the component points at one role.">
           <Badge variant="accent">Live</Badge>
         </LayerCard>
       </ol>

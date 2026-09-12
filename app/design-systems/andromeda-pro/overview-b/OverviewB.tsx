@@ -19,7 +19,6 @@ import { BENTO_TILES } from './CompareBento'
 import {
   CURATED_SLUGS,
   TEMPLATES,
-  type Family,
   type OverviewComponent,
   type OverviewStats,
   type OverviewTemplate,
@@ -71,7 +70,7 @@ const BRAIN_POINTS: { icon: Icon; title: string; line: string }[] = [
   {
     icon: Brain,
     title: 'Foundations and rules',
-    line: 'Colour, type, spacing and motion, written as rules an agent follows.',
+    line: 'Color, type, spacing and motion, written as rules an agent follows.',
   },
   {
     icon: ChatText,
@@ -190,12 +189,10 @@ function LedgerMark({ included, column }: { included: boolean; column: string })
 
 export function OverviewB({
   components,
-  families,
   stats,
   legacyComponents,
 }: {
   components: OverviewComponent[]
-  families: Family[]
   stats: OverviewStats
   legacyComponents: number
 }) {
@@ -230,7 +227,7 @@ export function OverviewB({
           <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
             {stats.components} components, {stats.variants} variants and {stats.templates} templates for
             dashboards and control rooms, in light and dark. Every one runs on this site for free. Premium adds
-            the code, the CLI install, the remix prompts and the templates.
+            the code, the CLI install, the remix prompts, the Brain&apos;s rule files and template installs.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/pricing" className={BTN_PRIMARY}>
@@ -355,7 +352,7 @@ export function OverviewB({
                 <span className="hidden sm:inline">
                   {capitalWord(BENTO_TILES.length)} tiles, {numberWord(countParts(BENTO_TILES))} components
                 </span>
-                , two themes, one set of tokens. Drag the line and every one switches on the same values.
+                , two themes, one set of tokens. Drag the line to switch every one at once.
               </>
             }
           />
@@ -408,8 +405,8 @@ export function OverviewB({
               </h2>
               <p className="mt-3 text-base leading-relaxed text-sand-700 dark:text-sand-300">
                 The Brain holds the foundations, component rules and skills an AI agent reads before it
-                writes a line. Every component also carries its own remix prompt. What your agent builds
-                already matches the system.
+                writes a line. Every component also carries its own remix prompt, so what your agent builds
+                stays on the system.
               </p>
               <ul className="mt-6 flex flex-col gap-4">
                 {BRAIN_POINTS.map(({ icon: PointIcon, title, line }) => (
@@ -427,7 +424,7 @@ export function OverviewB({
                 ))}
               </ul>
               <p className="mt-6 text-sm text-sand-600 dark:text-sand-400">
-                Remix prompts and the CLI install come with Premium.
+                The Brain&apos;s rule files, remix prompts and the CLI install come with Premium.
               </p>
               <div className="mt-6">
                 <Link href="/design-systems/andromeda-pro/brain" className={BTN_SECONDARY}>
