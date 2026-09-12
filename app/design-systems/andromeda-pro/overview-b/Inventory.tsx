@@ -215,8 +215,10 @@ const TAB_X = ['16%', '44%', '24%', '52%', '20%', '48%']
 const TAB_PATH =
   'M 0 34 C 7 34 11 30 14 23 L 18 11 C 20 4 25 0 32 0 L 176 0 C 183 0 188 4 190 11 L 194 23 C 197 30 201 34 208 34'
 
+// Two layers, light straight overhead so x is 0, tinted to the sand hue
+// rather than black.
 const OPEN_SHADOW =
-  'shadow-[0_2px_4px_rgba(0,0,0,0.08),0_18px_40px_rgba(0,0,0,0.14)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.45),0_18px_40px_rgba(0,0,0,0.60)]'
+  'shadow-[0_2px_4px_rgba(24,24,40,0.10),0_18px_40px_rgba(24,24,40,0.16)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.45),0_18px_40px_rgba(0,0,0,0.60)]'
 
 function Tab({ number, label, lit }: { number: number; label: string; lit: boolean }) {
   return (
@@ -288,10 +290,15 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
           />
         </svg>
 
-        {/* clip, not hidden: an overflow-hidden box is still programmatically
-            scrollable, and focusing a document inside it scrolled the whole
-            stack out of place on the keyboard path. */}
-        <div className="absolute inset-0 overflow-clip">
+        {/* Clipped down the page only. The stack has to cut off the filed
+            documents at the bottom, but clipping sideways as well sliced the
+            open card's shadow off at both edges. Nothing here is ever wider
+            than the drawer, so the horizontal axis has nothing to clip.
+            `clip` rather than `hidden`: a hidden box is still programmatically
+            scrollable, and focusing a document inside one scrolled the whole
+            stack out of place on the keyboard path. It is also the one
+            overflow value that lets the other axis stay visible. */}
+        <div className="absolute inset-0 overflow-x-visible overflow-y-clip">
           {DOCS.map((doc, i) => {
             const y = i * PITCH
             const isOpen = open === doc.key
