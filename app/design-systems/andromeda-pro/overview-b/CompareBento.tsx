@@ -5,7 +5,10 @@
 // Objects: those re-resolve their ink from documentElement and would not follow
 // a layer. Tiles paint from the layer's tokens, never from the site chrome.
 //
-// Phones show three tiles (Button, Toggle, Table) so the stage stays short.
+// Phones show three tiles (Buttons, Controls, Data) so the stage stays short.
+//
+// A tile is named for what it holds, not for its lead component: the tile with
+// a switch, a checkbox and a radio is Controls, not Toggle.
 
 import type { CSSProperties, ReactNode } from 'react'
 import { GearSix } from '@phosphor-icons/react'
@@ -40,12 +43,12 @@ import {
 // What each tile shows. The section copy counts tiles and components from this
 // list, so the numbers on the page always match the stage.
 export const BENTO_TILES = [
-  { name: 'Button', parts: ['Button', 'IconButton'], onPhone: true },
-  { name: 'Input', parts: ['Input', 'SearchField'], onPhone: false },
-  { name: 'Toggle', parts: ['Toggle', 'Checkbox', 'Radio'], onPhone: true },
-  { name: 'Stat Tile', parts: ['StatTile', 'ProgressBar'], onPhone: false },
-  { name: 'Table', parts: ['Table', 'Badge'], onPhone: true },
-  { name: 'Tag', parts: ['Tag', 'Avatar', 'Alert'], onPhone: false },
+  { name: 'Buttons', parts: ['Button', 'IconButton'], onPhone: true },
+  { name: 'Fields', parts: ['Input', 'SearchField'], onPhone: false },
+  { name: 'Controls', parts: ['Toggle', 'Checkbox', 'Radio'], onPhone: true },
+  { name: 'Metrics', parts: ['StatTile', 'ProgressBar'], onPhone: false },
+  { name: 'Data', parts: ['Table', 'Badge'], onPhone: true },
+  { name: 'Status', parts: ['Tag', 'Avatar', 'Alert'], onPhone: false },
 ] as const
 
 type TileName = (typeof BENTO_TILES)[number]['name']
@@ -63,12 +66,23 @@ const FOCUS_LOOK: CSSProperties = {
   boxShadow: '0 0 0 var(--andromeda-border-width, 1px) var(--andromeda-focus-ring)',
 }
 
+// One row per state, never the same badge twice: four rows of Online proved
+// nothing the first row had not already shown.
 const NODES = [
   { name: 'orion-01', status: 'Online', variant: 'success' },
-  { name: 'orion-02', status: 'Online', variant: 'success' },
   { name: 'vega-03', status: 'Degraded', variant: 'warning' },
   { name: 'lyra-04', status: 'Down', variant: 'fault' },
 ] as const
+
+// A caption for a run of controls. Sans, one rung under the tile's own mono
+// label, so a group reads as a group without a second box or rule.
+function GroupLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-xs" style={{ color: 'var(--at-text-muted)' }}>
+      {children}
+    </p>
+  )
+}
 
 function Tile({ name, children }: { name: TileName; children: ReactNode }) {
   const onPhone = BENTO_TILES.find((t) => t.name === name)?.onPhone ?? true
@@ -88,7 +102,7 @@ function Tile({ name, children }: { name: TileName; children: ReactNode }) {
 export function CompareBento() {
   return (
     <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3">
-      <Tile name="Button">
+      <Tile name="Buttons">
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm">Deploy</Button>
           <Button size="sm" variant="outline">
@@ -101,29 +115,32 @@ export function CompareBento() {
         </div>
       </Tile>
 
-      <Tile name="Input">
+      <Tile name="Fields">
         <Input label="Callsign" defaultValue="ORION-7" size="sm" style={FOCUS_LOOK} />
         <SearchField size="sm" placeholder="Search nodes" ariaLabel="Search nodes" />
       </Tile>
 
-      <Tile name="Toggle">
+      <Tile name="Controls">
         <div className="flex flex-col gap-2.5">
           <Toggle label="Telemetry" defaultChecked />
           <Toggle label="Autopilot" />
           <Checkbox label="Log every event" defaultChecked />
-          <RadioGroup defaultValue="primary">
-            <Radio value="primary" label="Primary link" />
-            <Radio value="backup" label="Backup link" />
+        </div>
+        <div className="flex flex-col gap-2">
+          <GroupLabel>Uplink route</GroupLabel>
+          <RadioGroup defaultValue="primary" className="flex-row gap-4" aria-label="Uplink route">
+            <Radio value="primary" label="Primary" />
+            <Radio value="backup" label="Backup" />
           </RadioGroup>
         </div>
       </Tile>
 
-      <Tile name="Stat Tile">
+      <Tile name="Metrics">
         <StatTile label="Uplink" value={98.4} unit="%" delta={1.2} deltaLabel="vs last hour" />
         <ProgressBar label="Buffer" value={62} />
       </Tile>
 
-      <Tile name="Table">
+      <Tile name="Data">
         <TableStyles />
         <Table>
           <TableHead>
@@ -145,16 +162,19 @@ export function CompareBento() {
         </Table>
       </Tile>
 
-      <Tile name="Tag">
+      <Tile name="Status">
         <div className="flex flex-wrap gap-2">
           <Tag>eu-west</Tag>
           <Tag variant="accent">primary</Tag>
           <Tag variant="warning">canary</Tag>
         </div>
-        <div className="flex items-center gap-2">
-          <Avatar name="Ada Park" status="online" size="sm" />
-          <Avatar name="Leo Moss" status="caution" size="sm" />
-          <Avatar name="Rin Sato" size="sm" />
+        <div className="flex flex-col gap-2">
+          <GroupLabel>On call</GroupLabel>
+          <div className="flex items-center gap-3">
+            <Avatar name="Ada Park" status="online" size="sm" />
+            <Avatar name="Leo Moss" status="caution" size="sm" />
+            <Avatar name="Rin Sato" status="offline" size="sm" />
+          </div>
         </div>
         <Alert variant="accent">
           <AlertContent>
