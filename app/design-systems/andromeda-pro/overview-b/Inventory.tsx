@@ -24,6 +24,7 @@ type Doc = {
   key: keyof OverviewStats
   label: string
   line: string
+  note: string
 }
 
 const DOCS: Doc[] = [
@@ -31,37 +32,120 @@ const DOCS: Doc[] = [
     key: 'components',
     label: 'components',
     line: 'Forms, tables, charts, overlays and navigation, each one with its states worked out.',
+    note: 'Open any of them here and use it live before you pay for anything.',
   },
   {
     key: 'variants',
     label: 'variants',
     line: 'Sizes and tones already drawn, so none of it is left for you to improvise.',
+    note: 'Each one is a real prop on the component, not a picture of an option.',
   },
   {
     key: 'states',
     label: 'states',
-    line: 'Hover, focus, disabled, loading and error, specified on the components that have them.',
+    line: 'Hover, focus, disabled, loading and error, on the components that have them.',
+    note: 'Keyboard focus is drawn as part of the system, not left to the browser.',
   },
   {
     key: 'families',
     label: 'families',
     line: 'Forms, data display, charts, overlays, feedback, actions, navigation, surfaces and more.',
+    note: 'The same taxonomy the components index is built from, not a label added after.',
   },
   {
     key: 'templates',
     label: 'templates',
     line: 'Mission control, service orders, resource planning, the signal room and sign-in.',
+    note: 'Whole screens assembled out of the system, running, not screenshots of screens.',
   },
   {
     key: 'themes',
     label: 'themes',
     line: 'Light and dark off one set of OKLCH tokens, with no part redrawn for either.',
+    note: 'Three layers of tokens retint every surface, border and state together.',
   },
 ]
 
+// One minimal drawing per document, in the same two inks as the drawer: a thin
+// neutral line for the structure and a single olive mark for the count itself.
+// Line art rather than an icon, so it reads as a diagram of the number.
+const MARK_LINE = 'stroke-sand-400 dark:stroke-sand-600'
+const MARK_FILL = 'fill-olive-500'
+
+function Mark({ k }: { k: keyof OverviewStats }) {
+  const common = { fill: 'none', strokeWidth: 1.25, vectorEffect: 'non-scaling-stroke' as const }
+  return (
+    <svg viewBox="0 0 132 104" aria-hidden className="h-[104px] w-[132px]">
+      {k === 'components' &&
+        [0, 1, 2].map((r) =>
+          [0, 1, 2].map((c) => (
+            <rect
+              key={`${r}-${c}`}
+              x={10 + c * 40}
+              y={10 + r * 30}
+              width={32}
+              height={22}
+              rx={5}
+              {...common}
+              className={r === 1 && c === 1 ? MARK_FILL : MARK_LINE}
+              strokeWidth={r === 1 && c === 1 ? 0 : 1.25}
+            />
+          )),
+        )}
+      {k === 'variants' &&
+        [0, 1, 2, 3, 4].map((i) => (
+          <rect
+            key={i}
+            x={10 + i * 24}
+            y={72 - i * 13}
+            width={16}
+            height={20 + i * 13}
+            rx={4}
+            {...common}
+            className={i === 4 ? MARK_FILL : MARK_LINE}
+            strokeWidth={i === 4 ? 0 : 1.25}
+          />
+        ))}
+      {k === 'states' && (
+        <>
+          {[0, 1, 2, 3].map((i) => (
+            <circle key={i} cx={22 + i * 30} cy={52} r={13} {...common} className={MARK_LINE} />
+          ))}
+          <circle cx={22} cy={52} r={5} className={MARK_FILL} />
+          <path d="M 39 52 h 4 M 69 52 h 4 M 99 52 h 4" {...common} className={MARK_LINE} />
+          <circle cx={52} cy={52} r={13} {...common} className={MARK_FILL} fillOpacity={0.25} strokeWidth={0} />
+        </>
+      )}
+      {k === 'families' && (
+        <>
+          <rect x={8} y={18} width={50} height={30} rx={8} {...common} className={MARK_LINE} />
+          <rect x={68} y={18} width={56} height={30} rx={8} {...common} className={MARK_LINE} />
+          <rect x={8} y={58} width={56} height={30} rx={8} {...common} className={MARK_LINE} />
+          <rect x={74} y={58} width={50} height={30} rx={8} {...common} className={MARK_FILL} strokeWidth={0} />
+        </>
+      )}
+      {k === 'templates' && (
+        <>
+          <rect x={8} y={12} width={116} height={80} rx={8} {...common} className={MARK_LINE} />
+          <path d="M 8 30 h 116 M 42 30 v 62" {...common} className={MARK_LINE} />
+          <rect x={50} y={40} width={30} height={18} rx={4} className={MARK_FILL} />
+          <path d="M 88 44 h 26 M 50 68 h 64 M 50 78 h 44" {...common} className={MARK_LINE} />
+        </>
+      )}
+      {k === 'themes' && (
+        <>
+          <circle cx={66} cy={52} r={34} {...common} className={MARK_LINE} />
+          <path d="M 66 18 a 34 34 0 0 1 0 68 z" className={MARK_FILL} />
+          <path d="M 66 18 v 68" {...common} className={MARK_LINE} />
+        </>
+      )}
+    </svg>
+  )
+}
+
 const PITCH = 46
 const TAB_H = 34
-const BODY_H = 150
+const BODY_H = 196
 // The sliver of the front document that shows below its own tab at rest.
 const FRONT_LIP = 16
 const LAST_Y = PITCH * (DOCS.length - 1)
@@ -207,11 +291,21 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
                     animate={{ opacity: isOpen ? 1 : 0 }}
                     transition={travel}
                   >
-                    <span className="block text-lg font-bold text-sand-900 dark:text-sand-50">
-                      {stats[doc.key]} {doc.label}
-                    </span>
-                    <span className="mt-2 block max-w-lg text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                      {doc.line}
+                    <span className="flex items-center justify-between gap-8">
+                      <span className="block min-w-0">
+                        <span className="block text-lg font-bold text-sand-900 dark:text-sand-50">
+                          {stats[doc.key]} {doc.label}
+                        </span>
+                        <span className="mt-2 block max-w-md text-sm leading-relaxed text-sand-700 dark:text-sand-300">
+                          {doc.line}
+                        </span>
+                        <span className="mt-2 block max-w-md text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                          {doc.note}
+                        </span>
+                      </span>
+                      <span className="hidden shrink-0 sm:block">
+                        <Mark k={doc.key} />
+                      </span>
                     </span>
                   </motion.span>
                 </motion.span>
