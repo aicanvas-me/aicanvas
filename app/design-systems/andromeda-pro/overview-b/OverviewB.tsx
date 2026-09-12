@@ -11,6 +11,7 @@ import { SiteFooter } from '../../../components/SiteFooter'
 import { SystemTierChip } from '../../../_components/SystemTierChip'
 import { ThemeCompare } from './ThemeCompare'
 import { ComponentFilter } from './ComponentFilter'
+import { Inventory } from './Inventory'
 import { BrainWireframe } from './BrainWireframe'
 import { BENTO_TILES } from './CompareBento'
 import {
@@ -123,12 +124,6 @@ export function OverviewB({
   promptExcerpt: string | null
   legacyComponents: number
 }) {
-  const statCells = [
-    { value: stats.components, label: 'components' },
-    { value: stats.variants, label: 'variants' },
-    { value: stats.templates, label: 'templates' },
-    { value: stats.themes, label: 'themes' },
-  ]
   const ledgerRowCount = LEDGER_ROWS.length + 2
   const templateNames = TEMPLATES.map((t) => t.name)
   const templateList =
@@ -138,57 +133,51 @@ export function OverviewB({
 
   return (
     <main className="w-full pt-10 sm:pt-16">
-      {/* ── 1. Hero with inventory ─────────────────────────────────────── */}
+      {/* ── 1. Hero ─────────────────────────────────────────── */}
       <Container>
-        <section aria-labelledby="ovb-hero" className="grid gap-8 lg:grid-cols-12 lg:items-center">
-          <div className="lg:col-span-7">
-            <div className="flex items-center gap-2">
-              <Overline>Design system</Overline>
-              <SystemTierChip tier="pro" />
-            </div>
-            <h1
-              id="ovb-hero"
-              className="mt-3 text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl"
-            >
-              Andromeda Pro
-            </h1>
-            <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
-              See all of it running. Take it home with Premium.
-            </p>
-            <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
-              {stats.components} components, {stats.variants} variants and {stats.templates} templates for
-              dashboards and control rooms, in light and dark. Every one runs on this site for free. Premium adds
-              the code, the CLI install, the remix prompts and the templates.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/pricing" className={BTN_PRIMARY}>
-                Get Premium
-              </Link>
-              <Link href="/design-systems/andromeda-pro/components" className={BTN_SECONDARY}>
-                Explore every component
-              </Link>
-            </div>
+        <section aria-labelledby="ovb-hero" className="max-w-3xl">
+          <div className="flex items-center gap-2">
+            <Overline>Design system</Overline>
+            <SystemTierChip tier="pro" />
           </div>
-
-          {/* Static inventory: no hover, no cursor, no shadow. */}
-          <div className="lg:col-span-5">
-            <dl className={`grid grid-cols-2 overflow-hidden ${PANEL}`}>
-              {statCells.map((s, i) => (
-                <div
-                  key={s.label}
-                  className={`flex flex-col-reverse gap-1 border-sand-200 p-5 dark:border-sand-800 sm:p-6 ${
-                    i % 2 === 0 ? 'border-r' : ''
-                  } ${i < 2 ? 'border-b' : ''}`}
-                >
-                  <dt className="text-sm text-sand-600 dark:text-sand-400">{s.label}</dt>
-                  <dd className="text-4xl font-bold tabular-nums text-sand-900 dark:text-sand-50">{s.value}</dd>
-                </div>
-              ))}
-            </dl>
+          <h1
+            id="ovb-hero"
+            className="mt-3 text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl"
+          >
+            Andromeda Pro
+          </h1>
+          <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
+            See all of it running. Take it home with Premium.
+          </p>
+          <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
+            {stats.components} components, {stats.variants} variants and {stats.templates} templates for
+            dashboards and control rooms, in light and dark. Every one runs on this site for free. Premium adds
+            the code, the CLI install, the remix prompts and the templates.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href="/pricing" className={BTN_PRIMARY}>
+              Get Premium
+            </Link>
+            <Link href="/design-systems/andromeda-pro/components" className={BTN_SECONDARY}>
+              Explore every component
+            </Link>
           </div>
         </section>
 
-        {/* ── 2. The ledger ────────────────────────────────────────────── */}
+        {/* ── 2. The inventory ───────────────────────────────── */}
+        <section aria-labelledby="ovb-inventory" className="mt-16">
+          <SectionHead
+            id="ovb-inventory"
+            overline="The inventory"
+            title="Everything the system ships."
+            sub="Every count here is read from the system itself when the page builds, never typed in by hand."
+          />
+          <div className="mt-10">
+            <Inventory stats={stats} />
+          </div>
+        </section>
+
+        {/* ── 3. The ledger ────────────────────────────────────────────── */}
         <section aria-labelledby="ovb-ledger" className="mt-20">
           <SectionHead
             id="ovb-ledger"
@@ -274,7 +263,7 @@ export function OverviewB({
           </div>
         </section>
 
-        {/* ── 3. Compare ───────────────────────────────────────────────── */}
+        {/* ── 4. Compare ───────────────────────────────────────────────── */}
         <section aria-labelledby="ovb-compare" className="mt-20">
           <SectionHead
             id="ovb-compare"
@@ -298,7 +287,7 @@ export function OverviewB({
           <WithPremium>the CLI installs all of it, tokens included.</WithPremium>
         </section>
 
-        {/* ── 4. Components with real filters ─────────────────────────── */}
+        {/* ── 5. Components with real filters ─────────────────────────── */}
         <section aria-labelledby="ovb-components" className="mt-20">
           <SectionHead
             id="ovb-components"
@@ -317,7 +306,7 @@ export function OverviewB({
           <WithPremium>the code view and a one-command install on every component.</WithPremium>
         </section>
 
-        {/* ── 5. Built for AI ──────────────────────────────────────────── */}
+        {/* ── 6. Built for AI ──────────────────────────────────────────── */}
         <section aria-labelledby="ovb-ai" className="mt-20">
           <SectionHead
             id="ovb-ai"
@@ -399,7 +388,7 @@ export function OverviewB({
           <WithPremium>the full rule files and every prompt.</WithPremium>
         </section>
 
-        {/* ── 6. Templates ─────────────────────────────────────────────── */}
+        {/* ── 7. Templates ─────────────────────────────────────────────── */}
         <section aria-labelledby="ovb-templates" className="mt-20">
           <SectionHead
             id="ovb-templates"
@@ -465,7 +454,7 @@ export function OverviewB({
         </section>
       </Container>
 
-      {/* ── 7. Closing price band ──────────────────────────────────────── */}
+      {/* ── 8. Closing price band ──────────────────────────────────────── */}
       <section
         aria-labelledby="ovb-price"
         className="mt-20 border-y border-sand-200 bg-sand-100 py-12 dark:border-sand-800 dark:bg-sand-900"
@@ -497,7 +486,7 @@ export function OverviewB({
         </Container>
       </section>
 
-      {/* ── 8. Footer ──────────────────────────────────────────────────── */}
+      {/* ── 9. Footer ──────────────────────────────────────────────────── */}
       <Container className="pb-10">
         <SiteFooter />
       </Container>
