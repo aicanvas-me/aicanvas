@@ -92,6 +92,15 @@ const VERSUS_ROWS = [
 ]
 const NEW_FOUNDATIONS = FND.filter((f) => !legacyFilesOf('foundations').includes(f))
 const NEW_COMPONENTS = CMP.filter((f) => !legacyFilesOf('component-rules').includes(f))
+// A build without the Pro brain writes the same fallback into both teasers,
+// so the table would compare Legacy with itself. Nothing new = no section.
+const SHOW_VERSUS = NEW_FOUNDATIONS.length + NEW_COMPONENTS.length > 0
+const NEW_LINE = [
+  NEW_FOUNDATIONS.length ? `New foundations: ${NEW_FOUNDATIONS.join(', ')}.` : '',
+  NEW_COMPONENTS.length ? `New component rules: ${NEW_COMPONENTS.join(', ')}.` : '',
+]
+  .filter(Boolean)
+  .join(' ')
 const IMPROVEMENTS = [
   {
     title: 'Three color layers',
@@ -107,7 +116,7 @@ const IMPROVEMENTS = [
   },
   {
     title: 'Checked by scripts, not by eye',
-    line: 'Contrast is measured in both themes, and every color family follows one shape law. A retune that hurts readability fails a check before anyone looks.',
+    line: 'Contrast is measured in both themes, and every accent and status color follows one shape law. A retune that hurts readability fails a check before anyone looks.',
   },
 ]
 const SKILLS = filesOf('skills')
@@ -1122,7 +1131,8 @@ export function BrainStoryV4() {
           <CorpusExplorer />
         </Section>
 
-        {/* Legacy vs Pro: why this Brain is a step forward */}
+        {/* Legacy vs Pro: why this Brain is a step forward. Hidden when the Pro brain is not bundled. */}
+        {SHOW_VERSUS && (
         <Section className="mt-20" aria-labelledby="brain-versus">
           <SectionHead
             id="brain-versus"
@@ -1165,7 +1175,7 @@ export function BrainStoryV4() {
           </div>
 
           <p className="mt-4 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-            {`New foundations: ${NEW_FOUNDATIONS.join(', ')}. New component rules: ${NEW_COMPONENTS.join(', ')}.`}
+            {NEW_LINE}
           </p>
 
           <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -1177,6 +1187,7 @@ export function BrainStoryV4() {
             ))}
           </ul>
         </Section>
+        )}
 
         {/* How it works */}
         <Section className="mt-20" aria-labelledby="brain-how">
