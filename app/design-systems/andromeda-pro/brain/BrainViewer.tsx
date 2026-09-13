@@ -322,7 +322,9 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
   // The index file's own title names the shared Andromeda brain; the page
   // titles it as the Pro Brain with its tier chip and drops the file's H1.
   const isRulesIndex = isIndex && /(^|\/)rules\.md$/.test(activeFile.path)
-  const html = renderMd(isRulesIndex ? activeFile.content.replace(/^# .*\n/, '') : activeFile.content)
+  const html = renderMd(
+    isRulesIndex ? stripFrontmatter(activeFile.content).replace(/^\s*# .*(\r?\n|$)/, '') : activeFile.content,
+  )
 
   const fileCount = files.length
   // Zip the brain lazily on the CLIENT (never during SSR or the render phase):
@@ -536,10 +538,10 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
         {isRulesIndex && (
           <div className="brain-pad-x" style={{ maxWidth: 780, padding: '4px 40px 0' }}>
             <div className="flex flex-wrap items-center gap-3" style={{ margin: '0 0 6px' }}>
-              <h1 style={{ fontSize: 20, fontWeight: 700, color: C.text.primary, margin: 0 }}>Andromeda Pro Brain</h1>
+              <h1 style={{ fontSize: 20, fontWeight: 700, lineHeight: 1.75, color: C.text.primary, margin: 0 }}>Andromeda Pro Brain</h1>
               <SystemTierChip tier="pro" />
             </div>
-            <div style={{ height: 1, background: C.border.subtle }} />
+            <div style={{ height: 1, background: C.border.subtle, marginBottom: 16 }} />
           </div>
         )}
 
@@ -548,7 +550,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
           className="brain-content"
           onClick={handleContentClick}
           style={{
-            padding: isIndex ? '4px 40px 24px' : '28px 40px 64px',
+            padding: isRulesIndex ? '0 40px 24px' : isIndex ? '4px 40px 24px' : '28px 40px 64px',
             maxWidth: 780,
             fontSize: 14,
             lineHeight: 1.75,
