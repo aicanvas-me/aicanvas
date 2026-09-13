@@ -48,6 +48,8 @@ export const segmentedControl: MatrixSpec = {
   // row, and the control shrinks while its segments keep their text width — so
   // the labels bleed over the neighbouring rung and the case reads as broken.
   wide: true,
+  // The hero shows one control at its own width, so it sits centred there.
+  soloCentered: true,
   // Each instance auto-scopes its sliding indicator with useId, including the
   // repeated controls this matrix renders.
   render: (size, props, c) => (

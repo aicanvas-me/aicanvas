@@ -240,12 +240,14 @@ function MatrixCell({
   c,
   size,
   render,
+  centered = false,
 }: {
   spec: MatrixSpec
   kind: 'variant' | 'state'
   c: MatrixCase
   size?: string
   render: ReturnType<typeof defaultRender>
+  centered?: boolean
 }) {
   return (
     <span
@@ -259,7 +261,7 @@ function MatrixCell({
       // the card around a chart or player without growing the thing inside it.
       // Non-wide controls keep their old centred position inside the canvas.
       style={{
-        display: spec.wide || spec.fill ? 'block' : 'inline-flex',
+        display: centered ? 'flex' : spec.wide || spec.fill ? 'block' : 'inline-flex',
         justifyContent: 'center',
         width: '100%',
         minWidth: 0,
@@ -653,6 +655,7 @@ export function MatrixSolo({ spec, label }: { spec: MatrixSpec; label?: string }
           kind={usesVariants ? 'variant' : 'state'}
           c={c}
           render={render}
+          centered={spec.soloCentered}
         />
       </div>
     </div>

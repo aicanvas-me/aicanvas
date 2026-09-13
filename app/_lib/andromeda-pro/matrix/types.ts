@@ -77,6 +77,10 @@ export type MatrixSpec = {
       intrinsic width, so a textarea rendered at the size of an empty
       textarea instead of the room its case actually owns. */
   fill?: boolean
+  /** The page hero centres this `wide` spec's case instead of laying it from
+      the left edge. For a component that keeps its own intrinsic width (a
+      segmented control) but needs `wide` for its full-row cards. */
+  soloCentered?: boolean
   /** Required true when any case passes staticOpen (inline open popover), because
       content-visibility implies contain:paint and would clip it. Enforced by the test. */
   overflow?: boolean
