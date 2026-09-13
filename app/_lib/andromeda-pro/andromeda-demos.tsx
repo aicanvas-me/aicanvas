@@ -628,7 +628,13 @@ function MediaCardDemo() {
         gap: 16,
       }}
     >
-      <MediaCard code="MIX-01" title="Your Mix" meta="Updates daily" action="play" />
+      <MediaCard
+        code="MIX-01"
+        title="Your Mix"
+        meta="Updates daily"
+        action="play"
+        image="https://ik.imagekit.io/aitoolkit/andromeda/signal-room/mix-01.webp"
+      />
       <MediaCard
         code="CH-04"
         title="Deep Focus"
@@ -644,7 +650,7 @@ function MediaCardDemo() {
 function DataTableDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 720 }}>
-      <DataTable />
+      <DataTable selectedRowKey="track-02" />
     </div>
   )
 }
@@ -652,7 +658,7 @@ function DataTableDemo() {
 function MusicPlayerDemo() {
   return (
     <div style={{ width: '100%' }}>
-      <MusicPlayer />
+      <MusicPlayer playing />
     </div>
   )
 }

@@ -4,7 +4,7 @@ import type { MatrixSpec } from './types'
 
 // Two photos for the whole section, alternating. The cases differ by ACTION and
 // LAYOUT; a third and fourth picture would read as a difference that isn't one.
-// PLANET is also the component's own default image.
+// The component has no default image; every case passes one.
 const PLANET = 'https://ik.imagekit.io/aitoolkit/andromeda/signal-room/mix-01.webp'
 const DRIFT = 'https://ik.imagekit.io/aitoolkit/andromeda/signal-room/mix-03.webp'
 

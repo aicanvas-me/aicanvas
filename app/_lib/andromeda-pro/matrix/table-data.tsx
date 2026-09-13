@@ -137,8 +137,7 @@ export const dataTable: MatrixSpec = {
   Component: DataTable,
   sizes: null,
   wide: true,
-  // Row ids are kept as track-0N so the component's own `selectedRowKey`
-  // default ('track-02') still lands on a row and the accent edge shows.
+  // The first case marks track-02 as the current row, so the accent edge shows.
   // Capped and centred. `wide: true` gives the case the full section width,
   // which a dense grid wants — but five of these seven columns state a fixed
   // width, so every pixel past the cap lands in the one flexible column and the
@@ -174,7 +173,7 @@ export const dataTable: MatrixSpec = {
   // if a token or the column list moves.
   overflow: true,
   variants: [
-    { label: 'Defaults', props: {} },
+    { label: 'Selected row', props: { selectedRowKey: 'track-02' } },
     { label: 'No selection', props: { selectedRowKey: null } },
   ],
   states: [],
