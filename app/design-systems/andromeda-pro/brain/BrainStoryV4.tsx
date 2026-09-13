@@ -26,6 +26,7 @@ import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
 import { SiteFooter } from '@/app/components/SiteFooter'
 import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-pro-brain-teaser.generated'
+import { BRAIN_TEASER as LEGACY_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
 import { tokens } from '@/app/lib/andromeda-pro.generated'
 import type { Theme } from '@/app/components/ThemeProvider'
 import { BRAIN_GROUND, LINE_STOPS, oklchToLinearSrgb } from '../overview-b/BrainWireframe'
@@ -78,6 +79,37 @@ const filesOf = (id: string): readonly string[] =>
   (BRAIN_TEASER.sections as readonly { id: string; files: readonly string[] }[]).find((s) => s.id === id)?.files ?? []
 const FND = filesOf('foundations')
 const CMP = filesOf('component-rules')
+
+// Legacy vs Pro: every count is read off both teasers, so the table moves
+// when either brain does.
+const legacyFilesOf = (id: string): readonly string[] =>
+  (LEGACY_TEASER.sections as readonly { id: string; files: readonly string[] }[]).find((s) => s.id === id)?.files ?? []
+const VERSUS_ROWS = [
+  { label: 'Files', legacy: LEGACY_TEASER.totalFiles as number, pro: BRAIN_TEASER.totalFiles as number },
+  { label: 'Foundations', legacy: legacyFilesOf('foundations').length, pro: FND.length },
+  { label: 'Component rules', legacy: legacyFilesOf('component-rules').length, pro: CMP.length },
+  { label: 'Tools', legacy: legacyFilesOf('tools').length, pro: filesOf('tools').length },
+]
+const NEW_FOUNDATIONS = FND.filter((f) => !legacyFilesOf('foundations').includes(f))
+const NEW_COMPONENTS = CMP.filter((f) => !legacyFilesOf('component-rules').includes(f))
+const IMPROVEMENTS = [
+  {
+    title: 'Three color layers',
+    line: 'Raw colors belong to the theme. A component only reads what a color means, and the done-gate fails any component that reaches past that line.',
+  },
+  {
+    title: 'Themes that stay live',
+    line: 'Tokens are read when the page runs, not baked in at build, so one component serves light and dark. Canvas and SVG get their own rule.',
+  },
+  {
+    title: 'One type ladder',
+    line: 'Small, medium and large controls take 12, 14 and 16px type, with a 12px floor. Your agent stops guessing font sizes.',
+  },
+  {
+    title: 'Checked by scripts, not by eye',
+    line: 'Contrast is measured in both themes, and every color family follows one shape law. A retune that hurts readability fails a check before anyone looks.',
+  },
+]
 const SKILLS = filesOf('skills')
 const TOOLS = filesOf('tools')
 
@@ -1088,6 +1120,62 @@ export function BrainStoryV4() {
           />
 
           <CorpusExplorer />
+        </Section>
+
+        {/* Legacy vs Pro: why this Brain is a step forward */}
+        <Section className="mt-20" aria-labelledby="brain-versus">
+          <SectionHead
+            id="brain-versus"
+            overline="Legacy vs Pro"
+            title="A step forward from the Andromeda Brain."
+            sub="The Pro Brain grew out of Andromeda Legacy. It covers more of the system, closes the gaps agents slipped through, and hands the checking to scripts."
+          />
+
+          <div className={`mt-8 overflow-x-auto ${PANEL_CLASS} ${PANEL_SHADOW}`}>
+            <table className="w-full border-collapse text-left">
+              <thead>
+                <tr>
+                  <th scope="col" className="px-4 py-3 sm:px-5">
+                    <span className="sr-only">Measure</span>
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-sand-600 sm:px-5 dark:text-sand-400">
+                    Legacy Brain
+                  </th>
+                  <th scope="col" className="border-l border-sand-200 bg-sand-50 px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-olive-600 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-olive-400">
+                    Pro Brain
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {VERSUS_ROWS.map((row) => (
+                  <tr key={row.label}>
+                    <th scope="row" className="border-t border-sand-200 px-4 py-3.5 text-sm font-semibold text-sand-900 sm:px-5 dark:border-sand-800 dark:text-sand-50">
+                      {row.label}
+                    </th>
+                    <td className="border-t border-sand-200 px-4 py-3.5 text-sm tabular-nums text-sand-600 sm:px-5 dark:border-sand-800 dark:text-sand-400">
+                      {row.legacy}
+                    </td>
+                    <td className="border-l border-t border-sand-200 bg-sand-50 px-4 py-3.5 text-sm font-semibold tabular-nums text-sand-900 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50">
+                      {row.pro}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p className="mt-4 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+            {`New foundations: ${NEW_FOUNDATIONS.join(', ')}. New component rules: ${NEW_COMPONENTS.join(', ')}.`}
+          </p>
+
+          <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {IMPROVEMENTS.map((item) => (
+              <li key={item.title} className={`${PANEL_CLASS} p-5`}>
+                <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">{item.title}</h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{item.line}</p>
+              </li>
+            ))}
+          </ul>
         </Section>
 
         {/* How it works */}
