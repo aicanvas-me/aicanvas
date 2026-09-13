@@ -94,6 +94,12 @@ const coveragePanel =
 // its cases, not by a list of exceptions here.
 const SOLO_HERO_CASE = 'Live'
 
+// Install step 2, copied verbatim. The import path is where the CLI puts the
+// theme helpers under the default `@/` alias.
+const LIGHT_THEME_SNIPPET = `import { andromedaLightVars } from '@/components/aicanvas/andromeda-pro/components/lib/theme-vars'
+
+<html data-andromeda-theme="light" style={andromedaLightVars()}>`
+
 export function AndromedaComponentView({
   slug,
   name,
@@ -154,7 +160,7 @@ export function AndromedaComponentView({
   useEffect(() => setPortalReady(true), [])
   const [installTab, setInstallTab] = useState<'cli' | 'manual'>('cli')
   const [pkgManager, setPkgManager] = useState<'pnpm' | 'npm' | 'yarn' | 'bun'>('npm')
-  const [darkCopied, setDarkCopied] = useState(false)
+  const [themeCopied, setThemeCopied] = useState(false)
   const mainCardRef = useRef<HTMLDivElement>(null)
 
   // Source is never shipped in this page's HTML. It's fetched on demand from
@@ -717,15 +723,15 @@ export function AndromedaComponentView({
                   </div>
                 </Step>
 
-                {/* Step 2 — dark mode */}
+                {/* Step 2 — light theme. Pro components are dark by default and
+                    read no `.dark` class. Light is the andromedaLightVars() set
+                    on <html>: on the root, because portaled parts (Drawer,
+                    menus, tooltips) mount under <body> and only inherit a
+                    theme set there. */}
                 <Step number={2} isLast>
                   <div className="mb-2.5 flex items-center gap-2">
                     <p className="text-sm text-sand-600 dark:text-sand-400">
-                      For dark mode, add the{' '}
-                      <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
-                        dark
-                      </code>{' '}
-                      class to your{' '}
+                      Components are dark by default. For the light theme, spread the light set onto your{' '}
                       <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                         &lt;html&gt;
                       </code>{' '}
@@ -735,18 +741,20 @@ export function AndromedaComponentView({
                       Optional
                     </span>
                   </div>
-                  <div className="flex items-center justify-between rounded-lg bg-sand-200 px-4 py-3 dark:bg-sand-950">
-                    <code className="font-mono text-sm text-sand-800 dark:text-sand-300">{'<html class="dark">'}</code>
+                  <div className="flex items-start justify-between gap-3 rounded-lg bg-sand-200 px-4 py-3 dark:bg-sand-950">
+                    <pre className="min-w-0 overflow-x-auto font-mono text-sm text-sand-800 dark:text-sand-300">
+                      <code>{LIGHT_THEME_SNIPPET}</code>
+                    </pre>
                     <button
                       type="button"
                       onClick={() => {
-                        navigator.clipboard.writeText('<html class="dark">')
-                        setDarkCopied(true)
-                        setTimeout(() => setDarkCopied(false), 2000)
+                        navigator.clipboard.writeText(LIGHT_THEME_SNIPPET)
+                        setThemeCopied(true)
+                        setTimeout(() => setThemeCopied(false), 2000)
                       }}
                       className="shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                     >
-                      {darkCopied
+                      {themeCopied
                         ? <Check weight="regular" size={14} className="text-olive-500" />
                         : <Copy weight="regular" size={14} />}
                     </button>
