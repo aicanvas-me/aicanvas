@@ -52,6 +52,12 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  *                                    premium entitlement to INSTALL. Browsing
  *                                    the pages stays free. Andromeda Legacy is
  *                                    MIT and omits this; Andromeda Pro sets it.
+ * @property {boolean} [pinDependencies] Emit each npm dependency with the range
+ *                                    this app itself installs (from package.json),
+ *                                    plus the matching `@types/*` package as a
+ *                                    devDependency, so a buyer's fresh project
+ *                                    gets the majors the system was built against
+ *                                    and typechecks under strict TypeScript.
  * @property {boolean} [skipIfMissing] Skip the whole system when its root is not
  *                                    on disk (an injected-only system on a build
  *                                    with no vault access), instead of failing.
@@ -219,7 +225,11 @@ export const DESIGN_SYSTEMS = [
     // Pro owns its own `andromeda-pro-` slug namespace, so nothing here can
     // collide with a published Andromeda Legacy slug and Button needs no
     // override the way Legacy's does.
-    fontPackages: ['@fontsource-variable/jetbrains-mono'],
+    pinDependencies: true,
+    // Manrope is Pro's default face (tokens.ts fontSans), JetBrains Mono its
+    // mono face. The app loads both through next/font; an installed project
+    // loads neither, so the shipped tokens file self-loads both.
+    fontPackages: ['@fontsource-variable/jetbrains-mono', '@fontsource-variable/manrope'],
     fontInjectInto: 'tokens.ts',
     templates: [
       { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi',     entryPath: 'examples/mission-control/index.tsx' },

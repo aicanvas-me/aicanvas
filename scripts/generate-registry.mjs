@@ -57,6 +57,37 @@ const REGISTRY_SCHEMA = 'https://ui.shadcn.com/schema/registry.json'
 // 404 — which silently broke every design-system + template install. Emitting
 // full URLs is the documented shadcn pattern for self-hosted/custom registries.
 // Overridable so the generator can emit a localhost variant for install tests.
+// Dependency ranges this app installs itself, for systems that pin them
+// (design-systems.config.mjs `pinDependencies`). A package the app does not
+// list (a font package the app loads through next/font instead) stays bare.
+const APP_PACKAGE = JSON.parse(readFileSync('package.json', 'utf-8'))
+const APP_RANGES = { ...(APP_PACKAGE.devDependencies ?? {}), ...(APP_PACKAGE.dependencies ?? {}) }
+
+function pinnedDependencies(ds, pkgs) {
+  if (!ds.pinDependencies) return pkgs
+  return pkgs.map((pkg) => (APP_RANGES[pkg] ? `${pkg}@${APP_RANGES[pkg]}` : pkg))
+}
+
+// The `@types/*` companions of a pinned system's dependencies, as the item's
+// devDependencies. A package that ships no types of its own (three) otherwise
+// fails a fresh strict TypeScript project with TS7016. Only unscoped packages
+// have a plain `@types/<name>`, and only a companion this app installs is named.
+function typeDevDependencies(ds, pkgs) {
+  if (!ds.pinDependencies) return []
+  return pkgs
+    .filter((pkg) => !pkg.startsWith('@') && APP_RANGES[`@types/${pkg}`])
+    .map((pkg) => `@types/${pkg}@${APP_RANGES[`@types/${pkg}`]}`)
+}
+
+// Spread into an item: `dependencies`, and `devDependencies` only when there are any.
+function dependencyFields(ds, pkgs) {
+  const devDependencies = typeDevDependencies(ds, pkgs)
+  return {
+    dependencies: pinnedDependencies(ds, pkgs),
+    ...(devDependencies.length > 0 ? { devDependencies } : {}),
+  }
+}
+
 const REGISTRY_BASE = (process.env.AICANVAS_REGISTRY_BASE ?? 'https://aicanvas.me').replace(/\/+$/, '')
 const depUrl = (slug) => `${REGISTRY_BASE}/r/${slug}.json`
 
@@ -506,6 +537,7 @@ function indexEntry(item, files) {
     title: item.title,
     description: item.description,
     dependencies: item.dependencies,
+    devDependencies: item.devDependencies,
     registryDependencies: item.registryDependencies,
     files: files.map(({ path, type, target }) => ({ path, type, target })),
   }
@@ -589,7 +621,7 @@ for (const ds of SYSTEMS) {
     title: `${ds.name} tokens`,
     description: `Foundation files for the ${ds.name} design system — tokens, shared utilities, and the system mark. Required by every ${ds.name} component and template.`,
     author: 'aicanvas <https://aicanvas.me>',
-    dependencies: [...new Set([...tokensWalk.npmDeps, ...fontPackages])].sort(),
+    ...dependencyFields(ds, [...new Set([...tokensWalk.npmDeps, ...fontPackages])].sort()),
     files: tokensFiles,
   }
   writeFileSync(join(outDir, `${tokensSlug}.json`), JSON.stringify(tokensItem, null, 2) + '\n')
@@ -610,7 +642,7 @@ for (const ds of SYSTEMS) {
     description: `Every ${ds.name} component (${systemFiles.length} files). Installs the foundation tokens automatically.`,
     author: 'aicanvas <https://aicanvas.me>',
     registryDependencies: [depUrl(tokensSlug)],
-    dependencies: systemWalk.npmDeps,
+    ...dependencyFields(ds, systemWalk.npmDeps),
     files: systemFiles,
   }
   writeFileSync(join(outDir, `${ds.slug}.json`), JSON.stringify(systemItem, null, 2) + '\n')
@@ -709,7 +741,7 @@ for (const ds of SYSTEMS) {
       description: `${ds.name} ${compLabel} component. Install just this piece. Tokens and any sibling components are pulled in automatically.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: [...componentRegistryDeps].sort().map(depUrl),
-      dependencies: compWalk.npmDeps,
+      ...dependencyFields(ds, compWalk.npmDeps),
       files: compFiles,
     }
     writeFileSync(join(outDir, `${slug}.json`), JSON.stringify(compItem, null, 2) + '\n')
@@ -757,7 +789,7 @@ for (const ds of SYSTEMS) {
         `Pulls in the ${usedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: templateDeps,
-      dependencies: templateWalk.npmDeps,
+      ...dependencyFields(ds, templateWalk.npmDeps),
       files: templateFiles,
     }
     writeFileSync(join(outDir, `${template.slug}.json`), JSON.stringify(templateItem, null, 2) + '\n')
