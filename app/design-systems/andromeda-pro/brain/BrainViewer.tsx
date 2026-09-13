@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import { Check, Copy, DownloadSimple, Terminal } from '@phosphor-icons/react'
 import { zipSync, strToU8 } from 'fflate'
 import { Button } from '../../../components/Button'
-import { BrainRender } from './BrainRender'
+import { BrainWireframe } from '../overview-b/BrainWireframe'
 import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useCopied } from '@/app/components/useCopied'
 
@@ -520,10 +520,12 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
           </select>
         </div>
 
-        {/* Low-poly zone brain — INDEX ONLY, directly above the heading. */}
+        {/* The overview's brand-blue brain, INDEX ONLY, directly above the heading. */}
         {isIndex && (
           <div className="brain-pad-x" style={{ maxWidth: 780, padding: '4px 40px 0' }}>
-            <BrainRender height={400} />
+            <div className="relative overflow-hidden rounded-xl" style={{ height: 400 }}>
+              <BrainWireframe />
+            </div>
           </div>
         )}
 
