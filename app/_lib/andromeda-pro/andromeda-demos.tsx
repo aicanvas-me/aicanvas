@@ -80,7 +80,8 @@ import {
 // v2 components come from the build-time-injected shim (real re-exports when
 // injected, placeholder panels on degraded builds) — never import them from
 // design-systems/ directly. See scripts/inject-premium.mjs.
-import { MetricChart, Gauge, Waveform, MediaCard, DataTable, MusicPlayer, FunnelChart, Orb, Nodes, Burst } from '../../lib/andromeda-pro.generated'
+import { MetricChart, Gauge, Waveform, MediaCard, DataTable, FunnelChart, Orb, Nodes, Burst } from '../../lib/andromeda-pro.generated'
+import { MusicPlayerDemo as WiredMusicPlayer } from './matrix/music-player'
 
 // ─── Layout helpers ──────────────────────────────────────────────────────────
 
@@ -658,7 +659,7 @@ function DataTableDemo() {
 function MusicPlayerDemo() {
   return (
     <div style={{ width: '100%' }}>
-      <MusicPlayer playing />
+      <WiredMusicPlayer playing />
     </div>
   )
 }

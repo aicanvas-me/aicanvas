@@ -26,7 +26,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'icon-button': { variants: 4, states: 6 },
   'input': { variants: 4, states: 5 },
   'media-card': { variants: 6, states: 0 },
-  'music-player': { variants: 5, states: 0 },
+  'music-player': { variants: 7, states: 0 },
   'nav-item': { variants: 4, states: 5 },
   'nodes': { variants: 1, states: 0 },
   'orb': { variants: 1, states: 0 },
