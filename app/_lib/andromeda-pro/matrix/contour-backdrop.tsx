@@ -12,6 +12,15 @@ export const contourBackdrop: MatrixSpec = {
       <ContourBackdrop {...props} />
     </BackdropStage>
   ),
+  // The hero is the backdrop alone, filling a positioned box the way it fills
+  // the section it is installed behind. No caption, no panel: those are the
+  // legibility check the cases below carry. 272px keeps the hero frame at its
+  // 420px floor.
+  soloRender: (_size, props) => (
+    <div style={{ position: 'relative', width: '100%', height: 272 }}>
+      <ContourBackdrop {...props} />
+    </div>
+  ),
   variants: [
     // Every case names its seed. The terrain is generated, so a cell without a
     // fixed seed would differ between two screenshots of the same page.

@@ -623,7 +623,7 @@ export function MatrixBlock({ spec }: { spec: MatrixSpec }) {
 // Falls back to the first case when the named label is absent: a renamed case
 // degrades to a live component, never to an empty frame.
 export function MatrixSolo({ spec, label }: { spec: MatrixSpec; label?: string }) {
-  const render = spec.render ?? defaultRender(spec)
+  const render = spec.soloRender ?? spec.render ?? defaultRender(spec)
   const usesVariants = spec.variants.length > 0
   const cases = usesVariants ? spec.variants : spec.states
   const c = cases.find((x) => x.label === label) ?? cases[0]

@@ -21,11 +21,15 @@ const ROWS = [
 // forceRow is the index that carries the marker. It goes on ONE <tr>, never on
 // the canvas: `[data-force] &` is a descendant selector, and a table with every
 // row lit reads as broken rather than hovered.
-const table = (
+//
+// `raised` sets the table on a raised surface for the cases. The page hero
+// passes false: Table paints no surface of its own, so the hero shows it on the
+// page ground, the way it installs.
+const table = (raised: boolean) => (
   _size: string | undefined,
   { selectedRow, forceRow, force, hoverable = true, sorted }: Record<string, unknown> = {},
 ) => (
-  <div style={{ width: '100%', position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
+  <div style={{ width: '100%', position: 'relative', ...(raised ? { background: `var(--at-surface-raised, ${tokens.color.surface.raised})` } : null) }}>
     <TableStyles />
     <Table>
       <TableHead>
@@ -65,7 +69,8 @@ export const table_: MatrixSpec = {
   slug: 'table-basic',
   sizes: null,
   wide: true,
-  render: table,
+  render: table(true),
+  soloRender: table(false),
   variants: [
     // The default case carries a selected row: selection is the state this
     // table is read for, and a case showing it separately only repeated this

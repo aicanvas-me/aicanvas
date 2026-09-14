@@ -25,6 +25,14 @@ export const panelHeader: MatrixSpec = {
   // component behaviour.
   wide: true,
   render: panel,
+  // The hero is the header alone, as it installs: CornerMarkers and the raised
+  // surface belong to the panel a buyer puts it on, so they stay in the cases.
+  // The width is kept, since a header has none of its own.
+  soloRender: (size, props) => (
+    <div style={{ width: 320, maxWidth: '100%' }}>
+      <PanelHeader size={size} title="Requests" {...props} />
+    </div>
+  ),
   variants: [
     { label: 'Title only', props: {} },
     {

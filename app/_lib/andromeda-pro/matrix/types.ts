@@ -64,6 +64,15 @@ export type MatrixSpec = {
     props: Record<string, unknown>,
     c?: MatrixCase,
   ) => ReactNode
+  /** The page hero's render, when `render` frames the component in a demo
+      composition the installed item does not ship (a stage, a surface, a
+      sibling component). The hero shows the component as it installs; the
+      framed composition stays in the cases below it. */
+  soloRender?: (
+    size: string | undefined,
+    props: Record<string, unknown>,
+    c?: MatrixCase,
+  ) => ReactNode
   /** state label -> the MECHANISM that prevents painting at rest (framer whileTap,
       portal, ResizeObserver flip, perpetual motion). A gap must name a mechanism,
       never a missing implementation: "component lacks X the brain requires" is a
