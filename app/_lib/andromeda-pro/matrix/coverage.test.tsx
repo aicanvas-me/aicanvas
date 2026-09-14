@@ -162,12 +162,15 @@ describe('andromeda matrix — every forced state has something to paint', () =>
         // Two legitimate mechanisms, and the check accepts either. A Tailwind
         // variant class in the markup, or — for the inline-styled composites
         // whose states live in their own scoped stylesheet — a companion rule
-        // in the source. The second half is what fails if someone deletes a
-        // companion line while the forced cell still claims to show the state.
+        // in the source or in the spec's forcedStateCss. The second half is
+        // what fails if someone deletes a companion line while the forced cell
+        // still claims to show the state.
         const meta = ANDROMEDA_COMPONENT_META.find((m) => m.slug === spec.slug)!
         const file = join(COMPONENT_DIR, meta.sourceFile)
+        const rule = `data-force~="${c.force}"`
         const companion =
-          existsSync(file) && readFileSync(file, 'utf8').includes(`data-force~="${c.force}"`)
+          Boolean(spec.forcedStateCss?.includes(rule)) ||
+          (existsSync(file) && readFileSync(file, 'utf8').includes(rule))
         const hit = companion || classes.some((t) => FORCEABLE.test(t))
         expect(
           hit,

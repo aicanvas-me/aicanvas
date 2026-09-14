@@ -98,6 +98,15 @@ export type MatrixSpec = {
       card, a row), where each instance claims a whole line and the pair wraps
       into a stack, which reads as two examples rather than one comparison. */
   statePairColumns?: boolean
+  /** The preview's own companion rules for a component whose states live in
+      its scoped stylesheet rather than in Tailwind variants: the
+      `[data-force~=...]` twins of its :hover / :focus-visible rules. They
+      belong to this page, not to the installed component, so the shipped
+      source carries no data-force selector. Emitted once per matrix surface;
+      gate every selector with :where([data-andromeda-matrix]) and copy the
+      real rule's declarations exactly, or the forced cell shows a state the
+      component does not have. */
+  forcedStateCss?: string
 }
 
 export const matrixId = (slug: string, kind: 'variant' | 'state', label: string) =>

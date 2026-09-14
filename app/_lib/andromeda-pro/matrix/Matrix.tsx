@@ -598,6 +598,7 @@ export function MatrixBlock({ spec }: { spec: MatrixSpec }) {
           .andromeda-matrix-grid.is-wide { grid-template-columns: minmax(0, 1fr); }
         }
       `}</style>
+      {spec.forcedStateCss ? <style>{spec.forcedStateCss}</style> : null}
       {spec.variants.length > 0 ? (
         <CaseSection spec={spec} kind="variant" cases={spec.variants} render={render} />
       ) : null}
@@ -631,6 +632,7 @@ export function MatrixSolo({ spec, label }: { spec: MatrixSpec; label?: string }
   return (
     <div data-andromeda-matrix style={{ width: '100%' }}>
       <style>{BODY_RESERVE_CSS}</style>
+      {spec.forcedStateCss ? <style>{spec.forcedStateCss}</style> : null}
       <div
         className="andromeda-matrix-body"
         style={{

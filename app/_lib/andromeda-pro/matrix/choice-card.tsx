@@ -47,6 +47,24 @@ export const choiceCard: MatrixSpec = {
   // Rest and forced side by side: a choice card fills its container, so
   // left to the flex row the pair stacks and stops reading as one comparison.
   statePairColumns: true,
+  // ChoiceCard paints hover and focus from its own stylesheet, keyed off the
+  // nested input through :has(), so no Tailwind variant can force them. These
+  // are the at-rest twins of those rules, declaration for declaration.
+  forcedStateCss: `
+    :where([data-andromeda-matrix]) [data-force~="hover"] .andromeda-choice-card:not(:has(> [data-slot="choice-card-control"] input:checked)):not(:has(> [data-slot="choice-card-control"] input:disabled)) {
+      background-color: var(--andromeda-surface-hover) !important;
+      border-color: var(--andromeda-border-bright) !important;
+    }
+
+    :where([data-andromeda-matrix]) [data-force~="hover"] .andromeda-choice-card:has(> [data-slot="choice-card-control"] input:checked):not(:has(> [data-slot="choice-card-control"] input:disabled)) {
+      border-color: var(--andromeda-selection-border-hover) !important;
+    }
+
+    :where([data-andromeda-matrix]) [data-force~="focus"] .andromeda-choice-card:not(:has(> [data-slot="choice-card-control"] input:disabled)) {
+      outline: var(--andromeda-border-width, 1px) solid var(--andromeda-focus-ring);
+      outline-offset: var(--andromeda-border-width, 1px);
+    }
+  `,
   baseProps: {
     control: 'checkbox',
     title: 'Keep activity history',
