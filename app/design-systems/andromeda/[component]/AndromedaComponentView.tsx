@@ -96,9 +96,6 @@ export function AndromedaComponentView({
     try {
       const res = await fetch(`/api/component-code?slug=${registrySlug}`)
       if (!res.ok) {
-        // Only a real 402 is a paywall; a network hiccup also lands on the
-        // locked pane but is not a sale anyone was shown.
-        if (res.status === 402) track('Paywall Shown', { reason: 'premium-only' })
         setCodeState({ status: 'locked' })
         return
       }
@@ -449,7 +446,7 @@ export function AndromedaComponentView({
                             : pkgManager === 'yarn'
                             ? `yarn dlx shadcn@latest add ${installReference}`
                             : `npx shadcn@latest add ${installReference}`
-                          void copyText(cmd).then((ok) => track('CLI Copy', { component: registrySlug, ok }))
+                          void copyText(cmd)
                           trackInstall(registrySlug, 'andromeda', pkgManager)
                           setCliCopied(true)
                           setTimeout(() => setCliCopied(false), 2000)

@@ -6,6 +6,8 @@ import { Check, Copy, Lightning } from '@phosphor-icons/react'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { useInstallToken } from '../_lib/useInstallToken'
+import { copyText } from '../components/useCopied'
+import { track } from '../lib/analytics'
 
 // The two packages, as a toggle (the "two actions"). Everything is the default.
 const PACKAGES = [
@@ -62,12 +64,12 @@ export function ShowcaseInstallCard() {
   const bullets = INSTALL_CONTENTS[slug] ?? []
 
   const copy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(cliCommand)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {}
-  }, [cliCommand])
+    const ok = await copyText(cliCommand)
+    track('CLI Copy', { component: slug, ok })
+    if (!ok) return
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }, [cliCommand, slug])
 
   return (
     <div
