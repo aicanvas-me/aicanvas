@@ -101,9 +101,10 @@ export type MatrixSpec = {
   /** The preview's own companion rules for a component whose states live in
       its scoped stylesheet rather than in Tailwind variants: the
       `[data-force~=...]` twins of its :hover / :focus-visible rules. They
-      belong to this page, not to the installed component, so the shipped
-      source carries no data-force selector. Emitted once per matrix surface;
-      gate every selector with :where([data-andromeda-matrix]) and copy the
+      belong to this page, not to the installed component, so a component
+      whose twins live here ships without them. ChoiceCard's moved here; other
+      components may still carry their own data-force selectors in source.
+      Emitted once per matrix surface; gate every selector with :where([data-andromeda-matrix]) and copy the
       real rule's declarations exactly, or the forced cell shows a state the
       component does not have. */
   forcedStateCss?: string
