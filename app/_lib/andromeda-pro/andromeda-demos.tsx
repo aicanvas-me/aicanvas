@@ -598,7 +598,7 @@ function GaugeDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
       <Row label="Sizes">
-        <SizeRamp render={(s) => <Gauge size={s} />} />
+        <SizeRamp render={(s) => <Gauge size={s} value={68} />} />
       </Row>
       <Row label="Variants">
         <Gauge variant="accent" value={82} label="CPU" />
