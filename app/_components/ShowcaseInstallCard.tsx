@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import { Check, Copy, Lightning } from '@phosphor-icons/react'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
@@ -63,13 +63,13 @@ export function ShowcaseInstallCard() {
   const cliCommandMasked = `npx shadcn@latest add ${reference(true)}`
   const bullets = INSTALL_CONTENTS[slug] ?? []
 
-  const copy = useCallback(async () => {
+  async function copy() {
     const ok = await copyText(cliCommand)
     track('CLI Copy', { component: slug, ok })
     if (!ok) return
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
-  }, [cliCommand, slug])
+  }
 
   return (
     <div
