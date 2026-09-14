@@ -16,6 +16,8 @@ import {
 } from '@phosphor-icons/react'
 import { useInstallToken } from '../_lib/useInstallToken'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
+import { copyText } from '../components/useCopied'
+import { track } from '../lib/analytics'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { ThemeToggle } from '../components/ThemeToggle'
@@ -705,11 +707,11 @@ function InstallButton({
   }
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(cliCommand)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {}
+    const ok = await copyText(cliCommand)
+    track('CLI Copy', { component: templateSlug, ok })
+    if (!ok) return
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   useEffect(() => {
