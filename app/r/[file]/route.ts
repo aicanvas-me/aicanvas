@@ -191,8 +191,15 @@ function premiumStub(realBody: string, slug: string): NextResponse {
     `    </div>\n` +
     `  )\n` +
     `}\n`
+  // A .ts file cannot hold JSX. An item that ships .ts helpers (a design
+  // system's tokens and lib files) gets the notice there as a plain module, so
+  // a locked install still type-checks instead of breaking the project.
+  const plainStub = `export const PREMIUM_NOTICE = ${JSON.stringify(msg)}\n`
   const files = Array.isArray(parsed.files)
-    ? (parsed.files as Array<Record<string, unknown>>).map((f) => ({ ...f, content: stub }))
+    ? (parsed.files as Array<Record<string, unknown>>).map((f) => ({
+        ...f,
+        content: /\.(tsx|jsx)$/.test(String(f.path ?? f.target ?? '')) ? stub : plainStub,
+      }))
     : [{ path: `components/aicanvas/${slug}.tsx`, type: 'registry:ui', target: `components/aicanvas/${slug}.tsx`, content: stub }]
   const item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
@@ -296,8 +303,13 @@ function freeAccountStub(realBody: string, slug: string): NextResponse {
     `    </div>\n` +
     `  )\n` +
     `}\n`
+  // Same split as premiumStub: JSX only where JSX can live.
+  const plainStub = `export const ACCOUNT_NOTICE = ${JSON.stringify(msg)}\n`
   const files = Array.isArray(parsed.files)
-    ? (parsed.files as Array<Record<string, unknown>>).map((f) => ({ ...f, content: stub }))
+    ? (parsed.files as Array<Record<string, unknown>>).map((f) => ({
+        ...f,
+        content: /\.(tsx|jsx)$/.test(String(f.path ?? f.target ?? '')) ? stub : plainStub,
+      }))
     : [{ path: `components/aicanvas/${slug}.tsx`, type: 'registry:ui', target: `components/aicanvas/${slug}.tsx`, content: stub }]
   const item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
