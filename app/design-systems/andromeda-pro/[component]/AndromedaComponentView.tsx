@@ -94,11 +94,6 @@ const coveragePanel =
 // its cases, not by a list of exceptions here.
 const SOLO_HERO_CASE = 'Live'
 
-// Install step 2, copied verbatim. The import path is where the CLI puts the
-// theme helpers under the default `@/` alias.
-const LIGHT_THEME_SNIPPET = `import { andromedaLightVars } from '@/components/aicanvas/andromeda-pro/components/lib/theme-vars'
-
-<html data-andromeda-theme="light" style={andromedaLightVars()}>`
 
 export function AndromedaComponentView({
   slug,
@@ -160,7 +155,6 @@ export function AndromedaComponentView({
   useEffect(() => setPortalReady(true), [])
   const [installTab, setInstallTab] = useState<'cli' | 'manual'>('cli')
   const [pkgManager, setPkgManager] = useState<'pnpm' | 'npm' | 'yarn' | 'bun'>('npm')
-  const [themeCopied, setThemeCopied] = useState(false)
   const mainCardRef = useRef<HTMLDivElement>(null)
 
   // Source is never shipped in this page's HTML. It's fetched on demand from
@@ -659,8 +653,10 @@ export function AndromedaComponentView({
                 {/* Step 1 — shadcn add. The command + package-manager row stay
                     visible at all times. When the visitor isn't a confirmed
                     subscriber, the copy button opens the premium paywall
-                    modal instead of copying. */}
-                <Step number={1}>
+                    modal instead of copying. The install ships both themes
+                    into the project's CSS (light on :root, dark on .dark), so
+                    there is no second step. */}
+                <Step number={1} isLast>
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Run the following command. New project? Run{' '}
                     <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
@@ -721,44 +717,17 @@ export function AndromedaComponentView({
                       </code>
                     </div>
                   </div>
-                </Step>
-
-                {/* Step 2 — light theme. Pro components are dark by default and
-                    read no `.dark` class. Light is the andromedaLightVars() set
-                    on <html>: on the root, because portaled parts (Drawer,
-                    menus, tooltips) mount under <body> and only inherit a
-                    theme set there. */}
-                <Step number={2} isLast>
-                  <div className="mb-2.5 flex items-center gap-2">
-                    <p className="text-sm text-sand-600 dark:text-sand-400">
-                      Components are dark by default. For the light theme, spread the light set onto your{' '}
-                      <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
-                        &lt;html&gt;
-                      </code>{' '}
-                      element:
-                    </p>
-                    <span className="ml-auto shrink-0 rounded-full bg-sand-200 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">
-                      Optional
-                    </span>
-                  </div>
-                  <div className="flex items-start justify-between gap-3 rounded-lg bg-sand-200 px-4 py-3 dark:bg-sand-950">
-                    <pre className="min-w-0 overflow-x-auto font-mono text-sm text-sand-800 dark:text-sand-300">
-                      <code>{LIGHT_THEME_SNIPPET}</code>
-                    </pre>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        navigator.clipboard.writeText(LIGHT_THEME_SNIPPET)
-                        setThemeCopied(true)
-                        setTimeout(() => setThemeCopied(false), 2000)
-                      }}
-                      className="shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
-                    >
-                      {themeCopied
-                        ? <Check weight="regular" size={14} className="text-olive-500" />
-                        : <Copy weight="regular" size={14} />}
-                    </button>
-                  </div>
+                  <p className="mt-2.5 text-sm text-sand-600 dark:text-sand-400">
+                    Light and dark both come with the install and follow your app&apos;s theme: the{' '}
+                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                      dark
+                    </code>{' '}
+                    class on{' '}
+                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                      &lt;html&gt;
+                    </code>
+                    , as next-themes sets it.
+                  </p>
                 </Step>
               </div>
             ) : (

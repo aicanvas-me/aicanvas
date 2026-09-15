@@ -61,6 +61,12 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  * @property {boolean} [skipIfMissing] Skip the whole system when its root is not
  *                                    on disk (an injected-only system on a build
  *                                    with no vault access), instead of failing.
+ * @property {{ module: string, export: string }} [themeSets] A module (path from
+ *                                    rootDir) exporting a function that returns
+ *                                    `{ light, dark }` custom-property sets. The
+ *                                    tokens item then ships them as CSS: light on
+ *                                    `:root`, dark on `.dark`, so installs follow
+ *                                    the app's own light/dark class.
  * @property {DesignSystemTemplate[]} templates
  */
 
@@ -166,6 +172,7 @@ export const DESIGN_SYSTEMS = [
     // half of it.
     rootDir: 'design-systems/andromeda-pro',
     skipIfMissing: true,
+    themeSets: { module: 'components/lib/theme-vars.ts', export: 'andromedaThemeSets' },
     tokenEntries: [
       'tokens.ts',
       'components/lib/utils.ts',

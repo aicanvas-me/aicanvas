@@ -11,6 +11,7 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, unlinkSync, existsSync } from 'fs'
 import { join, dirname, resolve, relative, sep, posix } from 'path'
 import { execSync } from 'child_process'
+import { createJiti } from 'jiti'
 import { transformRootHeightClass } from './lib/copy-paste-transform.mjs'
 import { DESIGN_SYSTEMS, FREE_DS_PLACEHOLDER_SENTINEL } from './lib/design-systems.config.mjs'
 import { reconcileLedger } from './lib/order-ledger.mjs'
@@ -614,6 +615,16 @@ for (const ds of SYSTEMS) {
     }
     injectFile.content = fontPackages.map((p) => `import '${p}';`).join('\n') + '\n' + injectFile.content
   }
+  // Both themes as plain CSS the CLI writes into the buyer's stylesheet: light
+  // on :root, dark on .dark (the class next-themes toggles). Emitted through
+  // `css`, not `cssVars`: cssVars also maps every name into @theme, which
+  // overrides Tailwind's own shadow scale.
+  let themeCss
+  if (ds.themeSets) {
+    const mod = await createJiti(import.meta.url).import(resolve(rootDirAbs, ds.themeSets.module))
+    const { light, dark } = mod[ds.themeSets.export]()
+    themeCss = { '@layer base': { ':root': light, '.dark': dark } }
+  }
   const tokensItem = {
     $schema: SCHEMA,
     name: tokensSlug,
@@ -622,6 +633,7 @@ for (const ds of SYSTEMS) {
     description: `Foundation files for the ${ds.name} design system — tokens, shared utilities, and the system mark. Required by every ${ds.name} component and template.`,
     author: 'aicanvas <https://aicanvas.me>',
     ...dependencyFields(ds, [...new Set([...tokensWalk.npmDeps, ...fontPackages])].sort()),
+    ...(themeCss ? { css: themeCss } : {}),
     files: tokensFiles,
   }
   writeFileSync(join(outDir, `${tokensSlug}.json`), JSON.stringify(tokensItem, null, 2) + '\n')
@@ -836,11 +848,14 @@ for (const ds of SYSTEMS) {
       `Install all ${componentCount} ${ds.name} components, tokens, and utilities.`,
       'No templates, no brain.',
     ]
+    const themeLine = ds.themeSets ? ["Light and dark included. Follows your app's dark class."] : []
+    installContents[ds.slug].push(...themeLine)
     for (const template of ds.templates) {
       const used = templateContents.get(template.slug) ?? 0
       installContents[template.slug] = [
         `This template plus the ${used} ${ds.name} components it uses.`,
         'Tokens included. Re-installs reuse what is already there.',
+        ...themeLine,
       ]
     }
     if (ds.templates.length > 0) {
