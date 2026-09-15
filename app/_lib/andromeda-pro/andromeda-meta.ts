@@ -347,34 +347,6 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     sourceFile: 'UserMenu.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/user-menu.png?v=3',
   },
-  {
-    slug: 'grid-backdrop',
-    name: 'GridBackdrop (WIP)',
-    description:
-      'Lays a hairline measuring grid behind a page or a section.',
-    sourceFile: 'GridBackdrop.tsx',
-  },
-  {
-    slug: 'void-backdrop',
-    name: 'VoidBackdrop (WIP)',
-    description:
-      'Darkens a surface away from one light origin, so hairline panels keep their edge.',
-    sourceFile: 'VoidBackdrop.tsx',
-  },
-  {
-    slug: 'horizon-backdrop',
-    name: 'HorizonBackdrop (WIP)',
-    description:
-      'Lays a receding ground plane behind a section, converging at a horizon.',
-    sourceFile: 'HorizonBackdrop.tsx',
-  },
-  {
-    slug: 'contour-backdrop',
-    name: 'ContourBackdrop (WIP)',
-    description:
-      'Lays seeded topographic hairlines behind a surface.',
-    sourceFile: 'ContourBackdrop.tsx',
-  },
 
   // Objects — the system's sanctioned decorative class (Planet is its first
   // member, above). Monochrome, transparent ground, one per surface.

@@ -49,7 +49,7 @@ const head = {
 //
 // Every rule below keys off what the PANEL stamps on itself (its role, its
 // resolved placement), never off a component name, which is why no component
-// needs a rule of its own and why the set generalises to all 49.
+// needs a rule of its own and why the set generalises to all 45.
 const BODY_RESERVE_CSS = `
         /* A HOVER/FOCUS overlay reserves its room PERMANENTLY, which is the
            whole difference from the three rules below, and why it comes FIRST:
@@ -617,7 +617,7 @@ export function MatrixBlock({ spec }: { spec: MatrixSpec }) {
 // It renders through the SAME `.andromeda-matrix-body` the cards use and emits
 // the SAME reserve rules, because an out-of-flow panel is out of flow here too:
 // a bare centred cell gave the calendar nothing to open into and the frame
-// clipped it. Reusing the body is also what makes this correct for all 49
+// clipped it. Reusing the body is also what makes this correct for all 45
 // without a per-component branch — the reserves key off the panel, not the
 // component.
 //

@@ -64,13 +64,6 @@ export const CATEGORY: Record<string, string> = {
   'media-card': 'Media',
   'music-player': 'Media',
 
-  // Dynamic element — page- and section-scale substrate. WIP: named and
-  // grouped so they can be reviewed in the catalog, not because they are settled.
-  'grid-backdrop': 'Dynamic element',
-  'void-backdrop': 'Dynamic element',
-  'horizon-backdrop': 'Dynamic element',
-  'contour-backdrop': 'Dynamic element',
-
   // Objects — the sanctioned decorative class (motion.md#motion-philosophy).
   // Planet moved here from "Visualization" on the 2026-08-11 ruling: it was
   // never a visualization, it was the class's first member.

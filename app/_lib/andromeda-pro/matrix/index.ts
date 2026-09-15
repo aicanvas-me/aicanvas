@@ -10,7 +10,6 @@ import { button } from './button'
 import { card } from './card'
 import { checkbox } from './checkbox'
 import { choiceCard } from './choice-card'
-import { contourBackdrop } from './contour-backdrop'
 import { cornerMarkers } from './corner-markers'
 import { dataTable } from './table-data'
 import { dateRangePicker } from './date-range-picker'
@@ -18,9 +17,7 @@ import { drawer } from './drawer'
 import { emptyState } from './empty-state'
 import { funnelChart } from './chart-funnel'
 import { gauge } from './gauge'
-import { gridBackdrop } from './grid-backdrop'
 import { heatGrid } from './heat-grid'
-import { horizonBackdrop } from './horizon-backdrop'
 import { iconButton } from './icon-button'
 import { input } from './input'
 import { mediaCard } from './media-card'
@@ -49,19 +46,18 @@ import { topBar } from './top-bar'
 import { trendChart } from './chart-trend'
 import { userCard } from './user-card'
 import { userMenu } from './user-menu'
-import { voidBackdrop } from './void-backdrop'
 import { waveform } from './waveform'
 
 export const SPECS: readonly MatrixSpec[] = [
-  alert, avatar, badge, burst, button, card, checkbox, choiceCard, contourBackdrop,
+  alert, avatar, badge, burst, button, card, checkbox, choiceCard,
   // The two tables sit together so their selected-row treatments are judged
   // side by side.
   cornerMarkers, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,
-  gauge, gridBackdrop, heatGrid, horizonBackdrop, iconButton, input, mediaCard,
+  gauge, heatGrid, iconButton, input, mediaCard,
   metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet,
   progressBar, radarChart, radio, searchField, segmentedControl, slider, spinner,
   statTile, tag, textarea, toggle, tooltip, topBar, trendChart, userCard,
-  userMenu, voidBackdrop, waveform,
+  userMenu, waveform,
 ]
 
 export const SPEC_BY_SLUG: Record<string, MatrixSpec> = Object.fromEntries(

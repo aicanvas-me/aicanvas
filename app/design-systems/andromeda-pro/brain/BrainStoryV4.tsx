@@ -470,7 +470,7 @@ const useLgUp = () => useSyncExternalStore(subscribeLg, () => window.matchMedia(
 const DEFAULT_TAB = 'component-rules'
 const PANEL_ID = 'brain-corpus-panel'
 const tabId = (id: string) => `brain-corpus-tab-${id}`
-// On a phone the names run one column, so a 49-name section is a long scroll.
+// On a phone the names run one column, so a 45-name section is a long scroll.
 // Past this many they wait behind a button; from sm every name shows.
 const PHONE_PREVIEW = 12
 // Characters of 13px mono (about 7.8px each) one name column holds at the
