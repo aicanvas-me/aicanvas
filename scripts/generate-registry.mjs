@@ -620,10 +620,23 @@ for (const ds of SYSTEMS) {
   // with attribute="class", its default is data-theme). Emitted through
   // `css`, not `cssVars`: cssVars also maps every name into @theme, which
   // overrides Tailwind's own shadow scale.
+  // Fails loud, never ships an install without its themes: a missing export
+  // means the injected source is older than this generator.
   let themeCss
   if (ds.themeSets) {
-    const mod = await createJiti(import.meta.url).import(resolve(rootDirAbs, ds.themeSets.module))
-    const { light, dark } = mod[ds.themeSets.export]()
+    const { module: themeModule, export: themeExport } = ds.themeSets
+    const mod = await createJiti(import.meta.url).import(resolve(rootDirAbs, themeModule))
+    if (typeof mod[themeExport] !== 'function') {
+      throw new Error(
+        `generate-registry: ${ds.slug} ${themeModule} does not export ${themeExport}(). ` +
+          'The injected source predates the theme stylesheet; inject a source that has it.',
+      )
+    }
+    const { light, dark } = mod[themeExport]()
+    const lightNames = Object.keys(light ?? {}).sort().join()
+    if (!lightNames || lightNames !== Object.keys(dark ?? {}).sort().join()) {
+      throw new Error(`generate-registry: ${ds.slug} ${themeExport}() must return non-empty light and dark sets with the same names`)
+    }
     themeCss = { '@layer base': { ':root': light, '.dark': dark } }
   }
   const tokensItem = {
