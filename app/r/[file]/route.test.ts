@@ -193,6 +193,13 @@ function callTemplate() {
   return GET(req, { params: Promise.resolve({ file: TEMPLATE_FILE }) })
 }
 
+// Component files get the JSX stub; every other file (tokens, lib) gets a
+// plain notice export so a locked install still type-checks.
+function isLockedStub(f: { path: string; content: string }) {
+  const expected = /\.[jt]sx$/.test(f.path) ? 'PremiumLocked' : 'export const PREMIUM_NOTICE'
+  return f.content.includes(expected) && !f.content.includes('import ')
+}
+
 describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-independent gate (no enforce flag needed)', () => {
   afterEach(() => {
     delete process.env.REGISTRY_ENFORCEMENT
@@ -214,7 +221,8 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     // (the real file paths remain, but their bodies are all stubbed out).
     const item = JSON.parse(body)
     expect(item.files.length).toBeGreaterThan(0)
-    expect(item.files.every((f: { content: string }) => f.content.includes('PremiumLocked'))).toBe(true)
+    expect(item.files.some((f: { path: string }) => !/\.[jt]sx$/.test(f.path))).toBe(true)
+    expect(item.files.every(isLockedStub)).toBe(true)
   })
 
   it('signed-in free tier → same stub (no real source)', async () => {
@@ -224,7 +232,7 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     const item = await res.json()
 
     expect(res.status).toBe(200)
-    expect(item.files.every((f: { content: string }) => f.content.includes('PremiumLocked'))).toBe(true)
+    expect(item.files.every(isLockedStub)).toBe(true)
   })
 
   it('premium → the REAL template (registry deps to the components it uses)', async () => {
