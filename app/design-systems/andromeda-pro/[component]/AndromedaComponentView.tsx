@@ -718,7 +718,7 @@ export function AndromedaComponentView({
                     </div>
                   </div>
                   <p className="mt-2.5 text-sm text-sand-600 dark:text-sand-400">
-                    Light and dark both come with the install and follow your app&apos;s theme: the{' '}
+                    Light and dark both come with the install and follow the{' '}
                     <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       dark
                     </code>{' '}
@@ -726,7 +726,11 @@ export function AndromedaComponentView({
                     <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       &lt;html&gt;
                     </code>
-                    , as next-themes sets it.
+                    , the shadcn dark mode setup (next-themes with{' '}
+                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                      attribute=&quot;class&quot;
+                    </code>
+                    ).
                   </p>
                 </Step>
               </div>

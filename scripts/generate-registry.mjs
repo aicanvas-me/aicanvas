@@ -616,7 +616,8 @@ for (const ds of SYSTEMS) {
     injectFile.content = fontPackages.map((p) => `import '${p}';`).join('\n') + '\n' + injectFile.content
   }
   // Both themes as plain CSS the CLI writes into the buyer's stylesheet: light
-  // on :root, dark on .dark (the class next-themes toggles). Emitted through
+  // on :root, dark on .dark (shadcn's dark mode class; next-themes sets it only
+  // with attribute="class", its default is data-theme). Emitted through
   // `css`, not `cssVars`: cssVars also maps every name into @theme, which
   // overrides Tailwind's own shadow scale.
   let themeCss
