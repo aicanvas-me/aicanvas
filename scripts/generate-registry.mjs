@@ -885,6 +885,7 @@ for (const ds of SYSTEMS) {
         ...(hasBrain && brainFiles > 0
           ? [`Includes the ${ds.name} brain (${brainFiles} rule files your AI reads).`]
           : []),
+        ...themeLine,
       ]
     }
   }
