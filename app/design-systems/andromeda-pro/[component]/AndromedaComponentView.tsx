@@ -736,8 +736,13 @@ export function AndromedaComponentView({
               </div>
             ) : (
               <div className="space-y-6">
-                {/* Manual: copy the source */}
-                <Step number={1} isLast>
+                {/* Manual: copy the source. This pane shows the component's own
+                    file, whose imports (`../tokens`, `./lib/utils`) point at the
+                    Andromeda Pro foundation, so it does not compile alone, and
+                    the light and dark sets live in the CSS the CLI writes into
+                    the project's stylesheet, which a copied file never gets.
+                    Hence step 2. */}
+                <Step number={1}>
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Copy and paste the following code into your project:
                   </p>
@@ -760,6 +765,24 @@ export function AndromedaComponentView({
                       {renderCodePane()}
                     </div>
                   </div>
+                </Step>
+
+                {/* Step 2 — the foundation and theme CSS this file relies on */}
+                <Step number={2} isLast>
+                  <p className="text-sm text-sand-600 dark:text-sand-400">
+                    This file imports the Andromeda Pro foundation, so it expects{' '}
+                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                      tokens.ts
+                    </code>{' '}
+                    one folder up and the{' '}
+                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                      lib/
+                    </code>{' '}
+                    folder beside it, plus the other Andromeda Pro files it imports.
+                    Light and dark come from theme CSS the install adds to your
+                    stylesheet. Without it, the component shows dark only. The CLI
+                    tab installs all of it for you.
+                  </p>
                 </Step>
               </div>
             )}
