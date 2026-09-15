@@ -43,7 +43,6 @@ export const DESIGN_SYSTEM_META: Record<DesignSystemSlug, DesignSystemMeta> = {
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     domain: 'Telecom' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', domain: 'Operations' },
       { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       domain: 'Audio' },
-      { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           domain: 'Auth' },
     ],
   },
 }

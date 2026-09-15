@@ -243,7 +243,6 @@ export const DESIGN_SYSTEMS = [
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     domain: 'Telecom',    entryPath: 'examples/service-order/index.tsx' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', domain: 'Operations', entryPath: 'examples/resource-planning/index.tsx' },
       { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       domain: 'Audio',      entryPath: 'examples/signal-room/index.tsx' },
-      { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           domain: 'Auth',       entryPath: 'examples/sign-in/index.tsx' },
     ],
   },
 ]
