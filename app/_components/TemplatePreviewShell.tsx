@@ -320,11 +320,13 @@ function PreviewChrome({
 
   return (
     // CONTRACT: template compositions must FILL the preview region and scroll
-    // internally (height:100% + an inner overflow-y:auto). The root here is
-    // h-full, so a composition that instead GROWS past the region would (a)
-    // get clipped by the Andromeda column's md:overflow-y-hidden and (b)
-    // escape the sticky header's range. All four Andromeda templates follow
-    // the pinned pattern; keep new ones on it too.
+    // internally (an inner overflow-y:auto). Either root height does it:
+    // height:100%, or height:100dvh capped by max-height:100%, which also
+    // fills a bare page that has no sized parent. The root here is h-full, so
+    // a composition that instead GROWS past the region would (a) get clipped
+    // by the Andromeda column's md:overflow-y-hidden and (b) escape the sticky
+    // header's range. Every template on this shell uses one of the two; keep
+    // new ones on it too.
     <div className="flex h-full min-h-full w-full flex-col">
       <TopBar
         templateSlug={templateSlug}
