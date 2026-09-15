@@ -41,11 +41,16 @@ function PeakBar({ value }) {
           top: 0,
           bottom: 0,
           width: `${value}%`,
+          // The fill takes the track's radius, so both ends are round. A radius
+          // clamps to half the box, so on this 4px fill it is a full pill, and
+          // the minimum width keeps a low reading a dot instead of a sliver.
+          minWidth: value > 0 ? tokens.spacing[1] : 0,
+          borderRadius: tokens.radius.frame,
           // Solid mark, not a tint: a meter fill is a MARK. Over 85 reads hot.
-          // Both branches go through the theme channel — the hot one used to be
-          // a bare literal, so it stayed a dark-ramp amber on a light card.
+          // Both branches read a live role, so the hot one follows the theme
+          // instead of staying a dark-ramp amber on a light card.
           background: value > 85
-            ? `var(--at-warning-300, ${tokens.color.warning[300]})`
+            ? `var(--at-status-warning-mark, ${tokens.color.status.warning.mark})`
             : `var(--at-text-primary, ${tokens.color.text.primary})`,
         }}
       />

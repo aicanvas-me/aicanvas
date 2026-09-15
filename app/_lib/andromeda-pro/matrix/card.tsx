@@ -52,7 +52,7 @@ export const card: MatrixSpec = {
     {
       label: 'Glow',
       props: { variant: 'glow' },
-      children: body('Highlight card', 'Tinted accent gradient surface with a glow shadow and corner markers.', 'Live', 'accent'),
+      children: body('Highlight card', 'Tinted accent gradient surface with corner markers.', 'Live', 'accent'),
     },
     {
       // bordered and markers are independent booleans, not members of the cva
