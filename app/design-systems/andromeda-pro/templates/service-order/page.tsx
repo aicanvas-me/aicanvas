@@ -24,7 +24,7 @@ export default async function ServiceOrderTemplate({
 }) {
   const frame = (await searchParams).frame === '1'
   return (
-    <AndromedaThemeWrap className="contents">
+    <AndromedaThemeWrap className="contents" followSite>
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-pro-service-order"

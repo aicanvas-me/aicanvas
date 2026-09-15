@@ -23,7 +23,6 @@ import { Button } from '../components/Button'
 import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
-import { AndromedaThemeToggle } from '../design-systems/andromeda-pro/AndromedaThemeWrap'
 import dynamic from 'next/dynamic'
 import { useTheme } from '../components/ThemeProvider'
 // The dot-grid standalone, reused as the mobile preview backdrop. Loaded
@@ -479,11 +478,9 @@ function TopBar({
 
         {/* Device toggles (Desktop / Mobile) + Replay — sized to match the
             right-side buttons (~32px). Shown from md up; the cluster hides on a
-            real phone, where you already see the responsive layout. The theme
-            toggle beside it renders only inside an AndromedaThemeWrap, so
-            other systems' templates carry no dead control. */}
-        <div className="hidden items-center gap-2 justify-self-center md:flex">
-        <div className="flex items-center gap-0.5 rounded-lg border border-sand-200 bg-sand-100 p-0.5 dark:border-sand-800 dark:bg-sand-900">
+            real phone, where you already see the responsive layout. The site
+            theme toggle on the right moves every template preview with it. */}
+        <div className="hidden items-center gap-0.5 justify-self-center rounded-lg border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
           {DEVICE_ORDER.map(({ key, label, icon: Icon }) => {
             const active = device === key
             return (
@@ -513,14 +510,6 @@ function TopBar({
           >
             <ArrowClockwise weight="regular" size={15} />
           </button>
-        </div>
-        {/* Andromeda Pro's templates carry their own two-theme wrapper, so the
-            toggle belongs to them alone. Andromeda Legacy's templates have no
-            such wrapper (they follow the site via AndromedaThemeSync), and a
-            toggle over them controlled nothing. */}
-        {getDesignSystemTemplateMeta(templateSlug)?.system.slug === 'andromeda-pro' && (
-          <AndromedaThemeToggle />
-        )}
         </div>
 
         {/* Right — theme toggle + entitlement CTA + auth */}

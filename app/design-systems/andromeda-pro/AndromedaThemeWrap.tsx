@@ -14,10 +14,11 @@
 // style. A mid-tree wrapper retints the pure-CSS var() chains but fires no
 // observer, so canvases and charts silently keep the old palette.
 
-import { createContext, useContext, useEffect, useId, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useContext, useEffect, useId, useLayoutEffect, useMemo, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import { Moon, Sun } from '@phosphor-icons/react'
 import { andromedaLightVars } from '../../lib/andromeda-pro-helpers.generated'
+import { useTheme } from '../../components/ThemeProvider'
 
 type AndromedaTheme = 'dark' | 'light'
 
@@ -34,6 +35,7 @@ export function AndromedaThemeWrap({
   children,
   className,
   initialTheme = 'dark',
+  followSite = false,
 }: {
   children: ReactNode
   className?: string
@@ -45,8 +47,34 @@ export function AndromedaThemeWrap({
    * nothing keeps this component's original dark-anchored default.
    */
   initialTheme?: AndromedaTheme
+  /**
+   * Template pages: the preview has no toggle of its own and follows the site
+   * theme, the way Andromeda Legacy's templates do. The site moves the
+   * preview; nothing here ever writes the site's class or cookie. The phone
+   * preview iframe has no ThemeProvider, so it mirrors the embedding page.
+   */
+  followSite?: boolean
 }) {
-  const [theme, setTheme] = useState<AndromedaTheme>(initialTheme)
+  const [localTheme, setTheme] = useState<AndromedaTheme>(initialTheme)
+  const siteTheme = useTheme().theme
+  const [parentTheme, setParentTheme] = useState<AndromedaTheme | null>(null)
+
+  useLayoutEffect(() => {
+    if (!followSite || window.self === window.top) return
+    let parentRoot: HTMLElement
+    try {
+      parentRoot = window.parent.document.documentElement
+    } catch {
+      return
+    }
+    const sync = () => setParentTheme(parentRoot.classList.contains('dark') ? 'dark' : 'light')
+    sync()
+    const observer = new MutationObserver(sync)
+    observer.observe(parentRoot, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [followSite])
+
+  const theme = followSite ? (parentTheme ?? siteTheme) : localTheme
 
   // The full light set, computed once: shared by the SSR seed below and the
   // effect's imperative write, so the two can never drift apart.
