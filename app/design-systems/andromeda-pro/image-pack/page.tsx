@@ -152,7 +152,7 @@ function ImageVersion({ concept, mode }: { concept: ImagePackConcept; mode: Imag
           nothing for an image optimizer to do. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={imagePackUrl(`${concept.slug}/${mode}.webp`)}
+        src={imagePackUrl(`${concept.slug}-${mode}.webp`)}
         alt={`${concept.alt}, ${mode} version`}
         width={960}
         height={1200}
@@ -163,7 +163,7 @@ function ImageVersion({ concept, mode }: { concept: ImagePackConcept; mode: Imag
       <figcaption className="mt-2 flex items-center justify-between gap-2 px-1">
         <span className="text-xs font-semibold text-sand-700 dark:text-sand-300">{label}</span>
         <a
-          href={imagePackUrl(`${concept.slug}/${mode}.png`)}
+          href={imagePackUrl(`${concept.slug}-${mode}.png`)}
           download
           aria-label={`Download ${concept.title}, ${mode} version, PNG`}
           className={buttonClasses({ variant: 'link', size: 'xs' })}
