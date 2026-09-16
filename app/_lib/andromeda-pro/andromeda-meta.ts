@@ -423,7 +423,7 @@ export type AndromedaTemplateMeta = {
 
 // ImageKit template art — filenames kept exactly as uploaded (capitalized, with
 // spaces), so they're URL-encoded when building the src. Mirror of the same map
-// in AndromedaOverview.tsx.
+// in overview-b/overview-data.ts.
 const TEMPLATE_ART: Record<string, string> = {
   'mission-control': 'Mission control.png',
   'service-order': 'Service order.png',
@@ -437,7 +437,7 @@ const templateArt = (folder: string) =>
 // scripts/lib/design-systems.config.mjs (folder = registry slug minus the
 // "andromeda-" prefix, matching the route dirs). Kept here rather than derived
 // from the .mjs config so this stays a typed, Node-free, client-safe module.
-// Blurbs are the same copy AndromedaOverview.tsx shows on its template cards.
+// Blurbs are the same copy the overview (overview-b/overview-data.ts) shows on its template cards.
 // Keep the two in sync (fixed set, changes rarely).
 export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
   {

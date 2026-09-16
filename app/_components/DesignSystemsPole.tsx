@@ -42,7 +42,6 @@ const SYSTEMS = [
       { slug: 'mission-control', name: 'Mission Control', domain: 'Sci-Fi' },
       { slug: 'service-order', name: 'Service Order', domain: 'Telecom' },
       { slug: 'resource-planning', name: 'Resource Planning', domain: 'Operations' },
-      { slug: 'sign-in', name: 'Sign In', domain: 'Auth' },
     ],
   },
   {

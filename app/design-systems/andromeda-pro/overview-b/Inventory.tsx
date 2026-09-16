@@ -55,7 +55,7 @@ const DOCS: Doc[] = [
   {
     key: 'templates',
     label: 'templates',
-    line: 'Mission control, service orders, resource planning, the signal room and sign-in.',
+    line: 'Mission control, service orders, resource planning and the signal room.',
     note: 'Whole screens assembled out of the system, running, not screenshots of screens.',
   },
   {

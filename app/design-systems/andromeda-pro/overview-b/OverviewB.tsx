@@ -447,7 +447,7 @@ export function OverviewB({
             id="ovb-templates"
             overline="Templates"
             title={`${capitalWord(TEMPLATES.length)} finished screens, built from the system.`}
-            sub="A live signal room, mission telemetry, work orders, capacity planning and sign-in. Open any one and watch it run."
+            sub="A live signal room, mission telemetry, work orders and capacity planning. Open any one and watch it run."
           />
           <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-2">
             {TEMPLATES.map((t, i) => (
