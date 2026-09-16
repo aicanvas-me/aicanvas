@@ -107,26 +107,56 @@ function writeBuildInfo(sha, brainFileCounts = {}) {
 // marker — otherwise the leak guard would flag inject-premium.mjs itself.
 const MARKER = ['AICANVAS', 'PREMIUM', 'DO', 'NOT', 'COMMIT'].join('-')
 
-// Two marker forms: a `//` comment block in code, and an HTML comment in
-// markdown. An HTML comment that opens on the marker line and closes later is
-// removed through its closing `-->`.
 function stripMarkerBlock(text) {
   let stripping = false
-  let inHtmlComment = false
   return text.split('\n').filter((line) => {
-    if (inHtmlComment) {
-      if (line.includes('-->')) inHtmlComment = false
-      return false
-    }
     if (line.includes(MARKER)) {
       stripping = true
-      if (line.includes('<!--') && !line.slice(line.indexOf(MARKER)).includes('-->')) inHtmlComment = true
       return false
     }
     if (stripping && /^\s*\/\//.test(line)) return false
     stripping = false
     return true
   }).join('\n')
+}
+
+// Brain files ship to subscribers verbatim, so their marker strip is strict:
+// the marker must open its own comment, and anything that would drop real
+// content fails the build instead. Markdown uses an HTML comment (one line, or
+// closed on a later line that ends with `-->`); code files use the `//` block
+// stripMarkerBlock already handles.
+function stripBrainMarker(text, file) {
+  const fail = (why) => {
+    console.error(`[inject-premium] ${file}: ${why}`)
+    process.exit(1)
+  }
+  if (!text.includes(MARKER)) return text
+  const isMarkdown = file.endsWith('.md')
+  const lines = text.split('\n')
+  const out = []
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    if (!line.includes(MARKER)) {
+      out.push(line)
+      continue
+    }
+    const t = line.trim()
+    if (isMarkdown && t.startsWith('<!--')) {
+      if (t.endsWith('-->')) continue
+      let j = i + 1
+      while (j < lines.length && !lines[j].includes('-->')) j++
+      if (j === lines.length) fail('the premium marker comment is never closed with -->')
+      if (!lines[j].trim().endsWith('-->')) fail('text follows the --> that closes the premium marker comment')
+      i = j
+      continue
+    }
+    if (!isMarkdown && t.startsWith('//')) {
+      while (i + 1 < lines.length && /^\s*\/\//.test(lines[i + 1])) i++
+      continue
+    }
+    fail('the premium marker must open its own comment line (<!-- in markdown, // in code)')
+  }
+  return out.join('\n')
 }
 
 const log = (m) => console.log('[inject-premium] ' + m)
@@ -223,11 +253,14 @@ function syncGitExclude(paths) {
     // info/exclude is shared by every worktree of the repo, so the block is a
     // UNION: replacing it wholesale let one worktree's run drop the paths
     // another worktree had injected, and those files then showed up as
-    // untracked and blocked commits there. Stale names only hide files that no
-    // longer exist; tracked files are never affected by an exclude entry.
+    // untracked and blocked commits there. A name is kept only while its file
+    // still exists in some worktree, so the block does not grow forever.
     let kept = []
     if (start !== -1 && end !== -1 && end >= start) {
+      const roots = execSync('git worktree list --porcelain', { stdio: ['ignore', 'pipe', 'ignore'] })
+        .toString().split('\n').filter((l) => l.startsWith('worktree ')).map((l) => l.slice(9))
       kept = lines.slice(start + 1, end).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
+        .filter((l) => roots.some((r) => existsSync(join(r, l))))
       lines.splice(start, end - start + 1)
     }
     while (lines.length && lines[lines.length - 1].trim() === '') lines.pop()
@@ -837,14 +870,8 @@ function collectBrain(source, slug) {
     process.exit(1)
   }
   // Vault files carry a do-not-commit marker; subscribers must never receive it.
-  const read = (rel) => {
-    const content = stripMarkerBlock(readFileSync(join(sysDir, rel), 'utf8'))
-    if (content.includes(MARKER)) {
-      console.error(`[inject-premium] brain "${slug}": design-systems/${slug}/${rel} still contains the premium marker after stripping; put the marker on its own line`)
-      process.exit(1)
-    }
-    return content
-  }
+  const read = (rel) =>
+    stripBrainMarker(readFileSync(join(sysDir, rel), 'utf8'), `design-systems/${slug}/${rel}`)
   // INVENTORY.md is generated vault-side (scripts/generate-inventory.mjs): every
   // component with its purpose, props, variants and forbids in ONE file. It is
   // how an agent answers "do we already have this?" without opening 39 rules
@@ -991,8 +1018,8 @@ if (!source) {
   writeStubShim()
   writeBuildInfo(null)
   // Free v2 DS components: no vault reachable — remove any previously injected
-  // copies (mirrors the standalone clean-slate above), empty the exclude block,
-  // and write the placeholder shim so the showcase still compiles + renders.
+  // copies (mirrors the standalone clean-slate above), drop this worktree's
+  // names from the exclude block, and write the placeholder shim so the showcase still compiles + renders.
   const freePlaceholders = writeFreeDsPlaceholders('andromeda', V2_FALLBACK_NAMES, new Set())
   cleanupFreeDs(freePlaceholders)
   syncGitExclude(freePlaceholders)
@@ -1272,6 +1299,12 @@ const brains = Array.isArray(manifest.brains) ? [...manifest.brains] : []
 const brainFileCountExpected =
   manifest.brainFileCount && typeof manifest.brainFileCount === 'object' ? manifest.brainFileCount : {}
 const brainFileCounts = {}
+for (const slug of Object.keys(brainFileCountExpected)) {
+  if (!brains.includes(slug)) {
+    console.error(`[inject-premium] manifest brainFileCount names "${slug}", which is not in manifest brains`)
+    process.exit(1)
+  }
+}
 // ── Design-system remix prompts ─────────────────────────────────────────────
 // One hand-written markdown brief per Andromeda Pro component, authored in the
 // vault at design-systems/<system>/prompts/<Name>.md. This is PAID content: it
