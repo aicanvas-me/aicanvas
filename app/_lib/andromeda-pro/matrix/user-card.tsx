@@ -4,6 +4,7 @@ import { Gear, Keyboard, SignOut, UserCircle } from '@phosphor-icons/react'
 import { UserCard } from '../../../lib/andromeda-pro.generated'
 import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
+import { SAMPLE_AVATARS } from '../sample-pictures'
 
 const ITEMS = [
   { id: 'profile', label: 'Profile', icon: UserCircle },
@@ -13,8 +14,8 @@ const ITEMS = [
   { id: 'signout', label: 'Sign out', icon: SignOut },
 ]
 
-const SRC =
-  'https://images.unsplash.com/photo-1669287731461-bd8ce3126710?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+const SRC = SAMPLE_AVATARS.butterflyVisor.dark
+const LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light
 
 export const userCard: MatrixSpec = {
   slug: 'user-card',
@@ -48,6 +49,7 @@ export const userCard: MatrixSpec = {
         name="Reza Quinn"
         role="Product Designer"
         src={SRC}
+        lightSrc={LIGHT_SRC}
         status="online"
         size={size}
         items={ITEMS}
@@ -65,7 +67,7 @@ export const userCard: MatrixSpec = {
       label: 'Open up',
       node: (
         <div style={{ width: 360, minWidth: 0, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
-          <UserCard name="Reza Quinn" role="Product Designer" src={SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="top" />
+          <UserCard name="Reza Quinn" role="Product Designer" src={SRC} lightSrc={LIGHT_SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="top" />
         </div>
       ),
     },
@@ -73,7 +75,7 @@ export const userCard: MatrixSpec = {
       label: 'Open down',
       node: (
         <div style={{ width: 360, minWidth: 0, background: `var(--at-surface-raised, ${tokens.color.surface.raised})` }}>
-          <UserCard name="Reza Quinn" role="Product Designer" src={SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="bottom" />
+          <UserCard name="Reza Quinn" role="Product Designer" src={SRC} lightSrc={LIGHT_SRC} status="online" size="md" items={ITEMS} align="stretch" staticOpen placement="bottom" />
         </div>
       ),
     },

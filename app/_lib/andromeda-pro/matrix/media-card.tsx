@@ -1,19 +1,20 @@
 // v2 component: imported through the build-time shim.
 import { MediaCard } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
+import { SAMPLE_COVERS } from '../sample-pictures'
 
 // Two photos for the whole section, alternating. The cases differ by ACTION and
 // LAYOUT; a third and fourth picture would read as a difference that isn't one.
 // The component has no default image; every case passes one.
-const PLANET = 'https://ik.imagekit.io/aitoolkit/andromeda/signal-room/mix-01.webp'
-const DRIFT = 'https://ik.imagekit.io/aitoolkit/andromeda/signal-room/mix-03.webp'
+const CONDUCTOR = SAMPLE_COVERS.starlightConductor
+const OVERLOOK = SAMPLE_COVERS.earthOverlook
 
 export const mediaCard: MatrixSpec = {
   slug: 'media-card',
   Component: MediaCard,
   sizes: null,
   variants: [
-    { label: 'Play action', props: { code: 'MIX-01', title: 'Your mix', meta: 'Updates daily', action: 'play', image: PLANET } },
+    { label: 'Play action', props: { code: 'MIX-01', title: 'Your mix', meta: 'Updates daily', action: 'play', image: CONDUCTOR.dark, lightImage: CONDUCTOR.light } },
     {
       label: 'CTA action',
       props: {
@@ -22,11 +23,12 @@ export const mediaCard: MatrixSpec = {
         meta: 'Ambient · 2h',
         action: 'cta',
         ctaLabel: 'Open',
-        image: DRIFT,
+        image: OVERLOOK.dark,
+        lightImage: OVERLOOK.light,
       },
     },
-    { label: 'No action', props: { code: 'CH-09', title: 'Static art', meta: 'Cover only', action: 'none', image: PLANET } },
-    { label: 'Playing', props: { code: 'MIX-01', title: 'Your mix', meta: 'Now playing', playing: true, image: DRIFT } },
+    { label: 'No action', props: { code: 'CH-09', title: 'Static art', meta: 'Cover only', action: 'none', image: CONDUCTOR.dark, lightImage: CONDUCTOR.light } },
+    { label: 'Playing', props: { code: 'MIX-01', title: 'Your mix', meta: 'Now playing', playing: true, image: OVERLOOK.dark, lightImage: OVERLOOK.light } },
     // stacked is a structurally different render path (image block + plain-surface caption block, no scrim) — worth its own case, not just a prop tweak
     {
       label: 'Stacked',
@@ -40,7 +42,8 @@ export const mediaCard: MatrixSpec = {
         action: 'cta',
         // Visible text in stacked, not just an aria label — the case has to show that.
         ctaLabel: 'Discover more',
-        image: PLANET,
+        image: CONDUCTOR.dark,
+        lightImage: CONDUCTOR.light,
       },
     },
     // Same caption, code moved onto the photo — the only thing allowed there.
@@ -53,7 +56,8 @@ export const mediaCard: MatrixSpec = {
         meta: 'Continuous readings from the outer coil array, refreshed every few seconds.',
         action: 'cta',
         ctaLabel: 'Discover more',
-        image: DRIFT,
+        image: OVERLOOK.dark,
+        lightImage: OVERLOOK.light,
       },
     },
   ],
