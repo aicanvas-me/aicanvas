@@ -6,9 +6,9 @@
 // app/andromeda-capture/[slug]/CaptureFrame.tsx, which shoots the 16:9 card
 // posters. The system page and the component pages now render from the matrix
 // declarations (app/_lib/andromeda-pro/matrix/) instead. Flipping capture over too
-// would silently re-shoot every card poster, so that stays the maintainer's
-// call; until he makes it, this file is curation for the posters and nothing
-// else. Do not add a new consumer.
+// would silently re-shoot every card poster, so until that is a deliberate
+// change, this file is curation for the posters and nothing else. Do not add a
+// new consumer.
 'use client'
 
 import { Fragment, useState } from 'react'

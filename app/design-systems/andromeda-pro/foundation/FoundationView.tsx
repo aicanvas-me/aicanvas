@@ -174,7 +174,7 @@ const PIVOT_ROLES = [
 ] as const
 
 const stopOf = (ramp: Record<string, string>, value: string) =>
-  Object.entries(ramp).find(([, v]) => v === value)?.[0] ?? '—'
+  Object.entries(ramp).find(([, v]) => v === value)?.[0] ?? '-'
 
 const PIVOT_TABLE = PIVOT_ROLES.map(([suffix, title, what]) => ({
   suffix,

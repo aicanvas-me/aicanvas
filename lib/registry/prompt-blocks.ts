@@ -100,7 +100,7 @@ export function splitSystemPromptAtPaywall(prompt: string): { head: string } | n
   return { head }
 }
 
-// ponytail: prose-brief fallback; retire when all 45 Pro prompts are scaffold prompts.
+// Prose-brief fallback; retire it once all 45 Pro prompts are scaffold prompts.
 /**
  * The paywall seam for an ANDROMEDA PRO prompt, which may be either shape while
  * the 45 are rewritten one by one: a scaffold prompt cuts at the fixed seven-block

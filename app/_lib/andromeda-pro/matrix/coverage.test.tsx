@@ -1,8 +1,8 @@
 // The only enforcement for the matrix. It proves a declared case RENDERS and
 // that a forced state has a real rule to fire; it never proves anything looks
 // right, and it is structurally blind to a forced cell that is visually
-// identical to Rest. That is what the Rest baseline column and the maintainer's
-// eyes are for — the page is the instrument, this file is the floor.
+// identical to Rest. That is what the Rest baseline column and a human review
+// are for: the page is the instrument, this file is the floor.
 import { readFileSync, existsSync } from 'node:fs'
 import { join } from 'node:path'
 import { renderToStaticMarkup } from 'react-dom/server'

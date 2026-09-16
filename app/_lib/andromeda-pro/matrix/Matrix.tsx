@@ -22,18 +22,16 @@ const TARGET_INK = `var(--andromeda-text-primary, var(--at-text-primary, ${token
 
 // Documentation chrome, NOT an Andromeda surface: the system's own radius scale
 // stops at 3px because square corners are its identity, and every card here is
-// a page box around a component rather than a component. Rounding these is a
-// maintainer call, taken 2026-08-09; the components inside them are untouched
-// and still square.
+// a page box around a component rather than a component, so these are rounded;
+// the components inside them are untouched and still square.
 const CARD_RADIUS = '12px'
 
 // Documentation chrome runs on the SITE face (Manrope), not the system's mono,
 // on the same reasoning that already rounded these cards: a caption over a case
 // is the page telling you what you are looking at, not an Andromeda surface.
 // Mono made the captions read as part of the component. The components inside
-// are untouched and still spend the system's own type. Maintainer call,
-// 2026-08-28; applies to all three chrome sites (caption, card label, section
-// heading).
+// are untouched and still spend the system's own type. Applies to all three
+// chrome sites (caption, card label, section heading).
 const head = {
   fontFamily: tokens.typography.fontSans,
   fontSize: tokens.typography.size.sm,

@@ -385,9 +385,9 @@ export function AndromedaComponentView({
               {/* Theme toggle — one icon-only button whose icon and tooltip
                   swap with the current preview theme, matching the standalone
                   component page's control (app/components/[slug]/ComponentPageView.tsx).
-                  Replaces the old sun+moon segmented pair (AndromedaThemeToggle):
-                  the maintainer's ruling 2026-09-10 is that Pro's preview card
-                  shows the same three top-right controls the standalone does. */}
+                  Replaces the old sun+moon segmented pair (AndromedaThemeToggle)
+                  so Pro's preview card shows the same three top-right controls
+                  the standalone does. */}
               <div className="group/toggle relative">
                 <Button
                   variant="outline"
@@ -503,8 +503,8 @@ export function AndromedaComponentView({
 
         {/* Action bar. Remix with AI was omitted here for a long time on the
             reasoning that mutating a system component breaks the system
-            contract and that people compose AT the system level. The maintainer
-            reversed that on 2026-09-10 for Andromeda Pro: the prompt is part of
+            contract and that people compose AT the system level. Andromeda Pro
+            reverses that: the prompt is part of
             what the tier sells, so it is offered per component, behind the same
             paywall as the source. Andromeda Legacy keeps the original
             behaviour and has no Remix button. */}
