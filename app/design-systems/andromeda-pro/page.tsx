@@ -2,8 +2,8 @@
 // the sidebar's "Andromeda Pro" and "Overview" links point at: the deal first,
 // then the proof (hero, compare bento, foundation layers, Brain, templates,
 // component inventory). The raw component grid lives at
-// /design-systems/andromeda-pro/system; the former /overview preview URL
-// 308-redirects here (next.config.ts), and so does the /overview-b review URL.
+// /design-systems/andromeda-pro/system (308 to foundation); the /overview-b
+// review URL the redesign was built at redirects here permanently.
 //
 // Everything countable is computed here, on the server, from the same sources
 // the components index reads, so no number on the page is typed by hand. The
