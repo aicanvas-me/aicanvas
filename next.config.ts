@@ -51,6 +51,9 @@ const nextConfig: NextConfig = {
     // traced into the serverless bundle, the read throws ENOENT, and the Remix
     // panel silently disappears for everyone, subscribers included.
     "/design-systems/andromeda-pro/[component]": ["./registry-data/*.json"],
+    // The image pack's two Pro files are read with fs at request time from the
+    // injected (gitignored) Andromeda Pro tree.
+    "/api/andromeda-pro/image-pack/[file]": ["./design-systems/andromeda-pro/image-pack/*"],
   },
   async headers() {
     return [

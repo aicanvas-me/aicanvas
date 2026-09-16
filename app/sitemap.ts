@@ -46,7 +46,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   // system's IA for both advertised URLs that 404.
   const SYSTEM_SECTIONS: Record<string, string[]> = {
     andromeda: ['system'],
-    'andromeda-pro': ['foundation', 'components'],
+    'andromeda-pro': ['foundation', 'components', 'image-pack'],
   }
   const designSystemPages: MetadataRoute.Sitemap = availableDesignSystems().flatMap(
     (s: { slug: string; templates?: { slug: string }[] }) => [
