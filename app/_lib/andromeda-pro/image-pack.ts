@@ -13,7 +13,7 @@
 // domain. NEXT_PUBLIC_IMAGE_PACK_BASE overrides it (a local folder server in
 // development).
 export const IMAGE_PACK_BASE =
-  process.env.NEXT_PUBLIC_IMAGE_PACK_BASE ?? 'https://pub-image-pack.r2.dev/image-pack/v1'
+  process.env.NEXT_PUBLIC_IMAGE_PACK_BASE ?? 'https://pub-110c83a6ed20459da515832c8bdb50c7.r2.dev/image-pack/v1'
 
 export type ImagePackMode = 'dark' | 'light'
 
