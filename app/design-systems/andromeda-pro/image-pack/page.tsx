@@ -19,7 +19,7 @@ import { ImagePackProFiles } from './ImagePackProFiles'
 export const metadata = {
   title: 'Image Pack · Andromeda Pro',
   description:
-    '18 astronaut illustrations, each in a light and a dark version with the same pose and crop, free to download at 4096 × 5120. Pro members also get the style bible and QA manifest behind the set.',
+    '18 astronaut scenes, each in a light and a dark version with the same pose and crop, free to download at 4096 × 5120. Pro members also get the style bible and QA manifest behind the set.',
   alternates: { canonical: '/design-systems/andromeda-pro/image-pack' },
 }
 
@@ -49,7 +49,7 @@ export default function ImagePackPage() {
             Andromeda Pro · Image pack
           </p>
           <h1 className="mt-4 max-w-3xl text-4xl font-extrabold leading-[0.98] tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl lg:text-6xl">
-            {IMAGE_PACK_CONCEPTS.length} astronauts.
+            {IMAGE_PACK_CONCEPTS.length} scenes.
             <br />
             Each in light and dark.
           </h1>
