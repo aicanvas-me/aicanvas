@@ -33,7 +33,8 @@ export function ImagePackProFiles() {
       link.href = url
       link.download = name
       link.click()
-      URL.revokeObjectURL(url)
+      // Revoking in the same tick can cancel the save in some browsers.
+      setTimeout(() => URL.revokeObjectURL(url), 1000)
     } catch {
       setFailed(file)
     }
@@ -66,11 +67,10 @@ export function ImagePackProFiles() {
               )}
               {status === 'not-premium' ? 'Unlock with Pro' : 'Download'}
             </button>
-            {failed === f.file && (
-              <span role="status" className="text-xs text-sand-600 dark:text-sand-400">
-                Download failed. Try again.
-              </span>
-            )}
+            {/* Always mounted, so a screen reader announces the text change. */}
+            <span role="status" className="text-xs text-sand-600 dark:text-sand-400">
+              {failed === f.file ? 'Download failed. Try again.' : ''}
+            </span>
           </div>
         </div>
       ))}
