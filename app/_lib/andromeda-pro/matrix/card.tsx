@@ -47,7 +47,7 @@ export const card: MatrixSpec = {
     {
       label: 'Default',
       props: {},
-      children: body('Default card', 'Corner brackets are the frame — no perimeter stroke.', 'Idle', 'default'),
+      children: body('Default card', 'Corner brackets are the frame, no perimeter stroke.', 'Idle', 'default'),
     },
     {
       label: 'Glow',
@@ -64,7 +64,7 @@ export const card: MatrixSpec = {
     {
       label: 'No markers',
       props: { markers: false },
-      children: body('Unframed card', 'Markers off — for a card nested inside another frame.', 'Idle', 'default'),
+      children: body('Unframed card', 'Markers off, for a card nested inside another frame.', 'Idle', 'default'),
     },
   ],
   // A card is a surface, not a control: no hover, focus or pressed treatment

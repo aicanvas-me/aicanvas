@@ -19,6 +19,14 @@ describe('classifyContent', () => {
     expect(classifyContent('andromeda-pro-burst.json', lookup)).toBe('premium-standalone')
   })
 
+  it('gates a paid-system slug even when the manifest does not list it', () => {
+    // A page-style alias (andromeda-pro-table-basic) resolves real source in the
+    // code lookup, so it must never classify into a free lane.
+    expect(classifyContent('andromeda-pro-table-basic', lookup)).toBe('premium-standalone')
+    expect(classifyContent('andromeda-pro-chart-radar.json', lookup)).toBe('premium-standalone')
+    expect(classifyContent('andromeda-table', lookup)).not.toBe('premium-standalone')
+  })
+
   it('gates a paid system\'s token foundation but not a free one\'s', () => {
     expect(classifyContent('andromeda-tokens', lookup)).toBe('meta')
     expect(classifyContent('andromeda-pro-tokens', lookup)).toBe('premium-standalone')

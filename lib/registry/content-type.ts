@@ -65,10 +65,13 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
 
   // A paid system's individual components gate binary and fail-closed, exactly
   // like a premium standalone: free to explore on the site, paid to install.
+  // The PREFIX alone decides, never manifest membership. The source lookup
+  // resolves page-style aliases the manifest does not list (a component's page
+  // slug under the system prefix), so a membership check let those aliases fall
+  // through to a free lane and hand out paid source. No free item may carry a
+  // paid system's prefix, so fail-closed costs nothing.
   for (const system of lookup.paidSystemSlugs) {
-    if (slug.startsWith(`${system}-`) && lookup.designSystemSlugs.has(slug)) {
-      return 'premium-standalone'
-    }
+    if (slug.startsWith(`${system}-`)) return 'premium-standalone'
   }
 
   // Individual design-system components are FREE like standalones: the source is

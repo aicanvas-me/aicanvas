@@ -123,3 +123,4 @@ app/lib/andromeda-pro-brain-teaser.generated.ts
 
 # Dev-only Studio (aicanvas-studio install). Never ships.
 /app/studio/
+/app/api/studio-presets/
