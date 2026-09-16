@@ -15,6 +15,7 @@ import {
   type ImagePackMode,
 } from '../../../_lib/andromeda-pro/image-pack'
 import { ImagePackProFiles } from './ImagePackProFiles'
+import { ImagePackPrompt } from './ImagePackPrompt'
 
 export const metadata = {
   title: 'Image Pack · Andromeda Pro',
@@ -25,18 +26,21 @@ export const metadata = {
 
 const RECIPE = [
   {
-    title: 'Change the character',
-    body: 'Rewrite the character section of STYLE-BIBLE.md: body, materials, one accent colour, and what never appears on it.',
+    title: 'Download the two files',
+    body: 'Get STYLE-BIBLE.md and qa-manifest.json from the section above.',
   },
   {
-    title: 'Keep the method',
-    body: 'Leave the exclusions and the pair workflow as they are. They are what keeps every image consistent.',
+    title: 'Give them to your agent',
+    body: 'Attach both files to any AI agent that can make images.',
   },
   {
-    title: 'Generate and check',
-    body: 'Give both files to your image agent, one concept per request. Make the dark image first, edit it into light, and log each image in the manifest.',
+    title: 'Ask for your set',
+    body: 'Name your character and how many scenes you want. The files carry every rule.',
   },
 ]
+
+const EXAMPLE_PROMPT =
+  'Use STYLE-BIBLE.md and qa-manifest.json. Keep every rule, but replace the astronaut with a red fox in a knitted scarf. Make 6 scenes, each in dark and light, and fill in the manifest as you go.'
 
 export default function ImagePackPage() {
   const imageCount = IMAGE_PACK_CONCEPTS.length * 2
@@ -104,6 +108,9 @@ export default function ImagePackPage() {
           <h2 id="image-pack-recipe" className="text-lg font-bold text-sand-900 dark:text-sand-50">
             Make your own set
           </h2>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+            No prompt writing. The two files hold every rule, so one sentence to your agent is enough.
+          </p>
           <ol className="mt-4 grid gap-3 md:grid-cols-3">
             {RECIPE.map((step, i) => (
               <li
@@ -118,6 +125,8 @@ export default function ImagePackPage() {
               </li>
             ))}
           </ol>
+          <h3 className="mt-8 text-sm font-semibold text-sand-900 dark:text-sand-50">For example</h3>
+          <ImagePackPrompt prompt={EXAMPLE_PROMPT} />
         </section>
       </main>
       <div className="mx-auto w-full max-w-6xl px-4 pb-10 sm:px-6">
