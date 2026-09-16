@@ -59,7 +59,8 @@ export default function ImagePackPage() {
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
             One character in {IMAGE_PACK_CONCEPTS.length} scenes, each drawn twice with the same pose,
-            crop and prop, so an image follows your theme without moving. Free to download.
+            crop and prop, so an image follows your theme without moving. Free to download and use
+            in any project.
           </p>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
