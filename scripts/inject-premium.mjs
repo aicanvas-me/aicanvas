@@ -143,6 +143,7 @@ function stripBrainMarker(text, file) {
     const t = line.trim()
     if (isMarkdown && t.startsWith('<!--')) {
       if (t.endsWith('-->')) continue
+      if (t.includes('-->')) fail('text follows the --> that closes the premium marker comment')
       let j = i + 1
       while (j < lines.length && !lines[j].includes('-->')) j++
       if (j === lines.length) fail('the premium marker comment is never closed with -->')
