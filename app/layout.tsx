@@ -20,6 +20,7 @@ import { PaddlePaymentLink } from './components/billing/PaddlePaymentLink'
 import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
 import { GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
+import { FRAME_HEADER } from './lib/frame-header'
 
 const manrope = Manrope({
   variable: '--font-manrope',
@@ -139,10 +140,16 @@ export default async function RootLayout({
   // branch skips, so a cross-site frame (which X-Frame-Options refuses to
   // display anyway) must fall through to the full shell. A client that omits
   // either header also falls through — slower but never wrong.
+  // The frame header (set by proxy.ts from ?frame=1) narrows it once more, to
+  // documents that asked to be a bare payload. A same-origin frame of a plain
+  // page URL renders that page's full chrome, which reads the session, so it
+  // must get the providers: without them a template page threw
+  // "useSession must be used within <SessionProvider>".
   const reqHeaders = await headers()
   if (
     reqHeaders.get('sec-fetch-dest') === 'iframe' &&
-    reqHeaders.get('sec-fetch-site') === 'same-origin'
+    reqHeaders.get('sec-fetch-site') === 'same-origin' &&
+    reqHeaders.get(FRAME_HEADER) === '1'
   ) {
     return (
       <html

@@ -22,6 +22,7 @@ import { NextResponse } from 'next/server'
 import type { NextFetchEvent, NextRequest } from 'next/server'
 import { updateSession } from './app/lib/supabase/proxy'
 import { phCapture, posthogConfigured } from './app/lib/analytics-server'
+import { FRAME_HEADER } from './app/lib/frame-header'
 
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl
@@ -56,6 +57,15 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     }
   } catch (err) {
     console.error('[proxy] pageview logging failed:', err)
+  }
+
+  // The root layout skips the site shell only for a real preview payload, and
+  // a layout cannot read the query string, so the proxy hands ?frame=1 over as
+  // a request header. Whatever the client sent under that name is dropped
+  // first: only the proxy may say a document is a preview payload.
+  request.headers.delete(FRAME_HEADER)
+  if (request.nextUrl.searchParams.get('frame') === '1') {
+    request.headers.set(FRAME_HEADER, '1')
   }
 
   return await updateSession(request)
