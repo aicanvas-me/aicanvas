@@ -67,7 +67,20 @@ export function AndromedaThemeWrap({
     } catch {
       return
     }
-    const sync = () => setParentTheme(parentRoot.classList.contains('dark') ? 'dark' : 'light')
+    const sync = () => {
+      const next = parentRoot.classList.contains('dark') ? 'dark' : 'light'
+      setParentTheme(next)
+      // Keep the frame's OWN pre-paint marker in step with the parent. The
+      // root layout's head script sets it for the first paint only; on a Pro
+      // route nothing else owns it afterwards (the free lane has
+      // AndromedaThemeSync, Pro does not), so without this a later site
+      // toggle leaves the frame's html/body ground on the old theme while the
+      // composition moves, which reads as a light border around a dark
+      // dashboard.
+      const frameRoot = document.documentElement
+      if (next === 'light') frameRoot.setAttribute('data-frame-light', '')
+      else frameRoot.removeAttribute('data-frame-light')
+    }
     sync()
     const observer = new MutationObserver(sync)
     observer.observe(parentRoot, { attributes: true, attributeFilter: ['class'] })
@@ -79,6 +92,15 @@ export function AndromedaThemeWrap({
   // The full light set, computed once: shared by the SSR seed below and the
   // effect's imperative write, so the two can never drift apart.
   const lightVars = useMemo(() => andromedaLightVars() as Record<string, string>, [])
+
+  // The declaration list itself, built once and shared by both seeds below.
+  const lightDecls = useMemo(
+    () =>
+      Object.entries(lightVars)
+        .map(([name, value]) => `${name}:${value}`)
+        .join(';'),
+    [lightVars],
+  )
 
   // Dark, untuned is the authored set, which the var() fallbacks already
   // resolve to. Emitting nothing keeps it identical; only light needs an
@@ -111,10 +133,25 @@ export function AndromedaThemeWrap({
           it in the same render. Once hydration's effect sets the identical
           values as inline documentElement style, that wins the cascade and
           nothing visibly changes. */}
-      {theme === 'light' ? (
-        <style>{`:root{${Object.entries(lightVars)
-          .map(([name, value]) => `${name}:${value}`)
-          .join(';')}}`}</style>
+      {theme === 'light' ? <style>{`:root{${lightDecls}}`}</style> : null}
+      {/* The framed (phone preview) seed. Inside the iframe the seed above
+          cannot fire on the first paint: the root layout's iframe branch ships
+          no ThemeProvider, so `siteTheme` there is the dark default and the
+          parent's real theme only arrives with the layout effect above, one
+          tick past first paint. The result for a light visitor was the phone
+          flashing the dark var() fallbacks and then settling light.
+          The frame's root already carries [data-frame-light] pre-paint (set by
+          the head script in the root layout, which reads the same-origin
+          parent's class before anything renders), so keying a second copy of
+          the set on that marker makes the framed document light from its very
+          first paint with no script to wait for — the same mechanism
+          globals.css uses for the free Andromeda channel, which is why the
+          free templates never had this flash. Inert everywhere else: a
+          document with no [data-frame] never matches, and a dark parent has no
+          marker. Once hydration's effect writes the identical values as inline
+          documentElement style, that wins the cascade and nothing changes. */}
+      {followSite ? (
+        <style>{`html[data-frame][data-frame-light]{${lightDecls}}`}</style>
       ) : null}
       <div data-andromeda-theme={theme} className={className}>{children}</div>
     </ThemeCtx.Provider>
