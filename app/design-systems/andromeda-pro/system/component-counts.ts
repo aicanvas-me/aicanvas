@@ -45,7 +45,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'toggle': { variants: 2, states: 5 },
   'tooltip': { variants: 4, states: 0 },
   'top-bar': { variants: 3, states: 0 },
-  'chart-trend': { variants: 3, states: 0 },
+  'chart-trend': { variants: 4, states: 0 },
   'user-card': { variants: 4, states: 0 },
   'user-menu': { variants: 4, states: 0 },
   'waveform': { variants: 4, states: 0 },
