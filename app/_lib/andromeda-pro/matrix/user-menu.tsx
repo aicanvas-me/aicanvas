@@ -13,8 +13,8 @@ const ITEMS = [
   { id: 'signout', label: 'Sign out', icon: SignOut, destructive: true },
 ]
 
-const SRC = SAMPLE_AVATARS.cloudSurfer.dark
-const LIGHT_SRC = SAMPLE_AVATARS.cloudSurfer.light
+const SRC = SAMPLE_AVATARS.butterflyVisor.dark
+const LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light
 
 export const userMenu: MatrixSpec = {
   slug: 'user-menu',

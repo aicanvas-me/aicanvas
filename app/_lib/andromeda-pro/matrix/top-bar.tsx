@@ -22,8 +22,8 @@ const ITEMS = [
   { id: 'signout', label: 'Sign out', icon: SignOut, destructive: true },
 ]
 
-const SRC = SAMPLE_AVATARS.cloudSurfer.dark
-const LIGHT_SRC = SAMPLE_AVATARS.cloudSurfer.light
+const SRC = SAMPLE_AVATARS.butterflyVisor.dark
+const LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light
 
 // The active link is the bar's only own state, and it is the whole point of the
 // nav region: the 2px marker only means something once it MOVES. Same shape the

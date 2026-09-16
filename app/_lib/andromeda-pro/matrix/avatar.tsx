@@ -15,15 +15,16 @@ export const avatar: MatrixSpec = {
   sizes: ['sm', 'md', 'lg'],
   baseProps: { name: 'Reza Quinn' },
   variants: [
+    // `src` is a prop, not a cva variant, so this case covers nothing in the
+    // enum — it is here because a photo is the other half of what Avatar does
+    // and five initials cases never showed it. It leads because the page hero
+    // shows the first case, and a picture is how the avatar is mostly seen.
+    { label: 'Image', props: { src: PORTRAIT.dark, lightSrc: PORTRAIT.light } },
     { label: 'Initials', props: {} },
     { label: 'Online', props: { status: 'online' } },
     { label: 'Caution', props: { status: 'caution' } },
     { label: 'Fault', props: { status: 'fault' } },
     { label: 'Offline', props: { status: 'offline' } },
-    // `src` is a prop, not a cva variant, so this case covers nothing in the
-    // enum — it is here because a photo is the other half of what Avatar does
-    // and five initials cases never showed it.
-    { label: 'Image', props: { src: PORTRAIT.dark, lightSrc: PORTRAIT.light } },
   ],
   states: [
     // The whole hover treatment is a 1.05 scale on the tile — no colour moves —

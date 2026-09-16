@@ -26,6 +26,8 @@ export const userCard: MatrixSpec = {
   // about half each, which put the name and role back in truncation and slid
   // the open panels — which keep their own width — over one another.
   wide: true,
+  // The hero shows one card in its rail-width box, so it sits centred there.
+  soloCentered: true,
   // A user card fills the foot of a rail, so it needs a rail-width box to sit
   // in. Room for the open panel is NOT reserved here any more: the renderer
   // takes it from the mounted panel, which also covers a case you open by

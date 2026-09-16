@@ -1346,8 +1346,8 @@ const USER_MENU_ITEMS = [
   { id: 'signout',     label: 'Sign Out',            icon: SignOut },
 ]
 
-const USER_AVATAR_SRC = SAMPLE_AVATARS.cloudSurfer.dark
-const USER_AVATAR_LIGHT_SRC = SAMPLE_AVATARS.cloudSurfer.light
+const USER_AVATAR_SRC = SAMPLE_AVATARS.butterflyVisor.dark
+const USER_AVATAR_LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light
 
 const USER_CARD_SRC = SAMPLE_AVATARS.butterflyVisor.dark
 const USER_CARD_LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light

@@ -1,3 +1,5 @@
+// @ts-nocheck — this spec AUTHORS JSX against untyped design-system
+// components. Data-only specs in this directory need no such line.
 // v2 component: imported through the build-time shim.
 import { MediaCard } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
@@ -13,6 +15,15 @@ export const mediaCard: MatrixSpec = {
   slug: 'media-card',
   Component: MediaCard,
   sizes: null,
+  // A media card fills a grid cell, so it sits in a cell-width box: 320px at
+  // the default 200px height is the covers' own 16:10, so the whole picture
+  // shows. Left to fill the page-wide hero, it stretched into a strip that
+  // cropped the cover. maxWidth lets the box shrink on a phone.
+  render: (_size, props) => (
+    <div style={{ width: 320, maxWidth: '100%' }}>
+      <MediaCard {...props} />
+    </div>
+  ),
   variants: [
     { label: 'Play action', props: { code: 'MIX-01', title: 'Your mix', meta: 'Updates daily', action: 'play', image: CONDUCTOR.dark, lightImage: CONDUCTOR.light } },
     {

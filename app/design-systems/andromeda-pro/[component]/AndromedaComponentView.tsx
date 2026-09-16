@@ -89,7 +89,7 @@ const coveragePanel =
 // 'Live' is the reserved label for a case that is genuinely interactive
 // (matrix/types.ts), which is exactly what a hero wants. Only four specs
 // declare one; MatrixSolo falls back to the first case for the rest, and that
-// case is the component at rest in all 46 of them (Default, Initials, Playing).
+// case is the component at rest in all 46 of them (Default, Image, Playing).
 // A spec that later opens with something unrepresentative fixes it by ORDERING
 // its cases, not by a list of exceptions here.
 const SOLO_HERO_CASE = 'Live'
