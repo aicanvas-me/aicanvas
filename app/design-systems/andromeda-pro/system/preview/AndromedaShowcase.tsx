@@ -5,12 +5,12 @@
 // the ideation Andromeda landing render this so the body lives in one
 // place.
 //
-// INTERNAL PREVIEW as of 2026-08-09: every component on one page, nothing
+// INTERNAL PREVIEW: every component on one page, nothing
 // collapsed, for reviewing the system as a whole instead of 40 tabs. The public
 // /system is a gallery of cards now (AndromedaGallery), the same shape Lumen
 // uses. Dev-only — see preview/page.tsx.
 //
-// COLLAPSED 2026-08-09. This page used to hold 40 hand-written component
+// COLLAPSED. This page used to hold 40 hand-written component
 // sections, ~1900 lines of them, beside the per-component pages' own
 // hand-written demos. Two hand-written bodies is what made the two surfaces
 // drift, so the components are now ONE LOOP over the matrix declarations

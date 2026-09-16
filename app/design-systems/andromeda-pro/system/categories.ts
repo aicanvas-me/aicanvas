@@ -65,7 +65,7 @@ export const CATEGORY: Record<string, string> = {
   'music-player': 'Media',
 
   // Objects — the sanctioned decorative class (motion.md#motion-philosophy).
-  // Planet moved here from "Visualization" on the 2026-08-11 ruling: it was
+  // Planet moved here from "Visualization": it was
   // never a visualization, it was the class's first member.
   planet: 'Objects',
   orb: 'Objects',

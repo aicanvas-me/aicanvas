@@ -14,8 +14,8 @@ export const burst: MatrixSpec = {
     </div>
   ),
   wide: true,
-  // TWO sanctioned faces (2026-08-12 ruling, supersedes the one-canonical-look
-  // ruling of 08-11 for this Object): the field is either gathered around a low
+  // TWO sanctioned faces (the one exception to the one-canonical-look rule for
+  // Objects): the field is either gathered around a low
   // focus or mirrored about the frame centre. Density stays a prop, not a look.
   variants: [
     { label: 'Irregular', props: { variant: 'irregular' } },

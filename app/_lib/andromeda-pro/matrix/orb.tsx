@@ -16,7 +16,7 @@ export const orb: MatrixSpec = {
     </div>
   ),
   wide: true,
-  // ONE canonical look (2026-08-11 ruling): no variant grid. Density, pause and
+  // ONE canonical look: no variant grid. Density, pause and
   // colour are props a caller reaches for, not looks this page sells.
   variants: [{ label: 'The Orb', props: {} }],
   states: [],

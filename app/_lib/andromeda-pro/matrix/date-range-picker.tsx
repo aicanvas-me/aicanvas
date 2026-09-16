@@ -28,7 +28,7 @@ const PRESETS = [
 // the picker looks broken. Every case runs through this wrapper — its own seed
 // in, live from the first click. Clearing the preset on that first pick is the
 // component's real behaviour, not decoration. Carried over from the system
-// page's hand-written section in the 2026-08-09 collapse.
+// page's former hand-written section.
 function LiveDateRangePicker({ value = RANGE, presetLabel = null, ...props }) {
   const [range, setRange] = useState(value)
   const [preset, setPreset] = useState(presetLabel)

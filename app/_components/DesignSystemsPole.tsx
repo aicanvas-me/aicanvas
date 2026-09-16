@@ -29,7 +29,7 @@ const SYSTEMS = [
     short: 'Pro',
     tier: 'pro',
     brain: true,
-    // Pro follows the 2026-08-17 IA: Foundation, then Components. Neither
+    // Pro's sections: Foundation, then Components. Neither
     // carries the premium mark - the foundation is open and single components
     // are free to explore.
     sections: [
@@ -132,8 +132,8 @@ export function DesignSystemsPole({
       <ul className="space-y-0.5">
           {SYSTEMS.map((system) => {
             // The system row never highlights: every page under it, the bare
-            // overview included, now has its own child row (Overview, added
-            // 2026-09-10). It used to light on the overview path, which is the
+            // overview included, now has its own child row (Overview). It used
+            // to light on the overview path, which is the
             // same path the Overview child claims, so both lit at once and the
             // pole read as a double-select.
             const systemSelected = activeSystem?.slug === system.slug

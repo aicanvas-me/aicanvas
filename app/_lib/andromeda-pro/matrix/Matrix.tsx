@@ -143,7 +143,7 @@ const BODY_RESERVE_CSS = `
            spacing[6] 24px padding, which is the floor they replace.
            Too tall is dead space; too short puts the panel outside the card.
 
-           MENU 171 = 163 + 8, re-summed 2026-08-13 for the rows-follow-rung
+           MENU 171 = 163 + 8, summed for the rows-follow-rung
            law: menu rows now ride tokens.control[size].height, and every
            pinned-open case pins md (the open cases are node cases — a
            laddered staticOpen case mounted one open panel per rung and they

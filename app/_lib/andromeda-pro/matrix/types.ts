@@ -7,7 +7,7 @@
 // name. `Matrix` is Andromeda's own word for this (it named the size × state
 // helper on the old showcase page).
 //
-// PRESENTATION GRAMMAR (ruled 2026-08-13):
+// PRESENTATION GRAMMAR:
 // - Section headings are MECHANICAL: 'States' for state rows; 'Variants' when
 //   at least one case sets the `variant` prop; otherwise 'Configurations'.
 //   A single-case component renders under 'Default'. The Coverage chips reuse

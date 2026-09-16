@@ -55,7 +55,7 @@ describe('theme scope contract', () => {
       // useResolvedVars re-resolve their ink by observing the root, and the
       // Drawer, PanelMenu and Tooltip portal to <body>, which inherits from the
       // root and not from a mid-tree wrapper. Scoping the set to the wrapper was
-      // tried on 2026-09-10 and reverted: it left every portalled surface
+      // tried and reverted: it left every portalled surface
       // resolving the dark fallback in light theme.
       .filter((f) => !f.endsWith('AndromedaThemeWrap.tsx'))
       .filter((f) => {

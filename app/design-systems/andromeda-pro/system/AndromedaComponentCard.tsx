@@ -3,7 +3,7 @@
 // Andromeda --at- channel: this chrome lives on the page ground, which follows
 // the SITE toggle, not the per-preview theme).
 //
-// Extracted from AndromedaGallery's inline card JSX (2026-09-10) so the
+// Extracted from AndromedaGallery's inline card JSX so the
 // component index page and the "More Andromeda Pro components" carousel on
 // each component page render the exact same card and can never drift apart.
 import Link from 'next/link'

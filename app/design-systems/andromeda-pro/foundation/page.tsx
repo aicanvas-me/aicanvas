@@ -1,7 +1,7 @@
 // The Andromeda foundation: the primitives (color ladders, type ramp, spacing)
 // and the WHAT of the three-layer token architecture. The HOW — the family
 // shape law, the palette-generation recipe — is brain material and never
-// appears here (plan ruling 2026-08-17).
+// appears here.
 import { FoundationView } from './FoundationView'
 
 export const metadata = {

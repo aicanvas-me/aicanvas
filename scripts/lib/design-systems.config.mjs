@@ -161,7 +161,7 @@ export const DESIGN_SYSTEMS = [
   {
     slug: 'andromeda-pro',
     name: 'Andromeda Pro',
-    // Free to explore, paid to install (ruling 2026-08-30). Without this every
+    // Free to explore, paid to install. Without this every
     // andromeda-pro-* item classifies as a free design-system component and the
     // whole premium library installs for nothing.
     paidToInstall: true,

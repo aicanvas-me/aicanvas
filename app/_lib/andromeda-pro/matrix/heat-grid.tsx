@@ -11,8 +11,8 @@ import type { MatrixSpec } from './types'
 
 // The one thing a still cell cannot show: the gauge stays live after its first
 // fill, so a later value CROSSFADES in place instead of re-filling. Carried
-// over from the system page's hand-written section during the 2026-08-09
-// collapse, because no arrangement of static cells demonstrates it.
+// over from the system page's former hand-written section, because no
+// arrangement of static cells demonstrates it.
 function LiveHeatGrid() {
   const [value, setValue] = useState(60)
   return (

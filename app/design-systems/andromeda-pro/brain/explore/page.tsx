@@ -53,7 +53,7 @@ export default async function AndromedaBrainReaderPage() {
   }
 
   // Non-premium: the pitch lives on the public /brain story page. The old
-  // BrainPaywall pre-split pitch was deleted 2026-08-03; this redirect replaced it.
+  // BrainPaywall pitch was deleted; this redirect replaced it.
   if (tier !== 'premium') {
     redirect('/design-systems/andromeda-pro/brain')
   }

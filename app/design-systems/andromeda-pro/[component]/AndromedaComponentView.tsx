@@ -58,8 +58,8 @@ interface Props {
   // Prop tables parsed from the component's @typedef JSDoc at build time.
   // Empty for the few components without a @typedef block — section is hidden.
   propTables?: AndromedaPropTable[]
-  // Unused by Andromeda Pro: this tier is paid-to-install for every component
-  // (ruling 2026-08-30) — there is no free-account gate here, only the
+  // Unused by Andromeda Pro: this tier is paid-to-install for every component,
+  // so there is no free-account gate here, only the
   // premium gate below. Kept only so this view's prop shape matches the
   // shared page contract; the page still passes it.
   freeAccountGate?: boolean
@@ -81,8 +81,8 @@ const coverageChip =
 const coveragePanel =
   'rounded-2xl border border-sand-300 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
 
-// The case the top frame leads with. Ruled 2026-08-28 for EVERY v2 component,
-// after the pilot on date-range-picker: the frame shows ONE live instance and
+// The case the top frame leads with, for EVERY component: the frame shows ONE
+// live instance and
 // the full set sits below the coverage chips, instead of the frame carrying the
 // whole contact sheet.
 //
@@ -280,7 +280,7 @@ export function AndromedaComponentView({
       </div>
     )
 
-  // Paid-to-install (ruling 2026-08-30, names 2026-09-10): every Andromeda Pro
+  // Paid-to-install: every Andromeda Pro
   // component is premium content, so the install command is gated on the
   // viewer's subscription, never on a free account. 'unknown' (entitlement
   // still loading) does NOT gate, so a subscriber's click is never swallowed
@@ -593,7 +593,7 @@ export function AndromedaComponentView({
           anchor ids come from the same matrixId() the chips call, so a chip
           still targets a real card and :target still lights it.
 
-          NO wrapper heading and NO panel around it (ruled 2026-08-28): the
+          NO wrapper heading and NO panel around it: the
           matrix already prints "Configurations" and "States" over its own
           sections, so an "Examples" heading above them was a third name for
           the same thing, and a bordered box inset the cards from a column

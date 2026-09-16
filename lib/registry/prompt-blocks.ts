@@ -67,7 +67,7 @@ export function splitPromptAtPaywall(prompt: string): { head: string } | null {
  * says what the component is and what it is for, which is enough to judge
  * whether it is worth paying for.
  *
- * The cut sat one heading later until 2026-09-10, on the reasoning that a first
+ * The cut used to sit one heading later, on the reasoning that a first
  * section is "almost always the prop table". Measured against all 44 authored
  * prompts that was false for the compound components: it shipped 69% of Alert
  * free, including all 21 of its oklch values and every geometry number, leaving

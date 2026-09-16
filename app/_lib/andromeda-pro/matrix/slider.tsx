@@ -8,8 +8,8 @@ import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 // Static cells show where the thumb can sit; only a live one shows the readout
-// tracking it. Carried over from the system page's hand-written section in the
-// 2026-08-09 collapse.
+// tracking it. Carried over from the system page's former hand-written
+// section.
 function LiveSlider() {
   const [volume, setVolume] = useState(64)
   const [vector, setVector] = useState(12)

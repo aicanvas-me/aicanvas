@@ -27,8 +27,8 @@ const PERIODS = [
 ]
 
 // The sliding indicator is the component's whole character, and it only exists
-// between two selections. Carried over from the system page's hand-written
-// section in the 2026-08-09 collapse.
+// between two selections. Carried over from the system page's former
+// hand-written section.
 function LiveSegmentedControl() {
   const [period, setPeriod] = useState('1w')
   return (

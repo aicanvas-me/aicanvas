@@ -16,8 +16,8 @@ export const planet: MatrixSpec = {
   wide: true,
   // Two sanctioned faces, both shown: a shell of particles, and a porous shell
   // around a dead-centred inner core. Count, pause and colour stay props a caller
-  // reaches for, never variant cells — the 2026-08-11 ruling still holds for
-  // those; only the face is a look worth showing twice.
+  // reaches for, never variant cells, as for every Object; only the face is a
+  // look worth showing twice.
   variants: [
     {
       label: 'Shell',

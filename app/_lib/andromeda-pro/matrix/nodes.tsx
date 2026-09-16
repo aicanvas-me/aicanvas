@@ -14,7 +14,7 @@ export const nodes: MatrixSpec = {
     </div>
   ),
   wide: true,
-  // ONE canonical look (2026-08-11 ruling): default density, default seed, so
+  // ONE canonical look: default density, default seed, so
   // every render of the cell is the same composition.
   variants: [{ label: 'The lattice', props: {} }],
   states: [],

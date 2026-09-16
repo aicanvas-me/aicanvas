@@ -2,7 +2,7 @@
 // (see design-systems/CLAUDE.md). Demos consume those components, so this
 // file inherits the same posture.
 //
-// CAPTURE-ONLY as of 2026-08-09. Its single remaining consumer is
+// CAPTURE-ONLY. Its single remaining consumer is
 // app/andromeda-capture/[slug]/CaptureFrame.tsx, which shoots the 16:9 card
 // posters. The system page and the component pages now render from the matrix
 // declarations (app/_lib/andromeda-pro/matrix/) instead. Flipping capture over too

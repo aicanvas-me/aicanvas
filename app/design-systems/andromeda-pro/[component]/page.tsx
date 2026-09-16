@@ -100,8 +100,8 @@ export default async function AndromedaComponentPage({
   const freeAccountGate = process.env.FREE_ACCOUNT_GATE === 'on'
 
   // ── Prompt gate ──────────────────────────────────────────────────────────
-  // Andromeda Pro is free to explore, PAID to install (ruling 2026-08-30, names
-  // 2026-09-10), and its remix prompt is paid content like its source. A viewer
+  // Andromeda Pro is free to explore, PAID to install, and its remix prompt is
+  // paid content like its source. A viewer
   // without a premium entitlement gets the free teaser only — blocks 1-2 for a
   // rewritten scaffold prompt, or the opening paragraphs for one still a prose
   // brief — and everything that actually rebuilds the component is dropped

@@ -4,9 +4,9 @@
 // matrix and the per-component pages). This is the consumer of the theme
 // channel: `andromedaVars()` emits every colour as var(--at-<name>, <dark>),
 // so defining the --at-* set retints every Andromeda root — no component
-// edits, and the site chrome keeps NO relation to this toggle (plan ruling:
-// the Andromeda theme is the design system's own axis, not the site's; sand
-// chrome never reads an --at- var, so root-level vars cannot touch it).
+// edits, and the site chrome keeps NO relation to this toggle (the Andromeda
+// theme is the design system's own axis, not the site's; sand chrome never
+// reads an --at- var, so root-level vars cannot touch it).
 //
 // The set lands on documentElement, NOT on a mid-tree div, because that is
 // the system's swap contract: the Objects and useResolvedVars observe the

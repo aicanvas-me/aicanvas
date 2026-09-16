@@ -387,7 +387,7 @@ const ANDROMEDA_REGISTRY_SLUG_OVERRIDES: Record<string, string> = {
   // registry slug from the filename. Pointing these at `andromeda-*` handed
   // buyers an install command for Andromeda Legacy's free MIT component.
   //
-  // The two tables were renamed for the docs site (2026-08-19) so they read as a
+  // The two tables were renamed for the docs site so they read as a
   // pair; the vault filenames did not move.
   'table-basic': 'andromeda-pro-table',
   'table-data': 'andromeda-pro-data-table',

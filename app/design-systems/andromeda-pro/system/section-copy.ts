@@ -1,5 +1,5 @@
 // The per-section copy from the system page. Titles and kickers are still the
-// hand-written ones from the collapse of 2026-08-09; the descriptions are the
+// hand-written ones from before the matrix loop; the descriptions are the
 // one-line form, kept identical to the same slug's entry in andromeda-meta.ts
 // so this preview and the public component pages never say different things.
 // The sections themselves are a loop over the matrix declarations, so this is

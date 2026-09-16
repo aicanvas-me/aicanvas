@@ -11,7 +11,7 @@ const lookup: ContentLookup = {
 }
 
 describe('classifyContent', () => {
-  // Andromeda Pro is free to explore, PAID TO INSTALL (ruling 2026-08-30). Its
+  // Andromeda Pro is free to explore, PAID TO INSTALL. Its
   // components and its token foundation must never classify into a free lane.
   it('gates a paid system\'s components, while the free system\'s stay free', () => {
     expect(classifyContent('andromeda-card', lookup)).toBe('design-system-component')
