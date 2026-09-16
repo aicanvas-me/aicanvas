@@ -52,6 +52,20 @@ export const trendChart: MatrixSpec = {
       },
     },
     {
+      // An envelope beside the measurement: the compare role draws it in its
+      // own hue so it does not read as a second grey next to the context line.
+      label: 'With compare',
+      props: {
+        title: 'Allocated vs used',
+        yLabel: 'Requests / sec',
+        series: [
+          { key: 'planned', label: 'Allocated', role: 'compare' },
+          { key: 'actual', label: 'Used', role: 'live' },
+          { key: 'reserve', label: 'Reserve', role: 'context' },
+        ],
+      },
+    },
+    {
       label: 'Single series',
       props: {
         title: 'Actual throughput',
