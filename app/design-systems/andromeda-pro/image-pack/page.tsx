@@ -30,8 +30,8 @@ const RECIPE = [
     body: 'Get STYLE-BIBLE.md and qa-manifest.json from the section above.',
   },
   {
-    title: 'Give them to your agent',
-    body: 'Attach both files to any AI agent that can make images.',
+    title: 'Tell your agent to follow them',
+    body: 'Ask your agent to read both files and follow them. Any agent works, as long as it can use an image model. We recommend GPT Image or Nano Banana.',
   },
   {
     title: 'Ask for your set',
@@ -40,7 +40,7 @@ const RECIPE = [
 ]
 
 const EXAMPLE_PROMPT =
-  'Use STYLE-BIBLE.md and qa-manifest.json. Keep every rule, but replace the astronaut with a red fox in a knitted scarf. Make 6 scenes, each in dark and light, and fill in the manifest as you go.'
+  'Read STYLE-BIBLE.md and qa-manifest.json and follow them. Keep every rule, but replace the astronaut with a red fox in a knitted scarf. Make 6 scenes, each in dark and light, and fill in the manifest as you go.'
 
 export default function ImagePackPage() {
   const imageCount = IMAGE_PACK_CONCEPTS.length * 2
