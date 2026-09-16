@@ -10,6 +10,8 @@ import { Button } from '../components/Button'
 import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { useInstallToken } from '../_lib/useInstallToken'
+import { copyText } from '../components/useCopied'
+import { track } from '../lib/analytics'
 
 interface InstallAction {
   slug: string
@@ -84,11 +86,12 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   }
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(cliCommand)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {}
+    if (!active) return
+    const ok = await copyText(cliCommand)
+    track('CLI Copy', { component: active.slug, ok })
+    if (!ok) return
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   useEffect(() => {

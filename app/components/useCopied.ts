@@ -21,13 +21,16 @@ export async function copyText(text: string): Promise<boolean> {
 /**
  * Copy `text` and report "copied" for a moment, the pattern every copy button on
  * the site follows. `reset` clears the state early, e.g. when a menu closes.
+ * `copy` resolves to whether the write worked, so a caller can report it.
  */
 export function useCopied(text: string, ms = 2000) {
   const [copied, setCopied] = useState(false)
   const copy = useCallback(async () => {
-    if (!(await copyText(text))) return
+    const ok = await copyText(text)
+    if (!ok) return false
     setCopied(true)
     setTimeout(() => setCopied(false), ms)
+    return true
   }, [text, ms])
   const reset = useCallback(() => setCopied(false), [])
   return { copied, copy, reset }

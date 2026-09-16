@@ -25,6 +25,7 @@ import { andromedaRegistrySlug } from '../../../_lib/andromeda/andromeda-meta'
 import { tokens } from '../../../../design-systems/andromeda/tokens'
 import { themeColor } from '../../../../design-systems/andromeda/components/lib/utils'
 import { trackInstall } from '../../../lib/track-install'
+import { track } from '../../../lib/analytics'
 import { useSession } from '../../../components/auth/SessionProvider'
 import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useAuthModal } from '../../../components/auth/AuthModalProvider'
@@ -220,6 +221,8 @@ export function AndromedaComponentView({
   // returning the visitor here after they create their free account. The install
   // UI stays fully visible; only the COPY actions route here when signed out.
   function promptFreeAccount() {
+    // Anonymous count — the beacon's path property names the component.
+    track('Install Gate Shown', {})
     openAuthModal({
       mode: 'gate',
       next: `/design-systems/andromeda/${slug}`,
@@ -234,12 +237,12 @@ export function AndromedaComponentView({
       promptFreeAccount()
       return
     }
-    try {
-      trackInstall(registrySlug, 'andromeda', pkgManager)
-      await navigator.clipboard.writeText(cliCommand)
-      setCliCopied(true)
-      setTimeout(() => setCliCopied(false), 2000)
-    } catch {}
+    trackInstall(registrySlug, 'andromeda', pkgManager)
+    const ok = await copyText(cliCommand)
+    track('CLI Copy', { component: registrySlug, ok })
+    if (!ok) return
+    setCliCopied(true)
+    setTimeout(() => setCliCopied(false), 2000)
   }
 
   return (
@@ -288,7 +291,7 @@ export function AndromedaComponentView({
 
           {tab === 'preview' && (
             <div className="group/fullscreen relative">
-              <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={() => setFullscreen(true)}>
+              <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={() => { track('Fullscreen Open', { component: registrySlug }); setFullscreen(true) }}>
                 <CornersOut weight="regular" size={16} />
               </Button>
               <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-700 bg-sand-800 px-2.5 py-1.5 text-xs text-sand-300 group-hover/fullscreen:block">
@@ -365,7 +368,10 @@ export function AndromedaComponentView({
           <div className="flex border-b border-sand-300 bg-sand-50 dark:border-sand-800 dark:bg-sand-900">
             <button
               type="button"
-              onClick={() => setInstallTab('cli')}
+              onClick={() => {
+                if (installTab !== 'cli') track('Install Tab Switch', { component: registrySlug, tab: 'cli' })
+                setInstallTab('cli')
+              }}
               className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                 installTab === 'cli'
                   ? 'text-sand-900 dark:text-sand-50'
@@ -379,7 +385,10 @@ export function AndromedaComponentView({
             </button>
             <button
               type="button"
-              onClick={() => setInstallTab('manual')}
+              onClick={() => {
+                if (installTab !== 'manual') track('Install Tab Switch', { component: registrySlug, tab: 'manual' })
+                setInstallTab('manual')
+              }}
               className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                 installTab === 'manual'
                   ? 'text-sand-900 dark:text-sand-50'

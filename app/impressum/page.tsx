@@ -149,7 +149,7 @@ export default function ImpressumPage() {
             <br />
             c/o flexdienst – #21685
             <br />
-            Kurt-Schumacher-Straße 76
+            Kurt-Schumacher-Straße 74
             <br />
             67663 Kaiserslautern
             <br />

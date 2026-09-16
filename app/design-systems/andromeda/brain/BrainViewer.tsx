@@ -8,6 +8,7 @@ import { Button } from '../../../components/Button'
 import { BrainRender } from './BrainRender'
 import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useCopied } from '@/app/components/useCopied'
+import { track } from '@/app/lib/analytics'
 
 // AI Canvas site tokens: sand neutrals + olive accent, Manrope UI + Geist mono for code.
 // One flat palette per site theme, read through CSS variables (brainVars) so
@@ -351,6 +352,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
   // already access-gated.
   const downloadBrain = useCallback(() => {
     if (!zip) return // zip still computing (first few ms after mount)
+    track('Brain Download', {})
     const blob = new Blob([zip.bytes], { type: 'application/zip' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -634,7 +636,12 @@ function BrainInstallButton({
                   One command
                 </span>
               </div>
-              <Button variant="outline" size="xs" onClick={handleCopy} aria-label="Copy CLI command">
+              <Button
+                variant="outline"
+                size="xs"
+                onClick={async () => track('CLI Copy', { component: 'andromeda-brain', ok: await handleCopy() })}
+                aria-label="Copy CLI command"
+              >
                 {copied ? (
                   <>
                     <Check weight="regular" size={13} className="text-olive-500 dark:text-olive-400" />
@@ -738,7 +745,7 @@ function BrainInstallCard({
         <button
           type="button"
           className="brain-dl"
-          onClick={copy}
+          onClick={async () => track('CLI Copy', { component: 'andromeda-brain', ok: await copy() })}
           style={{
             display: 'inline-flex',
             alignItems: 'center',

@@ -19,6 +19,8 @@ type EventMap = {
   'Install Tab Switch': { component: string; tab: 'cli' | 'manual' }
   'Fullscreen Open': { component: string }
   'System Install Tier Click': { component: string; system: string }
+  // The Andromeda Brain's zip download, the one install path with no command.
+  'Brain Download': Record<string, never>
   'Subscribe Click': { cycle: string }
   'Paywall Shown': { reason: string }
   'Install Gate Shown': Record<string, never>
@@ -41,6 +43,7 @@ export const BEACON_EVENTS = [
   'Install Tab Switch',
   'Fullscreen Open',
   'System Install Tier Click',
+  'Brain Download',
   'Subscribe Click',
   'Paywall Shown',
   'Install Gate Shown',
