@@ -35,6 +35,9 @@ const SYSTEMS = [
     sections: [
       { slug: 'foundation', label: 'Foundation', premium: false },
       { slug: 'components', label: 'Components', premium: false },
+      // The images download free; only the two files behind the set are Pro,
+      // so the row carries no premium mark either.
+      { slug: 'image-pack', label: 'Image Pack', premium: false },
     ],
     components: ANDROMEDA_PRO_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
     templates: [
