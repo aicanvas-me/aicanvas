@@ -24,9 +24,10 @@ import { createClient } from './lib/supabase/server'
 const manrope = Manrope({
   variable: '--font-manrope',
   subsets: ['latin'],
-  // Weights 200/300 were declared but never used in the app — dropping them
-  // removes two font files from the critical path. Used range is 400–800.
-  weight: ['400', '500', '600', '700', '800'],
+  // 400 to 800 set the site itself. 200 is the thin display weight of the
+  // Andromeda Pro stat readout: without it the browser draws that number at
+  // 400, wider and heavier than the component a buyer installs. Nothing uses 300.
+  weight: ['200', '400', '500', '600', '700', '800'],
 })
 
 const geistMono = Geist_Mono({

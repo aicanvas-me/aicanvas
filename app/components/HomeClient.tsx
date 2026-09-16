@@ -15,6 +15,18 @@ import { LoadMore } from './LoadMore'
 import type { ComponentMeta } from '../lib/component-registry'
 import { searchTokens, matchesQuery, effectiveTokens } from '../lib/search-match'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
+import {
+  ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META,
+  ANDROMEDA_TEMPLATE_META as ANDROMEDA_PRO_TEMPLATE_META,
+} from '../_lib/andromeda-pro/andromeda-meta'
+
+// Search covers both design systems. Each one's entries carry its OWN url
+// prefix and label: pairing one system's component list with the other's URLs
+// is how 15 of these links came to 404.
+const SEARCHABLE_SYSTEMS = [
+  { slug: 'andromeda', label: 'Andromeda Legacy', components: ANDROMEDA_COMPONENT_META, templates: ANDROMEDA_TEMPLATE_META },
+  { slug: 'andromeda-pro', label: 'Andromeda Pro', components: ANDROMEDA_PRO_COMPONENT_META, templates: ANDROMEDA_PRO_TEMPLATE_META },
+] as const
 
 // ─── Fuzzy "Did you mean?" helpers ───────────────────────────────────────────
 
@@ -83,12 +95,15 @@ function findSuggestions(query: string, vocab: string[], max = 3): string[] {
 // shown anywhere — matching only.
 const COMPONENT_KW = 'andromeda components design systems'
 const TEMPLATE_KW = 'andromeda templates dashboards design systems'
-const ANDROMEDA_TEXT = ANDROMEDA_COMPONENT_META.map(
-  (c) => `${c.name} ${c.description} ${COMPONENT_KW}`,
-)
-const TEMPLATE_TEXT = ANDROMEDA_TEMPLATE_META.map(
-  (t) => `${t.name} ${t.description} ${TEMPLATE_KW}`,
-)
+// Per system, so each one's entries match on its own name too ("andromeda pro"
+// finds Pro's set) and carry its own URL prefix. One flat array over a single
+// system was how 15 of these links came to point at the wrong system.
+const SYSTEM_TEXT = SEARCHABLE_SYSTEMS.map((sys) => ({
+  components: sys.components.map((c) => `${c.name} ${c.description} ${sys.label} ${COMPONENT_KW}`),
+  templates: sys.templates.map((t) => `${t.name} ${t.description} ${sys.label} ${TEMPLATE_KW}`),
+}))
+const ANDROMEDA_TEXT = SYSTEM_TEXT.flatMap((t) => t.components)
+const TEMPLATE_TEXT = SYSTEM_TEXT.flatMap((t) => t.templates)
 
 // ─── HomeClient ───────────────────────────────────────────────────────────────
 
@@ -144,30 +159,30 @@ export function HomeClient({
   // link out to their own pages. Andromeda components are Free; templates Premium.
   const extras =
     q && !category
-      ? [
-          ...ANDROMEDA_COMPONENT_META.filter((_, i) =>
-            matchesQuery(ANDROMEDA_TEXT[i], tokens),
-          ).map((c) => ({
-            key: `andromeda-${c.slug}`,
-            name: c.name,
-            description: c.description,
-            image: c.image,
-            href: `/design-systems/andromeda/${c.slug}`,
-            badge: 'Free',
-            cta: 'View Component',
-          })),
-          ...ANDROMEDA_TEMPLATE_META.filter((_, i) =>
-            matchesQuery(TEMPLATE_TEXT[i], tokens),
-          ).map((t) => ({
-            key: `template-${t.folder}`,
-            name: t.name,
-            description: t.description,
-            image: t.image,
-            href: `/design-systems/andromeda/templates/${t.folder}`,
-            badge: 'Premium template',
-            cta: 'View template',
-          })),
-        ]
+      ? SEARCHABLE_SYSTEMS.flatMap((sys, si) => [
+          ...sys.components
+            .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].components[i], tokens))
+            .map((c) => ({
+              key: `${sys.slug}-${c.slug}`,
+              name: c.name,
+              description: c.description,
+              image: c.image,
+              href: `/design-systems/${sys.slug}/${c.slug}`,
+              badge: sys.label,
+              cta: 'View Component',
+            })),
+          ...sys.templates
+            .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].templates[i], tokens))
+            .map((t) => ({
+              key: `${sys.slug}-template-${t.folder}`,
+              name: t.name,
+              description: t.description,
+              image: t.image,
+              href: `/design-systems/${sys.slug}/templates/${t.folder}`,
+              badge: 'Premium template',
+              cta: 'View template',
+            })),
+        ])
       : []
 
   // Empty state only when BOTH the grid and the extra group have nothing, so an

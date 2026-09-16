@@ -7,7 +7,7 @@
 // unaffected. Path/file data for the registry generator lives in
 // scripts/lib/design-systems.config.mjs.
 
-export type DesignSystemSlug = 'andromeda'
+export type DesignSystemSlug = 'andromeda' | 'andromeda-pro'
 
 export interface DesignSystemTemplateMeta {
   slug: string
@@ -24,13 +24,25 @@ export interface DesignSystemMeta {
 export const DESIGN_SYSTEM_META: Record<DesignSystemSlug, DesignSystemMeta> = {
   andromeda: {
     slug: 'andromeda',
-    name: 'Andromeda',
+    name: 'Andromeda Legacy',
     templates: [
       { slug: 'andromeda-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi' },
       { slug: 'andromeda-service-order',     name: 'Service Order',     domain: 'Telecom' },
       // exchange-terminal — hidden, source preserved (see design-systems.config.mjs)
       { slug: 'andromeda-resource-planning', name: 'Resource Planning', domain: 'Operations' },
       { slug: 'andromeda-signal-room',       name: 'Signal Room',       domain: 'Audio' },
+    ],
+  },
+  'andromeda-pro': {
+    slug: 'andromeda-pro',
+    name: 'Andromeda Pro',
+    // Pro owns its own `andromeda-pro-` slug namespace, so a template here can
+    // never be mistaken for a Legacy one by the switcher or the installer.
+    templates: [
+      { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi' },
+      { slug: 'andromeda-pro-service-order',     name: 'Service Order',     domain: 'Telecom' },
+      { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', domain: 'Operations' },
+      { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       domain: 'Audio' },
     ],
   },
 }

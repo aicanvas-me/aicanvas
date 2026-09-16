@@ -11,6 +11,7 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, unlinkSync, existsSync } from 'fs'
 import { join, dirname, resolve, relative, sep, posix } from 'path'
 import { execSync } from 'child_process'
+import { createJiti } from 'jiti'
 import { transformRootHeightClass } from './lib/copy-paste-transform.mjs'
 import { DESIGN_SYSTEMS, FREE_DS_PLACEHOLDER_SENTINEL } from './lib/design-systems.config.mjs'
 import { reconcileLedger } from './lib/order-ledger.mjs'
@@ -30,6 +31,22 @@ function isInjectedComponentPresent(abs) {
   }
 }
 
+// A design system's source root. Each system now owns one: Andromeda Legacy
+// reads its committed tree, Andromeda Pro reads the tree the vault injects.
+function dsRoot(ds) {
+  return ds.rootDir
+}
+
+// Systems this build can actually read. An injected-only system (Andromeda Pro,
+// whose whole tree comes from the vault) is skipped wholesale when its root is
+// absent, so a fork or a no-PAT build emits Legacy alone instead of failing or
+// shipping half a system.
+const SYSTEMS = DESIGN_SYSTEMS.filter((ds) => {
+  if (!ds.skipIfMissing || existsSync(dsRoot(ds))) return true
+  console.warn(`generate-registry: skipping "${ds.slug}" — ${dsRoot(ds)} is not on disk`)
+  return false
+})
+
 const wsDir = 'components-workspace'
 const outDir = 'registry-data'
 const SCHEMA = 'https://ui.shadcn.com/schema/registry-item.json'
@@ -41,6 +58,37 @@ const REGISTRY_SCHEMA = 'https://ui.shadcn.com/schema/registry.json'
 // 404 — which silently broke every design-system + template install. Emitting
 // full URLs is the documented shadcn pattern for self-hosted/custom registries.
 // Overridable so the generator can emit a localhost variant for install tests.
+// Dependency ranges this app installs itself, for systems that pin them
+// (design-systems.config.mjs `pinDependencies`). A package the app does not
+// list (a font package the app loads through next/font instead) stays bare.
+const APP_PACKAGE = JSON.parse(readFileSync('package.json', 'utf-8'))
+const APP_RANGES = { ...(APP_PACKAGE.devDependencies ?? {}), ...(APP_PACKAGE.dependencies ?? {}) }
+
+function pinnedDependencies(ds, pkgs) {
+  if (!ds.pinDependencies) return pkgs
+  return pkgs.map((pkg) => (APP_RANGES[pkg] ? `${pkg}@${APP_RANGES[pkg]}` : pkg))
+}
+
+// The `@types/*` companions of a pinned system's dependencies, as the item's
+// devDependencies. A package that ships no types of its own (three) otherwise
+// fails a fresh strict TypeScript project with TS7016. Only unscoped packages
+// have a plain `@types/<name>`, and only a companion this app installs is named.
+function typeDevDependencies(ds, pkgs) {
+  if (!ds.pinDependencies) return []
+  return pkgs
+    .filter((pkg) => !pkg.startsWith('@') && APP_RANGES[`@types/${pkg}`])
+    .map((pkg) => `@types/${pkg}@${APP_RANGES[`@types/${pkg}`]}`)
+}
+
+// Spread into an item: `dependencies`, and `devDependencies` only when there are any.
+function dependencyFields(ds, pkgs) {
+  const devDependencies = typeDevDependencies(ds, pkgs)
+  return {
+    dependencies: pinnedDependencies(ds, pkgs),
+    ...(devDependencies.length > 0 ? { devDependencies } : {}),
+  }
+}
+
 const REGISTRY_BASE = (process.env.AICANVAS_REGISTRY_BASE ?? 'https://aicanvas.me').replace(/\/+$/, '')
 const depUrl = (slug) => `${REGISTRY_BASE}/r/${slug}.json`
 
@@ -287,6 +335,10 @@ try {
     expectedNames.add(`${b}-brain`)
   }
 } catch { /* no _premium.json — no brain files to preserve */ }
+// The remix-prompt bundles inject-premium writes, one per whole-system design
+// system. Underscore-prefixed so /r can never serve them; reserved here or the
+// stale-file sweep below deletes them on every generate.
+for (const ds of SYSTEMS) expectedNames.add(`_${ds.slug}-prompts`)
 // Reserve filenames for design systems (tokens + per-component + system +
 // templates) so they survive the stale-file cleanup pass.
 function componentSlug(systemSlug, fileBaseName) {
@@ -316,14 +368,14 @@ function dsAllEntries(ds) {
     ...(ds.optionalSystemEntries ?? []).map((path) => ({ path, optional: true })),
   ]
 }
-for (const ds of DESIGN_SYSTEMS) {
+for (const ds of SYSTEMS) {
   expectedNames.add(`${ds.slug}-tokens`)
   expectedNames.add(ds.slug)
   for (const { path: entry, optional } of dsAllEntries(ds)) {
     // Optional entries only reserve their name while the file is actually
     // present — a degraded run must let the stale-cleanup pass below delete
     // the previous run's JSON so /r and the gate manifest stay in sync.
-    if (optional && !isInjectedComponentPresent(resolve(ds.rootDir, entry))) continue
+    if (optional && !isInjectedComponentPresent(resolve(dsRoot(ds), entry))) continue
     const baseName = entry.split('/').pop()
     expectedNames.add(dsComponentSlug(ds, entry, baseName))
   }
@@ -486,6 +538,7 @@ function indexEntry(item, files) {
     title: item.title,
     description: item.description,
     dependencies: item.dependencies,
+    devDependencies: item.devDependencies,
     registryDependencies: item.registryDependencies,
     files: files.map(({ path, type, target }) => ({ path, type, target })),
   }
@@ -507,6 +560,10 @@ try {
 // /r route's filename regex rejects leading underscores, so it is not servable.
 const manifest = {
   systemSlugs: [],
+  // Systems whose every item is paid-to-install (design-systems.config.mjs
+  // `paidToInstall`). The gate reads this to tell a free MIT system's
+  // components from a premium system's.
+  paidSystemSlugs: SYSTEMS.filter((ds) => ds.paidToInstall).map((ds) => ds.slug).sort(),
   designSystemSlugs: [],
   templateSlugs: [],
   premiumSlugs,
@@ -521,8 +578,8 @@ const installContents = {}
 // template slug → used-component count (null = full-system fallback)
 const templateContents = new Map()
 
-for (const ds of DESIGN_SYSTEMS) {
-  const rootDirAbs = resolve(ds.rootDir)
+for (const ds of SYSTEMS) {
+  const rootDirAbs = resolve(dsRoot(ds))
   const tokenEntriesAbs = (ds.tokenEntries ?? []).map((p) => resolve(rootDirAbs, p))
   // Optional (build-time-injected v2) entries join the system exactly like the
   // committed ones when their file exists; when absent the build stays green —
@@ -558,6 +615,30 @@ for (const ds of DESIGN_SYSTEMS) {
     }
     injectFile.content = fontPackages.map((p) => `import '${p}';`).join('\n') + '\n' + injectFile.content
   }
+  // Both themes as plain CSS the CLI writes into the buyer's stylesheet: light
+  // on :root, dark on .dark (shadcn's dark mode class; next-themes sets it only
+  // with attribute="class", its default is data-theme). Emitted through
+  // `css`, not `cssVars`: cssVars also maps every name into @theme, which
+  // overrides Tailwind's own shadow scale.
+  // Fails loud, never ships an install without its themes: a missing export
+  // means the injected source is older than this generator.
+  let themeCss
+  if (ds.themeSets) {
+    const { module: themeModule, export: themeExport } = ds.themeSets
+    const mod = await createJiti(import.meta.url).import(resolve(rootDirAbs, themeModule))
+    if (typeof mod[themeExport] !== 'function') {
+      throw new Error(
+        `generate-registry: ${ds.slug} ${themeModule} does not export ${themeExport}(). ` +
+          'The injected source predates the theme stylesheet; inject a source that has it.',
+      )
+    }
+    const { light, dark } = mod[themeExport]()
+    const lightNames = Object.keys(light ?? {}).sort().join()
+    if (!lightNames || lightNames !== Object.keys(dark ?? {}).sort().join()) {
+      throw new Error(`generate-registry: ${ds.slug} ${themeExport}() must return non-empty light and dark sets with the same names`)
+    }
+    themeCss = { '@layer base': { ':root': light, '.dark': dark } }
+  }
   const tokensItem = {
     $schema: SCHEMA,
     name: tokensSlug,
@@ -565,7 +646,8 @@ for (const ds of DESIGN_SYSTEMS) {
     title: `${ds.name} tokens`,
     description: `Foundation files for the ${ds.name} design system — tokens, shared utilities, and the system mark. Required by every ${ds.name} component and template.`,
     author: 'aicanvas <https://aicanvas.me>',
-    dependencies: [...new Set([...tokensWalk.npmDeps, ...fontPackages])].sort(),
+    ...dependencyFields(ds, [...new Set([...tokensWalk.npmDeps, ...fontPackages])].sort()),
+    ...(themeCss ? { css: themeCss } : {}),
     files: tokensFiles,
   }
   writeFileSync(join(outDir, `${tokensSlug}.json`), JSON.stringify(tokensItem, null, 2) + '\n')
@@ -586,7 +668,7 @@ for (const ds of DESIGN_SYSTEMS) {
     description: `Every ${ds.name} component (${systemFiles.length} files). Installs the foundation tokens automatically.`,
     author: 'aicanvas <https://aicanvas.me>',
     registryDependencies: [depUrl(tokensSlug)],
-    dependencies: systemWalk.npmDeps,
+    ...dependencyFields(ds, systemWalk.npmDeps),
     files: systemFiles,
   }
   writeFileSync(join(outDir, `${ds.slug}.json`), JSON.stringify(systemItem, null, 2) + '\n')
@@ -685,7 +767,7 @@ for (const ds of DESIGN_SYSTEMS) {
       description: `${ds.name} ${compLabel} component. Install just this piece. Tokens and any sibling components are pulled in automatically.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: [...componentRegistryDeps].sort().map(depUrl),
-      dependencies: compWalk.npmDeps,
+      ...dependencyFields(ds, compWalk.npmDeps),
       files: compFiles,
     }
     writeFileSync(join(outDir, `${slug}.json`), JSON.stringify(compItem, null, 2) + '\n')
@@ -733,7 +815,7 @@ for (const ds of DESIGN_SYSTEMS) {
         `Pulls in the ${usedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: templateDeps,
-      dependencies: templateWalk.npmDeps,
+      ...dependencyFields(ds, templateWalk.npmDeps),
       files: templateFiles,
     }
     writeFileSync(join(outDir, `${template.slug}.json`), JSON.stringify(templateItem, null, 2) + '\n')
@@ -780,11 +862,14 @@ for (const ds of DESIGN_SYSTEMS) {
       `Install all ${componentCount} ${ds.name} components, tokens, and utilities.`,
       'No templates, no brain.',
     ]
+    const themeLine = ds.themeSets ? ["Light and dark included. Follows your app's dark class."] : []
+    installContents[ds.slug].push(...themeLine)
     for (const template of ds.templates) {
       const used = templateContents.get(template.slug) ?? 0
       installContents[template.slug] = [
         `This template plus the ${used} ${ds.name} components it uses.`,
         'Tokens included. Re-installs reuse what is already there.',
+        ...themeLine,
       ]
     }
     if (ds.templates.length > 0) {
@@ -800,6 +885,7 @@ for (const ds of DESIGN_SYSTEMS) {
         ...(hasBrain && brainFiles > 0
           ? [`Includes the ${ds.name} brain (${brainFiles} rule files your AI reads).`]
           : []),
+        ...themeLine,
       ]
     }
   }
@@ -867,11 +953,15 @@ const fillDescription = (p) => ({
   description: p.description || FALLBACK_DESCRIPTIONS[p.name] || enumSynth(p.type),
 })
 
+// Keyed by SYSTEM, then by file basename. Two systems ship a Button, and a
+// flat basename key let the second system's table silently replace the first's
+// on every shared name.
 const propTables = {}
-for (const ds of DESIGN_SYSTEMS) {
-  const dsRoot = resolve(ds.rootDir)
+for (const ds of SYSTEMS) {
+  const dsRootAbs = resolve(dsRoot(ds))
+  const forSystem = (propTables[ds.slug] ??= {})
   for (const { path: entry } of dsAllEntries(ds)) {
-    const abs = resolve(dsRoot, entry)
+    const abs = resolve(dsRootAbs, entry)
     if (!isInjectedComponentPresent(abs)) continue // absent or degraded placeholder — skip, don't fail
     const base = entry.split('/').pop().replace(/\.(tsx|ts)$/, '')
     const tables = parseJsdocProps(readFileSync(abs, 'utf-8'))
@@ -879,7 +969,7 @@ for (const ds of DESIGN_SYSTEMS) {
       table,
       props: props.map(fillDescription),
     }))
-    if (list.length) propTables[base] = list
+    if (list.length) forSystem[base] = list
   }
 }
 writeFileSync(
@@ -887,14 +977,19 @@ writeFileSync(
   [
     '// AUTO-GENERATED by scripts/generate-registry.mjs — gitignored, never committed.',
     '// Prop tables for design-system component pages, parsed from each component’s',
-    '// @typedef/@property JSDoc. Keyed by source-file basename (e.g. "Button").',
+    '// @typedef/@property JSDoc. Keyed by system slug, then source-file basename',
+    '// (e.g. ANDROMEDA_PROPS["andromeda-pro"]["Button"]).',
     'export interface AndromedaPropRow { name: string; type: string; optional: boolean; default: string; description: string }',
     'export interface AndromedaPropTable { table: string; props: AndromedaPropRow[] }',
-    `export const ANDROMEDA_PROPS: Record<string, AndromedaPropTable[]> = ${JSON.stringify(propTables, null, 2)}`,
+    `export const ANDROMEDA_PROPS: Record<string, Record<string, AndromedaPropTable[]>> = ${JSON.stringify(propTables, null, 2)}`,
     '',
   ].join('\n'),
 )
-console.log(`Generated app/lib/andromeda-props.generated.ts (${Object.keys(propTables).length} components with prop tables)`)
+console.log(
+  `Generated app/lib/andromeda-props.generated.ts (` +
+    Object.entries(propTables).map(([sys, t]) => `${sys}: ${Object.keys(t).length}`).join(', ') +
+    ` components with prop tables)`,
+)
 
 // Prop tables for STANDALONE component pages (components-workspace + injected
 // components-workspace-premium). Free standalones are self-contained and
@@ -941,6 +1036,7 @@ const FREE_GATE_NOTE = 'Free account required to install; source is free to read
 const PREMIUM_GATE_NOTE = 'Requires AI Canvas Premium to install.'
 const gate = {
   systems: new Set(manifest.systemSlugs),
+  paidSystems: new Set(manifest.paidSystemSlugs),
   dsComponents: new Set(manifest.designSystemSlugs),
   templates: new Set(manifest.templateSlugs),
   premiumStandalones: new Set(manifest.premiumSlugs),
@@ -951,8 +1047,17 @@ function gateNoteFor(name) {
   if (gate.templates.has(name)) return PREMIUM_GATE_NOTE
   if (gate.brains.has(name)) return PREMIUM_GATE_NOTE
   for (const system of gate.systems) {
-    if (name === `${system}-tokens`) return null // meta: free, anonymous install
+    // A PAID system's foundation is premium like the rest of it; only a free
+    // system's tokens are the anonymous shared dependency. This branch must
+    // stay in step with classifyContent(), or the catalog advertises a free
+    // install for something /r gates.
+    if (name === `${system}-tokens`) {
+      return gate.paidSystems.has(system) ? PREMIUM_GATE_NOTE : null
+    }
     if (name === system || name === `${system}-all`) return PREMIUM_GATE_NOTE
+  }
+  for (const system of gate.paidSystems) {
+    if (name.startsWith(`${system}-`) && gate.dsComponents.has(name)) return PREMIUM_GATE_NOTE
   }
   if (gate.dsComponents.has(name)) return FREE_GATE_NOTE
   if (gate.premiumStandalones.has(name)) return PREMIUM_GATE_NOTE
@@ -1081,7 +1186,7 @@ const mcpSystems = []
 const mcpTemplates = []
 const mcpSystemComponents = []
 const mcpBrains = []
-for (const ds of DESIGN_SYSTEMS) {
+for (const ds of SYSTEMS) {
   const tokensSlug = `${ds.slug}-tokens`
   const tokensJsonPath = join(outDir, `${tokensSlug}.json`)
   const sysJsonPath = join(outDir, `${ds.slug}.json`)

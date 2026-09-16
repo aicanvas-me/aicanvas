@@ -3,6 +3,7 @@ import { createClient } from '../../../lib/supabase/server'
 import type { InstallHistoryRow } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
 import { getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
+import { getAndromedaComponentMeta as getAndromedaProComponentMeta } from '../../../_lib/andromeda-pro/andromeda-meta'
 import { itemHref } from '../itemHref'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 
@@ -90,7 +91,13 @@ export default async function HistoryPage() {
       <ul className="space-y-2">
         {rows.map((row) => {
           const entry = bySlug.get(row.slug)
-          const andromedaEntry = !entry && row.system === 'andromeda' ? getAndromedaComponentMeta(row.slug) : undefined
+          const andromedaEntry = entry
+            ? undefined
+            : row.system === 'andromeda'
+              ? getAndromedaComponentMeta(row.slug)
+              : row.system === 'andromeda-pro'
+                ? getAndromedaProComponentMeta(row.slug)
+                : undefined
           const name = entry?.name ?? andromedaEntry?.name ?? row.slug
           const image = entry?.image
             ? optimizeImageKitUrl(entry.image, 'thumb')

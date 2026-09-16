@@ -9,10 +9,10 @@ import {
   Check,
   Code,
   Copy,
-  CornersIn,
   CornersOut,
   Eye,
   Terminal,
+  X,
 } from '@phosphor-icons/react'
 import { Step } from '../../../components/Step'
 import { copyText } from '../../../components/useCopied'
@@ -94,7 +94,7 @@ export function AndromedaComponentView({
   const openCode = useCallback(async () => {
     setCodeState({ status: 'loading' })
     try {
-      const res = await fetch(`/api/component-code?slug=${registrySlug}`)
+      const res = await fetch(`/api/component-code?slug=${registrySlug}&system=andromeda`)
       if (!res.ok) {
         setCodeState({ status: 'locked' })
         return
@@ -291,7 +291,7 @@ export function AndromedaComponentView({
 
           {tab === 'preview' && (
             <div className="group/fullscreen relative">
-              <Button variant="accent" size="md" iconOnly aria-label="Full screen" onClick={() => { track('Fullscreen Open', { component: registrySlug }); setFullscreen(true) }}>
+              <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={() => { track('Fullscreen Open', { component: registrySlug }); setFullscreen(true) }}>
                 <CornersOut weight="regular" size={16} />
               </Button>
               <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-700 bg-sand-800 px-2.5 py-1.5 text-xs text-sand-300 group-hover/fullscreen:block">
@@ -680,7 +680,7 @@ export function AndromedaComponentView({
               onClick={() => setFullscreen(false)}
               className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
             >
-              <CornersIn weight="regular" size={17} />
+              <X weight="regular" size={16} />
             </button>
           </motion.div>
         </motion.div>

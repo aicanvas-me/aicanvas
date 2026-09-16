@@ -118,7 +118,8 @@ async function validateRegistryJSON(slug: string): Promise<ValidationResult> {
     }
   }
 
-  const declaredDeps = new Set(json.dependencies || [])
+  // A declared dependency may carry a version range (`three@^0.183.2`); compare names.
+  const declaredDeps = new Set((json.dependencies || []).map((dep) => dep.replace(/(?<=.)@.*$/, '')))
   for (const dep of imports) {
     if (!declaredDeps.has(dep)) {
       return {

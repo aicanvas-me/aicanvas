@@ -42,6 +42,18 @@ const nextConfig: NextConfig = {
     // at request time (underscore-prefixed, so /r can never serve it). The
     // parent /brain route is the public story and needs no bundle.
     "/design-systems/andromeda/brain/explore": ["./registry-data/*.json"],
+    // Andromeda Pro's reader does the same fs read at request time; without its
+    // own entry the JSON is not traced into the serverless bundle and the route
+    // fails in production.
+    "/design-systems/andromeda-pro/brain/explore": ["./registry-data/*.json"],
+    // The component page reads the bundled remix prompts with fs at request
+    // time, same as the readers above. Without its own entry the JSON is not
+    // traced into the serverless bundle, the read throws ENOENT, and the Remix
+    // panel silently disappears for everyone, subscribers included.
+    "/design-systems/andromeda-pro/[component]": ["./registry-data/*.json"],
+    // The image pack's two Pro files are read with fs at request time from the
+    // injected (gitignored) Andromeda Pro tree.
+    "/api/andromeda-pro/image-pack/[file]": ["./design-systems/andromeda-pro/image-pack/*"],
   },
   async headers() {
     return [

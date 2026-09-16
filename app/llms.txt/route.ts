@@ -1,7 +1,7 @@
 import { COMPONENTS } from '../lib/component-registry'
 import { COLLECTIONS, collectionMembers } from '../lib/collections'
 import { SITE_URL } from '../lib/config'
-import { DESIGN_SYSTEMS } from '../../scripts/lib/design-systems.config.mjs'
+import { availableDesignSystems } from '../lib/available-design-systems'
 
 export const dynamic = 'force-static'
 
@@ -58,8 +58,15 @@ AI agents can browse and install AI Canvas components through the official MCP s
   }
 
   // Design systems + their templates (slug prefix stripped for page URLs,
-  // mirroring sitemap.ts).
-  const systems = DESIGN_SYSTEMS.map(
+  // mirroring sitemap.ts). Each system points at the browse route it actually
+  // has: Legacy redirects /showcase to its grid, Pro never had that route.
+  // A system whose source tree is absent on this build (skipIfMissing) is left
+  // out entirely rather than advertised as installable.
+  const SYSTEM_BROWSE: Record<string, string> = {
+    andromeda: '/showcase',
+    'andromeda-pro': '/components',
+  }
+  const systems = availableDesignSystems().map(
     (s: {
       slug: string
       name: string
@@ -74,7 +81,7 @@ AI agents can browse and install AI Canvas components through the official MCP s
       // component pages are free); label them so an assistant never presents
       // these installs as free.
       return [
-        `- [${s.name}](${SITE_URL}/design-systems/${s.slug}): Complete Premium design system (tokens + components). Showcase (free to browse): ${SITE_URL}/design-systems/${s.slug}/showcase. Install (Premium, requires an AI Canvas token): \`npx shadcn@latest add @aicanvas/${s.slug}\``,
+        `- [${s.name}](${SITE_URL}/design-systems/${s.slug}): Complete Premium design system (tokens + components). Browse free: ${SITE_URL}/design-systems/${s.slug}${SYSTEM_BROWSE[s.slug] ?? ''}. Install (Premium, requires an AI Canvas token): \`npx shadcn@latest add @aicanvas/${s.slug}\``,
         ...templates,
       ].join('\n')
     },

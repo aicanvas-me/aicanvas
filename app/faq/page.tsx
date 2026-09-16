@@ -42,7 +42,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
       {
         q: 'What is a design system?',
         a: 'A design system is a complete visual language where every color, spacing, and style comes from one shared source, so everything looks like it belongs together. Explore Andromeda, our live design system, to see one in action.',
-        link: { label: 'Andromeda', href: '/design-systems/andromeda' },
+        link: { label: 'Andromeda Legacy', href: '/design-systems/andromeda' },
       },
       {
         q: 'What is MCP?',

@@ -1,4 +1,9 @@
-// Replace Andromeda component card shots from the ImageKit folder
+// Replace Andromeda PRO component card shots from the ImageKit folder.
+//
+// Both the staging folder and the upload target are per SYSTEM. This script
+// rewrites Andromeda Pro's meta, and Andromeda Legacy's published card art
+// lives under `/andromeda`: uploading there while reading Pro's meta
+// overwrote Legacy's live images with Pro renders.
 // "andromeda/New Screenshoots". Each file whose name matches a known component
 // slug (case and space insensitive) is resized to 1280px wide as PNG and
 // overwrites andromeda/<slug>.png; the card's ?v cache-bust is bumped in
@@ -13,9 +18,9 @@ try {
 const key = process.env.IMAGEKIT_PRIVATE_KEY
 if (!key) { console.error('IMAGEKIT_PRIVATE_KEY is not set'); process.exit(1) }
 const auth = Buffer.from(key + ':').toString('base64')
-const SRC_FOLDER = '/andromeda/New Screenshoots'
+const SRC_FOLDER = '/andromeda-pro/New Screenshoots'
 const WIDTH = 1280
-const META_PATH = 'app/_lib/andromeda/andromeda-meta.ts'
+const META_PATH = 'app/_lib/andromeda-pro/andromeda-meta.ts'
 const arg = process.argv[2]
 if (!arg) { console.error('usage: node scripts/replace-andromeda-shot.mjs <slug> | --all'); process.exit(1) }
 const only = arg === '--all' ? undefined : arg
@@ -48,7 +53,7 @@ for (const f of candidates) {
     const body = new FormData()
     body.append('file', `data:image/png;base64,${buf.toString('base64')}`)
     body.append('fileName', `${slug}.png`)
-    body.append('folder', '/andromeda')
+    body.append('folder', '/andromeda-pro')
     body.append('useUniqueFileName', 'false')
     body.append('overwriteFile', 'true')
     const up = await fetch('https://upload.imagekit.io/api/v1/files/upload', { method: 'POST', headers: { Authorization: `Basic ${auth}` }, body })

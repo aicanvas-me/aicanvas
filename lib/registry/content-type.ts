@@ -12,7 +12,13 @@ export interface ContentLookup {
   templateSlugs: Set<string>
   /** Bare system names, e.g. andromeda; their whole-system aggregates are premium. */
   systemSlugs: Set<string>
-  /** Premium-only STANDALONE components, closed-source, born premium. */
+  /**
+   * Bare system names whose EVERY item is paid-to-install — components and the
+   * token foundation included, not just the aggregates (e.g. andromeda-pro).
+   * A free MIT system is absent from this set and keeps the free lane.
+   */
+  paidSystemSlugs: Set<string>
+  /** Slugs of premium-only STANDALONE components (closed-source, born premium). */
   premiumSlugs: Set<string>
   brainSlugs: Set<string>
   /**
@@ -48,12 +54,29 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
   // aggregates: every free DS component pulls it in, so gating it would break
   // their installs. Classifying it 'meta' keeps it free.
   for (const system of lookup.systemSlugs) {
-    if (slug === `${system}-tokens`) return 'meta'
+    // A paid system's foundation is NOT the free shared dependency the
+    // exception below was written for: it is that system's tokens, and handing
+    // it out publicly hands out the palette the system is sold on.
+    if (slug === `${system}-tokens`) {
+      return lookup.paidSystemSlugs.has(system) ? 'premium-standalone' : 'meta'
+    }
     if (slug === system || slug === `${system}-all`) return 'design-system'
   }
 
-  // Individual design-system components are FREE like standalones; only templates
-  // and the whole-system aggregates are premium.
+  // A paid system's individual components gate binary and fail-closed, exactly
+  // like a premium standalone: free to explore on the site, paid to install.
+  // The PREFIX alone decides, never manifest membership. The source lookup
+  // resolves page-style aliases the manifest does not list (a component's page
+  // slug under the system prefix), so a membership check let those aliases fall
+  // through to a free lane and hand out paid source. No free item may carry a
+  // paid system's prefix, so fail-closed costs nothing.
+  for (const system of lookup.paidSystemSlugs) {
+    if (slug.startsWith(`${system}-`)) return 'premium-standalone'
+  }
+
+  // Individual design-system components are FREE like standalones: the source is
+  // public, and the one-command install just needs a free account (unlimited,
+  // uncounted). Only templates and the whole-system aggregates above are premium.
   if (lookup.designSystemSlugs.has(slug)) return 'design-system-component'
 
   // Premium-only standalones gate like a design system: binary access, never

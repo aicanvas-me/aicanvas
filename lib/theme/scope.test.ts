@@ -47,6 +47,17 @@ describe('theme scope contract', () => {
       // The frame mirror writes theme VARS on the frame document's root, never
       // the dark class or the cookie; reviewed exception.
       .filter((f) => !f.endsWith('AndromedaThemeSync.tsx'))
+      // Same reviewed exception, same reasoning: Andromeda Pro's wrapper writes
+      // only its own `--at-*` custom properties on the root, never the dark
+      // class and never the cookie, so it cannot move the SITE theme — sand
+      // chrome reads no --at- var. The root is where they have to land: the
+      // canvas components (Burst, Orb, Nodes, Planet, the city map) and
+      // useResolvedVars re-resolve their ink by observing the root, and the
+      // Drawer, PanelMenu and Tooltip portal to <body>, which inherits from the
+      // root and not from a mid-tree wrapper. Scoping the set to the wrapper was
+      // tried and reverted: it left every portalled surface
+      // resolving the dark fallback in light theme.
+      .filter((f) => !f.endsWith('AndromedaThemeWrap.tsx'))
       .filter((f) => {
         const src = readFileSync(f, 'utf8')
         // Writing the class on <html>, or writing the cookie the server reads.

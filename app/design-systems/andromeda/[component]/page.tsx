@@ -42,7 +42,7 @@ export default async function AndromedaComponentPage({
   // Prop tables parsed from the component's @typedef JSDoc at build time, keyed
   // by source-file basename (Button.tsx → "Button"). Empty when the component
   // ships no @typedef block (2 of 33 today) — the view hides the section.
-  const propTables = ANDROMEDA_PROPS[entry.sourceFile.replace(/\.tsx?$/, '')] ?? []
+  const propTables = ANDROMEDA_PROPS['andromeda']?.[entry.sourceFile.replace(/\.tsx?$/, '')] ?? []
 
   // Account-gated install: when on, a signed-out visitor of this FREE
   // design-system component sees a "create a free account to install" CTA

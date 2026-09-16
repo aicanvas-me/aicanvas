@@ -28,6 +28,10 @@ import { GITHUB_URL } from '../lib/config'
 import { premiumEnabled } from '../../lib/flags'
 import { PremiumCards } from '../components/billing/PremiumCards'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
+import {
+  ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META,
+  ANDROMEDA_TEMPLATE_META as ANDROMEDA_PRO_TEMPLATE_META,
+} from '../_lib/andromeda-pro/andromeda-meta'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -53,7 +57,11 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
   // catalogue. The label says "components, blocks and templates", so all three
   // have to be in the number.
   const componentTotal =
-    total + ANDROMEDA_COMPONENT_META.length + ANDROMEDA_TEMPLATE_META.length
+    total +
+    ANDROMEDA_COMPONENT_META.length +
+    ANDROMEDA_TEMPLATE_META.length +
+    ANDROMEDA_PRO_COMPONENT_META.length +
+    ANDROMEDA_PRO_TEMPLATE_META.length
   return (
     <div
       // overflow-x-hidden makes this element own the page's vertical scroll,

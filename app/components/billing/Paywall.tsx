@@ -28,7 +28,7 @@ export function Component({ value, onChange }: Props) {
 
 // Default sub-copy. True for standalones and blocks, where the source AND the
 // build blocks of the prompt are both withheld. Surfaces that gate only one of
-// the two (Andromeda components carry no remix prompt at all) pass their own.
+// the two Andromeda component views pass their own.
 const DEFAULT_SUBTITLE = 'The full source and the remix prompt ship with Premium.'
 
 /**
@@ -45,6 +45,10 @@ export function Paywall({
   subtitle = DEFAULT_SUBTITLE,
   appearance = 'dark',
 }: {
+  // Accepted but unused: the lock no longer varies by reason, and callers still
+  // pass what they know so the call site reads as the gate it is.
+  reason?: PaywallReason
+  limit?: number
   teaser?: string
   name?: string
   subtitle?: string

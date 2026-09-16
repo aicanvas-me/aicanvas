@@ -75,7 +75,7 @@ const DEVICE_ORDER: { key: Device; label: string; icon: ComponentType<{ weight?:
 interface TemplatePreviewShellProps {
   templateSlug: string // registry slug, e.g. 'andromeda-mission-control'
   templateName: string // e.g. 'Mission Control'
-  systemName: string // e.g. 'Andromeda'
+  systemName: string // e.g. 'Andromeda Legacy'
   systemHref: string // where the system-name crumb links, e.g. the showcase
   frame?: boolean // true when this render is the iframe payload (?frame=1); resolved from searchParams on the server by the page and passed in, so the framed HTML is bare from the very first paint (no chrome flash)
   description?: string[] // overrides the install-popover bullet copy
@@ -321,11 +321,13 @@ function PreviewChrome({
 
   return (
     // CONTRACT: template compositions must FILL the preview region and scroll
-    // internally (height:100% + an inner overflow-y:auto). The root here is
-    // h-full, so a composition that instead GROWS past the region would (a)
-    // get clipped by the Andromeda column's md:overflow-y-hidden and (b)
-    // escape the sticky header's range. All four Andromeda templates follow
-    // the pinned pattern; keep new ones on it too.
+    // internally (an inner overflow-y:auto). Either root height does it:
+    // height:100%, or height:100dvh capped by max-height:100%, which also
+    // fills a bare page that has no sized parent. The root here is h-full, so
+    // a composition that instead GROWS past the region would (a) get clipped
+    // by the Andromeda column's md:overflow-y-hidden and (b) escape the sticky
+    // header's range. Every template on this shell uses one of the two; keep
+    // new ones on it too.
     <div className="flex h-full min-h-full w-full flex-col">
       <TopBar
         templateSlug={templateSlug}
@@ -478,7 +480,8 @@ function TopBar({
 
         {/* Device toggles (Desktop / Mobile) + Replay — sized to match the
             right-side buttons (~32px). Shown from md up; the cluster hides on a
-            real phone, where you already see the responsive layout. */}
+            real phone, where you already see the responsive layout. The site
+            theme toggle on the right moves every template preview with it. */}
         <div className="hidden items-center gap-0.5 justify-self-center rounded-lg border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
           {DEVICE_ORDER.map(({ key, label, icon: Icon }) => {
             const active = device === key

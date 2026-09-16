@@ -7,6 +7,14 @@
    explicitly — Tailwind tolerates the dir being absent (free-only builds). */
 @source "../components-workspace-premium";
 
+/* Same reason for the whole Andromeda Pro tree: inject-premium writes it to the
+   gitignored design-systems/andromeda-pro/, so auto-detection skips it and any
+   utility the Pro sources introduce would never be generated. The committed
+   Andromeda Legacy tree beside it is tracked, so it is detected on its own. */
+@source "../design-systems/andromeda-pro";
+
+/* Class-based dark mode — toggle .dark on <html> instead of OS preference */
+
 /* ── Theme scope contract ──────────────────────────────────────────────────
    Two independent scopes decide what "dark" means, and the nearest one wins.
 
@@ -33,6 +41,43 @@
    copy-pasted component work in someone else's project, so keep the attribute
    and the class on one element or the two halves disagree. */
 @variant dark (&:where(.dark, .dark *):not([data-card-theme="light"], [data-card-theme="light"] *));
+
+/* Fire a component's own hover / focus / press rules AT REST, and only inside
+   the Andromeda matrix surface. These redefine Tailwind's built-in variants,
+   so the first line of each block is the stock behaviour, unchanged, for the
+   whole site; the two gated lines are additive.
+
+   They add SELECTORS, never styles: a rule fires only if the component already
+   declared it, which is why a forced cell can never show a state the real
+   component does not have. data-force goes on the case canvas (the box holding
+   the component and nothing else) or on one element inside it — never on the
+   card chrome around it, or a descendant selector lights every nested rule at
+   once. The gate is required because globals.css is shared by the whole site;
+   ungated, this would be a site-wide semantic change. Cost, accepted: a few KB
+   of inert selectors ship to every visitor. */
+@custom-variant hover {
+  @media (hover: hover) { &:hover { @slot } }
+  :where([data-andromeda-matrix]) [data-force~="hover"] & { @slot }
+  :where([data-andromeda-matrix]) &[data-force~="hover"] { @slot }
+}
+@custom-variant focus-visible {
+  &:focus-visible { @slot }
+  :where([data-andromeda-matrix]) [data-force~="focus"] & { @slot }
+  :where([data-andromeda-matrix]) &[data-force~="focus"] { @slot }
+}
+/* Plain focus is not optional next to focus-visible: Input and Textarea paint
+   their accent border via focus: and only the ring via focus-visible:, so
+   forcing just the ring would show a focus state users never see. */
+@custom-variant focus {
+  &:focus { @slot }
+  :where([data-andromeda-matrix]) [data-force~="focus"] & { @slot }
+  :where([data-andromeda-matrix]) &[data-force~="focus"] { @slot }
+}
+@custom-variant active {
+  &:active { @slot }
+  :where([data-andromeda-matrix]) [data-force~="active"] & { @slot }
+  :where([data-andromeda-matrix]) &[data-force~="active"] { @slot }
+}
 
 :root {
   --background: #F4F4FA;

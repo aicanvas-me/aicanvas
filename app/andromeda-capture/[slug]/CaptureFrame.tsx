@@ -8,8 +8,8 @@
 //   [data-capture-ready] — present once measured, scaled, and fonts loaded
 import { useEffect, useRef, useState } from 'react'
 import { JetBrains_Mono } from 'next/font/google'
-import { AndromedaDemo } from '../../_lib/andromeda/andromeda-demos'
-import { themeColor } from '../../../design-systems/andromeda/components/lib/utils'
+import { AndromedaDemo } from '../../_lib/andromeda-pro/andromeda-demos'
+import { tokens } from '../../lib/andromeda-pro.generated'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -94,7 +94,9 @@ export function CaptureFrame({ slug }: { slug: string }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: themeColor.surface.base,
+        // Pro's own ground. Legacy's themeColor helper does not exist in the Pro
+        // tree; the equivalent is the surface rung on Pro's tokens.
+        background: tokens.color.surface.base,
         backgroundImage:
           'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
         backgroundSize: '22px 22px',

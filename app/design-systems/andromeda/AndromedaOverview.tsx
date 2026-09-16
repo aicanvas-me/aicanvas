@@ -27,6 +27,7 @@ import { optimizeImageKitUrl } from '../../lib/imagekit'
 import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoop } from '../../_components/FoundationLoop'
+import { SystemTierChip } from '../../_components/SystemTierChip'
 
 // Short blurbs for the four shipped templates — keyed by registry slug.
 const TEMPLATE_BLURBS: Record<string, string> = {
@@ -276,9 +277,14 @@ export function AndromedaOverview() {
         <p className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
           Design system
         </p>
-        <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">
-          {ANDROMEDA_META.name}
-        </h1>
+        {/* The chip sits beside the h1, not inside it, so the heading stays
+            the system's name alone. */}
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <h1 className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">
+            {ANDROMEDA_META.name}
+          </h1>
+          <SystemTierChip tier="mit" label="MIT License" />
+        </div>
         <p className="mt-4 text-base leading-relaxed text-sand-600 dark:text-sand-300 sm:text-lg">
           A complete design system for dashboards, control panels, data-dense tools, and anything
           else you can picture. Every component is driven by tokens, so you ship a coherent,

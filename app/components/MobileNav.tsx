@@ -74,7 +74,6 @@ export function MobileNav({
   const [showAllCats, setShowAllCats] = useState(false)
   // Design Systems pole opens by default so Andromeda is one tap away (mirrors
   // the desktop rail, where the DS pole is expanded out of the box).
-  const [collapsedDS, setCollapsedDS] = useState(false)
 
   const toggle = (title: string) =>
     setCollapsed((prev) => ({ ...prev, [title]: !prev[title] }))
@@ -306,10 +305,7 @@ export function MobileNav({
 
                 {/* ── Design Systems pole (shared, identical to the desktop rail) ── */}
                 <DesignSystemsPole
-                  collapsed={collapsedDS}
-                  onToggle={() => setCollapsedDS((prev) => !prev)}
                   onNavigate={() => setOpen(false)}
-                  promoteDS={promoteDS}
                 />
 
                 <div className="mb-3 h-px bg-sand-200 dark:bg-sand-800" />

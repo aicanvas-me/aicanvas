@@ -7,6 +7,7 @@ import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { Breadcrumbs, type Crumb } from '../components/Breadcrumbs'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 
 // The sticky top-bar breadcrumb for design-system + ideation routes. One
 // consistent, left-aligned trail so a visitor can click straight up the tree —
@@ -18,7 +19,8 @@ const SEGMENT_NAMES: Record<string, string> = {
   ideation: 'Ideation',
   components: 'Components',
   'design-systems': 'Design Systems',
-  andromeda: 'Andromeda',
+  andromeda: 'Andromeda Legacy',
+  'andromeda-pro': 'Andromeda Pro',
   showcase: 'Showcase',
   examples: 'See It in Action',
   dashboard: 'Dashboard',
@@ -28,13 +30,23 @@ const SEGMENT_NAMES: Record<string, string> = {
 // Template routes are full-screen — chrome is suppressed to let the composition
 // fill the viewport.
 const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
-// The Andromeda overview lives at /design-systems/andromeda — the clickable
-// "Andromeda" crumb points here from deeper pages.
-const ANDROMEDA_OVERVIEW = '/design-systems/andromeda'
-// Per-component pages live at /design-systems/andromeda/<slug>; showcase,
+// Two systems live side by side: Andromeda (MIT) and Andromeda Pro. Each owns
+// its own route namespace, so every crumb below is built from the system slug
+// in the path rather than from a single hardcoded system.
+const SYSTEM_LABELS: Record<string, string> = {
+  andromeda: 'Andromeda Legacy',
+  'andromeda-pro': 'Andromeda Pro',
+}
+const SYSTEM_ALT = Object.keys(SYSTEM_LABELS).join('|')
+const overviewHref = (system: string) => `/design-systems/${system}`
+// Per-component pages live at /design-systems/<system>/<slug>; showcase,
 // templates, examples, and brain are excluded so they resolve to their own crumbs.
-const ANDROMEDA_COMPONENT_RE =
-  /^\/design-systems\/andromeda\/(?!examples|showcase|system|templates|brain)([^/]+)\/?$/
+const ANDROMEDA_COMPONENT_RE = new RegExp(
+  `^/design-systems/(${SYSTEM_ALT})/(?!examples|showcase|system|templates|brain)([^/]+)/?$`,
+)
+const SYSTEM_SECTION_RE = new RegExp(`^/design-systems/(${SYSTEM_ALT})(?:/([^/]+))?/?$`)
+const BRAIN_READER_RE = new RegExp(`^/design-systems/(${SYSTEM_ALT})/brain/explore/?$`)
+const BRAIN_LANDING_RE = new RegExp(`^/design-systems/(${SYSTEM_ALT})/brain/?$`)
 
 function prettify(seg: string): string {
   if (SEGMENT_NAMES[seg]) return SEGMENT_NAMES[seg]
@@ -48,30 +60,42 @@ function prettify(seg: string): string {
 const DESIGN_SYSTEMS: Crumb = { label: 'Design Systems' }
 
 function buildCrumbs(pathname: string): Crumb[] | null {
-  // Andromeda component leaf → Design Systems · Andromeda / <name>
+  // Component leaf → Design Systems · <System> / <name>
   const componentMatch = pathname.match(ANDROMEDA_COMPONENT_RE)
   if (componentMatch) {
-    const slug = componentMatch[1]
-    const meta = ANDROMEDA_COMPONENT_META.find((c) => c.slug === slug)
-    return [DESIGN_SYSTEMS, { label: 'Andromeda', href: ANDROMEDA_OVERVIEW }, { label: meta?.name ?? prettify(slug) }]
-  }
-  // System → Design Systems · Andromeda / System
-  if (pathname === '/design-systems/andromeda/system') {
-    return [DESIGN_SYSTEMS, { label: 'Andromeda', href: ANDROMEDA_OVERVIEW }, { label: 'System' }]
-  }
-  // Brain reader → Design Systems · Andromeda / Brain (Brain links to the story
-  // landing; the reader is the current page).
-  if (pathname === '/design-systems/andromeda/brain/explore') {
+    const [, system, slug] = componentMatch
+    // Each system names its own components, so the crumb reads the list that
+    // belongs to the system in the path.
+    const list = system === 'andromeda-pro' ? ANDROMEDA_PRO_COMPONENT_META : ANDROMEDA_COMPONENT_META
+    const meta = list.find((c) => c.slug === slug)
     return [
       DESIGN_SYSTEMS,
-      { label: 'Andromeda', href: ANDROMEDA_OVERVIEW },
-      { label: 'Brain', href: '/design-systems/andromeda/brain' },
+      { label: SYSTEM_LABELS[system], href: overviewHref(system) },
+      { label: meta?.name ?? prettify(slug) },
+    ]
+  }
+  // Brain reader → Design Systems · <System> / Brain (Brain links to the story
+  // landing; the reader is the current page).
+  const readerMatch = pathname.match(BRAIN_READER_RE)
+  if (readerMatch) {
+    const system = readerMatch[1]
+    return [
+      DESIGN_SYSTEMS,
+      { label: SYSTEM_LABELS[system], href: overviewHref(system) },
+      { label: 'Brain', href: `/design-systems/${system}/brain` },
       { label: 'Reader' },
     ]
   }
-  // Overview → Design Systems · Andromeda (Andromeda is the current page)
-  if (pathname === ANDROMEDA_OVERVIEW) {
-    return [DESIGN_SYSTEMS, { label: 'Andromeda' }]
+  // Overview and its one-level sections → Design Systems · <System> [ / Section ]
+  const sectionMatch = pathname.match(SYSTEM_SECTION_RE)
+  if (sectionMatch) {
+    const [, system, section] = sectionMatch
+    if (!section) return [DESIGN_SYSTEMS, { label: SYSTEM_LABELS[system] }]
+    return [
+      DESIGN_SYSTEMS,
+      { label: SYSTEM_LABELS[system], href: overviewHref(system) },
+      { label: prettify(section) },
+    ]
   }
   // Fallback — a generic breadcrumb from the path segments (legacy /ideation/*).
   const segments = pathname.split('/').filter(Boolean)
@@ -92,17 +116,23 @@ export function IdeationTopBar() {
   // topbar disappears there.
   if (TEMPLATE_LEAF_RE.test(pathname)) return null
 
-  // The Brain LANDING renders its own full-page header (BrainStoryV4) — no app
-  // breadcrumb bar over it.
-  if (pathname === '/design-systems/andromeda/brain') return null
+  // Legacy's Brain landing renders its own full-page header, so no app bar over
+  // it. Pro's landing has none and takes the section breadcrumb like Foundation.
+  if (BRAIN_LANDING_RE.exec(pathname)?.[1] === 'andromeda') return null
 
   const crumbs = buildCrumbs(pathname)
   if (!crumbs) return null
 
   // The Brain READER and the Showcase mirror the template top bar: install
-  // control(s) portaled into a slot next to the auth pill. BrainViewer owns
-  // the brain slot; ShowcaseInstall owns the showcase slot.
-  const isBrainReader = pathname === '/design-systems/andromeda/brain/explore'
+  // control(s) portaled into a slot next to the auth pill, replacing the
+  // Lightning status pill. BrainViewer owns the brain slot; ShowcaseInstall
+  // owns the showcase slot.
+  // Either system's brain reader gets the install slot. The showcase slot
+  // belongs to whichever route actually mounts ShowcaseInstall: Andromeda
+  // Legacy's /system grid. Pro's /components grid renders AndromedaGallery,
+  // which mounts no install control, so claiming the slot there only painted an
+  // empty box and hid the status pill.
+  const isBrainReader = BRAIN_READER_RE.test(pathname)
   const isShowcase = pathname === '/design-systems/andromeda/system'
 
   // Pinned-dark surfaces keep a dark bar over a dark page in either site theme.

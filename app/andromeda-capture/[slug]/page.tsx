@@ -1,10 +1,11 @@
-// Screenshot-capture utility route (not user-facing). Renders a single
-// Andromeda demo fit-scaled inside a 1280×720 void frame so the screenshot
+// Screenshot-capture utility route (not user-facing) for Andromeda PRO.
+// Renders a single Pro demo fit-scaled inside a 1280×720 void frame so the
+// screenshot
 // script (scripts/screenshot-andromeda.mjs) can grab uniform 16:9 card art
 // for the design-system overview. Lives at the app root so it escapes the
 // Andromeda layout's sidebar + topbar chrome.
 import { notFound } from 'next/navigation'
-import { ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda-pro/andromeda-meta'
 import { CaptureFrame } from './CaptureFrame'
 
 export function generateStaticParams() {
