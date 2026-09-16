@@ -6,7 +6,12 @@ export const runtime = 'nodejs'
 
 // Guarded require — NOT a static import — so a fork/typecheck with no injected
 // build-info still compiles. inject-premium always writes at least a null stub.
-type BuildInfo = { sha: string | null; pinnedSha: string | null; appSha: string | null }
+type BuildInfo = {
+  sha: string | null
+  pinnedSha: string | null
+  appSha: string | null
+  brainFileCounts?: Record<string, number>
+}
 let PREMIUM_BUILD: BuildInfo = { sha: null, pinnedSha: null, appSha: null }
 try {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -30,6 +35,10 @@ try {
  * inject-premium.mjs, because a runtime env read would depend on Vercel's
  * "expose System Environment Variables" setting and would go silently null.
  * Safe to expose: this repo is public, so the sha is public already.
+ *
+ * `brainFileCounts` is how many files each design-system brain bundled at build
+ * time. The build already fails when a count differs from the manifest; this
+ * shows the count prod actually carries. Numbers only, never file names.
  */
 export async function GET() {
   const lookup = loadContentLookup()
@@ -45,6 +54,7 @@ export async function GET() {
       premiumSha: PREMIUM_BUILD.sha,
       pinnedSha: PREMIUM_BUILD.pinnedSha,
       deployedSha: PREMIUM_BUILD.appSha,
+      brainFileCounts: PREMIUM_BUILD.brainFileCounts ?? {},
     },
     { headers: { 'Cache-Control': 'private, no-store' } },
   )
