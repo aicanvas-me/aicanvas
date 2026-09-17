@@ -19,6 +19,7 @@ import { ANDROMEDA_COMPONENT_META as PRO_COMPONENT_META } from '../_lib/andromed
 import { COMPONENT_COUNTS } from '../design-systems/andromeda-pro/system/component-counts'
 import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-data'
 import { BrainWireframe, InteractionDemo, ThemeDemo, TokenDemo } from './AndromedaProIslands'
+import { ProCardStack } from './ProCardStack'
 
 const PRO_HREF = '/design-systems/andromeda-pro'
 
@@ -225,48 +226,6 @@ export function AndromedaProSection() {
   )
 }
 
-// Version 2 features: three open columns split by hairlines, no card boxes and
-// no browser window. Title and sentence on top, the live well at the foot,
-// fading out as it runs off the bottom.
-const FEATURES: { title: string; body: string; demo: Demo }[] = [
-  {
-    title: 'Token driven',
-    body: 'Three token layers. Swap one ramp and every part of every component follows.',
-    demo: 'tokens',
-  },
-  {
-    title: 'Dual themes',
-    body: 'Every component is designed in dark and light. Drag the line across the panel.',
-    demo: 'themes',
-  },
-  {
-    title: 'Premium interactions',
-    body: `${states} states tuned across ${components} components, so nothing jumps or feels unfinished.`,
-    demo: 'interactions',
-  },
-]
-
-const WELL_FADE = 'linear-gradient(to bottom, black 55%, transparent)'
-
-function FeatureGrid() {
-  return (
-    <div className="mt-12 grid grid-cols-1 divide-y divide-sand-200 border-y border-sand-200 lg:grid-cols-3 lg:divide-x lg:divide-y-0 dark:divide-sand-800 dark:border-sand-800">
-      {FEATURES.map(({ title, body, demo }) => (
-        <div key={title} className="flex min-w-0 flex-col py-8 lg:px-8 lg:first:pl-0 lg:last:pr-0">
-          <h3 className="text-lg font-semibold tracking-tight text-sand-900 dark:text-sand-50">{title}</h3>
-          <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{body}</p>
-          <div
-            className="mt-8 h-[148px] overflow-hidden rounded-lg border border-sand-800"
-            style={{ maskImage: WELL_FADE, WebkitMaskImage: WELL_FADE }}
-          >
-            <DemoFor demo={demo} />
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
 // Version 2: no beam and no outer box. The intro sits straight on the page and
 // follows the site theme; the grid stays, drawn in the theme's ink.
 const GRID_MASK = 'radial-gradient(ellipse 60% 70% at 30% 35%, black 15%, transparent 70%)'
@@ -283,8 +242,8 @@ export function AndromedaProSectionV2() {
       <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-16 -z-10 h-[520px] dark:hidden" style={gridStyle('rgb(0 0 0 / 0.05)')} />
       <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-16 -z-10 hidden h-[520px] dark:block" style={gridStyle('rgb(255 255 255 / 0.045)')} />
 
-      {/* ── Intro: copy on the left, buttons on the right; stacks on phones ── */}
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+      {/* ── Intro on the left, the card stack on the right; stacks on phones ── */}
+      <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-xs font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">New design system</span>
@@ -300,19 +259,23 @@ export function AndromedaProSectionV2() {
             {`A token-driven system for dashboards and control rooms. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
           </p>
         </div>
-        <div className="flex shrink-0 flex-wrap items-center gap-3">
-          <Link href={PRO_HREF} className={buttonClasses({ variant: 'primary', size: 'md' })}>
-            Explore Andromeda Pro
-            <ArrowRight weight="regular" size={14} />
-          </Link>
-          <Link href={`${PRO_HREF}/components`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
-            See the components
-          </Link>
+        <div className="w-full max-w-md lg:ml-auto">
+          <ProCardStack states={states} components={components} />
         </div>
       </div>
 
-      <FeatureGrid />
       <Brain />
+
+      {/* ── Calls to action, under the Brain ── */}
+      <div className="mt-8 flex flex-wrap items-center gap-3">
+        <Link href={PRO_HREF} className={buttonClasses({ variant: 'primary', size: 'md' })}>
+          Explore Andromeda Pro
+          <ArrowRight weight="regular" size={14} />
+        </Link>
+        <Link href={`${PRO_HREF}/components`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
+          See the components
+        </Link>
+      </div>
     </section>
   )
 }
