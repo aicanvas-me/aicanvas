@@ -1,13 +1,15 @@
 'use client'
 
-// The four Andromeda Pro facts as a stack of cards, like a notification pile.
-// When the stack scrolls into view the cards land one by one, each new card on
-// top pushing the older ones back; after that the stack keeps turning, one
-// card every few seconds, and holds still while hovered or off screen.
+// The four Andromeda Pro facts as a stack of cards. When the stack scrolls into
+// view the cards rise in from below one by one, each settling behind the last.
+// After that the stack turns every few seconds: the top card slides off to the
+// right and is cut off at the section's edge (the section box clips), the rest
+// step forward, and a new card rises from below into the back. It holds still
+// while hovered or off screen.
 //
 // Each rendered card is keyed by the tick it arrived on, so a new tick mounts a
-// fresh card on top and the oldest one leaves through AnimatePresence. Reduced
-// motion shows the settled stack and never turns.
+// fresh card at the back and the front one leaves through AnimatePresence.
+// Reduced motion shows the settled stack and never turns.
 
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
@@ -72,7 +74,9 @@ export function ProCardStack({
   }, [tick, inView, paused, reduce, list.length])
 
   const shown = reduce ? list.length - 1 : tick
-  const depths = Array.from({ length: Math.min(shown + 1, list.length) }, (_, d) => d)
+  // The oldest card still in the stack is the front one.
+  const front = Math.max(0, shown - (list.length - 1))
+  const keys = shown < 0 ? [] : Array.from({ length: shown - front + 1 }, (_, i) => front + i)
 
   return (
     <div ref={ref} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
@@ -87,16 +91,20 @@ export function ProCardStack({
           <CardBody fact={list[list.length - 1]} />
         </div>
         <AnimatePresence initial={false}>
-          {depths.map((d) => {
-            const arrived = shown - d
+          {keys.map((arrived) => {
+            const d = arrived - front
             return (
               <motion.div
                 key={arrived}
                 className={`absolute inset-x-0 top-0 ${CARD} shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_12px_32px_rgba(0,0,0,0.5)]`}
                 style={{ zIndex: list.length - d, transformOrigin: 'bottom center' }}
-                initial={{ opacity: 0, y: -24, scale: 1 }}
-                animate={{ opacity: 1, y: d * PEEK, scale: 1 - d * 0.05 }}
-                exit={{ opacity: 0, y: list.length * PEEK, scale: 1 - list.length * 0.05 }}
+                initial={{ opacity: 0, y: d * PEEK + 48, scale: 1 - d * 0.05 }}
+                animate={{ opacity: 1, x: 0, y: d * PEEK, scale: 1 - d * 0.05 }}
+                exit={{
+                  x: '120%',
+                  zIndex: list.length + 1,
+                  transition: { duration: 0.55, ease: [0.4, 0, 1, 1] },
+                }}
                 transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28 }}
               >
                 <motion.div animate={{ opacity: d === 0 ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.2 }}>
