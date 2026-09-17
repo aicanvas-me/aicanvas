@@ -3,9 +3,9 @@
 // The four Andromeda Pro facts as a stack of cards. When the stack scrolls into
 // view the cards rise in from below one by one, each settling behind the last.
 // After that the stack turns every few seconds: the top card slides off to the
-// right, tipping clockwise as it goes, and is cut off at the section's edge (the section box clips), the rest
-// step forward, and a new card rises from below into the back. It holds still
-// while hovered or off screen.
+// right, tipping clockwise as it goes, and is cut off at the section's edge
+// (the section box clips); the rest step forward, and a new card rises from
+// below into the back. It holds still while hovered or off screen.
 //
 // Each rendered card is keyed by the tick it arrived on, so a new tick mounts a
 // fresh card at the back and the front one leaves through AnimatePresence.
