@@ -7,9 +7,9 @@ import { AndromedaOverview } from './AndromedaOverview'
 import { ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
 
 export const metadata = {
-  title: 'Andromeda Design System for Dashboards and Control Panels',
+  title: 'Andromeda Design System for Any Product UI',
   description:
-    `A complete, token-driven design system for dashboards, control panels, and data-dense tools. Around ${ANDROMEDA_COMPONENT_META.length} components and 4 templates, all live.`,
+    `A complete, token-driven design system for any product UI. Around ${ANDROMEDA_COMPONENT_META.length} components and 4 templates, all live.`,
   alternates: { canonical: '/design-systems/andromeda' },
 }
 
