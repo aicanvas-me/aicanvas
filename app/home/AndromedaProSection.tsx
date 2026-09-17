@@ -1,5 +1,5 @@
 // The homepage's Andromeda Pro section: one bordered box holding the intro, a
-// turning stack of fact cards, the Brain and the two calls to action. Server
+// turning stack of fact cards and the Brain, each part with its own button. Server
 // component: the copy and counts render as static HTML; only the card stack
 // and the Brain wireframe hydrate. The section follows the site theme.
 //
@@ -35,7 +35,7 @@ const gridStyle = (ink: string) => ({
 })
 
 // The Brain sits straight on the section: no border, no ground (the
-// wireframe's own glow and its loading ground are cleared), no button.
+// wireframe's own glow and its loading ground are cleared).
 function Brain() {
   return (
     <div className="mt-6 grid grid-cols-1 sm:grid-cols-2">
@@ -51,6 +51,11 @@ function Brain() {
           Foundations, component rules and skills your AI reads before it writes a line, so everything it builds stays
           on the system.
         </p>
+        <div className="mt-6">
+          <Link href={`${PRO_HREF}/brain`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
+            Read the Brain
+          </Link>
+        </div>
       </div>
     </div>
   )
@@ -80,6 +85,12 @@ export function AndromedaProSection() {
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-sand-700 dark:text-sand-300">
               {`A token-driven design system for any product UI. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
             </p>
+            <div className="mt-6">
+              <Link href={PRO_HREF} className={buttonClasses({ variant: 'primary', size: 'md' })}>
+                Explore Andromeda Pro
+                <ArrowRight weight="regular" size={14} />
+              </Link>
+            </div>
           </div>
           <div className="w-full max-w-md lg:ml-auto">
             <ProCardStack states={states} variants={variants} components={components} templates={TEMPLATES.length} />
@@ -87,17 +98,6 @@ export function AndromedaProSection() {
         </div>
 
         <Brain />
-
-        {/* ── Calls to action, centred under the Brain ── */}
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href={PRO_HREF} className={buttonClasses({ variant: 'primary', size: 'md' })}>
-            Explore Andromeda Pro
-            <ArrowRight weight="regular" size={14} />
-          </Link>
-          <Link href={`${PRO_HREF}/brain`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
-            Read the Brain
-          </Link>
-        </div>
       </div>
     </section>
   )
