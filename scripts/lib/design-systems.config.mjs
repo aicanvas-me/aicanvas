@@ -3,7 +3,7 @@
  * generator and the website. Kept in `.mjs` so the build script and Next.js can
  * both import it without parsing TS or duplicating the data.
  *
- * Registry items of type `registry:block` keep that name in the JSON because
+ * Template registry items keep shadcn's `registry:block` type in the JSON because
  * shadcn's CLI only recognises a fixed set of `type` values; everything
  * user-facing says "template".
  */

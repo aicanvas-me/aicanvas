@@ -506,12 +506,14 @@ if (premiumCount > 0) console.log(`Generated ${premiumCount} GATED premium compo
 // installed exactly once regardless of which entry the user picks:
 //
 //   <slug>-tokens     (registry:lib)    — tokens.ts + utils + system icons
-//   <slug>            (registry:style)  — every component file; deps on tokens
+//   <slug>            (registry:block)  — every component file; deps on tokens
 //   <slug>-<template> (registry:block)  — only the example folder; deps on system
 //
 // Note: shadcn's CLI requires the `type` field to be one of its known enum
 // values — `registry:block` is shadcn vocabulary, kept verbatim in the JSON.
-// Everything user-facing (URLs, copy, MCP tool names) uses "template".
+// The system bundles share it, so the type never marks a template; the gate
+// manifest does. Everything user-facing (URLs, copy, MCP tool names) uses
+// "template".
 //
 // Internal relative imports stay intact because every layer writes into the
 // same `components/aicanvas/<slug>/` tree, preserving the source layout.
@@ -663,7 +665,10 @@ for (const ds of SYSTEMS) {
   const systemItem = {
     $schema: SCHEMA,
     name: ds.slug,
-    type: 'registry:style',
+    // Not registry:style: for that type the CLI first asks "Existing CSS
+    // variables and components will be overwritten. Continue?", and a run with
+    // no terminal to answer (an AI agent, a script) exits 0 having written nothing.
+    type: 'registry:block',
     title: `${ds.name} design system`,
     description: `Every ${ds.name} component (${systemFiles.length} files). Installs the foundation tokens automatically.`,
     author: 'aicanvas <https://aicanvas.me>',
@@ -854,7 +859,10 @@ for (const ds of SYSTEMS) {
     const allItem = {
       $schema: SCHEMA,
       name: `${ds.slug}-all`,
-      type: 'registry:style',
+      // registry:block for the system item's reason. Not registry:item: with no
+      // files of its own the CLI treats this bundle as universal and skips the
+      // components.json check, so a project without one installs on a blank config.
+      type: 'registry:block',
       title: `${ds.name} — full system`,
       description: hasBrain
         ? `Every ${ds.name} component, token, and template, plus the ${ds.name} brain, in one install.`
