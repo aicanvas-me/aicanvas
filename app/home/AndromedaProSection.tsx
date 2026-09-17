@@ -49,8 +49,7 @@ function Brain() {
         </h3>
         <p className="mt-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
           Foundations, component rules and skills tell your AI agent how every screen should look, and scripts check
-          the work before it calls it done. Each new screen follows the same rules, so the system grows without
-          drifting.
+          the work before it calls it done.
         </p>
         <div className="mt-6">
           <Link href={`${PRO_HREF}/brain`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
