@@ -158,7 +158,7 @@ function FactGlyph({ glyph, count }: { glyph: Glyph; count: number }) {
 }
 
 // Idea B: a spec sheet. A mono label with a live dot, the value, a muted line,
-// and a glyph at the foot that draws the fact, on a faint dot field.
+// and a glyph at the foot that draws the fact.
 function CardBodyB({ fact }: { fact: Fact }) {
   const FactIcon = fact.icon
   return (
@@ -189,11 +189,6 @@ function Body({ layout, fact, index, total }: { layout: Layout; fact: Fact; inde
 
 const CARD =
   'overflow-hidden rounded-xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
-// Idea B's dot field, faint enough to read as texture.
-const DOTS = {
-  backgroundImage: 'radial-gradient(circle, rgb(128 128 128 / 0.14) 1px, transparent 1px)',
-  backgroundSize: '12px 12px',
-}
 
 export function ProCardStack({
   states,
@@ -248,7 +243,7 @@ export function ProCardStack({
               <motion.div
                 key={arrived}
                 className={`absolute inset-x-0 top-0 ${CARD} shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_12px_32px_rgba(0,0,0,0.5)]`}
-                style={{ zIndex: list.length - d, transformOrigin: 'bottom center', ...(layout === 'b' ? DOTS : null) }}
+                style={{ zIndex: list.length - d, transformOrigin: 'bottom center' }}
                 initial={{ opacity: 0, y: d * PEEK + 48, scale: 1 - d * 0.05 }}
                 animate={{ opacity: 1, x: 0, rotate: 0, y: d * PEEK, scale: 1 - d * 0.05 }}
                 exit={{
