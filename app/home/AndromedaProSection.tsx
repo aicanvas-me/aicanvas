@@ -270,11 +270,11 @@ export function AndromedaProSectionV2() {
             </div>
             <h2
               id="home-andromeda-pro-v2"
-              className="mt-3 text-balance text-3xl font-extrabold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50"
+              className="mt-3 text-balance text-2xl font-extrabold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"
             >
               Andromeda Pro
             </h2>
-            <p className="mt-3 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
+            <p className="mt-3 max-w-xl text-sm leading-relaxed text-sand-700 dark:text-sand-300">
               {`A token-driven system for dashboards and control rooms. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
             </p>
           </div>
