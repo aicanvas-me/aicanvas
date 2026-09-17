@@ -70,13 +70,13 @@ const INK = 'text-sand-900 dark:text-sand-50'
 const MUTED = 'text-sand-600 dark:text-sand-400'
 const ACCENT = 'text-olive-600 dark:text-olive-400'
 const MONO = 'font-mono text-[11px] uppercase tracking-[0.14em]'
+const pad = (n: number) => String(n).padStart(2, '0')
 
 // Idea A: the number is the card. An oversized numeral with its unit beside it,
 // a mono index and label across the top, the line under a hairline, and a soft
 // olive light in the top corner.
 function CardBodyA({ fact, index, total }: { fact: Fact; index: number; total: number }) {
   const FactIcon = fact.icon
-  const pad = (n: number) => String(n).padStart(2, '0')
   return (
     <div className="relative">
       <div
@@ -157,14 +157,14 @@ function FactGlyph({ glyph, count }: { glyph: Glyph; count: number }) {
   )
 }
 
-// Idea B: a spec sheet. A mono label, the value, a muted line,
+// Idea B: a spec sheet. A numbered mono label, the value, a muted line,
 // and a glyph at the foot that draws the fact.
-function CardBodyB({ fact }: { fact: Fact }) {
+function CardBodyB({ fact, index }: { fact: Fact; index: number }) {
   const FactIcon = fact.icon
   return (
     <div className="relative">
       <div className="flex items-center justify-between gap-3">
-        <span className={`${MONO} ${MUTED}`}>{fact.label}</span>
+        <span className={`${MONO} ${MUTED}`}>{`${pad(index + 1)} · ${fact.label}`}</span>
         <FactIcon weight="regular" aria-hidden className={`size-4 ${MUTED}`} />
       </div>
       <p className={`mt-4 text-3xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
@@ -180,7 +180,7 @@ function CardBodyB({ fact }: { fact: Fact }) {
 
 function Body({ layout, fact, index, total }: { layout: Layout; fact: Fact; index: number; total: number }) {
   if (layout === 'a') return <CardBodyA fact={fact} index={index} total={total} />
-  if (layout === 'b') return <CardBodyB fact={fact} />
+  if (layout === 'b') return <CardBodyB fact={fact} index={index} />
   return <CardBody fact={fact} />
 }
 
