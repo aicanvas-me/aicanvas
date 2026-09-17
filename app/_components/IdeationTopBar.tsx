@@ -47,6 +47,13 @@ const ANDROMEDA_COMPONENT_RE = new RegExp(
 const SYSTEM_SECTION_RE = new RegExp(`^/design-systems/(${SYSTEM_ALT})(?:/([^/]+))?/?$`)
 const BRAIN_READER_RE = new RegExp(`^/design-systems/(${SYSTEM_ALT})/brain/explore/?$`)
 const BRAIN_LANDING_RE = new RegExp(`^/design-systems/(${SYSTEM_ALT})/brain/?$`)
+// The routes that mount ShowcaseInstall: Legacy's /system grid, and Pro's
+// Foundation and Components pages.
+const SHOWCASE_INSTALL_ROUTES = new Set([
+  '/design-systems/andromeda/system',
+  '/design-systems/andromeda-pro/foundation',
+  '/design-systems/andromeda-pro/components',
+])
 
 function prettify(seg: string): string {
   if (SEGMENT_NAMES[seg]) return SEGMENT_NAMES[seg]
@@ -128,12 +135,10 @@ export function IdeationTopBar() {
   // Lightning status pill. BrainViewer owns the brain slot; ShowcaseInstall
   // owns the showcase slot.
   // Either system's brain reader gets the install slot. The showcase slot
-  // belongs to whichever route actually mounts ShowcaseInstall: Andromeda
-  // Legacy's /system grid. Pro's /components grid renders AndromedaGallery,
-  // which mounts no install control, so claiming the slot there only painted an
-  // empty box and hid the status pill.
+  // belongs only to routes that actually mount ShowcaseInstall; claiming it
+  // anywhere else paints an empty box and hides the status pill.
   const isBrainReader = BRAIN_READER_RE.test(pathname)
-  const isShowcase = pathname === '/design-systems/andromeda/system'
+  const isShowcase = SHOWCASE_INSTALL_ROUTES.has(pathname)
 
   // Pinned-dark surfaces keep a dark bar over a dark page in either site theme.
   return (

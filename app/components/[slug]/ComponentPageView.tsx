@@ -858,7 +858,7 @@ export default function ComponentPageView({
                     <Lightning weight="fill" size={14} className="shrink-0" />
                     <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover/premium:grid-cols-[1fr]">
                       <span className="overflow-hidden">
-                        <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-none">
+                        <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
                           {isBlock ? 'Premium block' : 'Premium component'}
                         </span>
                       </span>
