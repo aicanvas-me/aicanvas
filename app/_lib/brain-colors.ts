@@ -18,7 +18,7 @@ export const BRAIN_ZONES: { label: string; dir: [number, number, number]; hex: R
   { label: 'Skills', dir: [0.0, -0.7, 0.7], hex: { dark: '#a3e635', light: '#65a30d' } }, // lime
 ]
 
-export const BRAIN_GRAY: Record<Theme, string> = { dark: '#9B9B9E', light: '#575759' }
+export const BRAIN_GRAY: Record<Theme, string> = { dark: '#9B9B9E', light: '#B0B0B4' }
 
 type Rgb = [number, number, number]
 
