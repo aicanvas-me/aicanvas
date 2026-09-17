@@ -227,7 +227,7 @@ export function OverviewB({
           <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
             {/* One string, not numbers interleaved with JSX text: the split form
                 hydrated with the space before "templates" missing on the server. */}
-            {`${stats.components} components, ${stats.variants} variants and ${stats.templates} templates for dashboards and control rooms, in light and dark. Every one runs on this site for free. Premium adds the code, the CLI install, the remix prompts, the Brain's rule files and template installs.`}
+            {`${stats.components} components, ${stats.variants} variants and ${stats.templates} templates for any product UI, in light and dark. Every one runs on this site for free. Premium adds the code, the CLI install, the remix prompts, the Brain's rule files and template installs.`}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href="/pricing" className={BTN_PRIMARY}>
