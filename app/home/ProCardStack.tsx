@@ -140,7 +140,7 @@ function CardBody({ fact, index, on, still }: { fact: Fact; index: number; on: b
       </div>
       <p className={`mt-3 text-3xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
       <p className={`mt-1 text-sm ${MUTED}`}>{fact.line}</p>
-      <div className="mt-4 flex h-10 items-end overflow-hidden">
+      <div className="mt-3 flex h-9 items-end overflow-hidden">
         <div className="w-full">
           <FactGlyph glyph={fact.glyph} count={fact.count} on={on} still={still} />
         </div>
@@ -150,7 +150,7 @@ function CardBody({ fact, index, on, still }: { fact: Fact; index: number; on: b
 }
 
 const CARD =
-  'overflow-hidden rounded-xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
+  'overflow-hidden rounded-xl border border-sand-200 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900'
 
 export function ProCardStack({
   states,
