@@ -646,7 +646,7 @@ for (const ds of SYSTEMS) {
     name: tokensSlug,
     type: 'registry:lib',
     title: `${ds.name} tokens`,
-    description: `Foundation files for the ${ds.name} design system — tokens, shared utilities, and the system mark. Required by every ${ds.name} component and template.`,
+    description: `Foundation files for the ${ds.name} design system: tokens, shared utilities, and the system mark. Required by every ${ds.name} component and template.`,
     author: 'aicanvas <https://aicanvas.me>',
     ...dependencyFields(ds, [...new Set([...tokensWalk.npmDeps, ...fontPackages])].sort()),
     ...(themeCss ? { css: themeCss } : {}),
@@ -848,7 +848,7 @@ for (const ds of SYSTEMS) {
       type: 'registry:block',
       title: `${template.name} (${ds.name})`,
       description:
-        `${template.name} composition from ${ds.name}${template.domain ? ` — ${template.domain.toLowerCase()} dashboard` : ''}. ` +
+        `${template.name} composition from ${ds.name}${template.domain ? ` (${template.domain.toLowerCase()} dashboard)` : ''}. ` +
         `Pulls in the ${installedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: templateDeps,
@@ -876,7 +876,7 @@ for (const ds of SYSTEMS) {
       // files of its own the CLI treats this bundle as universal and skips the
       // components.json check, so a project without one installs on a blank config.
       type: 'registry:block',
-      title: `${ds.name} — full system`,
+      title: `${ds.name}: full system`,
       description: hasBrain
         ? `Every ${ds.name} component, token, and template, plus the ${ds.name} brain, in one install.`
         : `Every ${ds.name} component, token, and template in one install.`,
@@ -1323,7 +1323,7 @@ for (const ds of SYSTEMS) {
       description:
         `The design rules behind ${ds.name}: system invariants, foundations (colour, spacing, ` +
         `layout, motion, charts), and per-component rules. Installs as markdown files into the ` +
-        `project so an AI agent reads them directly on every build — not fetched per request.`,
+        `project so an AI agent reads them directly on every build, not fetched per request.`,
       premium: true,
       fileCount: brainItem?.files?.length ?? 0,
       homepageUrl: `https://aicanvas.me/design-systems/${ds.slug}/brain`,

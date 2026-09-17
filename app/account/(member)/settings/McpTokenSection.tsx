@@ -103,7 +103,7 @@ export function McpTokenSection({ token }: Props) {
                 : <Copy weight="regular" size={16} />}
             </button>
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-sand-500 dark:text-sand-400">
+          <p className="mt-2 text-xs leading-relaxed text-sand-600 dark:text-sand-400">
             Swap glitch-button for any component&rsquo;s name to install that
             one instead. While you are signed in, every install command on the
             site already carries this token.

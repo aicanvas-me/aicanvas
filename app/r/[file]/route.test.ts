@@ -276,6 +276,20 @@ function callBundle(file: string, token?: string) {
   return GET(req, { params: Promise.resolve({ file }) })
 }
 
+// Mirrors the route's withToken rule: the token is stamped only onto /r URLs on
+// a host we own, and never onto a bare name, a foreign registry or a dep that
+// already carries one. Deriving the expectation from each dependency's own host
+// keeps this true whatever registry base registry-data was generated against.
+function expectedDep(dep: string) {
+  let u: URL
+  try { u = new URL(dep) } catch { return dep }
+  if (u.hostname !== 'aicanvas.me') return dep
+  if (!u.pathname.startsWith('/r/')) return dep
+  if (u.searchParams.has('token')) return dep
+  u.searchParams.set('token', TOKEN)
+  return u.toString()
+}
+
 type RegistryFile = { path: string; type: string; target?: string }
 const placement = (f: RegistryFile) => ({ path: f.path, type: f.type, target: f.target })
 
@@ -339,7 +353,7 @@ describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle wi
     const tokened = await (await callBundle(ALL_FILE, TOKEN)).json()
     expect(tokened.files).toEqual([])
     expect(tokened.registryDependencies).toEqual(
-      JSON.parse(raw).registryDependencies.map((d: string) => `${d}?token=${TOKEN}`),
+      JSON.parse(raw).registryDependencies.map(expectedDep),
     )
   })
 })
