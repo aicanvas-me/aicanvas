@@ -63,8 +63,10 @@ export function ComponentCard({ name, description, href, image, badge, slug, pos
               <span className="overflow-hidden">
                 {/* Tier only, no type noun: this shell is reused by blocks and
                     Andromeda templates, so "Premium component" mislabeled them.
-                    The type word lives on the detail page (see isBlock). */}
-                <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-none">
+                    The type word lives on the detail page (see isBlock).
+                    Line height matches the 14px icon: leading-none let the
+                    overflow-hidden wrapper cut the descenders of g, y and p. */}
+                <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
                   {badge}
                 </span>
               </span>

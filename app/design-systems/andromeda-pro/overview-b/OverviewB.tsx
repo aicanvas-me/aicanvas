@@ -33,10 +33,6 @@ const PANEL = 'rounded-2xl border border-sand-200 bg-sand-100 dark:border-sand-8
 const PANEL_SHADOW =
   'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
 
-const PRICE_MONTH = 8.99
-const PRICE_YEAR = 49.99
-const PRICE_YEAR_PER_MONTH = (PRICE_YEAR / 12).toFixed(2)
-
 // Counts in running copy read as words; anything past twenty stays a numeral.
 const NUMBER_WORDS = [
   'zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
@@ -292,8 +288,9 @@ export function OverviewB({
                 className="relative flex flex-col items-center justify-end gap-1.5 py-4 text-center sm:px-1"
               >
                 <SystemTierChip tier="pro" />
-                <span className="hidden text-xs text-sand-600 dark:text-sand-400 sm:block">
-                  ${PRICE_MONTH}/month or ${PRICE_YEAR}/year
+                {/* Same type as "Explore free", so both column titles sit on one line. */}
+                <span className="text-xs font-semibold text-sand-900 dark:text-sand-50 sm:text-sm">
+                  Install and ship
                 </span>
               </div>
 
@@ -337,16 +334,13 @@ export function OverviewB({
             </div>
 
             {/* Phones: the Premium column is 64px, too narrow for a button. */}
-            <div className="flex flex-col gap-3 border-t border-sand-200 px-3 pb-2 pt-4 dark:border-sand-800 sm:hidden">
-              <p className="text-xs text-sand-600 dark:text-sand-400">
-                Premium: ${PRICE_MONTH}/month or ${PRICE_YEAR}/year
-              </p>
-              {showGetPremium && (
+            {showGetPremium && (
+              <div className="border-t border-sand-200 px-3 pb-2 pt-4 dark:border-sand-800 sm:hidden">
                 <Link href="/pricing" className={`${BTN_PRIMARY} w-full`}>
                   Get Premium
                 </Link>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </section>
 
@@ -486,9 +480,6 @@ export function OverviewB({
           >
             Put Andromeda Pro in your project.
           </h2>
-          <p className="relative mt-2 text-base text-sand-700 dark:text-sand-300">
-            ${PRICE_MONTH} a month, or ${PRICE_YEAR} a year. Yearly works out to ${PRICE_YEAR_PER_MONTH} a month.
-          </p>
           <div className="relative mt-6 flex flex-wrap justify-center gap-3">
             {showGetPremium && (
               <Link href="/pricing" className={BTN_PRIMARY}>
