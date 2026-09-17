@@ -139,6 +139,8 @@ export const DESIGN_SYSTEMS = [
     slugOverrides: {
       'components/Button.tsx': 'andromeda-button-system',
     },
+    // Without this, installs get unpinned packages and no @types/three for Planet.
+    pinDependencies: true,
     // The app provides --font-jetbrains-mono via next/font, but installed projects
     // don't, so the shipped tokens item self-loads it. The import goes into the
     // SHIPPED file only, so the on-disk source stays clean and the app has no
