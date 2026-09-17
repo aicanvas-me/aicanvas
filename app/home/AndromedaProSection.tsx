@@ -45,11 +45,12 @@ function Brain() {
       <div className="flex flex-col justify-center p-6 sm:p-8">
         <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">The Brain</span>
         <h3 className="mt-2 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
-          Your agent reads the rules first.
+          Your design system, written for AI.
         </h3>
         <p className="mt-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
-          Foundations, component rules and skills your AI reads before it writes a line, so everything it builds stays
-          on the system.
+          The Brain is the rulebook your AI coding agent reads before it builds. Foundations, component rules and
+          skills tell it how every screen should look, and scripts check the work before it calls it done. Each new
+          screen follows the same rules, so the system grows without drifting.
         </p>
         <div className="mt-6">
           <Link href={`${PRO_HREF}/brain`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
