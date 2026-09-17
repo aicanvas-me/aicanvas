@@ -11,7 +11,7 @@
 // fresh card at the back and the front one leaves through AnimatePresence.
 // Reduced motion shows the settled stack and never turns.
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
 import { CircleHalf, HandTap, SquaresFour, Swatches } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
@@ -38,6 +38,7 @@ const INK = 'text-sand-900 dark:text-sand-50'
 const MUTED = 'text-sand-600 dark:text-sand-400'
 const MONO = 'font-mono text-[11px] uppercase tracking-[0.14em]'
 const pad = (n: number) => String(n).padStart(2, '0')
+const noSubscribe = () => () => {}
 
 // The glyph at each card's foot draws its fact rather than decorating it, in
 // neutral ink. Each draws in from left to right whenever its card comes to the
@@ -110,8 +111,8 @@ function FactGlyph({ glyph, count, on, still }: { glyph: Glyph; count: number; o
       </div>
     )
   }
-  // A ruler: a tick for every four variants, a long tick every eight, rising
-  // one after another from left to right.
+  // A ruler: a tick for every four variants, taller ticks every four and eight
+  // ticks, rising one after another from left to right.
   const ticks = Math.round(count / 4)
   return (
     <div className="flex h-9 items-end justify-between">
@@ -166,7 +167,10 @@ export function ProCardStack({
   const list = facts(states, variants, components, templates)
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { margin: '-80px' })
-  const reduce = useReducedMotion()
+  // The server cannot know the visitor's motion setting, so the first render
+  // always matches it (no cards yet); reduced motion applies once mounted.
+  const mounted = useSyncExternalStore(noSubscribe, () => true, () => false)
+  const reduce = !!useReducedMotion() && mounted
   const [tick, setTick] = useState(-1)
   const [paused, setPaused] = useState(false)
 
@@ -183,7 +187,12 @@ export function ProCardStack({
   const keys = shown < 0 ? [] : Array.from({ length: shown - front + 1 }, (_, i) => front + i)
 
   return (
-    <div ref={ref} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+    <div
+      ref={ref}
+      // Mouse only: a tap on a touch screen never sends the matching leave.
+      onPointerEnter={(e) => e.pointerType === 'mouse' && setPaused(true)}
+      onPointerLeave={(e) => e.pointerType === 'mouse' && setPaused(false)}
+    >
       <ul className="sr-only">
         {list.map((f) => (
           <li key={f.label}>{`${f.label}: ${f.value}. ${f.line}.`}</li>
@@ -216,7 +225,7 @@ export function ProCardStack({
                 transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28, delay }}
               >
                 <motion.div animate={{ opacity: d === 0 ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.2 }}>
-                  <CardBody fact={list[arrived % list.length]} index={arrived % list.length} on={d === 0} still={!!reduce} />
+                  <CardBody fact={list[arrived % list.length]} index={arrived % list.length} on={d === 0} still={reduce} />
                 </motion.div>
               </motion.div>
             )

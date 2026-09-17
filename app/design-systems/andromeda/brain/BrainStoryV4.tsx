@@ -72,8 +72,8 @@ const makeBrainMaterial = (T: typeof import('three')) =>
 
 // ── editorial copy helpers ──────────────────────────────────────────────────
 // Hero-only helpers, minimal equivalents of Andromeda Pro's brain hero (that
-// page's Container/Overline/PANEL_SHADOW), copied rather than imported since
-// the Pro folder is gitignored in this repo.
+// page's Container/Overline/PANEL_SHADOW), copied rather than imported so the
+// free page does not depend on Pro's files.
 function Container({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return <div className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>{children}</div>
 }
@@ -900,7 +900,7 @@ export function BrainStoryV4() {
             style={{ position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'pan-y' }}
           />
           {/* The appearance stepper is gone: the brain has one look now, the
-              gradient wireframe, so there was nothing left to step through. */}
+              gray wireframe, so there was nothing left to step through. */}
           {/* floating labels layer */}
           <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
             {LABELS.map((txt, i) => (

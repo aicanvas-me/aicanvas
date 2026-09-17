@@ -76,7 +76,7 @@ export function AndromedaProSection() {
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
             <div className="min-w-0">
               <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">New design system</span>
-              <div className="mt-3 flex items-center gap-3">
+              <div className="mt-3 flex flex-wrap items-center gap-3">
                 <h2
                   id="home-andromeda-pro"
                   className="text-balance text-2xl font-extrabold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"

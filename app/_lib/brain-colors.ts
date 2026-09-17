@@ -5,8 +5,9 @@
 //   across the wireframe by which way each vertex faces.
 // - Andromeda (the free system): one gray.
 //
-// Light takes each colour a few stops deeper: a pale hairline on a pale ground
-// is no wire at all. Hex values here are sRGB; `new THREE.Color(hex)` converts
+// Light takes each zone colour a few stops deeper: a pale hairline on a pale
+// ground is no wire at all. The gray goes the other way, lighter on light, so
+// the free brain sits quietly on the page. Hex values here are sRGB; `new THREE.Color(hex)` converts
 // them to the linear channels a vertex colour buffer wants.
 
 import type { Theme } from '../components/ThemeProvider'
