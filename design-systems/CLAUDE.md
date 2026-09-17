@@ -6,7 +6,7 @@ This folder contains **strict design systems**. Every component here is part of 
 
 | System | Components | Aesthetic | Showcase |
 |---|---|---|---|
-| `andromeda/` | a growing set of components <!-- TODO: reconcile count after parity --> | Sci-fi / blueprint. Transparent surfaces, 1px corner markers, JetBrains Mono only, turquoise accent. | `/design-systems/andromeda` and `/design-systems/andromeda/showcase` |
+| `andromeda/` | a growing set of components <!-- TODO: reconcile count after parity --> | Sci-fi / blueprint. Transparent surfaces, 1px corner markers, JetBrains Mono only, turquoise accent. | `/design-systems/andromeda` and `/design-systems/andromeda/system` |
 | `meridian/` | 9 | Editorial dashboard. Intentionally smaller surface area today; will grow over time to match Andromeda's coverage. | `/design-systems/meridian` |
 
 ## The three pillars of a design system
@@ -62,7 +62,7 @@ Tech notes: <any special requirements>
 Specs for DS work should be saved at `design-systems/<system>/specs/<slug>.md` (parallel to how standalone specs live at `components-workspace/<slug>/spec.md`). The Supervisor routes briefs based on the `design-system:` field.
 
 ## Browser verification — design systems
-Before reporting any DS change complete, screenshot the affected page on the running dev server. For Andromeda the canonical routes are `/design-systems/andromeda` and `/design-systems/andromeda/showcase`; for Meridian, `/design-systems/meridian`. If your change touches an example, also screenshot that example page directly.
+Before reporting any DS change complete, screenshot the affected page on the running dev server. For Andromeda the canonical routes are `/design-systems/andromeda` and `/design-systems/andromeda/system`; for Meridian, `/design-systems/meridian`. If your change touches an example, also screenshot that example page directly.
 
 - **Token resolution check**: the screenshot must show that every color, spacing, radius, and typography value resolved through the system's CSS custom properties (`--andromeda-*` / `--meridian-*`). Visually that means: no rogue Tailwind colors slipping in, no off-system shadows or radii, JetBrains Mono everywhere in Andromeda. If the screenshot looks "almost right but slightly off," suspect a hardcoded value bypassing tokens — find it before reporting done.
 - **Compositional integrity**: zoom mentally to the level that matters. A change to `Button.tsx` should be screenshot-verified inside an example that actually uses it (mission-control for Andromeda, the editorial dashboard for Meridian) — not just in isolation.
