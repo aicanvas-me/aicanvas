@@ -29,6 +29,7 @@ const word = (n: number) => WORDS[n] ?? String(n)
 
 const components = PRO_COMPONENT_META.length
 const states = Object.values(COMPONENT_COUNTS).reduce((sum, c) => sum + c.states, 0)
+const variants = Object.values(COMPONENT_COUNTS).reduce((sum, c) => sum + c.variants, 0)
 
 type Demo = 'tokens' | 'themes' | 'interactions'
 
@@ -279,7 +280,7 @@ export function AndromedaProSectionV2() {
             </p>
           </div>
           <div className="w-full max-w-md lg:ml-auto">
-            <ProCardStack states={states} components={components} templates={TEMPLATES.length} />
+            <ProCardStack states={states} variants={variants} components={components} templates={TEMPLATES.length} />
           </div>
         </div>
 

@@ -20,12 +20,12 @@ const PEEK = 12
 
 type Fact = { icon: Icon; label: string; value: string; line: string }
 
-function facts(states: number, components: number, templates: number): Fact[] {
+function facts(states: number, variants: number, components: number, templates: number): Fact[] {
   return [
     { icon: SquaresFour, label: 'Components', value: `${components} components`, line: `Plus ${templates} full templates` },
     { icon: Swatches, label: 'Token driven', value: '3 layers', line: 'Swap one ramp, every part follows' },
     { icon: CircleHalf, label: 'Dual themes', value: 'Dark + light', line: 'Every component, both themes' },
-    { icon: HandTap, label: 'Premium interactions', value: `${states} states`, line: `Tuned across ${components} components` },
+    { icon: HandTap, label: 'Premium interactions', value: `${variants} variants`, line: `${states} interaction states designed` },
   ]
 }
 
@@ -48,14 +48,16 @@ const CARD =
 
 export function ProCardStack({
   states,
+  variants,
   components,
   templates,
 }: {
   states: number
+  variants: number
   components: number
   templates: number
 }) {
-  const list = facts(states, components, templates)
+  const list = facts(states, variants, components, templates)
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { margin: '-80px' })
   const reduce = useReducedMotion()
