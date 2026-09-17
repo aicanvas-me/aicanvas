@@ -264,16 +264,16 @@ export function AndromedaProSectionV2() {
         {/* ── Intro on the left, the card stack on the right; stacks on phones ── */}
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
           <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">New design system</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">New design system</span>
+            <div className="mt-3 flex items-center gap-3">
+              <h2
+                id="home-andromeda-pro-v2"
+                className="text-balance text-2xl font-extrabold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"
+              >
+                Andromeda Pro
+              </h2>
               <SystemTierChip tier="pro" />
             </div>
-            <h2
-              id="home-andromeda-pro-v2"
-              className="mt-3 text-balance text-2xl font-extrabold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"
-            >
-              Andromeda Pro
-            </h2>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-sand-700 dark:text-sand-300">
               {`A token-driven system for dashboards and control rooms. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
             </p>
