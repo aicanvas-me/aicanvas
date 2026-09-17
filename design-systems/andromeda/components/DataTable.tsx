@@ -226,7 +226,13 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
     >
       <style>{`
         .andro-data-table .andro-tr {
-          transition: ${reducedMotion ? 'none' : `background-color ${tokens.motion.duration.normal} ${tokens.motion.easing.standard}`} !important;
+          transition: background-color ${tokens.motion.duration.normal} ${tokens.motion.easing.standard} !important;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .andro-data-table .andro-tr {
+            transition: none !important;
+          }
         }
 
         .andro-data-table .andro-tr-hover {
