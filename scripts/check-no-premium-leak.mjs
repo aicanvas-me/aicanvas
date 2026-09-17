@@ -69,6 +69,20 @@ const PAT = /\bghp_[A-Za-z0-9]{36}\b|\bgithub_pat_[A-Za-z0-9_]{20,}\b/
 // is read from registry-data/_premium.json (written by inject) and, as a
 // fallback, recomputed from the managed block in git info/exclude. Both may be
 // absent (fork, never injected) → empty set, guard fully inert.
+// A path already committed at HEAD is the repo's own source, the same rule
+// inject follows (committed always wins, the vault only fills gaps), so it is
+// never reported. info/exclude is shared by every worktree, and an older
+// worktree's block can still list a file this branch has since committed.
+function committedPaths() {
+  try {
+    return new Set(
+      execSync('git ls-tree -r --name-only HEAD design-systems', { encoding: 'utf8' })
+        .split('\n').map((s) => s.trim()).filter(Boolean),
+    )
+  } catch {
+    return new Set() // no HEAD yet / no git
+  }
+}
 function injectedFreeDsPaths() {
   const paths = new Set()
   try {
@@ -88,6 +102,7 @@ function injectedFreeDsPaths() {
       }
     }
   } catch { /* no git / no exclude file */ }
+  for (const p of committedPaths()) paths.delete(p)
   return paths
 }
 const FREE_DS_INJECTED = injectedFreeDsPaths()
