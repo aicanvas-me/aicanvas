@@ -172,7 +172,7 @@ function CardBodyB({ fact }: { fact: Fact }) {
       </div>
       <p className={`mt-4 text-3xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
       <p className={`mt-1 text-sm ${MUTED}`}>{fact.line}</p>
-      <div className="mt-5 flex h-10 items-end overflow-hidden border-t border-dashed border-sand-300 pt-3 dark:border-sand-700">
+      <div className="mt-5 flex h-10 items-end overflow-hidden">
         <div className="w-full">
           <FactGlyph glyph={fact.glyph} count={Number(fact.num)} />
         </div>
