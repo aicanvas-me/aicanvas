@@ -58,7 +58,7 @@ function FactGlyph({ glyph, count, on, still }: { glyph: Glyph; count: number; o
           <motion.span
             key={i}
             className={`size-[7px] rounded-[2px] ${GLYPH_INK}`}
-            initial={false}
+            initial={still ? false : { opacity: 0, scale: 0.4 }}
             animate={show ? { opacity: 0.3 + (0.6 * (i + 1)) / count, scale: 1 } : { opacity: 0, scale: 0.4 }}
             transition={show ? t(0.1 + i * 0.014, 0.25) : { duration: 0 }}
           />
@@ -80,7 +80,7 @@ function FactGlyph({ glyph, count, on, still }: { glyph: Glyph; count: number; o
             key={i}
             className={`h-1.5 origin-left rounded-full ${GLYPH_INK}`}
             style={{ width: `${w * 100}%` }}
-            initial={false}
+            initial={still ? false : { scaleX: 0, opacity: 0 }}
             animate={show ? { scaleX: 1, opacity: o } : { scaleX: 0, opacity: 0 }}
             transition={show ? t(0.1 + i * 0.12, 0.5) : { duration: 0 }}
           />
@@ -99,7 +99,7 @@ function FactGlyph({ glyph, count, on, still }: { glyph: Glyph; count: number; o
           <motion.span
             key={name}
             className={`flex h-9 flex-1 items-center justify-between rounded-md px-3 ring-1 ring-inset ring-sand-300 dark:ring-sand-700 ${skin}`}
-            initial={false}
+            initial={still ? false : { opacity: 0, x: -12 }}
             animate={show ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }}
             transition={show ? t(0.1 + i * 0.14, 0.4) : { duration: 0 }}
           >
@@ -120,7 +120,7 @@ function FactGlyph({ glyph, count, on, still }: { glyph: Glyph; count: number; o
           key={i}
           className={`w-px origin-bottom ${GLYPH_INK}`}
           style={{ height: i % 8 === 0 ? '100%' : i % 4 === 0 ? '60%' : '35%' }}
-          initial={false}
+          initial={still ? false : { scaleY: 0, opacity: 0 }}
           animate={show ? { scaleY: 1, opacity: i % 8 === 0 ? 1 : 0.5 } : { scaleY: 0, opacity: 0 }}
           transition={show ? t(0.1 + i * 0.012, 0.3) : { duration: 0 }}
         />
