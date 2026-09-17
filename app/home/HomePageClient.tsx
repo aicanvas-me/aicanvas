@@ -19,7 +19,7 @@ import {
 import { buttonClasses } from '../components/buttonClasses'
 import { HeaderSocials } from '../components/HeaderSocials'
 import { SiteFooter } from '../components/SiteFooter'
-import { AndromedaProSection, AndromedaProSectionV2 } from './AndromedaProSection'
+import { AndromedaProSection } from './AndromedaProSection'
 import { Reveal } from './Reveal'
 import { StackedCards, AnimatedCount, WireIcons, FeaturedCarousel, FaqAccordion } from './islands'
 import type { ComponentMeta } from '../lib/component-registry'
@@ -342,9 +342,6 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
 
         {/* ── Andromeda Pro spotlight ── */}
         <AndromedaProSection />
-
-        {/* ── Andromeda Pro, version 2 (under review beside version 1) ── */}
-        <AndromedaProSectionV2 />
 
         {/* ── Featured carousel ── */}
         <FeaturedCarousel items={carouselItems} />
