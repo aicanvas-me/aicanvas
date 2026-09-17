@@ -10,12 +10,8 @@
 // Each rendered card is keyed by the tick it arrived on, so a new tick mounts a
 // fresh card at the back and the front one leaves through AnimatePresence.
 // Reduced motion shows the settled stack and never turns.
-//
-// Card layouts under review: the default, and two ideas picked with ?cards=a
-// (big numeral) or ?cards=b (spec line and a small glyph that draws the fact).
-// The stack motion is the same for all three.
 
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
 import { CircleHalf, HandTap, SquaresFour, Swatches } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
@@ -27,82 +23,23 @@ const PEEK = 12
 const EXIT_S = 0.55
 
 type Glyph = 'grid' | 'layers' | 'themes' | 'ruler'
-type Fact = { icon: Icon; label: string; value: string; num: string; unit: string; line: string; glyph: Glyph }
-type Layout = 'default' | 'a' | 'b'
+type Fact = { icon: Icon; label: string; value: string; count: number; line: string; glyph: Glyph }
 
 function facts(states: number, variants: number, components: number, templates: number): Fact[] {
   return [
-    { icon: SquaresFour, label: 'Components', value: `${components} components`, num: String(components), unit: 'components', line: `Plus ${templates} full templates`, glyph: 'grid' },
-    { icon: Swatches, label: 'Token driven', value: '3 layers', num: '3', unit: 'token layers', line: 'Swap one ramp, every part follows', glyph: 'layers' },
-    { icon: CircleHalf, label: 'Dual themes', value: 'Dark + light', num: '2', unit: 'themes', line: 'Every component, both themes', glyph: 'themes' },
-    { icon: HandTap, label: 'Premium interactions', value: `${variants} variants`, num: String(variants), unit: 'variants', line: `${states} interaction states designed`, glyph: 'ruler' },
+    { icon: SquaresFour, label: 'Components', value: `${components} components`, count: components, line: `Plus ${templates} full templates`, glyph: 'grid' },
+    { icon: Swatches, label: 'Token driven', value: '3 layers', count: 3, line: 'Swap one ramp, every part follows', glyph: 'layers' },
+    { icon: CircleHalf, label: 'Dual themes', value: 'Dark + light', count: 2, line: 'Every component, both themes', glyph: 'themes' },
+    { icon: HandTap, label: 'Premium interactions', value: `${variants} variants`, count: variants, line: `${states} interaction states designed`, glyph: 'ruler' },
   ]
-}
-
-// ?cards=a|b, read on the client only; the server and first paint use the default.
-const noSubscribe = () => () => {}
-function useLayout(): Layout {
-  return useSyncExternalStore(
-    noSubscribe,
-    () => {
-      const v = new URLSearchParams(window.location.search).get('cards')
-      return v === 'a' || v === 'b' ? v : 'default'
-    },
-    () => 'default',
-  )
-}
-
-function CardBody({ fact }: { fact: Fact }) {
-  const FactIcon = fact.icon
-  return (
-    <>
-      <div className="flex items-center justify-between gap-3">
-        <span className="text-sm text-sand-700 dark:text-sand-300">{fact.label}</span>
-        <FactIcon weight="regular" aria-hidden className="size-5 shrink-0 text-olive-600 dark:text-olive-400" />
-      </div>
-      <p className="mt-4 text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">{fact.value}</p>
-      <p className="mt-1 text-sm font-semibold text-olive-600 dark:text-olive-400">{fact.line}</p>
-    </>
-  )
 }
 
 const INK = 'text-sand-900 dark:text-sand-50'
 const MUTED = 'text-sand-600 dark:text-sand-400'
-const ACCENT = 'text-olive-600 dark:text-olive-400'
 const MONO = 'font-mono text-[11px] uppercase tracking-[0.14em]'
 const pad = (n: number) => String(n).padStart(2, '0')
 
-// Idea A: the number is the card. An oversized numeral with its unit beside it,
-// a mono index and label across the top, the line under a hairline, and a soft
-// olive light in the top corner.
-function CardBodyA({ fact, index, total }: { fact: Fact; index: number; total: number }) {
-  const FactIcon = fact.icon
-  return (
-    <div className="relative">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-5 -top-5 size-40 opacity-60 dark:opacity-100"
-        style={{ background: 'radial-gradient(circle at 100% 0%, rgb(168 185 77 / 0.16), transparent 65%)' }}
-      />
-      <div className="relative flex items-center justify-between gap-3">
-        <span className={`${MONO} ${MUTED}`}>{`${pad(index + 1)} · ${fact.label}`}</span>
-        <span className="grid size-7 place-items-center rounded-md bg-olive-500/10 ring-1 ring-inset ring-olive-500/25">
-          <FactIcon weight="regular" aria-hidden className={`size-4 ${ACCENT}`} />
-        </span>
-      </div>
-      <p className="relative mt-5 flex items-baseline gap-2">
-        <span className={`text-6xl font-extrabold leading-none tracking-tighter tabular-nums ${INK}`}>{fact.num}</span>
-        <span className={`text-base font-semibold ${MUTED}`}>{fact.unit}</span>
-      </p>
-      <div className="relative mt-5 flex items-center justify-between gap-3 border-t border-sand-200 pt-3 dark:border-sand-800">
-        <span className={`text-sm font-semibold ${ACCENT}`}>{fact.line}</span>
-        <span className={`${MONO} ${MUTED}`}>{`${pad(index + 1)}/${pad(total)}`}</span>
-      </div>
-    </div>
-  )
-}
-
-// Idea B's glyphs: each one draws its fact rather than decorating it.
+// The glyph at each card's foot draws its fact rather than decorating it.
 function FactGlyph({ glyph, count }: { glyph: Glyph; count: number }) {
   if (glyph === 'grid') {
     // One square per component.
@@ -157,9 +94,8 @@ function FactGlyph({ glyph, count }: { glyph: Glyph; count: number }) {
   )
 }
 
-// Idea B: a spec sheet. A numbered mono label, the value, a muted line,
-// and a glyph at the foot that draws the fact.
-function CardBodyB({ fact, index }: { fact: Fact; index: number }) {
+// A spec sheet: a numbered mono label, the value, a muted line, and the glyph.
+function CardBody({ fact, index }: { fact: Fact; index: number }) {
   const FactIcon = fact.icon
   return (
     <div className="relative">
@@ -171,17 +107,11 @@ function CardBodyB({ fact, index }: { fact: Fact; index: number }) {
       <p className={`mt-1 text-sm ${MUTED}`}>{fact.line}</p>
       <div className="mt-4 flex h-10 items-end overflow-hidden">
         <div className="w-full">
-          <FactGlyph glyph={fact.glyph} count={Number(fact.num)} />
+          <FactGlyph glyph={fact.glyph} count={fact.count} />
         </div>
       </div>
     </div>
   )
-}
-
-function Body({ layout, fact, index, total }: { layout: Layout; fact: Fact; index: number; total: number }) {
-  if (layout === 'a') return <CardBodyA fact={fact} index={index} total={total} />
-  if (layout === 'b') return <CardBodyB fact={fact} index={index} />
-  return <CardBody fact={fact} />
 }
 
 const CARD =
@@ -199,7 +129,6 @@ export function ProCardStack({
   templates: number
 }) {
   const list = facts(states, variants, components, templates)
-  const layout = useLayout()
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { margin: '-80px' })
   const reduce = useReducedMotion()
@@ -228,7 +157,7 @@ export function ProCardStack({
       <div aria-hidden className="relative" style={{ paddingBottom: PEEK * (list.length - 1) }}>
         {/* Sizing copy: holds the stack's height so the page never jumps. */}
         <div className={`invisible ${CARD}`}>
-          <Body layout={layout} fact={list[list.length - 1]} index={list.length - 1} total={list.length} />
+          <CardBody fact={list[list.length - 1]} index={list.length - 1} />
         </div>
         <AnimatePresence initial={false}>
           {keys.map((arrived) => {
@@ -252,7 +181,7 @@ export function ProCardStack({
                 transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28, delay }}
               >
                 <motion.div animate={{ opacity: d === 0 ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.2 }}>
-                  <Body layout={layout} fact={list[arrived % list.length]} index={arrived % list.length} total={list.length} />
+                  <CardBody fact={list[arrived % list.length]} index={arrived % list.length} />
                 </motion.div>
               </motion.div>
             )
