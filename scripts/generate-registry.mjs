@@ -715,6 +715,9 @@ for (const ds of SYSTEMS) {
     if (componentWorkspaceSlugs.has(slug)) continue   // emitted as a standalone instead
     emittedComponentFiles.add(fileAbs)
   }
+  // Component slug → its item's registry deps, so a template can count the
+  // components its install pulls in through them.
+  const componentDeps = new Map()
 
   for (const { path: entry } of presentEntries) {
     const fileAbs = resolve(rootDirAbs, entry)
@@ -774,6 +777,7 @@ for (const ds of SYSTEMS) {
         }
       }
     }
+    componentDeps.set(slug, componentRegistryDeps)
 
     const compFiles = compWalk.files.map((f) => makeFile(f, rootDirAbs, ds.slug))
 
@@ -827,7 +831,16 @@ for (const ds of SYSTEMS) {
       }
     }
     const templateDeps = [`${ds.slug}-tokens`, ...[...usedComponentSlugs].sort()].map(depUrl)
-    templateContents.set(template.slug, usedComponentSlugs.size)
+    // The install also writes what those components depend on (UserCard brings
+    // Avatar), so the count follows the chain. A Set's loop visits what is added
+    // during it, each component counts once, and tokens are not a component.
+    const installedComponentSlugs = new Set(usedComponentSlugs)
+    for (const used of installedComponentSlugs) {
+      for (const dep of componentDeps.get(used) ?? []) {
+        if (componentDeps.has(dep)) installedComponentSlugs.add(dep)
+      }
+    }
+    templateContents.set(template.slug, installedComponentSlugs.size)
 
     const templateItem = {
       $schema: SCHEMA,
@@ -836,7 +849,7 @@ for (const ds of SYSTEMS) {
       title: `${template.name} (${ds.name})`,
       description:
         `${template.name} composition from ${ds.name}${template.domain ? ` — ${template.domain.toLowerCase()} dashboard` : ''}. ` +
-        `Pulls in the ${usedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
+        `Pulls in the ${installedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: templateDeps,
       ...dependencyFields(ds, templateWalk.npmDeps),
