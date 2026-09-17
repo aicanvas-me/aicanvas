@@ -64,7 +64,7 @@ Rules for writing the boundary type:
 
 The wrapper's job is to show the DS component **exactly as it appears on the DS's own overview page**. The user already spent effort designing the showcase layout (Variants / Sizes / With icon / Disabled rows for the Andromeda Button); the wrapper should reuse that layout one-to-one, not invent a different one.
 
-For `andromeda-button`, this meant copying the `Row` helper from `app/design-systems/andromeda/showcase/page.tsx` and using it directly in the wrapper:
+For `andromeda-button`, this meant copying the `Row` helper from `app/design-systems/andromeda/system/AndromedaShowcase.tsx` and using it directly in the wrapper:
 
 ```tsx
 function Row({ label, children }: { label: string; children: ReactNode }) {

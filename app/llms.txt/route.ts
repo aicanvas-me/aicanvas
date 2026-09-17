@@ -61,11 +61,12 @@ AI agents can browse and install AI Canvas components through the official MCP s
 
   // Design systems + their templates (slug prefix stripped for page URLs,
   // mirroring sitemap.ts). Each system points at the browse route it actually
-  // has: Legacy redirects /showcase to its grid, Pro never had that route.
+  // has, and the final one: /showcase was renamed to /system, so naming it here
+  // saves every agent a redirect. Pro never had a /system route.
   // A system whose source tree is absent on this build (skipIfMissing) is left
   // out entirely rather than advertised as installable.
   const SYSTEM_BROWSE: Record<string, string> = {
-    andromeda: '/showcase',
+    andromeda: '/system',
     'andromeda-pro': '/components',
   }
   // Who may install what comes from the /r gate itself (its manifest and
