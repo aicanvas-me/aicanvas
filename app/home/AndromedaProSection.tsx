@@ -1,7 +1,7 @@
 // The homepage's Andromeda Pro section: one bordered box holding the intro, a
-// turning stack of fact cards, the Brain and the two calls to action. Server component: the copy and counts render as static HTML; only
-// the card stack and the Brain wireframe hydrate. The section follows the site
-// theme.
+// turning stack of fact cards, the Brain and the two calls to action. Server
+// component: the copy and counts render as static HTML; only the card stack
+// and the Brain wireframe hydrate. The section follows the site theme.
 //
 // Every number is counted from source, the same way the Pro overview counts.
 
