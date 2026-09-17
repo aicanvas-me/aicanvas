@@ -679,8 +679,9 @@ for (const ds of SYSTEMS) {
   const dsBoundary = new Set([...tokensFileSet, ...systemFileSet])
 
   // ── 2b. Individual components ───────────────────────────────────────────────
-  // One installable item per component file. Each ships its own `.tsx` + sibling
-  // `.rules.md`, depends on `andromeda-tokens` for the foundation, and declares
+  // One installable item per component file. Each ships its own `.tsx` (plus its
+  // ready-made example when the config names one), depends on `andromeda-tokens`
+  // for the foundation, and declares
   // any other system components it imports as `registryDependencies` so the dep
   // graph stays correct (PanelHeader → IconButton → tokens, etc.).
   //
@@ -727,29 +728,45 @@ for (const ds of SYSTEMS) {
     // component's relative imports resolve after install.
     const otherComponentFiles = [...emittedComponentFiles].filter((f) => f !== fileAbs)
     const componentBoundary = new Set([...tokensFileSet, ...otherComponentFiles])
-    const compWalk = walkDependencies([fileAbs], rootDirAbs, componentBoundary)
+    // A ready-made example (config `componentExamples`) is walked with the
+    // component, so the helpers it imports ship too.
+    const itemEntries = [fileAbs]
+    const exampleEntry = ds.componentExamples?.[entry]
+    if (exampleEntry) {
+      const exampleAbs = resolve(rootDirAbs, exampleEntry)
+      if (existsSync(exampleAbs)) {
+        itemEntries.push(exampleAbs)
+      } else {
+        console.warn(
+          `generate-registry: WARNING — ${ds.slug} example "${exampleEntry}" is absent ` +
+            '(older injected source); its component ships without it.',
+        )
+      }
+    }
+    const compWalk = walkDependencies(itemEntries, rootDirAbs, componentBoundary)
 
-    // Read the component's own imports to figure out which sibling components
-    // it actually pulls in — those become registry deps. The walker doesn't
+    // Read the component's and its example's imports to figure out which sibling
+    // components they pull in — those become registry deps. The walker doesn't
     // report this directly, so re-read and parse imports to identify them.
-    const sourceContent = readFileSync(fileAbs, 'utf-8')
     const componentRegistryDeps = new Set([`${ds.slug}-tokens`])
-    for (const spec of extractImportSpecifiers(sourceContent)) {
-      if (!spec.startsWith('.') && !spec.startsWith('/')) continue
-      const resolved = resolveImport(fileAbs, spec)
-      // Only an individually-emitted sibling component becomes a registry dep.
-      // Non-emitted shared helpers (lib/motion.ts) are bundled inline above, so
-      // they must NOT be turned into a (non-existent) registry dependency.
-      if (!resolved || !emittedComponentFiles.has(resolved) || resolved === fileAbs) continue
-      // Sibling component — find its slug
-      const relPath = relative(rootDirAbs, resolved)
-      const relPosix = relPath.split(sep).join(posix.sep)
-      const siblingBase = relPath.split(sep).pop()
-      const siblingSlug = dsComponentSlug(ds, relPosix, siblingBase)
-      // Only declare a dep if that sibling is itself published individually
-      // (i.e. doesn't collide with a workspace standalone).
-      if (!componentWorkspaceSlugs.has(siblingSlug)) {
-        componentRegistryDeps.add(siblingSlug)
+    for (const itemFile of itemEntries) {
+      for (const spec of extractImportSpecifiers(readFileSync(itemFile, 'utf-8'))) {
+        if (!spec.startsWith('.') && !spec.startsWith('/')) continue
+        const resolved = resolveImport(itemFile, spec)
+        // Only an individually-emitted sibling component becomes a registry dep.
+        // Non-emitted shared helpers (lib/motion.ts) are bundled inline above, so
+        // they must NOT be turned into a (non-existent) registry dependency.
+        if (!resolved || !emittedComponentFiles.has(resolved) || resolved === fileAbs) continue
+        // Sibling component — find its slug
+        const relPath = relative(rootDirAbs, resolved)
+        const relPosix = relPath.split(sep).join(posix.sep)
+        const siblingBase = relPath.split(sep).pop()
+        const siblingSlug = dsComponentSlug(ds, relPosix, siblingBase)
+        // Only declare a dep if that sibling is itself published individually
+        // (i.e. doesn't collide with a workspace standalone).
+        if (!componentWorkspaceSlugs.has(siblingSlug)) {
+          componentRegistryDeps.add(siblingSlug)
+        }
       }
     }
 
@@ -764,7 +781,9 @@ for (const ds of SYSTEMS) {
       name: slug,
       type: 'registry:ui',
       title: `${compLabel} (${ds.name})`,
-      description: `${ds.name} ${compLabel} component. Install just this piece. Tokens and any sibling components are pulled in automatically.`,
+      description:
+        `${ds.name} ${compLabel} component. Install just this piece. Tokens and any sibling components are pulled in automatically.` +
+        (itemEntries.length > 1 ? ' Includes a ready-made example.' : ''),
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: [...componentRegistryDeps].sort().map(depUrl),
       ...dependencyFields(ds, compWalk.npmDeps),

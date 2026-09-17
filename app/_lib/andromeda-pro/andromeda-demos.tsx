@@ -82,6 +82,7 @@ import {
 // design-systems/ directly. See scripts/inject-premium.mjs.
 import { MetricChart, Gauge, Waveform, MediaCard, DataTable, FunnelChart, Orb, Nodes, Burst } from '../../lib/andromeda-pro.generated'
 import { MusicPlayerDemo as WiredMusicPlayer } from './matrix/music-player'
+import { SAMPLE_AVATARS, SAMPLE_COVERS } from './sample-pictures'
 
 // ─── Layout helpers ──────────────────────────────────────────────────────────
 
@@ -634,7 +635,8 @@ function MediaCardDemo() {
         title="Your Mix"
         meta="Updates daily"
         action="play"
-        image="https://ik.imagekit.io/aitoolkit/andromeda/signal-room/mix-01.webp"
+        image={SAMPLE_COVERS.starlightConductor.dark}
+        lightImage={SAMPLE_COVERS.starlightConductor.light}
       />
       <MediaCard
         code="CH-04"
@@ -642,7 +644,8 @@ function MediaCardDemo() {
         meta="Ambient · 2h"
         action="cta"
         ctaLabel="Open"
-        image="https://ik.imagekit.io/aitoolkit/andromeda/signal-room/mix-03.webp"
+        image={SAMPLE_COVERS.earthOverlook.dark}
+        lightImage={SAMPLE_COVERS.earthOverlook.light}
       />
     </div>
   )
@@ -1343,11 +1346,11 @@ const USER_MENU_ITEMS = [
   { id: 'signout',     label: 'Sign Out',            icon: SignOut },
 ]
 
-const USER_AVATAR_SRC =
-  'https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+const USER_AVATAR_SRC = SAMPLE_AVATARS.butterflyVisor.dark
+const USER_AVATAR_LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light
 
-const USER_CARD_SRC =
-  'https://images.unsplash.com/photo-1669287731461-bd8ce3126710?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+const USER_CARD_SRC = SAMPLE_AVATARS.butterflyVisor.dark
+const USER_CARD_LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light
 
 function UserMenuDemo() {
   return (
@@ -1356,6 +1359,7 @@ function UserMenuDemo() {
         <UserMenu
           name="OPS-01"
           src={USER_AVATAR_SRC}
+          lightSrc={USER_AVATAR_LIGHT_SRC}
           status="online"
           items={USER_MENU_ITEMS}
           placement="bottom"
@@ -1366,6 +1370,7 @@ function UserMenuDemo() {
         <UserMenu
           name="OPS-01"
           src={USER_AVATAR_SRC}
+          lightSrc={USER_AVATAR_LIGHT_SRC}
           status="online"
           items={USER_MENU_ITEMS}
           placement="top"
@@ -1378,6 +1383,7 @@ function UserMenuDemo() {
             <UserMenu
               name="OPS-01"
               src={USER_AVATAR_SRC}
+              lightSrc={USER_AVATAR_LIGHT_SRC}
               status="online"
               size={s}
               items={USER_MENU_ITEMS}
@@ -1400,6 +1406,7 @@ function UserCardDemo() {
               name="Reza Quinn"
               role="Product Designer"
               src={USER_CARD_SRC}
+              lightSrc={USER_CARD_LIGHT_SRC}
               status="online"
               items={USER_MENU_ITEMS}
               placement="top"
@@ -1415,6 +1422,7 @@ function UserCardDemo() {
               name="Reza Quinn"
               role="Product Designer"
               src={USER_CARD_SRC}
+              lightSrc={USER_CARD_LIGHT_SRC}
               status="online"
               items={USER_MENU_ITEMS}
               placement="bottom"
@@ -1434,6 +1442,7 @@ function UserCardDemo() {
                   name="Reza Quinn"
                   role="Product Designer"
                   src={USER_CARD_SRC}
+                  lightSrc={USER_CARD_LIGHT_SRC}
                   status="online"
                   size={s}
                   items={USER_MENU_ITEMS}

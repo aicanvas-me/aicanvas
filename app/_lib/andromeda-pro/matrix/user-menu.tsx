@@ -3,6 +3,7 @@
 import { Gear, Keyboard, SignOut, UserCircle } from '@phosphor-icons/react'
 import { UserMenu } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
+import { SAMPLE_AVATARS } from '../sample-pictures'
 
 const ITEMS = [
   { id: 'profile', label: 'Profile', icon: UserCircle },
@@ -12,8 +13,8 @@ const ITEMS = [
   { id: 'signout', label: 'Sign out', icon: SignOut, destructive: true },
 ]
 
-const SRC =
-  'https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+const SRC = SAMPLE_AVATARS.butterflyVisor.dark
+const LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light
 
 export const userMenu: MatrixSpec = {
   slug: 'user-menu',
@@ -24,7 +25,7 @@ export const userMenu: MatrixSpec = {
   // menu. The renderer takes the room from the mounted panel instead, on the
   // side that panel opens toward, which also covers a case opened by clicking.
   render: (size, props) => (
-    <UserMenu name="OPS-01" src={SRC} status="online" size={size} items={ITEMS} {...props} />
+    <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size={size} items={ITEMS} {...props} />
   ),
   variants: [
     { label: 'Closed', props: {} },
@@ -36,19 +37,19 @@ export const userMenu: MatrixSpec = {
     {
       label: 'Open down',
       node: (
-        <UserMenu name="OPS-01" src={SRC} status="online" size="md" items={ITEMS} staticOpen placement="bottom" align="end" />
+        <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size="md" items={ITEMS} staticOpen placement="bottom" align="end" />
       ),
     },
     {
       label: 'Open up',
       node: (
-        <UserMenu name="OPS-01" src={SRC} status="online" size="md" items={ITEMS} staticOpen placement="top" align="end" />
+        <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size="md" items={ITEMS} staticOpen placement="top" align="end" />
       ),
     },
     {
       label: 'Align start',
       node: (
-        <UserMenu name="OPS-01" src={SRC} status="online" size="md" items={ITEMS} staticOpen placement="bottom" align="start" />
+        <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size="md" items={ITEMS} staticOpen placement="bottom" align="start" />
       ),
     },
   ],
