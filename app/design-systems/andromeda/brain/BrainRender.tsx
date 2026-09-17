@@ -2,17 +2,13 @@
 
 import { useEffect, useRef } from 'react'
 import { useTheme } from '@/app/components/ThemeProvider'
-import { BRAIN_GRAY, BRAIN_ZONES } from '@/app/_lib/brain-colors'
+import { BRAIN_GRAY } from '@/app/_lib/brain-colors'
 import type { Group, Mesh, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 const MODEL_URL = '/models/brain.glb'
 
 // The Andromeda brain look: one gray, per site theme (app/_lib/brain-colors.ts).
-// The section legend stays, in the same gray.
-const SECTIONS = BRAIN_ZONES.map((z) => z.label)
-// Legend text stays readable: the light wire gray is too pale for type.
-const LEGEND_INK = { dark: BRAIN_GRAY.dark, light: '#575759' } as const
 
 // Wireframe brain for the reader's Brain Index landing, tumbling on a tilted
 // axis. Client-only Three.js; the reader only mounts for premium users.
@@ -120,25 +116,6 @@ export function BrainRender({ height = 400 }: { height?: number }) {
   return (
     <div style={{ position: 'relative', width: '100%', height, pointerEvents: 'none' }} aria-hidden>
       <div ref={hostRef} style={{ width: '100%', height }} />
-      <div
-        style={{
-          position: 'absolute',
-          top: 8,
-          left: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 7,
-          fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif",
-          fontSize: 12,
-        }}
-      >
-        {SECTIONS.map((label) => (
-          <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 4, height: 4, borderRadius: 4, background: BRAIN_GRAY[theme], flexShrink: 0 }} />
-            <span style={{ color: LEGEND_INK[theme], letterSpacing: '0.04em' }}>{label}</span>
-          </div>
-        ))}
-      </div>
     </div>
   )
 }
