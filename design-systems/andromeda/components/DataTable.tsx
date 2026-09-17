@@ -13,6 +13,7 @@
 import { forwardRef } from 'react';
 import type { ComponentPropsWithoutRef, CSSProperties, ReactElement, ReactNode, Ref } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import { tokens } from '../tokens';
 import { cn, andromedaVars } from './lib/utils';
 import { useReducedMotion, rowContainer, rowItem } from './lib/motion';
@@ -111,6 +112,10 @@ const DEFAULT_COLUMNS: DataTableColumn[] = [
 const DEFAULT_GET_ROW_KEY = (row: RowRecord) => row.id as string | number;
 // var() fallback for the inset divider height, the same 1px as tokens.border.thin.
 const HAIRLINE_WIDTH = '1px';
+// Reduced motion keeps the same hidden start, so server and client markup
+// match, and lands every row at once with no fade and no stagger.
+const STILL_CONTAINER: Variants = { hidden: {}, visible: {} };
+const STILL_ROW: Variants = { ...rowItem, visible: { opacity: 1, transition: { duration: 0 } } };
 // Each color stop carries its own var() so the rule follows the surface it sits
 // on; a baked literal here would stay near-black on a light ground.
 const DIVIDER = `var(--andromeda-border-subtle, ${tokens.color.border.subtle})`;
@@ -307,8 +312,8 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
         </thead>
 
         <motion.tbody
-          variants={rowContainer}
-          initial={reducedMotion ? false : 'hidden'}
+          variants={reducedMotion ? STILL_CONTAINER : rowContainer}
+          initial="hidden"
           whileInView="visible"
           viewport={{ once: true, amount: 0.2 }}
         >
@@ -356,7 +361,7 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
             return (
               <motion.tr
                 key={rowKey}
-                variants={rowItem}
+                variants={reducedMotion ? STILL_ROW : rowItem}
                 exit="exit"
                 className={cn('andro-tr', interactive && 'andro-tr-hover')}
                 aria-current={isSelected ? 'true' : undefined}
