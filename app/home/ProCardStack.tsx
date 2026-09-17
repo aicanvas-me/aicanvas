@@ -157,17 +157,14 @@ function FactGlyph({ glyph, count }: { glyph: Glyph; count: number }) {
   )
 }
 
-// Idea B: a spec sheet. A mono label with a live dot, the value, a muted line,
+// Idea B: a spec sheet. A mono label, the value, a muted line,
 // and a glyph at the foot that draws the fact.
 function CardBodyB({ fact }: { fact: Fact }) {
   const FactIcon = fact.icon
   return (
     <div className="relative">
       <div className="flex items-center justify-between gap-3">
-        <span className={`flex items-center gap-2 ${MONO} ${MUTED}`}>
-          <span className="size-1.5 rounded-full bg-olive-500" />
-          {fact.label}
-        </span>
+        <span className={`${MONO} ${MUTED}`}>{fact.label}</span>
         <FactIcon weight="regular" aria-hidden className={`size-4 ${MUTED}`} />
       </div>
       <p className={`mt-4 text-3xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
