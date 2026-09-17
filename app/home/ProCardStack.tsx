@@ -35,10 +35,10 @@ function CardBody({ fact }: { fact: Fact }) {
     <>
       <div className="flex items-center justify-between gap-3">
         <span className="text-sm text-sand-700 dark:text-sand-300">{fact.label}</span>
-        <FactIcon weight="regular" aria-hidden className="size-5 shrink-0 text-cyan-700 dark:text-cyan-400" />
+        <FactIcon weight="regular" aria-hidden className="size-5 shrink-0 text-olive-600 dark:text-olive-400" />
       </div>
       <p className="mt-4 text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">{fact.value}</p>
-      <p className="mt-1 text-sm font-semibold text-cyan-700 dark:text-cyan-400">{fact.line}</p>
+      <p className="mt-1 text-sm font-semibold text-olive-600 dark:text-olive-400">{fact.line}</p>
     </>
   )
 }
