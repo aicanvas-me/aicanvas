@@ -95,6 +95,9 @@ export function AndromedaProSection() {
           </div>
         </div>
 
+        {/* ── Divider between the intro and the Brain ── */}
+        <div aria-hidden className="mt-10 border-t border-sand-200 dark:border-sand-800" />
+
         <Brain />
       </div>
     </section>
