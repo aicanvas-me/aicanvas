@@ -69,37 +69,41 @@ export function AndromedaProSection() {
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[520px] dark:hidden" style={gridStyle('rgb(0 0 0 / 0.05)')} />
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 hidden h-[520px] dark:block" style={gridStyle('rgb(255 255 255 / 0.045)')} />
 
-        {/* ── Intro on the left, the card stack on the right; stacks on phones ── */}
-        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
-          <div className="min-w-0">
-            <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">New design system</span>
-            <div className="mt-3 flex items-center gap-3">
-              <h2
-                id="home-andromeda-pro"
-                className="text-balance text-2xl font-extrabold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"
-              >
-                Andromeda Pro
-              </h2>
-              <SystemTierChip tier="pro" />
+        {/* Two equal rows on wide screens: 1fr rows size to the taller of the
+            two, so the intro row matches the Brain row's height. */}
+        <div className="lg:grid lg:grid-rows-[1fr_auto_1fr]">
+          {/* ── Intro on the left, the card stack on the right; stacks on phones ── */}
+          <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
+            <div className="min-w-0">
+              <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">New design system</span>
+              <div className="mt-3 flex items-center gap-3">
+                <h2
+                  id="home-andromeda-pro"
+                  className="text-balance text-2xl font-extrabold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"
+                >
+                  Andromeda Pro
+                </h2>
+                <SystemTierChip tier="pro" />
+              </div>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-sand-700 dark:text-sand-300">
+                {`A token-driven design system for any product UI. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
+              </p>
+              <div className="mt-6">
+                <Link href={PRO_HREF} className={buttonClasses({ variant: 'outline', size: 'md' })}>
+                  Explore Andromeda Pro
+                </Link>
+              </div>
             </div>
-            <p className="mt-3 max-w-xl text-sm leading-relaxed text-sand-700 dark:text-sand-300">
-              {`A token-driven design system for any product UI. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
-            </p>
-            <div className="mt-6">
-              <Link href={PRO_HREF} className={buttonClasses({ variant: 'outline', size: 'md' })}>
-                Explore Andromeda Pro
-              </Link>
+            <div className="w-full max-w-md lg:ml-auto">
+              <ProCardStack states={states} variants={variants} components={components} templates={TEMPLATES.length} />
             </div>
           </div>
-          <div className="w-full max-w-md lg:ml-auto">
-            <ProCardStack states={states} variants={variants} components={components} templates={TEMPLATES.length} />
-          </div>
+
+          {/* ── Divider between the intro and the Brain ── */}
+          <div aria-hidden className="mt-10 border-t border-sand-200 dark:border-sand-800" />
+
+          <Brain />
         </div>
-
-        {/* ── Divider between the intro and the Brain ── */}
-        <div aria-hidden className="mt-10 border-t border-sand-200 dark:border-sand-800" />
-
-        <Brain />
       </div>
     </section>
   )
