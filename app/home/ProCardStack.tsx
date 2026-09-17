@@ -39,63 +39,98 @@ const MUTED = 'text-sand-600 dark:text-sand-400'
 const MONO = 'font-mono text-[11px] uppercase tracking-[0.14em]'
 const pad = (n: number) => String(n).padStart(2, '0')
 
-// The glyph at each card's foot draws its fact rather than decorating it.
-function FactGlyph({ glyph, count }: { glyph: Glyph; count: number }) {
+// The glyph at each card's foot draws its fact rather than decorating it, in
+// neutral ink. Each draws in from left to right whenever its card comes to the
+// front (`on`), and sits blank while the card waits behind. `still` skips the
+// motion: reduced motion, and the invisible sizing copy.
+const GLYPH_INK = 'bg-sand-500 dark:bg-sand-400'
+const EASE_OUT = [0.22, 1, 0.36, 1] as const
+
+function FactGlyph({ glyph, count, on, still }: { glyph: Glyph; count: number; on: boolean; still: boolean }) {
+  const t = (delay: number, duration = 0.35) => (still ? { duration: 0 } : { duration, delay, ease: EASE_OUT })
+  const show = on || still
+
   if (glyph === 'grid') {
-    // One square per component.
+    // One square per component, popping in along the rows.
     return (
       <div className="flex flex-wrap gap-[3px]">
         {Array.from({ length: count }, (_, i) => (
-          <span key={i} className="size-[7px] rounded-[2px] bg-olive-500/70" style={{ opacity: 0.35 + (0.65 * (i + 1)) / count }} />
+          <motion.span
+            key={i}
+            className={`size-[7px] rounded-[2px] ${GLYPH_INK}`}
+            initial={false}
+            animate={show ? { opacity: 0.3 + (0.6 * (i + 1)) / count, scale: 1 } : { opacity: 0, scale: 0.4 }}
+            transition={show ? t(0.1 + i * 0.014, 0.25) : { duration: 0 }}
+          />
         ))}
       </div>
     )
   }
   if (glyph === 'layers') {
-    // Primitives, semantics, components: each layer built on the one below.
+    // Primitives, semantics, components: each layer built on the one below,
+    // each bar growing out from the left.
     return (
       <div className="flex flex-col gap-1.5">
         {[
-          ['100%', 1, 'primitives'],
-          ['72%', 0.7, 'semantic'],
-          ['44%', 0.45, 'component'],
-        ].map(([w, o, name]) => (
-          <div key={name as string} className="flex items-center gap-3">
-            <span className="h-1.5 rounded-full bg-olive-500" style={{ width: w as string, opacity: o as number }} />
-          </div>
+          [1, 0.9],
+          [0.72, 0.6],
+          [0.44, 0.4],
+        ].map(([w, o], i) => (
+          <motion.span
+            key={i}
+            className={`h-1.5 origin-left rounded-full ${GLYPH_INK}`}
+            style={{ width: `${w * 100}%` }}
+            initial={false}
+            animate={show ? { scaleX: 1, opacity: o } : { scaleX: 0, opacity: 0 }}
+            transition={show ? t(0.1 + i * 0.12, 0.5) : { duration: 0 }}
+          />
         ))}
       </div>
     )
   }
   if (glyph === 'themes') {
-    // The same sample in both themes, side by side.
+    // The same sample in both themes, side by side, sliding in from the left.
     return (
       <div className="flex gap-2">
         {[
           ['bg-sand-950 text-sand-50', 'Dark'],
           ['bg-sand-50 text-sand-950', 'Light'],
-        ].map(([skin, name]) => (
-          <span key={name} className={`flex h-9 flex-1 items-center justify-between rounded-md px-3 ring-1 ring-inset ring-sand-300 dark:ring-sand-700 ${skin}`}>
+        ].map(([skin, name], i) => (
+          <motion.span
+            key={name}
+            className={`flex h-9 flex-1 items-center justify-between rounded-md px-3 ring-1 ring-inset ring-sand-300 dark:ring-sand-700 ${skin}`}
+            initial={false}
+            animate={show ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }}
+            transition={show ? t(0.1 + i * 0.14, 0.4) : { duration: 0 }}
+          >
             <span className="text-sm font-bold">Aa</span>
-            <span className="size-2 rounded-full bg-olive-500" />
-          </span>
+            <span className="size-2 rounded-full bg-sand-500" />
+          </motion.span>
         ))}
       </div>
     )
   }
-  // A ruler: a tick for every four variants, a long tick every eight.
+  // A ruler: a tick for every four variants, a long tick every eight, rising
+  // one after another from left to right.
   const ticks = Math.round(count / 4)
   return (
     <div className="flex h-9 items-end justify-between">
       {Array.from({ length: ticks }, (_, i) => (
-        <span key={i} className="w-px bg-olive-500" style={{ height: i % 8 === 0 ? '100%' : i % 4 === 0 ? '60%' : '35%', opacity: i % 8 === 0 ? 1 : 0.55 }} />
+        <motion.span
+          key={i}
+          className={`w-px origin-bottom ${GLYPH_INK}`}
+          style={{ height: i % 8 === 0 ? '100%' : i % 4 === 0 ? '60%' : '35%' }}
+          initial={false}
+          animate={show ? { scaleY: 1, opacity: i % 8 === 0 ? 1 : 0.5 } : { scaleY: 0, opacity: 0 }}
+          transition={show ? t(0.1 + i * 0.012, 0.3) : { duration: 0 }}
+        />
       ))}
     </div>
   )
 }
 
 // A spec sheet: a numbered mono label, the value, a muted line, and the glyph.
-function CardBody({ fact, index }: { fact: Fact; index: number }) {
+function CardBody({ fact, index, on, still }: { fact: Fact; index: number; on: boolean; still: boolean }) {
   const FactIcon = fact.icon
   return (
     <div className="relative">
@@ -107,7 +142,7 @@ function CardBody({ fact, index }: { fact: Fact; index: number }) {
       <p className={`mt-1 text-sm ${MUTED}`}>{fact.line}</p>
       <div className="mt-4 flex h-10 items-end overflow-hidden">
         <div className="w-full">
-          <FactGlyph glyph={fact.glyph} count={fact.count} />
+          <FactGlyph glyph={fact.glyph} count={fact.count} on={on} still={still} />
         </div>
       </div>
     </div>
@@ -157,7 +192,7 @@ export function ProCardStack({
       <div aria-hidden className="relative" style={{ paddingBottom: PEEK * (list.length - 1) }}>
         {/* Sizing copy: holds the stack's height so the page never jumps. */}
         <div className={`invisible ${CARD}`}>
-          <CardBody fact={list[list.length - 1]} index={list.length - 1} />
+          <CardBody fact={list[list.length - 1]} index={list.length - 1} on still />
         </div>
         <AnimatePresence initial={false}>
           {keys.map((arrived) => {
@@ -181,7 +216,7 @@ export function ProCardStack({
                 transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28, delay }}
               >
                 <motion.div animate={{ opacity: d === 0 ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.2 }}>
-                  <CardBody fact={list[arrived % list.length]} index={arrived % list.length} />
+                  <CardBody fact={list[arrived % list.length]} index={arrived % list.length} on={d === 0} still={!!reduce} />
                 </motion.div>
               </motion.div>
             )
