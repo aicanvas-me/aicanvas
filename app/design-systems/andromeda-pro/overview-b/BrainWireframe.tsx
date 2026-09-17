@@ -177,9 +177,26 @@ export function BrainWireframe({ followSite = false }: { followSite?: boolean })
               opacity: 1,
               depthWrite: false,
             })
+            // Wires behind the brain's front surface stay, drawn faint. An
+            // invisible solid copy of each mesh writes depth first; the wires
+            // in front of it draw at full strength, and a second pass draws
+            // only the wires behind it, at BACK_OPACITY. All the detail stays,
+            // and front and back stop muddying each other where they cross.
+            const BACK_OPACITY = 0.28
+            const occluderMaterial = new THREE.MeshBasicMaterial({
+              colorWrite: false,
+              polygonOffset: true,
+              polygonOffsetFactor: 1,
+              polygonOffsetUnits: 1,
+            })
+            const backMaterial = material.clone()
+            backMaterial.opacity = BACK_OPACITY
+            backMaterial.depthFunc = THREE.GreaterDepth
+            const meshes: Mesh[] = []
             model.traverse((o) => {
-              const mesh = o as Mesh
-              if (!mesh.isMesh) return
+              if ((o as Mesh).isMesh) meshes.push(o as Mesh)
+            })
+            meshes.forEach((mesh) => {
               // A copy per mesh, so writing its colours never touches a shared
               // geometry the model reuses elsewhere.
               const geometry = mesh.geometry.clone()
@@ -194,6 +211,12 @@ export function BrainWireframe({ followSite = false }: { followSite?: boolean })
               geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
               mesh.geometry = geometry
               mesh.material = material
+              mesh.renderOrder = 2
+              const occluder = new THREE.Mesh(geometry, occluderMaterial)
+              occluder.renderOrder = 0
+              const back = new THREE.Mesh(geometry, backMaterial)
+              back.renderOrder = 1
+              mesh.add(occluder, back)
             })
             // The recentring moved the model, not its pivot, so spinning the
             // model itself would swing it around its old origin and drift it
