@@ -1,6 +1,6 @@
 'use client'
 
-// The three Andromeda Pro facts as a stack of cards, like a notification pile.
+// The four Andromeda Pro facts as a stack of cards, like a notification pile.
 // When the stack scrolls into view the cards land one by one, each new card on
 // top pushing the older ones back; after that the stack keeps turning, one
 // card every few seconds, and holds still while hovered or off screen.
@@ -11,7 +11,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
-import { CircleHalf, HandTap, Swatches } from '@phosphor-icons/react'
+import { CircleHalf, HandTap, SquaresFour, Swatches } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
 
 const LAND_MS = 450
@@ -20,8 +20,9 @@ const PEEK = 12
 
 type Fact = { icon: Icon; label: string; value: string; line: string }
 
-function facts(states: number, components: number): Fact[] {
+function facts(states: number, components: number, templates: number): Fact[] {
   return [
+    { icon: SquaresFour, label: 'Components', value: `${components} components`, line: `Plus ${templates} full templates` },
     { icon: Swatches, label: 'Token driven', value: '3 layers', line: 'Swap one ramp, every part follows' },
     { icon: CircleHalf, label: 'Dual themes', value: 'Dark + light', line: 'Every component, both themes' },
     { icon: HandTap, label: 'Premium interactions', value: `${states} states`, line: `Tuned across ${components} components` },
@@ -45,8 +46,16 @@ function CardBody({ fact }: { fact: Fact }) {
 const CARD =
   'rounded-xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
 
-export function ProCardStack({ states, components }: { states: number; components: number }) {
-  const list = facts(states, components)
+export function ProCardStack({
+  states,
+  components,
+  templates,
+}: {
+  states: number
+  components: number
+  templates: number
+}) {
+  const list = facts(states, components, templates)
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { margin: '-80px' })
   const reduce = useReducedMotion()
@@ -73,7 +82,7 @@ export function ProCardStack({ states, components }: { states: number; component
       <div aria-hidden className="relative" style={{ paddingBottom: PEEK * (list.length - 1) }}>
         {/* Sizing copy: holds the stack's height so the page never jumps. */}
         <div className={`invisible ${CARD}`}>
-          <CardBody fact={list[2]} />
+          <CardBody fact={list[list.length - 1]} />
         </div>
         <AnimatePresence initial={false}>
           {depths.map((d) => {

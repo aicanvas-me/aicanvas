@@ -279,7 +279,7 @@ export function AndromedaProSectionV2() {
             </p>
           </div>
           <div className="w-full max-w-md lg:ml-auto">
-            <ProCardStack states={states} components={components} />
+            <ProCardStack states={states} components={components} templates={TEMPLATES.length} />
           </div>
         </div>
 
