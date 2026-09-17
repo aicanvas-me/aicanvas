@@ -6,7 +6,6 @@
 // Every number is counted from source, the same way the Pro overview counts.
 
 import Link from 'next/link'
-import { ArrowRight } from '@phosphor-icons/react/dist/ssr'
 import { buttonClasses } from '../components/buttonClasses'
 import { SystemTierChip } from '../_components/SystemTierChip'
 import { ANDROMEDA_COMPONENT_META as PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
@@ -86,9 +85,8 @@ export function AndromedaProSection() {
               {`A token-driven design system for any product UI. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
             </p>
             <div className="mt-6">
-              <Link href={PRO_HREF} className={buttonClasses({ variant: 'primary', size: 'md' })}>
+              <Link href={PRO_HREF} className={buttonClasses({ variant: 'outline', size: 'md' })}>
                 Explore Andromeda Pro
-                <ArrowRight weight="regular" size={14} />
               </Link>
             </div>
           </div>
