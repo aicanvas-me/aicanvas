@@ -8,6 +8,7 @@ import { TopBar } from '../../../lib/andromeda-pro.generated'
 import { Button } from '../../../lib/andromeda-pro.generated'
 import { UserMenu } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
+import { SAMPLE_AVATARS } from '../sample-pictures'
 
 const LABELS = ['Overview', 'Requests', 'History']
 
@@ -21,8 +22,8 @@ const ITEMS = [
   { id: 'signout', label: 'Sign out', icon: SignOut, destructive: true },
 ]
 
-const SRC =
-  'https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+const SRC = SAMPLE_AVATARS.butterflyVisor.dark
+const LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light
 
 // The active link is the bar's only own state, and it is the whole point of the
 // nav region: the 2px marker only means something once it MOVES. Same shape the
@@ -83,7 +84,7 @@ export const topBar: MatrixSpec = {
     {
       label: 'User menu',
       props: {
-        user: <UserMenu name="OPS-01" src={SRC} status="online" size="sm" items={ITEMS} />,
+        user: <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size="sm" items={ITEMS} />,
       },
     },
     {
@@ -94,7 +95,7 @@ export const topBar: MatrixSpec = {
       props: {
         size: 'md',
         cta: <Button size="md">Refresh</Button>,
-        user: <UserMenu name="OPS-01" src={SRC} status="online" size="md" items={ITEMS} />,
+        user: <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size="md" items={ITEMS} />,
       },
     },
   ],

@@ -89,7 +89,7 @@ const coveragePanel =
 // 'Live' is the reserved label for a case that is genuinely interactive
 // (matrix/types.ts), which is exactly what a hero wants. Only four specs
 // declare one; MatrixSolo falls back to the first case for the rest, and that
-// case is the component at rest in all 46 of them (Default, Initials, Playing).
+// case is the component at rest in all 46 of them (Default, Image, Playing).
 // A spec that later opens with something unrepresentative fixes it by ORDERING
 // its cases, not by a list of exceptions here.
 const SOLO_HERO_CASE = 'Live'
@@ -142,6 +142,10 @@ export function AndromedaComponentView({
   const [cliCopied, setCliCopied] = useState(false)
   const [remixOpen, setRemixOpen] = useState(false)
   const [fullscreen, setFullscreen] = useState(false)
+  function openFullscreen() {
+    track('Fullscreen Open', { component: registrySlug })
+    setFullscreen(true)
+  }
   // Bumped by the refresh control to force a remount of the previewed
   // instance (key={previewKey} below), the same replay-the-animation trick
   // as the standalone component page's refreshPreview().
@@ -154,6 +158,12 @@ export function AndromedaComponentView({
   const [portalReady, setPortalReady] = useState(false)
   useEffect(() => setPortalReady(true), [])
   const [installTab, setInstallTab] = useState<'cli' | 'manual'>('cli')
+  // Same events as the Andromeda Legacy page, so the two views compare
+  // directly. A tab switch counts only when the tab actually changes.
+  function switchInstallTab(next: 'cli' | 'manual') {
+    if (installTab !== next) track('Install Tab Switch', { component: registrySlug, tab: next })
+    setInstallTab(next)
+  }
   const [pkgManager, setPkgManager] = useState<'pnpm' | 'npm' | 'yarn' | 'bun'>('npm')
   const mainCardRef = useRef<HTMLDivElement>(null)
 
@@ -446,7 +456,7 @@ export function AndromedaComponentView({
               </div>
 
               <div className="group/fullscreen relative">
-                <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={() => setFullscreen(true)}>
+                <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={openFullscreen}>
                   <CornersOut weight="regular" size={16} />
                 </Button>
                 <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
@@ -479,7 +489,7 @@ export function AndromedaComponentView({
                 stays usable. Touch has no hover, so the pill is always up. */}
             <button
               type="button"
-              onClick={() => setFullscreen(true)}
+              onClick={openFullscreen}
               className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-lg bg-sand-950/90 px-3 py-2 text-xs font-semibold text-sand-100 opacity-0 shadow-lg transition-[opacity,background-color] duration-150 hover:bg-sand-900 focus-visible:opacity-100 group-hover/preview:opacity-100 [@media(hover:none)]:opacity-100"
             >
               <CornersOut weight="regular" size={14} />
@@ -587,7 +597,7 @@ export function AndromedaComponentView({
         </div>
       ) : null}
 
-      {/* ── Examples (solo-hero pilot) ───────────────────────────────────
+      {/* ── Examples ───────────────────────────────────
           When the frame above leads with one live instance, the full set has
           to land somewhere: here, below the chips that jump into it. The
           anchor ids come from the same matrixId() the chips call, so a chip
@@ -619,7 +629,7 @@ export function AndromedaComponentView({
           <div className="flex border-b border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
             <button
               type="button"
-              onClick={() => setInstallTab('cli')}
+              onClick={() => switchInstallTab('cli')}
               className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                 installTab === 'cli'
                   ? 'text-sand-900 dark:text-sand-50'
@@ -633,7 +643,7 @@ export function AndromedaComponentView({
             </button>
             <button
               type="button"
-              onClick={() => setInstallTab('manual')}
+              onClick={() => switchInstallTab('manual')}
               className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                 installTab === 'manual'
                   ? 'text-sand-900 dark:text-sand-50'

@@ -12,11 +12,11 @@ import {
 import { Avatar } from '../../../lib/andromeda-pro.generated'
 import { Button } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
+import { SAMPLE_AVATARS } from '../sample-pictures'
 
 // Reused from Avatar's image configuration so the two component pages exercise
 // the same known portrait and the same built-in image failure fallback.
-const PORTRAIT =
-  'https://images.unsplash.com/photo-1669287731461-bd8ce3126710?q=80&w=774&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
+const PORTRAIT = SAMPLE_AVATARS.butterflyVisor
 
 export const emptyState: MatrixSpec = {
   slug: 'empty-state',
@@ -87,7 +87,7 @@ export const emptyState: MatrixSpec = {
       children: (
         <>
           <EmptyStateMedia>
-            <Avatar name="Reza Quinn" src={PORTRAIT} size="lg" />
+            <Avatar name="Reza Quinn" src={PORTRAIT.dark} lightSrc={PORTRAIT.light} size="lg" />
           </EmptyStateMedia>
           <EmptyStateTitle>No tasks assigned</EmptyStateTitle>
           <EmptyStateDescription>

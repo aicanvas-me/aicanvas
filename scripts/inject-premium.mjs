@@ -88,7 +88,7 @@ if (!appSha) {
 // Stamp what actually got injected into a gitignored const the /api/premium/health
 // route imports — so prod can PROVE it is serving the intended premium commit,
 // and (via appSha) the intended APP commit.
-function writeBuildInfo(sha) {
+function writeBuildInfo(sha, brainFileCounts = {}) {
   writeFileSync(
     BUILD_INFO,
     [
@@ -97,6 +97,7 @@ function writeBuildInfo(sha) {
       `  sha: ${JSON.stringify(sha || null)},`,
       `  pinnedSha: ${JSON.stringify(pinnedSha || null)},`,
       `  appSha: ${JSON.stringify(appSha || null)},`,
+      `  brainFileCounts: ${JSON.stringify(brainFileCounts)} as Record<string, number>,`,
       '} as const',
       '',
     ].join('\n'),
@@ -117,6 +118,50 @@ function stripMarkerBlock(text) {
     stripping = false
     return true
   }).join('\n')
+}
+
+// Brain files ship to subscribers verbatim, so their marker strip is strict:
+// the marker must open its own comment, and anything that would drop real
+// content fails the build instead. Markdown uses an HTML comment (one line, or
+// closed on a later line that ends with `-->`); code files use the `//` block
+// stripMarkerBlock already handles.
+function stripBrainMarker(text, file) {
+  const fail = (why) => {
+    console.error(`[inject-premium] ${file}: ${why}`)
+    process.exit(1)
+  }
+  if (!text.includes(MARKER)) return text
+  const isMarkdown = file.endsWith('.md')
+  const lines = text.split('\n')
+  const out = []
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    if (!line.includes(MARKER)) {
+      out.push(line)
+      continue
+    }
+    const t = line.trim()
+    if (isMarkdown && t.startsWith('<!--')) {
+      // The first --> closes the comment; nothing may follow it on that line.
+      const closesCleanly = (l) => l.trim().indexOf('-->') === l.trim().length - 3
+      if (t.includes('-->')) {
+        if (!closesCleanly(t)) fail('text follows the --> that closes the premium marker comment')
+        continue
+      }
+      let j = i + 1
+      while (j < lines.length && !lines[j].includes('-->')) j++
+      if (j === lines.length) fail('the premium marker comment is never closed with -->')
+      if (!closesCleanly(lines[j])) fail('text follows the --> that closes the premium marker comment')
+      i = j
+      continue
+    }
+    if (!isMarkdown && t.startsWith('//')) {
+      while (i + 1 < lines.length && /^\s*\/\//.test(lines[i + 1])) i++
+      continue
+    }
+    fail('the premium marker must open its own comment line (<!-- in markdown, // in code)')
+  }
+  return out.join('\n')
 }
 
 const log = (m) => console.log('[inject-premium] ' + m)
@@ -210,9 +255,22 @@ function syncGitExclude(paths) {
     try { lines = readFileSync(file, 'utf8').split('\n') } catch { /* fresh file */ }
     const start = lines.indexOf(EXCLUDE_BEGIN)
     const end = lines.indexOf(EXCLUDE_END)
-    if (start !== -1 && end !== -1 && end >= start) lines.splice(start, end - start + 1)
+    // info/exclude is shared by every worktree of the repo, so the block is a
+    // UNION: replacing it wholesale let one worktree's run drop the paths
+    // another worktree had injected, and those files then showed up as
+    // untracked and blocked commits there. A name is kept only while its file
+    // still exists in some worktree, so the block does not grow forever.
+    let kept = []
+    if (start !== -1 && end !== -1 && end >= start) {
+      const roots = execSync('git worktree list --porcelain', { stdio: ['ignore', 'pipe', 'ignore'] })
+        .toString().split('\n').filter((l) => l.startsWith('worktree ')).map((l) => l.slice(9))
+      kept = lines.slice(start + 1, end).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
+        .filter((l) => roots.some((r) => existsSync(join(r, l))))
+      lines.splice(start, end - start + 1)
+    }
     while (lines.length && lines[lines.length - 1].trim() === '') lines.pop()
-    if (paths.length > 0) lines.push('', EXCLUDE_BEGIN, ...paths, EXCLUDE_END)
+    const merged = [...new Set([...kept, ...paths])].sort()
+    if (merged.length > 0) lines.push('', EXCLUDE_BEGIN, ...merged, EXCLUDE_END)
     mkdirSync(dirname(file), { recursive: true })
     writeFileSync(file, lines.join('\n') + '\n')
   } catch { /* git hygiene is best-effort — never fail the build over it */ }
@@ -816,7 +874,9 @@ function collectBrain(source, slug) {
     console.error(`[inject-premium] brain "${slug}" has no foundations/*.md and no components/*.rules.md — refusing to ship an empty brain`)
     process.exit(1)
   }
-  const read = (rel) => readFileSync(join(sysDir, rel), 'utf8')
+  // Vault files carry a do-not-commit marker; subscribers must never receive it.
+  const read = (rel) =>
+    stripBrainMarker(readFileSync(join(sysDir, rel), 'utf8'), `design-systems/${slug}/${rel}`)
   // INVENTORY.md is generated vault-side (scripts/generate-inventory.mjs): every
   // component with its purpose, props, variants and forbids in ONE file. It is
   // how an agent answers "do we already have this?" without opening 39 rules
@@ -963,8 +1023,8 @@ if (!source) {
   writeStubShim()
   writeBuildInfo(null)
   // Free v2 DS components: no vault reachable — remove any previously injected
-  // copies (mirrors the standalone clean-slate above), empty the exclude block,
-  // and write the placeholder shim so the showcase still compiles + renders.
+  // copies (mirrors the standalone clean-slate above), drop this worktree's
+  // names from the exclude block, and write the placeholder shim so the showcase still compiles + renders.
   const freePlaceholders = writeFreeDsPlaceholders('andromeda', V2_FALLBACK_NAMES, new Set())
   cleanupFreeDs(freePlaceholders)
   syncGitExclude(freePlaceholders)
@@ -1236,6 +1296,20 @@ if (freePaths.length > 0) {
 // gated brain page, and write the paywall teaser module (names/counts only).
 // Absent/empty key → no bundle, fallback teaser (older pins stay green).
 const brains = Array.isArray(manifest.brains) ? [...manifest.brains] : []
+// manifest.brainFileCount: { <slug>: <number> }. collectBrain only picks up
+// known shapes (rules.md, INVENTORY.md, foundations, component rules, skills,
+// tools), so a brain file anywhere else is left out without a word. The
+// expected count makes a publish prove the whole corpus landed. Optional per
+// slug, so older pins without it still build.
+const brainFileCountExpected =
+  manifest.brainFileCount && typeof manifest.brainFileCount === 'object' ? manifest.brainFileCount : {}
+const brainFileCounts = {}
+for (const slug of Object.keys(brainFileCountExpected)) {
+  if (!brains.includes(slug)) {
+    console.error(`[inject-premium] manifest brainFileCount names "${slug}", which is not in manifest brains`)
+    process.exit(1)
+  }
+}
 // ── Design-system remix prompts ─────────────────────────────────────────────
 // One hand-written markdown brief per Andromeda Pro component, authored in the
 // vault at design-systems/<system>/prompts/<Name>.md. This is PAID content: it
@@ -1280,6 +1354,21 @@ for (const slug of brains) {
     process.exit(1)
   }
   const { files, teaser } = collectBrain(source, slug)
+  const expected = brainFileCountExpected[slug]
+  if (expected !== undefined) {
+    if (!Number.isInteger(expected) || expected < 1) {
+      console.error(`[inject-premium] manifest brainFileCount["${slug}"] must be a positive integer, got ${JSON.stringify(expected)}`)
+      process.exit(1)
+    }
+    if (files.length !== expected) {
+      console.error(
+        `[inject-premium] brain "${slug}" bundled ${files.length} file(s) but the manifest expects ${expected}. ` +
+          'A brain file is outside the collected folders, or the manifest count is stale.',
+      )
+      process.exit(1)
+    }
+  }
+  brainFileCounts[slug] = files.length
   writeFileSync(
     join(REGISTRY_DATA, `_${slug}-brain.json`),
     JSON.stringify({ generatedAt: builtSha ?? 'local', files }, null, 2) + '\n',
@@ -1373,7 +1462,7 @@ for (const { slug, meta, hasPrompts } of injected) {
 const shim = [...imports, '', ...decls, '', 'export const PREMIUM_COMPONENTS: ComponentEntry[] = [', ...entries, ']', ''].join('\n')
 writeFileSync(SHIM, shim)
 
-writeBuildInfo(builtSha)
+writeBuildInfo(builtSha, brainFileCounts)
 
 if (tmpClone) rmSync(tmpClone, { recursive: true, force: true })
 log(

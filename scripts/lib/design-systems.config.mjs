@@ -67,6 +67,13 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  *                                    tokens item then ships them as CSS: light on
  *                                    `:root`, dark on `.dark`, so installs follow
  *                                    the app's own light/dark class.
+ * @property {Record<string, string>} [componentExamples] A ready-made example per
+ *                                    component entry (both paths from rootDir). The
+ *                                    component's own item ships the example and the
+ *                                    files it imports, so a fresh install opens on
+ *                                    the same first view as the component page. An
+ *                                    example absent from the tree is skipped with a
+ *                                    warning and the component ships alone.
  * @property {DesignSystemTemplate[]} templates
  */
 
@@ -234,6 +241,14 @@ export const DESIGN_SYSTEMS = [
     // loads neither, so the shipped tokens file self-loads both.
     fontPackages: ['@fontsource-variable/jetbrains-mono', '@fontsource-variable/manrope'],
     fontInjectInto: 'tokens.ts',
+    // The picture components install with an example that carries the sample
+    // pictures their pages show, never a default photo baked into the component.
+    componentExamples: {
+      'components/Avatar.tsx': 'examples/_usage/AvatarExample.tsx',
+      'components/MediaCard.tsx': 'examples/_usage/MediaCardExample.tsx',
+      'components/UserCard.tsx': 'examples/_usage/UserCardExample.tsx',
+      'components/UserMenu.tsx': 'examples/_usage/UserMenuExample.tsx',
+    },
     templates: [
       { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi',     entryPath: 'examples/mission-control/index.tsx' },
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     domain: 'Telecom',    entryPath: 'examples/service-order/index.tsx' },

@@ -20,6 +20,7 @@ import { PaddlePaymentLink } from './components/billing/PaddlePaymentLink'
 import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
 import { GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
+import { isFramedPayloadRequest } from './lib/frame'
 
 const manrope = Manrope({
   variable: '--font-manrope',
@@ -131,19 +132,10 @@ export default async function RootLayout({
   // previews). An embedded one paints a single composition over the whole
   // viewport, so every piece below — the auth round trip, the four providers,
   // both nav components, the modal, both analytics scripts — is work nobody
-  // can see. Sec-Fetch-Dest is the browser's own answer to "is this document
-  // being framed", sent on the document request itself; a browser too old to
-  // send it just gets the full shell, which is slower but never wrong.
-  // Sec-Fetch-Site narrows the branch to the site's own embeds: pages framed
-  // anywhere else render client components that expect the providers this
-  // branch skips, so a cross-site frame (which X-Frame-Options refuses to
-  // display anyway) must fall through to the full shell. A client that omits
-  // either header also falls through — slower but never wrong.
-  const reqHeaders = await headers()
-  if (
-    reqHeaders.get('sec-fetch-dest') === 'iframe' &&
-    reqHeaders.get('sec-fetch-site') === 'same-origin'
-  ) {
+  // can see. Only a same-origin frame of a route that renders bare gets this
+  // branch: any other page draws chrome that reads the session and throws
+  // without the providers (app/lib/frame.ts decides).
+  if (isFramedPayloadRequest(await headers())) {
     return (
       <html
         lang="en"

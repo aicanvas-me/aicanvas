@@ -391,7 +391,7 @@ const ANDROMEDA_REGISTRY_SLUG_OVERRIDES: Record<string, string> = {
   // pair; the vault filenames did not move.
   'table-basic': 'andromeda-pro-table',
   'table-data': 'andromeda-pro-data-table',
-  // Same for the charts, renamed the same day so the family reads together.
+  // Same for the charts, renamed so the family reads together.
   'chart-funnel': 'andromeda-pro-funnel-chart',
   'chart-metric': 'andromeda-pro-metric-chart',
   'chart-radar': 'andromeda-pro-radar-chart',
