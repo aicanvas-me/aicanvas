@@ -154,11 +154,12 @@ function ProWindow() {
   )
 }
 
-function Brain() {
+// bare: no border, for version 2 where the Brain sits inside the section box.
+function Brain({ bare = false }: { bare?: boolean }) {
   return (
     <>
       {/* ── The Brain ── */}
-      <div className="mt-6 grid grid-cols-1 overflow-hidden rounded-2xl border border-sand-800 bg-sand-950 sm:grid-cols-2">
+      <div className={`mt-6 grid grid-cols-1 overflow-hidden rounded-2xl bg-sand-950 sm:grid-cols-2 ${bare ? '' : 'border border-sand-800'}`}>
         <div className="relative h-56 sm:h-auto sm:min-h-[300px]">
           <BrainWireframe />
         </div>
@@ -238,33 +239,36 @@ const gridStyle = (ink: string) => ({
 
 export function AndromedaProSectionV2() {
   return (
-    <section aria-labelledby="home-andromeda-pro-v2" className="relative isolate mt-16 sm:mt-24">
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-16 -z-10 h-[520px] dark:hidden" style={gridStyle('rgb(0 0 0 / 0.05)')} />
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-16 -z-10 hidden h-[520px] dark:block" style={gridStyle('rgb(255 255 255 / 0.045)')} />
+    <section aria-labelledby="home-andromeda-pro-v2" className="mt-16 sm:mt-24">
+      {/* One box holds the intro, the stack and the Brain, so they read as one section. */}
+      <div className="relative isolate overflow-hidden rounded-3xl border border-sand-200 p-4 sm:p-8 lg:p-10 dark:border-sand-800">
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] dark:hidden" style={gridStyle('rgb(0 0 0 / 0.05)')} />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 hidden h-[520px] dark:block" style={gridStyle('rgb(255 255 255 / 0.045)')} />
 
-      {/* ── Intro on the left, the card stack on the right; stacks on phones ── */}
-      <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">New design system</span>
-            <SystemTierChip tier="pro" />
+        {/* ── Intro on the left, the card stack on the right; stacks on phones ── */}
+        <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">New design system</span>
+              <SystemTierChip tier="pro" />
+            </div>
+            <h2
+              id="home-andromeda-pro-v2"
+              className="mt-3 text-balance text-3xl font-extrabold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50"
+            >
+              Andromeda Pro
+            </h2>
+            <p className="mt-3 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
+              {`A token-driven system for dashboards and control rooms. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
+            </p>
           </div>
-          <h2
-            id="home-andromeda-pro-v2"
-            className="mt-3 text-balance text-3xl font-extrabold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50"
-          >
-            Andromeda Pro
-          </h2>
-          <p className="mt-3 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
-            {`A token-driven system for dashboards and control rooms. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
-          </p>
+          <div className="w-full max-w-md lg:ml-auto">
+            <ProCardStack states={states} components={components} />
+          </div>
         </div>
-        <div className="w-full max-w-md lg:ml-auto">
-          <ProCardStack states={states} components={components} />
-        </div>
-      </div>
 
-      <Brain />
+        <Brain bare />
+      </div>
 
       {/* ── Calls to action, under the Brain ── */}
       <div className="mt-8 flex flex-wrap items-center gap-3">
