@@ -126,15 +126,6 @@ export const DESIGN_SYSTEMS = [
       'components/TrendChart.tsx',
       'components/UserCard.tsx',
       'components/UserMenu.tsx',
-    ],
-    // The six vault-authored free-lane components: authored in the private vault
-    // and injected into this tree at build time (manifest key
-    // `freeSystemComponents`). They install FREE exactly like the committed
-    // entries above (same registry:ui type → classified free by
-    // lib/registry/content-type.ts). Optional because they have no committed
-    // counterpart: on a degraded build (fork, no PAT, older premium pin) the
-    // generator finds them absent and skips them with a warning.
-    optionalSystemEntries: [
       'components/MetricChart.tsx',
       'components/Gauge.tsx',
       'components/Waveform.tsx',

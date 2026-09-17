@@ -38,7 +38,6 @@ Every tracked file in this folder is real TypeScript: typed props, typed `forwar
 - Components export their prop types; examples annotate their data against those exported types.
 - Do NOT add a `@ts-nocheck` header to any file here. If the checker complains, fix the types.
 - The JSDoc `@typedef` blocks above components feed the auto-generated props tables; keep them in sync with the TS types.
-- Vault-injected free-lane files (MetricChart, Gauge, Waveform, MediaCard, DataTable, MusicPlayer and vault-side examples) are copied in at build time; their typing lives in the vault source, not here.
 
 ## Promotion to standalones
 

@@ -195,6 +195,9 @@ function writeStubShim() {
 // a placeholder component instead of a real re-export. UPDATE this list when a
 // new v2 component ships (it mirrors the vault manifest's
 // freeSystemComponents.andromeda).
+// These six are now committed MIT source in design-systems/andromeda/components/,
+// so every placeholder and copy step skips them as tracked files. The list stays
+// only so a checkout from before that commit still builds.
 const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'DataTable', 'MusicPlayer']
 
 // Export names the app imports from the generated v2 shim that the COMMITTED v1
