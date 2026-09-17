@@ -177,21 +177,9 @@ export function BrainWireframe({ followSite = false }: { followSite?: boolean })
               opacity: 1,
               depthWrite: false,
             })
-            // An invisible solid copy of each mesh writes depth before the
-            // wires draw, so wires behind the brain's front surface are hidden.
-            // Only the near side shows: half the lines, and the colours stop
-            // muddying where front and back cross.
-            const occluderMaterial = new THREE.MeshBasicMaterial({
-              colorWrite: false,
-              polygonOffset: true,
-              polygonOffsetFactor: 1,
-              polygonOffsetUnits: 1,
-            })
-            const meshes: Mesh[] = []
             model.traverse((o) => {
-              if ((o as Mesh).isMesh) meshes.push(o as Mesh)
-            })
-            meshes.forEach((mesh) => {
+              const mesh = o as Mesh
+              if (!mesh.isMesh) return
               // A copy per mesh, so writing its colours never touches a shared
               // geometry the model reuses elsewhere.
               const geometry = mesh.geometry.clone()
@@ -206,10 +194,6 @@ export function BrainWireframe({ followSite = false }: { followSite?: boolean })
               geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
               mesh.geometry = geometry
               mesh.material = material
-              mesh.renderOrder = 1
-              const occluder = new THREE.Mesh(geometry, occluderMaterial)
-              occluder.renderOrder = 0
-              mesh.add(occluder)
             })
             // The recentring moved the model, not its pivot, so spinning the
             // model itself would swing it around its old origin and drift it
