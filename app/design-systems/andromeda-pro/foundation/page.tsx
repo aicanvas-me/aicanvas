@@ -2,6 +2,7 @@
 // and the WHAT of the three-layer token architecture. The HOW — the family
 // shape law, the palette-generation recipe — is brain material and never
 // appears here.
+import { ShowcaseInstall } from '../../../_components/ShowcaseInstall'
 import { FoundationView } from './FoundationView'
 
 export const metadata = {
@@ -15,5 +16,15 @@ export const metadata = {
 // AND dark rendering inline (each scoped to a local --at-* wrapper), so there
 // is no toggle state left for a page-level wrap to carry.
 export default function FoundationPage() {
-  return <FoundationView />
+  return (
+    <>
+      <ShowcaseInstall
+        installs={[
+          { slug: 'andromeda-pro', label: 'All components' },
+          { slug: 'andromeda-pro-all', label: 'Everything' },
+        ]}
+      />
+      <FoundationView />
+    </>
+  )
 }
