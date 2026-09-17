@@ -11,6 +11,8 @@ const MODEL_URL = '/models/brain.glb'
 // The Andromeda brain look: one gray, per site theme (app/_lib/brain-colors.ts).
 // The section legend stays, in the same gray.
 const SECTIONS = BRAIN_ZONES.map((z) => z.label)
+// Legend text stays readable: the light wire gray is too pale for type.
+const LEGEND_INK = { dark: BRAIN_GRAY.dark, light: '#575759' } as const
 
 // Wireframe brain for the reader's Brain Index landing, tumbling on a tilted
 // axis. Client-only Three.js; the reader only mounts for premium users.
@@ -133,7 +135,7 @@ export function BrainRender({ height = 400 }: { height?: number }) {
         {SECTIONS.map((label) => (
           <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ width: 4, height: 4, borderRadius: 4, background: BRAIN_GRAY[theme], flexShrink: 0 }} />
-            <span style={{ color: BRAIN_GRAY[theme], letterSpacing: '0.04em' }}>{label}</span>
+            <span style={{ color: LEGEND_INK[theme], letterSpacing: '0.04em' }}>{label}</span>
           </div>
         ))}
       </div>
