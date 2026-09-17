@@ -167,9 +167,9 @@ function CardBodyB({ fact, index }: { fact: Fact; index: number }) {
         <span className={`${MONO} ${MUTED}`}>{`${pad(index + 1)} · ${fact.label}`}</span>
         <FactIcon weight="regular" aria-hidden className={`size-4 ${MUTED}`} />
       </div>
-      <p className={`mt-4 text-3xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
+      <p className={`mt-3 text-3xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
       <p className={`mt-1 text-sm ${MUTED}`}>{fact.line}</p>
-      <div className="mt-5 flex h-10 items-end overflow-hidden">
+      <div className="mt-4 flex h-10 items-end overflow-hidden">
         <div className="w-full">
           <FactGlyph glyph={fact.glyph} count={Number(fact.num)} />
         </div>
