@@ -154,31 +154,47 @@ function ProWindow() {
   )
 }
 
-// bare: no border, for version 2 where the Brain sits inside the section box.
+// bare: version 2, where the Brain sits inside the section box. No border, no
+// ground (the wireframe's own glow and the loading ground are cleared) and no
+// button; the copy follows the site theme.
 function Brain({ bare = false }: { bare?: boolean }) {
   return (
     <>
       {/* ── The Brain ── */}
-      <div className={`mt-6 grid grid-cols-1 overflow-hidden rounded-2xl bg-sand-950 sm:grid-cols-2 ${bare ? '' : 'border border-sand-800'}`}>
-        <div className="relative h-56 sm:h-auto sm:min-h-[300px]">
+      <div
+        className={`mt-6 grid grid-cols-1 overflow-hidden rounded-2xl sm:grid-cols-2 ${bare ? '' : 'border border-sand-800 bg-sand-950'}`}
+      >
+        <div
+          className={`relative h-56 sm:h-auto sm:min-h-[300px] ${bare ? '[&>div]:!bg-transparent [&>div]:!bg-none' : ''}`}
+        >
           <BrainWireframe />
         </div>
         <div className="flex flex-col justify-center p-6 sm:p-8">
-          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400">The Brain</span>
-          <h3 className="mt-2 text-2xl font-bold tracking-tight text-sand-50">Your agent reads the rules first.</h3>
-          <p className="mt-3 text-sm leading-relaxed text-sand-300">
+          <span
+            className={`text-xs font-semibold uppercase tracking-wider ${bare ? 'text-cyan-700 dark:text-cyan-400' : 'text-cyan-400'}`}
+          >
+            The Brain
+          </span>
+          <h3
+            className={`mt-2 text-2xl font-bold tracking-tight ${bare ? 'text-sand-900 dark:text-sand-50' : 'text-sand-50'}`}
+          >
+            Your agent reads the rules first.
+          </h3>
+          <p className={`mt-3 text-sm leading-relaxed ${bare ? 'text-sand-700 dark:text-sand-300' : 'text-sand-300'}`}>
             Foundations, component rules and skills your AI reads before it writes a line, so everything it builds
             stays on the system.
           </p>
-          <div className="mt-6">
-            <Link
-              href={`${PRO_HREF}/brain`}
-              className="inline-flex items-center gap-2 rounded-lg border border-sand-700 px-4 py-2 text-sm font-semibold text-sand-300 transition-colors hover:border-sand-600 hover:text-sand-50"
-            >
-              Explore the Brain
-              <ArrowRight weight="regular" size={14} />
-            </Link>
-          </div>
+          {!bare && (
+            <div className="mt-6">
+              <Link
+                href={`${PRO_HREF}/brain`}
+                className="inline-flex items-center gap-2 rounded-lg border border-sand-700 px-4 py-2 text-sm font-semibold text-sand-300 transition-colors hover:border-sand-600 hover:text-sand-50"
+              >
+                Explore the Brain
+                <ArrowRight weight="regular" size={14} />
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </>
