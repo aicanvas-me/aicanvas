@@ -1,22 +1,14 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { useTheme, type Theme } from '@/app/components/ThemeProvider'
+import { useTheme } from '@/app/components/ThemeProvider'
+import { BRAIN_GRAY } from '@/app/_lib/brain-colors'
 import type { Group, Mesh, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 const MODEL_URL = '/models/brain.glb'
 
-// The four brain sections and their colours, baked into the wireframe as
-// per-vertex colours blended by region, so the wires shade from one into the
-// next. Light takes the same hues a few stops deeper so the hairlines hold on a
-// pale ground. Kept in step with BrainStoryV4's SECTION_ZONES.
-const ZONES: { label: string; dir: [number, number, number]; hex: Record<Theme, string> }[] = [
-  { label: 'Index', dir: [0.2, 0.9, 0.35], hex: { dark: '#a78bfa', light: '#7c3aed' } }, // purple
-  { label: 'Foundations', dir: [-0.9, 0.05, 0.4], hex: { dark: '#38bdf8', light: '#0284c7' } }, // cyan
-  { label: 'Components', dir: [0.9, 0.05, 0.4], hex: { dark: '#fb923c', light: '#ea580c' } }, // orange
-  { label: 'Skills', dir: [0.0, -0.7, 0.7], hex: { dark: '#a3e635', light: '#65a30d' } }, // lime
-]
+// The Andromeda brain look: one gray, per site theme (app/_lib/brain-colors.ts).
 
 // Wireframe brain for the reader's Brain Index landing, tumbling on a tilted
 // axis. Client-only Three.js; the reader only mounts for premium users.
@@ -53,12 +45,7 @@ export function BrainRender({ height = 400 }: { height?: number }) {
       camera = new THREE.PerspectiveCamera(38, W / H, 0.01, 100)
       camera.position.set(0, 0.05, 2.8)
 
-      // Linear-space RGB of each zone colour (three stores hex as linear internally).
-      const zoneCols = ZONES.map((z) => {
-        const c = new THREE.Color(z.hex[theme])
-        return [c.r, c.g, c.b] as [number, number, number]
-      })
-      const zoneDirs = ZONES.map((z) => new THREE.Vector3(z.dir[0], z.dir[1], z.dir[2]).normalize())
+      const gray = new THREE.Color(BRAIN_GRAY[theme])
 
       new GLTFLoader().load(MODEL_URL, (gltf: GLTF) => {
         if (!alive) return
@@ -76,35 +63,8 @@ export function BrainRender({ height = 400 }: { height?: number }) {
           if (!mesh.isMesh) return
           const geo = mesh.geometry
           const pos = geo.attributes.position
-          // Local centre so each vertex direction is measured from the brain's middle.
-          geo.computeBoundingBox()
-          const box = geo.boundingBox!
-          const cx = (box.min.x + box.max.x) / 2
-          const cy = (box.min.y + box.max.y) / 2
-          const cz = (box.min.z + box.max.z) / 2
           const colors = new Float32Array(pos.count * 3)
-          const d = new THREE.Vector3()
-          for (let i = 0; i < pos.count; i++) {
-            d.set(pos.getX(i) - cx, pos.getY(i) - cy, pos.getZ(i) - cz).normalize()
-            // Weight each zone by angular proximity; blend the four colours.
-            let wsum = 0
-            const w = [0, 0, 0, 0]
-            for (let k = 0; k < 4; k++) {
-              const dot = Math.max(0, d.dot(zoneDirs[k]))
-              w[k] = dot * dot * dot + 0.04 // epsilon so no wire goes fully black
-              wsum += w[k]
-            }
-            let r = 0, g = 0, b = 0
-            for (let k = 0; k < 4; k++) {
-              const t = w[k] / wsum
-              r += zoneCols[k][0] * t
-              g += zoneCols[k][1] * t
-              b += zoneCols[k][2] * t
-            }
-            colors[i * 3] = r
-            colors[i * 3 + 1] = g
-            colors[i * 3 + 2] = b
-          }
+          for (let i = 0; i < pos.count; i++) gray.toArray(colors, i * 3)
           geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
           mesh.material = new THREE.MeshBasicMaterial({ wireframe: true, vertexColors: true })
         })
@@ -156,25 +116,6 @@ export function BrainRender({ height = 400 }: { height?: number }) {
   return (
     <div style={{ position: 'relative', width: '100%', height, pointerEvents: 'none' }} aria-hidden>
       <div ref={hostRef} style={{ width: '100%', height }} />
-      <div
-        style={{
-          position: 'absolute',
-          top: 8,
-          left: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 7,
-          fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif",
-          fontSize: 12,
-        }}
-      >
-        {ZONES.map((z) => (
-          <div key={z.label} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span style={{ width: 4, height: 4, borderRadius: 4, background: z.hex[theme], flexShrink: 0 }} />
-            <span style={{ color: z.hex[theme], letterSpacing: '0.04em' }}>{z.label}</span>
-          </div>
-        ))}
-      </div>
     </div>
   )
 }
