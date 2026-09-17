@@ -1,6 +1,5 @@
 // The homepage's Andromeda Pro section: one bordered box holding the intro, a
-// turning stack of fact cards and the Brain, with the two calls to action
-// under it. Server component: the copy and counts render as static HTML; only
+// turning stack of fact cards, the Brain and the two calls to action. Server component: the copy and counts render as static HTML; only
 // the card stack and the Brain wireframe hydrate. The section follows the site
 // theme.
 //
@@ -88,17 +87,17 @@ export function AndromedaProSection() {
         </div>
 
         <Brain />
-      </div>
 
-      {/* ── Calls to action, under the Brain ── */}
-      <div className="mt-8 flex flex-wrap items-center gap-3">
-        <Link href={PRO_HREF} className={buttonClasses({ variant: 'primary', size: 'md' })}>
-          Explore Andromeda Pro
-          <ArrowRight weight="regular" size={14} />
-        </Link>
-        <Link href={`${PRO_HREF}/components`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
-          See the components
-        </Link>
+        {/* ── Calls to action, centred under the Brain ── */}
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link href={PRO_HREF} className={buttonClasses({ variant: 'primary', size: 'md' })}>
+            Explore Andromeda Pro
+            <ArrowRight weight="regular" size={14} />
+          </Link>
+          <Link href={`${PRO_HREF}/brain`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
+            Read the Brain
+          </Link>
+        </div>
       </div>
     </section>
   )
