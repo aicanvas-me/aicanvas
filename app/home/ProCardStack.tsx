@@ -19,6 +19,8 @@ import type { Icon } from '@phosphor-icons/react'
 const LAND_MS = 450
 const TURN_MS = 3200
 const PEEK = 12
+// The front card's exit; a turn's new card waits for it before rising.
+const EXIT_S = 0.55
 
 type Fact = { icon: Icon; label: string; value: string; line: string }
 
@@ -93,6 +95,9 @@ export function ProCardStack({
         <AnimatePresence initial={false}>
           {keys.map((arrived) => {
             const d = arrived - front
+            // A card joining on a turn (not during the first landing) rises only
+            // once the front card has slid away.
+            const delay = arrived === shown && arrived >= list.length ? EXIT_S : 0
             return (
               <motion.div
                 key={arrived}
@@ -103,9 +108,9 @@ export function ProCardStack({
                 exit={{
                   x: '120%',
                   zIndex: list.length + 1,
-                  transition: { duration: 0.55, ease: [0.4, 0, 1, 1] },
+                  transition: { duration: EXIT_S, ease: [0.4, 0, 1, 1] },
                 }}
-                transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28 }}
+                transition={reduce ? { duration: 0 } : { type: 'spring', stiffness: 260, damping: 28, delay }}
               >
                 <motion.div animate={{ opacity: d === 0 ? 1 : 0 }} transition={{ duration: reduce ? 0 : 0.2 }}>
                   <CardBody fact={list[arrived % list.length]} />
