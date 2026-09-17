@@ -111,6 +111,62 @@ function Card({ icon: CardIcon, label, value, line, demo }: (typeof CARDS)[numbe
   )
 }
 
+// The window and the Brain row: dark stages in both site themes, shared by
+// both versions of the section.
+function WindowAndBrain() {
+  return (
+    <>
+      {/* ── The window ── */}
+      <div className="relative mt-12 rounded-2xl border border-sand-800 bg-sand-900 p-2 shadow-[0_2px_4px_rgba(0,0,0,0.4),0_24px_64px_rgba(0,0,0,0.6)]">
+        <div className="overflow-hidden rounded-xl border border-sand-800 bg-sand-950">
+          <div className="flex h-11 items-center gap-3 border-b border-sand-800 px-4">
+            <div aria-hidden className="flex shrink-0 gap-1.5">
+              <span className="size-2.5 rounded-full bg-[#ff5f57]/80" />
+              <span className="size-2.5 rounded-full bg-[#febc2e]/80" />
+              <span className="size-2.5 rounded-full bg-[#28c840]/80" />
+            </div>
+            <span className="min-w-0 flex-1 truncate text-center font-mono text-xs text-sand-400">
+              aicanvas.me/design-systems/andromeda-pro
+            </span>
+            <span className="hidden shrink-0 rounded-full border border-sand-800 px-2.5 py-0.5 text-xs font-semibold text-sand-300 sm:inline">
+              {`${TEMPLATES.length} templates`}
+            </span>
+          </div>
+          <div className="grid grid-cols-1 gap-3 p-3 sm:p-4 lg:grid-cols-3">
+            {CARDS.map((card) => (
+              <Card key={card.label} {...card} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ── The Brain ── */}
+      <div className="mt-6 grid grid-cols-1 overflow-hidden rounded-2xl border border-sand-800 bg-sand-950 sm:grid-cols-2">
+        <div className="relative h-56 sm:h-auto sm:min-h-[300px]">
+          <BrainWireframe />
+        </div>
+        <div className="flex flex-col justify-center p-6 sm:p-8">
+          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400">The Brain</span>
+          <h3 className="mt-2 text-2xl font-bold tracking-tight text-sand-50">Your agent reads the rules first.</h3>
+          <p className="mt-3 text-sm leading-relaxed text-sand-300">
+            Foundations, component rules and skills your AI reads before it writes a line, so everything it builds
+            stays on the system.
+          </p>
+          <div className="mt-6">
+            <Link
+              href={`${PRO_HREF}/brain`}
+              className="inline-flex items-center gap-2 rounded-lg border border-sand-700 px-4 py-2 text-sm font-semibold text-sand-300 transition-colors hover:border-sand-600 hover:text-sand-50"
+            >
+              Explore the Brain
+              <ArrowRight weight="regular" size={14} />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </>
+  )
+}
+
 export function AndromedaProSection() {
   return (
     <section aria-labelledby="home-andromeda-pro" className="mt-16 sm:mt-24">
@@ -147,54 +203,55 @@ export function AndromedaProSection() {
           </div>
         </div>
 
-        {/* ── The window ── */}
-        <div className="relative mt-12 rounded-2xl border border-sand-800 bg-sand-900/50 p-2 shadow-[0_2px_4px_rgba(0,0,0,0.4),0_24px_64px_rgba(0,0,0,0.6)]">
-          <div className="overflow-hidden rounded-xl border border-sand-800 bg-sand-950">
-            <div className="flex h-11 items-center gap-3 border-b border-sand-800 px-4">
-              <div aria-hidden className="flex shrink-0 gap-1.5">
-                <span className="size-2.5 rounded-full bg-[#ff5f57]/80" />
-                <span className="size-2.5 rounded-full bg-[#febc2e]/80" />
-                <span className="size-2.5 rounded-full bg-[#28c840]/80" />
-              </div>
-              <span className="min-w-0 flex-1 truncate text-center font-mono text-xs text-sand-400">
-                aicanvas.me/design-systems/andromeda-pro
-              </span>
-              <span className="hidden shrink-0 rounded-full border border-sand-800 px-2.5 py-0.5 text-xs font-semibold text-sand-300 sm:inline">
-                {`${TEMPLATES.length} templates`}
-              </span>
-            </div>
-            <div className="grid grid-cols-1 gap-3 p-3 sm:p-4 lg:grid-cols-3">
-              {CARDS.map((card) => (
-                <Card key={card.label} {...card} />
-              ))}
-            </div>
-          </div>
-        </div>
+        <WindowAndBrain />
+      </div>
+    </section>
+  )
+}
 
-        {/* ── The Brain ── */}
-        <div className="mt-6 grid grid-cols-1 overflow-hidden rounded-2xl border border-sand-800 bg-sand-900/40 sm:grid-cols-2">
-          <div className="relative h-56 sm:h-auto sm:min-h-[300px]">
-            <BrainWireframe />
-          </div>
-          <div className="flex flex-col justify-center p-6 sm:p-8">
-            <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400">The Brain</span>
-            <h3 className="mt-2 text-2xl font-bold tracking-tight text-sand-50">Your agent reads the rules first.</h3>
-            <p className="mt-3 text-sm leading-relaxed text-sand-300">
-              Foundations, component rules and skills your AI reads before it writes a line, so everything it builds
-              stays on the system.
-            </p>
-            <div className="mt-6">
-              <Link
-                href={`${PRO_HREF}/brain`}
-                className="inline-flex items-center gap-2 rounded-lg border border-sand-700 px-4 py-2 text-sm font-semibold text-sand-300 transition-colors hover:border-sand-600 hover:text-sand-50"
-              >
-                Explore the Brain
-                <ArrowRight weight="regular" size={14} />
-              </Link>
-            </div>
-          </div>
+// Version 2: no beam and no outer box. The intro sits straight on the page and
+// follows the site theme; the grid stays, drawn in the theme's ink.
+const GRID_MASK = 'radial-gradient(ellipse 60% 70% at 50% 35%, black 15%, transparent 70%)'
+const gridStyle = (ink: string) => ({
+  backgroundImage: `linear-gradient(to right, ${ink} 1px, transparent 1px), linear-gradient(to bottom, ${ink} 1px, transparent 1px)`,
+  backgroundSize: '40px 40px',
+  maskImage: GRID_MASK,
+  WebkitMaskImage: GRID_MASK,
+})
+
+export function AndromedaProSectionV2() {
+  return (
+    <section aria-labelledby="home-andromeda-pro-v2" className="relative isolate mt-16 sm:mt-24">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-16 -z-10 h-[520px] dark:hidden" style={gridStyle('rgb(0 0 0 / 0.05)')} />
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 -top-16 -z-10 hidden h-[520px] dark:block" style={gridStyle('rgb(255 255 255 / 0.045)')} />
+
+      {/* ── Intro ── */}
+      <div className="flex flex-col items-center text-center">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">New design system</span>
+          <SystemTierChip tier="pro" />
+        </div>
+        <h2
+          id="home-andromeda-pro-v2"
+          className="mt-3 text-balance text-3xl font-extrabold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50"
+        >
+          Andromeda Pro
+        </h2>
+        <p className="mt-3 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
+          {`A token-driven system for dashboards and control rooms. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
+        </p>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <Link href={PRO_HREF} className={buttonClasses({ variant: 'primary', size: 'md' })}>
+            Explore Andromeda Pro
+            <ArrowRight weight="regular" size={14} />
+          </Link>
+          <Link href={`${PRO_HREF}/components`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
+            See the components
+          </Link>
         </div>
       </div>
+
+      <WindowAndBrain />
     </section>
   )
 }
