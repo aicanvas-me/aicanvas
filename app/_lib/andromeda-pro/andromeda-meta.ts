@@ -66,7 +66,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Presents an option as a whole selectable card with a title and a supporting line.',
     sourceFile: 'ChoiceCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/choice-card.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/choice-card.png?v=1',
   },
   {
     slug: 'corner-markers',
@@ -106,7 +106,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Charts how much of a population survives each stage of a sequence.',
     sourceFile: 'FunnelChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/funnel-chart.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/chart-funnel.png?v=1',
   },
   {
     slug: 'chart-metric',
@@ -330,6 +330,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Spans the top of a dashboard with the brand, the nav, and the account cluster.',
     sourceFile: 'TopBar.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/top-bar.png?v=1',
   },
   {
     slug: 'user-card',
@@ -356,6 +357,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Sweeps one circle through a full turn into a sphere of hairline loops.',
     sourceFile: 'Orb.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/orb.png?v=1',
   },
   {
     slug: 'nodes',
@@ -363,6 +365,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Spreads light across a hairline lattice, one crossing igniting the next.',
     sourceFile: 'Nodes.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/nodes.png?v=1',
   },
   {
     slug: 'burst',
@@ -370,6 +373,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Draws hundreds of hairlines converging on a single focal point.',
     sourceFile: 'Burst.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/burst.png?v=1',
   },
 ]
 

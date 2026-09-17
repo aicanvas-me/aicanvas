@@ -22,10 +22,11 @@ import {
 
 // Search covers both design systems. Each one's entries carry its OWN url
 // prefix and label: pairing one system's component list with the other's URLs
-// is how 15 of these links came to 404.
+// is how 15 of these links came to 404. Pro's cards, components and templates
+// alike, take its cyan badge.
 const SEARCHABLE_SYSTEMS = [
-  { slug: 'andromeda', label: 'Andromeda Legacy', components: ANDROMEDA_COMPONENT_META, templates: ANDROMEDA_TEMPLATE_META },
-  { slug: 'andromeda-pro', label: 'Andromeda Pro', components: ANDROMEDA_PRO_COMPONENT_META, templates: ANDROMEDA_PRO_TEMPLATE_META },
+  { slug: 'andromeda', label: 'Andromeda Legacy', badgeTone: undefined, components: ANDROMEDA_COMPONENT_META, templates: ANDROMEDA_TEMPLATE_META },
+  { slug: 'andromeda-pro', label: 'Andromeda Pro', badgeTone: 'pro', components: ANDROMEDA_PRO_COMPONENT_META, templates: ANDROMEDA_PRO_TEMPLATE_META },
 ] as const
 
 // ─── Fuzzy "Did you mean?" helpers ───────────────────────────────────────────
@@ -169,6 +170,7 @@ export function HomeClient({
               image: c.image,
               href: `/design-systems/${sys.slug}/${c.slug}`,
               badge: sys.label,
+              badgeTone: sys.badgeTone,
               cta: 'View Component',
             })),
           ...sys.templates
@@ -180,6 +182,7 @@ export function HomeClient({
               image: t.image,
               href: `/design-systems/${sys.slug}/templates/${t.folder}`,
               badge: 'Premium template',
+              badgeTone: sys.badgeTone,
               cta: 'View template',
             })),
         ])
@@ -377,6 +380,7 @@ export function HomeClient({
                     tags={[]}
                     image={e.image}
                     badge={e.badge}
+                    badgeTone={e.badgeTone}
                     cta={e.cta}
                     href={e.href}
                     slug={e.key}

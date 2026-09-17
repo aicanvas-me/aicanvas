@@ -25,7 +25,16 @@ interface InstallAction {
 // bullets). Portaled into the top-bar slot on desktop; a floating fallback
 // below md (where the top bar is hidden). Premium-gated: a resolved free/anon
 // tier sees "Unlock with Premium" → /pricing.
-export function ShowcaseInstall({ installs }: { installs: InstallAction[] }) {
+// `phoneFallback={false}` drops the floating copy: Andromeda Pro's content
+// column is its own stacking context (`isolate`), so a fixed control inside it
+// sits under the phone menu bar, unseen but still reachable by Tab.
+export function ShowcaseInstall({
+  installs,
+  phoneFallback = true,
+}: {
+  installs: InstallAction[]
+  phoneFallback?: boolean
+}) {
   const [slot, setSlot] = useState<HTMLElement | null>(null)
   useEffect(() => {
     setSlot(document.getElementById('andromeda-install-slot'))
@@ -35,9 +44,11 @@ export function ShowcaseInstall({ installs }: { installs: InstallAction[] }) {
     <>
       {slot && createPortal(<ShowcaseInstallButtons installs={installs} />, slot)}
       {/* The top bar is hidden below md, so float the install control top-right. */}
-      <div className="fixed right-3 top-3 z-50 md:hidden">
-        <ShowcaseInstallButtons installs={installs} />
-      </div>
+      {phoneFallback && (
+        <div className="fixed right-3 top-3 z-50 md:hidden">
+          <ShowcaseInstallButtons installs={installs} />
+        </div>
+      )}
     </>
   )
 }

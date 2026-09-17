@@ -8,6 +8,7 @@ import { Fragment, type ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowRight, Brain, ChatText, Check, Minus, TerminalWindow, type Icon } from '@phosphor-icons/react'
 import { buttonClasses } from '../../../components/buttonClasses'
+import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { SystemTierChip } from '../../../_components/SystemTierChip'
 import { AndromedaComponentCard } from '../system/AndromedaComponentCard'
@@ -31,10 +32,6 @@ const BTN_SECONDARY = `${buttonClasses({ variant: 'outline', size: 'md' })} h-10
 const PANEL = 'rounded-2xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
 const PANEL_SHADOW =
   'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
-
-const PRICE_MONTH = 8.99
-const PRICE_YEAR = 49.99
-const PRICE_YEAR_PER_MONTH = (PRICE_YEAR / 12).toFixed(2)
 
 // Counts in running copy read as words; anything past twenty stays a numeral.
 const NUMBER_WORDS = [
@@ -196,7 +193,12 @@ export function OverviewB({
   stats: OverviewStats
   legacyComponents: number
 }) {
-  const ledgerRowCount = LEDGER_ROWS.length + 2
+  // Get Premium shows only to a visitor known not to have it. A signed-in
+  // visitor starts as 'unknown' until the entitlement check returns, so a
+  // subscriber never sees the button flash in and out.
+  const showGetPremium = usePremiumStatus() === 'not-premium'
+  // Header row, one row per ledger line, and the button row when it shows.
+  const ledgerRowCount = LEDGER_ROWS.length + (showGetPremium ? 2 : 1)
   // The curated nine, in the order the curated list sets. A slug missing from
   // the live metadata is skipped rather than rendering a hole.
   const featured = CURATED_SLUGS.flatMap((slug) => {
@@ -230,9 +232,11 @@ export function OverviewB({
             {`${stats.components} components, ${stats.variants} variants and ${stats.templates} templates for any product UI, in light and dark. Every one runs on this site for free. Premium adds the code, the CLI install, the remix prompts, the Brain's rule files and template installs.`}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link href="/pricing" className={BTN_PRIMARY}>
-              Get Premium
-            </Link>
+            {showGetPremium && (
+              <Link href="/pricing" className={BTN_PRIMARY}>
+                Get Premium
+              </Link>
+            )}
             <Link href="/design-systems/andromeda-pro/components" className={BTN_SECONDARY}>
               Explore every component
             </Link>
@@ -284,8 +288,9 @@ export function OverviewB({
                 className="relative flex flex-col items-center justify-end gap-1.5 py-4 text-center sm:px-1"
               >
                 <SystemTierChip tier="pro" />
-                <span className="hidden text-xs text-sand-600 dark:text-sand-400 sm:block">
-                  ${PRICE_MONTH}/month or ${PRICE_YEAR}/year
+                {/* Same type as "Explore free", so both column titles sit on one line. */}
+                <span className="text-xs font-semibold text-sand-900 dark:text-sand-50 sm:text-sm">
+                  Install and ship
                 </span>
               </div>
 
@@ -316,25 +321,26 @@ export function OverviewB({
                 )
               })}
 
-              <div
-                style={{ gridColumn: 3, gridRow: ledgerRowCount }}
-                className="relative hidden border-t border-sand-200 px-3 py-4 dark:border-sand-800 sm:block"
-              >
+              {showGetPremium && (
+                <div
+                  style={{ gridColumn: 3, gridRow: ledgerRowCount }}
+                  className="relative hidden border-t border-sand-200 px-3 py-4 dark:border-sand-800 sm:block"
+                >
+                  <Link href="/pricing" className={`${BTN_PRIMARY} w-full`}>
+                    Get Premium
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Phones: the Premium column is 64px, too narrow for a button. */}
+            {showGetPremium && (
+              <div className="border-t border-sand-200 px-3 pb-2 pt-4 dark:border-sand-800 sm:hidden">
                 <Link href="/pricing" className={`${BTN_PRIMARY} w-full`}>
                   Get Premium
                 </Link>
               </div>
-            </div>
-
-            {/* Phones: the Premium column is 64px, too narrow for a button. */}
-            <div className="flex flex-col gap-3 border-t border-sand-200 px-3 pb-2 pt-4 dark:border-sand-800 sm:hidden">
-              <p className="text-xs text-sand-600 dark:text-sand-400">
-                Premium: ${PRICE_MONTH}/month or ${PRICE_YEAR}/year
-              </p>
-              <Link href="/pricing" className={`${BTN_PRIMARY} w-full`}>
-                Get Premium
-              </Link>
-            </div>
+            )}
           </div>
         </section>
 
@@ -457,7 +463,7 @@ export function OverviewB({
         </section>
       </Container>
 
-      {/* ── 8. Closing price band ──────────────────────────────────────── */}
+      {/* ── 8. Closing band ────────────────────────────────────────────── */}
       {/* Same closing card as the homepage's final CTA: inside the container,
           not a full-bleed band. */}
       <Container className="mt-20">
@@ -474,13 +480,12 @@ export function OverviewB({
           >
             Put Andromeda Pro in your project.
           </h2>
-          <p className="relative mt-2 text-base text-sand-700 dark:text-sand-300">
-            ${PRICE_MONTH} a month, or ${PRICE_YEAR} a year. Yearly works out to ${PRICE_YEAR_PER_MONTH} a month.
-          </p>
           <div className="relative mt-6 flex flex-wrap justify-center gap-3">
-            <Link href="/pricing" className={BTN_PRIMARY}>
-              Get Premium
-            </Link>
+            {showGetPremium && (
+              <Link href="/pricing" className={BTN_PRIMARY}>
+                Get Premium
+              </Link>
+            )}
             <Link href="/design-systems/andromeda-pro/components" className={BTN_SECONDARY}>
               Explore every component
             </Link>
