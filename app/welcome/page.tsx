@@ -97,8 +97,8 @@ export default async function WelcomePage() {
                   : 'Everything is unlocked.'}
               </p>
               <div className="aic-hero-rise mt-7 flex flex-wrap items-center justify-center gap-3" style={{ animationDelay: '0.34s' }}>
-                <Link href="/design-systems/andromeda" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-                  Browse Andromeda
+                <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
+                  Browse Andromeda Pro
                   <ArrowRight weight="regular" size={14} />
                 </Link>
                 <Link
