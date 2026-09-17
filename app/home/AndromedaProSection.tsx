@@ -24,8 +24,9 @@ const components = PRO_COMPONENT_META.length
 const states = Object.values(COMPONENT_COUNTS).reduce((sum, c) => sum + c.states, 0)
 const variants = Object.values(COMPONENT_COUNTS).reduce((sum, c) => sum + c.variants, 0)
 
-// Faint grid behind the intro, drawn in the theme's ink and faded out.
-const GRID_MASK = 'radial-gradient(ellipse 60% 70% at 30% 35%, black 15%, transparent 70%)'
+// Faint grid in the bottom-left, behind the Brain, drawn in the theme's ink
+// and faded out.
+const GRID_MASK = 'radial-gradient(ellipse 60% 70% at 30% 65%, black 15%, transparent 70%)'
 const gridStyle = (ink: string) => ({
   backgroundImage: `linear-gradient(to right, ${ink} 1px, transparent 1px), linear-gradient(to bottom, ${ink} 1px, transparent 1px)`,
   backgroundSize: '40px 40px',
@@ -65,8 +66,8 @@ export function AndromedaProSection() {
     <section aria-labelledby="home-andromeda-pro" className="mt-16 sm:mt-24">
       {/* One box holds the intro, the stack and the Brain, so they read as one section. */}
       <div className="relative isolate overflow-hidden rounded-3xl border border-sand-200 p-4 sm:p-8 lg:p-10 dark:border-sand-800">
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[520px] dark:hidden" style={gridStyle('rgb(0 0 0 / 0.05)')} />
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 hidden h-[520px] dark:block" style={gridStyle('rgb(255 255 255 / 0.045)')} />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[520px] dark:hidden" style={gridStyle('rgb(0 0 0 / 0.05)')} />
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 hidden h-[520px] dark:block" style={gridStyle('rgb(255 255 255 / 0.045)')} />
 
         {/* ── Intro on the left, the card stack on the right; stacks on phones ── */}
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
