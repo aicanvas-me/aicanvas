@@ -26,6 +26,7 @@ import { buttonClasses } from '@/app/components/buttonClasses'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
 import { HeaderSocials } from '@/app/components/HeaderSocials'
 import { SiteFooter } from '@/app/components/SiteFooter'
+import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
 import { useTheme, type Theme } from '@/app/components/ThemeProvider'
 import { BRAIN_GRAY } from '@/app/_lib/brain-colors'
@@ -70,6 +71,23 @@ const makeBrainMaterial = (T: typeof import('three')) =>
   new T.MeshBasicMaterial({ wireframe: true, vertexColors: true, toneMapped: false })
 
 // ── editorial copy helpers ──────────────────────────────────────────────────
+// Hero-only helpers, minimal equivalents of Andromeda Pro's brain hero (that
+// page's Container/Overline/PANEL_SHADOW), copied rather than imported since
+// the Pro folder is gitignored in this repo.
+function Container({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+  return <div className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>{children}</div>
+}
+function Overline({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">{children}</p>
+  )
+}
+const PANEL_SHADOW =
+  'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
+// Medium buttons, class for class with the Pro brain hero.
+const BTN_PRIMARY = `${buttonClasses({ variant: 'primary', size: 'md' })} h-10`
+const BTN_SECONDARY = `${buttonClasses({ variant: 'outline', size: 'md' })} h-10`
+
 // sand tokens: panel = card surface (sand-900 / sand-100), line = border (sand-800 / sand-200)
 const PANEL: React.CSSProperties = { background: 'transparent', border: `1px solid ${C.line}`, borderRadius: 16, padding: '24px 28px' }
 // Smaller sibling of PANEL — the solid-surface card treatment reused by the
@@ -840,85 +858,85 @@ export function BrainStoryV4() {
         </div>
       </header>
 
-      {/* 3D hero — centered, top */}
-      <div style={{ position: 'relative', height: '64vh', minHeight: 420 }}>
-        <div
-          ref={hostRef}
-          style={{ position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'pan-y' }}
-        />
-        {/* The appearance stepper is gone: the brain has one look now, the
-            gradient wireframe, so there was nothing left to step through. */}
-        {/* floating labels layer */}
-        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-          {LABELS.map((txt, i) => (
-            <div
-              key={txt}
-              ref={(el) => { labelEls.current[i] = el }}
-              style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: MONO, fontSize: 12, letterSpacing: '0.02em', color: C.node, whiteSpace: 'nowrap', textShadow: `0 0 8px ${C.halo}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
+      <Container className="pt-10 sm:pt-16">
+        {/* ── Hero, in the Pro brain hero's shape: left-aligned text block,
+            then the stage below it as a bordered card ── */}
+        <section aria-labelledby="brain-hero" className="max-w-3xl">
+          <Overline>Built for agents</Overline>
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <h1
+              id="brain-hero"
+              className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl"
             >
-              {txt}
-            </div>
-          ))}
-        </div>
-        {/* hero labels layer (bigger / higher hierarchy) */}
-        <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
-          {HERO_LABELS.map((txt, i) => (
-            <div
-              key={txt}
-              ref={(el) => { heroEls.current[i] = el }}
-              style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: SANS, fontSize: 20, fontWeight: 700, letterSpacing: '-0.01em', color: C.bright, whiteSpace: 'nowrap', textShadow: `0 0 14px ${C.haloStrong}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
-            >
-              {txt}
-            </div>
-          ))}
-        </div>
-        {status !== 'ready' && (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted }}>
-            {status === 'error' ? 'Scene unavailable' : loadProgress > 0 ? `Loading the brain… ${loadProgress}%` : 'Loading the brain…'}
+              Andromeda Brain
+            </h1>
+            <SystemTierChip tier="mit" />
           </div>
-        )}
-        {/* drag affordance: a static rotate-3d icon (olive) */}
-        <div style={{ position: 'absolute', left: 0, right: 0, bottom: 16, display: 'flex', justifyContent: 'center', pointerEvents: 'none' }}>
-          <Rotate3d size={26} color={C.accent} strokeWidth={1.5} />
-        </div>
-      </div>
+          <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
+            Tokens and components are the pieces. The brain is the judgment.
+          </p>
+          <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
+            It assembles them: every foundation, component rule, skill and tool your AI agent reads, so what it builds already matches the system instead of a guess.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-3">
+            <Link href={ctaHref} className={BTN_PRIMARY}>
+              {ctaLabel}
+            </Link>
+            <Link href="/design-systems/andromeda" className={BTN_SECONDARY}>
+              Explore Andromeda
+            </Link>
+          </div>
+        </section>
 
-      {/* ── Hero caption (centered) — homepage hero sizes: h1 text-2xl sm:text-4xl, sub text-base ── */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', fontFamily: SANS, padding: '28px 24px 0' }}>
-        {/* Slide-in entrance, same rhythm as the homepage hero (fade + rise, staggered) */}
-        <motion.h1
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.1 }}
-          style={{ fontSize: 'clamp(24px,4.5vw,36px)', color: C.bright, fontWeight: 800, letterSpacing: '-0.025em', margin: 0, lineHeight: 1.1 }}
+        {/* ── The stage. Unlike Pro's void, this brain follows the site theme:
+            its background is the page base colour per theme (C.base), not a
+            fixed dark ground. ── */}
+        <div
+          className={`relative mt-10 h-[380px] overflow-hidden rounded-2xl border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
+          style={{ background: C.base }}
         >
-          The Andromeda <span style={{ color: C.accentBtn }}>Brain</span>
-        </motion.h1>
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.18 }}
-          style={{ fontSize: 16, color: C.node, maxWidth: 576, lineHeight: 1.625, margin: '16px 0 0', fontWeight: 400 }}
-        >
-          Tokens and components are the pieces. The brain is the judgment that assembles them: every foundation, component rule, skill and tool your AI agent reads, so what it builds already matches the system instead of a guess.
-        </motion.p>
-        {/* two CTAs, same hierarchy as the homepage hero (primary olive + outline). Premium
-            branch: the gate routes premium users to the brain viewer when this becomes the real page. */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.26 }}
-          style={{ display: 'flex', flexWrap: 'wrap', gap: 12, justifyContent: 'center', marginTop: 24 }}
-        >
-          <Link href={ctaHref} className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-            {ctaLabel}
-            <ArrowRight weight="regular" size={14} />
-          </Link>
-          <Link href="/design-systems/andromeda" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-            Explore Andromeda
-          </Link>
-        </motion.div>
-      </div>
+          <div
+            ref={hostRef}
+            style={{ position: 'absolute', inset: 0, cursor: 'grab', touchAction: 'pan-y' }}
+          />
+          {/* The appearance stepper is gone: the brain has one look now, the
+              gradient wireframe, so there was nothing left to step through. */}
+          {/* floating labels layer */}
+          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+            {LABELS.map((txt, i) => (
+              <div
+                key={txt}
+                ref={(el) => { labelEls.current[i] = el }}
+                style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: MONO, fontSize: 12, letterSpacing: '0.02em', color: C.node, whiteSpace: 'nowrap', textShadow: `0 0 8px ${C.halo}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
+              >
+                {txt}
+              </div>
+            ))}
+          </div>
+          {/* hero labels layer (bigger / higher hierarchy) */}
+          <div style={{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }}>
+            {HERO_LABELS.map((txt, i) => (
+              <div
+                key={txt}
+                ref={(el) => { heroEls.current[i] = el }}
+                style={{ position: 'absolute', top: 0, left: 0, opacity: 0, fontFamily: SANS, fontSize: 20, fontWeight: 700, letterSpacing: '-0.01em', color: C.bright, whiteSpace: 'nowrap', textShadow: `0 0 14px ${C.haloStrong}`, willChange: 'transform,opacity', transition: 'transform 90ms linear, opacity 140ms linear' }}
+              >
+                {txt}
+              </div>
+            ))}
+          </div>
+          {status !== 'ready' && (
+            <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted }}>
+              {status === 'error' ? 'Scene unavailable' : loadProgress > 0 ? `Loading the brain… ${loadProgress}%` : 'Loading the brain…'}
+            </div>
+          )}
+          {/* drag affordance: a static rotate-3d icon (olive), at the box's
+              bottom-right like Pro's stage. */}
+          <div style={{ position: 'absolute', right: 16, bottom: 16, pointerEvents: 'none' }}>
+            <Rotate3d size={26} color={C.accent} strokeWidth={1.5} />
+          </div>
+        </div>
+      </Container>
 
       {/* 3-icon wire divider directly below the hero */}
       <WireDivider />
