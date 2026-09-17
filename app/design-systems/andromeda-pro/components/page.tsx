@@ -40,7 +40,7 @@ export default function ShowcasePage() {
 
   return (
     <>
-      <ShowcaseInstall installs={[{ slug: 'andromeda-pro', label: 'All components' }]} />
+      <ShowcaseInstall installs={[{ slug: 'andromeda-pro', label: 'All components' }]} phoneFallback={false} />
       <AndromedaGallery components={components} templateCount={andromeda?.templates.length ?? 0} />
       <div className="mx-auto w-full max-w-6xl px-4 pb-10 sm:px-6">
         <SiteFooter />

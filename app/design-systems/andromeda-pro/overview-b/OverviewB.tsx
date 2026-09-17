@@ -463,7 +463,7 @@ export function OverviewB({
         </section>
       </Container>
 
-      {/* ── 8. Closing price band ──────────────────────────────────────── */}
+      {/* ── 8. Closing band ────────────────────────────────────────────── */}
       {/* Same closing card as the homepage's final CTA: inside the container,
           not a full-bleed band. */}
       <Container className="mt-20">
