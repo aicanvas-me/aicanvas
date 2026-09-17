@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { NextRequest } from 'next/server'
 
@@ -256,5 +256,90 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     expect(res.status).toBe(503)
     const body = await res.text()
     expect(body).not.toContain('TelemetryRow')
+  })
+})
+
+// A whole-system "Everything" bundle has no files of its own, only
+// registryDependencies. Refused, it must still write one visible notice, or the
+// CLI reports success with nothing on disk. Both bundles are generated from the
+// committed system source, so they are present on every build.
+const ALL_FILE = 'andromeda-all.json'
+const SYSTEM_FILE = 'andromeda.json'
+const allPath = join(process.cwd(), 'registry-data', ALL_FILE)
+const systemPath = join(process.cwd(), 'registry-data', SYSTEM_FILE)
+const bundlesAvailable = existsSync(allPath) && existsSync(systemPath)
+const TOKEN = `aic_${'ab'.repeat(24)}`
+const NOTICE_TARGET = '~/aicanvas-premium-locked/andromeda-all.md'
+
+function callBundle(file: string, token?: string) {
+  const req = new NextRequest(`http://localhost/r/${file}${token ? `?token=${token}` : ''}`)
+  return GET(req, { params: Promise.resolve({ file }) })
+}
+
+type RegistryFile = { path: string; type: string; target?: string }
+const placement = (f: RegistryFile) => ({ path: f.path, type: f.type, target: f.target })
+
+describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle with no files of its own', () => {
+  it('anonymous, no token → exactly one markdown notice, no registryDependencies', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+
+    const res = await callBundle(ALL_FILE)
+    const item = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('Cache-Control')).toBe('private, no-store')
+    expect(item.registryDependencies).toEqual([])
+    expect(item.dependencies).toEqual([])
+    expect(item.files).toHaveLength(1)
+    const [notice] = item.files
+    expect(notice.type).toBe('registry:file')
+    expect(notice.target).toBe(NOTICE_TARGET)
+    expect(notice.content).toContain('(Premium, locked)')
+    // The file says exactly what the terminal prints.
+    expect(notice.content).toContain(item.docs)
+    expect(notice.content).toContain('aicanvas.me/pricing')
+    expect(notice.content).toContain('account/settings')
+  })
+
+  it("signed-in 'free' tier with a token → the same single notice, token never stamped", async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+
+    const res = await callBundle(ALL_FILE, TOKEN)
+    const body = await res.text()
+    const item = JSON.parse(body)
+
+    expect(res.status).toBe(200)
+    expect(item.registryDependencies).toEqual([])
+    expect(item.files).toHaveLength(1)
+    expect(item.files[0].target).toBe(NOTICE_TARGET)
+    expect(body).not.toContain(TOKEN)
+  })
+
+  it('refused bundle WITH files (andromeda) → every real file stubbed in place, no notice added', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+    const real = JSON.parse(readFileSync(systemPath, 'utf8'))
+
+    const res = await callBundle(SYSTEM_FILE)
+    const item = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(item.registryDependencies).toEqual([])
+    expect(item.files.map(placement)).toEqual(real.files.map(placement))
+    expect(item.files.every(isLockedStub)).toBe(true)
+  })
+
+  it('premium → the real bundle, byte for byte, with the token stamped on its dependencies', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'premium', userId: 'u1' })
+    const raw = readFileSync(allPath, 'utf8')
+
+    const res = await callBundle(ALL_FILE)
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe(raw)
+
+    const tokened = await (await callBundle(ALL_FILE, TOKEN)).json()
+    expect(tokened.files).toEqual([])
+    expect(tokened.registryDependencies).toEqual(
+      JSON.parse(raw).registryDependencies.map((d: string) => `${d}?token=${TOKEN}`),
+    )
   })
 })

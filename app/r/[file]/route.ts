@@ -201,6 +201,7 @@ function premiumStub(realBody: string, slug: string): NextResponse {
         content: /\.(tsx|jsx)$/.test(String(f.path ?? f.target ?? '')) ? stub : plainStub,
       }))
     : [{ path: `components/aicanvas/${slug}.tsx`, type: 'registry:ui', target: `components/aicanvas/${slug}.tsx`, content: stub }]
+  const notice = `aicanvas-premium-locked/${slug}.md`
   const item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
     name: slug,
@@ -212,7 +213,16 @@ function premiumStub(realBody: string, slug: string): NextResponse {
     docs: msg,
     dependencies: [],
     registryDependencies: [],
-    files,
+    // A whole-system bundle has no files of its own, only the dependencies
+    // emptied above, so its placeholder would write nothing and the CLI would
+    // report success with nothing on disk. It gets one markdown notice instead,
+    // like the brain's BRAIN-LOCKED.md. `~/` is the project root, and no real
+    // install writes into this folder, so the notice never overwrites user code
+    // or passes for installed source.
+    files:
+      files.length > 0
+        ? files
+        : [{ path: notice, type: 'registry:file', target: `~/${notice}`, content: `# ${title} (Premium, locked)\n\n${msg}\n` }],
   }
   return NextResponse.json(item, {
     status: 200,
