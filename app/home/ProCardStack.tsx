@@ -3,7 +3,7 @@
 // The four Andromeda Pro facts as a stack of cards. When the stack scrolls into
 // view the cards rise in from below one by one, each settling behind the last.
 // After that the stack turns every few seconds: the top card slides off to the
-// right and is cut off at the section's edge (the section box clips), the rest
+// right, tipping clockwise as it goes, and is cut off at the section's edge (the section box clips), the rest
 // step forward, and a new card rises from below into the back. It holds still
 // while hovered or off screen.
 //
@@ -104,9 +104,10 @@ export function ProCardStack({
                 className={`absolute inset-x-0 top-0 ${CARD} shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.08)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_12px_32px_rgba(0,0,0,0.5)]`}
                 style={{ zIndex: list.length - d, transformOrigin: 'bottom center' }}
                 initial={{ opacity: 0, y: d * PEEK + 48, scale: 1 - d * 0.05 }}
-                animate={{ opacity: 1, x: 0, y: d * PEEK, scale: 1 - d * 0.05 }}
+                animate={{ opacity: 1, x: 0, rotate: 0, y: d * PEEK, scale: 1 - d * 0.05 }}
                 exit={{
                   x: '120%',
+                  rotate: 14,
                   zIndex: list.length + 1,
                   transition: { duration: EXIT_S, ease: [0.4, 0, 1, 1] },
                 }}
