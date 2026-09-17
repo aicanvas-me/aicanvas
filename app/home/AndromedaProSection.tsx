@@ -222,7 +222,7 @@ export function AndromedaProSection() {
             Andromeda Pro
           </h2>
           <p className="mt-3 max-w-xl text-base leading-relaxed text-sand-300">
-            {`A token-driven system for dashboards and control rooms. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
+            {`A token-driven design system for any product UI. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
             <Link href={PRO_HREF} className={buttonClasses({ variant: 'primary', size: 'md' })}>
@@ -276,7 +276,7 @@ export function AndromedaProSectionV2() {
               <SystemTierChip tier="pro" />
             </div>
             <p className="mt-3 max-w-xl text-sm leading-relaxed text-sand-700 dark:text-sand-300">
-              {`A token-driven system for dashboards and control rooms. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
+              {`A token-driven design system for any product UI. ${components} components and ${word(TEMPLATES.length)} templates, dark and light, with every state designed.`}
             </p>
           </div>
           <div className="w-full max-w-md lg:ml-auto">
