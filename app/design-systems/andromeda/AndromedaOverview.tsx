@@ -28,6 +28,7 @@ import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/a
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoop } from '../../_components/FoundationLoop'
 import { SystemTierChip } from '../../_components/SystemTierChip'
+import { BRAIN_GRAY } from '../../_lib/brain-colors'
 
 // Short blurbs for the four shipped templates — keyed by registry slug.
 const TEMPLATE_BLURBS: Record<string, string> = {
@@ -67,11 +68,10 @@ const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
 // Decorative auto-rotating 3D preview for the Brain card's right half —
 // the same brain.glb model as the live Brain page (BrainStoryV4.tsx),
 // reduced to just a slow spin: no drag, no firefly, no floating labels.
-// Locked to the site's olive-500 (AI Canvas chrome presenting the system,
-// per the file header — not Andromeda's own turquoise). Fails silent
+// Drawn in the Andromeda brain gray (app/_lib/brain-colors.ts); the
+// four-colour brain belongs to Andromeda Pro. Fails silent
 // (void background only) if WebGL or the model can't load.
 const BRAIN_MODEL_URL = '/models/brain.glb'
-const BRAIN_OLIVE_500 = '#A8B94D'
 const BRAIN_VOID = '#0E0E0F'
 
 function BrainWireframePreview() {
@@ -139,14 +139,8 @@ function BrainWireframePreview() {
           // Duck-typed on purpose: instanceof breaks when two copies of three load.
           const mesh = o as Mesh
           if (mesh.isMesh) {
-            mesh.material = new THREE.MeshStandardMaterial({
-              color: new THREE.Color(BRAIN_OLIVE_500),
-              wireframe: true,
-              emissive: new THREE.Color(BRAIN_OLIVE_500),
-              emissiveIntensity: 0.6,
-              metalness: 0,
-              roughness: 1,
-            })
+            // The Andromeda brain look: one gray, unlit so it reads exactly.
+            mesh.material = new THREE.MeshBasicMaterial({ color: new THREE.Color(BRAIN_GRAY.dark), wireframe: true })
           }
         })
         scene.add(model)

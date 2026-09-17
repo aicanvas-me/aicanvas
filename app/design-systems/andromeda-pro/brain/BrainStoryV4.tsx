@@ -29,7 +29,8 @@ import { BRAIN_TEASER } from '@/app/lib/andromeda-pro-brain-teaser.generated'
 import { BRAIN_TEASER as LEGACY_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
 import { tokens } from '@/app/lib/andromeda-pro.generated'
 import type { Theme } from '@/app/components/ThemeProvider'
-import { BRAIN_GROUND, LINE_STOPS, oklchToLinearSrgb } from '../overview-b/BrainWireframe'
+import { BRAIN_GROUND } from '../overview-b/BrainWireframe'
+import { BRAIN_ZONES, blendZones } from '@/app/_lib/brain-colors'
 
 // The flow diagram's connector gradients and travelling dots paint from these.
 // They sit inside an SVG stop and a CSS string, where a Tailwind class cannot
@@ -268,7 +269,7 @@ const Y_BOT = FLOW_H - ROW_H / 2
 const LINK_W = 104
 
 // The centre card, and the wireframe brain across the top of it: a still of the
-// brand-ramp brain, stored at 2x display size. Its ground is a flat
+// four-colour Andromeda Pro brain, stored at 2x display size. Its ground is a flat
 // rgb(14,14,15), the sand-950 the card is painted in both site themes, so the
 // image has no visible edge either way.
 const IMG_W = 78
@@ -725,7 +726,7 @@ export function BrainStoryV4() {
 
       let W = host.clientWidth || 800, H = host.clientHeight || 600
       // Transparent canvas: the void ground is the stage's CSS background. No
-      // tone mapping, so the ramp reads exactly as it does on the overview.
+      // tone mapping, so the colours read exactly as they do on the overview.
       const r = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' })
       renderer = r
       r.setClearColor(0x000000, 0)
@@ -741,14 +742,11 @@ export function BrainStoryV4() {
       const camera = new THREE.PerspectiveCamera(38, W / H, 0.01, 100)
       camera.position.set(0, 0.3, 3)
 
-      const stops = LINE_STOPS.map((css) =>
-        new THREE.Color().setRGB(...oklchToLinearSrgb(css), THREE.LinearSRGBColorSpace),
-      )
-      const colorAt = (t: number, out: InstanceType<typeof THREE.Color>) => {
-        const x = Math.min(Math.max(t, 0), 1) * (stops.length - 1)
-        const i = Math.min(Math.floor(x), stops.length - 2)
-        return out.copy(stops[i]).lerp(stops[i + 1], x - i)
-      }
+      // The stage is the void in both site themes, so the dark inks always.
+      const zoneCols = BRAIN_ZONES.map((z) => {
+        const c = new THREE.Color(z.hex.dark)
+        return [c.r, c.g, c.b] as [number, number, number]
+      })
 
       let brainRoot: import('three').Group | null = null, ready = false
       const radius = 1
@@ -926,11 +924,11 @@ export function BrainStoryV4() {
         model.position.sub(sphere.center)
         model.updateWorldMatrix(true, true)
         box = new THREE.Box3().setFromObject(model)
-        const size = box.getSize(new THREE.Vector3())
+        const centre = box.getCenter(new THREE.Vector3())
 
-        // The overview's ramp, painted by height: brand 400 at the stem up to a
-        // light neutral at the crown. One unlit material for every mesh, so the
-        // ramp reads exactly.
+        // The Andromeda Pro brain look, the same as the overview: the four
+        // corpus sections blended by which way each vertex faces. One unlit
+        // material for every mesh, so the colours read exactly.
         const material = new THREE.MeshBasicMaterial({
           vertexColors: true,
           wireframe: true,
@@ -939,7 +937,6 @@ export function BrainStoryV4() {
           depthWrite: false,
         })
         const v = new THREE.Vector3()
-        const c = new THREE.Color()
         model.traverse((o) => {
           // Duck-typed on purpose: instanceof breaks when two copies of three load.
           const mesh = o as Mesh
@@ -950,8 +947,8 @@ export function BrainStoryV4() {
           const pos = geometry.getAttribute('position')
           const colors = new Float32Array(pos.count * 3)
           for (let i = 0; i < pos.count; i++) {
-            v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld)
-            colorAt((v.y - box.min.y) / (size.y || 1), c).toArray(colors, i * 3)
+            v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld).sub(centre).normalize()
+            blendZones(v.x, v.y, v.z, zoneCols, colors, i * 3)
           }
           geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
           mesh.geometry = geometry

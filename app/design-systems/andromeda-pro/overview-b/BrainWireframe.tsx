@@ -2,11 +2,13 @@
 
 // A slow-spinning wireframe of the Brain model for the Built for AI card. The
 // same brain.glb as the Brain page, reduced to a spin: no drag, no labels.
-// The crown is a light neutral and the lines fade down through brand 300 to
-// brand 400 at the stem. Lines blend normally rather than adding, so
-// dense areas settle on the ramp colour instead of burning to white or flat
-// cyan and the fade stays soft. Fails silent (the ground
-// only) when WebGL or the model cannot load.
+// The wires carry the Andromeda Pro brain look: the four corpus sections in
+// their own colours, blended by which way each vertex faces
+// (app/_lib/brain-colors.ts). Lines blend normally rather than adding, so dense
+// areas keep their colour instead of burning to white. Drawn on the dark void
+// by default; `followSite` takes the site theme's inks instead, for a brain
+// that sits straight on the page. Fails silent (the ground only) when WebGL or
+// the model cannot load.
 //
 // The loop only runs while the card is on screen, and under reduced motion it
 // draws a single still frame instead. The reduced-motion setting is read
@@ -17,38 +19,16 @@ import { useReducedMotion } from 'framer-motion'
 import type { Mesh, Object3D, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { tokens } from '../../../lib/andromeda-pro.generated'
+import { useTheme } from '../../../components/ThemeProvider'
+import { BRAIN_ZONES, blendZones } from '../../../_lib/brain-colors'
 
 const BRAIN_MODEL_URL = '/models/brain.glb'
 const BRAIN_VOID = '#0E0E0F'
 
-// Primitives read once from tokens.ts. Safe here because the card is always
-// drawn on the dark void, so the dark-authored neutral stops are the right ink.
+// Brand primitives for the ground, read once from tokens.ts.
 const BRAND = tokens.color.brand
-const NEUTRAL = tokens.color.neutral
-// Stem to crown: blue at the base, a light neutral over the top.
-export const LINE_STOPS = [BRAND[400], BRAND[300], NEUTRAL[1100], NEUTRAL[1200]]
 
 const withAlpha = (oklch: string, alpha: number) => oklch.replace(')', ` / ${alpha})`)
-
-// WebGL takes no oklch, so each stop goes OKLCH -> OKLab -> linear sRGB here
-// (Ottosson's matrices), clamped to the gamut. Reading pixels back off a
-// canvas did the same job but stalled the GPU.
-export function oklchToLinearSrgb(css: string): [number, number, number] {
-  const m = /oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)/.exec(css)
-  if (!m) return [0.5, 0.5, 0.5]
-  const [L, C, h] = [+m[1], +m[2], (+m[3] * Math.PI) / 180]
-  const a = C * Math.cos(h)
-  const b = C * Math.sin(h)
-  const l = (L + 0.3963377774 * a + 0.2158037573 * b) ** 3
-  const mm = (L - 0.1055613458 * a - 0.0638541728 * b) ** 3
-  const s = (L - 0.0894841775 * a - 1.291485548 * b) ** 3
-  const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1)
-  return [
-    clamp01(4.0767416621 * l - 3.3077115913 * mm + 0.2309699292 * s),
-    clamp01(-1.2684380046 * l + 2.6097574011 * mm - 0.3413193965 * s),
-    clamp01(-0.0041960863 * l - 0.7034186147 * mm + 1.707614701 * s),
-  ]
-}
 
 // Barely-there brand light behind the model: a glow where the brain sits and
 // two faint sweeps from opposite corners, over the void. The Brain page's
@@ -60,8 +40,13 @@ export const BRAIN_GROUND = [
   BRAIN_VOID,
 ].join(', ')
 
-export function BrainWireframe() {
+export function BrainWireframe({ followSite = false }: { followSite?: boolean }) {
   const hostRef = useRef<HTMLDivElement>(null)
+  const { theme } = useTheme()
+  // A theme switch rebuilds the scene (the model comes from cache); only a
+  // followSite brain ever sees one.
+  const ink = followSite ? theme : 'dark'
+
   const reduce = useReducedMotion()
   const reduceRef = useRef(reduce)
   // Starts one frame, and the loop if motion is allowed. Filled in once the
@@ -103,14 +88,10 @@ export function BrainWireframe() {
 
         const scene = new THREE.Scene()
 
-        const stops = LINE_STOPS.map((css) =>
-          new THREE.Color().setRGB(...oklchToLinearSrgb(css), THREE.LinearSRGBColorSpace),
-        )
-        const colorAt = (t: number, out: InstanceType<typeof THREE.Color>) => {
-          const x = Math.min(Math.max(t, 0), 1) * (stops.length - 1)
-          const i = Math.min(Math.floor(x), stops.length - 2)
-          return out.copy(stops[i]).lerp(stops[i + 1], x - i)
-        }
+        const zoneCols = BRAIN_ZONES.map((z) => {
+          const c = new THREE.Color(z.hex[ink])
+          return [c.r, c.g, c.b] as [number, number, number]
+        })
 
         // The camera backs off until the model's unit sphere, times FIT, fits
         // the narrower side of the box, so the brain keeps the same share of
@@ -186,10 +167,9 @@ export function BrainWireframe() {
             model.position.sub(sphere.center)
             model.updateWorldMatrix(true, true)
             box = new THREE.Box3().setFromObject(model)
-            const size = box.getSize(new THREE.Vector3())
+            const centre = box.getCenter(new THREE.Vector3())
             const v = new THREE.Vector3()
-            const c = new THREE.Color()
-            // One material for every mesh: unlit, so the ramp reads exactly.
+            // One material for every mesh: unlit, so the colours read exactly.
             const material = new THREE.MeshBasicMaterial({
               vertexColors: true,
               wireframe: true,
@@ -206,11 +186,10 @@ export function BrainWireframe() {
               const pos = geometry.getAttribute('position')
               const colors = new Float32Array(pos.count * 3)
               for (let i = 0; i < pos.count; i++) {
-                v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld)
-                // Height alone: the spin turns around the vertical axis, so a
-                // top-to-bottom fade holds still while the model turns.
-                const ny = (v.y - box.min.y) / (size.y || 1)
-                colorAt(ny, c).toArray(colors, i * 3)
+                // Direction from the model's centre, so each section holds its
+                // side of the brain while the whole thing turns.
+                v.fromBufferAttribute(pos, i).applyMatrix4(mesh.matrixWorld).sub(centre).normalize()
+                blendZones(v.x, v.y, v.z, zoneCols, colors, i * 3)
               }
               geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3))
               mesh.geometry = geometry
@@ -249,7 +228,7 @@ export function BrainWireframe() {
         }
       } catch {}
     }
-  }, [])
+  }, [ink])
 
   return <div ref={hostRef} aria-hidden className="absolute inset-0" style={{ background: BRAIN_GROUND }} />
 }

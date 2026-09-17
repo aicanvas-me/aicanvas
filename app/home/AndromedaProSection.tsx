@@ -41,7 +41,7 @@ function Brain() {
   return (
     <div className="mt-6 grid grid-cols-1 sm:grid-cols-2">
       <div className="relative h-56 sm:h-auto sm:min-h-[300px] [&>div]:!bg-transparent [&>div]:!bg-none">
-        <BrainWireframe />
+        <BrainWireframe followSite />
       </div>
       <div className="flex flex-col justify-center p-6 sm:p-8">
         <span className="text-xs font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-400">The Brain</span>
