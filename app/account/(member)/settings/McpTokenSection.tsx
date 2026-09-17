@@ -18,7 +18,9 @@ type Props = { token: string | null }
 
 const MASKED = 'aic_••••••••'
 
-const installCmd = (t: string) => `npx shadcn@latest add "https://aicanvas.me/r/component-name.json?token=${t}"`
+// A real free component, so the copied command installs as pasted. A
+// placeholder name makes the CLI fail.
+const installCmd = (t: string) => `npx shadcn@latest add "https://aicanvas.me/r/glitch-button.json?token=${t}"`
 
 export function McpTokenSection({ token }: Props) {
   const [revealed, setRevealed] = useState(false)
@@ -102,8 +104,9 @@ export function McpTokenSection({ token }: Props) {
             </button>
           </div>
           <p className="mt-2 text-xs leading-relaxed text-sand-500 dark:text-sand-400">
-            Swap component-name for the component you want. While you are signed
-            in, every install command on the site already carries this token.
+            Swap glitch-button for any component&rsquo;s name to install that
+            one instead. While you are signed in, every install command on the
+            site already carries this token.
           </p>
         </>
       ) : (
