@@ -138,8 +138,8 @@ function CardBody({ fact, index, on, still }: { fact: Fact; index: number; on: b
         <span className={`${MONO} ${MUTED}`}>{`${pad(index + 1)} · ${fact.label}`}</span>
         <FactIcon weight="regular" aria-hidden className={`size-4 ${MUTED}`} />
       </div>
-      <p className={`mt-3 text-3xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
-      <p className={`mt-1 text-sm ${MUTED}`}>{fact.line}</p>
+      <p className={`mt-3 text-2xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
+      <p className={`mt-1 text-[13px] ${MUTED}`}>{fact.line}</p>
       <div className="mt-3 flex h-9 items-end overflow-hidden">
         <div className="w-full">
           <FactGlyph glyph={fact.glyph} count={fact.count} on={on} still={still} />
