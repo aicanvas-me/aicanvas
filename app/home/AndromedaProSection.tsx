@@ -111,9 +111,18 @@ function Card({ icon: CardIcon, label, value, line, demo }: (typeof CARDS)[numbe
   )
 }
 
-// The window and the Brain row: dark stages in both site themes, shared by
-// both versions of the section.
+// The window and the Brain row: dark stages in both site themes. Version 1
+// shows both; version 2 keeps only the Brain.
 function WindowAndBrain() {
+  return (
+    <>
+      <ProWindow />
+      <Brain />
+    </>
+  )
+}
+
+function ProWindow() {
   return (
     <>
       {/* ── The window ── */}
@@ -140,6 +149,13 @@ function WindowAndBrain() {
         </div>
       </div>
 
+    </>
+  )
+}
+
+function Brain() {
+  return (
+    <>
       {/* ── The Brain ── */}
       <div className="mt-6 grid grid-cols-1 overflow-hidden rounded-2xl border border-sand-800 bg-sand-950 sm:grid-cols-2">
         <div className="relative h-56 sm:h-auto sm:min-h-[300px]">
@@ -209,6 +225,48 @@ export function AndromedaProSection() {
   )
 }
 
+// Version 2 features: three open columns split by hairlines, no card boxes and
+// no browser window. Title and sentence on top, the live well at the foot,
+// fading out as it runs off the bottom.
+const FEATURES: { title: string; body: string; demo: Demo }[] = [
+  {
+    title: 'Token driven',
+    body: 'Three token layers. Swap one ramp and every part of every component follows.',
+    demo: 'tokens',
+  },
+  {
+    title: 'Dual themes',
+    body: 'Every component is designed in dark and light. Drag the line across the panel.',
+    demo: 'themes',
+  },
+  {
+    title: 'Premium interactions',
+    body: `${states} states tuned across ${components} components, so nothing jumps or feels unfinished.`,
+    demo: 'interactions',
+  },
+]
+
+const WELL_FADE = 'linear-gradient(to bottom, black 55%, transparent)'
+
+function FeatureGrid() {
+  return (
+    <div className="mt-12 grid grid-cols-1 divide-y divide-sand-200 border-y border-sand-200 lg:grid-cols-3 lg:divide-x lg:divide-y-0 dark:divide-sand-800 dark:border-sand-800">
+      {FEATURES.map(({ title, body, demo }) => (
+        <div key={title} className="flex min-w-0 flex-col py-8 lg:px-8 lg:first:pl-0 lg:last:pr-0">
+          <h3 className="text-lg font-semibold tracking-tight text-sand-900 dark:text-sand-50">{title}</h3>
+          <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{body}</p>
+          <div
+            className="mt-8 h-[148px] overflow-hidden rounded-lg border border-sand-800"
+            style={{ maskImage: WELL_FADE, WebkitMaskImage: WELL_FADE }}
+          >
+            <DemoFor demo={demo} />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 // Version 2: no beam and no outer box. The intro sits straight on the page and
 // follows the site theme; the grid stays, drawn in the theme's ink.
 const GRID_MASK = 'radial-gradient(ellipse 60% 70% at 30% 35%, black 15%, transparent 70%)'
@@ -253,7 +311,8 @@ export function AndromedaProSectionV2() {
         </div>
       </div>
 
-      <WindowAndBrain />
+      <FeatureGrid />
+      <Brain />
     </section>
   )
 }
