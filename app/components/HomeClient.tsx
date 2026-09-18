@@ -9,6 +9,7 @@ import { ComponentCard } from './ComponentCard'
 import { track } from '../lib/analytics'
 import { useTopBarLeft } from './TopBar'
 import { SiteFooter } from './SiteFooter'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
 import { INITIAL_LOAD, LOAD_MORE_SIZE } from './LoadMore'
 import { LoadMore } from './LoadMore'
 import type { ComponentMeta } from '../lib/component-registry'
@@ -278,9 +279,7 @@ export function HomeClient({
 
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-
-      {/* ── Grid ── */}
-      <div className="flex flex-1 flex-col bg-sand-50 px-4 pt-4 dark:bg-sand-950 md:px-6 md:pt-6">
+      <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
         {/* Mobile breadcrumb — shown above cards on small screens */}
         <p className="mb-4 text-sm font-semibold md:hidden">
           {q && !category ? (
@@ -296,13 +295,9 @@ export function HomeClient({
           )}
         </p>
         {heading && (
-          <header className="mx-auto mb-6 w-full max-w-[1800px]">
-            <h1 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50 sm:text-3xl">
-              {heading.h1}
-            </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-sand-600 dark:text-sand-400 sm:text-base">
-              {heading.intro}
-            </p>
+          <header className="mb-6">
+            <PageTitle className="mt-0">{heading.h1}</PageTitle>
+            <PageLead>{heading.intro}</PageLead>
           </header>
         )}
         {filtered.length > 0 && (
@@ -311,11 +306,11 @@ export function HomeClient({
                 ("Components & blocks" + "Design systems & templates") read as a
                 consistent pair. Browsing shows no title (the top bar names it). */}
             {q && !category && (
-              <h2 className="mx-auto mb-4 w-full max-w-[1800px] text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
+              <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
                 Components &amp; blocks
               </h2>
             )}
-            <div className="mx-auto grid max-w-[1800px] grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((entry, i) => (
                 <motion.div
                   key={entry.slug}
@@ -352,11 +347,11 @@ export function HomeClient({
             catalog. Same ComponentCard shell as the grid; links out to each
             item's own page. ── */}
         {extras.length > 0 && (
-          <div className="mx-auto mt-10 w-full max-w-[1800px]">
+          <div className="mt-10">
             <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
               Design systems &amp; templates
             </h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {extras.map((e, i) => (
                 <motion.div
                   key={e.key}
@@ -464,11 +459,9 @@ export function HomeClient({
             )}
           </motion.div>
         )}
-      </div>
 
-      <div className="mx-auto w-full max-w-[1800px] px-4 pb-8 md:px-6">
         <SiteFooter />
-      </div>
+      </PageFrame>
     </div>
   )
 }

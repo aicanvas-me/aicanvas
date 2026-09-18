@@ -28,6 +28,7 @@ import { isStackLabel, STACK_ICONS, stackIconWidthForHeight, type Stack } from '
 import { SiteFooter } from '../SiteFooter'
 import { PropsTable, type PropTable } from '../PropsTable'
 import { Step } from '../Step'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../_components/DesignSystemPage'
 import type { ComponentMeta } from '../../lib/component-registry'
 // Runtime + type from the light module so this client component never imports
 // the heavy registry (which would pull every preview component, incl. three.js,
@@ -474,7 +475,7 @@ export default function ComponentPageView({
     <>
       {/* Top stripe — sticky (desktop only; mobile uses MobileNav) */}
       <main className="bg-sand-50 dark:bg-sand-950">
-        <div className="relative mx-auto max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
+        <PageFrame className={`relative ${PAGE_TOP} ${PAGE_BOTTOM}`}>
 
           {/* Mobile back button */}
           <button
@@ -487,19 +488,14 @@ export default function ComponentPageView({
 
           {/* Header */}
           <div className="mb-8">
-            {/* Page heading — bold (700). Subtitle is an answer-block for GEO:
-                the first 200 tokens on each page carry a definitional answer. */}
-            <h1 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
-              <span className="block">{name}</span>
-              {headingSubtitle && (
-                <span className="mt-2 block text-base font-normal leading-relaxed tracking-normal text-sand-600 dark:text-sand-400 sm:text-lg">
-                  {headingSubtitle}
-                </span>
-              )}
-            </h1>
-            {/* Description — normal (400). Hidden when subtitle already covers it. */}
-            {!headingSubtitle && (
-              <p className="mt-3 font-normal text-sand-600 dark:text-sand-400">{description}</p>
+            {/* Page heading. Subtitle is an answer-block for GEO: the first
+                200 tokens on each page carry a definitional answer. Falls
+                back to the plain description when there is no subtitle. */}
+            <PageTitle className="mt-0">{name}</PageTitle>
+            {headingSubtitle ? (
+              <PageLead>{headingSubtitle}</PageLead>
+            ) : (
+              <PageLead>{description}</PageLead>
             )}
             {(() => {
               // Header chip row: category chip + up to 3 use-case chips.
@@ -1451,7 +1447,7 @@ export default function ComponentPageView({
           )}
 
           <SiteFooter />
-        </div>
+        </PageFrame>
       </main>
 
       {/* ── Fullscreen overlay ───────────────────────────────────────────────
