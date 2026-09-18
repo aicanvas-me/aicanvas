@@ -55,7 +55,7 @@ export function AndromedaGallery({
   return (
     <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
       <header className="border-b border-sand-300 pb-10 dark:border-sand-800">
-        <PageOverline>Design system · Dark</PageOverline>
+        <PageOverline>Andromeda Pro · Components</PageOverline>
         <PageTitle className="max-w-3xl">
           One control room.
           <br />
