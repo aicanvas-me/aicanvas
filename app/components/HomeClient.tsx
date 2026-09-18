@@ -9,7 +9,7 @@ import { ComponentCard } from './ComponentCard'
 import { track } from '../lib/analytics'
 import { useTopBarLeft } from './TopBar'
 import { SiteFooter } from './SiteFooter'
-import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
+import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
 import { INITIAL_LOAD, LOAD_MORE_SIZE } from './LoadMore'
 import { LoadMore } from './LoadMore'
 import type { ComponentMeta } from '../lib/component-registry'
@@ -120,7 +120,7 @@ export function HomeClient({
   /** Optional H1 + intro rendered above the grid. Passed by the category and
    *  collection pages so each listing page carries crawlable on-page copy;
    *  the plain /components index omits it. */
-  heading?: { h1: string; intro: string }
+  heading?: { overline?: string; h1: string; intro: string }
 }) {
   const router        = useRouter()
   const searchParams  = useSearchParams()
@@ -296,7 +296,8 @@ export function HomeClient({
         </p>
         {heading && (
           <header className="mb-6">
-            <PageTitle className="mt-0">{heading.h1}</PageTitle>
+            {heading.overline && <PageOverline>{heading.overline}</PageOverline>}
+            <PageTitle className={heading.overline ? '' : 'mt-0'}>{heading.h1}</PageTitle>
             <PageLead>{heading.intro}</PageLead>
           </header>
         )}

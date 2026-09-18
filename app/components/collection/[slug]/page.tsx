@@ -75,7 +75,7 @@ export default async function CollectionPage({
       <HomeClient
         components={members}
         categoryLabel={collection.h1}
-        heading={{ h1: collection.h1, intro: collection.intro }}
+        heading={{ overline: 'Components & Blocks', h1: collection.h1, intro: collection.intro }}
       />
     </>
   )

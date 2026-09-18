@@ -61,5 +61,16 @@ export default async function ComponentsPage({
       ? COMPONENT_META.filter((c) => c.tags.some((t) => t.accent && t.label === category))
       : COMPONENT_META
 
-  return <HomeClient components={filtered} />
+  // The legacy ?category= filter shows a subset, so the all-components heading
+  // would misdescribe the page; that variant canonicalises to the category page.
+  const heading =
+    category && category !== 'All Components'
+      ? undefined
+      : {
+          overline: 'Components & Blocks',
+          h1: 'Animated React Components and Blocks',
+          intro: `All ${COMPONENT_META.length} components and blocks in the AI Canvas registry, built with Tailwind CSS and Motion. Copy and paste, install with the shadcn CLI, or remix with AI.`,
+        }
+
+  return <HomeClient components={filtered} heading={heading} />
 }
