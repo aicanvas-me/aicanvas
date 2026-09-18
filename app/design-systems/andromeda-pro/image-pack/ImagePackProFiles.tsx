@@ -9,6 +9,7 @@ import { usePaywallModal } from '../../../components/billing/PaywallModalProvide
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { IMAGE_PACK_PRO_FILES, type ImagePackProFile } from '../../../_lib/andromeda-pro/image-pack'
+import { SystemTierChip } from '../../../_components/SystemTierChip'
 
 export function ImagePackProFiles() {
   const { open: openPaywall } = usePaywallModal()
@@ -49,9 +50,7 @@ export function ImagePackProFiles() {
         >
           <div className="flex items-center gap-2">
             <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">{f.name}</h3>
-            <span className="rounded-md bg-olive-500/10 px-2 py-1 text-xxs font-semibold text-olive-600 dark:text-olive-400">
-              Pro
-            </span>
+            <SystemTierChip tier="pro" />
           </div>
           <p className="mt-1.5 flex-1 text-xs leading-relaxed text-sand-600 dark:text-sand-400">{f.description}</p>
           <div className="mt-4 flex flex-wrap items-center gap-3">
