@@ -64,7 +64,7 @@ export function ImagePackProFiles() {
               ) : (
                 <DownloadSimple weight="regular" size={14} />
               )}
-              {status === 'not-premium' ? 'Unlock with Pro' : 'Download'}
+              {status === 'not-premium' ? 'Unlock with Premium' : 'Download'}
             </button>
             {/* Always mounted, so a screen reader announces the text change. */}
             <span role="status" className="text-xs text-sand-600 dark:text-sand-400">
