@@ -287,26 +287,26 @@ export function MobileNav({
                               </li>
                             )
                           })}
-                          {hasHiddenCats && (
-                            <li>
-                              <button
-                                type="button"
-                                onClick={() => setShowAllCats((v) => !v)}
-                                className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
-                              >
-                                <CaretDown
-                                  size={12}
-                                  weight="regular"
-                                  className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
-                                />
-                                <span className="flex-1 text-left">
-                                  {showAllCats ? 'Show less' : `Show ${section.labels.length - 4} more`}
-                                </span>
-                              </button>
-                            </li>
-                          )}
                         </ul>
                         </div>
+                      )}
+                      {/* Show more sits OUTSIDE the rail, same as the desktop
+                          sidebar: its caret shares the rail's column. */}
+                      {!isCollapsed && !isDisabled && hasHiddenCats && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAllCats((v) => !v)}
+                          className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
+                        >
+                          <CaretDown
+                            size={12}
+                            weight="regular"
+                            className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
+                          />
+                          <span className="flex-1 text-left">
+                            {showAllCats ? 'Show less' : `Show ${section.labels.length - 4} more`}
+                          </span>
+                        </button>
                       )}
                     </div>
                   )
