@@ -206,7 +206,7 @@ export function OverviewB({
           {/* Same hero row as Legacy: the chip sits beside the h1, not inside
               it, so the heading stays the system's name alone. */}
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <PageTitle id="ovb-hero" className="mt-0">
+            <PageTitle id="ovb-hero" gap="none">
               Andromeda Pro
             </PageTitle>
             <SystemTierChip tier="pro" />

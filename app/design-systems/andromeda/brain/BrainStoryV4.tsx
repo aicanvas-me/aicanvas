@@ -842,7 +842,7 @@ export function BrainStoryV4() {
         <section aria-labelledby="brain-hero" className="max-w-3xl">
           <PageOverline>Built for agents</PageOverline>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <PageTitle id="brain-hero" className="mt-0">Andromeda Brain</PageTitle>
+            <PageTitle id="brain-hero" gap="none">Andromeda Brain</PageTitle>
             <SystemTierChip tier="mit" />
           </div>
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">

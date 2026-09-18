@@ -281,7 +281,9 @@ html[data-frame][data-frame-light] {
 .app-scroll-column {
   scrollbar-gutter: stable;
 }
-.app-scroll-column:has(> [data-owns-scroll]) {
+/* Descendant, not child: the page slot sits between the column and the layout
+   root that carries this attribute. Only layout roots carry it. */
+.app-scroll-column:has([data-owns-scroll]) {
   scrollbar-gutter: auto;
 }
 

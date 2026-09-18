@@ -260,7 +260,13 @@ export default async function RootLayout({
                 <Suspense fallback={null}>
                   <TopBar />
                 </Suspense>
-                {children}
+                {/* The page slot, sized to the column MINUS the bar. Page
+                    roots ask for min-h-full, and the column is a flex item of
+                    the full-height body, so without this wrapper that 100%
+                    resolved against the whole viewport and every short page
+                    scrolled by exactly the bar's height. flex-1 keeps its auto
+                    minimum, so a long page still grows past it. */}
+                <div className="flex flex-1 flex-col">{children}</div>
               </div>
               {/* Global auth dialog — toggles between sign-in and sign-up modes */}
               <AuthModal />

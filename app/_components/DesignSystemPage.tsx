@@ -49,21 +49,27 @@ export function PageOverline({ children, className = '' }: { children: ReactNode
   )
 }
 
-// The page title. `mt-3` is its distance from the overline; a page with no
-// overline passes className="mt-0".
+// The page title. `gap` is its distance from the overline above it; a page whose
+// title starts the block passes gap="none". It is a prop and not a className
+// override for the same reason PageLead's tone is: mt-0 and mt-3 carry equal
+// specificity, so appending one would leave the winner to stylesheet order.
+const TITLE_GAP = { overline: 'mt-3', none: 'mt-0' } as const
+
 export function PageTitle({
   children,
   id,
+  gap = 'overline',
   className = '',
 }: {
   children: ReactNode
   id?: string
+  gap?: keyof typeof TITLE_GAP
   className?: string
 }) {
   return (
     <h1
       id={id}
-      className={`mt-3 text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl ${className}`}
+      className={`${TITLE_GAP[gap]} text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl ${className}`}
     >
       {children}
     </h1>

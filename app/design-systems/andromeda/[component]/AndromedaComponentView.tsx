@@ -251,7 +251,7 @@ export function AndromedaComponentView({
     <PageFrame as="main" className={`${PAGE_TOP} pb-8`}>
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="mb-8">
-        <PageTitle className="mt-0">{name}</PageTitle>
+        <PageTitle gap="none">{name}</PageTitle>
         <PageLead>{description}</PageLead>
       </div>
 

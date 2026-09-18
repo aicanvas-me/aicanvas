@@ -188,7 +188,10 @@ export function Sidebar({
           const hiddenCatCount = catLabels.filter(
             (label, i) => i >= hideCatsFrom && label !== activeCategory,
           ).length
-          const hasHiddenCats = isComponents && promoteDS && hiddenCatCount > 0
+          // Once expanded nothing is hidden, so the count alone would unmount
+          // the control and strand the list open with no way back.
+          const hasHiddenCats =
+            isComponents && promoteDS && (showAllCats || hiddenCatCount > 0)
 
           return (
             <div key={section.title} className="mb-3">

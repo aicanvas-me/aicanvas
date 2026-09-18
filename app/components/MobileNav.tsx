@@ -223,8 +223,18 @@ export function MobileNav({
                           (l, i) => i < 4 || l === activeCategory,
                         )
                       : section.labels
+                  // Count what is ACTUALLY hidden: the active category rides
+                  // along past the cap, so a plain length - 4 overcounts by one
+                  // whenever you are inside one of the capped categories. The
+                  // expanded state keeps the control so it can collapse back.
+                  const hiddenCatCount =
+                    isComponents && promoteDS
+                      ? section.labels.filter(
+                          (l, i) => i >= 4 && l !== activeCategory,
+                        ).length
+                      : 0
                   const hasHiddenCats =
-                    isComponents && promoteDS && section.labels.length > 4
+                    isComponents && promoteDS && (showAllCats || hiddenCatCount > 0)
 
                   return (
                     <div key={section.title} className="mb-3">
@@ -321,7 +331,7 @@ export function MobileNav({
                             className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
                           />
                           <span className="flex-1 text-left">
-                            {showAllCats ? 'Show less' : `Show ${section.labels.length - 4} more`}
+                            {showAllCats ? 'Show less' : `Show ${hiddenCatCount} more`}
                           </span>
                         </button>
                       )}

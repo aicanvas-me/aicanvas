@@ -273,7 +273,7 @@ export function AndromedaOverview() {
         {/* The chip sits beside the h1, not inside it, so the heading stays
             the system's name alone. */}
         <div className="mt-3 flex flex-wrap items-center gap-3">
-          <PageTitle className="mt-0">{ANDROMEDA_META.name}</PageTitle>
+          <PageTitle gap="none">{ANDROMEDA_META.name}</PageTitle>
           <SystemTierChip tier="mit" label="MIT License" />
         </div>
         <PageLead tone="body" className="sm:text-lg">

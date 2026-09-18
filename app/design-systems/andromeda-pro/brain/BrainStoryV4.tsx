@@ -983,7 +983,7 @@ export function BrainStoryV4() {
         <section aria-labelledby="brain-hero" className="max-w-3xl">
           <PageOverline>Built for agents</PageOverline>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <PageTitle id="brain-hero" className="mt-0">
+            <PageTitle id="brain-hero" gap="none">
               Andromeda Pro Brain
             </PageTitle>
             <SystemTierChip tier="pro" />

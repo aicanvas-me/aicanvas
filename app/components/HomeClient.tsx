@@ -305,7 +305,7 @@ export function HomeClient({
         {heading && (
           <header className="mb-6">
             {heading.overline && <PageOverline>{heading.overline}</PageOverline>}
-            <PageTitle className={heading.overline ? '' : 'mt-0'}>{heading.h1}</PageTitle>
+            <PageTitle gap={heading.overline ? 'overline' : 'none'}>{heading.h1}</PageTitle>
             <PageLead>{heading.intro}</PageLead>
           </header>
         )}
