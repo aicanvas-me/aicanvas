@@ -151,7 +151,7 @@ export function DesignSystemsPole({
                     link is not valid markup, so they sit side by side and
                     share the row's hover ground. */}
                 <div
-                  className="group flex items-center gap-2 rounded-md pr-1 text-sm font-medium text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
+                  className="group flex items-center gap-1 rounded-md text-sm font-medium text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                 >
                   <Link
                     href={`/design-systems/${system.slug}`}
@@ -174,7 +174,7 @@ export function DesignSystemsPole({
                       })
                       onNavigate?.()
                     }}
-                    className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-2 pr-2"
+                    className="flex min-w-0 flex-1 items-center gap-1.5 py-1.5 pl-2 pr-0"
                   >
                     {/* The two systems are the top rows of the pole now: each
                         carries the Andromeda mark and its own full name. The
@@ -197,7 +197,7 @@ export function DesignSystemsPole({
                     onClick={() => setOpen((o) => ({ ...o, [system.slug]: !expanded }))}
                     aria-expanded={expanded}
                     aria-label={`${expanded ? 'Collapse' : 'Expand'} ${system.name}`}
-                    className="-mr-0.5 shrink-0 rounded p-1 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-100"
+                    className="-mr-0.5 shrink-0 rounded p-0.5 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-100"
                   >
                     <CaretDown
                       size={12}
