@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { ArrowElbowDownRight, CaretDown, Cube, Lightning } from '@phosphor-icons/react'
+import { CaretDown, Cube, Lightning } from '@phosphor-icons/react'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
@@ -24,9 +24,6 @@ const SYSTEMS = [
   {
     slug: 'andromeda-pro',
     name: 'Andromeda Pro',
-    // The rail says "Andromeda" once on the family row, so each system row
-    // shows only its short name and its tier chip.
-    short: 'Pro',
     tier: 'pro',
     brain: true,
     // Pro's sections: Foundation, then Components. Neither
@@ -50,7 +47,6 @@ const SYSTEMS = [
   {
     slug: 'andromeda',
     name: 'Andromeda Legacy',
-    short: 'Legacy',
     tier: 'mit',
     // Has a premium Brain page at /design-systems/<slug>/brain (rules +
     // foundations + per-component intelligence).
@@ -122,13 +118,13 @@ export function DesignSystemsPole({
         <Cube weight="regular" size={16} />
         <span className="flex-1 text-left">Design Systems</span>
       </div>
-      {/* The family row, a label like the pole header above it. Both systems
-          are Andromeda, so the name and the brand mark are said once here. */}
-      <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-semibold text-sand-700 dark:text-sand-400">
-        <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
-        <AndromedaIcon size={14} mono />
-        <span className="flex-1">Andromeda</span>
-      </div>
+      <div className="relative">
+        {/* One vertical rail groups the systems under the pole header; it
+            replaces the elbow arrow that used to sit on every row. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800"
+        />
       <ul className="space-y-0.5">
           {SYSTEMS.map((system) => {
             // The system row never highlights: every page under it, the bare
@@ -174,18 +170,17 @@ export function DesignSystemsPole({
                       })
                       onNavigate?.()
                     }}
-                    className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-7 pr-2"
+                    className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-2 pr-2"
                   >
-                    {/* Arrow at pl-7 starts under the family row's brand mark,
-                        so Pro and Legacy read as children of Andromeda. */}
-                    <ArrowElbowDownRight
-                      weight="regular"
-                      size={12}
-                      className="shrink-0 text-sand-300 dark:text-sand-700"
-                    />
+                    {/* The two systems are the top rows of the pole now: each
+                        carries the Andromeda mark and its own full name. The
+                        gap keeps them clear of the group's vertical rail. */}
+                    <span aria-hidden className="w-3 shrink-0" />
+                    <span aria-hidden className="shrink-0">
+                      <AndromedaIcon size={14} mono />
+                    </span>
                     <span className="min-w-0 truncate font-semibold">
-                      <span className="sr-only">Andromeda </span>
-                      {system.short}
+                      {system.name}
                     </span>
                     <span aria-hidden className="flex">
                       <SystemTierChip tier={system.tier} />
@@ -210,7 +205,7 @@ export function DesignSystemsPole({
                     {/* Nesting rail — groups System / Brain / Templates / Components under Andromeda */}
                     <span
                       aria-hidden
-                      className="pointer-events-none absolute bottom-1 left-[35px] top-1 w-px bg-sand-200 dark:bg-sand-800"
+                      className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800"
                     />
                     <ul className="mt-0.5 space-y-0.5">
                     {/* ── Overview: the system's own landing page, above every
@@ -221,7 +216,7 @@ export function DesignSystemsPole({
                       <Link
                         href={`/design-systems/${system.slug}`}
                         onClick={onNavigate}
-                        className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                        className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                           pathname === `/design-systems/${system.slug}`
                             ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                             : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
@@ -238,7 +233,7 @@ export function DesignSystemsPole({
                         <Link
                           href={`/design-systems/${system.slug}/${section.slug}`}
                           onClick={onNavigate}
-                          className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                          className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                             pathname === `/design-systems/${system.slug}/${section.slug}`
                               ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                               : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
@@ -266,7 +261,7 @@ export function DesignSystemsPole({
                         <Link
                           href={`/design-systems/${system.slug}/brain`}
                           onClick={onNavigate}
-                          className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                          className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                             pathname === `/design-systems/${system.slug}/brain` ||
                             pathname.startsWith(`/design-systems/${system.slug}/brain/`)
                               ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
@@ -286,7 +281,7 @@ export function DesignSystemsPole({
                     )}
                     {/* ── Templates (label + flat list) ──────────── */}
                     <li className="mt-1">
-                      <div className="pt-1.5 pb-0.5 pl-12 pr-2 text-xxs uppercase tracking-wider text-sand-600 dark:text-sand-500">
+                      <div className="pt-1.5 pb-0.5 pl-7 pr-2 text-xxs uppercase tracking-wider text-sand-600 dark:text-sand-500">
                         Templates
                       </div>
                       <ul className="space-y-0.5">
@@ -297,7 +292,7 @@ export function DesignSystemsPole({
                               <Link
                                 href={`/design-systems/${system.slug}/templates/${t.slug}`}
                                 onClick={onNavigate}
-                                className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                                className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                                   isActive
                                     ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                                     : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
@@ -327,7 +322,7 @@ export function DesignSystemsPole({
                         so it overflows into the sidebar's own scroll (peeks on
                         tall screens, scroll for the rest). */}
                     <li className="mt-1">
-                      <div className="pt-1.5 pb-0.5 pl-12 pr-2 text-xxs uppercase tracking-wider text-sand-600 dark:text-sand-500">
+                      <div className="pt-1.5 pb-0.5 pl-7 pr-2 text-xxs uppercase tracking-wider text-sand-600 dark:text-sand-500">
                         Components
                       </div>
                       <ul className="space-y-0.5">
@@ -338,7 +333,7 @@ export function DesignSystemsPole({
                               <Link
                                 href={`/design-systems/${system.slug}/${c.slug}`}
                                 onClick={onNavigate}
-                                className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                                className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                                   isActive
                                     ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                                     : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
@@ -358,6 +353,7 @@ export function DesignSystemsPole({
             )
           })}
       </ul>
+      </div>
     </div>
   )
 }

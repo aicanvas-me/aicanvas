@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { ArrowElbowDownRight, CaretDown, DiamondsFour, GithubLogo, MagnifyingGlass, X, XLogo } from '@phosphor-icons/react'
+import { CaretDown, DiamondsFour, GithubLogo, MagnifyingGlass, X, XLogo } from '@phosphor-icons/react'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import type { ReactNode } from 'react'
 import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
@@ -171,6 +171,9 @@ export function Sidebar({
             'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
         }}
       >
+        {/* ── Design Systems pole (shared, identical on every page) ── */}
+        <DesignSystemsPole />
+
         {/* Tiered sections */}
         {SECTIONS.map((section) => {
           const isComponents = section.title === 'Components'
@@ -241,6 +244,10 @@ export function Sidebar({
               )}
 
               {!isCollapsed && !isDisabled && (
+                <div className="relative">
+                  {/* One vertical rail replaces the per-row elbow arrows: the
+                      line is the grouping cue, the rows stay uncluttered. */}
+                  <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
                 <ul className="space-y-0.5">
                   {/* Embedded mode shows an explicit "All Components" leaf since
                       the header is a collapse toggle, not a link to /components. */}
@@ -254,7 +261,7 @@ export function Sidebar({
                             : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                         }`}
                       >
-                        <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
+                        <span aria-hidden className="w-3 shrink-0" />
                         <span className="flex-1 truncate">All Components</span>
                       </Link>
                     </li>
@@ -275,7 +282,7 @@ export function Sidebar({
                               : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                           }`}
                         >
-                          <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
+                          <span aria-hidden className="w-3 shrink-0" />
                           <span className="flex-1">{label}</span>
                         </Link>
                       </li>
@@ -300,13 +307,11 @@ export function Sidebar({
                     </li>
                   )}
                 </ul>
+                </div>
               )}
             </div>
           )
         })}
-
-        {/* ── Design Systems pole (shared, identical on every page) ── */}
-        <DesignSystemsPole />
 
       </nav>
 

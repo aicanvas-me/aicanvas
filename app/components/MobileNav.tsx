@@ -9,7 +9,6 @@ import {
   X,
   GithubLogo,
   XLogo,
-  ArrowElbowDownRight,
   CaretDown,
   DiamondsFour,
   MagnifyingGlass,
@@ -207,6 +206,11 @@ export function MobileNav({
                     'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
                 }}
               >
+                {/* ── Design Systems pole (shared, identical to the desktop rail) ── */}
+                <DesignSystemsPole
+                  onNavigate={() => setOpen(false)}
+                />
+
                 {SECTIONS.map((section) => {
                   const isCollapsed = collapsed[section.title] ?? false
                   const isDisabled = section.disabled === true
@@ -255,6 +259,10 @@ export function MobileNav({
                       )}
 
                       {!isCollapsed && !isDisabled && (
+                        <div className="relative">
+                          {/* One vertical rail replaces the per-row elbow
+                              arrows, same as the desktop sidebar. */}
+                          <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
                         <ul className="space-y-0.5">
                           {catLabels.map((label) => {
                             const isActive = label === activeCategory
@@ -273,7 +281,7 @@ export function MobileNav({
                                       : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                                   }`}
                                 >
-                                  <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
+                                  <span aria-hidden className="w-3 shrink-0" />
                                   <span className="flex-1">{label}</span>
                                 </Link>
                               </li>
@@ -298,15 +306,11 @@ export function MobileNav({
                             </li>
                           )}
                         </ul>
+                        </div>
                       )}
                     </div>
                   )
                 })}
-
-                {/* ── Design Systems pole (shared, identical to the desktop rail) ── */}
-                <DesignSystemsPole
-                  onNavigate={() => setOpen(false)}
-                />
 
                 <div className="mb-3 h-px bg-sand-200 dark:bg-sand-800" />
                 <div className="mb-3">
