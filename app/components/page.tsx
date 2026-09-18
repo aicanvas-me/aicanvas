@@ -3,7 +3,7 @@ import { HomeClient } from './HomeClient'
 // Registry-free metadata so the grid never bundles the heavy registry
 // (three.js etc.); mirrors COMPONENTS.map(toMeta).
 import { COMPONENT_META } from '../lib/component-meta.generated'
-import { getCategoryByLabel } from '../lib/categories'
+import { getCategoryByLabel, COMPONENTS_SECTION_OVERLINE } from '../lib/categories'
 import { SITE_URL } from '../lib/config'
 
 const INDEX_TITLE = `All Components: Browse ${COMPONENT_META.length} Animated React Components`
@@ -67,7 +67,7 @@ export default async function ComponentsPage({
     category && category !== 'All Components'
       ? undefined
       : {
-          overline: 'Components & Blocks',
+          overline: COMPONENTS_SECTION_OVERLINE,
           h1: 'Animated React Components and Blocks',
           intro: `All ${COMPONENT_META.length} components and blocks in the AI Canvas registry, built with Tailwind CSS and Motion. Copy and paste, install with the shadcn CLI, or remix with AI.`,
         }
