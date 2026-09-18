@@ -5,7 +5,6 @@
 import { useState } from 'react'
 import { Bell, BookOpen, ChartLine, Compass, Gear, Pulse, Users } from '@phosphor-icons/react'
 import { Sidebar } from '../../../lib/andromeda-pro.generated'
-import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const NAV_ITEMS = [
@@ -27,8 +26,10 @@ const FOOTER_ITEMS = [
 // useState, mounted by the case.
 //
 // The rail has no intrinsic height of its own; it fills a console's full-height
-// left edge. So the case hands it a fixed-height row on the system's own
-// surface, which is what gives the full-height rail something to stand in.
+// left edge. So the case hands it a fixed-height frame to stand in — and one
+// that shrink-wraps its WIDTH, because the rail sizes itself and a full-width
+// wrapper would pad every case out with an empty console the component does
+// not have anything to say about.
 function LiveSidebar(props: Record<string, unknown>) {
   const [active, setActive] = useState('Overview')
   const items = NAV_ITEMS.map((item) => ({
@@ -40,10 +41,8 @@ function LiveSidebar(props: Record<string, unknown>) {
     <div
       style={{
         height: 480,
-        width: '100%',
-        display: 'flex',
+        display: 'inline-flex',
         flexDirection: 'row',
-        background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
       }}
     >
       <Sidebar title="Console" items={items} footerItems={FOOTER_ITEMS} {...props} />
