@@ -6,9 +6,8 @@ import { MagnifyingGlass, Sparkle, Ghost, Question } from '@phosphor-icons/react
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ComponentCard } from './ComponentCard'
-import { HeaderSocials } from './HeaderSocials'
 import { track } from '../lib/analytics'
-import { Breadcrumbs } from './Breadcrumbs'
+import { useTopBarLeft } from './TopBar'
 import { SiteFooter } from './SiteFooter'
 import { INITIAL_LOAD, LOAD_MORE_SIZE } from './LoadMore'
 import { LoadMore } from './LoadMore'
@@ -264,30 +263,21 @@ export function HomeClient({
   const EmptyIcon = EMPTY_BEATS[emptyIdx].Icon
   const emptyPhrase = EMPTY_BEATS[emptyIdx].phrase
 
+  // While a search is active the site top bar shows the live result count in
+  // place of the breadcrumb. The bar itself lives in the root layout; this is
+  // the one line of it this page owns.
+  useTopBarLeft(
+    q && !category ? (
+      <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
+        {totalResults} {totalResults === 1 ? 'result' : 'results'}
+        <span className="text-sand-600 dark:text-sand-500"> for </span>
+        <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
+      </p>
+    ) : null,
+  )
+
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-
-      {/* ── Top bar (desktop only — mobile uses MobileNav) ── */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
-        {q && !category ? (
-          <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
-            {totalResults} {totalResults === 1 ? 'result' : 'results'}
-            <span className="text-sand-600 dark:text-sand-500"> for </span>
-            <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
-          </p>
-        ) : (
-          <Breadcrumbs
-            crumbs={
-              // Root crumb names the whole grid: it lists components AND blocks,
-              // matching the sidebar's "Components & Blocks" entry.
-              category
-                ? [{ label: 'Components & Blocks', href: '/components' }, { label: category }]
-                : [{ label: 'Components & Blocks', href: '/components' }]
-            }
-          />
-        )}
-        <HeaderSocials />
-      </div>
 
       {/* ── Grid ── */}
       <div className="flex flex-1 flex-col bg-sand-50 px-4 pt-4 dark:bg-sand-950 md:px-6 md:pt-6">

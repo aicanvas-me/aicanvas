@@ -1,6 +1,5 @@
 import { type ReactNode } from 'react'
 import { JetBrains_Mono } from 'next/font/google'
-import { IdeationTopBar } from '../_components/IdeationTopBar'
 
 // Make JetBrains Mono available throughout the ideation subtree so any
 // Andromeda preview that references the --font-jetbrains-mono variable
@@ -29,10 +28,9 @@ export default function IdeationLayout({ children }: { children: ReactNode }) {
       // site theme the same way a preview box does, with a scoped `dark` class
       // rather than by touching <html>.
       data-owns-scroll
-      className={`dark flex h-full w-full flex-1 flex-col overflow-hidden bg-sand-950 md:flex-row ${jetbrainsMono.variable}`}
+      className={`dark flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-sand-950 md:flex-row ${jetbrainsMono.variable}`}
     >
       <div className="aic-page-scroll flex flex-1 scroll-smooth flex-col overflow-y-auto bg-sand-200 dark:bg-sand-950">
-        <IdeationTopBar />
         {children}
       </div>
     </div>

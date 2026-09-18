@@ -9,6 +9,7 @@ import './globals.css'
 import { ThemeProvider } from './components/ThemeProvider'
 import { Sidebar } from './components/Sidebar'
 import { MobileNav } from './components/MobileNav'
+import { TopBar, TopBarProvider } from './components/TopBar'
 import { SessionProvider } from './components/auth/SessionProvider'
 import { AuthModalProvider } from './components/auth/AuthModalProvider'
 import { PaywallModalProvider } from './components/billing/PaywallModalProvider'
@@ -232,6 +233,7 @@ export default async function RootLayout({
           <SessionProvider initialUser={user}>
             <AuthModalProvider>
              <PaywallModalProvider>
+             <TopBarProvider>
               {/* Desktop sidebar — hidden on mobile */}
               <Suspense fallback={null}>
                 <div className="hidden md:flex">
@@ -251,10 +253,18 @@ export default async function RootLayout({
                   than an inline style so the :has() release can out-specify
                   it; an inline declaration would always win. */}
               <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 dark:bg-sand-950">
+                {/* The one top bar, above every page's content and never
+                    remounted: a navigation swaps only what is below it. It
+                    reads the URL, so it sits inside the same Suspense the
+                    sidebar needs. */}
+                <Suspense fallback={null}>
+                  <TopBar />
+                </Suspense>
                 {children}
               </div>
               {/* Global auth dialog — toggles between sign-in and sign-up modes */}
               <AuthModal />
+             </TopBarProvider>
              </PaywallModalProvider>
             </AuthModalProvider>
           </SessionProvider>

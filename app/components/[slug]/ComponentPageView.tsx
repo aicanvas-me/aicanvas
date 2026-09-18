@@ -25,8 +25,6 @@ import {
 } from '@phosphor-icons/react'
 import type { Tag, Platform } from '../ComponentCard'
 import { isStackLabel, STACK_ICONS, stackIconWidthForHeight, type Stack } from '../../lib/stack'
-import { HeaderSocials } from '../HeaderSocials'
-import { Breadcrumbs } from '../Breadcrumbs'
 import { SiteFooter } from '../SiteFooter'
 import { PropsTable, type PropTable } from '../PropsTable'
 import { Step } from '../Step'
@@ -475,11 +473,6 @@ export default function ComponentPageView({
   return (
     <>
       {/* Top stripe — sticky (desktop only; mobile uses MobileNav) */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
-        <Breadcrumbs crumbs={[{ label: 'Components & Blocks', href: '/components' }, { label: name }]} />
-        <HeaderSocials />
-      </div>
-
       <main className="bg-sand-50 dark:bg-sand-950">
         <div className="relative mx-auto max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
 

@@ -20,16 +20,17 @@ const jetbrainsMono = JetBrains_Mono({
 export default function AndromedaLayout({ children }: { children: ReactNode }) {
   return (
     <div
-      // h-full + overflow-hidden means this fills the root chrome column
-      // exactly and can never overflow it, so that column must not reserve a
-      // scrollbar gutter it can never use. AndromedaContentColumn owns the
-      // scrolling here. See .app-scroll-column in globals.css.
+      // min-h-0 + flex-1 + overflow-hidden means this fills the root chrome
+      // column below the site top bar exactly and can never overflow it, so
+      // that column must not reserve a scrollbar gutter it can never use.
+      // AndromedaContentColumn owns the scrolling here. See .app-scroll-column
+      // in globals.css.
       // andromeda-theme-scope is where the light palette enters: globals.css
       // defines the --andromeda-theme-* channel under this class whenever the
       // site theme is light, so Andromeda follows the site toggle from the
       // first server paint. No scoped `dark` pin here anymore.
       data-owns-scroll
-      className={`andromeda-theme-scope flex h-full w-full flex-1 flex-col overflow-hidden md:flex-row ${jetbrainsMono.variable}`}
+      className={`andromeda-theme-scope flex min-h-0 w-full flex-1 flex-col overflow-hidden md:flex-row ${jetbrainsMono.variable}`}
     >
       {/* Mirrors the page theme into the phone-preview iframe. Renders nothing. */}
       <AndromedaThemeSync />
