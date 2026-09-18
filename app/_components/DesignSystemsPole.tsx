@@ -151,7 +151,7 @@ export function DesignSystemsPole({
                     link is not valid markup, so they sit side by side and
                     share the row's hover ground. */}
                 <div
-                  className="group flex items-center gap-1 rounded-md text-sm font-medium text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
+                  className="group flex items-center gap-1 rounded-md pr-1.5 text-sm font-medium text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                 >
                   <Link
                     href={`/design-systems/${system.slug}`}
@@ -188,7 +188,7 @@ export function DesignSystemsPole({
                     </span>
                     {system.badge && (
                       <span aria-hidden className="flex">
-                        <SystemTierChip tier={system.tier} label={system.badge} />
+                        <SystemTierChip tier={system.tier} label={system.badge} className="!px-1" />
                       </span>
                     )}
                   </Link>
@@ -197,7 +197,7 @@ export function DesignSystemsPole({
                     onClick={() => setOpen((o) => ({ ...o, [system.slug]: !expanded }))}
                     aria-expanded={expanded}
                     aria-label={`${expanded ? 'Collapse' : 'Expand'} ${system.name}`}
-                    className="-mr-0.5 shrink-0 rounded p-0.5 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-100"
+                    className="shrink-0 rounded p-0.5 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-100"
                   >
                     <CaretDown
                       size={12}
