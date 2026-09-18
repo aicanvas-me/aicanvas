@@ -455,6 +455,20 @@ const templateArt = (folder: string) =>
 // Keep the two in sync (fixed set, changes rarely).
 export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
   {
+    folder: 'city-operations',
+    name: 'City Operations',
+    description:
+      'A city operations centre: a live incident map, air and traffic readings, an alert queue, and response trends.',
+    image: templateArt('city-operations'),
+  },
+  {
+    folder: 'signal-room',
+    name: 'Signal Room',
+    description:
+      'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
+    image: templateArt('signal-room'),
+  },
+  {
     folder: 'mission-control',
     name: 'Mission Control',
     description:
@@ -473,20 +487,6 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
     description:
       'Capacity, allocation trend, and request triage across teams on one planning board.',
     image: templateArt('resource-planning'),
-  },
-  {
-    folder: 'signal-room',
-    name: 'Signal Room',
-    description:
-      'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
-    image: templateArt('signal-room'),
-  },
-  {
-    folder: 'city-operations',
-    name: 'City Operations',
-    description:
-      'A city operations centre: a live incident map, air and traffic readings, an alert queue, and response trends.',
-    image: templateArt('city-operations'),
   },
 ]
 

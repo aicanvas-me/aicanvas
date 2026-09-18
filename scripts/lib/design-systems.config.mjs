@@ -244,11 +244,13 @@ export const DESIGN_SYSTEMS = [
       'components/UserMenu.tsx': 'examples/_usage/UserMenuExample.tsx',
     },
     templates: [
+      // Order here IS the order the overview bento shows. The first one also
+      // takes the lead slot, which spans both columns.
+      { slug: 'andromeda-pro-city-operations',   name: 'City Operations',   domain: 'Civic',      entryPath: 'examples/city-operations/index.tsx' },
+      { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       domain: 'Audio',      entryPath: 'examples/signal-room/index.tsx' },
       { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi',     entryPath: 'examples/mission-control/index.tsx' },
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     domain: 'Telecom',    entryPath: 'examples/service-order/index.tsx' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', domain: 'Operations', entryPath: 'examples/resource-planning/index.tsx' },
-      { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       domain: 'Audio',      entryPath: 'examples/signal-room/index.tsx' },
-      { slug: 'andromeda-pro-city-operations',   name: 'City Operations',   domain: 'Civic',      entryPath: 'examples/city-operations/index.tsx' },
     ],
   },
 ]
