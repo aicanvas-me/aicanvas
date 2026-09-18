@@ -202,15 +202,29 @@ export function Sidebar({
           return (
             <div key={section.title} className="mb-3">
               {isComponents && embedded ? (
-                <button
-                  type="button"
-                  onClick={toggleComponents}
-                  className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-                >
-                  <span>{section.icon}</span>
-                  <span className="flex-1 whitespace-nowrap text-left">Components &amp; Blocks</span>
-                  <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />
-                </button>
+                /* Two targets on one row, the same shape a system row uses:
+                   the name opens All Components and expands the list, the caret
+                   only opens or closes it in place. It used to be one button
+                   that merely expanded, so the header led nowhere. */
+                <div className="group mb-1 flex items-center gap-1 rounded-md pr-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100">
+                  <Link
+                    href="/components"
+                    onClick={() => setCollapsedComponents(false)}
+                    className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-2 pr-0"
+                  >
+                    <span>{section.icon}</span>
+                    <span className="flex-1 whitespace-nowrap text-left">Components &amp; Blocks</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={toggleComponents}
+                    aria-expanded={!isCollapsed}
+                    aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} Components & Blocks`}
+                    className="shrink-0 rounded p-0.5 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-100"
+                  >
+                    <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />
+                  </button>
+                </div>
               ) : isComponents ? (
                 <Link
                   href="/components"
