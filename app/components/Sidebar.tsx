@@ -182,8 +182,13 @@ export function Sidebar({
           const catLabels = section.labels
           const hideCatsFrom =
             isComponents && promoteDS && !showAllCats ? 4 : Infinity
-          const hasHiddenCats =
-            isComponents && promoteDS && section.labels.length > 4
+          // Count what the cap ACTUALLY hides: the active category stays
+          // visible past the cap, so a plain length - 4 overcounts by one
+          // whenever you are inside one of the capped categories.
+          const hiddenCatCount = catLabels.filter(
+            (label, i) => i >= hideCatsFrom && label !== activeCategory,
+          ).length
+          const hasHiddenCats = isComponents && promoteDS && hiddenCatCount > 0
 
           return (
             <div key={section.title} className="mb-3">
@@ -300,7 +305,7 @@ export function Sidebar({
                     className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
                   />
                   <span className="flex-1 text-left">
-                    {showAllCats ? 'Show less' : `Show ${section.labels.length - 4} more`}
+                    {showAllCats ? 'Show less' : `Show ${hiddenCatCount} more`}
                   </span>
                 </button>
               )}

@@ -848,7 +848,7 @@ export function BrainStoryV4() {
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
             Tokens and components are the pieces. The brain is the judgment.
           </p>
-          <PageLead className="dark:text-sand-300">
+          <PageLead tone="body">
             It assembles them: every foundation, component rule, skill and tool your AI agent reads, so what it builds already matches the system instead of a guess.
           </PageLead>
           <div className="mt-6 flex flex-wrap gap-3">

@@ -991,7 +991,7 @@ export function BrainStoryV4() {
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
             Components are the pieces. The Brain is the judgment.
           </p>
-          <PageLead className="dark:text-sand-300">{HERO_BODY}</PageLead>
+          <PageLead tone="body">{HERO_BODY}</PageLead>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href={ctaHref} className={BTN_PRIMARY}>
               {ctaLabel}

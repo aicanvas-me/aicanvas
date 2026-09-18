@@ -214,7 +214,7 @@ export function OverviewB({
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
             See all of it running. Take it home with Premium.
           </p>
-          <PageLead className="dark:text-sand-300">
+          <PageLead tone="body">
             {/* One string, not numbers interleaved with JSX text: the split form
                 hydrated with the space before "templates" missing on the server. */}
             {`${stats.components} components, ${stats.variants} variants and ${stats.templates} templates for any product UI, in light and dark. Every one runs on this site for free. Premium adds the code, the CLI install, the remix prompts, the Brain's rule files and template installs.`}

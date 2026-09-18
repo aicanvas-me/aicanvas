@@ -70,14 +70,29 @@ export function PageTitle({
   )
 }
 
-// The lead paragraph under the title. Dark defaults to sand-400, the value the
-// per-page leads carried before they shared this component; dark is the default
-// theme and unifying these must not lighten it. The four HERO leads (the two
-// system overviews and the two brain pages) were sand-300 and pass that back in,
-// because a hero lead is body copy, not a secondary line.
-export function PageLead({ children, className = '' }: { children: ReactNode; className?: string }) {
+// The lead paragraph under the title. `tone` picks the dark value, because dark
+// is the default theme and unifying these leads must not lighten any of them:
+// most pages carried sand-400, the four hero leads (the two system overviews and
+// the two brain pages) carried sand-300, and a hero lead is body copy rather than
+// a secondary line. It is a prop and not a className override on purpose: both
+// classes have the same specificity, so appending one would leave the winner to
+// stylesheet order rather than to the caller.
+const LEAD_TONE = {
+  secondary: 'text-sand-700 dark:text-sand-400',
+  body: 'text-sand-700 dark:text-sand-300',
+} as const
+
+export function PageLead({
+  children,
+  tone = 'secondary',
+  className = '',
+}: {
+  children: ReactNode
+  tone?: keyof typeof LEAD_TONE
+  className?: string
+}) {
   return (
-    <p className={`mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-400 ${className}`}>
+    <p className={`mt-4 max-w-xl text-base leading-relaxed ${LEAD_TONE[tone]} ${className}`}>
       {children}
     </p>
   )

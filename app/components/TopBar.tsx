@@ -41,7 +41,7 @@ export function TopBarProvider({ children }: { children: ReactNode }) {
 // it, so wrap anything but null in a useMemo keyed on the values it reads.
 // Writing the override changes the context this hook subscribes to, which
 // re-renders the caller; a fresh element each time would feed the effect its
-// own write and never settle. app/components/TopBar.test.ts guards this.
+// own write and never settle. app/components/TopBar.test.tsx guards this.
 export function useTopBarLeft(node: ReactNode | null) {
   // The context VALUE is deliberately not a dependency: only the setter, which
   // is stable, plus the inputs that decide what the override should be.

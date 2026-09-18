@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { Sparkle } from '@phosphor-icons/react/dist/ssr'
 import { InstallCards } from './InstallCards'
 import { SiteFooter } from '../components/SiteFooter'
