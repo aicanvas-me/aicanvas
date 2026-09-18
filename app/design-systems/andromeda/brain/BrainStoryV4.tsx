@@ -24,7 +24,6 @@ import { Rotate3d } from 'lucide-react'
 import { ArrowRight, Fire, Target, Gauge, Check, X as XIcon } from '@phosphor-icons/react'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
-import { HeaderSocials } from '@/app/components/HeaderSocials'
 import { SiteFooter } from '@/app/components/SiteFooter'
 import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
@@ -843,21 +842,6 @@ export function BrainStoryV4() {
         .brain-wire { filter: invert(1) hue-rotate(180deg) brightness(1.06); mix-blend-mode: multiply; }
         .dark .brain-wire { filter: none; mix-blend-mode: normal; }
       `}</style>
-      {/* top tab — left-aligned breadcrumb (Andromeda -> overview, current page
-          in olive), consistent with the content pages' breadcrumb pattern. */}
-      <header className="sticky top-0 z-50 hidden h-14 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 md:flex dark:border-sand-800 dark:bg-sand-950">
-        <nav aria-label="Breadcrumb" className="min-w-0 truncate text-sm font-semibold">
-          <Link href="/design-systems/andromeda" className="text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100">
-            Andromeda
-          </Link>
-          <span className="mx-1 text-sand-400 dark:text-sand-600">/</span>
-          <span className="text-olive-600 dark:text-olive-500">Andromeda Brain</span>
-        </nav>
-        <div className="flex items-center justify-end">
-          <HeaderSocials />
-        </div>
-      </header>
-
       <Container className="pt-10 sm:pt-16">
         {/* ── Hero, in the Pro brain hero's shape: left-aligned text block,
             then the stage below it as a bordered card ── */}

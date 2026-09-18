@@ -62,3 +62,35 @@ describe('sidebar single-instance contract', () => {
     }
   })
 })
+
+describe('top bar single-instance contract', () => {
+  it('only app/layout.tsx renders a <TopBar>', () => {
+    const offenders = walk(join(root, 'app'))
+      .filter((f) => /<TopBar[ />]/.test(readFileSync(f, 'utf8')))
+      .map((f) => f.slice(root.length + 1))
+
+    expect(offenders).toEqual(['app/layout.tsx'])
+  })
+
+  it('the old per-page bar signature (h-14 shrink-0 + border-b border-sand-200 on one line) only survives in the shell, the template shell and the lab', () => {
+    // Not a page top bar: the sidebar's own logo block is h-14 to match the
+    // bar's height (see TopBar.tsx's comment), and it carries the same two
+    // substrings by coincidence, not because it is a copy of the removed bar.
+    const ALLOWED = [
+      'app/_components/TemplatePreviewShell.tsx',
+      'app/components/Sidebar.tsx',
+      'app/components/TopBar.tsx',
+    ]
+
+    const offenders = walk(join(root, 'app'))
+      .filter((f) =>
+        readFileSync(f, 'utf8')
+          .split('\n')
+          .some((line) => line.includes('h-14 shrink-0') && line.includes('border-b border-sand-200')),
+      )
+      .map((f) => f.slice(root.length + 1))
+      .sort()
+
+    expect(offenders).toEqual([...ALLOWED].sort())
+  })
+})

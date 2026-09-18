@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { CheckCircle } from '@phosphor-icons/react'
 import { Button } from '../components/Button'
 import { SiteFooter } from '../components/SiteFooter'
-import { HeaderSocials } from '../components/HeaderSocials'
 
 // ─── /contact ─────────────────────────────────────────────────────────────────
 // The public contact form. Posts {name, email, message} to /api/contact, which
@@ -57,19 +56,6 @@ export default function ContactPage() {
 
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-      <header className="sticky top-0 z-50 hidden h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:grid">
-        <div />
-        <Link
-          href="/contact"
-          className="text-sm font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-400"
-        >
-          /Contact
-        </Link>
-        <div className="flex items-center justify-end">
-          <HeaderSocials />
-        </div>
-      </header>
-
       <main className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         <div className="flex-1">
           <p className="mb-6 text-sm font-semibold md:hidden">

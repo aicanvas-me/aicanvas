@@ -1,9 +1,7 @@
 'use client'
 
-import Link from 'next/link'
 import { CONTACT_EMAIL } from '../lib/config'
 import { SiteFooter } from '../components/SiteFooter'
-import { HeaderSocials } from '../components/HeaderSocials'
 
 // ─── /privacy ─────────────────────────────────────────────────────────────────
 // Datenschutzerklärung — Art. 13 GDPR notice. Trimmed to the strict minimum:
@@ -17,16 +15,6 @@ import { HeaderSocials } from '../components/HeaderSocials'
 export default function PrivacyPage() {
   return (
     <div className="min-h-full bg-sand-50 dark:bg-sand-950">
-      <header className="sticky top-0 z-50 hidden h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 dark:border-sand-800 bg-sand-50 dark:bg-sand-950 px-6 md:grid">
-        <div />
-        <Link href="/privacy" className="text-sm font-semibold text-olive-600 dark:text-olive-500 transition-colors hover:text-olive-800 dark:hover:text-olive-400">
-          /Privacy
-        </Link>
-        <div className="flex items-center justify-end">
-          <HeaderSocials />
-        </div>
-      </header>
-
       <main className="relative mx-auto max-w-3xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         <p className="mb-6 text-sm font-semibold md:hidden">
           <span className="text-olive-600 dark:text-olive-500">/Privacy</span>

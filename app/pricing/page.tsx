@@ -6,7 +6,6 @@ import Link from 'next/link'
 import { CheckCircle, Sparkle } from '@phosphor-icons/react'
 import type { ComponentType, ReactNode } from 'react'
 import { buttonClasses } from '../components/buttonClasses'
-import { HeaderSocials } from '../components/HeaderSocials'
 import { SiteFooter } from '../components/SiteFooter'
 import { TerminatorCool } from '../components/auth/TerminatorReveal'
 import { premiumEnabled } from '../../lib/flags'
@@ -216,20 +215,6 @@ export default function PricingPage() {
   const premium = premiumEnabled()
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-      {/* ── Top bar — mirrors /About: olive /Pricing centered, HeaderSocials right ── */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:grid">
-        <div />
-        <Link
-          href="/pricing"
-          className="text-sm font-semibold text-olive-600 transition-colors dark:text-olive-500 dark:hover:text-olive-400"
-        >
-          /Pricing
-        </Link>
-        <div className="flex justify-end">
-          <HeaderSocials />
-        </div>
-      </div>
-
       <main className="relative mx-auto w-full max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         {/* Mobile breadcrumb */}
         <p className="mb-6 text-sm font-semibold md:hidden">

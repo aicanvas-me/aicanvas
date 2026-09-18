@@ -57,7 +57,9 @@ export function TopBar() {
 
   // Routes that carry no site chrome: the lab has its own bar, and template
   // leaves are full-screen compositions. The sidebar hides on the same two.
-  if (pathname.startsWith('/lab') || TEMPLATE_LEAF_RE.test(pathname)) return null
+  // /kuendigen still draws its own bar: that page is the legal cancellation
+  // flow and is frozen as shipped, so the shell steps aside there.
+  if (pathname.startsWith('/lab') || pathname === '/kuendigen' || TEMPLATE_LEAF_RE.test(pathname)) return null
 
   const override = ctx?.override && ctx.override.pathname === pathname ? ctx.override.node : undefined
   const crumbs = buildTopBarCrumbs(pathname)
