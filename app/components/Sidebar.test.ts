@@ -60,6 +60,14 @@ describe('sidebar single-instance contract', () => {
       const src = readFileSync(join(root, layout), 'utf8')
       expect(src, `${layout} should still carry data-owns-scroll`).toContain('data-owns-scroll')
     }
+    // The attribute alone does not make it true. The page slot in the root
+    // layout must keep min-h-0: a flex item's automatic minimum is its content,
+    // so without it the slot grows to the whole page, these layouts stop
+    // clipping, and the chrome column takes the scroll they declare they own.
+    const rootLayout = readFileSync(join(root, 'app/layout.tsx'), 'utf8')
+    expect(rootLayout, 'the page slot must keep min-h-0').toMatch(
+      /className="flex min-h-0 flex-1 flex-col">\{children\}/,
+    )
   })
 })
 

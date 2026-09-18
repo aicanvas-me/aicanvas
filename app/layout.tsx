@@ -264,9 +264,15 @@ export default async function RootLayout({
                     roots ask for min-h-full, and the column is a flex item of
                     the full-height body, so without this wrapper that 100%
                     resolved against the whole viewport and every short page
-                    scrolled by exactly the bar's height. flex-1 keeps its auto
-                    minimum, so a long page still grows past it. */}
-                <div className="flex flex-1 flex-col">{children}</div>
+                    scrolled by exactly the bar's height.
+                    min-h-0 is load-bearing: a flex item's automatic minimum is
+                    its content, which would grow this slot to the full page
+                    height, stop every overflow-hidden layout root below from
+                    clipping, and hand the scroll to this column instead of to
+                    the page that declares data-owns-scroll. A long page still
+                    scrolls: its overflow is visible and this column is the
+                    scroller. */}
+                <div className="flex min-h-0 flex-1 flex-col">{children}</div>
               </div>
               {/* Global auth dialog — toggles between sign-in and sign-up modes */}
               <AuthModal />
