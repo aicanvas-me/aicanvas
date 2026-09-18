@@ -62,9 +62,9 @@ export function AndromedaGallery({
           {components.length > 0 ? `${components.length} components.` : 'Every component.'}
         </PageTitle>
         <PageLead>
-          Andromeda is a React system for dense operational interfaces: corner-marker framing,
-          mono typography, and a token layer every component reads at runtime. Each one below
-          ships its variants and its interaction states.
+          Andromeda Pro is a React system for any product UI, in light and dark: corner-marker
+          framing and a token layer every component reads at runtime. Each one below ships its
+          variants and its interaction states.
         </PageLead>
 
         <label className="mt-8 flex max-w-md items-center gap-3 rounded-xl border border-sand-300 bg-sand-100 px-4 py-3 transition-colors hover:border-sand-400 focus-within:border-olive-500 focus-within:ring-2 focus-within:ring-olive-500/20 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600">
