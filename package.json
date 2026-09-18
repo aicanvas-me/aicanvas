@@ -43,7 +43,7 @@
     "framer-motion": "^12.38.0",
     "geist": "^1.7.0",
     "lucide-react": "^1.7.0",
-    "maplibre-gl": "^6.10.0",
+    "maplibre-gl": "^5.24.0",
     "matter-js": "^0.20.0",
     "mediabunny": "^1.45.2",
     "next": "16.2.9",
