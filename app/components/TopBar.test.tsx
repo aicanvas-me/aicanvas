@@ -9,6 +9,8 @@
 import { describe, it, expect } from 'vitest'
 import { createElement as h, act, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { TopBarProvider, useTopBarLeft } from './TopBar'
 
 const RENDER_CEILING = 200
@@ -49,5 +51,19 @@ describe('useTopBarLeft', () => {
     // The shape this test exists to forbid. Any caller that looks like this is
     // the bug, not the hook.
     expect(rendersUntilSettled(() => h('p', null, '3 results'))).toBeGreaterThan(5)
+  })
+})
+
+// The tests above prove the hook's contract. This one fences the caller that
+// broke it: HomeClient must hand useTopBarLeft a memoised identifier, never an
+// expression that builds a new element on every render.
+describe('HomeClient honours the useTopBarLeft contract', () => {
+  it('passes a memoised identifier, not an inline expression', () => {
+    const src = readFileSync(join(__dirname, 'HomeClient.tsx'), 'utf8')
+    const call = src.match(/useTopBarLeft\(([^)]*)\)/)
+    expect(call, 'HomeClient no longer calls useTopBarLeft').not.toBeNull()
+    const arg = call![1].trim()
+    expect(arg, 'the argument must be a plain identifier').toMatch(/^[A-Za-z_$][\w$]*$/)
+    expect(src).toMatch(new RegExp(`const ${arg} = useMemo\\(`))
   })
 })

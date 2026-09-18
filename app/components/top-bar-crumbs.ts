@@ -1,5 +1,6 @@
 import type { Crumb } from './Breadcrumbs'
 import { CATEGORIES } from '../lib/categories'
+import { COLLECTIONS } from '../lib/collections'
 import { COMPONENT_NAMES } from '../lib/component-nav.generated'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
@@ -98,6 +99,14 @@ export function buildTopBarCrumbs(pathname: string): Crumb[] | null {
   if (categoryMatch) {
     const cat = CATEGORIES.find((c) => c.slug === categoryMatch[1])
     return [COMPONENTS, { label: cat?.label ?? prettify(categoryMatch[1]) }]
+  }
+  // Collections sit under /components/collection/<slug>, but there is no index
+  // at /components/collection, so this must not fall through to the generic
+  // segment walk: that would hand 8 indexed pages a crumb linking to a 404.
+  const collectionMatch = path.match(/^\/components\/collection\/([^/]+)$/)
+  if (collectionMatch) {
+    const col = COLLECTIONS.find((c) => c.slug === collectionMatch[1])
+    return [COMPONENTS, { label: col?.h1 ?? prettify(collectionMatch[1]) }]
   }
   const componentMatch = path.match(/^\/components\/([^/]+)$/)
   if (componentMatch) {

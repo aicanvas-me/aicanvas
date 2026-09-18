@@ -383,7 +383,8 @@ export default function AndromedaShowcase({
         {/* Page header — AI Canvas site style (Manrope), not the Andromeda mono
             aesthetic of the demos below. Site sand/olive pairs so the header follows
             the site theme like the rest of the page. */}
-        <header style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
+        {/* A div, not a header: the site bar is the page's banner landmark. */}
+        <div style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
           <PageOverline>Andromeda</PageOverline>
           <PageTitle>System</PageTitle>
           <PageLead>
@@ -401,7 +402,7 @@ export default function AndromedaShowcase({
           >
             {componentCount} components · {templateCount} templates · 1 brain · one-command install
           </div>
-        </header>
+        </div>
 
         {/* ── Colors ─────────────────────────────────────────────────────── */}
         <Section

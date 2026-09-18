@@ -70,9 +70,11 @@ export function PageTitle({
   )
 }
 
-// The lead paragraph under the title. Dark stays on sand-400, the value every
-// page's lead already carried before they shared this component: dark is the
-// default theme and unifying these must not lighten it.
+// The lead paragraph under the title. Dark defaults to sand-400, the value the
+// per-page leads carried before they shared this component; dark is the default
+// theme and unifying these must not lighten it. The four HERO leads (the two
+// system overviews and the two brain pages) were sand-300 and pass that back in,
+// because a hero lead is body copy, not a secondary line.
 export function PageLead({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
     <p className={`mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-400 ${className}`}>

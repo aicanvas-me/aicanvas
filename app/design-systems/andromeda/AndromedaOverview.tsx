@@ -276,7 +276,7 @@ export function AndromedaOverview() {
           <PageTitle className="mt-0">{ANDROMEDA_META.name}</PageTitle>
           <SystemTierChip tier="mit" label="MIT License" />
         </div>
-        <PageLead>
+        <PageLead className="dark:text-sand-300 sm:text-lg">
           A complete design system for dashboards, control panels, data-dense tools, and anything
           else you can picture. Every component is driven by tokens, so you ship a coherent,
           technical interface fast.
