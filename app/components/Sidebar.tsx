@@ -313,17 +313,18 @@ export function Sidebar({
           )
         })}
 
-      </nav>
-
-      {/* ── Pinned secondary nav — stays on screen while the scroll region
-             above scrolls the long Andromeda component list ── */}
-      <div className="shrink-0 px-3 pt-2 pb-1">
-        {/* Inset divider (padded left/right via the container's px-3) */}
-        <div className="mb-2 border-t border-sand-200 dark:border-sand-800" />
-        <div className="space-y-0.5">
-          <SecondaryNav pathname={pathname} variant="rail" />
+        {/* ── Secondary nav — scrolls with the rail instead of sitting pinned,
+               so the navigation reads as one list that simply runs on. The
+               mobile drawer has always worked this way. ── */}
+        <div className="pt-2">
+          {/* Inset divider (padded left/right via the nav's px-3) */}
+          <div className="mb-2 border-t border-sand-200 dark:border-sand-800" />
+          <div className="space-y-0.5">
+            <SecondaryNav pathname={pathname} variant="rail" />
+          </div>
         </div>
-      </div>
+
+      </nav>
 
       {/* ── Social icons ── */}
       {/* GitHub + X moved here from the page header so the top-right can
