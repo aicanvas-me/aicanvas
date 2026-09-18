@@ -34,6 +34,7 @@ import { radarChart } from './chart-radar'
 import { radio } from './radio'
 import { searchField } from './search-field'
 import { segmentedControl } from './segmented-control'
+import { sidebar } from './sidebar'
 import { slider } from './slider'
 import { spinner } from './spinner'
 import { statTile } from './stat-tile'
@@ -55,7 +56,7 @@ export const SPECS: readonly MatrixSpec[] = [
   cornerMarkers, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,
   gauge, heatGrid, iconButton, input, mediaCard,
   metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet,
-  progressBar, radarChart, radio, searchField, segmentedControl, slider, spinner,
+  progressBar, radarChart, radio, searchField, segmentedControl, sidebar, slider, spinner,
   statTile, tag, textarea, toggle, tooltip, topBar, trendChart, userCard,
   userMenu, waveform,
 ]

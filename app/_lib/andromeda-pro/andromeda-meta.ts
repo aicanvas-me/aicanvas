@@ -269,6 +269,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/segmented-control.png?v=3',
   },
   {
+    slug: 'sidebar',
+    name: 'Sidebar',
+    description:
+      'Navigates a console from a left rail that folds between labelled rows and icons.',
+    sourceFile: 'Sidebar.tsx',
+  },
+  {
     slug: 'slider',
     name: 'Slider',
     description:

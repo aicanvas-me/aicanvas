@@ -211,6 +211,7 @@ export const DESIGN_SYSTEMS = [
       'components/Radio.tsx',
       'components/SearchField.tsx',
       'components/SegmentedControl.tsx',
+      'components/Sidebar.tsx',
       'components/Slider.tsx',
       'components/Spinner.tsx',
       'components/StatTile.tsx',
