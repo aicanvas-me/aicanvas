@@ -267,15 +267,23 @@ export function HomeClient({
   // While a search is active the site top bar shows the live result count in
   // place of the breadcrumb. The bar itself lives in the root layout; this is
   // the one line of it this page owns.
-  useTopBarLeft(
-    q && !category ? (
-      <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
-        {totalResults} {totalResults === 1 ? 'result' : 'results'}
-        <span className="text-sand-600 dark:text-sand-500"> for </span>
-        <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
-      </p>
-    ) : null,
+  //
+  // The node MUST keep its identity between renders that did not change it.
+  // useTopBarLeft stores it in context, and this page reads that same context,
+  // so a fresh element on every render would feed the effect its own write and
+  // never settle. Keying the memo on the primitives is what stops that.
+  const searchCount = useMemo(
+    () =>
+      q && !category ? (
+        <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
+          {totalResults} {totalResults === 1 ? 'result' : 'results'}
+          <span className="text-sand-600 dark:text-sand-500"> for </span>
+          <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
+        </p>
+      ) : null,
+    [q, category, totalResults, query],
   )
+  useTopBarLeft(searchCount)
 
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">

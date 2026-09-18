@@ -36,10 +36,15 @@ export function TopBarProvider({ children }: { children: ReactNode }) {
 // Replaces the bar's left side for as long as the calling page is mounted.
 // Pass null to fall back to the URL-derived crumbs. Runs as a layout effect so
 // the swap lands before the browser paints.
+//
+// CONTRACT: `node` must keep its identity between renders that did not change
+// it, so wrap anything but null in a useMemo keyed on the values it reads.
+// Writing the override changes the context this hook subscribes to, which
+// re-renders the caller; a fresh element each time would feed the effect its
+// own write and never settle. app/components/TopBar.test.ts guards this.
 export function useTopBarLeft(node: ReactNode | null) {
-  // Only the setter goes into the effect's dependencies: it is stable, while
-  // the context value changes on every override, and depending on that would
-  // loop the effect against its own write.
+  // The context VALUE is deliberately not a dependency: only the setter, which
+  // is stable, plus the inputs that decide what the override should be.
   const setOverride = useContext(TopBarContext)?.setOverride
   const pathname = usePathname() ?? '/'
   useLayoutEffect(() => {
@@ -66,7 +71,7 @@ export function TopBar() {
   const slot = installSlotId(pathname)
 
   return (
-    <div className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
+    <header className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
       <div className="min-w-0 flex-1">
         {override !== undefined ? override : crumbs ? <Breadcrumbs crumbs={crumbs} /> : null}
       </div>
@@ -77,6 +82,6 @@ export function TopBar() {
         {slot && <div id={slot} />}
         <TopAuthPill />
       </div>
-    </div>
+    </header>
   )
 }
