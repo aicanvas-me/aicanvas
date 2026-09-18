@@ -214,11 +214,7 @@ export function Sidebar({
               ) : isComponents ? (
                 <Link
                   href="/components"
-                  className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                    activeCategory === 'All Components'
-                      ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                  }`}
+                  className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                 >
                   <span>{section.icon}</span>
                   <span className="flex-1 whitespace-nowrap">Components &amp; Blocks</span>
@@ -249,9 +245,11 @@ export function Sidebar({
                       line is the grouping cue, the rows stay uncluttered. */}
                   <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
                 <ul className="space-y-0.5">
-                  {/* Embedded mode shows an explicit "All Components" leaf since
-                      the header is a collapse toggle, not a link to /components. */}
-                  {isComponents && embedded && (
+                  {/* "All Components" is always its own leaf. It used to exist
+                      only in embedded mode, so clicking it from a design-system
+                      page landed on /components and the row you just clicked
+                      vanished, with the section header lit instead. */}
+                  {isComponents && (
                     <li>
                       <Link
                         href="/components"

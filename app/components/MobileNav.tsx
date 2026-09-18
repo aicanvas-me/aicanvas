@@ -233,11 +233,7 @@ export function MobileNav({
                         <Link
                           href="/components"
                           onClick={() => setOpen(false)}
-                          className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                            activeCategory === 'All Components'
-                              ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                              : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                          }`}
+                          className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                         >
                           <span>{section.icon}</span>
                           <span className="flex-1 whitespace-nowrap">Components &amp; Blocks</span>
@@ -268,6 +264,24 @@ export function MobileNav({
                               arrows, same as the desktop sidebar. */}
                           <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
                         <ul className="space-y-0.5">
+                          {/* "All Components" is its own leaf here too, so the
+                              drawer and the desktop rail list the same rows. */}
+                          {isComponents && (
+                            <li>
+                              <Link
+                                href="/components"
+                                onClick={() => setOpen(false)}
+                                className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
+                                  activeCategory === 'All Components'
+                                    ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                                    : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                                }`}
+                              >
+                                <span aria-hidden className="w-3 shrink-0" />
+                                <span className="flex-1">All Components</span>
+                              </Link>
+                            </li>
+                          )}
                           {catLabels.map((label) => {
                             const isActive = label === activeCategory
                             const cat = getCategoryByLabel(label)
