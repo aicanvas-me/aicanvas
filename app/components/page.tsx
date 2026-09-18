@@ -61,6 +61,8 @@ export default async function ComponentsPage({
       ? COMPONENT_META.filter((c) => c.tags.some((t) => t.accent && t.label === category))
       : COMPONENT_META
 
+  const mitCount = COMPONENT_META.filter((c) => c.badge !== 'Premium').length
+
   // The legacy ?category= filter shows a subset, so the all-components heading
   // would misdescribe the page; that variant canonicalises to the category page.
   const heading =
@@ -68,8 +70,10 @@ export default async function ComponentsPage({
       ? undefined
       : {
           overline: COMPONENTS_SECTION_OVERLINE,
-          h1: 'Animated React Components and Blocks',
-          intro: `All ${COMPONENT_META.length} components and blocks in the AI Canvas registry, built with Tailwind CSS and Motion. Copy and paste, install with the shadcn CLI, or remix with AI.`,
+          h1: 'One command installs it. One prompt rebuilds it.',
+          // The count and the licence must agree: injected premium entries also
+          // sit in the grid, and they are not MIT.
+          intro: `${mitCount} standalone React components and blocks, MIT, built with Tailwind CSS and Motion. Every one installs with the shadcn CLI and ships a remix prompt written for AI coding tools, so you or your agent can drop it in or make it yours.`,
         }
 
   return <HomeClient components={filtered} heading={heading} />
