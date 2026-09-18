@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { CaretDown, Cube, Lightning } from '@phosphor-icons/react'
+import { CaretDown, Cube, Sparkle } from '@phosphor-icons/react'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
@@ -240,18 +240,10 @@ export function DesignSystemsPole({
                           }`}
                         >
                           <span className="flex-1 truncate">{section.label}</span>
-                          {/* Lightning marks premium (install is premium). */}
-                          {section.premium && (
-                            <>
-                              <Lightning
-                                weight="regular"
-                                size={13}
-                                aria-hidden
-                                className="ml-auto shrink-0 text-sand-600 dark:text-sand-500"
-                              />
-                              <span className="sr-only">Premium</span>
-                            </>
-                          )}
+                          {/* No premium mark on the row: the tier is said once
+                              on the system row's chip. Still spoken, so the
+                              information is not lost to a screen reader. */}
+                          {section.premium && <span className="sr-only">Premium</span>}
                         </Link>
                       </li>
                     ))}
@@ -269,7 +261,9 @@ export function DesignSystemsPole({
                           }`}
                         >
                           <span className="flex-1 truncate">Brain</span>
-                          <Lightning
+                          {/* The one icon left in the list: the Brain is the
+                              system's AI layer, and the mark says so. */}
+                          <Sparkle
                             weight="regular"
                             size={13}
                             aria-hidden
@@ -299,17 +293,10 @@ export function DesignSystemsPole({
                                 }`}
                               >
                                 <span className="flex-1 truncate">{t.name}</span>
-                                {/* Lightning marks the template as Premium (replaces
-                                    the old domain tag). The bolt is decorative; the
-                                    sr-only word folds "Premium" into the link's
-                                    accessible name (Phosphor renders a bare <svg>, so
-                                    an aria-label on it is unreliably announced). */}
-                                <Lightning
-                                  weight="regular"
-                                  size={13}
-                                  aria-hidden
-                                  className="ml-auto shrink-0 text-sand-600 dark:text-sand-500"
-                                />
+                                {/* No mark on the row. The sr-only word still
+                                    folds "Premium" into the link's accessible
+                                    name (Phosphor renders a bare <svg>, so an
+                                    aria-label on it is unreliably announced). */}
                                 <span className="sr-only">Premium</span>
                               </Link>
                             </li>
