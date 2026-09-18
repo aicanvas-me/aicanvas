@@ -616,6 +616,7 @@ function writeProHelpersShim(fromV2Tree) {
 // sign-in. Same committed-fallback contract as V2_FALLBACK_NAMES — UPDATE when a
 // template route lands.
 const V2_EXAMPLE_EXPORTS = {
+  CityOperations: 'city-operations',
   MissionControl: 'mission-control',
   ResourcePlanning: 'resource-planning',
   ServiceOrder: 'service-order',
