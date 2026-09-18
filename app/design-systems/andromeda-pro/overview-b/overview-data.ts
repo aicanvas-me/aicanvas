@@ -78,7 +78,7 @@ const pro = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-p
 
 // The lead card of the template bento spans both columns, so it is listed
 // first and the grid never has to reorder.
-const LEAD_TEMPLATE = 'andromeda-pro-signal-room'
+const LEAD_TEMPLATE = 'andromeda-pro-city-operations'
 
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
   (t: { slug: string; name: string; domain?: string }) => {
@@ -92,7 +92,7 @@ const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
       // tr=orig-true serves the untouched original. v busts the browser cache
       // when the art is re-shot under the same name.
       image: file
-        ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?tr=orig-true&v=2`
+        ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?tr=orig-true&v=3`
         : null,
     }
   },
