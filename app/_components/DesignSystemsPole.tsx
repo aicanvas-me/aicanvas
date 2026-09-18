@@ -10,12 +10,11 @@ import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
 import { SystemTierChip } from './SystemTierChip'
 
 // ── Shared "Design Systems" sidebar pole ────────────────────────────────────
-// SINGLE SOURCE OF TRUTH for the Design Systems pole. Rendered by the one
-// `app/components/Sidebar.tsx` — plain in the root layout, and with `embedded`
-// in the design-systems / ideation layouts — so the pole is identical on every
-// page. The sidebar owns the collapse state + toggle (mutual-exclusion with the
-// Components pole) and passes it in here; the data (systems → templates →
-// components) and the full pole JSX live here.
+// SINGLE SOURCE OF TRUTH for the Design Systems pole. Rendered by the root
+// `app/components/Sidebar.tsx` and by `MobileNav.tsx`, so the pole is identical
+// on every page. The sidebar owns the collapse state + toggle (mutual-exclusion
+// with the Components pole) and passes it in here; the data (systems →
+// templates → components) and the full pole JSX live here.
 
 // Design systems shown under the Design Systems pole.
 // Two systems live side by side, each at its own routes: Andromeda Legacy

@@ -11,6 +11,7 @@ import { buttonClasses } from './buttonClasses'
 import { SecondaryNav } from './SecondaryNav'
 import { useComponentSearch } from './useComponentSearch'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
+import { isPinnedDarkRoute } from '../lib/pinned-dark'
 
 // ── Tier structure ────────────────────────────────────────────────────────
 // Ordering comes from the shared categories config so the sidebar, the
@@ -25,20 +26,18 @@ type Section = {
 }
 
 // The Design Systems pole is rendered separately (shared DesignSystemsPole) so
-// it never drifts. This is the single Sidebar used everywhere: the root layout
-// renders it plain (it hides itself on /design-systems, /ideation, /lab), and
-// the design-systems / ideation layouts render it with `embedded` so it shows
-// on those routes too. Only the Components pole stays in SECTIONS.
+// it never drifts. This is the single Sidebar, rendered once by the root
+// layout and persisting across every route — it hides itself only on /lab and
+// on template leaves, where the page owns the full viewport. Only the
+// Components pole stays in SECTIONS.
 const SECTIONS: Section[] = [
   { title: 'Components', icon: <DiamondsFour weight="regular" size={16} />, labels: COMPONENTS_LABELS },
   // { title: 'SVGs', icon: <PenNib weight="regular" size={16} />, labels: [], disabled: true },
 ]
 
 export function Sidebar({
-  embedded = false,
   promoteDS = false,
 }: {
-  embedded?: boolean
   // promoteDS: the "promote the design system" landing behavior — caps the
   // Components pole to its first 3 categories (rest behind a Show more toggle)
   // and auto-expands Andromeda's System/Brain/Templates. Off by default; flip it
@@ -60,19 +59,13 @@ export function Sidebar({
       ? (searchParams.get('category') ?? 'All Components')
       : null
 
-  // Hide the global sidebar on design-system preview routes so the design
-  // system gets the full viewport. Also hidden on /ideation/* — that subtree
-  // renders this same Sidebar with `embedded` from its own layout (so the root
-  // copy must stand down to avoid a duplicate). And on /lab/* — LAB has its own
-  // custom top bar (logo + auth pill), no left rail, no search.
-  //
-  // When `embedded`, the sidebar is rendered explicitly by a design-system /
-  // ideation layout, so it must bypass this hide check and actually render.
+  // Hidden only on /lab/* — LAB has its own custom top bar (logo + auth pill),
+  // no left rail, no search — and on template / example leaves, which are
+  // full-screen compositions with no chrome at all. Every other route,
+  // /design-systems and /ideation included, keeps this one rail mounted, so
+  // crossing between those route spaces never unmounts and remounts it.
   const hideSidebar =
-    !embedded &&
-    (pathname?.startsWith('/design-systems/') ||
-      pathname?.startsWith('/ideation') ||
-      pathname?.startsWith('/lab'))
+    pathname?.startsWith('/lab') || TEMPLATE_LEAF_RE.test(pathname ?? '')
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   // promoteDS caps Components to its first 3 categories; this reveals the rest.
   const [showAllCats, setShowAllCats] = useState(false)
@@ -87,15 +80,14 @@ export function Sidebar({
   // The Design Systems pole no longer collapses as a whole: each system row
   // owns its own caret, so both systems stay listed at all times.
 
-  // ── Embedded (design-systems / ideation) mutual-exclusion ─────────────────
-  // In embedded mode the Components pole is a collapsible button (mirrors the
-  // retired IdeationSidebar). On component routes it's expanded and the DS pole
-  // collapsed; on design-system routes the reverse. Opening one pole auto-closes
-  // the other; closing a pole leaves the other alone (you can have neither open).
-  const onComponents = !onDesignSystems
-  const [collapsedComponents, setCollapsedComponents] = useState(!onComponents)
+  // ── Components pole mutual-exclusion ───────────────────────────────────────
+  // The Components pole opens on component routes and closes on design-system
+  // routes; a toggle by hand sticks while you stay on one side and is dropped
+  // when you cross, which is what the remount used to do.
+  const [handToggle, setHandToggle] = useState<{ onDS: boolean; collapsed: boolean } | null>(null)
+  const collapsedComponents = handToggle?.onDS === onDesignSystems ? handToggle.collapsed : onDesignSystems
 
-  const toggleComponents = () => setCollapsedComponents((prev) => !prev)
+  const toggleComponents = () => setHandToggle({ onDS: onDesignSystems, collapsed: !collapsedComponents })
 
   const { searchValue, setSearchValue, searchInputRef, clearSearch } = useComponentSearch()
 
@@ -113,13 +105,10 @@ export function Sidebar({
 
   if (hideSidebar) return null
 
-  // Template / example leaves open distraction-free — no sidebar, no topbar.
-  // (Only reachable in embedded mode, since template routes live under
-  // /design-systems/* which the non-embedded copy already hides.)
-  if (embedded && TEMPLATE_LEAF_RE.test(pathname ?? '')) return null
+  const pinnedDark = isPinnedDarkRoute(pathname)
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col border-r border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
+    <aside className={`flex h-full w-60 shrink-0 flex-col border-r border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 ${pinnedDark ? 'dark' : ''}`}>
 
       {/* ── Logo ── */}
       <div className="flex h-14 shrink-0 items-center border-b border-sand-200 px-4 dark:border-sand-800">
@@ -177,15 +166,12 @@ export function Sidebar({
         {/* Tiered sections */}
         {SECTIONS.map((section) => {
           const isComponents = section.title === 'Components'
-          // In embedded (design-systems / ideation) mode the Components pole is a
-          // collapsible button driven by the mutual-exclusion state, with an
-          // extra "All Components" leaf — mirrors the retired IdeationSidebar so
-          // navigating between the two URL spaces feels identical. On the home
-          // page the header stays a direct link to /components (no leaf).
+          // The Components pole is a collapsible button driven by the
+          // mutual-exclusion state, with an extra "All Components" leaf —
+          // mirrors the retired IdeationSidebar so navigating between the two
+          // URL spaces feels identical.
           const isCollapsed = isComponents
-            ? embedded
-              ? collapsedComponents
-              : false
+            ? collapsedComponents
             : (collapsed[section.title] ?? false)
           const isDisabled = section.disabled === true
           // Promoted landing view shows only the first 4 categories so the
@@ -201,7 +187,7 @@ export function Sidebar({
 
           return (
             <div key={section.title} className="mb-3">
-              {isComponents && embedded ? (
+              {isComponents ? (
                 /* Two targets on one row, the same shape a system row uses:
                    the name opens All Components and expands the list, the caret
                    only opens or closes it in place. It used to be one button
@@ -209,7 +195,7 @@ export function Sidebar({
                 <div className="group mb-1 flex items-center gap-1 rounded-md pr-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100">
                   <Link
                     href="/components"
-                    onClick={() => setCollapsedComponents(false)}
+                    onClick={() => setHandToggle(null)}
                     className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-2 pr-0"
                   >
                     <span>{section.icon}</span>
@@ -225,14 +211,6 @@ export function Sidebar({
                     <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />
                   </button>
                 </div>
-              ) : isComponents ? (
-                <Link
-                  href="/components"
-                  className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-                >
-                  <span>{section.icon}</span>
-                  <span className="flex-1 whitespace-nowrap">Components &amp; Blocks</span>
-                </Link>
               ) : (
                 <button
                   type="button"
@@ -260,9 +238,10 @@ export function Sidebar({
                   <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
                 <ul className="space-y-0.5">
                   {/* "All Components" is always its own leaf. It used to exist
-                      only in embedded mode, so clicking it from a design-system
-                      page landed on /components and the row you just clicked
-                      vanished, with the section header lit instead. */}
+                      only on design-system and ideation routes, so clicking it
+                      from one of those pages landed on /components and the row
+                      you just clicked vanished, with the section header lit
+                      instead. */}
                   {isComponents && (
                     <li>
                       <Link

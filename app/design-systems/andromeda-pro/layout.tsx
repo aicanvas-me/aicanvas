@@ -1,6 +1,5 @@
-import { Suspense, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { JetBrains_Mono } from 'next/font/google'
-import { Sidebar } from '../../components/Sidebar'
 import { AndromedaContentColumn } from './AndromedaContentColumn'
 // heavy registry (keeps three.js etc. out of the bundle).
 
@@ -28,14 +27,6 @@ export default function AndromedaLayout({ children }: { children: ReactNode }) {
       data-owns-scroll
       className={`flex h-full w-full flex-1 flex-col overflow-hidden md:flex-row ${jetbrainsMono.variable}`}
     >
-      {/* Desktop-only rail. Below md the embedded Sidebar (a full-height 240px
-          aside) would fill the viewport and bury the page, so it's hidden and
-          the global MobileNav drawer takes over on mobile. */}
-      <Suspense fallback={null}>
-        <div className="hidden md:flex">
-          <Sidebar embedded promoteDS />
-        </div>
-      </Suspense>
       <AndromedaContentColumn>{children}</AndromedaContentColumn>
     </div>
   )

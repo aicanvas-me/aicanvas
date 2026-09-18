@@ -95,11 +95,10 @@ export function MobileNav({
 
   const { searchValue, setSearchValue, searchInputRef, clearSearch } = useComponentSearch()
 
-  // The design-systems / ideation layouts only render the *desktop* embedded
-  // Sidebar (hidden below md), so this drawer is the only mobile nav on those
-  // routes — it must stay visible there. Suppress it only where a route owns
-  // the full viewport: full-screen template leaves and the /lab subtree (LAB
-  // ships its own top bar).
+  // The desktop Sidebar hides itself below md on every route, so this drawer
+  // is the only mobile nav there is — it must stay visible everywhere.
+  // Suppress it only where a route owns the full viewport: full-screen
+  // template leaves and the /lab subtree (LAB ships its own top bar).
   const hideMobileNav =
     pathname?.startsWith('/lab') ||
     TEMPLATE_LEAF_RE.test(pathname ?? '')
