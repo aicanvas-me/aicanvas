@@ -45,6 +45,7 @@ import { usePaywallModal } from '../../../components/billing/PaywallModalProvide
 import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
 import { RemixPanel } from '../../../_components/RemixPanel'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 
 // Matches the Pro components index card's data shape (system/AndromedaGallery
 // GalleryItem) so [component]/page.tsx and this view share one contract.
@@ -342,7 +343,7 @@ export function AndromedaComponentView({
 
   return (
     <>
-    <main className="mx-auto w-full max-w-4xl px-4 pt-8 pb-8 sm:px-6 sm:pt-14">
+    <PageFrame as="main" className={`${PAGE_TOP} pb-8`}>
       {/* ── Header ───────────────────────────────────────────────────────
           Site-chrome styled (sand), not the Andromeda channel: this heading
           sits on the content column's own page ground, which follows the
@@ -351,12 +352,8 @@ export function AndromedaComponentView({
           --at- text colour here was authored for the system's dark void and
           read as invisible ink the moment the page ground went light. */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
-          {name}
-        </h1>
-        <p className="mt-3 max-w-2xl text-base text-sand-600 dark:text-sand-400">
-          {description}
-        </p>
+        <PageTitle className="mt-0">{name}</PageTitle>
+        <PageLead>{description}</PageLead>
       </div>
 
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
@@ -883,7 +880,7 @@ export function AndromedaComponentView({
       )}
 
       <SiteFooter />
-    </main>
+    </PageFrame>
 
     {/* Portalled to <body>. The page content sits inside an `isolate` wrapper
         (AndromedaContentColumn) that keeps component menus from climbing over

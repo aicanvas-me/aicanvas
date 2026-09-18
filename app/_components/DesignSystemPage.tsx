@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode, Ref } from 'react'
 
 // The one page frame for every design-system page: Overview, Foundation,
 // Components, Image Pack, Brain, System and each per-component page, on both
@@ -11,17 +11,28 @@ import type { ReactNode } from 'react'
 // full-bleed band between sections stays possible: the frame sets the width,
 // the page decides where it applies.
 
-// Width, side padding and the space above the first heading.
+// Width, side padding and the space above the first heading. `ref` and
+// `style` are here because two pages need them on the frame itself: Foundation
+// anchors its swatch tooltip to the column, and the Legacy System page lays the
+// column out as a flex stack with a token gap.
 export function PageFrame({
   children,
   className = '',
   as: Tag = 'div',
+  ref,
+  style,
 }: {
   children: ReactNode
   className?: string
   as?: 'div' | 'main' | 'section' | 'header'
+  ref?: Ref<HTMLElement>
+  style?: CSSProperties
 }) {
-  return <Tag className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>{children}</Tag>
+  return (
+    <Tag ref={ref as never} style={style} className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>
+      {children}
+    </Tag>
+  )
 }
 
 // Top padding for the first frame on a page. Sections after the hero set

@@ -31,6 +31,7 @@ import { tokens } from '@/app/lib/andromeda-pro.generated'
 import type { Theme } from '@/app/components/ThemeProvider'
 import { BRAIN_GROUND } from '../overview-b/BrainWireframe'
 import { BRAIN_ZONES, blendZones } from '@/app/_lib/brain-colors'
+import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 
 // The flow diagram's connector gradients and travelling dots paint from these.
 // They sit inside an SVG stop and a CSS string, where a Tailwind class cannot
@@ -149,20 +150,10 @@ function mulberry32(seed: number) { return function () { seed |= 0; seed = (seed
 // ── editorial copy helpers ──────────────────────────────────────────────────
 // Column, overline and section head, class for class with the overview page, so
 // the two routes share one editorial frame.
-function Container({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <div className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>{children}</div>
-}
-
-function Overline({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">{children}</p>
-  )
-}
-
 function SectionHead({ overline, title, sub, id }: { overline: string; title: React.ReactNode; sub?: React.ReactNode; id: string }) {
   return (
     <div className="max-w-2xl">
-      <Overline>{overline}</Overline>
+      <PageOverline>{overline}</PageOverline>
       {/* The h2 carries the anchor id, so its scroll margin has to clear the
           sticky bar (64px on phones), the overline above it (24px) and the
           32px the Section reveal still has to rise after the jump lands. */}
@@ -987,23 +978,20 @@ export function BrainStoryV4() {
         .dark .brain-story { ${brainVars('dark')} }
       `}</style>
 
-      <Container className="pt-10 sm:pt-16">
+      <PageFrame className={PAGE_TOP}>
         {/* ── Hero, in the overview hero's shape ── */}
         <section aria-labelledby="brain-hero" className="max-w-3xl">
-          <Overline>Built for agents</Overline>
+          <PageOverline>Built for agents</PageOverline>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <h1
-              id="brain-hero"
-              className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl"
-            >
+            <PageTitle id="brain-hero" className="mt-0">
               Andromeda Pro Brain
-            </h1>
+            </PageTitle>
             <SystemTierChip tier="pro" />
           </div>
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
             Components are the pieces. The Brain is the judgment.
           </p>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">{HERO_BODY}</p>
+          <PageLead>{HERO_BODY}</PageLead>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href={ctaHref} className={BTN_PRIMARY}>
               {ctaLabel}
@@ -1246,12 +1234,12 @@ export function BrainStoryV4() {
             </Link>
           </div>
         </Section>
-      </Container>
+      </PageFrame>
 
       {/* footer, consistent with the content pages */}
-      <Container className="mt-16 pb-10">
+      <PageFrame className="mt-16 pb-10">
         <SiteFooter />
-      </Container>
+      </PageFrame>
     </div>
   )
 }

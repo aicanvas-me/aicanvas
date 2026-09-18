@@ -29,6 +29,7 @@ import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
 import { useTheme, type Theme } from '@/app/components/ThemeProvider'
 import { BRAIN_GRAY } from '@/app/_lib/brain-colors'
+import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP } from '@/app/_components/DesignSystemPage'
 
 // AI Canvas site palette: sand neutrals + olive accent, Manrope + mono fonts.
 // One palette per site theme; the page reads them through CSS variables (see
@@ -70,17 +71,10 @@ const makeBrainMaterial = (T: typeof import('three')) =>
   new T.MeshBasicMaterial({ wireframe: true, vertexColors: true, toneMapped: false })
 
 // ── editorial copy helpers ──────────────────────────────────────────────────
-// Hero-only helpers, minimal equivalents of Andromeda Pro's brain hero (that
-// page's Container/Overline/PANEL_SHADOW), copied rather than imported so the
-// free page does not depend on Pro's files.
-function Container({ children, className = '' }: { children: React.ReactNode; className?: string }) {
-  return <div className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>{children}</div>
-}
-function Overline({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">{children}</p>
-  )
-}
+// PANEL_SHADOW is a minimal equivalent of Andromeda Pro's brain hero panel
+// shadow, copied rather than imported so the free page does not depend on
+// Pro's files. The page container, overline, title and lead below now come
+// from the shared DesignSystemPage frame instead of a local copy.
 const PANEL_SHADOW =
   'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
 // Medium buttons, class for class with the Pro brain hero.
@@ -842,26 +836,21 @@ export function BrainStoryV4() {
         .brain-wire { filter: invert(1) hue-rotate(180deg) brightness(1.06); mix-blend-mode: multiply; }
         .dark .brain-wire { filter: none; mix-blend-mode: normal; }
       `}</style>
-      <Container className="pt-10 sm:pt-16">
+      <PageFrame className={PAGE_TOP}>
         {/* ── Hero, in the Pro brain hero's shape: left-aligned text block,
             then the stage below it as a bordered card ── */}
         <section aria-labelledby="brain-hero" className="max-w-3xl">
-          <Overline>Built for agents</Overline>
+          <PageOverline>Built for agents</PageOverline>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <h1
-              id="brain-hero"
-              className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl"
-            >
-              Andromeda Brain
-            </h1>
+            <PageTitle id="brain-hero" className="mt-0">Andromeda Brain</PageTitle>
             <SystemTierChip tier="mit" />
           </div>
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
             Tokens and components are the pieces. The brain is the judgment.
           </p>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
+          <PageLead>
             It assembles them: every foundation, component rule, skill and tool your AI agent reads, so what it builds already matches the system instead of a guess.
-          </p>
+          </PageLead>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link href={ctaHref} className={BTN_PRIMARY}>
               {ctaLabel}
@@ -920,13 +909,13 @@ export function BrainStoryV4() {
             <Rotate3d size={26} color={C.accent} strokeWidth={1.5} />
           </div>
         </div>
-      </Container>
+      </PageFrame>
 
       {/* 3-icon wire divider directly below the hero */}
       <WireDivider />
 
-      {/* ── Editorial sections (left-aligned, framed panels). max-w-4xl (896) + sm:px-6, matches the homepage content column. ── */}
-      <div style={{ width: '100%', maxWidth: 896, margin: '0 auto', padding: '8px 24px 8px', fontFamily: SANS }}>
+      {/* ── Editorial sections (left-aligned, framed panels), on the shared PageFrame (max-w-5xl) below the hero, matching every other design-system page. ── */}
+      <PageFrame className="py-2" style={{ fontFamily: SANS }}>
 
         {/* Why it exists — the system is built to grow */}
         <Section>
@@ -1121,12 +1110,12 @@ export function BrainStoryV4() {
             </div>
           </div>
         </Section>
-      </div>
+      </PageFrame>
 
       {/* footer, consistent with the content pages */}
-      <div style={{ width: '100%', maxWidth: 896, margin: '0 auto', padding: '0 24px 24px', fontFamily: SANS }}>
+      <PageFrame className="pb-6" style={{ fontFamily: SANS }}>
         <SiteFooter />
-      </div>
+      </PageFrame>
     </div>
   )
 }
