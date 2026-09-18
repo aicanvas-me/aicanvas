@@ -25,6 +25,9 @@ const SYSTEMS = [
     slug: 'andromeda-pro',
     name: 'Andromeda Pro',
     tier: 'pro',
+    // The rail says what is NEW, not what it costs: the tier is on the
+    // system's own page, and the licence word crowded out the name here.
+    badge: 'New',
     brain: true,
     // Pro's sections: Foundation, then Components. Neither
     // carries the premium mark - the foundation is open and single components
@@ -48,6 +51,7 @@ const SYSTEMS = [
     slug: 'andromeda',
     name: 'Andromeda Legacy',
     tier: 'mit',
+    badge: null,
     // Has a premium Brain page at /design-systems/<slug>/brain (rules +
     // foundations + per-component intelligence).
     brain: true,
@@ -182,9 +186,11 @@ export function DesignSystemsPole({
                     <span className="min-w-0 truncate font-semibold">
                       {system.name}
                     </span>
-                    <span aria-hidden className="flex">
-                      <SystemTierChip tier={system.tier} />
-                    </span>
+                    {system.badge && (
+                      <span aria-hidden className="flex">
+                        <SystemTierChip tier={system.tier} label={system.badge} />
+                      </span>
+                    )}
                   </Link>
                   <button
                     type="button"
