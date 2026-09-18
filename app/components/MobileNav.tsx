@@ -215,10 +215,14 @@ export function MobileNav({
                   const isCollapsed = collapsed[section.title] ?? false
                   const isDisabled = section.disabled === true
                   const isComponents = section.title === 'Components'
-                  // Promoted view shows the first 4 categories; rest behind Show more.
+                  // Promoted view shows the first 4 categories; rest behind Show
+                  // more. The category you are ON always rides along, so the
+                  // drawer never hides the page you are looking at.
                   const catLabels =
                     isComponents && promoteDS && !showAllCats
-                      ? section.labels.slice(0, 4)
+                      ? section.labels.filter(
+                          (l, i) => i < 4 || l === activeCategory,
+                        )
                       : section.labels
                   const hasHiddenCats =
                     isComponents && promoteDS && section.labels.length > 4

@@ -272,8 +272,11 @@ export function Sidebar({
                     const href = cat
                       ? `/components/category/${cat.slug}`
                       : `/components?category=${encodeURIComponent(label)}`
+                    // The category you are ON is never hidden by the cap.
+                    // Hiding it left the rail with nothing lit while the
+                    // breadcrumb said you were inside that category.
                     return (
-                      <li key={label} className={i >= hideCatsFrom ? 'hidden' : undefined}>
+                      <li key={label} className={i >= hideCatsFrom && !isActive ? 'hidden' : undefined}>
                         <Link
                           href={href}
                           className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
