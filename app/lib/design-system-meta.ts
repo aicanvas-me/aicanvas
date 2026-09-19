@@ -39,6 +39,7 @@ export const DESIGN_SYSTEM_META: Record<DesignSystemSlug, DesignSystemMeta> = {
     // Pro owns its own `andromeda-pro-` slug namespace, so a template here can
     // never be mistaken for a Legacy one by the switcher or the installer.
     templates: [
+      { slug: 'andromeda-pro-city-operations',   name: 'City Operations',   domain: 'Civic' },
       { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi' },
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     domain: 'Telecom' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', domain: 'Operations' },

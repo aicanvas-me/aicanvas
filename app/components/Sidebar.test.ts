@@ -2,6 +2,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { dirname, join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda-pro/andromeda-meta'
+import { DESIGN_SYSTEM_META } from '../lib/design-system-meta'
 
 // One rail, rendered once. Before this, four call sites mounted `<Sidebar>` —
 // the root layout plus three design-system / ideation layouts each rendering
@@ -129,6 +130,16 @@ describe('top bar single-instance contract', () => {
 })
 
 describe('the rail lists every Andromeda Pro template', () => {
+  it('the template switcher knows the same Pro templates the gallery does', () => {
+    // A fourth hand-kept copy of the same list lives in design-system-meta.ts
+    // and drives the switcher in the template bar. City Operations shipped
+    // missing from it, so its own page offered nothing to switch to and the
+    // other four never listed it.
+    const expected = ANDROMEDA_TEMPLATE_META.map((t) => `andromeda-pro-${t.folder}`).sort()
+    const actual = DESIGN_SYSTEM_META['andromeda-pro'].templates.map((t) => t.slug).sort()
+    expect(actual).toEqual(expected)
+  })
+
   it("the pole's Pro template rows are the template meta, in the same order", () => {
     // The pole hardcodes its rows (it is a client module and cannot read the
     // registry), so a new template lands on the site with no way into the
