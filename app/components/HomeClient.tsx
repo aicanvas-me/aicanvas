@@ -302,7 +302,10 @@ export function HomeClient({
             </>
           )}
         </p>
-        {heading && (
+        {/* The hero (overline, h1, lead) describes the whole grid, so it is
+            dropped while a search is active: the results — or the empty state —
+            start at the top. */}
+        {heading && !(q && !category) && (
           <header className="mb-6">
             {heading.overline && <PageOverline>{heading.overline}</PageOverline>}
             <PageTitle gap={heading.overline ? 'overline' : 'none'}>{heading.h1}</PageTitle>
