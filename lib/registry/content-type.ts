@@ -10,7 +10,10 @@ export type ContentType =
 export interface ContentLookup {
   designSystemSlugs: Set<string>
   templateSlugs: Set<string>
-  /** Bare system names, e.g. andromeda; their whole-system aggregates are premium. */
+  /**
+   * Bare system names, e.g. andromeda. `<system>-all` is premium on every
+   * system; the bare `<system>` components bundle is premium only on a paid one.
+   */
   systemSlugs: Set<string>
   /**
    * Bare system names whose EVERY item is paid-to-install — components and the
@@ -60,7 +63,17 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
     if (slug === `${system}-tokens`) {
       return lookup.paidSystemSlugs.has(system) ? 'premium-standalone' : 'meta'
     }
-    if (slug === system || slug === `${system}-all`) return 'design-system'
+    // `<system>-all` pulls the templates and the brain in with the components,
+    // and those are paid on both systems, so it stays premium either way.
+    if (slug === `${system}-all`) return 'design-system'
+    // The bare aggregate is that system's COMPONENTS in one install, nothing
+    // else. On a paid system that is the product. On a free MIT system it is
+    // the same source the per-component files already hand out, so paywalling
+    // it only stopped people from taking what is already theirs: it rides the
+    // free lane and asks for an account, exactly like one component does.
+    if (slug === system) {
+      return lookup.paidSystemSlugs.has(system) ? 'design-system' : 'design-system-component'
+    }
   }
 
   // A paid system's individual components gate binary and fail-closed, exactly

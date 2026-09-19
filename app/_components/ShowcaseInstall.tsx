@@ -18,6 +18,12 @@ interface InstallAction {
   slug: string
   label: string
   description?: string[]
+  /**
+   * This item installs on a free account, so its command is shown to everyone.
+   * Set it only for content the registry itself serves on the free lane: a free
+   * system's components bundle, never a template, a brain or an `-all` bundle.
+   */
+  free?: boolean
 }
 
 // Showcase install — the SAME top-bar pattern as the brain reader and the
@@ -59,7 +65,12 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   // Premium AND the in-flight 'unknown' window see the CLI popover; only a
   // resolved free/anon tier is routed to /pricing (never flash upsell at a
   // paying customer). handleInstall fails open, so defaulting to Install is safe.
-  const canInstall = status !== 'not-premium'
+  const premiumOk = status !== 'not-premium'
+  // A group holding even one free item still renders: hiding the whole control
+  // behind the upsell is what kept MIT components out of reach of the people
+  // they are free for. The per-item check below still sends a paid item to the
+  // paywall.
+  const canInstall = premiumOk || installs.some((a) => a.free)
   const [openSlug, setOpenSlug] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -82,6 +93,10 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
     : []
 
   async function handleInstall(slug: string) {
+    if (!premiumOk && !installs.find((a) => a.slug === slug)?.free) {
+      openPaywall({ reason: 'premium-only' })
+      return
+    }
     try {
       const res = await fetch(`/api/me/install-check?slug=${slug}`)
       const d = await res.json().catch(() => null)

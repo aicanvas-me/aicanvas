@@ -329,17 +329,36 @@ describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle wi
     expect(body).not.toContain(TOKEN)
   })
 
-  it('refused bundle WITH files (andromeda) → every real file stubbed in place, no notice added', async () => {
+  // The components bundle (andromeda.json) is NOT one of these. It carries the
+  // MIT component source and nothing else, so it rides the free lane: an
+  // account, not a subscription. These two pin that, next to the premium ones
+  // above, so a future change cannot quietly move it to either extreme.
+  it('the free components bundle: anonymous → the create-an-account steer, never a premium lock', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
     mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+
+    const res = await callBundle(SYSTEM_FILE)
+    const item = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
+    expect(item.files.every(isLockedStub)).toBe(false)
+    delete process.env.FREE_ACCOUNT_GATE
+  })
+
+  it("the free components bundle: signed-in 'free' tier → the real MIT source", async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
     const real = JSON.parse(readFileSync(systemPath, 'utf8'))
 
     const res = await callBundle(SYSTEM_FILE)
     const item = await res.json()
 
     expect(res.status).toBe(200)
-    expect(item.registryDependencies).toEqual([])
     expect(item.files.map(placement)).toEqual(real.files.map(placement))
-    expect(item.files.every(isLockedStub)).toBe(true)
+    expect(item.files.some(isLockedStub)).toBe(false)
+    expect(item.files[0].content).toEqual(real.files[0].content)
+    delete process.env.FREE_ACCOUNT_GATE
   })
 
   it('premium → the real bundle, byte for byte, with the token stamped on its dependencies', async () => {
