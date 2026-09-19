@@ -848,7 +848,7 @@ for (const ds of SYSTEMS) {
       type: 'registry:block',
       title: `${template.name} (${ds.name})`,
       description:
-        `${template.name} composition from ${ds.name}${template.category ? ` (${template.category.toLowerCase()} template)` : ''}. ` +
+        `${template.name} composition from ${ds.name}${template.category ? ` (${template.category} template)` : ''}. ` +
         `Pulls in the ${installedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: templateDeps,
