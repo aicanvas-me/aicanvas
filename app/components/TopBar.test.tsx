@@ -9,9 +9,13 @@
 import { describe, it, expect } from 'vitest'
 import { createElement as h, act, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { readFileSync } from 'node:fs'
+import { createPortal } from 'react-dom'
+import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { TopBarProvider, useTopBarLeft } from './TopBar'
+import { TopBarInstallSlot, TopBarProvider, useTopBarInstallSlot, useTopBarLeft } from './TopBar'
+
+// React only batches act() work when the environment says it is a test.
+;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
 
 const RENDER_CEILING = 200
 
@@ -65,5 +69,64 @@ describe('HomeClient honours the useTopBarLeft contract', () => {
     const arg = call![1].trim()
     expect(arg, 'the argument must be a plain identifier').toMatch(/^[A-Za-z_$][\w$]*$/)
     expect(src).toMatch(new RegExp(`const ${arg} = useMemo\\(`))
+  })
+})
+
+// The install control is owned by the page and drawn inside the bar. The bar
+// hydrates in its own Suspense boundary, so the page can mount BEFORE it. A
+// page that looked the slot up once on mount portaled into the server's copy
+// of the node, broke the bar's hydration, and was left holding a detached node:
+// the install button vanished on every first load of the three showcase pages.
+// The bar now publishes its own node and pages follow it.
+describe('useTopBarInstallSlot', () => {
+  function Page() {
+    const slot = useTopBarInstallSlot()
+    return slot ? createPortal(h('button', null, 'Install'), slot) : null
+  }
+  function mount() {
+    const host = document.createElement('div')
+    document.body.appendChild(host)
+    const rootEl = createRoot(host)
+    const render = (bar: ReactNode) =>
+      act(() => rootEl.render(h(TopBarProvider, null, h(Page), bar)))
+    const button = () => document.querySelector('#andromeda-install-slot button')
+    return { render, button, unmount: () => act(() => rootEl.unmount()) }
+  }
+
+  it('reaches a page that mounted before the bar did', () => {
+    const t = mount()
+    t.render(null)
+    expect(t.button()).toBeNull()
+    t.render(h(TopBarInstallSlot, { id: 'andromeda-install-slot' }))
+    expect(t.button()?.textContent).toBe('Install')
+    t.unmount()
+  })
+
+  it('follows the node when the bar is rebuilt, and lets go when it leaves', () => {
+    const t = mount()
+    t.render(h(TopBarInstallSlot, { key: 'a', id: 'andromeda-install-slot' }))
+    const first = document.getElementById('andromeda-install-slot')
+    t.render(h(TopBarInstallSlot, { key: 'b', id: 'andromeda-install-slot' }))
+    const second = document.getElementById('andromeda-install-slot')
+    expect(second).not.toBe(first)
+    expect(second?.querySelector('button')?.textContent).toBe('Install')
+    t.render(null)
+    expect(document.querySelector('button')).toBeNull()
+    t.unmount()
+  })
+
+  it('is the only way a page finds the slot', () => {
+    const app = join(__dirname, '..')
+    const walk = (dir: string, out: string[] = []): string[] => {
+      for (const name of readdirSync(dir)) {
+        if (name === 'node_modules' || name.startsWith('.')) continue
+        const full = join(dir, name)
+        if (statSync(full).isDirectory()) walk(full, out)
+        else if (/\.tsx?$/.test(name) && !/\.test\.tsx?$/.test(name)) out.push(full)
+      }
+      return out
+    }
+    const offenders = walk(app).filter((f) => /getElementById\([^)]*install-slot/.test(readFileSync(f, 'utf8')))
+    expect(offenders).toEqual([])
   })
 })

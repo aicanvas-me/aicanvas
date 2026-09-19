@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useLayoutEffect, useMemo, useState, type ReactNode } from 'react'
+import { createContext, useContext, useLayoutEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { Breadcrumbs } from './Breadcrumbs'
 import { ThemeToggle } from './ThemeToggle'
@@ -27,10 +27,40 @@ const TopBarContext = createContext<{
   setOverride: (o: LeftOverride) => void
 } | null>(null)
 
+// The bar's install slot: the element a page portals its install control into.
+// The BAR publishes it, from a ref, once the bar itself has committed. A page
+// must never look the node up on its own: the bar hydrates in its own Suspense
+// boundary, so a page that mounts first finds the server's copy of the node,
+// portals into it, and breaks the bar's hydration; React then rebuilds the bar
+// and the page is left holding a detached node with its control inside.
+const TopBarSlotContext = createContext<{
+  installSlot: HTMLElement | null
+  setInstallSlot: (el: HTMLElement | null) => void
+} | null>(null)
+
 export function TopBarProvider({ children }: { children: ReactNode }) {
   const [override, setOverride] = useState<LeftOverride>(null)
+  const [installSlot, setInstallSlot] = useState<HTMLElement | null>(null)
   const value = useMemo(() => ({ override, setOverride }), [override])
-  return <TopBarContext.Provider value={value}>{children}</TopBarContext.Provider>
+  const slotValue = useMemo(() => ({ installSlot, setInstallSlot }), [installSlot])
+  return (
+    <TopBarContext.Provider value={value}>
+      <TopBarSlotContext.Provider value={slotValue}>{children}</TopBarSlotContext.Provider>
+    </TopBarContext.Provider>
+  )
+}
+
+const noop = () => () => {}
+
+// The install slot of the bar above the calling page, or null while there is
+// none: before the bar has committed, on a route that has no slot, and during
+// the page's own hydration render (the server sent no portal, so the first
+// client render must not have one either). It follows the node: if the bar is
+// rebuilt, callers get the new element.
+export function useTopBarInstallSlot(): HTMLElement | null {
+  const slot = useContext(TopBarSlotContext)?.installSlot ?? null
+  const isClient = useSyncExternalStore(noop, () => true, () => false)
+  return isClient ? slot : null
 }
 
 // Replaces the bar's left side for as long as the calling page is mounted.
@@ -51,6 +81,13 @@ export function useTopBarLeft(node: ReactNode | null) {
     if (!setOverride) return
     setOverride(node === null ? null : { pathname, node })
   }, [setOverride, pathname, node])
+}
+
+// The slot element. Its ref is what publishes it, so the node a page receives
+// is always one the bar has already committed.
+export function TopBarInstallSlot({ id }: { id: string }) {
+  const setInstallSlot = useContext(TopBarSlotContext)?.setInstallSlot
+  return <div id={id} ref={setInstallSlot} />
 }
 
 const BAR_CLASS =
@@ -79,7 +116,7 @@ export function TopBar() {
           the CTA, then the user. */}
       <div className="flex shrink-0 items-center gap-2">
         <ThemeToggle />
-        {slot && <div id={slot} />}
+        {slot && <TopBarInstallSlot id={slot} />}
         <TopAuthPill />
       </div>
     </header>
