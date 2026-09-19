@@ -6,10 +6,10 @@ import { MagnifyingGlass, Sparkle, Ghost, Question } from '@phosphor-icons/react
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ComponentCard } from './ComponentCard'
-import { HeaderSocials } from './HeaderSocials'
 import { track } from '../lib/analytics'
-import { Breadcrumbs } from './Breadcrumbs'
+import { useTopBarLeft } from './TopBar'
 import { SiteFooter } from './SiteFooter'
+import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
 import { INITIAL_LOAD, LOAD_MORE_SIZE } from './LoadMore'
 import { LoadMore } from './LoadMore'
 import type { ComponentMeta } from '../lib/component-registry'
@@ -120,7 +120,7 @@ export function HomeClient({
   /** Optional H1 + intro rendered above the grid. Passed by the category and
    *  collection pages so each listing page carries crawlable on-page copy;
    *  the plain /components index omits it. */
-  heading?: { h1: string; intro: string }
+  heading?: { overline?: string; h1: string; intro: string }
 }) {
   const router        = useRouter()
   const searchParams  = useSearchParams()
@@ -264,33 +264,30 @@ export function HomeClient({
   const EmptyIcon = EMPTY_BEATS[emptyIdx].Icon
   const emptyPhrase = EMPTY_BEATS[emptyIdx].phrase
 
+  // While a search is active the site top bar shows the live result count in
+  // place of the breadcrumb. The bar itself lives in the root layout; this is
+  // the one line of it this page owns.
+  //
+  // The node MUST keep its identity between renders that did not change it.
+  // useTopBarLeft stores it in context, and this page reads that same context,
+  // so a fresh element on every render would feed the effect its own write and
+  // never settle. Keying the memo on the primitives is what stops that.
+  const searchCount = useMemo(
+    () =>
+      q && !category ? (
+        <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
+          {totalResults} {totalResults === 1 ? 'result' : 'results'}
+          <span className="text-sand-600 dark:text-sand-500"> for </span>
+          <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
+        </p>
+      ) : null,
+    [q, category, totalResults, query],
+  )
+  useTopBarLeft(searchCount)
+
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-
-      {/* ── Top bar (desktop only — mobile uses MobileNav) ── */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
-        {q && !category ? (
-          <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
-            {totalResults} {totalResults === 1 ? 'result' : 'results'}
-            <span className="text-sand-600 dark:text-sand-500"> for </span>
-            <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
-          </p>
-        ) : (
-          <Breadcrumbs
-            crumbs={
-              // Root crumb names the whole grid: it lists components AND blocks,
-              // matching the sidebar's "Components & Blocks" entry.
-              category
-                ? [{ label: 'Components & Blocks', href: '/components' }, { label: category }]
-                : [{ label: 'Components & Blocks', href: '/components' }]
-            }
-          />
-        )}
-        <HeaderSocials />
-      </div>
-
-      {/* ── Grid ── */}
-      <div className="flex flex-1 flex-col bg-sand-50 px-4 pt-4 dark:bg-sand-950 md:px-6 md:pt-6">
+      <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
         {/* Mobile breadcrumb — shown above cards on small screens */}
         <p className="mb-4 text-sm font-semibold md:hidden">
           {q && !category ? (
@@ -306,13 +303,10 @@ export function HomeClient({
           )}
         </p>
         {heading && (
-          <header className="mx-auto mb-6 w-full max-w-[1800px]">
-            <h1 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50 sm:text-3xl">
-              {heading.h1}
-            </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-sand-600 dark:text-sand-400 sm:text-base">
-              {heading.intro}
-            </p>
+          <header className="mb-6">
+            {heading.overline && <PageOverline>{heading.overline}</PageOverline>}
+            <PageTitle gap={heading.overline ? 'overline' : 'none'}>{heading.h1}</PageTitle>
+            <PageLead>{heading.intro}</PageLead>
           </header>
         )}
         {filtered.length > 0 && (
@@ -321,11 +315,11 @@ export function HomeClient({
                 ("Components & blocks" + "Design systems & templates") read as a
                 consistent pair. Browsing shows no title (the top bar names it). */}
             {q && !category && (
-              <h2 className="mx-auto mb-4 w-full max-w-[1800px] text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
+              <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
                 Components &amp; blocks
               </h2>
             )}
-            <div className="mx-auto grid max-w-[1800px] grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((entry, i) => (
                 <motion.div
                   key={entry.slug}
@@ -362,11 +356,11 @@ export function HomeClient({
             catalog. Same ComponentCard shell as the grid; links out to each
             item's own page. ── */}
         {extras.length > 0 && (
-          <div className="mx-auto mt-10 w-full max-w-[1800px]">
+          <div className="mt-10">
             <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
               Design systems &amp; templates
             </h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {extras.map((e, i) => (
                 <motion.div
                   key={e.key}
@@ -474,11 +468,9 @@ export function HomeClient({
             )}
           </motion.div>
         )}
-      </div>
 
-      <div className="mx-auto w-full max-w-[1800px] px-4 pb-8 md:px-6">
         <SiteFooter />
-      </div>
+      </PageFrame>
     </div>
   )
 }

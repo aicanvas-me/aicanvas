@@ -1434,7 +1434,15 @@ const navTs =
   '// Category counts + total for the sidebar/mobile nav, with zero component\n' +
   '// imports (keeps three.js etc. out of the shared bundle).\n\n' +
   `export const CATEGORY_COUNTS: Record<string, number> = ${JSON.stringify(categoryCounts, null, 2)}\n\n` +
-  `export const TOTAL_COMPONENTS = ${mcpComponents.length}\n`
+  `export const TOTAL_COMPONENTS = ${mcpComponents.length}\n\n` +
+  '// Slug to display name, for the site top bar\'s breadcrumbs: the bar lives in the\n' +
+  '// root layout, so it needs a name for /components/<slug> without the 40 KB\n' +
+  '// component-meta list, let alone the registry.\n' +
+  `export const COMPONENT_NAMES: Record<string, string> = ${JSON.stringify(
+    Object.fromEntries(mcpComponents.map((c) => [c.slug, c.name])),
+    null,
+    2,
+  )}\n`
 writeFileSync('app/lib/component-nav.generated.ts', navTs)
 console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categoryCounts).length} categories, ${mcpComponents.length} total)`)
 

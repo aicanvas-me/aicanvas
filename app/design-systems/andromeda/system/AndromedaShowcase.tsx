@@ -7,6 +7,7 @@ import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import Link from 'next/link'
 import { JetBrains_Mono } from 'next/font/google'
 import { SiteFooter } from '../../../components/SiteFooter'
+import { PageFrame, PageOverline, PageTitle, PageLead } from '../../../_components/DesignSystemPage'
 import {
   MagnifyingGlass,
   Bell,
@@ -341,24 +342,15 @@ export default function AndromedaShowcase({
         paddingBottom: tokens.spacing[10],
       }}
     >
-      <div
-        style={{
-          maxWidth: '1180px',
-          width: '100%',
-          margin: '0 auto',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: tokens.spacing[6],
-        }}
-      >
+      <PageFrame style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[6] }}>
         {/* Responsive reflow — desktop-first. The default (unqualified)
             rules ARE the desktop layout; the mq.md block collapses the dense
             two/three-column section grids to a single column below 768px, and
-            mq.sm tightens the page gutter and steps the display title down on
-            phones. Grid tracks use minmax(0,…) and items get min-width:0 so a
-            wide child (chart/table) can never push the page past the viewport.
-            Overrides that compete with an inline style (shell padding, title
-            font-size) carry !important per the brain's inline-style rule. */}
+            mq.sm tightens the page gutter on phones. Grid tracks use
+            minmax(0,…) and items get min-width:0 so a wide child (chart/table)
+            can never push the page past the viewport. Overrides that compete
+            with an inline style (shell padding) carry !important per the
+            brain's inline-style rule. */}
         <style>{`
           .as-grid-2 { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
           .as-grid-2 > * { min-width: 0; }
@@ -375,7 +367,6 @@ export default function AndromedaShowcase({
           ${mq.sm} {
             .as-usage-grid { grid-template-columns: minmax(0, 1fr); }
             .as-shell { padding: ${tokens.spacing[6]} ${tokens.spacing[4]} !important; padding-bottom: 7.5rem !important; }
-            .as-title { font-size: ${tokens.typography.size['2xl']} !important; }
             /* Phones: drop the right-hand usage gloss on the Type Scale and
                Spacing rows — at phone widths it crowds the specimen off-screen.
                Desktop/tablet keep it (rule is mq.sm-only). */
@@ -392,43 +383,13 @@ export default function AndromedaShowcase({
         {/* Page header — AI Canvas site style (Manrope), not the Andromeda mono
             aesthetic of the demos below. Site sand/olive pairs so the header follows
             the site theme like the rest of the page. */}
-        <header style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
-          <div
-            className="text-olive-600 dark:text-olive-400"
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              marginBottom: 10,
-            }}
-          >
-            Andromeda
-          </div>
-          <h1
-            className="as-title text-sand-900 dark:text-sand-50"
-            style={{
-              margin: 0,
-              fontSize: 'clamp(30px, 4.5vw, 42px)',
-              fontWeight: 800,
-              letterSpacing: '-0.02em',
-              lineHeight: 1.05,
-            }}
-          >
-            System
-          </h1>
-          <p
-            className="text-sand-600 dark:text-sand-400"
-            style={{
-              margin: '16px 0 0 0',
-              maxWidth: '56ch',
-              fontSize: 16,
-              fontWeight: 400,
-              lineHeight: 1.6,
-            }}
-          >
+        {/* A div, not a header: the site bar is the page's banner landmark. */}
+        <div style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
+          <PageOverline>Andromeda</PageOverline>
+          <PageTitle>System</PageTitle>
+          <PageLead>
             Built for designers, developers, and teams who want a system, not a stylesheet. Tokens, components, templates, and a documented brain that keeps everyone aligned.
-          </p>
+          </PageLead>
           <div
             className="text-sand-500"
             style={{
@@ -441,7 +402,7 @@ export default function AndromedaShowcase({
           >
             {componentCount} components · {templateCount} templates · 1 brain · one-command install
           </div>
-        </header>
+        </div>
 
         {/* ── Colors ─────────────────────────────────────────────────────── */}
         <Section
@@ -1996,7 +1957,7 @@ export default function AndromedaShowcase({
 
         {/* Bottom install card — the two packages, like the brain's card. */}
         <ShowcaseInstallCard />
-      </div>
+      </PageFrame>
       <SiteFooter />
     </div>
     </>

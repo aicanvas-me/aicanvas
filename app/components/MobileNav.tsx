@@ -9,7 +9,6 @@ import {
   X,
   GithubLogo,
   XLogo,
-  ArrowElbowDownRight,
   CaretDown,
   DiamondsFour,
   MagnifyingGlass,
@@ -96,11 +95,10 @@ export function MobileNav({
 
   const { searchValue, setSearchValue, searchInputRef, clearSearch } = useComponentSearch()
 
-  // The design-systems / ideation layouts only render the *desktop* embedded
-  // Sidebar (hidden below md), so this drawer is the only mobile nav on those
-  // routes — it must stay visible there. Suppress it only where a route owns
-  // the full viewport: full-screen template leaves and the /lab subtree (LAB
-  // ships its own top bar).
+  // The desktop Sidebar hides itself below md on every route, so this drawer
+  // is the only mobile nav there is — it must stay visible everywhere.
+  // Suppress it only where a route owns the full viewport: full-screen
+  // template leaves and the /lab subtree (LAB ships its own top bar).
   const hideMobileNav =
     pathname?.startsWith('/lab') ||
     TEMPLATE_LEAF_RE.test(pathname ?? '')
@@ -207,17 +205,36 @@ export function MobileNav({
                     'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
                 }}
               >
+                {/* ── Design Systems pole (shared, identical to the desktop rail) ── */}
+                <DesignSystemsPole
+                  onNavigate={() => setOpen(false)}
+                />
+
                 {SECTIONS.map((section) => {
                   const isCollapsed = collapsed[section.title] ?? false
                   const isDisabled = section.disabled === true
                   const isComponents = section.title === 'Components'
-                  // Promoted view shows the first 4 categories; rest behind Show more.
+                  // Promoted view shows the first 4 categories; rest behind Show
+                  // more. The category you are ON always rides along, so the
+                  // drawer never hides the page you are looking at.
                   const catLabels =
                     isComponents && promoteDS && !showAllCats
-                      ? section.labels.slice(0, 4)
+                      ? section.labels.filter(
+                          (l, i) => i < 4 || l === activeCategory,
+                        )
                       : section.labels
+                  // Count what is ACTUALLY hidden: the active category rides
+                  // along past the cap, so a plain length - 4 overcounts by one
+                  // whenever you are inside one of the capped categories. The
+                  // expanded state keeps the control so it can collapse back.
+                  const hiddenCatCount =
+                    isComponents && promoteDS
+                      ? section.labels.filter(
+                          (l, i) => i >= 4 && l !== activeCategory,
+                        ).length
+                      : 0
                   const hasHiddenCats =
-                    isComponents && promoteDS && section.labels.length > 4
+                    isComponents && promoteDS && (showAllCats || hiddenCatCount > 0)
 
                   return (
                     <div key={section.title} className="mb-3">
@@ -225,11 +242,7 @@ export function MobileNav({
                         <Link
                           href="/components"
                           onClick={() => setOpen(false)}
-                          className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                            activeCategory === 'All Components'
-                              ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                              : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                          }`}
+                          className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                         >
                           <span>{section.icon}</span>
                           <span className="flex-1 whitespace-nowrap">Components &amp; Blocks</span>
@@ -255,7 +268,29 @@ export function MobileNav({
                       )}
 
                       {!isCollapsed && !isDisabled && (
+                        <div className="relative">
+                          {/* One vertical rail replaces the per-row elbow
+                              arrows, same as the desktop sidebar. */}
+                          <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
                         <ul className="space-y-0.5">
+                          {/* "All Components" is its own leaf here too, so the
+                              drawer and the desktop rail list the same rows. */}
+                          {isComponents && (
+                            <li>
+                              <Link
+                                href="/components"
+                                onClick={() => setOpen(false)}
+                                className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
+                                  activeCategory === 'All Components'
+                                    ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                                    : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                                }`}
+                              >
+                                <span aria-hidden className="w-3 shrink-0" />
+                                <span className="flex-1">All Components</span>
+                              </Link>
+                            </li>
+                          )}
                           {catLabels.map((label) => {
                             const isActive = label === activeCategory
                             const cat = getCategoryByLabel(label)
@@ -273,40 +308,36 @@ export function MobileNav({
                                       : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                                   }`}
                                 >
-                                  <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
+                                  <span aria-hidden className="w-3 shrink-0" />
                                   <span className="flex-1">{label}</span>
                                 </Link>
                               </li>
                             )
                           })}
-                          {hasHiddenCats && (
-                            <li>
-                              <button
-                                type="button"
-                                onClick={() => setShowAllCats((v) => !v)}
-                                className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
-                              >
-                                <CaretDown
-                                  size={12}
-                                  weight="regular"
-                                  className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
-                                />
-                                <span className="flex-1 text-left">
-                                  {showAllCats ? 'Show less' : `Show ${section.labels.length - 4} more`}
-                                </span>
-                              </button>
-                            </li>
-                          )}
                         </ul>
+                        </div>
+                      )}
+                      {/* Show more sits OUTSIDE the rail, same as the desktop
+                          sidebar: its caret shares the rail's column. */}
+                      {!isCollapsed && !isDisabled && hasHiddenCats && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAllCats((v) => !v)}
+                          className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
+                        >
+                          <CaretDown
+                            size={12}
+                            weight="regular"
+                            className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
+                          />
+                          <span className="flex-1 text-left">
+                            {showAllCats ? 'Show less' : `Show ${hiddenCatCount} more`}
+                          </span>
+                        </button>
                       )}
                     </div>
                   )
                 })}
-
-                {/* ── Design Systems pole (shared, identical to the desktop rail) ── */}
-                <DesignSystemsPole
-                  onNavigate={() => setOpen(false)}
-                />
 
                 <div className="mb-3 h-px bg-sand-200 dark:bg-sand-800" />
                 <div className="mb-3">

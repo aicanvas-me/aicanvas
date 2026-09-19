@@ -9,12 +9,12 @@ import './globals.css'
 import { ThemeProvider } from './components/ThemeProvider'
 import { Sidebar } from './components/Sidebar'
 import { MobileNav } from './components/MobileNav'
+import { TopBar, TopBarProvider } from './components/TopBar'
 import { SessionProvider } from './components/auth/SessionProvider'
 import { AuthModalProvider } from './components/auth/AuthModalProvider'
 import { PaywallModalProvider } from './components/billing/PaywallModalProvider'
 import { AuthModal } from './components/auth/AuthModal'
 import { DevBranchBadge } from './components/DevBranchBadge'
-import { PageEnterFade } from './components/PageEnterFade'
 import { SiteBeacon } from './components/SiteBeacon'
 import { PaddlePaymentLink } from './components/billing/PaddlePaymentLink'
 import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
@@ -233,6 +233,7 @@ export default async function RootLayout({
           <SessionProvider initialUser={user}>
             <AuthModalProvider>
              <PaywallModalProvider>
+             <TopBarProvider>
               {/* Desktop sidebar — hidden on mobile */}
               <Suspense fallback={null}>
                 <div className="hidden md:flex">
@@ -251,11 +252,36 @@ export default async function RootLayout({
                   full-height strip it can never paint a bar in. In CSS rather
                   than an inline style so the :has() release can out-specify
                   it; an inline declaration would always win. */}
-              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 dark:bg-sand-950">
-                {children}
+              {/* md:scroll-pt-14 is the bar's height (h-14, drawn from md up). On
+                  a navigation Next scrolls the new page's root into view, and
+                  that root starts BELOW the sticky bar, so without the padding
+                  a page opened from a scrolled one lands 56px down with its
+                  first lines under the bar. */}
+              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 md:scroll-pt-14 dark:bg-sand-950">
+                {/* The one top bar, above every page's content and never
+                    remounted: a navigation swaps only what is below it. It
+                    reads the URL, so it sits inside the same Suspense the
+                    sidebar needs. */}
+                <Suspense fallback={null}>
+                  <TopBar />
+                </Suspense>
+                {/* The page slot, sized to the column MINUS the bar. Page
+                    roots ask for min-h-full, and the column is a flex item of
+                    the full-height body, so without this wrapper that 100%
+                    resolved against the whole viewport and every short page
+                    scrolled by exactly the bar's height.
+                    min-h-0 is load-bearing: a flex item's automatic minimum is
+                    its content, which would grow this slot to the full page
+                    height, stop every overflow-hidden layout root below from
+                    clipping, and hand the scroll to this column instead of to
+                    the page that declares data-owns-scroll. A long page still
+                    scrolls: its overflow is visible and this column is the
+                    scroller. */}
+                <div className="flex min-h-0 flex-1 flex-col">{children}</div>
               </div>
               {/* Global auth dialog — toggles between sign-in and sign-up modes */}
               <AuthModal />
+             </TopBarProvider>
              </PaywallModalProvider>
             </AuthModalProvider>
           </SessionProvider>
@@ -267,10 +293,6 @@ export default async function RootLayout({
         <Analytics />
         <SpeedInsights />
         <SiteBeacon />
-        {/* Fades the scroll column in on client-side navigations */}
-        <Suspense fallback={null}>
-          <PageEnterFade />
-        </Suspense>
         <DevBranchBadge />
         {/* Resumes checkout when the URL carries a Paddle payment link (?_ptxn=) */}
         <PaddlePaymentLink />
