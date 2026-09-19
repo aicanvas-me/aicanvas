@@ -647,7 +647,7 @@ function TemplateSwitcher({
                     the active row is already named by its olive colour and its
                     weight, so it needs no second marker. */}
                 {t.category && (
-                  <span className="ml-auto shrink-0 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
+                  <span className="ml-auto shrink-0 rounded-md bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
                     {t.category}
                   </span>
                 )}
