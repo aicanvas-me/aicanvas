@@ -287,7 +287,10 @@ export function HomeClient({
 
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-      <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
+      {/* On the empty state the main column grows to fill the viewport, so the
+          "no results" block centres in the space left over and the footer sits
+          at the bottom edge instead of halfway up the page. */}
+      <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}${showEmpty ? ' flex flex-1 flex-col' : ''}`}>
         {/* Mobile breadcrumb — shown above cards on small screens */}
         <p className="mb-4 text-sm font-semibold md:hidden">
           {q && !category ? (
@@ -302,15 +305,54 @@ export function HomeClient({
             </>
           )}
         </p>
-        {heading && (
+        {/* The hero (overline, h1, lead) describes the whole grid, so it is
+            dropped while a search is active: the results — or the empty state —
+            start at the top. */}
+        {heading && !(q && !category) && (
           <header className="mb-6">
             {heading.overline && <PageOverline>{heading.overline}</PageOverline>}
             <PageTitle gap={heading.overline ? 'overline' : 'none'}>{heading.h1}</PageTitle>
             <PageLead>{heading.intro}</PageLead>
           </header>
         )}
+        {/* ── Design systems & templates — search matches beyond the standalone
+            catalog. Listed FIRST during a search: a whole system or template is the
+            bigger answer, the individual components follow. Same ComponentCard
+            shell as the grid; links out to each item's own page. ── */}
+        {extras.length > 0 && (
+          <div>
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
+              Design systems &amp; templates
+            </h2>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {extras.map((e, i) => (
+                <motion.div
+                  key={e.key}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25, delay: (i % LOAD_MORE_SIZE) * 0.03 }}
+                >
+                  <ComponentCard
+                    name={e.name}
+                    description={e.description}
+                    tags={[]}
+                    image={e.image}
+                    badge={e.badge}
+                    badgeTone={e.badgeTone}
+                    cta={e.cta}
+                    href={e.href}
+                    slug={e.key}
+                    position={i}
+                    source="index"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {filtered.length > 0 && (
-          <>
+          <div className={extras.length > 0 ? 'mt-10' : ''}>
             {/* Group title — only during a search, so the two result groups
                 ("Components & blocks" + "Design systems & templates") read as a
                 consistent pair. Browsing shows no title (the top bar names it). */}
@@ -349,41 +391,6 @@ export function HomeClient({
               remaining={remaining}
               onLoadMore={handleLoadMore}
             />
-          </>
-        )}
-
-        {/* ── Design systems & templates — search matches beyond the standalone
-            catalog. Same ComponentCard shell as the grid; links out to each
-            item's own page. ── */}
-        {extras.length > 0 && (
-          <div className="mt-10">
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
-              Design systems &amp; templates
-            </h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {extras.map((e, i) => (
-                <motion.div
-                  key={e.key}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25, delay: (i % LOAD_MORE_SIZE) * 0.03 }}
-                >
-                  <ComponentCard
-                    name={e.name}
-                    description={e.description}
-                    tags={[]}
-                    image={e.image}
-                    badge={e.badge}
-                    badgeTone={e.badgeTone}
-                    cta={e.cta}
-                    href={e.href}
-                    slug={e.key}
-                    position={i}
-                    source="index"
-                  />
-                </motion.div>
-              ))}
-            </div>
           </div>
         )}
 
