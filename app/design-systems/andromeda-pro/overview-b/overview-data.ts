@@ -56,6 +56,8 @@ const TEMPLATE_BLURBS: Record<string, string> = {
     'A broadcast control room: now transmitting, channel levels, mixes and a transport bar.',
   'andromeda-pro-sign-in':
     'An authentication screen: provider sign-in, email and password fields and a forgotten-password link.',
+  'andromeda-pro-city-operations':
+    'A city operations centre: a live incident map, air and traffic readings, an alert queue and response trends.',
 }
 
 // The card art slot for each template, a filename in ImageKit's
@@ -69,13 +71,14 @@ export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
   'andromeda-pro-resource-planning': 'Resource_planning_pro.png',
   'andromeda-pro-signal-room': 'Signal_Room_pro.png',
   'andromeda-pro-sign-in': '',
+  'andromeda-pro-city-operations': 'City_operations_pro.png',
 }
 
 const pro = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-pro')
 
 // The lead card of the template bento spans both columns, so it is listed
 // first and the grid never has to reorder.
-const LEAD_TEMPLATE = 'andromeda-pro-signal-room'
+const LEAD_TEMPLATE = 'andromeda-pro-city-operations'
 
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
   (t: { slug: string; name: string; domain?: string }) => {
@@ -89,7 +92,7 @@ const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
       // tr=orig-true serves the untouched original. v busts the browser cache
       // when the art is re-shot under the same name.
       image: file
-        ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?tr=orig-true&v=2`
+        ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?tr=orig-true&v=3`
         : null,
     }
   },

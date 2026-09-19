@@ -208,7 +208,7 @@ const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'Dat
 // v2-only name — same contract as V2_FALLBACK_NAMES above.
 const V2_ONLY_NAMES = [
   'Burst', 'ChoiceCard', 'ChoiceCardGroup', 'EmptyStateMedia',
-  'FunnelChart', 'Nodes', 'Orb', 'TopBar',
+  'FunnelChart', 'Nodes', 'Orb', 'Sidebar', 'TopBar',
 ]
 
 // components/lib/* modules the HELPERS shim re-exports (both trees have them),
@@ -616,6 +616,7 @@ function writeProHelpersShim(fromV2Tree) {
 // sign-in. Same committed-fallback contract as V2_FALLBACK_NAMES — UPDATE when a
 // template route lands.
 const V2_EXAMPLE_EXPORTS = {
+  CityOperations: 'city-operations',
   MissionControl: 'mission-control',
   ResourcePlanning: 'resource-planning',
   ServiceOrder: 'service-order',

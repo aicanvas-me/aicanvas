@@ -269,6 +269,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/segmented-control.png?v=3',
   },
   {
+    slug: 'sidebar',
+    name: 'Sidebar',
+    description:
+      'Navigates a console from a left rail that folds between labelled rows and icons.',
+    sourceFile: 'Sidebar.tsx',
+  },
+  {
     slug: 'slider',
     name: 'Slider',
     description:
@@ -433,17 +440,34 @@ const TEMPLATE_ART: Record<string, string> = {
   'service-order': 'Service order.png',
   'resource-planning': 'Resource planning.png',
   'signal-room': 'Signal Room.png',
+  // City Operations is Pro-only, so it has no free-Andromeda poster to pair
+  // with and points straight at the Pro file the overview also serves.
+  'city-operations': 'City_operations_pro.png',
 }
 const templateArt = (folder: string) =>
   `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_ART[folder] ?? '')}`
 
-// Static 4-entry mirror of the andromeda `templates` in
+// Static 5-entry mirror of the andromeda `templates` in
 // scripts/lib/design-systems.config.mjs (folder = registry slug minus the
 // "andromeda-" prefix, matching the route dirs). Kept here rather than derived
 // from the .mjs config so this stays a typed, Node-free, client-safe module.
 // Blurbs are the same copy the overview (overview-b/overview-data.ts) shows on its template cards.
 // Keep the two in sync (fixed set, changes rarely).
 export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
+  {
+    folder: 'city-operations',
+    name: 'City Operations',
+    description:
+      'A city operations centre: a live incident map, air and traffic readings, an alert queue, and response trends.',
+    image: templateArt('city-operations'),
+  },
+  {
+    folder: 'signal-room',
+    name: 'Signal Room',
+    description:
+      'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
+    image: templateArt('signal-room'),
+  },
   {
     folder: 'mission-control',
     name: 'Mission Control',
@@ -463,13 +487,6 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
     description:
       'Capacity, allocation trend, and request triage across teams on one planning board.',
     image: templateArt('resource-planning'),
-  },
-  {
-    folder: 'signal-room',
-    name: 'Signal Room',
-    description:
-      'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
-    image: templateArt('signal-room'),
   },
 ]
 

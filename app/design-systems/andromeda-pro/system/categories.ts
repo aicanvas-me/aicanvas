@@ -54,6 +54,7 @@ export const CATEGORY: Record<string, string> = {
   // Navigation
   'nav-item': 'Navigation',
   'panel-header': 'Navigation',
+  sidebar: 'Navigation',
   'top-bar': 'Navigation',
 
   // Surfaces

@@ -1,6 +1,7 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
+import { ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda-pro/andromeda-meta'
 
 // One rail, rendered once. Before this, four call sites mounted `<Sidebar>` —
 // the root layout plus three design-system / ideation layouts each rendering
@@ -25,8 +26,14 @@ function walk(dir: string, out: string[] = []): string[] {
 
 describe('sidebar single-instance contract', () => {
   it('only app/layout.tsx renders a <Sidebar>', () => {
+    // Andromeda Pro has its own component named Sidebar, rendered from the
+    // generated registry by its matrix case. Only the site's rail counts
+    // here, so the tag has to come from app/components/Sidebar.
     const offenders = walk(join(root, 'app'))
-      .filter((f) => /<Sidebar[ />]/.test(readFileSync(f, 'utf8')))
+      .filter((f) => {
+        const src = readFileSync(f, 'utf8')
+        return /from '[^']*\/components\/Sidebar'/.test(src) && /<Sidebar[ />]/.test(src)
+      })
       .map((f) => f.slice(root.length + 1))
 
     expect(offenders).toEqual(['app/layout.tsx'])
@@ -111,5 +118,19 @@ describe('top bar single-instance contract', () => {
       .sort()
 
     expect(offenders).toEqual([...ALLOWED].sort())
+  })
+})
+
+describe('the rail lists every Andromeda Pro template', () => {
+  it("the pole's Pro template rows are the template meta, in the same order", () => {
+    // The pole hardcodes its rows (it is a client module and cannot read the
+    // registry), so a new template lands on the site with no way into the
+    // rail. City Operations was built while the rail was being rewritten and
+    // nearly shipped missing from it. This is the tie.
+    const pole = readFileSync(join(root, 'app/_components/DesignSystemsPole.tsx'), 'utf8')
+    const pro = pole.slice(pole.indexOf("slug: 'andromeda-pro'"), pole.indexOf("slug: 'andromeda',"))
+    const block = pro.slice(pro.indexOf('templates: ['), pro.indexOf('],', pro.indexOf('templates: [')))
+    const railSlugs = [...block.matchAll(/slug: '([^']+)'/g)].map((m) => m[1])
+    expect(railSlugs).toEqual(ANDROMEDA_TEMPLATE_META.map((t) => t.folder))
   })
 })
