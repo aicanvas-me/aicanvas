@@ -70,10 +70,10 @@ export default async function ComponentsPage({
       ? undefined
       : {
           overline: COMPONENTS_SECTION_OVERLINE,
-          h1: 'One command installs it. One prompt rebuilds it.',
+          h1: 'Animated React Components and Blocks',
           // The count and the licence must agree: injected premium entries also
           // sit in the grid, and they are not MIT.
-          intro: `${mitCount} standalone React components and blocks, MIT, built with Tailwind CSS and Motion. Every one installs with the shadcn CLI and ships a remix prompt written for AI coding tools, so you or your agent can drop it in or make it yours.`,
+          intro: `${mitCount} standalone React components and blocks, MIT, built with Tailwind CSS and Motion. Each one installs with the shadcn CLI and ships a remix prompt for any AI coding tool.`,
         }
 
   return <HomeClient components={filtered} heading={heading} />
