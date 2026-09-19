@@ -391,7 +391,7 @@ export default function AndromedaShowcase({
           <PageOverline>Andromeda</PageOverline>
           <PageTitle>System</PageTitle>
           <PageLead>
-            Built for designers, developers, and teams who want a system, not a stylesheet. Tokens, components, templates, and a documented brain that keeps everyone aligned.
+            Built for designers, developers, and teams who want a system, not a stylesheet. Tokens, components, templates, and a documented AI Brain that keeps everyone aligned.
           </PageLead>
           <div
             className="text-sand-500"
@@ -403,7 +403,7 @@ export default function AndromedaShowcase({
               letterSpacing: '0.1em',
             }}
           >
-            {componentCount} components · {templateCount} templates · 1 brain · one-command install
+            {componentCount} components · {templateCount} templates · 1 AI Brain · one-command install
           </div>
         </div>
 
