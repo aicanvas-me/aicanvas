@@ -362,7 +362,7 @@ function BrainFlow() {
               decoding="async"
               style={{ display: 'block' }}
             />
-            <span style={{ fontSize: 13, fontWeight: 700, color: C.bright, marginTop: IMG_GAP }}>Andromeda Brain</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: C.bright, marginTop: IMG_GAP }}>Andromeda AI Brain</span>
             <span style={{ fontFamily: MONO, fontSize: 11, color: C.accent, marginTop: 2 }}>{BRAIN_TEASER.totalFiles} files</span>
           </div>
         </div>
@@ -545,7 +545,7 @@ export function BrainStoryV4() {
   // TemplateChrome/TopAuthPill. Anon/free derive to 'not-premium' synchronously,
   // and /explore is server-gated, so this never grants a free user access.
   const canOpen = usePremiumStatus() !== 'not-premium'
-  const ctaLabel = canOpen ? 'Read the brain' : 'Get the brain with premium'
+  const ctaLabel = canOpen ? 'Read the AI Brain' : 'Get the AI Brain with premium'
   const ctaHref = canOpen ? '/design-systems/andromeda/brain/explore' : '/pricing'
 
   // label positions spread over the WHOLE sphere around the brain (top, bottom, left, right,
@@ -842,11 +842,11 @@ export function BrainStoryV4() {
         <section aria-labelledby="brain-hero" className="max-w-3xl">
           <PageOverline>Built for agents</PageOverline>
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <PageTitle id="brain-hero" gap="none">Andromeda Brain</PageTitle>
+            <PageTitle id="brain-hero" gap="none">Andromeda AI Brain</PageTitle>
             <SystemTierChip tier="mit" />
           </div>
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
-            Tokens and components are the pieces. The brain is the judgment.
+            Tokens and components are the pieces. The AI Brain is the judgment.
           </p>
           <PageLead tone="body">
             It assembles them: every foundation, component rule, skill and tool your AI agent reads, so what it builds already matches the system instead of a guess.
@@ -900,7 +900,7 @@ export function BrainStoryV4() {
           </div>
           {status !== 'ready' && (
             <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted }}>
-              {status === 'error' ? 'Scene unavailable' : loadProgress > 0 ? `Loading the brain… ${loadProgress}%` : 'Loading the brain…'}
+              {status === 'error' ? 'Scene unavailable' : loadProgress > 0 ? `Loading the AI Brain… ${loadProgress}%` : 'Loading the AI Brain…'}
             </div>
           )}
           {/* drag affordance: a static rotate-3d icon (olive), at the box's
@@ -957,7 +957,7 @@ export function BrainStoryV4() {
                   A system that grows with the work.
                 </p>
                 <p style={{ fontSize: 14, color: C.node, lineHeight: 1.625, margin: '16px 0 0' }}>
-                  Most design systems hand you a fixed kit and stop. The brain is built the other way: to grow, not freeze.
+                  Most design systems hand you a fixed kit and stop. The AI Brain is built the other way: to grow, not freeze.
                 </p>
               </div>
             </div>
@@ -1043,7 +1043,7 @@ export function BrainStoryV4() {
 
         {/* What it is */}
         <Section className="mt-16 sm:mt-24">
-          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted, margin: 0 }}>The design brain</p>
+          <p style={{ fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: C.muted, margin: 0 }}>The AI Brain</p>
           <h2 style={{ fontSize: 20, color: C.bright, fontWeight: 700, letterSpacing: '-0.01em', margin: '6px 0 0' }}>
             The taste lives in the system, not the prompt
           </h2>
@@ -1097,7 +1097,7 @@ export function BrainStoryV4() {
               Andromeda components are free for everyone.
             </h2>
             <p className="relative mt-2 text-base text-sand-600 dark:text-sand-500">
-              The brain is the premium layer: one install puts all {BRAIN_TEASER.totalFiles} files in your project, and the web reader keeps every rule a click away while you work.
+              The AI Brain is the premium layer: one install puts all {BRAIN_TEASER.totalFiles} files in your project, and the web reader keeps every rule a click away while you work.
             </p>
             <div className="relative mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link href={ctaHref} className={buttonClasses({ variant: 'primary', size: 'lg' })}>

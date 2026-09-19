@@ -57,7 +57,7 @@ interface Section {
 function getDisplayName(f: BrainFile): string {
   const parts = f.path.split('/')
   const name = parts.at(-1) ?? ''
-  if (name === 'rules.md') return 'Brain Index'
+  if (name === 'rules.md') return 'AI Brain Index'
   if (name === 'SKILL.md') return parts.at(-2) ?? 'Skill'
   if (name.endsWith('.rules.md')) return name.replace('.rules.md', '')
   return name.replace('.md', '')
@@ -398,7 +398,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
       {/* Nav (file index) — rendered on the RIGHT via row-reverse on the root,
           so it doesn't sit beside the global app sidebar on the left. */}
       <nav
-        aria-label="Brain sections"
+        aria-label="AI Brain sections"
         className="brain-nav-desktop"
         style={{
           width: 220,
@@ -491,7 +491,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
             the brain files from this dropdown instead. */}
         <div className="brain-mobile-nav brain-pad-x" style={{ padding: '16px 40px 0' }}>
           <select
-            aria-label="Brain file"
+            aria-label="AI Brain file"
             value={activeFile.path}
             onChange={(e) => {
               const f = files.find((x) => x.path === e.target.value)
@@ -619,7 +619,7 @@ function BrainInstallButton({
         }}
       >
         <Terminal weight="regular" size={13} />
-        Get the Brain
+        Get the AI Brain
       </Button>
 
       {open && (
@@ -709,7 +709,7 @@ function BrainInstallCard({
     >
       {/* Title */}
       <div style={{ fontSize: 14, fontWeight: 600, color: C.text.primary, marginBottom: 12 }}>
-        Get the brain
+        Get the AI Brain
       </div>
 
       {/* npx command box (full width) */}

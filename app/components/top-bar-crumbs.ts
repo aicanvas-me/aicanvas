@@ -49,6 +49,7 @@ const SEGMENT_NAMES: Record<string, string> = {
   dashboard: 'Dashboard',
   'service-order': 'Service Order',
   'image-pack': 'Image Pack',
+  brain: 'AI Brain',
 }
 
 // Single-segment site pages. The label is what the page used to put in its
@@ -141,7 +142,7 @@ export function buildTopBarCrumbs(pathname: string): Crumb[] | null {
     return [
       DESIGN_SYSTEMS,
       { label: SYSTEM_LABELS[system], href: overviewHref(system) },
-      { label: 'Brain', href: `/design-systems/${system}/brain` },
+      { label: 'AI Brain', href: `/design-systems/${system}/brain` },
       { label: 'Reader' },
     ]
   }

@@ -83,7 +83,7 @@ export function AndromedaGallery({
         </label>
 
         <p className="mt-5 text-xxs font-semibold uppercase tracking-[0.1em] text-sand-500">
-          {components.length} components · {templateCount} templates · 1 brain · one-command install
+          {components.length} components · {templateCount} templates · 1 AI Brain · one-command install
         </p>
       </header>
 
