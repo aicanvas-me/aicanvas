@@ -643,17 +643,13 @@ function TemplateSwitcher({
                   className={`shrink-0 ${active ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-500'}`}
                 />
                 <span className="truncate">{t.name}</span>
-                {/* The domain and the check share the right slot: the active row
-                    is already named by its colour and weight, so the tick is the
-                    more useful thing to show there. */}
-                {active ? (
-                  <Check weight="bold" size={14} className="ml-auto shrink-0 text-olive-600 dark:text-olive-400" />
-                ) : (
-                  t.domain && (
-                    <span className="ml-auto shrink-0 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
-                      {t.domain}
-                    </span>
-                  )
+                {/* Every row keeps its domain, including the one you are on:
+                    the active row is already named by its olive colour and its
+                    weight, so it needs no second marker. */}
+                {t.domain && (
+                  <span className="ml-auto shrink-0 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
+                    {t.domain}
+                  </span>
                 )}
               </Link>
             )
