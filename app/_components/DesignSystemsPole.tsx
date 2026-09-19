@@ -40,11 +40,11 @@ const SYSTEMS = [
     ],
     components: ANDROMEDA_PRO_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
     templates: [
-      { slug: 'city-operations', name: 'City Operations', domain: 'Civic' },
-      { slug: 'signal-room', name: 'Signal Room', domain: 'Audio' },
-      { slug: 'mission-control', name: 'Mission Control', domain: 'Sci-Fi' },
-      { slug: 'service-order', name: 'Service Order', domain: 'Telecom' },
-      { slug: 'resource-planning', name: 'Resource Planning', domain: 'Operations' },
+      { slug: 'city-operations', name: 'City Operations', category: 'Dashboard' },
+      { slug: 'signal-room', name: 'Signal Room', category: 'Media' },
+      { slug: 'mission-control', name: 'Mission Control', category: 'Dashboard' },
+      { slug: 'service-order', name: 'Service Order', category: 'CRM' },
+      { slug: 'resource-planning', name: 'Resource Planning', category: 'Scheduling' },
     ],
   },
   {
@@ -60,11 +60,11 @@ const SYSTEMS = [
     sections: [{ slug: 'system', label: 'System', premium: true }],
     components: ANDROMEDA_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
     templates: [
-      { slug: 'signal-room', name: 'Signal Room', domain: 'Audio' },
-      { slug: 'mission-control', name: 'Mission Control', domain: 'Sci-Fi' },
-      { slug: 'service-order', name: 'Service Order', domain: 'Telecom' },
+      { slug: 'signal-room', name: 'Signal Room', category: 'Media' },
+      { slug: 'mission-control', name: 'Mission Control', category: 'Dashboard' },
+      { slug: 'service-order', name: 'Service Order', category: 'CRM' },
       // exchange-terminal — hidden, source preserved (see design-systems.config.mjs)
-      { slug: 'resource-planning', name: 'Resource Planning', domain: 'Operations' },
+      { slug: 'resource-planning', name: 'Resource Planning', category: 'Scheduling' },
     ],
   },
 ] as const

@@ -89,11 +89,11 @@ AI agents can browse and install AI Canvas components through the official MCP s
       slug: string
       name: string
       slugOverrides?: Record<string, string>
-      templates?: { slug: string; name: string; domain?: string }[]
+      templates?: { slug: string; name: string; category?: string }[]
     }) => {
       const templates = (s.templates ?? []).map((t) => {
         const pageSlug = t.slug.replace(new RegExp(`^${s.slug}-`), '')
-        const kind = t.domain ? `${t.domain} template` : 'template'
+        const kind = t.category ? `${t.category} template` : 'template'
         return `  - [${t.name}](${SITE_URL}/design-systems/${s.slug}/templates/${pageSlug}): Premium ${kind} built entirely from ${s.name} components. Install (Premium, requires an AI Canvas token): \`npx shadcn@latest add @aicanvas/${t.slug}\``
       })
       // Every install the system offers, grouped under the tier the gate gives

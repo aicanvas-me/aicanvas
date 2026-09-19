@@ -98,7 +98,7 @@ interface TemplateMeta {
   slug: string
   name: string
   system: string
-  domain?: string
+  category?: string
   description: string
   fileCount: number
   dependencies: string[]
@@ -427,13 +427,14 @@ server.registerTool(
       }))
       // Templates rank in the same list, otherwise the most natural query for a
       // whole screen ("dashboard", "mission control") matches nothing at all.
-      // Tagged so the agent calls `get_template`, not `get_component`. The domain
-      // ("Sci-Fi", "Telecom") folds into the system field to stay searchable.
+      // Tagged so the agent calls `get_template`, not `get_component`. The
+      // category ("Dashboard", "CRM") folds into the system field to stay
+      // searchable, which is what an agent asking for a dashboard types.
       const templateRanked = (meta.templates ?? []).map((t) => ({
         item: { ...t, kind: 'template' as const } as SearchHit,
         score: scoreSystemComponent(query, {
           ...t,
-          system: t.domain ? `${t.system} ${t.domain}` : t.system,
+          system: t.category ? `${t.system} ${t.category}` : t.system,
         }),
       }))
 
@@ -783,7 +784,7 @@ server.registerTool(
         '',
         ...templates.map(
           (t) =>
-            `  ${t.slug.padEnd(32)}  ${t.system}${t.domain ? ` · ${t.domain}` : ''}, ${t.fileCount} files`,
+            `  ${t.slug.padEnd(32)}  ${t.system}${t.category ? ` · ${t.category}` : ''}, ${t.fileCount} files`,
         ),
         '',
         'Use `get_template` with a slug above to fetch every file for one template.',
@@ -827,7 +828,7 @@ server.registerTool(
       }
       const item = await fetchComponentSource(slug)
       const summary = [
-        `# ${template.name} (${template.system}${template.domain ? ` · ${template.domain}` : ''})`,
+        `# ${template.name} (${template.system}${template.category ? ` · ${template.category}` : ''})`,
         '',
         template.description,
         '',

@@ -848,7 +848,7 @@ for (const ds of SYSTEMS) {
       type: 'registry:block',
       title: `${template.name} (${ds.name})`,
       description:
-        `${template.name} composition from ${ds.name}${template.domain ? ` (${template.domain.toLowerCase()} dashboard)` : ''}. ` +
+        `${template.name} composition from ${ds.name}${template.category ? ` (${template.category} template)` : ''}. ` +
         `Pulls in the ${installedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: templateDeps,
@@ -1365,7 +1365,7 @@ for (const ds of SYSTEMS) {
       name: `${template.name} (${ds.name} template)`,
       system: ds.slug,
       systemLabel: `${ds.name} design system`,
-      domain: template.domain,
+      category: template.category,
       description: templateItem?.description ?? `${template.name} template from ${ds.name}.`,
       fileCount: templateItem?.files?.length ?? 0,
       dependencies: templateItem?.dependencies ?? [],
