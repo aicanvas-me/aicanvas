@@ -24,10 +24,23 @@ describe('scroll memory', () => {
     expect(src).not.toContain('useRef')
   })
 
-  it('never writes a position under a URL the reader has already left', () => {
+  it('never writes a position under a page the reader has already left', () => {
     // Leaving a tall page for a short one clamps the column to zero and fires
-    // a scroll event; without this the saved position becomes that zero.
-    expect(src).toContain('if (key() !== url) return')
+    // a scroll event; without this the saved position becomes that zero. The
+    // guard has to be inside `save`, and scoped to `save`: a second copy of it
+    // elsewhere in the file used to be enough to satisfy this test.
+    const saver = /const save = \(\) => \{([\s\S]*?)sessionStorage\.setItem/.exec(src)?.[1]
+    expect(saver).toBeDefined()
+    expect(saver).toContain('if (location.pathname !== path) return')
+  })
+
+  it('keeps saving once the reader searches, under the URL they are on', () => {
+    // The rail's search rewrites the query with router.replace and no pathname
+    // change, so this effect does not re-run. Comparing the whole key would
+    // turn saving off for the rest of the visit, and Back to a searched or
+    // filtered list would land at the top.
+    expect(src).toContain('sessionStorage.setItem(key(), String(col.scrollTop))')
+    expect(src).not.toContain('if (key() !== url) return')
   })
 
   it('stops a restore chain that belongs to the page the reader has left', () => {
@@ -36,6 +49,6 @@ describe('scroll memory', () => {
     // The guard has to be inside the chain, ahead of the write.
     const chain = /const apply = \(\) => \{([\s\S]*?)col\.scrollTop = target/.exec(src)?.[1]
     expect(chain).toBeDefined()
-    expect(chain).toContain('if (key() !== url) return')
+    expect(chain).toContain('if (location.pathname !== path) return')
   })
 })

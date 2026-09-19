@@ -52,6 +52,12 @@ export function ScrollMemory() {
     if (!col) return
 
     const url = key()
+    // The pathname, not the whole key, is what says whose scroll this is. The
+    // rail's search rewrites the query on every keystroke (router.replace, no
+    // pathname change), so this effect does not re-run and `url` goes stale the
+    // moment the reader types. Comparing the full key there would silently turn
+    // saving off for the rest of the visit.
+    const path = location.pathname
     let raf = 0
     const save = () => {
       cancelAnimationFrame(raf)
@@ -60,10 +66,12 @@ export function ScrollMemory() {
         // clamps its scrollTop, and that fires a scroll event like any other.
         // Without this the last thing written for the page you just left is a
         // zero, which is precisely the position it must not remember. By then
-        // the URL has already moved on, so the key says whose scroll this is.
-        if (key() !== url) return
+        // the URL has already moved on, so the path says whose scroll this is.
+        if (location.pathname !== path) return
         try {
-          sessionStorage.setItem(url, String(col.scrollTop))
+          // Under the live key, not the captured one: a search keystroke keeps
+          // the reader on this page and its position belongs to the new query.
+          sessionStorage.setItem(key(), String(col.scrollTop))
         } catch {
           // Private windows and blocked site data: remembering is a nicety.
         }
@@ -93,8 +101,8 @@ export function ScrollMemory() {
         // The column outlives every page, so a chain still running for the page
         // you just left would write its position into the one you just opened.
         // Cleanup cannot reach a frame that has not fired yet, so the chain
-        // checks the same key `save` does and stops itself.
-        if (key() !== url) return
+        // makes the same check `save` does and stops itself.
+        if (location.pathname !== path) return
         col.scrollTop = target
         if (frames++ < (target > 0 ? RESTORE_FRAMES : 1) && Math.abs(col.scrollTop - target) > 1) {
           requestAnimationFrame(apply)
