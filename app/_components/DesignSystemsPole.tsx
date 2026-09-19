@@ -40,6 +40,7 @@ const SYSTEMS = [
     ],
     components: ANDROMEDA_PRO_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
     templates: [
+      { slug: 'city-operations', name: 'City Operations', domain: 'Civic' },
       { slug: 'signal-room', name: 'Signal Room', domain: 'Audio' },
       { slug: 'mission-control', name: 'Mission Control', domain: 'Sci-Fi' },
       { slug: 'service-order', name: 'Service Order', domain: 'Telecom' },
