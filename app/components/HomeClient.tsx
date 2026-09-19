@@ -315,8 +315,44 @@ export function HomeClient({
             <PageLead>{heading.intro}</PageLead>
           </header>
         )}
+        {/* ── Design systems & templates — search matches beyond the standalone
+            catalog. Listed FIRST during a search: a whole system or template is the
+            bigger answer, the individual components follow. Same ComponentCard
+            shell as the grid; links out to each item's own page. ── */}
+        {extras.length > 0 && (
+          <div>
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
+              Design systems &amp; templates
+            </h2>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {extras.map((e, i) => (
+                <motion.div
+                  key={e.key}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25, delay: (i % LOAD_MORE_SIZE) * 0.03 }}
+                >
+                  <ComponentCard
+                    name={e.name}
+                    description={e.description}
+                    tags={[]}
+                    image={e.image}
+                    badge={e.badge}
+                    badgeTone={e.badgeTone}
+                    cta={e.cta}
+                    href={e.href}
+                    slug={e.key}
+                    position={i}
+                    source="index"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {filtered.length > 0 && (
-          <>
+          <div className={extras.length > 0 ? 'mt-10' : ''}>
             {/* Group title — only during a search, so the two result groups
                 ("Components & blocks" + "Design systems & templates") read as a
                 consistent pair. Browsing shows no title (the top bar names it). */}
@@ -355,41 +391,6 @@ export function HomeClient({
               remaining={remaining}
               onLoadMore={handleLoadMore}
             />
-          </>
-        )}
-
-        {/* ── Design systems & templates — search matches beyond the standalone
-            catalog. Same ComponentCard shell as the grid; links out to each
-            item's own page. ── */}
-        {extras.length > 0 && (
-          <div className="mt-10">
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
-              Design systems &amp; templates
-            </h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-              {extras.map((e, i) => (
-                <motion.div
-                  key={e.key}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25, delay: (i % LOAD_MORE_SIZE) * 0.03 }}
-                >
-                  <ComponentCard
-                    name={e.name}
-                    description={e.description}
-                    tags={[]}
-                    image={e.image}
-                    badge={e.badge}
-                    badgeTone={e.badgeTone}
-                    cta={e.cta}
-                    href={e.href}
-                    slug={e.key}
-                    position={i}
-                    source="index"
-                  />
-                </motion.div>
-              ))}
-            </div>
           </div>
         )}
 
