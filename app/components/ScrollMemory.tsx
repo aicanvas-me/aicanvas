@@ -90,6 +90,11 @@ export function ScrollMemory() {
       // same reason: Next scrolls the new segment into view right after this.
       let frames = 0
       const apply = () => {
+        // The column outlives every page, so a chain still running for the page
+        // you just left would write its position into the one you just opened.
+        // Cleanup cannot reach a frame that has not fired yet, so the chain
+        // checks the same key `save` does and stops itself.
+        if (key() !== url) return
         col.scrollTop = target
         if (frames++ < (target > 0 ? RESTORE_FRAMES : 1) && Math.abs(col.scrollTop - target) > 1) {
           requestAnimationFrame(apply)

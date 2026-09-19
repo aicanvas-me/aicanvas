@@ -29,4 +29,13 @@ describe('scroll memory', () => {
     // a scroll event; without this the saved position becomes that zero.
     expect(src).toContain('if (key() !== url) return')
   })
+
+  it('stops a restore chain that belongs to the page the reader has left', () => {
+    // The column never unmounts, so cleanup cannot cancel a frame that has not
+    // fired yet: a chain from the previous page would scroll the new one down.
+    // The guard has to be inside the chain, ahead of the write.
+    const chain = /const apply = \(\) => \{([\s\S]*?)col\.scrollTop = target/.exec(src)?.[1]
+    expect(chain).toBeDefined()
+    expect(chain).toContain('if (key() !== url) return')
+  })
 })
