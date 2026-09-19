@@ -352,7 +352,7 @@ export function AndromedaComponentView({
           --at- text colour here was authored for the system's dark void and
           read as invisible ink the moment the page ground went light. */}
       <div className="mb-8">
-        <PageTitle gap="none">{name}</PageTitle>
+        <PageTitle gap="none" rank="section">{name}</PageTitle>
         <PageLead>{description}</PageLead>
       </div>
 

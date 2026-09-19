@@ -55,21 +55,33 @@ export function PageOverline({ children, className = '' }: { children: ReactNode
 // specificity, so appending one would leave the winner to stylesheet order.
 const TITLE_GAP = { overline: 'mt-3', none: 'mt-0' } as const
 
+// `rank` is the same kind of prop for the same reason: the two sizes collide at
+// equal specificity. A hero heading opens a whole area (a system, the index, a
+// gallery) and takes the 800 weight; a section heading names one thing inside
+// it, which is what a single component page is, and stays at 700. The ladder
+// is supervisor/skills/site-design-tokens.md.
+const TITLE_RANK = {
+  hero: 'text-4xl font-extrabold sm:text-5xl',
+  section: 'text-3xl font-bold sm:text-4xl',
+} as const
+
 export function PageTitle({
   children,
   id,
   gap = 'overline',
+  rank = 'hero',
   className = '',
 }: {
   children: ReactNode
   id?: string
   gap?: keyof typeof TITLE_GAP
+  rank?: keyof typeof TITLE_RANK
   className?: string
 }) {
   return (
     <h1
       id={id}
-      className={`${TITLE_GAP[gap]} text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl ${className}`}
+      className={`${TITLE_GAP[gap]} ${TITLE_RANK[rank]} tracking-tight text-sand-900 dark:text-sand-50 ${className}`}
     >
       {children}
     </h1>
