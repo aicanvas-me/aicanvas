@@ -1094,7 +1094,13 @@ function gateNoteFor(name) {
     if (name === `${system}-tokens`) {
       return gate.paidSystems.has(system) ? PREMIUM_GATE_NOTE : null
     }
-    if (name === system || name === `${system}-all`) return PREMIUM_GATE_NOTE
+    // `-all` carries the templates and the brain, so it is premium on every
+    // system. The bare components bundle follows its system: paid on a paid
+    // one, the free-account lane on a free one.
+    if (name === `${system}-all`) return PREMIUM_GATE_NOTE
+    if (name === system) {
+      return gate.paidSystems.has(system) ? PREMIUM_GATE_NOTE : FREE_GATE_NOTE
+    }
   }
   for (const system of gate.paidSystems) {
     if (name.startsWith(`${system}-`) && gate.dsComponents.has(name)) return PREMIUM_GATE_NOTE
