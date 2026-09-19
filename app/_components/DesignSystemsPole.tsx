@@ -3,19 +3,18 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { ArrowElbowDownRight, CaretDown, Cube, Lightning } from '@phosphor-icons/react'
+import { CaretDown, Cube, Sparkle } from '@phosphor-icons/react'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
 import { SystemTierChip } from './SystemTierChip'
 
 // ── Shared "Design Systems" sidebar pole ────────────────────────────────────
-// SINGLE SOURCE OF TRUTH for the Design Systems pole. Rendered by the one
-// `app/components/Sidebar.tsx` — plain in the root layout, and with `embedded`
-// in the design-systems / ideation layouts — so the pole is identical on every
-// page. The sidebar owns the collapse state + toggle (mutual-exclusion with the
-// Components pole) and passes it in here; the data (systems → templates →
-// components) and the full pole JSX live here.
+// SINGLE SOURCE OF TRUTH for the Design Systems pole. Rendered by the root
+// `app/components/Sidebar.tsx` and by `MobileNav.tsx`, so the pole is identical
+// on every page. The sidebar owns the collapse state + toggle (mutual-exclusion
+// with the Components pole) and passes it in here; the data (systems →
+// templates → components) and the full pole JSX live here.
 
 // Design systems shown under the Design Systems pole.
 // Two systems live side by side, each at its own routes: Andromeda Legacy
@@ -24,10 +23,10 @@ const SYSTEMS = [
   {
     slug: 'andromeda-pro',
     name: 'Andromeda Pro',
-    // The rail says "Andromeda" once on the family row, so each system row
-    // shows only its short name and its tier chip.
-    short: 'Pro',
     tier: 'pro',
+    // The rail says what is NEW, not what it costs: the tier is on the
+    // system's own page, and the licence word crowded out the name here.
+    badge: 'New',
     brain: true,
     // Pro's sections: Foundation, then Components. Neither
     // carries the premium mark - the foundation is open and single components
@@ -50,8 +49,8 @@ const SYSTEMS = [
   {
     slug: 'andromeda',
     name: 'Andromeda Legacy',
-    short: 'Legacy',
     tier: 'mit',
+    badge: null,
     // Has a premium Brain page at /design-systems/<slug>/brain (rules +
     // foundations + per-component intelligence).
     brain: true,
@@ -122,13 +121,13 @@ export function DesignSystemsPole({
         <Cube weight="regular" size={16} />
         <span className="flex-1 text-left">Design Systems</span>
       </div>
-      {/* The family row, a label like the pole header above it. Both systems
-          are Andromeda, so the name and the brand mark are said once here. */}
-      <div className="flex items-center gap-2 px-2 py-1.5 text-sm font-semibold text-sand-700 dark:text-sand-400">
-        <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
-        <AndromedaIcon size={14} mono />
-        <span className="flex-1">Andromeda</span>
-      </div>
+      <div className="relative">
+        {/* One vertical rail groups the systems under the pole header; it
+            replaces the elbow arrow that used to sit on every row. */}
+        <span
+          aria-hidden
+          className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800"
+        />
       <ul className="space-y-0.5">
           {SYSTEMS.map((system) => {
             // The system row never highlights: every page under it, the bare
@@ -151,7 +150,7 @@ export function DesignSystemsPole({
                     link is not valid markup, so they sit side by side and
                     share the row's hover ground. */}
                 <div
-                  className="group flex items-center gap-2 rounded-md pr-1 text-sm font-medium text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
+                  className="group flex items-center gap-1 rounded-md pr-1.5 text-sm font-medium text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                 >
                   <Link
                     href={`/design-systems/${system.slug}`}
@@ -174,29 +173,30 @@ export function DesignSystemsPole({
                       })
                       onNavigate?.()
                     }}
-                    className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-7 pr-2"
+                    className="flex min-w-0 flex-1 items-center gap-1.5 py-1.5 pl-2 pr-0"
                   >
-                    {/* Arrow at pl-7 starts under the family row's brand mark,
-                        so Pro and Legacy read as children of Andromeda. */}
-                    <ArrowElbowDownRight
-                      weight="regular"
-                      size={12}
-                      className="shrink-0 text-sand-300 dark:text-sand-700"
-                    />
+                    {/* The two systems are the top rows of the pole now: each
+                        carries the Andromeda mark and its own full name. The
+                        gap keeps them clear of the group's vertical rail. */}
+                    <span aria-hidden className="w-3 shrink-0" />
+                    <span aria-hidden className="shrink-0">
+                      <AndromedaIcon size={14} mono />
+                    </span>
                     <span className="min-w-0 truncate font-semibold">
-                      <span className="sr-only">Andromeda </span>
-                      {system.short}
+                      {system.name}
                     </span>
-                    <span aria-hidden className="flex">
-                      <SystemTierChip tier={system.tier} />
-                    </span>
+                    {system.badge && (
+                      <span aria-hidden className="flex">
+                        <SystemTierChip tier={system.tier} label={system.badge} className="!px-1" />
+                      </span>
+                    )}
                   </Link>
                   <button
                     type="button"
                     onClick={() => setOpen((o) => ({ ...o, [system.slug]: !expanded }))}
                     aria-expanded={expanded}
                     aria-label={`${expanded ? 'Collapse' : 'Expand'} ${system.name}`}
-                    className="-mr-0.5 shrink-0 rounded p-1 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-100"
+                    className="shrink-0 rounded p-0.5 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-100"
                   >
                     <CaretDown
                       size={12}
@@ -210,7 +210,7 @@ export function DesignSystemsPole({
                     {/* Nesting rail — groups System / Brain / Templates / Components under Andromeda */}
                     <span
                       aria-hidden
-                      className="pointer-events-none absolute bottom-1 left-[35px] top-1 w-px bg-sand-200 dark:bg-sand-800"
+                      className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800"
                     />
                     <ul className="mt-0.5 space-y-0.5">
                     {/* ── Overview: the system's own landing page, above every
@@ -221,10 +221,10 @@ export function DesignSystemsPole({
                       <Link
                         href={`/design-systems/${system.slug}`}
                         onClick={onNavigate}
-                        className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                        className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                           pathname === `/design-systems/${system.slug}`
-                            ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                            : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                            ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                            : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                         }`}
                       >
                         <span className="flex-1 truncate">Overview</span>
@@ -238,25 +238,17 @@ export function DesignSystemsPole({
                         <Link
                           href={`/design-systems/${system.slug}/${section.slug}`}
                           onClick={onNavigate}
-                          className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                          className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                             pathname === `/design-systems/${system.slug}/${section.slug}`
-                              ? 'bg-sand-300/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                              : 'text-sand-700 hover:bg-sand-300/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                              ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                              : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                           }`}
                         >
                           <span className="flex-1 truncate">{section.label}</span>
-                          {/* Lightning marks premium (install is premium). */}
-                          {section.premium && (
-                            <>
-                              <Lightning
-                                weight="regular"
-                                size={13}
-                                aria-hidden
-                                className="ml-auto shrink-0 text-sand-600 dark:text-sand-500"
-                              />
-                              <span className="sr-only">Premium</span>
-                            </>
-                          )}
+                          {/* No premium mark on the row: the tier is said once
+                              on the system row's chip. Still spoken, so the
+                              information is not lost to a screen reader. */}
+                          {section.premium && <span className="sr-only">Premium</span>}
                         </Link>
                       </li>
                     ))}
@@ -266,7 +258,7 @@ export function DesignSystemsPole({
                         <Link
                           href={`/design-systems/${system.slug}/brain`}
                           onClick={onNavigate}
-                          className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                          className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                             pathname === `/design-systems/${system.slug}/brain` ||
                             pathname.startsWith(`/design-systems/${system.slug}/brain/`)
                               ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
@@ -274,7 +266,9 @@ export function DesignSystemsPole({
                           }`}
                         >
                           <span className="flex-1 truncate">Brain</span>
-                          <Lightning
+                          {/* The one icon left in the list: the Brain is the
+                              system's AI layer, and the mark says so. */}
+                          <Sparkle
                             weight="regular"
                             size={13}
                             aria-hidden
@@ -286,7 +280,7 @@ export function DesignSystemsPole({
                     )}
                     {/* ── Templates (label + flat list) ──────────── */}
                     <li className="mt-1">
-                      <div className="pt-1.5 pb-0.5 pl-12 pr-2 text-xxs uppercase tracking-wider text-sand-600 dark:text-sand-500">
+                      <div className="pt-1.5 pb-0.5 pl-7 pr-2 text-xxs uppercase tracking-wider text-sand-600 dark:text-sand-500">
                         Templates
                       </div>
                       <ul className="space-y-0.5">
@@ -297,24 +291,17 @@ export function DesignSystemsPole({
                               <Link
                                 href={`/design-systems/${system.slug}/templates/${t.slug}`}
                                 onClick={onNavigate}
-                                className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                                className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                                   isActive
                                     ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                                     : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                                 }`}
                               >
                                 <span className="flex-1 truncate">{t.name}</span>
-                                {/* Lightning marks the template as Premium (replaces
-                                    the old domain tag). The bolt is decorative; the
-                                    sr-only word folds "Premium" into the link's
-                                    accessible name (Phosphor renders a bare <svg>, so
-                                    an aria-label on it is unreliably announced). */}
-                                <Lightning
-                                  weight="regular"
-                                  size={13}
-                                  aria-hidden
-                                  className="ml-auto shrink-0 text-sand-600 dark:text-sand-500"
-                                />
+                                {/* No mark on the row. The sr-only word still
+                                    folds "Premium" into the link's accessible
+                                    name (Phosphor renders a bare <svg>, so an
+                                    aria-label on it is unreliably announced). */}
                                 <span className="sr-only">Premium</span>
                               </Link>
                             </li>
@@ -327,7 +314,7 @@ export function DesignSystemsPole({
                         so it overflows into the sidebar's own scroll (peeks on
                         tall screens, scroll for the rest). */}
                     <li className="mt-1">
-                      <div className="pt-1.5 pb-0.5 pl-12 pr-2 text-xxs uppercase tracking-wider text-sand-600 dark:text-sand-500">
+                      <div className="pt-1.5 pb-0.5 pl-7 pr-2 text-xxs uppercase tracking-wider text-sand-600 dark:text-sand-500">
                         Components
                       </div>
                       <ul className="space-y-0.5">
@@ -338,7 +325,7 @@ export function DesignSystemsPole({
                               <Link
                                 href={`/design-systems/${system.slug}/${c.slug}`}
                                 onClick={onNavigate}
-                                className={`flex items-center gap-2 rounded-md py-1.5 pl-12 pr-2 text-[13px] font-medium transition-colors ${
+                                className={`flex items-center gap-2 rounded-md py-1.5 pl-7 pr-2 text-[13px] font-medium transition-colors ${
                                   isActive
                                     ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                                     : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
@@ -358,6 +345,7 @@ export function DesignSystemsPole({
             )
           })}
       </ul>
+      </div>
     </div>
   )
 }

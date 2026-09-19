@@ -33,6 +33,7 @@ import { optimizeImageKitUrl } from '../../../lib/imagekit'
 import { Paywall } from '../../../components/billing/Paywall'
 import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 
 type RelatedItem = { slug: string; name: string; image?: string }
 
@@ -247,15 +248,11 @@ export function AndromedaComponentView({
 
   return (
     <>
-    <main className="mx-auto w-full max-w-4xl px-4 pt-8 pb-8 sm:px-6 sm:pt-14">
+    <PageFrame as="main" className={`${PAGE_TOP} pb-8`}>
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
-          {name}
-        </h1>
-        <p className="mt-3 max-w-2xl text-base text-sand-600 dark:text-sand-400">
-          {description}
-        </p>
+        <PageTitle gap="none">{name}</PageTitle>
+        <PageLead>{description}</PageLead>
       </div>
 
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
@@ -648,7 +645,7 @@ export function AndromedaComponentView({
       )}
 
       <SiteFooter />
-    </main>
+    </PageFrame>
 
     <AnimatePresence>
       {fullscreen && (

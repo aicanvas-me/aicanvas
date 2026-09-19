@@ -11,6 +11,7 @@ import { buttonClasses } from '../../../components/buttonClasses'
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { SystemTierChip } from '../../../_components/SystemTierChip'
+import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { AndromedaComponentCard } from '../system/AndromedaComponentCard'
 import { ThemeCompare } from './ThemeCompare'
 import { FoundationLayers } from './FoundationLayers'
@@ -81,20 +82,10 @@ const BRAIN_POINTS: { icon: Icon; title: string; line: string }[] = [
   },
 ]
 
-function Container({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`mx-auto w-full max-w-5xl px-4 sm:px-6 ${className}`}>{children}</div>
-}
-
-function Overline({ children }: { children: ReactNode }) {
-  return (
-    <p className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">{children}</p>
-  )
-}
-
 function SectionHead({ overline, title, sub, id }: { overline: string; title: string; sub?: ReactNode; id: string }) {
   return (
     <div className="max-w-2xl">
-      <Overline>{overline}</Overline>
+      <PageOverline>{overline}</PageOverline>
       <h2 id={id} className="mt-2 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
         {title}
       </h2>
@@ -207,30 +198,27 @@ export function OverviewB({
   })
 
   return (
-    <main className="w-full pt-10 sm:pt-16">
+    <main className={`w-full ${PAGE_TOP}`}>
       {/* ── 1. Hero ─────────────────────────────────────────── */}
-      <Container>
+      <PageFrame>
         <section aria-labelledby="ovb-hero" className="max-w-3xl">
-          <Overline>Design system</Overline>
+          <PageOverline>Design system</PageOverline>
           {/* Same hero row as Legacy: the chip sits beside the h1, not inside
               it, so the heading stays the system's name alone. */}
           <div className="mt-3 flex flex-wrap items-center gap-3">
-            <h1
-              id="ovb-hero"
-              className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl"
-            >
+            <PageTitle id="ovb-hero" gap="none">
               Andromeda Pro
-            </h1>
+            </PageTitle>
             <SystemTierChip tier="pro" />
           </div>
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
             See all of it running. Take it home with Premium.
           </p>
-          <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-700 dark:text-sand-300">
+          <PageLead tone="body">
             {/* One string, not numbers interleaved with JSX text: the split form
                 hydrated with the space before "templates" missing on the server. */}
             {`${stats.components} components, ${stats.variants} variants and ${stats.templates} templates for any product UI, in light and dark. Every one runs on this site for free. Premium adds the code, the CLI install, the remix prompts, the Brain's rule files and template installs.`}
-          </p>
+          </PageLead>
           <div className="mt-6 flex flex-wrap gap-3">
             {showGetPremium && (
               <Link href="/pricing" className={BTN_PRIMARY}>
@@ -404,7 +392,7 @@ export function OverviewB({
               too narrow to read. The same holds for the template grid below. */}
           <div className={`grid grid-cols-1 gap-8 p-6 sm:p-8 lg:grid-cols-2 ${PANEL} ${PANEL_SHADOW}`}>
             <div className="flex flex-col justify-center">
-              <Overline>Built for agents</Overline>
+              <PageOverline>Built for agents</PageOverline>
               <h2
                 id="ovb-brain"
                 className="mt-2 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50"
@@ -461,12 +449,12 @@ export function OverviewB({
             ))}
           </div>
         </section>
-      </Container>
+      </PageFrame>
 
       {/* ── 8. Closing band ────────────────────────────────────────────── */}
       {/* Same closing card as the homepage's final CTA: inside the container,
           not a full-bleed band. */}
-      <Container className="mt-20">
+      <PageFrame className="mt-20">
         <section
           aria-labelledby="ovb-price"
           className="relative overflow-hidden rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
@@ -500,12 +488,12 @@ export function OverviewB({
             </Link>
           </p>
         </section>
-      </Container>
+      </PageFrame>
 
       {/* ── 9. Footer ──────────────────────────────────────────────────── */}
-      <Container className="mt-16 pb-10">
+      <PageFrame className="mt-16 pb-10">
         <SiteFooter />
-      </Container>
+      </PageFrame>
     </main>
   )
 }

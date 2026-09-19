@@ -2,7 +2,6 @@
 
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
-import { IdeationTopBar } from '../../_components/IdeationTopBar'
 import { themeColor } from '../../../design-systems/andromeda/components/lib/utils'
 
 // Template leaf routes own the full viewport. On DESKTOP the template pins itself
@@ -35,7 +34,6 @@ export function AndromedaContentColumn({ children }: { children: ReactNode }) {
 
   return (
     <div className={className} style={style}>
-      <IdeationTopBar />
       {children}
     </div>
   )

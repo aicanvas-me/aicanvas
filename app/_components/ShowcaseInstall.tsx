@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Check, Copy, Lightning, Terminal } from '@phosphor-icons/react'
+import { useTopBarInstallSlot } from '../components/TopBar'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { Button } from '../components/Button'
@@ -35,10 +36,7 @@ export function ShowcaseInstall({
   installs: InstallAction[]
   phoneFallback?: boolean
 }) {
-  const [slot, setSlot] = useState<HTMLElement | null>(null)
-  useEffect(() => {
-    setSlot(document.getElementById('andromeda-install-slot'))
-  }, [])
+  const slot = useTopBarInstallSlot()
 
   return (
     <>

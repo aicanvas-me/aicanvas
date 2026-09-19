@@ -1,6 +1,5 @@
-import { Suspense, type ReactNode } from 'react'
+import { type ReactNode } from 'react'
 import { JetBrains_Mono } from 'next/font/google'
-import { Sidebar } from '../../components/Sidebar'
 import { AndromedaContentColumn } from './AndromedaContentColumn'
 // heavy registry (keeps three.js etc. out of the bundle).
 
@@ -21,21 +20,14 @@ const jetbrainsMono = JetBrains_Mono({
 export default function AndromedaLayout({ children }: { children: ReactNode }) {
   return (
     <div
-      // h-full + overflow-hidden means this fills the root chrome column
-      // exactly and can never overflow it, so that column must not reserve a
-      // scrollbar gutter it can never use. AndromedaContentColumn owns the
-      // scrolling here. See .app-scroll-column in globals.css.
+      // min-h-0 + flex-1 + overflow-hidden means this fills the root chrome
+      // column below the site top bar exactly and can never overflow it, so
+      // that column must not reserve a scrollbar gutter it can never use.
+      // AndromedaContentColumn owns the scrolling here. See .app-scroll-column
+      // in globals.css.
       data-owns-scroll
-      className={`flex h-full w-full flex-1 flex-col overflow-hidden md:flex-row ${jetbrainsMono.variable}`}
+      className={`flex min-h-0 w-full flex-1 flex-col overflow-hidden md:flex-row ${jetbrainsMono.variable}`}
     >
-      {/* Desktop-only rail. Below md the embedded Sidebar (a full-height 240px
-          aside) would fill the viewport and bury the page, so it's hidden and
-          the global MobileNav drawer takes over on mobile. */}
-      <Suspense fallback={null}>
-        <div className="hidden md:flex">
-          <Sidebar embedded promoteDS />
-        </div>
-      </Suspense>
       <AndromedaContentColumn>{children}</AndromedaContentColumn>
     </div>
   )

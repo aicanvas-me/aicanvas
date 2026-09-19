@@ -5,6 +5,7 @@
 import { DownloadSimple } from '@phosphor-icons/react/dist/ssr'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { buttonClasses } from '../../../components/buttonClasses'
+import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import {
   IMAGE_PACK_CHECKS,
   IMAGE_PACK_CONCEPTS,
@@ -47,21 +48,19 @@ export default function ImagePackPage() {
 
   return (
     <>
-      <main className="mx-auto w-full max-w-6xl px-4 pt-8 pb-16 sm:px-6 sm:pt-14">
+      <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
         <header className="border-b border-sand-300 pb-10 dark:border-sand-800">
-          <p className="text-xxs font-semibold uppercase tracking-[0.18em] text-olive-600 dark:text-olive-400">
-            Andromeda Pro · Image pack
-          </p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-extrabold leading-[0.98] tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl lg:text-6xl">
+          <PageOverline>Andromeda Pro · Image pack</PageOverline>
+          <PageTitle className="max-w-3xl">
             {IMAGE_PACK_CONCEPTS.length} scenes.
             <br />
             Each in light and dark.
-          </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
+          </PageTitle>
+          <PageLead>
             One character in {IMAGE_PACK_CONCEPTS.length} scenes, each drawn twice with the same pose,
             crop and prop, so an image follows your theme without moving. Free to download and use
             in any project.
-          </p>
+          </PageLead>
 
           <div className="mt-8 flex flex-wrap items-center gap-x-4 gap-y-3">
             <a
@@ -129,10 +128,10 @@ export default function ImagePackPage() {
           <h3 className="mt-8 text-sm font-semibold text-sand-900 dark:text-sand-50">For example</h3>
           <ImagePackPrompt prompt={EXAMPLE_PROMPT} />
         </section>
-      </main>
-      <div className="mx-auto w-full max-w-6xl px-4 pb-10 sm:px-6">
+      </PageFrame>
+      <PageFrame className="pb-10">
         <SiteFooter />
-      </div>
+      </PageFrame>
     </>
   )
 }

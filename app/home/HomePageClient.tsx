@@ -17,7 +17,6 @@ import {
   CaretRight,
 } from '@phosphor-icons/react/dist/ssr'
 import { buttonClasses } from '../components/buttonClasses'
-import { HeaderSocials } from '../components/HeaderSocials'
 import { SiteFooter } from '../components/SiteFooter'
 import { AndromedaProSection } from './AndromedaProSection'
 import { Reveal } from './Reveal'
@@ -75,12 +74,6 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
       data-owns-scroll
       className="aic-page-scroll flex min-h-full flex-col overflow-x-hidden bg-sand-50 dark:bg-sand-950"
     >
-
-      {/* ── Top bar ── */}
-      <div className="sticky top-0 z-20 hidden h-14 shrink-0 items-center justify-between border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
-        <span className="text-sm font-semibold text-sand-900 dark:text-sand-50">Overview</span>
-        <HeaderSocials />
-      </div>
 
       <main className="relative mx-auto w-full min-w-0 max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
 

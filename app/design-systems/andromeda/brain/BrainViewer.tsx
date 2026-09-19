@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import { Check, Copy, DownloadSimple, Terminal } from '@phosphor-icons/react'
 import { zipSync, strToU8 } from 'fflate'
 import { Button } from '../../../components/Button'
+import { useTopBarInstallSlot } from '../../../components/TopBar'
 import { BrainRender } from './BrainRender'
 import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useCopied } from '@/app/components/useCopied'
@@ -342,10 +343,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
   // files, which only this component has. The slot div is display:none below
   // md (the whole bar is), so a portal there would be invisible on mobile; the
   // inline md:hidden fallback below covers small screens instead.
-  const [installSlot, setInstallSlot] = useState<HTMLElement | null>(null)
-  useEffect(() => {
-    setInstallSlot(document.getElementById('brain-install-slot'))
-  }, [])
+  const installSlot = useTopBarInstallSlot()
 
   // Download the pre-zipped bytes — the secondary path for anyone who prefers a
   // file over a command. The viewer only renders for entitled users, so this is

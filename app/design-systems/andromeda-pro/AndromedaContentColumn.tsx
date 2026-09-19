@@ -2,7 +2,6 @@
 
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
-import { IdeationTopBar } from '../../_components/IdeationTopBar'
 import { tokens } from '../../lib/andromeda-pro.generated'
 
 // Template leaf routes own the full viewport (sidebar + topbar are suppressed).
@@ -50,10 +49,9 @@ export function AndromedaContentColumn({ children }: { children: ReactNode }) {
 
   return (
     <div className={className} style={style}>
-      <IdeationTopBar />
       {/* isolate: page content forms its OWN stacking context, so a component
-          z-index (menus mount at zIndex 1000) can never climb over the sticky
-          top bar above — the bar wins on its z-30 against this single unit.
+          z-index (menus mount at zIndex 1000) can never climb over the site's
+          top bar, which the root layout renders above this column.
           The wrapper is flex-transparent (flex-1 min-h-0 column) so template
           leaves keep their full-height math and normal pages keep flowing. */}
       <div className="isolate flex min-h-0 flex-1 flex-col">
