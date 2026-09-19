@@ -80,6 +80,17 @@ describe('top bar single-instance contract', () => {
     expect(offenders).toEqual(['app/layout.tsx'])
   })
 
+  it('the scroll column reserves the bar\'s height, so a page opened from a scrolled one still starts at its top', () => {
+    // Next scrolls the new page's root into view, and that root sits below the
+    // sticky bar. The reserve and the bar's height are one number in two files.
+    const bar = readFileSync(join(root, 'app/components/TopBar.tsx'), 'utf8')
+    expect(bar, 'the bar is h-14 from md up').toMatch(/sticky top-0[^'\n]*\bhidden h-14\b[^'\n]*\bmd:flex\b/)
+    const rootLayout = readFileSync(join(root, 'app/layout.tsx'), 'utf8')
+    expect(rootLayout, 'the scroll column must keep md:scroll-pt-14').toMatch(
+      /className="app-scroll-column [^"]*\bmd:scroll-pt-14\b/,
+    )
+  })
+
   it('the old per-page bar signature (h-14 shrink-0 + border-b border-sand-200 on one line) only survives in the shell, the template shell and the lab', () => {
     // Not a page top bar: the sidebar's own logo block is h-14 to match the
     // bar's height (see TopBar.tsx's comment), and it carries the same two

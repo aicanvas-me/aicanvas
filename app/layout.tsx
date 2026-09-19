@@ -252,7 +252,12 @@ export default async function RootLayout({
                   full-height strip it can never paint a bar in. In CSS rather
                   than an inline style so the :has() release can out-specify
                   it; an inline declaration would always win. */}
-              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 dark:bg-sand-950">
+              {/* md:scroll-pt-14 is the bar's height (h-14, drawn from md up). On
+                  a navigation Next scrolls the new page's root into view, and
+                  that root starts BELOW the sticky bar, so without the padding
+                  a page opened from a scrolled one lands 56px down with its
+                  first lines under the bar. */}
+              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 md:scroll-pt-14 dark:bg-sand-950">
                 {/* The one top bar, above every page's content and never
                     remounted: a navigation swaps only what is below it. It
                     reads the URL, so it sits inside the same Suspense the
