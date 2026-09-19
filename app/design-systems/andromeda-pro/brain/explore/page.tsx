@@ -9,7 +9,7 @@ import { BrainViewer } from '../BrainViewer'
 export const dynamic = 'force-dynamic'
 
 export const metadata = {
-  title: 'Andromeda Pro Brain: Premium Design Intelligence',
+  title: 'Andromeda Pro AI Brain: Premium Design Intelligence',
   description:
     'The judgment layer for Andromeda Pro: foundations and per-component rules, the intelligence behind every build decision.',
   robots: { index: false, follow: false },
@@ -78,9 +78,9 @@ export default async function AndromedaBrainReaderPage() {
     // paying subscriber to the pitch page; tell them plainly instead.
     return (
       <div className="flex-1 bg-sand-50 text-sand-600 dark:bg-sand-950 dark:text-sand-400" style={{ padding: '40px 48px', maxWidth: 720, fontFamily: "var(--font-jetbrains-mono, 'JetBrains Mono Variable'), 'JetBrains Mono', monospace" }}>
-        <h1 className="text-sand-900 dark:text-sand-50" style={{ fontSize: 15, marginBottom: 12 }}>Brain temporarily unavailable</h1>
+        <h1 className="text-sand-900 dark:text-sand-50" style={{ fontSize: 15, marginBottom: 12 }}>AI Brain temporarily unavailable</h1>
         <p style={{ fontSize: 13, lineHeight: 1.6 }}>
-          Your Premium access is active, but the Brain files could not be loaded
+          Your Premium access is active, but the AI Brain files could not be loaded
           on this deployment. This resolves on the next build. If it persists,
           write to us and we will fix it.
         </p>

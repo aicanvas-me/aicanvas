@@ -431,7 +431,7 @@ function BrainFlow() {
               decoding="async"
               style={{ display: 'block' }}
             />
-            <span className="text-[13px] font-bold text-sand-50" style={{ marginTop: IMG_GAP }}>Andromeda Pro Brain</span>
+            <span className="text-[13px] font-bold text-sand-50" style={{ marginTop: IMG_GAP }}>Andromeda Pro AI Brain</span>
             <span className="mt-0.5 font-mono text-[11px] text-olive-400">{`${BRAIN_TEASER.totalFiles} files`}</span>
           </div>
         </div>
@@ -539,7 +539,7 @@ function CorpusExplorer() {
       <div
         ref={rowRef}
         role="tablist"
-        aria-label="Brain sections"
+        aria-label="AI Brain sections"
         aria-orientation={lgUp ? 'vertical' : 'horizontal'}
         onKeyDown={onKeyDown}
         className="relative flex gap-1 overflow-x-auto [scrollbar-width:none] lg:flex-col lg:self-start lg:overflow-visible"
@@ -984,12 +984,12 @@ export function BrainStoryV4() {
           <PageOverline>Built for agents</PageOverline>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             <PageTitle id="brain-hero" gap="none">
-              Andromeda Pro Brain
+              Andromeda Pro AI Brain
             </PageTitle>
             <SystemTierChip tier="pro" />
           </div>
           <p className="mt-3 text-xl font-bold text-sand-900 dark:text-sand-50">
-            Components are the pieces. The Brain is the judgment.
+            Components are the pieces. The AI Brain is the judgment.
           </p>
           <PageLead tone="body">{HERO_BODY}</PageLead>
           <div className="mt-6 flex flex-wrap gap-3">
@@ -1037,7 +1037,7 @@ export function BrainStoryV4() {
           </div>
           {status !== 'ready' && (
             <div aria-hidden style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: SANS, fontSize: 12, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: STAGE_INK.status }}>
-              {status === 'error' ? 'Scene unavailable' : loadProgress > 0 ? `Loading the brain… ${loadProgress}%` : 'Loading the brain…'}
+              {status === 'error' ? 'Scene unavailable' : loadProgress > 0 ? `Loading the AI Brain… ${loadProgress}%` : 'Loading the AI Brain…'}
             </div>
           )}
           {/* Drag affordance, a static rotate-3d icon. In the corner because the
@@ -1066,7 +1066,7 @@ export function BrainStoryV4() {
                   {/* The lifted column, like the overview ledger's Premium
                       column: one surface, no colour. */}
                   <th scope="col" className="border-l border-sand-200 bg-sand-50 px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-olive-600 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-olive-400">
-                    With the Brain
+                    With the AI Brain
                   </th>
                 </tr>
               </thead>
@@ -1097,7 +1097,7 @@ export function BrainStoryV4() {
 
         {/* What it is */}
         <Section className="mt-20" aria-labelledby="brain-flow">
-          <SectionHead id="brain-flow" overline="The design brain" title="The taste lives in the system, not the prompt." />
+          <SectionHead id="brain-flow" overline="The AI Brain" title="The taste lives in the system, not the prompt." />
           {/* Kicker, headline, diagram. No paragraph: the picture is the
               explanation, and prose above it only said the same thing first. */}
 
@@ -1122,8 +1122,8 @@ export function BrainStoryV4() {
           <SectionHead
             id="brain-versus"
             overline="Legacy vs Pro"
-            title="A step forward from the Andromeda Brain."
-            sub="The Pro Brain grew out of Andromeda Legacy. It covers more of the system, closes the gaps agents slipped through, and hands the checking to scripts."
+            title="A step forward from the Andromeda AI Brain."
+            sub="The Pro AI Brain grew out of Andromeda Legacy. It covers more of the system, closes the gaps agents slipped through, and hands the checking to scripts."
           />
 
           <div className={`mt-8 overflow-x-auto ${PANEL_CLASS} ${PANEL_SHADOW}`}>
@@ -1134,10 +1134,10 @@ export function BrainStoryV4() {
                     <span className="sr-only">Measure</span>
                   </th>
                   <th scope="col" className="px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-sand-600 sm:px-5 dark:text-sand-400">
-                    Legacy Brain
+                    Legacy AI Brain
                   </th>
                   <th scope="col" className="border-l border-sand-200 bg-sand-50 px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-olive-600 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-olive-400">
-                    Pro Brain
+                    Pro AI Brain
                   </th>
                 </tr>
               </thead>
@@ -1220,7 +1220,7 @@ export function BrainStoryV4() {
             <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
           </div>
           <h2 id="brain-get" className="relative text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
-            Give your agent the Brain.
+            Give your agent the AI Brain.
           </h2>
           <p className="relative mt-2 text-base text-sand-700 dark:text-sand-300">
             {`One command installs all ${BRAIN_TEASER.totalFiles} files in your project, and running it again updates them. Premium also opens the reader, with every rule a click away while you work.`}

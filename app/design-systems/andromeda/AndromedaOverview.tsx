@@ -360,13 +360,13 @@ export function AndromedaOverview() {
           </div>
           <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">
             <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
-              The Brain
+              The AI Brain
             </span>
             <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
               The rules your agent reads
             </h2>
             <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-              Tokens and components are the pieces. The Brain is the judgment that assembles them:
+              Tokens and components are the pieces. The AI Brain is the judgment that assembles them:
               every rule, foundation, and skill your AI agent reads, so what it builds already
               matches the system instead of a guess.
             </p>

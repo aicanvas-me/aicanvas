@@ -266,7 +266,7 @@ export function DesignSystemsPole({
                               : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                           }`}
                         >
-                          <span className="flex-1 truncate">Brain</span>
+                          <span className="flex-1 truncate">AI Brain</span>
                           {/* The one icon left in the list: the Brain is the
                               system's AI layer, and the mark says so. */}
                           <Sparkle

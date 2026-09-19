@@ -228,11 +228,11 @@ export default function PricingPage() {
             Our Pricing Plan
           </span>
           <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50">
-            {premium ? 'Start free, upgrade when you need more' : 'Pick your side'}
+            {premium ? 'Simple, honest pricing' : 'Pick your side'}
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
             {premium
-              ? 'A free account unlocks unlimited one-command installs and remix with AI on every free component, free forever. Premium adds the closed-source components, blocks, design systems and templates, with their full remix prompts.'
+              ? 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'
               : 'The free library is free, forever. Browse anonymously, or sign up to save your work, keep Lab presets, and export to your machine.'}
           </p>
         </Section>

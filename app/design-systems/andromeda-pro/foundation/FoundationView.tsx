@@ -271,7 +271,7 @@ export function FoundationView() {
       <PageTitle>The primitives</PageTitle>
       <PageLead>
         Every Andromeda Pro component is built from the values on this page, read through
-        three layers of tokens. This page is the what. The Brain teaches when and how to use
+        three layers of tokens. This page is the what. The AI Brain teaches when and how to use
         each value.
       </PageLead>
 

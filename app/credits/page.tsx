@@ -40,7 +40,7 @@ export default function CreditsPage() {
               <a href="https://poly.pizza/m/5mPRPZkI3qt" target="_blank" rel="noopener noreferrer" className={extLink}>
                 Poly Pizza
               </a>
-              . Used in the Andromeda Brain visual.
+              . Used in the Andromeda AI Brain visual.
             </li>
           </ul>
         </section>

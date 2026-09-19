@@ -120,7 +120,7 @@ AI agents can browse and install AI Canvas components through the official MCP s
       // Listed only when this build shipped the brain, per the manifest the gate reads.
       const brain = `${s.slug}-brain`
       const brainLine = lookup.brainSlugs.has(brain)
-        ? [`  - [Brain](${SITE_URL}/design-systems/${s.slug}/brain): Rule files an AI agent reads to build on-brand ${s.name} UI (tokens, layout, motion, per-component rules). Install or update (${installTier(brain)}): \`npx shadcn@latest add --overwrite @aicanvas/${brain}\``]
+        ? [`  - [AI Brain](${SITE_URL}/design-systems/${s.slug}/brain): Rule files an AI agent reads to build on-brand ${s.name} UI (tokens, layout, motion, per-component rules). Install or update (${installTier(brain)}): \`npx shadcn@latest add --overwrite @aicanvas/${brain}\``]
         : []
       return [
         `- [${s.name}](${SITE_URL}/design-systems/${s.slug}): Design system (tokens + components). Browse free: ${SITE_URL}/design-systems/${s.slug}${SYSTEM_BROWSE[s.slug] ?? ''}. ${install}`,

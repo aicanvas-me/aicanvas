@@ -60,7 +60,7 @@ const LEDGER_ROWS: { label: string; free: boolean }[] = [
   { label: 'CLI install into your repo', free: false },
   { label: 'A remix prompt per component', free: false },
   { label: `Install all ${numberWord(TEMPLATES.length)} templates`, free: false },
-  { label: "The Brain's rule files, ready for your agent", free: false },
+  { label: "The AI Brain's rule files, ready for your agent", free: false },
 ]
 
 // What the Brain gives an agent, in the order it matters.
@@ -217,7 +217,7 @@ export function OverviewB({
           <PageLead tone="body">
             {/* One string, not numbers interleaved with JSX text: the split form
                 hydrated with the space before "templates" missing on the server. */}
-            {`${stats.components} components, ${stats.variants} variants and ${stats.templates} templates for any product UI, in light and dark. Every one runs on this site for free. Premium adds the code, the CLI install, the remix prompts, the Brain's rule files and template installs.`}
+            {`${stats.components} components, ${stats.variants} variants and ${stats.templates} templates for any product UI, in light and dark. Every one runs on this site for free. Premium adds the code, the CLI install, the remix prompts, the AI Brain's rule files and template installs.`}
           </PageLead>
           <div className="mt-6 flex flex-wrap gap-3">
             {showGetPremium && (
@@ -400,7 +400,7 @@ export function OverviewB({
                 Your agent reads the rules first.
               </h2>
               <p className="mt-3 text-base leading-relaxed text-sand-700 dark:text-sand-300">
-                The Brain holds the foundations, component rules and skills an AI agent reads before it
+                The AI Brain holds the foundations, component rules and skills an AI agent reads before it
                 writes a line. Every component also carries its own remix prompt, so what your agent builds
                 stays on the system.
               </p>
@@ -420,11 +420,11 @@ export function OverviewB({
                 ))}
               </ul>
               <p className="mt-6 text-sm text-sand-600 dark:text-sand-400">
-                The Brain&apos;s rule files, remix prompts and the CLI install come with Premium.
+                The AI Brain&apos;s rule files, remix prompts and the CLI install come with Premium.
               </p>
               <div className="mt-6">
                 <Link href="/design-systems/andromeda-pro/brain" className={BTN_SECONDARY}>
-                  Explore the Brain
+                  Explore the AI Brain
                   <ArrowRight weight="regular" aria-hidden className="size-4" />
                 </Link>
               </div>
