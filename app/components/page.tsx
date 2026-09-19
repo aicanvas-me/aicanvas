@@ -70,7 +70,7 @@ export default async function ComponentsPage({
           overline: COMPONENTS_SECTION_OVERLINE,
           h1: 'Animated React Components and Blocks',
           intro:
-            'Standalone React components and blocks, built with Tailwind CSS and Motion. Each one installs with the shadcn CLI and ships a remix prompt for any AI coding tool.',
+            'Standalone React components and blocks, built with Tailwind CSS and Motion. Each one installs with the shadcn CLI and ships a remix prompt for any AI tool.',
         }
 
   return <HomeClient components={filtered} heading={heading} />
