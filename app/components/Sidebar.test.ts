@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda-pro/andromeda-meta'
 
@@ -27,12 +27,19 @@ function walk(dir: string, out: string[] = []): string[] {
 describe('sidebar single-instance contract', () => {
   it('only app/layout.tsx renders a <Sidebar>', () => {
     // Andromeda Pro has its own component named Sidebar, rendered from the
-    // generated registry by its matrix case. Only the site's rail counts
-    // here, so the tag has to come from app/components/Sidebar.
+    // generated registry by its matrix case, so the tag's NAME proves
+    // nothing. Resolve every relative specifier in the file against the
+    // file's own directory and keep only the ones that land on the rail:
+    // a sibling './Sidebar', a '../components/Sidebar', either quote, and a
+    // dynamic import all count, and Pro's registry import does not.
+    const rail = join(root, 'app', 'components', 'Sidebar')
     const offenders = walk(join(root, 'app'))
       .filter((f) => {
         const src = readFileSync(f, 'utf8')
-        return /from '[^']*\/components\/Sidebar'/.test(src) && /<Sidebar[ />]/.test(src)
+        if (!/<Sidebar[ />]/.test(src)) return false
+        return [...src.matchAll(/(?:from|import\()\s*['"](\.[^'"]*)['"]/g)].some(
+          (m) => resolve(dirname(f), m[1]) === rail,
+        )
       })
       .map((f) => f.slice(root.length + 1))
 
