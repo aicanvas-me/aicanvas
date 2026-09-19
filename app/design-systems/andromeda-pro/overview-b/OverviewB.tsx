@@ -144,7 +144,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
           <span className="rounded-md bg-sand-200 px-2 py-0.5 text-xs font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
             Premium template
           </span>
-          {t.domain ? <span className="text-xs text-sand-600 dark:text-sand-400">{t.domain}</span> : null}
+          {t.category ? <span className="text-xs text-sand-600 dark:text-sand-400">{t.category}</span> : null}
         </div>
         <h3 className="mt-3 text-base font-bold text-sand-900 dark:text-sand-50">{t.name}</h3>
         <p className="mt-1 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{t.blurb}</p>
