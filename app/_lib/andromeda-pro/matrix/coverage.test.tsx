@@ -288,4 +288,14 @@ describe('andromeda matrix — the gallery cards cannot drift', () => {
       expect(CATEGORY[m.slug], `${m.slug} has no category — it would land in "Other"`).toBeDefined()
     }
   })
+
+  it('every component has a gallery poster', () => {
+    // A component with no image falls back to the placeholder glyph, which
+    // reads as a broken card next to 45 real ones. Shoot it with
+    // `node scripts/screenshot-andromeda.mjs <slug>` against a dev server and
+    // paste the returned URL into andromeda-meta.ts.
+    for (const m of ANDROMEDA_COMPONENT_META) {
+      expect(m.image, `${m.slug} has no poster — its card shows the placeholder glyph`).toBeTruthy()
+    }
+  })
 })

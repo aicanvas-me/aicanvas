@@ -274,6 +274,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Navigates a console from a left rail that folds between labelled rows and icons.',
     sourceFile: 'Sidebar.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/sidebar.png?v=1',
   },
   {
     slug: 'slider',

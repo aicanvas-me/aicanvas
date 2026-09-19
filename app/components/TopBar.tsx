@@ -6,7 +6,7 @@ import { Breadcrumbs } from './Breadcrumbs'
 import { ThemeToggle } from './ThemeToggle'
 import { TopAuthPill } from './auth/TopAuthPill'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
-import { TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId } from './top-bar-crumbs'
+import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId } from './top-bar-crumbs'
 
 // The site's one top bar. Rendered once by the root layout, at the top of the
 // scroll column, and never unmounted: a page change swaps the content below
@@ -101,7 +101,13 @@ export function TopBar() {
   // leaves are full-screen compositions. The sidebar hides on the same two.
   // /kuendigen still draws its own bar: that page is the legal cancellation
   // flow and is frozen as shipped, so the shell steps aside there.
-  if (pathname.startsWith('/lab') || pathname === '/kuendigen' || TEMPLATE_LEAF_RE.test(pathname)) return null
+  if (
+    pathname.startsWith('/lab') ||
+    pathname === '/kuendigen' ||
+    TEMPLATE_LEAF_RE.test(pathname) ||
+    CAPTURE_LEAF_RE.test(pathname)
+  )
+    return null
 
   const override = ctx?.override && ctx.override.pathname === pathname ? ctx.override.node : undefined
   const crumbs = buildTopBarCrumbs(pathname)

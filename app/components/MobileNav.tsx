@@ -17,6 +17,7 @@ import { GITHUB_URL, X_URL } from '../lib/config'
 import type { ReactNode } from 'react'
 import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
+import { CAPTURE_LEAF_RE } from './top-bar-crumbs'
 import { SecondaryNav } from './SecondaryNav'
 import { useComponentSearch } from './useComponentSearch'
 import { Button } from './Button'
@@ -101,7 +102,8 @@ export function MobileNav({
   // template leaves and the /lab subtree (LAB ships its own top bar).
   const hideMobileNav =
     pathname?.startsWith('/lab') ||
-    TEMPLATE_LEAF_RE.test(pathname ?? '')
+    TEMPLATE_LEAF_RE.test(pathname ?? '') ||
+    CAPTURE_LEAF_RE.test(pathname ?? '')
   if (hideMobileNav) return null
 
   // On a route that pins itself dark, this drawer is the one piece of site

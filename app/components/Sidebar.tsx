@@ -11,6 +11,7 @@ import { buttonClasses } from './buttonClasses'
 import { SecondaryNav } from './SecondaryNav'
 import { useComponentSearch } from './useComponentSearch'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
+import { CAPTURE_LEAF_RE } from './top-bar-crumbs'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
 
 // ── Tier structure ────────────────────────────────────────────────────────
@@ -65,7 +66,9 @@ export function Sidebar({
   // /design-systems and /ideation included, keeps this one rail mounted, so
   // crossing between those route spaces never unmounts and remounts it.
   const hideSidebar =
-    pathname?.startsWith('/lab') || TEMPLATE_LEAF_RE.test(pathname ?? '')
+    pathname?.startsWith('/lab') ||
+    TEMPLATE_LEAF_RE.test(pathname ?? '') ||
+    CAPTURE_LEAF_RE.test(pathname ?? '')
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   // promoteDS caps Components to its first 3 categories; this reveals the rest.
   const [showAllCats, setShowAllCats] = useState(false)

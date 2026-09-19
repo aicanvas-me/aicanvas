@@ -18,6 +18,13 @@ import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_li
 // TemplatePreviewShell owns those. The sidebar hides on the same test.
 export const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
 
+// The card-art capture route renders one component alone on a void canvas for
+// scripts/screenshot-andromeda.mjs. It is a tool, not a page: any chrome left
+// in the frame is baked into the poster that ships on the gallery card. It
+// used to escape the chrome by living at the app root, which stopped being
+// true when the bar and the rail moved into the root layout.
+export const CAPTURE_LEAF_RE = /^\/andromeda-capture\//
+
 const SYSTEM_LABELS: Record<string, string> = {
   andromeda: 'Andromeda Legacy',
   'andromeda-pro': 'Andromeda Pro',
