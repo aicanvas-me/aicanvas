@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { ArrowElbowDownRight, CaretDown, DiamondsFour, GithubLogo, MagnifyingGlass, X, XLogo } from '@phosphor-icons/react'
+import { CaretDown, DiamondsFour, GithubLogo, MagnifyingGlass, X, XLogo } from '@phosphor-icons/react'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import type { ReactNode } from 'react'
 import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
@@ -11,6 +11,7 @@ import { buttonClasses } from './buttonClasses'
 import { SecondaryNav } from './SecondaryNav'
 import { useComponentSearch } from './useComponentSearch'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
+import { isPinnedDarkRoute } from '../lib/pinned-dark'
 
 // ── Tier structure ────────────────────────────────────────────────────────
 // Ordering comes from the shared categories config so the sidebar, the
@@ -25,20 +26,18 @@ type Section = {
 }
 
 // The Design Systems pole is rendered separately (shared DesignSystemsPole) so
-// it never drifts. This is the single Sidebar used everywhere: the root layout
-// renders it plain (it hides itself on /design-systems, /ideation, /lab), and
-// the design-systems / ideation layouts render it with `embedded` so it shows
-// on those routes too. Only the Components pole stays in SECTIONS.
+// it never drifts. This is the single Sidebar, rendered once by the root
+// layout and persisting across every route — it hides itself only on /lab and
+// on template leaves, where the page owns the full viewport. Only the
+// Components pole stays in SECTIONS.
 const SECTIONS: Section[] = [
   { title: 'Components', icon: <DiamondsFour weight="regular" size={16} />, labels: COMPONENTS_LABELS },
   // { title: 'SVGs', icon: <PenNib weight="regular" size={16} />, labels: [], disabled: true },
 ]
 
 export function Sidebar({
-  embedded = false,
   promoteDS = false,
 }: {
-  embedded?: boolean
   // promoteDS: the "promote the design system" landing behavior — caps the
   // Components pole to its first 3 categories (rest behind a Show more toggle)
   // and auto-expands Andromeda's System/Brain/Templates. Off by default; flip it
@@ -60,19 +59,13 @@ export function Sidebar({
       ? (searchParams.get('category') ?? 'All Components')
       : null
 
-  // Hide the global sidebar on design-system preview routes so the design
-  // system gets the full viewport. Also hidden on /ideation/* — that subtree
-  // renders this same Sidebar with `embedded` from its own layout (so the root
-  // copy must stand down to avoid a duplicate). And on /lab/* — LAB has its own
-  // custom top bar (logo + auth pill), no left rail, no search.
-  //
-  // When `embedded`, the sidebar is rendered explicitly by a design-system /
-  // ideation layout, so it must bypass this hide check and actually render.
+  // Hidden only on /lab/* — LAB has its own custom top bar (logo + auth pill),
+  // no left rail, no search — and on template / example leaves, which are
+  // full-screen compositions with no chrome at all. Every other route,
+  // /design-systems and /ideation included, keeps this one rail mounted, so
+  // crossing between those route spaces never unmounts and remounts it.
   const hideSidebar =
-    !embedded &&
-    (pathname?.startsWith('/design-systems/') ||
-      pathname?.startsWith('/ideation') ||
-      pathname?.startsWith('/lab'))
+    pathname?.startsWith('/lab') || TEMPLATE_LEAF_RE.test(pathname ?? '')
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   // promoteDS caps Components to its first 3 categories; this reveals the rest.
   const [showAllCats, setShowAllCats] = useState(false)
@@ -87,15 +80,14 @@ export function Sidebar({
   // The Design Systems pole no longer collapses as a whole: each system row
   // owns its own caret, so both systems stay listed at all times.
 
-  // ── Embedded (design-systems / ideation) mutual-exclusion ─────────────────
-  // In embedded mode the Components pole is a collapsible button (mirrors the
-  // retired IdeationSidebar). On component routes it's expanded and the DS pole
-  // collapsed; on design-system routes the reverse. Opening one pole auto-closes
-  // the other; closing a pole leaves the other alone (you can have neither open).
-  const onComponents = !onDesignSystems
-  const [collapsedComponents, setCollapsedComponents] = useState(!onComponents)
+  // ── Components pole mutual-exclusion ───────────────────────────────────────
+  // The Components pole opens on component routes and closes on design-system
+  // routes; a toggle by hand sticks while you stay on one side and is dropped
+  // when you cross, which is what the remount used to do.
+  const [handToggle, setHandToggle] = useState<{ onDS: boolean; collapsed: boolean } | null>(null)
+  const collapsedComponents = handToggle?.onDS === onDesignSystems ? handToggle.collapsed : onDesignSystems
 
-  const toggleComponents = () => setCollapsedComponents((prev) => !prev)
+  const toggleComponents = () => setHandToggle({ onDS: onDesignSystems, collapsed: !collapsedComponents })
 
   const { searchValue, setSearchValue, searchInputRef, clearSearch } = useComponentSearch()
 
@@ -113,13 +105,10 @@ export function Sidebar({
 
   if (hideSidebar) return null
 
-  // Template / example leaves open distraction-free — no sidebar, no topbar.
-  // (Only reachable in embedded mode, since template routes live under
-  // /design-systems/* which the non-embedded copy already hides.)
-  if (embedded && TEMPLATE_LEAF_RE.test(pathname ?? '')) return null
+  const pinnedDark = isPinnedDarkRoute(pathname)
 
   return (
-    <aside className="flex h-full w-60 shrink-0 flex-col border-r border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
+    <aside className={`flex h-full w-60 shrink-0 flex-col border-r border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 ${pinnedDark ? 'dark' : ''}`}>
 
       {/* ── Logo ── */}
       <div className="flex h-14 shrink-0 items-center border-b border-sand-200 px-4 dark:border-sand-800">
@@ -171,18 +160,18 @@ export function Sidebar({
             'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
         }}
       >
+        {/* ── Design Systems pole (shared, identical on every page) ── */}
+        <DesignSystemsPole />
+
         {/* Tiered sections */}
         {SECTIONS.map((section) => {
           const isComponents = section.title === 'Components'
-          // In embedded (design-systems / ideation) mode the Components pole is a
-          // collapsible button driven by the mutual-exclusion state, with an
-          // extra "All Components" leaf — mirrors the retired IdeationSidebar so
-          // navigating between the two URL spaces feels identical. On the home
-          // page the header stays a direct link to /components (no leaf).
+          // The Components pole is a collapsible button driven by the
+          // mutual-exclusion state, with an extra "All Components" leaf —
+          // mirrors the retired IdeationSidebar so navigating between the two
+          // URL spaces feels identical.
           const isCollapsed = isComponents
-            ? embedded
-              ? collapsedComponents
-              : false
+            ? collapsedComponents
             : (collapsed[section.title] ?? false)
           const isDisabled = section.disabled === true
           // Promoted landing view shows only the first 4 categories so the
@@ -193,33 +182,43 @@ export function Sidebar({
           const catLabels = section.labels
           const hideCatsFrom =
             isComponents && promoteDS && !showAllCats ? 4 : Infinity
+          // Count what the cap ACTUALLY hides: the active category stays
+          // visible past the cap, so a plain length - 4 overcounts by one
+          // whenever you are inside one of the capped categories.
+          const hiddenCatCount = catLabels.filter(
+            (label, i) => i >= hideCatsFrom && label !== activeCategory,
+          ).length
+          // Once expanded nothing is hidden, so the count alone would unmount
+          // the control and strand the list open with no way back.
           const hasHiddenCats =
-            isComponents && promoteDS && section.labels.length > 4
+            isComponents && promoteDS && (showAllCats || hiddenCatCount > 0)
 
           return (
             <div key={section.title} className="mb-3">
-              {isComponents && embedded ? (
-                <button
-                  type="button"
-                  onClick={toggleComponents}
-                  className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-                >
-                  <span>{section.icon}</span>
-                  <span className="flex-1 whitespace-nowrap text-left">Components &amp; Blocks</span>
-                  <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />
-                </button>
-              ) : isComponents ? (
-                <Link
-                  href="/components"
-                  className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                    activeCategory === 'All Components'
-                      ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                  }`}
-                >
-                  <span>{section.icon}</span>
-                  <span className="flex-1 whitespace-nowrap">Components &amp; Blocks</span>
-                </Link>
+              {isComponents ? (
+                /* Two targets on one row, the same shape a system row uses:
+                   the name opens All Components and expands the list, the caret
+                   only opens or closes it in place. It used to be one button
+                   that merely expanded, so the header led nowhere. */
+                <div className="group mb-1 flex items-center gap-1 rounded-md pr-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100">
+                  <Link
+                    href="/components"
+                    onClick={() => setHandToggle(null)}
+                    className="flex min-w-0 flex-1 items-center gap-2 py-1.5 pl-2 pr-0"
+                  >
+                    <span>{section.icon}</span>
+                    <span className="flex-1 whitespace-nowrap text-left">Components &amp; Blocks</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={toggleComponents}
+                    aria-expanded={!isCollapsed}
+                    aria-label={`${isCollapsed ? 'Expand' : 'Collapse'} Components & Blocks`}
+                    className="shrink-0 rounded p-0.5 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-100"
+                  >
+                    <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />
+                  </button>
+                </div>
               ) : (
                 <button
                   type="button"
@@ -241,10 +240,17 @@ export function Sidebar({
               )}
 
               {!isCollapsed && !isDisabled && (
+                <div className="relative">
+                  {/* One vertical rail replaces the per-row elbow arrows: the
+                      line is the grouping cue, the rows stay uncluttered. */}
+                  <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
                 <ul className="space-y-0.5">
-                  {/* Embedded mode shows an explicit "All Components" leaf since
-                      the header is a collapse toggle, not a link to /components. */}
-                  {isComponents && embedded && (
+                  {/* "All Components" is always its own leaf. It used to exist
+                      only on design-system and ideation routes, so clicking it
+                      from one of those pages landed on /components and the row
+                      you just clicked vanished, with the section header lit
+                      instead. */}
+                  {isComponents && (
                     <li>
                       <Link
                         href="/components"
@@ -254,7 +260,7 @@ export function Sidebar({
                             : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                         }`}
                       >
-                        <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
+                        <span aria-hidden className="w-3 shrink-0" />
                         <span className="flex-1 truncate">All Components</span>
                       </Link>
                     </li>
@@ -265,8 +271,11 @@ export function Sidebar({
                     const href = cat
                       ? `/components/category/${cat.slug}`
                       : `/components?category=${encodeURIComponent(label)}`
+                    // The category you are ON is never hidden by the cap.
+                    // Hiding it left the rail with nothing lit while the
+                    // breadcrumb said you were inside that category.
                     return (
-                      <li key={label} className={i >= hideCatsFrom ? 'hidden' : undefined}>
+                      <li key={label} className={i >= hideCatsFrom && !isActive ? 'hidden' : undefined}>
                         <Link
                           href={href}
                           className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
@@ -275,50 +284,50 @@ export function Sidebar({
                               : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                           }`}
                         >
-                          <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
+                          <span aria-hidden className="w-3 shrink-0" />
                           <span className="flex-1">{label}</span>
                         </Link>
                       </li>
                     )
                   })}
-                  {hasHiddenCats && (
-                    <li>
-                      <button
-                        type="button"
-                        onClick={() => setShowAllCats((v) => !v)}
-                        className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
-                      >
-                        <CaretDown
-                          size={12}
-                          weight="regular"
-                          className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
-                        />
-                        <span className="flex-1 text-left">
-                          {showAllCats ? 'Show less' : `Show ${section.labels.length - 4} more`}
-                        </span>
-                      </button>
-                    </li>
-                  )}
                 </ul>
+                </div>
+              )}
+              {/* Show more sits OUTSIDE the rail: it is a control over the
+                  list, not an item in it, and its caret lives in the same
+                  column the rail occupies — the line ran straight through it. */}
+              {!isCollapsed && !isDisabled && hasHiddenCats && (
+                <button
+                  type="button"
+                  onClick={() => setShowAllCats((v) => !v)}
+                  className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
+                >
+                  <CaretDown
+                    size={12}
+                    weight="regular"
+                    className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
+                  />
+                  <span className="flex-1 text-left">
+                    {showAllCats ? 'Show less' : `Show ${hiddenCatCount} more`}
+                  </span>
+                </button>
               )}
             </div>
           )
         })}
 
-        {/* ── Design Systems pole (shared, identical on every page) ── */}
-        <DesignSystemsPole />
+        {/* ── Secondary nav — scrolls with the rail instead of sitting pinned,
+               so the navigation reads as one list that simply runs on. The
+               mobile drawer has always worked this way. ── */}
+        <div className="pt-2">
+          {/* Inset divider (padded left/right via the nav's px-3) */}
+          <div className="mb-2 border-t border-sand-200 dark:border-sand-800" />
+          <div className="space-y-0.5">
+            <SecondaryNav pathname={pathname} variant="rail" />
+          </div>
+        </div>
 
       </nav>
-
-      {/* ── Pinned secondary nav — stays on screen while the scroll region
-             above scrolls the long Andromeda component list ── */}
-      <div className="shrink-0 px-3 pt-2 pb-1">
-        {/* Inset divider (padded left/right via the container's px-3) */}
-        <div className="mb-2 border-t border-sand-200 dark:border-sand-800" />
-        <div className="space-y-0.5">
-          <SecondaryNav pathname={pathname} variant="rail" />
-        </div>
-      </div>
 
       {/* ── Social icons ── */}
       {/* GitHub + X moved here from the page header so the top-right can

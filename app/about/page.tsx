@@ -7,7 +7,6 @@ import { GithubLogo, ArrowRight } from '@phosphor-icons/react'
 import { GITHUB_URL } from '../lib/config'
 import { buttonClasses } from '../components/buttonClasses'
 import { SiteFooter } from '../components/SiteFooter'
-import { HeaderSocials } from '../components/HeaderSocials'
 import { TOTAL_COMPONENTS } from '../lib/component-nav.generated'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
@@ -57,17 +56,6 @@ export default function AboutPage() {
 
   return (
     <div className="min-h-full bg-sand-50 dark:bg-sand-950">
-      {/* ── Top bar ── */}
-      <header className="sticky top-0 z-50 hidden h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:grid">
-        <div />
-        <Link href="/components" className="text-sm font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-400">
-          /About
-        </Link>
-        <div className="flex items-center justify-end">
-          <HeaderSocials />
-        </div>
-      </header>
-
       <main className="relative mx-auto max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         {/* Mobile breadcrumb */}
         <p className="mb-6 text-sm font-semibold md:hidden">

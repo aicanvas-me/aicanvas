@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Info } from '@phosphor-icons/react/dist/ssr'
-import { HeaderSocials } from '../components/HeaderSocials'
 import { SiteFooter } from '../components/SiteFooter'
 import { buttonClasses } from '../components/buttonClasses'
 import { StackedCards } from '../home/islands'
@@ -59,16 +58,6 @@ export default async function WelcomePage() {
     // Scoped dark: this page is a dark set piece with no light rendering, so
     // it opts out of the site theme the way pinned-dark.ts documents.
     <div className="dark min-h-full bg-sand-950">
-      <header className="sticky top-0 z-30 hidden h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-800 bg-sand-950 px-6 md:grid">
-        <div />
-        <Link href="/welcome" className="text-sm font-semibold text-olive-500 transition-colors hover:text-olive-400">
-          /Welcome
-        </Link>
-        <div className="flex items-center justify-end">
-          <HeaderSocials />
-        </div>
-      </header>
-
       <main className="relative mx-auto w-full min-w-0 max-w-4xl px-4 pt-6 pb-16 sm:px-6 sm:pt-12">
         <section className="flex flex-col items-center text-center">
           <StackedCards cards={THANKS_CARDS} />
@@ -97,8 +86,8 @@ export default async function WelcomePage() {
                   : 'Everything is unlocked.'}
               </p>
               <div className="aic-hero-rise mt-7 flex flex-wrap items-center justify-center gap-3" style={{ animationDelay: '0.34s' }}>
-                <Link href="/design-systems/andromeda" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-                  Browse Andromeda
+                <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
+                  Browse Andromeda Pro
                   <ArrowRight weight="regular" size={14} />
                 </Link>
                 <Link

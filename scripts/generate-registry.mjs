@@ -506,12 +506,14 @@ if (premiumCount > 0) console.log(`Generated ${premiumCount} GATED premium compo
 // installed exactly once regardless of which entry the user picks:
 //
 //   <slug>-tokens     (registry:lib)    — tokens.ts + utils + system icons
-//   <slug>            (registry:style)  — every component file; deps on tokens
+//   <slug>            (registry:block)  — every component file; deps on tokens
 //   <slug>-<template> (registry:block)  — only the example folder; deps on system
 //
 // Note: shadcn's CLI requires the `type` field to be one of its known enum
 // values — `registry:block` is shadcn vocabulary, kept verbatim in the JSON.
-// Everything user-facing (URLs, copy, MCP tool names) uses "template".
+// The system bundles share it, so the type never marks a template; the gate
+// manifest does. Everything user-facing (URLs, copy, MCP tool names) uses
+// "template".
 //
 // Internal relative imports stay intact because every layer writes into the
 // same `components/aicanvas/<slug>/` tree, preserving the source layout.
@@ -644,7 +646,7 @@ for (const ds of SYSTEMS) {
     name: tokensSlug,
     type: 'registry:lib',
     title: `${ds.name} tokens`,
-    description: `Foundation files for the ${ds.name} design system — tokens, shared utilities, and the system mark. Required by every ${ds.name} component and template.`,
+    description: `Foundation files for the ${ds.name} design system: tokens, shared utilities, and the system mark. Required by every ${ds.name} component and template.`,
     author: 'aicanvas <https://aicanvas.me>',
     ...dependencyFields(ds, [...new Set([...tokensWalk.npmDeps, ...fontPackages])].sort()),
     ...(themeCss ? { css: themeCss } : {}),
@@ -663,7 +665,10 @@ for (const ds of SYSTEMS) {
   const systemItem = {
     $schema: SCHEMA,
     name: ds.slug,
-    type: 'registry:style',
+    // Not registry:style: for that type the CLI first asks "Existing CSS
+    // variables and components will be overwritten. Continue?", and a run with
+    // no terminal to answer (an AI agent, a script) exits 0 having written nothing.
+    type: 'registry:block',
     title: `${ds.name} design system`,
     description: `Every ${ds.name} component (${systemFiles.length} files). Installs the foundation tokens automatically.`,
     author: 'aicanvas <https://aicanvas.me>',
@@ -710,6 +715,9 @@ for (const ds of SYSTEMS) {
     if (componentWorkspaceSlugs.has(slug)) continue   // emitted as a standalone instead
     emittedComponentFiles.add(fileAbs)
   }
+  // Component slug → its item's registry deps, so a template can count the
+  // components its install pulls in through them.
+  const componentDeps = new Map()
 
   for (const { path: entry } of presentEntries) {
     const fileAbs = resolve(rootDirAbs, entry)
@@ -769,6 +777,7 @@ for (const ds of SYSTEMS) {
         }
       }
     }
+    componentDeps.set(slug, componentRegistryDeps)
 
     const compFiles = compWalk.files.map((f) => makeFile(f, rootDirAbs, ds.slug))
 
@@ -822,7 +831,16 @@ for (const ds of SYSTEMS) {
       }
     }
     const templateDeps = [`${ds.slug}-tokens`, ...[...usedComponentSlugs].sort()].map(depUrl)
-    templateContents.set(template.slug, usedComponentSlugs.size)
+    // The install also writes what those components depend on (UserCard brings
+    // Avatar), so the count follows the chain. A Set's loop visits what is added
+    // during it, each component counts once, and tokens are not a component.
+    const installedComponentSlugs = new Set(usedComponentSlugs)
+    for (const used of installedComponentSlugs) {
+      for (const dep of componentDeps.get(used) ?? []) {
+        if (componentDeps.has(dep)) installedComponentSlugs.add(dep)
+      }
+    }
+    templateContents.set(template.slug, installedComponentSlugs.size)
 
     const templateItem = {
       $schema: SCHEMA,
@@ -830,8 +848,8 @@ for (const ds of SYSTEMS) {
       type: 'registry:block',
       title: `${template.name} (${ds.name})`,
       description:
-        `${template.name} composition from ${ds.name}${template.domain ? ` — ${template.domain.toLowerCase()} dashboard` : ''}. ` +
-        `Pulls in the ${usedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
+        `${template.name} composition from ${ds.name}${template.domain ? ` (${template.domain.toLowerCase()} dashboard)` : ''}. ` +
+        `Pulls in the ${installedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: templateDeps,
       ...dependencyFields(ds, templateWalk.npmDeps),
@@ -854,8 +872,11 @@ for (const ds of SYSTEMS) {
     const allItem = {
       $schema: SCHEMA,
       name: `${ds.slug}-all`,
-      type: 'registry:style',
-      title: `${ds.name} — full system`,
+      // registry:block for the system item's reason. Not registry:item: with no
+      // files of its own the CLI treats this bundle as universal and skips the
+      // components.json check, so a project without one installs on a blank config.
+      type: 'registry:block',
+      title: `${ds.name}: full system`,
       description: hasBrain
         ? `Every ${ds.name} component, token, and template, plus the ${ds.name} brain, in one install.`
         : `Every ${ds.name} component, token, and template in one install.`,
@@ -1302,7 +1323,7 @@ for (const ds of SYSTEMS) {
       description:
         `The design rules behind ${ds.name}: system invariants, foundations (colour, spacing, ` +
         `layout, motion, charts), and per-component rules. Installs as markdown files into the ` +
-        `project so an AI agent reads them directly on every build — not fetched per request.`,
+        `project so an AI agent reads them directly on every build, not fetched per request.`,
       premium: true,
       fileCount: brainItem?.files?.length ?? 0,
       homepageUrl: `https://aicanvas.me/design-systems/${ds.slug}/brain`,
@@ -1413,7 +1434,15 @@ const navTs =
   '// Category counts + total for the sidebar/mobile nav, with zero component\n' +
   '// imports (keeps three.js etc. out of the shared bundle).\n\n' +
   `export const CATEGORY_COUNTS: Record<string, number> = ${JSON.stringify(categoryCounts, null, 2)}\n\n` +
-  `export const TOTAL_COMPONENTS = ${mcpComponents.length}\n`
+  `export const TOTAL_COMPONENTS = ${mcpComponents.length}\n\n` +
+  '// Slug to display name, for the site top bar\'s breadcrumbs: the bar lives in the\n' +
+  '// root layout, so it needs a name for /components/<slug> without the 40 KB\n' +
+  '// component-meta list, let alone the registry.\n' +
+  `export const COMPONENT_NAMES: Record<string, string> = ${JSON.stringify(
+    Object.fromEntries(mcpComponents.map((c) => [c.slug, c.name])),
+    null,
+    2,
+  )}\n`
 writeFileSync('app/lib/component-nav.generated.ts', navTs)
 console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categoryCounts).length} categories, ${mcpComponents.length} total)`)
 

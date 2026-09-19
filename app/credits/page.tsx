@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { SiteFooter } from '../components/SiteFooter'
-import { HeaderSocials } from '../components/HeaderSocials'
 
 // ─── /credits ───────────────────────────────────────────────────────────────
 // Attributions for third-party creative assets used on AI Canvas (3D models,
@@ -14,16 +13,6 @@ const extLink = 'text-olive-600 hover:underline dark:text-olive-400'
 export default function CreditsPage() {
   return (
     <div className="min-h-full bg-sand-50 dark:bg-sand-950">
-      <header className="sticky top-0 z-50 hidden h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:grid">
-        <div />
-        <Link href="/credits" className="text-sm font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-400">
-          /Credits
-        </Link>
-        <div className="flex items-center justify-end">
-          <HeaderSocials />
-        </div>
-      </header>
-
       <main className="relative mx-auto max-w-3xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         <p className="mb-6 text-sm font-semibold md:hidden">
           <span className="text-olive-600 dark:text-olive-500">/Credits</span>

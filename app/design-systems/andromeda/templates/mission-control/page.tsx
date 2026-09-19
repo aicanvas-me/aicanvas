@@ -3,7 +3,7 @@ import { themeColor } from '../../../../../design-systems/andromeda/components/l
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
-// routes matching TEMPLATE_LEAF_RE (see Sidebar + IdeationTopBar) so the shell
+// routes matching TEMPLATE_LEAF_RE (see Sidebar + TopBar) so the shell
 // owns the full column. TemplatePreviewShell supplies the top bar (logo,
 // System / Template breadcrumb, desktop/mobile responsive toggles, and the
 // Install / Unlock-with-Premium CTA + auth), and renders the dashboard either

@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation'
 import { HomeClient } from '../../HomeClient'
 // Registry-free metadata so category pages never bundle the heavy registry.
 import { COMPONENT_META } from '../../../lib/component-meta.generated'
-import { CATEGORIES, getCategoryBySlug } from '../../../lib/categories'
+import { CATEGORIES, getCategoryBySlug, COMPONENTS_SECTION_OVERLINE } from '../../../lib/categories'
 import { SITE_URL } from '../../../lib/config'
 import { buildItemListJsonLd } from '../../../lib/jsonld'
 import { buildBreadcrumbJsonLd, pageMetadata } from '../../../lib/page-metadata'
@@ -76,7 +76,7 @@ export default async function CategoryPage({
       <HomeClient
         components={filtered}
         categoryLabel={category.label}
-        heading={{ h1: category.h1, intro: category.intro }}
+        heading={{ overline: COMPONENTS_SECTION_OVERLINE, h1: category.h1, intro: category.intro }}
       />
     </>
   )

@@ -3,7 +3,7 @@
  * generator and the website. Kept in `.mjs` so the build script and Next.js can
  * both import it without parsing TS or duplicating the data.
  *
- * Registry items of type `registry:block` keep that name in the JSON because
+ * Template registry items keep shadcn's `registry:block` type in the JSON because
  * shadcn's CLI only recognises a fixed set of `type` values; everything
  * user-facing says "template".
  */
@@ -139,6 +139,8 @@ export const DESIGN_SYSTEMS = [
     slugOverrides: {
       'components/Button.tsx': 'andromeda-button-system',
     },
+    // Without this, installs get unpinned packages and no @types/three for Planet.
+    pinDependencies: true,
     // The app provides --font-jetbrains-mono via next/font, but installed projects
     // don't, so the shipped tokens item self-loads it. The import goes into the
     // SHIPPED file only, so the on-disk source stays clean and the app has no

@@ -11,6 +11,7 @@
 // demos use. Everything here renders statically all the same.
 import { useRef } from 'react'
 import { SiteFooter } from '../../../components/SiteFooter'
+import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { SwatchTooltip } from './SwatchTooltip'
 import { LayerCards } from '../overview-b/FoundationLayers'
 import { tokens } from '../../../lib/andromeda-pro.generated'
@@ -264,19 +265,15 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 export function FoundationView() {
   const mainRef = useRef<HTMLElement>(null)
   return (
-    <main ref={mainRef} className="mx-auto w-full max-w-4xl px-4 pt-8 pb-20 sm:px-6 sm:pt-14">
+    <PageFrame as="main" ref={mainRef} className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
       <SwatchTooltip root={mainRef} />
-      <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-olive-600 dark:text-olive-400">
-        Andromeda Pro · Foundation
-      </p>
-      <h1 className="text-3xl font-extrabold text-sand-900 dark:text-sand-50 sm:text-4xl">
-        The primitives
-      </h1>
-      <p className="mt-3 max-w-2xl text-sand-600 dark:text-sand-400">
+      <PageOverline>Andromeda Pro · Foundation</PageOverline>
+      <PageTitle>The primitives</PageTitle>
+      <PageLead>
         Every Andromeda Pro component is built from the values on this page, read through
         three layers of tokens. This page is the what. The Brain teaches when and how to use
         each value.
-      </p>
+      </PageLead>
 
       {/* ── The three layers ── */}
       <SectionHeading>Three layers</SectionHeading>
@@ -622,6 +619,6 @@ export function FoundationView() {
       </div>
 
       <SiteFooter />
-    </main>
+    </PageFrame>
   )
 }

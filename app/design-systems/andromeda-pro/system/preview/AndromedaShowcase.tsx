@@ -603,7 +603,8 @@ export default function AndromedaShowcase({
             aesthetic of the demos below. Colours ride the --at- channel with the
             dark literals as fallback: the showcase surface follows the theme
             toggle, so light-on-dark values cannot be pinned here. */}
-        <header style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
+        {/* A div, not a header: the site bar is the page's banner landmark. */}
+        <div style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
           <div
             style={{
               fontSize: 12,
@@ -653,7 +654,7 @@ export default function AndromedaShowcase({
           >
             {componentCount} components · {templateCount} templates · 1 brain · one-command install
           </div>
-        </header>
+        </div>
         {/* ── Colors ─────────────────────────────────────────────────────── */}
         <Section
           title="Color Palette"

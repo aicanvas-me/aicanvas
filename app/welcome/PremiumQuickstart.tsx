@@ -21,7 +21,7 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
   const [cmdCopied, setCmdCopied] = useState(false)
   const [tokenCopied, setTokenCopied] = useState(false)
 
-  const cmd = (t: string) => `npx shadcn@latest add "https://aicanvas.me/r/andromeda-all.json?token=${t}"`
+  const cmd = (t: string) => `npx shadcn@latest add "https://aicanvas.me/r/andromeda-pro-all.json?token=${t}"`
 
   async function copyCmd() {
     if (!token) return
@@ -74,7 +74,7 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
         </button>
       </div>
       <p className="mt-1.5 text-xs leading-relaxed text-sand-500">
-        Installs the full Andromeda design system. Swap the file name for any
+        Installs the full Andromeda Pro design system. Swap the file name for any
         component or template.
       </p>
 
