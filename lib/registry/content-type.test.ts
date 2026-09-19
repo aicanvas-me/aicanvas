@@ -65,7 +65,11 @@ describe('classifyContent', () => {
   })
 
   it('classifies the whole-system aggregates', () => {
-    expect(classifyContent('andromeda', lookup)).toBe('design-system')
+    // A FREE system's components bundle is the free lane: it carries the same
+    // MIT source its per-component files already serve, so it asks for an
+    // account and nothing more. The `-all` bundle is a different thing: it
+    // pulls the templates and the brain in, and both are paid.
+    expect(classifyContent('andromeda', lookup)).toBe('design-system-component')
     expect(classifyContent('andromeda-all', lookup)).toBe('design-system')
   })
 

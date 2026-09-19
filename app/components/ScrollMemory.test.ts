@@ -1,0 +1,54 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
+import { describe, expect, it } from 'vitest'
+
+// Both of these were real failures while this was written, and both are
+// invisible in a type check: the component renders null, so it fails by
+// quietly doing nothing.
+const root = join(__dirname, '..', '..')
+const src = readFileSync(join(root, 'app/components/ScrollMemory.tsx'), 'utf8')
+const layout = readFileSync(join(root, 'app/layout.tsx'), 'utf8')
+
+describe('scroll memory', () => {
+  it('is mounted by the root layout, and not inside a Suspense boundary', () => {
+    expect(layout).toContain('<ScrollMemory />')
+    // A boundary above it can remount it mid-navigation, which loses the
+    // popstate that the restore depends on.
+    expect(layout).not.toMatch(/<Suspense[^>]*>\s*(\{\/\*[\s\S]*?\*\/\}\s*)?<ScrollMemory\b/)
+  })
+
+  it('keeps the back/forward timestamp at module scope', () => {
+    // In a ref it dies with the component, so Back fell through to the
+    // new-page branch and scrolled the restored page to its top instead.
+    expect(src).toMatch(/^let lastPop = 0$/m)
+    expect(src).not.toContain('useRef')
+  })
+
+  it('never writes a position under a page the reader has already left', () => {
+    // Leaving a tall page for a short one clamps the column to zero and fires
+    // a scroll event; without this the saved position becomes that zero. The
+    // guard has to be inside `save`, and scoped to `save`: a second copy of it
+    // elsewhere in the file used to be enough to satisfy this test.
+    const saver = /const save = \(\) => \{([\s\S]*?)sessionStorage\.setItem/.exec(src)?.[1]
+    expect(saver).toBeDefined()
+    expect(saver).toContain('if (location.pathname !== path) return')
+  })
+
+  it('keeps saving once the reader searches, under the URL they are on', () => {
+    // The rail's search rewrites the query with router.replace and no pathname
+    // change, so this effect does not re-run. Comparing the whole key would
+    // turn saving off for the rest of the visit, and Back to a searched or
+    // filtered list would land at the top.
+    expect(src).toContain('sessionStorage.setItem(key(), String(col.scrollTop))')
+    expect(src).not.toContain('if (key() !== url) return')
+  })
+
+  it('stops a restore chain that belongs to the page the reader has left', () => {
+    // The column never unmounts, so cleanup cannot cancel a frame that has not
+    // fired yet: a chain from the previous page would scroll the new one down.
+    // The guard has to be inside the chain, ahead of the write.
+    const chain = /const apply = \(\) => \{([\s\S]*?)col\.scrollTop = target/.exec(src)?.[1]
+    expect(chain).toBeDefined()
+    expect(chain).toContain('if (location.pathname !== path) return')
+  })
+})

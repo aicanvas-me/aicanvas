@@ -491,7 +491,7 @@ export default function ComponentPageView({
             {/* Page heading. Subtitle is an answer-block for GEO: the first
                 200 tokens on each page carry a definitional answer. Falls
                 back to the plain description when there is no subtitle. */}
-            <PageTitle gap="none">{name}</PageTitle>
+            <PageTitle gap="none" rank="section">{name}</PageTitle>
             {headingSubtitle ? (
               <PageLead>{headingSubtitle}</PageLead>
             ) : (

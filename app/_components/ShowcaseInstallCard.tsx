@@ -12,8 +12,11 @@ import { track } from '../lib/analytics'
 // The two packages, as a toggle (the "two actions"). Everything is the default.
 const PACKAGES = [
   { slug: 'andromeda-all', label: 'Everything' },
-  { slug: 'andromeda', label: 'All components' },
+  // MIT source on the free lane: an account installs it, a subscription is not
+  // needed. "Everything" adds the templates and the brain, which are paid.
+  { slug: 'andromeda', label: 'All components', free: true },
 ]
+const FREE_PACKAGE = PACKAGES.find((p) => p.free)!.slug
 
 // AI Canvas site tokens as --si-* variables, light by default and dark under
 // the site's `dark` class, matching the brain's "Get the brain" card.
@@ -48,10 +51,16 @@ const MONO = "var(--font-mono, var(--font-jetbrains-mono)), 'Geist Mono', monosp
 // as a toggle. Premium-gated: a resolved free/anon tier sees an Unlock CTA.
 export function ShowcaseInstallCard() {
   const status = usePremiumStatus()
-  // Premium AND the in-flight 'unknown' window see the command; only a resolved
-  // free/anon tier sees the Unlock pitch (never flash upsell at a subscriber).
-  const canInstall = status !== 'not-premium'
-  const [slug, setSlug] = useState('andromeda-all')
+  // Until the visitor picks, the card offers the package they can actually
+  // take: Everything for a subscriber and for the in-flight 'unknown' window
+  // (never flash a downgrade at a subscriber), the free components bundle once
+  // the tier resolves to free or anonymous.
+  const [picked, setPicked] = useState<string | null>(null)
+  const slug = picked ?? (status === 'not-premium' ? FREE_PACKAGE : 'andromeda-all')
+  const setSlug = setPicked
+  // The command is shown for anything this visitor can install: premium content
+  // to a subscriber, and the free bundle to everyone.
+  const canInstall = status !== 'not-premium' || slug === FREE_PACKAGE
   const [copied, setCopied] = useState(false)
 
   const userToken = useInstallToken()

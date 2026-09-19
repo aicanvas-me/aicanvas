@@ -8,6 +8,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { ThemeProvider } from './components/ThemeProvider'
 import { Sidebar } from './components/Sidebar'
+import { ScrollMemory } from './components/ScrollMemory'
 import { MobileNav } from './components/MobileNav'
 import { TopBar, TopBarProvider } from './components/TopBar'
 import { SessionProvider } from './components/auth/SessionProvider'
@@ -279,6 +280,9 @@ export default async function RootLayout({
                     scroller. */}
                 <div className="flex min-h-0 flex-1 flex-col">{children}</div>
               </div>
+              {/* Owns this column's scroll across navigations: a new page
+                  starts at its top, Back returns to where you were. */}
+              <ScrollMemory />
               {/* Global auth dialog — toggles between sign-in and sign-up modes */}
               <AuthModal />
              </TopBarProvider>

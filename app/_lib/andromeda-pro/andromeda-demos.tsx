@@ -15,6 +15,7 @@ import { Fragment, useState } from 'react'
 import {
   ArrowClockwise,
   Bell,
+  BookOpen,
   ChartBar,
   ChartLine,
   Clock,
@@ -56,6 +57,7 @@ import { IconButton } from '../../lib/andromeda-pro.generated'
 import { Input } from '../../lib/andromeda-pro.generated'
 import { SearchField } from '../../lib/andromeda-pro.generated'
 import { NavItem } from '../../lib/andromeda-pro.generated'
+import { Sidebar } from '../../lib/andromeda-pro.generated'
 import { PanelHeader } from '../../lib/andromeda-pro.generated'
 import { PanelMenu } from '../../lib/andromeda-pro.generated'
 import { SegmentedControl } from '../../lib/andromeda-pro.generated'
@@ -1461,6 +1463,29 @@ function UserCardDemo() {
 
 // ─── Public switcher ─────────────────────────────────────────────────────────
 
+function SidebarDemo() {
+  const items = [
+    { icon: Compass, label: 'Overview', active: true },
+    { icon: Pulse, label: 'Activity' },
+    { icon: ChartLine, label: 'Reports' },
+    { icon: Bell, label: 'Alerts' },
+    { icon: Users, label: 'Members' },
+  ]
+  const footerItems = [
+    { icon: BookOpen, label: 'Docs' },
+    { icon: Gear, label: 'Settings' },
+  ]
+  // The rail has no height of its own: it fills a console's left edge, so the
+  // poster gives it one to stand in. Both forms side by side, because the
+  // folding between them is the component.
+  return (
+    <div style={{ display: 'flex', gap: tokens.spacing[5], alignItems: 'flex-start', height: 420 }}>
+      <Sidebar title="Console" items={items} footerItems={footerItems} collapsible={false} />
+      <Sidebar title="Console" items={items} footerItems={footerItems} collapsible={false} defaultCollapsed />
+    </div>
+  )
+}
+
 const DEMOS: Record<string, () => React.ReactElement> = {
   alert: AlertDemo,
   avatar: AvatarDemo,
@@ -1490,6 +1515,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   nodes: NodesDemo,
   burst: BurstDemo,
   'search-field': SearchFieldDemo,
+  sidebar: SidebarDemo,
   'segmented-control': SegmentedControlDemo,
   'progress-bar': ProgressBarDemo,
   'chart-metric': MetricChartDemo,

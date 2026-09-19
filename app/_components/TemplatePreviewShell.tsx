@@ -467,14 +467,22 @@ function TopBar({
           the leftover width; from md it becomes [1fr_auto_1fr] + px-6, mirroring
           the site's content top bar (HomeClient) with the toggles centered. */}
       <div className="grid min-w-0 flex-1 grid-cols-[1fr_auto] items-center gap-4 px-4 md:grid-cols-[1fr_auto_1fr] md:px-6">
-        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center text-sm font-semibold">
+        {/* The system half of the trail is hidden below md. A phone gives this
+            column about 80px, and the system name does not shrink, so keeping
+            it pushed the template name out of the column and painted it over
+            the buttons on the right. The template name is the one that says
+            where you are; the logo already leads home. */}
+        <nav
+          aria-label="Breadcrumb"
+          className="flex min-w-0 items-center overflow-hidden text-sm font-semibold"
+        >
           <Link
             href={systemHref}
-            className="shrink-0 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100"
+            className="hidden shrink-0 text-sand-600 transition-colors hover:text-sand-900 md:inline dark:text-sand-400 dark:hover:text-sand-100"
           >
             {systemName}
           </Link>
-          <span className="mx-1 shrink-0 text-sand-600 dark:text-sand-600">/</span>
+          <span className="mx-1 hidden shrink-0 text-sand-600 md:inline dark:text-sand-600">/</span>
           <TemplateSwitcher templateSlug={templateSlug} templateName={templateName} />
         </nav>
 
@@ -567,7 +575,7 @@ function TemplateSwitcher({
 
   // Nothing to switch to → keep the original static olive crumb.
   if (!systemSlug || siblings.length < 2) {
-    return <span className="text-olive-600 dark:text-olive-500">{templateName}</span>
+    return <span className="truncate text-olive-600 dark:text-olive-500">{templateName}</span>
   }
 
   return (

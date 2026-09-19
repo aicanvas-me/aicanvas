@@ -1,7 +1,8 @@
 import { readFileSync, readdirSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda-pro/andromeda-meta'
+import { DESIGN_SYSTEM_META } from '../lib/design-system-meta'
 
 // One rail, rendered once. Before this, four call sites mounted `<Sidebar>` —
 // the root layout plus three design-system / ideation layouts each rendering
@@ -27,12 +28,27 @@ function walk(dir: string, out: string[] = []): string[] {
 describe('sidebar single-instance contract', () => {
   it('only app/layout.tsx renders a <Sidebar>', () => {
     // Andromeda Pro has its own component named Sidebar, rendered from the
-    // generated registry by its matrix case. Only the site's rail counts
-    // here, so the tag has to come from app/components/Sidebar.
+    // generated registry by its matrix case, so the tag's NAME proves
+    // nothing. Resolve every specifier in the file and keep only the ones
+    // that land on the rail: a sibling './Sidebar', a '../components/Sidebar',
+    // the '@/app/components/Sidebar' alias that most of this app is written
+    // in, an explicit .tsx, either quote, and a dynamic import all count, and
+    // Pro's registry import does not.
+    const rail = join(root, 'app', 'components', 'Sidebar')
     const offenders = walk(join(root, 'app'))
       .filter((f) => {
         const src = readFileSync(f, 'utf8')
-        return /from '[^']*\/components\/Sidebar'/.test(src) && /<Sidebar[ />]/.test(src)
+        if (!/<Sidebar[ />]/.test(src)) return false
+        return [...src.matchAll(/(?:from|import\()\s*['"](\.[^'"]*|@\/[^'"]*)['"]/g)].some(
+          (m) => {
+            // tsconfig maps '@/*' to './*' at the repo root.
+            const spec = m[1]
+            const hit = spec.startsWith('@/')
+              ? join(root, spec.slice(2))
+              : resolve(dirname(f), spec)
+            return hit === rail || hit === `${rail}.tsx`
+          },
+        )
       })
       .map((f) => f.slice(root.length + 1))
 
@@ -122,6 +138,16 @@ describe('top bar single-instance contract', () => {
 })
 
 describe('the rail lists every Andromeda Pro template', () => {
+  it('the template switcher knows the same Pro templates the gallery does', () => {
+    // A fourth hand-kept copy of the same list lives in design-system-meta.ts
+    // and drives the switcher in the template bar. City Operations shipped
+    // missing from it, so its own page offered nothing to switch to and the
+    // other four never listed it.
+    const expected = ANDROMEDA_TEMPLATE_META.map((t) => `andromeda-pro-${t.folder}`).sort()
+    const actual = DESIGN_SYSTEM_META['andromeda-pro'].templates.map((t) => t.slug).sort()
+    expect(actual).toEqual(expected)
+  })
+
   it("the pole's Pro template rows are the template meta, in the same order", () => {
     // The pole hardcodes its rows (it is a client module and cannot read the
     // registry), so a new template lands on the site with no way into the

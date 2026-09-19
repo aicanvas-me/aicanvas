@@ -318,7 +318,10 @@ export default function AndromedaShowcase({
     <>
     <ShowcaseInstall
       installs={[
-        { slug: 'andromeda', label: 'All components' },
+        // MIT, and the registry serves it on the free lane, so the command is
+        // shown to everyone. "Everything" adds the templates and the brain,
+        // which are paid, so that one still leads to the paywall.
+        { slug: 'andromeda', label: 'All components', free: true },
         { slug: 'andromeda-all', label: 'Everything' },
       ]}
     />
