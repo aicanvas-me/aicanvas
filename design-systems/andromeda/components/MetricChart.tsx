@@ -273,18 +273,18 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
   // Plot colors, resolved off the panel's own root (see CHART_VARS).
   const c = useResolvedColors(internalRef, CHART_VARS);
 
-  // Reduced motion: render the chart fully drawn immediately — no wipe, no
-  // transition. Otherwise wipe from hidden (inset right→left) to fully
-  // revealed once in view.
-  const revealProps = reducedMotion
-    ? { initial: false, animate: { clipPath: 'inset(0 0% 0 0)', opacity: 1 } }
-    : {
-        initial: { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
-        animate: inView
-          ? { clipPath: 'inset(0 0% 0 0)', opacity: 1 }
-          : { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
-        transition: { duration: ms(tokens.motion.duration.cascade), ease: EASE_OUT },
-      };
+  // Wipe from hidden (inset right→left) to fully revealed once in view. Reduced
+  // motion starts from the same hidden state, so server and client markup
+  // match, then shows the chart fully drawn at once: no wipe, no wait for view.
+  const revealProps = {
+    initial: { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
+    animate: reducedMotion || inView
+      ? { clipPath: 'inset(0 0% 0 0)', opacity: 1 }
+      : { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
+    transition: reducedMotion
+      ? { duration: 0 }
+      : { duration: ms(tokens.motion.duration.cascade), ease: EASE_OUT },
+  };
 
   // height={number} → fixed; height="fill" → grow to fill a flex parent panel.
   const fill = height === 'fill';
@@ -388,7 +388,7 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
         {/* Draw-reveal wrapper. width/height 100% so ResponsiveContainer
             still measures the chart correctly — the motion.div must not
             collapse the sizing box. The clipPath wipe + opacity is driven
-            by `revealProps` above (static when reduced motion). */}
+            by `revealProps` above (hidden on first paint, then shown instantly when reduced motion). */}
         <motion.div style={{ width: '100%', height: plotHeight }} {...revealProps}>
           {/* initialDimension: recharts' size detector measures -1×-1 on its
               first render (before its ResizeObserver reports) and logs a
