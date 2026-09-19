@@ -26,7 +26,7 @@ export type OverviewStats = {
 export type OverviewTemplate = {
   slug: string
   name: string
-  domain: string
+  category: string
   folder: string
   blurb: string
   image: string | null
@@ -81,12 +81,12 @@ const pro = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-p
 const LEAD_TEMPLATE = 'andromeda-pro-city-operations'
 
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
-  (t: { slug: string; name: string; domain?: string }) => {
+  (t: { slug: string; name: string; category?: string }) => {
     const file = TEMPLATE_IMAGE_FILE[t.slug]
     return {
       slug: t.slug,
       name: t.name,
-      domain: t.domain ?? '',
+      category: t.category ?? '',
       folder: t.slug.replace(/^andromeda-pro-/, ''),
       blurb: TEMPLATE_BLURBS[t.slug] ?? '',
       // tr=orig-true serves the untouched original. v busts the browser cache

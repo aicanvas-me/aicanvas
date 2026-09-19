@@ -21,7 +21,9 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  * @typedef {Object} DesignSystemTemplate
  * @property {string} slug         Registry slug, e.g. 'andromeda-mission-control'
  * @property {string} name         Human label for the template widget
- * @property {string} [domain]     Short domain tag (e.g. 'Sci-Fi', 'Finance')
+ * @property {string} [category]   What the template IS, in buyer words:
+ *                                 Dashboard, CRM, Scheduling, Media, Authentication.
+ *                                 Closed vocabulary; adding one is a product call.
  * @property {string} entryPath    Entry file relative to the system's `rootDir`. The
  *                                 generator walks transitive imports from here and
  *                                 ships every file inside `rootDir` it reaches.
@@ -148,14 +150,14 @@ export const DESIGN_SYSTEMS = [
     fontPackages: ['@fontsource-variable/jetbrains-mono'],
     fontInjectInto: 'tokens.ts',
     templates: [
-      { slug: 'andromeda-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi',     entryPath: 'examples/mission-control/index.tsx' },
-      { slug: 'andromeda-service-order',     name: 'Service Order',     domain: 'Telecom',    entryPath: 'examples/service-order/index.tsx' },
+      { slug: 'andromeda-mission-control',   name: 'Mission Control',   category: 'Dashboard',     entryPath: 'examples/mission-control/index.tsx' },
+      { slug: 'andromeda-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
       // exchange-terminal is hidden from the registry, sidebar and showcase.
       // Restore by uncommenting the entry below plus the matching entries in
       // app/lib/component-registry.tsx and app/_components/IdeationSidebar.tsx.
-      // { slug: 'andromeda-exchange-terminal', name: 'Exchange Terminal', domain: 'Finance', entryPath: 'examples/exchange-terminal/index.tsx' },
-      { slug: 'andromeda-resource-planning', name: 'Resource Planning', domain: 'Operations', entryPath: 'examples/resource-planning/index.tsx' },
-      { slug: 'andromeda-signal-room',       name: 'Signal Room',       domain: 'Audio',      entryPath: 'examples/signal-room/index.tsx' },
+      // { slug: 'andromeda-exchange-terminal', name: 'Exchange Terminal', category: 'Dashboard', entryPath: 'examples/exchange-terminal/index.tsx' },
+      { slug: 'andromeda-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
+      { slug: 'andromeda-signal-room',       name: 'Signal Room',       category: 'Media',      entryPath: 'examples/signal-room/index.tsx' },
     ],
   },
   {
@@ -246,11 +248,11 @@ export const DESIGN_SYSTEMS = [
     templates: [
       // Order here IS the order the overview bento shows. The first one also
       // takes the lead slot, which spans both columns.
-      { slug: 'andromeda-pro-city-operations',   name: 'City Operations',   domain: 'Civic',      entryPath: 'examples/city-operations/index.tsx' },
-      { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       domain: 'Audio',      entryPath: 'examples/signal-room/index.tsx' },
-      { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi',     entryPath: 'examples/mission-control/index.tsx' },
-      { slug: 'andromeda-pro-service-order',     name: 'Service Order',     domain: 'Telecom',    entryPath: 'examples/service-order/index.tsx' },
-      { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', domain: 'Operations', entryPath: 'examples/resource-planning/index.tsx' },
+      { slug: 'andromeda-pro-city-operations',   name: 'City Operations',   category: 'Dashboard',      entryPath: 'examples/city-operations/index.tsx' },
+      { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       category: 'Media',      entryPath: 'examples/signal-room/index.tsx' },
+      { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   category: 'Dashboard',     entryPath: 'examples/mission-control/index.tsx' },
+      { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
+      { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
     ],
   },
 ]

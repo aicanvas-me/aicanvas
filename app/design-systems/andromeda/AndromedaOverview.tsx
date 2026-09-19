@@ -57,7 +57,7 @@ const andromeda = DESIGN_SYSTEMS.find((s) => s.slug === 'andromeda')
 const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
   slug: t.slug,
   name: t.name,
-  domain: t.domain,
+  category: t.category,
   folder: t.slug.replace(/^andromeda-/, ''),
   blurb: TEMPLATE_BLURBS[t.slug] ?? '',
   // Uncompressed template card art — tr=orig-true serves the untouched original
@@ -385,7 +385,7 @@ export function AndromedaOverview() {
         <div className="mb-5">
           <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Templates</h2>
           <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
-            Full dashboards composed from the system. Pick a domain to explore.
+            Full dashboards composed from the system. Pick one to explore.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">

@@ -6,12 +6,18 @@ import { useEffect, useRef, useState, type ComponentType, type ReactNode } from 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowClockwise,
+  Broadcast,
+  Buildings,
+  CalendarBlank,
   CaretUpDown,
   Check,
+  ClipboardText,
   Copy,
   DeviceMobile,
   Lightning,
   Monitor,
+  Rocket,
+  SquaresFour,
   Terminal,
 } from '@phosphor-icons/react'
 import { useInstallToken } from '../_lib/useInstallToken'
@@ -472,9 +478,13 @@ function TopBar({
             it pushed the template name out of the column and painted it over
             the buttons on the right. The template name is the one that says
             where you are; the logo already leads home. */}
+        {/* No overflow-hidden on this nav: the switcher's menu is positioned
+            against it, so clipping the row hides the menu and the caret reads
+            as dead. The trail stays inside its column through min-w-0 plus the
+            truncate on the template label. */}
         <nav
           aria-label="Breadcrumb"
-          className="flex min-w-0 items-center overflow-hidden text-sm font-semibold"
+          className="flex min-w-0 items-center text-sm font-semibold"
         >
           <Link
             href={systemHref}
@@ -542,6 +552,17 @@ function TopBar({
 // Falls back to the plain olive label when the system has no other template.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// One icon per template, keyed by the slug with its design-system prefix
+// stripped, so Legacy and Pro share the map. A template with no entry falls
+// back to the generic tile icon rather than leaving a ragged left edge.
+const TEMPLATE_ICONS: Record<string, ComponentType<{ weight?: 'regular'; size?: number; className?: string }>> = {
+  'city-operations': Buildings,
+  'mission-control': Rocket,
+  'service-order': ClipboardText,
+  'resource-planning': CalendarBlank,
+  'signal-room': Broadcast,
+}
+
 function TemplateSwitcher({
   templateSlug,
   templateName,
@@ -603,21 +624,32 @@ function TemplateSwitcher({
             const folder = t.slug.startsWith(`${systemSlug}-`)
               ? t.slug.slice(systemSlug.length + 1)
               : t.slug
+            const Icon = TEMPLATE_ICONS[folder] ?? SquaresFour
             return (
               <Link
                 key={t.slug}
                 href={`/design-systems/${systemSlug}/templates/${folder}`}
                 aria-current={active ? 'page' : undefined}
                 onClick={() => setOpen(false)}
-                className={`flex items-center justify-between gap-3 px-3 py-2 text-sm transition-colors ${
+                className={`flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
                   active
                     ? 'font-semibold text-olive-600 dark:text-olive-400'
                     : 'text-sand-700 hover:bg-sand-50/70 dark:text-sand-300 dark:hover:bg-sand-800/70'
                 }`}
               >
+                <Icon
+                  weight="regular"
+                  size={16}
+                  className={`shrink-0 ${active ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-500'}`}
+                />
                 <span className="truncate">{t.name}</span>
-                {active && (
-                  <Check weight="bold" size={14} className="shrink-0 text-olive-600 dark:text-olive-400" />
+                {/* Every row keeps its category, including the one you are on:
+                    the active row is already named by its olive colour and its
+                    weight, so it needs no second marker. */}
+                {t.category && (
+                  <span className="ml-auto shrink-0 rounded-md bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
+                    {t.category}
+                  </span>
                 )}
               </Link>
             )
