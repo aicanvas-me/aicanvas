@@ -472,9 +472,13 @@ function TopBar({
             it pushed the template name out of the column and painted it over
             the buttons on the right. The template name is the one that says
             where you are; the logo already leads home. */}
+        {/* No overflow-hidden on this nav: the switcher's menu is positioned
+            against it, so clipping the row hides the menu and the caret reads
+            as dead. The trail stays inside its column through min-w-0 plus the
+            truncate on the template label. */}
         <nav
           aria-label="Breadcrumb"
-          className="flex min-w-0 items-center overflow-hidden text-sm font-semibold"
+          className="flex min-w-0 items-center text-sm font-semibold"
         >
           <Link
             href={systemHref}
