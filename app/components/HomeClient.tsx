@@ -287,7 +287,10 @@ export function HomeClient({
 
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-      <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
+      {/* On the empty state the main column grows to fill the viewport, so the
+          "no results" block centres in the space left over and the footer sits
+          at the bottom edge instead of halfway up the page. */}
+      <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}${showEmpty ? ' flex flex-1 flex-col' : ''}`}>
         {/* Mobile breadcrumb — shown above cards on small screens */}
         <p className="mb-4 text-sm font-semibold md:hidden">
           {q && !category ? (
