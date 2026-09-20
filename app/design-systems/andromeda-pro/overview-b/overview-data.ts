@@ -110,7 +110,7 @@ const UNCOMPRESSED_ART = new Set(['andromeda-pro-city-operations'])
 // A poster is re-shot under a FIXED filename, so nothing about the URL moves
 // when the art does. The version is the only thing that tells a browser and the
 // CDN to fetch again: bump it on every re-shoot, on both lanes.
-const ART_VERSION = 8
+const ART_VERSION = 9
 
 const artUrl = (slug: string, file: string | undefined) =>
   file

@@ -74,14 +74,14 @@ const PAINT_MS = 3000 // a map's last tiles are in, give it time to draw them
 // theme of a shot.
 //
 // Each shot gets the mat that opposes it. The dark shot sits on Andromeda's
-// neutral 800, a mid grey that lifts a near-black screenshot off the card
+// neutral 600, a dark grey that lifts a near-black screenshot off the card
 // without competing with it; the light shot sits on black, the hardest frame a
 // near-white screenshot can have. One pair for every poster, Pro and Legacy
 // alike — the posters sit side by side in the same grid, so a mat that changed
 // per system would read as an accident. Literal values, because a baked PNG
 // cannot carry a token.
 const THEMES = [
-  { theme: 'dark', suffix: '_dark', mat: 'oklch(0.506 0.002 286.2)' },
+  { theme: 'dark', suffix: '_dark', mat: 'oklch(0.320 0.002 286.2)' },
   { theme: 'light', suffix: '_light', mat: '#000000' },
 ]
 
