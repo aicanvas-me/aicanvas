@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { NextRequest, NextResponse } from 'next/server'
 import { getEntitlement } from '@/app/lib/entitlement'
+import { trackPull } from '@/app/lib/track-pull'
 
 export const runtime = 'nodejs'
 
@@ -23,8 +24,11 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ file
 
   // Fail closed: an entitlement error must never hand out Pro bytes.
   let tier
+  let userId: string | null
   try {
-    tier = (await getEntitlement(req)).tier
+    const entitlement = await getEntitlement(req)
+    tier = entitlement.tier
+    userId = entitlement.userId
   } catch (err) {
     console.error('[image-pack] entitlement error, failing closed:', err)
     return json({ error: 'temporarily-unavailable' }, 503)
@@ -37,6 +41,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ file
   } catch {
     return json({ error: 'not found' }, 404)
   }
+
+  trackPull(userId, `andromeda-pro-image-pack-${file}`, 'image-pack')
 
   return new NextResponse(body, {
     status: 200,
