@@ -57,7 +57,7 @@ const TEMPLATE_BLURBS: Record<string, string> = {
   'andromeda-pro-sign-in':
     'A whole authentication flow: create an account, sign in, recover a password and set a new one.',
   'andromeda-pro-sign-up':
-    'The same authentication flow with no columns: one picture is the ground and the form floats on it.',
+    'The same authentication flow with no columns: a hairline lattice is the ground and the form floats on it.',
   'andromeda-pro-city-operations':
     'A city operations centre: a live incident map, air and traffic readings, an alert queue and response trends.',
 }

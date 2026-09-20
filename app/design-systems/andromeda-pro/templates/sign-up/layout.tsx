@@ -5,7 +5,7 @@ import type { ReactNode } from 'react'
 export const metadata = {
   title: 'Sign Up · Andromeda Template',
   description:
-    'A complete authentication flow built with Andromeda: create an account, sign in, recover a password and set a new one, with the form floating on a card over a full-screen picture.',
+    'A complete authentication flow built with Andromeda: create an account, sign in, recover a password and set a new one, with the form floating on a card over a full-screen hairline lattice.',
   alternates: { canonical: '/design-systems/andromeda-pro/templates/sign-up' },
 }
 
