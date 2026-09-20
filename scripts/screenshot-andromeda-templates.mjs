@@ -73,16 +73,17 @@ const PAINT_MS = 3000 // a map's last tiles are in, give it time to draw them
 // The site reads the `theme` cookie server-side, so the cookie alone picks the
 // theme of a shot.
 //
-// Each shot gets the mat that opposes it. The dark shot sits on Andromeda's
-// neutral 600, a dark grey that lifts a near-black screenshot off the card
-// without competing with it; the light shot sits on black, the hardest frame a
-// near-white screenshot can have. One pair for every poster, Pro and Legacy
-// alike — the posters sit side by side in the same grid, so a mat that changed
-// per system would read as an accident. Literal values, because a baked PNG
-// cannot carry a token.
+// The mat is Andromeda's neutral 600 read in the shot's OWN theme: the dark
+// ladder's 600 behind a dark shot, the light ladder's 600 behind a light one.
+// That is one rule, not two colours. The ladder already inverts with the theme,
+// so a single step lands dark-grey on a near-black screenshot and light-grey on
+// a near-white one, and the mat opposes its shot in both without ever being
+// told to. One pair for every poster, Pro and Legacy alike — the posters sit
+// side by side in the same grid, so a mat that changed per system would read as
+// an accident. Literal values, because a baked PNG cannot carry a token.
 const THEMES = [
   { theme: 'dark', suffix: '_dark', mat: 'oklch(0.320 0.002 286.2)' },
-  { theme: 'light', suffix: '_light', mat: '#000000' },
+  { theme: 'light', suffix: '_light', mat: 'oklch(0.874 0.002 286.2)' },
 ]
 
 // Lay a shot on its mat: a second, empty page the size of the poster, the mat
