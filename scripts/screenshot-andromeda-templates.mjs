@@ -71,11 +71,16 @@ const OFFSET = 100 // how far the shot sits in from the top-left of the canvas
 const SETTLE_MS = 3000 // let charts reveal + animations settle
 const PAINT_MS = 3000 // a map's last tiles are in, give it time to draw them
 // The site reads the `theme` cookie server-side, so the cookie alone picks the
-// theme of a shot. The mat is a site neutral that opposes it: sand-300 behind
-// the dark shot, sand-700 behind the light one.
+// theme of a shot.
+//
+// The mat is Andromeda's neutral 600, taken from the ladder OPPOSITE the shot:
+// the light ladder's 600 behind a dark shot, the dark ladder's 600 behind a
+// light one. One pair for every poster, Pro and Legacy alike — the posters sit
+// side by side in the same grid, so a mat that changed per system would read as
+// an accident. Literal values, because a baked PNG cannot carry a token.
 const THEMES = [
-  { theme: 'dark', suffix: '_dark', mat: '#CACACD' },
-  { theme: 'light', suffix: '_light', mat: '#373738' },
+  { theme: 'dark', suffix: '_dark', mat: 'oklch(0.874 0.002 286.2)' },
+  { theme: 'light', suffix: '_light', mat: 'oklch(0.320 0.002 286.2)' },
 ]
 
 // Lay a shot on its mat: a second, empty page the size of the poster, the mat
