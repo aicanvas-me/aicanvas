@@ -24,7 +24,7 @@ export default function PrivacyPage() {
           Privacy Policy
         </h1>
         <p className="mt-3 text-sm text-sand-600 dark:text-sand-500">
-          Last updated: 2026-08-16. This policy describes how AI Canvas processes
+          Last updated: 2026-09-20. This policy describes how AI Canvas processes
           personal data, in line with the EU General Data Protection Regulation
           (GDPR / DSGVO) and the German Bundesdatenschutzgesetz (BDSG).
         </p>
@@ -140,6 +140,18 @@ export default function PrivacyPage() {
             contains, including any image you uploaded into the tool, so the
             preset can be restored later. Presets are private to your account
             and deleted with it.
+          </p>
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
+            We want every member to get the quality of experience they deserve.
+            To help with that, when you install with your API token or download
+            a file while signed in, our server keeps a short note of what it
+            delivered to your account and when (pull history). It shows us what
+            people find useful, tells us when someone seems stuck getting
+            started so we can fix what is in the way, and guides what we build
+            and polish next. The note is made on our own server from the
+            request you sent. It sets no cookie, runs nothing extra in your
+            browser, is never sent to an analytics provider, and is never used
+            for advertising or profiling.
           </p>
 
           <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
@@ -290,6 +302,17 @@ export default function PrivacyPage() {
               are tied to your account.
             </li>
             <li>
+              <strong className="text-sand-700 dark:text-sand-200">Pull history:</strong>{' '}
+              Art. 6 (1)(f) GDPR. Legitimate interest in giving our members a
+              better experience: knowing which content they find useful and
+              making sure every subscriber can actually use what they pay for.
+              We keep this light: one line per delivered item,
+              recorded on our own server, never shared and never used for
+              advertising. You can object at any time (Art. 21 GDPR) by
+              contacting us; we then stop recording your pulls and delete the
+              ones we hold.
+            </li>
+            <li>
               <strong className="text-sand-700 dark:text-sand-200">Contact form:</strong>{' '}
               Art. 6 (1)(f) GDPR: legitimate interest in answering an enquiry you
               chose to send us. We process only the name, email, subject, and
@@ -420,8 +443,8 @@ export default function PrivacyPage() {
             <li>
               <strong className="text-sand-700 dark:text-sand-200">Account data</strong>{' '}is kept for
               as long as your account exists. When you delete your account, your
-              account row, saved components, install history, and preferences
-              are removed via cascade.
+              account row, saved components, install history, pull history, and
+              preferences are removed via cascade.
             </li>
             <li>
               <strong className="text-sand-700 dark:text-sand-200">Contact messages</strong>{' '}are kept
