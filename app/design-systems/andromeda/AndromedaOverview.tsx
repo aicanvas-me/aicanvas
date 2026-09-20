@@ -47,11 +47,30 @@ const TEMPLATE_BLURBS: Record<string, string> = {
 // exactly as uploaded — capitalized, with spaces — so they're URL-encoded when
 // building the src.
 const TEMPLATE_IMAGE_FILE: Record<string, string> = {
-  'andromeda-mission-control': 'Mission control.png',
-  'andromeda-service-order': 'Service order.png',
-  'andromeda-resource-planning': 'Resource planning.png',
-  'andromeda-signal-room': 'Signal Room.png',
+  'andromeda-mission-control': 'Mission_control_dark.png',
+  'andromeda-service-order': 'Service_order_dark.png',
+  'andromeda-resource-planning': 'Resource_planning_dark.png',
+  'andromeda-signal-room': 'Signal_Room_dark.png',
 }
+
+// The light-theme poster for each template, shown when the site is light.
+const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
+  'andromeda-mission-control': 'Mission_control_light.png',
+  'andromeda-service-order': 'Service_order_light.png',
+  'andromeda-resource-planning': 'Resource_planning_light.png',
+  'andromeda-signal-room': 'Signal_Room_light.png',
+}
+
+// A poster is re-shot under a FIXED filename, so nothing about the URL moves
+// when the art does. The version is the only thing that tells a browser and the
+// CDN to fetch again: bump it on every re-shoot.
+const ART_VERSION = 1
+
+const templateArt = (file: string | undefined) =>
+  optimizeImageKitUrl(
+    `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file ?? '')}?v=${ART_VERSION}`,
+    'detail',
+  )
 
 const andromeda = DESIGN_SYSTEMS.find((s) => s.slug === 'andromeda')
 const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
@@ -63,10 +82,8 @@ const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
   // Template card art through the same helper as every other image on the site:
   // 1600px is still double what these cards paint. Filenames have spaces, so
   // encode them.
-  image: optimizeImageKitUrl(
-    `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_IMAGE_FILE[t.slug] ?? '')}`,
-    'detail',
-  ),
+  image: templateArt(TEMPLATE_IMAGE_FILE[t.slug]),
+  imageLight: templateArt(TEMPLATE_IMAGE_FILE_LIGHT[t.slug]),
 }))
 
 // ── BrainWireframePreview ────────────────────────────────────────────
@@ -413,12 +430,23 @@ export function AndromedaOverview() {
                     </span>
                   </span>
                 </div>
+                {/* The poster follows the SITE theme: the light shot on a
+                    light page, the dark shot on a dark one. Two images and the
+                    `dark:` variant, so the first byte is already right and
+                    nothing swaps after paint. */}
                 <img
                   src={t.image}
                   alt={t.name}
                   loading="lazy"
                   decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  className="absolute inset-0 hidden h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 dark:block"
+                />
+                <img
+                  src={t.imageLight}
+                  alt={t.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 dark:hidden"
                 />
               </div>
               <div className="relative -mt-4 flex flex-1 flex-col gap-3 rounded-t-2xl bg-sand-50 p-5 shadow-[0_-8px_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[0_-8px_24px_rgba(0,0,0,0.25)]">

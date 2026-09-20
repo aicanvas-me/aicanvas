@@ -17,6 +17,7 @@
  *
  * Usage: node scripts/screenshot-andromeda-templates.mjs            — every one
  *        node scripts/screenshot-andromeda-templates.mjs <slug>     — one
+ *        ...mjs andromeda-pro/signal-room   — one, in one system only
  *        add --dry to keep the posters in .screenshots-tmp-templates/ and
  *        upload nothing
  */
@@ -36,24 +37,37 @@ try {
   process.loadEnvFile('.env.local')
 } catch {}
 
-// `system` picks the route family, `file` is the name the shot is uploaded
-// under. Both default to the Legacy route and the bare `<slug>.png` the first
-// four have always used, so those four keep the exact URLs already in the art
-// maps. A Pro-only template has no Legacy route to shoot and carries the
-// `_pro` filename its own maps expect.
+// `system` picks the route family, `file` is the base name the shot is uploaded
+// under, before the theme suffix. Both are spelled out for every template,
+// because the two systems name their art differently: Pro carries a `_pro`
+// tail, Legacy does not. Four templates exist in both systems and are shot
+// twice, once per system. Sign In is Pro-only; there is no Legacy route.
+//
+// NEVER put a space in one of these names. ImageKit rewrites a space to an
+// underscore on upload, so the file would land under a name no art map spells,
+// and every card using it would 404. Legacy's ORIGINAL art does have spaces
+// (`Mission control.png`) because it was uploaded by hand, not through here.
 const TEMPLATES = [
-  { slug: 'mission-control' },
-  { slug: 'service-order' },
-  { slug: 'resource-planning' },
-  { slug: 'signal-room' },
+  { slug: 'mission-control', file: 'Mission_control.png' },
+  { slug: 'service-order', file: 'Service_order.png' },
+  { slug: 'resource-planning', file: 'Resource_planning.png' },
+  { slug: 'signal-room', file: 'Signal_Room.png' },
   { slug: 'city-operations', system: 'andromeda-pro', file: 'City_operations_pro.png' },
   { slug: 'sign-in', system: 'andromeda-pro', file: 'Sign_in_pro.png' },
+  { slug: 'signal-room', system: 'andromeda-pro', file: 'Signal_Room_pro.png' },
+  { slug: 'mission-control', system: 'andromeda-pro', file: 'Mission_control_pro.png' },
+  { slug: 'service-order', system: 'andromeda-pro', file: 'Service_order_pro.png' },
+  { slug: 'resource-planning', system: 'andromeda-pro', file: 'Resource_planning_pro.png' },
 ]
 
 const args = process.argv.slice(2)
 const DRY = args.includes('--dry')
 const arg = args.find((a) => !a.startsWith('--'))
-const LIST = arg ? TEMPLATES.filter((t) => t.slug === arg) : TEMPLATES
+// A bare slug shoots that template in EVERY system that has it; `<system>/<slug>`
+// narrows it to one, for when only one system's art needs redoing.
+const LIST = arg
+  ? TEMPLATES.filter((t) => t.slug === arg || `${t.system ?? 'andromeda'}/${t.slug}` === arg)
+  : TEMPLATES
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3001'
 const IMAGEKIT_PRIVATE = process.env.IMAGEKIT_PRIVATE_KEY
@@ -126,7 +140,7 @@ async function main() {
       const fileName = (t.file ?? `${t.slug}.png`).replace(/\.png$/, `${suffix}.png`)
       const localPath = path.join(TEMP_DIR, fileName)
       try {
-        process.stdout.write(`  ${t.slug} (${theme})... `)
+        process.stdout.write(`  ${t.system ?? 'andromeda'}/${t.slug} (${theme})... `)
         await page.goto(
           // `frame=1` is the shell's own bare-payload mode, the one the mobile
           // preview iframe uses: the template renders with no top bar at all,

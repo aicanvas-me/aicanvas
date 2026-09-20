@@ -68,21 +68,25 @@ const TEMPLATE_BLURBS: Record<string, string> = {
 // andromeda/templates/ folder. New art is a one-line edit here. An EMPTY string
 // means "no art yet": the card keeps its dark fallback panel, because a URL
 // built from an empty filename resolves to the folder and paints a broken image.
-// A poster is the template's dark shot on a lighter neutral mat; its light
-// twin, the light shot on a darker mat, is in TEMPLATE_IMAGE_FILE_LIGHT. The
-// posters not re-shot yet still sit on brand-500. Legacy's cards keep their
-// own files.
+// A poster is the template's dark shot on its mat; the light twin is in
+// TEMPLATE_IMAGE_FILE_LIGHT. Legacy's cards keep their own files, under their
+// own spelling.
 export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
-  'andromeda-pro-mission-control': 'Mission_control_pro.png',
-  'andromeda-pro-service-order': 'Service_order_pro.png',
-  'andromeda-pro-resource-planning': 'Resource_planning_pro.png',
-  'andromeda-pro-signal-room': 'Signal_Room_pro.png',
-  'andromeda-pro-sign-in': 'Sign_in_pro.png',
+  'andromeda-pro-mission-control': 'Mission_control_pro_dark.png',
+  'andromeda-pro-service-order': 'Service_order_pro_dark.png',
+  'andromeda-pro-resource-planning': 'Resource_planning_pro_dark.png',
+  'andromeda-pro-signal-room': 'Signal_Room_pro_dark.png',
+  'andromeda-pro-sign-in': 'Sign_in_pro_dark.png',
   'andromeda-pro-city-operations': 'City_operations_pro_dark.png',
 }
 
 // The light-theme poster for each template, shown when the site is light.
 export const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
+  'andromeda-pro-mission-control': 'Mission_control_pro_light.png',
+  'andromeda-pro-service-order': 'Service_order_pro_light.png',
+  'andromeda-pro-resource-planning': 'Resource_planning_pro_light.png',
+  'andromeda-pro-signal-room': 'Signal_Room_pro_light.png',
+  'andromeda-pro-sign-in': 'Sign_in_pro_light.png',
   'andromeda-pro-city-operations': 'City_operations_pro_light.png',
 }
 
@@ -110,7 +114,7 @@ const UNCOMPRESSED_ART = new Set(['andromeda-pro-city-operations'])
 // A poster is re-shot under a FIXED filename, so nothing about the URL moves
 // when the art does. The version is the only thing that tells a browser and the
 // CDN to fetch again: bump it on every re-shoot, on both lanes.
-const ART_VERSION = 11
+const ART_VERSION = 12
 
 const artUrl = (slug: string, file: string | undefined) =>
   file
