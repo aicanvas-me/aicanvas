@@ -31,6 +31,9 @@ export type OverviewTemplate = {
   folder: string
   blurb: string
   image: string | null
+  // The light-theme poster. Null means none was shot yet, and the card shows
+  // `image` in both themes.
+  imageLight: string | null
 }
 
 // What the "All" tab shows: one strong card per kind of work, in reading order.
@@ -65,14 +68,22 @@ const TEMPLATE_BLURBS: Record<string, string> = {
 // andromeda/templates/ folder. New art is a one-line edit here. An EMPTY string
 // means "no art yet": the card keeps its dark fallback panel, because a URL
 // built from an empty filename resolves to the folder and paints a broken image.
-// The Pro art sits on brand-500; Legacy's cards keep their own files.
+// A poster is the template's dark shot on a lighter neutral mat; its light
+// twin, the light shot on a darker mat, is in TEMPLATE_IMAGE_FILE_LIGHT. The
+// posters not re-shot yet still sit on brand-500. Legacy's cards keep their
+// own files.
 export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
   'andromeda-pro-mission-control': 'Mission_control_pro.png',
   'andromeda-pro-service-order': 'Service_order_pro.png',
   'andromeda-pro-resource-planning': 'Resource_planning_pro.png',
   'andromeda-pro-signal-room': 'Signal_Room_pro.png',
   'andromeda-pro-sign-in': 'Sign_in_pro.png',
-  'andromeda-pro-city-operations': 'City_operations_pro.png',
+  'andromeda-pro-city-operations': 'City_operations_pro_dark.png',
+}
+
+// The light-theme poster for each template, shown when the site is light.
+export const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
+  'andromeda-pro-city-operations': 'City_operations_pro_light.png',
 }
 
 const ART_BASE = 'https://ik.imagekit.io/aitoolkit/andromeda/templates/'
@@ -96,22 +107,25 @@ const TEMPLATE_ORDER = [
 // already twice what its card paints.
 const UNCOMPRESSED_ART = new Set(['andromeda-pro-city-operations'])
 
+// v busts the browser cache when the art is re-shot under the same name; the
+// optimized lane needs none, its transform is already a fresh URL.
+const artUrl = (slug: string, file: string | undefined) =>
+  file
+    ? UNCOMPRESSED_ART.has(slug)
+      ? `${ART_BASE}${encodeURIComponent(file)}?tr=orig-true&v=4`
+      : optimizeImageKitUrl(`${ART_BASE}${encodeURIComponent(file)}`, 'detail')
+    : null
+
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
   (t: { slug: string; name: string; category?: string }) => {
-    const file = TEMPLATE_IMAGE_FILE[t.slug]
     return {
       slug: t.slug,
       name: t.name,
       category: t.category ?? '',
       folder: t.slug.replace(/^andromeda-pro-/, ''),
       blurb: TEMPLATE_BLURBS[t.slug] ?? '',
-      // v busts the browser cache when the art is re-shot under the same name;
-      // the optimized lane needs none, its transform is already a fresh URL.
-      image: file
-        ? UNCOMPRESSED_ART.has(t.slug)
-          ? `${ART_BASE}${encodeURIComponent(file)}?tr=orig-true&v=4`
-          : optimizeImageKitUrl(`${ART_BASE}${encodeURIComponent(file)}`, 'detail')
-        : null,
+      image: artUrl(t.slug, TEMPLATE_IMAGE_FILE[t.slug]),
+      imageLight: artUrl(t.slug, TEMPLATE_IMAGE_FILE_LIGHT[t.slug]),
     }
   },
 )

@@ -6,8 +6,9 @@
  * neutral mat that opposes it: the dark shot on a lighter mat, the light shot
  * on a darker one. The poster is a 1920×1080 canvas; the shot fills that size
  * and sits 100px in from the top-left, so it bleeds off the right and bottom
- * edges. The dark poster keeps the template's filename, the light one carries
- * `_light` before the extension.
+ * edges. Each poster carries its theme before the extension, `_dark` or
+ * `_light`. An upload overwrites a file of the same name, so neither one ever
+ * lands on the name an older, single-theme poster is still served from.
  *
  * The floating TemplateChrome toolbar (Back / name / Install) is hidden so
  * only the dashboard shows. Template routes work in dev OR prod (no
@@ -73,7 +74,7 @@ const PAINT_MS = 3000 // a map's last tiles are in, give it time to draw them
 // theme of a shot. The mat is a site neutral that opposes it: sand-300 behind
 // the dark shot, sand-700 behind the light one.
 const THEMES = [
-  { theme: 'dark', suffix: '', mat: '#CACACD' },
+  { theme: 'dark', suffix: '_dark', mat: '#CACACD' },
   { theme: 'light', suffix: '_light', mat: '#373738' },
 ]
 

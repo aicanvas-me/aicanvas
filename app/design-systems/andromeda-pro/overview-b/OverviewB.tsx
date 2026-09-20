@@ -116,13 +116,29 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
     >
       <div className={`relative overflow-hidden rounded-xl bg-sand-900 ${lead ? 'aspect-video' : 'aspect-[16/10]'}`}>
         {t.image ? (
-          <img
-            src={t.image}
-            alt={`${t.name} template`}
-            loading="lazy"
-            decoding="async"
-            className="absolute inset-0 h-full w-full origin-top-left object-cover object-[left_top] transition-transform duration-200 ease-out motion-safe:group-hover:scale-[1.02]"
-          />
+          // The poster follows the SITE theme: the light shot on a light page,
+          // the dark shot on a dark one. Two images and the `dark:` variant, so
+          // the first byte is already right and nothing swaps after paint.
+          <>
+            <img
+              src={t.image}
+              alt={`${t.name} template`}
+              loading="lazy"
+              decoding="async"
+              className={`absolute inset-0 h-full w-full origin-top-left object-cover object-[left_top] transition-transform duration-200 ease-out motion-safe:group-hover:scale-[1.02] ${
+                t.imageLight ? 'hidden dark:block' : ''
+              }`}
+            />
+            {t.imageLight ? (
+              <img
+                src={t.imageLight}
+                alt={`${t.name} template`}
+                loading="lazy"
+                decoding="async"
+                className="absolute inset-0 h-full w-full origin-top-left object-cover object-[left_top] transition-transform duration-200 ease-out motion-safe:group-hover:scale-[1.02] dark:hidden"
+              />
+            ) : null}
+          </>
         ) : (
           // No art yet: a quiet dark panel, never a broken-image glyph.
           <div
