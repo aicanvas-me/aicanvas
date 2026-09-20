@@ -2,9 +2,9 @@
  * Shoot the Andromeda TEMPLATE posters and upload them to ImageKit under
  * `andromeda/templates/`.
  *
- * Every template is shot twice, once per theme, and each shot is laid on a
- * neutral mat that opposes it: the dark shot on a lighter mat, the light shot
- * on a darker one. The poster is a 1920×1080 canvas; the shot fills that size
+ * Every template is shot twice, once per theme, and each shot is laid on a mat
+ * (see THEMES for the colour and why). The poster is a 1920×1080 canvas; the
+ * shot fills that size
  * and sits 100px in from the top-left, so it bleeds off the right and bottom
  * edges. Each poster carries its theme before the extension, `_dark` or
  * `_light`. An upload overwrites a file of the same name, so neither one ever
@@ -73,14 +73,14 @@ const PAINT_MS = 3000 // a map's last tiles are in, give it time to draw them
 // The site reads the `theme` cookie server-side, so the cookie alone picks the
 // theme of a shot.
 //
-// The mat is Andromeda's neutral 700, taken from the ladder OPPOSITE the shot:
-// the light ladder's 700 behind a dark shot, the dark ladder's 700 behind a
-// light one. One pair for every poster, Pro and Legacy alike — the posters sit
-// side by side in the same grid, so a mat that changed per system would read as
-// an accident. Literal values, because a baked PNG cannot carry a token.
+// The mat is black behind both shots. Behind the light shot it is a hard frame;
+// behind the dark shot it all but disappears, so that poster reads full-bleed.
+// One value for every poster, Pro and Legacy alike — the posters sit side by
+// side in the same grid, so a mat that changed per system would read as an
+// accident. Literal values, because a baked PNG cannot carry a token.
 const THEMES = [
-  { theme: 'dark', suffix: '_dark', mat: 'oklch(0.821 0.002 286.2)' },
-  { theme: 'light', suffix: '_light', mat: 'oklch(0.413 0.002 286.2)' },
+  { theme: 'dark', suffix: '_dark', mat: '#000000' },
+  { theme: 'light', suffix: '_light', mat: '#000000' },
 ]
 
 // Lay a shot on its mat: a second, empty page the size of the poster, the mat
