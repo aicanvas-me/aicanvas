@@ -107,13 +107,16 @@ const TEMPLATE_ORDER = [
 // already twice what its card paints.
 const UNCOMPRESSED_ART = new Set(['andromeda-pro-city-operations'])
 
-// v busts the browser cache when the art is re-shot under the same name; the
-// optimized lane needs none, its transform is already a fresh URL.
+// A poster is re-shot under a FIXED filename, so nothing about the URL moves
+// when the art does. The version is the only thing that tells a browser and the
+// CDN to fetch again: bump it on every re-shoot, on both lanes.
+const ART_VERSION = 5
+
 const artUrl = (slug: string, file: string | undefined) =>
   file
     ? UNCOMPRESSED_ART.has(slug)
-      ? `${ART_BASE}${encodeURIComponent(file)}?tr=orig-true&v=4`
-      : optimizeImageKitUrl(`${ART_BASE}${encodeURIComponent(file)}`, 'detail')
+      ? `${ART_BASE}${encodeURIComponent(file)}?v=${ART_VERSION}&tr=orig-true`
+      : optimizeImageKitUrl(`${ART_BASE}${encodeURIComponent(file)}?v=${ART_VERSION}`, 'detail')
     : null
 
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
