@@ -444,6 +444,8 @@ const TEMPLATE_ART: Record<string, string> = {
   // City Operations is Pro-only, so it has no free-Andromeda poster to pair
   // with and points straight at the Pro file the overview also serves.
   'city-operations': 'City_operations_pro.png',
+  // Sign In is Pro-only for the same reason: no Legacy counterpart to pair with.
+  'sign-in': 'Sign_in_pro.png',
 }
 const templateArt = (folder: string) =>
   `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_ART[folder] ?? '')}`
@@ -488,6 +490,13 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
     description:
       'Capacity, allocation trend, and request triage across teams on one planning board.',
     image: templateArt('resource-planning'),
+  },
+  {
+    folder: 'sign-in',
+    name: 'Sign In',
+    description:
+      'A whole authentication flow: create an account, sign in, recover a password and set a new one.',
+    image: templateArt('sign-in'),
   },
 ]
 

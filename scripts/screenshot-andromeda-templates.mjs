@@ -1,5 +1,5 @@
 /**
- * Capture the four Andromeda TEMPLATE dashboards (clean, full-resolution,
+ * Capture the Andromeda TEMPLATE screens (clean, full-resolution,
  * lossless) and upload them to ImageKit under `andromeda/templates/`.
  *
  * These are raw source shots — NOT wired into any card and NOT served through
@@ -10,7 +10,7 @@
  * Template routes work in dev OR prod (no capture-route guard), and prod has no
  * dev overlays — so the default localhost:3001 is fine.
  *
- * Usage: node scripts/screenshot-andromeda-templates.mjs            — all four
+ * Usage: node scripts/screenshot-andromeda-templates.mjs            — every one
  *        node scripts/screenshot-andromeda-templates.mjs <slug>     — one
  */
 
@@ -29,11 +29,18 @@ try {
   process.loadEnvFile('.env.local')
 } catch {}
 
+// `system` picks the route family, `file` is the name the shot is uploaded
+// under. Both default to the Legacy route and the bare `<slug>.png` the first
+// four have always used, so those four keep the exact URLs already in the art
+// maps. A Pro-only template has no Legacy route to shoot and carries the
+// `_pro` filename its own maps expect.
 const TEMPLATES = [
   { slug: 'mission-control' },
   { slug: 'service-order' },
   { slug: 'resource-planning' },
   { slug: 'signal-room' },
+  { slug: 'city-operations', system: 'andromeda-pro', file: 'City_operations_pro.png' },
+  { slug: 'sign-in', system: 'andromeda-pro', file: 'Sign_in_pro.png' },
 ]
 
 const arg = process.argv[2]
@@ -71,12 +78,15 @@ async function main() {
   const results = []
 
   for (const t of LIST) {
-    const fileName = `${t.slug}.png`
+    const fileName = t.file ?? `${t.slug}.png`
     const localPath = path.join(TEMP_DIR, fileName)
     try {
       process.stdout.write(`  ${t.slug}... `)
       await page.goto(
-        `${BASE_URL}/design-systems/andromeda/templates/${t.slug}`,
+        // `frame=1` is the shell's own bare-payload mode, the one the mobile
+        // preview iframe uses: the template renders with no top bar at all,
+        // which is a cleaner shot than hiding the bar after the fact.
+        `${BASE_URL}/design-systems/${t.system ?? 'andromeda'}/templates/${t.slug}?frame=1`,
         { waitUntil: 'load', timeout: 60_000 },
       )
       await page.waitForTimeout(SETTLE_MS)

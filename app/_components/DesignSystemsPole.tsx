@@ -45,6 +45,7 @@ const SYSTEMS = [
       { slug: 'mission-control', name: 'Mission Control', category: 'Dashboard' },
       { slug: 'service-order', name: 'Service Order', category: 'CRM' },
       { slug: 'resource-planning', name: 'Resource Planning', category: 'Scheduling' },
+      { slug: 'sign-in', name: 'Sign In', category: 'Authentication' },
     ],
   },
   {
