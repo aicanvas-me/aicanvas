@@ -9,6 +9,7 @@ export const CATEGORY: Record<string, string> = {
   input: 'Forms',
   textarea: 'Forms',
   'search-field': 'Forms',
+  'strength-meter': 'Forms',
   checkbox: 'Forms',
   radio: 'Forms',
   toggle: 'Forms',

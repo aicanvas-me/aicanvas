@@ -217,6 +217,7 @@ export const DESIGN_SYSTEMS = [
       'components/Slider.tsx',
       'components/Spinner.tsx',
       'components/StatTile.tsx',
+      'components/StrengthMeter.tsx',
       'components/Table.tsx',
       'components/Tag.tsx',
       'components/Textarea.tsx',

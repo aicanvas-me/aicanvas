@@ -69,6 +69,7 @@ import { Radio, RadioGroup } from '../../lib/andromeda-pro.generated'
 import { Slider } from '../../lib/andromeda-pro.generated'
 import { Spinner } from '../../lib/andromeda-pro.generated'
 import { StatTile } from '../../lib/andromeda-pro.generated'
+import { StrengthMeter } from '../../lib/andromeda-pro.generated'
 import { Tag } from '../../lib/andromeda-pro.generated'
 import { Textarea } from '../../lib/andromeda-pro.generated'
 import { Toggle } from '../../lib/andromeda-pro.generated'
@@ -1461,6 +1462,25 @@ function UserCardDemo() {
   )
 }
 
+function StrengthMeterDemo() {
+  // Real strings, and the component judges them itself. A demo that handed the
+  // meter a level could show a reading the component would never give, which is
+  // the one thing this page exists to prevent.
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5], width: '100%', maxWidth: 420 }}>
+      <Row label="Too short">
+        <StrengthMeter value="sunflower" />
+      </Row>
+      <Row label="Long enough, three families">
+        <StrengthMeter value="Sunflower12!" />
+      </Row>
+      <Row label="Length alone">
+        <StrengthMeter value="correct horse battery" />
+      </Row>
+    </div>
+  )
+}
+
 // ─── Public switcher ─────────────────────────────────────────────────────────
 
 function SidebarDemo() {
@@ -1515,6 +1535,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   nodes: NodesDemo,
   burst: BurstDemo,
   'search-field': SearchFieldDemo,
+  'strength-meter': StrengthMeterDemo,
   sidebar: SidebarDemo,
   'segmented-control': SegmentedControlDemo,
   'progress-bar': ProgressBarDemo,

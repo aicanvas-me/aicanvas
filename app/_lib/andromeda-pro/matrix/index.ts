@@ -33,6 +33,7 @@ import { progressBar } from './progress-bar'
 import { radarChart } from './chart-radar'
 import { radio } from './radio'
 import { searchField } from './search-field'
+import { strengthMeter } from './strength-meter'
 import { segmentedControl } from './segmented-control'
 import { sidebar } from './sidebar'
 import { slider } from './slider'
@@ -57,7 +58,7 @@ export const SPECS: readonly MatrixSpec[] = [
   gauge, heatGrid, iconButton, input, mediaCard,
   metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet,
   progressBar, radarChart, radio, searchField, segmentedControl, sidebar, slider, spinner,
-  statTile, tag, textarea, toggle, tooltip, topBar, trendChart, userCard,
+  statTile, strengthMeter, tag, textarea, toggle, tooltip, topBar, trendChart, userCard,
   userMenu, waveform,
 ]
 
