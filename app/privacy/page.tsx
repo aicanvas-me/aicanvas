@@ -142,14 +142,16 @@ export default function PrivacyPage() {
             and deleted with it.
           </p>
           <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
-            When you install with your API token, or download a file while
-            signed in, our server notes which item it delivered to your account
-            and when (pull history). We use this to see which parts of AI Canvas
-            are actually used, to notice when a subscriber has never managed to
-            use what they pay for, and to improve the catalogue. It is recorded on our own
-            server from the request you made. It sets no cookie, runs nothing
-            extra in your browser, is never sent to an analytics provider, and
-            is not used for advertising or profiling.
+            We want every member to get the quality of experience they deserve.
+            To help with that, when you install with your API token or download
+            a file while signed in, our server keeps a short note of what it
+            delivered to your account and when (pull history). It shows us what
+            people find useful, tells us when someone seems stuck getting
+            started so we can fix what is in the way, and guides what we build
+            and polish next. The note is made on our own server from the
+            request you sent. It sets no cookie, runs nothing extra in your
+            browser, is never sent to an analytics provider, and is never used
+            for advertising or profiling.
           </p>
 
           <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
@@ -301,9 +303,10 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong className="text-sand-700 dark:text-sand-200">Pull history:</strong>{' '}
-              Art. 6 (1)(f) GDPR. Legitimate interest in knowing which content
-              our members use and in spotting a subscriber who has never used
-              what they pay for. We keep this light: one line per delivered item,
+              Art. 6 (1)(f) GDPR. Legitimate interest in giving our members a
+              better experience: knowing which content they find useful and
+              making sure every subscriber can actually use what they pay for.
+              We keep this light: one line per delivered item,
               recorded on our own server, never shared and never used for
               advertising. You can object at any time (Art. 21 GDPR) by
               contacting us; we then stop recording your pulls and delete the
