@@ -23,7 +23,7 @@ import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Button } from '../../components/Button'
 import { buttonClasses } from '../../components/buttonClasses'
 import { SiteFooter } from '../../components/SiteFooter'
-import { optimizeImageKitUrl } from '../../lib/imagekit'
+import { optimizeImageKitUrl, TEMPLATE_ART_VERSION } from '../../lib/imagekit'
 import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoop } from '../../_components/FoundationLoop'
@@ -43,15 +43,34 @@ const TEMPLATE_BLURBS: Record<string, string> = {
     'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
 }
 
-// Card art uploaded to ImageKit (andromeda/templates/). Filenames are kept
-// exactly as uploaded — capitalized, with spaces — so they're URL-encoded when
-// building the src.
+// Card art uploaded to ImageKit (andromeda/templates/). Names are underscored:
+// ImageKit rewrites a space in an uploaded filename to an underscore, so a name
+// written with spaces here would 404 while the upload still reported success.
 const TEMPLATE_IMAGE_FILE: Record<string, string> = {
-  'andromeda-mission-control': 'Mission control.png',
-  'andromeda-service-order': 'Service order.png',
-  'andromeda-resource-planning': 'Resource planning.png',
-  'andromeda-signal-room': 'Signal Room.png',
+  'andromeda-mission-control': 'Mission_control_dark.png',
+  'andromeda-service-order': 'Service_order_dark.png',
+  'andromeda-resource-planning': 'Resource_planning_dark.png',
+  'andromeda-signal-room': 'Signal_Room_dark.png',
 }
+
+// The light-theme poster for each template, shown when the site is light.
+const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
+  'andromeda-mission-control': 'Mission_control_light.png',
+  'andromeda-service-order': 'Service_order_light.png',
+  'andromeda-resource-planning': 'Resource_planning_light.png',
+  'andromeda-signal-room': 'Signal_Room_light.png',
+}
+
+// Null, not an empty name: a URL built from '' resolves to the folder and
+// paints a broken-image glyph, so a template with no art must render the card's
+// own quiet panel instead.
+const templateArt = (file: string | undefined) =>
+  file
+    ? optimizeImageKitUrl(
+        `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`,
+        'detail',
+      )
+    : null
 
 const andromeda = DESIGN_SYSTEMS.find((s) => s.slug === 'andromeda')
 const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
@@ -60,9 +79,10 @@ const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
   category: t.category,
   folder: t.slug.replace(/^andromeda-/, ''),
   blurb: TEMPLATE_BLURBS[t.slug] ?? '',
-  // Uncompressed template card art — tr=orig-true serves the untouched original
-  // (no resize / quality optimization). Filenames have spaces, so encode them.
-  image: `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_IMAGE_FILE[t.slug] ?? '')}?tr=orig-true`,
+  // Template card art through the same helper as every other image on the site:
+  // 1600px is still double what these cards paint.
+  image: templateArt(TEMPLATE_IMAGE_FILE[t.slug]),
+  imageLight: templateArt(TEMPLATE_IMAGE_FILE_LIGHT[t.slug]),
 }))
 
 // ── BrainWireframePreview ────────────────────────────────────────────
@@ -409,13 +429,35 @@ export function AndromedaOverview() {
                     </span>
                   </span>
                 </div>
-                <img
-                  src={t.image}
-                  alt={t.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                />
+                {/* The poster follows the SITE theme: the light shot on a
+                    light page, the dark shot on a dark one. Two images and the
+                    `dark:` variant, so the first byte is already right and
+                    nothing swaps after paint.
+
+                    NOT lazy. A lazy image that starts at display:none has no
+                    layout box, so the browser never fetches it, and the card
+                    would go blank the moment the visitor used the theme toggle
+                    while a full-size poster downloaded. */}
+                {t.image ? (
+                  <img
+                    src={t.image}
+                    alt={t.name}
+                    decoding="async"
+                    className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
+                      t.imageLight ? 'hidden dark:block' : ''
+                    }`}
+                  />
+                ) : null}
+                {t.imageLight ? (
+                  <img
+                    src={t.imageLight}
+                    alt={t.name}
+                    decoding="async"
+                    className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
+                      t.image ? 'dark:hidden' : ''
+                    }`}
+                  />
+                ) : null}
               </div>
               <div className="relative -mt-4 flex flex-1 flex-col gap-3 rounded-t-2xl bg-sand-50 p-5 shadow-[0_-8px_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[0_-8px_24px_rgba(0,0,0,0.25)]">
                 <div>
