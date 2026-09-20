@@ -41,6 +41,7 @@ const TEMPLATES = [
   { slug: 'signal-room' },
   { slug: 'city-operations', system: 'andromeda-pro', file: 'City_operations_pro.png' },
   { slug: 'sign-in', system: 'andromeda-pro', file: 'Sign_in_pro.png' },
+  { slug: 'sign-up', system: 'andromeda-pro', file: 'Sign_up_pro.png' },
 ]
 
 const arg = process.argv[2]

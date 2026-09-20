@@ -48,6 +48,7 @@ export const DESIGN_SYSTEM_META: Record<DesignSystemSlug, DesignSystemMeta> = {
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling' },
       { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       category: 'Media' },
       { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication' },
+      { slug: 'andromeda-pro-sign-up',           name: 'Sign Up',           category: 'Authentication' },
     ],
   },
 }

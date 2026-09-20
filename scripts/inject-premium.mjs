@@ -621,6 +621,7 @@ const V2_EXAMPLE_EXPORTS = {
   ResourcePlanning: 'resource-planning',
   ServiceOrder: 'service-order',
   SignIn: 'sign-in',
+  SignUp: 'sign-up',
   SignalRoom: 'signal-room',
 }
 
