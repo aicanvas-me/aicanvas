@@ -79,14 +79,21 @@ const ART_BASE = 'https://ik.imagekit.io/aitoolkit/andromeda/templates/'
 
 const pro = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-pro')
 
-// The lead card of the template bento spans both columns, so it is listed
-// first and the grid never has to reorder.
-const LEAD_TEMPLATE = 'andromeda-pro-sign-in'
+// The card order of the template bento. The first one spans both columns, so
+// it leads; anything not listed here falls in behind, in registry order.
+const TEMPLATE_ORDER = [
+  'andromeda-pro-city-operations',
+  'andromeda-pro-sign-in',
+  'andromeda-pro-signal-room',
+  'andromeda-pro-mission-control',
+  'andromeda-pro-service-order',
+  'andromeda-pro-resource-planning',
+]
 
-// City Operations is the one poster served untouched: it is the densest shot
-// in the set and the only one where the resize is visible. Every other poster,
-// the lead included, is small enough on screen that the helper's 1600px is
-// already twice what its card shows.
+// City Operations is the one poster served untouched: it leads at double width
+// and it is the densest shot in the set, the only one where the resize shows.
+// Every other poster is small enough on screen that the helper's 1600px is
+// already twice what its card paints.
 const UNCOMPRESSED_ART = new Set(['andromeda-pro-city-operations'])
 
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
@@ -109,7 +116,11 @@ const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
   },
 )
 
-export const TEMPLATES: OverviewTemplate[] = [
-  ...BUILT_TEMPLATES.filter((t) => t.slug === LEAD_TEMPLATE),
-  ...BUILT_TEMPLATES.filter((t) => t.slug !== LEAD_TEMPLATE),
-]
+const rank = (slug: string) => {
+  const i = TEMPLATE_ORDER.indexOf(slug)
+  return i === -1 ? TEMPLATE_ORDER.length : i
+}
+
+export const TEMPLATES: OverviewTemplate[] = [...BUILT_TEMPLATES].sort(
+  (a, b) => rank(a.slug) - rank(b.slug),
+)
