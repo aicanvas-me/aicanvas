@@ -2,6 +2,7 @@
 // overview, the curated "All" set, and the template cards. No React and no
 // Node APIs, so both the server page and the client overview can import it.
 import { DESIGN_SYSTEMS } from '../../../../scripts/lib/design-systems.config.mjs'
+import { optimizeImageKitUrl } from '../../../lib/imagekit'
 
 export type OverviewComponent = {
   slug: string
@@ -74,11 +75,18 @@ export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
   'andromeda-pro-city-operations': 'City_operations_pro.png',
 }
 
+const ART_BASE = 'https://ik.imagekit.io/aitoolkit/andromeda/templates/'
+
 const pro = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-pro')
 
 // The lead card of the template bento spans both columns, so it is listed
 // first and the grid never has to reorder.
 const LEAD_TEMPLATE = 'andromeda-pro-city-operations'
+
+// The lead card is painted at double width, so its art stays the untouched
+// original. Every other poster is small enough on screen that the helper's
+// 1600px is already twice what its card shows.
+const UNCOMPRESSED_ART = new Set([LEAD_TEMPLATE])
 
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
   (t: { slug: string; name: string; category?: string }) => {
@@ -89,10 +97,12 @@ const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
       category: t.category ?? '',
       folder: t.slug.replace(/^andromeda-pro-/, ''),
       blurb: TEMPLATE_BLURBS[t.slug] ?? '',
-      // tr=orig-true serves the untouched original. v busts the browser cache
-      // when the art is re-shot under the same name.
+      // v busts the browser cache when the art is re-shot under the same name;
+      // the optimized lane needs none, its transform is already a fresh URL.
       image: file
-        ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?tr=orig-true&v=4`
+        ? UNCOMPRESSED_ART.has(t.slug)
+          ? `${ART_BASE}${encodeURIComponent(file)}?tr=orig-true&v=4`
+          : optimizeImageKitUrl(`${ART_BASE}${encodeURIComponent(file)}`, 'detail')
         : null,
     }
   },

@@ -60,9 +60,13 @@ const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
   category: t.category,
   folder: t.slug.replace(/^andromeda-/, ''),
   blurb: TEMPLATE_BLURBS[t.slug] ?? '',
-  // Uncompressed template card art — tr=orig-true serves the untouched original
-  // (no resize / quality optimization). Filenames have spaces, so encode them.
-  image: `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_IMAGE_FILE[t.slug] ?? '')}?tr=orig-true`,
+  // Template card art through the same helper as every other image on the site:
+  // 1600px is still double what these cards paint. Filenames have spaces, so
+  // encode them.
+  image: optimizeImageKitUrl(
+    `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_IMAGE_FILE[t.slug] ?? '')}`,
+    'detail',
+  ),
 }))
 
 // ── BrainWireframePreview ────────────────────────────────────────────
