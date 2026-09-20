@@ -92,7 +92,7 @@ const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
       // tr=orig-true serves the untouched original. v busts the browser cache
       // when the art is re-shot under the same name.
       image: file
-        ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?tr=orig-true&v=3`
+        ? `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?tr=orig-true&v=4`
         : null,
     }
   },
