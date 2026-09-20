@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 .screenshots-tmp/
+.screenshots-tmp-templates/
 /public/screenshots/
 *.pem
 
