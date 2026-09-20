@@ -2,7 +2,7 @@
 // overview, the curated "All" set, and the template cards. No React and no
 // Node APIs, so both the server page and the client overview can import it.
 import { DESIGN_SYSTEMS } from '../../../../scripts/lib/design-systems.config.mjs'
-import { optimizeImageKitUrl } from '../../../lib/imagekit'
+import { optimizeImageKitUrl, TEMPLATE_ART_VERSION } from '../../../lib/imagekit'
 
 export type OverviewComponent = {
   slug: string
@@ -81,7 +81,7 @@ export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
 }
 
 // The light-theme poster for each template, shown when the site is light.
-export const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
+const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
   'andromeda-pro-mission-control': 'Mission_control_pro_light.png',
   'andromeda-pro-service-order': 'Service_order_pro_light.png',
   'andromeda-pro-resource-planning': 'Resource_planning_pro_light.png',
@@ -111,16 +111,11 @@ const TEMPLATE_ORDER = [
 // already twice what its card paints.
 const UNCOMPRESSED_ART = new Set(['andromeda-pro-city-operations'])
 
-// A poster is re-shot under a FIXED filename, so nothing about the URL moves
-// when the art does. The version is the only thing that tells a browser and the
-// CDN to fetch again: bump it on every re-shoot, on both lanes.
-const ART_VERSION = 12
-
 const artUrl = (slug: string, file: string | undefined) =>
   file
     ? UNCOMPRESSED_ART.has(slug)
-      ? `${ART_BASE}${encodeURIComponent(file)}?v=${ART_VERSION}&tr=orig-true`
-      : optimizeImageKitUrl(`${ART_BASE}${encodeURIComponent(file)}?v=${ART_VERSION}`, 'detail')
+      ? `${ART_BASE}${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}&tr=orig-true`
+      : optimizeImageKitUrl(`${ART_BASE}${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`, 'detail')
     : null
 
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
