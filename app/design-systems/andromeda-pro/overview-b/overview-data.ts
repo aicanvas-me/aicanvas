@@ -81,12 +81,13 @@ const pro = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-p
 
 // The lead card of the template bento spans both columns, so it is listed
 // first and the grid never has to reorder.
-const LEAD_TEMPLATE = 'andromeda-pro-city-operations'
+const LEAD_TEMPLATE = 'andromeda-pro-sign-in'
 
-// The lead card is painted at double width, so its art stays the untouched
-// original. Every other poster is small enough on screen that the helper's
-// 1600px is already twice what its card shows.
-const UNCOMPRESSED_ART = new Set([LEAD_TEMPLATE])
+// City Operations is the one poster served untouched: it is the densest shot
+// in the set and the only one where the resize is visible. Every other poster,
+// the lead included, is small enough on screen that the helper's 1600px is
+// already twice what its card shows.
+const UNCOMPRESSED_ART = new Set(['andromeda-pro-city-operations'])
 
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
   (t: { slug: string; name: string; category?: string }) => {
