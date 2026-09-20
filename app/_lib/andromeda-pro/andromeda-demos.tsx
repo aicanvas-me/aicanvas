@@ -1471,8 +1471,8 @@ function StrengthMeterDemo() {
       <Row label="Too short">
         <StrengthMeter value="sunflower" />
       </Row>
-      <Row label="Long enough, three families">
-        <StrengthMeter value="Sunflower12!" />
+      <Row label="Long enough, one family">
+        <StrengthMeter value="sunflowerpath" />
       </Row>
       <Row label="Length alone">
         <StrengthMeter value="correct horse battery" />

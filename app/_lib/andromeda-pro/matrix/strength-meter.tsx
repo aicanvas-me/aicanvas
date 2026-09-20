@@ -16,7 +16,11 @@ export const strengthMeter: MatrixSpec = {
   // strength the component itself would not give that string.
   variants: [
     { label: 'Weak', props: { value: 'sunflower' } },
-    { label: 'Medium', props: { value: 'Sunflower12!' } },
+    // Thirteen characters and one character family: past the length floor,
+    // short of the length that carries it alone, and nowhere near three
+    // families. Anything with an upper, a digit and a symbol in it would be
+    // judged Strong and this cell would repeat the one below it.
+    { label: 'Medium', props: { value: 'sunflowerpath' } },
     { label: 'Strong', props: { value: 'correct horse battery' } },
   ],
   states: [],

@@ -454,12 +454,16 @@ const TEMPLATE_ART: Record<string, string> = {
   'city-operations': 'City_operations_pro.png',
   // Sign In is Pro-only for the same reason: no Legacy counterpart to pair with.
   'sign-in': 'Sign_in_pro.png',
-  // Sign Up has no art yet, so the lookup below resolves to the folder and the
-  // card falls back the way overview-data.ts's empty string does.
+  // Sign Up has no art yet. The empty string is the signal, and templateArt
+  // below hands it straight back: a URL built from an empty filename resolves
+  // to the FOLDER, which paints a broken image on every card that shows it.
   'sign-up': '',
 }
-const templateArt = (folder: string) =>
-  `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_ART[folder] ?? '')}`
+const templateArt = (folder: string) => {
+  const file = TEMPLATE_ART[folder] ?? ''
+  if (!file) return ''
+  return `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}`
+}
 
 // Static mirror of the andromeda `templates` in
 // scripts/lib/design-systems.config.mjs (folder = registry slug minus the
