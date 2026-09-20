@@ -22,7 +22,7 @@ describe('trackPull', () => {
   })
 
   it('leaves no note for an account that objected', () => {
-    process.env.PULL_HISTORY_OPT_OUT = 'u0, u1'
+    process.env.PULL_HISTORY_OPT_OUT = 'u0, U1'
     trackPull('u1', 'peel-corner-reveal', 'standalone')
     delete process.env.PULL_HISTORY_OPT_OUT
     expect(after).not.toHaveBeenCalled()

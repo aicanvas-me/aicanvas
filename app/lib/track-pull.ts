@@ -8,7 +8,9 @@ import { createAdminClient } from '@/app/lib/supabase/admin'
 // An env list read per call suits a handful of objections; past that it
 // belongs in a column on the account.
 function optedOut(): Set<string> {
-  return new Set((process.env.PULL_HISTORY_OPT_OUT ?? '').split(',').map((s) => s.trim()).filter(Boolean))
+  return new Set(
+    (process.env.PULL_HISTORY_OPT_OUT ?? '').split(',').map((s) => s.trim().toLowerCase()).filter(Boolean),
+  )
 }
 
 /**
@@ -18,7 +20,7 @@ function optedOut(): Set<string> {
  * resolved; an anonymous request leaves no note.
  */
 export function trackPull(userId: string | null, slug: string, kind: string) {
-  if (!userId || optedOut().has(userId)) return
+  if (!userId || optedOut().has(userId.toLowerCase())) return
   try {
     after(async () => {
       try {
