@@ -105,17 +105,18 @@ const TEMPLATE_ORDER = [
   'andromeda-pro-resource-planning',
 ]
 
-// City Operations is the one poster served untouched: it leads at double width
-// and it is the densest shot in the set, the only one where the resize shows.
-// Every other poster is small enough on screen that the helper's 1600px is
+// City Operations leads the bento at double width and is the densest shot in
+// the set, the only one where a resize shows, so it keeps the full 1920px of
+// the source. Every other poster is small enough on screen that 1600px is
 // already twice what its card paints.
-const UNCOMPRESSED_ART = new Set(['andromeda-pro-city-operations'])
+const LEAD_ART = new Set(['andromeda-pro-city-operations'])
 
 const artUrl = (slug: string, file: string | undefined) =>
   file
-    ? UNCOMPRESSED_ART.has(slug)
-      ? `${ART_BASE}${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}&tr=orig-true`
-      : optimizeImageKitUrl(`${ART_BASE}${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`, 'detail')
+    ? optimizeImageKitUrl(
+        `${ART_BASE}${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`,
+        LEAD_ART.has(slug) ? 'lead' : 'detail',
+      )
     : null
 
 const BUILT_TEMPLATES: OverviewTemplate[] = (pro?.templates ?? []).map(
