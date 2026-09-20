@@ -253,6 +253,7 @@ export const DESIGN_SYSTEMS = [
       { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   category: 'Dashboard',     entryPath: 'examples/mission-control/index.tsx' },
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
+      { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication', entryPath: 'examples/sign-in/index.tsx' },
     ],
   },
 ]
