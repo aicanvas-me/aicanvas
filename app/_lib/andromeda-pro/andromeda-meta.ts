@@ -452,6 +452,8 @@ const TEMPLATE_ART: Record<string, string> = {
   'city-operations': 'City_operations_pro_dark.png',
   // Sign In is Pro-only for the same reason: no Legacy counterpart to pair with.
   'sign-in': 'Sign_in_pro_dark.png',
+  // AI Chat is Pro-only too: no Legacy counterpart to pair with.
+  'ai-chat': 'Ai_chat_pro_dark.png',
 }
 const templateArt = (folder: string) =>
   `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(
@@ -505,6 +507,13 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
     description:
       'A whole authentication flow: create an account, sign in, recover a password and set a new one.',
     image: templateArt('sign-in'),
+  },
+  {
+    folder: 'ai-chat',
+    name: 'AI Chat',
+    description:
+      'A revenue desk that works by conversation: an agent scores the Q3 pipeline, shows its steps, and hands back a live risk artifact.',
+    image: templateArt('ai-chat'),
   },
 ]
 

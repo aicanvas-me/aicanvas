@@ -59,6 +59,7 @@ const TEMPLATES = [
   { slug: 'mission-control', system: 'andromeda-pro', file: 'Mission_control_pro.png' },
   { slug: 'service-order', system: 'andromeda-pro', file: 'Service_order_pro.png' },
   { slug: 'resource-planning', system: 'andromeda-pro', file: 'Resource_planning_pro.png' },
+  { slug: 'ai-chat', system: 'andromeda-pro', file: 'Ai_chat_pro.png' },
 ]
 
 const args = process.argv.slice(2)

@@ -46,6 +46,7 @@ const SYSTEMS = [
       { slug: 'service-order', name: 'Service Order', category: 'CRM' },
       { slug: 'resource-planning', name: 'Resource Planning', category: 'Scheduling' },
       { slug: 'sign-in', name: 'Sign In', category: 'Authentication' },
+      { slug: 'ai-chat', name: 'AI Chat', category: 'Dashboard' },
     ],
   },
   {

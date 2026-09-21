@@ -254,6 +254,7 @@ export const DESIGN_SYSTEMS = [
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
       { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication', entryPath: 'examples/sign-in/index.tsx' },
+      { slug: 'andromeda-pro-ai-chat',           name: 'AI Chat',           category: 'Dashboard',     entryPath: 'examples/ai-chat/index.tsx' },
     ],
   },
 ]
