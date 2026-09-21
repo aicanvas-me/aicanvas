@@ -3,6 +3,8 @@ import fs from 'fs'
 import os from 'os'
 import path from 'path'
 import {
+  mergeForSave,
+  carryStartedAt,
   usableEntries,
   loadCheckpoint,
   saveCheckpoint,
@@ -107,6 +109,63 @@ describe('checkpoint file', () => {
   })
 })
 
+describe('mergeForSave', () => {
+  const e = (url: string) => ({ url })
+
+  it('keeps results a previous run stored that this one has not reached yet', () => {
+    const carried = new Map([['a', e('a')], ['b', e('b')], ['z', e('z')]])
+    const out = mergeForSave([e('a'), e('b'), e('c')], carried)
+    expect(out.map((x) => x.url)).toEqual(['a', 'b', 'c', 'z'])
+  })
+
+  it('never duplicates a URL that was replayed', () => {
+    const carried = new Map([['a', e('a')]])
+    expect(mergeForSave([e('a')], carried).map((x) => x.url)).toEqual(['a'])
+  })
+
+  it('keeps this run answer when both have the URL, because it is the newer one', () => {
+    type Entry = { url: string; category: string }
+    const carried = new Map<string, Entry>([['a', { url: 'a', category: 'old' }]])
+    const out = mergeForSave<Entry>([{ url: 'a', category: 'new' }], carried)
+    expect(out[0].category).toBe('new')
+  })
+
+  it('a save can never be shorter than what is already stored', () => {
+    const carried = new Map(['a', 'b', 'c', 'd'].map((u) => [u, e(u)]))
+    expect(mergeForSave([e('x')], carried).length).toBe(5)
+  })
+
+  it('is just this run when there is nothing carried', () => {
+    expect(mergeForSave([e('a'), e('b')], new Map()).map((x) => x.url)).toEqual(['a', 'b'])
+  })
+})
+
+describe('carryStartedAt', () => {
+  const NOW_ISO = '2026-09-21T12:00:00Z'
+
+  it('keeps the first attempt time, so interruptions cannot launder old results', () => {
+    expect(carryStartedAt(cp(), 5, NOW_ISO)).toBe('2026-09-20T07:00:00Z')
+  })
+
+  it('starts a fresh clock when nothing was carried', () => {
+    expect(carryStartedAt(cp(), 0, NOW_ISO)).toBe(NOW_ISO)
+    expect(carryStartedAt(null, 0, NOW_ISO)).toBe(NOW_ISO)
+  })
+
+  it('starts a fresh clock when the old checkpoint has no usable stamp', () => {
+    expect(carryStartedAt(cp({ startedAt: '' }), 5, NOW_ISO)).toBe(NOW_ISO)
+  })
+
+  it('three interruptions in a row still expire 24h after the first try', () => {
+    let stamp = carryStartedAt(null, 0, '2026-09-20T07:00:00Z')
+    for (const t of ['2026-09-20T09:00:00Z', '2026-09-20T18:00:00Z', '2026-09-21T05:00:00Z']) {
+      stamp = carryStartedAt(cp({ startedAt: stamp }), 100, t)
+    }
+    expect(stamp).toBe('2026-09-20T07:00:00Z')
+    expect(usableEntries(cp({ startedAt: stamp }), { ...CTX, now: Date.parse('2026-09-21T08:00:00Z') }).size).toBe(0)
+  })
+})
+
 describe('takeLock', () => {
   it('takes a free lock and names the process holding it', () => {
     const l = path.join(tmpdir(), 'audit.lock')
@@ -116,26 +175,54 @@ describe('takeLock', () => {
     expect(fs.existsSync(l)).toBe(false)
   })
 
-  it('refuses a second run and says who holds it', () => {
+  it('refuses while the holder is still running, and says who it is', () => {
     const l = path.join(tmpdir(), 'audit.lock')
     fs.mkdirSync(l)
     fs.writeFileSync(path.join(l, 'pid'), '4242')
-    expect(() => takeLock(l)).toThrow(/already running \(4242\)/)
+    expect(() => takeLock(l, { isAlive: () => true })).toThrow(/already running \(4242\)/)
   })
 
-  it('refuses even when the holder never wrote its pid', () => {
-    const l = path.join(tmpdir(), 'audit.lock')
-    fs.mkdirSync(l)
-    expect(() => takeLock(l)).toThrow(/already running \(pid unknown\)/)
-  })
-
-  it('takes over a lock left behind by a run that was killed', () => {
+  it('refuses a live holder even once the lock is past the stale window', () => {
     const l = path.join(tmpdir(), 'audit.lock')
     fs.mkdirSync(l)
     fs.writeFileSync(path.join(l, 'pid'), '4242')
-    const release = takeLock(l, { now: Date.now() + 7 * 60 * 60 * 1000 })
+    expect(() =>
+      takeLock(l, { isAlive: () => true, now: Date.now() + 7 * 60 * 60 * 1000 }),
+    ).toThrow(/already running/)
+  })
+
+  it('takes over at once when the holder is gone: the machine going down must not lock out the retry', () => {
+    const l = path.join(tmpdir(), 'audit.lock')
+    fs.mkdirSync(l)
+    fs.writeFileSync(path.join(l, 'pid'), '4242')
+    const release = takeLock(l, { isAlive: () => false })
     expect(fs.readFileSync(path.join(l, 'pid'), 'utf8')).toBe(String(process.pid))
     release()
+  })
+
+  it('refuses our own live process without the stub, so the default really checks liveness', () => {
+    const l = path.join(tmpdir(), 'audit.lock')
+    fs.mkdirSync(l)
+    fs.writeFileSync(path.join(l, 'pid'), String(process.pid))
+    expect(() => takeLock(l)).toThrow(/already running/)
+  })
+
+  it('falls back to age when the holder died before writing its pid', () => {
+    const fresh = path.join(tmpdir(), 'fresh.lock')
+    fs.mkdirSync(fresh)
+    expect(() => takeLock(fresh)).toThrow(/already running \(pid unknown\)/)
+    const old = path.join(tmpdir(), 'old.lock')
+    fs.mkdirSync(old)
+    const release = takeLock(old, { now: Date.now() + 7 * 60 * 60 * 1000 })
+    expect(fs.existsSync(path.join(old, 'pid'))).toBe(true)
+    release()
+  })
+
+  it('treats a garbage pid file as no pid and falls back to age', () => {
+    const l = path.join(tmpdir(), 'audit.lock')
+    fs.mkdirSync(l)
+    fs.writeFileSync(path.join(l, 'pid'), 'not-a-pid')
+    expect(() => takeLock(l)).toThrow(/already running \(not-a-pid\)/)
   })
 
   it('releases once, so a second call cannot wipe the next run lock', () => {

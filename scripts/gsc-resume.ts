@@ -77,6 +77,38 @@ export function saveCheckpoint<T extends Resumable>(file: string, cp: Checkpoint
   fs.renameSync(tmp, file)
 }
 
+/**
+ * What to write at a save point: this run's results, plus anything a previous
+ * run answered that this one has not replayed yet.
+ *
+ * Without the second half a resumed run truncates the checkpoint at its first
+ * save. That is harmless only while the sitemap order holds; insert a URL near
+ * the front and the first save would replace a hundred stored results with ten,
+ * and a second interruption would re-inspect the ninety that were dropped.
+ */
+export function mergeForSave<T extends Resumable>(entries: T[], carried: Map<string, T>): T[] {
+  const out = entries.slice()
+  const seen = new Set(out.map((e) => e.url))
+  for (const [url, e] of carried) if (!seen.has(url)) out.push(e)
+  return out
+}
+
+/**
+ * The start time a resumed run should record.
+ *
+ * Carried results keep the ORIGINAL stamp. Restamping on every resume would let
+ * each interruption push the 24h ceiling forward, so a URL inspected on Sunday
+ * could still be reported on Wednesday — the exact staleness the ceiling exists
+ * to stop. A run that carries nothing starts its own clock.
+ */
+export function carryStartedAt<T extends Resumable>(
+  previous: Checkpoint<T> | null | undefined,
+  carriedCount: number,
+  nowIso: string,
+): string {
+  return carriedCount > 0 && previous?.startedAt ? previous.startedAt : nowIso
+}
+
 export function clearCheckpoint(file: string): void {
   for (const f of [file, `${file}.tmp`]) {
     try {
@@ -92,27 +124,49 @@ export function clearCheckpoint(file: string): void {
  * Returns the release function; also released on exit and on Ctrl-C, so a
  * failed run does not leave the next one locked out.
  */
-export function takeLock(lockDir: string, opts: { staleMs?: number; now?: number } = {}): () => void {
+/** Is that process still there? EPERM means yes and owned by someone else. */
+function running(pid: number): boolean {
+  try {
+    process.kill(pid, 0)
+    return true
+  } catch (e: unknown) {
+    return (e as NodeJS.ErrnoException)?.code !== 'ESRCH'
+  }
+}
+
+export function takeLock(
+  lockDir: string,
+  opts: { staleMs?: number; now?: number; isAlive?: (pid: number) => boolean } = {},
+): () => void {
   const staleMs = opts.staleMs ?? LOCK_STALE_MS
   const now = opts.now ?? Date.now()
+  const isAlive = opts.isAlive ?? running
+  const pidFile = path.join(lockDir, 'pid')
+  let held = ''
   try {
-    const age = now - fs.statSync(lockDir).mtimeMs
-    // A run killed mid-flight leaves the directory with no process to release it.
-    if (age > staleMs) fs.rmSync(lockDir, { recursive: true, force: true })
+    held = fs.readFileSync(pidFile, 'utf8').trim()
+  } catch {
+    /* no lock, or the holder died before it could write its pid */
+  }
+  const heldPid = /^\d+$/.test(held) ? Number(held) : null
+  try {
+    // Whether the holder is still running decides this, not the clock. The
+    // 2026-09-20 failure was the machine going down mid-run, which leaves the
+    // directory behind with nothing to release it; an age-only rule would then
+    // refuse the retry for six hours. A run that legitimately outlasts the
+    // stale window keeps its lock, because its process answers.
+    const abandoned = heldPid !== null
+      ? !isAlive(heldPid)
+      : now - fs.statSync(lockDir).mtimeMs > staleMs
+    if (abandoned) fs.rmSync(lockDir, { recursive: true, force: true })
   } catch {
     /* no lock present */
   }
   try {
     fs.mkdirSync(lockDir)
   } catch {
-    let held = 'pid unknown'
-    try {
-      held = fs.readFileSync(path.join(lockDir, 'pid'), 'utf8').trim() || held
-    } catch {
-      /* the holder never got to write it */
-    }
     throw new Error(
-      `another GSC audit is already running (${held}). ` +
+      `another GSC audit is already running (${held || 'pid unknown'}). ` +
         `If that is wrong, remove ${lockDir} and run it again.`,
     )
   }

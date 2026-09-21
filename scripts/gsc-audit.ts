@@ -19,8 +19,10 @@ import { google } from 'googleapis'
 import { XMLParser } from 'fast-xml-parser'
 import { GAXIOS_OPTS, errMessage, guardedCall } from './gsc-net.ts'
 import {
+  carryStartedAt,
   clearCheckpoint,
   loadCheckpoint,
+  mergeForSave,
   saveCheckpoint,
   takeLock,
   usableEntries,
@@ -200,7 +202,7 @@ async function inspectAll(
       process.stdout.write(`ERROR: ${message}\n`)
     }
     if (i % CHECKPOINT_EVERY === 0 || i === urls.length) {
-      resume.checkpoint.entries = entries
+      resume.checkpoint.entries = mergeForSave(entries, resume.done)
       saveCheckpoint(PROGRESS_JSON, resume.checkpoint)
     }
     // Throttle: ~10 req/sec — well under 600/min quota.
@@ -310,16 +312,18 @@ async function main() {
   const { sitemapUrl, urls } = await fetchSitemapUrls(SITE_URL)
   console.log(`  Found ${urls.length} URLs in ${sitemapUrl}`)
   console.log('')
-  const done = usableEntries<AuditEntry>(loadCheckpoint<AuditEntry>(PROGRESS_JSON), {
-    property: PROPERTY!,
-    sitemapUrl,
-  })
-  if (done.size) console.log(`  Resuming: ${done.size} of them were already inspected`)
+  const previous = loadCheckpoint<AuditEntry>(PROGRESS_JSON)
+  const done = usableEntries<AuditEntry>(previous, { property: PROPERTY!, sitemapUrl })
+  // Carried results keep the ORIGINAL start time. Restamping it on every resume
+  // would let a URL inspected on Sunday survive Wednesday: each interruption
+  // would push the 24h ceiling forward instead of measuring from the first try.
+  const startedAt = carryStartedAt(previous, done.size, new Date().toISOString())
+  if (done.size) console.log(`  Resuming: ${done.size} of them were already inspected (since ${startedAt})`)
   console.log('Inspecting URLs (this calls the GSC URL Inspection API once per URL)...')
 
   const entries = await inspectAll(urls, PROPERTY!, {
     done,
-    checkpoint: { startedAt: new Date().toISOString(), property: PROPERTY!, sitemapUrl, entries: [] },
+    checkpoint: { startedAt, property: PROPERTY!, sitemapUrl, entries: [] },
   })
 
   const counts = entries.reduce<Record<string, number>>((acc, e) => {
