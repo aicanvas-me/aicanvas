@@ -628,7 +628,23 @@ export function MatrixSolo({ spec, label }: { spec: MatrixSpec; label?: string }
   const c = cases.find((x) => x.label === label) ?? cases[0]
   if (!c) return null
   return (
-    <div data-andromeda-matrix style={{ width: '100%' }}>
+    <div
+      data-andromeda-matrix
+      style={{
+        width: '100%',
+        // A `fill` spec is a control that spans whatever holds it: a field, a
+        // textarea, a search bar, a slider, the strength meter. In a case card
+        // that is right, because the card is already a reading width. The solo
+        // hero has the whole page, so the same rule stretched one field across
+        // 1800px and it read as a rule, not as a field. The cap is the width
+        // the sign-in form gives its own column, plus the body padding below,
+        // so the control lands at exactly that column width. Centred by the
+        // frame's justify-content, not a margin.
+        maxWidth: spec.fill
+          ? `calc(${tokens.spacing[12]} * 8 + ${tokens.spacing[6]} * 2)`
+          : undefined,
+      }}
+    >
       <style>{BODY_RESERVE_CSS}</style>
       {spec.forcedStateCss ? <style>{spec.forcedStateCss}</style> : null}
       <div

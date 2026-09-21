@@ -303,6 +303,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/stat-tile.png?v=3',
   },
   {
+    slug: 'strength-meter',
+    name: 'Strength Meter',
+    description:
+      'Reports how strong a password is, in three steps and one word.',
+    sourceFile: 'StrengthMeter.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/strength-meter.png?v=1',
+  },
+  {
     slug: 'tag',
     name: 'Tag',
     description:
@@ -452,13 +460,18 @@ const TEMPLATE_ART: Record<string, string> = {
   'city-operations': 'City_operations_pro_dark.png',
   // Sign In is Pro-only for the same reason: no Legacy counterpart to pair with.
   'sign-in': 'Sign_in_pro_dark.png',
+  // Sign Up is Pro-only for the same reason.
+  'sign-up': 'Sign_up_pro_dark.png',
 }
-const templateArt = (folder: string) =>
-  `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(
-    TEMPLATE_ART[folder] ?? '',
+const templateArt = (folder: string) => {
+  const file = TEMPLATE_ART[folder] ?? ''
+  if (!file) return ''
+  return `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(
+    file,
   )}?v=${TEMPLATE_ART_VERSION}`
+}
 
-// Static 5-entry mirror of the andromeda `templates` in
+// Static mirror of the andromeda `templates` in
 // scripts/lib/design-systems.config.mjs (folder = registry slug minus the
 // "andromeda-" prefix, matching the route dirs). Kept here rather than derived
 // from the .mjs config so this stays a typed, Node-free, client-safe module.
@@ -505,6 +518,13 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
     description:
       'A whole authentication flow: create an account, sign in, recover a password and set a new one.',
     image: templateArt('sign-in'),
+  },
+  {
+    folder: 'sign-up',
+    name: 'Sign Up',
+    description:
+      'The same authentication flow with no columns: a hairline lattice is the ground and the form floats on it.',
+    image: templateArt('sign-up'),
   },
 ]
 

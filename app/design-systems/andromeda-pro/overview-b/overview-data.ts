@@ -60,6 +60,8 @@ const TEMPLATE_BLURBS: Record<string, string> = {
     'A broadcast control room: now transmitting, channel levels, mixes and a transport bar.',
   'andromeda-pro-sign-in':
     'A whole authentication flow: create an account, sign in, recover a password and set a new one.',
+  'andromeda-pro-sign-up':
+    'The same authentication flow with no columns: a hairline lattice is the ground and the form floats on it.',
   'andromeda-pro-city-operations':
     'A city operations centre: a live incident map, air and traffic readings, an alert queue and response trends.',
 }
@@ -77,6 +79,7 @@ export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
   'andromeda-pro-resource-planning': 'Resource_planning_pro_dark.png',
   'andromeda-pro-signal-room': 'Signal_Room_pro_dark.png',
   'andromeda-pro-sign-in': 'Sign_in_pro_dark.png',
+  'andromeda-pro-sign-up': 'Sign_up_pro_dark.png',
   'andromeda-pro-city-operations': 'City_operations_pro_dark.png',
 }
 
@@ -87,6 +90,7 @@ const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
   'andromeda-pro-resource-planning': 'Resource_planning_pro_light.png',
   'andromeda-pro-signal-room': 'Signal_Room_pro_light.png',
   'andromeda-pro-sign-in': 'Sign_in_pro_light.png',
+  'andromeda-pro-sign-up': 'Sign_up_pro_light.png',
   'andromeda-pro-city-operations': 'City_operations_pro_light.png',
 }
 

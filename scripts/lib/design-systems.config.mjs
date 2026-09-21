@@ -217,6 +217,7 @@ export const DESIGN_SYSTEMS = [
       'components/Slider.tsx',
       'components/Spinner.tsx',
       'components/StatTile.tsx',
+      'components/StrengthMeter.tsx',
       'components/Table.tsx',
       'components/Tag.tsx',
       'components/Textarea.tsx',
@@ -254,6 +255,7 @@ export const DESIGN_SYSTEMS = [
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
       { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication', entryPath: 'examples/sign-in/index.tsx' },
+      { slug: 'andromeda-pro-sign-up',           name: 'Sign Up',           category: 'Authentication', entryPath: 'examples/sign-up/index.tsx' },
     ],
   },
 ]

@@ -208,7 +208,7 @@ const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'Dat
 // v2-only name — same contract as V2_FALLBACK_NAMES above.
 const V2_ONLY_NAMES = [
   'Burst', 'ChoiceCard', 'ChoiceCardGroup', 'EmptyStateMedia',
-  'FunnelChart', 'Nodes', 'Orb', 'Sidebar', 'TopBar',
+  'FunnelChart', 'Nodes', 'Orb', 'Sidebar', 'StrengthMeter', 'TopBar',
 ]
 
 // components/lib/* modules the HELPERS shim re-exports (both trees have them),
@@ -621,6 +621,7 @@ const V2_EXAMPLE_EXPORTS = {
   ResourcePlanning: 'resource-planning',
   ServiceOrder: 'service-order',
   SignIn: 'sign-in',
+  SignUp: 'sign-up',
   SignalRoom: 'signal-room',
 }
 
