@@ -18,6 +18,14 @@ import path from 'path'
 import { google } from 'googleapis'
 import { XMLParser } from 'fast-xml-parser'
 import { GAXIOS_OPTS, errMessage, guardedCall } from './gsc-net.ts'
+import {
+  clearCheckpoint,
+  loadCheckpoint,
+  saveCheckpoint,
+  takeLock,
+  usableEntries,
+  type Checkpoint,
+} from './gsc-resume.ts'
 
 
 // Secrets come from .env.local when present; variables already in the
@@ -37,6 +45,12 @@ const CREDS = process.env.GOOGLE_APPLICATION_CREDENTIALS
 const OUTPUT_DIR = path.join(process.cwd(), 'scripts', 'gsc-output')
 const AUDIT_JSON = path.join(OUTPUT_DIR, 'audit.json')
 const AUDIT_MD = path.join(OUTPUT_DIR, 'audit-report.md')
+// Both are inside gsc-output, which .gitignore already covers.
+const PROGRESS_JSON = path.join(OUTPUT_DIR, 'audit-progress.json')
+const AUDIT_LOCK = path.join(OUTPUT_DIR, 'audit.lock')
+// Results are checkpointed every CHECKPOINT_EVERY URLs. An interruption costs
+// at most that many calls; the old cost was the whole run.
+const CHECKPOINT_EVERY = 10
 
 type Category =
   | 'Indexed'
@@ -131,7 +145,11 @@ const ACTION_BY_CATEGORY: Record<Category, string> = {
 // ─────────────────────────────────────────────────────────────────────
 // Inspection (with rate limiting)
 // ─────────────────────────────────────────────────────────────────────
-async function inspectAll(urls: string[], property: string): Promise<AuditEntry[]> {
+async function inspectAll(
+  urls: string[],
+  property: string,
+  resume: { done: Map<string, AuditEntry>; checkpoint: Checkpoint<AuditEntry> },
+): Promise<AuditEntry[]> {
   const auth = new google.auth.GoogleAuth({
     scopes: ['https://www.googleapis.com/auth/webmasters.readonly'],
   })
@@ -142,6 +160,14 @@ async function inspectAll(urls: string[], property: string): Promise<AuditEntry[
   for (const url of urls) {
     i++
     process.stdout.write(`  [${String(i).padStart(2, ' ')}/${urls.length}] ${url} ... `)
+    // Already answered by the run this one is picking up. No API call, and the
+    // sitemap's order is kept because the loop, not the checkpoint, drives it.
+    const already = resume.done.get(url)
+    if (already) {
+      entries.push(already)
+      process.stdout.write(`${already.category} (resumed)\n`)
+      continue
+    }
     try {
       const res = await guardedCall(
         () =>
@@ -172,6 +198,10 @@ async function inspectAll(urls: string[], property: string): Promise<AuditEntry[
       const message = errMessage(err)
       entries.push({ url, category: 'Inspection failed', error: message })
       process.stdout.write(`ERROR: ${message}\n`)
+    }
+    if (i % CHECKPOINT_EVERY === 0 || i === urls.length) {
+      resume.checkpoint.entries = entries
+      saveCheckpoint(PROGRESS_JSON, resume.checkpoint)
     }
     // Throttle: ~10 req/sec — well under 600/min quota.
     if (i < urls.length) await new Promise((r) => setTimeout(r, 100))
@@ -268,6 +298,9 @@ async function main() {
   if (!fs.existsSync(CREDS)) throw new Error(`Service account JSON not found at: ${CREDS}`)
 
   fs.mkdirSync(OUTPUT_DIR, { recursive: true })
+  // Two audits at once would double the API calls and overwrite each other's
+  // checkpoint, so the Sunday job and a manual run take turns.
+  takeLock(AUDIT_LOCK)
 
   console.log(`GSC audit for ${SITE_URL}`)
   console.log(`Property:        ${PROPERTY}`)
@@ -277,9 +310,17 @@ async function main() {
   const { sitemapUrl, urls } = await fetchSitemapUrls(SITE_URL)
   console.log(`  Found ${urls.length} URLs in ${sitemapUrl}`)
   console.log('')
+  const done = usableEntries<AuditEntry>(loadCheckpoint<AuditEntry>(PROGRESS_JSON), {
+    property: PROPERTY!,
+    sitemapUrl,
+  })
+  if (done.size) console.log(`  Resuming: ${done.size} of them were already inspected`)
   console.log('Inspecting URLs (this calls the GSC URL Inspection API once per URL)...')
 
-  const entries = await inspectAll(urls, PROPERTY!)
+  const entries = await inspectAll(urls, PROPERTY!, {
+    done,
+    checkpoint: { startedAt: new Date().toISOString(), property: PROPERTY!, sitemapUrl, entries: [] },
+  })
 
   const counts = entries.reduce<Record<string, number>>((acc, e) => {
     acc[e.category] = (acc[e.category] || 0) + 1
@@ -301,6 +342,8 @@ async function main() {
 
   fs.writeFileSync(AUDIT_JSON, JSON.stringify(audit, null, 2))
   fs.writeFileSync(AUDIT_MD, buildMarkdown(audit))
+  // The run finished, so there is nothing left to pick up.
+  clearCheckpoint(PROGRESS_JSON)
 
   console.log('')
   console.log('Done.')
