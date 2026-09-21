@@ -41,8 +41,8 @@ try {
 // under, before the theme suffix. Both are spelled out for every template,
 // because the two systems name their art differently: Pro carries a `_pro`
 // tail, Legacy does not. Four templates exist in both systems and are shot
-// twice, once per system. City Operations and Sign In are Pro-only; neither
-// has a Legacy route to shoot.
+// twice, once per system. City Operations, Sign In and Sign Up are Pro-only;
+// none has a Legacy route to shoot.
 //
 // NEVER put a space in one of these names. ImageKit rewrites a space to an
 // underscore on upload, so the file would land under a name no art map spells,
