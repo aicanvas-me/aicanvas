@@ -3,6 +3,8 @@
 // registry (which reads source files via `fs`) lives in
 // `andromeda-registry.ts` and imports this file as the metadata source.
 
+import { TEMPLATE_ART_VERSION } from '../../lib/imagekit'
+
 export type AndromedaComponentMeta = {
   slug: string
   name: string
@@ -441,19 +443,23 @@ export type AndromedaTemplateMeta = {
   image: string
 }
 
-// ImageKit template art — filenames kept exactly as uploaded (capitalized, with
-// spaces), so they're URL-encoded when building the src. Mirror of the same map
-// in overview-b/overview-data.ts.
+// ImageKit template art for the home browse grid. Underscored, because
+// ImageKit rewrites a space in an uploaded filename to an underscore.
+//
+// The home grid serves the DARK poster in both themes, the same way every
+// component card on that grid does. It is not a mirror of the overview page,
+// which carries a light poster too. The four shared templates deliberately
+// point at the LEGACY art here, as they always have.
 const TEMPLATE_ART: Record<string, string> = {
-  'mission-control': 'Mission control.png',
-  'service-order': 'Service order.png',
-  'resource-planning': 'Resource planning.png',
-  'signal-room': 'Signal Room.png',
+  'mission-control': 'Mission_control_dark.png',
+  'service-order': 'Service_order_dark.png',
+  'resource-planning': 'Resource_planning_dark.png',
+  'signal-room': 'Signal_Room_dark.png',
   // City Operations is Pro-only, so it has no free-Andromeda poster to pair
   // with and points straight at the Pro file the overview also serves.
-  'city-operations': 'City_operations_pro.png',
+  'city-operations': 'City_operations_pro_dark.png',
   // Sign In is Pro-only for the same reason: no Legacy counterpart to pair with.
-  'sign-in': 'Sign_in_pro.png',
+  'sign-in': 'Sign_in_pro_dark.png',
   // Sign Up has no art yet. The empty string is the signal, and templateArt
   // below hands it straight back: a URL built from an empty filename resolves
   // to the FOLDER, which paints a broken image on every card that shows it.
@@ -462,7 +468,9 @@ const TEMPLATE_ART: Record<string, string> = {
 const templateArt = (folder: string) => {
   const file = TEMPLATE_ART[folder] ?? ''
   if (!file) return ''
-  return `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}`
+  return `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(
+    file,
+  )}?v=${TEMPLATE_ART_VERSION}`
 }
 
 // Static mirror of the andromeda `templates` in

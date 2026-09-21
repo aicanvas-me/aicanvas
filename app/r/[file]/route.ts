@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { classifyContent } from '@/lib/registry/content-type'
 import { loadContentLookup } from '@/lib/registry/lookup'
 import { getEntitlement } from '@/app/lib/entitlement'
+import { trackPull } from '@/app/lib/track-pull'
 import { premiumEnabled } from '@/lib/flags'
 import { extractToken } from '@/lib/identity/token'
 
@@ -66,6 +67,10 @@ export async function GET(
   // default). Both branches below are inert until a premium slug exists or the
   // manifest goes missing, so current free / DS / template / meta behaviour is
   // byte-for-byte unchanged.
+  // Set by whichever gate below resolves the caller. Only feeds the pull note at
+  // the end; no access decision reads it.
+  let userId: string | null = null
+
   if (contentType !== 'meta' && lookup.degraded) {
     // Missing _manifest.json → cannot tell a premium standalone from a free one
     // → fail CLOSED for all non-meta, in ANY mode. Loud + temporary, never a leak.
@@ -81,7 +86,9 @@ export async function GET(
     // bytes. Fail CLOSED on any entitlement error.
     let tier
     try {
-      tier = (await getEntitlement(req)).tier
+      const entitlement = await getEntitlement(req)
+      tier = entitlement.tier
+      userId = entitlement.userId
     } catch (err) {
       console.error('[registry gate] entitlement error on premium content — failing closed:', err)
       return paymentJson({ error: 'temporarily-unavailable', message: 'Please retry shortly.' }, 503)
@@ -107,7 +114,9 @@ export async function GET(
   ) {
     let tier
     try {
-      tier = (await getEntitlement(req)).tier
+      const entitlement = await getEntitlement(req)
+      tier = entitlement.tier
+      userId = entitlement.userId
     } catch (err) {
       console.error('[registry gate] entitlement error on free content — failing open:', err)
       tier = 'free' // fail OPEN — free source is public anyway
@@ -144,6 +153,10 @@ export async function GET(
       // Non-JSON / malformed body: serve as-is (defensive; registry files are JSON).
     }
   }
+
+  // Every stub and refusal returned above, so this is real source going to a
+  // known account. Catalog files never resolve a caller and leave no note.
+  trackPull(userId, slug, contentType)
 
   return new NextResponse(outBody, {
     status: 200,

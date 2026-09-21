@@ -9,11 +9,16 @@ import { NextRequest } from 'next/server'
 // point: this test locks in the route's per-TIER behaviour end to end, with the
 // only stub being the identity/tier resolution.
 vi.mock('@/app/lib/entitlement', () => ({ getEntitlement: vi.fn() }))
+// The pull note writes to the database after the response; here it is a spy, so
+// the cases below can assert WHEN a note is left without touching Supabase.
+vi.mock('@/app/lib/track-pull', () => ({ trackPull: vi.fn() }))
 
 import { GET } from './route'
 import { getEntitlement } from '@/app/lib/entitlement'
+import { trackPull } from '@/app/lib/track-pull'
 
 const mockedGetEntitlement = vi.mocked(getEntitlement)
+const mockedTrackPull = vi.mocked(trackPull)
 
 // A REAL free standalone that exists in registry-data/ and is NOT listed in the
 // manifest's premiumSlugs / designSystemSlugs / templateSlugs / systemSlugs — so
@@ -31,6 +36,7 @@ const REAL_SOURCE_MARKERS = ['useState', 'useEffect', 'export default']
 
 beforeEach(() => {
   mockedGetEntitlement.mockReset()
+  mockedTrackPull.mockReset()
 })
 
 afterEach(() => {
@@ -54,6 +60,8 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     // ZERO real source: the stub must not leak the component's actual code.
     expect(body).not.toContain('useState')
     expect(body).not.toContain('useEffect')
+    // A stub is not a pull.
+    expect(mockedTrackPull).not.toHaveBeenCalled()
   })
 
   it("case 2: gate ON + signed-in 'free' tier → REAL standalone source (the gap this closes)", async () => {
@@ -68,6 +76,9 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     // A signed-in free account gets the real, unstubbed source.
     expect(body).toContain('useState')
     expect(body).toContain('export default')
+    // Real source to a known account leaves exactly one note, with its kind.
+    expect(mockedTrackPull).toHaveBeenCalledTimes(1)
+    expect(mockedTrackPull).toHaveBeenCalledWith('u1', SLUG, 'standalone')
   })
 
   it('case 3: gate ON + premium tier → REAL standalone source', async () => {
@@ -95,6 +106,8 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     // Free standalone source is public anyway → a transient error fails OPEN.
     expect(body).toContain('useState')
     expect(body).toContain('export default')
+    // Nobody was identified, so the note has no account to carry.
+    expect(mockedTrackPull).toHaveBeenCalledWith(null, SLUG, 'standalone')
   })
 
   it('case 5: gate UNSET (dormant) + anonymous → REAL source', async () => {
