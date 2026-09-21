@@ -79,7 +79,7 @@ export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
   'andromeda-pro-resource-planning': 'Resource_planning_pro_dark.png',
   'andromeda-pro-signal-room': 'Signal_Room_pro_dark.png',
   'andromeda-pro-sign-in': 'Sign_in_pro_dark.png',
-  'andromeda-pro-sign-up': '',
+  'andromeda-pro-sign-up': 'Sign_up_pro_dark.png',
   'andromeda-pro-city-operations': 'City_operations_pro_dark.png',
 }
 
@@ -90,7 +90,7 @@ const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
   'andromeda-pro-resource-planning': 'Resource_planning_pro_light.png',
   'andromeda-pro-signal-room': 'Signal_Room_pro_light.png',
   'andromeda-pro-sign-in': 'Sign_in_pro_light.png',
-  'andromeda-pro-sign-up': '',
+  'andromeda-pro-sign-up': 'Sign_up_pro_light.png',
   'andromeda-pro-city-operations': 'City_operations_pro_light.png',
 }
 

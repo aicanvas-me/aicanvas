@@ -460,10 +460,8 @@ const TEMPLATE_ART: Record<string, string> = {
   'city-operations': 'City_operations_pro_dark.png',
   // Sign In is Pro-only for the same reason: no Legacy counterpart to pair with.
   'sign-in': 'Sign_in_pro_dark.png',
-  // Sign Up has no art yet. The empty string is the signal, and templateArt
-  // below hands it straight back: a URL built from an empty filename resolves
-  // to the FOLDER, which paints a broken image on every card that shows it.
-  'sign-up': '',
+  // Sign Up is Pro-only for the same reason.
+  'sign-up': 'Sign_up_pro_dark.png',
 }
 const templateArt = (folder: string) => {
   const file = TEMPLATE_ART[folder] ?? ''
