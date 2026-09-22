@@ -328,7 +328,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           already accepted the Terms / Privacy / marketing notice when they
           first created the account. Kept short enough for one line at the
           card's width; forcing nowrap would overflow on a phone instead. */}
-      <p className="mt-6 text-xs leading-relaxed text-sand-600 dark:text-sand-500">
+      <p className="mt-6 text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
         By continuing you agree to our{' '}
         <Link
           href="/terms"
