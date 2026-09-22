@@ -211,13 +211,13 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               separate marketing notice is required. The Art. 8 age-16
               confirmation was also dropped — developer-tool audience with
               negligible under-16 risk. */}
-          <p className="mt-6 text-xs leading-relaxed text-sand-600 dark:text-sand-500">
-            By creating an account you agree to our{' '}
+          <p className="mt-6 text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
+            By continuing you agree to our{' '}
             <Link
               href="/terms"
               className="underline hover:text-sand-700 dark:hover:text-sand-100"
             >
-              Terms &amp; Conditions
+              Terms
             </Link>{' '}
             and{' '}
             <Link

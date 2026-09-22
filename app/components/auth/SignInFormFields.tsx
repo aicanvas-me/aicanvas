@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import Link from 'next/link'
 import { createClient } from '../../lib/supabase/client'
 import { formatAuthError } from '../../lib/auth-errors'
@@ -13,6 +14,15 @@ import { TerminatorReveal } from './TerminatorReveal'
 // The actual sign-in form. Mirrors SignUpFormFields visually — same NerdToHero
 // header, same Google → divider → form → switch-link → legal rhythm — so the
 // two modes feel like a single product surface in two flavors.
+//
+// Two ways in, one form at a time:
+//   • password mode (default): email + password, "Sign in", and a button that
+//     switches to link mode
+//   • link mode: email only, "Send sign-in link", and a way back. A password
+//     field next to a passwordless action only confused people, so it is not
+//     there at all.
+// The email input is the same element in both modes, so what the user typed
+// carries across the switch.
 //
 // Shared between:
 //   • the standalone /account/sign-in page (wraps it in a card)
@@ -34,13 +44,16 @@ type Props = {
   initialError?: string | null
 }
 
+type Mode = 'password' | 'link'
+
 export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialError = null }: Props) {
+  const [mode, setMode] = useState<Mode>('password')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(initialError)
-  // Magic-link ("email me a sign-in link") state. Separate submitting flag so it
-  // doesn't fight the password Sign in button's spinner.
+  // Magic-link state. Separate submitting flag so it doesn't fight the
+  // password Sign in button's spinner.
   const [magicSubmitting, setMagicSubmitting] = useState(false)
   const [magicSent, setMagicSent] = useState(false)
   const emailRef = useRef<HTMLInputElement>(null)
@@ -53,13 +66,24 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
     setError(null)
   }
 
+  // Swapping modes is a new action, so the old message goes too, and focus
+  // lands on the email field so the user can type straight away. The mode
+  // change is flushed BEFORE focusing, so the field already carries its
+  // link-mode description when a screen reader announces it.
+  function switchMode(to: Mode) {
+    flushSync(() => {
+      setMode(to)
+      clearStatus()
+    })
+    emailRef.current?.focus()
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
     // The password field is not `required` in the markup, on purpose: the
-    // passwordless button shares this form, so the browser's own "fill in this
-    // field" on Enter read as a demand for a password the user never needed.
-    // Our message says the same thing and names the other way in.
+    // browser's own "fill in this field" bubble cannot mention the other way
+    // in. Our message can.
     if (!password) {
       setError('Enter your password, or use "Email me a sign-in link" below.')
       passwordRef.current?.focus()
@@ -102,12 +126,11 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
   // account creation on the deliberate sign-up path. We stay neutral about
   // whether the email has an account, so this can't be used to probe who's
   // registered — only a genuine rate-limit surfaces an error.
-  async function handleMagicLink() {
-    if (!email) {
-      setError('Enter your email to get a sign-in link.')
-      emailRef.current?.focus()
-      return
-    }
+  // The email input is `required`, so an empty submit never reaches here: the
+  // browser's own bubble handles it, and unlike the password case there is no
+  // other way in for a message of ours to name.
+  async function handleMagicLink(e: React.FormEvent) {
+    e.preventDefault()
     setMagicSubmitting(true)
     setError(null)
     const supabase = createClient()
@@ -147,6 +170,8 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
     )
   }
 
+  const linkMode = mode === 'link'
+
   return (
     <>
       <TerminatorReveal />
@@ -162,7 +187,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-4">
+      <form onSubmit={linkMode ? handleMagicLink : handleSubmit} className="mt-4">
         <div className="space-y-4">
           <div>
             <label
@@ -179,6 +204,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
               autoFocus
               autoComplete="email"
               placeholder="you@example.com"
+              aria-describedby={linkMode ? 'signin-link-note' : undefined}
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value)
@@ -186,33 +212,42 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
               }}
               className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
             />
+            {linkMode && (
+              // Tied to the input via aria-describedby, so a screen reader that
+              // lands on the refocused field hears that the form changed mode.
+              <p id="signin-link-note" className="mt-2 text-xs text-sand-600 dark:text-sand-400">
+                We&apos;ll email you a one-time sign-in link. No password needed.
+              </p>
+            )}
           </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
-            >
-              Password
-            </label>
-            <PasswordInput
-              ref={passwordRef}
-              id="password"
-              autoComplete="current-password"
-              placeholder="Your password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value)
-                clearStatus()
-              }}
-            />
-            <Link
-              href="/account/forgot-password"
-              className="mt-2 inline-block text-xs font-semibold text-olive-600 hover:underline dark:text-olive-400"
-            >
-              Forgot password?
-            </Link>
-          </div>
+          {!linkMode && (
+            <div>
+              <label
+                htmlFor="password"
+                className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
+              >
+                Password
+              </label>
+              <PasswordInput
+                ref={passwordRef}
+                id="password"
+                autoComplete="current-password"
+                placeholder="Your password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value)
+                  clearStatus()
+                }}
+              />
+              <Link
+                href="/account/forgot-password"
+                className="mt-2 inline-block text-xs font-semibold text-olive-600 hover:underline dark:text-olive-400"
+              >
+                Forgot password?
+              </Link>
+            </div>
+          )}
 
           {error && (
             // role="alert": this box replaced the browser's own validation
@@ -223,28 +258,55 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           )}
         </div>
 
-        <Button
-          type="submit"
-          variant="primary"
-          size="md"
-          fullWidth
-          disabled={submitting}
-          className="mt-6"
-        >
-          {submitting ? 'Signing in…' : 'Sign in'}
-        </Button>
-
-        <Button
-          type="button"
-          variant="outline"
-          size="md"
-          fullWidth
-          disabled={submitting || magicSubmitting}
-          onClick={handleMagicLink}
-          className="mt-3"
-        >
-          {magicSubmitting ? 'Sending link…' : 'Email me a sign-in link'}
-        </Button>
+        {linkMode ? (
+          <>
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              fullWidth
+              disabled={magicSubmitting}
+              className="mt-6"
+            >
+              {magicSubmitting ? 'Sending link…' : 'Send sign-in link'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              fullWidth
+              disabled={magicSubmitting}
+              onClick={() => switchMode('password')}
+              className="mt-3"
+            >
+              Use a password instead
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              type="submit"
+              variant="primary"
+              size="md"
+              fullWidth
+              disabled={submitting}
+              className="mt-6"
+            >
+              {submitting ? 'Signing in…' : 'Sign in'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              size="md"
+              fullWidth
+              disabled={submitting}
+              onClick={() => switchMode('link')}
+              className="mt-3"
+            >
+              Email me a sign-in link
+            </Button>
+          </>
+        )}
       </form>
 
       <p className="mt-4 text-center text-sm text-sand-600 dark:text-sand-400">
@@ -268,16 +330,16 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
       </p>
 
       {/* "By continuing…" footer covers both the email and Google sign-in
-          paths above. Lighter than the sign-up footer because the user
-          already accepted the Terms / Privacy / marketing notice when they
-          first created the account. */}
-      <p className="mt-6 text-xs leading-relaxed text-sand-600 dark:text-sand-500">
-        By continuing, you agree to our{' '}
+          paths above; the sign-up form carries the same sentence. Kept short
+          enough for one line at the card's width; forcing nowrap would
+          overflow on a phone instead. */}
+      <p className="mt-6 text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
+        By continuing you agree to our{' '}
         <Link
           href="/terms"
           className="underline hover:text-sand-700 dark:hover:text-sand-100"
         >
-          Terms &amp; Conditions
+          Terms
         </Link>{' '}
         and{' '}
         <Link
@@ -291,4 +353,3 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
     </>
   )
 }
-
