@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, fireEvent, cleanup } from '@testing-library/react'
+import { render, screen, fireEvent, cleanup, waitFor } from '@testing-library/react'
 import { SignInFormFields } from './SignInFormFields'
 
 // The form's job here is what it tells the user and when it stops telling
@@ -16,9 +16,12 @@ vi.mock('../../account/GoogleSignInButton', () => ({ GoogleSignInButton: () => n
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
 }))
+// The icon barrel is thousands of modules the form never needs in a test;
+// stubbing it keeps the import graph small. PasswordInput itself still renders.
+vi.mock('@phosphor-icons/react', () => ({ Eye: () => null, EyeSlash: () => null }))
 
-function mount() {
-  return render(<SignInFormFields next="/" onSuccess={() => {}} />)
+function mount(onSuccess: () => void = () => {}) {
+  return render(<SignInFormFields next="/" onSuccess={onSuccess} />)
 }
 const email = () => screen.getByLabelText('Email') as HTMLInputElement
 const password = () => screen.getByLabelText('Password') as HTMLInputElement
@@ -69,6 +72,24 @@ describe('SignInFormFields', () => {
 
     fireEvent.change(password(), { target: { value: 'hunter22' } })
     expect(alertText()).toBeNull()
+  })
+
+  it('still signs in normally when both fields are filled', async () => {
+    signInWithPassword.mockResolvedValue({ error: null })
+    const onSuccess = vi.fn()
+    mount(onSuccess)
+    fireEvent.change(email(), { target: { value: 'a@b.co' } })
+    fireEvent.change(password(), { target: { value: 'hunter22' } })
+    fireEvent.submit(email().closest('form')!)
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledTimes(1))
+    expect(signInWithPassword).toHaveBeenCalledWith({ email: 'a@b.co', password: 'hunter22' })
+    expect(alertText()).toBeNull()
+  })
+
+  it('announces the message to assistive tech', () => {
+    mount()
+    fireEvent.click(magicButton())
+    expect(screen.getByRole('alert').textContent).toBe('Enter your email to get a sign-in link.')
   })
 
   it('clears a pre-seeded callback error the moment the user edits a field', () => {

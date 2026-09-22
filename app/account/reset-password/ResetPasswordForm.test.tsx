@@ -12,6 +12,8 @@ vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
 }))
 vi.mock('../AuthPagePopup', () => ({ AuthPagePopup: ({ children }: { children: React.ReactNode }) => <div>{children}</div> }))
+// The icon barrel is thousands of modules the form never needs in a test.
+vi.mock('@phosphor-icons/react', () => ({ Eye: () => null, EyeSlash: () => null }))
 
 const password = () => screen.getByLabelText('New password') as HTMLInputElement
 const confirm = () => screen.getByLabelText('Confirm new password') as HTMLInputElement

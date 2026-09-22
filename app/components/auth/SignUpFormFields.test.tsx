@@ -15,6 +15,8 @@ vi.mock('../../account/GoogleSignInButton', () => ({ GoogleSignInButton: () => n
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
 }))
+// The icon barrel is thousands of modules the form never needs in a test.
+vi.mock('@phosphor-icons/react', () => ({ Eye: () => null, EyeSlash: () => null }))
 
 const email = () => screen.getByLabelText('Email') as HTMLInputElement
 const password = () => screen.getByLabelText('Password') as HTMLInputElement

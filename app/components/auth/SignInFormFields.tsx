@@ -29,8 +29,8 @@ type Props = {
   // context), it renders as a Link that navigates to /account/sign-up.
   onSwitchToSignUp?: () => void
   // Pre-seeded error to display (e.g. the callback page failed and bounced
-  // here with `?error=…`). Cleared on the first submit attempt so the user
-  // sees feedback for their new action instead of stale callback text.
+  // here with `?error=…`). Cleared on the first keystroke or submit so the
+  // user sees feedback for their new action instead of stale callback text.
   initialError?: string | null
 }
 
@@ -215,7 +215,9 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           </div>
 
           {error && (
-            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+            // role="alert": this box replaced the browser's own validation
+            // bubble for the password, which screen readers used to announce.
+            <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}
