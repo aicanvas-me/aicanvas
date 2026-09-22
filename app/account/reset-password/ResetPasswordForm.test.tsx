@@ -30,7 +30,7 @@ describe('ResetPasswordForm', () => {
     fireEvent.change(password(), { target: { value: 'correct-horse' } })
     fireEvent.change(confirm(), { target: { value: 'correct-hors' } })
     submit()
-    expect(screen.getByText("Passwords don't match.")).toBeTruthy()
+    expect(screen.getByRole('alert').textContent).toBe("Passwords don't match.")
     expect(updateUser).not.toHaveBeenCalled()
 
     fireEvent.change(confirm(), { target: { value: 'correct-horse' } })
