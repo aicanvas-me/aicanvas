@@ -501,6 +501,19 @@ try {
     (cp?.sections ?? []).some((s) => s.pick?.hasProps === true),
     JSON.stringify((cp?.sections ?? []).map((s) => s.pick?.hasProps)),
   )
+  const cpVerb = sc(
+    await call('compose_page', {
+      brief: 'plan a CRM dashboard with a pipeline board and an activity feed',
+      system: 'andromeda',
+    }),
+  )
+  record(
+    'local: compose_page ignores instruction verbs and substring hits',
+    ['andromeda-service-order', 'andromeda-mission-control'].includes(cpVerb?.template?.slug) &&
+      (cpVerb?.sections ?? []).every((s) => s.pick == null) &&
+      (cpVerb?.gaps ?? []).length === 3,
+    JSON.stringify({ template: cpVerb?.template, picks: (cpVerb?.sections ?? []).map((s) => s.pick?.slug) }),
+  )
   const cpGap = sc(await call('compose_page', { brief: 'a zorblax flibbertigibbet' }))
   record(
     'local: compose_page reports a part nothing covers as a gap',

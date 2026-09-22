@@ -1353,12 +1353,23 @@ const ARTICLES = /^(a|an|the|some)\s+/i
 const STOP_WORDS = new Set([
   'and', 'with', 'for', 'the', 'that', 'this', 'from', 'into', 'then', 'plus', 'some',
   'our', 'your', 'one', 'two', 'has', 'have', 'want', 'need', 'like', 'make', 'build',
+  'plan', 'create', 'design', 'add', 'use', 'using', 'show', 'page', 'screen',
 ])
 function withoutStopWords(text: string): string {
   return text
     .split(/\s+/)
     .filter((w) => !STOP_WORDS.has(w.toLowerCase()))
     .join(' ')
+}
+
+// A pick needs one whole word of the ask in the item's name or slug. Substring
+// scoring alone let "plan" pick Planet and the Resource Planning template.
+function namedHit(ask: string, item: { slug: string; name: string; category?: string }): boolean {
+  const names = `${normalize(item.slug)} ${normalize(item.name)} ${normalize(item.category ?? '')}`
+  return normalize(withoutStopWords(ask))
+    .split(/\s+/)
+    .filter((t) => t.length > 2)
+    .some((t) => new RegExp(`\\b${escapeRegExp(t)}\\b`).test(names))
 }
 
 function briefSegments(brief: string): string[] {
@@ -1405,33 +1416,38 @@ server.registerTool(
       }
 
       // The closest whole screen, scored against the entire brief. One whole-word
-      // hit on the template's name scores 8; anything below that is a stray token
-      // in a description, not a screen the brief is asking for.
+      // hit on the template's name or its category (Dashboard, CRM, Scheduling,
+      // Media, Authentication) scores 8; anything below that is a stray token in
+      // a description, not a screen the brief is asking for.
       const MIN_TEMPLATE_SCORE = 8
       const templates = (meta.templates ?? []).filter((t) => !wanted || t.system === wanted)
       const templatePick = templates
         .map((t) => ({
           item: t,
-          score: scoreSystemComponent(withoutStopWords(brief), {
-            ...t,
-            system: t.category ? `${t.system} ${t.category}` : t.system,
-          }),
+          score: scoreFields(withoutStopWords(brief), [
+            { text: normalize(t.slug), weight: 5 },
+            { text: normalize(t.name), weight: 4 },
+            { text: normalize(t.category ?? ''), weight: 4 },
+            { text: normalize(t.description), weight: 1 },
+            { text: normalize(t.system), weight: 2 },
+          ]),
         }))
-        .filter((r) => r.score >= MIN_TEMPLATE_SCORE)
+        .filter((r) => r.score >= MIN_TEMPLATE_SCORE && namedHit(brief, r.item))
         .sort((a, b) => b.score - a.score)[0]?.item
 
       const segments = briefSegments(brief)
       const dsPool = (meta.systemComponents ?? []).filter((c) => !wanted || c.system === wanted)
       type Pick = ComponentMeta | SystemComponentMeta
       const sections = segments.map((ask) => {
+        const query = withoutStopWords(ask)
         const ds = dsPool
-          .map((c) => ({ item: c as Pick, score: scoreSystemComponent(ask, c) }))
-          .filter((r) => r.score > 0)
+          .map((c) => ({ item: c as Pick, score: scoreSystemComponent(query, c) }))
+          .filter((r) => r.score > 0 && namedHit(ask, r.item))
         const sa = wanted
           ? []
           : meta.components
-              .map((c) => ({ item: c as Pick, score: scoreMatch(ask, c) }))
-              .filter((r) => r.score > 0)
+              .map((c) => ({ item: c as Pick, score: scoreMatch(query, c) }))
+              .filter((r) => r.score > 0 && namedHit(ask, r.item))
         const ranked = [...ds, ...sa].sort((a, b) => b.score - a.score).map((r) => r.item)
         const pick = ranked[0]
         return {
