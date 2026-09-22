@@ -3,7 +3,7 @@
   "name": "io.github.aicanvas-me/aicanvas",
   "description": "Browse and install 75+ free animated, shadcn-compatible React components from AI Canvas.",
   "status": "active",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "websiteUrl": "https://aicanvas.me",
   "repository": {
     "url": "https://github.com/aicanvas-me/aicanvas",
@@ -15,7 +15,7 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@aicanvas/mcp",
-      "version": "0.2.5",
+      "version": "0.3.0",
       "transport": {
         "type": "stdio"
       }

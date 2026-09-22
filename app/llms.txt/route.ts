@@ -38,7 +38,7 @@ To authenticate installs: sign in and copy your personal token from ${SITE_URL}/
 After that, every \`npx shadcn@latest add @aicanvas/<component-name>\` is authenticated. Alternatively, each component page shows a ready tokenized install command when signed in.
 
 ## MCP server
-AI agents can browse and install AI Canvas components through the official MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: list_categories, list_components, search_components, get_component, get_install_command, list_systems, get_system, list_templates, get_template. Setup guide: ${SITE_URL}/mcp
+AI agents can browse and install AI Canvas components through the official MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: list_categories, list_components, search_components, get_component, get_component_props, get_install_command, list_systems, get_system, list_templates, get_template, validate_usage, compose_page, get_audit_checklist. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp
 `
 
   const grouped = new Map<string, typeof COMPONENTS>()

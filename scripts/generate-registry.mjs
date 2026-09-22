@@ -318,6 +318,7 @@ const expectedNames = new Set(
 )
 expectedNames.add('registry') // keep the root index
 expectedNames.add('aicanvas-mcp') // MCP metadata file
+expectedNames.add('aicanvas-props') // MCP prop tables file
 for (const slug of premiumSlugDirs) expectedNames.add(slug) // keep gated premium JSON
 expectedNames.add('_premium') // gate input (written by inject-premium) — must survive cleanup
 expectedNames.add('_manifest') // gate manifest
@@ -1147,6 +1148,10 @@ console.log(`Generated ${count} components + ${dsCount} system/template items in
 
 const mcpComponents = []
 const categoryCounts = {}
+// Prop tables by registry slug, for the MCP's read-the-API and validate tools.
+// Standalones (free + injected premium) are already keyed by slug; design-system
+// components are added inside the systemComponents loop below.
+const mcpPropsBySlug = { ...standaloneProps }
 
 for (const dir of dirs) {
   const meta = metadata[dir]
@@ -1259,6 +1264,13 @@ for (const ds of SYSTEMS) {
     let compItem
     try { compItem = JSON.parse(readFileSync(compJsonPath, 'utf-8')) } catch { compItem = null }
     if (!compItem) continue
+    // The MCP props file is keyed by registry slug; the page tables above are
+    // keyed by system then source basename. Bridge them here, where both are known.
+    {
+      const base = baseName.replace(/\.(tsx|ts)$/, '')
+      const tables = propTables[ds.slug]?.[base]
+      if (tables) mcpPropsBySlug[slug] = tables
+    }
 
     // metaSlug: registry slug minus the `<system>-` prefix, unless a slugOverride
     // already mapped it to a distinct meta slug. Validate against the website meta.
@@ -1428,6 +1440,20 @@ const mcpMeta = {
 }
 
 writeFileSync(join(outDir, 'aicanvas-mcp.json'), JSON.stringify(mcpMeta, null, 2) + '\n')
+
+// ── AI Canvas MCP prop tables ─────────────────────────────────────────────────
+// A second, separate file so the catalog above stays small for every search
+// call; the MCP fetches this one only when an agent reads or validates an API.
+// Same rows the component pages render, keyed by registry slug. Metadata, never
+// source: it rides the free 'meta' lane (lib/registry/content-type.ts).
+const mcpProps = {
+  name: 'aicanvas',
+  generatedAt: mcpMeta.generatedAt,
+  componentCount: Object.keys(mcpPropsBySlug).length,
+  props: Object.fromEntries(Object.entries(mcpPropsBySlug).sort(([a], [b]) => a.localeCompare(b))),
+}
+writeFileSync(join(outDir, 'aicanvas-props.json'), JSON.stringify(mcpProps, null, 2) + '\n')
+console.log(`Generated MCP prop tables: ${mcpProps.componentCount} components with a documented API`)
 console.log(`Generated MCP metadata: ${mcpComponents.length} components, ${Object.keys(categoryCounts).length} categories, ${mcpSystems.length} systems, ${mcpSystemComponents.length} system components, ${mcpTemplates.length} templates`)
 
 // ── Lightweight nav counts (sidebar / mobile-nav) ─────────────────────────────
