@@ -9,10 +9,11 @@
 //
 // The Supabase Auth templates (confirm signup / magic link / reset password /
 // change email / invite / reauthentication) live in the Supabase dashboard, NOT
-// in this repo, but they are BUILT FROM THIS SHELL: run
-// `node scripts/render-auth-emails.mjs <dir>` after changing anything here and
-// push the result, so the two can never drift. Never hand-edit them in the
-// dashboard; the next render would overwrite the edit anyway.
+// in this repo, but they are BUILT FROM THIS SHELL: after changing anything
+// here, re-render them with
+// `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-auth-emails.mjs <dir>`
+// and upload the result, so the two can never drift. Never hand-edit them in
+// the dashboard; the next render would overwrite the edit anyway.
 
 const FONT =
   "-apple-system,BlinkMacSystemFont,'Segoe UI',Manrope,Roboto,'Helvetica Neue',Arial,sans-serif"
@@ -129,6 +130,7 @@ export function emailShell(opts: {
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="ac-bg" style="background-color:#F4F4F1;">
     <tr>
       <td align="center" style="padding:40px 16px;">
+        <!--[if mso]><table role="presentation" width="544" cellpadding="0" cellspacing="0" border="0" align="center"><tr><td><![endif]-->
         <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:544px;">
           <tr>
             <td class="ac-card" style="background-color:#FFFFFF;border:1px solid #E6E6E1;border-radius:14px;padding:40px 32px;">
@@ -161,6 +163,7 @@ export function emailShell(opts: {
             </td>
           </tr>
         </table>
+        <!--[if mso]></td></tr></table><![endif]-->
       </td>
     </tr>
   </table>

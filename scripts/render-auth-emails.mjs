@@ -7,13 +7,14 @@
  *   node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-auth-emails.mjs <out-dir>
  *
  * Each file is named after its Supabase template key, and every template keeps
- * the variable Supabase substitutes into it ({{ .ConfirmationURL }}, or
- * {{ .Token }} for reauthentication). Losing that variable would break sign-in,
- * so the push script asserts it again before sending anything.
+ * the variables Supabase substitutes into it ({{ .ConfirmationURL }}, or
+ * {{ .Token }} for reauthentication). Losing one would break sign-in, so they
+ * are all asserted here before a single file is written.
  */
 
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { pathToFileURL } from 'node:url'
 import { emailShell, emailText } from '../app/lib/email/shell.ts'
 
 const body = (text) =>
@@ -111,11 +112,15 @@ const REQUIRED_VARS = {
 }
 
 export function renderAuthEmails(outDir) {
-  mkdirSync(outDir, { recursive: true })
-  for (const [key, { subject, html }] of Object.entries(AUTH_EMAILS)) {
+  // Assert every template FIRST, so a failure on the last one cannot leave a
+  // half-written directory that looks complete enough to push.
+  for (const [key, { html }] of Object.entries(AUTH_EMAILS)) {
     for (const need of REQUIRED_VARS[key]) {
       if (!html.includes(need)) throw new Error(`${key}: lost ${need}`)
     }
+  }
+  mkdirSync(outDir, { recursive: true })
+  for (const [key, { subject, html }] of Object.entries(AUTH_EMAILS)) {
     writeFileSync(join(outDir, `${key}.html`), html)
     writeFileSync(join(outDir, `${key}.subject.txt`), subject)
     console.log(`${key.padEnd(18)} ${html.length} chars, keeps ${REQUIRED_VARS[key].join(' ')}`)
@@ -124,7 +129,8 @@ export function renderAuthEmails(outDir) {
 }
 
 // CLI half: only when run directly, so importing AUTH_EMAILS cannot exit the process.
-if (import.meta.url === `file://${process.argv[1]}`) {
+// argv[1] is absent under `node -e`, where nothing is being run directly.
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const outDir = process.argv[2]
   if (!outDir) {
     console.error('usage: node scripts/render-auth-emails.mjs <out-dir>')
