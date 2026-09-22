@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { createClient } from '../../lib/supabase/client'
 import { formatAuthError } from '../../lib/auth-errors'
@@ -29,8 +29,8 @@ type Props = {
   // context), it renders as a Link that navigates to /account/sign-up.
   onSwitchToSignUp?: () => void
   // Pre-seeded error to display (e.g. the callback page failed and bounced
-  // here with `?error=…`). Cleared on the first submit attempt so the user
-  // sees feedback for their new action instead of stale callback text.
+  // here with `?error=…`). Cleared on the first keystroke or submit so the
+  // user sees feedback for their new action instead of stale callback text.
   initialError?: string | null
 }
 
@@ -43,11 +43,29 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
   // doesn't fight the password Sign in button's spinner.
   const [magicSubmitting, setMagicSubmitting] = useState(false)
   const [magicSent, setMagicSent] = useState(false)
+  const emailRef = useRef<HTMLInputElement>(null)
+  const passwordRef = useRef<HTMLInputElement>(null)
+
+  // Any edit clears the last message. A message about a value the user has
+  // since changed is worse than none: it kept telling people to enter an email
+  // they had already entered.
+  function clearStatus() {
+    setError(null)
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    setSubmitting(true)
     setError(null)
+    // The password field is not `required` in the markup, on purpose: the
+    // passwordless button shares this form, so the browser's own "fill in this
+    // field" on Enter read as a demand for a password the user never needed.
+    // Our message says the same thing and names the other way in.
+    if (!password) {
+      setError('Enter your password, or use "Email me a sign-in link" below.')
+      passwordRef.current?.focus()
+      return
+    }
+    setSubmitting(true)
     const supabase = createClient()
     const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
     if (signInError) {
@@ -87,6 +105,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
   async function handleMagicLink() {
     if (!email) {
       setError('Enter your email to get a sign-in link.')
+      emailRef.current?.focus()
       return
     }
     setMagicSubmitting(true)
@@ -153,6 +172,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
               Email
             </label>
             <input
+              ref={emailRef}
               id="email"
               type="email"
               required
@@ -160,7 +180,10 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
               autoComplete="email"
               placeholder="you@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                clearStatus()
+              }}
               className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
             />
           </div>
@@ -173,12 +196,15 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
               Password
             </label>
             <PasswordInput
+              ref={passwordRef}
               id="password"
-              required
               autoComplete="current-password"
               placeholder="Your password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                clearStatus()
+              }}
             />
             <Link
               href="/account/forgot-password"
@@ -189,7 +215,9 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           </div>
 
           {error && (
-            <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+            // role="alert": this box replaced the browser's own validation
+            // bubble for the password, which screen readers used to announce.
+            <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}
