@@ -1118,10 +1118,60 @@ function parseAttrs(text: string): { attrs: JsxAttr[]; spread: boolean } {
   return { attrs, spread }
 }
 
+// Comments and string literals that carry JSX-looking text ("<Button ...")
+// are replaced by spaces, newlines kept, so line numbers survive and a
+// commented-out or quoted <Button> is never scored as a usage. A quote opens a
+// string only after =, (, ,, :, [, {, ?, + or a line start, so an apostrophe in
+// JSX text (don't) does not; "//" after ":" is a URL, not a comment.
+// ponytail: no real tokenizer, so a regex literal containing quotes can throw it.
+function blankNoise(code: string): string {
+  const out = code.split('')
+  const blank = (from: number, to: number) => {
+    for (let k = from; k < to; k++) if (out[k] !== '\n') out[k] = ' '
+  }
+  const opensString = (i: number) => {
+    let j = i - 1
+    while (j >= 0 && (code[j] === ' ' || code[j] === '\t')) j--
+    return j < 0 || code[j] === '\n' || '=(,:[{?+'.includes(code[j])
+  }
+  let i = 0
+  while (i < code.length) {
+    const ch = code[i]
+    const next = code[i + 1]
+    if (ch === '/' && next === '*') {
+      const end = code.indexOf('*/', i + 2)
+      const to = end === -1 ? code.length : end + 2
+      blank(i, to)
+      i = to
+      continue
+    }
+    if (ch === '/' && next === '/' && code[i - 1] !== ':') {
+      const end = code.indexOf('\n', i)
+      const to = end === -1 ? code.length : end
+      blank(i, to)
+      i = to
+      continue
+    }
+    if ((ch === '"' || ch === "'" || ch === '`') && opensString(i)) {
+      let j = i + 1
+      while (j < code.length && code[j] !== ch && (ch === '`' || code[j] !== '\n')) {
+        if (code[j] === '\\') j++
+        j++
+      }
+      if (j < code.length && code[j] === ch && /<[A-Z]/.test(code.slice(i + 1, j))) blank(i + 1, j)
+      i = j + 1
+      continue
+    }
+    i++
+  }
+  return out.join('')
+}
+
 function scanJsx(code: string): JsxUsage[] {
   const out: JsxUsage[] = []
-  // PascalCase tags only: lowercase tags are DOM elements.
-  const re = /<([A-Z][\w$]*)(?=[\s/>])/g
+  // PascalCase tags only: lowercase tags are DOM elements. A "<" glued to an
+  // identifier (Array<Drawer>) is a type argument, not a tag.
+  const re = /(?<![\w$.])<([A-Z][\w$]*)(?=[\s/>])/g
   let m: RegExpExecArray | null
   while ((m = re.exec(code))) {
     const start = re.lastIndex
@@ -1247,8 +1297,9 @@ server.registerTool(
     try {
       const meta = await fetchMeta()
       const props = await fetchProps()
-      const { index, unresolved } = resolveTags(code, meta, props, tags ?? {})
-      const usages = scanJsx(code)
+      const clean = blankNoise(code)
+      const { index, unresolved } = resolveTags(clean, meta, props, tags ?? {})
+      const usages = scanJsx(clean)
       const issues: UsageIssue[] = []
       const checked: Array<{ tag: string; slug: string; table: string; line: number }> = []
 
@@ -1372,7 +1423,8 @@ function namedHit(ask: string, item: { slug: string; name: string; category?: st
     .some((t) => new RegExp(`\\b${escapeRegExp(t)}\\b`).test(names))
 }
 
-function briefSegments(brief: string): string[] {
+const MAX_PARTS = 8
+function briefSegments(brief: string): { segments: string[]; omitted: string[] } {
   const seen = new Set<string>()
   const out: string[] = []
   for (const raw of brief.split(/,|;|\n|\band\b|\bwith\b|\bplus\b|\bthen\b/i)) {
@@ -1381,9 +1433,8 @@ function briefSegments(brief: string): string[] {
     if (key.length < 3 || seen.has(key)) continue
     seen.add(key)
     out.push(seg)
-    if (out.length === 8) break
   }
-  return out
+  return { segments: out.slice(0, MAX_PARTS), omitted: out.slice(MAX_PARTS) }
 }
 
 server.registerTool(
@@ -1435,23 +1486,56 @@ server.registerTool(
         .filter((r) => r.score >= MIN_TEMPLATE_SCORE && namedHit(brief, r.item))
         .sort((a, b) => b.score - a.score)[0]?.item
 
-      const segments = briefSegments(brief)
-      const dsPool = (meta.systemComponents ?? []).filter((c) => !wanted || c.system === wanted)
+      const { segments, omitted } = briefSegments(brief)
       type Pick = ComponentMeta | SystemComponentMeta
-      const sections = segments.map((ask) => {
-        const query = withoutStopWords(ask)
-        const ds = dsPool
-          .map((c) => ({ item: c as Pick, score: scoreSystemComponent(query, c) }))
-          .filter((r) => r.score > 0 && namedHit(ask, r.item))
-        const sa = wanted
-          ? []
-          : meta.components
-              .map((c) => ({ item: c as Pick, score: scoreMatch(query, c) }))
-              .filter((r) => r.score > 0 && namedHit(ask, r.item))
-        const ranked = [...ds, ...sa].sort((a, b) => b.score - a.score).map((r) => r.item)
-        const pick = ranked[0]
-        return {
-          ask,
+      const systemOf = new Map((meta.systemComponents ?? []).map((c) => [c.slug, c.system]))
+      const rankAll = (lock: string | undefined) =>
+        segments.map((ask) => {
+          const query = withoutStopWords(ask)
+          const ds = (meta.systemComponents ?? [])
+            .filter((c) => !lock || c.system === lock)
+            .map((c) => ({ item: c as Pick, score: scoreSystemComponent(query, c) }))
+            .filter((r) => r.score > 0 && namedHit(ask, r.item))
+          const sa = wanted
+            ? []
+            : meta.components
+                .map((c) => ({ item: c as Pick, score: scoreMatch(query, c) }))
+                .filter((r) => r.score > 0 && namedHit(ask, r.item))
+          return { ask, ranked: [...ds, ...sa].sort((a, b) => b.score - a.score).map((r) => r.item) }
+        })
+
+      // One design system per screen (the audit checklist's own rule). With no
+      // `system` given, the system behind most first picks wins and the parts
+      // are ranked again inside it; a tie goes to the first pick's system.
+      let ranked = rankAll(wanted)
+      let locked = wanted
+      if (!wanted) {
+        const votes = new Map<string, number>()
+        for (const r of ranked) {
+          const sys = r.ranked[0] && systemOf.get(r.ranked[0].slug)
+          if (sys) votes.set(sys, (votes.get(sys) ?? 0) + 1)
+        }
+        if (votes.size > 1) {
+          locked = [...votes.entries()].sort((a, b) => b[1] - a[1])[0][0]
+          ranked = rankAll(locked)
+        }
+      }
+
+      const sections: Array<{
+        ask: string
+        pick: { slug: string; name: string; installCommand: string; homepageUrl: string; hasProps: boolean } | null
+        alternatives: Array<{ slug: string; name: string }>
+      }> = []
+      for (const r of ranked) {
+        const pick = r.ranked[0]
+        // Two parts of the brief that resolve to the same component are one part.
+        const twin = pick && sections.find((s) => s.pick?.slug === pick.slug)
+        if (twin) {
+          twin.ask = `${twin.ask}, ${r.ask}`
+          continue
+        }
+        sections.push({
+          ask: r.ask,
           pick: pick
             ? {
                 slug: pick.slug,
@@ -1461,9 +1545,9 @@ server.registerTool(
                 hasProps: !!props?.props[pick.slug],
               }
             : null,
-          alternatives: ranked.slice(1, 3).map((c) => ({ slug: c.slug, name: c.name })),
-        }
-      })
+          alternatives: r.ranked.slice(1, 3).map((c) => ({ slug: c.slug, name: c.name })),
+        })
+      }
       const gaps = sections.filter((s) => !s.pick).map((s) => s.ask)
       const picks = sections.flatMap((s) => (s.pick ? [s.pick] : []))
 
@@ -1491,6 +1575,9 @@ server.registerTool(
           '',
         )
       }
+      if (locked && !wanted && systemsUsed.size) {
+        lines.push(`Design system: ${locked} (one system per screen; pass \`system\` to choose another).`, '')
+      }
       lines.push('## Parts')
       for (const s of sections) {
         if (s.pick) {
@@ -1503,6 +1590,11 @@ server.registerTool(
         } else {
           lines.push(`- ${s.ask}: nothing in the catalog. Build it by hand.`)
         }
+      }
+      if (omitted.length) {
+        lines.push(
+          `- Not planned (a brief takes ${MAX_PARTS} parts): ${omitted.join('; ')}. Run compose_page again for these.`,
+        )
       }
       lines.push('', '## Steps')
       let n = 1
@@ -1532,7 +1624,8 @@ server.registerTool(
         content: [asTextContent(lines.join('\n'))],
         structuredContent: {
           brief,
-          system: wanted ?? null,
+          system: locked ?? null,
+          omitted,
           template: templatePick
             ? {
                 slug: templatePick.slug,

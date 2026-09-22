@@ -468,6 +468,25 @@ try {
       tags: { Btn: 'andromeda-button-system' },
     }),
   )
+  const noise = [
+    "import { Button } from '@/components/aicanvas/andromeda/components/Button'",
+    "import { Drawer } from '@/components/aicanvas/andromeda/components/Drawer'",
+    'type Rows = Array<Drawer>',
+    '// old: <Button variant="bogus-in-comment" />',
+    '/* <Button variant="bogus-in-block" /> */',
+    'const help = "Try <Button variant=\'bogus-in-string\'>"',
+    'export default function P() {',
+    '  return (<div>{/* <Button variant="bogus-in-jsx-comment" /> */}<Button variant="ghost" href="https://x.y/z">don\'t</Button><Drawer open>x</Drawer></div>)',
+    '}',
+  ].join('\n')
+  const vuNoise = sc(await call('validate_usage', { code: noise, path: 'noise.tsx' }))
+  record(
+    'local: validate_usage ignores comments, strings and type arguments',
+    vuNoise?.errors === 0 &&
+      (vuNoise?.checked ?? []).length === 2 &&
+      !JSON.stringify(vuNoise?.issues ?? []).includes('bogus'),
+    JSON.stringify(vuNoise?.issues ?? vuNoise).slice(0, 300),
+  )
   record(
     'local: validate_usage honours a forced tag map',
     vuForced?.checked?.length === 1 && (vuForced?.issues ?? []).length === 0,
@@ -513,6 +532,38 @@ try {
       (cpVerb?.sections ?? []).every((s) => s.pick == null) &&
       (cpVerb?.gaps ?? []).length === 3,
     JSON.stringify({ template: cpVerb?.template, picks: (cpVerb?.sections ?? []).map((s) => s.pick?.slug) }),
+  )
+  const cpMix = sc(
+    await call('compose_page', {
+      brief: 'an admin dashboard with a sidebar, stats cards, a data table and a chart',
+    }),
+  )
+  const mixSystems = new Set(
+    (cpMix?.sections ?? [])
+      .map((s) => s.pick?.slug)
+      .filter((x) => x && x.startsWith('andromeda'))
+      .map((x) => (x.startsWith('andromeda-pro-') ? 'andromeda-pro' : 'andromeda')),
+  )
+  record(
+    'local: compose_page keeps one design system per plan',
+    mixSystems.size === 1 && (cpMix?.install ?? []).filter((c) => c.endsWith('-tokens')).length === 1,
+    JSON.stringify({ systems: [...mixSystems], install: cpMix?.install }),
+  )
+  const cpLong = sc(
+    await call('compose_page', {
+      brief: 'p1, p2x, p3x, p4x, p5x, p6x, p7x, p8x, footer with newsletter signup, sticky nav',
+    }),
+  )
+  record(
+    'local: compose_page reports parts beyond the cap instead of dropping them',
+    (cpLong?.omitted ?? []).length === 2 && cpLong.omitted.includes('sticky nav'),
+    JSON.stringify(cpLong?.omitted),
+  )
+  const cpTwin = sc(await call('compose_page', { brief: 'a dark hero with a fluid simulation' }))
+  record(
+    'local: compose_page merges two parts that resolve to the same component',
+    (cpTwin?.sections ?? []).filter((s) => s.pick?.slug === 'fluid-simulation-hero').length === 1,
+    JSON.stringify((cpTwin?.sections ?? []).map((s) => [s.ask, s.pick?.slug])),
   )
   const cpGap = sc(await call('compose_page', { brief: 'a zorblax flibbertigibbet' }))
   record(
