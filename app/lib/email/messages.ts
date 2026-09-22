@@ -15,6 +15,7 @@ export function welcomeEmail(): { subject: string; html: string } {
     heading: 'Welcome, hero.',
     bodyHtml: `<p ${emailText('secondary', 'margin:0;font-size:15px;line-height:1.6;')}>Your account is live. Grab any free component with its full source code and remix it with your AI coding agent. Everything ships ready to paste into your project.</p>`,
     button: { label: 'Start building', url: 'https://aicanvas.me' },
+    footerNoteHtml: 'You are getting this because an AI Canvas account was just created with this address.',
   })
   return { subject: 'Welcome to AI Canvas', html }
 }
@@ -48,7 +49,7 @@ export function claimPremiumAccountEmail(): { subject: string; html: string } {
     heading: 'You just got <span class="ac-accent" style="color:#869631;">superpowers</span>.',
     bodyHtml: `<p ${emailText('secondary', 'margin:0;font-size:15px;line-height:1.6;')}>Your payment went through and Premium is live on your account. Sign in with the email you used at checkout to get in, no password needed. Every design system, premium component, and template is yours, including every new one the moment it ships.</p>`,
     button: { label: 'Claim your Premium account', url: 'https://aicanvas.me/welcome' },
-    footerNoteHtml: 'The claim page asks for this email address and sends you a one-time sign-in link. You can set a password later in your account settings. If you did not purchase AI Canvas Premium, you can ignore this email and contact support to have the account removed.',
+    footerNoteHtml: 'The claim page asks for this address and emails you a one-time sign-in link. You can add a password later in your account settings. If you did not buy AI Canvas Premium, ignore this email.',
   })
   return { subject: 'Access your AI Canvas Premium account', html }
 }
