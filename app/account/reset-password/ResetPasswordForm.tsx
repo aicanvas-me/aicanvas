@@ -36,6 +36,12 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Any edit clears the last message: "Passwords don't match." must not stay
+  // on screen after the user has made them match.
+  function clearStatus() {
+    setError(null)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError(null)
@@ -107,7 +113,10 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
             minLength={8}
             placeholder="At least 8 characters"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              clearStatus()
+            }}
           />
         </div>
 
@@ -125,7 +134,10 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
             minLength={8}
             placeholder="Re-enter password"
             value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
+            onChange={(e) => {
+              setConfirm(e.target.value)
+              clearStatus()
+            }}
           />
         </div>
 
