@@ -41,6 +41,10 @@ describe('SignInFormFields, link mode', () => {
   it('shows only the email field once "Email me a sign-in link" is pressed', () => {
     mount()
     expect(passwordIfAny()).not.toBeNull()
+    // Focus starts on the email input (autoFocus), so park it on the password
+    // first; otherwise the focus assertion below could never fail.
+    password().focus()
+    expect(document.activeElement).toBe(password())
     fireEvent.click(button('Email me a sign-in link'))
 
     expect(passwordIfAny()).toBeNull()
@@ -49,6 +53,8 @@ describe('SignInFormFields, link mode', () => {
     expect(button('Use a password instead')).toBeTruthy()
     expect(buttonIfAny('Sign in')).toBeNull()
     expect(document.activeElement).toBe(email())
+    expect(email().getAttribute('aria-describedby')).toBe('signin-link-note')
+    expect(screen.getByText(/no password needed/i).id).toBe('signin-link-note')
     expect(alertText()).toBeNull()
   })
 
@@ -77,16 +83,11 @@ describe('SignInFormFields, link mode', () => {
     await waitFor(() => expect(screen.getByText(/check your inbox/i)).toBeTruthy())
   })
 
-  it('asks for the email on an empty submit, announces it, and clears it on typing', () => {
+  it('leaves an empty email to the browser: the field is required in link mode too', () => {
     mount()
     fireEvent.click(button('Email me a sign-in link'))
-    fireEvent.submit(form())
-    expect(alertText()).toBe('Enter your email to get a sign-in link.')
-    expect(document.activeElement).toBe(email())
-    expect(signInWithOtp).not.toHaveBeenCalled()
-
-    fireEvent.change(email(), { target: { value: 'a@b.co' } })
-    expect(alertText()).toBeNull()
+    expect(email().required).toBe(true)
+    expect(email().checkValidity()).toBe(false)
   })
 
   it('drops a stale message when the mode is switched', () => {

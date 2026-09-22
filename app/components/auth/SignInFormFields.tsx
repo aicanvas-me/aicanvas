@@ -121,13 +121,11 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
   // account creation on the deliberate sign-up path. We stay neutral about
   // whether the email has an account, so this can't be used to probe who's
   // registered — only a genuine rate-limit surfaces an error.
+  // The email input is `required`, so an empty submit never reaches here: the
+  // browser's own bubble handles it, and unlike the password case there is no
+  // other way in for a message of ours to name.
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault()
-    if (!email) {
-      setError('Enter your email to get a sign-in link.')
-      emailRef.current?.focus()
-      return
-    }
     setMagicSubmitting(true)
     setError(null)
     const supabase = createClient()
@@ -201,6 +199,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
               autoFocus
               autoComplete="email"
               placeholder="you@example.com"
+              aria-describedby={linkMode ? 'signin-link-note' : undefined}
               value={email}
               onChange={(e) => {
                 setEmail(e.target.value)
@@ -209,7 +208,9 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
               className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
             />
             {linkMode && (
-              <p className="mt-2 text-xs text-sand-600 dark:text-sand-400">
+              // Tied to the input via aria-describedby, so a screen reader that
+              // lands on the refocused field hears that the form changed mode.
+              <p id="signin-link-note" className="mt-2 text-xs text-sand-600 dark:text-sand-400">
                 We&apos;ll email you a one-time sign-in link. No password needed.
               </p>
             )}
