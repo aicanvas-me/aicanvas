@@ -2,10 +2,9 @@
  * Renders the six Supabase Auth email templates from the SAME shell the app's
  * own emails use, so the two can never drift apart again. The templates live in
  * the Supabase dashboard, not in this repo, so this script only WRITES HTML to
- * a directory; pushing it to Supabase is the guarded devtools script's job
- * (~/.aicanvas-devtools/supabase/auth-templates.mjs push <dir>).
+ * a directory; uploading it is a separate, deliberate step.
  *
- *   node scripts/render-auth-emails.mjs <out-dir>
+ *   node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-auth-emails.mjs <out-dir>
  *
  * Each file is named after its Supabase template key, and every template keeps
  * the variable Supabase substitutes into it ({{ .ConfirmationURL }}, or
@@ -100,20 +99,36 @@ export const AUTH_EMAILS = {
   },
 }
 
-const REQUIRED_VAR = { reauthentication: '{{ .Token }}' }
-
-const outDir = process.argv[2]
-if (!outDir) {
-  console.error('usage: node scripts/render-auth-emails.mjs <out-dir>')
-  process.exit(1)
+/** Every variable Supabase substitutes into a template. Losing one silently
+ *  breaks that email, so each is asserted before anything is written. */
+const REQUIRED_VARS = {
+  confirmation: [URL_VAR],
+  magic_link: [URL_VAR],
+  recovery: [URL_VAR],
+  email_change: [URL_VAR, '{{ .Email }}', '{{ .NewEmail }}'],
+  invite: [URL_VAR],
+  reauthentication: ['{{ .Token }}'],
 }
-mkdirSync(outDir, { recursive: true })
 
-for (const [key, { subject, html }] of Object.entries(AUTH_EMAILS)) {
-  const need = REQUIRED_VAR[key] ?? URL_VAR
-  if (!html.includes(need)) throw new Error(`${key}: lost ${need}`)
-  writeFileSync(join(outDir, `${key}.html`), html)
-  writeFileSync(join(outDir, `${key}.subject.txt`), subject)
-  console.log(`${key.padEnd(18)} ${html.length} chars, keeps ${need}`)
+export function renderAuthEmails(outDir) {
+  mkdirSync(outDir, { recursive: true })
+  for (const [key, { subject, html }] of Object.entries(AUTH_EMAILS)) {
+    for (const need of REQUIRED_VARS[key]) {
+      if (!html.includes(need)) throw new Error(`${key}: lost ${need}`)
+    }
+    writeFileSync(join(outDir, `${key}.html`), html)
+    writeFileSync(join(outDir, `${key}.subject.txt`), subject)
+    console.log(`${key.padEnd(18)} ${html.length} chars, keeps ${REQUIRED_VARS[key].join(' ')}`)
+  }
+  console.log(`\nwrote ${Object.keys(AUTH_EMAILS).length} templates to ${outDir}`)
 }
-console.log(`\nwrote ${Object.keys(AUTH_EMAILS).length} templates to ${outDir}`)
+
+// CLI half: only when run directly, so importing AUTH_EMAILS cannot exit the process.
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const outDir = process.argv[2]
+  if (!outDir) {
+    console.error('usage: node scripts/render-auth-emails.mjs <out-dir>')
+    process.exit(1)
+  }
+  renderAuthEmails(outDir)
+}

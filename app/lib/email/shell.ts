@@ -7,10 +7,12 @@
 // recipient sees the email in whatever mode their mail client is set to, instead
 // of a forced dark card. The olive accent + wordmark stay constant in both modes.
 //
-// ⚠️ The Supabase Auth templates (confirm signup / reset password / change email /
-// magic link) live in the Supabase dashboard, NOT in this repo, but they share
-// this exact design. If you change the shell here, mirror it there (Auth → Email
-// Templates) so the two stay in sync.
+// The Supabase Auth templates (confirm signup / magic link / reset password /
+// change email / invite / reauthentication) live in the Supabase dashboard, NOT
+// in this repo, but they are BUILT FROM THIS SHELL: run
+// `node scripts/render-auth-emails.mjs <dir>` after changing anything here and
+// push the result, so the two can never drift. Never hand-edit them in the
+// dashboard; the next render would overwrite the edit anyway.
 
 const FONT =
   "-apple-system,BlinkMacSystemFont,'Segoe UI',Manrope,Roboto,'Helvetica Neue',Arial,sans-serif"
@@ -51,6 +53,15 @@ export function emailText(kind: keyof typeof LIGHT, extra = ''): string {
 
 export type EmailButton = { label: string; url: string }
 
+/** An email asks the reader for one thing: either follow an action, or copy a
+ *  code. Offering both at once is a worse email, so the type refuses it. */
+type EmailAction =
+  /** Olive call-to-action (label and url — pre-escape any dynamic value). */
+  | { button?: EmailButton; code?: never }
+  /** One-time code, shown in a bordered box because it is read and retyped
+   *  rather than clicked (plain text — pre-escape any dynamic value). */
+  | { code?: string; button?: never }
+
 export function emailShell(opts: {
   /** Goes in <title> and the hidden preview line. */
   title: string
@@ -58,15 +69,9 @@ export function emailShell(opts: {
   heading: string
   /** Main content HTML. Build rows/paragraphs with emailText() so they adapt. */
   bodyHtml: string
-  /** Optional olive call-to-action. */
-  button?: EmailButton
-  /** Optional one-time code, shown in a bordered box instead of a button.
-   *  A code is read and retyped, so it gets a container of its own rather
-   *  than sitting loose in the body like ordinary text. */
-  code?: string
   /** Optional fine-print line shown above the constant "AI Canvas · aicanvas.me". */
   footerNoteHtml?: string
-}): string {
+} & EmailAction): string {
   const { title, heading, bodyHtml, button, code, footerNoteHtml } = opts
 
   // min-width keeps a short label ("Sign in") from shrinking to a stub next to
@@ -124,7 +129,10 @@ export function emailShell(opts: {
   <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="ac-bg" style="background-color:#F4F4F1;">
     <tr>
       <td align="center" style="padding:40px 16px;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="ac-card" style="max-width:544px;background-color:#FFFFFF;border:1px solid #E6E6E1;border-radius:14px;padding:40px 32px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:544px;">
+          <tr>
+            <td class="ac-card" style="background-color:#FFFFFF;border:1px solid #E6E6E1;border-radius:14px;padding:40px 32px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
             <td style="padding-bottom:28px;">
               <img src="${MARK}" width="33" height="28" alt="AI Canvas" style="vertical-align:middle;border:0;outline:none;display:inline-block;" />
@@ -147,6 +155,9 @@ export function emailShell(opts: {
             <td class="ac-divider" style="border-top:1px solid #E6E6E1;padding-top:24px;">
               ${footerNote}
               <p ${emailText('muted', 'margin:8px 0 0 0;font-size:12px;line-height:1.6;')}>AI Canvas, Inhaber Alexandru Daniel Tatu &middot; c/o flexdienst &ndash; #21685 &middot; Kurt-Schumacher-Stra&szlig;e 74 &middot; 67663 Kaiserslautern &middot; Deutschland &middot; <a href="https://aicanvas.me" ${emailText('muted', 'text-decoration:underline;')}>aicanvas.me</a></p>
+            </td>
+          </tr>
+              </table>
             </td>
           </tr>
         </table>
