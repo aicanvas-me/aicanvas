@@ -126,8 +126,7 @@ export function emailShell(opts: {
           <tr>
             <td class="ac-divider" style="border-top:1px solid #E6E6E1;padding-top:24px;">
               ${footerNote}
-              <p ${emailText('muted', 'margin:8px 0 0 0;font-size:12px;line-height:1.6;')}>AI Canvas &middot; <a href="https://aicanvas.me" ${emailText('muted', 'text-decoration:underline;')}>aicanvas.me</a></p>
-              <p ${emailText('muted', 'margin:8px 0 0 0;font-size:12px;line-height:1.6;')}>AI Canvas, Inhaber Alexandru Daniel Tatu &middot; c/o flexdienst &ndash; #21685 &middot; Kurt-Schumacher-Stra&szlig;e 74 &middot; 67663 Kaiserslautern &middot; Deutschland</p>
+              <p ${emailText('muted', 'margin:8px 0 0 0;font-size:12px;line-height:1.6;')}>AI Canvas, Inhaber Alexandru Daniel Tatu &middot; c/o flexdienst &ndash; #21685 &middot; Kurt-Schumacher-Stra&szlig;e 74 &middot; 67663 Kaiserslautern &middot; Deutschland &middot; <a href="https://aicanvas.me" ${emailText('muted', 'text-decoration:underline;')}>aicanvas.me</a></p>
             </td>
           </tr>
         </table>
