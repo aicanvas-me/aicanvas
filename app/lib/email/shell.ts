@@ -15,12 +15,14 @@
 const FONT =
   "-apple-system,BlinkMacSystemFont,'Segoe UI',Manrope,Roboto,'Helvetica Neue',Arial,sans-serif"
 
-// Brand mark, hosted on ImageKit (email clients strip SVG; PNG is required). Two
-// variants swap by `prefers-color-scheme`: the light-bg version has dark facets,
-// the dark-bg version has light facets. The olive "AI Canvas" wordmark sits beside
-// them so branding survives if a client blocks images.
-const MARK_LIGHT = 'https://ik.imagekit.io/aitoolkit/email/mark-light.png'
-const MARK_DARK = 'https://ik.imagekit.io/aitoolkit/email/mark-dark.png'
+// Brand mark, hosted on ImageKit (email clients strip SVG; PNG is required).
+// ONE mark in both themes, matching the site: public/ai-canvas-icon.svg is
+// theme-agnostic, an olive gradient ring around two near-black faces. On a dark
+// card the faces recede and the ring reads as a hollow hexagon, exactly as in
+// the site's dark sidebar. An earlier light-faced variant for dark mode put
+// white inside the hexagon, which is not the mark. The "AI CANVAS" wordmark
+// sits beside it so branding survives if a client blocks images.
+const MARK = 'https://ik.imagekit.io/aitoolkit/email/mark-light.png'
 
 // Light = inline default (also what color-blind clients like Outlook show).
 // Dark = applied via the `.ac-*` classes in the <style> media query below.
@@ -58,15 +60,33 @@ export function emailShell(opts: {
   bodyHtml: string
   /** Optional olive call-to-action. */
   button?: EmailButton
+  /** Optional one-time code, shown in a bordered box instead of a button.
+   *  A code is read and retyped, so it gets a container of its own rather
+   *  than sitting loose in the body like ordinary text. */
+  code?: string
   /** Optional fine-print line shown above the constant "AI Canvas · aicanvas.me". */
   footerNoteHtml?: string
 }): string {
-  const { title, heading, bodyHtml, button, footerNoteHtml } = opts
+  const { title, heading, bodyHtml, button, code, footerNoteHtml } = opts
 
+  // min-width keeps a short label ("Sign in") from shrinking to a stub next to
+  // the long ones; Outlook ignores it and falls back to the padding.
   const buttonRow = button
     ? `<tr>
-            <td style="padding-bottom:48px;">
-              <a href="${button.url}" style="display:inline-block;background-color:#A8B94D;color:#1A1A19;font-size:14px;font-weight:600;text-decoration:none;padding:14px 28px;border-radius:8px;">${button.label}</a>
+            <td style="padding-bottom:40px;">
+              <a href="${button.url}" style="display:inline-block;min-width:150px;text-align:center;background-color:#A8B94D;color:#1A1A19;font-size:14px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:8px;">${button.label}</a>
+            </td>
+          </tr>`
+    : ''
+
+  const codeRow = code
+    ? `<tr>
+            <td style="padding-bottom:40px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+                <td class="ac-code" style="background-color:#F4F4F1;border:1px solid #E6E6E1;border-radius:8px;padding:16px 24px;">
+                  <span class="ac-heading" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:30px;font-weight:700;letter-spacing:0.22em;color:#1A1A19;">${code}</span>
+                </td>
+              </tr></table>
             </td>
           </tr>`
     : ''
@@ -87,28 +107,27 @@ export function emailShell(opts: {
     :root { color-scheme: light dark; supported-color-schemes: light dark; }
     body { margin:0; padding:0; }
     @media (prefers-color-scheme: dark) {
-      .ac-bg       { background-color:#1A1A19 !important; }
+      .ac-bg       { background-color:#121211 !important; }
+      .ac-card     { background-color:#1A1A19 !important; border-color:#2F2F2D !important; }
+      .ac-code     { background-color:#232322 !important; border-color:#383836 !important; }
       .ac-wordmark { color:#FAFAF0 !important; }
       .ac-heading  { color:#FAFAF0 !important; }
       .ac-body     { color:#9E9E98 !important; }
       .ac-divider  { border-color:#383836 !important; }
       .ac-footer, .ac-footer a { color:#7D7D78 !important; }
-      .ac-mark-light { display:none !important; }
-      .ac-mark-dark  { display:inline-block !important; }
       .ac-accent { color:#DAE4A0 !important; }
     }
   </style>
 </head>
-<body class="ac-bg" style="margin:0;padding:0;background-color:#FFFFFF;font-family:${FONT};">
+<body class="ac-bg" style="margin:0;padding:0;background-color:#F4F4F1;font-family:${FONT};">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${title}</div>
-  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="ac-bg" style="background-color:#FFFFFF;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="ac-bg" style="background-color:#F4F4F1;">
     <tr>
-      <td align="center" style="padding:48px 24px;">
-        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:480px;">
+      <td align="center" style="padding:40px 16px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" class="ac-card" style="max-width:544px;background-color:#FFFFFF;border:1px solid #E6E6E1;border-radius:14px;padding:40px 32px;">
           <tr>
             <td style="padding-bottom:28px;">
-              <img class="ac-mark-light" src="${MARK_LIGHT}" width="33" height="28" alt="AI Canvas" style="vertical-align:middle;border:0;outline:none;display:inline-block;" />
-              <img class="ac-mark-dark" src="${MARK_DARK}" width="33" height="28" alt="" style="vertical-align:middle;border:0;outline:none;display:none;" />
+              <img src="${MARK}" width="33" height="28" alt="AI Canvas" style="vertical-align:middle;border:0;outline:none;display:inline-block;" />
               <span class="ac-wordmark" style="margin:0 0 0 10px;font-size:15px;font-weight:600;letter-spacing:0.08em;color:#1A1A19;text-transform:uppercase;vertical-align:middle;">AI Canvas</span>
             </td>
           </tr>
@@ -123,6 +142,7 @@ export function emailShell(opts: {
             </td>
           </tr>
           ${buttonRow}
+          ${codeRow}
           <tr>
             <td class="ac-divider" style="border-top:1px solid #E6E6E1;padding-top:24px;">
               ${footerNote}
