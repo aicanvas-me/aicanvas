@@ -326,14 +326,15 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
       {/* "By continuing…" footer covers both the email and Google sign-in
           paths above. Lighter than the sign-up footer because the user
           already accepted the Terms / Privacy / marketing notice when they
-          first created the account. */}
+          first created the account. Kept short enough for one line at the
+          card's width; forcing nowrap would overflow on a phone instead. */}
       <p className="mt-6 text-xs leading-relaxed text-sand-600 dark:text-sand-500">
-        By continuing, you agree to our{' '}
+        By continuing you agree to our{' '}
         <Link
           href="/terms"
           className="underline hover:text-sand-700 dark:hover:text-sand-100"
         >
-          Terms &amp; Conditions
+          Terms
         </Link>{' '}
         and{' '}
         <Link
