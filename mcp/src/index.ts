@@ -1003,7 +1003,7 @@ server.registerTool(
 )
 
 // ── Usage scanner for validate_usage ─────────────────────────────────────────
-// ponytail: a string scanner, not a TypeScript parse. It reads import lines and
+// This is a string scanner, not a TypeScript parse. It reads import lines and
 // JSX opening tags with balanced braces, which covers ordinary component files.
 // Its ceiling: props passed through a spread object, tags built at runtime, and
 // JSX inside template strings are not seen. The TypeScript compiler would close
@@ -1123,7 +1123,7 @@ function parseAttrs(text: string): { attrs: JsxAttr[]; spread: boolean } {
 // commented-out or quoted <Button> is never scored as a usage. A quote opens a
 // string only after =, (, ,, :, [, {, ?, + or a line start, so an apostrophe in
 // JSX text (don't) does not; "//" after ":" is a URL, not a comment.
-// ponytail: no real tokenizer, so a regex literal containing quotes can throw it.
+// There is no real tokenizer, so a regex literal containing quotes can throw it.
 function blankNoise(code: string): string {
   const out = code.split('')
   const blank = (from: number, to: number) => {
