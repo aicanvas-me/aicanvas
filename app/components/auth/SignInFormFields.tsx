@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { flushSync } from 'react-dom'
 import Link from 'next/link'
 import { createClient } from '../../lib/supabase/client'
 import { formatAuthError } from '../../lib/auth-errors'
@@ -66,10 +67,14 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
   }
 
   // Swapping modes is a new action, so the old message goes too, and focus
-  // lands on the email field so the user can type straight away.
+  // lands on the email field so the user can type straight away. The mode
+  // change is flushed BEFORE focusing, so the field already carries its
+  // link-mode description when a screen reader announces it.
   function switchMode(to: Mode) {
-    setMode(to)
-    clearStatus()
+    flushSync(() => {
+      setMode(to)
+      clearStatus()
+    })
     emailRef.current?.focus()
   }
 
@@ -325,10 +330,9 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
       </p>
 
       {/* "By continuing…" footer covers both the email and Google sign-in
-          paths above. Lighter than the sign-up footer because the user
-          already accepted the Terms / Privacy / marketing notice when they
-          first created the account. Kept short enough for one line at the
-          card's width; forcing nowrap would overflow on a phone instead. */}
+          paths above; the sign-up form carries the same sentence. Kept short
+          enough for one line at the card's width; forcing nowrap would
+          overflow on a phone instead. */}
       <p className="mt-6 text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
         By continuing you agree to our{' '}
         <Link

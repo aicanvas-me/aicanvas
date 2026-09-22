@@ -58,6 +58,18 @@ describe('SignInFormFields, link mode', () => {
     expect(alertText()).toBeNull()
   })
 
+  it('has the description attached at the instant focus moves, not a tick later', () => {
+    mount()
+    password().focus()
+    // Capture what the field carried the moment it received focus.
+    let describedByAtFocus: string | null = 'unset'
+    email().addEventListener('focus', () => {
+      describedByAtFocus = email().getAttribute('aria-describedby')
+    }, { once: true })
+    fireEvent.click(button('Email me a sign-in link'))
+    expect(describedByAtFocus).toBe('signin-link-note')
+  })
+
   it('carries the email typed so far across the switch, both ways', () => {
     mount()
     fireEvent.change(email(), { target: { value: 'a@b.co' } })
