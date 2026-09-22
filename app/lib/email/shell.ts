@@ -8,7 +8,8 @@
 // of a forced dark card. The olive accent + wordmark stay constant in both modes.
 //
 // The Supabase Auth templates (confirm signup / magic link / reset password /
-// change email / invite / reauthentication) live in the Supabase dashboard, NOT
+// change email / invite / reauthentication, plus the password-changed and
+// email-changed security notifications) live in the Supabase dashboard, NOT
 // in this repo, but they are BUILT FROM THIS SHELL: after changing anything
 // here, re-render them with
 // `node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/render-auth-emails.mjs <dir>`

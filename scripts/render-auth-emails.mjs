@@ -1,5 +1,5 @@
 /**
- * Renders the six Supabase Auth email templates from the SAME shell the app's
+ * Renders the Supabase Auth email templates from the SAME shell the app's
  * own emails use, so the two can never drift apart again. The templates live in
  * the Supabase dashboard, not in this repo, so this script only WRITES HTML to
  * a directory; uploading it is a separate, deliberate step.
@@ -98,6 +98,33 @@ export const AUTH_EMAILS = {
         "If you didn't request this, you can safely ignore this email and your account stays unchanged.",
     }),
   },
+
+  // Security notifications. Supabase sends these AFTER the fact, so they carry
+  // no token and their buttons point at ordinary pages rather than a
+  // {{ .ConfirmationURL }}. Only the two enabled in the project are defined
+  // here; the other five notification templates stay off.
+  password_changed_notification: {
+    subject: 'Your password was changed',
+    html: emailShell({
+      title: 'Your password was changed',
+      heading: 'Your password was changed',
+      bodyHtml: body(
+        "The password on your AI Canvas account ({{ .Email }}) was just changed. If this was you, you're all set. If not, reset it now and secure your account.",
+      ),
+      button: { label: 'Reset your password', url: 'https://aicanvas.me/account/forgot-password' },
+    }),
+  },
+  email_changed_notification: {
+    subject: 'Your account email was changed',
+    html: emailShell({
+      title: 'Your account email was changed',
+      heading: 'Your account email was changed',
+      bodyHtml: body(
+        "The email on your AI Canvas account ({{ .OldEmail }}) was changed to {{ .Email }}. If you didn't do this, contact us right away.",
+      ),
+      button: { label: 'Contact us', url: 'https://aicanvas.me/contact' },
+    }),
+  },
 }
 
 /** Every variable Supabase substitutes into a template. Losing one silently
@@ -109,6 +136,8 @@ const REQUIRED_VARS = {
   email_change: [URL_VAR, '{{ .Email }}', '{{ .NewEmail }}'],
   invite: [URL_VAR],
   reauthentication: ['{{ .Token }}'],
+  password_changed_notification: ['{{ .Email }}'],
+  email_changed_notification: ['{{ .OldEmail }}', '{{ .Email }}'],
 }
 
 export function renderAuthEmails(outDir) {
