@@ -27,7 +27,7 @@ describe('ForgotPasswordForm', () => {
     resetPasswordForEmail.mockResolvedValue({ error: { message: 'Unable to validate email address' } })
     fireEvent.change(email(), { target: { value: 'not-an-address' } })
     fireEvent.submit(email().closest('form')!)
-    await waitFor(() => expect(screen.getByText('Unable to validate email address')).toBeTruthy())
+    await waitFor(() => expect(screen.getByRole('alert').textContent).toBe('Unable to validate email address'))
 
     fireEvent.change(email(), { target: { value: 'me@example.com' } })
     expect(screen.queryByText('Unable to validate email address')).toBeNull()

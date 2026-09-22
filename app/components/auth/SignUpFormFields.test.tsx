@@ -38,6 +38,7 @@ beforeEach(() => {
 describe('SignUpFormFields', () => {
   it('clears a sign-up error when the email is edited', async () => {
     await submitAndFail('User already registered')
+    expect(screen.getByRole('alert').textContent).toBe('User already registered')
     fireEvent.change(email(), { target: { value: 'other@example.com' } })
     expect(screen.queryByText('User already registered')).toBeNull()
   })
