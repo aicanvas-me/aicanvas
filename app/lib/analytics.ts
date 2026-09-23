@@ -29,6 +29,10 @@ type EventMap = {
   'MCP Token Copy': { ok: boolean }
   'Manage Subscription Open': Record<string, never>
   'Checkout Step': { step: string }
+  // Business is not open yet. `open` counts who wanted it enough to ask, and
+  // `submit` counts who left an address, so the gap between the two is the
+  // honest read on demand before a line of seat code exists.
+  'Business Waitlist': { plan: string; step: 'open' | 'submit' }
 }
 
 // Runtime mirror of EventMap's keys plus the two events sent via beacon()
@@ -52,6 +56,7 @@ export const BEACON_EVENTS = [
   'MCP Token Copy',
   'Manage Subscription Open',
   'Checkout Step',
+  'Business Waitlist',
   'js_error',
   '$pageview',
 ] as const

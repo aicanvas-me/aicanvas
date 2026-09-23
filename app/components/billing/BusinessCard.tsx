@@ -1,9 +1,8 @@
 'use client'
 
-import Link from 'next/link'
 import { CheckCircle, Users } from '@phosphor-icons/react'
-import { buttonClasses } from '../buttonClasses'
 import { TerminatorSkull } from '../auth/TerminatorReveal'
+import { BusinessWaitlist } from './BusinessWaitlist'
 import { PREMIUM_FEATURES } from './PremiumCards'
 
 // The four things the Business tier adds. Seats are the parity part: a ten
@@ -26,9 +25,7 @@ type BusinessPlan = {
   amount: string
   suffix: string
   note: string
-  /** Twelve months at the monthly price, struck through so the saving reads in money. */
-  anchor?: string
-  saving?: string
+  /** Yearly only: what a month works out at, so the two cards compare directly. */
   perMonth?: string
   featured?: boolean
 }
@@ -48,8 +45,6 @@ const BUSINESS_PLANS: BusinessPlan[] = [
     amount: '$980',
     suffix: 'year',
     note: 'Billed yearly, for up to 10 people.',
-    anchor: '$1,440',
-    saving: 'save 32%',
     perMonth: '$81.67/mo',
     featured: true,
   },
@@ -78,18 +73,6 @@ function BusinessPlanCard({ plan }: { plan: BusinessPlan }) {
           Everything in Premium for your whole team, building to one set of rules.
         </p>
 
-        {/* Mirrors the Premium card: the yearly anchor sits beside the saving so
-            the discount reads in money, not just in percent. The monthly card
-            keeps an invisible copy of the row so both prices sit on one line. */}
-        <div className={`mt-3 flex items-center gap-3 ${plan.anchor ? '' : 'invisible'}`} aria-hidden={!plan.anchor}>
-          <span className="rounded-md bg-olive-500 px-3 py-1 text-xs font-semibold text-sand-950">
-            {plan.saving ?? 'save'}
-          </span>
-          <span className="text-sm font-medium text-sand-600 line-through dark:text-sand-500">
-            {plan.anchor ?? '$0'}
-          </span>
-        </div>
-
         <div className="mt-4 flex items-baseline gap-2">
           <span className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">
             {plan.amount}
@@ -103,16 +86,7 @@ function BusinessPlanCard({ plan }: { plan: BusinessPlan }) {
         </div>
         <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">{plan.note}</p>
 
-        <Link
-          href="/contact"
-          className={`mt-6 ${buttonClasses({
-            variant: plan.featured ? 'primary' : 'outline',
-            size: 'lg',
-            fullWidth: true,
-          })}`}
-        >
-          Talk to us
-        </Link>
+        <BusinessWaitlist plan={plan.key} featured={plan.featured} />
       </div>
 
       <div className="flex-1 rounded-2xl bg-sand-50/70 px-2 py-6 dark:bg-sand-950 sm:px-2.5">
@@ -148,14 +122,8 @@ export function BusinessCards() {
         ))}
       </div>
       <p className="mt-6 text-center text-sm text-sand-600 dark:text-sand-400">
-        More than 10 people?{' '}
-        <Link
-          href="/contact"
-          className="font-semibold text-olive-600 underline-offset-2 hover:text-olive-800 hover:underline dark:text-olive-400 dark:hover:text-olive-300"
-        >
-          Tell us how many
-        </Link>{' '}
-        and we will size it with you.
+        More than 10 people? Join the list above and tell us how many. That number is
+        what decides the next bracket.
       </p>
     </>
   )
