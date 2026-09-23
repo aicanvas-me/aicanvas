@@ -1,6 +1,6 @@
 #!/bin/bash
-# Weekly Bing Webmaster audit + submit. Runs from launchd every Sunday at 07:30,
-# after the GSC run. The Bing twin of gsc-weekly.sh:
+# Weekly Bing Webmaster audit + submit. gsc-weekly.sh calls it when the GSC run
+# ends, so it has no launchd job of its own. The Bing twin of gsc-weekly.sh:
 # - Runs the audit (bing-audit.ts keeps the previous audit for diffing)
 # - Submits the URLs Bing has not crawled, within the daily quota
 # - Appends results to scripts/bing-output/weekly.log
