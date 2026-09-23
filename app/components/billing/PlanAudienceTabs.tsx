@@ -79,8 +79,8 @@ export function PlanAudienceTabs({
                   <span
                     className={`rounded-full px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.08em] ${
                       selected
-                        ? 'bg-sand-950/15 text-sand-950'
-                        : 'bg-olive-500/15 text-olive-700 dark:bg-olive-500/20 dark:text-olive-400'
+                        ? 'bg-sand-50 text-sand-700'
+                        : 'bg-sand-200 text-sand-700 dark:bg-sand-800 dark:text-sand-300'
                     }`}
                   >
                     {badge}
