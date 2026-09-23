@@ -522,6 +522,8 @@ function TrendChartDemo() {
         data={TREND_DATA}
         title="Throughput vs plan"
         yLabel="Requests / sec"
+        // `t` is a day of the month, so the axis and the tooltip heading read as dates.
+        formatX={(d) => `Sep ${d}`}
         height={220}
         series={[
           { key: 'planned', label: 'Planned', role: 'baseline' },
