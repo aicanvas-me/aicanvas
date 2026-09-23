@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/reconcile-subscriptions",
       "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/renewal-thanks",
+      "schedule": "0 9 * * *"
     }
   ]
 }

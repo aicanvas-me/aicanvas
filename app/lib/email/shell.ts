@@ -71,10 +71,13 @@ export function emailShell(opts: {
   heading: string
   /** Main content HTML. Build rows/paragraphs with emailText() so they adapt. */
   bodyHtml: string
+  /** Optional content after the button or code, for a letter that continues
+   *  past its call to action. Build it with emailText() like bodyHtml. */
+  afterHtml?: string
   /** Optional fine-print line shown above the constant "AI Canvas · aicanvas.me". */
   footerNoteHtml?: string
 } & EmailAction): string {
-  const { title, heading, bodyHtml, button, code, footerNoteHtml } = opts
+  const { title, heading, bodyHtml, button, code, afterHtml, footerNoteHtml } = opts
 
   // min-width keeps a short label ("Sign in") from shrinking to a stub next to
   // the long ones; Outlook ignores it and falls back to the padding.
@@ -94,6 +97,14 @@ export function emailShell(opts: {
                   <span class="ac-heading" style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:30px;font-weight:700;letter-spacing:0.22em;color:#1A1A19;">${code}</span>
                 </td>
               </tr></table>
+            </td>
+          </tr>`
+    : ''
+
+  const afterRow = afterHtml
+    ? `<tr>
+            <td style="padding-bottom:32px;">
+              ${afterHtml}
             </td>
           </tr>`
     : ''
@@ -153,7 +164,7 @@ export function emailShell(opts: {
             </td>
           </tr>
           ${buttonRow}
-          ${codeRow}
+          ${codeRow}${afterRow}
           <tr>
             <td class="ac-divider" style="border-top:1px solid #E6E6E1;padding-top:24px;">
               ${footerNote}
