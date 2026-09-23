@@ -117,16 +117,22 @@ export function TopBar() {
 
   return (
     <header className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
+      {/* With the offer pill in the middle, both ends carry flex-1, so they
+          take equal shares of what is left and the pill lands on the centre
+          line of the bar without floating over anything. The crumb keeps
+          min-w-0 so it truncates into its share instead of pushing the pill off
+          centre. Without the pill the right cluster goes back to shrink-0 and
+          the bar is the two ends it has always been.
+          The two are written as alternatives, never both: flex-1 and shrink-0
+          each set flex-shrink, so a class string carrying both is settled by
+          the built stylesheet rather than by the order written here. */}
       <div className="min-w-0 flex-1">
         {override !== undefined ? override : crumbs ? <Breadcrumbs crumbs={crumbs} /> : null}
       </div>
-      {/* The offer pill centres itself on the bar and takes no layout space,
-          so the crumb and the right cluster keep the exact positions they hold
-          where it is absent. */}
       {offerMode && <OfferBanner mode={offerMode} />}
       {/* Right cluster order whenever a page mounts a CTA: theme toggle, then
           the CTA, then the user. */}
-      <div className="flex shrink-0 items-center gap-2">
+      <div className={`flex items-center gap-2 ${offerMode ? 'min-w-0 flex-1 justify-end' : 'shrink-0'}`}>
         <ThemeToggle />
         {slot && <TopBarInstallSlot id={slot} />}
         <TopAuthPill />

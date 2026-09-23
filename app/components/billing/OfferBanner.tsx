@@ -17,14 +17,15 @@ import { checkoutComingSoon, premiumEnabled } from '../../../lib/flags'
 // whether it is a control there, is decided by offerPillMode in
 // top-bar-crumbs.ts, next to the rest of the bar's route rules.
 //
-// One row, because the bar is 56px tall, and absolutely centred on the bar
-// rather than placed between the crumb and the user pill: those two are
-// different widths, so a flex middle would sit off-centre and the two ends
-// would have to give up the positions they hold on every other page. Absolute
-// keeps the change to this route and leaves the rest of the chrome untouched.
+// One row, because the bar is 56px tall. It is a real cell in the bar rather
+// than something floated over it: the bar gives the crumb and this pill equal
+// shares, so the pill lands centred AND the crumb truncates instead of being
+// painted over. Floating it was tried first and it covered the crumb on any
+// laptop under about 1600px, which is most of them.
 //
-// The wrapper takes no pointer events, so nothing here can swallow a click
-// meant for the crumb or the sign-in button; only the pill itself is clickable.
+// Under 1220px the countdown drops and the offer keeps its words. That width
+// is where the full line stops fitting beside a long crumb, and the price is
+// the part worth keeping.
 //
 // It leads to /pricing rather than straight into the Paddle overlay. A bar
 // that is present on first paint should not be able to throw a payment sheet
@@ -67,9 +68,19 @@ export function OfferBanner({ mode }: { mode: OfferPillMode }) {
   const [left, setLeft] = useState<number | null>(null)
 
   useEffect(() => {
-    const tick = () => setLeft(OFFER_ENDS.getTime() - Date.now())
+    // The bar is shared chrome and never unmounts, so the cleanup below only
+    // runs when the whole app goes. Once the offer has closed there is nothing
+    // left to count: stop the timer from inside it, or every tab left open
+    // past the deadline re-renders a component that returns null, once a
+    // second, forever.
+    let id: ReturnType<typeof setInterval> | undefined
+    const tick = () => {
+      const ms = OFFER_ENDS.getTime() - Date.now()
+      setLeft(ms)
+      if (ms <= 0 && id !== undefined) clearInterval(id)
+    }
     tick()
-    const id = setInterval(tick, 1000)
+    id = setInterval(tick, 1000)
     return () => clearInterval(id)
   }, [])
 
@@ -99,13 +110,15 @@ export function OfferBanner({ mode }: { mode: OfferPillMode }) {
       <span className="opacity-60">·</span>
       <span className="line-through opacity-70">{usd(YEARLY_ANCHOR)}</span>
       now {usd(YEARLY_PRICE)} per year
-      <span className="opacity-60">·</span>
-      <span className="tabular-nums">{remaining(left)} left</span>
+      <span className="hidden items-center gap-1.5 min-[1220px]:inline-flex">
+        <span className="opacity-60">·</span>
+        <span className="tabular-nums">{remaining(left)} left</span>
+      </span>
     </span>
   )
 
   return (
-    <div className="pointer-events-none absolute inset-y-0 left-0 right-0 hidden items-center justify-center lg:flex">
+    <div className="hidden shrink-0 items-center px-4 lg:flex">
       {mode === 'static' ? (
         <span className={`whitespace-nowrap ${STATIC_PILL}`}>
           <span className="sr-only">{offer}</span>
@@ -116,7 +129,7 @@ export function OfferBanner({ mode }: { mode: OfferPillMode }) {
           href="/pricing"
           onClick={() => track('Offer Banner Click', {})}
           aria-label={`${offer}. See pricing`}
-          className={`pointer-events-auto whitespace-nowrap ${buttonClasses({ variant: 'accent', size: 'xs', pill: true })}`}
+          className={`whitespace-nowrap ${buttonClasses({ variant: 'accent', size: 'xs', pill: true })}`}
         >
           {row}
         </Link>
