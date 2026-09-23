@@ -531,6 +531,12 @@ export function FoundationView() {
                   </span>
                 </div>
               ))}
+              {/* An odd list leaves the last row half empty, and the row lines
+                  and the column divider stopped short there. An empty cell
+                  closes the table; one column has no gap to fill. */}
+              {group.rows.length % 2 === 1 ? (
+                <div aria-hidden className="hidden border-l border-t border-sand-300 sm:block dark:border-sand-800" />
+              ) : null}
             </div>
           </div>
         ))}
