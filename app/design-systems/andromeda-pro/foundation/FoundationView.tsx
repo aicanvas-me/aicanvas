@@ -425,11 +425,12 @@ export function FoundationView() {
         because 100 barely stands off the light page. The one thing that overrules the
         mirror is <strong className="font-semibold text-sand-900 dark:text-sand-50">WCAG</strong>.
         Where the mirrored value misses its contrast minimum on the light page ground it steps
-        toward the deep end until it clears. That is the whole reason the text row below reads
-        300 &rarr; 500 rather than 300 &rarr; 400: on the light ground the 400 stop measures 3.97
-        for brand, 4.21 for success and 3.12 for warning, all under the 4.5 that normal text
-        requires, so they step again. Danger reaches 4.86 at 400 and stops there. The row under
-        it lands on 400 everywhere because a mark is a non-text object and needs 3.0, not 4.5.
+        toward the deep end until it clears. That is why brand and success text reads
+        300 &rarr; 500 rather than 300 &rarr; 400: on the light ground their 400 stop measures
+        3.97 and 4.21, under the 4.5 that normal text requires, so they step again. Danger
+        reaches 4.86 at 400 and stops there, and warning&rsquo;s 400 is a deep ochre drawn to
+        clear it at 4.88, so every warning on light is one ochre. The mark row lands on 400
+        everywhere because a mark is a non-text object and needs 3.0, not 4.5.
         Both columns are resolved from the same functions the site paints with, so they cannot
         drift from what you see.
       </p>
