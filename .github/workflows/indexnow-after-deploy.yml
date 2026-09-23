@@ -1,0 +1,38 @@
+name: indexnow after deploy
+
+# After each production deploy goes live, tell IndexNow (Bing, Yandex, Seznam,
+# Naver) about sitemap URLs it has not been told about yet. Vercel posts the
+# deployment status to GitHub, so this runs when production is actually
+# serving the new build, not on a timer. The list of already-pinged URLs is
+# kept in the Actions cache. Uses only the public key file; no secrets.
+
+on:
+  deployment_status:
+
+# Queue, never cancel: a cancelled run could ping and then skip saving state.
+concurrency:
+  group: indexnow-production
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    if: github.event.deployment_status.state == 'success' && github.event.deployment.environment == 'Production'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Restore the list of URLs already pinged
+        uses: actions/cache/restore@v4
+        with:
+          path: indexnow-state.json
+          key: indexnow-state-${{ github.run_id }}
+          restore-keys: indexnow-state-
+      - name: Ping new URLs
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/indexnow.ts --state=indexnow-state.json
+      - name: Save the list
+        uses: actions/cache/save@v4
+        with:
+          path: indexnow-state.json
+          key: indexnow-state-${{ github.run_id }}

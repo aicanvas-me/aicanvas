@@ -67,6 +67,10 @@ app/lib/component-codes.generated.ts
 /scripts/gsc-output/*
 !/scripts/gsc-output/.gitkeep
 
+# Bing Webmaster tooling outputs (audit reports, submission logs)
+/scripts/bing-output/*
+!/scripts/bing-output/.gitkeep
+
 # studio prototype (local-only — see "Studio prototype" memory)
 /app/tune/
 scripts/sync-output/

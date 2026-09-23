@@ -21,6 +21,9 @@
     "gsc:audit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/gsc-audit.ts",
     "gsc:submit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/gsc-submit.ts",
     "gsc:keywords": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/gsc-keywords.ts",
+    "bing:audit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/bing-audit.ts",
+    "bing:submit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/bing-submit.ts",
+    "indexnow": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/indexnow.ts",
     "lint:prompts": "node scripts/lint-prompts.mjs",
     "andromeda:contrast": "node --import ./design-systems/andromeda/_tools/ts-resolve.mjs design-systems/andromeda/_tools/light-contrast.selfcheck.mjs"
   },
