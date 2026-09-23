@@ -168,7 +168,7 @@ const PIVOT_ROLES = [
 ] as const
 
 const stopOf = (ramp: Record<string, string>, value: string) =>
-  Object.entries(ramp).find(([, v]) => v === value)?.[0] ?? '-'
+  Object.entries(ramp).find(([, v]) => v === value)?.[0] ?? 'ink'
 
 const PIVOT_TABLE = PIVOT_ROLES.map(([suffix, title, what]) => ({
   suffix,
@@ -428,9 +428,10 @@ export function FoundationView() {
         toward the deep end until it clears. That is why brand and success text reads
         300 &rarr; 500 rather than 300 &rarr; 400: on the light ground their 400 stop measures
         3.97 and 4.21, under the 4.5 that normal text requires, so they step again. Danger
-        reaches 4.86 at 400 and stops there, and warning&rsquo;s 400 is a deep ochre drawn to
-        clear it at 4.88, so every warning on light is one ochre. The mark row lands on 400
-        everywhere because a mark is a non-text object and needs 3.0, not 4.5.
+        reaches 4.86 at 400 and stops there. Warning&rsquo;s 400 measures 3.12, and its 500
+        clears 4.5 but reads as brown, so its words take an authored deep ochre, marked{' '}
+        <em>ink</em> below, the most saturated amber that clears 4.5 (4.88). The mark row lands
+        on 400 everywhere because a mark is a non-text object and needs 3.0, not 4.5.
         Both columns are resolved from the same functions the site paints with, so they cannot
         drift from what you see.
       </p>
