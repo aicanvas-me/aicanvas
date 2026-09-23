@@ -10,7 +10,7 @@
 // shim, whose modules carry 'use client' — the same pattern the component
 // demos use. Everything here renders statically all the same.
 import { useRef } from 'react'
-import { ArrowUpRight } from '@phosphor-icons/react'
+import { ArrowUpRight, Crosshair, Eye, HandTap, Keyboard, ListChecks, Pause } from '@phosphor-icons/react'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { SwatchTooltip } from './SwatchTooltip'
@@ -222,6 +222,42 @@ const ALL_COLOURS = GROUP_ORDER.map(([prefix, title, note]) => {
   return { prefix, title, note, rows }
 }).filter((g) => g.rows.length > 0)
 
+
+// What the rules require beyond contrast, each one a `must` or `should` in the
+// brain (interaction states, motion, color, responsive) or a component's own
+// a11y frontmatter. Plain claims only: nothing here the brain does not state.
+const A11Y_PRACTICES = [
+  {
+    icon: Crosshair,
+    title: 'Focus you can see',
+    body: 'Reached by keyboard, every control shows one 1px ring from the focus token, in place of the browser default. An invalid field gets a red ring instead.',
+  },
+  {
+    icon: Keyboard,
+    title: 'Full keyboard use',
+    body: 'Menus move with the arrow keys, Home and End. The drawer keeps focus inside while open and hands it back when it closes. The date picker moves by day, week and month. Escape closes what opened.',
+  },
+  {
+    icon: Pause,
+    title: 'Reduced motion',
+    body: 'When a visitor asks their system for less motion, entrances and cascades turn off, state feedback stays, and animated objects hold a still frame.',
+  },
+  {
+    icon: Eye,
+    title: 'Color is never the only signal',
+    body: 'Every state a reader has to tell apart also carries an icon, a dot, a label, an arrow or a dash. Success and warning look almost the same to some color-blind readers; the second signal is what they read.',
+  },
+  {
+    icon: HandTap,
+    title: 'Touch targets',
+    body: 'On touch screens the tappable area grows to 40px while the control keeps its size on screen. In tight clusters it stops at 32px, so neighbors never overlap.',
+  },
+  {
+    icon: ListChecks,
+    title: 'Rules per component',
+    body: 'Every component lists its own accessibility behavior in its rules: the roles and labels it uses, its keys and its focus handling. An icon-only button, for one, must carry a label.',
+  },
+] as const
 
 const SPACING_STEPS = [1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12] as const
 
@@ -503,20 +539,30 @@ export function FoundationView() {
       {/* ── Accessibility ── */}
       <SectionHeading>Accessibility</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        Every color pair in this system meets WCAG 2.2 level AA, in both themes. The ratios are
-        measured by a contrast script, not judged by eye, and contrast is the one thing here that
-        overrules a design decision, including the family pivot above.
+        Contrast is checked by a script in both themes, not judged by eye, and it is the one thing
+        here that overrules a design decision, including the family pivot above. The rest is
+        written into the system&rsquo;s rules, so every component follows it the same way.
       </p>
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           ['4.5 : 1', 'Normal text', 'Anything under 24px, or under 18.66px bold. Almost all of our text. WCAG 1.4.3.'],
-          ['3.0 : 1', 'Large text and non-text', 'Display sizes, and every icon, border, chart line, dot and focus ring. WCAG 1.4.3 and 1.4.11.'],
-          ['7.0 : 1', 'AAA, where it lands', 'Not a target for the whole system, but the primary, secondary and muted text inks clear it in both themes.'],
+          ['3.0 : 1', 'Large text and non-text', 'Display sizes, and the status icons, dots and borders, the chart lines and the focus ring. WCAG 1.4.3 and 1.4.11.'],
+          ['10 : 1', 'Measured headroom', 'The script checks the 4.5 floor. Measured, the primary, secondary and muted text inks sit above 10:1 in both themes, past the 7:1 of AAA.'],
         ].map(([ratio, who, what]) => (
           <div key={ratio} className="rounded-xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
             <p className="text-base font-bold tabular-nums text-sand-900 dark:text-sand-50">{ratio}</p>
             <p className="text-[13px] font-semibold text-sand-700 dark:text-sand-300">{who}</p>
             <p className="mt-1 text-[12px] leading-relaxed text-sand-500">{what}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {A11Y_PRACTICES.map(({ icon: Icon, title, body }) => (
+          <div key={title} className="rounded-xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
+            <Icon size={18} weight="regular" aria-hidden className="text-sand-600 dark:text-sand-400" />
+            <p className="mt-3 text-[13px] font-semibold text-sand-900 dark:text-sand-50">{title}</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-sand-600 dark:text-sand-400">{body}</p>
           </div>
         ))}
       </div>
