@@ -446,6 +446,20 @@ const INTERACTIONS = {
   'fluid-simulation-hero': async (preview, page) => {
     await page.waitForTimeout(5600 - SETTLE_MS)
   },
+  // AI Knowledge Map, framed. The preview document boots in its own iframe, then
+  // the orb, wires, cards, fan and rows arrive over about three seconds; wait
+  // out both before the shot. No hover: it would raise the full-view pill.
+  'ai-knowledge-map': async (preview, page) => {
+    await page.waitForTimeout(8000 - SETTLE_MS)
+    // the frame's document loaded after the dev-chrome style went in, so hide
+    // its badge again now
+    for (const f of page.frames()) {
+      if (f !== page.mainFrame()) {
+        try { await f.addStyleTag({ content: '[data-dev-overlay], nextjs-portal { display: none !important }' }) } catch {}
+      }
+    }
+    await page.waitForTimeout(100)
+  },
 }
 
 async function hoverCenter(preview, page) {
