@@ -413,7 +413,7 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
   'ai-knowledge-map': {
     useCases: ['Due Diligence Dashboard', 'AI Research Assistant', 'Vendor Risk Review'],
     about:
-      'AI Knowledge Map is a dotted AI orb whose travelling light band sends a comet down the active wire to five category cards, each with an icon tile, a result count, and a quality ring split into high, medium, and low results. The active card fans its results out along a curved arc, and a confidence ring under the orb tracks the overall score. Motion drives the comet, the card springs, and the fan-out; on phones the layout becomes a fading chip row above a straight list. Twelve props cover categories, results, confidence, and layout, with keyboard paging, radiogroup roles, and a matching light theme. It suits AI search products, RAG dashboards, and knowledge-base status screens.',
+      'AI Knowledge Map is a dotted AI orb whose travelling light band sends a comet down the active wire to five category cards, each with an icon tile, a result count, and a quality ring split into high, medium, and low results. The active card fans its results out along a curved arc, and a confidence ring under the orb tracks the overall score. Motion drives the card springs and the fan-out while plain CSS keyframes carry the comet; on phones the layout becomes a fading chip row above a straight list. Twelve props cover categories, results, confidence, and layout, with keyboard paging, radiogroup roles, and a matching light theme. It suits AI search products, RAG dashboards, and knowledge-base status screens.',
   },
   'filter-menu': {
     useCases: ['Search results', 'Product catalog', 'Job listings'],
