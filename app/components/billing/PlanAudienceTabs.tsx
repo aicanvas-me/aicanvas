@@ -5,9 +5,12 @@ import { motion, useReducedMotion } from 'framer-motion'
 
 export type PlanAudience = 'individual' | 'business'
 
-const OPTIONS: { key: PlanAudience; label: string }[] = [
+const OPTIONS: { key: PlanAudience; label: string; badge?: string }[] = [
   { key: 'individual', label: 'Individual' },
-  { key: 'business', label: 'Business' },
+  // The badge rides inside the tab rather than beside the whole control,
+  // because only one of the two is unreleased and a marker floating next to
+  // the pair would read as if both were.
+  { key: 'business', label: 'Business', badge: 'Soon' },
 ]
 
 export function audiencePanelId(prefix: string, key: PlanAudience) {
@@ -42,7 +45,7 @@ export function PlanAudienceTabs({
         aria-label="Plans for individuals or for a business"
         className="inline-flex rounded-xl border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900"
       >
-        {OPTIONS.map(({ key, label }) => {
+        {OPTIONS.map(({ key, label, badge }) => {
           const selected = value === key
           return (
             <button
@@ -70,7 +73,20 @@ export function PlanAudienceTabs({
                   }
                 />
               )}
-              <span className="relative">{label}</span>
+              <span className="relative flex items-center gap-1.5">
+                {label}
+                {badge && (
+                  <span
+                    className={`rounded-full px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.08em] ${
+                      selected
+                        ? 'bg-sand-950/15 text-sand-950'
+                        : 'bg-olive-500/15 text-olive-700 dark:bg-olive-500/20 dark:text-olive-400'
+                    }`}
+                  >
+                    {badge}
+                  </span>
+                )}
+              </span>
             </button>
           )
         })}
