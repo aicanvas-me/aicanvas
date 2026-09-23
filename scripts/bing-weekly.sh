@@ -47,8 +47,12 @@ fi
 # 2. Submit (only if audit succeeded)
 SUBMIT_SUMMARY=""
 if $AUDIT_OK; then
-  npm run bing:submit >> "$LOG" 2>&1
-  SUBMIT_SUMMARY=$(grep -E "^Done\." "$LOG" | tail -1)
+  # The summary comes from THIS run's output, never the shared log: a crash
+  # before submit's own "Done." line must not borrow last week's.
+  SUBMIT_OUT=$(npm run bing:submit 2>&1)
+  echo "$SUBMIT_OUT" >> "$LOG"
+  SUBMIT_SUMMARY=$(echo "$SUBMIT_OUT" | grep -E "^Done\. [0-9]+ ok" | tail -1)
+  SUBMIT_SUMMARY=${SUBMIT_SUMMARY:-submit FAILED, see weekly.log}
 fi
 
 # 3. Notification
