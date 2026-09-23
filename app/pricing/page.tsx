@@ -11,7 +11,7 @@ import { TerminatorCool } from '../components/auth/TerminatorReveal'
 import { premiumEnabled } from '../../lib/flags'
 import { PremiumCards } from '../components/billing/PremiumCards'
 import { FaqAccordion, type FaqItem } from '../components/FaqAccordion'
-import { BusinessCard } from '../components/billing/BusinessCard'
+import { BusinessCards } from '../components/billing/BusinessCard'
 import {
   PlanAudienceTabs,
   audiencePanelId,
@@ -262,7 +262,7 @@ export default function PricingPage() {
               id={audiencePanelId('pricing-audience', audience)}
               aria-labelledby={`pricing-audience-${audience}-tab`}
             >
-              {audience === 'individual' ? <PremiumCards /> : <BusinessCard />}
+              {audience === 'individual' ? <PremiumCards /> : <BusinessCards />}
             </div>
           </>
         ) : (

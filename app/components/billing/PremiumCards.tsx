@@ -30,7 +30,9 @@ const FREE_FEATURES = [
 // colour and only travels, so nothing about it changes except where it is.
 const CYCLES = ['monthly', 'yearly'] as const
 
-const PREMIUM_FEATURES = [
+// Exported so the Business cards can list the same unlocks without a second
+// copy of the wording drifting away from this one.
+export const PREMIUM_FEATURES = [
   'Every premium component and block, one command install',
   'Remix with AI on every component',
   'Full design systems, tokens to templates',
