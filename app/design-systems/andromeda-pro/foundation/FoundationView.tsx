@@ -10,6 +10,7 @@
 // shim, whose modules carry 'use client' — the same pattern the component
 // demos use. Everything here renders statically all the same.
 import { useRef } from 'react'
+import { ArrowUpRight } from '@phosphor-icons/react'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { SwatchTooltip } from './SwatchTooltip'
@@ -61,8 +62,6 @@ const TYPE_ROLES = [
   'displayXs', 'displaySm', 'displayMd', 'displayLg', 'displayXl', 'display2xl',
 ] as const
 
-const px = (value: string) => value.replace('px', '')
-
 // px to rem at the browser default root, the way Untitled UI states both on
 // every row of its own scale. The token stays the source; rem is derived here
 // so a size that moves cannot leave a stale rem behind.
@@ -90,22 +89,30 @@ const TYPE_RAMP = TYPE_ROLES.map((step) => {
   }
 })
 
-// The one named style. Everything else in the system is a step plus a weight,
-// read straight off the ramp above; `label` exists only because it carries a
-// property the ramp deliberately does not, which is case. Read off the token,
-// never re-typed, and typed against it so removing the style fails the build
-// here instead of white-screening this page.
-const LABEL = tokens.typography.role.label
+// The two faces, named by the tokens and loaded by the site (Manrope in the
+// root layout, JetBrains Mono in the Andromeda Pro layout), so each specimen
+// renders in the real face through the same stack a component uses.
+const WEIGHTS = (['regular', 'medium', 'semibold', 'bold'] as const).map((name) => ({
+  name,
+  value: tokens.typography.weight[name],
+}))
 
-const nameOf = (scale: Record<string, string | number>, value: string | number) =>
-  Object.entries(scale).find(([, v]) => v === value)?.[0] ?? String(value)
-
-const LABEL_RECIPE = [
-  `${px(LABEL.fontSize)} / ${px(LABEL.lineHeight)}`,
-  nameOf(tokens.typography.weight, LABEL.fontWeight),
-  nameOf(tokens.typography.tracking, LABEL.letterSpacing),
-  'uppercase',
-].join(' · ')
+const TYPEFACES = [
+  {
+    role: 'Default',
+    name: 'Manrope',
+    family: tokens.typography.fontSans,
+    href: 'https://fonts.google.com/specimen/Manrope',
+    note: 'A modern geometric sans with open, even shapes that stay clear at small interface sizes and hold together at display sizes. Every label, value and heading is set in it unless a component has a stated reason not to.',
+  },
+  {
+    role: 'Mono',
+    name: 'JetBrains Mono',
+    family: tokens.typography.fontMono,
+    href: 'https://fonts.google.com/specimen/JetBrains+Mono',
+    note: 'A monospace face drawn for code, with a tall lowercase and clearly different 0 and O, 1 and l. Used only where characters must line up: code, keyboard keys and identifiers.',
+  },
+] as const
 
 // ── The family pivot ────────────────────────────────────────────────────────
 // Both columns are RESOLVED from the same functions the site paints with, so
@@ -528,6 +535,61 @@ export function FoundationView() {
         ))}
       </div>
 
+      {/* ── Typefaces ── */}
+      <SectionHeading>Typefaces</SectionHeading>
+      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
+        Two free, open-source faces from Google Fonts. Manrope carries the interface; JetBrains
+        Mono is kept for the few places that need fixed-width characters.
+      </p>
+      <div className="grid gap-3 sm:grid-cols-2">
+        {TYPEFACES.map((face) => (
+          <div
+            key={face.name}
+            className="flex flex-col rounded-xl border border-sand-300 p-5 dark:border-sand-800"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">{face.role}</p>
+            <p
+              className="mt-3 text-[56px] font-semibold leading-none text-sand-900 dark:text-sand-50"
+              style={{ fontFamily: face.family }}
+            >
+              Aa
+            </p>
+            <p className="mt-4 text-base font-bold text-sand-900 dark:text-sand-50">{face.name}</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-sand-600 dark:text-sand-400">{face.note}</p>
+            <p
+              className="mt-4 break-all text-[15px] leading-relaxed text-sand-700 [font-variant-ligatures:none] dark:text-sand-300"
+              style={{ fontFamily: face.family }}
+            >
+              ABCDEFGHIJKLMNOPQRSTUVWXYZ
+              <br />
+              abcdefghijklmnopqrstuvwxyz
+              <br />
+              0123456789
+            </p>
+            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1">
+              {WEIGHTS.map((w) => (
+                <span
+                  key={w.name}
+                  className="text-[13px] capitalize text-sand-700 dark:text-sand-300"
+                  style={{ fontFamily: face.family, fontWeight: w.value }}
+                >
+                  {w.name} {w.value}
+                </span>
+              ))}
+            </div>
+            <a
+              href={face.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+            >
+              {face.name} on Google Fonts
+              <ArrowUpRight size={14} weight="regular" aria-hidden />
+            </a>
+          </div>
+        ))}
+      </div>
+
       {/* ── Typography ── */}
       <SectionHeading>The type ramp</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
@@ -568,30 +630,6 @@ export function FoundationView() {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* ── The one named style ── */}
-      <SectionHeading>The one named style</SectionHeading>
-      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        Everything in the system is a step plus a weight. There is exactly one exception,
-        because it carries something the ramp deliberately does not: case. Uppercase is a
-        decision a component makes, not a property of a size, so it lives here and nowhere
-        else. It carries no color either, so ink stays a separate decision.
-      </p>
-      <div className="rounded-xl border border-sand-300 px-4 py-4 dark:border-sand-800">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <code className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">
-            typography.role.label
-          </code>
-          <span className="text-[12px] tabular-nums text-sand-500">{LABEL_RECIPE}</span>
-        </div>
-        {/* Sentence case on purpose: the uppercase you read is the style doing its work. */}
-        <p className="mt-2 text-sand-900 dark:text-sand-50" style={LABEL as React.CSSProperties}>
-          Bearing
-        </p>
-        <p className="mt-1.5 text-[12px] text-sand-500">
-          column heads, axis and legend labels, kickers, stat captions
-        </p>
       </div>
 
       {/* ── Spacing ── */}
