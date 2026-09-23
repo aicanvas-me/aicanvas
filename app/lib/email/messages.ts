@@ -6,22 +6,22 @@
 
 import { emailShell, emailText } from './shell'
 
-/** A thank-you sent the day before a subscription renews. The cron in
+/** A thank-you sent about two days before a subscription renews. The cron in
  *  app/api/cron/renewal-thanks decides who gets it and guards against a
- *  second send for the same renewal. `renewsOn` is already formatted
- *  ("24 September"). */
-export function renewalThanksEmail(opts: { plan: 'monthly' | 'annual'; renewsOn: string }): { subject: string; html: string } {
+ *  second send for the same renewal. No calendar date on purpose: a UTC date
+ *  can be a day off in the reader's own timezone, "the next few days" never is. */
+export function renewalThanksEmail(opts: { plan: 'monthly' | 'annual' }): { subject: string; html: string } {
   const p = (text: string, kind: 'secondary' | 'muted' = 'secondary', margin = '0 0 16px 0') =>
     `<p ${emailText(kind, `margin:${margin};font-size:${kind === 'muted' ? 13 : 15}px;line-height:1.6;`)}>${text}</p>`
   const html = emailShell({
     title: 'A quick thank you from AI Canvas',
     heading: 'You make this <span class="ac-accent" style="color:#869631;">possible</span>.',
-    bodyHtml: p('AI Canvas is built by one person, and every Premium member is the reason it keeps going. So before your plan renews tomorrow, I just wanted to say thank you.', 'secondary', '0'),
+    bodyHtml: p('AI Canvas is built by one person, and every Premium member is the reason it keeps going. So before your plan renews, I just wanted to say thank you.', 'secondary', '0'),
     button: { label: 'See what your support built lately', url: 'https://aicanvas.me' },
     afterHtml:
       p('What should I build next? Hit reply and tell me. Your answer goes straight into the plan.') +
       p('Thanks for being here,<br />Alex', 'secondary', '0 0 24px 0') +
-      p(`Your ${opts.plan} plan renews on ${opts.renewsOn}. Nothing to do on your side.`, 'muted', '0'),
+      p(`Your ${opts.plan} plan renews in the next few days. Nothing to do on your side.`, 'muted', '0'),
     footerNoteHtml: `Manage or cancel your plan anytime from your <a href="https://aicanvas.me/account/settings" ${emailText('muted', 'text-decoration:underline;')}>account settings</a>.`,
   })
   return { subject: 'A quick thank you from AI Canvas', html }

@@ -9,13 +9,16 @@ export const runtime = 'nodejs'
 export const maxDuration = 60
 
 /**
- * Daily thank-you to every subscriber whose plan renews tomorrow (UTC date).
+ * Daily thank-you to every subscriber whose plan renews the day after tomorrow
+ * (UTC date), so it lands roughly two days (38 to 63 hours) before the charge.
+ * The email names no date, only "the next few days", which stays true in every
+ * timezone.
  *
  * The database only nominates candidates; Paddle decides. Each candidate's LIVE
  * subscription is read, and the email goes out only when it is active, has no
  * scheduled change (a pending cancel or pause lives only in Paddle, never in our
- * row) and its next charge falls on tomorrow's date. Anything unclear is a skip:
- * a missed thank-you costs nothing, a "renews tomorrow" sent to someone who
+ * row) and its next charge falls on the target date. Anything unclear is a skip:
+ * a missed thank-you costs nothing, a "renews soon" sent to someone who
  * cancelled does.
  *
  * Sending is off unless RENEWAL_THANKS_SEND=1. Without it the job only logs who
@@ -42,7 +45,7 @@ export async function GET(req: NextRequest) {
   const send = process.env.RENEWAL_THANKS_SEND === '1'
 
   const now = new Date()
-  const tomorrow = new Date(now.getTime() + 86_400_000).toISOString().slice(0, 10)
+  const target = new Date(now.getTime() + 2 * 86_400_000).toISOString().slice(0, 10)
 
   const admin = createAdminClient()
 
@@ -54,7 +57,7 @@ export async function GET(req: NextRequest) {
     .eq('status', 'active')
     .not('paddle_subscription_id', 'is', null)
     .gte('current_period_end', now.toISOString())
-    .lte('current_period_end', new Date(now.getTime() + 3 * 86_400_000).toISOString())
+    .lte('current_period_end', new Date(now.getTime() + 4 * 86_400_000).toISOString())
     .limit(MAX_ROWS)
   if (error) {
     console.error('[renewal-thanks] list failed:', error)
@@ -74,7 +77,7 @@ export async function GET(req: NextRequest) {
       if (!sub) { failed++; continue }
 
       const nextBilledAt = typeof sub.next_billed_at === 'string' ? sub.next_billed_at : ''
-      if (sub.status !== 'active' || sub.scheduled_change || nextBilledAt.slice(0, 10) !== tomorrow) {
+      if (sub.status !== 'active' || sub.scheduled_change || nextBilledAt.slice(0, 10) !== target) {
         skipped++; continue
       }
 
@@ -94,10 +97,7 @@ export async function GET(req: NextRequest) {
       })
       if (flagErr) { console.error('[renewal-thanks] flag write failed', row.user_id, flagErr); failed++; continue }
 
-      const mail = renewalThanksEmail({
-        plan: mapSubscriptionFields(sub).plan ?? 'monthly',
-        renewsOn: new Date(nextBilledAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', timeZone: 'UTC' }),
-      })
+      const mail = renewalThanksEmail({ plan: mapSubscriptionFields(sub).plan ?? 'monthly' })
       const sendRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         signal: AbortSignal.timeout(10_000),
@@ -115,6 +115,6 @@ export async function GET(req: NextRequest) {
     }
   }
 
-  console.log(`[renewal-thanks] tomorrow=${tomorrow} send=${send} candidates=${candidates} sent=${sent} wouldSend=${wouldSend} skipped=${skipped} failed=${failed}`)
-  return NextResponse.json({ ok: true, tomorrow, send, candidates, sent, wouldSend, skipped, failed })
+  console.log(`[renewal-thanks] target=${target} send=${send} candidates=${candidates} sent=${sent} wouldSend=${wouldSend} skipped=${skipped} failed=${failed}`)
+  return NextResponse.json({ ok: true, target, send, candidates, sent, wouldSend, skipped, failed })
 }
