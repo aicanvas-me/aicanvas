@@ -13,6 +13,7 @@ import { createPortal } from 'react-dom'
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { TopBarInstallSlot, TopBarProvider, useTopBarInstallSlot, useTopBarLeft } from './TopBar'
+import { showsOfferPill } from './top-bar-crumbs'
 
 // React only batches act() work when the environment says it is a test.
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
@@ -128,5 +129,29 @@ describe('useTopBarInstallSlot', () => {
     }
     const offenders = walk(app).filter((f) => /getElementById\([^)]*install-slot/.test(readFileSync(f, 'utf8')))
     expect(offenders).toEqual([])
+  })
+})
+
+// Which routes carry the offer pill. The rule is "wherever the middle of the
+// bar is free", so the cases that matter are the ones where it is not.
+describe('showsOfferPill', () => {
+  it('rides the ordinary pages', () => {
+    for (const path of ['/', '/components', '/components/category/forms', '/faq', '/about', '/mcp'])
+      expect(showsOfferPill(path), path).toBe(true)
+  })
+
+  it('stands down where an install control owns the right of the bar', () => {
+    for (const path of [
+      '/design-systems/andromeda/system',
+      '/design-systems/andromeda-pro/foundation',
+      '/design-systems/andromeda-pro/components',
+      '/design-systems/andromeda-pro/brain/explore',
+    ])
+      expect(showsOfferPill(path), path).toBe(false)
+  })
+
+  it('does not link the pricing page to itself', () => {
+    expect(showsOfferPill('/pricing')).toBe(false)
+    expect(showsOfferPill('/pricing/')).toBe(false)
   })
 })

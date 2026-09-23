@@ -98,6 +98,23 @@ export function installSlotId(pathname: string): string | null {
   return INSTALL_SLOTS[pathname.replace(/\/$/, '') || '/'] ?? null
 }
 
+// Whether the offer pill may sit in the middle of the bar on this route.
+//
+// It answers one question only: is the middle actually free here. The routes
+// that carry no bar at all (the lab, the cancellation flow, template leaves,
+// the capture canvas) never reach this, because the bar returns before it is
+// asked. Templates are therefore out without naming them.
+//
+// Two kinds of route say no:
+//   - anything mounting an install control, which makes the right cluster wide
+//     enough that a centred pill would run into it;
+//   - /pricing itself, where the pill would link to the page it is already on.
+export function showsOfferPill(pathname: string): boolean {
+  const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
+  if (path === '/pricing') return false
+  return installSlotId(path) === null
+}
+
 export function buildTopBarCrumbs(pathname: string): Crumb[] | null {
   const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
 

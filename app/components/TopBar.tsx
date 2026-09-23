@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation'
 import { Breadcrumbs } from './Breadcrumbs'
 import { ThemeToggle } from './ThemeToggle'
 import { TopAuthPill } from './auth/TopAuthPill'
-import { HomeOfferBanner } from './billing/HomeOfferBanner'
+import { OfferBanner } from './billing/OfferBanner'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
-import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId } from './top-bar-crumbs'
+import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId, showsOfferPill } from './top-bar-crumbs'
 
 // The site's one top bar. Rendered once by the root layout, at the top of the
 // scroll column, and never unmounted: a page change swaps the content below
@@ -119,10 +119,10 @@ export function TopBar() {
       <div className="min-w-0 flex-1">
         {override !== undefined ? override : crumbs ? <Breadcrumbs crumbs={crumbs} /> : null}
       </div>
-      {/* Home only. The offer pill centres itself on the bar and takes no
-          layout space, so the crumb and the right cluster keep the exact
-          positions they hold on every other route. */}
-      {pathname === '/' && <HomeOfferBanner />}
+      {/* The offer pill centres itself on the bar and takes no layout space,
+          so the crumb and the right cluster keep the exact positions they hold
+          where it is absent. */}
+      {showsOfferPill(pathname) && <OfferBanner />}
       {/* Right cluster order whenever a page mounts a CTA: theme toggle, then
           the CTA, then the user. */}
       <div className="flex shrink-0 items-center gap-2">

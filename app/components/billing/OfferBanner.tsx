@@ -9,8 +9,12 @@ import { track } from '../../lib/analytics'
 import { OFFER_ENDS, YEARLY_ANCHOR, YEARLY_PRICE, usd } from '../../lib/offer'
 import { checkoutComingSoon, premiumEnabled } from '../../../lib/flags'
 
-// The founding-offer pill that sits in the middle of the top bar on the home
-// page.
+// The founding-offer pill that sits in the middle of the site top bar.
+//
+// It rides the bar rather than any one page, so it follows people through the
+// site instead of being seen once on the way in. Which routes get it is
+// decided by showsOfferPill in top-bar-crumbs.ts, next to the rest of the
+// bar's route rules.
 //
 // One row, because the bar is 56px tall, and absolutely centred on the bar
 // rather than placed between the crumb and the user pill: those two are
@@ -43,7 +47,7 @@ const ENDS_LABEL = OFFER_ENDS.toLocaleDateString('en-GB', {
   timeZone: 'Europe/Berlin',
 })
 
-export function HomeOfferBanner() {
+export function OfferBanner() {
   const premium = usePremiumStatus()
 
   // The countdown cannot be server-rendered: the server's clock and the
