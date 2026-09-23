@@ -166,7 +166,7 @@ export function takeLock(
     fs.mkdirSync(lockDir)
   } catch {
     throw new Error(
-      `another GSC audit is already running (${held || 'pid unknown'}). ` +
+      `another audit is already running (${held || 'pid unknown'}). ` +
         `If that is wrong, remove ${lockDir} and run it again.`,
     )
   }

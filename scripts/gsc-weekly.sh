@@ -74,3 +74,7 @@ osascript -e "display notification \"$BODY\" with title \"$TITLE\"" 2>>"$LOG" ||
     echo "[$TS] FAILED — $COUNTS"
   fi
 } >> "$LOG"
+
+# Bing runs straight after, whatever GSC's outcome: the two are independent.
+# Chaining keeps it to one launchd job, and a long GSC pass can never overlap it.
+"$REPO/scripts/bing-weekly.sh"
