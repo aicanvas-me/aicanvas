@@ -8,6 +8,7 @@ describe('renewalThanksEmail', () => {
     expect(html).toContain('Your annual plan renews in the next few days.')
     expect(html).not.toContain('tomorrow')
     expect(html).toContain('href="https://aicanvas.me/account/settings"')
+    expect(html).toContain('Switch off Product updates there, free and anytime.')
   })
 
   it('keeps the letter after the button', () => {

@@ -21,12 +21,20 @@ export const maxDuration = 60
  * a missed thank-you costs nothing, a "renews soon" sent to someone who
  * cancelled does.
  *
+ * This is not a transactional email (it thanks and asks for feedback), so an
+ * address marked 'unsubscribed' in newsletter_subscribers never gets it: that
+ * status is the site-wide "never mail again" line, set by the Product updates
+ * toggle and by Brevo unsubscribes, bounces and complaints. A failed lookup
+ * skips too.
+ *
  * Sending is off unless RENEWAL_THANKS_SEND=1. Without it the job only logs who
  * would get the email, so the list can be checked before anyone is written to.
  *
  * Send-once per renewal: `renewal_thanks_sent_for` in user_metadata holds the
- * renewal instant already thanked for, claimed BEFORE sending (same discipline
- * as premium_welcome_sent in the Paddle webhook), so a re-run never doubles up.
+ * start of the billing period already thanked for (it stays put if the billing
+ * date is moved, unlike next_billed_at), claimed BEFORE sending (same
+ * discipline as premium_welcome_sent in the Paddle webhook), so a re-run never
+ * doubles up.
  *
  * Secured by CRON_SECRET, like the reconcile cron. Never touches
  * user_subscriptions or entitlement: it reads, then emails.
@@ -81,10 +89,23 @@ export async function GET(req: NextRequest) {
         skipped++; continue
       }
 
-      const { data: { user } } = await admin.auth.admin.getUserById(row.user_id)
-      if (!user?.email || user.user_metadata?.renewal_thanks_sent_for === nextBilledAt) {
+      const period = sub.current_billing_period as { starts_at?: unknown } | null | undefined
+      const periodKey = typeof period?.starts_at === 'string' ? period.starts_at : nextBilledAt
+
+      const { data: { user }, error: userErr } = await admin.auth.admin.getUserById(row.user_id)
+      if (userErr) { console.error('[renewal-thanks] user read failed', row.user_id, userErr); failed++; continue }
+      if (!user?.email || user.user_metadata?.renewal_thanks_sent_for === periodKey) {
         skipped++; continue
       }
+
+      const { data: optOut, error: nlErr } = await admin
+        .from('newsletter_subscribers')
+        .select('status')
+        .eq('email', user.email.toLowerCase())
+        .eq('status', 'unsubscribed')
+        .maybeSingle()
+      if (nlErr) { console.error('[renewal-thanks] opt-out read failed', row.user_id, nlErr); failed++; continue }
+      if (optOut) { skipped++; continue }
 
       if (!send) {
         console.log('[renewal-thanks] would send', row.user_id, nextBilledAt)
@@ -93,7 +114,7 @@ export async function GET(req: NextRequest) {
 
       // Claim first, send only if the claim persisted.
       const { error: flagErr } = await admin.auth.admin.updateUserById(row.user_id, {
-        user_metadata: { ...(user.user_metadata ?? {}), renewal_thanks_sent_for: nextBilledAt },
+        user_metadata: { ...(user.user_metadata ?? {}), renewal_thanks_sent_for: periodKey },
       })
       if (flagErr) { console.error('[renewal-thanks] flag write failed', row.user_id, flagErr); failed++; continue }
 

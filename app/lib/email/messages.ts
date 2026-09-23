@@ -22,7 +22,7 @@ export function renewalThanksEmail(opts: { plan: 'monthly' | 'annual' }): { subj
       p('What should I build next? Hit reply and tell me. Your answer goes straight into the plan.') +
       p('Thanks for being here,<br />Alex', 'secondary', '0 0 24px 0') +
       p(`Your ${opts.plan} plan renews in the next few days. Nothing to do on your side.`, 'muted', '0'),
-    footerNoteHtml: `Manage or cancel your plan anytime from your <a href="https://aicanvas.me/account/settings" ${emailText('muted', 'text-decoration:underline;')}>account settings</a>.`,
+    footerNoteHtml: `Manage or cancel your plan anytime from your <a href="https://aicanvas.me/account/settings" ${emailText('muted', 'text-decoration:underline;')}>account settings</a>. Rather not get notes like this? Switch off Product updates there, free and anytime.`,
   })
   return { subject: 'A quick thank you from AI Canvas', html }
 }
