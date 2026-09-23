@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import { CheckCircle, Sparkle } from '@phosphor-icons/react'
@@ -11,6 +11,12 @@ import { TerminatorCool } from '../components/auth/TerminatorReveal'
 import { premiumEnabled } from '../../lib/flags'
 import { PremiumCards } from '../components/billing/PremiumCards'
 import { FaqAccordion, type FaqItem } from '../components/FaqAccordion'
+import { BusinessCard } from '../components/billing/BusinessCard'
+import {
+  PlanAudienceTabs,
+  audiencePanelId,
+  type PlanAudience,
+} from '../components/billing/PlanAudienceTabs'
 
 // ─── Plan data ──────────────────────────────────────────────────────────────
 // Legacy fallback, rendered only when premiumEnabled() is false. The first card
@@ -213,6 +219,7 @@ const PRICING_FAQ: FaqItem[] = [
 
 export default function PricingPage() {
   const premium = premiumEnabled()
+  const [audience, setAudience] = useState<PlanAudience>('individual')
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
       <main className="relative mx-auto w-full max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
@@ -239,7 +246,25 @@ export default function PricingPage() {
 
         {/* ── Plan cards ── */}
         {premium ? (
-          <PremiumCards />
+          <>
+            {/* Audience switch. Individual keeps the Free vs Premium pair
+                the rest of the site already uses; Business swaps in the
+                single team card, so neither view has to explain the other. */}
+            <div className="mt-10 sm:mt-12">
+              <PlanAudienceTabs
+                value={audience}
+                onChange={setAudience}
+                idPrefix="pricing-audience"
+              />
+            </div>
+            <div
+              role="tabpanel"
+              id={audiencePanelId('pricing-audience', audience)}
+              aria-labelledby={`pricing-audience-${audience}-tab`}
+            >
+              {audience === 'individual' ? <PremiumCards /> : <BusinessCard />}
+            </div>
+          </>
         ) : (
           <div className="mt-12 grid gap-6 sm:mt-16 md:grid-cols-2">
             {PLANS.map((plan, i) => (
