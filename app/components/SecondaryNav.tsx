@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ChatCircleText, EnvelopeSimple, Flask, Info, PiggyBank, Plug, Question } from '@phosphor-icons/react'
+import { ChatCircleText, EnvelopeSimple, Info, PiggyBank, Plug, Question } from '@phosphor-icons/react'
 import type { ReactNode } from 'react'
 
 type NavItem = {
@@ -10,8 +10,9 @@ type NavItem = {
   match?: 'exact' | 'prefix'
 }
 
+// Lab is not listed. The page is still there and the footer still links to
+// it; it just no longer takes a row in the nav.
 const ITEMS: NavItem[] = [
-  { label: 'Lab', href: '/lab', icon: <Flask weight="regular" size={16} />, match: 'prefix' },
   { label: 'Get MCP', href: '/mcp', icon: <Plug weight="regular" size={16} />, match: 'exact' },
   { label: 'Pricing', href: '/pricing', icon: <PiggyBank weight="regular" size={16} />, match: 'exact' },
   { label: 'About', href: '/about', icon: <Info weight="regular" size={16} />, match: 'exact' },
