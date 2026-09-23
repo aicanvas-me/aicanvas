@@ -7,7 +7,7 @@ import { ThemeToggle } from './ThemeToggle'
 import { TopAuthPill } from './auth/TopAuthPill'
 import { OfferBanner } from './billing/OfferBanner'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
-import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId, showsOfferPill } from './top-bar-crumbs'
+import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId, offerPillMode } from './top-bar-crumbs'
 
 // The site's one top bar. Rendered once by the root layout, at the top of the
 // scroll column, and never unmounted: a page change swaps the content below
@@ -113,6 +113,7 @@ export function TopBar() {
   const override = ctx?.override && ctx.override.pathname === pathname ? ctx.override.node : undefined
   const crumbs = buildTopBarCrumbs(pathname)
   const slot = installSlotId(pathname)
+  const offerMode = offerPillMode(pathname)
 
   return (
     <header className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
@@ -122,7 +123,7 @@ export function TopBar() {
       {/* The offer pill centres itself on the bar and takes no layout space,
           so the crumb and the right cluster keep the exact positions they hold
           where it is absent. */}
-      {showsOfferPill(pathname) && <OfferBanner />}
+      {offerMode && <OfferBanner mode={offerMode} />}
       {/* Right cluster order whenever a page mounts a CTA: theme toggle, then
           the CTA, then the user. */}
       <div className="flex shrink-0 items-center gap-2">

@@ -98,21 +98,27 @@ export function installSlotId(pathname: string): string | null {
   return INSTALL_SLOTS[pathname.replace(/\/$/, '') || '/'] ?? null
 }
 
-// Whether the offer pill may sit in the middle of the bar on this route.
+/** How the offer pill behaves on a route, or null where it stays off. */
+export type OfferPillMode = 'link' | 'static'
+
+// Whether the offer pill sits in the middle of the bar on this route, and
+// whether it is a control there.
 //
-// It answers one question only: is the middle actually free here. The routes
-// that carry no bar at all (the lab, the cancellation flow, template leaves,
-// the capture canvas) never reach this, because the bar returns before it is
-// asked. Templates are therefore out without naming them.
+// The routes that carry no bar at all (the lab, the cancellation flow,
+// template leaves, the capture canvas) never reach this, because the bar
+// returns before it is asked. Templates are therefore out without naming them.
 //
-// Two kinds of route say no:
-//   - anything mounting an install control, which makes the right cluster wide
-//     enough that a centred pill would run into it;
-//   - /pricing itself, where the pill would link to the page it is already on.
-export function showsOfferPill(pathname: string): boolean {
+// A route mounting an install control says no outright: the right cluster is
+// wide enough there that a centred pill would run into it.
+//
+// /pricing keeps the pill and loses the link. The offer belongs on the page
+// where the plans are, but a chip that navigates to the page it is already on
+// would be a control that does nothing, and a thing that looks clickable has
+// to be clickable.
+export function offerPillMode(pathname: string): OfferPillMode | null {
   const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
-  if (path === '/pricing') return false
-  return installSlotId(path) === null
+  if (installSlotId(path) !== null) return null
+  return path === '/pricing' ? 'static' : 'link'
 }
 
 export function buildTopBarCrumbs(pathname: string): Crumb[] | null {

@@ -7,6 +7,7 @@ import { buttonClasses } from '../buttonClasses'
 import { usePremiumStatus } from './usePremiumStatus'
 import { track } from '../../lib/analytics'
 import { OFFER_ENDS, YEARLY_ANCHOR, YEARLY_PRICE, usd } from '../../lib/offer'
+import type { OfferPillMode } from '../top-bar-crumbs'
 import { checkoutComingSoon, premiumEnabled } from '../../../lib/flags'
 
 // The founding-offer pill that sits in the middle of the site top bar.
@@ -28,6 +29,10 @@ import { checkoutComingSoon, premiumEnabled } from '../../../lib/flags'
 // It leads to /pricing rather than straight into the Paddle overlay. A bar
 // that is present on first paint should not be able to throw a payment sheet
 // over the page from a single click: the offer is made here and decided there.
+//
+// On /pricing itself it is a label, not a control: same chip, no link, and no
+// hover or focus skin, because something that cannot be clicked must not look
+// as though it can.
 
 const DAY = 86_400
 
@@ -47,7 +52,13 @@ const ENDS_LABEL = OFFER_ENDS.toLocaleDateString('en-GB', {
   timeZone: 'Europe/Berlin',
 })
 
-export function OfferBanner() {
+/** The soft-olive chip without the states a control earns. Mirrors the
+ *  `accent` button at size xs; the hover, focus and press skins are exactly
+ *  what is left out. */
+const STATIC_PILL =
+  'inline-flex items-center justify-center gap-1.5 rounded-full border border-olive-600/40 bg-olive-500/10 px-3 py-1.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400'
+
+export function OfferBanner({ mode }: { mode: OfferPillMode }) {
   const premium = usePremiumStatus()
 
   // The countdown cannot be server-rendered: the server's clock and the
@@ -68,27 +79,41 @@ export function OfferBanner() {
   if (premium === 'premium') return null
   if (left === null || left <= 0) return null
 
+  const offer = `Founding Members offer: ${usd(YEARLY_PRICE)} per year instead of ${usd(YEARLY_ANCHOR)}, ends ${ENDS_LABEL}`
+
+  // The visible line is decoration for a screen reader either way: a figure
+  // that changes every second would otherwise be announced every second. The
+  // offer reaches assistive tech as the link's name, or as text beside the
+  // static chip.
+  const row = (
+    <span aria-hidden className="inline-flex items-center gap-1.5">
+      <Clock weight="regular" size={16} />
+      Founding Members
+      <span className="opacity-60">·</span>
+      <span className="line-through opacity-70">{usd(YEARLY_ANCHOR)}</span>
+      now {usd(YEARLY_PRICE)} per year
+      <span className="opacity-60">·</span>
+      <span className="tabular-nums">{remaining(left)} left</span>
+    </span>
+  )
+
   return (
     <div className="pointer-events-none absolute inset-y-0 left-0 right-0 hidden items-center justify-center lg:flex">
-      <Link
-        href="/pricing"
-        onClick={() => track('Offer Banner Click', {})}
-        aria-label={`Founding Members offer: ${usd(YEARLY_PRICE)} per year instead of ${usd(YEARLY_ANCHOR)}, ends ${ENDS_LABEL}. See pricing`}
-        className={`pointer-events-auto whitespace-nowrap ${buttonClasses({ variant: 'accent', size: 'xs', pill: true })}`}
-      >
-        {/* The whole line is decoration for a screen reader: the link already
-            carries the offer as its accessible name, and a figure that changes
-            every second would otherwise be announced every second. */}
-        <span aria-hidden className="inline-flex items-center gap-1.5">
-          <Clock weight="regular" size={16} />
-          Founding Members
-          <span className="opacity-60">·</span>
-          <span className="line-through opacity-70">{usd(YEARLY_ANCHOR)}</span>
-          now {usd(YEARLY_PRICE)} per year
-          <span className="opacity-60">·</span>
-          <span className="tabular-nums">{remaining(left)} left</span>
+      {mode === 'static' ? (
+        <span className={`whitespace-nowrap ${STATIC_PILL}`}>
+          <span className="sr-only">{offer}</span>
+          {row}
         </span>
-      </Link>
+      ) : (
+        <Link
+          href="/pricing"
+          onClick={() => track('Offer Banner Click', {})}
+          aria-label={`${offer}. See pricing`}
+          className={`pointer-events-auto whitespace-nowrap ${buttonClasses({ variant: 'accent', size: 'xs', pill: true })}`}
+        >
+          {row}
+        </Link>
+      )}
     </div>
   )
 }
