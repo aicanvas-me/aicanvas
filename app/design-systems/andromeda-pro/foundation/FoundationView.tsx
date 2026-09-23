@@ -89,30 +89,16 @@ const TYPE_RAMP = TYPE_ROLES.map((step) => {
   }
 })
 
-// The two faces, named by the tokens and loaded by the site (Manrope in the
-// root layout, JetBrains Mono in the Andromeda Pro layout), so each specimen
-// renders in the real face through the same stack a component uses.
+// The typeface, named by the token and loaded by the root layout, so the
+// specimen renders in the real face through the same stack a component uses.
+// The tokens also name a mono face, but no component reads it, so it is not
+// shown here.
 const WEIGHTS = (['regular', 'medium', 'semibold', 'bold'] as const).map((name) => ({
   name,
   value: tokens.typography.weight[name],
 }))
 
-const TYPEFACES = [
-  {
-    role: 'Default',
-    name: 'Manrope',
-    family: tokens.typography.fontSans,
-    href: 'https://fonts.google.com/specimen/Manrope',
-    note: 'A modern geometric sans with open, even shapes that stay clear at small interface sizes and hold together at display sizes. Every label, value and heading is set in it unless a component has a stated reason not to.',
-  },
-  {
-    role: 'Mono',
-    name: 'JetBrains Mono',
-    family: tokens.typography.fontMono,
-    href: 'https://fonts.google.com/specimen/JetBrains+Mono',
-    note: 'A monospace face drawn for code, with a tall lowercase and clearly different 0 and O, 1 and l. Used only where characters must line up: code, keyboard keys and identifiers.',
-  },
-] as const
+const FACE = tokens.typography.fontSans
 
 // ── The family pivot ────────────────────────────────────────────────────────
 // Both columns are RESOLVED from the same functions the site paints with, so
@@ -535,59 +521,56 @@ export function FoundationView() {
         ))}
       </div>
 
-      {/* ── Typefaces ── */}
-      <SectionHeading>Typefaces</SectionHeading>
+      {/* ── Typeface ── */}
+      <SectionHeading>Typeface</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        Two free, open-source faces from Google Fonts. Manrope carries the interface; JetBrains
-        Mono is kept for the few places that need fixed-width characters.
+        One free, open-source face from Google Fonts carries every label, value and heading in
+        the system.
       </p>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {TYPEFACES.map((face) => (
-          <div
-            key={face.name}
-            className="flex flex-col rounded-xl border border-sand-300 p-5 dark:border-sand-800"
+      <div className="grid gap-6 rounded-xl border border-sand-300 p-5 sm:grid-cols-[auto_1fr] sm:gap-10 dark:border-sand-800">
+        <p
+          className="text-[96px] font-semibold leading-none text-sand-900 dark:text-sand-50"
+          style={{ fontFamily: FACE }}
+        >
+          Aa
+        </p>
+        <div className="flex min-w-0 flex-col">
+          <p className="text-base font-bold text-sand-900 dark:text-sand-50">Manrope</p>
+          <p className="mt-1 max-w-xl text-[13px] leading-relaxed text-sand-600 dark:text-sand-400">
+            A modern geometric sans with open, even shapes that stay clear at small interface
+            sizes and hold together at display sizes.
+          </p>
+          <p
+            className="mt-4 break-all text-[15px] leading-relaxed text-sand-700 dark:text-sand-300"
+            style={{ fontFamily: FACE }}
           >
-            <p className="text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">{face.role}</p>
-            <p
-              className="mt-3 text-[56px] font-semibold leading-none text-sand-900 dark:text-sand-50"
-              style={{ fontFamily: face.family }}
-            >
-              Aa
-            </p>
-            <p className="mt-4 text-base font-bold text-sand-900 dark:text-sand-50">{face.name}</p>
-            <p className="mt-1 text-[13px] leading-relaxed text-sand-600 dark:text-sand-400">{face.note}</p>
-            <p
-              className="mt-4 break-all text-[15px] leading-relaxed text-sand-700 [font-variant-ligatures:none] dark:text-sand-300"
-              style={{ fontFamily: face.family }}
-            >
-              ABCDEFGHIJKLMNOPQRSTUVWXYZ
-              <br />
-              abcdefghijklmnopqrstuvwxyz
-              <br />
-              0123456789
-            </p>
-            <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1">
-              {WEIGHTS.map((w) => (
-                <span
-                  key={w.name}
-                  className="text-[13px] capitalize text-sand-700 dark:text-sand-300"
-                  style={{ fontFamily: face.family, fontWeight: w.value }}
-                >
-                  {w.name} {w.value}
-                </span>
-              ))}
-            </div>
-            <a
-              href={face.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-5 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
-            >
-              {face.name} on Google Fonts
-              <ArrowUpRight size={14} weight="regular" aria-hidden />
-            </a>
+            ABCDEFGHIJKLMNOPQRSTUVWXYZ
+            <br />
+            abcdefghijklmnopqrstuvwxyz
+            <br />
+            0123456789
+          </p>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1">
+            {WEIGHTS.map((w) => (
+              <span
+                key={w.name}
+                className="text-[13px] capitalize text-sand-700 dark:text-sand-300"
+                style={{ fontFamily: FACE, fontWeight: w.value }}
+              >
+                {w.name} {w.value}
+              </span>
+            ))}
           </div>
-        ))}
+          <a
+            href="https://fonts.google.com/specimen/Manrope"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+          >
+            Manrope on Google Fonts
+            <ArrowUpRight size={14} weight="regular" aria-hidden />
+          </a>
+        </div>
       </div>
 
       {/* ── Typography ── */}
