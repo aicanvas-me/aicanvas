@@ -13,9 +13,9 @@ import { checkoutComingSoon, premiumEnabled } from '../../../lib/flags'
 // The founding-offer pill that sits in the middle of the site top bar.
 //
 // It rides the bar rather than any one page, so it follows people through the
-// site instead of being seen once on the way in. Which routes get it is
-// decided by showsOfferPill in top-bar-crumbs.ts, next to the rest of the
-// bar's route rules.
+// site instead of being seen once on the way in. Which routes get it, and
+// whether it is a control there, is decided by offerPillMode in
+// top-bar-crumbs.ts, next to the rest of the bar's route rules.
 //
 // One row, because the bar is 56px tall, and absolutely centred on the bar
 // rather than placed between the crumb and the user pill: those two are
@@ -75,8 +75,15 @@ export function OfferBanner({ mode }: { mode: OfferPillMode }) {
 
   // Nothing to sell: premium off, checkout dormant, or the visitor already pays
   // for the thing the pill is offering them.
+  //
+  // Only a settled 'not-premium' shows it. 'unknown' means the entitlement
+  // answer is still in flight, or that the call failed and it will stay unknown
+  // for the life of the page: reading that as "not a subscriber" would
+  // advertise the annual plan to someone already paying for it. A signed-out
+  // visitor settles on 'not-premium' with no request at all, so the common case
+  // waits for nothing.
   if (!premiumEnabled() || checkoutComingSoon()) return null
-  if (premium === 'premium') return null
+  if (premium !== 'not-premium') return null
   if (left === null || left <= 0) return null
 
   const offer = `Founding Members offer: ${usd(YEARLY_PRICE)} per year instead of ${usd(YEARLY_ANCHOR)}, ends ${ENDS_LABEL}`
