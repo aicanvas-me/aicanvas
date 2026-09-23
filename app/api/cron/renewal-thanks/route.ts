@@ -21,11 +21,12 @@ export const maxDuration = 60
  * a missed thank-you costs nothing, a "renews soon" sent to someone who
  * cancelled does.
  *
- * This is not a transactional email (it thanks and asks for feedback), so an
- * address marked 'unsubscribed' in newsletter_subscribers never gets it: that
- * status is the site-wide "never mail again" line, set by the Product updates
- * toggle and by Brevo unsubscribes, bounces and complaints. A failed lookup
- * skips too.
+ * This is not a transactional email (it thanks and asks for feedback), so it
+ * only goes to someone whose Product updates toggle reads on: a
+ * newsletter_subscribers row that is 'soft' or 'subscribed'. 'unsubscribed' is
+ * the site-wide "never mail again" line (the toggle, Brevo unsubscribes,
+ * bounces and complaints), and no row reads as off on the settings page, so
+ * both skip. A failed lookup skips too.
  *
  * Sending is off unless RENEWAL_THANKS_SEND=1. Without it the job only logs who
  * would get the email, so the list can be checked before anyone is written to.
@@ -98,14 +99,18 @@ export async function GET(req: NextRequest) {
         skipped++; continue
       }
 
-      const { data: optOut, error: nlErr } = await admin
-        .from('newsletter_subscribers')
-        .select('status')
-        .eq('email', user.email.toLowerCase())
-        .eq('status', 'unsubscribed')
-        .maybeSingle()
-      if (nlErr) { console.error('[renewal-thanks] opt-out read failed', row.user_id, nlErr); failed++; continue }
-      if (optOut) { skipped++; continue }
+      // Same rule as the Product updates toggle: no row reads as off. Checked by
+      // account and by address, since a row can outlive an email change.
+      const [byUser, byEmail] = await Promise.all([
+        admin.from('newsletter_subscribers').select('status').eq('user_id', row.user_id),
+        admin.from('newsletter_subscribers').select('status').eq('email', user.email.toLowerCase()),
+      ])
+      if (byUser.error || byEmail.error) {
+        console.error('[renewal-thanks] opt-out read failed', row.user_id, byUser.error ?? byEmail.error)
+        failed++; continue
+      }
+      const statuses = [...(byUser.data ?? []), ...(byEmail.data ?? [])].map(r => r.status)
+      if (!statuses.length || statuses.includes('unsubscribed')) { skipped++; continue }
 
       if (!send) {
         console.log('[renewal-thanks] would send', row.user_id, nextBilledAt)
