@@ -30,7 +30,7 @@ const PRESETS: Record<Preset, string> = {
  * feed the home grid. A per-file version was a trap: bump one, forget another,
  * and that surface silently serves stale art. Bump this on every re-shoot.
  */
-export const TEMPLATE_ART_VERSION = 13
+export const TEMPLATE_ART_VERSION = 14
 
 export function optimizeImageKitUrl(url: string, preset: Preset = 'card'): string {
   if (!url.includes('ik.imagekit.io')) return url
