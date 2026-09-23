@@ -117,22 +117,24 @@ export function TopBar() {
 
   return (
     <header className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
-      {/* With the offer pill in the middle, both ends carry flex-1, so they
-          take equal shares of what is left and the pill lands on the centre
-          line of the bar without floating over anything. The crumb keeps
-          min-w-0 so it truncates into its share instead of pushing the pill off
-          centre. Without the pill the right cluster goes back to shrink-0 and
-          the bar is the two ends it has always been.
-          The two are written as alternatives, never both: flex-1 and shrink-0
-          each set flex-shrink, so a class string carrying both is settled by
-          the built stylesheet rather than by the order written here. */}
-      <div className="min-w-0 flex-1">
+      {/* With the offer pill present, the MIDDLE takes the slack and centres
+          the pill inside it, while the crumb sizes to its own content. Giving
+          the two ends equal shares instead put the pill exactly on the centre
+          line, but it also capped the crumb at half the bar and truncated
+          "Design Systems / Andromeda Pro" while a hundred spare pixels sat
+          unused next to the sign-in button. The crumb keeps min-w-0, so when
+          the bar really is too narrow it is the one that gives way, and the
+          pill is never painted over.
+          flex-1 and shrink-0 each set flex-shrink, so the ends are written as
+          alternatives and never both: a string carrying the two is settled by
+          the built stylesheet, not by the order written here. */}
+      <div className={`min-w-0 ${offerMode ? '' : 'flex-1'}`}>
         {override !== undefined ? override : crumbs ? <Breadcrumbs crumbs={crumbs} /> : null}
       </div>
       {offerMode && <OfferBanner mode={offerMode} />}
       {/* Right cluster order whenever a page mounts a CTA: theme toggle, then
           the CTA, then the user. */}
-      <div className={`flex items-center gap-2 ${offerMode ? 'min-w-0 flex-1 justify-end' : 'shrink-0'}`}>
+      <div className="flex shrink-0 items-center gap-2">
         <ThemeToggle />
         {slot && <TopBarInstallSlot id={slot} />}
         <TopAuthPill />

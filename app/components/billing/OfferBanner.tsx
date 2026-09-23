@@ -18,10 +18,10 @@ import { checkoutComingSoon, premiumEnabled } from '../../../lib/flags'
 // top-bar-crumbs.ts, next to the rest of the bar's route rules.
 //
 // One row, because the bar is 56px tall. It is a real cell in the bar rather
-// than something floated over it: the bar gives the crumb and this pill equal
-// shares, so the pill lands centred AND the crumb truncates instead of being
-// painted over. Floating it was tried first and it covered the crumb on any
-// laptop under about 1600px, which is most of them.
+// than something floated over it, and it is the cell that takes the slack, so
+// the pill centres itself in whatever room is left between the crumb and the
+// controls. Floating it was tried first and it covered the crumb on any laptop
+// under about 1600px, which is most of them.
 //
 // Under 1220px the countdown drops and the offer keeps its words. That width
 // is where the full line stops fitting beside a long crumb, and the price is
@@ -118,7 +118,7 @@ export function OfferBanner({ mode }: { mode: OfferPillMode }) {
   )
 
   return (
-    <div className="hidden shrink-0 items-center px-4 lg:flex">
+    <div className="hidden flex-1 items-center justify-center px-4 lg:flex">
       {mode === 'static' ? (
         <span className={`whitespace-nowrap ${STATIC_PILL}`}>
           <span className="sr-only">{offer}</span>
