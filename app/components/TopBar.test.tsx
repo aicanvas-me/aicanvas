@@ -140,6 +140,16 @@ describe('offerPillMode', () => {
       expect(offerPillMode(path), path).toBe('link')
   })
 
+  it("stays off a single component's page, where the crumb is already long", () => {
+    for (const path of [
+      '/components/perspective-showcase-hero',
+      '/components/jar-of-emotions',
+      '/design-systems/andromeda/button',
+      '/design-systems/andromeda-pro/gauge',
+    ])
+      expect(offerPillMode(path), path).toBeNull()
+  })
+
   it('stands down where an install control owns the right of the bar', () => {
     for (const path of [
       '/design-systems/andromeda/system',
