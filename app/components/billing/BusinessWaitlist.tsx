@@ -21,7 +21,7 @@ export function BusinessWaitlist({ plan, featured }: { plan: string; featured?: 
 
   if (state === 'done') {
     return (
-      <div className="mt-6 flex items-start gap-3 rounded-xl border border-olive-500/40 bg-olive-500/5 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
+      <div role="status" className="mt-6 flex items-start gap-3 rounded-xl border border-olive-500/40 bg-olive-500/5 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
         <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
         <span>You are on the list. We will email you before Business opens.</span>
       </div>
@@ -60,7 +60,9 @@ export function BusinessWaitlist({ plan, featured }: { plan: string; featured?: 
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: email,
+        // A fixed name, not the address: /api/contact caps name shorter than
+        // email, so a long address would fail as a missing name.
+        name: 'Business waitlist',
         email,
         website,
         subject: `Business waiting list (${plan})`,
@@ -79,13 +81,16 @@ export function BusinessWaitlist({ plan, featured }: { plan: string; featured?: 
   }
 
   const field =
-    'w-full rounded-lg border border-sand-200 bg-sand-50 px-3 py-2 text-sm text-sand-900 placeholder:text-sand-500 focus:border-olive-500 focus:outline-none dark:border-sand-700 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500'
+    'w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-base text-sand-900 placeholder:text-sand-600 focus:border-olive-500 focus:outline-none dark:border-sand-700 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 md:text-sm'
 
   return (
     <form onSubmit={submit} className="mt-6 space-y-3">
       <input
         type="email"
         required
+        // The button that opened the form is gone, so focus lands here instead
+        // of falling back to the page.
+        autoFocus
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@company.com"
@@ -110,7 +115,7 @@ export function BusinessWaitlist({ plan, featured }: { plan: string; featured?: 
         className="hidden"
         aria-hidden
       />
-      {error && <p className="text-sm text-sand-700 dark:text-sand-300">{error}</p>}
+      {error && <p role="alert" className="text-sm text-sand-700 dark:text-sand-300">{error}</p>}
       <button
         type="submit"
         disabled={state === 'sending'}

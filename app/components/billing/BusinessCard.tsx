@@ -84,6 +84,8 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
               <div className={`flex ${iconBox} shrink-0 items-end justify-center`}>
                 <img
                   src="https://ik.imagekit.io/aitoolkit/site/avatar-business.png?tr=w-160,f-auto"
+                  width={160}
+                  height={160}
                   alt=""
                   aria-hidden="true"
                   className="h-full w-auto"

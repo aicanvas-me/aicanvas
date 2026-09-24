@@ -38,11 +38,31 @@ export function PlanAudienceTabs({
   const reduceMotion = useReducedMotion()
   const pillId = useId()
 
+  // Tab keyboard pattern: one Tab stop for the whole switch, arrows and
+  // Home/End move the selection and the focus together, so a screen reader
+  // that announces "tab" gets the keys it tells the user to press.
+  function onKeyDown(e: React.KeyboardEvent<HTMLDivElement>) {
+    const i = OPTIONS.findIndex((o) => o.key === value)
+    const last = OPTIONS.length - 1
+    const next =
+      e.key === 'ArrowRight' ? (i === last ? 0 : i + 1)
+      : e.key === 'ArrowLeft' ? (i === 0 ? last : i - 1)
+      : e.key === 'Home' ? 0
+      : e.key === 'End' ? last
+      : null
+    if (next === null) return
+    e.preventDefault()
+    const key = OPTIONS[next].key
+    onChange(key)
+    document.getElementById(`${idPrefix}-${key}-tab`)?.focus()
+  }
+
   return (
     <div className="flex justify-center">
       <div
         role="tablist"
         aria-label="Plans for individuals or for a business"
+        onKeyDown={onKeyDown}
         className="inline-flex rounded-xl border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900"
       >
         {OPTIONS.map(({ key, label }) => {
@@ -55,6 +75,7 @@ export function PlanAudienceTabs({
               role="tab"
               aria-selected={selected}
               aria-controls={audiencePanelId(idPrefix, key)}
+              tabIndex={selected ? 0 : -1}
               onClick={() => onChange(key)}
               className={`relative rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
                 selected

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { X } from '@phosphor-icons/react'
 import { PremiumCards } from './PremiumCards'
 import { BusinessCards } from './BusinessCard'
-import { PlanAudienceTabs, type PlanAudience } from './PlanAudienceTabs'
+import { PlanAudienceTabs, audiencePanelId, type PlanAudience } from './PlanAudienceTabs'
 import { PaymentMethods } from './PaymentMethods'
 import { track } from '../../lib/analytics'
 import { useDialogFocus } from '../useDialogFocus'
@@ -147,7 +147,12 @@ function PaywallModalView({
           />
         </div>
 
-        <div className="mt-5">
+        <div
+          role="tabpanel"
+          id={audiencePanelId('paywall-audience', audience)}
+          aria-labelledby={`paywall-audience-${audience}-tab`}
+          className="mt-5"
+        >
           {business ? <BusinessCards compact /> : <PremiumCards show="premium-only" compact />}
         </div>
 
