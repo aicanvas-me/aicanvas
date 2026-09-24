@@ -154,8 +154,14 @@ export function Sidebar({
       </div>
 
       {/* ── Navigation ── */}
+      {/* The thin scrollbar (globals.css) takes width when the list scrolls,
+          and the widest row, a system name with its NEW chip, has no slack to
+          give: it truncated the moment the bar appeared. A stable gutter keeps
+          that strip reserved whether or not the list scrolls, so every row has
+          one width in both states. The right padding drops to 1px because
+          the reserved gutter now supplies the right-hand space px-3 used to. */}
       <nav
-        className="flex-1 overflow-y-auto px-3 pt-2 pb-2"
+        className="flex-1 overflow-y-auto pl-3 pr-px pt-2 pb-2 [scrollbar-gutter:stable]"
         style={{
           maskImage:
             'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
