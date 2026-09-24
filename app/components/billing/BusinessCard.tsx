@@ -1,7 +1,6 @@
 'use client'
 
-import { CheckCircle, Users } from '@phosphor-icons/react'
-import { TerminatorSkull } from '../auth/TerminatorReveal'
+import { CheckCircle, UsersThree } from '@phosphor-icons/react'
 import { BusinessWaitlist } from './BusinessWaitlist'
 import { PREMIUM_FEATURES } from './PremiumCards'
 
@@ -61,12 +60,15 @@ function BusinessPlanCard({ plan }: { plan: BusinessPlan }) {
     >
       <div className="px-2 pt-6 pb-6 sm:px-2.5 sm:pt-7">
         <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-end justify-center">
-            <TerminatorSkull />
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
+            <UsersThree
+              weight="regular"
+              size={30}
+              className="text-olive-600 dark:text-olive-400"
+            />
           </div>
-          <h2 className="flex items-center gap-2 text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+          <h2 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
             Business
-            <Users weight="regular" size={22} className="text-olive-600 dark:text-olive-400" />
           </h2>
         </div>
         <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
