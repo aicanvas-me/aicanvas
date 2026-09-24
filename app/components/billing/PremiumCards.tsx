@@ -23,7 +23,6 @@ const FREE_FEATURES = [
   'Unlimited one-command installs of free components',
   'Remix with AI on every free component',
   'MCP server for Claude Code, Codex and Cursor',
-  'Lab access with presets and export',
   'Save your favorite components',
 ]
 

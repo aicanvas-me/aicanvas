@@ -35,8 +35,8 @@ type NavItem = {
   match?: 'exact' | 'prefix'
 }
 
-// Lab is not listed. The page is still there and the footer still links to
-// it; it just no longer takes a row in the nav.
+// Lab is not listed. It is off the site: its routes redirect away (see
+// next.config.ts) and nothing links to it.
 const ITEMS: NavItem[] = [
   { label: 'Get MCP', href: '/mcp', icon: <McpMark size={16} />, match: 'exact' },
   { label: 'Pricing', href: '/pricing', icon: <PiggyBank weight="regular" size={16} />, match: 'exact' },

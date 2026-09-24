@@ -1,10 +1,9 @@
 import Link from 'next/link'
-import { ClockClockwise, Flask, Gear, Heart, Lightning, SignOut, User } from '@phosphor-icons/react'
+import { ClockClockwise, Gear, Heart, Lightning, SignOut, User } from '@phosphor-icons/react'
 import type { ReactNode } from 'react'
 
 const LINKS: { href: string; label: string; icon: ReactNode }[] = [
   { href: '/account/saved', label: 'Saved', icon: <Heart size={14} weight="regular" /> },
-  { href: '/account/lab', label: 'Made in Lab', icon: <Flask size={14} weight="regular" /> },
   { href: '/account/history', label: 'Activity', icon: <ClockClockwise size={14} weight="regular" /> },
   { href: '/account/settings', label: 'Settings', icon: <Gear size={14} weight="regular" /> },
   { href: '/account', label: 'Profile', icon: <User size={14} weight="regular" /> },

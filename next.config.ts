@@ -71,6 +71,18 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       { source: "/r", destination: "/components", permanent: true },
+      // The Lab is off the site. Its routes stay in the tree, so these two
+      // redirects are the whole switch: temporary (307) rather than permanent,
+      // so browsers and crawlers do not cache the move if the Lab comes back.
+      // `:path*` matches zero segments too, so it covers /lab itself.
+      // LAB_ENABLED=1 in .env.local skips them, which is what keeps the Lab's
+      // own worktree working after it syncs this file from main.
+      ...(process.env.LAB_ENABLED === "1"
+        ? []
+        : [
+            { source: "/lab/:path*", destination: "/components", permanent: false },
+            { source: "/account/lab", destination: "/account/saved", permanent: false },
+          ]),
       // The Andromeda overview was promoted to the system root; the old preview
       // URL permanently (308) redirects there so any stray link/index lands on
       // the canonical page.

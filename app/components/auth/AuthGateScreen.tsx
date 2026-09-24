@@ -26,7 +26,7 @@ export function AuthGateScreen({ onChooseSignIn, onChooseSignUp, title, subtitle
         {title ?? 'Sign in and unlock the canvas.'}
       </h2>
       <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-        {subtitle ?? 'Save what you love, tune in the Lab, export to your machine. AI Canvas is open core: a free MIT library plus an optional Premium tier.'}
+        {subtitle ?? 'Save what you love. AI Canvas is open core: a free MIT library plus an optional Premium tier.'}
       </p>
 
       <div className="mt-7 flex flex-col gap-3">
