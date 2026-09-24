@@ -29,6 +29,10 @@ type EventMap = {
   'MCP Token Copy': { ok: boolean }
   'Manage Subscription Open': Record<string, never>
   'Checkout Step': { step: string }
+  // Business is not open yet. `open` counts who wanted it enough to ask, and
+  // `submit` counts who left an address, so the gap between the two is the
+  // honest read on demand before a line of seat code exists.
+  'Business Waitlist': { plan: string; step: 'open' | 'submit' }
   /** The founding-offer pill in the home-page top bar. Its own event rather
    *  than 'Subscribe Click': that one counts people opening the checkout, and
    *  folding a banner click into it would read as checkout intent it has not
@@ -57,6 +61,7 @@ export const BEACON_EVENTS = [
   'MCP Token Copy',
   'Manage Subscription Open',
   'Checkout Step',
+  'Business Waitlist',
   'Offer Banner Click',
   'js_error',
   '$pageview',
