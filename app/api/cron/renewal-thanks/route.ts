@@ -34,7 +34,7 @@ export const maxDuration = 60
  * Send-once per renewal: `renewal_thanks_sent_for` in user_metadata holds the
  * start of the billing period already thanked for (it stays put if the billing
  * date is moved, unlike next_billed_at), claimed BEFORE sending (same
- * discipline as welcome_claimed_at in the Paddle webhook), so a re-run never
+ * discipline as premium_welcome_sent in the Paddle webhook), so a re-run never
  * doubles up.
  *
  * Secured by CRON_SECRET, like the reconcile cron. Never touches
