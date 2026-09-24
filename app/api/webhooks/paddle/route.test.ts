@@ -10,7 +10,7 @@ import { NextRequest } from 'next/server'
 // a row lock. Signature verification and the stale guard run for real.
 let row: Record<string, unknown> | null = null
 let claimFails = false
-const claims = { attempted: 0, won: 0 }
+const claims = { attempted: 0, won: 0, filters: [] as unknown[][] }
 const upserts: Record<string, unknown>[] = []
 const users: Record<string, { email: string; user_metadata: Record<string, unknown> }> = {}
 
@@ -31,10 +31,11 @@ vi.mock('@/app/lib/supabase/admin', () => ({
         return { error: null }
       },
       update: (patch: Record<string, unknown>) => ({
-        eq: () => ({
-          is: () => ({
+        eq: (col: string, val: unknown) => ({
+          is: (col2: string, val2: unknown) => ({
             select: async () => {
               claims.attempted++
+              claims.filters.push([col, val, col2, val2])
               if (claimFails) return { data: null, error: { message: 'claim failed' } }
               if (row && row.welcome_claimed_at == null) {
                 row = { ...row, ...patch }
@@ -105,6 +106,7 @@ beforeEach(() => {
   claimFails = false
   claims.attempted = 0
   claims.won = 0
+  claims.filters.length = 0
   upserts.length = 0
   for (const k of Object.keys(users)) delete users[k]
   users.u1 = { email: 'buyer@example.com', user_metadata: {} }
@@ -124,8 +126,21 @@ describe('POST /api/webhooks/paddle first-activation email', () => {
     expect(b.status).toBe(200)
     expect(claims.attempted).toBe(2)
     expect(claims.won).toBe(1)
+    expect(claims.filters).toEqual([
+      ['user_id', 'u1', 'welcome_claimed_at', null],
+      ['user_id', 'u1', 'welcome_claimed_at', null],
+    ])
     expect(sentSubjects()).toEqual(['You just got superpowers'])
     expect(row).toMatchObject({ user_id: 'u1', status: 'active', paddle_subscription_id: 'sub_1' })
+  })
+
+  it('a row first activated by the previous code (user flag set, no column claim) is not welcomed again', async () => {
+    users.u1.user_metadata = { premium_welcome_sent: true }
+    row = { user_id: 'u1', status: 'past_due', last_event_at: '2026-09-01T00:00:00Z', welcome_claimed_at: null }
+    expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
+    expect(claims.attempted).toBe(0)
+    expect(sentSubjects()).toEqual([])
+    expect(row).toMatchObject({ status: 'active' })
   })
 
   it('an account provisioned at checkout gets the claim email instead of the welcome', async () => {

@@ -10,9 +10,12 @@
 -- marked claimed here and can never be welcomed again. Nullable, no default: a
 -- row created after this migration starts unclaimed. Additive only; the
 -- entitlement columns and every reader of them are untouched.
+--
+-- Safe to re-run, and the remedy after a code rollback that spanned new
+-- activations: the column add is guarded and the backfill only fills nulls.
 
 alter table public.user_subscriptions
-  add column welcome_claimed_at timestamptz;
+  add column if not exists welcome_claimed_at timestamptz;
 
 comment on column public.user_subscriptions.welcome_claimed_at is
   'When the first-activation email was claimed for sending. The Paddle webhook claims it atomically; rows older than the column were claimed by migration 0021.';

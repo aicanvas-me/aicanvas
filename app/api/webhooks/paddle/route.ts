@@ -281,7 +281,11 @@ export async function POST(req: NextRequest) {
       const {
         data: { user },
       } = await admin.auth.admin.getUserById(userId)
-      if (apiKey && user?.email) {
+      // A row first activated by the previous code carries the flag that code
+      // wrote on the user and no column claim (rows from before migration 0021
+      // are backfilled; a rollback window is not). Honour the flag too, so no
+      // subscriber is ever welcomed twice.
+      if (apiKey && user?.email && !user.user_metadata?.premium_welcome_sent) {
         // Claim the send FIRST, with one conditional UPDATE that only matches
         // while welcome_claimed_at is still null. Paddle delivers
         // subscription.created and subscription.activated at the same instant;
