@@ -258,18 +258,18 @@ export async function POST(req: NextRequest) {
   }
 
   // First-activation email. Fires once, only on a genuine non-active -> active
-  // transition, so renewals and existing subscribers are excluded; a
-  // user_metadata flag adds idempotency.
+  // transition, so renewals and existing subscribers are excluded; the row's
+  // welcome_claimed_at column adds idempotency (claimed atomically below).
   //
   // Which email: an `anon_provisioned` account (created here from the checkout
   // email) has no session/password, so it gets the sign-in CLAIM email; everyone
   // else (signed-in upgrade, or an email that already had an account) gets the
-  // plain welcome. The flag lives on the USER, so the correct email is chosen no
-  // matter which event flips the subscription active (a non-active event may have
-  // provisioned the row first). The send stays best-effort and never fails the
-  // webhook: a lost claim email is NOT a lockout, because /welcome already told
-  // the anonymous buyer to sign in with the email they paid with, and the sign-in
-  // page self-serves a fresh OTP on demand.
+  // plain welcome. anon_provisioned lives on the USER, so the correct email is
+  // chosen no matter which event flips the subscription active (a non-active
+  // event may have provisioned the row first). The send stays best-effort and
+  // never fails the webhook: a lost claim email is NOT a lockout, because
+  // /welcome already told the anonymous buyer to sign in with the email they
+  // paid with, and the sign-in page self-serves a fresh OTP on demand.
   //
   // We gate on 'active' only, NOT 'trialing' (which tier.ts also counts as
   // premium): AI Canvas sells no-trial plans, so a first activation never carries
@@ -281,13 +281,24 @@ export async function POST(req: NextRequest) {
       const {
         data: { user },
       } = await admin.auth.admin.getUserById(userId)
-      if (apiKey && user?.email && !user.user_metadata?.premium_welcome_sent) {
-        // Claim the flag FIRST and only send if it persisted: a flag-write
-        // failure must never leave the door open to a later double-send.
-        const { error: flagErr } = await admin.auth.admin.updateUserById(userId, {
-          user_metadata: { ...(user.user_metadata ?? {}), premium_welcome_sent: true },
-        })
-        if (!flagErr) {
+      if (apiKey && user?.email) {
+        // Claim the send FIRST, with one conditional UPDATE that only matches
+        // while welcome_claimed_at is still null. Paddle delivers
+        // subscription.created and subscription.activated at the same instant;
+        // a flag that was read and then written let both deliveries send. Here
+        // the second UPDATE waits on the row lock, re-reads the claimed row,
+        // matches nothing and returns no row. A claim that does not persist
+        // sends nothing: a missed welcome is not a lockout, a double is a
+        // broken promise.
+        const { data: claimed, error: claimErr } = await admin
+          .from('user_subscriptions')
+          .update({ welcome_claimed_at: new Date().toISOString() })
+          .eq('user_id', userId)
+          .is('welcome_claimed_at', null)
+          .select('user_id')
+        if (claimErr) {
+          console.error('[paddle webhook] welcome claim failed (non-fatal):', claimErr)
+        } else if (claimed && claimed.length > 0) {
           const mail = user.user_metadata?.anon_provisioned
             ? claimPremiumAccountEmail()
             : welcomeToPremiumEmail()
