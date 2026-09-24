@@ -98,6 +98,43 @@ export function installSlotId(pathname: string): string | null {
   return INSTALL_SLOTS[pathname.replace(/\/$/, '') || '/'] ?? null
 }
 
+/** One standalone component's page. Category and collection pages sit a
+ *  segment deeper, so they do not match and keep their short crumbs. */
+const COMPONENT_LEAF_RE = /^\/components\/[^/]+$/
+
+/** How the offer pill behaves on a route, or null where it stays off. */
+export type OfferPillMode = 'link' | 'static'
+
+// Whether the offer pill sits in the middle of the bar on this route, and
+// whether it is a control there.
+//
+// The routes that carry no bar at all (the lab, the cancellation flow,
+// template leaves, the capture canvas) never reach this, because the bar
+// returns before it is asked. Templates are therefore out without naming them.
+//
+// A route mounting an install control says no outright: the right cluster is
+// wide enough there that a centred pill would run into it.
+//
+// So does a single component's page, in all three families: the standalones,
+// Andromeda Legacy and Andromeda Pro. The crumb there is a trail ending in the
+// component's own name, which is as long as the name happens to be, and a
+// centred pill next to "Components & Blocks / Perspective Showcase Hero" reads
+// as clutter rather than as an offer. The design-system half of that test is
+// the same pattern the crumbs use, so a system's own leaf pages (the image
+// pack, for one) sit out too; they carry the same two-level crumb and the same
+// problem.
+//
+// /pricing keeps the pill and loses the link. The offer belongs on the page
+// where the plans are, but a chip that navigates to the page it is already on
+// would be a control that does nothing, and a thing that looks clickable has
+// to be clickable.
+export function offerPillMode(pathname: string): OfferPillMode | null {
+  const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
+  if (installSlotId(path) !== null) return null
+  if (COMPONENT_LEAF_RE.test(path) || ANDROMEDA_COMPONENT_RE.test(path)) return null
+  return path === '/pricing' ? 'static' : 'link'
+}
+
 export function buildTopBarCrumbs(pathname: string): Crumb[] | null {
   const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
 
