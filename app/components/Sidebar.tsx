@@ -339,7 +339,7 @@ export function Sidebar({
                so the navigation reads as one list that simply runs on. The
                mobile drawer has always worked this way. ── */}
         <div className="pt-2">
-          {/* Inset divider (padded left/right via the nav's px-3) */}
+          {/* Inset divider (padded left/right by the wrapper inside the nav) */}
           <div className="mb-2 border-t border-sand-200 dark:border-sand-800" />
           <div className="space-y-0.5">
             <SecondaryNav pathname={pathname} variant="rail" />
