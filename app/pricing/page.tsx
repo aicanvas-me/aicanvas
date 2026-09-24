@@ -52,14 +52,13 @@ const PLANS: Plan[] = [
       'Copy the source of any free component',
       'Copy the AI remix prompt for any free component',
       'Access the MCP server',
-      'Experiment in the Lab',
     ],
   },
   {
     name: 'Free account',
     Icon: TerminatorCool,
     tagline:
-      'Sign in and unlock the canvas. Save what you love, tune in the Lab, export to your machine.',
+      'Sign in and unlock the canvas. Save what you love.',
     priceLabel: 'Free',
     priceSuffix: 'Forever',
     cta: {
@@ -71,8 +70,6 @@ const PLANS: Plan[] = [
     features: [
       'Save your favorite components',
       'Save preferences across sessions',
-      'Keep Lab presets you can revisit',
-      'Export from the Lab directly to your computer',
       'Access to more resources and features',
     ],
     featured: true,
