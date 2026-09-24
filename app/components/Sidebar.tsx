@@ -111,7 +111,7 @@ export function Sidebar({
   const pinnedDark = isPinnedDarkRoute(pathname)
 
   return (
-    <aside className={`flex h-full w-60 shrink-0 flex-col border-r border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 ${pinnedDark ? 'dark' : ''}`}>
+    <aside className={`@container flex h-full w-60 shrink-0 flex-col border-r border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 ${pinnedDark ? 'dark' : ''}`}>
 
       {/* ── Logo ── */}
       <div className="flex h-14 shrink-0 items-center border-b border-sand-200 px-4 dark:border-sand-800">
@@ -158,10 +158,19 @@ export function Sidebar({
           and the widest row, a system name with its NEW chip, has no slack to
           give: it truncated the moment the bar appeared. A stable gutter keeps
           that strip reserved whether or not the list scrolls, so every row has
-          one width in both states. The right padding drops to 1px because
-          the reserved gutter now supplies the right-hand space px-3 used to. */}
+          one width in both states.
+
+          The right-hand space then has to come from padding OR gutter, never
+          both, and which one depends on the browser: a classic bar takes
+          width, an overlay bar (Safari on a trackpad, for one) takes none and
+          reserves no gutter. The inner wrapper works it out. The aside is a
+          size container, so 100cqw is the rail's width and 100% is the
+          nav's width minus whatever the bar took; their difference IS the bar.
+          The padding is 12px (the old px-3) minus that, never under 1px, so an
+          overlay browser keeps the full 12px and a classic one keeps the row
+          width this fix was checked at. */}
       <nav
-        className="flex-1 overflow-y-auto pl-3 pr-px pt-2 pb-2 [scrollbar-gutter:stable]"
+        className="flex-1 overflow-y-auto pt-2 pb-2 [scrollbar-gutter:stable]"
         style={{
           maskImage:
             'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
@@ -169,6 +178,7 @@ export function Sidebar({
             'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
         }}
       >
+        <div className="pl-3 pr-[max(1px,calc(12px_-_(100cqw_-_100%)))]">
         {/* ── Design Systems pole (shared, identical on every page) ── */}
         <DesignSystemsPole />
 
@@ -336,6 +346,7 @@ export function Sidebar({
           </div>
         </div>
 
+        </div>
       </nav>
 
       {/* ── Social icons ── */}
