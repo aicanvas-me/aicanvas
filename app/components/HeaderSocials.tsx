@@ -8,7 +8,6 @@ import { ThemeToggle } from './ThemeToggle'
 // (compact letter-avatar + dropdown when signed in, "Sign in" button that
 // opens the auth modal when signed out).
 //
-// Lab moved into the sidebar nav (plain icon + label, before Get MCP).
 // Get MCP, Pricing, About also live in the sidebar; GitHub + X icons too.
 
 export function HeaderSocials() {
