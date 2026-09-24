@@ -2,7 +2,7 @@
 
 import { useId, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { CheckCircle, UsersThree } from '@phosphor-icons/react'
+import { CheckCircle } from '@phosphor-icons/react'
 import { BusinessWaitlist } from './BusinessWaitlist'
 import { PREMIUM_FEATURES } from './PremiumCards'
 
@@ -69,11 +69,16 @@ export function BusinessCards() {
             </span>
 
             <div className="flex items-center gap-4">
-              <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
-                <UsersThree
-                  weight="regular"
-                  size={30}
-                  className="text-olive-600 dark:text-olive-400"
+              {/* Its own avatar, so Business reads as a third member of the
+                  family rather than a second Premium card. Hosted on ImageKit
+                  with the rest of the site chrome art; w-160 covers the 64px
+                  slot at 2x. */}
+              <div className="flex h-16 w-16 shrink-0 items-end justify-center">
+                <img
+                  src="https://ik.imagekit.io/aitoolkit/site/avatar-business.png?tr=w-160,f-auto"
+                  alt=""
+                  aria-hidden="true"
+                  className="h-full w-auto"
                 />
               </div>
               <h2 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
