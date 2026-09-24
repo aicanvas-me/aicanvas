@@ -5,12 +5,12 @@ import { motion, useReducedMotion } from 'framer-motion'
 
 export type PlanAudience = 'individual' | 'business'
 
-const OPTIONS: { key: PlanAudience; label: string; badge?: string }[] = [
+// No unreleased marker here: it rides on the Business card itself, where it
+// sits next to the price it qualifies. A marker in the tab had to explain a
+// card the visitor had not seen yet.
+const OPTIONS: { key: PlanAudience; label: string }[] = [
   { key: 'individual', label: 'Individual' },
-  // The badge rides inside the tab rather than beside the whole control,
-  // because only one of the two is unreleased and a marker floating next to
-  // the pair would read as if both were.
-  { key: 'business', label: 'Business', badge: 'Soon' },
+  { key: 'business', label: 'Business' },
 ]
 
 export function audiencePanelId(prefix: string, key: PlanAudience) {
@@ -45,7 +45,7 @@ export function PlanAudienceTabs({
         aria-label="Plans for individuals or for a business"
         className="inline-flex rounded-xl border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900"
       >
-        {OPTIONS.map(({ key, label, badge }) => {
+        {OPTIONS.map(({ key, label }) => {
           const selected = value === key
           return (
             <button
@@ -73,16 +73,7 @@ export function PlanAudienceTabs({
                   }
                 />
               )}
-              <span className="relative flex items-center gap-1.5">
-                {label}
-                {badge && (
-                  <span
-                    className="rounded-full bg-sand-200 px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.08em] text-sand-700 dark:bg-sand-950 dark:text-sand-300"
-                  >
-                    {badge}
-                  </span>
-                )}
-              </span>
+              <span className="relative">{label}</span>
             </button>
           )
         })}
