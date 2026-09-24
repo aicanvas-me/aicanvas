@@ -240,7 +240,7 @@ export default function PricingPage() {
                 show, so leaving it fixed made the header answer a question
                 the visitor had just switched away from. */}
             {!premium
-              ? 'The free library is free, forever. Browse anonymously, or sign up to save your work, keep Lab presets, and export to your machine.'
+              ? 'The free library is free, forever. Browse anonymously, or sign up to save your favorites.'
               : audience === 'business'
                 ? 'One subscription for up to 10 people, and one shared AI Brain, so every agent on the team builds to the same rules.'
                 : 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'}
