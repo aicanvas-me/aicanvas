@@ -182,7 +182,25 @@ export function DesignSystemsPole({
                         carries the Andromeda mark and its own full name. The
                         gap keeps them clear of the group's vertical rail. */}
                     <span aria-hidden className="w-3 shrink-0" />
-                    <span aria-hidden className="shrink-0">
+                    {/* Same mark, two weights: Pro keeps the solid mark,
+                        Legacy draws it as an outline, so the two rows tell
+                        apart before the names are read. Styled from here
+                        rather than with a prop on the icon, which is a
+                        design-system file. CSS fill and stroke beat the
+                        paths' own fill attributes. The stroke is 1.5 units
+                        in a 28-wide box drawn at 14px, so 0.75px: at a full
+                        1px the two outlines sitting this close together read
+                        heavier than the Phosphor icons around them.
+                        overflow-visible keeps the outer half of the line from
+                        clipping at the box edge. */}
+                    <span
+                      aria-hidden
+                      className={`shrink-0 ${
+                        system.tier === 'pro'
+                          ? ''
+                          : '[&_path]:fill-transparent [&_path]:stroke-current [&_path]:[stroke-linejoin:round] [&_path]:[stroke-width:1.5] [&_svg]:overflow-visible'
+                      }`}
+                    >
                       <AndromedaIcon size={14} mono />
                     </span>
                     <span className="min-w-0 truncate font-semibold">
