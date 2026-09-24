@@ -50,17 +50,25 @@ const BUSINESS_PRICES: Record<Cycle, { amount: string; suffix: string; note: str
  * Swapping the price in place leaves the comparison where it belongs: on the
  * two numbers, in the same spot.
  */
-export function BusinessCards() {
+export function BusinessCards({ compact = false }: { compact?: boolean }) {
   const [cycle, setCycle] = useState<Cycle>('yearly')
   const reduceMotion = useReducedMotion()
   const pillId = useId()
   const price = BUSINESS_PRICES[cycle]
 
+  // Same compact ladder as the Premium card, so the two read as one family
+  // wherever they swap for each other.
+  const iconBox = compact ? 'h-12 w-12' : 'h-16 w-16'
+  const heading = compact ? 'text-2xl' : 'text-3xl'
+  const priceText = compact ? 'text-4xl' : 'text-4xl sm:text-5xl'
+  const cardPad = compact ? 'px-2 pt-5 pb-5' : 'px-2 pt-6 pb-6 sm:px-2.5 sm:pt-7'
+  const listPad = compact ? 'px-2 py-4' : 'px-2 py-6 sm:px-2.5'
+
   return (
     <>
-      <div className="mx-auto mt-12 max-w-md sm:mt-16">
+      <div className={`mx-auto max-w-md ${compact ? '' : 'mt-12 sm:mt-16'}`}>
         <div className="relative flex flex-col rounded-3xl border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
-          <div className="px-2 pt-6 pb-6 sm:px-2.5 sm:pt-7">
+          <div className={cardPad}>
             {/* The unreleased marker sits on the card, in the corner the eye
                 leaves the price by, so it qualifies the number rather than the
                 tab. Neutral sand on purpose: olive is the buy colour. */}
@@ -73,7 +81,7 @@ export function BusinessCards() {
                   family rather than a second Premium card. Hosted on ImageKit
                   with the rest of the site chrome art; w-160 covers the 64px
                   slot at 2x. */}
-              <div className="flex h-16 w-16 shrink-0 items-end justify-center">
+              <div className={`flex ${iconBox} shrink-0 items-end justify-center`}>
                 <img
                   src="https://ik.imagekit.io/aitoolkit/site/avatar-business.png?tr=w-160,f-auto"
                   alt=""
@@ -81,7 +89,7 @@ export function BusinessCards() {
                   className="h-full w-auto"
                 />
               </div>
-              <h2 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+              <h2 className={`${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
                 Business
               </h2>
             </div>
@@ -121,7 +129,7 @@ export function BusinessCards() {
             </div>
 
             <div className="mt-4 flex items-baseline gap-2">
-              <span className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">
+              <span className={`${priceText} font-extrabold tracking-tight text-sand-900 dark:text-sand-50`}>
                 {price.amount}
               </span>
               <span className="text-sm font-medium text-sand-600 dark:text-sand-500">
@@ -138,7 +146,7 @@ export function BusinessCards() {
             <BusinessWaitlist plan={cycle} featured />
           </div>
 
-          <div className="flex-1 rounded-2xl bg-sand-50/70 px-2 py-6 dark:bg-sand-950 sm:px-2.5">
+          <div className={`flex-1 rounded-2xl bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">
               EVERYTHING INCLUDED
             </p>
@@ -160,10 +168,14 @@ export function BusinessCards() {
           </div>
         </div>
       </div>
-      <p className="mt-6 text-center text-sm text-sand-600 dark:text-sand-400">
-        More than 10 people? Join the list above and tell us how many. That number is
-        what decides the next bracket.
-      </p>
+      {/* The bracket line is a pricing-page aside. In the modal it competes
+          with the gate the visitor actually opened, so it stays off there. */}
+      {!compact && (
+        <p className="mt-6 text-center text-sm text-sand-600 dark:text-sand-400">
+          More than 10 people? Join the list above and tell us how many. That number is
+          what decides the next bracket.
+        </p>
+      )}
     </>
   )
 }
