@@ -13,6 +13,7 @@ import { createPortal } from 'react-dom'
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { TopBarInstallSlot, TopBarProvider, useTopBarInstallSlot, useTopBarLeft } from './TopBar'
+import { offerPillMode } from './top-bar-crumbs'
 
 // React only batches act() work when the environment says it is a test.
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
@@ -128,5 +129,39 @@ describe('useTopBarInstallSlot', () => {
     }
     const offenders = walk(app).filter((f) => /getElementById\([^)]*install-slot/.test(readFileSync(f, 'utf8')))
     expect(offenders).toEqual([])
+  })
+})
+
+// Which routes carry the offer pill. The rule is "wherever the middle of the
+// bar is free", so the cases that matter are the ones where it is not.
+describe('offerPillMode', () => {
+  it('links from the ordinary pages', () => {
+    for (const path of ['/', '/components', '/components/category/forms', '/faq', '/about', '/mcp'])
+      expect(offerPillMode(path), path).toBe('link')
+  })
+
+  it("stays off a single component's page, where the crumb is already long", () => {
+    for (const path of [
+      '/components/perspective-showcase-hero',
+      '/components/jar-of-emotions',
+      '/design-systems/andromeda/button',
+      '/design-systems/andromeda-pro/gauge',
+    ])
+      expect(offerPillMode(path), path).toBeNull()
+  })
+
+  it('stands down where an install control owns the right of the bar', () => {
+    for (const path of [
+      '/design-systems/andromeda/system',
+      '/design-systems/andromeda-pro/foundation',
+      '/design-systems/andromeda-pro/components',
+      '/design-systems/andromeda-pro/brain/explore',
+    ])
+      expect(offerPillMode(path), path).toBeNull()
+  })
+
+  it('shows on the pricing page without linking to it', () => {
+    expect(offerPillMode('/pricing')).toBe('static')
+    expect(offerPillMode('/pricing/')).toBe('static')
   })
 })

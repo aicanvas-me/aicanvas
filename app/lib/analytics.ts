@@ -33,6 +33,11 @@ type EventMap = {
   // `submit` counts who left an address, so the gap between the two is the
   // honest read on demand before a line of seat code exists.
   'Business Waitlist': { plan: string; step: 'open' | 'submit' }
+  /** The founding-offer pill in the home-page top bar. Its own event rather
+   *  than 'Subscribe Click': that one counts people opening the checkout, and
+   *  folding a banner click into it would read as checkout intent it has not
+   *  earned. The pill only sends people to /pricing. */
+  'Offer Banner Click': Record<string, never>
 }
 
 // Runtime mirror of EventMap's keys plus the two events sent via beacon()
@@ -57,6 +62,7 @@ export const BEACON_EVENTS = [
   'Manage Subscription Open',
   'Checkout Step',
   'Business Waitlist',
+  'Offer Banner Click',
   'js_error',
   '$pageview',
 ] as const
