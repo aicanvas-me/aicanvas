@@ -238,9 +238,15 @@ export default function PricingPage() {
             {premium ? 'Simple, honest pricing' : 'Pick your side'}
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
-            {premium
-              ? 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'
-              : 'The free library is free, forever. Browse anonymously, or sign up to save your work, keep Lab presets, and export to your machine.'}
+            {/* The line follows the audience switch below it. The Free vs
+                Premium sentence describes a pair the Business view does not
+                show, so leaving it fixed made the header answer a question
+                the visitor had just switched away from. */}
+            {!premium
+              ? 'The free library is free, forever. Browse anonymously, or sign up to save your work, keep Lab presets, and export to your machine.'
+              : audience === 'business'
+                ? 'One subscription for up to 10 people, and one shared AI Brain, so every agent on the team builds to the same rules.'
+                : 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'}
           </p>
         </Section>
 
