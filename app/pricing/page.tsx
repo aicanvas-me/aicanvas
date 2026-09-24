@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import { CheckCircle, Sparkle } from '@phosphor-icons/react'
@@ -11,6 +11,12 @@ import { TerminatorCool } from '../components/auth/TerminatorReveal'
 import { premiumEnabled } from '../../lib/flags'
 import { PremiumCards } from '../components/billing/PremiumCards'
 import { FaqAccordion, type FaqItem } from '../components/FaqAccordion'
+import { BusinessCards } from '../components/billing/BusinessCard'
+import {
+  PlanAudienceTabs,
+  audiencePanelId,
+  type PlanAudience,
+} from '../components/billing/PlanAudienceTabs'
 
 // ─── Plan data ──────────────────────────────────────────────────────────────
 // Legacy fallback, rendered only when premiumEnabled() is false. The first card
@@ -213,6 +219,7 @@ const PRICING_FAQ: FaqItem[] = [
 
 export default function PricingPage() {
   const premium = premiumEnabled()
+  const [audience, setAudience] = useState<PlanAudience>('individual')
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
       <main className="relative mx-auto w-full max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
@@ -231,15 +238,39 @@ export default function PricingPage() {
             {premium ? 'Simple, honest pricing' : 'Pick your side'}
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
-            {premium
-              ? 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'
-              : 'The free library is free, forever. Browse anonymously, or sign up to save your work, keep Lab presets, and export to your machine.'}
+            {/* The line follows the audience switch below it. The Free vs
+                Premium sentence describes a pair the Business view does not
+                show, so leaving it fixed made the header answer a question
+                the visitor had just switched away from. */}
+            {!premium
+              ? 'The free library is free, forever. Browse anonymously, or sign up to save your work, keep Lab presets, and export to your machine.'
+              : audience === 'business'
+                ? 'One subscription for up to 10 people, and one shared AI Brain, so every agent on the team builds to the same rules.'
+                : 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'}
           </p>
         </Section>
 
         {/* ── Plan cards ── */}
         {premium ? (
-          <PremiumCards />
+          <>
+            {/* Audience switch. Individual keeps the Free vs Premium pair
+                the rest of the site already uses; Business swaps in the
+                single team card, so neither view has to explain the other. */}
+            <div className="mt-10 sm:mt-12">
+              <PlanAudienceTabs
+                value={audience}
+                onChange={setAudience}
+                idPrefix="pricing-audience"
+              />
+            </div>
+            <div
+              role="tabpanel"
+              id={audiencePanelId('pricing-audience', audience)}
+              aria-labelledby={`pricing-audience-${audience}-tab`}
+            >
+              {audience === 'individual' ? <PremiumCards /> : <BusinessCards />}
+            </div>
+          </>
         ) : (
           <div className="mt-12 grid gap-6 sm:mt-16 md:grid-cols-2">
             {PLANS.map((plan, i) => (
