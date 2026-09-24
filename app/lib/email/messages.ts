@@ -42,9 +42,9 @@ export function welcomeEmail(): { subject: string; html: string } {
 }
 
 /** Sent ONCE when a subscription goes active (the upgrade moment), in the
- *  site's superhero voice. The send-once guard (premium_welcome_sent in
- *  user_metadata) lives in the Paddle webhook, and it's non-fatal there so it
- *  can never block subscription activation. */
+ *  site's superhero voice. The send-once guard (welcome_claimed_at on the
+ *  subscription row, one conditional UPDATE) lives in the Paddle webhook, and
+ *  it's non-fatal there so it can never block subscription activation. */
 export function welcomeToPremiumEmail(): { subject: string; html: string } {
   const html = emailShell({
     title: 'You just got superpowers',
@@ -61,9 +61,9 @@ export function welcomeToPremiumEmail(): { subject: string; html: string } {
  *  one-time magic-link token: the buyer requests a fresh OTP themselves, so
  *  there is no single-slot token a concurrent webhook delivery could invalidate,
  *  and a lost/delayed email is not a lockout (they can sign in any time with the
- *  email they paid with). The send-once guard (premium_welcome_sent in
- *  user_metadata) lives in the Paddle webhook, shared with the welcome email so
- *  a buyer never gets both. */
+ *  email they paid with). The send-once guard (welcome_claimed_at on the
+ *  subscription row) lives in the Paddle webhook, shared with the welcome email
+ *  so a buyer never gets both. */
 export function claimPremiumAccountEmail(): { subject: string; html: string } {
   const html = emailShell({
     title: 'Access your Premium account',
