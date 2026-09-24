@@ -58,14 +58,14 @@ export function PlanAudienceTabs({
               onClick={() => onChange(key)}
               className={`relative rounded-lg px-5 py-2 text-sm font-semibold transition-colors ${
                 selected
-                  ? 'text-sand-950'
+                  ? 'text-sand-900 dark:text-sand-50'
                   : 'text-sand-600 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-200'
               }`}
             >
               {selected && (
                 <motion.span
                   layoutId={`plan-audience-pill-${pillId}`}
-                  className="absolute inset-0 rounded-lg bg-olive-500"
+                  className="absolute inset-0 rounded-lg bg-sand-50 shadow-sm dark:bg-sand-800"
                   transition={
                     reduceMotion
                       ? { duration: 0 }
@@ -77,11 +77,7 @@ export function PlanAudienceTabs({
                 {label}
                 {badge && (
                   <span
-                    className={`rounded-full px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.08em] ${
-                      selected
-                        ? 'bg-sand-50 text-sand-700'
-                        : 'bg-sand-200 text-sand-700 dark:bg-sand-800 dark:text-sand-300'
-                    }`}
+                    className="rounded-full bg-sand-200 px-1.5 py-px text-[10px] font-bold uppercase tracking-[0.08em] text-sand-700 dark:bg-sand-950 dark:text-sand-300"
                   >
                     {badge}
                   </span>
