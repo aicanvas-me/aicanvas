@@ -51,7 +51,7 @@ export const CATEGORY: Record<string, string> = {
   // Actions
   button: 'Actions',
   'icon-button': 'Actions',
-  chip: 'Actions',
+  suggestion: 'Actions',
 
   // Navigation
   'nav-item': 'Navigation',

@@ -11,7 +11,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'button': { variants: 6, states: 6 },
   'card': { variants: 4, states: 0 },
   'checkbox': { variants: 3, states: 6 },
-  'chip': { variants: 6, states: 3 },
+  'suggestion': { variants: 3, states: 3 },
   'choice-card': { variants: 3, states: 7 },
   'corner-markers': { variants: 4, states: 0 },
   'cube': { variants: 3, states: 0 },

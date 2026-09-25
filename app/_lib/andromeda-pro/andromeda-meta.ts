@@ -63,13 +63,6 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/checkbox.png?v=3',
   },
   {
-    slug: 'chip',
-    name: 'Chip',
-    description:
-      'Offers a small pressable choice: a suggestion to take, or a filter to switch on.',
-    sourceFile: 'Chip.tsx',
-  },
-  {
     slug: 'choice-card',
     name: 'Choice Card',
     description:
@@ -315,6 +308,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Displays one headline number with its unit and its change.',
     sourceFile: 'StatTile.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/stat-tile.png?v=3',
+  },
+  {
+    slug: 'suggestion',
+    name: 'Suggestion',
+    description:
+      'Offers a proposed next move the reader can take, such as a follow-up prompt or a task lane.',
+    sourceFile: 'Suggestion.tsx',
   },
   {
     slug: 'tag',

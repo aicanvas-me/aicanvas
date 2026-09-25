@@ -71,7 +71,7 @@ import { Radio, RadioGroup } from '../../lib/andromeda-pro.generated'
 import { Slider } from '../../lib/andromeda-pro.generated'
 import { Spinner } from '../../lib/andromeda-pro.generated'
 import { Skeleton } from '../../lib/andromeda-pro.generated'
-import { Chip } from '../../lib/andromeda-pro.generated'
+import { Suggestion } from '../../lib/andromeda-pro.generated'
 import { StatTile } from '../../lib/andromeda-pro.generated'
 import { Tag } from '../../lib/andromeda-pro.generated'
 import { Textarea } from '../../lib/andromeda-pro.generated'
@@ -923,21 +923,16 @@ function SkeletonDemo() {
   )
 }
 
-function ChipDemo() {
+function SuggestionDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
-      <Row label="Suggestion">
-        <Chip variant="suggestion" icon={Sparkle}>Summarize</Chip>
-        <Chip variant="suggestion">Draft a reply</Chip>
-        <Chip variant="suggestion" selected>Selected</Chip>
-      </Row>
-      <Row label="Filter">
-        <Chip variant="filter" icon={Funnel}>Open</Chip>
-        <Chip variant="filter">Assigned to me</Chip>
-        <Chip variant="filter" selected>Selected</Chip>
+      <Row label="Default">
+        <Suggestion icon={Sparkle}>Summarize</Suggestion>
+        <Suggestion>Draft a reply</Suggestion>
+        <Suggestion selected>Selected</Suggestion>
       </Row>
       <Row label="Sizes">
-        <SizeRamp sizes={['sm', 'md']} render={(s) => <Chip size={s} variant="filter" icon={Funnel}>Filter</Chip>} />
+        <SizeRamp sizes={['sm', 'md']} render={(s) => <Suggestion size={s} icon={Sparkle}>Suggestion</Suggestion>} />
       </Row>
     </div>
   )
@@ -1542,7 +1537,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   button: ButtonDemo,
   card: CardDemo,
   checkbox: CheckboxDemo,
-  chip: ChipDemo,
+  suggestion: SuggestionDemo,
   'choice-card': ChoiceCardDemo,
   'corner-markers': CornerMarkersDemo,
   'date-range-picker': DateRangePickerDemo,
