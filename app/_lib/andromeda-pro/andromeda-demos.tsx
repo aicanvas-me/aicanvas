@@ -11,7 +11,8 @@
 // new consumer.
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import { LayoutGroup } from 'framer-motion'
 import {
   ArrowClockwise,
   Bell,
@@ -19,6 +20,7 @@ import {
   Calendar,
   ChartBar,
   ChartLine,
+  ChatCircle,
   Clock,
   Compass,
   Copy,
@@ -36,12 +38,17 @@ import {
   Keyboard,
   MagnifyingGlass,
   Pencil,
+  PencilSimple,
   PlugsConnected,
   Pulse,
+  PushPin,
   SignOut,
   Sliders,
   Sparkle,
+  SpeakerHigh,
+  SpeakerSlash,
   Star,
+  ThumbsUp,
   Trash,
   UserCircle,
   Users,
@@ -209,7 +216,29 @@ function SizeRamp({ sizes = ['sm', 'md', 'lg'], render, direction = 'row' }) {
 
 // ─── Per-slug demos ──────────────────────────────────────────────────────────
 
+// A short live readout beside a demo control, so a toggle visibly changes
+// something besides its own paint. Muted, not faint: it is a value.
+function Readout({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      aria-live="polite"
+      style={{
+        fontFamily: tokens.typography.fontSans,
+        fontSize: tokens.typography.size.sm,
+        color: `var(--at-text-muted, ${tokens.color.text.muted})`,
+      }}
+    >
+      {children}
+    </span>
+  )
+}
+
 function IconButtonDemo() {
+  // Toggle buttons: `pressed` is always a boolean here, never undefined, so
+  // each announces as a toggle from its first paint. The labels stay constant;
+  // the state is read from aria-pressed.
+  const [muted, setMuted] = useState(false)
+  const [liked, setLiked] = useState(false)
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
       <Row label="Variants">
@@ -217,6 +246,25 @@ function IconButtonDemo() {
         <IconButton variant="outline" aria-label="Settings" icon={Gear} />
         <IconButton variant="ghost" aria-label="Refresh" icon={ArrowClockwise} />
         <IconButton variant="destructive" aria-label="Delete" icon={Trash} />
+      </Row>
+      <Row label="Pressed">
+        <IconButton
+          variant="outline"
+          aria-label="Mute"
+          icon={muted ? SpeakerSlash : SpeakerHigh}
+          pressed={muted}
+          onClick={() => setMuted((v) => !v)}
+        />
+        <IconButton
+          variant="ghost"
+          aria-label="Good response"
+          icon={ThumbsUp}
+          pressed={liked}
+          onClick={() => setLiked((v) => !v)}
+        />
+        <Readout>
+          {muted ? 'Muted' : 'Sound on'} · {liked ? 'Rated good' : 'Not rated'}
+        </Readout>
       </Row>
       <Row label="Sizes">
         <SizeRamp render={(s) => <IconButton size={s} aria-label={`Settings (${s})`} icon={Gear} />} />
@@ -229,7 +277,15 @@ function IconButtonDemo() {
   )
 }
 
+// Twenty-four issues; nine are assigned to you, seven are unread, three are both.
+const ISSUE_COUNT = { all: 24, mine: 9, unread: 7, both: 3 }
+
 function ButtonDemo() {
+  // Two filter toggles over one list. `pressed` is a boolean from the first
+  // paint, and each label stays the same whether it is on or off.
+  const [mine, setMine] = useState(false)
+  const [unread, setUnread] = useState(false)
+  const shown = mine && unread ? ISSUE_COUNT.both : mine ? ISSUE_COUNT.mine : unread ? ISSUE_COUNT.unread : ISSUE_COUNT.all
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
       <Row label="Variants">
@@ -238,6 +294,15 @@ function ButtonDemo() {
         <Button variant="ghost">Ghost</Button>
         <Button variant="destructive">Destructive</Button>
         <Button variant="link">Link</Button>
+      </Row>
+      <Row label="Pressed">
+        <Button variant="outline" icon={UserCircle} pressed={mine} onClick={() => setMine((v) => !v)}>
+          Assigned to me
+        </Button>
+        <Button variant="ghost" icon={Envelope} pressed={unread} onClick={() => setUnread((v) => !v)}>
+          Unread
+        </Button>
+        <Readout>{shown} issues</Readout>
       </Row>
       <Row label="Sizes">
         <SizeRamp render={(s) => <Button size={s}>Deploy</Button>} />
@@ -449,56 +514,216 @@ function SearchFieldDemo() {
   )
 }
 
-function NavItemDemo() {
-  const items = [
-    { icon: Compass, label: 'Overview' },
-    { icon: Pulse, label: 'Activity' },
-    { icon: ChartLine, label: 'Reports' },
-    { icon: Bell, label: 'Alerts' },
-    { icon: Users, label: 'Members' },
-    { icon: Database, label: 'Logs' },
-    { icon: Gear, label: 'Settings' },
-  ]
-  return (
-    <div style={{ display: 'flex', gap: tokens.spacing[5], alignItems: 'flex-start' }}>
-      <div
-        style={{
-          width: 260,
-          background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
-          position: 'relative',
-        }}
-      >
-        <CornerMarkers />
-        {items.map((item, i) => (
-          <NavItem key={item.label} icon={item.icon} label={item.label} active={i === 0} />
-        ))}
-      </div>
+const NAV_ITEMS = [
+  { icon: Compass, label: 'Overview' },
+  { icon: Pulse, label: 'Activity' },
+  { icon: ChartLine, label: 'Reports' },
+  { icon: Bell, label: 'Alerts' },
+  { icon: Users, label: 'Members' },
+  { icon: Database, label: 'Logs' },
+  { icon: Gear, label: 'Settings' },
+]
 
-      {/* The same list collapsed to an icon rail. Same component, no edge
-          square — a rail is too narrow for one to read as an edge, so the
-          accent glyph marks the current row. The label is still there for
-          screen readers. */}
-      <div
-        style={{
-          width: 56,
-          background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
-          position: 'relative',
-        }}
-      >
-        <CornerMarkers />
-        {items.map((item, i) => (
-          <Tooltip
-            key={item.label}
-            label={item.label}
-            position="right"
-            // inline-flex by default, which would shrink-wrap the row and
-            // leave the hover fill and tap target narrower than the rail.
-            style={{ display: 'flex', width: '100%' }}
-          >
-            <NavItem collapsed icon={item.icon} label={item.label} active={i === 0} />
-          </Tooltip>
-        ))}
-      </div>
+const INITIAL_CHATS = [
+  { id: 'c1', title: 'Deorbit burn checklist', pinned: true },
+  { id: 'c2', title: 'Telemetry gaps on node 7', pinned: false },
+  { id: 'c3', title: 'Q3 launch cadence', pinned: false },
+  { id: 'c4', title: 'Ground station handover', pinned: false },
+]
+
+// Metadata label over a group of rows. Faint is right here: it names the
+// group, it is not a value.
+function GroupLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        padding: `${tokens.spacing[3]} ${tokens.spacing[3]} ${tokens.spacing[1]}`,
+        fontFamily: tokens.typography.fontMono,
+        fontSize: tokens.typography.size.xs,
+        color: `var(--at-text-faint, ${tokens.color.text.faint})`,
+        textTransform: 'uppercase',
+        letterSpacing: tokens.typography.tracking.widest,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+// A chat list: `selected` marks the open chat (neutral, not the current page),
+// and each row's `action` is a sm PanelMenu of things to do to that chat.
+// Rename swaps the row for an inline field; Pin moves the row between the
+// Pinned and Recent groups.
+function ChatList() {
+  const [chats, setChats] = useState(INITIAL_CHATS)
+  const [openId, setOpenId] = useState('c2')
+  const [renamingId, setRenamingId] = useState<string | null>(null)
+  // A menu item that moves or replaces the row puts focus back on that row
+  // itself: the menu's own focus return targets a trigger that may have just
+  // unmounted. Runs after the menu's effect, so it has the last word.
+  const [focusId, setFocusId] = useState<string | null>(null)
+  const rows = useRef<Record<string, HTMLButtonElement | null>>({})
+  const renameDone = useRef(false)
+
+  useEffect(() => {
+    if (!focusId) return
+    rows.current[focusId]?.focus()
+    setFocusId(null)
+  }, [focusId])
+
+  const togglePin = (id: string) => {
+    setChats((list) => list.map((c) => (c.id === id ? { ...c, pinned: !c.pinned } : c)))
+    setFocusId(id)
+  }
+  const finishRename = (id: string, value: string | null) => {
+    if (renameDone.current) return
+    renameDone.current = true
+    const title = value?.trim()
+    if (title) setChats((list) => list.map((c) => (c.id === id ? { ...c, title } : c)))
+    setRenamingId(null)
+    setFocusId(id)
+  }
+
+  const pinned = chats.filter((c) => c.pinned)
+  const recent = chats.filter((c) => !c.pinned)
+  // One flat keyed list, group labels included, so a pinned row MOVES rather
+  // than remounting in a second container.
+  const entries = [
+    ...(pinned.length ? [{ group: 'Pinned' }, ...pinned] : []),
+    ...(recent.length ? [{ group: 'Recent' }, ...recent] : []),
+  ]
+
+  return (
+    <div
+      style={{
+        width: 240,
+        paddingBottom: tokens.spacing[1],
+        background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
+        position: 'relative',
+      }}
+    >
+      <CornerMarkers />
+      {entries.map((entry) => {
+        if ('group' in entry) return <GroupLabel key={entry.group}>{entry.group}</GroupLabel>
+        const chat = entry
+        if (renamingId === chat.id) {
+          return (
+            // 28px sm field plus 4px above and below keeps the 36px row height.
+            <div key={chat.id} style={{ padding: `${tokens.spacing[1]} 0` }}>
+              <Input
+                size="sm"
+                aria-label="Chat name"
+                defaultValue={chat.title}
+                autoFocus
+                onFocus={(e) => e.target.select()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') finishRename(chat.id, e.currentTarget.value)
+                  if (e.key === 'Escape') finishRename(chat.id, null)
+                }}
+                onBlur={(e) => finishRename(chat.id, e.currentTarget.value)}
+              />
+            </div>
+          )
+        }
+        return (
+          <NavItem
+            key={chat.id}
+            ref={(el) => {
+              rows.current[chat.id] = el
+            }}
+            icon={ChatCircle}
+            label={chat.title}
+            selected={openId === chat.id}
+            onClick={() => setOpenId(chat.id)}
+            action={
+              <PanelMenu
+                size="sm"
+                ariaLabel={`${chat.title} options`}
+                items={[
+                  {
+                    label: 'Rename',
+                    icon: PencilSimple,
+                    onSelect: () => {
+                      renameDone.current = false
+                      setRenamingId(chat.id)
+                    },
+                  },
+                  { label: chat.pinned ? 'Unpin' : 'Pin', icon: PushPin, onSelect: () => togglePin(chat.id) },
+                ]}
+              />
+            }
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+function NavItemDemo() {
+  // One current page shared by both rails, so a click on either moves the
+  // active row in both.
+  const [current, setCurrent] = useState(0)
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: tokens.spacing[5], alignItems: 'flex-start' }}>
+      {/* LayoutGroup so the active edge line slides between rows. */}
+      <LayoutGroup id="nav-demo-expanded">
+        <div
+          style={{
+            width: 260,
+            background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
+            position: 'relative',
+          }}
+        >
+          <CornerMarkers />
+          {NAV_ITEMS.map((item, i) => (
+            <NavItem
+              key={item.label}
+              icon={item.icon}
+              label={item.label}
+              active={i === current}
+              onClick={() => setCurrent(i)}
+            />
+          ))}
+        </div>
+      </LayoutGroup>
+
+      {/* The same list collapsed to an icon rail. Same component: the accent
+          glyph and the same trailing edge line mark the current row, so the
+          rail reads the same folded or open. The label is still there for
+          screen readers. Its own layoutGroupId, so its line never slides
+          across to the expanded list. */}
+      <LayoutGroup id="nav-demo-rail">
+        <div
+          style={{
+            width: 56,
+            background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
+            position: 'relative',
+          }}
+        >
+          <CornerMarkers />
+          {NAV_ITEMS.map((item, i) => (
+            <Tooltip
+              key={item.label}
+              label={item.label}
+              position="right"
+              // inline-flex by default, which would shrink-wrap the row and
+              // leave the hover fill and tap target narrower than the rail.
+              style={{ display: 'flex', width: '100%' }}
+            >
+              <NavItem
+                collapsed
+                icon={item.icon}
+                label={item.label}
+                active={i === current}
+                layoutGroupId="andromeda-navitem-indicator-rail"
+                onClick={() => setCurrent(i)}
+              />
+            </Tooltip>
+          ))}
+        </div>
+      </LayoutGroup>
+
+      <ChatList />
     </div>
   )
 }
@@ -1266,6 +1491,19 @@ function TextareaDemo() {
           direction="column"
           render={(s) => <Textarea size={s} placeholder="Add a description" rows={2} style={{ width: 300 }} />}
         />
+      </Row>
+      {/* One line at rest; it grows with every line typed, up to six, then
+          scrolls. No resize handle: the height is the field's to set. */}
+      <Row label="Auto-grow">
+        <div style={{ width: '100%', maxWidth: 420 }}>
+          <Textarea
+            label="Reply"
+            placeholder="Type a few lines. It grows to six, then scrolls."
+            autoGrow
+            rows={1}
+            maxRows={6}
+          />
+        </div>
       </Row>
       <div
         style={{
