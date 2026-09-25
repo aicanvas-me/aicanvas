@@ -18,7 +18,7 @@ export const chip: MatrixSpec = {
 
     :where([data-andromeda-matrix]) [data-force~="focus"] .andromeda-chip {
       outline: none;
-      box-shadow: inset 0 0 0 1px var(--andromeda-focus-ring, ${tokens.color.focus.ring});
+      box-shadow: inset 0 0 0 var(--andromeda-border-width, 1px) var(--andromeda-focus-ring, ${tokens.color.focus.ring});
     }
   `,
   // The two variants differ only at rest (dashed vs solid frame); chosen, both
