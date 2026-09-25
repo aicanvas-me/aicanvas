@@ -26,6 +26,7 @@ import {
   Envelope,
   Export,
   EyeSlash,
+  Funnel,
   Gear,
   Info,
   Keyboard,
@@ -34,6 +35,7 @@ import {
   Pulse,
   SignOut,
   Sliders,
+  Sparkle,
   Star,
   Trash,
   UserCircle,
@@ -68,6 +70,8 @@ import { TrendChart } from '../../lib/andromeda-pro.generated'
 import { Radio, RadioGroup } from '../../lib/andromeda-pro.generated'
 import { Slider } from '../../lib/andromeda-pro.generated'
 import { Spinner } from '../../lib/andromeda-pro.generated'
+import { Skeleton } from '../../lib/andromeda-pro.generated'
+import { Chip } from '../../lib/andromeda-pro.generated'
 import { StatTile } from '../../lib/andromeda-pro.generated'
 import { Tag } from '../../lib/andromeda-pro.generated'
 import { Textarea } from '../../lib/andromeda-pro.generated'
@@ -82,7 +86,7 @@ import {
 // v2 components come from the build-time-injected shim (real re-exports when
 // injected, placeholder panels on degraded builds) — never import them from
 // design-systems/ directly. See scripts/inject-premium.mjs.
-import { MetricChart, Gauge, Waveform, MediaCard, DataTable, FunnelChart, Orb, Nodes, Burst } from '../../lib/andromeda-pro.generated'
+import { MetricChart, Gauge, Waveform, MediaCard, DataTable, FunnelChart, Orb, Nodes, Burst, Cube } from '../../lib/andromeda-pro.generated'
 import { MusicPlayerDemo as WiredMusicPlayer } from './matrix/music-player'
 import { SAMPLE_AVATARS, SAMPLE_COVERS } from './sample-pictures'
 
@@ -677,9 +681,9 @@ function PlanetDemo() {
   )
 }
 
-// Orb, Nodes and Burst are Objects: set-pieces, one per surface, framed by the
-// system's own Card instead of floating on a bare page. One shared frame — the
-// only thing that differs between the three is the title and the body.
+// Orb, Nodes, Burst and Cube are Objects: set-pieces, one per surface, framed by
+// the system's own Card instead of floating on a bare page. One shared frame —
+// the only thing that differs between them is the title and the body.
 // The box is deliberately large: an Object fills a surface, and at 280px it
 // reads as a widget instead.
 function ObjectPanel({ title, children }) {
@@ -715,6 +719,14 @@ function BurstDemo() {
   return (
     <ObjectPanel title="Convergence">
       <Burst />
+    </ObjectPanel>
+  )
+}
+
+function CubeDemo() {
+  return (
+    <ObjectPanel title="Lattice">
+      <Cube />
     </ObjectPanel>
   )
 }
@@ -889,6 +901,43 @@ function ToggleDemo() {
       </Row>
       <Row label="Sizes">
         <SizeRamp sizes={['md', 'lg']} render={(s) => <Toggle size={s} label={s} defaultChecked />} />
+      </Row>
+    </div>
+  )
+}
+
+function SkeletonDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <Row label="Sizes">
+        <SizeRamp
+          sizes={['sm', 'md']}
+          render={(s) => (
+            <div style={{ width: 240 }}>
+              <Skeleton size={s} />
+            </div>
+          )}
+        />
+      </Row>
+    </div>
+  )
+}
+
+function ChipDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <Row label="Suggestion">
+        <Chip variant="suggestion" icon={Sparkle}>Summarize</Chip>
+        <Chip variant="suggestion">Draft a reply</Chip>
+        <Chip variant="suggestion" selected>Selected</Chip>
+      </Row>
+      <Row label="Filter">
+        <Chip variant="filter" icon={Funnel}>Open</Chip>
+        <Chip variant="filter">Assigned to me</Chip>
+        <Chip variant="filter" selected>Selected</Chip>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp sizes={['sm', 'md']} render={(s) => <Chip size={s} variant="filter" icon={Funnel}>Filter</Chip>} />
       </Row>
     </div>
   )
@@ -1493,6 +1542,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   button: ButtonDemo,
   card: CardDemo,
   checkbox: CheckboxDemo,
+  chip: ChipDemo,
   'choice-card': ChoiceCardDemo,
   'corner-markers': CornerMarkersDemo,
   'date-range-picker': DateRangePickerDemo,
@@ -1514,8 +1564,10 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   orb: OrbDemo,
   nodes: NodesDemo,
   burst: BurstDemo,
+  cube: CubeDemo,
   'search-field': SearchFieldDemo,
   sidebar: SidebarDemo,
+  skeleton: SkeletonDemo,
   'segmented-control': SegmentedControlDemo,
   'progress-bar': ProgressBarDemo,
   'chart-metric': MetricChartDemo,

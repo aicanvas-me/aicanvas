@@ -207,8 +207,8 @@ const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'Dat
 // (ChoiceCardGroup, EmptyStateMedia). UPDATE when app code imports a new
 // v2-only name — same contract as V2_FALLBACK_NAMES above.
 const V2_ONLY_NAMES = [
-  'Burst', 'ChoiceCard', 'ChoiceCardGroup', 'EmptyStateMedia',
-  'FunnelChart', 'Nodes', 'Orb', 'Sidebar', 'TopBar',
+  'Burst', 'Chip', 'ChoiceCard', 'ChoiceCardGroup', 'Cube', 'EmptyStateMedia',
+  'FunnelChart', 'Nodes', 'Orb', 'Sidebar', 'Skeleton', 'TopBar',
 ]
 
 // components/lib/* modules the HELPERS shim re-exports (both trees have them),

@@ -63,6 +63,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/checkbox.png?v=3',
   },
   {
+    slug: 'chip',
+    name: 'Chip',
+    description:
+      'Offers a small pressable choice: a suggestion to take, or a filter to switch on.',
+    sourceFile: 'Chip.tsx',
+  },
+  {
     slug: 'choice-card',
     name: 'Choice Card',
     description:
@@ -279,6 +286,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/sidebar.png?v=1',
   },
   {
+    slug: 'skeleton',
+    name: 'Skeleton',
+    description:
+      'Holds the place of text that is still loading, as bars a single light passes over.',
+    sourceFile: 'Skeleton.tsx',
+  },
+  {
     slug: 'slider',
     name: 'Slider',
     description:
@@ -384,6 +398,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Draws hundreds of hairlines converging on a single focal point.',
     sourceFile: 'Burst.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/burst.png?v=1',
+  },
+  {
+    slug: 'cube',
+    name: 'Cube',
+    description:
+      'Turns a lattice of dots a quarter at a time, the way a puzzle cube twists.',
+    sourceFile: 'Cube.tsx',
   },
 ]
 

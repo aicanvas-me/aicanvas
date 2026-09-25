@@ -46,10 +46,12 @@ export const CATEGORY: Record<string, string> = {
   alert: 'Feedback',
   'empty-state': 'Feedback',
   spinner: 'Feedback',
+  skeleton: 'Feedback',
 
   // Actions
   button: 'Actions',
   'icon-button': 'Actions',
+  chip: 'Actions',
 
   // Navigation
   'nav-item': 'Navigation',
@@ -72,4 +74,5 @@ export const CATEGORY: Record<string, string> = {
   orb: 'Objects',
   nodes: 'Objects',
   burst: 'Objects',
+  cube: 'Objects',
 }

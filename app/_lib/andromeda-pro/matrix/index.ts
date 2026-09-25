@@ -9,8 +9,10 @@ import { burst } from './burst'
 import { button } from './button'
 import { card } from './card'
 import { checkbox } from './checkbox'
+import { chip } from './chip'
 import { choiceCard } from './choice-card'
 import { cornerMarkers } from './corner-markers'
+import { cube } from './cube'
 import { dataTable } from './table-data'
 import { dateRangePicker } from './date-range-picker'
 import { drawer } from './drawer'
@@ -35,6 +37,7 @@ import { radio } from './radio'
 import { searchField } from './search-field'
 import { segmentedControl } from './segmented-control'
 import { sidebar } from './sidebar'
+import { skeleton } from './skeleton'
 import { slider } from './slider'
 import { spinner } from './spinner'
 import { statTile } from './stat-tile'
@@ -50,13 +53,13 @@ import { userMenu } from './user-menu'
 import { waveform } from './waveform'
 
 export const SPECS: readonly MatrixSpec[] = [
-  alert, avatar, badge, burst, button, card, checkbox, choiceCard,
+  alert, avatar, badge, burst, button, card, checkbox, chip, choiceCard,
   // The two tables sit together so their selected-row treatments are judged
   // side by side.
-  cornerMarkers, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,
+  cornerMarkers, cube, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,
   gauge, heatGrid, iconButton, input, mediaCard,
   metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet,
-  progressBar, radarChart, radio, searchField, segmentedControl, sidebar, slider, spinner,
+  progressBar, radarChart, radio, searchField, segmentedControl, sidebar, skeleton, slider, spinner,
   statTile, tag, textarea, toggle, tooltip, topBar, trendChart, userCard,
   userMenu, waveform,
 ]
