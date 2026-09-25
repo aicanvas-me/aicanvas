@@ -3,6 +3,7 @@
 // mirrors the per-component .rules.md convention the brain already uses.
 import type { MatrixSpec } from './types'
 import { alert } from './alert'
+import { artifact } from './artifact'
 import { avatar } from './avatar'
 import { badge } from './badge'
 import { burst } from './burst'
@@ -11,6 +12,8 @@ import { card } from './card'
 import { checkbox } from './checkbox'
 import { suggestion } from './suggestion'
 import { choiceCard } from './choice-card'
+import { collapsible } from './collapsible'
+import { combobox } from './combobox'
 import { cornerMarkers } from './corner-markers'
 import { cube } from './cube'
 import { dataTable } from './table-data'
@@ -22,7 +25,9 @@ import { gauge } from './gauge'
 import { heatGrid } from './heat-grid'
 import { iconButton } from './icon-button'
 import { input } from './input'
+import { item } from './item'
 import { mediaCard } from './media-card'
+import { message } from './message'
 import { metricChart } from './chart-metric'
 import { musicPlayer } from './music-player'
 import { navItem } from './nav-item'
@@ -31,7 +36,9 @@ import { orb } from './orb'
 import { panelHeader } from './panel-header'
 import { panelMenu } from './panel-menu'
 import { planet } from './planet'
+import { popover } from './popover'
 import { progressBar } from './progress-bar'
+import { promptInput } from './prompt-input'
 import { radarChart } from './chart-radar'
 import { radio } from './radio'
 import { searchField } from './search-field'
@@ -45,6 +52,7 @@ import { table_ } from './table-basic'
 import { tag } from './tag'
 import { textarea } from './textarea'
 import { toggle } from './toggle'
+import { tool } from './tool'
 import { tooltip } from './tooltip'
 import { topBar } from './top-bar'
 import { trendChart } from './chart-trend'
@@ -53,14 +61,14 @@ import { userMenu } from './user-menu'
 import { waveform } from './waveform'
 
 export const SPECS: readonly MatrixSpec[] = [
-  alert, avatar, badge, burst, button, card, checkbox, choiceCard,
+  alert, artifact, avatar, badge, burst, button, card, checkbox, choiceCard, collapsible, combobox,
   // The two tables sit together so their selected-row treatments are judged
   // side by side.
   cornerMarkers, cube, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,
-  gauge, heatGrid, iconButton, input, mediaCard,
-  metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet,
-  progressBar, radarChart, radio, searchField, segmentedControl, sidebar, skeleton, slider, spinner,
-  statTile, suggestion, tag, textarea, toggle, tooltip, topBar, trendChart, userCard,
+  gauge, heatGrid, iconButton, input, item, mediaCard, message,
+  metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet, popover,
+  progressBar, promptInput, radarChart, radio, searchField, segmentedControl, sidebar, skeleton, slider, spinner,
+  statTile, suggestion, tag, textarea, toggle, tool, tooltip, topBar, trendChart, userCard,
   userMenu, waveform,
 ]
 

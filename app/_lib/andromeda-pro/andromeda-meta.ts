@@ -23,6 +23,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/alert.png?v=5',
   },
   {
+    slug: 'artifact',
+    name: 'Artifact',
+    description:
+      'Frames something an agent produced, such as a table or a chart, under a title bar with its actions.',
+    sourceFile: 'Artifact.tsx',
+  },
+  {
     slug: 'avatar',
     name: 'Avatar',
     description:
@@ -69,6 +76,20 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Presents an option as a whole selectable card with a title and a supporting line.',
     sourceFile: 'ChoiceCard.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/choice-card.png?v=1',
+  },
+  {
+    slug: 'collapsible',
+    name: 'Collapsible',
+    description:
+      'Opens and closes the section under a one-line row, for detail the reader may want.',
+    sourceFile: 'Collapsible.tsx',
+  },
+  {
+    slug: 'combobox',
+    name: 'Combobox',
+    description:
+      'Finds one thing in a known set as you type, from a list that opens under the field.',
+    sourceFile: 'Combobox.tsx',
   },
   {
     slug: 'corner-markers',
@@ -167,6 +188,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/input.png?v=4',
   },
   {
+    slug: 'item',
+    name: 'Item',
+    description:
+      'Lays out one row of a list or a menu: a glyph, a name with a line under it, and its actions.',
+    sourceFile: 'Item.tsx',
+  },
+  {
     slug: 'waveform',
     name: 'Waveform',
     description:
@@ -181,6 +209,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Presents an item on its own artwork, for content the image identifies.',
     sourceFile: 'MediaCard.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/media-card.png?v=1',
+  },
+  {
+    slug: 'message',
+    name: 'Message',
+    description:
+      'Shows one turn of a conversation, from the user or from the assistant, with its actions.',
+    sourceFile: 'Message.tsx',
   },
   {
     slug: 'table-basic',
@@ -239,12 +274,26 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/planet.png?v=1',
   },
   {
+    slug: 'popover',
+    name: 'Popover',
+    description:
+      'Floats a panel of mixed content off a trigger, such as a picker with a setting under it.',
+    sourceFile: 'Popover.tsx',
+  },
+  {
     slug: 'progress-bar',
     name: 'Progress Bar',
     description:
       'Displays a single bounded reading as a horizontal meter.',
     sourceFile: 'ProgressBar.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/progress-bar.png?v=4',
+  },
+  {
+    slug: 'prompt-input',
+    name: 'Prompt Input',
+    description:
+      'Collects a prompt in a growing field, with its tools and one Send that becomes Stop.',
+    sourceFile: 'PromptInput.tsx',
   },
   {
     slug: 'radio',
@@ -339,6 +388,13 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Switches a setting that takes effect the moment it flips.',
     sourceFile: 'Toggle.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/toggle.png?v=3',
+  },
+  {
+    slug: 'tool',
+    name: 'Tool',
+    description:
+      'Reports one agent step with its status and duration, and opens to show what it produced.',
+    sourceFile: 'Tool.tsx',
   },
   {
     slug: 'tooltip',

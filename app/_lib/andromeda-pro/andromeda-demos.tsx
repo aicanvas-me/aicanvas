@@ -16,22 +16,27 @@ import {
   ArrowClockwise,
   Bell,
   BookOpen,
+  Calendar,
   ChartBar,
   ChartLine,
   Clock,
   Compass,
   Copy,
   Database,
+  DownloadSimple,
   EnvelopeOpen,
   Envelope,
   Export,
   EyeSlash,
+  FileCsv,
   Funnel,
   Gear,
+  GlobeSimple,
   Info,
   Keyboard,
   MagnifyingGlass,
   Pencil,
+  PlugsConnected,
   Pulse,
   SignOut,
   Sliders,
@@ -72,6 +77,10 @@ import { Slider } from '../../lib/andromeda-pro.generated'
 import { Spinner } from '../../lib/andromeda-pro.generated'
 import { Skeleton } from '../../lib/andromeda-pro.generated'
 import { Suggestion } from '../../lib/andromeda-pro.generated'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '../../lib/andromeda-pro.generated'
+import { Popover, PopoverContent, PopoverLabel, PopoverSeparator, PopoverTrigger } from '../../lib/andromeda-pro.generated'
+import { Tool } from '../../lib/andromeda-pro.generated'
 import { StatTile } from '../../lib/andromeda-pro.generated'
 import { Tag } from '../../lib/andromeda-pro.generated'
 import { Textarea } from '../../lib/andromeda-pro.generated'
@@ -88,6 +97,11 @@ import {
 // design-systems/ directly. See scripts/inject-premium.mjs.
 import { MetricChart, Gauge, Waveform, MediaCard, DataTable, FunnelChart, Orb, Nodes, Burst, Cube } from '../../lib/andromeda-pro.generated'
 import { MusicPlayerDemo as WiredMusicPlayer } from './matrix/music-player'
+import { LiveArtifact, downloadRiskCsv } from './matrix/artifact'
+import { PickerCombobox } from './matrix/combobox'
+import { AssistantTurn, UserTurn } from './matrix/message'
+import { ModelPicker } from './matrix/popover'
+import { LiveComposer } from './matrix/prompt-input'
 import { SAMPLE_AVATARS, SAMPLE_COVERS } from './sample-pictures'
 
 // ─── Layout helpers ──────────────────────────────────────────────────────────
@@ -938,6 +952,276 @@ function SuggestionDemo() {
   )
 }
 
+// ─── AI chat set ─────────────────────────────────────────────────────────────
+// Composed the way a chat surface uses them, and every control is wired: the
+// wired pieces live beside their matrix declarations (./matrix/*) and are
+// reused here, so the poster and the component page run the same behaviour.
+
+const aiBody = {
+  margin: 0,
+  // Custom properties, not token paths: the section sits inside the root that
+  // writes them, and a module-level token path would throw on a degraded
+  // build whose fallback tokens lack it.
+  fontFamily: 'var(--andromeda-font-sans)',
+  fontSize: 'var(--andromeda-text-sm)',
+  lineHeight: 'var(--andromeda-leading-text-sm)',
+  color: `var(--andromeda-text-secondary, ${tokens.color.text.secondary})`,
+}
+
+function MessageDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: tokens.spacing[5] }}>
+      <UserTurn />
+      <AssistantTurn />
+    </div>
+  )
+}
+
+// A done step whose body is the receipt of what it wrote: an outline Item
+// whose one action downloads that file.
+function ReceiptItem() {
+  return (
+    <Item variant="outline" size="sm">
+      <ItemMedia>
+        <FileCsv weight="regular" />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle>q3-pipeline-risk.csv</ItemTitle>
+        <ItemDescription>3 rows · 4 KB</ItemDescription>
+      </ItemContent>
+      <ItemActions>
+        <IconButton size="sm" variant="ghost" icon={DownloadSimple} aria-label="Download q3-pipeline-risk.csv" onClick={downloadRiskCsv} />
+      </ItemActions>
+    </Item>
+  )
+}
+
+function ToolDemo() {
+  // One step per status, stacked spacing[1] apart the way they sit inside an
+  // assistant turn. Done and failed steps open; running and stopped cannot.
+  return (
+    <div style={{ width: 360, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: tokens.spacing[1] }}>
+      <Tool title="Searched the web" duration={1240}>
+        <p style={aiBody}>Read 3 sources on Q3 renewals and kept the two with dated figures.</p>
+      </Tool>
+      <Tool title="Wrote the risk table" duration={860} defaultOpen>
+        <ReceiptItem />
+      </Tool>
+      <Tool title="Queried the CRM" status="error">
+        <p style={aiBody}>The CRM returned 429 Too Many Requests. Nothing was read.</p>
+      </Tool>
+      <Tool title="Drafting the summary" status="stopped" />
+      <Tool title="Scoring each deal" status="running" />
+    </div>
+  )
+}
+
+function ArtifactDemo() {
+  return (
+    <div style={{ width: 640, maxWidth: '100%' }}>
+      <LiveArtifact />
+    </div>
+  )
+}
+
+function PromptInputDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: tokens.spacing[5] }}>
+      <LiveComposer draft="Summarize the three riskiest Q3 deals" tools={<ModelPicker side="auto" />} />
+      <LiveComposer status="streaming" />
+    </div>
+  )
+}
+
+function ComboboxDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 420 }}>
+      <Row label="Search chats and accounts">
+        <div style={{ width: 360, maxWidth: '100%' }}>
+          <PickerCombobox />
+        </div>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp
+          sizes={['sm', 'md']}
+          render={(s) => (
+            <div style={{ width: 240 }}>
+              <PickerCombobox size={s} />
+            </div>
+          )}
+        />
+      </Row>
+    </div>
+  )
+}
+
+const CONNECTIONS = [
+  { id: 'warehouse', label: 'Warehouse', detail: 'Synced 4 minutes ago', icon: Database, on: true },
+  { id: 'calendar', label: 'Calendar', detail: 'Read only', icon: Calendar, on: false },
+]
+
+// A popover of mixed content: rows that each carry their own switch. The
+// rows stay plain (the switch is the hit area), so they do not lift.
+function ConnectionsPopover() {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <IconButton variant="outline" icon={PlugsConnected} aria-label="Connections" />
+      </PopoverTrigger>
+      <PopoverContent side="bottom" width={280} aria-label="Connections">
+        <PopoverLabel>Data</PopoverLabel>
+        {CONNECTIONS.map((c) => {
+          const Icon = c.icon
+          return (
+            <Item key={c.id} size="sm">
+              <ItemMedia>
+                <Icon weight="regular" />
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>{c.label}</ItemTitle>
+                <ItemDescription>{c.detail}</ItemDescription>
+              </ItemContent>
+              <ItemActions>
+                <Toggle size="sm" defaultChecked={c.on} aria-label={`Use ${c.label}`} />
+              </ItemActions>
+            </Item>
+          )
+        })}
+        <PopoverSeparator />
+        <PopoverLabel>Web</PopoverLabel>
+        <Item size="sm">
+          <ItemMedia>
+            <GlobeSimple weight="regular" />
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>Search the web</ItemTitle>
+          </ItemContent>
+          <ItemActions>
+            <Toggle size="sm" defaultChecked aria-label="Search the web" />
+          </ItemActions>
+        </Item>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+function PopoverDemo() {
+  return (
+    <div style={{ display: 'flex', gap: tokens.spacing[8], alignItems: 'flex-start', flexWrap: 'wrap', minHeight: 260 }}>
+      <Row label="Model picker">
+        <ModelPicker defaultOpen />
+      </Row>
+      <Row label="Mixed content">
+        <ConnectionsPopover />
+      </Row>
+    </div>
+  )
+}
+
+function CollapsibleDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 420 }}>
+      <Row label="Open · guide">
+        <div style={{ width: 360, maxWidth: '100%' }}>
+          <Collapsible defaultOpen>
+            <CollapsibleTrigger meta="3 sources">Searched the web</CollapsibleTrigger>
+            <CollapsibleContent guide>
+              <p style={aiBody}>Read 3 sources on Q3 renewals and kept the two with dated figures.</p>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      </Row>
+      <Row label="Closed">
+        <div style={{ width: 360, maxWidth: '100%' }}>
+          <Collapsible>
+            <CollapsibleTrigger meta="2 options">Advanced settings</CollapsibleTrigger>
+            <CollapsibleContent>
+              <Toggle size="sm" label="Cite sources" defaultChecked />
+              <Toggle size="sm" label="Search the web" />
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp
+          sizes={['sm', 'md']}
+          render={(s) => (
+            <div style={{ width: 200 }}>
+              <Collapsible>
+                <CollapsibleTrigger size={s}>Details</CollapsibleTrigger>
+                <CollapsibleContent>
+                  <p style={aiBody}>Opened from the {s} row.</p>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          )}
+        />
+      </Row>
+    </div>
+  )
+}
+
+function ItemDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 420 }}>
+      <Row label="Default · rows in a list">
+        <div style={{ width: 360, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: tokens.spacing[1] }}>
+          {CONNECTIONS.map((c) => {
+            const Icon = c.icon
+            return (
+              <Item key={c.id}>
+                <ItemMedia>
+                  <Icon weight="regular" />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>{c.label}</ItemTitle>
+                  <ItemDescription>{c.detail}</ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <Toggle size="sm" defaultChecked={c.on} aria-label={`Use ${c.label}`} />
+                </ItemActions>
+              </Item>
+            )
+          })}
+        </div>
+      </Row>
+      <Row label="Outline · a receipt">
+        <div style={{ width: 360, maxWidth: '100%' }}>
+          <Item variant="outline">
+            <ItemMedia variant="icon">
+              <FileCsv weight="regular" />
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle>q3-pipeline-risk.csv</ItemTitle>
+              <ItemDescription>3 rows · written by the agent</ItemDescription>
+            </ItemContent>
+            <ItemActions>
+              <IconButton size="sm" variant="ghost" icon={DownloadSimple} aria-label="Download q3-pipeline-risk.csv" onClick={downloadRiskCsv} />
+            </ItemActions>
+          </Item>
+        </div>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp
+          sizes={['sm', 'md']}
+          render={(s) => (
+            <div style={{ width: 180 }}>
+              <Item size={s} variant="outline">
+                <ItemMedia>
+                  <Database weight="regular" />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>Warehouse</ItemTitle>
+                </ItemContent>
+              </Item>
+            </div>
+          )}
+        />
+      </Row>
+    </div>
+  )
+}
+
 function SpinnerDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
@@ -1532,6 +1816,7 @@ function SidebarDemo() {
 
 const DEMOS: Record<string, () => React.ReactElement> = {
   alert: AlertDemo,
+  artifact: ArtifactDemo,
   avatar: AvatarDemo,
   badge: BadgeDemo,
   button: ButtonDemo,
@@ -1539,6 +1824,8 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   checkbox: CheckboxDemo,
   suggestion: SuggestionDemo,
   'choice-card': ChoiceCardDemo,
+  collapsible: CollapsibleDemo,
+  combobox: ComboboxDemo,
   'corner-markers': CornerMarkersDemo,
   'date-range-picker': DateRangePickerDemo,
   drawer: DrawerDemo,
@@ -1548,14 +1835,17 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'heat-grid': HeatGridDemo,
   'icon-button': IconButtonDemo,
   input: InputDemo,
+  item: ItemDemo,
   waveform: WaveformDemo,
   'media-card': MediaCardDemo,
+  message: MessageDemo,
   'table-data': DataTableDemo,
   'music-player': MusicPlayerDemo,
   'nav-item': NavItemDemo,
   'panel-header': PanelHeaderDemo,
   'panel-menu': PanelMenuDemo,
   planet: PlanetDemo,
+  popover: PopoverDemo,
   orb: OrbDemo,
   nodes: NodesDemo,
   burst: BurstDemo,
@@ -1565,6 +1855,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   skeleton: SkeletonDemo,
   'segmented-control': SegmentedControlDemo,
   'progress-bar': ProgressBarDemo,
+  'prompt-input': PromptInputDemo,
   'chart-metric': MetricChartDemo,
   'chart-radar': RadarChartDemo,
   radio: RadioDemo,
@@ -1575,6 +1866,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'chart-trend': TrendChartDemo,
   textarea: TextareaDemo,
   toggle: ToggleDemo,
+  tool: ToolDemo,
   'table-basic': TableDemo,
   tooltip: TooltipDemo,
   'user-card': UserCardDemo,
