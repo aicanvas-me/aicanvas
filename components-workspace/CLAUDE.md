@@ -10,7 +10,7 @@ If your brief has `design-system: andromeda` (or `meridian`, etc.) — you are N
 
 If your brief has `design-system: standalone` (or omits the field), continue.
 
-**`tier: premium`?** This is a closed-source standalone. Its source lives in the private `aicanvas-premium` repo and is never committed to this public one: you edit it there and preview it from here with `PREMIUM_LOCAL_PATH`, under the same rules as any other standalone in this file, plus the premium marker on every file. The marker value, the manifest entry and the exact preview command are in the maintainer-only `premium-authoring` skill, which is not part of this repo.
+**`tier: premium`?** This is a closed-source standalone. Its source lives in the private `aicanvas-premium` repo and is never committed to this public one: you edit it there and preview it from here with `PREMIUM_LOCAL_PATH`. This file's build rules still apply, and premium adds its own contract on top of them. That contract, the marker values, the manifest entry and the exact preview command are in the maintainer-only `premium-authoring` skill, which is not part of this repo.
 
 ## Skills library — read before building
 
