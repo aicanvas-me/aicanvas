@@ -12,7 +12,7 @@ The brief's `design-system:` field routes every task:
 | `andromeda` / `meridian` / named system | `design-systems/CLAUDE.md` + the system's `tokens.ts` (strict tokens) | `design-systems/<system>/specs/<slug>.md` |
 | site chrome | `supervisor/skills/site-design-tokens.md` | n/a |
 
-`tier: premium` (closed-source): pipeline is identical, but finished source is stored outside this repo and never committed here. Read `_private/premium-workflow.md` (gitignored) before delegating a premium brief. If tier is unspecified, ask — don't guess.
+`tier: premium` (closed-source): pipeline is identical, but finished source is stored outside this repo and never committed here. Read the `premium-authoring` skill before delegating a premium brief. If tier is unspecified, ask — don't guess.
 
 ## Brief format (approval required before building)
 
