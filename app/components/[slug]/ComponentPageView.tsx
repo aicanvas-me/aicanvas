@@ -906,14 +906,14 @@ export default function ComponentPageView({
                           </p>
                           <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
                             {/* Package manager switcher */}
-                            <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                            <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                                 <button
                                   key={pm}
                                   onClick={() => { setPkgManager(pm); setDepsCopied(false) }}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     pkgManager === pm
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -951,12 +951,12 @@ export default function ComponentPageView({
 
                             {/* Tier toggle — only for components belonging to a design system */}
                             {systemMeta && (
-                              <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                              <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                                 <button
                                   onClick={() => setInstallTier('component')}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'component'
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -969,7 +969,7 @@ export default function ComponentPageView({
                                   }}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'system'
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -1074,7 +1074,7 @@ export default function ComponentPageView({
                             Copy and paste the following code into your project:
                           </p>
                           <div className="relative rounded-lg bg-sand-200 dark:bg-sand-950">
-                            <div className="flex items-center justify-between border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                            <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                                 {slug}.tsx
                               </span>
@@ -1602,12 +1602,12 @@ function FontStep({
         <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
       </div>
       <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-        <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+        <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
           {(['html', 'nextjs'] as const).map((fw) => (
             <button
               key={fw}
               onClick={() => onSelectFramework(fw)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
             >
               {fw === 'html' ? 'HTML' : 'Next.js'}
             </button>
@@ -1665,7 +1665,7 @@ function PackageFontStep({
       </div>
       {snippet && (
         <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-          <div className="flex items-center justify-between border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+          <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
             <span className="font-mono text-xs text-sand-600 dark:text-sand-500">layout.tsx</span>
             <button
               onClick={onCopySnippet}
