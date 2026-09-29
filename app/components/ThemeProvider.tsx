@@ -9,11 +9,12 @@ export type Theme = 'light' | 'dark'
  * so the server renders the right class on the first paint. This is the only
  * writer of either.
  *
- * A component or block preview does NOT use this. Previews carry their own
- * `[data-card-theme]` wrapper (see the scope contract in globals.css) and hold
- * their choice in local state. Nothing below may reach into a preview and
- * nothing in a preview may call back into here: if both wrote `<html>`, flipping
- * a preview to dark would drag the whole site with it.
+ * The site and every component, block and Andromeda preview share this one
+ * theme. A preview reads it and its own toggle calls setTheme below, so
+ * flipping either moves the other. Previews still carry their own
+ * `[data-card-theme]` wrapper (see the scope contract in globals.css), but its
+ * value comes from here, and nothing outside this file may write `<html>` or
+ * the cookie: two writers is how the first site toggle got deleted.
  */
 
 const ThemeContext = createContext<{ theme: Theme; setTheme: (next: Theme) => void }>({

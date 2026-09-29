@@ -390,11 +390,13 @@ export function AndromedaComponentView({
           {tab === 'preview' && (
             <div className="flex items-center gap-0.5 sm:gap-2">
               {/* Theme toggle — one icon-only button whose icon and tooltip
-                  swap with the current preview theme, matching the standalone
+                  swap with the current theme, matching the standalone
                   component page's control (app/components/[slug]/ComponentPageView.tsx).
-                  Replaces the old sun+moon segmented pair (AndromedaThemeToggle)
-                  so Pro's preview card shows the same three top-right controls
-                  the standalone does. */}
+                  It moves the SITE theme (the wrap's setTheme is
+                  ThemeProvider's), the same as the nav toggle. Replaces the old
+                  sun+moon segmented pair (AndromedaThemeToggle) so Pro's
+                  preview card shows the same three top-right controls the
+                  standalone does. */}
               <div className="group/toggle relative">
                 <Button
                   variant="outline"
@@ -402,13 +404,11 @@ export function AndromedaComponentView({
                   iconOnly
                   onClick={() => previewTheme?.setTheme(previewTheme.theme === 'dark' ? 'light' : 'dark')}
                   className="overflow-hidden"
-                  // Named for the PREVIEW, not the site: the nav's own toggle already
-                  // carries "Switch to light theme", and two controls answering to the
-                  // same name is the one thing a screen-reader user cannot tell apart.
+                  // Same name as the nav toggle: both do the same thing now.
                   aria-label={
                     previewTheme?.theme === 'dark'
-                      ? 'Switch the preview to light theme'
-                      : 'Switch the preview to dark theme'
+                      ? 'Switch to light theme'
+                      : 'Switch to dark theme'
                   }
                 >
                   <AnimatePresence mode="wait" initial={false}>

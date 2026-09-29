@@ -218,19 +218,16 @@ export default function ComponentPageView({
   // same bug in reverse. Safe on mount: `user` starts from the server-provided
   // initialUser, so a normal load never fires a second fetch.
   useEffect(() => { if (enforcing) setCodeState({ status: 'idle' }) }, [enforcing, slug, user?.id])
-  // The preview starts on whatever the site is set to, so a visitor browsing in
-  // light does not get slapped with a dark box, then pins to their own choice
-  // the moment they touch the toggle. Derived rather than synced with an
-  // effect: the site theme is already correct during SSR (ThemeProvider is
-  // seeded from the cookie), so there is nothing to reconcile and no frame of
-  // the wrong theme. It reads the site and never writes it, which is the whole
-  // point — the previous version of this toggle wrote <html> and dragged the
-  // entire site dark with it.
+  // The preview and the site are ONE theme. The preview reads the site theme
+  // (already correct during SSR: ThemeProvider is seeded from the cookie, so no
+  // frame of the wrong theme), and its toggle writes it back through
+  // ThemeProvider.setTheme, so flipping either moves the other, the same as the
+  // template pages. This file never touches <html> or the cookie itself; the
+  // scope test holds that line.
   //
-  // A dark-only component ignores both: it has no light rendering to show.
-  const { theme: siteTheme } = useTheme()
-  const [themeOverride, setThemeOverride] = useState<'dark' | 'light' | null>(null)
-  const cardTheme: 'dark' | 'light' = dualTheme ? (themeOverride ?? siteTheme) : 'dark'
+  // A dark-only component ignores the theme: it has no light rendering to show.
+  const { theme: siteTheme, setTheme: setSiteTheme } = useTheme()
+  const cardTheme: 'dark' | 'light' = dualTheme ? siteTheme : 'dark'
   const [cliCopied, setCliCopied] = useState(false)
   const { copied: mcpTokenCopied, copy: copyMcpToken } = useCopied(
     userToken ? `AICANVAS_TOKEN=${userToken}` : '',
@@ -599,7 +596,7 @@ export default function ComponentPageView({
                     disabled={!dualTheme}
                     onClick={() => {
                       if (!dualTheme) return
-                      setThemeOverride(cardTheme === 'dark' ? 'light' : 'dark')
+                      setSiteTheme(cardTheme === 'dark' ? 'light' : 'dark')
                     }}
                     className="overflow-hidden"
                   >

@@ -2,14 +2,15 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-// The site theme and a component preview's theme are separate scopes. That
-// separation is the whole reason the site can have a light mode at all: the
-// first site toggle shipped in 5b4ef1a and was deleted in 12a8897 because it
-// and the per-component toggles both wrote the `dark` class on <html>, so
-// flipping one preview to dark dragged the entire site with it.
+// The site theme and a component preview's theme are LINKED (ruled 2026-09-29):
+// flipping the site moves every preview, and flipping a preview moves the site,
+// as the template pages always did. What must stay true is that there is ONE
+// writer. The first site toggle shipped in 5b4ef1a and was deleted in 12a8897
+// because it and the per-component toggles each wrote the `dark` class on
+// <html> themselves; the link now runs through ThemeProvider.setTheme instead.
 //
 // Nothing about that is enforced by types, and it is one careless line away
-// from coming back. These are the two lines that would let it.
+// from coming back. These are the lines that would let it.
 
 const root = join(__dirname, '..', '..')
 
@@ -73,7 +74,20 @@ describe('theme scope contract', () => {
     expect(
       offenders,
       'These files write the SITE theme. Only app/components/ThemeProvider.tsx may. '
-        + 'A preview owns its own [data-card-theme] wrapper and must never reach <html>.',
+        + 'A preview toggle calls ThemeProvider.setTheme and must never reach <html> itself.',
     ).toEqual([])
+  })
+
+  it('preview toggles move the site theme through ThemeProvider, not local state', () => {
+    const view = readFileSync(join(root, 'app', 'components', '[slug]', 'ComponentPageView.tsx'), 'utf8')
+    expect(view).toMatch(/setTheme: setSiteTheme \} = useTheme\(\)/)
+    expect(view).not.toContain('themeOverride')
+
+    const wrap = readFileSync(
+      join(root, 'app', 'design-systems', 'andromeda-pro', 'AndromedaThemeWrap.tsx'),
+      'utf8',
+    )
+    expect(wrap).toMatch(/theme: siteTheme, setTheme \} = useTheme\(\)/)
+    expect(wrap).not.toMatch(/useState<AndromedaTheme>\(/)
   })
 })
