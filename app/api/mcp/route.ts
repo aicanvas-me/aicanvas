@@ -2,6 +2,7 @@ import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/
 import { createServer } from '@/mcp/src/tools'
 import mcpPackage from '@/mcp/package.json'
 import { agentContext, HOSTED_INSTRUCTIONS } from '@/app/lib/agent-context'
+import { hostedMcpEnabled } from '@/lib/flags'
 import { isWellFormedToken } from '@/lib/identity/token'
 
 export const runtime = 'nodejs'
@@ -11,10 +12,6 @@ export const dynamic = 'force-dynamic'
 // its credential and gets a fresh server, so the account's plan and token are read live on
 // each call and an upgrade, a lapse or a rotated token applies on the same connection.
 // Ships dark: HOSTED_MCP=on turns it on, anything else answers 404 (kill switch).
-
-function hostedOn(): boolean {
-  return process.env.HOSTED_MCP === 'on'
-}
 
 function unauthorized(error: 'invalid_request' | 'invalid_token'): Response {
   return Response.json(
@@ -30,7 +27,7 @@ function unauthorized(error: 'invalid_request' | 'invalid_token'): Response {
 }
 
 async function handle(req: Request): Promise<Response> {
-  if (!hostedOn()) return Response.json({ error: 'not found' }, { status: 404 })
+  if (!hostedMcpEnabled()) return Response.json({ error: 'not found' }, { status: 404 })
 
   const auth = req.headers.get('authorization') ?? ''
   const bearer = auth.startsWith('Bearer ') ? auth.slice('Bearer '.length).trim() : ''

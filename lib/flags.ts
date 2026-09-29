@@ -19,3 +19,9 @@ function isCheckoutComingSoon(raw: string | undefined): boolean {
 export function checkoutComingSoon(): boolean {
   return isCheckoutComingSoon(process.env.NEXT_PUBLIC_CHECKOUT_COMING_SOON)
 }
+
+/** The hosted MCP server (mcp.aicanvas.me) and every surface that sends people
+ *  to it. Server-only; defaults to off, so it ships dark. */
+export function hostedMcpEnabled(): boolean {
+  return process.env.HOSTED_MCP === 'on'
+}

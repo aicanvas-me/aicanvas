@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import {
   Eye,
-  EyeSlash,
   Code,
   Check,
   Copy,
@@ -36,7 +35,6 @@ import type { ComponentMeta } from '../../lib/component-registry'
 import { getDesignSystemMeta, type DesignSystemSlug } from '../../lib/design-system-meta'
 import { track } from '../../lib/analytics'
 import { copyText, useCopied } from '../useCopied'
-import { tokenEnvLine } from '@/lib/identity/token'
 import { trackInstall } from '../../lib/track-install'
 import { BlockPreviewFrame } from './BlockPreviewFrame'
 import { useSession } from '../auth/SessionProvider'
@@ -233,10 +231,6 @@ export default function ComponentPageView({
   const [themeOverride, setThemeOverride] = useState<'dark' | 'light' | null>(null)
   const cardTheme: 'dark' | 'light' = dualTheme ? (themeOverride ?? siteTheme) : 'dark'
   const [cliCopied, setCliCopied] = useState(false)
-  const { copied: mcpTokenCopied, copy: copyMcpToken } = useCopied(
-    userToken ? tokenEnvLine(userToken) : '',
-  )
-  const [mcpTokenRevealed, setMcpTokenRevealed] = useState(false)
   const [codeCopied, setCodeCopied] = useState(false)
   const [depsCopied, setDepsCopied] = useState(false)
   const [installTab, setInstallTab] = useState<'cli' | 'manual'>('cli')
@@ -1184,52 +1178,6 @@ export default function ComponentPageView({
                   <ArrowRight weight="regular" size={13} />
                 </Link>
               </div>
-
-              {/* MCP token — so AI-agent / MCP installs authenticate as your
-                  account. Always visible. Signed out: nothing (the token is
-                  account-scoped). Signed in: the real value behind an eye
-                  reveal + copy; a skeleton mirrors the row while it fetches. */}
-              {user && (
-                userToken ? (
-                  <div className="mt-4">
-                    <div className="flex items-center justify-between gap-2 rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
-                      <code className="font-mono text-sm text-sand-700 dark:text-sand-300 break-all">
-                        AICANVAS_TOKEN={mcpTokenRevealed ? userToken : 'aic_••••••••'}
-                      </code>
-                      <div className="flex shrink-0 items-center gap-0.5">
-                        <button
-                          onClick={() => setMcpTokenRevealed((v) => !v)}
-                          className="rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                          aria-label={mcpTokenRevealed ? 'Hide MCP token' : 'Reveal MCP token'}
-                          aria-pressed={mcpTokenRevealed}
-                        >
-                          {mcpTokenRevealed
-                            ? <EyeSlash weight="regular" size={14} />
-                            : <Eye weight="regular" size={14} />}
-                        </button>
-                        <button
-                          onClick={copyMcpToken}
-                          className="rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                          aria-label="Copy MCP token"
-                        >
-                          {mcpTokenCopied
-                            ? <Check weight="regular" size={14} className="text-olive-500" />
-                            : <Copy weight="regular" size={14} />}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ) : (
-                  /* Token still loading — placeholder mirrors the token row so
-                     nothing jumps when it lands. */
-                  <div className="mt-4" aria-hidden>
-                    <div className="flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
-                      <div className="h-4 w-40 animate-pulse rounded bg-sand-200 dark:bg-sand-800" />
-                      <div className="h-5 w-5 shrink-0 animate-pulse rounded bg-sand-200 dark:bg-sand-800" />
-                    </div>
-                  </div>
-                )
-              )}
             </section>
 
           {/* Props — generated from the component's @typedef JSDoc; hides itself
