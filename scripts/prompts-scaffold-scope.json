@@ -5,6 +5,7 @@
     "avatar-picker",
     "scroll-wipe-gallery",
     "fluid-simulation-hero",
-    "ai-knowledge-map"
+    "ai-knowledge-map",
+    "agent-cost-flow"
   ]
 }
