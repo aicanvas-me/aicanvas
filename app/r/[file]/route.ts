@@ -272,7 +272,7 @@ function brainStub(realBody: string, slug: string): NextResponse {
     '',
     '- Upgrade: https://aicanvas.me/pricing',
     `- See what is inside: https://aicanvas.me/design-systems/${system}/brain`,
-    `- Already subscribed? Sign in at https://aicanvas.me/design-systems/${system}/brain and press Copy CLI: that command includes your token.`,
+    `- Already subscribed? Sign in at https://aicanvas.me/design-systems/${system}/brain/explore and press Copy CLI: that command includes your token.`,
     '',
   ].join('\n')
   const target = `~/design-systems/${system}/BRAIN-LOCKED.md`
@@ -288,7 +288,7 @@ function brainStub(realBody: string, slug: string): NextResponse {
       `"${title}" is premium AI Canvas content. This install wrote a locked ` +
       `placeholder, not the real rules. Unlock it with Premium at ` +
       `https://aicanvas.me/pricing, then re-run the same command. Already ` +
-      `subscribed? Sign in at https://aicanvas.me/design-systems/${system}/brain ` +
+      `subscribed? Sign in at https://aicanvas.me/design-systems/${system}/brain/explore ` +
       `and press Copy CLI: that command includes your token.`,
     dependencies: [],
     registryDependencies: [],
