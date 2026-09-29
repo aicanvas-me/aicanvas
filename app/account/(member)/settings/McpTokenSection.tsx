@@ -1,31 +1,25 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { Copy, Check, Eye, EyeSlash } from '@phosphor-icons/react'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
 
 // ─── McpTokenSection ──────────────────────────────────────────────────────────
-// Shows the signed-in user's AI Canvas API token on /account/settings so they
-// can reveal + copy it into their MCP server config. Masked by default (it's a
-// live secret that acts like a password); the eye reveals it. The token is read
-// server-side in page.tsx and passed in, so there's no loading flash.
-// Also shows the personal INSTALL COMMAND (the token baked into a /r URL): the
-// registry stubs a signed-out CLI receives point here by name, so this page
-// must actually hold a copyable command, not just the bare token.
+// Shows the signed-in user's AI Canvas API token on /account/settings, the
+// by-hand fallback: every Copy CLI button and the /mcp setup commands already
+// carry it. Masked by default so it stays off screen shares; the eye reveals it.
+// The token is read server-side in page.tsx and passed in, so there's no
+// loading flash.
 
 type Props = { token: string | null }
 
 const MASKED = 'aic_••••••••'
 
-// A real free component, so the copied command installs as pasted. A
-// placeholder name makes the CLI fail.
-const installCmd = (t: string) => `npx shadcn@latest add "https://aicanvas.me/r/glitch-button.json?token=${t}"`
-
 export function McpTokenSection({ token }: Props) {
   const [revealed, setRevealed] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [cmdCopied, setCmdCopied] = useState(false)
 
   async function copy() {
     if (!token) return
@@ -37,21 +31,13 @@ export function McpTokenSection({ token }: Props) {
     setTimeout(() => setCopied(false), 2000)
   }
 
-  async function copyCmd() {
-    if (!token) return
-    const ok = await copyText(installCmd(token))
-    track('CLI Copy', { component: 'settings', ok })
-    if (!ok) return
-    setCmdCopied(true)
-    setTimeout(() => setCmdCopied(false), 2000)
-  }
-
   return (
     <section className="rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
       <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">API token</h2>
       <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
-        Copy this token into your MCP server config or CLI install so AI Canvas
-        authenticates as your account.
+        You don&rsquo;t need to copy this token for installs. Open any component and
+        press <span className="font-semibold">Copy CLI</span>. The command it copies
+        already includes your token.
       </p>
 
       {token ? (
@@ -85,28 +71,13 @@ export function McpTokenSection({ token }: Props) {
             </div>
           </div>
 
-          <h3 className="mt-5 text-sm font-semibold text-sand-900 dark:text-sand-50">
-            Personal install command
-          </h3>
-          <div className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-sand-200 px-4 py-3 dark:bg-sand-950">
-            <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap font-mono text-xs text-sand-800 dark:text-sand-300">
-              {installCmd(revealed ? token : MASKED)}
-            </code>
-            <button
-              type="button"
-              onClick={copyCmd}
-              className="shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
-              aria-label="Copy install command"
-            >
-              {cmdCopied
-                ? <Check weight="regular" size={16} className="text-olive-500" />
-                : <Copy weight="regular" size={16} />}
-            </button>
-          </div>
           <p className="mt-2 text-xs leading-relaxed text-sand-600 dark:text-sand-400">
-            Swap glitch-button for any component&rsquo;s name to install that
-            one instead. While you are signed in, every install command on the
-            site already carries this token.
+            You only need it to set things up by hand, or to give to your AI agent. The
+            Copy CLI button and the{' '}
+            <Link href="/mcp" className="font-medium text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300">
+              MCP setup page
+            </Link>{' '}
+            already include it.
           </p>
         </>
       ) : (

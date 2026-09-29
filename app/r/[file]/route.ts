@@ -198,8 +198,8 @@ function premiumStub(realBody: string, slug: string): NextResponse {
   const msg =
     `"${title}" is premium AI Canvas content. ` +
     `This is a placeholder. Unlock the real source with an AI Canvas Premium ` +
-    `account at https://aicanvas.me/pricing. Already subscribed? Sign in and copy ` +
-    `your personal install command from https://aicanvas.me/account/settings`
+    `account at https://aicanvas.me/pricing. Already subscribed? Sign in, open it on ` +
+    `aicanvas.me and press Copy CLI: that command includes your token.`
   const stub =
     `const PREMIUM_NOTICE =\n` +
     `  ${JSON.stringify(msg)}\n\n` +
@@ -272,7 +272,7 @@ function brainStub(realBody: string, slug: string): NextResponse {
     '',
     '- Upgrade: https://aicanvas.me/pricing',
     `- See what is inside: https://aicanvas.me/design-systems/${system}/brain`,
-    '- Already subscribed? Your personal install command: https://aicanvas.me/account/settings',
+    `- Already subscribed? Sign in at https://aicanvas.me/design-systems/${system}/brain and press Copy CLI: that command includes your token.`,
     '',
   ].join('\n')
   const target = `~/design-systems/${system}/BRAIN-LOCKED.md`
@@ -288,8 +288,8 @@ function brainStub(realBody: string, slug: string): NextResponse {
       `"${title}" is premium AI Canvas content. This install wrote a locked ` +
       `placeholder, not the real rules. Unlock it with Premium at ` +
       `https://aicanvas.me/pricing, then re-run the same command. Already ` +
-      `subscribed? Sign in and copy your personal install command from ` +
-      `https://aicanvas.me/account/settings`,
+      `subscribed? Sign in at https://aicanvas.me/design-systems/${system}/brain ` +
+      `and press Copy CLI: that command includes your token.`,
     dependencies: [],
     registryDependencies: [],
     files: [{ path: `design-systems/${system}/BRAIN-LOCKED.md`, type: 'registry:file', target, content: md }],
@@ -319,9 +319,8 @@ function freeAccountStub(realBody: string, slug: string): NextResponse {
   }
   const msg =
     `Almost there! "${title}" is free with an AI Canvas account (free, unlimited installs). ` +
-    `Sign up at https://aicanvas.me/account/sign-up, then copy your personal install command ` +
-    `from the component page. Already have an account? Sign in and copy it from ` +
-    `https://aicanvas.me/account/settings`
+    `Sign up at https://aicanvas.me/account/sign-up, then open the component page and press ` +
+    `Copy CLI: that command includes your token. Already have an account? Sign in and do the same.`
   const stub =
     `const ACCOUNT_NOTICE =\n` +
     `  ${JSON.stringify(msg)}\n\n` +
