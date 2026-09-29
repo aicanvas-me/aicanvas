@@ -41,6 +41,7 @@ export const ACCURATE_STACKS: Record<string, string[]> = {
   'emoji-burst': ['Motion', 'Tailwind CSS'],
   'expanding-tabs': ['Motion', 'Tailwind CSS'],
   'ai-knowledge-map': ['Motion', 'Canvas', 'Tailwind CSS'],
+  'agent-cost-flow': ['Motion', 'Canvas', 'Tailwind CSS'],
   'filter-menu': ['Motion', 'Tailwind CSS'],
   'flip-calendar': ['Motion', 'Tailwind CSS'],
   'fluid-simulation-hero': ['WebGL', 'Tailwind CSS'],
@@ -408,6 +409,12 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
     useCases: ['AI product', 'SaaS', 'Editor'],
     about:
       'Glass AI Composer is an AI chat input with everything modern conversation interfaces tend to bolt on: an image-upload slot, a web-search toggle that visibly engages, and a segmented pill switcher for picking between fast and frontier models. The whole thing sits inside a glassmorphism surface with Motion-driven focus and toggle states, so the composer feels like part of the product rather than a third-party widget. Drop it into AI products, SaaS support consoles, editor command surfaces, and any chat-style entry point.',
+  },
+
+  'agent-cost-flow': {
+    useCases: ['AI Agent Cost Dashboard', 'Multi-agent Run Report', 'LLM Token Usage Breakdown'],
+    about:
+      'Agent Cost Flow draws one orchestrator run as a single picture: a hair-thin strand for every source document bundles into five subagent lanes, each lane shows its model, run time and tokens read, and its band sweeps into a stacked bill that totals the cost of the run on the right. Every figure climbs on one 30-second run clock, tokens quickly and money slowly, so the lane bills add up to the total at every moment. Pointing at a lane or its band isolates it and says what it read, returned and cost; below 1000px the picture becomes a stacked list where a click or tap opens a lane\'s tool calls over a fall of canvas dust. Motion springs the bars, CSS carries the travelling light, a canvas draws the dust, and light and dark themes ship in the same file. Thirteen props take your own agents, task, clocks, layout and palettes.',
   },
 
   'ai-knowledge-map': {
