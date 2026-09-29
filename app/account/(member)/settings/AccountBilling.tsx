@@ -190,8 +190,9 @@ export function AccountBilling() {
       <section className="rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
         <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">API access</h2>
         <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
-          Your API token authorizes CLI and MCP installs from your account. Rotate it if it&rsquo;s
-          ever exposed; the old one stops working immediately.
+          Your API token lets your AI agent, the MCP server and the CLI install from your account.
+          Giving it to your own agent is expected. Rotate it only if someone else has it: the old one
+          stops working at once.
         </p>
 
         <div className="mt-4">
@@ -208,7 +209,8 @@ export function AccountBilling() {
 
 {rotateState === 'done' && !refreshing && (
           <p className="mt-3 text-xs text-olive-600 dark:text-olive-400">
-            Done. The old token is disabled. Copy the new one from the API token card below.
+            Done. The old token no longer works. Copy the new one from the API token card below and
+            give it to your AI agent so it updates its AI Canvas setup.
           </p>
         )}
         {rotateState === 'error' && (

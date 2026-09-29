@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Check, Copy, Eye, EyeSlash } from '@phosphor-icons/react'
 import { track } from '../lib/analytics'
 import { copyText } from '../components/useCopied'
+import { tokenEnvLine } from '@/lib/identity/token'
 
 // ─── PremiumQuickstart ────────────────────────────────────────────────────────
 // The quiet helper card on the premium /welcome view. The page has already led
@@ -34,7 +35,7 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
 
   async function copyToken() {
     if (!token) return
-    const ok = await copyText(`AICANVAS_TOKEN=${token}`)
+    const ok = await copyText(tokenEnvLine(token))
     track('MCP Token Copy', { ok })
     if (!ok) return
     setTokenCopied(true)
@@ -102,7 +103,8 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
         </button>
       </div>
       <p className="mt-1.5 text-xs leading-relaxed text-sand-500">
-        For AI agents and the AI Canvas MCP server. Keep it private. Both live in{' '}
+        Give it to your AI agent or the AI Canvas MCP server so they can install for you. Keep it
+        out of git. Both live in{' '}
         <Link href="/account/settings" className="font-medium text-olive-400 transition-colors hover:text-olive-300">
           account settings
         </Link>{' '}

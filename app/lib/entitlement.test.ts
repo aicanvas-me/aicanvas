@@ -54,14 +54,14 @@ describe('getEntitlement (token path)', () => {
     expect(await getEntitlement(req())).toEqual({ tier: 'free', userId: 'u2' })
   })
 
-  it('an unknown token is anonymous', async () => {
-    expect(await getEntitlement(req())).toEqual({ tier: 'anonymous', userId: null })
+  it('an unknown token is anonymous, flagged so the registry can say it changed', async () => {
+    expect(await getEntitlement(req())).toEqual({ tier: 'anonymous', userId: null, tokenUnknown: true })
   })
 
   it('a revoked token is anonymous even with an active subscription', async () => {
     rows.user_api_keys = { user_id: 'u4', revoked: true }
     rows.user_subscriptions = { status: 'active', current_period_end: null }
-    expect(await getEntitlement(req())).toEqual({ tier: 'anonymous', userId: null })
+    expect(await getEntitlement(req())).toEqual({ tier: 'anonymous', userId: null, tokenUnknown: true })
   })
 
   it('a lapsed subscription is free even with a valid token', async () => {

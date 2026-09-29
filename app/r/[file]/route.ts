@@ -85,10 +85,12 @@ export async function GET(
     // UI/metering switch, not the thing standing between a free user and premium
     // bytes. Fail CLOSED on any entitlement error.
     let tier
+    let tokenUnknown = false
     try {
       const entitlement = await getEntitlement(req)
       tier = entitlement.tier
       userId = entitlement.userId
+      tokenUnknown = entitlement.tokenUnknown === true
     } catch (err) {
       console.error('[registry gate] entitlement error on premium content — failing closed:', err)
       return paymentJson({ error: 'temporarily-unavailable', message: 'Please retry shortly.' }, 503)
@@ -97,7 +99,7 @@ export async function GET(
       // Free / anon: don't 402 (shadcn renders that as a cryptic, misleading
       // error). Serve a 200 PLACEHOLDER item — the install succeeds and drops a
       // single clearly-labelled file pointing to /pricing. ZERO real source.
-      return contentType === 'brain' ? brainStub(body, slug) : premiumStub(body, slug)
+      return markTokenUnknown(contentType === 'brain' ? brainStub(body, slug) : premiumStub(body, slug), tokenUnknown)
     }
   }
 
@@ -113,15 +115,17 @@ export async function GET(
     (contentType === 'standalone' || contentType === 'design-system-component')
   ) {
     let tier
+    let tokenUnknown = false
     try {
       const entitlement = await getEntitlement(req)
       tier = entitlement.tier
       userId = entitlement.userId
+      tokenUnknown = entitlement.tokenUnknown === true
     } catch (err) {
       console.error('[registry gate] entitlement error on free content — failing open:', err)
       tier = 'free' // fail OPEN — free source is public anyway
     }
-    if (tier === 'anonymous') return freeAccountStub(body, slug)
+    if (tier === 'anonymous') return markTokenUnknown(freeAccountStub(body, slug), tokenUnknown)
   }
 
   // Token propagation: the shadcn CLI fetches each registryDependency URL
@@ -363,6 +367,16 @@ function freeAccountStub(realBody: string, slug: string): NextResponse {
  */
 function freeAccountGateActive(): boolean {
   return process.env.FREE_ACCOUNT_GATE === 'on'
+}
+
+/**
+ * Tags a placeholder served to a token that matches no account (the user rotated it) with
+ * X-AICanvas-Token: unknown, so the MCP can say "your token changed" instead of "sign up".
+ * Only ever set on a placeholder: the bytes served are exactly the anonymous ones.
+ */
+function markTokenUnknown(res: NextResponse, tokenUnknown: boolean): NextResponse {
+  if (tokenUnknown) res.headers.set('X-AICanvas-Token', 'unknown')
+  return res
 }
 
 /** Enforce requires the premium UI flag, else blocked users would have no

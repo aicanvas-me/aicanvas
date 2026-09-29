@@ -62,6 +62,23 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     expect(body).not.toContain('useEffect')
     // A stub is not a pull.
     expect(mockedTrackPull).not.toHaveBeenCalled()
+    // No token sent, so nothing to call stale.
+    expect(res.headers.get('X-AICanvas-Token')).toBeNull()
+  })
+
+  it('case 1b: gate ON + a token that matches no account → the same stub, tagged so the MCP can say it changed', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+    const anon = await (await call()).text()
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null, tokenUnknown: true })
+
+    const res = await call()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Token')).toBe('unknown')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
+    // Access is exactly anonymous: byte-for-byte the anonymous placeholder.
+    expect(await res.text()).toBe(anon)
   })
 
   it("case 2: gate ON + signed-in 'free' tier → REAL standalone source (the gap this closes)", async () => {

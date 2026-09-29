@@ -8,6 +8,12 @@ import { createClient } from '@/app/lib/supabase/server'
 export interface Entitlement {
   tier: Tier
   userId: string | null
+  /**
+   * A well-formed token came in but matches no account, which is what a token looks like
+   * right after the user rotated it. Access is exactly anonymous; this only lets the
+   * registry tell the MCP "your token changed" instead of "sign up".
+   */
+  tokenUnknown?: true
 }
 
 type AdminClient = ReturnType<typeof createAdminClient>
@@ -29,7 +35,7 @@ export async function getEntitlement(req: Request): Promise<Entitlement> {
       .eq('token', token)
       .eq('revoked', false)
       .maybeSingle()
-    if (!key) return { tier: 'anonymous', userId: null } // bad/revoked token
+    if (!key) return { tier: 'anonymous', userId: null, tokenUnknown: true } // bad/revoked token
     // Fire-and-forget usage stamp so leaked-token anomalies are detectable.
     void admin
       .from('user_api_keys')

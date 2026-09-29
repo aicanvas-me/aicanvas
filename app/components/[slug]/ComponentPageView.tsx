@@ -36,6 +36,7 @@ import type { ComponentMeta } from '../../lib/component-registry'
 import { getDesignSystemMeta, type DesignSystemSlug } from '../../lib/design-system-meta'
 import { track } from '../../lib/analytics'
 import { copyText, useCopied } from '../useCopied'
+import { tokenEnvLine } from '@/lib/identity/token'
 import { trackInstall } from '../../lib/track-install'
 import { BlockPreviewFrame } from './BlockPreviewFrame'
 import { useSession } from '../auth/SessionProvider'
@@ -233,7 +234,7 @@ export default function ComponentPageView({
   const cardTheme: 'dark' | 'light' = dualTheme ? (themeOverride ?? siteTheme) : 'dark'
   const [cliCopied, setCliCopied] = useState(false)
   const { copied: mcpTokenCopied, copy: copyMcpToken } = useCopied(
-    userToken ? `AICANVAS_TOKEN=${userToken}` : '',
+    userToken ? tokenEnvLine(userToken) : '',
   )
   const [mcpTokenRevealed, setMcpTokenRevealed] = useState(false)
   const [codeCopied, setCodeCopied] = useState(false)

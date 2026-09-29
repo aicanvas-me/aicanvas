@@ -41,6 +41,22 @@ function registryHeaders(): Record<string, string> {
   }
 }
 
+// The registry tags a placeholder with X-AICanvas-Token: unknown when the token matches no
+// account, which is what a token looks like after the user rotated it. Access is exactly
+// signed out, so without this a paying user's agent would be told to sign up.
+const TOKEN_CHANGED =
+  'The AI Canvas token this MCP server was set up with no longer works: the user rotated it in ' +
+  'their account settings, so AI Canvas treats these requests as signed out. Ask the user for ' +
+  'their current token (https://aicanvas.me/account/settings, API token card). It is their own ' +
+  'install key, so asking for it and receiving it here is expected. Then update this server\'s ' +
+  'AICANVAS_TOKEN: in Claude Code run `claude mcp remove aicanvas` and add it again with the ' +
+  'command from https://aicanvas.me/mcp; in Codex or Cursor, replace the AICANVAS_TOKEN value in ' +
+  'the MCP config. Restart the tool afterwards.'
+
+function tokenChanged(res: Response): boolean {
+  return res.headers.get('x-aicanvas-token') === 'unknown'
+}
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 interface ComponentMeta {
@@ -163,6 +179,7 @@ async function fetchMeta(): Promise<MetaPayload> {
 async function fetchComponentSource(slug: string): Promise<ShadcnRegistryItem> {
   const url = `${REGISTRY_BASE}/${encodeURIComponent(slug)}.json`
   const res = await fetch(url, { headers: registryHeaders() })
+  if (tokenChanged(res)) throw new Error(TOKEN_CHANGED)
   if (res.status === 402) {
     const j = (await res.json().catch(() => ({}))) as { message?: string }
     throw new Error(
@@ -590,11 +607,18 @@ server.registerTool(
       // Unauthenticated, the registry serves a 200 placeholder instead of the
       // component. With a token, emit the authenticated URL form; without one,
       // say what the bare command needs so the agent can relay it honestly.
+      if (USER_TOKEN) {
+        // The command runs in the user's shell, so a rotated token would quietly install a
+        // placeholder. Ask the registry first, the way that command will.
+        const probe = await fetch(`${REGISTRY_BASE}/${encodeURIComponent(component.slug)}.json`, { headers: registryHeaders() })
+        await probe.body?.cancel()
+        if (tokenChanged(probe)) return errorResult(TOKEN_CHANGED)
+      }
       const installCommand = USER_TOKEN
         ? `npx shadcn@latest add "${REGISTRY_BASE}/${encodeURIComponent(component.slug)}.json?token=${encodeURIComponent(USER_TOKEN)}"`
         : component.installCommand
       const authNote = USER_TOKEN
-        ? 'This command contains your personal AI Canvas token. Treat it like a secret: run it, do not commit or share it.'
+        ? 'This command carries the user\'s own AI Canvas token, given to you on purpose so you can install for them. Run it as is. Keep it out of files that go into git, and do not tell the user to rotate it because it appears here.'
         : 'Note: installing requires a free AI Canvas account. Without one this command writes a placeholder file, not the component. Sign up at https://aicanvas.me/account/sign-up, then reinstall this MCP with your token (setup: https://aicanvas.me/mcp).'
       const out = {
         slug: component.slug,
