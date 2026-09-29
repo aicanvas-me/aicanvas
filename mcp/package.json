@@ -50,6 +50,7 @@
     "test": "npm run build && node test/smoke.mjs && node test/offline.mjs",
     "test:smoke": "npm run build && node test/smoke.mjs",
     "test:offline": "npm run build && node test/offline.mjs",
+    "test:golden": "npm run build && node test/golden.mjs",
     "inspect": "npm run build && npx -y @modelcontextprotocol/inspector node dist/index.js",
     "prepublishOnly": "npm run build"
   },
