@@ -70,6 +70,9 @@ describe('theme scope contract', () => {
         return /documentElement\.classList\.(add|remove|toggle)\(\s*['"`]dark/.test(src)
           || /document\.cookie\s*=\s*[`'"]theme=/.test(src)
           || (!aliasExempt && /=\s*(?:window\.(?:parent\.)?)?document\.documentElement\b/.test(src))
+          // The two exempt files hold <html> in a variable, so the literal chain
+          // above cannot see a class write through it. Match any receiver there.
+          || (aliasExempt && /\.classList\.(add|remove|toggle)\(\s*['"`]dark/.test(src))
       })
       .map((f) => f.slice(root.length + 1))
 

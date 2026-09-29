@@ -610,8 +610,10 @@ export default function ComponentPageView({
                     <AnimatePresence mode="wait" initial={false}>
                       {/* Shows where a click goes (moon in light, sun in dark),
                           the same rule as the site toggle in ThemeToggle.tsx, so
-                          the two controls that now do one thing agree. */}
-                      {cardTheme !== 'dark' ? (
+                          the two controls that now do one thing agree. A dark-only
+                          component's toggle goes nowhere, so it keeps the moon
+                          that says what the preview is. */}
+                      {!dualTheme || cardTheme !== 'dark' ? (
                         <motion.span
                           key="moon"
                           initial={{ y: 12, opacity: 0 }}
