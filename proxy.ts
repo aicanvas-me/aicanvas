@@ -51,6 +51,12 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.next()
   }
 
+  // The hosted MCP authenticates every request by its own header and never
+  // reads a cookie, so it skips the Supabase refresh hop too.
+  if (pathname === '/api/mcp' || pathname.startsWith('/.well-known/')) {
+    return NextResponse.next()
+  }
+
   try {
     if (posthogConfigured && isPageview(request)) {
       event.waitUntil(logPageview(request))

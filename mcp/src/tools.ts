@@ -1,11 +1,11 @@
 /**
  * AI Canvas MCP tools
  * -------------------
- * The 13 tools, shared by the npm package (stdio, index.ts) and the hosted
+ * The tools, shared by the npm package (stdio, index.ts) and the hosted
  * server on aicanvas.me. Everything that differs between the two (where the
  * registry is, which token goes into install commands, whether to check that
- * token first) comes in through the ToolContext; the tools themselves are the
- * same code for both.
+ * token first, which items the account cannot install) comes in through the
+ * ToolContext; the tools themselves are the same code for both.
  */
 
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
@@ -22,8 +22,72 @@ export interface ToolContext {
   token: string
   /** Ask the registry before handing out an install command, so a token rotated since setup is caught. */
   probeBeforeInstall: boolean
+  /**
+   * Hosted only: the signed-in account's plan and what it cannot install, so results are
+   * labelled and a locked item is never handed back as if it were source. The npm package
+   * leaves this out, and its answers stay exactly what they were.
+   */
+  access?: {
+    plan: 'free' | 'premium'
+    locked(slug: string): boolean
+  }
+  /** Hosted only: the account this connection is signed in as, for the whoami tool. */
+  whoami?: () => Promise<{ email: string | null; plan: 'free' | 'premium' }>
 }
 
+type Access = 'included' | 'locked'
+
+// Hosted only: a catalog command in the bare `@aicanvas/<slug>` form runs in the user's shell
+// without a key and installs a placeholder, so hosted answers hand out the form that carries
+// the account's key, as get_install_command does. The npm package keeps the bare form.
+function keyed(ctx: ToolContext, command: string): string {
+  if (!ctx.access || !ctx.token) return command
+  return command.replace(
+    /@aicanvas\/([a-z0-9-]+)/,
+    (_, slug: string) => `"${ctx.registryBase}/${slug}.json?token=${encodeURIComponent(ctx.token)}"`,
+  )
+}
+
+// Hosted only: every catalog item says whether this account can install it, and only an
+// item it can install carries a command. Without an access context (the npm package) items
+// pass through untouched.
+function forAccount<T extends { slug: string; installCommand?: string; tokensInstallCommand?: string }>(
+  ctx: ToolContext,
+  item: T,
+): T | (Omit<T, 'installCommand' | 'tokensInstallCommand'> & { access: Access }) {
+  if (!ctx.access) return item
+  if (ctx.access.locked(item.slug)) {
+    const { installCommand: _i, tokensInstallCommand: _t, ...rest } = item
+    return { ...rest, access: 'locked' }
+  }
+  return {
+    ...item,
+    ...(item.installCommand ? { installCommand: keyed(ctx, item.installCommand) } : {}),
+    ...(item.tokensInstallCommand ? { tokensInstallCommand: keyed(ctx, item.tokensInstallCommand) } : {}),
+    access: 'included',
+  }
+}
+
+const UPGRADE_URL = 'https://aicanvas.me/pricing'
+
+function lockedLine(name: string): string {
+  return (
+    `${name} is AI Canvas Premium, and this account is on the free plan, so there is no source to install. ` +
+    `Tell the user, and offer the upgrade: ${UPGRADE_URL}. It unlocks on this same connection, nothing to reinstall.`
+  )
+}
+
+// What a locked item returns instead of its source: a preview and one upgrade line.
+function lockedPreview(item: { slug: string; name: string; description: string; homepageUrl: string }) {
+  return {
+    content: [
+      asTextContent(
+        [`# ${item.name} (locked)`, '', item.description, '', `Preview: ${item.homepageUrl}`, '', lockedLine(item.name)].join('\n'),
+      ),
+    ],
+    structuredContent: { ...item, access: 'locked' as const, upgradeUrl: UPGRADE_URL },
+  }
+}
 
 // The registry tags a placeholder with X-AICanvas-Token: unknown when the token matches no
 // account, which is what a token looks like after the user rotated it. Access is exactly
@@ -717,10 +781,16 @@ const CHECKLIST_COMPONENT = [
 
 // ── Server ───────────────────────────────────────────────────────────────────
 
-export function createServer(ctx: ToolContext, info: { version: string }): McpServer {
+export function createServer(
+  ctx: ToolContext,
+  info: { version: string; instructions?: string },
+): McpServer {
   const server = new McpServer(
     { name: 'aicanvas-mcp', version: info.version },
-    { capabilities: { tools: {}, logging: {} } },
+    {
+      capabilities: { tools: {}, logging: {} },
+      ...(info.instructions ? { instructions: info.instructions } : {}),
+    },
   )
 
   // ── Tool: list_categories ────────────────────────────────────────────────────
@@ -799,7 +869,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
           )
         }
         const total = pool.length
-        const slice = pool.slice(offset, offset + limit)
+        const slice = pool.slice(offset, offset + limit).map((c) => forAccount(ctx, c))
         const summary =
           category != null
             ? `${total} components in category "${category}"` +
@@ -884,7 +954,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
           .filter((r) => r.score > 0)
           .sort((a, b) => b.score - a.score)
           .slice(0, limit)
-          .map((r) => r.item)
+          .map((r) => forAccount(ctx, r.item))
 
         const summary =
           ranked.length === 0
@@ -934,13 +1004,14 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
               `or \`list_systems\` / \`get_system\` for design-system components (e.g. "andromeda-heat-grid").`,
           )
         }
+        if (ctx.access?.locked(slug)) return lockedPreview((component ?? systemComponent)!)
 
         const source = await fetchComponentSource(ctx, slug)
         const code = source.files[0]?.content ?? ''
         const filePath = source.files[0]?.path ?? `components/aicanvas/${slug}.tsx`
 
         if (systemComponent) {
-          const result = { ...systemComponent, filePath, code }
+          const result = { ...forAccount(ctx, systemComponent), filePath, code }
           return {
             content: [
               asTextContent(
@@ -952,7 +1023,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
                   `Design system: ${systemComponent.system}`,
                   `Dependencies: ${systemComponent.dependencies.join(', ') || '(none)'}`,
                   `Registry dependencies: ${(systemComponent.registryDependencies ?? []).join(', ') || '(none)'}`,
-                  `Install: ${systemComponent.installCommand}`,
+                  `Install: ${keyed(ctx, systemComponent.installCommand)}`,
                   `Homepage: ${systemComponent.homepageUrl}`,
                   '',
                   'Note: a manual (non-CLI) write must ALSO install the shared tokens this component depends on (see registry dependencies above and `get_system`). The CLI install resolves them automatically.',
@@ -967,7 +1038,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
         }
 
         const result = {
-          ...component!,
+          ...forAccount(ctx, component!),
           filePath,
           code,
         }
@@ -982,7 +1053,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
                 '',
                 `Categories: ${component!.categories.join(', ') || '(none)'}`,
                 `Dependencies: ${component!.dependencies.join(', ') || '(none)'}`,
-                `Install: ${component!.installCommand}`,
+                `Install: ${keyed(ctx, component!.installCommand)}`,
                 `Homepage: ${component!.homepageUrl}`,
                 '',
                 `--- ${filePath} ---`,
@@ -1019,13 +1090,17 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
         const meta = await fetchMeta(ctx)
         const component =
           meta.components.find((c) => c.slug === slug) ??
-          (meta.systemComponents ?? []).find((c) => c.slug === slug)
+          (meta.systemComponents ?? []).find((c) => c.slug === slug) ??
+          // Hosted: templates and whole systems get their command here too, with the key in it.
+          (ctx.access ? [...(meta.templates ?? []), ...(meta.systems ?? [])].find((c) => c.slug === slug) : undefined)
         if (!component) {
           return errorResult(
             `No component found with slug "${slug}". Use \`search_components\` to find standalone slugs, ` +
               `or \`list_systems\` / \`get_system\` for design-system components.`,
           )
         }
+        // A locked item has no command: it would only write a placeholder file.
+        if (ctx.access?.locked(component.slug)) return errorResult(lockedLine(component.name))
         // The meta installCommand is the bare `@aicanvas/<slug>` form, which runs
         // in the USER'S shell — where this server's AICANVAS_TOKEN does not exist.
         // Unauthenticated, the registry serves a 200 placeholder instead of the
@@ -1104,14 +1179,14 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
           `${systems.length} design system${systems.length === 1 ? '' : 's'} on AI Canvas:`,
           '',
           ...systems.map((s) =>
-            `  ${s.name.padEnd(16)}  ${String(s.componentCount).padStart(2)} components, ${s.templateSlugs.length} templates`,
+            `  ${s.name.padEnd(16)}  ${String(s.componentCount).padStart(2)} components, ${s.templateSlugs.length} templates${ctx.access?.locked(s.slug) ? ', locked' : ''}`,
           ),
           '',
           'Use `get_system` to fetch the full source of a system, or `list_templates` to see the ready-made screens built from one.',
         ]
         return {
           content: [asTextContent(lines.join('\n'))],
-          structuredContent: { systems },
+          structuredContent: { systems: systems.map((s) => forAccount(ctx, s)) },
         }
       } catch (err) {
         return errorResult(err instanceof Error ? err.message : String(err))
@@ -1144,6 +1219,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
             `No design system found with slug "${slug}". Use \`list_systems\` to see what's available.`,
           )
         }
+        if (ctx.access?.locked(slug)) return lockedPreview(system)
         const item = await fetchComponentSource(ctx, slug)
 
         // The system's own design-system components, with their per-component
@@ -1162,9 +1238,9 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
           `Files: ${item.files.length}`,
           `Dependencies: ${system.dependencies.join(', ') || '(none)'}`,
           `Registry dependencies: ${(system.registryDependencies ?? []).join(', ') || '(none)'}`,
-          `Install (whole system): ${system.installCommand}`,
+          `Install (whole system): ${keyed(ctx, system.installCommand)}`,
           ...(system.tokensInstallCommand
-            ? [`Install (shared tokens only): ${system.tokensInstallCommand}`]
+            ? [`Install (shared tokens only): ${keyed(ctx, system.tokensInstallCommand)}`]
             : []),
           ...(system.tokensSourceUrl ? [`Tokens source: ${system.tokensSourceUrl}`] : []),
           `Homepage: ${system.homepageUrl}`,
@@ -1172,7 +1248,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
           'Note: the shared tokens ship as a SEPARATE registry dependency. For a manual (non-CLI) file write you must ALSO install the tokens (see "Install (shared tokens only)" above); the CLI resolves them automatically.',
           '',
           `--- components (${components.length}) ---`,
-          ...components.map((c) => `  ${c.slug.padEnd(28)}  ${c.installCommand}`),
+          ...components.map((c) => `  ${c.slug.padEnd(28)}  ${keyed(ctx, c.installCommand)}`),
           '',
           `--- file index ---`,
           ...item.files.map((f) => `  ${f.path}`),
@@ -1181,8 +1257,8 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
         return {
           content: [asTextContent(summary)],
           structuredContent: {
-            ...system,
-            components,
+            ...forAccount(ctx, system),
+            components: components.map((c) => forAccount(ctx, c)),
             files: item.files,
           },
         }
@@ -1236,14 +1312,14 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
           '',
           ...templates.map(
             (t) =>
-              `  ${t.slug.padEnd(32)}  ${t.system}${t.category ? ` · ${t.category}` : ''}, ${t.fileCount} files`,
+              `  ${t.slug.padEnd(32)}  ${t.system}${t.category ? ` · ${t.category}` : ''}, ${t.fileCount} files${ctx.access?.locked(t.slug) ? ', locked' : ''}`,
           ),
           '',
           'Use `get_template` with a slug above to fetch every file for one template.',
         ]
         return {
           content: [asTextContent(lines.join('\n'))],
-          structuredContent: { templates },
+          structuredContent: { templates: templates.map((t) => forAccount(ctx, t)) },
         }
       } catch (err) {
         return errorResult(err instanceof Error ? err.message : String(err))
@@ -1278,6 +1354,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
             `No template found with slug "${slug}". Use \`list_templates\` to see available templates.`,
           )
         }
+        if (ctx.access?.locked(slug)) return lockedPreview(template)
         const item = await fetchComponentSource(ctx, slug)
         const summary = [
           `# ${template.name} (${template.system}${template.category ? ` · ${template.category}` : ''})`,
@@ -1287,7 +1364,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
           `Files: ${item.files.length}`,
           `Dependencies: ${template.dependencies.join(', ') || '(none)'}`,
           `Registry dependencies: ${(template.registryDependencies ?? []).join(', ') || '(none)'}`,
-          `Install: ${template.installCommand}`,
+          `Install: ${keyed(ctx, template.installCommand)}`,
           `Preview: ${template.homepageUrl}`,
           '',
           'Note: a manual (non-CLI) file write must ALSO install the registry dependencies above (the base components + shared tokens) for the composition to build. The CLI install resolves them automatically.',
@@ -1299,7 +1376,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
         return {
           content: [asTextContent(summary)],
           structuredContent: {
-            ...template,
+            ...forAccount(ctx, template),
             files: item.files,
           },
         }
@@ -1342,7 +1419,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
           return {
             content: [
               asTextContent(
-                `${component.name} takes no props: it is self-contained. Install it (${component.installCommand}) and adapt the source directly.`,
+                `${component.name} takes no props: it is self-contained. Install it (${keyed(ctx, component.installCommand)}) and adapt the source directly.`,
               ),
             ],
             structuredContent: { slug, name: component.name, tables: [] },
@@ -1356,7 +1433,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
                 '',
                 renderPropTables(tables),
                 '',
-                `Install: ${component.installCommand}`,
+                `Install: ${keyed(ctx, component.installCommand)}`,
                 `Homepage: ${component.homepageUrl}`,
               ].join('\n'),
             ),
@@ -1597,7 +1674,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
               ? {
                   slug: pick.slug,
                   name: pick.name,
-                  installCommand: pick.installCommand,
+                  installCommand: keyed(ctx, pick.installCommand),
                   homepageUrl: pick.homepageUrl,
                   hasProps: !!props?.props[pick.slug],
                 }
@@ -1617,16 +1694,22 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
         )
         const install: string[] = []
         for (const s of systemsUsed) {
-          const cmd = (meta.systems ?? []).find((x) => x.slug === s)?.tokensInstallCommand
+          const bare = (meta.systems ?? []).find((x) => x.slug === s)?.tokensInstallCommand
+          const cmd = bare && !ctx.access?.locked(`${s}-tokens`) ? keyed(ctx, bare) : null
           if (cmd && !install.includes(cmd)) install.push(cmd)
         }
-        for (const p of picks) if (!install.includes(p.installCommand)) install.push(p.installCommand)
+        // Hosted: a pick this account cannot install stays in the plan, marked, but out of the
+        // install list, where it would only write a placeholder.
+        const lockedPicks = picks.filter((p) => ctx.access?.locked(p.slug))
+        for (const p of picks) {
+          if (!lockedPicks.includes(p) && !install.includes(p.installCommand)) install.push(p.installCommand)
+        }
 
         const lines: string[] = [`# Plan for: ${brief}`, '']
         if (templatePick) {
           lines.push(
-            `Closest ready-made screen: ${templatePick.name} (${templatePick.system}${templatePick.category ? ` · ${templatePick.category}` : ''}), ${templatePick.fileCount} files.`,
-            `  Install: ${templatePick.installCommand}`,
+            `Closest ready-made screen: ${templatePick.name} (${templatePick.system}${templatePick.category ? ` · ${templatePick.category}` : ''}), ${templatePick.fileCount} files${ctx.access?.locked(templatePick.slug) ? ', locked' : ''}.`,
+            `  Install: ${keyed(ctx, templatePick.installCommand)}`,
             `  Preview: ${templatePick.homepageUrl}`,
             '  Start from it when the brief is mostly this screen; fetch it with `get_template`.',
             '',
@@ -1639,7 +1722,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
         for (const s of sections) {
           if (s.pick) {
             lines.push(
-              `- ${s.ask}: ${s.pick.name} (${s.pick.slug})${s.pick.hasProps ? ', documented API' : ', self-contained'}` +
+              `- ${s.ask}: ${s.pick.name} (${s.pick.slug})${s.pick.hasProps ? ', documented API' : ', self-contained'}${ctx.access?.locked(s.pick.slug) ? ', locked' : ''}` +
                 (s.alternatives.length
                   ? `. Alternatives: ${s.alternatives.map((a) => a.slug).join(', ')}`
                   : ''),
@@ -1666,6 +1749,11 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
             `${n++}. Read the API before writing JSX: get_component_props on ${withApi.map((p) => p.slug).join(', ')}.`,
           )
         }
+        if (lockedPicks.length) {
+          lines.push(
+            `${n++}. Locked on this account (Premium): ${lockedPicks.map((p) => p.slug).join(', ')}. Tell the user, and offer the upgrade (${UPGRADE_URL}) or an alternative.`,
+          )
+        }
         if (gaps.length) {
           lines.push(
             `${n++}. Build by hand: ${gaps.join('; ')}. Hold it to get_audit_checklist.`,
@@ -1687,7 +1775,7 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
               ? {
                   slug: templatePick.slug,
                   name: templatePick.name,
-                  installCommand: templatePick.installCommand,
+                  installCommand: keyed(ctx, templatePick.installCommand),
                   homepageUrl: templatePick.homepageUrl,
                 }
               : null,
@@ -1726,6 +1814,41 @@ export function createServer(ctx: ToolContext, info: { version: string }): McpSe
       }
     },
   )
+
+  // ── Tool: whoami (hosted only) ───────────────────────────────────────────────
+
+  const whoami = ctx.whoami
+  if (whoami) {
+    server.registerTool(
+      'whoami',
+      {
+        title: 'Show the AI Canvas account this connection uses',
+        description:
+          'Return the AI Canvas account this connection is signed in as, its plan (free or premium) and what that plan installs. Use when the user asks which account is connected, or before explaining why an item is locked.',
+        inputSchema: {},
+        annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+      },
+      async () => {
+        try {
+          const me = await whoami()
+          const scope =
+            me.plan === 'premium'
+              ? 'Every component, design system and template installs in full.'
+              : `Free components and design-system components install in full. Premium items show as locked; upgrading at ${UPGRADE_URL} unlocks them on this same connection.`
+          return {
+            content: [
+              asTextContent(
+                `Signed in to AI Canvas as ${me.email ?? 'an account with no email on file'}, ${me.plan === 'premium' ? 'Premium' : 'Free'} plan. ${scope}`,
+              ),
+            ],
+            structuredContent: { email: me.email, plan: me.plan },
+          }
+        } catch (err) {
+          return errorResult(err instanceof Error ? err.message : String(err))
+        }
+      },
+    )
+  }
 
   return server
 }
