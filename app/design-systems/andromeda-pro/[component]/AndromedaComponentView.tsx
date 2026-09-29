@@ -412,7 +412,9 @@ export function AndromedaComponentView({
                   }
                 >
                   <AnimatePresence mode="wait" initial={false}>
-                    {previewTheme?.theme === 'dark' ? (
+                    {/* Shows where a click goes (moon in light, sun in dark),
+                        the same rule as the site toggle in ThemeToggle.tsx. */}
+                    {previewTheme?.theme !== 'dark' ? (
                       <motion.span
                         key="moon"
                         initial={{ y: 12, opacity: 0 }}

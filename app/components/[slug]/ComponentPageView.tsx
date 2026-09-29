@@ -601,7 +601,10 @@ export default function ComponentPageView({
                     className="overflow-hidden"
                   >
                     <AnimatePresence mode="wait" initial={false}>
-                      {cardTheme === 'dark' ? (
+                      {/* Shows where a click goes (moon in light, sun in dark),
+                          the same rule as the site toggle in ThemeToggle.tsx, so
+                          the two controls that now do one thing agree. */}
+                      {cardTheme !== 'dark' ? (
                         <motion.span
                           key="moon"
                           initial={{ y: 12, opacity: 0 }}
