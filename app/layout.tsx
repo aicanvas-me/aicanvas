@@ -84,10 +84,6 @@ export const metadata: Metadata = {
     description: GLOBAL_DESCRIPTION,
     images: ['/og-aug2026-aicanvas.me.png'],
   },
-  icons: {
-    icon: '/ai-canvas-icon-square.svg',
-    shortcut: '/ai-canvas-icon-square.svg',
-  },
   robots: {
     index: true,
     follow: true,
