@@ -241,9 +241,9 @@ html[data-frame][data-frame-light] {
   animation-timing-function: ease-in-out;
 }
 
-/* Preview scope stays sovereign: a [data-card-theme] wrapper and everything
-   inside it keeps its transitions during a SITE flip (the site must never
-   reach into a preview). [data-theme-keep-transition] exempts the theme
+/* A [data-card-theme] wrapper and everything inside it keeps its own
+   transitions during a theme flip (the site and a preview share one theme, but
+   a preview's animation is its own). [data-theme-keep-transition] exempts the theme
    toggle's own icon cross-fade, the one animation the flip should show. */
 .theme-switching
   *:not(

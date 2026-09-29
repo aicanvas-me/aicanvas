@@ -45,29 +45,31 @@ describe('theme scope contract', () => {
     const offenders = walk(join(root, 'app'))
       .filter((f) => !f.endsWith('ThemeProvider.tsx'))
       .filter((f) => !f.endsWith('.test.ts'))
-      // The frame mirror writes theme VARS on the frame document's root, never
-      // the dark class or the cookie; reviewed exception.
-      .filter((f) => !f.endsWith('AndromedaThemeSync.tsx'))
-      // Same reviewed exception, same reasoning: Andromeda Pro's wrapper writes
-      // only its own `--at-*` custom properties on the root, never the dark
-      // class and never the cookie, so it cannot move the SITE theme — sand
-      // chrome reads no --at- var. The root is where they have to land: the
-      // canvas components (Burst, Orb, Nodes, Planet, the city map) and
-      // useResolvedVars re-resolve their ink by observing the root, and the
-      // Drawer, PanelMenu and Tooltip portal to <body>, which inherits from the
-      // root and not from a mid-tree wrapper. Scoping the set to the wrapper was
-      // tried and reverted: it left every portalled surface
-      // resolving the dark fallback in light theme.
-      .filter((f) => !f.endsWith('AndromedaThemeWrap.tsx'))
       .filter((f) => {
         const src = readFileSync(f, 'utf8')
+        // Two reviewed files hold <html> in a variable to set theme VARS on it,
+        // so they are exempt from the alias pattern ONLY; the class and cookie
+        // patterns still apply to them, because the Pro wrap now hands
+        // ThemeProvider's setTheme to every Pro toggle and a direct write there
+        // would be the two-writers bug again.
+        // - AndromedaThemeSync: the frame mirror sets [data-frame-light] on the
+        //   frame document's root.
+        // - AndromedaThemeWrap: writes Andromeda Pro's `--at-*` custom properties
+        //   on the root (sand chrome reads no --at- var). The root is where they
+        //   have to land: the canvas components (Burst, Orb, Nodes, Planet, the
+        //   city map) and useResolvedVars re-resolve their ink by observing the
+        //   root, and the Drawer, PanelMenu and Tooltip portal to <body>, which
+        //   inherits from the root and not from a mid-tree wrapper. Scoping the
+        //   set to the wrapper was tried and reverted: it left every portalled
+        //   surface resolving the dark fallback in light theme.
+        const aliasExempt = /(AndromedaThemeSync|AndromedaThemeWrap)\.tsx$/.test(f)
         // Writing the class on <html>, or writing the cookie the server reads.
         // The alias pattern closes the two-line variant (`const root =
         // document.documentElement; root.classList.toggle('dark', …)`) that
         // the literal chain above cannot see.
         return /documentElement\.classList\.(add|remove|toggle)\(\s*['"`]dark/.test(src)
           || /document\.cookie\s*=\s*[`'"]theme=/.test(src)
-          || /=\s*(?:window\.(?:parent\.)?)?document\.documentElement\b/.test(src)
+          || (!aliasExempt && /=\s*(?:window\.(?:parent\.)?)?document\.documentElement\b/.test(src))
       })
       .map((f) => f.slice(root.length + 1))
 
@@ -89,5 +91,18 @@ describe('theme scope contract', () => {
     )
     expect(wrap).toMatch(/theme: siteTheme, setTheme \} = useTheme\(\)/)
     expect(wrap).not.toMatch(/useState<AndromedaTheme>\(/)
+  })
+
+  it('a live-canvas preview opts out of the root cross-fade the wrap would trigger', () => {
+    // A preview toggle now runs ThemeProvider.setTheme, whose view transition
+    // double-images animating canvases. The Pro wrap has no [data-card-theme],
+    // so it marks itself, and ThemeProvider has to look for that mark.
+    const provider = readFileSync(join(root, 'app', 'components', 'ThemeProvider.tsx'), 'utf8')
+    const wrap = readFileSync(
+      join(root, 'app', 'design-systems', 'andromeda-pro', 'AndromedaThemeWrap.tsx'),
+      'utf8',
+    )
+    expect(provider).toContain('[data-theme-instant]')
+    expect(wrap).toContain('data-theme-instant')
   })
 })

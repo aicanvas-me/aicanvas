@@ -46,10 +46,14 @@ Always `bg-sand-950` — never zinc, never black, never transparent.
 
 The site ships light and dark. Dark is the default; the toggle at the bottom of the
 left rail writes a `theme` cookie that `app/layout.tsx` reads server-side, so the
-first paint is already correct. A component or block preview keeps its OWN theme in
-a `[data-card-theme]` wrapper and never touches the site's; the `@variant dark`
-selector at the top of `app/globals.css` is what keeps the two scopes apart, and it
-is the thing to read before changing anything here.
+first paint is already correct. The site and every component, block and Andromeda
+preview share that ONE theme (ruled 2026-09-29): a preview reads it, and its own
+toggle calls `ThemeProvider.setTheme`, so flipping either moves the other. Only
+`ThemeProvider` writes `<html>` and the cookie. A preview still owns a
+`[data-card-theme]` wrapper, and the `@variant dark` selector at the top of
+`app/globals.css` keeps that wrapper correct when it disagrees with the site (a
+dark-only component on a light site, a `?theme=` preview route); it is the thing to
+read before changing anything here.
 
 | Role | Light | Dark |
 |---|---|---|

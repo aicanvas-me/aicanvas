@@ -62,6 +62,7 @@ The Reviewer checks this list on every review. The Supervisor logs here after ev
 - **Reference (correct pattern)**: `components-workspace/charging-widget/index.tsx`, `peel-corner-reveal/index.tsx`, `radial-cards/index.tsx`. Copy one of these when inlining `useTheme`.
 - **Affected files**: `components-workspace/crypto-swap/index.tsx` (fixed)
 - **Detected**: 2026-06-14
+- **Update 2026-09-29**: the site and preview themes are now linked, so the preview toggle also flips `<html>` through `ThemeProvider.setTheme` and the story above (Light doing nothing) no longer happens on the site. The rule stands: a preview can still differ from `<html>` (a dark-only component on a light site, a `?theme=` preview route, a copy-pasted component in another project), so resolve wrapper-first.
 
 ## #010 — Live component preview paints over the mobile menu / site chrome (z-index escape)
 

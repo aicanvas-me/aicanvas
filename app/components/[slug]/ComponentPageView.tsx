@@ -594,6 +594,13 @@ export default function ComponentPageView({
                     size="md"
                     iconOnly
                     disabled={!dualTheme}
+                    aria-label={
+                      !dualTheme
+                        ? 'Dark mode only'
+                        : cardTheme === 'dark'
+                          ? 'Switch to light theme'
+                          : 'Switch to dark theme'
+                    }
                     onClick={() => {
                       if (!dualTheme) return
                       setSiteTheme(cardTheme === 'dark' ? 'light' : 'dark')

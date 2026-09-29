@@ -144,7 +144,17 @@ export function AndromedaThemeWrap({
       {followSite ? (
         <style>{`html[data-frame][data-frame-light]{${lightDecls}}`}</style>
       ) : null}
-      <div data-andromeda-theme={theme} className={className}>{children}</div>
+      {/* data-theme-instant makes ThemeProvider skip its root cross-fade, which
+          would double-image the live canvases (Orb, Planet, Burst, Nodes) on a
+          preview toggle. Not on the followSite template pages, which flip with
+          the site toggle exactly as they always did. */}
+      <div
+        data-andromeda-theme={theme}
+        data-theme-instant={followSite ? undefined : ''}
+        className={className}
+      >
+        {children}
+      </div>
     </ThemeCtx.Provider>
   )
 }

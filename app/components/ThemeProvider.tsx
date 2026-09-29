@@ -48,12 +48,15 @@ export function ThemeProvider({ initial, children }: { initial: Theme; children:
     // Soft cross-fade where the browser supports view transitions, EXCEPT while a
     // component preview is on the page: a root view transition cross-fades a
     // frozen screenshot over the still-animating preview and visibly double-images
-    // it, so those pages flip instantly. Either way .theme-switching silences
-    // per-element color transitions so every surface lands on its new color at once.
+    // it, so those pages flip instantly. A preview marks itself with
+    // [data-card-theme] (component and block pages) or [data-theme-instant]
+    // (the Andromeda Pro preview wrap, whose live canvases would double-image the
+    // same way). Either way .theme-switching silences per-element color
+    // transitions so every surface lands on its new color at once.
     document.documentElement.classList.add('theme-switching')
     if (
       typeof document.startViewTransition === 'function' &&
-      !document.querySelector('[data-card-theme]')
+      !document.querySelector('[data-card-theme], [data-theme-instant]')
     ) {
       // `finished` rejects if apply() throws (a denied cookie write); unhandled,
       // SiteBeacon would report that as a js_error.
