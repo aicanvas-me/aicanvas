@@ -159,8 +159,10 @@ export async function GET(
   }
 
   // Every stub and refusal returned above, so this is real source going to a
-  // known account. Catalog files never resolve a caller and leave no note.
-  trackPull(userId, slug, contentType)
+  // known account. Catalog files never resolve a caller and leave no note, and
+  // neither does the MCP's token check before it hands out an install command
+  // (the install that follows is the pull). Tracking only: no access reads this.
+  if (req.headers.get('x-aicanvas-probe') !== '1') trackPull(userId, slug, contentType)
 
   return new NextResponse(outBody, {
     status: 200,

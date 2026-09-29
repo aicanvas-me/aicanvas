@@ -93,9 +93,22 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     // A signed-in free account gets the real, unstubbed source.
     expect(body).toContain('useState')
     expect(body).toContain('export default')
+    expect(res.headers.get('X-AICanvas-Token')).toBeNull()
     // Real source to a known account leaves exactly one note, with its kind.
     expect(mockedTrackPull).toHaveBeenCalledTimes(1)
     expect(mockedTrackPull).toHaveBeenCalledWith('u1', SLUG, 'standalone')
+  })
+
+  it("case 2b: the MCP's token check before an install command gets the source but leaves no note", async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+
+    const req = new NextRequest(`http://localhost/r/${FILE}`, { headers: { 'x-aicanvas-probe': '1' } })
+    const res = await GET(req, { params: Promise.resolve({ file: FILE }) })
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('standalone')
+    expect(mockedTrackPull).not.toHaveBeenCalled()
   })
 
   it('case 3: gate ON + premium tier → REAL standalone source', async () => {
@@ -171,6 +184,19 @@ describe.skipIf(!brainAvailable)('GET /r/andromeda-brain.json — mode-independe
     expect(item.files[0].content).toContain('aicanvas.me/pricing')
     // A subscribed-but-untokened CLI must learn where its command lives.
     expect(item.files[0].content).toContain('account/settings')
+    expect(res.headers.get('X-AICanvas-Token')).toBeNull()
+  })
+
+  it('a token that matches no account → the same locked placeholder, tagged so the MCP can say it changed', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+    const anon = await (await callBrain()).text()
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null, tokenUnknown: true })
+
+    const res = await callBrain()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Token')).toBe('unknown')
+    expect(await res.text()).toBe(anon)
   })
 
   it("signed-in 'free' tier → same locked placeholder", async () => {

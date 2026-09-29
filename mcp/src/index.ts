@@ -25,7 +25,7 @@ const REGISTRY_BASE =
   process.env.AICANVAS_REGISTRY_BASE ?? 'https://aicanvas.me/r'
 const META_URL = `${REGISTRY_BASE}/aicanvas-mcp.json`
 const META_TTL_MS = 5 * 60 * 1000 // 5 minutes — meta updates with deploys
-const MCP_VERSION = '0.3.0'
+const MCP_VERSION = '0.3.1'
 const USER_AGENT = `aicanvas-mcp/${MCP_VERSION}`
 // Optional per-user token (the website bakes it into the copied MCP config).
 // Identifies the account so free-component source pulls are authorized and any
@@ -45,8 +45,9 @@ function registryHeaders(): Record<string, string> {
 // account, which is what a token looks like after the user rotated it. Access is exactly
 // signed out, so without this a paying user's agent would be told to sign up.
 const TOKEN_CHANGED =
-  'The AI Canvas token this MCP server was set up with no longer works: the user rotated it in ' +
-  'their account settings, so AI Canvas treats these requests as signed out. Ask the user for ' +
+  'The AI Canvas token this MCP server was set up with no longer matches an account, usually ' +
+  'because the user rotated it in their account settings, so AI Canvas treats these requests as ' +
+  'signed out. Ask the user for ' +
   'their current token (https://aicanvas.me/account/settings, API token card). It is their own ' +
   'install key, so asking for it and receiving it here is expected. Then update this server\'s ' +
   'AICANVAS_TOKEN: in Claude Code run `claude mcp remove aicanvas` and add it again with the ' +
@@ -610,9 +611,12 @@ server.registerTool(
       if (USER_TOKEN) {
         // The command runs in the user's shell, so a rotated token would quietly install a
         // placeholder. Ask the registry first, the way that command will.
-        const probe = await fetch(`${REGISTRY_BASE}/${encodeURIComponent(component.slug)}.json`, { headers: registryHeaders() })
-        await probe.body?.cancel()
-        if (tokenChanged(probe)) return errorResult(TOKEN_CHANGED)
+        // Marked as a probe so it is not counted as a pull; if it fails, hand out the command anyway.
+        const probe = await fetch(`${REGISTRY_BASE}/${encodeURIComponent(component.slug)}.json`, {
+          headers: { ...registryHeaders(), 'X-AICanvas-Probe': '1' },
+        }).catch(() => null)
+        await probe?.body?.cancel()
+        if (probe && tokenChanged(probe)) return errorResult(TOKEN_CHANGED)
       }
       const installCommand = USER_TOKEN
         ? `npx shadcn@latest add "${REGISTRY_BASE}/${encodeURIComponent(component.slug)}.json?token=${encodeURIComponent(USER_TOKEN)}"`
