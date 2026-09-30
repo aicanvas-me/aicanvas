@@ -2,7 +2,7 @@ import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
-// The site theme and a component preview's theme are LINKED (ruled 2026-09-29):
+// The site theme and a component preview's theme are LINKED:
 // flipping the site moves every preview, and flipping a preview moves the site,
 // as the template pages always did. What must stay true is that there is ONE
 // writer. The first site toggle shipped in 5b4ef1a and was deleted in 12a8897
