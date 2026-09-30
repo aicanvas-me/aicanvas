@@ -20,7 +20,7 @@
 import fs from 'fs'
 import path from 'path'
 import { google } from 'googleapis'
-import { GAXIOS_OPTS, guardedCall } from './gsc-net.ts'
+import { GAXIOS_OPTS, errMessage, guardedCall } from './gsc-net.ts'
 
 
 // Secrets come from .env.local when present; variables already in the
@@ -360,6 +360,6 @@ async function main() {
 }
 
 main().catch((err) => {
-  console.error('\nFAILED:', err?.message || err)
+  console.error('\nFAILED:', errMessage(err))
   process.exit(1)
 })

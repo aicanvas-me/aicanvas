@@ -2,9 +2,16 @@
  * One-way sync: Supabase newsletter_subscribers -> Brevo contacts.
  * The DB is the source of truth; run this any time to make Brevo match it.
  *
- *   subscribed / soft -> in the "AI Canvas updates" list, mailable
+ *   subscribed / soft -> in the "AI Canvas updates" list, mailable unless
+ *                        Brevo already has them blacklisted
  *   unsubscribed      -> imported BLACKLISTED so Brevo can never mail them,
  *                        even if someone adds them to a list by hand
+ *
+ * Suppression only ever grows here: the sync never clears a blacklist. An
+ * opt-out that reached Brevo before the DB (a campaign unsubscribe the
+ * webhook missed) would otherwise be undone by the next run. The settings
+ * toggle (app/lib/brevo.ts) is the only path that un-blacklists, because it
+ * runs on the person's own click.
  *
  * Reads .env.local (BREVO_API_KEY, BREVO_LIST_ID, NEXT_PUBLIC_SUPABASE_URL,
  * SUPABASE_SECRET_KEY). Prints counts only, never addresses.
@@ -53,7 +60,6 @@ if (data.length !== count) {
 
 const mailable = data.filter(r => r.status !== 'unsubscribed')
 const suppressed = data.filter(r => r.status === 'unsubscribed')
-const optedIn = data.filter(r => r.status === 'subscribed')
 
 // Mailable contacts: Brevo's bulk import endpoint (async server-side job).
 async function importMailable(rows) {
@@ -85,22 +91,6 @@ async function suppressContact(r) {
   })
   if (!res.ok && res.status !== 204) {
     console.error('brevo suppress:', res.status, await res.text()); process.exit(1)
-  }
-}
-
-// Explicit opt-ins additionally get emailBlacklisted:false per-contact: the
-// bulk import never touches suppression, so this is what repairs the
-// resubscribe direction (DB says subscribed, Brevo still blacklisted from an
-// old unsubscribe). Merely-'soft' contacts are NOT forced mailable — a
-// Brevo-side unsubscribe of a soft contact must stay suppressed.
-async function unsuppressContact(r) {
-  const res = await fetch('https://api.brevo.com/v3/contacts', {
-    method: 'POST',
-    headers: { 'api-key': BREVO_API_KEY, 'content-type': 'application/json' },
-    body: JSON.stringify({ email: r.email, updateEnabled: true, emailBlacklisted: false }),
-  })
-  if (!res.ok && res.status !== 204) {
-    console.error('brevo unsuppress:', res.status, await res.text()); process.exit(1)
   }
 }
 
@@ -138,6 +128,5 @@ async function removeStrayListMembers() {
 
 await importMailable(mailable)
 await removeStrayListMembers()
-for (const r of optedIn) await unsuppressContact(r)
 for (const r of suppressed) await suppressContact(r)
 console.log(`done: ${mailable.length} mailable, ${suppressed.length} suppressed, ${data.length} total`)

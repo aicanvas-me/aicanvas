@@ -217,14 +217,6 @@ export type ComponentMeta = Pick<
   'slug' | 'name' | 'description' | 'tags' | 'image' | 'badge'
 >
 
-// ─── Design systems (site-side lookups) ───────────────────────────────────────
-// Moved to a light, dependency-free module (./design-system-meta) so CLIENT
-// components can read these without importing this heavy registry. Re-exported
-// here so existing server importers are unaffected.
-export { DESIGN_SYSTEM_META, getDesignSystemMeta, getDesignSystemTemplateMeta } from './design-system-meta'
-export type { DesignSystemSlug, DesignSystemMeta, DesignSystemTemplateMeta } from './design-system-meta'
-
-
 // Code strings are now auto-generated from source files — see component-codes.generated.ts
 
 const COMPONENTS_RAW: ComponentEntry[] = [
@@ -1513,24 +1505,3 @@ export const COMPONENTS: ComponentEntry[] = [
   ...[...COMPONENTS_RAW].reverse().map(withCopyAndStack),
   ...PREMIUM_COMPONENTS.map(withCopyAndStack),
 ].filter((c) => !HIDDEN_SLUGS.has(c.slug))
-
-// ─── Helper ───────────────────────────────────────────────────────────────────
-
-export function getComponent(slug: string): ComponentEntry | undefined {
-  return COMPONENTS.find((c) => c.slug === slug)
-}
-
-// Strip a full ComponentEntry to a serializable ComponentMeta — pass THIS
-// across the server/client boundary (grid cards, nav) so the heavy registry
-// (code strings, prompts, preview components incl. three.js) never reaches the
-// client bundle or the RSC payload.
-export function toMeta(c: ComponentEntry): ComponentMeta {
-  return {
-    slug: c.slug,
-    name: c.name,
-    description: c.description,
-    tags: c.tags,
-    image: c.image,
-    badge: c.badge,
-  }
-}

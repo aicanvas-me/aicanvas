@@ -4,6 +4,11 @@
 // `title` and `description` drive per-category SEO metadata.
 // `h1` and `intro` are the on-page copy that appears above the grid.
 
+// The eyebrow above every components/blocks title. It leads with "Standalone"
+// because these are not part of any design system: each one drops into an app
+// that already has its own. The design systems have their own section.
+export const COMPONENTS_SECTION_OVERLINE = 'Standalone: Components & Blocks'
+
 export type Category = {
   label: string
   slug: string

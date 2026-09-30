@@ -26,7 +26,7 @@ export default async function ServiceOrderTemplate({
       frame={frame}
       templateSlug="andromeda-service-order"
       templateName="Service Order"
-      systemName="Andromeda"
+      systemName="Andromeda Legacy"
       systemHref="/design-systems/andromeda"
     >
       {/* Pinned pattern, same as the other templates: the composition fills

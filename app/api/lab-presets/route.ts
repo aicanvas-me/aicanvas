@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '../../lib/supabase/server'
+import { sessionUser, unauthenticated } from '../../lib/require-user'
 
 // Tools currently in the LAB. Server validates the value so a malformed
 // client can't insert garbage into the `tool` column.
@@ -16,8 +16,7 @@ function isKnownTool(v: unknown): v is KnownTool {
 const MAX_PRESETS_PER_USER = 100
 
 export async function GET(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { supabase, user } = await sessionUser()
   if (!user) return NextResponse.json({ presets: [] })
 
   const tool = request.nextUrl.searchParams.get('tool')
@@ -36,9 +35,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  const { supabase, user } = await sessionUser()
+  if (!user) return unauthenticated()
 
   const body = await request.json().catch(() => null)
   if (!body) return NextResponse.json({ error: 'invalid body' }, { status: 400 })
@@ -81,9 +79,8 @@ export async function POST(request: NextRequest) {
 // PATCH: rename or overwrite config on an existing preset.
 // Body: { id, name?, config? }
 export async function PATCH(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  const { supabase, user } = await sessionUser()
+  if (!user) return unauthenticated()
 
   const body = await request.json().catch(() => null)
   if (!body?.id || typeof body.id !== 'string') {
@@ -116,9 +113,8 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  const { supabase, user } = await sessionUser()
+  if (!user) return unauthenticated()
 
   const body = await request.json().catch(() => null)
   if (!body?.id || typeof body.id !== 'string') {

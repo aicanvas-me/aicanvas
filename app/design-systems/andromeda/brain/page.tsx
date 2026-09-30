@@ -8,9 +8,9 @@ import { BrainStoryV4 } from './BrainStoryV4'
 const jbm = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
 export const metadata = {
-  title: 'The Andromeda Brain: Design Rules for On-Brand UI',
+  title: 'The Andromeda AI Brain: Design Rules for On-Brand UI',
   description:
-    'Tokens and components are the pieces. The brain is the judgment that assembles them: every foundation, component rule, skill and tool your AI agent reads, so what it builds already matches the system instead of a guess.',
+    'Tokens and components are the pieces. The AI Brain is the judgment that assembles them: every foundation, component rule, skill and tool your AI agent reads, so what it builds already matches the system instead of a guess.',
 }
 
 export default function AndromedaBrainLandingPage() {

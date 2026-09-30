@@ -9,20 +9,24 @@
  * `withTimeout` wraps the whole thing as an absolute ceiling.
  */
 
-export const REQUEST_TIMEOUT_MS = 30_000 // gaxios aborts the request itself after this
-export const HARD_TIMEOUT_MS = 45_000 // absolute ceiling incl. the lazy auth-token fetch
-export const MAX_ATTEMPTS = 2 // one retry — recovers a flaky transient failure
+const REQUEST_TIMEOUT_MS = 30_000 // gaxios aborts the request itself after this
+const HARD_TIMEOUT_MS = 45_000 // absolute ceiling incl. the lazy auth-token fetch
+const MAX_ATTEMPTS = 2 // one retry, recovers a flaky transient failure
 
 // Pass as the gaxios options arg on every googleapis call: `.method(params, GAXIOS_OPTS)`.
 export const GAXIOS_OPTS = { timeout: REQUEST_TIMEOUT_MS }
 
-// Reject if `promise` doesn't settle within `ms`. Backstop ceiling: guarantees
-// the caller unblocks even if the underlying client's own timer never fires.
+// Audit categories gsc-submit.ts targets by default. These strings must match
+// the Category union in gsc-audit.ts.
+export const SUBMITTABLE = ['Discovered, awaiting crawl', 'Unknown to Google'] as const
+
 /** The message of anything a catch block receives, Error or not. */
 export function errMessage(e: unknown): string {
   return e instanceof Error ? e.message : String(e)
 }
 
+// Reject if `promise` doesn't settle within `ms`. Backstop ceiling: guarantees
+// the caller unblocks even if the underlying client's own timer never fires.
 export function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
   let timer: ReturnType<typeof setTimeout>
   const timeout = new Promise<never>((_, reject) => {

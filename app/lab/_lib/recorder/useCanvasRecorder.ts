@@ -18,6 +18,7 @@ import {
   ALL_FORMATS,
   type VideoCodec,
 } from 'mediabunny'
+import { computeFit } from './fit'
 
 /**
  * Post-recording handoff. When set, the recorder is idle but a finalised
@@ -95,26 +96,6 @@ type Session = {
   readyForMoreFrames: boolean
   /** Bitrate handed to the encoder, for the info readout. */
   bitrateBps: number
-}
-
-/**
- * Letterbox the source canvas into a fixed-aspect destination. Returns the
- * draw rectangle to pass to ctx.drawImage. Bars are filled by the caller.
- */
-function computeFit(srcW: number, srcH: number, dstW: number, dstH: number) {
-  if (srcW <= 0 || srcH <= 0) return { x: 0, y: 0, w: dstW, h: dstH }
-  const srcAspect = srcW / srcH
-  const dstAspect = dstW / dstH
-  if (srcAspect > dstAspect) {
-    // Source is wider — fit width, bars top/bottom.
-    const w = dstW
-    const h = Math.round(dstW / srcAspect)
-    return { x: 0, y: Math.round((dstH - h) / 2), w, h }
-  }
-  // Source is taller (or equal) — fit height, bars left/right.
-  const h = dstH
-  const w = Math.round(dstH * srcAspect)
-  return { x: Math.round((dstW - w) / 2), y: 0, w, h }
 }
 
 /**

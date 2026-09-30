@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { NextRequest } from 'next/server'
 
@@ -9,11 +9,16 @@ import { NextRequest } from 'next/server'
 // point: this test locks in the route's per-TIER behaviour end to end, with the
 // only stub being the identity/tier resolution.
 vi.mock('@/app/lib/entitlement', () => ({ getEntitlement: vi.fn() }))
+// The pull note writes to the database after the response; here it is a spy, so
+// the cases below can assert WHEN a note is left without touching Supabase.
+vi.mock('@/app/lib/track-pull', () => ({ trackPull: vi.fn() }))
 
 import { GET } from './route'
 import { getEntitlement } from '@/app/lib/entitlement'
+import { trackPull } from '@/app/lib/track-pull'
 
 const mockedGetEntitlement = vi.mocked(getEntitlement)
+const mockedTrackPull = vi.mocked(trackPull)
 
 // A REAL free standalone that exists in registry-data/ and is NOT listed in the
 // manifest's premiumSlugs / designSystemSlugs / templateSlugs / systemSlugs — so
@@ -31,6 +36,7 @@ const REAL_SOURCE_MARKERS = ['useState', 'useEffect', 'export default']
 
 beforeEach(() => {
   mockedGetEntitlement.mockReset()
+  mockedTrackPull.mockReset()
 })
 
 afterEach(() => {
@@ -54,6 +60,8 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     // ZERO real source: the stub must not leak the component's actual code.
     expect(body).not.toContain('useState')
     expect(body).not.toContain('useEffect')
+    // A stub is not a pull.
+    expect(mockedTrackPull).not.toHaveBeenCalled()
   })
 
   it("case 2: gate ON + signed-in 'free' tier → REAL standalone source (the gap this closes)", async () => {
@@ -68,6 +76,9 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     // A signed-in free account gets the real, unstubbed source.
     expect(body).toContain('useState')
     expect(body).toContain('export default')
+    // Real source to a known account leaves exactly one note, with its kind.
+    expect(mockedTrackPull).toHaveBeenCalledTimes(1)
+    expect(mockedTrackPull).toHaveBeenCalledWith('u1', SLUG, 'standalone')
   })
 
   it('case 3: gate ON + premium tier → REAL standalone source', async () => {
@@ -95,6 +106,8 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     // Free standalone source is public anyway → a transient error fails OPEN.
     expect(body).toContain('useState')
     expect(body).toContain('export default')
+    // Nobody was identified, so the note has no account to carry.
+    expect(mockedTrackPull).toHaveBeenCalledWith(null, SLUG, 'standalone')
   })
 
   it('case 5: gate UNSET (dormant) + anonymous → REAL source', async () => {
@@ -193,6 +206,13 @@ function callTemplate() {
   return GET(req, { params: Promise.resolve({ file: TEMPLATE_FILE }) })
 }
 
+// Component files get the JSX stub; every other file (tokens, lib) gets a
+// plain notice export so a locked install still type-checks.
+function isLockedStub(f: { path: string; content: string }) {
+  const expected = /\.[jt]sx$/.test(f.path) ? 'PremiumLocked' : 'export const PREMIUM_NOTICE'
+  return f.content.includes(expected) && !f.content.includes('import ')
+}
+
 describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-independent gate (no enforce flag needed)', () => {
   afterEach(() => {
     delete process.env.REGISTRY_ENFORCEMENT
@@ -214,7 +234,8 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     // (the real file paths remain, but their bodies are all stubbed out).
     const item = JSON.parse(body)
     expect(item.files.length).toBeGreaterThan(0)
-    expect(item.files.every((f: { content: string }) => f.content.includes('PremiumLocked'))).toBe(true)
+    expect(item.files.some((f: { path: string }) => !/\.[jt]sx$/.test(f.path))).toBe(true)
+    expect(item.files.every(isLockedStub)).toBe(true)
   })
 
   it('signed-in free tier → same stub (no real source)', async () => {
@@ -224,7 +245,7 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     const item = await res.json()
 
     expect(res.status).toBe(200)
-    expect(item.files.every((f: { content: string }) => f.content.includes('PremiumLocked'))).toBe(true)
+    expect(item.files.every(isLockedStub)).toBe(true)
   })
 
   it('premium → the REAL template (registry deps to the components it uses)', async () => {
@@ -248,5 +269,123 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     expect(res.status).toBe(503)
     const body = await res.text()
     expect(body).not.toContain('TelemetryRow')
+  })
+})
+
+// A whole-system "Everything" bundle has no files of its own, only
+// registryDependencies. Refused, it must still write one visible notice, or the
+// CLI reports success with nothing on disk. Both bundles are generated from the
+// committed system source, so they are present on every build.
+const ALL_FILE = 'andromeda-all.json'
+const SYSTEM_FILE = 'andromeda.json'
+const allPath = join(process.cwd(), 'registry-data', ALL_FILE)
+const systemPath = join(process.cwd(), 'registry-data', SYSTEM_FILE)
+const bundlesAvailable = existsSync(allPath) && existsSync(systemPath)
+const TOKEN = `aic_${'ab'.repeat(24)}`
+const NOTICE_TARGET = '~/aicanvas-premium-locked/andromeda-all.md'
+
+function callBundle(file: string, token?: string) {
+  const req = new NextRequest(`http://localhost/r/${file}${token ? `?token=${token}` : ''}`)
+  return GET(req, { params: Promise.resolve({ file }) })
+}
+
+// Mirrors the route's withToken rule: the token is stamped only onto /r URLs on
+// a host we own, and never onto a bare name, a foreign registry or a dep that
+// already carries one. Deriving the expectation from each dependency's own host
+// keeps this true whatever registry base registry-data was generated against.
+function expectedDep(dep: string) {
+  let u: URL
+  try { u = new URL(dep) } catch { return dep }
+  if (u.hostname !== 'aicanvas.me') return dep
+  if (!u.pathname.startsWith('/r/')) return dep
+  if (u.searchParams.has('token')) return dep
+  u.searchParams.set('token', TOKEN)
+  return u.toString()
+}
+
+type RegistryFile = { path: string; type: string; target?: string }
+const placement = (f: RegistryFile) => ({ path: f.path, type: f.type, target: f.target })
+
+describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle with no files of its own', () => {
+  it('anonymous, no token → exactly one markdown notice, no registryDependencies', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+
+    const res = await callBundle(ALL_FILE)
+    const item = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('Cache-Control')).toBe('private, no-store')
+    expect(item.registryDependencies).toEqual([])
+    expect(item.dependencies).toEqual([])
+    expect(item.files).toHaveLength(1)
+    const [notice] = item.files
+    expect(notice.type).toBe('registry:file')
+    expect(notice.target).toBe(NOTICE_TARGET)
+    expect(notice.content).toContain('(Premium, locked)')
+    // The file says exactly what the terminal prints.
+    expect(notice.content).toContain(item.docs)
+    expect(notice.content).toContain('aicanvas.me/pricing')
+    expect(notice.content).toContain('account/settings')
+  })
+
+  it("signed-in 'free' tier with a token → the same single notice, token never stamped", async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+
+    const res = await callBundle(ALL_FILE, TOKEN)
+    const body = await res.text()
+    const item = JSON.parse(body)
+
+    expect(res.status).toBe(200)
+    expect(item.registryDependencies).toEqual([])
+    expect(item.files).toHaveLength(1)
+    expect(item.files[0].target).toBe(NOTICE_TARGET)
+    expect(body).not.toContain(TOKEN)
+  })
+
+  // The components bundle (andromeda.json) is NOT one of these. It carries the
+  // MIT component source and nothing else, so it rides the free lane: an
+  // account, not a subscription. These two pin that, next to the premium ones
+  // above, so a future change cannot quietly move it to either extreme.
+  it('the free components bundle: anonymous → the create-an-account steer, never a premium lock', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+
+    const res = await callBundle(SYSTEM_FILE)
+    const item = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
+    expect(item.files.every(isLockedStub)).toBe(false)
+    delete process.env.FREE_ACCOUNT_GATE
+  })
+
+  it("the free components bundle: signed-in 'free' tier → the real MIT source", async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    const real = JSON.parse(readFileSync(systemPath, 'utf8'))
+
+    const res = await callBundle(SYSTEM_FILE)
+    const item = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(item.files.map(placement)).toEqual(real.files.map(placement))
+    expect(item.files.some(isLockedStub)).toBe(false)
+    expect(item.files[0].content).toEqual(real.files[0].content)
+    delete process.env.FREE_ACCOUNT_GATE
+  })
+
+  it('premium → the real bundle, byte for byte, with the token stamped on its dependencies', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'premium', userId: 'u1' })
+    const raw = readFileSync(allPath, 'utf8')
+
+    const res = await callBundle(ALL_FILE)
+    expect(res.status).toBe(200)
+    expect(await res.text()).toBe(raw)
+
+    const tokened = await (await callBundle(ALL_FILE, TOKEN)).json()
+    expect(tokened.files).toEqual([])
+    expect(tokened.registryDependencies).toEqual(
+      JSON.parse(raw).registryDependencies.map(expectedDep),
+    )
   })
 })

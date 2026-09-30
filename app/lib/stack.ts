@@ -5,7 +5,7 @@
 //
 // Order matters — controls left-to-right rendering order.
 
-export const STACK_VOCABULARY = [
+const STACK_VOCABULARY = [
   'Tailwind CSS',
   'Motion',
   'Three.js',

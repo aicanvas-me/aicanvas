@@ -7,25 +7,39 @@
    explicitly — Tailwind tolerates the dir being absent (free-only builds). */
 @source "../components-workspace-premium";
 
+/* Same reason for the whole Andromeda Pro tree: inject-premium writes it to the
+   gitignored design-systems/andromeda-pro/, so auto-detection skips it and any
+   utility the Pro sources introduce would never be generated. The committed
+   Andromeda Legacy tree beside it is tracked, so it is detected on its own. */
+@source "../design-systems/andromeda-pro";
+
+/* Class-based dark mode — toggle .dark on <html> instead of OS preference */
+
 /* ── Theme scope contract ──────────────────────────────────────────────────
    Two independent scopes decide what "dark" means, and the nearest one wins.
 
    1. SITE scope — `.dark` on <html>, written only by ThemeProvider and mirrored
       into the `theme` cookie. Owns the chrome: nav, pages, cards, footer.
    2. PREVIEW scope — `[data-card-theme]` plus a matching `dark` class on the
-      SAME element, written only by the local state of a component or block
-      preview. Owns everything inside that preview box and nothing else.
+      SAME element. Owns everything inside that preview box and nothing else.
 
-   Both directions have to hold, and both are in the selector below:
+   The two are LINKED, through one writer. A preview's theme is the site theme
+   (a dark-only component pins itself dark), and a preview's toggle calls
+   ThemeProvider.setTheme, so flipping the site moves every preview and flipping
+   a preview moves the site. Neither scope ever writes <html> or the cookie
+   except through ThemeProvider: the first site toggle was deleted because it
+   and the preview toggles each wrote <html> on their own.
+
+   The wrapper still has to be its own scope, because the two can disagree on a
+   page: a dark-only component on a light site, or a standalone previewed on a
+   different theme through a preview route. Both directions are in the selector
+   below:
 
      site dark  + preview light → the wrapper AND its subtree drop out of dark
      site light + preview dark  → the wrapper's own `dark` class turns it back on
 
-   The second one is why this cannot just key off <html>. The site had a theme
-   toggle once and it was deleted, because it and the preview toggles both wrote
-   <html>: flipping one component to dark took the whole site with it. Keeping
-   the two scopes apart is the entire fix, so if this selector is ever edited,
-   check both directions before believing it.
+   The second one is why this cannot just key off <html>. If this selector is
+   ever edited, check both directions before believing it.
 
    The JS side of the same contract lives in the components themselves: they
    read `closest('[data-card-theme]')` first and only fall back to <html> when
@@ -33,6 +47,43 @@
    copy-pasted component work in someone else's project, so keep the attribute
    and the class on one element or the two halves disagree. */
 @variant dark (&:where(.dark, .dark *):not([data-card-theme="light"], [data-card-theme="light"] *));
+
+/* Fire a component's own hover / focus / press rules AT REST, and only inside
+   the Andromeda matrix surface. These redefine Tailwind's built-in variants,
+   so the first line of each block is the stock behaviour, unchanged, for the
+   whole site; the two gated lines are additive.
+
+   They add SELECTORS, never styles: a rule fires only if the component already
+   declared it, which is why a forced cell can never show a state the real
+   component does not have. data-force goes on the case canvas (the box holding
+   the component and nothing else) or on one element inside it — never on the
+   card chrome around it, or a descendant selector lights every nested rule at
+   once. The gate is required because globals.css is shared by the whole site;
+   ungated, this would be a site-wide semantic change. Cost, accepted: a few KB
+   of inert selectors ship to every visitor. */
+@custom-variant hover {
+  @media (hover: hover) { &:hover { @slot } }
+  :where([data-andromeda-matrix]) [data-force~="hover"] & { @slot }
+  :where([data-andromeda-matrix]) &[data-force~="hover"] { @slot }
+}
+@custom-variant focus-visible {
+  &:focus-visible { @slot }
+  :where([data-andromeda-matrix]) [data-force~="focus"] & { @slot }
+  :where([data-andromeda-matrix]) &[data-force~="focus"] { @slot }
+}
+/* Plain focus is not optional next to focus-visible: Input and Textarea paint
+   their accent border via focus: and only the ring via focus-visible:, so
+   forcing just the ring would show a focus state users never see. */
+@custom-variant focus {
+  &:focus { @slot }
+  :where([data-andromeda-matrix]) [data-force~="focus"] & { @slot }
+  :where([data-andromeda-matrix]) &[data-force~="focus"] { @slot }
+}
+@custom-variant active {
+  &:active { @slot }
+  :where([data-andromeda-matrix]) [data-force~="active"] & { @slot }
+  :where([data-andromeda-matrix]) &[data-force~="active"] { @slot }
+}
 
 :root {
   --background: #F4F4FA;
@@ -190,9 +241,9 @@ html[data-frame][data-frame-light] {
   animation-timing-function: ease-in-out;
 }
 
-/* Preview scope stays sovereign: a [data-card-theme] wrapper and everything
-   inside it keeps its transitions during a SITE flip (the site must never
-   reach into a preview). [data-theme-keep-transition] exempts the theme
+/* A [data-card-theme] wrapper and everything inside it keeps its own
+   transitions during a theme flip (the site and a preview share one theme, but
+   a preview's animation is its own). [data-theme-keep-transition] exempts the theme
    toggle's own icon cross-fade, the one animation the flip should show. */
 .theme-switching
   *:not(
@@ -204,23 +255,10 @@ html[data-frame][data-frame-light] {
   transition: none !important;
 }
 
-/* ── Page-enter transition ── */
-/* Played on the scroll column by app/components/PageEnterFade.tsx on
-   client-side navigations: a 200ms fade. Keep the duration in sync with
-   ENTER_MS there. */
-.aic-page-enter {
-  animation: aicPageFade 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes aicPageFade {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .aic-page-enter {
-    animation: none;
-  }
-}
-
+/* ── Theme-switch view transition ── */
+/* The only cross-page animation the site runs is the theme toggle's view
+   transition. Page navigation itself does not animate: the new page simply
+   replaces the old one. */
 @media (prefers-reduced-motion: reduce) {
   ::view-transition-old(root),
   ::view-transition-new(root) {
@@ -249,7 +287,9 @@ html[data-frame][data-frame-light] {
 .app-scroll-column {
   scrollbar-gutter: stable;
 }
-.app-scroll-column:has(> [data-owns-scroll]) {
+/* Descendant, not child: the page slot sits between the column and the layout
+   root that carries this attribute. Only layout roots carry it. */
+.app-scroll-column:has([data-owns-scroll]) {
   scrollbar-gutter: auto;
 }
 

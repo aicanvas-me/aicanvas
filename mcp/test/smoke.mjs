@@ -87,6 +87,14 @@ try {
     'search_components',
     'get_component',
     'get_install_command',
+    'list_systems',
+    'get_system',
+    'list_templates',
+    'get_template',
+    'get_component_props',
+    'validate_usage',
+    'compose_page',
+    'get_audit_checklist',
   ]
   for (const t of expected) {
     record(`tools/list contains ${t}`, toolNames.has(t), `got [${[...toolNames].join(', ')}]`)

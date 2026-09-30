@@ -33,9 +33,9 @@ describe('buildLookup + classifyContent (manifest-driven gate)', () => {
     }
   })
 
-  it('system aggregates are design-system', () => {
-    expect(classifyContent('andromeda', lookup)).toBe('design-system')
+  it('the everything bundle is premium, the free system\'s components bundle is not', () => {
     expect(classifyContent('andromeda-all', lookup)).toBe('design-system')
+    expect(classifyContent('andromeda', lookup)).toBe('design-system-component')
   })
 
   it('the name-colliding free standalone stays standalone', () => {

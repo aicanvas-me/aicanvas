@@ -1,13 +1,15 @@
 'use client'
 
-import { useEffect, useId, useState } from 'react'
+import { useId, useState } from 'react'
 import Link from 'next/link'
 import { CheckCircle, Lightning, Lock } from '@phosphor-icons/react'
 import { motion, useReducedMotion } from 'framer-motion'
-import { buttonClasses } from '../Button'
+import { buttonClasses } from '../buttonClasses'
 import { TerminatorCool, TerminatorSkull } from '../auth/TerminatorReveal'
 import { useSession } from '../auth/SessionProvider'
+import { usePremiumStatus } from './usePremiumStatus'
 import { UpgradeButton } from './UpgradeButton'
+import { MONTHLY_PRICE, YEARLY_ANCHOR, YEARLY_PER_MONTH, YEARLY_PRICE, YEARLY_SAVING_PCT, usd } from '../../lib/offer'
 
 // Single source of truth for the Free / Premium cards. Rendered full-size on
 // /pricing and `compact` inside the Code-tab paywall. The Premium card lists
@@ -21,7 +23,6 @@ const FREE_FEATURES = [
   'Unlimited one-command installs of free components',
   'Remix with AI on every free component',
   'MCP server for Claude Code, Codex and Cursor',
-  'Lab access with presets and export',
   'Save your favorite components',
 ]
 
@@ -29,7 +30,9 @@ const FREE_FEATURES = [
 // colour and only travels, so nothing about it changes except where it is.
 const CYCLES = ['monthly', 'yearly'] as const
 
-const PREMIUM_FEATURES = [
+// Exported so the Business cards can list the same unlocks without a second
+// copy of the wording drifting away from this one.
+export const PREMIUM_FEATURES = [
   'Every premium component and block, one command install',
   'Remix with AI on every component',
   'Full design systems, tokens to templates',
@@ -58,27 +61,15 @@ export function PremiumCards({
   // from the page into the modal.
   const pillId = useId()
   const [cycle, setCycle] = useState<'monthly' | 'yearly'>('yearly')
-  const price = cycle === 'yearly' ? '$49.99' : '$8.99'
+  const price = cycle === 'yearly' ? usd(YEARLY_PRICE) : usd(MONTHLY_PRICE)
   const suffix = cycle === 'yearly' ? 'year' : 'month'
   // Per-month equivalent of the yearly plan ($49.99 / 12 ≈ $4.17) — a hook that
   // shows how low the effective monthly cost is. Only shown on the yearly cycle.
-  const perMonthHint = cycle === 'yearly' ? '$4.17/mo' : null
+  const perMonthHint = cycle === 'yearly' ? `${usd(YEARLY_PER_MONTH)}/mo` : null
 
-  // Reflect the real subscription so a premium user isn't pitched "Go Premium".
-  // Tri-state: while 'unknown' (loading or backend error) render a neutral
-  // disabled CTA instead of flashing the wrong one. Signed-out derives to
-  // 'not-premium' at render time.
-  const [fetchedState, setFetchedState] = useState<'unknown' | 'premium' | 'not-premium'>('unknown')
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    fetch('/api/me/entitlement')
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((d) => { if (!cancelled) setFetchedState(d?.tier === 'premium' ? 'premium' : 'not-premium') })
-      .catch(() => { if (!cancelled) setFetchedState('unknown') })
-    return () => { cancelled = true }
-  }, [user])
-  const premiumState: 'unknown' | 'premium' | 'not-premium' = user ? fetchedState : 'not-premium'
+  // Reflect the real subscription so a premium user isn't pitched "Go Premium";
+  // 'unknown' renders a neutral disabled CTA instead of flashing the wrong one.
+  const premiumState = usePremiumStatus()
 
   const showFree = show === 'both'
   const iconBox = compact ? 'h-12 w-12' : 'h-16 w-16'
@@ -202,7 +193,7 @@ export function PremiumCards({
                       <>
                         Yearly{' '}
                         <span className={selected ? 'opacity-80' : 'text-olive-600 dark:text-olive-400'}>
-                          · save 54%
+                          · save {YEARLY_SAVING_PCT}%
                         </span>
                       </>
                     )}
@@ -214,7 +205,7 @@ export function PremiumCards({
           {/* Yearly anchor: 12 x $8.99 monthly, struck through so the saving reads in money. */}
           {cycle === 'yearly' && (
             <span className="text-sm font-medium text-sand-600 line-through dark:text-sand-500">
-              $107.88
+              {usd(YEARLY_ANCHOR)}
             </span>
           )}
           </div>

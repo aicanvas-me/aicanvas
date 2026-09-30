@@ -9,7 +9,6 @@ import {
   SquaresFour,
   MagnifyingGlass,
   WaveSine,
-  Stack,
   Broadcast,
   Heart,
   Archive,

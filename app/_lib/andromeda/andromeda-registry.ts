@@ -1,20 +1,12 @@
-// Server-only registry — reads Andromeda component sources from disk so
-// each per-component page can ship the source as a string.
-//
-// CLIENT components must NOT import this file (it pulls in `fs` and
-// `process.cwd()`). Use `andromeda-meta.ts` for client-safe metadata.
-
-// NB: this module is implicitly server-only because it uses `fs` and
-// `process.cwd()` at module scope. Do not import it from a 'use client' file.
+// Server-only registry: reads Andromeda component sources from disk with `fs`
+// and `process.cwd()`, so a 'use client' file must never import it. Client-safe
+// metadata lives in `andromeda-meta.ts`.
 import { readFileSync } from 'fs'
 import { join } from 'path'
 import {
   ANDROMEDA_COMPONENT_META,
-  ANDROMEDA_META,
   type AndromedaComponentMeta,
 } from './andromeda-meta'
-
-export { ANDROMEDA_META, type AndromedaComponentMeta } from './andromeda-meta'
 
 const COMPONENTS_ROOT = join(
   process.cwd(),

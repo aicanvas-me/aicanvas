@@ -1,0 +1,63 @@
+// @ts-nocheck — this spec AUTHORS JSX against untyped design-system
+// components. Data-only specs in this directory need no such line.
+import { Gear, Keyboard, SignOut, UserCircle } from '@phosphor-icons/react'
+import { UserMenu } from '../../../lib/andromeda-pro.generated'
+import type { MatrixSpec } from './types'
+import { SAMPLE_AVATARS } from '../sample-pictures'
+
+const ITEMS = [
+  { id: 'profile', label: 'Profile', icon: UserCircle },
+  { id: 'preferences', label: 'Preferences', icon: Gear },
+  { id: 'shortcuts', label: 'Keyboard shortcuts', icon: Keyboard },
+  { id: 'sep1', type: 'separator' },
+  { id: 'signout', label: 'Sign out', icon: SignOut, destructive: true },
+]
+
+const SRC = SAMPLE_AVATARS.butterflyVisor.dark
+const LIGHT_SRC = SAMPLE_AVATARS.butterflyVisor.light
+
+export const userMenu: MatrixSpec = {
+  slug: 'user-menu',
+  sizes: ['sm', 'md', 'lg'],
+  overflow: true,
+  // Room for the open panel is NOT reserved here: a box under the trigger pins
+  // the trigger to its top, so it could only ever add room BELOW an upward
+  // menu. The renderer takes the room from the mounted panel instead, on the
+  // side that panel opens toward, which also covers a case opened by clicking.
+  render: (size, props) => (
+    <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size={size} items={ITEMS} {...props} />
+  ),
+  variants: [
+    { label: 'Closed', props: {} },
+    // The open cases are node cases pinned to md: since size became a
+    // whole-trigger axis, a laddered staticOpen case mounted three open
+    // panels in one card and they slid over one another and their
+    // neighbours. One rung shows the placement/align behaviour; the Closed
+    // case still walks the ladder.
+    {
+      label: 'Open down',
+      node: (
+        <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size="md" items={ITEMS} staticOpen placement="bottom" align="end" />
+      ),
+    },
+    {
+      label: 'Open up',
+      node: (
+        <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size="md" items={ITEMS} staticOpen placement="top" align="end" />
+      ),
+    },
+    {
+      label: 'Align start',
+      node: (
+        <UserMenu name="OPS-01" src={SRC} lightSrc={LIGHT_SRC} status="online" size="md" items={ITEMS} staticOpen placement="bottom" align="start" />
+      ),
+    },
+  ],
+  states: [],
+  gaps: {
+    'Item hover':
+      'rows are DATA (an items array), not elements the caller can reach, and the hover rule in the component\'s stylesheet is per-row — marking one would mean lighting all of them',
+    'Trigger open':
+      'the pressed-and-held trigger look is keyed off data-state, which the component sets itself from its own open state; the Open cases above show it',
+  },
+}

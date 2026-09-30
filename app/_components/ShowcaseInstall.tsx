@@ -4,16 +4,26 @@ import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Check, Copy, Lightning, Terminal } from '@phosphor-icons/react'
-import { useSession } from '../components/auth/SessionProvider'
+import { useTopBarInstallSlot } from '../components/TopBar'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
-import { Button, buttonClasses } from '../components/Button'
+import { Button } from '../components/Button'
+import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
+import { useInstallToken } from '../_lib/useInstallToken'
+import { copyText } from '../components/useCopied'
+import { track } from '../lib/analytics'
 
 interface InstallAction {
   slug: string
   label: string
   description?: string[]
+  /**
+   * This item installs on a free account, so its command is shown to everyone.
+   * Set it only for content the registry itself serves on the free lane: a free
+   * system's components bundle, never a template, a brain or an `-all` bundle.
+   */
+  free?: boolean
 }
 
 // Showcase install — the SAME top-bar pattern as the brain reader and the
@@ -22,19 +32,27 @@ interface InstallAction {
 // bullets). Portaled into the top-bar slot on desktop; a floating fallback
 // below md (where the top bar is hidden). Premium-gated: a resolved free/anon
 // tier sees "Unlock with Premium" → /pricing.
-export function ShowcaseInstall({ installs }: { installs: InstallAction[] }) {
-  const [slot, setSlot] = useState<HTMLElement | null>(null)
-  useEffect(() => {
-    setSlot(document.getElementById('andromeda-install-slot'))
-  }, [])
+// `phoneFallback={false}` drops the floating copy: Andromeda Pro's content
+// column is its own stacking context (`isolate`), so a fixed control inside it
+// sits under the phone menu bar, unseen but still reachable by Tab.
+export function ShowcaseInstall({
+  installs,
+  phoneFallback = true,
+}: {
+  installs: InstallAction[]
+  phoneFallback?: boolean
+}) {
+  const slot = useTopBarInstallSlot()
 
   return (
     <>
       {slot && createPortal(<ShowcaseInstallButtons installs={installs} />, slot)}
       {/* The top bar is hidden below md, so float the install control top-right. */}
-      <div className="fixed right-3 top-3 z-50 md:hidden">
-        <ShowcaseInstallButtons installs={installs} />
-      </div>
+      {phoneFallback && (
+        <div className="fixed right-3 top-3 z-50 md:hidden">
+          <ShowcaseInstallButtons installs={installs} />
+        </div>
+      )}
     </>
   )
 }
@@ -42,13 +60,17 @@ export function ShowcaseInstall({ installs }: { installs: InstallAction[] }) {
 // Self-contained button group + popover (own state, so the desktop portal and
 // the mobile fallback never share a popover).
 function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
-  const { user } = useSession()
   const { open: openPaywall } = usePaywallModal()
   const status = usePremiumStatus()
   // Premium AND the in-flight 'unknown' window see the CLI popover; only a
   // resolved free/anon tier is routed to /pricing (never flash upsell at a
   // paying customer). handleInstall fails open, so defaulting to Install is safe.
-  const canInstall = status !== 'not-premium'
+  const premiumOk = status !== 'not-premium'
+  // A group holding even one free item still renders: hiding the whole control
+  // behind the upsell is what kept MIT components out of reach of the people
+  // they are free for. The per-item check below still sends a paid item to the
+  // paywall.
+  const canInstall = premiumOk || installs.some((a) => a.free)
   const [openSlug, setOpenSlug] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -57,25 +79,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   // Tokenized command so the registry attributes the pull to the account
   // (these are premium; a bare command would 402). Masked on screen; copy
   // writes the real token.
-  const [token, setToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [user])
-  const userToken = user ? token : null
+  const userToken = useInstallToken()
   const commandFor = (slug: string, masked: boolean) => {
     const r = userToken
       ? `"https://aicanvas.me/r/${slug}.json?token=${masked ? 'aic_••••••••' : userToken}"`
@@ -89,6 +93,10 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
     : []
 
   async function handleInstall(slug: string) {
+    if (!premiumOk && !installs.find((a) => a.slug === slug)?.free) {
+      openPaywall({ reason: 'premium-only' })
+      return
+    }
     try {
       const res = await fetch(`/api/me/install-check?slug=${slug}`)
       const d = await res.json().catch(() => null)
@@ -102,11 +110,12 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   }
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(cliCommand)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {}
+    if (!active) return
+    const ok = await copyText(cliCommand)
+    track('CLI Copy', { component: active.slug, ok })
+    if (!ok) return
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   useEffect(() => {

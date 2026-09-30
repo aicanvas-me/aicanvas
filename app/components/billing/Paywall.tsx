@@ -28,15 +28,14 @@ export function Component({ value, onChange }: Props) {
 
 // Default sub-copy. True for standalones and blocks, where the source AND the
 // build blocks of the prompt are both withheld. Surfaces that gate only one of
-// the two (Andromeda components carry no remix prompt at all) pass their own.
+// the two Andromeda component views pass their own.
 const DEFAULT_SUBTITLE = 'The full source and the remix prompt ship with Premium.'
 
 /**
  * Inline locked state rendered where withheld content would be — the Code tab,
  * and the withheld blocks of a premium prompt. Shows a blurred teaser over two
  * CTAs: buy, and (signed out only) log in, since a subscriber who lands here
- * logged out has no other way in from this panel. Props are kept for the call
- * sites even though the lock no longer varies by reason. `teaser` overrides the
+ * logged out has no other way in from this panel. `teaser` overrides the
  * blurred decoration so it matches whatever was withheld; `name` titles the
  * lock with the thing being unlocked.
  */
@@ -46,15 +45,19 @@ export function Paywall({
   subtitle = DEFAULT_SUBTITLE,
   appearance = 'dark',
 }: {
-  reason: PaywallReason
+  // Accepted but unused: the lock no longer varies by reason, and callers still
+  // pass what they know so the call site reads as the gate it is.
+  reason?: PaywallReason
   limit?: number
   teaser?: string
   name?: string
   subtitle?: string
   /**
    * 'dark' (default) keeps the wall a dark slab in both site themes - right
-   * for the Code tab, which renders dark either way. 'themed' follows the
-   * site theme - right for the remix panel, whose surface is themed.
+   * for a surface that is dark either way. 'themed' fades into the surface it
+   * was dropped on: that surface names its own colour, both halves, in
+   * --paywall-surface. A themed caller that names nothing gets the remix
+   * panel's ground, which is what every themed caller sat on before.
    */
   appearance?: 'dark' | 'themed'
 }) {
@@ -67,20 +70,38 @@ export function Paywall({
 
   // No ground of its own: the teaser shows the surrounding slab at the top and
   // the overlay gradient fades it out, so the wall blends in instead of
-  // starting on a hard edge.
+  // starting on a hard edge. A themed wall fades to the surface it actually
+  // sits on rather than a fixed grey, because those surfaces differ - the code
+  // panel is near-white, the remix panel a step darker - and a fade to the
+  // wrong one reads as a band across the panel. The surface names its colour
+  // in --paywall-surface; --paywall-fallback is the remix panel's ground, kept
+  // as the default so a caller that names nothing looks exactly as it did.
   const themed = appearance === 'themed'
   const overlay = themed
-    ? 'bg-gradient-to-b from-sand-300/0 via-sand-300/85 to-sand-300 dark:from-sand-950/0 dark:via-sand-950/85 dark:to-sand-950'
+    ? '[--paywall-fallback:var(--color-sand-300)] dark:[--paywall-fallback:var(--color-sand-950)] bg-gradient-to-b from-[var(--paywall-surface,var(--paywall-fallback))]/0 via-[var(--paywall-surface,var(--paywall-fallback))]/85 to-[var(--paywall-surface,var(--paywall-fallback))]'
     : 'bg-gradient-to-b from-sand-950/0 via-sand-950/85 to-sand-950'
+  // The chip is a tint of the same ground, not a fixed grey, for the reason the
+  // fade is: a fixed fill flattens against a ground that matches it and floats
+  // against one that does not. 90% reads as the same slight step down on every
+  // themed ground, 62% gives the ring the separation border-sand-400 used to.
+  // Dark keeps its literals, so it cannot move.
   const chip = themed
-    ? 'border-sand-400 bg-sand-200 dark:border-sand-800 dark:bg-sand-900'
+    ? 'border-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_62%,#000)] bg-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_90%,#000)] dark:border-sand-800 dark:bg-sand-900'
     : 'border-sand-800 bg-sand-900'
-  const lockIcon = themed ? 'text-olive-600 dark:text-olive-400' : 'text-olive-400'
+  // Stepping the fill down costs the glyph contrast, so it steps down with it:
+  // olive-600 fell to 1.6-2.5:1 on the new fills, olive-700 clears 3:1 on all
+  // three themed grounds.
+  const lockIcon = themed ? 'text-olive-700 dark:text-olive-400' : 'text-olive-400'
   const heading = themed ? 'text-sand-900 dark:text-sand-50' : 'text-sand-50'
   const sub = themed ? 'text-sand-600 dark:text-sand-400' : 'text-sand-400'
+  // transition-colors lives per appearance, not on the button, because only the
+  // themed half changes colour on a theme flip. CSS cannot tell a theme flip
+  // from a hover, so a themed button that eases its hover also eases the flip
+  // and lands after the panel behind it. Snapping both is the trade. The dark
+  // half has no dark: variants, so it never moved on a flip and keeps its ease.
   const login = themed
     ? 'border-sand-500 text-sand-700 hover:border-sand-600 hover:text-sand-900 dark:border-sand-700 dark:text-sand-200 dark:hover:border-sand-600 dark:hover:text-sand-50'
-    : 'border-sand-700 text-sand-200 hover:border-sand-600 hover:text-sand-50'
+    : 'transition-colors border-sand-700 text-sand-200 hover:border-sand-600 hover:text-sand-50'
 
   return (
     <div className="relative min-h-[360px] w-full overflow-hidden">
@@ -109,7 +130,7 @@ export function Paywall({
             <button
               type="button"
               onClick={() => open()}
-              className={`rounded-lg border px-4 py-2 text-sm font-semibold transition-colors ${login}`}
+              className={`rounded-lg border px-4 py-2 text-sm font-semibold ${login}`}
             >
               Log in
             </button>

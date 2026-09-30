@@ -8,27 +8,28 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { ThemeProvider } from './components/ThemeProvider'
 import { Sidebar } from './components/Sidebar'
+import { ScrollMemory } from './components/ScrollMemory'
 import { MobileNav } from './components/MobileNav'
+import { TopBar, TopBarProvider } from './components/TopBar'
 import { SessionProvider } from './components/auth/SessionProvider'
 import { AuthModalProvider } from './components/auth/AuthModalProvider'
 import { PaywallModalProvider } from './components/billing/PaywallModalProvider'
 import { AuthModal } from './components/auth/AuthModal'
 import { DevBranchBadge } from './components/DevBranchBadge'
-import { PageEnterFade } from './components/PageEnterFade'
 import { SiteBeacon } from './components/SiteBeacon'
 import { PaddlePaymentLink } from './components/billing/PaddlePaymentLink'
-// Registry-free nav counts (generated) — keeps the heavy component-registry,
-// and the three.js/matter-js it references, out of the shared client bundle.
-import { CATEGORY_COUNTS, TOTAL_COMPONENTS } from './lib/component-nav.generated'
+import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
 import { GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
+import { isFramedPayloadRequest } from './lib/frame'
 
 const manrope = Manrope({
   variable: '--font-manrope',
   subsets: ['latin'],
-  // Weights 200/300 were declared but never used in the app — dropping them
-  // removes two font files from the critical path. Used range is 400–800.
-  weight: ['400', '500', '600', '700', '800'],
+  // 400 to 800 set the site itself. 200 is the thin display weight of the
+  // Andromeda Pro stat readout: without it the browser draws that number at
+  // 400, wider and heavier than the component a buyer installs. Nothing uses 300.
+  weight: ['200', '400', '500', '600', '700', '800'],
 })
 
 const geistMono = Geist_Mono({
@@ -83,10 +84,6 @@ export const metadata: Metadata = {
     description: GLOBAL_DESCRIPTION,
     images: ['/og-aug2026-aicanvas.me.png'],
   },
-  icons: {
-    icon: '/ai-canvas-icon-square.svg',
-    shortcut: '/ai-canvas-icon-square.svg',
-  },
   robots: {
     index: true,
     follow: true,
@@ -132,19 +129,10 @@ export default async function RootLayout({
   // previews). An embedded one paints a single composition over the whole
   // viewport, so every piece below — the auth round trip, the four providers,
   // both nav components, the modal, both analytics scripts — is work nobody
-  // can see. Sec-Fetch-Dest is the browser's own answer to "is this document
-  // being framed", sent on the document request itself; a browser too old to
-  // send it just gets the full shell, which is slower but never wrong.
-  // Sec-Fetch-Site narrows the branch to the site's own embeds: pages framed
-  // anywhere else render client components that expect the providers this
-  // branch skips, so a cross-site frame (which X-Frame-Options refuses to
-  // display anyway) must fall through to the full shell. A client that omits
-  // either header also falls through — slower but never wrong.
-  const reqHeaders = await headers()
-  if (
-    reqHeaders.get('sec-fetch-dest') === 'iframe' &&
-    reqHeaders.get('sec-fetch-site') === 'same-origin'
-  ) {
+  // can see. Only a same-origin frame of a route that renders bare gets this
+  // branch: any other page draws chrome that reads the session and throws
+  // without the providers (app/lib/frame.ts decides).
+  if (isFramedPayloadRequest(await headers())) {
     return (
       <html
         lang="en"
@@ -168,9 +156,10 @@ export default async function RootLayout({
               first paint instead of flashing dark until AndromedaThemeSync's
               effect lands after hydration. AndromedaThemeSync still owns every
               LATER change (the visitor toggling the site theme with the preview
-              open). Only design-system routes: a block preview pins its own
-              theme through [data-card-theme] and must not be dragged to the
-              site's. An attribute, not a class, so hydration leaves it alone. */}
+              open). Only design-system routes: a block preview frame takes its
+              theme from its own ?theme= param (the parent sets it from the
+              linked theme) and does not mirror the parent's class. An
+              attribute, not a class, so hydration leaves it alone. */}
           <script dangerouslySetInnerHTML={{ __html: `try{if(location.pathname.indexOf('/design-systems/')===0&&parent!==self&&!parent.document.documentElement.classList.contains('dark'))document.documentElement.setAttribute('data-frame-light','')}catch(e){}` }} />
         </head>
         {/* No overflow-hidden and no scroll column: a framed template preview
@@ -221,7 +210,7 @@ export default async function RootLayout({
         {/* The light marker rides along for the same reason it is set in the
             iframe branch above: a light visitor must not eat a dark flash in
             the phone preview. Only design-system routes — a block preview
-            frames /preview/<slug>?frame=1 and pins its own [data-card-theme].
+            frames /preview/<slug>?frame=1 and takes its theme from ?theme=.
             This branch only runs when the browser withheld Sec-Fetch (the
             branch above handles every modern one), and here the theme is
             already known server-side, so it is baked into the script. */}
@@ -242,15 +231,16 @@ export default async function RootLayout({
           <SessionProvider initialUser={user}>
             <AuthModalProvider>
              <PaywallModalProvider>
+             <TopBarProvider>
               {/* Desktop sidebar — hidden on mobile */}
               <Suspense fallback={null}>
                 <div className="hidden md:flex">
-                  <Sidebar promoteDS counts={CATEGORY_COUNTS} total={TOTAL_COMPONENTS} />
+                  <Sidebar promoteDS />
                 </div>
               </Suspense>
               {/* Mobile nav — visible only below md */}
               <Suspense fallback={null}>
-                <MobileNav promoteDS counts={CATEGORY_COUNTS} total={TOTAL_COMPONENTS} />
+                <MobileNav promoteDS />
               </Suspense>
               {/* Content area scrolls independently of the sidebar.
                   .app-scroll-column (globals.css) reserves the scrollbar
@@ -260,11 +250,39 @@ export default async function RootLayout({
                   full-height strip it can never paint a bar in. In CSS rather
                   than an inline style so the :has() release can out-specify
                   it; an inline declaration would always win. */}
-              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 dark:bg-sand-950">
-                {children}
+              {/* md:scroll-pt-14 is the bar's height (h-14, drawn from md up). On
+                  a navigation Next scrolls the new page's root into view, and
+                  that root starts BELOW the sticky bar, so without the padding
+                  a page opened from a scrolled one lands 56px down with its
+                  first lines under the bar. */}
+              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 md:scroll-pt-14 dark:bg-sand-950">
+                {/* The one top bar, above every page's content and never
+                    remounted: a navigation swaps only what is below it. It
+                    reads the URL, so it sits inside the same Suspense the
+                    sidebar needs. */}
+                <Suspense fallback={null}>
+                  <TopBar />
+                </Suspense>
+                {/* The page slot, sized to the column MINUS the bar. Page
+                    roots ask for min-h-full, and the column is a flex item of
+                    the full-height body, so without this wrapper that 100%
+                    resolved against the whole viewport and every short page
+                    scrolled by exactly the bar's height.
+                    min-h-0 is load-bearing: a flex item's automatic minimum is
+                    its content, which would grow this slot to the full page
+                    height, stop every overflow-hidden layout root below from
+                    clipping, and hand the scroll to this column instead of to
+                    the page that declares data-owns-scroll. A long page still
+                    scrolls: its overflow is visible and this column is the
+                    scroller. */}
+                <div className="flex min-h-0 flex-1 flex-col">{children}</div>
               </div>
+              {/* Owns this column's scroll across navigations: a new page
+                  starts at its top, Back returns to where you were. */}
+              <ScrollMemory />
               {/* Global auth dialog — toggles between sign-in and sign-up modes */}
               <AuthModal />
+             </TopBarProvider>
              </PaywallModalProvider>
             </AuthModalProvider>
           </SessionProvider>
@@ -276,10 +294,6 @@ export default async function RootLayout({
         <Analytics />
         <SpeedInsights />
         <SiteBeacon />
-        {/* Fades the scroll column in on client-side navigations */}
-        <Suspense fallback={null}>
-          <PageEnterFade />
-        </Suspense>
         <DevBranchBadge />
         {/* Resumes checkout when the URL carries a Paddle payment link (?_ptxn=) */}
         <PaddlePaymentLink />

@@ -31,6 +31,12 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
   const [existing, setExisting] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Any edit clears the last message: "already uses that email" must not stay
+  // on screen after the user has changed the email.
+  function clearStatus() {
+    setError(null)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSubmitting(true)
@@ -129,7 +135,10 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
                   autoComplete="email"
                   placeholder="you@example.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value)
+                    clearStatus()
+                  }}
                   className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
                 />
               </div>
@@ -148,12 +157,15 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
                   minLength={8}
                   placeholder="At least 8 characters"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value)
+                    clearStatus()
+                  }}
                 />
               </div>
 
               {error && (
-                <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+                <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
                   {error}
                 </div>
               )}
@@ -199,13 +211,13 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               separate marketing notice is required. The Art. 8 age-16
               confirmation was also dropped — developer-tool audience with
               negligible under-16 risk. */}
-          <p className="mt-6 text-xs leading-relaxed text-sand-600 dark:text-sand-500">
-            By creating an account you agree to our{' '}
+          <p className="mt-6 text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
+            By continuing you agree to our{' '}
             <Link
               href="/terms"
               className="underline hover:text-sand-700 dark:hover:text-sand-100"
             >
-              Terms &amp; Conditions
+              Terms
             </Link>{' '}
             and{' '}
             <Link

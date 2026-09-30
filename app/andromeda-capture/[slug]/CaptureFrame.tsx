@@ -8,8 +8,8 @@
 //   [data-capture-ready] — present once measured, scaled, and fonts loaded
 import { useEffect, useRef, useState } from 'react'
 import { JetBrains_Mono } from 'next/font/google'
-import { AndromedaDemo } from '../../_lib/andromeda/andromeda-demos'
-import { themeColor } from '../../../design-systems/andromeda/components/lib/utils'
+import { AndromedaDemo } from '../../_lib/andromeda-pro/andromeda-demos'
+import { tokens } from '../../lib/andromeda-pro.generated'
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
@@ -28,6 +28,11 @@ const INNER_H = FRAME_H - PAD * 2
 // the overflow. MAX_SCALE caps tiny demos from blowing up absurdly.
 const MAX_SCALE = 4.5
 const ZOOM = 1.5
+// A demo whose whole shape IS the component cannot survive that crop: a rail
+// loses its title and its last row. These slugs are fitted instead of zoomed.
+// Keep this list short — it is for components that are tall by nature, not a
+// dial to retune cards that already shipped.
+const ZOOM_OVERRIDES: Record<string, number> = { sidebar: 1 }
 
 export function CaptureFrame({ slug }: { slug: string }) {
   const innerRef = useRef<HTMLDivElement>(null)
@@ -68,7 +73,8 @@ export function CaptureFrame({ slug }: { slug: string }) {
       const w = maxR > minL ? maxR - minL : rootRect.width
       const h = maxB > minT ? maxB - minT : rootRect.height
       const contain = Math.min(INNER_W / w, INNER_H / h)
-      const s = w > 0 && h > 0 ? Math.min(MAX_SCALE, contain * ZOOM) : 1
+      const zoom = ZOOM_OVERRIDES[slug] ?? ZOOM
+      const s = w > 0 && h > 0 ? Math.min(MAX_SCALE, contain * zoom) : 1
       setScale(s)
       requestAnimationFrame(() => {
         if (!cancelled) setReady(true)
@@ -94,7 +100,9 @@ export function CaptureFrame({ slug }: { slug: string }) {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: themeColor.surface.base,
+        // Pro's own ground. Legacy's themeColor helper does not exist in the Pro
+        // tree; the equivalent is the surface rung on Pro's tokens.
+        background: tokens.color.surface.base,
         backgroundImage:
           'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
         backgroundSize: '22px 22px',

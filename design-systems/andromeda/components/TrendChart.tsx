@@ -21,7 +21,7 @@
 import { forwardRef, useId, useRef, useState } from 'react';
 import type { ComponentPropsWithoutRef, ReactElement, ReactNode } from 'react';
 import {
-  AreaChart, Area, BarChart, Bar, LineChart, Line,
+  AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
 } from 'recharts';
 import type { AxisDomainItem, YAxisTickContentProps } from 'recharts';
@@ -374,7 +374,7 @@ export const TrendChart = forwardRef<HTMLDivElement, TrendChartProps>(function T
   // Y tick labels are LEFT-aligned flush with the yLabel kicker at the plot's
   // top-left, not right-aligned inside a reserved gutter, so the numbers share
   // the same left edge as the unit caption above them (no stray left inset).
-  const yTick = ({ x, y, payload }: YAxisTickContentProps) => (
+  const yTick = ({ y, payload }: YAxisTickContentProps) => (
     <text
       x={parseInt(tokens.spacing[1], 10)}
       y={y}

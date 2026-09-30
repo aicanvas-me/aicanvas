@@ -25,6 +25,11 @@ export function ClaimForm() {
     if (sent) sentRef.current?.focus()
   }, [sent])
 
+  // Any edit clears the last message, same as every other account form.
+  function clearStatus() {
+    setError(null)
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email) return
@@ -105,7 +110,10 @@ export function ClaimForm() {
         required
         autoComplete="email"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={(e) => {
+          setEmail(e.target.value)
+          clearStatus()
+        }}
         placeholder="Email you used at checkout"
         className="h-11 w-full rounded-lg border border-sand-700 bg-sand-900 px-4 text-sm text-sand-100 placeholder:text-sand-500 focus:border-olive-500 focus:outline-none"
       />

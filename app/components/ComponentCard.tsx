@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowRight, ImageSquare, Lightning, SealCheck } from '@phosphor-icons/react'
 import { track, type CardSource } from '../lib/analytics'
 import { optimizeImageKitUrl } from '../lib/imagekit'
-import { buttonClasses } from './Button'
+import { buttonClasses } from './buttonClasses'
 
 // ─── Types (also used by ComponentPageView + registry) ────────────────────────
 
@@ -28,16 +28,18 @@ export interface ComponentCardProps {
   /** CTA label. Defaults to "View Component"; pass e.g. "View template" for
    *  non-component cards reusing this shell. */
   cta?: string
+  /** 'pro' paints the badge in Andromeda Pro's cyan, the colour of its tier chip. */
+  badgeTone?: 'pro'
 }
 
 // ─── ComponentCard ─────────────────────────────────────────────────────────────
 
-export function ComponentCard({ name, description, href, image, badge, slug, position, source, cta = 'View Component' }: ComponentCardProps) {
+export function ComponentCard({ name, description, href, image, badge, badgeTone, slug, position, source, cta = 'View Component' }: ComponentCardProps) {
   return (
     <Link
       href={href}
       onClick={() => track('Component Card Click', { component: slug, position, source })}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 shadow-sm transition-all duration-200 hover:border-sand-300 hover:shadow-xl hover:shadow-sand-300/60 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:hover:shadow-2xl dark:hover:shadow-black/50"
+      className="group relative isolate flex flex-col overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 shadow-sm transition-all duration-200 hover:border-sand-300 hover:shadow-xl hover:shadow-sand-300/60 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:hover:shadow-2xl dark:hover:shadow-black/50"
     >
       {/* Image — extends slightly behind the content panel. Save action
           intentionally lives on the component detail page only; keeping it
@@ -51,7 +53,9 @@ export function ComponentCard({ name, description, href, image, badge, slug, pos
             className={`absolute left-3 top-3 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 ring-1 backdrop-blur-sm ${
               badge === 'Free'
                 ? 'text-sand-300 ring-sand-500/40'
-                : 'text-olive-400 ring-olive-500/40'
+                : badgeTone === 'pro'
+                  ? 'text-cyan-400 ring-cyan-500/40'
+                  : 'text-olive-400 ring-olive-500/40'
             }`}
           >
             {badge === 'Free' ? (
@@ -63,8 +67,10 @@ export function ComponentCard({ name, description, href, image, badge, slug, pos
               <span className="overflow-hidden">
                 {/* Tier only, no type noun: this shell is reused by blocks and
                     Andromeda templates, so "Premium component" mislabeled them.
-                    The type word lives on the detail page (see isBlock). */}
-                <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-none">
+                    The type word lives on the detail page (see isBlock).
+                    Line height matches the 14px icon: leading-none let the
+                    overflow-hidden wrapper cut the descenders of g, y and p. */}
+                <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
                   {badge}
                 </span>
               </span>

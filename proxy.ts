@@ -22,6 +22,7 @@ import { NextResponse } from 'next/server'
 import type { NextFetchEvent, NextRequest } from 'next/server'
 import { updateSession } from './app/lib/supabase/proxy'
 import { phCapture, posthogConfigured } from './app/lib/analytics-server'
+import { FRAME_HEADER, isFramePayload } from './app/lib/frame'
 
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl
@@ -58,6 +59,12 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     console.error('[proxy] pageview logging failed:', err)
   }
 
+  // Hand the preview-payload flag to the root layout (see app/lib/frame.ts).
+  request.headers.delete(FRAME_HEADER)
+  if (isFramePayload(request.nextUrl)) {
+    request.headers.set(FRAME_HEADER, '1')
+  }
+
   return await updateSession(request)
 }
 
@@ -78,13 +85,13 @@ const BOT_UA = /bot|crawl|spider|slurp|headless|preview|scrape|python|curl|wget/
  */
 function isPageview(request: NextRequest): boolean {
   if (request.method !== 'GET') return false
-  const { pathname, searchParams } = request.nextUrl
+  const { pathname } = request.nextUrl
   if (pathname.startsWith('/api/') || pathname.includes('.')) return false
   // A framed preview is a piece of the page that embeds it, not a visit of its
   // own. Its document request is otherwise indistinguishable from a real one —
   // same method, same accept, the visitor's own user agent — so without this
   // every block detail page would count twice.
-  if (searchParams.get('frame') === '1') return false
+  if (isFramePayload(request.nextUrl)) return false
   const ua = request.headers.get('user-agent') ?? ''
   if (!ua || BOT_UA.test(ua)) return false
   if (

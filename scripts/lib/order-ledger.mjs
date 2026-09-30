@@ -1,25 +1,22 @@
 // Pure grid-ordering over the committed order ledger (component-order.json).
 //
-// The ledger is a COMMITTED oldest→newest list of every slug that has appeared
-// in the catalog. The grid renders it reversed (newest first), so the newest
-// push — free or premium — sits on top. It is committed and never recomputed
-// from git at build time because production shallow-clones both the public repo
-// and the vault (inject-premium: git clone --depth 1), so add-history isn't
-// available in the build. The build only APPENDS slugs it has never seen, at the
-// tail (= newest); the historical order was seeded once from full local history.
+// The ledger is a COMMITTED oldest-to-newest list of every slug that has appeared
+// in the catalog, rendered reversed so the newest push sits on top. It is
+// committed rather than recomputed from git at build time because production
+// shallow-clones both repos, so add-history is not available in the build. The
+// build only APPENDS slugs it has never seen, at the tail.
 
 /**
  * @param {string[]} ledger        committed order, oldest→newest (may have stale/removed slugs)
  * @param {string[]} appendOrder   deterministic order to append never-seen present slugs in
  * @param {Set<string>} presentSet slugs currently listed (free + premium)
  * @returns {{ ledger: string[], gridSlugs: string[], grew: boolean }}
- *          ledger    = de-duped, with unseen present slugs appended (persist this)
- *          gridSlugs = present slugs in newest-first order (for the grid)
- *          grew      = whether any slug was appended (i.e. the ledger needs writing)
+ *          ledger de-duped with unseen present slugs appended (persist this),
+ *          gridSlugs present slugs newest-first, grew whether it needs writing
  */
 export function reconcileLedger(ledger, appendOrder, presentSet) {
-  // De-dupe defensively (first occurrence wins) so a hand-edited ledger can't
-  // double-count a slug and throw off the downstream count assertion.
+  // De-dupe defensively so a hand-edited ledger cannot double-count a slug and
+  // throw off the downstream count assertion.
   const seen = new Set()
   const next = ledger.filter((s) => (seen.has(s) ? false : (seen.add(s), true)))
 
@@ -32,8 +29,8 @@ export function reconcileLedger(ledger, appendOrder, presentSet) {
     }
   }
 
-  // Grid = present slugs in ledger (oldest→newest) minus anything no longer
-  // listed (hidden/removed), reversed to newest-first.
+  // Present slugs only, so anything hidden or removed drops out, reversed to
+  // newest-first.
   const gridSlugs = next.filter((s) => presentSet.has(s)).reverse()
   return { ledger: next, gridSlugs, grew }
 }

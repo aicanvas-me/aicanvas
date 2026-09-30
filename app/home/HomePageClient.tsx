@@ -14,13 +14,11 @@ import {
   Palette,
   Terminal,
   Sparkle,
-  Fire,
   CaretRight,
 } from '@phosphor-icons/react/dist/ssr'
 import { buttonClasses } from '../components/buttonClasses'
-import { HeaderSocials } from '../components/HeaderSocials'
 import { SiteFooter } from '../components/SiteFooter'
-import { FoundationLoop } from '../_components/FoundationLoop'
+import { AndromedaProSection } from './AndromedaProSection'
 import { Reveal } from './Reveal'
 import { StackedCards, AnimatedCount, WireIcons, FeaturedCarousel, FaqAccordion } from './islands'
 import type { ComponentMeta } from '../lib/component-registry'
@@ -28,6 +26,10 @@ import { GITHUB_URL } from '../lib/config'
 import { premiumEnabled } from '../../lib/flags'
 import { PremiumCards } from '../components/billing/PremiumCards'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
+import {
+  ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META,
+  ANDROMEDA_TEMPLATE_META as ANDROMEDA_PRO_TEMPLATE_META,
+} from '../_lib/andromeda-pro/andromeda-meta'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -53,7 +55,11 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
   // catalogue. The label says "components, blocks and templates", so all three
   // have to be in the number.
   const componentTotal =
-    total + ANDROMEDA_COMPONENT_META.length + ANDROMEDA_TEMPLATE_META.length
+    total +
+    ANDROMEDA_COMPONENT_META.length +
+    ANDROMEDA_TEMPLATE_META.length +
+    ANDROMEDA_PRO_COMPONENT_META.length +
+    ANDROMEDA_PRO_TEMPLATE_META.length
   return (
     <div
       // overflow-x-hidden makes this element own the page's vertical scroll,
@@ -68,12 +74,6 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
       data-owns-scroll
       className="aic-page-scroll flex min-h-full flex-col overflow-x-hidden bg-sand-50 dark:bg-sand-950"
     >
-
-      {/* ── Top bar ── */}
-      <div className="sticky top-0 z-20 hidden h-14 shrink-0 items-center justify-between border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
-        <span className="text-sm font-semibold text-sand-900 dark:text-sand-50">Overview</span>
-        <HeaderSocials />
-      </div>
 
       <main className="relative mx-auto w-full min-w-0 max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
 
@@ -137,8 +137,7 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
         {/* ── Proof pair ──
              Two cards side by side under the hero: the live pull counter on the
              left, the at-a-glance facts on the right. Both share one shell so
-             they read as a pair (rounded-2xl / border-sand-800 / bg-sand-900,
-             matching the Andromeda spotlight further down).
+             they read as a pair (rounded-2xl / border-sand-800 / bg-sand-900).
 
              In both cards the big value and its label sit on ONE baseline-
              aligned row rather than stacked, which is what makes this read as a
@@ -334,41 +333,8 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
         {/* ── Wire icon divider ── */}
         <WireIcons />
 
-        {/* ── Andromeda spotlight (foundation loop) — same bordered-card treatment
-             as the Overview page's System card, with the homepage's own copy/CTA ── */}
-        <section className="mt-16 sm:mt-24">
-          <Reveal>
-            <Link
-              href="/design-systems/andromeda"
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 transition-all duration-200 hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
-            >
-              <span
-                aria-hidden
-                className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-lg border border-red-500/40 bg-sand-950/85 text-red-500 backdrop-blur-sm"
-              >
-                <Fire weight="fill" size={15} />
-              </span>
-              <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">
-                <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">Featured</span>
-                <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Andromeda • Design System</h2>
-                <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                  A complete design system for dashboards, control panels, and data-dense
-                  interfaces. Components, templates, and the rules that keep them all speaking the
-                  same visual language.
-                </p>
-                <div className="mt-1">
-                  <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-olive-400`}>
-                    Discover more
-                    <ArrowRight weight="regular" size={14} />
-                  </span>
-                </div>
-              </div>
-              <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px] sm:w-1/2">
-                <FoundationLoop />
-              </div>
-            </Link>
-          </Reveal>
-        </section>
+        {/* ── Andromeda Pro spotlight ── */}
+        <AndromedaProSection />
 
         {/* ── Featured carousel ── */}
         <FeaturedCarousel items={carouselItems} />

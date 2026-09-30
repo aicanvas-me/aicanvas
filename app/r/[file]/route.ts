@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { classifyContent } from '@/lib/registry/content-type'
 import { loadContentLookup } from '@/lib/registry/lookup'
 import { getEntitlement } from '@/app/lib/entitlement'
+import { trackPull } from '@/app/lib/track-pull'
 import { premiumEnabled } from '@/lib/flags'
 import { extractToken } from '@/lib/identity/token'
 
@@ -66,6 +67,10 @@ export async function GET(
   // default). Both branches below are inert until a premium slug exists or the
   // manifest goes missing, so current free / DS / template / meta behaviour is
   // byte-for-byte unchanged.
+  // Set by whichever gate below resolves the caller. Only feeds the pull note at
+  // the end; no access decision reads it.
+  let userId: string | null = null
+
   if (contentType !== 'meta' && lookup.degraded) {
     // Missing _manifest.json → cannot tell a premium standalone from a free one
     // → fail CLOSED for all non-meta, in ANY mode. Loud + temporary, never a leak.
@@ -81,7 +86,9 @@ export async function GET(
     // bytes. Fail CLOSED on any entitlement error.
     let tier
     try {
-      tier = (await getEntitlement(req)).tier
+      const entitlement = await getEntitlement(req)
+      tier = entitlement.tier
+      userId = entitlement.userId
     } catch (err) {
       console.error('[registry gate] entitlement error on premium content — failing closed:', err)
       return paymentJson({ error: 'temporarily-unavailable', message: 'Please retry shortly.' }, 503)
@@ -107,7 +114,9 @@ export async function GET(
   ) {
     let tier
     try {
-      tier = (await getEntitlement(req)).tier
+      const entitlement = await getEntitlement(req)
+      tier = entitlement.tier
+      userId = entitlement.userId
     } catch (err) {
       console.error('[registry gate] entitlement error on free content — failing open:', err)
       tier = 'free' // fail OPEN — free source is public anyway
@@ -144,6 +153,10 @@ export async function GET(
       // Non-JSON / malformed body: serve as-is (defensive; registry files are JSON).
     }
   }
+
+  // Every stub and refusal returned above, so this is real source going to a
+  // known account. Catalog files never resolve a caller and leave no note.
+  trackPull(userId, slug, contentType)
 
   return new NextResponse(outBody, {
     status: 200,
@@ -191,9 +204,17 @@ function premiumStub(realBody: string, slug: string): NextResponse {
     `    </div>\n` +
     `  )\n` +
     `}\n`
+  // A .ts file cannot hold JSX. An item that ships .ts helpers (a design
+  // system's tokens and lib files) gets the notice there as a plain module, so
+  // a locked install still type-checks instead of breaking the project.
+  const plainStub = `export const PREMIUM_NOTICE = ${JSON.stringify(msg)}\n`
   const files = Array.isArray(parsed.files)
-    ? (parsed.files as Array<Record<string, unknown>>).map((f) => ({ ...f, content: stub }))
+    ? (parsed.files as Array<Record<string, unknown>>).map((f) => ({
+        ...f,
+        content: /\.(tsx|jsx)$/.test(String(f.path ?? f.target ?? '')) ? stub : plainStub,
+      }))
     : [{ path: `components/aicanvas/${slug}.tsx`, type: 'registry:ui', target: `components/aicanvas/${slug}.tsx`, content: stub }]
+  const notice = `aicanvas-premium-locked/${slug}.md`
   const item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',
     name: slug,
@@ -205,7 +226,16 @@ function premiumStub(realBody: string, slug: string): NextResponse {
     docs: msg,
     dependencies: [],
     registryDependencies: [],
-    files,
+    // A whole-system bundle has no files of its own, only the dependencies
+    // emptied above, so its placeholder would write nothing and the CLI would
+    // report success with nothing on disk. It gets one markdown notice instead,
+    // like the brain's BRAIN-LOCKED.md. `~/` is the project root, and no real
+    // install writes into this folder, so the notice never overwrites user code
+    // or passes for installed source.
+    files:
+      files.length > 0
+        ? files
+        : [{ path: notice, type: 'registry:file', target: `~/${notice}`, content: `# ${title} (Premium, locked)\n\n${msg}\n` }],
   }
   return NextResponse.json(item, {
     status: 200,
@@ -296,8 +326,13 @@ function freeAccountStub(realBody: string, slug: string): NextResponse {
     `    </div>\n` +
     `  )\n` +
     `}\n`
+  // Same split as premiumStub: JSX only where JSX can live.
+  const plainStub = `export const ACCOUNT_NOTICE = ${JSON.stringify(msg)}\n`
   const files = Array.isArray(parsed.files)
-    ? (parsed.files as Array<Record<string, unknown>>).map((f) => ({ ...f, content: stub }))
+    ? (parsed.files as Array<Record<string, unknown>>).map((f) => ({
+        ...f,
+        content: /\.(tsx|jsx)$/.test(String(f.path ?? f.target ?? '')) ? stub : plainStub,
+      }))
     : [{ path: `components/aicanvas/${slug}.tsx`, type: 'registry:ui', target: `components/aicanvas/${slug}.tsx`, content: stub }]
   const item = {
     $schema: 'https://ui.shadcn.com/schema/registry-item.json',

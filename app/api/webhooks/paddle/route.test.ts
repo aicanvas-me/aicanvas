@@ -1,0 +1,204 @@
+import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { createHmac } from 'node:crypto'
+import { NextRequest } from 'next/server'
+
+// The subscription row and the users live in memory. A read (the row, or the
+// user) takes its snapshot when it is CALLED and resolves 5 ms later, so two
+// deliveries that arrive together both see the state from before either wrote,
+// which is the real interleaving (Paddle sends subscription.created and
+// subscription.activated at the same instant). The claim is one synchronous
+// check-and-set, like one UPDATE under a row lock. Signature verification and
+// the stale guard run for real.
+let row: Record<string, unknown> | null = null
+let claimFails = false
+let flagFails = false
+const claims = { attempted: 0, won: 0, filters: [] as unknown[][] }
+const flagWrites: Record<string, unknown>[] = []
+const upserts: Record<string, unknown>[] = []
+const users: Record<string, { email: string; user_metadata: Record<string, unknown> }> = {}
+
+vi.mock('@/app/lib/supabase/admin', () => ({
+  createAdminClient: () => ({
+    from: (table: string) => ({
+      select: () => ({
+        eq: () => ({
+          maybeSingle: () => {
+            const snapshot = row ? { ...row } : null
+            return new Promise((resolve) => setTimeout(() => resolve({ data: snapshot, error: null }), 5))
+          },
+        }),
+      }),
+      upsert: async (patch: Record<string, unknown>) => {
+        upserts.push(patch)
+        row = { ...(row ?? {}), ...patch }
+        return { error: null }
+      },
+      update: (patch: Record<string, unknown>) => ({
+        eq: (col: string, val: unknown) => ({
+          is: (col2: string, val2: unknown) => ({
+            select: async () => {
+              claims.attempted++
+              claims.filters.push([table, col, val, col2, val2])
+              if (claimFails) return { data: null, error: { message: 'claim failed' } }
+              if (row && row.welcome_claimed_at == null) {
+                row = { ...row, ...patch }
+                claims.won++
+                return { data: [{ user_id: row.user_id }], error: null }
+              }
+              return { data: [], error: null }
+            },
+          }),
+        }),
+      }),
+    }),
+    auth: {
+      admin: {
+        getUserById: (id: string) => {
+          const u = users[id]
+          const snapshot = u ? { id, email: u.email, user_metadata: { ...u.user_metadata } } : null
+          return new Promise((resolve) => setTimeout(() => resolve({ data: { user: snapshot }, error: null }), 5))
+        },
+        updateUserById: async (id: string, attrs: { user_metadata: Record<string, unknown> }) => {
+          flagWrites.push(attrs.user_metadata)
+          if (flagFails) return { data: { user: null }, error: { message: 'flag write failed' } }
+          if (users[id]) users[id].user_metadata = { ...attrs.user_metadata }
+          return { data: { user: users[id] ?? null }, error: null }
+        },
+      },
+    },
+  }),
+}))
+vi.mock('@/app/lib/analytics-server', () => ({ phCapture: async () => {} }))
+
+import { POST } from './route'
+
+const SECRET = 'pdl_ntfset_test'
+
+function event(occurredAt: string) {
+  return JSON.stringify({
+    event_type: 'subscription.activated',
+    occurred_at: occurredAt,
+    data: {
+      id: 'sub_1',
+      status: 'active',
+      customer_id: 'ctm_1',
+      custom_data: { user_id: 'u1' },
+      current_billing_period: { ends_at: '2026-10-24T08:19:04Z' },
+      items: [{ price: { billing_cycle: { interval: 'month' } } }],
+    },
+  })
+}
+
+function post(body: string) {
+  const ts = Math.floor(Date.now() / 1000)
+  const h1 = createHmac('sha256', SECRET).update(`${ts}:${body}`).digest('hex')
+  return POST(
+    new NextRequest('http://localhost/api/webhooks/paddle', {
+      method: 'POST',
+      body,
+      headers: { 'paddle-signature': `ts=${ts};h1=${h1}` },
+    }),
+  )
+}
+
+const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promise<Response>>(
+  async () => Response.json({ id: 'email_1' }),
+)
+
+function sentSubjects(): string[] {
+  return fetchMock.mock.calls
+    .filter(([url]) => String(url).includes('api.resend.com'))
+    .map(([, init]) => (JSON.parse(String(init?.body)) as { subject: string }).subject)
+}
+
+beforeEach(() => {
+  row = null
+  claimFails = false
+  flagFails = false
+  claims.attempted = 0
+  claims.won = 0
+  claims.filters.length = 0
+  flagWrites.length = 0
+  upserts.length = 0
+  for (const k of Object.keys(users)) delete users[k]
+  users.u1 = { email: 'buyer@example.com', user_metadata: {} }
+  process.env.PADDLE_WEBHOOK_SECRET = SECRET
+  process.env.RESEND_API_KEY = 're_test'
+  fetchMock.mockClear()
+  vi.stubGlobal('fetch', fetchMock)
+})
+
+describe('POST /api/webhooks/paddle first-activation email', () => {
+  it('two activation deliveries at the same instant send exactly one email', async () => {
+    const [a, b] = await Promise.all([
+      post(event('2026-09-24T08:19:05.000Z')),
+      post(event('2026-09-24T08:19:05.500Z')),
+    ])
+    expect(a.status).toBe(200)
+    expect(b.status).toBe(200)
+    expect(claims.attempted).toBe(2)
+    expect(claims.won).toBe(1)
+    expect(claims.filters).toEqual([
+      ['user_subscriptions', 'user_id', 'u1', 'welcome_claimed_at', null],
+      ['user_subscriptions', 'user_id', 'u1', 'welcome_claimed_at', null],
+    ])
+    expect(sentSubjects()).toEqual(['You just got superpowers'])
+    // Only the winner keeps the older deploys' flag in step.
+    expect(flagWrites).toEqual([{ premium_welcome_sent: true }])
+    expect(users.u1.user_metadata).toEqual({ premium_welcome_sent: true })
+    expect(row).toMatchObject({ user_id: 'u1', status: 'active', paddle_subscription_id: 'sub_1' })
+  })
+
+  it('an account activated by an older deploy (user flag set, no claim on the row) is not welcomed again', async () => {
+    users.u1.user_metadata = { premium_welcome_sent: true }
+    row = { user_id: 'u1', status: 'past_due', last_event_at: '2026-09-01T00:00:00Z', welcome_claimed_at: null }
+    expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
+    expect(claims.attempted).toBe(0)
+    expect(flagWrites).toEqual([])
+    expect(sentSubjects()).toEqual([])
+    expect(row).toMatchObject({ status: 'active' })
+  })
+
+  it('a flag write that fails still sends the one email the claim won', async () => {
+    flagFails = true
+    expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
+    expect(claims.won).toBe(1)
+    expect(sentSubjects()).toEqual(['You just got superpowers'])
+  })
+
+  it('an account provisioned at checkout gets the claim email instead of the welcome', async () => {
+    users.u1.user_metadata = { anon_provisioned: true }
+    expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
+    expect(sentSubjects()).toEqual(['Access your AI Canvas Premium account'])
+  })
+
+  it('a row that was already welcomed is never welcomed again', async () => {
+    row = {
+      user_id: 'u1',
+      status: 'past_due',
+      last_event_at: '2026-09-01T00:00:00Z',
+      welcome_claimed_at: '2026-08-01T00:00:00Z',
+    }
+    expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
+    expect(claims.attempted).toBe(1)
+    expect(claims.won).toBe(0)
+    expect(sentSubjects()).toEqual([])
+    expect(row).toMatchObject({ status: 'active' })
+  })
+
+  it('a renewal (active to active) neither claims nor sends', async () => {
+    row = { user_id: 'u1', status: 'active', last_event_at: '2026-08-24T00:00:00Z', welcome_claimed_at: null }
+    expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
+    expect(claims.attempted).toBe(0)
+    expect(sentSubjects()).toEqual([])
+  })
+
+  it('a claim that fails to persist sends nothing, and the subscription row still lands', async () => {
+    claimFails = true
+    expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
+    expect(sentSubjects()).toEqual([])
+    expect(flagWrites).toEqual([])
+    expect(upserts).toHaveLength(1)
+    expect(row).toMatchObject({ user_id: 'u1', status: 'active' })
+  })
+})

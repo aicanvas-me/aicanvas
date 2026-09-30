@@ -17,31 +17,29 @@ import {
   Sun,
   Moon,
   CornersOut,
-  CornersIn,
+  X,
   ArrowClockwise,
   Terminal,
   Sparkle,
   Lightning,
-  X,
-  LockSimple,
 } from '@phosphor-icons/react'
 import type { Tag, Platform } from '../ComponentCard'
 import { isStackLabel, STACK_ICONS, stackIconWidthForHeight, type Stack } from '../../lib/stack'
-import { HeaderSocials } from '../HeaderSocials'
-import { Breadcrumbs } from '../Breadcrumbs'
 import { SiteFooter } from '../SiteFooter'
 import { PropsTable, type PropTable } from '../PropsTable'
 import { Step } from '../Step'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../_components/DesignSystemPage'
 import type { ComponentMeta } from '../../lib/component-registry'
 // Runtime + type from the light module so this client component never imports
 // the heavy registry (which would pull every preview component, incl. three.js,
 // into the bundle).
 import { getDesignSystemMeta, type DesignSystemSlug } from '../../lib/design-system-meta'
 import { track } from '../../lib/analytics'
-import { copyText } from '../useCopied'
+import { copyText, useCopied } from '../useCopied'
 import { trackInstall } from '../../lib/track-install'
 import { BlockPreviewFrame } from './BlockPreviewFrame'
 import { useSession } from '../auth/SessionProvider'
+import { useInstallToken } from '../../_lib/useInstallToken'
 import { useAuthModal } from '../auth/AuthModalProvider'
 import { Button } from '../Button'
 import { useTheme } from '../ThemeProvider'
@@ -54,22 +52,9 @@ import { usePremiumStatus } from '../billing/usePremiumStatus'
 import { PremiumBadge } from '../billing/PremiumBadge'
 import { Paywall, type PaywallReason } from '../billing/Paywall'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
+import { RemixPanel } from '../../_components/RemixPanel'
 
-// Blurred behind the prompt paywall. Prompt-shaped, not TSX-shaped, so the
-// blur matches what is actually withheld (the Code tab's default teaser is a
-// fake component and would read as the wrong thing here). Decorative only.
-// It deliberately omits the literal "## 2." / "## 3." / "## 4." headings, so
-// grepping a response for those headings stays a clean leak check.
-const LOCKED_PROMPT_TEASER = `State
-- every hook, handler, effect and disposal
-- the animation loop, frame by frame
-
-Tree
-- the JSX, every className and inline style
-
-Why · Remix · Check
-- the mechanism, the tuning points, the checks
-`
+type FontFramework = 'html' | 'nextjs'
 
 // ─── Platform icons (inlined SVGs — no external dependency) ───────────────────
 
@@ -184,28 +169,9 @@ export default function ComponentPageView({
   const router = useRouter()
   const { preferences, user } = useSession()
   // Personalized install: when signed in, the copied command carries the
-  // user's API token so the registry can attribute the pull to the account
-  // (Plan 2). Signed out = today's plain @aicanvas/<slug> command, unchanged.
-  // The token route is resilient (returns null pre-migration), so this stays
-  // a no-op until the backend lands.
-  const [userToken, setUserToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) { setUserToken(null); return }
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => { if (!cancelled) setUserToken(d?.token ?? null) })
-        .catch(() => {})
-    refresh()
-    // Re-fetch on focus so a token rotated in another tab (settings) doesn't
-    // leave this page embedding a dead credential in the copied commands.
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [user])
+  // user's API token so the registry can attribute the pull to the account.
+  // Signed out = today's plain @aicanvas/<slug> command, unchanged.
+  const userToken = useInstallToken()
   const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview')
   // Enforcing mode (Plan 3): source isn't in the HTML — fetch it on demand from
   // the gated endpoint when the Code tab opens. 200 -> source; 402 -> paywall.
@@ -252,21 +218,20 @@ export default function ComponentPageView({
   // same bug in reverse. Safe on mount: `user` starts from the server-provided
   // initialUser, so a normal load never fires a second fetch.
   useEffect(() => { if (enforcing) setCodeState({ status: 'idle' }) }, [enforcing, slug, user?.id])
-  // The preview starts on whatever the site is set to, so a visitor browsing in
-  // light does not get slapped with a dark box, then pins to their own choice
-  // the moment they touch the toggle. Derived rather than synced with an
-  // effect: the site theme is already correct during SSR (ThemeProvider is
-  // seeded from the cookie), so there is nothing to reconcile and no frame of
-  // the wrong theme. It reads the site and never writes it, which is the whole
-  // point — the previous version of this toggle wrote <html> and dragged the
-  // entire site dark with it.
+  // The preview and the site are ONE theme. The preview reads the site theme
+  // (already correct during SSR: ThemeProvider is seeded from the cookie, so no
+  // frame of the wrong theme), and its toggle writes it back through
+  // ThemeProvider.setTheme, so flipping either moves the other, the same as the
+  // template pages. This file never touches <html> or the cookie itself; the
+  // scope test holds that line.
   //
-  // A dark-only component ignores both: it has no light rendering to show.
-  const { theme: siteTheme } = useTheme()
-  const [themeOverride, setThemeOverride] = useState<'dark' | 'light' | null>(null)
-  const cardTheme: 'dark' | 'light' = dualTheme ? (themeOverride ?? siteTheme) : 'dark'
+  // A dark-only component ignores the theme: it has no light rendering to show.
+  const { theme: siteTheme, setTheme: setSiteTheme } = useTheme()
+  const cardTheme: 'dark' | 'light' = dualTheme ? siteTheme : 'dark'
   const [cliCopied, setCliCopied] = useState(false)
-  const [mcpTokenCopied, setMcpTokenCopied] = useState(false)
+  const { copied: mcpTokenCopied, copy: copyMcpToken } = useCopied(
+    userToken ? `AICANVAS_TOKEN=${userToken}` : '',
+  )
   const [mcpTokenRevealed, setMcpTokenRevealed] = useState(false)
   const [codeCopied, setCodeCopied] = useState(false)
   const [depsCopied, setDepsCopied] = useState(false)
@@ -278,11 +243,8 @@ export default function ComponentPageView({
   useEffect(() => {
     if (preferences.package_manager) setPkgManager(preferences.package_manager)
   }, [preferences.package_manager])
-  const [darkCopied, setDarkCopied] = useState(false)
-  const [fontCopied, setFontCopied] = useState(false)
-  const [fontFramework, setFontFramework] = useState<'html' | 'nextjs'>('html')
-  const [fontPkgInstallCopied, setFontPkgInstallCopied] = useState(false)
-  const [fontPkgSnippetCopied, setFontPkgSnippetCopied] = useState(false)
+  const { copied: darkCopied, copy: copyDark } = useCopied('<html class="dark">')
+  const [fontFramework, setFontFramework] = useState<FontFramework>('html')
 
   // Directive lines live in the source; when enforcing withholds `code`, the
   // server still passes them via `codeDirectives` so the install UI is intact.
@@ -311,6 +273,19 @@ export default function ComponentPageView({
     ? `import { ${fontPkgClass} } from '${fontPkgPath}'\n\nconst font = ${fontPkgClass}({ variable: '${fontPkgVar}' })\n\n// Add font.variable to your <html> className`
     : null
   const fontPkgSelfContained = fontPkgName && !fontPkgVar // font used via .className, no layout setup needed
+  const { copied: fontCopied, copy: copyFont, reset: resetFontCopied } = useCopied(
+    FONT_SNIPPETS?.[fontFramework] ?? '',
+  )
+  const { copied: fontPkgInstallCopied, copy: copyFontPkgInstall } = useCopied(
+    FONT_PKG_INSTALL ?? '',
+  )
+  const { copied: fontPkgSnippetCopied, copy: copyFontPkgSnippet } = useCopied(
+    FONT_PKG_SNIPPET ?? '',
+  )
+  const selectFontFramework = (framework: FontFramework) => {
+    setFontFramework(framework)
+    resetFontCopied()
+  }
   const [fullscreen, setFullscreen] = useState(false)
 
   // Extract npm install command from code comment (e.g. "// npm install framer-motion")
@@ -344,8 +319,6 @@ export default function ComponentPageView({
   // mounted (slid off-screen when closed) so the prompt text ships in the
   // server-rendered HTML for SEO.
   const [remixOpen, setRemixOpen] = useState(false)
-  const [remixCopied, setRemixCopied] = useState(false)
-  const remixPanelRef = useRef<HTMLDivElement>(null)
   const mainCardRef = useRef<HTMLDivElement>(null)
   const remixPrompt =
     prompts['Claude Code'] ?? Object.values(prompts).find((p): p is string => !!p)
@@ -374,29 +347,16 @@ export default function ComponentPageView({
     )
   }
 
-  // Escape key closes fullscreen and the Remix panel
+  // Escape key closes fullscreen. The Remix panel closes itself on Escape
+  // (RemixPanel owns that, plus its own scroll lock and focus move).
   useEffect(() => {
+    if (!fullscreen) return
     function onKey(e: KeyboardEvent) {
-      if (e.key !== 'Escape') return
-      if (fullscreen) setFullscreen(false)
-      if (remixOpen) setRemixOpen(false)
+      if (e.key === 'Escape') setFullscreen(false)
     }
-    if (fullscreen || remixOpen) {
-      document.addEventListener('keydown', onKey)
-    }
+    document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [fullscreen, remixOpen])
-
-  // Remix panel open: lock body scroll and move focus into the dialog.
-  useEffect(() => {
-    if (!remixOpen) return
-    const prev = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    remixPanelRef.current?.focus()
-    return () => {
-      document.body.style.overflow = prev
-    }
-  }, [remixOpen])
+  }, [fullscreen])
 
   function refreshPreview() {
     setPreviewKey((k) => k + 1)
@@ -508,28 +468,11 @@ export default function ComponentPageView({
     setTimeout(() => setCliCopied(false), 4000)
   }
 
-  async function copyRemixPrompt() {
-    if (!remixPrompt) return
-    // Copies exactly what is on screen. Only ever reached when the prompt is
-    // NOT paywalled: a locked prompt opens the paywall instead of copying, so
-    // nobody walks away with blocks 1-2 believing they have a working prompt.
-    const ok = await copyText(remixPrompt)
-    track('Remix Prompt Copy', { component: slug, ok })
-    if (!ok) return
-    setRemixCopied(true)
-    setTimeout(() => setRemixCopied(false), 2500)
-  }
-
   return (
     <>
       {/* Top stripe — sticky (desktop only; mobile uses MobileNav) */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
-        <Breadcrumbs crumbs={[{ label: 'Components & Blocks', href: '/components' }, { label: name }]} />
-        <HeaderSocials />
-      </div>
-
       <main className="bg-sand-50 dark:bg-sand-950">
-        <div className="relative mx-auto max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
+        <PageFrame className={`relative ${PAGE_TOP} ${PAGE_BOTTOM}`}>
 
           {/* Mobile back button */}
           <button
@@ -542,19 +485,14 @@ export default function ComponentPageView({
 
           {/* Header */}
           <div className="mb-8">
-            {/* Page heading — bold (700). Subtitle is an answer-block for GEO:
-                the first 200 tokens on each page carry a definitional answer. */}
-            <h1 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
-              <span className="block">{name}</span>
-              {headingSubtitle && (
-                <span className="mt-2 block text-base font-normal leading-relaxed tracking-normal text-sand-600 dark:text-sand-400 sm:text-lg">
-                  {headingSubtitle}
-                </span>
-              )}
-            </h1>
-            {/* Description — normal (400). Hidden when subtitle already covers it. */}
-            {!headingSubtitle && (
-              <p className="mt-3 font-normal text-sand-600 dark:text-sand-400">{description}</p>
+            {/* Page heading. Subtitle is an answer-block for GEO: the first
+                200 tokens on each page carry a definitional answer. Falls
+                back to the plain description when there is no subtitle. */}
+            <PageTitle gap="none" rank="section">{name}</PageTitle>
+            {headingSubtitle ? (
+              <PageLead>{headingSubtitle}</PageLead>
+            ) : (
+              <PageLead>{description}</PageLead>
             )}
             {(() => {
               // Header chip row: category chip + up to 3 use-case chips.
@@ -621,22 +559,24 @@ export default function ComponentPageView({
               {/* Preview / Code tabs */}
               <div className="flex items-center gap-0.5">
                 <button
+                  type="button"
                   onClick={() => setActiveTab('preview')}
                   className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'preview'
-                      ? 'bg-sand-50 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                      ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                      : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
                   <Eye weight="regular" size={15} />
                   Preview
                 </button>
                 <button
+                  type="button"
                   onClick={() => setActiveTab('code')}
                   className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'code'
-                      ? 'bg-sand-50 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                      ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                      : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
                   <Code weight="regular" size={15} />
@@ -654,14 +594,26 @@ export default function ComponentPageView({
                     size="md"
                     iconOnly
                     disabled={!dualTheme}
+                    aria-label={
+                      !dualTheme
+                        ? 'Dark mode only'
+                        : cardTheme === 'dark'
+                          ? 'Switch to light theme'
+                          : 'Switch to dark theme'
+                    }
                     onClick={() => {
                       if (!dualTheme) return
-                      setThemeOverride(cardTheme === 'dark' ? 'light' : 'dark')
+                      setSiteTheme(cardTheme === 'dark' ? 'light' : 'dark')
                     }}
                     className="overflow-hidden"
                   >
                     <AnimatePresence mode="wait" initial={false}>
-                      {cardTheme === 'dark' ? (
+                      {/* Shows where a click goes (moon in light, sun in dark),
+                          the same rule as the site toggle in ThemeToggle.tsx, so
+                          the two controls that now do one thing agree. A dark-only
+                          component's toggle goes nowhere, so it keeps the moon
+                          that says what the preview is. */}
+                      {!dualTheme || cardTheme !== 'dark' ? (
                         <motion.span
                           key="moon"
                           initial={{ y: 12, opacity: 0 }}
@@ -712,11 +664,12 @@ export default function ComponentPageView({
                 {/* Fullscreen — preview only */}
                 {activeTab === 'preview' && (
                   <div className="group/fullscreen relative">
-                    {/* Soft-olive accent (the active-tag look) so the fullscreen
-                        action stands out from the outline theme/refresh buttons
-                        beside it without shouting like a solid primary. */}
+                    {/* Solid olive, the strongest control on the card. The soft
+                        accent it used before all but vanished on the light
+                        theme, and full screen is the view people most need to
+                        find. */}
                     <Button
-                      variant="accent"
+                      variant="primary"
                       size="md"
                       iconOnly
                       aria-label="Full screen"
@@ -811,10 +764,9 @@ export default function ComponentPageView({
                 initial={false}
                 animate={{ opacity: activeTab === 'code' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
-                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-950 p-5"
+                className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 [--paywall-surface:var(--color-sand-50)] [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)] dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
-                  scrollbarColor: '#4A453F transparent',
                   pointerEvents: activeTab === 'code' ? 'auto' : 'none',
                 }}
                 aria-hidden={activeTab !== 'code'}
@@ -823,17 +775,17 @@ export default function ComponentPageView({
                   // Real gating (Plan 3): source fetched on demand from the
                   // gated endpoint. 402 -> paywall; otherwise plain source.
                   codeState.status === 'locked' ? (
-                    <Paywall reason={codeState.reason} limit={codeState.limit} name={name} />
+                    <Paywall name={name} appearance="themed" />
                   ) : codeState.status === 'ready' ? (
                     codeState.highlighted ? (
                       <HighlightedCodeView html={codeState.highlighted} />
                     ) : (
-                      <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-sand-200">
+                      <pre className="whitespace-pre-wrap break-words font-mono text-sm leading-relaxed text-sand-800 dark:text-sand-200">
                         {codeState.code}
                       </pre>
                     )
                   ) : (
-                    <div className="flex h-full items-center justify-center text-sm text-sand-500">
+                    <div className="flex h-full items-center justify-center text-sm text-sand-600 dark:text-sand-500">
                       Loading source…
                     </div>
                   )
@@ -841,7 +793,7 @@ export default function ComponentPageView({
                   // Not enforcing: source is server-rendered (SEO preserved).
                   // Plan 0's stub paywall previews states in dev when the
                   // premium flag is on; otherwise it is always null.
-                  paywallReason ? <Paywall reason={paywallReason} name={name} /> : highlightedCode
+                  paywallReason ? <Paywall name={name} appearance="themed" /> : highlightedCode
                 )}
               </motion.div>
             </div>
@@ -888,7 +840,6 @@ export default function ComponentPageView({
           {(() => {
             // Dynamic step numbers for Manual tab — deps step is optional
             const manualStep = {
-              deps: depsCommand ? 1 : null,
               code: depsCommand ? 2 : 1,
               dark: depsCommand ? 3 : 2,
               font: depsCommand ? 4 : 3,
@@ -905,7 +856,7 @@ export default function ComponentPageView({
                     <Lightning weight="fill" size={14} className="shrink-0" />
                     <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover/premium:grid-cols-[1fr]">
                       <span className="overflow-hidden">
-                        <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-none">
+                        <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
                           {isBlock ? 'Premium block' : 'Premium component'}
                         </span>
                       </span>
@@ -928,7 +879,7 @@ export default function ComponentPageView({
                     className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                       installTab === 'cli'
                         ? 'text-sand-900 dark:text-sand-50'
-                        : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                        : 'text-sand-600 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                     }`}
                   >
                     CLI
@@ -944,7 +895,7 @@ export default function ComponentPageView({
                     className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                       installTab === 'manual'
                         ? 'text-sand-900 dark:text-sand-50'
-                        : 'text-sand-600 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                        : 'text-sand-600 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                     }`}
                   >
                     Manual
@@ -967,14 +918,14 @@ export default function ComponentPageView({
                           </p>
                           <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
                             {/* Package manager switcher */}
-                            <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                            <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                                 <button
                                   key={pm}
                                   onClick={() => { setPkgManager(pm); setDepsCopied(false) }}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     pkgManager === pm
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -1012,12 +963,12 @@ export default function ComponentPageView({
 
                             {/* Tier toggle — only for components belonging to a design system */}
                             {systemMeta && (
-                              <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                              <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                                 <button
                                   onClick={() => setInstallTier('component')}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'component'
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -1030,7 +981,7 @@ export default function ComponentPageView({
                                   }}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'system'
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -1065,113 +1016,39 @@ export default function ComponentPageView({
                           </div>
                       </Step>
 
-                      {/* Step 2 — Dark mode (optional) */}
-                      <Step
+                      <DarkModeStep
                         number={2}
                         isLast={!FONT_SNIPPETS && !FONT_PKG_SNIPPET && !fontPkgSelfContained}
-                      >
-                          <div className="mb-2.5 flex items-center gap-2">
-                            <p className="text-sm text-sand-600 dark:text-sand-400">
-                              For dark mode, add the <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">dark</code> class to your <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">&lt;html&gt;</code> element:
-                            </p>
-                            <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
-                          </div>
-                          <div className="flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
-                            <code className="font-mono text-sm text-sand-700 dark:text-sand-300">{'<html class="dark">'}</code>
-                            <button
-                              onClick={() => {
-                                void copyText('<html class="dark">')
-                                setDarkCopied(true)
-                                setTimeout(() => setDarkCopied(false), 2000)
-                              }}
-                              aria-label="Copy dark mode snippet"
-                              className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                            >
-                              {darkCopied
-                                ? <Check weight="regular" size={14} className="text-olive-500" />
-                                : <Copy weight="regular" size={14} />}
-                            </button>
-                          </div>
-                      </Step>
+                        copied={darkCopied}
+                        onCopy={copyDark}
+                      />
 
-                      {/* Step 3 — Font (optional, only when component specifies a font) */}
                       {FONT_SNIPPETS && (
-                        <Step number={3} isLast={!FONT_PKG_SNIPPET && !fontPkgSelfContained}>
-                            <div className="mb-2.5 flex items-center gap-2">
-                              <p className="text-sm text-sand-600 dark:text-sand-400">
-                                This component uses <span className="font-semibold text-sand-700 dark:text-sand-300">{fontName}</span>. Add it to your project:
-                              </p>
-                              <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
-                            </div>
-                            <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-                              <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
-                                {(['html', 'nextjs'] as const).map((fw) => (
-                                  <button
-                                    key={fw}
-                                    onClick={() => { setFontFramework(fw); setFontCopied(false) }}
-                                    className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${fontFramework === fw ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
-                                  >
-                                    {fw === 'html' ? 'HTML' : 'Next.js'}
-                                  </button>
-                                ))}
-                                <button
-                                  onClick={() => {
-                                    void copyText(FONT_SNIPPETS[fontFramework])
-                                    setFontCopied(true)
-                                    setTimeout(() => setFontCopied(false), 2000)
-                                  }}
-                                  aria-label="Copy font snippet"
-                                  className="ml-auto shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                                >
-                                  {fontCopied
-                                    ? <Check weight="regular" size={14} className="text-olive-500" />
-                                    : <Copy weight="regular" size={14} />}
-                                </button>
-                              </div>
-                              <div className="px-4 py-3.5">
-                                <code className="whitespace-pre font-mono text-sm text-sand-700 dark:text-sand-300">{FONT_SNIPPETS[fontFramework]}</code>
-                              </div>
-                            </div>
-                        </Step>
+                        <FontStep
+                          number={3}
+                          isLast={!FONT_PKG_SNIPPET && !fontPkgSelfContained}
+                          fontName={fontName}
+                          snippets={FONT_SNIPPETS}
+                          framework={fontFramework}
+                          onSelectFramework={selectFontFramework}
+                          copied={fontCopied}
+                          onCopy={copyFont}
+                        />
                       )}
 
-                      {/* Step 3 — Package font (optional, only when component specifies a font-pkg) */}
                       {(FONT_PKG_SNIPPET || fontPkgSelfContained) && (
-                        <Step number={3} isLast>
-                            <div className="mb-2.5 flex items-center gap-2">
-                              <p className="text-sm text-sand-600 dark:text-sand-400">
-                                This component uses <span className="font-semibold text-sand-700 dark:text-sand-300">{fontPkgClass}</span> from <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">{fontPkgName}</code>.{fontPkgSelfContained ? ' Install the package:' : ' Install and register it:'}
-                              </p>
-                              <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
-                            </div>
-                            <div className={`flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3 ${FONT_PKG_SNIPPET ? 'mb-2' : ''}`}>
-                              <code className="font-mono text-sm text-sand-700 dark:text-sand-300">{FONT_PKG_INSTALL}</code>
-                              <button
-                                onClick={() => { void copyText(FONT_PKG_INSTALL!); setFontPkgInstallCopied(true); setTimeout(() => setFontPkgInstallCopied(false), 2000) }}
-                                aria-label="Copy install command"
-                                className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                              >
-                                {fontPkgInstallCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
-                              </button>
-                            </div>
-                            {FONT_PKG_SNIPPET && (
-                              <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-                                <div className="flex items-center justify-between border-b border-sand-200 dark:border-sand-800 px-4 py-2">
-                                  <span className="font-mono text-xs text-sand-600 dark:text-sand-500">layout.tsx</span>
-                                  <button
-                                    onClick={() => { void copyText(FONT_PKG_SNIPPET!); setFontPkgSnippetCopied(true); setTimeout(() => setFontPkgSnippetCopied(false), 2000) }}
-                                    aria-label="Copy font setup snippet"
-                                    className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                                  >
-                                    {fontPkgSnippetCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
-                                  </button>
-                                </div>
-                                <div className="px-4 py-3.5">
-                                  <code className="whitespace-pre font-mono text-sm text-sand-700 dark:text-sand-300">{FONT_PKG_SNIPPET}</code>
-                                </div>
-                              </div>
-                            )}
-                        </Step>
+                        <PackageFontStep
+                          number={3}
+                          action={fontPkgSelfContained ? ' Install the package:' : ' Install and register it:'}
+                          fontClass={fontPkgClass}
+                          packageName={fontPkgName}
+                          install={FONT_PKG_INSTALL}
+                          snippet={FONT_PKG_SNIPPET}
+                          installCopied={fontPkgInstallCopied}
+                          onCopyInstall={copyFontPkgInstall}
+                          snippetCopied={fontPkgSnippetCopied}
+                          onCopySnippet={copyFontPkgSnippet}
+                        />
                       )}
                     </div>
                   ) : (
@@ -1209,7 +1086,7 @@ export default function ComponentPageView({
                             Copy and paste the following code into your project:
                           </p>
                           <div className="relative rounded-lg bg-sand-200 dark:bg-sand-950">
-                            <div className="flex items-center justify-between border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                            <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                                 {slug}.tsx
                               </span>
@@ -1227,7 +1104,7 @@ export default function ComponentPageView({
                             <div className="max-h-64 overflow-y-auto p-4 [scrollbar-color:#C4BFB7_transparent] dark:[scrollbar-color:#4A453F_transparent]" style={{ scrollbarWidth: 'thin' }}>
                               {enforcing ? (
                                 codeState.status === 'locked' ? (
-                                  <Paywall reason={codeState.reason} limit={codeState.limit} name={name} />
+                                  <Paywall name={name} />
                                 ) : codeState.status === 'ready' ? (
                                   codeState.highlighted ? (
                                     <HighlightedCodeView html={codeState.highlighted} />
@@ -1252,111 +1129,39 @@ export default function ComponentPageView({
                           </div>
                       </Step>
 
-                      {/* Step — Dark mode (optional) */}
-                      <Step
+                      <DarkModeStep
                         number={manualStep.dark}
                         isLast={!FONT_SNIPPETS && !FONT_PKG_SNIPPET}
-                      >
-                          <div className="mb-2.5 flex items-center gap-2">
-                            <p className="text-sm text-sand-600 dark:text-sand-400">
-                              For dark mode, add the <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">dark</code> class to your <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">&lt;html&gt;</code> element:
-                            </p>
-                            <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
-                          </div>
-                          <div className="flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
-                            <code className="font-mono text-sm text-sand-700 dark:text-sand-300">{'<html class="dark">'}</code>
-                            <button
-                              onClick={() => {
-                                void copyText('<html class="dark">')
-                                setDarkCopied(true)
-                                setTimeout(() => setDarkCopied(false), 2000)
-                              }}
-                              aria-label="Copy dark mode snippet"
-                              className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                            >
-                              {darkCopied
-                                ? <Check weight="regular" size={14} className="text-olive-500" />
-                                : <Copy weight="regular" size={14} />}
-                            </button>
-                          </div>
-                      </Step>
+                        copied={darkCopied}
+                        onCopy={copyDark}
+                      />
 
-                      {/* Step — Font (optional, only when component specifies a font) */}
                       {FONT_SNIPPETS && (
-                        <Step number={manualStep.font} isLast={!FONT_PKG_SNIPPET}>
-                            <div className="mb-2.5 flex items-center gap-2">
-                              <p className="text-sm text-sand-600 dark:text-sand-400">
-                                This component uses <span className="font-semibold text-sand-700 dark:text-sand-300">{fontName}</span>. Add it to your project:
-                              </p>
-                              <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
-                            </div>
-                            <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-                              <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
-                                {(['html', 'nextjs'] as const).map((fw) => (
-                                  <button
-                                    key={fw}
-                                    onClick={() => { setFontFramework(fw); setFontCopied(false) }}
-                                    className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${fontFramework === fw ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
-                                  >
-                                    {fw === 'html' ? 'HTML' : 'Next.js'}
-                                  </button>
-                                ))}
-                                <button
-                                  onClick={() => {
-                                    void copyText(FONT_SNIPPETS[fontFramework])
-                                    setFontCopied(true)
-                                    setTimeout(() => setFontCopied(false), 2000)
-                                  }}
-                                  aria-label="Copy font snippet"
-                                  className="ml-auto shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                                >
-                                  {fontCopied
-                                    ? <Check weight="regular" size={14} className="text-olive-500" />
-                                    : <Copy weight="regular" size={14} />}
-                                </button>
-                              </div>
-                              <div className="px-4 py-3.5">
-                                <code className="whitespace-pre font-mono text-sm text-sand-700 dark:text-sand-300">{FONT_SNIPPETS[fontFramework]}</code>
-                              </div>
-                            </div>
-                        </Step>
+                        <FontStep
+                          number={manualStep.font}
+                          isLast={!FONT_PKG_SNIPPET}
+                          fontName={fontName}
+                          snippets={FONT_SNIPPETS}
+                          framework={fontFramework}
+                          onSelectFramework={selectFontFramework}
+                          copied={fontCopied}
+                          onCopy={copyFont}
+                        />
                       )}
 
-                      {/* Step — Package font (optional, only when component specifies a font-pkg) */}
                       {FONT_PKG_SNIPPET && (
-                        <Step number={manualStep.font} isLast>
-                            <div className="mb-2.5 flex items-center gap-2">
-                              <p className="text-sm text-sand-600 dark:text-sand-400">
-                                This component uses <span className="font-semibold text-sand-700 dark:text-sand-300">{fontPkgClass}</span> from <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">{fontPkgName}</code>. Install and register it:
-                              </p>
-                              <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
-                            </div>
-                            <div className="flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3 mb-2">
-                              <code className="font-mono text-sm text-sand-700 dark:text-sand-300">{FONT_PKG_INSTALL}</code>
-                              <button
-                                onClick={() => { void copyText(FONT_PKG_INSTALL!); setFontPkgInstallCopied(true); setTimeout(() => setFontPkgInstallCopied(false), 2000) }}
-                                aria-label="Copy install command"
-                                className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                              >
-                                {fontPkgInstallCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
-                              </button>
-                            </div>
-                            <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-                              <div className="flex items-center justify-between border-b border-sand-200 dark:border-sand-800 px-4 py-2">
-                                <span className="font-mono text-xs text-sand-600 dark:text-sand-500">layout.tsx</span>
-                                <button
-                                  onClick={() => { void copyText(FONT_PKG_SNIPPET!); setFontPkgSnippetCopied(true); setTimeout(() => setFontPkgSnippetCopied(false), 2000) }}
-                                  aria-label="Copy font setup snippet"
-                                  className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
-                                >
-                                  {fontPkgSnippetCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
-                                </button>
-                              </div>
-                              <div className="px-4 py-3.5">
-                                <code className="whitespace-pre font-mono text-sm text-sand-700 dark:text-sand-300">{FONT_PKG_SNIPPET}</code>
-                              </div>
-                            </div>
-                        </Step>
+                        <PackageFontStep
+                          number={manualStep.font}
+                          action=" Install and register it:"
+                          fontClass={fontPkgClass}
+                          packageName={fontPkgName}
+                          install={FONT_PKG_INSTALL}
+                          snippet={FONT_PKG_SNIPPET}
+                          installCopied={fontPkgInstallCopied}
+                          onCopyInstall={copyFontPkgInstall}
+                          snippetCopied={fontPkgSnippetCopied}
+                          onCopySnippet={copyFontPkgSnippet}
+                        />
                       )}
                     </div>
                   )}
@@ -1411,11 +1216,7 @@ export default function ComponentPageView({
                             : <Eye weight="regular" size={14} />}
                         </button>
                         <button
-                          onClick={() => {
-                            void copyText(`AICANVAS_TOKEN=${userToken}`)
-                            setMcpTokenCopied(true)
-                            setTimeout(() => setMcpTokenCopied(false), 2000)
-                          }}
+                          onClick={copyMcpToken}
                           className="rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
                           aria-label="Copy MCP token"
                         >
@@ -1655,7 +1456,7 @@ export default function ComponentPageView({
           )}
 
           <SiteFooter />
-        </div>
+        </PageFrame>
       </main>
 
       {/* ── Fullscreen overlay ───────────────────────────────────────────────
@@ -1708,7 +1509,7 @@ export default function ComponentPageView({
               aria-label="Close fullscreen preview"
               className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95 sm:top-14 sm:right-14"
             >
-              <CornersIn weight="regular" size={17} />
+              <X weight="regular" size={16} />
             </button>
           </motion.div>
         )}
@@ -1745,183 +1546,152 @@ export default function ComponentPageView({
         )}
       </AnimatePresence>
 
-      {/* ── Remix panel ─────────────────────────────────────────────────────
-          The panel is ALWAYS mounted and merely slides off-canvas when
-          closed, so the full prompt text ships in the server-rendered HTML
-          and gets crawled — the single biggest block of unique text on the
-          page. Backdrop is interaction chrome only, so it mounts on open. */}
-      <AnimatePresence>
-        {remixOpen && (
-          <motion.div
-            key="remix-backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-sand-950/70 backdrop-blur-[2px]"
-            onClick={() => setRemixOpen(false)}
-            aria-hidden="true"
-          />
-        )}
-      </AnimatePresence>
-      {remixPrompt && (
-        <motion.div
-          ref={remixPanelRef}
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="remix-panel-title"
-          tabIndex={-1}
-          inert={!remixOpen}
-          initial={false}
-          animate={{ x: remixOpen ? '0%' : '105%' }}
-          transition={{ type: 'spring', stiffness: 380, damping: 40 }}
-          className="fixed inset-y-0 right-0 z-50 flex w-full max-w-2xl flex-col border-l border-sand-200 bg-sand-100 shadow-2xl outline-none dark:border-sand-800 dark:bg-sand-900"
-        >
-          {/* Header */}
-          <div className="flex items-start justify-between gap-5 px-6 py-5 sm:px-8">
-            <div className="pt-0.5">
-              <div className="flex flex-wrap items-center gap-2">
-                <h2
-                  id="remix-panel-title"
-                  className="text-base font-bold text-sand-900 dark:text-sand-50"
-                >
-                  Remix {name} with AI
-                </h2>
-                {/* Same pill as the tag row on the page behind. Says what the
-                    lock further down is about before the reader reaches it. */}
-                {premium && (
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-olive-600/40 bg-olive-500/10 px-2.5 py-0.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400">
-                    <Lightning weight="regular" size={12} />
-                    Premium
-                  </span>
-                )}
-              </div>
-              <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                Written against the real source code. Works in Claude, Cursor,
-                ChatGPT, or any AI tool you use.
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="md"
-              iconOnly
-              onClick={() => setRemixOpen(false)}
-              aria-label="Close Remix panel"
-              className="shrink-0"
-            >
-              <X weight="regular" size={16} />
-            </Button>
-          </div>
-
-          {/* Divider — inset to match the content padding on both sides */}
-          <div className="mx-6 border-t border-sand-200 dark:border-sand-800 sm:mx-8" />
-
-          {/* Body */}
-          <div
-            className="flex-1 overflow-y-auto px-6 py-6 sm:px-8"
-            style={{ scrollbarWidth: 'thin' }}
-          >
-            {/* Remix disclaimer */}
-            <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-              <span className="font-semibold text-sand-900 dark:text-sand-50">
-                This prompt is for remixing.
-              </span>{' '}
-              Use it to build your own variation of {name}. Results depend on
-              the model you use, and no prompt in the world is 100% exact.
-            </p>
-
-            {/* CLI first — the accurate path */}
-            <div className="mt-5 rounded-xl border border-olive-500/40 bg-olive-500/10 p-5">
-              <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
-                Want the exact component?
-              </p>
-              <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                One command installs it, pixel-perfect. Copy, paste into your
-                project, done.
-              </p>
-              <div className="mt-4 flex items-start gap-2.5">
-                {/* One line, clipped. A signed-in install is a tokenized URL
-                    that wraps to two lines and turns a tidy card into a wall of
-                    monospace. Nothing is lost by cutting it: the visible form
-                    is masked anyway, and the button copies the real command. */}
-                <code className="min-w-0 flex-1 truncate rounded-lg bg-sand-200 dark:bg-sand-950 px-3 py-2 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
-                  npx shadcn@latest add {installReferenceMasked}
-                </code>
-                {/* copyCli already sends a non-subscriber to the paywall
-                    instead of copying, so only the label was lying: it offered
-                    a clipboard action beside a command that is already dots.
-                    Same treatment as the locked prompt below. */}
-                <Button variant="primary" size="sm" onClick={copyCli}>
-                  {needsPremium
-                    ? <LockSimple weight="regular" size={15} />
-                    : cliCopied
-                    ? <Check weight="regular" size={15} />
-                    : <Terminal weight="regular" size={15} />}
-                  {needsPremium
-                    ? 'Unlock to install'
-                    : cliCopied ? 'Copied!' : 'Copy CLI'}
-                </Button>
-              </div>
-              {/* Same warning as the install step: the command above is real
-                  and runnable, and signed out it installs a placeholder. */}
-              {needsFreeAccount && (
-                <p className="mt-2.5 text-xs text-sand-600 dark:text-sand-400">
-                  Free account required. Signed out, this installs a placeholder
-                  file instead of the component.
-                </p>
-              )}
-            </div>
-
-            {/* The prompt */}
-            <div className="mt-8 flex items-center justify-between gap-3">
-              <h3 className="text-sm font-bold text-sand-900 dark:text-sand-50">
-                AI prompt for {name}
-              </h3>
-              {promptLocked ? (
-                /* Copying a paywalled prompt used to silently hand over blocks 1-2
-                   and say "Copied!". That is a broken build waiting to happen and
-                   the component gets the blame, so the button sells instead. */
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openPaywallModal({ reason: 'premium-only' })}
-                >
-                  <LockSimple weight="regular" size={15} />
-                  Unlock full prompt
-                </Button>
-              ) : (
-                <Button variant="outline" size="sm" onClick={copyRemixPrompt}>
-                  {remixCopied
-                    ? <Check weight="regular" size={15} />
-                    : <Copy weight="regular" size={15} />}
-                  {remixCopied ? 'Copied!' : 'Copy prompt'}
-                </Button>
-              )}
-            </div>
-            {/* ONE panel, always. When block 3 onward is withheld the lock is a band
-                INSIDE it, sitting exactly where the cut happened, so the prompt
-                still reads as a single document. Rendering head, lock and tail as
-                three rounded cards made a paywalled prompt look broken rather
-                than gated. */}
-            <div className="mt-4 overflow-hidden rounded-xl bg-sand-200 dark:bg-sand-950 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
-              <pre
-                className={`whitespace-pre-wrap break-words px-5 pt-5 ${
-                  promptLocked
-                    // Fade the last lines out instead of cutting them off. A hard
-                    // edge reads as truncation, a fade reads as "there is more".
-                    ? 'pb-0 [mask-image:linear-gradient(to_bottom,#000_calc(100%-5rem),transparent)] [-webkit-mask-image:linear-gradient(to_bottom,#000_calc(100%-5rem),transparent)]'
-                    : 'pb-5'
-                }`}
-              >
-                {remixPrompt}
-              </pre>
-              {promptLocked && (
-                <Paywall reason="premium-only" appearance="themed" teaser={LOCKED_PROMPT_TEASER} name={name} />
-              )}
-            </div>
-          </div>
-        </motion.div>
-      )}
+      {/* ── Remix panel ───────────────────────────────────────────────────── */}
+      <RemixPanel
+        open={remixOpen}
+        onClose={() => setRemixOpen(false)}
+        name={name}
+        slug={slug}
+        prompt={remixPrompt}
+        promptLocked={promptLocked}
+        premium={premium}
+        cliReference={installReferenceMasked}
+        cliCopied={cliCopied}
+        onCopyCli={copyCli}
+        needsPremium={needsPremium}
+        needsFreeAccount={needsFreeAccount}
+      />
     </>
+  )
+}
+
+type CopyStepProps = {
+  number: number
+  isLast: boolean
+  copied: boolean
+  onCopy: () => void
+}
+
+function DarkModeStep({ number, isLast, copied, onCopy }: CopyStepProps) {
+  return (
+    <Step number={number} isLast={isLast}>
+      <div className="mb-2.5 flex items-center gap-2">
+        <p className="text-sm text-sand-600 dark:text-sand-400">
+          For dark mode, add the <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">dark</code> class to your <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">&lt;html&gt;</code> element:
+        </p>
+        <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
+      </div>
+      <div className="flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
+        <code className="font-mono text-sm text-sand-700 dark:text-sand-300">{'<html class="dark">'}</code>
+        <button
+          onClick={onCopy}
+          aria-label="Copy dark mode snippet"
+          className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+        >
+          {copied
+            ? <Check weight="regular" size={14} className="text-olive-500" />
+            : <Copy weight="regular" size={14} />}
+        </button>
+      </div>
+    </Step>
+  )
+}
+
+function FontStep({
+  number, isLast, copied, onCopy, fontName, snippets, framework, onSelectFramework,
+}: CopyStepProps & {
+  fontName: string | null
+  snippets: Record<FontFramework, string>
+  framework: FontFramework
+  onSelectFramework: (framework: FontFramework) => void
+}) {
+  return (
+    <Step number={number} isLast={isLast}>
+      <div className="mb-2.5 flex items-center gap-2">
+        <p className="text-sm text-sand-600 dark:text-sand-400">
+          This component uses <span className="font-semibold text-sand-700 dark:text-sand-300">{fontName}</span>. Add it to your project:
+        </p>
+        <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
+      </div>
+      <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
+        <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
+          {(['html', 'nextjs'] as const).map((fw) => (
+            <button
+              key={fw}
+              onClick={() => onSelectFramework(fw)}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
+            >
+              {fw === 'html' ? 'HTML' : 'Next.js'}
+            </button>
+          ))}
+          <button
+            onClick={onCopy}
+            aria-label="Copy font snippet"
+            className="ml-auto shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+          >
+            {copied
+              ? <Check weight="regular" size={14} className="text-olive-500" />
+              : <Copy weight="regular" size={14} />}
+          </button>
+        </div>
+        <div className="px-4 py-3.5">
+          <code className="whitespace-pre font-mono text-sm text-sand-700 dark:text-sand-300">{snippets[framework]}</code>
+        </div>
+      </div>
+    </Step>
+  )
+}
+
+function PackageFontStep({
+  number, action, fontClass, packageName, install, snippet,
+  installCopied, onCopyInstall, snippetCopied, onCopySnippet,
+}: {
+  number: number
+  action: string
+  fontClass: string | null
+  packageName: string | null
+  install: string | null
+  snippet: string | null
+  installCopied: boolean
+  onCopyInstall: () => void
+  snippetCopied: boolean
+  onCopySnippet: () => void
+}) {
+  return (
+    <Step number={number} isLast>
+      <div className="mb-2.5 flex items-center gap-2">
+        <p className="text-sm text-sand-600 dark:text-sand-400">
+          This component uses <span className="font-semibold text-sand-700 dark:text-sand-300">{fontClass}</span> from <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">{packageName}</code>.{action}
+        </p>
+        <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
+      </div>
+      <div className={`flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3 ${snippet ? 'mb-2' : ''}`}>
+        <code className="font-mono text-sm text-sand-700 dark:text-sand-300">{install}</code>
+        <button
+          onClick={onCopyInstall}
+          aria-label="Copy install command"
+          className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+        >
+          {installCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
+        </button>
+      </div>
+      {snippet && (
+        <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
+          <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
+            <span className="font-mono text-xs text-sand-600 dark:text-sand-500">layout.tsx</span>
+            <button
+              onClick={onCopySnippet}
+              aria-label="Copy font setup snippet"
+              className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+            >
+              {snippetCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
+            </button>
+          </div>
+          <div className="px-4 py-3.5">
+            <code className="whitespace-pre font-mono text-sm text-sand-700 dark:text-sand-300">{snippet}</code>
+          </div>
+        </div>
+      )}
+    </Step>
   )
 }

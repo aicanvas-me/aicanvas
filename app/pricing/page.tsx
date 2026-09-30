@@ -1,17 +1,22 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import { CheckCircle, Sparkle } from '@phosphor-icons/react'
 import type { ComponentType, ReactNode } from 'react'
-import { buttonClasses } from '../components/Button'
-import { HeaderSocials } from '../components/HeaderSocials'
+import { buttonClasses } from '../components/buttonClasses'
 import { SiteFooter } from '../components/SiteFooter'
 import { TerminatorCool } from '../components/auth/TerminatorReveal'
 import { premiumEnabled } from '../../lib/flags'
 import { PremiumCards } from '../components/billing/PremiumCards'
 import { FaqAccordion, type FaqItem } from '../components/FaqAccordion'
+import { BusinessCards } from '../components/billing/BusinessCard'
+import {
+  PlanAudienceTabs,
+  audiencePanelId,
+  type PlanAudience,
+} from '../components/billing/PlanAudienceTabs'
 
 // ─── Plan data ──────────────────────────────────────────────────────────────
 // Legacy fallback, rendered only when premiumEnabled() is false. The first card
@@ -47,14 +52,13 @@ const PLANS: Plan[] = [
       'Copy the source of any free component',
       'Copy the AI remix prompt for any free component',
       'Access the MCP server',
-      'Experiment in the Lab',
     ],
   },
   {
     name: 'Free account',
     Icon: TerminatorCool,
     tagline:
-      'Sign in and unlock the canvas. Save what you love, tune in the Lab, export to your machine.',
+      'Sign in and unlock the canvas. Save what you love.',
     priceLabel: 'Free',
     priceSuffix: 'Forever',
     cta: {
@@ -66,8 +70,6 @@ const PLANS: Plan[] = [
     features: [
       'Save your favorite components',
       'Save preferences across sessions',
-      'Keep Lab presets you can revisit',
-      'Export from the Lab directly to your computer',
       'Access to more resources and features',
     ],
     featured: true,
@@ -214,22 +216,9 @@ const PRICING_FAQ: FaqItem[] = [
 
 export default function PricingPage() {
   const premium = premiumEnabled()
+  const [audience, setAudience] = useState<PlanAudience>('individual')
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-      {/* ── Top bar — mirrors /About: olive /Pricing centered, HeaderSocials right ── */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:grid">
-        <div />
-        <Link
-          href="/pricing"
-          className="text-sm font-semibold text-olive-600 transition-colors dark:text-olive-500 dark:hover:text-olive-400"
-        >
-          /Pricing
-        </Link>
-        <div className="flex justify-end">
-          <HeaderSocials />
-        </div>
-      </div>
-
       <main className="relative mx-auto w-full max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         {/* Mobile breadcrumb */}
         <p className="mb-6 text-sm font-semibold md:hidden">
@@ -243,18 +232,42 @@ export default function PricingPage() {
             Our Pricing Plan
           </span>
           <h1 className="mt-5 text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50">
-            {premium ? 'Start free, upgrade when you need more' : 'Pick your side'}
+            {premium ? 'Simple, honest pricing' : 'Pick your side'}
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
-            {premium
-              ? 'A free account unlocks unlimited one-command installs and remix with AI on every free component, free forever. Premium adds the closed-source components, blocks, design systems and templates, with their full remix prompts.'
-              : 'The free library is free, forever. Browse anonymously, or sign up to save your work, keep Lab presets, and export to your machine.'}
+            {/* The line follows the audience switch below it. The Free vs
+                Premium sentence describes a pair the Business view does not
+                show, so leaving it fixed made the header answer a question
+                the visitor had just switched away from. */}
+            {!premium
+              ? 'The free library is free, forever. Browse anonymously, or sign up to save your favorites.'
+              : audience === 'business'
+                ? 'One subscription for up to 10 people, and one shared AI Brain, so every agent on the team builds to the same rules.'
+                : 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'}
           </p>
         </Section>
 
         {/* ── Plan cards ── */}
         {premium ? (
-          <PremiumCards />
+          <>
+            {/* Audience switch. Individual keeps the Free vs Premium pair
+                the rest of the site already uses; Business swaps in the
+                single team card, so neither view has to explain the other. */}
+            <div className="mt-10 sm:mt-12">
+              <PlanAudienceTabs
+                value={audience}
+                onChange={setAudience}
+                idPrefix="pricing-audience"
+              />
+            </div>
+            <div
+              role="tabpanel"
+              id={audiencePanelId('pricing-audience', audience)}
+              aria-labelledby={`pricing-audience-${audience}-tab`}
+            >
+              {audience === 'individual' ? <PremiumCards /> : <BusinessCards />}
+            </div>
+          </>
         ) : (
           <div className="mt-12 grid gap-6 sm:mt-16 md:grid-cols-2">
             {PLANS.map((plan, i) => (

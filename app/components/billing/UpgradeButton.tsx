@@ -1,6 +1,6 @@
 'use client'
 
-import { getPaddle, PRICES, type BillingCycle } from '../../lib/paddle/client'
+import { CHECKOUT_SETTINGS, getPaddle, PRICES, type BillingCycle } from '../../lib/paddle/client'
 import { useSession } from '../auth/SessionProvider'
 import { track } from '../../lib/analytics'
 import { checkoutComingSoon } from '../../../lib/flags'
@@ -33,11 +33,8 @@ export function UpgradeButton({
     if (comingSoon) return
     track('Subscribe Click', { cycle })
     const paddle = await getPaddle()
-    // showAddDiscounts:false hides the public "Add discount" box, so promos are
-    // never offered to every visitor (protects conversion against coupon-fishing).
-    // Instead a targeted link carries the code: a ?promo=CODE in the URL is passed
-    // to Checkout.open as discountCode and applied silently. Paddle ignores an
-    // unknown code and opens at full price, so no validation is needed here.
+    // A ?promo=CODE in the URL is passed as discountCode and applied silently.
+    // Paddle ignores an unknown code and opens at full price, so no validation here.
     //
     // Signed-in: attribute the sale to the account up front (user_id + email).
     // Signed-out: open anonymously, Paddle collects the email itself and the
@@ -52,7 +49,7 @@ export function UpgradeButton({
           }
         : {}),
       ...(promo ? { discountCode: promo } : {}),
-      settings: { displayMode: 'overlay', theme: 'light', showAddDiscounts: false },
+      settings: CHECKOUT_SETTINGS,
     })
   }
 

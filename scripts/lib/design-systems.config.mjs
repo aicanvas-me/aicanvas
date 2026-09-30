@@ -1,24 +1,19 @@
 /**
- * Design-system declarations — source of truth for both:
- *  - the registry generator (which emits multi-file `andromeda.json` and per-template JSONs)
- *  - the website (per-component "Part of Andromeda" affordance, TemplateChrome metadata)
+ * Design-system declarations, the source of truth for both the registry
+ * generator and the website. Kept in `.mjs` so the build script and Next.js can
+ * both import it without parsing TS or duplicating the data.
  *
- * Keeping this in `.mjs` means the build script and Next.js can both import it
- * without parsing TS or duplicating the data. New systems land here.
- *
- * Note: registry items of type `registry:block` keep that name in the JSON because
- * shadcn's CLI only recognises a fixed set of `type` values. Everything user-facing
- * uses "template"; only the JSON schema field uses the shadcn vocabulary.
+ * Template registry items keep shadcn's `registry:block` type in the JSON because
+ * shadcn's CLI only recognises a fixed set of `type` values; everything
+ * user-facing says "template".
  */
 
 /**
- * First line of a placeholder file that inject-premium writes for a free-lane
- * design-system component that was EXPECTED but NOT injected (degraded/free-only
- * build, or a pin predating the component). The file exists only so static
- * imports (`../../components/<Name>`) resolve without crashing the build; the
- * registry/props generators treat any file starting with this sentinel as absent
- * so a placeholder is never registered or installed. inject-premium.mjs writes
- * it; generate-registry.mjs reads it — they MUST agree, hence one shared source.
+ * First line of the placeholder inject-premium writes for a free-lane
+ * design-system component that was EXPECTED but NOT injected. It exists only so
+ * static imports resolve without crashing the build; the generators treat any
+ * file starting with this sentinel as absent, so a placeholder is never
+ * registered or installed. Writer and readers MUST agree, hence one source.
  */
 export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeholder'
 
@@ -26,15 +21,17 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  * @typedef {Object} DesignSystemTemplate
  * @property {string} slug         Registry slug, e.g. 'andromeda-mission-control'
  * @property {string} name         Human label for the template widget
- * @property {string} [domain]     Short domain tag (e.g. 'Sci-Fi', 'Finance')
- * @property {string} entryPath    Entry file relative to the system's `rootDir`.
- *                                 The generator walks transitive imports starting
- *                                 here and ships every file inside `rootDir` reached.
+ * @property {string} [category]   What the template IS, in buyer words:
+ *                                 Dashboard, CRM, Scheduling, Media, Authentication.
+ *                                 Closed vocabulary; adding one is a product call.
+ * @property {string} entryPath    Entry file relative to the system's `rootDir`. The
+ *                                 generator walks transitive imports from here and
+ *                                 ships every file inside `rootDir` it reaches.
  */
 
 /**
  * @typedef {Object} DesignSystem
- * @property {'andromeda'} slug
+ * @property {'andromeda'|'andromeda-pro'} slug
  * @property {string} name
  * @property {string} rootDir         Path from repo root. Layout is preserved verbatim
  *                                    so internal relative imports continue to resolve.
@@ -52,14 +49,45 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  *                                    (degraded build / older premium pin) the
  *                                    generator skips them with a warning instead of
  *                                    failing.
+ * @property {boolean} [paidToInstall] Every item this system emits (components,
+ *                                    tokens, aggregates, templates) requires a
+ *                                    premium entitlement to INSTALL. Browsing
+ *                                    the pages stays free. Andromeda Legacy is
+ *                                    MIT and omits this; Andromeda Pro sets it.
+ * @property {boolean} [pinDependencies] Emit each npm dependency with the range
+ *                                    this app itself installs (from package.json),
+ *                                    plus the matching `@types/*` package as a
+ *                                    devDependency, so a buyer's fresh project
+ *                                    gets the majors the system was built against
+ *                                    and typechecks under strict TypeScript.
+ * @property {boolean} [skipIfMissing] Skip the whole system when its root is not
+ *                                    on disk (an injected-only system on a build
+ *                                    with no vault access), instead of failing.
+ * @property {{ module: string, export: string }} [themeSets] A module (path from
+ *                                    rootDir) exporting a function that returns
+ *                                    `{ light, dark }` custom-property sets. The
+ *                                    tokens item then ships them as CSS: light on
+ *                                    `:root`, dark on `.dark`, so installs follow
+ *                                    the app's own light/dark class.
+ * @property {Record<string, string>} [componentExamples] A ready-made example per
+ *                                    component entry (both paths from rootDir). The
+ *                                    component's own item ships the example and the
+ *                                    files it imports, so a fresh install opens on
+ *                                    the same first view as the component page. An
+ *                                    example absent from the tree is skipped with a
+ *                                    warning and the component ships alone.
  * @property {DesignSystemTemplate[]} templates
  */
+
+// NOTE: this module is imported by CLIENT components, so it must stay free of
+// `node:` imports. Anything needing the filesystem (e.g. "is this system's tree
+// actually on disk") belongs in app/lib/available-design-systems.ts instead.
 
 /** @type {DesignSystem[]} */
 export const DESIGN_SYSTEMS = [
   {
     slug: 'andromeda',
-    name: 'Andromeda',
+    name: 'Andromeda Legacy',
     rootDir: 'design-systems/andromeda',
     tokenEntries: [
       'tokens.ts',
@@ -100,14 +128,6 @@ export const DESIGN_SYSTEMS = [
       'components/TrendChart.tsx',
       'components/UserCard.tsx',
       'components/UserMenu.tsx',
-    ],
-    // v2 components — authored in the private vault (aicanvas-premium) and
-    // injected into design-systems/andromeda/components/ at build time by
-    // scripts/inject-premium.mjs. FREE single-component installs exactly like
-    // the v1 entries above (same registry:ui type → classified free by
-    // lib/registry/content-type.ts). Optional: absent files (degraded build,
-    // older premium pin) are skipped with a warning, never a build failure.
-    optionalSystemEntries: [
       'components/MetricChart.tsx',
       'components/Gauge.tsx',
       'components/Waveform.tsx',
@@ -115,43 +135,127 @@ export const DESIGN_SYSTEMS = [
       'components/DataTable.tsx',
       'components/MusicPlayer.tsx',
     ],
-    // Per-file slug overrides. Button.tsx's natural slug (andromeda-button) is
-    // owned by the standalone in components-workspace/andromeda-button/, so the
-    // design-system Button is given its own unique slug and ships as a
-    // first-class installable component (with Button.rules.md), fully separate
-    // from that standalone.
+    // Button.tsx's natural slug (andromeda-button) is owned by the standalone in
+    // components-workspace/andromeda-button/, so the design-system Button ships
+    // under its own slug, fully separate from that standalone.
     slugOverrides: {
       'components/Button.tsx': 'andromeda-button-system',
     },
-    // Fonts the system needs at runtime. The AI Canvas app provides
-    // --font-jetbrains-mono via next/font, but installed projects don't — so the
-    // shipped tokens item self-loads the font. The import is injected into the
-    // SHIPPED tokens file only (fontInjectInto); the on-disk source stays clean,
-    // so the app keeps using next/font with no double-load.
+    // Without this, installs get unpinned packages and no @types/three for Planet.
+    pinDependencies: true,
+    // The app provides --font-jetbrains-mono via next/font, but installed projects
+    // don't, so the shipped tokens item self-loads it. The import goes into the
+    // SHIPPED file only, so the on-disk source stays clean and the app has no
+    // double-load.
     fontPackages: ['@fontsource-variable/jetbrains-mono'],
     fontInjectInto: 'tokens.ts',
     templates: [
-      { slug: 'andromeda-mission-control',   name: 'Mission Control',   domain: 'Sci-Fi',     entryPath: 'examples/mission-control/index.tsx' },
-      { slug: 'andromeda-service-order',     name: 'Service Order',     domain: 'Telecom',    entryPath: 'examples/service-order/index.tsx' },
-      // exchange-terminal — hidden from registry, sidebar, and showcase. Source
-      // preserved in `examples/exchange-terminal/` for future revival; restore
-      // by uncommenting the entry below + the matching entries in
+      { slug: 'andromeda-mission-control',   name: 'Mission Control',   category: 'Dashboard',     entryPath: 'examples/mission-control/index.tsx' },
+      { slug: 'andromeda-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
+      // exchange-terminal is hidden from the registry, sidebar and showcase.
+      // Restore by uncommenting the entry below plus the matching entries in
       // app/lib/component-registry.tsx and app/_components/IdeationSidebar.tsx.
-      // { slug: 'andromeda-exchange-terminal', name: 'Exchange Terminal', domain: 'Finance', entryPath: 'examples/exchange-terminal/index.tsx' },
-      { slug: 'andromeda-resource-planning', name: 'Resource Planning', domain: 'Operations', entryPath: 'examples/resource-planning/index.tsx' },
-      { slug: 'andromeda-signal-room',       name: 'Signal Room',       domain: 'Audio',      entryPath: 'examples/signal-room/index.tsx' },
+      // { slug: 'andromeda-exchange-terminal', name: 'Exchange Terminal', category: 'Dashboard', entryPath: 'examples/exchange-terminal/index.tsx' },
+      { slug: 'andromeda-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
+      { slug: 'andromeda-signal-room',       name: 'Signal Room',       category: 'Media',      entryPath: 'examples/signal-room/index.tsx' },
+    ],
+  },
+  {
+    slug: 'andromeda-pro',
+    name: 'Andromeda Pro',
+    // Free to explore, paid to install. Without this every
+    // andromeda-pro-* item classifies as a free design-system component and the
+    // whole premium library installs for nothing.
+    paidToInstall: true,
+    // Andromeda Pro has NO committed source: its whole tree is injected from
+    // the vault (design-systems/andromeda-pro/) by scripts/inject-premium.mjs
+    // (manifest key `systems`). On a build without that injection the tree is
+    // absent and the generator skips the system entirely rather than emitting
+    // half of it.
+    rootDir: 'design-systems/andromeda-pro',
+    skipIfMissing: true,
+    themeSets: { module: 'components/lib/theme-vars.ts', export: 'andromedaThemeSets' },
+    tokenEntries: [
+      'tokens.ts',
+      'components/lib/utils.ts',
+      'AndromedaIcon.tsx',
+    ],
+    systemEntries: [
+      'components/Alert.tsx',
+      'components/Avatar.tsx',
+      'components/Badge.tsx',
+      'components/Burst.tsx',
+      'components/Button.tsx',
+      'components/Card.tsx',
+      'components/Checkbox.tsx',
+      'components/ChoiceCard.tsx',
+      'components/CornerMarkers.tsx',
+      'components/DataTable.tsx',
+      'components/DateRangePicker.tsx',
+      'components/Drawer.tsx',
+      'components/EmptyState.tsx',
+      'components/FunnelChart.tsx',
+      'components/Gauge.tsx',
+      'components/HeatGrid.tsx',
+      'components/IconButton.tsx',
+      'components/Input.tsx',
+      'components/MediaCard.tsx',
+      'components/MetricChart.tsx',
+      'components/MusicPlayer.tsx',
+      'components/NavItem.tsx',
+      'components/Nodes.tsx',
+      'components/Orb.tsx',
+      'components/PanelHeader.tsx',
+      'components/PanelMenu.tsx',
+      'components/Planet.tsx',
+      'components/ProgressBar.tsx',
+      'components/RadarChart.tsx',
+      'components/Radio.tsx',
+      'components/SearchField.tsx',
+      'components/SegmentedControl.tsx',
+      'components/Sidebar.tsx',
+      'components/Slider.tsx',
+      'components/Spinner.tsx',
+      'components/StatTile.tsx',
+      'components/StrengthMeter.tsx',
+      'components/Table.tsx',
+      'components/Tag.tsx',
+      'components/Textarea.tsx',
+      'components/Toggle.tsx',
+      'components/Tooltip.tsx',
+      'components/TopBar.tsx',
+      'components/TrendChart.tsx',
+      'components/UserCard.tsx',
+      'components/UserMenu.tsx',
+      'components/Waveform.tsx',
+    ],
+    // Pro owns its own `andromeda-pro-` slug namespace, so nothing here can
+    // collide with a published Andromeda Legacy slug and Button needs no
+    // override the way Legacy's does.
+    pinDependencies: true,
+    // Manrope is Pro's default face (tokens.ts fontSans), JetBrains Mono its
+    // mono face. The app loads both through next/font; an installed project
+    // loads neither, so the shipped tokens file self-loads both.
+    fontPackages: ['@fontsource-variable/jetbrains-mono', '@fontsource-variable/manrope'],
+    fontInjectInto: 'tokens.ts',
+    // The picture components install with an example that carries the sample
+    // pictures their pages show, never a default photo baked into the component.
+    componentExamples: {
+      'components/Avatar.tsx': 'examples/_usage/AvatarExample.tsx',
+      'components/MediaCard.tsx': 'examples/_usage/MediaCardExample.tsx',
+      'components/UserCard.tsx': 'examples/_usage/UserCardExample.tsx',
+      'components/UserMenu.tsx': 'examples/_usage/UserMenuExample.tsx',
+    },
+    templates: [
+      // Order here IS the order the overview bento shows. The first one also
+      // takes the lead slot, which spans both columns.
+      { slug: 'andromeda-pro-city-operations',   name: 'City Operations',   category: 'Dashboard',      entryPath: 'examples/city-operations/index.tsx' },
+      { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       category: 'Media',      entryPath: 'examples/signal-room/index.tsx' },
+      { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   category: 'Dashboard',     entryPath: 'examples/mission-control/index.tsx' },
+      { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
+      { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
+      { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication', entryPath: 'examples/sign-in/index.tsx' },
+      { slug: 'andromeda-pro-sign-up',           name: 'Sign Up',           category: 'Authentication', entryPath: 'examples/sign-up/index.tsx' },
     ],
   },
 ]
-
-export function getDesignSystem(slug) {
-  return DESIGN_SYSTEMS.find((s) => s.slug === slug)
-}
-
-export function getDesignSystemTemplate(slug) {
-  for (const system of DESIGN_SYSTEMS) {
-    const template = system.templates.find((t) => t.slug === slug)
-    if (template) return { system, template }
-  }
-  return undefined
-}

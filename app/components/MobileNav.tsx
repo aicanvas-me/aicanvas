@@ -1,31 +1,27 @@
 'use client'
 
-import { useState, useEffect, useRef, useTransition } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   List,
   X,
-  Info,
-  EnvelopeSimple,
-  ChatCircleText,
   GithubLogo,
   XLogo,
-  ArrowElbowDownRight,
   CaretDown,
   DiamondsFour,
-  Flask,
   MagnifyingGlass,
-  PiggyBank,
-  Plug,
-  Question,
 } from '@phosphor-icons/react'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import type { ReactNode } from 'react'
 import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
-import { Button, buttonClasses } from './Button'
+import { CAPTURE_LEAF_RE } from './top-bar-crumbs'
+import { SecondaryNav } from './SecondaryNav'
+import { useComponentSearch } from './useComponentSearch'
+import { Button } from './Button'
+import { buttonClasses } from './buttonClasses'
 import { ThemeToggle } from './ThemeToggle'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
 import { SignedIn } from './auth/SignedIn'
@@ -54,19 +50,12 @@ const SECTIONS: Section[] = [
 // ─── MobileNav ────────────────────────────────────────────────────────────────
 
 export function MobileNav({
-  counts,
-  total,
   promoteDS = false,
 }: {
-  // Server-computed nav counts (passed by the layout) so this client component
-  // never imports the heavy COMPONENTS registry.
-  counts: Record<string, number>
-  total: number
   // promoteDS: mirror the desktop Sidebar — cap Components to its first 4 (rest
   // behind Show more) and auto-expand Andromeda's System/Brain/Templates.
   promoteDS?: boolean
 }) {
-  const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const isHome = pathname === '/components'
@@ -85,17 +74,17 @@ export function MobileNav({
   const [showAllCats, setShowAllCats] = useState(false)
   // Design Systems pole opens by default so Andromeda is one tap away (mirrors
   // the desktop rail, where the DS pole is expanded out of the box).
-  const [collapsedDS, setCollapsedDS] = useState(false)
 
   const toggle = (title: string) =>
     setCollapsed((prev) => ({ ...prev, [title]: !prev[title] }))
 
-  // Close drawer on real route change (pathname only — NOT searchParams,
-  // since typing in search updates ?q= and would otherwise close the drawer
-  // on every keystroke).
-  useEffect(() => {
+  // Close the drawer on a real route change (pathname only, not searchParams:
+  // typing in search updates ?q= and would otherwise close it on every keystroke).
+  const [seenPathname, setSeenPathname] = useState(pathname)
+  if (pathname !== seenPathname) {
+    setSeenPathname(pathname)
     setOpen(false)
-  }, [pathname])
+  }
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -105,56 +94,16 @@ export function MobileNav({
     }
   }, [open])
 
-  // ── Search ──────────────────────────────────────────────────────────────
-  // Local state drives the input; URL is written via a debounced effect so
-  // fast keystrokes don't fight themselves. lastPushed distinguishes our
-  // own pushes from external URL changes (back/forward, category click).
-  const urlQuery = searchParams.get('q') ?? ''
-  const [searchValue, setSearchValue] = useState(urlQuery)
-  const searchInputRef = useRef<HTMLInputElement>(null)
-  const [, startTransition] = useTransition()
+  const { searchValue, setSearchValue, searchInputRef, clearSearch } = useComponentSearch()
 
-  const lastPushed = useRef(urlQuery)
-
-  useEffect(() => {
-    // While the input is focused, local state is sacred — fast typing can put
-    // two debounced pushes in flight, and an older Transition committing
-    // after lastPushed has advanced would otherwise clobber the input.
-    if (document.activeElement === searchInputRef.current) return
-    if (urlQuery === lastPushed.current) return
-    setSearchValue(urlQuery)
-    lastPushed.current = urlQuery
-  }, [urlQuery])
-
-  useEffect(() => {
-    if (searchValue === urlQuery) return
-    const timer = setTimeout(() => {
-      lastPushed.current = searchValue
-      const params = new URLSearchParams(searchParams.toString())
-      if (searchValue) params.set('q', searchValue)
-      else params.delete('q')
-      const qs = params.toString()
-      startTransition(() => {
-        router.replace(qs ? `/components?${qs}` : '/components', { scroll: false })
-      })
-    }, 150)
-    return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchValue])
-
-  const clearSearch = () => {
-    setSearchValue('')
-    searchInputRef.current?.focus()
-  }
-
-  // The design-systems / ideation layouts only render the *desktop* embedded
-  // Sidebar (hidden below md), so this drawer is the only mobile nav on those
-  // routes — it must stay visible there. Suppress it only where a route owns
-  // the full viewport: full-screen template leaves and the /lab subtree (LAB
-  // ships its own top bar).
+  // The desktop Sidebar hides itself below md on every route, so this drawer
+  // is the only mobile nav there is — it must stay visible everywhere.
+  // Suppress it only where a route owns the full viewport: full-screen
+  // template leaves and the /lab subtree (LAB ships its own top bar).
   const hideMobileNav =
     pathname?.startsWith('/lab') ||
-    TEMPLATE_LEAF_RE.test(pathname ?? '')
+    TEMPLATE_LEAF_RE.test(pathname ?? '') ||
+    CAPTURE_LEAF_RE.test(pathname ?? '')
   if (hideMobileNav) return null
 
   // On a route that pins itself dark, this drawer is the one piece of site
@@ -258,17 +207,36 @@ export function MobileNav({
                     'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
                 }}
               >
+                {/* ── Design Systems pole (shared, identical to the desktop rail) ── */}
+                <DesignSystemsPole
+                  onNavigate={() => setOpen(false)}
+                />
+
                 {SECTIONS.map((section) => {
                   const isCollapsed = collapsed[section.title] ?? false
                   const isDisabled = section.disabled === true
                   const isComponents = section.title === 'Components'
-                  // Promoted view shows the first 4 categories; rest behind Show more.
+                  // Promoted view shows the first 4 categories; rest behind Show
+                  // more. The category you are ON always rides along, so the
+                  // drawer never hides the page you are looking at.
                   const catLabels =
                     isComponents && promoteDS && !showAllCats
-                      ? section.labels.slice(0, 4)
+                      ? section.labels.filter(
+                          (l, i) => i < 4 || l === activeCategory,
+                        )
                       : section.labels
+                  // Count what is ACTUALLY hidden: the active category rides
+                  // along past the cap, so a plain length - 4 overcounts by one
+                  // whenever you are inside one of the capped categories. The
+                  // expanded state keeps the control so it can collapse back.
+                  const hiddenCatCount =
+                    isComponents && promoteDS
+                      ? section.labels.filter(
+                          (l, i) => i >= 4 && l !== activeCategory,
+                        ).length
+                      : 0
                   const hasHiddenCats =
-                    isComponents && promoteDS && section.labels.length > 4
+                    isComponents && promoteDS && (showAllCats || hiddenCatCount > 0)
 
                   return (
                     <div key={section.title} className="mb-3">
@@ -276,11 +244,7 @@ export function MobileNav({
                         <Link
                           href="/components"
                           onClick={() => setOpen(false)}
-                          className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                            activeCategory === 'All Components'
-                              ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                              : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                          }`}
+                          className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
                         >
                           <span>{section.icon}</span>
                           <span className="flex-1 whitespace-nowrap">Components &amp; Blocks</span>
@@ -306,7 +270,29 @@ export function MobileNav({
                       )}
 
                       {!isCollapsed && !isDisabled && (
+                        <div className="relative">
+                          {/* One vertical rail replaces the per-row elbow
+                              arrows, same as the desktop sidebar. */}
+                          <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
                         <ul className="space-y-0.5">
+                          {/* "All Components" is its own leaf here too, so the
+                              drawer and the desktop rail list the same rows. */}
+                          {isComponents && (
+                            <li>
+                              <Link
+                                href="/components"
+                                onClick={() => setOpen(false)}
+                                className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
+                                  activeCategory === 'All Components'
+                                    ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                                    : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
+                                }`}
+                              >
+                                <span aria-hidden className="w-3 shrink-0" />
+                                <span className="flex-1">All Components</span>
+                              </Link>
+                            </li>
+                          )}
                           {catLabels.map((label) => {
                             const isActive = label === activeCategory
                             const cat = getCategoryByLabel(label)
@@ -324,122 +310,40 @@ export function MobileNav({
                                       : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
                                   }`}
                                 >
-                                  <ArrowElbowDownRight weight="regular" size={12} className="shrink-0 text-sand-300 dark:text-sand-700" />
+                                  <span aria-hidden className="w-3 shrink-0" />
                                   <span className="flex-1">{label}</span>
                                 </Link>
                               </li>
                             )
                           })}
-                          {hasHiddenCats && (
-                            <li>
-                              <button
-                                type="button"
-                                onClick={() => setShowAllCats((v) => !v)}
-                                className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
-                              >
-                                <CaretDown
-                                  size={12}
-                                  weight="regular"
-                                  className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
-                                />
-                                <span className="flex-1 text-left">
-                                  {showAllCats ? 'Show less' : `Show ${section.labels.length - 4} more`}
-                                </span>
-                              </button>
-                            </li>
-                          )}
                         </ul>
+                        </div>
+                      )}
+                      {/* Show more sits OUTSIDE the rail, same as the desktop
+                          sidebar: its caret shares the rail's column. */}
+                      {!isCollapsed && !isDisabled && hasHiddenCats && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAllCats((v) => !v)}
+                          className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
+                        >
+                          <CaretDown
+                            size={12}
+                            weight="regular"
+                            className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
+                          />
+                          <span className="flex-1 text-left">
+                            {showAllCats ? 'Show less' : `Show ${hiddenCatCount} more`}
+                          </span>
+                        </button>
                       )}
                     </div>
                   )
                 })}
 
-                {/* ── Design Systems pole (shared, identical to the desktop rail) ── */}
-                <DesignSystemsPole
-                  collapsed={collapsedDS}
-                  onToggle={() => setCollapsedDS((prev) => !prev)}
-                  onNavigate={() => setOpen(false)}
-                  promoteDS={promoteDS}
-                />
-
-                {/* Lab, Get MCP, Pricing, About — follows same pattern as section headers */}
                 <div className="mb-3 h-px bg-sand-200 dark:bg-sand-800" />
                 <div className="mb-3">
-                  <Link
-                    href="/lab"
-                    onClick={() => setOpen(false)}
-                    className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                      pathname?.startsWith('/lab')
-                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                    }`}
-                  >
-                    <span><Flask weight="regular" size={16} /></span>
-                    <span className="flex-1">Lab</span>
-                  </Link>
-                  <Link
-                    href="/mcp"
-                    onClick={() => setOpen(false)}
-                    className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                      pathname === '/mcp'
-                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                    }`}
-                  >
-                    <span><Plug weight="regular" size={16} /></span>
-                    <span className="flex-1">Get MCP</span>
-                  </Link>
-                  <Link
-                    href="/pricing"
-                    onClick={() => setOpen(false)}
-                    className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                      pathname === '/pricing'
-                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                    }`}
-                  >
-                    <span><PiggyBank weight="regular" size={16} /></span>
-                    <span className="flex-1">Pricing</span>
-                  </Link>
-                  <Link
-                    href="/about"
-                    onClick={() => setOpen(false)}
-                    className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                      pathname === '/about'
-                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                    }`}
-                  >
-                    <span><Info weight="regular" size={16} /></span>
-                    <span className="flex-1">About</span>
-                  </Link>
-                  <Link
-                    href="/faq"
-                    onClick={() => setOpen(false)}
-                    className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                      pathname === '/faq'
-                        ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                        : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                    }`}
-                  >
-                    <span><Question weight="regular" size={16} /></span>
-                    <span className="flex-1">FAQ</span>
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-                  >
-                    <span><EnvelopeSimple weight="regular" size={16} /></span>
-                    <span className="flex-1">Contact</span>
-                  </Link>
-                  <Link
-                    href="/feedback"
-                    onClick={() => setOpen(false)}
-                    className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-                  >
-                    <span><ChatCircleText weight="regular" size={16} /></span>
-                    <span className="flex-1">Feedback</span>
-                  </Link>
+                  <SecondaryNav pathname={pathname} variant="drawer" onNavigate={() => setOpen(false)} />
                 </div>
               </nav>
 

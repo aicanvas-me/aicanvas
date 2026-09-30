@@ -1,12 +1,15 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect, useMemo } from 'react'
+import { useState, useCallback, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Check, Copy, DownloadSimple, Terminal } from '@phosphor-icons/react'
 import { zipSync, strToU8 } from 'fflate'
 import { Button } from '../../../components/Button'
+import { useTopBarInstallSlot } from '../../../components/TopBar'
 import { BrainRender } from './BrainRender'
+import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useCopied } from '@/app/components/useCopied'
+import { track } from '@/app/lib/analytics'
 
 // AI Canvas site tokens: sand neutrals + olive accent, Manrope UI + Geist mono for code.
 // One flat palette per site theme, read through CSS variables (brainVars) so
@@ -54,7 +57,7 @@ interface Section {
 function getDisplayName(f: BrainFile): string {
   const parts = f.path.split('/')
   const name = parts.at(-1) ?? ''
-  if (name === 'rules.md') return 'Brain Index'
+  if (name === 'rules.md') return 'AI Brain Index'
   if (name === 'SKILL.md') return parts.at(-2) ?? 'Skill'
   if (name.endsWith('.rules.md')) return name.replace('.rules.md', '')
   return name.replace('.md', '')
@@ -307,11 +310,10 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
       if (!target) return
       e.preventDefault()
       const rel = target.getAttribute('data-brain-file') ?? ''
-      const found = files.find((f) => {
-        const parts = f.path.split('/')
+      const found = files.find((f) =>
         // Match by the tail segments in the href (e.g. "foundations/build-workflow.md")
-        return f.path.endsWith(rel.replace(/^\.\.\//, '').replace(/^\.\//, ''))
-      })
+        f.path.endsWith(rel.replace(/^\.\.\//, '').replace(/^\.\//, '')),
+      )
       if (found) setActiveFile(found)
     },
     [files],
@@ -341,16 +343,14 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
   // files, which only this component has. The slot div is display:none below
   // md (the whole bar is), so a portal there would be invisible on mobile; the
   // inline md:hidden fallback below covers small screens instead.
-  const [installSlot, setInstallSlot] = useState<HTMLElement | null>(null)
-  useEffect(() => {
-    setInstallSlot(document.getElementById('brain-install-slot'))
-  }, [])
+  const installSlot = useTopBarInstallSlot()
 
   // Download the pre-zipped bytes — the secondary path for anyone who prefers a
   // file over a command. The viewer only renders for entitled users, so this is
   // already access-gated.
   const downloadBrain = useCallback(() => {
     if (!zip) return // zip still computing (first few ms after mount)
+    track('Brain Download', {})
     const blob = new Blob([zip.bytes], { type: 'application/zip' })
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -398,7 +398,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
       {/* Nav (file index) — rendered on the RIGHT via row-reverse on the root,
           so it doesn't sit beside the global app sidebar on the left. */}
       <nav
-        aria-label="Brain sections"
+        aria-label="AI Brain sections"
         className="brain-nav-desktop"
         style={{
           width: 220,
@@ -491,7 +491,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
             the brain files from this dropdown instead. */}
         <div className="brain-mobile-nav brain-pad-x" style={{ padding: '16px 40px 0' }}>
           <select
-            aria-label="Brain file"
+            aria-label="AI Brain file"
             value={activeFile.path}
             onChange={(e) => {
               const f = files.find((x) => x.path === e.target.value)
@@ -558,23 +558,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
 // update (a no-op on first run, an in-place refresh on re-runs — without it the
 // CLI prompts per existing file).
 function useBrainInstallCommand() {
-  const [token, setToken] = useState<string | null>(null)
-  useEffect(() => {
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [])
+  const token = useInstallToken()
   const reference = token
     ? `"https://aicanvas.me/r/andromeda-brain.json?token=${token}"`
     : '@aicanvas/andromeda-brain'
@@ -635,7 +619,7 @@ function BrainInstallButton({
         }}
       >
         <Terminal weight="regular" size={13} />
-        Get the Brain
+        Get the AI Brain
       </Button>
 
       {open && (
@@ -650,7 +634,12 @@ function BrainInstallButton({
                   One command
                 </span>
               </div>
-              <Button variant="outline" size="xs" onClick={handleCopy} aria-label="Copy CLI command">
+              <Button
+                variant="outline"
+                size="xs"
+                onClick={async () => track('CLI Copy', { component: 'andromeda-brain', ok: await handleCopy() })}
+                aria-label="Copy CLI command"
+              >
                 {copied ? (
                   <>
                     <Check weight="regular" size={13} className="text-olive-500 dark:text-olive-400" />
@@ -720,7 +709,7 @@ function BrainInstallCard({
     >
       {/* Title */}
       <div style={{ fontSize: 14, fontWeight: 600, color: C.text.primary, marginBottom: 12 }}>
-        Get the brain
+        Get the AI Brain
       </div>
 
       {/* npx command box (full width) */}
@@ -754,7 +743,7 @@ function BrainInstallCard({
         <button
           type="button"
           className="brain-dl"
-          onClick={copy}
+          onClick={async () => track('CLI Copy', { component: 'andromeda-brain', ok: await copy() })}
           style={{
             display: 'inline-flex',
             alignItems: 'center',

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Info } from '@phosphor-icons/react/dist/ssr'
-import { HeaderSocials } from '../components/HeaderSocials'
 import { SiteFooter } from '../components/SiteFooter'
 import { buttonClasses } from '../components/buttonClasses'
 import { StackedCards } from '../home/islands'
@@ -20,19 +19,14 @@ export const metadata: Metadata = {
 // card says thank you — this page only exists because someone just paid.
 const THANKS_CARDS = ['Thank you', 'Merci', 'Danke', 'Gracias', 'Grazie', 'ありがとう', '谢谢', 'Tack', '♥']
 
-// ─── /welcome ─────────────────────────────────────────────────────────────────
-// THE post-purchase page — every confirmed Paddle checkout lands here (signed-in
-// fast-path and anonymous pending-claim alike; see app/lib/paddle/client.ts).
-// State-aware, three views:
-//   • no session      → the claim form: the webhook provisioned a passwordless
-//     account under the checkout email; enter it, get a one-time sign-in link.
-//     Deliberately NO OAuth here — a Google login under a different address
-//     creates a fresh free account and shows a paying buyer the paywall.
-//   • session, premium → advantage first (every install command carries your
-//     token), browse CTAs, then the quiet terminal/MCP helper card.
-//   • session, free    → mismatch view: this account holds no Premium; claim
-//     the checkout-email account instead (or see plans).
-// Claiming is self-service, so a lost/delayed claim email is never a lockout.
+// THE post-purchase page: every confirmed Paddle checkout lands here, signed-in
+// fast-path and anonymous pending-claim alike. Three views: no session gets the
+// claim form (the webhook provisioned a passwordless account under the checkout
+// email), a premium session gets the token-carrying install commands, a free
+// session gets the mismatch view. Deliberately NO OAuth on the claim form: a
+// Google login under a different address creates a fresh free account and shows
+// a paying buyer the paywall. Claiming is self-service, so a lost or delayed
+// claim email is never a lockout.
 
 export default async function WelcomePage() {
   // Fail SOFT to the claim view: this page must render for a buyer even when
@@ -64,16 +58,6 @@ export default async function WelcomePage() {
     // Scoped dark: this page is a dark set piece with no light rendering, so
     // it opts out of the site theme the way pinned-dark.ts documents.
     <div className="dark min-h-full bg-sand-950">
-      <header className="sticky top-0 z-30 hidden h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-800 bg-sand-950 px-6 md:grid">
-        <div />
-        <Link href="/welcome" className="text-sm font-semibold text-olive-500 transition-colors hover:text-olive-400">
-          /Welcome
-        </Link>
-        <div className="flex items-center justify-end">
-          <HeaderSocials />
-        </div>
-      </header>
-
       <main className="relative mx-auto w-full min-w-0 max-w-4xl px-4 pt-6 pb-16 sm:px-6 sm:pt-12">
         <section className="flex flex-col items-center text-center">
           <StackedCards cards={THANKS_CARDS} />
@@ -102,8 +86,8 @@ export default async function WelcomePage() {
                   : 'Everything is unlocked.'}
               </p>
               <div className="aic-hero-rise mt-7 flex flex-wrap items-center justify-center gap-3" style={{ animationDelay: '0.34s' }}>
-                <Link href="/design-systems/andromeda" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-                  Browse Andromeda
+                <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
+                  Browse Andromeda Pro
                   <ArrowRight weight="regular" size={14} />
                 </Link>
                 <Link

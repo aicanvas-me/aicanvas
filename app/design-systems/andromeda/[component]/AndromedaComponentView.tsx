@@ -9,10 +9,10 @@ import {
   Check,
   Code,
   Copy,
-  CornersIn,
   CornersOut,
   Eye,
   Terminal,
+  X,
 } from '@phosphor-icons/react'
 import { Step } from '../../../components/Step'
 import { copyText } from '../../../components/useCopied'
@@ -25,12 +25,15 @@ import { andromedaRegistrySlug } from '../../../_lib/andromeda/andromeda-meta'
 import { tokens } from '../../../../design-systems/andromeda/tokens'
 import { themeColor } from '../../../../design-systems/andromeda/components/lib/utils'
 import { trackInstall } from '../../../lib/track-install'
+import { track } from '../../../lib/analytics'
 import { useSession } from '../../../components/auth/SessionProvider'
+import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useAuthModal } from '../../../components/auth/AuthModalProvider'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
-import { Paywall, type PaywallReason } from '../../../components/billing/Paywall'
+import { Paywall } from '../../../components/billing/Paywall'
 import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 
 type RelatedItem = { slug: string; name: string; image?: string }
 
@@ -68,25 +71,8 @@ export function AndromedaComponentView({
 
   // Personalized install: when signed in, the copied command carries the
   // user's API token so the registry attributes the pull to the account.
-  // Signed out = plain @aicanvas command. The token route is resilient
-  // (returns null on any error), so this is a no-op fallback to the anonymous
-  // command rather than a break.
-  const [fetchedToken, setFetchedToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => { if (!cancelled) setFetchedToken(d?.token ?? null) })
-        .catch(() => {})
-    refresh()
-    // Re-fetch on focus so a token rotated in another tab isn't left stale here.
-    window.addEventListener('focus', refresh)
-    return () => { cancelled = true; window.removeEventListener('focus', refresh) }
-  }, [user])
-  // Signed-out derives to null at render — no setState in the effect body.
-  const userToken = user ? fetchedToken : null
+  // Signed out = plain @aicanvas command.
+  const userToken = useInstallToken()
   const [tab, setTab] = useState<'preview' | 'code'>('preview')
   const [codeCopied, setCodeCopied] = useState(false)
   const [cliCopied, setCliCopied] = useState(false)
@@ -104,19 +90,14 @@ export function AndromedaComponentView({
   type CodeState =
     | { status: 'idle' | 'loading' }
     | { status: 'ready'; code: string; highlighted?: string }
-    | { status: 'locked'; reason: PaywallReason; limit?: number }
+    | { status: 'locked' }
   const [codeState, setCodeState] = useState<CodeState>({ status: 'idle' })
   const openCode = useCallback(async () => {
     setCodeState({ status: 'loading' })
     try {
-      const res = await fetch(`/api/component-code?slug=${registrySlug}`)
-      if (res.status === 402) {
-        const { limit } = await res.json().catch(() => ({}))
-        setCodeState({ status: 'locked', reason: 'premium-only', limit })
-        return
-      }
+      const res = await fetch(`/api/component-code?slug=${registrySlug}&system=andromeda`)
       if (!res.ok) {
-        setCodeState({ status: 'locked', reason: 'premium-only' })
+        setCodeState({ status: 'locked' })
         return
       }
       // The endpoint highlights server-side and returns both; keep `highlighted`
@@ -125,7 +106,7 @@ export function AndromedaComponentView({
       const { code, highlighted } = await res.json()
       setCodeState({ status: 'ready', code: code ?? '', highlighted })
     } catch {
-      setCodeState({ status: 'locked', reason: 'premium-only' })
+      setCodeState({ status: 'locked' })
     }
   }, [registrySlug])
   // Fetch the first time the source becomes visible (Code tab or Manual tab).
@@ -184,9 +165,12 @@ export function AndromedaComponentView({
   const renderCodePane = () =>
     codeState.status === 'locked' ? (
       <Paywall
-        reason={codeState.reason}
-        limit={codeState.limit}
         name={name}
+        // Both grounds this pane renders on are light-aware, so the wall follows
+        // them rather than staying a dark slab. Each of the two wrappers names
+        // its own colour in --paywall-surface and this inherits whichever one it
+        // landed inside.
+        appearance="themed"
         // Remix with AI is deliberately not offered on system components (see
         // the note further down), so the default sub-copy would promise a
         // prompt this page does not have.
@@ -238,6 +222,8 @@ export function AndromedaComponentView({
   // returning the visitor here after they create their free account. The install
   // UI stays fully visible; only the COPY actions route here when signed out.
   function promptFreeAccount() {
+    // Anonymous count — the beacon's path property names the component.
+    track('Install Gate Shown', {})
     openAuthModal({
       mode: 'gate',
       next: `/design-systems/andromeda/${slug}`,
@@ -252,31 +238,27 @@ export function AndromedaComponentView({
       promptFreeAccount()
       return
     }
-    try {
-      trackInstall(registrySlug, 'andromeda', pkgManager)
-      await navigator.clipboard.writeText(cliCommand)
-      setCliCopied(true)
-      setTimeout(() => setCliCopied(false), 2000)
-    } catch {}
+    trackInstall(registrySlug, 'andromeda', pkgManager)
+    const ok = await copyText(cliCommand)
+    track('CLI Copy', { component: registrySlug, ok })
+    if (!ok) return
+    setCliCopied(true)
+    setTimeout(() => setCliCopied(false), 2000)
   }
 
   return (
     <>
-    <main className="mx-auto w-full max-w-4xl px-4 pt-8 pb-8 sm:px-6 sm:pt-14">
+    <PageFrame as="main" className={`${PAGE_TOP} pb-8`}>
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
-          {name}
-        </h1>
-        <p className="mt-3 max-w-2xl text-base text-sand-600 dark:text-sand-400">
-          {description}
-        </p>
+        <PageTitle gap="none" rank="section">{name}</PageTitle>
+        <PageLead>{description}</PageLead>
       </div>
 
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
-      <div ref={mainCardRef} className="overflow-hidden rounded-2xl border border-sand-300 bg-sand-50 dark:border-sand-800 dark:bg-sand-900">
+      <div ref={mainCardRef} className="overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
         {/* Tab bar */}
-        <div className="flex items-center justify-between border-b border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-between border-b border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           <div className="flex items-center gap-0.5">
             <button
               type="button"
@@ -284,7 +266,7 @@ export function AndromedaComponentView({
               className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'preview'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                  : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                  : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
               <Eye weight="regular" size={15} />
@@ -296,7 +278,7 @@ export function AndromedaComponentView({
               className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'code'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                  : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
+                  : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
               <Code weight="regular" size={15} />
@@ -306,7 +288,7 @@ export function AndromedaComponentView({
 
           {tab === 'preview' && (
             <div className="group/fullscreen relative">
-              <Button variant="accent" size="md" iconOnly aria-label="Full screen" onClick={() => setFullscreen(true)}>
+              <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={() => { track('Fullscreen Open', { component: registrySlug }); setFullscreen(true) }}>
                 <CornersOut weight="regular" size={16} />
               </Button>
               <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-700 bg-sand-800 px-2.5 py-1.5 text-xs text-sand-300 group-hover/fullscreen:block">
@@ -322,16 +304,19 @@ export function AndromedaComponentView({
         <div className="relative isolate min-h-[420px]">
           {tab === 'preview' ? (
             <div
-              className="flex min-h-[420px] items-center justify-center overflow-auto p-8 sm:p-12"
-              style={{ backgroundColor: themeColor.surface.base }}
+              className="flex min-h-[420px] items-center justify-center overflow-auto bg-sand-50 p-8 dark:bg-sand-950 sm:p-12"
             >
               {!fullscreen && <AndromedaDemo slug={slug} />}
             </div>
           ) : (
             <div
-              className="min-h-[420px] overflow-auto p-5"
+              // One source, not two copies of one value: the pane PAINTS
+              // --paywall-surface and the wall inside fades to that same
+              // variable, so the ground and the wall on it cannot drift apart.
+              className="min-h-[420px] overflow-auto p-5 [--paywall-surface:var(--color-sand-50)] dark:[--paywall-surface:var(--color-sand-950)]"
               style={{
-                backgroundColor: themeColor.surface.base,
+                // Fallback so a dropped class can never paint transparent.
+                backgroundColor: 'var(--paywall-surface, var(--color-sand-50))',
                 maxHeight: '70vh',
                 scrollbarWidth: 'thin',
               }}
@@ -345,7 +330,7 @@ export function AndromedaComponentView({
             Remix with AI deliberately omitted because mutating a system
             component breaks the system contract. Users compose AT the
             system level, not per-component. */}
-        <div className="flex items-center justify-end gap-2 border-t border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           {/* Save — signed out, opens the same soft-gate modal as Copy CLI.
               Keyed on the REGISTRY slug (not the page slug) so the Button
               override (andromeda-button-system) can't collide with the free
@@ -380,7 +365,10 @@ export function AndromedaComponentView({
           <div className="flex border-b border-sand-300 bg-sand-50 dark:border-sand-800 dark:bg-sand-900">
             <button
               type="button"
-              onClick={() => setInstallTab('cli')}
+              onClick={() => {
+                if (installTab !== 'cli') track('Install Tab Switch', { component: registrySlug, tab: 'cli' })
+                setInstallTab('cli')
+              }}
               className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                 installTab === 'cli'
                   ? 'text-sand-900 dark:text-sand-50'
@@ -394,7 +382,10 @@ export function AndromedaComponentView({
             </button>
             <button
               type="button"
-              onClick={() => setInstallTab('manual')}
+              onClick={() => {
+                if (installTab !== 'manual') track('Install Tab Switch', { component: registrySlug, tab: 'manual' })
+                setInstallTab('manual')
+              }}
               className={`relative px-4 py-2.5 text-sm font-semibold transition-colors ${
                 installTab === 'manual'
                   ? 'text-sand-900 dark:text-sand-50'
@@ -491,7 +482,7 @@ export function AndromedaComponentView({
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Copy and paste the following code into your project:
                   </p>
-                  <div className="relative rounded-lg bg-sand-200 dark:bg-sand-950">
+                  <div className="relative rounded-lg bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
                     <div className="flex items-center justify-between border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                         {name}.tsx
@@ -654,7 +645,7 @@ export function AndromedaComponentView({
       )}
 
       <SiteFooter />
-    </main>
+    </PageFrame>
 
     <AnimatePresence>
       {fullscreen && (
@@ -686,7 +677,7 @@ export function AndromedaComponentView({
               onClick={() => setFullscreen(false)}
               className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
             >
-              <CornersIn weight="regular" size={17} />
+              <X weight="regular" size={16} />
             </button>
           </motion.div>
         </motion.div>

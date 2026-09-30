@@ -6,7 +6,6 @@ import { premiumEnabled } from '../../../lib/flags'
 import { isPremiumNow, type SubStatus } from '../../../lib/identity/tier'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
 import { AccountTabs } from './AccountTabs'
-import { AccountTopBar } from './AccountTopBar'
 
 export default async function MemberLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient()
@@ -32,7 +31,6 @@ export default async function MemberLayout({ children }: { children: ReactNode }
 
   return (
     <>
-      <AccountTopBar />
       <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
         <div className="mb-6 flex items-center gap-4 sm:mb-8">
           <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-12 w-12 shrink-0 text-xl sm:h-16 sm:w-16 sm:text-2xl" />

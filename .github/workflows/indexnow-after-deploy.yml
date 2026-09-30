@@ -1,0 +1,70 @@
+name: indexnow after deploy
+
+# After each production deploy goes live, tell IndexNow (Bing, Yandex, Seznam,
+# Naver) about sitemap URLs it has not been told about yet. It waits for the
+# Production deployment status Vercel posts to GitHub for this commit, so it
+# pings what production actually serves. The list of already-pinged URLs is
+# kept in the Actions cache. Uses only the public key file; no secrets.
+#
+# Triggered by push, not deployment_status: Vercel's deployments carry a bare
+# sha as their ref, and the cache is scoped by ref, so a deployment_status run
+# could not find the list the previous run saved.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  deployments: read
+
+# One run at a time. A newer deploy may replace an older run still waiting to
+# start, which is fine: it pings against the same sitemap.
+concurrency:
+  group: indexnow-main
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Wait for the production deploy of this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          deadline=$(( SECONDS + 900 ))
+          while (( SECONDS < deadline )); do
+            id="$(gh api "repos/${{ github.repository }}/deployments?sha=${{ github.sha }}&environment=Production" --jq '.[0].id // empty')"
+            if [[ -n "$id" ]]; then
+              state="$(gh api "repos/${{ github.repository }}/deployments/$id/statuses" --jq '.[0].state // empty')"
+              echo "deployment $id: ${state:-no status yet}"
+              [[ "$state" == "success" ]] && exit 0
+              if [[ "$state" == "failure" || "$state" == "error" ]]; then
+                echo "::error::The production deploy of this commit failed; nothing pinged."
+                exit 1
+              fi
+            else
+              echo "no production deployment for this commit yet"
+            fi
+            sleep 20
+          done
+          echo "::error::No successful production deploy within 15 minutes; nothing pinged."
+          exit 1
+      - name: Restore the list of URLs already pinged
+        uses: actions/cache/restore@v4
+        with:
+          path: indexnow-state.json
+          key: indexnow-state-${{ github.run_id }}
+          restore-keys: indexnow-state-
+      - name: Ping new URLs
+        run: node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/indexnow.ts --state=indexnow-state.json
+      - name: Save the list
+        uses: actions/cache/save@v4
+        with:
+          path: indexnow-state.json
+          key: indexnow-state-${{ github.run_id }}

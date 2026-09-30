@@ -11,8 +11,9 @@
  *
  * Needs IMAGEKIT_PRIVATE_KEY in .env.local (private_… from the dashboard).
  */
-import { readdir, readFile } from 'fs/promises'
+import { readdir } from 'fs/promises'
 import path from 'path'
+import { uploadToImageKit } from './lib/imagekit.mjs'
 
 if (process.env.IMAGEKIT_PRIVATE_KEY === undefined) {
   try { process.loadEnvFile('.env.local') } catch {}
@@ -29,30 +30,7 @@ if (!SRC) {
   process.exit(1)
 }
 
-const IMAGEKIT_UPLOAD = 'https://upload.imagekit.io/api/v1/files/upload'
 const FOLDER = '/user-avatars'
-const auth = Buffer.from(`${IMAGEKIT_PRIVATE}:`).toString('base64')
-
-async function upload(localPath, fileName) {
-  const base64 = (await readFile(localPath)).toString('base64')
-  const body = new FormData()
-  body.append('file', `data:image/png;base64,${base64}`)
-  body.append('fileName', fileName)
-  body.append('folder', FOLDER)
-  body.append('useUniqueFileName', 'false')
-  body.append('overwriteFile', 'true')
-
-  const res = await fetch(IMAGEKIT_UPLOAD, { method: 'POST', headers: { Authorization: `Basic ${auth}` }, body })
-  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`)
-  const { url } = await res.json()
-
-  await fetch('https://api.imagekit.io/v1/files/purge', {
-    method: 'POST',
-    headers: { Authorization: `Basic ${auth}`, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ url }),
-  })
-  return url
-}
 
 const files = (await readdir(SRC))
   .filter((f) => f.toLowerCase().endsWith('.png'))
@@ -67,7 +45,12 @@ console.log(`${files.length} files → ImageKit ${FOLDER}\n`)
 let n = 0
 for (const file of files) {
   const id = `avatar-${String(++n).padStart(2, '0')}`
-  const url = await upload(path.join(SRC, file), `${id}.png`)
+  const url = await uploadToImageKit({
+    localPath: path.join(SRC, file),
+    fileName: `${id}.png`,
+    privateKey: IMAGEKIT_PRIVATE,
+    folder: FOLDER,
+  })
   console.log(`  ${id}  ←  ${file}\n           ${url}`)
 }
 console.log(`\n${n} uploaded → https://ik.imagekit.io/aitoolkit${FOLDER}/`)

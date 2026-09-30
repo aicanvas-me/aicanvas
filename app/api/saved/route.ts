@@ -1,9 +1,8 @@
 import { NextResponse, type NextRequest } from 'next/server'
-import { createClient } from '../../lib/supabase/server'
+import { sessionUser, unauthenticated } from '../../lib/require-user'
 
 export async function GET() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { supabase, user } = await sessionUser()
   if (!user) return NextResponse.json({ slugs: [] })
 
   const { data, error } = await supabase
@@ -17,9 +16,8 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  const { supabase, user } = await sessionUser()
+  if (!user) return unauthenticated()
 
   const body = await request.json().catch(() => null)
   if (!body?.slug) return NextResponse.json({ error: 'slug required' }, { status: 400 })
@@ -51,9 +49,8 @@ export async function POST(request: NextRequest) {
 // inline collection picker — separate from POST so toggling the heart on
 // a card doesn't accidentally clear a user-assigned collection.
 export async function PATCH(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  const { supabase, user } = await sessionUser()
+  if (!user) return unauthenticated()
 
   const body = await request.json().catch(() => null)
   if (!body?.slug) return NextResponse.json({ error: 'slug required' }, { status: 400 })
@@ -73,9 +70,8 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return NextResponse.json({ error: 'unauthenticated' }, { status: 401 })
+  const { supabase, user } = await sessionUser()
+  if (!user) return unauthenticated()
 
   const body = await request.json().catch(() => null)
   if (!body?.slug) return NextResponse.json({ error: 'slug required' }, { status: 400 })

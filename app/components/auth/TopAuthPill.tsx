@@ -1,13 +1,13 @@
 'use client'
 
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { CaretUpDown, ClockClockwise, Flask, Gear, Heart, Lightning, SignIn, SignOut, User } from '@phosphor-icons/react'
+import { CaretUpDown, SignIn } from '@phosphor-icons/react'
 import { useSession } from './SessionProvider'
 import { useAuthModal } from './AuthModalProvider'
 import { createClient } from '../../lib/supabase/client'
 import { Button } from '../Button'
+import { AccountMenuItems } from './AccountMenuItems'
 import { EmailAvatar, photoFromUser } from './EmailAvatar'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
 import { usePremiumStatus } from '../billing/usePremiumStatus'
@@ -76,67 +76,12 @@ export function TopAuthPill() {
             <div className="border-b border-sand-200 px-3 py-2 text-xs text-sand-600 dark:border-sand-800 dark:text-sand-400">
               <span className="block truncate">{email}</span>
             </div>
-            {status === 'not-premium' && (
-              <button
-                type="button"
-                onClick={() => { setOpen(false); openPaywall({ reason: 'upgrade' }) }}
-                className="flex w-full items-center gap-2 border-b border-sand-200 px-3 py-2 text-sm font-semibold text-olive-600 transition-colors hover:bg-sand-50 dark:border-sand-700 dark:text-olive-500 dark:hover:bg-sand-800"
-              >
-                <Lightning size={14} weight="regular" />
-                Upgrade to Premium
-              </button>
-            )}
-            {/* Mirrors the account tabs (Saved · Made in Lab · Activity ·
-                Settings · Profile) so the dropdown is a quick teleport into
-                any account view. */}
-            <Link
-              href="/account/saved"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-50 dark:text-sand-300 dark:hover:bg-sand-800"
-            >
-              <Heart size={14} weight="regular" />
-              Saved
-            </Link>
-            <Link
-              href="/account/lab"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-50 dark:text-sand-300 dark:hover:bg-sand-800"
-            >
-              <Flask size={14} weight="regular" />
-              Made in Lab
-            </Link>
-            <Link
-              href="/account/history"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-50 dark:text-sand-300 dark:hover:bg-sand-800"
-            >
-              <ClockClockwise size={14} weight="regular" />
-              Activity
-            </Link>
-            <Link
-              href="/account/settings"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-50 dark:text-sand-300 dark:hover:bg-sand-800"
-            >
-              <Gear size={14} weight="regular" />
-              Settings
-            </Link>
-            <Link
-              href="/account"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 px-3 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-50 dark:text-sand-300 dark:hover:bg-sand-800"
-            >
-              <User size={14} weight="regular" />
-              Profile
-            </Link>
-            <button
-              type="button"
-              onClick={signOut}
-              className="flex w-full items-center gap-2 border-t border-sand-200 px-3 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-50 dark:border-sand-700 dark:text-sand-300 dark:hover:bg-sand-800"
-            >
-              <SignOut size={14} weight="regular" />
-              Sign out
-            </button>
+            <AccountMenuItems
+              showUpgrade={status === 'not-premium'}
+              onUpgrade={() => { setOpen(false); openPaywall({ reason: 'upgrade' }) }}
+              onNavigate={() => setOpen(false)}
+              onSignOut={signOut}
+            />
           </div>
         )}
     </div>

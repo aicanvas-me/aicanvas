@@ -3,6 +3,7 @@ import { createClient } from '../../../lib/supabase/server'
 import type { SavedComponent } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
 import { getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
+import { getAndromedaComponentMeta as getAndromedaProComponentMeta } from '../../../_lib/andromeda-pro/andromeda-meta'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { SavedList, type SavedRow } from './SavedList'
@@ -54,7 +55,15 @@ export default async function SavedPage() {
   const bySlug = new Map(COMPONENTS.map((c) => [c.slug, c]))
   const rows: SavedRow[] = raw.map((r) => {
     const entry = bySlug.get(r.slug)
-    const andromedaEntry = !entry && r.system === 'andromeda' ? getAndromedaComponentMeta(r.slug) : undefined
+    // Each system resolves in its own metadata: Legacy and Pro share the
+    // `andromeda-` namespace but not their component lists.
+    const andromedaEntry = entry
+      ? undefined
+      : r.system === 'andromeda'
+        ? getAndromedaComponentMeta(r.slug)
+        : r.system === 'andromeda-pro'
+          ? getAndromedaProComponentMeta(r.slug)
+          : undefined
     return {
       ...r,
       name: entry?.name ?? andromedaEntry?.name ?? r.slug,

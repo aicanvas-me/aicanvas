@@ -1,0 +1,416 @@
+// The inventory drawer: every count the system can state, filed as one
+// document. There are no blank documents in it, so the drawer is exactly as
+// deep as there are numbers to show.
+//
+// Opening one slides that document out of the drawer and nothing else moves.
+// It travels to the same slot at the same size every time, widening to the
+// full width as it comes forward, because a file pulled toward you reads
+// larger than the ones still filed behind it. At rest each document is
+// already full height with its copy in it, hidden behind the documents in
+// front, so opening reveals rather than builds.
+//
+// Two earlier motions were wrong and are not worth repeating. Lifting the
+// document without raising it over the stack carries its body up with the
+// tab, so whatever covered it goes on covering it. Pushing the documents in
+// front of it down instead needs a drawer deep enough to swallow them, which
+// meant padding the front with blank documents.
+'use client'
+
+import { useEffect, useRef, useState } from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import type { OverviewStats } from './overview-data'
+
+type Doc = {
+  key: keyof OverviewStats
+  label: string
+  line: string
+  note: string
+}
+
+const DOCS: Doc[] = [
+  {
+    key: 'components',
+    label: 'components',
+    line: 'Forms, tables, charts, overlays and navigation, each one with its states worked out.',
+    note: 'Open any of them here and use it live before you pay for anything.',
+  },
+  {
+    key: 'variants',
+    label: 'variants',
+    line: 'Sizes and tones already drawn, so none of it is left for you to improvise.',
+    note: 'Each one is a real prop on the component, not a picture of an option.',
+  },
+  {
+    key: 'states',
+    label: 'states',
+    line: 'Hover, focus, disabled, loading and error, on the components that have them.',
+    note: 'Keyboard focus is drawn as part of the system, not left to the browser.',
+  },
+  {
+    key: 'families',
+    label: 'families',
+    line: 'Forms, data display, charts, overlays, feedback, actions, navigation, surfaces and more.',
+    note: 'The same taxonomy the components index is built from, not a label added after.',
+  },
+  {
+    key: 'templates',
+    label: 'templates',
+    line: 'Mission control, service orders, resource planning and the signal room.',
+    note: 'Whole screens assembled out of the system, running, not screenshots of screens.',
+  },
+  {
+    key: 'themes',
+    label: 'themes',
+    line: 'Light and dark off one set of OKLCH tokens, with no part redrawn for either.',
+    note: 'Three layers of tokens retint every surface, border and state together.',
+  },
+]
+
+// One drawing per document, in the drawer's own two inks: a thin neutral line
+// for the structure and a single olive mark for the thing being counted. Each
+// one is a diagram of its number rather than an icon of its subject, so it
+// says something the copy does not.
+const LINE = 'stroke-sand-400 dark:stroke-sand-600'
+const OLIVE_LINE = 'stroke-olive-500'
+const OLIVE = 'fill-olive-500'
+// The open card's own background. A mark is only ever seen while its document
+// is out, and an out document is always the tinted surface, so a shape filled
+// with this occludes cleanly instead of letting the stack show through.
+const CARD = 'fill-sand-200 dark:fill-sand-800'
+
+function Mark({ k }: { k: keyof OverviewStats }) {
+  const s = { fill: 'none', vectorEffect: 'non-scaling-stroke' as const }
+  return (
+    <svg
+      viewBox="0 0 132 104"
+      aria-hidden
+      className="h-[104px] w-[132px]"
+      strokeWidth={1.25}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      {/* Components: six unlike parts on one grid, two rows of three, each
+          centred in its own cell. The first pass scattered them and trailed
+          loose rules underneath, which read as clutter rather than a kit. */}
+      {k === 'components' && (
+        <>
+          {/* button */}
+          <rect x={12} y={21} width={32} height={16} rx={8} {...s} className={LINE} />
+          {/* input */}
+          <rect x={50} y={21} width={32} height={16} rx={4} {...s} className={LINE} />
+          <path d="M 56 29 h 13" {...s} className={LINE} />
+          {/* toggle, on */}
+          <rect x={88} y={21} width={32} height={16} rx={8} {...s} className={LINE} />
+          <circle cx={112} cy={29} r={5.5} className={OLIVE} />
+          {/* avatar */}
+          <circle cx={28} cy={73} r={9} {...s} className={LINE} />
+          {/* checkbox */}
+          <rect x={57} y={64} width={18} height={18} rx={4} {...s} className={LINE} />
+          <path d="M 61.5 73 l 3.5 3.5 l 6.5 -7.5" {...s} className={LINE} />
+          {/* chart */}
+          <path d="M 92 82 h 26" {...s} className={LINE} />
+          <path d="M 97 82 v -9 M 105 82 v -17 M 113 82 v -12" {...s} className={LINE} />
+        </>
+      )}
+
+      {/* Variants: one part at every size the system draws it. A fan of
+          rotated copies was tried and tangles in the middle. */}
+      {k === 'variants' &&
+        [
+          [112, 68, 14],
+          [86, 52, 11],
+          [60, 36, 8],
+          [36, 22, 6],
+          [16, 10, 4],
+        ].map(([w, h, r], i) => (
+          <rect
+            key={w}
+            x={66 - w / 2}
+            y={52 - h / 2}
+            width={w}
+            height={h}
+            rx={r}
+            {...s}
+            className={i === 3 ? OLIVE_LINE : LINE}
+          />
+        ))}
+
+      {/* States: one control drawn four ways. Rest, held, blocked, focused. */}
+      {k === 'states' && (
+        <>
+          <rect x={12} y={20} width={44} height={22} rx={6} {...s} className={LINE} />
+          <rect x={76} y={20} width={44} height={22} rx={6} className={OLIVE} />
+          <rect x={12} y={62} width={44} height={22} rx={6} {...s} className={LINE} strokeDasharray="3 4" />
+          <rect x={76} y={62} width={44} height={22} rx={6} {...s} className={LINE} />
+          <rect x={71} y={57} width={54} height={32} rx={10} {...s} className={OLIVE_LINE} />
+        </>
+      )}
+
+      {/* Families: the taxonomy the index is built from, as a spine. */}
+      {k === 'families' && (
+        <>
+          <circle cx={13} cy={52} r={5} {...s} className={LINE} />
+          <path d="M 18 52 h 12" {...s} className={LINE} />
+          <path d="M 30 24 v 56" {...s} className={LINE} />
+          <path d="M 30 24 h 14 M 30 52 h 14 M 30 80 h 14" {...s} className={LINE} />
+          <rect x={44} y={15} width={52} height={18} rx={5} {...s} className={LINE} />
+          <rect x={44} y={43} width={70} height={18} rx={5} className={OLIVE} />
+          <rect x={44} y={71} width={58} height={18} rx={5} {...s} className={LINE} />
+        </>
+      )}
+
+      {/* Templates: three finished screens, each a closed card. They were
+          open paths that trailed off at the left; closing them means the two
+          behind carry the card's own fill so the front one occludes them. */}
+      {k === 'templates' && (
+        <>
+          <rect x={34} y={14} width={84} height={56} rx={7} vectorEffect="non-scaling-stroke" className={`${CARD} ${LINE}`} />
+          <rect x={24} y={25} width={94} height={56} rx={7} vectorEffect="non-scaling-stroke" className={`${CARD} ${LINE}`} />
+          <rect x={14} y={36} width={104} height={54} rx={7} vectorEffect="non-scaling-stroke" className={`${CARD} ${LINE}`} />
+          <path d="M 14 50 h 104 M 44 50 v 40" {...s} className={LINE} />
+          <rect x={52} y={58} width={26} height={14} rx={3} className={OLIVE} />
+          <path d="M 86 65 h 22 M 52 80 h 56" {...s} className={LINE} />
+          <path d="M 22 58 h 14 M 22 66 h 14 M 22 74 h 10" {...s} className={LINE} />
+        </>
+      )}
+
+      {/* Themes: two treatments, one set of tokens, sharing the middle. */}
+      {k === 'themes' && (
+        <>
+          <circle cx={82} cy={52} r={28} className={OLIVE} />
+          <circle cx={50} cy={52} r={28} {...s} className={LINE} />
+          <circle cx={82} cy={52} r={28} {...s} className={OLIVE_LINE} />
+        </>
+      )}
+    </svg>
+  )
+}
+
+const PITCH = 46
+const TAB_H = 34
+const BODY_H = 196
+// The sliver of the front document that shows below its own tab at rest.
+const FRONT_LIP = 16
+const LAST_Y = PITCH * (DOCS.length - 1)
+// The drawer's back rim needs room to show. Without it the topmost document
+// sits exactly on the line, the rim is hidden under it, and the drawer reads
+// as two walls that never meet.
+const RIM = 14
+const STACK_H = RIM + LAST_Y + TAB_H + FRONT_LIP
+
+// The taper: the document at the back of the drawer is this share of the
+// width and the one at the front runs the full width. It is drawn with a
+// horizontal scale rather than a width, so opening a document can animate
+// back to full size without laying the page out on every frame. Only the
+// document's face is scaled; the tabs stay one size, as real tabs would.
+const BACK_WIDTH = 0.72
+const widthAt = (y: number) => BACK_WIDTH + (1 - BACK_WIDTH) * (y / LAST_Y)
+
+// Tab positions across the drawer. Every one clears the narrowest document's
+// left edge, so no tab hangs off the back of the stack.
+const TAB_X = ['16%', '44%', '24%', '52%', '20%', '48%']
+
+// One folder tab, drawn as an open path so the fill closes along the bottom
+// but the stroke never draws a line between the tab and the document.
+const TAB_PATH =
+  'M 0 34 C 7 34 11 30 14 23 L 18 11 C 20 4 25 0 32 0 L 176 0 C 183 0 188 4 190 11 L 194 23 C 197 30 201 34 208 34'
+
+// Two layers, light straight overhead so x is 0, tinted to the sand hue
+// rather than black.
+const OPEN_SHADOW =
+  'shadow-[0_2px_4px_rgba(24,24,40,0.10),0_18px_40px_rgba(24,24,40,0.16)] dark:shadow-[0_2px_4px_rgba(0,0,0,0.45),0_18px_40px_rgba(0,0,0,0.60)]'
+
+function Tab({ number, label, lit }: { number: number; label: string; lit: boolean }) {
+  return (
+    <span className="pointer-events-none relative block h-[28px] w-[152px] sm:h-[34px] sm:w-[208px]">
+      <svg
+        viewBox="0 0 208 34"
+        preserveAspectRatio="none"
+        aria-hidden
+        className={`absolute inset-0 h-full w-full stroke-sand-300 transition-colors duration-150 dark:stroke-sand-700 ${
+          lit ? 'fill-sand-200 dark:fill-sand-800' : 'fill-sand-100 dark:fill-sand-900'
+        }`}
+        strokeWidth={1}
+      >
+        <path d={TAB_PATH} vectorEffect="non-scaling-stroke" />
+      </svg>
+      <span className="absolute inset-x-0 bottom-0 top-[6px] flex items-center justify-between px-6 sm:px-7">
+        <span className="text-sm font-semibold tabular-nums text-sand-900 dark:text-sand-50">{number}</span>
+        <span className="text-sm text-sand-600 dark:text-sand-400">{label}</span>
+      </span>
+    </span>
+  )
+}
+
+export function Inventory({ stats }: { stats: OverviewStats }) {
+  const reduce = useReducedMotion() ?? false
+  const [open, setOpen] = useState<string | null>(null)
+  const [lit, setLit] = useState<string | null>(null)
+  const root = useRef<HTMLDivElement>(null)
+  const travel = reduce ? { duration: 0 } : { duration: 0.42, ease: [0.22, 1, 0.36, 1] as const }
+
+  // Hover only tints a document. The click is what pulls it out, and a click
+  // anywhere off the drawer files it back. Opening on hover was wrong twice
+  // over: the document slides out from under the cursor, so the pointer
+  // leaves it, it closes, it comes back under the cursor and opens again.
+  // The pointer still belongs to a hit strip parked at each slot rather than
+  // to the document, so the tint does not chase the document either.
+  useEffect(() => {
+    if (!open) return
+    const away = (e: PointerEvent) => {
+      if (!root.current?.contains(e.target as Node)) setOpen(null)
+    }
+    const esc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(null)
+    }
+    document.addEventListener('pointerdown', away)
+    document.addEventListener('keydown', esc)
+    return () => {
+      document.removeEventListener('pointerdown', away)
+      document.removeEventListener('keydown', esc)
+    }
+  }, [open])
+
+  return (
+    <div ref={root} className="select-none">
+      <div className="relative" style={{ height: STACK_H }}>
+        {/* The drawer: the walls follow the taper of the stack. */}
+        <svg
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          aria-hidden
+          className="absolute inset-0 h-full w-full stroke-sand-300 dark:stroke-sand-700"
+          fill="none"
+          strokeWidth={1}
+        >
+          <path
+            // Closed: rim across the back, then a wall down each side.
+            d={`M 0 100 L ${(1 - BACK_WIDTH) * 50} 0 H ${100 - (1 - BACK_WIDTH) * 50} L 100 100`}
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+
+        {/* Clipped down the page only. The stack has to cut off the filed
+            documents at the bottom, but clipping sideways as well sliced the
+            open card's shadow off at both edges. Nothing here is ever wider
+            than the drawer, so the horizontal axis has nothing to clip.
+            `clip` rather than `hidden`: a hidden box is still programmatically
+            scrollable, and focusing a document inside one scrolled the whole
+            stack out of place on the keyboard path. It is also the one
+            overflow value that lets the other axis stay visible. */}
+        <div className="absolute inset-0 overflow-x-visible overflow-y-clip">
+          {DOCS.map((doc, i) => {
+            const y = i * PITCH
+            const isOpen = open === doc.key
+
+            return (
+              <motion.div
+                key={doc.key}
+                // Nothing here takes the pointer. The strips below do that.
+                className="pointer-events-none absolute inset-x-0"
+                style={{ top: RIM + y, zIndex: isOpen ? DOCS.length * 2 + 4 : i + 1 }}
+                initial={false}
+                animate={{ y: isOpen ? -y : 0 }}
+                transition={travel}
+              >
+                <span aria-hidden className="relative z-10 block" style={{ marginLeft: TAB_X[i] }}>
+                  <Tab number={stats[doc.key]} label={doc.label} lit={lit === doc.key || isOpen} />
+                </span>
+                <motion.span
+                  id={`inv-${doc.key}`}
+                  className={`-mt-px block origin-top overflow-hidden rounded-2xl border border-sand-300 p-5 transition-colors duration-150 dark:border-sand-700 sm:p-6 ${
+                    lit === doc.key || isOpen
+                      ? 'bg-sand-200 dark:bg-sand-800'
+                      : 'bg-sand-100 dark:bg-sand-900'
+                  } ${isOpen ? OPEN_SHADOW : ''}`}
+                  // An open document swallows clicks so reading it is not a
+                  // click outside the drawer, and a click anywhere on it files
+                  // it back: the whole card is the way out, not just its tab.
+                  style={{
+                    height: BODY_H,
+                    pointerEvents: isOpen ? 'auto' : 'none',
+                    cursor: isOpen ? 'pointer' : undefined,
+                  }}
+                  initial={false}
+                  animate={{ scaleX: isOpen ? 1 : widthAt(y) }}
+                  transition={travel}
+                  onClick={() => isOpen && setOpen(null)}
+                >
+                  {/* The copy stays in the page and fades with the pull. A
+                      filed document shows a bare face: the band between two
+                      tabs is its own face, and copy sitting there reads as a
+                      caption on the document in front. */}
+                  <motion.span
+                    className="block"
+                    initial={false}
+                    animate={{ opacity: isOpen ? 1 : 0 }}
+                    transition={travel}
+                  >
+                    <span className="flex items-center justify-between gap-8">
+                      <span className="block min-w-0">
+                        <span className="block text-lg font-bold text-sand-900 dark:text-sand-50">
+                          {stats[doc.key]} {doc.label}
+                        </span>
+                        <span className="mt-2 block max-w-md text-sm leading-relaxed text-sand-700 dark:text-sand-300">
+                          {doc.line}
+                        </span>
+                        <span className="mt-2 block max-w-md text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                          {doc.note}
+                        </span>
+                      </span>
+                      <span className="hidden shrink-0 sm:block">
+                        <Mark k={doc.key} />
+                      </span>
+                    </span>
+                  </motion.span>
+                </motion.span>
+              </motion.div>
+            )
+          })}
+
+          {/* The hit strips: one per slot, parked, never moving. */}
+          {DOCS.map((doc, i) => {
+            const y = i * PITCH
+            const isOpen = open === doc.key
+            return (
+              <button
+                key={`grip-${doc.key}`}
+                type="button"
+                aria-expanded={isOpen}
+                aria-controls={`inv-${doc.key}`}
+                // An explicit name: the document's copy belongs to the panel,
+                // not to the button, and reading all of it back on focus would
+                // bury the label.
+                aria-label={`${stats[doc.key]} ${doc.label}`}
+                // A pointer that can hover opens on the way past. Touch has no
+                // hover and fires enter and leave around the tap, so it toggles.
+                onPointerEnter={() => setLit(doc.key)}
+                onPointerLeave={() => setLit((k) => (k === doc.key ? null : k))}
+                onFocus={() => setLit(doc.key)}
+                onBlur={() => setLit((k) => (k === doc.key ? null : k))}
+                onClick={() => setOpen((k) => (k === doc.key ? null : doc.key))}
+                className="absolute inset-x-0 cursor-pointer focus-visible:outline-none"
+                style={{ top: RIM + y, height: PITCH, zIndex: DOCS.length + 2 + i }}
+              />
+            )
+          })}
+        </div>
+      </div>
+
+      {/* The drawer front, with its label printed on it. An olive pill here
+          read as a button, and nothing on the drawer front is clickable. */}
+      <div className="relative flex h-14 items-center justify-center rounded-b-xl border border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900">
+        <span className="flex items-center gap-3">
+          <span aria-hidden className="size-1.5 rounded-full bg-olive-500" />
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-sand-700 dark:text-sand-300">
+            Andromeda Pro
+          </span>
+          <span aria-hidden className="h-3 w-px bg-sand-300 dark:bg-sand-700" />
+          <span className="text-xs uppercase tracking-[0.2em] text-sand-600 dark:text-sand-400">
+            Design system
+          </span>
+        </span>
+      </div>
+    </div>
+  )
+}

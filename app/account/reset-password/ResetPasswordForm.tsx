@@ -6,7 +6,8 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '../../lib/supabase/client'
 import { formatAuthError } from '../../lib/auth-errors'
 import { PasswordInput } from '../PasswordInput'
-import { Button, buttonClasses } from '../../components/Button'
+import { Button } from '../../components/Button'
+import { buttonClasses } from '../../components/buttonClasses'
 import { AuthPagePopup } from '../AuthPagePopup'
 
 // ─── ResetPasswordForm ───────────────────────────────────────────────────────
@@ -34,6 +35,12 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
   const [confirm, setConfirm] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Any edit clears the last message: "Passwords don't match." must not stay
+  // on screen after the user has made them match.
+  function clearStatus() {
+    setError(null)
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -106,7 +113,10 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
             minLength={8}
             placeholder="At least 8 characters"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              clearStatus()
+            }}
           />
         </div>
 
@@ -124,12 +134,15 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
             minLength={8}
             placeholder="Re-enter password"
             value={confirm}
-            onChange={(e) => setConfirm(e.target.value)}
+            onChange={(e) => {
+              setConfirm(e.target.value)
+              clearStatus()
+            }}
           />
         </div>
 
         {error && (
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+          <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
             {error}
           </div>
         )}

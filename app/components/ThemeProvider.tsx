@@ -5,19 +5,16 @@ import { createContext, useContext, useState, type ReactNode } from 'react'
 export type Theme = 'light' | 'dark'
 
 /**
- * SITE theme only.
+ * SITE theme only: the `dark` class on `<html>`, mirrored into the `theme` cookie
+ * so the server renders the right class on the first paint. This is the only
+ * writer of either.
  *
- * The site owns exactly one thing: the `dark` class on `<html>`, mirrored into
- * the `theme` cookie so the server can render the right class on the first
- * paint. It is the only writer of either.
- *
- * A component or block preview does NOT use this. Previews carry their own
- * `[data-card-theme]` wrapper (see the scope contract in globals.css) and hold
- * their choice in local state. That separation is load-bearing: an earlier site
- * toggle and the component toggles both wrote `<html>`, so flipping a preview
- * to dark dragged the whole site with it, and the site toggle was deleted to
- * stop it. Nothing below may reach into a preview, and nothing in a preview may
- * call back into here.
+ * The site and every component, block and Andromeda preview share this one
+ * theme. A preview reads it and its own toggle calls setTheme below, so
+ * flipping either moves the other. Previews still carry their own
+ * `[data-card-theme]` wrapper (see the scope contract in globals.css), but its
+ * value comes from here, and nothing outside this file may write `<html>` or
+ * the cookie: two writers is how the first site toggle got deleted.
  */
 
 const ThemeContext = createContext<{ theme: Theme; setTheme: (next: Theme) => void }>({
@@ -38,36 +35,36 @@ export function ThemeProvider({ initial, children }: { initial: Theme; children:
       setThemeState(next)
       document.documentElement.classList.toggle('dark', next === 'dark')
       // A year, so the choice survives. Carries the word light or dark and
-      // nothing else: no id, no session, nothing that could identify a visitor.
+      // nothing else: nothing in it could identify a visitor.
       document.cookie = `theme=${next}; path=/; max-age=31536000; samesite=lax${
         location.protocol === 'https:' ? '; secure' : ''
       }`
     }
     // Token-guarded: a second toggle skips the first view transition, whose
-    // `finished` settles immediately and would otherwise strip the class from
-    // under the still-running second fade.
+    // `finished` settles at once and would strip the class mid-fade.
     const clear = () => {
       if (token === switchSeq) document.documentElement.classList.remove('theme-switching')
     }
-    // Soft cross-fade between the two paints where the browser supports view
-    // transitions — EXCEPT while a component preview is on the page: a root
-    // view transition cross-fades a frozen screenshot over the still-animating
-    // preview, which visibly double-images it, so those pages flip instantly.
-    // Either way .theme-switching silences per-element color transitions (see
-    // globals.css) so every surface lands on its new color at once instead of
-    // shimmering in patches.
+    // Soft cross-fade where the browser supports view transitions, EXCEPT while a
+    // component preview is on the page: a root view transition cross-fades a
+    // frozen screenshot over the still-animating preview and visibly double-images
+    // it, so those pages flip instantly. A preview marks itself with
+    // [data-card-theme] (component and block pages) or [data-theme-instant]
+    // (the Andromeda Pro preview wrap, whose live canvases would double-image the
+    // same way). Either way .theme-switching silences per-element color
+    // transitions so every surface lands on its new color at once.
     document.documentElement.classList.add('theme-switching')
     if (
       typeof document.startViewTransition === 'function' &&
-      !document.querySelector('[data-card-theme]')
+      !document.querySelector('[data-card-theme], [data-theme-instant]')
     ) {
-      // catch: `finished` rejects if apply() throws (a denied cookie write);
-      // unhandled, SiteBeacon would report that as a js_error.
+      // `finished` rejects if apply() throws (a denied cookie write); unhandled,
+      // SiteBeacon would report that as a js_error.
       document.startViewTransition(apply).finished.catch(() => {}).finally(clear)
     } else {
       apply()
-      // Two frames: the first paints the new theme while transitions are
-      // still frozen, the second releases them.
+      // Two frames: the first paints the new theme while transitions are still
+      // frozen, the second releases them.
       requestAnimationFrame(() => requestAnimationFrame(clear))
     }
   }

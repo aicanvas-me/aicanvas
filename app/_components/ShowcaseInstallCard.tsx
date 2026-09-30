@@ -1,17 +1,22 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Check, Copy, Lightning } from '@phosphor-icons/react'
-import { useSession } from '../components/auth/SessionProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
+import { useInstallToken } from '../_lib/useInstallToken'
+import { copyText } from '../components/useCopied'
+import { track } from '../lib/analytics'
 
 // The two packages, as a toggle (the "two actions"). Everything is the default.
 const PACKAGES = [
   { slug: 'andromeda-all', label: 'Everything' },
-  { slug: 'andromeda', label: 'All components' },
+  // MIT source on the free lane: an account installs it, a subscription is not
+  // needed. "Everything" adds the templates and the brain, which are paid.
+  { slug: 'andromeda', label: 'All components', free: true },
 ]
+const FREE_PACKAGE = PACKAGES.find((p) => p.free)!.slug
 
 // AI Canvas site tokens as --si-* variables, light by default and dark under
 // the site's `dark` class, matching the brain's "Get the brain" card.
@@ -45,33 +50,20 @@ const MONO = "var(--font-mono, var(--font-jetbrains-mono)), 'Geist Mono', monosp
 // "Get the brain" card, but with the two packages (All components / Everything)
 // as a toggle. Premium-gated: a resolved free/anon tier sees an Unlock CTA.
 export function ShowcaseInstallCard() {
-  const { user } = useSession()
   const status = usePremiumStatus()
-  // Premium AND the in-flight 'unknown' window see the command; only a resolved
-  // free/anon tier sees the Unlock pitch (never flash upsell at a subscriber).
-  const canInstall = status !== 'not-premium'
-  const [slug, setSlug] = useState('andromeda-all')
+  // Until the visitor picks, the card offers the package they can actually
+  // take: Everything for a subscriber and for the in-flight 'unknown' window
+  // (never flash a downgrade at a subscriber), the free components bundle once
+  // the tier resolves to free or anonymous.
+  const [picked, setPicked] = useState<string | null>(null)
+  const slug = picked ?? (status === 'not-premium' ? FREE_PACKAGE : 'andromeda-all')
+  const setSlug = setPicked
+  // The command is shown for anything this visitor can install: premium content
+  // to a subscriber, and the free bundle to everyone.
+  const canInstall = status !== 'not-premium' || slug === FREE_PACKAGE
   const [copied, setCopied] = useState(false)
 
-  const [token, setToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [user])
-  const userToken = user ? token : null
+  const userToken = useInstallToken()
   const reference = (masked: boolean) =>
     userToken
       ? `"https://aicanvas.me/r/${slug}.json?token=${masked ? 'aic_••••••••' : userToken}"`
@@ -80,13 +72,13 @@ export function ShowcaseInstallCard() {
   const cliCommandMasked = `npx shadcn@latest add ${reference(true)}`
   const bullets = INSTALL_CONTENTS[slug] ?? []
 
-  const copy = useCallback(async () => {
-    try {
-      await navigator.clipboard.writeText(cliCommand)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {}
-  }, [cliCommand])
+  async function copy() {
+    const ok = await copyText(cliCommand)
+    track('CLI Copy', { component: slug, ok })
+    if (!ok) return
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div

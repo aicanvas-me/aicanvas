@@ -6,15 +6,28 @@ import { MagnifyingGlass, Sparkle, Ghost, Question } from '@phosphor-icons/react
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ComponentCard } from './ComponentCard'
-import { HeaderSocials } from './HeaderSocials'
 import { track } from '../lib/analytics'
-import { Breadcrumbs } from './Breadcrumbs'
+import { useTopBarLeft } from './TopBar'
 import { SiteFooter } from './SiteFooter'
+import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
 import { INITIAL_LOAD, LOAD_MORE_SIZE } from './LoadMore'
 import { LoadMore } from './LoadMore'
 import type { ComponentMeta } from '../lib/component-registry'
 import { searchTokens, matchesQuery, effectiveTokens } from '../lib/search-match'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
+import {
+  ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META,
+  ANDROMEDA_TEMPLATE_META as ANDROMEDA_PRO_TEMPLATE_META,
+} from '../_lib/andromeda-pro/andromeda-meta'
+
+// Search covers both design systems. Each one's entries carry its OWN url
+// prefix and label: pairing one system's component list with the other's URLs
+// is how 15 of these links came to 404. Pro's cards, components and templates
+// alike, take its cyan badge.
+const SEARCHABLE_SYSTEMS = [
+  { slug: 'andromeda', label: 'Andromeda Legacy', badgeTone: undefined, components: ANDROMEDA_COMPONENT_META, templates: ANDROMEDA_TEMPLATE_META },
+  { slug: 'andromeda-pro', label: 'Andromeda Pro', badgeTone: 'pro', components: ANDROMEDA_PRO_COMPONENT_META, templates: ANDROMEDA_PRO_TEMPLATE_META },
+] as const
 
 // ─── Fuzzy "Did you mean?" helpers ───────────────────────────────────────────
 
@@ -83,12 +96,15 @@ function findSuggestions(query: string, vocab: string[], max = 3): string[] {
 // shown anywhere — matching only.
 const COMPONENT_KW = 'andromeda components design systems'
 const TEMPLATE_KW = 'andromeda templates dashboards design systems'
-const ANDROMEDA_TEXT = ANDROMEDA_COMPONENT_META.map(
-  (c) => `${c.name} ${c.description} ${COMPONENT_KW}`,
-)
-const TEMPLATE_TEXT = ANDROMEDA_TEMPLATE_META.map(
-  (t) => `${t.name} ${t.description} ${TEMPLATE_KW}`,
-)
+// Per system, so each one's entries match on its own name too ("andromeda pro"
+// finds Pro's set) and carry its own URL prefix. One flat array over a single
+// system was how 15 of these links came to point at the wrong system.
+const SYSTEM_TEXT = SEARCHABLE_SYSTEMS.map((sys) => ({
+  components: sys.components.map((c) => `${c.name} ${c.description} ${sys.label} ${COMPONENT_KW}`),
+  templates: sys.templates.map((t) => `${t.name} ${t.description} ${sys.label} ${TEMPLATE_KW}`),
+}))
+const ANDROMEDA_TEXT = SYSTEM_TEXT.flatMap((t) => t.components)
+const TEMPLATE_TEXT = SYSTEM_TEXT.flatMap((t) => t.templates)
 
 // ─── HomeClient ───────────────────────────────────────────────────────────────
 
@@ -104,7 +120,7 @@ export function HomeClient({
   /** Optional H1 + intro rendered above the grid. Passed by the category and
    *  collection pages so each listing page carries crawlable on-page copy;
    *  the plain /components index omits it. */
-  heading?: { h1: string; intro: string }
+  heading?: { overline?: string; h1: string; intro: string }
 }) {
   const router        = useRouter()
   const searchParams  = useSearchParams()
@@ -144,30 +160,32 @@ export function HomeClient({
   // link out to their own pages. Andromeda components are Free; templates Premium.
   const extras =
     q && !category
-      ? [
-          ...ANDROMEDA_COMPONENT_META.filter((_, i) =>
-            matchesQuery(ANDROMEDA_TEXT[i], tokens),
-          ).map((c) => ({
-            key: `andromeda-${c.slug}`,
-            name: c.name,
-            description: c.description,
-            image: c.image,
-            href: `/design-systems/andromeda/${c.slug}`,
-            badge: 'Free',
-            cta: 'View Component',
-          })),
-          ...ANDROMEDA_TEMPLATE_META.filter((_, i) =>
-            matchesQuery(TEMPLATE_TEXT[i], tokens),
-          ).map((t) => ({
-            key: `template-${t.folder}`,
-            name: t.name,
-            description: t.description,
-            image: t.image,
-            href: `/design-systems/andromeda/templates/${t.folder}`,
-            badge: 'Premium template',
-            cta: 'View template',
-          })),
-        ]
+      ? SEARCHABLE_SYSTEMS.flatMap((sys, si) => [
+          ...sys.components
+            .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].components[i], tokens))
+            .map((c) => ({
+              key: `${sys.slug}-${c.slug}`,
+              name: c.name,
+              description: c.description,
+              image: c.image,
+              href: `/design-systems/${sys.slug}/${c.slug}`,
+              badge: sys.label,
+              badgeTone: sys.badgeTone,
+              cta: 'View Component',
+            })),
+          ...sys.templates
+            .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].templates[i], tokens))
+            .map((t) => ({
+              key: `${sys.slug}-template-${t.folder}`,
+              name: t.name,
+              description: t.description,
+              image: t.image,
+              href: `/design-systems/${sys.slug}/templates/${t.folder}`,
+              badge: 'Premium template',
+              badgeTone: sys.badgeTone,
+              cta: 'View template',
+            })),
+        ])
       : []
 
   // Empty state only when BOTH the grid and the extra group have nothing, so an
@@ -246,33 +264,33 @@ export function HomeClient({
   const EmptyIcon = EMPTY_BEATS[emptyIdx].Icon
   const emptyPhrase = EMPTY_BEATS[emptyIdx].phrase
 
+  // While a search is active the site top bar shows the live result count in
+  // place of the breadcrumb. The bar itself lives in the root layout; this is
+  // the one line of it this page owns.
+  //
+  // The node MUST keep its identity between renders that did not change it.
+  // useTopBarLeft stores it in context, and this page reads that same context,
+  // so a fresh element on every render would feed the effect its own write and
+  // never settle. Keying the memo on the primitives is what stops that.
+  const searchCount = useMemo(
+    () =>
+      q && !category ? (
+        <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
+          {totalResults} {totalResults === 1 ? 'result' : 'results'}
+          <span className="text-sand-600 dark:text-sand-500"> for </span>
+          <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
+        </p>
+      ) : null,
+    [q, category, totalResults, query],
+  )
+  useTopBarLeft(searchCount)
+
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-
-      {/* ── Top bar (desktop only — mobile uses MobileNav) ── */}
-      <div className="sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex">
-        {q && !category ? (
-          <p className="min-w-0 truncate text-sm font-semibold text-sand-600 dark:text-sand-400">
-            {totalResults} {totalResults === 1 ? 'result' : 'results'}
-            <span className="text-sand-600 dark:text-sand-500"> for </span>
-            <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
-          </p>
-        ) : (
-          <Breadcrumbs
-            crumbs={
-              // Root crumb names the whole grid: it lists components AND blocks,
-              // matching the sidebar's "Components & Blocks" entry.
-              category
-                ? [{ label: 'Components & Blocks', href: '/components' }, { label: category }]
-                : [{ label: 'Components & Blocks', href: '/components' }]
-            }
-          />
-        )}
-        <HeaderSocials />
-      </div>
-
-      {/* ── Grid ── */}
-      <div className="flex flex-1 flex-col bg-sand-50 px-4 pt-4 dark:bg-sand-950 md:px-6 md:pt-6">
+      {/* On the empty state the main column grows to fill the viewport, so the
+          "no results" block centres in the space left over and the footer sits
+          at the bottom edge instead of halfway up the page. */}
+      <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}${showEmpty ? ' flex flex-1 flex-col' : ''}`}>
         {/* Mobile breadcrumb — shown above cards on small screens */}
         <p className="mb-4 text-sm font-semibold md:hidden">
           {q && !category ? (
@@ -287,27 +305,63 @@ export function HomeClient({
             </>
           )}
         </p>
-        {heading && (
-          <header className="mx-auto mb-6 w-full max-w-[1800px]">
-            <h1 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50 sm:text-3xl">
-              {heading.h1}
-            </h1>
-            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-sand-600 dark:text-sand-400 sm:text-base">
-              {heading.intro}
-            </p>
+        {/* The hero (overline, h1, lead) describes the whole grid, so it is
+            dropped while a search is active: the results — or the empty state —
+            start at the top. */}
+        {heading && !(q && !category) && (
+          <header className="mb-6">
+            {heading.overline && <PageOverline>{heading.overline}</PageOverline>}
+            <PageTitle gap={heading.overline ? 'overline' : 'none'}>{heading.h1}</PageTitle>
+            <PageLead>{heading.intro}</PageLead>
           </header>
         )}
+        {/* ── Design systems & templates — search matches beyond the standalone
+            catalog. Listed FIRST during a search: a whole system or template is the
+            bigger answer, the individual components follow. Same ComponentCard
+            shell as the grid; links out to each item's own page. ── */}
+        {extras.length > 0 && (
+          <div>
+            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
+              Design systems &amp; templates
+            </h2>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {extras.map((e, i) => (
+                <motion.div
+                  key={e.key}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.25, delay: (i % LOAD_MORE_SIZE) * 0.03 }}
+                >
+                  <ComponentCard
+                    name={e.name}
+                    description={e.description}
+                    tags={[]}
+                    image={e.image}
+                    badge={e.badge}
+                    badgeTone={e.badgeTone}
+                    cta={e.cta}
+                    href={e.href}
+                    slug={e.key}
+                    position={i}
+                    source="index"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {filtered.length > 0 && (
-          <>
+          <div className={extras.length > 0 ? 'mt-10' : ''}>
             {/* Group title — only during a search, so the two result groups
                 ("Components & blocks" + "Design systems & templates") read as a
                 consistent pair. Browsing shows no title (the top bar names it). */}
             {q && !category && (
-              <h2 className="mx-auto mb-4 w-full max-w-[1800px] text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
+              <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
                 Components &amp; blocks
               </h2>
             )}
-            <div className="mx-auto grid max-w-[1800px] grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {visible.map((entry, i) => (
                 <motion.div
                   key={entry.slug}
@@ -337,40 +391,6 @@ export function HomeClient({
               remaining={remaining}
               onLoadMore={handleLoadMore}
             />
-          </>
-        )}
-
-        {/* ── Design systems & templates — search matches beyond the standalone
-            catalog. Same ComponentCard shell as the grid; links out to each
-            item's own page. ── */}
-        {extras.length > 0 && (
-          <div className="mx-auto mt-10 w-full max-w-[1800px]">
-            <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-500">
-              Design systems &amp; templates
-            </h2>
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-              {extras.map((e, i) => (
-                <motion.div
-                  key={e.key}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.25, delay: (i % LOAD_MORE_SIZE) * 0.03 }}
-                >
-                  <ComponentCard
-                    name={e.name}
-                    description={e.description}
-                    tags={[]}
-                    image={e.image}
-                    badge={e.badge}
-                    cta={e.cta}
-                    href={e.href}
-                    slug={e.key}
-                    position={i}
-                    source="index"
-                  />
-                </motion.div>
-              ))}
-            </div>
           </div>
         )}
 
@@ -455,11 +475,9 @@ export function HomeClient({
             )}
           </motion.div>
         )}
-      </div>
 
-      <div className="mx-auto w-full max-w-[1800px] px-4 pb-8 md:px-6">
         <SiteFooter />
-      </div>
+      </PageFrame>
     </div>
   )
 }

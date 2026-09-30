@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { CONTACT_INBOX, CONTACT_FROM } from '@/app/lib/config'
 import { ipFromHeaders } from '@/app/lib/quota'
+import { rateLimiter } from '@/app/lib/rate-limit'
 import { emailShell, emailText, escapeHtml } from '@/app/lib/email/shell'
 
 export const runtime = 'nodejs'
@@ -22,25 +23,7 @@ export const runtime = 'nodejs'
 // this as fully hardened.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-// Best-effort, per-instance rate limit. Soft speed-bump, not a real guarantee.
-const WINDOW_MS = 10 * 60 * 1000
-const MAX_PER_WINDOW = 4
-const hits = new Map<string, number[]>()
-
-function rateLimited(ip: string): boolean {
-  const now = Date.now()
-  const recent = (hits.get(ip) ?? []).filter((t) => now - t < WINDOW_MS)
-  recent.push(now)
-  hits.set(ip, recent)
-  // Opportunistic cleanup so the Map doesn't grow without bound.
-  if (hits.size > 5000) {
-    for (const [k, v] of hits) {
-      if (v.every((t) => now - t >= WINDOW_MS)) hits.delete(k)
-    }
-  }
-  return recent.length > MAX_PER_WINDOW
-}
+const rateLimited = rateLimiter(4)
 
 function emailHtml({ name, email, subject, message }: { name: string; email: string; subject: string; message: string }): string {
   const safeName = escapeHtml(name)

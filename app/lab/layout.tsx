@@ -6,22 +6,18 @@
 import Link from 'next/link'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { LabLogo } from './_components/LabLogo'
-import { LabNavActionsProvider } from './_lib/navActionsContext'
-import { LabNavCenterSlot, LabNavRightSlot } from './_components/LabNavActionsSlot'
 
 export default function LabLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  // Pinned dark, on purpose. LAB paints with its own palette and has no light
+  // rendering, so it opts out of the site theme with a scoped `dark` class
+  // rather than by touching <html>.
   return (
-    <LabNavActionsProvider>
-    {/* Pinned dark, on purpose. LAB paints with its own palette and has no
-        light rendering, so it opts out of the site theme with a scoped `dark`
-        class rather than by touching <html>. */}
     <div className="dark relative flex h-full w-full flex-col bg-sand-950">
       <header className="sticky top-0 z-30 relative flex h-14 shrink-0 items-center justify-between border-b border-sand-300 bg-sand-200/90 px-4 backdrop-blur dark:border-sand-800 dark:bg-sand-950/90">
-        <LabNavCenterSlot />
         {/* Left: icon + "AI Canvas" (links home, lighter) + divider + "LAB" badge (darker) */}
         <div className="flex items-center gap-2.5">
           <Link
@@ -55,15 +51,13 @@ export default function LabLayout({
           </span>
         </div>
 
-        {/* Right: page-injected actions (e.g. Export menu) + sign in */}
+        {/* Right: sign in */}
         <div className="flex items-center gap-2">
-          <LabNavRightSlot />
           <TopAuthPill />
         </div>
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col">{children}</div>
     </div>
-    </LabNavActionsProvider>
   )
 }

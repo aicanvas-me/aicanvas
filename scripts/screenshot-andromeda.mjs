@@ -1,6 +1,11 @@
 /**
- * Capture Andromeda design-system component screenshots and upload them to
- * ImageKit under the `andromeda/` folder.
+ * Capture Andromeda PRO design-system component screenshots and upload them to
+ * ImageKit under the `andromeda-pro/` folder.
+ *
+ * The folder is per SYSTEM on purpose. This script reads Andromeda Pro's meta,
+ * and Andromeda Legacy's live card art sits under `andromeda/`: sharing one
+ * folder meant a Pro shoot silently overwrote Legacy's published images and
+ * left Legacy with no way to be re-shot at all.
  *
  * Each component is rendered fit-scaled in a 1280×720 void frame by the
  * /andromeda-capture/<slug> route, so every card gets uniform 16:9 art.
@@ -13,10 +18,11 @@
  */
 
 import { chromium } from 'playwright'
-import { mkdir, readFile, rm } from 'fs/promises'
+import { mkdir, rm } from 'fs/promises'
 import { readFileSync } from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
+import { uploadToImageKit } from './lib/imagekit.mjs'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
@@ -31,7 +37,7 @@ try {
 
 // Slugs are the single source of truth in andromeda-meta.ts — parse them out so
 // this list can never drift from the metadata the overview grid renders.
-const META_PATH = path.join(__dirname, '../app/_lib/andromeda/andromeda-meta.ts')
+const META_PATH = path.join(__dirname, '../app/_lib/andromeda-pro/andromeda-meta.ts')
 const ALL_SLUGS = [
   ...readFileSync(META_PATH, 'utf8').matchAll(/slug:\s*'([^']+)'/g),
 ].map((m) => m[1])
@@ -46,7 +52,7 @@ if (!IMAGEKIT_PRIVATE) {
   process.exit(1)
 }
 const IMAGEKIT_UPLOAD = 'https://upload.imagekit.io/api/v1/files/upload'
-const IMAGEKIT_FOLDER = '/andromeda'
+const IMAGEKIT_FOLDER = '/andromeda-pro'
 const TEMP_DIR = path.join(__dirname, '../.screenshots-tmp-andromeda')
 const SETTLE_MS = 1800 // let scroll-gated charts reveal + animations settle
 
@@ -66,42 +72,6 @@ const INTERACTIONS = {
     await frame.locator('button').first().hover()
     await page.waitForTimeout(450)
   },
-}
-
-// ─── ImageKit upload ──────────────────────────────────────────────────────────
-
-async function upload(localPath, fileName) {
-  const fileData = await readFile(localPath)
-  const base64 = fileData.toString('base64')
-  const auth = Buffer.from(`${IMAGEKIT_PRIVATE}:`).toString('base64')
-
-  const body = new FormData()
-  body.append('file', `data:image/png;base64,${base64}`)
-  body.append('fileName', fileName)
-  body.append('folder', IMAGEKIT_FOLDER)
-  body.append('useUniqueFileName', 'false')
-  body.append('overwriteFile', 'true')
-
-  const res = await fetch(IMAGEKIT_UPLOAD, {
-    method: 'POST',
-    headers: { Authorization: `Basic ${auth}` },
-    body,
-  })
-
-  if (!res.ok) throw new Error(`${res.status} ${await res.text()}`)
-  const { url } = await res.json()
-
-  // Purge CDN cache so the new image is served immediately
-  await fetch('https://api.imagekit.io/v1/files/purge', {
-    method: 'POST',
-    headers: {
-      Authorization: `Basic ${auth}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ url }),
-  })
-
-  return url
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -145,7 +115,12 @@ async function main() {
 
       await frame.screenshot({ path: localPath })
 
-      const url = await upload(localPath, fileName)
+      const url = await uploadToImageKit({
+        localPath,
+        fileName,
+        privateKey: IMAGEKIT_PRIVATE,
+        folder: IMAGEKIT_FOLDER,
+      })
       console.log(`✓  ${url}`)
       results.push({ slug, url })
       ok++
@@ -159,7 +134,7 @@ async function main() {
   await browser.close()
   await rm(TEMP_DIR, { recursive: true, force: true })
 
-  console.log(`\n${ok} uploaded, ${fail} failed → https://ik.imagekit.io/aitoolkit/andromeda/`)
+  console.log(`\n${ok} uploaded, ${fail} failed → https://ik.imagekit.io/aitoolkit/andromeda-pro/`)
 
   // Emit a slug→url map so the URLs can be wired straight into andromeda-meta.ts
   const map = Object.fromEntries(results.filter((r) => r.url).map((r) => [r.slug, r.url]))

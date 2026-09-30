@@ -33,7 +33,7 @@
 import fs from 'fs'
 import path from 'path'
 import { google } from 'googleapis'
-import { GAXIOS_OPTS, errMessage, guardedCall } from './gsc-net.ts'
+import { GAXIOS_OPTS, SUBMITTABLE, errMessage, guardedCall } from './gsc-net.ts'
 
 
 // Secrets come from .env.local when present; variables already in the
@@ -68,6 +68,21 @@ interface SubmitLogEntry {
   status: 'success' | 'error'
   notifyTime?: string | null
   error?: string
+}
+
+// Append to the existing log so single-URL and batch runs accumulate one
+// history. A missing or corrupt log is treated as empty rather than fatal.
+function appendToSubmitLog(entries: SubmitLogEntry[]) {
+  let existing: SubmitLogEntry[] = []
+  if (fs.existsSync(SUBMIT_LOG)) {
+    try {
+      const parsed = JSON.parse(fs.readFileSync(SUBMIT_LOG, 'utf8'))
+      if (Array.isArray(parsed)) existing = parsed
+    } catch {}
+  } else {
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true })
+  }
+  fs.writeFileSync(SUBMIT_LOG, JSON.stringify([...existing, ...entries], null, 2))
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -150,19 +165,7 @@ async function submitSingleUrl(url: string, dryRun: boolean) {
     process.stdout.write(`ERROR: ${entry.error}\n`)
   }
 
-  // Append to existing log so single-URL submissions accumulate alongside batch runs.
-  let existing: SubmitLogEntry[] = []
-  if (fs.existsSync(SUBMIT_LOG)) {
-    try {
-      existing = JSON.parse(fs.readFileSync(SUBMIT_LOG, 'utf8'))
-      if (!Array.isArray(existing)) existing = []
-    } catch {
-      existing = []
-    }
-  } else {
-    fs.mkdirSync(OUTPUT_DIR, { recursive: true })
-  }
-  fs.writeFileSync(SUBMIT_LOG, JSON.stringify([...existing, entry], null, 2))
+  appendToSubmitLog([entry])
 
   console.log('')
   console.log(`Log: ${path.relative(process.cwd(), SUBMIT_LOG)}`)
@@ -198,9 +201,8 @@ async function main() {
     console.warn(`⚠ audit.json is ${auditAge.toFixed(1)}h old. Consider re-running gsc:audit first.\n`)
   }
 
-  const submittableCategories = new Set([
-    'Discovered, awaiting crawl',
-    'Unknown to Google',
+  const submittableCategories = new Set<string>([
+    ...SUBMITTABLE,
     ...(flags.includeCrawledNotIndexed ? ['Crawled, not indexed'] : []),
   ])
 
@@ -279,17 +281,7 @@ async function main() {
     if (i < toSubmit.length) await new Promise((r) => setTimeout(r, 200))
   }
 
-  // Append to existing log if present, so multiple runs accumulate history.
-  let existing: SubmitLogEntry[] = []
-  if (fs.existsSync(SUBMIT_LOG)) {
-    try {
-      existing = JSON.parse(fs.readFileSync(SUBMIT_LOG, 'utf8'))
-      if (!Array.isArray(existing)) existing = []
-    } catch {
-      existing = []
-    }
-  }
-  fs.writeFileSync(SUBMIT_LOG, JSON.stringify([...existing, ...log], null, 2))
+  appendToSubmitLog(log)
 
   console.log('')
   console.log(`Done. ${success} ok, ${errors} errors.`)

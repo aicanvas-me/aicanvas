@@ -6,20 +6,29 @@ import { useEffect, useRef, useState, type ComponentType, type ReactNode } from 
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import {
   ArrowClockwise,
+  Broadcast,
+  Buildings,
+  CalendarBlank,
   CaretUpDown,
   Check,
+  ClipboardText,
   Copy,
   DeviceMobile,
   Lightning,
   Monitor,
+  Rocket,
+  SquaresFour,
   Terminal,
 } from '@phosphor-icons/react'
-import { useSession } from '../components/auth/SessionProvider'
+import { useInstallToken } from '../_lib/useInstallToken'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
+import { copyText } from '../components/useCopied'
+import { track } from '../lib/analytics'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { ThemeToggle } from '../components/ThemeToggle'
-import { Button, buttonClasses } from '../components/Button'
+import { Button } from '../components/Button'
+import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
 import dynamic from 'next/dynamic'
@@ -72,7 +81,7 @@ const DEVICE_ORDER: { key: Device; label: string; icon: ComponentType<{ weight?:
 interface TemplatePreviewShellProps {
   templateSlug: string // registry slug, e.g. 'andromeda-mission-control'
   templateName: string // e.g. 'Mission Control'
-  systemName: string // e.g. 'Andromeda'
+  systemName: string // e.g. 'Andromeda Legacy'
   systemHref: string // where the system-name crumb links, e.g. the showcase
   frame?: boolean // true when this render is the iframe payload (?frame=1); resolved from searchParams on the server by the page and passed in, so the framed HTML is bare from the very first paint (no chrome flash)
   description?: string[] // overrides the install-popover bullet copy
@@ -318,11 +327,13 @@ function PreviewChrome({
 
   return (
     // CONTRACT: template compositions must FILL the preview region and scroll
-    // internally (height:100% + an inner overflow-y:auto). The root here is
-    // h-full, so a composition that instead GROWS past the region would (a)
-    // get clipped by the Andromeda column's md:overflow-y-hidden and (b)
-    // escape the sticky header's range. All four Andromeda templates follow
-    // the pinned pattern; keep new ones on it too.
+    // internally (an inner overflow-y:auto). Either root height does it:
+    // height:100%, or height:100dvh capped by max-height:100%, which also
+    // fills a bare page that has no sized parent. The root here is h-full, so
+    // a composition that instead GROWS past the region would (a) get clipped
+    // by the Andromeda column's md:overflow-y-hidden and (b) escape the sticky
+    // header's range. Every template on this shell uses one of the two; keep
+    // new ones on it too.
     <div className="flex h-full min-h-full w-full flex-col">
       <TopBar
         templateSlug={templateSlug}
@@ -462,20 +473,33 @@ function TopBar({
           the leftover width; from md it becomes [1fr_auto_1fr] + px-6, mirroring
           the site's content top bar (HomeClient) with the toggles centered. */}
       <div className="grid min-w-0 flex-1 grid-cols-[1fr_auto] items-center gap-4 px-4 md:grid-cols-[1fr_auto_1fr] md:px-6">
-        <nav aria-label="Breadcrumb" className="flex min-w-0 items-center text-sm font-semibold">
+        {/* The system half of the trail is hidden below md. A phone gives this
+            column about 80px, and the system name does not shrink, so keeping
+            it pushed the template name out of the column and painted it over
+            the buttons on the right. The template name is the one that says
+            where you are; the logo already leads home. */}
+        {/* No overflow-hidden on this nav: the switcher's menu is positioned
+            against it, so clipping the row hides the menu and the caret reads
+            as dead. The trail stays inside its column through min-w-0 plus the
+            truncate on the template label. */}
+        <nav
+          aria-label="Breadcrumb"
+          className="flex min-w-0 items-center text-sm font-semibold"
+        >
           <Link
             href={systemHref}
-            className="shrink-0 text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100"
+            className="hidden shrink-0 text-sand-600 transition-colors hover:text-sand-900 md:inline dark:text-sand-400 dark:hover:text-sand-100"
           >
             {systemName}
           </Link>
-          <span className="mx-1 shrink-0 text-sand-600 dark:text-sand-600">/</span>
+          <span className="mx-1 hidden shrink-0 text-sand-600 md:inline dark:text-sand-600">/</span>
           <TemplateSwitcher templateSlug={templateSlug} templateName={templateName} />
         </nav>
 
         {/* Device toggles (Desktop / Mobile) + Replay — sized to match the
             right-side buttons (~32px). Shown from md up; the cluster hides on a
-            real phone, where you already see the responsive layout. */}
+            real phone, where you already see the responsive layout. The site
+            theme toggle on the right moves every template preview with it. */}
         <div className="hidden items-center gap-0.5 justify-self-center rounded-lg border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
           {DEVICE_ORDER.map(({ key, label, icon: Icon }) => {
             const active = device === key
@@ -528,6 +552,17 @@ function TopBar({
 // Falls back to the plain olive label when the system has no other template.
 // ─────────────────────────────────────────────────────────────────────────────
 
+// One icon per template, keyed by the slug with its design-system prefix
+// stripped, so Legacy and Pro share the map. A template with no entry falls
+// back to the generic tile icon rather than leaving a ragged left edge.
+const TEMPLATE_ICONS: Record<string, ComponentType<{ weight?: 'regular'; size?: number; className?: string }>> = {
+  'city-operations': Buildings,
+  'mission-control': Rocket,
+  'service-order': ClipboardText,
+  'resource-planning': CalendarBlank,
+  'signal-room': Broadcast,
+}
+
 function TemplateSwitcher({
   templateSlug,
   templateName,
@@ -561,7 +596,7 @@ function TemplateSwitcher({
 
   // Nothing to switch to → keep the original static olive crumb.
   if (!systemSlug || siblings.length < 2) {
-    return <span className="text-olive-600 dark:text-olive-500">{templateName}</span>
+    return <span className="truncate text-olive-600 dark:text-olive-500">{templateName}</span>
   }
 
   return (
@@ -589,21 +624,32 @@ function TemplateSwitcher({
             const folder = t.slug.startsWith(`${systemSlug}-`)
               ? t.slug.slice(systemSlug.length + 1)
               : t.slug
+            const Icon = TEMPLATE_ICONS[folder] ?? SquaresFour
             return (
               <Link
                 key={t.slug}
                 href={`/design-systems/${systemSlug}/templates/${folder}`}
                 aria-current={active ? 'page' : undefined}
                 onClick={() => setOpen(false)}
-                className={`flex items-center justify-between gap-3 px-3 py-2 text-sm transition-colors ${
+                className={`flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
                   active
                     ? 'font-semibold text-olive-600 dark:text-olive-400'
                     : 'text-sand-700 hover:bg-sand-50/70 dark:text-sand-300 dark:hover:bg-sand-800/70'
                 }`}
               >
+                <Icon
+                  weight="regular"
+                  size={16}
+                  className={`shrink-0 ${active ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-500'}`}
+                />
                 <span className="truncate">{t.name}</span>
-                {active && (
-                  <Check weight="bold" size={14} className="shrink-0 text-olive-600 dark:text-olive-400" />
+                {/* Every row keeps its category, including the one you are on:
+                    the active row is already named by its olive colour and its
+                    weight, so it needs no second marker. */}
+                {t.category && (
+                  <span className="ml-auto shrink-0 rounded-md bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
+                    {t.category}
+                  </span>
                 )}
               </Link>
             )
@@ -663,7 +709,6 @@ function InstallButton({
   systemName: string
   description?: string[]
 }) {
-  const { user } = useSession()
   const { open: openPaywall } = usePaywallModal()
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
@@ -672,26 +717,7 @@ function InstallButton({
   // Tokenized install for signed-in users so the registry attributes the pull
   // to the account (templates are premium — a plain command would 402). The
   // token is masked on screen; copy writes the real one.
-  const [fetchedToken, setFetchedToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => {
-          if (!cancelled) setFetchedToken(d?.token ?? null)
-        })
-        .catch(() => {})
-    refresh()
-    window.addEventListener('focus', refresh)
-    return () => {
-      cancelled = true
-      window.removeEventListener('focus', refresh)
-    }
-  }, [user])
-
-  const userToken = user ? fetchedToken : null
+  const userToken = useInstallToken()
   const installReference = userToken
     ? `"https://aicanvas.me/r/${templateSlug}.json?token=${userToken}"`
     : `@aicanvas/${templateSlug}`
@@ -724,11 +750,11 @@ function InstallButton({
   }
 
   async function handleCopy() {
-    try {
-      await navigator.clipboard.writeText(cliCommand)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
-    } catch {}
+    const ok = await copyText(cliCommand)
+    track('CLI Copy', { component: templateSlug, ok })
+    if (!ok) return
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   useEffect(() => {

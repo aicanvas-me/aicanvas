@@ -20,12 +20,16 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Lightning, Robot, Wrench, CaretDow
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
 import type { Group, Mesh, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
-import { Button, buttonClasses } from '../../components/Button'
+import { Button } from '../../components/Button'
+import { buttonClasses } from '../../components/buttonClasses'
 import { SiteFooter } from '../../components/SiteFooter'
-import { optimizeImageKitUrl } from '../../lib/imagekit'
+import { optimizeImageKitUrl, TEMPLATE_ART_VERSION } from '../../lib/imagekit'
 import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoop } from '../../_components/FoundationLoop'
+import { SystemTierChip } from '../../_components/SystemTierChip'
+import { BRAIN_GRAY } from '../../_lib/brain-colors'
+import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../_components/DesignSystemPage'
 
 // Short blurbs for the four shipped templates — keyed by registry slug.
 const TEMPLATE_BLURBS: Record<string, string> = {
@@ -39,57 +43,56 @@ const TEMPLATE_BLURBS: Record<string, string> = {
     'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
 }
 
-// Card art uploaded to ImageKit (andromeda/templates/). Filenames are kept
-// exactly as uploaded — capitalized, with spaces — so they're URL-encoded when
-// building the src.
+// Card art uploaded to ImageKit (andromeda/templates/). Names are underscored:
+// ImageKit rewrites a space in an uploaded filename to an underscore, so a name
+// written with spaces here would 404 while the upload still reported success.
 const TEMPLATE_IMAGE_FILE: Record<string, string> = {
-  'andromeda-mission-control': 'Mission control.png',
-  'andromeda-service-order': 'Service order.png',
-  'andromeda-resource-planning': 'Resource planning.png',
-  'andromeda-signal-room': 'Signal Room.png',
+  'andromeda-mission-control': 'Mission_control_dark.png',
+  'andromeda-service-order': 'Service_order_dark.png',
+  'andromeda-resource-planning': 'Resource_planning_dark.png',
+  'andromeda-signal-room': 'Signal_Room_dark.png',
 }
+
+// The light-theme poster for each template, shown when the site is light.
+const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
+  'andromeda-mission-control': 'Mission_control_light.png',
+  'andromeda-service-order': 'Service_order_light.png',
+  'andromeda-resource-planning': 'Resource_planning_light.png',
+  'andromeda-signal-room': 'Signal_Room_light.png',
+}
+
+// Null, not an empty name: a URL built from '' resolves to the folder and
+// paints a broken-image glyph, so a template with no art must render the card's
+// own quiet panel instead.
+const templateArt = (file: string | undefined) =>
+  file
+    ? optimizeImageKitUrl(
+        `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`,
+        'detail',
+      )
+    : null
 
 const andromeda = DESIGN_SYSTEMS.find((s) => s.slug === 'andromeda')
 const TEMPLATES = (andromeda?.templates ?? []).map((t) => ({
   slug: t.slug,
   name: t.name,
-  domain: t.domain,
+  category: t.category,
   folder: t.slug.replace(/^andromeda-/, ''),
   blurb: TEMPLATE_BLURBS[t.slug] ?? '',
-  // Uncompressed template card art — tr=orig-true serves the untouched original
-  // (no resize / quality optimization). Filenames have spaces, so encode them.
-  image: `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(TEMPLATE_IMAGE_FILE[t.slug] ?? '')}?tr=orig-true`,
+  // Template card art through the same helper as every other image on the site:
+  // 1600px is still double what these cards paint.
+  image: templateArt(TEMPLATE_IMAGE_FILE[t.slug]),
+  imageLight: templateArt(TEMPLATE_IMAGE_FILE_LIGHT[t.slug]),
 }))
-
-// AI Canvas component-preview fill — dark sand-900 surface with the site's
-// dot-grid motif and a centered Manrope label. Screenshot-ready (drop an <img>
-// over it later). Rendered as absolute children of a `relative` image box.
-function PreviewFill({ label }: { label: string }) {
-  return (
-    <>
-      <div
-        className="absolute inset-0"
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.04) 1px, transparent 1px)',
-          backgroundSize: '22px 22px',
-        }}
-      />
-      <div className="absolute inset-0 flex items-center justify-center px-4 text-center">
-        <span className="text-sm font-medium text-sand-500">{label}</span>
-      </div>
-    </>
-  )
-}
 
 // ── BrainWireframePreview ────────────────────────────────────────────
 // Decorative auto-rotating 3D preview for the Brain card's right half —
 // the same brain.glb model as the live Brain page (BrainStoryV4.tsx),
 // reduced to just a slow spin: no drag, no firefly, no floating labels.
-// Locked to the site's olive-500 (AI Canvas chrome presenting the system,
-// per the file header — not Andromeda's own turquoise). Fails silent
+// Drawn in the Andromeda brain gray (app/_lib/brain-colors.ts); the
+// four-colour brain belongs to Andromeda Pro. Fails silent
 // (void background only) if WebGL or the model can't load.
 const BRAIN_MODEL_URL = '/models/brain.glb'
-const BRAIN_OLIVE_500 = '#A8B94D'
 const BRAIN_VOID = '#0E0E0F'
 
 function BrainWireframePreview() {
@@ -157,14 +160,8 @@ function BrainWireframePreview() {
           // Duck-typed on purpose: instanceof breaks when two copies of three load.
           const mesh = o as Mesh
           if (mesh.isMesh) {
-            mesh.material = new THREE.MeshStandardMaterial({
-              color: new THREE.Color(BRAIN_OLIVE_500),
-              wireframe: true,
-              emissive: new THREE.Color(BRAIN_OLIVE_500),
-              emissiveIntensity: 0.6,
-              metalness: 0,
-              roughness: 1,
-            })
+            // The Andromeda brain look: one gray, unlit so it reads exactly.
+            mesh.material = new THREE.MeshBasicMaterial({ color: new THREE.Color(BRAIN_GRAY.dark), wireframe: true })
           }
         })
         scene.add(model)
@@ -289,20 +286,21 @@ export function AndromedaOverview() {
   }
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6 sm:py-16">
+    <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
       {/* ── Hero ────────────────────────────────────────────────────────── */}
       <header className="max-w-3xl">
-        <p className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
-          Design system
-        </p>
-        <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">
-          {ANDROMEDA_META.name}
-        </h1>
-        <p className="mt-4 text-base leading-relaxed text-sand-600 dark:text-sand-300 sm:text-lg">
+        <PageOverline>Design system</PageOverline>
+        {/* The chip sits beside the h1, not inside it, so the heading stays
+            the system's name alone. */}
+        <div className="mt-3 flex flex-wrap items-center gap-3">
+          <PageTitle gap="none">{ANDROMEDA_META.name}</PageTitle>
+          <SystemTierChip tier="mit" label="MIT License" />
+        </div>
+        <PageLead tone="body" className="sm:text-lg">
           A complete design system for dashboards, control panels, data-dense tools, and anything
           else you can picture. Every component is driven by tokens, so you ship a coherent,
           technical interface fast.
-        </p>
+        </PageLead>
       </header>
 
       {/* ── Value props — two cards below the title + description; click to expand.
@@ -382,13 +380,13 @@ export function AndromedaOverview() {
           </div>
           <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">
             <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
-              The Brain
+              The AI Brain
             </span>
             <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
               The rules your agent reads
             </h2>
             <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-              Tokens and components are the pieces. The Brain is the judgment that assembles them:
+              Tokens and components are the pieces. The AI Brain is the judgment that assembles them:
               every rule, foundation, and skill your AI agent reads, so what it builds already
               matches the system instead of a guess.
             </p>
@@ -407,7 +405,7 @@ export function AndromedaOverview() {
         <div className="mb-5">
           <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Templates</h2>
           <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
-            Full dashboards composed from the system. Pick a domain to explore.
+            Full dashboards composed from the system. Pick one to explore.
           </p>
         </div>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
@@ -425,19 +423,41 @@ export function AndromedaOverview() {
                   <Lightning weight="fill" size={14} className="shrink-0" />
                   <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
                     <span className="overflow-hidden">
-                      <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-none">
+                      <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
                         Premium template
                       </span>
                     </span>
                   </span>
                 </div>
-                <img
-                  src={t.image}
-                  alt={t.name}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                />
+                {/* The poster follows the SITE theme: the light shot on a
+                    light page, the dark shot on a dark one. Two images and the
+                    `dark:` variant, so the first byte is already right and
+                    nothing swaps after paint.
+
+                    NOT lazy. A lazy image that starts at display:none has no
+                    layout box, so the browser never fetches it, and the card
+                    would go blank the moment the visitor used the theme toggle
+                    while a full-size poster downloaded. */}
+                {t.image ? (
+                  <img
+                    src={t.image}
+                    alt={t.name}
+                    decoding="async"
+                    className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
+                      t.imageLight ? 'hidden dark:block' : ''
+                    }`}
+                  />
+                ) : null}
+                {t.imageLight ? (
+                  <img
+                    src={t.imageLight}
+                    alt={t.name}
+                    decoding="async"
+                    className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
+                      t.image ? 'dark:hidden' : ''
+                    }`}
+                  />
+                ) : null}
               </div>
               <div className="relative -mt-4 flex flex-1 flex-col gap-3 rounded-t-2xl bg-sand-50 p-5 shadow-[0_-8px_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[0_-8px_24px_rgba(0,0,0,0.25)]">
                 <div>
@@ -553,6 +573,6 @@ export function AndromedaOverview() {
       </motion.section>
 
       <SiteFooter />
-    </main>
+    </PageFrame>
   )
 }

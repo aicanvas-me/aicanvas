@@ -31,7 +31,10 @@ export function loadContentLookup(): ContentLookup {
     // Not cached on purpose: the next request retries the read, so a transient
     // failure does not leave this instance degraded for the rest of its life.
     const fallback = buildLookup({
-      systemSlugs: ['andromeda'],
+      systemSlugs: ['andromeda', 'andromeda-pro'],
+      // Explicit here too, though buildLookup's floor already covers it: the
+      // degraded path must never be the one that opens the paywall.
+      paidSystemSlugs: ['andromeda-pro'],
       designSystemSlugs: [],
       templateSlugs: [
         'andromeda-mission-control',

@@ -11,6 +11,7 @@
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, unlinkSync, existsSync } from 'fs'
 import { join, dirname, resolve, relative, sep, posix } from 'path'
 import { execSync } from 'child_process'
+import { createJiti } from 'jiti'
 import { transformRootHeightClass } from './lib/copy-paste-transform.mjs'
 import { DESIGN_SYSTEMS, FREE_DS_PLACEHOLDER_SENTINEL } from './lib/design-systems.config.mjs'
 import { reconcileLedger } from './lib/order-ledger.mjs'
@@ -30,6 +31,22 @@ function isInjectedComponentPresent(abs) {
   }
 }
 
+// A design system's source root. Each system now owns one: Andromeda Legacy
+// reads its committed tree, Andromeda Pro reads the tree the vault injects.
+function dsRoot(ds) {
+  return ds.rootDir
+}
+
+// Systems this build can actually read. An injected-only system (Andromeda Pro,
+// whose whole tree comes from the vault) is skipped wholesale when its root is
+// absent, so a fork or a no-PAT build emits Legacy alone instead of failing or
+// shipping half a system.
+const SYSTEMS = DESIGN_SYSTEMS.filter((ds) => {
+  if (!ds.skipIfMissing || existsSync(dsRoot(ds))) return true
+  console.warn(`generate-registry: skipping "${ds.slug}" — ${dsRoot(ds)} is not on disk`)
+  return false
+})
+
 const wsDir = 'components-workspace'
 const outDir = 'registry-data'
 const SCHEMA = 'https://ui.shadcn.com/schema/registry-item.json'
@@ -41,6 +58,37 @@ const REGISTRY_SCHEMA = 'https://ui.shadcn.com/schema/registry.json'
 // 404 — which silently broke every design-system + template install. Emitting
 // full URLs is the documented shadcn pattern for self-hosted/custom registries.
 // Overridable so the generator can emit a localhost variant for install tests.
+// Dependency ranges this app installs itself, for systems that pin them
+// (design-systems.config.mjs `pinDependencies`). A package the app does not
+// list (a font package the app loads through next/font instead) stays bare.
+const APP_PACKAGE = JSON.parse(readFileSync('package.json', 'utf-8'))
+const APP_RANGES = { ...(APP_PACKAGE.devDependencies ?? {}), ...(APP_PACKAGE.dependencies ?? {}) }
+
+function pinnedDependencies(ds, pkgs) {
+  if (!ds.pinDependencies) return pkgs
+  return pkgs.map((pkg) => (APP_RANGES[pkg] ? `${pkg}@${APP_RANGES[pkg]}` : pkg))
+}
+
+// The `@types/*` companions of a pinned system's dependencies, as the item's
+// devDependencies. A package that ships no types of its own (three) otherwise
+// fails a fresh strict TypeScript project with TS7016. Only unscoped packages
+// have a plain `@types/<name>`, and only a companion this app installs is named.
+function typeDevDependencies(ds, pkgs) {
+  if (!ds.pinDependencies) return []
+  return pkgs
+    .filter((pkg) => !pkg.startsWith('@') && APP_RANGES[`@types/${pkg}`])
+    .map((pkg) => `@types/${pkg}@${APP_RANGES[`@types/${pkg}`]}`)
+}
+
+// Spread into an item: `dependencies`, and `devDependencies` only when there are any.
+function dependencyFields(ds, pkgs) {
+  const devDependencies = typeDevDependencies(ds, pkgs)
+  return {
+    dependencies: pinnedDependencies(ds, pkgs),
+    ...(devDependencies.length > 0 ? { devDependencies } : {}),
+  }
+}
+
 const REGISTRY_BASE = (process.env.AICANVAS_REGISTRY_BASE ?? 'https://aicanvas.me').replace(/\/+$/, '')
 const depUrl = (slug) => `${REGISTRY_BASE}/r/${slug}.json`
 
@@ -270,6 +318,7 @@ const expectedNames = new Set(
 )
 expectedNames.add('registry') // keep the root index
 expectedNames.add('aicanvas-mcp') // MCP metadata file
+expectedNames.add('aicanvas-props') // MCP prop tables file
 for (const slug of premiumSlugDirs) expectedNames.add(slug) // keep gated premium JSON
 expectedNames.add('_premium') // gate input (written by inject-premium) — must survive cleanup
 expectedNames.add('_manifest') // gate manifest
@@ -287,6 +336,10 @@ try {
     expectedNames.add(`${b}-brain`)
   }
 } catch { /* no _premium.json — no brain files to preserve */ }
+// The remix-prompt bundles inject-premium writes, one per whole-system design
+// system. Underscore-prefixed so /r can never serve them; reserved here or the
+// stale-file sweep below deletes them on every generate.
+for (const ds of SYSTEMS) expectedNames.add(`_${ds.slug}-prompts`)
 // Reserve filenames for design systems (tokens + per-component + system +
 // templates) so they survive the stale-file cleanup pass.
 function componentSlug(systemSlug, fileBaseName) {
@@ -316,14 +369,14 @@ function dsAllEntries(ds) {
     ...(ds.optionalSystemEntries ?? []).map((path) => ({ path, optional: true })),
   ]
 }
-for (const ds of DESIGN_SYSTEMS) {
+for (const ds of SYSTEMS) {
   expectedNames.add(`${ds.slug}-tokens`)
   expectedNames.add(ds.slug)
   for (const { path: entry, optional } of dsAllEntries(ds)) {
     // Optional entries only reserve their name while the file is actually
     // present — a degraded run must let the stale-cleanup pass below delete
     // the previous run's JSON so /r and the gate manifest stay in sync.
-    if (optional && !isInjectedComponentPresent(resolve(ds.rootDir, entry))) continue
+    if (optional && !isInjectedComponentPresent(resolve(dsRoot(ds), entry))) continue
     const baseName = entry.split('/').pop()
     expectedNames.add(dsComponentSlug(ds, entry, baseName))
   }
@@ -454,12 +507,14 @@ if (premiumCount > 0) console.log(`Generated ${premiumCount} GATED premium compo
 // installed exactly once regardless of which entry the user picks:
 //
 //   <slug>-tokens     (registry:lib)    — tokens.ts + utils + system icons
-//   <slug>            (registry:style)  — every component file; deps on tokens
+//   <slug>            (registry:block)  — every component file; deps on tokens
 //   <slug>-<template> (registry:block)  — only the example folder; deps on system
 //
 // Note: shadcn's CLI requires the `type` field to be one of its known enum
 // values — `registry:block` is shadcn vocabulary, kept verbatim in the JSON.
-// Everything user-facing (URLs, copy, MCP tool names) uses "template".
+// The system bundles share it, so the type never marks a template; the gate
+// manifest does. Everything user-facing (URLs, copy, MCP tool names) uses
+// "template".
 //
 // Internal relative imports stay intact because every layer writes into the
 // same `components/aicanvas/<slug>/` tree, preserving the source layout.
@@ -486,6 +541,7 @@ function indexEntry(item, files) {
     title: item.title,
     description: item.description,
     dependencies: item.dependencies,
+    devDependencies: item.devDependencies,
     registryDependencies: item.registryDependencies,
     files: files.map(({ path, type, target }) => ({ path, type, target })),
   }
@@ -507,6 +563,10 @@ try {
 // /r route's filename regex rejects leading underscores, so it is not servable.
 const manifest = {
   systemSlugs: [],
+  // Systems whose every item is paid-to-install (design-systems.config.mjs
+  // `paidToInstall`). The gate reads this to tell a free MIT system's
+  // components from a premium system's.
+  paidSystemSlugs: SYSTEMS.filter((ds) => ds.paidToInstall).map((ds) => ds.slug).sort(),
   designSystemSlugs: [],
   templateSlugs: [],
   premiumSlugs,
@@ -521,8 +581,8 @@ const installContents = {}
 // template slug → used-component count (null = full-system fallback)
 const templateContents = new Map()
 
-for (const ds of DESIGN_SYSTEMS) {
-  const rootDirAbs = resolve(ds.rootDir)
+for (const ds of SYSTEMS) {
+  const rootDirAbs = resolve(dsRoot(ds))
   const tokenEntriesAbs = (ds.tokenEntries ?? []).map((p) => resolve(rootDirAbs, p))
   // Optional (build-time-injected v2) entries join the system exactly like the
   // committed ones when their file exists; when absent the build stays green —
@@ -558,14 +618,39 @@ for (const ds of DESIGN_SYSTEMS) {
     }
     injectFile.content = fontPackages.map((p) => `import '${p}';`).join('\n') + '\n' + injectFile.content
   }
+  // Both themes as plain CSS the CLI writes into the buyer's stylesheet: light
+  // on :root, dark on .dark (shadcn's dark mode class; next-themes sets it only
+  // with attribute="class", its default is data-theme). Emitted through
+  // `css`, not `cssVars`: cssVars also maps every name into @theme, which
+  // overrides Tailwind's own shadow scale.
+  // Fails loud, never ships an install without its themes: a missing export
+  // means the injected source is older than this generator.
+  let themeCss
+  if (ds.themeSets) {
+    const { module: themeModule, export: themeExport } = ds.themeSets
+    const mod = await createJiti(import.meta.url).import(resolve(rootDirAbs, themeModule))
+    if (typeof mod[themeExport] !== 'function') {
+      throw new Error(
+        `generate-registry: ${ds.slug} ${themeModule} does not export ${themeExport}(). ` +
+          'The injected source predates the theme stylesheet; inject a source that has it.',
+      )
+    }
+    const { light, dark } = mod[themeExport]()
+    const lightNames = Object.keys(light ?? {}).sort().join()
+    if (!lightNames || lightNames !== Object.keys(dark ?? {}).sort().join()) {
+      throw new Error(`generate-registry: ${ds.slug} ${themeExport}() must return non-empty light and dark sets with the same names`)
+    }
+    themeCss = { '@layer base': { ':root': light, '.dark': dark } }
+  }
   const tokensItem = {
     $schema: SCHEMA,
     name: tokensSlug,
     type: 'registry:lib',
     title: `${ds.name} tokens`,
-    description: `Foundation files for the ${ds.name} design system — tokens, shared utilities, and the system mark. Required by every ${ds.name} component and template.`,
+    description: `Foundation files for the ${ds.name} design system: tokens, shared utilities, and the system mark. Required by every ${ds.name} component and template.`,
     author: 'aicanvas <https://aicanvas.me>',
-    dependencies: [...new Set([...tokensWalk.npmDeps, ...fontPackages])].sort(),
+    ...dependencyFields(ds, [...new Set([...tokensWalk.npmDeps, ...fontPackages])].sort()),
+    ...(themeCss ? { css: themeCss } : {}),
     files: tokensFiles,
   }
   writeFileSync(join(outDir, `${tokensSlug}.json`), JSON.stringify(tokensItem, null, 2) + '\n')
@@ -581,12 +666,15 @@ for (const ds of DESIGN_SYSTEMS) {
   const systemItem = {
     $schema: SCHEMA,
     name: ds.slug,
-    type: 'registry:style',
+    // Not registry:style: for that type the CLI first asks "Existing CSS
+    // variables and components will be overwritten. Continue?", and a run with
+    // no terminal to answer (an AI agent, a script) exits 0 having written nothing.
+    type: 'registry:block',
     title: `${ds.name} design system`,
     description: `Every ${ds.name} component (${systemFiles.length} files). Installs the foundation tokens automatically.`,
     author: 'aicanvas <https://aicanvas.me>',
     registryDependencies: [depUrl(tokensSlug)],
-    dependencies: systemWalk.npmDeps,
+    ...dependencyFields(ds, systemWalk.npmDeps),
     files: systemFiles,
   }
   writeFileSync(join(outDir, `${ds.slug}.json`), JSON.stringify(systemItem, null, 2) + '\n')
@@ -597,8 +685,9 @@ for (const ds of DESIGN_SYSTEMS) {
   const dsBoundary = new Set([...tokensFileSet, ...systemFileSet])
 
   // ── 2b. Individual components ───────────────────────────────────────────────
-  // One installable item per component file. Each ships its own `.tsx` + sibling
-  // `.rules.md`, depends on `andromeda-tokens` for the foundation, and declares
+  // One installable item per component file. Each ships its own `.tsx` (plus its
+  // ready-made example when the config names one), depends on `andromeda-tokens`
+  // for the foundation, and declares
   // any other system components it imports as `registryDependencies` so the dep
   // graph stays correct (PanelHeader → IconButton → tokens, etc.).
   //
@@ -627,6 +716,9 @@ for (const ds of DESIGN_SYSTEMS) {
     if (componentWorkspaceSlugs.has(slug)) continue   // emitted as a standalone instead
     emittedComponentFiles.add(fileAbs)
   }
+  // Component slug → its item's registry deps, so a template can count the
+  // components its install pulls in through them.
+  const componentDeps = new Map()
 
   for (const { path: entry } of presentEntries) {
     const fileAbs = resolve(rootDirAbs, entry)
@@ -645,31 +737,48 @@ for (const ds of DESIGN_SYSTEMS) {
     // component's relative imports resolve after install.
     const otherComponentFiles = [...emittedComponentFiles].filter((f) => f !== fileAbs)
     const componentBoundary = new Set([...tokensFileSet, ...otherComponentFiles])
-    const compWalk = walkDependencies([fileAbs], rootDirAbs, componentBoundary)
-
-    // Read the component's own imports to figure out which sibling components
-    // it actually pulls in — those become registry deps. The walker doesn't
-    // report this directly, so re-read and parse imports to identify them.
-    const sourceContent = readFileSync(fileAbs, 'utf-8')
-    const componentRegistryDeps = new Set([`${ds.slug}-tokens`])
-    for (const spec of extractImportSpecifiers(sourceContent)) {
-      if (!spec.startsWith('.') && !spec.startsWith('/')) continue
-      const resolved = resolveImport(fileAbs, spec)
-      // Only an individually-emitted sibling component becomes a registry dep.
-      // Non-emitted shared helpers (lib/motion.ts) are bundled inline above, so
-      // they must NOT be turned into a (non-existent) registry dependency.
-      if (!resolved || !emittedComponentFiles.has(resolved) || resolved === fileAbs) continue
-      // Sibling component — find its slug
-      const relPath = relative(rootDirAbs, resolved)
-      const relPosix = relPath.split(sep).join(posix.sep)
-      const siblingBase = relPath.split(sep).pop()
-      const siblingSlug = dsComponentSlug(ds, relPosix, siblingBase)
-      // Only declare a dep if that sibling is itself published individually
-      // (i.e. doesn't collide with a workspace standalone).
-      if (!componentWorkspaceSlugs.has(siblingSlug)) {
-        componentRegistryDeps.add(siblingSlug)
+    // A ready-made example (config `componentExamples`) is walked with the
+    // component, so the helpers it imports ship too.
+    const itemEntries = [fileAbs]
+    const exampleEntry = ds.componentExamples?.[entry]
+    if (exampleEntry) {
+      const exampleAbs = resolve(rootDirAbs, exampleEntry)
+      if (existsSync(exampleAbs)) {
+        itemEntries.push(exampleAbs)
+      } else {
+        console.warn(
+          `generate-registry: WARNING — ${ds.slug} example "${exampleEntry}" is absent ` +
+            '(older injected source); its component ships without it.',
+        )
       }
     }
+    const compWalk = walkDependencies(itemEntries, rootDirAbs, componentBoundary)
+
+    // Read the component's and its example's imports to figure out which sibling
+    // components they pull in — those become registry deps. The walker doesn't
+    // report this directly, so re-read and parse imports to identify them.
+    const componentRegistryDeps = new Set([`${ds.slug}-tokens`])
+    for (const itemFile of itemEntries) {
+      for (const spec of extractImportSpecifiers(readFileSync(itemFile, 'utf-8'))) {
+        if (!spec.startsWith('.') && !spec.startsWith('/')) continue
+        const resolved = resolveImport(itemFile, spec)
+        // Only an individually-emitted sibling component becomes a registry dep.
+        // Non-emitted shared helpers (lib/motion.ts) are bundled inline above, so
+        // they must NOT be turned into a (non-existent) registry dependency.
+        if (!resolved || !emittedComponentFiles.has(resolved) || resolved === fileAbs) continue
+        // Sibling component — find its slug
+        const relPath = relative(rootDirAbs, resolved)
+        const relPosix = relPath.split(sep).join(posix.sep)
+        const siblingBase = relPath.split(sep).pop()
+        const siblingSlug = dsComponentSlug(ds, relPosix, siblingBase)
+        // Only declare a dep if that sibling is itself published individually
+        // (i.e. doesn't collide with a workspace standalone).
+        if (!componentWorkspaceSlugs.has(siblingSlug)) {
+          componentRegistryDeps.add(siblingSlug)
+        }
+      }
+    }
+    componentDeps.set(slug, componentRegistryDeps)
 
     const compFiles = compWalk.files.map((f) => makeFile(f, rootDirAbs, ds.slug))
 
@@ -682,10 +791,12 @@ for (const ds of DESIGN_SYSTEMS) {
       name: slug,
       type: 'registry:ui',
       title: `${compLabel} (${ds.name})`,
-      description: `${ds.name} ${compLabel} component. Install just this piece. Tokens and any sibling components are pulled in automatically.`,
+      description:
+        `${ds.name} ${compLabel} component. Install just this piece. Tokens and any sibling components are pulled in automatically.` +
+        (itemEntries.length > 1 ? ' Includes a ready-made example.' : ''),
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: [...componentRegistryDeps].sort().map(depUrl),
-      dependencies: compWalk.npmDeps,
+      ...dependencyFields(ds, compWalk.npmDeps),
       files: compFiles,
     }
     writeFileSync(join(outDir, `${slug}.json`), JSON.stringify(compItem, null, 2) + '\n')
@@ -721,7 +832,16 @@ for (const ds of DESIGN_SYSTEMS) {
       }
     }
     const templateDeps = [`${ds.slug}-tokens`, ...[...usedComponentSlugs].sort()].map(depUrl)
-    templateContents.set(template.slug, usedComponentSlugs.size)
+    // The install also writes what those components depend on (UserCard brings
+    // Avatar), so the count follows the chain. A Set's loop visits what is added
+    // during it, each component counts once, and tokens are not a component.
+    const installedComponentSlugs = new Set(usedComponentSlugs)
+    for (const used of installedComponentSlugs) {
+      for (const dep of componentDeps.get(used) ?? []) {
+        if (componentDeps.has(dep)) installedComponentSlugs.add(dep)
+      }
+    }
+    templateContents.set(template.slug, installedComponentSlugs.size)
 
     const templateItem = {
       $schema: SCHEMA,
@@ -729,11 +849,11 @@ for (const ds of DESIGN_SYSTEMS) {
       type: 'registry:block',
       title: `${template.name} (${ds.name})`,
       description:
-        `${template.name} composition from ${ds.name}${template.domain ? ` — ${template.domain.toLowerCase()} dashboard` : ''}. ` +
-        `Pulls in the ${usedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
+        `${template.name} composition from ${ds.name}${template.category ? ` (${template.category} template)` : ''}. ` +
+        `Pulls in the ${installedComponentSlugs.size} ${ds.name} components it uses, plus tokens.`,
       author: 'aicanvas <https://aicanvas.me>',
       registryDependencies: templateDeps,
-      dependencies: templateWalk.npmDeps,
+      ...dependencyFields(ds, templateWalk.npmDeps),
       files: templateFiles,
     }
     writeFileSync(join(outDir, `${template.slug}.json`), JSON.stringify(templateItem, null, 2) + '\n')
@@ -753,8 +873,11 @@ for (const ds of DESIGN_SYSTEMS) {
     const allItem = {
       $schema: SCHEMA,
       name: `${ds.slug}-all`,
-      type: 'registry:style',
-      title: `${ds.name} — full system`,
+      // registry:block for the system item's reason. Not registry:item: with no
+      // files of its own the CLI treats this bundle as universal and skips the
+      // components.json check, so a project without one installs on a blank config.
+      type: 'registry:block',
+      title: `${ds.name}: full system`,
       description: hasBrain
         ? `Every ${ds.name} component, token, and template, plus the ${ds.name} brain, in one install.`
         : `Every ${ds.name} component, token, and template in one install.`,
@@ -780,11 +903,14 @@ for (const ds of DESIGN_SYSTEMS) {
       `Install all ${componentCount} ${ds.name} components, tokens, and utilities.`,
       'No templates, no brain.',
     ]
+    const themeLine = ds.themeSets ? ["Light and dark included. Follows your app's dark class."] : []
+    installContents[ds.slug].push(...themeLine)
     for (const template of ds.templates) {
       const used = templateContents.get(template.slug) ?? 0
       installContents[template.slug] = [
         `This template plus the ${used} ${ds.name} components it uses.`,
         'Tokens included. Re-installs reuse what is already there.',
+        ...themeLine,
       ]
     }
     if (ds.templates.length > 0) {
@@ -800,6 +926,7 @@ for (const ds of DESIGN_SYSTEMS) {
         ...(hasBrain && brainFiles > 0
           ? [`Includes the ${ds.name} brain (${brainFiles} rule files your AI reads).`]
           : []),
+        ...themeLine,
       ]
     }
   }
@@ -867,11 +994,15 @@ const fillDescription = (p) => ({
   description: p.description || FALLBACK_DESCRIPTIONS[p.name] || enumSynth(p.type),
 })
 
+// Keyed by SYSTEM, then by file basename. Two systems ship a Button, and a
+// flat basename key let the second system's table silently replace the first's
+// on every shared name.
 const propTables = {}
-for (const ds of DESIGN_SYSTEMS) {
-  const dsRoot = resolve(ds.rootDir)
+for (const ds of SYSTEMS) {
+  const dsRootAbs = resolve(dsRoot(ds))
+  const forSystem = (propTables[ds.slug] ??= {})
   for (const { path: entry } of dsAllEntries(ds)) {
-    const abs = resolve(dsRoot, entry)
+    const abs = resolve(dsRootAbs, entry)
     if (!isInjectedComponentPresent(abs)) continue // absent or degraded placeholder — skip, don't fail
     const base = entry.split('/').pop().replace(/\.(tsx|ts)$/, '')
     const tables = parseJsdocProps(readFileSync(abs, 'utf-8'))
@@ -879,7 +1010,7 @@ for (const ds of DESIGN_SYSTEMS) {
       table,
       props: props.map(fillDescription),
     }))
-    if (list.length) propTables[base] = list
+    if (list.length) forSystem[base] = list
   }
 }
 writeFileSync(
@@ -887,14 +1018,19 @@ writeFileSync(
   [
     '// AUTO-GENERATED by scripts/generate-registry.mjs — gitignored, never committed.',
     '// Prop tables for design-system component pages, parsed from each component’s',
-    '// @typedef/@property JSDoc. Keyed by source-file basename (e.g. "Button").',
+    '// @typedef/@property JSDoc. Keyed by system slug, then source-file basename',
+    '// (e.g. ANDROMEDA_PROPS["andromeda-pro"]["Button"]).',
     'export interface AndromedaPropRow { name: string; type: string; optional: boolean; default: string; description: string }',
     'export interface AndromedaPropTable { table: string; props: AndromedaPropRow[] }',
-    `export const ANDROMEDA_PROPS: Record<string, AndromedaPropTable[]> = ${JSON.stringify(propTables, null, 2)}`,
+    `export const ANDROMEDA_PROPS: Record<string, Record<string, AndromedaPropTable[]>> = ${JSON.stringify(propTables, null, 2)}`,
     '',
   ].join('\n'),
 )
-console.log(`Generated app/lib/andromeda-props.generated.ts (${Object.keys(propTables).length} components with prop tables)`)
+console.log(
+  `Generated app/lib/andromeda-props.generated.ts (` +
+    Object.entries(propTables).map(([sys, t]) => `${sys}: ${Object.keys(t).length}`).join(', ') +
+    ` components with prop tables)`,
+)
 
 // Prop tables for STANDALONE component pages (components-workspace + injected
 // components-workspace-premium). Free standalones are self-contained and
@@ -941,6 +1077,7 @@ const FREE_GATE_NOTE = 'Free account required to install; source is free to read
 const PREMIUM_GATE_NOTE = 'Requires AI Canvas Premium to install.'
 const gate = {
   systems: new Set(manifest.systemSlugs),
+  paidSystems: new Set(manifest.paidSystemSlugs),
   dsComponents: new Set(manifest.designSystemSlugs),
   templates: new Set(manifest.templateSlugs),
   premiumStandalones: new Set(manifest.premiumSlugs),
@@ -951,8 +1088,23 @@ function gateNoteFor(name) {
   if (gate.templates.has(name)) return PREMIUM_GATE_NOTE
   if (gate.brains.has(name)) return PREMIUM_GATE_NOTE
   for (const system of gate.systems) {
-    if (name === `${system}-tokens`) return null // meta: free, anonymous install
-    if (name === system || name === `${system}-all`) return PREMIUM_GATE_NOTE
+    // A PAID system's foundation is premium like the rest of it; only a free
+    // system's tokens are the anonymous shared dependency. This branch must
+    // stay in step with classifyContent(), or the catalog advertises a free
+    // install for something /r gates.
+    if (name === `${system}-tokens`) {
+      return gate.paidSystems.has(system) ? PREMIUM_GATE_NOTE : null
+    }
+    // `-all` carries the templates and the brain, so it is premium on every
+    // system. The bare components bundle follows its system: paid on a paid
+    // one, the free-account lane on a free one.
+    if (name === `${system}-all`) return PREMIUM_GATE_NOTE
+    if (name === system) {
+      return gate.paidSystems.has(system) ? PREMIUM_GATE_NOTE : FREE_GATE_NOTE
+    }
+  }
+  for (const system of gate.paidSystems) {
+    if (name.startsWith(`${system}-`) && gate.dsComponents.has(name)) return PREMIUM_GATE_NOTE
   }
   if (gate.dsComponents.has(name)) return FREE_GATE_NOTE
   if (gate.premiumStandalones.has(name)) return PREMIUM_GATE_NOTE
@@ -996,6 +1148,10 @@ console.log(`Generated ${count} components + ${dsCount} system/template items in
 
 const mcpComponents = []
 const categoryCounts = {}
+// Prop tables by registry slug, for the MCP's read-the-API and validate tools.
+// Standalones (free + injected premium) are already keyed by slug; design-system
+// components are added inside the systemComponents loop below.
+const mcpPropsBySlug = { ...standaloneProps }
 
 for (const dir of dirs) {
   const meta = metadata[dir]
@@ -1081,7 +1237,7 @@ const mcpSystems = []
 const mcpTemplates = []
 const mcpSystemComponents = []
 const mcpBrains = []
-for (const ds of DESIGN_SYSTEMS) {
+for (const ds of SYSTEMS) {
   const tokensSlug = `${ds.slug}-tokens`
   const tokensJsonPath = join(outDir, `${tokensSlug}.json`)
   const sysJsonPath = join(outDir, `${ds.slug}.json`)
@@ -1108,6 +1264,13 @@ for (const ds of DESIGN_SYSTEMS) {
     let compItem
     try { compItem = JSON.parse(readFileSync(compJsonPath, 'utf-8')) } catch { compItem = null }
     if (!compItem) continue
+    // The MCP props file is keyed by registry slug; the page tables above are
+    // keyed by system then source basename. Bridge them here, where both are known.
+    {
+      const base = baseName.replace(/\.(tsx|ts)$/, '')
+      const tables = propTables[ds.slug]?.[base]
+      if (tables) mcpPropsBySlug[slug] = tables
+    }
 
     // metaSlug: registry slug minus the `<system>-` prefix, unless a slugOverride
     // already mapped it to a distinct meta slug. Validate against the website meta.
@@ -1178,7 +1341,7 @@ for (const ds of DESIGN_SYSTEMS) {
       description:
         `The design rules behind ${ds.name}: system invariants, foundations (colour, spacing, ` +
         `layout, motion, charts), and per-component rules. Installs as markdown files into the ` +
-        `project so an AI agent reads them directly on every build — not fetched per request.`,
+        `project so an AI agent reads them directly on every build, not fetched per request.`,
       premium: true,
       fileCount: brainItem?.files?.length ?? 0,
       homepageUrl: `https://aicanvas.me/design-systems/${ds.slug}/brain`,
@@ -1214,7 +1377,7 @@ for (const ds of DESIGN_SYSTEMS) {
       name: `${template.name} (${ds.name} template)`,
       system: ds.slug,
       systemLabel: `${ds.name} design system`,
-      domain: template.domain,
+      category: template.category,
       description: templateItem?.description ?? `${template.name} template from ${ds.name}.`,
       fileCount: templateItem?.files?.length ?? 0,
       dependencies: templateItem?.dependencies ?? [],
@@ -1277,6 +1440,20 @@ const mcpMeta = {
 }
 
 writeFileSync(join(outDir, 'aicanvas-mcp.json'), JSON.stringify(mcpMeta, null, 2) + '\n')
+
+// ── AI Canvas MCP prop tables ─────────────────────────────────────────────────
+// A second, separate file so the catalog above stays small for every search
+// call; the MCP fetches this one only when an agent reads or validates an API.
+// Same rows the component pages render, keyed by registry slug. Metadata, never
+// source: it rides the free 'meta' lane (lib/registry/content-type.ts).
+const mcpProps = {
+  name: 'aicanvas',
+  generatedAt: mcpMeta.generatedAt,
+  componentCount: Object.keys(mcpPropsBySlug).length,
+  props: Object.fromEntries(Object.entries(mcpPropsBySlug).sort(([a], [b]) => a.localeCompare(b))),
+}
+writeFileSync(join(outDir, 'aicanvas-props.json'), JSON.stringify(mcpProps, null, 2) + '\n')
+console.log(`Generated MCP prop tables: ${mcpProps.componentCount} components with a documented API`)
 console.log(`Generated MCP metadata: ${mcpComponents.length} components, ${Object.keys(categoryCounts).length} categories, ${mcpSystems.length} systems, ${mcpSystemComponents.length} system components, ${mcpTemplates.length} templates`)
 
 // ── Lightweight nav counts (sidebar / mobile-nav) ─────────────────────────────
@@ -1289,7 +1466,15 @@ const navTs =
   '// Category counts + total for the sidebar/mobile nav, with zero component\n' +
   '// imports (keeps three.js etc. out of the shared bundle).\n\n' +
   `export const CATEGORY_COUNTS: Record<string, number> = ${JSON.stringify(categoryCounts, null, 2)}\n\n` +
-  `export const TOTAL_COMPONENTS = ${mcpComponents.length}\n`
+  `export const TOTAL_COMPONENTS = ${mcpComponents.length}\n\n` +
+  '// Slug to display name, for the site top bar\'s breadcrumbs: the bar lives in the\n' +
+  '// root layout, so it needs a name for /components/<slug> without the 40 KB\n' +
+  '// component-meta list, let alone the registry.\n' +
+  `export const COMPONENT_NAMES: Record<string, string> = ${JSON.stringify(
+    Object.fromEntries(mcpComponents.map((c) => [c.slug, c.name])),
+    null,
+    2,
+  )}\n`
 writeFileSync('app/lib/component-nav.generated.ts', navTs)
 console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categoryCounts).length} categories, ${mcpComponents.length} total)`)
 

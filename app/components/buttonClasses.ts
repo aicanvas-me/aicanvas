@@ -2,8 +2,8 @@
 // Kept separate from Button.tsx (which is 'use client') so Server Components
 // can compute classNames for <a>/<Link> elements that look like buttons.
 
-export type ButtonVariant = 'primary' | 'accent' | 'outline' | 'icon' | 'link' | 'destructive'
-export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
+type ButtonVariant = 'primary' | 'accent' | 'outline' | 'icon' | 'link' | 'destructive'
+type ButtonSize = 'xs' | 'sm' | 'md' | 'lg'
 
 export type ButtonOptions = {
   variant?: ButtonVariant
@@ -11,6 +11,11 @@ export type ButtonOptions = {
   iconOnly?: boolean
   fullWidth?: boolean
   tone?: 'outline' | 'solid'
+  /** Fully rounded instead of the default corner. Set here rather than
+   *  appended by the caller: two radius utilities in one class string are
+   *  settled by the order of the built stylesheet, not by the caller's, so an
+   *  appended `rounded-full` silently loses. */
+  pill?: boolean
 }
 
 const BASE = 'inline-flex items-center justify-center font-semibold transition-colors active:scale-95 disabled:cursor-not-allowed disabled:opacity-50'
@@ -60,9 +65,11 @@ export function buttonClasses({
   iconOnly = false,
   fullWidth = false,
   tone = 'solid',
+  pill = false,
 }: ButtonOptions = {}): string {
   const square = iconOnly || variant === 'icon'
-  const sizing = square ? ICON_SIZES[size] : LABEL_SIZES[size]
+  const base = square ? ICON_SIZES[size] : LABEL_SIZES[size]
+  const sizing = pill ? base.replace(/rounded-(?:md|lg)/, 'rounded-full') : base
 
   const skin = variant === 'destructive' ? DESTRUCTIVE_TONES[tone] : VARIANTS[variant]
 

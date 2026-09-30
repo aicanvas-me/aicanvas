@@ -2,7 +2,9 @@ import Link from 'next/link'
 import { createClient } from '../../../lib/supabase/server'
 import type { InstallHistoryRow } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
-import { andromedaPageSlug, getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
+import { getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
+import { getAndromedaComponentMeta as getAndromedaProComponentMeta } from '../../../_lib/andromeda-pro/andromeda-meta'
+import { itemHref } from '../itemHref'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 
 // ─── Activity page ──────────────────────────────────────────────────────────
@@ -10,12 +12,6 @@ import { optimizeImageKitUrl } from '../../../lib/imagekit'
 // small gap, thumbnail at the start, component name + subtitle, relative
 // timestamp on the right. The underlying route is still /account/history
 // (label was renamed to "Activity" in AccountTabs; the URL stays for now).
-
-function hrefFor(row: InstallHistoryRow): string {
-  return row.system === 'andromeda'
-    ? `/design-systems/andromeda/${andromedaPageSlug(row.slug)}`
-    : `/components/${row.slug}`
-}
 
 function formatTimestamp(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', {
@@ -95,7 +91,13 @@ export default async function HistoryPage() {
       <ul className="space-y-2">
         {rows.map((row) => {
           const entry = bySlug.get(row.slug)
-          const andromedaEntry = !entry && row.system === 'andromeda' ? getAndromedaComponentMeta(row.slug) : undefined
+          const andromedaEntry = entry
+            ? undefined
+            : row.system === 'andromeda'
+              ? getAndromedaComponentMeta(row.slug)
+              : row.system === 'andromeda-pro'
+                ? getAndromedaProComponentMeta(row.slug)
+                : undefined
           const name = entry?.name ?? andromedaEntry?.name ?? row.slug
           const image = entry?.image
             ? optimizeImageKitUrl(entry.image, 'thumb')
@@ -105,7 +107,7 @@ export default async function HistoryPage() {
           return (
             <li key={row.id}>
               <Link
-                href={hrefFor(row)}
+                href={itemHref(row)}
                 className={`${ROW_GRID} rounded-xl border border-sand-200 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700`}
                 aria-label={`Open ${name}`}
               >

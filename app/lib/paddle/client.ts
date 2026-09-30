@@ -1,5 +1,5 @@
 'use client'
-import { initializePaddle, type Paddle } from '@paddle/paddle-js'
+import { initializePaddle, type CheckoutSettings, type Paddle } from '@paddle/paddle-js'
 import { beacon } from '../analytics'
 
 let paddlePromise: Promise<Paddle | undefined> | null = null
@@ -66,6 +66,13 @@ export function getPaddle(): Promise<Paddle | undefined> {
 export const PRICES = {
   monthly: process.env.NEXT_PUBLIC_PADDLE_PRICE_MONTHLY ?? '',
   yearly: process.env.NEXT_PUBLIC_PADDLE_PRICE_YEARLY ?? '',
+}
+
+/** Shared overlay settings; showAddDiscounts:false hides the public discount box so promos stay targeted. */
+export const CHECKOUT_SETTINGS: CheckoutSettings = {
+  displayMode: 'overlay',
+  theme: 'light',
+  showAddDiscounts: false,
 }
 
 export type BillingCycle = 'monthly' | 'yearly'

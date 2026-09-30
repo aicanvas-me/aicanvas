@@ -1,21 +1,14 @@
-// Site search matching.
+// Site search matching. Two rules:
 //
-// Learned from "glass component" returning nothing while "glass" alone matched
-// a dozen components. Two rules:
+// 1. A query is matched word by word, never as one contiguous phrase, so word
+//    order does not matter and "glass component" still finds the glass entries.
+// 2. When the full query matches nothing it is relaxed rather than failed: words
+//    no entry carries go first, then the least selective word, until something
+//    matches or a single word is left. That drops "component", "ui" or "react"
+//    without a hand-kept filler list to go stale, and keeps real tags like
+//    "blocks" and "widgets" working as filters.
 //
-// 1. A query is matched word by word, never as one contiguous phrase. No name,
-//    description or tag carries those two words side by side, so phrase
-//    matching found nothing. Word order now stops mattering too.
-// 2. When the full query matches nothing, it is relaxed rather than failed:
-//    words that match nothing at all go first, then the least selective word
-//    (the one the most entries carry) goes next, until something matches or a
-//    single word is left. That drops "component", "ui" or "react" — how people
-//    describe what they are browsing, not how any one component describes
-//    itself — without a hand-kept filler list to go stale, and it keeps real
-//    tags like "blocks" and "widgets" working as filters.
-//
-// A one-word query is never relaxed, so a typo still lands on the empty state
-// and its "Did you mean?" suggestions.
+// A one-word query is never relaxed, so a typo still lands on the empty state.
 
 /** Split a raw query into lowercase words. Empty for a blank query. */
 export function searchTokens(query: string): string[] {
@@ -23,8 +16,8 @@ export function searchTokens(query: string): string[] {
 }
 
 /** True when every word appears somewhere in the text. Pass the entry's name,
- *  description and tag labels joined into one string: a word can never contain
- *  whitespace, so nothing matches across a field boundary. */
+ *  description and tags as one string; words never contain whitespace, so
+ *  nothing matches across a field boundary. */
 export function matchesQuery(text: string, tokens: string[]): boolean {
   if (tokens.length === 0) return true
   const haystack = text.toLowerCase()
@@ -32,7 +25,7 @@ export function matchesQuery(text: string, tokens: string[]): boolean {
 }
 
 /** The words actually used to filter, after relaxing a query that would find
- *  nothing. `corpus` is every searchable entry, each as one string, exactly as
+ *  nothing. `corpus` is every searchable entry as one string, exactly as
  *  it will be matched. */
 export function effectiveTokens(tokens: string[], corpus: string[]): string[] {
   if (tokens.length < 2) return tokens
