@@ -1534,8 +1534,9 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
   // The accent check catches the sibling bug: an accent tag that is not a
   // categories.ts label makes a category with no page, and the component drops
   // out of every category listing.
-  // Dev is tolerant here: PREMIUM_LOCAL_PATH means an injected vault worktree whose
-  // manifest lists components still in progress, and their copy is written at the end.
+  // Dev is tolerant here: `npm run dev` passes --dev, and a premium component still
+  // in progress has no copy until the end of its build. Keyed on the flag, not on
+  // PREMIUM_LOCAL_PATH, because preflight sets that too and must stay as strict as Vercel.
   const copyStart = copySrc.indexOf('export const COMPONENT_COPY')
   if (copyStart === -1) throw new Error('generate-registry: COMPONENT_COPY not found in component-copy.ts')
   const copyKeys = new Set(
@@ -1544,7 +1545,7 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
   const catLabels = new Set(
     [...readFileSync('app/lib/categories.ts', 'utf-8').matchAll(/^\s*label: '([^']+)'/gm)].map((m) => m[1]),
   )
-  const injectedVault = Boolean(process.env.PREMIUM_LOCAL_PATH)
+  const devServer = process.argv.includes('--dev')
   const copyProblems = []
   for (const { m, premium } of [
     ...freeMetaList.map((m) => ({ m, premium: false })),
@@ -1553,7 +1554,7 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
     const gaps = [!stacks[m.slug] && 'ACCURATE_STACKS', !copyKeys.has(m.slug) && 'COMPONENT_COPY'].filter(Boolean)
     if (gaps.length > 0) {
       const problem = `${m.slug}: missing from ${gaps.join(' + ')}`
-      if (premium && injectedVault) {
+      if (premium && devServer) {
         process.stderr.write(`generate-registry: dev, skipping copy check for ${problem}\n`)
       } else {
         copyProblems.push(problem)
