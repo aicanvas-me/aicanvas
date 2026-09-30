@@ -42,6 +42,7 @@ export const ACCURATE_STACKS: Record<string, string[]> = {
   'expanding-tabs': ['Motion', 'Tailwind CSS'],
   'ai-knowledge-map': ['Motion', 'Canvas', 'Tailwind CSS'],
   'agent-cost-flow': ['Motion', 'Canvas', 'Tailwind CSS'],
+  'agent-feedback-loop': ['Motion', 'Tailwind CSS'],
   'filter-menu': ['Motion', 'Tailwind CSS'],
   'flip-calendar': ['Motion', 'Tailwind CSS'],
   'fluid-simulation-hero': ['WebGL', 'Tailwind CSS'],
@@ -415,6 +416,12 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
     useCases: ['AI Agent Cost Dashboard', 'Multi-agent Run Report', 'LLM Token Usage Breakdown'],
     about:
       'Agent Cost Flow draws one orchestrator run as a single picture: a hair-thin strand for every source document bundles into five subagent lanes, each lane shows its model, run time and tokens read, and its band sweeps into a stacked bill that totals the cost of the run on the right. Every figure climbs on one 30-second run clock, tokens quickly and money slowly, so the lane bills add up to the total at every moment. Pointing at a lane or its band isolates it and says what it read, returned and cost; below 1000px the picture becomes a stacked list where a click or tap opens a lane\'s tool calls over a fall of canvas dust. Motion springs the bars, CSS carries the travelling light, a canvas draws the dust, and light and dark themes ship in the same file. Thirteen props take your own agents, task, clocks, layout and palettes.',
+  },
+
+  'agent-feedback-loop': {
+    useCases: ['AI Agent Workflow Diagram', 'Human-in-the-Loop Workflow', 'AI Automation Landing Page'],
+    about:
+      'Agent Feedback Loop draws an AI agent pipeline as six isometric objects in a row, from Discover through Extract, Evaluate, Review and Activate to Learn, with a thin line carrying the outcome back through a small glass cube. Each stage assembles in turn as it scrolls into view, and hovering, focusing or tapping one lifts it into a named exploded view. A coloured light then relays around the circuit, one hue per stage. Motion drives the assembly and Tailwind CSS switches the light and dark palettes. Twelve props take your own stage names, colours and timing. It suits AI agent product pages, workflow explainers and automation docs.',
   },
 
   'ai-knowledge-map': {
