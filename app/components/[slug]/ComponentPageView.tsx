@@ -218,19 +218,16 @@ export default function ComponentPageView({
   // same bug in reverse. Safe on mount: `user` starts from the server-provided
   // initialUser, so a normal load never fires a second fetch.
   useEffect(() => { if (enforcing) setCodeState({ status: 'idle' }) }, [enforcing, slug, user?.id])
-  // The preview starts on whatever the site is set to, so a visitor browsing in
-  // light does not get slapped with a dark box, then pins to their own choice
-  // the moment they touch the toggle. Derived rather than synced with an
-  // effect: the site theme is already correct during SSR (ThemeProvider is
-  // seeded from the cookie), so there is nothing to reconcile and no frame of
-  // the wrong theme. It reads the site and never writes it, which is the whole
-  // point — the previous version of this toggle wrote <html> and dragged the
-  // entire site dark with it.
+  // The preview and the site are ONE theme. The preview reads the site theme
+  // (already correct during SSR: ThemeProvider is seeded from the cookie, so no
+  // frame of the wrong theme), and its toggle writes it back through
+  // ThemeProvider.setTheme, so flipping either moves the other, the same as the
+  // template pages. This file never touches <html> or the cookie itself; the
+  // scope test holds that line.
   //
-  // A dark-only component ignores both: it has no light rendering to show.
-  const { theme: siteTheme } = useTheme()
-  const [themeOverride, setThemeOverride] = useState<'dark' | 'light' | null>(null)
-  const cardTheme: 'dark' | 'light' = dualTheme ? (themeOverride ?? siteTheme) : 'dark'
+  // A dark-only component ignores the theme: it has no light rendering to show.
+  const { theme: siteTheme, setTheme: setSiteTheme } = useTheme()
+  const cardTheme: 'dark' | 'light' = dualTheme ? siteTheme : 'dark'
   const [cliCopied, setCliCopied] = useState(false)
   const { copied: mcpTokenCopied, copy: copyMcpToken } = useCopied(
     userToken ? `AICANVAS_TOKEN=${userToken}` : '',
@@ -597,14 +594,26 @@ export default function ComponentPageView({
                     size="md"
                     iconOnly
                     disabled={!dualTheme}
+                    aria-label={
+                      !dualTheme
+                        ? 'Dark mode only'
+                        : cardTheme === 'dark'
+                          ? 'Switch to light theme'
+                          : 'Switch to dark theme'
+                    }
                     onClick={() => {
                       if (!dualTheme) return
-                      setThemeOverride(cardTheme === 'dark' ? 'light' : 'dark')
+                      setSiteTheme(cardTheme === 'dark' ? 'light' : 'dark')
                     }}
                     className="overflow-hidden"
                   >
                     <AnimatePresence mode="wait" initial={false}>
-                      {cardTheme === 'dark' ? (
+                      {/* Shows where a click goes (moon in light, sun in dark),
+                          the same rule as the site toggle in ThemeToggle.tsx, so
+                          the two controls that now do one thing agree. A dark-only
+                          component's toggle goes nowhere, so it keeps the moon
+                          that says what the preview is. */}
+                      {!dualTheme || cardTheme !== 'dark' ? (
                         <motion.span
                           key="moon"
                           initial={{ y: 12, opacity: 0 }}
@@ -909,14 +918,14 @@ export default function ComponentPageView({
                           </p>
                           <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
                             {/* Package manager switcher */}
-                            <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                            <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                                 <button
                                   key={pm}
                                   onClick={() => { setPkgManager(pm); setDepsCopied(false) }}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     pkgManager === pm
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -954,12 +963,12 @@ export default function ComponentPageView({
 
                             {/* Tier toggle — only for components belonging to a design system */}
                             {systemMeta && (
-                              <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                              <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                                 <button
                                   onClick={() => setInstallTier('component')}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'component'
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -972,7 +981,7 @@ export default function ComponentPageView({
                                   }}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'system'
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -1077,7 +1086,7 @@ export default function ComponentPageView({
                             Copy and paste the following code into your project:
                           </p>
                           <div className="relative rounded-lg bg-sand-200 dark:bg-sand-950">
-                            <div className="flex items-center justify-between border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                            <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                                 {slug}.tsx
                               </span>
@@ -1605,12 +1614,12 @@ function FontStep({
         <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
       </div>
       <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-        <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+        <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
           {(['html', 'nextjs'] as const).map((fw) => (
             <button
               key={fw}
               onClick={() => onSelectFramework(fw)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
             >
               {fw === 'html' ? 'HTML' : 'Next.js'}
             </button>
@@ -1668,7 +1677,7 @@ function PackageFontStep({
       </div>
       {snippet && (
         <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-          <div className="flex items-center justify-between border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+          <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
             <span className="font-mono text-xs text-sand-600 dark:text-sand-500">layout.tsx</span>
             <button
               onClick={onCopySnippet}

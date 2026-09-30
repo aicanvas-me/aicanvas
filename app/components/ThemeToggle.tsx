@@ -5,9 +5,9 @@ import { buttonClasses } from './buttonClasses'
 import { useTheme } from './ThemeProvider'
 
 /**
- * The site's only theme control. Flips `<html>` and the cookie through
- * ThemeProvider and stops there: a component preview's own light/dark switch is
- * a separate, local thing and this must never touch it.
+ * The site's theme control. Flips `<html>` and the cookie through
+ * ThemeProvider, which every preview also reads: a component preview's own
+ * light/dark switch calls the same setTheme, so the two stay linked.
  *
  * Both icons stay mounted and cross-fade. Swapping the element instead would
  * drop focus off the button mid-press for anyone driving it from the keyboard.
