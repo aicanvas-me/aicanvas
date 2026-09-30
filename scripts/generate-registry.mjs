@@ -1534,6 +1534,9 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
   // The accent check catches the sibling bug: an accent tag that is not a
   // categories.ts label makes a category with no page, and the component drops
   // out of every category listing.
+  // Dev is tolerant here: `npm run dev` passes --dev, and a premium component still
+  // in progress has no copy until the end of its build. Keyed on the flag, not on
+  // PREMIUM_LOCAL_PATH, because preflight sets that too and must stay as strict as Vercel.
   const copyStart = copySrc.indexOf('export const COMPONENT_COPY')
   if (copyStart === -1) throw new Error('generate-registry: COMPONENT_COPY not found in component-copy.ts')
   const copyKeys = new Set(
@@ -1542,10 +1545,21 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
   const catLabels = new Set(
     [...readFileSync('app/lib/categories.ts', 'utf-8').matchAll(/^\s*label: '([^']+)'/gm)].map((m) => m[1]),
   )
+  const devServer = process.argv.includes('--dev')
   const copyProblems = []
-  for (const m of [...freeMetaList, ...premiumMetaList]) {
+  for (const { m, premium } of [
+    ...freeMetaList.map((m) => ({ m, premium: false })),
+    ...premiumMetaList.map((m) => ({ m, premium: true })),
+  ]) {
     const gaps = [!stacks[m.slug] && 'ACCURATE_STACKS', !copyKeys.has(m.slug) && 'COMPONENT_COPY'].filter(Boolean)
-    if (gaps.length > 0) copyProblems.push(`${m.slug}: missing from ${gaps.join(' + ')}`)
+    if (gaps.length > 0) {
+      const problem = `${m.slug}: missing from ${gaps.join(' + ')}`
+      if (premium && devServer) {
+        process.stderr.write(`generate-registry: dev, skipping copy check for ${problem}\n`)
+      } else {
+        copyProblems.push(problem)
+      }
+    }
     for (const t of m.tags) {
       if (t.accent && !catLabels.has(t.label)) {
         copyProblems.push(`${m.slug}: accent tag "${t.label}" is not a label in app/lib/categories.ts`)
