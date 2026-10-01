@@ -57,6 +57,10 @@ export const combobox: MatrixSpec = {
   // must not turn into a scroll container that clips it.
   overflow: true,
   variants: [
+    // The page hero: a typed query with its list already open, so the field
+    // never reads as a plain SearchField. defaultOpen shows the list without
+    // taking focus; a click outside or Escape closes it as usual.
+    { label: 'Live', props: { defaultValue: 'a', defaultOpen: true } },
     { label: 'Empty', props: {} },
     // Holding a query, the list opens as soon as the field takes focus.
     { label: 'With query', props: { defaultValue: 'acme' } },

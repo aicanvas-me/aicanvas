@@ -15,7 +15,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'suggestion': { variants: 3, states: 3 },
   'choice-card': { variants: 3, states: 7 },
   'collapsible': { variants: 5, states: 3 },
-  'combobox': { variants: 2, states: 0 },
+  'combobox': { variants: 3, states: 0 },
   'corner-markers': { variants: 4, states: 0 },
   'cube': { variants: 3, states: 0 },
   'table-data': { variants: 2, states: 0 },
