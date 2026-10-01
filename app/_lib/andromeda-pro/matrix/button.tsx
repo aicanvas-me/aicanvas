@@ -16,14 +16,27 @@ export const button: MatrixSpec = {
     // The icon slot is orthogonal to variant, so it is its own case rather than
     // a fifth copy of the ladder.
     { label: 'With icon', props: { icon: Lightning } },
+    // `pressed` makes it a toggle button that stays on. The held look (the
+    // surface.active fill, primary ink) is painted on the two neutral lanes
+    // only: default and destructive already read as on through their fill, so
+    // there it only sets aria-pressed and a cell would copy its baseline.
+    { label: 'Pressed toggle (outline)', props: { variant: 'outline', pressed: true } },
+    { label: 'Pressed toggle (ghost)', props: { variant: 'ghost', pressed: true } },
   ],
   states: [
     ...CONTROL_STATES,
     { label: 'Destructive focus', props: { variant: 'destructive' }, force: 'focus' },
+    // A held toggle keeps its fill under the pointer while the edge climbs to
+    // border.bright; on ghost, whose frame is transparent, that edge exists
+    // only on hover. Both are hover: utilities in the component, so the
+    // gated hover variant in globals.css forces them with no companion CSS.
+    { label: 'Pressed toggle hover (outline)', props: { variant: 'outline', pressed: true }, force: 'hover' },
+    { label: 'Pressed toggle hover (ghost)', props: { variant: 'ghost', pressed: true }, force: 'hover' },
     // Pressed is declared on the two variants whose active: colours actually
     // differ from their own rest colours. default and destructive carry active:
     // utilities too, but they repaint the same accent-400 / danger-400 they already
     // sit on, so a Pressed cell for them would be a copy of its baseline.
+    // These are the :active moment of a click, not the `pressed` toggle above.
     { label: 'Pressed (outline)', props: { variant: 'outline' }, force: 'active' },
     { label: 'Pressed (ghost)', props: { variant: 'ghost' }, force: 'active' },
   ],

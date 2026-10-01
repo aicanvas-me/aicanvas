@@ -11,30 +11,44 @@
 // new consumer.
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
+import { LayoutGroup } from 'framer-motion'
 import {
   ArrowClockwise,
   Bell,
   BookOpen,
+  Calendar,
   ChartBar,
   ChartLine,
+  ChatCircle,
   Clock,
   Compass,
   Copy,
   Database,
+  DownloadSimple,
   EnvelopeOpen,
   Envelope,
   Export,
   EyeSlash,
+  FileCsv,
+  Funnel,
   Gear,
+  GlobeSimple,
   Info,
   Keyboard,
   MagnifyingGlass,
   Pencil,
+  PencilSimple,
+  PlugsConnected,
   Pulse,
+  PushPin,
   SignOut,
   Sliders,
+  Sparkle,
+  SpeakerHigh,
+  SpeakerSlash,
   Star,
+  ThumbsUp,
   Trash,
   UserCircle,
   Users,
@@ -68,6 +82,12 @@ import { TrendChart } from '../../lib/andromeda-pro.generated'
 import { Radio, RadioGroup } from '../../lib/andromeda-pro.generated'
 import { Slider } from '../../lib/andromeda-pro.generated'
 import { Spinner } from '../../lib/andromeda-pro.generated'
+import { Skeleton } from '../../lib/andromeda-pro.generated'
+import { Suggestion } from '../../lib/andromeda-pro.generated'
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
+import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '../../lib/andromeda-pro.generated'
+import { Popover, PopoverContent, PopoverLabel, PopoverSeparator, PopoverTrigger } from '../../lib/andromeda-pro.generated'
+import { Tool } from '../../lib/andromeda-pro.generated'
 import { StatTile } from '../../lib/andromeda-pro.generated'
 import { StrengthMeter } from '../../lib/andromeda-pro.generated'
 import { Tag } from '../../lib/andromeda-pro.generated'
@@ -83,8 +103,13 @@ import {
 // v2 components come from the build-time-injected shim (real re-exports when
 // injected, placeholder panels on degraded builds) — never import them from
 // design-systems/ directly. See scripts/inject-premium.mjs.
-import { MetricChart, Gauge, Waveform, MediaCard, DataTable, FunnelChart, Orb, Nodes, Burst } from '../../lib/andromeda-pro.generated'
+import { MetricChart, Gauge, Waveform, MediaCard, DataTable, FunnelChart, Orb, Nodes, Burst, Cube } from '../../lib/andromeda-pro.generated'
 import { MusicPlayerDemo as WiredMusicPlayer } from './matrix/music-player'
+import { LiveArtifact, downloadRiskCsv } from './matrix/artifact'
+import { PickerCombobox } from './matrix/combobox'
+import { AssistantTurn, UserTurn } from './matrix/message'
+import { ModelPicker } from './matrix/popover'
+import { LiveComposer } from './matrix/prompt-input'
 import { SAMPLE_AVATARS, SAMPLE_COVERS } from './sample-pictures'
 
 // ─── Layout helpers ──────────────────────────────────────────────────────────
@@ -192,7 +217,29 @@ function SizeRamp({ sizes = ['sm', 'md', 'lg'], render, direction = 'row' }) {
 
 // ─── Per-slug demos ──────────────────────────────────────────────────────────
 
+// A short live readout beside a demo control, so a toggle visibly changes
+// something besides its own paint. Muted, not faint: it is a value.
+function Readout({ children }: { children: React.ReactNode }) {
+  return (
+    <span
+      aria-live="polite"
+      style={{
+        fontFamily: tokens.typography.fontSans,
+        fontSize: tokens.typography.size.sm,
+        color: `var(--at-text-muted, ${tokens.color.text.muted})`,
+      }}
+    >
+      {children}
+    </span>
+  )
+}
+
 function IconButtonDemo() {
+  // Toggle buttons: `pressed` is always a boolean here, never undefined, so
+  // each announces as a toggle from its first paint. The labels stay constant;
+  // the state is read from aria-pressed.
+  const [muted, setMuted] = useState(false)
+  const [liked, setLiked] = useState(false)
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
       <Row label="Variants">
@@ -200,6 +247,25 @@ function IconButtonDemo() {
         <IconButton variant="outline" aria-label="Settings" icon={Gear} />
         <IconButton variant="ghost" aria-label="Refresh" icon={ArrowClockwise} />
         <IconButton variant="destructive" aria-label="Delete" icon={Trash} />
+      </Row>
+      <Row label="Pressed">
+        <IconButton
+          variant="outline"
+          aria-label="Mute"
+          icon={muted ? SpeakerSlash : SpeakerHigh}
+          pressed={muted}
+          onClick={() => setMuted((v) => !v)}
+        />
+        <IconButton
+          variant="ghost"
+          aria-label="Good response"
+          icon={ThumbsUp}
+          pressed={liked}
+          onClick={() => setLiked((v) => !v)}
+        />
+        <Readout>
+          {muted ? 'Muted' : 'Sound on'} · {liked ? 'Rated good' : 'Not rated'}
+        </Readout>
       </Row>
       <Row label="Sizes">
         <SizeRamp render={(s) => <IconButton size={s} aria-label={`Settings (${s})`} icon={Gear} />} />
@@ -212,7 +278,15 @@ function IconButtonDemo() {
   )
 }
 
+// Twenty-four issues; nine are assigned to you, seven are unread, three are both.
+const ISSUE_COUNT = { all: 24, mine: 9, unread: 7, both: 3 }
+
 function ButtonDemo() {
+  // Two filter toggles over one list. `pressed` is a boolean from the first
+  // paint, and each label stays the same whether it is on or off.
+  const [mine, setMine] = useState(false)
+  const [unread, setUnread] = useState(false)
+  const shown = mine && unread ? ISSUE_COUNT.both : mine ? ISSUE_COUNT.mine : unread ? ISSUE_COUNT.unread : ISSUE_COUNT.all
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
       <Row label="Variants">
@@ -221,6 +295,15 @@ function ButtonDemo() {
         <Button variant="ghost">Ghost</Button>
         <Button variant="destructive">Destructive</Button>
         <Button variant="link">Link</Button>
+      </Row>
+      <Row label="Pressed">
+        <Button variant="outline" icon={UserCircle} pressed={mine} onClick={() => setMine((v) => !v)}>
+          Assigned to me
+        </Button>
+        <Button variant="ghost" icon={Envelope} pressed={unread} onClick={() => setUnread((v) => !v)}>
+          Unread
+        </Button>
+        <Readout>{shown} issues</Readout>
       </Row>
       <Row label="Sizes">
         <SizeRamp render={(s) => <Button size={s}>Deploy</Button>} />
@@ -432,56 +515,216 @@ function SearchFieldDemo() {
   )
 }
 
-function NavItemDemo() {
-  const items = [
-    { icon: Compass, label: 'Overview' },
-    { icon: Pulse, label: 'Activity' },
-    { icon: ChartLine, label: 'Reports' },
-    { icon: Bell, label: 'Alerts' },
-    { icon: Users, label: 'Members' },
-    { icon: Database, label: 'Logs' },
-    { icon: Gear, label: 'Settings' },
-  ]
-  return (
-    <div style={{ display: 'flex', gap: tokens.spacing[5], alignItems: 'flex-start' }}>
-      <div
-        style={{
-          width: 260,
-          background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
-          position: 'relative',
-        }}
-      >
-        <CornerMarkers />
-        {items.map((item, i) => (
-          <NavItem key={item.label} icon={item.icon} label={item.label} active={i === 0} />
-        ))}
-      </div>
+const NAV_ITEMS = [
+  { icon: Compass, label: 'Overview' },
+  { icon: Pulse, label: 'Activity' },
+  { icon: ChartLine, label: 'Reports' },
+  { icon: Bell, label: 'Alerts' },
+  { icon: Users, label: 'Members' },
+  { icon: Database, label: 'Logs' },
+  { icon: Gear, label: 'Settings' },
+]
 
-      {/* The same list collapsed to an icon rail. Same component, no edge
-          square — a rail is too narrow for one to read as an edge, so the
-          accent glyph marks the current row. The label is still there for
-          screen readers. */}
-      <div
-        style={{
-          width: 56,
-          background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
-          position: 'relative',
-        }}
-      >
-        <CornerMarkers />
-        {items.map((item, i) => (
-          <Tooltip
-            key={item.label}
-            label={item.label}
-            position="right"
-            // inline-flex by default, which would shrink-wrap the row and
-            // leave the hover fill and tap target narrower than the rail.
-            style={{ display: 'flex', width: '100%' }}
-          >
-            <NavItem collapsed icon={item.icon} label={item.label} active={i === 0} />
-          </Tooltip>
-        ))}
-      </div>
+const INITIAL_CHATS = [
+  { id: 'c1', title: 'Deorbit burn checklist', pinned: true },
+  { id: 'c2', title: 'Telemetry gaps on node 7', pinned: false },
+  { id: 'c3', title: 'Q3 launch cadence', pinned: false },
+  { id: 'c4', title: 'Ground station handover', pinned: false },
+]
+
+// Metadata label over a group of rows. Faint is right here: it names the
+// group, it is not a value.
+function GroupLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      style={{
+        padding: `${tokens.spacing[3]} ${tokens.spacing[3]} ${tokens.spacing[1]}`,
+        fontFamily: tokens.typography.fontMono,
+        fontSize: tokens.typography.size.xs,
+        color: `var(--at-text-faint, ${tokens.color.text.faint})`,
+        textTransform: 'uppercase',
+        letterSpacing: tokens.typography.tracking.widest,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+// A chat list: `selected` marks the open chat (neutral, not the current page),
+// and each row's `action` is a sm PanelMenu of things to do to that chat.
+// Rename swaps the row for an inline field; Pin moves the row between the
+// Pinned and Recent groups.
+function ChatList() {
+  const [chats, setChats] = useState(INITIAL_CHATS)
+  const [openId, setOpenId] = useState('c2')
+  const [renamingId, setRenamingId] = useState<string | null>(null)
+  // A menu item that moves or replaces the row puts focus back on that row
+  // itself: the menu's own focus return targets a trigger that may have just
+  // unmounted. Runs after the menu's effect, so it has the last word.
+  const [focusId, setFocusId] = useState<string | null>(null)
+  const rows = useRef<Record<string, HTMLButtonElement | null>>({})
+  const renameDone = useRef(false)
+
+  useEffect(() => {
+    if (!focusId) return
+    rows.current[focusId]?.focus()
+    setFocusId(null)
+  }, [focusId])
+
+  const togglePin = (id: string) => {
+    setChats((list) => list.map((c) => (c.id === id ? { ...c, pinned: !c.pinned } : c)))
+    setFocusId(id)
+  }
+  const finishRename = (id: string, value: string | null) => {
+    if (renameDone.current) return
+    renameDone.current = true
+    const title = value?.trim()
+    if (title) setChats((list) => list.map((c) => (c.id === id ? { ...c, title } : c)))
+    setRenamingId(null)
+    setFocusId(id)
+  }
+
+  const pinned = chats.filter((c) => c.pinned)
+  const recent = chats.filter((c) => !c.pinned)
+  // One flat keyed list, group labels included, so a pinned row MOVES rather
+  // than remounting in a second container.
+  const entries = [
+    ...(pinned.length ? [{ group: 'Pinned' }, ...pinned] : []),
+    ...(recent.length ? [{ group: 'Recent' }, ...recent] : []),
+  ]
+
+  return (
+    <div
+      style={{
+        width: 240,
+        paddingBottom: tokens.spacing[1],
+        background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
+        position: 'relative',
+      }}
+    >
+      <CornerMarkers />
+      {entries.map((entry) => {
+        if ('group' in entry) return <GroupLabel key={entry.group}>{entry.group}</GroupLabel>
+        const chat = entry
+        if (renamingId === chat.id) {
+          return (
+            // 28px sm field plus 4px above and below keeps the 36px row height.
+            <div key={chat.id} style={{ padding: `${tokens.spacing[1]} 0` }}>
+              <Input
+                size="sm"
+                aria-label="Chat name"
+                defaultValue={chat.title}
+                autoFocus
+                onFocus={(e) => e.target.select()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') finishRename(chat.id, e.currentTarget.value)
+                  if (e.key === 'Escape') finishRename(chat.id, null)
+                }}
+                onBlur={(e) => finishRename(chat.id, e.currentTarget.value)}
+              />
+            </div>
+          )
+        }
+        return (
+          <NavItem
+            key={chat.id}
+            ref={(el) => {
+              rows.current[chat.id] = el
+            }}
+            icon={ChatCircle}
+            label={chat.title}
+            selected={openId === chat.id}
+            onClick={() => setOpenId(chat.id)}
+            action={
+              <PanelMenu
+                size="sm"
+                ariaLabel={`${chat.title} options`}
+                items={[
+                  {
+                    label: 'Rename',
+                    icon: PencilSimple,
+                    onSelect: () => {
+                      renameDone.current = false
+                      setRenamingId(chat.id)
+                    },
+                  },
+                  { label: chat.pinned ? 'Unpin' : 'Pin', icon: PushPin, onSelect: () => togglePin(chat.id) },
+                ]}
+              />
+            }
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+function NavItemDemo() {
+  // One current page shared by both rails, so a click on either moves the
+  // active row in both.
+  const [current, setCurrent] = useState(0)
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', gap: tokens.spacing[5], alignItems: 'flex-start' }}>
+      {/* LayoutGroup so the active edge line slides between rows. */}
+      <LayoutGroup id="nav-demo-expanded">
+        <div
+          style={{
+            width: 260,
+            background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
+            position: 'relative',
+          }}
+        >
+          <CornerMarkers />
+          {NAV_ITEMS.map((item, i) => (
+            <NavItem
+              key={item.label}
+              icon={item.icon}
+              label={item.label}
+              active={i === current}
+              onClick={() => setCurrent(i)}
+            />
+          ))}
+        </div>
+      </LayoutGroup>
+
+      {/* The same list collapsed to an icon rail. Same component: the accent
+          glyph and the same trailing edge line mark the current row, so the
+          rail reads the same folded or open. The label is still there for
+          screen readers. Its own layoutGroupId, so its line never slides
+          across to the expanded list. */}
+      <LayoutGroup id="nav-demo-rail">
+        <div
+          style={{
+            width: 56,
+            background: `var(--at-surface-raised, ${tokens.color.surface.raised})`,
+            position: 'relative',
+          }}
+        >
+          <CornerMarkers />
+          {NAV_ITEMS.map((item, i) => (
+            <Tooltip
+              key={item.label}
+              label={item.label}
+              position="right"
+              // inline-flex by default, which would shrink-wrap the row and
+              // leave the hover fill and tap target narrower than the rail.
+              style={{ display: 'flex', width: '100%' }}
+            >
+              <NavItem
+                collapsed
+                icon={item.icon}
+                label={item.label}
+                active={i === current}
+                layoutGroupId="andromeda-navitem-indicator-rail"
+                onClick={() => setCurrent(i)}
+              />
+            </Tooltip>
+          ))}
+        </div>
+      </LayoutGroup>
+
+      <ChatList />
     </div>
   )
 }
@@ -680,9 +923,9 @@ function PlanetDemo() {
   )
 }
 
-// Orb, Nodes and Burst are Objects: set-pieces, one per surface, framed by the
-// system's own Card instead of floating on a bare page. One shared frame — the
-// only thing that differs between the three is the title and the body.
+// Orb, Nodes, Burst and Cube are Objects: set-pieces, one per surface, framed by
+// the system's own Card instead of floating on a bare page. One shared frame —
+// the only thing that differs between them is the title and the body.
 // The box is deliberately large: an Object fills a surface, and at 280px it
 // reads as a widget instead.
 function ObjectPanel({ title, children }) {
@@ -718,6 +961,14 @@ function BurstDemo() {
   return (
     <ObjectPanel title="Convergence">
       <Burst />
+    </ObjectPanel>
+  )
+}
+
+function CubeDemo() {
+  return (
+    <ObjectPanel title="Lattice">
+      <Cube />
     </ObjectPanel>
   )
 }
@@ -897,6 +1148,308 @@ function ToggleDemo() {
   )
 }
 
+function SkeletonDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <Row label="Sizes">
+        <SizeRamp
+          sizes={['sm', 'md']}
+          render={(s) => (
+            <div style={{ width: 240 }}>
+              <Skeleton size={s} />
+            </div>
+          )}
+        />
+      </Row>
+    </div>
+  )
+}
+
+function SuggestionDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <Row label="Default">
+        <Suggestion icon={Sparkle}>Summarize</Suggestion>
+        <Suggestion>Draft a reply</Suggestion>
+        <Suggestion selected>Selected</Suggestion>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp sizes={['sm', 'md']} render={(s) => <Suggestion size={s} icon={Sparkle}>Suggestion</Suggestion>} />
+      </Row>
+    </div>
+  )
+}
+
+// ─── AI chat set ─────────────────────────────────────────────────────────────
+// Composed the way a chat surface uses them, and every control is wired: the
+// wired pieces live beside their matrix declarations (./matrix/*) and are
+// reused here, so the poster and the component page run the same behaviour.
+
+const aiBody = {
+  margin: 0,
+  // Custom properties, not token paths: the section sits inside the root that
+  // writes them, and a module-level token path would throw on a degraded
+  // build whose fallback tokens lack it.
+  fontFamily: 'var(--andromeda-font-sans)',
+  fontSize: 'var(--andromeda-text-sm)',
+  lineHeight: 'var(--andromeda-leading-text-sm)',
+  color: `var(--andromeda-text-secondary, ${tokens.color.text.secondary})`,
+}
+
+function MessageDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: tokens.spacing[5] }}>
+      <UserTurn />
+      <AssistantTurn />
+    </div>
+  )
+}
+
+// A done step whose body is the receipt of what it wrote: an outline Item
+// whose one action downloads that file.
+function ReceiptItem() {
+  return (
+    <Item variant="outline" size="sm">
+      <ItemMedia>
+        <FileCsv weight="regular" />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle>q3-pipeline-risk.csv</ItemTitle>
+        <ItemDescription>3 rows · 4 KB</ItemDescription>
+      </ItemContent>
+      <ItemActions>
+        <IconButton size="sm" variant="ghost" icon={DownloadSimple} aria-label="Download q3-pipeline-risk.csv" onClick={downloadRiskCsv} />
+      </ItemActions>
+    </Item>
+  )
+}
+
+function ToolDemo() {
+  // One step per status, stacked spacing[1] apart the way they sit inside an
+  // assistant turn. Done and failed steps open; running and stopped cannot.
+  return (
+    <div style={{ width: 360, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: tokens.spacing[1] }}>
+      <Tool title="Searched the web" duration={1240}>
+        <p style={aiBody}>Read 3 sources on Q3 renewals and kept the two with dated figures.</p>
+      </Tool>
+      <Tool title="Wrote the risk table" duration={860} defaultOpen>
+        <ReceiptItem />
+      </Tool>
+      <Tool title="Queried the CRM" status="error">
+        <p style={aiBody}>The CRM returned 429 Too Many Requests. Nothing was read.</p>
+      </Tool>
+      <Tool title="Drafting the summary" status="stopped" />
+      <Tool title="Scoring each deal" status="running" />
+    </div>
+  )
+}
+
+function ArtifactDemo() {
+  return (
+    <div style={{ width: 640, maxWidth: '100%' }}>
+      <LiveArtifact />
+    </div>
+  )
+}
+
+function PromptInputDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 640, display: 'flex', flexDirection: 'column', gap: tokens.spacing[5] }}>
+      <LiveComposer draft="Summarize the three riskiest Q3 deals" tools={<ModelPicker side="auto" />} />
+      <LiveComposer status="streaming" />
+    </div>
+  )
+}
+
+function ComboboxDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 420 }}>
+      <Row label="Search chats and accounts">
+        <div style={{ width: 360, maxWidth: '100%' }}>
+          <PickerCombobox />
+        </div>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp
+          sizes={['sm', 'md']}
+          render={(s) => (
+            <div style={{ width: 240 }}>
+              <PickerCombobox size={s} />
+            </div>
+          )}
+        />
+      </Row>
+    </div>
+  )
+}
+
+const CONNECTIONS = [
+  { id: 'warehouse', label: 'Warehouse', detail: 'Synced 4 minutes ago', icon: Database, on: true },
+  { id: 'calendar', label: 'Calendar', detail: 'Read only', icon: Calendar, on: false },
+]
+
+// A popover of mixed content: rows that each carry their own switch. The
+// rows stay plain (the switch is the hit area), so they do not lift.
+function ConnectionsPopover() {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <IconButton variant="outline" icon={PlugsConnected} aria-label="Connections" />
+      </PopoverTrigger>
+      <PopoverContent side="bottom" width={280} aria-label="Connections">
+        <PopoverLabel>Data</PopoverLabel>
+        {CONNECTIONS.map((c) => {
+          const Icon = c.icon
+          return (
+            <Item key={c.id} size="sm">
+              <ItemMedia>
+                <Icon weight="regular" />
+              </ItemMedia>
+              <ItemContent>
+                <ItemTitle>{c.label}</ItemTitle>
+                <ItemDescription>{c.detail}</ItemDescription>
+              </ItemContent>
+              <ItemActions>
+                <Toggle size="sm" defaultChecked={c.on} aria-label={`Use ${c.label}`} />
+              </ItemActions>
+            </Item>
+          )
+        })}
+        <PopoverSeparator />
+        <PopoverLabel>Web</PopoverLabel>
+        <Item size="sm">
+          <ItemMedia>
+            <GlobeSimple weight="regular" />
+          </ItemMedia>
+          <ItemContent>
+            <ItemTitle>Search the web</ItemTitle>
+          </ItemContent>
+          <ItemActions>
+            <Toggle size="sm" defaultChecked aria-label="Search the web" />
+          </ItemActions>
+        </Item>
+      </PopoverContent>
+    </Popover>
+  )
+}
+
+function PopoverDemo() {
+  return (
+    <div style={{ display: 'flex', gap: tokens.spacing[8], alignItems: 'flex-start', flexWrap: 'wrap', minHeight: 260 }}>
+      <Row label="Model picker">
+        <ModelPicker defaultOpen />
+      </Row>
+      <Row label="Mixed content">
+        <ConnectionsPopover />
+      </Row>
+    </div>
+  )
+}
+
+function CollapsibleDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 420 }}>
+      <Row label="Open · guide">
+        <div style={{ width: 360, maxWidth: '100%' }}>
+          <Collapsible defaultOpen>
+            <CollapsibleTrigger meta="3 sources">Searched the web</CollapsibleTrigger>
+            <CollapsibleContent guide>
+              <p style={aiBody}>Read 3 sources on Q3 renewals and kept the two with dated figures.</p>
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      </Row>
+      <Row label="Closed">
+        <div style={{ width: 360, maxWidth: '100%' }}>
+          <Collapsible>
+            <CollapsibleTrigger meta="2 options">Advanced settings</CollapsibleTrigger>
+            <CollapsibleContent>
+              <Toggle size="sm" label="Cite sources" defaultChecked />
+              <Toggle size="sm" label="Search the web" />
+            </CollapsibleContent>
+          </Collapsible>
+        </div>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp
+          sizes={['sm', 'md']}
+          render={(s) => (
+            <div style={{ width: 200 }}>
+              <Collapsible>
+                <CollapsibleTrigger size={s}>Details</CollapsibleTrigger>
+                <CollapsibleContent>
+                  <p style={aiBody}>Opened from the {s} row.</p>
+                </CollapsibleContent>
+              </Collapsible>
+            </div>
+          )}
+        />
+      </Row>
+    </div>
+  )
+}
+
+function ItemDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 420 }}>
+      <Row label="Default · rows in a list">
+        <div style={{ width: 360, maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: tokens.spacing[1] }}>
+          {CONNECTIONS.map((c) => {
+            const Icon = c.icon
+            return (
+              <Item key={c.id}>
+                <ItemMedia>
+                  <Icon weight="regular" />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>{c.label}</ItemTitle>
+                  <ItemDescription>{c.detail}</ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                  <Toggle size="sm" defaultChecked={c.on} aria-label={`Use ${c.label}`} />
+                </ItemActions>
+              </Item>
+            )
+          })}
+        </div>
+      </Row>
+      <Row label="Outline · a receipt">
+        <div style={{ width: 360, maxWidth: '100%' }}>
+          <Item variant="outline">
+            <ItemMedia variant="icon">
+              <FileCsv weight="regular" />
+            </ItemMedia>
+            <ItemContent>
+              <ItemTitle>q3-pipeline-risk.csv</ItemTitle>
+              <ItemDescription>3 rows · written by the agent</ItemDescription>
+            </ItemContent>
+            <ItemActions>
+              <IconButton size="sm" variant="ghost" icon={DownloadSimple} aria-label="Download q3-pipeline-risk.csv" onClick={downloadRiskCsv} />
+            </ItemActions>
+          </Item>
+        </div>
+      </Row>
+      <Row label="Sizes">
+        <SizeRamp
+          sizes={['sm', 'md']}
+          render={(s) => (
+            <div style={{ width: 180 }}>
+              <Item size={s} variant="outline">
+                <ItemMedia>
+                  <Database weight="regular" />
+                </ItemMedia>
+                <ItemContent>
+                  <ItemTitle>Warehouse</ItemTitle>
+                </ItemContent>
+              </Item>
+            </div>
+          )}
+        />
+      </Row>
+    </div>
+  )
+}
+
 function SpinnerDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
@@ -941,6 +1494,19 @@ function TextareaDemo() {
           direction="column"
           render={(s) => <Textarea size={s} placeholder="Add a description" rows={2} style={{ width: 300 }} />}
         />
+      </Row>
+      {/* One line at rest; it grows with every line typed, up to six, then
+          scrolls. No resize handle: the height is the field's to set. */}
+      <Row label="Auto-grow">
+        <div style={{ width: '100%', maxWidth: 420 }}>
+          <Textarea
+            label="Reply"
+            placeholder="Type a few lines. It grows to six, then scrolls."
+            autoGrow
+            rows={1}
+            maxRows={6}
+          />
+        </div>
       </Row>
       <div
         style={{
@@ -1510,12 +2076,16 @@ function SidebarDemo() {
 
 const DEMOS: Record<string, () => React.ReactElement> = {
   alert: AlertDemo,
+  artifact: ArtifactDemo,
   avatar: AvatarDemo,
   badge: BadgeDemo,
   button: ButtonDemo,
   card: CardDemo,
   checkbox: CheckboxDemo,
+  suggestion: SuggestionDemo,
   'choice-card': ChoiceCardDemo,
+  collapsible: CollapsibleDemo,
+  combobox: ComboboxDemo,
   'corner-markers': CornerMarkersDemo,
   'date-range-picker': DateRangePickerDemo,
   drawer: DrawerDemo,
@@ -1525,22 +2095,28 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'heat-grid': HeatGridDemo,
   'icon-button': IconButtonDemo,
   input: InputDemo,
+  item: ItemDemo,
   waveform: WaveformDemo,
   'media-card': MediaCardDemo,
+  message: MessageDemo,
   'table-data': DataTableDemo,
   'music-player': MusicPlayerDemo,
   'nav-item': NavItemDemo,
   'panel-header': PanelHeaderDemo,
   'panel-menu': PanelMenuDemo,
   planet: PlanetDemo,
+  popover: PopoverDemo,
   orb: OrbDemo,
   nodes: NodesDemo,
   burst: BurstDemo,
+  cube: CubeDemo,
   'search-field': SearchFieldDemo,
   'strength-meter': StrengthMeterDemo,
   sidebar: SidebarDemo,
+  skeleton: SkeletonDemo,
   'segmented-control': SegmentedControlDemo,
   'progress-bar': ProgressBarDemo,
+  'prompt-input': PromptInputDemo,
   'chart-metric': MetricChartDemo,
   'chart-radar': RadarChartDemo,
   radio: RadioDemo,
@@ -1551,6 +2127,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'chart-trend': TrendChartDemo,
   textarea: TextareaDemo,
   toggle: ToggleDemo,
+  tool: ToolDemo,
   'table-basic': TableDemo,
   tooltip: TooltipDemo,
   'user-card': UserCardDemo,

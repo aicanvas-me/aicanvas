@@ -56,7 +56,7 @@ describe('theme scope contract', () => {
         //   frame document's root.
         // - AndromedaThemeWrap: writes Andromeda Pro's `--at-*` custom properties
         //   on the root (sand chrome reads no --at- var). The root is where they
-        //   have to land: the canvas components (Burst, Orb, Nodes, Planet, the
+        //   have to land: the canvas components (Burst, Cube, Orb, Nodes, Planet, the
         //   city map) and useResolvedVars re-resolve their ink by observing the
         //   root, and the Drawer, PanelMenu and Tooltip portal to <body>, which
         //   inherits from the root and not from a mid-tree wrapper. Scoping the

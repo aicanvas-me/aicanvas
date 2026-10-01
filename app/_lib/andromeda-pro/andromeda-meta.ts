@@ -23,6 +23,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/alert.png?v=5',
   },
   {
+    slug: 'artifact',
+    name: 'Artifact',
+    description:
+      'Frames something an agent produced, such as a table or a chart, under a title bar with its actions.',
+    sourceFile: 'Artifact.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/artifact.png?v=1',
+  },
+  {
     slug: 'avatar',
     name: 'Avatar',
     description:
@@ -69,6 +77,22 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Presents an option as a whole selectable card with a title and a supporting line.',
     sourceFile: 'ChoiceCard.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/choice-card.png?v=1',
+  },
+  {
+    slug: 'collapsible',
+    name: 'Collapsible',
+    description:
+      'Opens and closes the section under a one-line row, for detail the reader may want.',
+    sourceFile: 'Collapsible.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/collapsible.png?v=1',
+  },
+  {
+    slug: 'combobox',
+    name: 'Combobox',
+    description:
+      'Finds one thing in a known set as you type, from a list that opens under the field.',
+    sourceFile: 'Combobox.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/combobox.png?v=1',
   },
   {
     slug: 'corner-markers',
@@ -167,6 +191,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/input.png?v=4',
   },
   {
+    slug: 'item',
+    name: 'Item',
+    description:
+      'Lays out one row of a list or a menu: a glyph, a name with a line under it, and its actions.',
+    sourceFile: 'Item.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/item.png?v=1',
+  },
+  {
     slug: 'waveform',
     name: 'Waveform',
     description:
@@ -181,6 +213,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Presents an item on its own artwork, for content the image identifies.',
     sourceFile: 'MediaCard.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/media-card.png?v=1',
+  },
+  {
+    slug: 'message',
+    name: 'Message',
+    description:
+      'Shows one turn of a conversation, from the user or from the assistant, with its actions.',
+    sourceFile: 'Message.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/message.png?v=1',
   },
   {
     slug: 'table-basic',
@@ -239,12 +279,28 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/planet.png?v=1',
   },
   {
+    slug: 'popover',
+    name: 'Popover',
+    description:
+      'Floats a panel of mixed content off a trigger, such as a picker with a setting under it.',
+    sourceFile: 'Popover.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/popover.png?v=1',
+  },
+  {
     slug: 'progress-bar',
     name: 'Progress Bar',
     description:
       'Displays a single bounded reading as a horizontal meter.',
     sourceFile: 'ProgressBar.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/progress-bar.png?v=4',
+  },
+  {
+    slug: 'prompt-input',
+    name: 'Prompt Input',
+    description:
+      'Collects a prompt in a growing field, with its tools and one Send that becomes Stop.',
+    sourceFile: 'PromptInput.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/prompt-input.png?v=1',
   },
   {
     slug: 'radio',
@@ -279,6 +335,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/sidebar.png?v=1',
   },
   {
+    slug: 'skeleton',
+    name: 'Skeleton',
+    description:
+      'Holds the place of text that is still loading, as bars a single light passes over.',
+    sourceFile: 'Skeleton.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/skeleton.png?v=1',
+  },
+  {
     slug: 'slider',
     name: 'Slider',
     description:
@@ -311,6 +375,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/strength-meter.png?v=1',
   },
   {
+    slug: 'suggestion',
+    name: 'Suggestion',
+    description:
+      'Offers a proposed next move the reader can take, such as a follow-up prompt or a task lane.',
+    sourceFile: 'Suggestion.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/suggestion.png?v=1',
+  },
+  {
     slug: 'tag',
     name: 'Tag',
     description:
@@ -333,6 +405,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Switches a setting that takes effect the moment it flips.',
     sourceFile: 'Toggle.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/toggle.png?v=3',
+  },
+  {
+    slug: 'tool',
+    name: 'Tool',
+    description:
+      'Reports one agent step with its status and duration, and opens to show what it produced.',
+    sourceFile: 'Tool.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tool.png?v=1',
   },
   {
     slug: 'tooltip',
@@ -392,6 +472,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Draws hundreds of hairlines converging on a single focal point.',
     sourceFile: 'Burst.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/burst.png?v=1',
+  },
+  {
+    slug: 'cube',
+    name: 'Cube',
+    description:
+      'Turns a lattice of dots a quarter at a time, the way a puzzle cube twists.',
+    sourceFile: 'Cube.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/cube.png?v=1',
   },
 ]
 
@@ -462,6 +550,8 @@ const TEMPLATE_ART: Record<string, string> = {
   'sign-in': 'Sign_in_pro_dark.png',
   // Sign Up is Pro-only for the same reason.
   'sign-up': 'Sign_up_pro_dark.png',
+  // AI Chat is Pro-only too: no Legacy counterpart to pair with.
+  'ai-chat': 'Ai_chat_pro_dark.png',
 }
 const templateArt = (folder: string) => {
   const file = TEMPLATE_ART[folder] ?? ''
@@ -525,6 +615,13 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
     description:
       'The same authentication flow with no columns: a hairline lattice is the ground and the form floats on it.',
     image: templateArt('sign-up'),
+  },
+  {
+    folder: 'ai-chat',
+    name: 'AI Chat',
+    description:
+      'A revenue desk that works by conversation: an agent scores the Q3 pipeline, shows its steps, and hands back a live risk artifact.',
+    image: templateArt('ai-chat'),
   },
 ]
 

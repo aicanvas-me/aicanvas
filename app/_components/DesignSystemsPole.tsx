@@ -47,6 +47,7 @@ const SYSTEMS = [
       { slug: 'resource-planning', name: 'Resource Planning', category: 'Scheduling' },
       { slug: 'sign-in', name: 'Sign In', category: 'Authentication' },
       { slug: 'sign-up', name: 'Sign Up', category: 'Authentication' },
+      { slug: 'ai-chat', name: 'AI Chat', category: 'CRM' },
     ],
   },
   {
