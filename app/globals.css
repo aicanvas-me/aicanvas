@@ -156,7 +156,7 @@ html {
   --color-olive-500: #A8B94D;
   --color-olive-600: #869631;
   /* Deep end of the olive ramp. Dark enough to carry sand-50 text at about
-     6:1, which is what the selection highlight needs to stay readable. */
+     6:1; a small decorative fill on light pages. */
   --color-olive-700: #56631F;
   /* Light-mode accent hover. The ramp above was drawn to glow on sand-950, so
      its brightest steps land between 1.2:1 and 3:1 on a light page. This deep
