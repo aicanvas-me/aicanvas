@@ -568,12 +568,27 @@ const templateArt = (folder: string) => {
 // Blurbs are the same copy the overview (overview-b/overview-data.ts) shows on its template cards.
 // Keep the two in sync (fixed set, changes rarely).
 export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
+  // Same order as the overview bento, the template switcher and the left menu.
   {
     folder: 'city-operations',
     name: 'City Operations',
     description:
       'A city operations centre: a live incident map, air and traffic readings, an alert queue, and response trends.',
     image: templateArt('city-operations'),
+  },
+  {
+    folder: 'ai-chat',
+    name: 'AI Chat',
+    description:
+      'A revenue desk that works by conversation: an agent scores the Q3 pipeline, shows its steps, and hands back a live risk artifact.',
+    image: templateArt('ai-chat'),
+  },
+  {
+    folder: 'sign-in',
+    name: 'Sign In',
+    description:
+      'A whole authentication flow: create an account, sign in, recover a password and set a new one.',
+    image: templateArt('sign-in'),
   },
   {
     folder: 'signal-room',
@@ -603,25 +618,11 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
     image: templateArt('resource-planning'),
   },
   {
-    folder: 'sign-in',
-    name: 'Sign In',
-    description:
-      'A whole authentication flow: create an account, sign in, recover a password and set a new one.',
-    image: templateArt('sign-in'),
-  },
-  {
     folder: 'sign-up',
     name: 'Sign Up',
     description:
       'The same authentication flow with no columns: a hairline lattice is the ground and the form floats on it.',
     image: templateArt('sign-up'),
-  },
-  {
-    folder: 'ai-chat',
-    name: 'AI Chat',
-    description:
-      'A revenue desk that works by conversation: an agent scores the Q3 pipeline, shows its steps, and hands back a live risk artifact.',
-    image: templateArt('ai-chat'),
   },
 ]
 
