@@ -182,7 +182,7 @@ export function RemixPanel({
               </div>
               <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
                 Written against the real source code. Paste it into your AI
-                agent and ask for your changes.
+                agent and describe the changes you want.
               </p>
             </div>
             <Button
