@@ -531,20 +531,21 @@ export function AndromedaComponentView({
             <Button
               variant="outline"
               size="sm"
+              className="whitespace-nowrap"
               onClick={() => {
                 track('Remix Open', { component: registrySlug })
                 setRemixOpen(true)
               }}
             >
               <Sparkle weight="regular" size={15} />
-              Remix with AI
+              Remix<span className="hidden sm:inline"> with AI</span>
             </Button>
           )}
 
           {/* Copy Command — the button and command stay visible at all times; when
               the visitor isn't a confirmed subscriber, copyCli() opens the
               premium paywall modal instead of copying. */}
-          <Button variant="primary" size="sm" onClick={copyCli}>
+          <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
             {cliCopied ? (
               <Check weight="regular" size={15} />
             ) : (

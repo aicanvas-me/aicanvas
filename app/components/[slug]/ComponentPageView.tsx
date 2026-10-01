@@ -812,13 +812,14 @@ export default function ComponentPageView({
                 <Button
                   variant="outline"
                   size="sm"
+                  className="whitespace-nowrap"
                   onClick={() => {
                     track('Remix Open', { component: slug })
                     setRemixOpen(true)
                   }}
                 >
                   <Sparkle weight="regular" size={15} />
-                  Remix with AI
+                  Remix<span className="hidden sm:inline"> with AI</span>
                 </Button>
               )}
 
@@ -826,7 +827,7 @@ export default function ComponentPageView({
                   command. The button and command stay visible at all times;
                   when the install is account-gated and the visitor is signed
                   out, copyCli() opens the auth modal instead of copying. */}
-              <Button variant="primary" size="sm" onClick={copyCli}>
+              <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
                 {cliCopied
                   ? <Check weight="regular" size={15} />
                   : <Terminal weight="regular" size={15} />}

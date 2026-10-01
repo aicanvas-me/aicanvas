@@ -340,7 +340,7 @@ export function AndromedaComponentView({
           {/* Copy Command — the button and command stay visible at all times; when
               the install is account-gated and the visitor is signed out,
               copyCli() opens the auth modal instead of copying. */}
-          <Button variant="primary" size="sm" onClick={copyCli}>
+          <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
             {cliCopied ? (
               <Check weight="regular" size={15} />
             ) : (
