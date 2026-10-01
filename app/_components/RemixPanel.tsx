@@ -205,17 +205,8 @@ export function RemixPanel({
             className="flex-1 overflow-y-auto px-6 py-6 sm:px-8"
             style={{ scrollbarWidth: 'thin' }}
           >
-            {/* Remix disclaimer */}
-            <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-              <span className="font-semibold text-sand-900 dark:text-sand-50">
-                This prompt is for remixing.
-              </span>{' '}
-              Use it to build your own variation of {name}. Results depend on
-              the model you use, and no prompt in the world is 100% exact.
-            </p>
-
             {/* The prompt */}
-            <div className="mt-5 flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-bold text-sand-900 dark:text-sand-50">
                 AI prompt for {name}
               </h3>
