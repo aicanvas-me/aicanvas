@@ -100,7 +100,7 @@ The Glass category deserves special attention: **every Glass component descripti
 
 ## Prompts are already doing SEO work — do not touch them
 
-Each component's general AI prompt (the `'Claude Code'` lane) is server-rendered as visible text inside the Remix side panel, under an "AI prompt for {name}" heading — the largest block of unique crawlable text on the page. Do not modify prompts for SEO purposes — they are optimised for developer utility, not search engines; the SEO value is a side effect of rendering them.
+Each component's general AI prompt (the `'Claude Code'` lane) is server-rendered as visible text inside the Remix side panel, under a "The Remix Prompt" heading, below the "Remix {name} with AI" title — the largest block of unique crawlable text on the page. Do not modify prompts for SEO purposes — they are optimised for developer utility, not search engines; the SEO value is a side effect of rendering them.
 
 ---
 

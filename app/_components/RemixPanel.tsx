@@ -30,7 +30,7 @@ export interface RemixPanelProps {
    *  (see below) — this only drives the slide + backdrop + focus/scroll lock. */
   open: boolean
   onClose: () => void
-  /** Component display name — used in the heading and the disclaimer copy. */
+  /** Component display name, used in the panel title and the paywall. */
   name: string
   /** Analytics key: fired as the `component` property on every event this
    *  panel sends (Remix Prompt Copy). Keep it the same value the page's own

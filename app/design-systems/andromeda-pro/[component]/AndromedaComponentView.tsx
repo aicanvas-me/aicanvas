@@ -537,7 +537,7 @@ export function AndromedaComponentView({
                 setRemixOpen(true)
               }}
             >
-              <Sparkle weight="regular" size={15} />
+              <Sparkle weight="regular" size={15} className="max-[379px]:hidden" />
               Remix<span className="hidden sm:inline"> with AI</span>
             </Button>
           )}
@@ -547,9 +547,9 @@ export function AndromedaComponentView({
               premium paywall modal instead of copying. */}
           <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
             {cliCopied ? (
-              <Check weight="regular" size={15} />
+              <Check weight="regular" size={15} className="max-[379px]:hidden" />
             ) : (
-              <Terminal weight="regular" size={15} />
+              <Terminal weight="regular" size={15} className="max-[379px]:hidden" />
             )}
             {cliCopied ? 'Copied!' : 'Copy Command'}
           </Button>
