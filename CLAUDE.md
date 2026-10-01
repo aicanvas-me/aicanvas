@@ -58,7 +58,7 @@ Semantic quick reference:
 | Accent text | `text-olive-600` | `dark:text-olive-400` |
 | Accent hover | `text-olive-800` | `dark:text-olive-300` |
 
-The olive ramp was drawn to glow on `sand-950`, so olive-400 and olive-500 cannot carry accent text on a light page. Light accent text is `olive-600` (a deliberate design call at roughly 3:1, carried by size and weight), its hover is `olive-800`, and `olive-700` is the selection highlight. `bg-olive-500` stays the accent FILL in both themes, always with `text-sand-950` on it; a tiny decorative fill may deepen to `olive-700` on light. `text-sand-500` is not a text colour in light mode (3.9:1); it survives only on a decorative glyph.
+The olive ramp was drawn to glow on `sand-950`, so olive-400 and olive-500 cannot carry accent text on a light page. Light accent text is `olive-600` (a deliberate design call at roughly 3:1, carried by size and weight), its hover is `olive-800`. Selected text is neutral, never olive: `sand-300` under `sand-900` on light, `sand-700` under `sand-50` on dark. `bg-olive-500` stays the accent FILL in both themes, always with `text-sand-950` on it; a tiny decorative fill may deepen to `olive-700` on light. `text-sand-500` is not a text colour in light mode (3.9:1); it survives only on a decorative glyph.
 
 This table is for NEW code. When adding a light half to an element that already had only a dark value, keep that element's existing dark value exactly and change only the light base: dark is the default theme and must not shift. `lib/theme/scope.test.ts` guards the scope contract itself.
 

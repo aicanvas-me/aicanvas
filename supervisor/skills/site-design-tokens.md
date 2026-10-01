@@ -31,7 +31,7 @@ Always `bg-sand-950` — never zinc, never black, never transparent.
 | `olive-400` | `#DAE4A0` | Dark-mode accent text, hover state, gradient end |
 | `olive-500` | `#A8B94D` | **Accent fill** — buttons, badges, highlights. On DARK surfaces it is also accent text |
 | `olive-600` | `#869631` | **Light-mode accent text**, pressed / active state |
-| `olive-700` | `#56631F` | Selection highlight |
+| `olive-700` | `#56631F` | Small decorative fill on light |
 | `olive-800` | `#4A551A` | Light-mode accent hover |
 
 > Olive buttons must use `text-sand-950` — NOT white. Olive has insufficient contrast with white.
@@ -39,8 +39,8 @@ Always `bg-sand-950` — never zinc, never black, never transparent.
 > The top of the ramp is for dark surfaces only. On a light page olive-400/500
 > measure 1.2 and 2.0 against the background, so an accent link painted with them
 > is invisible. Light accent text is `olive-600` (~3:1, a deliberate call carried
-> by size and weight), hover is `olive-800`; `olive-700` is the selection
-> highlight.
+> by size and weight), hover is `olive-800`. Selected text is neutral, never olive:
+> `sand-300` under `sand-900` on light, `sand-700` under `sand-50` on dark.
 
 ## Light mode
 

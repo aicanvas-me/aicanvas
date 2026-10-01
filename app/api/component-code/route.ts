@@ -10,6 +10,23 @@ export const runtime = 'nodejs'
 
 const NO_STORE = { 'Cache-Control': 'private, no-store' }
 
+// Highlighted HTML per source, kept for the life of the server instance. Shiki
+// takes 1-3s on a large component and the source only changes with a deploy,
+// so only the first open per instance pays it. Keyed by the source itself, so
+// a different file can never be served for a slug; read only after the gate
+// below has passed. ponytail: unbounded, fine at catalogue size (~100 entries).
+const highlightCache = new Map<string, Promise<string>>()
+function highlight(code: string) {
+  let html = highlightCache.get(code)
+  if (!html) {
+    html = codeToHtml(code, { lang: 'tsx', themes: { light: 'github-light', dark: 'github-dark' } })
+    highlightCache.set(code, html)
+    // A failed highlight is not cached, so the next open retries.
+    html.catch(() => highlightCache.delete(code))
+  }
+  return html
+}
+
 /**
  * On-demand source for the web Code tab. Free standalone / design-system-
  * component source is PUBLIC and uncounted — reading the code never needs an
@@ -91,7 +108,7 @@ export async function GET(req: NextRequest) {
   // Shiki hiccup — the client falls back to a plain <pre>.
   let highlighted: string | undefined
   try {
-    highlighted = await codeToHtml(code, { lang: 'tsx', themes: { light: 'github-light', dark: 'github-dark' } })
+    highlighted = await highlight(code)
   } catch (err) {
     console.error('[component-code] highlight failed, serving raw:', err)
   }
