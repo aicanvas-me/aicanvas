@@ -215,7 +215,7 @@ const V2_ONLY_NAMES = [
   'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
   'Popover', 'PopoverContent', 'PopoverLabel', 'PopoverSeparator', 'PopoverTrigger',
   'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
-  'Sidebar', 'Skeleton', 'Suggestion', 'Tool', 'TopBar',
+  'Sidebar', 'Skeleton', 'StrengthMeter', 'Suggestion', 'Tool', 'TopBar',
 ]
 
 // components/lib/* modules the HELPERS shim re-exports (both trees have them),
@@ -629,6 +629,7 @@ const V2_EXAMPLE_EXPORTS = {
   ResourcePlanning: 'resource-planning',
   ServiceOrder: 'service-order',
   SignIn: 'sign-in',
+  SignUp: 'sign-up',
   SignalRoom: 'signal-room',
 }
 

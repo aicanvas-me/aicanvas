@@ -10,6 +10,7 @@
 // shim, whose modules carry 'use client' — the same pattern the component
 // demos use. Everything here renders statically all the same.
 import { useRef } from 'react'
+import { ArrowUpRight, Crosshair, Eye, HandTap, Keyboard, ListChecks, Pause } from '@phosphor-icons/react'
 import { SiteFooter } from '../../../components/SiteFooter'
 import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { SwatchTooltip } from './SwatchTooltip'
@@ -61,8 +62,6 @@ const TYPE_ROLES = [
   'displayXs', 'displaySm', 'displayMd', 'displayLg', 'displayXl', 'display2xl',
 ] as const
 
-const px = (value: string) => value.replace('px', '')
-
 // px to rem at the browser default root, the way Untitled UI states both on
 // every row of its own scale. The token stays the source; rem is derived here
 // so a size that moves cannot leave a stale rem behind.
@@ -90,22 +89,16 @@ const TYPE_RAMP = TYPE_ROLES.map((step) => {
   }
 })
 
-// The one named style. Everything else in the system is a step plus a weight,
-// read straight off the ramp above; `label` exists only because it carries a
-// property the ramp deliberately does not, which is case. Read off the token,
-// never re-typed, and typed against it so removing the style fails the build
-// here instead of white-screening this page.
-const LABEL = tokens.typography.role.label
+// The typeface, named by the token and loaded by the root layout, so the
+// specimen renders in the real face through the same stack a component uses.
+// The tokens also name a mono face, but no component reads it, so it is not
+// shown here.
+const WEIGHTS = (['regular', 'medium', 'semibold', 'bold'] as const).map((name) => ({
+  name,
+  value: tokens.typography.weight[name],
+}))
 
-const nameOf = (scale: Record<string, string | number>, value: string | number) =>
-  Object.entries(scale).find(([, v]) => v === value)?.[0] ?? String(value)
-
-const LABEL_RECIPE = [
-  `${px(LABEL.fontSize)} / ${px(LABEL.lineHeight)}`,
-  nameOf(tokens.typography.weight, LABEL.fontWeight),
-  nameOf(tokens.typography.tracking, LABEL.letterSpacing),
-  'uppercase',
-].join(' · ')
+const FACE = tokens.typography.fontSans
 
 // ── The family pivot ────────────────────────────────────────────────────────
 // Both columns are RESOLVED from the same functions the site paints with, so
@@ -175,7 +168,7 @@ const PIVOT_ROLES = [
 ] as const
 
 const stopOf = (ramp: Record<string, string>, value: string) =>
-  Object.entries(ramp).find(([, v]) => v === value)?.[0] ?? '-'
+  Object.entries(ramp).find(([, v]) => v === value)?.[0] ?? 'ink'
 
 const PIVOT_TABLE = PIVOT_ROLES.map(([suffix, title, what]) => ({
   suffix,
@@ -229,6 +222,42 @@ const ALL_COLOURS = GROUP_ORDER.map(([prefix, title, note]) => {
   return { prefix, title, note, rows }
 }).filter((g) => g.rows.length > 0)
 
+
+// What the rules require beyond contrast, each one a `must` or `should` in the
+// brain (interaction states, motion, color, responsive) or a component's own
+// a11y frontmatter. Plain claims only: nothing here the brain does not state.
+const A11Y_PRACTICES = [
+  {
+    icon: Crosshair,
+    title: 'Focus you can see',
+    body: 'Reached by keyboard, every control shows one 1px ring from the focus token, in place of the browser default. An invalid field gets a red ring instead.',
+  },
+  {
+    icon: Keyboard,
+    title: 'Full keyboard use',
+    body: 'Menus move with the arrow keys, Home and End. The drawer keeps focus inside while open and hands it back when it closes. The date picker moves by day, week and month. Escape closes what opened.',
+  },
+  {
+    icon: Pause,
+    title: 'Reduced motion',
+    body: 'When a visitor asks their system for less motion, entrances and cascades turn off, state feedback stays, and animated objects hold a still frame.',
+  },
+  {
+    icon: Eye,
+    title: 'Color is never the only signal',
+    body: 'Every state a reader has to tell apart also carries an icon, a dot, a label, an arrow or a dash. Success and warning look almost the same to some color-blind readers; the second signal is what they read.',
+  },
+  {
+    icon: HandTap,
+    title: 'Touch targets',
+    body: 'On touch screens the tappable area grows to 40px while the control keeps its size on screen. In tight clusters it stops at 32px, so neighbors never overlap.',
+  },
+  {
+    icon: ListChecks,
+    title: 'Rules per component',
+    body: 'Every component lists its own accessibility behavior in its rules: the roles and labels it uses, its keys and its focus handling. An icon-only button, for one, must carry a label.',
+  },
+] as const
 
 const SPACING_STEPS = [1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12] as const
 
@@ -396,11 +425,13 @@ export function FoundationView() {
         because 100 barely stands off the light page. The one thing that overrules the
         mirror is <strong className="font-semibold text-sand-900 dark:text-sand-50">WCAG</strong>.
         Where the mirrored value misses its contrast minimum on the light page ground it steps
-        toward the deep end until it clears. That is the whole reason the text row below reads
-        300 &rarr; 500 rather than 300 &rarr; 400: on the light ground the 400 stop measures 3.97
-        for brand, 4.21 for success and 3.12 for warning, all under the 4.5 that normal text
-        requires, so they step again. Danger reaches 4.86 at 400 and stops there. The row under
-        it lands on 400 everywhere because a mark is a non-text object and needs 3.0, not 4.5.
+        toward the deep end until it clears. That is why brand and success text reads
+        300 &rarr; 500 rather than 300 &rarr; 400: on the light ground their 400 stop measures
+        3.97 and 4.21, under the 4.5 that normal text requires, so they step again. Danger
+        reaches 4.86 at 400 and stops there. Warning&rsquo;s 400 measures 3.12, and its 500
+        clears 4.5 but reads as brown, so its words take an authored deep ochre, marked{' '}
+        <em>ink</em> below, the most saturated amber that clears 4.5 (4.88). The mark row lands
+        on 400 everywhere because a mark is a non-text object and needs 3.0, not 4.5.
         Both columns are resolved from the same functions the site paints with, so they cannot
         drift from what you see.
       </p>
@@ -502,6 +533,12 @@ export function FoundationView() {
                   </span>
                 </div>
               ))}
+              {/* An odd list leaves the last row half empty, and the row lines
+                  and the column divider stopped short there. An empty cell
+                  closes the table; one column has no gap to fill. */}
+              {group.rows.length % 2 === 1 ? (
+                <div aria-hidden className="hidden border-l border-t border-sand-300 sm:block dark:border-sand-800" />
+              ) : null}
             </div>
           </div>
         ))}
@@ -510,15 +547,15 @@ export function FoundationView() {
       {/* ── Accessibility ── */}
       <SectionHeading>Accessibility</SectionHeading>
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        Every color pair in this system meets WCAG 2.2 level AA, in both themes. The ratios are
-        measured by a contrast script, not judged by eye, and contrast is the one thing here that
-        overrules a design decision, including the family pivot above.
+        Contrast is checked by a script in both themes, not judged by eye, and it is the one thing
+        here that overrules a design decision, including the family pivot above. The rest is
+        written into the system&rsquo;s rules, so every component follows it the same way.
       </p>
       <div className="grid gap-3 sm:grid-cols-3">
         {[
           ['4.5 : 1', 'Normal text', 'Anything under 24px, or under 18.66px bold. Almost all of our text. WCAG 1.4.3.'],
-          ['3.0 : 1', 'Large text and non-text', 'Display sizes, and every icon, border, chart line, dot and focus ring. WCAG 1.4.3 and 1.4.11.'],
-          ['7.0 : 1', 'AAA, where it lands', 'Not a target for the whole system, but the primary, secondary and muted text inks clear it in both themes.'],
+          ['3.0 : 1', 'Large text and non-text', 'Display sizes, and the status icons, dots and borders, the chart lines and the focus ring. WCAG 1.4.3 and 1.4.11.'],
+          ['10 : 1', 'Measured headroom', 'The script checks the 4.5 floor. Measured, the primary, secondary and muted text inks sit above 10:1 in both themes, past the 7:1 of AAA.'],
         ].map(([ratio, who, what]) => (
           <div key={ratio} className="rounded-xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
             <p className="text-base font-bold tabular-nums text-sand-900 dark:text-sand-50">{ratio}</p>
@@ -526,6 +563,68 @@ export function FoundationView() {
             <p className="mt-1 text-[12px] leading-relaxed text-sand-500">{what}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {A11Y_PRACTICES.map(({ icon: Icon, title, body }) => (
+          <div key={title} className="rounded-xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
+            <Icon size={18} weight="regular" aria-hidden className="text-sand-600 dark:text-sand-400" />
+            <p className="mt-3 text-[13px] font-semibold text-sand-900 dark:text-sand-50">{title}</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-sand-600 dark:text-sand-400">{body}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* ── Typeface ── */}
+      <SectionHeading>Typeface</SectionHeading>
+      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
+        One free, open-source face from Google Fonts carries every label, value and heading in
+        the system.
+      </p>
+      <div className="grid gap-6 rounded-xl border border-sand-300 p-5 sm:grid-cols-[auto_1fr] sm:gap-10 dark:border-sand-800">
+        <p
+          className="text-[96px] font-semibold leading-none text-sand-900 dark:text-sand-50"
+          style={{ fontFamily: FACE }}
+        >
+          Aa
+        </p>
+        <div className="flex min-w-0 flex-col">
+          <p className="text-base font-bold text-sand-900 dark:text-sand-50">Manrope</p>
+          <p className="mt-1 max-w-xl text-[13px] leading-relaxed text-sand-600 dark:text-sand-400">
+            A modern geometric sans with open, even shapes that stay clear at small interface
+            sizes and hold together at display sizes.
+          </p>
+          <p
+            className="mt-4 break-all text-[15px] leading-relaxed text-sand-700 dark:text-sand-300"
+            style={{ fontFamily: FACE }}
+          >
+            ABCDEFGHIJKLMNOPQRSTUVWXYZ
+            <br />
+            abcdefghijklmnopqrstuvwxyz
+            <br />
+            0123456789
+          </p>
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-1">
+            {WEIGHTS.map((w) => (
+              <span
+                key={w.name}
+                className="text-[13px] capitalize text-sand-700 dark:text-sand-300"
+                style={{ fontFamily: FACE, fontWeight: w.value }}
+              >
+                {w.name} {w.value}
+              </span>
+            ))}
+          </div>
+          <a
+            href="https://fonts.google.com/specimen/Manrope"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+          >
+            Manrope on Google Fonts
+            <ArrowUpRight size={14} weight="regular" aria-hidden />
+          </a>
+        </div>
       </div>
 
       {/* ── Typography ── */}
@@ -568,30 +667,6 @@ export function FoundationView() {
             </div>
           ))}
         </div>
-      </div>
-
-      {/* ── The one named style ── */}
-      <SectionHeading>The one named style</SectionHeading>
-      <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
-        Everything in the system is a step plus a weight. There is exactly one exception,
-        because it carries something the ramp deliberately does not: case. Uppercase is a
-        decision a component makes, not a property of a size, so it lives here and nowhere
-        else. It carries no color either, so ink stays a separate decision.
-      </p>
-      <div className="rounded-xl border border-sand-300 px-4 py-4 dark:border-sand-800">
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <code className="text-[13px] font-semibold text-sand-900 dark:text-sand-50">
-            typography.role.label
-          </code>
-          <span className="text-[12px] tabular-nums text-sand-500">{LABEL_RECIPE}</span>
-        </div>
-        {/* Sentence case on purpose: the uppercase you read is the style doing its work. */}
-        <p className="mt-2 text-sand-900 dark:text-sand-50" style={LABEL as React.CSSProperties}>
-          Bearing
-        </p>
-        <p className="mt-1.5 text-[12px] text-sand-500">
-          column heads, axis and legend labels, kickers, stat captions
-        </p>
       </div>
 
       {/* ── Spacing ── */}

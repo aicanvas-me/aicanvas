@@ -67,6 +67,35 @@ export const input: MatrixSpec = {
         icon: Lock,
       },
     },
+    // A hint and an error are the same slot, and the error wins: this pair of
+    // cases is what shows that the field never carries two messages at once.
+    { label: 'With hint', props: { hint: 'Letters, numbers and dashes.' } },
+    // `action` is a NODE, so it is the one case here that cannot be a prop
+    // literal in a table. It is the field's own shortcut and belongs level
+    // with the label, never under the field with the hint.
+    {
+      label: 'With label action',
+      props: {
+        label: 'Password',
+        type: 'password',
+        action: (
+          <button
+            type="button"
+            style={{
+              background: 'none',
+              border: 0,
+              padding: 0,
+              cursor: 'pointer',
+              font: 'inherit',
+              fontSize: 'var(--andromeda-text-sm)',
+              color: 'var(--andromeda-action-active-text)',
+            }}
+          >
+            Forgot password
+          </button>
+        ),
+      },
+    },
     // error is a STRING prop; the cva `state` axis is DERIVED from it
     // (Input.tsx:130), never passed, so this case is what covers that axis.
     { label: 'Error', props: { error: 'Value out of range' } },

@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { cookies } from 'next/headers'
 import { notFound } from 'next/navigation'
 import {
   ANDROMEDA_COMPONENTS,
@@ -66,11 +65,6 @@ export default async function AndromedaComponentPage({
   const entry = getAndromedaComponent(component)
   if (!entry) notFound()
 
-  // The site rule's seed: this preview opens in whatever the site is set to
-  // (same cookie, same read, as app/layout.tsx), and only the preview's own
-  // toggle pins it after that — see AndromedaThemeWrap's `initialTheme`.
-  const siteTheme = (await cookies()).get('theme')?.value === 'light' ? 'light' : 'dark'
-
   // Same shape as the Pro components index card (system/AndromedaGallery.tsx):
   // name, one-line description, and the variant/state counts from
   // COMPONENT_COUNTS — the same generated source the index page reads — so a
@@ -134,7 +128,7 @@ export default async function AndromedaComponentPage({
   return (
     // The theme provider sits ABOVE the view so the view's own hooks (the
     // portalled full-screen overlay re-spreads the theme set) can read it.
-    <AndromedaThemeWrap initialTheme={siteTheme}>
+    <AndromedaThemeWrap>
       <AndromedaComponentView
         slug={entry.slug}
         name={entry.name}

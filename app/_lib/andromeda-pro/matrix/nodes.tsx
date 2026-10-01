@@ -14,9 +14,14 @@ export const nodes: MatrixSpec = {
     </div>
   ),
   wide: true,
-  // ONE canonical look: default density, default seed, so
-  // every render of the cell is the same composition.
-  variants: [{ label: 'The lattice', props: {} }],
+  // One seed and one density throughout, so the two cells differ in exactly
+  // one thing: how much ink the Object is allowed to spend. `ground` is what a
+  // whole-screen use needs, where the lattice lies under text that has to be
+  // read; `subject` is the default, for a panel the lattice IS the content of.
+  variants: [
+    { label: 'Subject', props: {} },
+    { label: 'Ground', props: { emphasis: 'ground' } },
+  ],
   states: [],
   gaps: {
     'Reduced motion':

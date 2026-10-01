@@ -24,10 +24,13 @@ const DATA = Array.from({ length: 18 }, (_, i) => {
   }
 })
 
+// `t` is a day of the month, so the axis and the tooltip heading read as dates.
+const dayLabel = (d: string | number | undefined) => `Sep ${d}`
+
 const framed = (props: Record<string, unknown>) => (
   <div style={{ position: 'relative', background: `var(--at-surface-raised, ${tokens.color.surface.raised})`, padding: tokens.spacing[5], width: '100%' }}>
     <CornerMarkers />
-    <TrendChart data={DATA} height={200} {...props} />
+    <TrendChart data={DATA} height={200} formatX={dayLabel} {...props} />
   </div>
 )
 

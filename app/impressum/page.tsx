@@ -162,6 +162,12 @@ export default function ImpressumPage() {
               {CONTACT_EMAIL}
             </a>
           </p>
+          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
+            Kontaktformular / Contact form:{' '}
+            <a href="/contact" className="text-olive-600 dark:text-olive-400 hover:underline">
+              aicanvas.me/contact
+            </a>
+          </p>
         </section>
 
         {/* ── Verantwortlich für den Inhalt / Responsible for content ─────── */}

@@ -318,6 +318,7 @@ const expectedNames = new Set(
 )
 expectedNames.add('registry') // keep the root index
 expectedNames.add('aicanvas-mcp') // MCP metadata file
+expectedNames.add('aicanvas-props') // MCP prop tables file
 for (const slug of premiumSlugDirs) expectedNames.add(slug) // keep gated premium JSON
 expectedNames.add('_premium') // gate input (written by inject-premium) — must survive cleanup
 expectedNames.add('_manifest') // gate manifest
@@ -1147,6 +1148,10 @@ console.log(`Generated ${count} components + ${dsCount} system/template items in
 
 const mcpComponents = []
 const categoryCounts = {}
+// Prop tables by registry slug, for the MCP's read-the-API and validate tools.
+// Standalones (free + injected premium) are already keyed by slug; design-system
+// components are added inside the systemComponents loop below.
+const mcpPropsBySlug = { ...standaloneProps }
 
 for (const dir of dirs) {
   const meta = metadata[dir]
@@ -1259,6 +1264,13 @@ for (const ds of SYSTEMS) {
     let compItem
     try { compItem = JSON.parse(readFileSync(compJsonPath, 'utf-8')) } catch { compItem = null }
     if (!compItem) continue
+    // The MCP props file is keyed by registry slug; the page tables above are
+    // keyed by system then source basename. Bridge them here, where both are known.
+    {
+      const base = baseName.replace(/\.(tsx|ts)$/, '')
+      const tables = propTables[ds.slug]?.[base]
+      if (tables) mcpPropsBySlug[slug] = tables
+    }
 
     // metaSlug: registry slug minus the `<system>-` prefix, unless a slugOverride
     // already mapped it to a distinct meta slug. Validate against the website meta.
@@ -1428,6 +1440,20 @@ const mcpMeta = {
 }
 
 writeFileSync(join(outDir, 'aicanvas-mcp.json'), JSON.stringify(mcpMeta, null, 2) + '\n')
+
+// ── AI Canvas MCP prop tables ─────────────────────────────────────────────────
+// A second, separate file so the catalog above stays small for every search
+// call; the MCP fetches this one only when an agent reads or validates an API.
+// Same rows the component pages render, keyed by registry slug. Metadata, never
+// source: it rides the free 'meta' lane (lib/registry/content-type.ts).
+const mcpProps = {
+  name: 'aicanvas',
+  generatedAt: mcpMeta.generatedAt,
+  componentCount: Object.keys(mcpPropsBySlug).length,
+  props: Object.fromEntries(Object.entries(mcpPropsBySlug).sort(([a], [b]) => a.localeCompare(b))),
+}
+writeFileSync(join(outDir, 'aicanvas-props.json'), JSON.stringify(mcpProps, null, 2) + '\n')
+console.log(`Generated MCP prop tables: ${mcpProps.componentCount} components with a documented API`)
 console.log(`Generated MCP metadata: ${mcpComponents.length} components, ${Object.keys(categoryCounts).length} categories, ${mcpSystems.length} systems, ${mcpSystemComponents.length} system components, ${mcpTemplates.length} templates`)
 
 // ── Lightweight nav counts (sidebar / mobile-nav) ─────────────────────────────
@@ -1508,6 +1534,9 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
   // The accent check catches the sibling bug: an accent tag that is not a
   // categories.ts label makes a category with no page, and the component drops
   // out of every category listing.
+  // Dev is tolerant here: `npm run dev` passes --dev, and a premium component still
+  // in progress has no copy until the end of its build. Keyed on the flag, not on
+  // PREMIUM_LOCAL_PATH, because preflight sets that too and must stay as strict as Vercel.
   const copyStart = copySrc.indexOf('export const COMPONENT_COPY')
   if (copyStart === -1) throw new Error('generate-registry: COMPONENT_COPY not found in component-copy.ts')
   const copyKeys = new Set(
@@ -1516,10 +1545,21 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
   const catLabels = new Set(
     [...readFileSync('app/lib/categories.ts', 'utf-8').matchAll(/^\s*label: '([^']+)'/gm)].map((m) => m[1]),
   )
+  const devServer = process.argv.includes('--dev')
   const copyProblems = []
-  for (const m of [...freeMetaList, ...premiumMetaList]) {
+  for (const { m, premium } of [
+    ...freeMetaList.map((m) => ({ m, premium: false })),
+    ...premiumMetaList.map((m) => ({ m, premium: true })),
+  ]) {
     const gaps = [!stacks[m.slug] && 'ACCURATE_STACKS', !copyKeys.has(m.slug) && 'COMPONENT_COPY'].filter(Boolean)
-    if (gaps.length > 0) copyProblems.push(`${m.slug}: missing from ${gaps.join(' + ')}`)
+    if (gaps.length > 0) {
+      const problem = `${m.slug}: missing from ${gaps.join(' + ')}`
+      if (premium && devServer) {
+        process.stderr.write(`generate-registry: dev, skipping copy check for ${problem}\n`)
+      } else {
+        copyProblems.push(problem)
+      }
+    }
     for (const t of m.tags) {
       if (t.accent && !catLabels.has(t.label)) {
         copyProblems.push(`${m.slug}: accent tag "${t.label}" is not a label in app/lib/categories.ts`)

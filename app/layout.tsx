@@ -84,10 +84,6 @@ export const metadata: Metadata = {
     description: GLOBAL_DESCRIPTION,
     images: ['/og-aug2026-aicanvas.me.png'],
   },
-  icons: {
-    icon: '/ai-canvas-icon-square.svg',
-    shortcut: '/ai-canvas-icon-square.svg',
-  },
   robots: {
     index: true,
     follow: true,
@@ -160,9 +156,10 @@ export default async function RootLayout({
               first paint instead of flashing dark until AndromedaThemeSync's
               effect lands after hydration. AndromedaThemeSync still owns every
               LATER change (the visitor toggling the site theme with the preview
-              open). Only design-system routes: a block preview pins its own
-              theme through [data-card-theme] and must not be dragged to the
-              site's. An attribute, not a class, so hydration leaves it alone. */}
+              open). Only design-system routes: a block preview frame takes its
+              theme from its own ?theme= param (the parent sets it from the
+              linked theme) and does not mirror the parent's class. An
+              attribute, not a class, so hydration leaves it alone. */}
           <script dangerouslySetInnerHTML={{ __html: `try{if(location.pathname.indexOf('/design-systems/')===0&&parent!==self&&!parent.document.documentElement.classList.contains('dark'))document.documentElement.setAttribute('data-frame-light','')}catch(e){}` }} />
         </head>
         {/* No overflow-hidden and no scroll column: a framed template preview
@@ -213,7 +210,7 @@ export default async function RootLayout({
         {/* The light marker rides along for the same reason it is set in the
             iframe branch above: a light visitor must not eat a dark flash in
             the phone preview. Only design-system routes — a block preview
-            frames /preview/<slug>?frame=1 and pins its own [data-card-theme].
+            frames /preview/<slug>?frame=1 and takes its theme from ?theme=.
             This branch only runs when the browser withheld Sec-Fetch (the
             branch above handles every modern one), and here the theme is
             already known server-side, so it is baked into the script. */}

@@ -15,7 +15,7 @@ AI:    [edits the file directly]
 
 ## What it exposes
 
-Nine tools, derived from the live [aicanvas.me](https://aicanvas.me) registry. Adding a component to the website auto-updates the MCP within minutes. The registry holds 80+ standalone components, plus the Andromeda design system with its own components and templates.
+Thirteen tools, derived from the live [aicanvas.me](https://aicanvas.me) registry. Adding a component to the website auto-updates the MCP within minutes. The registry holds 80+ standalone components, plus the Andromeda design system with its own components and templates.
 
 | Tool | Purpose |
 |---|---|
@@ -28,8 +28,14 @@ Nine tools, derived from the live [aicanvas.me](https://aicanvas.me) registry. A
 | `get_system` | Every file for a whole design system, plus its shared tokens, its component install commands, and the dependency chain. |
 | `list_templates` | List the ready-made templates (complete example screens), optionally filtered by design system. |
 | `get_template` | Every file for a single template (a ready-made composition), with the registry dependencies it pulls in. |
+| `get_component_props` | The documented props of one component: name, type, required, default, description. Free, no account, far smaller than the source. |
+| `validate_usage` | Check a file's JSX against the documented props of the AI Canvas components it imports: unknown props, missing required props, values outside a prop's options, each with a line number. |
+| `compose_page` | Turn a one-line brief into a build plan: closest template, one component per part with alternatives, install order (tokens first), and the parts nothing covers. Plans only, generates no code. |
+| `get_audit_checklist` | The checklist to run on a finished page or component: install completeness, props, both themes, 320px layout, motion cleanup, keyboard and contrast, composition. |
 
 All tools are read-only. Nothing is mutated on AI Canvas's side.
+
+The workflow the last four tools are built for: `compose_page` to plan, `get_component_props` to read each API before writing JSX, `validate_usage` on the finished file, `get_audit_checklist` before calling it done.
 
 Standalone components and design-system components are kept in separate buckets. `list_components` and `list_categories` cover the 80+ standalones only, so the catalog stays clean. Design-system components are reached through `list_systems` / `get_system`, and are also resolvable by slug through `get_component`, `get_install_command`, and `search_components`.
 
@@ -134,6 +140,8 @@ Browsing metadata (`list_categories`, `list_components`, `search_components`, `l
 The MCP fetches `https://aicanvas.me/r/aicanvas-mcp.json` on first use and caches it for 5 minutes. New components on AI Canvas appear in the MCP automatically, no package update required.
 
 The full source code for each component is fetched on demand from `/r/<slug>.json` (the same shadcn registry items the CLI installs).
+
+The prop tables come from `https://aicanvas.me/r/aicanvas-props.json`, parsed at build time from each component's own JSDoc, so they cannot drift from the source. Same 5-minute cache.
 
 ## Local development
 

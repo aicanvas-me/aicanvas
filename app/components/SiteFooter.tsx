@@ -27,9 +27,6 @@ export function SiteFooter() {
         <Link href="/design-systems/andromeda" className={linkCls}>
           Andromeda Legacy
         </Link>
-        <Link href="/lab" className={linkCls}>
-          Lab
-        </Link>
         <Link href="/pricing" className={linkCls}>
           Pricing
         </Link>

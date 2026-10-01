@@ -5,8 +5,9 @@ import { usePathname } from 'next/navigation'
 import { Breadcrumbs } from './Breadcrumbs'
 import { ThemeToggle } from './ThemeToggle'
 import { TopAuthPill } from './auth/TopAuthPill'
+import { OfferBanner } from './billing/OfferBanner'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
-import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId } from './top-bar-crumbs'
+import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId, offerPillMode } from './top-bar-crumbs'
 
 // The site's one top bar. Rendered once by the root layout, at the top of the
 // scroll column, and never unmounted: a page change swaps the content below
@@ -112,12 +113,25 @@ export function TopBar() {
   const override = ctx?.override && ctx.override.pathname === pathname ? ctx.override.node : undefined
   const crumbs = buildTopBarCrumbs(pathname)
   const slot = installSlotId(pathname)
+  const offerMode = offerPillMode(pathname)
 
   return (
     <header className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
-      <div className="min-w-0 flex-1">
+      {/* With the offer pill present, the MIDDLE takes the slack and centres
+          the pill inside it, while the crumb sizes to its own content. Giving
+          the two ends equal shares instead put the pill exactly on the centre
+          line, but it also capped the crumb at half the bar and truncated
+          "Design Systems / Andromeda Pro" while a hundred spare pixels sat
+          unused next to the sign-in button. The crumb keeps min-w-0, so when
+          the bar really is too narrow it is the one that gives way, and the
+          pill is never painted over.
+          flex-1 and shrink-0 each set flex-shrink, so the ends are written as
+          alternatives and never both: a string carrying the two is settled by
+          the built stylesheet, not by the order written here. */}
+      <div className={`min-w-0 ${offerMode ? '' : 'flex-1'}`}>
         {override !== undefined ? override : crumbs ? <Breadcrumbs crumbs={crumbs} /> : null}
       </div>
+      {offerMode && <OfferBanner mode={offerMode} />}
       {/* Right cluster order whenever a page mounts a CTA: theme toggle, then
           the CTA, then the user. */}
       <div className="flex shrink-0 items-center gap-2">

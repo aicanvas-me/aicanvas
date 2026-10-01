@@ -9,6 +9,7 @@
  * Data flow:
  *   - aicanvas.me/r/aicanvas-mcp.json   → metadata for the 80+ standalone
  *     components plus the Andromeda design system, its components, and templates
+ *   - aicanvas.me/r/aicanvas-props.json → the documented props per component
  *   - aicanvas.me/r/<slug>.json         → full source code per component
  *
  * Both are static files, served from Vercel's CDN. Stateless server.
@@ -24,7 +25,7 @@ const REGISTRY_BASE =
   process.env.AICANVAS_REGISTRY_BASE ?? 'https://aicanvas.me/r'
 const META_URL = `${REGISTRY_BASE}/aicanvas-mcp.json`
 const META_TTL_MS = 5 * 60 * 1000 // 5 minutes — meta updates with deploys
-const MCP_VERSION = '0.2.4'
+const MCP_VERSION = '0.3.0'
 const USER_AGENT = `aicanvas-mcp/${MCP_VERSION}`
 // Optional per-user token (the website bakes it into the copied MCP config).
 // Identifies the account so free-component source pulls are authorized and any
@@ -853,6 +854,864 @@ server.registerTool(
       }
     } catch (err) {
       return errorResult(err instanceof Error ? err.message : String(err))
+    }
+  },
+)
+
+// ── Prop tables (the documented API per component) ───────────────────────────
+// A second registry file, separate from the catalog so search stays small. It
+// carries the same rows the component pages render: every prop of a component
+// with its type, whether it is required, its default and one sentence on what
+// it does. Metadata, never source, so it needs no account.
+
+const PROPS_URL = `${REGISTRY_BASE}/aicanvas-props.json`
+
+interface PropRow {
+  name: string
+  type: string
+  optional: boolean
+  default: string
+  description: string
+}
+interface PropTable {
+  table: string
+  props: PropRow[]
+}
+interface PropsPayload {
+  name: string
+  generatedAt: string
+  componentCount: number
+  props: Record<string, PropTable[]>
+}
+
+let propsCache: { data: PropsPayload; fetchedAt: number } | null = null
+
+async function fetchProps(): Promise<PropsPayload> {
+  if (propsCache && Date.now() - propsCache.fetchedAt < META_TTL_MS) {
+    return propsCache.data
+  }
+  const res = await fetch(PROPS_URL, { headers: registryHeaders() })
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch AI Canvas prop tables from ${PROPS_URL}: ${res.status} ${res.statusText}`,
+    )
+  }
+  const data = (await res.json()) as PropsPayload
+  propsCache = { data, fetchedAt: Date.now() }
+  return data
+}
+
+function findAnyComponent(
+  meta: MetaPayload,
+  slug: string,
+): ComponentMeta | SystemComponentMeta | undefined {
+  return (
+    meta.components.find((c) => c.slug === slug) ??
+    (meta.systemComponents ?? []).find((c) => c.slug === slug)
+  )
+}
+
+function cell(s: string): string {
+  return s.replace(/\|/g, '\\|')
+}
+
+function renderPropTables(tables: PropTable[]): string {
+  return tables
+    .map((t) =>
+      [
+        `## ${t.table}`,
+        '',
+        '| Prop | Type | Required | Default | Description |',
+        '|---|---|---|---|---|',
+        ...t.props.map(
+          (p) =>
+            `| ${p.name} | \`${cell(p.type)}\` | ${p.optional ? 'no' : 'yes'} | ${
+              p.default ? '`' + cell(p.default) + '`' : ''
+            } | ${cell(p.description)} |`,
+        ),
+      ].join('\n'),
+    )
+    .join('\n\n')
+}
+
+// A type that is purely a union of string literals, as a list of the options.
+// Anything else (a generic, an object, a plain string) returns null.
+function unionOptions(type: string): string[] | null {
+  const cleaned = type.replace(/\s+/g, '')
+  if (!/^('[^']*'\|?)+(\|?undefined)?$/.test(cleaned)) return null
+  return (type.match(/'[^']+'/g) ?? []).map((s) => s.slice(1, -1))
+}
+
+// ── Tool: get_component_props ────────────────────────────────────────────────
+
+server.registerTool(
+  'get_component_props',
+  {
+    title: 'Get the documented props (API) of an AI Canvas component',
+    description:
+      'Return the prop table of one component: every prop with its type, whether it is required, its default and what it does. Free, needs no account, and far smaller than the full source. Call it before writing JSX for a component you have not read, or to answer "what can I configure on X". A component with no table takes no props: it is self-contained and adapted by editing its source.',
+    inputSchema: {
+      slug: z
+        .string()
+        .min(1)
+        .describe(
+          'Registry slug from a search or list result, e.g. "andromeda-button-system", "filter-menu".',
+        ),
+    },
+    annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+  },
+  async ({ slug }) => {
+    try {
+      const meta = await fetchMeta()
+      const component = findAnyComponent(meta, slug)
+      if (!component) {
+        return errorResult(
+          `No component found with slug "${slug}". Use \`search_components\` to find the slug.`,
+        )
+      }
+      const props = await fetchProps()
+      const tables = props.props[slug] ?? []
+      if (tables.length === 0) {
+        return {
+          content: [
+            asTextContent(
+              `${component.name} takes no props: it is self-contained. Install it (${component.installCommand}) and adapt the source directly.`,
+            ),
+          ],
+          structuredContent: { slug, name: component.name, tables: [] },
+        }
+      }
+      return {
+        content: [
+          asTextContent(
+            [
+              `# ${component.name} props`,
+              '',
+              renderPropTables(tables),
+              '',
+              `Install: ${component.installCommand}`,
+              `Homepage: ${component.homepageUrl}`,
+            ].join('\n'),
+          ),
+        ],
+        structuredContent: { slug, name: component.name, tables },
+      }
+    } catch (err) {
+      return errorResult(err instanceof Error ? err.message : String(err))
+    }
+  },
+)
+
+// ── Usage scanner for validate_usage ─────────────────────────────────────────
+// This is a string scanner, not a TypeScript parse. It reads import lines and
+// JSX opening tags with balanced braces, which covers ordinary component files.
+// Its ceiling: props passed through a spread object, tags built at runtime, and
+// JSX inside template strings are not seen. The TypeScript compiler would close
+// that gap at the cost of a large download for every npx user.
+
+interface ImportBinding {
+  local: string
+  imported: string
+  path: string
+}
+
+function scanImports(code: string): ImportBinding[] {
+  const out: ImportBinding[] = []
+  const re =
+    /import\s+(?:type\s+)?([A-Za-z_$][\w$]*)?\s*,?\s*(?:\{([^}]*)\})?\s*from\s*['"]([^'"]+)['"]/g
+  let m: RegExpExecArray | null
+  while ((m = re.exec(code))) {
+    const [, def, named, path] = m
+    if (def) out.push({ local: def, imported: 'default', path })
+    if (named) {
+      for (const part of named.split(',')) {
+        const seg = part.trim().replace(/^type\s+/, '')
+        if (!seg) continue
+        const [imported, local] = seg.split(/\s+as\s+/).map((s) => s.trim())
+        out.push({ local: local ?? imported, imported, path })
+      }
+    }
+  }
+  return out
+}
+
+interface JsxAttr {
+  name: string
+  value: string | null
+  kind: 'string' | 'expr' | 'bare'
+}
+interface JsxUsage {
+  tag: string
+  attrs: JsxAttr[]
+  spread: boolean
+  line: number
+}
+
+// Index just past the brace that closes the one opening at `i`.
+function skipBrace(text: string, i: number): number {
+  let depth = 0
+  let quote: string | null = null
+  for (; i < text.length; i++) {
+    const ch = text[i]
+    if (quote) {
+      if (ch === quote && text[i - 1] !== '\\') quote = null
+      continue
+    }
+    if (ch === '"' || ch === "'" || ch === '`') {
+      quote = ch
+      continue
+    }
+    if (ch === '{') depth++
+    else if (ch === '}') {
+      depth--
+      if (depth === 0) return i + 1
+    }
+  }
+  return text.length
+}
+
+function parseAttrs(text: string): { attrs: JsxAttr[]; spread: boolean } {
+  const attrs: JsxAttr[] = []
+  let spread = false
+  let i = 0
+  const n = text.length
+  while (i < n) {
+    const ch = text[i]
+    if (/\s/.test(ch) || ch === '/') {
+      i++
+      continue
+    }
+    if (ch === '{') {
+      if (text.slice(i + 1, i + 4) === '...') spread = true
+      i = skipBrace(text, i)
+      continue
+    }
+    const nm = /^[A-Za-z_$][\w$:.-]*/.exec(text.slice(i))
+    if (!nm) {
+      i++
+      continue
+    }
+    const name = nm[0]
+    i += name.length
+    while (i < n && /\s/.test(text[i])) i++
+    if (text[i] !== '=') {
+      attrs.push({ name, value: null, kind: 'bare' })
+      continue
+    }
+    i++
+    while (i < n && /\s/.test(text[i])) i++
+    if (text[i] === '"' || text[i] === "'") {
+      const q = text[i]
+      const end = text.indexOf(q, i + 1)
+      attrs.push({ name, value: text.slice(i + 1, end < 0 ? n : end), kind: 'string' })
+      i = end < 0 ? n : end + 1
+      continue
+    }
+    if (text[i] === '{') {
+      const end = skipBrace(text, i)
+      attrs.push({ name, value: text.slice(i + 1, end - 1).trim(), kind: 'expr' })
+      i = end
+      continue
+    }
+    attrs.push({ name, value: null, kind: 'bare' })
+  }
+  return { attrs, spread }
+}
+
+// Comments and string literals that carry JSX-looking text ("<Button ...")
+// are replaced by spaces, newlines kept, so line numbers survive and a
+// commented-out or quoted <Button> is never scored as a usage. A quote opens a
+// string only after =, (, ,, :, [, {, ?, + or a line start, so an apostrophe in
+// JSX text (don't) does not; "//" after ":" is a URL, not a comment.
+// There is no real tokenizer, so a regex literal containing quotes can throw it.
+function blankNoise(code: string): string {
+  const out = code.split('')
+  const blank = (from: number, to: number) => {
+    for (let k = from; k < to; k++) if (out[k] !== '\n') out[k] = ' '
+  }
+  const opensString = (i: number) => {
+    let j = i - 1
+    while (j >= 0 && (code[j] === ' ' || code[j] === '\t')) j--
+    return j < 0 || code[j] === '\n' || '=(,:[{?+'.includes(code[j])
+  }
+  let i = 0
+  while (i < code.length) {
+    const ch = code[i]
+    const next = code[i + 1]
+    if (ch === '/' && next === '*') {
+      const end = code.indexOf('*/', i + 2)
+      const to = end === -1 ? code.length : end + 2
+      blank(i, to)
+      i = to
+      continue
+    }
+    if (ch === '/' && next === '/' && code[i - 1] !== ':') {
+      const end = code.indexOf('\n', i)
+      const to = end === -1 ? code.length : end
+      blank(i, to)
+      i = to
+      continue
+    }
+    if ((ch === '"' || ch === "'" || ch === '`') && opensString(i)) {
+      let j = i + 1
+      while (j < code.length && code[j] !== ch && (ch === '`' || code[j] !== '\n')) {
+        if (code[j] === '\\') j++
+        j++
+      }
+      if (j < code.length && code[j] === ch && /<[A-Z]/.test(code.slice(i + 1, j))) blank(i + 1, j)
+      i = j + 1
+      continue
+    }
+    i++
+  }
+  return out.join('')
+}
+
+function scanJsx(code: string): JsxUsage[] {
+  const out: JsxUsage[] = []
+  // PascalCase tags only: lowercase tags are DOM elements. A "<" glued to an
+  // identifier (Array<Drawer>) is a type argument, not a tag.
+  const re = /(?<![\w$.])<([A-Z][\w$]*)(?=[\s/>])/g
+  let m: RegExpExecArray | null
+  while ((m = re.exec(code))) {
+    const start = re.lastIndex
+    let i = start
+    let depth = 0
+    let quote: string | null = null
+    for (; i < code.length; i++) {
+      const ch = code[i]
+      if (quote) {
+        if (ch === quote && code[i - 1] !== '\\') quote = null
+        continue
+      }
+      if (ch === '"' || ch === "'" || ch === '`') {
+        quote = ch
+        continue
+      }
+      if (ch === '{') depth++
+      else if (ch === '}') depth--
+      else if (ch === '>' && depth === 0) break
+    }
+    const { attrs, spread } = parseAttrs(code.slice(start, i))
+    out.push({ tag: m[1], attrs, spread, line: code.slice(0, m.index).split('\n').length })
+    re.lastIndex = i
+  }
+  return out
+}
+
+interface ResolvedTag {
+  slug: string
+  table: PropTable
+}
+
+// Map each JSX tag in the file to a documented component. A default import
+// whose path ends in a registry slug is that standalone; an import from a path
+// that carries a design-system slug is looked up among that system's tables by
+// the imported name. An explicit `tags` map from the caller wins over both.
+function resolveTags(
+  code: string,
+  meta: MetaPayload,
+  props: PropsPayload,
+  forced: Record<string, string>,
+): { index: Map<string, ResolvedTag>; unresolved: string[] } {
+  const index = new Map<string, ResolvedTag>()
+  const unresolved: string[] = []
+  const systems = (meta.systems ?? []).map((s) => s.slug).sort((a, b) => b.length - a.length)
+  const entries = Object.entries(props.props)
+  // Which system a design-system slug belongs to, from the catalog, so a lookup
+  // inside "andromeda" never sweeps in "andromeda-pro-*" slugs by prefix.
+  const systemOf = new Map((meta.systemComponents ?? []).map((c) => [c.slug, c.system]))
+
+  const tableFor = (slug: string, name: string): PropTable | undefined => {
+    const tables = props.props[slug] ?? []
+    return tables.find((t) => t.table === name) ?? (tables.length === 1 ? tables[0] : undefined)
+  }
+
+  for (const [tag, slug] of Object.entries(forced)) {
+    const table = tableFor(slug, tag)
+    if (table) index.set(tag, { slug, table })
+    else unresolved.push(`<${tag}> (forced to "${slug}", which has no documented API)`)
+  }
+
+  for (const b of scanImports(code)) {
+    if (index.has(b.local)) continue
+    const segs = b.path.replace(/\.(tsx|ts|jsx|js)$/, '').split('/')
+    const base = segs[segs.length - 1] === 'index' ? segs[segs.length - 2] : segs[segs.length - 1]
+    const name = b.imported === 'default' ? base : b.imported
+
+    // 1. Path ends in a registry slug: a standalone or a per-slug install.
+    if (props.props[base]) {
+      const table = tableFor(base, name) ?? tableFor(base, b.local)
+      if (table) index.set(b.local, { slug: base, table })
+      continue
+    }
+    // 2. Path carries a design-system slug: look the name up in that system.
+    const system = systems.find((s) => segs.includes(s))
+    const pool = system ? entries.filter(([slug]) => systemOf.get(slug) === system) : entries
+    const hits = pool.filter(([, tables]) => tables.some((t) => t.table === name))
+    if (hits.length === 1) {
+      index.set(b.local, { slug: hits[0][0], table: hits[0][1].find((t) => t.table === name)! })
+    } else if (hits.length > 1 || /aicanvas|andromeda/i.test(b.path)) {
+      unresolved.push(
+        `<${b.local}> from "${b.path}"` +
+          (hits.length > 1
+            ? ` matches ${hits.length} components (${hits.map(([s]) => s).join(', ')}); pass tags: { "${b.local}": "<slug>" }`
+            : ' has no documented API here'),
+      )
+    }
+  }
+  return { index, unresolved }
+}
+
+const PASSTHROUGH = new Set(['key', 'ref', 'children'])
+
+interface UsageIssue {
+  severity: 'error' | 'warning' | 'info'
+  line: number
+  tag: string
+  prop: string
+  message: string
+}
+
+// ── Tool: validate_usage ─────────────────────────────────────────────────────
+
+server.registerTool(
+  'validate_usage',
+  {
+    title: 'Validate AI Canvas component usage in a file',
+    description:
+      'Check a file\'s JSX against the documented props of the AI Canvas components it imports. Reports props that do not exist on the component, required props that are missing, and string values outside a prop\'s allowed options, each with a line number. Run it on every file that uses AI Canvas components before you finish. Components are matched by import path (components/aicanvas/<slug> for standalones, components/aicanvas/<system>/... for design-system components); pass `tags` to map a tag to a slug by hand.',
+    inputSchema: {
+      code: z.string().min(1).describe('The full contents of the file to check.'),
+      path: z.string().optional().describe('The file path, used only in the report.'),
+      tags: z
+        .record(z.string())
+        .optional()
+        .describe(
+          'Optional map from JSX tag name to registry slug, e.g. { "Button": "andromeda-button-system" }, for tags the import scan cannot resolve.',
+        ),
+    },
+    annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+  },
+  async ({ code, path, tags }) => {
+    try {
+      const meta = await fetchMeta()
+      const props = await fetchProps()
+      const clean = blankNoise(code)
+      const { index, unresolved } = resolveTags(clean, meta, props, tags ?? {})
+      const usages = scanJsx(clean)
+      const issues: UsageIssue[] = []
+      const checked: Array<{ tag: string; slug: string; table: string; line: number }> = []
+
+      for (const u of usages) {
+        const r = index.get(u.tag)
+        if (!r) continue
+        checked.push({ tag: u.tag, slug: r.slug, table: r.table.table, line: u.line })
+        const known = new Map(r.table.props.map((p) => [p.name, p]))
+        for (const a of u.attrs) {
+          if (PASSTHROUGH.has(a.name) || /^(data|aria)-/.test(a.name)) continue
+          const p = known.get(a.name)
+          if (!p) {
+            issues.push({
+              severity: u.spread ? 'info' : 'warning',
+              line: u.line,
+              tag: u.tag,
+              prop: a.name,
+              message: `"${a.name}" is not in the documented ${r.table.table} API (${r.slug}). It only works if the component spreads unknown props onto its root.`,
+            })
+            continue
+          }
+          const opts = unionOptions(p.type)
+          const literal =
+            a.kind === 'string'
+              ? a.value
+              : a.kind === 'expr' && a.value && /^(['"])[^'"]*\1$/.test(a.value)
+                ? a.value.slice(1, -1)
+                : null
+          if (opts && literal !== null && !opts.includes(literal)) {
+            issues.push({
+              severity: 'error',
+              line: u.line,
+              tag: u.tag,
+              prop: a.name,
+              message: `"${literal}" is not an allowed value of ${a.name}. One of: ${opts.join(', ')}.`,
+            })
+          }
+          if (a.kind === 'bare' && !/boolean/.test(p.type)) {
+            issues.push({
+              severity: 'warning',
+              line: u.line,
+              tag: u.tag,
+              prop: a.name,
+              message: `${a.name} is passed without a value, but its type is ${p.type}.`,
+            })
+          }
+        }
+        if (!u.spread) {
+          for (const p of r.table.props) {
+            if (!p.optional && !u.attrs.some((a) => a.name === p.name)) {
+              issues.push({
+                severity: 'error',
+                line: u.line,
+                tag: u.tag,
+                prop: p.name,
+                message: `required prop ${p.name} (${p.type}) is missing.`,
+              })
+            }
+          }
+        }
+      }
+
+      const errors = issues.filter((i) => i.severity === 'error').length
+      const warnings = issues.filter((i) => i.severity === 'warning').length
+      const where = path ?? 'the file'
+      const lines: string[] = []
+      if (checked.length === 0) {
+        lines.push(
+          `No AI Canvas component usages found in ${where}.`,
+          'Components are matched by import path: components/aicanvas/<slug> (standalones) or components/aicanvas/<system>/... (design-system components). Pass `tags` to map a tag to a slug by hand.',
+        )
+      } else {
+        lines.push(
+          `Checked ${checked.length} AI Canvas component usage${checked.length === 1 ? '' : 's'} in ${where}: ${errors} error${errors === 1 ? '' : 's'}, ${warnings} warning${warnings === 1 ? '' : 's'}.`,
+        )
+        if (issues.length === 0) lines.push('', 'Every prop matches the documented API.')
+        else {
+          lines.push('')
+          for (const i of issues.sort((a, b) => a.line - b.line)) {
+            lines.push(`- line ${i.line} <${i.tag}> ${i.severity}: ${i.message}`)
+          }
+        }
+      }
+      if (unresolved.length) {
+        lines.push('', 'Not checked:', ...unresolved.map((u) => `- ${u}`))
+      }
+      return {
+        content: [asTextContent(lines.join('\n'))],
+        structuredContent: { path: path ?? null, checked, issues, unresolved, errors, warnings },
+      }
+    } catch (err) {
+      return errorResult(err instanceof Error ? err.message : String(err))
+    }
+  },
+)
+
+// ── Tool: compose_page ───────────────────────────────────────────────────────
+
+const ARTICLES = /^(a|an|the|some)\s+/i
+// Grammar words score against every description; they say nothing about which
+// screen a brief wants, so the template match drops them first.
+const STOP_WORDS = new Set([
+  'and', 'with', 'for', 'the', 'that', 'this', 'from', 'into', 'then', 'plus', 'some',
+  'our', 'your', 'one', 'two', 'has', 'have', 'want', 'need', 'like', 'make', 'build',
+  'plan', 'create', 'design', 'add', 'use', 'using', 'show', 'page', 'screen',
+])
+function withoutStopWords(text: string): string {
+  return text
+    .split(/\s+/)
+    .filter((w) => !STOP_WORDS.has(w.toLowerCase()))
+    .join(' ')
+}
+
+// A pick needs one whole word of the ask in the item's name or slug. Substring
+// scoring alone let "plan" pick Planet and the Resource Planning template.
+function namedHit(ask: string, item: { slug: string; name: string; category?: string }): boolean {
+  const names = `${normalize(item.slug)} ${normalize(item.name)} ${normalize(item.category ?? '')}`
+  return normalize(withoutStopWords(ask))
+    .split(/\s+/)
+    .filter((t) => t.length > 2)
+    .some((t) => new RegExp(`\\b${escapeRegExp(t)}\\b`).test(names))
+}
+
+const MAX_PARTS = 8
+function briefSegments(brief: string): { segments: string[]; omitted: string[] } {
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const raw of brief.split(/,|;|\n|\band\b|\bwith\b|\bplus\b|\bthen\b/i)) {
+    const seg = raw.trim().replace(ARTICLES, '').trim()
+    const key = normalize(seg)
+    if (key.length < 3 || seen.has(key)) continue
+    seen.add(key)
+    out.push(seg)
+  }
+  return { segments: out.slice(0, MAX_PARTS), omitted: out.slice(MAX_PARTS) }
+}
+
+server.registerTool(
+  'compose_page',
+  {
+    title: 'Plan a page from AI Canvas components',
+    description:
+      'Turn a one-line brief ("a CRM dashboard with a pipeline board and an activity feed") into a build plan: the closest ready-made template if one fits, one AI Canvas component per part of the brief with two alternatives, the install commands in order (shared tokens first), which picks have a documented API to read, and the parts nothing in the catalog covers so you build only those. It plans; it generates no code. Follow it with get_component_props, then validate_usage on the result.',
+    inputSchema: {
+      brief: z.string().min(3).describe('What the page needs, in plain words. Separate parts with commas or "and".'),
+      system: z
+        .string()
+        .optional()
+        .describe(
+          'Prefer components from this design system, e.g. "andromeda". Omit to rank standalones and design-system components together.',
+        ),
+    },
+    annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+  },
+  async ({ brief, system }) => {
+    try {
+      const meta = await fetchMeta()
+      const props = await fetchProps().catch(() => null)
+      const wanted = system?.toLowerCase()
+      const systemMeta = wanted ? (meta.systems ?? []).find((s) => s.slug === wanted) : undefined
+      if (wanted && !systemMeta) {
+        return errorResult(
+          `No design system with slug "${system}". Use \`list_systems\` to see what exists, or omit the filter.`,
+        )
+      }
+
+      // The closest whole screen, scored against the entire brief. One whole-word
+      // hit on the template's name or its category (Dashboard, CRM, Scheduling,
+      // Media, Authentication) scores 8; anything below that is a stray token in
+      // a description, not a screen the brief is asking for.
+      const MIN_TEMPLATE_SCORE = 8
+      const templates = (meta.templates ?? []).filter((t) => !wanted || t.system === wanted)
+      const templatePick = templates
+        .map((t) => ({
+          item: t,
+          score: scoreFields(withoutStopWords(brief), [
+            { text: normalize(t.slug), weight: 5 },
+            { text: normalize(t.name), weight: 4 },
+            { text: normalize(t.category ?? ''), weight: 4 },
+            { text: normalize(t.description), weight: 1 },
+            { text: normalize(t.system), weight: 2 },
+          ]),
+        }))
+        .filter((r) => r.score >= MIN_TEMPLATE_SCORE && namedHit(brief, r.item))
+        .sort((a, b) => b.score - a.score)[0]?.item
+
+      const { segments, omitted } = briefSegments(brief)
+      type Pick = ComponentMeta | SystemComponentMeta
+      const systemOf = new Map((meta.systemComponents ?? []).map((c) => [c.slug, c.system]))
+      const rankAll = (lock: string | undefined) =>
+        segments.map((ask) => {
+          const query = withoutStopWords(ask)
+          const ds = (meta.systemComponents ?? [])
+            .filter((c) => !lock || c.system === lock)
+            .map((c) => ({ item: c as Pick, score: scoreSystemComponent(query, c) }))
+            .filter((r) => r.score > 0 && namedHit(ask, r.item))
+          const sa = wanted
+            ? []
+            : meta.components
+                .map((c) => ({ item: c as Pick, score: scoreMatch(query, c) }))
+                .filter((r) => r.score > 0 && namedHit(ask, r.item))
+          return { ask, ranked: [...ds, ...sa].sort((a, b) => b.score - a.score).map((r) => r.item) }
+        })
+
+      // One design system per screen (the audit checklist's own rule). With no
+      // `system` given, the system behind most first picks wins and the parts
+      // are ranked again inside it; a tie goes to the first pick's system.
+      let ranked = rankAll(wanted)
+      let locked = wanted
+      if (!wanted) {
+        const votes = new Map<string, number>()
+        for (const r of ranked) {
+          const sys = r.ranked[0] && systemOf.get(r.ranked[0].slug)
+          if (sys) votes.set(sys, (votes.get(sys) ?? 0) + 1)
+        }
+        if (votes.size > 1) {
+          locked = [...votes.entries()].sort((a, b) => b[1] - a[1])[0][0]
+          ranked = rankAll(locked)
+        }
+      }
+
+      const sections: Array<{
+        ask: string
+        pick: { slug: string; name: string; installCommand: string; homepageUrl: string; hasProps: boolean } | null
+        alternatives: Array<{ slug: string; name: string }>
+      }> = []
+      for (const r of ranked) {
+        const pick = r.ranked[0]
+        // Two parts of the brief that resolve to the same component are one part.
+        const twin = pick && sections.find((s) => s.pick?.slug === pick.slug)
+        if (twin) {
+          twin.ask = `${twin.ask}, ${r.ask}`
+          continue
+        }
+        sections.push({
+          ask: r.ask,
+          pick: pick
+            ? {
+                slug: pick.slug,
+                name: pick.name,
+                installCommand: pick.installCommand,
+                homepageUrl: pick.homepageUrl,
+                hasProps: !!props?.props[pick.slug],
+              }
+            : null,
+          alternatives: r.ranked.slice(1, 3).map((c) => ({ slug: c.slug, name: c.name })),
+        })
+      }
+      const gaps = sections.filter((s) => !s.pick).map((s) => s.ask)
+      const picks = sections.flatMap((s) => (s.pick ? [s.pick] : []))
+
+      // Install order: shared tokens of every system used, then each pick once.
+      const systemsUsed = new Set(
+        picks.flatMap((p) => {
+          const sc = (meta.systemComponents ?? []).find((c) => c.slug === p.slug)
+          return sc ? [sc.system] : []
+        }),
+      )
+      const install: string[] = []
+      for (const s of systemsUsed) {
+        const cmd = (meta.systems ?? []).find((x) => x.slug === s)?.tokensInstallCommand
+        if (cmd && !install.includes(cmd)) install.push(cmd)
+      }
+      for (const p of picks) if (!install.includes(p.installCommand)) install.push(p.installCommand)
+
+      const lines: string[] = [`# Plan for: ${brief}`, '']
+      if (templatePick) {
+        lines.push(
+          `Closest ready-made screen: ${templatePick.name} (${templatePick.system}${templatePick.category ? ` · ${templatePick.category}` : ''}), ${templatePick.fileCount} files.`,
+          `  Install: ${templatePick.installCommand}`,
+          `  Preview: ${templatePick.homepageUrl}`,
+          '  Start from it when the brief is mostly this screen; fetch it with `get_template`.',
+          '',
+        )
+      }
+      if (locked && !wanted && systemsUsed.size) {
+        lines.push(`Design system: ${locked} (one system per screen; pass \`system\` to choose another).`, '')
+      }
+      lines.push('## Parts')
+      for (const s of sections) {
+        if (s.pick) {
+          lines.push(
+            `- ${s.ask}: ${s.pick.name} (${s.pick.slug})${s.pick.hasProps ? ', documented API' : ', self-contained'}` +
+              (s.alternatives.length
+                ? `. Alternatives: ${s.alternatives.map((a) => a.slug).join(', ')}`
+                : ''),
+          )
+        } else {
+          lines.push(`- ${s.ask}: nothing in the catalog. Build it by hand.`)
+        }
+      }
+      if (omitted.length) {
+        lines.push(
+          `- Not planned (a brief takes ${MAX_PARTS} parts): ${omitted.join('; ')}. Run compose_page again for these.`,
+        )
+      }
+      lines.push('', '## Steps')
+      let n = 1
+      if (install.length) {
+        lines.push(`${n++}. Install, in this order:`, ...install.map((c) => `   ${c}`))
+      }
+      const withApi = picks.filter(
+        (p, i) => p.hasProps && picks.findIndex((q) => q.slug === p.slug) === i,
+      )
+      if (withApi.length) {
+        lines.push(
+          `${n++}. Read the API before writing JSX: get_component_props on ${withApi.map((p) => p.slug).join(', ')}.`,
+        )
+      }
+      if (gaps.length) {
+        lines.push(
+          `${n++}. Build by hand: ${gaps.join('; ')}. Hold it to get_audit_checklist.`,
+        )
+      }
+      lines.push(
+        `${n++}. Compose the page, then run validate_usage on the file.`,
+        '',
+        'This is a plan from the catalog. No code was generated.',
+      )
+
+      return {
+        content: [asTextContent(lines.join('\n'))],
+        structuredContent: {
+          brief,
+          system: locked ?? null,
+          omitted,
+          template: templatePick
+            ? {
+                slug: templatePick.slug,
+                name: templatePick.name,
+                installCommand: templatePick.installCommand,
+                homepageUrl: templatePick.homepageUrl,
+              }
+            : null,
+          sections,
+          gaps,
+          install,
+        },
+      }
+    } catch (err) {
+      return errorResult(err instanceof Error ? err.message : String(err))
+    }
+  },
+)
+
+// ── Tool: get_audit_checklist ────────────────────────────────────────────────
+
+const CHECKLIST_SHARED = [
+  '## Install',
+  '- Every AI Canvas piece came in through its CLI command (get_install_command), so its npm dependencies and registry dependencies such as shared tokens are present. A hand-copied file needs those installed too.',
+  '- The packages named in the `// npm install` comment at the top of each component are installed.',
+  '',
+  '## Props',
+  '- validate_usage on the file reports no errors. A warning is a prop outside the documented API: keep it only if the component spreads unknown props onto its root.',
+  '',
+  '## Themes',
+  '- The result renders in light and dark. Design-system components read their theme from the shared tokens; standalones carry their own dark variants. Nothing is pinned to one theme by a hard-coded colour.',
+  '',
+  '## Layout',
+  '- Works at 320px wide with no horizontal scroll. Hover-only interactions have a tap equivalent. Text meant to be read is at least 14px.',
+  '- No fixed pixel widths or heights on layout containers. A component sizes from its parent; a canvas sizes from its container.',
+  '',
+  '## Motion',
+  '- Animation respects prefers-reduced-motion. Every effect that starts a loop, a timer or a listener cleans it up on unmount.',
+  '',
+  '## Accessibility',
+  '- Every interactive element is reachable by keyboard with a visible focus state. Icons that carry meaning have a label; decorative ones are hidden from assistive technology. Text contrast passes on both themes.',
+]
+
+const CHECKLIST_PAGE = [
+  '# AI Canvas audit checklist: page',
+  'Run this on the finished screen before calling it done.',
+  '',
+  ...CHECKLIST_SHARED,
+  '',
+  '## Composition',
+  '- One design system per screen. Components from two systems are not mixed, and a system component is not restyled with utility classes that fight its tokens.',
+  '- Repeated content goes through props or data, never by editing a component source per instance.',
+  '- The shared tokens are installed once and imported from their installed path, not copied into the page.',
+]
+
+const CHECKLIST_COMPONENT = [
+  '# AI Canvas audit checklist: component',
+  'Run this on a component you adapted or built to the AI Canvas standard.',
+  '',
+  ...CHECKLIST_SHARED,
+  '',
+  '## Structure',
+  "- `'use client'` is the first line when the file uses hooks, effects or browser APIs.",
+  '- One default export, named after the file. The root element fills its container; nothing inside sets its own viewport height.',
+  '- Props have sensible defaults so the component renders with none, and a className prop merges onto the root.',
+]
+
+server.registerTool(
+  'get_audit_checklist',
+  {
+    title: 'Get the AI Canvas audit checklist',
+    description:
+      'Return the checklist to run on a finished page or component built with AI Canvas parts: install completeness, prop correctness (via validate_usage), both themes, layout at 320px, motion cleanup and reduced motion, keyboard and contrast, and composition rules. Use it as the last step of compose_page, or whenever the user asks "is this done right".',
+    inputSchema: {
+      scope: z
+        .enum(['page', 'component'])
+        .optional()
+        .describe('"page" (default) for a composed screen, "component" for a single adapted or hand-built component.'),
+    },
+    annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+  },
+  async ({ scope = 'page' }) => {
+    const list = scope === 'component' ? CHECKLIST_COMPONENT : CHECKLIST_PAGE
+    return {
+      content: [asTextContent(list.join('\n'))],
+      structuredContent: { scope, items: list.filter((l) => l.startsWith('- ')).map((l) => l.slice(2)) },
     }
   },
 )

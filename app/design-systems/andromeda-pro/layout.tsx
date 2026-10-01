@@ -3,7 +3,8 @@ import { JetBrains_Mono } from 'next/font/google'
 import { AndromedaContentColumn } from './AndromedaContentColumn'
 // heavy registry (keeps three.js etc. out of the bundle).
 
-// JetBrains Mono is the only font in the Andromeda design system.
+// JetBrains Mono is the mono face of the Andromeda design system (Manrope, the
+// default face, comes from the root layout).
 // Loading it at the layout level makes --font-jetbrains-mono available
 // to every Andromeda route (overview, showcase, per-component pages),
 // which the tokens reference via fontMono / fontSans.

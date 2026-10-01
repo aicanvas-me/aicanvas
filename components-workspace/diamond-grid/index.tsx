@@ -253,6 +253,11 @@ function addStarPath(
   context.closePath()
 }
 
+/**
+ * @typedef {object} DiamondGridProps
+ * @property {string} [className] Extra classes merged onto the outermost root element.
+ * @property {number} [seed=1337] Determines grid placement, ignition positions and the complete loop sequence.
+ */
 export default function DiamondGrid({ className, seed = 1337 }: DiamondGridProps) {
   const hostRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)

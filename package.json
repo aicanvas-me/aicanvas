@@ -6,8 +6,8 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true",
     "predev": "node scripts/check-deps.mjs",
-    "dev": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs && next dev -p 3001 --turbopack",
-    "dev:webpack": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs && next dev -p 3001 --webpack",
+    "dev": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs --dev && next dev -p 3001 --turbopack",
+    "dev:webpack": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs --dev && next dev -p 3001 --webpack",
     "build": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs && NODE_OPTIONS=--max-old-space-size=4096 next build",
     "start": "next start",
     "publish-premium": "node scripts/publish-premium.mjs",
@@ -21,6 +21,9 @@
     "gsc:audit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/gsc-audit.ts",
     "gsc:submit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/gsc-submit.ts",
     "gsc:keywords": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/gsc-keywords.ts",
+    "bing:audit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/bing-audit.ts",
+    "bing:submit": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/bing-submit.ts",
+    "indexnow": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/indexnow.ts",
     "lint:prompts": "node scripts/lint-prompts.mjs",
     "andromeda:contrast": "node --import ./design-systems/andromeda/_tools/ts-resolve.mjs design-systems/andromeda/_tools/light-contrast.selfcheck.mjs"
   },
@@ -59,6 +62,8 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

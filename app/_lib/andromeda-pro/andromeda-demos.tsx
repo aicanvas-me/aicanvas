@@ -89,6 +89,7 @@ import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle }
 import { Popover, PopoverContent, PopoverLabel, PopoverSeparator, PopoverTrigger } from '../../lib/andromeda-pro.generated'
 import { Tool } from '../../lib/andromeda-pro.generated'
 import { StatTile } from '../../lib/andromeda-pro.generated'
+import { StrengthMeter } from '../../lib/andromeda-pro.generated'
 import { Tag } from '../../lib/andromeda-pro.generated'
 import { Textarea } from '../../lib/andromeda-pro.generated'
 import { Toggle } from '../../lib/andromeda-pro.generated'
@@ -764,6 +765,8 @@ function TrendChartDemo() {
         data={TREND_DATA}
         title="Throughput vs plan"
         yLabel="Requests / sec"
+        // `t` is a day of the month, so the axis and the tooltip heading read as dates.
+        formatX={(d) => `Sep ${d}`}
         height={220}
         series={[
           { key: 'planned', label: 'Planned', role: 'baseline' },
@@ -2027,6 +2030,25 @@ function UserCardDemo() {
   )
 }
 
+function StrengthMeterDemo() {
+  // Real strings, and the component judges them itself. A demo that handed the
+  // meter a level could show a reading the component would never give, which is
+  // the one thing this page exists to prevent.
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5], width: '100%', maxWidth: 420 }}>
+      <Row label="Too short">
+        <StrengthMeter value="sunflower" />
+      </Row>
+      <Row label="Long enough, one family">
+        <StrengthMeter value="sunflowerpath" />
+      </Row>
+      <Row label="Length alone">
+        <StrengthMeter value="correct horse battery" />
+      </Row>
+    </div>
+  )
+}
+
 // ─── Public switcher ─────────────────────────────────────────────────────────
 
 function SidebarDemo() {
@@ -2089,6 +2111,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   burst: BurstDemo,
   cube: CubeDemo,
   'search-field': SearchFieldDemo,
+  'strength-meter': StrengthMeterDemo,
   sidebar: SidebarDemo,
   skeleton: SkeletonDemo,
   'segmented-control': SegmentedControlDemo,

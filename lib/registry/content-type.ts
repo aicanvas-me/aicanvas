@@ -33,7 +33,7 @@ export interface ContentLookup {
 }
 
 // Catalog/index files the CLI and MCP need to browse — never gated.
-const META_SLUGS = new Set(['registry', 'aicanvas-mcp'])
+const META_SLUGS = new Set(['registry', 'aicanvas-mcp', 'aicanvas-props'])
 
 /**
  * Classify a registry slug (with or without a trailing `.json`).

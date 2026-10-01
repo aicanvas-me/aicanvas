@@ -53,6 +53,14 @@ export function AuthModal() {
 
   if (!isOpen) return null
 
+  // Where a flow that leaves the site comes back to: Google, the emailed
+  // sign-in link, the sign-up confirmation email. Those all return through
+  // /account/auth/callback?next=..., and with no explicit `next` they used to
+  // land on the homepage while email and password kept you on the page. The
+  // page you opened the modal from is the default now. Only read while the
+  // modal is open, which is always client side, so window is safe here.
+  const returnTo = next ?? `${pathname}${window.location.search}`
+
   // Stay on the current page after sign-in unless an explicit `next` was
   // provided when opening. router.refresh() re-runs RSCs so the page picks
   // up the new auth state (header pill, gated content, etc.).
@@ -113,13 +121,13 @@ export function AuthModal() {
           />
         ) : mode === 'sign-in' ? (
           <SignInFormFields
-            next={next ?? '/'}
+            next={returnTo}
             onSuccess={handleSignInSuccess}
             onSwitchToSignUp={() => setMode('sign-up')}
           />
         ) : (
           <SignUpFormFields
-            next={next ?? '/'}
+            next={returnTo}
             onSwitchToSignIn={() => setMode('sign-in')}
           />
         )}

@@ -158,7 +158,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
     items: [
       {
         q: 'What can I do on AI Canvas for free?',
-        a: 'A lot. Browsing components, previewing them, copying the full AI prompt of any free component, using the MCP, the Lab, and saving favorites are all free. A free account also unlocks unlimited one-command installs. On premium components and blocks you still read part of the prompt for free, and Premium unlocks the rest.',
+        a: 'A lot. Browsing components, previewing them, copying the full AI prompt of any free component, using the MCP, and saving favorites are all free. A free account also unlocks unlimited one-command installs. On premium components and blocks you still read part of the prompt for free, and Premium unlocks the rest.',
       },
       {
         q: 'What does install mean here?',
