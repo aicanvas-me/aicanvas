@@ -25,6 +25,9 @@ export const collapsible: MatrixSpec = {
   sizes: ['sm', 'md'],
   // Two 260px rungs side by side do not fit half a row.
   wide: true,
+  // The hero centres the case: its own width is fixed, so a wide
+  // cell would lay it from the left edge.
+  soloCentered: true,
   statePairColumns: true,
   render: (size, props) => {
     const { defaultOpen, disabled, guide, meta, indicator } = props

@@ -28,6 +28,9 @@ export const tool: MatrixSpec = {
   sizes: ['sm', 'md'],
   // Two 280px rungs side by side do not fit half a row.
   wide: true,
+  // The hero centres the case: its own width is fixed, so a wide
+  // cell would lay it from the left edge.
+  soloCentered: true,
   statePairColumns: true,
   // A step row fills its message column, so it needs a width of its own.
   // Uncontrolled: a done or failed case opens and shuts on the page.

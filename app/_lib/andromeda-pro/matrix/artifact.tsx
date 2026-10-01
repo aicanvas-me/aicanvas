@@ -169,6 +169,9 @@ export const artifact: MatrixSpec = {
   sizes: null,
   // It holds a table, and a table in half a row is a table that scrolls.
   wide: true,
+  // The hero centres the case: its own width is fixed, so a wide
+  // cell would lay it from the left edge.
+  soloCentered: true,
   // The action tooltips hang under the bar; the body must not become a
   // scroll container that clips them.
   overflow: true,

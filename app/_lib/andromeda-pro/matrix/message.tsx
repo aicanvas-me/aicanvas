@@ -154,6 +154,9 @@ export const message: MatrixSpec = {
   // A turn fills its thread: the user bubble is capped at 80% of it and the
   // assistant panel takes the full width, so each case gets a full row.
   wide: true,
+  // The hero centres the case: its own width is fixed, so a wide
+  // cell would lay it from the left edge.
+  soloCentered: true,
   statePairColumns: true,
   render: (_size, props) => (
     <div style={{ width: '100%', maxWidth: 640 }}>
