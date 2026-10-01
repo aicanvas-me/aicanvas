@@ -267,7 +267,7 @@ export const DESIGN_SYSTEMS = [
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
       { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication', entryPath: 'examples/sign-in/index.tsx' },
       { slug: 'andromeda-pro-sign-up',           name: 'Sign Up',           category: 'Authentication', entryPath: 'examples/sign-up/index.tsx' },
-      { slug: 'andromeda-pro-ai-chat',           name: 'AI Chat',           category: 'Dashboard',     entryPath: 'examples/ai-chat/index.tsx' },
+      { slug: 'andromeda-pro-ai-chat',           name: 'AI Chat',           category: 'CRM',    entryPath: 'examples/ai-chat/index.tsx' },
     ],
   },
 ]
