@@ -72,6 +72,21 @@ const INTERACTIONS = {
     await frame.locator('button').first().hover()
     await page.waitForTimeout(450)
   },
+  // The cube flies in over 2s the first time it is on screen; shoot it landed.
+  cube: async (frame, page) => {
+    await page.waitForTimeout(1200)
+  },
+  // Closed, a combobox is a search field. Type so the card shows its list.
+  combobox: async (frame, page) => {
+    await frame.locator('input').first().click()
+    await page.keyboard.type('a')
+    await page.waitForTimeout(450)
+  },
+  // Closed, a popover is a trigger. Open it so the card shows the panel.
+  popover: async (frame, page) => {
+    await frame.locator('button').first().click()
+    await page.waitForTimeout(450)
+  },
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
