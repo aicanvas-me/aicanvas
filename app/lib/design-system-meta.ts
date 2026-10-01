@@ -41,15 +41,17 @@ export const DESIGN_SYSTEM_META: Record<DesignSystemSlug, DesignSystemMeta> = {
     name: 'Andromeda Pro',
     // Pro owns its own `andromeda-pro-` slug namespace, so a template here can
     // never be mistaken for a Legacy one by the switcher or the installer.
+    // Same order as the overview's template bento (TEMPLATE_ORDER in
+    // andromeda-pro/overview-b/overview-data.ts), so the switcher matches the page.
     templates: [
       { slug: 'andromeda-pro-city-operations',   name: 'City Operations',   category: 'Dashboard' },
+      { slug: 'andromeda-pro-ai-chat',           name: 'AI Chat',           category: 'CRM' },
+      { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication' },
+      { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       category: 'Media' },
       { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   category: 'Dashboard' },
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling' },
-      { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       category: 'Media' },
-      { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication' },
       { slug: 'andromeda-pro-sign-up',           name: 'Sign Up',           category: 'Authentication' },
-      { slug: 'andromeda-pro-ai-chat',           name: 'AI Chat',           category: 'CRM' },
     ],
   },
 }
