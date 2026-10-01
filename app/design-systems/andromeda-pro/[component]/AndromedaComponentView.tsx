@@ -388,7 +388,7 @@ export function AndromedaComponentView({
           </div>
 
           {tab === 'preview' && (
-            <div className="flex items-center gap-0.5 sm:gap-2">
+            <div className="flex items-center gap-2">
               {/* Theme toggle — one icon-only button whose icon and tooltip
                   swap with the current theme, matching the standalone
                   component page's control (app/components/[slug]/ComponentPageView.tsx).

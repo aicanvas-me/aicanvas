@@ -585,7 +585,7 @@ export default function ComponentPageView({
               </div>
 
               {/* Right-side controls */}
-              <div className="flex items-center gap-0.5 sm:gap-2">
+              <div className="flex items-center gap-2">
 
                 {/* Theme toggle — hidden on code tab */}
                 <div className="group/toggle relative" style={{ cursor: !dualTheme ? 'not-allowed' : undefined, display: activeTab === 'code' ? 'none' : undefined }}>
