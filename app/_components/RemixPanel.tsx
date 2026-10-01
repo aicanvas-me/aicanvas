@@ -215,7 +215,7 @@ export function RemixPanel({
                    and say "Copied!". That is a broken build waiting to happen and
                    the component gets the blame, so the button sells instead. */
                 <Button
-                  variant="primary"
+                  variant="outline"
                   size="sm"
                   onClick={() => openPaywallModal({ reason: 'premium-only' })}
                 >
