@@ -917,7 +917,7 @@ for (const ds of SYSTEMS) {
       `Install all ${componentCount} ${ds.name} components, tokens, and utilities.`,
       'No templates, no brain.',
     ]
-    const themeLine = ds.themeSets ? ["Light and dark included. Follows your app's dark class."] : []
+    const themeLine = ds.themeSets ? ['Light and dark included.'] : []
     installContents[ds.slug].push(...themeLine)
     for (const template of ds.templates) {
       const used = templateContents.get(template.slug) ?? 0
