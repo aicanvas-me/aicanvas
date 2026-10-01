@@ -205,10 +205,13 @@ export default function ComponentPageView({
       setCodeState({ status: 'locked', reason: 'premium-only' })
     }
   }, [slug])
-  // Fetch on first Code-tab open.
+  // Fetch on first Code-tab open, or earlier when the pointer reaches the tab.
   useEffect(() => {
     if (enforcing && activeTab === 'code' && codeState.status === 'idle') void openCode()
   }, [enforcing, activeTab, codeState.status, openCode])
+  const prefetchCode = () => {
+    if (enforcing && codeState.status === 'idle') void openCode()
+  }
   // Reset when switching components — or when the VIEWER changes — so the next
   // open re-fetches. The user id is load-bearing: signing in from the auth
   // modal calls router.refresh(), which merges the new RSC payload but
@@ -573,6 +576,10 @@ export default function ComponentPageView({
                 <button
                   type="button"
                   onClick={() => setActiveTab('code')}
+                  // Start the source fetch on the way to the click, so most of
+                  // it is done by the time the tab opens.
+                  onPointerEnter={prefetchCode}
+                  onFocus={prefetchCode}
                   className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'code'
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
