@@ -181,8 +181,8 @@ export function RemixPanel({
                 )}
               </div>
               <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                Written against the real source code. Works in Claude, Cursor,
-                ChatGPT, or any AI tool you use.
+                Written against the real source code. Paste it into your AI
+                agent and ask for your changes.
               </p>
             </div>
             <Button
@@ -208,7 +208,7 @@ export function RemixPanel({
             {/* The prompt */}
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-bold text-sand-900 dark:text-sand-50">
-                AI prompt for {name}
+                The Prompt
               </h3>
               {promptLocked ? (
                 /* Copying a paywalled prompt used to silently hand over blocks 1-2
