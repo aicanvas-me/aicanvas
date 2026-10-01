@@ -331,13 +331,13 @@ export function AndromedaComponentView({
             component breaks the system contract. Users compose AT the
             system level, not per-component. */}
         <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
-          {/* Save — signed out, opens the same soft-gate modal as Copy CLI.
+          {/* Save — signed out, opens the same soft-gate modal as Copy Command.
               Keyed on the REGISTRY slug (not the page slug) so the Button
               override (andromeda-button-system) can't collide with the free
               standalone's own save entry (andromeda-button). */}
           <SaveButton slug={registrySlug} system="andromeda" />
 
-          {/* Copy CLI — the button and command stay visible at all times; when
+          {/* Copy Command — the button and command stay visible at all times; when
               the install is account-gated and the visitor is signed out,
               copyCli() opens the auth modal instead of copying. */}
           <Button variant="primary" size="sm" onClick={copyCli}>
@@ -346,7 +346,7 @@ export function AndromedaComponentView({
             ) : (
               <Terminal weight="regular" size={15} />
             )}
-            {cliCopied ? 'Copied!' : 'Copy CLI'}
+            {cliCopied ? 'Copied!' : 'Copy Command'}
           </Button>
         </div>
       </div>
@@ -707,7 +707,7 @@ export function AndromedaComponentView({
                 Install command copied
               </p>
               <p className="mt-0.5 text-xs text-sand-400">
-                Paste into your terminal to add this component.
+                Paste it into your terminal or give it to your AI agent.
               </p>
             </div>
           </div>

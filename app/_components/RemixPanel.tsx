@@ -54,12 +54,12 @@ export interface RemixPanelProps {
    *  an invisible-but-real DOM difference on the standalone page. */
   cliReference: string
   /** Whether the CLI box's button should read "Copied!" right now — owned by
-   *  the caller so it can share state/timing with the page's other Copy CLI
+   *  the caller so it can share state/timing with the page's other Copy Command
    *  action instead of drifting out of sync with it. */
   cliCopied: boolean
   /** Click handler for the CLI box's button. The caller owns the actual
    *  clipboard write, any premium/account gating, and its own tracking, so
-   *  this always matches whatever the page's other Copy CLI action does. */
+   *  this always matches whatever the page's other Copy Command action does. */
   onCopyCli: () => void
   /** Non-subscriber viewing gated (premium-only) content: swaps the CLI
    *  button to a lock icon + "Unlock to install". */
@@ -243,7 +243,7 @@ export function RemixPanel({
                     : <Terminal weight="regular" size={15} />}
                   {needsPremium
                     ? 'Unlock to install'
-                    : cliCopied ? 'Copied!' : 'Copy CLI'}
+                    : cliCopied ? 'Copied!' : 'Copy Command'}
                 </Button>
               </div>
               {/* Same warning as the install step: the command above is real
