@@ -17,6 +17,7 @@ import {
   Lightning,
   Monitor,
   Rocket,
+  Sparkle,
   SquaresFour,
   Terminal,
 } from '@phosphor-icons/react'
@@ -561,6 +562,7 @@ const TEMPLATE_ICONS: Record<string, ComponentType<{ weight?: 'regular'; size?: 
   'service-order': ClipboardText,
   'resource-planning': CalendarBlank,
   'signal-room': Broadcast,
+  'ai-chat': Sparkle,
 }
 
 function TemplateSwitcher({
