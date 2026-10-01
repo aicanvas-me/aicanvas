@@ -1525,9 +1525,13 @@ export default function ComponentPageView({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-            className="fixed bottom-16 z-50 -translate-x-1/2"
+            className="fixed bottom-16 z-[60] -translate-x-1/2"
             style={{
-              left: mainCardRef.current
+              // Over the Remix panel when it is open (a copy from inside it), centred in
+              // the panel (w-full max-w-2xl, so 672px at most); else under the card.
+              left: remixOpen
+                ? window.innerWidth - Math.min(window.innerWidth, 672) / 2
+                : mainCardRef.current
                 ? mainCardRef.current.getBoundingClientRect().left + mainCardRef.current.offsetWidth / 2
                 : '50%',
             }}
