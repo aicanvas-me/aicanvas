@@ -175,8 +175,10 @@ export const artifact: MatrixSpec = {
   // The action tooltips hang under the bar; the body must not become a
   // scroll container that clips them.
   overflow: true,
+  // Flex and centred, so the Show button a closed case turns into sits in
+  // the middle of the slot; the open frame still fills it at width 100%.
   render: (_size, props) => (
-    <div style={{ width: '100%', maxWidth: 640 }}>
+    <div style={{ width: '100%', maxWidth: 640, display: 'flex', justifyContent: 'center' }}>
       <LiveArtifact {...props} />
     </div>
   ),
