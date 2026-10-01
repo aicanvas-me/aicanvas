@@ -13,7 +13,7 @@ import { Button } from './Button'
 // heart) is layered on top via className.
 //
 // Always rendered, even signed out — clicking it while signed out opens the
-// same soft-gate modal the account-gated Copy CLI uses (mirrors that
+// same soft-gate modal the account-gated Copy Command uses (mirrors that
 // aesthetic with save-specific copy) instead of hiding the affordance.
 
 type SaveButtonProps = {

@@ -33,7 +33,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         q: 'How do I get my first component in under a minute?',
-        a: 'Open any component page, click Copy CLI to grab its install command, paste it into your terminal, and run it. The component drops into your project as real, editable code, and a free account unlocks unlimited one-command installs, free forever.',
+        a: 'Open any component page, click Copy Command to grab its install command, paste it into your terminal and run it, or give it to your AI agent. The component drops into your project as real, editable code, and a free account unlocks unlimited one-command installs, free forever.',
       },
       {
         q: 'What is a CLI?',

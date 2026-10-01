@@ -592,7 +592,7 @@ export default function ComponentPageView({
               </div>
 
               {/* Right-side controls */}
-              <div className="flex items-center gap-0.5 sm:gap-2">
+              <div className="flex items-center gap-2">
 
                 {/* Theme toggle — hidden on code tab */}
                 <div className="group/toggle relative" style={{ cursor: !dualTheme ? 'not-allowed' : undefined, display: activeTab === 'code' ? 'none' : undefined }}>
@@ -811,36 +811,37 @@ export default function ComponentPageView({
             {/* Action bar */}
             <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
 
-              {/* Save — signed out, opens the same soft-gate modal as Copy CLI. */}
+              {/* Save — signed out, opens the same soft-gate modal as Copy Command. */}
               <SaveButton slug={slug} system={designSystem ?? null} />
 
               {/* Remix with AI — secondary action; opens the side panel with
                   the full platform-agnostic prompt. Hidden entirely when the
-                  component has no prompt. Sits left of the primary Copy CLI
+                  component has no prompt. Sits left of the primary Copy Command
                   action. */}
               {remixPrompt && (
                 <Button
                   variant="outline"
                   size="sm"
+                  className="whitespace-nowrap"
                   onClick={() => {
                     track('Remix Open', { component: slug })
                     setRemixOpen(true)
                   }}
                 >
-                  <Sparkle weight="regular" size={15} />
-                  Remix with AI
+                  <Sparkle weight="regular" size={15} className="max-[379px]:hidden" />
+                  Remix<span className="hidden sm:inline"> with AI</span>
                 </Button>
               )}
 
-              {/* Copy CLI — primary install action; copies the npx shadcn
+              {/* Copy Command — primary install action; copies the npx shadcn
                   command. The button and command stay visible at all times;
                   when the install is account-gated and the visitor is signed
                   out, copyCli() opens the auth modal instead of copying. */}
-              <Button variant="primary" size="sm" onClick={copyCli}>
+              <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
                 {cliCopied
-                  ? <Check weight="regular" size={15} />
-                  : <Terminal weight="regular" size={15} />}
-                {cliCopied ? 'Copied!' : 'Copy CLI'}
+                  ? <Check weight="regular" size={15} className="max-[379px]:hidden" />
+                  : <Terminal weight="regular" size={15} className="max-[379px]:hidden" />}
+                {cliCopied ? 'Copied!' : 'Copy Command'}
               </Button>
 
             </div>
@@ -1534,7 +1535,7 @@ export default function ComponentPageView({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-            className="fixed bottom-16 z-50 -translate-x-1/2"
+            className="fixed bottom-16 z-[60] -translate-x-1/2"
             style={{
               left: mainCardRef.current
                 ? mainCardRef.current.getBoundingClientRect().left + mainCardRef.current.offsetWidth / 2
@@ -1548,7 +1549,7 @@ export default function ComponentPageView({
                   Install command copied
                 </p>
                 <p className="mt-0.5 text-xs text-sand-600 dark:text-sand-400">
-                  Paste into your terminal to install this component.
+                  Paste it into your terminal or give it to your AI agent.
                 </p>
               </div>
             </div>

@@ -9,7 +9,7 @@ export const runtime = 'nodejs'
 const NO_STORE = { 'Cache-Control': 'private, no-store' }
 
 /**
- * Proactive PAYWALL check for the website's "Copy CLI" action: would pulling
+ * Proactive PAYWALL check for the website's "Copy Command" action: would pulling
  * <slug> right now be refused because it is PREMIUM? Lets the UI show the paywall
  * instead of handing over a command that then 402s. Installs are no longer
  * metered, so free content is never blocked here — the signed-out "create a free

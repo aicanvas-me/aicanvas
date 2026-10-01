@@ -567,7 +567,7 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
   },
   {
     q: 'How do I get my first component in under a minute?',
-    a: 'Open any component page, click Copy CLI to grab its install command, paste it into your terminal, and run it. The component drops into your project as real, editable code.',
+    a: 'Open any component page, click Copy Command to grab its install command, paste it into your terminal and run it, or give it to your AI agent. The component drops into your project as real, editable code.',
   },
   {
     q: 'What is the AI Canvas MCP server?',

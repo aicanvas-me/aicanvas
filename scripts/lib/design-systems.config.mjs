@@ -261,13 +261,13 @@ export const DESIGN_SYSTEMS = [
       // Order here IS the order the overview bento shows. The first one also
       // takes the lead slot, which spans both columns.
       { slug: 'andromeda-pro-city-operations',   name: 'City Operations',   category: 'Dashboard',      entryPath: 'examples/city-operations/index.tsx' },
+      { slug: 'andromeda-pro-ai-chat',           name: 'AI Chat',           category: 'CRM',    entryPath: 'examples/ai-chat/index.tsx' },
+      { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication', entryPath: 'examples/sign-in/index.tsx' },
       { slug: 'andromeda-pro-signal-room',       name: 'Signal Room',       category: 'Media',      entryPath: 'examples/signal-room/index.tsx' },
       { slug: 'andromeda-pro-mission-control',   name: 'Mission Control',   category: 'Dashboard',     entryPath: 'examples/mission-control/index.tsx' },
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
-      { slug: 'andromeda-pro-sign-in',           name: 'Sign In',           category: 'Authentication', entryPath: 'examples/sign-in/index.tsx' },
       { slug: 'andromeda-pro-sign-up',           name: 'Sign Up',           category: 'Authentication', entryPath: 'examples/sign-up/index.tsx' },
-      { slug: 'andromeda-pro-ai-chat',           name: 'AI Chat',           category: 'CRM',    entryPath: 'examples/ai-chat/index.tsx' },
     ],
   },
 ]

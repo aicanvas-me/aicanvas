@@ -30,7 +30,7 @@ export interface RemixPanelProps {
    *  (see below) — this only drives the slide + backdrop + focus/scroll lock. */
   open: boolean
   onClose: () => void
-  /** Component display name — used in the heading and the disclaimer copy. */
+  /** Component display name, used in the panel title and the paywall. */
   name: string
   /** Analytics key: fired as the `component` property on every event this
    *  panel sends (Remix Prompt Copy). Keep it the same value the page's own
@@ -54,12 +54,12 @@ export interface RemixPanelProps {
    *  an invisible-but-real DOM difference on the standalone page. */
   cliReference: string
   /** Whether the CLI box's button should read "Copied!" right now — owned by
-   *  the caller so it can share state/timing with the page's other Copy CLI
+   *  the caller so it can share state/timing with the page's other Copy Command
    *  action instead of drifting out of sync with it. */
   cliCopied: boolean
   /** Click handler for the CLI box's button. The caller owns the actual
    *  clipboard write, any premium/account gating, and its own tracking, so
-   *  this always matches whatever the page's other Copy CLI action does. */
+   *  this always matches whatever the page's other Copy Command action does. */
   onCopyCli: () => void
   /** Non-subscriber viewing gated (premium-only) content: swaps the CLI
    *  button to a lock icon + "Unlock to install". */
@@ -181,8 +181,8 @@ export function RemixPanel({
                 )}
               </div>
               <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                Written against the real source code. Works in Claude, Cursor,
-                ChatGPT, or any AI tool you use.
+                Written against the real source code. Paste it into your AI
+                agent and describe the changes you want.
               </p>
             </div>
             <Button
@@ -205,61 +205,10 @@ export function RemixPanel({
             className="flex-1 overflow-y-auto px-6 py-6 sm:px-8"
             style={{ scrollbarWidth: 'thin' }}
           >
-            {/* Remix disclaimer */}
-            <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-              <span className="font-semibold text-sand-900 dark:text-sand-50">
-                This prompt is for remixing.
-              </span>{' '}
-              Use it to build your own variation of {name}. Results depend on
-              the model you use, and no prompt in the world is 100% exact.
-            </p>
-
-            {/* CLI first — the accurate path */}
-            <div className="mt-5 rounded-xl border border-olive-500/40 bg-olive-500/10 p-5">
-              <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
-                Want the exact component?
-              </p>
-              <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                One command installs it, pixel-perfect. Copy, paste into your
-                project, done.
-              </p>
-              <div className="mt-4 flex items-start gap-2.5">
-                {/* One line, clipped. A signed-in install is a tokenized URL
-                    that wraps to two lines and turns a tidy card into a wall of
-                    monospace. Nothing is lost by cutting it: the visible form
-                    is masked anyway, and the button copies the real command. */}
-                <code className="min-w-0 flex-1 truncate rounded-lg bg-sand-200 dark:bg-sand-950 px-3 py-2 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
-                  npx shadcn@latest add {cliReference}
-                </code>
-                {/* onCopyCli already sends a non-subscriber to the paywall
-                    instead of copying, so only the label was lying: it offered
-                    a clipboard action beside a command that is already dots.
-                    Same treatment as the locked prompt below. */}
-                <Button variant="primary" size="sm" onClick={onCopyCli}>
-                  {needsPremium
-                    ? <LockSimple weight="regular" size={15} />
-                    : cliCopied
-                    ? <Check weight="regular" size={15} />
-                    : <Terminal weight="regular" size={15} />}
-                  {needsPremium
-                    ? 'Unlock to install'
-                    : cliCopied ? 'Copied!' : 'Copy CLI'}
-                </Button>
-              </div>
-              {/* Same warning as the install step: the command above is real
-                  and runnable, and signed out it installs a placeholder. */}
-              {needsFreeAccount && (
-                <p className="mt-2.5 text-xs text-sand-600 dark:text-sand-400">
-                  Free account required. Signed out, this installs a placeholder
-                  file instead of the component.
-                </p>
-              )}
-            </div>
-
             {/* The prompt */}
-            <div className="mt-8 flex items-center justify-between gap-3">
+            <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-bold text-sand-900 dark:text-sand-50">
-                AI prompt for {name}
+                The Remix Prompt
               </h3>
               {promptLocked ? (
                 /* Copying a paywalled prompt used to silently hand over blocks 1-2
@@ -274,7 +223,7 @@ export function RemixPanel({
                   Unlock full prompt
                 </Button>
               ) : (
-                <Button variant="outline" size="sm" onClick={copyRemixPrompt}>
+                <Button variant="primary" size="sm" onClick={copyRemixPrompt}>
                   {remixCopied
                     ? <Check weight="regular" size={15} />
                     : <Copy weight="regular" size={15} />}
@@ -301,6 +250,49 @@ export function RemixPanel({
               </pre>
               {promptLocked && (
                 <Paywall appearance="themed" teaser={LOCKED_PROMPT_TEASER} name={name} />
+              )}
+            </div>
+
+            {/* The exact install, after the prompt: this panel is for remixing,
+                so the prompt leads and installing is the quiet way out. */}
+            <div className="mt-8 rounded-xl border border-olive-500/40 bg-olive-500/10 p-5">
+              <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
+                Want the exact component?
+              </p>
+              <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                One command installs it, pixel-perfect. Copy, paste into your
+                project, done.
+              </p>
+              <div className="mt-4 flex items-start gap-2.5">
+                {/* One line, clipped. A signed-in install is a tokenized URL
+                    that wraps to two lines and turns a tidy card into a wall of
+                    monospace. Nothing is lost by cutting it: the visible form
+                    is masked anyway, and the button copies the real command. */}
+                <code className="min-w-0 flex-1 truncate rounded-lg bg-sand-200 dark:bg-sand-950 px-3 py-2 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
+                  npx shadcn@latest add {cliReference}
+                </code>
+                {/* onCopyCli already sends a non-subscriber to the paywall
+                    instead of copying, so only the label was lying: it offered
+                    a clipboard action beside a command that is already dots.
+                    Same treatment as the locked prompt above. */}
+                <Button variant="outline" size="sm" onClick={onCopyCli}>
+                  {needsPremium
+                    ? <LockSimple weight="regular" size={15} />
+                    : cliCopied
+                    ? <Check weight="regular" size={15} />
+                    : <Terminal weight="regular" size={15} />}
+                  {needsPremium
+                    ? 'Unlock to install'
+                    : cliCopied ? 'Copied!' : 'Copy Command'}
+                </Button>
+              </div>
+              {/* Same warning as the install step: the command above is real
+                  and runnable, and signed out it installs a placeholder. */}
+              {needsFreeAccount && (
+                <p className="mt-2.5 text-xs text-sand-600 dark:text-sand-400">
+                  Free account required. Signed out, this installs a placeholder
+                  file instead of the component.
+                </p>
               )}
             </div>
           </div>

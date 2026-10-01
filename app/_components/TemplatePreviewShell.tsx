@@ -17,6 +17,7 @@ import {
   Lightning,
   Monitor,
   Rocket,
+  Sparkle,
   SquaresFour,
   Terminal,
 } from '@phosphor-icons/react'
@@ -33,6 +34,7 @@ import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
 import dynamic from 'next/dynamic'
 import { useTheme } from '../components/ThemeProvider'
+import { InstallCopiedToast } from './InstallCopiedToast'
 // The dot-grid standalone, reused as the mobile preview backdrop. Loaded
 // dynamically (client-only) so it never enters the initial page bundle — it
 // ships only when a desktop user opens the Mobile preview. The page an end user
@@ -561,6 +563,7 @@ const TEMPLATE_ICONS: Record<string, ComponentType<{ weight?: 'regular'; size?: 
   'service-order': ClipboardText,
   'resource-planning': CalendarBlank,
   'signal-room': Broadcast,
+  'ai-chat': Sparkle,
 }
 
 function TemplateSwitcher({
@@ -775,6 +778,7 @@ function InstallButton({
 
   return (
     <div className="relative" ref={ref}>
+      <InstallCopiedToast show={copied} />
       <Button variant="primary" size="xs" onClick={handleInstall}>
         <Terminal weight="regular" size={13} />
         Install
@@ -796,7 +800,7 @@ function InstallButton({
                 variant="outline"
                 size="xs"
                 onClick={handleCopy}
-                aria-label="Copy CLI command"
+                aria-label="Copy install command"
               >
                 {copied ? (
                   <>
@@ -806,7 +810,7 @@ function InstallButton({
                 ) : (
                   <>
                     <Copy weight="regular" size={13} />
-                    Copy CLI
+                    Copy Command
                   </>
                 )}
               </Button>
