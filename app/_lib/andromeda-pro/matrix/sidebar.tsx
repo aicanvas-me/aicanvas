@@ -5,6 +5,7 @@
 import { useState } from 'react'
 import { Bell, BookOpen, ChartLine, Compass, Gear, Pulse, SignOut, UserCircle, Users } from '@phosphor-icons/react'
 import { Sidebar } from '../../../lib/andromeda-pro.generated'
+import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 import { SAMPLE_AVATARS } from '../sample-pictures'
 
@@ -74,6 +75,16 @@ export const sidebar: MatrixSpec = {
   // The row tooltips (icon-rail form) paint outside the case cell and would
   // otherwise be clipped by content-visibility's implied contain:paint.
   overflow: true,
+  // The user row's account menu opens UPWARD, and the matrix reserves 171px
+  // above any upward panel so it is not cut off. Inside the rail that room is
+  // never needed: the menu opens over the rail's own nav, within its height.
+  // Without this the whole rail jumped down the page on the click that opened
+  // it. One more class in the selector, so it outranks the reserve rule.
+  forcedStateCss: `
+    .andromeda-matrix-body:has([data-slot="sidebar"] [data-placement="top"]) {
+      padding-top: ${tokens.spacing[6]} !important;
+    }
+  `,
   variants: [
     // First, so it is the page hero: the fold toggle in the brand block and
     // the user's row at the foot, the way an app rail is built (the AI Chat
