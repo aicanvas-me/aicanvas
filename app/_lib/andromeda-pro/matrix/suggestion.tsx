@@ -18,7 +18,7 @@ export const suggestion: MatrixSpec = {
 
     :where([data-andromeda-matrix]) [data-force~="focus"] .andromeda-suggestion {
       outline: none;
-      box-shadow: inset 0 0 0 var(--andromeda-border-width, 1px) var(--andromeda-focus-ring, ${tokens.color.focus.ring});
+      box-shadow: inset 0 0 0 var(--andromeda-border-width, 1px) var(--andromeda-focus-ring, ${tokens.color.focus?.ring});
     }
   `,
   // At rest the frame is dashed; taken, it turns solid with the selection

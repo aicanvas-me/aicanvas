@@ -107,8 +107,8 @@ export const promptInput: MatrixSpec = {
   // reach, so this is the at-rest twin of those two declarations.
   forcedStateCss: `
     :where([data-andromeda-matrix]) [data-force~="focus"] [data-slot="prompt-input"] {
-      border-color: var(--andromeda-focus-ring, ${tokens.color.focus.ring});
-      box-shadow: 0 0 0 var(--andromeda-border-width, ${tokens.border.width[1]}) var(--andromeda-focus-ring, ${tokens.color.focus.ring});
+      border-color: var(--andromeda-focus-ring, ${tokens.color.focus?.ring});
+      box-shadow: 0 0 0 var(--andromeda-border-width, 1px) var(--andromeda-focus-ring, ${tokens.color.focus?.ring});
     }
   `,
   // The status axis, plus the one thing that arms Send: words in the field.

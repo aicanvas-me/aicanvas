@@ -54,7 +54,7 @@ export const collapsible: MatrixSpec = {
 
     :where([data-andromeda-matrix]) [data-force~="focus"] .andromeda-collapsible-trigger {
       outline: none;
-      box-shadow: inset 0 0 0 var(--andromeda-border-width, ${tokens.border.width[1]}) var(--andromeda-focus-ring, ${tokens.color.focus.ring});
+      box-shadow: inset 0 0 0 var(--andromeda-border-width, 1px) var(--andromeda-focus-ring, ${tokens.color.focus?.ring});
     }
   `,
   // Configurations, not variants: open or shut, with or without the branch

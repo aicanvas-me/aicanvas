@@ -22,7 +22,7 @@ const BASE_PROPS = { label: 'Notes', placeholder: 'Add a note', rows: 3 }
  */
 function BareHost({ children }: { children: ReactNode }) {
   const [focus, setFocus] = useState<'none' | 'pointer' | 'keyboard'>('none')
-  const ring = `var(--at-focus-ring, ${tokens.color.focus.ring})`
+  const ring = `var(--at-focus-ring, ${tokens.color.focus?.ring})`
   return (
     <div
       onFocus={(e) => setFocus(e.target.matches(':focus-visible') ? 'keyboard' : 'pointer')}
