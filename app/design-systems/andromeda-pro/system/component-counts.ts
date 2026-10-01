@@ -46,7 +46,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'search-field': { variants: 4, states: 1 },
   'strength-meter': { variants: 3, states: 0 },
   'segmented-control': { variants: 5, states: 0 },
-  'sidebar': { variants: 4, states: 0 },
+  'sidebar': { variants: 5, states: 0 },
   'skeleton': { variants: 2, states: 0 },
   'slider': { variants: 5, states: 3 },
   'spinner': { variants: 4, states: 0 },

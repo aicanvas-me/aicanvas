@@ -3,9 +3,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Bell, BookOpen, ChartLine, Compass, Gear, Pulse, Users } from '@phosphor-icons/react'
+import { Bell, BookOpen, ChartLine, Compass, Gear, Pulse, SignOut, UserCircle, Users } from '@phosphor-icons/react'
 import { Sidebar } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
+import { SAMPLE_AVATARS } from '../sample-pictures'
 
 const NAV_ITEMS = [
   { label: 'Overview', icon: Compass },
@@ -19,6 +20,21 @@ const FOOTER_ITEMS = [
   { label: 'Docs', icon: BookOpen },
   { label: 'Settings', icon: Gear },
 ]
+
+// The signed-in user at the foot of the rail, with the account menu that
+// opens upward from it. The same row the AI Chat template's rail carries.
+const USER = {
+  name: 'Ilse Brandt',
+  role: 'Revenue Desk',
+  src: SAMPLE_AVATARS.butterflyVisor.dark,
+  lightSrc: SAMPLE_AVATARS.butterflyVisor.light,
+  items: [
+    { id: 'profile', label: 'Profile', icon: UserCircle },
+    { id: 'preferences', label: 'Preferences', icon: Gear },
+    { id: 'sep1', type: 'separator' },
+    { id: 'signout', label: 'Sign out', icon: SignOut },
+  ],
+}
 
 // The rail's own active row is the whole point of the component — the marker
 // only means something once it MOVES between rows. Same shape the other live
@@ -59,6 +75,10 @@ export const sidebar: MatrixSpec = {
   // otherwise be clipped by content-visibility's implied contain:paint.
   overflow: true,
   variants: [
+    // First, so it is the page hero: the fold toggle in the brand block and
+    // the user's row at the foot, the way an app rail is built (the AI Chat
+    // template's). No utility rows: the account row takes the foot.
+    { label: 'Header toggle and user', props: { togglePlacement: 'header', user: USER, footerItems: undefined } },
     { label: 'Collapsible', props: {} },
     { label: 'Starts collapsed', props: { defaultCollapsed: true } },
     { label: 'Static expanded', props: { collapsible: false } },
