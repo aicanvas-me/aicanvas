@@ -208,7 +208,7 @@ export function RemixPanel({
             {/* The prompt */}
             <div className="flex items-center justify-between gap-3">
               <h3 className="text-sm font-bold text-sand-900 dark:text-sand-50">
-                The Prompt
+                The Remix Prompt
               </h3>
               {promptLocked ? (
                 /* Copying a paywalled prompt used to silently hand over blocks 1-2
