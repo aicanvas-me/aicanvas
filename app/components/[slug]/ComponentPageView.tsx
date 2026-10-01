@@ -205,10 +205,13 @@ export default function ComponentPageView({
       setCodeState({ status: 'locked', reason: 'premium-only' })
     }
   }, [slug])
-  // Fetch on first Code-tab open.
+  // Fetch on first Code-tab open, or earlier when the pointer reaches the tab.
   useEffect(() => {
     if (enforcing && activeTab === 'code' && codeState.status === 'idle') void openCode()
   }, [enforcing, activeTab, codeState.status, openCode])
+  const prefetchCode = () => {
+    if (enforcing && codeState.status === 'idle') void openCode()
+  }
   // Reset when switching components — or when the VIEWER changes — so the next
   // open re-fetches. The user id is load-bearing: signing in from the auth
   // modal calls router.refresh(), which merges the new RSC payload but
@@ -573,6 +576,10 @@ export default function ComponentPageView({
                 <button
                   type="button"
                   onClick={() => setActiveTab('code')}
+                  // Start the source fetch on the way to the click, so most of
+                  // it is done by the time the tab opens.
+                  onPointerEnter={prefetchCode}
+                  onFocus={prefetchCode}
                   className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'code'
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
@@ -706,13 +713,16 @@ export default function ComponentPageView({
             >
               {/* Both tabs stay mounted so the syntax-highlighted code is in the
                   server-rendered HTML — Google indexes it even while the Preview
-                  tab is active. Visibility toggled via opacity + pointer-events. */}
+                  tab is active. Visibility toggled via opacity; the active pane
+                  is stacked on top so it alone takes the pointer. Not
+                  pointer-events: it inherits, so flipping it restyled every
+                  node of the highlighted source on each switch (~150ms). */}
               <motion.div
                 initial={false}
                 animate={{ opacity: activeTab === 'preview' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
                 className="group/preview absolute inset-0 flex items-center justify-center"
-                style={{ pointerEvents: activeTab === 'preview' ? 'auto' : 'none' }}
+                style={{ zIndex: activeTab === 'preview' ? 1 : 0 }}
                 aria-hidden={activeTab !== 'preview'}
               >
                 {/* Keyed wrapper so the refresh button can force a remount.
@@ -767,7 +777,7 @@ export default function ComponentPageView({
                 className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 [--paywall-surface:var(--color-sand-50)] [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)] dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
-                  pointerEvents: activeTab === 'code' ? 'auto' : 'none',
+                  zIndex: activeTab === 'code' ? 1 : 0,
                 }}
                 aria-hidden={activeTab !== 'code'}
               >
