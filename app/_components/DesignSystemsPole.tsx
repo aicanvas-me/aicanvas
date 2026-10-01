@@ -40,14 +40,15 @@ const SYSTEMS = [
     ],
     components: ANDROMEDA_PRO_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
     templates: [
+      // Same order as the overview bento and the template switcher.
       { slug: 'city-operations', name: 'City Operations', category: 'Dashboard' },
+      { slug: 'ai-chat', name: 'AI Chat', category: 'CRM' },
+      { slug: 'sign-in', name: 'Sign In', category: 'Authentication' },
       { slug: 'signal-room', name: 'Signal Room', category: 'Media' },
       { slug: 'mission-control', name: 'Mission Control', category: 'Dashboard' },
       { slug: 'service-order', name: 'Service Order', category: 'CRM' },
       { slug: 'resource-planning', name: 'Resource Planning', category: 'Scheduling' },
-      { slug: 'sign-in', name: 'Sign In', category: 'Authentication' },
       { slug: 'sign-up', name: 'Sign Up', category: 'Authentication' },
-      { slug: 'ai-chat', name: 'AI Chat', category: 'CRM' },
     ],
   },
   {
