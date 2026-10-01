@@ -706,13 +706,16 @@ export default function ComponentPageView({
             >
               {/* Both tabs stay mounted so the syntax-highlighted code is in the
                   server-rendered HTML — Google indexes it even while the Preview
-                  tab is active. Visibility toggled via opacity + pointer-events. */}
+                  tab is active. Visibility toggled via opacity; the active pane
+                  is stacked on top so it alone takes the pointer. Not
+                  pointer-events: it inherits, so flipping it restyled every
+                  node of the highlighted source on each switch (~150ms). */}
               <motion.div
                 initial={false}
                 animate={{ opacity: activeTab === 'preview' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
                 className="group/preview absolute inset-0 flex items-center justify-center"
-                style={{ pointerEvents: activeTab === 'preview' ? 'auto' : 'none' }}
+                style={{ zIndex: activeTab === 'preview' ? 1 : 0 }}
                 aria-hidden={activeTab !== 'preview'}
               >
                 {/* Keyed wrapper so the refresh button can force a remount.
@@ -767,7 +770,7 @@ export default function ComponentPageView({
                 className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 [--paywall-surface:var(--color-sand-50)] [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)] dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
-                  pointerEvents: activeTab === 'code' ? 'auto' : 'none',
+                  zIndex: activeTab === 'code' ? 1 : 0,
                 }}
                 aria-hidden={activeTab !== 'code'}
               >
