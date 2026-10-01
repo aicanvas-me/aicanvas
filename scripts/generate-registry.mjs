@@ -428,7 +428,7 @@ for (const dir of dirs) {
     files: [
       {
         path: `components/aicanvas/${name}.tsx`,
-        content: copyPasteReady,
+        content: directiveFirst(copyPasteReady),
         type: 'registry:ui',
         target: `components/aicanvas/${name}.tsx`,
       },
@@ -491,7 +491,7 @@ for (const slug of premiumSlugDirs) {
     files: [
       {
         path: `components/aicanvas/${slug}.tsx`,
-        content: transformRootHeightClass(content),
+        content: directiveFirst(transformRootHeightClass(content)),
         type: 'registry:ui',
         target: `components/aicanvas/${slug}.tsx`,
       },
@@ -524,11 +524,25 @@ let dsCount = 0
 // Every shipped file is code (.ts/.tsx) → registry:lib. The .md "brain" docs are
 // deliberately NOT shipped to consumers; they stay in design-systems/ for
 // internal use only.
+// The shadcn CLI re-emits a 'use client' directive at the top of the file and
+// drops whatever comment block sat above it, so a buyer received every file
+// that opens with a header comment WITHOUT that comment (found by the delivery
+// gate's byte check, 2026-10-01: all 19 files of the AI Chat template). Served
+// with the directive first, the comment survives the install. Only that one
+// line moves; a file with no header comment, or no directive, is untouched.
+function directiveFirst(content) {
+  const m = content.match(/^((?:[ \t]*(?:\/\/[^\n]*|\/\*[\s\S]*?\*\/)[ \t]*\n|[ \t]*\n)+)(['"])use client\2;?[ \t]*\n/)
+  if (!m || !/\S/.test(m[1])) return content
+  const comments = m[1].replace(/\s+$/, '')
+  const rest = content.slice(m[0].length).replace(/^\n+/, '')
+  return `${m[2]}use client${m[2]};\n\n${comments}\n\n${rest}`
+}
+
 function makeFile(fileAbs, rootDirAbs, slug) {
   const target = targetPathFor(fileAbs, rootDirAbs, slug)
   return {
     path: target,
-    content: readFileSync(fileAbs, 'utf-8'),
+    content: directiveFirst(readFileSync(fileAbs, 'utf-8')),
     type: 'registry:lib',
     target,
   }
