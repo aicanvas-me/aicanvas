@@ -218,15 +218,24 @@ html[data-frame][data-frame-light] {
 }
 
 /* ── Text selection ── */
-/* Dark olive with light text, in place of the browser's default gray. One rule
-   covers both themes: an inverted highlight reads on the sand page and the dark
-   page alike. ::selection honours only a few properties (colour, background,
-   text-shadow), and the ::-moz-selection prefix is not needed on any browser we
-   support, so it is left out rather than risking one invalid selector
-   invalidating the pair. */
+/* Neutral: a sand step one shade off the page, text at full contrast, so a
+   selection never competes with the olive accent. ::selection honours only a
+   few properties (colour, background, text-shadow), and the ::-moz-selection
+   prefix is not needed on any browser we support, so it is left out rather
+   than risking one invalid selector invalidating the pair. The same two scopes
+   as the dark variant: site first, then a preview wrapper that disagrees. */
 ::selection {
-  background-color: var(--color-olive-700);
+  background-color: var(--color-sand-300);
+  color: var(--color-sand-900);
+}
+.dark ::selection,
+[data-card-theme="dark"] ::selection {
+  background-color: var(--color-sand-700);
   color: var(--color-sand-50);
+}
+[data-card-theme="light"] ::selection {
+  background-color: var(--color-sand-300);
+  color: var(--color-sand-900);
 }
 
 /* ── Theme switch cross-fade ── */
