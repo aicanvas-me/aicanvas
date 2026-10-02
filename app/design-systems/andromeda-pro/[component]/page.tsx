@@ -5,6 +5,7 @@ import {
   getAndromedaComponent,
 } from '../../../_lib/andromeda-pro/andromeda-registry'
 import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
+import { nextInOrder } from '../../../lib/related-order'
 import { AndromedaComponentView } from './AndromedaComponentView'
 import { AndromedaThemeWrap } from '../AndromedaThemeWrap'
 import { COMPONENT_COUNTS } from '../system/component-counts'
@@ -69,7 +70,8 @@ export default async function AndromedaComponentPage({
   // name, one-line description, and the variant/state counts from
   // COMPONENT_COUNTS — the same generated source the index page reads — so a
   // component's chip numbers can never diverge between the two surfaces.
-  const related = ANDROMEDA_COMPONENTS.filter((c) => c.slug !== entry.slug).map(
+  // The components after this one in sidebar order, wrapping around.
+  const related = nextInOrder(ANDROMEDA_COMPONENTS, entry.slug).map(
     (c) => ({
       slug: c.slug,
       name: c.name,
