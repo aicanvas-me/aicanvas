@@ -217,21 +217,19 @@ export function AndromedaComponentView({
   const RELATED_PAGE_SIZE = 3
   const [relatedStart, setRelatedStart] = useState(0)
   const [relatedDir, setRelatedDir] = useState<1 | -1>(1)
-  const visibleRelated = related.slice(
-    relatedStart,
-    relatedStart + RELATED_PAGE_SIZE,
+  // `related` starts after this component and wraps round the whole system,
+  // so the row loops: back from the start shows the component before this one.
+  const visibleRelated = Array.from(
+    { length: Math.min(RELATED_PAGE_SIZE, related.length) },
+    (_, i) => related[(relatedStart + i) % related.length],
   )
   const canPaginate = related.length > RELATED_PAGE_SIZE
-  const canGoPrev = relatedStart > 0
-  const canGoNext = relatedStart < related.length - RELATED_PAGE_SIZE
+  const canGoPrev = canPaginate
+  const canGoNext = canPaginate
 
   function pageRelated(dir: 1 | -1) {
     setRelatedDir(dir)
-    setRelatedStart((s) =>
-      dir === 1
-        ? Math.min(related.length - RELATED_PAGE_SIZE, s + 1)
-        : Math.max(0, s - 1),
-    )
+    setRelatedStart((s) => (s + dir + related.length) % related.length)
   }
 
   // Escape closes the fullscreen preview. The Remix panel closes itself on
