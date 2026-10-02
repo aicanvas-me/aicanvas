@@ -5,6 +5,7 @@ import {
   getAndromedaComponent,
 } from '../../../_lib/andromeda/andromeda-registry'
 import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
+import { nextInOrder } from '../../../lib/related-order'
 import { AndromedaComponentView } from './AndromedaComponentView'
 
 export function generateStaticParams() {
@@ -35,7 +36,8 @@ export default async function AndromedaComponentPage({
   const entry = getAndromedaComponent(component)
   if (!entry) notFound()
 
-  const related = ANDROMEDA_COMPONENTS.filter((c) => c.slug !== entry.slug).map(
+  // The components after this one in sidebar order, wrapping around.
+  const related = nextInOrder(ANDROMEDA_COMPONENTS, entry.slug).map(
     (c) => ({ slug: c.slug, name: c.name, image: c.image }),
   )
 
