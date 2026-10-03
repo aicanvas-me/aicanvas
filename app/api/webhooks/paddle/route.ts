@@ -30,7 +30,15 @@ async function fetchPaddleCustomerEmail(customerId: string): Promise<EmailLookup
     // 429/5xx = transient. A 404 right after subscription.activated is usually
     // the customer record not yet being queryable (eventual consistency), so
     // treat it as transient too — a Paddle retry recovers it rather than
-    // permanently stranding a charged buyer. Other 4xx = a genuine miss.
+    // permanently stranding a charged buyer. 401/403 means Paddle refused OUR
+    // key (expired, rotated or mis-scoped), which says nothing about the buyer:
+    // transient, so Paddle keeps re-delivering while the key is replaced instead
+    // of a 200 that leaves a charged buyer with no account. Other 4xx = a
+    // genuine miss.
+    if (res.status === 401 || res.status === 403) {
+      console.error('[paddle webhook] Paddle refused PADDLE_API_KEY on customer lookup, status', res.status)
+      return { transient: true }
+    }
     if (res.status === 429 || res.status === 404 || res.status >= 500) return { transient: true }
     if (!res.ok) return { missing: true }
     const { data } = await res.json()

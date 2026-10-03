@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createHmac } from 'node:crypto'
 import { NextRequest } from 'next/server'
 
@@ -16,6 +16,7 @@ const claims = { attempted: 0, won: 0, filters: [] as unknown[][] }
 const flagWrites: Record<string, unknown>[] = []
 const upserts: Record<string, unknown>[] = []
 const users: Record<string, { email: string; user_metadata: Record<string, unknown> }> = {}
+const createdUsers: string[] = []
 
 vi.mock('@/app/lib/supabase/admin', () => ({
   createAdminClient: () => ({
@@ -53,6 +54,13 @@ vi.mock('@/app/lib/supabase/admin', () => ({
     }),
     auth: {
       admin: {
+        // Anonymous checkout provisions a brand-new account from the checkout email.
+        createUser: async (attrs: { email: string; user_metadata?: Record<string, unknown> }) => {
+          createdUsers.push(attrs.email)
+          const id = `u_new_${createdUsers.length}`
+          users[id] = { email: attrs.email, user_metadata: { ...(attrs.user_metadata ?? {}) } }
+          return { data: { user: { id } }, error: null }
+        },
         getUserById: (id: string) => {
           const u = users[id]
           const snapshot = u ? { id, email: u.email, user_metadata: { ...u.user_metadata } } : null
@@ -120,6 +128,7 @@ beforeEach(() => {
   claims.filters.length = 0
   flagWrites.length = 0
   upserts.length = 0
+  createdUsers.length = 0
   for (const k of Object.keys(users)) delete users[k]
   users.u1 = { email: 'buyer@example.com', user_metadata: {} }
   process.env.PADDLE_WEBHOOK_SECRET = SECRET
@@ -200,5 +209,147 @@ describe('POST /api/webhooks/paddle first-activation email', () => {
     expect(flagWrites).toEqual([])
     expect(upserts).toHaveLength(1)
     expect(row).toMatchObject({ user_id: 'u1', status: 'active' })
+  })
+})
+
+// An anonymous (logged-out) checkout carries no custom_data.user_id, so the
+// webhook is the SOLE path that provisions the buyer's account: it reads the
+// checkout email from Paddle's /customers/<id>. These cases pin how each Paddle
+// answer to that lookup maps to a webhook status. With `row` null the
+// customer-id fallback finds nothing, which is the anonymous path.
+describe('POST /api/webhooks/paddle anonymous checkout customer lookup', () => {
+  const originalApiKey = process.env.PADDLE_API_KEY
+  const defaultFetch = async () => Response.json({ id: 'email_1' })
+
+  function anonEvent() {
+    return JSON.stringify({
+      event_type: 'subscription.activated',
+      occurred_at: '2026-09-24T08:19:05.000Z',
+      data: {
+        id: 'sub_anon',
+        status: 'active',
+        customer_id: 'ctm_anon',
+        current_billing_period: { ends_at: '2026-10-24T08:19:04Z' },
+        items: [{ price: { billing_cycle: { interval: 'month' } } }],
+      },
+    })
+  }
+
+  // Route the mocked fetch by URL: Paddle's customers endpoint answers with the
+  // case's status/body, Resend always accepts. Nothing leaves the process.
+  function paddleAnswers(status: number, body: unknown = { error: { code: 'x' } }) {
+    fetchMock.mockImplementation(async (input) => {
+      const url = String(input)
+      if (url.includes('/customers/')) return Response.json(body, { status })
+      if (url.includes('api.resend.com')) return Response.json({ id: 'email_1' })
+      throw new Error(`unexpected fetch: ${url}`)
+    })
+  }
+
+  function customerCalls() {
+    return fetchMock.mock.calls.filter(([url]) => String(url).includes('/customers/'))
+  }
+
+  beforeEach(() => {
+    process.env.PADDLE_API_KEY = 'pdl_apikey_test'
+  })
+
+  afterEach(() => {
+    if (originalApiKey === undefined) delete process.env.PADDLE_API_KEY
+    else process.env.PADDLE_API_KEY = originalApiKey
+    fetchMock.mockImplementation(defaultFetch)
+  })
+
+  function expectNothingProvisioned() {
+    expect(upserts).toEqual([])
+    expect(createdUsers).toEqual([])
+    expect(sentSubjects()).toEqual([])
+    expect(row).toBeNull()
+  }
+
+  it.each([401, 403])(
+    'Paddle refusing our key (%i) answers 500 so Paddle re-delivers, and provisions nothing',
+    async (status) => {
+      paddleAnswers(status)
+      const res = await post(anonEvent())
+      expect(res.status).toBe(500)
+      expect(await res.json()).toEqual({ error: 'customer lookup failed' })
+      expect(customerCalls()).toHaveLength(1)
+      expectNothingProvisioned()
+    },
+  )
+
+  it('another 4xx (400) is a genuine miss: still 200 unmatched, nothing provisioned', async () => {
+    paddleAnswers(400)
+    const res = await post(anonEvent())
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ ok: true, unmatched: true })
+    expectNothingProvisioned()
+  })
+
+  it.each([404, 429, 503])('Paddle answering %i stays transient: 500 and nothing provisioned', async (status) => {
+    paddleAnswers(status)
+    const res = await post(anonEvent())
+    expect(res.status).toBe(500)
+    expectNothingProvisioned()
+  })
+
+  it('a 200 with the checkout email provisions the account, writes the row and sends the claim email', async () => {
+    paddleAnswers(200, { data: { id: 'ctm_anon', email: 'anon@example.com' } })
+    const res = await post(anonEvent())
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({ ok: true })
+    const [url, init] = customerCalls()[0]
+    expect(String(url)).toMatch(/\/customers\/ctm_anon$/)
+    expect((init?.headers as Record<string, string>).Authorization).toBe('Bearer pdl_apikey_test')
+    expect(createdUsers).toEqual(['anon@example.com'])
+    expect(upserts).toHaveLength(1)
+    expect(upserts[0]).toMatchObject({
+      user_id: 'u_new_1',
+      status: 'active',
+      paddle_customer_id: 'ctm_anon',
+      paddle_subscription_id: 'sub_anon',
+    })
+    expect(row).toMatchObject({ user_id: 'u_new_1', status: 'active' })
+    expect(users.u_new_1.user_metadata).toMatchObject({ anon_provisioned: true })
+    expect(sentSubjects()).toEqual(['Access your AI Canvas Premium account'])
+  })
+
+  it('PADDLE_API_KEY unset stays transient: 500, Paddle is never called, nothing provisioned', async () => {
+    delete process.env.PADDLE_API_KEY
+    paddleAnswers(200, { data: { email: 'anon@example.com' } })
+    const res = await post(anonEvent())
+    expect(res.status).toBe(500)
+    expect(customerCalls()).toHaveLength(0)
+    expectNothingProvisioned()
+  })
+
+  it('a signed-in buyer never reaches the customers endpoint, so a 403 from Paddle cannot touch them', async () => {
+    paddleAnswers(403)
+    const res = await post(event('2026-09-24T08:19:05.000Z'))
+    expect(res.status).toBe(200)
+    expect(customerCalls()).toHaveLength(0)
+    expect(createdUsers).toEqual([])
+    expect(upserts).toHaveLength(1)
+    expect(row).toMatchObject({ user_id: 'u1', status: 'active', paddle_subscription_id: 'sub_1' })
+    expect(sentSubjects()).toEqual(['You just got superpowers'])
+  })
+
+  it('an existing subscriber renewing without custom_data resolves by customer id and never calls Paddle', async () => {
+    paddleAnswers(403)
+    row = {
+      user_id: 'u1',
+      status: 'active',
+      paddle_customer_id: 'ctm_anon',
+      last_event_at: '2026-08-24T00:00:00Z',
+      welcome_claimed_at: '2026-08-01T00:00:00Z',
+    }
+    const res = await post(anonEvent())
+    expect(res.status).toBe(200)
+    expect(customerCalls()).toHaveLength(0)
+    expect(createdUsers).toEqual([])
+    expect(upserts).toHaveLength(1)
+    expect(row).toMatchObject({ user_id: 'u1', status: 'active', last_event_at: '2026-09-24T08:19:05.000Z' })
+    expect(sentSubjects()).toEqual([])
   })
 })
