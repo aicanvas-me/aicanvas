@@ -14,10 +14,10 @@ type AdminClient = ReturnType<typeof createAdminClient>
 /** Resolve the email a buyer entered at Paddle checkout (anonymous purchases
  *  carry no user_id). Subscription events only include customer_id, so we read
  *  the email from the Paddle API. Crucially this DISTINGUISHES a transient
- *  failure (rate limit / 5xx / network) — which the caller turns into a 500 so
- *  Paddle re-delivers — from a genuine miss, so one API hiccup never permanently
- *  strands a charged customer (the webhook is the SOLE provisioning path for an
- *  anonymous buyer). */
+ *  failure (rate limit / 5xx / network / our API key refused) — which the
+ *  caller turns into a 500 so Paddle re-delivers — from a genuine miss, so one
+ *  API hiccup or a dead key never permanently strands a charged customer (the
+ *  webhook is the SOLE provisioning path for an anonymous buyer). */
 type EmailLookup = { email: string } | { transient: true } | { missing: true }
 async function fetchPaddleCustomerEmail(customerId: string): Promise<EmailLookup> {
   const apiKey = process.env.PADDLE_API_KEY
