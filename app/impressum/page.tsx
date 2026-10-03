@@ -35,28 +35,21 @@ export default function ImpressumPage() {
             Haftung für Inhalte / Liability for content
           </h2>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
-            Als Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte
-            auf diesen Seiten nach den allgemeinen Gesetzen verantwortlich. Nach
-            §§ 8 bis 10 DDG sind wir als Diensteanbieter jedoch nicht
-            verpflichtet, übermittelte oder gespeicherte fremde Informationen zu
-            überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige
-            Tätigkeit hinweisen. Verpflichtungen zur Entfernung oder Sperrung der
-            Nutzung von Informationen nach den allgemeinen Gesetzen bleiben
-            hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem
-            Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung möglich. Bei
-            Bekanntwerden entsprechender Rechtsverletzungen werden wir diese
-            Inhalte umgehend entfernen.
+            Für die eigenen Inhalte auf diesen Seiten sind wir nach den
+            allgemeinen Gesetzen verantwortlich. Die Regelungen der Artikel 4 bis
+            8 der Verordnung (EU) 2022/2065 (Gesetz über digitale Dienste) in
+            Verbindung mit § 7 DDG bleiben unberührt. Bei Bekanntwerden einer
+            konkreten Rechtsverletzung werden wir die betreffenden Inhalte
+            umgehend entfernen; Hinweise nehmen wir unter der unten genannten
+            E-Mail-Adresse entgegen.
           </p>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-500">
-            As a service provider we are responsible for our own content on these
-            pages in accordance with general legislation pursuant to § 7 (1) DDG.
-            Pursuant to §§ 8 to 10 DDG we are not obliged to monitor transmitted
-            or stored third-party information or to investigate circumstances that
-            indicate illegal activity. Obligations to remove or block the use of
-            information under general law remain unaffected. Liability in this
-            respect is, however, only possible from the time we become aware of a
-            specific infringement. Upon notification of a corresponding
-            infringement we will remove the content immediately.
+            We are responsible for our own content on these pages under general
+            law. The provisions of Articles 4 to 8 of Regulation (EU) 2022/2065
+            (Digital Services Act) in conjunction with § 7 DDG remain unaffected.
+            Upon becoming aware of a specific infringement we will remove the
+            content concerned immediately; notices can be sent to the email
+            address given below.
           </p>
         </section>
 
