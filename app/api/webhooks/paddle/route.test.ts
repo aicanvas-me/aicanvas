@@ -17,17 +17,23 @@ const flagWrites: Record<string, unknown>[] = []
 const upserts: Record<string, unknown>[] = []
 const users: Record<string, { email: string; user_metadata: Record<string, unknown> }> = {}
 const createdUsers: string[] = []
+// Every select().eq() the handler makes, as [table, column, value]. The reads
+// themselves ignore the filter; this is what proves which column was asked.
+const reads: unknown[][] = []
 
 vi.mock('@/app/lib/supabase/admin', () => ({
   createAdminClient: () => ({
     from: (table: string) => ({
       select: () => ({
-        eq: () => ({
-          maybeSingle: () => {
-            const snapshot = row ? { ...row } : null
-            return new Promise((resolve) => setTimeout(() => resolve({ data: snapshot, error: null }), 5))
-          },
-        }),
+        eq: (col: string, val: unknown) => {
+          reads.push([table, col, val])
+          return {
+            maybeSingle: () => {
+              const snapshot = row ? { ...row } : null
+              return new Promise((resolve) => setTimeout(() => resolve({ data: snapshot, error: null }), 5))
+            },
+          }
+        },
       }),
       upsert: async (patch: Record<string, unknown>) => {
         upserts.push(patch)
@@ -129,6 +135,7 @@ beforeEach(() => {
   flagWrites.length = 0
   upserts.length = 0
   createdUsers.length = 0
+  reads.length = 0
   for (const k of Object.keys(users)) delete users[k]
   users.u1 = { email: 'buyer@example.com', user_metadata: {} }
   process.env.PADDLE_WEBHOOK_SECRET = SECRET
@@ -346,6 +353,7 @@ describe('POST /api/webhooks/paddle anonymous checkout customer lookup', () => {
     }
     const res = await post(anonEvent())
     expect(res.status).toBe(200)
+    expect(reads).toContainEqual(['user_subscriptions', 'paddle_customer_id', 'ctm_anon'])
     expect(customerCalls()).toHaveLength(0)
     expect(createdUsers).toEqual([])
     expect(upserts).toHaveLength(1)
