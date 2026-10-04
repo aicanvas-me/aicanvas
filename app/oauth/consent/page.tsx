@@ -105,7 +105,7 @@ export default async function ConsentPage({
     <Card>
       <Pairing />
       <h1 className="text-center text-xl font-bold leading-tight tracking-tight text-sand-900 dark:text-sand-50">
-        Allow this AI agent to use your AI Canvas account?
+        Allow your AI agent to use your AI Canvas account?
       </h1>
       <ul className="mt-6 space-y-2.5 text-sm text-sand-700 dark:text-sand-300">
         {[
