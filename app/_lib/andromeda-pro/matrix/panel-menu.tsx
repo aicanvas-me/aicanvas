@@ -40,6 +40,9 @@ export const panelMenu: MatrixSpec = {
   // half a row: they shrink, and the open menus — which keep their own width —
   // slide over each other and past the card. A full row fits all three.
   wide: true,
+  // The hero centres the case: its own width is fixed, so a wide
+  // cell would lay it from the left edge.
+  soloCentered: true,
   // wide's '1 1 100%' would otherwise stack the Rest/selected pair vertically,
   // reading as two examples instead of one comparison.
   statePairColumns: true,

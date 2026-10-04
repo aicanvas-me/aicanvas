@@ -125,21 +125,19 @@ export function AndromedaComponentView({
   const RELATED_PAGE_SIZE = 3
   const [relatedStart, setRelatedStart] = useState(0)
   const [relatedDir, setRelatedDir] = useState<1 | -1>(1)
-  const visibleRelated = related.slice(
-    relatedStart,
-    relatedStart + RELATED_PAGE_SIZE,
+  // `related` starts after this component and wraps round the whole system,
+  // so the row loops: back from the start shows the component before this one.
+  const visibleRelated = Array.from(
+    { length: Math.min(RELATED_PAGE_SIZE, related.length) },
+    (_, i) => related[(relatedStart + i) % related.length],
   )
   const canPaginate = related.length > RELATED_PAGE_SIZE
-  const canGoPrev = relatedStart > 0
-  const canGoNext = relatedStart < related.length - RELATED_PAGE_SIZE
+  const canGoPrev = canPaginate
+  const canGoNext = canPaginate
 
   function pageRelated(dir: 1 | -1) {
     setRelatedDir(dir)
-    setRelatedStart((s) =>
-      dir === 1
-        ? Math.min(related.length - RELATED_PAGE_SIZE, s + 1)
-        : Math.max(0, s - 1),
-    )
+    setRelatedStart((s) => (s + dir + related.length) % related.length)
   }
 
   useEffect(() => {
@@ -331,22 +329,22 @@ export function AndromedaComponentView({
             component breaks the system contract. Users compose AT the
             system level, not per-component. */}
         <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
-          {/* Save — signed out, opens the same soft-gate modal as Copy CLI.
+          {/* Save — signed out, opens the same soft-gate modal as Copy Command.
               Keyed on the REGISTRY slug (not the page slug) so the Button
               override (andromeda-button-system) can't collide with the free
               standalone's own save entry (andromeda-button). */}
           <SaveButton slug={registrySlug} system="andromeda" />
 
-          {/* Copy CLI — the button and command stay visible at all times; when
+          {/* Copy Command — the button and command stay visible at all times; when
               the install is account-gated and the visitor is signed out,
               copyCli() opens the auth modal instead of copying. */}
-          <Button variant="primary" size="sm" onClick={copyCli}>
+          <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
             {cliCopied ? (
               <Check weight="regular" size={15} />
             ) : (
               <Terminal weight="regular" size={15} />
             )}
-            {cliCopied ? 'Copied!' : 'Copy CLI'}
+            {cliCopied ? 'Copied!' : 'Copy Command'}
           </Button>
         </div>
       </div>
@@ -700,14 +698,14 @@ export function AndromedaComponentView({
               : '50%',
           }}
         >
-          <div className="flex items-center gap-3 rounded-xl border border-sand-700 bg-sand-800 px-4 py-3 shadow-lg">
+          <div className="flex items-center gap-3 rounded-xl border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
             <Check weight="regular" size={16} className="shrink-0 text-olive-500" />
             <div>
-              <p className="text-sm font-semibold text-sand-50">
+              <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Install command copied
               </p>
-              <p className="mt-0.5 text-xs text-sand-400">
-                Paste into your terminal to add this component.
+              <p className="mt-0.5 text-xs text-sand-600 dark:text-sand-400">
+                Paste it into your terminal or give it to your AI agent.
               </p>
             </div>
           </div>

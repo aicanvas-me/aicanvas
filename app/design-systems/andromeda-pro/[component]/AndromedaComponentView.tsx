@@ -217,21 +217,19 @@ export function AndromedaComponentView({
   const RELATED_PAGE_SIZE = 3
   const [relatedStart, setRelatedStart] = useState(0)
   const [relatedDir, setRelatedDir] = useState<1 | -1>(1)
-  const visibleRelated = related.slice(
-    relatedStart,
-    relatedStart + RELATED_PAGE_SIZE,
+  // `related` starts after this component and wraps round the whole system,
+  // so the row loops: back from the start shows the component before this one.
+  const visibleRelated = Array.from(
+    { length: Math.min(RELATED_PAGE_SIZE, related.length) },
+    (_, i) => related[(relatedStart + i) % related.length],
   )
   const canPaginate = related.length > RELATED_PAGE_SIZE
-  const canGoPrev = relatedStart > 0
-  const canGoNext = relatedStart < related.length - RELATED_PAGE_SIZE
+  const canGoPrev = canPaginate
+  const canGoNext = canPaginate
 
   function pageRelated(dir: 1 | -1) {
     setRelatedDir(dir)
-    setRelatedStart((s) =>
-      dir === 1
-        ? Math.min(related.length - RELATED_PAGE_SIZE, s + 1)
-        : Math.max(0, s - 1),
-    )
+    setRelatedStart((s) => (s + dir + related.length) % related.length)
   }
 
   // Escape closes the fullscreen preview. The Remix panel closes itself on
@@ -388,13 +386,15 @@ export function AndromedaComponentView({
           </div>
 
           {tab === 'preview' && (
-            <div className="flex items-center gap-0.5 sm:gap-2">
+            <div className="flex items-center gap-2">
               {/* Theme toggle — one icon-only button whose icon and tooltip
-                  swap with the current preview theme, matching the standalone
+                  swap with the current theme, matching the standalone
                   component page's control (app/components/[slug]/ComponentPageView.tsx).
-                  Replaces the old sun+moon segmented pair (AndromedaThemeToggle)
-                  so Pro's preview card shows the same three top-right controls
-                  the standalone does. */}
+                  It moves the SITE theme (the wrap's setTheme is
+                  ThemeProvider's), the same as the nav toggle. Replaces the old
+                  sun+moon segmented pair (AndromedaThemeToggle) so Pro's
+                  preview card shows the same three top-right controls the
+                  standalone does. */}
               <div className="group/toggle relative">
                 <Button
                   variant="outline"
@@ -402,17 +402,17 @@ export function AndromedaComponentView({
                   iconOnly
                   onClick={() => previewTheme?.setTheme(previewTheme.theme === 'dark' ? 'light' : 'dark')}
                   className="overflow-hidden"
-                  // Named for the PREVIEW, not the site: the nav's own toggle already
-                  // carries "Switch to light theme", and two controls answering to the
-                  // same name is the one thing a screen-reader user cannot tell apart.
+                  // Same name as the nav toggle: both do the same thing now.
                   aria-label={
                     previewTheme?.theme === 'dark'
-                      ? 'Switch the preview to light theme'
-                      : 'Switch the preview to dark theme'
+                      ? 'Switch to light theme'
+                      : 'Switch to dark theme'
                   }
                 >
                   <AnimatePresence mode="wait" initial={false}>
-                    {previewTheme?.theme === 'dark' ? (
+                    {/* Shows where a click goes (moon in light, sun in dark),
+                        the same rule as the site toggle in ThemeToggle.tsx. */}
+                    {previewTheme?.theme !== 'dark' ? (
                       <motion.span
                         key="moon"
                         initial={{ y: 12, opacity: 0 }}
@@ -516,7 +516,7 @@ export function AndromedaComponentView({
             paywall as the source. Andromeda Legacy keeps the original
             behaviour and has no Remix button. */}
         <div className="flex items-center justify-end gap-2 border-t border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
-          {/* Save — signed out, opens the same soft-gate modal as Copy CLI.
+          {/* Save — signed out, opens the same soft-gate modal as Copy Command.
               Keyed on the REGISTRY slug (not the page slug) so the Button
               override (andromeda-button-system) can't collide with the free
               standalone's own save entry (andromeda-button). */}
@@ -529,26 +529,27 @@ export function AndromedaComponentView({
             <Button
               variant="outline"
               size="sm"
+              className="whitespace-nowrap"
               onClick={() => {
                 track('Remix Open', { component: registrySlug })
                 setRemixOpen(true)
               }}
             >
-              <Sparkle weight="regular" size={15} />
-              Remix with AI
+              <Sparkle weight="regular" size={15} className="max-[379px]:hidden" />
+              Remix<span className="hidden sm:inline"> with AI</span>
             </Button>
           )}
 
-          {/* Copy CLI — the button and command stay visible at all times; when
+          {/* Copy Command — the button and command stay visible at all times; when
               the visitor isn't a confirmed subscriber, copyCli() opens the
               premium paywall modal instead of copying. */}
-          <Button variant="primary" size="sm" onClick={copyCli}>
+          <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
             {cliCopied ? (
-              <Check weight="regular" size={15} />
+              <Check weight="regular" size={15} className="max-[379px]:hidden" />
             ) : (
-              <Terminal weight="regular" size={15} />
+              <Terminal weight="regular" size={15} className="max-[379px]:hidden" />
             )}
-            {cliCopied ? 'Copied!' : 'Copy CLI'}
+            {cliCopied ? 'Copied!' : 'Copy Command'}
           </Button>
         </div>
       </div>
@@ -946,21 +947,21 @@ export function AndromedaComponentView({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-          className="fixed bottom-16 z-50 -translate-x-1/2"
+          className="fixed bottom-16 z-[60] -translate-x-1/2"
           style={{
             left: mainCardRef.current
               ? mainCardRef.current.getBoundingClientRect().left + mainCardRef.current.offsetWidth / 2
               : '50%',
           }}
         >
-          <div className="flex items-center gap-3 rounded-xl border border-sand-700 bg-sand-800 px-4 py-3 shadow-lg">
+          <div className="flex items-center gap-3 rounded-xl border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
             <Check weight="regular" size={16} className="shrink-0 text-olive-500" />
             <div>
-              <p className="text-sm font-semibold text-sand-50">
+              <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Install command copied
               </p>
-              <p className="mt-0.5 text-xs text-sand-400">
-                Paste into your terminal to add this component.
+              <p className="mt-0.5 text-xs text-sand-600 dark:text-sand-400">
+                Paste it into your terminal or give it to your AI agent.
               </p>
             </div>
           </div>

@@ -207,8 +207,15 @@ const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'Dat
 // (ChoiceCardGroup, EmptyStateMedia). UPDATE when app code imports a new
 // v2-only name — same contract as V2_FALLBACK_NAMES above.
 const V2_ONLY_NAMES = [
-  'Burst', 'ChoiceCard', 'ChoiceCardGroup', 'EmptyStateMedia',
-  'FunnelChart', 'Nodes', 'Orb', 'Sidebar', 'StrengthMeter', 'TopBar',
+  'Artifact', 'ArtifactAction', 'ArtifactActions', 'ArtifactClose', 'ArtifactContent',
+  'ArtifactDescription', 'ArtifactHeader', 'ArtifactTitle',
+  'Burst', 'ChoiceCard', 'ChoiceCardGroup',
+  'Collapsible', 'CollapsibleContent', 'CollapsibleTrigger', 'Combobox', 'Cube', 'EmptyStateMedia',
+  'FunnelChart', 'Item', 'ItemActions', 'ItemContent', 'ItemDescription', 'ItemMedia', 'ItemTitle',
+  'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
+  'Popover', 'PopoverContent', 'PopoverLabel', 'PopoverSeparator', 'PopoverTrigger',
+  'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
+  'Sidebar', 'Skeleton', 'StrengthMeter', 'Suggestion', 'Tool', 'TopBar',
 ]
 
 // components/lib/* modules the HELPERS shim re-exports (both trees have them),
@@ -616,6 +623,7 @@ function writeProHelpersShim(fromV2Tree) {
 // sign-in. Same committed-fallback contract as V2_FALLBACK_NAMES — UPDATE when a
 // template route lands.
 const V2_EXAMPLE_EXPORTS = {
+  AiChat: 'ai-chat',
   CityOperations: 'city-operations',
   MissionControl: 'mission-control',
   ResourcePlanning: 'resource-planning',

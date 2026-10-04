@@ -17,6 +17,7 @@ export const CATEGORY: Record<string, string> = {
   slider: 'Forms',
   'segmented-control': 'Forms',
   'date-range-picker': 'Forms',
+  combobox: 'Forms',
 
   // Data display
   'table-basic': 'Data display',
@@ -27,6 +28,7 @@ export const CATEGORY: Record<string, string> = {
   badge: 'Data display',
   tag: 'Data display',
   avatar: 'Data display',
+  item: 'Data display',
 
   // Charts
   'chart-trend': 'Charts',
@@ -42,11 +44,20 @@ export const CATEGORY: Record<string, string> = {
   'user-card': 'Overlays',
   drawer: 'Overlays',
   tooltip: 'Overlays',
+  popover: 'Overlays',
+
+  // AI
+  message: 'AI',
+  tool: 'AI',
+  artifact: 'AI',
+  'prompt-input': 'AI',
+  suggestion: 'AI',
 
   // Feedback
   alert: 'Feedback',
   'empty-state': 'Feedback',
   spinner: 'Feedback',
+  skeleton: 'Feedback',
 
   // Actions
   button: 'Actions',
@@ -61,6 +72,7 @@ export const CATEGORY: Record<string, string> = {
   // Surfaces
   card: 'Surfaces',
   'corner-markers': 'Surfaces',
+  collapsible: 'Surfaces',
 
   // Media
   'media-card': 'Media',
@@ -73,4 +85,5 @@ export const CATEGORY: Record<string, string> = {
   orb: 'Objects',
   nodes: 'Objects',
   burst: 'Objects',
+  cube: 'Objects',
 }

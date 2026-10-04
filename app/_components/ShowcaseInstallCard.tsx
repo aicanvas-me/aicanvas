@@ -8,6 +8,7 @@ import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { useInstallToken } from '../_lib/useInstallToken'
 import { copyText } from '../components/useCopied'
 import { track } from '../lib/analytics'
+import { InstallCopiedToast } from './InstallCopiedToast'
 
 // The two packages, as a toggle (the "two actions"). Everything is the default.
 const PACKAGES = [
@@ -92,6 +93,7 @@ export function ShowcaseInstallCard() {
         fontFamily: SANS,
       }}
     >
+      <InstallCopiedToast show={copied} />
       <style>{`.si-card{${cardVars('light')}}.dark .si-card{${cardVars('dark')}}.si-dl{transition:background .12s}.si-dl:hover{background:${C.accent[300]} !important}`}</style>
       <div style={{ fontSize: 15, fontWeight: 600, color: C.text.primary, marginBottom: 12 }}>
         Get the system
@@ -180,7 +182,7 @@ export function ShowcaseInstallCard() {
             }}
           >
             {copied ? <Check weight="regular" size={14} /> : <Copy weight="regular" size={14} />}
-            {copied ? 'Copied' : 'Copy CLI'}
+            {copied ? 'Copied' : 'Copy Command'}
           </button>
         </>
       ) : (

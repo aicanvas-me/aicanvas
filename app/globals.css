@@ -21,19 +21,25 @@
    1. SITE scope — `.dark` on <html>, written only by ThemeProvider and mirrored
       into the `theme` cookie. Owns the chrome: nav, pages, cards, footer.
    2. PREVIEW scope — `[data-card-theme]` plus a matching `dark` class on the
-      SAME element, written only by the local state of a component or block
-      preview. Owns everything inside that preview box and nothing else.
+      SAME element. Owns everything inside that preview box and nothing else.
 
-   Both directions have to hold, and both are in the selector below:
+   The two are LINKED, through one writer. A preview's theme is the site theme
+   (a dark-only component pins itself dark), and a preview's toggle calls
+   ThemeProvider.setTheme, so flipping the site moves every preview and flipping
+   a preview moves the site. Neither scope ever writes <html> or the cookie
+   except through ThemeProvider: the first site toggle was deleted because it
+   and the preview toggles each wrote <html> on their own.
+
+   The wrapper still has to be its own scope, because the two can disagree on a
+   page: a dark-only component on a light site, or a standalone previewed on a
+   different theme through a preview route. Both directions are in the selector
+   below:
 
      site dark  + preview light → the wrapper AND its subtree drop out of dark
      site light + preview dark  → the wrapper's own `dark` class turns it back on
 
-   The second one is why this cannot just key off <html>. The site had a theme
-   toggle once and it was deleted, because it and the preview toggles both wrote
-   <html>: flipping one component to dark took the whole site with it. Keeping
-   the two scopes apart is the entire fix, so if this selector is ever edited,
-   check both directions before believing it.
+   The second one is why this cannot just key off <html>. If this selector is
+   ever edited, check both directions before believing it.
 
    The JS side of the same contract lives in the components themselves: they
    read `closest('[data-card-theme]')` first and only fall back to <html> when
@@ -150,7 +156,7 @@ html {
   --color-olive-500: #A8B94D;
   --color-olive-600: #869631;
   /* Deep end of the olive ramp. Dark enough to carry sand-50 text at about
-     6:1, which is what the selection highlight needs to stay readable. */
+     6:1; a small decorative fill on light pages. */
   --color-olive-700: #56631F;
   /* Light-mode accent hover. The ramp above was drawn to glow on sand-950, so
      its brightest steps land between 1.2:1 and 3:1 on a light page. This deep
@@ -212,15 +218,24 @@ html[data-frame][data-frame-light] {
 }
 
 /* ── Text selection ── */
-/* Dark olive with light text, in place of the browser's default gray. One rule
-   covers both themes: an inverted highlight reads on the sand page and the dark
-   page alike. ::selection honours only a few properties (colour, background,
-   text-shadow), and the ::-moz-selection prefix is not needed on any browser we
-   support, so it is left out rather than risking one invalid selector
-   invalidating the pair. */
+/* Neutral: a sand step one shade off the page, text at full contrast, so a
+   selection never competes with the olive accent. ::selection honours only a
+   few properties (colour, background, text-shadow), and the ::-moz-selection
+   prefix is not needed on any browser we support, so it is left out rather
+   than risking one invalid selector invalidating the pair. The same two scopes
+   as the dark variant: site first, then a preview wrapper that disagrees. */
 ::selection {
-  background-color: var(--color-olive-700);
+  background-color: var(--color-sand-300);
+  color: var(--color-sand-900);
+}
+.dark ::selection,
+[data-card-theme="dark"] ::selection {
+  background-color: var(--color-sand-700);
   color: var(--color-sand-50);
+}
+[data-card-theme="light"] ::selection {
+  background-color: var(--color-sand-300);
+  color: var(--color-sand-900);
 }
 
 /* ── Theme switch cross-fade ── */
@@ -235,9 +250,9 @@ html[data-frame][data-frame-light] {
   animation-timing-function: ease-in-out;
 }
 
-/* Preview scope stays sovereign: a [data-card-theme] wrapper and everything
-   inside it keeps its transitions during a SITE flip (the site must never
-   reach into a preview). [data-theme-keep-transition] exempts the theme
+/* A [data-card-theme] wrapper and everything inside it keeps its own
+   transitions during a theme flip (the site and a preview share one theme, but
+   a preview's animation is its own). [data-theme-keep-transition] exempts the theme
    toggle's own icon cross-fade, the one animation the flip should show. */
 .theme-switching
   *:not(

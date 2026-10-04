@@ -4,9 +4,11 @@
 // matrix and the per-component pages). This is the consumer of the theme
 // channel: `andromedaVars()` emits every colour as var(--at-<name>, <dark>),
 // so defining the --at-* set retints every Andromeda root — no component
-// edits, and the site chrome keeps NO relation to this toggle (the Andromeda
-// theme is the design system's own axis, not the site's; sand chrome never
-// reads an --at- var, so root-level vars cannot touch it).
+// edits. The Andromeda theme IS the site theme: it reads ThemeProvider and its
+// toggles call ThemeProvider.setTheme, so the site toggle moves the previews and
+// a preview toggle moves the site. This file only writes --at-* vars and a data
+// attribute on the root, never the `dark` class or the cookie (sand chrome reads
+// no --at- var, so root-level vars cannot touch it).
 //
 // The set lands on documentElement, NOT on a mid-tree div, because that is
 // the system's swap contract: the Objects and useResolvedVars observe the
@@ -34,29 +36,18 @@ const ThemeCtx = createContext<{
 export function AndromedaThemeWrap({
   children,
   className,
-  initialTheme = 'dark',
   followSite = false,
 }: {
   children: ReactNode
   className?: string
   /**
-   * The site's OWN theme (its `theme` cookie), read by the server page and
-   * threaded down so the preview OPENS in it — the site rule's seed (a
-   * preview opens in whatever the site is set to; only the visitor's own
-   * toggle pins it after that, see the file banner). A caller that passes
-   * nothing keeps this component's original dark-anchored default.
-   */
-  initialTheme?: AndromedaTheme
-  /**
-   * Template pages: the preview has no toggle of its own and follows the site
-   * theme, the way Andromeda Legacy's templates do. The site moves the
-   * preview; nothing here ever writes the site's class or cookie. The phone
-   * preview iframe has no ThemeProvider, so it mirrors the embedding page.
+   * Template pages, which have no toggle of their own: inside the phone preview
+   * iframe there is no ThemeProvider, so the frame mirrors the embedding page's
+   * theme instead of reading its own. Everywhere else the theme is the site's.
    */
   followSite?: boolean
 }) {
-  const [localTheme, setTheme] = useState<AndromedaTheme>(initialTheme)
-  const siteTheme = useTheme().theme
+  const { theme: siteTheme, setTheme } = useTheme()
   const [parentTheme, setParentTheme] = useState<AndromedaTheme | null>(null)
 
   useLayoutEffect(() => {
@@ -87,7 +78,7 @@ export function AndromedaThemeWrap({
     return () => observer.disconnect()
   }, [followSite])
 
-  const theme = followSite ? (parentTheme ?? siteTheme) : localTheme
+  const theme = followSite ? (parentTheme ?? siteTheme) : siteTheme
 
   // The full light set, computed once: shared by the SSR seed below and the
   // effect's imperative write, so the two can never drift apart.
@@ -153,7 +144,17 @@ export function AndromedaThemeWrap({
       {followSite ? (
         <style>{`html[data-frame][data-frame-light]{${lightDecls}}`}</style>
       ) : null}
-      <div data-andromeda-theme={theme} className={className}>{children}</div>
+      {/* data-theme-instant makes ThemeProvider skip its root cross-fade, which
+          would double-image the live canvases (Orb, Planet, Burst, Nodes) on a
+          preview toggle. Not on the followSite template pages, which flip with
+          the site toggle exactly as they always did. */}
+      <div
+        data-andromeda-theme={theme}
+        data-theme-instant={followSite ? undefined : ''}
+        className={className}
+      >
+        {children}
+      </div>
     </ThemeCtx.Provider>
   )
 }
@@ -190,7 +191,7 @@ export function AndromedaThemeToggle({ className = '', label }: { className?: st
   return (
     <div
       role="group"
-      aria-label="Andromeda theme"
+      aria-label="Theme"
       className={`flex items-center gap-0.5 rounded-lg border border-sand-300 bg-sand-100 p-0.5 dark:border-sand-800 dark:bg-sand-900 ${className}`}
     >
       {label ? (

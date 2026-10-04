@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { COMPONENTS, isBlockEntry, type ComponentEntry, type ComponentMeta } from '../../lib/component-registry'
+import { rankRelated } from '../../lib/related-order'
+import COMPONENT_ORDER from '../../../component-order.json'
 import { STANDALONE_PROPS } from '../../lib/standalone-props.generated'
 import ComponentPageView from './ComponentPageView'
 import { HighlightedCode } from '../../components/HighlightedCode'
@@ -285,16 +287,9 @@ export default async function Page({
   ].filter(Boolean).join('\n')
 
   // ── Related ──────────────────────────────────────────────────────────────
-  // Pass the full pool of accent-tag siblings; the client paginates 3 at a
-  // time via the inline arrow controls.
-  const accentLabels = entry.tags
-    .filter((t) => t.accent)
-    .map((t) => t.label)
-  const related = COMPONENTS.filter(
-    (c) =>
-      c.slug !== slug &&
-      c.tags.some((t) => t.accent && accentLabels.includes(t.label)),
-  ).map(toMeta)
+  // Pass the full pool of same-category siblings, most related then newest
+  // first; the client paginates 3 at a time via the inline arrow controls.
+  const related = rankRelated(entry, COMPONENTS, COMPONENT_ORDER).map(toMeta)
 
   const url = `${SITE_URL}/components/${slug}`
   const firstSentence = firstSentenceOf(entry.description)

@@ -31,7 +31,7 @@ Always `bg-sand-950` — never zinc, never black, never transparent.
 | `olive-400` | `#DAE4A0` | Dark-mode accent text, hover state, gradient end |
 | `olive-500` | `#A8B94D` | **Accent fill** — buttons, badges, highlights. On DARK surfaces it is also accent text |
 | `olive-600` | `#869631` | **Light-mode accent text**, pressed / active state |
-| `olive-700` | `#56631F` | Selection highlight |
+| `olive-700` | `#56631F` | Small decorative fill on light |
 | `olive-800` | `#4A551A` | Light-mode accent hover |
 
 > Olive buttons must use `text-sand-950` — NOT white. Olive has insufficient contrast with white.
@@ -39,17 +39,21 @@ Always `bg-sand-950` — never zinc, never black, never transparent.
 > The top of the ramp is for dark surfaces only. On a light page olive-400/500
 > measure 1.2 and 2.0 against the background, so an accent link painted with them
 > is invisible. Light accent text is `olive-600` (~3:1, a deliberate call carried
-> by size and weight), hover is `olive-800`; `olive-700` is the selection
-> highlight.
+> by size and weight), hover is `olive-800`. Selected text is neutral, never olive:
+> `sand-300` under `sand-900` on light, `sand-700` under `sand-50` on dark.
 
 ## Light mode
 
 The site ships light and dark. Dark is the default; the toggle at the bottom of the
 left rail writes a `theme` cookie that `app/layout.tsx` reads server-side, so the
-first paint is already correct. A component or block preview keeps its OWN theme in
-a `[data-card-theme]` wrapper and never touches the site's; the `@variant dark`
-selector at the top of `app/globals.css` is what keeps the two scopes apart, and it
-is the thing to read before changing anything here.
+first paint is already correct. The site and every component, block and Andromeda
+preview share that ONE theme (ruled 2026-09-29): a preview reads it, and its own
+toggle calls `ThemeProvider.setTheme`, so flipping either moves the other. Only
+`ThemeProvider` writes `<html>` and the cookie. A preview still owns a
+`[data-card-theme]` wrapper, and the `@variant dark` selector at the top of
+`app/globals.css` keeps that wrapper correct when it disagrees with the site (a
+dark-only component on a light site, a `?theme=` preview route); it is the thing to
+read before changing anything here.
 
 | Role | Light | Dark |
 |---|---|---|

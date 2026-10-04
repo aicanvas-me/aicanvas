@@ -6,6 +6,7 @@
     "scroll-wipe-gallery",
     "fluid-simulation-hero",
     "ai-knowledge-map",
-    "agent-cost-flow"
+    "agent-cost-flow",
+    "agent-feedback-loop"
   ]
 }

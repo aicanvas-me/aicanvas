@@ -10,6 +10,7 @@ import { BrainRender } from './BrainRender'
 import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useCopied } from '@/app/components/useCopied'
 import { track } from '@/app/lib/analytics'
+import { InstallCopiedToast } from '@/app/_components/InstallCopiedToast'
 
 // AI Canvas site tokens: sand neutrals + olive accent, Manrope UI + Geist mono for code.
 // One flat palette per site theme, read through CSS variables (brainVars) so
@@ -571,7 +572,7 @@ function useBrainInstallCommand() {
 
 // Install button + popover, cloned from the template pages' InstallButton
 // (TemplatePreviewShell) so the brain installs exactly like a template: CLI
-// command with masked token, Copy CLI, contents bullets — plus the zip as the
+// command with masked token, Copy Command, contents bullets — plus the zip as the
 // in-popover secondary. Rendered only for entitled users (inside BrainViewer).
 function BrainInstallButton({
   fileCount,
@@ -610,6 +611,7 @@ function BrainInstallButton({
 
   return (
     <div className="relative" ref={ref}>
+      <InstallCopiedToast show={copied} />
       <Button
         variant="primary"
         size="xs"
@@ -638,7 +640,7 @@ function BrainInstallButton({
                 variant="outline"
                 size="xs"
                 onClick={async () => track('CLI Copy', { component: 'andromeda-brain', ok: await handleCopy() })}
-                aria-label="Copy CLI command"
+                aria-label="Copy install command"
               >
                 {copied ? (
                   <>
@@ -648,7 +650,7 @@ function BrainInstallButton({
                 ) : (
                   <>
                     <Copy weight="regular" size={13} />
-                    Copy CLI
+                    Copy Command
                   </>
                 )}
               </Button>
@@ -707,6 +709,7 @@ function BrainInstallCard({
         padding: '16px 18px',
       }}
     >
+      <InstallCopiedToast show={copied} />
       {/* Title */}
       <div style={{ fontSize: 14, fontWeight: 600, color: C.text.primary, marginBottom: 12 }}>
         Get the AI Brain
@@ -738,7 +741,7 @@ function BrainInstallCard({
         ))}
       </div>
 
-      {/* CTAs — Copy CLI (primary) + Download (secondary) */}
+      {/* CTAs — Copy Command (primary) + Download (secondary) */}
       <div style={{ display: 'flex', gap: 8 }}>
         <button
           type="button"
@@ -760,7 +763,7 @@ function BrainInstallCard({
           }}
         >
           {copied ? <Check weight="regular" size={14} /> : <Copy weight="regular" size={14} />}
-          {copied ? 'Copied' : 'Copy CLI'}
+          {copied ? 'Copied' : 'Copy Command'}
         </button>
         <button
           type="button"

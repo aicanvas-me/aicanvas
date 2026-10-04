@@ -204,10 +204,13 @@ export default function ComponentPageView({
       setCodeState({ status: 'locked', reason: 'premium-only' })
     }
   }, [slug])
-  // Fetch on first Code-tab open.
+  // Fetch on first Code-tab open, or earlier when the pointer reaches the tab.
   useEffect(() => {
     if (enforcing && activeTab === 'code' && codeState.status === 'idle') void openCode()
   }, [enforcing, activeTab, codeState.status, openCode])
+  const prefetchCode = () => {
+    if (enforcing && codeState.status === 'idle') void openCode()
+  }
   // Reset when switching components — or when the VIEWER changes — so the next
   // open re-fetches. The user id is load-bearing: signing in from the auth
   // modal calls router.refresh(), which merges the new RSC payload but
@@ -217,19 +220,16 @@ export default function ComponentPageView({
   // same bug in reverse. Safe on mount: `user` starts from the server-provided
   // initialUser, so a normal load never fires a second fetch.
   useEffect(() => { if (enforcing) setCodeState({ status: 'idle' }) }, [enforcing, slug, user?.id])
-  // The preview starts on whatever the site is set to, so a visitor browsing in
-  // light does not get slapped with a dark box, then pins to their own choice
-  // the moment they touch the toggle. Derived rather than synced with an
-  // effect: the site theme is already correct during SSR (ThemeProvider is
-  // seeded from the cookie), so there is nothing to reconcile and no frame of
-  // the wrong theme. It reads the site and never writes it, which is the whole
-  // point — the previous version of this toggle wrote <html> and dragged the
-  // entire site dark with it.
+  // The preview and the site are ONE theme. The preview reads the site theme
+  // (already correct during SSR: ThemeProvider is seeded from the cookie, so no
+  // frame of the wrong theme), and its toggle writes it back through
+  // ThemeProvider.setTheme, so flipping either moves the other, the same as the
+  // template pages. This file never touches <html> or the cookie itself; the
+  // scope test holds that line.
   //
-  // A dark-only component ignores both: it has no light rendering to show.
-  const { theme: siteTheme } = useTheme()
-  const [themeOverride, setThemeOverride] = useState<'dark' | 'light' | null>(null)
-  const cardTheme: 'dark' | 'light' = dualTheme ? (themeOverride ?? siteTheme) : 'dark'
+  // A dark-only component ignores the theme: it has no light rendering to show.
+  const { theme: siteTheme, setTheme: setSiteTheme } = useTheme()
+  const cardTheme: 'dark' | 'light' = dualTheme ? siteTheme : 'dark'
   const [cliCopied, setCliCopied] = useState(false)
   const [codeCopied, setCodeCopied] = useState(false)
   const [depsCopied, setDepsCopied] = useState(false)
@@ -571,6 +571,10 @@ export default function ComponentPageView({
                 <button
                   type="button"
                   onClick={() => setActiveTab('code')}
+                  // Start the source fetch on the way to the click, so most of
+                  // it is done by the time the tab opens.
+                  onPointerEnter={prefetchCode}
+                  onFocus={prefetchCode}
                   className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'code'
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
@@ -583,7 +587,7 @@ export default function ComponentPageView({
               </div>
 
               {/* Right-side controls */}
-              <div className="flex items-center gap-0.5 sm:gap-2">
+              <div className="flex items-center gap-2">
 
                 {/* Theme toggle — hidden on code tab */}
                 <div className="group/toggle relative" style={{ cursor: !dualTheme ? 'not-allowed' : undefined, display: activeTab === 'code' ? 'none' : undefined }}>
@@ -592,14 +596,26 @@ export default function ComponentPageView({
                     size="md"
                     iconOnly
                     disabled={!dualTheme}
+                    aria-label={
+                      !dualTheme
+                        ? 'Dark mode only'
+                        : cardTheme === 'dark'
+                          ? 'Switch to light theme'
+                          : 'Switch to dark theme'
+                    }
                     onClick={() => {
                       if (!dualTheme) return
-                      setThemeOverride(cardTheme === 'dark' ? 'light' : 'dark')
+                      setSiteTheme(cardTheme === 'dark' ? 'light' : 'dark')
                     }}
                     className="overflow-hidden"
                   >
                     <AnimatePresence mode="wait" initial={false}>
-                      {cardTheme === 'dark' ? (
+                      {/* Shows where a click goes (moon in light, sun in dark),
+                          the same rule as the site toggle in ThemeToggle.tsx, so
+                          the two controls that now do one thing agree. A dark-only
+                          component's toggle goes nowhere, so it keeps the moon
+                          that says what the preview is. */}
+                      {!dualTheme || cardTheme !== 'dark' ? (
                         <motion.span
                           key="moon"
                           initial={{ y: 12, opacity: 0 }}
@@ -692,13 +708,16 @@ export default function ComponentPageView({
             >
               {/* Both tabs stay mounted so the syntax-highlighted code is in the
                   server-rendered HTML — Google indexes it even while the Preview
-                  tab is active. Visibility toggled via opacity + pointer-events. */}
+                  tab is active. Visibility toggled via opacity; the active pane
+                  is stacked on top so it alone takes the pointer. Not
+                  pointer-events: it inherits, so flipping it restyled every
+                  node of the highlighted source on each switch (~150ms). */}
               <motion.div
                 initial={false}
                 animate={{ opacity: activeTab === 'preview' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
                 className="group/preview absolute inset-0 flex items-center justify-center"
-                style={{ pointerEvents: activeTab === 'preview' ? 'auto' : 'none' }}
+                style={{ zIndex: activeTab === 'preview' ? 1 : 0 }}
                 aria-hidden={activeTab !== 'preview'}
               >
                 {/* Keyed wrapper so the refresh button can force a remount.
@@ -753,7 +772,7 @@ export default function ComponentPageView({
                 className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 [--paywall-surface:var(--color-sand-50)] [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)] dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
-                  pointerEvents: activeTab === 'code' ? 'auto' : 'none',
+                  zIndex: activeTab === 'code' ? 1 : 0,
                 }}
                 aria-hidden={activeTab !== 'code'}
               >
@@ -787,36 +806,37 @@ export default function ComponentPageView({
             {/* Action bar */}
             <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
 
-              {/* Save — signed out, opens the same soft-gate modal as Copy CLI. */}
+              {/* Save — signed out, opens the same soft-gate modal as Copy Command. */}
               <SaveButton slug={slug} system={designSystem ?? null} />
 
               {/* Remix with AI — secondary action; opens the side panel with
                   the full platform-agnostic prompt. Hidden entirely when the
-                  component has no prompt. Sits left of the primary Copy CLI
+                  component has no prompt. Sits left of the primary Copy Command
                   action. */}
               {remixPrompt && (
                 <Button
                   variant="outline"
                   size="sm"
+                  className="whitespace-nowrap"
                   onClick={() => {
                     track('Remix Open', { component: slug })
                     setRemixOpen(true)
                   }}
                 >
-                  <Sparkle weight="regular" size={15} />
-                  Remix with AI
+                  <Sparkle weight="regular" size={15} className="max-[379px]:hidden" />
+                  Remix<span className="hidden sm:inline"> with AI</span>
                 </Button>
               )}
 
-              {/* Copy CLI — primary install action; copies the npx shadcn
+              {/* Copy Command — primary install action; copies the npx shadcn
                   command. The button and command stay visible at all times;
                   when the install is account-gated and the visitor is signed
                   out, copyCli() opens the auth modal instead of copying. */}
-              <Button variant="primary" size="sm" onClick={copyCli}>
+              <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
                 {cliCopied
-                  ? <Check weight="regular" size={15} />
-                  : <Terminal weight="regular" size={15} />}
-                {cliCopied ? 'Copied!' : 'Copy CLI'}
+                  ? <Check weight="regular" size={15} className="max-[379px]:hidden" />
+                  : <Terminal weight="regular" size={15} className="max-[379px]:hidden" />}
+                {cliCopied ? 'Copied!' : 'Copy Command'}
               </Button>
 
             </div>
@@ -904,14 +924,14 @@ export default function ComponentPageView({
                           </p>
                           <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
                             {/* Package manager switcher */}
-                            <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                            <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                                 <button
                                   key={pm}
                                   onClick={() => { setPkgManager(pm); setDepsCopied(false) }}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     pkgManager === pm
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -949,12 +969,12 @@ export default function ComponentPageView({
 
                             {/* Tier toggle — only for components belonging to a design system */}
                             {systemMeta && (
-                              <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                              <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                                 <button
                                   onClick={() => setInstallTier('component')}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'component'
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -967,7 +987,7 @@ export default function ComponentPageView({
                                   }}
                                   className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'system'
-                                      ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
+                                      ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
                                   }`}
                                 >
@@ -1072,7 +1092,7 @@ export default function ComponentPageView({
                             Copy and paste the following code into your project:
                           </p>
                           <div className="relative rounded-lg bg-sand-200 dark:bg-sand-950">
-                            <div className="flex items-center justify-between border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+                            <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                                 {slug}.tsx
                               </span>
@@ -1464,7 +1484,7 @@ export default function ComponentPageView({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
-            className="fixed bottom-16 z-50 -translate-x-1/2"
+            className="fixed bottom-16 z-[60] -translate-x-1/2"
             style={{
               left: mainCardRef.current
                 ? mainCardRef.current.getBoundingClientRect().left + mainCardRef.current.offsetWidth / 2
@@ -1478,7 +1498,7 @@ export default function ComponentPageView({
                   Install command copied
                 </p>
                 <p className="mt-0.5 text-xs text-sand-600 dark:text-sand-400">
-                  Paste into your terminal to install this component.
+                  Paste it into your terminal or give it to your AI agent.
                 </p>
               </div>
             </div>
@@ -1554,12 +1574,12 @@ function FontStep({
         <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
       </div>
       <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-        <div className="flex items-center gap-1 border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+        <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
           {(['html', 'nextjs'] as const).map((fw) => (
             <button
               key={fw}
               onClick={() => onSelectFramework(fw)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-200 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
+              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
             >
               {fw === 'html' ? 'HTML' : 'Next.js'}
             </button>
@@ -1617,7 +1637,7 @@ function PackageFontStep({
       </div>
       {snippet && (
         <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
-          <div className="flex items-center justify-between border-b border-sand-200 dark:border-sand-800 px-4 py-2">
+          <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
             <span className="font-mono text-xs text-sand-600 dark:text-sand-500">layout.tsx</span>
             <button
               onClick={onCopySnippet}

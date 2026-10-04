@@ -14,10 +14,10 @@ type AdminClient = ReturnType<typeof createAdminClient>
 /** Resolve the email a buyer entered at Paddle checkout (anonymous purchases
  *  carry no user_id). Subscription events only include customer_id, so we read
  *  the email from the Paddle API. Crucially this DISTINGUISHES a transient
- *  failure (rate limit / 5xx / network) — which the caller turns into a 500 so
- *  Paddle re-delivers — from a genuine miss, so one API hiccup never permanently
- *  strands a charged customer (the webhook is the SOLE provisioning path for an
- *  anonymous buyer). */
+ *  failure (rate limit / 5xx / network / our API key refused) — which the
+ *  caller turns into a 500 so Paddle re-delivers — from a genuine miss, so one
+ *  API hiccup or a dead key never permanently strands a charged customer (the
+ *  webhook is the SOLE provisioning path for an anonymous buyer). */
 type EmailLookup = { email: string } | { transient: true } | { missing: true }
 async function fetchPaddleCustomerEmail(customerId: string): Promise<EmailLookup> {
   const apiKey = process.env.PADDLE_API_KEY
@@ -30,7 +30,15 @@ async function fetchPaddleCustomerEmail(customerId: string): Promise<EmailLookup
     // 429/5xx = transient. A 404 right after subscription.activated is usually
     // the customer record not yet being queryable (eventual consistency), so
     // treat it as transient too — a Paddle retry recovers it rather than
-    // permanently stranding a charged buyer. Other 4xx = a genuine miss.
+    // permanently stranding a charged buyer. 401/403 means Paddle refused OUR
+    // key (expired, rotated or mis-scoped), which says nothing about the buyer:
+    // transient, so Paddle keeps re-delivering while the key is replaced instead
+    // of a 200 that leaves a charged buyer with no account. Other 4xx = a
+    // genuine miss.
+    if (res.status === 401 || res.status === 403) {
+      console.error('[paddle webhook] Paddle refused PADDLE_API_KEY on customer lookup, status', res.status)
+      return { transient: true }
+    }
     if (res.status === 429 || res.status === 404 || res.status >= 500) return { transient: true }
     if (!res.ok) return { missing: true }
     const { data } = await res.json()

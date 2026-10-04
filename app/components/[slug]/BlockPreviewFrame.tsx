@@ -42,7 +42,36 @@ export function BlockPreviewFrame({
   reloadKey: number
 }) {
   const hostRef = useRef<HTMLDivElement>(null)
+  const frameRef = useRef<HTMLIFrameElement>(null)
   const [box, setBox] = useState<{ width: number; height: number } | null>(null)
+
+  // The theme the document was LOADED in. It changes only with a reload, so a
+  // theme flip never reloads the frame: reloading restarted the whole block and
+  // left the preview a beat behind the page around it. The flip is pushed into
+  // the live document below instead.
+  const [load, setLoad] = useState({ key: reloadKey, theme })
+  if (load.key !== reloadKey) setLoad({ key: reloadKey, theme })
+
+  // Same origin, so the frame's preview wrapper is set directly, the same
+  // attribute, class and ground the preview route renders on the server. A
+  // block that reads its theme in script already watches that wrapper. Also
+  // runs on load, for a flip made while the frame was still loading.
+  useEffect(() => {
+    const frame = frameRef.current
+    if (!frame) return
+    const sync = () => {
+      const wrap = frame.contentDocument?.querySelector('[data-card-theme]')
+      if (!wrap) return
+      const dark = theme === 'dark'
+      wrap.setAttribute('data-card-theme', theme)
+      wrap.classList.toggle('dark', dark)
+      wrap.classList.toggle('bg-sand-950', dark)
+      wrap.classList.toggle('bg-sand-100', !dark)
+    }
+    sync()
+    frame.addEventListener('load', sync)
+    return () => frame.removeEventListener('load', sync)
+  }, [theme, box, load])
 
   // Measured, not guessed: the box height is fixed by Tailwind (320 / 480) but
   // its width is fluid, and the scale has to follow every resize or the frame
@@ -72,8 +101,9 @@ export function BlockPreviewFrame({
         <iframe
           // Reloads the document rather than nudging it: a block's entrance
           // animation and canvas init only run on a fresh load.
-          key={reloadKey}
-          src={`/preview/${slug}?frame=1&theme=${theme}`}
+          ref={frameRef}
+          key={load.key}
+          src={`/preview/${slug}?frame=1&theme=${load.theme}`}
           title={`${name} preview`}
           loading="lazy"
           // Live and interactive on a pointer device, deliberately inert on

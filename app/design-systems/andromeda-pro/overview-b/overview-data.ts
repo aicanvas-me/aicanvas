@@ -64,6 +64,8 @@ const TEMPLATE_BLURBS: Record<string, string> = {
     'The same authentication flow with no columns: a hairline lattice is the ground and the form floats on it.',
   'andromeda-pro-city-operations':
     'A city operations centre: a live incident map, air and traffic readings, an alert queue and response trends.',
+  'andromeda-pro-ai-chat':
+    'A revenue desk that works by conversation: an agent scores the Q3 pipeline, shows its steps, and hands back a live risk artifact.',
 }
 
 // The card art slot for each template, a filename in ImageKit's
@@ -81,6 +83,7 @@ export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
   'andromeda-pro-sign-in': 'Sign_in_pro_dark.png',
   'andromeda-pro-sign-up': 'Sign_up_pro_dark.png',
   'andromeda-pro-city-operations': 'City_operations_pro_dark.png',
+  'andromeda-pro-ai-chat': 'Ai_chat_pro_dark.png',
 }
 
 // The light-theme poster for each template, shown when the site is light.
@@ -92,6 +95,7 @@ const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
   'andromeda-pro-sign-in': 'Sign_in_pro_light.png',
   'andromeda-pro-sign-up': 'Sign_up_pro_light.png',
   'andromeda-pro-city-operations': 'City_operations_pro_light.png',
+  'andromeda-pro-ai-chat': 'Ai_chat_pro_light.png',
 }
 
 const ART_BASE = 'https://ik.imagekit.io/aitoolkit/andromeda/templates/'
@@ -102,6 +106,7 @@ const pro = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-p
 // it leads; anything not listed here falls in behind, in registry order.
 const TEMPLATE_ORDER = [
   'andromeda-pro-city-operations',
+  'andromeda-pro-ai-chat',
   'andromeda-pro-sign-in',
   'andromeda-pro-signal-room',
   'andromeda-pro-mission-control',

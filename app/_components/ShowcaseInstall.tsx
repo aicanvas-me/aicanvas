@@ -13,6 +13,7 @@ import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { useInstallToken } from '../_lib/useInstallToken'
 import { copyText } from '../components/useCopied'
 import { track } from '../lib/analytics'
+import { InstallCopiedToast } from './InstallCopiedToast'
 
 interface InstallAction {
   slug: string
@@ -28,7 +29,7 @@ interface InstallAction {
 
 // Showcase install — the SAME top-bar pattern as the brain reader and the
 // template pages: install button(s) next to the auth pill, each opening a CLI
-// popover (One command / Copy CLI / masked tokenized command / contents
+// popover (One command / Copy Command / masked tokenized command / contents
 // bullets). Portaled into the top-bar slot on desktop; a floating fallback
 // below md (where the top bar is hidden). Premium-gated: a resolved free/anon
 // tier sees "Unlock with Premium" → /pricing.
@@ -145,6 +146,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
 
   return (
     <div className="relative flex items-center gap-1.5" ref={ref}>
+      <InstallCopiedToast show={copied} />
       {installs.map((action, i) => (
         <Button
           key={action.slug}
@@ -169,7 +171,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
                   One command
                 </span>
               </div>
-              <Button variant="outline" size="xs" onClick={handleCopy} aria-label="Copy CLI command">
+              <Button variant="outline" size="xs" onClick={handleCopy} aria-label="Copy install command">
                 {copied ? (
                   <>
                     <Check weight="regular" size={13} className="text-olive-600 dark:text-olive-400" />
@@ -178,7 +180,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
                 ) : (
                   <>
                     <Copy weight="regular" size={13} />
-                    Copy CLI
+                    Copy Command
                   </>
                 )}
               </Button>

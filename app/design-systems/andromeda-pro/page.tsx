@@ -7,10 +7,8 @@
 //
 // Everything countable is computed here, on the server, from the same sources
 // the components index reads, so no number on the page is typed by hand. The
-// site theme cookie seeds the Andromeda preview theme; the preview's own toggle
-// still wins from the first click onward.
+// Andromeda preview theme is the site theme (see AndromedaThemeWrap).
 import type { Metadata } from 'next'
-import { cookies } from 'next/headers'
 import { AndromedaThemeWrap } from './AndromedaThemeWrap'
 import { ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda-pro/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as LEGACY_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
@@ -28,8 +26,6 @@ export const metadata: Metadata = {
 }
 
 export default async function AndromedaPage() {
-  const siteTheme = (await cookies()).get('theme')?.value === 'light' ? 'light' : 'dark'
-
   // Same card data as the components index page.
   const components: OverviewComponent[] = ANDROMEDA_COMPONENT_META.map((m) => ({
     slug: m.slug,
@@ -59,7 +55,7 @@ export default async function AndromedaPage() {
   }
 
   return (
-    <AndromedaThemeWrap initialTheme={siteTheme}>
+    <AndromedaThemeWrap>
       <OverviewB
         components={components}
         stats={stats}
