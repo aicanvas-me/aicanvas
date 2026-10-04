@@ -13,6 +13,11 @@ import { createAdminClient } from '@/app/lib/supabase/admin'
 // Nothing is stored until a person clicks Allow: a registered client is its own signed
 // client_id, and a pending request travels as a signed blob to the consent page. Tokens
 // are stored as SHA-256 hashes in mcp_grants.
+//
+// Kill switches: HOSTED_MCP_OAUTH off stops everything at once. Rotating MCP_OAUTH_SECRET
+// voids every registration, pending request and refresh at once, but an access token
+// already issued lives out its hour (it is a stored hash, not signed); delete the
+// mcp_grants rows to end those too.
 
 export const MCP_HOST = 'mcp.aicanvas.me'
 
@@ -74,10 +79,11 @@ export function authorizationServerMetadata(url: URL) {
   }
 }
 
-/** Resources compare as URLs: an agent sends `https://mcp.aicanvas.me/` for `https://mcp.aicanvas.me`. */
+/** Resources compare as URLs, a trailing slash aside: an agent may send `https://mcp.aicanvas.me/`. */
 export function sameResource(a: string, b: string): boolean {
   try {
-    return new URL(a).href === new URL(b).href
+    const norm = (u: string) => new URL(u).href.replace(/\/$/, '')
+    return norm(a) === norm(b)
   } catch {
     return false
   }

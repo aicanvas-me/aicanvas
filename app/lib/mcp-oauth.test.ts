@@ -189,6 +189,13 @@ describe('authorization request', () => {
     expect(other.kind === 'redirect' && new URL(other.location).searchParams.get('error')).toBe('invalid_target')
   })
 
+  it('accepts a resource with or without a trailing slash, never another path', () => {
+    const slash = authorize(authorizeUrl(LOCAL, register(), { resource: 'http://localhost:3001/api/mcp/' }), null)
+    expect(slash.kind === 'redirect' && slash.location.includes('/oauth/consent?request=')).toBe(true)
+    const other = authorize(authorizeUrl(LOCAL, register(), { resource: 'http://localhost:3001/api/mcp/other' }), null)
+    expect(other.kind === 'redirect' && new URL(other.location).searchParams.get('error')).toBe('invalid_target')
+  })
+
   it('accepts the production address with or without its trailing slash', () => {
     const outcome = authorize(authorizeUrl(PROD, register()), null)
     expect(outcome.kind === 'redirect' && outcome.location.startsWith('https://aicanvas.me/oauth/consent?request=')).toBe(true)
