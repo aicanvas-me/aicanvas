@@ -27,6 +27,14 @@ import { FRAME_HEADER, isFramePayload } from './app/lib/frame'
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl
 
+  // mcp.aicanvas.me is the hosted MCP and its discovery documents, nothing else: the bare
+  // address is the server, any other page goes to the site.
+  if (request.nextUrl.hostname === 'mcp.aicanvas.me') {
+    if (pathname === '/') return NextResponse.rewrite(new URL('/api/mcp', request.url))
+    if (pathname === '/api/mcp' || pathname.startsWith('/.well-known/')) return NextResponse.next()
+    return NextResponse.redirect(new URL(`${pathname}${request.nextUrl.search}`, 'https://aicanvas.me'), 307)
+  }
+
   // Case-sensitive redirect: /MCP → /mcp. Next's redirects() matcher is
   // case-insensitive, so it would loop on lowercase /mcp.
   if (pathname === '/MCP') {

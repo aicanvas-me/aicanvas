@@ -4,9 +4,22 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 // the real /r handler in process, so these cases prove what an agent receives end to end.
 vi.mock('@/app/lib/entitlement', () => ({ getEntitlement: vi.fn() }))
 vi.mock('@/app/lib/track-pull', () => ({ trackPull: vi.fn() }))
+// The admin client answers the browser sign-in checks: Supabase's verdict on the sign-in
+// (getUser) and the account's current API key (user_api_keys).
+const admin = vi.hoisted(() => ({
+  getUser: vi.fn(),
+  key: { data: null, error: null } as { data: { token: string } | null; error: unknown },
+}))
 vi.mock('@/app/lib/supabase/admin', () => ({
   createAdminClient: () => ({
-    auth: { admin: { getUserById: async () => ({ data: { user: { email: 'maria@example.com' } } }) } },
+    auth: {
+      getUser: admin.getUser,
+      admin: { getUserById: async () => ({ data: { user: { email: 'maria@example.com' } } }) },
+    },
+    from: () => {
+      const query = { select: () => query, eq: () => query, maybeSingle: async () => admin.key }
+      return query
+    },
   }),
 }))
 
@@ -57,6 +70,7 @@ beforeEach(() => {
 
 afterEach(() => {
   delete process.env.HOSTED_MCP
+  delete process.env.HOSTED_MCP_OAUTH
   delete process.env.FREE_ACCOUNT_GATE
 })
 
@@ -106,6 +120,81 @@ describe('hosted MCP: the door', () => {
     const names = (await res.json()).result.tools.map((t: { name: string }) => t.name)
     expect(names).toContain('whoami')
     expect(names).toContain('get_install_command')
+  })
+})
+
+describe('hosted MCP: browser sign-in', () => {
+  const STORED_KEY = 'aic_' + 'a'.repeat(48)
+  const jwt = (claims: Record<string, unknown>) =>
+    ['header', Buffer.from(JSON.stringify(claims)).toString('base64url'), 'signature'].join('.')
+  const AGENT = jwt({ sub: 'user-1', client_id: 'client-1' })
+  const WEBSITE = jwt({ sub: 'user-1' })
+
+  beforeEach(() => {
+    process.env.HOSTED_MCP_OAUTH = 'on'
+    admin.getUser.mockReset()
+    admin.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null })
+    admin.key = { data: { token: STORED_KEY }, error: null }
+  })
+
+  it('points an agent with no credential at the discovery document', async () => {
+    const res = await rpc('tools/list', {}, null)
+    expect(res.status).toBe(401)
+    expect(res.headers.get('WWW-Authenticate')).toBe(
+      'Bearer resource_metadata="https://mcp.aicanvas.me/.well-known/oauth-protected-resource"',
+    )
+  })
+
+  it('serves a signed-in agent with the account\'s current API key', async () => {
+    asPlan('free')
+    const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
+    expect(res.status).toBe(200)
+    const sent = mockedGetEntitlement.mock.calls[0][0] as Request
+    expect(sent.headers.get('authorization')).toBe(`Bearer ${STORED_KEY}`)
+  })
+
+  it('refuses a website session token, which names no agent, without asking Supabase', async () => {
+    const res = await rpc('tools/list', {}, `Bearer ${WEBSITE}`)
+    expect(res.status).toBe(401)
+    expect((await res.json()).error).toBe('invalid_token')
+    expect(admin.getUser).not.toHaveBeenCalled()
+  })
+
+  it('refuses a sign-in that has ended, and says how to sign in again', async () => {
+    admin.getUser.mockResolvedValue({ data: { user: null }, error: { status: 400, message: 'Auth session missing!' } })
+    const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
+    expect(res.status).toBe(401)
+    expect(res.headers.get('WWW-Authenticate')).toContain('error="invalid_token"')
+    expect(res.headers.get('WWW-Authenticate')).toContain('resource_metadata=')
+    expect(mockedGetEntitlement).not.toHaveBeenCalled()
+  })
+
+  it('answers 503, never a sign-in prompt, when Supabase cannot answer', async () => {
+    admin.getUser.mockResolvedValue({ data: { user: null }, error: { status: 0, message: 'fetch failed' } })
+    const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
+    expect(res.status).toBe(503)
+  })
+
+  it('refuses a signed-in account that has no live API key', async () => {
+    admin.key = { data: null, error: null }
+    const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
+    expect(res.status).toBe(401)
+    expect(mockedGetEntitlement).not.toHaveBeenCalled()
+  })
+
+  it('takes keys only while HOSTED_MCP_OAUTH is off', async () => {
+    delete process.env.HOSTED_MCP_OAUTH
+    const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
+    expect(res.status).toBe(401)
+    expect(res.headers.get('WWW-Authenticate')).toBe('Bearer realm="aicanvas", error="invalid_request"')
+    expect(admin.getUser).not.toHaveBeenCalled()
+  })
+
+  it('still takes an API key with sign-in on', async () => {
+    asPlan('premium')
+    const res = await rpc('tools/list', {})
+    expect(res.status).toBe(200)
+    expect(admin.getUser).not.toHaveBeenCalled()
   })
 })
 

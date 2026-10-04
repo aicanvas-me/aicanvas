@@ -25,3 +25,9 @@ export function checkoutComingSoon(): boolean {
 export function hostedMcpEnabled(): boolean {
   return process.env.HOSTED_MCP === 'on'
 }
+
+/** Browser sign-in for the hosted MCP (Supabase OAuth server, consent page,
+ *  discovery route). Off: the server takes API keys only. Server-only. */
+export function hostedMcpOAuthEnabled(): boolean {
+  return hostedMcpEnabled() && process.env.HOSTED_MCP_OAUTH === 'on'
+}
