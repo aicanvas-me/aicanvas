@@ -18,16 +18,16 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-// Where the browser goes after the choice, said plainly: a look-alike app name is the one
-// trick this screen invites, and the destination is the part it cannot fake.
-function destination(redirectUri: string): string {
+// An agent on the person's own computer returns to a local address or an app scheme and
+// needs no warning. A sign-in sent on to a website is the phishing shape (a look-alike agent
+// can copy any name, never this address), so only then does the screen name the host loudly.
+function websiteHost(redirectUri: string): string | null {
   try {
     const url = new URL(redirectUri)
-    if (['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname)) return 'an app on this computer'
-    if (url.protocol === 'https:' || url.protocol === 'http:') return url.host
-    return `the ${url.protocol.slice(0, -1)} app`
+    if (['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname)) return null
+    return url.protocol === 'https:' || url.protocol === 'http:' ? url.host : null
   } catch {
-    return redirectUri
+    return null
   }
 }
 
@@ -99,6 +99,7 @@ export default async function ConsentPage({
   if ('redirect_url' in data) redirect(data.redirect_url)
 
 
+  const website = websiteHost(data.redirect_uri)
   const here = `/oauth/consent?authorization_id=${encodeURIComponent(data.authorization_id)}`
 
   return (
@@ -119,10 +120,12 @@ export default async function ConsentPage({
           </li>
         ))}
       </ul>
-      <p className="mt-6 rounded-lg border border-sand-200 px-3 py-2.5 text-xs leading-relaxed text-sand-600 dark:border-sand-800 dark:text-sand-400">
-        Only allow it if you just connected it yourself. After you choose, you go back to{' '}
-        {destination(data.redirect_uri)}.
-      </p>
+      {website && (
+        <p className="mt-6 rounded-lg border border-red-500/40 px-3 py-2.5 text-xs leading-relaxed text-red-700 dark:border-red-500/30 dark:text-red-400">
+          This sign-in will be sent to the website <span className="font-semibold">{website}</span>. Only allow it
+          if you know that site.
+        </p>
+      )}
       <form action="/oauth/consent/decision" method="post" className="mt-6 flex gap-3">
         <input type="hidden" name="authorization_id" value={data.authorization_id} />
         <button type="submit" name="decision" value="allow" className={buttonClasses({ variant: 'primary', size: 'md', fullWidth: true })}>
