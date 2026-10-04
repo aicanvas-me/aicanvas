@@ -11,7 +11,7 @@ import { buttonClasses } from './buttonClasses'
 import { SecondaryNav } from './SecondaryNav'
 import { useComponentSearch } from './useComponentSearch'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
-import { CAPTURE_LEAF_RE } from './top-bar-crumbs'
+import { CAPTURE_LEAF_RE, FOCUS_ROUTE_RE } from './top-bar-crumbs'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
 
 // ── Tier structure ────────────────────────────────────────────────────────
@@ -62,13 +62,15 @@ export function Sidebar({
 
   // Hidden only on /lab/* — LAB has its own custom top bar (logo + auth pill),
   // no left rail, no search — and on template / example leaves, which are
-  // full-screen compositions with no chrome at all. Every other route,
+  // full-screen compositions with no chrome at all, and on focus pages (the
+  // agent sign-in consent). Every other route,
   // /design-systems and /ideation included, keeps this one rail mounted, so
   // crossing between those route spaces never unmounts and remounts it.
   const hideSidebar =
     pathname?.startsWith('/lab') ||
     TEMPLATE_LEAF_RE.test(pathname ?? '') ||
-    CAPTURE_LEAF_RE.test(pathname ?? '')
+    CAPTURE_LEAF_RE.test(pathname ?? '') ||
+    FOCUS_ROUTE_RE.test(pathname ?? '')
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   // promoteDS caps Components to its first 3 categories; this reveals the rest.
   const [showAllCats, setShowAllCats] = useState(false)

@@ -7,7 +7,7 @@ import { ThemeToggle } from './ThemeToggle'
 import { TopAuthPill } from './auth/TopAuthPill'
 import { OfferBanner } from './billing/OfferBanner'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
-import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId, offerPillMode } from './top-bar-crumbs'
+import { CAPTURE_LEAF_RE, FOCUS_ROUTE_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId, offerPillMode } from './top-bar-crumbs'
 
 // The site's one top bar. Rendered once by the root layout, at the top of the
 // scroll column, and never unmounted: a page change swaps the content below
@@ -99,14 +99,16 @@ export function TopBar() {
   const ctx = useContext(TopBarContext)
 
   // Routes that carry no site chrome: the lab has its own bar, and template
-  // leaves are full-screen compositions. The sidebar hides on the same two.
+  // leaves are full-screen compositions, focus pages (the agent sign-in
+  // consent) are one decision alone. The sidebar hides on the same three.
   // /kuendigen still draws its own bar: that page is the legal cancellation
   // flow and is frozen as shipped, so the shell steps aside there.
   if (
     pathname.startsWith('/lab') ||
     pathname === '/kuendigen' ||
     TEMPLATE_LEAF_RE.test(pathname) ||
-    CAPTURE_LEAF_RE.test(pathname)
+    CAPTURE_LEAF_RE.test(pathname) ||
+    FOCUS_ROUTE_RE.test(pathname)
   )
     return null
 

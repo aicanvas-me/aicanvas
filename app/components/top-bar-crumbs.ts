@@ -25,6 +25,10 @@ export const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
 // true when the bar and the rail moved into the root layout.
 export const CAPTURE_LEAF_RE = /^\/andromeda-capture\//
 
+// Focus pages: one decision on an empty canvas, nothing to wander off to. The
+// agent sign-in consent screen is the one today.
+export const FOCUS_ROUTE_RE = /^\/oauth\//
+
 const SYSTEM_LABELS: Record<string, string> = {
   andromeda: 'Andromeda Legacy',
   'andromeda-pro': 'Andromeda Pro',
