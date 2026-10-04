@@ -8,6 +8,8 @@ import { getSessionEntitlement } from '../lib/entitlement'
 import { createClient } from '../lib/supabase/server'
 import { ClaimForm } from './ClaimForm'
 import { PremiumQuickstart } from './PremiumQuickstart'
+import { ConnectAgentCard } from '../mcp/ConnectAgentCard'
+import { hostedMcpOAuthEnabled } from '../../lib/flags'
 
 export const metadata: Metadata = {
   title: 'Welcome to Premium',
@@ -97,16 +99,24 @@ export default async function WelcomePage() {
                   All components
                 </Link>
               </div>
-              {token && (
-                <p className="aic-hero-rise mx-auto mt-6 flex w-full max-w-2xl items-start justify-center gap-2 text-left text-xs leading-relaxed text-sand-500" style={{ animationDelay: '0.4s' }}>
-                  <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-400" />
-                  <span>
-                    Copy install commands while signed in with this account. That is
-                    what bakes your personal token into them.
-                  </span>
-                </p>
+              {hostedMcpOAuthEnabled() ? (
+                <div className="mx-auto mt-10 w-full max-w-2xl text-left">
+                  <ConnectAgentCard />
+                </div>
+              ) : (
+                <>
+                {token && (
+                  <p className="aic-hero-rise mx-auto mt-6 flex w-full max-w-2xl items-start justify-center gap-2 text-left text-xs leading-relaxed text-sand-500" style={{ animationDelay: '0.4s' }}>
+                    <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-400" />
+                    <span>
+                      Copy install commands while signed in with this account. That is
+                      what bakes your personal token into them.
+                    </span>
+                  </p>
+                )}
+                <PremiumQuickstart token={token} />
+                </>
               )}
-              <PremiumQuickstart token={token} />
             </>
           ) : tier === 'free' ? (
             <>

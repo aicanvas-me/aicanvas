@@ -1,4 +1,5 @@
-import { NextResponse } from 'next/server'
+import { after, NextResponse } from 'next/server'
+import { phCapture } from '../../../lib/analytics-server'
 import { createClient } from '../../../lib/supabase/server'
 import { approve, deny, readRequest } from '../../../lib/mcp-oauth'
 import { hostedMcpOAuthEnabled } from '../../../../lib/flags'
@@ -32,5 +33,8 @@ export async function POST(req: Request): Promise<Response> {
   if (!user) return ended
 
   const location = await approve(request, user.id)
-  return location ? NextResponse.redirect(location, 303) : ended
+  if (!location) return ended
+  // Anonymous count of connections made (constant distinct id, no person, no cookie).
+  after(() => phCapture('mcp_connect_approved', {}))
+  return NextResponse.redirect(location, 303)
 }

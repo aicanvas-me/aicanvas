@@ -1,6 +1,8 @@
 import type { Metadata } from 'next'
 import { Sparkle } from '@phosphor-icons/react/dist/ssr'
 import { InstallCards } from './InstallCards'
+import { ConnectAgentCard } from './ConnectAgentCard'
+import { hostedMcpOAuthEnabled } from '../../lib/flags'
 import { SiteFooter } from '../components/SiteFooter'
 import { SITE_URL } from '../lib/config'
 
@@ -60,8 +62,17 @@ export default function McpPage() {
           </p>
         </header>
 
-      {/* ── Install cards ────────────────────────────────────────────────── */}
-      <InstallCards />
+      {/* ── Install cards: the hosted sign-in first while it is on, npm below ─── */}
+      {hostedMcpOAuthEnabled() ? (
+        <>
+          <ConnectAgentCard />
+          <div className="mt-10">
+            <InstallCards heading="Run it locally with npm" />
+          </div>
+        </>
+      ) : (
+        <InstallCards />
+      )}
 
       {/* ── How it works ─────────────────────────────────────────────────── */}
       <section className="mt-14 sm:mt-20">

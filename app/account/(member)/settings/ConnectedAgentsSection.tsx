@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Robot, Warning } from '@phosphor-icons/react'
 import { buttonClasses } from '../../../components/buttonClasses'
@@ -56,7 +57,10 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
     <section id="ai-agents" className="scroll-mt-20 rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
       <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">Connected AI agents</h2>
       <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
-        AI agents you allowed to use your account through the AI Canvas MCP.
+        AI agents you allowed to use your account through the AI Canvas MCP.{' '}
+        <Link href="/account/connect" className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300">
+          Connect an AI agent
+        </Link>
       </p>
 
       {agents.length === 0 ? (

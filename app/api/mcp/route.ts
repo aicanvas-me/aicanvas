@@ -1,7 +1,9 @@
+import { after } from 'next/server'
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js'
 import { createServer } from '@/mcp/src/tools'
 import mcpPackage from '@/mcp/package.json'
 import { agentContext, HOSTED_INSTRUCTIONS } from '@/app/lib/agent-context'
+import { phCapture } from '@/app/lib/analytics-server'
 import { agentForAccessToken, endConnection, isAccessToken, resourceMetadataUrl } from '@/app/lib/mcp-oauth'
 import { hostedMcpEnabled, hostedMcpOAuthEnabled } from '@/lib/flags'
 import { isWellFormedToken } from '@/lib/identity/token'
@@ -77,6 +79,10 @@ async function handle(req: Request): Promise<Response> {
     const id = grantId
     ctx.disconnect = () => endConnection(id)
   }
+  // Anonymous usage count: how hosted calls sign in, nothing about who (constant distinct id).
+  const signedInWith = grantId ? 'agent' : 'key'
+  after(() => phCapture('mcp_hosted_call', { auth: signedInWith }))
+
   const server = createServer(ctx, { version: mcpPackage.version, instructions: HOSTED_INSTRUCTIONS })
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,

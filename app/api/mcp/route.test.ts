@@ -4,6 +4,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 // the real /r handler in process, so these cases prove what an agent receives end to end.
 vi.mock('@/app/lib/entitlement', () => ({ getEntitlement: vi.fn() }))
 vi.mock('@/app/lib/track-pull', () => ({ trackPull: vi.fn() }))
+// after() needs a live request scope; here the deferred work (analytics) just runs.
+vi.mock('next/server', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('next/server')>()),
+  after: (fn: () => unknown) => void fn(),
+}))
 vi.mock('@/app/lib/supabase/admin', () => ({
   createAdminClient: () => ({
     auth: { admin: { getUserById: async () => ({ data: { user: { email: 'maria@example.com' } } }) } },

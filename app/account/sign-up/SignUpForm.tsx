@@ -5,9 +5,9 @@ import { SignUpFormFields } from '../../components/auth/SignUpFormFields'
 import { safeNext } from '../../lib/safe-next'
 import { AuthPagePopup } from '../AuthPagePopup'
 
-export function SignUpForm() {
+export function SignUpForm({ fallback = '/account' }: { fallback?: string }) {
   const searchParams = useSearchParams()
-  const next = safeNext(searchParams.get('next'))
+  const next = safeNext(searchParams.get('next'), fallback)
 
   return (
     <AuthPagePopup>
