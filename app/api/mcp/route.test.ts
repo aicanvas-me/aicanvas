@@ -4,23 +4,17 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 // the real /r handler in process, so these cases prove what an agent receives end to end.
 vi.mock('@/app/lib/entitlement', () => ({ getEntitlement: vi.fn() }))
 vi.mock('@/app/lib/track-pull', () => ({ trackPull: vi.fn() }))
-// The admin client answers the browser sign-in checks: Supabase's verdict on the sign-in
-// (getUser) and the account's current API key (user_api_keys).
-const admin = vi.hoisted(() => ({
-  getUser: vi.fn(),
-  key: { data: null, error: null } as { data: { token: string } | null; error: unknown },
-}))
 vi.mock('@/app/lib/supabase/admin', () => ({
   createAdminClient: () => ({
-    auth: {
-      getUser: admin.getUser,
-      admin: { getUserById: async () => ({ data: { user: { email: 'maria@example.com' } } }) },
-    },
-    from: () => {
-      const query = { select: () => query, eq: () => query, maybeSingle: async () => admin.key }
-      return query
-    },
+    auth: { admin: { getUserById: async () => ({ data: { user: { email: 'maria@example.com' } } }) } },
   }),
+}))
+// The sign-in store is stubbed; app/lib/mcp-oauth.test.ts covers it.
+const oauth = vi.hoisted(() => ({ agentForAccessToken: vi.fn(), endConnection: vi.fn() }))
+vi.mock('@/app/lib/mcp-oauth', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@/app/lib/mcp-oauth')>()),
+  agentForAccessToken: oauth.agentForAccessToken,
+  endConnection: oauth.endConnection,
 }))
 
 import { POST } from './route'
@@ -123,18 +117,15 @@ describe('hosted MCP: the door', () => {
   })
 })
 
-describe('hosted MCP: browser sign-in', () => {
+describe('hosted MCP: AI agent sign-in', () => {
   const STORED_KEY = 'aic_' + 'a'.repeat(48)
-  const jwt = (claims: Record<string, unknown>) =>
-    ['header', Buffer.from(JSON.stringify(claims)).toString('base64url'), 'signature'].join('.')
-  const AGENT = jwt({ sub: 'user-1', client_id: 'client-1' })
-  const WEBSITE = jwt({ sub: 'user-1' })
+  const AGENT = 'aicm_at_' + 'x'.repeat(43)
 
   beforeEach(() => {
     process.env.HOSTED_MCP_OAUTH = 'on'
-    admin.getUser.mockReset()
-    admin.getUser.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null })
-    admin.key = { data: { token: STORED_KEY }, error: null }
+    oauth.agentForAccessToken.mockReset()
+    oauth.agentForAccessToken.mockResolvedValue({ grantId: 'grant-1', userId: 'user-1', key: STORED_KEY })
+    oauth.endConnection.mockReset()
   })
 
   it('points an agent with no credential at the discovery document', async () => {
@@ -145,7 +136,7 @@ describe('hosted MCP: browser sign-in', () => {
     )
   })
 
-  it('serves a signed-in agent with the account\'s current API key', async () => {
+  it("serves a signed-in agent with the account's current API key", async () => {
     asPlan('free')
     const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
     expect(res.status).toBe(200)
@@ -153,15 +144,28 @@ describe('hosted MCP: browser sign-in', () => {
     expect(sent.headers.get('authorization')).toBe(`Bearer ${STORED_KEY}`)
   })
 
-  it('refuses a website session token, which names no agent, without asking Supabase', async () => {
-    const res = await rpc('tools/list', {}, `Bearer ${WEBSITE}`)
+  it('offers the disconnect tool to a signed-in agent only, and it ends that connection', async () => {
+    asPlan('free')
+    const names = async (auth: string) =>
+      (await (await rpc('tools/list', {}, auth)).json()).result.tools.map((t: { name: string }) => t.name)
+    expect(await names(`Bearer ${AGENT}`)).toContain('disconnect')
+    expect(await names(`Bearer ${TOKEN}`)).not.toContain('disconnect')
+
+    const res = await rpc('tools/call', { name: 'disconnect', arguments: {} }, `Bearer ${AGENT}`)
+    expect(res.status).toBe(200)
+    expect(oauth.endConnection).toHaveBeenCalledWith('grant-1')
+  })
+
+  it('refuses a Supabase session token: only our own tokens sign an agent in', async () => {
+    const jwt = ['h', Buffer.from(JSON.stringify({ sub: 'user-1', client_id: 'c' })).toString('base64url'), 's'].join('.')
+    const res = await rpc('tools/list', {}, `Bearer ${jwt}`)
     expect(res.status).toBe(401)
-    expect((await res.json()).error).toBe('invalid_token')
-    expect(admin.getUser).not.toHaveBeenCalled()
+    expect(oauth.agentForAccessToken).not.toHaveBeenCalled()
+    expect(mockedGetEntitlement).not.toHaveBeenCalled()
   })
 
   it('refuses a sign-in that has ended, and says how to sign in again', async () => {
-    admin.getUser.mockResolvedValue({ data: { user: null }, error: { status: 400, message: 'Auth session missing!' } })
+    oauth.agentForAccessToken.mockResolvedValue(null)
     const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
     expect(res.status).toBe(401)
     expect(res.headers.get('WWW-Authenticate')).toContain('error="invalid_token"')
@@ -169,17 +173,17 @@ describe('hosted MCP: browser sign-in', () => {
     expect(mockedGetEntitlement).not.toHaveBeenCalled()
   })
 
-  it('answers 503, never a sign-in prompt, when Supabase cannot answer', async () => {
-    admin.getUser.mockResolvedValue({ data: { user: null }, error: { status: 0, message: 'fetch failed' } })
-    const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
-    expect(res.status).toBe(503)
-  })
-
   it('refuses a signed-in account that has no live API key', async () => {
-    admin.key = { data: null, error: null }
+    oauth.agentForAccessToken.mockResolvedValue({ grantId: 'grant-1', userId: 'user-1', key: null })
     const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
     expect(res.status).toBe(401)
     expect(mockedGetEntitlement).not.toHaveBeenCalled()
+  })
+
+  it('answers 503, never a sign-in prompt, when the connection cannot be read', async () => {
+    oauth.agentForAccessToken.mockRejectedValue(new Error('db down'))
+    const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
+    expect(res.status).toBe(503)
   })
 
   it('takes keys only while HOSTED_MCP_OAUTH is off', async () => {
@@ -187,14 +191,14 @@ describe('hosted MCP: browser sign-in', () => {
     const res = await rpc('tools/list', {}, `Bearer ${AGENT}`)
     expect(res.status).toBe(401)
     expect(res.headers.get('WWW-Authenticate')).toBe('Bearer realm="aicanvas", error="invalid_request"')
-    expect(admin.getUser).not.toHaveBeenCalled()
+    expect(oauth.agentForAccessToken).not.toHaveBeenCalled()
   })
 
   it('still takes an API key with sign-in on', async () => {
     asPlan('premium')
     const res = await rpc('tools/list', {})
     expect(res.status).toBe(200)
-    expect(admin.getUser).not.toHaveBeenCalled()
+    expect(oauth.agentForAccessToken).not.toHaveBeenCalled()
   })
 })
 

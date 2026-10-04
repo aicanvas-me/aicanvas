@@ -33,6 +33,8 @@ export interface ToolContext {
   }
   /** Hosted only: the account this connection is signed in as, for the whoami tool. */
   whoami?: () => Promise<{ email: string | null; plan: 'free' | 'premium' }>
+  /** Hosted, browser sign-in only: ends this AI agent's connection, for the disconnect tool. */
+  disconnect?: () => Promise<void>
 }
 
 type Access = 'included' | 'locked'
@@ -1842,6 +1844,34 @@ export function createServer(
               ),
             ],
             structuredContent: { email: me.email, plan: me.plan },
+          }
+        } catch (err) {
+          return errorResult(err instanceof Error ? err.message : String(err))
+        }
+      },
+    )
+  }
+
+  const disconnect = ctx.disconnect
+  if (disconnect) {
+    server.registerTool(
+      'disconnect',
+      {
+        title: 'Disconnect this AI agent from AI Canvas',
+        description:
+          'End this AI agent\'s connection to the user\'s AI Canvas account. Use ONLY when the user asks to disconnect or sign out this agent. Afterwards every AI Canvas tool needs a new sign-in.',
+        inputSchema: {},
+        annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+      },
+      async () => {
+        try {
+          await disconnect()
+          return {
+            content: [
+              asTextContent(
+                'Disconnected. This AI agent can no longer use the AI Canvas account. To connect again, sign in from the agent. Install commands it already ran carried the account\'s API key; the user can change that key in AI Canvas settings.',
+              ),
+            ],
           }
         } catch (err) {
           return errorResult(err instanceof Error ? err.message : String(err))

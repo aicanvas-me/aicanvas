@@ -2,7 +2,7 @@ import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/
 import { createServer } from '@/mcp/src/tools'
 import mcpPackage from '@/mcp/package.json'
 import { agentContext, HOSTED_INSTRUCTIONS } from '@/app/lib/agent-context'
-import { keyForSignIn, looksLikeJwt, resourceMetadataUrl } from '@/app/lib/mcp-oauth'
+import { agentForAccessToken, endConnection, isAccessToken, resourceMetadataUrl } from '@/app/lib/mcp-oauth'
 import { hostedMcpEnabled, hostedMcpOAuthEnabled } from '@/lib/flags'
 import { isWellFormedToken } from '@/lib/identity/token'
 
@@ -47,18 +47,19 @@ async function handle(req: Request): Promise<Response> {
   const auth = req.headers.get('authorization') ?? ''
   let bearer = auth.startsWith('Bearer ') ? auth.slice('Bearer '.length).trim() : ''
 
-  // A browser sign-in: swap it for the account's current API key, then carry on as a key caller.
-  let signedIn = false
-  if (hostedMcpOAuthEnabled() && looksLikeJwt(bearer)) {
-    let key
+  // An AI agent's sign-in: our own token, swapped for the account's current API key, then
+  // on as a key caller. It never reaches Supabase Auth or the data API.
+  let grantId: string | null = null
+  if (hostedMcpOAuthEnabled() && isAccessToken(bearer)) {
+    let agent
     try {
-      key = await keyForSignIn(bearer)
+      agent = await agentForAccessToken(bearer, new URL(req.url))
     } catch (err) {
       return unavailable(err)
     }
-    if (!key) return unauthorized(req, 'ended_sign_in')
-    bearer = key
-    signedIn = true
+    if (!agent?.key) return unauthorized(req, 'ended_sign_in')
+    bearer = agent.key
+    grantId = agent.grantId
   }
 
   // An API key (aic_...) is the headless way in: CI, a remote shell, anything without a browser.
@@ -70,8 +71,12 @@ async function handle(req: Request): Promise<Response> {
   } catch (err) {
     return unavailable(err)
   }
-  if (!ctx) return unauthorized(req, signedIn ? 'ended_sign_in' : 'unknown_key')
+  if (!ctx) return unauthorized(req, grantId ? 'ended_sign_in' : 'unknown_key')
 
+  if (grantId) {
+    const id = grantId
+    ctx.disconnect = () => endConnection(id)
+  }
   const server = createServer(ctx, { version: mcpPackage.version, instructions: HOSTED_INSTRUCTIONS })
   const transport = new WebStandardStreamableHTTPServerTransport({
     sessionIdGenerator: undefined,

@@ -5,13 +5,14 @@ import { Check, DotsThree, Robot } from '@phosphor-icons/react/dist/ssr'
 import { createClient } from '../../lib/supabase/server'
 import { buttonClasses } from '../../components/buttonClasses'
 import { hostedMcpOAuthEnabled } from '../../../lib/flags'
+import { readRequest } from '../../lib/mcp-oauth'
 import { SwitchAccount } from './SwitchAccount'
 
 // ─── /oauth/consent ──────────────────────────────────────────────────────────
-// Supabase's OAuth server sends the browser here when an agent asks to sign in to the
-// hosted MCP (?authorization_id=…). Signed out: sign in first and come back. An agent the
-// person already allowed goes straight back without asking again. The choice is a plain
-// form POST to ./decision, so it works before any JavaScript loads.
+// The hosted MCP's sign-in sends the browser here with a signed, 10-minute request
+// (?request=…). Signed out: sign in first and come back. Each connection is one click;
+// nothing is stored until Allow. The choice is a plain form POST to ./decision, so it
+// works before any JavaScript loads.
 
 export const metadata: Metadata = {
   title: 'Connect your agent',
@@ -72,7 +73,7 @@ function Ended() {
         This sign-in request has ended
       </h1>
       <p className="mt-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
-        It expired or was already answered. Start the sign-in again from your agent.
+        It expired or was already answered. Start the sign-in again from your AI agent.
       </p>
     </Card>
   )
@@ -81,26 +82,20 @@ function Ended() {
 export default async function ConsentPage({
   searchParams,
 }: {
-  searchParams: Promise<{ authorization_id?: string }>
+  searchParams: Promise<{ request?: string }>
 }) {
   if (!hostedMcpOAuthEnabled()) notFound()
 
-  const { authorization_id: id } = await searchParams
-  if (!id) return <Ended />
+  const { request: signed } = await searchParams
+  const request = readRequest(signed ?? null)
+  if (!request || !signed) return <Ended />
 
+  const here = `/oauth/consent?request=${encodeURIComponent(signed)}`
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) {
-    redirect(`/account/sign-in?next=${encodeURIComponent(`/oauth/consent?authorization_id=${encodeURIComponent(id)}`)}`)
-  }
+  if (!user) redirect(`/account/sign-in?next=${encodeURIComponent(here)}`)
 
-  const { data, error } = await supabase.auth.oauth.getAuthorizationDetails(id)
-  if (error || !data) return <Ended />
-  if ('redirect_url' in data) redirect(data.redirect_url)
-
-
-  const website = websiteHost(data.redirect_uri)
-  const here = `/oauth/consent?authorization_id=${encodeURIComponent(data.authorization_id)}`
+  const website = websiteHost(request.ru)
 
   return (
     <Card>
@@ -127,7 +122,7 @@ export default async function ConsentPage({
         </p>
       )}
       <form action="/oauth/consent/decision" method="post" className="mt-6 flex gap-3">
-        <input type="hidden" name="authorization_id" value={data.authorization_id} />
+        <input type="hidden" name="request" value={signed} />
         <button type="submit" name="decision" value="allow" className={buttonClasses({ variant: 'primary', size: 'md', fullWidth: true })}>
           Allow
         </button>
@@ -136,7 +131,7 @@ export default async function ConsentPage({
         </button>
       </form>
       <p className="mt-6 text-center text-xs text-sand-600 dark:text-sand-400">
-        Signed in as <span className="font-semibold text-sand-900 dark:text-sand-50">{data.user.email}</span>.{' '}
+        Signed in as <span className="font-semibold text-sand-900 dark:text-sand-50">{user.email}</span>.{' '}
         <SwitchAccount next={here} />
       </p>
     </Card>

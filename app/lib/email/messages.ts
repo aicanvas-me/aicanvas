@@ -4,7 +4,7 @@
 // Senders/triggers live in the routes that call these (auth callback, cancel-
 // confirm, renewal-thanks cron) along with their send-once guards.
 
-import { emailShell, emailText } from './shell'
+import { emailShell, emailText, escapeHtml } from './shell'
 
 /** A thank-you sent about two days before a subscription renews. The cron in
  *  app/api/cron/renewal-thanks decides who gets it and guards against a
@@ -89,4 +89,36 @@ export function cancellationConfirmedEmail(opts: { endsAt: Date | null }): { sub
     bodyHtml,
   })
   return { subject: 'Your cancellation is confirmed', html }
+}
+
+/** Sent each time a person allows an AI agent on the hosted MCP's consent screen. It is
+ *  the one alert that reaches someone after a look-alike agent tricked them into Allow,
+ *  so it says where the agent finished signing in and flags a country that differs from
+ *  the browser's. Countries are display names (or null when unknown). */
+export function agentConnectedEmail(opts: {
+  agentName: string
+  agentCountry: string | null
+  browserCountry: string | null
+}): { subject: string; html: string } {
+  const p = (text: string, kind: 'secondary' | 'muted' = 'secondary', margin = '0 0 16px 0') =>
+    `<p ${emailText(kind, `margin:${margin};font-size:${kind === 'muted' ? 13 : 15}px;line-height:1.6;`)}>${text}</p>`
+  const name = escapeHtml(opts.agentName)
+  const where = opts.agentCountry ? ` It signed in from ${escapeHtml(opts.agentCountry)}.` : ''
+  const mismatch =
+    opts.agentCountry && opts.browserCountry && opts.agentCountry !== opts.browserCountry
+      ? p(
+          `It finished signing in from ${escapeHtml(opts.agentCountry)} while your browser was in ${escapeHtml(opts.browserCountry)}. If that is unexpected, disconnect it and change your API key.`,
+        )
+      : ''
+  const html = emailShell({
+    title: 'An AI agent connected to your AI Canvas account',
+    heading: 'An AI agent connected to your account',
+    bodyHtml:
+      p(`It can now search AI Canvas and install what your plan includes. It calls itself &ldquo;${name}&rdquo;.${where}`) +
+      mismatch +
+      p('Not you? Disconnect it in your settings and change your API key there.', 'secondary', '0'),
+    button: { label: 'See connected AI agents', url: 'https://aicanvas.me/account/settings#ai-agents' },
+    footerNoteHtml: 'You are getting this because an AI agent was allowed to use this AI Canvas account.',
+  })
+  return { subject: 'An AI agent connected to your AI Canvas account', html }
 }

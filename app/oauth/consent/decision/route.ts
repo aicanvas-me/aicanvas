@@ -1,27 +1,36 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '../../../lib/supabase/server'
+import { approve, deny, readRequest } from '../../../lib/mcp-oauth'
 import { hostedMcpOAuthEnabled } from '../../../../lib/flags'
 
 export const runtime = 'nodejs'
 
-// The consent page's Allow / Cancel. Supabase records the choice for the signed-in person
-// and returns the agent's callback address, which the browser is sent on to. The session
-// cookie is SameSite=Lax, so a form posted from another site arrives signed out and fails.
+// The consent page's Allow / Cancel. Only a form posted from this site counts: the
+// browser's Sec-Fetch-Site (or Origin) must say same-origin, and the session cookie is
+// SameSite=Lax besides. The browser is only ever sent to the return address inside the
+// signed request, never to anything the form carries.
+function fromThisSite(req: Request): boolean {
+  const site = req.headers.get('sec-fetch-site')
+  if (site) return site === 'same-origin'
+  const origin = req.headers.get('origin')
+  return origin !== null && origin === new URL(req.url).origin
+}
+
 export async function POST(req: Request): Promise<Response> {
   if (!hostedMcpOAuthEnabled()) return NextResponse.json({ error: 'not found' }, { status: 404 })
+  if (!fromThisSite(req)) return NextResponse.json({ error: 'forbidden' }, { status: 403 })
 
   const form = await req.formData()
-  const id = String(form.get('authorization_id') ?? '')
-  const allow = form.get('decision') === 'allow'
+  const request = readRequest(String(form.get('request') ?? ''))
+  const ended = NextResponse.redirect(new URL('/oauth/consent', req.url), 303)
+  if (!request) return ended
+
+  if (form.get('decision') !== 'allow') return NextResponse.redirect(deny(request), 303)
 
   const supabase = await createClient()
-  const { data, error } = allow
-    ? await supabase.auth.oauth.approveAuthorization(id, { skipBrowserRedirect: true })
-    : await supabase.auth.oauth.denyAuthorization(id, { skipBrowserRedirect: true })
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return ended
 
-  // Expired, already answered, or signed out: the page says so and offers nothing to click.
-  if (error || !data?.redirect_url) {
-    return NextResponse.redirect(new URL(`/oauth/consent?authorization_id=${encodeURIComponent(id)}`, req.url), 303)
-  }
-  return NextResponse.redirect(data.redirect_url, 303)
+  const location = await approve(request, user.id)
+  return location ? NextResponse.redirect(location, 303) : ended
 }

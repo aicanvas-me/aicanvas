@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import { createClient } from '../../lib/supabase/server'
 import { SignInForm } from './SignInForm'
+import { safeNext } from '../../lib/safe-next'
 
 // ─── /account/sign-in ────────────────────────────────────────────────────────
 // Server entry: if the user already has a valid session, skip the form and
@@ -23,11 +24,12 @@ export default async function SignInPage({
 }: {
   searchParams: Promise<{ next?: string; error?: string }>
 }) {
+  const params = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (user) redirect('/account')
+  // Already signed in: go where the sign-in was for (an AI agent's consent screen, say).
+  if (user) redirect(safeNext(params.next))
 
-  const params = await searchParams
   const next = params.next ?? '/account'
   const errorCode = params.error ?? null
   const initialError = errorCode

@@ -16,14 +16,13 @@ describe('protected-resource metadata', () => {
     expect(GET(new Request('https://mcp.aicanvas.me/.well-known/oauth-protected-resource')).status).toBe(404)
   })
 
-  it('names the MCP address and Supabase Auth as the sign-in server', async () => {
+  it('names the MCP address and its own origin as the sign-in server', async () => {
     process.env.HOSTED_MCP = 'on'
     process.env.HOSTED_MCP_OAUTH = 'on'
-    process.env.NEXT_PUBLIC_SUPABASE_URL ??= 'https://example.supabase.co'
     const res = GET(new Request('https://mcp.aicanvas.me/.well-known/oauth-protected-resource'))
     const body = await res.json()
     expect(body.resource).toBe('https://mcp.aicanvas.me')
-    expect(body.authorization_servers).toEqual([`${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1`])
+    expect(body.authorization_servers).toEqual(['https://mcp.aicanvas.me'])
   })
 
   it('names the /api/mcp address on any other host, for local and preview testing', async () => {

@@ -24,14 +24,19 @@ import { updateSession } from './app/lib/supabase/proxy'
 import { phCapture, posthogConfigured } from './app/lib/analytics-server'
 import { FRAME_HEADER, isFramePayload } from './app/lib/frame'
 
+const MCP_OAUTH_PATHS = new Set(['/authorize', '/token', '/register', '/revoke'])
+
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl
 
-  // mcp.aicanvas.me is the hosted MCP and its discovery documents, nothing else: the bare
-  // address is the server, any other page goes to the site.
+  // mcp.aicanvas.me is the hosted MCP, its sign-in endpoints and their discovery
+  // documents, nothing else. A page someone opens there goes to the site; anything else
+  // (a POST that missed) is a 404, never replayed across hosts.
   if (request.nextUrl.hostname === 'mcp.aicanvas.me') {
     if (pathname === '/') return NextResponse.rewrite(new URL('/api/mcp', request.url))
-    if (pathname === '/api/mcp' || pathname.startsWith('/.well-known/')) return NextResponse.next()
+    if (MCP_OAUTH_PATHS.has(pathname)) return NextResponse.rewrite(new URL(`/api/mcp/oauth${pathname}${request.nextUrl.search}`, request.url))
+    if (pathname.startsWith('/api/mcp') || pathname.startsWith('/.well-known/')) return NextResponse.next()
+    if (request.method !== 'GET' && request.method !== 'HEAD') return new NextResponse(null, { status: 404 })
     return NextResponse.redirect(new URL(`${pathname}${request.nextUrl.search}`, 'https://aicanvas.me'), 307)
   }
 
@@ -61,7 +66,7 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
 
   // The hosted MCP authenticates every request by its own header and never
   // reads a cookie, so it skips the Supabase refresh hop too.
-  if (pathname === '/api/mcp' || pathname.startsWith('/.well-known/')) {
+  if (pathname.startsWith('/api/mcp') || pathname.startsWith('/.well-known/')) {
     return NextResponse.next()
   }
 
