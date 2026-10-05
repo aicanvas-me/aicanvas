@@ -625,6 +625,7 @@ function writeProHelpersShim(fromV2Tree) {
 const V2_EXAMPLE_EXPORTS = {
   AiChat: 'ai-chat',
   CityOperations: 'city-operations',
+  FintechLanding: 'fintech-landing',
   MissionControl: 'mission-control',
   ResourcePlanning: 'resource-planning',
   ServiceOrder: 'service-order',

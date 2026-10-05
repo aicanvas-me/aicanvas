@@ -268,6 +268,7 @@ export const DESIGN_SYSTEMS = [
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
       { slug: 'andromeda-pro-sign-up',           name: 'Sign Up',           category: 'Authentication', entryPath: 'examples/sign-up/index.tsx' },
+      { slug: 'andromeda-pro-fintech-landing',   name: 'Fintech Landing',   category: 'Landing page',   entryPath: 'examples/fintech-landing/index.tsx' },
     ],
   },
 ]
