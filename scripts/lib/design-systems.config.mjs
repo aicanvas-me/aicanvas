@@ -136,9 +136,9 @@ export const DESIGN_SYSTEMS = [
       'components/DataTable.tsx',
       'components/MusicPlayer.tsx',
     ],
-    // Button.tsx's natural slug (andromeda-button) is owned by the standalone in
-    // components-workspace/andromeda-button/, so the design-system Button ships
-    // under its own slug, fully separate from that standalone.
+    // The design-system Button ships as andromeda-button-system, the slug that
+    // Saved rows and install commands already hold; the retired andromeda-button
+    // install URL redirects to it (next.config.ts).
     slugOverrides: {
       'components/Button.tsx': 'andromeda-button-system',
     },

@@ -106,12 +106,11 @@ export function AndromedaComponentView({
   promptLocked = false,
 }: Props) {
   const { preferences, user } = useSession()
-  // The registry slug is normally `andromeda-<metaSlug>`. The lone exception is the
-  // slugOverride (scripts/lib/design-systems.config.mjs): Button.tsx ships as the
-  // registry item `andromeda-button-system` because the free standalone owns
-  // `andromeda-button`. Map the page's meta slug back to the REGISTRY slug so the
-  // Code tab, install command, analytics, and Save all target the right item —
-  // otherwise the Button page silently serves the standalone.
+  // The registry slug is normally `andromeda-pro-<metaSlug>`. The exceptions are
+  // pages renamed for the docs (table-basic, chart-radar and the rest), whose
+  // registry item keeps its source filename. Map the page's meta slug to the
+  // REGISTRY slug so the Code tab, install command, analytics, and Save all
+  // target the right item.
   const registrySlug = andromedaRegistrySlug(slug)
 
   // Personalized install: when signed in, the copied command carries the
@@ -517,9 +516,9 @@ export function AndromedaComponentView({
             behaviour and has no Remix button. */}
         <div className="flex items-center justify-end gap-2 border-t border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           {/* Save — signed out, opens the same soft-gate modal as Copy Command.
-              Keyed on the REGISTRY slug (not the page slug) so the Button
-              override (andromeda-button-system) can't collide with the free
-              standalone's own save entry (andromeda-button). */}
+              Keyed on the REGISTRY slug (not the page slug) so a renamed
+              page (table-basic and the rest) saves under its real registry
+              item. */}
           <SaveButton slug={registrySlug} system="andromeda-pro" />
 
           {/* Remix with AI — only when a prompt actually exists for this

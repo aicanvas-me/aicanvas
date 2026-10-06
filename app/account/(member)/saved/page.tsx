@@ -4,6 +4,7 @@ import type { SavedComponent } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
 import { getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
 import { getAndromedaComponentMeta as getAndromedaProComponentMeta } from '../../../_lib/andromeda-pro/andromeda-meta'
+import { resolveRetiredSlug } from '../itemHref'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { SavedList, type SavedRow } from './SavedList'
@@ -49,20 +50,20 @@ export default async function SavedPage() {
 
   // Enrich each row with a name + thumbnail so SavedList can render the card
   // without a second client-side lookup. Andromeda system components aren't
-  // in COMPONENTS (only the free `andromeda-button` standalone is) — those
-  // are looked up in the Andromeda metadata instead. Design-system templates
+  // in COMPONENTS; those are looked up in the Andromeda metadata instead. Design-system templates
   // are in neither and fall through to the bare slug.
   const bySlug = new Map(COMPONENTS.map((c) => [c.slug, c]))
   const rows: SavedRow[] = raw.map((r) => {
     const entry = bySlug.get(r.slug)
     // Each system resolves in its own metadata: Legacy and Pro share the
     // `andromeda-` namespace but not their component lists.
+    const resolved = resolveRetiredSlug(r)
     const andromedaEntry = entry
       ? undefined
-      : r.system === 'andromeda'
-        ? getAndromedaComponentMeta(r.slug)
-        : r.system === 'andromeda-pro'
-          ? getAndromedaProComponentMeta(r.slug)
+      : resolved.system === 'andromeda'
+        ? getAndromedaComponentMeta(resolved.slug)
+        : resolved.system === 'andromeda-pro'
+          ? getAndromedaProComponentMeta(resolved.slug)
           : undefined
     return {
       ...r,

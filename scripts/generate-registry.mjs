@@ -344,7 +344,7 @@ for (const ds of SYSTEMS) expectedNames.add(`_${ds.slug}-prompts`)
 // templates) so they survive the stale-file cleanup pass.
 function componentSlug(systemSlug, fileBaseName) {
   // Convert PascalCase file name to kebab-case, prefix with system slug.
-  // Button.tsx → andromeda-button; PanelHeader.tsx → andromeda-panel-header.
+  // Button.tsx → andromeda-button (natural slug, overridden to andromeda-button-system); PanelHeader.tsx → andromeda-panel-header.
   const kebab = fileBaseName
     .replace(/\.(tsx|ts|jsx|js|mjs|cjs)$/, '')
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
@@ -354,8 +354,9 @@ function componentSlug(systemSlug, fileBaseName) {
 // Resolve a system component's registry slug, honoring per-system `slugOverrides`
 // (keyed by the file's posix path relative to the system rootDir). Lets a
 // design-system component whose natural slug collides with a published standalone
-// (e.g. Button.tsx → andromeda-button) emit under its own unique slug instead of
-// being skipped.
+// (Button.tsx once collided with the andromeda-button standalone, now retired)
+// emit under its own unique slug (andromeda-button-system) instead of being
+// skipped.
 function dsComponentSlug(ds, entryRelPosix, baseName) {
   return ds.slugOverrides?.[entryRelPosix] ?? componentSlug(ds.slug, baseName)
 }
@@ -706,10 +707,11 @@ for (const ds of SYSTEMS) {
   // graph stays correct (PanelHeader → IconButton → tokens, etc.).
   //
   // Collision handling: if a component's slug already exists as a published
-  // standalone in `components-workspace/` (e.g. the inlined `andromeda-button`
-  // wrapper), skip the system emit — the standalone retains the slug. Users on
-  // that component's page get the standalone install command; the system version
-  // is still reachable via the full `andromeda` bundle install.
+  // standalone in `components-workspace/`, skip the system emit — the standalone
+  // retains the slug. Users on that component's page get the standalone install
+  // command; the system version is still reachable via the full `andromeda`
+  // bundle install. (The Button collided this way until its standalone was
+  // retired; it now ships under the `andromeda-button-system` override.)
   const componentWorkspaceSlugs = new Set(
     readdirSync(wsDir).filter((d) => {
       try { return statSync(join(wsDir, d)).isDirectory() } catch { return false }

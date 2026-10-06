@@ -1137,6 +1137,9 @@ function TableDemo() {
 }
 
 function TooltipDemo() {
+  // The poster hovers a bottom-row button. The spacer at the end is the room
+  // its bubble opens into: the capture fits the demo by its children's boxes,
+  // so padding would not count.
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[8] }}>
       <Row label="Position · top (default)">
@@ -1158,6 +1161,7 @@ function TooltipDemo() {
           <IconButton aria-label="Settings" icon={Gear} />
         </Tooltip>
       </Row>
+      <div aria-hidden style={{ height: 1 }} />
     </div>
   )
 }
@@ -2168,7 +2172,7 @@ function DateRangePickerDemo() {
   })
   const [presetLabel, setPresetLabel] = useState<string | null>('Last month')
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5], minHeight: 360 }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[5] }}>
       <Row label="Range">
         <DateRangePicker
           value={range}

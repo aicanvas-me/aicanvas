@@ -40,9 +40,9 @@ const META_SLUGS = new Set(['registry', 'aicanvas-mcp', 'aicanvas-props'])
  *
  * Besides per-component files, `generate-registry.mjs` emits three whole-system
  * aggregates per design system: `<system>`, `<system>-all` and `<system>-tokens`.
- * They are matched EXACTLY, never by a `<system>-` prefix, because a standalone
- * can legitimately share a system's name prefix (`andromeda-button` is a free
- * standalone) and a broad prefix would wrongly gate it.
+ * They are matched EXACTLY, never by a `<system>-` prefix, because a free
+ * standalone can legitimately share a system's name prefix (a hypothetical
+ * `andromeda-foo` wrapper) and a broad prefix would wrongly gate it.
  */
 export function classifyContent(slugOrFile: string, lookup: ContentLookup): ContentType {
   const slug = slugOrFile.replace(/\.json$/, '')

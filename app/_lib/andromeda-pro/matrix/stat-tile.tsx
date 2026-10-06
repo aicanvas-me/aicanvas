@@ -1,10 +1,14 @@
-import { StatTile } from '../../../lib/andromeda-pro.generated'
+import { StatTile, tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const statTile: MatrixSpec = {
   slug: 'stat-tile',
   Component: StatTile,
   sizes: null,
+  // StatTile is flex-1 so a row of tiles shares a dashboard strip evenly. Alone
+  // in a preview canvas that same rule stretched one tile across the whole
+  // hero. The cap is one tile's width in a four-up strip.
+  baseProps: { style: { maxWidth: `calc(${tokens.spacing[10]} * 8)` } },
   variants: [
     {
       label: 'Rising',

@@ -22,6 +22,9 @@ function LiveRadioChoiceCards() {
       value={value}
       onValueChange={setValue}
       className="grid grid-cols-2 gap-[var(--andromeda-3)]"
+      // The group is w-full, so in the full-width hero each card ran to about
+      // 440px. Capped at the reading width Artifact and Message use, centred.
+      style={{ maxWidth: `calc(${tokens.spacing[10]} * 16)`, marginInline: 'auto' }}
     >
       <ChoiceCard
         control="radio"

@@ -50,10 +50,6 @@ describe('classifyContent', () => {
     expect(classifyContent('glass-navbar', lookup)).toBe('standalone')
   })
 
-  it('keeps a name-colliding standalone as standalone (andromeda-button is NOT the system)', () => {
-    expect(classifyContent('andromeda-button', lookup)).toBe('standalone')
-  })
-
   it('classifies an individual design-system component as metered (not premium)', () => {
     // Individual components are free-metered like standalones; only templates
     // and whole-system aggregates stay premium.
