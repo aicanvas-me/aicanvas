@@ -89,6 +89,7 @@ import { Marquee } from '../../lib/andromeda-pro.generated'
 import { LogoCloud } from '../../lib/andromeda-pro.generated'
 import { SectionHeading } from '../../lib/andromeda-pro.generated'
 import { PricingCard, PricingGrid } from '../../lib/andromeda-pro.generated'
+import { BentoGrid, BentoGridItem } from '../../lib/andromeda-pro.generated'
 import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
@@ -1550,6 +1551,34 @@ function SectionHeadingDemo() {
   )
 }
 
+const BENTO_DEMO = [
+  { title: 'Overview', text: 'Balances, income and spending for the month, across the wide panel.', colSpan: 2 },
+  { title: 'Alerts', text: 'Payments that need a look, newest first.', rowSpan: 2 },
+  { title: 'Cards', text: 'Every virtual card and what is left on it.' },
+  { title: 'Savings', text: 'Pots and how close each is to its goal.' },
+]
+
+function BentoGridDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 960 }}>
+      <BentoGrid columns={3}>
+        {BENTO_DEMO.map(({ title, text, ...place }) => (
+          <BentoGridItem key={title} asChild {...place}>
+            <Card>
+              <CardHeader>
+                <CardTitle>{title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>{text}</CardDescription>
+              </CardContent>
+            </Card>
+          </BentoGridItem>
+        ))}
+      </BentoGrid>
+    </div>
+  )
+}
+
 const PRICING_DEMO = [
   {
     name: 'Starter',
@@ -2293,6 +2322,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   artifact: ArtifactDemo,
   avatar: AvatarDemo,
   badge: BadgeDemo,
+  'bento-grid': BentoGridDemo,
   button: ButtonDemo,
   card: CardDemo,
   checkbox: CheckboxDemo,

@@ -210,7 +210,7 @@ const V2_ONLY_NAMES = [
   'Accordion', 'AccordionContent', 'AccordionItem', 'AccordionTrigger',
   'Artifact', 'ArtifactAction', 'ArtifactActions', 'ArtifactClose', 'ArtifactContent',
   'ArtifactDescription', 'ArtifactHeader', 'ArtifactTitle',
-  'Burst', 'ChoiceCard', 'ChoiceCardGroup',
+  'BentoGrid', 'BentoGridItem', 'Burst', 'ChoiceCard', 'ChoiceCardGroup',
   'Collapsible', 'CollapsibleContent', 'CollapsibleTrigger', 'Combobox', 'Cube', 'EmptyStateMedia',
   'FunnelChart', 'Item', 'ItemActions', 'ItemContent', 'ItemDescription', 'ItemMedia', 'ItemTitle',
   'LogoCloud', 'Marquee', 'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',

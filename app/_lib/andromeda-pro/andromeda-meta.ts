@@ -55,6 +55,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/badge.png?v=3',
   },
   {
+    slug: 'bento-grid',
+    name: 'Bento Grid',
+    description:
+      'Lays out cards on a grid where one can span several columns and cards in a row line up their parts.',
+    sourceFile: 'BentoGrid.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/bento-grid.png?v=1',
+  },
+  {
     slug: 'button',
     name: 'Button',
     description:

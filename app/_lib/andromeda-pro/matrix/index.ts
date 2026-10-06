@@ -7,6 +7,7 @@ import { alert } from './alert'
 import { artifact } from './artifact'
 import { avatar } from './avatar'
 import { badge } from './badge'
+import { bentoGrid } from './bento-grid'
 import { burst } from './burst'
 import { button } from './button'
 import { card } from './card'
@@ -69,7 +70,7 @@ import { userMenu } from './user-menu'
 import { waveform } from './waveform'
 
 export const SPECS: readonly MatrixSpec[] = [
-  accordion, alert, artifact, avatar, badge, burst, button, card, checkbox, choiceCard, collapsible, combobox,
+  accordion, alert, artifact, avatar, badge, bentoGrid, burst, button, card, checkbox, choiceCard, collapsible, combobox,
   // The two tables sit together so their selected-row treatments are judged
   // side by side.
   cornerMarkers, cube, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,

@@ -186,6 +186,7 @@ export const DESIGN_SYSTEMS = [
       'components/Artifact.tsx',
       'components/Avatar.tsx',
       'components/Badge.tsx',
+      'components/BentoGrid.tsx',
       'components/Burst.tsx',
       'components/Button.tsx',
       'components/Card.tsx',
