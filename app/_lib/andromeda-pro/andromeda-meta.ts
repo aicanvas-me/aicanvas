@@ -638,6 +638,9 @@ const TEMPLATE_ART: Record<string, string> = {
   'sign-in': 'Sign_in_pro_dark.png',
   // Sign Up is Pro-only for the same reason.
   'sign-up': 'Sign_up_pro_dark.png',
+  // Fintech Landing is Pro-only. Empty until its poster is shot and uploaded:
+  // an empty name keeps the card's fallback panel instead of a broken image.
+  'fintech-landing': '',
   // AI Chat is Pro-only too: no Legacy counterpart to pair with.
   'ai-chat': 'Ai_chat_pro_dark.png',
 }
@@ -711,6 +714,13 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
     description:
       'The same authentication flow with no columns: a hairline lattice is the ground and the form floats on it.',
     image: templateArt('sign-up'),
+  },
+  {
+    folder: 'fintech-landing',
+    name: 'Fintech Landing',
+    description:
+      'A landing page for a money app: a product hero, use cases on tabs, live cards, security, plans and a journal, every section built from the system.',
+    image: templateArt('fintech-landing'),
   },
 ]
 

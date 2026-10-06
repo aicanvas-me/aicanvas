@@ -22,7 +22,8 @@ export const FREE_DS_PLACEHOLDER_SENTINEL = '// @aicanvas-inject-degraded-placeh
  * @property {string} slug         Registry slug, e.g. 'andromeda-mission-control'
  * @property {string} name         Human label for the template widget
  * @property {string} [category]   What the template IS, in buyer words:
- *                                 Dashboard, CRM, Scheduling, Media, Authentication.
+ *                                 Dashboard, CRM, Scheduling, Media, Authentication,
+ *                                 Marketing (ruled 2026-10-06).
  *                                 Closed vocabulary; adding one is a product call.
  * @property {string} entryPath    Entry file relative to the system's `rootDir`. The
  *                                 generator walks transitive imports from here and
@@ -279,7 +280,7 @@ export const DESIGN_SYSTEMS = [
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM',    entryPath: 'examples/service-order/index.tsx' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling', entryPath: 'examples/resource-planning/index.tsx' },
       { slug: 'andromeda-pro-sign-up',           name: 'Sign Up',           category: 'Authentication', entryPath: 'examples/sign-up/index.tsx' },
-      { slug: 'andromeda-pro-fintech-landing',   name: 'Fintech Landing',   category: 'Landing page',   entryPath: 'examples/fintech-landing/index.tsx' },
+      { slug: 'andromeda-pro-fintech-landing',   name: 'Fintech Landing',   category: 'Marketing',   entryPath: 'examples/fintech-landing/index.tsx' },
     ],
   },
 ]
