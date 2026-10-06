@@ -215,6 +215,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/waveform.png?v=1',
   },
   {
+    slug: 'marquee',
+    name: 'Marquee',
+    description:
+      'Loops a row of items slowly across its width, so a long list shows without taking room.',
+    sourceFile: 'Marquee.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/marquee.png?v=1',
+  },
+  {
     slug: 'media-card',
     name: 'Media Card',
     description:

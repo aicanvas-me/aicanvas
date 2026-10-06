@@ -85,6 +85,7 @@ import { Spinner } from '../../lib/andromeda-pro.generated'
 import { Skeleton } from '../../lib/andromeda-pro.generated'
 import { Suggestion } from '../../lib/andromeda-pro.generated'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/andromeda-pro.generated'
+import { Marquee } from '../../lib/andromeda-pro.generated'
 import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
@@ -1521,6 +1522,35 @@ function ItemDemo() {
   )
 }
 
+const MARQUEE_DEMO = ['Payments', 'Cards', 'Payroll', 'Invoices', 'Treasury', 'Exchange', 'Reporting', 'Lending']
+
+function MarqueeDemo() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[6], width: '100%', maxWidth: 720 }}>
+      <Marquee aria-label="Products" gap={4}>
+        {MARQUEE_DEMO.map((word) => (
+          <Tag key={word}>{word}</Tag>
+        ))}
+      </Marquee>
+      <Marquee aria-label="Products, reversed" reverse separator gap={8}>
+        {MARQUEE_DEMO.map((word) => (
+          <span
+            key={word}
+            style={{
+              fontSize: tokens.typography.size.textLg,
+              fontWeight: tokens.typography.weight.medium,
+              color: `var(--andromeda-text-secondary, ${tokens.color.text.secondary})`,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {word}
+          </span>
+        ))}
+      </Marquee>
+    </div>
+  )
+}
+
 const STEPPER_DEMO = [
   { title: 'Amount reserved', text: 'Held from your balance', time: '0.2 s' },
   { title: 'Recipient verified', text: 'Name and account checked', time: '0.4 s' },
@@ -2201,6 +2231,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   input: InputDemo,
   item: ItemDemo,
   waveform: WaveformDemo,
+  marquee: MarqueeDemo,
   'media-card': MediaCardDemo,
   message: MessageDemo,
   'table-data': DataTableDemo,

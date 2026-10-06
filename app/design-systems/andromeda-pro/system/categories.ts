@@ -78,6 +78,7 @@ export const CATEGORY: Record<string, string> = {
   accordion: 'Surfaces',
 
   // Media
+  marquee: 'Media',
   'media-card': 'Media',
   'music-player': 'Media',
 
