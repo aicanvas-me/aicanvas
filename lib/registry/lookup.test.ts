@@ -38,10 +38,6 @@ describe('buildLookup + classifyContent (manifest-driven gate)', () => {
     expect(classifyContent('andromeda', lookup)).toBe('design-system-component')
   })
 
-  it('the name-colliding free standalone stays standalone', () => {
-    expect(classifyContent('andromeda-button', lookup)).toBe('standalone')
-  })
-
   it('a premium standalone from the manifest gates as premium-standalone', () => {
     expect(classifyContent('aurora-pricing-table', lookup)).toBe('premium-standalone')
   })

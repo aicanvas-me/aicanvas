@@ -72,7 +72,6 @@ const ALL_SLUGS = [
   'glass-stepper',
   'glass-progress',
   'glass-ai-compose',
-  'andromeda-button',
   'meet-the-crew',
   'ai-job-cards',
   'task-cards',

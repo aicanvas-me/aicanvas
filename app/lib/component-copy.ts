@@ -25,7 +25,6 @@ export const ACCURATE_STACKS: Record<string, string[]> = {
   '3d-gem-pricing-section': ['Three.js', 'Canvas', 'Tailwind CSS'],
   '3d-product-card': ['Three.js', 'Tailwind CSS'],
   'ai-job-cards': ['Motion', 'Tailwind CSS'],
-  'andromeda-button': ['Tailwind CSS'],
   'blind-pull-toggle': ['Motion', 'Tailwind CSS'],
   'bubble-field': ['Canvas', 'Tailwind CSS'],
   'charging-widget': ['Motion', 'Tailwind CSS'],
@@ -227,11 +226,6 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
     useCases: ['Settings', 'Dashboard', 'Theme switcher'],
     about:
       'Glass Toggle is an on/off switch housed in a frosted glass track, with a thumb that glides on a soft Motion spring while the track color transitions smoothly between states. The glass surface picks up the page behind it through backdrop-filter, so it always feels consistent with whatever you put under it. Drop it into glassmorphism dashboards, settings panels, theme switchers, or any UI that already leans on the same visual language for cards and modals.',
-  },
-  'andromeda-button': {
-    useCases: ['Dashboard', 'Admin panel', 'Internal tools'],
-    about:
-      'Andromeda Button is the canonical button primitive from the Andromeda design system: a sci-fi blueprint aesthetic with five variants (default, outline, ghost, destructive, link), three sizes, optional leading icon, and complete state coverage for hover, focus, active, and disabled. Transparent hairline surfaces sit on a near-black canvas, and the electric-blue accent brightens and glows on interaction so the button always tells you exactly which state it is in. It is the standard control for any dashboard or internal tool built in the Andromeda visual language.',
   },
   'delete-button': {
     useCases: ['Account settings', 'Admin panel', 'Confirmation flow'],
