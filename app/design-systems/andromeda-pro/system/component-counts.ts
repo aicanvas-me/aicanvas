@@ -60,7 +60,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'skeleton': { variants: 2, states: 0 },
   'slider': { variants: 5, states: 3 },
   'spinner': { variants: 4, states: 0 },
-  'stat-tile': { variants: 5, states: 0 },
+  'stat-tile': { variants: 7, states: 0 },
   'stepper': { variants: 3, states: 0 },
   'table-basic': { variants: 3, states: 2 },
   'tag': { variants: 5, states: 3 },

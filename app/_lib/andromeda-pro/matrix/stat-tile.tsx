@@ -30,6 +30,16 @@ export const statTile: MatrixSpec = {
     },
     { label: 'No delta', props: { label: 'Errors', code: 'ERR-03', value: '1.04', unit: '%', polarity: 'lower-is-better' } },
     { label: 'Live drift', props: { label: 'Signal', code: 'SIG-05', value: '48.2', unit: 'dB', live: true } },
+    {
+      label: 'Large, prefix and suffix',
+      props: { label: 'Volume', code: 'VOL-06', size: 'lg', prefix: '$', value: '12', suffix: 'B', delta: 3.1, deltaLabel: 'vs last year' },
+    },
+    {
+      // Bare drops the frame so a row of figures can share one surface the
+      // caller owns; the caption sits under the figure on one line.
+      label: 'Bare, caption below',
+      props: { bare: true, labelPosition: 'bottom', size: 'lg', label: 'People and teams on board', value: '3.4', suffix: 'M' },
+    },
   ],
   states: [],
 }

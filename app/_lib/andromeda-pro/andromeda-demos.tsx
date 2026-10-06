@@ -991,6 +991,25 @@ function StatTileDemo() {
       {/* Latency falling is an improvement — polarity keeps the ▼ accent, not fault. */}
       <StatTile label="Latency" code="LAT-02" value="412" unit="ms" delta={-1.2} polarity="lower-is-better" deltaLabel="vs prior period" />
       <StatTile label="Errors" code="ERR-03" value="1.04" unit="%" />
+      {/* Bare tiles drop their own frame and share one Card, split by hairlines. */}
+      <Card style={{ width: '100%' }}>
+        <CardContent style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+          {[
+            { prefix: '$', value: '12', suffix: 'B', label: 'Moved last year' },
+            { value: '3.4', suffix: 'M', label: 'People and teams on board' },
+            { value: '24', suffix: '/7', label: 'Human support, every day' },
+          ].map((item, i) => (
+            <StatTile
+              key={item.label}
+              bare
+              size="lg"
+              labelPosition="bottom"
+              {...item}
+              style={i === 0 ? { paddingRight: tokens.spacing[6] } : { paddingInline: tokens.spacing[6], borderLeft: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})` }}
+            />
+          ))}
+        </CardContent>
+      </Card>
     </div>
   )
 }
