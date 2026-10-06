@@ -219,6 +219,7 @@ export const DESIGN_SYSTEMS = [
       'components/Orb.tsx',
       'components/PanelHeader.tsx',
       'components/PanelMenu.tsx',
+      'components/PaymentCard.tsx',
       'components/Planet.tsx',
       'components/Popover.tsx',
       'components/ProgressBar.tsx',

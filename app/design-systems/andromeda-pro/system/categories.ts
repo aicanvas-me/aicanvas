@@ -98,4 +98,5 @@ export const CATEGORY: Record<string, string> = {
   nodes: 'Objects',
   burst: 'Objects',
   cube: 'Objects',
+  'payment-card': 'Objects',
 }

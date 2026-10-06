@@ -92,6 +92,7 @@ import { PricingCard, PricingGrid } from '../../lib/andromeda-pro.generated'
 import { BentoGrid, BentoGridItem } from '../../lib/andromeda-pro.generated'
 import { Navbar } from '../../lib/andromeda-pro.generated'
 import { Footer } from '../../lib/andromeda-pro.generated'
+import { PaymentCard } from '../../lib/andromeda-pro.generated'
 import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
@@ -1700,6 +1701,24 @@ function FooterDemo() {
   )
 }
 
+// The fintech page's three cards side by side, one per lacquer. A mouse over
+// a card turns it toward the pointer and moves a light across it.
+const PAYMENT_CARD_DEMO = [
+  { tone: 'ember', kind: 'Debit', label: 'Everyday', last4: '4821', expiry: '08/29' },
+  { tone: 'graphite', kind: 'Virtual', label: 'Travel', last4: '7305', expiry: '03/28' },
+  { tone: 'steel', kind: 'Virtual', label: 'Bills', last4: '1190', expiry: '11/27' },
+] as const
+
+function PaymentCardDemo() {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: tokens.spacing[6] }}>
+      {PAYMENT_CARD_DEMO.map((card) => (
+        <PaymentCard key={card.last4} brand="Andromeda" width={288} {...card} />
+      ))}
+    </div>
+  )
+}
+
 const PRICING_DEMO = [
   {
     name: 'Starter',
@@ -2474,6 +2493,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   navbar: NavbarDemo,
   'panel-header': PanelHeaderDemo,
   'panel-menu': PanelMenuDemo,
+  'payment-card': PaymentCardDemo,
   planet: PlanetDemo,
   popover: PopoverDemo,
   orb: OrbDemo,

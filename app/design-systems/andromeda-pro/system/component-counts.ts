@@ -43,6 +43,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'orb': { variants: 1, states: 0 },
   'panel-header': { variants: 2, states: 0 },
   'panel-menu': { variants: 3, states: 1 },
+  'payment-card': { variants: 7, states: 0 },
   'planet': { variants: 2, states: 0 },
   'popover': { variants: 3, states: 0 },
   'progress-bar': { variants: 5, states: 0 },

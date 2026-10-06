@@ -42,6 +42,7 @@ import { nodes } from './nodes'
 import { orb } from './orb'
 import { panelHeader } from './panel-header'
 import { panelMenu } from './panel-menu'
+import { paymentCard } from './payment-card'
 import { planet } from './planet'
 import { popover } from './popover'
 import { progressBar } from './progress-bar'
@@ -77,7 +78,7 @@ export const SPECS: readonly MatrixSpec[] = [
   // side by side.
   cornerMarkers, cube, dataTable, table_, dateRangePicker, drawer, emptyState, footer, funnelChart,
   gauge, heatGrid, iconButton, input, item, logoCloud, marquee, mediaCard, message,
-  metricChart, musicPlayer, navItem, navbar, nodes, orb, panelHeader, panelMenu, planet, popover,
+  metricChart, musicPlayer, navItem, navbar, nodes, orb, panelHeader, panelMenu, paymentCard, planet, popover,
   pricingCard, progressBar, promptInput, radarChart, radio, searchField, sectionHeading, segmentedControl, sidebar, skeleton, slider, spinner,
   statTile, stepper, strengthMeter, suggestion, tabs, tag, textarea, toggle, tool, tooltip, topBar, trendChart, userCard,
   userMenu, waveform,

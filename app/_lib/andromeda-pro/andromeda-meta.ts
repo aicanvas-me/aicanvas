@@ -319,6 +319,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/panel-menu.png?v=4',
   },
   {
+    slug: 'payment-card',
+    name: 'Payment Card',
+    description:
+      'Shows a payment card as the card itself, with its name, last four digits and expiry, and tilts toward the pointer.',
+    sourceFile: 'PaymentCard.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/payment-card.png?v=1',
+  },
+  {
     slug: 'planet',
     name: 'Planet',
     description:
