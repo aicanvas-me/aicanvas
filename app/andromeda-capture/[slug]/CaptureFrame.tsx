@@ -22,17 +22,22 @@ const FRAME_H = 720
 const PAD = 40
 const INNER_W = FRAME_W - PAD * 2
 const INNER_H = FRAME_H - PAD * 2
-// Demos are built for the tall detail page, so most occupy a small fraction of
-// a 16:9 frame and read tiny at card size. Scale each one UP past a plain fit
-// (× ZOOM) so the component fills the card and stays legible; the frame crops
-// the overflow. MAX_SCALE caps tiny demos from blowing up absurdly.
+// Every demo is fitted whole into the frame by default: a zoom past the fit
+// crops, and a cropped card cut Alert, Card, Input and a dozen more mid-word.
+// MAX_SCALE caps tiny demos from blowing up absurdly.
 const MAX_SCALE = 4.5
-const ZOOM = 1.5
-// A demo whose whole shape IS the component cannot survive that crop: a rail
-// loses its title and its last row. These slugs are fitted instead of zoomed.
-// Keep this list short — it is for components that are tall by nature, not a
-// dial to retune cards that already shipped.
-const ZOOM_OVERRIDES: Record<string, number> = { sidebar: 1 }
+const ZOOM = 1
+// Zoomed past the fit (the frame crops the overflow). Two groups: small demos
+// that read tiny when only fitted, and the posters first shot at 1.5, kept so a
+// reshoot reproduces the card that already shipped.
+const ZOOM_OVERRIDES: Record<string, number> = Object.fromEntries(
+  [
+    'avatar', 'planet', 'radio', 'spinner', 'tag', 'toggle',
+    'artifact', 'burst', 'chart-funnel', 'choice-card', 'collapsible', 'combobox',
+    'cube', 'item', 'message', 'nodes', 'orb', 'popover', 'prompt-input',
+    'skeleton', 'strength-meter', 'suggestion', 'tool',
+  ].map((slug) => [slug, 1.5]),
+)
 
 export function CaptureFrame({ slug }: { slug: string }) {
   const innerRef = useRef<HTMLDivElement>(null)
