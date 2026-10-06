@@ -216,7 +216,8 @@ const V2_ONLY_NAMES = [
   'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
   'Popover', 'PopoverContent', 'PopoverLabel', 'PopoverSeparator', 'PopoverTrigger',
   'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
-  'Sidebar', 'Skeleton', 'StrengthMeter', 'Suggestion', 'Tabs', 'TabsContent', 'TabsList', 'TabsTrigger',
+  'Sidebar', 'Skeleton', 'Stepper', 'StepperDescription', 'StepperItem', 'StepperMeta', 'StepperTitle',
+  'StrengthMeter', 'Suggestion', 'Tabs', 'TabsContent', 'TabsList', 'TabsTrigger',
   'Tool', 'TopBar',
 ]
 

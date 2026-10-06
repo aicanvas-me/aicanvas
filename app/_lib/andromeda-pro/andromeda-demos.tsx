@@ -85,6 +85,7 @@ import { Spinner } from '../../lib/andromeda-pro.generated'
 import { Skeleton } from '../../lib/andromeda-pro.generated'
 import { Suggestion } from '../../lib/andromeda-pro.generated'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/andromeda-pro.generated'
+import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '../../lib/andromeda-pro.generated'
@@ -1520,6 +1521,37 @@ function ItemDemo() {
   )
 }
 
+const STEPPER_DEMO = [
+  { title: 'Amount reserved', text: 'Held from your balance', time: '0.2 s' },
+  { title: 'Recipient verified', text: 'Name and account checked', time: '0.4 s' },
+  { title: 'Rate locked', text: 'The quote you confirmed', time: '0.3 s' },
+  { title: 'Funds delivered', text: 'In the recipient account', time: '0.9 s' },
+]
+
+function StepperDemo() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[8], width: '100%', maxWidth: 360 }}>
+      <Stepper activeStep={1} aria-label="Transfer in progress">
+        {STEPPER_DEMO.map((step) => (
+          <StepperItem key={step.title}>
+            <StepperTitle>{step.title}</StepperTitle>
+            <StepperDescription>{step.text}</StepperDescription>
+            <StepperMeta>{step.time}</StepperMeta>
+          </StepperItem>
+        ))}
+      </Stepper>
+      <Stepper activeStep={STEPPER_DEMO.length} aria-label="Transfer complete">
+        {STEPPER_DEMO.map((step) => (
+          <StepperItem key={step.title}>
+            <StepperTitle>{step.title}</StepperTitle>
+            <StepperMeta>{step.time}</StepperMeta>
+          </StepperItem>
+        ))}
+      </Stepper>
+    </div>
+  )
+}
+
 function SpinnerDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 640 }}>
@@ -2194,6 +2226,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   radio: RadioDemo,
   slider: SliderDemo,
   spinner: SpinnerDemo,
+  stepper: StepperDemo,
   'stat-tile': StatTileDemo,
   tag: TagDemo,
   'chart-trend': TrendChartDemo,

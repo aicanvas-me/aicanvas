@@ -367,6 +367,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/spinner.png?v=3',
   },
   {
+    slug: 'stepper',
+    name: 'Stepper',
+    description:
+      'Shows a run of steps in order, marking each one done, running or still to come.',
+    sourceFile: 'Stepper.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/stepper.png?v=1',
+  },
+  {
     slug: 'stat-tile',
     name: 'Stat Tile',
     description:

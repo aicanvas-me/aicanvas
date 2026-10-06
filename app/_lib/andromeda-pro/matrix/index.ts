@@ -51,6 +51,7 @@ import { skeleton } from './skeleton'
 import { slider } from './slider'
 import { spinner } from './spinner'
 import { statTile } from './stat-tile'
+import { stepper } from './stepper'
 import { table_ } from './table-basic'
 import { tag } from './tag'
 import { textarea } from './textarea'
@@ -71,7 +72,7 @@ export const SPECS: readonly MatrixSpec[] = [
   gauge, heatGrid, iconButton, input, item, mediaCard, message,
   metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet, popover,
   progressBar, promptInput, radarChart, radio, searchField, segmentedControl, sidebar, skeleton, slider, spinner,
-  statTile, strengthMeter, suggestion, tabs, tag, textarea, toggle, tool, tooltip, topBar, trendChart, userCard,
+  statTile, stepper, strengthMeter, suggestion, tabs, tag, textarea, toggle, tool, tooltip, topBar, trendChart, userCard,
   userMenu, waveform,
 ]
 

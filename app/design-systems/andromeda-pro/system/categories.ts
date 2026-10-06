@@ -59,6 +59,7 @@ export const CATEGORY: Record<string, string> = {
   'empty-state': 'Feedback',
   spinner: 'Feedback',
   skeleton: 'Feedback',
+  stepper: 'Feedback',
 
   // Actions
   button: 'Actions',
