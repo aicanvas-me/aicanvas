@@ -213,6 +213,7 @@ export const DESIGN_SYSTEMS = [
       'components/MetricChart.tsx',
       'components/MusicPlayer.tsx',
       'components/NavItem.tsx',
+      'components/Navbar.tsx',
       'components/Nodes.tsx',
       'components/Orb.tsx',
       'components/PanelHeader.tsx',

@@ -279,6 +279,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/music-player.png?v=2',
   },
   {
+    slug: 'navbar',
+    name: 'Navbar',
+    description:
+      'Keeps the brand, page links and main action at the top of a page, and marks the section you are reading.',
+    sourceFile: 'Navbar.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/navbar.png?v=1',
+  },
+  {
     slug: 'nav-item',
     name: 'Nav Item',
     description:

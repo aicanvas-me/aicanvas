@@ -85,6 +85,7 @@ export const CATEGORY: Record<string, string> = {
   // Marketing — the parts a landing page is built from.
   'bento-grid': 'Marketing',
   'logo-cloud': 'Marketing',
+  navbar: 'Marketing',
   'pricing-card': 'Marketing',
   'section-heading': 'Marketing',
 

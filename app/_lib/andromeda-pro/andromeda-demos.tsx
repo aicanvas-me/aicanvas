@@ -90,6 +90,7 @@ import { LogoCloud } from '../../lib/andromeda-pro.generated'
 import { SectionHeading } from '../../lib/andromeda-pro.generated'
 import { PricingCard, PricingGrid } from '../../lib/andromeda-pro.generated'
 import { BentoGrid, BentoGridItem } from '../../lib/andromeda-pro.generated'
+import { Navbar } from '../../lib/andromeda-pro.generated'
 import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
@@ -1579,6 +1580,61 @@ function BentoGridDemo() {
   )
 }
 
+const NAVBAR_LINKS = [
+  { label: 'Toolkit', href: '#features' },
+  { label: 'Use cases', href: '#solutions' },
+  { label: 'Plans', href: '#pricing' },
+  { label: 'Journal', href: '#insights' },
+]
+
+function NavbarBrand() {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: tokens.spacing[2],
+        ...tokens.typography.role.label,
+        fontWeight: tokens.typography.weight.semibold,
+        color: `var(--at-text-primary, ${tokens.color.text.primary})`,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <Compass size={tokens.iconSize.xl} weight="regular" aria-hidden />
+      Andromeda
+    </span>
+  )
+}
+
+// The fintech page's bar in a frame: static, since it does not sit at the
+// top of a page scroller here.
+function NavbarDemo() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        maxWidth: 960,
+        border: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
+        overflow: 'hidden',
+      }}
+    >
+      <Navbar
+        sticky={false}
+        brand={<NavbarBrand />}
+        links={NAVBAR_LINKS}
+        secondaryActions={<Button variant="ghost">Sign in</Button>}
+        actions={<Button>Open account</Button>}
+        menuActions={
+          <>
+            <Button>Open account</Button>
+            <Button variant="outline">Sign in</Button>
+          </>
+        }
+      />
+    </div>
+  )
+}
+
 const PRICING_DEMO = [
   {
     name: 'Starter',
@@ -2349,6 +2405,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'table-data': DataTableDemo,
   'music-player': MusicPlayerDemo,
   'nav-item': NavItemDemo,
+  navbar: NavbarDemo,
   'panel-header': PanelHeaderDemo,
   'panel-menu': PanelMenuDemo,
   planet: PlanetDemo,

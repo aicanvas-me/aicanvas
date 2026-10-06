@@ -213,7 +213,7 @@ const V2_ONLY_NAMES = [
   'BentoGrid', 'BentoGridItem', 'Burst', 'ChoiceCard', 'ChoiceCardGroup',
   'Collapsible', 'CollapsibleContent', 'CollapsibleTrigger', 'Combobox', 'Cube', 'EmptyStateMedia',
   'FunnelChart', 'Item', 'ItemActions', 'ItemContent', 'ItemDescription', 'ItemMedia', 'ItemTitle',
-  'LogoCloud', 'Marquee', 'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
+  'LogoCloud', 'Marquee', 'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Navbar', 'Nodes', 'Orb',
   'Popover', 'PopoverContent', 'PopoverLabel', 'PopoverSeparator', 'PopoverTrigger',
   'PricingCard', 'PricingGrid', 'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
   'SectionHeading', 'Sidebar', 'Skeleton', 'Stepper', 'StepperDescription', 'StepperItem', 'StepperMeta', 'StepperTitle',
