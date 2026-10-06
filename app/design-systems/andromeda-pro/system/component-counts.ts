@@ -25,6 +25,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'date-range-picker': { variants: 4, states: 3 },
   'drawer': { variants: 2, states: 0 },
   'empty-state': { variants: 4, states: 0 },
+  'footer': { variants: 3, states: 0 },
   'chart-funnel': { variants: 2, states: 0 },
   'gauge': { variants: 4, states: 0 },
   'heat-grid': { variants: 6, states: 0 },

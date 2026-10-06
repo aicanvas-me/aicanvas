@@ -200,6 +200,7 @@ export const DESIGN_SYSTEMS = [
       'components/DateRangePicker.tsx',
       'components/Drawer.tsx',
       'components/EmptyState.tsx',
+      'components/Footer.tsx',
       'components/FunnelChart.tsx',
       'components/Gauge.tsx',
       'components/HeatGrid.tsx',

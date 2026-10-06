@@ -143,6 +143,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/empty-state.png?v=3',
   },
   {
+    slug: 'footer',
+    name: 'Footer',
+    description:
+      'Closes a page with the brand, its secondary links in titled columns, and an optional large name.',
+    sourceFile: 'Footer.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/footer.png?v=1',
+  },
+  {
     slug: 'chart-funnel',
     name: 'Chart Funnel',
     description:

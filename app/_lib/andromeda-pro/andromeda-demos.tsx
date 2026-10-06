@@ -91,6 +91,7 @@ import { SectionHeading } from '../../lib/andromeda-pro.generated'
 import { PricingCard, PricingGrid } from '../../lib/andromeda-pro.generated'
 import { BentoGrid, BentoGridItem } from '../../lib/andromeda-pro.generated'
 import { Navbar } from '../../lib/andromeda-pro.generated'
+import { Footer } from '../../lib/andromeda-pro.generated'
 import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
@@ -1635,6 +1636,70 @@ function NavbarDemo() {
   )
 }
 
+// The Andromeda mark's two shapes on its 28 x 24 grid: the lockup draws
+// them in the text ink, the wordmark fills them with its own.
+const FOOTER_MARK = [
+  'M0 24L13.1483 0L14.9111 7.19476C14.4502 8.0149 14.0026 8.81944 13.5507 9.63168L9.86787 16.2221C10.7337 15.869 11.6049 15.5292 12.4707 15.1762L16.531 13.5278L0 24Z',
+  'M14.7637 0L19.9727 20.3637L27.9998 24C26.8086 21.7712 25.5259 19.5191 24.3008 17.3031L17.7544 5.4295C17.5204 5.00473 14.8816 0.132369 14.7637 0Z',
+].map((d) => <path key={d} d={d} />)
+
+const FOOTER_COLUMNS = [
+  { title: 'Accounts', links: ['Personal', 'Joint', 'Business', 'Savings pots'] },
+  { title: 'Tools', links: ['Exchange', 'Virtual cards', 'Spending reports', 'Team approvals'] },
+  { title: 'Company', links: ['About', 'Journal', 'Careers', 'Security'] },
+  { title: 'Legal', links: ['Terms', 'Privacy', 'Legal', 'Imprint'] },
+].map(({ title, links }) => ({ title, links: links.map((label) => ({ label })) }))
+
+function FooterBrand() {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: tokens.spacing[2],
+        ...tokens.typography.role.label,
+        fontWeight: tokens.typography.weight.semibold,
+        color: `var(--at-text-primary, ${tokens.color.text.primary})`,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <svg
+        aria-hidden
+        viewBox="0 0 28 24"
+        width={tokens.iconSize.xl}
+        height={(tokens.iconSize.xl * 24) / 28}
+        fill="currentColor"
+      >
+        {FOOTER_MARK}
+      </svg>
+      Andromeda
+    </span>
+  )
+}
+
+// The fintech page's footer in a frame, signing off with the wordmark.
+function FooterDemo() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        maxWidth: 960,
+        border: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
+        overflow: 'hidden',
+      }}
+    >
+      <Footer
+        brand={<FooterBrand />}
+        description="Accounts, cards and transfers on one live screen."
+        columns={FOOTER_COLUMNS}
+        wordmark="Andromeda"
+        wordmarkMark={FOOTER_MARK}
+        wordmarkMarkViewBox="0 0 28 24"
+      />
+    </div>
+  )
+}
+
 const PRICING_DEMO = [
   {
     name: 'Starter',
@@ -2391,6 +2456,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'date-range-picker': DateRangePickerDemo,
   drawer: DrawerDemo,
   'empty-state': EmptyStateDemo,
+  footer: FooterDemo,
   'chart-funnel': FunnelChartDemo,
   gauge: GaugeDemo,
   'heat-grid': HeatGridDemo,

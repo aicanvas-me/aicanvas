@@ -23,6 +23,7 @@ import { dataTable } from './table-data'
 import { dateRangePicker } from './date-range-picker'
 import { drawer } from './drawer'
 import { emptyState } from './empty-state'
+import { footer } from './footer'
 import { funnelChart } from './chart-funnel'
 import { gauge } from './gauge'
 import { heatGrid } from './heat-grid'
@@ -74,7 +75,7 @@ export const SPECS: readonly MatrixSpec[] = [
   accordion, alert, artifact, avatar, badge, bentoGrid, burst, button, card, checkbox, choiceCard, collapsible, combobox,
   // The two tables sit together so their selected-row treatments are judged
   // side by side.
-  cornerMarkers, cube, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,
+  cornerMarkers, cube, dataTable, table_, dateRangePicker, drawer, emptyState, footer, funnelChart,
   gauge, heatGrid, iconButton, input, item, logoCloud, marquee, mediaCard, message,
   metricChart, musicPlayer, navItem, navbar, nodes, orb, panelHeader, panelMenu, planet, popover,
   pricingCard, progressBar, promptInput, radarChart, radio, searchField, sectionHeading, segmentedControl, sidebar, skeleton, slider, spinner,
