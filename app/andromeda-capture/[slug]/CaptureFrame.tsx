@@ -32,7 +32,17 @@ const ZOOM = 1.5
 // loses its title and its last row. These slugs are fitted instead of zoomed.
 // Keep this list short — it is for components that are tall by nature, not a
 // dial to retune cards that already shipped.
-const ZOOM_OVERRIDES: Record<string, number> = { sidebar: 1 }
+// The marketing set: a heading, a footer and a navbar are whole only with
+// their edges, so they are fitted; a logo band runs off both sides anyway,
+// so it is zoomed further until the marks read at card size.
+const ZOOM_OVERRIDES: Record<string, number> = {
+  sidebar: 1,
+  'section-heading': 1,
+  footer: 1,
+  navbar: 1,
+  marquee: 3,
+  'logo-cloud': 3,
+}
 
 export function CaptureFrame({ slug }: { slug: string }) {
   const innerRef = useRef<HTMLDivElement>(null)

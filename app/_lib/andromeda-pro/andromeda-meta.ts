@@ -148,7 +148,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Closes a page with the brand, its secondary links in titled columns, and an optional large name.',
     sourceFile: 'Footer.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/footer.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/footer.png?v=2',
   },
   {
     slug: 'chart-funnel',
@@ -236,7 +236,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Shows the names or logos of customers in a slow moving band under a short line of text.',
     sourceFile: 'LogoCloud.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/logo-cloud.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/logo-cloud.png?v=2',
   },
   {
     slug: 'marquee',
@@ -244,7 +244,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Loops a row of items slowly across its width, so a long list shows without taking room.',
     sourceFile: 'Marquee.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/marquee.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/marquee.png?v=2',
   },
   {
     slug: 'media-card',
@@ -292,7 +292,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Keeps the brand, page links and main action at the top of a page, and marks the section you are reading.',
     sourceFile: 'Navbar.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/navbar.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/navbar.png?v=2',
   },
   {
     slug: 'nav-item',
@@ -388,7 +388,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Opens a page section with a short label, a title and a sentence that says what the section covers.',
     sourceFile: 'SectionHeading.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/section-heading.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/section-heading.png?v=2',
   },
   {
     slug: 'segmented-control',
@@ -638,9 +638,8 @@ const TEMPLATE_ART: Record<string, string> = {
   'sign-in': 'Sign_in_pro_dark.png',
   // Sign Up is Pro-only for the same reason.
   'sign-up': 'Sign_up_pro_dark.png',
-  // Fintech Landing is Pro-only. Empty until its poster is shot and uploaded:
-  // an empty name keeps the card's fallback panel instead of a broken image.
-  'fintech-landing': '',
+  // Fintech Landing is Pro-only too: no Legacy counterpart to pair with.
+  'fintech-landing': 'Fintech_landing_pro_dark.png',
   // AI Chat is Pro-only too: no Legacy counterpart to pair with.
   'ai-chat': 'Ai_chat_pro_dark.png',
 }

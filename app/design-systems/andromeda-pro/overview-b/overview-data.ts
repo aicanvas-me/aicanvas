@@ -84,8 +84,7 @@ export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
   'andromeda-pro-signal-room': 'Signal_Room_pro_dark.png',
   'andromeda-pro-sign-in': 'Sign_in_pro_dark.png',
   'andromeda-pro-sign-up': 'Sign_up_pro_dark.png',
-  // Empty until the poster is shot: the card keeps its fallback panel.
-  'andromeda-pro-fintech-landing': '',
+  'andromeda-pro-fintech-landing': 'Fintech_landing_pro_dark.png',
   'andromeda-pro-city-operations': 'City_operations_pro_dark.png',
   'andromeda-pro-ai-chat': 'Ai_chat_pro_dark.png',
 }
@@ -98,7 +97,7 @@ const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
   'andromeda-pro-signal-room': 'Signal_Room_pro_light.png',
   'andromeda-pro-sign-in': 'Sign_in_pro_light.png',
   'andromeda-pro-sign-up': 'Sign_up_pro_light.png',
-  'andromeda-pro-fintech-landing': '',
+  'andromeda-pro-fintech-landing': 'Fintech_landing_pro_light.png',
   'andromeda-pro-city-operations': 'City_operations_pro_light.png',
   'andromeda-pro-ai-chat': 'Ai_chat_pro_light.png',
 }
