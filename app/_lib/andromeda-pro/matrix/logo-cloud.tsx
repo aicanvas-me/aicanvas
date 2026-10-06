@@ -25,7 +25,7 @@ export const logoCloud: MatrixSpec = {
   `,
   variants: [
     { label: 'Default', props: { label: 'Teams that already run their money on Andromeda' } },
-    { label: 'Custom label', props: { label: 'Trusted by finance teams at' } },
+    { label: 'No label', props: { 'aria-label': 'Customers' } },
   ],
   states: [
     { label: 'Hover', force: 'hover', props: { label: 'Teams that already run their money on Andromeda' } },
