@@ -20,7 +20,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Lists questions that each open their answer below them, one at a time or several at once.',
     sourceFile: 'Accordion.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/accordion.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/accordion.png?v=2',
   },
   {
     slug: 'alert',
@@ -60,7 +60,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Lays out cards on a grid where one can span several columns and cards in a row line up their parts.',
     sourceFile: 'BentoGrid.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/bento-grid.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/bento-grid.png?v=2',
   },
   {
     slug: 'button',
@@ -324,7 +324,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Shows a payment card as the card itself, with its name, last four digits and expiry, and tilts toward the pointer.',
     sourceFile: 'PaymentCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/payment-card.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/payment-card.png?v=2',
   },
   {
     slug: 'planet',
@@ -348,7 +348,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Shows one plan with its price, what it includes and the button to choose it, lined up with the plans beside it.',
     sourceFile: 'PricingCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/pricing-card.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/pricing-card.png?v=2',
   },
   {
     slug: 'progress-bar',
@@ -436,7 +436,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Shows a run of steps in order, marking each one done, running or still to come.',
     sourceFile: 'Stepper.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/stepper.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/stepper.png?v=2',
   },
   {
     slug: 'stat-tile',
@@ -468,7 +468,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Splits content into named panels and shows one at a time, as a row of tabs or a list whose rows can each carry a sentence.',
     sourceFile: 'Tabs.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tabs.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tabs.png?v=2',
   },
   {
     slug: 'tag',
