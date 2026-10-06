@@ -6,6 +6,11 @@ export const progressBar: MatrixSpec = {
   Component: ProgressBar,
   sizes: null,
   wide: true,
+  // The strip is fixed geometry (30 slats, never stretched), and `wide` makes
+  // the canvas a full-width block, so the bar sat flush left in the hero and
+  // in every card. Shrinking the root to its own width and centring it keeps
+  // it in the middle of whatever room the canvas has.
+  baseProps: { style: { width: 'fit-content', marginInline: 'auto' } },
   // Configurations, not variants: the reading picks the colour. Empty and Full
   // carry no thresholds — they demonstrate the 0 and 100 ends of the fill, not
   // a tone.
