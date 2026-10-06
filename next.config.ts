@@ -105,6 +105,18 @@ const nextConfig: NextConfig = {
         destination: "/design-systems/andromeda/system",
         permanent: true,
       },
+      // The standalone Andromeda Button copied the design system's Button and
+      // was retired. Its page and its install URL land on the system Button.
+      {
+        source: "/components/andromeda-button",
+        destination: "/design-systems/andromeda/button",
+        permanent: true,
+      },
+      {
+        source: "/r/andromeda-button.json",
+        destination: "/r/andromeda-button-system.json",
+        permanent: true,
+      },
     ];
   },
 };

@@ -91,8 +91,6 @@ import GlassProgress from '../../components-workspace/glass-progress'
 import { prompts as glassProgressPrompts } from '../../components-workspace/glass-progress/prompts'
 import GlassAiCompose from '../../components-workspace/glass-ai-compose'
 import { prompts as glassAiComposePrompts } from '../../components-workspace/glass-ai-compose/prompts'
-import AndromedaButton from '../../components-workspace/andromeda-button'
-import { prompts as andromedaButtonPrompts } from '../../components-workspace/andromeda-button/prompts'
 import AvatarPicker from '../../components-workspace/avatar-picker'
 import { prompts as avatarPickerPrompts } from '../../components-workspace/avatar-picker/prompts'
 import TaskCards from '../../components-workspace/task-cards'
@@ -920,19 +918,6 @@ Requirements:
     PreviewComponent: GlassAiCompose,
     code: componentCodes['glass-ai-compose'],
     prompts: glassAiComposePrompts,
-  },
-  {
-    slug: 'andromeda-button',
-    name: 'Andromeda Button',
-    description: 'A sci-fi / blueprint-aesthetic button with five variants (default, outline, ghost, destructive, link), three sizes (small, medium, large), optional leading icon, and full hover / focus / active / disabled state coverage. Transparent hairline surfaces sit on a near-black canvas, with an electric-blue accent that brightens and glows on interaction.',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-button.png?updatedAt=1775998697243',
-    tags: [
-      { label: 'Buttons & Toggles', accent: true },
-      { label: 'Andromeda' },
-    ],
-    PreviewComponent: AndromedaButton,
-    code: componentCodes['andromeda-button'],
-    prompts: andromedaButtonPrompts,
   },
   {
     slug: 'meet-the-crew',

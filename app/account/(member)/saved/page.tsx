@@ -49,8 +49,7 @@ export default async function SavedPage() {
 
   // Enrich each row with a name + thumbnail so SavedList can render the card
   // without a second client-side lookup. Andromeda system components aren't
-  // in COMPONENTS (only the free `andromeda-button` standalone is) — those
-  // are looked up in the Andromeda metadata instead. Design-system templates
+  // in COMPONENTS; those are looked up in the Andromeda metadata instead. Design-system templates
   // are in neither and fall through to the bare slug.
   const bySlug = new Map(COMPONENTS.map((c) => [c.slug, c]))
   const rows: SavedRow[] = raw.map((r) => {
