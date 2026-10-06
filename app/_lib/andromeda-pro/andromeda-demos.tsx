@@ -88,6 +88,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/andromeda-pr
 import { Marquee } from '../../lib/andromeda-pro.generated'
 import { LogoCloud } from '../../lib/andromeda-pro.generated'
 import { SectionHeading } from '../../lib/andromeda-pro.generated'
+import { PricingCard, PricingGrid } from '../../lib/andromeda-pro.generated'
 import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
@@ -1549,6 +1550,46 @@ function SectionHeadingDemo() {
   )
 }
 
+const PRICING_DEMO = [
+  {
+    name: 'Starter',
+    description: 'For one person and one wallet.',
+    price: 0,
+    period: 'Free for good, no card asked',
+    cta: 'Open free account',
+    features: ['One multi-currency wallet', 'Free transfers between accounts', 'One virtual card', 'Help by email'],
+  },
+  {
+    name: 'Plus',
+    description: 'For freelancers and households.',
+    price: 29,
+    period: 'per month',
+    cta: 'Try Plus free for 30 days',
+    featured: true,
+    features: ['Everything in Starter', 'Up to 10 virtual cards', 'Lower fees abroad', 'Savings pots', 'Chat support'],
+  },
+  {
+    name: 'Business',
+    description: 'For teams that spend together.',
+    price: 149,
+    period: 'per month',
+    cta: 'Book a call',
+    features: ['Everything in Plus', 'A card for every teammate', 'Approval rules for payments', 'Accounting exports', 'API access'],
+  },
+]
+
+function PricingCardDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 960 }}>
+      <PricingGrid>
+        {PRICING_DEMO.map((plan) => (
+          <PricingCard key={plan.name} {...plan} featuredLabel="Most picked" />
+        ))}
+      </PricingGrid>
+    </div>
+  )
+}
+
 const LOGO_CLOUD_DEMO = ['Northwind', 'Lumen', 'Parallax', 'Vantage', 'Kestrel', 'Meridian']
 
 function LogoCloudDemo() {
@@ -2288,6 +2329,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   cube: CubeDemo,
   'search-field': SearchFieldDemo,
   'section-heading': SectionHeadingDemo,
+  'pricing-card': PricingCardDemo,
   'strength-meter': StrengthMeterDemo,
   sidebar: SidebarDemo,
   skeleton: SkeletonDemo,

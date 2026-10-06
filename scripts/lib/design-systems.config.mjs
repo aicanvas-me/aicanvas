@@ -219,6 +219,7 @@ export const DESIGN_SYSTEMS = [
       'components/Planet.tsx',
       'components/Popover.tsx',
       'components/ProgressBar.tsx',
+      'components/PricingCard.tsx',
       'components/PromptInput.tsx',
       'components/RadarChart.tsx',
       'components/Radio.tsx',

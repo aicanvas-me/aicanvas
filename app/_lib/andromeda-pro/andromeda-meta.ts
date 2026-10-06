@@ -311,6 +311,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/popover.png?v=1',
   },
   {
+    slug: 'pricing-card',
+    name: 'Pricing Card',
+    description:
+      'Shows one plan with its price, what it includes and the button to choose it, lined up with the plans beside it.',
+    sourceFile: 'PricingCard.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/pricing-card.png?v=1',
+  },
+  {
     slug: 'progress-bar',
     name: 'Progress Bar',
     description:

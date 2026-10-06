@@ -215,7 +215,7 @@ const V2_ONLY_NAMES = [
   'FunnelChart', 'Item', 'ItemActions', 'ItemContent', 'ItemDescription', 'ItemMedia', 'ItemTitle',
   'LogoCloud', 'Marquee', 'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
   'Popover', 'PopoverContent', 'PopoverLabel', 'PopoverSeparator', 'PopoverTrigger',
-  'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
+  'PricingCard', 'PricingGrid', 'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
   'SectionHeading', 'Sidebar', 'Skeleton', 'Stepper', 'StepperDescription', 'StepperItem', 'StepperMeta', 'StepperTitle',
   'StrengthMeter', 'Suggestion', 'Tabs', 'TabsContent', 'TabsList', 'TabsTrigger',
   'Tool', 'TopBar',
