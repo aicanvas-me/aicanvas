@@ -86,6 +86,7 @@ import { Skeleton } from '../../lib/andromeda-pro.generated'
 import { Suggestion } from '../../lib/andromeda-pro.generated'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/andromeda-pro.generated'
 import { Marquee } from '../../lib/andromeda-pro.generated'
+import { LogoCloud } from '../../lib/andromeda-pro.generated'
 import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
@@ -1522,6 +1523,19 @@ function ItemDemo() {
   )
 }
 
+const LOGO_CLOUD_DEMO = ['Northwind', 'Lumen', 'Parallax', 'Vantage', 'Kestrel', 'Meridian']
+
+function LogoCloudDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 720 }}>
+      <LogoCloud
+        label="Teams that already run their money on Andromeda"
+        logos={LOGO_CLOUD_DEMO.map((name) => ({ name }))}
+      />
+    </div>
+  )
+}
+
 const MARQUEE_DEMO = ['Payments', 'Cards', 'Payroll', 'Invoices', 'Treasury', 'Exchange', 'Reporting', 'Lending']
 
 function MarqueeDemo() {
@@ -2231,6 +2245,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   input: InputDemo,
   item: ItemDemo,
   waveform: WaveformDemo,
+  'logo-cloud': LogoCloudDemo,
   marquee: MarqueeDemo,
   'media-card': MediaCardDemo,
   message: MessageDemo,

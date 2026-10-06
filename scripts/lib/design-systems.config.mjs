@@ -205,6 +205,7 @@ export const DESIGN_SYSTEMS = [
       'components/IconButton.tsx',
       'components/Input.tsx',
       'components/Item.tsx',
+      'components/LogoCloud.tsx',
       'components/Marquee.tsx',
       'components/MediaCard.tsx',
       'components/Message.tsx',

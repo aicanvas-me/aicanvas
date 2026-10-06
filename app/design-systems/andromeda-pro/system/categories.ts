@@ -82,6 +82,9 @@ export const CATEGORY: Record<string, string> = {
   'media-card': 'Media',
   'music-player': 'Media',
 
+  // Marketing — the parts a landing page is built from.
+  'logo-cloud': 'Marketing',
+
   // Objects — the sanctioned decorative class (motion.md#motion-philosophy).
   // Planet moved here from "Visualization": it was
   // never a visualization, it was the class's first member.

@@ -215,6 +215,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/waveform.png?v=1',
   },
   {
+    slug: 'logo-cloud',
+    name: 'Logo Cloud',
+    description:
+      'Shows the names or logos of customers in a slow moving band under a short line of text.',
+    sourceFile: 'LogoCloud.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/logo-cloud.png?v=1',
+  },
+  {
     slug: 'marquee',
     name: 'Marquee',
     description:

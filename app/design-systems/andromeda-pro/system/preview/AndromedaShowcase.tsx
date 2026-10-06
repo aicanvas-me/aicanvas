@@ -47,7 +47,7 @@ import { CATEGORY } from '../categories'
 // the meta order holds. A slug missing from the map lands in Other, visible.
 const CATEGORY_ORDER = [
   'Actions', 'Forms', 'Data display', 'Charts', 'Overlays', 'AI', 'Feedback',
-  'Navigation', 'Surfaces', 'Media', 'Objects', 'Other',
+  'Navigation', 'Surfaces', 'Media', 'Marketing', 'Objects', 'Other',
 ] as const
 const GROUPED_META = CATEGORY_ORDER.map((category) => ({
   category,

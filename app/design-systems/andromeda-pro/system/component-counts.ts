@@ -30,6 +30,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'icon-button': { variants: 6, states: 8 },
   'input': { variants: 6, states: 5 },
   'item': { variants: 5, states: 6 },
+  'logo-cloud': { variants: 2, states: 1 },
   'marquee': { variants: 3, states: 0 },
   'media-card': { variants: 6, states: 0 },
   'message': { variants: 3, states: 1 },

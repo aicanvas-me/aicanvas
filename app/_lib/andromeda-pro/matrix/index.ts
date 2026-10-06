@@ -28,6 +28,7 @@ import { heatGrid } from './heat-grid'
 import { iconButton } from './icon-button'
 import { input } from './input'
 import { item } from './item'
+import { logoCloud } from './logo-cloud'
 import { marquee } from './marquee'
 import { mediaCard } from './media-card'
 import { message } from './message'
@@ -70,7 +71,7 @@ export const SPECS: readonly MatrixSpec[] = [
   // The two tables sit together so their selected-row treatments are judged
   // side by side.
   cornerMarkers, cube, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,
-  gauge, heatGrid, iconButton, input, item, marquee, mediaCard, message,
+  gauge, heatGrid, iconButton, input, item, logoCloud, marquee, mediaCard, message,
   metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet, popover,
   progressBar, promptInput, radarChart, radio, searchField, segmentedControl, sidebar, skeleton, slider, spinner,
   statTile, stepper, strengthMeter, suggestion, tabs, tag, textarea, toggle, tool, tooltip, topBar, trendChart, userCard,

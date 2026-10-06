@@ -213,7 +213,7 @@ const V2_ONLY_NAMES = [
   'Burst', 'ChoiceCard', 'ChoiceCardGroup',
   'Collapsible', 'CollapsibleContent', 'CollapsibleTrigger', 'Combobox', 'Cube', 'EmptyStateMedia',
   'FunnelChart', 'Item', 'ItemActions', 'ItemContent', 'ItemDescription', 'ItemMedia', 'ItemTitle',
-  'Marquee', 'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
+  'LogoCloud', 'Marquee', 'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
   'Popover', 'PopoverContent', 'PopoverLabel', 'PopoverSeparator', 'PopoverTrigger',
   'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
   'Sidebar', 'Skeleton', 'Stepper', 'StepperDescription', 'StepperItem', 'StepperMeta', 'StepperTitle',
