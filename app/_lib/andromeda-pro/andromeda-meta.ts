@@ -386,7 +386,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'tabs',
     name: 'Tabs',
     description:
-      'Splits content into named panels and shows one at a time, as a row of tabs or a list with a line under each.',
+      'Splits content into named panels and shows one at a time, as a row of tabs or a list whose rows can each carry a sentence.',
     sourceFile: 'Tabs.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tabs.png?v=1',
   },
