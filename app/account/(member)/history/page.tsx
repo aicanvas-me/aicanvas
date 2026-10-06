@@ -4,7 +4,7 @@ import type { InstallHistoryRow } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
 import { getAndromedaComponentMeta } from '../../../_lib/andromeda/andromeda-meta'
 import { getAndromedaComponentMeta as getAndromedaProComponentMeta } from '../../../_lib/andromeda-pro/andromeda-meta'
-import { itemHref } from '../itemHref'
+import { itemHref, resolveRetiredSlug } from '../itemHref'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 
 // ─── Activity page ──────────────────────────────────────────────────────────
@@ -65,10 +65,11 @@ export default async function HistoryPage() {
   }
 
   // Enrich each row with a name + thumbnail (same pattern as saved/page.tsx).
-  // Andromeda system components aren't in COMPONENTS (only the free
-  // `andromeda-button` standalone is) — those resolve via the Andromeda
-  // metadata instead. Design-system templates are in neither and fall
-  // through to the bare slug + neutral placeholder thumbnail.
+  // Andromeda system components aren't in COMPONENTS — those resolve via the
+  // Andromeda metadata instead (the retired `andromeda-button` standalone slug
+  // is aliased to the Legacy Button by resolveRetiredSlug). Design-system
+  // templates are in neither and fall through to the bare slug + neutral
+  // placeholder thumbnail.
   const bySlug = new Map(COMPONENTS.map((c) => [c.slug, c]))
 
   return (
@@ -91,12 +92,13 @@ export default async function HistoryPage() {
       <ul className="space-y-2">
         {rows.map((row) => {
           const entry = bySlug.get(row.slug)
+          const resolved = resolveRetiredSlug(row)
           const andromedaEntry = entry
             ? undefined
-            : row.system === 'andromeda'
-              ? getAndromedaComponentMeta(row.slug)
-              : row.system === 'andromeda-pro'
-                ? getAndromedaProComponentMeta(row.slug)
+            : resolved.system === 'andromeda'
+              ? getAndromedaComponentMeta(resolved.slug)
+              : resolved.system === 'andromeda-pro'
+                ? getAndromedaProComponentMeta(resolved.slug)
                 : undefined
           const name = entry?.name ?? andromedaEntry?.name ?? row.slug
           const image = entry?.image

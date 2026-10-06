@@ -63,10 +63,10 @@ export function AndromedaComponentView({
   const { open: openAuthModal } = useAuthModal()
   // The registry slug is normally `andromeda-<metaSlug>`. The lone exception is the
   // slugOverride (scripts/lib/design-systems.config.mjs): Button.tsx ships as the
-  // registry item `andromeda-button-system` because the free standalone owns
-  // `andromeda-button`. Map the page's meta slug back to the REGISTRY slug so the
-  // Code tab, install command, analytics, and Save all target the right item —
-  // otherwise the Button page silently serves the standalone.
+  // registry item `andromeda-button-system` (the old free standalone slug
+  // `andromeda-button` is retired and redirects there). Map the page's meta slug
+  // back to the REGISTRY slug so the Code tab, install command, analytics, and
+  // Save all target the right item.
   const registrySlug = andromedaRegistrySlug(slug)
 
   // Personalized install: when signed in, the copied command carries the
@@ -331,8 +331,8 @@ export function AndromedaComponentView({
         <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           {/* Save — signed out, opens the same soft-gate modal as Copy Command.
               Keyed on the REGISTRY slug (not the page slug) so the Button
-              override (andromeda-button-system) can't collide with the free
-              standalone's own save entry (andromeda-button). */}
+              saves under its override (andromeda-button-system), not the
+              retired standalone slug (andromeda-button). */}
           <SaveButton slug={registrySlug} system="andromeda" />
 
           {/* Copy Command — the button and command stay visible at all times; when

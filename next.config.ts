@@ -113,6 +113,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/components/andromeda-button/:path*",
+        destination: "/design-systems/andromeda/button",
+        permanent: true,
+      },
+      {
         source: "/r/andromeda-button.json",
         destination: "/r/andromeda-button-system.json",
         permanent: true,

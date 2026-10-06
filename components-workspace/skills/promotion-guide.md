@@ -4,6 +4,8 @@ When a design-system component (something living under `design-systems/<system>/
 
 This guide documents the full workflow using the first real promotion — `andromeda-button` — as the worked example. Everything below is taken from that wrapper's actual code. When new promotions surface new patterns, extend this file.
 
+> **Retired 2026-10-06:** the `andromeda-button` wrapper used as the worked example below was retired and merged into the Andromeda Legacy Button (`/components/andromeda-button` now redirects to `/design-systems/andromeda/button`). The steps still apply, but the file paths quoted below (`components-workspace/andromeda-button/` and its registry entry) no longer exist.
+
 ## The folder shape
 
 ```
@@ -301,6 +303,6 @@ Some DS components don't make sense as homepage cards. Don't promote them.
 
 | DS component | Wrapper slug | Status | Notes |
 |---|---|---|---|
-| `andromeda/components/Button.tsx` | `andromeda-button` | ✅ Integrated | First promotion. Boundary retyping pattern originated here. `#0E0E0F` container override. Only Claude prompt lane filled. |
+| `andromeda/components/Button.tsx` | `andromeda-button` | Retired 2026-10-06 | First promotion; merged into the Andromeda Legacy Button. Boundary retyping pattern originated here. `#0E0E0F` container override. Only Claude prompt lane filled. |
 
 Extend this table as new components are promoted.
