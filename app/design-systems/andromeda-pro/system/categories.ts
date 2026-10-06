@@ -52,6 +52,7 @@ export const CATEGORY: Record<string, string> = {
   artifact: 'AI',
   'prompt-input': 'AI',
   suggestion: 'AI',
+  tabs: 'Navigation',
 
   // Feedback
   alert: 'Feedback',

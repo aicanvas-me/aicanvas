@@ -229,6 +229,7 @@ export const DESIGN_SYSTEMS = [
       'components/StrengthMeter.tsx',
       'components/Suggestion.tsx',
       'components/Table.tsx',
+      'components/Tabs.tsx',
       'components/Tag.tsx',
       'components/Textarea.tsx',
       'components/Toggle.tsx',

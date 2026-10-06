@@ -11,6 +11,7 @@ import { button } from './button'
 import { card } from './card'
 import { checkbox } from './checkbox'
 import { suggestion } from './suggestion'
+import { tabs } from './tabs'
 import { choiceCard } from './choice-card'
 import { collapsible } from './collapsible'
 import { combobox } from './combobox'
@@ -69,7 +70,7 @@ export const SPECS: readonly MatrixSpec[] = [
   gauge, heatGrid, iconButton, input, item, mediaCard, message,
   metricChart, musicPlayer, navItem, nodes, orb, panelHeader, panelMenu, planet, popover,
   progressBar, promptInput, radarChart, radio, searchField, segmentedControl, sidebar, skeleton, slider, spinner,
-  statTile, strengthMeter, suggestion, tag, textarea, toggle, tool, tooltip, topBar, trendChart, userCard,
+  statTile, strengthMeter, suggestion, tabs, tag, textarea, toggle, tool, tooltip, topBar, trendChart, userCard,
   userMenu, waveform,
 ]
 

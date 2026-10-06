@@ -13,6 +13,7 @@ export const COMPONENT_COUNTS: Record<string, { variants: number; states: number
   'card': { variants: 4, states: 0 },
   'checkbox': { variants: 3, states: 6 },
   'suggestion': { variants: 3, states: 3 },
+  'tabs': { variants: 3, states: 2 },
   'choice-card': { variants: 3, states: 7 },
   'collapsible': { variants: 5, states: 3 },
   'combobox': { variants: 3, states: 0 },

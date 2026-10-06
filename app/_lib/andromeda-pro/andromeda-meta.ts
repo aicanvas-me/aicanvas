@@ -383,6 +383,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/suggestion.png?v=1',
   },
   {
+    slug: 'tabs',
+    name: 'Tabs',
+    description:
+      'Splits content into named panels and shows one at a time, as a row of tabs or a list with a line under each.',
+    sourceFile: 'Tabs.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tabs.png?v=1',
+  },
+  {
     slug: 'tag',
     name: 'Tag',
     description:

@@ -84,6 +84,7 @@ import { Slider } from '../../lib/andromeda-pro.generated'
 import { Spinner } from '../../lib/andromeda-pro.generated'
 import { Skeleton } from '../../lib/andromeda-pro.generated'
 import { Suggestion } from '../../lib/andromeda-pro.generated'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '../../lib/andromeda-pro.generated'
 import { Popover, PopoverContent, PopoverLabel, PopoverSeparator, PopoverTrigger } from '../../lib/andromeda-pro.generated'
@@ -1180,6 +1181,52 @@ function SuggestionDemo() {
   )
 }
 
+const TABS_DEMO = [
+  { value: 'spend', label: 'Everyday spending', text: 'One account for pay day, bills and the small things in between.' },
+  { value: 'pay', label: 'Paying people', text: 'Pay friends, contractors or suppliers, with a check on every payment.' },
+  { value: 'abroad', label: 'Sending abroad', text: 'See the rate and the fee before you send.' },
+]
+
+function TabsDemo() {
+  const panel = {
+    margin: 0,
+    paddingTop: 16,
+    fontFamily: 'var(--andromeda-font-sans)',
+    fontSize: 'var(--andromeda-text-sm)',
+    lineHeight: 'var(--andromeda-leading-text-sm)',
+    color: 'var(--andromeda-text-secondary)',
+  }
+  return (
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <Row label="Horizontal">
+        <Tabs defaultValue="spend">
+          <TabsList aria-label="Use cases">
+            {TABS_DEMO.map((t) => (
+              <TabsTrigger key={t.value} value={t.value}>{t.label.split(' ')[0]}</TabsTrigger>
+            ))}
+          </TabsList>
+          {TABS_DEMO.map((t) => (
+            <TabsContent key={t.value} value={t.value}><p style={panel}>{t.text}</p></TabsContent>
+          ))}
+        </Tabs>
+      </Row>
+      <Row label="Vertical, with index and description">
+        <div style={{ width: '100%', maxWidth: 440 }}>
+          <Tabs defaultValue="spend" orientation="vertical">
+            <TabsList aria-label="Use cases">
+              {TABS_DEMO.map((t, i) => (
+                <TabsTrigger key={t.value} value={t.value} leading={String(i + 1).padStart(2, '0')} description={t.text}>
+                  {t.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
+      </Row>
+    </div>
+  )
+}
+
 // ─── AI chat set ─────────────────────────────────────────────────────────────
 // Composed the way a chat surface uses them, and every control is wired: the
 // wired pieces live beside their matrix declarations (./matrix/*) and are
@@ -2083,6 +2130,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   card: CardDemo,
   checkbox: CheckboxDemo,
   suggestion: SuggestionDemo,
+  tabs: TabsDemo,
   'choice-card': ChoiceCardDemo,
   collapsible: CollapsibleDemo,
   combobox: ComboboxDemo,
