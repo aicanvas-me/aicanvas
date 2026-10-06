@@ -343,6 +343,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/search-field.png?v=4',
   },
   {
+    slug: 'section-heading',
+    name: 'Section Heading',
+    description:
+      'Opens a page section with a short label, a title and a sentence that says what the section covers.',
+    sourceFile: 'SectionHeading.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/section-heading.png?v=1',
+  },
+  {
     slug: 'segmented-control',
     name: 'Segmented Control',
     description:

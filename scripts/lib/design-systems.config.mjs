@@ -223,6 +223,7 @@ export const DESIGN_SYSTEMS = [
       'components/RadarChart.tsx',
       'components/Radio.tsx',
       'components/SearchField.tsx',
+      'components/SectionHeading.tsx',
       'components/SegmentedControl.tsx',
       'components/Sidebar.tsx',
       'components/Skeleton.tsx',

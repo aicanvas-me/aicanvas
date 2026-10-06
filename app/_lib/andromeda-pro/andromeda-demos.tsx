@@ -87,6 +87,7 @@ import { Suggestion } from '../../lib/andromeda-pro.generated'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/andromeda-pro.generated'
 import { Marquee } from '../../lib/andromeda-pro.generated'
 import { LogoCloud } from '../../lib/andromeda-pro.generated'
+import { SectionHeading } from '../../lib/andromeda-pro.generated'
 import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
@@ -1523,6 +1524,31 @@ function ItemDemo() {
   )
 }
 
+function SectionHeadingDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 960, display: 'flex', flexDirection: 'column', gap: 64 }}>
+      <SectionHeading
+        eyebrow="Why Andromeda"
+        title="Your money, clear at a glance"
+        description="Three things every account does from day one."
+      />
+      <SectionHeading
+        align="left"
+        eyebrow="FAQ"
+        title="Questions, answered"
+        description="Short answers to what people ask before they open an account."
+      />
+      <SectionHeading
+        align="split"
+        eyebrow="Plans"
+        title="Simple pricing that grows with you"
+        description="Every plan includes the multi-currency wallet and free transfers between accounts. Change or cancel at any time."
+        actions={<Button variant="outline">Compare plans</Button>}
+      />
+    </div>
+  )
+}
+
 const LOGO_CLOUD_DEMO = ['Northwind', 'Lumen', 'Parallax', 'Vantage', 'Kestrel', 'Meridian']
 
 function LogoCloudDemo() {
@@ -2261,6 +2287,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   burst: BurstDemo,
   cube: CubeDemo,
   'search-field': SearchFieldDemo,
+  'section-heading': SectionHeadingDemo,
   'strength-meter': StrengthMeterDemo,
   sidebar: SidebarDemo,
   skeleton: SkeletonDemo,

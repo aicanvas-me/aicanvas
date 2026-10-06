@@ -216,7 +216,7 @@ const V2_ONLY_NAMES = [
   'LogoCloud', 'Marquee', 'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
   'Popover', 'PopoverContent', 'PopoverLabel', 'PopoverSeparator', 'PopoverTrigger',
   'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
-  'Sidebar', 'Skeleton', 'Stepper', 'StepperDescription', 'StepperItem', 'StepperMeta', 'StepperTitle',
+  'SectionHeading', 'Sidebar', 'Skeleton', 'Stepper', 'StepperDescription', 'StepperItem', 'StepperMeta', 'StepperTitle',
   'StrengthMeter', 'Suggestion', 'Tabs', 'TabsContent', 'TabsList', 'TabsTrigger',
   'Tool', 'TopBar',
 ]

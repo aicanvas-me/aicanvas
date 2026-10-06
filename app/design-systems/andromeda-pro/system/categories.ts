@@ -84,6 +84,7 @@ export const CATEGORY: Record<string, string> = {
 
   // Marketing — the parts a landing page is built from.
   'logo-cloud': 'Marketing',
+  'section-heading': 'Marketing',
 
   // Objects — the sanctioned decorative class (motion.md#motion-philosophy).
   // Planet moved here from "Visualization": it was
