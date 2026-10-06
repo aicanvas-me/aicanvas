@@ -4,6 +4,7 @@
 // index page that renders none of them. Plain numbers cross that boundary
 // for free, and the test fails the moment they stop matching the specs.
 export const COMPONENT_COUNTS: Record<string, { variants: number; states: number }> = {
+  'accordion': { variants: 3, states: 2 },
   'alert': { variants: 4, states: 0 },
   'artifact': { variants: 3, states: 0 },
   'avatar': { variants: 6, states: 1 },

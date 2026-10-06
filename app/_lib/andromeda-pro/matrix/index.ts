@@ -2,6 +2,7 @@
 // parallel builders adding specs never touch the same lines twice, and it
 // mirrors the per-component .rules.md convention the brain already uses.
 import type { MatrixSpec } from './types'
+import { accordion } from './accordion'
 import { alert } from './alert'
 import { artifact } from './artifact'
 import { avatar } from './avatar'
@@ -63,7 +64,7 @@ import { userMenu } from './user-menu'
 import { waveform } from './waveform'
 
 export const SPECS: readonly MatrixSpec[] = [
-  alert, artifact, avatar, badge, burst, button, card, checkbox, choiceCard, collapsible, combobox,
+  accordion, alert, artifact, avatar, badge, burst, button, card, checkbox, choiceCard, collapsible, combobox,
   // The two tables sit together so their selected-row treatments are judged
   // side by side.
   cornerMarkers, cube, dataTable, table_, dateRangePicker, drawer, emptyState, funnelChart,

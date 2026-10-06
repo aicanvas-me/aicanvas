@@ -15,6 +15,14 @@ export type AndromedaComponentMeta = {
 
 export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
   {
+    slug: 'accordion',
+    name: 'Accordion',
+    description:
+      'Lists questions that each open their answer below them, one at a time or several at once.',
+    sourceFile: 'Accordion.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/accordion.png?v=1',
+  },
+  {
     slug: 'alert',
     name: 'Alert',
     description:

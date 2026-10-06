@@ -181,6 +181,7 @@ export const DESIGN_SYSTEMS = [
       'AndromedaIcon.tsx',
     ],
     systemEntries: [
+      'components/Accordion.tsx',
       'components/Alert.tsx',
       'components/Artifact.tsx',
       'components/Avatar.tsx',

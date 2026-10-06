@@ -207,6 +207,7 @@ const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'Dat
 // (ChoiceCardGroup, EmptyStateMedia). UPDATE when app code imports a new
 // v2-only name — same contract as V2_FALLBACK_NAMES above.
 const V2_ONLY_NAMES = [
+  'Accordion', 'AccordionContent', 'AccordionItem', 'AccordionTrigger',
   'Artifact', 'ArtifactAction', 'ArtifactActions', 'ArtifactClose', 'ArtifactContent',
   'ArtifactDescription', 'ArtifactHeader', 'ArtifactTitle',
   'Burst', 'ChoiceCard', 'ChoiceCardGroup',

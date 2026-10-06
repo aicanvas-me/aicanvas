@@ -74,6 +74,7 @@ export const CATEGORY: Record<string, string> = {
   card: 'Surfaces',
   'corner-markers': 'Surfaces',
   collapsible: 'Surfaces',
+  accordion: 'Surfaces',
 
   // Media
   'media-card': 'Media',

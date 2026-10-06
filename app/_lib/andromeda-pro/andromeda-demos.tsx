@@ -85,6 +85,7 @@ import { Spinner } from '../../lib/andromeda-pro.generated'
 import { Skeleton } from '../../lib/andromeda-pro.generated'
 import { Suggestion } from '../../lib/andromeda-pro.generated'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/andromeda-pro.generated'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '../../lib/andromeda-pro.generated'
 import { Popover, PopoverContent, PopoverLabel, PopoverSeparator, PopoverTrigger } from '../../lib/andromeda-pro.generated'
@@ -1393,6 +1394,28 @@ function PopoverDemo() {
   )
 }
 
+const ACCORDION_DEMO = [
+  { q: 'How long does opening an account take?', a: 'About five minutes. Confirm your email, show one photo ID, and the wallet opens as soon as the check clears.' },
+  { q: 'When does a transfer arrive?', a: 'Between accounts, at once. To a bank, usually the same day; abroad, within one or two working days.' },
+  { q: 'What does sending money abroad cost?', a: 'The exact rate and fee appear before you confirm, and that is what you pay.' },
+  { q: 'Can I cancel at any time?', a: 'Yes. Move back to the free plan in settings and keep your wallet and its history.' },
+]
+
+function AccordionDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 520 }}>
+      <Accordion as="ol" type="single" collapsible defaultValue="0">
+        {ACCORDION_DEMO.map((item, i) => (
+          <AccordionItem key={item.q} value={String(i)}>
+            <AccordionTrigger leading={String(i + 1).padStart(2, '0')}>{item.q}</AccordionTrigger>
+            <AccordionContent>{item.a}</AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  )
+}
+
 function CollapsibleDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 420 }}>
@@ -2122,6 +2145,7 @@ function SidebarDemo() {
 }
 
 const DEMOS: Record<string, () => React.ReactElement> = {
+  accordion: AccordionDemo,
   alert: AlertDemo,
   artifact: ArtifactDemo,
   avatar: AvatarDemo,
