@@ -12,8 +12,8 @@ import { andromedaPageSlug as legacyPageSlug } from '@/app/_lib/andromeda/androm
  * - Individual design-system components (now free-metered, e.g.
  *   `andromeda-checkbox`): resolved from the system registry via
  *   andromedaPageSlug(), which also handles the rare per-component slugOverride
- *   (e.g. Button.tsx ships as `andromeda-button-system` because the free
- *   standalone owns `andromeda-button`). Pro is tried first, then Legacy, for
+ *   (e.g. Button.tsx ships as `andromeda-button-system`; the retired
+ *   standalone slug `andromeda-button` redirects to it). Pro is tried first, then Legacy, for
  *   the components only Legacy has. Templates + whole-system aggregates
  *   are NOT served here — the gate 402s those before the source is ever needed.
  */

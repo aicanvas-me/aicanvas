@@ -368,10 +368,9 @@ try {
   )
 
   // list_components must NOT leak DS components into the standalone catalog.
-  // (Note: `andromeda-button` is a genuine standalone wrapper in
-  // components-workspace/ and legitimately appears here; the DS Button ships as
-  // `andromeda-button-system`. So compare against the real systemComponents set,
-  // not a name prefix.)
+  // (Note: a standalone can legitimately share a system's name prefix, and the
+  // DS Button ships as `andromeda-button-system`. So compare against the real
+  // systemComponents set, not a name prefix.)
   const dsSlugs = new Set((gsSc?.componentSlugs ?? []))
   const lcB = await call('list_components', { limit: 200 })
   const lcBSlugs = (sc(lcB)?.components ?? []).map((c) => c.slug)

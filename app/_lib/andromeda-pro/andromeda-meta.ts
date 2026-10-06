@@ -483,16 +483,16 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
   },
 ]
 
-// Per-file registry-slug overrides. Button's natural slug (andromeda-button)
-// is owned by the free standalone in components-workspace/andromeda-button/,
-// so the design-system Button gets its own slug. Source of truth:
+// Per-file registry-slug overrides. Legacy's Button ships as
+// andromeda-button-system (the old free standalone slug andromeda-button is
+// retired and its URLs redirect there). Source of truth:
 // scripts/lib/design-systems.config.mjs `slugOverrides` — mirrored here (typed,
 // Node-free) for use by the component page (forward) and the Saved list
 // (reverse, to resolve a saved registry slug back to its page + display name).
 const ANDROMEDA_REGISTRY_SLUG_OVERRIDES: Record<string, string> = {
   // Andromeda Pro owns the `andromeda-pro-` namespace, so Button needs no
-  // override here: nothing collides with the free standalone that owns
-  // `andromeda-button`. What DOES still need overriding is every page slug that
+  // override here: nothing collides with Legacy's
+  // `andromeda-button-system`. What DOES still need overriding is every page slug that
   // diverges from its source FILENAME, because the generator derives the
   // registry slug from the filename. Pointing these at `andromeda-*` handed
   // buyers an install command for Andromeda Legacy's free MIT component.
