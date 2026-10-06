@@ -20,7 +20,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a status message in the flow of the page, at a severity from note to fault.',
     sourceFile: 'Alert.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/alert.png?v=5',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/alert.png?v=2',
   },
   {
     slug: 'artifact',
@@ -36,7 +36,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Represents a person as a square image tile that falls back to their initials.',
     sourceFile: 'Avatar.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/avatar.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/avatar.png?v=2',
   },
   {
     slug: 'badge',
@@ -44,7 +44,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays the state a row or cell reports, such as online, queued, or fault.',
     sourceFile: 'Badge.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/badge.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/badge.png?v=2',
   },
   {
     slug: 'button',
@@ -52,7 +52,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Triggers an action or event, at the level of emphasis the action deserves.',
     sourceFile: 'Button.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/button.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/button.png?v=2',
   },
   {
     slug: 'card',
@@ -60,7 +60,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Frames a region of related content with corner brackets instead of a border.',
     sourceFile: 'Card.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/card.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/card.png?v=2',
   },
   {
     slug: 'checkbox',
@@ -68,7 +68,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Selects any number of options from a set, or turns a single one on and off.',
     sourceFile: 'Checkbox.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/checkbox.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/checkbox.png?v=2',
   },
   {
     slug: 'choice-card',
@@ -100,7 +100,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Frames any container with the four L-shaped brackets that stand in for a border.',
     sourceFile: 'CornerMarkers.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/corner-markers.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/corner-markers.png?v=2',
   },
   {
     slug: 'date-range-picker',
@@ -108,7 +108,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Selects a start and an end date from a calendar popover.',
     sourceFile: 'DateRangePicker.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/date-range-picker.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/date-range-picker.png?v=2',
   },
   {
     slug: 'drawer',
@@ -116,7 +116,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays content in a panel that slides in from the edge of the screen.',
     sourceFile: 'Drawer.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/drawer.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/drawer.png?v=2',
   },
   {
     slug: 'empty-state',
@@ -124,7 +124,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Explains why a region has nothing to show, and offers the way out.',
     sourceFile: 'EmptyState.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/empty-state.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/empty-state.png?v=2',
   },
   {
     slug: 'chart-funnel',
@@ -140,7 +140,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Charts one measurement over time in a panel that frames itself.',
     sourceFile: 'MetricChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/metric-chart.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/chart-metric.png?v=2',
   },
   {
     slug: 'chart-radar',
@@ -148,7 +148,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Compares several series across one shared set of axes.',
     sourceFile: 'RadarChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/radar-chart.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/chart-radar.png?v=2',
   },
   {
     slug: 'chart-trend',
@@ -156,7 +156,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Charts several series over time as lines, areas, or bars.',
     sourceFile: 'TrendChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/trend-chart.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/chart-trend.png?v=2',
   },
   {
     slug: 'gauge',
@@ -164,7 +164,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a single bounded reading as a radial arc.',
     sourceFile: 'Gauge.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/gauge.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/gauge.png?v=2',
   },
   {
     slug: 'heat-grid',
@@ -172,7 +172,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a single bounded reading as a matrix of cells that fill as it rises.',
     sourceFile: 'HeatGrid.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/heat-grid.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/heat-grid.png?v=2',
   },
   {
     slug: 'icon-button',
@@ -180,7 +180,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Triggers an action with an icon alone, for controls whose glyph reads as the label.',
     sourceFile: 'IconButton.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/icon-button.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/icon-button.png?v=2',
   },
   {
     slug: 'input',
@@ -188,7 +188,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Collects a single line of text.',
     sourceFile: 'Input.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/input.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/input.png?v=2',
   },
   {
     slug: 'item',
@@ -204,7 +204,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a live signal as a moving trace, showing that a feed is running.',
     sourceFile: 'Waveform.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/waveform.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/waveform.png?v=2',
   },
   {
     slug: 'media-card',
@@ -212,7 +212,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Presents an item on its own artwork, for content the image identifies.',
     sourceFile: 'MediaCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/media-card.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/media-card.png?v=2',
   },
   {
     slug: 'message',
@@ -228,7 +228,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Builds a table row by row, for cells that need their own structure.',
     sourceFile: 'Table.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/table.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/table-basic.png?v=2',
   },
   {
     slug: 'table-data',
@@ -236,7 +236,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Renders a table from a column definition and a set of rows.',
     sourceFile: 'DataTable.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/data-table.png?v=2',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/table-data.png?v=2',
   },
   {
     slug: 'music-player',
@@ -244,7 +244,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Controls playback in one bar: track identity, transport, and a scrub slider.',
     sourceFile: 'MusicPlayer.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/music-player.png?v=2',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/music-player.png?v=2',
   },
   {
     slug: 'nav-item',
@@ -252,7 +252,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Links to one destination in a sidebar, in full or icon-only form.',
     sourceFile: 'NavItem.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/nav-item.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/nav-item.png?v=2',
   },
   {
     slug: 'panel-header',
@@ -260,7 +260,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Titles a dashboard panel and holds the actions that belong to it.',
     sourceFile: 'PanelHeader.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/panel-header.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/panel-header.png?v=2',
   },
   {
     slug: 'panel-menu',
@@ -268,7 +268,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       "Collects a panel's secondary actions behind a kebab trigger.",
     sourceFile: 'PanelMenu.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/panel-menu.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/panel-menu.png?v=2',
   },
   {
     slug: 'planet',
@@ -276,7 +276,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Renders a slowly rotating particle sphere as a hero object.',
     sourceFile: 'Planet.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/planet.png?v=1',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/planet.png?v=2',
   },
   {
     slug: 'popover',
@@ -292,7 +292,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a single bounded reading as a horizontal meter.',
     sourceFile: 'ProgressBar.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/progress-bar.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/progress-bar.png?v=2',
   },
   {
     slug: 'prompt-input',
@@ -308,7 +308,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Selects exactly one option from a small set that stays visible.',
     sourceFile: 'Radio.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/radio.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/radio.png?v=2',
   },
   {
     slug: 'search-field',
@@ -316,7 +316,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Collects a search query, with room for a keyboard shortcut hint.',
     sourceFile: 'SearchField.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/search-field.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/search-field.png?v=2',
   },
   {
     slug: 'segmented-control',
@@ -324,7 +324,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Switches between a few mutually exclusive views or modes.',
     sourceFile: 'SegmentedControl.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/segmented-control.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/segmented-control.png?v=2',
   },
   {
     slug: 'sidebar',
@@ -348,7 +348,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Sets one continuous value by dragging along a track.',
     sourceFile: 'Slider.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/slider.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/slider.png?v=2',
   },
   {
     slug: 'spinner',
@@ -356,7 +356,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Signals that work is running when the remaining time is unknown.',
     sourceFile: 'Spinner.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/spinner.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/spinner.png?v=2',
   },
   {
     slug: 'stat-tile',
@@ -364,7 +364,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays one headline number with its unit and its change.',
     sourceFile: 'StatTile.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/stat-tile.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/stat-tile.png?v=2',
   },
   {
     slug: 'strength-meter',
@@ -388,7 +388,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Labels content for categorizing or filtering, and can be dismissed.',
     sourceFile: 'Tag.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/tag.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tag.png?v=2',
   },
   {
     slug: 'textarea',
@@ -396,7 +396,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Collects text that runs to more than one line.',
     sourceFile: 'Textarea.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/textarea.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/textarea.png?v=2',
   },
   {
     slug: 'toggle',
@@ -404,7 +404,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Switches a setting that takes effect the moment it flips.',
     sourceFile: 'Toggle.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/toggle.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/toggle.png?v=2',
   },
   {
     slug: 'tool',
@@ -420,7 +420,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Names a control that carries no text of its own, on hover or focus.',
     sourceFile: 'Tooltip.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/tooltip.png?v=4',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tooltip.png?v=2',
   },
   {
     slug: 'top-bar',
@@ -436,7 +436,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Opens the account menu from a row that names the signed-in user and their role.',
     sourceFile: 'UserCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/user-card.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/user-card.png?v=2',
   },
   {
     slug: 'user-menu',
@@ -444,7 +444,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       "Opens the account menu from the signed-in user's avatar.",
     sourceFile: 'UserMenu.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda/user-menu.png?v=3',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/user-menu.png?v=2',
   },
 
   // Objects — the system's sanctioned decorative class (Planet is its first
