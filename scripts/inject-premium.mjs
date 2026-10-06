@@ -207,15 +207,19 @@ const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'Dat
 // (ChoiceCardGroup, EmptyStateMedia). UPDATE when app code imports a new
 // v2-only name — same contract as V2_FALLBACK_NAMES above.
 const V2_ONLY_NAMES = [
+  'Accordion', 'AccordionContent', 'AccordionItem', 'AccordionTrigger',
   'Artifact', 'ArtifactAction', 'ArtifactActions', 'ArtifactClose', 'ArtifactContent',
   'ArtifactDescription', 'ArtifactHeader', 'ArtifactTitle',
-  'Burst', 'ChoiceCard', 'ChoiceCardGroup',
+  'BentoGrid', 'BentoGridItem', 'Burst', 'ChoiceCard', 'ChoiceCardGroup',
   'Collapsible', 'CollapsibleContent', 'CollapsibleTrigger', 'Combobox', 'Cube', 'EmptyStateMedia',
-  'FunnelChart', 'Item', 'ItemActions', 'ItemContent', 'ItemDescription', 'ItemMedia', 'ItemTitle',
-  'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
+  'Footer', 'FooterWordmark', 'FunnelChart', 'Item', 'ItemActions', 'ItemContent', 'ItemDescription', 'ItemMedia', 'ItemTitle',
+  'LogoCloud', 'Marquee', 'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Navbar', 'Nodes', 'Orb',
+  'PaymentCard',
   'Popover', 'PopoverContent', 'PopoverLabel', 'PopoverSeparator', 'PopoverTrigger',
-  'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
-  'Sidebar', 'Skeleton', 'StrengthMeter', 'Suggestion', 'Tool', 'TopBar',
+  'PricingCard', 'PricingGrid', 'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
+  'SectionHeading', 'Sidebar', 'Skeleton', 'Stepper', 'StepperDescription', 'StepperItem', 'StepperMeta', 'StepperTitle',
+  'StrengthMeter', 'Suggestion', 'Tabs', 'TabsContent', 'TabsList', 'TabsTrigger',
+  'Tool', 'TopBar',
 ]
 
 // components/lib/* modules the HELPERS shim re-exports (both trees have them),
@@ -625,6 +629,7 @@ function writeProHelpersShim(fromV2Tree) {
 const V2_EXAMPLE_EXPORTS = {
   AiChat: 'ai-chat',
   CityOperations: 'city-operations',
+  FintechLanding: 'fintech-landing',
   MissionControl: 'mission-control',
   ResourcePlanning: 'resource-planning',
   ServiceOrder: 'service-order',

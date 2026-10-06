@@ -13,8 +13,9 @@ export interface DesignSystemTemplateMeta {
   slug: string
   name: string
   /** Closed vocabulary: what the template IS, in the words buyers search.
-   *  Dashboard · CRM · Scheduling · Media · Authentication · Landing page ·
-   *  Ecommerce · Settings · Docs · Analytics. Adding one is a product call. */
+   *  Dashboard · CRM · Scheduling · Media · Authentication · Marketing ·
+   *  Ecommerce · Settings · Docs · Analytics. Adding one is a product call;
+   *  Marketing (landing pages and their sections) was ruled 2026-10-06. */
   category?: string
 }
 
@@ -52,6 +53,7 @@ export const DESIGN_SYSTEM_META: Record<DesignSystemSlug, DesignSystemMeta> = {
       { slug: 'andromeda-pro-service-order',     name: 'Service Order',     category: 'CRM' },
       { slug: 'andromeda-pro-resource-planning', name: 'Resource Planning', category: 'Scheduling' },
       { slug: 'andromeda-pro-sign-up',           name: 'Sign Up',           category: 'Authentication' },
+      { slug: 'andromeda-pro-fintech-landing',   name: 'Fintech Landing',   category: 'Marketing' },
     ],
   },
 }

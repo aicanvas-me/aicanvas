@@ -84,6 +84,17 @@ import { Slider } from '../../lib/andromeda-pro.generated'
 import { Spinner } from '../../lib/andromeda-pro.generated'
 import { Skeleton } from '../../lib/andromeda-pro.generated'
 import { Suggestion } from '../../lib/andromeda-pro.generated'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../lib/andromeda-pro.generated'
+import { Marquee } from '../../lib/andromeda-pro.generated'
+import { LogoCloud } from '../../lib/andromeda-pro.generated'
+import { SectionHeading } from '../../lib/andromeda-pro.generated'
+import { PricingCard, PricingGrid } from '../../lib/andromeda-pro.generated'
+import { BentoGrid, BentoGridItem } from '../../lib/andromeda-pro.generated'
+import { Navbar } from '../../lib/andromeda-pro.generated'
+import { Footer } from '../../lib/andromeda-pro.generated'
+import { PaymentCard } from '../../lib/andromeda-pro.generated'
+import { Stepper, StepperDescription, StepperItem, StepperMeta, StepperTitle } from '../../lib/andromeda-pro.generated'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '../../lib/andromeda-pro.generated'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../../lib/andromeda-pro.generated'
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '../../lib/andromeda-pro.generated'
 import { Popover, PopoverContent, PopoverLabel, PopoverSeparator, PopoverTrigger } from '../../lib/andromeda-pro.generated'
@@ -980,6 +991,25 @@ function StatTileDemo() {
       {/* Latency falling is an improvement — polarity keeps the ▼ accent, not fault. */}
       <StatTile label="Latency" code="LAT-02" value="412" unit="ms" delta={-1.2} polarity="lower-is-better" deltaLabel="vs prior period" />
       <StatTile label="Errors" code="ERR-03" value="1.04" unit="%" />
+      {/* Bare tiles drop their own frame and share one Card, split by hairlines. */}
+      <Card style={{ width: '100%' }}>
+        <CardContent style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))' }}>
+          {[
+            { prefix: '$', value: '12', suffix: 'B', label: 'Moved last year' },
+            { value: '3.4', suffix: 'M', label: 'People and teams on board' },
+            { value: '24', suffix: '/7', label: 'Human support, every day' },
+          ].map((item, i) => (
+            <StatTile
+              key={item.label}
+              bare
+              size="lg"
+              labelPosition="bottom"
+              {...item}
+              style={i === 0 ? { paddingRight: tokens.spacing[6] } : { paddingInline: tokens.spacing[6], borderLeft: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})` }}
+            />
+          ))}
+        </CardContent>
+      </Card>
     </div>
   )
 }
@@ -1184,6 +1214,52 @@ function SuggestionDemo() {
   )
 }
 
+const TABS_DEMO = [
+  { value: 'spend', label: 'Everyday spending', text: 'One account for pay day, bills and the small things in between.' },
+  { value: 'pay', label: 'Paying people', text: 'Pay friends, contractors or suppliers, with a check on every payment.' },
+  { value: 'abroad', label: 'Sending abroad', text: 'See the rate and the fee before you send.' },
+]
+
+function TabsDemo() {
+  const panel = {
+    margin: 0,
+    paddingTop: 16,
+    fontFamily: 'var(--andromeda-font-sans)',
+    fontSize: 'var(--andromeda-text-sm)',
+    lineHeight: 'var(--andromeda-leading-text-sm)',
+    color: 'var(--andromeda-text-secondary)',
+  }
+  return (
+    <div style={{ width: '100%', maxWidth: 640 }}>
+      <Row label="Horizontal">
+        <Tabs defaultValue="spend">
+          <TabsList aria-label="Use cases">
+            {TABS_DEMO.map((t) => (
+              <TabsTrigger key={t.value} value={t.value}>{t.label.split(' ')[0]}</TabsTrigger>
+            ))}
+          </TabsList>
+          {TABS_DEMO.map((t) => (
+            <TabsContent key={t.value} value={t.value}><p style={panel}>{t.text}</p></TabsContent>
+          ))}
+        </Tabs>
+      </Row>
+      <Row label="Vertical, with index and description">
+        <div style={{ width: '100%', maxWidth: 440 }}>
+          <Tabs defaultValue="spend" orientation="vertical">
+            <TabsList aria-label="Use cases">
+              {TABS_DEMO.map((t, i) => (
+                <TabsTrigger key={t.value} value={t.value} leading={String(i + 1).padStart(2, '0')} description={t.text}>
+                  {t.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
+        </div>
+      </Row>
+    </div>
+  )
+}
+
 // ─── AI chat set ─────────────────────────────────────────────────────────────
 // Composed the way a chat surface uses them, and every control is wired: the
 // wired pieces live beside their matrix declarations (./matrix/*) and are
@@ -1350,6 +1426,28 @@ function PopoverDemo() {
   )
 }
 
+const ACCORDION_DEMO = [
+  { q: 'How long does opening an account take?', a: 'About five minutes. Confirm your email, show one photo ID, and the wallet opens as soon as the check clears.' },
+  { q: 'When does a transfer arrive?', a: 'Between accounts, at once. To a bank, usually the same day; abroad, within one or two working days.' },
+  { q: 'What does sending money abroad cost?', a: 'The exact rate and fee appear before you confirm, and that is what you pay.' },
+  { q: 'Can I cancel at any time?', a: 'Yes. Move back to the free plan in settings and keep your wallet and its history.' },
+]
+
+function AccordionDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 520 }}>
+      <Accordion as="ol" type="single" collapsible defaultValue="0">
+        {ACCORDION_DEMO.map((item, i) => (
+          <AccordionItem key={item.q} value={String(i)}>
+            <AccordionTrigger leading={String(i + 1).padStart(2, '0')}>{item.q}</AccordionTrigger>
+            <AccordionContent>{item.a}</AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  )
+}
+
 function CollapsibleDemo() {
   return (
     <div style={{ width: '100%', maxWidth: 420 }}>
@@ -1450,6 +1548,309 @@ function ItemDemo() {
           )}
         />
       </Row>
+    </div>
+  )
+}
+
+function SectionHeadingDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 960, display: 'flex', flexDirection: 'column', gap: 64 }}>
+      <SectionHeading
+        eyebrow="Why Andromeda"
+        title="Your money, clear at a glance"
+        description="Three things every account does from day one."
+      />
+      <SectionHeading
+        align="left"
+        eyebrow="FAQ"
+        title="Questions, answered"
+        description="Short answers to what people ask before they open an account."
+      />
+      <SectionHeading
+        align="split"
+        eyebrow="Plans"
+        title="Simple pricing that grows with you"
+        description="Every plan includes the multi-currency wallet and free transfers between accounts. Change or cancel at any time."
+        actions={<Button variant="outline">Compare plans</Button>}
+      />
+    </div>
+  )
+}
+
+const BENTO_DEMO = [
+  { title: 'Overview', text: 'Balances, income and spending for the month, across the wide panel.', colSpan: 2 },
+  { title: 'Alerts', text: 'Payments that need a look, newest first.', rowSpan: 2 },
+  { title: 'Cards', text: 'Every virtual card and what is left on it.' },
+  { title: 'Savings', text: 'Pots and how close each is to its goal.' },
+]
+
+function BentoGridDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 960 }}>
+      <BentoGrid columns={3}>
+        {BENTO_DEMO.map(({ title, text, ...place }) => (
+          <BentoGridItem key={title} asChild {...place}>
+            <Card>
+              <CardHeader>
+                <CardTitle>{title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>{text}</CardDescription>
+              </CardContent>
+            </Card>
+          </BentoGridItem>
+        ))}
+      </BentoGrid>
+    </div>
+  )
+}
+
+const NAVBAR_LINKS = [
+  { label: 'Toolkit', href: '#features' },
+  { label: 'Use cases', href: '#solutions' },
+  { label: 'Plans', href: '#pricing' },
+  { label: 'Journal', href: '#insights' },
+]
+
+function NavbarBrand() {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: tokens.spacing[2],
+        ...tokens.typography.role.label,
+        fontWeight: tokens.typography.weight.semibold,
+        color: `var(--at-text-primary, ${tokens.color.text.primary})`,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <Compass size={tokens.iconSize.xl} weight="regular" aria-hidden />
+      Andromeda
+    </span>
+  )
+}
+
+// The fintech page's bar in a frame: static, since it does not sit at the
+// top of a page scroller here.
+function NavbarDemo() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        maxWidth: 960,
+        border: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
+        overflow: 'hidden',
+      }}
+    >
+      <Navbar
+        sticky={false}
+        brand={<NavbarBrand />}
+        links={NAVBAR_LINKS}
+        secondaryActions={<Button variant="ghost">Sign in</Button>}
+        actions={<Button>Open account</Button>}
+        menuActions={
+          <>
+            <Button>Open account</Button>
+            <Button variant="outline">Sign in</Button>
+          </>
+        }
+      />
+    </div>
+  )
+}
+
+// The Andromeda mark's two shapes on its 28 x 24 grid: the lockup draws
+// them in the text ink, the wordmark fills them with its own.
+const FOOTER_MARK = [
+  'M0 24L13.1483 0L14.9111 7.19476C14.4502 8.0149 14.0026 8.81944 13.5507 9.63168L9.86787 16.2221C10.7337 15.869 11.6049 15.5292 12.4707 15.1762L16.531 13.5278L0 24Z',
+  'M14.7637 0L19.9727 20.3637L27.9998 24C26.8086 21.7712 25.5259 19.5191 24.3008 17.3031L17.7544 5.4295C17.5204 5.00473 14.8816 0.132369 14.7637 0Z',
+].map((d) => <path key={d} d={d} />)
+
+const FOOTER_COLUMNS = [
+  { title: 'Accounts', links: ['Personal', 'Joint', 'Business', 'Savings pots'] },
+  { title: 'Tools', links: ['Exchange', 'Virtual cards', 'Spending reports', 'Team approvals'] },
+  { title: 'Company', links: ['About', 'Journal', 'Careers', 'Security'] },
+  { title: 'Legal', links: ['Terms', 'Privacy', 'Legal', 'Imprint'] },
+].map(({ title, links }) => ({ title, links: links.map((label) => ({ label })) }))
+
+function FooterBrand() {
+  return (
+    <span
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: tokens.spacing[2],
+        ...tokens.typography.role.label,
+        fontWeight: tokens.typography.weight.semibold,
+        color: `var(--at-text-primary, ${tokens.color.text.primary})`,
+        whiteSpace: 'nowrap',
+      }}
+    >
+      <svg
+        aria-hidden
+        viewBox="0 0 28 24"
+        width={tokens.iconSize.xl}
+        height={(tokens.iconSize.xl * 24) / 28}
+        fill="currentColor"
+      >
+        {FOOTER_MARK}
+      </svg>
+      Andromeda
+    </span>
+  )
+}
+
+// The fintech page's footer in a frame, signing off with the wordmark.
+function FooterDemo() {
+  return (
+    <div
+      style={{
+        width: '100%',
+        maxWidth: 960,
+        border: `1px solid var(--at-border-subtle, ${tokens.color.border.subtle})`,
+        overflow: 'hidden',
+      }}
+    >
+      <Footer
+        brand={<FooterBrand />}
+        description="Accounts, cards and transfers on one live screen."
+        columns={FOOTER_COLUMNS}
+        wordmark="Andromeda"
+        wordmarkMark={FOOTER_MARK}
+        wordmarkMarkViewBox="0 0 28 24"
+      />
+    </div>
+  )
+}
+
+// The fintech page's three cards side by side, one per lacquer. A mouse over
+// a card turns it toward the pointer and moves a light across it.
+const PAYMENT_CARD_DEMO = [
+  { tone: 'ember', kind: 'Debit', label: 'Everyday', last4: '4821', expiry: '08/29' },
+  { tone: 'graphite', kind: 'Virtual', label: 'Travel', last4: '7305', expiry: '03/28' },
+  { tone: 'steel', kind: 'Virtual', label: 'Bills', last4: '1190', expiry: '11/27' },
+] as const
+
+function PaymentCardDemo() {
+  return (
+    <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: tokens.spacing[6] }}>
+      {PAYMENT_CARD_DEMO.map((card) => (
+        <PaymentCard key={card.last4} brand="Andromeda" width={288} {...card} />
+      ))}
+    </div>
+  )
+}
+
+const PRICING_DEMO = [
+  {
+    name: 'Starter',
+    description: 'For one person and one wallet.',
+    price: 0,
+    period: 'Free for good, no card asked',
+    cta: 'Open free account',
+    features: ['One multi-currency wallet', 'Free transfers between accounts', 'One virtual card', 'Help by email'],
+  },
+  {
+    name: 'Plus',
+    description: 'For freelancers and households.',
+    price: 29,
+    period: 'per month',
+    cta: 'Try Plus free for 30 days',
+    featured: true,
+    features: ['Everything in Starter', 'Up to 10 virtual cards', 'Lower fees abroad', 'Savings pots', 'Chat support'],
+  },
+  {
+    name: 'Business',
+    description: 'For teams that spend together.',
+    price: 149,
+    period: 'per month',
+    cta: 'Book a call',
+    features: ['Everything in Plus', 'A card for every teammate', 'Approval rules for payments', 'Accounting exports', 'API access'],
+  },
+]
+
+function PricingCardDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 960 }}>
+      <PricingGrid>
+        {PRICING_DEMO.map((plan) => (
+          <PricingCard key={plan.name} {...plan} featuredLabel="Most picked" />
+        ))}
+      </PricingGrid>
+    </div>
+  )
+}
+
+const LOGO_CLOUD_DEMO = ['Northwind', 'Lumen', 'Parallax', 'Vantage', 'Kestrel', 'Meridian']
+
+function LogoCloudDemo() {
+  return (
+    <div style={{ width: '100%', maxWidth: 720 }}>
+      <LogoCloud
+        label="Teams that already run their money on Andromeda"
+        logos={LOGO_CLOUD_DEMO.map((name) => ({ name }))}
+      />
+    </div>
+  )
+}
+
+const MARQUEE_DEMO = ['Payments', 'Cards', 'Payroll', 'Invoices', 'Treasury', 'Exchange', 'Reporting', 'Lending']
+
+function MarqueeDemo() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[6], width: '100%', maxWidth: 720 }}>
+      <Marquee aria-label="Products" gap={4}>
+        {MARQUEE_DEMO.map((word) => (
+          <Tag key={word}>{word}</Tag>
+        ))}
+      </Marquee>
+      <Marquee aria-label="Products, reversed" reverse separator gap={8}>
+        {MARQUEE_DEMO.map((word) => (
+          <span
+            key={word}
+            style={{
+              fontSize: tokens.typography.size.textLg,
+              fontWeight: tokens.typography.weight.medium,
+              color: `var(--andromeda-text-secondary, ${tokens.color.text.secondary})`,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {word}
+          </span>
+        ))}
+      </Marquee>
+    </div>
+  )
+}
+
+const STEPPER_DEMO = [
+  { title: 'Amount reserved', text: 'Held from your balance', time: '0.2 s' },
+  { title: 'Recipient verified', text: 'Name and account checked', time: '0.4 s' },
+  { title: 'Rate locked', text: 'The quote you confirmed', time: '0.3 s' },
+  { title: 'Funds delivered', text: 'In the recipient account', time: '0.9 s' },
+]
+
+function StepperDemo() {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[8], width: '100%', maxWidth: 360 }}>
+      <Stepper activeStep={1} aria-label="Transfer in progress">
+        {STEPPER_DEMO.map((step) => (
+          <StepperItem key={step.title}>
+            <StepperTitle>{step.title}</StepperTitle>
+            <StepperDescription>{step.text}</StepperDescription>
+            <StepperMeta>{step.time}</StepperMeta>
+          </StepperItem>
+        ))}
+      </Stepper>
+      <Stepper activeStep={STEPPER_DEMO.length} aria-label="Transfer complete">
+        {STEPPER_DEMO.map((step) => (
+          <StepperItem key={step.title}>
+            <StepperTitle>{step.title}</StepperTitle>
+            <StepperMeta>{step.time}</StepperMeta>
+          </StepperItem>
+        ))}
+      </Stepper>
     </div>
   )
 }
@@ -2079,14 +2480,17 @@ function SidebarDemo() {
 }
 
 const DEMOS: Record<string, () => React.ReactElement> = {
+  accordion: AccordionDemo,
   alert: AlertDemo,
   artifact: ArtifactDemo,
   avatar: AvatarDemo,
   badge: BadgeDemo,
+  'bento-grid': BentoGridDemo,
   button: ButtonDemo,
   card: CardDemo,
   checkbox: CheckboxDemo,
   suggestion: SuggestionDemo,
+  tabs: TabsDemo,
   'choice-card': ChoiceCardDemo,
   collapsible: CollapsibleDemo,
   combobox: ComboboxDemo,
@@ -2094,6 +2498,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   'date-range-picker': DateRangePickerDemo,
   drawer: DrawerDemo,
   'empty-state': EmptyStateDemo,
+  footer: FooterDemo,
   'chart-funnel': FunnelChartDemo,
   gauge: GaugeDemo,
   'heat-grid': HeatGridDemo,
@@ -2101,13 +2506,17 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   input: InputDemo,
   item: ItemDemo,
   waveform: WaveformDemo,
+  'logo-cloud': LogoCloudDemo,
+  marquee: MarqueeDemo,
   'media-card': MediaCardDemo,
   message: MessageDemo,
   'table-data': DataTableDemo,
   'music-player': MusicPlayerDemo,
   'nav-item': NavItemDemo,
+  navbar: NavbarDemo,
   'panel-header': PanelHeaderDemo,
   'panel-menu': PanelMenuDemo,
+  'payment-card': PaymentCardDemo,
   planet: PlanetDemo,
   popover: PopoverDemo,
   orb: OrbDemo,
@@ -2115,6 +2524,8 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   burst: BurstDemo,
   cube: CubeDemo,
   'search-field': SearchFieldDemo,
+  'section-heading': SectionHeadingDemo,
+  'pricing-card': PricingCardDemo,
   'strength-meter': StrengthMeterDemo,
   sidebar: SidebarDemo,
   skeleton: SkeletonDemo,
@@ -2126,6 +2537,7 @@ const DEMOS: Record<string, () => React.ReactElement> = {
   radio: RadioDemo,
   slider: SliderDemo,
   spinner: SpinnerDemo,
+  stepper: StepperDemo,
   'stat-tile': StatTileDemo,
   tag: TagDemo,
   'chart-trend': TrendChartDemo,

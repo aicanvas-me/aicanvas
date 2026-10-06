@@ -30,14 +30,20 @@ const ZOOM = 1
 // Zoomed past the fit (the frame crops the overflow). Two groups: small demos
 // that read tiny when only fitted, and the posters first shot at 1.5, kept so a
 // reshoot reproduces the card that already shipped.
-const ZOOM_OVERRIDES: Record<string, number> = Object.fromEntries(
-  [
-    'avatar', 'planet', 'radio', 'spinner', 'tag', 'toggle',
-    'artifact', 'burst', 'chart-funnel', 'choice-card', 'collapsible', 'combobox',
-    'cube', 'item', 'message', 'nodes', 'orb', 'popover', 'prompt-input',
-    'skeleton', 'strength-meter', 'suggestion', 'tool',
-  ].map((slug) => [slug, 1.5]),
-)
+const ZOOM_OVERRIDES: Record<string, number> = {
+  ...Object.fromEntries(
+    [
+      'avatar', 'planet', 'radio', 'spinner', 'tag', 'toggle',
+      'artifact', 'burst', 'chart-funnel', 'choice-card', 'collapsible', 'combobox',
+      'cube', 'item', 'message', 'nodes', 'orb', 'popover', 'prompt-input',
+      'skeleton', 'strength-meter', 'suggestion', 'tool',
+    ].map((slug) => [slug, 1.5]),
+  ),
+  // A logo band runs off both sides anyway, so it is zoomed further until the
+  // marks read at card size.
+  marquee: 3,
+  'logo-cloud': 3,
+}
 
 export function CaptureFrame({ slug }: { slug: string }) {
   const innerRef = useRef<HTMLDivElement>(null)

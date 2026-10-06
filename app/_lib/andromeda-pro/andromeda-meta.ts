@@ -15,6 +15,14 @@ export type AndromedaComponentMeta = {
 
 export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
   {
+    slug: 'accordion',
+    name: 'Accordion',
+    description:
+      'Lists questions that each open their answer below them, one at a time or several at once.',
+    sourceFile: 'Accordion.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/accordion.png?v=2',
+  },
+  {
     slug: 'alert',
     name: 'Alert',
     description:
@@ -45,6 +53,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Displays the state a row or cell reports, such as online, queued, or fault.',
     sourceFile: 'Badge.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/badge.png?v=2',
+  },
+  {
+    slug: 'bento-grid',
+    name: 'Bento Grid',
+    description:
+      'Lays out cards on a grid where one can span several columns and cards in a row line up their parts.',
+    sourceFile: 'BentoGrid.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/bento-grid.png?v=2',
   },
   {
     slug: 'button',
@@ -127,6 +143,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/empty-state.png?v=2',
   },
   {
+    slug: 'footer',
+    name: 'Footer',
+    description:
+      'Closes a page with the brand, its secondary links in titled columns, and an optional large name.',
+    sourceFile: 'Footer.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/footer.png?v=2',
+  },
+  {
     slug: 'chart-funnel',
     name: 'Chart Funnel',
     description:
@@ -207,6 +231,22 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/waveform.png?v=2',
   },
   {
+    slug: 'logo-cloud',
+    name: 'Logo Cloud',
+    description:
+      'Shows the names or logos of customers in a slow moving band under a short line of text.',
+    sourceFile: 'LogoCloud.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/logo-cloud.png?v=2',
+  },
+  {
+    slug: 'marquee',
+    name: 'Marquee',
+    description:
+      'Loops a row of items slowly across its width, so a long list shows without taking room.',
+    sourceFile: 'Marquee.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/marquee.png?v=2',
+  },
+  {
     slug: 'media-card',
     name: 'Media Card',
     description:
@@ -247,6 +287,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/music-player.png?v=2',
   },
   {
+    slug: 'navbar',
+    name: 'Navbar',
+    description:
+      'Keeps the brand, page links and main action at the top of a page, and marks the section you are reading.',
+    sourceFile: 'Navbar.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/navbar.png?v=2',
+  },
+  {
     slug: 'nav-item',
     name: 'Nav Item',
     description:
@@ -271,6 +319,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/panel-menu.png?v=2',
   },
   {
+    slug: 'payment-card',
+    name: 'Payment Card',
+    description:
+      'Shows a payment card as the card itself, with its name, last four digits and expiry, and tilts toward the pointer.',
+    sourceFile: 'PaymentCard.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/payment-card.png?v=2',
+  },
+  {
     slug: 'planet',
     name: 'Planet',
     description:
@@ -285,6 +341,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Floats a panel of mixed content off a trigger, such as a picker with a setting under it.',
     sourceFile: 'Popover.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/popover.png?v=1',
+  },
+  {
+    slug: 'pricing-card',
+    name: 'Pricing Card',
+    description:
+      'Shows one plan with its price, what it includes and the button to choose it, lined up with the plans beside it.',
+    sourceFile: 'PricingCard.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/pricing-card.png?v=2',
   },
   {
     slug: 'progress-bar',
@@ -317,6 +381,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Collects a search query, with room for a keyboard shortcut hint.',
     sourceFile: 'SearchField.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/search-field.png?v=2',
+  },
+  {
+    slug: 'section-heading',
+    name: 'Section Heading',
+    description:
+      'Opens a page section with a short label, a title and a sentence that says what the section covers.',
+    sourceFile: 'SectionHeading.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/section-heading.png?v=2',
   },
   {
     slug: 'segmented-control',
@@ -359,6 +431,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/spinner.png?v=2',
   },
   {
+    slug: 'stepper',
+    name: 'Stepper',
+    description:
+      'Shows a run of steps in order, marking each one done, running or still to come.',
+    sourceFile: 'Stepper.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/stepper.png?v=2',
+  },
+  {
     slug: 'stat-tile',
     name: 'Stat Tile',
     description:
@@ -381,6 +461,14 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
       'Offers a proposed next move the reader can take, such as a follow-up prompt or a task lane.',
     sourceFile: 'Suggestion.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/suggestion.png?v=1',
+  },
+  {
+    slug: 'tabs',
+    name: 'Tabs',
+    description:
+      'Splits content into named panels and shows one at a time, as a row of tabs or a list whose rows can each carry a sentence.',
+    sourceFile: 'Tabs.tsx',
+    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tabs.png?v=2',
   },
   {
     slug: 'tag',
@@ -550,6 +638,8 @@ const TEMPLATE_ART: Record<string, string> = {
   'sign-in': 'Sign_in_pro_dark.png',
   // Sign Up is Pro-only for the same reason.
   'sign-up': 'Sign_up_pro_dark.png',
+  // Fintech Landing is Pro-only too: no Legacy counterpart to pair with.
+  'fintech-landing': 'Fintech_landing_pro_dark.png',
   // AI Chat is Pro-only too: no Legacy counterpart to pair with.
   'ai-chat': 'Ai_chat_pro_dark.png',
 }
@@ -623,6 +713,13 @@ export const ANDROMEDA_TEMPLATE_META: AndromedaTemplateMeta[] = [
     description:
       'The same authentication flow with no columns: a hairline lattice is the ground and the form floats on it.',
     image: templateArt('sign-up'),
+  },
+  {
+    folder: 'fintech-landing',
+    name: 'Fintech Landing',
+    description:
+      'A landing page for a money app: a product hero, use cases on tabs, live cards, security, plans and a journal, every section built from the system.',
+    image: templateArt('fintech-landing'),
   },
 ]
 

@@ -52,12 +52,14 @@ export const CATEGORY: Record<string, string> = {
   artifact: 'AI',
   'prompt-input': 'AI',
   suggestion: 'AI',
+  tabs: 'Navigation',
 
   // Feedback
   alert: 'Feedback',
   'empty-state': 'Feedback',
   spinner: 'Feedback',
   skeleton: 'Feedback',
+  stepper: 'Feedback',
 
   // Actions
   button: 'Actions',
@@ -73,10 +75,20 @@ export const CATEGORY: Record<string, string> = {
   card: 'Surfaces',
   'corner-markers': 'Surfaces',
   collapsible: 'Surfaces',
+  accordion: 'Surfaces',
 
   // Media
+  marquee: 'Media',
   'media-card': 'Media',
   'music-player': 'Media',
+
+  // Marketing — the parts a landing page is built from.
+  'bento-grid': 'Marketing',
+  footer: 'Marketing',
+  'logo-cloud': 'Marketing',
+  navbar: 'Marketing',
+  'pricing-card': 'Marketing',
+  'section-heading': 'Marketing',
 
   // Objects — the sanctioned decorative class (motion.md#motion-philosophy).
   // Planet moved here from "Visualization": it was
@@ -86,4 +98,5 @@ export const CATEGORY: Record<string, string> = {
   nodes: 'Objects',
   burst: 'Objects',
   cube: 'Objects',
+  'payment-card': 'Objects',
 }
