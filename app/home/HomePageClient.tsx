@@ -9,16 +9,14 @@ import Link from 'next/link'
 import {
   ArrowRight,
   MagnifyingGlass,
-  RocketLaunch,
   Code,
-  Palette,
   Terminal,
-  Sparkle,
   CaretRight,
 } from '@phosphor-icons/react/dist/ssr'
 import { buttonClasses } from '../components/buttonClasses'
 import { SiteFooter } from '../components/SiteFooter'
-import { AndromedaProSection } from './AndromedaProSection'
+import { HomeShowcase } from './HomeShowcase'
+import { FeatureGrid } from './FeatureGrid'
 import { Reveal } from './Reveal'
 import { StackedCards, AnimatedCount, WireIcons, FeaturedCarousel, FaqAccordion } from './islands'
 import type { ComponentMeta } from '../lib/component-registry'
@@ -35,6 +33,8 @@ import {
 
 interface Props {
   total: number
+  /** Free MIT standalones (everything not badged Premium). */
+  freeTotal: number
   /** Live registry pulls served, from PostHog. See app/lib/registry-stats.ts. */
   pulls: number
   carouselItems: ComponentMeta[]
@@ -44,7 +44,7 @@ const PREMIUM = premiumEnabled()
 
 // ─── HomePageClient ────────────────────────────────────────────────────────────
 
-export function HomePageClient({ total, pulls, carouselItems }: Props) {
+export function HomePageClient({ total, freeTotal, pulls, carouselItems }: Props) {
   // Everything installable, counted from source so it can never drift from
   // reality: standalones (`total`, premium included — the premium injection
   // runs before the registry is generated, so a production build counts the
@@ -60,6 +60,11 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
     ANDROMEDA_TEMPLATE_META.length +
     ANDROMEDA_PRO_COMPONENT_META.length +
     ANDROMEDA_PRO_TEMPLATE_META.length
+  const systemComponents = ANDROMEDA_COMPONENT_META.length + ANDROMEDA_PRO_COMPONENT_META.length
+  const systemTemplates = ANDROMEDA_TEMPLATE_META.length + ANDROMEDA_PRO_TEMPLATE_META.length
+  // "80+" style: the standalone count rounded down to its ten, so the hero
+  // never claims more than ships.
+  const standalonesFloor = `${Math.floor(total / 10) * 10}+`
   return (
     <div
       // overflow-x-hidden makes this element own the page's vertical scroll,
@@ -85,33 +90,27 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
             className="aic-hero-rise mb-5 inline-flex items-center rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300"
             style={{ animationDelay: '0.1s' }}
           >
-            One command, zero tokens
+            Best in class, by design
           </span>
 
           <h1
             className="aic-hero-slide text-balance text-2xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl"
             style={{ animationDelay: '0.18s' }}
           >
-            AI
-            {' '}
-            <img
-              src="/ai-canvas-icon.svg"
-              alt=""
-              aria-hidden
-              className="inline-block h-[0.6em] w-auto align-[0.02em]"
-            />
-            {' '}Native Components and Blocks,
+            Design systems your agent and your team build with.
             <br />
-            <span className="mt-2 inline-block text-olive-600 dark:text-olive-500">Design Systems and Templates</span>
+            <span className="mt-2 inline-block text-olive-600 dark:text-olive-500">
+              Andromeda Pro, plus {standalonesFloor} standalone components.
+            </span>
           </h1>
 
           <p
             className="aic-hero-rise mt-4 max-w-2xl text-base leading-relaxed text-sand-600 dark:text-sand-400"
             style={{ animationDelay: '0.26s' }}
           >
-            Copy one shadcn CLI command and a finished component, block, or complete
-            design system lands in your project in seconds. No tokens spent asking an
-            AI to generate it from scratch, just real, editable React you own.
+            Complete React design systems with templates, light and dark themes, and the design
+            rules your agent follows. Animated standalones for everything else. Install with one
+            command yourself, or let your agent do it.
           </p>
 
           <div
@@ -119,17 +118,14 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
             style={{ animationDelay: '0.34s' }}
           >
             <Link
-              href="/components"
+              href="/design-systems/andromeda-pro"
               className={buttonClasses({ variant: 'primary', size: 'lg' })}
             >
-              Browse Components
+              Explore Andromeda Pro
               <ArrowRight weight="regular" size={14} />
             </Link>
-            <Link
-              href="/mcp"
-              className="flex items-center gap-1.5 rounded-xl border border-sand-300 px-5 py-2.5 text-sm font-semibold text-sand-700 transition-colors hover:border-sand-500 hover:text-sand-900 dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
-            >
-              Get MCP
+            <Link href="/components" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
+              Browse components
             </Link>
           </div>
         </section>
@@ -333,90 +329,18 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
         {/* ── Wire icon divider ── */}
         <WireIcons />
 
-        {/* ── Andromeda Pro spotlight ── */}
-        <AndromedaProSection />
-
-        {/* ── Featured carousel ── */}
-        <FeaturedCarousel items={carouselItems} />
+        {/* ── Andromeda showcase ── */}
+        <HomeShowcase components={systemComponents} templates={systemTemplates} />
 
 
 
-        {/* ── Who it's for ── */}
-        <section id="audience" className="mt-16 sm:mt-24 scroll-mt-24">
-          <Reveal className="mb-8">
-            <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Built for everyone</p>
-            <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">
-              For developers. For designers. For makers. For your AI agent.
-            </h2>
-            <p className="mt-3 text-base leading-relaxed text-sand-600 dark:text-sand-400">
-              Most component libraries serve one kind of person. AI Canvas installs the same finished code for everyone who builds, and every install costs zero AI tokens instead of burning them on a from-scratch generation. Drop a component in with the shadcn CLI, reshape it with an AI agent, or let an agent browse and install it for you.
-            </p>
-          </Reveal>
-
-          <div className="grid grid-cols-1 gap-4">
-            {[
-              {
-                icon: <Code weight="regular" size={18} />,
-                audience: 'Developers',
-                description: 'Drop finished, typed components into your project with one command. No boilerplate, no screenshot to rebuild, and no tokens spent generating what already works.',
-                badges: ['TypeScript', 'Motion', 'Tailwind CSS'],
-                badgeStyle: 'text-sand-600 ring-sand-300 dark:text-sand-500 dark:ring-sand-800',
-              },
-              {
-                icon: <Palette weight="regular" size={18} />,
-                audience: 'Designers',
-                description: 'Start from something already crafted, then reshape it in your AI agent, Cursor, Claude Code, or Codex, whichever you use: the colors, the layout, the motion, fast, without rebuilding it from scratch.',
-                badges: ['Cursor', 'Claude Code', 'Codex'],
-                badgeStyle: 'text-olive-600 ring-olive-500/30 bg-olive-500/5 dark:text-olive-500',
-              },
-              {
-                icon: <RocketLaunch weight="regular" size={18} />,
-                audience: 'Makers & Founders',
-                description: 'Building with AI in Lovable, V0, Cursor, or any AI agent? Hand it real, polished components to install so your product ships fast and does not look generated, with no tokens spent regenerating UI from scratch.',
-                badges: ['No-code', 'AI-built', 'Real code'],
-                badgeStyle: 'text-sand-600 ring-sand-400 dark:text-sand-400 dark:ring-sand-700',
-              },
-              {
-                icon: <Sparkle weight="regular" size={18} />,
-                audience: 'AI agents',
-                description: 'Point your agent at the AI Canvas MCP and it browses, inspects, and installs finished components for you: fewer tokens, no writing UI from scratch, and you keep control. Works with any MCP client, Claude Code, Cursor, Codex, Copilot, Gemini, and more.',
-                badges: ['MCP', 'Agent-ready', 'No copy-paste'],
-                badgeStyle: 'text-sand-600 ring-sand-400 dark:text-sand-400 dark:ring-sand-700',
-              },
-            ].map(({ icon, audience, description, badges, badgeStyle }, i) => (
-              <Reveal
-                key={audience}
-                y={14}
-                delay={i * 0.08}
-                className="flex flex-col rounded-xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900"
-              >
-                <div className="mb-3 flex items-center gap-2.5">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sand-100 text-sand-700 dark:bg-sand-800 dark:text-sand-300">
-                    {icon}
-                  </div>
-                  <span className="text-sm font-bold text-sand-900 dark:text-sand-50">{audience}</span>
-                </div>
-                <p className="flex-1 text-base leading-relaxed text-sand-600 dark:text-sand-400">{description}</p>
-                <div className="mt-4 flex flex-wrap gap-1.5">
-                  {badges.map((badge) => (
-                    <span
-                      key={badge}
-                      className={`rounded px-1.5 py-0.5 text-[10px] font-semibold ring-1 ${badgeStyle}`}
-                    >
-                      {badge}
-                    </span>
-                  ))}
-                </div>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        {/* ── How it works — vertical timeline ── */}
+        {/* ── How your agent builds with it — vertical timeline ── */}
         <section id="how-remix" className="mt-16 sm:mt-24">
           <Reveal className="mb-8">
             <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">How it works</p>
-            <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">Three steps. Your way.</h2>
+            <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">
+              Your agent reads the rules before it writes a line.
+            </h2>
           </Reveal>
 
           <div className="relative flex flex-col gap-0">
@@ -434,21 +358,21 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
             {[
               {
                 num: '01',
-                icon: <MagnifyingGlass weight="regular" size={16} />,
-                title: 'Browse',
-                desc: 'Search components, blocks, and design systems, and preview each one live before you choose.',
+                icon: <Terminal weight="regular" size={16} />,
+                title: 'Install',
+                desc: 'One command adds the components, tokens and design rules to your project.',
               },
               {
                 num: '02',
-                icon: <Terminal weight="regular" size={16} />,
-                title: 'Install',
-                desc: 'Run the one shadcn CLI command, or point your AI agent at the MCP. The finished, typed source lands in your project, no tokens spent generating it.',
+                icon: <Code weight="regular" size={16} />,
+                title: 'Build',
+                desc: 'Your agent follows the rules: where colour goes, how cards sit in a grid, which button leads a row.',
               },
               {
                 num: '03',
-                icon: <RocketLaunch weight="regular" size={16} />,
-                title: 'Ship',
-                desc: 'It arrives as real code you own. Ship it as is, or reshape it with an AI agent in seconds. It is yours.',
+                icon: <MagnifyingGlass weight="regular" size={16} />,
+                title: 'Check',
+                desc: 'Ask it to review its own screen against the same rules before you look.',
               },
             ].map((step, i) => (
               <Reveal
@@ -473,8 +397,72 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
               </Reveal>
             ))}
           </div>
+          <p className="pl-[60px] text-sm text-sand-600 dark:text-sand-400">
+            Works with Claude Code, Codex, Cursor and any agent that reads files.
+          </p>
         </section>
 
+        {/* ── Where it works ── */}
+        <FeatureGrid />
+
+        {/* ── Standalone components ── */}
+        <FeaturedCarousel items={carouselItems} freeTotal={freeTotal} />
+
+        {/* ── Pricing ── */}
+        {/* The same <PremiumCards /> that /pricing renders, so the plans, the
+            prices, the billing cycle switch and the entitlement-aware CTA can
+            never drift between the two pages. Premium off = no section: the
+            site is then fully free and has nothing to sell here. */}
+        {PREMIUM && (
+          <section className="mt-16 sm:mt-24">
+            {/* Open-core band: the honest boundary between what is open and
+                what Premium adds. Lives at the top of the pricing section, the
+                one place on the page where Premium is a decision. */}
+            <Reveal className="text-center">
+              <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Open core</p>
+              <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">
+                One codebase in the open. Premium on top.
+              </h2>
+            </Reveal>
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Reveal y={12}>
+                <div className="flex h-full flex-col rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">Open source · MIT</p>
+                  <p className="mt-2 flex-1 text-base leading-relaxed text-sand-700 dark:text-sand-300">
+                    The aicanvas.me site, {freeTotal} free components, Andromeda Legacy and its rules,
+                    and the MCP server.
+                  </p>
+                  <div className="mt-5">
+                    <a
+                      href={GITHUB_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={buttonClasses({ variant: 'outline', size: 'md' })}
+                    >
+                      View on GitHub
+                    </a>
+                  </div>
+                </div>
+              </Reveal>
+              <Reveal y={12} delay={0.08}>
+                <div className="flex h-full flex-col rounded-2xl border border-olive-500/30 bg-olive-500/5 p-5">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">Premium</p>
+                  <p className="mt-2 flex-1 text-base leading-relaxed text-sand-700 dark:text-sand-300">
+                    Andromeda Pro, premium components and blocks, and the AI Brain installs with build
+                    and review skills.
+                  </p>
+                  <div className="mt-5">
+                    <Link href="/pricing" className={buttonClasses({ variant: 'outline', size: 'md' })}>
+                      See Premium
+                    </Link>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+            <div className="mt-12" />
+            <PremiumCards />
+          </section>
+        )}
 
         {/* ── FAQ ── */}
         <section className="mt-16 sm:mt-24">
@@ -501,28 +489,6 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
           </div>
         </section>
 
-        {/* ── Pricing ── */}
-        {/* The same <PremiumCards /> that /pricing renders, so the plans, the
-            prices, the billing cycle switch and the entitlement-aware CTA can
-            never drift between the two pages. Premium off = no section: the
-            site is then fully free and has nothing to sell here. */}
-        {PREMIUM && (
-          <section className="mt-16 sm:mt-24">
-            <Reveal className="text-center">
-              <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Pricing</p>
-              <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">
-                The free library stays free.
-              </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-base leading-relaxed text-sand-600 dark:text-sand-400">
-                Every free component ships its full source and its remix prompt, installed
-                with one command. Premium adds the closed-source components, blocks,
-                design systems and templates.
-              </p>
-            </Reveal>
-            <PremiumCards />
-          </section>
-        )}
-
         {/* ── Final CTA ── */}
         <section className="mt-16 sm:mt-24">
           <Reveal
@@ -536,19 +502,17 @@ export function HomePageClient({ total, pulls, carouselItems }: Props) {
               Ready to build?
             </p>
             <h2 className="relative mt-2 text-xl font-bold text-sand-900 dark:text-sand-50">
-              One command from your next screen.
+              Start with a system, not a blank page.
             </h2>
             <p className="relative mt-2 text-base text-sand-600 dark:text-sand-500">
-              {componentTotal}+ components and design systems, each one command away. Copy it
-              yourself, or tell your agent to install it. No tokens spent generating what
-              already works.
+              Andromeda Legacy is free. Install it and let your agent build your next screen.
             </p>
             <div className="relative mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link
-                href="/components"
+                href="/design-systems/andromeda"
                 className={buttonClasses({ variant: 'primary', size: 'lg' })}
               >
-                Browse Components
+                Explore Andromeda
                 <ArrowRight weight="regular" size={14} />
               </Link>
               <a

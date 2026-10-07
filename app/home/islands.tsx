@@ -371,7 +371,7 @@ function TiltCard({ children }: { children: React.ReactNode }) {
   )
 }
 
-export function FeaturedCarousel({ items }: { items: ComponentMeta[] }) {
+export function FeaturedCarousel({ items, freeTotal }: { items: ComponentMeta[]; freeTotal: number }) {
   const count = items.length
   const [idx, setIdx] = useState(0)
   const [dir, setDir] = useState(0)
@@ -389,13 +389,13 @@ export function FeaturedCarousel({ items }: { items: ComponentMeta[] }) {
     <section className="mt-16 sm:mt-24">
       {/* Header */}
       <Reveal className="mb-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">The library</p>
-        <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">Components and blocks, one command away.</h2>
+        <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Standalone components</p>
+        <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">{freeTotal} animated components, free and MIT.</h2>
       </Reveal>
       <Reveal delay={0.05} className="mb-8 max-w-2xl">
         <p className="text-base leading-relaxed text-sand-600 dark:text-sand-400">
-          Copy one CLI command and a finished, animated React piece lands in your project, no
-          tokens spent generating it.
+          Backgrounds, glass navigation, 3D globes, shaders. Each one installs with one command, and
+          its remix prompt lets any AI tool reshape it.
         </p>
       </Reveal>
 
@@ -580,6 +580,18 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
   {
     q: 'How is AI Canvas different from other component libraries?',
     a: 'Most libraries serve one audience, but AI Canvas fits however you build: copy a free component’s AI prompt, run one command with the shadcn CLI, or hand it to an AI agent. The code lands as real code in your project, not a screenshot to chase, so you can restyle, extend, or ship it as is.',
+  },
+  {
+    q: 'What does "written for AI agents" mean?',
+    a: 'Every component ships with rules an agent reads: when to use it, what never to change, how it sits next to others.',
+  },
+  {
+    q: 'Which frameworks does it work in?',
+    a: 'Tested in Next.js and Vite. It installs through shadcn, so other React setups shadcn supports should work; we list a framework once we have tested it.',
+  },
+  {
+    q: 'Does it cost AI tokens?',
+    a: 'Installing uses none: the finished source lands in your project. Your agent still uses tokens when it builds with it.',
   },
   {
     q: 'Who is behind AI Canvas?',

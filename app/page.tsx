@@ -6,8 +6,8 @@ import { COMPONENT_META } from './lib/component-meta.generated'
 import { SITE_URL } from './lib/config'
 import { getRegistryPulls } from './lib/registry-stats'
 
-const HOMEPAGE_TITLE = 'React Component Registry: Components, Blocks & Design Systems | AI Canvas'
-const HOMEPAGE_DESCRIPTION = 'Install finished React components, blocks, and design systems with one shadcn CLI command. Real, editable code you own, no AI tokens spent.'
+const HOMEPAGE_TITLE = 'AI Canvas: Design Systems for AI Agents and Humans'
+const HOMEPAGE_DESCRIPTION = 'Andromeda is a React design system written for AI agents: components, templates, light and dark themes, and designer rules. Install with shadcn.'
 
 export const metadata: Metadata = {
   title: { absolute: HOMEPAGE_TITLE },
@@ -46,5 +46,8 @@ export default async function HomePage() {
     .filter((c) => c !== undefined)
     .map((c) => ({ slug: c.slug, name: c.name, description: c.description, tags: c.tags, image: c.image, badge: c.badge }))
 
-  return <HomePageClient total={total} pulls={pulls} carouselItems={carouselItems} />
+  // The free MIT standalones: everything not badged Premium.
+  const freeTotal = COMPONENT_META.filter((c) => c.badge !== 'Premium').length
+
+  return <HomePageClient total={total} freeTotal={freeTotal} pulls={pulls} carouselItems={carouselItems} />
 }
