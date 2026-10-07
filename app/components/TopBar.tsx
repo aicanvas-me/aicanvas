@@ -3,6 +3,7 @@
 import { createContext, useContext, useLayoutEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { Breadcrumbs } from './Breadcrumbs'
+import { HomeNav } from './HomeNav'
 import { ThemeToggle } from './ThemeToggle'
 import { TopAuthPill } from './auth/TopAuthPill'
 import { OfferBanner } from './billing/OfferBanner'
@@ -114,6 +115,7 @@ export function TopBar() {
   const crumbs = buildTopBarCrumbs(pathname)
   const slot = installSlotId(pathname)
   const offerMode = offerPillMode(pathname)
+  const isHome = pathname === '/'
 
   return (
     <header className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
@@ -128,10 +130,18 @@ export function TopBar() {
           flex-1 and shrink-0 each set flex-shrink, so the ends are written as
           alternatives and never both: a string carrying the two is settled by
           the built stylesheet, not by the order written here. */}
-      <div className={`min-w-0 ${offerMode ? '' : 'flex-1'}`}>
-        {override !== undefined ? override : crumbs ? <Breadcrumbs crumbs={crumbs} /> : null}
+      <div className={`min-w-0 ${offerMode && !isHome ? '' : 'flex-1'}`}>
+        {isHome ? (
+          <HomeNav />
+        ) : override !== undefined ? (
+          override
+        ) : crumbs ? (
+          <Breadcrumbs crumbs={crumbs} />
+        ) : null}
       </div>
-      {offerMode && <OfferBanner mode={offerMode} />}
+      {/* On the homepage the nav fills the left, so the offer pill only shows
+          where there is room for both. */}
+      {offerMode && (isHome ? <div className="hidden 2xl:block"><OfferBanner mode={offerMode} /></div> : <OfferBanner mode={offerMode} />)}
       {/* Right cluster order whenever a page mounts a CTA: theme toggle, then
           the CTA, then the user. */}
       <div className="flex shrink-0 items-center gap-2">

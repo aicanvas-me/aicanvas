@@ -1,0 +1,128 @@
+'use client'
+
+// The homepage's left side of the top bar. The homepage drops the sidebar (the
+// way ui.shadcn.com's landing page does), so the logo and the site's sections
+// move up here: two systems, the component categories, MCP, Pricing, and a
+// More menu for the info pages. Every other route keeps the sidebar.
+//
+// Each menu is a disclosure: a button with aria-expanded and a list of plain
+// links. Escape and a click outside close it, and focus goes back to the
+// button on Escape. The links render in the server HTML only while open, so
+// the categories stay crawlable through the sidebar on every other page and
+// through /components.
+
+import Link from 'next/link'
+import { useEffect, useId, useRef, useState } from 'react'
+import { CaretDown } from '@phosphor-icons/react'
+import { CATEGORIES } from '../lib/categories'
+
+type NavLink = { label: string; href: string }
+
+const DESIGN_SYSTEMS: NavLink[] = [
+  { label: 'Andromeda Pro', href: '/design-systems/andromeda-pro' },
+  { label: 'Andromeda Legacy', href: '/design-systems/andromeda' },
+]
+
+const COMPONENT_LINKS: NavLink[] = [
+  { label: 'All components & blocks', href: '/components' },
+  ...CATEGORIES.map((c) => ({ label: c.label, href: `/components/category/${c.slug}` })),
+]
+
+const MORE: NavLink[] = [
+  { label: 'About', href: '/about' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Contact', href: '/contact' },
+  { label: 'Feedback', href: '/feedback' },
+]
+
+const ITEM =
+  'inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50'
+
+function Menu({ label, links, columns = 1 }: { label: string; links: NavLink[]; columns?: 1 | 2 }) {
+  const [open, setOpen] = useState(false)
+  const rootRef = useRef<HTMLDivElement>(null)
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const listId = useId()
+
+  useEffect(() => {
+    if (!open) return
+    function onPointer(e: PointerEvent) {
+      if (!rootRef.current?.contains(e.target as Node)) setOpen(false)
+    }
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') {
+        setOpen(false)
+        buttonRef.current?.focus()
+      }
+    }
+    document.addEventListener('pointerdown', onPointer)
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('pointerdown', onPointer)
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
+
+  return (
+    <div ref={rootRef} className="relative">
+      <button
+        ref={buttonRef}
+        type="button"
+        aria-expanded={open}
+        aria-controls={listId}
+        onClick={() => setOpen((o) => !o)}
+        className={ITEM}
+      >
+        {label}
+        <CaretDown
+          weight="regular"
+          aria-hidden
+          className={`size-3 transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
+        />
+      </button>
+      {open && (
+        <ul
+          id={listId}
+          className={`absolute left-0 top-full z-40 mt-1.5 grid gap-0.5 rounded-xl border border-sand-200 bg-sand-50 p-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.12)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_8px_24px_rgba(0,0,0,0.5)] ${
+            columns === 2 ? 'w-[26rem] grid-cols-2' : 'w-56 grid-cols-1'
+          }`}
+        >
+          {links.map((l) => (
+            <li key={l.href}>
+              <Link
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="block rounded-lg px-2.5 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50"
+              >
+                {l.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
+export function HomeNav() {
+  return (
+    <nav aria-label="Main" className="flex items-center gap-1">
+      <Link
+        href="/"
+        className="mr-3 flex shrink-0 items-center gap-2 font-bold text-sand-900 dark:text-sand-50"
+      >
+        <img src="/ai-canvas-icon.svg" alt="" width={20} height={17} className="shrink-0" />
+        AI Canvas
+      </Link>
+      <Menu label="Design systems" links={DESIGN_SYSTEMS} />
+      <Menu label="Components & blocks" links={COMPONENT_LINKS} columns={2} />
+      <Link href="/mcp" className={ITEM}>
+        MCP
+      </Link>
+      <Link href="/pricing" className={ITEM}>
+        Pricing
+      </Link>
+      <Menu label="More" links={MORE} />
+    </nav>
+  )
+}

@@ -65,7 +65,10 @@ export function Sidebar({
   // full-screen compositions with no chrome at all. Every other route,
   // /design-systems and /ideation included, keeps this one rail mounted, so
   // crossing between those route spaces never unmounts and remounts it.
+  // The homepage has no rail either: its top bar carries the navigation
+  // (HomeNav), the way ui.shadcn.com's landing page does.
   const hideSidebar =
+    pathname === '/' ||
     pathname?.startsWith('/lab') ||
     TEMPLATE_LEAF_RE.test(pathname ?? '') ||
     CAPTURE_LEAF_RE.test(pathname ?? '')
