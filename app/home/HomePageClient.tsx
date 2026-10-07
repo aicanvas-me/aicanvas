@@ -80,7 +80,7 @@ export function HomePageClient({ total, freeTotal, pulls, carouselItems }: Props
       className="aic-page-scroll flex min-h-full flex-col overflow-x-hidden bg-sand-50 dark:bg-sand-950"
     >
 
-      <main className="relative mx-auto w-full min-w-0 max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
+      <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
 
         {/* ── Hero ── */}
         <section className="flex flex-col items-center text-center">
