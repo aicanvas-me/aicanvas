@@ -46,7 +46,7 @@ function remaining(ms: number): string {
   return days > 0 ? `${days}d ${hh}:${mm}:${ss}` : `${hh}:${mm}:${ss}`
 }
 
-/** 1 October, spelled the way the pill's accessible name reads it. */
+/** The closing date, spelled the way the pill's accessible name reads it. */
 const ENDS_LABEL = OFFER_ENDS.toLocaleDateString('en-GB', {
   day: 'numeric',
   month: 'long',
