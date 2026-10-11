@@ -3,6 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { SignInFormFields } from '../../components/auth/SignInFormFields'
 import { safeNext } from '../../lib/safe-next'
+import { AgentSignInNote, isAgentSignIn } from '../AgentSignInNote'
 import { AuthPagePopup } from '../AuthPagePopup'
 
 // Client wrapper for /account/sign-in. The page-level server component reads
@@ -24,6 +25,7 @@ export function SignInForm({ next: rawNext, initialError }: Props) {
 
   return (
     <AuthPagePopup>
+      {isAgentSignIn(next) && <AgentSignInNote mode="sign-in" />}
       <SignInFormFields
         next={next}
         initialError={initialError}
