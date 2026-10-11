@@ -3,7 +3,7 @@
 import { useSearchParams } from 'next/navigation'
 import { SignUpFormFields } from '../../components/auth/SignUpFormFields'
 import { safeNext } from '../../lib/safe-next'
-import { AgentSignInNote, isAgentSignIn } from '../AgentSignInNote'
+import { AgentSignInHeader, isAgentSignIn } from '../AgentSignInHeader'
 import { AuthPagePopup } from '../AuthPagePopup'
 
 export function SignUpForm({ fallback = '/account', agentFlag = false }: { fallback?: string; agentFlag?: boolean }) {
@@ -12,8 +12,7 @@ export function SignUpForm({ fallback = '/account', agentFlag = false }: { fallb
 
   return (
     <AuthPagePopup>
-      {agentFlag && isAgentSignIn(next) && <AgentSignInNote mode="sign-up" />}
-      <SignUpFormFields next={next} />
+      <SignUpFormFields next={next} header={agentFlag && isAgentSignIn(next) ? <AgentSignInHeader mode="sign-up" /> : undefined} />
     </AuthPagePopup>
   )
 }

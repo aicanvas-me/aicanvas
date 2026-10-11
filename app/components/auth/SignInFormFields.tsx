@@ -42,11 +42,13 @@ type Props = {
   // here with `?error=…`). Cleared on the first keystroke or submit so the
   // user sees feedback for their new action instead of stale callback text.
   initialError?: string | null
+  // Replaces the mascot header, e.g. when an AI agent's sign-in opened the page.
+  header?: React.ReactNode
 }
 
 type Mode = 'password' | 'link'
 
-export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialError = null }: Props) {
+export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialError = null, header }: Props) {
   const [mode, setMode] = useState<Mode>('password')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -155,7 +157,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
   if (magicSent) {
     return (
       <>
-        <TerminatorReveal />
+        {header ?? <TerminatorReveal />}
         <div className="mt-6 rounded-lg border border-olive-500/30 bg-olive-500/10 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
           Check your inbox. If an account exists for <strong>{email}</strong>, a one-time sign-in link is on its way. It expires in 1 hour.
         </div>
@@ -174,7 +176,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
 
   return (
     <>
-      <TerminatorReveal />
+      {header ?? <TerminatorReveal />}
 
       <div className="mt-6 space-y-3">
         <GoogleSignInButton next={next} label="Sign in with Google" />

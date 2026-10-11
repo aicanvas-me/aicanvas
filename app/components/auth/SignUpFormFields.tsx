@@ -21,9 +21,11 @@ import { NerdToHero } from './NerdToHero'
 type Props = {
   next: string
   onSwitchToSignIn?: () => void
+  // Replaces the mascot header, e.g. when an AI agent's sign-in opened the page.
+  header?: React.ReactNode
 }
 
-export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
+export function SignUpFormFields({ next, onSwitchToSignIn, header }: Props) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -72,7 +74,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
 
   return (
     <>
-      <NerdToHero />
+      {header ?? <NerdToHero />}
 
       {sent ? (
         <div className="mt-6 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
