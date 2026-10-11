@@ -51,8 +51,8 @@ const RECONNECT: { agent: string; code?: string; text?: string }[] = [
     agent: 'Codex',
     code: `codex mcp remove aicanvas\ncodex mcp add aicanvas --url ${HOSTED_MCP_URL}\ncodex mcp login aicanvas`,
   },
-  { agent: 'Cursor', text: 'Open Cursor Settings, then the MCP section. Delete AI Canvas, add it again with the address below, and sign in when Cursor asks.' },
-  { agent: 'VS Code', text: 'Remove the aicanvas entry from .vscode/mcp.json and save. Add it back, start the server from that file, and sign in.' },
+  { agent: 'Cursor', text: 'Open Customize in the Cursor sidebar and remove AI Canvas. Add it again with the address below; the sign-in opens the next time Cursor uses it.' },
+  { agent: 'VS Code', text: 'Open the Command Palette and run MCP: List Servers. Pick aicanvas, disconnect its account, then start it again and sign in.' },
   { agent: 'Claude Desktop', text: 'Open Settings, then Connectors. Remove AI Canvas, add a custom connector with the address below, and click Connect.' },
   { agent: 'Any other AI agent', text: 'Remove the AI Canvas server, add it again with the address below, and sign in when it asks.' },
 ]

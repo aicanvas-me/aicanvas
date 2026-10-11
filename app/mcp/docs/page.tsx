@@ -206,7 +206,8 @@ export default function HostedMcpDocsPage() {
             <Link href="/account/settings" className={linkClass}>
               account settings
             </Link>
-            . Store it as a secret in your CI, never in git.
+            . Store it as a secret in your CI, never in git. Use either the browser sign-in or the
+            header, never both: a saved header overrides the sign-in, so every call would fail.
           </p>
           <p className="mt-4 text-sm font-semibold text-sand-900 dark:text-sand-50">Example for Claude Code</p>
           <pre className={`${codeClass} mt-2`}>

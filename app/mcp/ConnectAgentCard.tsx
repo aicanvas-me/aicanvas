@@ -167,7 +167,7 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
               </Step>
               <Step number={2} isLast>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
-                  Cursor asks you to sign in. Your browser opens: sign in to AI Canvas and click{' '}
+                  The first time you ask Cursor for something from AI Canvas, your browser opens: sign in and click{' '}
                   <span className="font-semibold">Allow</span>.
                 </p>
               </Step>
@@ -184,7 +184,7 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
               </Step>
               <Step number={2} isLast>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
-                  Start the server from that file. VS Code opens your browser: sign in to AI Canvas and click{' '}
+                  The first time your agent uses AI Canvas, your browser opens: sign in and click{' '}
                   <span className="font-semibold">Allow</span>.
                 </p>
               </Step>
