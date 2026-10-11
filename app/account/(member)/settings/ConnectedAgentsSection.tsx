@@ -8,8 +8,8 @@ import { buttonClasses } from '../../../components/buttonClasses'
 
 // ─── ConnectedAgentsSection ───────────────────────────────────────────────────
 // Every AI agent this account allowed on the hosted MCP's consent screen. The new-
-// connection email links here (#ai-agents). "Don't recognise it" disconnects AND changes
-// the API key, because an agent learns the key from the install commands it runs.
+// connection email links here (#ai-agents). One calm action per agent; changing the API
+// key lives in the API key section, not here.
 
 export type ConnectedAgent = {
   id: string
@@ -41,13 +41,12 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
   const router = useRouter()
   const [busy, setBusy] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)
-  const [changeKey, setChangeKey] = useState(true)
   const [, startRefresh] = useTransition()
 
-  async function run(key: string, body: { id: string } | { all: true }, rotate: boolean) {
+  async function run(key: string, body: { id: string } | { all: true }) {
     setBusy(key)
     setFailed(false)
-    const ok = (await post('/api/me/agents', body)) && (!rotate || (await post('/api/me/token/rotate')))
+    const ok = await post('/api/me/agents', body)
     setBusy(null)
     if (!ok) return setFailed(true)
     startRefresh(() => router.refresh())
@@ -76,31 +75,21 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
                   <div className="flex min-w-0 items-start gap-3">
                     <Robot weight="regular" size={20} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">AI agent &ldquo;{agent.name}&rdquo;</p>
+                      <p className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">{agent.name}</p>
                       <p className="mt-0.5 text-xs text-sand-600 dark:text-sand-400">
                         {agent.destination} · Connected {day(agent.connectedAt)}
                         {agent.lastUsedAt ? ` · Last used ${day(agent.lastUsedAt)}` : ''}
                       </p>
                     </div>
                   </div>
-                  <div className="flex shrink-0 gap-2">
-                    <button
-                      type="button"
-                      disabled={busy !== null}
-                      onClick={() => run(agent.id, { id: agent.id }, false)}
-                      className={buttonClasses({ variant: 'outline', size: 'sm' })}
-                    >
-                      {busy === agent.id ? 'Disconnecting…' : 'Disconnect'}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={busy !== null}
-                      onClick={() => run(`${agent.id}:unknown`, { id: agent.id }, true)}
-                      className={buttonClasses({ variant: 'destructive', tone: 'outline', size: 'sm' })}
-                    >
-                      {busy === `${agent.id}:unknown` ? 'Securing…' : 'Don’t recognise it'}
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    disabled={busy !== null}
+                    onClick={() => run(agent.id, { id: agent.id })}
+                    className={buttonClasses({ variant: 'outline', size: 'sm' })}
+                  >
+                    {busy === agent.id ? 'Disconnecting…' : 'Disconnect'}
+                  </button>
                 </div>
                 {(agent.countryMismatch || agent.staleRefreshAt) && (
                   <p className="mt-2 flex items-start gap-1.5 text-xs text-red-700 dark:text-red-400">
@@ -112,24 +101,15 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
             ))}
           </ul>
 
-          <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2">
+          {agents.length > 1 && (
             <button
               type="button"
               disabled={busy !== null}
-              onClick={() => run('all', { all: true }, changeKey)}
-              className={buttonClasses({ variant: 'outline', size: 'sm' })}
+              onClick={() => run('all', { all: true })}
+              className={`mt-4 ${buttonClasses({ variant: 'outline', size: 'sm' })}`}
             >
               {busy === 'all' ? 'Disconnecting…' : 'Disconnect all'}
             </button>
-            <label className="flex items-center gap-2 text-xs text-sand-700 dark:text-sand-300">
-              <input type="checkbox" checked={changeKey} onChange={(e) => setChangeKey(e.target.checked)} className="accent-olive-500" />
-              Also change my API key
-            </label>
-          </div>
-          {changeKey && (
-            <p className="mt-2 text-xs text-sand-600 dark:text-sand-400">
-              Setups that use your API key directly, like the npm MCP package or saved Copy CLI commands, then need the new key.
-            </p>
           )}
         </>
       )}
