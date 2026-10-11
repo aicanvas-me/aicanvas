@@ -52,8 +52,10 @@ export function AuthPagePopup({ children, closeHref = '/', aside }: Props) {
         </Button>
         {aside ? (
           <div className="grid md:grid-cols-2">
-            <div className="border-b border-sand-200 p-8 md:border-b-0 md:border-r dark:border-sand-800">{aside}</div>
-            <div className="p-8">{children}</div>
+            {/* pt-16 on both columns: the close button keeps its own corner, and the two
+                columns still start on the same line. */}
+            <div className="border-b border-sand-200 p-8 pt-16 md:border-b-0 md:border-r dark:border-sand-800">{aside}</div>
+            <div className="p-8 md:pt-16">{children}</div>
           </div>
         ) : (
           children
