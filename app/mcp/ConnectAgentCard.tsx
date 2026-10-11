@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Code, Robot } from '@phosphor-icons/react'
@@ -12,8 +12,8 @@ import { HOSTED_MCP_URL } from '../lib/hosted-mcp'
 // ─── ConnectAgentCard ─────────────────────────────────────────────────────────
 // The hosted MCP setup: add one address to the AI agent, sign in once in the browser,
 // never copy a key. Shown on /mcp, on /welcome for Premium and on /account/connect after
-// sign-up, only while HOSTED_MCP_OAUTH is on (the pages decide). The API key stays for
-// machines with no browser (CI, a remote shell) and for the npm package.
+// sign-up, only while HOSTED_MCP_OAUTH is on (the pages decide). Machines with no browser
+// (CI, a remote shell) use the API key; /mcp/docs#ci covers that, not this card.
 
 type Agent = 'claude' | 'cursor' | 'vscode' | 'codex' | 'desktop' | 'other'
 
@@ -34,10 +34,6 @@ const CURSOR_CONFIG = JSON.stringify({ mcpServers: { aicanvas: { url: HOSTED_MCP
 const CURSOR_DEEPLINK = `cursor://anysphere.cursor-deeplink/mcp/install?name=aicanvas&config=${btoa(JSON.stringify({ url: HOSTED_MCP_URL }))}`
 const VSCODE_CONFIG = JSON.stringify({ servers: { aicanvas: { type: 'http', url: HOSTED_MCP_URL } } }, null, 2)
 
-const MASKED_KEY = 'aic_••••••••'
-const MASKED_API_HEADER = `Authorization: Bearer ${MASKED_KEY}`
-// Shown on two lines (a shell line break) so it never wraps mid-flag; copied as one line.
-const MASKED_CLAUDE_HEADER_COMMAND = `claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL} \\\n  --header "${MASKED_API_HEADER}"`
 
 function Inline({ children }: { children: React.ReactNode }) {
   return (
@@ -54,21 +50,8 @@ function Hint({ children }: { children: React.ReactNode }) {
 export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?: string; showDocsLink?: boolean }) {
   const [agent, setAgent] = useState<Agent>('claude')
   const [copied, setCopied] = useState<string | null>(null)
-  const [apiKey, setApiKey] = useState<string | null>(null)
   const toast = useToast()
 
-  // The API key is only for machines without a browser; read it the way the other
-  // install cards do, and show nothing when signed out.
-  useEffect(() => {
-    let alive = true
-    fetch('/api/me/token')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => alive && setApiKey(d?.token ?? null))
-      .catch(() => {})
-    return () => {
-      alive = false
-    }
-  }, [])
 
   async function copy(id: string, text: string, message: string) {
     if (!(await copyText(text))) return
@@ -237,45 +220,6 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
       </div>
 
       {showDocsLink && <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">Stuck, or setting up CI? <Link href="/mcp/docs" className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300">Read the docs</Link>.</p>}
-
-      {apiKey && (
-        <div className="mt-4 rounded-xl border border-sand-200 bg-sand-100 p-4 sm:p-6 dark:border-sand-800 dark:bg-sand-900">
-          <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">Using it on a server or in CI?</p>
-          <p className="mb-3 mt-1 text-sm text-sand-600 dark:text-sand-400">
-            A server cannot open a browser to sign in, so it uses your API key instead. Run this on that machine:
-          </p>
-          <CodeBlock
-            command={MASKED_CLAUDE_HEADER_COMMAND}
-            copied={copied === 'api-claude'}
-            onCopy={() =>
-              copy(
-                'api-claude',
-                `claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL} --header "Authorization: Bearer ${apiKey}"`,
-                'Command copied',
-              )
-            }
-            label="command"
-            multiline
-          />
-          <p className="mb-2.5 mt-4 text-sm text-sand-600 dark:text-sand-400">Another tool? Send your key in this header:</p>
-          <CodeBlock
-            command={MASKED_API_HEADER}
-            copied={copied === 'api-header'}
-            onCopy={() => copy('api-header', `Authorization: Bearer ${apiKey}`, 'Header copied')}
-            label="header"
-          />
-          <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">
-            Keep the key in your CI secrets, not in your code. See it in{' '}
-            <Link
-              href="/account/settings"
-              className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
-            >
-              account settings
-            </Link>
-            .
-          </p>
-        </div>
-      )}
 
       {skipHref && (
         <div className="mt-6 text-center">
