@@ -54,9 +54,9 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     expect(res.status).toBe(200)
     expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
     // Steers the user to create a free account, and existing accounts to the
-    // tokened Copy CLI command on the component page.
+    // tokened install command on the component page.
     expect(body).toContain('account/sign-up')
-    expect(body).toContain('Copy CLI')
+    expect(body).toContain('copy its install command')
     // ZERO real source: the stub must not leak the component's actual code.
     expect(body).not.toContain('useState')
     expect(body).not.toContain('useEffect')
@@ -183,7 +183,7 @@ describe.skipIf(!brainAvailable)('GET /r/andromeda-brain.json — mode-independe
     expect(item.files[0].target).toContain('BRAIN-LOCKED.md')
     expect(item.files[0].content).toContain('aicanvas.me/pricing')
     // A subscribed-but-untokened CLI must learn where its command lives.
-    expect(item.files[0].content).toContain('Copy CLI')
+    expect(item.files[0].content).toContain('Copy Command')
     expect(res.headers.get('X-AICanvas-Token')).toBeNull()
   })
 
@@ -272,7 +272,7 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     expect(res.status).toBe(200) // never a cryptic 402
     expect(body).toContain('aicanvas.me/pricing')
     // A subscribed-but-untokened CLI must learn where its command lives.
-    expect(body).toContain('Copy CLI')
+    expect(body).toContain('copy its install command')
     // EVERY file's content is the placeholder — zero real component source
     // (the real file paths remain, but their bodies are all stubbed out).
     const item = JSON.parse(body)
@@ -368,7 +368,7 @@ describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle wi
     // The file says exactly what the terminal prints.
     expect(notice.content).toContain(item.docs)
     expect(notice.content).toContain('aicanvas.me/pricing')
-    expect(notice.content).toContain('Copy CLI')
+    expect(notice.content).toContain('copy its install command')
   })
 
   it("signed-in 'free' tier with a token → the same single notice, token never stamped", async () => {
