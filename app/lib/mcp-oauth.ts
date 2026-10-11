@@ -286,27 +286,30 @@ function withParams(uri: string, params: Record<string, string | undefined>): st
   return url.href
 }
 
+/** Why a sign-in stopped before consent; /oauth/stopped explains each one. */
+export type StopReason = 'unregistered' | 'redirect' | 'invalid'
+
 export type AuthorizeOutcome =
-  | { kind: 'error-page'; message: string } // the redirect target is not trusted: never redirect
+  | { kind: 'error-page'; reason: StopReason; message: string } // the redirect target is not trusted: never redirect
   | { kind: 'redirect'; location: string } // an error the agent can read, or the consent page
 
 export function authorize(url: URL, country: string | null): AuthorizeOutcome {
   const p = url.searchParams
   const clientId = p.get('client_id')
   const client = readClient(clientId)
-  if (!client || !clientId) return { kind: 'error-page', message: 'This AI agent is not registered. Start the sign-in again from your AI agent.' }
+  if (!client || !clientId) return { kind: 'error-page', reason: 'unregistered', message: 'This AI agent is not registered. Start the sign-in again from your AI agent.' }
 
   const requested = p.get('redirect_uri')
   let redirectUri: string
   if (requested) {
     if (!client.r.some((r) => redirectMatches(requested, r))) {
-      return { kind: 'error-page', message: 'This sign-in asked to return somewhere the AI agent never registered.' }
+      return { kind: 'error-page', reason: 'redirect', message: 'This sign-in asked to return somewhere the AI agent never registered.' }
     }
     redirectUri = requested
   } else if (client.r.length === 1) {
     redirectUri = client.r[0]
   } else {
-    return { kind: 'error-page', message: 'This sign-in did not say where to return.' }
+    return { kind: 'error-page', reason: 'redirect', message: 'This sign-in did not say where to return.' }
   }
 
   // Errors go back to the agent, except to a website: anyone can register one, and a
@@ -315,7 +318,7 @@ export function authorize(url: URL, country: string | null): AuthorizeOutcome {
   const toWebsite = /^https?:$/.test(new URL(redirectUri).protocol) && !LOOPBACK.has(new URL(redirectUri).hostname)
   const fail = (error: string, description: string): AuthorizeOutcome =>
     toWebsite
-      ? { kind: 'error-page', message: description }
+      ? { kind: 'error-page', reason: 'invalid', message: description }
       : {
           kind: 'redirect',
           location: withParams(redirectUri, { error, error_description: description, state, iss: issuerFor(url) }),

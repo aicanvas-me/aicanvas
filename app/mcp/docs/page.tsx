@@ -223,6 +223,10 @@ export default function HostedMcpDocsPage() {
             <li>You disconnected the AI agent in settings.</li>
             <li>The sign-in took longer than your AI agent waits. It usually waits a few minutes, so it gave up.</li>
             <li>The browser says &ldquo;This sign-in request has ended&rdquo; because the request expired or was already answered.</li>
+            <li>
+              The browser says &ldquo;Your AI agent needs to connect again&rdquo;: its saved connection is no longer valid.
+              Starting again reuses it, so remove the server from your AI agent and add it again.
+            </li>
             <li>If you use the header method, you rotated your API key.</li>
           </ul>
           <p className="mt-5 font-semibold text-sand-900 dark:text-sand-50">Fix it</p>
