@@ -1743,7 +1743,8 @@ export function createServer(
               ? {
                   slug: pick.slug,
                   name: pick.name,
-                  installCommand: keyed(ctx, pick.installCommand),
+                  // A locked pick carries no command: it would only write a placeholder.
+                  installCommand: ctx.access?.locked(pick.slug) ? '' : keyed(ctx, pick.installCommand),
                   homepageUrl: pick.homepageUrl,
                   hasProps: !!props?.props[pick.slug],
                 }
@@ -1778,7 +1779,9 @@ export function createServer(
         if (templatePick) {
           lines.push(
             `Closest ready-made screen: ${templatePick.name} (${templatePick.system}${templatePick.category ? ` · ${templatePick.category}` : ''}), ${templatePick.fileCount} files${ctx.access?.locked(templatePick.slug) ? ', locked' : ''}.`,
-            `  Install: ${keyed(ctx, templatePick.installCommand)}`,
+            ctx.access?.locked(templatePick.slug)
+              ? `  Locked on this account (Premium): offer the upgrade (${UPGRADE_URL}).`
+              : `  Install: ${keyed(ctx, templatePick.installCommand)}`,
             `  Preview: ${templatePick.homepageUrl}`,
             '  Start from it when the brief is mostly this screen; fetch it with `get_template`.',
             '',
@@ -1848,7 +1851,7 @@ export function createServer(
               ? {
                   slug: templatePick.slug,
                   name: templatePick.name,
-                  installCommand: keyed(ctx, templatePick.installCommand),
+                  installCommand: ctx.access?.locked(templatePick.slug) ? '' : keyed(ctx, templatePick.installCommand),
                   homepageUrl: templatePick.homepageUrl,
                 }
               : null,

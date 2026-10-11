@@ -29,13 +29,14 @@ export async function getEntitlement(req: Request): Promise<Entitlement> {
 
   if (token) {
     const admin = createAdminClient()
-    const { data: key } = await admin
+    const { data: key, error: keyError } = await admin
       .from('user_api_keys')
       .select('user_id')
       .eq('token', token)
       .eq('revoked', false)
       .maybeSingle()
-    if (!key) return { tier: 'anonymous', userId: null, tokenUnknown: true } // bad/revoked token
+    // bad/revoked token. A failed read is not labelled: "your token changed" would be wrong.
+    if (!key) return keyError ? { tier: 'anonymous', userId: null } : { tier: 'anonymous', userId: null, tokenUnknown: true }
     // Fire-and-forget usage stamp so leaked-token anomalies are detectable.
     void admin
       .from('user_api_keys')
