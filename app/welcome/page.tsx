@@ -58,8 +58,10 @@ export default async function WelcomePage() {
 
   return (
     // Scoped dark: this page is a dark set piece with no light rendering, so
-    // it opts out of the site theme the way pinned-dark.ts documents.
-    <div className="dark min-h-full bg-sand-950">
+    // it opts out of the site theme the way pinned-dark.ts documents. shrink-0:
+    // the page slot is a fixed-height flex column, so without it this root
+    // shrinks to the slot and a long page spills past its dark background.
+    <div className="dark min-h-full shrink-0 bg-sand-950">
       <main className="relative mx-auto w-full min-w-0 max-w-4xl px-4 pt-6 pb-16 sm:px-6 sm:pt-12">
         <section className="flex flex-col items-center text-center">
           <StackedCards cards={THANKS_CARDS} />
@@ -100,7 +102,7 @@ export default async function WelcomePage() {
                 </Link>
               </div>
               {hostedMcpOAuthEnabled() ? (
-                <div className="mx-auto mt-10 w-full max-w-2xl text-left">
+                <div className="mx-auto mt-10 w-full max-w-3xl text-left">
                   <ConnectAgentCard />
                 </div>
               ) : (
