@@ -1,3 +1,4 @@
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { Lightning } from '@phosphor-icons/react/dist/ssr'
@@ -6,11 +7,16 @@ import { hostedMcpOAuthEnabled, premiumEnabled } from '../../../lib/flags'
 import { isPremiumNow, type SubStatus } from '../../../lib/identity/tier'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
 import { AccountTabs } from './AccountTabs'
+import { ACCOUNT_PATH_HEADER } from '../../lib/account-path'
+import { safeNext } from '../../lib/safe-next'
 
 export default async function MemberLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/account/sign-in?next=/account')
+  if (!user) {
+    const here = safeNext((await headers()).get(ACCOUNT_PATH_HEADER))
+    redirect(`/account/sign-in?next=${encodeURIComponent(here)}`)
+  }
 
   const email = user.email ?? 'Account'
 

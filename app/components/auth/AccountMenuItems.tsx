@@ -1,6 +1,7 @@
 import Link from 'next/link'
-import { ClockClockwise, Gear, Heart, Lightning, SignOut, User } from '@phosphor-icons/react'
+import { ClockClockwise, Gear, Heart, Lightning, Plug, SignOut, User } from '@phosphor-icons/react'
 import type { ReactNode } from 'react'
+import { useSession } from './SessionProvider'
 
 const LINKS: { href: string; label: string; icon: ReactNode }[] = [
   { href: '/account/saved', label: 'Saved', icon: <Heart size={14} weight="regular" /> },
@@ -8,6 +9,9 @@ const LINKS: { href: string; label: string; icon: ReactNode }[] = [
   { href: '/account/settings', label: 'Settings', icon: <Gear size={14} weight="regular" /> },
   { href: '/account', label: 'Profile', icon: <User size={14} weight="regular" /> },
 ]
+
+// Only while the hosted MCP sign-in is on, matching the account tabs.
+const CONNECT_LINK = { href: '/account/connect', label: 'Connect', icon: <Plug size={14} weight="regular" /> }
 
 const LINK_CLASS =
   'flex items-center gap-2 px-3 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-50 dark:text-sand-300 dark:hover:bg-sand-800'
@@ -25,6 +29,8 @@ export function AccountMenuItems({
   onNavigate: () => void
   onSignOut: () => void
 }) {
+  const { showConnect } = useSession()
+  const links = showConnect ? [...LINKS, CONNECT_LINK] : LINKS
   return (
     <>
       {showUpgrade && (
@@ -37,7 +43,7 @@ export function AccountMenuItems({
           Upgrade to Premium
         </button>
       )}
-      {LINKS.map(({ href, label, icon }) => (
+      {links.map(({ href, label, icon }) => (
         <Link key={href} href={href} onClick={onNavigate} className={LINK_CLASS}>
           {icon}
           {label}

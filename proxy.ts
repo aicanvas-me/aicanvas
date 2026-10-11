@@ -23,6 +23,7 @@ import type { NextFetchEvent, NextRequest } from 'next/server'
 import { updateSession } from './app/lib/supabase/proxy'
 import { phCapture, posthogConfigured } from './app/lib/analytics-server'
 import { FRAME_HEADER, isFramePayload } from './app/lib/frame'
+import { ACCOUNT_PATH_HEADER } from './app/lib/account-path'
 
 const MCP_OAUTH_PATHS = new Set(['/authorize', '/token', '/register', '/revoke'])
 
@@ -83,6 +84,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   if (isFramePayload(request.nextUrl)) {
     request.headers.set(FRAME_HEADER, '1')
   }
+  request.headers.delete(ACCOUNT_PATH_HEADER)
+  if (pathname.startsWith('/account/')) request.headers.set(ACCOUNT_PATH_HEADER, pathname)
 
   return await updateSession(request)
 }

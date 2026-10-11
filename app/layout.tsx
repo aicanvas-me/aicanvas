@@ -22,6 +22,7 @@ import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
 import { GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
 import { isFramedPayloadRequest } from './lib/frame'
+import { hostedMcpOAuthEnabled } from '../lib/flags'
 
 const manrope = Manrope({
   variable: '--font-manrope',
@@ -228,7 +229,7 @@ export default async function RootLayout({
       </head>
       <body className="flex h-full flex-col overflow-hidden bg-sand-50 dark:bg-sand-950 md:flex-row">
         <ThemeProvider initial={theme}>
-          <SessionProvider initialUser={user}>
+          <SessionProvider initialUser={user} showConnect={hostedMcpOAuthEnabled()}>
             <AuthModalProvider>
              <PaywallModalProvider>
              <TopBarProvider>
