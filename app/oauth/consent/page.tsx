@@ -60,7 +60,20 @@ function Ended() {
         This sign-in request has ended
       </h1>
       <p className="mt-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
-        It expired or was already answered. Start the sign-in again from your AI agent.
+        It expired or was already answered. Start the sign-in again from your AI agent. In Claude Code, run:
+      </p>
+      <pre className="mt-3 overflow-x-auto rounded-lg bg-sand-200 px-4 py-3 font-mono text-sm text-sand-700 dark:bg-sand-950 dark:text-sand-300">
+        <code>claude mcp login aicanvas</code>
+      </pre>
+      <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">
+        Another AI agent, or still stuck?{' '}
+        <Link
+          href="/mcp/docs#stuck"
+          className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+        >
+          Read the fix
+        </Link>
+        .
       </p>
     </Card>
   )
