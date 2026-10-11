@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ClockClockwise, Gear, Heart, PlugsConnected, User } from '@phosphor-icons/react'
+import { ClockClockwise, Gear, Heart, Plug, User } from '@phosphor-icons/react'
 import type { ComponentType } from 'react'
 
 // Tabs mirror the dropdown menu entries (TopAuthPill + UserMenu) — same
@@ -18,7 +18,7 @@ const TABS: { href: string; label: string; Icon: IconComponent }[] = [
 ]
 
 // Only while the hosted MCP sign-in is on; the flag is server-side, so the layout passes it.
-const CONNECT_TAB = { href: '/account/connect', label: 'Connect', Icon: PlugsConnected }
+const CONNECT_TAB = { href: '/account/connect', label: 'Connect', Icon: Plug }
 
 export function AccountTabs({ showConnect = false }: { showConnect?: boolean }) {
   const pathname = usePathname()
