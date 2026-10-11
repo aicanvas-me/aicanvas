@@ -76,6 +76,35 @@ if (typeof window !== 'undefined' && !isFramed()) {
   window.addEventListener('unhandledrejection', onRejection)
 }
 
+// Browser page translation (Chrome's "Translate this page") swaps React's text
+// nodes for its own. React later removes or inserts against the node it still
+// holds, the DOM throws NotFoundError, and the page dies: 12 js_errors in one day
+// from KR, HK, CN, JP and MY (pulse 2026-10-08), all in React's own chunk. Only
+// the call that would throw is changed; every valid insert or remove runs as
+// before. A skip is still reported, with the page in `source`, so the pulse keeps
+// counting it and a real bug of the same shape in our code stays visible.
+if (typeof window !== 'undefined' && typeof Node === 'function') {
+  const skipped = (op: string) => {
+    if (!isFramed()) report(`translate-guard: ${op} skipped`, location.origin + location.pathname, null)
+  }
+  const removeChild = Node.prototype.removeChild
+  Node.prototype.removeChild = function <T extends Node>(this: Node, child: T): T {
+    if (child.parentNode !== this) {
+      skipped('removeChild')
+      return child
+    }
+    return removeChild.call(this, child) as T
+  }
+  const insertBefore = Node.prototype.insertBefore
+  Node.prototype.insertBefore = function <T extends Node>(this: Node, node: T, ref: Node | null): T {
+    if (ref && ref.parentNode !== this) {
+      skipped('insertBefore')
+      return node
+    }
+    return insertBefore.call(this, node, ref) as T
+  }
+}
+
 export function SiteBeacon() {
   const pathname = usePathname()
   const prevPath = useRef<string | null>(null)
