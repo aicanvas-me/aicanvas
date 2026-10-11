@@ -520,6 +520,39 @@ try {
     (cp?.sections ?? []).some((s) => s.pick?.hasProps === true),
     JSON.stringify((cp?.sections ?? []).map((s) => s.pick?.hasProps)),
   )
+  const cpLanding = sc(
+    await call('compose_page', {
+      brief: 'SaaS landing page for an AI note-taking app',
+    }),
+  )
+  record(
+    'local: compose_page infers standard landing-page sections for a one-part brief',
+    cpLanding?.pageType === 'landing' &&
+      (cpLanding?.sections ?? []).length > 3 &&
+      (cpLanding?.sections ?? []).some((s) => s.pick != null) &&
+      (cpLanding?.install ?? []).length > 0,
+    JSON.stringify({
+      pageType: cpLanding?.pageType,
+      sections: (cpLanding?.sections ?? []).map((s) => [s.ask, s.pick?.slug]),
+      install: cpLanding?.install,
+    }),
+  )
+  const cpDashboardParts = sc(
+    await call('compose_page', {
+      brief: 'a CRM dashboard with a pipeline board and an activity feed',
+    }),
+  )
+  record(
+    'local: compose_page leaves an explicit multi-part dashboard brief unchanged',
+    cpDashboardParts?.pageType === null &&
+      JSON.stringify(cpDashboardParts?.sections) ===
+        JSON.stringify([
+          { ask: 'CRM dashboard', pick: null, alternatives: [] },
+          { ask: 'pipeline board', pick: null, alternatives: [] },
+          { ask: 'activity feed', pick: null, alternatives: [] },
+        ]),
+    JSON.stringify({ pageType: cpDashboardParts?.pageType, sections: cpDashboardParts?.sections }),
+  )
   const cpVerb = sc(
     await call('compose_page', {
       brief: 'plan a CRM dashboard with a pipeline board and an activity feed',

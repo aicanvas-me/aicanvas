@@ -735,6 +735,46 @@ function briefSegments(brief: string): { segments: string[]; omitted: string[] }
   return { segments: out.slice(0, MAX_PARTS), omitted: out.slice(MAX_PARTS) }
 }
 
+const PAGE_RECIPES = {
+  landing: {
+    triggers: ['landing', 'homepage', 'home page', 'marketing page', 'website', 'saas site'],
+    sections: [
+      'navbar',
+      'hero',
+      'features',
+      'testimonials',
+      'pricing',
+      'faq',
+      'call to action',
+      'footer',
+    ],
+  },
+  dashboard: {
+    triggers: ['dashboard', 'admin', 'analytics', 'console'],
+    sections: ['sidebar', 'top bar', 'stats', 'chart', 'table', 'activity feed'],
+  },
+  pricing: {
+    triggers: ['pricing page', 'plans page'],
+    sections: ['pricing', 'comparison', 'faq', 'call to action'],
+  },
+  'sign-in': {
+    triggers: ['sign in', 'sign-in', 'login', 'log in', 'sign up', 'signup', 'auth page'],
+    sections: ['sign-in form', 'social sign-in'],
+  },
+} as const
+
+type PageType = keyof typeof PAGE_RECIPES
+
+function pageTypeFor(brief: string): PageType | null {
+  const normalized = ` ${normalize(brief)} `
+  for (const pageType of Object.keys(PAGE_RECIPES) as PageType[]) {
+    if (PAGE_RECIPES[pageType].triggers.some((trigger) => normalized.includes(` ${normalize(trigger)} `))) {
+      return pageType
+    }
+  }
+  return null
+}
+
 const CHECKLIST_SHARED = [
   '## Install',
   '- Every AI Canvas piece came in through its CLI command (get_install_command), so its npm dependencies and registry dependencies such as shared tokens are present. A hand-copied file needs those installed too.',
@@ -1622,7 +1662,7 @@ export function createServer(
           .filter((r) => r.score >= MIN_TEMPLATE_SCORE && namedHit(brief, r.item))
           .sort((a, b) => b.score - a.score)[0]?.item
 
-        const { segments, omitted } = briefSegments(brief)
+        let { segments, omitted } = briefSegments(brief)
         type Pick = ComponentMeta | SystemComponentMeta
         const systemOf = new Map((meta.systemComponents ?? []).map((c) => [c.slug, c.system]))
         const rankAll = (lock: string | undefined) =>
@@ -1644,6 +1684,15 @@ export function createServer(
         // `system` given, the system behind most first picks wins and the parts
         // are ranked again inside it; a tie goes to the first pick's system.
         let ranked = rankAll(wanted)
+        const detectedPageType = pageTypeFor(brief)
+        const pageType =
+          detectedPageType && segments.length <= 1 && ranked.every((r) => r.ranked.length === 0)
+            ? detectedPageType
+            : null
+        if (pageType) {
+          segments = [...PAGE_RECIPES[pageType].sections]
+          ranked = rankAll(wanted)
+        }
         let locked = wanted
         if (!wanted) {
           const votes = new Map<string, number>()
@@ -1721,6 +1770,9 @@ export function createServer(
           lines.push(`Design system: ${locked} (one system per screen; pass \`system\` to choose another).`, '')
         }
         lines.push('## Parts')
+        if (pageType) {
+          lines.push(`Sections inferred for a ${pageType} page. Name the parts yourself (comma-separated) to plan something else.`)
+        }
         for (const s of sections) {
           if (s.pick) {
             lines.push(
@@ -1772,6 +1824,7 @@ export function createServer(
           structuredContent: {
             brief,
             system: locked ?? null,
+            pageType,
             omitted,
             template: templatePick
               ? {
