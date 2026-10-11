@@ -26,11 +26,11 @@ export function SignInForm({ next: rawNext, initialError, agent = false }: Props
   const next = safeNext(rawNext)
 
   return (
-    <AuthPagePopup>
+    <AuthPagePopup aside={agent ? <AgentSignInHeader mode="sign-in" /> : undefined}>
       <SignInFormFields
         next={next}
         initialError={initialError}
-        header={agent ? <AgentSignInHeader mode="sign-in" /> : undefined}
+        header={agent ? <></> : undefined}
         onSuccess={() => {
           router.push(next)
           router.refresh()

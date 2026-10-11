@@ -11,8 +11,8 @@ export function SignUpForm({ fallback = '/account', agentFlag = false }: { fallb
   const next = safeNext(searchParams.get('next'), fallback)
 
   return (
-    <AuthPagePopup>
-      <SignUpFormFields next={next} header={agentFlag && isAgentSignIn(next) ? <AgentSignInHeader mode="sign-up" /> : undefined} />
+    <AuthPagePopup aside={agentFlag && isAgentSignIn(next) ? <AgentSignInHeader mode="sign-up" /> : undefined}>
+      <SignUpFormFields next={next} header={agentFlag && isAgentSignIn(next) ? <></> : undefined} />
     </AuthPagePopup>
   )
 }

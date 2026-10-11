@@ -178,7 +178,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
     <>
       {header ?? <TerminatorReveal />}
 
-      <div className="mt-6 space-y-3">
+      <div className="mt-6 space-y-3 first:mt-0">
         <GoogleSignInButton next={next} label="Sign in with Google" />
         <div className="flex items-center gap-3" aria-hidden="true">
           <span className="h-px flex-1 bg-sand-200 dark:bg-sand-800" />

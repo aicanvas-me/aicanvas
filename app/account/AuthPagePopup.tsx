@@ -19,9 +19,12 @@ import { Button } from '../components/Button'
 type Props = {
   children: React.ReactNode
   closeHref?: string
+  // A side panel next to the form (desktop) or above it (phone): the card widens to two
+  // columns. Used when an AI agent's sign-in opened the page, to say why.
+  aside?: React.ReactNode
 }
 
-export function AuthPagePopup({ children, closeHref = '/' }: Props) {
+export function AuthPagePopup({ children, closeHref = '/', aside }: Props) {
   const router = useRouter()
   return (
     <div
@@ -33,7 +36,11 @@ export function AuthPagePopup({ children, closeHref = '/' }: Props) {
         aria-hidden="true"
         className="absolute inset-0 bg-sand-950/80 backdrop-blur-sm"
       />
-      <div className="relative z-10 w-full max-w-md rounded-xl border border-sand-200 bg-sand-100 p-8 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+      <div
+        className={`relative z-10 max-h-full w-full overflow-y-auto rounded-xl border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900 ${
+          aside ? 'max-w-4xl' : 'max-w-md p-8'
+        }`}
+      >
         <Button
           variant="icon"
           size="md"
@@ -43,7 +50,14 @@ export function AuthPagePopup({ children, closeHref = '/' }: Props) {
         >
           <X weight="regular" size={18} />
         </Button>
-        {children}
+        {aside ? (
+          <div className="grid md:grid-cols-2">
+            <div className="border-b border-sand-200 p-8 md:border-b-0 md:border-r dark:border-sand-800">{aside}</div>
+            <div className="p-8">{children}</div>
+          </div>
+        ) : (
+          children
+        )}
       </div>
     </div>
   )

@@ -77,12 +77,12 @@ export function SignUpFormFields({ next, onSwitchToSignIn, header }: Props) {
       {header ?? <NerdToHero />}
 
       {sent ? (
-        <div className="mt-6 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
+        <div className="mt-6 first:mt-0 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
           Confirmation email sent to <strong>{email}</strong>. Click the link
           inside to finish creating your account.
         </div>
       ) : existing ? (
-        <div className="mt-6 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
+        <div className="mt-6 first:mt-0 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
           <p>
             <strong>{email}</strong> already has an account. Sign in to continue,
             no password needed if you choose &ldquo;Email me a sign-in link.&rdquo;
@@ -109,7 +109,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn, header }: Props) {
         </div>
       ) : (
         <>
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 space-y-3 first:mt-0">
             <GoogleSignInButton next={next} label="Sign up with Google" />
             <div className="flex items-center gap-3" aria-hidden="true">
               <span className="h-px flex-1 bg-sand-200 dark:bg-sand-800" />
