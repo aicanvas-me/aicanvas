@@ -94,9 +94,9 @@ export default async function ConsentPage({
       <p className="mt-6 text-xs font-semibold text-sand-600 dark:text-sand-400">This lets it:</p>
       <ul className="mt-3 space-y-3 text-sm text-sand-700 dark:text-sand-300">
         {[
-          { Icon: MagnifyingGlass, line: 'Search AI Canvas and read components' },
-          { Icon: DownloadSimple, line: 'Install the components your plan includes' },
-          { Icon: Stack, line: 'Use the other AI Canvas resources your plan includes' },
+          { Icon: MagnifyingGlass, line: 'Search AI Canvas and read what is inside' },
+          { Icon: DownloadSimple, line: 'Install the components, design systems and templates your plan includes' },
+          { Icon: Stack, line: 'Check its work against each design system\'s rules' },
         ].map(({ Icon, line }) => (
           <li key={line} className="flex items-start gap-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
