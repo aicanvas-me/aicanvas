@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ClockClockwise, Gear, Heart, User } from '@phosphor-icons/react'
+import { ClockClockwise, Gear, Heart, PlugsConnected, User } from '@phosphor-icons/react'
 import type { ComponentType } from 'react'
 
 // Tabs mirror the dropdown menu entries (TopAuthPill + UserMenu) — same
@@ -17,15 +17,19 @@ const TABS: { href: string; label: string; Icon: IconComponent }[] = [
   { href: '/account', label: 'Profile', Icon: User },
 ]
 
-export function AccountTabs() {
+// Only while the hosted MCP sign-in is on; the flag is server-side, so the layout passes it.
+const CONNECT_TAB = { href: '/account/connect', label: 'Connect', Icon: PlugsConnected }
+
+export function AccountTabs({ showConnect = false }: { showConnect?: boolean }) {
   const pathname = usePathname()
+  const tabs = showConnect ? [...TABS, CONNECT_TAB] : TABS
   return (
     // Five tabs split the full row evenly (flex-1). No horizontal scroll —
     // labels collapse to icon-only below `sm:` so all five always fit on
     // mobile; on desktop the label rides alongside.
     <nav className="border-b border-sand-200 dark:border-sand-800">
       <div className="flex">
-        {TABS.map(({ href, label, Icon }) => {
+        {tabs.map(({ href, label, Icon }) => {
           const active = pathname === href
           return (
             <Link

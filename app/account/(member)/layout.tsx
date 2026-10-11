@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { Lightning } from '@phosphor-icons/react/dist/ssr'
 import { createClient } from '../../lib/supabase/server'
-import { premiumEnabled } from '../../../lib/flags'
+import { hostedMcpOAuthEnabled, premiumEnabled } from '../../../lib/flags'
 import { isPremiumNow, type SubStatus } from '../../../lib/identity/tier'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
 import { AccountTabs } from './AccountTabs'
@@ -53,7 +53,7 @@ export default async function MemberLayout({ children }: { children: ReactNode }
             <p className="mt-1 truncate text-sm text-sand-600 dark:text-sand-400">{email}</p>
           </div>
         </div>
-        <AccountTabs />
+        <AccountTabs showConnect={hostedMcpOAuthEnabled()} />
         <div className="mt-6 sm:mt-8">{children}</div>
       </div>
     </>
