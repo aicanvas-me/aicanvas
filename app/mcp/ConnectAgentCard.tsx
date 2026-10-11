@@ -107,7 +107,7 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
       </p>
 
       <div className="overflow-hidden rounded-xl border border-sand-200 dark:border-sand-800">
-        <div className="flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-b border-sand-200 bg-sand-100 p-1.5 dark:border-sand-800 dark:bg-sand-900">
+        <div className="isolate flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-b border-sand-200 bg-sand-100 p-1.5 dark:border-sand-800 dark:bg-sand-900">
           {AGENTS.map((a) => {
             const active = agent === a.id
             return (

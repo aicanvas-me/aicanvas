@@ -287,7 +287,7 @@ export function InstallCards({ heading = 'How to install the MCP' }: { heading?:
       {/* Tabbed install widget — matches the per-component "Add to your project" */}
       <div className="overflow-hidden rounded-xl border border-sand-200 dark:border-sand-800">
         {/* Tool toggle — Claude Code / Codex / Cursor */}
-        <div className="flex gap-1.5 border-b border-sand-200 bg-sand-100 p-1.5 dark:border-sand-800 dark:bg-sand-900">
+        <div className="isolate flex gap-1.5 border-b border-sand-200 bg-sand-100 p-1.5 dark:border-sand-800 dark:bg-sand-900">
           {TOOLS.map((t) => {
             const active = tool === t.id
             return (
