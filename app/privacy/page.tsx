@@ -160,8 +160,9 @@ export default function PrivacyPage() {
             the city or address) your browser and the agent connected from. That
             lets you recognise it in your settings and lets us warn you about one
             you did not expect. Its sign-in is stored only as a one-way
-            fingerprint. You can disconnect it at any time in your settings, and
-            it is deleted with your account.
+            fingerprint. We email you when a new AI agent connects. You can
+            disconnect it at any time in your settings, and it is deleted with
+            your account.
           </p>
 
           <h3 className="mt-5 text-sm font-bold uppercase tracking-wider text-sand-700 dark:text-sand-300">
@@ -224,8 +225,11 @@ export default function PrivacyPage() {
             request and the hash is discarded after 24 hours. No personal
             identifier is created and no cross-site tracking is possible. We
             also measure site usage ourselves, without cookies: our own server
-            collects page views (path, referrer, country and region), clicks on
-            key buttons (for example copying an install command), searches on
+            collects page views (path, referrer, country and region, and whether
+            the visit came from a link the AI Canvas MCP gave an AI agent), clicks on
+            key buttons (for example copying an install command), an AI agent
+            connecting to or using the AI Canvas MCP (counted, with no account
+            attached), searches on
             the site (the typed query and its result count), script errors in
             your browser, and errors raised on our own server while handling a
             request (the affected route, the error message and an error id),
