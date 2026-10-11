@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import { DotsThree, DownloadSimple, LockSimple, MagnifyingGlass, Robot, Stack } from '@phosphor-icons/react/dist/ssr'
+import { DotsThree, DownloadSimple, MagnifyingGlass, Robot, Stack } from '@phosphor-icons/react/dist/ssr'
 import { createClient } from '../../lib/supabase/server'
 import { buttonClasses } from '../../components/buttonClasses'
 import { hostedMcpOAuthEnabled } from '../../../lib/flags'
@@ -106,12 +106,6 @@ export default async function ConsentPage({
           </li>
         ))}
       </ul>
-      <div className="mt-5 flex items-start gap-3 border-t border-sand-200 pt-5 text-sm text-sand-600 dark:border-sand-800 dark:text-sand-400">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center">
-          <LockSimple weight="regular" size={15} />
-        </span>
-        <span className="pt-1">It never sees your password, cannot change your account or plan, and cannot buy anything.</span>
-      </div>
       {target && (
         <p className="mt-6 rounded-lg border border-red-500/40 px-3 py-2.5 text-xs leading-relaxed text-red-700 dark:border-red-500/30 dark:text-red-400">
           This sign-in will be sent to <span className="font-semibold">{target}</span>. Only allow it
