@@ -735,8 +735,18 @@ function briefSegments(brief: string): { segments: string[]; omitted: string[] }
   return { segments: out.slice(0, MAX_PARTS), omitted: out.slice(MAX_PARTS) }
 }
 
+// Narrower page types first: "pricing page for a SaaS site" is a pricing page.
 const PAGE_RECIPES = {
-  landing: {
+  'sign-in': {
+    triggers: ['sign in', 'sign-in', 'login', 'log in', 'sign up', 'signup', 'auth page'],
+    sections: ['sign-in form', 'social sign-in'],
+  },  pricing: {
+    triggers: ['pricing page', 'plans page'],
+    sections: ['pricing', 'comparison', 'faq', 'call to action'],
+  },  dashboard: {
+    triggers: ['dashboard', 'admin', 'analytics', 'console'],
+    sections: ['sidebar', 'top bar', 'stats', 'chart', 'table', 'activity feed'],
+  },  landing: {
     triggers: ['landing', 'homepage', 'home page', 'marketing page', 'website', 'saas site'],
     sections: [
       'navbar',
@@ -748,20 +758,7 @@ const PAGE_RECIPES = {
       'call to action',
       'footer',
     ],
-  },
-  dashboard: {
-    triggers: ['dashboard', 'admin', 'analytics', 'console'],
-    sections: ['sidebar', 'top bar', 'stats', 'chart', 'table', 'activity feed'],
-  },
-  pricing: {
-    triggers: ['pricing page', 'plans page'],
-    sections: ['pricing', 'comparison', 'faq', 'call to action'],
-  },
-  'sign-in': {
-    triggers: ['sign in', 'sign-in', 'login', 'log in', 'sign up', 'signup', 'auth page'],
-    sections: ['sign-in form', 'social sign-in'],
-  },
-} as const
+  },} as const
 
 type PageType = keyof typeof PAGE_RECIPES
 

@@ -16,7 +16,7 @@ export default async function SignUpPage() {
   return (
     <Suspense>
       {/* A new account lands on the AI agent setup unless it came here for something else. */}
-      <SignUpForm fallback={hostedMcpOAuthEnabled() ? '/account/connect' : '/account'} />
+      <SignUpForm fallback={hostedMcpOAuthEnabled() ? '/account/connect' : '/account'} agentFlag={hostedMcpOAuthEnabled()} />
     </Suspense>
   )
 }

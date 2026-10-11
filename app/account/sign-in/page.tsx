@@ -3,6 +3,7 @@ import { Suspense } from 'react'
 import { createClient } from '../../lib/supabase/server'
 import { SignInForm } from './SignInForm'
 import { safeNext } from '../../lib/safe-next'
+import { hostedMcpOAuthEnabled } from '../../../lib/flags'
 
 // ─── /account/sign-in ────────────────────────────────────────────────────────
 // Server entry: if the user already has a valid session, skip the form and
@@ -38,7 +39,7 @@ export default async function SignInPage({
 
   return (
     <Suspense>
-      <SignInForm next={next} initialError={initialError} />
+      <SignInForm next={next} initialError={initialError} agent={hostedMcpOAuthEnabled() && next.startsWith('/oauth/consent')} />
     </Suspense>
   )
 }

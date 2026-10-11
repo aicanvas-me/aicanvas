@@ -61,7 +61,7 @@ const toolGroups = [
     title: 'Account',
     tools: [
       ['whoami', 'Shows the connected AI Canvas account, its plan and what that plan can install.'],
-      ['disconnect', 'Ends this AI agent connection when you ask it to sign out.'],
+      ['disconnect', 'Ends this AI agent connection when you ask it to sign out. Only for AI agents signed in through the browser.'],
     ],
   },
 ] as const

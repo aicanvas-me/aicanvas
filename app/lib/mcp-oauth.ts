@@ -197,8 +197,13 @@ export function redirectWarning(uri: string): string | null {
   if (LOOPBACK.has(url.hostname)) return null
   const scheme = url.protocol.slice(0, -1)
   if (scheme === 'https' || scheme === 'http') return url.host
-  if (KNOWN_APP_SCHEMES.has(scheme) || scheme.includes('.')) return null
-  return `${scheme}:${url.host ? `//${url.host}` : ''}`
+  // A known or reverse-DNS app is trusted only when nothing in the address carries a web
+  // address onward (vivaldi:https://..., arc://open?url=...).
+  const forwards = /https?:|url=|%3a%2f%2f/i.test(uri.slice(scheme.length + 1))
+  if ((KNOWN_APP_SCHEMES.has(scheme) || scheme.includes('.')) && !forwards) return null
+  // An unknown app address is shown whole (shortened), since the scheme and host alone can
+  // hide the website it sends to.
+  return uri.length > 80 ? `${uri.slice(0, 77)}...` : uri
 }
 
 /**
@@ -253,7 +258,11 @@ export function registerClient(meta: unknown): Registration {
 export function readClient(clientId: string | null): Client | null {
   if (!clientId || clientId.length > MAX_CLIENT_ID) return null
   const client = verify<Client>('client', clientId)
-  return client && typeof client.n === 'string' && Array.isArray(client.r) ? client : null
+  // The redirect rules are checked again on every read: a client is a signed token, so one
+  // registered before a rule tightened would otherwise keep working.
+  return client && typeof client.n === 'string' && Array.isArray(client.r) && client.r.every(isAllowedRedirect)
+    ? client
+    : null
 }
 
 // ─── Authorization request → consent page ─────────────────────────────────────

@@ -207,7 +207,9 @@ describe('authorization request', () => {
     const outcome = authorize(authorizeUrl(LOCAL, clientId), 'DE')
     const signed = outcome.kind === 'redirect' ? new URL(outcome.location).searchParams.get('request')! : ''
     expect(readRequest(signed)).toMatchObject({ ru: CALLBACK, st: 'st-1', co: 'DE', res: 'http://localhost:3001/api/mcp' })
-    expect(readRequest(signed.replace(/.$/, (c) => (c === 'A' ? 'B' : 'A')))).toBeNull()
+    // Flip a middle character: the last base64url character can carry only padding bits.
+    const mid = Math.floor(signed.length / 2)
+    expect(readRequest(signed.slice(0, mid) + (signed[mid] === 'A' ? 'B' : 'A') + signed.slice(mid + 1))).toBeNull()
     expect(readRequest(clientId)).toBeNull() // a client_id never passes as a request
     vi.useFakeTimers({ now: Date.now() + 11 * 60 * 1000 })
     expect(readRequest(signed)).toBeNull()
@@ -313,7 +315,18 @@ describe('redirect safety', () => {
     expect(redirectWarning('cursor://anysphere.cursor-mcp/oauth/callback')).toBeNull()
     expect(redirectWarning('com.example.agent:/callback')).toBeNull()
     expect(redirectWarning('https://evil.example/cb')).toBe('evil.example')
-    expect(redirectWarning('opera://evil.example/cb')).toBe('opera://evil.example')
+    expect(redirectWarning('opera://evil.example/cb')).toBe('opera://evil.example/cb')
+  })
+
+  it('names the whole address when an app address carries a website onward', () => {
+    expect(redirectWarning('vivaldi:https://evil.example/cb')).toBe('vivaldi:https://evil.example/cb')
+    expect(redirectWarning('arc://open?url=https://evil.example')).toBe('arc://open?url=https://evil.example')
+    expect(redirectWarning('com.example.agent:/open?url=https%3A%2F%2Fevil.example')).not.toBeNull()
+    expect(redirectWarning('cursor://anysphere.cursor-mcp/oauth?next=https://evil.example')).not.toBeNull()
+  })
+
+  it('still reads a client whose addresses pass today\'s rules', () => {
+    expect(readClient(register(['cursor://anysphere.cursor-mcp/oauth/callback']))).not.toBeNull()
   })
 
   it('shows an error page instead of redirecting a bad request to a website', () => {

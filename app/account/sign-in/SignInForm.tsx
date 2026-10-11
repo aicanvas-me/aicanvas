@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { SignInFormFields } from '../../components/auth/SignInFormFields'
 import { safeNext } from '../../lib/safe-next'
-import { AgentSignInNote, isAgentSignIn } from '../AgentSignInNote'
+import { AgentSignInNote } from '../AgentSignInNote'
 import { AuthPagePopup } from '../AuthPagePopup'
 
 // Client wrapper for /account/sign-in. The page-level server component reads
@@ -17,15 +17,17 @@ import { AuthPagePopup } from '../AuthPagePopup'
 type Props = {
   next: string
   initialError: string | null
+  /** Opened by an AI agent's sign-in while HOSTED_MCP_OAUTH is on (decided on the server). */
+  agent?: boolean
 }
 
-export function SignInForm({ next: rawNext, initialError }: Props) {
+export function SignInForm({ next: rawNext, initialError, agent = false }: Props) {
   const router = useRouter()
   const next = safeNext(rawNext)
 
   return (
     <AuthPagePopup>
-      {isAgentSignIn(next) && <AgentSignInNote mode="sign-in" />}
+      {agent && <AgentSignInNote mode="sign-in" />}
       <SignInFormFields
         next={next}
         initialError={initialError}
