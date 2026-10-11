@@ -4,7 +4,8 @@ import { notFound } from 'next/navigation'
 import { hostedMcpOAuthEnabled } from '../../../lib/flags'
 import { SiteFooter } from '../../components/SiteFooter'
 import { SITE_URL } from '../../lib/config'
-import { ConnectAgentCard, HOSTED_MCP_URL } from '../ConnectAgentCard'
+import { ConnectAgentCard } from '../ConnectAgentCard'
+import { HOSTED_MCP_URL } from '../../lib/hosted-mcp'
 
 export const metadata: Metadata = {
   title: 'Hosted MCP docs',

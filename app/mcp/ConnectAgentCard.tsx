@@ -7,14 +7,13 @@ import { Code, Robot } from '@phosphor-icons/react'
 import { Step } from '../components/Step'
 import { copyText } from '../components/useCopied'
 import { ClaudeMark, CodeBlock, CodexMark, CursorMark, Toast, useToast } from './InstallCards'
+import { HOSTED_MCP_URL } from '../lib/hosted-mcp'
 
 // ─── ConnectAgentCard ─────────────────────────────────────────────────────────
 // The hosted MCP setup: add one address to the AI agent, sign in once in the browser,
 // never copy a key. Shown on /mcp, on /welcome for Premium and on /account/connect after
 // sign-up, only while HOSTED_MCP_OAUTH is on (the pages decide). The API key stays for
 // machines with no browser (CI, a remote shell) and for the npm package.
-
-export const HOSTED_MCP_URL = 'https://mcp.aicanvas.me'
 
 type Agent = 'claude' | 'cursor' | 'vscode' | 'codex' | 'desktop' | 'other'
 
