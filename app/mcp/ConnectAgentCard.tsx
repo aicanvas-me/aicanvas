@@ -36,6 +36,8 @@ const CURSOR_DEEPLINK = `cursor://anysphere.cursor-deeplink/mcp/install?name=aic
 const VSCODE_CONFIG = JSON.stringify({ servers: { aicanvas: { type: 'http', url: HOSTED_MCP_URL } } }, null, 2)
 
 const MASKED_KEY = 'aic_••••••••'
+const MASKED_API_HEADER = `Authorization: Bearer ${MASKED_KEY}`
+const MASKED_CLAUDE_HEADER_COMMAND = `claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL} --header "${MASKED_API_HEADER}"`
 
 function Inline({ children }: { children: React.ReactNode }) {
   return (
@@ -238,14 +240,41 @@ export function ConnectAgentCard({ skipHref }: { skipHref?: string }) {
         <div className="mt-4 rounded-xl border border-sand-200 p-4 dark:border-sand-800">
           <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">No browser on that machine?</p>
           <p className="mb-3 mt-1 text-sm text-sand-600 dark:text-sand-400">
-            In CI or a remote shell, send your API key to the same address as a Bearer token. Keep it out of git.
+            In CI or a remote shell, skip the sign-in and send your API key as a header. Store it as a secret, never in git.
           </p>
           <CodeBlock
-            command={MASKED_KEY}
-            copied={copied === 'api-key'}
-            onCopy={() => copy('api-key', apiKey, 'API key copied')}
-            label="API key"
+            command={MASKED_API_HEADER}
+            copied={copied === 'api-header'}
+            onCopy={() => copy('api-header', `Authorization: Bearer ${apiKey}`, 'Header copied')}
+            label="header"
+            multiline={false}
           />
+          <div className="mt-3">
+            <Hint>For Claude Code:</Hint>
+            <CodeBlock
+              command={MASKED_CLAUDE_HEADER_COMMAND}
+              copied={copied === 'api-claude'}
+              onCopy={() =>
+                copy(
+                  'api-claude',
+                  `claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL} --header "Authorization: Bearer ${apiKey}"`,
+                  'Command copied',
+                )
+              }
+              label="command"
+              multiline={false}
+            />
+          </div>
+          <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">
+            View or rotate your key in{' '}
+            <Link
+              href="/account/settings"
+              className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+            >
+              account settings
+            </Link>
+            .
+          </p>
         </div>
       )}
 
