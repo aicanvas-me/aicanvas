@@ -229,6 +229,15 @@ describe('hosted MCP: a free account', () => {
     expect(r.structuredContent!.code).toBeUndefined()
   })
 
+  it('search says how many results are locked and offers the upgrade', async () => {
+    const r = await call('search_components', { query: PREMIUM_SLUG.replace(/-/g, ' '), limit: 50 })
+    const locked = r.structuredContent!.locked as number
+    expect(locked).toBeGreaterThan(0)
+    expect(r.structuredContent!.upgradeUrl).toBe('https://aicanvas.me/pricing')
+    expect(r.content[0].text).toContain('cannot install')
+    expect(r.content[0].text).toContain('Next: show the user')
+  })
+
   it('refuses an install command for a locked component', async () => {
     const r = await call('get_install_command', { slug: PREMIUM_SLUG })
     expect(r.isError).toBe(true)
@@ -266,6 +275,13 @@ describe('hosted MCP: a premium account', () => {
     expect(r.content[0].text).not.toContain('(locked)')
     expect(String(r.structuredContent!.code)).toContain('export default')
     expect(String(r.structuredContent!.code)).not.toContain('PREMIUM_NOTICE')
+  })
+
+  it('search reports nothing locked for a premium account', async () => {
+    const r = await call('search_components', { query: PREMIUM_SLUG.replace(/-/g, ' '), limit: 50 })
+    expect(r.structuredContent!.locked).toBe(0)
+    expect(r.structuredContent!.upgradeUrl).toBeUndefined()
+    expect(r.content[0].text).not.toContain('cannot install')
   })
 
   it('labels everything included', async () => {

@@ -1003,9 +1003,30 @@ export function createServer(
             ? `No matches for "${query}". Try \`list_categories\` to browse standalones, \`list_systems\` for design systems, or \`list_templates\` for ready-made screens.`
             : `${ranked.length} match${ranked.length === 1 ? '' : 'es'} for "${query}"`
 
+        // Hosted only: say how many results this account cannot install and what to do next,
+        // so the agent shows them honestly instead of skipping them or writing a placeholder.
+        // The npm package (no access context) answers exactly as before.
+        const lockedCount = ctx.access ? ranked.filter((r) => 'access' in r && r.access === 'locked').length : 0
+        const guidance: string[] = []
+        if (ctx.access && ranked.length) {
+          if (lockedCount) {
+            guidance.push(
+              `${lockedCount} of these ${lockedCount === 1 ? 'is' : 'are'} AI Canvas Premium (access: "locked") and this account cannot install ${lockedCount === 1 ? 'it' : 'them'}. Show ${lockedCount === 1 ? 'it' : 'them'} anyway, say so, and offer the upgrade: ${UPGRADE_URL}. It unlocks on this same connection.`,
+            )
+          }
+          guidance.push(
+            'Next: show the user the top 2 or 3 as images from `image`, linked to `homepageUrl`, so they can pick by eye. Then read the API with get_component_props and install with the `installCommand` of an included item.',
+          )
+        }
+
         return {
-          content: [asTextContent(summary + '\n\n' + JSON.stringify(ranked, null, 2))],
-          structuredContent: { query, count: ranked.length, components: ranked },
+          content: [asTextContent([summary, ...guidance].join('\n') + '\n\n' + JSON.stringify(ranked, null, 2))],
+          structuredContent: {
+            query,
+            count: ranked.length,
+            components: ranked,
+            ...(ctx.access && ranked.length ? { locked: lockedCount, ...(lockedCount ? { upgradeUrl: UPGRADE_URL } : {}) } : {}),
+          },
         }
       } catch (err) {
         return errorResult(err instanceof Error ? err.message : String(err))
