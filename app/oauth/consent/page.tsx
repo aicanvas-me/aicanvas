@@ -5,7 +5,7 @@ import { Check, DotsThree, Robot } from '@phosphor-icons/react/dist/ssr'
 import { createClient } from '../../lib/supabase/server'
 import { buttonClasses } from '../../components/buttonClasses'
 import { hostedMcpOAuthEnabled } from '../../../lib/flags'
-import { readRequest } from '../../lib/mcp-oauth'
+import { readRequest, redirectWarning } from '../../lib/mcp-oauth'
 import { SwitchAccount } from './SwitchAccount'
 
 // ─── /oauth/consent ──────────────────────────────────────────────────────────
@@ -17,19 +17,6 @@ import { SwitchAccount } from './SwitchAccount'
 export const metadata: Metadata = {
   title: 'Connect your agent',
   robots: { index: false, follow: false },
-}
-
-// An agent on the person's own computer returns to a local address or an app scheme and
-// needs no warning. A sign-in sent on to a website is the phishing shape (a look-alike agent
-// can copy any name, never this address), so only then does the screen name the host loudly.
-function websiteHost(redirectUri: string): string | null {
-  try {
-    const url = new URL(redirectUri)
-    if (['127.0.0.1', 'localhost', '[::1]'].includes(url.hostname)) return null
-    return url.protocol === 'https:' || url.protocol === 'http:' ? url.host : null
-  } catch {
-    return null
-  }
 }
 
 // A focus page: the site rail and top bar step aside (FOCUS_ROUTE_RE), so the card is the
@@ -95,7 +82,7 @@ export default async function ConsentPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/account/sign-in?next=${encodeURIComponent(here)}`)
 
-  const website = websiteHost(request.ru)
+  const target = redirectWarning(request.ru)
 
   return (
     <Card>
@@ -115,10 +102,10 @@ export default async function ConsentPage({
           </li>
         ))}
       </ul>
-      {website && (
+      {target && (
         <p className="mt-6 rounded-lg border border-red-500/40 px-3 py-2.5 text-xs leading-relaxed text-red-700 dark:border-red-500/30 dark:text-red-400">
-          This sign-in will be sent to the website <span className="font-semibold">{website}</span>. Only allow it
-          if you know that site.
+          This sign-in will be sent to <span className="font-semibold">{target}</span>. Only allow it
+          if you know it.
         </p>
       )}
       <form action="/oauth/consent/decision" method="post" className="mt-6 flex gap-3">

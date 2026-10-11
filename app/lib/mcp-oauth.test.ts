@@ -74,6 +74,7 @@ import {
   readClient,
   readRequest,
   redirectMatches,
+  redirectWarning,
   registerClient,
   revoke,
 } from './mcp-oauth'
@@ -297,5 +298,29 @@ describe('tokens', () => {
     await revoke(String(res.body.refresh_token))
     expect(db.tables.mcp_grants).toHaveLength(0)
     expect(await agentForAccessToken(String(res.body.access_token), MCP_URL)).toBeNull()
+  })
+})
+
+describe('redirect safety', () => {
+  it('refuses schemes that hand a web address to a browser', () => {
+    for (const uri of ['microsoft-edge:https://evil.example/cb', 'x-safari-https://evil.example/cb', 'googlechromes://evil.example/cb']) {
+      expect(registerClient({ client_name: 'x', redirect_uris: [uri], token_endpoint_auth_method: 'none' }).ok).toBe(false)
+    }
+  })
+
+  it('warns on consent for websites and unknown app schemes, not for loopback or known apps', () => {
+    expect(redirectWarning('http://127.0.0.1:5000/callback')).toBeNull()
+    expect(redirectWarning('cursor://anysphere.cursor-mcp/oauth/callback')).toBeNull()
+    expect(redirectWarning('com.example.agent:/callback')).toBeNull()
+    expect(redirectWarning('https://evil.example/cb')).toBe('evil.example')
+    expect(redirectWarning('opera://evil.example/cb')).toBe('opera://evil.example')
+  })
+
+  it('shows an error page instead of redirecting a bad request to a website', () => {
+    const web = register(['https://agent.example/cb'])
+    const outcome = authorize(authorizeUrl(LOCAL, web, { redirect_uri: 'https://agent.example/cb', response_type: 'token' }), null)
+    expect(outcome.kind).toBe('error-page')
+    const local = authorize(authorizeUrl(LOCAL, register(), { response_type: 'token' }), null)
+    expect(local.kind).toBe('redirect')
   })
 })

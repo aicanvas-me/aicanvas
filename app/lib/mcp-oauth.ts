@@ -141,7 +141,16 @@ export interface Client {
 }
 
 const LOOPBACK = new Set(['localhost', '127.0.0.1', '[::1]'])
-const BANNED_SCHEMES = new Set(['javascript', 'data', 'file', 'blob', 'about', 'vbscript', 'ftp', 'intent', 'http', 'https'])
+const BANNED_SCHEMES = new Set([
+  'javascript', 'data', 'file', 'blob', 'about', 'vbscript', 'ftp', 'intent', 'http', 'https',
+  // Schemes that hand a web address to a browser: a redirect through one is a website in disguise.
+  'microsoft-edge', 'microsoft-edge-http', 'microsoft-edge-https', 'x-safari-http', 'x-safari-https',
+  'googlechrome', 'googlechromes', 'firefox', 'opera-http', 'opera-https', 'brave', 'x-web-search',
+])
+// App schemes of AI agents we know, which need no warning on the consent screen. Any other
+// app scheme without a dot (RFC 8252 asks for reverse-DNS, com.example.app) is warned about,
+// since no ban list can name every browser-launching scheme.
+const KNOWN_APP_SCHEMES = new Set(['cursor', 'vscode', 'vscode-insiders', 'windsurf', 'claude', 'zed', 'codex'])
 
 // Control characters, zero-width and bidi overrides: the ways a name can hide or reverse
 // text. Built from code points so the source carries no invisible characters.
@@ -171,6 +180,25 @@ export function isAllowedRedirect(uri: string): boolean {
   if (scheme === 'https') return true
   if (scheme === 'http') return LOOPBACK.has(url.hostname)
   return /^[a-z][a-z0-9+.-]{2,}$/.test(scheme) && !BANNED_SCHEMES.has(scheme)
+}
+
+/**
+ * What the consent screen must name loudly before Allow, or null when the sign-in goes back
+ * to this computer (loopback) or to a known or reverse-DNS app. A website is the phishing
+ * shape: a look-alike agent can copy any name, never this address.
+ */
+export function redirectWarning(uri: string): string | null {
+  let url: URL
+  try {
+    url = new URL(uri)
+  } catch {
+    return uri
+  }
+  if (LOOPBACK.has(url.hostname)) return null
+  const scheme = url.protocol.slice(0, -1)
+  if (scheme === 'https' || scheme === 'http') return url.host
+  if (KNOWN_APP_SCHEMES.has(scheme) || scheme.includes('.')) return null
+  return `${scheme}:${url.host ? `//${url.host}` : ''}`
 }
 
 /**
@@ -272,12 +300,17 @@ export function authorize(url: URL, country: string | null): AuthorizeOutcome {
     return { kind: 'error-page', message: 'This sign-in did not say where to return.' }
   }
 
-  // The redirect target is trusted from here on, so errors go back to the agent.
+  // Errors go back to the agent, except to a website: anyone can register one, and a
+  // redirect from our domain to it on a bad request is an open redirect (RFC 9700 4.11.2).
   const state = p.get('state') ?? undefined
-  const fail = (error: string, description: string): AuthorizeOutcome => ({
-    kind: 'redirect',
-    location: withParams(redirectUri, { error, error_description: description, state, iss: issuerFor(url) }),
-  })
+  const toWebsite = /^https?:$/.test(new URL(redirectUri).protocol) && !LOOPBACK.has(new URL(redirectUri).hostname)
+  const fail = (error: string, description: string): AuthorizeOutcome =>
+    toWebsite
+      ? { kind: 'error-page', message: description }
+      : {
+          kind: 'redirect',
+          location: withParams(redirectUri, { error, error_description: description, state, iss: issuerFor(url) }),
+        }
   if (state !== undefined && state.length > MAX_STATE) return fail('invalid_request', 'state is too long.')
   if (p.get('response_type') !== 'code') return fail('unsupported_response_type', 'Only response_type=code is supported.')
   const challenge = p.get('code_challenge') ?? ''

@@ -24,8 +24,8 @@ export function AccountTabs({ showConnect = false }: { showConnect?: boolean }) 
   const pathname = usePathname()
   const tabs = showConnect ? [...TABS.slice(0, 2), CONNECT_TAB, ...TABS.slice(2)] : TABS
   return (
-    // Five tabs split the full row evenly (flex-1). No horizontal scroll —
-    // labels collapse to icon-only below `sm:` so all five always fit on
+    // The tabs split the full row evenly (flex-1). No horizontal scroll —
+    // labels collapse to icon-only below `sm:` so every tab always fits on
     // mobile; on desktop the label rides alongside.
     <nav className="border-b border-sand-200 dark:border-sand-800">
       <div className="flex">
