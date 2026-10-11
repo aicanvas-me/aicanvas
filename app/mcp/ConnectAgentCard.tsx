@@ -137,11 +137,15 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
           {agent === 'codex' && (
             <>
               <Step number={1}>
-                <Hint>Run this in any terminal.</Hint>
+                <Hint>Run this in any terminal. It opens the sign-in by itself.</Hint>
                 {block('codex-add', CODEX_ADD, 'command')}
-                <div className="mt-3">{block('codex-login', CODEX_LOGIN, 'sign-in command')}</div>
               </Step>
-              {signIn}
+              <Step number={2} isLast>
+                <p className="text-sm text-sand-700 dark:text-sand-300">
+                  Your browser opens. Sign in to AI Canvas and click <span className="font-semibold">Allow</span>. If it
+                  does not open, run <Inline>{CODEX_LOGIN}</Inline>.
+                </p>
+              </Step>
             </>
           )}
 
