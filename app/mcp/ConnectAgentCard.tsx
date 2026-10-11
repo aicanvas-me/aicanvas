@@ -36,7 +36,8 @@ const VSCODE_CONFIG = JSON.stringify({ servers: { aicanvas: { type: 'http', url:
 
 const MASKED_KEY = 'aic_••••••••'
 const MASKED_API_HEADER = `Authorization: Bearer ${MASKED_KEY}`
-const MASKED_CLAUDE_HEADER_COMMAND = `claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL} --header "${MASKED_API_HEADER}"`
+// Shown on two lines (a shell line break) so it never wraps mid-flag; copied as one line.
+const MASKED_CLAUDE_HEADER_COMMAND = `claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL} \\\n  --header "${MASKED_API_HEADER}"`
 
 function Inline({ children }: { children: React.ReactNode }) {
   return (
@@ -238,36 +239,33 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
       {showDocsLink && <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">Stuck, or setting up CI? <Link href="/mcp/docs" className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300">Read the docs</Link>.</p>}
 
       {apiKey && (
-        <div className="mt-4 rounded-xl border border-sand-200 p-4 dark:border-sand-800">
-          <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">No browser on that machine?</p>
+        <div className="mt-4 rounded-xl border border-sand-200 bg-sand-100 p-4 sm:p-6 dark:border-sand-800 dark:bg-sand-900">
+          <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">Using it on a server or in CI?</p>
           <p className="mb-3 mt-1 text-sm text-sand-600 dark:text-sand-400">
-            In CI or a remote shell, skip the sign-in and send your API key as a header. Store it as a secret, never in git.
+            A server cannot open a browser to sign in, so it uses your API key instead. Run this on that machine:
           </p>
+          <CodeBlock
+            command={MASKED_CLAUDE_HEADER_COMMAND}
+            copied={copied === 'api-claude'}
+            onCopy={() =>
+              copy(
+                'api-claude',
+                `claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL} --header "Authorization: Bearer ${apiKey}"`,
+                'Command copied',
+              )
+            }
+            label="command"
+            multiline
+          />
+          <p className="mb-2.5 mt-4 text-sm text-sand-600 dark:text-sand-400">Another tool? Send your key in this header:</p>
           <CodeBlock
             command={MASKED_API_HEADER}
             copied={copied === 'api-header'}
             onCopy={() => copy('api-header', `Authorization: Bearer ${apiKey}`, 'Header copied')}
             label="header"
-            multiline={false}
           />
-          <div className="mt-3">
-            <Hint>For Claude Code:</Hint>
-            <CodeBlock
-              command={MASKED_CLAUDE_HEADER_COMMAND}
-              copied={copied === 'api-claude'}
-              onCopy={() =>
-                copy(
-                  'api-claude',
-                  `claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL} --header "Authorization: Bearer ${apiKey}"`,
-                  'Command copied',
-                )
-              }
-              label="command"
-              multiline={false}
-            />
-          </div>
-          <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">
-            View or rotate your key in{' '}
+          <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">
+            Keep the key in your CI secrets, not in your code. See it in{' '}
             <Link
               href="/account/settings"
               className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
