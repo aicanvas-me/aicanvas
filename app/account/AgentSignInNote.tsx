@@ -23,6 +23,9 @@ export function AgentSignInNote({ mode }: { mode: 'sign-in' | 'sign-up' }) {
             your free account and you come straight back to click Allow.
           </>
         )}
+        <span className="mt-2 block text-sand-600 dark:text-sand-400">
+          A free account installs every free component and design-system component in full, with no daily limit.
+        </span>
       </p>
     </div>
   )

@@ -145,6 +145,9 @@ async function logPageview(request: NextRequest): Promise<void> {
     $referrer: referrer.split('?')[0],
     $referring_domain: referringDomain,
     nav: 'load',
+    // One allowlisted tag survives: links the MCP hands an agent carry ?ref=mcp, so the
+    // pricing visits it drives can be counted. A fixed value, never the query itself.
+    ...(request.nextUrl.searchParams.get('ref') === 'mcp' ? { source: 'mcp' } : {}),
     country: request.headers.get('x-vercel-ip-country') ?? undefined,
     region: request.headers.get('x-vercel-ip-country-region') ?? undefined,
   })

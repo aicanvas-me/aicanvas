@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import { Check, DotsThree, Robot } from '@phosphor-icons/react/dist/ssr'
+import { DotsThree, DownloadSimple, LockSimple, MagnifyingGlass, Robot, Stack } from '@phosphor-icons/react/dist/ssr'
 import { createClient } from '../../lib/supabase/server'
 import { buttonClasses } from '../../components/buttonClasses'
 import { hostedMcpOAuthEnabled } from '../../../lib/flags'
@@ -100,21 +100,33 @@ export default async function ConsentPage({
   return (
     <Card>
       <Pairing />
+      {/* The name is the agent's own, so it is shown only when the sign-in returns to this
+          computer or a known app. A sign-in sent to a website keeps the plain heading and the
+          warning below: a look-alike agent can copy any name, never the address. */}
       <h1 className="text-center text-xl font-bold leading-tight tracking-tight text-sand-900 dark:text-sand-50">
-        Allow your AI agent to use your AI Canvas account?
+        {target || request.n === 'An app' ? 'Allow your AI agent to use your AI Canvas account?' : `Allow ${request.n} to use your AI Canvas account?`}
       </h1>
-      <ul className="mt-6 space-y-2.5 text-sm text-sand-700 dark:text-sand-300">
+      <p className="mt-6 text-xs font-semibold text-sand-600 dark:text-sand-400">This lets it:</p>
+      <ul className="mt-3 space-y-3 text-sm text-sand-700 dark:text-sand-300">
         {[
-          'Search AI Canvas and read components',
-          'Install the components your plan includes',
-          'Use the other AI Canvas resources your plan includes',
-        ].map((line) => (
-          <li key={line} className="flex items-start gap-2.5">
-            <Check weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
-            {line}
+          { Icon: MagnifyingGlass, line: 'Search AI Canvas and read components' },
+          { Icon: DownloadSimple, line: 'Install the components your plan includes' },
+          { Icon: Stack, line: 'Use the other AI Canvas resources your plan includes' },
+        ].map(({ Icon, line }) => (
+          <li key={line} className="flex items-start gap-3">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
+              <Icon weight="regular" size={15} className="text-sand-700 dark:text-sand-300" />
+            </span>
+            <span className="pt-1">{line}</span>
           </li>
         ))}
       </ul>
+      <div className="mt-5 flex items-start gap-3 border-t border-sand-200 pt-5 text-sm text-sand-600 dark:border-sand-800 dark:text-sand-400">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center">
+          <LockSimple weight="regular" size={15} />
+        </span>
+        <span className="pt-1">It never sees your password, cannot change your account or plan, and cannot buy anything.</span>
+      </div>
       {target && (
         <p className="mt-6 rounded-lg border border-red-500/40 px-3 py-2.5 text-xs leading-relaxed text-red-700 dark:border-red-500/30 dark:text-red-400">
           This sign-in will be sent to <span className="font-semibold">{target}</span>. Only allow it
@@ -133,6 +145,15 @@ export default async function ConsentPage({
       <p className="mt-6 text-center text-xs text-sand-600 dark:text-sand-400">
         Signed in as <span className="font-semibold text-sand-900 dark:text-sand-50">{user.email}</span>.{' '}
         <SwitchAccount next={here} />
+        <br />
+        Disconnect it anytime in{' '}
+        <Link
+          href="/account/settings"
+          className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+        >
+          Settings, Connected AI agents
+        </Link>
+        .
       </p>
     </Card>
   )

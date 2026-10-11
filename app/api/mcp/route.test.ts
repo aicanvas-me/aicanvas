@@ -233,7 +233,7 @@ describe('hosted MCP: a free account', () => {
     const r = await call('search_components', { query: PREMIUM_SLUG.replace(/-/g, ' '), limit: 50 })
     const locked = r.structuredContent!.locked as number
     expect(locked).toBeGreaterThan(0)
-    expect(r.structuredContent!.upgradeUrl).toBe('https://aicanvas.me/pricing')
+    expect(r.structuredContent!.upgradeUrl).toBe('https://aicanvas.me/pricing?ref=mcp')
     expect(r.content[0].text).toContain('cannot install')
     expect(r.content[0].text).toContain('Next: show the user')
   })

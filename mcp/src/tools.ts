@@ -70,7 +70,8 @@ function forAccount<T extends { slug: string; installCommand?: string; tokensIns
   }
 }
 
-const UPGRADE_URL = 'https://aicanvas.me/pricing'
+// ?ref=mcp lets the site count the pricing visits the MCP drives (see proxy.ts).
+const UPGRADE_URL = 'https://aicanvas.me/pricing?ref=mcp'
 
 function lockedLine(name: string): string {
   return (
