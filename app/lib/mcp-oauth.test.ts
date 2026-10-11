@@ -146,9 +146,11 @@ describe('registration', () => {
     expect(db.tables.mcp_grants).toHaveLength(0)
   })
 
-  it('rejects a tampered client_id', () => {
-    const clientId = register()
-    expect(readClient(clientId.slice(0, 10) + (clientId[10] === 'A' ? 'B' : 'A') + clientId.slice(11))).toBeNull()
+  it('reads an edited client_id by the registration rules, never by trust', () => {
+    const [body] = register().split('.')
+    const edited = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'))
+    edited.r = ['x-safari-https://evil.example/cb']
+    expect(readClient(`${Buffer.from(JSON.stringify(edited)).toString('base64url')}.AAAA`)).toBeNull()
   })
 
   it('accepts https, http to this computer and app schemes; refuses the rest', () => {
@@ -329,11 +331,38 @@ describe('redirect safety', () => {
     expect(readClient(register(['cursor://anysphere.cursor-mcp/oauth/callback']))).not.toBeNull()
   })
 
+
   it('shows an error page instead of redirecting a bad request to a website', () => {
     const web = register(['https://agent.example/cb'])
     const outcome = authorize(authorizeUrl(LOCAL, web, { redirect_uri: 'https://agent.example/cb', response_type: 'token' }), null)
     expect(outcome.kind).toBe('error-page')
     const local = authorize(authorizeUrl(LOCAL, register(), { response_type: 'token' }), null)
     expect(local.kind).toBe('redirect')
+  })
+})
+
+describe('registrations outlive the signing secret', () => {
+  const forge = (client: object) => `${Buffer.from(JSON.stringify(client)).toString('base64url')}.c2lnbmVkLWVsc2V3aGVyZQ`
+
+  it('reads a registration signed under an earlier secret by the registration rules', () => {
+    const old = register()
+    process.env.MCP_OAUTH_SECRET = 't'.repeat(40)
+    expect(readClient(old)).toMatchObject({ n: 'Claude Code (aicanvas)', r: [CALLBACK] })
+    expect(authorize(authorizeUrl(LOCAL, old), null).kind).toBe('redirect')
+  })
+
+  it('refuses an unsigned one that breaks a rule, and garbage', () => {
+    expect(readClient(forge({ n: 'x', r: ['microsoft-edge:https://evil.example/cb'], iat: 1 }))).toBeNull()
+    expect(readClient(forge({ n: 'x', r: [], iat: 1 }))).toBeNull()
+    expect(readClient(forge({ n: 'x', iat: 1 }))).toBeNull()
+    expect(readClient('not-a-client')).toBeNull()
+  })
+
+  it('cleans the name again and never takes a consent request as a client', () => {
+    const zw = String.fromCharCode(0x200b)
+    expect(readClient(forge({ n: `Claude${zw} Code`, r: [CALLBACK], iat: 1 }))?.n).toBe('Claude Code')
+    const outcome = authorize(authorizeUrl(LOCAL, register()), null)
+    const signed = outcome.kind === 'redirect' ? new URL(outcome.location).searchParams.get('request')! : ''
+    expect(readClient(signed)).toBeNull()
   })
 })

@@ -257,12 +257,26 @@ export function registerClient(meta: unknown): Registration {
 
 export function readClient(clientId: string | null): Client | null {
   if (!clientId || clientId.length > MAX_CLIENT_ID) return null
-  const client = verify<Client>('client', clientId)
-  // The redirect rules are checked again on every read: a client is a signed token, so one
-  // registered before a rule tightened would otherwise keep working.
-  return client && typeof client.n === 'string' && Array.isArray(client.r) && client.r.every(isAllowedRedirect)
-    ? client
+  // Registration is open and stateless, so the signature only says which secret signed it.
+  // A registration signed under an earlier secret (a rotation, a dev restart) is read by the
+  // same rules registerClient applies, instead of stranding every agent that saved it: the
+  // agent reuses its stored client_id and "sign in again" alone would never recover.
+  const client = verify<Client>('client', clientId) ?? unsignedClient(clientId)
+  return client && typeof client.n === 'string' && Array.isArray(client.r) && client.r.length > 0 &&
+    client.r.length <= MAX_REDIRECT_URIS && client.r.every((u) => typeof u === 'string' && isAllowedRedirect(u))
+    ? { ...client, n: cleanName(client.n) }
     : null
+}
+
+function unsignedClient(clientId: string): Client | null {
+  const parts = clientId.split('.')
+  if (parts.length !== 2) return null
+  try {
+    const c = JSON.parse(Buffer.from(parts[0], 'base64url').toString('utf8')) as Client
+    return c && typeof c === 'object' ? c : null
+  } catch {
+    return null
+  }
 }
 
 // ─── Authorization request → consent page ─────────────────────────────────────
