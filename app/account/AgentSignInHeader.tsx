@@ -1,7 +1,8 @@
-import { Robot } from '@phosphor-icons/react'
+import { DownloadSimple, Lightning, Plug, Robot } from '@phosphor-icons/react'
 
 // The header of the sign-in and sign-up forms when an AI agent's sign-in opened them (the
-// next step is the consent screen): it says why the page is here, in place of the mascot.
+// next step is the consent screen): it says why the page is here and what signing in gives,
+// in place of the mascot.
 export function isAgentSignIn(next: string): boolean {
   return next.startsWith('/oauth/consent')
 }
@@ -18,6 +19,19 @@ export function AgentSignInHeader({ mode }: { mode: 'sign-in' | 'sign-up' }) {
       <p className="mt-1.5 text-sm text-sand-600 dark:text-sand-400">
         {mode === 'sign-in' ? 'Sign in, then click Allow.' : 'Create your free account, then click Allow.'}
       </p>
+      {/* Why an account: installing needs one, it carries the plan, and it is a one-time step. */}
+      <ul className="mt-5 space-y-2.5 border-t border-sand-200 pt-5 text-sm text-sand-700 dark:border-sand-800 dark:text-sand-300">
+        {[
+          { Icon: DownloadSimple, line: 'Your agent installs the full source of each component straight into your project.' },
+          { Icon: Lightning, line: 'Your plan comes along: every free component, and all of Premium if you have it.' },
+          { Icon: Plug, line: 'Sign in once. It stays connected until you disconnect it.' },
+        ].map(({ Icon, line }) => (
+          <li key={line} className="flex items-start gap-3">
+            <Icon weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+            {line}
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
