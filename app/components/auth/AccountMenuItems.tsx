@@ -10,7 +10,7 @@ const LINKS: { href: string; label: string; icon: ReactNode }[] = [
   { href: '/account', label: 'Profile', icon: <User size={14} weight="regular" /> },
 ]
 
-// Only while the hosted MCP sign-in is on, matching the account tabs.
+// After Activity, only while the hosted MCP sign-in is on, matching the account tabs.
 const CONNECT_LINK = { href: '/account/connect', label: 'Connect', icon: <Plug size={14} weight="regular" /> }
 
 const LINK_CLASS =
@@ -30,7 +30,7 @@ export function AccountMenuItems({
   onSignOut: () => void
 }) {
   const { showConnect } = useSession()
-  const links = showConnect ? [...LINKS, CONNECT_LINK] : LINKS
+  const links = showConnect ? [...LINKS.slice(0, 2), CONNECT_LINK, ...LINKS.slice(2)] : LINKS
   return (
     <>
       {showUpgrade && (

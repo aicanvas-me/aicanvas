@@ -17,12 +17,12 @@ const TABS: { href: string; label: string; Icon: IconComponent }[] = [
   { href: '/account', label: 'Profile', Icon: User },
 ]
 
-// Only while the hosted MCP sign-in is on; the flag is server-side, so the layout passes it.
+// After Activity, only while the hosted MCP sign-in is on; the flag is server-side, so the layout passes it.
 const CONNECT_TAB = { href: '/account/connect', label: 'Connect', Icon: Plug }
 
 export function AccountTabs({ showConnect = false }: { showConnect?: boolean }) {
   const pathname = usePathname()
-  const tabs = showConnect ? [...TABS, CONNECT_TAB] : TABS
+  const tabs = showConnect ? [...TABS.slice(0, 2), CONNECT_TAB, ...TABS.slice(2)] : TABS
   return (
     // Five tabs split the full row evenly (flex-1). No horizontal scroll —
     // labels collapse to icon-only below `sm:` so all five always fit on
