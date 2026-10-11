@@ -51,7 +51,7 @@ function Hint({ children }: { children: React.ReactNode }) {
   return <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">{children}</p>
 }
 
-export function ConnectAgentCard({ skipHref }: { skipHref?: string }) {
+export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?: string; showDocsLink?: boolean }) {
   const [agent, setAgent] = useState<Agent>('claude')
   const [copied, setCopied] = useState<string | null>(null)
   const [apiKey, setApiKey] = useState<string | null>(null)
@@ -235,6 +235,8 @@ export function ConnectAgentCard({ skipHref }: { skipHref?: string }) {
           )}
         </div>
       </div>
+
+      {showDocsLink && <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">Stuck, or setting up CI? <Link href="/mcp/docs" className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300">Read the docs</Link>.</p>}
 
       {apiKey && (
         <div className="mt-4 rounded-xl border border-sand-200 p-4 dark:border-sand-800">
