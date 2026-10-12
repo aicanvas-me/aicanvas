@@ -9,7 +9,7 @@
 // with one name (Pro and Legacy) stay apart. Matching runs per word over the
 // name and the description, so a short description of what you need finds
 // things too: filler words are dropped, a plural matches its singular, and a
-// long query needs most of its words, not all. Groups are ordered by their
+// query of several words needs half of them, not all. Groups are ordered by their
 // best hit once there is a query.
 //
 // The input is a combobox and the only focus stop: the arrow keys move the
@@ -161,8 +161,9 @@ function toWords(query: string): string[] {
 }
 
 // A name hit outranks a description hit, and a name that starts with the word
-// ranks highest. Up to two words must all match; a longer query needs 60% of
-// them, since a description of a need rarely uses our exact words.
+// ranks highest. A query of two or more words needs half of them, since a
+// description of a need rarely uses our exact words; every matched word adds
+// 10, so the rows that match the most words always come first.
 function score(item: Item, words: string[]): number {
   const name = item.name.toLowerCase()
   const keywords = item.keywords.toLowerCase()
@@ -179,7 +180,7 @@ function score(item: Item, words: string[]): number {
       total += s
     }
   }
-  const need = words.length <= 2 ? words.length : Math.ceil(words.length * 0.6)
+  const need = Math.ceil(words.length / 2)
   return matched >= need ? total + matched * 10 : 0
 }
 

@@ -109,7 +109,7 @@ function Menu({ label, links, columns = 1 }: { label: string; links: NavLink[]; 
 
 export function HomeLogo() {
   return (
-    <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-sand-900 dark:text-sand-50">
+    <Link href="/" className="flex shrink-0 items-center gap-2 justify-self-start font-bold text-sand-900 dark:text-sand-50">
       <img src="/ai-canvas-icon.svg" alt="" width={20} height={17} className="shrink-0" />
       AI Canvas
     </Link>
