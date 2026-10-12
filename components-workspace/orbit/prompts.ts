@@ -9,7 +9,7 @@ Create a circular typography component where a looping phrase rotates continuous
 ## Requirements
 
 ### Setup
-- Use Next.js 16 with TypeScript
+- Use React with TypeScript (any React app)
 - Verify Tailwind CSS v4 is installed (configured via @theme inline in globals.css)
 - Install: react
 - The component should be a client-side React component ('use client')
