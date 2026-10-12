@@ -253,7 +253,22 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
   // With premium switched off nothing is for sale, so no row claims a tier.
   const showTiers = premiumEnabled()
 
-  const results = useMemo(() => search(tab, query), [tab, query])
+  const results = useMemo(() => {
+    const found = search(tab, query)
+    const q = query.trim()
+    // Once there is a query, the first row hands it to the components grid,
+    // which filters every standalone by it (the sidebar box used to do this
+    // as you typed).
+    if (!q || (tab !== 'all' && tab !== 'components')) return found
+    const grid: Item = {
+      id: 'grid',
+      name: `Show all results for “${q}” in the components grid`,
+      href: `/components?q=${encodeURIComponent(q)}`,
+      keywords: '',
+      icon: MagnifyingGlass,
+    }
+    return [{ label: 'Components grid', tab: 'components' as const, items: [grid] }, ...found]
+  }, [tab, query])
   const flat = useMemo(() => results.flatMap((g) => g.items), [results])
   const current = flat[Math.min(active, flat.length - 1)]
 

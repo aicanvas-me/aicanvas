@@ -1,6 +1,8 @@
 'use client'
 
-// The top bar's Search button and its ⌘K / Ctrl+K shortcut. The dialog itself
+// The site's Search trigger and its ⌘K / Ctrl+K shortcut: a compact button in
+// the homepage bar (`bar`), a full-width box in the sidebar (`field`). A page
+// renders exactly one of the two, so one shortcut listener is live. The dialog itself
 // is a separate chunk, fetched the first time the pointer or focus reaches the
 // button (or the shortcut fires), so the metadata it searches stays out of the
 // page bundle.
@@ -18,7 +20,15 @@ const isMac = () => /Mac|iPhone|iPad/.test(navigator.platform || navigator.userA
 const KBD =
   'rounded border border-sand-200 bg-sand-50 px-1 font-sans text-[11px] font-medium leading-4 text-sand-600 dark:border-sand-700 dark:bg-sand-950 dark:text-sand-400'
 
-export function SiteSearch() {
+const BAR =
+  'inline-flex h-8 items-center gap-2 rounded-lg border border-sand-200 bg-sand-100 px-2.5 text-sm font-medium text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-50'
+
+// The sidebar box keeps the look of the text field it replaced (same border,
+// fill, height and placeholder tone), so the rail does not change shape.
+const FIELD =
+  'flex w-full items-center gap-2 rounded-lg border border-sand-200 bg-sand-100 py-1.5 pl-3 pr-2 text-sm text-sand-600 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/20 focus-visible:border-olive-500 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-500 dark:hover:border-sand-600'
+
+export function SiteSearch({ variant = 'bar' }: { variant?: 'bar' | 'field' }) {
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const mac = useSyncExternalStore(noop, isMac, () => true)
@@ -49,11 +59,20 @@ export function SiteSearch() {
         onClick={() => setOpen(true)}
         onPointerEnter={loadDialog}
         onFocus={loadDialog}
-        className="inline-flex h-8 items-center gap-2 rounded-lg border border-sand-200 bg-sand-100 px-2.5 text-sm font-medium text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-50"
+        className={variant === 'field' ? FIELD : BAR}
       >
-        <MagnifyingGlass weight="regular" size={14} aria-hidden className="lg:hidden" />
-        <span className="hidden lg:inline">Search</span>
-        <span aria-hidden className="hidden items-center gap-0.5 lg:flex">
+        {variant === 'field' ? (
+          <>
+            <MagnifyingGlass weight="regular" size={14} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-500" />
+            <span className="flex-1 text-left">Search…</span>
+          </>
+        ) : (
+          <>
+            <MagnifyingGlass weight="regular" size={14} aria-hidden className="lg:hidden" />
+            <span className="hidden lg:inline">Search</span>
+          </>
+        )}
+        <span aria-hidden className={`items-center gap-0.5 ${variant === 'field' ? 'flex' : 'hidden lg:flex'}`}>
           <kbd className={KBD}>{mac ? '⌘' : 'Ctrl'}</kbd>
           <kbd className={KBD}>K</kbd>
         </span>

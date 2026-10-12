@@ -1,15 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { CaretDown, DiamondsFour, GithubLogo, MagnifyingGlass, X, XLogo } from '@phosphor-icons/react'
+import { CaretDown, DiamondsFour, GithubLogo, XLogo } from '@phosphor-icons/react'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import type { ReactNode } from 'react'
 import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
 import { buttonClasses } from './buttonClasses'
 import { SecondaryNav } from './SecondaryNav'
-import { useComponentSearch } from './useComponentSearch'
+import { SiteSearch } from './SiteSearch'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
 import { CAPTURE_LEAF_RE } from './top-bar-crumbs'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
@@ -95,20 +95,6 @@ export function Sidebar({
 
   const toggleComponents = () => setHandToggle({ onDS: onDesignSystems, collapsed: !collapsedComponents })
 
-  const { searchValue, setSearchValue, searchInputRef, clearSearch } = useComponentSearch()
-
-  // ⌘K / Ctrl+K focuses the search input.
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault()
-        searchInputRef.current?.focus()
-      }
-    }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [searchInputRef])
-
   if (hideSidebar) return null
 
   const pinnedDark = isPinnedDarkRoute(pathname)
@@ -127,33 +113,10 @@ export function Sidebar({
         </Link>
       </div>
 
-      {/* ── Search ── */}
+      {/* ── Search ── the site search dialog, the same one the homepage bar
+          opens; ⌘K / Ctrl+K opens it too. */}
       <div className="shrink-0 px-3 py-3">
-        <div className="relative">
-          <MagnifyingGlass
-            weight="regular"
-            size={14}
-            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sand-600 dark:text-sand-500"
-          />
-          <input
-            ref={searchInputRef}
-            type="text"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            placeholder="Search…"
-            className="w-full rounded-lg border border-sand-200 bg-sand-100 py-1.5 pl-8 pr-8 text-sm text-sand-900 outline-none transition-colors placeholder:text-sand-600 hover:border-sand-300 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-600 dark:focus:border-olive-500 dark:focus:ring-olive-500/20"
-          />
-          {searchValue && (
-            <button
-              type="button"
-              onClick={clearSearch}
-              aria-label="Clear search"
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-sand-600 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
-            >
-              <X weight="regular" size={13} />
-            </button>
-          )}
-        </div>
+        <SiteSearch variant="field" />
       </div>
 
       {/* ── Navigation ── */}
