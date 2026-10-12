@@ -47,5 +47,8 @@ export default async function HomePage() {
     .filter((c) => c !== undefined)
     .map((c) => ({ slug: c.slug, name: c.name, description: c.description, tags: c.tags, image: c.image, badge: c.badge }))
 
-  return <HomePageClient total={total} pulls={pulls} carouselItems={carouselItems} />
+  // The free MIT standalones: everything not badged Premium.
+  const freeTotal = COMPONENT_META.filter((c) => c.badge !== 'Premium').length
+
+  return <HomePageClient total={total} freeTotal={freeTotal} pulls={pulls} carouselItems={carouselItems} />
 }
