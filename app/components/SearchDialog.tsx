@@ -41,15 +41,20 @@ import {
   ANDROMEDA_COMPONENT_META as PRO_COMPONENTS,
   ANDROMEDA_TEMPLATE_META as PRO_TEMPLATES,
 } from '../_lib/andromeda-pro/andromeda-meta'
+import { premiumEnabled } from '../../lib/flags'
 
 type Tab = 'all' | 'systems' | 'templates' | 'components' | 'pages'
+// What it costs to install: Andromeda Pro is all paid (its own cyan), a
+// standalone is paid when badged Premium (olive), and Andromeda Legacy and the
+// other standalones are free. Categories and pages carry no tier.
+type Tier = 'pro' | 'premium' | 'free'
 type Item = {
   id: string
   name: string
   href: string
   keywords: string
   icon: ComponentType<IconProps>
-  premium?: boolean
+  tier?: Tier
 }
 type Group = { label: string; tab: Exclude<Tab, 'all'>; items: Item[] }
 
@@ -71,8 +76,8 @@ const GROUPS: Group[] = [
     label: 'Design systems',
     tab: 'systems',
     items: [
-      { id: 'ds:pro', name: 'Andromeda Pro', href: PRO, keywords: 'design system light dark', icon: Stack },
-      { id: 'ds:legacy', name: 'Andromeda Legacy', href: LEGACY, keywords: 'design system mit free', icon: Stack },
+      { id: 'ds:pro', name: 'Andromeda Pro', href: PRO, keywords: 'design system light dark', icon: Stack, tier: 'pro' },
+      { id: 'ds:legacy', name: 'Andromeda Legacy', href: LEGACY, keywords: 'design system mit', icon: Stack, tier: 'free' },
     ],
   },
   {
@@ -84,20 +89,22 @@ const GROUPS: Group[] = [
       href: `${PRO}/${c.slug}`,
       keywords: c.description,
       icon: SquaresFour,
+      tier: 'pro' as const,
     })),
   },
   {
     label: 'Templates',
     tab: 'templates',
     items: [
-      ...PRO_TEMPLATES.map((t) => ({ ...t, base: PRO })),
-      ...LEGACY_TEMPLATES.map((t) => ({ ...t, base: LEGACY })),
+      ...PRO_TEMPLATES.map((t) => ({ ...t, base: PRO, tier: 'pro' as const })),
+      ...LEGACY_TEMPLATES.map((t) => ({ ...t, base: LEGACY, tier: 'free' as const })),
     ].map((t) => ({
       id: `${t.base}:t:${t.folder}`,
       name: t.name,
       href: `${t.base}/templates/${t.folder}`,
       keywords: `template page ${t.description}`,
       icon: Layout,
+      tier: t.tier,
     })),
   },
   {
@@ -109,7 +116,7 @@ const GROUPS: Group[] = [
       href: `/components/${c.slug}`,
       keywords: `${c.tags.map((t) => t.label).join(' ')} ${c.description}`,
       icon: SquaresFour,
-      premium: c.badge === 'Premium',
+      tier: c.badge === 'Premium' ? ('premium' as const) : ('free' as const),
     })),
   },
   {
@@ -121,6 +128,7 @@ const GROUPS: Group[] = [
       href: `${LEGACY}/${c.slug}`,
       keywords: c.description,
       icon: SquaresFour,
+      tier: 'free' as const,
     })),
   },
   {
@@ -186,12 +194,18 @@ function score(item: Item, words: string[]): number {
 
 function search(tab: Tab, query: string): Group[] {
   const groups = GROUPS.filter((g) => tab === 'all' || g.tab === tab)
-  const words = toWords(query)
-  if (words.length === 0) return groups
+  const all = toWords(query)
+  // "pro" stays a search word when it is the whole query's subject alongside
+  // others ("andromeda pro"); only on its own or next to plain words is it a tier.
+  const tierWord = all.find((w) => w in TIER_FILTER && !(w === 'pro' && all.includes('andromeda')))
+  const want = tierWord ? TIER_FILTER[tierWord] : undefined
+  const words = all.filter((w) => w !== tierWord)
+  if (!want && words.length === 0) return groups
   return groups
     .map((g) => {
       const ranked = g.items
-        .map((item, i) => ({ item, i, s: score(item, words) }))
+        .filter((item) => !want || inTier(item, want))
+        .map((item, i) => ({ item, i, s: words.length ? score(item, words) : 1 }))
         .filter((r) => r.s > 0)
         .sort((a, b) => b.s - a.s || a.i - b.i)
       return { group: { ...g, items: ranked.map((r) => r.item) }, best: ranked[0]?.s ?? 0 }
@@ -199,6 +213,29 @@ function search(tab: Tab, query: string): Group[] {
     .filter((r) => r.best > 0)
     .sort((a, b) => b.best - a.best)
     .map((r) => r.group)
+}
+
+// A tier word in the query is a filter, not a search word: "free button"
+// means buttons that are free, and "premium" alone lists everything paid.
+const TIER_FILTER: Record<string, 'free' | 'paid'> = { free: 'free', mit: 'free', premium: 'paid', paid: 'paid', pro: 'paid' }
+const inTier = (item: Item, want: 'free' | 'paid') => (want === 'free' ? item.tier === 'free' : item.tier === 'pro' || item.tier === 'premium')
+
+// Same chip shape as SystemTierChip, with the tier colours the component grid
+// already uses: Pro cyan, premium standalone olive, free neutral.
+const TIER_CHIP: Record<Tier, string> = {
+  pro: 'bg-cyan-500/10 text-cyan-600 ring-cyan-500/40 dark:text-cyan-400',
+  premium: 'bg-olive-500/10 text-olive-600 ring-olive-500/40 dark:text-olive-400',
+  free: 'text-sand-600 ring-sand-300 dark:text-sand-400 dark:ring-sand-700',
+}
+
+function TierChip({ tier }: { tier: Tier }) {
+  return (
+    <span
+      className={`inline-flex shrink-0 items-center rounded px-1.5 py-px text-xxs font-semibold uppercase tracking-wider ring-1 ring-inset ${TIER_CHIP[tier]}`}
+    >
+      {tier === 'free' ? 'Free' : 'Premium'}
+    </span>
+  )
 }
 
 const KEY_BASE =
@@ -213,6 +250,8 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const listRef = useRef<HTMLDivElement>(null)
   const listId = useId()
+  // With premium switched off nothing is for sale, so no row claims a tier.
+  const showTiers = premiumEnabled()
 
   const results = useMemo(() => search(tab, query), [tab, query])
   const flat = useMemo(() => results.flatMap((g) => g.items), [results])
@@ -371,9 +410,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
                         <div className="truncate text-sm font-medium text-sand-900 dark:text-sand-50">{item.name}</div>
                         <div className="truncate font-mono text-xs text-sand-600 dark:text-sand-400">{item.href}</div>
                       </div>
-                      {item.premium && (
-                        <span className="shrink-0 text-xs font-medium text-sand-600 dark:text-sand-400">Premium</span>
-                      )}
+                      {showTiers && item.tier && <TierChip tier={item.tier} />}
                       {selected && (
                         <ArrowElbowDownLeft weight="regular" size={14} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-400" />
                       )}
