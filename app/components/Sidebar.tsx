@@ -69,6 +69,7 @@ export function Sidebar({
   // (HomeNav), the way ui.shadcn.com's landing page does.
   const hideSidebar =
     pathname === '/' ||
+    pathname === '/v2' ||
     pathname?.startsWith('/lab') ||
     TEMPLATE_LEAF_RE.test(pathname ?? '') ||
     CAPTURE_LEAF_RE.test(pathname ?? '')

@@ -122,7 +122,8 @@ export function TopBar() {
   // where both sides have room to be equal; below that the three just spread.
   // The founding-offer pill does not show here: the centred nav leaves it no
   // room in a 7xl column.
-  if (pathname === '/') {
+  // ponytail: /v2 is the homepage v2 review route; drop it with the route.
+  if (pathname === '/' || pathname === '/v2') {
     return (
       <header className={HOME_BAR_CLASS}>
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 xl:grid xl:grid-cols-[1fr_auto_1fr]">
