@@ -109,8 +109,9 @@ export function HomePageClient({ total, freeTotal, pulls, carouselItems }: Props
             style={{ animationDelay: '0.26s' }}
           >
             Complete React design systems with templates, light and dark themes, and the design
-            rules your agent follows. Animated standalones for everything else. Install with one
-            command yourself, or let your agent do it.
+            rules your agent follows. Plus standalone components and blocks that fit any React
+            project, with or without a design system. Install with one command yourself, or let
+            your agent do it.
           </p>
 
           <div

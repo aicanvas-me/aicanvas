@@ -389,11 +389,12 @@ export function FeaturedCarousel({ items, freeTotal }: { items: ComponentMeta[];
     <section className="mt-16 sm:mt-24">
       {/* Header */}
       <Reveal className="mb-4">
-        <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Standalone components</p>
-        <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">{freeTotal} animated components, free and MIT.</h2>
+        <p className="text-xs font-semibold uppercase tracking-wider text-sand-600">Standalone components &amp; blocks</p>
+        <h2 className="mt-1 text-xl font-bold text-sand-900 dark:text-sand-50">{freeTotal} free components that fit any React project.</h2>
       </Reveal>
       <Reveal delay={0.05} className="mb-8 max-w-2xl">
         <p className="text-base leading-relaxed text-sand-600 dark:text-sand-400">
+          They belong to no design system, so they sit next to Andromeda, shadcn or your own styles.
           Backgrounds, glass navigation, 3D globes, shaders. Each one installs with one command, and
           its remix prompt lets any AI tool reshape it.
         </p>
@@ -588,6 +589,10 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
   {
     q: 'Which frameworks does it work in?',
     a: 'Tested in Next.js and Vite. It installs through shadcn, so other React setups shadcn supports should work; we list a framework once we have tested it.',
+  },
+  {
+    q: 'Do standalone components need a design system?',
+    a: 'No. They belong to no design system. Each one is a React component styled with Tailwind, so it drops into any React project, next to Andromeda, shadcn or a system of your own.',
   },
   {
     q: 'Does it cost AI tokens?',
