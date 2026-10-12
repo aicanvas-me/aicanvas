@@ -157,7 +157,8 @@ export function HomeClient({
   // them: on the plain /components search (not a scoped category/collection), an
   // active query also scans those two meta sources and they render as their own
   // group below the grid, reusing ComponentCard so the aesthetic matches. They
-  // link out to their own pages. Andromeda components are Free; templates Premium.
+  // link out to their own pages. A component card names its system; a template
+  // reads Premium on Andromeda Pro and Free on Andromeda Legacy, which is MIT.
   const extras =
     q && !category
       ? SEARCHABLE_SYSTEMS.flatMap((sys, si) => [
@@ -181,7 +182,7 @@ export function HomeClient({
               description: t.description,
               image: t.image,
               href: `/design-systems/${sys.slug}/templates/${t.folder}`,
-              badge: 'Premium template',
+              badge: sys.badgeTone === 'pro' ? 'Premium template' : 'Free',
               badgeTone: sys.badgeTone,
               cta: 'View template',
             })),
