@@ -3,7 +3,8 @@
 import { createContext, useContext, useLayoutEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
 import { Breadcrumbs } from './Breadcrumbs'
-import { HomeNav } from './HomeNav'
+import { HomeLogo, HomeNav } from './HomeNav'
+import { SiteSearch } from './SiteSearch'
 import { ThemeToggle } from './ThemeToggle'
 import { TopAuthPill } from './auth/TopAuthPill'
 import { OfferBanner } from './billing/OfferBanner'
@@ -95,6 +96,11 @@ export function TopBarInstallSlot({ id }: { id: string }) {
 const BAR_CLASS =
   'sticky top-0 z-10 hidden h-14 shrink-0 items-center justify-between gap-4 border-b border-sand-200 bg-sand-50 px-6 dark:border-sand-800 dark:bg-sand-950 md:flex'
 
+// The homepage bar has no sidebar beside it, so its content sits in the same
+// 7xl column as the page below (same max width, same px-6), not edge to edge.
+const HOME_BAR_CLASS =
+  'sticky top-0 z-10 hidden h-14 shrink-0 items-center border-b border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 md:flex'
+
 export function TopBar() {
   const pathname = usePathname() ?? '/'
   const ctx = useContext(TopBarContext)
@@ -111,11 +117,31 @@ export function TopBar() {
   )
     return null
 
+  // The homepage: logo left, the site's sections centred, search and the
+  // account on the right. The centre column is only truly centred from xl,
+  // where both sides have room to be equal; below that the three just spread.
+  // The founding-offer pill does not show here: the centred nav leaves it no
+  // room in a 7xl column.
+  if (pathname === '/') {
+    return (
+      <header className={HOME_BAR_CLASS}>
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 xl:grid xl:grid-cols-[1fr_auto_1fr]">
+          <HomeLogo />
+          <HomeNav />
+          <div className="flex shrink-0 items-center justify-end gap-2">
+            <SiteSearch />
+            <ThemeToggle />
+            <TopAuthPill />
+          </div>
+        </div>
+      </header>
+    )
+  }
+
   const override = ctx?.override && ctx.override.pathname === pathname ? ctx.override.node : undefined
   const crumbs = buildTopBarCrumbs(pathname)
   const slot = installSlotId(pathname)
   const offerMode = offerPillMode(pathname)
-  const isHome = pathname === '/'
 
   return (
     <header className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
@@ -130,18 +156,14 @@ export function TopBar() {
           flex-1 and shrink-0 each set flex-shrink, so the ends are written as
           alternatives and never both: a string carrying the two is settled by
           the built stylesheet, not by the order written here. */}
-      <div className={`min-w-0 ${offerMode && !isHome ? '' : 'flex-1'}`}>
-        {isHome ? (
-          <HomeNav />
-        ) : override !== undefined ? (
+      <div className={`min-w-0 ${offerMode ? '' : 'flex-1'}`}>
+        {override !== undefined ? (
           override
         ) : crumbs ? (
           <Breadcrumbs crumbs={crumbs} />
         ) : null}
       </div>
-      {/* On the homepage the nav fills the left, so the offer pill only shows
-          where there is room for both. */}
-      {offerMode && (isHome ? <div className="hidden 2xl:block"><OfferBanner mode={offerMode} /></div> : <OfferBanner mode={offerMode} />)}
+      {offerMode && <OfferBanner mode={offerMode} />}
       {/* Right cluster order whenever a page mounts a CTA: theme toggle, then
           the CTA, then the user. */}
       <div className="flex shrink-0 items-center gap-2">

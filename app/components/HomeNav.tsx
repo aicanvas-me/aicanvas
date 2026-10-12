@@ -1,9 +1,10 @@
 'use client'
 
-// The homepage's left side of the top bar. The homepage drops the sidebar (the
-// way ui.shadcn.com's landing page does), so the logo and the site's sections
-// move up here: two systems, the component categories, MCP, Pricing, and a
-// More menu for the info pages. Every other route keeps the sidebar.
+// The homepage's top bar content. The homepage drops the sidebar (the way
+// ui.shadcn.com's landing page does), so the logo and the site's sections move
+// up here: the logo on the left, and in the centre the two systems, the
+// component categories, MCP, Pricing, and a More menu for the info pages.
+// Every other route keeps the sidebar.
 //
 // Each menu is a disclosure: a button with aria-expanded and a list of plain
 // links. Escape and a click outside close it, and focus goes back to the
@@ -35,8 +36,10 @@ const MORE: NavLink[] = [
   { label: 'Feedback', href: '/feedback' },
 ]
 
+// Plain text links in a muted tone that steps up to the primary text on hover
+// and while a menu is open; no pill behind them.
 const ITEM =
-  'inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50'
+  'inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-medium text-sand-600 transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-expanded:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50 dark:aria-expanded:text-sand-50 xl:px-3'
 
 function Menu({ label, links, columns = 1 }: { label: string; links: NavLink[]; columns?: 1 | 2 }) {
   const [open, setOpen] = useState(false)
@@ -104,16 +107,20 @@ function Menu({ label, links, columns = 1 }: { label: string; links: NavLink[]; 
   )
 }
 
+export function HomeLogo() {
+  return (
+    <Link href="/" className="flex shrink-0 items-center gap-2 font-bold text-sand-900 dark:text-sand-50">
+      <img src="/ai-canvas-icon.svg" alt="" width={20} height={17} className="shrink-0" />
+      AI Canvas
+    </Link>
+  )
+}
+
+// The centre of the homepage bar. The More menu waits for lg: its pages are in
+// the footer too, and below lg the bar has no room for it.
 export function HomeNav() {
   return (
-    <nav aria-label="Main" className="flex items-center gap-1">
-      <Link
-        href="/"
-        className="mr-3 flex shrink-0 items-center gap-2 font-bold text-sand-900 dark:text-sand-50"
-      >
-        <img src="/ai-canvas-icon.svg" alt="" width={20} height={17} className="shrink-0" />
-        AI Canvas
-      </Link>
+    <nav aria-label="Main" className="flex items-center xl:gap-2">
       <Menu label="Design systems" links={DESIGN_SYSTEMS} />
       <Menu label="Components & blocks" links={COMPONENT_LINKS} columns={2} />
       <Link href="/mcp" className={ITEM}>
@@ -122,7 +129,9 @@ export function HomeNav() {
       <Link href="/pricing" className={ITEM}>
         Pricing
       </Link>
-      <Menu label="More" links={MORE} />
+      <div className="hidden lg:block">
+        <Menu label="More" links={MORE} />
+      </div>
     </nav>
   )
 }
