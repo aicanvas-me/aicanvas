@@ -1,5 +1,5 @@
 // "Why AI Canvas": seven cards in three rows (wide + narrow, three equal,
-// narrow + wide), each a short claim over a small picture of it. Every picture
+// narrow + wide), each a short claim with a small picture of it. Every picture
 // is CSS and inline SVG, no extra 3D on a page that already has the Brain.
 // Server component; hover lifts a card a little, nothing loops.
 
@@ -213,11 +213,11 @@ function FreeFan({ shots }: { shots: Shot[] }) {
     'translate-x-[-12%] translate-y-3 rotate-[10deg] group-hover:translate-x-[-4%] group-hover:rotate-[13deg]',
   ]
   return (
-    <div className="relative h-48 sm:h-56">
+    <div className="relative h-44">
       {shots.slice(0, 3).map((s, i) => (
         <div
           key={s.slug}
-          className={`absolute left-1/2 top-4 w-[46%] max-w-[260px] rounded-xl border border-sand-200 bg-sand-100 p-1.5 shadow-[0_2px_6px_rgba(0,0,0,0.08),0_20px_32px_-12px_rgba(0,0,0,0.3)] transition-transform duration-500 ease-out dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.4),0_24px_40px_-12px_rgba(0,0,0,0.75)] ${pose[i]}`}
+          className={`absolute left-1/2 top-4 w-[52%] max-w-[220px] rounded-xl border border-sand-200 bg-sand-100 p-1.5 shadow-[0_2px_6px_rgba(0,0,0,0.08),0_20px_32px_-12px_rgba(0,0,0,0.3)] transition-transform duration-500 ease-out dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.4),0_24px_40px_-12px_rgba(0,0,0,0.75)] ${pose[i]}`}
         >
           <img src={s.image} alt="" aria-hidden loading="lazy" decoding="async" className="aspect-[4/3] w-full rounded-lg object-cover" />
         </div>
@@ -227,36 +227,25 @@ function FreeFan({ shots }: { shots: Shot[] }) {
 }
 
 export function ValueBento({ freeTotal, freeShots }: { freeTotal: number; freeShots: Shot[] }) {
+  // Reading order: what you get (source), how you work (by hand or agent),
+  // what you may do with it, then free and Premium last, right above the plans.
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
       {/* Row 1 */}
       <Reveal y={12} className="h-full lg:col-span-2">
-        <div className={`${CARD} sm:flex-row sm:items-center sm:gap-8`}>
+        <div className={`${CARD} sm:flex-row sm:items-center sm:gap-10`}>
           <div className="order-2 mt-8 sm:order-1 sm:mt-0 sm:max-w-xs">
-            <Copy title="Premium opens the whole catalog.">
-              One subscription unlocks Andromeda Pro and its templates, the AI Brain and every premium standalone, with
-              new pieces included as they ship. Monthly or yearly, cancel anytime.
-            </Copy>
-          </div>
-          <div className="order-1 flex flex-1 justify-center py-4 sm:order-2">
-            <MemberCard />
-          </div>
-        </div>
-      </Reveal>
-      <Reveal y={12} delay={0.06} className="h-full">
-        <div className={CARD}>
-          <CodePeek />
-          <div className="mt-8">
             <Copy title="Real source, in your repo.">
               The shadcn CLI copies the component files into your project, ready to read and edit. Nothing is locked in a
               package.
             </Copy>
           </div>
+          <div className="order-1 min-w-0 flex-1 sm:order-2">
+            <CodePeek />
+          </div>
         </div>
       </Reveal>
-
-      {/* Row 2 */}
-      <Reveal y={12} className="h-full">
+      <Reveal y={12} delay={0.06} className="h-full">
         <div className={CARD}>
           <div className="flex flex-1 items-center justify-center py-6">
             <AgentMarks />
@@ -266,7 +255,9 @@ export function ValueBento({ freeTotal, freeShots }: { freeTotal: number; freeSh
           </Copy>
         </div>
       </Reveal>
-      <Reveal y={12} delay={0.06} className="h-full">
+
+      {/* Row 2 */}
+      <Reveal y={12} className="h-full">
         <div className={CARD}>
           <div className="flex flex-1 items-center justify-center py-6">
             <Well>
@@ -279,7 +270,7 @@ export function ValueBento({ freeTotal, freeShots }: { freeTotal: number; freeSh
           </Copy>
         </div>
       </Reveal>
-      <Reveal y={12} delay={0.12} className="h-full">
+      <Reveal y={12} delay={0.06} className="h-full">
         <div className={CARD}>
           <div className="flex flex-1 items-center justify-center py-6">
             <CheckDial />
@@ -290,29 +281,42 @@ export function ValueBento({ freeTotal, freeShots }: { freeTotal: number; freeSh
           </Copy>
         </div>
       </Reveal>
+      <Reveal y={12} delay={0.12} className="h-full">
+        <div className={CARD}>
+          <div className="flex flex-1 items-center py-6">
+            <StackTiles />
+          </div>
+          <Copy title="The stack you already use.">
+            React, TypeScript and Tailwind CSS, with Framer Motion for movement, installed by the shadcn CLI into the
+            project you already have.
+          </Copy>
+        </div>
+      </Reveal>
 
       {/* Row 3 */}
       <Reveal y={12} className="h-full">
         <div className={CARD}>
-          <Copy title="The stack you already use.">
-            React, TypeScript and Tailwind CSS, with Framer Motion for movement. The shadcn CLI installs it, so there is
-            nothing new to learn.
-          </Copy>
-          <div className="mt-8">
-            <StackTiles />
+          <div className="flex-1">
+            <FreeFan shots={freeShots} />
           </div>
-        </div>
-      </Reveal>
-      <Reveal y={12} delay={0.06} className="h-full lg:col-span-2">
-        <div className={`${CARD} sm:flex-row sm:items-center sm:gap-6`}>
-          <div className="sm:max-w-xs">
+          <div className="mt-6">
             <Copy title="Free means MIT.">
               {freeTotal} free standalones and Andromeda Legacy are open source under MIT. Install them, change them, ship
               them.
             </Copy>
           </div>
-          <div className="mt-6 flex-1 sm:mt-0">
-            <FreeFan shots={freeShots} />
+        </div>
+      </Reveal>
+      <Reveal y={12} delay={0.06} className="h-full lg:col-span-2">
+        <div className={`${CARD} sm:flex-row sm:items-center sm:gap-8`}>
+          <div className="order-2 mt-8 sm:order-1 sm:mt-0 sm:max-w-xs">
+            <Copy title="Premium opens the whole catalog.">
+              One subscription unlocks Andromeda Pro and its templates, the AI Brain and every premium standalone, with
+              new pieces included as they ship. Monthly or yearly, cancel anytime.
+            </Copy>
+          </div>
+          <div className="order-1 flex flex-1 justify-center py-4 sm:order-2">
+            <MemberCard />
           </div>
         </div>
       </Reveal>

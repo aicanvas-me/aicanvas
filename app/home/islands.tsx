@@ -207,7 +207,8 @@ const WIRE_ALTS    = [
   '',
 ]
 
-export function WireIcons() {
+// `target` is the section the icons scroll to; the homepage's is #audience.
+export function WireIcons({ target = 'audience' }: { target?: string } = {}) {
   const [hovered, setHovered] = useState<number | null>(null)
 
   function scale(idx: number) {
@@ -227,7 +228,7 @@ export function WireIcons() {
       {[0, 1, 2].map((idx) => (
         <a
           key={idx}
-          href="#audience"
+          href={`#${target}`}
           aria-label={WIRE_LABELS[idx]}
           className="relative flex flex-col items-center"
           onMouseEnter={() => setHovered(idx)}
@@ -236,7 +237,7 @@ export function WireIcons() {
           onBlur={() => setHovered(null)}
           onClick={(e) => {
             e.preventDefault()
-            document.getElementById('audience')?.scrollIntoView({ behavior: 'smooth' })
+            document.getElementById(target)?.scrollIntoView({ behavior: 'smooth' })
           }}
         >
           <AnimatePresence>

@@ -4,14 +4,15 @@
 // when a row opens, and a few die-cut stickers of the tools AI Canvas lives
 // with, scattered in the margins. The stickers can be picked up and moved
 // anywhere in the section; they bob gently while left alone. They only show
-// where the margins are wide enough (xl), and hold still under reduced motion.
+// where the margins are wide enough (xl); under reduced motion they neither
+// bob nor scale, and the accordion opens without animating.
 //
 // Answers stay in the DOM when closed (SEO); the grid-rows trick animates the
 // height, the same as the live FAQ.
 
 import { useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Plus } from '@phosphor-icons/react'
 import { ClaudeMark, CursorMark } from '../mcp/InstallCards'
 
@@ -80,6 +81,7 @@ const STICKERS: { id: string; art: ReactNode; pos: { left?: string; right?: stri
 export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; eyebrow: string; title: string; sub: string }) {
   const [open, setOpen] = useState<number | null>(0)
   const area = useRef<HTMLDivElement>(null)
+  const reduce = useReducedMotion()
 
   return (
     <div ref={area} className="relative">
@@ -98,11 +100,11 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
             dragConstraints={area}
             dragElastic={0.12}
             dragTransition={{ bounceStiffness: 320, bounceDamping: 22 }}
-            whileHover={{ scale: 1.05 }}
-            whileDrag={{ scale: 1.1, rotate: 0, cursor: 'grabbing' }}
+            whileHover={reduce ? undefined : { scale: 1.05 }}
+            whileDrag={reduce ? { cursor: 'grabbing' } : { scale: 1.1, rotate: 0, cursor: 'grabbing' }}
             initial={false}
             animate={{ rotate: s.tilt }}
-            className="pointer-events-auto absolute z-10 cursor-grab touch-none"
+            className="pointer-events-auto absolute cursor-grab touch-none"
             style={s.pos}
           >
             <div className="v3-bob" style={{ animationDelay: `-${s.bob}s`, filter: DIE_CUT }}>
@@ -112,7 +114,9 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
         ))}
       </div>
 
-      <div className="relative mx-auto max-w-3xl">
+      {/* z-10: the column sits above the stickers, so one dropped on it slides
+          underneath and never covers a question. */}
+      <div className="relative z-10 mx-auto max-w-3xl">
         <div className="text-center">
           <p className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">{eyebrow}</p>
           <h2 className="mt-2 text-balance text-3xl font-bold tracking-tight text-sand-900 sm:text-5xl dark:text-sand-50">
@@ -147,13 +151,13 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
                       weight="regular"
                       size={18}
                       aria-hidden
-                      className={`shrink-0 transition-transform duration-200 ${on ? 'rotate-45 text-sand-900 dark:text-sand-50' : 'text-sand-600 dark:text-sand-400'}`}
+                      className={`shrink-0 transition-transform duration-200 motion-reduce:transition-none ${on ? 'rotate-45 text-sand-900 dark:text-sand-50' : 'text-sand-600 dark:text-sand-400'}`}
                     />
                   </button>
                 </h3>
                 <div
                   id={id}
-                  className={`grid transition-[grid-template-rows] duration-300 ease-out ${on ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+                  className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${on ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
                 >
                   <div className={`overflow-hidden transition-[visibility] duration-300 ${on ? 'visible' : 'invisible'}`}>
                     <p className="px-5 pb-5 pr-12 text-base leading-relaxed text-sand-700 sm:px-7 sm:pr-16 dark:text-sand-300">{a}</p>

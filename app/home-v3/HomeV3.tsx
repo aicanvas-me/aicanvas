@@ -148,7 +148,9 @@ export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
           >
             Design systems your agent and your team build with.
             <br />
-            <span className="mt-2 inline-block text-olive-600 dark:text-olive-500">
+            {/* One step below the headline, so the opening reads as the whole
+                catalog rather than one product. */}
+            <span className="mt-3 inline-block text-2xl sm:text-4xl text-olive-600 dark:text-olive-500">
               Andromeda Pro, plus {standalonesFloor} standalone components.
             </span>
           </h1>
@@ -375,14 +377,14 @@ export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
         </div>
 
         <div className="mx-auto max-w-4xl">
-          <WireIcons />
+          <WireIcons target="v3-chapter" />
         </div>
 
         {/* ── The Andromeda chapter: the system, its Brain, then its screens ── */}
-        <div className="mx-auto max-w-6xl">
+        <div id="v3-chapter" className="mx-auto max-w-6xl scroll-mt-24">
           <AndromedaProSection />
 
-          <section aria-labelledby="v3-templates" className="mt-16 sm:mt-24">
+          <section aria-labelledby="v3-templates" className="mt-14 sm:mt-16">
             <Reveal className="mx-auto max-w-2xl text-center">
               <span className="inline-flex items-center gap-1.5 rounded-full border border-sand-300 bg-sand-100 px-2.5 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300">
                 <Sparkle weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />
@@ -423,7 +425,7 @@ export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
             </p>
           </Reveal>
           <ComponentWall items={wall} />
-          <div className="relative -mt-16 flex justify-center">
+          <div className="relative -mt-12 flex justify-center">
             <Link href="/components" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
               Browse all {total} standalones
               <ArrowRight weight="regular" size={14} />
@@ -431,7 +433,8 @@ export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
           </div>
         </section>
 
-        {/* ── From catalog to code: the three steps, then the agent's way in ── */}
+        {/* ── From catalog to code: the live page's three-step timeline on the
+             left, the agent's way in on the right; stacked on phones ── */}
         <section id="how-remix" aria-labelledby="v3-how" className="mx-auto mt-20 max-w-6xl scroll-mt-24 sm:mt-32">
           <Reveal className="mx-auto max-w-2xl text-center">
             <p className={EYEBROW}>From catalog to code</p>
@@ -441,47 +444,46 @@ export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
             <p className={`mx-auto mt-3 max-w-xl ${SUB}`}>Both paths end the same way: real source in your project.</p>
           </Reveal>
 
-          <div className="relative mt-10 grid grid-cols-1 gap-4 md:grid-cols-3">
-            {/* The live page's flowing dots, laid across the three steps. */}
-            <div
-              aria-hidden
-              className="v3-dot-flow absolute left-[16%] right-[16%] top-[42px] hidden h-px md:block"
-              style={{
-                backgroundImage: 'radial-gradient(circle, rgba(123,123,125,0.6) 1px, transparent 1px)',
-                backgroundSize: '8px 1px',
-                animation: 'v3DotFlow 1.5s linear infinite',
-              }}
-            />
-            <style>{`@keyframes v3DotFlow { from { background-position-x: 0 } to { background-position-x: 8px } } @media (prefers-reduced-motion: reduce) { .v3-dot-flow { animation: none !important } }`}</style>
-            {STEPS.map((step, i) => (
-              <Reveal key={step.num} y={12} delay={i * 0.08}>
-                <div className="relative flex h-full flex-col items-center rounded-2xl px-4 py-5 text-center">
-                  <div className="relative z-10 flex h-10 w-10 items-center justify-center rounded-xl border border-sand-300 bg-sand-100 text-sand-700 shadow-[0_2px_10px_rgba(0,0,0,0.08)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
-                    {step.icon}
-                  </div>
-                  <div className="mt-4 flex items-center gap-2">
-                    <span className="text-sm font-bold tabular-nums text-olive-600 dark:text-olive-500">{step.num}</span>
-                    <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">{step.title}</h3>
-                  </div>
-                  <p className="mt-1.5 max-w-xs text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{step.desc}</p>
-                </div>
-              </Reveal>
-            ))}
-          </div>
-
-          <Reveal y={16} className="mt-10">
-            <div className="relative overflow-hidden rounded-3xl border border-sand-200 px-5 py-12 sm:px-10 sm:py-16 dark:border-sand-800">
+          <div className="mt-10 grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
+            <div className="relative flex flex-col lg:col-span-5">
+              {/* Connecting dotted line, as on the live page */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-100"
+                className="v3-dot-flow absolute bottom-16 left-[19px] top-6 w-px overflow-hidden"
                 style={{
-                  backgroundImage:
-                    'radial-gradient(60% 55% at 50% 0%, rgb(168 185 77 / 0.08), transparent 70%)',
+                  backgroundImage: 'radial-gradient(circle, rgba(123,123,125,0.6) 1px, transparent 1px)',
+                  backgroundSize: '1px 8px',
+                  animation: 'v3DotFlow 1.5s linear infinite',
                 }}
               />
-              <AgentInstall />
+              <style>{`@keyframes v3DotFlow { from { background-position-y: 0 } to { background-position-y: 8px } } @media (prefers-reduced-motion: reduce) { .v3-dot-flow { animation: none !important } }`}</style>
+              {STEPS.map((step, i) => (
+                <Reveal key={step.num} x={-20} y={0} delay={i * 0.12} className="flex items-start gap-5 py-5">
+                  <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sand-300 bg-sand-100 text-sand-700 shadow-[0_2px_10px_rgba(0,0,0,0.08)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
+                    {step.icon}
+                  </div>
+                  <div className="flex-1 pt-0.5">
+                    <div className="flex items-center gap-2.5">
+                      <span className="text-base font-bold tabular-nums text-olive-600 dark:text-olive-500">{step.num}</span>
+                      <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">{step.title}</h3>
+                    </div>
+                    <p className="mt-1.5 text-base leading-relaxed text-sand-600 dark:text-sand-400">{step.desc}</p>
+                  </div>
+                </Reveal>
+              ))}
             </div>
-          </Reveal>
+
+            <Reveal y={16} className="lg:col-span-7">
+              <div className="relative isolate overflow-hidden rounded-3xl border border-sand-200 px-5 py-10 sm:px-8 sm:py-12 dark:border-sand-800">
+                <div
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-100"
+                  style={{ backgroundImage: 'radial-gradient(60% 55% at 50% 0%, rgb(168 185 77 / 0.08), transparent 70%)' }}
+                />
+                <AgentInstall />
+              </div>
+            </Reveal>
+          </div>
         </section>
 
         {/* ── FAQ ── */}

@@ -7,7 +7,8 @@
 // never disagree. They are the signed-out versions: the setup guide adds the
 // account token. Reduced motion keeps the first prompt, still.
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useInView } from 'framer-motion'
 import Link from 'next/link'
 import { ArrowRight, Check, Sparkle } from '@phosphor-icons/react'
 import { useMedia } from './useMedia'
@@ -26,16 +27,22 @@ const COMMANDS = {
 
 type Copyable = keyof typeof COMMANDS
 
-// The first prompt renders whole on the server and on the first client pass
-// (same HTML, no hydration mismatch, readable without JS); the cycle starts
-// from there. Reduced motion answers "still" on the server for the same reason.
-function useTypedPrompt() {
+// The example prompt, typing itself. The first prompt renders whole on the
+// server and on the first client pass (same HTML, no hydration mismatch,
+// readable without JS); the cycle starts from there, and only while the pill
+// is on screen. Reduced motion answers "still" on the server for the same
+// reason, and keeps the first prompt. Its own component, so each typed letter
+// re-renders the pill and nothing else.
+function PromptPill() {
+  const ref = useRef<HTMLDivElement>(null)
+  const inView = useInView(ref, { margin: '0px 0px -10% 0px' })
   const still = useMedia('(prefers-reduced-motion: reduce)', true)
   const [i, setI] = useState(0)
   const [n, setN] = useState(PROMPTS[0].length)
+  const running = inView && !still
 
   useEffect(() => {
-    if (still) return
+    if (!running) return
     const full = PROMPTS[i]
     // Type, hold, then move to the next prompt.
     const id =
@@ -46,16 +53,31 @@ function useTypedPrompt() {
             setN(0)
           }, 2600)
     return () => window.clearTimeout(id)
-  }, [i, n, still])
+  }, [i, n, running])
 
-  return { text: PROMPTS[i].slice(0, n), typing: !still && n < PROMPTS[i].length }
+  const typing = running && n < PROMPTS[i].length
+  return (
+    <div
+      ref={ref}
+      className="mt-7 flex w-full max-w-xl items-center gap-2.5 rounded-full border border-sand-200 bg-sand-100/60 px-4 py-2.5 text-left dark:border-sand-800 dark:bg-sand-900/60"
+    >
+      <Sparkle weight="regular" size={15} aria-hidden className="shrink-0 text-olive-600 dark:text-olive-400" />
+      <p className="min-w-0 flex-1 truncate font-mono text-[13px] text-sand-700 dark:text-sand-300">
+        <span className="sr-only">Example prompt: </span>
+        &ldquo;{PROMPTS[i].slice(0, n)}
+        {typing ? (
+          <span aria-hidden className="ml-px inline-block h-[1.05em] w-[1.5px] translate-y-[2px] animate-pulse bg-sand-500" />
+        ) : null}
+        &rdquo;
+      </p>
+    </div>
+  )
 }
 
 const BUTTON =
   'inline-flex items-center gap-2 rounded-xl border border-sand-200 bg-sand-100 px-4 py-2.5 text-sm font-semibold text-sand-900 transition-colors hover:border-sand-300 hover:bg-sand-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-50 dark:hover:border-sand-700 dark:hover:bg-sand-800'
 
 export function AgentInstall() {
-  const { text, typing } = useTypedPrompt()
   const [copied, setCopied] = useState<Copyable | null>(null)
 
   useEffect(() => {
@@ -85,17 +107,7 @@ export function AgentInstall() {
       </p>
 
       {/* What you can ask */}
-      <div className="mt-7 flex w-full max-w-xl items-center gap-2.5 rounded-full border border-sand-200 bg-sand-100/60 px-4 py-2.5 text-left dark:border-sand-800 dark:bg-sand-900/60">
-        <Sparkle weight="regular" size={15} aria-hidden className="shrink-0 text-olive-600 dark:text-olive-400" />
-        <p className="min-w-0 flex-1 truncate font-mono text-[13px] text-sand-700 dark:text-sand-300">
-          <span className="sr-only">Example prompt: </span>
-          &ldquo;{text}
-          {typing ? (
-            <span aria-hidden className="ml-px inline-block h-[1.05em] w-[1.5px] translate-y-[2px] animate-pulse bg-sand-500" />
-          ) : null}
-          &rdquo;
-        </p>
-      </div>
+      <PromptPill />
 
       {/* One way in per tool */}
       <div className="mt-6 flex flex-wrap items-center justify-center gap-2.5">
