@@ -56,6 +56,8 @@ function PromptPill() {
   }, [i, n, running])
 
   const typing = running && n < PROMPTS[i].length
+  // Reduced motion (even switched on mid-prompt) shows the first prompt whole.
+  const text = still ? PROMPTS[0] : PROMPTS[i].slice(0, n)
   return (
     <div
       ref={ref}
@@ -64,7 +66,7 @@ function PromptPill() {
       <Sparkle weight="regular" size={15} aria-hidden className="shrink-0 text-olive-600 dark:text-olive-400" />
       <p className="min-w-0 flex-1 truncate font-mono text-[13px] text-sand-700 dark:text-sand-300">
         <span className="sr-only">Example prompt: </span>
-        &ldquo;{PROMPTS[i].slice(0, n)}
+        &ldquo;{text}
         {typing ? (
           <span aria-hidden className="ml-px inline-block h-[1.05em] w-[1.5px] translate-y-[2px] animate-pulse bg-sand-500" />
         ) : null}

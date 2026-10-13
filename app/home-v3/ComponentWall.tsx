@@ -2,9 +2,10 @@
 
 // A wall of standalone components: columns of cards, each a name in mono over
 // its screenshot, drifting slowly up and down in turn, with the edges fading
-// into the page. The wall holds still while hovered, while a card has keyboard
-// focus, and while it is off screen. Reduced motion shows it still. Every card
-// opens its component page.
+// into the page. The wall holds still while hovered and while it is off
+// screen. Keyboard focus stops the drift and resets the column to its start,
+// where the focusable originals sit (the loop's second copy is untabbable).
+// Reduced motion shows it still. Every card opens its component page.
 
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
@@ -77,7 +78,8 @@ export function ComponentWall({ items }: { items: WallItem[] }) {
       <style>{`
         @keyframes v3-wall-up { from { transform: translateY(0) } to { transform: translateY(-50%) } }
         @keyframes v3-wall-down { from { transform: translateY(-50%) } to { transform: translateY(0) } }
-        .v3-wall-col:hover, .v3-wall-col:focus-within, .v3-wall[data-off] .v3-wall-col { animation-play-state: paused }
+        .v3-wall-col:hover, .v3-wall[data-off] .v3-wall-col { animation-play-state: paused }
+        .v3-wall-col:focus-within { animation: none }
         @media (prefers-reduced-motion: reduce) { .v3-wall-col { animation: none !important } }
       `}</style>
       <div className="grid h-full grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
