@@ -9,6 +9,7 @@ import { ThemeToggle } from './ThemeToggle'
 import { TopAuthPill } from './auth/TopAuthPill'
 import { OfferBanner } from './billing/OfferBanner'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
+import { isRaillessRoute } from '../lib/railless'
 import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE, buildTopBarCrumbs, installSlotId, offerPillMode } from './top-bar-crumbs'
 
 // The site's one top bar. Rendered once by the root layout, at the top of the
@@ -117,13 +118,12 @@ export function TopBar() {
   )
     return null
 
-  // The homepage: logo left, the site's sections centred, search and the
-  // account on the right. The centre column is only truly centred from xl,
-  // where both sides have room to be equal; below that the three just spread.
-  // The founding-offer pill does not show here: the centred nav leaves it no
-  // room in a 7xl column.
-  // ponytail: /v2 and /v3 are homepage review routes; drop them with the routes.
-  if (pathname === '/' || pathname === '/v2' || pathname === '/v3') {
+  // The homepage and every page without the rail (app/lib/railless.ts): logo
+  // left, the site's sections centred, search and the account on the right.
+  // The centre column is only truly centred from xl, where both sides have
+  // room to be equal; below that the three just spread. The founding-offer
+  // pill does not show here: the centred nav leaves it no room in a 7xl column.
+  if (isRaillessRoute(pathname)) {
     return (
       <header className={HOME_BAR_CLASS}>
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 xl:grid xl:grid-cols-[1fr_auto_1fr]">

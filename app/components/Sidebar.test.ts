@@ -60,7 +60,7 @@ describe('sidebar single-instance contract', () => {
     expect(src).not.toContain('embedded')
   })
 
-  it('the hide check covers only /lab and template leaves', () => {
+  it('the hide check covers the rail-less pages, /lab and template leaves, never a catalog route', () => {
     const src = readFileSync(join(root, 'app', 'components', 'Sidebar.tsx'), 'utf8')
     // Read the hide check itself, not the whole file: `onDesignSystems` still
     // tests the same prefix, and it legitimately does — it is what opens the

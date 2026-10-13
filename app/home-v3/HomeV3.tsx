@@ -23,7 +23,7 @@ import { AndromedaProSection } from '../home/AndromedaProSection'
 import { Reveal } from '../home/Reveal'
 import { StackedCards, AnimatedCount, WireIcons } from '../home/islands'
 import { GITHUB_URL } from '../lib/config'
-import { premiumEnabled } from '../../lib/flags'
+import { lifetimeEnabled, premiumEnabled } from '../../lib/flags'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
 import {
   ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META,
@@ -34,7 +34,7 @@ import { ComponentWall, type WallItem } from './ComponentWall'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq, type FaqItem } from './StickerFaq'
 import { ValueBento } from './ValueBento'
-import { Wordmark } from './Wordmark'
+import { Wordmark } from '../components/Wordmark'
 
 interface Props {
   /** Every standalone, free and premium. */
@@ -515,7 +515,7 @@ export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
             the billing switch and the entitlement-aware button never drift.
             Premium off = no section. */}
         {PREMIUM && (
-          <section aria-labelledby="v3-pricing" className="mx-auto mt-20 max-w-4xl sm:mt-32">
+          <section aria-labelledby="v3-pricing" className={`mx-auto mt-20 sm:mt-32 ${lifetimeEnabled() ? 'max-w-6xl' : 'max-w-4xl'}`}>
             <Reveal className="text-center">
               <p className={EYEBROW}>Pricing</p>
               <h2 id="v3-pricing" className={`mt-2 ${H2}`}>

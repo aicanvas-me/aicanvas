@@ -13,6 +13,7 @@ import { SiteSearch } from './SiteSearch'
 import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
 import { CAPTURE_LEAF_RE } from './top-bar-crumbs'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
+import { isRaillessRoute } from '../lib/railless'
 
 // ── Tier structure ────────────────────────────────────────────────────────
 // Ordering comes from the shared categories config so the sidebar, the
@@ -65,12 +66,11 @@ export function Sidebar({
   // full-screen compositions with no chrome at all. Every other route,
   // /design-systems and /ideation included, keeps this one rail mounted, so
   // crossing between those route spaces never unmounts and remounts it.
-  // The homepage has no rail either: its top bar carries the navigation
-  // (HomeNav), the way ui.shadcn.com's landing page does.
+  // The homepage and the pages about the product, its plans, policies and the
+  // account have no rail either (app/lib/railless.ts): the top bar carries the
+  // navigation there (HomeNav), the way ui.shadcn.com's landing page does.
   const hideSidebar =
-    pathname === '/' ||
-    pathname === '/v2' ||
-    pathname === '/v3' ||
+    isRaillessRoute(pathname) ||
     pathname?.startsWith('/lab') ||
     TEMPLATE_LEAF_RE.test(pathname ?? '') ||
     CAPTURE_LEAF_RE.test(pathname ?? '')

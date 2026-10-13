@@ -1,10 +1,11 @@
 'use client'
 
-// The homepage's top bar content. The homepage drops the sidebar (the way
-// ui.shadcn.com's landing page does), so the logo and the site's sections move
-// up here: the logo on the left, and in the centre the two systems, the
-// component categories, MCP, Pricing, and a More menu for the info pages.
-// Every other route keeps the sidebar.
+// The top bar content of every page without the sidebar (app/lib/railless.ts:
+// the homepage, pricing, MCP, the info and legal pages, the account), the way
+// ui.shadcn.com's landing page does it: the logo on the left, and in the
+// centre the two systems, the component categories, MCP, Pricing, and a More
+// menu for the info pages. The catalog routes keep the sidebar. The page you
+// are on reads in the primary text colour and carries aria-current.
 //
 // Each menu is a disclosure: a button with aria-expanded and a list of plain
 // links. Escape and a click outside close it, and focus goes back to the
@@ -14,6 +15,7 @@
 
 import Link from 'next/link'
 import { useEffect, useId, useRef, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { CaretDown } from '@phosphor-icons/react'
 import { CATEGORIES } from '../lib/categories'
 
@@ -36,12 +38,16 @@ const MORE: NavLink[] = [
   { label: 'Feedback', href: '/feedback' },
 ]
 
-// Plain text links in a muted tone that steps up to the primary text on hover
-// and while a menu is open; no pill behind them.
+// Plain text links in a muted tone that steps up to the primary text on hover,
+// while a menu is open, and on the page you are on; no pill behind them.
 const ITEM =
-  'inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-medium text-sand-600 transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-expanded:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50 dark:aria-expanded:text-sand-50 xl:px-3'
+  'inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-medium text-sand-600 transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-expanded:text-sand-900 aria-[current=page]:text-sand-900 data-[active]:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50 dark:aria-expanded:text-sand-50 dark:aria-[current=page]:text-sand-50 dark:data-[active]:text-sand-50 xl:px-3'
+
+const isOn = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`)
 
 function Menu({ label, links, columns = 1 }: { label: string; links: NavLink[]; columns?: 1 | 2 }) {
+  const pathname = usePathname() ?? '/'
+  const active = links.some((l) => isOn(pathname, l.href))
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -74,6 +80,7 @@ function Menu({ label, links, columns = 1 }: { label: string; links: NavLink[]; 
         aria-expanded={open}
         aria-controls={listId}
         onClick={() => setOpen((o) => !o)}
+        data-active={active ? '' : undefined}
         className={ITEM}
       >
         {label}
@@ -95,7 +102,8 @@ function Menu({ label, links, columns = 1 }: { label: string; links: NavLink[]; 
               <Link
                 href={l.href}
                 onClick={() => setOpen(false)}
-                className="block rounded-lg px-2.5 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50"
+                aria-current={pathname === l.href ? 'page' : undefined}
+                className="block rounded-lg px-2.5 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-[current=page]:bg-sand-100 aria-[current=page]:font-semibold aria-[current=page]:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50 dark:aria-[current=page]:bg-sand-900 dark:aria-[current=page]:text-sand-50"
               >
                 {l.label}
               </Link>
@@ -119,14 +127,15 @@ export function HomeLogo() {
 // The centre of the homepage bar. The More menu waits for lg: its pages are in
 // the footer too, and below lg the bar has no room for it.
 export function HomeNav() {
+  const pathname = usePathname() ?? '/'
   return (
     <nav aria-label="Main" className="flex items-center xl:gap-2">
       <Menu label="Design systems" links={DESIGN_SYSTEMS} />
       <Menu label="Components & blocks" links={COMPONENT_LINKS} columns={2} />
-      <Link href="/mcp" className={ITEM}>
+      <Link href="/mcp" aria-current={pathname === '/mcp' ? 'page' : undefined} className={ITEM}>
         MCP
       </Link>
-      <Link href="/pricing" className={ITEM}>
+      <Link href="/pricing" aria-current={pathname === '/pricing' ? 'page' : undefined} className={ITEM}>
         Pricing
       </Link>
       <div className="hidden lg:block">
