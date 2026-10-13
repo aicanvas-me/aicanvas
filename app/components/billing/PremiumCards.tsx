@@ -311,7 +311,7 @@ export function PremiumCards({
 // copy, word for word (handoffs/lifetime-build.md, section 10), with "life"
 // linking to the licence's Lifetime terms.
 //
-// ponytail: the button is not wired to checkout yet. The Lifetime build adds
+// ponytail: the button is dormant, not wired to checkout. The Lifetime build adds
 // the price id, the webhook grant and the UpgradeButton path; until then this
 // card only renders with NEXT_PUBLIC_LIFETIME_ENABLED, which production keeps
 // off, so nobody can pay for something that grants nothing.
@@ -366,13 +366,16 @@ function LifetimeCard({
           <span className="text-sm font-medium text-sand-600 dark:text-sand-500">/ one time</span>
         </div>
         <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">+ VAT where applicable</p>
+        {/* Dormant until the Lifetime checkout exists: the same disabled
+            "Coming soon" state UpgradeButton shows when checkout is off, so
+            the button never looks clickable while it does nothing. */}
         <button
           type="button"
-          aria-disabled
-          title="Lifetime checkout opens with the Lifetime release"
+          disabled
+          title="Available soon"
           className={`mt-6 ${buttonClasses({ variant: 'primary', size: 'lg', fullWidth: true })}`}
         >
-          Get Lifetime
+          Coming soon
         </button>
       </div>
       <div className={`relative flex-1 rounded-2xl bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>

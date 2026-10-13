@@ -9,7 +9,7 @@ import type { FaqItem } from '../faq/FaqView'
 export type { FaqItem }
 
 // Renders an answer, turning the first occurrence of link.label into a link.
-// (Mirrors FaqView's AnswerText so `a` can stay plain text.)
+// (The same rule as FaqRows' Answer, so `a` can stay plain text.)
 function AnswerText({ item }: { item: FaqItem }) {
   const { a, link } = item
   if (!link || !a.includes(link.label)) return <>{a}</>
