@@ -1,37 +1,53 @@
-'use client'
-
 import Link from 'next/link'
+import { Scales } from '@phosphor-icons/react/dist/ssr'
 import { CONTACT_EMAIL } from '../lib/config'
-import { SiteFooter } from '../components/SiteFooter'
+import { PageHero, PageShell } from '../components/PageKit'
+import { LegalArticle } from '../components/LegalArticle'
 
 // ─── /terms ───────────────────────────────────────────────────────────────────
 // Terms & Conditions for AI Canvas. Operator details live in /impressum to
 // avoid duplication.
+//
+// A server component: the terms are static text, and LegalArticle is the one
+// client piece (its "On this page" list).
+
+const SECTION = 'mt-12 first:mt-0'
+const HEADING = 'text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50'
+const BODY = 'mt-4 leading-relaxed text-sand-600 dark:text-sand-400'
+const LINK =
+  'font-medium text-olive-600 underline-offset-4 hover:text-olive-800 hover:underline dark:text-olive-400 dark:hover:text-olive-300'
+// A bulleted clause list; the bullets stay quieter than the words.
+const LIST =
+  'list-disc space-y-3 pl-5 leading-relaxed text-sand-600 marker:text-sand-400 dark:text-sand-400 dark:marker:text-sand-600'
+const CODE =
+  'rounded-md border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-[0.8125rem] text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
 
 export default function TermsPage() {
   return (
-    <div className="min-h-full bg-sand-50 dark:bg-sand-950">
-      <main className="relative mx-auto max-w-3xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
-        <p className="mb-6 text-sm font-semibold md:hidden">
-          <span className="text-olive-600 dark:text-olive-500">/Terms</span>
-        </p>
+    <PageShell>
+      <PageHero
+        size="md"
+        pill="Legal"
+        pillIcon={<Scales weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />}
+        title="Terms & Conditions"
+        sub={
+          <span className="block text-balance">
+            Last updated: 2026-05-10. These terms govern your use of AI Canvas.
+          </span>
+        }
+      />
 
-        <h1 className="text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
-          Terms &amp; Conditions
-        </h1>
-        <p className="mt-3 text-sm text-sand-600 dark:text-sand-500">
-          Last updated: 2026-05-10. These terms govern your use of AI Canvas.
-        </p>
+      <LegalArticle>
 
         {/* ── 1. Creator ───────────────────────────────────────────────── */}
-        <section className="mt-12">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">1. Creator</h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>1. Creator</h2>
+          <p className={BODY}>
             AI Canvas (the &ldquo;Service&rdquo;) is the work of a single
             individual (the &ldquo;Creator&rdquo;), reachable at{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="text-olive-600 dark:text-olive-400 hover:underline"
+              className={LINK}
             >
               {CONTACT_EMAIL}
             </a>
@@ -42,9 +58,9 @@ export default function TermsPage() {
         </section>
 
         {/* ── 2. The Service ───────────────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">2. The Service</h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>2. The Service</h2>
+          <p className={BODY}>
             AI Canvas is an open-source registry of animated React components,
             offered through a free tier and an optional paid Premium tier. It
             also publishes design-system templates and an MCP integration that
@@ -58,11 +74,11 @@ export default function TermsPage() {
         </section>
 
         {/* ── 2b. Premium subscription ─────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+        <section className={SECTION}>
+          <h2 className={HEADING}>
             2b. Premium subscription
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             Premium is billed at $8.99 per month or $49.99 per year through
             Paddle.com, our reseller and Merchant of Record. Paddle is the
             seller of record for these transactions and handles payment and
@@ -70,7 +86,7 @@ export default function TermsPage() {
             terms. A subscription requires an account and renews automatically
             at the end of each billing period until cancelled.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             You can cancel at any time from the customer portal linked in your
             account settings; cancellation takes effect at the end of the
             current period and you keep access until then. Because Premium is
@@ -79,10 +95,10 @@ export default function TermsPage() {
             of withdrawal ends once access begins, except where the law provides
             otherwise.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             Premium Components, design systems, and templates are closed-source
             and are licensed, not sold, under the separate{' '}
-            <Link href="/premium-license" className="text-olive-600 dark:text-olive-400 hover:underline">
+            <Link href="/premium-license" className={LINK}>
               AI Canvas Premium License
             </Link>
             , not under MIT. A paid subscription provides ongoing access,
@@ -95,11 +111,11 @@ export default function TermsPage() {
         </section>
 
         {/* ── 3. Eligibility & user account ────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+        <section className={SECTION}>
+          <h2 className={HEADING}>
             3. Eligibility &amp; user account
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             You may create an account using a valid email address and a
             password, or by signing in with Google OAuth. You are responsible
             for keeping your credentials confidential and for any activity that
@@ -109,11 +125,11 @@ export default function TermsPage() {
         </section>
 
         {/* ── 4. Component licensing ───────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+        <section className={SECTION}>
+          <h2 className={HEADING}>
             4. Component licensing
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             Free components published in the public AI Canvas registry and
             source repository are released under the MIT License, as set out in
             the LICENSE file of that repository. You are free to copy them,
@@ -121,12 +137,12 @@ export default function TermsPage() {
             commercial or non-commercial, subject only to the MIT License. This
             applies whether you are on the Free or Premium plan.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             The MIT License does not cover Premium Components. AI Canvas Premium
             Components, design systems, and templates are proprietary, are not
             part of the public registry or repository, and are not
             redistributable. They are licensed separately under the{' '}
-            <Link href="/premium-license" className="text-olive-600 dark:text-olive-400 hover:underline">
+            <Link href="/premium-license" className={LINK}>
               AI Canvas Premium License
             </Link>{' '}
             (see &sect; 2b and &sect; 7). The website chrome itself (page
@@ -136,11 +152,11 @@ export default function TermsPage() {
         </section>
 
         {/* ── 4b. Trademarks & independence ────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+        <section className={SECTION}>
+          <h2 className={HEADING}>
             4b. Trademarks &amp; independence
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             AI Canvas is an independent project. It is not partnered with,
             sponsored by, endorsed by, or an official integration of the
             third-party tools, platforms, and brands referenced on the site,
@@ -152,19 +168,19 @@ export default function TermsPage() {
         </section>
 
         {/* ── 5. Acceptable use ────────────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">5. Acceptable use</h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>5. Acceptable use</h2>
+          <p className={BODY}>
             You agree not to:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-600 dark:text-sand-400">
+          <ul className={`mt-4 ${LIST}`}>
             <li>
               Attempt to circumvent authentication, rate limits, or any
               technical access controls.
             </li>
             <li>
               Scrape, mirror, or republish the registry endpoints under{' '}
-              <code className="rounded bg-sand-100 dark:bg-sand-900 px-1 py-0.5 text-xs text-sand-700 dark:text-sand-300">/r/</code>{' '}
+              <code className={CODE}>/r/</code>{' '}
               in a way that materially impairs the service for others.
             </li>
             <li>
@@ -178,25 +194,25 @@ export default function TermsPage() {
         </section>
 
         {/* ── 6. Marketing communications ──────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+        <section className={SECTION}>
+          <h2 className={HEADING}>
             6. Marketing communications
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             By creating an account you agree that we may send you occasional
             emails about AI Canvas itself: new components, design-system
             updates, MCP releases, and other product news directly related to
             the Service. We do not send marketing for third-party products and
             we do not share your email with third-party advertisers.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             You can opt out at any time by:
           </p>
-          <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed text-sand-600 dark:text-sand-400">
+          <ul className={`mt-4 ${LIST}`}>
             <li>Toggling &ldquo;Marketing emails&rdquo; off in your account settings, or</li>
             <li>Clicking the unsubscribe link at the bottom of any marketing email we send.</li>
           </ul>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             Opting out does not affect transactional emails (sign-up
             confirmation, magic links, password reset). Those are
             necessary to provide the account service. The legal basis for this
@@ -206,11 +222,11 @@ export default function TermsPage() {
         </section>
 
         {/* ── 7. Disclaimer of warranties ──────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+        <section className={SECTION}>
+          <h2 className={HEADING}>
             7. Disclaimer of warranties
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             AI Canvas is provided on an &ldquo;as is&rdquo; and &ldquo;as
             available&rdquo; basis, without warranties of any kind, either
             express or implied, including without limitation warranties of
@@ -220,7 +236,7 @@ export default function TermsPage() {
             published here are free of bugs, free of security issues, or
             suitable for production use without further review.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             You evaluate, test, and ship the components at your own risk. You
             are responsible for deciding whether a component fits your
             project, testing it in your context, complying with the licence
@@ -233,17 +249,17 @@ export default function TermsPage() {
         </section>
 
         {/* ── 7b. Premium components ───────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+        <section className={SECTION}>
+          <h2 className={HEADING}>
             7b. Premium components
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             AI Canvas Premium Components, design systems, and templates are NOT
             released under the MIT License and are not part of the public
             registry or repository. They are proprietary works, made available
             only to subscribers with an active Premium subscription, and are
             licensed solely under the{' '}
-            <Link href="/premium-license" className="text-olive-600 dark:text-olive-400 hover:underline">
+            <Link href="/premium-license" className={LINK}>
               AI Canvas Premium License
             </Link>
             , which forms part of these terms by reference. By subscribing to or
@@ -259,11 +275,11 @@ export default function TermsPage() {
         </section>
 
         {/* ── 8. Limitation of liability ───────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+        <section className={SECTION}>
+          <h2 className={HEADING}>
             8. Limitation of liability
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             To the maximum extent permitted by law, the Creator is not liable
             for indirect, incidental, special, consequential, or punitive
             damages, or any loss of profits, revenue, or data, arising out of
@@ -276,13 +292,13 @@ export default function TermsPage() {
         </section>
 
         {/* ── 9. Account termination ───────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+        <section className={SECTION}>
+          <h2 className={HEADING}>
             9. Account termination
           </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             You can delete your account at any time from{' '}
-            <code className="rounded bg-sand-100 dark:bg-sand-900 px-1 py-0.5 text-xs text-sand-700 dark:text-sand-300">
+            <code className={CODE}>
               /account/settings
             </code>
             . Deletion is immediate and removes your account row, saved
@@ -290,7 +306,7 @@ export default function TermsPage() {
             suspend accounts that breach these terms; in such cases we will
             inform you by email where reasonably possible.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             Beyond breach-based termination, we may also terminate any account
             at our reasonable discretion with at least 14 days&apos; notice by
             email. For example, if an account no longer fits the
@@ -298,7 +314,7 @@ export default function TermsPage() {
             risk, repeated breach) we may terminate immediately. In either
             case you can export your data before the account is closed.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             We may also modify, suspend, or discontinue all or part of the
             Service at any time, including individual features,
             components, or the registry itself. Where a change materially
@@ -309,9 +325,9 @@ export default function TermsPage() {
         </section>
 
         {/* ── 10. Changes ──────────────────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">10. Changes to these terms</h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>10. Changes to these terms</h2>
+          <p className={BODY}>
             We may update these terms when the service materially changes
             (new features, new processors, new legal requirements). The
             &ldquo;Last updated&rdquo; date at the top of this page reflects
@@ -325,9 +341,9 @@ export default function TermsPage() {
         </section>
 
         {/* ── 11. Severability ─────────────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">11. Severability</h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>11. Severability</h2>
+          <p className={BODY}>
             If any provision of these terms is found to be invalid or
             unenforceable, the remaining provisions stay in full effect. The
             invalid provision is replaced by a valid one that comes closest
@@ -337,13 +353,13 @@ export default function TermsPage() {
         </section>
 
         {/* ── 12. Contact ──────────────────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">12. Contact</h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>12. Contact</h2>
+          <p className={BODY}>
             Questions about these terms? Email{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="text-olive-600 dark:text-olive-400 hover:underline"
+              className={LINK}
             >
               {CONTACT_EMAIL}
             </a>
@@ -351,8 +367,7 @@ export default function TermsPage() {
           </p>
         </section>
 
-        <SiteFooter />
-      </main>
-    </div>
+      </LegalArticle>
+    </PageShell>
   )
 }
