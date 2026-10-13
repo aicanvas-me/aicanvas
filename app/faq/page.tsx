@@ -1,5 +1,9 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
+import { ArrowRight, Question } from '@phosphor-icons/react/dist/ssr'
 import { SITE_URL } from '../lib/config'
+import { buttonClasses } from '../components/buttonClasses'
+import { CtaBand, PageHero, PageShell } from '../components/PageKit'
 import { FaqView, type FaqCategory } from './FaqView'
 
 // ─── FAQ content ──────────────────────────────────────────────────────────────
@@ -42,7 +46,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
       {
         q: 'What is a design system?',
         a: 'A design system is a complete visual language where every color, spacing, and style comes from one shared source, so everything looks like it belongs together. Explore Andromeda, our live design system, to see one in action.',
-        link: { label: 'Andromeda Legacy', href: '/design-systems/andromeda' },
+        link: { label: 'Andromeda', href: '/design-systems/andromeda' },
       },
       {
         q: 'What is MCP?',
@@ -285,6 +289,8 @@ const FAQ_JSON_LD = {
   ),
 }
 
+// A server page: the hero and the closing band are static HTML, and FaqView is
+// the one client piece (the open rows and the list that follows the reader).
 export default function FaqPage() {
   return (
     <>
@@ -292,7 +298,30 @@ export default function FaqPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }}
       />
-      <FaqView categories={FAQ_CATEGORIES} />
+      <PageShell>
+        <PageHero
+          pill="FAQ"
+          pillIcon={<Question weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />}
+          title="Questions, answered."
+          sub="Everything worth knowing before you ship your first component. Start free, install with one command, and upgrade only when AI Canvas is already paying off."
+        />
+
+        <FaqView categories={FAQ_CATEGORIES} />
+
+        <CtaBand
+          eyebrow="Still curious?"
+          title="Start free, build now."
+          sub="Browse the registry, install with one command, and remix the free library with AI at no cost. Go Premium for the premium components and blocks, their full prompts, and complete design systems."
+        >
+          <Link href="/components" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
+            Browse Components
+            <ArrowRight weight="regular" size={14} />
+          </Link>
+          <Link href="/pricing" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
+            See Pricing
+          </Link>
+        </CtaBand>
+      </PageShell>
     </>
   )
 }
