@@ -70,10 +70,10 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
   if (!hasRecoveryMarker) {
     return (
       <AuthPagePopup>
-        <h1 className="text-2xl font-bold text-sand-900 dark:text-sand-50">
+        <h1 className="pr-10 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
           Use a fresh recovery link
         </h1>
-        <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
+        <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
           For your security, the password reset page only works right after
           you click a recovery link in your email. Request a new one to
           continue.
@@ -90,10 +90,10 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
 
   return (
     <AuthPagePopup>
-      <h1 className="text-2xl font-bold text-sand-900 dark:text-sand-50">
+      <h1 className="pr-10 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
         Set a new password
       </h1>
-      <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
+      <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
         Choose something at least 8 characters long.
       </p>
 

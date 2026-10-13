@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Lightning, Key, ShieldCheck } from '@phosphor-icons/react'
 import { premiumEnabled } from '../../../../lib/flags'
 import { buttonClasses } from '../../../components/buttonClasses'
+import { CARD } from '../../../components/PageKit'
 import { track } from '../../../lib/analytics'
 import { usePaywallModal } from '../../../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
@@ -107,9 +108,9 @@ export function AccountBilling() {
   return (
     <>
       {/* ── Subscription ──────────────────────────────────────────────── */}
-      <section className="rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
-        <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">Subscription</h2>
-        <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
+      <section className={`${CARD} p-6 sm:p-8`}>
+        <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Subscription</h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
           {status === 'premium'
             ? "You're on Premium."
             : status === 'not-premium'
@@ -141,7 +142,7 @@ export function AccountBilling() {
           </div>
         )}
 
-        <div className="mt-4">
+        <div className="mt-5">
           {status === 'premium' ? (
             <button
               type="button"
@@ -175,8 +176,8 @@ export function AccountBilling() {
           </p>
         )}
 
-        <p className="mt-4 flex items-start gap-2 border-t border-sand-200 pt-4 text-xs leading-relaxed text-sand-600 dark:border-sand-800 dark:text-sand-400">
-          <ShieldCheck weight="regular" size={15} className="mt-px shrink-0 text-olive-600 dark:text-olive-500" />
+        <p className="mt-6 flex items-start gap-2 border-t border-sand-200 pt-5 text-xs leading-relaxed text-sand-600 dark:border-sand-800 dark:text-sand-400">
+          <ShieldCheck weight="regular" size={15} className="mt-px shrink-0 text-olive-600 dark:text-olive-400" />
           <span>
             Billing is securely handled by{' '}
             <span className="font-semibold text-sand-700 dark:text-sand-300">Paddle</span>, our
@@ -187,14 +188,14 @@ export function AccountBilling() {
       </section>
 
       {/* ── API access ────────────────────────────────────────────────── */}
-      <section className="rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
-        <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">API access</h2>
-        <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
+      <section className={`${CARD} p-6 sm:p-8`}>
+        <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">API access</h2>
+        <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
           Your API token authorizes CLI and MCP installs from your account. Rotate it if it&rsquo;s
           ever exposed; the old one stops working immediately.
         </p>
 
-        <div className="mt-4">
+        <div className="mt-5">
           <button
             type="button"
             onClick={rotateToken}
@@ -206,7 +207,7 @@ export function AccountBilling() {
           </button>
         </div>
 
-{rotateState === 'done' && !refreshing && (
+        {rotateState === 'done' && !refreshing && (
           <p className="mt-3 text-xs text-olive-600 dark:text-olive-400">
             Done. The old token is disabled. Copy the new one from the API token card below.
           </p>

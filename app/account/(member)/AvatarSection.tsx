@@ -7,6 +7,7 @@ import { useSession } from '../../components/auth/SessionProvider'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
 import { createClient } from '../../lib/supabase/client'
 import { USER_AVATAR_IDS, userAvatarUrl } from '../../lib/user-avatars'
+import { CARD } from '../../components/PageKit'
 
 // ─── AvatarSection ────────────────────────────────────────────────────────────
 // Lets a signed-in person swap the badge in the top bar for one of the
@@ -61,13 +62,13 @@ export function AvatarSection() {
     selected ? 'ring-2 ring-olive-500 ring-offset-2 ring-offset-sand-100 dark:ring-offset-sand-900' : ''
 
   return (
-    <section className="rounded-xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
-      <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">Avatar</h2>
-      <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
+    <section className={`${CARD} p-6 sm:p-8`}>
+      <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Avatar</h2>
+      <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
         Pick one of ours, or keep the photo from your sign-in provider.
       </p>
 
-      <div className="mt-4 flex flex-wrap gap-3">
+      <div className="mt-5 flex flex-wrap gap-3">
         {/* The default: whatever the account already had. */}
         <button
           type="button"

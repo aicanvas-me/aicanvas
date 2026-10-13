@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Copy, Check, Eye, EyeSlash } from '@phosphor-icons/react'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
+import { CARD } from '../../../components/PageKit'
 
 // ─── McpTokenSection ──────────────────────────────────────────────────────────
 // Shows the signed-in user's AI Canvas API token on /account/settings so they
@@ -47,16 +48,16 @@ export function McpTokenSection({ token }: Props) {
   }
 
   return (
-    <section className="rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
-      <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">API token</h2>
-      <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
+    <section className={`${CARD} p-6 sm:p-8`}>
+      <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">API token</h2>
+      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
         Copy this token into your MCP server config or CLI install so AI Canvas
         authenticates as your account.
       </p>
 
       {token ? (
         <>
-          <div className="mt-4 flex items-center justify-between gap-2 rounded-lg bg-sand-200 px-4 py-3 dark:bg-sand-950">
+          <div className="mt-5 flex items-center justify-between gap-2 rounded-xl border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-950">
             <code className="min-w-0 flex-1 truncate font-mono text-sm text-sand-800 dark:text-sand-300">
               {revealed ? token : MASKED}
             </code>
@@ -85,10 +86,10 @@ export function McpTokenSection({ token }: Props) {
             </div>
           </div>
 
-          <h3 className="mt-5 text-sm font-semibold text-sand-900 dark:text-sand-50">
+          <h3 className="mt-6 text-sm font-semibold text-sand-900 dark:text-sand-50">
             Personal install command
           </h3>
-          <div className="mt-2 flex items-center justify-between gap-2 rounded-lg bg-sand-200 px-4 py-3 dark:bg-sand-950">
+          <div className="mt-2 flex items-center justify-between gap-2 rounded-xl border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-950">
             <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap font-mono text-xs text-sand-800 dark:text-sand-300">
               {installCmd(revealed ? token : MASKED)}
             </code>
@@ -110,7 +111,7 @@ export function McpTokenSection({ token }: Props) {
           </p>
         </>
       ) : (
-        <div className="mt-4 rounded-lg border border-sand-200 bg-sand-100 px-4 py-3 text-sm text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
+        <div className="mt-5 rounded-xl border border-sand-200 bg-sand-50 px-4 py-3 text-sm leading-relaxed text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
           Your token isn&rsquo;t set up yet. Install the AI Canvas MCP once, or
           reach out to support if this persists.
         </div>

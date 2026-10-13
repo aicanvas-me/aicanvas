@@ -6,6 +6,7 @@ import { createClient } from '../../../lib/supabase/client'
 import { formatAuthError } from '../../../lib/auth-errors'
 import { PasswordInput } from '../../PasswordInput'
 import { Button } from '../../../components/Button'
+import { CARD } from '../../../components/PageKit'
 
 // ─── PasswordSection ──────────────────────────────────────────────────────────
 // In-account password management on /account/settings. The server decides the
@@ -85,17 +86,17 @@ export function PasswordSection({ hasPassword, email }: Props) {
   }
 
   return (
-    <div className="rounded-xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
-      <div className="text-lg font-bold text-sand-900 dark:text-sand-50">
+    <div className={`${CARD} p-6 sm:p-8`}>
+      <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">
         {hasPassword ? 'Change password' : 'Set a password'}
-      </div>
-      <div className="mt-1 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+      </h2>
+      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
         {hasPassword
           ? 'Update the password you use to sign in.'
           : 'You signed up with Google. Add a password so you can also sign in with your email.'}
-      </div>
+      </p>
 
-      <form onSubmit={handleSubmit} className="mt-4 max-w-sm space-y-4">
+      <form onSubmit={handleSubmit} className="mt-5 max-w-sm space-y-4">
         {hasPassword && (
           <div>
             <label htmlFor="current-password" className={LABEL}>

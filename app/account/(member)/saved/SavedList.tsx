@@ -2,9 +2,10 @@
 
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { CaretDown, Check, Plus, PushPinSlash, X } from '@phosphor-icons/react'
+import { CaretDown, Check, Heart, Plus, PushPinSlash, X } from '@phosphor-icons/react'
 import { Button } from '../../../components/Button'
 import { buttonClasses } from '../../../components/buttonClasses'
+import { CARD } from '../../../components/PageKit'
 import { itemHref } from '../itemHref'
 
 export type SavedRow = {
@@ -135,16 +136,16 @@ export function SavedList({ initial }: { initial: SavedRow[] }) {
           {visible.map((row) => (
             <li
               key={row.slug}
-              className="flex items-center gap-4 rounded-xl border border-sand-200 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+              className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-2xl border border-sand-200 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-300 sm:flex-nowrap sm:gap-4 sm:px-4 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
             >
               <Link
                 href={itemHref(row)}
-                className="group flex min-w-0 flex-1 items-center gap-4"
+                className="group flex min-w-0 flex-1 items-center gap-3 sm:gap-4"
                 aria-label={`Open ${row.name}`}
               >
                 <SavedThumbnail src={row.image} alt="" />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-medium text-sand-900 transition-colors group-hover:text-olive-500 dark:text-sand-50 dark:group-hover:text-olive-400">
+                  <div className="truncate font-semibold text-sand-900 transition-colors group-hover:text-olive-600 dark:text-sand-50 dark:group-hover:text-olive-400">
                     {row.name}
                   </div>
                   {row.system && (
@@ -154,11 +155,16 @@ export function SavedList({ initial }: { initial: SavedRow[] }) {
                   )}
                 </div>
               </Link>
-              <CollectionPicker
-                value={row.collection}
-                allNames={collections.names}
-                onChange={(value) => setCollection(row.slug, value)}
-              />
+              {/* On a phone the picker drops to its own line under the name
+                  (indented past the thumbnail), so the name keeps the row's
+                  width instead of truncating to a few letters. */}
+              <div className="order-last flex basis-full pl-[4.25rem] sm:order-none sm:basis-auto sm:pl-0">
+                <CollectionPicker
+                  value={row.collection}
+                  allNames={collections.names}
+                  onChange={(value) => setCollection(row.slug, value)}
+                />
+              </div>
               <Button
                 variant="icon"
                 size="sm"
@@ -182,13 +188,16 @@ export function SavedList({ initial }: { initial: SavedRow[] }) {
 // arrive with zero saves or unsave their last item in this session.
 function EmptyState() {
   return (
-    <div className="rounded-xl border border-sand-200 bg-sand-100 p-12 text-center dark:border-sand-800 dark:bg-sand-900">
+    <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
+      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
+        <Heart weight="regular" size={22} />
+      </div>
       <p className="text-sm text-sand-600 dark:text-sand-400">
         You haven&apos;t saved anything yet.
       </p>
       <Link
         href="/components"
-        className={`mt-4 ${buttonClasses({ variant: 'primary', size: 'sm' })}`}
+        className={`mt-5 ${buttonClasses({ variant: 'primary', size: 'md' })}`}
       >
         Browse components
       </Link>
@@ -202,7 +211,7 @@ function EmptyState() {
 // placeholder for rows the registry has no image for.
 function SavedThumbnail({ src, alt }: { src: string | null; alt: string }) {
   return (
-    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-md bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
+    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-lg bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt={alt} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
@@ -213,7 +222,7 @@ function SavedThumbnail({ src, alt }: { src: string | null; alt: string }) {
 
 function FilteredEmptyState({ onReset }: { onReset: () => void }) {
   return (
-    <div className="rounded-xl border border-dashed border-sand-200 bg-transparent p-10 text-center dark:border-sand-800">
+    <div className="rounded-3xl border border-dashed border-sand-300 bg-transparent px-6 py-12 text-center dark:border-sand-800">
       <p className="text-sm text-sand-600 dark:text-sand-400">
         This collection is empty.
       </p>
@@ -281,7 +290,7 @@ function FolderTabs({
   return (
     <div className="space-y-3">
       {confirmDelete && (
-        <div className="flex flex-col gap-3 rounded-xl border border-red-500/40 bg-red-500/10 p-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 rounded-2xl border border-red-500/40 bg-red-500/10 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
           <p className="text-sm text-sand-900 dark:text-sand-50">
             Delete <strong className="font-semibold">&ldquo;{confirmDelete}&rdquo;</strong>?
             {confirmCount > 0 && (
@@ -349,7 +358,7 @@ function FolderTabs({
               onClick={() => { setCreating(true); setConfirmDelete(null) }}
               aria-label="Create new folder"
               title="Create new folder"
-              className="mt-[14px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-dashed border-sand-700 text-sand-700 transition-colors hover:border-olive-500 hover:text-olive-500 dark:border-sand-50 dark:text-sand-50 dark:hover:border-olive-400 dark:hover:text-olive-400"
+              className="mt-[14px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-dashed border-sand-400 text-sand-700 transition-colors hover:border-olive-600 hover:text-olive-600 dark:border-sand-600 dark:text-sand-300 dark:hover:border-olive-400 dark:hover:text-olive-400"
             >
               <Plus size={14} weight="regular" />
             </button>
@@ -393,7 +402,7 @@ function Folder({
         type="button"
         onClick={onClick}
         aria-pressed={active}
-        className="flex flex-col items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-olive-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-200 dark:focus-visible:ring-offset-sand-950"
+        className="flex flex-col items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-olive-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50 dark:focus-visible:ring-offset-sand-950"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -478,7 +487,7 @@ function CollectionPicker({
             onClick={() => { setOpen(false); setDraft('') }}
             className="fixed inset-0 z-30 cursor-default"
           />
-          <div className="absolute right-0 top-full z-40 mt-1 w-56 overflow-hidden rounded-lg border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
+          <div className="absolute left-0 top-full z-40 mt-1.5 w-56 sm:left-auto sm:right-0 overflow-hidden rounded-xl border border-sand-200 bg-sand-100 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_28px_-10px_rgba(0,0,0,0.2)] dark:border-sand-700 dark:bg-sand-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_16px_36px_-12px_rgba(0,0,0,0.7)]">
             {value && (
               <button
                 type="button"
@@ -517,7 +526,7 @@ function CollectionPicker({
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="New collection…"
-                className="flex-1 rounded-md border border-sand-200 bg-white px-2 py-1 text-base text-sand-900 outline-none focus:border-olive-500 md:text-xs dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50"
+                className="flex-1 rounded-md border border-sand-200 bg-sand-50 px-2 py-1 text-base text-sand-900 outline-none focus:border-olive-500 md:text-xs dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50"
                 maxLength={40}
               />
               <button

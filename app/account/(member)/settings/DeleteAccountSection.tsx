@@ -51,14 +51,14 @@ export function DeleteAccountSection() {
   }
 
   return (
-    <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-6 dark:border-red-500/20">
+    <div className="rounded-3xl border border-red-500/30 bg-red-500/5 p-6 sm:p-8 dark:border-red-500/20">
       <div className="flex items-start gap-3">
         <div className="mt-0.5 shrink-0 text-red-700 dark:text-red-400">
           <Warning weight="regular" size={20} />
         </div>
         <div className="flex-1">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">Danger zone</h2>
-          <p className="mt-1 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+          <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Danger zone</h2>
+          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
             Permanently delete your AI Canvas account, your saved components,
             install history, and preferences. This cannot be undone.
           </p>
