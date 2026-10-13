@@ -70,6 +70,7 @@ export function Sidebar({
   const hideSidebar =
     pathname === '/' ||
     pathname === '/v2' ||
+    pathname === '/v3' ||
     pathname?.startsWith('/lab') ||
     TEMPLATE_LEAF_RE.test(pathname ?? '') ||
     CAPTURE_LEAF_RE.test(pathname ?? '')
