@@ -122,7 +122,9 @@ export function LegalArticle({ children }: { children: ReactNode }) {
             <div className="px-5 pb-4">{list}</div>
           </details>
         )}
-        <article ref={ref} className="max-w-3xl [&_h2]:scroll-mt-10">
+        {/* No common ligatures: Manrope draws "(c)" as a copyright sign, which
+            turns a clause reference like "Art. 6 (1)(c) GDPR" into "(1)©". */}
+        <article ref={ref} className="max-w-3xl [font-variant-ligatures:no-common-ligatures] [&_h2]:scroll-mt-10">
           {children}
         </article>
       </div>

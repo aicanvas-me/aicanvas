@@ -91,7 +91,7 @@ export function PageHero({
       </h1>
       {sub && (
         <div
-          className="aic-hero-rise mt-5 max-w-2xl text-base leading-relaxed text-sand-600 sm:text-lg dark:text-sand-400"
+          className="aic-hero-rise mt-5 max-w-2xl text-pretty text-base leading-relaxed text-sand-600 sm:text-lg dark:text-sand-400"
           style={{ animationDelay: '0.26s' }}
         >
           {sub}
@@ -163,7 +163,7 @@ export function CtaBand({
         </div>
         {eyebrow && <p className={`relative ${EYEBROW}`}>{eyebrow}</p>}
         <h2 className={`relative ${eyebrow ? 'mt-2' : ''} ${H2}`}>{title}</h2>
-        {sub && <p className={`relative mx-auto mt-3 max-w-xl ${SUB}`}>{sub}</p>}
+        {sub && <p className={`relative mx-auto mt-3 max-w-xl text-pretty ${SUB}`}>{sub}</p>}
         {children && <div className="relative mt-7 flex flex-wrap items-center justify-center gap-3">{children}</div>}
       </Reveal>
     </section>
