@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Check, Copy, Eye, EyeSlash } from '@phosphor-icons/react'
+import { Check, Copy, Eye, EyeSlash, Info } from '@phosphor-icons/react'
 import { track } from '../lib/analytics'
 import { copyText } from '../components/useCopied'
 
@@ -13,8 +13,18 @@ import { copyText } from '../components/useCopied'
 // wiring up MCP. Buyers who never found their token installed nothing (verified
 // against real accounts) — the card stays visible on the page, never behind a
 // click. Token masked until revealed; copy always copies the real value.
+// Dressed as the pricing card: heading on the card, the two values in the inset
+// well under it. The page is pinned dark, so these are dark values only.
 
 const MASK = 'aic_••••••••'
+
+// One value row's pieces, shared so the command and the token line up.
+const LABEL = 'text-sm font-semibold text-sand-100'
+const WELL = 'mt-2.5 flex items-center gap-1 rounded-xl border border-sand-800 bg-sand-900 py-1.5 pr-1.5 pl-4'
+const CODE = 'min-w-0 flex-1 overflow-x-auto whitespace-nowrap py-1.5 font-mono text-xs text-sand-300'
+const ICON_BTN =
+  'shrink-0 rounded-lg p-2 text-sand-400 transition-all hover:bg-sand-800 hover:text-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 active:scale-90'
+const HELP = 'mt-2.5 text-sm leading-relaxed text-sand-400'
 
 export function PremiumQuickstart({ token }: { token: string | null }) {
   const [revealed, setRevealed] = useState(false)
@@ -43,71 +53,69 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
 
   if (!token) {
     return (
-      <div className="mx-auto mt-10 w-full max-w-2xl rounded-2xl border border-sand-800 bg-sand-900 p-5 text-left text-sm leading-relaxed text-sand-300">
-        Your install token isn&rsquo;t set up yet. Check{' '}
-        <Link href="/account/settings" className="font-medium text-olive-400 transition-colors hover:text-olive-300">
-          account settings
-        </Link>{' '}
-        in a moment, or reach out to support if it stays missing.
+      <div className="mx-auto mt-14 flex w-full max-w-xl items-start gap-2.5 rounded-3xl border border-sand-800 bg-sand-900 px-5 py-5 text-left text-sm leading-relaxed text-sand-300 sm:mt-16 sm:px-6">
+        <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-400" />
+        <span className="text-pretty">
+          Your install token isn&rsquo;t set up yet. Check{' '}
+          <Link href="/account/settings" className="font-semibold text-olive-400 transition-colors hover:text-olive-300">
+            account settings
+          </Link>{' '}
+          in a moment, or reach out to support if it stays missing.
+        </span>
       </div>
     )
   }
 
   return (
-    <div className="mx-auto mt-10 w-full max-w-2xl rounded-2xl border border-sand-800 bg-sand-900/50 p-5 text-left">
-      <h2 className="text-sm font-semibold text-sand-200">
-        Already in a terminal or setting up MCP?
-      </h2>
-
-      <p className="mt-3 text-xs font-medium text-sand-500">Install command</p>
-      <div className="mt-1.5 flex items-center gap-2 rounded-lg bg-sand-950 px-4 py-3">
-        <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap font-mono text-xs text-sand-300">
-          {cmd(revealed ? token : MASK)}
-        </code>
-        <button
-          type="button"
-          onClick={copyCmd}
-          aria-label="Copy install command"
-          className="shrink-0 rounded-md p-1.5 text-sand-500 transition-all hover:text-sand-200 active:scale-90"
-        >
-          {cmdCopied ? <Check weight="regular" size={16} className="text-olive-400" /> : <Copy weight="regular" size={16} />}
-        </button>
+    <div className="mx-auto mt-14 w-full max-w-3xl rounded-3xl border border-sand-800 bg-sand-900 p-2 text-left sm:mt-16">
+      <div className="px-4 pt-5 pb-5 sm:px-6 sm:pt-6">
+        <p className="text-xs font-semibold uppercase tracking-wider text-sand-400">Quickstart</p>
+        <h2 className="mt-2 text-xl font-bold tracking-tight text-sand-50">
+          Already in a terminal or setting up MCP?
+        </h2>
       </div>
-      <p className="mt-1.5 text-xs leading-relaxed text-sand-500">
-        Installs the full Andromeda Pro design system. Swap the file name for any
-        component or template.
-      </p>
 
-      <p className="mt-4 text-xs font-medium text-sand-500">MCP token</p>
-      <div className="mt-1.5 flex items-center gap-2 rounded-lg bg-sand-950 px-4 py-3">
-        <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap font-mono text-xs text-sand-300">
-          AICANVAS_TOKEN={revealed ? token : MASK}
-        </code>
-        <button
-          type="button"
-          onClick={() => setRevealed((v) => !v)}
-          aria-label={revealed ? 'Hide token' : 'Reveal token'}
-          aria-pressed={revealed}
-          className="shrink-0 rounded-md p-1.5 text-sand-500 transition-all hover:text-sand-200 active:scale-90"
-        >
-          {revealed ? <EyeSlash weight="regular" size={16} /> : <Eye weight="regular" size={16} />}
-        </button>
-        <button
-          type="button"
-          onClick={copyToken}
-          aria-label="Copy MCP token"
-          className="shrink-0 rounded-md p-1.5 text-sand-500 transition-all hover:text-sand-200 active:scale-90"
-        >
-          {tokenCopied ? <Check weight="regular" size={16} className="text-olive-400" /> : <Copy weight="regular" size={16} />}
-        </button>
+      <div className="space-y-7 rounded-2xl bg-sand-950 px-4 py-6 sm:px-6">
+        <div>
+          <p className={LABEL}>Install command</p>
+          <div className={WELL}>
+            <code className={CODE}>{cmd(revealed ? token : MASK)}</code>
+            <button type="button" onClick={copyCmd} aria-label="Copy install command" className={ICON_BTN}>
+              {cmdCopied ? <Check weight="regular" size={16} className="text-olive-400" /> : <Copy weight="regular" size={16} />}
+            </button>
+          </div>
+          <p className={HELP}>
+            Installs the full Andromeda Pro design system. Swap the file name for any
+            component or template.
+          </p>
+        </div>
+
+        <div>
+          <p className={LABEL}>MCP token</p>
+          <div className={WELL}>
+            <code className={CODE}>AICANVAS_TOKEN={revealed ? token : MASK}</code>
+            <button
+              type="button"
+              onClick={() => setRevealed((v) => !v)}
+              aria-label={revealed ? 'Hide token' : 'Reveal token'}
+              aria-pressed={revealed}
+              className={ICON_BTN}
+            >
+              {revealed ? <EyeSlash weight="regular" size={16} /> : <Eye weight="regular" size={16} />}
+            </button>
+            <button type="button" onClick={copyToken} aria-label="Copy MCP token" className={ICON_BTN}>
+              {tokenCopied ? <Check weight="regular" size={16} className="text-olive-400" /> : <Copy weight="regular" size={16} />}
+            </button>
+          </div>
+          <p className={HELP}>
+            For AI agents and the AI Canvas MCP server. Keep it private. Both live in{' '}
+            <Link href="/account/settings" className="font-semibold text-olive-400 transition-colors hover:text-olive-300">
+              account settings
+            </Link>{' '}
+            too.
+          </p>
+        </div>
       </div>
-      <p className="mt-1.5 text-xs leading-relaxed text-sand-500">
-        For AI agents and the AI Canvas MCP server. Keep it private. Both live in{' '}
-        <Link href="/account/settings" className="font-medium text-olive-400 transition-colors hover:text-olive-300">
-          account settings
-        </Link>{' '}
-        too.
-      </p>
     </div>
   )
 }
