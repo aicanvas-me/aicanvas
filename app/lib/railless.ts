@@ -22,8 +22,9 @@ const PAGES = new Set([
   '/terms',
   '/refund',
   '/premium-license',
-  '/kuendigen',
 ])
+// /kuendigen is not here: the cancellation flow is frozen as shipped and draws
+// its own bar with no site links, so the rail stays its way back to the site.
 
 export function isRaillessRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return false
