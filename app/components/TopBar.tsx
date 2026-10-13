@@ -125,7 +125,7 @@ export function TopBar() {
   // pill does not show here: the centred nav leaves it no room in a 7xl column.
   if (isRaillessRoute(pathname)) {
     return (
-      <header className={HOME_BAR_CLASS}>
+      <header className={isPinnedDarkRoute(pathname) ? `dark ${HOME_BAR_CLASS}` : HOME_BAR_CLASS}>
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-6 xl:grid xl:grid-cols-[1fr_auto_1fr]">
           <HomeLogo />
           <HomeNav />
