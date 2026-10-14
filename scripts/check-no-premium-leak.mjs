@@ -73,15 +73,24 @@ const PAT = /\bghp_[A-Za-z0-9]{36}\b|\bgithub_pat_[A-Za-z0-9_]{20,}\b/
 // inject follows (committed always wins, the vault only fills gaps), so it is
 // never reported. info/exclude is shared by every worktree, and an older
 // worktree's block can still list a file this branch has since committed.
+// The same holds for a file committed on public main or on the commit being
+// merged in: while a branch merges main, HEAD is still the old branch, so a
+// file main took over (the Andromeda components that went MIT) arrives staged
+// and would read as an injected copy. Anything already on public main is
+// public by definition, so those paths are the repo's own source too.
 function committedPaths() {
-  try {
-    return new Set(
-      execSync('git ls-tree -r --name-only HEAD design-systems', { encoding: 'utf8' })
-        .split('\n').map((s) => s.trim()).filter(Boolean),
-    )
-  } catch {
-    return new Set() // no HEAD yet / no git
+  const paths = new Set()
+  for (const ref of ['HEAD', 'MERGE_HEAD', 'origin/main']) {
+    try {
+      execSync(`git ls-tree -r --name-only ${ref} design-systems`, {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      })
+        .split('\n').map((s) => s.trim()).filter(Boolean)
+        .forEach((p) => paths.add(p))
+    } catch { /* ref absent: no HEAD yet, no merge in progress, or a shallow clone */ }
   }
+  return paths
 }
 function injectedFreeDsPaths() {
   const paths = new Set()
