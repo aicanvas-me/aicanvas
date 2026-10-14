@@ -72,7 +72,7 @@ app/lib/component-codes.generated.ts
 !/scripts/bing-output/.gitkeep
 
 # studio prototype (local-only — see "Studio prototype" memory)
-/app/tune/
+/app/studio/
 scripts/sync-output/
 
 # Generated registry JSON (served dynamically from app/r)

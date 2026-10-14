@@ -22,6 +22,31 @@ export type ComponentCopy = {
 // `meet-the-crew` aliases the `avatar-picker` source; `traveldeck` aliases
 // the `floating-cards` source.
 export const ACCURATE_STACKS: Record<string, string[]> = {
+  'task-queue': ['Motion', 'Tailwind CSS'],
+  'permission-scope': ['Motion', 'Tailwind CSS'],
+  'confidence-meter': ['Motion', 'Tailwind CSS'],
+  'loading-skeleton': ['Motion', 'Tailwind CSS'],
+  'agent-status': ['Motion', 'Tailwind CSS'],
+  'memory-note': ['Motion', 'Tailwind CSS'],
+  'retry-card': ['Motion', 'Tailwind CSS'],
+  'code-panel': ['Motion', 'Tailwind CSS'],
+  'render-slot': ['Motion', 'Canvas', 'Tailwind CSS'],
+  'side-by-side': ['Motion', 'Tailwind CSS'],
+  'result-grid': ['Motion', 'Tailwind CSS'],
+  'branch-tree': ['Motion', 'Tailwind CSS'],
+  'model-switch': ['Motion', 'Tailwind CSS'],
+  'artifact-card': ['Motion', 'Tailwind CSS'],
+  'agent-handoff': ['Motion', 'Tailwind CSS'],
+  'context-gauge': ['Motion', 'Tailwind CSS'],
+  'sandbox-console': ['Motion', 'Tailwind CSS'],
+  'change-review': ['Motion', 'Tailwind CSS'],
+  'source-rail': ['Motion', 'Tailwind CSS'],
+  'plan-runner': ['Motion', 'Tailwind CSS'],
+  'agent-composer': ['Motion', 'Tailwind CSS'],
+  'tool-ledger': ['Motion', 'Tailwind CSS'],
+  'token-stream': ['Motion', 'Tailwind CSS'],
+  'reasoning-trace': ['Motion', 'Tailwind CSS'],
+  'agent-checkpoint': ['Motion', 'Tailwind CSS'],
   '3d-gem-pricing-section': ['Three.js', 'Canvas', 'Tailwind CSS'],
   '3d-product-card': ['Three.js', 'Tailwind CSS'],
   'ai-job-cards': ['Motion', 'Tailwind CSS'],
@@ -323,6 +348,131 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
   },
 
   // ─── Cards & Modals ──────────────────────────────────────────────────────
+  'memory-note': {
+    useCases: ['AI coding agents', 'Personal assistants', 'Chat assistants'],
+    about:
+      'Memory Note shows exactly what an agent saved to memory and lets the user keep control of it. The note is editable in place with a save flash, a scope chip switches between this chat, this project and everywhere, a why line explains what triggered the save, and Forget folds the card into a receipt with a five second undo. Recent notes stack behind the newest as a small deck that fans into a list, and when a new note contradicts an older one the old text shows struck through with a Keep both control.',
+  },
+  'loading-skeleton': {
+    useCases: ['AI coding agents', 'Chat assistants', 'Content feeds'],
+    about:
+      'Loading Skeleton draws the wait as the shape of the answer that is coming: an agent header, three lines of a reply, two tool rows and the actions, in the exact boxes the real content will occupy, so nothing moves when it arrives. One calm light crosses the whole card from a single shared motion value, which means a block on the right lights up after a block on the left the way a real reflection would, instead of every placeholder blinking on its own loop. The skeleton and the loaded state are the same DOM, so the swap is a fade in place with no reflow. Reduced motion drops the light and swaps instantly, and the card announces the answer once rather than on every frame.',
+  },
+  'agent-status': {
+    useCases: ['AI coding agents', 'Chat assistants', 'App headers'],
+    about:
+      'Agent Status is one line that always says what the agent is doing: idle, thinking, running a named tool, waiting for the user, done or failed, with elapsed time and cost that only updates when a turn completes. It reads like a sentence with the object in mono, hovering expands a short history with durations, the waiting state pulses and adds a needs you chip that scrolls to the decision, and it ships as a 28px pill for headers or a 40px bar with the history inline. State changes are announced once to screen readers.',
+  },
+  'confidence-meter': {
+    useCases: ['AI research assistants', 'AI search', 'Decision support'],
+    about:
+      'Confidence Meter shows how sure an agent is and why. A five segment meter carries a word from low to verified and, right under it, the one sentence that limits the answer. Expanding lists the factors with a plus or minus glyph and a note, positive in cyan and negative in ember, so the mix is visible. Verify calls back to your code, shimmers while checking and fills the meter segment by segment when the new level arrives, and the meter never shows verified unless the caller says so. A sources chip links to the citations.',
+  },
+  'permission-scope': {
+    useCases: ['AI coding agents', 'Browser agents', 'Enterprise assistants'],
+    about:
+      'Permission Scope is the card an agent shows when it needs a capability: read a folder, use the network, run a command class, access a secret. The scope is the decision, a segmented control for once, this session or always with the Allow label following it. Details expand to the exact paths or hosts in mono with checkboxes, so unchecking narrows the grant and the callback carries only what stayed checked. Write and secret tiers show a chip and disable always by default, secrets are masked with a reveal, and the decision folds into a receipt with undo and a Revoke link.',
+  },
+  'task-queue': {
+    useCases: ['AI coding agents', 'Batch processing', 'Automation dashboards'],
+    about:
+      'Task Queue shows the background work an agent is running as lanes: running, queued, done and failed, as chips that filter one list. Running tasks carry a thin progress bar and the latest status line with an estimate only after enough samples, queued tasks can be dragged or moved with the keyboard to change priority and jumped to the front with Run next, failed tasks show the first error line with Retry and Dismiss, and finished tasks fold to one line with their duration. Tasks and every action are props; without them a scripted workload plays on a loop.',
+  },
+  'side-by-side': {
+    useCases: ['AI research assistants', 'Decision tools', 'Product comparison'],
+    about:
+      'Side by Side is the table an agent uses to compare options across criteria and say which wins where. Every row marks the winning cell, every cell can carry a one line reason shown on hover, the leading option gets a rail and a win count, and criteria weights are dots the reader can click to test the ranking with their own priorities while the scores recount live. A verdict sentence sits under the table with a Pick button per option, and under 480px the table becomes stacked cards with the wins still marked.',
+  },
+  'render-slot': {
+    useCases: ['AI image tools', 'Design assistants', 'Creative apps'],
+    about:
+      'Render Slot is the place an agent generated image appears. The reveal follows real progress, a blurred version sharpening in steps while a thin bar and an elapsed counter track the run, variations land as thumbnails under the slot with a ring on the selected one, and holding a thumbnail swaps it into the slot for a quick comparison. The prompt and seed sit under the image with Edit and copy, and Download, Upscale and Regenerate live in the footer. The demo paints its own generative image on a canvas, so the preview is honest without a stock photo.',
+  },
+  'code-panel': {
+    useCases: ['AI coding agents', 'Code review tools', 'Developer docs'],
+    about:
+      'Code Panel shows code an agent wrote inside the conversation, with a file header, line numbers, syntax coloring drawn from the palette, and Copy, Apply and Run. While streaming, the panel reserves the announced number of lines so it does not grow line by line, highlighted ranges carry a gutter note and a Jump link cycles through them, Apply names the target file and line, Run shows a spinner and then an exit chip, and long blocks fold with a wrap toggle. Wide code scrolls inside the panel, never the page.',
+  },
+  'retry-card': {
+    useCases: ['AI coding agents', 'Automation tools', 'Chat assistants'],
+    about:
+      'Retry Card is how an agent reports a failure: three lines that matter, what it tried, what it got and what it will try next, with the full trace one click away. Retry can run on a countdown drawn as a thin ring that pauses on hover, attempt dots keep the history, and after repeated failures the card promotes Change approach, which opens the alternative strategies as chips. Report copies a plain text bundle for a bug report. When an attempt works the card folds into a one line receipt with the attempt count and time.',
+  },
+  'artifact-card': {
+    useCases: ['AI coding agents', 'Document assistants', 'Data tools'],
+    about:
+      'Artifact Card presents something an agent produced as a file. The preview adapts to the kind of content: code shows its first lines in mono, markdown renders, images show a contained thumbnail and data shows a mini table. While the agent writes, the preview fills line by line under a shimmering title with a live line count. Versions sit as a row of dots with the current one filled, hovering shows when and how big, clicking crossfades the preview, and Diff calls back to your code. Open, Copy and Download live in the footer with feedback, and a pin marks the card with a thin rail so it stands out in a transcript.',
+  },
+  'model-switch': {
+    useCases: ['AI coding agents', 'Chat assistants', 'Internal AI tools'],
+    about:
+      'Model Switch is a compact picker for the model an agent runs on. Each option carries two micro bars for speed and cost and a row of capability chips, one option can be marked best for this task with a one line reason, and models with an effort setting show a segmented control inline that moves the cost bar live. Hovering an option shows its delta against the current one, typing filters the list, arrows move, Enter picks. The trigger shows the model and effort in mono and crossfades on change. Models, the current value and the recommendation are props.',
+  },
+  'branch-tree': {
+    useCases: ['Chat assistants', 'AI writing tools', 'Prompt workbenches'],
+    about:
+      'Branch Tree shows a conversation that forked, as a vertical rail of message stubs rather than a graph. A fork shows its siblings side by side with a pager, the active path is olive and the rest muted, hovering a stub previews the full text, and any assistant stub can be regenerated into a new sibling that shimmers until content arrives. Selecting two siblings opens a compare pane with the differing words highlighted and a Keep button on each, and keeping one reflows the rail with a spring. Arrows move along the path and between siblings, Enter picks, C compares.',
+  },
+  'result-grid': {
+    useCases: ['AI data analysis', 'Test dashboards', 'Agent tool output'],
+    about:
+      'Result Grid is a table for agent output that fits inside a conversation. Cells are typed: numbers right aligned in mono, dates relative with the exact value on hover, statuses as a dot and a word, links, booleans. Rows can stream in while the agent works and sorting stays stable as they arrive. Headers sort on click and stack a secondary sort with Shift, per column filters show as removable chips, selected rows raise a floating bar with the count, export and copy as markdown, and a compact switch tightens the rows. Wide tables scroll inside their own container, never the page.',
+  },
+  'change-review': {
+    useCases: ['AI coding agents', 'Code review tools', 'Pull request assistants'],
+    about:
+      'Change Review shows a code change the agent proposes as a diff per file, with Accept and Reject on every hunk and Apply once each hunk is decided. Changed words are highlighted inside changed lines so a one word edit is obvious, file tabs carry added and removed counts with a dot for undecided hunks, and long unchanged stretches fold away. J and K move between hunks, A and R decide them, arrows switch files. Apply collapses the panel into a one line receipt with a five second undo. Files, hunks and decisions are props; without them a demo reviews and applies its own change.',
+  },
+  'sandbox-console': {
+    useCases: ['AI coding agents', 'CI assistants', 'Developer tools'],
+    about:
+      'Sandbox Console shows the output of a command the agent ran: lines streaming in, stderr marked by a thin red rail instead of a color wash, an exit code chip, elapsed time, copy and collapse. Output past a few hundred lines folds its middle while the tail stays visible, an inline find highlights matches with a count, Copy takes the visible output and Alt copies stderr only, and Rerun calls back to your code. A non zero exit repeats the last error line in the header so the failure is readable at a glance.',
+  },
+  'context-gauge': {
+    useCases: ['AI coding agents', 'Chat assistants', 'LLM cost dashboards'],
+    about:
+      'Context Gauge is a small instrument showing how full an agent context window is and what fills it: one bar split into system, files, conversation and tool results, a tick where compaction triggers, cost so far with a burn rate once enough turns exist, and a sparkline of context size per turn. Crossing the compaction tick pulses it once and warns, compaction shrinks the bar with a spring and leaves a short receipt, and Compact now and Clear tool results call back to your code with a confirm on the destructive one.',
+  },
+  'agent-handoff': {
+    useCases: ['Multi-agent systems', 'Agent observability', 'Workflow automation'],
+    about:
+      'Agent Handoff makes a multi agent run legible: agents as round badges on a line, an olive baton that travels to whoever has the task, a ring on the current agent and a live header with their name and elapsed time. Each handoff writes a one line note with a timestamp, parallel stretches split the line into lanes and merge back, and clicking a badge opens a card with that agent role, tool call count and last message. Arrows move between agents and Enter opens the card. Agents and events are props; without them a scripted run plays on a loop.',
+  },
+  'tool-ledger': {
+    useCases: ['AI coding agents', 'Agent observability', 'Automation dashboards'],
+    about:
+      'Tool Ledger is a timeline of the tool calls an agent makes: the name, the arguments it passed, how long each took and its status, with the result one click away. Every row carries a thin duration bar against the slowest call, running calls grow live, concurrent calls share a bracket, and a failed call shows its error line with a Retry control. Arguments render as a compact mono line that expands to pretty printed args and the result with Copy. Arrow keys move between rows, Enter expands, and a sticky footer totals calls, time and failures.',
+  },
+  'agent-composer': {
+    useCases: ['AI coding agents', 'Chat assistants', 'Internal tools'],
+    about:
+      'Agent Composer is the message input for an agent: a growing textarea with slash commands, file mentions, attachments and a model chip, and a send button that turns into stop while the agent works. Typing a slash opens an inline command list that becomes a chip, an at sign opens recent files and the footer counts the context they add, dropped files sit in a row above the input, and Escape stops a running turn while queued text waits with a chip. Every list is a real listbox with full keyboard control, and the whole thing is typed props with sensible defaults.',
+  },
+  'plan-runner': {
+    useCases: ['AI coding agents', 'Workflow automation', 'Onboarding flows'],
+    about:
+      'Plan Runner shows a plan the agent proposed and runs it step by step. Before it starts, steps can be edited, reordered, removed or added, and the plan handed to your code is the one the user shaped. While running, the current step carries a live progress bar and the latest status line, finished steps fold their outcome into one line with a duration, and a failed step offers Retry or Skip. The header keeps an honest elapsed time and only estimates what is left once real steps have finished. Pause freezes everything, Resume continues, and the keyboard drives it all.',
+  },
+  'source-rail': {
+    useCases: ['Research assistants', 'AI search', 'Documentation bots'],
+    about:
+      'Source Rail puts citations next to an agent answer: numbered markers inside the text, a rail of sources beside it, and hover cards with the exact quoted passage. Hovering a marker highlights its source and hovering a source lights every marker that cites it, each marker can show how directly its source supports the claim, and on narrow screens the rail folds into a strip of chips that open the quote as a sheet. Markers sit in the tab order, Enter opens a card, arrows move through the rail. Sources and text are props; without them a demo walks through its own citations.',
+  },
+  'reasoning-trace': {
+    useCases: ['AI coding agents', 'Research assistants', 'Chat assistants'],
+    about:
+      'Reasoning Trace shows what an agent is thinking while it works. Thoughts stream in under phase headers such as Understand, Explore, Decide and Verify, the current phase shimmers and finished phases settle, and an honest timer ticks only while the agent thinks. Collapsed, it keeps the freshest thought visible on one line; expanded, long phases fold to their first lines. When the answer starts it becomes a one-line summary that stays expandable. Skip calls back to your code, keyboard toggles it, and it runs its own demo loop when rendered without props.',
+  },
+  'token-stream': {
+    useCases: ['Chat assistants', 'AI writing tools', 'Documentation bots'],
+    about:
+      'Token Stream renders an answer as it arrives: inline markdown, lists, headings and fenced code, with a steady word by word reveal that smooths bursty delivery. An open code fence renders as code from its first character, so nothing reflows when it closes. The cursor blinks only while waiting, Stop freezes what you have and Continue resumes, and if the reader scrolls up a small Jump to latest pill appears instead of dragging them down. Feed it chunks or a controlled content string; without props it streams a scripted answer on a loop.',
+  },
+  'agent-checkpoint': {
+    useCases: ['AI coding agents', 'Chat assistants', 'Automation approvals'],
+    about:
+      'Checkpoint is the card an agent shows when it has to stop and ask before it continues: answer a short question, allow a shell command, or confirm a plan. The command can be edited in place before it is allowed, plan steps can be struck out, and the callback receives exactly what the user agreed to. A risk chip grades the command as read, writes or destructive, and a destructive command turns the button red and asks for a second press. An optional auto-allow ring runs around the button and pauses while the pointer or focus is inside the card. After the decision the card folds into a one-line receipt with a five second undo, so the conversation stays readable. Every prop is optional and the defaults reproduce the preview, with full keyboard control, reduced motion support and a matching light theme.',
+  },
   'traveldeck': {
     useCases: ['Image gallery', 'Portfolio', 'E-commerce'],
     about:
