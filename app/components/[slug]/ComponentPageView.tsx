@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import {
@@ -86,6 +86,9 @@ interface ComponentPageViewProps {
   // the vault's meta.json files are next touched anyway, so the two repos don't
   // have to ship in lockstep for it.
   framedPreview?: boolean
+  // Taller live preview box for cards that do not fit the default 480 / 320.
+  previewHeight?: number
+  previewHeightMobile?: number
   // Label-only: names the type above the install section, "Premium block"
   // rather than "Premium component". The chip row by the title states the tier
   // alone, so the category chip beside it carries the type there instead.
@@ -135,6 +138,8 @@ export default function ComponentPageView({
   designSystem,
   premium = false,
   framedPreview = false,
+  previewHeight,
+  previewHeightMobile,
   isBlock = false,
   related,
   highlightedCode,
@@ -707,9 +712,15 @@ export default function ComponentPageView({
                 e.currentTarget.scrollLeft = 0
                 e.currentTarget.scrollTop = 0
               }}
-              className={`relative isolate h-[320px] overflow-hidden transition-colors duration-300 sm:h-[480px] ${
+              className={`relative isolate h-[var(--pv-h-m,320px)] overflow-hidden transition-colors duration-300 sm:h-[var(--pv-h,480px)] ${
                 cardTheme === 'dark' ? 'dark bg-sand-950' : 'bg-sand-100'
               }`}
+              style={
+                {
+                  ...(previewHeight ? { '--pv-h': `${previewHeight}px` } : {}),
+                  ...(previewHeightMobile ? { '--pv-h-m': `${previewHeightMobile}px` } : {}),
+                } as CSSProperties
+              }
             >
               {/* Both tabs stay mounted so the syntax-highlighted code is in the
                   server-rendered HTML — Google indexes it even while the Preview

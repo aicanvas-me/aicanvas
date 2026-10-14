@@ -1469,6 +1469,8 @@ for (const { slug, meta, hasPrompts } of injected) {
       (meta.image ? `    image: ${JSON.stringify(meta.image)},\n` : '') +
       (meta.dualTheme ? '    dualTheme: true,\n' : '') +
       (meta.staticPreview ? '    staticPreview: true,\n' : '') +
+      (Number.isFinite(meta.previewHeight) ? `    previewHeight: ${meta.previewHeight},\n` : '') +
+      (Number.isFinite(meta.previewHeightMobile) ? `    previewHeightMobile: ${meta.previewHeightMobile},\n` : '') +
       (meta.isBlock ? '    isBlock: true,\n' : '') +
       `    badge: 'Premium',\n` +
       `    PreviewComponent: ${v},\n` +

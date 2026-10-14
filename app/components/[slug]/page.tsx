@@ -370,6 +370,8 @@ export default async function Page({
         designSystem={entry.designSystem}
         premium={contentType === 'premium-standalone'}
         framedPreview={entry.staticPreview}
+        previewHeight={entry.previewHeight}
+        previewHeightMobile={entry.previewHeightMobile ?? entry.previewHeight}
         isBlock={isBlockEntry(entry)}
         related={related}
         highlightedCode={withholdSource ? undefined : <HighlightedCode code={entry.code} />}
