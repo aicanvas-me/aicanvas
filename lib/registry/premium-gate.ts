@@ -5,12 +5,14 @@ import { loadContentLookup } from './lookup'
 /**
  * Who may install a registry slug, worded for agents. Comes from the /r gate's
  * own manifest and classifier, so no public text ever promises an install the
- * gate refuses. Used by llms.txt and the markdown twins.
+ * gate refuses. Used by llms.txt and the markdown twins. A degraded lookup
+ * labels everything but the meta files Premium, like classifyPremium: a
+ * missing manifest must never make a premium item read as free.
  */
 export function installTier(slug: string, lookup: ContentLookup = loadContentLookup()): string {
   const type = classifyContent(slug, lookup)
   if (type === 'meta') return 'no account needed'
-  if (type === 'standalone' || type === 'design-system-component') return 'free account'
+  if (lookup.degraded !== true && (type === 'standalone' || type === 'design-system-component')) return 'free account'
   return 'Premium, requires an AI Canvas token'
 }
 

@@ -52,12 +52,14 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.next()
   }
 
+  // An agent reading llms.txt or a markdown twin is its own event, never a
+  // page view: Claude Code asks for text/markdown AND text/html, so it would
+  // otherwise pass as a person loading the page.
+  const agentDoc = isAgentDocRequest(pathname, request.headers.get('accept') ?? '')
+
   try {
     if (posthogConfigured) {
-      // An agent reading llms.txt or a markdown twin is its own event, never a
-      // page view: Claude Code asks for text/markdown AND text/html, so it
-      // would otherwise pass as a person loading the page.
-      if (isAgentDocRequest(pathname, request.headers.get('accept') ?? '')) {
+      if (agentDoc) {
         if (request.method === 'GET') event.waitUntil(logAgentDocHit(request))
       } else if (isPageview(request)) {
         event.waitUntil(logPageview(request))
@@ -65,6 +67,16 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     }
   } catch (err) {
     console.error('[proxy] pageview logging failed:', err)
+  }
+
+  // The machine-readable pages are public and shared-cached, and they read no
+  // session: skip the Supabase refresh (same as /r/ above), so a signed-in
+  // browser opening one never gets a Set-Cookie on a publicly cached response.
+  // The frame flag is still stripped: it may only ever be set by this proxy.
+  if (agentDoc) {
+    const headers = new Headers(request.headers)
+    headers.delete(FRAME_HEADER)
+    return NextResponse.next({ request: { headers } })
   }
 
   // Hand the preview-payload flag to the root layout (see app/lib/frame.ts).

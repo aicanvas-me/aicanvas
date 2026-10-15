@@ -25,6 +25,7 @@ describe('isAgentDocRequest', () => {
     expect(isAgentDocRequest('/llms.txt', '*/*')).toBe(true)
     expect(isAgentDocRequest('/llms-full.txt', '*/*')).toBe(true)
     expect(isAgentDocRequest('/components/wave-lines.md', '*/*')).toBe(true)
+    expect(isAgentDocRequest('/md/components/wave-lines', '*/*')).toBe(true)
     expect(isAgentDocRequest('/components/wave-lines', 'text/markdown, text/html, */*')).toBe(true)
   })
 

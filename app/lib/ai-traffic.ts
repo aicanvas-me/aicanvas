@@ -44,12 +44,17 @@ export function aiSourceOf(referringDomain: string, utmSource: string | null): s
   return ASSISTANT_HOSTS[referringDomain.toLowerCase()] ?? (utmSource ? ASSISTANT_UTM[utmSource.trim().toLowerCase()] : undefined)
 }
 
-/** A request for the machine-readable site: llms.txt, llms-full.txt or a markdown twin. */
+/**
+ * A request for the machine-readable site: llms.txt, llms-full.txt or a
+ * markdown twin (its public `.md` URL, its internal /md/ route, or a page URL
+ * asked for in markdown).
+ */
 export function isAgentDocRequest(pathname: string, accept: string): boolean {
   return (
     pathname === '/llms.txt' ||
     pathname === '/llms-full.txt' ||
     pathname.endsWith('.md') ||
+    pathname.startsWith('/md/') ||
     accept.includes('text/markdown')
   )
 }
