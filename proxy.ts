@@ -166,8 +166,8 @@ async function logAgentDocHit(request: NextRequest): Promise<void> {
     'agent_doc_hit',
     {
       path: pathname,
-      // 'file' = an llms file or a .md URL; 'accept' = a page URL asked for in markdown.
-      via: pathname.endsWith('.md') || pathname.endsWith('.txt') ? 'file' : 'accept',
+      // 'file' = an llms file, a .md URL or the internal /md/ route; 'accept' = a page URL asked for in markdown.
+      via: pathname.endsWith('.md') || pathname.endsWith('.txt') || pathname.startsWith('/md/') ? 'file' : 'accept',
       agent,
       country: request.headers.get('x-vercel-ip-country') ?? undefined,
       region: request.headers.get('x-vercel-ip-country-region') ?? undefined,
