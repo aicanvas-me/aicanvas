@@ -24,7 +24,7 @@ export default function PrivacyPage() {
           Privacy Policy
         </h1>
         <p className="mt-3 text-sm text-sand-600 dark:text-sand-500">
-          Last updated: 2026-09-20. This policy describes how AI Canvas processes
+          Last updated: 2026-10-15. This policy describes how AI Canvas processes
           personal data, in line with the EU General Data Protection Regulation
           (GDPR / DSGVO) and the German Bundesdatenschutzgesetz (BDSG).
         </p>
@@ -214,7 +214,11 @@ export default function PrivacyPage() {
             request and the hash is discarded after 24 hours. No personal
             identifier is created and no cross-site tracking is possible. We
             also measure site usage ourselves, without cookies: our own server
-            collects page views (path, referrer, country and region), clicks on
+            collects page views (path, referrer, the name of the AI assistant
+            when the visit came from one, such as ChatGPT or Claude, country
+            and region), requests from AI tools for the machine-readable
+            versions of our pages (the page path and the kind of tool, for
+            example Claude or Cursor), clicks on
             key buttons (for example copying an install command), searches on
             the site (the typed query and its result count), script errors in
             your browser, and errors raised on our own server while handling a

@@ -23,6 +23,7 @@ import type { NextFetchEvent, NextRequest } from 'next/server'
 import { updateSession } from './app/lib/supabase/proxy'
 import { phCapture, posthogConfigured } from './app/lib/analytics-server'
 import { FRAME_HEADER, isFramePayload } from './app/lib/frame'
+import { agentFamilyOf, aiSourceOf, isAgentDocRequest } from './app/lib/ai-traffic'
 
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl
@@ -52,8 +53,15 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   }
 
   try {
-    if (posthogConfigured && isPageview(request)) {
-      event.waitUntil(logPageview(request))
+    if (posthogConfigured) {
+      // An agent reading llms.txt or a markdown twin is its own event, never a
+      // page view: Claude Code asks for text/markdown AND text/html, so it
+      // would otherwise pass as a person loading the page.
+      if (isAgentDocRequest(pathname, request.headers.get('accept') ?? '')) {
+        if (request.method === 'GET') event.waitUntil(logAgentDocHit(request))
+      } else if (isPageview(request)) {
+        event.waitUntil(logPageview(request))
+      }
     }
   } catch (err) {
     console.error('[proxy] pageview logging failed:', err)
@@ -123,9 +131,34 @@ async function logPageview(request: NextRequest): Promise<void> {
     $referrer: referrer.split('?')[0],
     $referring_domain: referringDomain,
     nav: 'load',
+    // The AI assistant that sent the visit, as a fixed name (app/lib/ai-traffic.ts).
+    // utm_source is read only to match that list; the query is never stored.
+    ...withAiSource(aiSourceOf(referringDomain, request.nextUrl.searchParams.get('utm_source'))),
     country: request.headers.get('x-vercel-ip-country') ?? undefined,
     region: request.headers.get('x-vercel-ip-country-region') ?? undefined,
   })
+}
+
+function withAiSource(source: string | undefined): { ai_source?: string } {
+  return source ? { ai_source: source } : {}
+}
+
+// One shared bucket per tool family: no per-client id, no user-agent string.
+async function logAgentDocHit(request: NextRequest): Promise<void> {
+  const { pathname } = request.nextUrl
+  const agent = agentFamilyOf(request.headers.get('user-agent') ?? '')
+  await phCapture(
+    'agent_doc_hit',
+    {
+      path: pathname,
+      // 'file' = an llms file or a .md URL; 'accept' = a page URL asked for in markdown.
+      via: pathname.endsWith('.md') || pathname.endsWith('.txt') ? 'file' : 'accept',
+      agent,
+      country: request.headers.get('x-vercel-ip-country') ?? undefined,
+      region: request.headers.get('x-vercel-ip-country-region') ?? undefined,
+    },
+    `agent:${agent}`,
+  )
 }
 
 async function logRegistryHit(request: NextRequest): Promise<void> {
