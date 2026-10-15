@@ -14,15 +14,27 @@ function categoryOf(tags: { label: string; accent?: boolean }[]): string {
 export function GET() {
   const total = COMPONENTS.length
 
+  // Who may install what comes from the /r gate itself (its manifest and
+  // classifier), so this file never promises an install the gate refuses.
+  const lookup = loadContentLookup()
+  const installTier = (slug: string) => {
+    const type = classifyContent(slug, lookup)
+    if (type === 'meta') return 'no account needed'
+    if (type === 'standalone' || type === 'design-system-component') return 'free account'
+    return 'Premium, requires an AI Canvas token'
+  }
+
   const intro = `# AI Canvas
 
 > AI Canvas is an open-core, shadcn-compatible registry of ${total} animated React components, design systems, and templates built with Tailwind CSS and Motion. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components ship with a comprehensive AI remix prompt, so developers can install the code directly or recreate their own variation in any AI builder. On free components that prompt is public in full; on premium components and blocks only part of it is public (the setup and the constants), and the rest of the build spec requires a Premium subscription.
 
+Every component link below points at the page's markdown version (the page URL plus \`.md\`): description, install command, props and, for free components, the remix prompt. The HTML page at the same URL without \`.md\` also answers in markdown when the request sends \`Accept: text/markdown\`.
+
 ## Overview
 - [Homepage](${SITE_URL}): Browse all components.
-- [All components](${SITE_URL}/components): Full component list.
+- [All components](${SITE_URL}/components.md): Every component and block by category, as markdown.
 - [About](${SITE_URL}/about): About AI Canvas.
-- [Registry index](${SITE_URL}/r/registry.json): Machine-readable registry index.
+- [Registry index](${SITE_URL}/r/registry.json): Machine-readable registry index (see Read API below).
 
 ## Install
 Install command: \`npx shadcn@latest add @aicanvas/<component-name>\`. The @aicanvas registry is listed in the official shadcn directory, so the CLI resolves it with no extra setup.
@@ -39,6 +51,14 @@ After that, every \`npx shadcn@latest add @aicanvas/<component-name>\` is authen
 
 ## MCP server
 AI agents can browse and install AI Canvas components through the official MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: list_categories, list_components, search_components, get_component, get_component_props, get_install_command, list_systems, get_system, list_templates, get_template, validate_usage, compose_page, get_audit_checklist. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp
+
+## Read API
+Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes. Use these to list and search the catalog without the MCP server.
+- [registry.json](${SITE_URL}/r/registry.json): The shadcn registry index. \`items[]\` lists every installable item with \`name\` (the install slug), \`type\` (\`registry:ui\` component, \`registry:block\` page section, \`registry:lib\` helper), \`title\`, \`description\`, \`dependencies\` and \`files\` (target paths only, no source).
+- [aicanvas-mcp.json](${SITE_URL}/r/aicanvas-mcp.json): The catalog the MCP server reads. \`components[]\` carry \`slug\`, \`name\`, \`description\`, \`categories\`, \`tags\`, \`image\`, \`dependencies\`, \`homepageUrl\` and \`installCommand\`; it also lists \`systems\`, \`systemComponents\`, \`templates\` and \`brains\`.
+- [aicanvas-props.json](${SITE_URL}/r/aicanvas-props.json): \`props\` maps a component's slug to its documented prop tables. Components that take no props are absent.
+- Per-item files, \`${SITE_URL}/r/<slug>.json\`, are the install payloads the shadcn CLI fetches. They need the token described under Install: without it, a free item returns a placeholder titled "(free account required)" and a Premium item returns a Premium placeholder, both with no source.
+- Markdown pages, \`${SITE_URL}/components/<slug>.md\` and \`${SITE_URL}/components.md\`, are the readable form of the same catalog.
 `
 
   const grouped = new Map<string, typeof COMPONENTS>()
@@ -51,10 +71,12 @@ AI agents can browse and install AI Canvas components through the official MCP s
   const sections: string[] = []
   for (const [category, items] of grouped) {
     // Premium standalones must carry the same label the DS/template lines have,
-    // so an assistant never presents a premium install as free.
+    // so an assistant never presents a premium install as free. The label comes
+    // from the gate's own classifier, the same one the page and its markdown
+    // twin use, and each link goes to the twin (agents read it far cheaper).
     const lines = items.map(
       (c) =>
-        `- [${c.name}](${SITE_URL}/components/${c.slug}): ${c.description} Install${c.badge === 'Premium' ? ' (Premium, requires an AI Canvas token)' : ' (free account)'}: \`npx shadcn@latest add @aicanvas/${c.slug}\`. Registry: ${SITE_URL}/r/${c.slug}.json`,
+        `- [${c.name}](${SITE_URL}/components/${c.slug}.md): ${c.description} Install (${installTier(c.slug)}): \`npx shadcn@latest add @aicanvas/${c.slug}\`. Registry: ${SITE_URL}/r/${c.slug}.json`,
     )
     sections.push(`## ${category}\n${lines.join('\n')}`)
   }
@@ -68,15 +90,6 @@ AI agents can browse and install AI Canvas components through the official MCP s
   const SYSTEM_BROWSE: Record<string, string> = {
     andromeda: '/system',
     'andromeda-pro': '/components',
-  }
-  // Who may install what comes from the /r gate itself (its manifest and
-  // classifier), so this file never promises an install the gate refuses.
-  const lookup = loadContentLookup()
-  const installTier = (slug: string) => {
-    const type = classifyContent(slug, lookup)
-    if (type === 'meta') return 'no account needed'
-    if (type === 'standalone' || type === 'design-system-component') return 'free account'
-    return 'Premium, requires an AI Canvas token'
   }
   // The longest system name a slug starts with owns it, so Legacy's
   // `andromeda-` never claims an `andromeda-pro-` component.
