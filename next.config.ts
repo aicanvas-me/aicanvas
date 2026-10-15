@@ -79,10 +79,20 @@ const nextConfig: NextConfig = {
     const wantsMarkdown = [{ type: "header" as const, key: "accept", value: ".*text/markdown.*" }];
     return {
       beforeFiles: [
+        { source: "/index.md", destination: "/md/home" },
+        { source: "/", has: wantsMarkdown, destination: "/md/home" },
+        { source: "/mcp.md", destination: "/md/mcp" },
+        { source: "/mcp", has: wantsMarkdown, destination: "/md/mcp" },
         { source: "/components.md", destination: "/md/components" },
         { source: "/components/:slug.md", destination: "/md/components/:slug" },
         { source: "/components", has: wantsMarkdown, destination: "/md/components" },
         { source: "/components/:slug", has: wantsMarkdown, destination: "/md/components/:slug" },
+        // A system's own pages (system, brain, foundation...) share the
+        // :component shape; the twin answers those with the system overview.
+        { source: "/design-systems/:system.md", destination: "/md/design-systems/:system" },
+        { source: "/design-systems/:system/:component.md", destination: "/md/design-systems/:system/:component" },
+        { source: "/design-systems/:system", has: wantsMarkdown, destination: "/md/design-systems/:system" },
+        { source: "/design-systems/:system/:component", has: wantsMarkdown, destination: "/md/design-systems/:system/:component" },
       ],
       afterFiles: [],
       fallback: [],

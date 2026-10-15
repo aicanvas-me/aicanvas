@@ -93,7 +93,7 @@ describe('componentMarkdown', () => {
 
   it('free document has the source, the full prompt and the llms.txt pointer first', () => {
     const md = componentMarkdown(input())
-    expect(md.startsWith('> Free, MIT-licensed component from AI Canvas.')).toBe(true)
+    expect(md.startsWith('> Free, MIT-licensed standalone component (part of no design system')).toBe(true)
     expect(md).toContain('https://aicanvas.me/llms.txt')
     expect(md).toContain('SecretEngine')
     expect(md).toContain('## 3. State')

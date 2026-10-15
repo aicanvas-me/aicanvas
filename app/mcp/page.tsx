@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: 'MCP Server for Claude Code, Cursor and Codex',
   description:
     'Add production-ready React components to Claude Code, Cursor, and Codex from one MCP server. Source, design specs, and Framer Motion included. Install in seconds.',
-  alternates: { canonical: `${SITE_URL}/mcp` },
+  alternates: { canonical: `${SITE_URL}/mcp`, types: { 'text/markdown': `${SITE_URL}/mcp.md` } },
   openGraph: {
     title: 'AI Canvas MCP connects Claude Code, Codex, and Cursor',
     description:

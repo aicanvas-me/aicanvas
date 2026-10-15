@@ -2,8 +2,9 @@ import { COMPONENTS } from '../lib/component-registry'
 import { COLLECTIONS, collectionMembers } from '../lib/collections'
 import { SITE_URL } from '../lib/config'
 import { availableDesignSystems } from '../lib/available-design-systems'
-import { classifyContent } from '@/lib/registry/content-type'
 import { loadContentLookup } from '@/lib/registry/lookup'
+import { installTier as gateInstallTier, systemOfSlug } from '@/lib/registry/premium-gate'
+import { MCP_TOOLS } from '@/lib/agent-markdown/site'
 
 export const dynamic = 'force-static'
 
@@ -17,18 +18,13 @@ export function GET() {
   // Who may install what comes from the /r gate itself (its manifest and
   // classifier), so this file never promises an install the gate refuses.
   const lookup = loadContentLookup()
-  const installTier = (slug: string) => {
-    const type = classifyContent(slug, lookup)
-    if (type === 'meta') return 'no account needed'
-    if (type === 'standalone' || type === 'design-system-component') return 'free account'
-    return 'Premium, requires an AI Canvas token'
-  }
+  const installTier = (slug: string) => gateInstallTier(slug, lookup)
 
   const intro = `# AI Canvas
 
 > AI Canvas is an open-core, shadcn-compatible registry of ${total} animated React components, design systems, and templates built with Tailwind CSS and Motion. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components ship with a comprehensive AI remix prompt, so developers can install the code directly or recreate their own variation in any AI builder. On free components that prompt is public in full; on premium components and blocks only part of it is public (the setup and the constants), and the rest of the build spec requires a Premium subscription.
 
-Every component link below points at the page's markdown version (the page URL plus \`.md\`): description, install command, props and, for free components, the remix prompt. The HTML page at the same URL without \`.md\` also answers in markdown when the request sends \`Accept: text/markdown\`.
+Component and design-system links below point at each page's markdown version (the page URL plus \`.md\`): description, install command, props and, where the page shows one, the remix prompt. Every component, design-system and MCP page also answers in markdown at its own URL when the request sends \`Accept: text/markdown\`; the home page's markdown is at ${SITE_URL}/index.md and the MCP setup guide's at ${SITE_URL}/mcp.md.
 
 ## Overview
 - [Homepage](${SITE_URL}): Browse all components.
@@ -50,7 +46,7 @@ To authenticate installs: sign in and copy your personal token from ${SITE_URL}/
 After that, every \`npx shadcn@latest add @aicanvas/<component-name>\` is authenticated. Alternatively, each component page shows a ready tokenized install command when signed in.
 
 ## MCP server
-AI agents can browse and install AI Canvas components through the official MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: list_categories, list_components, search_components, get_component, get_component_props, get_install_command, list_systems, get_system, list_templates, get_template, validate_usage, compose_page, get_audit_checklist. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp
+AI agents can browse and install AI Canvas components through the official MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: ${MCP_TOOLS.join(', ')}.The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp.md
 
 ## Read API
 Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes. Use these to list and search the catalog without the MCP server.
@@ -91,12 +87,7 @@ Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes.
     andromeda: '/system',
     'andromeda-pro': '/components',
   }
-  // The longest system name a slug starts with owns it, so Legacy's
-  // `andromeda-` never claims an `andromeda-pro-` component.
-  const systemOf = (slug: string) =>
-    [...lookup.systemSlugs]
-      .filter((sys) => slug.startsWith(`${sys}-`))
-      .sort((a, b) => b.length - a.length)[0]
+  const systemOf = (slug: string) => systemOfSlug(slug, lookup)
   const systems = availableDesignSystems().map(
     (s: {
       slug: string
@@ -136,7 +127,7 @@ Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes.
         ? [`  - [AI Brain](${SITE_URL}/design-systems/${s.slug}/brain): Rule files an AI agent reads to build on-brand ${s.name} UI (tokens, layout, motion, per-component rules). Install or update (${installTier(brain)}): \`npx shadcn@latest add --overwrite @aicanvas/${brain}\``]
         : []
       return [
-        `- [${s.name}](${SITE_URL}/design-systems/${s.slug}): Design system (tokens + components). Browse free: ${SITE_URL}/design-systems/${s.slug}${SYSTEM_BROWSE[s.slug] ?? ''}. ${install}`,
+        `- [${s.name}](${SITE_URL}/design-systems/${s.slug}.md): Design system (tokens + components). Browse free: ${SITE_URL}/design-systems/${s.slug}${SYSTEM_BROWSE[s.slug] ?? ''}. ${install}`,
         ...brainLine,
         ...templates,
       ].join('\n')

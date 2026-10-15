@@ -10,7 +10,7 @@ export const metadata = {
   title: 'Andromeda Design System for Any Product UI',
   description:
     `A complete, token-driven design system for any product UI. Around ${ANDROMEDA_COMPONENT_META.length} components and 4 templates, all live.`,
-  alternates: { canonical: '/design-systems/andromeda' },
+  alternates: { canonical: '/design-systems/andromeda', types: { 'text/markdown': '/design-systems/andromeda.md' } },
 }
 
 export default function AndromedaPage() {

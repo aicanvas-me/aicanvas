@@ -76,7 +76,7 @@ function cell(text: string): string {
   return text.replace(/\r?\n/g, ' ').replace(/\|/g, '\\|').trim()
 }
 
-function propsSection(tables: PropTable[]): string | null {
+export function propsSection(tables: PropTable[]): string | null {
   const blocks = tables
     .filter((t) => t.props.length > 0)
     .map((t) => {
@@ -102,8 +102,10 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
   const out: string[] = []
 
   // Agents truncate long fetches, so the way back to the index goes first.
+  // A standalone belongs to no design system; say so wherever it is named.
+  const kind = input.designSystem ? noun : `standalone ${noun} (part of no design system, works in any React + Tailwind app)`
   out.push(
-    `> ${isPremium ? 'Premium' : 'Free, MIT-licensed'} ${noun} from AI Canvas. Index of every component and install setup: ${siteUrl}/llms.txt`,
+    `> ${isPremium ? 'Premium' : 'Free, MIT-licensed'} ${kind} from AI Canvas. Index of every component and install setup: ${siteUrl}/llms.txt`,
   )
   out.push(`# ${name}`)
   out.push(input.description)
