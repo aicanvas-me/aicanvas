@@ -68,6 +68,26 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Markdown twins for AI agents (app/md/*, built by lib/agent-markdown). Two
+  // ways in, both answered from the same static route: the `.md` URL that the
+  // page advertises with <link rel="alternate" type="text/markdown"> (Codex
+  // follows it), and the page URL itself with Accept: text/markdown (Claude
+  // Code, Cursor and Copilot send it alongside text/html; markdown wins the
+  // tie). beforeFiles, so the rewrite runs before the prerendered HTML page
+  // can answer. Browsers never send text/markdown, so they always get HTML.
+  async rewrites() {
+    const wantsMarkdown = [{ type: "header" as const, key: "accept", value: ".*text/markdown.*" }];
+    return {
+      beforeFiles: [
+        { source: "/components.md", destination: "/md/components" },
+        { source: "/components/:slug.md", destination: "/md/components/:slug" },
+        { source: "/components", has: wantsMarkdown, destination: "/md/components" },
+        { source: "/components/:slug", has: wantsMarkdown, destination: "/md/components/:slug" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async redirects() {
     return [
       { source: "/r", destination: "/components", permanent: true },
