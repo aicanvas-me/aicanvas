@@ -130,7 +130,7 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
     )
   }
   install.push(
-    `AI agents can also install it through the AI Canvas MCP server (\`npx -y @aicanvas/mcp\`). Setup: ${siteUrl}/mcp`,
+    `AI agents can also get its install command from the read-only AI Canvas MCP server (\`npx -y @aicanvas/mcp\`) and run it. Setup: ${siteUrl}/mcp`,
   )
   if (npm) install.push(`Peer dependencies:\n\n${fence(`npm install ${npm}`, 'bash')}`)
   if (fonts.length > 0) install.push(`Fonts: ${fonts.join('; ')}`)

@@ -24,7 +24,7 @@ export function GET() {
 
 > AI Canvas is an open-core, shadcn-compatible registry of ${total} animated React components, design systems, and templates built with Tailwind CSS and Motion. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components ship with a comprehensive AI remix prompt, so developers can install the code directly or recreate their own variation in any AI builder. On free components that prompt is public in full; on premium components and blocks only part of it is public (the setup and the constants), and the rest of the build spec requires a Premium subscription.
 
-Component and design-system links below point at each page's markdown version (the page URL plus \`.md\`): description, install command, props and, where the page shows one, the remix prompt. Every component, design-system and MCP page also answers in markdown at its own URL when the request sends \`Accept: text/markdown\`; the home page's markdown is at ${SITE_URL}/index.md and the MCP setup guide's at ${SITE_URL}/mcp.md.
+Component and design-system links below point at each page's markdown version (the page URL plus \`.md\`): description, install command, props and, where the page shows one, the remix prompt. These pages also answer in markdown at their own URL when the request sends \`Accept: text/markdown\`: the home page (or ${SITE_URL}/index.md), /mcp (or ${SITE_URL}/mcp.md), /components, each /components/<slug>, each /design-systems/<system> and each /design-systems/<system>/<component>. Other pages, such as templates, answer in HTML only.
 
 ## Overview
 - [Homepage](${SITE_URL}): Browse all components.
@@ -46,7 +46,7 @@ To authenticate installs: sign in and copy your personal token from ${SITE_URL}/
 After that, every \`npx shadcn@latest add @aicanvas/<component-name>\` is authenticated. Alternatively, each component page shows a ready tokenized install command when signed in.
 
 ## MCP server
-AI agents can browse and install AI Canvas components through the official MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: ${MCP_TOOLS.join(', ')}. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp.md
+AI agents can browse AI Canvas and get install commands through the official, read-only MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: ${MCP_TOOLS.join(', ')}. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp.md
 
 ## Read API
 Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes. Use these to list and search the catalog without the MCP server.

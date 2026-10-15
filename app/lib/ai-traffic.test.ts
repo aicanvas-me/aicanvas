@@ -17,6 +17,8 @@ describe('aiSourceOf', () => {
     expect(aiSourceOf('google.com', null)).toBeUndefined()
     expect(aiSourceOf('chatgpt.com.evil.example', null)).toBeUndefined()
     expect(aiSourceOf('$direct', 'newsletter')).toBeUndefined()
+    expect(aiSourceOf('$direct', '__proto__')).toBeUndefined()
+    expect(aiSourceOf('constructor', 'toString')).toBeUndefined()
   })
 })
 
@@ -27,6 +29,14 @@ describe('isAgentDocRequest', () => {
     expect(isAgentDocRequest('/components/wave-lines.md', '*/*')).toBe(true)
     expect(isAgentDocRequest('/md/components/wave-lines', '*/*')).toBe(true)
     expect(isAgentDocRequest('/components/wave-lines', 'text/markdown, text/html, */*')).toBe(true)
+  })
+
+  it('counts only URLs that have a markdown version', () => {
+    expect(isAgentDocRequest('/design-systems/andromeda-pro/accordion.md', '*/*')).toBe(true)
+    expect(isAgentDocRequest('/README.md', '*/*')).toBe(false)
+    expect(isAgentDocRequest('/pricing', 'text/markdown, text/html')).toBe(false)
+    expect(isAgentDocRequest('/api/me/token', 'text/markdown')).toBe(false)
+    expect(isAgentDocRequest('/components/category/backgrounds', 'text/markdown')).toBe(false)
   })
 
   it('leaves a browser page load alone', () => {

@@ -214,16 +214,19 @@ export default function PrivacyPage() {
             request and the hash is discarded after 24 hours. No personal
             identifier is created and no cross-site tracking is possible. We
             also measure site usage ourselves, without cookies: our own server
-            collects page views (path, referrer, the name of the AI assistant
-            when the visit came from one, such as ChatGPT or Claude, country
-            and region), requests from AI tools for the machine-readable
-            versions of our pages (the page path and the kind of tool, for
-            example Claude or Cursor), clicks on
+            collects page views (path, referrer, country and region), requests
+            for the machine-readable versions of our pages, such as llms.txt
+            (the page path and the kind of tool that asked), clicks on
             key buttons (for example copying an install command), searches on
             the site (the typed query and its result count), script errors in
             your browser, and errors raised on our own server while handling a
             request (the affected route, the error message and an error id),
-            and stores them as anonymous events in our analytics tool. Every
+            and stores them as anonymous events in our analytics tool. When a
+            visit comes from an AI assistant such as ChatGPT or Claude, the page
+            view also records that assistant&apos;s name; to recognise it, the
+            server briefly reads the referrer and the link&apos;s source tag,
+            and to name the kind of tool it briefly reads the user-agent, then
+            stores only the name. Every
             such event carries at most a country and region. Nothing is stored
             on or read from your device for this, no visitor identifier is
             created, and your IP address never reaches the analytics store.

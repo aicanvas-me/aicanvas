@@ -26,7 +26,7 @@ export function GET() {
   const body = [
     `> AI Canvas component index for agents. Full site index and install setup: ${SITE_URL}/llms.txt`,
     `# AI Canvas standalone components and blocks`,
-    `${COMPONENTS.length} animated React components and page-section blocks, shadcn-compatible, built with Tailwind CSS and Motion. They are standalone: they belong to no design system and drop into any React + Tailwind app (the design systems are at ${SITE_URL}/index.md). Free ones are MIT; Premium ones need a Premium subscription to install. Install any of them with \`npx shadcn@latest add @aicanvas/<slug>\`, or through the AI Canvas MCP server (${SITE_URL}/mcp). Each link below is that component's markdown page: description, install, props, and, for free components, the source and the remix prompt.`,
+    `${COMPONENTS.length} animated React components and page-section blocks, shadcn-compatible, built with Tailwind CSS and Motion. They are standalone: they belong to no design system and drop into any React + Tailwind app (the design systems are at ${SITE_URL}/index.md). Free ones are MIT; Premium ones need a Premium subscription to install. Install any of them with \`npx shadcn@latest add @aicanvas/<slug>\`, or get the command from the read-only AI Canvas MCP server (${SITE_URL}/mcp). Each link below is that component's markdown page: description, install command, props and, for free components, the remix prompt.`,
     ...sections,
   ].join('\n\n')
 

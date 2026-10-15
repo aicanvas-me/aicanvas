@@ -1,9 +1,11 @@
 /**
- * Edge proxy — three responsibilities:
+ * Edge proxy — four responsibilities:
  *
  * 1. /r/* registry hits → log to PostHog (anonymous, fire-and-forget)
- * 2. Page requests → log an anonymous server-side $pageview (see below)
- * 3. Everything else → refresh the Supabase auth-session cookie
+ * 2. Agent reads of llms.txt and the markdown twins → log `agent_doc_hit`
+ *    (anonymous), and skip the session refresh like /r/*
+ * 3. Page requests → log an anonymous server-side $pageview (see below)
+ * 4. Everything else → refresh the Supabase auth-session cookie
  *
  * /r/* is fetched by the shadcn CLI and the AI Canvas MCP, both anonymous.
  * Running Supabase there would just waste cycles. Everything else may carry
@@ -12,7 +14,8 @@
  *
  * Pageviews are logged HERE, server-side, instead of via a client SDK, on
  * purpose: no cookie, no localStorage, no visitor identifier of any kind
- * (constant distinct_id), and the client IP never reaches the analytics
+ * (constant distinct_id for page views; agent reads share one id per tool
+ * family, never per visitor), and the client IP never reaches the analytics
  * store. We count events; we never fingerprint a visitor. This invariant
  * is load-bearing for the privacy policy — do not add a client analytics
  * SDK or a per-visitor id here.
