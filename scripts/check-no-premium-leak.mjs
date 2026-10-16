@@ -6,6 +6,7 @@
  * CONTENT MARKER, and by SECRET SHAPE:
  *   - injected premium working folders   (components-workspace|design-systems)/zz-premium-*
  *   - generated premium shims            *.premium.generated.(ts|tsx), premium-registry.generated.*
+ *   - injected vault systems and output  design-systems/andromeda-pro/, the inject shims, _premium.json
  *   - the premium source marker          a fixed token the inject script stamps
  *                                         into every premium file (in ANY path)
  *   - a GitHub Personal Access Token     ghp_… / github_pat_…
@@ -56,6 +57,16 @@ const PREMIUM_PATH =
   /(^|\/)(components-workspace-premium|design-systems-premium)\/|(^|\/)(components-workspace|design-systems)\/zz-premium-/
 const PREMIUM_GENERATED =
   /\.premium\.generated\.(ts|tsx|js)$|(^|\/)premium-registry\.generated\.|(^|\/)component-copy\.premium\.generated\./
+// Whole-system trees inject copies from the vault (manifest key `systems`), and
+// the shims and stamps inject writes beside them. All gitignored, so only a
+// force-add reaches here. Slugs are static, one per injected-only system, the
+// same list as .gitignore. Case-insensitive: macOS treats Andromeda-Pro/ as the
+// same folder. app/_lib/andromeda-pro/ is the public site's own code, not matched.
+const INJECTED_SYSTEM = /^design-systems\/andromeda-pro\//i
+const INJECTED_GENERATED =
+  /^app\/lib\/(andromeda-(v2|pro|pro-examples|pro-helpers|pro-brain-teaser|brain-teaser)|premium-build-info)\.generated\.(ts|tsx)$/i
+// Inject's manifest stamp; brain bundles beside it are BRAIN_JSON below.
+const INJECTED_MANIFEST = /^registry-data\/_premium\.json$/i
 // Assembled from parts so THIS file does not contain the literal marker (which
 // would make the content scan flag the guard itself). Keep in sync with inject.
 const MARKER = new RegExp(['AICANVAS', 'PREMIUM', 'DO', 'NOT', 'COMMIT'].join('-'))
@@ -145,6 +156,9 @@ const violations = []
 for (const f of files) {
   if (PREMIUM_PATH.test(f)) violations.push(`tracked premium working folder: ${f}`)
   if (PREMIUM_GENERATED.test(f)) violations.push(`tracked premium generated shim: ${f}`)
+  if (INJECTED_SYSTEM.test(f)) violations.push(`injected vault design system: ${f} (vault-only, injected at build time)`)
+  if (INJECTED_GENERATED.test(f)) violations.push(`injected build shim: ${f} (written by inject-premium.mjs, never tracked)`)
+  if (INJECTED_MANIFEST.test(f)) violations.push(`injected premium manifest: ${f} (written by inject-premium.mjs, never tracked)`)
   if (FREE_DS_INJECTED.has(f)) {
     violations.push(
       `build-time-injected free design-system component: ${f} ` +
