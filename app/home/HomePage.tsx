@@ -403,7 +403,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
               </p>
               <div className="mt-6">
                 <Link
-                  href="/design-systems/andromeda-pro/templates"
+                  href="/design-systems/andromeda-pro#ovb-templates"
                   className={buttonClasses({ variant: 'primary', size: 'md' })}
                 >
                   Browse all {ANDROMEDA_PRO_TEMPLATE_META.length} templates

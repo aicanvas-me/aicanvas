@@ -19,7 +19,8 @@ import { usePathname } from 'next/navigation'
 import { CaretDown } from '@phosphor-icons/react'
 import { CATEGORIES } from '../lib/categories'
 
-type NavLink = { label: string; href: string }
+// prefetch false: a page linked ahead of its launch (/icons) is not prefetched.
+type NavLink = { label: string; href: string; prefetch?: false }
 
 const DESIGN_SYSTEMS: NavLink[] = [
   { label: 'Andromeda Pro', href: '/design-systems/andromeda-pro' },
@@ -115,6 +116,7 @@ function Menu({
             <li key={l.href}>
               <Link
                 href={l.href}
+                prefetch={l.prefetch}
                 onClick={() => setOpen(false)}
                 aria-current={pathname === l.href ? 'page' : undefined}
                 className="block rounded-lg px-2.5 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-[current=page]:bg-sand-100 aria-[current=page]:font-semibold aria-[current=page]:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50 dark:aria-[current=page]:bg-sand-900 dark:aria-[current=page]:text-sand-50"
@@ -143,7 +145,7 @@ export function HomeLogo() {
 // the phone drawer is gone from md up, so More is the only way to Pricing and
 // the info pages on a tablet.
 const MORE_COMPACT: NavLink[] = [
-  { label: 'Icons', href: '/icons' },
+  { label: 'Icons', href: '/icons', prefetch: false },
   { label: 'MCP', href: '/mcp' },
   ...MORE,
 ]

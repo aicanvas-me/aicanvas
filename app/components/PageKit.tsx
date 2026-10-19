@@ -25,7 +25,8 @@ export const CARD = 'rounded-3xl border border-sand-200 bg-sand-100 dark:border-
 // The page itself: the 7xl column the homepage uses, the footer, and the AI
 // CANVAS wordmark signing it off. It does not own the scroll (no
 // data-owns-scroll): the root column scrolls, so Back restores the position
-// (ScrollMemory) and in-page anchors land under the bar (md:scroll-pt-14).
+// (ScrollMemory). The site bar sits above the column, not in it, so an
+// in-page anchor lands at the column's top with nothing to clear.
 export function PageShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">

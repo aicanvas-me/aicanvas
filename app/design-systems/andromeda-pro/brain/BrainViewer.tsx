@@ -299,7 +299,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
 
   // Jump back to the top of the content whenever the active file changes.
   // The content panel is not a scroller itself (the page column scrolls), so
-  // scroll the column via scrollIntoView; scrollMarginTop clears the sticky bar.
+  // scroll the column via scrollIntoView; no bar sits inside that scroller.
   useEffect(() => {
     contentRef.current?.scrollIntoView({ block: 'start' })
   }, [activeFile])
@@ -409,10 +409,11 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
           width: 220,
           flexShrink: 0,
           borderLeft: `1px solid ${C.border.subtle}`,
-          // Sticks under the crumb line (h-11) at the top of the scroll
-          // column, which itself starts under the 56px site bar.
+          // Sticks to the top of the Andromeda layout's own scroller
+          // (data-owns-scroll), which starts under the 56px site bar and the
+          // 44px crumb line; neither sits inside it, so nothing to clear.
           position: 'sticky',
-          top: 44,
+          top: 0,
           maxHeight: 'calc(100vh - 100px)',
           overflowY: 'auto',
           padding: '20px 0',
@@ -478,7 +479,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
         style={{
           flex: 1,
           minWidth: 0,
-          scrollMarginTop: 56,
+          scrollMarginTop: 0,
           display: 'flex',
           flexDirection: 'column',
         }}
