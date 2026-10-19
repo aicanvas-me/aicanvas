@@ -54,14 +54,11 @@ const IDLE =
  *  The desktop bar carries the same pages in its nav and More menu. */
 export function SecondaryNav({
   pathname,
-  variant,
   onNavigate,
 }: {
   pathname: string | null
-  variant: 'rail' | 'drawer'
   onNavigate?: () => void
 }) {
-  const drawer = variant === 'drawer'
   return (
     <>
       {ITEMS.map(({ label, href, icon, match }) => {
@@ -72,12 +69,12 @@ export function SecondaryNav({
             key={href}
             href={href}
             onClick={onNavigate}
-            className={`${drawer ? 'mb-1 ' : ''}flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
+            className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
               active ? ACTIVE : IDLE
             }`}
           >
-            {drawer ? <span>{icon}</span> : icon}
-            <span className={drawer ? 'flex-1' : undefined}>{label}</span>
+            <span>{icon}</span>
+            <span className="flex-1">{label}</span>
           </Link>
         )
       })}

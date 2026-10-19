@@ -24,9 +24,6 @@ export interface ComponentCardProps {
   slug: string
   position: number
   source: CardSource
-  /** Retired: the card no longer draws a button, the whole card is the link.
-   *  Still accepted so the callers that pass it keep compiling. */
-  cta?: string
   /** 'pro' paints the badge in Andromeda Pro's cyan, the colour of its tier chip. */
   badgeTone?: 'pro'
 }

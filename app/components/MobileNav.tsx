@@ -167,7 +167,7 @@ export function MobileNav() {
                 </div>
 
                 <div className="mb-3">
-                  <SecondaryNav pathname={pathname} variant="drawer" onNavigate={() => setOpen(false)} />
+                  <SecondaryNav pathname={pathname} onNavigate={() => setOpen(false)} />
                 </div>
               </nav>
 

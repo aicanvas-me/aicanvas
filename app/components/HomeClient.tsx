@@ -172,7 +172,6 @@ export function HomeClient({
               href: `/design-systems/${sys.slug}/${c.slug}`,
               badge: sys.label,
               badgeTone: sys.badgeTone,
-              cta: 'View Component',
             })),
           ...sys.templates
             .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].templates[i], tokens))
@@ -184,7 +183,6 @@ export function HomeClient({
               href: `/design-systems/${sys.slug}/templates/${t.folder}`,
               badge: sys.badgeTone === 'pro' ? 'Premium template' : 'Free',
               badgeTone: sys.badgeTone,
-              cta: 'View template',
             })),
         ])
       : []
@@ -340,7 +338,6 @@ export function HomeClient({
                     image={e.image}
                     badge={e.badge}
                     badgeTone={e.badgeTone}
-                    cta={e.cta}
                     href={e.href}
                     slug={e.key}
                     position={i}

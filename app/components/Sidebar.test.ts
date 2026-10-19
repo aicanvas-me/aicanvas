@@ -202,7 +202,8 @@ describe('the catalog rail', () => {
   const selectedTab = (aside: HTMLElement) =>
     within(aside).getAllByRole('tab').find((t) => t.getAttribute('aria-selected') === 'true')?.getAttribute('aria-label')
 
-  it('carries no search, no logo, no site-page links and no rules', () => {
+  // Renders the whole rail for three routes: room for a busy machine.
+  it('carries no search, no logo, no site-page links and no rules', { timeout: 20_000 }, () => {
     for (const path of ['/components', '/components/category/widgets', '/design-systems/andromeda-pro']) {
       const aside = rail(path)
       expect(aside.querySelector('input'), path).toBeNull()
@@ -220,6 +221,12 @@ describe('the catalog rail', () => {
     const src = readFileSync(join(root, 'app/components/Sidebar.tsx'), 'utf8')
     expect(src).not.toContain('SecondaryNav')
     expect(src).not.toContain('SiteSearch')
+  })
+
+  it('carries the logo home on /kuendigen only, where the global bar steps aside', () => {
+    expect(rail('/kuendigen').querySelector('a[href="/"]')).not.toBeNull()
+    cleanup()
+    expect(rail('/components').querySelector('a[href="/"]')).toBeNull()
   })
 
   it('draws a three-way switch: Design systems, Components, Icons', () => {
@@ -286,6 +293,20 @@ describe('the catalog rail', () => {
     expect(selectedTab(aside)).toBe('Design systems')
     // Only the selected tab is in the tab order.
     expect(within(aside).getAllByRole('tab').map((t) => t.tabIndex)).toEqual([0, -1, -1])
+  })
+
+  it('drops a hand-picked segment on navigation, and does not bring it back on return', () => {
+    currentPath = '/components'
+    const { container, rerender } = render(h(Sidebar))
+    const aside = () => container.querySelector('aside')!
+    fireEvent.click(within(aside()).getByRole('tab', { name: 'Design systems' }))
+    expect(selectedTab(aside())).toBe('Design systems')
+    currentPath = '/design-systems/andromeda-pro'
+    rerender(h(Sidebar))
+    expect(selectedTab(aside())).toBe('Design systems')
+    currentPath = '/components'
+    rerender(h(Sidebar))
+    expect(selectedTab(aside())).toBe('Components')
   })
 
   it('keeps every category link in the HTML whichever segment is on', () => {

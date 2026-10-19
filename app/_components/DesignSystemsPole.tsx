@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import { CaretDown, Cube, Sparkle } from '@phosphor-icons/react'
+import { CaretDown, Sparkle } from '@phosphor-icons/react'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
@@ -84,11 +84,7 @@ export const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
 
 export function DesignSystemsPole({
   onNavigate,
-  showHeader = true,
 }: {
-  // The pole's own "Design Systems" label. The rail's switch (CatalogNav)
-  // draws its own heading above the list and turns this one off.
-  showHeader?: boolean
   // Fired when any leaf link is tapped. The mobile drawer passes setOpen(false)
   // so it closes immediately on tap. Templates now navigate in the SAME tab
   // (the TemplatePreviewShell top bar carries you back), so a route change also
@@ -128,15 +124,8 @@ export function DesignSystemsPole({
 
   return (
     <div className="mb-3">
-      {/* A label, not a control. Collapsing now lives on each system row, so a
-          second collapse here could hide both systems behind a header that
-          carries no caret and no way back. */}
-      {showHeader && (
-        <div className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 dark:text-sand-300">
-          <Cube weight="regular" size={16} />
-          <span className="flex-1 text-left">Design Systems</span>
-        </div>
-      )}
+      {/* No label of its own: the switch (CatalogNav) draws the heading above
+          the list. */}
       <div className="relative">
         {/* One vertical rail groups the systems under the pole header; it
             replaces the elbow arrow that used to sit on every row. */}

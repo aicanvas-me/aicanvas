@@ -76,11 +76,19 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
   const baseId = useId()
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
 
-  // A pick by hand is remembered with the path it was made on, so the next
-  // navigation drops it and the route decides again.
-  const [hand, setHand] = useState<{ pathname: string; segment: CatalogSegment } | null>(null)
-  const segment = hand?.pathname === pathname ? hand.segment : segmentForPath(pathname)
-  const pick = (next: CatalogSegment) => setHand({ pathname, segment: next })
+  // A pick by hand holds only until the next navigation, which hands the
+  // choice back to the route. The rail stays mounted across pages, so the pick
+  // is dropped the moment the path changes (state adjusted during render),
+  // not merely ignored on other paths: coming back to the page it was made on
+  // must not bring it back.
+  const [hand, setHand] = useState<CatalogSegment | null>(null)
+  const [handPath, setHandPath] = useState(pathname)
+  if (handPath !== pathname) {
+    setHandPath(pathname)
+    setHand(null)
+  }
+  const segment = hand ?? segmentForPath(pathname)
+  const pick = (next: CatalogSegment) => setHand(next)
 
   // Active category resolves from the path first (canonical
   // /components/category/<slug>), then falls back to the legacy ?category=
@@ -147,7 +155,7 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
     <div>
       <div
         role="tablist"
-        aria-label="Catalog"
+        aria-label="Catalog section"
         onKeyDown={onKeyDown}
         className="flex items-center gap-0.5 rounded-full bg-sand-100 p-1 dark:bg-sand-900"
       >
@@ -183,7 +191,7 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
         })}
       </div>
 
-      {panel('design-systems', <DesignSystemsPole onNavigate={onNavigate} showHeader={false} />)}
+      {panel('design-systems', <DesignSystemsPole onNavigate={onNavigate} />)}
 
       {panel(
         'components',

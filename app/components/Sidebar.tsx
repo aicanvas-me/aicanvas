@@ -5,6 +5,7 @@ import { GithubLogo, XLogo } from '@phosphor-icons/react'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import { buttonClasses } from './buttonClasses'
 import { CatalogNav } from './CatalogNav'
+import { HomeLogo } from './HomeNav'
 import { TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
 import { CAPTURE_LEAF_RE } from './top-bar-crumbs'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
@@ -32,11 +33,21 @@ export function Sidebar() {
     TEMPLATE_LEAF_RE.test(pathname ?? '') ||
     CAPTURE_LEAF_RE.test(pathname ?? '')
   const pinnedDark = isPinnedDarkRoute(pathname)
+  // /kuendigen is frozen as shipped and draws its own bar with no site links,
+  // and the global bar steps aside there, so the rail carries the logo on that
+  // one route: the way home, at the height of the page's own bar.
+  const ownBar = pathname === '/kuendigen'
 
   if (hideSidebar) return null
 
   return (
     <aside className={`@container flex h-full w-60 shrink-0 flex-col bg-sand-50 dark:bg-sand-950 ${pinnedDark ? 'dark' : ''}`}>
+      {ownBar && (
+        <div className="flex h-14 shrink-0 items-center px-5">
+          <HomeLogo />
+        </div>
+      )}
+
       {/* ── Navigation ── */}
       {/* The thin scrollbar (globals.css) takes width when the list scrolls,
           and the widest row, a system name with its NEW chip, has no slack to

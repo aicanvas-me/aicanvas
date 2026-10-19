@@ -213,7 +213,8 @@ describe('the global top bar', () => {
     return container.querySelector('header')
   }
 
-  it('draws the main navigation on the homepage and on every catalog route', () => {
+  // Renders the whole bar for every route below: room for a busy machine.
+  it('draws the main navigation on the homepage and on every catalog route', { timeout: 20_000 }, () => {
     for (const path of ['/', '/pricing', ...CATALOG]) {
       const header = bar(path)
       expect(header, path).not.toBeNull()

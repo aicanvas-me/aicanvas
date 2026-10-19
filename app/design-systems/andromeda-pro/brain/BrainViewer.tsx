@@ -409,9 +409,11 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
           width: 220,
           flexShrink: 0,
           borderLeft: `1px solid ${C.border.subtle}`,
+          // Sticks under the crumb line (h-11) at the top of the scroll
+          // column, which itself starts under the 56px site bar.
           position: 'sticky',
-          top: 56,
-          maxHeight: 'calc(100vh - 56px)',
+          top: 44,
+          maxHeight: 'calc(100vh - 100px)',
           overflowY: 'auto',
           padding: '20px 0',
         }}
