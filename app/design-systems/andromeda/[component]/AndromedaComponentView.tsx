@@ -16,7 +16,6 @@ import {
 } from '@phosphor-icons/react'
 import { Step } from '../../../components/Step'
 import { copyText } from '../../../components/useCopied'
-import { SiteFooter } from '../../../components/SiteFooter'
 import { Button } from '../../../components/Button'
 import { SaveButton } from '../../../components/SaveButton'
 import { HighlightedCodeView } from '../../../components/HighlightedCodeView'
@@ -34,6 +33,7 @@ import { Paywall } from '../../../components/billing/Paywall'
 import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 type RelatedItem = { slug: string; name: string; image?: string }
 
@@ -80,6 +80,15 @@ export function AndromedaComponentView({
   const [installTab, setInstallTab] = useState<'cli' | 'manual'>('cli')
   const [pkgManager, setPkgManager] = useState<'pnpm' | 'npm' | 'yarn' | 'bun'>('npm')
   const mainCardRef = useRef<HTMLDivElement>(null)
+  // Where the copied toast centres: under the main card, read when the toast
+  // opens (a ref is not read during render).
+  const [toastLeft, setToastLeft] = useState<number | null>(null)
+  const showCliToast = () => {
+    const card = mainCardRef.current
+    setToastLeft(card ? card.getBoundingClientRect().left + card.offsetWidth / 2 : null)
+    setCliCopied(true)
+    setTimeout(() => setCliCopied(false), 2000)
+  }
 
   // Source is never shipped in this page's HTML. It's fetched on demand from
   // the gated endpoint when the Code tab (or Manual install) opens. Reading a
@@ -110,17 +119,28 @@ export function AndromedaComponentView({
     }
   }, [registrySlug])
   // Fetch the first time the source becomes visible (Code tab or Manual tab).
+  // The fetch starts in a task of its own, so its first state write never lands
+  // inside the commit; a change of tab before it fires cancels it.
   useEffect(() => {
-    if ((tab === 'code' || installTab === 'manual') && codeState.status === 'idle') void openCode()
+    if (!((tab === 'code' || installTab === 'manual') && codeState.status === 'idle')) return
+    const id = setTimeout(() => void openCode(), 0)
+    return () => clearTimeout(id)
   }, [tab, installTab, codeState.status, openCode])
-  // Re-fetch when navigating to another component.
-  useEffect(() => { setCodeState({ status: 'idle' }) }, [slug])
+  // Re-fetch when navigating to another component (state adjusted during
+  // render, the moment the slug changes).
+  const [codeSlug, setCodeSlug] = useState(slug)
+  if (codeSlug !== slug) {
+    setCodeSlug(slug)
+    setCodeState({ status: 'idle' })
+  }
 
   // Adopt the user's preferred package manager once preferences load.
   // We don't override an in-progress click — only the initial default.
-  useEffect(() => {
-    if (preferences.package_manager) setPkgManager(preferences.package_manager)
-  }, [preferences.package_manager])
+  const [pmPref, setPmPref] = useState<typeof preferences.package_manager | null>(null)
+  if (preferences.package_manager && preferences.package_manager !== pmPref) {
+    setPmPref(preferences.package_manager)
+    setPkgManager(preferences.package_manager)
+  }
 
   const RELATED_PAGE_SIZE = 3
   const [relatedStart, setRelatedStart] = useState(0)
@@ -240,8 +260,7 @@ export function AndromedaComponentView({
     const ok = await copyText(cliCommand)
     track('CLI Copy', { component: registrySlug, ok })
     if (!ok) return
-    setCliCopied(true)
-    setTimeout(() => setCliCopied(false), 2000)
+    showCliToast()
   }
 
   return (
@@ -249,6 +268,7 @@ export function AndromedaComponentView({
     <PageFrame as="main" className={`${PAGE_TOP} pb-8`}>
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="mb-8">
+        <PageCrumbs />
         <PageTitle gap="none" rank="section">{name}</PageTitle>
         <PageLead>{description}</PageLead>
       </div>
@@ -443,8 +463,7 @@ export function AndromedaComponentView({
                             : `npx shadcn@latest add ${installReference}`
                           void copyText(cmd)
                           trackInstall(registrySlug, 'andromeda', pkgManager)
-                          setCliCopied(true)
-                          setTimeout(() => setCliCopied(false), 2000)
+                          showCliToast()
                         }}
                         className="ml-auto shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
@@ -641,8 +660,6 @@ export function AndromedaComponentView({
           </div>
         </section>
       )}
-
-      <SiteFooter />
     </PageFrame>
 
     <AnimatePresence>
@@ -693,9 +710,7 @@ export function AndromedaComponentView({
           transition={{ type: 'spring', stiffness: 400, damping: 28 }}
           className="fixed bottom-16 z-50 -translate-x-1/2"
           style={{
-            left: mainCardRef.current
-              ? mainCardRef.current.getBoundingClientRect().left + mainCardRef.current.offsetWidth / 2
-              : '50%',
+            left: toastLeft ?? '50%',
           }}
         >
           <div className="flex items-center gap-3 rounded-xl border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">

@@ -429,7 +429,9 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
             </p>
           </Reveal>
           <ComponentWall items={wall} />
-          <div className="relative -mt-12 flex justify-center">
+          {/* Below the wall, never over it: pulled up into the wall's fade it
+              sat on the bottom row of cards. */}
+          <div className="mt-8 flex justify-center">
             <Link href="/components" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
               Browse all {total} standalones
               <ArrowRight weight="regular" size={14} />

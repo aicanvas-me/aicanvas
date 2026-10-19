@@ -23,7 +23,6 @@ import { Rotate3d } from 'lucide-react'
 import { Check, LockSimple, X as XIcon } from '@phosphor-icons/react'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
-import { SiteFooter } from '@/app/components/SiteFooter'
 import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-pro-brain-teaser.generated'
 import { BRAIN_TEASER as LEGACY_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
@@ -32,6 +31,7 @@ import type { Theme } from '@/app/components/ThemeProvider'
 import { BRAIN_GROUND } from '../overview-b/BrainWireframe'
 import { BRAIN_ZONES, blendZones } from '@/app/_lib/brain-colors'
 import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // The flow diagram's connector gradients and travelling dots paint from these.
 // They sit inside an SVG stop and a CSS string, where a Tailwind class cannot
@@ -980,9 +980,9 @@ export function BrainStoryV4() {
 
       <PageFrame className={PAGE_TOP}>
         {/* ── Hero, in the overview hero's shape ── */}
+        <PageCrumbs />
         <section aria-labelledby="brain-hero" className="max-w-3xl">
-          <PageOverline>Built for agents</PageOverline>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <PageTitle id="brain-hero" gap="none">
               Andromeda Pro AI Brain
             </PageTitle>
@@ -1234,11 +1234,6 @@ export function BrainStoryV4() {
             </Link>
           </div>
         </Section>
-      </PageFrame>
-
-      {/* footer, consistent with the content pages */}
-      <PageFrame className="mt-16 pb-10">
-        <SiteFooter />
       </PageFrame>
     </div>
   )

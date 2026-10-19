@@ -9,7 +9,6 @@ import Link from 'next/link'
 import { ArrowRight, Brain, ChatText, Check, Minus, TerminalWindow, type Icon } from '@phosphor-icons/react'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
-import { SiteFooter } from '../../../components/SiteFooter'
 import { SystemTierChip } from '../../../_components/SystemTierChip'
 import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { AndromedaComponentCard } from '../system/AndromedaComponentCard'
@@ -25,6 +24,7 @@ import {
   type OverviewStats,
   type OverviewTemplate,
 } from './overview-data'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // Medium buttons are 40px tall with 14px text and 16px side padding.
 const BTN_PRIMARY = `${buttonClasses({ variant: 'primary', size: 'md' })} h-10`
@@ -225,11 +225,11 @@ export function OverviewB({
     <main className={`w-full ${PAGE_TOP}`}>
       {/* ── 1. Hero ─────────────────────────────────────────── */}
       <PageFrame>
+        <PageCrumbs />
         <section aria-labelledby="ovb-hero" className="max-w-3xl">
-          <PageOverline>Design system</PageOverline>
           {/* Same hero row as Legacy: the chip sits beside the h1, not inside
               it, so the heading stays the system's name alone. */}
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <PageTitle id="ovb-hero" gap="none">
               Andromeda Pro
             </PageTitle>
@@ -512,11 +512,6 @@ export function OverviewB({
             </Link>
           </p>
         </section>
-      </PageFrame>
-
-      {/* ── 9. Footer ──────────────────────────────────────────────────── */}
-      <PageFrame className="mt-16 pb-10">
-        <SiteFooter />
       </PageFrame>
     </main>
   )

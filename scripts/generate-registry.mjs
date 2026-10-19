@@ -1491,8 +1491,8 @@ const navTs =
     null,
     2,
   )}\n`
-writeFileSync('app/lib/component-nav.generated.ts', navTs)
-console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categoryCounts).length} categories, ${mcpComponents.length} total)`)
+// Written at the end of the metadata block below, once the grid order is known:
+// CATEGORY_COMPONENTS lists each category's components in that order.
 
 // ── Registry-free component metadata (grid + homepage) ────────────────────────
 // COMPONENT_META mirrors `COMPONENTS.map(toMeta)` exactly — same order
@@ -1625,6 +1625,41 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
     `export const COMPONENT_META: ComponentMeta[] = ${JSON.stringify(metaList, null, 2)}\n`
   writeFileSync('app/lib/component-meta.generated.ts', metaTs)
   console.log(`Generated app/lib/component-meta.generated.ts (${metaList.length} components)`)
+
+  // Every component by name under each category, for the rail's Components
+  // tab, in categories.ts order and, inside a category, in grid order. A
+  // component with two category tags is listed under both, as the category
+  // pages list it. Fail loudly if the lists and the counts the grid shows ever
+  // disagree: a component missing here has no way into the rail.
+  const catOrder = [...readFileSync('app/lib/categories.ts', 'utf-8').matchAll(/^\s*label: '([^']+)'/gm)].map((m) => m[1])
+  const categoryComponents = Object.fromEntries(
+    catOrder.map((label) => [
+      label,
+      metaList.filter((m) => m.tags.some((t) => t.accent && t.label === label)).map((m) => ({ slug: m.slug, name: m.name })),
+    ]),
+  )
+  const listed = new Set(Object.values(categoryComponents).flatMap((rows) => rows.map((r) => r.slug)))
+  const navProblems = []
+  if (listed.size !== mcpComponents.length) {
+    navProblems.push(`CATEGORY_COMPONENTS lists ${listed.size} components, TOTAL_COMPONENTS is ${mcpComponents.length}`)
+  }
+  for (const label of catOrder) {
+    if (categoryComponents[label].length !== (categoryCounts[label] ?? 0)) {
+      navProblems.push(`"${label}" lists ${categoryComponents[label].length}, CATEGORY_COUNTS says ${categoryCounts[label] ?? 0}`)
+    }
+  }
+  if (navProblems.length > 0) {
+    throw new Error(`generate-registry: rail component lists disagree with the grid:\n  ${navProblems.join('\n  ')}`)
+  }
+
+  writeFileSync(
+    'app/lib/component-nav.generated.ts',
+    navTs +
+      '\n// Category label to its components (slug + display name), in categories.ts\n' +
+      '// order and grid order, for the rail\'s Components tab.\n' +
+      `export const CATEGORY_COMPONENTS: Record<string, { slug: string; name: string }[]> = ${JSON.stringify(categoryComponents, null, 2)}\n`,
+  )
+  console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categoryCounts).length} categories, ${mcpComponents.length} total)`)
 }
 
 // ── Lint the shipped JSON for transform integrity ─────────────────────────────

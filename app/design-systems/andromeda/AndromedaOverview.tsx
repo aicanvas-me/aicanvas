@@ -22,14 +22,14 @@ import type { Group, Mesh, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Button } from '../../components/Button'
 import { buttonClasses } from '../../components/buttonClasses'
-import { SiteFooter } from '../../components/SiteFooter'
 import { optimizeImageKitUrl, TEMPLATE_ART_VERSION } from '../../lib/imagekit'
 import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoop } from '../../_components/FoundationLoop'
 import { SystemTierChip } from '../../_components/SystemTierChip'
 import { BRAIN_GRAY } from '../../_lib/brain-colors'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../_components/DesignSystemPage'
+import { PageCrumbs } from '../../components/PageCrumbs'
 
 // Short blurbs for the four shipped templates — keyed by registry slug.
 const TEMPLATE_BLURBS: Record<string, string> = {
@@ -288,11 +288,11 @@ export function AndromedaOverview() {
   return (
     <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
       {/* ── Hero ────────────────────────────────────────────────────────── */}
+      <PageCrumbs />
       <header className="max-w-3xl">
-        <PageOverline>Design system</PageOverline>
         {/* The chip sits beside the h1, not inside it, so the heading stays
             the system's name alone. */}
-        <div className="mt-3 flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <PageTitle gap="none">{ANDROMEDA_META.name}</PageTitle>
           <SystemTierChip tier="mit" label="MIT License" />
         </div>
@@ -571,8 +571,6 @@ export function AndromedaOverview() {
           </div>
         </div>
       </motion.section>
-
-      <SiteFooter />
     </PageFrame>
   )
 }

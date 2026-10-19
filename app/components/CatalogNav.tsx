@@ -3,15 +3,24 @@
 import Link from 'next/link'
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { Cube, DiamondsFour, Shapes } from '@phosphor-icons/react'
+import { CaretDown, Cube, DiamondsFour, Shapes, Sparkle } from '@phosphor-icons/react'
 import { CATEGORIES } from '../lib/categories'
-import { TOTAL_COMPONENTS } from '../lib/component-nav.generated'
-import { DESIGN_SYSTEM_COUNT, DesignSystemsPole } from '../_components/DesignSystemsPole'
+import { CATEGORY_COMPONENTS, TOTAL_COMPONENTS } from '../lib/component-nav.generated'
+import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
+import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
+import { SystemTierChip } from '../_components/SystemTierChip'
 
 // The catalog list of the rail and of the phone drawer: a three-way switch on
 // top (Design systems, Components, Icons), a heading with a count under it,
 // then the list for the segment that is on. One component for both places so
 // the drawer and the rail never list different things.
+//
+// Both catalog lists follow one pattern, the one strong docs sidebars use:
+// sections, each a small-caps header with a count chip over a flat list of
+// rows, each list with its own thin guide line. The Components tab has one
+// section per category naming every component in it; the Design systems tab
+// has one row per system that opens to its PAGES, TEMPLATES and COMPONENTS.
 //
 // The switch is a real tab control: role="tablist" with role="tab" buttons,
 // the arrow keys (and Home / End) move between them, and only the selected
@@ -28,6 +37,70 @@ const SEGMENTS: { id: CatalogSegment; label: string; icon: ReactNode }[] = [
   { id: 'icons', label: 'Icons', icon: <Shapes weight="regular" size={16} aria-hidden /> },
 ]
 
+// The design systems the Design systems tab lists. Two systems live side by
+// side, each at its own routes: Andromeda Pro and Andromeda Legacy (MIT).
+// Neither replaces the other and neither redirects to the other. The rows are
+// hardcoded (this is a client module and cannot read the registry);
+// app/components/Sidebar.test.ts ties the Pro templates to the template meta.
+const SYSTEMS = [
+  {
+    slug: 'andromeda-pro',
+    name: 'Andromeda Pro',
+    tier: 'pro',
+    // The rail says what is NEW, not what it costs: the tier is on the
+    // system's own page, and the licence word crowded out the name here.
+    badge: 'New',
+    brain: true,
+    // Pro's pages after the overview: Foundation, Components, Image Pack.
+    // None carries the premium mark: the foundation is open, single
+    // components are free to explore, and the images download free (only the
+    // two files behind the set are Pro).
+    sections: [
+      { slug: 'foundation', label: 'Foundation', premium: false },
+      { slug: 'components', label: 'Components', premium: false },
+      { slug: 'image-pack', label: 'Image Pack', premium: false },
+    ],
+    components: ANDROMEDA_PRO_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
+    templates: [
+      // Same order as the overview bento and the template switcher.
+      { slug: 'city-operations', name: 'City Operations', category: 'Dashboard' },
+      { slug: 'ai-chat', name: 'AI Chat', category: 'CRM' },
+      { slug: 'sign-in', name: 'Sign In', category: 'Authentication' },
+      { slug: 'signal-room', name: 'Signal Room', category: 'Media' },
+      { slug: 'mission-control', name: 'Mission Control', category: 'Dashboard' },
+      { slug: 'service-order', name: 'Service Order', category: 'CRM' },
+      { slug: 'resource-planning', name: 'Resource Planning', category: 'Scheduling' },
+      { slug: 'sign-up', name: 'Sign Up', category: 'Authentication' },
+      { slug: 'fintech-landing', name: 'Fintech Landing', category: 'Marketing' },
+    ],
+  },
+  {
+    slug: 'andromeda',
+    name: 'Andromeda Legacy',
+    tier: 'mit',
+    badge: null,
+    // Has a premium Brain page at /design-systems/<slug>/brain (rules +
+    // foundations + per-component intelligence).
+    brain: true,
+    // Legacy ships one System page, premium marked, then Brain. It has no
+    // /foundation or /components route.
+    sections: [{ slug: 'system', label: 'System', premium: true }],
+    components: ANDROMEDA_COMPONENT_META.map((c) => ({ slug: c.slug, name: c.name })),
+    templates: [
+      { slug: 'signal-room', name: 'Signal Room', category: 'Media' },
+      { slug: 'mission-control', name: 'Mission Control', category: 'Dashboard' },
+      { slug: 'service-order', name: 'Service Order', category: 'CRM' },
+      // exchange-terminal — hidden, source preserved (see design-systems.config.mjs)
+      { slug: 'resource-planning', name: 'Resource Planning', category: 'Scheduling' },
+    ],
+  },
+] as const
+
+type System = (typeof SYSTEMS)[number]
+
+// How many systems the tab lists: the count chip beside its heading.
+export const DESIGN_SYSTEM_COUNT = SYSTEMS.length
+
 /** The segment a route opens on. */
 export function segmentForPath(pathname: string | null | undefined): CatalogSegment {
   const path = pathname ?? ''
@@ -43,7 +116,35 @@ const ROW_ACTIVE = 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand
 const ROW_IDLE =
   'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
 
-function CatalogRow({ href, label, active, onNavigate, prefetch }: { href: string; label: string; active: boolean; onNavigate?: () => void; prefetch?: false }) {
+// The small-caps label with its count chip: the tab's own heading and every
+// section header under it.
+const HEADING =
+  'flex items-center gap-2 px-2 text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400'
+
+function CountChip({ count }: { count: number }) {
+  return (
+    <span className="rounded-full bg-sand-100 px-1.5 py-px text-[10px] font-semibold tabular-nums text-sand-700 dark:bg-sand-900 dark:text-sand-300">
+      {count}
+    </span>
+  )
+}
+
+function CatalogRow({
+  href,
+  label,
+  active,
+  onNavigate,
+  prefetch,
+  children,
+}: {
+  href: string
+  label: string
+  active: boolean
+  onNavigate?: () => void
+  prefetch?: false
+  // Anything after the label: a mark, or a word only a screen reader hears.
+  children?: ReactNode
+}) {
   return (
     <li>
       <Link
@@ -54,7 +155,8 @@ function CatalogRow({ href, label, active, onNavigate, prefetch }: { href: strin
         className={`${ROW} ${active ? ROW_ACTIVE : ROW_IDLE}`}
       >
         <span aria-hidden className="w-3 shrink-0" />
-        <span className="flex-1">{label}</span>
+        <span className="min-w-0 flex-1 truncate">{label}</span>
+        {children}
       </Link>
     </li>
   )
@@ -67,6 +169,177 @@ function Guided({ children }: { children: ReactNode }) {
       <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
       <ul className="space-y-0.5">{children}</ul>
     </div>
+  )
+}
+
+// One section: its header (a real heading, which also names the group) over
+// its own guided list.
+function Section({ id, label, count, children }: { id: string; label: ReactNode; count: number; children: ReactNode }) {
+  return (
+    <div role="group" aria-labelledby={id} className="mt-5">
+      <h3 id={id} className={`mb-1 ${HEADING}`}>
+        {label}
+        <CountChip count={count} />
+      </h3>
+      {count > 0 && <Guided>{children}</Guided>}
+    </div>
+  )
+}
+
+// The Design systems tab: one row per system, opening to its sections. Only
+// the system you are inside is open on load; off the system pages, Andromeda
+// Pro is. A row toggled by hand holds until you cross into another system,
+// which hands the choice back to the route. Closed systems keep their links in
+// the HTML (hidden), so crawlers reach every system page from any page.
+function DesignSystemsList({ onNavigate }: { onNavigate?: () => void }) {
+  const pathname = usePathname() ?? ''
+  const baseId = useId()
+
+  // Longest slug first: 'andromeda' is a prefix of 'andromeda-pro', so a plain
+  // startsWith would light up Legacy on every Pro page.
+  const activeSystem = [...SYSTEMS]
+    .sort((a, b) => b.slug.length - a.slug.length)
+    .find((s) => pathname === `/design-systems/${s.slug}` || pathname.startsWith(`/design-systems/${s.slug}/`))
+  const openOnLoad = activeSystem?.slug ?? 'andromeda-pro'
+
+  const [hand, setHand] = useState<Record<string, boolean>>({})
+  const [handFor, setHandFor] = useState(openOnLoad)
+  if (handFor !== openOnLoad) {
+    setHandFor(openOnLoad)
+    setHand({})
+  }
+
+  return (
+    <ul className="space-y-0.5">
+      {SYSTEMS.map((system) => {
+        const expanded = hand[system.slug] ?? system.slug === openOnLoad
+        const panelId = `${baseId}-${system.slug}`
+        return (
+          <li key={system.slug}>
+            {/* The row only opens and closes the system; the Overview row
+                under PAGES is the way to its landing page. */}
+            <button
+              type="button"
+              onClick={() => setHand((h) => ({ ...h, [system.slug]: !expanded }))}
+              aria-expanded={expanded}
+              aria-controls={panelId}
+              className={`${ROW} ${ROW_IDLE} w-full text-left`}
+            >
+              {/* Same mark, two weights: Pro keeps the solid mark, Legacy
+                  draws it as an outline, so the two rows tell apart before the
+                  names are read. Styled from here rather than with a prop on
+                  the icon, which is a design-system file. CSS fill and stroke
+                  beat the paths' own fill attributes. The stroke is 1.5 units
+                  in a 28-wide box drawn at 14px, so 0.75px. overflow-visible
+                  keeps the outer half of the line from clipping at the box
+                  edge. */}
+              <span
+                aria-hidden
+                className={`flex shrink-0 ${
+                  system.tier === 'pro'
+                    ? ''
+                    : '[&_path]:fill-transparent [&_path]:stroke-current [&_path]:[stroke-linejoin:round] [&_path]:[stroke-width:1.5] [&_svg]:overflow-visible'
+                }`}
+              >
+                <AndromedaIcon size={14} mono />
+              </span>
+              <span className="min-w-0 truncate font-semibold">{system.name}</span>
+              {system.badge && (
+                <span aria-hidden className="flex">
+                  <SystemTierChip tier={system.tier} label={system.badge} className="!px-1" />
+                </span>
+              )}
+              <CaretDown
+                size={12}
+                weight="regular"
+                aria-hidden
+                className={`ml-auto shrink-0 text-sand-600 transition-transform dark:text-sand-500 ${expanded ? '' : '-rotate-90'}`}
+              />
+            </button>
+            <div id={panelId} hidden={!expanded} className="pb-2 pl-3">
+              <SystemSections system={system} pathname={pathname} baseId={panelId} onNavigate={onNavigate} />
+            </div>
+          </li>
+        )
+      })}
+    </ul>
+  )
+}
+
+function SystemSections({
+  system,
+  pathname,
+  baseId,
+  onNavigate,
+}: {
+  system: System
+  pathname: string
+  baseId: string
+  onNavigate?: () => void
+}) {
+  const root = `/design-systems/${system.slug}`
+  const pages = [
+    // The system's own landing page, lit only on itself, never on a page
+    // underneath it.
+    { href: root, label: 'Overview', active: pathname === root, premium: false },
+    // Each system names its own sections, because they do not share an IA:
+    // Legacy has System, Pro has Foundation, Components and Image Pack.
+    ...system.sections.map((section) => ({
+      href: `${root}/${section.slug}`,
+      label: section.label,
+      active: pathname === `${root}/${section.slug}`,
+      premium: section.premium,
+    })),
+  ]
+  const brainActive = pathname === `${root}/brain` || pathname.startsWith(`${root}/brain/`)
+  const pageCount = pages.length + (system.brain ? 1 : 0)
+
+  return (
+    <>
+      <Section id={`${baseId}-pages`} label="Pages" count={pageCount}>
+        {pages.map((page) => (
+          <CatalogRow key={page.href} href={page.href} label={page.label} active={page.active} onNavigate={onNavigate}>
+            {/* No premium mark on the row: the tier is said on the system's
+                own page. Still spoken, so a screen reader does not lose it. */}
+            {page.premium && <span className="sr-only">Premium</span>}
+          </CatalogRow>
+        ))}
+        {system.brain && (
+          <CatalogRow href={`${root}/brain`} label="AI Brain" active={brainActive} onNavigate={onNavigate}>
+            {/* The one icon left in the list: the Brain is the system's AI
+                layer, and the mark says so. */}
+            <Sparkle weight="regular" size={13} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-500" />
+            <span className="sr-only">Premium</span>
+          </CatalogRow>
+        )}
+      </Section>
+      <Section id={`${baseId}-templates`} label="Templates" count={system.templates.length}>
+        {system.templates.map((t) => (
+          <CatalogRow
+            key={t.slug}
+            href={`${root}/templates/${t.slug}`}
+            label={t.name}
+            active={pathname === `${root}/templates/${t.slug}`}
+            onNavigate={onNavigate}
+          >
+            {/* No mark on the row. The sr-only word still folds "Premium" into
+                the link's accessible name. */}
+            <span className="sr-only">Premium</span>
+          </CatalogRow>
+        ))}
+      </Section>
+      <Section id={`${baseId}-components`} label="Components" count={system.components.length}>
+        {system.components.map((c) => (
+          <CatalogRow
+            key={c.slug}
+            href={`${root}/${c.slug}`}
+            label={c.name}
+            active={pathname === `${root}/${c.slug}`}
+            onNavigate={onNavigate}
+          />
+        ))}
+      </Section>
+    </>
   )
 }
 
@@ -138,13 +411,9 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
         hidden={segment !== id}
         className="mt-4"
       >
-        <p className="mb-2 flex items-center gap-2 px-2 text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
+        <p className={`mb-2 ${HEADING}`}>
           {s.label}
-          {counts[id] !== null && (
-            <span className="rounded-full bg-sand-100 px-1.5 py-px text-[10px] font-semibold tabular-nums text-sand-700 dark:bg-sand-900 dark:text-sand-300">
-              {counts[id]}
-            </span>
-          )}
+          {counts[id] !== null && <CountChip count={counts[id]} />}
         </p>
         {children}
       </div>
@@ -191,29 +460,57 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
         })}
       </div>
 
-      {panel('design-systems', <DesignSystemsPole onNavigate={onNavigate} />)}
+      {panel('design-systems', <DesignSystemsList onNavigate={onNavigate} />)}
 
       {panel(
         'components',
-        <Guided>
-          {/* "All Components" is always its own leaf, so the row you just
+        <>
+          {/* "All components" is always its own leaf, so the row you just
               clicked stays lit on /components. */}
-          <CatalogRow
-            href="/components"
-            label="All Components"
-            active={activeCategory === 'All Components'}
-            onNavigate={onNavigate}
-          />
-          {CATEGORIES.map((cat) => (
+          <Guided>
             <CatalogRow
-              key={cat.slug}
-              href={`/components/category/${cat.slug}`}
-              label={cat.label}
-              active={cat.label === activeCategory}
+              href="/components"
+              label="All components"
+              active={activeCategory === 'All Components'}
               onNavigate={onNavigate}
             />
-          ))}
-        </Guided>,
+          </Guided>
+          {/* One section per category, in categories.ts order, naming every
+              component in it. The header links to the category page. */}
+          {CATEGORIES.map((cat) => {
+            const rows = CATEGORY_COMPONENTS[cat.label] ?? []
+            const current = cat.label === activeCategory
+            return (
+              <Section
+                key={cat.slug}
+                id={`${baseId}-category-${cat.slug}`}
+                count={rows.length}
+                label={
+                  <Link
+                    href={`/components/category/${cat.slug}`}
+                    onClick={onNavigate}
+                    aria-current={current ? 'page' : undefined}
+                    className={`rounded-sm transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:hover:text-sand-100 ${
+                      current ? 'text-sand-900 dark:text-sand-50' : ''
+                    }`}
+                  >
+                    {cat.label}
+                  </Link>
+                }
+              >
+                {rows.map((c) => (
+                  <CatalogRow
+                    key={c.slug}
+                    href={`/components/${c.slug}`}
+                    label={c.name}
+                    active={pathname === `/components/${c.slug}`}
+                    onNavigate={onNavigate}
+                  />
+                ))}
+              </Section>
+            )
+          })}
+        </>,
       )}
 
       {panel(

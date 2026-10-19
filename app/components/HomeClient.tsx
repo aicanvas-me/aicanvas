@@ -1,15 +1,14 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import Link from 'next/link'
 import { MagnifyingGlass, Sparkle, Ghost, Question } from '@phosphor-icons/react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ComponentCard } from './ComponentCard'
 import { track } from '../lib/analytics'
-import { useTopBarLeft } from './TopBar'
-import { SiteFooter } from './SiteFooter'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
+import { PageCrumbs, useTopBarLeft } from './PageCrumbs'
+import { RailFooter } from './RailFooter'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
 import { INITIAL_LOAD, LOAD_MORE_SIZE } from './LoadMore'
 import { LoadMore } from './LoadMore'
 import type { ComponentMeta } from '../lib/component-registry'
@@ -120,7 +119,7 @@ export function HomeClient({
   /** Optional H1 + intro rendered above the grid. Passed by the category and
    *  collection pages so each listing page carries crawlable on-page copy;
    *  the plain /components index omits it. */
-  heading?: { overline?: string; h1: string; intro: string }
+  heading?: { h1: string; intro: string }
 }) {
   const router        = useRouter()
   const searchParams  = useSearchParams()
@@ -263,9 +262,8 @@ export function HomeClient({
   const EmptyIcon = EMPTY_BEATS[emptyIdx].Icon
   const emptyPhrase = EMPTY_BEATS[emptyIdx].phrase
 
-  // While a search is active the site top bar shows the live result count in
-  // place of the breadcrumb. The bar itself lives in the root layout; this is
-  // the one line of it this page owns.
+  // While a search is active the crumb row above the title shows the live
+  // result count in place of the breadcrumb.
   //
   // The node MUST keep its identity between renders that did not change it.
   // useTopBarLeft stores it in context, and this page reads that same context,
@@ -290,27 +288,15 @@ export function HomeClient({
           "no results" block centres in the space left over and the footer sits
           at the bottom edge instead of halfway up the page. */}
       <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}${showEmpty ? ' flex flex-1 flex-col' : ''}`}>
-        {/* Mobile breadcrumb — shown above cards on small screens */}
-        <p className="mb-4 text-sm font-semibold md:hidden">
-          {q && !category ? (
-            <span className="text-sand-600 dark:text-sand-400">
-              {totalResults} {totalResults === 1 ? 'result' : 'results'} for{' '}
-              <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
-            </span>
-          ) : (
-            <>
-              <Link href="/components" className="text-sand-900 transition-colors hover:text-sand-600 dark:text-sand-50 dark:hover:text-sand-400">Components &amp; Blocks</Link>
-              {category && <span className="text-olive-600 dark:text-olive-500">/{category}</span>}
-            </>
-          )}
-        </p>
-        {/* The hero (overline, h1, lead) describes the whole grid, so it is
+        {/* The crumb trail above the title, at every width. While a search
+            is active it carries the live result count instead (searchCount). */}
+        <PageCrumbs />
+        {/* The hero (h1, lead) describes the whole grid, so it is
             dropped while a search is active: the results — or the empty state —
             start at the top. */}
         {heading && !(q && !category) && (
           <header className="mb-6">
-            {heading.overline && <PageOverline>{heading.overline}</PageOverline>}
-            <PageTitle gap={heading.overline ? 'overline' : 'none'}>{heading.h1}</PageTitle>
+            <PageTitle gap="none">{heading.h1}</PageTitle>
             <PageLead>{heading.intro}</PageLead>
           </header>
         )}
@@ -474,8 +460,8 @@ export function HomeClient({
           </motion.div>
         )}
 
-        <SiteFooter />
       </PageFrame>
+      <RailFooter />
     </div>
   )
 }

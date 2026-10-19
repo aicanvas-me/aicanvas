@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { Check, Copy, Lightning, Terminal } from '@phosphor-icons/react'
-import { useTopBarInstallSlot } from '../components/TopBar'
+import { useTopBarInstallSlot } from '../components/PageCrumbs'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { Button } from '../components/Button'
@@ -27,39 +27,19 @@ interface InstallAction {
   free?: boolean
 }
 
-// Showcase install — the SAME top-bar pattern as the brain reader and the
-// template pages: install button(s) next to the auth pill, each opening a CLI
+// Showcase install — the SAME pattern as the brain reader: install button(s)
+// in the crumb row above the page title (PageCrumbs), each opening a CLI
 // popover (One command / Copy Command / masked tokenized command / contents
-// bullets). Portaled into the top-bar slot on desktop; a floating fallback
-// below md (where the top bar is hidden). Premium-gated: a resolved free/anon
-// tier sees "Unlock with Premium" → /pricing.
-// `phoneFallback={false}` drops the floating copy: Andromeda Pro's content
-// column is its own stacking context (`isolate`), so a fixed control inside it
-// sits under the phone menu bar, unseen but still reachable by Tab.
-export function ShowcaseInstall({
-  installs,
-  phoneFallback = true,
-}: {
-  installs: InstallAction[]
-  phoneFallback?: boolean
-}) {
+// bullets). Portaled into the row's slot, which is drawn at every width.
+// Premium-gated: a resolved free/anon tier sees "Unlock with Premium" →
+// /pricing.
+export function ShowcaseInstall({ installs }: { installs: InstallAction[] }) {
   const slot = useTopBarInstallSlot()
-
-  return (
-    <>
-      {slot && createPortal(<ShowcaseInstallButtons installs={installs} />, slot)}
-      {/* The top bar is hidden below md, so float the install control top-right. */}
-      {phoneFallback && (
-        <div className="fixed right-3 top-3 z-50 md:hidden">
-          <ShowcaseInstallButtons installs={installs} />
-        </div>
-      )}
-    </>
-  )
+  return slot ? createPortal(<ShowcaseInstallButtons installs={installs} />, slot) : null
 }
 
-// Self-contained button group + popover (own state, so the desktop portal and
-// the mobile fallback never share a popover).
+// Self-contained button group + popover (own state, so two copies never share a
+// popover).
 function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   const { open: openPaywall } = usePaywallModal()
   const status = usePremiumStatus()

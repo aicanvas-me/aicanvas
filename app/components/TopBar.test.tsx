@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-// The top bar's left side can be overridden by the page under it
+// The crumb row above each catalog page's title can be overridden by the page
 // (useTopBarLeft). Writing that override changes the context the hook reads,
 // which re-renders the calling page. If the page hands back a fresh element
 // every render the effect feeds on its own write and the page dies with
@@ -13,7 +13,8 @@ import { createPortal } from 'react-dom'
 import { cleanup, fireEvent, render, within } from '@testing-library/react'
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { CrumbBar, TopBar, TopBarInstallSlot, TopBarProvider, useTopBarInstallSlot, useTopBarLeft } from './TopBar'
+import { TopBar } from './TopBar'
+import { PageCrumbs, TopBarInstallSlot, TopBarProvider, useTopBarInstallSlot, useTopBarLeft } from './PageCrumbs'
 import { offerPillMode } from './top-bar-crumbs'
 
 // The route the bar is rendered on, per test.
@@ -102,12 +103,12 @@ describe('HomeClient honours the useTopBarLeft contract', () => {
   })
 })
 
-// The install control is owned by the page and drawn inside the bar. The bar
-// hydrates in its own Suspense boundary, so the page can mount BEFORE it. A
-// page that looked the slot up once on mount portaled into the server's copy
-// of the node, broke the bar's hydration, and was left holding a detached node:
-// the install button vanished on every first load of the three showcase pages.
-// The bar now publishes its own node and pages follow it.
+// The install control is owned by the page and drawn inside the crumb row. The
+// row can commit after the page's own install code has mounted. A page that
+// looked the slot up once on mount portaled into the server's copy of the node,
+// broke hydration, and was left holding a detached node: the install button
+// vanished on every first load of the three showcase pages. The row publishes
+// its own node and pages follow it.
 describe('useTopBarInstallSlot', () => {
   function Page() {
     const slot = useTopBarInstallSlot()
@@ -290,50 +291,75 @@ describe('the global top bar', () => {
     expect(bar).toBeGreaterThan(-1)
     expect(bar).toBeLessThan(layout.indexOf('<Sidebar'))
     expect(bar).toBeLessThan(layout.indexOf('app-scroll-column'))
-    expect(layout.search(/<CrumbBar\s*\/>/)).toBeGreaterThan(layout.indexOf('app-scroll-column'))
   })
 })
 
-// The crumbs and the install slot left the bar for one slim line at the top
-// of the content column, on the routes that showed them before.
-describe('the crumb line', () => {
-  function line(path: string) {
+const appDir = join(__dirname, '..')
+function walkApp(dir: string, out: string[] = []): string[] {
+  for (const name of readdirSync(dir)) {
+    if (name === 'node_modules' || name.startsWith('.')) continue
+    const full = join(dir, name)
+    if (statSync(full).isDirectory()) walkApp(full, out)
+    else if (/\.(tsx?|css)$/.test(name) && !/\.test\.tsx?$/.test(name)) out.push(full)
+  }
+  return out
+}
+const read = (rel: string) => readFileSync(join(appDir, rel), 'utf8')
+
+// The crumbs, the install slot and the offer pill left the slim line across
+// the top of the content column for one row drawn by each page directly above
+// its own title, where they replaced the small overline that used to sit there.
+describe('the crumb row above the title', () => {
+  function row(path: string) {
     currentPath = path
-    const { container } = render(h(TopBarProvider, null, h(CrumbBar)))
-    return container.querySelector('[data-crumb-bar]')
+    const { container } = render(h(TopBarProvider, null, h(PageCrumbs)))
+    return container.querySelector('[data-page-crumbs]')
   }
 
   it('draws the crumb trail on the catalog routes', () => {
-    const el = line('/components/category/widgets')!
+    const el = row('/components/category/widgets')!
     const crumbs = within(el as HTMLElement).getByRole('navigation', { name: 'Breadcrumb' })
     expect(crumbs.textContent).toBe('Components & Blocks/Widgets')
+    cleanup()
+    const ds = row('/design-systems/andromeda-pro')!
+    expect(within(ds as HTMLElement).getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe(
+      'Design Systems/Andromeda Pro',
+    )
   })
 
-  it('carries the install slot where the bar used to, and the offer pill where it used to', () => {
-    expect(line('/design-systems/andromeda-pro/components')!.querySelector('#andromeda-install-slot')).not.toBeNull()
-    cleanup()
-    expect(line('/design-systems/andromeda-pro/brain/explore')!.querySelector('#brain-install-slot')).not.toBeNull()
-    cleanup()
-    expect(line('/components')!.querySelector('[data-offer]')).not.toBeNull()
-    cleanup()
-    expect(line('/components/jar-of-emotions')!.querySelector('[data-offer]')).toBeNull()
-  })
-
-  it('stays off the rail-less pages, which never had crumbs', () => {
-    for (const path of ['/', '/pricing', '/faq', '/account']) {
-      expect(line(path), path).toBeNull()
+  it('carries the install slot and the offer pill on its right, in the same row as the crumbs', () => {
+    for (const [path, id] of [
+      ['/design-systems/andromeda-pro/components', 'andromeda-install-slot'],
+      ['/design-systems/andromeda-pro/foundation', 'andromeda-install-slot'],
+      ['/design-systems/andromeda/system', 'andromeda-install-slot'],
+      ['/design-systems/andromeda-pro/brain/explore', 'brain-install-slot'],
+    ]) {
+      const el = row(path)!
+      const slot = el.querySelector(`#${id}`)
+      expect(slot, path).not.toBeNull()
+      // The crumbs come first, the slot after them.
+      const nav = el.querySelector('nav[aria-label="Breadcrumb"]')!
+      expect(nav.compareDocumentPosition(slot!) & Node.DOCUMENT_POSITION_FOLLOWING, path).toBeTruthy()
       cleanup()
     }
+    const offer = row('/components')!
+    expect(offer.querySelector('[data-offer]')).not.toBeNull()
+    expect(
+      offer.querySelector('nav[aria-label="Breadcrumb"]')!.compareDocumentPosition(offer.querySelector('[data-offer]')!) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy()
+    cleanup()
+    expect(row('/components/jar-of-emotions')!.querySelector('[data-offer]')).toBeNull()
   })
 
-  it('a page portals its install control into the line', () => {
+  it('a page portals its install control into the row', () => {
     currentPath = '/design-systems/andromeda-pro/components'
     function Page() {
       const slot = useTopBarInstallSlot()
       return slot ? createPortal(h('button', null, 'Install'), slot) : null
     }
-    const { container } = render(h(TopBarProvider, null, h(CrumbBar), h(Page)))
-    expect(container.querySelector('[data-crumb-bar] #andromeda-install-slot button')?.textContent).toBe('Install')
+    const { container } = render(h(TopBarProvider, null, h(Page), h(PageCrumbs)))
+    expect(container.querySelector('[data-page-crumbs] #andromeda-install-slot button')?.textContent).toBe('Install')
   })
 
   it('the page override replaces the crumbs', () => {
@@ -341,10 +367,75 @@ describe('the crumb line', () => {
     const count = h('p', null, '3 results')
     function Page() {
       useTopBarLeft(count)
+      return h(PageCrumbs)
+    }
+    const { container } = render(h(TopBarProvider, null, h(Page)))
+    expect(container.querySelector('[data-page-crumbs]')?.textContent).toContain('3 results')
+    expect(container.querySelector('nav[aria-label="Breadcrumb"]')).toBeNull()
+  })
+
+  it('the override never bleeds onto the next page', () => {
+    currentPath = '/components'
+    const count = h('p', null, '3 results')
+    function Page() {
+      useTopBarLeft(count)
       return null
     }
-    const { container } = render(h(TopBarProvider, null, h(CrumbBar), h(Page)))
-    expect(container.querySelector('[data-crumb-bar]')?.textContent).toContain('3 results')
-    expect(container.querySelector('nav[aria-label="Breadcrumb"]')).toBeNull()
+    const { container, rerender } = render(h(TopBarProvider, null, h(Page), h(PageCrumbs)))
+    expect(container.textContent).toContain('3 results')
+    currentPath = '/components/category/widgets'
+    rerender(h(TopBarProvider, null, h(PageCrumbs)))
+    expect(container.textContent).not.toContain('3 results')
+    expect(container.querySelector('nav[aria-label="Breadcrumb"]')?.textContent).toBe('Components & Blocks/Widgets')
+  })
+
+  // Every page that has crumbs draws the row above its own h1, and the
+  // overline that used to sit there is gone.
+  const CRUMB_PAGES = [
+    'components/HomeClient.tsx',
+    'components/[slug]/ComponentPageView.tsx',
+    'design-systems/andromeda-pro/overview-b/OverviewB.tsx',
+    'design-systems/andromeda-pro/foundation/FoundationView.tsx',
+    'design-systems/andromeda-pro/system/AndromedaGallery.tsx',
+    'design-systems/andromeda-pro/image-pack/page.tsx',
+    'design-systems/andromeda-pro/brain/BrainStoryV4.tsx',
+    'design-systems/andromeda-pro/brain/BrainViewer.tsx',
+    'design-systems/andromeda-pro/[component]/AndromedaComponentView.tsx',
+    'design-systems/andromeda/AndromedaOverview.tsx',
+    'design-systems/andromeda/system/AndromedaShowcase.tsx',
+    'design-systems/andromeda/brain/BrainStoryV4.tsx',
+    'design-systems/andromeda/brain/BrainViewer.tsx',
+    'design-systems/andromeda/[component]/AndromedaComponentView.tsx',
+  ]
+
+  it('is drawn directly above the h1 on every crumb page, with no overline between them', () => {
+    for (const rel of CRUMB_PAGES) {
+      const src = read(rel)
+      const crumbs = src.indexOf('<PageCrumbs')
+      expect(crumbs, rel).toBeGreaterThan(-1)
+      // The brain readers' titles are the markdown file's own heading, in the
+      // rendered body.
+      const title = [
+        src.indexOf('<PageTitle', crumbs),
+        src.indexOf('<h1', crumbs),
+        src.indexOf('dangerouslySetInnerHTML={{ __html: html }}', crumbs),
+      ].filter((i) => i > -1)
+      expect(title.length, `${rel}: no title after the crumbs`).toBeGreaterThan(0)
+      const between = src.slice(crumbs, Math.min(...title))
+      expect(between, rel).not.toContain('PageOverline')
+      expect(between, rel).not.toMatch(/uppercase/)
+    }
+    expect(read('lib/categories.ts')).not.toContain('COMPONENTS_SECTION_OVERLINE')
+  })
+
+  it('is never drawn on the pages without the rail', () => {
+    expect(read('components/PageKit.tsx')).not.toContain('PageCrumbs')
+    expect(read('home/HomePage.tsx')).not.toContain('PageCrumbs')
+  })
+
+  it('replaced the crumb line, which is gone with everything that existed only for it', () => {
+    const offenders = walkApp(appDir).filter((f) => /data-crumb-bar|CrumbBar/.test(readFileSync(f, 'utf8')))
+    expect(offenders.map((f) => f.slice(appDir.length + 1))).toEqual([])
+    expect(read('components/TopBar.tsx')).not.toContain('installSlot')
   })
 })

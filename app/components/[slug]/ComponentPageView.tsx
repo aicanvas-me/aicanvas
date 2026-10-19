@@ -25,7 +25,8 @@ import {
 } from '@phosphor-icons/react'
 import type { Tag, Platform } from '../ComponentCard'
 import { isStackLabel, STACK_ICONS, stackIconWidthForHeight, type Stack } from '../../lib/stack'
-import { SiteFooter } from '../SiteFooter'
+import { PageCrumbs } from '../PageCrumbs'
+import { RailFooter } from '../RailFooter'
 import { PropsTable, type PropTable } from '../PropsTable'
 import { Step } from '../Step'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../_components/DesignSystemPage'
@@ -491,6 +492,7 @@ export default function ComponentPageView({
             {/* Page heading. Subtitle is an answer-block for GEO: the first
                 200 tokens on each page carry a definitional answer. Falls
                 back to the plain description when there is no subtitle. */}
+            <PageCrumbs />
             <PageTitle gap="none" rank="section">{name}</PageTitle>
             {headingSubtitle ? (
               <PageLead>{headingSubtitle}</PageLead>
@@ -1475,9 +1477,9 @@ export default function ComponentPageView({
             </section>
           )}
 
-          <SiteFooter />
         </PageFrame>
       </main>
+      <RailFooter />
 
       {/* ── Fullscreen overlay ───────────────────────────────────────────────
           The panel scrolls its own overflow: it is fixed, so a component taller

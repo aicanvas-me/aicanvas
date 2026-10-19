@@ -7,7 +7,9 @@ import { cleanup, fireEvent, render, within } from '@testing-library/react'
 import { ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda-pro/andromeda-meta'
 import { DESIGN_SYSTEM_META } from '../lib/design-system-meta'
 import { CATEGORIES } from '../lib/categories'
-import { TOTAL_COMPONENTS } from '../lib/component-nav.generated'
+import { CATEGORY_COMPONENTS, CATEGORY_COUNTS, TOTAL_COMPONENTS } from '../lib/component-nav.generated'
+import { ANDROMEDA_COMPONENT_META as PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
+import { ANDROMEDA_COMPONENT_META as LEGACY_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { Sidebar } from './Sidebar'
 import { segmentForPath } from './CatalogNav'
 
@@ -135,18 +137,18 @@ describe('top bar single-instance contract', () => {
     expect(offenders).toEqual(['app/layout.tsx'])
   })
 
-  it('the scroll column reserves the crumb line\'s height, so a page opened from a scrolled one still starts at its top', () => {
-    // Next scrolls the new page's root into view, and that root sits below the
-    // sticky crumb line. The reserve and the line's height are one number in
-    // two files. The bar itself sits above the column and needs no reserve.
+  it('the crumb line and the scroll padding it needed are gone', () => {
+    // The crumbs moved into each page, above its title (PageCrumbs), so the
+    // column has no sticky line to reserve room under any more.
     const bar = readFileSync(join(root, 'app/components/TopBar.tsx'), 'utf8')
     expect(bar, 'the bar is h-14 from md up').toMatch(/sticky top-0[^'\n]*\bhidden h-14\b[^'\n]*\bmd:flex\b/)
-    expect(bar, 'the crumb line is h-11 from md up').toMatch(/CRUMB_BAR_CLASS =\s*'sticky top-0[^'\n]*\bhidden h-11\b[^'\n]*\bmd:flex\b/)
-    expect(bar).toContain('data-crumb-bar')
+    expect(bar).not.toContain('CRUMB_BAR_CLASS')
+    expect(bar).not.toContain('data-crumb-bar')
     const css = readFileSync(join(root, 'app/globals.css'), 'utf8')
-    expect(css, 'globals.css must reserve 2.75rem (h-11) under the crumb line').toMatch(
-      /@media \(min-width: 48rem\) \{\s*\.app-scroll-column:has\(> \[data-crumb-bar\]\) \{\s*scroll-padding-top: 2\.75rem;/,
-    )
+    expect(css).not.toContain('data-crumb-bar')
+    expect(css).not.toMatch(/scroll-padding-top:\s*2\.75rem/)
+    const layout = readFileSync(join(root, 'app/layout.tsx'), 'utf8')
+    expect(layout).not.toContain('CrumbBar')
   })
 
   it('the old per-page bar signature (h-14 shrink-0 + border-b border-sand-200 on one line) only survives in the template shell', () => {
@@ -178,12 +180,12 @@ describe('the rail lists every Andromeda Pro template', () => {
     expect(actual).toEqual(expected)
   })
 
-  it("the pole's Pro template rows are the template meta, in the same order", () => {
+  it("the rail's Pro template rows are the template meta, in the same order", () => {
     // The pole hardcodes its rows (it is a client module and cannot read the
     // registry), so a new template lands on the site with no way into the
     // rail. City Operations was built while the rail was being rewritten and
     // nearly shipped missing from it. This is the tie.
-    const pole = readFileSync(join(root, 'app/_components/DesignSystemsPole.tsx'), 'utf8')
+    const pole = readFileSync(join(root, 'app/components/CatalogNav.tsx'), 'utf8')
     const pro = pole.slice(pole.indexOf("slug: 'andromeda-pro'"), pole.indexOf("slug: 'andromeda',"))
     const block = pro.slice(pro.indexOf('templates: ['), pro.indexOf('],', pro.indexOf('templates: [')))
     const railSlugs = [...block.matchAll(/slug: '([^']+)'/g)].map((m) => m[1])
@@ -258,14 +260,139 @@ describe('the catalog rail', () => {
     expect(segmentForPath('/design-systems-ish')).toBe('components')
   })
 
-  it('lists every category under Components with the standalone count, no Show more', () => {
+  it('lists every component by name under its category, with the counts, no Show more', () => {
     const aside = rail('/components')
     const panel = within(aside).getAllByRole('tabpanel').find((p) => !p.hidden)!
     expect(panel.querySelector('p')?.textContent).toBe(`Components${TOTAL_COMPONENTS}`)
-    const rows = [...panel.querySelectorAll('li a')].map((a) => a.textContent)
-    expect(rows).toEqual(['All Components', ...CATEGORIES.map((c) => c.label)])
+    // "All components" first, on its own.
+    const first = panel.querySelector('li a')!
+    expect([first.textContent, first.getAttribute('href')]).toEqual(['All components', '/components'])
+    // Then one labelled group per category, in categories.ts order.
+    const groups = within(panel).getAllByRole('group')
+    expect(groups.map((g) => g.querySelector('h3 a')?.textContent)).toEqual(CATEGORIES.map((c) => c.label))
+    groups.forEach((g, i) => {
+      const cat = CATEGORIES[i]
+      const heading = g.querySelector('h3')!
+      expect(g.getAttribute('aria-labelledby')).toBe(heading.id)
+      expect(heading.querySelector('a')?.getAttribute('href')).toBe(`/components/category/${cat.slug}`)
+      const rows = CATEGORY_COMPONENTS[cat.label] ?? []
+      // The header's count is the category's count, the one its page shows.
+      expect(heading.textContent, cat.label).toBe(`${cat.label}${CATEGORY_COUNTS[cat.label] ?? 0}`)
+      expect(rows.length, cat.label).toBe(CATEGORY_COUNTS[cat.label] ?? 0)
+      expect(
+        [...g.querySelectorAll('li a')].map((a) => [a.textContent, a.getAttribute('href')]),
+        cat.label,
+      ).toEqual(rows.map((r) => [r.name, `/components/${r.slug}`]))
+    })
+    // Every released component is reachable by name.
+    const slugs = new Set(
+      [...panel.querySelectorAll('li a')]
+        .map((a) => a.getAttribute('href')!)
+        .filter((href) => /^\/components\/[^/]+$/.test(href)),
+    )
+    expect(slugs.size).toBe(TOTAL_COMPONENTS)
     expect(aside.querySelector('li.hidden')).toBeNull()
     expect(aside.textContent).not.toMatch(/Show \d+ more/)
+  })
+
+  it('lights the component you are on, and the category header of the page you are on', () => {
+    const [cat] = CATEGORIES.filter((c) => (CATEGORY_COMPONENTS[c.label] ?? []).length > 0)
+    const comp = CATEGORY_COMPONENTS[cat.label][0]
+    let aside = rail(`/components/${comp.slug}`)
+    const lit = [...aside.querySelectorAll('a[aria-current="page"]')].map((a) => a.getAttribute('href'))
+    expect(new Set(lit)).toEqual(new Set([`/components/${comp.slug}`]))
+    cleanup()
+    aside = rail(`/components/category/${cat.slug}`)
+    expect(aside.querySelector(`h3 a[href="/components/category/${cat.slug}"]`)?.getAttribute('aria-current')).toBe('page')
+  })
+
+  it('opens only the system you are in, Andromeda Pro off the system pages, each as a button', () => {
+    const systemButtons = (aside: HTMLElement) => {
+      // The Design systems panel, which is hidden on /components.
+      const panel = within(aside).getAllByRole('tabpanel', { hidden: true })[0]
+      return within(panel)
+        .getAllByRole('button', { hidden: true })
+        .map((b) => [b.textContent, b.getAttribute('aria-expanded')])
+    }
+    expect(systemButtons(rail('/design-systems/andromeda/system'))).toEqual([
+      ['Andromeda ProNew', 'false'],
+      ['Andromeda Legacy', 'true'],
+    ])
+    cleanup()
+    expect(systemButtons(rail('/design-systems/andromeda-pro/foundation'))).toEqual([
+      ['Andromeda ProNew', 'true'],
+      ['Andromeda Legacy', 'false'],
+    ])
+    cleanup()
+    expect(systemButtons(rail('/components'))).toEqual([
+      ['Andromeda ProNew', 'true'],
+      ['Andromeda Legacy', 'false'],
+    ])
+  })
+
+  it('opens a system to PAGES, TEMPLATES and COMPONENTS, each with its count and its own list', () => {
+    const aside = rail('/design-systems/andromeda/system')
+    const panel = within(aside).getAllByRole('tabpanel')[0]
+    const legacy = within(panel).getByRole('button', { name: /Andromeda Legacy/ })
+    const region = document.getElementById(legacy.getAttribute('aria-controls')!)!
+    expect(region.hidden).toBe(false)
+    const groups = within(region).getAllByRole('group')
+    expect(groups.map((g) => g.querySelector('h3')?.textContent)).toEqual([
+      'Pages3',
+      'Templates4',
+      `Components${LEGACY_COMPONENT_META.length}`,
+    ])
+    for (const g of groups) expect(g.querySelector('ul'), g.textContent ?? '').not.toBeNull()
+    expect([...groups[0].querySelectorAll('a')].map((a) => a.getAttribute('href'))).toEqual([
+      '/design-systems/andromeda',
+      '/design-systems/andromeda/system',
+      '/design-systems/andromeda/brain',
+    ])
+    // The page you are on keeps the raised pill.
+    expect(groups[0].querySelector('a[aria-current="page"]')?.getAttribute('href')).toBe('/design-systems/andromeda/system')
+
+    // Pro, closed here, still carries every link in the HTML.
+    const pro = within(panel).getByRole('button', { name: /Andromeda Pro/ })
+    const proRegion = document.getElementById(pro.getAttribute('aria-controls')!)!
+    expect(proRegion.hidden).toBe(true)
+    const proGroups = [...proRegion.querySelectorAll('[role="group"]')]
+    expect(proGroups.map((g) => g.querySelector('h3')?.textContent)).toEqual([
+      'Pages5',
+      `Templates${ANDROMEDA_TEMPLATE_META.length}`,
+      `Components${PRO_COMPONENT_META.length}`,
+    ])
+    expect([...proGroups[0].querySelectorAll('a')].map((a) => a.getAttribute('href'))).toEqual([
+      '/design-systems/andromeda-pro',
+      '/design-systems/andromeda-pro/foundation',
+      '/design-systems/andromeda-pro/components',
+      '/design-systems/andromeda-pro/image-pack',
+      '/design-systems/andromeda-pro/brain',
+    ])
+    for (const c of PRO_COMPONENT_META)
+      expect(proRegion.querySelector(`a[href="/design-systems/andromeda-pro/${c.slug}"]`), c.slug).not.toBeNull()
+
+    // The row opens and closes it in place.
+    fireEvent.click(pro)
+    expect(pro.getAttribute('aria-expanded')).toBe('true')
+    expect(proRegion.hidden).toBe(false)
+    fireEvent.click(legacy)
+    expect(legacy.getAttribute('aria-expanded')).toBe('false')
+    expect(region.hidden).toBe(true)
+  })
+
+  it('lights the design-system leaf you are on', () => {
+    const c = PRO_COMPONENT_META[0]
+    const cases: [string, string][] = [
+      ['/design-systems/andromeda-pro', '/design-systems/andromeda-pro'],
+      ['/design-systems/andromeda-pro/image-pack', '/design-systems/andromeda-pro/image-pack'],
+      ['/design-systems/andromeda-pro/brain/explore', '/design-systems/andromeda-pro/brain'],
+      [`/design-systems/andromeda-pro/${c.slug}`, `/design-systems/andromeda-pro/${c.slug}`],
+    ]
+    for (const [path, href] of cases) {
+      const aside = rail(path)
+      expect([...aside.querySelectorAll('a[aria-current="page"]')].map((a) => a.getAttribute('href')), path).toEqual([href])
+      cleanup()
+    }
   })
 
   it('switches the list in place on a click or an arrow key, without navigating', () => {
@@ -326,5 +453,62 @@ describe('the phone drawer still reaches every page that left the rail and the b
       expect(secondary, href).toContain(`href: '${href}'`)
     const catalog = readFileSync(join(root, 'app/components/CatalogNav.tsx'), 'utf8')
     expect(catalog).toContain('href="/icons"')
+  })
+})
+
+// Every page drawn beside the rail signs off with the site footer and the AI
+// CANVAS wordmark, inside whatever element scrolls that page.
+describe('the footer on every rail page', () => {
+  const src = (rel: string) => readFileSync(join(root, rel), 'utf8')
+
+  it('is the site footer, as a contentinfo landmark, with the wordmark under it', async () => {
+    const { RailFooter } = await import('./RailFooter')
+    const { container } = render(h(RailFooter))
+    const footer = within(container).getByRole('contentinfo')
+    expect(within(footer).getByRole('link', { name: 'Components' }).getAttribute('href')).toBe('/components')
+    const mark = container.querySelector('[aria-hidden] .v3-wordmark')
+    expect(mark?.textContent).toBe('AICANVAS')
+    // Sized to its own column, not the window: beside the rail the column is
+    // narrower than the viewport. (jsdom drops container units, so read it.)
+    expect(src('app/components/RailFooter.tsx')).toContain('<Wordmark fit="column" />')
+    expect(src('app/components/Wordmark.tsx')).toContain('18.5cqw')
+  })
+
+  it('ends the standalone pages, outside their <main>, in the root scroll column', () => {
+    for (const rel of ['app/components/HomeClient.tsx', 'app/components/[slug]/ComponentPageView.tsx']) {
+      const page = src(rel)
+      expect(page, rel).toContain('<RailFooter />')
+      expect(page, rel).not.toContain('<SiteFooter')
+      expect(page.indexOf('<RailFooter />'), rel).toBeGreaterThan(page.lastIndexOf('</PageFrame>'))
+    }
+    // Every standalone route renders one of the two.
+    expect(src('app/components/page.tsx')).toContain('<HomeClient')
+    expect(src('app/components/category/[slug]/page.tsx')).toContain('<HomeClient')
+    expect(src('app/components/collection/[slug]/page.tsx')).toContain('<HomeClient')
+    expect(src('app/components/[slug]/page.tsx')).toContain('ComponentPageView')
+  })
+
+  it('ends the Andromeda scrollers on every page but a template leaf, and no page draws its own', async () => {
+    for (const rel of [
+      'app/design-systems/andromeda/AndromedaContentColumn.tsx',
+      'app/design-systems/andromeda-pro/AndromedaContentColumn.tsx',
+    ])
+      expect(src(rel), rel).toContain('{!isTemplate && <RailFooter />}')
+    const pages = walk(join(root, 'app/design-systems')).filter((f) => /<SiteFooter[ />]/.test(readFileSync(f, 'utf8')))
+    expect(pages.map((f) => f.slice(root.length + 1))).toEqual([])
+
+    const { AndromedaContentColumn } = await import('../design-systems/andromeda/AndromedaContentColumn')
+    for (const path of ['/design-systems/andromeda', '/design-systems/andromeda/system', '/design-systems/andromeda/button']) {
+      currentPath = path
+      const { container } = render(h(AndromedaContentColumn, null, h('main', null, 'page')))
+      const column = container.firstElementChild!
+      expect(within(column as HTMLElement).getByRole('contentinfo'), path).toBeTruthy()
+      // Last in the scroller, after the page.
+      expect(column.lastElementChild?.hasAttribute('data-rail-footer'), path).toBe(true)
+      cleanup()
+    }
+    currentPath = '/design-systems/andromeda/templates/signal-room'
+    const { container } = render(h(AndromedaContentColumn, null, h('main', null, 'page')))
+    expect(container.querySelector('footer')).toBeNull()
   })
 })

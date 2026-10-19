@@ -10,7 +10,8 @@ import { ThemeProvider } from './components/ThemeProvider'
 import { Sidebar } from './components/Sidebar'
 import { ScrollMemory } from './components/ScrollMemory'
 import { MobileNav } from './components/MobileNav'
-import { CrumbBar, TopBar, TopBarProvider } from './components/TopBar'
+import { TopBar } from './components/TopBar'
+import { TopBarProvider } from './components/PageCrumbs'
 import { SessionProvider } from './components/auth/SessionProvider'
 import { AuthModalProvider } from './components/auth/AuthModalProvider'
 import { PaywallModalProvider } from './components/billing/PaywallModalProvider'
@@ -261,25 +262,9 @@ export default async function RootLayout({
                   full-height strip it can never paint a bar in. In CSS rather
                   than an inline style so the :has() release can out-specify
                   it; an inline declaration would always win. */}
-              {/* The crumb line is sticky at the top of this column on the
-                  routes with the rail, and globals.css reserves its height as
-                  this column's scroll padding there (.app-scroll-column:has
-                  the [data-crumb-bar]). On a navigation Next scrolls the new
-                  page's root into view, and that root starts BELOW the line,
-                  so without the padding a page opened from a scrolled one
-                  lands with its first lines under it. */}
               <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 dark:bg-sand-950">
-                {/* The crumb trail and the page's install slot, one slim line
-                    above the page. Like the bar it reads the URL and is never
-                    remounted. */}
-                <Suspense fallback={null}>
-                  <CrumbBar />
-                </Suspense>
-                {/* The page slot, sized to the column MINUS the crumb line.
-                    Page roots ask for min-h-full, and the column is a flex
-                    item of the full-height row, so without this wrapper that
-                    100% resolved against the whole column and every short page
-                    scrolled by exactly the line's height.
+                {/* The page slot. Page roots ask for min-h-full, and this
+                    wrapper is what that 100% resolves against.
                     min-h-0 is load-bearing: a flex item's automatic minimum is
                     its content, which would grow this slot to the full page
                     height, stop every overflow-hidden layout root below from

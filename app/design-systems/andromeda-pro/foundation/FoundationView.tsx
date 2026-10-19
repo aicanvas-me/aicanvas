@@ -11,12 +11,12 @@
 // demos use. Everything here renders statically all the same.
 import { useRef } from 'react'
 import { ArrowUpRight, Crosshair, Eye, HandTap, Keyboard, ListChecks, Pause } from '@phosphor-icons/react'
-import { SiteFooter } from '../../../components/SiteFooter'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { SwatchTooltip } from './SwatchTooltip'
 import { LayerCards } from '../overview-b/FoundationLayers'
 import { tokens } from '../../../lib/andromeda-pro.generated'
 import { andromedaVars, andromedaLightVars } from '../../../lib/andromeda-pro-helpers.generated'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // ── the theme channel ───────────────────────────────────────────────────────
 // Every swatch paints `var(--at-<name>, <dark value>)`. With no themed
@@ -296,8 +296,8 @@ export function FoundationView() {
   return (
     <PageFrame as="main" ref={mainRef} className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
       <SwatchTooltip root={mainRef} />
-      <PageOverline>Andromeda Pro · Foundation</PageOverline>
-      <PageTitle>The primitives</PageTitle>
+      <PageCrumbs />
+      <PageTitle gap="none">The primitives</PageTitle>
       <PageLead>
         Every Andromeda Pro component is built from the values on this page, read through
         three layers of tokens. This page is the what. The AI Brain teaches when and how to use
@@ -692,8 +692,6 @@ export function FoundationView() {
           )
         })}
       </div>
-
-      <SiteFooter />
     </PageFrame>
   )
 }

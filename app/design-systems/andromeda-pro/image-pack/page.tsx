@@ -3,9 +3,8 @@
 // Site chrome (sand/olive, Manrope) like the components index: no Andromeda
 // component renders here.
 import { DownloadSimple } from '@phosphor-icons/react/dist/ssr'
-import { SiteFooter } from '../../../components/SiteFooter'
 import { buttonClasses } from '../../../components/buttonClasses'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import {
   IMAGE_PACK_CHECKS,
   IMAGE_PACK_CONCEPTS,
@@ -17,6 +16,7 @@ import {
 } from '../../../_lib/andromeda-pro/image-pack'
 import { ImagePackProFiles } from './ImagePackProFiles'
 import { ImagePackPrompt } from './ImagePackPrompt'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 export const metadata = {
   title: 'Image Pack · Andromeda Pro',
@@ -50,8 +50,8 @@ export default function ImagePackPage() {
     <>
       <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
         <header className="border-b border-sand-300 pb-10 dark:border-sand-800">
-          <PageOverline>Andromeda Pro · Image pack</PageOverline>
-          <PageTitle className="max-w-3xl">
+          <PageCrumbs />
+          <PageTitle gap="none" className="max-w-3xl">
             {IMAGE_PACK_CONCEPTS.length} scenes.
             <br />
             Each in light and dark.
@@ -128,9 +128,6 @@ export default function ImagePackPage() {
           <h3 className="mt-8 text-sm font-semibold text-sand-900 dark:text-sand-50">For example</h3>
           <ImagePackPrompt prompt={EXAMPLE_PROMPT} />
         </section>
-      </PageFrame>
-      <PageFrame className="pb-10">
-        <SiteFooter />
       </PageFrame>
     </>
   )

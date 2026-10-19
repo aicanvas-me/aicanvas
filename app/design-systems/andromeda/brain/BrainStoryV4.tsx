@@ -24,12 +24,12 @@ import { Rotate3d } from 'lucide-react'
 import { ArrowRight, Fire, Target, Gauge, Check, X as XIcon } from '@phosphor-icons/react'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
-import { SiteFooter } from '@/app/components/SiteFooter'
 import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
 import { useTheme, type Theme } from '@/app/components/ThemeProvider'
 import { BRAIN_GRAY } from '@/app/_lib/brain-colors'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP } from '@/app/_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '@/app/_components/DesignSystemPage'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // AI Canvas site palette: sand neutrals + olive accent, Manrope + mono fonts.
 // One palette per site theme; the page reads them through CSS variables (see
@@ -839,9 +839,9 @@ export function BrainStoryV4() {
       <PageFrame className={PAGE_TOP}>
         {/* ── Hero, in the Pro brain hero's shape: left-aligned text block,
             then the stage below it as a bordered card ── */}
+        <PageCrumbs />
         <section aria-labelledby="brain-hero" className="max-w-3xl">
-          <PageOverline>Built for agents</PageOverline>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <PageTitle id="brain-hero" gap="none">Andromeda AI Brain</PageTitle>
             <SystemTierChip tier="mit" />
           </div>
@@ -1110,11 +1110,6 @@ export function BrainStoryV4() {
             </div>
           </div>
         </Section>
-      </PageFrame>
-
-      {/* footer, consistent with the content pages */}
-      <PageFrame className="pb-6" style={{ fontFamily: SANS }}>
-        <SiteFooter />
       </PageFrame>
     </div>
   )

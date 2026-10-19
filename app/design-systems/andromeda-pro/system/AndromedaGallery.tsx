@@ -11,8 +11,9 @@
 // page is site chrome.
 import { useMemo, useState } from 'react'
 import { MagnifyingGlass } from '@phosphor-icons/react'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { AndromedaComponentCard } from './AndromedaComponentCard'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 export type GalleryItem = {
   slug: string
@@ -55,8 +56,8 @@ export function AndromedaGallery({
   return (
     <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
       <header className="border-b border-sand-300 pb-10 dark:border-sand-800">
-        <PageOverline>Andromeda Pro · Components</PageOverline>
-        <PageTitle className="max-w-3xl">
+        <PageCrumbs />
+        <PageTitle gap="none" className="max-w-3xl">
           One control room.
           <br />
           {components.length > 0 ? `${components.length} components.` : 'Every component.'}

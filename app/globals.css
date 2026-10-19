@@ -301,17 +301,6 @@ html[data-frame][data-frame-light] {
 .app-scroll-column:has([data-owns-scroll]) {
   scrollbar-gutter: auto;
 }
-/* The crumb line (CrumbBar in TopBar.tsx) is sticky at the top of the column
-   from md up, h-11. Its height is the column's scroll padding, so a page
-   scrolled into view on a navigation, or an anchor jumped to, starts below it
-   rather than under it. Routes without the line keep no padding: the global
-   bar sits above the column, not inside it. */
-@media (min-width: 48rem) {
-  .app-scroll-column:has(> [data-crumb-bar]) {
-    scroll-padding-top: 2.75rem;
-  }
-}
-
 /* ── Fullscreen component preview: kill the phantom 80px of scroll ──
    The panel is `sm:inset-10`, so its height is 100vh MINUS 80px. Almost every
    component in the catalogue is authored `min-h-screen` (100vh) to be

@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
+import { RailFooter } from '../../components/RailFooter'
 import { themeColor } from '../../../design-systems/andromeda/components/lib/utils'
 
 // Template leaf routes own the full viewport. On DESKTOP the template pins itself
@@ -24,7 +25,7 @@ export function AndromedaContentColumn({ children }: { children: ReactNode }) {
   // tables and menus INSIDE the page.
   const className = isTemplate
     ? 'aic-page-scroll flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto md:overflow-y-hidden'
-    : 'aic-page-scroll flex flex-1 scroll-smooth flex-col overflow-y-auto bg-sand-50 dark:bg-sand-950'
+    : 'aic-page-scroll flex flex-1 scroll-smooth flex-col overflow-y-auto bg-sand-50 dark:bg-sand-950 [&>*]:shrink-0'
 
   // Templates paint the Andromeda void through the theme channel; every other
   // route takes the global page ground, matching the sidebar in both themes.
@@ -35,6 +36,12 @@ export function AndromedaContentColumn({ children }: { children: ReactNode }) {
   return (
     <div className={className} style={style}>
       {children}
+      {/* The site footer, at the end of the scroller this column is. Template
+          leaves are full-screen compositions and carry none. Nothing in the
+          column shrinks ([&>*]:shrink-0): a page root with a min-height of its
+          own (the System shell's 100vh) would otherwise give way to the footer
+          and leave its content running out under it. */}
+      {!isTemplate && <RailFooter />}
     </div>
   )
 }

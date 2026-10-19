@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import { Check, Copy, DownloadSimple, Terminal } from '@phosphor-icons/react'
 import { zipSync, strToU8 } from 'fflate'
 import { Button } from '../../../components/Button'
-import { useTopBarInstallSlot } from '../../../components/TopBar'
+import { PageCrumbs, useTopBarInstallSlot } from '../../../components/PageCrumbs'
 import { BrainRender } from './BrainRender'
 import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useCopied } from '@/app/components/useCopied'
@@ -332,18 +332,21 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
   // click). sizeKb is undefined until then — the copy omits it gracefully.
   const [zip, setZip] = useState<{ sizeKb: number; bytes: ReturnType<typeof zipSync> } | null>(null)
   useEffect(() => {
-    const entries: Record<string, Uint8Array> = {}
-    for (const f of files) entries[f.path] = strToU8(f.content)
-    const zipped = zipSync(entries, { level: 6 })
-    setZip({ sizeKb: Math.round(zipped.length / 1024), bytes: zipped })
+    // A task of its own, so the deflate never runs inside the commit.
+    const id = setTimeout(() => {
+      const entries: Record<string, Uint8Array> = {}
+      for (const f of files) entries[f.path] = strToU8(f.content)
+      const zipped = zipSync(entries, { level: 6 })
+      setZip({ sizeKb: Math.round(zipped.length / 1024), bytes: zipped })
+    }, 0)
+    return () => clearTimeout(id)
   }, [files])
   const sizeKb = zip?.sizeKb
 
-  // The Install button lives in the sticky top bar (template-page pattern) but
-  // is OWNED here, portaled into the bar's slot — the zip needs the loaded
-  // files, which only this component has. The slot div is display:none below
-  // md (the whole bar is), so a portal there would be invisible on mobile; the
-  // inline md:hidden fallback below covers small screens instead.
+  // The Install button lives in the crumb row above the reader (PageCrumbs)
+  // but is OWNED here, portaled into the row's slot — the zip needs the loaded
+  // files, which only this component has. The row is drawn at every width, so
+  // the one portal serves phones too.
   const installSlot = useTopBarInstallSlot()
 
   // Download the pre-zipped bytes — the secondary path for anyone who prefers a
@@ -406,11 +409,11 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
           flexShrink: 0,
           borderLeft: `1px solid ${C.border.subtle}`,
           // Sticks to the top of the Andromeda layout's own scroller
-          // (data-owns-scroll), which starts under the 56px site bar and the
-          // 44px crumb line; neither sits inside it, so nothing to clear.
+          // (data-owns-scroll), which starts under the 56px site bar; the bar
+          // does not sit inside it, so nothing to clear.
           position: 'sticky',
           top: 0,
-          maxHeight: 'calc(100vh - 100px)',
+          maxHeight: 'calc(100vh - 56px)',
           overflowY: 'auto',
           padding: '20px 0',
         }}
@@ -480,16 +483,15 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
           flexDirection: 'column',
         }}
       >
-        {/* Install lives in the sticky top bar (template pattern) via portal;
-            below md the bar is hidden, so an inline copy takes over. */}
+        {/* The crumb row, with the install control portaled into its slot. */}
+        <div className="brain-pad-x" style={{ maxWidth: 780, padding: '20px 40px 0' }}>
+          <PageCrumbs className="!mb-0" />
+        </div>
         {installSlot &&
           createPortal(
             <BrainInstallButton fileCount={fileCount} sizeKb={sizeKb} onDownloadZip={downloadBrain} />,
             installSlot,
           )}
-        <div className="brain-pad-x md:hidden" style={{ padding: '20px 40px 0', alignSelf: 'flex-start' }}>
-          <BrainInstallButton fileCount={fileCount} sizeKb={sizeKb} onDownloadZip={downloadBrain} />
-        </div>
 
         {/* Mobile file picker — the right nav is hidden below md, so navigate
             the brain files from this dropdown instead. */}
