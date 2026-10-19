@@ -18,7 +18,9 @@ export type Crumb = {
 // keep their own chrome).
 export function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
   return (
-    <nav aria-label="Breadcrumb" className="flex min-w-0 items-center text-sm font-semibold">
+    // flex-wrap: on a phone a long trail breaks onto a second line instead of
+    // pushing the page sideways.
+    <nav aria-label="Breadcrumb" className="flex min-w-0 flex-wrap items-center gap-y-1 text-sm font-semibold">
       {crumbs.map((c, i) => {
         const isLast = i === crumbs.length - 1
         return (

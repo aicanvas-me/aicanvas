@@ -91,7 +91,9 @@ export function TopBarInstallSlot({ id }: { id: string }) {
 
 // With the offer pill or an install control present, the row wraps on a
 // narrow column: the trail keeps the first line and the right cluster drops
-// under it rather than painting over it.
+// under it rather than painting over it. ml-auto keeps that cluster on the
+// right when it wraps: the install popovers open leftward from their button,
+// so a cluster on the left would push them off the column.
 export function PageCrumbs({ className = '' }: { className?: string }) {
   const pathname = usePathname() ?? '/'
   const ctx = useContext(TopBarContext)
@@ -107,7 +109,7 @@ export function PageCrumbs({ className = '' }: { className?: string }) {
         {override !== undefined ? override : crumbs ? <Breadcrumbs crumbs={crumbs} /> : null}
       </div>
       {(offerMode || slot) && (
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="ml-auto flex shrink-0 items-center gap-2">
           {offerMode && <OfferBanner mode={offerMode} />}
           {slot && <TopBarInstallSlot id={slot} />}
         </div>

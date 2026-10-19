@@ -269,15 +269,15 @@ describe('the catalog rail', () => {
     expect([first.textContent, first.getAttribute('href')]).toEqual(['All components', '/components'])
     // Then one labelled group per category, in categories.ts order.
     const groups = within(panel).getAllByRole('group')
-    expect(groups.map((g) => g.querySelector('h3 a')?.textContent)).toEqual(CATEGORIES.map((c) => c.label))
+    expect(groups.map((g) => g.querySelector(':scope > p a')?.textContent)).toEqual(CATEGORIES.map((c) => c.label))
     groups.forEach((g, i) => {
       const cat = CATEGORIES[i]
-      const heading = g.querySelector('h3')!
+      const heading = g.querySelector(':scope > p')!
       expect(g.getAttribute('aria-labelledby')).toBe(heading.id)
       expect(heading.querySelector('a')?.getAttribute('href')).toBe(`/components/category/${cat.slug}`)
       const rows = CATEGORY_COMPONENTS[cat.label] ?? []
       // The header's count is the category's count, the one its page shows.
-      expect(heading.textContent, cat.label).toBe(`${cat.label}${CATEGORY_COUNTS[cat.label] ?? 0}`)
+      expect(heading.textContent, cat.label).toBe(`${cat.label}, ${CATEGORY_COUNTS[cat.label] ?? 0}`)
       expect(rows.length, cat.label).toBe(CATEGORY_COUNTS[cat.label] ?? 0)
       expect(
         [...g.querySelectorAll('li a')].map((a) => [a.textContent, a.getAttribute('href')]),
@@ -295,15 +295,28 @@ describe('the catalog rail', () => {
     expect(aside.textContent).not.toMatch(/Show \d+ more/)
   })
 
-  it('lights the component you are on, and the category header of the page you are on', () => {
+  it('lights the component you are on once, and the category header of the page you are on', () => {
     const [cat] = CATEGORIES.filter((c) => (CATEGORY_COMPONENTS[c.label] ?? []).length > 0)
     const comp = CATEGORY_COMPONENTS[cat.label][0]
     let aside = rail(`/components/${comp.slug}`)
     const lit = [...aside.querySelectorAll('a[aria-current="page"]')].map((a) => a.getAttribute('href'))
-    expect(new Set(lit)).toEqual(new Set([`/components/${comp.slug}`]))
+    expect(lit).toEqual([`/components/${comp.slug}`])
     cleanup()
+    // A component listed under two categories still lights exactly one row.
+    const seen = new Map<string, number>()
+    for (const c of CATEGORIES) for (const r of CATEGORY_COMPONENTS[c.label] ?? []) seen.set(r.slug, (seen.get(r.slug) ?? 0) + 1)
+    const twice = [...seen].find(([, n]) => n > 1)?.[0]
+    if (twice) {
+      aside = rail(`/components/${twice}`)
+      expect([...aside.querySelectorAll('a[aria-current="page"]')].map((a) => a.getAttribute('href'))).toEqual([`/components/${twice}`])
+      cleanup()
+    }
     aside = rail(`/components/category/${cat.slug}`)
-    expect(aside.querySelector(`h3 a[href="/components/category/${cat.slug}"]`)?.getAttribute('aria-current')).toBe('page')
+    expect(aside.querySelector(`[role="group"] > p a[href="/components/category/${cat.slug}"]`)?.getAttribute('aria-current')).toBe('page')
+  })
+
+  it('draws no headings, so the page outline opens with the page title', () => {
+    expect(rail('/components').querySelectorAll('h1, h2, h3, h4, h5, h6')).toHaveLength(0)
   })
 
   it('opens only the system you are in, Andromeda Pro off the system pages, each as a button', () => {
@@ -337,10 +350,10 @@ describe('the catalog rail', () => {
     const region = document.getElementById(legacy.getAttribute('aria-controls')!)!
     expect(region.hidden).toBe(false)
     const groups = within(region).getAllByRole('group')
-    expect(groups.map((g) => g.querySelector('h3')?.textContent)).toEqual([
-      'Pages3',
-      'Templates4',
-      `Components${LEGACY_COMPONENT_META.length}`,
+    expect(groups.map((g) => g.querySelector(':scope > p')?.textContent)).toEqual([
+      'Pages, 3',
+      'Templates, 4',
+      `Components, ${LEGACY_COMPONENT_META.length}`,
     ])
     for (const g of groups) expect(g.querySelector('ul'), g.textContent ?? '').not.toBeNull()
     expect([...groups[0].querySelectorAll('a')].map((a) => a.getAttribute('href'))).toEqual([
@@ -356,10 +369,10 @@ describe('the catalog rail', () => {
     const proRegion = document.getElementById(pro.getAttribute('aria-controls')!)!
     expect(proRegion.hidden).toBe(true)
     const proGroups = [...proRegion.querySelectorAll('[role="group"]')]
-    expect(proGroups.map((g) => g.querySelector('h3')?.textContent)).toEqual([
-      'Pages5',
-      `Templates${ANDROMEDA_TEMPLATE_META.length}`,
-      `Components${PRO_COMPONENT_META.length}`,
+    expect(proGroups.map((g) => g.querySelector(':scope > p')?.textContent)).toEqual([
+      'Pages, 5',
+      `Templates, ${ANDROMEDA_TEMPLATE_META.length}`,
+      `Components, ${PRO_COMPONENT_META.length}`,
     ])
     expect([...proGroups[0].querySelectorAll('a')].map((a) => a.getAttribute('href'))).toEqual([
       '/design-systems/andromeda-pro',

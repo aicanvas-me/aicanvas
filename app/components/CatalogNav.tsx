@@ -121,6 +121,14 @@ const ROW_IDLE =
 const HEADING =
   'flex items-center gap-2 px-2 text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400'
 
+// Each component's first category in categories.ts order: the one section
+// whose row lights up for it.
+const FIRST_CATEGORY = new Map<string, number>()
+CATEGORIES.forEach((cat, i) => {
+  for (const c of CATEGORY_COMPONENTS[cat.label] ?? []) if (!FIRST_CATEGORY.has(c.slug)) FIRST_CATEGORY.set(c.slug, i)
+})
+const firstCategoryIndex = (slug: string) => FIRST_CATEGORY.get(slug)
+
 function CountChip({ count }: { count: number }) {
   return (
     <span className="rounded-full bg-sand-100 px-1.5 py-px text-[10px] font-semibold tabular-nums text-sand-700 dark:bg-sand-900 dark:text-sand-300">
@@ -174,13 +182,18 @@ function Guided({ children }: { children: ReactNode }) {
 
 // One section: its header (a real heading, which also names the group) over
 // its own guided list.
+// A labelled group, not a heading: the rail sits before the page's own H1, so
+// headings here would open every page's outline with the rail's sections. The
+// count is announced as its own phrase ("Widgets, 12") rather than run into
+// the label.
 function Section({ id, label, count, children }: { id: string; label: ReactNode; count: number; children: ReactNode }) {
   return (
     <div role="group" aria-labelledby={id} className="mt-5">
-      <h3 id={id} className={`mb-1 ${HEADING}`}>
+      <p id={id} className={`mb-1 ${HEADING}`}>
         {label}
+        <span className="sr-only">, </span>
         <CountChip count={count} />
-      </h3>
+      </p>
       {count > 0 && <Guided>{children}</Guided>}
     </div>
   )
@@ -477,7 +490,7 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
           </Guided>
           {/* One section per category, in categories.ts order, naming every
               component in it. The header links to the category page. */}
-          {CATEGORIES.map((cat) => {
+          {CATEGORIES.map((cat, ci) => {
             const rows = CATEGORY_COMPONENTS[cat.label] ?? []
             const current = cat.label === activeCategory
             return (
@@ -503,7 +516,10 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
                     key={c.slug}
                     href={`/components/${c.slug}`}
                     label={c.name}
-                    active={pathname === `/components/${c.slug}`}
+                    // A component tagged with two categories is listed under
+                    // both; only its row under the first one lights up, so a
+                    // page never has two current rows.
+                    active={pathname === `/components/${c.slug}` && firstCategoryIndex(c.slug) === ci}
                     onNavigate={onNavigate}
                   />
                 ))}

@@ -198,6 +198,25 @@ describe('offerPillMode', () => {
 
 // One bar on every page that draws one: the catalog routes now get the same
 // navigation as the homepage, instead of a crumb bar beside the rail.
+describe('the crumb row stays off the pages without the rail', () => {
+  it('no rail-less page imports PageCrumbs', () => {
+    const { readdirSync, statSync, readFileSync } = require('node:fs') as typeof import('node:fs')
+    const { join } = require('node:path') as typeof import('node:path')
+    const appDir = join(process.cwd(), 'app')
+    const dirs = ['home', 'pricing', 'mcp', 'faq', 'about', 'contact', 'feedback', 'welcome', 'credits', 'impressum', 'privacy', 'terms', 'refund', 'premium-license', 'account']
+    const files: string[] = [join(appDir, 'page.tsx')]
+    const walk = (d: string) => {
+      for (const f of readdirSync(d)) {
+        const p = join(d, f)
+        if (statSync(p).isDirectory()) walk(p)
+        else if (/\.tsx?$/.test(f)) files.push(p)
+      }
+    }
+    for (const d of dirs) walk(join(appDir, d))
+    for (const f of files) expect(readFileSync(f, 'utf8'), f).not.toMatch(/PageCrumbs/)
+  })
+})
+
 describe('the global top bar', () => {
   const CATALOG = [
     '/components',

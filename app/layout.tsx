@@ -228,6 +228,14 @@ export default async function RootLayout({
         {process.env.NODE_ENV === 'development' && <script src="/koko.js" defer />}
       </head>
       <body className="flex h-full flex-col overflow-hidden bg-sand-50 dark:bg-sand-950">
+        {/* First stop for keyboard users: the rail can carry over a hundred
+            links before the page itself. Hidden until focused. */}
+        <a
+          href="#page-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-sand-50 focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-sand-900 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-olive-500/60 dark:focus:bg-sand-900 dark:focus:text-sand-50"
+        >
+          Skip to content
+        </a>
         <ThemeProvider initial={theme}>
           <SessionProvider initialUser={user}>
             <AuthModalProvider>
@@ -272,7 +280,7 @@ export default async function RootLayout({
                     the page that declares data-owns-scroll. A long page still
                     scrolls: its overflow is visible and this column is the
                     scroller. */}
-                <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+                <div id="page-content" tabIndex={-1} className="flex min-h-0 flex-1 flex-col">{children}</div>
               </div>
               </div>
               {/* Owns this column's scroll across navigations: a new page

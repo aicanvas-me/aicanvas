@@ -514,3 +514,9 @@ html:not(.dark):not([data-frame]) .andromeda-theme-scope {
   --andromeda-theme-gradient-surface-soft: linear-gradient(180deg, #FFFFFF 0%, #F1F1F2 100%);
   --andromeda-theme-shadow-color: rgba(17, 17, 20, 0.16);
 }
+
+/* The skip link's target (app/layout.tsx) takes focus only so the next Tab
+   starts inside the page; it is a region, not a control, so no ring. */
+#page-content:focus {
+  outline: none;
+}
