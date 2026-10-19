@@ -67,7 +67,7 @@ export function MobileNav() {
   return (
     <div className={pinnedDark ? 'dark contents' : 'contents'}>
       {/* ── Mobile top bar ── */}
-      <div className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-sand-200 bg-sand-50 px-4 dark:border-sand-800 dark:bg-sand-950 md:hidden">
+      <div className="sticky top-0 z-30 flex h-16 items-center justify-between bg-sand-50 px-4 dark:bg-sand-950 md:hidden">
         <Link href="/" className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/ai-canvas-icon.svg" alt="" width={18} height={15} className="shrink-0" />
@@ -104,7 +104,7 @@ export function MobileNav() {
               className="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-sand-50 shadow-2xl dark:bg-sand-950 md:hidden"
             >
               {/* Drawer header */}
-              <div className="flex h-16 shrink-0 items-center justify-between border-b border-sand-200 px-4 dark:border-sand-800">
+              <div className="flex h-16 shrink-0 items-center justify-between px-4">
                 <Link
                   href="/"
                   className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50"
@@ -166,7 +166,6 @@ export function MobileNav() {
                   <CatalogNav onNavigate={() => setOpen(false)} />
                 </div>
 
-                <div className="mb-3 h-px bg-sand-200 dark:bg-sand-800" />
                 <div className="mb-3">
                   <SecondaryNav pathname={pathname} variant="drawer" onNavigate={() => setOpen(false)} />
                 </div>
@@ -197,7 +196,7 @@ export function MobileNav() {
               </div>
 
               {/* Auth row */}
-              <div className="shrink-0 border-t border-sand-200 px-3 py-3 dark:border-sand-800">
+              <div className="shrink-0 px-3 py-3">
                 <SignedIn>
                   <UserMenu />
                 </SignedIn>

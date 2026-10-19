@@ -138,21 +138,35 @@ export function HomeLogo() {
   )
 }
 
-// The centre of the bar. The More menu waits for lg: below lg the bar has no
-// room for it, and its pages stay one tap away in the mobile drawer and the
-// footer. /icons is linked ahead of the page that will live there.
+// Below lg the bar has no room for Icons and MCP beside More, so they fold
+// into the More menu there. More itself shows at every width the bar draws:
+// the phone drawer is gone from md up, so More is the only way to Pricing and
+// the info pages on a tablet.
+const MORE_COMPACT: NavLink[] = [
+  { label: 'Icons', href: '/icons' },
+  { label: 'MCP', href: '/mcp' },
+  ...MORE,
+]
+
+// The centre of the bar. /icons is linked ahead of the page that will live
+// there.
 export function HomeNav() {
   const pathname = usePathname() ?? '/'
   return (
     <nav aria-label="Main" className="flex items-center xl:gap-2">
       <Menu label="Design systems" links={DESIGN_SYSTEMS} section="/design-systems" />
       <Menu label="Components & blocks" links={COMPONENT_LINKS} columns={2} section="/components" />
-      <Link href="/icons" prefetch={false} aria-current={isOn(pathname, '/icons') ? 'page' : undefined} className={ITEM}>
-        Icons
-      </Link>
-      <Link href="/mcp" aria-current={pathname === '/mcp' ? 'page' : undefined} className={ITEM}>
-        MCP
-      </Link>
+      <span className="hidden lg:contents">
+        <Link href="/icons" prefetch={false} aria-current={isOn(pathname, '/icons') ? 'page' : undefined} className={ITEM}>
+          Icons
+        </Link>
+        <Link href="/mcp" aria-current={pathname === '/mcp' ? 'page' : undefined} className={ITEM}>
+          MCP
+        </Link>
+      </span>
+      <div className="lg:hidden">
+        <Menu label="More" links={MORE_COMPACT} />
+      </div>
       <div className="hidden lg:block">
         <Menu label="More" links={MORE} />
       </div>

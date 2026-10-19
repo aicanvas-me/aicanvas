@@ -219,10 +219,26 @@ describe('the global top bar', () => {
       expect(header, path).not.toBeNull()
       const nav = within(header!).getByRole('navigation', { name: 'Main' })
       // Every menu is closed, so the only buttons and links are the items.
+      // jsdom applies no CSS, so both More menus are in the list: the compact
+      // one shown below lg, then the wide one from lg up.
       const items = [...nav.querySelectorAll('button, a')].map((el) => el.textContent?.trim())
-      expect(items, path).toEqual(['Design systems', 'Components & blocks', 'Icons', 'MCP', 'More'])
+      expect(items, path).toEqual(['Design systems', 'Components & blocks', 'Icons', 'MCP', 'More', 'More'])
       cleanup()
     }
+  })
+
+  it('shows Icons, MCP and the wide More from lg, and folds Icons and MCP into a compact More below lg', () => {
+    const header = bar('/components')!
+    const nav = within(header).getByRole('navigation', { name: 'Main' })
+    const icons = within(nav).getByRole('link', { name: 'Icons' })
+    expect(icons.parentElement?.className).toBe('hidden lg:contents')
+    expect(within(nav).getByRole('link', { name: 'MCP' }).parentElement).toBe(icons.parentElement)
+    const [compact, wide] = within(nav).getAllByRole('button', { name: 'More' })
+    expect(compact.parentElement?.parentElement?.className).toBe('lg:hidden')
+    expect(wide.parentElement?.parentElement?.className).toBe('hidden lg:block')
+    fireEvent.click(compact)
+    const links = [...header.querySelectorAll('ul a')].map((a) => a.getAttribute('href'))
+    expect(links).toEqual(['/icons', '/mcp', '/pricing', '/about', '/faq', '/contact', '/feedback'])
   })
 
   it('links Icons to /icons and MCP to /mcp, and Pricing is no longer a top-level link', () => {
@@ -235,7 +251,8 @@ describe('the global top bar', () => {
 
   it('opens More on Pricing, then About, FAQ, Contact, Feedback', () => {
     const header = bar('/components')!
-    fireEvent.click(within(header).getByRole('button', { name: 'More' }))
+    // The wide More, the one drawn from lg up.
+    fireEvent.click(within(header).getAllByRole('button', { name: 'More' })[1])
     const links = [...header.querySelectorAll('ul a')].map((a) => [a.textContent, a.getAttribute('href')])
     expect(links).toEqual([
       ['Pricing', '/pricing'],
