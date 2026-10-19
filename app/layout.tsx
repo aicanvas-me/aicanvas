@@ -10,7 +10,7 @@ import { ThemeProvider } from './components/ThemeProvider'
 import { Sidebar } from './components/Sidebar'
 import { ScrollMemory } from './components/ScrollMemory'
 import { MobileNav } from './components/MobileNav'
-import { TopBar, TopBarProvider } from './components/TopBar'
+import { CrumbBar, TopBar, TopBarProvider } from './components/TopBar'
 import { SessionProvider } from './components/auth/SessionProvider'
 import { AuthModalProvider } from './components/auth/AuthModalProvider'
 import { PaywallModalProvider } from './components/billing/PaywallModalProvider'
@@ -226,21 +226,32 @@ export default async function RootLayout({
         {process.env.NODE_ENV === 'development' && <script src="/pufi.js" defer />}
         {process.env.NODE_ENV === 'development' && <script src="/koko.js" defer />}
       </head>
-      <body className="flex h-full flex-col overflow-hidden bg-sand-50 dark:bg-sand-950 md:flex-row">
+      <body className="flex h-full flex-col overflow-hidden bg-sand-50 dark:bg-sand-950">
         <ThemeProvider initial={theme}>
           <SessionProvider initialUser={user}>
             <AuthModalProvider>
              <PaywallModalProvider>
              <TopBarProvider>
-              {/* Desktop sidebar — hidden on mobile */}
+              {/* The one top bar, across the whole window above the rail and
+                  the content, drawn from md up and never remounted: a
+                  navigation swaps only what is below it. It reads the URL, so
+                  it sits inside a Suspense like the rail. */}
               <Suspense fallback={null}>
-                <div className="hidden md:flex">
-                  <Sidebar promoteDS />
-                </div>
+                <TopBar />
               </Suspense>
               {/* Mobile nav — visible only below md */}
               <Suspense fallback={null}>
-                <MobileNav promoteDS />
+                <MobileNav />
+              </Suspense>
+              {/* The rail and the content sit side by side under the bar.
+                  min-h-0 lets the row take the height the bar leaves and no
+                  more, so each of the two scrolls on its own. */}
+              <div className="flex min-h-0 flex-1">
+              {/* Desktop sidebar — hidden on mobile */}
+              <Suspense fallback={null}>
+                <div className="hidden md:flex">
+                  <Sidebar />
+                </div>
               </Suspense>
               {/* Content area scrolls independently of the sidebar.
                   .app-scroll-column (globals.css) reserves the scrollbar
@@ -250,24 +261,25 @@ export default async function RootLayout({
                   full-height strip it can never paint a bar in. In CSS rather
                   than an inline style so the :has() release can out-specify
                   it; an inline declaration would always win. */}
-              {/* md:scroll-pt-14 is the bar's height (h-14, drawn from md up). On
-                  a navigation Next scrolls the new page's root into view, and
-                  that root starts BELOW the sticky bar, so without the padding
-                  a page opened from a scrolled one lands 56px down with its
-                  first lines under the bar. */}
-              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 md:scroll-pt-14 dark:bg-sand-950">
-                {/* The one top bar, above every page's content and never
-                    remounted: a navigation swaps only what is below it. It
-                    reads the URL, so it sits inside the same Suspense the
-                    sidebar needs. */}
+              {/* The crumb line is sticky at the top of this column on the
+                  routes with the rail, and globals.css reserves its height as
+                  this column's scroll padding there (.app-scroll-column:has
+                  the [data-crumb-bar]). On a navigation Next scrolls the new
+                  page's root into view, and that root starts BELOW the line,
+                  so without the padding a page opened from a scrolled one
+                  lands with its first lines under it. */}
+              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 dark:bg-sand-950">
+                {/* The crumb trail and the page's install slot, one slim line
+                    above the page. Like the bar it reads the URL and is never
+                    remounted. */}
                 <Suspense fallback={null}>
-                  <TopBar />
+                  <CrumbBar />
                 </Suspense>
-                {/* The page slot, sized to the column MINUS the bar. Page
-                    roots ask for min-h-full, and the column is a flex item of
-                    the full-height body, so without this wrapper that 100%
-                    resolved against the whole viewport and every short page
-                    scrolled by exactly the bar's height.
+                {/* The page slot, sized to the column MINUS the crumb line.
+                    Page roots ask for min-h-full, and the column is a flex
+                    item of the full-height row, so without this wrapper that
+                    100% resolved against the whole column and every short page
+                    scrolled by exactly the line's height.
                     min-h-0 is load-bearing: a flex item's automatic minimum is
                     its content, which would grow this slot to the full page
                     height, stop every overflow-hidden layout root below from
@@ -276,6 +288,7 @@ export default async function RootLayout({
                     scrolls: its overflow is visible and this column is the
                     scroller. */}
                 <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+              </div>
               </div>
               {/* Owns this column's scroll across navigations: a new page
                   starts at its top, Back returns to where you were. */}

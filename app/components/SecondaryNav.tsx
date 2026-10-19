@@ -50,7 +50,8 @@ const ACTIVE = 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
 const IDLE =
   'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
 
-/** The pinned nav rows, shared by the desktop rail and the mobile drawer. */
+/** The site-page rows of the mobile drawer (MCP, Pricing, the info pages).
+ *  The desktop bar carries the same pages in its nav and More menu. */
 export function SecondaryNav({
   pathname,
   variant,

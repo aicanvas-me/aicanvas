@@ -6,14 +6,43 @@
 // "Maximum update depth exceeded". /components?q= hit exactly that path.
 //
 // This renders the real provider and hook against both shapes of caller.
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, afterEach } from 'vitest'
 import { createElement as h, act, type ReactNode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createPortal } from 'react-dom'
+import { cleanup, fireEvent, render, within } from '@testing-library/react'
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { TopBarInstallSlot, TopBarProvider, useTopBarInstallSlot, useTopBarLeft } from './TopBar'
+import { CrumbBar, TopBar, TopBarInstallSlot, TopBarProvider, useTopBarInstallSlot, useTopBarLeft } from './TopBar'
 import { offerPillMode } from './top-bar-crumbs'
+
+// The route the bar is rendered on, per test.
+let currentPath = '/'
+vi.mock('next/navigation', () => ({
+  usePathname: () => currentPath,
+  useSearchParams: () => new URLSearchParams(),
+}))
+vi.mock('next/link', () => ({
+  default: (props: { href: string; children: ReactNode; prefetch?: boolean }) => {
+    const attrs: Record<string, unknown> = { ...props }
+    delete attrs.prefetch
+    delete attrs.children
+    return h('a', attrs, props.children)
+  },
+}))
+// The bar's right cluster reads the session, the theme and the premium state;
+// none of that is what these tests are about.
+vi.mock('./SiteSearch', () => ({ SiteSearch: () => h('button', { type: 'button', 'aria-label': 'Search' }) }))
+vi.mock('./ThemeToggle', () => ({ ThemeToggle: () => null }))
+vi.mock('./auth/TopAuthPill', () => ({ TopAuthPill: () => null }))
+vi.mock('./billing/OfferBanner', () => ({ OfferBanner: () => h('span', { 'data-offer': '' }) }))
+// The icon barrel is thousands of modules the bar never needs in a test.
+vi.mock('@phosphor-icons/react', () => ({ CaretDown: () => null }))
+
+afterEach(() => {
+  cleanup()
+  currentPath = '/'
+})
 
 // React only batches act() work when the environment says it is a test.
 ;(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true
@@ -163,5 +192,141 @@ describe('offerPillMode', () => {
   it('shows on the pricing page without linking to it', () => {
     expect(offerPillMode('/pricing')).toBe('static')
     expect(offerPillMode('/pricing/')).toBe('static')
+  })
+})
+
+// One bar on every page that draws one: the catalog routes now get the same
+// navigation as the homepage, instead of a crumb bar beside the rail.
+describe('the global top bar', () => {
+  const CATALOG = [
+    '/components',
+    '/components/category/widgets',
+    '/components/collection/glass',
+    '/components/jar-of-emotions',
+    '/design-systems/andromeda-pro',
+    '/design-systems/andromeda/system',
+  ]
+
+  function bar(path: string) {
+    currentPath = path
+    const { container } = render(h(TopBarProvider, null, h(TopBar)))
+    return container.querySelector('header')
+  }
+
+  it('draws the main navigation on the homepage and on every catalog route', () => {
+    for (const path of ['/', '/pricing', ...CATALOG]) {
+      const header = bar(path)
+      expect(header, path).not.toBeNull()
+      const nav = within(header!).getByRole('navigation', { name: 'Main' })
+      // Every menu is closed, so the only buttons and links are the items.
+      const items = [...nav.querySelectorAll('button, a')].map((el) => el.textContent?.trim())
+      expect(items, path).toEqual(['Design systems', 'Components & blocks', 'Icons', 'MCP', 'More'])
+      cleanup()
+    }
+  })
+
+  it('links Icons to /icons and MCP to /mcp, and Pricing is no longer a top-level link', () => {
+    const header = bar('/components')!
+    const nav = within(header).getByRole('navigation', { name: 'Main' })
+    expect(within(nav).getByRole('link', { name: 'Icons' }).getAttribute('href')).toBe('/icons')
+    expect(within(nav).getByRole('link', { name: 'MCP' }).getAttribute('href')).toBe('/mcp')
+    expect(within(nav).queryByRole('link', { name: 'Pricing' })).toBeNull()
+  })
+
+  it('opens More on Pricing, then About, FAQ, Contact, Feedback', () => {
+    const header = bar('/components')!
+    fireEvent.click(within(header).getByRole('button', { name: 'More' }))
+    const links = [...header.querySelectorAll('ul a')].map((a) => [a.textContent, a.getAttribute('href')])
+    expect(links).toEqual([
+      ['Pricing', '/pricing'],
+      ['About', '/about'],
+      ['FAQ', '/faq'],
+      ['Contact', '/contact'],
+      ['Feedback', '/feedback'],
+    ])
+  })
+
+  it('marks the section you are in with aria-current, catalog routes included', () => {
+    const components = bar('/components/category/widgets')!
+    expect(within(components).getByRole('button', { name: 'Components & blocks' }).getAttribute('aria-current')).toBe('true')
+    expect(within(components).getByRole('button', { name: 'Design systems' }).getAttribute('aria-current')).toBeNull()
+    cleanup()
+    const systems = bar('/design-systems/andromeda-pro/components')!
+    expect(within(systems).getByRole('button', { name: 'Design systems' }).getAttribute('aria-current')).toBe('true')
+    expect(within(systems).getByRole('button', { name: 'Components & blocks' }).getAttribute('aria-current')).toBeNull()
+  })
+
+  it('carries no crumbs, no install slot and no bottom rule', () => {
+    for (const path of CATALOG) {
+      const header = bar(path)!
+      expect(header.querySelector('nav[aria-label="Breadcrumb"]'), path).toBeNull()
+      expect(header.querySelector('[id$="install-slot"]'), path).toBeNull()
+      expect(header.className, path).not.toMatch(/\bborder-b\b/)
+      cleanup()
+    }
+  })
+
+  it('sits above the rail and the scroll column in the root layout, not inside them', () => {
+    const layout = readFileSync(join(__dirname, '..', 'layout.tsx'), 'utf8')
+    const bar = layout.search(/<TopBar\s*\/>/)
+    expect(bar).toBeGreaterThan(-1)
+    expect(bar).toBeLessThan(layout.indexOf('<Sidebar'))
+    expect(bar).toBeLessThan(layout.indexOf('app-scroll-column'))
+    expect(layout.search(/<CrumbBar\s*\/>/)).toBeGreaterThan(layout.indexOf('app-scroll-column'))
+  })
+})
+
+// The crumbs and the install slot left the bar for one slim line at the top
+// of the content column, on the routes that showed them before.
+describe('the crumb line', () => {
+  function line(path: string) {
+    currentPath = path
+    const { container } = render(h(TopBarProvider, null, h(CrumbBar)))
+    return container.querySelector('[data-crumb-bar]')
+  }
+
+  it('draws the crumb trail on the catalog routes', () => {
+    const el = line('/components/category/widgets')!
+    const crumbs = within(el as HTMLElement).getByRole('navigation', { name: 'Breadcrumb' })
+    expect(crumbs.textContent).toBe('Components & Blocks/Widgets')
+  })
+
+  it('carries the install slot where the bar used to, and the offer pill where it used to', () => {
+    expect(line('/design-systems/andromeda-pro/components')!.querySelector('#andromeda-install-slot')).not.toBeNull()
+    cleanup()
+    expect(line('/design-systems/andromeda-pro/brain/explore')!.querySelector('#brain-install-slot')).not.toBeNull()
+    cleanup()
+    expect(line('/components')!.querySelector('[data-offer]')).not.toBeNull()
+    cleanup()
+    expect(line('/components/jar-of-emotions')!.querySelector('[data-offer]')).toBeNull()
+  })
+
+  it('stays off the rail-less pages, which never had crumbs', () => {
+    for (const path of ['/', '/pricing', '/faq', '/account']) {
+      expect(line(path), path).toBeNull()
+      cleanup()
+    }
+  })
+
+  it('a page portals its install control into the line', () => {
+    currentPath = '/design-systems/andromeda-pro/components'
+    function Page() {
+      const slot = useTopBarInstallSlot()
+      return slot ? createPortal(h('button', null, 'Install'), slot) : null
+    }
+    const { container } = render(h(TopBarProvider, null, h(CrumbBar), h(Page)))
+    expect(container.querySelector('[data-crumb-bar] #andromeda-install-slot button')?.textContent).toBe('Install')
+  })
+
+  it('the page override replaces the crumbs', () => {
+    currentPath = '/components'
+    const count = h('p', null, '3 results')
+    function Page() {
+      useTopBarLeft(count)
+      return null
+    }
+    const { container } = render(h(TopBarProvider, null, h(CrumbBar), h(Page)))
+    expect(container.querySelector('[data-crumb-bar]')?.textContent).toContain('3 results')
+    expect(container.querySelector('nav[aria-label="Breadcrumb"]')).toBeNull()
   })
 })

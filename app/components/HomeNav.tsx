@@ -1,11 +1,11 @@
 'use client'
 
-// The top bar content of every page without the sidebar (app/lib/railless.ts:
-// the homepage, pricing, MCP, the info and legal pages, the account), the way
-// ui.shadcn.com's landing page does it: the logo on the left, and in the
-// centre the two systems, the component categories, MCP, Pricing, and a More
-// menu for the info pages. The catalog routes keep the sidebar. The page you
-// are on reads in the primary text colour and carries aria-current.
+// The top bar content of every page that draws the bar, the catalog routes
+// included, the way ui.shadcn.com does it: the logo on the left, and in the
+// centre the two systems, the component categories, Icons, MCP, and a More
+// menu that opens on Pricing and the info pages. The section you are in reads
+// in the primary text colour and carries aria-current: a page link on that
+// page, a menu button anywhere inside its section.
 //
 // Each menu is a disclosure: a button with aria-expanded and a list of plain
 // links. Escape and a click outside close it, and focus goes back to the
@@ -32,6 +32,7 @@ const COMPONENT_LINKS: NavLink[] = [
 ]
 
 const MORE: NavLink[] = [
+  { label: 'Pricing', href: '/pricing' },
   { label: 'About', href: '/about' },
   { label: 'FAQ', href: '/faq' },
   { label: 'Contact', href: '/contact' },
@@ -41,13 +42,25 @@ const MORE: NavLink[] = [
 // Plain text links in a muted tone that steps up to the primary text on hover,
 // while a menu is open, and on the page you are on; no pill behind them.
 const ITEM =
-  'inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-medium text-sand-600 transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-expanded:text-sand-900 aria-[current=page]:text-sand-900 data-[active]:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50 dark:aria-expanded:text-sand-50 dark:aria-[current=page]:text-sand-50 dark:data-[active]:text-sand-50 xl:px-3'
+  'inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-medium text-sand-600 transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-expanded:text-sand-900 aria-[current=page]:text-sand-900 aria-[current=true]:text-sand-900 data-[active]:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50 dark:aria-expanded:text-sand-50 dark:aria-[current=page]:text-sand-50 dark:aria-[current=true]:text-sand-50 dark:data-[active]:text-sand-50 xl:px-3'
 
 const isOn = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`)
 
-function Menu({ label, links, columns = 1 }: { label: string; links: NavLink[]; columns?: 1 | 2 }) {
+function Menu({
+  label,
+  links,
+  columns = 1,
+  section,
+}: {
+  label: string
+  links: NavLink[]
+  columns?: 1 | 2
+  // The route prefix the menu stands for. Without one, the menu is current
+  // only while you are on one of its own links.
+  section?: string
+}) {
   const pathname = usePathname() ?? '/'
-  const active = links.some((l) => isOn(pathname, l.href))
+  const active = section ? isOn(pathname, section) : links.some((l) => isOn(pathname, l.href))
   const [open, setOpen] = useState(false)
   const rootRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -80,6 +93,7 @@ function Menu({ label, links, columns = 1 }: { label: string; links: NavLink[]; 
         aria-expanded={open}
         aria-controls={listId}
         onClick={() => setOpen((o) => !o)}
+        aria-current={active ? 'true' : undefined}
         data-active={active ? '' : undefined}
         className={ITEM}
       >
@@ -124,19 +138,20 @@ export function HomeLogo() {
   )
 }
 
-// The centre of the homepage bar. The More menu waits for lg: its pages are in
-// the footer too, and below lg the bar has no room for it.
+// The centre of the bar. The More menu waits for lg: below lg the bar has no
+// room for it, and its pages stay one tap away in the mobile drawer and the
+// footer. /icons is linked ahead of the page that will live there.
 export function HomeNav() {
   const pathname = usePathname() ?? '/'
   return (
     <nav aria-label="Main" className="flex items-center xl:gap-2">
-      <Menu label="Design systems" links={DESIGN_SYSTEMS} />
-      <Menu label="Components & blocks" links={COMPONENT_LINKS} columns={2} />
+      <Menu label="Design systems" links={DESIGN_SYSTEMS} section="/design-systems" />
+      <Menu label="Components & blocks" links={COMPONENT_LINKS} columns={2} section="/components" />
+      <Link href="/icons" prefetch={false} aria-current={isOn(pathname, '/icons') ? 'page' : undefined} className={ITEM}>
+        Icons
+      </Link>
       <Link href="/mcp" aria-current={pathname === '/mcp' ? 'page' : undefined} className={ITEM}>
         MCP
-      </Link>
-      <Link href="/pricing" aria-current={pathname === '/pricing' ? 'page' : undefined} className={ITEM}>
-        Pricing
       </Link>
       <div className="hidden lg:block">
         <Menu label="More" links={MORE} />

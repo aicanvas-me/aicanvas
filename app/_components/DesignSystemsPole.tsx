@@ -74,13 +74,21 @@ const SYSTEMS = [
   },
 ] as const
 
+// How many systems the pole lists: the count chip beside the Design systems
+// heading in the rail's switch (CatalogNav).
+export const DESIGN_SYSTEM_COUNT = SYSTEMS.length
+
 // Template routes are full-screen — chrome is suppressed to let the composition
 // fill the viewport. Exported so the sidebars can suppress themselves on them.
 export const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
 
 export function DesignSystemsPole({
   onNavigate,
+  showHeader = true,
 }: {
+  // The pole's own "Design Systems" label. The rail's switch (CatalogNav)
+  // draws its own heading above the list and turns this one off.
+  showHeader?: boolean
   // Fired when any leaf link is tapped. The mobile drawer passes setOpen(false)
   // so it closes immediately on tap. Templates now navigate in the SAME tab
   // (the TemplatePreviewShell top bar carries you back), so a route change also
@@ -123,10 +131,12 @@ export function DesignSystemsPole({
       {/* A label, not a control. Collapsing now lives on each system row, so a
           second collapse here could hide both systems behind a header that
           carries no caret and no way back. */}
-      <div className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 dark:text-sand-300">
-        <Cube weight="regular" size={16} />
-        <span className="flex-1 text-left">Design Systems</span>
-      </div>
+      {showHeader && (
+        <div className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold text-sand-700 dark:text-sand-300">
+          <Cube weight="regular" size={16} />
+          <span className="flex-1 text-left">Design Systems</span>
+        </div>
+      )}
       <div className="relative">
         {/* One vertical rail groups the systems under the pole header; it
             replaces the elbow arrow that used to sit on every row. */}

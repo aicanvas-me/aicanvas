@@ -1432,14 +1432,19 @@ export default function ComponentPageView({
                         <Link
                           href={`/components/${c.slug}`}
                           onClick={() => track('Component Card Click', { component: c.slug, position: relatedStart + i, source: 'related' })}
-                          className="group flex flex-col overflow-hidden rounded-xl border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+                          className="group flex h-full flex-col overflow-hidden rounded-[28px] border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-olive-500 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
                         >
+                          {/* The grid card's shape (ComponentCard): the
+                              preview fades into the card and the text sits
+                              straight on it. The focus mark is an inset
+                              outline, which paints over the preview, because
+                              the sliding row clips anything drawn outside. */}
                           <div className="relative aspect-video overflow-hidden bg-sand-950">
                             {c.image ? (
                               <img
                                 src={c.image}
                                 alt={c.name}
-                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                                className="absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] group-hover:brightness-110"
                               />
                             ) : (
                               <div
@@ -1451,11 +1456,15 @@ export default function ComponentPageView({
                                 }}
                               />
                             )}
+                            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-900" />
                           </div>
-                          <div className="px-3 py-2.5">
+                          <div className="relative -mt-2 px-4 pb-4">
                             <h3 className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">
                               {c.name}
                             </h3>
+                            <p className="mt-0.5 line-clamp-1 text-xs text-sand-600 dark:text-sand-400">
+                              {c.description}
+                            </p>
                           </div>
                         </Link>
                       </motion.div>

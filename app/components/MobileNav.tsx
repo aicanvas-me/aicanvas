@@ -2,21 +2,12 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  List,
-  X,
-  GithubLogo,
-  XLogo,
-  CaretDown,
-  DiamondsFour,
-  MagnifyingGlass,
-} from '@phosphor-icons/react'
+import { List, X, GithubLogo, XLogo, MagnifyingGlass } from '@phosphor-icons/react'
 import { GITHUB_URL, X_URL } from '../lib/config'
-import type { ReactNode } from 'react'
-import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
-import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
+import { TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
+import { CatalogNav } from './CatalogNav'
 import { CAPTURE_LEAF_RE } from './top-bar-crumbs'
 import { SecondaryNav } from './SecondaryNav'
 import { useComponentSearch } from './useComponentSearch'
@@ -29,54 +20,16 @@ import { SignedOut } from './auth/SignedOut'
 import { UserMenu } from './auth/UserMenu'
 import { SignInCta } from './auth/SignInCta'
 
-// ── Tier structure (mirrors Sidebar — both read from the shared config) ──
-const COMPONENTS_LABELS = CATEGORIES.map((c) => c.label)
-
-type Section = {
-  title: string
-  icon: ReactNode
-  labels: readonly string[]
-  disabled?: boolean
-}
-
-// The Design Systems pole is rendered separately via the shared
-// DesignSystemsPole (same component the desktop Sidebar uses) so the mobile
-// drawer and the desktop rail never drift. Only the Components pole lives here.
-const SECTIONS: Section[] = [
-  { title: 'Components', icon: <DiamondsFour weight="regular" size={16} />, labels: COMPONENTS_LABELS },
-  // { title: 'SVGs', icon: <PenNib weight="regular" size={16} />, labels: [], disabled: true },
-]
-
 // ─── MobileNav ────────────────────────────────────────────────────────────────
 
-export function MobileNav({
-  promoteDS = false,
-}: {
-  // promoteDS: mirror the desktop Sidebar — cap Components to its first 4 (rest
-  // behind Show more) and auto-expand Andromeda's System/Brain/Templates.
-  promoteDS?: boolean
-}) {
+// The phone's only navigation: the bar at the top and the drawer it opens. The
+// drawer carries everything the desktop bar and rail do: search, the catalog
+// switch (CatalogNav, shared with the rail), MCP, Pricing and the info pages
+// (SecondaryNav), the socials, the theme and the account.
+export function MobileNav() {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const isHome = pathname === '/components'
-  const categoryFromPath = pathname?.startsWith('/components/category/')
-    ? pathname.replace('/components/category/', '')
-    : null
-  const activeCategory = categoryFromPath
-    ? CATEGORIES.find((c) => c.slug === categoryFromPath)?.label ?? null
-    : isHome
-      ? (searchParams.get('category') ?? 'All Components')
-      : null
 
   const [open, setOpen] = useState(false)
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
-  // promoteDS caps Components to its first 4 categories; this reveals the rest.
-  const [showAllCats, setShowAllCats] = useState(false)
-  // Design Systems pole opens by default so Andromeda is one tap away (mirrors
-  // the desktop rail, where the DS pole is expanded out of the box).
-
-  const toggle = (title: string) =>
-    setCollapsed((prev) => ({ ...prev, [title]: !prev[title] }))
 
   // Close the drawer on a real route change (pathname only, not searchParams:
   // typing in search updates ?q= and would otherwise close it on every keystroke).
@@ -207,139 +160,11 @@ export function MobileNav({
                     'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
                 }}
               >
-                {/* ── Design Systems pole (shared, identical to the desktop rail) ── */}
-                <DesignSystemsPole
-                  onNavigate={() => setOpen(false)}
-                />
-
-                {SECTIONS.map((section) => {
-                  const isCollapsed = collapsed[section.title] ?? false
-                  const isDisabled = section.disabled === true
-                  const isComponents = section.title === 'Components'
-                  // Promoted view shows the first 4 categories; rest behind Show
-                  // more. The category you are ON always rides along, so the
-                  // drawer never hides the page you are looking at.
-                  const catLabels =
-                    isComponents && promoteDS && !showAllCats
-                      ? section.labels.filter(
-                          (l, i) => i < 4 || l === activeCategory,
-                        )
-                      : section.labels
-                  // Count what is ACTUALLY hidden: the active category rides
-                  // along past the cap, so a plain length - 4 overcounts by one
-                  // whenever you are inside one of the capped categories. The
-                  // expanded state keeps the control so it can collapse back.
-                  const hiddenCatCount =
-                    isComponents && promoteDS
-                      ? section.labels.filter(
-                          (l, i) => i >= 4 && l !== activeCategory,
-                        ).length
-                      : 0
-                  const hasHiddenCats =
-                    isComponents && promoteDS && (showAllCats || hiddenCatCount > 0)
-
-                  return (
-                    <div key={section.title} className="mb-3">
-                      {section.title === 'Components' ? (
-                        <Link
-                          href="/components"
-                          onClick={() => setOpen(false)}
-                          className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-                        >
-                          <span>{section.icon}</span>
-                          <span className="flex-1 whitespace-nowrap">Components &amp; Blocks</span>
-                        </Link>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => !isDisabled && toggle(section.title)}
-                          disabled={isDisabled}
-                          className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                            isDisabled
-                              ? 'cursor-not-allowed text-sand-600/60 dark:text-sand-600/60'
-                              : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                          }`}
-                        >
-                          <span className={isDisabled ? 'opacity-40' : ''}>{section.icon}</span>
-                          <span className="flex-1 text-left">
-                            {section.title}
-                            {isDisabled && <span className="ml-1 text-xs font-normal text-sand-600 dark:text-sand-700">· soon</span>}
-                          </span>
-                          {!isDisabled && <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />}
-                        </button>
-                      )}
-
-                      {!isCollapsed && !isDisabled && (
-                        <div className="relative">
-                          {/* One vertical rail replaces the per-row elbow
-                              arrows, same as the desktop sidebar. */}
-                          <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
-                        <ul className="space-y-0.5">
-                          {/* "All Components" is its own leaf here too, so the
-                              drawer and the desktop rail list the same rows. */}
-                          {isComponents && (
-                            <li>
-                              <Link
-                                href="/components"
-                                onClick={() => setOpen(false)}
-                                className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
-                                  activeCategory === 'All Components'
-                                    ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                                    : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                                }`}
-                              >
-                                <span aria-hidden className="w-3 shrink-0" />
-                                <span className="flex-1">All Components</span>
-                              </Link>
-                            </li>
-                          )}
-                          {catLabels.map((label) => {
-                            const isActive = label === activeCategory
-                            const cat = getCategoryByLabel(label)
-                            const href = cat
-                              ? `/components/category/${cat.slug}`
-                              : `/components?category=${encodeURIComponent(label)}`
-                            return (
-                              <li key={label}>
-                                <Link
-                                  href={href}
-                                  onClick={() => setOpen(false)}
-                                  className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
-                                    isActive
-                                      ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                                      : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                                  }`}
-                                >
-                                  <span aria-hidden className="w-3 shrink-0" />
-                                  <span className="flex-1">{label}</span>
-                                </Link>
-                              </li>
-                            )
-                          })}
-                        </ul>
-                        </div>
-                      )}
-                      {/* Show more sits OUTSIDE the rail, same as the desktop
-                          sidebar: its caret shares the rail's column. */}
-                      {!isCollapsed && !isDisabled && hasHiddenCats && (
-                        <button
-                          type="button"
-                          onClick={() => setShowAllCats((v) => !v)}
-                          className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
-                        >
-                          <CaretDown
-                            size={12}
-                            weight="regular"
-                            className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
-                          />
-                          <span className="flex-1 text-left">
-                            {showAllCats ? 'Show less' : `Show ${hiddenCatCount} more`}
-                          </span>
-                        </button>
-                      )}
-                    </div>
-                  )
-                })}
+                {/* The catalog switch and its list, the same control the
+                    desktop rail draws. */}
+                <div className="mb-3">
+                  <CatalogNav onNavigate={() => setOpen(false)} />
+                </div>
 
                 <div className="mb-3 h-px bg-sand-200 dark:bg-sand-800" />
                 <div className="mb-3">

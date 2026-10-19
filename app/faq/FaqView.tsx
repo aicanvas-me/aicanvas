@@ -81,7 +81,7 @@ export function FaqView({ categories }: { categories: FaqCategory[] }) {
       <div className="mx-auto mt-14 grid max-w-5xl gap-16 sm:mt-16 lg:mt-24 lg:grid-cols-[13rem_minmax(0,1fr)]">
         {/* From lg: the same list, sticky, marking the category in view. */}
         <nav aria-label="FAQ categories" className="hidden lg:block">
-          <div className="sticky top-24">
+          <div className="sticky top-10">
             <p className={`mb-3 ${EYEBROW}`}>On this page</p>
             <ul className="space-y-0.5 border-l border-sand-200 dark:border-sand-800">
               {categories.map((c) => {
@@ -109,7 +109,7 @@ export function FaqView({ categories }: { categories: FaqCategory[] }) {
         <div className="min-w-0">
           {categories.map((c, i) => (
             // scroll-mt-10 lands the heading level with the sticky list
-            // (top-24 = the bar's 14 plus these 10).
+            // (top-10, under the bar, which sits above the scroll column).
             <section key={c.slug} id={c.slug} data-faq-category="" className="mt-16 scroll-mt-10 first:mt-0 sm:mt-20">
               <Reveal>
                 <h2

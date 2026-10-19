@@ -7,8 +7,8 @@
 // The list is read off the article's own h2s after mount, so the policy text
 // is never edited to feed it. A heading without an id gets one from its words,
 // which also makes every section linkable (/terms#5-acceptable-use). A jump
-// lands the heading 96px down, level with the sticky list (the column's 56px
-// scroll padding for the bar plus scroll-mt-10), and the list marks the last
+// lands the heading 96px down the window, level with the sticky list (the
+// 56px bar above the scroll column plus scroll-mt-10), and the list marks the last
 // heading above LINE, so the section you jumped to is the one marked.
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
@@ -99,7 +99,7 @@ export function LegalArticle({ children }: { children: ReactNode }) {
   return (
     <div className="mx-auto mt-14 mb-10 grid max-w-6xl gap-8 sm:mt-20 sm:mb-16 lg:grid-cols-[14rem_minmax(0,1fr)] lg:gap-16">
       <nav aria-label="On this page" className="hidden lg:block">
-        <div className="sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pb-6">
+        <div className="sticky top-10 max-h-[calc(100vh-8rem)] overflow-y-auto pb-6">
           <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
             On this page
           </p>
