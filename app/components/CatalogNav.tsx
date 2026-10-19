@@ -520,6 +520,9 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
                     // both; only its row under the first one lights up, so a
                     // page never has two current rows.
                     active={pathname === `/components/${c.slug}` && firstCategoryIndex(c.slug) === ci}
+                    // A hundred-odd rows: prefetching every one in view would
+                    // fetch pages nobody opens.
+                    prefetch={false}
                     onNavigate={onNavigate}
                   />
                 ))}

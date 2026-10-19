@@ -78,7 +78,9 @@ function prettify(seg: string): string {
 }
 
 const DESIGN_SYSTEMS: Crumb = { label: 'Design Systems' }
-const COMPONENTS: Crumb = { label: 'Components & Blocks', href: '/components' }
+// Leads with "Standalone": every surface naming this family says so, and the
+// crumb replaced the "Standalone: Components & Blocks" eyebrow above each title.
+const COMPONENTS: Crumb = { label: 'Standalone: Components & Blocks', href: '/components' }
 
 // Routes where the crumb row carries an install CTA on its right. The CTA
 // itself is portalled in by the page; the row only provides the mount point,

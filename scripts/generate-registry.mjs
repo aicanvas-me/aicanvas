@@ -1649,7 +1649,11 @@ const navTs =
     }
   }
   if (navProblems.length > 0) {
-    throw new Error(`generate-registry: rail component lists disagree with the grid:\n  ${navProblems.join('\n  ')}`)
+    const msg = `generate-registry: rail component lists disagree with the grid:\n  ${navProblems.join('\n  ')}`
+    // The dev server tolerates a component still in progress (no category tag
+    // yet), as the copy check does; a build never does.
+    if (devServer) console.warn(msg)
+    else throw new Error(msg)
   }
 
   writeFileSync(

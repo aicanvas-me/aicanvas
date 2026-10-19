@@ -336,7 +336,7 @@ describe('the crumb row above the title', () => {
   it('draws the crumb trail on the catalog routes', () => {
     const el = row('/components/category/widgets')!
     const crumbs = within(el as HTMLElement).getByRole('navigation', { name: 'Breadcrumb' })
-    expect(crumbs.textContent).toBe('Components & Blocks/Widgets')
+    expect(crumbs.textContent).toBe('Standalone: Components & Blocks/Widgets')
     cleanup()
     const ds = row('/design-systems/andromeda-pro')!
     expect(within(ds as HTMLElement).getByRole('navigation', { name: 'Breadcrumb' }).textContent).toBe(
@@ -403,7 +403,7 @@ describe('the crumb row above the title', () => {
     currentPath = '/components/category/widgets'
     rerender(h(TopBarProvider, null, h(PageCrumbs)))
     expect(container.textContent).not.toContain('3 results')
-    expect(container.querySelector('nav[aria-label="Breadcrumb"]')?.textContent).toBe('Components & Blocks/Widgets')
+    expect(container.querySelector('nav[aria-label="Breadcrumb"]')?.textContent).toBe('Standalone: Components & Blocks/Widgets')
   })
 
   // Every page that has crumbs draws the row above its own h1, and the
