@@ -5,7 +5,7 @@
 
 import type { ReactNode } from 'react'
 import { Briefcase, Check } from '@phosphor-icons/react/dist/ssr'
-import { Reveal } from '../home/Reveal'
+import { Reveal } from './Reveal'
 import { ClaudeMark, CodexMark, CursorMark } from '../mcp/InstallCards'
 
 type Shot = { slug: string; name: string; image: string }
@@ -77,11 +77,11 @@ function CodePeek() {
         components/aicanvas/slice-type.tsx
       </div>
       <div className="overflow-hidden px-4 py-3 text-sand-700 dark:text-sand-300">
-        <p className="truncate text-sand-600 dark:text-sand-500">$ npx shadcn@latest add @aicanvas/slice-type</p>
-        <p className="truncate">
+        <p className="truncate text-sand-600 max-xl:whitespace-normal dark:text-sand-500">$ npx shadcn@latest add @aicanvas/slice-type</p>
+        <p className="truncate max-xl:whitespace-normal">
           <span className="text-olive-600 dark:text-olive-400">export default function</span> SliceType() {'{'}
         </p>
-        <p className="truncate pl-4 text-sand-600 dark:text-sand-500">{'// yours now: read it, change it'}</p>
+        <p className="truncate pl-4 text-sand-600 max-xl:whitespace-normal dark:text-sand-500">{'// yours now: read it, change it'}</p>
         <p>{'}'}</p>
       </div>
     </div>

@@ -289,7 +289,7 @@ html[data-frame][data-frame-light] {
        app/design-systems/andromeda/layout.tsx, app/ideation/layout.tsx
      - it sets overflow on one axis (overflow-x-hidden), which computes the
        other axis to auto AND drops its flex auto-minimum to 0 so it shrinks
-       to the column rather than growing past it: app/home/HomePageClient.tsx
+       to the column rather than growing past it: app/home/HomePage.tsx
 
    Declared here rather than inline so the :has() override can win — an inline
    scrollbar-gutter on the column would beat any selector. */
@@ -422,7 +422,7 @@ html[data-frame][data-frame-light] {
 
 /* Homepage proof pair — one beam of light tracing the OUTER edge of both cards
    as a single rectangle, ignoring the gap between them.
-   See app/home/HomePageClient.tsx.
+   See app/home/HomePage.tsx.
 
    An SVG rect with a travelling dash, not a positioned dot. Three reasons:
    the stroke follows the rounded corners exactly, dashoffset moves at a

@@ -1,23 +1,15 @@
-import type { Metadata } from 'next'
-import { HomeV3 } from '../home-v3/HomeV3'
-import type { WallItem } from '../home-v3/ComponentWall'
+import type { WallItem } from './ComponentWall'
+// Registry-free metadata so the homepage never bundles the heavy registry
+// (three.js etc.); mirrors COMPONENT_META.map(toMeta).
 import { COMPONENT_META } from '../lib/component-meta.generated'
-import { SITE_URL } from '../lib/config'
 import { optimizeImageKitUrl } from '../lib/imagekit'
 import { getRegistryPulls } from '../lib/registry-stats'
 import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-data'
 
-// Homepage v3 preview, beside v1 at / and v2 at /v2. Not for search: it points
-// its canonical at the root and stays out of the index until one version wins.
-// ponytail: a review route; delete it (and its TopBar/Sidebar checks) once a
-// version is chosen, before the REBRANDING ship.
-export const metadata: Metadata = {
-  title: { absolute: 'AI Canvas: Design Systems for AI Agents and Humans' },
-  description:
-    'React design systems, templates, components and blocks for people and their AI agents. Real source you own, installed with shadcn or MCP.',
-  alternates: { canonical: SITE_URL },
-  robots: { index: false, follow: false },
-}
+// The homepage renders at / and at /home; both routes share this data and
+// these words.
+export const HOMEPAGE_TITLE = 'AI Canvas: Design Systems for AI Agents and Humans'
+export const HOMEPAGE_DESCRIPTION = 'Andromeda is a React design system written for AI agents: components, templates, light and dark themes, and designer rules. Install with shadcn.'
 
 // The device frame's tabs, in order: one of each kind of screen.
 const TEMPLATE_TABS = [
@@ -39,9 +31,10 @@ const WALL_SLUGS = [
   'sphere-lines', 'polaroid-stack', 'charging-widget', 'traveldeck',
 ]
 
-export default async function HomeV3Page() {
+export async function getHomeData() {
   const total = COMPONENT_META.length
   const pulls = await getRegistryPulls()
+  // The free MIT standalones: everything not badged Premium.
   const freeTotal = COMPONENT_META.filter((c) => c.badge !== 'Premium').length
 
   const templates = TEMPLATE_TABS.map((slug) => TEMPLATES.find((t) => t.slug === slug))
@@ -55,5 +48,5 @@ export default async function HomeV3Page() {
       : []
   })
 
-  return <HomeV3 total={total} freeTotal={freeTotal} pulls={pulls} templates={templates} wall={wall} />
+  return { total, freeTotal, pulls, templates, wall }
 }

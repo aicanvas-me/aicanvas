@@ -1,7 +1,7 @@
 // The page kit for every page without the sidebar (app/lib/railless.ts): the
-// homepage v3 look, taken apart so pricing, MCP, the info pages, the legal
+// homepage look, taken apart so pricing, MCP, the info pages, the legal
 // pages and the account all read as one site. Same column, same hero, same
-// section heading, same closing band, same footer and wordmark as /v3.
+// section heading, same closing band, same footer and wordmark as the homepage.
 //
 // Server-safe: no hooks here, so a server page renders it as static HTML and a
 // client page simply bundles it. Reveal is the one client piece it pulls in.
@@ -11,7 +11,7 @@ import { SiteFooter } from './SiteFooter'
 import { Wordmark } from './Wordmark'
 import { Reveal } from '../home/Reveal'
 
-// The homepage v3 type ladder, shared so a section heading reads the same on
+// The homepage type ladder, shared so a section heading reads the same on
 // every page.
 export const EYEBROW = 'text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400'
 export const H2 = 'text-balance text-3xl font-bold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50'
@@ -19,7 +19,7 @@ export const SUB = 'text-base leading-relaxed text-sand-600 dark:text-sand-400'
 // The small rounded label above a hero or a section title.
 export const PILL =
   'inline-flex items-center gap-1.5 rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300'
-// A bordered surface, the v3 card.
+// A bordered surface, the homepage card.
 export const CARD = 'rounded-3xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
 
 // The page itself: the 7xl column the homepage uses, the footer, and the AI

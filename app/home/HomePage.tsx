@@ -1,11 +1,8 @@
-// Homepage v3: the live homepage's flow (hero, proof, the Andromeda chapter,
-// the library, how to get it, questions, value, plans) as a home for the whole
-// catalog, carrying the new positioning. Server component: copy and counts
-// render as static HTML; the template frame, the FAQ stickers, the agent
-// install panel and the live page's own islands hydrate.
-//
-// Shared pieces are imported from v1 (app/home) and left untouched there, so
-// v1 and v2 render exactly as before.
+// The homepage (rendered at / and /home): hero, proof, the Andromeda chapter,
+// the library, how to get it, questions, value, plans, as a home for the whole
+// catalog. Server component: copy and counts render as static HTML; the
+// template frame, the FAQ stickers, the agent install panel and the islands
+// hydrate.
 
 import Link from 'next/link'
 import {
@@ -19,9 +16,9 @@ import {
 import { buttonClasses } from '../components/buttonClasses'
 import { SiteFooter } from '../components/SiteFooter'
 import { PremiumCards } from '../components/billing/PremiumCards'
-import { AndromedaProSection } from '../home/AndromedaProSection'
-import { Reveal } from '../home/Reveal'
-import { StackedCards, AnimatedCount, WireIcons } from '../home/islands'
+import { AndromedaProSection } from './AndromedaProSection'
+import { Reveal } from './Reveal'
+import { StackedCards, AnimatedCount, WireIcons } from './islands'
 import { GITHUB_URL } from '../lib/config'
 import { lifetimeEnabled, premiumEnabled } from '../../lib/flags'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
@@ -53,7 +50,7 @@ const EYEBROW = 'text-xs font-semibold uppercase tracking-wider text-sand-600 da
 const H2 = 'text-balance text-3xl font-bold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50'
 const SUB = 'text-base leading-relaxed text-sand-600 dark:text-sand-400'
 
-// The live FAQ's answers, kept word for word where the question is the same.
+// The FAQ page's answers, kept word for word where the question is the same.
 const FAQ: FaqItem[] = [
   {
     q: 'What is AI Canvas?',
@@ -110,8 +107,10 @@ const STEPS = [
   },
 ]
 
-export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
-  // Everything installable, counted from source, the same sum as the live page.
+export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
+  // Everything installable, counted from source so it can never drift from
+  // reality: standalones (`total`, premium included) + the Andromeda
+  // design-system components and templates, which live in their own registry.
   const componentTotal =
     total +
     ANDROMEDA_COMPONENT_META.length +
@@ -125,13 +124,18 @@ export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
 
   return (
     <div
-      // Same scroll ownership as the live homepage: see the long note in
-      // app/home/HomePageClient.tsx and .app-scroll-column in globals.css.
+      // overflow-x-hidden makes this element own the page's vertical scroll,
+      // via two CSS rules at once: a non-visible value on one axis computes
+      // the other axis to auto, and a flex item with non-visible overflow gets
+      // an automatic minimum size of 0 so it shrinks to the column instead of
+      // growing past it. So this scrolls and the root chrome column does not,
+      // and the column must not reserve a gutter it can never paint a bar in.
+      // See .app-scroll-column in globals.css.
       data-owns-scroll
       className="aic-page-scroll flex min-h-full flex-col overflow-x-hidden bg-sand-50 dark:bg-sand-950"
     >
       <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
-        {/* ── Hero: the live layout, the new positioning ── */}
+        {/* ── Hero ── */}
         <section className="mx-auto flex max-w-4xl flex-col items-center text-center">
           <StackedCards />
 
@@ -433,7 +437,7 @@ export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
           </div>
         </section>
 
-        {/* ── From catalog to code: the live page's three-step timeline on the
+        {/* ── From catalog to code: the three-step timeline on the
              left, the agent's way in on the right; stacked on phones ── */}
         <section id="how-remix" aria-labelledby="v3-how" className="mx-auto mt-20 max-w-6xl scroll-mt-24 sm:mt-32">
           <Reveal className="mx-auto max-w-2xl text-center">
@@ -446,7 +450,7 @@ export function HomeV3({ total, freeTotal, pulls, templates, wall }: Props) {
 
           <div className="mt-10 grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
             <div className="relative flex flex-col lg:col-span-5">
-              {/* Connecting dotted line, as on the live page */}
+              {/* Connecting dotted line */}
               <div
                 aria-hidden
                 className="v3-dot-flow absolute bottom-16 left-[19px] top-6 w-px overflow-hidden"

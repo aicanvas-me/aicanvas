@@ -61,16 +61,26 @@ function PromptPill() {
   return (
     <div
       ref={ref}
-      className="mt-7 flex w-full max-w-xl items-center gap-2.5 rounded-full border border-sand-200 bg-sand-100/60 px-4 py-2.5 text-left dark:border-sand-800 dark:bg-sand-900/60"
+      className="mt-7 flex w-full max-w-xl items-center gap-2.5 rounded-full border border-sand-200 bg-sand-100/60 px-4 py-2.5 text-left max-xl:rounded-2xl dark:border-sand-800 dark:bg-sand-900/60"
     >
       <Sparkle weight="regular" size={15} aria-hidden className="shrink-0 text-olive-600 dark:text-olive-400" />
-      <p className="min-w-0 flex-1 truncate font-mono text-[13px] text-sand-700 dark:text-sand-300">
-        <span className="sr-only">Example prompt: </span>
-        &ldquo;{text}
-        {typing ? (
-          <span aria-hidden className="ml-px inline-block h-[1.05em] w-[1.5px] translate-y-[2px] animate-pulse bg-sand-500" />
-        ) : null}
-        &rdquo;
+      {/* One line on wide screens, cut with an ellipsis. Narrower, the prompt
+          wraps instead, in a grid cell sized by every prompt laid out
+          invisibly underneath, so the pill keeps one height while it types. */}
+      <p className="min-w-0 flex-1 truncate font-mono text-[13px] text-sand-700 max-xl:grid max-xl:whitespace-normal dark:text-sand-300">
+        <span className="max-xl:[grid-area:1/1]">
+          <span className="sr-only">Example prompt: </span>
+          &ldquo;{text}
+          {typing ? (
+            <span aria-hidden className="ml-px inline-block h-[1.05em] w-[1.5px] translate-y-[2px] animate-pulse bg-sand-500" />
+          ) : null}
+          &rdquo;
+        </span>
+        {PROMPTS.map((prompt) => (
+          <span key={prompt} aria-hidden className="invisible hidden [grid-area:1/1] max-xl:block">
+            &ldquo;{prompt}&rdquo;
+          </span>
+        ))}
       </p>
     </div>
   )

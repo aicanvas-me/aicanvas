@@ -8,7 +8,7 @@
 // bob nor scale, and the accordion opens without animating.
 //
 // Answers stay in the DOM when closed (SEO); the grid-rows trick animates the
-// height, the same as the live FAQ.
+// height, the same as the FAQ page.
 
 import { useRef, useState, type ReactNode } from 'react'
 import Link from 'next/link'

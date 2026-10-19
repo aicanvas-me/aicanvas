@@ -6,9 +6,7 @@
 
 const PAGES = new Set([
   '/',
-  // ponytail: /v2 and /v3 are homepage review routes; drop them with the routes.
-  '/v2',
-  '/v3',
+  '/home',
   '/pricing',
   '/mcp',
   '/faq',
