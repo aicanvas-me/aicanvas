@@ -2,24 +2,6 @@
 
 // npm install framer-motion
 
-/**
- * A swarm of logo marks that fly in from off-screen, settle into an
- * overlapping diamond pack, breathe on an infinite GPU drift, and bend
- * toward the cursor like iron filings around a magnet.
- *
- * Three motion behaviours run per icon:
- *
- *   1. Entry (one-shot spring): off-screen → rest, staggered across the pack.
- *   2. Float (CSS @keyframes, GPU): infinite slow position drift + rotation
- *      sway. Compositor-driven, so no JS runs per frame while at rest.
- *   3. Magnet (spring): the cursor pulls nearby icons toward it with a soft
- *      radial falloff plus a tangential curl, so they trail and overshoot
- *      before settling.
- *
- * Performance: drift is pure CSS, and the magnet transform returns 0 outside
- * the influence radius, so the springs for distant icons are parked and only
- * the icons near the cursor consume per-frame work.
- */
 import {
   motion,
   useMotionValue,
@@ -38,15 +20,12 @@ import {
   type ReactNode,
 } from 'react'
 
-// ── Defaults ───────────────────────────────────────────────────────────────
 const DRIFT_ROT_AMPLITUDE = 3.5
 const DRIFT_MAG_MIN_FRAC = 0.012
 const DRIFT_MAG_MAX_FRAC = 0.03
 const DRIFT_DURATION_MIN = 4
 const DRIFT_DURATION_MAX = 8
 const ENTRY_SPRING = { type: 'spring' as const, stiffness: 100, damping: 18, mass: 1 }
-// Low mass + medium damping: a slight overshoot reaching for the cursor,
-// a gentle return when it moves away.
 const MAGNET_SPRING = { stiffness: 180, damping: 14, mass: 0.6 }
 const PARKED = 99999
 
@@ -58,8 +37,6 @@ type Palette = {
   dark: string
 }
 
-// Default palettes for the built-in mark: a light-to-dark ladder in two
-// families, so the pack reads as depth rather than as one flat colour.
 const OLIVE_PALETTES: Palette[] = [
   { id: 'op0', from: '#EBF0C8', to: '#C5D672', mid: '#5C5C58', dark: '#262624' },
   { id: 'op1', from: '#DAE4A0', to: '#BECF5D', mid: '#4F4F4C', dark: '#1E1E1E' },
@@ -76,8 +53,6 @@ const SAND_PALETTES: Palette[] = [
 ]
 const ALL_PALETTES: Palette[] = [...OLIVE_PALETTES, ...SAND_PALETTES]
 
-// Weighted pool, biased dark so the light marks read as highlights: 30% of
-// the accent family, 70% of the neutral one.
 const PALETTE_WEIGHTS: Array<[Palette, number]> = [
   [OLIVE_PALETTES[0], 2],
   [OLIVE_PALETTES[1], 4],
@@ -90,10 +65,6 @@ const PALETTE_WEIGHTS: Array<[Palette, number]> = [
   [SAND_PALETTES[3], 36],
   [SAND_PALETTES[4], 16],
 ]
-
-// ── Deterministic randomness ───────────────────────────────────────────────
-// Everything below is seeded, so the server and the client build the exact
-// same pack and hydration never mismatches.
 
 function mulberry32(seed: number) {
   let t = seed >>> 0
@@ -121,9 +92,6 @@ function smoothstep(edge0: number, edge1: number, x: number) {
   return t * t * (3 - 2 * t)
 }
 
-// Halton sequence — a low-discrepancy quasi-random generator. Index 1..N
-// spreads points evenly across [0,1] without the clumping of Math.random or
-// the visible rows of a grid layout.
 function halton(index: number, base: number): number {
   let result = 0
   let f = 1
@@ -172,7 +140,6 @@ type ClusterConfig = {
 function buildCluster(cfg: ClusterConfig): Item[] {
   const pool: Palette[] = []
   for (const [palette, weight] of PALETTE_WEIGHTS) {
-    // Scale the weights so the mix holds at any count, not just the default.
     const n = Math.max(1, Math.round((weight / 150) * cfg.count))
     for (let i = 0; i < n; i++) pool.push(palette)
   }
@@ -182,10 +149,6 @@ function buildCluster(cfg: ClusterConfig): Item[] {
   for (let i = 0; i < cfg.count; i++) {
     const rand = mulberry32(cfg.seed * 0x2545f491 + 0x9e3779b1 + i * 2654435761)
 
-    // Take 2D Halton points in the unit square. For the diamond layout,
-    // rotate them 45° (x' = u - v, y' = u + v) so the square maps to a
-    // rhombus with corners at (±1, 0) and (0, ±1). The +1 offset skips the
-    // degenerate first point; the jitter keeps it from looking machined.
     const u = halton(i + 1, 2) - 0.5
     const v = halton(i + 1, 3) - 0.5
     const ux = cfg.layout === 'diamond' ? u - v : u * 2
@@ -193,12 +156,9 @@ function buildCluster(cfg: ClusterConfig): Item[] {
     const xFrac = ux * cfg.spreadX + (rand() - 0.5) * 0.018
     const yFrac = uy * cfg.spreadY + (rand() - 0.5) * 0.018
 
-    // Size is fully random per icon, biased small so the big ones stay rare.
     const sizeFrac =
       cfg.minIconSize + Math.pow(rand(), 1.4) * (cfg.maxIconSize - cfg.minIconSize)
 
-    // Entry origin: a random bearing, 1.6–2.0 container widths out, so the
-    // pack converges from every direction at once.
     const fromAngle = rand() * Math.PI * 2
     const fromDist = 1.6 + rand() * 0.4
 
@@ -212,7 +172,6 @@ function buildCluster(cfg: ClusterConfig): Item[] {
       xFrac,
       yFrac,
       sizeFrac,
-      // Free base rotation in ±180°; the float loop sways around this base.
       rotation: (rand() - 0.5) * 360,
       palette: palettes[i % palettes.length],
       iconIndex: cfg.iconCount > 0 ? i % cfg.iconCount : 0,
@@ -225,15 +184,13 @@ function buildCluster(cfg: ClusterConfig): Item[] {
         DRIFT_DURATION_MIN + rand() * (DRIFT_DURATION_MAX - DRIFT_DURATION_MIN),
       driftDelay: -rand() * DRIFT_DURATION_MAX,
       entryDelay: i * cfg.entryStagger,
-      // Stack the bigger icons on top so they read as the foreground layer.
       zIndex: Math.round(sizeFrac * 10000),
     })
   }
   return items
 }
 
-// Shared gradient defs live in one hidden <svg>, so every mark references
-// them by id instead of carrying its own <defs>.
+// Not display:none: gradients inside a hidden SVG stop rendering.
 function GradientDefs({ uid }: { uid: string }) {
   return (
     <svg
@@ -262,8 +219,6 @@ function GradientDefs({ uid }: { uid: string }) {
   )
 }
 
-// The built-in placeholder mark: an isometric cube in three tones. Swap the
-// whole thing out by passing your own logos to the `icons` prop.
 function DefaultMark({ palette, uid }: { palette: Palette; uid: string }) {
   return (
     <svg viewBox='0 0 28 24' fill='none' aria-hidden='true'>
@@ -289,11 +244,7 @@ function DefaultMark({ palette, uid }: { palette: Palette; uid: string }) {
   )
 }
 
-// One icon, four nested layers:
-//   outer (static):      pins the icon's centre to its rest point in px
-//   magnet (motion.div): spring-lagged x/y from the cursor attraction
-//   entry  (motion.div): one-shot off-screen → 0
-//   float  (plain div):  GPU-driven CSS animation, no per-frame JS
+// Each layer owns its own transform; merging them makes one overwrite the other.
 function ClusterIcon({
   item,
   size,
@@ -323,10 +274,6 @@ function ClusterIcon({
   const influence = magnetRadius * size
   const strength = magnetStrength * size
 
-  // Radial attraction with a smoothstep falloff over the influence radius,
-  // plus a tangential component so the field swirls instead of tugging in a
-  // straight line. Returning 0 past the radius parks the spring, which is
-  // why no explicit proximity gate is needed.
   const magnetX = useTransform([mouseX, mouseY], (input) => {
     const [mx, my] = input as [number, number]
     const dx = mx - restX
@@ -353,8 +300,7 @@ function ClusterIcon({
   const springX = useSpring(magnetX, MAGNET_SPRING)
   const springY = useSpring(magnetY, MAGNET_SPRING)
 
-  // Per-icon amplitude, period and phase feed the shared @keyframes loop, so
-  // the pack never sways in unison.
+  // Keep these unitless: CLUSTER_CSS multiplies them by 1px or 1deg.
   const floatStyle: CSSProperties = {
     width: '100%',
     height: '100%',
@@ -429,9 +375,6 @@ function ClusterIcon({
   )
 }
 
-// The float loop, plus the one rule that lets any artwork — inline SVG, an
-// <img>, a whole component — fill its square slot without the caller having
-// to style it.
 const CLUSTER_CSS = `
 .aicanvas-cluster-float {
   animation: aicanvas-cluster-float var(--ic-duration) ease-in-out var(--ic-delay) infinite alternate;
@@ -523,12 +466,10 @@ export default function MagneticLogoCluster({
   className = '',
 }: MagneticLogoClusterProps) {
   const reduceMotion = useReducedMotion() ?? false
-  // Namespaces the gradient ids so two clusters on one page never collide.
   const uid = useId().replace(/:/g, '')
   const iconCount = icons?.length ?? 0
 
-  // Compared by value, not identity, so a caller passing a fresh array
-  // literal on every render doesn't rebuild the whole pack.
+  // Compared by value, so inline tints arrays don't rebuild the pack.
   const tintsKey = tints.join('|')
 
   const items = useMemo(
@@ -564,11 +505,8 @@ export default function MagneticLogoCluster({
 
   const clusterRef = useRef<HTMLDivElement | null>(null)
   const [size, setSize] = useState(0)
-  // Once the visitor drives the cursor themselves, the scripted demo stops.
   const interactedRef = useRef(false)
-  // The demo is a one-time introduction. Without this it would replay every
-  // time the container is re-measured, and on mobile the URL bar collapsing
-  // does exactly that.
+  // A ref, not state: state would re-run the effect and cancel the demo.
   const demoPlayedRef = useRef(false)
 
   const mouseX = useMotionValue(PARKED)
@@ -584,9 +522,6 @@ export default function MagneticLogoCluster({
     return () => ro.disconnect()
   }, [])
 
-  // Pointer is tracked on the whole surface, not just the pack, so icons
-  // start reaching before the cursor arrives. Coordinates are relative to
-  // the pack's centre, which is where the rest points are measured from.
   function handlePointer(e: React.PointerEvent<HTMLDivElement>) {
     if (reduceMotion || !clusterRef.current) return
     interactedRef.current = true
@@ -599,15 +534,10 @@ export default function MagneticLogoCluster({
     mouseY.set(PARKED)
   }
 
-  // One scripted "ghost cursor" pass right after the entry settles: the same
-  // motion values are animated along an arc from the left edge, through the
-  // centre, out past the right edge. Icons reach for the invisible cursor and
-  // trail behind it, showing the interaction to someone who never touches the
-  // page. Skipped for reduced motion, and abandoned on first real input.
   useEffect(() => {
     if (!autoDemo || reduceMotion || size <= 0 || demoPlayedRef.current) return
 
-    const entryDoneMs = count * entryStagger * 1000 + 900 // stagger + spring settle
+    const entryDoneMs = count * entryStagger * 1000 + 900
     const startDelay = entryDoneMs + 400
     const sweepDuration = 1500
     const pauseAfter = 400
@@ -628,19 +558,14 @@ export default function MagneticLogoCluster({
           return
         }
         const t = Math.min(1, (performance.now() - startedAt) / sweepDuration)
-        // Ease in/out so the ghost cursor doesn't snap into motion.
         const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
-        // Ends past the right edge, so the trailing icons spill toward
-        // whatever copy sits beside the pack.
         const startX = -size * 0.45
         const endX = size * 0.65
         mouseX.set(startX + (endX - startX) * eased)
-        // A gentle sine makes the path a soft arc rather than a flat line.
         mouseY.set(Math.sin(eased * Math.PI) * size * -0.08)
         if (t < 1) {
           rafId = requestAnimationFrame(tick)
         } else {
-          // Hold briefly, then park far away so the springs return to rest.
           parkTimer = window.setTimeout(() => {
             if (cancelled) return
             mouseX.set(PARKED)
@@ -664,8 +589,7 @@ export default function MagneticLogoCluster({
       onPointerMove={handlePointer}
       onPointerLeave={handlePointerLeave}
       className={`relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#EFEFEA] dark:bg-[#0E0E0F] ${className}`}
-      // pan-y, not none: the pack still tracks a finger dragging across it,
-      // but the page underneath can always be scrolled away from.
+      // pan-y, not none: the page must still scroll on touch.
       style={{ touchAction: 'pan-y' }}
     >
       <style dangerouslySetInnerHTML={{ __html: CLUSTER_CSS }} />
@@ -677,6 +601,7 @@ export default function MagneticLogoCluster({
         className='relative aspect-square'
         style={{ width: 'min(86vw, 78vh, 640px)' }}
       >
+        {/* Mount after measuring: Framer Motion reads `initial` only once. */}
         {size > 0 &&
           items.map((item) => (
             <ClusterIcon
