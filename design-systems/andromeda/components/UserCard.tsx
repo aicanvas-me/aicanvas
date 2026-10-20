@@ -1,23 +1,3 @@
-// ============================================================
-// COMPONENT: UserCard
-// User card menu — the same popover as `UserMenu`, but the trigger
-// is a wider card showing the user's avatar, name, and role
-// alongside the CaretUpDown chevron. Designed for the bottom of a
-// sidebar where there is room to spell the user identity out;
-// reach for `UserMenu` instead when the trigger has to fit beside
-// other top-bar controls.
-//
-// Defaults `placement="top"` and `align="stretch"` because the
-// canonical home is a bottom-of-sidebar slot: the menu opens
-// upward so it doesn't run off-screen and stretches to the card's
-// width so the panel sits flush.
-//
-// Follows the same popover rules as `UserMenu` — see that file's
-// header and the Andromeda interaction-states rules. Panel state + items rendering
-// are reused from `./UserMenu` so the two components can never
-// drift apart visually.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useState } from 'react';
@@ -33,11 +13,8 @@ import {
   useUserMenuPanel,
 } from './UserMenu';
 
-// Motion locals — same convention as Drawer / UserMenu: keep every
-// duration + easing referenced to a token while adapting to the shape
-// framer-motion expects (seconds + 4-tuple bezier).
+// Returns seconds: Framer Motion takes seconds, tokens store ms.
 const toSeconds = (ms: string) => parseInt(ms, 10) / 1000;
-// framer boundary: derived from tokens, cannot follow runtime var overrides
 const EASE_STANDARD = easingArray(tokens.motion.easing.standard);
 
 /**
@@ -71,7 +48,6 @@ export type UserCardProps = ComponentPropsWithoutRef<'div'> & {
   ariaLabel?: string;
 };
 
-/** @type {React.ForwardRefExoticComponent<UserCardProps>} */
 export const UserCard = forwardRef<HTMLDivElement, UserCardProps>(function UserCard(
   {
     name,
@@ -98,6 +74,7 @@ export const UserCard = forwardRef<HTMLDivElement, UserCardProps>(function UserC
   return (
     <div
       ref={(node: HTMLDivElement | null) => {
+        // wrapperRef must wrap trigger and panel: outside-click and first-item focus read it.
         (wrapperRef as RefObject<HTMLDivElement | null>).current = node;
         if (typeof ref === 'function') ref(node);
         else if (ref) ref.current = node;
