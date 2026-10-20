@@ -1,18 +1,13 @@
 'use client'
 
-/**
- * Renders a canvas dot grid with theme-aware resting and highlight colors.
- * Pointer movement brightens and enlarges nearby dots with eased falloff.
- */
-
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
-const SPACING = 20     // tune: raise to spread the dots farther apart
-const RADIUS  = 130    // tune: raise to widen the pointer influence
-const BASE_A  = 0.13   // tune: raise to brighten resting dots
-const PEAK_A  = 0.92   // tune: raise to brighten highlighted dots
+const SPACING = 20
+const RADIUS  = 130
+const BASE_A  = 0.13
+const PEAK_A  = 0.92
 
 export default function InteractiveDotGrid({
   showLabel = true,
@@ -22,6 +17,7 @@ export default function InteractiveDotGrid({
   /** Overrides the background, dot colors, and resting or highlighted opacity. */
   colors?: {
     background?: string
+    // dot and highlight take "r,g,b" strings, not hex: they are split into numbers.
     dot?: string
     highlight?: string
     baseAlpha?: number
@@ -140,12 +136,11 @@ export default function InteractiveDotGrid({
         const dist2 = dx * dx + dy * dy
         const tgt   = dist2 < r2 ? Math.pow(1 - Math.sqrt(dist2) / RADIUS, 1.5) : 0
 
-        // tune: raise either rate to speed up illumination changes
         d.b += (tgt > d.b ? 0.16 : 0.07) * (tgt - d.b)
         if (d.b < 0.004) d.b = 0
 
         const alpha = baseA + (peakA - baseA) * d.b
-        const sz    = 1 + d.b * 1.2   // tune: raise the multiplier to enlarge highlighted dots
+        const sz    = 1 + d.b * 1.2
         const r = Math.round(r0 + (r1 - r0) * d.b)
         const g = Math.round(g0 + (g1 - g0) * d.b)
         const b = Math.round(b0 + (b1 - b0) * d.b)
