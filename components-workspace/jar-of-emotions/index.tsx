@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion matter-js
-/**
- * Displays a physics-driven jar that dispenses selected emotion emoji.
- * Clicking an emotion opens the lid and launches a matching body toward its button.
- */
 
 import {
   useEffect,
@@ -43,16 +39,11 @@ function useTheme(ref: RefObject<HTMLElement | null>): { theme: 'light' | 'dark'
 }
 
 
-// tune: raise to make dispensed emoji fall faster
 const GRAVITY_SCALE = 0.0018
-// tune: change to resize the physics bodies
-const EMOJI_SIZE = 34 
-// tune: change to resize the visible emoji
-const EMOJI_FONT = 30 
-// tune: raise to allow more active emoji
+const EMOJI_SIZE = 34
+const EMOJI_FONT = 30
 const MAX_BODIES = 30
-// tune: raise to keep more emoji inside the jar
-const MAX_INTERIOR = 8 
+const MAX_INTERIOR = 8
 const WALL_THICKNESS = 40
 const JAR_WALL_THICKNESS = 24
 
@@ -65,11 +56,11 @@ const MOUTH_RIGHT = 160
 
 const JAR_INNER_LEFT = 32
 const JAR_INNER_RIGHT = 168
-const JAR_INNER_TOP = 46 
+const JAR_INNER_TOP = 46
 const JAR_INNER_BOTTOM = 226
 
 const LID_X = 26
-const LID_Y = 22 
+const LID_Y = 22
 const LID_W = 148
 const LID_H = 18
 const LID_HINGE_X = LID_X
@@ -84,7 +75,6 @@ type Emotion = {
   lightColor: string
 }
 
-// customize: replace the emotion labels and emoji below
 const EMOTIONS: Emotion[] = [
   { id: 'banger',   emoji: '🔥', label: 'Banger',   darkColor: '#FF6B35', lightColor: '#C94400' },
   { id: 'perfect',  emoji: '👌', label: 'Perfect',  darkColor: '#6BD97A', lightColor: '#1E8A35' },
@@ -100,7 +90,6 @@ type Dispensed = {
   body: Body
   emoji: string
   emotionId: string
-  
   location: 'inside' | 'outside'
 }
 
@@ -126,9 +115,8 @@ export default function JarOfEmotions() {
   const runnerRef = useRef<Runner | null>(null)
   const worldRef = useRef<World | null>(null)
   const dispensedRef = useRef<Dispensed[]>([])
-  
   const jarBoxRef = useRef<{
-    x: number 
+    x: number
     y: number
     w: number
     h: number
@@ -137,10 +125,9 @@ export default function JarOfEmotions() {
 
   const [lidOpen, setLidOpen] = useState(false)
   const [dispensedTotal, setDispensedTotal] = useState(0)
-  const [renderTick, setRenderTick] = useState(0) 
+  const [renderTick, setRenderTick] = useState(0)
   const lidCloseTimerRef = useRef<number | null>(null)
 
-  
   useEffect(() => {
     let alive = true
     let rafId = 0
@@ -172,12 +159,9 @@ export default function JarOfEmotions() {
       const t = WALL_THICKNESS
       const opts = { isStatic: true, render: { visible: false } }
       return [
-        
         Matter.Bodies.rectangle(w / 2, h + t / 2, w + t * 2, t, opts),
-        
         Matter.Bodies.rectangle(-t / 2, h / 2, t, h * 2, opts),
         Matter.Bodies.rectangle(w + t / 2, h / 2, t, h * 2, opts),
-        
         Matter.Bodies.rectangle(w / 2, -t * 3, w + t * 2, t, opts),
       ]
     }
@@ -188,7 +172,6 @@ export default function JarOfEmotions() {
       const t = JAR_WALL_THICKNESS
       const opts = { isStatic: true, render: { visible: false }, friction: 0.6 }
 
-      
       const leftX = x + (JAR_INNER_LEFT - 2) * scale
       const rightX = x + (JAR_INNER_RIGHT + 2) * scale
       const topY = y + JAR_INNER_TOP * scale
@@ -196,7 +179,6 @@ export default function JarOfEmotions() {
       const innerH = botY - topY
 
       return [
-        
         Matter.Bodies.rectangle(
           leftX - t / 2,
           topY + innerH / 2,
@@ -204,7 +186,6 @@ export default function JarOfEmotions() {
           innerH,
           opts,
         ),
-        
         Matter.Bodies.rectangle(
           rightX + t / 2,
           topY + innerH / 2,
@@ -212,9 +193,8 @@ export default function JarOfEmotions() {
           innerH,
           opts,
         ),
-        
-        
         ...(() => {
+          // Hard-coded trace of the jar path's bottom curve (SVG units); update it with the path.
           const pts = [
             [30, 218], [40, 226], [65, 233], [100, 236],
             [135, 233], [160, 226], [170, 218],
@@ -247,7 +227,6 @@ export default function JarOfEmotions() {
         if (!el) continue
         const r = el.getBoundingClientRect()
         const x = r.left - cRect.left + r.width / 2
-        
         const y = r.top - cRect.top + 4
         const body = Matter.Bodies.rectangle(x, y, r.width, 8, {
           isStatic: true,
@@ -270,7 +249,6 @@ export default function JarOfEmotions() {
       const topY = y + JAR_INNER_TOP * scale
       const botY = y + (JAR_INNER_BOTTOM - 10) * scale
       const innerH = botY - topY
-      
       for (let i = 0; i < EMOTIONS.length; i++) {
         const e = EMOTIONS[i]
         const px = rand(leftX, rightX)
@@ -318,7 +296,6 @@ export default function JarOfEmotions() {
       buttonFloors = buildButtonFloors(Matter)
       Matter.Composite.add(world, buttonFloors)
 
-      
       for (const d of dispensedRef.current) {
         const p = d.body.position
         let nx = p.x
@@ -332,11 +309,9 @@ export default function JarOfEmotions() {
 
     function tick() {
       if (!alive) return
-      
       const Matter = matterRef.current
       if (Matter) {
         const list = dispensedRef.current
-        
         const outsideCount = list.filter(d => d.location === 'outside').length
         if (outsideCount > MAX_BODIES) {
           const extra = outsideCount - MAX_BODIES
@@ -352,7 +327,6 @@ export default function JarOfEmotions() {
           }
         }
       }
-      
       setRenderTick((t) => (t + 1) & 0xffff)
       rafId = requestAnimationFrame(tick)
     }
@@ -405,7 +379,6 @@ export default function JarOfEmotions() {
     }
   }, [])
 
-  
   useIsomorphicLayoutEffect(() => {
     return () => {
       if (lidCloseTimerRef.current !== null) {
@@ -415,14 +388,12 @@ export default function JarOfEmotions() {
     }
   }, [])
 
-  
   function dispense(emotion: Emotion) {
     const Matter = matterRef.current
     const world = worldRef.current
     const container = containerRef.current
     if (!Matter || !world || !container) return
 
-    
     setLidOpen(true)
     if (lidCloseTimerRef.current !== null) clearTimeout(lidCloseTimerRef.current)
     lidCloseTimerRef.current = window.setTimeout(() => {
@@ -430,7 +401,6 @@ export default function JarOfEmotions() {
       lidCloseTimerRef.current = null
     }, 900)
 
-    
     const list = dispensedRef.current
     let candidate = list.find(
       (d) => d.location === 'inside' && d.emotionId === emotion.id,
@@ -462,10 +432,8 @@ export default function JarOfEmotions() {
         }
         list.push(candidate)
       }
-      
     }
 
-    
     if (!candidate) {
       const { x: jx, y: jy, scale: s } = jarBoxRef.current
       const mouthCx = jx + ((MOUTH_LEFT + MOUTH_RIGHT) / 2) * s
@@ -489,7 +457,6 @@ export default function JarOfEmotions() {
       list.push(candidate)
     }
 
-    
     const btn = buttonRefs.current[emotion.id]
     if (!btn) return
     const cRect = container.getBoundingClientRect()
@@ -497,12 +464,9 @@ export default function JarOfEmotions() {
     const targetX = bRect.left - cRect.left + bRect.width / 2
     const targetY = bRect.top - cRect.top + 4
 
-    
-    
-    
     const { x: jx, y: jy, scale: s } = jarBoxRef.current
     const mouthCx = jx + ((MOUTH_LEFT + MOUTH_RIGHT) / 2) * s
-    const exitY = jy - 18 
+    const exitY = jy - 18
 
     Matter.Body.setPosition(candidate.body, {
       x: mouthCx + rand(-6, 6),
@@ -510,14 +474,9 @@ export default function JarOfEmotions() {
     })
     Matter.Body.setAngularVelocity(candidate.body, rand(-0.12, 0.12))
 
-    
-    
-    
     const dx = targetX - mouthCx
-    
     const upKick = -14 - Math.min(2, Math.abs(dx) / 200)
-    
-    const hVel = dx / 60 
+    const hVel = dx / 60
     Matter.Body.setVelocity(candidate.body, {
       x: hVel + rand(-0.3, 0.3),
       y: upKick,
@@ -526,9 +485,6 @@ export default function JarOfEmotions() {
     candidate.location = 'outside'
     setDispensedTotal(t => t + 1)
 
-    
-    
-    
     const remainingInside = list.some(
       (d) => d.location === 'inside' && d.emotionId === emotion.id,
     )
@@ -557,7 +513,6 @@ export default function JarOfEmotions() {
     }
   }
 
-  
   const styles = useMemo(
     () => ({
       jarFill: isDark ? 'rgba(220, 235, 245, 0.10)' : 'rgba(120, 140, 160, 0.18)',
@@ -571,18 +526,10 @@ export default function JarOfEmotions() {
     [isDark],
   )
 
-  
   void renderTick
 
-  
   return (
     <div
-      
-      
-      
-      
-      
-      
       className="flex min-h-screen w-full items-stretch justify-center"
       style={{ background: isDark ? '#1A1A19' : '#E8E8DF' }}
     >
@@ -591,7 +538,6 @@ export default function JarOfEmotions() {
         className="relative flex w-full max-w-2xl flex-col items-center justify-center gap-7 overflow-hidden px-4 py-6 sm:gap-8 sm:px-6 sm:py-10"
         style={{ minHeight: 520 }}
       >
-        {}
         <div className="relative">
         <div className="relative z-10 flex items-center justify-center">
           <div
@@ -608,34 +554,28 @@ export default function JarOfEmotions() {
               preserveAspectRatio="xMidYMid meet"
             >
               <defs>
-                {}
                 <linearGradient id="jar-body-grad" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%"   stopColor="rgba(255,255,255,0.35)" />
                   <stop offset="18%"  stopColor="rgba(255,255,255,0.08)" />
                   <stop offset="82%"  stopColor="rgba(0,0,0,0.06)" />
                   <stop offset="100%" stopColor="rgba(0,0,0,0.18)" />
                 </linearGradient>
-                {}
                 <linearGradient id="lid-grad" x1="0" y1="0" x2="0" y2="1">
                   <stop offset="0%"   stopColor="rgba(255,255,255,0.55)" stopOpacity={1} />
                   <stop offset="8%"   stopColor={styles.lidFill} stopOpacity={1} />
                   <stop offset="50%"  stopColor={styles.lidFill} stopOpacity={1} />
                   <stop offset="100%" stopColor={styles.lidStroke} stopOpacity={1} />
                 </linearGradient>
-                {}
                 <filter id="lid-drop-shadow" x="-20%" y="-20%" width="160%" height="160%">
                   <feDropShadow dx="1" dy="3" stdDeviation="3" floodColor="rgba(0,0,0,0.35)" />
                 </filter>
-                {}
                 <filter id="shadow-blur" x="-40%" y="-100%" width="180%" height="400%">
                   <feGaussianBlur stdDeviation="6" />
                 </filter>
-                {}
                 <linearGradient id="jar-right-shadow" x1="1" y1="0" x2="0" y2="0">
                   <stop offset="0%"  stopColor="rgba(0,0,0,0.18)" />
                   <stop offset="30%" stopColor="rgba(0,0,0,0)" />
                 </linearGradient>
-                {}
                 <radialGradient id="jar-bottom-glow" cx="50%" cy="100%" r="50%" fx="50%" fy="100%">
                   <stop offset="0%"   stopColor="rgba(255,255,255,0.12)" />
                   <stop offset="100%" stopColor="rgba(255,255,255,0)" />
@@ -654,7 +594,6 @@ export default function JarOfEmotions() {
                 </clipPath>
               </defs>
 
-              {}
               <ellipse
                 cx={JAR_VIEW_W / 2}
                 cy={JAR_VIEW_H - 16}
@@ -665,7 +604,6 @@ export default function JarOfEmotions() {
                 filter="url(#shadow-blur)"
               />
 
-              {}
               <path
                 d={`
                   M ${JAR_INNER_LEFT - 4} 44
@@ -681,7 +619,6 @@ export default function JarOfEmotions() {
                 strokeLinejoin="round"
               />
 
-              {}
               <rect
                 x={JAR_INNER_LEFT - 8}
                 y={36}
@@ -694,9 +631,7 @@ export default function JarOfEmotions() {
                 opacity={0.85}
               />
 
-              {}
               <g clipPath="url(#jar-clip)">
-                {}
                 <ellipse
                   cx={JAR_INNER_LEFT + 10}
                   cy={(JAR_INNER_TOP + JAR_INNER_BOTTOM) / 2}
@@ -705,7 +640,6 @@ export default function JarOfEmotions() {
                   fill="white"
                   opacity={0.30}
                 />
-                {}
                 <rect
                   x={JAR_INNER_RIGHT - 18}
                   y={JAR_INNER_TOP}
@@ -713,7 +647,6 @@ export default function JarOfEmotions() {
                   height={JAR_INNER_BOTTOM - JAR_INNER_TOP}
                   fill="url(#jar-right-shadow)"
                 />
-                {}
                 <path
                   d={`
                     M ${JAR_INNER_LEFT - 4} ${JAR_INNER_BOTTOM - 40}
@@ -727,7 +660,6 @@ export default function JarOfEmotions() {
                 />
               </g>
 
-              {}
               <motion.g
                 animate={{ rotate: lidOpen ? -70 : 0 }}
                 transition={{
@@ -740,7 +672,6 @@ export default function JarOfEmotions() {
                   transformBox: 'fill-box',
                 }}
               >
-                {}
                 <rect
                   x={LID_X}
                   y={LID_Y}
@@ -752,7 +683,6 @@ export default function JarOfEmotions() {
                   strokeWidth={1.5}
                   filter="url(#lid-drop-shadow)"
                 />
-                {}
                 <rect
                   x={LID_X + 4}
                   y={LID_Y + 2}
@@ -762,7 +692,6 @@ export default function JarOfEmotions() {
                   fill="white"
                   opacity={0.35}
                 />
-                {}
                 <rect
                   x={LID_X + 6}
                   y={LID_Y + 5}
@@ -790,7 +719,6 @@ export default function JarOfEmotions() {
                   fill={styles.lidStroke}
                   opacity={0.15}
                 />
-                {}
                 <circle
                   cx={LID_HINGE_X + 3}
                   cy={LID_HINGE_Y}
@@ -802,7 +730,6 @@ export default function JarOfEmotions() {
           </div>
         </div>
 
-        {}
         <AnimatePresence>
           {dispensedTotal >= 30 && (
             <motion.div
@@ -819,9 +746,8 @@ export default function JarOfEmotions() {
             </motion.div>
           )}
         </AnimatePresence>
-        </div>{}
+        </div>
 
-        {}
         <motion.div
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
@@ -842,7 +768,6 @@ export default function JarOfEmotions() {
           </p>
         </motion.div>
 
-        {}
         <div
           ref={buttonRowRef}
           className="z-10 flex w-full flex-wrap items-end justify-center gap-2 sm:gap-3"
@@ -889,7 +814,6 @@ export default function JarOfEmotions() {
           ))}
         </div>
 
-        {}
         <div
           ref={overlayRef}
           className="pointer-events-none absolute inset-0 z-20"
@@ -899,8 +823,6 @@ export default function JarOfEmotions() {
             {dispensedRef.current.map((d) => {
               const p = d.body.position
               const angle = d.body.angle
-              
-              
               if (d.location !== 'outside') return null
               return (
                 <motion.div
@@ -933,7 +855,6 @@ export default function JarOfEmotions() {
           </AnimatePresence>
         </div>
 
-        {}
         <div
           className="pointer-events-none absolute inset-0 z-[15]"
           aria-hidden
