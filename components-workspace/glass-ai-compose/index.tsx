@@ -188,6 +188,7 @@ export default function GlassAiCompose() {
       }
       reader.readAsDataURL(files[i])
     }
+    // Without this reset, picking the same file again fires no change event.
     e.target.value = ''
   }
 
