@@ -20,6 +20,7 @@ export default function GlassModal() {
       <AnimatePresence>
         {open && (
       <motion.div
+        // No opacity in initial: below 1 it hides the blur until the fade ends.
         initial={{ scale: 0.9, y: 16 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 16, opacity: 0 }}
