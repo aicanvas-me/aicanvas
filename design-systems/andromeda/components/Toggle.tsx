@@ -147,7 +147,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
           checked={checked}
           disabled={disabled}
           onChange={handleChange}
-          // Keep z-10 and keep the input before the track: clicks and focus ring need both.
+          // z-10 lets clicks reach the input; keep the input before the track for the focus ring.
           className="andromeda-toggle-touch peer absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
           {...props}
         />
