@@ -1,43 +1,30 @@
 'use client'
 
-/**
- * Renders a canvas field of arrows following an organic flow pattern.
- * Nearby arrows turn toward the pointer with distance-based easing.
- */
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
 
-// tune: raise to spread the arrows farther apart
-const GRID_SPACING = 24    
-// tune: raise to lengthen each arrow shaft
-const SHAFT_LEN    = 8     
-// tune: raise to enlarge each arrowhead
-const HEAD_SIZE    = 4     
+const GRID_SPACING = 24
+const SHAFT_LEN    = 8
+const HEAD_SIZE    = 4
 
 
-// tune: raise to widen pointer influence
-const DECAY_DIST = 320     
-// tune: raise to quicken arrows nearest the pointer
-const LERP_FAST  = 0.12    
-// tune: raise to quicken distant arrows
-const LERP_MIN   = 0.006   
-// tune: raise to quicken the return to idle flow
-const IDLE_LERP  = 0.010   
+const DECAY_DIST = 320
+const LERP_FAST  = 0.12
+const LERP_MIN   = 0.006
+const IDLE_LERP  = 0.010
 
 
-// tune: raise to increase angular drift
-const WOBBLE_AMP  = 0.18   
-// tune: raise to speed the wobble
-const WOBBLE_FREQ = 0.7    
+const WOBBLE_AMP  = 0.18
+const WOBBLE_FREQ = 0.7
 
 
 interface Arrow {
   gx: number
   gy: number
-  angle: number   
-  phase: number   
+  angle: number
+  phase: number
 }
 
 
@@ -69,7 +56,6 @@ export default function NoiseField() {
 
   useIsomorphicLayoutEffect(() => { isDarkRef.current = isDark }, [isDark])
 
-  
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -89,7 +75,6 @@ export default function NoiseField() {
     return () => observer.disconnect()
   }, [])
 
-  
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -119,7 +104,6 @@ export default function NoiseField() {
     }
   }, [])
 
-  
   useEffect(() => {
     const canvas = canvasRef.current
     const container = containerRef.current
@@ -131,7 +115,6 @@ export default function NoiseField() {
     let t = 0
 
     function buildGrid(W: number, H: number) {
-      
       const prev = new Map<string, Arrow>()
       for (const a of arrowsRef.current) prev.set(`${a.gx},${a.gy}`, a)
       const next: Arrow[] = []
@@ -171,7 +154,6 @@ export default function NoiseField() {
       const dark  = isDarkRef.current
       const mouse = mouseRef.current
 
-      
       ctx!.fillStyle = dark ? '#110F0C' : '#F5F1EA'
       ctx!.fillRect(0, 0, W, H)
 
@@ -182,18 +164,15 @@ export default function NoiseField() {
         const { gx, gy } = arrow
 
         if (mouse) {
-          
           const dx   = mouse.x - gx
           const dy   = mouse.y - gy
           const dist = Math.sqrt(dx * dx + dy * dy)
-          
           const proximityFactor = Math.exp(-dist / DECAY_DIST)
           const wobble = WOBBLE_AMP * (1 - proximityFactor * 0.7) * Math.sin(t * WOBBLE_FREQ + arrow.phase)
           const targetAngle = Math.atan2(dy, dx) + wobble
           const speed = LERP_FAST * proximityFactor + LERP_MIN
           arrow.angle = lerpAngle(arrow.angle, targetAngle, speed)
         } else {
-          
           const noiseAngle = flowAngle(gx, gy, t) + WOBBLE_AMP * 0.5 * Math.sin(t * WOBBLE_FREQ * 0.8 + arrow.phase)
           arrow.angle = lerpAngle(arrow.angle, noiseAngle, IDLE_LERP)
         }
@@ -202,18 +181,15 @@ export default function NoiseField() {
         const cos   = Math.cos(angle)
         const sin   = Math.sin(angle)
 
-        
         let alpha: number
         if (mouse) {
           const dx = mouse.x - gx, dy = mouse.y - gy
           const dist2 = dx * dx + dy * dy
-          
           const proximity = Math.exp(-dist2 / (200 * 200))
           alpha = dark
             ? 0.06 + proximity * 0.84
             : 0.05 + proximity * 0.75
         } else {
-          
           alpha = dark ? 0.18 : 0.15
         }
 
@@ -227,14 +203,12 @@ export default function NoiseField() {
         const tailX = gx - cos * SHAFT_LEN
         const tailY = gy - sin * SHAFT_LEN
 
-        
         ctx!.lineWidth = 1.2
         ctx!.beginPath()
         ctx!.moveTo(tailX, tailY)
         ctx!.lineTo(tipX, tipY)
         ctx!.stroke()
 
-        
         const headAngle = Math.PI - Math.PI / 5
         ctx!.lineWidth = 1.0
         ctx!.beginPath()
