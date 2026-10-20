@@ -1,28 +1,21 @@
 'use client'
 
-/**
- * Displays the current time and date with seven-segment neon digits.
- * Active segments and calendar labels update from the local clock.
- */
 import { useState, useEffect } from 'react'
 
 
 const CYAN     = '#55E8E2'
-const CYAN_OFF  = 'rgba(85,232,226,0.055)'  
-const CYAN_IDLE = 'rgba(85,232,226,0.28)'   
-const CYAN_DIM  = 'rgba(85,232,226,0.65)'   
+const CYAN_OFF  = 'rgba(85,232,226,0.055)'
+const CYAN_IDLE = 'rgba(85,232,226,0.28)'
+const CYAN_DIM  = 'rgba(85,232,226,0.65)'
 const BG       = '#060a0a'
 const GLOW_SVG = `drop-shadow(0 0 3px ${CYAN}) drop-shadow(0 0 8px ${CYAN}99)`
 const GLOW_TXT = `0 0 5px ${CYAN}, 0 0 11px ${CYAN}88`
 
 
 const VW = 42, VH = 80
-// tune: raise to thicken the digit segments
-const T  = 6    
-// tune: raise to deepen the segment bevels
-const BV = 3    
-// tune: raise to increase segment edge gaps
-const GP = 2    
+const T  = 6
+const BV = 3
+const GP = 2
 
 function hPts(y: number): string {
   const x1 = GP + BV, x2 = VW - GP - BV, cy = y + T / 2
@@ -42,13 +35,13 @@ const aEnd = aY,         gTop = gY - GP
 const gEnd = gY + T + GP, dTop = dY + T
 
 const SHAPES = [
-  hPts(aY),               
-  vPts(rX, aEnd, gTop),  
-  vPts(rX, gEnd, dTop),  
-  hPts(dY),               
-  vPts(lX, gEnd, dTop),  
-  vPts(lX, aEnd, gTop),  
-  hPts(gY),               
+  hPts(aY),
+  vPts(rX, aEnd, gTop),
+  vPts(rX, gEnd, dTop),
+  hPts(dY),
+  vPts(lX, gEnd, dTop),
+  vPts(lX, aEnd, gTop),
+  hPts(gY),
 ]
 
 
@@ -139,21 +132,18 @@ function getNow(): Now {
 }
 
 
-// tune: change to resize the primary time digits
-const BIG       = 50                          
-// tune: change to resize the seconds digits
-const SML       = 24                          
-const GAP       = 3                           
-const COLON_BIG = Math.round(BIG * 0.44)     
-const COLON_SML = Math.round(SML * 0.44)     
+const BIG       = 50
+const SML       = 24
+const GAP       = 3
+const COLON_BIG = Math.round(BIG * 0.44)
+const COLON_SML = Math.round(SML * 0.44)
 
 const TIME_W    = 4 * BIG + COLON_BIG + COLON_SML + 2 * SML + 7 * GAP
 
 
 
 export default function NeonClock() {
-  
-  
+  // Start null: reading the clock during render makes server and client HTML differ.
   const [now,     setNow]     = useState<Now | null>(null)
   const [colonOn, setColonOn] = useState(true)
 
@@ -166,8 +156,6 @@ export default function NeonClock() {
     return () => clearInterval(id)
   }, [])
 
-  
-  
   if (now === null) {
     return (
       <div
@@ -190,10 +178,8 @@ export default function NeonClock() {
       className="relative flex h-full w-full select-none items-center justify-center overflow-hidden"
       style={{ background: BG, fontFamily: '"Courier New", Courier, monospace' }}
     >
-      {}
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
 
-        {}
         <div style={{ display: 'flex', alignItems: 'flex-end', gap: GAP }}>
           <Digit char={now.h[0]} size={BIG} />
           <Digit char={now.h[1]} size={BIG} />
@@ -202,7 +188,6 @@ export default function NeonClock() {
           <Digit char={now.m[1]} size={BIG} />
           <ColonDots dim={!colonOn} size={SML} />
 
-          {}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
             <div style={{ display: 'flex', gap: 6, fontSize: 13, letterSpacing: '0.08em', marginBottom: 3 }}>
               <span style={{ color: !now.isPM ? CYAN : CYAN_IDLE, textShadow: !now.isPM ? GLOW_TXT : 'none' }}>AM</span>
@@ -215,7 +200,6 @@ export default function NeonClock() {
           </div>
         </div>
 
-        {}
         <div
           style={{
             display: 'flex',
@@ -239,7 +223,6 @@ export default function NeonClock() {
           ))}
         </div>
 
-        {}
         <div
           style={{
             width: TIME_W,
@@ -254,7 +237,6 @@ export default function NeonClock() {
         </div>
       </div>
 
-      {}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
