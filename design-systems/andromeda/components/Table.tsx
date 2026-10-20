@@ -1,15 +1,3 @@
-// ============================================================
-// COMPONENT: Table
-// Compound primitive for dense data tables:
-//   Table / TableHead / TableBody / TableRow / TableHeader / TableCell
-//
-// Features:
-//   - Consistent mono typography, verticalAlign:top, 1px subtle dividers
-//   - TableHeader accepts sort="asc|desc|sortable" → renders the correct caret
-//   - TableRow accepts selected (accent-300 left edge + surface.active bg)
-//     and hover state via the included <TableStyles /> helper
-// ============================================================
-
 'use client';
 
 import { forwardRef, useEffect } from 'react';
@@ -19,9 +7,7 @@ import { tokens } from '../tokens';
 import { andromedaVars, themeColor } from './lib/utils';
 import { mq } from './lib/responsive';
 
-// ── Global hover stylesheet ────────────────────────────────────────
-// Inject once per page. Class-based rules beat inline styles so the
-// hover lift fires correctly even when rows carry an inline background.
+// Table does not inject these; render one <TableStyles /> per page.
 const TABLE_STYLE_ID = 'andromeda-table-styles';
 const TABLE_STYLES = `
       /* off-token 100ms ease, deliberate — no matching duration/easing token */
@@ -47,10 +33,6 @@ const TABLE_STYLES = `
     `;
 
 export function TableStyles() {
-  // Dedupe guard — multiple <Table> instances on a page would otherwise
-  // each inject this stylesheet. Mirror the keyframe-injection guard used
-  // in Spinner/StatTile: check for the id before appending so the rules
-  // land exactly once per document.
   useEffect(() => {
     if (typeof document === 'undefined') return;
     if (document.getElementById(TABLE_STYLE_ID)) return;
@@ -62,12 +44,8 @@ export function TableStyles() {
   return null;
 }
 
-// Linear-gradient bottom line that insets 12px from each side.
-// Used as a TR background-image so it survives border-collapse:collapse
-// (real TR borders don't render under collapse).
 const ROW_INSET_LINE = `linear-gradient(to right, transparent var(--andromeda-3, ${tokens.spacing[3]}), var(--andromeda-border-subtle, ${themeColor.border.subtle}) var(--andromeda-3, ${tokens.spacing[3]}), var(--andromeda-border-subtle, ${themeColor.border.subtle}) calc(100% - var(--andromeda-3, ${tokens.spacing[3]})), transparent calc(100% - var(--andromeda-3, ${tokens.spacing[3]})))`;
 
-// ── Table ──────────────────────────────────────────────────────────
 export const Table = forwardRef<HTMLTableElement, ComponentPropsWithoutRef<'table'>>(function Table(
   { className, style, children, ...props },
   ref,
@@ -101,7 +79,6 @@ export const Table = forwardRef<HTMLTableElement, ComponentPropsWithoutRef<'tabl
   );
 });
 
-// ── TableHead / TableBody ──────────────────────────────────────────
 export const TableHead = forwardRef<HTMLTableSectionElement, ComponentPropsWithoutRef<'thead'>>(
   function TableHead({ children, ...props }, ref) {
     return <thead ref={ref} {...props}>{children}</thead>;
@@ -114,7 +91,6 @@ export const TableBody = forwardRef<HTMLTableSectionElement, ComponentPropsWitho
   },
 );
 
-// ── TableRow ───────────────────────────────────────────────────────
 /**
  * @typedef {object} TableRowProps
  * @property {boolean} [selected=false]  Applies surface.active bg + accent-300 left edge.
@@ -149,7 +125,6 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function 
   );
 });
 
-// ── TableHeader (sortable <th>) ────────────────────────────────────
 /**
  * @typedef {object} TableHeaderProps
  * @property {'asc'|'desc'|'sortable'|undefined} [sort]  Column sort state; picks the matching caret and sets aria-sort.
@@ -210,7 +185,6 @@ export const TableHeader = forwardRef<HTMLTableCellElement, TableHeaderProps>(fu
   );
 });
 
-// ── TableCell ──────────────────────────────────────────────────────
 /**
  * @typedef {object} TableCellProps
  * @property {'left'|'right'|'center'} [align='left']  Horizontal text alignment of the cell content.
