@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Displays a button that emits a rotating set of emoji particles.
- * Each press advances the theme and animates a radial burst around the label.
- */
 
 import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -62,7 +58,6 @@ let uid = 0
 function EmojiParticle({ p }: { p: Particle }) {
   const tx = Math.cos(p.angle) * p.distance
   const ty = Math.sin(p.angle) * p.distance
-  // tune: raise either value to increase the particle arc
   const lift = 18 + Math.abs(Math.cos(p.angle)) * 22
 
   return (
@@ -111,7 +106,6 @@ export default function EmojiBurst() {
     const { emojis } = SETS[setIdx % SETS.length]
 
     const burst: Particle[] = Array.from({ length: PARTICLE_COUNT }, (_, i) => {
-      // tune: raise the jitter multiplier to vary particle angles
       const baseAngle = (i / PARTICLE_COUNT) * Math.PI * 2
       const jitter    = (Math.random() - 0.5) * ((Math.PI * 2) / PARTICLE_COUNT) * 0.8
       return {
@@ -121,13 +115,14 @@ export default function EmojiBurst() {
         distance: 85 + Math.random() * 95,
         rotation: (Math.random() - 0.5) * 640,
         size:     1.4 + Math.random() * 0.9,
-        duration: 0.55 + Math.random() * 0.25,  // tune: raise either value to lengthen particle motion
+        duration: 0.55 + Math.random() * 0.25,
       }
     })
 
     setParticles(burst)
     setSetIdx(prev => prev + 1)
 
+    // Particles live up to 0.8 s: keep this clear-out longer than their duration.
     setTimeout(() => {
       setParticles([])
       setIsPopping(false)
@@ -138,14 +133,12 @@ export default function EmojiBurst() {
     <div className="flex h-full w-full items-center justify-center bg-[#E8E8DF] dark:bg-[#1A1A19]">
       <div className="relative flex items-center justify-center">
 
-        {}
         <AnimatePresence>
           {particles.map(p => (
             <EmojiParticle key={p.id} p={p} />
           ))}
         </AnimatePresence>
 
-        {}
         <motion.button
           onClick={explode}
           whileHover={{ scale: 1.06 }}
@@ -158,7 +151,6 @@ export default function EmojiBurst() {
             letterSpacing: '-0.01em',
           }}
         >
-          {}
           <AnimatePresence mode="wait">
             <motion.span
               key={setIdx}
