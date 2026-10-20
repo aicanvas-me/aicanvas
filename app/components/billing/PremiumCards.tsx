@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { CheckCircle, Infinity as InfinityIcon, Lightning, Lock } from '@phosphor-icons/react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { buttonClasses } from '../buttonClasses'
+import { TopLight } from '../TopLight'
 import { useSession } from '../auth/SessionProvider'
 import { usePremiumStatus } from './usePremiumStatus'
 import { UpgradeButton } from './UpgradeButton'
@@ -297,7 +298,7 @@ export function PremiumCards({
 
 // ── Lifetime card ──
 // One payment, Premium for life. The featured plan of the three: the olive
-// edge and a soft olive light from the top. The description is one short
+// edge and the site's light from straight above (TopLight). The description is one short
 // line, like the other two cards; the Lifetime terms live on the licence page,
 // not on the card.
 //
@@ -318,11 +319,7 @@ function LifetimeCard({
 }) {
   return (
     <div className="relative flex flex-col overflow-hidden rounded-3xl border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-40"
-        style={{ backgroundImage: 'radial-gradient(70% 100% at 50% 0%, rgb(168 185 77 / 0.12), transparent 70%)' }}
-      />
+      <TopLight />
       <span className="absolute right-4 top-4 rounded-full border border-olive-500/40 bg-olive-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-olive-700 dark:text-olive-300">
         Pay once
       </span>

@@ -9,6 +9,7 @@
 import type { ReactNode } from 'react'
 import { SiteFooter } from './SiteFooter'
 import { Wordmark } from './Wordmark'
+import { TopLight } from './TopLight'
 import { Reveal } from '../home/Reveal'
 
 // The homepage type ladder, shared so a section heading reads the same on
@@ -140,8 +141,8 @@ export function SectionHead({
   )
 }
 
-// The closing band: the homepage's final call to action, an olive wash with
-// one soft light behind the words. Actions go in as children.
+// The closing band: the homepage's final call to action, lit from straight
+// above like every card. Actions go in as children.
 export function CtaBand({
   eyebrow,
   title,
@@ -157,11 +158,9 @@ export function CtaBand({
     <section className="mx-auto mt-20 max-w-4xl sm:mt-32">
       <Reveal
         y={12}
-        className="relative overflow-hidden rounded-3xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
+        className="relative overflow-hidden rounded-3xl border border-olive-500/20 px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
       >
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
-        </div>
+        <TopLight />
         {eyebrow && <p className={`relative ${EYEBROW}`}>{eyebrow}</p>}
         <h2 className={`relative ${eyebrow ? 'mt-2' : ''} ${H2}`}>{title}</h2>
         {sub && <p className={`relative mx-auto mt-3 max-w-xl text-pretty ${SUB}`}>{sub}</p>}

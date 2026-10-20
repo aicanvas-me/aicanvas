@@ -32,6 +32,7 @@ import { AgentInstall } from './AgentInstall'
 import { StickerFaq, type FaqItem } from './StickerFaq'
 import { ValueBento } from './ValueBento'
 import { Wordmark } from '../components/Wordmark'
+import { TopLight } from '../components/TopLight'
 
 interface Props {
   /** Every standalone, free and premium. */
@@ -248,11 +249,8 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
               <Reveal className="h-full">
                 <div className="relative flex h-full flex-col justify-center rounded-3xl p-4 sm:p-5">
                   {/* No border, no fill — the soft light IS the card. One light
-                      only: cool blue entering from the TOP-LEFT.
-
-                      The right-hand card is lit from the opposite corner in olive,
-                      so the pair reads as a diagonal rather than two matching
-                      boxes.
+                      only, cool blue, from straight above like every lit
+                      surface on the site.
 
                       Inline rather than a Tailwind arbitrary value: gradients need
                       commas, which arbitrary values escape awkwardly. */}
@@ -261,7 +259,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                     className="pointer-events-none absolute inset-0 rounded-3xl"
                     style={{
                       background:
-                        'radial-gradient(85% 85% at 8% 0%, rgba(214,226,255,0.075), transparent 58%)',
+                        'radial-gradient(85% 85% at 50% 0%, rgba(214,226,255,0.075), transparent 58%)',
                     }}
                   />
                   <div className="relative">
@@ -300,9 +298,8 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
               {/* Right: the facts */}
               <Reveal delay={0.08} className="h-full">
                 <div className="relative flex h-full flex-col justify-center rounded-3xl p-4 sm:p-5">
-                  {/* One light only, olive, entering from the BOTTOM-RIGHT — the
-                      opposite corner to the left card, so the pair reads as a
-                      diagonal.
+                  {/* One light only, olive, from straight above like the left
+                      card.
 
                       Olive is the brand accent (--color-olive-400, #DAE4A0), so
                       this card is on-palette. Its alpha is lower than the blue
@@ -313,7 +310,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                     className="pointer-events-none absolute inset-0 rounded-3xl"
                     style={{
                       background:
-                        'radial-gradient(65% 65% at 100% 100%, rgba(218,228,160,0.028), transparent 60%)',
+                        'radial-gradient(65% 65% at 50% 0%, rgba(218,228,160,0.028), transparent 60%)',
                     }}
                   />
                   {/* Every row links. These four sat in the most valuable space on
@@ -542,11 +539,9 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
         <section className="mx-auto mt-20 max-w-4xl sm:mt-32">
           <Reveal
             y={12}
-            className="relative overflow-hidden rounded-3xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
+            className="relative overflow-hidden rounded-3xl border border-olive-500/20 px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
           >
-            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
-            </div>
+            <TopLight />
             <p className={`relative ${EYEBROW}`}>Ready to build?</p>
             <h2 className={`relative mt-2 ${H2}`}>Start with the source, not a blank prompt.</h2>
             <p className={`relative mx-auto mt-3 max-w-xl ${SUB}`}>
