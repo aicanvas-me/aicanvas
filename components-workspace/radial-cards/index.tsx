@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Arranges activity cards around a continuously rotating radial track.
- * Pointer engagement lifts and centers the nearest card for inspection.
- */
 
 import { useEffect, useRef, useState, type ComponentType, type RefObject } from 'react'
 import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
@@ -21,14 +17,11 @@ import {
 import { Footprints, Fire, Moon, Drop, Heart, Lightning, Path } from '@phosphor-icons/react'
 
 
-// tune: raise to slow the orbit
 const SECONDS_PER_TURN = 45
-const REDUCED_SECONDS_PER_TURN = SECONDS_PER_TURN * 4 
+const REDUCED_SECONDS_PER_TURN = SECONDS_PER_TURN * 4
 
-// tune: raise to bring the engaged card farther forward
 const ENGAGED_LIFT_Z = 120
 const REDUCED_LIFT_Z = 30
-// tune: raise to enlarge the engaged card
 const ENGAGED_SCALE = 1.18
 const REDUCED_ENGAGED_SCALE = 1.06
 
@@ -40,7 +33,6 @@ const SPRING = { stiffness: 200, damping: 24, mass: 1 } as const
 const SPEED_SPRING = { stiffness: 90, damping: 20, mass: 1 } as const
 
 
-// tune: change both dimensions to resize the cards
 const CARD_W = 240
 const CARD_H = 138
 
@@ -56,15 +48,15 @@ const OUTWARD_OFFSET_PX = '0px'
 
 
 
-// tune: adjust to redistribute cards around the orbit
+// One angle per METRICS entry, in the same order.
 const SLOT_ANGLES: readonly number[] = [
-  -35.55, 
-  22.14, 
-  71.01, 
-  122.25, 
-  161.58, 
-  -150.4, 
-  -108.41, 
+  -35.55,
+  22.14,
+  71.01,
+  122.25,
+  161.58,
+  -150.4,
+  -108.41,
 ]
 
 
@@ -85,19 +77,14 @@ type Metric = {
   label: string
   value: string
   delta: string
-  
   surface: string
-  
   gradientEnd: string
-  
   dark: string
-  
+  // Sparkline y positions, 0 (top) to 36 (bottom), not raw data values.
   sparkline: readonly number[]
-  
   Icon: ComponentType<PhosphorIconProps>
 }
 
-// customize: replace the activity metrics below
 const METRICS: Metric[] = [
   {
     title: 'Steps',
@@ -262,13 +249,9 @@ function useReducedMotion(): boolean {
 type CardProps = {
   index: number
   metric: Metric
-  
   rotation: MotionValue<number>
-  
   engagedIndex: number | null
-  
   topIndex: number | null
-  
   reduced: boolean
   onToggle: (index: number) => void
 }
@@ -285,22 +268,11 @@ function Card({
   const engaged = engagedIndex === index
   const isTop = topIndex === index
 
-  
-  
-  
-  
-  
-  
-  
-  
   const slotTargetDeg = SLOT_ANGLES[index]
 
-  
   const outwardFactorTarget = useMotionValue(1)
   const outwardFactor = useSpring(outwardFactorTarget, SPRING)
 
-  
-  
   const centeringFactorTarget = useMotionValue(0)
   const centeringFactor = useSpring(centeringFactorTarget, LIFT_SPRING)
 
@@ -316,50 +288,17 @@ function Card({
   const opacityTarget = useMotionValue(1)
   const cardOpacity = useSpring(opacityTarget, SPRING)
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   const initialRot = SLOT_ANGLES[index] + rotation.get()
   const cardRotation = useMotionValue(initialRot)
   const followModeRef = useRef<boolean>(true)
   const followBaseRef = useRef<number>(SLOT_ANGLES[index])
 
-  
-  
-  
   useMotionValueEvent(rotation, 'change', (latest) => {
     if (!followModeRef.current) return
     cardRotation.set(followBaseRef.current + latest)
   })
 
-  
-  
-  
-  
-  
-  
   useEffect(() => {
-    
-    
     const shortestEquivalent = (current: number, target: number): number => {
       let delta = target - current
       while (delta > 180) delta -= 360
@@ -368,9 +307,6 @@ function Card({
     }
 
     if (engaged) {
-      
-      
-      
       followBaseRef.current = 0
       followModeRef.current = false
 
@@ -383,24 +319,15 @@ function Card({
       })
       return () => controls.stop()
     } else {
-      
-      
-      
-      
-      
       followBaseRef.current = slotTargetDeg
       cardRotation.set(slotTargetDeg + rotation.get())
       followModeRef.current = true
     }
-    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [engaged, slotTargetDeg, index])
 
-  
   useEffect(() => {
     if (engaged) {
-      
-      
       outwardFactorTarget.set(0)
       centeringFactorTarget.set(1)
       skewFactorTarget.set(0)
@@ -408,14 +335,11 @@ function Card({
       scaleTarget.set(reduced ? REDUCED_ENGAGED_SCALE : ENGAGED_SCALE)
       opacityTarget.set(1)
     } else {
-      
-      
       outwardFactorTarget.set(1)
       centeringFactorTarget.set(0)
       skewFactorTarget.set(1)
       liftTarget.set(0)
       scaleTarget.set(1)
-      
       opacityTarget.set(reduced && engagedIndex != null ? 0.7 : 1)
     }
   }, [
@@ -431,30 +355,17 @@ function Card({
     opacityTarget,
   ])
 
-  
-  
-  
   const pivotTransform = useTransform(
     cardRotation,
     (r) => `rotate(${r as number}deg)`,
   )
 
-  
-  
-  
-  
-  
-  
-  
-  
   const cardBodyTransform = useTransform(
     [centeringFactor, skewFactor, outwardFactor],
     ([c, sk, ow]) => {
       const cf = c as number
       const skf = sk as number
       const owf = ow as number
-      
-      
       const txPct = -50 * cf
       return (
         `translate(${txPct}%, calc(-50% - (50% + (${OUTWARD_OFFSET_PX}) * ${owf}) * ${1 - cf})) ` +
@@ -463,25 +374,12 @@ function Card({
     },
   )
 
-  
-  
-  
-  
+  // translateZ needs preserve-3d on every wrapper up to the perspective stage.
   const liftTransform = useTransform(
     [lift, scale],
     ([z, s]) => `translateZ(${z as number}px) scale(${s as number})`,
   )
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   const dynamicZIndex = useTransform(lift, (z) => {
     if (z > 4) return 50
     if (engaged) return 40
@@ -489,13 +387,10 @@ function Card({
     return 1
   })
 
-  
-  
   useEffect(() => {
     lift.set(lift.get())
   }, [engaged, isTop, lift])
 
-  
   const restShadow =
     '4px 6px 14px rgba(0,0,0,0.18), 12px 18px 40px rgba(0,0,0,0.22)'
   const liftedShadow =
@@ -506,7 +401,6 @@ function Card({
     onToggle(index)
   }
 
-  
   const interStack =
     '"Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif'
 
@@ -552,7 +446,6 @@ function Card({
             transform: liftTransform,
           }}
         >
-          {}
           <div
             style={{
               position: 'absolute',
@@ -569,7 +462,6 @@ function Card({
               fontFamily: interStack,
             }}
           >
-            {}
             <div
               style={{
                 display: 'flex',
@@ -593,7 +485,6 @@ function Card({
               </span>
             </div>
 
-            {}
             <div
               style={{
                 flex: '1 0 0',
@@ -607,7 +498,6 @@ function Card({
                 minHeight: 0,
               }}
             >
-              {}
               <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <span
                   style={{
@@ -625,7 +515,6 @@ function Card({
                 </span>
               </div>
 
-              {}
               <div
                 style={{
                   display: 'flex',
@@ -682,33 +571,21 @@ export default function RadialCards() {
   const isDark = theme === 'dark'
   const reduced = useReducedMotion()
 
-  
   const rotation = useMotionValue(0)
 
-  
-  
   const speedTargetRef = useRef(1)
   const speedTarget = useMotionValue(1)
   const speedSmooth = useSpring(speedTarget, SPEED_SPRING)
 
-  
   const [engagedIndex, setEngagedIndex] = useState<number | null>(null)
 
-  
-  
-  
   const [topIndex, setTopIndex] = useState<number | null>(null)
 
-  
-  
-  
-  
   useEffect(() => {
     speedTargetRef.current = 1
     speedTarget.set(speedTargetRef.current)
   }, [engagedIndex, speedTarget])
 
-  
   const prevTs = useRef<number | null>(null)
   useAnimationFrame((t) => {
     const last = prevTs.current
@@ -722,17 +599,11 @@ export default function RadialCards() {
   })
 
   function handleToggle(i: number) {
-    
-    
-    
     setTopIndex(i)
     setEngagedIndex((prev) => (prev === i ? null : i))
   }
 
   function handleStageRelease() {
-    
-    
-    
     setEngagedIndex(null)
   }
 
@@ -745,7 +616,6 @@ export default function RadialCards() {
       }}
       onPointerDown={handleStageRelease}
     >
-      {}
       <div
         aria-hidden
         style={{
@@ -757,7 +627,6 @@ export default function RadialCards() {
         }}
       />
 
-      {}
       <div
         style={{
           position: 'relative',
