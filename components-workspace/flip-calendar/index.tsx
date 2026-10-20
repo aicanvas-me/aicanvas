@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Renders a draggable day calendar with a split-flap transition.
- * Pointer movement tilts the card, while vertical swipes change the date.
- */
 
 import { useState, useRef, useLayoutEffect, useEffect } from 'react'
 import { motion, useMotionValue, useTransform, animate } from 'framer-motion'
@@ -12,7 +8,6 @@ import type { PanInfo } from 'framer-motion'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
-// tune: raise to slow the page flip
 const FLIP_MS = 220
 
 function fmt(n: number) { return String(n).padStart(2, '0') }
@@ -160,7 +155,6 @@ export default function FlipCalendar() {
   return (
     <div ref={rootRef} className="flex h-full w-full flex-col items-center justify-center gap-6" style={{ background: isDark ? '#110F0C' : '#F5F1EA' }}>
 
-      {}
       <div
         style={{ perspective: '900px' }}
         onMouseMove={handleMouseMove}
@@ -184,7 +178,6 @@ export default function FlipCalendar() {
           }}
         >
 
-          {}
           {[13, 8, 4].map((y, i) => (
             <div
               key={i}
@@ -200,13 +193,11 @@ export default function FlipCalendar() {
             />
           ))}
 
-          {}
           <div
             className="absolute inset-0 overflow-hidden"
             style={{ zIndex: 1, boxShadow: cardShadow, borderRadius: 18 }}
           >
 
-            {}
             <div
               className="absolute inset-x-0 top-0 flex items-end justify-center gap-8"
               style={{
@@ -231,7 +222,6 @@ export default function FlipCalendar() {
               ))}
             </div>
 
-            {}
             <div
               className="absolute inset-x-0 bottom-0 overflow-hidden"
               style={{ top: '59%', background: bottomGrad }}
@@ -239,7 +229,6 @@ export default function FlipCalendar() {
               <Half n={bottomDisplay} half="bottom" numShadow={numShadow} />
             </div>
 
-            {}
             <div
               className="absolute inset-x-0 overflow-hidden"
               style={{
@@ -251,7 +240,6 @@ export default function FlipCalendar() {
               <Half n={topDisplay} half="top" numShadow={numShadow} />
             </div>
 
-            {}
             {flapVisible && (
               <div
                 className="absolute inset-x-0"
@@ -272,7 +260,6 @@ export default function FlipCalendar() {
                   <Half n={flapContent} half="top" numShadow={numShadow} />
                 </motion.div>
 
-                {}
                 <div
                   className="absolute inset-x-0 bottom-0 pointer-events-none"
                   style={{
@@ -285,7 +272,6 @@ export default function FlipCalendar() {
               </div>
             )}
 
-            {}
             {flapVisible && (
               <motion.div
                 className="absolute inset-x-0 pointer-events-none"
@@ -300,7 +286,6 @@ export default function FlipCalendar() {
               />
             )}
 
-            {}
             <div
               className="absolute inset-x-0 pointer-events-none"
               style={{
@@ -309,7 +294,6 @@ export default function FlipCalendar() {
               }}
             />
 
-            {}
             <div
               className="absolute inset-x-0 pointer-events-none"
               style={{
@@ -318,7 +302,6 @@ export default function FlipCalendar() {
               }}
             />
 
-            {}
             <div
               className="absolute inset-x-0 pointer-events-none"
               style={{
@@ -332,7 +315,6 @@ export default function FlipCalendar() {
         </motion.div>
       </div>
 
-      {}
       <motion.p
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
