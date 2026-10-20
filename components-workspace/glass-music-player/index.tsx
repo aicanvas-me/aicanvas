@@ -81,6 +81,7 @@ export default function GlassMusicPlayer() {
       />
 
       <motion.div
+        // No opacity in initial: below 1 it hides the blur until the fade ends.
         initial={{ y: 24, scale: 0.95 }}
         animate={{ y: 0, scale: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 22 }}
