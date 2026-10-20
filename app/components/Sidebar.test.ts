@@ -260,7 +260,7 @@ describe('the catalog rail', () => {
     expect(segmentForPath('/design-systems-ish')).toBe('components')
   })
 
-  it('lists every component by name under its category, with the counts, no Show more', () => {
+  it('lists every component once by name, under its first category, with the counts, no Show more', () => {
     const aside = rail('/components')
     const panel = within(aside).getAllByRole('tabpanel').find((p) => !p.hidden)!
     expect(panel.querySelector('p')?.textContent).toBe(`Components${TOTAL_COMPONENTS}`)
@@ -270,27 +270,30 @@ describe('the catalog rail', () => {
     // Then one labelled group per category, in categories.ts order.
     const groups = within(panel).getAllByRole('group')
     expect(groups.map((g) => g.querySelector(':scope > p a')?.textContent)).toEqual(CATEGORIES.map((c) => c.label))
+    const listed = new Set<string>()
     groups.forEach((g, i) => {
       const cat = CATEGORIES[i]
       const heading = g.querySelector(':scope > p')!
       expect(g.getAttribute('aria-labelledby')).toBe(heading.id)
       expect(heading.querySelector('a')?.getAttribute('href')).toBe(`/components/category/${cat.slug}`)
-      const rows = CATEGORY_COMPONENTS[cat.label] ?? []
+      const all = CATEGORY_COMPONENTS[cat.label] ?? []
       // The header's count is the category's count, the one its page shows.
       expect(heading.textContent, cat.label).toBe(`${cat.label}, ${CATEGORY_COUNTS[cat.label] ?? 0}`)
-      expect(rows.length, cat.label).toBe(CATEGORY_COUNTS[cat.label] ?? 0)
+      expect(all.length, cat.label).toBe(CATEGORY_COUNTS[cat.label] ?? 0)
+      // Its rows are the components no earlier category listed.
+      const rows = all.filter((r) => !listed.has(r.slug))
+      for (const r of rows) listed.add(r.slug)
       expect(
         [...g.querySelectorAll('li a')].map((a) => [a.textContent, a.getAttribute('href')]),
         cat.label,
       ).toEqual(rows.map((r) => [r.name, `/components/${r.slug}`]))
     })
-    // Every released component is reachable by name.
-    const slugs = new Set(
-      [...panel.querySelectorAll('li a')]
-        .map((a) => a.getAttribute('href')!)
-        .filter((href) => /^\/components\/[^/]+$/.test(href)),
-    )
-    expect(slugs.size).toBe(TOTAL_COMPONENTS)
+    // Every released component is reachable by name, exactly once.
+    const hrefs = [...panel.querySelectorAll('li a')]
+      .map((a) => a.getAttribute('href')!)
+      .filter((href) => /^\/components\/[^/]+$/.test(href))
+    expect(new Set(hrefs).size).toBe(TOTAL_COMPONENTS)
+    expect(hrefs).toHaveLength(TOTAL_COMPONENTS)
     expect(aside.querySelector('li.hidden')).toBeNull()
     expect(aside.textContent).not.toMatch(/Show \d+ more/)
   })
@@ -302,7 +305,7 @@ describe('the catalog rail', () => {
     const lit = [...aside.querySelectorAll('a[aria-current="page"]')].map((a) => a.getAttribute('href'))
     expect(lit).toEqual([`/components/${comp.slug}`])
     cleanup()
-    // A component listed under two categories still lights exactly one row.
+    // A component tagged with two categories lights exactly one row.
     const seen = new Map<string, number>()
     for (const c of CATEGORIES) for (const r of CATEGORY_COMPONENTS[c.label] ?? []) seen.set(r.slug, (seen.get(r.slug) ?? 0) + 1)
     const twice = [...seen].find(([, n]) => n > 1)?.[0]

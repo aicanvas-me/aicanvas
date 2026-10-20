@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { CaretDown, Cube, DiamondsFour, Shapes, Sparkle } from '@phosphor-icons/react'
 import { CATEGORIES } from '../lib/categories'
@@ -19,8 +19,9 @@ import { SystemTierChip } from '../_components/SystemTierChip'
 // Both catalog lists follow one pattern, the one strong docs sidebars use:
 // sections, each a small-caps header with a count chip over a flat list of
 // rows, each list with its own thin guide line. The Components tab has one
-// section per category naming every component in it; the Design systems tab
-// has one row per system that opens to its PAGES, TEMPLATES and COMPONENTS.
+// section per category, each component listed once, under its first
+// category; the Design systems tab has one row per system that opens to its
+// PAGES, TEMPLATES and COMPONENTS.
 //
 // The switch is a real tab control: role="tablist" with role="tab" buttons,
 // the arrow keys (and Home / End) move between them, and only the selected
@@ -122,12 +123,29 @@ const HEADING =
   'flex items-center gap-2 px-2 text-[11px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400'
 
 // Each component's first category in categories.ts order: the one section
-// whose row lights up for it.
+// that lists it. Listing a component under every category it carries put a
+// quarter of the rows in twice. A category whose every component sits in an
+// earlier one (Glass, a look that cuts across the others) keeps its header,
+// its count and its page link, with no rows under it.
 const FIRST_CATEGORY = new Map<string, number>()
 CATEGORIES.forEach((cat, i) => {
   for (const c of CATEGORY_COMPONENTS[cat.label] ?? []) if (!FIRST_CATEGORY.has(c.slug)) FIRST_CATEGORY.set(c.slug, i)
 })
 const firstCategoryIndex = (slug: string) => FIRST_CATEGORY.get(slug)
+
+// The list fades its top 8px and bottom 16px (the nav's mask); a row inside
+// that band is not in sight.
+const EDGE = 24
+
+// The element that scrolls the list: the rail's nav, or the phone drawer's.
+// Never the page itself.
+function scrollerOf(from: HTMLElement): HTMLElement | null {
+  for (let el = from.parentElement; el && el !== document.body; el = el.parentElement) {
+    const { overflowY } = getComputedStyle(el)
+    if (overflowY === 'auto' || overflowY === 'scroll') return el
+  }
+  return null
+}
 
 function CountChip({ count }: { count: number }) {
   return (
@@ -185,7 +203,8 @@ function Guided({ children }: { children: ReactNode }) {
 // A labelled group, not a heading: the rail sits before the page's own H1, so
 // headings here would open every page's outline with the rail's sections. The
 // count is announced as its own phrase ("Widgets, 12") rather than run into
-// the label.
+// the label. A section can carry a count and no rows (children null): a
+// category whose components are all listed under earlier ones.
 function Section({ id, label, count, children }: { id: string; label: ReactNode; count: number; children: ReactNode }) {
   return (
     <div role="group" aria-labelledby={id} className="mt-5">
@@ -194,7 +213,7 @@ function Section({ id, label, count, children }: { id: string; label: ReactNode;
         <span className="sr-only">, </span>
         <CountChip count={count} />
       </p>
-      {count > 0 && <Guided>{children}</Guided>}
+      {count > 0 && children != null && <Guided>{children}</Guided>}
     </div>
   )
 }
@@ -376,6 +395,33 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
   const segment = hand ?? segmentForPath(pathname)
   const pick = (next: CatalogSegment) => setHand(next)
 
+  // Keep the page you are on in sight. Landing on a component deep in the
+  // list (from search, or a card on the grid) left the rail at its top with
+  // the lit row thousands of pixels below. After each navigation the lit row
+  // is brought to the middle of the list when it sits outside it; a row you
+  // just clicked is in view already and stays put. A segment swapped by hand
+  // opens at its own lit row, or at its top, never at the old list's offset.
+  // No animation: this is where the list opens, not a move.
+  const rootRef = useRef<HTMLDivElement>(null)
+  const shownSegment = useRef(segment)
+  useEffect(() => {
+    const root = rootRef.current
+    const list = root && scrollerOf(root)
+    if (!root || !list || !list.clientHeight) return
+    const swapped = shownSegment.current !== segment
+    shownSegment.current = segment
+    // A lit row inside a hidden panel or a closed system has no box.
+    const row = [...root.querySelectorAll<HTMLElement>('a[aria-current="page"]')].find((a) => a.getClientRects().length)
+    if (!row) {
+      if (swapped) list.scrollTop = 0
+      return
+    }
+    const box = list.getBoundingClientRect()
+    const r = row.getBoundingClientRect()
+    if (!swapped && r.top >= box.top + EDGE && r.bottom <= box.bottom - EDGE) return
+    list.scrollTop += r.top - box.top - (box.height - r.height) / 2
+  }, [pathname, segment])
+
   // Active category resolves from the path first (canonical
   // /components/category/<slug>), then falls back to the legacy ?category=
   // query param so old bookmarks still highlight correctly.
@@ -434,7 +480,7 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
   }
 
   return (
-    <div>
+    <div ref={rootRef}>
       <div
         role="tablist"
         aria-label="Catalog section"
@@ -488,16 +534,18 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
               onNavigate={onNavigate}
             />
           </Guided>
-          {/* One section per category, in categories.ts order, naming every
-              component in it. The header links to the category page. */}
+          {/* One section per category, in categories.ts order, listing the
+              components no earlier category listed. The header links to the
+              category page and counts all of that page's components. */}
           {CATEGORIES.map((cat, ci) => {
-            const rows = CATEGORY_COMPONENTS[cat.label] ?? []
+            const all = CATEGORY_COMPONENTS[cat.label] ?? []
+            const rows = all.filter((c) => firstCategoryIndex(c.slug) === ci)
             const current = cat.label === activeCategory
             return (
               <Section
                 key={cat.slug}
                 id={`${baseId}-category-${cat.slug}`}
-                count={rows.length}
+                count={all.length}
                 label={
                   <Link
                     href={`/components/category/${cat.slug}`}
@@ -511,21 +559,20 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
                   </Link>
                 }
               >
-                {rows.map((c) => (
-                  <CatalogRow
-                    key={c.slug}
-                    href={`/components/${c.slug}`}
-                    label={c.name}
-                    // A component tagged with two categories is listed under
-                    // both; only its row under the first one lights up, so a
-                    // page never has two current rows.
-                    active={pathname === `/components/${c.slug}` && firstCategoryIndex(c.slug) === ci}
-                    // A hundred-odd rows: prefetching every one in view would
-                    // fetch pages nobody opens.
-                    prefetch={false}
-                    onNavigate={onNavigate}
-                  />
-                ))}
+                {rows.length > 0
+                  ? rows.map((c) => (
+                      <CatalogRow
+                        key={c.slug}
+                        href={`/components/${c.slug}`}
+                        label={c.name}
+                        active={pathname === `/components/${c.slug}`}
+                        // Nearly a hundred rows: prefetching every one in view
+                        // would fetch pages nobody opens.
+                        prefetch={false}
+                        onNavigate={onNavigate}
+                      />
+                    ))
+                  : null}
               </Section>
             )
           })}
