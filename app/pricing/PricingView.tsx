@@ -4,9 +4,7 @@ import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import { CheckCircle, Sparkle } from '@phosphor-icons/react'
-import type { ComponentType } from 'react'
 import { buttonClasses } from '../components/buttonClasses'
-import { TerminatorCool } from '../components/auth/TerminatorReveal'
 import { lifetimeEnabled, premiumEnabled } from '../../lib/flags'
 import { PremiumCards } from '../components/billing/PremiumCards'
 import { FaqHelpCard, FaqRows, type FaqRow } from '../components/FaqRows'
@@ -22,12 +20,10 @@ import {
 // Legacy fallback, rendered only when premiumEnabled() is false. The first card
 // is the anonymous baseline; the second is the signed-in (still free)
 // experience. The live Free vs Premium pricing is rendered separately when the
-// premium flag is on. Avatars are the TerminatorReveal sign-in characters
-// (TerminatorCool); both legacy cards are free (anonymous + signed-in).
+// premium flag is on. Both legacy cards are free (anonymous + signed-in).
 
 type Plan = {
   name: string
-  Icon: ComponentType
   tagline: string
   priceLabel: string
   priceSuffix: string
@@ -40,7 +36,6 @@ type Plan = {
 const PLANS: Plan[] = [
   {
     name: 'Free',
-    Icon: TerminatorCool,
     tagline:
       'Browse the canvas freely. Copy any free component and its prompt with no account, no friction.',
     priceLabel: 'Free',
@@ -56,7 +51,6 @@ const PLANS: Plan[] = [
   },
   {
     name: 'Free account',
-    Icon: TerminatorCool,
     tagline:
       'Sign in and unlock the canvas. Save what you love.',
     priceLabel: 'Free',
@@ -94,21 +88,13 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
           : 'border-sand-200 dark:border-sand-800'
       }`}
     >
-      {/* Top — icon + name row, tagline below, then price, CTA */}
+      {/* Top: name, price, tagline, then the CTA */}
       <div className="px-5 pt-6 pb-6 sm:px-6 sm:pt-7">
-        <div className="flex items-center gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-end justify-center">
-            <plan.Icon />
-          </div>
-          <h2 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
-            {plan.name}
-          </h2>
-        </div>
-        <p className="mt-4 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-          {plan.tagline}
-        </p>
+        <h2 className="text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+          {plan.name}
+        </h2>
 
-        <div className="mt-6 flex items-baseline gap-2">
+        <div className="mt-4 flex items-baseline gap-2">
           <span className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">
             {plan.priceLabel}
           </span>
@@ -116,6 +102,9 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
             / {plan.priceSuffix}
           </span>
         </div>
+        <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+          {plan.tagline}
+        </p>
 
         <Link
           href={plan.cta.href}

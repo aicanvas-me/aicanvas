@@ -5,7 +5,6 @@ import Link from 'next/link'
 import { CheckCircle, Infinity as InfinityIcon, Lightning, Lock } from '@phosphor-icons/react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { buttonClasses } from '../buttonClasses'
-import { TerminatorCool, TerminatorSkull } from '../auth/TerminatorReveal'
 import { useSession } from '../auth/SessionProvider'
 import { usePremiumStatus } from './usePremiumStatus'
 import { UpgradeButton } from './UpgradeButton'
@@ -53,9 +52,9 @@ const LIFETIME_FEATURES = [
 ]
 
 const LIFETIME = lifetimeEnabled()
-// Side by side, the three descriptions share one height so the prices and the
-// buttons line up across the row; the Lifetime sentence is the longest.
-const DESC_3UP = 'lg:min-h-[8.5rem] xl:min-h-[5.75rem]'
+// Side by side, the three descriptions share one height (two lines) so the
+// buttons line up across the row.
+const DESC_3UP = 'lg:min-h-[2.875rem]'
 
 export function PremiumCards({
   show = 'both',
@@ -93,7 +92,6 @@ export function PremiumCards({
   // Three plans side by side: Free, Monthly, Lifetime. The modal keeps its one
   // card; the Lifetime build decides what the paywall offers.
   const threeUp = LIFETIME && showFree && !compact
-  const iconBox = compact ? 'h-12 w-12' : 'h-16 w-16'
   const heading = compact ? 'text-2xl' : 'text-3xl'
   const priceText = compact ? 'text-4xl' : 'text-4xl sm:text-5xl'
   const cardPad = compact ? 'px-2 pt-5 pb-5' : 'px-2 pt-6 pb-6 sm:px-2.5 sm:pt-7'
@@ -109,18 +107,12 @@ export function PremiumCards({
       {/* ── Free card ── */}
       {showFree && (
         <div className="relative flex flex-col rounded-3xl border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900">
+          {/* Name, price, then the one-line description: every plan card
+              reads in that order. */}
           <div className={cardPad}>
-            <div className="flex items-center gap-4">
-              <div className={`flex ${iconBox} shrink-0 items-end justify-center`}>
-                <TerminatorCool />
-              </div>
-              <h2 className={`${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
-                Free
-              </h2>
-            </div>
-            <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${threeUp ? DESC_3UP : ''}`}>
-              Install and remix every free component, free forever.
-            </p>
+            <h2 className={`${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
+              Free
+            </h2>
             {/* Invisible mirror of the Premium card's billing-cycle toggle so the
                 price and CTA align across both cards. Three plans have no
                 toggle; there the mirror is the tax line under the paid prices. */}
@@ -139,6 +131,9 @@ export function PremiumCards({
               <span className="text-sm font-medium text-sand-600 dark:text-sand-500">/ forever</span>
             </div>
             {threeUp && <p aria-hidden className="invisible mt-1.5 text-xs">+ VAT where applicable</p>}
+            <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${threeUp ? DESC_3UP : ''}`}>
+              Install and remix every free component, free forever.
+            </p>
             <Link
               href={user ? '/components' : '/account/sign-up'}
               className={`mt-6 ${buttonClasses({ variant: 'outline', size: 'lg', fullWidth: true })}`}
@@ -169,18 +164,10 @@ export function PremiumCards({
         }`}
       >
         <div className={cardPad}>
-          <div className="flex items-center gap-4">
-            <div className={`flex ${iconBox} shrink-0 items-end justify-center`}>
-              <TerminatorSkull />
-            </div>
-            <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
-              {threeUp ? 'Monthly' : 'Premium'}
-              <Lightning weight="regular" size={22} className="text-olive-600 dark:text-olive-400" />
-            </h2>
-          </div>
-          <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${threeUp ? DESC_3UP : ''}`}>
-            Design systems, templates, components and blocks.
-          </p>
+          <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
+            {threeUp ? 'Monthly' : 'Premium'}
+            <Lightning weight="regular" size={22} className="text-olive-600 dark:text-olive-400" />
+          </h2>
 
           {/* Billing cycle toggle + struck yearly-anchor price sit side by side.
               Gone with Lifetime on: the card is the monthly plan only. */}
@@ -254,6 +241,9 @@ export function PremiumCards({
             )}
           </div>
           {LIFETIME && <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">+ VAT where applicable</p>}
+          <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${threeUp ? DESC_3UP : ''}`}>
+            Design systems, templates, components and blocks.
+          </p>
 
           {user && premiumState === 'unknown' ? (
             <button
@@ -298,7 +288,7 @@ export function PremiumCards({
         </div>
       </div>
 
-      {threeUp && <LifetimeCard cardPad={cardPad} listPad={listPad} iconBox={iconBox} heading={heading} priceText={priceText} />}
+      {threeUp && <LifetimeCard cardPad={cardPad} listPad={listPad} heading={heading} priceText={priceText} />}
     </div>
     {!compact && <TrustStrip />}
     </>
@@ -307,9 +297,9 @@ export function PremiumCards({
 
 // ── Lifetime card ──
 // One payment, Premium for life. The featured plan of the three: the olive
-// edge and a soft olive light from the top. The description is the approved
-// copy, word for word (handoffs/lifetime-build.md, section 10), with "life"
-// linking to the licence's Lifetime terms.
+// edge and a soft olive light from the top. The description is one short
+// line, like the other two cards; the Lifetime terms live on the licence page,
+// not on the card.
 //
 // ponytail: the button is dormant, not wired to checkout. The Lifetime build adds
 // the price id, the webhook grant and the UpgradeButton path; until then this
@@ -318,13 +308,11 @@ export function PremiumCards({
 function LifetimeCard({
   cardPad,
   listPad,
-  iconBox,
   heading,
   priceText,
 }: {
   cardPad: string
   listPad: string
-  iconBox: string
   heading: string
   priceText: string
 }) {
@@ -339,26 +327,10 @@ function LifetimeCard({
         Pay once
       </span>
       <div className={`relative ${cardPad}`}>
-        <div className="flex items-center gap-4">
-          <div className={`flex ${iconBox} shrink-0 items-end justify-center`}>
-            <TerminatorSkull />
-          </div>
-          <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
-            Lifetime
-            <InfinityIcon weight="regular" size={22} className="text-olive-600 dark:text-olive-400" />
-          </h2>
-        </div>
-        <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${DESC_3UP}`}>
-          Pay once, own it for{' '}
-          <Link
-            href="/premium-license#lifetime"
-            className="text-sand-900 underline decoration-olive-500/50 underline-offset-2 transition-colors hover:decoration-olive-500 dark:text-sand-50"
-          >
-            life
-          </Link>
-          . Every Premium component, template and design system unlocks the moment checkout ends, and every future
-          release is included at no extra cost.
-        </p>
+        <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
+          Lifetime
+          <InfinityIcon weight="regular" size={22} className="text-olive-600 dark:text-olive-400" />
+        </h2>
         <div className="mt-4 flex items-baseline gap-2">
           <span className={`${priceText} font-extrabold tracking-tight text-sand-900 dark:text-sand-50`}>
             {usd(LIFETIME_PRICE)}
@@ -366,6 +338,9 @@ function LifetimeCard({
           <span className="text-sm font-medium text-sand-600 dark:text-sand-500">/ one time</span>
         </div>
         <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">+ VAT where applicable</p>
+        <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${DESC_3UP}`}>
+          Everything in Monthly, paid once. Future releases included.
+        </p>
         {/* Dormant until the Lifetime checkout exists: the same disabled
             "Coming soon" state UpgradeButton shows when checkout is off, so
             the button never looks clickable while it does nothing. */}

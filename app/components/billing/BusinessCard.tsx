@@ -58,7 +58,6 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
 
   // Same compact ladder as the Premium card, so the two read as one family
   // wherever they swap for each other.
-  const iconBox = compact ? 'h-12 w-12' : 'h-16 w-16'
   const heading = compact ? 'text-2xl' : 'text-3xl'
   const priceText = compact ? 'text-4xl' : 'text-4xl sm:text-5xl'
   const cardPad = compact ? 'px-2 pt-5 pb-5' : 'px-2 pt-6 pb-6 sm:px-2.5 sm:pt-7'
@@ -76,25 +75,9 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
               Soon
             </span>
 
-            <div className="flex items-center gap-4">
-              {/* Its own avatar, so Business reads as a third member of the
-                  family rather than a second Premium card. Hosted on ImageKit
-                  with the rest of the site chrome art; w-160 covers the 64px
-                  slot at 2x. */}
-              <div className={`flex ${iconBox} shrink-0 items-end justify-center`}>
-                <img
-                  src="https://ik.imagekit.io/aitoolkit/site/avatar-business.png?tr=w-160,f-auto"
-                  width={160}
-                  height={160}
-                  alt=""
-                  aria-hidden="true"
-                  className="h-full w-auto"
-                />
-              </div>
-              <h2 className={`${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
-                Business
-              </h2>
-            </div>
+            <h2 className={`${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
+              Business
+            </h2>
             {/* Billing cycle toggle — same sliding-pill mechanic as the Premium
                 card, minus the discount chip and the struck yearly anchor,
                 which were deliberately removed from this tier. */}
