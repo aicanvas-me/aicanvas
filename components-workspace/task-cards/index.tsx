@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents project tasks as a responsive overlapping card deck.
- * Dragging or using arrow controls moves the selected task through the stack.
- */
 
 import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
 import { motion, useMotionValue, useTransform } from 'framer-motion'
@@ -13,18 +9,17 @@ import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
 
 
 
-// tune: change both dimensions to resize the task cards
 const CARD_W = 220
 const CARD_H = 280
 const DECK_W = CARD_W + 210
 
-// customize: replace the task content, colors, and icons below
 const TASKS: Array<{
   id: number
   title: string
   category: string
   description: string
   progress: number
+  // 6-digit hex only: two-digit alpha suffixes are appended to accent and accentLight.
   accent: string
   accentLight: string
   bg: string
@@ -89,7 +84,6 @@ const TASKS: Array<{
 ]
 
 
-// tune: adjust to change the deck spread
 const SLOTS = [
   { x: 0,    y: 0, rotate: 0, scale: 1,    z: 4, opacity: 1   },
   { x: 108,  y: 0, rotate: 0, scale: 0.88, z: 3, opacity: 0.7 },
@@ -105,7 +99,6 @@ const SPRING = { type: 'spring' as const, stiffness: 280, damping: 26 }
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 function useIsDark(ref: React.RefObject<HTMLElement | null>) {
-  
   const [isDark, setIsDark] = useState(() => {
     if (typeof window === 'undefined') return false
     return document.documentElement.classList.contains('dark')
@@ -187,6 +180,7 @@ export default function TaskCards() {
   const dragX = useMotionValue(0)
   const cardRotateY = useTransform(dragX, [-200, 0, 200], [14, 0, -14])
 
+  // Must hold exactly the TASKS ids; an id with no task becomes an empty slot.
   const [order, setOrder] = useState([0, 1, 2, 3])
   const orderRef = useRef(order)
   useEffect(() => { orderRef.current = order }, [order])
@@ -201,6 +195,7 @@ export default function TaskCards() {
     dismissing.current = true
     const frontId = orderRef.current[0]
     setExiting({ id: frontId, dir })
+    // The 420 ms delay must equal the card's 0.42s exit duration; change both.
     setTimeout(() => {
       setReturning(prev => new Set([...prev, frontId]))
       setOrder(prev => [...prev.slice(1), prev[0]])
@@ -217,7 +212,6 @@ export default function TaskCards() {
       ref={containerRef}
       className="flex h-full w-full flex-col items-center justify-center bg-[#E8E8DF] dark:bg-[#1A1A19]"
     >
-      {}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ position: 'relative', width: DECK_W, height: CARD_H }}>
           {TASKS.map(task => {
@@ -227,9 +221,7 @@ export default function TaskCards() {
             const isExiting = exiting?.id === task.id
             const isReturning = returning.has(task.id)
 
-            
             const cardBg = isDark ? task.accent : task.accentLight
-            
             const topBg = isDark ? task.bg : task.bgLight
             const catColor = isDark ? (task.darkLabel ?? task.accent) : (task.lightLabel ?? task.accentLight)
             const titleColor = isDark ? 'rgba(255,255,255,0.92)' : '#21211F'
@@ -301,7 +293,6 @@ export default function TaskCards() {
                   }
                 }}
               >
-                {}
                 <div
                   style={{
                     flex: 1,
@@ -317,7 +308,6 @@ export default function TaskCards() {
                     position: 'relative',
                   }}
                 >
-                  {}
                   <motion.span
                     aria-hidden="true"
                     style={{
@@ -341,7 +331,6 @@ export default function TaskCards() {
                   >
                     <ArrowUpRight weight="regular" size={13} />
                   </motion.span>
-                  {}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
                     <Icon weight="regular" size={11} style={{ color: catColor }} />
                     <span style={{
@@ -355,10 +344,8 @@ export default function TaskCards() {
                     </span>
                   </div>
 
-                  {}
                   <div style={{ height: 28, flexShrink: 0 }} />
 
-                  {}
                   <h2 style={{
                     fontSize: 20,
                     fontWeight: 800,
@@ -371,10 +358,8 @@ export default function TaskCards() {
                     {task.title}
                   </h2>
 
-                  {}
                   <div style={{ height: 10, flexShrink: 0 }} />
 
-                  {}
                   <p style={{
                     fontSize: 12,
                     color: descColor,
@@ -388,7 +373,6 @@ export default function TaskCards() {
                   </p>
                 </div>
 
-                {}
                 <div style={{ padding: '12px 20px 14px', flexShrink: 0 }}>
                   <AnimatedProgress progress={task.progress} isActive={isFront} darkText={task.darkOnAccent} />
                 </div>
@@ -398,7 +382,6 @@ export default function TaskCards() {
         </div>
       </div>
 
-      {}
       <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
         {([
           { dir: 'left' as const, icon: <CaretLeft weight="regular" size={16} />, label: 'Previous' },
