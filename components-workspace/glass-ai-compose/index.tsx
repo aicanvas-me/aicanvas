@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents a glass-styled AI composer with model and web-search controls.
- * Text input expands with content and supports removable image attachments.
- */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
@@ -19,6 +15,7 @@ import {
 const BACKGROUND =
   'https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png?updatedAt=1775226802133'
 
+// 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const MODELS = [
   { label: 'Claude',     color: '#FF7B54' },
   { label: 'ChatGPT',    color: '#10A37F' },
@@ -216,14 +213,12 @@ export default function GlassAiCompose() {
 
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
-      {}
       <img
         src={BACKGROUND}
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
 
-      {}
       <div
         ref={containerRef}
         className="relative z-10 w-[calc(100%-2rem)] max-w-[420px]"
@@ -239,13 +234,11 @@ export default function GlassAiCompose() {
             border: glassPanel.border,
           }}
         >
-          {}
           <div
             className="pointer-events-none absolute inset-0 z-[-1] rounded-2xl"
             style={glassBlur}
           />
 
-          {}
           <div
             className="absolute left-6 right-6 top-0 z-10 h-[1px]"
             style={{
@@ -254,9 +247,7 @@ export default function GlassAiCompose() {
             }}
           />
 
-          {}
           <div className="relative z-10 flex flex-col gap-6 p-4 pb-2">
-            {}
             <textarea
               ref={textareaRef}
               value={message}
@@ -275,7 +266,6 @@ export default function GlassAiCompose() {
               }}
             />
 
-            {}
             <AnimatePresence>
               {images.length > 0 && (
                 <motion.div
@@ -300,9 +290,7 @@ export default function GlassAiCompose() {
               )}
             </AnimatePresence>
 
-            {}
             <div className="flex items-center justify-between">
-              {}
               <div className="flex items-center gap-2">
                 <motion.button
                   onClick={() => fileInputRef.current?.click()}
@@ -335,7 +323,6 @@ export default function GlassAiCompose() {
                   className="hidden"
                 />
 
-                {}
                 <motion.button
                   onClick={() => setWebSearch((v) => !v)}
                   whileHover={reducedMotion ? undefined : { scale: 1.08, background: webSearch ? `${activeModel.color}28` : 'rgba(255, 255, 255, 0.14)' }}
@@ -360,7 +347,6 @@ export default function GlassAiCompose() {
                   />
                 </motion.button>
 
-                {}
                 <AnimatePresence>
                   {showWebLabel && (
                     <motion.span
@@ -377,7 +363,6 @@ export default function GlassAiCompose() {
                 </AnimatePresence>
               </div>
 
-              {}
               <motion.button
                 onClick={handleSend}
                 disabled={!canSend}
@@ -418,13 +403,11 @@ export default function GlassAiCompose() {
             </div>
           </div>
 
-          {}
           <div
             className="mx-4 h-[1px]"
             style={{ background: 'rgba(255, 255, 255, 0.07)' }}
           />
 
-          {}
           <div className="relative z-10 px-3 py-2.5">
             <ModelSwitcher activeModel={activeModel} onSelect={setActiveModel} />
           </div>
