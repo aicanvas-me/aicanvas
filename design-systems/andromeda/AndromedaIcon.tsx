@@ -1,11 +1,3 @@
-// ============================================================
-// ANDROMEDA · brand icon
-// Two-path mark: gray triangle + turquoise blade. Source SVG is
-// 28x24 (7:6 aspect). The exported component takes a `size` prop
-// that is interpreted as the WIDTH; height is derived so the icon
-// never deforms regardless of where it's dropped in.
-// ============================================================
-
 import type { SVGProps } from 'react';
 
 type AndromedaIconProps = {
