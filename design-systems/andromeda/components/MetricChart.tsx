@@ -27,7 +27,7 @@ const ms = (v: string) => parseInt(v, 10) / 1000;
 // Mirrors tokens.motion.easing.out; change both.
 const EASE_OUT: [number, number, number, number] = [0, 0, 0.2, 1];
 
-// recharts colours are SVG attributes and can't read var(), so they are resolved first.
+// Plot colours must come from c.*: raw token values stay dark-theme on light pages.
 const CHART_VARS = {
   textPrimary:   ['--andromeda-text-primary',   tokens.color.text.primary],
   textMuted:     ['--andromeda-text-muted',     tokens.color.text.muted],
