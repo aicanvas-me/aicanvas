@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Displays a stacked set of travel cards with animated hotel counts.
- * Dragging the front card downward sends it behind the deck.
- */
 
 import { useRef, useState, useLayoutEffect, useEffect } from 'react'
 import { motion } from 'framer-motion'
@@ -21,7 +17,6 @@ const CARDS = [
   { title: 'Bali',       sub: 'Sun-soaked shores', img: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=520&q=80&fit=crop&crop=center', country: 'Indonesia',   hotels: 250 },
 ] as const
 
-// tune: adjust offsets and rotation to change the deck spread
 const POSITIONS = [
   { x:  12, y: -32, rotate:  6, zIndex: 1, opacity: 1.00 },
   { x:   6, y: -18, rotate:  4, zIndex: 2, opacity: 1.00 },
@@ -97,7 +92,6 @@ export default function FloatingCards() {
       className="relative flex h-full w-full items-center justify-center overflow-hidden"
       style={{ background: isDark ? '#110F0C' : '#F5F1EA' }}
     >
-      {}
       <div
         className="absolute inset-0"
         style={{
@@ -107,7 +101,6 @@ export default function FloatingCards() {
       />
 
 
-      {}
       <div style={{ position: 'relative', width: CARD_W, height: CARD_H }}>
         {CARDS.map((card, i) => {
           const posIndex = order.indexOf(i)
@@ -163,7 +156,6 @@ export default function FloatingCards() {
                 }
               }}
             >
-              {}
               <div style={{
                 padding: '10px 10px 0',
                 display: 'flex',
@@ -171,12 +163,9 @@ export default function FloatingCards() {
                 gap: 8,
                 flex: '0 0 auto',
               }}>
-                {}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  {}
                   <HotelsCounter target={card.hotels} active={isFront && !isExiting} />
 
-                  {}
                   <div style={{
                     width: 26, height: 26, borderRadius: '50%',
                     background: '#BECF5D',
@@ -186,7 +175,6 @@ export default function FloatingCards() {
                   </div>
                 </div>
 
-                {}
                 <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between' }}>
                   <p style={{
                     fontSize: 17,
@@ -209,7 +197,6 @@ export default function FloatingCards() {
                 </div>
               </div>
 
-              {}
               <div style={{
                 margin: '8px 6px 6px',
                 borderRadius: 12,
@@ -226,7 +213,6 @@ export default function FloatingCards() {
         })}
       </div>
 
-      {}
       <p
         style={{
           position: 'absolute',
