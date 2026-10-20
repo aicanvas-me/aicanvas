@@ -1,11 +1,3 @@
-// ============================================================
-// COMPONENT: Checkbox
-// shadcn/ui-aligned API: forwardRef, controlled (`checked`) or
-// uncontrolled (`defaultChecked`), `onCheckedChange` callback,
-// optional inline `label`. Square box, sharp corners, accent
-// fill on checked, full hover/focus/disabled coverage.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useId, useState, useEffect } from 'react';
@@ -17,6 +9,7 @@ function useSpacePopIn() {
     if (document.querySelector('#andromeda-pop-in-style')) return;
     const style = document.createElement('style');
     style.id = 'andromeda-pop-in-style';
+    // Radio injects this same id; the first to mount wins, so keep both keyframes identical.
     style.textContent = `@keyframes andromeda-pop-in{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}`;
     document.head.appendChild(style);
   }, []);
@@ -26,12 +19,7 @@ import { cn, andromedaVars } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
 
-// Touch-target expander — the visible 16px box stays its desktop size; on coarse
-// pointers the invisible input (which receives the click, kept on top via z-10)
-// grows to spacing[10] (40px), centered over the box. inset-0 is released so the
-// input can overflow the small wrapper. Scoped className, !important to beat the
-// peer/absolute base classes. the Andromeda responsive rules + the Andromeda interaction-states rules "Invisible inputs over
-// visual proxies" (input must stay above the proxy — z-10 is preserved).
+// Touch screens: the hidden input grows to 40px, centered over the 16px box.
 const TOUCH_TARGET_STYLE = `
   ${mq.coarse} {
     .andromeda-checkbox-touch {
@@ -114,7 +102,6 @@ type CheckboxProps = Omit<
   label?: string;
 };
 
-/** @type {React.ForwardRefExoticComponent<CheckboxProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'|'type'>>} */
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
   {
     className,
@@ -155,10 +142,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           checked={checked}
           disabled={disabled}
           onChange={handleChange}
-          // z-10 keeps the invisible input on top of the visual span so
-          // clicks reach the input. Both layers are positioned, so without
-          // an explicit z-index the visual span paints last and swallows
-          // every click — the box hovers but never toggles.
+          // z-10 lets clicks reach the input; keep the input before the box for the focus ring.
           className="andromeda-checkbox-touch peer absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
           {...props}
         />
@@ -169,7 +153,6 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
               state: checked ? 'checked' : 'unchecked',
               disabled,
             }),
-            // Sync focus ring with the hidden native input.
             'peer-focus-visible:shadow-[0_0_0_1px_var(--andromeda-accent-400),0_0_8px_var(--andromeda-accent-500)]',
             className,
           )}
