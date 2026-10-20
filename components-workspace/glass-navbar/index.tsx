@@ -47,6 +47,7 @@ export default function GlassNavbar() {
       <div className="relative flex w-[calc(100%-2rem)] max-w-[720px] flex-col">
 
         <motion.nav
+          // No opacity in initial: below 1 it hides the blur until the fade ends.
           initial={{ y: -40 }}
           animate={{ y: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 24 }}
