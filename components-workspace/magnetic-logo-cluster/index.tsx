@@ -244,7 +244,7 @@ function DefaultMark({ palette, uid }: { palette: Palette; uid: string }) {
   )
 }
 
-// Each layer owns its own transform; merging them makes one overwrite the other.
+// The three inner layers each own a transform; merged, one overwrites the other.
 function ClusterIcon({
   item,
   size,
@@ -300,7 +300,7 @@ function ClusterIcon({
   const springX = useSpring(magnetX, MAGNET_SPRING)
   const springY = useSpring(magnetY, MAGNET_SPRING)
 
-  // Keep these unitless: CLUSTER_CSS multiplies them by 1px or 1deg.
+  // --ic-dx/dy/rot/rot-amp stay unitless: CLUSTER_CSS multiplies them by 1px or 1deg.
   const floatStyle: CSSProperties = {
     width: '100%',
     height: '100%',
