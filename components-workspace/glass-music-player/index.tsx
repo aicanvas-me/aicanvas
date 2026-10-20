@@ -1,15 +1,12 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Simulates a glass music player with track switching and playback progress.
- * Play and skip drive the simulated timeline, while like and shuffle toggle local state.
- */
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
 import { Play, Pause, SkipBack, SkipForward, Heart, Shuffle, Queue, ArrowLeft } from '@phosphor-icons/react'
 
+// 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const TRACKS = [
   { title: 'Midnight Drive',  artist: 'Neon Collective', color: '#FF6BF5', duration: 234 },
   { title: 'Glass Horizons',  artist: 'Aurora Synth',    color: '#06D6A0', duration: 198 },
@@ -49,7 +46,6 @@ export default function GlassMusicPlayer() {
 
       progressMV.set(pct)
 
-      // tune: raise the interval to reduce timestamp updates
       if (now - lastLabelUpdate > 250) {
         setElapsed(pct * track.duration)
         lastLabelUpdate = now
@@ -78,14 +74,12 @@ export default function GlassMusicPlayer() {
 
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
-      {}
       <img
         src="https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png"
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
 
-      {}
       <motion.div
         initial={{ y: 24, scale: 0.95 }}
         animate={{ y: 0, scale: 1 }}
@@ -97,12 +91,11 @@ export default function GlassMusicPlayer() {
           boxShadow: '0 24px 64px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.07)',
         }}
       >
-        {}
+        {/* z-[-1] relies on the card's isolate; without it the blur falls behind the page. */}
         <div
           className="pointer-events-none absolute inset-0 z-[-1] rounded-[32px]"
           style={{ backdropFilter: 'blur(48px) saturate(1.6)', WebkitBackdropFilter: 'blur(48px) saturate(1.6)' }}
         />
-        {}
         <div
           className="absolute left-12 right-12 top-0 h-[1px]"
           style={{ background: 'linear-gradient(90deg,transparent,rgba(255,255,255,0.18),transparent)' }}
@@ -110,9 +103,7 @@ export default function GlassMusicPlayer() {
 
         <div className="flex flex-col items-center px-7 pb-7 pt-6">
 
-          {}
           <div className="mb-6 flex w-full items-center justify-between">
-            {}
             <motion.div
               aria-hidden
               whileHover={{ scale: 1.15, color: 'rgba(255,255,255,0.8)' }}
@@ -141,7 +132,6 @@ export default function GlassMusicPlayer() {
             </motion.button>
           </div>
 
-          {}
           <AnimatePresence mode="wait">
             <motion.div
               key={trackIdx}
@@ -151,7 +141,6 @@ export default function GlassMusicPlayer() {
               transition={{ type: 'spring', stiffness: 260, damping: 26 }}
               className="relative mb-7"
             >
-              {}
               <div
                 className="absolute inset-0 rounded-full"
                 style={{
@@ -161,7 +150,6 @@ export default function GlassMusicPlayer() {
                   transform: 'scale(1.15)',
                 }}
               />
-              {}
               <div
                 className="relative flex h-44 w-44 items-center justify-center rounded-full"
                 style={{
@@ -185,7 +173,6 @@ export default function GlassMusicPlayer() {
                       }}
                     />
                   ))}
-                  {}
                   <div
                     className="absolute left-1/2 top-1/2 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full"
                     style={{
@@ -198,7 +185,6 @@ export default function GlassMusicPlayer() {
             </motion.div>
           </AnimatePresence>
 
-          {}
           <AnimatePresence mode="wait">
             <motion.div
               key={trackIdx}
@@ -213,7 +199,6 @@ export default function GlassMusicPlayer() {
             </motion.div>
           </AnimatePresence>
 
-          {}
           <div className="mb-5 flex items-center gap-[7px]">
             {TRACKS.map((_, i) => (
               <motion.button
@@ -237,9 +222,7 @@ export default function GlassMusicPlayer() {
             ))}
           </div>
 
-          {}
           <div className="mb-5 w-full">
-            {}
             <div
               className="relative h-[3px] w-full overflow-hidden rounded-full"
               style={{ background: 'rgba(255,255,255,0.07)' }}
@@ -262,7 +245,6 @@ export default function GlassMusicPlayer() {
             </div>
           </div>
 
-          {}
           <div className="flex w-full items-center justify-between">
 
             <motion.button
@@ -286,7 +268,6 @@ export default function GlassMusicPlayer() {
               <SkipBack size={26} weight="fill" />
             </motion.button>
 
-            {}
             <motion.button
               whileHover={{ scale: 1.07 }}
               whileTap={{ scale: 0.92 }}
@@ -333,7 +314,6 @@ export default function GlassMusicPlayer() {
               <SkipForward size={26} weight="fill" />
             </motion.button>
 
-            {}
             <motion.div
               aria-hidden
               whileHover={{ scale: 1.15, color: 'rgba(255,255,255,0.75)' }}
