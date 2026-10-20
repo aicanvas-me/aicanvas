@@ -114,6 +114,7 @@ export default function GlassDock() {
       <div className="flex w-full overflow-x-auto py-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {/* mx-auto, not justify-center: centered overflow can't scroll to its left edge. */}
         <motion.div
+          // No opacity in initial: below 1 it hides the blur until the fade ends.
           initial={{ y: 50 }}
           animate={{ y: 0 }}
           transition={{ type: 'spring', stiffness: 180, damping: 20 }}
