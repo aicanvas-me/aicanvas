@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Renders sliced typography that transitions between contrasting color modes.
- * Hovering offsets the letter slices and reveals the alternate word treatment.
- */
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
@@ -38,7 +34,7 @@ function measureLeftInk(char: string, font: string): number {
     ctx.font = font
     ctx.textBaseline = 'alphabetic'
     ctx.fillStyle = '#000'
-    ctx.fillText(char, 50, 150) 
+    ctx.fillText(char, 50, 150)
     const { data } = ctx.getImageData(0, 0, W, H)
     for (let x = 0; x < W; x++) {
       for (let y = 0; y < H; y++) {
@@ -65,19 +61,16 @@ function mix(a: string, b: string, t: number): string {
 
 
 
-// customize: replace the paired words below
+// Same letters after the first, WORD_BOTTOM the wider; also change 'L'/'N' in measure().
 const WORD_TOP = 'LIGHT'
 const WORD_BOTTOM = 'NIGHT'
 
 
 
-// tune: raise to separate the slices farther
 const OPEN_OFFSET = 0.65
 
 
-// tune: raise to delay the introductory reveal
 const INTRO_DELAY_MS = 700
-// tune: raise to hold the introductory reveal longer
 const INTRO_HOLD_MS = 1100
 const INTRO_PEAK = 0.7
 const INTRO_DURATION_S = 0.9
@@ -95,40 +88,26 @@ export default function SliceType() {
     return () => mq.removeEventListener('change', update)
   }, [])
 
-  
   const engage = useMotionValue(0)
   const engageSmooth = useSpring(engage, { stiffness: 140, damping: 18, mass: 0.9 })
 
-  
-  
   const bgColor = useTransform(engageSmooth, (e) => mix(DARK_BG, LIGHT_BG, e))
   const fgColor = useTransform(engageSmooth, (e) => mix(DARK_FG, LIGHT_FG, e))
 
-  
   const topClip = useTransform(engageSmooth, (e) =>
     `inset(0 0 ${50 * (1 - e)}% 0)`,
   )
   const topY = useTransform(engageSmooth, (e) => `${-OPEN_OFFSET * 100 * e}%`)
 
-  
   const botClip = useTransform(engageSmooth, (e) =>
     `inset(${50 * (1 - e)}% 0 0 0)`,
   )
   const botY = useTransform(engageSmooth, (e) => `${OPEN_OFFSET * 100 * e}%`)
 
-  
-  
-  
-  
-  
-  
   const containerRef = useRef<HTMLDivElement>(null)
   const lRef = useRef<HTMLSpanElement>(null)
   const ightRef = useRef<HTMLSpanElement>(null)
 
-  
-  
-  
   const naturalLeftMV: MotionValue<number> = useMotionValue(0)
   const nudgeMV: MotionValue<number> = useMotionValue(0)
 
@@ -144,15 +123,11 @@ export default function SliceType() {
 
       naturalLeftMV.set(Math.max(0, iRect.left - cRect.left - lRect.width))
 
-      
-      
-      
       const computed = window.getComputedStyle(lEl)
       const font = `900 ${computed.fontSize} ${computed.fontFamily}`
+      // 'L' and 'N' must be the first letters of WORD_TOP and WORD_BOTTOM.
       const lInk = measureLeftInk('L', font)
       const nInk = measureLeftInk('N', font)
-      
-      
       nudgeMV.set(nInk - lInk)
     }
     measure()
@@ -161,8 +136,6 @@ export default function SliceType() {
     return () => ro.disconnect()
   }, [naturalLeftMV, nudgeMV])
 
-  
-  
   const lX = useTransform(
     [engageSmooth, naturalLeftMV, nudgeMV],
     ([e, natural, nudge]) => {
@@ -171,7 +144,6 @@ export default function SliceType() {
     },
   )
 
-  
   const didIntro = useRef(false)
   useEffect(() => {
     if (didIntro.current) return
@@ -192,7 +164,6 @@ export default function SliceType() {
       try {
         await opener
       } catch {
-        
       }
       if (cancelled) return
       closeTimer = setTimeout(() => {
@@ -213,11 +184,8 @@ export default function SliceType() {
     return cancel
   }, [engage, reducedMotion])
 
-  
   const touchOpenRef = useRef(false)
 
-  
-  
   const cancelTeaserRef = useRef<(() => void) | null>(null)
 
   const cancelTeaser = () => {
@@ -232,12 +200,10 @@ export default function SliceType() {
   }
   const handlePointerLeave = (e: React.PointerEvent) => {
     if (e.pointerType !== 'mouse') return
-    
     engage.set(0)
   }
   const handlePointerDown = (e: React.PointerEvent) => {
     if (e.pointerType === 'mouse') return
-    
     cancelTeaser()
     touchOpenRef.current = !touchOpenRef.current
     engage.set(touchOpenRef.current ? 1 : 0)
@@ -254,8 +220,6 @@ export default function SliceType() {
     userSelect: 'none',
   }
 
-  
-  
   const TAIL = WORD_TOP.slice(1)
 
   return (
@@ -272,12 +236,10 @@ export default function SliceType() {
         className="relative"
         aria-label={`${WORD_TOP} / ${WORD_BOTTOM}`}
       >
-        {}
         <span aria-hidden style={{ ...sharedTextStyle, visibility: 'hidden' }}>
           {WORD_BOTTOM}
         </span>
 
-        {}
         <motion.div
           aria-hidden
           style={{
@@ -289,7 +251,6 @@ export default function SliceType() {
             willChange: 'transform, clip-path',
           }}
         >
-          {}
           <motion.span
             ref={lRef}
             style={{
@@ -304,7 +265,6 @@ export default function SliceType() {
             {WORD_TOP.charAt(0)}
           </motion.span>
 
-          {}
           <span
             ref={ightRef}
             style={{
@@ -318,7 +278,6 @@ export default function SliceType() {
           </span>
         </motion.div>
 
-        {}
         <motion.span
           aria-hidden
           style={{
