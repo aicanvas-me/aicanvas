@@ -1,11 +1,3 @@
-// ============================================================
-// COMPONENT: Input
-// shadcn/ui-aligned API: className, ref, ...props passthrough.
-// label + optional left icon + error state.
-// Border transitions border.base → border.bright on focus.
-// Error state recolors border + ring + helper text in fault.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useId } from 'react';
@@ -31,7 +23,6 @@ const inputVariants = cva(
   {
     variants: {
       hasIcon: {
-        // 9px vertical padding is a deliberate off-grid optical value, no token
         true:  'pl-[var(--andromeda-8,32px)] pr-[var(--andromeda-3)] py-[9px]',
         false: 'px-[var(--andromeda-3)] py-[9px]',
       },
@@ -74,7 +65,6 @@ type InputOwnProps = {
 
 export type InputProps = InputOwnProps & Omit<ComponentPropsWithoutRef<'input'>, keyof InputOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<InputProps & React.InputHTMLAttributes<HTMLInputElement>>} */
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     className,
