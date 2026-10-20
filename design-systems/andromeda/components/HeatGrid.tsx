@@ -1,24 +1,3 @@
-// ============================================================
-// COMPONENT: HeatGrid
-// A 2-D matrix fill gauge — the cousin of ProgressBar. A grid of
-// cells fills from the bottom-centre outward in a widening pyramid
-// as `value` (0–100) rises. Three accent stops give the wave front
-// depth: bright (accent-300) at the frontier, dim (accent-500) at
-// the base. Empty cells are surface.overlay.
-//
-// Use it when a level reads better as a heat-matrix than a bar —
-// risk meters, capacity gauges, saturation. The fill IS a
-// measurement, so accent is allowed (the the Andromeda color-philosophy rules "colour is for
-// meaning" exception, same as ProgressBar / charts).
-//
-// The entrance fill is gated on `useInView` so a HeatGrid below the
-// fold plays when scrolled into view (consistent with ProgressBar /
-// StatTile), and it honours prefers-reduced-motion. After the one-shot
-// entrance cascade, the gauge is LIVE: change `value` at runtime and the
-// cells crossfade uniformly (dots appearing / disappearing) — a real-time
-// gauge responding, not a re-load.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
@@ -28,12 +7,8 @@ import { tokens } from '../tokens';
 import { andromedaVars } from './lib/utils';
 import { useReducedMotion } from './lib/motion';
 
-/** Fill step of a single cell, from empty (0) to the bright frontier (3). */
 type Intensity = 0 | 1 | 2 | 3;
 
-// intensity → fill: 0 = empty, 1 = dim (base), 2 = mid, 3 = bright (frontier).
-// Both sinks are inline CSS, so var-with-fallback lets the cells follow a theme
-// natively (no revarnish needed); the fallback keeps the default pixel-exact.
 const INTENSITY_COLOR: Record<Intensity, { bg: string; border: string }> = {
   0: { bg: `var(--andromeda-surface-overlay, ${tokens.color.surface.overlay})`, border: `var(--andromeda-border-subtle, ${tokens.color.border.subtle})` },
   1: { bg: `var(--andromeda-accent-500, ${tokens.color.accent[500]})`,          border: `var(--andromeda-accent-400, ${tokens.color.accent[400]})` },
@@ -41,23 +16,17 @@ const INTENSITY_COLOR: Record<Intensity, { bg: string; border: string }> = {
   3: { bg: `var(--andromeda-accent-300, ${tokens.color.accent[300]})`,          border: `var(--andromeda-accent-200, ${tokens.color.accent[200]})` },
 };
 
-const msNum = (v: string) => parseInt(v, 10); // "120ms" → 120
+const msNum = (v: string) => parseInt(v, 10);
 
-// Compute the fill map for a value. Cells fill bottom-centre first in a
-// widening pyramid; intensity ramps dim (base, low rank) → bright (frontier,
-// high rank). Returns { "r-c": intensity } for every cell.
 function buildFillMap(value: number, cols: number, rows: number): Record<string, Intensity> {
   const center = (cols - 1) / 2;
   const cells = [];
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      // rank: lower fills earlier. Bottom rows first (vertical term), centre
-      // columns first (horizontal term) → a triangular, rising wave front.
       const rank = (rows - 1 - r) + Math.abs(c - center);
       cells.push({ r, c, rank });
     }
   }
-  // Deterministic order: rank, then row, then column.
   const order = [...cells].sort((a, b) => a.rank - b.rank || a.r - b.r || a.c - b.c);
 
   const clamped = Math.max(0, Math.min(100, value));
@@ -73,7 +42,6 @@ function buildFillMap(value: number, cols: number, rows: number): Record<string,
   order.forEach((cell, i) => {
     let intensity: Intensity = 0;
     if (i < target) {
-      // Closer to the frontier (higher rank) → brighter.
       const frac = (cell.rank - minRank) / span;
       intensity = frac >= 0.66 ? 3 : frac >= 0.33 ? 2 : 1;
     }
@@ -107,7 +75,6 @@ type HeatGridProps = ComponentPropsWithoutRef<'div'> & {
   label?: string;
 };
 
-/** @type {React.ForwardRefExoticComponent<HeatGridProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const HeatGrid = forwardRef<HTMLDivElement, HeatGridProps>(function HeatGrid(
   {
     value = 0,
@@ -127,21 +94,15 @@ export const HeatGrid = forwardRef<HTMLDivElement, HeatGridProps>(function HeatG
   const innerRef = useRef<HTMLDivElement | null>(null);
   const reducedMotion = useReducedMotion();
   const inView = useInView(innerRef, { once: true, margin: '-10% 0px' });
-  // Reduced motion → render filled immediately; otherwise wait until on-screen.
   const revealed = reducedMotion ? true : inView;
 
   const fillMap = useMemo(() => buildFillMap(value, cols, rows), [value, cols, rows]);
   const clamped = Math.max(0, Math.min(100, value));
   const center = (cols - 1) / 2;
 
-  // Cascade base-first, centre-out — token-driven tempo.
   const rowStaggerMs = msNum(tokens.motion.stagger.progressBar);
   const colStaggerMs = Math.round(rowStaggerMs * 0.18);
 
-  // The staggered cascade plays ONCE on entrance. After it finishes the gauge
-  // goes "live": subsequent `value` changes crossfade uniformly (delay 0) so a
-  // real-time update reads as the gauge responding, not re-loading. Cells that
-  // turn on/off just transition their fill, so dots appear/disappear smoothly.
   const [entered, setEntered] = useState(false);
   useEffect(() => {
     if (entered) return undefined;
@@ -153,7 +114,6 @@ export const HeatGrid = forwardRef<HTMLDivElement, HeatGridProps>(function HeatG
     return () => clearTimeout(t);
   }, [revealed, entered, reducedMotion, rows, rowStaggerMs, colStaggerMs, center]);
 
-  // Stagger only during the one-shot entrance; live updates crossfade together.
   const inEntrance = revealed && !entered && !reducedMotion;
 
   const setRefs = (node: HTMLDivElement | null) => {
@@ -175,13 +135,8 @@ export const HeatGrid = forwardRef<HTMLDivElement, HeatGridProps>(function HeatG
         ...andromedaVars(),
         display: 'inline-flex',
         alignItems: 'center',
-        // Wrap so a narrow stacked column drops the readout BELOW the fixed
-        // cell matrix instead of forcing horizontal page scroll. The cells stay
-        // their true size (flexShrink:0) — a faithful stack, not a reflow. On
-        // desktop there's always room, so it stays inline (no visual change).
         flexWrap: 'wrap',
         gap: tokens.spacing[6],
-        // Never let the fixed-size matrix push past its container's width.
         maxWidth: '100%',
         ...style,
       }}
