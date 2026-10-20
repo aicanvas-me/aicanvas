@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Displays a tilted coverflow of captioned image cards.
- * Dragging, tapping, or using the keyboard changes the centered slide.
- */
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, type PanInfo } from 'framer-motion'
@@ -22,7 +18,6 @@ interface Slide {
 
 
 
-// customize: replace the coverflow images and captions below
 const SLIDES: Slide[] = [
   {
     id: 0,
@@ -77,20 +72,19 @@ const SLIDES: Slide[] = [
 
 
 
+// Must equal SLIDES.length, and slide ids must run 0 to TOTAL - 1.
 const TOTAL = 7
-const HALF = 3                                   
-// tune: raise to increase card tilt between slots
-const ROTATION_PER_STEP = 14 
-// tune: raise to deepen the vertical arc
-const ARC_Y = 8              
-// tune: raise to spread cards farther apart
-const GAP_PX = 30            
-const SCALE_BY_OFFSET = [1.0, 0.88, 0.76, 0.64] 
+const HALF = 3
+const ROTATION_PER_STEP = 14
+const ARC_Y = 8
+const GAP_PX = 30
+const SCALE_BY_OFFSET = [1.0, 0.88, 0.76, 0.64]
 
 
 const SPRING = { type: 'spring' as const, stiffness: 240, damping: 30 }
 
 const MOUNT_SPRING = { type: 'spring' as const, stiffness: 180, damping: 18 }
+// In seconds despite the name: 0.09 is a 90 ms stagger.
 const STAGGER_MS = 0.09
 
 
@@ -107,13 +101,10 @@ function visibleOffset(cardIndex: number, focus: number, total: number) {
 }
 
 function buildXPositions(scales: number[], baseWidth: number, gap: number) {
-  
-  
   const positions = new Map<number, number>()
   positions.set(0, 0)
   let cursor = 0
   for (let i = 1; i <= 3; i++) {
-    
     const step = (scales[i - 1] / 2 + scales[i] / 2) * baseWidth + gap
     cursor += step
     positions.set(i, cursor)
@@ -125,20 +116,17 @@ function buildXPositions(scales: number[], baseWidth: number, gap: number) {
 
 
 export default function TiltedCoverflow() {
-  const [focus, setFocus] = useState(3) 
+  const [focus, setFocus] = useState(3)
   const [maxSide, setMaxSide] = useState(3)
   const [cardWidth, setCardWidth] = useState(180)
   const [mounted, setMounted] = useState(false)
 
   const cardRef = useRef<HTMLButtonElement | null>(null)
 
-  
-  
   useEffect(() => {
     setMounted(true)
   }, [])
 
-  
   useEffect(() => {
     if (typeof window === 'undefined') return
     const mq = window.matchMedia('(min-width: 640px)')
@@ -148,7 +136,6 @@ export default function TiltedCoverflow() {
     return () => mq.removeEventListener('change', apply)
   }, [])
 
-  
   useEffect(() => {
     if (typeof window === 'undefined') return
     const measure = () => {
@@ -174,7 +161,6 @@ export default function TiltedCoverflow() {
     })
   }, [])
 
-  
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if (event.key === 'ArrowRight') {
@@ -221,28 +207,18 @@ export default function TiltedCoverflow() {
             const hidden = absOffset > maxSide
             const isFocus = offset === 0
 
-            
-            
-            
             const scale = SCALE_BY_OFFSET[absOffset] ?? 0.6
             const rotateY = -offset * ROTATION_PER_STEP
             const translateX = positions.get(offset) ?? 0
             const translateY = absOffset * ARC_Y
 
-            
-            
-            
             const mountDelay = (HALF - absOffset) * STAGGER_MS
             const transition = mounted
               ? SPRING
               : { ...MOUNT_SPRING, delay: mountDelay }
 
-            
-            
             const breathDuration = 7 + slide.id * 0.6
 
-            
-            
             const words = slide.caption.split(' ')
 
             return (
@@ -274,7 +250,6 @@ export default function TiltedCoverflow() {
                 transition={transition}
                 whileTap={isFocus ? { cursor: 'grabbing' } : undefined}
               >
-                {}
                 <motion.div
                   className="relative h-full w-full overflow-hidden rounded-[20px] ring-1 ring-black/10 dark:ring-white/10"
                   style={{
@@ -300,7 +275,6 @@ export default function TiltedCoverflow() {
                     className="absolute inset-0 h-full w-full object-cover"
                   />
 
-                  {}
                   <div className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-col justify-end px-4 pb-3 pt-12">
                     <div
                       aria-hidden
@@ -349,7 +323,6 @@ export default function TiltedCoverflow() {
           })()}
         </motion.div>
 
-        {}
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-1.5">
             {SLIDES.map((slide) => {
