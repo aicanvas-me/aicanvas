@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Presents a responsive stack of labeled polaroid cards.
- * Selecting a card brings it forward and rearranges the remaining stack.
- */
 
 import { useState, useEffect, useLayoutEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
@@ -28,17 +24,16 @@ interface Pos {
 
 
 
-// tune: change both dimensions to resize the polaroids
 const CARD_W = 110
 const CARD_H = 140
 
 
 
 
-const STAGE_W = 2 * (160 + CARD_W / 2) + 32 
+// 160 must match the largest |x| in FANNED, or narrow containers clip the outer cards.
+const STAGE_W = 2 * (160 + CARD_W / 2) + 32
 const STAGE_H = 220
 
-// customize: replace the card labels and colors below
 const CARDS: CardData[] = [
   { id: 0, label: 'Sunset', from: '#FF6B6B', to: '#FF8E53' },
   { id: 1, label: 'Ocean',  from: '#14B8A6', to: '#67E8F9' },
@@ -48,7 +43,6 @@ const CARDS: CardData[] = [
 ]
 
 
-// tune: adjust these positions to change the stacked and fanned layouts
 const STACKED: Pos[] = [
   { x: -6, y:  2, rotate: -12 },
   { x:  3, y: -4, rotate:  -5 },
@@ -73,8 +67,6 @@ export default function PolaroidStack() {
   const [hoveredId, setHoveredId] = useState<number | null>(null)
   const [selectedId, setSelectedId] = useState<number | null>(null)
 
-  
-  
   const rootRef = useRef<HTMLDivElement>(null)
   const [scale, setScale] = useState(1)
 
@@ -103,9 +95,7 @@ export default function PolaroidStack() {
       className="relative flex h-full w-full cursor-pointer select-none items-center justify-center overflow-hidden bg-zinc-950"
       onClick={toggle}
     >
-      {}
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap');`}</style>
-        {}
         <motion.div
           className="relative"
           animate={{ scale }}
@@ -118,7 +108,6 @@ export default function PolaroidStack() {
             const isSelected = fanned && selectedId === card.id
 
             return (
-              
               <motion.div
                 key={card.id}
                 className="absolute left-1/2 top-1/2"
@@ -132,13 +121,11 @@ export default function PolaroidStack() {
                   type: 'spring',
                   stiffness: 280,
                   damping: 22,
-                  
                   delay: fanned
                     ? i * 0.06
                     : (CARDS.length - 1 - i) * 0.05,
                 }}
               >
-                {}
                 <motion.div
                   animate={{
                     y: isSelected ? -28 : isHovered ? -18 : 0,
@@ -155,7 +142,6 @@ export default function PolaroidStack() {
                     setHoveredId(null)
                   }}
                 >
-                  {}
                   <div
                     style={{
                       width: CARD_W,
@@ -173,7 +159,6 @@ export default function PolaroidStack() {
                       transition: 'box-shadow 0.25s ease',
                     }}
                   >
-                    {}
                     <div
                       style={{
                         flexShrink: 0,
@@ -182,7 +167,6 @@ export default function PolaroidStack() {
                       }}
                     />
 
-                    {}
                     <div
                       style={{
                         flex: 1,
@@ -211,7 +195,6 @@ export default function PolaroidStack() {
           })}
         </motion.div>
 
-        {}
         <motion.p
           key={`${String(fanned)}-${String(selectedId !== null)}`}
           initial={{ opacity: 0, y: 4 }}
