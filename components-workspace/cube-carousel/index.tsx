@@ -1,11 +1,6 @@
 'use client'
 // npm install framer-motion
 
-/**
- * Rotatable photo cube controlled by dragging or the arrow keys.
- * Momentum carries the cube after a pointer gesture ends.
- */
-
 import { useRef } from 'react'
 import { motion, useMotionValue, animate, type AnimationPlaybackControls, type MotionValue, type PanInfo } from 'framer-motion'
 
@@ -32,7 +27,7 @@ const FACES: { src: string; shape: FaceShape; transform: string }[] = [
 ]
 
 const DRAG_SENSITIVITY = 0.5
-const KEY_STEP = 30 // tune: raise to increase each keyboard rotation
+const KEY_STEP = 30
 const COAST = { type: 'spring' as const, stiffness: 40, damping: 22 }
 
 export default function CubeCarousel() {
@@ -126,6 +121,7 @@ export default function CubeCarousel() {
           role="button"
           tabIndex={0}
           className="absolute inset-0 z-10 cursor-grab select-none active:cursor-grabbing"
+          // Keep none: with pan-y or auto, vertical touch drags scroll the page, not tilt the cube.
           style={{ touchAction: 'none' }}
         />
 
