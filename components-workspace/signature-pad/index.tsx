@@ -1,9 +1,5 @@
 'use client'
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents a signature modal with a velocity-sensitive drawing canvas.
- * Pointer strokes can be erased, canceled, or confirmed into the trigger pill.
- */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -13,7 +9,6 @@ type Pt = { x: number; y: number; t: number }
 type Stroke = Pt[]
 type ButtonRect = { x: number; y: number; w: number; h: number }
 
-// tune: adjust these bounds to change stroke-width variation
 const MIN_W = 1.1
 const MAX_W = 2.6
 const MORPH = { type: 'spring' as const, stiffness: 320, damping: 30, mass: 1 }
@@ -197,7 +192,6 @@ function ModalCard({
     )
   }, [])
 
-  
   useEffect(() => {
     surfaceRef.current?.focus()
     const onKeyDown = (e: KeyboardEvent) => {
@@ -421,7 +415,6 @@ function ModalCard({
           animate="show"
           exit="exit"
         >
-          {}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: -6 },
@@ -468,7 +461,6 @@ function ModalCard({
             </motion.button>
           </motion.div>
 
-          {}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: 8 },
@@ -488,6 +480,7 @@ function ModalCard({
                 onPointerUp={handlePointerUp}
                 onPointerCancel={handlePointerUp}
                 onPointerLeave={handlePointerUp}
+                // touch-none: without it a finger drag scrolls the page instead of drawing.
                 className="absolute inset-0 touch-none"
                 style={{ cursor: confirming ? 'default' : 'crosshair' }}
               />
@@ -541,7 +534,6 @@ function ModalCard({
             </div>
           </motion.div>
 
-          {}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: 8 },
