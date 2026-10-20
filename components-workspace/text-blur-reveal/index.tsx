@@ -1,25 +1,18 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Reveals a short sentence through staggered blur and position transitions.
- * The call-to-action appears after the final word finishes animating.
- */
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
-// customize: replace the sentence and accented word indexes below
 const WORDS = ['Craft', 'interfaces', 'that', 'feel', 'like', 'magic.']
-const ACCENTED = new Set([1, 5]) 
+const ACCENTED = new Set([1, 5])
 
 
-// tune: raise to increase the delay between words
 const STAGGER = 100
-// tune: raise to slow each word reveal
 const DURATION = 650
-const LAST_WORD_END = (WORDS.length - 1) * STAGGER + DURATION 
-const SHOW_BUTTON_AT = LAST_WORD_END + 150                     
+const LAST_WORD_END = (WORDS.length - 1) * STAGGER + DURATION
+const SHOW_BUTTON_AT = LAST_WORD_END + 150
 
 export default function TextBlurReveal() {
   const [showCTA, setShowCTA] = useState(false)
@@ -32,7 +25,6 @@ export default function TextBlurReveal() {
   return (
     <div className="relative flex h-full w-full flex-col items-center justify-center gap-5 overflow-hidden">
 
-      {}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -41,12 +33,10 @@ export default function TextBlurReveal() {
         }}
       />
 
-      {}
       <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
         <div className="h-40 w-80 rounded-full bg-indigo-600/20 blur-3xl" />
       </div>
 
-      {}
       <div className="relative flex flex-wrap justify-center gap-x-[0.4em] gap-y-1">
         {WORDS.map((word, i) => (
           <motion.span
@@ -70,7 +60,6 @@ export default function TextBlurReveal() {
         ))}
       </div>
 
-      {}
       <motion.p
         key="sub"
         initial={{ opacity: 0, y: 8 }}
@@ -85,7 +74,6 @@ export default function TextBlurReveal() {
         Drop any phrase. Works with any text.
       </motion.p>
 
-      {}
       <div className="flex h-10 items-center justify-center">
       <AnimatePresence>
         {showCTA && (
