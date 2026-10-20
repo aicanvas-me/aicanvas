@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents an avatar-triggered glass user menu with grouped actions.
- * The dropdown animates open and closes after outside pointer interaction.
- */
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -26,6 +22,7 @@ const USER = {
   avatar: 'https://ik.imagekit.io/aitoolkit/Miscellaneous/Avatars/Silhouette%20Profile%20Against%20Gradient%20Background%201.webp',
 }
 
+// 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const MENU_GROUPS = [
   {
     label: 'Account',
@@ -82,7 +79,6 @@ function MenuItem({
       className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5"
       style={{ minHeight: 44, background: 'transparent' }}
     >
-      {}
       <motion.button
         onClick={() => {}}
         animate={{
@@ -94,7 +90,6 @@ function MenuItem({
         className="flex min-w-0 flex-1 cursor-pointer items-center gap-2.5"
         style={{ background: 'transparent', transformOrigin: 'left center' }}
       >
-        {}
         <div
           className="flex shrink-0 items-center justify-center rounded-xl"
           style={{
@@ -150,7 +145,6 @@ export default function GlassUserMenu() {
 
       <div ref={ref} className="relative flex flex-col items-center" style={{ marginTop: -150 }}>
 
-        {}
         <motion.button
           onClick={() => setOpen(v => !v)}
           whileHover={{ scale: 1.02 }}
@@ -163,6 +157,7 @@ export default function GlassUserMenu() {
             border: glassPanel.border,
           }}
         >
+          {/* z-[-1] relies on the button's isolate; without it the blur falls behind the page. */}
           <div className="pointer-events-none absolute inset-0 z-[-1] rounded-2xl" style={glassPanelBlur} />
           <img
             src={USER.avatar}
@@ -173,7 +168,6 @@ export default function GlassUserMenu() {
           <CaretUpDown size={16} weight="regular" className="text-white/40" />
         </motion.button>
 
-        {}
         <AnimatePresence>
           {open && (
             <motion.div
@@ -184,13 +178,11 @@ export default function GlassUserMenu() {
               className="absolute left-1/2 top-full mt-2 w-[min(256px,calc(100vw-32px))] rounded-2xl p-2"
               style={{ ...glassPanel, ...glassPanelBlur, transformOrigin: 'top center' }}
             >
-              {}
               <div
                 className="absolute bottom-6 left-0 top-6 w-[1px]"
                 style={{ background: 'linear-gradient(180deg, transparent, rgba(255,255,255,0.18), transparent)' }}
               />
 
-              {}
               {MENU_GROUPS.map((group) => (
                 <div key={group.label} className="mb-1">
                   <p className="mb-0.5 px-3 pt-1 text-[10px] font-semibold uppercase tracking-widest text-white/25">
@@ -202,10 +194,8 @@ export default function GlassUserMenu() {
                 </div>
               ))}
 
-              {}
               <div className="mx-2 my-1.5 h-[1px]" style={{ background: 'rgba(255,255,255,0.07)' }} />
 
-              {}
               <LogOutItem index={itemIndex} />
             </motion.div>
           )}
