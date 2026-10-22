@@ -94,6 +94,7 @@ const DEFAULT_COLUMNS: DataTableColumn[] = [
 const DEFAULT_GET_ROW_KEY = (row: RowRecord) => row.id as string | number;
 const HAIRLINE_WIDTH = '1px';
 const STILL_CONTAINER: Variants = { hidden: {}, visible: {} };
+// Same hidden start with reduced motion, so server and client HTML match.
 const STILL_ROW: Variants = { ...rowItem, visible: { opacity: 1, transition: { duration: 0 } } };
 const DIVIDER = `var(--andromeda-border-subtle, ${tokens.color.border.subtle})`;
 const ROW_INSET = () =>
