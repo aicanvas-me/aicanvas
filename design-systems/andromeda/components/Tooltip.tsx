@@ -184,6 +184,7 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(function Tooltip
     >
       {children}
 
+      {/* AnimatePresence stays inside the portal, or the exit animation never runs. */}
       {portal ? (
         mounted
           ? createPortal(
