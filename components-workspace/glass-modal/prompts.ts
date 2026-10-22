@@ -28,18 +28,18 @@ Root: div relative flex min-h-screen w-full items-center justify-center overflow
 State, open and closed:
 - const [open, setOpen] = useState(true); const triggerRef = useRef<HTMLButtonElement>(null); const closeRef = useRef<HTMLButtonElement>(null); const focusOnOpen = useRef(false); function close() { setOpen(false) }
 - useEffect(() => { if (!open) triggerRef.current?.focus(); else if (focusOnOpen.current) { closeRef.current?.focus(); focusOnOpen.current = false } }, [open]), so when the modal closes, focus moves to the View Upgrade trigger, and when the trigger reopens it, focus moves to the Close (X) button. focusOnOpen starts false, so the modal that is open on first load never steals focus.
-- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger>} then {open && <Modal card>}.
+- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger key="trigger">} then {open && <Modal card key="card">}. Both keys are required: without them the two children share the same empty key, AnimatePresence treats close and reopen as one child changing type, and neither exit plays.
 
-View Upgrade trigger (motion.button), shown only while closed: ref={triggerRef}, type="button", onClick={() => { focusOnOpen.current = true; setOpen(true) }}, text "View Upgrade", className "absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
-- absolute, not relative: while the card exits and the trigger enters (or the reverse), both are mounted at once. absolute takes the trigger out of the root's flex row, so it sits centred over the same spot instead of sharing the row with the card and shoving it sideways.
+View Upgrade trigger (motion.button), shown only while closed: key="trigger", ref={triggerRef}, type="button", onClick={() => { focusOnOpen.current = true; setOpen(true) }}, text "View Upgrade", className "absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+- absolute, not relative: while the card exits and the trigger enters (or the reverse), both are mounted at once (the keys make this happen). absolute takes the trigger out of the root's flex row, so it sits centred over the same spot instead of sharing the row with the card and shoving it sideways.
 - style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
 - initial {opacity:0, scale:0.9}, animate {opacity:1, scale:1}, exit {opacity:0, scale:0.9}
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
 - Clicking it reopens the modal, which plays its normal entrance again.
 
-Modal card (motion.div):
+Modal card (motion.div, key="card"):
 - initial {scale:0.9, y:16}, animate {scale:1, y:0}, transition {type:'spring', stiffness:350, damping:28}
-- exit {scale:0.9, y:16, opacity:0}, played when open turns false.
+- exit {scale:0.9, y:16, opacity:0}, played when open turns false (needs key="card", see AnimatePresence above).
 - className "relative isolate w-[min(340px,calc(100vw-2rem))] overflow-hidden rounded-3xl"
 - style: background 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.12)', boxShadow '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
 - Separate blur layer (non-animating): pointer-events-none absolute inset-0 z-[-1] rounded-3xl, backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
@@ -91,18 +91,18 @@ Root: div relative flex min-h-screen w-full items-center justify-center overflow
 State, open and closed:
 - const [open, setOpen] = useState(true); const triggerRef = useRef<HTMLButtonElement>(null); const closeRef = useRef<HTMLButtonElement>(null); const focusOnOpen = useRef(false); function close() { setOpen(false) }
 - useEffect(() => { if (!open) triggerRef.current?.focus(); else if (focusOnOpen.current) { closeRef.current?.focus(); focusOnOpen.current = false } }, [open]), so when the modal closes, focus moves to the View Upgrade trigger, and when the trigger reopens it, focus moves to the Close (X) button. focusOnOpen starts false, so the modal that is open on first load never steals focus.
-- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger>} then {open && <Modal card>}.
+- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger key="trigger">} then {open && <Modal card key="card">}. Both keys are required: without them the two children share the same empty key, AnimatePresence treats close and reopen as one child changing type, and neither exit plays.
 
-View Upgrade trigger (motion.button), shown only while closed: ref={triggerRef}, type="button", onClick={() => { focusOnOpen.current = true; setOpen(true) }}, text "View Upgrade", className "absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
-- absolute, not relative: while the card exits and the trigger enters (or the reverse), both are mounted at once. absolute takes the trigger out of the root's flex row, so it sits centred over the same spot instead of sharing the row with the card and shoving it sideways.
+View Upgrade trigger (motion.button), shown only while closed: key="trigger", ref={triggerRef}, type="button", onClick={() => { focusOnOpen.current = true; setOpen(true) }}, text "View Upgrade", className "absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+- absolute, not relative: while the card exits and the trigger enters (or the reverse), both are mounted at once (the keys make this happen). absolute takes the trigger out of the root's flex row, so it sits centred over the same spot instead of sharing the row with the card and shoving it sideways.
 - style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
 - initial {opacity:0, scale:0.9}, animate {opacity:1, scale:1}, exit {opacity:0, scale:0.9}
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
 - Clicking it reopens the modal, which plays its normal entrance again.
 
-Modal card (motion.div):
+Modal card (motion.div, key="card"):
 - initial {scale:0.9, y:16}, animate {scale:1, y:0}, transition {type:'spring', stiffness:350, damping:28}
-- exit {scale:0.9, y:16, opacity:0}, played when open turns false.
+- exit {scale:0.9, y:16, opacity:0}, played when open turns false (needs key="card", see AnimatePresence above).
 - className "relative isolate w-[min(340px,calc(100vw-2rem))] overflow-hidden rounded-3xl"
 - style: background 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.12)', boxShadow '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
 - Separate blur layer (non-animating): pointer-events-none absolute inset-0 z-[-1] rounded-3xl, backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
@@ -154,18 +154,18 @@ Root: div relative flex min-h-screen w-full items-center justify-center overflow
 State, open and closed:
 - const [open, setOpen] = useState(true); const triggerRef = useRef<HTMLButtonElement>(null); const closeRef = useRef<HTMLButtonElement>(null); const focusOnOpen = useRef(false); function close() { setOpen(false) }
 - useEffect(() => { if (!open) triggerRef.current?.focus(); else if (focusOnOpen.current) { closeRef.current?.focus(); focusOnOpen.current = false } }, [open]), so when the modal closes, focus moves to the View Upgrade trigger, and when the trigger reopens it, focus moves to the Close (X) button. focusOnOpen starts false, so the modal that is open on first load never steals focus.
-- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger>} then {open && <Modal card>}.
+- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger key="trigger">} then {open && <Modal card key="card">}. Both keys are required: without them the two children share the same empty key, AnimatePresence treats close and reopen as one child changing type, and neither exit plays.
 
-View Upgrade trigger (motion.button), shown only while closed: ref={triggerRef}, type="button", onClick={() => { focusOnOpen.current = true; setOpen(true) }}, text "View Upgrade", className "absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
-- absolute, not relative: while the card exits and the trigger enters (or the reverse), both are mounted at once. absolute takes the trigger out of the root's flex row, so it sits centred over the same spot instead of sharing the row with the card and shoving it sideways.
+View Upgrade trigger (motion.button), shown only while closed: key="trigger", ref={triggerRef}, type="button", onClick={() => { focusOnOpen.current = true; setOpen(true) }}, text "View Upgrade", className "absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+- absolute, not relative: while the card exits and the trigger enters (or the reverse), both are mounted at once (the keys make this happen). absolute takes the trigger out of the root's flex row, so it sits centred over the same spot instead of sharing the row with the card and shoving it sideways.
 - style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
 - initial {opacity:0, scale:0.9}, animate {opacity:1, scale:1}, exit {opacity:0, scale:0.9}
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
 - Clicking it reopens the modal, which plays its normal entrance again.
 
-Modal card (motion.div):
+Modal card (motion.div, key="card"):
 - initial {scale:0.9, y:16}, animate {scale:1, y:0}, transition {type:'spring', stiffness:350, damping:28}
-- exit {scale:0.9, y:16, opacity:0}, played when open turns false.
+- exit {scale:0.9, y:16, opacity:0}, played when open turns false (needs key="card", see AnimatePresence above).
 - className "relative isolate w-[min(340px,calc(100vw-2rem))] overflow-hidden rounded-3xl"
 - style: background 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.12)', boxShadow '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
 - Separate blur layer (non-animating): pointer-events-none absolute inset-0 z-[-1] rounded-3xl, backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
