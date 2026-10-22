@@ -97,6 +97,7 @@ export default function SignaturePad() {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [open, setOpen] = useState(false)
   const [origin, setOrigin] = useState<ButtonRect | null>(null)
+  const [closeRect, setCloseRect] = useState<ButtonRect | null>(null)
   const [isDark, setIsDark] = useState(false)
   const [savedSignature, setSavedSignature] = useState<SavedSignature | null>(null)
 
@@ -132,6 +133,13 @@ export default function SignaturePad() {
   }
 
   function close() {
+    const button = buttonRef.current
+    if (button) {
+      const r = button.getBoundingClientRect()
+      const w = button.offsetWidth
+      const h = button.offsetHeight
+      setCloseRect({ x: r.left + (r.width - w) / 2, y: r.top + (r.height - h) / 2, w, h })
+    }
     setOpen(false)
   }
 
@@ -198,7 +206,7 @@ export default function SignaturePad() {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
+      <AnimatePresence custom={closeRect}>
         {open && origin && (
           <ModalCard
             key="modal"
@@ -451,14 +459,17 @@ function ModalCard({
           borderRadius: 28,
           opacity: 1,
         }}
-        exit={{
-          x: initialOffsetX,
-          y: initialOffsetY,
-          scaleX: initialScaleX,
-          scaleY: 0.18,
-          borderRadius: 9999,
-          opacity: 0,
+        variants={{
+          exit: (rect: ButtonRect | null) => ({
+            x: rect ? rect.x + rect.w / 2 - vw / 2 : initialOffsetX,
+            y: rect ? rect.y + rect.h / 2 - vh / 2 : initialOffsetY,
+            scaleX: rect ? rect.w / targetW : initialScaleX,
+            scaleY: 0.18,
+            borderRadius: 9999,
+            opacity: 0,
+          }),
         }}
+        exit="exit"
         transition={{
           default: MORPH,
           borderRadius: { duration: 0.32, ease: [0.32, 0.72, 0.34, 1] },

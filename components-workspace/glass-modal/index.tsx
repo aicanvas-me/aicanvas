@@ -9,9 +9,15 @@ import { X, Check, ShieldCheck } from '@phosphor-icons/react'
 export default function GlassModal() {
   const [open, setOpen] = useState(true)
   const triggerRef = useRef<HTMLButtonElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const focusOnOpen = useRef(false)
 
   useEffect(() => {
     if (!open) triggerRef.current?.focus()
+    else if (focusOnOpen.current) {
+      closeRef.current?.focus()
+      focusOnOpen.current = false
+    }
   }, [open])
 
   function close() {
@@ -31,14 +37,17 @@ export default function GlassModal() {
           <motion.button
             ref={triggerRef}
             type="button"
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              focusOnOpen.current = true
+              setOpen(true)
+            }}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
             whileHover={{ scale: 1.04, background: 'rgba(255,255,255,0.1)' }}
             whileTap={{ scale: 0.96 }}
             transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
-            className="relative cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+            className="absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
             style={{
               background: 'rgba(255, 255, 255, 0.06)',
               border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -74,6 +83,7 @@ export default function GlassModal() {
         />
 
         <motion.button
+          ref={closeRef}
           type="button"
           aria-label="Close"
           onClick={close}
