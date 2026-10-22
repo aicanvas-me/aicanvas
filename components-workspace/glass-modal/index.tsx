@@ -35,6 +35,7 @@ export default function GlassModal() {
       <AnimatePresence>
         {!open && (
           <motion.button
+            key="trigger"
             ref={triggerRef}
             type="button"
             onClick={() => {
@@ -60,6 +61,7 @@ export default function GlassModal() {
         )}
         {open && (
       <motion.div
+        key="card"
         // No opacity in initial: below 1 it hides the blur until the fade ends.
         initial={{ scale: 0.9, y: 16 }}
         animate={{ scale: 1, y: 0 }}
