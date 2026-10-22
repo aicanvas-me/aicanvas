@@ -668,8 +668,7 @@ export default function JarOfEmotions() {
                   damping: lidOpen ? 14 : 22,
                 }}
                 style={{
-                  originX: 0,
-                  originY: 0.5,
+                  transformOrigin: `${LID_HINGE_X}px ${LID_HINGE_Y}px`,
                   transformBox: 'fill-box',
                 }}
               >
