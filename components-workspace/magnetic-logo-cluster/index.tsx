@@ -66,6 +66,7 @@ const PALETTE_WEIGHTS: Array<[Palette, number]> = [
   [SAND_PALETTES[4], 16],
 ]
 
+// Seeded, never Math.random(): the server and the browser must build the same pack.
 function mulberry32(seed: number) {
   let t = seed >>> 0
   return () => {
