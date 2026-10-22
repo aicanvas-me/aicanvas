@@ -172,7 +172,13 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
   const repeat = onRepeat ? repeatProp : localRepeat;
   const lyrics = onLyrics ? lyricsProp : localLyrics;
 
-  const togglePlay = onTogglePlay ?? (() => setLocalPlaying((p) => !p));
+  const ended = !controlledElapsed && safeDuration > 0 && localElapsed >= safeDuration;
+
+  const togglePlay = onTogglePlay ?? (() => {
+    // Play from the end starts the track over.
+    if (!localPlaying && ended) setLocalElapsed(0);
+    setLocalPlaying((p) => !p);
+  });
   const toggleLike = onLike ?? (() => setLocalLiked((v) => !v));
   const toggleShuffle = onShuffle ?? (() => setLocalShuffle((v) => !v));
   const toggleRepeat = onRepeat ?? (() => setLocalRepeat((v) => !v));
@@ -194,10 +200,16 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
   }, [controlledElapsed, cur.title]);
 
   useEffect(() => {
-    if (controlledElapsed || !playing || safeDuration <= 0) return undefined;
+    if (controlledElapsed || !playing || safeDuration <= 0 || ended) return undefined;
     const id = setInterval(() => setLocalElapsed((e) => Math.min(safeDuration, e + 1)), 1000);
     return () => clearInterval(id);
-  }, [controlledElapsed, playing, safeDuration]);
+  }, [controlledElapsed, playing, safeDuration, ended]);
+
+  // At the end of the track: loop when repeat is on, otherwise the demo pauses.
+  if (ended && playing) {
+    if (repeat) setLocalElapsed(0);
+    else if (!onTogglePlay) setLocalPlaying(false);
+  }
 
   return (
     // The @container query below measures this root; keep container-type on it.

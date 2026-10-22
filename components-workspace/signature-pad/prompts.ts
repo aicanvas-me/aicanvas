@@ -10,7 +10,7 @@ const SPEC = `Create \`components-workspace/signature-pad/index.tsx\`. Export a 
 
 This is a **button-morphs-into-modal** pattern (same family as new-project-modal / voice-chat-pill). User clicks the trigger pill → pill scales to 0 + opacity 0 while a fixed-position card morphs from the pill's bounding rect into a centered 480px-wide modal. On Save: button morphs to a check, then the whole modal collapses back to the pill.
 
-State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\`, the captured \`getBoundingClientRect()\` of the pill on click), \`isDark\` (bool). Modal is a child component so its drawing state resets on close/reopen.
+State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\`, the captured \`getBoundingClientRect()\` of the pill on click), \`closeRect\` (\`ButtonRect | null\`, default \`null\`, with \`type ButtonRect = { x: number; y: number; w: number; h: number }\`, the pill's current rect re-measured in \`close()\`), \`isDark\` (bool), \`savedSignature\` (\`SavedSignature | null\`, default \`null\`, with \`type SavedSignature = { strokes: Stroke[]; size: { w: number; h: number } }\`). Modal is a child component that unmounts on close. It is rendered inside \`<AnimatePresence custom={closeRect}>\` as \`<ModalCard key="modal" origin={origin} initialStrokes={savedSignature?.strokes ?? []} onSave={(strokes, size) => setSavedSignature({ strokes, size })} onClose={close} />\` and seeds its own state from the saved strokes: \`strokesRef = useRef<Stroke[]>(initialStrokes.map(stroke => stroke.map(point => ({ ...point }))))\` (a deep copy, so drawing or Clear never touches the saved signature until Save) and \`hasInk = useState(initialStrokes.some(stroke => stroke.length > 0))\`. A reopened modal therefore shows the saved signature, ready to edit or clear; closing without Save keeps the last saved signature.
 
 ---
 
@@ -28,9 +28,64 @@ State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\`, th
 
 **Layout:** \`flex items-center gap-3 py-2 pl-2 pr-5 font-sans text-[15px] font-semibold\`. Children:
 1. Icon tile: \`flex size-9 shrink-0 items-center justify-center rounded-full\`. Phosphor \`<Signature size={18} weight="regular" />\` inside.
-2. Text "Create your digital signature".
+2. Label: \`{savedSignature ? (<><SignaturePreview signature={savedSignature} /><span className="sr-only">Edit your digital signature</span></>) : 'Create your digital signature'}\`. Before the first save it reads "Create your digital signature"; after a save the pill shows the saved strokes instead, and the sr-only text keeps its accessible name.
+
+**Signature preview** (module-level, above \`SignaturePad\`): an \`aria-hidden\` SVG in \`h-7 w-24\`, viewBox taken from the saved canvas size, \`currentColor\` stroke 1.8 with \`vectorEffect="non-scaling-stroke"\` so it inherits the pill text colour at any scale, quadratic curves to midpoints like the canvas, and a one-point stroke drawn as a tiny \`l 0.01 0\` line so its round cap shows a dot:
+\`\`\`tsx
+function SignaturePreview({ signature }: { signature: SavedSignature }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox={\`0 0 \${Math.max(signature.size.w, 1)} \${Math.max(signature.size.h, 1)}\`}
+      preserveAspectRatio="xMidYMid meet"
+      className="h-7 w-24"
+      fill="none"
+    >
+      {signature.strokes.map((stroke, index) => {
+        if (stroke.length === 0) return null
+        const first = stroke[0]
+        let d = \`M \${first.x} \${first.y}\`
+        if (stroke.length === 1) {
+          d += ' l 0.01 0'
+        } else {
+          for (let i = 1; i < stroke.length; i++) {
+            const prev = stroke[i - 1]
+            const curr = stroke[i]
+            d += \` Q \${prev.x} \${prev.y} \${(prev.x + curr.x) / 2} \${(prev.y + curr.y) / 2}\`
+          }
+        }
+        return (
+          <path
+            key={index}
+            d={d}
+            stroke="currentColor"
+            strokeWidth={1.8}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        )
+      })}
+    </svg>
+  )
+}
+\`\`\`
 
 **On click:** capture \`buttonRef.getBoundingClientRect()\` into \`origin\`, then \`setOpen(true)\`.
+
+**On close:** \`close()\` re-measures the pill into \`closeRect\` before \`setOpen(false)\`. The pill can change width while the modal is open (the first Save swaps the long label for the narrow preview), so \`origin\` is stale by then. The pill sits at \`scale: 0.85\` while open, so \`getBoundingClientRect()\` is the scaled box; \`offsetWidth\`/\`offsetHeight\` give the unscaled size, centred on that box, which is the rect the pill returns to:
+\`\`\`tsx
+function close() {
+  const button = buttonRef.current
+  if (button) {
+    const r = button.getBoundingClientRect()
+    const w = button.offsetWidth
+    const h = button.offsetHeight
+    setCloseRect({ x: r.left + (r.width - w) / 2, y: r.top + (r.height - h) / 2, w, h })
+  }
+  setOpen(false)
+}
+\`\`\`
 
 ---
 
@@ -58,10 +113,22 @@ const MODAL_PALETTE = {
 \`\`\`
 
 Centered fixed div z-50, \`onClick={onClose}\`. Inner \`motion.div\` morphs from pill origin (use \`onClick={(e) => e.stopPropagation()}\` to prevent close):
-- Compute: \`targetW = Math.min(480, window.innerWidth - 32)\`, \`initialOffsetX = origin.x + origin.w/2 - vw/2\`, \`initialOffsetY = origin.y + origin.h/2 - vh/2\`, \`initialScaleX = origin.w / targetW\`.
+- Compute in ModalCard's render body: \`vw = typeof window !== 'undefined' ? window.innerWidth : 1024\`, \`vh = typeof window !== 'undefined' ? window.innerHeight : 768\`, \`targetW = Math.min(480, vw - 32)\`, \`initialOffsetX = origin.x + origin.w/2 - vw/2\`, \`initialOffsetY = origin.y + origin.h/2 - vh/2\`, \`initialScaleX = origin.w / targetW\`.
 - \`initial\`: \`{ x: initialOffsetX, y: initialOffsetY, scaleX: initialScaleX, scaleY: 0.18, borderRadius: 9999, opacity: 0.85 }\`
 - \`animate\`: \`{ x: 0, y: 0, scaleX: 1, scaleY: 1, borderRadius: 28, opacity: 1 }\`
-- \`exit\`: reverses initial but \`opacity: 0\`
+- \`exit="exit"\`, a variant function of the close rect, so the card lands on the pill's CURRENT rect. It reads the rect from \`AnimatePresence\`'s \`custom\`, never from a ModalCard prop: \`close()\` sets \`closeRect\` in the same render that removes the card, and only \`custom\` reaches a child that is already exiting. With no rect it falls back to the open origin. Without this, the first Save closed onto the old wide pill:
+\`\`\`tsx
+variants={{
+  exit: (rect: ButtonRect | null) => ({
+    x: rect ? rect.x + rect.w / 2 - vw / 2 : initialOffsetX,
+    y: rect ? rect.y + rect.h / 2 - vh / 2 : initialOffsetY,
+    scaleX: rect ? rect.w / targetW : initialScaleX,
+    scaleY: 0.18,
+    borderRadius: 9999,
+    opacity: 0,
+  }),
+}}
+\`\`\`
 - \`transition\`: \`default: MORPH\` (\`{ type:'spring', stiffness:320, damping:30, mass:1 }\`); \`borderRadius: { duration: 0.32, ease: [0.32, 0.72, 0.34, 1] }\`; \`opacity: { duration: 0.18 }\`.
 - Style: \`borderRadius: 28\`, \`willChange: 'transform, border-radius'\`, \`backgroundColor: surfaceBg\`, \`boxShadow: '0px 16px 56px rgba(0,0,0,0.18)'\`.
 - Class: \`w-full max-w-[480px] px-6 pb-6 pt-6\`.
@@ -97,7 +164,7 @@ Wrapper \`relative mb-3\`.
 - Re-run setup via a \`ResizeObserver\` on the container.
 
 **Drawing model**: \`Stroke = { x: number; y: number; t: number }[]\`. Maintain \`strokesRef: Stroke[]\` (all completed + current strokes), \`currentRef: Stroke\` (in-progress), \`drawingRef: boolean\`, \`sizeRef: { w, h }\`.
-- \`onPointerDown\`: \`preventDefault\`, \`setPointerCapture\`, push a new stroke with one point, set \`hasInk\` true.
+- \`onPointerDown\`: \`preventDefault\`, \`setPointerCapture\`, push a new stroke with one point, paint a dot there at once (\`ctx.fillStyle = inkColor\`, \`ctx.beginPath()\`, \`ctx.arc(p.x, p.y, MIN_W, 0, Math.PI * 2)\`, \`ctx.fill()\`) so a single tap shows ink before any move, set \`hasInk\` true.
 - \`onPointerMove\`: append point to current stroke, draw the latest segment incrementally.
 - \`onPointerUp/Cancel/Leave\`: \`releasePointerCapture\`, \`drawingRef = false\`.
 
@@ -154,9 +221,9 @@ A full \`redrawAll\` (replays all strokes from the array) runs after \`setupCanv
 **Save signature** (primary): pill button, \`min-w-[148px] flex items-center justify-center rounded-full px-7 py-3 font-sans text-[15px] font-bold\`, \`backgroundColor: primaryBg\`, \`color: primaryFg\`. Disabled when \`!hasInk\` (opacity 0.4) or while \`confirming\`. Hover scale 1.05, tap 0.96. Spring 500/40.
 
 **Save flow:**
-1. \`onClick\` → \`setConfirming(true)\`.
+1. \`onClick\` → \`setConfirming(true)\`, then \`onSave(strokesRef.current.map(stroke => stroke.map(point => ({ ...point }))), { ...sizeRef.current })\` hands a copy of the strokes and the canvas size to the parent.
 2. Button label is replaced via \`<AnimatePresence mode="wait">\` with a centered \`<Check size={16} weight="bold" />\` (initial \`{opacity:0,scale:0.5}\`, animate \`{opacity:1,scale:1}\`, exit \`{opacity:0,scale:0.5}\`, spring 400/22). The button itself animates \`scale: 0.96\`.
-3. After ~1100ms, call \`onClose()\`. The modal exit-animates back to the pill, the pill fades back in. Drawing state resets because \`ModalCard\` unmounts.
+3. After ~1100ms, call \`onClose()\`. The modal exit-animates back to the pill, the pill fades back in showing the saved signature preview. \`ModalCard\` unmounts, so the next open starts from \`initialStrokes\`, the saved strokes; Cancel, the X and the backdrop never call \`onSave\`, so they keep the last saved signature.
 
 ---
 

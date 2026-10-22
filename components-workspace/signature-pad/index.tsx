@@ -8,6 +8,7 @@ import { X, Check, Eraser, Signature } from '@phosphor-icons/react'
 type Pt = { x: number; y: number; t: number }
 type Stroke = Pt[]
 type ButtonRect = { x: number; y: number; w: number; h: number }
+type SavedSignature = { strokes: Stroke[]; size: { w: number; h: number } }
 
 const MIN_W = 1.1
 const MAX_W = 2.6
@@ -53,12 +54,52 @@ const MODAL_PALETTE = {
   baselineColor: 'rgba(26,26,24,0.14)',
 } as const
 
+function SignaturePreview({ signature }: { signature: SavedSignature }) {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox={`0 0 ${Math.max(signature.size.w, 1)} ${Math.max(signature.size.h, 1)}`}
+      preserveAspectRatio="xMidYMid meet"
+      className="h-7 w-24"
+      fill="none"
+    >
+      {signature.strokes.map((stroke, index) => {
+        if (stroke.length === 0) return null
+        const first = stroke[0]
+        let d = `M ${first.x} ${first.y}`
+        if (stroke.length === 1) {
+          d += ' l 0.01 0'
+        } else {
+          for (let i = 1; i < stroke.length; i++) {
+            const prev = stroke[i - 1]
+            const curr = stroke[i]
+            d += ` Q ${prev.x} ${prev.y} ${(prev.x + curr.x) / 2} ${(prev.y + curr.y) / 2}`
+          }
+        }
+        return (
+          <path
+            key={index}
+            d={d}
+            stroke="currentColor"
+            strokeWidth={1.8}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        )
+      })}
+    </svg>
+  )
+}
+
 export default function SignaturePad() {
   const rootRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [open, setOpen] = useState(false)
   const [origin, setOrigin] = useState<ButtonRect | null>(null)
+  const [closeRect, setCloseRect] = useState<ButtonRect | null>(null)
   const [isDark, setIsDark] = useState(false)
+  const [savedSignature, setSavedSignature] = useState<SavedSignature | null>(null)
 
   useEffect(() => {
     const el = rootRef.current
@@ -92,6 +133,13 @@ export default function SignaturePad() {
   }
 
   function close() {
+    const button = buttonRef.current
+    if (button) {
+      const r = button.getBoundingClientRect()
+      const w = button.offsetWidth
+      const h = button.offsetHeight
+      setCloseRect({ x: r.left + (r.width - w) / 2, y: r.top + (r.height - h) / 2, w, h })
+    }
     setOpen(false)
   }
 
@@ -131,7 +179,12 @@ export default function SignaturePad() {
         >
           <Signature size={18} weight="regular" />
         </span>
-        Create your digital signature
+        {savedSignature ? (
+          <>
+            <SignaturePreview signature={savedSignature} />
+            <span className="sr-only">Edit your digital signature</span>
+          </>
+        ) : 'Create your digital signature'}
       </motion.button>
 
       <AnimatePresence>
@@ -153,9 +206,15 @@ export default function SignaturePad() {
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
+      <AnimatePresence custom={closeRect}>
         {open && origin && (
-          <ModalCard key="modal" origin={origin} onClose={close} />
+          <ModalCard
+            key="modal"
+            origin={origin}
+            initialStrokes={savedSignature?.strokes ?? []}
+            onSave={(strokes, size) => setSavedSignature({ strokes, size })}
+            onClose={close}
+          />
         )}
       </AnimatePresence>
     </div>
@@ -164,21 +223,25 @@ export default function SignaturePad() {
 
 function ModalCard({
   origin,
+  initialStrokes,
+  onSave,
   onClose,
 }: {
   origin: ButtonRect
+  initialStrokes: Stroke[]
+  onSave: (strokes: Stroke[], size: { w: number; h: number }) => void
   onClose: () => void
 }) {
   const palette = MODAL_PALETTE
   const surfaceRef = useRef<HTMLDivElement>(null)
   const canvasContainerRef = useRef<HTMLDivElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const strokesRef = useRef<Stroke[]>([])
+  const strokesRef = useRef<Stroke[]>(initialStrokes.map(stroke => stroke.map(point => ({ ...point }))))
   const currentRef = useRef<Stroke>([])
   const drawingRef = useRef(false)
   const sizeRef = useRef({ w: 0, h: 0 })
 
-  const [hasInk, setHasInk] = useState(false)
+  const [hasInk, setHasInk] = useState(initialStrokes.some(stroke => stroke.length > 0))
   const [confirming, setConfirming] = useState(false)
   const [today, setToday] = useState('')
 
@@ -230,6 +293,17 @@ function ModalCard({
     },
     [palette.inkColor],
   )
+
+  const drawDot = useCallback((point: Pt) => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    ctx.fillStyle = palette.inkColor
+    ctx.beginPath()
+    ctx.arc(point.x, point.y, MIN_W, 0, Math.PI * 2)
+    ctx.fill()
+  }, [palette.inkColor])
 
   const redrawAll = useCallback(() => {
     const canvas = canvasRef.current
@@ -315,6 +389,7 @@ function ModalCard({
     const p = getPoint(e)
     currentRef.current = [p]
     strokesRef.current.push(currentRef.current)
+    drawDot(p)
     if (!hasInk) setHasInk(true)
   }
 
@@ -343,6 +418,10 @@ function ModalCard({
   function save() {
     if (!hasInk || confirming) return
     setConfirming(true)
+    onSave(
+      strokesRef.current.map(stroke => stroke.map(point => ({ ...point }))),
+      { ...sizeRef.current },
+    )
     setTimeout(() => onClose(), 1100)
   }
 
@@ -380,14 +459,17 @@ function ModalCard({
           borderRadius: 28,
           opacity: 1,
         }}
-        exit={{
-          x: initialOffsetX,
-          y: initialOffsetY,
-          scaleX: initialScaleX,
-          scaleY: 0.18,
-          borderRadius: 9999,
-          opacity: 0,
+        variants={{
+          exit: (rect: ButtonRect | null) => ({
+            x: rect ? rect.x + rect.w / 2 - vw / 2 : initialOffsetX,
+            y: rect ? rect.y + rect.h / 2 - vh / 2 : initialOffsetY,
+            scaleX: rect ? rect.w / targetW : initialScaleX,
+            scaleY: 0.18,
+            borderRadius: 9999,
+            opacity: 0,
+          }),
         }}
+        exit="exit"
         transition={{
           default: MORPH,
           borderRadius: { duration: 0.32, ease: [0.32, 0.72, 0.34, 1] },

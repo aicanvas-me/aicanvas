@@ -20,7 +20,7 @@ export const tabs: MatrixSpec = {
     const { orientation = 'horizontal', leading, description } = props
     const vertical = orientation === 'vertical'
     return (
-      <div style={{ width: vertical ? 420 : undefined, maxWidth: '100%' }}>
+      <div style={{ width: vertical ? 420 : undefined, maxWidth: '100%', margin: '0 auto' }}>
         <Tabs defaultValue="spend" orientation={orientation} size={size ?? 'md'}>
           <TabsList aria-label="Use cases">
             {ROWS.map((r, i) => (

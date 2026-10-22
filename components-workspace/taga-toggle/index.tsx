@@ -202,7 +202,8 @@ export default function TagaToggle() {
               </AnimatePresence>
 
               <motion.path
-                d={mouthPath}
+                initial={false}
+                animate={{ d: mouthPath }}
                 stroke={FACE_COLOR}
                 strokeWidth={0.13}
                 strokeLinecap="round"

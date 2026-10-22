@@ -53,7 +53,7 @@ export const panelMenu: MatrixSpec = {
   // spilling past the card border on a phone — an open case turns the body's
   // horizontal scroll off, so a box that cannot shrink has nowhere to go.
   render: (size, props) => (
-    <div style={{ width: 220, minWidth: 0 }}>
+    <div style={{ width: 220, minWidth: 0, margin: '0 auto' }}>
       <PanelMenu size={size} align="left" items={ITEMS} ariaLabel="Panel options" {...props} />
     </div>
   ),

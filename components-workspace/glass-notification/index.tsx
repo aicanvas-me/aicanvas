@@ -2,7 +2,7 @@
 
 // npm install @phosphor-icons/react framer-motion
 
-import { useState } from 'react'
+import { useState, type Ref } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, ChatCircle, Heart, ShieldCheck, X, ArrowUp } from '@phosphor-icons/react'
 
@@ -63,15 +63,18 @@ function NotificationCard({
   notification,
   onDismiss,
   index,
+  ref,
 }: {
   notification: Notification
   onDismiss: (id: number) => void
   index: number
+  ref?: Ref<HTMLDivElement>
 }) {
   const Icon = notification.icon
 
   return (
     <motion.div
+      ref={ref}
       layout
       // No opacity in initial: below 1 it hides the blur until the fade ends.
       initial={{ x: 60, scale: 0.9 }}

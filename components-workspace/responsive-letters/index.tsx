@@ -33,7 +33,8 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
 
     const updateStyle = () => {
       const italicVar = getComputedStyle(element).getPropertyValue('--italic')
-      const italicValue = parseFloat(italicVar) || 1
+      const parsedItalic = parseFloat(italicVar)
+      const italicValue = Number.isNaN(parsedItalic) ? 1 : parsedItalic
       setFontStyle(italicValue > 0.5 ? 'italic' : 'normal')
     }
 
@@ -74,7 +75,7 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
         lineHeight: 1,
         letterSpacing: 'var(--letter-spacing, 0.15em)',
         wordSpacing: '0.8em',
-        transform: `skewY(var(--skew, 0)deg)`,
+        transform: `skewY(calc(var(--skew, 0) * 1deg))`,
       }}
     >
       {letter}

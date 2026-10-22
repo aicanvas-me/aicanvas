@@ -2,12 +2,27 @@
 
 // npm install @phosphor-icons/react framer-motion
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, Check, ShieldCheck } from '@phosphor-icons/react'
 
 export default function GlassModal() {
   const [open, setOpen] = useState(true)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const focusOnOpen = useRef(false)
+
+  useEffect(() => {
+    if (!open) triggerRef.current?.focus()
+    else if (focusOnOpen.current) {
+      closeRef.current?.focus()
+      focusOnOpen.current = false
+    }
+  }, [open])
+
+  function close() {
+    setOpen(false)
+  }
 
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
@@ -18,8 +33,35 @@ export default function GlassModal() {
       />
 
       <AnimatePresence>
+        {!open && (
+          <motion.button
+            key="trigger"
+            ref={triggerRef}
+            type="button"
+            onClick={() => {
+              focusOnOpen.current = true
+              setOpen(true)
+            }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            whileHover={{ scale: 1.04, background: 'rgba(255,255,255,0.1)' }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            className="absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+            style={{
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(40px) saturate(1.8)',
+              WebkitBackdropFilter: 'blur(40px) saturate(1.8)',
+            }}
+          >
+            View Upgrade
+          </motion.button>
+        )}
         {open && (
       <motion.div
+        key="card"
         // No opacity in initial: below 1 it hides the blur until the fade ends.
         initial={{ scale: 0.9, y: 16 }}
         animate={{ scale: 1, y: 0 }}
@@ -43,9 +85,10 @@ export default function GlassModal() {
         />
 
         <motion.button
+          ref={closeRef}
           type="button"
           aria-label="Close"
-          onClick={() => setOpen(false)}
+          onClick={close}
           whileHover={{ scale: 1.15, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
           transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
@@ -114,6 +157,8 @@ export default function GlassModal() {
 
           <div className="flex w-full flex-col gap-2">
             <motion.button
+              type="button"
+              onClick={close}
               whileHover={{
                 scale: 1.04,
                 background: 'linear-gradient(135deg, rgba(255, 180, 80, 0.9), rgba(235, 75, 45, 0.8))',
@@ -131,6 +176,8 @@ export default function GlassModal() {
               Upgrade Now
             </motion.button>
             <motion.button
+              type="button"
+              onClick={close}
               whileHover={{ scale: 1.04, background: 'rgba(255,255,255,0.1)' }}
               whileTap={{ scale: 0.96 }}
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}

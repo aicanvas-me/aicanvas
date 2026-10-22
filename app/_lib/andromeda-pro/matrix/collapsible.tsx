@@ -32,7 +32,7 @@ export const collapsible: MatrixSpec = {
   render: (size, props) => {
     const { defaultOpen, disabled, guide, meta, indicator } = props
     return (
-      <div style={{ width: 260, maxWidth: '100%' }}>
+      <div style={{ width: 260, maxWidth: '100%', margin: '0 auto' }}>
         <Collapsible defaultOpen={defaultOpen} disabled={disabled}>
           <CollapsibleTrigger size={size ?? 'sm'} meta={meta} indicator={indicator}>
             Searched the web

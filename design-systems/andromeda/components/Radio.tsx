@@ -59,9 +59,14 @@ const boxVariants = cva(
       },
       disabled: {
         true:  'opacity-[var(--andromeda-opacity-disabled)] pointer-events-none cursor-not-allowed',
-        false: '',
+        false: 'peer-active:scale-[0.88]',
       },
     },
+    // The input covers the box, so the box's own :hover and :active never fire; both ride the peer.
+    compoundVariants: [
+      { state: 'unchecked', disabled: false, class: 'peer-hover:border-[color:var(--andromeda-border-bright)]' },
+      { state: 'checked', disabled: false, class: 'peer-hover:border-[color:var(--andromeda-accent-100)]' },
+    ],
     defaultVariants: {
       state: 'unchecked',
       disabled: false,

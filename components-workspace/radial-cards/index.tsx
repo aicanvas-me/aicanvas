@@ -387,10 +387,6 @@ function Card({
     return 1
   })
 
-  useEffect(() => {
-    lift.set(lift.get())
-  }, [engaged, isTop, lift])
-
   const restShadow =
     '4px 6px 14px rgba(0,0,0,0.18), 12px 18px 40px rgba(0,0,0,0.22)'
   const liftedShadow =

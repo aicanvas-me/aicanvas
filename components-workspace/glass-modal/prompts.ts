@@ -23,19 +23,33 @@ Write this as a single self-contained React client component. Inline everything.
 Background image (absolute inset-0 object-cover opacity-60 pointer-events-none):
 \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866\`
 
-Root: div relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19].
+Root: div relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]. The source has h-full there because AI Canvas renders it inside a sized preview frame; a standalone paste needs min-h-screen, or an ancestor with a real height.
 
-Modal card (motion.div):
+State, open and closed:
+- const [open, setOpen] = useState(true); const triggerRef = useRef<HTMLButtonElement>(null); const closeRef = useRef<HTMLButtonElement>(null); const focusOnOpen = useRef(false); function close() { setOpen(false) }
+- useEffect(() => { if (!open) triggerRef.current?.focus(); else if (focusOnOpen.current) { closeRef.current?.focus(); focusOnOpen.current = false } }, [open]), so when the modal closes, focus moves to the View Upgrade trigger, and when the trigger reopens it, focus moves to the Close (X) button. focusOnOpen starts false, so the modal that is open on first load never steals focus.
+- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger key="trigger">} then {open && <Modal card key="card">}. Both keys are required: without them the two children share the same empty key, AnimatePresence treats close and reopen as one child changing type, and neither exit plays.
+
+View Upgrade trigger (motion.button), shown only while closed: key="trigger", ref={triggerRef}, type="button", onClick={() => { focusOnOpen.current = true; setOpen(true) }}, text "View Upgrade", className "absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+- absolute, not relative: while the card exits and the trigger enters (or the reverse), both are mounted at once (the keys make this happen). absolute takes the trigger out of the root's flex row, so it sits centred over the same spot instead of sharing the row with the card and shoving it sideways.
+- style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
+- initial {opacity:0, scale:0.9}, animate {opacity:1, scale:1}, exit {opacity:0, scale:0.9}
+- whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- Clicking it reopens the modal, which plays its normal entrance again.
+
+Modal card (motion.div, key="card"):
 - initial {scale:0.9, y:16}, animate {scale:1, y:0}, transition {type:'spring', stiffness:350, damping:28}
-- className "relative isolate w-[340px] overflow-hidden rounded-3xl"
+- exit {scale:0.9, y:16, opacity:0}, played when open turns false (needs key="card", see AnimatePresence above).
+- className "relative isolate w-[min(340px,calc(100vw-2rem))] overflow-hidden rounded-3xl"
 - style: background 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.12)', boxShadow '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
 - Separate blur layer (non-animating): pointer-events-none absolute inset-0 z-[-1] rounded-3xl, backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
 - Top highlight: absolute left-8 right-8 top-0 h-[1px], background 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)'.
 
-Close button (motion.button): absolute right-4 top-4 z-10 h-8 w-8 rounded-full, bg 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.08)'.
+Close button (motion.button): className "absolute right-4 top-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full", bg 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.08)'.
 - whileHover { scale:1.15, rotate:90 }
 - whileTap {scale:0.9}, transition {duration:0.2, ease:[0.25,0.1,0.25,1]}
 - X icon size={14} weight="regular" className="text-white/60"
+- ref={closeRef}, type="button", aria-label="Close", onClick={close}
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
@@ -52,11 +66,13 @@ Primary motion.button ("Upgrade Now") className "w-full cursor-pointer rounded-f
 - style: background 'linear-gradient(135deg, rgba(255,160,50,0.75), rgba(220,60,40,0.6))', border '1px solid rgba(255,180,80,0.25)', boxShadow '0 2px 16px rgba(220,80,30,0.4)'
 - whileHover {scale:1.04, background:'linear-gradient(135deg, rgba(255,180,80,0.9), rgba(235,75,45,0.8))', boxShadow:'0 4px 24px rgba(220,80,30,0.6)'}
 - whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- type="button", onClick={close}: closes the modal, same as X.
 Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-full py-3 text-sm font-medium text-white/50":
 - style: bg 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)'
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
+- type="button", onClick={close}: closes the modal, same as X.
 
-Imports: motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
 
 ## Typography
 - Font: project default sans-serif
@@ -70,19 +86,33 @@ Write this as a single self-contained React client component. Inline everything.
 Background image (absolute inset-0 object-cover opacity-60 pointer-events-none):
 \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866\`
 
-Root: div relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19].
+Root: div relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]. The source has h-full there because AI Canvas renders it inside a sized preview frame; a standalone paste needs min-h-screen, or an ancestor with a real height.
 
-Modal card (motion.div):
+State, open and closed:
+- const [open, setOpen] = useState(true); const triggerRef = useRef<HTMLButtonElement>(null); const closeRef = useRef<HTMLButtonElement>(null); const focusOnOpen = useRef(false); function close() { setOpen(false) }
+- useEffect(() => { if (!open) triggerRef.current?.focus(); else if (focusOnOpen.current) { closeRef.current?.focus(); focusOnOpen.current = false } }, [open]), so when the modal closes, focus moves to the View Upgrade trigger, and when the trigger reopens it, focus moves to the Close (X) button. focusOnOpen starts false, so the modal that is open on first load never steals focus.
+- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger key="trigger">} then {open && <Modal card key="card">}. Both keys are required: without them the two children share the same empty key, AnimatePresence treats close and reopen as one child changing type, and neither exit plays.
+
+View Upgrade trigger (motion.button), shown only while closed: key="trigger", ref={triggerRef}, type="button", onClick={() => { focusOnOpen.current = true; setOpen(true) }}, text "View Upgrade", className "absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+- absolute, not relative: while the card exits and the trigger enters (or the reverse), both are mounted at once (the keys make this happen). absolute takes the trigger out of the root's flex row, so it sits centred over the same spot instead of sharing the row with the card and shoving it sideways.
+- style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
+- initial {opacity:0, scale:0.9}, animate {opacity:1, scale:1}, exit {opacity:0, scale:0.9}
+- whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- Clicking it reopens the modal, which plays its normal entrance again.
+
+Modal card (motion.div, key="card"):
 - initial {scale:0.9, y:16}, animate {scale:1, y:0}, transition {type:'spring', stiffness:350, damping:28}
-- className "relative isolate w-[340px] overflow-hidden rounded-3xl"
+- exit {scale:0.9, y:16, opacity:0}, played when open turns false (needs key="card", see AnimatePresence above).
+- className "relative isolate w-[min(340px,calc(100vw-2rem))] overflow-hidden rounded-3xl"
 - style: background 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.12)', boxShadow '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
 - Separate blur layer (non-animating): pointer-events-none absolute inset-0 z-[-1] rounded-3xl, backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
 - Top highlight: absolute left-8 right-8 top-0 h-[1px], background 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)'.
 
-Close button (motion.button): absolute right-4 top-4 z-10 h-8 w-8 rounded-full, bg 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.08)'.
+Close button (motion.button): className "absolute right-4 top-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full", bg 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.08)'.
 - whileHover { scale:1.15, rotate:90 }
 - whileTap {scale:0.9}, transition {duration:0.2, ease:[0.25,0.1,0.25,1]}
 - X icon size={14} weight="regular" className="text-white/60"
+- ref={closeRef}, type="button", aria-label="Close", onClick={close}
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
@@ -99,11 +129,13 @@ Primary motion.button ("Upgrade Now") className "w-full cursor-pointer rounded-f
 - style: background 'linear-gradient(135deg, rgba(255,160,50,0.75), rgba(220,60,40,0.6))', border '1px solid rgba(255,180,80,0.25)', boxShadow '0 2px 16px rgba(220,80,30,0.4)'
 - whileHover {scale:1.04, background:'linear-gradient(135deg, rgba(255,180,80,0.9), rgba(235,75,45,0.8))', boxShadow:'0 4px 24px rgba(220,80,30,0.6)'}
 - whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- type="button", onClick={close}: closes the modal, same as X.
 Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-full py-3 text-sm font-medium text-white/50":
 - style: bg 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)'
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
+- type="button", onClick={close}: closes the modal, same as X.
 
-Imports: motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
 
 ## Typography
 - Font: project default sans-serif
@@ -117,19 +149,33 @@ Write this as a single self-contained React client component. Inline everything.
 Background image (absolute inset-0 object-cover opacity-60 pointer-events-none):
 \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866\`
 
-Root: div relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19].
+Root: div relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]. The source has h-full there because AI Canvas renders it inside a sized preview frame; a standalone paste needs min-h-screen, or an ancestor with a real height.
 
-Modal card (motion.div):
+State, open and closed:
+- const [open, setOpen] = useState(true); const triggerRef = useRef<HTMLButtonElement>(null); const closeRef = useRef<HTMLButtonElement>(null); const focusOnOpen = useRef(false); function close() { setOpen(false) }
+- useEffect(() => { if (!open) triggerRef.current?.focus(); else if (focusOnOpen.current) { closeRef.current?.focus(); focusOnOpen.current = false } }, [open]), so when the modal closes, focus moves to the View Upgrade trigger, and when the trigger reopens it, focus moves to the Close (X) button. focusOnOpen starts false, so the modal that is open on first load never steals focus.
+- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger key="trigger">} then {open && <Modal card key="card">}. Both keys are required: without them the two children share the same empty key, AnimatePresence treats close and reopen as one child changing type, and neither exit plays.
+
+View Upgrade trigger (motion.button), shown only while closed: key="trigger", ref={triggerRef}, type="button", onClick={() => { focusOnOpen.current = true; setOpen(true) }}, text "View Upgrade", className "absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+- absolute, not relative: while the card exits and the trigger enters (or the reverse), both are mounted at once (the keys make this happen). absolute takes the trigger out of the root's flex row, so it sits centred over the same spot instead of sharing the row with the card and shoving it sideways.
+- style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
+- initial {opacity:0, scale:0.9}, animate {opacity:1, scale:1}, exit {opacity:0, scale:0.9}
+- whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- Clicking it reopens the modal, which plays its normal entrance again.
+
+Modal card (motion.div, key="card"):
 - initial {scale:0.9, y:16}, animate {scale:1, y:0}, transition {type:'spring', stiffness:350, damping:28}
-- className "relative isolate w-[340px] overflow-hidden rounded-3xl"
+- exit {scale:0.9, y:16, opacity:0}, played when open turns false (needs key="card", see AnimatePresence above).
+- className "relative isolate w-[min(340px,calc(100vw-2rem))] overflow-hidden rounded-3xl"
 - style: background 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.12)', boxShadow '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
 - Separate blur layer (non-animating): pointer-events-none absolute inset-0 z-[-1] rounded-3xl, backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
 - Top highlight: absolute left-8 right-8 top-0 h-[1px], background 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)'.
 
-Close button (motion.button): absolute right-4 top-4 z-10 h-8 w-8 rounded-full, bg 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.08)'.
+Close button (motion.button): className "absolute right-4 top-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full", bg 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.08)'.
 - whileHover { scale:1.15, rotate:90 }
 - whileTap {scale:0.9}, transition {duration:0.2, ease:[0.25,0.1,0.25,1]}
 - X icon size={14} weight="regular" className="text-white/60"
+- ref={closeRef}, type="button", aria-label="Close", onClick={close}
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
@@ -146,11 +192,13 @@ Primary motion.button ("Upgrade Now") className "w-full cursor-pointer rounded-f
 - style: background 'linear-gradient(135deg, rgba(255,160,50,0.75), rgba(220,60,40,0.6))', border '1px solid rgba(255,180,80,0.25)', boxShadow '0 2px 16px rgba(220,80,30,0.4)'
 - whileHover {scale:1.04, background:'linear-gradient(135deg, rgba(255,180,80,0.9), rgba(235,75,45,0.8))', boxShadow:'0 4px 24px rgba(220,80,30,0.6)'}
 - whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- type="button", onClick={close}: closes the modal, same as X.
 Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-full py-3 text-sm font-medium text-white/50":
 - style: bg 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)'
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
+- type="button", onClick={close}: closes the modal, same as X.
 
-Imports: motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
 
 ## Typography
 - Font: project default sans-serif

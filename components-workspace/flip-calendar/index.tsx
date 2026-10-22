@@ -250,7 +250,7 @@ export default function FlipCalendar() {
                   style={{
                     background: flapGrad,
                     rotateX,
-                    perspective: 140,
+                    transformPerspective: 140,
                     transformOrigin: 'center bottom',
                     willChange: 'transform',
                     borderRadius: '12px 12px 0 0',

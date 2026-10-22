@@ -69,7 +69,7 @@ Each letter animates 5 properties based on cursor distance:
 - Calculate angle from cursor to letter: angle = atan2(dy, dx)
 - Map to skew direction: skewDirection = sin(angle)
 - Interpolate: targetSkew = 18 × influence × skewDirection
-- Apply as transform: skewY(var(--skew, 0)deg)
+- Apply as transform: skewY(calc(var(--skew, 0) * 1deg))
 
 ### Animation & Physics
 

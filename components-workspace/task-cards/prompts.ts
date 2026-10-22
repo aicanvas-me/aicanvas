@@ -138,6 +138,7 @@ useEffect(() => { orderRef.current = order }, [order])
 const dismissing = useRef(false)
 const dragDelta = useRef(0)
 const [exiting, setExiting] = useState<{ id: number; dir: 'left' | 'right' } | null>(null)
+const [entering, setEntering] = useState<number | null>(null)
 const [returning, setReturning] = useState<Set<number>>(new Set())
 
 const dismiss = useCallback((dir: 'left' | 'right') => {
@@ -156,12 +157,25 @@ const dismiss = useCallback((dir: 'left' | 'right') => {
   }, 420)
 }, [])
 
+const showPrevious = useCallback(() => {
+  if (dismissing.current) return
+  dismissing.current = true
+  const backId = orderRef.current[orderRef.current.length - 1]
+  setEntering(backId)
+  setOrder(prev => [prev[prev.length - 1], ...prev.slice(0, -1)])
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    setEntering(null)
+    setTimeout(() => { dismissing.current = false }, 420)
+  }))
+}, [])
+
 Per-card values, computed inside TASKS.map(task => ...) before its return:
 
 const slotIndex = order.indexOf(task.id)
 const slot = SLOTS[slotIndex]
 const isFront = slotIndex === 0
 const isExiting = exiting?.id === task.id
+const isEntering = entering === task.id
 const isReturning = returning.has(task.id)
 const cardBg = isDark ? task.accent : task.accentLight
 const topBg = isDark ? task.bg : task.bgLight
@@ -208,9 +222,9 @@ const fillBg     = darkText ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.85)'
     <div style={{ position: 'relative', width: DECK_W, height: CARD_H }}>
       <motion.div  [map TASKS.map(task => ...)]
         key={task.id}
-        style={{ position: 'absolute', left: '50%', top: '50%', width: CARD_W, height: CARD_H, marginLeft: -CARD_W / 2, marginTop: -CARD_H / 2, zIndex: isExiting ? 10 : slot.z, borderRadius: 24, overflow: 'hidden', cursor: isFront ? 'grab' : 'default', display: 'flex', flexDirection: 'column', background: cardBg, ...(isFront ? { rotateY: cardRotateY, transformPerspective: 900 } : {}) }}
-        animate={isExiting ? { x: exiting!.dir === 'left' ? -480 : 480, y: 100, rotate: exiting!.dir === 'left' ? -22 : 22, scale: 0.85, opacity: 0 } : { x: slot.x, y: slot.y, rotate: slot.rotate, scale: slot.scale, opacity: slot.opacity }}
-        transition={isExiting ? { duration: 0.42, ease: [0.4, 0, 0.2, 1] } : isReturning ? { duration: 0 } : SPRING}
+        style={{ position: 'absolute', left: '50%', top: '50%', width: CARD_W, height: CARD_H, marginLeft: -CARD_W / 2, marginTop: -CARD_H / 2, zIndex: isExiting || isEntering ? 10 : slot.z, borderRadius: 24, overflow: 'hidden', cursor: isFront ? 'grab' : 'default', display: 'flex', flexDirection: 'column', background: cardBg, ...(isFront ? { rotateY: cardRotateY, transformPerspective: 900 } : {}) }}
+        animate={isExiting ? { x: exiting!.dir === 'left' ? -480 : 480, y: 100, rotate: exiting!.dir === 'left' ? -22 : 22, scale: 0.85, opacity: 0 } : isEntering ? { x: -480, y: 100, rotate: -22, scale: 0.85, opacity: 0 } : { x: slot.x, y: slot.y, rotate: slot.rotate, scale: slot.scale, opacity: slot.opacity }}
+        transition={isExiting ? { duration: 0.42, ease: [0.4, 0, 0.2, 1] } : isEntering ? { duration: 0 } : isReturning ? { duration: 0 } : SPRING}
         whileHover={isExiting ? undefined : isFront ? { scale: 1.03, boxShadow: \`0 10px 36px \${cardBg}30\` } : slotIndex === 1 || slotIndex === 2 ? { opacity: 0.88, scale: slot.scale + 0.015 } : undefined}
         whileTap={isFront ? { scale: 0.98 } : undefined}
         drag={isFront && !dismissing.current ? 'x' : false}
@@ -235,7 +249,7 @@ const fillBg     = darkText ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.85)'
   <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
     <motion.button  [map ([{ dir: 'left' as const, icon: <CaretLeft weight="regular" size={16} />, label: 'Previous' }, { dir: 'right' as const, icon: <CaretRight weight="regular" size={16} />, label: 'Next' }] as const).map(({ dir, icon, label }) => ...)]
       key={dir}
-      onClick={() => dismiss(dir)}
+      onClick={() => dir === 'left' ? showPrevious() : dismiss(dir)}
       aria-label={label}
       style={{ width: 36, height: 36, borderRadius: '50%', border: \`1.5px solid \${isDark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.08)'}\`, background: 'rgba(0,0,0,0)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.28)' }}
       whileHover={{ scale: 1.1, background: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.05)', borderColor: isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.18)', color: isDark ? 'rgba(255,255,255,0.85)' : 'rgba(0,0,0,0.55)' }}
@@ -277,7 +291,7 @@ A line that fails is a bug in your build; fix it and re-check.
 - Every element carrying initial/animate/exit is a motion.* tag, not a plain tag or a bare icon: the card is motion.div, the corner circle is motion.span wrapping a plain ArrowUpRight, the chevrons are motion.button wrapping plain carets, the progress fill is motion.div.
 - Exactly three cards are visible at rest (front, +108, -108); the fourth sits at slot 3 with opacity 0 and scale 0.78 behind the front card.
 - Only the front card drags and only the front card's progress counts up; the two peeked cards show 0% and a track with no fill.
-- One swipe past 80px, or one chevron click, flies the front card to ±480 with y 100 and rotate ±22, and 420ms later the next card is front. The dismissed card reappears in the back slot with no visible travel, and a second dismiss is accepted immediately after.
+- One swipe past 80px, or one Next click, flies the front card to ±480 with y 100 and rotate ±22, and 420ms later the next card is front. The dismissed card reappears in the back slot with no visible travel, and a second dismiss is accepted immediately after. One Previous click snaps the back card to x -480, y 100, rotate -22 with no visible travel, then springs it into the front slot on top of every other card while the old front card moves to the right peek.
 - Each card reads as a coloured frame: a 2px accent border and rounded 24px panel on the tinted background, with the same accent as a solid footer strip under it holding PROGRESS and the percentage.
 - Toggling the page or card theme repaints every card instantly through \`isDark\`, with no reload and no flash of the wrong palette on first paint.`,
 }

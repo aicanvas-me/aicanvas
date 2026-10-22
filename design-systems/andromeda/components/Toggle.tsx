@@ -50,6 +50,11 @@ const trackVariants = cva(
         false: '',
       },
     },
+    // The input covers the track, so the track's own :hover never fires; hover rides the peer.
+    compoundVariants: [
+      { state: 'off', disabled: false, class: 'peer-hover:border-[color:var(--andromeda-border-bright)]' },
+      { state: 'on', disabled: false, class: 'peer-hover:border-[color:var(--andromeda-accent-100)]' },
+    ],
     defaultVariants: {
       state: 'off',
       disabled: false,

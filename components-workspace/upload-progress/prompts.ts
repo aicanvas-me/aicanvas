@@ -23,7 +23,7 @@ Four states: \`uploading\`, \`paused\`, \`complete\`, \`idle\`
 
 ### Collapsed view
 - Title: "Uploading 3 files" (18px bold) or "Upload complete"
-- Subtitle (14px medium, muted \`#6c6c6c\`, \`whitespace-nowrap\`): \`"XX% · Ns left"\` / \`"XX% · Paused"\` / \`"Upload complete"\`. Use \`key={status}\` on the AnimatePresence child so it only animates on state transitions, not on every percentage tick. Use the short \`Ns left\` format (not \`N seconds left\`) so the subtitle never wraps and the card height stays stable.
+- Subtitle (14px medium, muted \`#6c6c6c\`, \`whitespace-nowrap\`): \`"XX% · Ns left"\` / \`"XX% · Paused"\` / \`\${FILES.length} files uploaded\` ("3 files uploaded", so the complete subtitle never repeats the title). Use \`key={status}\` on the AnimatePresence child so it only animates on state transitions, not on every percentage tick. Use the short \`Ns left\` format (not \`N seconds left\`) so the subtitle never wraps and the card height stays stable.
 - **Bottom bar**: 6px tall, full width flush at card bottom. Track \`#e4e4dc\`. Fill animates between \`#6366f1\` (uploading) and \`#f59e0b\` (paused) with a 0.35s ease transition. While uploading, a white gradient shimmer (\`linear-gradient(to right, transparent, rgba(255,255,255,0.35), transparent)\`) sweeps left-to-right across the fill on a 1.6s loop with a 0.8s delay between sweeps. Shimmer stops (animate x stays at -100%) when paused.
 - No background fill/sweep on the card body. The bar is the only progress indicator in collapsed view.
 
