@@ -107,7 +107,7 @@ const handleLeave = (i) => { if (hoveredIndexRef.current === i) hoveredIndexRef.
 
 This is load-bearing: using \`useState\` here re-renders the whole stack on every hover change, which visibly hiccups the rotation. Refs avoid that.
 
-Each row wraps its \`<motion.div>\` in an outer pointer-target \`<div>\` with \`width: 100%\`, \`display: flex\`, \`justifyContent: 'center'\`, \`cursor: 'pointer'\`, \`touchAction: 'none'\`, and handlers \`onPointerEnter/Leave/Down/Up/Cancel\`. The outer div stays a stable rectangle even when the inner \`<motion.div>\` scales down to 0.08×, so hover targeting never fails.
+Each row wraps its \`<motion.div>\` in an outer pointer-target \`<div>\` with \`width: 100%\`, \`display: flex\`, \`justifyContent: 'center'\`, \`cursor: 'pointer'\`, \`touchAction: 'pan-y'\`, and handlers \`onPointerEnter/Leave/Down/Up/Cancel\`. \`pan-y\` lets a vertical swipe that starts on the tower still scroll the page on touch screens; tap-to-highlight keeps working, and when a swipe turns into a scroll the browser fires \`pointercancel\`, whose \`onLeave\` clears the highlight. The outer div stays a stable rectangle even when the inner \`<motion.div>\` scales down to 0.08×, so hover targeting never fails.
 
 ---
 
@@ -184,7 +184,7 @@ ONE \`useAnimationFrame\` in the parent advances every row's phase by \`dtSec / 
 
 ## Hover tracking
 
-Store \`hoveredIndex\` in a **ref**, not state — state re-renders the stack every hover and visibly stutters the rotation. Each row has an outer pointer-target \`<div>\` (\`width: 100%\`, flex-centered, \`cursor: pointer\`, \`touchAction: none\`) with \`onPointerEnter/Leave/Down/Up/Cancel\`. Inner \`<motion.div>\` carries transform + color.
+Store \`hoveredIndex\` in a **ref**, not state — state re-renders the stack every hover and visibly stutters the rotation. Each row has an outer pointer-target \`<div>\` (\`width: 100%\`, flex-centered, \`cursor: pointer\`, \`touchAction: pan-y\`) with \`onPointerEnter/Leave/Down/Up/Cancel\`. \`pan-y\` keeps vertical page scrolling working when a finger lands on the tower; \`onPointerCancel\` calls \`onLeave\`, so a swipe that becomes a scroll clears the highlight. Inner \`<motion.div>\` carries transform + color.
 
 ---
 
@@ -229,7 +229,7 @@ color  = mix( mix(dim, fg, (cos(local)+1)/2), accent, hoverAccent )
 One \`useAnimationFrame\` in parent. Per-row MotionValues via \`useMemo(() => Array.from({length:12}, () => motionValue(0)), [])\`. All phases advance at SAME rate (hover does NOT slow anything). Hover eased with \`alpha = 1 - exp(-10*dtSec)\`.
 
 ## Hover
-Store \`hoveredIndex\` in **ref** (not state — state re-renders stutter rotation). Outer pointer-target \`<div>\` per row (\`width:100%\`, flex-centered, \`cursor:pointer\`, \`touchAction:none\`, full pointer event set). Inner \`<motion.div>\` carries transform + color.
+Store \`hoveredIndex\` in **ref** (not state — state re-renders stutter rotation). Outer pointer-target \`<div>\` per row (\`width:100%\`, flex-centered, \`cursor:pointer\`, \`touchAction:pan-y\`, full pointer event set). \`pan-y\` keeps vertical page scroll on touch; \`onPointerCancel\` calls \`onLeave\`, clearing the highlight when a swipe becomes a scroll. Inner \`<motion.div>\` carries transform + color.
 
 ## Fades
 Two pointer-events-none gradient divs at top/bottom (22% tall, bg-solid → transparent) for infinite-cylinder effect.
