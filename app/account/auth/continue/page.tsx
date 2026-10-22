@@ -60,7 +60,7 @@ export default async function ContinuePage({
       <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">{body}</p>
       {user?.email && (
         <p className="mt-4 rounded-lg border border-sand-200 px-3 py-2 text-sm text-sand-700 dark:border-sand-800 dark:text-sand-300">
-          You&apos;re signed in as <strong className="font-semibold">{user.email}</strong>. If this link
+          You&apos;re signed in as <strong className="font-semibold break-all">{user.email}</strong>. If this link
           is for a different account, Continue switches to it.
         </p>
       )}

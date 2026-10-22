@@ -59,6 +59,14 @@ describe('nextFromRedirectTo', () => {
     }
   })
 
+  it('a tab or newline smuggled into the inner next is refused', () => {
+    for (const enc of ['%09', '%0A', '%0D', '%09%5C']) {
+      const r = `${ORIGIN}/account/auth/callback?next=/${enc}/evil.com`
+      expect(nextFromRedirectTo(search(goEscape(r)), ORIGIN)).toBe('/account')
+      expect(nextFromRedirectTo(search(r), ORIGIN)).toBe('/account')
+    }
+  })
+
   it('non-http schemes and junk go to /account', () => {
     expect(nextFromRedirectTo(search('javascript:alert(1)'), ORIGIN)).toBe('/account')
     expect(nextFromRedirectTo(search('https%3a%2f%2f%E0%A4%A'), ORIGIN)).toBe('/account')

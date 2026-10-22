@@ -40,6 +40,8 @@ function post(fields: Record<string, string>, headers: Record<string, string> = 
 
 const where = (res: Response) => {
   const loc = new URL(res.headers.get('location')!)
+  // Every redirect must stay on our origin.
+  expect(loc.origin).toBe(ORIGIN)
   return loc.pathname + loc.search
 }
 
@@ -133,6 +135,17 @@ describe('POST /account/auth/confirm', () => {
     const res = await post({ token_hash: 'th1', type: 'email', next: '/account/reset-password' })
     expect(where(res)).toBe('/account/reset-password')
     expect(res.headers.get('set-cookie') ?? '').not.toContain('ac_recovery_session')
+  })
+
+  it('a tab or newline in next cannot leave the origin (URL parser strips them)', async () => {
+    for (const code of [9, 10, 13]) {
+      const next = `/${String.fromCharCode(code)}/evil.com`
+      expect(where(await post({ token_hash: 'th1', type: 'email', next }))).toBe('/account')
+      sessionUser = { id: 'u1' }
+      verifyOtp.mockResolvedValueOnce({ error: { message: 'used' } })
+      expect(where(await post({ token_hash: 'th1', type: 'email', next }))).toBe('/account')
+      sessionUser = null
+    }
   })
 
   it('an off-site next falls back to /account', async () => {

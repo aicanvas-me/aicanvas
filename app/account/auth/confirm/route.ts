@@ -19,8 +19,11 @@ import { destinationFor, isEmailLinkType, kindFor, nextFromRedirectTo } from '..
 //      the browser, so the link works in any browser or device.
 
 function redirectTo(origin: string, path: string) {
+  // Paths are already safeNext-checked; this is the last line: whatever the
+  // parser makes of the path, the user never leaves our origin.
+  const url = new URL(path, origin)
   // 303: the browser follows with GET, never re-POSTs the form.
-  return NextResponse.redirect(new URL(path, origin), 303)
+  return NextResponse.redirect(url.origin === origin ? url : new URL('/account', origin), 303)
 }
 
 export async function GET(request: NextRequest) {
