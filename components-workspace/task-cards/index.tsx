@@ -188,6 +188,7 @@ export default function TaskCards() {
   const dismissing = useRef(false)
   const dragDelta = useRef(0)
   const [exiting, setExiting] = useState<{ id: number; dir: 'left' | 'right' } | null>(null)
+  const [entering, setEntering] = useState<number | null>(null)
   const [returning, setReturning] = useState<Set<number>>(new Set())
 
   const dismiss = useCallback((dir: 'left' | 'right') => {
@@ -207,6 +208,18 @@ export default function TaskCards() {
     }, 420)
   }, [])
 
+  const showPrevious = useCallback(() => {
+    if (dismissing.current) return
+    dismissing.current = true
+    const backId = orderRef.current[orderRef.current.length - 1]
+    setEntering(backId)
+    setOrder(prev => [prev[prev.length - 1], ...prev.slice(0, -1)])
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      setEntering(null)
+      setTimeout(() => { dismissing.current = false }, 420)
+    }))
+  }, [])
+
   return (
     <div
       ref={containerRef}
@@ -219,6 +232,7 @@ export default function TaskCards() {
             const slot = SLOTS[slotIndex]
             const isFront = slotIndex === 0
             const isExiting = exiting?.id === task.id
+            const isEntering = entering === task.id
             const isReturning = returning.has(task.id)
 
             const cardBg = isDark ? task.accent : task.accentLight
@@ -239,7 +253,7 @@ export default function TaskCards() {
                   height: CARD_H,
                   marginLeft: -CARD_W / 2,
                   marginTop: -CARD_H / 2,
-                  zIndex: isExiting ? 10 : slot.z,
+                  zIndex: isExiting || isEntering ? 10 : slot.z,
                   borderRadius: 24,
                   overflow: 'hidden',
                   cursor: isFront ? 'grab' : 'default',
@@ -257,6 +271,14 @@ export default function TaskCards() {
                         scale: 0.85,
                         opacity: 0,
                       }
+                    : isEntering
+                    ? {
+                        x: -480,
+                        y: 100,
+                        rotate: -22,
+                        scale: 0.85,
+                        opacity: 0,
+                      }
                     : {
                         x: slot.x,
                         y: slot.y,
@@ -268,6 +290,8 @@ export default function TaskCards() {
                 transition={
                   isExiting
                     ? { duration: 0.42, ease: [0.4, 0, 0.2, 1] }
+                    : isEntering
+                    ? { duration: 0 }
                     : isReturning
                     ? { duration: 0 }
                     : SPRING
@@ -389,7 +413,7 @@ export default function TaskCards() {
         ] as const).map(({ dir, icon, label }) => (
           <motion.button
             key={dir}
-            onClick={() => dismiss(dir)}
+            onClick={() => dir === 'left' ? showPrevious() : dismiss(dir)}
             aria-label={label}
             style={{
               width: 36, height: 36, borderRadius: '50%',

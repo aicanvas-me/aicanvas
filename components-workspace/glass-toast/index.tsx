@@ -2,7 +2,7 @@
 
 // npm install @phosphor-icons/react framer-motion
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, type Ref } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import {
   CheckCircle,
@@ -122,10 +122,12 @@ function ToastCard({
   toast,
   onDismiss,
   prefersReduced,
+  ref,
 }: {
   toast: Toast
   onDismiss: (id: string) => void
   prefersReduced: boolean | null
+  ref?: Ref<HTMLDivElement>
 }) {
   const [hovered, setHovered] = useState(false)
   const variant = VARIANTS[toast.variant]
@@ -152,6 +154,7 @@ function ToastCard({
 
   return (
     <motion.div
+      ref={ref}
       layout
       initial={enterAnim}
       animate={{

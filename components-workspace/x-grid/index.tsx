@@ -165,6 +165,7 @@ export default function XGrid() {
       style={{ background: bg }}
       onMouseMove={(e) => updateMouse(e.clientX, e.clientY)}
       onMouseLeave={() => { mouseRef.current = null }}
+      onTouchStart={(e) => { const t = e.touches[0]; if (t) updateMouse(t.clientX, t.clientY) }}
       onTouchMove={(e) => { const t = e.touches[0]; if (t) updateMouse(t.clientX, t.clientY) }}
       onTouchEnd={() => { mouseRef.current = null }}
     >

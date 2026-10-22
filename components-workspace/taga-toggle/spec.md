@@ -18,16 +18,16 @@
 ## Face geometry (SVG viewBox -1 -1 2 2)
 - Eyes (off — X): two crossing lines per eye, centered at (±0.32, -0.17)
 - Eyes (on — arc): downward-opening arcs `M -0.50,-0.28 Q -0.32,-0.06 -0.14,-0.28` (left)
-- Mouth (off — straight): `M -0.40,0.30 Q 0,0.30 0.40,0.30`
+- Mouth (off — straight): `M -0.40,0.43 Q 0,0.43 0.40,0.43`
 - Mouth (on — smile): `M -0.40,0.15 Q 0,0.50 0.40,0.15`
-  → same M+Q structure enables smooth Framer Motion path interpolation
+  → same M+Q structure is interpolated by Framer Motion via `animate={{ d }}`
 - Blush: two ellipses at (±0.42, 0.18)
 
 ## Behaviour
 - Click → thumb springs across (stiffness 500, damping 36)
 - Track colour transitions continuously via useTransform(thumbX)
 - Eyes: AnimatePresence mode="wait" — X scales out, arc scales in (and vice versa)
-- Mouth: motion.path animates `d` attribute straight→smile (both M+Q format for interpolation)
+- Mouth: motion.path uses `animate={{ d: mouthPath }}` for straight→smile interpolation (both M+Q format)
 - Blush: AnimatePresence fades in with a slight delay (0.15s) after turning on
 - Thumb slightly larger than pill-toggle: thumb = round(trackW * 0.50), trackH = round(trackW * 0.58)
 - Responsive via ResizeObserver, dual theme via MutationObserver

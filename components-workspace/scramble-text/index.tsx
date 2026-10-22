@@ -116,8 +116,12 @@ export default function ScrambleText() {
       <div
         className="flex select-none flex-col items-center gap-4"
         style={{ padding: 'clamp(1.5rem, 8vw, 60px) clamp(1rem, 10vw, 80px)' }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onPointerEnter={e => {
+          if (e.pointerType === 'mouse') setIsHovered(true)
+        }}
+        onPointerLeave={e => {
+          if (e.pointerType === 'mouse') setIsHovered(false)
+        }}
         onPointerDown={e => {
           // Touch has no hover, so non-mouse pointers reveal on press.
           if (e.pointerType !== 'mouse') setIsHovered(true)

@@ -128,7 +128,7 @@ export default function UploadProgress() {
   const trackColor = isDark ? '#34342f' : '#e4e4dc'
 
   const subtitle = isDone
-    ? 'Upload complete'
+    ? `${FILES.length} files uploaded`
     : isPaused
     ? `${overallPct}% · Paused`
     : `${overallPct}% · ${secondsLeft}s left`
@@ -197,7 +197,7 @@ export default function UploadProgress() {
                         style={{ color: mutedColor }}
                         className="mt-0.5 whitespace-nowrap font-sans text-[14px] font-medium"
                       >
-                        {isDone ? 'Upload complete' : (
+                        {isDone ? subtitle : (
                           <>
                             <span className="inline-block min-w-[2.5rem] tabular-nums">
                               {overallPct}%

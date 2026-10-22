@@ -31,6 +31,9 @@ const EMOJI_FONT_PX  = 42
 const CARD_RADIUS    = 32
 const BORDER_WIDTH   = 2
 
+const PASSIVE_LISTENER = { capture: false, passive: true } as const
+const ACTIVE_LISTENER = { capture: false, passive: false } as const
+
 
 const PALETTE_DARK = ['#FDE68A', '#BBF7D0', '#FBCFE8', '#C7D2FE', '#BAE6FD', '#FED7AA']
 const PALETTE_LIGHT = ['#F59E0B', '#34D399', '#F472B6', '#A78BFA', '#38BDF8', '#FB923C']
@@ -71,6 +74,13 @@ interface Sticker {
 }
 
 type BodyWithPlugin = Body & { plugin: { sticker?: Sticker } }
+
+type MouseWithHandlers = MatterMouse & {
+  mousemove: EventListener
+  mousedown: EventListener
+  mouseup: EventListener
+  mousewheel: EventListener
+}
 
 
 function roundedRect(
@@ -205,9 +215,13 @@ export default function StickerWall() {
     let runner: Runner | null = null
     let world: World | null = null
     let walls: Body[] = []
-    let mouse: MatterMouse | null = null
+    let mouse: MouseWithHandlers | null = null
     let mouseConstraint: MC | null = null
     let ro: ResizeObserver | null = null
+    let touchDragging = false
+    let onTouchStart: ((event: TouchEvent) => void) | null = null
+    let onTouchMove: ((event: TouchEvent) => void) | null = null
+    let onTouchEnd: ((event: TouchEvent) => void) | null = null
 
     let dpr = Math.min(window.devicePixelRatio || 1, 2)
 
@@ -440,7 +454,34 @@ export default function StickerWall() {
       Matter.Runner.run(runner, engine)
 
       resize()
-      mouse = Matter.Mouse.create(canvas!)
+      mouse = Matter.Mouse.create(canvas!) as MouseWithHandlers
+      canvas!.removeEventListener('wheel', mouse.mousewheel, ACTIVE_LISTENER)
+      canvas!.removeEventListener('touchmove', mouse.mousemove, ACTIVE_LISTENER)
+      canvas!.removeEventListener('touchstart', mouse.mousedown, ACTIVE_LISTENER)
+      canvas!.removeEventListener('touchend', mouse.mouseup, ACTIVE_LISTENER)
+
+      onTouchStart = (event) => {
+        const touch = event.changedTouches[0]
+        if (!touch || !mouse) return
+        const bounds = canvas!.getBoundingClientRect()
+        const point = { x: touch.clientX - bounds.left, y: touch.clientY - bounds.top }
+        const bodies = stickersRef.current.map((sticker) => sticker.body)
+        if (Matter.Query.point(bodies, point).length === 0) return
+        touchDragging = true
+        mouse.mousedown(event)
+      }
+      onTouchMove = (event) => {
+        if (touchDragging) mouse?.mousemove(event)
+      }
+      onTouchEnd = (event) => {
+        if (!touchDragging) return
+        touchDragging = false
+        mouse?.mouseup(event)
+      }
+      canvas!.addEventListener('touchstart', onTouchStart, ACTIVE_LISTENER)
+      canvas!.addEventListener('touchmove', onTouchMove, ACTIVE_LISTENER)
+      canvas!.addEventListener('touchend', onTouchEnd, ACTIVE_LISTENER)
+      canvas!.addEventListener('touchcancel', onTouchEnd, ACTIVE_LISTENER)
       // Must equal canvas.width / clientWidth or drags miss on HiDPI.
       mouse.pixelRatio = dpr
       mouseConstraint = Matter.MouseConstraint.create(engine, {
@@ -465,6 +506,21 @@ export default function StickerWall() {
       alive = false
       cancelAnimationFrame(rafId)
       if (ro) ro.disconnect()
+      if (mouse) {
+        canvas.removeEventListener('mousemove', mouse.mousemove, PASSIVE_LISTENER)
+        canvas.removeEventListener('mousedown', mouse.mousedown, PASSIVE_LISTENER)
+        canvas.removeEventListener('mouseup', mouse.mouseup, PASSIVE_LISTENER)
+        canvas.removeEventListener('wheel', mouse.mousewheel, ACTIVE_LISTENER)
+        canvas.removeEventListener('touchmove', mouse.mousemove, ACTIVE_LISTENER)
+        canvas.removeEventListener('touchstart', mouse.mousedown, ACTIVE_LISTENER)
+        canvas.removeEventListener('touchend', mouse.mouseup, ACTIVE_LISTENER)
+      }
+      if (onTouchStart) canvas.removeEventListener('touchstart', onTouchStart, ACTIVE_LISTENER)
+      if (onTouchMove) canvas.removeEventListener('touchmove', onTouchMove, ACTIVE_LISTENER)
+      if (onTouchEnd) {
+        canvas.removeEventListener('touchend', onTouchEnd, ACTIVE_LISTENER)
+        canvas.removeEventListener('touchcancel', onTouchEnd, ACTIVE_LISTENER)
+      }
       const Matter = matterRef.current
       if (Matter) {
         if (runner) Matter.Runner.stop(runner)
@@ -581,7 +637,7 @@ export default function StickerWall() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="relative h-full w-full overflow-hidden"
-        style={{ background: bg, touchAction: 'none' }}
+        style={{ background: bg, touchAction: 'auto' }}
       >
         <canvas
           ref={canvasRef}

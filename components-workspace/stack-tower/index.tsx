@@ -105,7 +105,7 @@ function TowerRow({
         display: 'flex',
         justifyContent: 'center',
         cursor: 'pointer',
-        touchAction: 'none',
+        touchAction: 'pan-y',
       }}
     >
       <motion.div

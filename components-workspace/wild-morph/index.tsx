@@ -410,7 +410,7 @@ export default function WildMorph({ text = 'wild' }: { text?: string }) {
         perspective: '1400px',
         perspectiveOrigin: '50% 50%',
         cursor: 'crosshair',
-        touchAction: 'none',
+        touchAction: 'pan-y',
       }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
