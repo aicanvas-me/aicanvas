@@ -10,7 +10,7 @@ const SPEC = `Create \`components-workspace/signature-pad/index.tsx\`. Export a 
 
 This is a **button-morphs-into-modal** pattern (same family as new-project-modal / voice-chat-pill). User clicks the trigger pill → pill scales to 0 + opacity 0 while a fixed-position card morphs from the pill's bounding rect into a centered 480px-wide modal. On Save: button morphs to a check, then the whole modal collapses back to the pill.
 
-State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\`, the captured \`getBoundingClientRect()\` of the pill on click), \`isDark\` (bool), \`savedSignature\` (\`SavedSignature | null\`, default \`null\`, with \`type SavedSignature = { strokes: Stroke[]; size: { w: number; h: number } }\`). Modal is a child component that unmounts on close. It is rendered as \`<ModalCard key="modal" origin={origin} initialStrokes={savedSignature?.strokes ?? []} onSave={(strokes, size) => setSavedSignature({ strokes, size })} onClose={close} />\` and seeds its own state from the saved strokes: \`strokesRef = useRef<Stroke[]>(initialStrokes.map(stroke => stroke.map(point => ({ ...point }))))\` (a deep copy, so drawing or Clear never touches the saved signature until Save) and \`hasInk = useState(initialStrokes.some(stroke => stroke.length > 0))\`. A reopened modal therefore shows the saved signature, ready to edit or clear; closing without Save keeps the last saved signature.
+State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\`, the captured \`getBoundingClientRect()\` of the pill on click), \`closeRect\` (\`ButtonRect | null\`, default \`null\`, with \`type ButtonRect = { x: number; y: number; w: number; h: number }\`, the pill's current rect re-measured in \`close()\`), \`isDark\` (bool), \`savedSignature\` (\`SavedSignature | null\`, default \`null\`, with \`type SavedSignature = { strokes: Stroke[]; size: { w: number; h: number } }\`). Modal is a child component that unmounts on close. It is rendered inside \`<AnimatePresence custom={closeRect}>\` as \`<ModalCard key="modal" origin={origin} initialStrokes={savedSignature?.strokes ?? []} onSave={(strokes, size) => setSavedSignature({ strokes, size })} onClose={close} />\` and seeds its own state from the saved strokes: \`strokesRef = useRef<Stroke[]>(initialStrokes.map(stroke => stroke.map(point => ({ ...point }))))\` (a deep copy, so drawing or Clear never touches the saved signature until Save) and \`hasInk = useState(initialStrokes.some(stroke => stroke.length > 0))\`. A reopened modal therefore shows the saved signature, ready to edit or clear; closing without Save keeps the last saved signature.
 
 ---
 
@@ -73,6 +73,20 @@ function SignaturePreview({ signature }: { signature: SavedSignature }) {
 
 **On click:** capture \`buttonRef.getBoundingClientRect()\` into \`origin\`, then \`setOpen(true)\`.
 
+**On close:** \`close()\` re-measures the pill into \`closeRect\` before \`setOpen(false)\`. The pill can change width while the modal is open (the first Save swaps the long label for the narrow preview), so \`origin\` is stale by then. The pill sits at \`scale: 0.85\` while open, so \`getBoundingClientRect()\` is the scaled box; \`offsetWidth\`/\`offsetHeight\` give the unscaled size, centred on that box, which is the rect the pill returns to:
+\`\`\`tsx
+function close() {
+  const button = buttonRef.current
+  if (button) {
+    const r = button.getBoundingClientRect()
+    const w = button.offsetWidth
+    const h = button.offsetHeight
+    setCloseRect({ x: r.left + (r.width - w) / 2, y: r.top + (r.height - h) / 2, w, h })
+  }
+  setOpen(false)
+}
+\`\`\`
+
 ---
 
 ## Backdrop
@@ -99,10 +113,22 @@ const MODAL_PALETTE = {
 \`\`\`
 
 Centered fixed div z-50, \`onClick={onClose}\`. Inner \`motion.div\` morphs from pill origin (use \`onClick={(e) => e.stopPropagation()}\` to prevent close):
-- Compute: \`targetW = Math.min(480, window.innerWidth - 32)\`, \`initialOffsetX = origin.x + origin.w/2 - vw/2\`, \`initialOffsetY = origin.y + origin.h/2 - vh/2\`, \`initialScaleX = origin.w / targetW\`.
+- Compute in ModalCard's render body: \`vw = typeof window !== 'undefined' ? window.innerWidth : 1024\`, \`vh = typeof window !== 'undefined' ? window.innerHeight : 768\`, \`targetW = Math.min(480, vw - 32)\`, \`initialOffsetX = origin.x + origin.w/2 - vw/2\`, \`initialOffsetY = origin.y + origin.h/2 - vh/2\`, \`initialScaleX = origin.w / targetW\`.
 - \`initial\`: \`{ x: initialOffsetX, y: initialOffsetY, scaleX: initialScaleX, scaleY: 0.18, borderRadius: 9999, opacity: 0.85 }\`
 - \`animate\`: \`{ x: 0, y: 0, scaleX: 1, scaleY: 1, borderRadius: 28, opacity: 1 }\`
-- \`exit\`: reverses initial but \`opacity: 0\`
+- \`exit="exit"\`, a variant function of the close rect, so the card lands on the pill's CURRENT rect. It reads the rect from \`AnimatePresence\`'s \`custom\`, never from a ModalCard prop: \`close()\` sets \`closeRect\` in the same render that removes the card, and only \`custom\` reaches a child that is already exiting. With no rect it falls back to the open origin. Without this, the first Save closed onto the old wide pill:
+\`\`\`tsx
+variants={{
+  exit: (rect: ButtonRect | null) => ({
+    x: rect ? rect.x + rect.w / 2 - vw / 2 : initialOffsetX,
+    y: rect ? rect.y + rect.h / 2 - vh / 2 : initialOffsetY,
+    scaleX: rect ? rect.w / targetW : initialScaleX,
+    scaleY: 0.18,
+    borderRadius: 9999,
+    opacity: 0,
+  }),
+}}
+\`\`\`
 - \`transition\`: \`default: MORPH\` (\`{ type:'spring', stiffness:320, damping:30, mass:1 }\`); \`borderRadius: { duration: 0.32, ease: [0.32, 0.72, 0.34, 1] }\`; \`opacity: { duration: 0.18 }\`.
 - Style: \`borderRadius: 28\`, \`willChange: 'transform, border-radius'\`, \`backgroundColor: surfaceBg\`, \`boxShadow: '0px 16px 56px rgba(0,0,0,0.18)'\`.
 - Class: \`w-full max-w-[480px] px-6 pb-6 pt-6\`.
