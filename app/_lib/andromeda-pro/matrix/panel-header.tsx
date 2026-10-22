@@ -29,7 +29,7 @@ export const panelHeader: MatrixSpec = {
   // surface belong to the panel a buyer puts it on, so they stay in the cases.
   // The width is kept, since a header has none of its own.
   soloRender: (size, props) => (
-    <div style={{ width: 320, maxWidth: '100%' }}>
+    <div style={{ width: 320, maxWidth: '100%', margin: '0 auto' }}>
       <PanelHeader size={size} title="Requests" {...props} />
     </div>
   ),

@@ -9,7 +9,7 @@ export const nodes: MatrixSpec = {
   // Full-surface piece: a full-row card, sized so the lattice reads as a field
   // rather than a thumbnail.
   render: (_size, props) => (
-    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative' }}>
+    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative', margin: '0 auto' }}>
       <Nodes {...props} />
     </div>
   ),

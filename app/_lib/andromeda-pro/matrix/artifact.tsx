@@ -178,7 +178,7 @@ export const artifact: MatrixSpec = {
   // Flex and centred, so the Show button a closed case turns into sits in
   // the middle of the slot; the open frame still fills it at width 100%.
   render: (_size, props) => (
-    <div style={{ width: '100%', maxWidth: 640, display: 'flex', justifyContent: 'center' }}>
+    <div style={{ width: '100%', maxWidth: 640, display: 'flex', justifyContent: 'center', margin: '0 auto' }}>
       <LiveArtifact {...props} />
     </div>
   ),
