@@ -206,11 +206,10 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
   }, [controlledElapsed, playing, safeDuration, ended]);
 
   // At the end of the track: loop when repeat is on, otherwise the demo pauses.
-  useEffect(() => {
-    if (!ended || !playing) return;
+  if (ended && playing) {
     if (repeat) setLocalElapsed(0);
     else if (!onTogglePlay) setLocalPlaying(false);
-  }, [ended, playing, repeat, onTogglePlay]);
+  }
 
   return (
     // The @container query below measures this root; keep container-type on it.
