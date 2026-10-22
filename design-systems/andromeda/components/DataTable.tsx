@@ -3,7 +3,7 @@
 import { forwardRef } from 'react';
 import type { ComponentPropsWithoutRef, CSSProperties, ReactElement, ReactNode, Ref } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import type { Variants } from 'framer-motion';
+import type { TargetAndTransition, Variants } from 'framer-motion';
 import { tokens } from '../tokens';
 import { cn, andromedaVars } from './lib/utils';
 import { useReducedMotion, rowContainer, rowItem } from './lib/motion';
@@ -96,6 +96,9 @@ const HAIRLINE_WIDTH = '1px';
 const STILL_CONTAINER: Variants = { hidden: {}, visible: {} };
 // Same hidden start with reduced motion, so server and client HTML match.
 const STILL_ROW: Variants = { ...rowItem, visible: { opacity: 1, transition: { duration: 0 } } };
+// A target, not the 'exit' label: any variant label on a row makes it its own
+// variant root and cuts it off from the tbody's staggered reveal.
+const ROW_EXIT = rowItem.exit as TargetAndTransition;
 const DIVIDER = `var(--andromeda-border-subtle, ${tokens.color.border.subtle})`;
 const ROW_INSET = () =>
   `linear-gradient(to right, transparent, transparent ${tokens.spacing[3]}, ${DIVIDER} ${tokens.spacing[3]}, ${DIVIDER} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
@@ -294,9 +297,10 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
           variants={reducedMotion ? STILL_CONTAINER : rowContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          // amount 0: a tall table can never show 20% of itself at once, which would leave its rows hidden.
+          viewport={{ once: true, amount: 0 }}
         >
-          <AnimatePresence initial={false}>
+          <AnimatePresence>
           {rows.map((row) => {
             const rowKey = getRowKey(row);
             const isSelected = selectedRowKey === rowKey;
@@ -339,7 +343,7 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
               <motion.tr
                 key={rowKey}
                 variants={reducedMotion ? STILL_ROW : rowItem}
-                exit="exit"
+                exit={ROW_EXIT}
                 className={cn('andro-tr', interactive && 'andro-tr-hover')}
                 aria-current={isSelected ? 'true' : undefined}
                 tabIndex={interactive ? 0 : undefined}
