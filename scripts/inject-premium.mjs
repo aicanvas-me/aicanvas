@@ -502,6 +502,18 @@ function writeShimFile(outFile, root, injectedNames, fromV2Tree, headerLines, an
       '  color: { ...v1Tokens.color, brand: v1Tokens.color.accent, warning: v1Tokens.color.orange, danger: v1Tokens.color.red },',
       '}',
     )
+    // Pro only: Legacy's shim is written in production too and must not change.
+    if (anyTypedDegraded) {
+      out.push(
+        'const { surface: s, border: b, text: t, accent, orange, red } = v1Tokens.color',
+        'Object.assign(tokens.color, {',
+        '  success: accent,',
+        '  neutral: { 100: s.base, 200: s.raised, 300: s.overlay, 400: s.hover, 500: b.subtle, 600: s.active, 700: b.base, 800: b.bright, 900: b.strong, 1000: t.faint, 1100: t.muted, 1200: t.secondary, 1300: t.primary },',
+        '  status: { info: { mark: accent[300] }, success: { mark: accent[300] }, warning: { mark: orange[300] }, danger: { mark: red[300] } },',
+        '})',
+        'tokens.typography = { ...v1Tokens.typography, leading: {}, role: {} }',
+      )
+    }
   }
   out.push('', `export const V2_COMPONENT_NAMES = ${JSON.stringify(injectedNames)}`, '')
   writeFileSync(outFile, out.join('\n'))
