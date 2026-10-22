@@ -1,6 +1,6 @@
 'use client'
 
-// npm install framer-motion matter-js
+// npm install framer-motion matter-js @types/matter-js
 
 import { useEffect, useLayoutEffect, useRef, useState, FormEvent } from 'react'
 import { motion } from 'framer-motion'
