@@ -1,25 +1,3 @@
-// ============================================================
-// COMPONENT: DateRangePicker
-// Trigger chip → expandable calendar panel positioned below.
-// Range selection: first click sets the anchor; hovering previews
-// the in-between band; second click commits the range and closes.
-// ESC and click-outside close the panel. Controlled-only API:
-//
-//   <DateRangePicker
-//     value={{ start: Date, end: Date | null }}
-//     onChange={(next) => setRange(next)}
-//     presetLabel="Last month"      // optional chip prefix
-//     defaultOpen                   // calendar pre-opened (showcases / docs);
-//                                   // ESC + click-outside still dismiss
-//     staticOpen                    // pre-opened AND pinned — ESC + click-
-//                                   // outside do NOT dismiss (multi-popover docs)
-//   />
-//
-// All visual values come from `tokens.ts` — selection / preview /
-// today markers reuse the system accent stops because date selection
-// IS a measurement (the the Andromeda color-philosophy rules "color is for meaning" exception).
-// ============================================================
-
 'use client';
 
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
@@ -33,11 +11,6 @@ import { tokens } from '../tokens';
 import { andromedaVars, cn } from './lib/utils';
 import { mq } from './lib/responsive';
 
-// Color values used in the calendar's INLINE styles as var-with-fallback, so
-// the panel and day cells follow a live theme override natively — an installed
-// project (or the tuner) can retune --andromeda-* and the picker tracks it. The
-// fallback keeps the default pixel-identical. (Inline styles can't be reached
-// by any runtime rewrite the way component classes can, so wire them as vars.)
 const V = {
   accent100:     `var(--andromeda-accent-100, ${tokens.color.accent[100]})`,
   accent400:     `var(--andromeda-accent-400, ${tokens.color.accent[400]})`,
@@ -90,7 +63,7 @@ function addDays(d: Date, n: number) {
   return x;
 }
 
-// Monday-first weekday index: Mon=0 … Sun=6
+// Monday-first like DOW and buildMonthGrid's offset; change all three together.
 function weekdayIndex(d: Date) {
   return (d.getDay() + 6) % 7;
 }
@@ -99,7 +72,6 @@ function buildMonthGrid(viewDate: Date) {
   const year  = viewDate.getFullYear();
   const month = viewDate.getMonth();
   const first = new Date(year, month, 1);
-  // Monday-first week: Mon=0, ..., Sun=6
   const offset = (first.getDay() + 6) % 7;
   return Array.from({ length: 42 }, (_, i) => {
     const d = new Date(year, month, 1 - offset + i);
@@ -115,8 +87,6 @@ function formatRangeChip(range: DateRange | null | undefined) {
   return `${fmt(range.start)} → ${fmt(range.end)}`;
 }
 
-// One-shot stylesheet for hover/focus states. Inline styles can't express
-// :hover or :focus-visible, so we inject a scoped sheet keyed off classes.
 function PickerStyles() {
   return (
     <style>{`
@@ -211,9 +181,6 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     const seed = value?.start ?? new Date();
     return new Date(seed.getFullYear(), seed.getMonth(), 1);
   });
-  // Roving-tabindex focus target for keyboard nav across the day grid.
-  // Initialised to the range start (if it lands in the visible month),
-  // else today (if visible), else the 1st of the visible month.
   const [focusedDay, setFocusedDay] = useState(() => {
     const seed = value?.start ?? new Date();
     const vd   = new Date(seed.getFullYear(), seed.getMonth(), 1);
@@ -225,12 +192,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     return startOfDay(vd);
   });
   const wrapRef = useRef<HTMLDivElement | null>(null);
-  // Map of day-key → button node, used to move real DOM focus after a
-  // keyboard move flushes focusedDay state.
   const dayRefs = useRef(new Map<number, HTMLButtonElement>());
-  // Tracks whether the last focusedDay change came from a keyboard event,
-  // so we only steal focus on intentional arrow/Home/End/PageUp/Down moves
-  // (never on open — see the staticOpen docs-mode requirement).
   const keyboardMoveRef = useRef(false);
 
   function close() {
@@ -239,10 +201,6 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     setHover(null);
   }
 
-  // Click-outside + ESC to dismiss. Only attaches when open to avoid
-  // listening across the entire app lifetime. staticOpen pins the panel
-  // open (showcases / docs) so it survives clicks elsewhere on the page —
-  // skip the dismissers entirely in that mode.
   useEffect(() => {
     if (!open || staticOpen) return undefined;
     const handleDown = (e: MouseEvent) => {
@@ -259,8 +217,6 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     };
   }, [open, staticOpen]);
 
-  // When the panel opens, jump the visible month to the current start and
-  // re-seed the roving focus target (without stealing DOM focus).
   useEffect(() => {
     if (open && value?.start) {
       setViewDate(new Date(value.start.getFullYear(), value.start.getMonth(), 1));
@@ -269,9 +225,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     }
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // After a keyboard move, push real DOM focus onto the matching day button.
-  // Gated on keyboardMoveRef so opening the panel never auto-focuses the grid
-  // (critical for staticOpen docs mode where multiple popovers coexist).
+  // Keyboard moves only: focusing on open would pull page focus to every pre-opened picker.
   useEffect(() => {
     if (!open || !keyboardMoveRef.current) return;
     const node = dayRefs.current.get(focusedDay.getTime());
@@ -289,16 +243,10 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
     const start = cmp >= 0 ? anchor : day;
     const end   = cmp >= 0 ? day    : anchor;
     onChange?.({ start, end });
-    // Stay open. Reset the anchor so a follow-up click starts a fresh range
-    // rather than extending the one that was just committed. The panel
-    // dismisses only on click-outside or ESC.
     setAnchor(null);
     setHover(null);
   }
 
-  // Roving-tabindex keyboard navigation across the day grid. Computes the
-  // next focus target, syncs viewDate if it crosses a month boundary, and
-  // flags keyboardMoveRef so the focus effect moves real DOM focus.
   function moveFocus(next: Date) {
     keyboardMoveRef.current = true;
     if (next.getMonth() !== viewDate.getMonth() || next.getFullYear() !== viewDate.getFullYear()) {
@@ -329,17 +277,10 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
   }
 
   const grid  = useMemo(() => buildMonthGrid(viewDate), [viewDate]);
-  // The clock is read AFTER mount, never during render. `today` drives the
-  // today-marker border on a day cell, so reading it during render would make
-  // the server (deploy-region timezone, typically UTC) and the client (visitor
-  // timezone) disagree about which cell is today for part of every day — a
-  // hydration mismatch on the `style` attribute of two buttons. Null until
-  // mounted means the marker simply appears a frame later, which nobody sees.
+  // Set after mount: server and visitor timezones can disagree on today (hydration mismatch).
   const [today, setToday] = useState<Date | null>(null);
   useEffect(() => { setToday(startOfDay(new Date())); }, []);
 
-  // While anchor is set, the visible "range" is the in-progress preview.
-  // Otherwise it falls back to the committed value.
   const drawRange = anchor
     ? (() => {
         const probe = hover ?? anchor;

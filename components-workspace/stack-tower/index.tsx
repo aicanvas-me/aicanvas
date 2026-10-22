@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Renders repeated words as a vertically rotating typographic tower.
- * Hovering a row increases its scale while the stack continues cycling.
- */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import {
@@ -16,17 +12,12 @@ import {
 import type { MotionValue } from 'framer-motion'
 
 
-// customize: replace the alternating tower words below
 const WORDS = ['STACK', 'TOWER'] as const
-// tune: raise to add more stacked rows
-const ROW_COUNT = 12 
-// tune: raise to slow the tower cycle
-const SECONDS_PER_CYCLE = 5 
-// tune: raise to increase horizontal row travel
-const AMPLITUDE_PX = 22 
-// tune: raise to enlarge the hovered row further
-const HOVER_SCALE_BOOST = 0.1 
-const HOVER_EASE_RATE = 10 
+const ROW_COUNT = 12
+const SECONDS_PER_CYCLE = 5
+const AMPLITUDE_PX = 22
+const HOVER_SCALE_BOOST = 0.1
+const HOVER_EASE_RATE = 10
 
 function useTheme(ref: React.RefObject<HTMLElement | null>) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
@@ -82,8 +73,6 @@ function TowerRow({
 }: RowProps) {
   const rowOffset = rowIndex * 0.35
 
-  
-  
   const transform = useTransform([phase, hover], ([p, h]) => {
     const local = (p as number) * Math.PI * 2 + rowOffset
     const scaleX = 0.55 + 0.45 * Math.cos(local)
@@ -95,7 +84,6 @@ function TowerRow({
     }, ${boost})`
   })
 
-  
   const color = useTransform([phase, hover], ([p, h]) => {
     const local = (p as number) * Math.PI * 2 + rowOffset
     const tt = (Math.cos(local) + 1) / 2
@@ -184,19 +172,13 @@ export default function StackTower() {
     return () => mq.removeEventListener('change', update)
   }, [])
 
-  
-  
   const hoveredIndexRef = useRef<number | null>(null)
 
-  
-  
-  
   const phases = useMemo<MotionValue<number>[]>(
     () => Array.from({ length: ROW_COUNT }, () => motionValue(0)),
     [],
   )
 
-  
   const hovers = useMemo<MotionValue<number>[]>(
     () => Array.from({ length: ROW_COUNT }, () => motionValue(0)),
     [],
@@ -220,10 +202,8 @@ export default function StackTower() {
 
     const hov = hoveredIndexRef.current
     for (let i = 0; i < ROW_COUNT; i++) {
-      
       phases[i].set(phases[i].get() + phaseDt)
 
-      
       const target = i === hov ? 1 : 0
       const cur = hoverEased.current[i]
       const next = cur + (target - cur) * alpha
@@ -268,7 +248,6 @@ export default function StackTower() {
           />
         ))}
 
-        {}
         <div
           aria-hidden
           style={{

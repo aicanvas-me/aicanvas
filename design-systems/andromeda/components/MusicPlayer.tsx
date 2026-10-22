@@ -1,26 +1,3 @@
-// ============================================================================
-// MUSICPLAYER
-// A block-scale transport composite for media playback — track identity,
-// transport controls, a scrub slider with elapsed/remaining readouts, and a
-// like / lyrics / volume cluster, all reading as one bar. Assembled from
-// Andromeda primitives (IconButton, Slider, CornerMarkers). This is the
-// canonical shared component behind the Signal Room template's player.
-//
-// Controlled OR uncontrolled: pass playback state + callbacks to drive it, or
-// omit them and the bar runs a live demo (an internal once-per-second timer
-// advances the scrubber while playing). One primary action — the accent-filled
-// Play. The liked heart is the single sanctioned colour exception (red on a
-// non-fault element), a plain toggle affordance.
-//
-// Responsive: a wide single row is the base layout; below its own container
-// width `breakpoints.md` it STACKS into three rows (track meta, timer/scrub,
-// transport controls), like a mobile player. It responds to ITS OWN width via
-// a CSS container query (`container-type: inline-size`), NOT the viewport — a
-// block-scale bar can be dropped into a narrow panel on a wide screen, and it
-// must stack on its own container, not the window. Positioning (fixed/sticky/
-// in-flow) stays the consumer's job.
-// ============================================================================
-
 'use client';
 
 import { forwardRef, useEffect, useState } from 'react';
@@ -50,7 +27,6 @@ const DEFAULT_TRACK = {
 };
 const DEFAULT_DURATION = 221;
 const DEFAULT_VOLUME = 72;
-// A pressed toggle (shuffle, repeat, lyrics) lights its glyph in the accent.
 const PRESSED_INK = `var(--andromeda-accent-300, ${tokens.color.accent[300]})`;
 
 type MusicPlayerTrack = { title?: string; subtitle?: string; cover?: string | null };
@@ -67,7 +43,6 @@ function formatTime(sec: number) {
 }
 
 function Cover({ cover, title }: { cover: string | null; title: string }) {
-  // Cover art when the track has it, else a stylised broadcast glyph.
   return (
     <div
       style={{
@@ -87,8 +62,6 @@ function Cover({ cover, title }: { cover: string | null; title: string }) {
       aria-label={title ? `${title} cover` : 'Cover art'}
     >
       <CornerMarkers size={4} offset={1} />
-      {/* Glyph ink rides `style`: an icon's `color` prop lands on the svg fill
-          ATTRIBUTE, which takes the literal, while the CSS property resolves. */}
       {cover ? null : (
         <Broadcast
           size={tokens.iconSize.sm}
@@ -149,7 +122,6 @@ type MusicPlayerOwnProps = {
 type MusicPlayerProps = MusicPlayerOwnProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof MusicPlayerOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<MusicPlayerProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function MusicPlayer(
   {
     track = DEFAULT_TRACK,
@@ -194,8 +166,6 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
 
   const playing = onTogglePlay ? playingProp : localPlaying;
   const liked = onLike ? likedProp : localLiked;
-  // Number.isFinite() carries no type predicate, so the true branch is narrowed
-  // by hand; it is a finite number by definition of the guard.
   const elapsed = clamp(Number.isFinite(elapsedProp) ? (elapsedProp as number) : localElapsed, 0, safeDuration);
   const volume = onVolumeChange ? clamp(volumeProp, 0, 100) : localVolume;
   const shuffle = onShuffle ? shuffleProp : localShuffle;
@@ -212,7 +182,6 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
     if (onSeek) onSeek(s);
     else if (elapsedProp === undefined) setLocalElapsed(s);
   };
-  // Without a playlist behind it, Previous and Next restart the current track.
   const restart = () => handleSeek(0);
   const handleVolume = (v: number) => {
     const s = clamp(Number.isFinite(v) ? v : 0, 0, 100);
@@ -231,8 +200,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
   }, [controlledElapsed, playing, safeDuration]);
 
   return (
-    // Container-query root: makes the bar respond to its OWN width, not the
-    // viewport. The visual bar is the inner div.
+    // The @container query below measures this root; keep container-type on it.
     <div
       {...props}
       ref={ref}
@@ -263,7 +231,6 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
       >
         <CornerMarkers />
 
-        {/* Left: track metadata */}
         <div
           className="andro-mp-meta"
           style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[3], flex: '0 1 220px', minWidth: 0 }}
@@ -299,9 +266,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
               {cur.subtitle}
             </span>
           </div>
-          {/* Stacked-layout only like — render-both-and-CSS-hide: same state as
-              the aux copy, relocated onto the meta row so the stack needs no
-              extra row. */}
+          {/* Shown only when the bar stacks (CSS below), as the aux row hides. */}
           <IconButton
             variant="ghost"
             size="md"
@@ -318,7 +283,6 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
           </IconButton>
         </div>
 
-        {/* Center: transport controls + scrub */}
         <div
           className="andro-mp-center"
           style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'stretch', gap: tokens.spacing[1] }}
@@ -377,7 +341,6 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
           </div>
         </div>
 
-        {/* Right: like + lyrics + volume */}
         <div
           className="andro-mp-aux"
           style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[3], flex: '0 1 240px', justifyContent: 'flex-end' }}

@@ -1,10 +1,5 @@
 'use client'
 
-/**
- * Renders a seeded diamond grid with traveling ignition pulses.
- * It adapts its canvas animation to visibility, theme, and reduced motion.
- */
-
 import { useEffect, useRef } from 'react'
 
 type DiamondGridProps = {
@@ -15,7 +10,6 @@ type DiamondGridProps = {
 }
 
 const LOOP_MS = 64000
-// tune: raise the event count to increase concurrent ignitions
 const EVENT_COUNT = 34
 const STATIC_TIME_MS = 27000
 const STAR_SIZE = 30
@@ -134,7 +128,6 @@ function screenToGrid(transform: GridTransform, x: number, y: number) {
 
 function buildField(W: number, H: number, seed: number): Field {
   const rnd = mulberry32(seed)
-  // tune: raise the scale factor to widen the grid spacing
   const cell = clamp(Math.min(W, H) * 0.113, 65, 124)
   const transform = makeGridTransform(W, H)
   const corners = [

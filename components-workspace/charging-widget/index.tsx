@@ -3,19 +3,14 @@
 // npm install framer-motion
 // font: Manrope
 
-/**
- * Circular charging indicator with liquid waves that rise with a looping count.
- * The displayed percentage resets after reaching its target.
- */
-
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 import { useMotionValue, animate } from 'framer-motion'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
 const TARGET_PERCENT = 78
-const COUNT_DURATION = 4 // tune: raise to slow the count-up
-const PAUSE_DURATION = 1 // tune: raise to lengthen the pause between loops
+const COUNT_DURATION = 4
+const PAUSE_DURATION = 1
 
 export default function ChargingWidget() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -135,31 +130,25 @@ export default function ChargingWidget() {
         aria-label={`Charging: ${TARGET_PERCENT}%`}
       >
         <defs>
-          {}
           <clipPath id="cw-circle-clip">
             <circle cx="100" cy="100" r="88" />
           </clipPath>
 
-          {}
           <filter id="cw-bolt-glow" x="-50%" y="-50%" width="200%" height="200%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
             <feComposite in="blur" in2="SourceGraphic" operator="over" />
           </filter>
         </defs>
 
-        {}
         <circle cx="100" cy="100" r="88" fill={BG_CIRCLE_COLOR} />
 
-        {}
         <g clipPath="url(#cw-circle-clip)">
           <path ref={wave1Ref} fill={WAVE1_COLOR} d="M 0 200 L 200 200 L 200 200 L 0 200 Z" />
           <path ref={wave2Ref} fill={WAVE2_COLOR} d="M 0 200 L 200 200 L 200 200 L 0 200 Z" />
         </g>
 
-        {}
         <circle cx="100" cy="100" r="88" fill="none" stroke={RING_COLOR} strokeWidth="3" />
 
-        {}
         <g transform="translate(100, 52) scale(0.7)" filter="url(#cw-bolt-glow)">
           <path
             d="M 8 -20 L -8 2 L 0 2 L -8 20 L 8 -2 L 0 -2 Z"
@@ -168,7 +157,6 @@ export default function ChargingWidget() {
           />
         </g>
 
-        {}
         <text
           ref={displayRef}
           x="100"
@@ -184,7 +172,6 @@ export default function ChargingWidget() {
           0
         </text>
 
-        {}
         <text
           x="100"
           y="140"

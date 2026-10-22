@@ -1,13 +1,3 @@
-// ============================================================
-// COMPONENT: PanelMenu
-// Kebab-trigger overflow menu for panel headers. Trigger is an
-// IconButton (size sm, ghost). Menu opens beneath it — or flips
-// above when a downward menu wouldn't fit on screen (e.g. the kebab
-// on the last row of a scrolled table). Supports items with optional
-// icons and a single level of submenu (right-flyout). Closes on
-// outside click and on Escape.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -72,20 +62,12 @@ type PanelMenuProps = ComponentPropsWithoutRef<'div'> & {
 
 type Timer = ReturnType<typeof setTimeout>;
 
-const ITEM_HEIGHT = 26; // identity constant, no token
+const ITEM_HEIGHT = 26;
 
-// Layout effect on the client (runs before paint so the flip lands without a
-// flash), plain effect on the server (avoids the useLayoutEffect SSR warning
-// when a staticOpen menu is server-rendered).
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
 
-// Shared panel chrome for the dropdown (inline and portaled paths).
-// maxWidth / maxHeight cap the menu to a token-inset of the viewport so a wide
-// or tall menu on a phone never forces page scroll; a taller-than-viewport menu
-// scrolls internally instead of spilling off the bottom edge. boxSizing keeps
-// the border inside that cap.
 const MENU_PANEL_STYLE: CSSProperties = {
-  minWidth: '160px', // identity constant, no token
+  minWidth: '160px',
   maxWidth: `calc(100vw - ${tokens.spacing[4]})`,
   maxHeight: `calc(100vh - ${tokens.spacing[4]})`,
   overflowY: 'auto',
@@ -98,15 +80,9 @@ const MENU_PANEL_STYLE: CSSProperties = {
   boxShadow: 'var(--andromeda-shadow-md, 0 8px 21.6px rgba(0, 0, 0, 0.45))',
 };
 
-// Roving arrow-key navigation for a `role="menu"` container. Queries the
-// direct menuitem buttons, finds the focused one, and moves focus up/down
-// with wrap-around. Home/End jump to first/last. Separators are ignored
-// because they are not `role="menuitem"` buttons. Shared by the top-level
-// menu and any open submenu — each gets its own onKeyDown bound to its own
-// container, and stopPropagation keeps an inner submenu's keys from also
-// being handled by the parent menu.
 function handleMenuKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
   const container = e.currentTarget;
+  // Matches MenuItem's wrapper div > button; change both or arrow keys stop working.
   const itemsList = Array.from(
     container.querySelectorAll<HTMLElement>(':scope > div > button[role="menuitem"]'),
   );
@@ -145,9 +121,6 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
 
   useEffect(() => () => clearTimeout(closeTimer.current ?? undefined), []);
 
-  // When the submenu opens via keyboard (ArrowRight), move focus into its
-  // first item. Guarded by the keyboard-open flag so hover-opening the
-  // submenu never steals focus from the pointer.
   const submenuOpenedByKey = useRef(false);
   useEffect(() => {
     if (submenuOpen && submenuOpenedByKey.current && submenuRef.current) {
@@ -157,18 +130,8 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
     if (!submenuOpen) submenuOpenedByKey.current = false;
   }, [submenuOpen]);
 
-  // Submenu side is measured, not breakpoint-driven: default to a right-flyout
-  // (left:100%) and flip to a left-flyout (right:100%) ONLY when the right side
-  // would overflow the viewport AND the left side has room. A blind CSS flip
-  // below `md` just moves the overflow to the opposite edge — off the LEFT edge
-  // when the parent menu is clamped near x=0 on a phone. Mirrors the parent
-  // menu's reposition clamp; runs before paint, re-measures on resize/scroll.
   const [flipLeft, setFlipLeft] = useState(false);
-  // Viewport coords for the flyout. The panel scrolls (overflowY: auto), and
-  // an absolutely-positioned child at left:100% sits outside its scroll box,
-  // so the panel CLIPS it invisible. The flyout therefore renders with fixed
-  // coords measured from the item, which escape the clip; the scroll listener
-  // below (capture) re-measures so it tracks internal panel scrolling too.
+  // Fixed, not absolute: the scrolling panel would clip a flyout positioned inside it.
   const [subPos, setSubPos] = useState<{ top: number; left: number; right: number } | null>(null);
   useIsomorphicLayoutEffect(() => {
     if (!submenuOpen) {
@@ -186,12 +149,7 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
       const rightOverflows = ir.right + gap + w > window.innerWidth - margin;
       const leftFits = ir.left - gap - w >= margin;
       setFlipLeft(rightOverflows && leftFits);
-      // A fixed box is laid out against the viewport only while no ancestor
-      // establishes a containing block; a transform, filter or backdrop-filter
-      // (the Card's blur, so every inline docs menu) re-bases it on that
-      // ancestor, and viewport coords would land far off. Park the flyout at
-      // 0,0, read where that lands, and express the item coords in that frame.
-      // The inline overrides are undone right away so React's paint owns them.
+      // Measured from 0,0: a transformed or blurred ancestor re-bases fixed coords.
       const prev = { left: sub.style.left, top: sub.style.top, transform: sub.style.transform };
       sub.style.left = '0px';
       sub.style.top = '0px';
@@ -227,8 +185,6 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
   const Icon = item.icon;
   const hasSub = Array.isArray(item.submenu) && item.submenu.length > 0;
 
-  // Hover-with-grace-period so the user can move the cursor across the gap
-  // between the parent item and the submenu without the submenu collapsing.
   function handleEnter() {
     clearTimeout(closeTimer.current ?? undefined);
     if (hasSub) setSubmenuOpen(true);
@@ -248,8 +204,6 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
     onClose();
   }
 
-  // ArrowRight opens the submenu and focuses into it; ArrowLeft (handled on
-  // the submenu container) closes it and returns focus to this parent button.
   function handleButtonKeyDown(e: ReactKeyboardEvent<HTMLButtonElement>) {
     if (hasSub && e.key === 'ArrowRight') {
       e.preventDefault();
@@ -317,7 +271,6 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
         {hasSub ? <CaretRight size={10} weight="bold" /> : null}
       </button>
 
-      {/* Right-flyout submenu */}
       {hasSub && submenuOpen ? (
         <div
           ref={submenuRef}
@@ -350,36 +303,25 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
   );
 }
 
-/** @type {React.ForwardRefExoticComponent<PanelMenuProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const PanelMenu = forwardRef<HTMLDivElement, PanelMenuProps>(function PanelMenu(
   { items, align = 'right', ariaLabel = 'Panel options', defaultOpen = false, staticOpen = false, className, style, ...props },
   ref,
 ) {
   const [open, setOpen] = useState(defaultOpen || staticOpen);
-  // Interactive menus portal to <body> and position with `fixed` coords, so they
-  // sit in the top layer — never clipped by an `overflow` container, never
-  // stacked under sibling table rows — and flip above the trigger when a
-  // downward menu would fall off the bottom of the viewport. staticOpen (docs)
-  // menus stay inline in normal flow on purpose.
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
   const [mounted, setMounted] = useState(false);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => setMounted(true), []);
-  // The element to return focus to when the menu closes — captured at the
-  // moment the trigger toggles the menu open (interactive open only).
   const returnFocusRef = useRef<HTMLElement | null>(null);
 
-  // Focus the first menuitem when the panel opens — but NEVER in staticOpen
-  // mode, where multiple pinned menus would fight over focus.
+  // Never in staticOpen: every pinned menu would pull page focus on load.
   useEffect(() => {
     if (!open || staticOpen) return;
     const first = menuRef.current?.querySelector<HTMLElement>('button[role="menuitem"]');
     if (first) first.focus();
   }, [open, staticOpen]);
 
-  // Return focus to the trigger when the menu closes after an interactive
-  // open. Skipped in staticOpen mode (no focus stealing on showcase pages).
   useEffect(() => {
     if (open || staticOpen) return;
     const target = returnFocusRef.current;
@@ -388,13 +330,8 @@ export const PanelMenu = forwardRef<HTMLDivElement, PanelMenuProps>(function Pan
   }, [open, staticOpen]);
 
   useEffect(() => {
-    // staticOpen pins the menu open (showcase/docs) — skip the dismissers so it
-    // survives outside clicks and scrolling.
     if (!open || staticOpen) return;
     function onClick(e: MouseEvent) {
-      // The portaled menu lives outside the wrapper, so check it too — otherwise
-      // clicking a menu item would register as an outside click and close before
-      // the item fires.
       const inWrapper = wrapperRef.current && wrapperRef.current.contains(e.target as Node);
       const inMenu = menuRef.current && menuRef.current.contains(e.target as Node);
       if (!inWrapper && !inMenu) setOpen(false);
@@ -410,16 +347,10 @@ export const PanelMenu = forwardRef<HTMLDivElement, PanelMenuProps>(function Pan
     };
   }, [open, staticOpen]);
 
-  // Position the portaled (interactive) menu in viewport coords, flipping above
-  // the trigger when a downward menu wouldn't fit. Measured in a layout effect
-  // so it lands before paint (no flash), and recomputed on scroll/resize so the
-  // menu stays pinned to its trigger. staticOpen menus are inline — skipped here.
   useIsomorphicLayoutEffect(() => {
     if (staticOpen) return;
     if (!open) { setCoords(null); return; }
-    // The body portal sits outside whatever ancestor defines the theme
-    // channel, so the menu wears the channel it inherited at the trigger.
-    // Written to the DOM here, before paint; React never manages these keys.
+    // The body portal copies its theme vars from the trigger, or light pages get dark menus.
     const trigger0 = wrapperRef.current;
     const menu0 = menuRef.current;
     if (trigger0 && menu0) {
@@ -435,24 +366,19 @@ export const PanelMenu = forwardRef<HTMLDivElement, PanelMenuProps>(function Pan
       const fitsDown = tr.bottom + margin + mr.height <= window.innerHeight - margin;
       const fitsUp = tr.top - margin - mr.height >= margin;
       let top = !fitsDown && fitsUp ? tr.top - margin - mr.height : tr.bottom + margin;
-      // Clamp vertically so a menu taller than the gap (or taller than the
-      // whole viewport on a phone) can never spill off the bottom or top edge.
-      // The panel itself caps its height (maxHeight below) and scrolls, so the
-      // clamped top keeps the first item on-screen either way.
       top = Math.max(margin, Math.min(top, window.innerHeight - mr.height - margin));
       let left = align === 'right' ? tr.right - mr.width : tr.left;
       left = Math.max(margin, Math.min(left, window.innerWidth - mr.width - margin));
       setCoords({ top, left });
     };
     reposition();
-    window.addEventListener('scroll', reposition, true); // capture: catch scroll in any ancestor
+    window.addEventListener('scroll', reposition, true);
     window.addEventListener('resize', reposition);
     return () => {
       window.removeEventListener('scroll', reposition, true);
       window.removeEventListener('resize', reposition);
     };
-    // `mounted` is a dep so a defaultOpen menu repositions once the portal
-    // actually mounts (the menu ref doesn't exist until then).
+    // mounted: a defaultOpen menu can only measure once its portal exists.
   }, [open, staticOpen, align, mounted]);
 
   return (
@@ -475,7 +401,6 @@ export const PanelMenu = forwardRef<HTMLDivElement, PanelMenuProps>(function Pan
         size="sm"
         icon={DotsThreeVertical}
         onClick={(e: ReactMouseEvent<HTMLButtonElement>) => {
-          // Capture the trigger as the focus-return target before opening.
           if (!open && !staticOpen) returnFocusRef.current = e.currentTarget;
           setOpen((o) => !o);
         }}
@@ -488,7 +413,6 @@ export const PanelMenu = forwardRef<HTMLDivElement, PanelMenuProps>(function Pan
 
       {open ? (
         staticOpen ? (
-          // Docs / showcase: inline absolute under the trigger, in normal flow.
           <div
             ref={menuRef}
             role="menu"
@@ -505,7 +429,6 @@ export const PanelMenu = forwardRef<HTMLDivElement, PanelMenuProps>(function Pan
             ))}
           </div>
         ) : mounted ? (
-          // Product: portal to <body>, fixed coords → top layer, never clipped.
           createPortal(
             <div
               ref={menuRef}

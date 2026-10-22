@@ -1,11 +1,3 @@
-// ============================================================
-// COMPONENT: Toggle (Switch)
-// shadcn/ui-aligned API: forwardRef, controlled (`checked`) /
-// uncontrolled, `onCheckedChange`, optional inline `label`.
-// Sharp rectangular track with a sliding rectangular thumb —
-// matches the rest of the Andromeda vocabulary (no rounded chrome).
-// ============================================================
-
 'use client';
 
 import { forwardRef, useId, useState } from 'react';
@@ -14,12 +6,7 @@ import { cva } from 'class-variance-authority';
 import { cn, andromedaVars } from './lib/utils';
 import { mq } from './lib/responsive';
 
-// Touch-target expander — the visible 34x18px track stays its desktop size; on
-// coarse pointers the invisible input (which receives the click, kept on top via
-// z-10) grows to spacing[10] (40px), centered over the track. inset-0 is released
-// so the input can overflow the short track. Scoped className, !important to beat
-// the peer/absolute base classes. the Andromeda responsive rules + the Andromeda interaction-states rules "Invisible inputs over
-// visual proxies" (input must stay above the proxy — z-10 is preserved).
+// Touch screens: the hidden input grows to 40px; !important beats its base classes.
 const TOUCH_TARGET_STYLE = `
   ${mq.coarse} {
     .andromeda-toggle-touch {
@@ -36,7 +23,7 @@ const TOUCH_TARGET_STYLE = `
 const trackVariants = cva(
   [
     'relative inline-flex items-center shrink-0',
-    // Identity constant, no token: the 34x18 track / 12px thumb / 2px inset geometry is the switch's fixed shape
+    // Track, border, thumb size and offsets are coupled: change them together.
     'w-[34px] h-[18px]',
     'border-[length:var(--andromeda-border-width,1px)] border-solid',
     'rounded-[var(--andromeda-radius-frame,0px)]',
@@ -119,7 +106,6 @@ type ToggleProps = Omit<
   label?: string;
 };
 
-/** @type {React.ForwardRefExoticComponent<ToggleProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'|'type'>>} */
 export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
   {
     className,
@@ -161,10 +147,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
           checked={checked}
           disabled={disabled}
           onChange={handleChange}
-          // z-10 keeps the invisible input on top of the visual track so clicks
-          // reach the input. Both layers are positioned, so without an explicit
-          // z-index the track span paints last and swallows every click on the
-          // switch — only the label (via htmlFor) would toggle. Mirrors Checkbox.
+          // z-10 lets clicks reach the input; keep the input before the track for the focus ring.
           className="andromeda-toggle-touch peer absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
           {...props}
         />

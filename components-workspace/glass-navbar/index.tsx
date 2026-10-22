@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Displays a responsive glass navigation bar with selectable links.
- * On narrow screens, the menu button reveals an animated dropdown.
- */
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -23,6 +19,7 @@ export default function GlassNavbar() {
     boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
   }
 
+  // Used on z-[-1] layers: each parent needs isolate, or the blur falls behind the page.
   const glassBlur = {
     backdropFilter: 'blur(24px) saturate(1.8)',
     WebkitBackdropFilter: 'blur(24px) saturate(1.8)',
@@ -41,27 +38,23 @@ export default function GlassNavbar() {
 
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
-      {}
       <img
         src="https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866"
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
 
-      {}
       <div className="relative flex w-[calc(100%-2rem)] max-w-[720px] flex-col">
 
-        {}
         <motion.nav
+          // No opacity in initial: below 1 it hides the blur until the fade ends.
           initial={{ y: -40 }}
           animate={{ y: 0 }}
           transition={{ type: 'spring', stiffness: 200, damping: 24 }}
           className="relative isolate flex w-full items-center gap-1 rounded-full px-2 py-2"
           style={glassStyle}
         >
-          {}
           <div className="pointer-events-none absolute inset-0 z-[-1] rounded-full" style={glassBlur} />
-          {}
           <div className="flex cursor-pointer items-center gap-2 px-3" onClick={() => setActive(null)}>
             <motion.div
               animate={{ rotate: [0, 360] }}
@@ -72,10 +65,8 @@ export default function GlassNavbar() {
             <span className="text-sm font-semibold text-white/90">Studio</span>
           </div>
 
-          {}
           <div className="flex-1" />
 
-          {}
           <div className="hidden items-center gap-1 sm:flex">
             {NAV_ITEMS.map((item, i) => (
               <motion.button
@@ -87,7 +78,6 @@ export default function GlassNavbar() {
                 style={{ color: active === i || hovered === i ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)' }}
                 whileTap={{ scale: 0.97 }}
               >
-                {}
                 {active === i && (
                   <motion.div
                     layoutId="glass-nav-active"
@@ -100,7 +90,6 @@ export default function GlassNavbar() {
               </motion.button>
             ))}
 
-            {}
             <motion.button
               whileHover={{ scale: 1.04, ...ctaHoverStyle }}
               whileTap={{ scale: 0.96 }}
@@ -112,7 +101,6 @@ export default function GlassNavbar() {
             </motion.button>
           </div>
 
-          {}
           <motion.button
             className="mr-2 flex cursor-pointer items-center justify-center rounded-full p-2 text-white/70 sm:hidden"
             onClick={() => setMenuOpen(v => !v)}
@@ -128,7 +116,6 @@ export default function GlassNavbar() {
           </motion.button>
         </motion.nav>
 
-        {}
         <AnimatePresence>
           {menuOpen && (
             <motion.div

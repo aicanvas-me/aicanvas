@@ -1,11 +1,3 @@
-// ============================================================
-// COMPONENT: SearchField
-// Command-bar-style search input with an optional ⌘-K shortcut chip.
-// Five states: idle, hover, focus (selected), text-inactive (placeholder),
-// text-active (typed). All values resolve through tokens.ts — see
-// the Andromeda interaction-states rules for the model.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useState } from 'react';
@@ -45,7 +37,6 @@ type SearchFieldOwnProps = {
 export type SearchFieldProps = SearchFieldOwnProps &
   Omit<ComponentPropsWithoutRef<'input'>, keyof SearchFieldOwnProps | 'onChange'>;
 
-/** @type {React.ForwardRefExoticComponent<SearchFieldProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'value' | 'defaultValue' | 'onChange'>>} */
 export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(function SearchField(
   {
     placeholder = 'Search anything',
@@ -70,9 +61,6 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
   const [isHover, setIsHover] = useState(false);
   const [isFocus, setIsFocus] = useState(false);
 
-  // State cascade: focus (selected) > hover > idle. Var-with-fallback so a
-  // theme override (e.g. a blue accent) reaches the focus border, matching
-  // the focus ring below — not a baked literal that stays the old accent.
   const borderColor = isFocus
     ? 'var(--andromeda-accent-400, #109380)'
     : isHover
@@ -87,7 +75,6 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
     ? '0 0 0 var(--andromeda-border-width, 1px) var(--andromeda-accent-400, #109380), 0 0 var(--andromeda-glow, 8px) var(--andromeda-accent-500, #126059)'
     : 'none';
 
-  // Icon brightens when the user engages — focus or typed.
   const iconColor = isFocus || hasText
     ? 'var(--andromeda-text-primary, #F5F5F5)'
     : 'var(--andromeda-text-muted, #9A9A9A)';
@@ -110,9 +97,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
         alignItems: 'center',
         gap: tokens.spacing[3],
         width: '100%',
-        // border-box so the horizontal padding stays INSIDE the 100% width —
-        // without it a full-width field overflows its container by the padding
-        // and forces horizontal page scroll on a phone.
+        // border-box keeps the padding inside 100% width; without it the field overflows on phones.
         boxSizing: 'border-box',
         padding: `${tokens.spacing[2]} ${tokens.spacing[4]}`,
         border: `${tokens.border.thin} ${borderColor}`,
@@ -135,15 +120,12 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
           weight="regular"
           style={{
             flexShrink: 0,
-            // Phosphor renders fill="currentColor"; CSS color lets the var resolve.
             color: iconColor,
             transition: `color ${tokens.motion.duration.normal} ${tokens.motion.easing.out}`,
           }}
         />
       ) : null}
 
-      {/* Input + placeholder overlay. The overlay avoids the ::placeholder
-          pseudo, which can't be set via inline styles. */}
       <div
         style={{
           position: 'relative',

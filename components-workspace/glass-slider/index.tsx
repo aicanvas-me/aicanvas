@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Renders a glass slider whose fill and value color follow its gradient.
- * Pointer dragging and track clicks update the animated thumb position.
- */
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
@@ -12,6 +8,7 @@ import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 
 const BACKGROUND = 'https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png?updatedAt=1775226802133'
 
+// 6-digit hex only: lerpHex reads these as #RRGGBB.
 const SLIDERS = [
   { label: 'Brightness', defaultValue: 72, colorA: '#5B8FF9', colorB: '#A78BFA' },
   { label: 'Contrast',   defaultValue: 45, colorA: '#FF6BF5', colorB: '#FF6680' },
@@ -112,7 +109,6 @@ function Slider({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {}
       <div className="flex items-center justify-between">
         <motion.span
           animate={{ color: hovered ? 'rgba(255,255,255,0.85)' : 'rgba(255,255,255,0.5)' }}
@@ -124,7 +120,6 @@ function Slider({
         <span className="font-mono text-sm font-semibold" style={{ color: thumbColor }}>{value}</span>
       </div>
 
-      {}
       <div
         ref={trackRef}
         role="slider"
@@ -141,7 +136,6 @@ function Slider({
           transition: 'background 0.2s ease',
         }}
       >
-        {}
         <div
           className="absolute left-0 top-0 h-full rounded-full"
           style={{
@@ -152,7 +146,6 @@ function Slider({
           }}
         />
 
-        {}
         <motion.div
           className="absolute top-1/2 flex h-[44px] w-[44px] -translate-x-1/2 -translate-y-1/2 items-center justify-center"
           style={{ left: `${value}%`, scale: thumbScale }}
@@ -180,6 +173,7 @@ export default function GlassSlider() {
       />
 
       <motion.div
+        // No opacity in initial: below 1 it hides the blur until the fade ends.
         initial={{ y: 20, scale: 0.96 }}
         animate={{ y: 0, scale: 1 }}
         transition={{ type: 'spring', stiffness: 200, damping: 22 }}
@@ -190,12 +184,11 @@ export default function GlassSlider() {
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
-        {}
+        {/* z-[-1] relies on the panel's isolate; without it the blur falls behind the page. */}
         <div
           className="pointer-events-none absolute inset-0 z-[-1] rounded-3xl"
           style={{ backdropFilter: 'blur(24px) saturate(1.8)', WebkitBackdropFilter: 'blur(24px) saturate(1.8)' }}
         />
-        {}
         <div
           className="absolute left-7 right-7 top-0 h-[1px]"
           style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }}

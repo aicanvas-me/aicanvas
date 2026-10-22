@@ -1,15 +1,10 @@
 'use client'
 
 // npm install three
-/**
- * Renders a shaded particle sphere with a Three.js point cloud.
- * Pointer movement rotates the sphere while its particles continue drifting.
- */
 
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 
-// tune: raise to increase sphere density
 const PARTICLE_COUNT = 9000
 
 
@@ -54,11 +49,7 @@ export default function ParticleSphere() {
     const camera   = new THREE.PerspectiveCamera(52, W / H, 0.1, 100)
     camera.position.z = 2.9
 
-    // Throws outright when the browser cannot hand back a WebGL context:
-    // hardware acceleration switched off, an older or virtualised machine, or
-    // too many live contexts on one page. Thrown from inside an effect it takes
-    // the surrounding page down with it, so an empty frame is the better
-    // failure.
+    // No WebGL available: render nothing instead of crashing the page.
     let renderer: THREE.WebGLRenderer
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -129,9 +120,7 @@ export default function ParticleSphere() {
       geo.dispose()
       mat.dispose()
       sprite.dispose()
-      // Hand the GPU context back explicitly: dispose() frees the scene but
-      // leaves the context alive, and a browser grants only about sixteen per
-      // page, so remounting a few times exhausts them.
+      // dispose() keeps the WebGL context; release it or remounts hit the browser limit.
       try {
         renderer.forceContextLoss()
       } catch {}

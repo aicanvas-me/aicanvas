@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents a glass search field with a filtered suggestion list.
- * Typing, clearing, pressing Escape, or clicking outside updates the open state.
- */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
@@ -27,6 +23,7 @@ interface Suggestion {
 const BACKGROUND =
   'https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20pink%20Flower%20%20(1).png'
 
+// 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const SUGGESTIONS: Suggestion[] = [
   { icon: MusicNote, label: 'Audio visualizers',   color: '#FF5C8A' },
   { icon: File,      label: 'Documentation files', color: '#3A86FF' },
@@ -87,7 +84,6 @@ function SuggestionRow({
         background: 'transparent',
       }}
     >
-      {}
       <motion.button
         onClick={() => onSelect(suggestion.label)}
         animate={
@@ -103,7 +99,6 @@ function SuggestionRow({
         className="flex min-w-0 flex-1 cursor-pointer items-center gap-3"
         style={{ background: 'transparent', transformOrigin: 'left center' }}
       >
-        {}
         <div
           className="flex shrink-0 items-center justify-center rounded-xl"
           style={{
@@ -127,7 +122,6 @@ function SuggestionRow({
         </span>
       </motion.button>
 
-      {}
       <button
         onClick={(e) => { e.stopPropagation(); onClear(suggestion.label) }}
         className="shrink-0 cursor-pointer rounded-full px-1.5 py-0.5 text-[8px] font-semibold uppercase tracking-wide text-white/40 font-sans"
@@ -227,20 +221,17 @@ export default function GlassSearchBar() {
 
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
-      {}
       <img
         src={BACKGROUND}
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
 
-      {}
       <div
         ref={containerRef}
         className="absolute w-[calc(100%-2rem)] max-w-[380px]"
         style={{ top: '30%', left: '50%', transform: 'translateX(-50%)' }}
       >
-        {}
         <motion.div
           animate={{
             boxShadow: isActive ? ACTIVE_GLOW : glassPanel.boxShadow,
@@ -254,13 +245,11 @@ export default function GlassSearchBar() {
             borderRadius: 24,
           }}
         >
-          {}
           <div
             className="pointer-events-none absolute inset-0 z-[-1]"
             style={{ ...glassBlur, borderRadius: 24 }}
           />
 
-          {}
           <div
             className="flex shrink-0 items-center justify-center"
             style={{
@@ -277,7 +266,6 @@ export default function GlassSearchBar() {
             />
           </div>
 
-          {}
           <input
             ref={inputRef}
             value={query}
@@ -289,7 +277,6 @@ export default function GlassSearchBar() {
             aria-label="Search components"
           />
 
-          {}
           <AnimatePresence>
             {query.length > 0 && (
               <motion.button
@@ -329,7 +316,6 @@ export default function GlassSearchBar() {
           </AnimatePresence>
         </motion.div>
 
-        {}
         <AnimatePresence>
           {isActive && filteredSuggestions.length > 0 && (
             <motion.div
@@ -358,7 +344,6 @@ export default function GlassSearchBar() {
               style={{ ...glassPanel, ...glassBlur, transformOrigin: 'top center', top: BAR_HEIGHT + 8 }}
             >
 
-              {}
               <div
                 className="absolute left-6 right-6 top-0 h-[1px]"
                 style={{
@@ -367,12 +352,10 @@ export default function GlassSearchBar() {
                 }}
               />
 
-              {}
               <p className="mb-0.5 px-3 pt-1 text-[10px] font-semibold uppercase tracking-widest text-white/25 font-sans">
                 {query.trim() ? 'Results' : 'Suggestions'}
               </p>
 
-              {}
               {filteredSuggestions.map((suggestion, i) => (
                 <SuggestionRow
                   key={suggestion.label}

@@ -1,20 +1,15 @@
 'use client'
 
-/**
- * Renders a canvas grid of curved lines with ambient wave distortion.
- * Pointer proximity increases the wave amplitude and repels nearby lines.
- */
-
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
-const SPACING      = 32     // tune: raise to spread the grid points farther apart
-const BASE_AMP     = 30     // tune: raise to increase the resting distortion
-const WAVE_FREQ    = 0.007  // tune: raise to shorten the wave length
-const HOVER_BOOST  = 1.5    // tune: raise to amplify the hover distortion
-const LOCAL_AMP    = 60     // tune: raise to strengthen pointer repulsion
-const LOCAL_RADIUS = 260    // tune: raise to widen the pointer influence
+const SPACING      = 32
+const BASE_AMP     = 30
+const WAVE_FREQ    = 0.007
+const HOVER_BOOST  = 1.5
+const LOCAL_AMP    = 60
+const LOCAL_RADIUS = 260
 const LINE_A_DARK  = 0.55
 const LINE_A_LIGHT = 0.75
 

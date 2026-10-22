@@ -1,10 +1,3 @@
-// ============================================================
-// COMPONENT: Tag
-// shadcn/ui-aligned API: variant, cva, forwardRef.
-// Variants: default | accent | warning | fault
-// Compact uppercase mono label, sharp corners, optional X.
-// ============================================================
-
 'use client';
 
 import { forwardRef } from 'react';
@@ -16,13 +9,10 @@ import { cn, andromedaVars } from './lib/utils';
 
 const tagVariants = cva(
   [
-    // max-w-full + min-w-0 keep a long label from forcing horizontal scroll
-    // in a stacked (single-column) layout; the label span truncates while
-    // the close button stays pinned (see render below).
+    // max-w-full + min-w-0: long labels truncate instead of forcing sideways scroll.
     'inline-flex items-center select-none whitespace-nowrap',
     'max-w-full min-w-0',
     'gap-[var(--andromeda-2)]',
-    // Identity constant: the 3px vertical pad is off the spacing grid by design
     'px-[var(--andromeda-2)] py-[3px]',
     'border-[length:var(--andromeda-border-width,1px)] border-solid',
     'rounded-[var(--andromeda-radius-frame,0px)]',
@@ -34,9 +24,6 @@ const tagVariants = cva(
   {
     variants: {
       variant: {
-        // Text is always text.primary across variants (mirrors Badge): the
-        // background + border carry the meaning, never the label color. The
-        // -500 backgrounds are dark, so near-white primary text clears WCAG AA.
         default: [
           'bg-[color:var(--andromeda-surface-raised)]',
           'text-[color:var(--andromeda-text-primary)]',
@@ -44,7 +31,6 @@ const tagVariants = cva(
         ],
         accent: [
           'bg-[color:var(--andromeda-accent-500)]',
-          // on-fill fix: guaranteed-contrast on-fill foreground (defaults to family 100)
           'text-[color:var(--andromeda-accent-on)]',
           'border-[color:var(--andromeda-accent-400)]',
         ],
@@ -71,8 +57,6 @@ const closeButtonClass = cn(
   'inline-flex items-center justify-center shrink-0',
   'p-0 m-0 bg-transparent border-0',
   'cursor-pointer leading-none',
-  // Inherit the variant's text color so contrast against the variant
-  // bg always matches the tag label (text-100 on bg-500 → ≥7:1).
   'text-[color:currentColor]',
   'opacity-70 transition-[opacity,transform] duration-150 ease-out',
   'hover:opacity-100',
@@ -99,7 +83,6 @@ type TagOwnProps = {
 
 export type TagProps = TagOwnProps & Omit<ComponentPropsWithoutRef<'span'>, keyof TagOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<TagProps & React.HTMLAttributes<HTMLSpanElement>>} */
 export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
   { className, variant = 'default', children, onClose, style, ...props },
   ref,

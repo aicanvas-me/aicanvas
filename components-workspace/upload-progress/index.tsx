@@ -1,9 +1,5 @@
 'use client'
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents simulated file uploads in a collapsible progress card.
- * Each transfer can be paused, resumed, canceled, or restarted after completion.
- */
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -16,7 +12,6 @@ import {
   ArrowsInSimple,
 } from '@phosphor-icons/react'
 
-// customize: replace the simulated files and durations below
 const FILES = [
   { name: 'Brand reel.mp4', durationMs: 8000 },
   { name: 'Product demo.mp4', durationMs: 12500 },
@@ -41,9 +36,6 @@ function useDarkMode(ref: React.RefObject<HTMLElement | null>) {
     update()
     const obs = new MutationObserver(update)
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-    // Watch the card wrapper too. Its own light/dark switch changes only the
-    // wrapper, never <html>, so observing the document alone leaves this stuck
-    // on whatever it read first.
     const scope = el.closest('[data-card-theme]')
     if (scope) obs.observe(scope, { attributes: true, attributeFilter: ['class', 'data-card-theme'] })
     return () => obs.disconnect()
@@ -186,7 +178,6 @@ export default function UploadProgress() {
               }}
             >
 
-              {}
               <div className="flex items-start justify-between px-6 pt-5 pb-4">
                 <div className="min-w-0 flex-1 pr-3">
                   <h2
@@ -220,9 +211,7 @@ export default function UploadProgress() {
                   </AnimatePresence>
                 </div>
 
-                {}
                 <div className="flex shrink-0 items-center gap-1.5 pt-0.5">
-                  {}
                   <AnimatePresence initial={false}>
                     {!isDone && (
                       <motion.div
@@ -233,7 +222,6 @@ export default function UploadProgress() {
                         transition={SPRING}
                         className="flex items-center gap-1.5"
                       >
-                        {}
                         <IconBtn onClick={togglePause} bg={btnBg} color={btnColor}>
                           <AnimatePresence mode="wait" initial={false}>
                             {isPaused ? (
@@ -262,7 +250,6 @@ export default function UploadProgress() {
                           </AnimatePresence>
                         </IconBtn>
 
-                        {}
                         <IconBtn onClick={handleRefresh} bg={btnBg} color={btnColor}>
                           <ArrowCounterClockwise size={15} weight="regular" />
                         </IconBtn>
@@ -270,7 +257,6 @@ export default function UploadProgress() {
                     )}
                   </AnimatePresence>
 
-                  {}
                   <IconBtn
                     onClick={() => setExpanded(e => !e)}
                     bg={btnBg}
@@ -303,7 +289,6 @@ export default function UploadProgress() {
                     </AnimatePresence>
                   </IconBtn>
 
-                  {}
                   <AnimatePresence initial={false}>
                     {!isDone && (
                       <motion.div
@@ -314,7 +299,6 @@ export default function UploadProgress() {
                         transition={SPRING}
                         className="flex items-center"
                       >
-                        {}
                         <IconBtn onClick={handleStop} bg={btnBg} color={btnColor}>
                           <X size={15} weight="regular" />
                         </IconBtn>
@@ -324,7 +308,6 @@ export default function UploadProgress() {
                 </div>
               </div>
 
-              {}
               <AnimatePresence initial={false}>
                 {expanded && (
                   <motion.div
@@ -397,7 +380,6 @@ export default function UploadProgress() {
                 )}
               </AnimatePresence>
 
-              {}
               <AnimatePresence initial={false}>
                 {!expanded && (
                   <motion.div

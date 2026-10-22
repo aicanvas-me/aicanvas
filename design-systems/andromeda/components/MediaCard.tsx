@@ -1,12 +1,3 @@
-// ============================================================================
-// MEDIACARD
-// An image-backed content tile for routines, channels, and featured items where
-// a strong visual preview needs concise identity, metadata, and one clear action.
-//
-// Props provide the image, code, title, and metadata; select play, CTA, or no
-// action; control play state and action handling; and size or style the card.
-// ============================================================================
-
 'use client';
 
 import { forwardRef } from 'react';
@@ -53,7 +44,6 @@ type MediaCardOwnProps = {
 
 type MediaCardProps = MediaCardOwnProps & Omit<ComponentPropsWithoutRef<'div'>, keyof MediaCardOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<MediaCardProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(function MediaCard(
   {
     image = DEFAULT_IMAGE,
@@ -81,9 +71,6 @@ export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(function Med
         onClick={(e) => { e.stopPropagation(); onAction(); }}
       />
     ) : action === 'cta' ? (
-      // Accent-filled arrow icon button, same md size as the play action, so
-      // both action treatments read as one corner control. ctaLabel becomes
-      // the accessible label since the glyph carries no visible text.
       <IconButton
         variant="default"
         size="md"
@@ -98,8 +85,6 @@ export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(function Med
       ref={ref}
       markers={false}
       className={cn('andromeda-media-card', className)}
-      // The whole card is the action target when there is one: clicking
-      // anywhere triggers onAction (the play/CTA), not just the corner button.
       onClick={action !== 'none' ? onAction : undefined}
       style={{
         ...andromedaVars(),
@@ -139,9 +124,7 @@ export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(function Med
         style={{
           position: 'absolute',
           inset: 0,
-          // The photo is the ground here, not the theme: the scrim and the ink on
-          // top of it stay dark-theme literals in both themes so titles never
-          // paint dark-on-dark over an image.
+          // Dark literals on purpose: the scrim and text sit on the photo in both themes.
           background: `linear-gradient(180deg, transparent 0%, transparent 55%, ${tokens.color.surface.alpha} 100%)`,
           pointerEvents: 'none',
         }}
@@ -199,9 +182,6 @@ export const MediaCard = forwardRef<HTMLDivElement, MediaCardProps>(function Med
         {actionElement}
       </div>
 
-      {/* Hover zoom on the image only (the card frame + text hold still) — the
-          overflow:hidden root clips the scaled photo. Held steady under
-          prefers-reduced-motion. */}
       <style>{`
         .andromeda-media-card:hover .andromeda-media-card-image {
           transform: scale(1.12);

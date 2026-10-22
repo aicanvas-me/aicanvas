@@ -1,10 +1,3 @@
-// ============================================================
-// COMPONENT: Textarea
-// shadcn/ui-aligned API: forwardRef, label, error, ...props.
-// Multi-line counterpart to <Input>. Same border / focus / error
-// behavior; resizes vertically; min-height controlled via `rows`.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useId } from 'react';
@@ -66,7 +59,6 @@ type TextareaOwnProps = {
 export type TextareaProps = TextareaOwnProps &
   Omit<ComponentPropsWithoutRef<'textarea'>, keyof TextareaOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<TextareaProps & React.TextareaHTMLAttributes<HTMLTextAreaElement>>} */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function Textarea(
   {
     className,

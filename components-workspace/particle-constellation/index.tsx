@@ -1,9 +1,5 @@
 'use client'
 
-/**
- * Renders a radial canvas constellation with bowed connecting strands.
- * Pointer proximity repels nodes and bends nearby connections.
- */
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
@@ -13,38 +9,27 @@ const N_RADIALS = 24
 const N_RINGS   = 14
 
 
-// tune: raise to increase idle node drift
-const SWAY_AMP  = 3.5     
-// tune: raise to speed idle drift
-const SWAY_SPD  = 0.00045 
+const SWAY_AMP  = 3.5
+const SWAY_SPD  = 0.00045
 
 
-// tune: raise to deepen resting strand curves
-const BOW_AMP   = 6       
-// tune: raise to speed strand oscillation
-const BOW_SPD   = 0.55    
+const BOW_AMP   = 6
+const BOW_SPD   = 0.55
 
 
-// tune: raise to widen node repulsion
-const NODE_PUSH_R   = 90  
-// tune: raise to strengthen node repulsion
-const NODE_PUSH_STR = 3.2 
-// tune: raise to quicken the spring return
-const SPRING_K      = 0.07 
-// tune: lower to reduce retained velocity
-const SPRING_DAMP   = 0.84 
+const NODE_PUSH_R   = 90
+const NODE_PUSH_STR = 3.2
+const SPRING_K      = 0.07
+const SPRING_DAMP   = 0.84
 
 
-// tune: raise to widen strand bending
-const PUSH_RADIUS = 280   
-// tune: raise to increase strand displacement
-const PUSH_MAX    = 18    
+const PUSH_RADIUS = 280
+const PUSH_MAX    = 18
 
 
 interface WebNode {
   bx: number; by: number
-  phase: number       
-  
+  phase: number
   sx: number; sy: number
   svx: number; svy: number
 }
@@ -53,10 +38,9 @@ interface Strand {
   a: number; b: number
   kind: 'radial' | 'ring'
   ring: number
-  
-  bowPhase: number    
-  bowPerpX: number    
-  bowPerpY: number    
+  bowPhase: number
+  bowPerpX: number
+  bowPerpY: number
 }
 
 
@@ -67,7 +51,6 @@ function buildWeb(W: number, H: number): { nodes: WebNode[]; strands: Strand[] }
 
   const nodes: WebNode[] = []
 
-  
   nodes.push({ bx: cx, by: cy, phase: 0, sx: 0, sy: 0, svx: 0, svy: 0 })
 
   for (let r = 1; r <= N_RINGS; r++) {
@@ -90,7 +73,6 @@ function buildWeb(W: number, H: number): { nodes: WebNode[]; strands: Strand[] }
     const na = nodes[a], nb = nodes[b]
     const dx = nb.bx - na.bx, dy = nb.by - na.by
     const len = Math.sqrt(dx * dx + dy * dy) || 1
-    
     strands.push({
       a, b, kind, ring,
       bowPhase: (na.phase + nb.phase) / 2,
@@ -99,7 +81,6 @@ function buildWeb(W: number, H: number): { nodes: WebNode[]; strands: Strand[] }
     })
   }
 
-  
   for (let s = 0; s < N_RADIALS; s++) {
     addStrand(0, 1 + s, 'radial', 1)
     for (let r = 1; r < N_RINGS; r++) {
@@ -109,7 +90,6 @@ function buildWeb(W: number, H: number): { nodes: WebNode[]; strands: Strand[] }
     }
   }
 
-  
   for (let r = 1; r <= N_RINGS; r++) {
     for (let s = 0; s < N_RADIALS; s++) {
       const ai = 1 + (r - 1) * N_RADIALS + s
@@ -138,7 +118,6 @@ export default function ParticleConstellation() {
   const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
   const isDarkRef = useRef(typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
 
-  
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -151,7 +130,6 @@ export default function ParticleConstellation() {
     return () => mo.disconnect()
   }, [])
 
-  
   useIsomorphicLayoutEffect(() => {
     const canvas    = canvasRef.current
     const container = containerRef.current
@@ -198,13 +176,10 @@ export default function ParticleConstellation() {
       const W = container!.clientWidth
       const H = container!.clientHeight
 
-      
       for (const n of web.nodes) {
-        
         const swayX = n.bx + Math.sin(time * 1.1 + n.phase)       * SWAY_AMP
         const swayY = n.by + Math.cos(time * 0.9 + n.phase * 1.4) * SWAY_AMP
 
-        
         if (mouse) {
           const liveX = swayX + n.sx
           const liveY = swayY + n.sy
@@ -218,7 +193,6 @@ export default function ParticleConstellation() {
           }
         }
 
-        
         n.svx += -n.sx * SPRING_K
         n.svy += -n.sy * SPRING_K
         n.svx *= SPRING_DAMP
@@ -227,13 +201,11 @@ export default function ParticleConstellation() {
         n.sy  += n.svy
       }
 
-      
       const pos = web.nodes.map(n => ({
         x: n.bx + Math.sin(time * 1.1 + n.phase)       * SWAY_AMP + n.sx,
         y: n.by + Math.cos(time * 0.9 + n.phase * 1.4) * SWAY_AMP + n.sy,
       }))
 
-      
       const dark = isDarkRef.current
       const fg   = dark ? '255,255,255' : '28,25,22'
 
@@ -250,12 +222,10 @@ export default function ParticleConstellation() {
         const mx = (pa.x + pb.x) / 2
         const my = (pa.y + pb.y) / 2
 
-        
         const bow    = BOW_AMP * Math.sin(time * BOW_SPD * 60 + s.bowPhase)
         let cpx = mx + s.bowPerpX * bow
         let cpy = my + s.bowPerpY * bow
 
-        
         if (mouse) {
           const cdx    = mouse.x - mx
           const cdy    = mouse.y - my
@@ -269,7 +239,6 @@ export default function ParticleConstellation() {
           }
         }
 
-        
         const depthFade = 1 - (s.ring - 1) / (N_RINGS + 2)
         let alpha = s.kind === 'radial' ? 0.42 * depthFade : 0.20 * depthFade
 
@@ -288,7 +257,6 @@ export default function ParticleConstellation() {
         ctx.stroke()
       }
 
-      
       for (let i = 0; i < pos.length; i++) {
         const p = pos[i]
         let alpha = i === 0 ? 0.45 : 0.16

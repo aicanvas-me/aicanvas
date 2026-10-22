@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Displays a collapsible glass navigation sidebar with icon tiles.
- * Expanding reveals labels, while the collapsed state exposes hover tooltips.
- */
 
 import { useState, useEffect } from 'react'
 import { motion, useSpring, AnimatePresence } from 'framer-motion'
@@ -24,10 +20,10 @@ import {
 const COLLAPSED_WIDTH = 64
 const EXPANDED_WIDTH = 220
 
-// tune: change to resize the icon tiles
 const ICON_TILE_SIZE = 44
 const TOGGLE_BUTTON_HEIGHT = 36
 
+// 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const NAV_ITEMS = [
   { icon: House,           label: 'Home',          color: '#3A86FF' },
   { icon: MagnifyingGlass, label: 'Search',        color: '#B388FF' },
@@ -72,7 +68,6 @@ function NavItemRow({
 
   return (
     <div className="relative flex w-full items-center">
-      {}
       <AnimatePresence>
         {!isOpen && hovered && (
           <motion.div
@@ -89,7 +84,6 @@ function NavItemRow({
         )}
       </AnimatePresence>
 
-      {}
       <motion.button
         onClick={onActivate}
         onMouseEnter={() => setHovered(true)}
@@ -99,13 +93,11 @@ function NavItemRow({
           x: hovered ? (isOpen ? 0 : 3) : 0,
         }}
         whileTap={{ scale: 0.90 }}
-        // tune: raise stiffness to sharpen item motion
         transition={{ type: 'spring', stiffness: 320, damping: 20 }}
         className="flex w-full items-center gap-3 rounded-xl cursor-pointer justify-start"
         style={{ background: 'transparent', border: 'none', outline: 'none' }}
         aria-label={item.label}
       >
-        {}
         <motion.div
           className="flex shrink-0 items-center justify-center rounded-xl"
           style={{
@@ -119,7 +111,6 @@ function NavItemRow({
           <Icon size={20} weight="regular" style={{ color: item.color }} />
         </motion.div>
 
-        {}
         <AnimatePresence>
           {isOpen && (
             <motion.span
@@ -157,34 +148,30 @@ export default function GlassSidebar() {
 
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
-      {}
       <img
         src="https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20pink%20Flower%20%20(1).png"
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
 
-      {}
       <div style={{ width: EXPANDED_WIDTH }} className="flex items-center justify-start">
-        {}
         <motion.div
           style={{
             width: widthSpring,
             ...GLASS_STYLE,
           }}
+          // No opacity in initial: below 1 it hides the blur until the fade ends.
           initial={{ x: -20 }}
           animate={{ x: 0 }}
-          // tune: raise the delay to postpone the sidebar entrance
           transition={{ type: 'spring', stiffness: 200, damping: 22, delay: 0.1 }}
           className="relative isolate flex h-auto flex-col items-center gap-2 overflow-visible rounded-3xl px-2.5 py-3"
         >
-          {}
+          {/* z-[-1] relies on the panel's isolate; without it the blur falls behind the page. */}
           <div
             className="pointer-events-none absolute inset-0 z-[-1] rounded-3xl"
             style={GLASS_BLUR_STYLE}
           />
 
-          {}
           <div className="flex w-full flex-col gap-1.5">
             {NAV_ITEMS.map((item, i) => (
               <NavItemRow
@@ -198,13 +185,11 @@ export default function GlassSidebar() {
             ))}
           </div>
 
-          {}
           <div
             className="my-1 w-full"
             style={{ height: 1, background: 'rgba(255,255,255,0.1)' }}
           />
 
-          {}
           <div className={`flex w-full items-center ${isOpen ? 'justify-start px-1' : 'justify-center'}`}>
             <motion.button
               onClick={toggle}
@@ -223,7 +208,6 @@ export default function GlassSidebar() {
               }}
               aria-label={isOpen ? 'Collapse sidebar' : 'Expand sidebar'}
             >
-              {}
               <AnimatePresence mode="wait" initial={false}>
                 {isOpen ? (
                   <motion.span

@@ -2,11 +2,6 @@
 
 // npm install framer-motion
 
-/**
- * Displays layered warning stripes with repeating text.
- * Hovering jitters the stripes, while clicking briefly increases the motion.
- */
-
 import { useCallback, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 

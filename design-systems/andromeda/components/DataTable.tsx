@@ -1,13 +1,3 @@
-// ============================================================================
-// DATATABLE
-// A configuration-driven, dense data grid for rendering array data with stable
-// column priority, row selection, and a compact mobile detail affordance. Use it
-// when the data model is regular enough to describe with columns and rows.
-//
-// Props: columns configure content and responsive priority; rows provide data;
-// getRowKey identifies rows; onRowClick and selectedRowKey control interaction;
-// className and style customize the root wrapper.
-// ============================================================================
 'use client';
 
 import { forwardRef } from 'react';
@@ -22,9 +12,6 @@ import { IconButton } from './IconButton';
 import { Tooltip } from './Tooltip';
 import { Info } from '@phosphor-icons/react';
 
-// Rows are plain objects the columns read by key; the values a column can pull
-// out of one are whatever React can render. A column without `render` reads its
-// key straight off the row, so the row values have to be renderable.
 type RowRecord = Record<string, ReactNode>;
 
 type DataTableColumn<Row extends RowRecord = RowRecord> = {
@@ -32,14 +19,10 @@ type DataTableColumn<Row extends RowRecord = RowRecord> = {
   header: string;
   width?: string | number;
   align?: 'left' | 'center' | 'right';
-  // 'md' is the only breakpoint honoured, and the fold targets are
-  // 'info' | 'meta' | 'none'; both stay open strings so a caller can build its
-  // column list as a plain array without pinning every literal.
+  // Only hideBelow 'md' and folds 'info' | 'meta' | 'none' work; other values are ignored.
   hideBelow?: string;
   fold?: string;
-  // Arrow-function property syntax on the row callbacks, not method syntax:
-  // methods are compared bivariantly, so a column reading fields the rows do
-  // not have would type-check and then crash. Properties are checked strictly.
+  // Not method syntax: methods are checked bivariantly, so wrong row fields type-check.
   infoValue?: (row: Row) => ReactNode;
   primary?: boolean;
   color?: string | ((row: Row) => string);
@@ -108,16 +91,11 @@ const DEFAULT_COLUMNS: DataTableColumn[] = [
   },
 ];
 
-// Rows are keyed by their `id`; pass getRowKey when the rows carry no id.
 const DEFAULT_GET_ROW_KEY = (row: RowRecord) => row.id as string | number;
-// var() fallback for the inset divider height, the same 1px as tokens.border.thin.
 const HAIRLINE_WIDTH = '1px';
-// Reduced motion keeps the same hidden start, so server and client markup
-// match, and lands every row at once with no fade and no stagger.
 const STILL_CONTAINER: Variants = { hidden: {}, visible: {} };
+// Same hidden start with reduced motion, so server and client HTML match.
 const STILL_ROW: Variants = { ...rowItem, visible: { opacity: 1, transition: { duration: 0 } } };
-// Each color stop carries its own var() so the rule follows the surface it sits
-// on; a baked literal here would stay near-black on a light ground.
 const DIVIDER = `var(--andromeda-border-subtle, ${tokens.color.border.subtle})`;
 const ROW_INSET = () =>
   `linear-gradient(to right, transparent, transparent ${tokens.spacing[3]}, ${DIVIDER} ${tokens.spacing[3]}, ${DIVIDER} calc(100% - ${tokens.spacing[3]}), transparent calc(100% - ${tokens.spacing[3]}))`;
@@ -127,9 +105,7 @@ const renderColumnValue = (column: DataTableColumn, row: RowRecord): ReactNode =
   return value === null || value === undefined || value === '' ? '—' : value;
 };
 
-// Textual value for a mobile fold (the primary column's sub-line or the info
-// tooltip). Prefers `infoValue` (a text-returning fn) over the raw field, and
-// deliberately NOT `render` — a visual cell (e.g. a meter) reads as text here.
+// Never column.render: a fold needs text, and the meta line joins values as strings.
 const foldText = (column: DataTableColumn, row: RowRecord): ReactNode => {
   if (typeof column.infoValue === 'function') return column.infoValue(row);
   const value = row?.[column.key];
@@ -164,7 +140,6 @@ type DataTableOwnProps<Row extends RowRecord = RowRecord> = {
 type DataTableProps<Row extends RowRecord = RowRecord> = DataTableOwnProps<Row> &
   Omit<ComponentPropsWithoutRef<'div'>, keyof DataTableOwnProps<Row>>;
 
-/** @type {React.ForwardRefExoticComponent<DataTableProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function DataTable(
   {
     columns = DEFAULT_COLUMNS,
@@ -180,8 +155,6 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
 ) {
   const reducedMotion = useReducedMotion();
   const interactive = typeof onRowClick === 'function';
-  // Hidden-on-mobile columns split by fold target: 'meta' → the primary
-  // column's mobile sub-line; anything else (default 'info') → the info tooltip.
   const metaColumns = columns.filter((c) => c.hideBelow === 'md' && c.fold === 'meta');
   const infoColumns = columns.filter((c) => c.hideBelow === 'md' && c.fold !== 'meta' && c.fold !== 'none');
 
@@ -340,9 +313,7 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
                   fontFamily: tokens.typography.fontMono,
                   fontSize: tokens.typography.size.xs,
                   lineHeight: 1,
-                  // Only the column HEADER is uppercased (below); folded values
-                  // keep their own case (the Tooltip container uppercases by
-                  // default, which would mangle mixed-case data).
+                  // Tooltip uppercases its label; 'none' keeps folded values in their own case.
                   textTransform: 'none',
                 }}
               >
@@ -443,16 +414,13 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
                       overflow: 'visible',
                     }}
                   >
-                    {/* Tooltip accepts any renderable label; the fold list is a node. */}
                     <Tooltip label={infoLabel} position="top">
                       <IconButton
                         variant="ghost"
                         size="sm"
                         icon={Info}
                         aria-label="More details"
-                        // A tap does not focus a button in iOS Safari, and the
-                        // Tooltip opens on focus: focusing it here opens the
-                        // details on touch too. Tapping elsewhere closes them.
+                        // iOS Safari does not focus a tapped button, and the Tooltip opens on focus.
                         onClick={(event) => {
                           event.stopPropagation();
                           event.currentTarget.focus();
@@ -472,8 +440,6 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
 }) as (<Row extends RowRecord>(
   props: DataTableProps<Row> & { ref?: Ref<HTMLDivElement> },
 ) => ReactElement) & { displayName?: string };
-// forwardRef erases the row type parameter, so the call signature is restored
-// with one cast at the export. The body works in RowRecord; this is what ties a
-// column's callbacks to the rows the caller actually passes.
+// The cast above restores the Row generic forwardRef erases, or columns go unchecked.
 
 DataTable.displayName = 'DataTable';

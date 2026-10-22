@@ -2,10 +2,6 @@
 
 // npm install next
 // font: Anton
-/**
- * Displays text arranged around a responsive elliptical orbit.
- * Pointer movement shifts the ring perspective and its central marker.
- */
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Anton } from 'next/font/google'
@@ -44,7 +40,6 @@ function useTheme(ref: React.RefObject<HTMLElement | null>) {
   return { theme }
 }
 
-// customize: replace the orbit phrase below
 const BASE_TEXT = 'KEEP MOVING • KEEP MOVING • '
 const FULL_TEXT = BASE_TEXT + BASE_TEXT
 const LETTERS = FULL_TEXT.split('')

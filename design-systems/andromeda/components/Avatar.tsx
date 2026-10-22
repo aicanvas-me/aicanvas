@@ -1,11 +1,3 @@
-// ============================================================
-// COMPONENT: Avatar
-// shadcn/ui-aligned API: variant/size, cva, forwardRef.
-// Sizes: sm | md | lg
-// Initials, monospace, square (radius.none).
-// Optional status dot: online | caution | fault | offline
-// ============================================================
-
 'use client';
 
 import { forwardRef, useState } from 'react';
@@ -95,7 +87,6 @@ type AvatarOwnProps = {
 
 export type AvatarProps = AvatarOwnProps & Omit<ComponentPropsWithoutRef<'div'>, keyof AvatarOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<AvatarProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const Avatar = forwardRef<HTMLDivElement, AvatarProps>(function Avatar(
   { className, name = '?', src, size = 'md', status, style, ...props },
   ref,

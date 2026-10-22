@@ -2,11 +2,6 @@
 
 // npm install framer-motion three
 
-/**
- * Renders a shader-driven orb that tracks pointer movement with animated eyes.
- * Idle gaze and blink cycles continue when the pointer leaves the component.
- */
-
 import { useEffect, useRef, useState } from 'react'
 import { motion, useMotionValue, useSpring } from 'framer-motion'
 import * as THREE from 'three'
@@ -300,7 +295,6 @@ const PALETTE: Record<'dark' | 'light', Palette> = {
   },
 }
 
-// tune: adjust coordinates and durations to change the idle gaze pattern
 const LOOK_SEQUENCE: { x: number; y: number; dur: number }[] = [
   { x: -0.65, y:  0.00, dur: 2400 },
   { x:  0.32, y:  0.00, dur: 2800 },
@@ -346,11 +340,7 @@ export default function CuriousAi() {
     const camera = new THREE.PerspectiveCamera(38, W / H, 0.1, 100)
     camera.position.z = 4.4
 
-    // Throws outright when the browser cannot hand back a WebGL context:
-    // hardware acceleration switched off, an older or virtualised machine, or
-    // too many live contexts on one page. Thrown from inside an effect it takes
-    // the surrounding page down with it, so an empty frame is the better
-    // failure.
+    // No WebGL: skip the orb instead of crashing the page.
     let renderer: THREE.WebGLRenderer
     try {
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
@@ -412,12 +402,10 @@ export default function CuriousAi() {
       const dt = Math.min(clock.getDelta(), 0.05)
       uniforms.uTime.value += dt
 
-      // tune: raise the response rate to sharpen alert transitions
       const ka = 1 - Math.exp(-dt * 6)
       activeRef.current += (targetRef.current - activeRef.current) * ka
       uniforms.uActive.value = activeRef.current
 
-      // tune: raise either rate to make gaze tracking more responsive
       const speed = hoverActiveRef.current ? 7 : 2.2
       const kl    = 1 - Math.exp(-dt * speed)
       const lc    = lookCurrentRef.current
@@ -427,12 +415,10 @@ export default function CuriousAi() {
 
       uniforms.uLook.value.set(lc.x, -lc.y)
 
-      // tune: raise the lean range to increase orb travel
       const lean = 0.12 + activeRef.current * 0.06
       mesh.position.x += (lc.x * lean - mesh.position.x) * kl
       mesh.position.y += (-lc.y * lean - mesh.position.y) * kl
 
-      // tune: raise the range factor to increase eye travel
       const range = sizeRef.current.w * 0.18
       eyeX.set(lc.x * range)
       eyeY.set(lc.y * range)
@@ -450,9 +436,7 @@ export default function CuriousAi() {
       ro.disconnect()
       geo.dispose()
       mat.dispose()
-      // Hand the GPU context back explicitly: dispose() frees the scene but
-      // leaves the context alive, and a browser grants only about sixteen per
-      // page, so remounting a few times exhausts them.
+      // dispose() keeps the WebGL context; release it or remounts hit the browser limit.
       try {
         renderer.forceContextLoss()
       } catch {}
@@ -477,7 +461,6 @@ export default function CuriousAi() {
       const ny      = Math.max(-1, Math.min(1, dy / radius))
       const dist    = Math.sqrt(nx * nx + ny * ny)
 
-      // tune: raise the threshold to enlarge the focused pointer region
       const onOrb = dist < 0.62
 
       hoverActiveRef.current = true
@@ -487,7 +470,6 @@ export default function CuriousAi() {
         setOpen(0.32)
       } else {
         targetRef.current = 0.35
-        // tune: raise the multiplier to increase off-orb eye tracking
         lookTargetRef.current = { x: nx * 0.40, y: ny * 0.40 }
         setOpen(0.70)
       }
@@ -510,7 +492,6 @@ export default function CuriousAi() {
       update(e.clientX, e.clientY)
     }
     function onUp() {
-      // tune: raise the delay to extend the touch-release grace period
       window.setTimeout(() => {
         if (!container?.matches(':hover')) onLeave()
       }, 500)
@@ -554,7 +535,6 @@ export default function CuriousAi() {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     let t: number
     function schedule() {
-      // tune: raise either bound to reduce blink frequency
       const wait = 3800 + Math.random() * 3200
       t = window.setTimeout(() => {
         setBlinkAt((v) => v + 1)
@@ -580,7 +560,6 @@ export default function CuriousAi() {
       >
         <div ref={canvasRef} className="absolute inset-0" />
 
-        {}
         <motion.div
           className="pointer-events-none absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-between"
           style={{ x: sx, y: sy, width: '11%', height: '15%' }}
@@ -603,9 +582,7 @@ function Eye({
   return (
     <motion.div
       style={{
-        // tune: raise to widen the eyes
         width: '32%',
-        // tune: raise to lengthen the eyes
         height: '100%',
         background: palette.eye,
         borderRadius: 9999,

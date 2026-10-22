@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Renders a horizontally scrollable glass dock of labeled icons.
- * Nearby icons magnify and lift as the pointer moves across the dock.
- */
 
 import { useRef } from 'react'
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
@@ -20,6 +16,7 @@ import {
   Cloud,
 } from '@phosphor-icons/react'
 
+// 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const DOCK_ITEMS = [
   { icon: Sun,       color: '#FFBE0B', label: 'Energy' },
   { icon: Heart,     color: '#FF5C8A', label: 'Love' },
@@ -53,6 +50,7 @@ function DockItem({
 
   const distance = useTransform(mouseX, (mx: number) => {
     const el = ref.current
+    // 200 must stay above MAG_RANGE, or every icon rests slightly magnified.
     if (!el || mx < 0) return 200
     const rect = el.getBoundingClientRect()
     const center = rect.left + rect.width / 2
@@ -71,7 +69,6 @@ function DockItem({
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 200, damping: 18, delay: index * 0.04 }}
     >
-      {}
       <motion.div
         className="pointer-events-none absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium text-white/90 opacity-0 group-hover:opacity-100"
         style={{
@@ -85,7 +82,6 @@ function DockItem({
         {label}
       </motion.div>
 
-      {}
       <motion.div
         style={{
           width: size,
@@ -109,17 +105,16 @@ export default function GlassDock() {
 
   return (
     <div className="relative flex h-full w-full items-center justify-end overflow-hidden bg-[#1A1A19] pb-8">
-      {}
       <img
         src="https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866"
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
 
-      {}
       <div className="flex w-full overflow-x-auto py-12 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {}
+        {/* mx-auto, not justify-center: centered overflow can't scroll to its left edge. */}
         <motion.div
+          // No opacity in initial: below 1 it hides the blur until the fade ends.
           initial={{ y: 50 }}
           animate={{ y: 0 }}
           transition={{ type: 'spring', stiffness: 180, damping: 20 }}
@@ -132,7 +127,7 @@ export default function GlassDock() {
             boxShadow: '0 8px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
           }}
         >
-          {}
+          {/* z-[-1] relies on the dock's isolate; without it the blur falls behind the page. */}
           <div
             className="pointer-events-none absolute inset-0 z-[-1] rounded-3xl"
             style={{

@@ -1,15 +1,3 @@
-// ============================================================
-// COMPONENT: Slider
-// shadcn/ui-aligned API: forwardRef, controlled (`value`) /
-// uncontrolled (`defaultValue`), onValueChange. Single-value
-// horizontal range slider with a sharp rectangular thumb and
-// a glowing accent fill — sci-fi telemetry vibe.
-//
-// Built without a native <input type="range"> so the chrome
-// is fully consistent across browsers. ARIA-compliant via
-// role="slider" + aria-valuenow/min/max.
-// ============================================================
-
 'use client';
 
 import {
@@ -67,7 +55,6 @@ type SliderProps = Omit<ComponentPropsWithoutRef<'div'>, 'onChange' | 'defaultVa
   disabled?: boolean;
 };
 
-/** @type {React.ForwardRefExoticComponent<SliderProps & Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'>>} */
 export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
   {
     className,
@@ -119,7 +106,6 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
     [max, min, value],
   );
 
-  // ── Pointer drag (mouse + touch unified) ─────────────────────────────────
   useEffect(() => {
     if (disabled) return undefined;
 
@@ -223,7 +209,6 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
         </div>
       ) : null}
 
-      {/* Track */}
       <div
         ref={trackRef}
         id={id}
@@ -246,7 +231,6 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
           'focus-visible:[--slider-thumb-shadow:0_0_0_1px_var(--andromeda-accent-100),0_0_10px_var(--andromeda-accent-500)]',
         )}
       >
-        {/* Track line */}
         <div
           className={cn(
             'absolute left-0 right-0 top-1/2 -translate-y-1/2',
@@ -255,8 +239,6 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
             'border-[color:var(--andromeda-border-subtle)]',
           )}
         />
-        {/* Filled portion — the accent gradient IS the measurement; no resting
-            glow (glow is reserved for the focused/active thumb, below). */}
         <div
           className={cn(
             'absolute left-0 top-1/2 -translate-y-1/2 h-[3px]',
@@ -264,7 +246,6 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
           )}
           style={{ width: `${percent}%` }}
         />
-        {/* Thumb */}
         <div
           aria-hidden="true"
           className={cn(
@@ -272,7 +253,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
             'w-[8px] h-[16px]',
             'bg-[color:var(--andromeda-accent-300)]',
             'border-[length:var(--andromeda-border-width,1px)] border-solid border-[color:var(--andromeda-accent-100)]',
-            // No resting glow; the focus-visible state sets --slider-thumb-shadow.
+            // The track's focus-visible class sets --slider-thumb-shadow; keep both.
             'shadow-[var(--slider-thumb-shadow,none)]',
             'transition-[box-shadow,transform] [transition-duration:var(--andromeda-duration-normal)] [transition-timing-function:var(--andromeda-easing-out)]',
             'hover:scale-[1.25]',
@@ -281,15 +262,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
         />
       </div>
 
-      {/* Touch-target growth (the Andromeda responsive rules). Mirror Button/IconButton:
-          a centered transparent ::before overlay grows the *hit area* toward
-          spacing[10] (40px) on coarse pointers with ZERO layout impact — the
-          track keeps its 18px box, so neither the desktop visual nor the
-          surrounding row height inflate. The track owns onPointerDown and the
-          ::before is part of it, so taps in the enlarged zone still set the
-          value (the horizontal getBoundingClientRect mapping is unaffected by
-          the taller overlay). Growing the track's own height instead would
-          inflate the wrapper — the forbidden technique (the Andromeda responsive rules). */}
+      {/* Touch screens: an invisible ::before grows the tap area to 40px tall. */}
       <style>{`
         ${mq.coarse} {
           .andromeda-slider-track::before {

@@ -12,6 +12,7 @@ export const badge: MatrixSpec = {
     { label: 'Accent', props: { variant: 'accent' } },
     { label: 'Warning', props: { variant: 'warning' } },
     { label: 'Fault', props: { variant: 'fault' } },
+    { label: 'Success', props: { variant: 'success' } },
     { label: 'Subtle', props: { variant: 'subtle' } },
     { label: 'Outline', props: { variant: 'outline' } },
     { label: 'Icon', props: { variant: 'accent', icon: Check } },

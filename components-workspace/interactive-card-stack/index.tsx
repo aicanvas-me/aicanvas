@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Displays a responsive stack of bird cards with drag, tap, and keyboard cycling.
- * The focused card can expose an optional external link.
- */
 
 import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
 import { motion, useReducedMotion, type PanInfo } from 'framer-motion'
@@ -61,7 +57,6 @@ const CARDS: Card[] = [
   },
 ]
 
-// tune: adjust the slot tables to change desktop and mobile spread
 
 const SLOTS_DESKTOP: Slot[] = [
   { x:    0, y:   0, rotate:  1.5, scale: 1.00, zIndex: 50 },
@@ -145,6 +140,7 @@ const OpenChip = (
 
 
 export default function InteractiveCardStack() {
+  // Must hold exactly the CARDS ids, and each SLOTS table needs a row per card.
   const [order, setOrder] = useState<number[]>([0, 1, 2, 3, 4])
   const [mounted, setMounted] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
@@ -187,6 +183,7 @@ export default function InteractiveCardStack() {
     const handler = (event: KeyboardEvent) => {
       if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return
       const root = containerRef.current
+      // Window listener: without this focus check it steals arrow keys from the whole page.
       if (!root || !root.contains(document.activeElement)) return
       event.preventDefault()
       step(event.key === 'ArrowRight' ? 1 : -1)
@@ -212,11 +209,11 @@ export default function InteractiveCardStack() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-[#E8E8DF] px-4 dark:bg-[#1A1A19]">
       <div ref={containerRef} className="relative flex w-full max-w-4xl flex-col items-center gap-10 py-12">
-        {}
         <div
           role="group"
           aria-label="Interactive card stack"
           aria-describedby="ics-hint"
+          // overflow-hidden: without it the scattered cards scroll the page sideways on phones.
           className="relative flex w-full select-none items-center justify-center overflow-hidden"
           style={{ perspective: '1400px', height: 'clamp(320px, 44vw, 440px)' }}
         >
@@ -292,7 +289,6 @@ export default function InteractiveCardStack() {
                 transition={transition}
                 whileTap={isFocus ? { cursor: 'grabbing' } : undefined}
               >
-                {}
                 <motion.div
                   className="relative flex w-full flex-col rounded-[18px] ring-1 ring-black/[0.08] dark:ring-white/[0.12]"
                   style={{ backgroundColor: '#FFFFFF', padding: '10px', boxShadow: isFocus ? SHADOW_FOCUS : SHADOW_REST }}
@@ -303,7 +299,6 @@ export default function InteractiveCardStack() {
                       : { duration: 7 + card.id * 0.6, repeat: Infinity, ease: 'easeInOut' }
                   }
                 >
-                  {}
                   <span
                     aria-hidden
                     className="pointer-events-none absolute inset-0 rounded-[18px] dark:bg-[#F5F5F0]"
@@ -313,7 +308,6 @@ export default function InteractiveCardStack() {
                     <div style={{ position: 'relative', padding: '14px 12px 8px 12px' }}>
                       <p style={TITLE_STYLE}>{card.title}</p>
 
-                      {/* customize: set href on a card to enable the open link */}
                       {isFocus &&
                         (card.href ? (
                           <motion.a
@@ -350,7 +344,6 @@ export default function InteractiveCardStack() {
                     </div>
                   )}
 
-                  {}
                   <div
                     className={`relative w-full overflow-hidden ${isLandscape ? 'aspect-[16/10]' : 'aspect-[4/5]'}`}
                     style={{ borderRadius: 10 }}
@@ -370,12 +363,10 @@ export default function InteractiveCardStack() {
           })}
         </div>
 
-        {}
         <p className="sr-only" aria-live="polite">
           {frontTitle ? `${frontTitle} in focus` : ''}
         </p>
 
-        {}
         <div className="flex flex-col items-center gap-3">
           <div className="flex items-center gap-1.5">
             {CARDS.map((card) => {
@@ -388,6 +379,7 @@ export default function InteractiveCardStack() {
                   aria-current={isCurrent ? true : undefined}
                   onClick={() => focusCard(card.id)}
                   className={`flex items-center justify-center rounded-full outline-none ${RING}`}
+                  // 24px hit box: the visible pill alone is below the WCAG 2.5.8 target size.
                   style={{ width: 24, height: 24 }}
                 >
                   <motion.span
