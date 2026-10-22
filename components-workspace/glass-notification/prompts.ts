@@ -36,9 +36,10 @@ Root: relative flex h-full w-full items-center justify-center overflow-hidden bg
 
 Header (mb-1 flex justify-between px-1): left group (flex items-center gap-2): Bell size=20 weight="regular" text-white/40 + <span className="text-sm font-semibold text-white/60">Notifications</span> + counter motion.span (layout, h-4 min-w-4 rounded-full px-1 text-[9px] font-semibold text-white, bg 'rgba(255,107,245,0.4)' border '1px solid rgba(255,107,245,0.3)') showing notifications.length. Right: Reset motion.button (visible only when notifications.length < INITIAL.length): initial {opacity:0, scale:0.8} animate {opacity:1, scale:1}, whileHover {scale:1.05} whileTap {scale:0.95}, className "cursor-pointer text-xs font-medium text-white/30 transition-colors hover:text-white/50".
 
-Cards wrapped in <AnimatePresence mode="popLayout">. Each NotificationCard receives notification, onDismiss, index.
+Cards wrapped in <AnimatePresence mode="popLayout">. Each NotificationCard receives notification, onDismiss, index; AnimatePresence adds a ref (see below).
 
 NotificationCard (inner function component):
+- Props: notification, onDismiss, index, and ref?: Ref<HTMLDivElement> (React 19 ref as a plain prop, no forwardRef). Put ref={ref} on the root motion.div: popLayout passes a ref to its direct child to pop the exiting card out of layout; without it the gap closes only after the exit.
 - motion.div layout, drag="x", dragConstraints {left:0, right:0}, dragElastic 0.3.
 - onDragEnd(_, info): if Math.abs(info.offset.x) > 80 → onDismiss(id).
 - initial {x:60, scale:0.9}, animate {x:0, scale:1, transition:{type:'spring', stiffness:280, damping:24, delay:index*0.05}}.
@@ -55,7 +56,7 @@ NotificationCard (inner function component):
 
 Empty state: AnimatePresence containing motion.div when notifications.length===0: initial {opacity:0, scale:0.9} animate {opacity:1, scale:1} className "flex flex-col items-center gap-3 py-12". Text: <span className="text-sm text-white/60">All caught up</span>.
 
-Imports: useState from react; motion, AnimatePresence from framer-motion; Bell, ChatCircle, Heart, ShieldCheck, X, ArrowUp from @phosphor-icons/react.
+Imports: useState, type Ref from react; motion, AnimatePresence from framer-motion; Bell, ChatCircle, Heart, ShieldCheck, X, ArrowUp from @phosphor-icons/react.
 
 ## Typography
 - Font: project default sans-serif
@@ -82,9 +83,10 @@ Root: relative flex h-full w-full items-center justify-center overflow-hidden bg
 
 Header (mb-1 flex justify-between px-1): left group (flex items-center gap-2): Bell size=20 weight="regular" text-white/40 + <span className="text-sm font-semibold text-white/60">Notifications</span> + counter motion.span (layout, h-4 min-w-4 rounded-full px-1 text-[9px] font-semibold text-white, bg 'rgba(255,107,245,0.4)' border '1px solid rgba(255,107,245,0.3)') showing notifications.length. Right: Reset motion.button (visible only when notifications.length < INITIAL.length): initial {opacity:0, scale:0.8} animate {opacity:1, scale:1}, whileHover {scale:1.05} whileTap {scale:0.95}, className "cursor-pointer text-xs font-medium text-white/30 transition-colors hover:text-white/50".
 
-Cards wrapped in <AnimatePresence mode="popLayout">. Each NotificationCard receives notification, onDismiss, index.
+Cards wrapped in <AnimatePresence mode="popLayout">. Each NotificationCard receives notification, onDismiss, index; AnimatePresence adds a ref (see below).
 
 NotificationCard (inner function component):
+- Props: notification, onDismiss, index, and ref?: Ref<HTMLDivElement> (React 19 ref as a plain prop, no forwardRef). Put ref={ref} on the root motion.div: popLayout passes a ref to its direct child to pop the exiting card out of layout; without it the gap closes only after the exit.
 - motion.div layout, drag="x", dragConstraints {left:0, right:0}, dragElastic 0.3.
 - onDragEnd(_, info): if Math.abs(info.offset.x) > 80 → onDismiss(id).
 - initial {x:60, scale:0.9}, animate {x:0, scale:1, transition:{type:'spring', stiffness:280, damping:24, delay:index*0.05}}.
@@ -101,7 +103,7 @@ NotificationCard (inner function component):
 
 Empty state: AnimatePresence containing motion.div when notifications.length===0: initial {opacity:0, scale:0.9} animate {opacity:1, scale:1} className "flex flex-col items-center gap-3 py-12". Text: <span className="text-sm text-white/60">All caught up</span>.
 
-Imports: useState from react; motion, AnimatePresence from framer-motion; Bell, ChatCircle, Heart, ShieldCheck, X, ArrowUp from @phosphor-icons/react.
+Imports: useState, type Ref from react; motion, AnimatePresence from framer-motion; Bell, ChatCircle, Heart, ShieldCheck, X, ArrowUp from @phosphor-icons/react.
 
 ## Typography
 - Font: project default sans-serif
@@ -128,9 +130,10 @@ Root: relative flex h-full w-full items-center justify-center overflow-hidden bg
 
 Header (mb-1 flex justify-between px-1): left group (flex items-center gap-2): Bell size=20 weight="regular" text-white/40 + <span className="text-sm font-semibold text-white/60">Notifications</span> + counter motion.span (layout, h-4 min-w-4 rounded-full px-1 text-[9px] font-semibold text-white, bg 'rgba(255,107,245,0.4)' border '1px solid rgba(255,107,245,0.3)') showing notifications.length. Right: Reset motion.button (visible only when notifications.length < INITIAL.length): initial {opacity:0, scale:0.8} animate {opacity:1, scale:1}, whileHover {scale:1.05} whileTap {scale:0.95}, className "cursor-pointer text-xs font-medium text-white/30 transition-colors hover:text-white/50".
 
-Cards wrapped in <AnimatePresence mode="popLayout">. Each NotificationCard receives notification, onDismiss, index.
+Cards wrapped in <AnimatePresence mode="popLayout">. Each NotificationCard receives notification, onDismiss, index; AnimatePresence adds a ref (see below).
 
 NotificationCard (inner function component):
+- Props: notification, onDismiss, index, and ref?: Ref<HTMLDivElement> (React 19 ref as a plain prop, no forwardRef). Put ref={ref} on the root motion.div: popLayout passes a ref to its direct child to pop the exiting card out of layout; without it the gap closes only after the exit.
 - motion.div layout, drag="x", dragConstraints {left:0, right:0}, dragElastic 0.3.
 - onDragEnd(_, info): if Math.abs(info.offset.x) > 80 → onDismiss(id).
 - initial {x:60, scale:0.9}, animate {x:0, scale:1, transition:{type:'spring', stiffness:280, damping:24, delay:index*0.05}}.
@@ -147,7 +150,7 @@ NotificationCard (inner function component):
 
 Empty state: AnimatePresence containing motion.div when notifications.length===0: initial {opacity:0, scale:0.9} animate {opacity:1, scale:1} className "flex flex-col items-center gap-3 py-12". Text: <span className="text-sm text-white/60">All caught up</span>.
 
-Imports: useState from react; motion, AnimatePresence from framer-motion; Bell, ChatCircle, Heart, ShieldCheck, X, ArrowUp from @phosphor-icons/react.
+Imports: useState, type Ref from react; motion, AnimatePresence from framer-motion; Bell, ChatCircle, Heart, ShieldCheck, X, ArrowUp from @phosphor-icons/react.
 
 ## Typography
 - Font: project default sans-serif

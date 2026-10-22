@@ -86,7 +86,7 @@ Unified pointer events on the container, no separate touch handlers needed:
 - \`onPointerMove\`: apply mode from \`e.clientY\`.
 - \`onPointerUp\` / \`onPointerLeave\` / \`onPointerCancel\`: return to rest.
 
-Set \`touchAction: 'none'\` and \`cursor: 'crosshair'\` on the container. Set \`perspective: 1400px\` and \`perspectiveOrigin: 50% 50%\` on the container for the 3D effect.
+Set \`touchAction: 'pan-y'\` (a vertical swipe scrolls the page through the component, horizontal drags still drive the warp) and \`cursor: 'crosshair'\` on the container. Set \`perspective: 1400px\` and \`perspectiveOrigin: 50% 50%\` on the container for the 3D effect.
 
 ---
 
@@ -127,7 +127,7 @@ Springs: enter \`{stiffness:280, damping:14, mass:1.8}\`, release \`{stiffness:2
 
 ## Pointer handling
 
-\`onPointerDown\` (setPointerCapture + apply mode), \`onPointerMove\` (apply mode), \`onPointerUp/Leave/Cancel\` (none). \`touchAction:'none'\`. Mode from \`clientY\` vs container midline.`,
+\`onPointerDown\` (setPointerCapture + apply mode), \`onPointerMove\` (apply mode), \`onPointerUp/Leave/Cancel\` (none). \`touchAction:'pan-y'\` (vertical swipes scroll the page, horizontal drags drive the warp). Mode from \`clientY\` vs container midline.`,
 
   V0: `Build a single-file React component called \`WildMorph\`. Install: \`framer-motion\`.
 
@@ -137,7 +137,7 @@ Springs: enter \`{stiffness:280, damping:14, mass:1.8}\`, release \`{stiffness:2
 - Detect via \`closest('[data-card-theme]')\` then html .dark class. MutationObserver for reactivity.
 
 ## Layout
-Single \`min-h-screen w-full flex items-center justify-center\` container — IS the bg + interaction zone. \`perspective: 1400px\`, \`touchAction: none\`, \`cursor: crosshair\`.
+Single \`min-h-screen w-full flex items-center justify-center\` container — IS the bg + interaction zone. \`perspective: 1400px\`, \`touchAction: pan-y\` (vertical swipes scroll the page), \`cursor: crosshair\`.
 
 ## Word
 Anton font via \`<style>\` @import. Font size \`clamp(64px, 12vw, 144px)\` from JS, resize listener. Default prop \`text='wild'\`. SVG \`<text>\` element, sized from \`getBBox()\`.

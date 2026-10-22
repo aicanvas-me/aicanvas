@@ -25,8 +25,20 @@ Background image (absolute inset-0 object-cover opacity-60 pointer-events-none):
 
 Root: div relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19].
 
+State, open and closed:
+- const [open, setOpen] = useState(true); const triggerRef = useRef<HTMLButtonElement>(null); function close() { setOpen(false) }
+- useEffect(() => { if (!open) triggerRef.current?.focus() }, [open]), so when the modal closes, focus moves to the View Upgrade trigger.
+- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger>} then {open && <Modal card>}.
+
+View Upgrade trigger (motion.button), shown only while closed: ref={triggerRef}, type="button", onClick={() => setOpen(true)}, text "View Upgrade", className "relative cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+- style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
+- initial {opacity:0, scale:0.9}, animate {opacity:1, scale:1}, exit {opacity:0, scale:0.9}
+- whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- Clicking it reopens the modal, which plays its normal entrance again.
+
 Modal card (motion.div):
 - initial {scale:0.9, y:16}, animate {scale:1, y:0}, transition {type:'spring', stiffness:350, damping:28}
+- exit {scale:0.9, y:16, opacity:0}, played when open turns false.
 - className "relative isolate w-[340px] overflow-hidden rounded-3xl"
 - style: background 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.12)', boxShadow '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
 - Separate blur layer (non-animating): pointer-events-none absolute inset-0 z-[-1] rounded-3xl, backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
@@ -36,6 +48,7 @@ Close button (motion.button): absolute right-4 top-4 z-10 h-8 w-8 rounded-full, 
 - whileHover { scale:1.15, rotate:90 }
 - whileTap {scale:0.9}, transition {duration:0.2, ease:[0.25,0.1,0.25,1]}
 - X icon size={14} weight="regular" className="text-white/60"
+- type="button", aria-label="Close", onClick={close}
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
@@ -52,11 +65,13 @@ Primary motion.button ("Upgrade Now") className "w-full cursor-pointer rounded-f
 - style: background 'linear-gradient(135deg, rgba(255,160,50,0.75), rgba(220,60,40,0.6))', border '1px solid rgba(255,180,80,0.25)', boxShadow '0 2px 16px rgba(220,80,30,0.4)'
 - whileHover {scale:1.04, background:'linear-gradient(135deg, rgba(255,180,80,0.9), rgba(235,75,45,0.8))', boxShadow:'0 4px 24px rgba(220,80,30,0.6)'}
 - whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- type="button", onClick={close}: closes the modal, same as X.
 Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-full py-3 text-sm font-medium text-white/50":
 - style: bg 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)'
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
+- type="button", onClick={close}: closes the modal, same as X.
 
-Imports: motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
 
 ## Typography
 - Font: project default sans-serif
@@ -72,8 +87,20 @@ Background image (absolute inset-0 object-cover opacity-60 pointer-events-none):
 
 Root: div relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19].
 
+State, open and closed:
+- const [open, setOpen] = useState(true); const triggerRef = useRef<HTMLButtonElement>(null); function close() { setOpen(false) }
+- useEffect(() => { if (!open) triggerRef.current?.focus() }, [open]), so when the modal closes, focus moves to the View Upgrade trigger.
+- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger>} then {open && <Modal card>}.
+
+View Upgrade trigger (motion.button), shown only while closed: ref={triggerRef}, type="button", onClick={() => setOpen(true)}, text "View Upgrade", className "relative cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+- style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
+- initial {opacity:0, scale:0.9}, animate {opacity:1, scale:1}, exit {opacity:0, scale:0.9}
+- whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- Clicking it reopens the modal, which plays its normal entrance again.
+
 Modal card (motion.div):
 - initial {scale:0.9, y:16}, animate {scale:1, y:0}, transition {type:'spring', stiffness:350, damping:28}
+- exit {scale:0.9, y:16, opacity:0}, played when open turns false.
 - className "relative isolate w-[340px] overflow-hidden rounded-3xl"
 - style: background 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.12)', boxShadow '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
 - Separate blur layer (non-animating): pointer-events-none absolute inset-0 z-[-1] rounded-3xl, backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
@@ -83,6 +110,7 @@ Close button (motion.button): absolute right-4 top-4 z-10 h-8 w-8 rounded-full, 
 - whileHover { scale:1.15, rotate:90 }
 - whileTap {scale:0.9}, transition {duration:0.2, ease:[0.25,0.1,0.25,1]}
 - X icon size={14} weight="regular" className="text-white/60"
+- type="button", aria-label="Close", onClick={close}
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
@@ -99,11 +127,13 @@ Primary motion.button ("Upgrade Now") className "w-full cursor-pointer rounded-f
 - style: background 'linear-gradient(135deg, rgba(255,160,50,0.75), rgba(220,60,40,0.6))', border '1px solid rgba(255,180,80,0.25)', boxShadow '0 2px 16px rgba(220,80,30,0.4)'
 - whileHover {scale:1.04, background:'linear-gradient(135deg, rgba(255,180,80,0.9), rgba(235,75,45,0.8))', boxShadow:'0 4px 24px rgba(220,80,30,0.6)'}
 - whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- type="button", onClick={close}: closes the modal, same as X.
 Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-full py-3 text-sm font-medium text-white/50":
 - style: bg 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)'
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
+- type="button", onClick={close}: closes the modal, same as X.
 
-Imports: motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
 
 ## Typography
 - Font: project default sans-serif
@@ -119,8 +149,20 @@ Background image (absolute inset-0 object-cover opacity-60 pointer-events-none):
 
 Root: div relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19].
 
+State, open and closed:
+- const [open, setOpen] = useState(true); const triggerRef = useRef<HTMLButtonElement>(null); function close() { setOpen(false) }
+- useEffect(() => { if (!open) triggerRef.current?.focus() }, [open]), so when the modal closes, focus moves to the View Upgrade trigger.
+- After the background image, one <AnimatePresence> holds {!open && <View Upgrade trigger>} then {open && <Modal card>}.
+
+View Upgrade trigger (motion.button), shown only while closed: ref={triggerRef}, type="button", onClick={() => setOpen(true)}, text "View Upgrade", className "relative cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+- style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
+- initial {opacity:0, scale:0.9}, animate {opacity:1, scale:1}, exit {opacity:0, scale:0.9}
+- whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- Clicking it reopens the modal, which plays its normal entrance again.
+
 Modal card (motion.div):
 - initial {scale:0.9, y:16}, animate {scale:1, y:0}, transition {type:'spring', stiffness:350, damping:28}
+- exit {scale:0.9, y:16, opacity:0}, played when open turns false.
 - className "relative isolate w-[340px] overflow-hidden rounded-3xl"
 - style: background 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.12)', boxShadow '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)'
 - Separate blur layer (non-animating): pointer-events-none absolute inset-0 z-[-1] rounded-3xl, backdropFilter 'blur(40px) saturate(1.8)' + WebkitBackdropFilter.
@@ -130,6 +172,7 @@ Close button (motion.button): absolute right-4 top-4 z-10 h-8 w-8 rounded-full, 
 - whileHover { scale:1.15, rotate:90 }
 - whileTap {scale:0.9}, transition {duration:0.2, ease:[0.25,0.1,0.25,1]}
 - X icon size={14} weight="regular" className="text-white/60"
+- type="button", aria-label="Close", onClick={close}
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
@@ -146,11 +189,13 @@ Primary motion.button ("Upgrade Now") className "w-full cursor-pointer rounded-f
 - style: background 'linear-gradient(135deg, rgba(255,160,50,0.75), rgba(220,60,40,0.6))', border '1px solid rgba(255,180,80,0.25)', boxShadow '0 2px 16px rgba(220,80,30,0.4)'
 - whileHover {scale:1.04, background:'linear-gradient(135deg, rgba(255,180,80,0.9), rgba(235,75,45,0.8))', boxShadow:'0 4px 24px rgba(220,80,30,0.6)'}
 - whileTap {scale:0.96}, transition {duration:0.25, ease:[0.25,0.1,0.25,1]}
+- type="button", onClick={close}: closes the modal, same as X.
 Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-full py-3 text-sm font-medium text-white/50":
 - style: bg 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)'
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
+- type="button", onClick={close}: closes the modal, same as X.
 
-Imports: motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
 
 ## Typography
 - Font: project default sans-serif

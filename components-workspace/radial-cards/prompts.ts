@@ -62,7 +62,8 @@ Each card tracks a per-card cardRotation MotionValue with two modes:
 
 --- Z-INDEX ---
   useTransform(lift, z => z > 4 ? 50 : engaged ? 40 : isTop ? 30 : 1)
-  Nudge lift.set(lift.get()) on engaged/isTop change to force recompute.
+  This transform alone drives zIndex: useTransform re-runs it on every render, so engaged/isTop changes land without help.
+  Do not add an effect that calls lift.set(lift.get()) when engaged or isTop changes: it retargets the lift spring to its current value and cancels the engage lift.
 
 --- DUAL THEME ---
   import useTheme from ThemeProvider.

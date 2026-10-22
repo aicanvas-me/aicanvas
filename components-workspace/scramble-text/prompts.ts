@@ -54,7 +54,9 @@ const makeScrambled = (word: string): CharState[]. Maps each char to { display: 
 - Root: relative flex h-full w-full cursor-default items-center justify-center, style={{ background: '#292929' }}
 - Crosshair at top-right: style={{ top:'10%', right:'8%' }}
 - Crosshair at bottom-left: style={{ bottom:'10%', left:'8%' }}
-- Inner flex-col div: select-none, items-center, gap-4, padding '60px 80px', mouse enter/leave handlers
+- Inner flex-col div: select-none, items-center, gap-4, padding 'clamp(1.5rem, 8vw, 60px) clamp(1rem, 10vw, 80px)', pointer handlers:
+  - onPointerEnter sets isHovered true and onPointerLeave sets it false, both only when e.pointerType === 'mouse'. Plain mouse enter/leave is wrong here: on touch, the emulated mouseenter after a tap left the words stuck revealed.
+  - onPointerDown sets isHovered true, onPointerUp and onPointerCancel set it false, all only when e.pointerType !== 'mouse'. Touch has no hover, so on touch the words reveal only while pressed.
 - Rows: for each rowIdx, a flex items-center gap-1 div using GeistPixelGrid.className:
   - If rowIdx===0: prepend <span className="text-6xl leading-none tracking-widest" style={{ color: '#BECF5D' }}>/</span>
   - Each char: <span key={i} className="text-6xl leading-none tracking-widest" style={{ color: '#BECF5D' }}>{ch.display}</span>
@@ -112,7 +114,9 @@ const makeScrambled = (word: string): CharState[] — maps each char to { displa
 - Root: relative flex h-full w-full cursor-default items-center justify-center, style={{ background: '#292929' }}
 - Crosshair at top-right: style={{ top:'10%', right:'8%' }}
 - Crosshair at bottom-left: style={{ bottom:'10%', left:'8%' }}
-- Inner flex-col div: select-none, items-center, gap-4, padding '60px 80px', mouse enter/leave handlers
+- Inner flex-col div: select-none, items-center, gap-4, padding 'clamp(1.5rem, 8vw, 60px) clamp(1rem, 10vw, 80px)', pointer handlers:
+  - onPointerEnter sets isHovered true and onPointerLeave sets it false, both only when e.pointerType === 'mouse'. Plain mouse enter/leave is wrong here: on touch, the emulated mouseenter after a tap left the words stuck revealed.
+  - onPointerDown sets isHovered true, onPointerUp and onPointerCancel set it false, all only when e.pointerType !== 'mouse'. Touch has no hover, so on touch the words reveal only while pressed.
 - Rows: for each rowIdx, a flex items-center gap-1 div using GeistPixelGrid.className:
   - If rowIdx===0: prepend <span className="text-6xl leading-none tracking-widest" style={{ color: '#BECF5D' }}>/</span>
   - Each char: <span key={i} className="text-6xl leading-none tracking-widest" style={{ color: '#BECF5D' }}>{ch.display}</span>
@@ -170,7 +174,9 @@ const makeScrambled = (word: string): CharState[] — maps each char to { displa
 - Root: relative flex h-full w-full cursor-default items-center justify-center, style={{ background: '#292929' }}
 - Crosshair at top-right: style={{ top:'10%', right:'8%' }}
 - Crosshair at bottom-left: style={{ bottom:'10%', left:'8%' }}
-- Inner flex-col div: select-none, items-center, gap-4, padding '60px 80px', mouse enter/leave handlers
+- Inner flex-col div: select-none, items-center, gap-4, padding 'clamp(1.5rem, 8vw, 60px) clamp(1rem, 10vw, 80px)', pointer handlers:
+  - onPointerEnter sets isHovered true and onPointerLeave sets it false, both only when e.pointerType === 'mouse'. Plain mouse enter/leave is wrong here: on touch, the emulated mouseenter after a tap left the words stuck revealed.
+  - onPointerDown sets isHovered true, onPointerUp and onPointerCancel set it false, all only when e.pointerType !== 'mouse'. Touch has no hover, so on touch the words reveal only while pressed.
 - Rows: for each rowIdx, a flex items-center gap-1 div using GeistPixelGrid.className:
   - If rowIdx===0: prepend <span className="text-6xl leading-none tracking-widest" style={{ color: '#BECF5D' }}>/</span>
   - Each char: <span key={i} className="text-6xl leading-none tracking-widest" style={{ color: '#BECF5D' }}>{ch.display}</span>

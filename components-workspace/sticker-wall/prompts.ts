@@ -77,7 +77,7 @@ Inline a \`useIsomorphicLayoutEffect\` (= \`useLayoutEffect\` on the client, \`u
 
 ## Root layout
 - Outer wrapper: \`flex h-full w-full items-center justify-center\` with inline \`style={{ background: bg }}\`. The component fills its parent, so the parent must define height (e.g. \`h-screen\` or \`h-[480px]\`). Do NOT use \`min-h-screen\`: the matter-js floor wall sits at the canvas bottom edge; a taller-than-visible canvas pushes bodies below the fold.
-- Inside: a \`motion.div\` (containerRef) \`relative h-full w-full overflow-hidden\` with \`style={{ background: bg, touchAction: 'none' }}\`. Mount animation: \`initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, ease: 'easeOut' }}\`.
+- Inside: a \`motion.div\` (containerRef) \`relative h-full w-full overflow-hidden\` with \`style={{ background: bg, touchAction: 'auto' }}\`. Mount animation: \`initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6, ease: 'easeOut' }}\`.
 - Children: \`<canvas>\` absolute inset-0 (display block, 100% w/h) + \`<form>\` overlay.
 
 ## Form overlay
@@ -151,8 +151,56 @@ CSS for the Send button (in the same scoped \`<style>\` block):
 Boot sequence inside a single \`useEffect([], [])\`: dynamic-import matter-js, then:
 1. Create engine: \`Matter.Engine.create({ gravity: { x: 0, y: 1, scale: GRAVITY_SCALE } })\`; set \`engine.timing.timeScale = 0.6\`.
 2. \`runner = Matter.Runner.create(); Matter.Runner.run(runner, engine)\`.
-3. Call \`resize()\` (sets up canvas size) THEN create mouse:
-   \`mouse = Matter.Mouse.create(canvas); mouse.pixelRatio = dpr;\`
+3. Call \`resize()\` (sets up canvas size) THEN create mouse, strip matter's own wheel and touch listeners (matter adds them non-passive, so they block page scroll), and install touch handlers that only drag when the touch starts on a sticker:
+\`\`\`ts
+// module scope
+const PASSIVE_LISTENER = { capture: false, passive: true } as const
+const ACTIVE_LISTENER = { capture: false, passive: false } as const
+type MouseWithHandlers = MatterMouse & {   // import type { Mouse as MatterMouse } from 'matter-js'
+  mousemove: EventListener
+  mousedown: EventListener
+  mouseup: EventListener
+  mousewheel: EventListener
+}
+
+// effect locals
+let mouse: MouseWithHandlers | null = null
+let touchDragging = false
+let onTouchStart: ((event: TouchEvent) => void) | null = null
+let onTouchMove: ((event: TouchEvent) => void) | null = null
+let onTouchEnd: ((event: TouchEvent) => void) | null = null
+
+// boot, right after resize()
+mouse = Matter.Mouse.create(canvas) as MouseWithHandlers
+canvas.removeEventListener('wheel', mouse.mousewheel, ACTIVE_LISTENER)
+canvas.removeEventListener('touchmove', mouse.mousemove, ACTIVE_LISTENER)
+canvas.removeEventListener('touchstart', mouse.mousedown, ACTIVE_LISTENER)
+canvas.removeEventListener('touchend', mouse.mouseup, ACTIVE_LISTENER)
+
+onTouchStart = (event) => {
+  const touch = event.changedTouches[0]
+  if (!touch || !mouse) return
+  const bounds = canvas.getBoundingClientRect()
+  const point = { x: touch.clientX - bounds.left, y: touch.clientY - bounds.top }
+  const bodies = stickersRef.current.map((sticker) => sticker.body)
+  if (Matter.Query.point(bodies, point).length === 0) return
+  touchDragging = true
+  mouse.mousedown(event)
+}
+onTouchMove = (event) => {
+  if (touchDragging) mouse?.mousemove(event)
+}
+onTouchEnd = (event) => {
+  if (!touchDragging) return
+  touchDragging = false
+  mouse?.mouseup(event)
+}
+canvas.addEventListener('touchstart', onTouchStart, ACTIVE_LISTENER)
+canvas.addEventListener('touchmove', onTouchMove, ACTIVE_LISTENER)
+canvas.addEventListener('touchend', onTouchEnd, ACTIVE_LISTENER)
+canvas.addEventListener('touchcancel', onTouchEnd, ACTIVE_LISTENER)
+mouse.pixelRatio = dpr
+\`\`\`
 4. MouseConstraint: \`Matter.MouseConstraint.create(engine, { mouse, constraint: { stiffness: 0.2, damping: 0.1, render: { visible: false } } })\`. Add to world.
 5. Call \`seed()\` to populate initial stickers.
 6. Install \`ResizeObserver\` on the container.
@@ -224,12 +272,30 @@ function roundedRect(ctx, x, y, w, h, r) {
 - Set \`alive = false\`.
 - \`cancelAnimationFrame(rafId)\`.
 - \`ro.disconnect()\` (ResizeObserver).
+- Remove every canvas listener matter's Mouse added and the custom touch handlers, with the options they were added with:
+\`\`\`ts
+if (mouse) {
+  canvas.removeEventListener('mousemove', mouse.mousemove, PASSIVE_LISTENER)
+  canvas.removeEventListener('mousedown', mouse.mousedown, PASSIVE_LISTENER)
+  canvas.removeEventListener('mouseup', mouse.mouseup, PASSIVE_LISTENER)
+  canvas.removeEventListener('wheel', mouse.mousewheel, ACTIVE_LISTENER)
+  canvas.removeEventListener('touchmove', mouse.mousemove, ACTIVE_LISTENER)
+  canvas.removeEventListener('touchstart', mouse.mousedown, ACTIVE_LISTENER)
+  canvas.removeEventListener('touchend', mouse.mouseup, ACTIVE_LISTENER)
+}
+if (onTouchStart) canvas.removeEventListener('touchstart', onTouchStart, ACTIVE_LISTENER)
+if (onTouchMove) canvas.removeEventListener('touchmove', onTouchMove, ACTIVE_LISTENER)
+if (onTouchEnd) {
+  canvas.removeEventListener('touchend', onTouchEnd, ACTIVE_LISTENER)
+  canvas.removeEventListener('touchcancel', onTouchEnd, ACTIVE_LISTENER)
+}
+\`\`\`
 - \`Matter.Runner.stop(runner); Matter.Composite.clear(world, false, true); Matter.Engine.clear(engine)\`.
 - Null out \`matterRef\`, \`engineRef\`, \`worldRef\`, \`measureCtxRef\`; reset \`stickersRef.current = []\`.
 
 ## Mobile + a11y
-- \`touchAction: 'none'\` on the motion wrapper prevents page scroll on touch-drag.
-- matter-js Mouse handles touch events natively. No hover-only affordances.
+- \`touchAction: 'auto'\` on the motion wrapper: a touch scrolls the page unless it starts on a sticker. Removing matter's wheel listener lets wheel scroll reach the page too.
+- matter-js's built-in touch listeners are removed. The custom non-passive touch handlers forward a touch to the Mouse only when \`Matter.Query.point\` hits a sticker body (\`touchDragging\`), and the Mouse's own \`preventDefault\` then holds the page still for that drag; \`touchcancel\` ends it like \`touchend\`. No hover-only affordances.
 - Input pill sits in the lower third of the viewport (paddingBottom 18vh), reachable by thumbs.
 - Canvas is DPR-aware via ResizeObserver; never hardcoded dimensions.
 
