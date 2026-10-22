@@ -25,16 +25,19 @@ const body = (text) =>
 
 const URL_VAR = '{{ .ConfirmationURL }}'
 
-// Links verified by /account/auth/confirm. `redirect_to` MUST stay the last
-// parameter: the route reads it as the raw tail of the query
+// Links verified by /account/auth/confirm. `type` is what Supabase documents for
+// token-hash links (`email` for sign-in and sign-up, `recovery` for reset);
+// `kind=signup` only picks the Continue page's wording. `redirect_to` MUST stay
+// the last parameter: the route reads it as the raw tail of the query
 // (app/lib/auth/email-link.ts). {{ .RedirectTo }} is the URL the app passed
 // when it asked for the email; Supabase falls back to the Site URL.
-const confirmUrl = (type) =>
-  `{{ .SiteURL }}/account/auth/confirm?token_hash={{ .TokenHash }}&amp;type=${type}&amp;redirect_to={{ .RedirectTo }}`
-const CONFIRM_VARS = (type) => [
+const confirmUrl = (type, kind) =>
+  `{{ .SiteURL }}/account/auth/confirm?token_hash={{ .TokenHash }}&amp;type=${type}&amp;${kind ? `kind=${kind}&amp;` : ''}redirect_to={{ .RedirectTo }}`
+const CONFIRM_VARS = (type, kind) => [
   '{{ .SiteURL }}/account/auth/confirm?',
   '{{ .TokenHash }}',
   `type=${type}&amp;`,
+  ...(kind ? [`kind=${kind}&amp;`] : []),
   'redirect_to={{ .RedirectTo }}"',
 ]
 
@@ -47,7 +50,7 @@ export const AUTH_EMAILS = {
       bodyHtml: body(
         'Welcome to AI Canvas. Confirm your email to activate your account, then start dropping components straight into your projects.',
       ),
-      button: { label: 'Confirm email', url: confirmUrl('signup') },
+      button: { label: 'Confirm email', url: confirmUrl('email', 'signup') },
       footerNoteHtml: "If you didn't sign up for AI Canvas, you can safely ignore this email.",
     }),
   },
@@ -59,7 +62,7 @@ export const AUTH_EMAILS = {
       bodyHtml: body(
         "Here's your sign-in link. It gets you into AI Canvas, expires in 1 hour, and works once.",
       ),
-      button: { label: 'Sign in', url: confirmUrl('magiclink') },
+      button: { label: 'Sign in', url: confirmUrl('email') },
       footerNoteHtml: "If you didn't request this link, you can safely ignore this email.",
     }),
   },
@@ -146,8 +149,8 @@ export const AUTH_EMAILS = {
 /** Every variable Supabase substitutes into a template. Losing one silently
  *  breaks that email, so each is asserted before anything is written. */
 const REQUIRED_VARS = {
-  confirmation: CONFIRM_VARS('signup'),
-  magic_link: CONFIRM_VARS('magiclink'),
+  confirmation: CONFIRM_VARS('email', 'signup'),
+  magic_link: CONFIRM_VARS('email'),
   recovery: CONFIRM_VARS('recovery'),
   email_change: [URL_VAR, '{{ .Email }}', '{{ .NewEmail }}'],
   invite: [URL_VAR],

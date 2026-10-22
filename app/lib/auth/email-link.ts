@@ -5,14 +5,25 @@ import { safeNext } from '../safe-next'
 // the token is verified on our server and the link works in any browser (a
 // PKCE link only works in the browser that asked for it).
 
-// The only link types the templates send: magic_link → magiclink,
-// recovery → recovery, confirmation → signup. Anything else is refused, so a
-// hand-edited link cannot reach a verify type we never send.
-export const EMAIL_LINK_TYPES = ['magiclink', 'recovery', 'signup'] as const
+// The only link types the templates send, as Supabase documents them for
+// token-hash links: `email` for the magic-link and sign-up templates (it
+// verifies either, including the confirmation email an unconfirmed user gets
+// when they ask for a magic link) and `recovery` for password reset. Anything
+// else is refused, so a hand-edited link cannot reach a verify type we never send.
+export const EMAIL_LINK_TYPES = ['email', 'recovery'] as const
 export type EmailLinkType = (typeof EMAIL_LINK_TYPES)[number]
 
 export function isEmailLinkType(value: unknown): value is EmailLinkType {
   return typeof value === 'string' && (EMAIL_LINK_TYPES as readonly string[]).includes(value)
+}
+
+// Which email the link came from, for the Continue page's wording only. The
+// sign-up template adds `kind=signup`; it never changes how the link verifies.
+export type EmailLinkKind = 'signin' | 'signup' | 'recovery'
+
+export function kindFor(type: EmailLinkType, kind: string | null | undefined): EmailLinkKind {
+  if (type === 'recovery') return 'recovery'
+  return kind === 'signup' ? 'signup' : 'signin'
 }
 
 // Where the user goes after a successful verify. A recovery link always lands

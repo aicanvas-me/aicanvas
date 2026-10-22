@@ -53,62 +53,70 @@ beforeEach(() => {
 describe('GET /account/auth/confirm', () => {
   it('hands a valid link to the Continue page without verifying it', async () => {
     const r = `${ORIGIN}/account/auth/callback?next=${encodeURIComponent('/components/x?a=1&b=2')}`
-    const res = await get(`?token_hash=th1&type=magiclink&redirect_to=${encodeURIComponent(r)}`)
+    const res = await get(`?token_hash=th1&type=email&redirect_to=${encodeURIComponent(r)}`)
     expect(res.status).toBe(303)
     const loc = new URL(res.headers.get('location')!)
     expect(loc.pathname).toBe('/account/auth/continue')
     expect(loc.searchParams.get('token_hash')).toBe('th1')
-    expect(loc.searchParams.get('type')).toBe('magiclink')
+    expect(loc.searchParams.get('type')).toBe('email')
+    expect(loc.searchParams.get('kind')).toBe('signin')
     expect(loc.searchParams.get('next')).toBe('/components/x?a=1&b=2')
     expect(verifyOtp).not.toHaveBeenCalled()
   })
 
   it('refuses a type the templates never send', async () => {
-    for (const type of ['email', 'email_change', 'invite', '']) {
+    for (const type of ['magiclink', 'signup', 'email_change', 'invite', '']) {
       const res = await get(`?token_hash=th1&type=${type}`)
       expect(where(res)).toBe('/account/sign-in?error=link_invalid')
     }
     expect(verifyOtp).not.toHaveBeenCalled()
   })
 
+  it('passes the sign-up wording through, and nothing else', async () => {
+    const kind = async (q: string) => new URL((await get(q)).headers.get('location')!).searchParams.get('kind')
+    expect(await kind('?token_hash=th1&type=email&kind=signup')).toBe('signup')
+    expect(await kind('?token_hash=th1&type=email&kind=<script>')).toBe('signin')
+    expect(await kind('?token_hash=th1&type=recovery&kind=signup')).toBe('recovery')
+  })
+
   it('refuses a link without a token', async () => {
-    expect(where(await get('?type=magiclink'))).toBe('/account/sign-in?error=link_invalid')
+    expect(where(await get('?type=email'))).toBe('/account/sign-in?error=link_invalid')
   })
 })
 
 describe('POST /account/auth/confirm', () => {
   it('refuses a cross-site POST (login CSRF) without verifying', async () => {
-    const res = await post({ token_hash: 'th1', type: 'magiclink', next: '/x' }, { origin: 'https://evil.com' })
+    const res = await post({ token_hash: 'th1', type: 'email', next: '/x' }, { origin: 'https://evil.com' })
     expect(where(res)).toBe('/account/sign-in?error=link_invalid')
     expect(verifyOtp).not.toHaveBeenCalled()
   })
 
   it('refuses a POST with Origin null', async () => {
-    const res = await post({ token_hash: 'th1', type: 'magiclink', next: '/x' }, { origin: 'null' })
+    const res = await post({ token_hash: 'th1', type: 'email', next: '/x' }, { origin: 'null' })
     expect(where(res)).toBe('/account/sign-in?error=link_invalid')
     expect(verifyOtp).not.toHaveBeenCalled()
   })
 
   it('refuses a POST with no Origin unless Sec-Fetch-Site says same-origin', async () => {
-    expect(where(await post({ token_hash: 'th1', type: 'magiclink', next: '/x' }, {}))).toBe(
+    expect(where(await post({ token_hash: 'th1', type: 'email', next: '/x' }, {}))).toBe(
       '/account/sign-in?error=link_invalid',
     )
-    const ok = await post({ token_hash: 'th1', type: 'magiclink', next: '/x' }, { 'sec-fetch-site': 'same-origin' })
+    const ok = await post({ token_hash: 'th1', type: 'email', next: '/x' }, { 'sec-fetch-site': 'same-origin' })
     expect(where(ok)).toBe('/x')
   })
 
   it('magic link: verifies with the token hash and lands on next, no recovery marker', async () => {
-    const res = await post({ token_hash: 'th1', type: 'magiclink', next: '/components/x?a=1&b=2' })
-    expect(verifyOtp).toHaveBeenCalledWith({ type: 'magiclink', token_hash: 'th1' })
+    const res = await post({ token_hash: 'th1', type: 'email', next: '/components/x?a=1&b=2' })
+    expect(verifyOtp).toHaveBeenCalledWith({ type: 'email', token_hash: 'th1' })
     expect(res.status).toBe(303)
     expect(where(res)).toBe('/components/x?a=1&b=2')
     expect(res.headers.get('set-cookie') ?? '').not.toContain('ac_recovery_session')
     expect(welcome).toHaveBeenCalledTimes(1)
   })
 
-  it('sign-up confirmation: verifies as signup', async () => {
-    const res = await post({ token_hash: 'th1', type: 'signup', next: '/welcome' })
-    expect(verifyOtp).toHaveBeenCalledWith({ type: 'signup', token_hash: 'th1' })
+  it('sign-up confirmation verifies as email too', async () => {
+    const res = await post({ token_hash: 'th1', type: 'email', next: '/welcome' })
+    expect(verifyOtp).toHaveBeenCalledWith({ type: 'email', token_hash: 'th1' })
     expect(where(res)).toBe('/welcome')
   })
 
@@ -122,14 +130,14 @@ describe('POST /account/auth/confirm', () => {
   })
 
   it('the marker follows the type, never the destination', async () => {
-    const res = await post({ token_hash: 'th1', type: 'magiclink', next: '/account/reset-password' })
+    const res = await post({ token_hash: 'th1', type: 'email', next: '/account/reset-password' })
     expect(where(res)).toBe('/account/reset-password')
     expect(res.headers.get('set-cookie') ?? '').not.toContain('ac_recovery_session')
   })
 
   it('an off-site next falls back to /account', async () => {
     for (const next of ['//evil.com', 'https://evil.com', '/\\evil.com']) {
-      expect(where(await post({ token_hash: 'th1', type: 'magiclink', next }))).toBe('/account')
+      expect(where(await post({ token_hash: 'th1', type: 'email', next }))).toBe('/account')
     }
   })
 
@@ -144,7 +152,7 @@ describe('POST /account/auth/confirm', () => {
 
     it('a browser that is already signed in goes on to the destination', async () => {
       sessionUser = { id: 'u1' }
-      expect(where(await post({ token_hash: 'th1', type: 'magiclink', next: '/x' }))).toBe('/x')
+      expect(where(await post({ token_hash: 'th1', type: 'email', next: '/x' }))).toBe('/x')
     })
 
     it('a signed-in second click on a reset link goes to the reset page WITHOUT a new marker', async () => {
@@ -161,13 +169,13 @@ describe('POST /account/auth/confirm', () => {
     })
 
     it('signed out, a sign-in link goes to sign-in and keeps next', async () => {
-      expect(where(await post({ token_hash: 'th1', type: 'magiclink', next: '/components/x' }))).toBe(
+      expect(where(await post({ token_hash: 'th1', type: 'email', next: '/components/x' }))).toBe(
         '/account/sign-in?error=link_expired&next=%2Fcomponents%2Fx',
       )
     })
 
     it('never sends the welcome email', async () => {
-      await post({ token_hash: 'th1', type: 'signup', next: '/welcome' })
+      await post({ token_hash: 'th1', type: 'email', next: '/welcome' })
       expect(welcome).not.toHaveBeenCalled()
     })
   })

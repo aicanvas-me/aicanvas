@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { destinationFor, isEmailLinkType, nextFromRedirectTo } from './email-link'
+import { destinationFor, isEmailLinkType, kindFor, nextFromRedirectTo } from './email-link'
 
 const ORIGIN = 'https://aicanvas.me'
 // What the app passes as emailRedirectTo / redirectTo today.
@@ -7,7 +7,7 @@ const redirectFor = (next: string) => `${ORIGIN}/account/auth/callback?next=${en
 // Go's html/template query-escapes {{ .RedirectTo }} inside an href, lowercase hex.
 const goEscape = (s: string) =>
   encodeURIComponent(s).replace(/%[0-9A-F]{2}/g, (m) => m.toLowerCase())
-const search = (redirectTo: string) => `?token_hash=abc123&type=magiclink&redirect_to=${redirectTo}`
+const search = (redirectTo: string) => `?token_hash=abc123&type=email&redirect_to=${redirectTo}`
 
 describe('nextFromRedirectTo', () => {
   const nexts = [
@@ -38,8 +38,8 @@ describe('nextFromRedirectTo', () => {
   })
 
   it('missing or empty redirect_to goes to /account', () => {
-    expect(nextFromRedirectTo('?token_hash=abc&type=magiclink', ORIGIN)).toBe('/account')
-    expect(nextFromRedirectTo('?token_hash=abc&type=magiclink&redirect_to=', ORIGIN)).toBe('/account')
+    expect(nextFromRedirectTo('?token_hash=abc&type=email', ORIGIN)).toBe('/account')
+    expect(nextFromRedirectTo('?token_hash=abc&type=email&redirect_to=', ORIGIN)).toBe('/account')
   })
 
   it('another origin goes to /account', () => {
@@ -77,11 +77,20 @@ describe('nextFromRedirectTo', () => {
 })
 
 describe('isEmailLinkType', () => {
-  it('accepts only the three types our templates send', () => {
-    expect(['magiclink', 'recovery', 'signup'].every(isEmailLinkType)).toBe(true)
-    for (const t of ['email', 'invite', 'email_change', 'sms', '', null, undefined, 1]) {
+  it('accepts only the two types our templates send', () => {
+    expect(['email', 'recovery'].every(isEmailLinkType)).toBe(true)
+    for (const t of ['magiclink', 'signup', 'invite', 'email_change', 'sms', '', null, undefined, 1]) {
       expect(isEmailLinkType(t)).toBe(false)
     }
+  })
+})
+
+describe('kindFor', () => {
+  it('only picks wording, from a closed set', () => {
+    expect(kindFor('email', 'signup')).toBe('signup')
+    expect(kindFor('email', null)).toBe('signin')
+    expect(kindFor('email', 'anything')).toBe('signin')
+    expect(kindFor('recovery', 'signup')).toBe('recovery')
   })
 })
 
@@ -89,8 +98,8 @@ describe('destinationFor', () => {
   it('recovery always lands on the reset page', () => {
     expect(destinationFor('recovery', '/components/x')).toBe('/account/reset-password')
   })
-  it('other types follow next', () => {
-    expect(destinationFor('magiclink', '/components/x')).toBe('/components/x')
-    expect(destinationFor('signup', '/welcome')).toBe('/welcome')
+  it('email links follow next', () => {
+    expect(destinationFor('email', '/components/x')).toBe('/components/x')
+    expect(destinationFor('email', '/welcome')).toBe('/welcome')
   })
 })

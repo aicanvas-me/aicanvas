@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { redirect } from 'next/navigation'
 import { createClient } from '../../../lib/supabase/server'
 import { safeNext } from '../../../lib/safe-next'
-import { isEmailLinkType, type EmailLinkType } from '../../../lib/auth/email-link'
+import { isEmailLinkType, kindFor, type EmailLinkKind } from '../../../lib/auth/email-link'
 import { AuthPagePopup } from '../../AuthPagePopup'
 import { ContinueForm } from './ContinueForm'
 
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
   referrer: 'same-origin',
 }
 
-const COPY: Record<EmailLinkType, { heading: string; body: string }> = {
-  magiclink: {
+const COPY: Record<EmailLinkKind, { heading: string; body: string }> = {
+  signin: {
     heading: 'Sign in to AI Canvas',
     body: 'Press Continue to finish signing in.',
   },
@@ -39,7 +39,7 @@ const COPY: Record<EmailLinkType, { heading: string; body: string }> = {
 export default async function ContinuePage({
   searchParams,
 }: {
-  searchParams: Promise<{ token_hash?: string; type?: string; next?: string }>
+  searchParams: Promise<{ token_hash?: string; type?: string; kind?: string; next?: string }>
 }) {
   const params = await searchParams
   const type = params.type
@@ -52,7 +52,7 @@ export default async function ContinuePage({
     data: { user },
   } = await supabase.auth.getUser()
 
-  const { heading, body } = COPY[type]
+  const { heading, body } = COPY[kindFor(type, params.kind)]
 
   return (
     <AuthPagePopup>

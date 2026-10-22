@@ -3,7 +3,7 @@ import { createClient } from '../../../lib/supabase/server'
 import { createVerifyClient } from '../../../lib/supabase/verify'
 import { safeNext } from '../../../lib/safe-next'
 import { maybeSendWelcome, setRecoveryMarker } from '../../../lib/auth/post-sign-in'
-import { destinationFor, isEmailLinkType, nextFromRedirectTo } from '../../../lib/auth/email-link'
+import { destinationFor, isEmailLinkType, kindFor, nextFromRedirectTo } from '../../../lib/auth/email-link'
 
 // ─── /account/auth/confirm ───────────────────────────────────────────────────
 // Where every sign-in, password-reset and sign-up email link lands.
@@ -36,6 +36,7 @@ export async function GET(request: NextRequest) {
   const params = new URLSearchParams({
     token_hash: tokenHash,
     type,
+    kind: kindFor(type, url.searchParams.get('kind')),
     next: nextFromRedirectTo(url.search, origin),
   })
   return redirectTo(origin, `/account/auth/continue?${params}`)
