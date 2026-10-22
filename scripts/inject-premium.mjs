@@ -486,20 +486,20 @@ function writeShimFile(outFile, root, injectedNames, fromV2Tree, headerLines, an
   if (fromV2Tree) {
     out.push('', `export { tokens } from '${root}/tokens'`)
   } else {
-    // v1 called the two semantic colour scales orange/red; v2 renamed them
-    // warning/danger. App code is written against the v2 names, so alias them
+    // v1 called three colour scales accent/orange/red; v2 renamed them
+    // brand/warning/danger. App code is written against the v2 names, so alias them
     // here rather than let a fork read undefined and throw at render — same
     // colours, same roles, nothing invented. What v1 genuinely lacks (`control`)
     // stays absent, and the one call site optional-chains it.
     // anyTypedDegraded (Pro only) types the merged object `any` — same runtime
-    // value, but Pro's token shape (brand/success/neutral/role/…, which v1
+    // value, but Pro's token shape (success/neutral/role/…, which v1
     // genuinely lacks) is never checked against it.
     out.push(
       '',
       `import { tokens as v1Tokens } from '${root}/tokens'`,
       `export const tokens${anyTypedDegraded ? ': any' : ''} = {`,
       '  ...v1Tokens,',
-      '  color: { ...v1Tokens.color, warning: v1Tokens.color.orange, danger: v1Tokens.color.red },',
+      '  color: { ...v1Tokens.color, brand: v1Tokens.color.accent, warning: v1Tokens.color.orange, danger: v1Tokens.color.red },',
       '}',
     )
   }
