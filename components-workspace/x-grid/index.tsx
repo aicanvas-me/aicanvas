@@ -1,22 +1,14 @@
 'use client'
 
-/**
- * Renders a theme-aware canvas grid of connected cross marks.
- * Pointer proximity brightens nearby marks and their connecting lines.
- */
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
 
-// tune: raise to spread the cross marks farther apart
-const SPACING = 20     
-// tune: raise to widen pointer influence
-const RADIUS  = 340    
-// tune: raise to brighten resting marks
-const BASE_A  = 0.13   
-// tune: raise to brighten highlighted marks
-const PEAK_A  = 0.92   
+const SPACING = 20
+const RADIUS  = 340
+const BASE_A  = 0.13
+const PEAK_A  = 0.92
 
 export default function XGrid() {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -25,7 +17,6 @@ export default function XGrid() {
   const isDarkRef = useRef(typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
   const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
 
-  
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -45,7 +36,6 @@ export default function XGrid() {
     return () => observer.disconnect()
   }, [])
 
-  
   useEffect(() => {
     const canvas: HTMLCanvasElement = canvasRef.current!
     const ctx = canvas.getContext('2d')!
@@ -88,7 +78,6 @@ export default function XGrid() {
       if (!alive) return
       ctx.clearRect(0, 0, cw, ch)
 
-      
       ctx.lineWidth = 0.5
 
       const mx      = mouseRef.current?.x ?? -99999
@@ -106,8 +95,8 @@ export default function XGrid() {
         d.b += (tgt > d.b ? 0.16 : 0.05) * (tgt - d.b)
         if (d.b < 0.004) d.b = 0
 
-        const arm   = 2 + d.b * 1.0   
-        const sw    = 0.5 + d.b * 0.3 
+        const arm   = 2 + d.b * 1.0
+        const sw    = 0.5 + d.b * 0.3
         const baseA = isDarkRef.current ? BASE_A : 0.25
         const wave  = Math.sin(d.col * 0.3 + d.row * 0.3 - t * 0.5)
         const restingAlpha = baseA * (1 + wave * 0.3)
@@ -123,16 +112,14 @@ export default function XGrid() {
         ctx.stroke()
       }
 
-      
       ctx.lineWidth = 0.5
       for (const d of marks) {
         if (d.b < 0.05) continue
-        
         const neighbours = [
-          grid[d.row]?.[d.col + 1],     
-          grid[d.row + 1]?.[d.col],     
-          grid[d.row + 1]?.[d.col + 1], 
-          grid[d.row + 1]?.[d.col - 1], 
+          grid[d.row]?.[d.col + 1],
+          grid[d.row + 1]?.[d.col],
+          grid[d.row + 1]?.[d.col + 1],
+          grid[d.row + 1]?.[d.col - 1],
         ]
         for (const n of neighbours) {
           if (!n || n.b < 0.05) continue

@@ -1,18 +1,3 @@
-// ============================================================
-// COMPONENT: Badge
-// shadcn/ui-aligned API: variant prop, cva, forwardRef.
-// Variants: default | accent | warning | fault | subtle | outline
-// Monospace, uppercase, wide letter-spacing, sharp corners.
-// ============================================================
-
-// ============================================================
-// COMPONENT: Badge
-// shadcn/ui-aligned API: variant prop, cva, forwardRef.
-// Variants: default | accent | warning | fault | subtle | outline
-// No border — badge is a read-only status label, not a control.
-// Leading 4×4 dot colored by variant distinguishes it from Button.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useEffect, useRef, useState } from 'react';
@@ -23,13 +8,8 @@ import { cn, andromedaVars } from './lib/utils';
 import { useReducedMotion } from './lib/motion';
 import { tokens } from '../tokens';
 
-// JS timer boundary: setTimeout cannot read CSS vars; derived from tokens at
-// module load, cannot follow runtime var overrides.
-const BLINK_OFF_MS = parseFloat(tokens.motion.duration.slow); // 200ms
+const BLINK_OFF_MS = parseFloat(tokens.motion.duration.slow);
 
-// Blinks once every ~2s: full opacity → 0.12 for 200ms → full opacity.
-// Honours reduced-motion: when the user opts out, the dot holds at full
-// opacity and the blink loop never schedules.
 function useBlink() {
   const reducedMotion = useReducedMotion();
   const [opacity, setOpacity] = useState(1);
@@ -47,7 +27,6 @@ function useBlink() {
           setOpacity(1);
           schedule();
         }, BLINK_OFF_MS);
-        // 1800/800 are bespoke blink-cadence jitter, no token
       }, 1800 + Math.random() * 800);
     }
     schedule();
@@ -59,10 +38,7 @@ function useBlink() {
 
 const badgeVariants = cva(
   [
-    // max-w-full + min-w-0 keep a long label from forcing horizontal scroll
-    // when the Badge sits in a stacked (single-column) layout; the label
-    // span truncates instead (see render below).
-    // 5px gap and 2px pad are identity constants, no token
+    // max-w-full + min-w-0: long labels truncate instead of forcing sideways scroll.
     'inline-flex items-center gap-[5px] select-none whitespace-nowrap',
     'max-w-full min-w-0',
     'rounded-[var(--andromeda-radius-frame,0px)]',
@@ -111,8 +87,6 @@ const badgeVariants = cva(
 
 type BadgeVariant = NonNullable<VariantProps<typeof badgeVariants>['variant']>;
 
-// Dot color per variant — the dot is the per-variant signal (text is always
-// text.primary across variants, so the colored dot, not the label, carries meaning).
 const dotColor: Record<BadgeVariant, string> = {
   default: 'var(--andromeda-text-muted)',
   accent:  'var(--andromeda-accent-300)',
@@ -139,7 +113,6 @@ type BadgeOwnProps = {
 
 export type BadgeProps = BadgeOwnProps & Omit<ComponentPropsWithoutRef<'span'>, keyof BadgeOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<BadgeProps & React.HTMLAttributes<HTMLSpanElement>>} */
 export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(function Badge(
   { className, variant = 'default', children, style, ...props },
   ref,

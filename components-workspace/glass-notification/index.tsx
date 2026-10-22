@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Displays a glass notification stack with individual dismiss controls.
- * Cards can also be dragged sideways, and dismissed items can be restored.
- */
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -19,6 +15,7 @@ interface Notification {
   time: string
 }
 
+// 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const INITIAL_NOTIFICATIONS: Notification[] = [
   {
     id: 1,
@@ -76,6 +73,7 @@ function NotificationCard({
   return (
     <motion.div
       layout
+      // No opacity in initial: below 1 it hides the blur until the fade ends.
       initial={{ x: 60, scale: 0.9 }}
       animate={{ x: 0, scale: 1, transition: { type: 'spring', stiffness: 280, damping: 24, delay: index * 0.05 } }}
       exit={{ opacity: 0, x: -60, scale: 0.9, filter: 'blur(4px)', transition: { duration: 0.2, ease: 'easeIn' } }}
@@ -95,13 +93,12 @@ function NotificationCard({
       }}
       whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
     >
-      {}
+      {/* z-[-1] relies on the card's isolate; without it the blur falls behind the page. */}
       <div
         className="pointer-events-none absolute inset-0 z-[-1] rounded-2xl"
         style={{ backdropFilter: 'blur(20px) saturate(1.6)', WebkitBackdropFilter: 'blur(20px) saturate(1.6)' }}
       />
       <div className="flex items-start gap-3.5 px-4 py-3.5 pr-12">
-        {}
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -115,14 +112,12 @@ function NotificationCard({
           <Icon size={18} weight="regular" style={{ color: notification.color }} />
         </motion.div>
 
-        {}
         <div className="min-w-0 flex-1">
           <h4 className="text-sm font-semibold text-white/85">{notification.title}</h4>
           <p className="mt-0.5 text-[13px] text-white/40">{notification.message}</p>
         </div>
       </div>
 
-      {}
       <div className="absolute right-3 top-3 flex flex-col items-end gap-1.5">
         <motion.button
           whileHover={{ scale: 1.2, backgroundColor: 'rgba(255,255,255,0.15)' }}
@@ -139,7 +134,6 @@ function NotificationCard({
         <span className="text-[10px] text-white/25">{notification.time}</span>
       </div>
 
-      {}
       <div
         className="absolute bottom-0 left-4 right-4 h-[1px]"
         style={{
@@ -161,17 +155,14 @@ export default function GlassNotification() {
 
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
-      {}
       <img
         src="https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png"
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
-      {}
       <div
         className="relative flex w-[360px] flex-col gap-2.5"
       >
-        {}
         <div className="mb-1 flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
             <Bell size={20} weight="regular" className="text-white/40" />
@@ -205,14 +196,12 @@ export default function GlassNotification() {
           )}
         </div>
 
-        {}
         <AnimatePresence mode="popLayout">
           {notifications.map((n, i) => (
             <NotificationCard key={n.id} notification={n} onDismiss={dismiss} index={i} />
           ))}
         </AnimatePresence>
 
-        {}
         <AnimatePresence>
           {notifications.length === 0 && (
             <motion.div

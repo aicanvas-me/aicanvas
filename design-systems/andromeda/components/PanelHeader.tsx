@@ -1,17 +1,3 @@
-// ============================================================
-// COMPONENT: PanelHeader
-// Title row that sits at the top of a panel — sentence-case mono
-// title on the left, optional `actions` slot on the right (typically
-// PanelMenu / IconButton). Bottom border uses the inset divider
-// pattern: `border.subtle` line inset by spacing[3] from each edge.
-//
-//   <PanelHeader title="Capacity" actions={<PanelMenu items={…} />} />
-//
-// Distinct from CardHeader (uppercase widest mono, smaller padding,
-// inset divider). PanelHeader is for top-level panels in dashboards;
-// CardHeader is for nested compositions inside Card.
-// ============================================================
-
 'use client';
 
 import { forwardRef } from 'react';
@@ -33,7 +19,6 @@ export type PanelHeaderProps = Omit<ComponentPropsWithoutRef<'div'>, 'title'> & 
   actions?: ReactNode;
 };
 
-/** @type {React.ForwardRefExoticComponent<PanelHeaderProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const PanelHeader = forwardRef<HTMLDivElement, PanelHeaderProps>(function PanelHeader(
   { title, actions, className, style, ...props },
   ref,
@@ -48,12 +33,6 @@ export const PanelHeader = forwardRef<HTMLDivElement, PanelHeaderProps>(function
         position: 'relative',
         display: 'flex',
         alignItems: 'center',
-        // Title + actions stay on ONE row at every width, actions pushed right
-        // by the spacer. The title truncates (min-width:0 + ellipsis below) so a
-        // long title shortens rather than wrapping the actions down to their own
-        // line — panel titles are short by design and a wrapped kebab reads as
-        // broken (its menu then opens off the left edge). See <style> for the
-        // phone padding step-down.
         gap: 'var(--andromeda-3, 12px)',
         padding: 'var(--andromeda-4, 16px) var(--andromeda-5, 20px)',
         ...style,
@@ -63,8 +42,6 @@ export const PanelHeader = forwardRef<HTMLDivElement, PanelHeaderProps>(function
       <span
         className="am-panel-header-title"
         style={{
-          // min-width:0 lets the title shrink and the spacer keep working;
-          // a long title truncates rather than blowing the row out.
           minWidth: 0,
           overflow: 'hidden',
           textOverflow: 'ellipsis',
@@ -86,7 +63,6 @@ export const PanelHeader = forwardRef<HTMLDivElement, PanelHeaderProps>(function
           </div>
         </>
       ) : null}
-      {/* Inset divider — 12px from each edge, matches CardHeader convention. */}
       <span
         aria-hidden
         style={{

@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents trigger buttons that add timed glass toasts to a stacked region.
- * Toast progress pauses on hover and resumes until dismissal.
- */
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
@@ -52,6 +48,7 @@ interface VariantConfig {
   label: string
 }
 
+// color must be 6-digit hex: two-digit alpha suffixes are appended to it.
 const VARIANTS: Record<ToastVariant, VariantConfig> = {
   success: { color: '#06D6A0', gradient: '#06D6A0, #00BFA5', icon: CheckCircle, label: 'Success' },
   error:   { color: '#FF5C8A', gradient: '#FF5C8A, #FF1744', icon: XCircle,     label: 'Error' },
@@ -168,15 +165,12 @@ function ToastCard({
       className="relative w-full overflow-hidden rounded-2xl"
       style={{ ...GLASS_PANEL }}
     >
-      {}
       <div
         className="pointer-events-none absolute inset-0 z-0 rounded-2xl"
         style={GLASS_BLUR}
       />
 
-      {}
       <div className="relative z-10 flex items-center gap-3 py-3.5 pl-4 pr-10">
-        {}
         <div
           className="flex shrink-0 items-center justify-center rounded-xl"
           style={{
@@ -189,7 +183,6 @@ function ToastCard({
           <Icon size={18} weight="regular" style={{ color: variant.color }} />
         </div>
 
-        {}
         <div className="flex min-w-0 flex-1 flex-col">
           <span className="truncate text-sm font-semibold text-white/90 font-sans">
             {toast.title}
@@ -202,8 +195,7 @@ function ToastCard({
         </div>
       </div>
 
-      {}
-      {}
+      {/* The 44px button is the touch target; the 20px circle inside is only the visual. */}
       <motion.button
         type="button"
         onClick={() => onDismiss(toast.id)}
@@ -226,7 +218,6 @@ function ToastCard({
         </motion.span>
       </motion.button>
 
-      {}
       <div className="absolute bottom-0 left-0 right-0 h-[2px]">
         <div
           ref={progressRef}
@@ -262,13 +253,11 @@ function TriggerButton({
         minHeight: 44,
       }}
     >
-      {}
       <div
         className="pointer-events-none absolute inset-0 z-[-1] rounded-2xl"
         style={GLASS_BLUR}
       />
 
-      {}
       <div
         className="flex shrink-0 items-center justify-center rounded-xl"
         style={{
@@ -310,14 +299,12 @@ export default function GlassToast() {
 
   return (
     <div className="flex h-full w-full items-center justify-center bg-[#1A1A19]">
-      {}
       <img
         src={BACKGROUND_IMAGE}
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
 
-      {}
       <div className="relative z-10 flex flex-wrap items-center justify-center gap-3 px-4">
         {(Object.keys(VARIANTS) as ToastVariant[]).map((variant) => (
           <TriggerButton
@@ -328,7 +315,6 @@ export default function GlassToast() {
         ))}
       </div>
 
-      {}
       <div className="fixed bottom-4 left-4 right-4 z-50 flex flex-col-reverse gap-3 sm:bottom-6 sm:left-auto sm:right-6 sm:w-[380px]">
         <AnimatePresence mode="popLayout" initial={false}>
           {toasts.map((toast) => (

@@ -1,9 +1,5 @@
 'use client'
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents a full-frame photo gallery driven by scroll progress.
- * Each section wipes over the previous image while updating its title.
- */
 
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import {
@@ -16,7 +12,6 @@ import {
 } from 'framer-motion'
 import { CaretDown } from '@phosphor-icons/react'
 
-// customize: replace the gallery images and titles below
 const PHOTOS = [
   {
     src: 'https://images.unsplash.com/photo-1634573826817-27d9e8da08df?w=1920&h=1080&fit=crop&crop=center&auto=format',
@@ -54,7 +49,6 @@ const TYPEFACE =
 
 
 
-// tune: lower to shorten the scroll sequence
 const SECTION_HEIGHT = '1100vh'
 
 
@@ -62,6 +56,7 @@ const SECTION_HEIGHT = '1100vh'
 
 
 
+// Keep % on every value: mixing 0 with 0% breaks the tween and the clip silently drops.
 const HIDDEN_CLIP = {
   down: 'inset(0% 0% 100% 0%)',
   right: 'inset(0% 100% 0% 0%)',
@@ -88,8 +83,6 @@ const WIPE_SEQUENCE = PHOTOS.slice(1).map((photo, index) => {
     direction: DIRECTIONS[index % DIRECTIONS.length],
     from,
     to,
-    
-    
     settled: to + (to - from) * 0.45,
   }
 })
@@ -101,10 +94,8 @@ const TOTAL_LABEL = String(PHOTOS.length).padStart(2, '0')
 
 
 
-// tune: raise to spread incoming title letters farther apart
 const ENTER_TRACKING = 0.16
 const SETTLED_TRACKING = 0.02
-// tune: raise to increase title entrance travel
 const ENTER_OFFSET = 48
 const ENTER_EASE = cubicBezier(0.16, 1, 0.3, 1)
 
@@ -134,17 +125,11 @@ function findScrollContext(element: HTMLElement): {
     if (overflowY !== 'visible') {
       if (!clipper) clipper = ancestor
 
-      
-      
-      
-      
+      // overflow-x: hidden also computes overflowY auto, so require real overflow too.
       if (
         (overflowY === 'auto' || overflowY === 'scroll') &&
         ancestor.scrollHeight > ancestor.clientHeight
       ) {
-        
-        
-        
         return { scroller: ancestor, clipper: clipper ?? ancestor }
       }
     }
@@ -164,13 +149,6 @@ function useElementScrollProgress(targetRef: RefObject<HTMLElement | null>): {
   viewportHeight: number | null
 } {
   const progress = useMotionValue(0)
-  
-  
-  
-  
-  
-  
-  
   const [viewportHeight, setViewportHeight] = useState<number | null>(null)
 
   useEffect(() => {
@@ -187,12 +165,6 @@ function useElementScrollProgress(targetRef: RefObject<HTMLElement | null>): {
       const containerTop = scrollContainer
         ? scrollContainer.getBoundingClientRect().top
         : 0
-      
-      
-      
-      
-      
-      
       const availableHeight = scrollContainer
         ? scrollContainer.clientHeight
         : window.innerHeight
@@ -200,11 +172,6 @@ function useElementScrollProgress(targetRef: RefObject<HTMLElement | null>): {
         clipper && clipper !== scrollContainer
           ? Math.min(availableHeight, clipper.clientHeight)
           : availableHeight
-      
-      
-      
-      
-      
       const cropped =
         !!clipper &&
         clipper !== scrollContainer &&
@@ -225,18 +192,12 @@ function useElementScrollProgress(targetRef: RefObject<HTMLElement | null>): {
     }
 
     updateProgress()
-    
-    
-    
+    // Both listeners: scroll events on an inner scroller do not bubble to window.
     scrollContainer?.addEventListener('scroll', requestUpdate, { passive: true })
     window.addEventListener('scroll', requestUpdate, { passive: true })
     window.addEventListener('resize', requestUpdate)
 
-    
-    
     const observer = new ResizeObserver(requestUpdate)
-    
-    
     observer.observe(scrollContainer ?? clipper ?? document.documentElement)
     if (clipper && clipper !== scrollContainer) observer.observe(clipper)
 
@@ -298,7 +259,6 @@ function PhotoLayer({
       className="absolute inset-0 isolate"
       style={{ clipPath, willChange: 'clip-path' }}
     >
-      {}
       <img
         src={step.photo.src}
         alt={step.photo.alt}
@@ -330,8 +290,6 @@ function FrameTitle({
   direction,
 }: {
   title: string
-  
-  
   enter?: MotionValue<number>
   direction?: Direction
 }) {
@@ -345,9 +303,6 @@ function FrameTitle({
     [ENTER_TRACKING, SETTLED_TRACKING],
   )
   const letterSpacing = useTransform(tracking, (value) => `${value}em`)
-  
-  
-  
   const trailing = useTransform(tracking, (value) => `${-value}em`)
   const offset = useTransform(
     arrival,
@@ -382,15 +337,11 @@ export default function ScrollWipeGallery() {
   const { progress: scrollYProgress, viewportHeight } =
     useElementScrollProgress(wrapperRef)
 
-  
-  
+  // 100vh until measured, so the server and first client render match.
   const panelHeight = viewportHeight ? `${viewportHeight}px` : '100vh'
 
-  
   const cueOpacity = useTransform(scrollYProgress, [0, 0.03], [1, 0])
 
-  
-  
   const frameLabel = useTransform(scrollYProgress, (value) => {
     const passed = WIPE_SEQUENCE.filter(
       (step) => value >= (step.from + step.to) / 2,
@@ -410,13 +361,11 @@ export default function ScrollWipeGallery() {
         className="sticky top-0 w-full overflow-hidden bg-[#0A0A0A] dark:bg-[#0A0A0A]"
         style={{ height: panelHeight }}
       >
-        {}
         <h2 className="sr-only">
           {PHOTOS.map((photo) => photo.title).join('. ')}
         </h2>
 
         <div className="absolute inset-0 isolate">
-          {}
           <img
             src={PHOTOS[0].src}
             alt={PHOTOS[0].alt}
@@ -435,7 +384,6 @@ export default function ScrollWipeGallery() {
           />
         ))}
 
-        {}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 z-20 text-[#FFFFFF] dark:text-[#FFFFFF]"
@@ -450,7 +398,6 @@ export default function ScrollWipeGallery() {
             </span>
           </div>
 
-          {}
           <div className="absolute bottom-6 right-4 text-[12px] font-semibold uppercase tracking-[0.18em] md:bottom-8 md:right-8">
             <motion.span>{frameLabel}</motion.span>
             <span className="opacity-70"> / {TOTAL_LABEL}</span>

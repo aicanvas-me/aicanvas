@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion react-dom
-/**
- * Presents a token swap card with live quotes, token pickers, and configurable slippage.
- * Selecting a duplicate token flips the pair, while submission animates confirmation.
- */
 
 import {
   useState,
@@ -93,18 +89,12 @@ const INITIAL_TOKENS: Token[] = [
 ]
 
 const PRICE_DRIFT_MS = 3000
-// tune: raise to extend the swapping state
 const SWAP_SWAPPING_MS = 900
-// tune: raise to extend the success state
 const SWAP_SUCCESS_MS = 1600
 
-// tune: raise to reduce quoted price impact
 const POOL_DEPTH_USD = 25_000_000
-// tune: raise to increase the minimum quoted price impact
 const IMPACT_FLOOR = 0.0005
-// tune: raise to increase the maximum quoted price impact
 const IMPACT_CAP = 0.05
-// tune: raise to increase the baseline network fee
 const NETWORK_FEE_BASE_USD = 2.4
 
 interface SlippageOption {
@@ -119,7 +109,6 @@ const SLIPPAGE_OPTIONS: SlippageOption[] = [
 ]
 const DEFAULT_SLIPPAGE = SLIPPAGE_OPTIONS[0].value
 
-// tune: change to set the initial sell amount
 const DEFAULT_SELL_INPUT = '1'
 
 const SUCCESS_SPARKS: number[] = Array.from(
@@ -216,7 +205,6 @@ function sanitizeDecimal(raw: string): string {
   return cleaned
 }
 
-// tune: raise to widen the neutral trend band
 const TREND_FLAT_EPS = 0.05
 function classifyTrend(change: number): 'up' | 'down' | 'flat' {
   if (change > TREND_FLAT_EPS) return 'up'
@@ -387,7 +375,6 @@ function AnimatedNumber({
       last.current = value
       return
     }
-    // tune: raise the threshold to snap more price changes
     const rel = Math.abs(value - last.current) / (Math.abs(last.current) || 1)
     if (rel < 0.001) {
       mv.set(value)
@@ -409,18 +396,13 @@ function AnimatedNumber({
   )
 }
 
-// tune: raise to make token rows taller
 const ROW_HEIGHT = 48
-// tune: raise to show more token rows before scrolling
 const VISIBLE_ROWS = 3
-// tune: raise to increase spacing between token rows
 const ROW_GAP = 4
-// tune: raise to increase the dropdown's vertical padding
 const PANEL_PAD_Y = 12
 const LIST_DEFAULT_HEIGHT =
   ROW_HEIGHT * VISIBLE_ROWS + ROW_GAP * (VISIBLE_ROWS - 1)
 const PANEL_DEFAULT_HEIGHT = LIST_DEFAULT_HEIGHT + PANEL_PAD_Y
-// tune: raise to move the dropdown farther from its trigger
 const DROPDOWN_GAP = 8
 
 type Placement = 'down' | 'up'
@@ -447,7 +429,6 @@ function usePopoverPosition(
     }
 
     let last: PopoverPosition | null = null
-    // tune: raise to ignore larger dropdown position shifts
     const EPS = 0.5
 
     const measure = (): PopoverPosition | null => {
@@ -723,6 +704,7 @@ function TokenPicker({
   return createPortal(
     <motion.div
       ref={panelRef}
+      // Portaled outside cardRef: the outside-click handler finds the list by this attribute.
       data-token-dropdown
       id={listId}
       role="listbox"
@@ -819,7 +801,6 @@ function SwapCard({
       </span>
 
       <div className="mt-1 flex items-center gap-3">
-        {}
         <div className="min-w-0 flex-1">
           {isSell ? (
             <input
@@ -857,7 +838,6 @@ function SwapCard({
           )}
         </div>
 
-        {}
         <TokenPill
           ref={pillRef}
           token={token}
@@ -870,7 +850,6 @@ function SwapCard({
         />
       </div>
 
-      {}
       <div className="mt-2 flex items-center justify-between gap-2">
         <TrendChip token={token} isDark={isDark} />
 
@@ -911,7 +890,6 @@ function SwapCard({
         )}
       </div>
 
-      {}
       <AnimatePresence>
         {pickerOpen && (
           <TokenPicker
@@ -983,7 +961,6 @@ const TokenPill = forwardRef<
       >
         {token.symbol}
       </span>
-      {}
       <motion.span
         animate={{ rotate: open ? 180 : 0 }}
         transition={
@@ -1094,7 +1071,6 @@ function DetailsPanel({
       className="overflow-hidden rounded-3xl px-4"
       style={{ background: panelBg }}
     >
-      {}
       <div
         className="flex items-center justify-between gap-2 -mx-4 px-4 transition-colors [@media(hover:hover)]:hover:bg-[var(--row-hover)]"
         style={
@@ -1153,7 +1129,6 @@ function DetailsPanel({
         </button>
       </div>
 
-      {}
       <AnimatePresence initial={false}>
         {expanded && (
           <motion.div
@@ -1164,7 +1139,6 @@ function DetailsPanel({
             transition={reduced ? { duration: 0 } : { duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
             style={{ overflow: 'visible' }}
           >
-            {}
             <div
               className="mt-3 flex flex-col gap-1.5 pt-3 pb-3"
               style={{ boxShadow: `inset 0 1px 0 0 ${dividerColor}` }}
@@ -1194,7 +1168,6 @@ function DetailsPanel({
                 />
               </div>
 
-              {}
               <div
                 className="relative flex items-center justify-between gap-2"
                 style={{ minHeight: 28 }}
@@ -1362,7 +1335,7 @@ export default function CryptoSwap() {
       setTokens((prev) =>
         prev.map((t) => {
           if (t.symbol === 'USDC' || t.symbol === 'USDT') return t
-          const drift = 1 + (Math.random() - 0.5) * 0.006 // tune: raise the multiplier to increase price drift
+          const drift = 1 + (Math.random() - 0.5) * 0.006
           const next = t.usdPrice * drift
           return {
             ...t,
@@ -1371,7 +1344,6 @@ export default function CryptoSwap() {
           }
         }),
       )
-      // tune: widen the jitter and bounds to increase fee variation
       setNetworkFeeUsd(
         clamp(NETWORK_FEE_BASE_USD + (Math.random() - 0.5) * 1.6, 1.6, 3.2),
       )
@@ -1520,15 +1492,12 @@ export default function CryptoSwap() {
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
         className="w-full max-w-[360px]"
       >
-        {}
         <div
           ref={cardRef}
           className="flex flex-col gap-2 rounded-[28px] p-2"
           style={{ background: trayBg, boxShadow: trayShadow }}
         >
-          {}
           <div className="flex flex-col gap-2">
-            {}
             <div className="relative">
               <SwapCard
                 side="sell"
@@ -1551,7 +1520,6 @@ export default function CryptoSwap() {
                 onSelect={(symbol) => handleSelect('sell', symbol)}
               />
 
-              {}
               <div className="pointer-events-none absolute bottom-0 left-1/2 z-10 translate-x-[-50%] translate-y-[calc(50%+4px)]">
                 <motion.button
                   type="button"
@@ -1614,7 +1582,6 @@ export default function CryptoSwap() {
             />
           </div>
 
-          {}
           <DetailsPanel
             quote={quote}
             hasAmount={hasAmount}
@@ -1625,7 +1592,6 @@ export default function CryptoSwap() {
             onSlippageChange={setSlippage}
           />
 
-          {}
           <motion.button
             type="button"
             onClick={handleSwap}
@@ -1651,7 +1617,6 @@ export default function CryptoSwap() {
             overflow: 'visible',
           }}
         >
-          {}
           <AnimatePresence>
             {status === 'success' && !reduced && (
               <motion.span
@@ -1716,7 +1681,6 @@ export default function CryptoSwap() {
                 transition={{ duration: 0.18 }}
                 className="relative flex items-center gap-2"
               >
-                {}
                 <span className="relative inline-flex items-center justify-center">
                   <motion.span
                     className="inline-flex"

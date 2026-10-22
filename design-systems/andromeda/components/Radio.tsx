@@ -1,15 +1,3 @@
-// ============================================================
-// COMPONENT: Radio (Choicebox)
-// shadcn/ui-aligned API: forwardRef, controlled (`checked`) or
-// uncontrolled, `onCheckedChange`, optional `label`. Square box
-// with a small filled square in the center when selected — same
-// sci-fi vocabulary as Checkbox, but mutually-exclusive semantics.
-//
-// For radio groups, use the `name` prop on each Radio so the native
-// inputs share the same group. The companion `RadioGroup` is just
-// a thin convenience wrapper that fans `name`/`value` down.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useId, useState, createContext, useContext, useEffect } from 'react';
@@ -20,6 +8,7 @@ function useSpacePopIn() {
     if (document.querySelector('#andromeda-pop-in-style')) return;
     const style = document.createElement('style');
     style.id = 'andromeda-pop-in-style';
+    // Checkbox injects this same id; the first to mount wins, so keep both keyframes identical.
     style.textContent = `@keyframes andromeda-pop-in{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}`;
     document.head.appendChild(style);
   }, []);
@@ -29,12 +18,7 @@ import { cn, andromedaVars } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
 
-// Touch-target expander — the visible 16px box stays its desktop size; on coarse
-// pointers the invisible input (which receives the click, kept on top via z-10)
-// grows to spacing[10] (40px), centered over the box. inset-0 is released so the
-// input can overflow the small wrapper. Scoped className, !important to beat the
-// peer/absolute base classes. the Andromeda responsive rules + the Andromeda interaction-states rules "Invisible inputs over
-// visual proxies" (input must stay above the proxy — z-10 is preserved).
+// Touch screens: the hidden input grows to 40px, centered over the 16px box.
 const TOUCH_TARGET_STYLE = `
   ${mq.coarse} {
     .andromeda-radio-touch {
@@ -94,7 +78,6 @@ const labelClass = cn(
   'select-none cursor-pointer',
 );
 
-// ── Group context ───────────────────────────────────────────────────────────
 type RadioGroupContextValue = {
   name: string;
   value: string | undefined;
@@ -187,7 +170,6 @@ type RadioProps = Omit<
   label?: string;
 };
 
-/** @type {React.ForwardRefExoticComponent<RadioProps & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange'|'type'>>} */
 export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   {
     className,
@@ -209,7 +191,6 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
   const id = idProp ?? `andromeda-radio-${reactId}`;
   const group = useContext(RadioGroupContext);
 
-  // Standalone fallback state when this Radio is rendered outside a group.
   const [internal, setInternal] = useState(defaultChecked);
 
   let checked: boolean;
@@ -221,8 +202,6 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
     checked = group.value === value;
     disabled = disabled || group.disabled;
     name = name ?? group.name;
-    // Inside a RadioGroup, value is required by the contract above; standalone
-    // radios never reach this call.
     onChange = () => { group.onValueChange(value as string); onCheckedChange?.(true); };
   } else {
     const isControlled = controlledChecked !== undefined;
@@ -248,10 +227,7 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
           checked={checked}
           disabled={disabled}
           onChange={onChange}
-          // z-10 keeps the invisible input on top of the visual box so clicks
-          // reach the input. Both layers are positioned, so without an explicit
-          // z-index the box span paints last and swallows every click on the
-          // square — only the label (via htmlFor) would toggle. Mirrors Checkbox.
+          // z-10 lets clicks reach the input; keep the input before the box for the focus ring.
           className="andromeda-radio-touch peer absolute inset-0 w-full h-full opacity-0 cursor-pointer disabled:cursor-not-allowed z-10"
           {...props}
         />
@@ -267,7 +243,6 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(function Radio(
         >
           {checked ? (
             <span
-              // Identity constant, no token (6px mark geometry)
               className="block w-[6px] h-[6px]"
               style={{
                 background: 'var(--andromeda-accent-300)',

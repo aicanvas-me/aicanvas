@@ -1,29 +1,16 @@
 'use client'
 
-/**
- * Renders a canvas grid of connected dots with theme-aware coloring.
- * Pointer proximity brightens the grid and pushes nearby nodes into a lens shape.
- */
-
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
-// tune: raise to spread the grid nodes farther apart
 const SPACING = 20
-// tune: raise to widen the pointer influence
 const RADIUS_FRAC = 0.30
-// tune: raise to strengthen the lens displacement
 const LENS_FRAC = 0.06
-// tune: raise to brighten resting dots
 const BASE_A = 0.13
-// tune: raise to brighten highlighted dots
 const PEAK_A = 0.95
-// tune: raise to brighten resting lines in dark mode
 const LINE_A_DARK = 0.07
-// tune: raise to brighten resting lines in light mode
 const LINE_A_LIGHT = 0.12
-// tune: raise to quicken pointer tracking
 const MOUSE_LERP = 0.14
 type Dot = { x: number; y: number; b: number; l: number; px: number; py: number }
 type Segment = { a: Dot; b: Dot }

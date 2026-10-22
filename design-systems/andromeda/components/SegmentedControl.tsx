@@ -1,12 +1,3 @@
-// ============================================================
-// COMPONENT: SegmentedControl
-// shadcn/ui-aligned API: controlled `value` / `onChange`, options
-// array, sized variants. A row of icon-or-label buttons with a
-// `surface.active` fill that slides between segments via framer's
-// `layoutId` — no manual measurement, no ResizeObserver, no raw
-// timing strings. Token-driven duration + easing throughout.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useId } from 'react';
@@ -18,14 +9,7 @@ import { cn, andromedaVars, easingArray, themeColor } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
 
-// Narrow-width overflow guard — a multi-segment strip can be wider than a phone
-// viewport. Faithful-stack rule (mirrors the Table): the strip scrolls
-// HORIZONTALLY inside its own box, never wraps (wrapping would break the
-// fixed-height row, the borderLeft dividers, and the sliding indicator) and
-// never forces page scroll. Below `md` the control is capped at max-width:100%
-// and its segments scroll within. The buttons are flex-shrink:0 so they keep
-// their tap size while scrolling. !important to beat the inline-styled root.
-// the Andromeda responsive rules (faithful stack, no horizontal PAGE scroll).
+// Below md the strip scrolls inside its own box; it must never wrap or force page scroll.
 const RESPONSIVE_STYLE = `
   ${mq.md} {
     .andromeda-segmented {
@@ -53,7 +37,6 @@ const SIZE_PX = {
   lg: 40,
 };
 
-// CSS var per size — heights sit on the spacing grid (6=24px, 8=32px, 10=40px).
 const SIZE_VAR = {
   sm: '--andromeda-6',
   md: '--andromeda-8',
@@ -66,8 +49,8 @@ const ICON_PX = {
   lg: 18,
 };
 
+// Returns seconds: Framer Motion takes seconds, tokens store ms.
 const ms = (v: string) => parseInt(v, 10) / 1000;
-// framer boundary: derived from tokens, cannot follow runtime var overrides
 const INDICATOR_TX: Transition = {
   duration: ms(tokens.motion.duration.slow),
   ease: easingArray(tokens.motion.easing.standard),
@@ -112,15 +95,10 @@ type SegmentedControlProps = Omit<ComponentPropsWithoutRef<'div'>, 'onChange'> &
   layoutGroupId?: string;
 };
 
-/** @type {React.ForwardRefExoticComponent<SegmentedControlProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps>(function SegmentedControl(
   { className, value, onChange, options, size = 'md', layoutGroupId, style, ...props },
   ref,
 ) {
-  // Auto-scope the indicator's layoutId to this instance so multiple
-  // SegmentedControls on the same page don't share the marker. Override
-  // via `layoutGroupId` only when you explicitly want cross-instance
-  // animation (rare).
   const generatedId = useId();
   const indicatorId = layoutGroupId ?? `andromeda-segmented-${generatedId}`;
   const cellSize = SIZE_PX[size] ?? SIZE_PX.md;
@@ -172,11 +150,6 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
               borderLeft: i === 0 ? 'none' : `${tokens.border.thin} ${themeColor.border.base}`,
               cursor: 'pointer',
               flexShrink: 0,
-              // A segment never wraps its label — a wrapped label breaks the
-              // fixed-height row, the borderLeft dividers and the sliding
-              // indicator (the strip scrolls horizontally instead, see
-              // RESPONSIVE_STYLE). Without this a label squeezed in a narrow
-              // container ("View all") drops to a second line.
               whiteSpace: 'nowrap',
               fontFamily: tokens.typography.fontMono,
               fontSize: tokens.typography.size.sm,
@@ -187,9 +160,6 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
               transition: `color ${tokens.motion.duration.normal} ${tokens.motion.easing.out}`,
             }}
           >
-            {/* Sliding indicator — only the active button renders it.
-                Framer's `layoutId` matches the new instance to the previous
-                one and animates the layout change between siblings. */}
             {active ? (
               <motion.span
                 layoutId={indicatorId}
@@ -213,8 +183,6 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
         );
       })}
 
-      {/* Hover styles — inline rule injected once per render scope.
-          The :hover psuedo-class can't be expressed with React inline styles. */}
       <style>{`
         .andromeda-segmented-item:hover[data-active="false"] {
           color: var(--andromeda-text-primary);

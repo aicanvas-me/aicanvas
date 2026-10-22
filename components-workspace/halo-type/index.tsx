@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Renders a rotating ring of individually positioned text glyphs.
- * Hover and touch slow the rotation, while reduced motion freezes the ring.
- */
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import {
@@ -15,20 +11,13 @@ import {
   useTransform,
 } from 'framer-motion'
 
-// customize: replace the ring phrase below
 const PHRASE = 'COPY ✦ PASTE ✦ SHIP ✦ REPEAT ✦ '
 
-// tune: raise to tilt the ring farther at rest
 const TILT_REST = 24
-// tune: raise to tilt the ring farther during interaction
 const TILT_HOVER = 24
-// tune: raise to slow the rotation
 const SECONDS_PER_TURN = 14
-// tune: raise to preserve more speed during interaction
 const SPEED_HOVER = 0.3
-// tune: raise to widen the ring
 const RADIUS_FRACTION = 0.35
-// tune: raise to enlarge the separators
 const STAR_SCALE = 0.65
 
 function useTheme(ref: React.RefObject<HTMLElement | null>) {
@@ -199,6 +188,7 @@ export default function HaloType() {
   return (
     <div
       ref={rootRef}
+      // No items-center: the wrapper must stretch to this height or the ring stops growing.
       className="flex min-h-screen w-full justify-center"
       style={{ backgroundColor: bg }}
     >
@@ -215,7 +205,6 @@ export default function HaloType() {
         onPointerUp={handleRelease}
         onPointerCancel={handleRelease}
       >
-        {}
         <div
           aria-hidden
           style={{
@@ -226,7 +215,7 @@ export default function HaloType() {
           }}
         />
 
-        {}
+        {/* Keep visibility hidden (not display:none) and text styles equal to glyphStyle below. */}
         <span
           ref={measureRef}
           aria-hidden
@@ -259,7 +248,6 @@ export default function HaloType() {
           ))}
         </span>
 
-        {}
         <div
           style={{
             perspective: '1200px',
@@ -300,7 +288,6 @@ export default function HaloType() {
               }
               return (
                 <React.Fragment key={i}>
-                  {}
                   <span
                     ref={(el) => {
                       frontRefs.current[i] = el
@@ -313,7 +300,6 @@ export default function HaloType() {
                   >
                     {display}
                   </span>
-                  {}
                   <span
                     ref={(el) => {
                       backRefs.current[i] = el

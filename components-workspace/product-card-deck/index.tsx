@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Displays a looping deck of product cards with a focused front item.
- * Dragging or using the controls cycles cards through the animated stack.
- */
 
 import { useEffect, useRef, useState } from 'react'
 import {
@@ -26,10 +22,8 @@ interface CardData {
   label?: string
 }
 
-// customize: replace the deck images and labels below
 const CARDS: CardData[] = [
   {
-    
     title: '',
     image: 'https://ik.imagekit.io/aitoolkit/product-card-deck/mural.jpg?tr=w-600',
   },
@@ -59,9 +53,8 @@ const CARDS: CardData[] = [
 
 
 
-// tune: change to control the number of rendered deck slots
+// SLOT_Y, SLOT_SCALE and SLOT_OPACITY need one entry per visible slot.
 const VISIBLE = 4
-// tune: adjust these arrays to change the depth spacing
 const SLOT_Y = [0, 12, 24, 36]
 const SLOT_SCALE = [1, 0.95, 0.9, 0.86]
 const SLOT_OPACITY = [1, 1, 0.92, 0.82]
@@ -82,7 +75,6 @@ function CardFace({ card, isTop }: { card: CardData; isTop: boolean }) {
           : '0 14px 30px rgba(0,0,0,0.18)',
       }}
     >
-      {}
       <div className="relative w-full" style={{ flex: 1, minHeight: 0 }}>
         <img
           src={card.image}
@@ -93,7 +85,6 @@ function CardFace({ card, isTop }: { card: CardData; isTop: boolean }) {
         />
       </div>
 
-      {}
       {card.title && (
         <div
           className="flex items-center justify-between"
@@ -131,7 +122,6 @@ function CardFace({ card, isTop }: { card: CardData; isTop: boolean }) {
                 cursor: 'pointer',
                 backgroundColor: '#141312',
                 color: '#F5F1E8',
-                
                 borderRadius: 9999,
                 padding: '8px 16px',
                 fontFamily: 'var(--font-sans, sans-serif)',
@@ -171,12 +161,9 @@ function FlickCard({
   const y = useMotionValue(SLOT_Y[slot])
   const scale = useMotionValue(SLOT_SCALE[slot])
   const opacity = useMotionValue(0)
-  
   const rotate = useTransform(x, [-200, 200], [-18, 18], { clamp: true })
   const flickVel = useRef({ x: 0, y: 0 })
 
-  
-  
   useEffect(() => {
     if (!isPresent) return
     const controls = [
@@ -188,7 +175,6 @@ function FlickCard({
     return () => controls.forEach((c) => c.stop())
   }, [slot, isTop, isPresent, x, y, scale, opacity])
 
-  
   useEffect(() => {
     if (isPresent) return
     const v = flickVel.current
@@ -208,15 +194,12 @@ function FlickCard({
     const speed = Math.hypot(info.velocity.x, info.velocity.y)
     const dist = Math.hypot(info.offset.x, info.offset.y)
     if (speed > 500 || dist > 130) {
-      
-      
       flickVel.current =
         speed > 220
           ? { x: info.velocity.x, y: info.velocity.y }
           : { x: info.offset.x * 9, y: info.offset.y * 9 }
       onFlick()
     } else {
-      
       animate(x, 0, SPRING)
       animate(y, SLOT_Y[0], SPRING)
     }
@@ -234,7 +217,6 @@ function FlickCard({
         inset: 0,
         zIndex: 100 - slot,
         cursor: isTop ? 'grab' : 'auto',
-        
         touchAction: isTop ? 'none' : 'auto',
       }}
       drag={isTop}
@@ -259,7 +241,6 @@ export default function ProductCardDeck() {
   )
   const nextKey = useRef(VISIBLE)
 
-  
   const handleFlick = () => {
     setDeck((prev) => {
       const rest = prev.slice(1)
@@ -278,8 +259,6 @@ export default function ProductCardDeck() {
         <div
           className="relative"
           style={{
-            
-            
             width: 'clamp(220px, 72vw, 300px)',
             height: 'calc(clamp(220px, 72vw, 300px) + 56px)',
           }}

@@ -1,20 +1,15 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Displays a set of glass feature cards over a shared image backdrop.
- * Pointer movement tilts each card while its border gradient rotates.
- */
 
 import { useRef } from 'react'
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
 import { ChartLineUp, Lightning, ShieldCheck, ArrowRight } from '@phosphor-icons/react'
 import type { Icon } from '@phosphor-icons/react'
 
-// customize: replace the background and card data below
-
 const BACKGROUND = 'https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png?updatedAt=1775226802133'
 
+// color and gradient take 6-digit hex ("#RRGGBB, #RRGGBB"): alpha suffixes are appended.
 const CARDS: { title: string; subtitle: string; color: string; gradient: string; cta: string; Icon: Icon }[] = [
   { title: 'Analytics',  subtitle: 'Real-time metrics and insights for your application.',    color: '#5B8FF9', gradient: '#5B8FF9, #A78BFA', cta: 'View Dashboard',    Icon: ChartLineUp },
   { title: 'Automation', subtitle: 'Streamline your workflows with intelligent triggers.',     color: '#FF6BF5', gradient: '#FF6BF5, #FF6680', cta: 'Create Workflow',    Icon: Lightning    },
@@ -65,7 +60,6 @@ function GlassCardItem({
       style={{ rotateX, rotateY, transformPerspective: 800 }}
       className="relative w-64 cursor-pointer overflow-hidden rounded-3xl p-[1px]"
     >
-      {}
       <motion.div
         className="absolute inset-0 rounded-3xl opacity-30"
         style={{ background: `linear-gradient(135deg, ${gradient}, transparent 60%)` }}
@@ -73,7 +67,6 @@ function GlassCardItem({
         transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
       />
 
-      {}
       <div
         className="relative rounded-3xl p-6"
         style={{
@@ -83,7 +76,6 @@ function GlassCardItem({
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12)',
         }}
       >
-        {}
         <motion.div
           className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl"
           style={{
@@ -99,7 +91,6 @@ function GlassCardItem({
         <h3 className="mb-2 text-base font-semibold text-white/90">{title}</h3>
         <p className="mb-5 text-sm leading-relaxed text-white/40">{subtitle}</p>
 
-        {}
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
@@ -107,6 +98,7 @@ function GlassCardItem({
           style={{
             background: `linear-gradient(135deg, ${gradient.split(',')[0]}40, ${gradient.split(',')[1]?.trim() ?? gradient.split(',')[0]}28)`,
             border: `1px solid ${gradient.split(',')[0]}55`,
+            // onMouseLeave below restores this shadow by hand: change both.
             boxShadow: `0 2px 12px ${gradient.split(',')[0]}25`,
             transition: 'box-shadow 0.2s ease',
           }}
@@ -126,7 +118,6 @@ function GlassCardItem({
           />
         </motion.button>
 
-        {}
         <div
           className="absolute left-6 right-6 top-0 h-[1px]"
           style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }}
