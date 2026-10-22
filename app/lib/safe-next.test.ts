@@ -34,6 +34,24 @@ describe('safeNext', () => {
     }
   })
 
+  it('refuses dot segments that resolve to a protocol-relative path', () => {
+    for (const p of ['/..//evil.com', '/.//evil.com', '/%2e%2e//evil.com', '/a/../..//evil.com']) {
+      expect(safeNext(p)).toBe('/account')
+    }
+  })
+
+  it('returns the resolved path, never raw dot segments', () => {
+    expect(safeNext('/a/../components/x?tab=code')).toBe('/components/x?tab=code')
+  })
+
+  it('unicode spaces and fullwidth slashes stay on our path, percent-encoded', () => {
+    for (const code of [0x2028, 0x00a0, 0xfeff, 0xff0f, 0xff3c]) {
+      const out = safeNext(`/${ch(code)}/evil.com`)
+      expect(out.startsWith('/%')).toBe(true)
+      expect(new URL(out, 'https://aicanvas.me').origin).toBe('https://aicanvas.me')
+    }
+  })
+
   it('honours a custom fallback', () => {
     expect(safeNext(null, '/welcome')).toBe('/welcome')
     expect(safeNext('//evil.com', '/welcome')).toBe('/welcome')

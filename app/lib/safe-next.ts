@@ -6,7 +6,9 @@
 // Control characters, spaces and backslashes are refused anywhere: the URL
 // parser deletes tab, CR and LF, so `/<tab>/evil.com` would turn into
 // `//evil.com` after this check. Whatever passes must still resolve on our own
-// origin. Anything else falls back to the supplied default.
+// origin, and the RESOLVED path is what we return: `/..//evil.com` resolves to
+// `//evil.com`, which a client-side navigation fallback could follow off-site.
+// Anything else falls back to the supplied default.
 
 const PROBE_ORIGIN = 'http://next.invalid'
 
@@ -19,10 +21,12 @@ export function safeNext(input: string | null | undefined, fallback = '/account'
     // 0x00-0x20 = control characters and space, 0x7f = DEL, 0x5c = backslash
     if (code <= 0x20 || code === 0x7f || code === 0x5c) return fallback
   }
+  let url: URL
   try {
-    if (new URL(input, PROBE_ORIGIN).origin !== PROBE_ORIGIN) return fallback
+    url = new URL(input, PROBE_ORIGIN)
   } catch {
     return fallback
   }
-  return input
+  if (url.origin !== PROBE_ORIGIN || url.pathname.startsWith('//')) return fallback
+  return url.pathname + url.search + url.hash
 }
