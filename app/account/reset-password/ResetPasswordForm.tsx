@@ -13,7 +13,7 @@ import { AuthPagePopup } from '../AuthPagePopup'
 // ─── ResetPasswordForm ───────────────────────────────────────────────────────
 // Sets a new password on a recovery-issued session. The recovery flow:
 //   1. user clicks the email link
-//   2. /account/auth/callback exchanges the code, sets a session, AND drops a
+//   2. /account/auth/confirm verifies the link, sets a session, AND drops a
 //      short-lived HTTP-only cookie (`ac_recovery_session`)
 //   3. user lands here; the server page reads the cookie and tells us via
 //      `hasRecoveryMarker` whether this session is a fresh recovery one

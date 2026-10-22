@@ -9,15 +9,21 @@ import { AuthPagePopup } from '../AuthPagePopup'
 
 // ─── ForgotPasswordForm ──────────────────────────────────────────────────────
 // Step 1 of recovery: user enters email, we send a Supabase recovery link.
-// The email's link points at /account/auth/callback?next=/account/reset-password
-// — the existing callback exchanges the code for a recovery session and then
-// the user lands on the reset-password page already authenticated.
+// The email's link lands on /account/auth/confirm, which verifies it on our
+// server (any browser works), sets the recovery marker, and sends the user to
+// the reset-password page already authenticated. A reset link always goes to
+// the reset page, so `redirectTo` below no longer steers it.
 
-export function ForgotPasswordForm() {
+type Props = {
+  /** Shown on first paint, e.g. when a reset link had already been used. */
+  initialError?: string | null
+}
+
+export function ForgotPasswordForm({ initialError = null }: Props) {
   const [email, setEmail] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(initialError)
 
   // Any edit clears the last message: a note about an address the user has
   // since corrected is worse than none.
