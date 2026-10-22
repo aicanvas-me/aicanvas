@@ -333,6 +333,7 @@ export const TrendChart = forwardRef<HTMLDivElement, TrendChartProps>(function T
       {payload.value}
     </text>
   );
+  // Bars always start at 0: a fitted floor would exaggerate the differences.
   const yDomain: [AxisDomainItem, AxisDomainItem] = mode === 'bar' ? [0, Array.isArray(domain) ? domain[1] : 'auto'] : domain;
   const yAxis = (
     <YAxis domain={yDomain} tick={yTick} axisLine={false} tickLine={false} width={showYAxis ? 34 : 0} hide={!showYAxis} />
