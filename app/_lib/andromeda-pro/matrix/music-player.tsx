@@ -68,7 +68,7 @@ export const musicPlayer: MatrixSpec = {
   // two different components. Capping the case AT the breakpoint (the container
   // query is max-width, so equal still matches) keeps them the same.
   render: (_size, props, c) => (
-    <div style={{ maxWidth: tokens.breakpoints.md }}>
+    <div style={{ width: '100%', maxWidth: tokens.breakpoints.md, margin: '0 auto' }}>
       {c?.label === UNWIRED_CASE ? <MusicPlayer {...props} /> : <MusicPlayerDemo {...props} />}
     </div>
   ),
