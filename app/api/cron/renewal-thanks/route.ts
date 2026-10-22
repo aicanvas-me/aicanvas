@@ -3,6 +3,7 @@ import { createAdminClient } from '@/app/lib/supabase/admin'
 import { paddleApiBase } from '@/app/lib/paddle/server'
 import { mapSubscriptionFields } from '@/lib/identity/sub-mapping'
 import { renewalThanksEmail } from '@/app/lib/email/messages'
+import { isThankYouRenewal } from '@/app/lib/billing/renewal-thanks-cadence'
 import { CONTACT_FROM } from '@/app/lib/config'
 
 export const runtime = 'nodejs'
@@ -20,6 +21,9 @@ export const maxDuration = 60
  * row) and its next charge falls on the target date. Anything unclear is a skip:
  * a missed thank-you costs nothing, a "renews soon" sent to someone who
  * cancelled does.
+ *
+ * Not every renewal is thanked: annual plans every time, monthly plans only the
+ * first renewal and then every 12th (see app/lib/billing/renewal-thanks-cadence).
  *
  * This is not a transactional email (it thanks and asks for feedback), so it
  * only goes to someone whose Product updates toggle reads on: a
@@ -90,6 +94,11 @@ export async function GET(req: NextRequest) {
         skipped++; continue
       }
 
+      const plan = mapSubscriptionFields(sub).plan ?? 'monthly'
+      if (!isThankYouRenewal({ plan, startedAt: sub.started_at ?? sub.first_billed_at, nextBilledAt })) {
+        skipped++; continue
+      }
+
       const period = sub.current_billing_period as { starts_at?: unknown } | null | undefined
       const periodKey = typeof period?.starts_at === 'string' ? period.starts_at : nextBilledAt
 
@@ -123,7 +132,7 @@ export async function GET(req: NextRequest) {
       })
       if (flagErr) { console.error('[renewal-thanks] flag write failed', row.user_id, flagErr); failed++; continue }
 
-      const mail = renewalThanksEmail({ plan: mapSubscriptionFields(sub).plan ?? 'monthly' })
+      const mail = renewalThanksEmail({ plan })
       const sendRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         signal: AbortSignal.timeout(10_000),
