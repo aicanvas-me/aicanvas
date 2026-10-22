@@ -22,8 +22,9 @@ export const maxDuration = 60
  * a missed thank-you costs nothing, a "renews soon" sent to someone who
  * cancelled does.
  *
- * Not every renewal is thanked: annual plans every time, monthly plans only the
- * first renewal and then every 12th (see app/lib/billing/renewal-thanks-cadence).
+ * Not every renewal is thanked: annual plans every time, monthly plans the next
+ * renewal of anyone never thanked and then 12 months after the last thank-you
+ * (see app/lib/billing/renewal-thanks-cadence).
  *
  * This is not a transactional email (it thanks and asks for feedback), so it
  * only goes to someone whose Product updates toggle reads on: a
@@ -95,16 +96,16 @@ export async function GET(req: NextRequest) {
       }
 
       const plan = mapSubscriptionFields(sub).plan ?? 'monthly'
-      if (!isThankYouRenewal({ plan, startedAt: sub.started_at ?? sub.first_billed_at, nextBilledAt })) {
-        skipped++; continue
-      }
-
       const period = sub.current_billing_period as { starts_at?: unknown } | null | undefined
       const periodKey = typeof period?.starts_at === 'string' ? period.starts_at : nextBilledAt
 
       const { data: { user }, error: userErr } = await admin.auth.admin.getUserById(row.user_id)
       if (userErr) { console.error('[renewal-thanks] user read failed', row.user_id, userErr); failed++; continue }
-      if (!user?.email || user.user_metadata?.renewal_thanks_sent_for === periodKey) {
+      const lastThankedFor = user?.user_metadata?.renewal_thanks_sent_for
+      if (!user?.email || lastThankedFor === periodKey) {
+        skipped++; continue
+      }
+      if (!isThankYouRenewal({ plan, lastThankedFor, periodStart: periodKey })) {
         skipped++; continue
       }
 
