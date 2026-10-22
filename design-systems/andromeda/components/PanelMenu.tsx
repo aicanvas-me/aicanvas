@@ -131,6 +131,7 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
   }, [submenuOpen]);
 
   const [flipLeft, setFlipLeft] = useState(false);
+  // Fixed, not absolute: the scrolling panel would clip a flyout positioned inside it.
   const [subPos, setSubPos] = useState<{ top: number; left: number; right: number } | null>(null);
   useIsomorphicLayoutEffect(() => {
     if (!submenuOpen) {
