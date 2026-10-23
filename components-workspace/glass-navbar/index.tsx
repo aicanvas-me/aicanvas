@@ -119,34 +119,42 @@ export default function GlassNavbar() {
         <AnimatePresence>
           {menuOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0,  scale: 1    }}
-              exit={{    opacity: 0, y: -8, scale: 0.97 }}
+              initial={{ height: 0, y: -8, overflow: 'hidden' }}
+              animate={{ height: 'auto', y: 0, transitionEnd: { overflow: 'visible' } }}
+              exit={{ height: 0, y: -8, overflow: 'hidden' }}
               transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-              className="relative isolate mt-2 flex flex-col gap-1 rounded-2xl p-2 sm:hidden"
-              style={glassStyle}
+              className="mt-2 sm:hidden"
             >
-              <div className="pointer-events-none absolute inset-0 z-[-1] rounded-2xl" style={glassBlur} />
-              {NAV_ITEMS.map((item, i) => (
-                <button
-                  key={item}
-                  onClick={() => { setActive(i); setMenuOpen(false) }}
-                  className="cursor-pointer rounded-full px-5 py-2.5 text-left text-sm font-medium transition-colors"
-                  style={{
-                    color: active === i ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)',
-                    background: active === i ? 'rgba(255,255,255,0.1)' : 'transparent',
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="mt-1 cursor-pointer rounded-full px-5 py-2.5 text-sm font-semibold text-white"
-                style={ctaStyle}
+              <motion.div
+                initial={{ scale: 0.97 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.97 }}
+                transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
+                className="relative isolate flex flex-col gap-1 rounded-2xl p-2"
+                style={glassStyle}
               >
-                Get Started
-              </button>
+                <div className="pointer-events-none absolute inset-0 z-[-1] rounded-2xl" style={glassBlur} />
+                {NAV_ITEMS.map((item, i) => (
+                  <button
+                    key={item}
+                    onClick={() => { setActive(i); setMenuOpen(false) }}
+                    className="cursor-pointer rounded-full px-5 py-2.5 text-left text-sm font-medium transition-colors"
+                    style={{
+                      color: active === i ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)',
+                      background: active === i ? 'rgba(255,255,255,0.1)' : 'transparent',
+                    }}
+                  >
+                    {item}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="mt-1 cursor-pointer rounded-full px-5 py-2.5 text-sm font-semibold text-white"
+                  style={ctaStyle}
+                >
+                  Get Started
+                </button>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
