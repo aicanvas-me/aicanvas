@@ -30,8 +30,6 @@ const CARD_H = 140
 
 
 
-// 160 must match the largest |x| in FANNED, or narrow containers clip the outer cards.
-const STAGE_W = 2 * (160 + CARD_W / 2) + 32
 const STAGE_H = 220
 
 const CARDS: CardData[] = [
@@ -59,6 +57,19 @@ const FANNED: Pos[] = [
   { x:   80, y:  8, rotate:  11 },
   { x:  160, y: 30, rotate:  22 },
 ]
+
+// Stage width covers every fanned card's widest idle, hovered, or selected extent.
+const STAGE_W = 2 * Math.max(...FANNED.flatMap(({ x, rotate }) => {
+  const radians = rotate * Math.PI / 180
+  const rotatedHalfWidth = (CARD_W / 2) * Math.abs(Math.cos(radians))
+    + (CARD_H / 2) * Math.abs(Math.sin(radians))
+
+  return [
+    Math.abs(x) + rotatedHalfWidth,
+    Math.abs(x) + 1.1 * rotatedHalfWidth,
+    Math.abs(x) + 1.4 * (CARD_W / 2),
+  ]
+})) + 32
 
 
 
