@@ -107,6 +107,7 @@ export const Waveform = forwardRef<HTMLDivElement, WaveformProps>(function Wavef
   const reduced = useReducedMotion();
   const lineRef = useRef<SVGPolylineElement | null>(null);
   const barsRef = useRef<SVGPathElement | null>(null);
+  const timeRef = useRef(0);
   const sampleCount = Math.max(2, Math.floor(samples));
 
   // Built during render so paused, reduced-motion and server-rendered views never start empty.
@@ -119,24 +120,31 @@ export const Waveform = forwardRef<HTMLDivElement, WaveformProps>(function Wavef
   }, [sampleCount, height, amplitude]);
 
   useEffect(() => {
-    if (reduced || paused) return undefined;
+    if (reduced) return undefined;
 
-    let raf = 0;
-    let last = performance.now();
-    let t = 0;
-
-    const tick = (now: number) => {
-      const dt = (now - last) / 1000;
-      last = now;
-      t += dt * speed;
-
-      const values = computeValues(t, sampleCount);
+    const draw = () => {
+      const values = computeValues(timeRef.current, sampleCount);
       if (lineRef.current) {
         lineRef.current.setAttribute('points', pointsFrom(values, height, amplitude));
       }
       if (barsRef.current) {
         barsRef.current.setAttribute('d', barsFrom(values, height));
       }
+    };
+
+    if (paused) {
+      draw();
+      return undefined;
+    }
+
+    let raf = 0;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      const dt = (now - last) / 1000;
+      last = now;
+      timeRef.current += dt * speed;
+      draw();
 
       raf = requestAnimationFrame(tick);
     };
