@@ -171,5 +171,7 @@ export default function ParticleSphere() {
     }
   }, [])
 
-  return <div ref={containerRef} className="relative min-h-screen w-full bg-[#F2F1EC] dark:bg-black" />
+  return (
+    <div ref={containerRef} className="relative min-h-screen w-full bg-[#F2F1EC] dark:bg-black" />
+  )
 }

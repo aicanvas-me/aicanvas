@@ -1,6 +1,6 @@
 'use client'
 
-// npm install framer-motion
+// npm install framer-motion @phosphor-icons/react
 
 import { useEffect, useRef, useState } from 'react'
 import {
