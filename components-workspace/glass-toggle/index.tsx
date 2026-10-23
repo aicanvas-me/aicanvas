@@ -35,7 +35,7 @@ function Toggle({
     [0, 1],
     ['rgba(255,255,255,0.1)', `${color}55`]
   )
-  const thumbX = useTransform(progress, [0, 1], [2, 26])
+  const thumbX = useTransform(progress, [0, 1], [3, 27])
   const thumbShadow = useTransform(
     progress,
     [0, 1],

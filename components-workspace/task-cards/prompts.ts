@@ -9,7 +9,7 @@ A swipeable 3-up deck of coloured project cards with an animated progress footer
 File: components-workspace/task-cards/index.tsx  ·  'use client'  ·  export default function TaskCards()
 
 import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion, MotionConfig, useMotionValue, useTransform } from 'framer-motion'
 import { PaintBrush, Megaphone, Code, ChartBar, CaretLeft, CaretRight, ArrowUpRight } from '@phosphor-icons/react'
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
 
@@ -127,6 +127,19 @@ function useIsDark(ref: React.RefObject<HTMLElement | null>) {
 
 const containerRef = useRef<HTMLDivElement>(null)
 const isDark = useIsDark(containerRef)
+const [deckScale, setDeckScale] = useState(1)
+
+useIsomorphicLayoutEffect(() => {
+  const container = containerRef.current
+  if (!container || typeof ResizeObserver === 'undefined') return
+  const updateScale = (width: number) => {
+    setDeckScale(Math.max(0.6, Math.min(1, (width - 32) / DECK_W)))
+  }
+  updateScale(container.getBoundingClientRect().width)
+  const observer = new ResizeObserver(entries => updateScale(entries[0].contentRect.width))
+  observer.observe(container)
+  return () => observer.disconnect()
+}, [])
 
 const dragX = useMotionValue(0)
 const cardRotateY = useTransform(dragX, [-200, 0, 200], [14, 0, -14])
@@ -217,9 +230,10 @@ const fillBg     = darkText ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.85)'
 
 ## 4. Tree
 
-<div ref={containerRef} className="flex min-h-screen w-full flex-col items-center justify-center bg-[#E8E8DF] dark:bg-[#1A1A19]">
-  <div style={{ display: 'flex', alignItems: 'center' }}>
-    <div style={{ position: 'relative', width: DECK_W, height: CARD_H }}>
+<div ref={containerRef} className="flex min-h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#E8E8DF] dark:bg-[#1A1A19]">
+  <div style={{ display: 'flex', alignItems: 'center', width: DECK_W * deckScale, height: CARD_H * deckScale }}>
+    <MotionConfig transformPagePoint={(p) => ({ x: p.x / deckScale, y: p.y / deckScale })}>
+    <div style={{ position: 'relative', width: DECK_W, height: CARD_H, flexShrink: 0, transform: \`scale(\${deckScale})\`, transformOrigin: 'top left' }}>
       <motion.div  [map TASKS.map(task => ...)]
         key={task.id}
         style={{ position: 'absolute', left: '50%', top: '50%', width: CARD_W, height: CARD_H, marginLeft: -CARD_W / 2, marginTop: -CARD_H / 2, zIndex: isExiting || isEntering ? 10 : slot.z, borderRadius: 24, overflow: 'hidden', cursor: isFront ? 'grab' : 'default', display: 'flex', flexDirection: 'column', background: cardBg, ...(isFront ? { rotateY: cardRotateY, transformPerspective: 900 } : {}) }}
@@ -235,7 +249,7 @@ const fillBg     = darkText ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.85)'
         onDragEnd={(_, info) => { dragX.set(0); if (Math.abs(info.offset.x) > 80 || Math.abs(info.velocity.x) > 400) { dismiss(info.offset.x < 0 ? 'left' : 'right') } }}
       >
         <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', background: topBg, border: \`2px solid \${cardBg}\`, borderRadius: 24, padding: '28px 20px 16px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', position: 'relative' }}>
-          <motion.span aria-hidden="true" style={{ position: 'absolute', top: 14, right: 14, width: 28, height: 28, borderRadius: '50%', border: \`1.5px solid \${catColor}\`, background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: catColor, flexShrink: 0 }} whileHover={{ scale: 1.1, opacity: 0.7 }} whileTap={{ scale: 0.92 }} transition={{ type: 'spring', stiffness: 400, damping: 25 }}>
+          <span aria-hidden="true" style={{ position: 'absolute', top: 14, right: 14, width: 28, height: 28, borderRadius: '50%', border: \`1.5px solid \${catColor}\`, background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: catColor, flexShrink: 0 }}>
             <ArrowUpRight weight="regular" size={13} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
             <Icon weight="regular" size={11} style={{ color: catColor }} />
@@ -288,7 +302,7 @@ The source ships h-full because AI Canvas renders it inside a sized preview fram
 A line that fails is a bug in your build; fix it and re-check.
 - A naked paste fills the viewport: the root is min-h-screen w-full flex flex-col items-center justify-center, and the deck is vertically centred with the chevrons 24px below it.
 - Every hex value and every key expression appears unchanged from block 2: #429EBD #2980A0 #0C1E27 #EAF4F8 #053F5C #032F45 #010810 #B8CEDB #2A9DC0 #0A6A8E #F7AD19 #D4900E #1E1608 #FEF8E6 #F27F0C #C96208 #1C1006 #FEF1E4 #21211F #52524E #E8E8DF #1A1A19, with \`key={task.id}\` on the cards and \`key={dir}\` on the buttons.
-- Every element carrying initial/animate/exit is a motion.* tag, not a plain tag or a bare icon: the card is motion.div, the corner circle is motion.span wrapping a plain ArrowUpRight, the chevrons are motion.button wrapping plain carets, the progress fill is motion.div.
+- Every element carrying initial/animate/exit is a motion.* tag, not a plain tag or a bare icon: the card is motion.div, the chevrons are motion.button wrapping plain carets, and the progress fill is motion.div. The corner circle is a static span wrapping a plain ArrowUpRight with no hover or tap motion.
 - Exactly three cards are visible at rest (front, +108, -108); the fourth sits at slot 3 with opacity 0 and scale 0.78 behind the front card.
 - Only the front card drags and only the front card's progress counts up; the two peeked cards show 0% and a track with no fill.
 - One swipe past 80px, or one Next click, flies the front card to ±480 with y 100 and rotate ±22, and 420ms later the next card is front. The dismissed card reappears in the back slot with no visible travel, and a second dismiss is accepted immediately after. One Previous click snaps the back card to x -480, y 100, rotate -22 with no visible travel, then springs it into the front slot on top of every other card while the old front card moves to the right peek.

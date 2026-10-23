@@ -108,7 +108,6 @@ export const ACCURATE_STACKS: Record<string, string[]> = {
   'upload-progress': ['Motion', 'Tailwind CSS'],
   'voice-chat-pill': ['Motion', 'Tailwind CSS'],
   'wave-lines': ['Canvas', 'Tailwind CSS'],
-  'wild-morph': ['Motion', 'Tailwind CSS'],
   'x-grid': ['Canvas', 'Tailwind CSS'],
 }
 
@@ -471,11 +470,6 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
     useCases: ['Hero section', 'Game UI', 'Children\'s site'],
     about:
       'Playful is kinetic typography that makes letters jump, drop, and rotate as your cursor approaches each one, like the headline is sneezing or hopping out of the way. Motion drives the per-letter physics and the staggered randomness so the effect feels organic rather than mechanical. It is the right pick for children-focused sites, game-UI headlines, festival posters, and any moment where typography should feel like a character with its own mood.',
-  },
-  'wild-morph': {
-    useCases: ['Hero section', 'Type specimen', 'Brand site'],
-    about:
-      'Wild Morph is an italic SVG word that warps under your cursor, with each path control point pulled and released by a Motion-driven spring so the deformation rebounds rather than smearing. Because the morph is on SVG paths rather than canvas pixels, the word stays infinitely scalable and crisp at any size. It is the right hero element for type specimens, brand sites, and any landing page where the headline should feel like liquid metal under the pointer.',
   },
   'orbit': {
     useCases: ['Hero section', 'About page', 'Type specimen'],

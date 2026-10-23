@@ -37,7 +37,7 @@ export default function GlassNavbar() {
   }
 
   return (
-    <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
+    <div className="@container relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
       <img
         src="https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866"
         alt=""
@@ -67,14 +67,14 @@ export default function GlassNavbar() {
 
           <div className="flex-1" />
 
-          <div className="hidden items-center gap-1 sm:flex">
+          <div className="hidden items-center gap-1 @min-[640px]:flex">
             {NAV_ITEMS.map((item, i) => (
               <motion.button
                 key={item}
                 onClick={() => setActive(i)}
                 onHoverStart={() => setHovered(i)}
                 onHoverEnd={() => setHovered(null)}
-                className="relative cursor-pointer rounded-full px-5 py-2 text-sm font-medium"
+                className="relative cursor-pointer whitespace-nowrap rounded-full px-5 py-2 text-sm font-medium"
                 style={{ color: active === i || hovered === i ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.5)' }}
                 whileTap={{ scale: 0.97 }}
               >
@@ -93,7 +93,7 @@ export default function GlassNavbar() {
             <motion.button
               whileHover={{ scale: 1.04, ...ctaHoverStyle }}
               whileTap={{ scale: 0.96 }}
-              className="ml-2 cursor-pointer rounded-full px-5 py-2 text-sm font-semibold text-white"
+              className="ml-2 cursor-pointer whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold text-white"
               style={ctaStyle}
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
             >
@@ -102,7 +102,7 @@ export default function GlassNavbar() {
           </div>
 
           <motion.button
-            className="mr-2 flex cursor-pointer items-center justify-center rounded-full p-2 text-white/70 sm:hidden"
+            className="mr-2 flex cursor-pointer items-center justify-center rounded-full p-2 text-white/70 @min-[640px]:hidden"
             onClick={() => setMenuOpen(v => !v)}
             whileTap={{ scale: 0.9 }}
             style={{ background: 'rgba(255,255,255,0.08)' }}
@@ -119,34 +119,42 @@ export default function GlassNavbar() {
         <AnimatePresence>
           {menuOpen && (
             <motion.div
-              initial={{ opacity: 0, y: -8, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0,  scale: 1    }}
-              exit={{    opacity: 0, y: -8, scale: 0.97 }}
+              initial={{ height: 0, y: -8, overflow: 'hidden' }}
+              animate={{ height: 'auto', y: 0, transitionEnd: { overflow: 'visible' } }}
+              exit={{ height: 0, y: -8, overflow: 'hidden' }}
               transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
-              className="relative isolate mt-2 flex flex-col gap-1 rounded-2xl p-2 sm:hidden"
-              style={glassStyle}
+              className="mt-2 @min-[640px]:hidden"
             >
-              <div className="pointer-events-none absolute inset-0 z-[-1] rounded-2xl" style={glassBlur} />
-              {NAV_ITEMS.map((item, i) => (
-                <button
-                  key={item}
-                  onClick={() => { setActive(i); setMenuOpen(false) }}
-                  className="cursor-pointer rounded-full px-5 py-2.5 text-left text-sm font-medium transition-colors"
-                  style={{
-                    color: active === i ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)',
-                    background: active === i ? 'rgba(255,255,255,0.1)' : 'transparent',
-                  }}
-                >
-                  {item}
-                </button>
-              ))}
-              <button
-                onClick={() => setMenuOpen(false)}
-                className="mt-1 cursor-pointer rounded-full px-5 py-2.5 text-sm font-semibold text-white"
-                style={ctaStyle}
+              <motion.div
+                initial={{ scale: 0.97 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.97 }}
+                transition={{ duration: 0.22, ease: [0.25, 0.1, 0.25, 1] }}
+                className="relative isolate flex flex-col gap-1 rounded-2xl p-2"
+                style={glassStyle}
               >
-                Get Started
-              </button>
+                <div className="pointer-events-none absolute inset-0 z-[-1] rounded-2xl" style={glassBlur} />
+                {NAV_ITEMS.map((item, i) => (
+                  <button
+                    key={item}
+                    onClick={() => { setActive(i); setMenuOpen(false) }}
+                    className="cursor-pointer rounded-full px-5 py-2.5 text-left text-sm font-medium transition-colors"
+                    style={{
+                      color: active === i ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)',
+                      background: active === i ? 'rgba(255,255,255,0.1)' : 'transparent',
+                    }}
+                  >
+                    {item}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setMenuOpen(false)}
+                  className="mt-1 cursor-pointer rounded-full px-5 py-2.5 text-sm font-semibold text-white"
+                  style={ctaStyle}
+                >
+                  Get Started
+                </button>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>

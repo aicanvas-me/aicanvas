@@ -120,7 +120,7 @@ function inkHex(hex: string): string {
 
 
 interface FaceProps {
-  size: number
+  size: number | string
 }
 
 const STROKE_W = 2.6
@@ -828,8 +828,10 @@ export default function MoodTracker() {
                 <motion.span
                   className="flex items-center justify-center rounded-full"
                   style={{
-                    width: 36,
-                    height: 36,
+                    width: '100%',
+                    maxWidth: 36,
+                    aspectRatio: '1 / 1',
+                    flexShrink: 0,
                     background: active ? legendIdle : 'transparent',
                     boxShadow: active ? `0 0 0 2px ${m.color}` : 'none',
                   }}
@@ -842,7 +844,16 @@ export default function MoodTracker() {
                       : { type: 'spring', stiffness: 420, damping: 24 }
                   }
                 >
-                  <m.Svg size={28} />
+                  <span
+                    className="flex items-center justify-center"
+                    style={{
+                      width: '77.7777777778%',
+                      maxWidth: 28,
+                      aspectRatio: '1 / 1',
+                    }}
+                  >
+                    <m.Svg size="100%" />
+                  </span>
                 </motion.span>
               </button>
             )

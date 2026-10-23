@@ -49,7 +49,7 @@ Right: button 56x32 \`rounded-full\`, whileTap scale 0.95.
 - Use a \`useSpring(defaultOn ? 1 : 0, { stiffness: 300, damping: 22 })\` progress motion value, updated in a \`useEffect\` when \`on\` changes.
 - \`useTransform(progress, [0,1], ['rgba(255,255,255,0.08)', '\${color}44'])\` → track background (motion value, cast string).
 - \`useTransform(progress, [0,1], ['rgba(255,255,255,0.1)', '\${color}55'])\` → track border color.
-- \`useTransform(progress, [0,1], [2, 26])\` → thumb x.
+- \`useTransform(progress, [0,1], [3, 27])\` → thumb x, leaving a 3px gap on every side.
 - \`useTransform(progress, [0,1], ['0 2px 8px rgba(0,0,0,0.3)', '0 2px 16px \${color}44'])\` → thumb shadow.
 - When on, extra box-shadow \`0 0 20px \${color}15, inset 0 1px 2px rgba(0,0,0,0.1)\`; when off, \`inset 0 1px 2px rgba(0,0,0,0.2)\`.
 

@@ -94,7 +94,7 @@ export const TableBody = forwardRef<HTMLTableSectionElement, ComponentPropsWitho
 /**
  * @typedef {object} TableRowProps
  * @property {boolean} [selected=false]  Applies surface.active bg + accent-300 left edge.
- * @property {boolean} [hoverable=true] Adds the hover-lift class (default true).
+ * @property {boolean} [hoverable] Adds the hover-lift class (default on only when the row has onClick).
  */
 type TableRowProps = ComponentPropsWithoutRef<'tr'> & {
   selected?: boolean;
@@ -102,13 +102,15 @@ type TableRowProps = ComponentPropsWithoutRef<'tr'> & {
 };
 
 export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function TableRow(
-  { selected = false, hoverable = true, className = '', style, children, ...props },
+  { selected = false, hoverable, onClick, className = '', style, children, ...props },
   ref,
 ) {
+  const isHoverable = hoverable ?? onClick !== undefined;
+
   return (
     <tr
       ref={ref}
-      className={`andro-tr${hoverable ? ' andro-tr-hover' : ''}${className ? ` ${className}` : ''}`}
+      className={`andro-tr${isHoverable ? ' andro-tr-hover' : ''}${className ? ` ${className}` : ''}`}
       style={{
         backgroundColor: selected ? themeColor.surface.active : 'transparent',
         backgroundImage: ROW_INSET_LINE,
@@ -118,6 +120,7 @@ export const TableRow = forwardRef<HTMLTableRowElement, TableRowProps>(function 
         boxShadow: selected ? `inset 2px 0 0 0 var(--andromeda-accent-300, ${themeColor.accent[300]})` : undefined,
         ...style,
       }}
+      onClick={onClick}
       {...props}
     >
       {children}

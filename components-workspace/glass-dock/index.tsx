@@ -2,8 +2,8 @@
 
 // npm install @phosphor-icons/react framer-motion
 
-import { useRef } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import {
   Sun,
   Heart,
@@ -39,14 +39,26 @@ function DockItem({
   label,
   mouseX,
   index,
+  isOpen,
+  onToggle,
 }: {
   icon: typeof Sun
   color: string
   label: string
   mouseX: ReturnType<typeof useMotionValue<number>>
   index: number
+  isOpen: boolean
+  onToggle: () => void
 }) {
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLButtonElement>(null)
+  const touchTooltipTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [isTouchTooltipVisible, setIsTouchTooltipVisible] = useState(false)
+
+  useEffect(() => {
+    return () => {
+      if (touchTooltipTimer.current) clearTimeout(touchTooltipTimer.current)
+    }
+  }, [])
 
   const distance = useTransform(mouseX, (mx: number) => {
     const el = ref.current
@@ -61,16 +73,32 @@ function DockItem({
   const size = useSpring(rawSize, { stiffness: 300, damping: 22, mass: 0.5 })
   const y = useTransform(size, [ICON_SIZE, ICON_SIZE * MAG_SCALE], [0, -12])
 
+  const showTouchTooltip = () => {
+    if (touchTooltipTimer.current) clearTimeout(touchTooltipTimer.current)
+    setIsTouchTooltipVisible(true)
+    touchTooltipTimer.current = setTimeout(() => {
+      setIsTouchTooltipVisible(false)
+      touchTooltipTimer.current = null
+    }, 1200)
+  }
+
   return (
-    <motion.div
+    <motion.button
       ref={ref}
-      className="group relative flex cursor-pointer flex-col items-center"
+      type="button"
+      aria-label={label}
+      aria-pressed={isOpen}
+      onClick={onToggle}
+      onPointerUp={(event) => {
+        if (event.pointerType === 'touch') showTouchTooltip()
+      }}
+      className="group relative flex cursor-pointer appearance-none flex-col items-center border-0 bg-transparent p-0 outline-none"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 200, damping: 18, delay: index * 0.04 }}
     >
       <motion.div
-        className="pointer-events-none absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium text-white/90 opacity-0 group-hover:opacity-100"
+        className={`pointer-events-none absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium text-white/90 ${isTouchTooltipVisible ? 'opacity-100' : 'opacity-0'} group-hover:opacity-100 group-focus-visible:opacity-100`}
         style={{
           background: 'rgba(255, 255, 255, 0.1)',
           backdropFilter: 'blur(16px)',
@@ -92,16 +120,38 @@ function DockItem({
           borderRadius: 12,
         }}
         whileTap={{ scale: 0.82 }}
-        className="flex items-center justify-center"
+        className="relative flex items-center justify-center group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[rgba(255,255,255,0.6)]"
       >
         <Icon size={22} weight="regular" style={{ color }} />
+        <AnimatePresence>
+          {isOpen && (
+            <motion.span
+              className="absolute h-1 w-1 rounded-full"
+              style={{ backgroundColor: color, bottom: -6, left: 'calc(50% - 2px)' }}
+              initial={{ opacity: 0, scale: 0 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+            />
+          )}
+        </AnimatePresence>
       </motion.div>
-    </motion.div>
+    </motion.button>
   )
 }
 
 export default function GlassDock() {
   const mouseX = useMotionValue(-200)
+  const [openItems, setOpenItems] = useState<Set<string>>(() => new Set())
+
+  const toggleItem = (label: string) => {
+    setOpenItems((current) => {
+      const next = new Set(current)
+      if (next.has(label)) next.delete(label)
+      else next.add(label)
+      return next
+    })
+  }
 
   return (
     <div className="relative flex h-full w-full items-center justify-end overflow-hidden bg-[#1A1A19] pb-8">
@@ -136,7 +186,14 @@ export default function GlassDock() {
             }}
           />
           {DOCK_ITEMS.map((item, i) => (
-            <DockItem key={item.label} {...item} mouseX={mouseX} index={i} />
+            <DockItem
+              key={item.label}
+              {...item}
+              mouseX={mouseX}
+              index={i}
+              isOpen={openItems.has(item.label)}
+              onToggle={() => toggleItem(item.label)}
+            />
           ))}
         </motion.div>
       </div>

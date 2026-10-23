@@ -67,6 +67,16 @@ const CARDS = [
   },
 ]
 
+const CARD_WIDTH_DIVISOR = 2 * Math.max(
+  ...CARDS.map(card => {
+    const radians = card.idle.rotate * Math.PI / 180
+    return Math.abs(card.idle.x)
+      + BASE_CARD_W / 2 * Math.abs(Math.cos(radians))
+      + (BASE_CARD_W * 9 / 16) / 2 * Math.abs(Math.sin(radians))
+  }),
+  1.05 * BASE_CARD_W / 2,
+) / BASE_CARD_W
+
 const BAR_PATTERN = [1,2,1,1,3,1,2,1,1,3,1,1,2,1,2,1,3,1,1,2,1,3,1,2,1,1,2,1]
 
 const SPRING_SCATTER = { type: 'spring' as const, stiffness: 240, damping: 24 }
@@ -146,8 +156,8 @@ export default function LabelCards() {
     return () => { themeObs.disconnect(); sizeObs.disconnect() }
   }, [])
 
-  // 1.56 = 2 × (largest |idle.x| + BASE_CARD_W / 2) / BASE_CARD_W; redo if either changes.
-  const cardW  = Math.min(BASE_CARD_W, Math.floor(containerW / 1.56))
+  // Scale to fit the widest rotated idle card or the enlarged selected card.
+  const cardW  = Math.min(BASE_CARD_W, Math.floor(containerW / CARD_WIDTH_DIVISOR))
   const cardH  = Math.round(cardW * 9 / 16)
   const scale  = cardW / BASE_CARD_W
 

@@ -58,7 +58,7 @@ function GlassCardItem({
       onMouseMove={handleMouse}
       onMouseLeave={handleLeave}
       style={{ rotateX, rotateY, transformPerspective: 800 }}
-      className="relative w-64 cursor-pointer overflow-hidden rounded-3xl p-[1px]"
+      className="relative w-64 overflow-hidden rounded-3xl p-[1px]"
     >
       <motion.div
         className="absolute inset-0 rounded-3xl opacity-30"
@@ -94,7 +94,7 @@ function GlassCardItem({
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
-          className="flex w-full items-center justify-between rounded-2xl px-4 py-3"
+          className="flex w-full cursor-pointer items-center justify-between rounded-2xl px-4 py-3"
           style={{
             background: `linear-gradient(135deg, ${gradient.split(',')[0]}40, ${gradient.split(',')[1]?.trim() ?? gradient.split(',')[0]}28)`,
             border: `1px solid ${gradient.split(',')[0]}55`,

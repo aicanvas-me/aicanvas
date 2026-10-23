@@ -3,7 +3,7 @@
 // npm install @phosphor-icons/react framer-motion
 
 import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion, MotionConfig, useMotionValue, useTransform } from 'framer-motion'
 import { PaintBrush, Megaphone, Code, ChartBar, CaretLeft, CaretRight, ArrowUpRight } from '@phosphor-icons/react'
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
 
@@ -176,6 +176,19 @@ function AnimatedProgress({ progress, isActive, darkText }: { progress: number; 
 export default function TaskCards() {
   const containerRef = useRef<HTMLDivElement>(null)
   const isDark = useIsDark(containerRef)
+  const [deckScale, setDeckScale] = useState(1)
+
+  useIsomorphicLayoutEffect(() => {
+    const container = containerRef.current
+    if (!container || typeof ResizeObserver === 'undefined') return
+    const updateScale = (width: number) => {
+      setDeckScale(Math.max(0.6, Math.min(1, (width - 32) / DECK_W)))
+    }
+    updateScale(container.getBoundingClientRect().width)
+    const observer = new ResizeObserver(entries => updateScale(entries[0].contentRect.width))
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [])
 
   const dragX = useMotionValue(0)
   const cardRotateY = useTransform(dragX, [-200, 0, 200], [14, 0, -14])
@@ -223,10 +236,11 @@ export default function TaskCards() {
   return (
     <div
       ref={containerRef}
-      className="flex h-full w-full flex-col items-center justify-center bg-[#E8E8DF] dark:bg-[#1A1A19]"
+      className="flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#E8E8DF] dark:bg-[#1A1A19]"
     >
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ position: 'relative', width: DECK_W, height: CARD_H }}>
+      <div style={{ display: 'flex', alignItems: 'center', width: DECK_W * deckScale, height: CARD_H * deckScale }}>
+        <MotionConfig transformPagePoint={(p) => ({ x: p.x / deckScale, y: p.y / deckScale })}>
+        <div style={{ position: 'relative', width: DECK_W, height: CARD_H, flexShrink: 0, transform: `scale(${deckScale})`, transformOrigin: 'top left' }}>
           {TASKS.map(task => {
             const slotIndex = order.indexOf(task.id)
             const slot = SLOTS[slotIndex]
@@ -332,7 +346,7 @@ export default function TaskCards() {
                     position: 'relative',
                   }}
                 >
-                  <motion.span
+                  <span
                     aria-hidden="true"
                     style={{
                       position: 'absolute',
@@ -349,12 +363,9 @@ export default function TaskCards() {
                       color: catColor,
                       flexShrink: 0,
                     }}
-                    whileHover={{ scale: 1.1, opacity: 0.7 }}
-                    whileTap={{ scale: 0.92 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                   >
                     <ArrowUpRight weight="regular" size={13} />
-                  </motion.span>
+                  </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
                     <Icon weight="regular" size={11} style={{ color: catColor }} />
                     <span style={{
@@ -404,6 +415,7 @@ export default function TaskCards() {
             )
           })}
         </div>
+        </MotionConfig>
       </div>
 
       <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>

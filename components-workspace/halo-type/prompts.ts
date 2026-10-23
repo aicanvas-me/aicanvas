@@ -92,18 +92,22 @@ Motion state (Framer Motion):
 - \`rotateY = useMotionValue(0)\`.
 - \`ringTransform = useTransform([tilt, rotateY], ([x, y]) => \\\`rotateX(\${x}deg) rotateY(\${y}deg)\\\`)\`. This is the ring container's \`transform\`.
 
+Define this pure helper in the same file:
+\`\`\`ts
+function getGlyphOpacities(rotation: number, angle: number) {
+  const eff = ((rotation + angle) % 360 + 360) % 360
+  const norm = eff > 180 ? eff - 360 : eff
+  const c = Math.cos(norm * Math.PI / 180)
+  return { front: Math.max(c, 0), back: Math.max(-c, 0) }
+}
+\`\`\`
+
 Animation loop via \`useAnimationFrame((t) => {...})\`:
 - If \`prefers-reduced-motion: reduce\` (tracked in state via \`matchMedia\`): \`rotateY.set(30)\` and skip the integrator so the ring freezes at 30°, both arcs visible.
 - Otherwise, integrate: keep a \`prevTs\` ref, compute \`dt = (t - prev) / 1000\`, advance \`rotateY\` by \`(360 / SECONDS_PER_TURN) * speedMul.get() * dt\`, wrap mod 360.
-- Then, for each character index \`i\`:
-  - \`eff = mod(rotateY.get() + charAngles[i], 360)\`
-  - \`norm = eff > 180 ? eff - 360 : eff\` (map to −180…180)
-  - \`c = Math.cos(norm * Math.PI / 180)\`
-  - \`frontOpacity = c > 0 ? c : 0\`
-  - \`backOpacity = c < 0 ? -c : 0\`
-  - Write these imperatively: \`frontRefs.current[i].style.opacity = String(frontOpacity)\` and \`backRefs.current[i].style.opacity = String(backOpacity)\`.
+- Then, for each character index \`i\`, call the pure \`getGlyphOpacities(rotateY.get(), charAngles[i])\` helper and write its front/back values imperatively to \`frontRefs.current[i].style.opacity\` and \`backRefs.current[i].style.opacity\`.
 
-Do NOT set opacity in JSX \`style\`: on any React re-render (theme change, resize) the letters would flash to 0 and pop in again.
+During render, call the same \`getGlyphOpacities(rotateY.get(), angle)\` helper and set each front/back glyph's JSX opacity from its result so the first paint is already correct. The frame loop keeps writing \`el.style.opacity\` as rotation advances.
 
 ---
 
