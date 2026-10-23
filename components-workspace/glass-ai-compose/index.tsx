@@ -24,6 +24,7 @@ const MODELS = [
 ] as const
 
 type Model = (typeof MODELS)[number]
+type AttachedImage = { id: number; src: string }
 
 const MAX_TEXTAREA_HEIGHT = 160
 
@@ -134,13 +135,14 @@ export default function GlassAiCompose() {
   const [isActive, setIsActive] = useState(false)
   const [message, setMessage] = useState('')
   const [activeModel, setActiveModel] = useState<Model>(MODELS[0])
-  const [images, setImages] = useState<string[]>([])
+  const [images, setImages] = useState<AttachedImage[]>([])
   const [webSearch, setWebSearch] = useState(false)
   const [showWebLabel, setShowWebLabel] = useState(false)
 
   const containerRef = useRef<HTMLDivElement>(null)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const imageIdRef = useRef(0)
 
   const prefersReduced = useReducedMotion()
   const reducedMotion = prefersReduced ?? false
@@ -183,7 +185,11 @@ export default function GlassAiCompose() {
       const reader = new FileReader()
       reader.onload = (ev) => {
         if (ev.target?.result) {
-          setImages((prev) => [...prev, ev.target!.result as string])
+          const image = {
+            id: imageIdRef.current++,
+            src: ev.target.result as string,
+          }
+          setImages((prev) => [...prev, image])
         }
       }
       reader.readAsDataURL(files[i])
@@ -277,12 +283,12 @@ export default function GlassAiCompose() {
                   className="flex gap-2 overflow-hidden"
                 >
                   <AnimatePresence>
-                    {images.map((src, i) => (
+                    {images.map((image) => (
                       <ImageThumbnail
-                        key={`${i}-${src.slice(-20)}`}
-                        src={src}
+                        key={image.id}
+                        src={image.src}
                         onRemove={() =>
-                          setImages((prev) => prev.filter((_, idx) => idx !== i))
+                          setImages((prev) => prev.filter(({ id }) => id !== image.id))
                         }
                       />
                     ))}

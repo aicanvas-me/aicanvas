@@ -39,11 +39,13 @@ Layout: root div ref={rootRef} className "relative flex h-full w-full cursor-poi
 
 Inject the Caveat google font once with an inline <style> block: @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap');
 
-Each card is rendered as a nested motion.div pair inside an absolute-positioned outer at left-1/2 top-1/2.
+Each card is rendered as three nested motion.divs: an absolute-positioned outer at left-1/2 top-1/2, a middle rotation-cancelling layer, and an inner interaction layer.
 
-Outer motion.div (fan/stack transform): animate {x: pos.x - CARD_W/2, y: pos.y - CARD_H/2, rotate: isSelected ? 0 : pos.rotate}, zIndex (isSelected ? 30 : isHovered ? 20 : i), transition {type:'spring', stiffness:280, damping:22, delay: fanned ? i*0.06 : (CARDS.length-1-i)*0.05}. (So fanning staggers left→right, restacking right→left.)
+Outer motion.div (fan/stack position and rotation): animate {x: pos.x - CARD_W/2, y: pos.y - CARD_H/2, rotate: pos.rotate}, zIndex (isSelected ? 30 : isHovered ? 20 : i), transition {type:'spring', stiffness:280, damping:22, delay: fanned ? i*0.06 : (CARDS.length-1-i)*0.05}. (So fanning staggers left→right, restacking right→left.)
 
-Inner motion.div (hover lift + selected pop): animate {y: isSelected ? -28 : isHovered ? -18 : 0, scale: isSelected ? 1.4 : isHovered ? 1.1 : 1}, transition {type:'spring', stiffness:420, damping:26}. cursor 'pointer' when fanned else 'inherit'. onHoverStart sets hoveredId if fanned. onHoverEnd clears. onClick (only when fanned): stopPropagation, toggle selectedId (if === card.id else set), clear hoveredId.
+Middle motion.div (selected upright rotation): animate {rotate: isSelected ? -pos.rotate : 0}, transition {type:'spring', stiffness:420, damping:26}. It has no stagger, so selection immediately counter-rotates the outer layer to upright.
+
+Inner motion.div (hover lift + selected pop, event handlers, and frame): animate {y: isSelected ? -28 : isHovered ? -18 : 0, scale: isSelected ? 1.4 : isHovered ? 1.1 : 1}, transition {type:'spring', stiffness:420, damping:26}. cursor 'pointer' when fanned else 'inherit'. onHoverStart sets hoveredId if fanned. onHoverEnd clears. onClick (only when fanned): stopPropagation, toggle selectedId (if === card.id else set), clear hoveredId.
 
 Card frame (div inside the inner motion.div): width CARD_W, height CARD_H, white background, borderRadius 2, flex column, padding '8px 8px 0 8px'. boxShadow: if isSelected '0 32px 64px rgba(0,0,0,0.7), 0 12px 24px rgba(0,0,0,0.4)'; else if isHovered '0 20px 40px rgba(0,0,0,0.6), 0 8px 16px rgba(0,0,0,0.3)'; else '0 4px 20px rgba(0,0,0,0.45), 0 1px 3px rgba(0,0,0,0.15)'. transition 'box-shadow 0.25s ease'.
 

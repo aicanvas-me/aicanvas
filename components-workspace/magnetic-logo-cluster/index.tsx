@@ -553,11 +553,12 @@ export default function MagneticLogoCluster({
       const startedAt = performance.now()
 
       const tick = () => {
-        if (cancelled || interactedRef.current) {
+        if (cancelled) {
           mouseX.set(PARKED)
           mouseY.set(PARKED)
           return
         }
+        if (interactedRef.current) return
         const t = Math.min(1, (performance.now() - startedAt) / sweepDuration)
         const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2
         const startX = -size * 0.45
@@ -568,7 +569,7 @@ export default function MagneticLogoCluster({
           rafId = requestAnimationFrame(tick)
         } else {
           parkTimer = window.setTimeout(() => {
-            if (cancelled) return
+            if (cancelled || interactedRef.current) return
             mouseX.set(PARKED)
             mouseY.set(PARKED)
           }, pauseAfter)
@@ -582,6 +583,10 @@ export default function MagneticLogoCluster({
       window.clearTimeout(startTimer)
       window.clearTimeout(parkTimer)
       cancelAnimationFrame(rafId)
+      if (demoPlayedRef.current && !interactedRef.current) {
+        mouseX.set(PARKED)
+        mouseY.set(PARKED)
+      }
     }
   }, [autoDemo, size, count, entryStagger, reduceMotion, mouseX, mouseY])
 

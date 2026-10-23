@@ -36,13 +36,13 @@ Glass shared styles:
 - glassPanel: { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)' }. The two fully transparent trailing layers match ACTIVE_GLOW layer for layer (same count, order and number of lengths), so the glow fades in and out instead of snapping.
 - ACTIVE_GLOW: '0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1.5px rgba(255,255,255,0.25), 0 0 20px rgba(255,255,255,0.06)'
 
-State: isActive, message, activeModel (default Claude), images: string[], webSearch, showWebLabel. Refs: containerRef, textareaRef, fileInputRef. useReducedMotion().
+Define type AttachedImage = { id: number; src: string }. State: isActive, message, activeModel (default Claude), images: AttachedImage[], webSearch, showWebLabel. Refs: containerRef, textareaRef, fileInputRef, imageIdRef initialized to 0. useReducedMotion().
 
 Behavior:
 - onFocus textarea → setIsActive(true). Click outside containerRef (mousedown + touchstart listeners, cleanup on unmount) → setIsActive(false).
 - Auto-resize textarea: on change set height='auto' then scrollHeight capped at 160.
 - webSearch useEffect: when true, showWebLabel=true then setTimeout 1000ms → false (cleanup clearTimeout).
-- handleImageUpload: FileReader readAsDataURL → push base64 into images. Reset e.target.value.
+- handleImageUpload: FileReader readAsDataURL → append { id: imageIdRef.current++, src: ev.target.result as string } from the reader's onload event to images. Reset e.target.value.
 - Enter (no shift) → handleSend; clears message + images and resets height.
 - canSend = message.trim().length > 0 || images.length > 0.
 
@@ -56,7 +56,7 @@ Panel (motion.div, ref=containerRef wraps inner), className \`relative isolate o
 
 Compose area (relative z-10 flex flex-col gap-6 p-4 pb-2):
 - textarea placeholder "Ask anything..." rows=1, bg-transparent text-white/90 placeholder-white/40, caretColor: activeModel.color, maxHeight 160.
-- AnimatePresence thumbnails: motion.div wrapper (opacity/height 0↔auto). Each thumbnail 64px rounded-xl border rgba(255,255,255,0.12), spring {stiffness:350, damping:25} scale 0.8↔1; X button (5x5 absolute top-1 right-1, bg rgba(0,0,0,0.6), X size 10 text-white/80).
+- AnimatePresence thumbnails: motion.div wrapper (opacity/height 0↔auto). Map each image object with key={image.id}, render image.src, and remove it by filtering for id !== image.id, never by array index. Each thumbnail is 64px rounded-xl border rgba(255,255,255,0.12), spring {stiffness:350, damping:25} scale 0.8↔1; X button (5x5 absolute top-1 right-1, bg rgba(0,0,0,0.6), X size 10 text-white/80).
 - Toolbar flex justify-between:
   Left (gap-2): Upload button 32x32 rounded-xl bg rgba(255,255,255,0.08) border rgba(255,255,255,0.12), ImageSquare size 16 color rgba(255,255,255,0.5). Hidden file input accept image/* multiple.
   Globe toggle 32x32 same base; when webSearch: bg \`\${activeModel.color}18\`, border \`1px solid \${activeModel.color}22\`, icon activeModel.color. whileHover scale 1.08 bg white/14 (or \`\${color}28\` when active); whileTap 0.88; spring {320,20}.

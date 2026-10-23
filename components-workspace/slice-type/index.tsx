@@ -177,6 +177,7 @@ export default function SliceType() {
 
     const cancel = () => {
       cancelled = true
+      engage.stop()
       clearTimeout(startTimer)
       if (closeTimer) clearTimeout(closeTimer)
     }

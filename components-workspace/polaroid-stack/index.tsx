@@ -125,7 +125,7 @@ export default function PolaroidStack() {
                 animate={{
                   x: pos.x - CARD_W / 2,
                   y: pos.y - CARD_H / 2,
-                  rotate: isSelected ? 0 : pos.rotate,
+                  rotate: pos.rotate,
                 }}
                 style={{ zIndex: isSelected ? 30 : isHovered ? 20 : i }}
                 transition={{
@@ -137,6 +137,10 @@ export default function PolaroidStack() {
                     : (CARDS.length - 1 - i) * 0.05,
                 }}
               >
+                <motion.div
+                  animate={{ rotate: isSelected ? -pos.rotate : 0 }}
+                  transition={{ type: 'spring', stiffness: 420, damping: 26 }}
+                >
                 <motion.div
                   animate={{
                     y: isSelected ? -28 : isHovered ? -18 : 0,
@@ -200,6 +204,7 @@ export default function PolaroidStack() {
                       </p>
                     </div>
                   </div>
+                </motion.div>
                 </motion.div>
               </motion.div>
             )

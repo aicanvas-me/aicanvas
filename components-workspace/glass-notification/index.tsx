@@ -88,12 +88,13 @@ function NotificationCard({
           onDismiss(notification.id)
         }
       }}
-      className="group relative isolate w-full cursor-grab overflow-hidden rounded-2xl active:cursor-grabbing transition-colors duration-200"
+      className="group relative isolate w-full cursor-grab overflow-hidden rounded-2xl active:cursor-grabbing"
       style={{
         background: 'rgba(255, 255, 255, 0.06)',
         border: '1px solid rgba(255, 255, 255, 0.08)',
         boxShadow: '0 4px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.06)',
       }}
+      transition={{ backgroundColor: { duration: 0.2, ease: 'easeOut' }, layout: { duration: 0.45, ease: [0.4, 0, 0.1, 1] } }}
       whileHover={{ backgroundColor: 'rgba(255, 255, 255, 0.1)' }}
     >
       {/* z-[-1] relies on the card's isolate; without it the blur falls behind the page. */}

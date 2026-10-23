@@ -36,14 +36,14 @@ Sub-component RepeatingText (takes color prop):
 Helper: random(min, max) returns Math.random() * (max - min) + min
 
 Main component DangerStripes:
-- Refs: rafRef (number, 0), hoveringRef (boolean, false), clickedRef (boolean, false), intensityRef (number, 0), stripesRef (array of HTMLDivElement | null)
+- Refs: rafRef (number, 0), hoveringRef (boolean, false), clickedRef (boolean, false), intensityRef (number, 0), stripesRef (array of HTMLDivElement | null), enteredRef = useRef(STRIPES.map(() => false))
 - No useState for animation: all animation state in refs for performance
 
 animateStripes (useCallback, no deps):
 - If hovering or clicked: lerp intensityRef toward target (clicked ? 3 : 1) with factor 0.15
 - Else: decay intensityRef by multiplying 0.92 each frame
-- When intensity < 0.005 and not hovering/clicked: reset all stripe transforms to just rotate(baseDeg), clear rafRef, return
-- Otherwise: for each stripe, compute random jitter:
+- When intensity < 0.005 and not hovering/clicked: for each element and idx, reset only when el exists and enteredRef.current[idx] is true using el.style.transform = \`rotate(\${STRIPES[idx].rotate}deg)\`; clear rafRef and return
+- Otherwise: for each stripe whose enteredRef flag is true, compute random jitter (skip stripes whose entrance has not finished):
   - tx = random(-18, 18) * intensity
   - ty = random(-10, 10) * intensity
   - skewX = random(-6, 6) * intensity
@@ -70,6 +70,7 @@ Each stripe: motion.div with ref stored in stripesRef array.
   - willChange: 'transform'
   - cursor: 'pointer'
 - Framer Motion entrance: initial { x: alternating -300/300 per index, opacity: 0, rotate: stripe.rotate }, animate { x: 0, opacity: 1, rotate: stripe.rotate }, transition { duration: 0.6, delay: i * 0.12, ease: 'easeOut' }
+- onAnimationComplete sets enteredRef.current[i] = true, handing transform ownership to the jitter loop only after Motion finishes the entrance
 - Event handlers: onMouseEnter=triggerHover, onMouseLeave=triggerLeave, onClick=triggerClick, onTouchStart=triggerHover, onTouchEnd triggers click then leave after 600ms
 - Children: <RepeatingText color={stripe.fg} />`,
 

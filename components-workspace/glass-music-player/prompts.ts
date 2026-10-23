@@ -30,7 +30,7 @@ TRACKS (title, artist, color, duration seconds):
 
 formatTime(s): \`\${Math.floor(s/60)}:\${Math.floor(s%60).toString().padStart(2,'0')}\`.
 
-State: trackIdx, playing, liked, shuffled, elapsed (number). Refs: rafRef (number), startRef, progressRef. progressMV = useMotionValue(0); barWidth = useTransform(progressMV, v => \`\${v*100}%\`). track = TRACKS[trackIdx].
+State: trackIdx, playing, liked, shuffled, elapsed (number). Refs: rafRef (number), startRef, progressRef. progressMV = useMotionValue(0); barWidth = useTransform(progressMV, v => \`\${v*100}%\`); discRotation = useMotionValue(0); reduceMotion = useReducedMotion(). track = TRACKS[trackIdx]. Use useAnimationFrame((_, delta) => { if (playing && !reduceMotion) discRotation.set(discRotation.get() + delta * 0.09) }) so the disc advances 0.09 degrees per millisecond, one turn per 4 seconds. Pausing holds its current angle and playing resumes from there; reduced motion leaves it still.
 
 RAF LOOP (useEffect deps [playing, track.duration, progressMV]):
 - If !playing → cancelAnimationFrame(rafRef.current); return.
@@ -56,7 +56,7 @@ Inside (flex flex-col items-center px-7 pb-7 pt-6):
 2) Album disc: AnimatePresence mode="wait" key=trackIdx → motion.div initial {opacity:0, scale:0.85} animate {opacity:1, scale:1} exit {opacity:0, scale:0.85} transition {type:'spring', stiffness:260, damping:26} className "relative mb-7".
    Ambient glow div: absolute inset-0 rounded-full, background track.color, opacity 0.18, filter 'blur(28px)', transform 'scale(1.15)'.
    Disc: relative flex h-44 w-44 items-center justify-center rounded-full, style background \`radial-gradient(circle at 38% 35%, \${track.color}28, \${track.color}08 60%, transparent)\`, border \`1.5px solid \${track.color}25\`, boxShadow \`0 0 0 8px rgba(255,255,255,0.03), 0 12px 40px rgba(0,0,0,0.5)\`.
-   Inner motion.div animate {rotate: playing ? 360 : 0}, transition {duration:4, repeat:Infinity, ease:'linear'}, className "relative h-28 w-28". Four ring divs at scales [1, 0.78, 0.58, 0.38]: absolute inset-0 rounded-full, transform scale, border \`1px solid \${track.color}\${i===0?'30':i===1?'1e':'14'}\`. Center hole: h-5 w-5 absolute centered, radial-gradient track.color cc→66, boxShadow \`0 0 10px \${track.color}55\`.
+   Inner motion.div className "relative h-28 w-28", style={{ rotate: discRotation }}. Four ring divs at scales [1, 0.78, 0.58, 0.38]: absolute inset-0 rounded-full, transform scale, border \`1px solid \${track.color}\${i===0?'30':i===1?'1e':'14'}\`. Center hole: h-5 w-5 absolute centered, radial-gradient track.color cc→66, boxShadow \`0 0 10px \${track.color}55\`.
 
 3) Track info: AnimatePresence mode="wait" key=trackIdx → motion.div initial {opacity:0, y:10, filter:'blur(4px)'} animate {opacity:1, y:0, filter:'blur(0px)'} exit {opacity:0, y:-10, filter:'blur(4px)'} transition {type:'spring', duration:0.4, bounce:0} className "mb-4 flex flex-col items-center gap-1". <h3 text-lg font-bold tracking-tight text-white/95>{title}</h3> + <p text-[13px] font-medium color rgba(255,255,255,0.38)>{artist}</p>.
 
@@ -71,7 +71,7 @@ Inside (flex flex-col items-center px-7 pb-7 pt-6):
    - SkipForward size=26 weight="fill" onClick skipTo(1) (same style as SkipBack).
    - Queue motion.button size=19 weight="regular" style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
 
-Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useMotionValue, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, Queue, ArrowLeft from @phosphor-icons/react.
+Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useAnimationFrame, useMotionValue, useReducedMotion, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, Queue, ArrowLeft from @phosphor-icons/react.
 
 ## Typography
 - Font: project default sans-serif
