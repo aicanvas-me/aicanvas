@@ -30,7 +30,7 @@ Five 16:9 label cards (base 300×169px) scattered at random angles across the ca
 | Motion | Animation & Micro-UX | Interaction Patterns | 2023 | #E08030 | #2A1A06 |
 
 Idle scatter positions (applied as Framer Motion x/y):
-Cards 0–4: {x:-82,y:-70,r:-11}, {x:-48,y:66,r:9}, {x:12,y:-14,r:-4}, {x:68,y:62,r:14}, {x:84,y:-86,r:18}
+Cards 0–4: {x:-82,y:-70,r:-11}, {x:-48,y:66,r:9}, {x:12,y:-14,r:-4}, {x:68,y:62,r:14}, {x:84,y:-86,r:18}. Store each on its CARDS entry as idle: {x, y, rotate}, with rotate equal to r.
 
 **Card anatomy (top→bottom, 16:9 ratio):**
 - Title row: ✳ glyph (weight 900) + bold title left; "Since YYYY" uppercase right (both in \`fg\` colour)
@@ -45,7 +45,16 @@ Cards 0–4: {x:-82,y:-70,r:-11}, {x:-48,y:66,r:9}, {x:12,y:-14,r:-4}, {x:68,y:6
 **Mobile-responsive scaling:**
 Use ResizeObserver to measure container width. Derive:
 \`\`\`ts
-const cardW = Math.min(300, Math.floor(containerW / 1.56))
+const CARD_WIDTH_DIVISOR = 2 * Math.max(
+  ...CARDS.map(card => {
+    const radians = card.idle.rotate * Math.PI / 180
+    return Math.abs(card.idle.x)
+      + 300 / 2 * Math.abs(Math.cos(radians))
+      + (300 * 9 / 16) / 2 * Math.abs(Math.sin(radians))
+  }),
+  1.05 * 300 / 2,
+) / 300
+const cardW = Math.min(300, Math.floor(containerW / CARD_WIDTH_DIVISOR))
 const cardH = Math.round(cardW * 9 / 16)
 const scale = cardW / 300
 \`\`\`

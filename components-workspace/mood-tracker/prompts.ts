@@ -175,8 +175,13 @@ const CLAUDE_PREAMBLE = `Before writing any code, verify the project is set up w
 
 `
 
+const CLAUDE_SPEC = SPEC.replace(
+  'Inside, a 36×36 rounded-full chip holding the mood SVG at size 28;',
+  'Inside, a width-100%, maxWidth 36, aspect-ratio 1/1 rounded-full chip with flexShrink 0; it holds a width-77.78%, maxWidth 28, aspect-ratio 1/1 square whose mood SVG renders at size "100%", so both stay round and shrink together;',
+)
+
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': CLAUDE_PREAMBLE + SPEC,
+  'Claude Code': CLAUDE_PREAMBLE + CLAUDE_SPEC,
   Lovable: SPEC,
   V0: SPEC,
 }

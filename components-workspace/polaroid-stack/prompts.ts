@@ -35,7 +35,7 @@ FANNED positions:
 
 State: fanned=false, hoveredId=null, selectedId=null. Click on background toggles fanned and clears hoveredId + selectedId.
 
-Layout: root div className "relative flex h-full w-full cursor-pointer select-none items-center justify-center bg-zinc-950" onClick=toggle. Inside a fixed stage div style {width:460, height:220} className "relative".
+Layout: root div ref={rootRef} className "relative flex h-full w-full cursor-pointer select-none items-center justify-center overflow-hidden bg-zinc-950" onClick=toggle. Compute STAGE_W as twice the largest horizontal half-extent of every fanned card across idle, hovered scale 1.1, and selected scale 1.4 upright states, then add 32; STAGE_H is 220. Use a ResizeObserver on the root to set scale = min(1, rootWidth / STAGE_W), and animate that scale on the stage motion.div with style {width:STAGE_W, height:STAGE_H}.
 
 Inject the Caveat google font once with an inline <style> block: @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;600&display=swap');
 
