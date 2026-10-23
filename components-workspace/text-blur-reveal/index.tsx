@@ -82,9 +82,10 @@ export default function TextBlurReveal() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 6 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.97 }}
-            className="relative rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30 transition-opacity hover:opacity-90"
+            whileHover={{ scale: 1.04, opacity: 0.9 }}
+            whileFocus={{ opacity: 0.9 }}
+            whileTap={{ scale: 0.97, opacity: 0.9 }}
+            className="relative rounded-full bg-gradient-to-r from-violet-500 to-indigo-500 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-500/30"
           >
             Start building
           </motion.button>
