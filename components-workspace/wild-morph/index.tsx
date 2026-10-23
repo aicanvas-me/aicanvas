@@ -277,33 +277,15 @@ export default function WildMorph({ text = 'wild' }: { text?: string }) {
   }, [])
 
   useEffect(() => {
-    let active = true
-    const measure = () => {
-      const el = textRef.current
-      if (!active || !el) return
-      const bbox = el.getBBox()
-      if (bbox.width === 0) return
-      setNatural({
-        width: bbox.width,
-        height: bbox.height,
-        ascent: -bbox.y,
-      })
-    }
-
-    measure()
-
-    if (!('fonts' in document)) return () => {
-      active = false
-    }
-
-    const fonts = document.fonts
-    void fonts.load(`${fontSize}px Anton`).then(measure).catch(() => {})
-    fonts.addEventListener('loadingdone', measure)
-
-    return () => {
-      active = false
-      fonts.removeEventListener('loadingdone', measure)
-    }
+    const el = textRef.current
+    if (!el) return
+    const bbox = el.getBBox()
+    if (bbox.width === 0) return
+    setNatural({
+      width: bbox.width,
+      height: bbox.height,
+      ascent: -bbox.y,
+    })
   }, [fontSize, text])
 
   const applyTransform = () => {
