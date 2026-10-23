@@ -44,9 +44,10 @@ NotificationCard (inner function component):
 - onDragEnd(_, info): if Math.abs(info.offset.x) > 80 → onDismiss(id).
 - initial {x:60, scale:0.9}, animate {x:0, scale:1, transition:{type:'spring', stiffness:280, damping:24, delay:index*0.05}}.
 - exit {opacity:0, x:-60, scale:0.9, filter:'blur(4px)', transition:{duration:0.2, ease:'easeIn'}}.
-- className "group relative isolate w-full cursor-grab overflow-hidden rounded-2xl active:cursor-grabbing transition-colors duration-200".
+- className "group relative isolate w-full cursor-grab overflow-hidden rounded-2xl active:cursor-grabbing".
 - style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.08)', boxShadow '0 4px 16px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06)'.
 - whileHover {backgroundColor: 'rgba(255,255,255,0.1)'}.
+- transition={{ backgroundColor: { duration: 0.2, ease: 'easeOut' } }} so Motion alone owns the hover colour transition.
 - Separate blur layer: pointer-events-none absolute inset-0 z-[-1] rounded-2xl, backdropFilter 'blur(20px) saturate(1.6)' (+ WebkitBackdropFilter).
 - Inner row: flex items-start gap-3.5 px-4 py-3.5 pr-12.
 - Icon motion.div (notification-style tinted): mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl, style {background: \`\${color}18\`, border: \`1px solid \${color}22\`}. initial {scale:0} animate {scale:1} transition {type:'spring', stiffness:400, damping:18, delay:0.1 + index*0.05}. Child <Icon size={18} weight="regular" style={{color}} />.
