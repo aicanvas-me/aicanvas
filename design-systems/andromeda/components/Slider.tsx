@@ -255,7 +255,7 @@ export const Slider = forwardRef<HTMLDivElement, SliderProps>(function Slider(
             'border-[length:var(--andromeda-border-width,1px)] border-solid border-[color:var(--andromeda-accent-100)]',
             // The track's focus-visible class sets --slider-thumb-shadow; keep both.
             'shadow-[var(--slider-thumb-shadow,none)]',
-            'transition-[box-shadow,transform] [transition-duration:var(--andromeda-duration-normal)] [transition-timing-function:var(--andromeda-easing-out)]',
+            'transition-[box-shadow,transform,scale] [transition-duration:var(--andromeda-duration-normal)] [transition-timing-function:var(--andromeda-easing-out)]',
             'hover:scale-[1.25]',
           )}
           style={{ left: `${percent}%` }}
