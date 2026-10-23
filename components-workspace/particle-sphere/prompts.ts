@@ -15,7 +15,7 @@ Create a new file called ParticleSphere.tsx. It should export a React client com
 
 Requirements:
 - 'use client' at the top
-- Add a "// npm install three" comment immediately after it
+- Add a "// npm install three @types/three" comment immediately after it
 - Use the named export declaration: export default function ParticleSphere
 - Import useEffect, useRef from react; import * as THREE from 'three'
 - PARTICLE_COUNT = 9000

@@ -1,6 +1,6 @@
 'use client'
 
-// npm install three
+// npm install three @types/three
 
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
