@@ -108,7 +108,7 @@ function CardFace({
               fontFamily: 'var(--font-sans, sans-serif)',
               fontSize: 16,
               fontWeight: 700,
-              lineHeight: 1.15,
+              lineHeight: 1.4,
               letterSpacing: '-0.01em',
               color: '#111111',
               margin: 0,
