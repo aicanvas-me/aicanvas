@@ -35,12 +35,23 @@ function colorFromY(ny: number): [number, number, number] {
   }
 }
 
+function lightColorFromY(ny: number): [number, number, number] {
+  if (ny >= 0) {
+    return [0.95, 0.42 + ny * 0.30, 0.02 + ny * 0.20]
+  } else {
+    const d = -ny
+    const v = 0.55 - d * 0.35
+    return [v + (1 - d) * 0.06, v + (1 - d) * 0.02, v]
+  }
+}
+
 export default function ParticleSphere() {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
+    const host = container
 
     const W = container.clientWidth  || 500
     const H = container.clientHeight || 500
@@ -52,13 +63,13 @@ export default function ParticleSphere() {
     // No WebGL available: render nothing instead of crashing the page.
     let renderer: THREE.WebGLRenderer
     try {
-      renderer = new THREE.WebGLRenderer({ antialias: true })
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
     } catch {
       return
     }
     renderer.setSize(W, H)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.setClearColor(0x000000)
+    renderer.setClearColor(0x000000, 0)
     container.appendChild(renderer.domElement)
 
     const positions = new Float32Array(PARTICLE_COUNT * 3)
@@ -103,6 +114,34 @@ export default function ParticleSphere() {
     mesh.rotation.z = 0.08
     scene.add(mesh)
 
+    function updateTheme() {
+      const card = host.closest('[data-card-theme]')
+      const isDark = card
+        ? card.classList.contains('dark')
+        : document.documentElement.classList.contains('dark')
+
+      for (let i = 0; i < PARTICLE_COUNT; i++) {
+        const x = positions[i * 3]
+        const y = positions[i * 3 + 1]
+        const z = positions[i * 3 + 2]
+        const r = Math.sqrt(x * x + y * y + z * z)
+        const ny = Math.max(-1, Math.min(1, y / r))
+        const [cr, cg, cb] = isDark ? colorFromY(ny) : lightColorFromY(ny)
+        colors[i * 3]     = cr
+        colors[i * 3 + 1] = cg
+        colors[i * 3 + 2] = cb
+      }
+      geo.getAttribute('color').needsUpdate = true
+      mat.blending = isDark ? THREE.AdditiveBlending : THREE.NormalBlending
+      mat.needsUpdate = true
+    }
+
+    updateTheme()
+    const themeObserver = new MutationObserver(updateTheme)
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
+    const cardWrapper = container.closest('[data-card-theme]')
+    if (cardWrapper) themeObserver.observe(cardWrapper, { attributes: true, attributeFilter: ['class'] })
+
     let raf: number
     let t = 0
 
@@ -117,6 +156,7 @@ export default function ParticleSphere() {
 
     return () => {
       cancelAnimationFrame(raf)
+      themeObserver.disconnect()
       geo.dispose()
       mat.dispose()
       sprite.dispose()
@@ -131,5 +171,5 @@ export default function ParticleSphere() {
     }
   }, [])
 
-  return <div ref={containerRef} className="h-full w-full" />
+  return <div ref={containerRef} className="relative min-h-screen w-full bg-[#F2F1EC] dark:bg-black" />
 }
