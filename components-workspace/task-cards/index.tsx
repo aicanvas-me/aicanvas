@@ -332,7 +332,7 @@ export default function TaskCards() {
                     position: 'relative',
                   }}
                 >
-                  <motion.span
+                  <span
                     aria-hidden="true"
                     style={{
                       position: 'absolute',
@@ -349,12 +349,9 @@ export default function TaskCards() {
                       color: catColor,
                       flexShrink: 0,
                     }}
-                    whileHover={{ scale: 1.1, opacity: 0.7 }}
-                    whileTap={{ scale: 0.92 }}
-                    transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                   >
                     <ArrowUpRight weight="regular" size={13} />
-                  </motion.span>
+                  </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
                     <Icon weight="regular" size={11} style={{ color: catColor }} />
                     <span style={{
