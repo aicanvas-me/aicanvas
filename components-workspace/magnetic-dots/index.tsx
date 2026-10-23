@@ -128,7 +128,7 @@ export default function MagneticDots() {
         if (smoothMx === -99999) { smoothMx = raw.x; smoothMy = raw.y }
         smoothMx += (raw.x - smoothMx) * MOUSE_LERP
         smoothMy += (raw.y - smoothMy) * MOUSE_LERP
-      } else {
+      } else if (hStr <= 0.001) {
         smoothMx = -99999
         smoothMy = -99999
       }
