@@ -49,7 +49,7 @@ const CLAUDE_SPEC = SPEC
   )
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `Verify this project has Tailwind CSS, TypeScript, and React set up, plus Framer Motion (npm install framer-motion). If anything is missing, initialize with the shadcn CLI:
+  'Claude Code': `Verify this project has Tailwind CSS, TypeScript, and React set up, plus Framer Motion and Phosphor Icons (npm install framer-motion @phosphor-icons/react). If anything is missing, initialize with the shadcn CLI:
   npx shadcn@latest init
 
 ---

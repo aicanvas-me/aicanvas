@@ -67,6 +67,7 @@ export default function ParticleSphere() {
     } catch {
       return
     }
+    renderer.domElement.style.display = 'block'
     renderer.setSize(W, H)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setClearColor(0x000000, 0)

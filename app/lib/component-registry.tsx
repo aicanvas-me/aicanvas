@@ -514,10 +514,12 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create a new file called ParticleSphere.tsx. It should export a React client component that renders an animated 3D particle sphere using Three.js.
+Create a new file called ParticleSphere.tsx. It should export a React client component named ParticleSphere that renders an animated 3D particle sphere using Three.js.
 
 Requirements:
 - 'use client' at the top
+- Add a "// npm install three" comment immediately after it
+- Use the named export declaration: export default function ParticleSphere
 - Import useEffect, useRef from react; import * as THREE from 'three'
 - PARTICLE_COUNT = 9000
 - makeSprite(): creates a 64×64 canvas with radial white→transparent gradient, returns THREE.CanvasTexture
@@ -533,7 +535,7 @@ Requirements:
 - mesh.rotation.x=0.28, mesh.rotation.z=0.08 (tilt)
 - RAF loop: t+=0.004/frame, mesh.rotation.y=t, z wobble via sin
 - Cleanup: cancelAnimationFrame, dispose geo/mat/sprite/renderer, removeChild
-- Return a relative h-full w-full root with bg-[#F2F1EC] dark:bg-black, containing <div ref={containerRef} className="absolute inset-0" />`,
+- Return a relative min-h-screen w-full root with bg-[#F2F1EC] dark:bg-black for a standalone page, containing <div ref={containerRef} className="absolute inset-0" />`,
       'Lovable': `Create a new file called ParticleSphere.tsx. It should export a React client component that renders an animated 3D particle sphere using Three.js.
 
 Requirements:
