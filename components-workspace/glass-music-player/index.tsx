@@ -3,7 +3,7 @@
 // npm install @phosphor-icons/react framer-motion
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion'
+import { motion, AnimatePresence, useAnimationFrame, useMotionValue, useReducedMotion, useTransform } from 'framer-motion'
 import { Play, Pause, SkipBack, SkipForward, Heart, Shuffle, Queue, ArrowLeft } from '@phosphor-icons/react'
 
 // 6-digit hex only: two-digit alpha suffixes are appended to these colors.
@@ -31,8 +31,14 @@ export default function GlassMusicPlayer() {
 
   const progressMV  = useMotionValue(0)
   const barWidth    = useTransform(progressMV, v => `${v * 100}%`)
+  const discRotation = useMotionValue(0)
+  const reduceMotion = useReducedMotion()
 
   const track = TRACKS[trackIdx]
+
+  useAnimationFrame((_, delta) => {
+    if (playing && !reduceMotion) discRotation.set(discRotation.get() + delta * 0.09)
+  })
 
   useEffect(() => {
     if (!playing) { cancelAnimationFrame(rafRef.current); return }
@@ -160,9 +166,8 @@ export default function GlassMusicPlayer() {
                 }}
               >
                 <motion.div
-                  animate={{ rotate: playing ? 360 : 0 }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'linear' }}
                   className="relative h-28 w-28"
+                  style={{ rotate: discRotation }}
                 >
                   {[1, 0.78, 0.58, 0.38].map((s, i) => (
                     <div
