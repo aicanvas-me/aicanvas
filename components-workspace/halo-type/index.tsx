@@ -20,6 +20,13 @@ const SPEED_HOVER = 0.3
 const RADIUS_FRACTION = 0.35
 const STAR_SCALE = 0.65
 
+function getGlyphOpacities(rotation: number, angle: number) {
+  const eff = ((rotation + angle) % 360 + 360) % 360
+  const norm = eff > 180 ? eff - 360 : eff
+  const c = Math.cos((norm * Math.PI) / 180)
+  return { front: Math.max(c, 0), back: Math.max(-c, 0) }
+}
+
 function useTheme(ref: React.RefObject<HTMLElement | null>) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
   useEffect(() => {
@@ -155,15 +162,11 @@ export default function HaloType() {
     }
     const ry = rotateY.get()
     for (let i = 0; i < charAngles.length; i++) {
-      const eff = ((ry + charAngles[i]) % 360 + 360) % 360
-      const norm = eff > 180 ? eff - 360 : eff
-      const c = Math.cos((norm * Math.PI) / 180)
-      const frontOp = c > 0 ? c : 0
-      const backOp = c < 0 ? -c : 0
+      const { front, back } = getGlyphOpacities(ry, charAngles[i])
       const fe = frontRefs.current[i]
       const be = backRefs.current[i]
-      if (fe) fe.style.opacity = String(frontOp)
-      if (be) be.style.opacity = String(backOp)
+      if (fe) fe.style.opacity = String(front)
+      if (be) be.style.opacity = String(back)
     }
   })
 
@@ -269,6 +272,7 @@ export default function HaloType() {
           >
             {characters.map((ch, i) => {
               const angle = charAngles[i] ?? (i / totalChars) * 360
+              const opacity = getGlyphOpacities(rotateY.get(), angle)
               const display = ch === ' ' ? ' ' : ch
               const base = `translate(-50%, -50%) rotateY(${angle}deg) translateZ(${radius}px)`
               const glyphSize = ch === '✦' ? fontSize * STAR_SCALE : fontSize
@@ -296,6 +300,7 @@ export default function HaloType() {
                       ...glyphStyle,
                       transform: base,
                       color: fg,
+                      opacity: opacity.front,
                     }}
                   >
                     {display}
@@ -308,6 +313,7 @@ export default function HaloType() {
                       ...glyphStyle,
                       transform: `${base} rotateY(180deg) rotateZ(180deg)`,
                       color: fgBack,
+                      opacity: opacity.back,
                     }}
                   >
                     {display}
