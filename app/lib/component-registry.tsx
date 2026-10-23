@@ -500,6 +500,7 @@ const COMPONENTS_RAW: ComponentEntry[] = [
       { label: '3D & Shaders', accent: true },
       { label: 'Three.js' },
     ],
+    dualTheme: true,
     PreviewComponent: ParticleSphere,
     code: componentCodes['particle-sphere'],
     prompts: {

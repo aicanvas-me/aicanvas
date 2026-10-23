@@ -72,6 +72,15 @@ export default function ParticleSphere() {
     renderer.setClearColor(0x000000, 0)
     container.appendChild(renderer.domElement)
 
+    const resizeObserver = new ResizeObserver(() => {
+      const width = container.clientWidth || 500
+      const height = container.clientHeight || 500
+      renderer.setSize(width, height)
+      camera.aspect = width / height
+      camera.updateProjectionMatrix()
+    })
+    resizeObserver.observe(container)
+
     const positions = new Float32Array(PARTICLE_COUNT * 3)
     const colors    = new Float32Array(PARTICLE_COUNT * 3)
 
@@ -157,6 +166,7 @@ export default function ParticleSphere() {
     return () => {
       cancelAnimationFrame(raf)
       themeObserver.disconnect()
+      resizeObserver.disconnect()
       geo.dispose()
       mat.dispose()
       sprite.dispose()
@@ -172,6 +182,8 @@ export default function ParticleSphere() {
   }, [])
 
   return (
-    <div ref={containerRef} className="relative min-h-screen w-full bg-[#F2F1EC] dark:bg-black" />
+    <div className="relative h-full w-full bg-[#F2F1EC] dark:bg-black">
+      <div ref={containerRef} className="absolute inset-0" />
+    </div>
   )
 }
