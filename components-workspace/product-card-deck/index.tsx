@@ -12,6 +12,7 @@ import {
   useTransform,
   type PanInfo,
 } from 'framer-motion'
+import { Check } from '@phosphor-icons/react'
 
 
 
@@ -63,7 +64,17 @@ const SPRING = { type: 'spring' as const, stiffness: 300, damping: 30 }
 
 
 
-function CardFace({ card, isTop }: { card: CardData; isTop: boolean }) {
+function CardFace({
+  card,
+  isTop,
+  isAdded,
+  onToggleAdded,
+}: {
+  card: CardData
+  isTop: boolean
+  isAdded: boolean
+  onToggleAdded: () => void
+}) {
   return (
     <div
       className="relative flex h-full w-full flex-col overflow-hidden"
@@ -111,8 +122,14 @@ function CardFace({ card, isTop }: { card: CardData; isTop: boolean }) {
           {card.label && (
             <motion.button
               type="button"
+              layout
+              layoutDependency={isAdded}
+              aria-pressed={isAdded}
               onPointerDown={(event) => event.stopPropagation()}
-              onClick={(event) => event.stopPropagation()}
+              onClick={(event) => {
+                event.stopPropagation()
+                onToggleAdded()
+              }}
               whileHover={{ scale: 1.06, backgroundColor: '#2C2825' }}
               whileTap={{ scale: 0.93, backgroundColor: '#000000' }}
               transition={{ type: 'spring', stiffness: 500, damping: 30 }}
@@ -130,7 +147,19 @@ function CardFace({ card, isTop }: { card: CardData; isTop: boolean }) {
                 letterSpacing: '0.01em',
               }}
             >
-              {card.label}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={isAdded ? 'added' : 'shop'}
+                  initial={{ opacity: 0, y: 2 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -2 }}
+                  transition={{ duration: 0.12, ease: 'easeOut' }}
+                  style={{ display: 'flex', alignItems: 'center', gap: isAdded ? 4 : 0 }}
+                >
+                  {isAdded && <Check size={14} weight="regular" aria-hidden="true" />}
+                  {isAdded ? 'Added' : card.label}
+                </motion.span>
+              </AnimatePresence>
             </motion.button>
           )}
         </div>
@@ -149,12 +178,16 @@ function FlickCard({
   card,
   slot,
   isTop,
+  isAdded,
   onFlick,
+  onToggleAdded,
 }: {
   card: CardData
   slot: number
   isTop: boolean
+  isAdded: boolean
   onFlick: () => void
+  onToggleAdded: () => void
 }) {
   const [isPresent, safeToRemove] = usePresence()
   const x = useMotionValue(0)
@@ -223,7 +256,12 @@ function FlickCard({
       onDragEnd={isTop ? handleDragEnd : undefined}
       whileTap={isTop ? { cursor: 'grabbing' } : undefined}
     >
-      <CardFace card={card} isTop={isTop} />
+      <CardFace
+        card={card}
+        isTop={isTop}
+        isAdded={isAdded}
+        onToggleAdded={onToggleAdded}
+      />
     </motion.div>
   )
 }
@@ -239,6 +277,7 @@ export default function ProductCardDeck() {
   const [deck, setDeck] = useState<DeckCard[]>(() =>
     Array.from({ length: VISIBLE }, (_, i) => ({ key: i, content: i })),
   )
+  const [addedProducts, setAddedProducts] = useState<Set<string>>(() => new Set())
   const nextKey = useRef(VISIBLE)
 
   const handleFlick = () => {
@@ -253,6 +292,15 @@ export default function ProductCardDeck() {
     })
   }
 
+  const handleToggleAdded = (title: string) => {
+    setAddedProducts((prev) => {
+      const next = new Set(prev)
+      if (next.has(title)) next.delete(title)
+      else next.add(title)
+      return next
+    })
+  }
+
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#E8E8DF] px-4 dark:bg-[#1A1A19]">
       <div className="flex flex-col items-center gap-10">
@@ -264,15 +312,20 @@ export default function ProductCardDeck() {
           }}
         >
           <AnimatePresence>
-            {deck.map((item, i) => (
-              <FlickCard
-                key={item.key}
-                card={CARDS[item.content % CARDS.length]}
-                slot={i}
-                isTop={i === 0}
-                onFlick={handleFlick}
-              />
-            ))}
+            {deck.map((item, i) => {
+              const card = CARDS[item.content % CARDS.length]
+              return (
+                <FlickCard
+                  key={item.key}
+                  card={card}
+                  slot={i}
+                  isTop={i === 0}
+                  isAdded={addedProducts.has(card.title)}
+                  onFlick={handleFlick}
+                  onToggleAdded={() => handleToggleAdded(card.title)}
+                />
+              )
+            })}
           </AnimatePresence>
         </div>
 
