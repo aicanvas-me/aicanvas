@@ -3,7 +3,7 @@
 // npm install @phosphor-icons/react framer-motion
 
 import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
-import { motion, useMotionValue, useTransform } from 'framer-motion'
+import { motion, MotionConfig, useMotionValue, useTransform } from 'framer-motion'
 import { PaintBrush, Megaphone, Code, ChartBar, CaretLeft, CaretRight, ArrowUpRight } from '@phosphor-icons/react'
 import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
 
@@ -239,6 +239,7 @@ export default function TaskCards() {
       className="flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#E8E8DF] dark:bg-[#1A1A19]"
     >
       <div style={{ display: 'flex', alignItems: 'center', width: DECK_W * deckScale, height: CARD_H * deckScale }}>
+        <MotionConfig transformPagePoint={(p) => ({ x: p.x / deckScale, y: p.y / deckScale })}>
         <div style={{ position: 'relative', width: DECK_W, height: CARD_H, flexShrink: 0, transform: `scale(${deckScale})`, transformOrigin: 'top left' }}>
           {TASKS.map(task => {
             const slotIndex = order.indexOf(task.id)
@@ -414,6 +415,7 @@ export default function TaskCards() {
             )
           })}
         </div>
+        </MotionConfig>
       </div>
 
       <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
