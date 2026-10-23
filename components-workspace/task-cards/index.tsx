@@ -176,6 +176,19 @@ function AnimatedProgress({ progress, isActive, darkText }: { progress: number; 
 export default function TaskCards() {
   const containerRef = useRef<HTMLDivElement>(null)
   const isDark = useIsDark(containerRef)
+  const [deckScale, setDeckScale] = useState(1)
+
+  useIsomorphicLayoutEffect(() => {
+    const container = containerRef.current
+    if (!container || typeof ResizeObserver === 'undefined') return
+    const updateScale = (width: number) => {
+      setDeckScale(Math.max(0.6, Math.min(1, (width - 32) / DECK_W)))
+    }
+    updateScale(container.getBoundingClientRect().width)
+    const observer = new ResizeObserver(entries => updateScale(entries[0].contentRect.width))
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [])
 
   const dragX = useMotionValue(0)
   const cardRotateY = useTransform(dragX, [-200, 0, 200], [14, 0, -14])
@@ -223,10 +236,10 @@ export default function TaskCards() {
   return (
     <div
       ref={containerRef}
-      className="flex h-full w-full flex-col items-center justify-center bg-[#E8E8DF] dark:bg-[#1A1A19]"
+      className="flex h-full w-full flex-col items-center justify-center overflow-hidden bg-[#E8E8DF] dark:bg-[#1A1A19]"
     >
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ position: 'relative', width: DECK_W, height: CARD_H }}>
+      <div style={{ display: 'flex', alignItems: 'center', width: DECK_W * deckScale, height: CARD_H * deckScale }}>
+        <div style={{ position: 'relative', width: DECK_W, height: CARD_H, flexShrink: 0, transform: `scale(${deckScale})`, transformOrigin: 'top left' }}>
           {TASKS.map(task => {
             const slotIndex = order.indexOf(task.id)
             const slot = SLOTS[slotIndex]
