@@ -67,6 +67,15 @@ export function Planet({
 } = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const reducedMotion = useReducedMotion();
+  const rotationSpeedRef = useRef(rotationSpeed);
+  const pausedRef = useRef(paused);
+  const reducedMotionRef = useRef(reducedMotion);
+
+  useEffect(() => {
+    rotationSpeedRef.current = rotationSpeed;
+    pausedRef.current = paused;
+    reducedMotionRef.current = reducedMotion;
+  }, [rotationSpeed, paused, reducedMotion]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -193,8 +202,8 @@ export function Planet({
     function tick() {
       if (!alive) return;
       raf = requestAnimationFrame(tick);
-      if (!paused && !reducedMotion) {
-        t += rotationSpeed;
+      if (!pausedRef.current && !reducedMotionRef.current) {
+        t += rotationSpeedRef.current;
         mesh.rotation.y = t;
         mesh.rotation.z = 0.06 + Math.sin(t * 0.4) * 0.035;
       }
@@ -219,7 +228,7 @@ export function Planet({
         container.removeChild(renderer.domElement);
       }
     };
-  }, [particleCount, particleSize, rotationSpeed, paused, reducedMotion]);
+  }, [particleCount, particleSize]);
 
   return (
     <>
