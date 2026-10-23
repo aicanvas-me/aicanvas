@@ -47,6 +47,7 @@ export default function DangerStripes() {
   const clickedRef = useRef(false)
   const intensityRef = useRef(0)
   const stripesRef = useRef<(HTMLDivElement | null)[]>([])
+  const enteredRef = useRef(STRIPES.map(() => false))
 
   const animateStripes = useCallback(() => {
     if (hoveringRef.current || clickedRef.current) {
@@ -59,7 +60,7 @@ export default function DangerStripes() {
     if (intensityRef.current < 0.005 && !hoveringRef.current && !clickedRef.current) {
       intensityRef.current = 0
       stripesRef.current.forEach((el, idx) => {
-        if (el) el.style.transform = `rotate(${STRIPES[idx].rotate}deg)`
+        if (el && enteredRef.current[idx]) el.style.transform = `rotate(${STRIPES[idx].rotate}deg)`
       })
       rafRef.current = 0
       return
@@ -68,7 +69,7 @@ export default function DangerStripes() {
     const intensity = intensityRef.current
 
     stripesRef.current.forEach((el, idx) => {
-      if (!el) return
+      if (!el || !enteredRef.current[idx]) return
       const base = STRIPES[idx].rotate
       const tx = random(-18, 18) * intensity
       const ty = random(-10, 10) * intensity
@@ -130,6 +131,7 @@ export default function DangerStripes() {
               delay: i * 0.12,
               ease: 'easeOut',
             }}
+            onAnimationComplete={() => { enteredRef.current[i] = true }}
             onMouseEnter={triggerHover}
             onMouseLeave={triggerLeave}
             onClick={triggerClick}
