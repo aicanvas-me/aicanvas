@@ -352,6 +352,7 @@ function pick(ids: string[]): FaqEntry[] {
 export const HOME_FAQ = pick(['what-is-ai-canvas', 'is-ai-canvas-free', 'stop-ai-slop', 'install-a-component', 'ai-canvas-mcp-server', 'premium-includes', 'commercial-use', 'standalone-components'])
 export const PRICING_FAQ = pick(['payments-and-paddle', 'payment-security', 'taxes', 'who-is-ai-canvas-for', 'tool-affiliations'])
 export const BRAIN_FAQ = pick(['andromeda-pro-ai-brain', 'design-skill-for-claude-code', 'ai-brain-cursor-codex', 'stop-ai-slop', 'install-ai-brain'])
+export const MCP_FAQ = pick(['ai-canvas-mcp-server', 'mcp-supported-agents', 'mcp-agent-tools', 'works-with-shadcn', 'mcp-versus-shadcn-cli', 'is-mcp-free'])
 
 /** /faq: the categories in order, each with its questions. */
 export const FAQ_PAGE_CATEGORIES = FAQ_CATEGORY_META.map((c) => ({

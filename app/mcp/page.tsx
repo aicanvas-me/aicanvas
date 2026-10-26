@@ -11,9 +11,11 @@ import {
 } from '@phosphor-icons/react/dist/ssr'
 import { InstallCards } from './InstallCards'
 import { buttonClasses } from '../components/buttonClasses'
+import { FaqRows } from '../components/FaqRows'
 import { CARD, CtaBand, PageHero, PageShell, SectionHead } from '../components/PageKit'
 import { Reveal } from '../home/Reveal'
 import { SITE_URL } from '../lib/config'
+import { MCP_FAQ, faqJsonLd } from '../lib/faq'
 
 export const metadata: Metadata = {
   title: 'AI Canvas MCP: shadcn Components for Claude Code, Cursor, Codex',
@@ -23,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'AI Canvas MCP connects Claude Code, Codex, and Cursor',
     description:
-      'One command gives your AI agent every AI Canvas component, with the design spec and motion built in. Save tokens, stop starting from scratch, adapt in seconds.',
+      'Connect Claude Code, Cursor, or Codex to browse, inspect, and install AI Canvas components, design systems, and templates as editable source with shadcn.',
     url: `${SITE_URL}/mcp`,
   },
 }
@@ -35,11 +37,13 @@ const jsonLd = {
   applicationCategory: 'DeveloperApplication',
   operatingSystem: 'Cross-platform',
   description:
-    'MCP server that gives Claude Code, Codex, and Cursor access to every AI Canvas React component, with source, design specs, and Framer Motion.',
+    'Free MCP server for Claude Code, Cursor, and Codex to browse, search, inspect, and install AI Canvas components, design systems, and templates as editable source.',
   url: `${SITE_URL}/mcp`,
   offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'AI Canvas', url: SITE_URL },
 }
+
+const MCP_FAQ_JSON_LD = faqJsonLd(MCP_FAQ)
 
 const BENEFITS: { title: string; body: string; icon: ReactNode }[] = [
   {
@@ -72,6 +76,10 @@ export default function McpPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(MCP_FAQ_JSON_LD) }}
       />
       <PageShell>
         <PageHero
@@ -154,6 +162,13 @@ export default function McpPage() {
               ))}
             </ul>
           </Reveal>
+        </section>
+
+        <section aria-labelledby="mcp-faq" className="mx-auto mt-20 max-w-4xl sm:mt-32">
+          <SectionHead id="mcp-faq" eyebrow="Questions" title="MCP questions, answered" />
+          <div className="mt-8">
+            <FaqRows items={MCP_FAQ} idPrefix="mcp-faq-row" />
+          </div>
         </section>
 
         {/* The homepage's closing words. Not <SiteCta />: its second button
