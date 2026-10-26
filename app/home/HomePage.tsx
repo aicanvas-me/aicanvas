@@ -19,7 +19,8 @@ import { PremiumCards } from '../components/billing/PremiumCards'
 import { AndromedaProSection } from './AndromedaProSection'
 import { Reveal } from './Reveal'
 import { StackedCards, AnimatedCount, WireIcons } from './islands'
-import { AI_CANVAS_DEFINITION, GITHUB_URL } from '../lib/config'
+import { GITHUB_URL } from '../lib/config'
+import { HOME_FAQ, faqJsonLd } from '../lib/faq'
 import { lifetimeEnabled, premiumEnabled } from '../../lib/flags'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
 import {
@@ -29,7 +30,7 @@ import {
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
 import { AgentInstall } from './AgentInstall'
-import { StickerFaq, type FaqItem } from './StickerFaq'
+import { StickerFaq } from './StickerFaq'
 import { ValueBento } from './ValueBento'
 import { Wordmark } from '../components/Wordmark'
 import { TopLight } from '../components/TopLight'
@@ -51,49 +52,10 @@ const EYEBROW = 'text-xs font-semibold uppercase tracking-wider text-sand-600 da
 const H2 = 'text-balance text-3xl font-bold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50'
 const SUB = 'text-base leading-relaxed text-sand-600 dark:text-sand-400'
 
-// The FAQ page's answers, kept word for word where the question is the same.
-const FAQ: FaqItem[] = [
-  {
-    q: 'What is AI Canvas?',
-    a: `${AI_CANVAS_DEFINITION} Free and premium alike land as code you own, never a black-box package.`,
-  },
-  {
-    q: 'Is AI Canvas free?',
-    a: 'Yes. Browse, preview and copy the full remix prompt of any free component, no account needed. A free account adds unlimited one-command installs, forever. Free components are MIT.',
-  },
-  {
-    q: 'What does Premium include?',
-    a: 'Everything. Andromeda Pro and its templates, the AI Brain, and every premium standalone component and block, each with full source and its remix prompt. New pieces arrive as they ship, for $8.99 a month or $49.99 a year. Cancel anytime.',
-  },
-  {
-    q: 'How do I install my first component?',
-    a: 'Copy one command. Every component page has a Copy Command button: paste it into your terminal or hand it to your agent, and the code lands in your project as editable source.',
-  },
-  {
-    q: 'What is the AI Canvas MCP server?',
-    a: 'Your agent finds and installs AI Canvas components without leaving the chat. MCP, the Model Context Protocol, is the open standard AI tools use to connect to outside services, and the free AI Canvas MCP works in Claude Code, Cursor, Codex, Copilot and Gemini.',
-  },
-  {
-    q: 'Can I use the components in commercial projects?',
-    a: 'Yes, ship them in personal and commercial work. Free components are MIT; premium components, design systems and templates come under the AI Canvas Premium License. Fonts or images a component references can carry their own terms, so check those.',
-  },
-  {
-    q: 'Do standalone components need a design system?',
-    a: 'No. Standalone components belong to no design system. Each is React and Tailwind, so it drops into any React project, next to Andromeda, shadcn or your own system.',
-  },
-]
 
-// FAQPage structured data from the same strings the stickers render, so answer
-// engines quote exactly what a visitor reads.
-const HOME_FAQ_JSON_LD = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: FAQ.map((it) => ({
-    '@type': 'Question',
-    name: it.q,
-    acceptedAnswer: { '@type': 'Answer', text: it.a },
-  })),
-}
+// The homepage's questions come from the one site FAQ (app/lib/faq.ts), so a
+// question repeated on /faq or pricing carries the same answer everywhere.
+const HOME_FAQ_JSON_LD = faqJsonLd(HOME_FAQ)
 
 const STEPS = [
   {
@@ -502,7 +464,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_FAQ_JSON_LD) }} />
         <section aria-label="Frequently asked questions" className="mt-20 sm:mt-32">
           <StickerFaq
-            items={FAQ}
+            items={HOME_FAQ}
             eyebrow="FAQ"
             title="Questions, answered."
             sub="The short version of everything people ask before adding their first component."

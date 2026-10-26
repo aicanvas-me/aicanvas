@@ -1,42 +1,7 @@
-import { BRAIN_TEASER } from '@/app/lib/andromeda-pro-brain-teaser.generated'
-import type { FaqRow } from '@/app/components/FaqRows'
+import { BRAIN_FAQ, faqJsonLd } from '@/app/lib/faq'
 
-// The AI Brain page's questions, phrased the way people search for them. Plain
-// text, so the same strings render the visible FAQ (BrainStoryV4) and the
-// FAQPage structured data (page.tsx); the two can never disagree. Every claim
-// here is one the page already makes above the FAQ.
-const total = BRAIN_TEASER.totalFiles
-
-export const BRAIN_FAQ: FaqRow[] = [
-  {
-    q: 'What is the Andromeda Pro AI Brain?',
-    a: `The design skill for Andromeda Pro: ${total} files your agent reads before it builds. The system rules, the foundations, one rule file per component, a building skill, a review skill and the tools that check finished work.`,
-  },
-  {
-    q: 'What is a design skill for Claude Code?',
-    a: 'Files that teach a coding agent how to build and how to check its own work, in the SKILL.md format Claude Code uses. The AI Brain ships two: one builds with Andromeda Pro, one reviews a finished build against every must rule.',
-  },
-  {
-    q: 'Does the AI Brain work with Cursor and Codex?',
-    a: 'Yes. The files live in your project as plain Markdown and scripts, so any agent that reads files follows them, Claude Code, Cursor and Codex included.',
-  },
-  {
-    q: 'How does it stop AI slop?',
-    a: 'It makes the designer\'s decisions before your agent guesses: which token a color comes from, how cards sit in a grid, which button leads a row. The done-gate then fails any component that breaks those rules, like a raw color in place of a token.',
-  },
-  {
-    q: 'How do I install the AI Brain?',
-    a: `One command installs all ${total} files; run it again to update them. The AI Brain comes with Premium, which also opens the reader with every rule a click away.`,
-    link: { label: 'Premium', href: '/pricing' },
-  },
-]
-
-export const BRAIN_FAQ_JSON_LD = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: BRAIN_FAQ.map((it) => ({
-    '@type': 'Question',
-    name: it.q,
-    acceptedAnswer: { '@type': 'Answer', text: it.a },
-  })),
-}
+// The AI Brain page's questions come from the one site FAQ (app/lib/faq.ts), so
+// they read the same here as on /faq. The same strings render the visible FAQ
+// (BrainStoryV4) and the FAQPage structured data (page.tsx).
+export { BRAIN_FAQ }
+export const BRAIN_FAQ_JSON_LD = faqJsonLd(BRAIN_FAQ)
