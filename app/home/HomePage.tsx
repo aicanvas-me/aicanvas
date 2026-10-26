@@ -81,10 +81,6 @@ const FAQ: FaqItem[] = [
     q: 'Do standalone components need a design system?',
     a: 'No. Standalone components belong to no design system. Each is React and Tailwind, so it drops into any React project, next to Andromeda, shadcn or your own system.',
   },
-  {
-    q: 'Who is behind AI Canvas?',
-    a: 'One designer, building it one component at a time and sweating every easing curve. Going Premium is the most direct way to keep it growing.',
-  },
 ]
 
 // FAQPage structured data from the same strings the stickers render, so answer
