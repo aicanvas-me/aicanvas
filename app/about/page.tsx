@@ -79,7 +79,8 @@ export default function AboutPage() {
             an AI at it and ask for an interface, and it invents the whole world
             from nothing. Layout, spacing, every state, every transition, one
             guess at a time. What comes back usually looks right. Then a real
-            person hovers, tabs, or hits an error, and the cracks show.
+            person hovers, tabs, or hits an error, and the cracks show. That is
+            AI slop: an interface nobody decided, only guessed.
           </p>
         }
       />
@@ -92,8 +93,9 @@ export default function AboutPage() {
         <p className="text-pretty text-xl leading-relaxed text-sand-900 sm:text-[1.375rem] sm:leading-[1.6] dark:text-sand-50">
           The magic was never in the asking. It is in what you start from.
           Point an agent at a blank page and it guesses. Point it at something
-          already good and it stops guessing and starts editing. AI Canvas
-          exists to be that something already good.
+          already good, a design system with rules it follows, and it stops
+          guessing and starts editing. AI Canvas exists to be that something
+          already good.
         </p>
       </div>
 
@@ -111,6 +113,29 @@ export default function AboutPage() {
           code you could drop into a project and ship? It felt like there
           should be a place where components are treated with the same care as
           code. Built thoughtfully, tested honestly, and shared openly.
+        </p>
+      </Chapter>
+
+      {/* ── Taste ── the turn from components to design systems. */}
+      <Chapter title="Components were not enough">
+        <p className={P}>
+          Good components fixed one screen at a time. They did not stop the
+          agent from mixing three spacing scales on the next one. Code was
+          never what the agent lacked. It lacked judgment: which token, which
+          pattern, when to stop.
+        </p>
+        <p className={P}>
+          So the work grew from components into design systems. For an agent,
+          a design system is not a style guide it skims. It is a set of
+          decisions written down as rules it follows: the tokens for color,
+          type, and spacing, how finished parts fit together, what a screen
+          may and may not do. Andromeda Pro ships those rules as its AI Brain,
+          a design skill that Claude Code, Cursor, and Codex read before they
+          build, with a review step that fails work which reaches past them.
+        </p>
+        <p className={P}>
+          That is what we mean by taste. Not a mood board. Decisions made once,
+          made well, and handed to every agent that builds with them.
         </p>
       </Chapter>
 
@@ -156,7 +181,8 @@ export default function AboutPage() {
           Developers run one shadcn CLI command and the fully typed source
           lands in the project, React with Tailwind CSS and Framer Motion,
           ready to run. Agents like Claude Code, Codex, and Cursor reach for
-          the AI Canvas MCP and install components themselves. Designers and
+          the AI Canvas MCP and install components and design systems
+          themselves. Designers and
           anyone working in plain language can remix a component with AI
           instead, changing colors, motion, and layout by describing the
           change, never from a blank prompt. You can always just copy the
@@ -173,19 +199,20 @@ export default function AboutPage() {
       </Chapter>
 
       {/* ── One language ── */}
-      <Chapter title="One language for designers and developers">
+      <Chapter title="One language for you and your agent">
         <p className={P}>
-          Most component libraries serve one audience. AI Canvas fits however
-          you build, and that means designers and developers reaching for the
-          same thing and meaning the same thing.
+          Most component libraries serve one audience. AI Canvas is built for
+          three: designers, developers, and the agents both of them now build
+          with, all reaching for the same thing and meaning the same thing.
         </p>
         <p className={P}>
           A pre-built component is not a shortcut. It is a decision already
           made well. For a designer it is a vocabulary, so primary action means
           one thing across every screen instead of a dozen subtly different
           things. For a developer it is a foundation they do not have to
-          reinvent. The real value was never the pixels. It is the agreement.
-          When design and engineering point at the same component and mean the
+          reinvent. For an agent it is a rule to follow instead of a guess. The
+          real value was never the pixels. It is the agreement. When design,
+          engineering, and the agent point at the same component and mean the
           same thing, the handoff stops being a negotiation.
         </p>
       </Chapter>
@@ -282,8 +309,8 @@ export default function AboutPage() {
           Browse Components
           <ArrowRight weight="regular" size={14} />
         </Link>
-        <Link href="/design-systems/andromeda" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-          Discover Andromeda
+        <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
+          Discover Andromeda Pro
         </Link>
         <div className="mt-2 basis-full">
           <a
