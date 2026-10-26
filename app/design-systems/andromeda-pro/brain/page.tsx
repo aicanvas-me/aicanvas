@@ -11,8 +11,8 @@ const jbm = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mon
 const total = BRAIN_TEASER.totalFiles
 
 export const metadata = {
-  title: 'Andromeda Pro AI Brain: Claude Code Design Skill and Rules',
-  description: `${total} files your AI agent reads before it builds with Andromeda Pro: foundations, a rule file per component, design skills and a done-gate, so the result looks designed, not like AI slop.`,
+  title: 'Andromeda Pro AI Brain: Design Skill for Claude Code',
+  description: `The design skill for Claude Code, Cursor and Codex: ${total} files of foundations, component rules, build and review skills and a done-gate for Andromeda Pro.`,
 }
 
 export default function AndromedaBrainLandingPage() {

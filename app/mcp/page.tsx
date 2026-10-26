@@ -16,9 +16,9 @@ import { Reveal } from '../home/Reveal'
 import { SITE_URL } from '../lib/config'
 
 export const metadata: Metadata = {
-  title: 'MCP Server for shadcn Components in Claude Code, Cursor and Codex',
+  title: 'AI Canvas MCP: shadcn Components for Claude Code, Cursor, Codex',
   description:
-    'Give Claude Code, Cursor and Codex shadcn components and design systems from one MCP server, so your agent installs real source instead of AI slop. Free, set up in seconds.',
+    'Connect Claude Code, Cursor or Codex to AI Canvas components and design systems through MCP. Your agent installs editable React source with shadcn.',
   alternates: { canonical: `${SITE_URL}/mcp` },
   openGraph: {
     title: 'AI Canvas MCP connects Claude Code, Codex, and Cursor',

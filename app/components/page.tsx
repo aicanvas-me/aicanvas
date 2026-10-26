@@ -7,7 +7,7 @@ import { getCategoryByLabel } from '../lib/categories'
 import { SITE_URL } from '../lib/config'
 
 const INDEX_TITLE = `React Component Library: ${COMPONENT_META.length} shadcn Components | AI Canvas`
-const INDEX_DESCRIPTION = `Browse ${COMPONENT_META.length} shadcn components and blocks for React: backgrounds, glass, 3D, buttons and more. Install with the shadcn CLI, or let your AI agent add them through MCP.`
+const INDEX_DESCRIPTION = `Browse ${COMPONENT_META.length} standalone shadcn components and blocks for React, from backgrounds and glass to 3D and buttons. Install with the shadcn CLI or MCP.`
 
 export async function generateMetadata({
   searchParams,

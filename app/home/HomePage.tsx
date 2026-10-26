@@ -153,9 +153,8 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
           >
             No more AI slop.
             <br />
-            {/* One step below the headline: the promise, then what delivers it.
-                "AI slop" leads because it is the words people search (90,500 a
-                month on Google US, 2026-10-26); the design-system line says how. */}
+            {/* One step below the headline: the problem every agent builder
+                names, then what solves it. */}
             <span className="mt-3 inline-block text-2xl sm:text-4xl text-olive-600 dark:text-olive-500">
               Design systems your agent builds with.
             </span>
