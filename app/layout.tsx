@@ -39,16 +39,23 @@ const geistMono = Geist_Mono({
 })
 
 const TOTAL = TOTAL_COMPONENTS
-const GLOBAL_DESCRIPTION = `Open-core registry of ${TOTAL} animated React components, design systems, and templates. The free library is MIT. Premium unlocks design systems, templates, and new components. Built with Tailwind CSS and Motion.`
+const GLOBAL_TITLE = 'AI Canvas: No More AI Slop. Design Systems for AI Agents'
+const GLOBAL_DESCRIPTION = `No more AI slop. Design systems, design rules and ${TOTAL} React components your AI agent builds with. The free library is MIT; install with shadcn or the AI Canvas MCP.`
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'AI Canvas - Animated React Components with AI Reproduction Prompts',
+    default: GLOBAL_TITLE,
     template: '%s | AI Canvas',
   },
   description: GLOBAL_DESCRIPTION,
   keywords: [
+    'no more ai slop',
+    'design system for ai agents',
+    'claude code design skill',
+    'shadcn mcp',
+    'agentic ui',
+    'shadcn components',
     'animated react components',
     'react component library',
     'framer motion components',
@@ -66,7 +73,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: 'AI Canvas',
-    title: 'AI Canvas - Animated React Components with AI Reproduction Prompts',
+    title: GLOBAL_TITLE,
     description: GLOBAL_DESCRIPTION,
     url: SITE_URL,
     locale: 'en_US',
@@ -81,7 +88,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Canvas - Animated React Components with AI Reproduction Prompts',
+    title: GLOBAL_TITLE,
     description: GLOBAL_DESCRIPTION,
     images: ['/og-aug2026-aicanvas.me.png'],
   },

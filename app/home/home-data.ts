@@ -8,8 +8,8 @@ import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-d
 
 // The homepage renders at / and at /home; both routes share this data and
 // these words.
-export const HOMEPAGE_TITLE = 'AI Canvas: Design Systems for AI Agents and Humans'
-export const HOMEPAGE_DESCRIPTION = 'Andromeda is a React design system written for AI agents: components, templates, light and dark themes, and designer rules. Install with shadcn.'
+export const HOMEPAGE_TITLE = 'AI Canvas: No More AI Slop. Design Systems for AI Agents'
+export const HOMEPAGE_DESCRIPTION = 'No more AI slop. Design systems, design rules and free components your agent builds with in Claude Code, Cursor or Codex. Install with shadcn or MCP.'
 
 // The device frame's tabs, in order: one of each kind of screen.
 const TEMPLATE_TABS = [

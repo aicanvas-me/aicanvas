@@ -6,8 +6,8 @@ import { COMPONENT_META } from '../lib/component-meta.generated'
 import { getCategoryByLabel } from '../lib/categories'
 import { SITE_URL } from '../lib/config'
 
-const INDEX_TITLE = `All Components: Browse ${COMPONENT_META.length} Animated React Components`
-const INDEX_DESCRIPTION = `Browse all ${COMPONENT_META.length} components in the AI Canvas registry: animated cards, glass morphism, backgrounds, buttons, and more. Each installable via the shadcn CLI.`
+const INDEX_TITLE = `React Component Library: ${COMPONENT_META.length} shadcn Components | AI Canvas`
+const INDEX_DESCRIPTION = `Browse ${COMPONENT_META.length} shadcn components and blocks for React: backgrounds, glass, 3D, buttons and more. Install with the shadcn CLI, or let your AI agent add them through MCP.`
 
 export async function generateMetadata({
   searchParams,

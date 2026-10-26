@@ -151,12 +151,13 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
             className="aic-hero-slide text-balance text-3xl font-extrabold tracking-tight text-sand-900 sm:text-5xl dark:text-sand-50"
             style={{ animationDelay: '0.18s' }}
           >
-            Design systems your agent and your team build with.
+            No more AI slop.
             <br />
-            {/* One step below the headline, so the opening reads as the whole
-                catalog rather than one product. */}
+            {/* One step below the headline: the promise, then what delivers it.
+                "AI slop" leads because it is the words people search (90,500 a
+                month on Google US, 2026-10-26); the design-system line says how. */}
             <span className="mt-3 inline-block text-2xl sm:text-4xl text-olive-600 dark:text-olive-500">
-              Andromeda Pro, plus {standalonesFloor} standalone components.
+              Design systems your agent builds with.
             </span>
           </h1>
 
@@ -165,8 +166,9 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
             style={{ animationDelay: '0.26s' }}
           >
             Complete React design systems with templates, light and dark themes, and the design rules your agent
-            follows. Plus standalone components and blocks that fit any React project, with or without a design
-            system. Install with one command yourself, or let your agent do it.
+            follows in Claude Code, Cursor or Codex. Plus {standalonesFloor} standalone components and blocks that fit
+            any React project. Install with one shadcn command yourself, or let your agent do it through the AI Canvas
+            MCP.
           </p>
 
           <div
