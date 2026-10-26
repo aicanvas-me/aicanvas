@@ -32,6 +32,8 @@ import { BRAIN_GROUND } from '../overview-b/BrainWireframe'
 import { BRAIN_ZONES, blendZones } from '@/app/_lib/brain-colors'
 import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { PageCrumbs } from '../../../components/PageCrumbs'
+import { FaqRows } from '../../../components/FaqRows'
+import { BRAIN_FAQ } from './brain-faq'
 
 // The flow diagram's connector gradients and travelling dots paint from these.
 // They sit inside an SVG stop and a CSS string, where a Tailwind class cannot
@@ -1207,6 +1209,15 @@ export function BrainStoryV4() {
               </li>
             ))}
           </ol>
+        </Section>
+
+        {/* Questions, in the words people search with. The same strings feed the
+            page's FAQPage structured data (brain-faq.ts). */}
+        <Section className="mt-20" aria-labelledby="brain-faq">
+          <SectionHead id="brain-faq" overline="Questions" title="The AI Brain, answered." />
+          <div className="mt-8">
+            <FaqRows items={BRAIN_FAQ} idPrefix="brain-faq-row" />
+          </div>
         </Section>
 
         {/* Closing card, class for class with the overview's, so the two pages

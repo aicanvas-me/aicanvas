@@ -2,6 +2,7 @@ import { preload } from 'react-dom'
 import { JetBrains_Mono } from 'next/font/google'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-pro-brain-teaser.generated'
 import { BrainStoryV4 } from './BrainStoryV4'
+import { BRAIN_FAQ_JSON_LD } from './brain-faq'
 
 // The Andromeda Pro Brain landing: the public marketing story. Anyone can view
 // it (it renders only the structure teaser, never brain content). The reader
@@ -22,6 +23,7 @@ export default function AndromedaBrainLandingPage() {
 
   return (
     <div className={jbm.variable}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(BRAIN_FAQ_JSON_LD) }} />
       <BrainStoryV4 />
     </div>
   )

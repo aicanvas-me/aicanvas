@@ -20,7 +20,7 @@ import { DevBranchBadge } from './components/DevBranchBadge'
 import { SiteBeacon } from './components/SiteBeacon'
 import { PaddlePaymentLink } from './components/billing/PaddlePaymentLink'
 import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
-import { GITHUB_URL, SITE_URL } from './lib/config'
+import { AI_CANVAS_DEFINITION, GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
 import { isFramedPayloadRequest } from './lib/frame'
 
@@ -103,6 +103,7 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'AI Canvas',
+  description: AI_CANVAS_DEFINITION,
   url: SITE_URL,
   logo: `${SITE_URL}/ai-canvas-icon-square.svg`,
   sameAs: [GITHUB_URL],

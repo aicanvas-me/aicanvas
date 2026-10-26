@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ArrowRight, Question } from '@phosphor-icons/react/dist/ssr'
-import { SITE_URL } from '../lib/config'
+import { AI_CANVAS_DEFINITION, SITE_URL } from '../lib/config'
 import { buttonClasses } from '../components/buttonClasses'
 import { CtaBand, PageHero, PageShell } from '../components/PageKit'
 import { FaqView, type FaqCategory } from './FaqView'
@@ -29,7 +29,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
     items: [
       {
         q: 'What is AI Canvas?',
-        a: 'AI Canvas is a registry of animated React components, design systems, and templates you can install straight into your project. Open source and free to start: every free component ships with its full source code, so you use it as is or rebuild it your way. Premium adds more components, complete design systems, and templates. React is a popular tool for building modern products’ user interfaces.',
+        a: `${AI_CANVAS_DEFINITION} Open source and free to start: every free component ships with its full source code, so you use it as is or rebuild it your way. Premium adds more components, complete design systems, and templates. React is a popular tool for building modern products’ user interfaces.`,
       },
       {
         q: 'Do I need to know how to code to use it?',

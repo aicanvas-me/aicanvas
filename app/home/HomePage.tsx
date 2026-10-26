@@ -19,7 +19,7 @@ import { PremiumCards } from '../components/billing/PremiumCards'
 import { AndromedaProSection } from './AndromedaProSection'
 import { Reveal } from './Reveal'
 import { StackedCards, AnimatedCount, WireIcons } from './islands'
-import { GITHUB_URL } from '../lib/config'
+import { AI_CANVAS_DEFINITION, GITHUB_URL } from '../lib/config'
 import { lifetimeEnabled, premiumEnabled } from '../../lib/flags'
 import { ANDROMEDA_COMPONENT_META, ANDROMEDA_TEMPLATE_META } from '../_lib/andromeda/andromeda-meta'
 import {
@@ -55,7 +55,7 @@ const SUB = 'text-base leading-relaxed text-sand-600 dark:text-sand-400'
 const FAQ: FaqItem[] = [
   {
     q: 'What is AI Canvas?',
-    a: 'AI Canvas is a registry of animated React components and design systems you install with one command, no tokens spent generating them. Every install lands real, editable source in your project. Free and premium alike install as real source you own, never a black-box package.',
+    a: `${AI_CANVAS_DEFINITION} Free and premium alike install as real source you own, never a black-box package.`,
   },
   {
     q: 'Is AI Canvas free?',
@@ -86,6 +86,18 @@ const FAQ: FaqItem[] = [
     a: 'One person. AI Canvas is a solo project, built and cared for one component at a time by someone who worries about the easing curve more than is strictly reasonable. It is still early and still growing, and if it makes your work easier, going Premium is the most direct way to help one maker keep building it with the same care.',
   },
 ]
+
+// FAQPage structured data from the same strings the stickers render, so answer
+// engines quote exactly what a visitor reads.
+const HOME_FAQ_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: FAQ.map((it) => ({
+    '@type': 'Question',
+    name: it.q,
+    acceptedAnswer: { '@type': 'Answer', text: it.a },
+  })),
+}
 
 const STEPS = [
   {
@@ -491,6 +503,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
         </section>
 
         {/* ── FAQ ── */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_FAQ_JSON_LD) }} />
         <section aria-label="Frequently asked questions" className="mt-20 sm:mt-32">
           <StickerFaq
             items={FAQ}
