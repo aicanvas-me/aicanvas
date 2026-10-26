@@ -16,12 +16,12 @@ export function GET() {
 
   const intro = `# AI Canvas
 
-> AI Canvas is an open-core, shadcn-compatible registry of ${total} animated React components, design systems, and templates built with Tailwind CSS and Motion. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components ship with a comprehensive AI remix prompt, so developers can install the code directly or recreate their own variation in any AI builder. On free components that prompt is public in full; on premium components and blocks only part of it is public (the setup and the constants), and the rest of the build spec requires a Premium subscription.
+> AI Canvas is the design layer for AI coding agents: design systems with the rules your agent follows, plus ${total} standalone React components and blocks, all installed as editable source with shadcn or MCP. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components include an AI remix prompt for recreating a variation in an AI builder. For free components, the full prompt is public. For premium components and blocks, the setup and constants are public, while the rest of the build specification requires a Premium subscription.
 
 ## Overview
-- [Homepage](${SITE_URL}): Browse all components.
-- [All components](${SITE_URL}/components): Full component list.
-- [About](${SITE_URL}/about): About AI Canvas.
+- [Homepage](${SITE_URL}): Design systems, rules, and standalone React components for AI coding agents.
+- [All components](${SITE_URL}/components): Browse ${total} standalone shadcn components and blocks for React.
+- [About](${SITE_URL}/about): Learn how AI Canvas works with Claude Code, Cursor, and Codex.
 - [Registry index](${SITE_URL}/r/registry.json): Machine-readable registry index.
 
 ## Install

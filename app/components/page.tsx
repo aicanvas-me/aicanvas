@@ -67,9 +67,9 @@ export default async function ComponentsPage({
     category && category !== 'All Components'
       ? undefined
       : {
-          h1: 'Animated React Components and Blocks',
+          h1: `React Component Library: ${COMPONENT_META.length} shadcn Components`,
           intro:
-            'Standalone React components and blocks, built with Tailwind CSS and Motion. Each one installs with the shadcn CLI and ships a remix prompt for any AI tool.',
+            'AI agents can install these standalone React components and blocks with the shadcn CLI or MCP, and each includes a remix prompt.',
         }
 
   return <HomeClient components={filtered} heading={heading} />

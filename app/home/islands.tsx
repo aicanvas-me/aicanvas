@@ -198,7 +198,7 @@ const WIRE_LABELS  = ['For developers', 'For designers', 'For makers and founder
 // stay aria-hidden so screen readers skip them and crawlers don't see the
 // brand name repeated three times in a row.
 const WIRE_ALTS    = [
-  'AI Canvas component registry: animated React components preview',
+  'AI Canvas design systems and React components for AI agents',
   '',
   '',
 ]
