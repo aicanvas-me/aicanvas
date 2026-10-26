@@ -275,9 +275,9 @@ export function ValueBento({ freeTotal, freeShots }: { freeTotal: number; freeSh
           <div className="flex flex-1 items-center justify-center py-6">
             <CheckDial />
           </div>
-          <Copy title="Rules your agent can follow.">
-            The AI Brain hands your agent the design rules and skills, then scripts check the screen before it calls it
-            done.
+          <Copy title="A system your agent can extend.">
+            The AI Brain hands your agent the whole system, so new screens and new components fit, and scripts check
+            the work before it calls it done.
           </Copy>
         </div>
       </Reveal>

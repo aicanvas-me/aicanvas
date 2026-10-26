@@ -40,7 +40,7 @@ const geistMono = Geist_Mono({
 
 const TOTAL = TOTAL_COMPONENTS
 const GLOBAL_TITLE = 'AI Canvas: No More AI Slop. Design Systems for AI Agents'
-const GLOBAL_DESCRIPTION = `AI Canvas gives your AI agent design systems, design rules and ${TOTAL} React components to build with. The free library is MIT; install with shadcn or MCP.`
+const GLOBAL_DESCRIPTION = `AI Canvas gives your AI agent design systems to build with and reshape, plus ${TOTAL} standalone React components that fit any of them. The free library is MIT; install with shadcn or MCP.`
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

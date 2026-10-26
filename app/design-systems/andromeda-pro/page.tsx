@@ -21,7 +21,7 @@ import { TEMPLATES, type Family, type OverviewComponent, type OverviewStats } fr
 export const metadata: Metadata = {
   title: 'Andromeda Pro: Give Your AI Agent Taste, Not AI Slop',
   description:
-    `No more AI slop. A complete design system with rules your agent follows: around ${ANDROMEDA_COMPONENT_META.length} components and ${TEMPLATES.length} templates, light and dark.`,
+    `No more AI slop. A complete design system your agent builds with and you reshape: around ${ANDROMEDA_COMPONENT_META.length} components and ${TEMPLATES.length} templates, light and dark.`,
   alternates: { canonical: '/design-systems/andromeda-pro' },
 }
 

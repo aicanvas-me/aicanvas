@@ -16,10 +16,10 @@ export function GET() {
 
   const intro = `# AI Canvas
 
-> AI Canvas is the design layer for AI coding agents: design systems with the rules your agent follows, plus ${total} standalone React components and blocks, all installed as editable source with shadcn or MCP. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components include an AI remix prompt for recreating a variation in an AI builder. For free components, the full prompt is public. For premium components and blocks, the setup and constants are public, while the rest of the build specification requires a Premium subscription.
+> AI Canvas is the design layer for AI coding agents: design systems your agent builds with and you reshape to your project, plus ${total} standalone React components and blocks that fit any of them, all installed as editable source with shadcn or MCP. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components include an AI remix prompt for recreating a variation in an AI builder. For free components, the full prompt is public. For premium components and blocks, the setup and constants are public, while the rest of the build specification requires a Premium subscription.
 
 ## Overview
-- [Homepage](${SITE_URL}): Design systems, rules, and standalone React components for AI coding agents.
+- [Homepage](${SITE_URL}): Design systems and standalone React components for AI coding agents.
 - [All components](${SITE_URL}/components): Browse ${total} standalone shadcn components and blocks for React.
 - [About](${SITE_URL}/about): Learn how AI Canvas works with Claude Code, Cursor, and Codex.
 - [Registry index](${SITE_URL}/r/registry.json): Machine-readable registry index.

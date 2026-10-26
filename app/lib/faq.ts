@@ -15,8 +15,10 @@ export const FAQ_CATEGORY_META: { slug: string; category: string; blurb: string 
   { slug: 'getting-started', category: 'Getting started', blurb: 'Start here. Learn what the design layer for AI coding agents provides and what you can use for free.' },
   { slug: 'installing', category: 'Installing components', blurb: 'Install through one CLI command, give the command to your agent, or copy the source by hand. The result is real, editable code in your project.' },
   { slug: 'mcp', category: 'AI Canvas MCP', blurb: 'Connect your coding agent to AI Canvas. It can search, inspect, and install components from the chat.' },
-  { slug: 'design-systems', category: 'Design systems', blurb: 'Give every screen one visual language and give your agent finished decisions to follow. Shared tokens keep components consistent.' },
-  { slug: 'ai-design-skills', category: 'AI design skills', blurb: 'Teach Claude Code, Cursor, and Codex how to build and review polished interfaces. Explicit rules replace design guesses.' },
+  { slug: 'design-systems', category: 'Design systems', blurb: 'Design systems your agent builds with and you reshape. Change the tokens and every component follows.' },
+  { slug: 'ai-design-skills', category: 'AI design skills', blurb: 'Give Claude Code, Cursor, and Codex the whole system, so what they build next fits it.' },
+  { slug: 'standalone', category: 'Standalone components', blurb: 'Effects, motion and blocks that belong to no design system and drop into any of them.' },
+  { slug: 'icons', category: 'Icons', blurb: 'An in-house icon set in four styles, free to use, with the size and stroke width yours to set.' },
   { slug: 'plans', category: 'Plans and Premium', blurb: 'Start free with unlimited installs. Upgrade for Andromeda Pro, the AI Brain, complete systems, templates, and premium standalone components and blocks.' },
   { slug: 'billing', category: 'Payments and billing', blurb: 'Paddle handles checkout, taxes, and payment details. Cancel Premium at any time and keep access through the paid period.' },
   { slug: 'about', category: 'About AI Canvas', blurb: 'Understand the code, licences, compatibility, and people it serves. One designer builds the project one component at a time.' },
@@ -155,7 +157,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'design-system-contents',
     category: 'design-systems',
     q: 'What do I get in an AI Canvas design system?',
-    a: 'A shared token file defines every color, spacing value, and font, and every included React component follows it. The complete set installs as real, editable code with one consistent visual language.',
+    a: 'A shared token file defines every color, spacing value, and font, and every included React component follows it, so changing a token restyles the whole set. It installs as real, editable code you can reshape to your project.',
   },
   {
     id: 'why-use-design-system',
@@ -179,7 +181,44 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'design-system-for-ai-agents',
     category: 'design-systems',
     q: 'What is a design system for AI agents?',
-    a: 'A shared visual language paired with explicit rules an agent follows while it builds. Tokens control color, type, and spacing; component rules tell the agent how finished parts fit together, so it adapts decisions instead of guessing.',
+    a: 'A complete system your agent builds with: components, tokens for color, type, and spacing, and written decisions about how the parts fit together. The agent carries those decisions into every new screen and component, and because it all lives in your project, you can change any of it.',
+  },
+  {
+    id: 'reshape-design-system',
+    category: 'design-systems',
+    q: 'Can I change a design system to fit my project?',
+    a: 'Yes. It installs as editable source in your project. Change the tokens for color, type, and spacing and every component follows. Edit or replace any component, or ask your agent for new ones, and the system\'s AI Brain keeps them consistent with the rest.',
+  },
+  {
+    id: 'what-are-standalone-components',
+    category: 'standalone',
+    q: 'What are standalone components?',
+    a: 'React components and blocks that belong to no design system: backgrounds, glass, 3D and shaders, typography and motion effects, plus cards, buttons, navigation and widgets. Each one drops into any project as editable source, so you can recolor, retime, or rebuild it.',
+    link: { label: 'components', href: '/components' },
+  },
+  {
+    id: 'standalone-components',
+    category: 'standalone',
+    q: 'Do standalone components need a design system?',
+    a: 'No. Standalone components belong to no design system. Each uses React and Tailwind, so it drops into any React project beside Andromeda, shadcn, or your own system.',
+  },
+  {
+    id: 'standalone-match-my-design',
+    category: 'standalone',
+    q: 'Can a standalone component match my design?',
+    a: 'Yes. It is plain React and Tailwind source in your project, so you or your agent can swap its colors, fonts, and timing for your own tokens. Free ones also ship a remix prompt that describes the change in plain language.',
+  },
+  {
+    id: 'ai-canvas-icons',
+    category: 'icons',
+    q: 'Does AI Canvas have icons?',
+    a: 'Yes. AI Canvas has its own icon set, drawn in house on one 24-pixel grid, in four styles: line, duotone, solid, and solid duotone. You set the size and the stroke width, and the stroke keeps its width at any size.',
+  },
+  {
+    id: 'are-icons-free',
+    category: 'icons',
+    q: 'Are the icons free?',
+    a: 'Yes. The icon set is free and public in its own repository, and every icon downloads free one at a time. Premium adds the bulk download of the whole set.',
   },
   {
     id: 'design-skill-for-claude-code',
@@ -210,7 +249,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'stop-ai-slop',
     category: 'ai-design-skills',
     q: 'How do I stop AI slop in Claude Code or Cursor?',
-    a: 'Give the agent finished components and explicit design rules instead of asking it to guess. The Andromeda Pro AI Brain tells Claude Code, Cursor, or Codex which tokens and layout patterns to use, then its done-gate fails work that reaches past those rules, such as using a raw color instead of a token.',
+    a: 'Give the agent a finished system instead of a blank page. The Andromeda Pro AI Brain tells Claude Code, Cursor, or Codex which tokens and layout patterns to use, and its done-gate fails work that drifts off the system, such as a raw color instead of a token. Change the tokens and the agent builds with yours.',
   },
   {
     id: 'what-install-means',
@@ -301,13 +340,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'different-from-component-libraries',
     category: 'about',
     q: 'How is AI Canvas different from other component libraries?',
-    a: 'It supports designers, developers, and AI agents in the same workflow. Copy a free component\'s remix prompt, install through the shadcn CLI, or let your agent handle it. Real source lands in your project, ready to restyle, extend, or ship.',
-  },
-  {
-    id: 'standalone-components',
-    category: 'about',
-    q: 'Do standalone components need a design system?',
-    a: 'No. Standalone components belong to no design system. Each uses React and Tailwind, so it drops into any React project beside Andromeda, shadcn, or your own system.',
+    a: 'Most libraries hand you one system as it is. AI Canvas gives you design systems your agent builds with and you reshape, standalone components that fit any of them, and an icon set, all as real source in your project. Install with the shadcn CLI, let your agent do it, or remix a free component with its prompt.',
   },
   {
     id: 'different-from-v0-lovable',
@@ -349,7 +382,7 @@ function pick(ids: string[]): FaqEntry[] {
   })
 }
 
-export const HOME_FAQ = pick(['what-is-ai-canvas', 'is-ai-canvas-free', 'stop-ai-slop', 'install-a-component', 'ai-canvas-mcp-server', 'premium-includes', 'commercial-use', 'standalone-components'])
+export const HOME_FAQ = pick(['what-is-ai-canvas', 'is-ai-canvas-free', 'stop-ai-slop', 'reshape-design-system', 'install-a-component', 'ai-canvas-mcp-server', 'what-are-standalone-components', 'ai-canvas-icons', 'premium-includes', 'commercial-use'])
 export const PRICING_FAQ = pick(['payments-and-paddle', 'payment-security', 'taxes', 'who-is-ai-canvas-for', 'tool-affiliations'])
 export const BRAIN_FAQ = pick(['andromeda-pro-ai-brain', 'design-skill-for-claude-code', 'ai-brain-cursor-codex', 'stop-ai-slop', 'install-ai-brain'])
 export const MCP_FAQ = pick(['ai-canvas-mcp-server', 'mcp-supported-agents', 'mcp-agent-tools', 'works-with-shadcn', 'mcp-versus-shadcn-cli', 'is-mcp-free'])

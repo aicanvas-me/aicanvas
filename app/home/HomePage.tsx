@@ -74,7 +74,7 @@ const STEPS = [
     num: '03',
     icon: <Code weight="regular" size={16} />,
     title: 'Build',
-    desc: 'Edit the source yourself, or let your agent build with the rules already in your project.',
+    desc: 'Change colors, swap parts or add your own components, by hand or through your agent. It is all your source.',
   },
 ]
 
@@ -134,10 +134,10 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
             className="aic-hero-rise mt-5 max-w-2xl text-base leading-relaxed text-sand-600 sm:text-lg dark:text-sand-400"
             style={{ animationDelay: '0.26s' }}
           >
-            Complete React design systems with templates, light and dark themes, and the design rules your agent
-            follows in Claude Code, Cursor or Codex. Plus {standalonesFloor} standalone components and blocks that fit
-            any React project. Install with one shadcn command yourself, or let your agent do it through the AI Canvas
-            MCP.
+            Complete React design systems your agent builds with in Claude Code, Cursor or Codex, and you reshape:
+            change the colors, swap components, add your own. Plus {standalonesFloor} standalone components and blocks,
+            effects and motion that fit any system. Install with one shadcn command, or let your agent do it through
+            the AI Canvas MCP.
           </p>
 
           <div

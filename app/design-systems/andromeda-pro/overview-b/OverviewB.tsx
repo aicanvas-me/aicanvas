@@ -67,8 +67,8 @@ const LEDGER_ROWS: { label: string; free: boolean }[] = [
 const BRAIN_POINTS: { icon: Icon; title: string; line: string }[] = [
   {
     icon: Brain,
-    title: 'Foundations and rules',
-    line: 'Color, type, spacing and motion, written as rules an agent follows.',
+    title: 'The whole system, written down',
+    line: 'Color, type, spacing and motion as decisions your agent carries into anything new.',
   },
   {
     icon: ChatText,
@@ -421,12 +421,12 @@ export function OverviewB({
                 id="ovb-brain"
                 className="mt-2 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50"
               >
-                Your agent reads the rules first.
+                Your agent gets the whole system.
               </h2>
               <p className="mt-3 text-base leading-relaxed text-sand-700 dark:text-sand-300">
                 The AI Brain holds the foundations, component rules and skills an AI agent reads before it
-                writes a line. Every component also carries its own remix prompt, so what your agent builds
-                stays on the system.
+                writes a line, so new screens and components of your own fit the system. Change the tokens and
+                it builds with yours. Every component also carries its own remix prompt.
               </p>
               <ul className="mt-6 flex flex-col gap-4">
                 {BRAIN_POINTS.map(({ icon: PointIcon, title, line }) => (

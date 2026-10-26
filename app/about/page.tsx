@@ -75,12 +75,11 @@ export default function AboutPage() {
         title="Stop building on sand"
         sub={
           <p className="text-pretty">
-            There is a blank file, a blinking cursor, and a deadline. You point
-            an AI at it and ask for an interface, and it invents the whole world
-            from nothing. Layout, spacing, every state, every transition, one
-            guess at a time. What comes back usually looks right. Then a real
-            person hovers, tabs, or hits an error, and the cracks show. That is
-            AI slop: an interface nobody decided, only guessed.
+            There is a blank file, a blinking cursor, and a deadline. You ask an
+            AI for an interface and it invents everything from nothing: layout,
+            spacing, every state, one guess at a time. It looks right until a
+            real person hovers, tabs, or hits an error. That is AI slop: an
+            interface nobody decided, only guessed.
           </p>
         }
       />
@@ -92,10 +91,9 @@ export default function AboutPage() {
       >
         <p className="text-pretty text-xl leading-relaxed text-sand-900 sm:text-[1.375rem] sm:leading-[1.6] dark:text-sand-50">
           The magic was never in the asking. It is in what you start from.
-          Point an agent at a blank page and it guesses. Point it at something
-          already good, a design system with rules it follows, and it stops
-          guessing and starts editing. AI Canvas exists to be that something
-          already good.
+          Point an agent at a blank page and it guesses. Point it at a design
+          system it can read and you can reshape, and it builds on decisions
+          already made. AI Canvas exists to be that starting point.
         </p>
       </div>
 
@@ -108,60 +106,70 @@ export default function AboutPage() {
           keeping the good versions somewhere an agent could reach them.
         </p>
         <p className={P}>
-          The question underneath was simple. What if a piece of UI did not
-          arrive as a screenshot you had to chase, but as finished, readable
-          code you could drop into a project and ship? It felt like there
-          should be a place where components are treated with the same care as
-          code. Built thoughtfully, tested honestly, and shared openly.
+          The question underneath was simple. What if UI arrived not as a
+          screenshot to chase, but as finished, readable code you drop into a
+          project and ship? Built thoughtfully, tested honestly, and shared
+          openly.
         </p>
       </Chapter>
 
-      {/* ── Taste ── the turn from components to design systems. */}
-      <Chapter title="Components were not enough">
+      {/* ── Systems ── the turn from components to design systems you own. */}
+      <Chapter title="From components to a system you own">
         <p className={P}>
           Good components fixed one screen at a time. They did not stop the
-          agent from mixing three spacing scales on the next one. Code was
-          never what the agent lacked. It lacked judgment: which token, which
-          pattern, when to stop.
+          agent from mixing three spacing scales on the next one. The agent
+          never lacked code. It lacked a system.
         </p>
         <p className={P}>
-          So the work grew from components into design systems. For an agent,
-          a design system is not a style guide it skims. It is a set of
-          decisions written down as rules it follows: the tokens for color,
-          type, and spacing, how finished parts fit together, what a screen
-          may and may not do. Andromeda Pro ships those rules as its AI Brain,
+          So the work grew into design systems your agent builds with.
+          Andromeda Pro gives it the components, the tokens, and the AI Brain,
           a design skill that Claude Code, Cursor, and Codex read before they
-          build, with a review step that fails work which reaches past them.
+          build, with a check that catches work drifting off the system.
         </p>
         <p className={P}>
-          That is what we mean by taste. Not a mood board. Decisions made once,
-          made well, and handed to every agent that builds with them.
+          And the system is yours. Change the colors and every component
+          follows. Edit a component, swap one out, or ask your agent for a new
+          one, and it fits, because the agent carries the system into
+          everything it builds. That is what we mean by taste: not a look you
+          copy, a way of deciding that you own.
+        </p>
+      </Chapter>
+
+      {/* ── Standalone ── the other division: effects that belong to no system. */}
+      <Chapter title="Standalone, for any system">
+        <p className={P}>
+          Not everything belongs to a system. The standalone components and
+          blocks are the other half of AI Canvas: backgrounds, glass, 3D and
+          shaders, typography, and motion effects that belong to no design
+          system and drop into any of them, Andromeda, shadcn, or your own.
+          Recolor them, retime them, rebuild them. The source is yours.
+        </p>
+        <p className={P}>
+          Underneath both sits a free icon set in four styles, line, duotone,
+          solid, and solid duotone, with the size and stroke width yours to
+          set.
         </p>
       </Chapter>
 
       {/* ── Craft ── */}
       <Chapter title="Craft you can feel">
         <p className={P}>
-          You cannot always name what makes an interface feel right. You feel
-          instantly when it is wrong. The spacing that drifts on a narrow
+          You cannot always name what makes an interface feel right, but you
+          feel instantly when it is wrong. The spacing that drifts on a narrow
           phone. The animation that lurches. The button that does nothing for
-          half a second and leaves you wondering if you missed.
+          half a second.
         </p>
         <p className={P}>
-          The work lives in the parts most libraries skip. The easing curve and
-          the duration behind a single transition. The rhythm that holds at 320
-          pixels and at 1440. The focus ring, the disabled state, the empty
-          state, the loading state, the small flash of feedback when something
-          is pressed. That is the boring eighty percent, and it is exactly
-          where generated UI quietly gives up. A model front-loads the visible
-          happy path and drops the states people hit when something goes wrong.
-          Here those states are built first, not last.
+          The work lives in the parts generated UI skips: the easing curve
+          behind a transition, the rhythm that holds at 320 pixels and at 1440,
+          the focus, disabled, empty, and loading states. A model front-loads
+          the happy path and drops the states people hit when something goes
+          wrong. Here those states are built first.
         </p>
         <p className={P}>
-          None of this asks for your trust. Open any component, resize it to
-          320 pixels, tab through it, read the easing curve. Some run real 2D
-          physics instead of scripted ease curves, and you can read that in the
-          source. The care is in the code, not in the marketing.
+          None of this asks for your trust. Open any component, resize it, tab
+          through it, read the easing curve. Some run real 2D physics, and you
+          can read that in the source too.
         </p>
       </Chapter>
 
@@ -170,48 +178,31 @@ export default function AboutPage() {
         accent="It is finished when it behaves, in every state a real person can reach."
       />
 
-      {/* ── Three ways in ── */}
+      {/* ── Ways in ── */}
       <Chapter title="Three ways in, all yours">
         <p className={P}>
-          Browse the registry and preview every component live. When one fits,
-          you have options, because different people build differently and that
-          is the whole point.
+          Developers run one shadcn command and typed source lands in the
+          project: React, Tailwind CSS, and Framer Motion. Agents like Claude
+          Code, Codex, and Cursor connect the AI Canvas MCP and install
+          components and design systems themselves. Designers remix a free
+          component with AI by describing the change. Or just copy the source.
         </p>
         <p className={P}>
-          Developers run one shadcn CLI command and the fully typed source
-          lands in the project, React with Tailwind CSS and Framer Motion,
-          ready to run. Agents like Claude Code, Codex, and Cursor reach for
-          the AI Canvas MCP and install components and design systems
-          themselves. Designers and
-          anyone working in plain language can remix a component with AI
-          instead, changing colors, motion, and layout by describing the
-          change, never from a blank prompt. You can always just copy the
-          source too.
-        </p>
-        <p className={P}>
-          A comprehensive AI remix prompt still ships with every free
-          component, and it works in any AI tool. Premium components and
-          blocks publish the setup and the constants to everyone, and Premium
-          unlocks the rest of the build spec. It is one lane now, the
-          remix lane, not the headline. However it arrives, it arrives as
-          real code in your codebase.
+          However it arrives, it arrives as real code in your codebase, yours
+          to change.
         </p>
       </Chapter>
 
       {/* ── One language ── */}
       <Chapter title="One language for you and your agent">
         <p className={P}>
-          Most component libraries serve one audience. AI Canvas is built for
-          three: designers, developers, and the agents both of them now build
-          with, all reaching for the same thing and meaning the same thing.
+          A pre-built component is a decision already made well. For a designer
+          it is a vocabulary, so primary action means one thing on every
+          screen. For a developer it is a foundation they do not reinvent. For
+          an agent it is a pattern to reuse instead of a guess.
         </p>
         <p className={P}>
-          A pre-built component is not a shortcut. It is a decision already
-          made well. For a designer it is a vocabulary, so primary action means
-          one thing across every screen instead of a dozen subtly different
-          things. For a developer it is a foundation they do not have to
-          reinvent. For an agent it is a rule to follow instead of a guess. The
-          real value was never the pixels. It is the agreement. When design,
+          The value was never the pixels. It is the agreement. When design,
           engineering, and the agent point at the same component and mean the
           same thing, the handoff stops being a negotiation.
         </p>
@@ -220,38 +211,25 @@ export default function AboutPage() {
       {/* ── Foundation ── */}
       <Chapter title="Build on rock, not on sand">
         <p className={P}>
-          What you start from quietly decides what you can finish. Begin on a
-          coherent base, a sane spacing scale, consistent tokens, accessible
-          defaults, real states, and every later decision gets easier. Begin on
-          a shaky one and you pay forever. The spacing never quite lines up.
-          Dark mode is an afterthought. The third feature fights the first.
-        </p>
-        <p className={P}>
-          The forty-first modal is never free. Every inconsistent pattern is a
-          thing someone has to find, re-learn, and reconcile later, and that
-          bill compounds in the dark. A polished component is not just
-          today&apos;s screen looking good. It is the next ten screens costing
-          less.
+          What you start from decides what you can finish. Begin on a coherent
+          base, a sane spacing scale, consistent tokens, accessible defaults,
+          real states, and every later decision gets easier. Begin on a shaky
+          one and you pay forever: spacing that never lines up, dark mode as an
+          afterthought, the third feature fighting the first. A polished
+          component is not just today&apos;s screen looking good. It is the
+          next ten screens costing less.
         </p>
       </Chapter>
 
       {/* ── Token economics ── */}
       <Chapter title="Do not pay your AI to start from zero">
         <p className={P}>
-          Craft is not just how it feels. It is what it costs to generate. When
-          you prompt an AI from nothing, you are paying it to invent
-          everything, layout, tokens, states, motion, one token at a time. The
-          output is the expensive part, and from-scratch work is almost all
-          output. Worse, the first pass is rarely the last, so you iterate, and
-          every round re-sends the whole context and re-pays for it.
-        </p>
-        <p className={P}>
-          Start from a finished AI Canvas component and the job flips from
-          generate to adapt. The agent reads a strong, correct base and remixes
-          it. Fewer tokens, fewer rounds, a better result, because a known-good
-          reference makes the hallucinations structurally unlikely. Spend your
-          tokens shaping the last twenty percent, not regenerating the first
-          eighty you could have had for free.
+          Prompting from nothing pays the AI to invent everything, layout,
+          tokens, states, motion, one token at a time, and every round of fixes
+          re-pays for the whole context. Start from a finished component and
+          the job flips from generate to adapt: fewer tokens, fewer rounds, a
+          better result. Spend your tokens on the last twenty percent, not on
+          regenerating the first eighty.
         </p>
       </Chapter>
 
@@ -263,15 +241,12 @@ export default function AboutPage() {
       {/* ── Open + free to start ── */}
       <Chapter title="Open, and free to start">
         <p className={P}>
-          The free library is open source under MIT, and that source is never
-          hidden. Premium is our one paid exception: proprietary components,
-          design systems, and templates whose sales keep the free library
-          free. Remixing the free library with AI stays free for everyone.
-        </p>
-        <p className={P}>
-          Browsing and previewing are free. Installing is free with a free
-          account, unlimited. Premium is there for people who lean on AI
-          Canvas every day, and what you pay keeps the open library growing.
+          The free library is open source under MIT, and its source is never
+          hidden. Browsing and previewing are free, installing is free with a
+          free account, and remixing the free library with AI stays free.
+          Premium is the one paid exception: proprietary components, design
+          systems, and templates for people who lean on AI Canvas every day,
+          and their sales keep the free library growing.
         </p>
       </Chapter>
 

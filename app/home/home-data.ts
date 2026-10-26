@@ -9,7 +9,7 @@ import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-d
 // The homepage renders at / and at /home; both routes share this data and
 // these words.
 export const HOMEPAGE_TITLE = 'AI Canvas: No More AI Slop. Design Systems for AI Agents'
-export const HOMEPAGE_DESCRIPTION = 'No more AI slop. Design systems, design rules and free components your agent builds with in Claude Code, Cursor or Codex. Install with shadcn or MCP.'
+export const HOMEPAGE_DESCRIPTION = 'No more AI slop. Design systems your agent builds with and you reshape, plus standalone components for any project, in Claude Code, Cursor or Codex.'
 
 // The device frame's tabs, in order: one of each kind of screen.
 const TEMPLATE_TABS = [

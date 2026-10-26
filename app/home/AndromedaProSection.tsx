@@ -48,8 +48,8 @@ function Brain() {
           Your design system, written for AI.
         </h3>
         <p className="mt-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
-          Foundations, component rules and skills tell your AI agent how every screen should look, and scripts check
-          the work before it calls it done.
+          Foundations, component rules and skills give your AI agent the whole system, so whatever it builds next, a
+          new screen or a component of your own, fits. Retune the tokens and it builds with your colors.
         </p>
         <div className="mt-6">
           <Link href={`${PRO_HREF}/brain`} className={buttonClasses({ variant: 'outline', size: 'md' })}>
