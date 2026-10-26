@@ -5,7 +5,7 @@ export const SITE_URL = 'https://aicanvas.me'
 // page and the Organization structured data all quote it, so answer engines
 // read the same definition wherever they look.
 export const AI_CANVAS_DEFINITION =
-  'AI Canvas is a React component library and design system platform for AI coding agents: design systems with the rules your agent follows, plus standalone components, all installed as editable source with shadcn or MCP.'
+  'The design layer for AI coding agents: design systems with the rules your agent follows, plus standalone React components, all installed as editable source with shadcn or MCP.'
 // Shown on the legal pages; forwards to CONTACT_INBOX via Porkbun forwarding.
 export const CONTACT_EMAIL = 'contact@aicanvas.me'
 

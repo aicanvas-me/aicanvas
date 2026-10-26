@@ -55,35 +55,35 @@ const SUB = 'text-base leading-relaxed text-sand-600 dark:text-sand-400'
 const FAQ: FaqItem[] = [
   {
     q: 'What is AI Canvas?',
-    a: `${AI_CANVAS_DEFINITION} Free and premium alike install as real source you own, never a black-box package.`,
+    a: `${AI_CANVAS_DEFINITION} Free and premium alike land as code you own, never a black-box package.`,
   },
   {
     q: 'Is AI Canvas free?',
-    a: 'Yes. Browsing, previewing, and copying the full prompt of any free component are always free, and a free account unlocks unlimited one-command installs, free forever. Premium adds the closed-source premium components and blocks with their full remix prompts, design systems, and templates at $8.99 per month or $49.99 per year when you want more.',
+    a: 'Yes. Browse, preview and copy the full remix prompt of any free component, no account needed. A free account adds unlimited one-command installs, forever. Free components are MIT.',
   },
   {
     q: 'What does Premium include?',
-    a: 'Andromeda Pro with its templates and the AI Brain, plus every premium standalone component and block, each with its full source and remix prompt. New premium pieces are included as they ship. Monthly or yearly, cancel anytime.',
+    a: 'Everything. Andromeda Pro and its templates, the AI Brain, and every premium standalone component and block, each with full source and its remix prompt. New pieces arrive as they ship, for $8.99 a month or $49.99 a year. Cancel anytime.',
   },
   {
-    q: 'How do I get my first component in under a minute?',
-    a: 'Open any component page, click Copy Command to grab its install command, paste it into your terminal and run it, or give it to your AI agent. The component drops into your project as real, editable code.',
+    q: 'How do I install my first component?',
+    a: 'Copy one command. Every component page has a Copy Command button: paste it into your terminal or hand it to your agent, and the code lands in your project as editable source.',
   },
   {
     q: 'What is the AI Canvas MCP server?',
-    a: 'MCP, short for Model Context Protocol, is an open standard for AI tools to plug into outside services, and nearly every AI coding agent now supports it. The AI Canvas MCP is a small server that connects your agent to AI Canvas, so it can find and install components without you leaving the chat, whether you use Claude Code, Cursor, Codex, Copilot, Gemini, or anything else. It is free to use.',
+    a: 'Your agent finds and installs AI Canvas components without leaving the chat. MCP, the Model Context Protocol, is the open standard AI tools use to connect to outside services, and the free AI Canvas MCP works in Claude Code, Cursor, Codex, Copilot and Gemini.',
   },
   {
     q: 'Can I use the components in commercial projects?',
-    a: 'Yes. Free components are MIT. Premium components, design systems, and templates are proprietary under the AI Canvas Premium License. Either way you can use what you install in personal and commercial projects and ship it. Any third-party assets, fonts, or images a component references may carry their own terms, so check those before shipping.',
+    a: 'Yes, ship them in personal and commercial work. Free components are MIT; premium components, design systems and templates come under the AI Canvas Premium License. Fonts or images a component references can carry their own terms, so check those.',
   },
   {
     q: 'Do standalone components need a design system?',
-    a: 'No. They belong to no design system. Each one is a React component styled with Tailwind, so it drops into any React project, next to Andromeda, shadcn or a system of your own.',
+    a: 'No. Standalone components belong to no design system. Each is React and Tailwind, so it drops into any React project, next to Andromeda, shadcn or your own system.',
   },
   {
     q: 'Who is behind AI Canvas?',
-    a: 'One person. AI Canvas is a solo project, built and cared for one component at a time by someone who worries about the easing curve more than is strictly reasonable. It is still early and still growing, and if it makes your work easier, going Premium is the most direct way to help one maker keep building it with the same care.',
+    a: 'One designer, building it one component at a time and sweating every easing curve. Going Premium is the most direct way to keep it growing.',
   },
 ]
 
