@@ -145,6 +145,7 @@ export function HomeLogo() {
 // the phone drawer is gone from md up, so More is the only way to Pricing and
 // the info pages on a tablet.
 const MORE_COMPACT: NavLink[] = [
+  { label: 'Docs', href: '/docs' },
   { label: 'Icons', href: '/icons', prefetch: false },
   { label: 'MCP', href: '/mcp' },
   ...MORE,
@@ -159,6 +160,9 @@ export function HomeNav() {
       <Menu label="Design systems" links={DESIGN_SYSTEMS} section="/design-systems" />
       <Menu label="Components & blocks" links={COMPONENT_LINKS} columns={2} section="/components" />
       <span className="hidden lg:contents">
+        <Link href="/docs" aria-current={isOn(pathname, '/docs') ? 'page' : undefined} className={ITEM}>
+          Docs
+        </Link>
         <Link href="/icons" prefetch={false} aria-current={isOn(pathname, '/icons') ? 'page' : undefined} className={ITEM}>
           Icons
         </Link>

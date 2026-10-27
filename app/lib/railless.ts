@@ -27,5 +27,13 @@ const PAGES = new Set([
 export function isRaillessRoute(pathname: string | null | undefined): boolean {
   if (!pathname) return false
   const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
-  return PAGES.has(path) || path === '/account' || path.startsWith('/account/')
+  // /docs carries its own list of docs pages (app/docs/layout.tsx), so the
+  // catalog rail steps aside there too.
+  return (
+    PAGES.has(path) ||
+    path === '/account' ||
+    path.startsWith('/account/') ||
+    path === '/docs' ||
+    path.startsWith('/docs/')
+  )
 }

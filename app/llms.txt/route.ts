@@ -22,6 +22,7 @@ export function GET() {
 - [Homepage](${SITE_URL}): Design systems and standalone React components for AI coding agents.
 - [All components](${SITE_URL}/components): Browse ${total} standalone shadcn components and blocks for React.
 - [About](${SITE_URL}/about): Learn how AI Canvas works with Claude Code, Cursor, and Codex.
+- [Docs](${SITE_URL}/docs): Installation, components.json, design systems, the AI Brain, the MCP server and the files for agents.
 - [Registry index](${SITE_URL}/r/registry.json): Machine-readable registry index.
 
 ## Install
