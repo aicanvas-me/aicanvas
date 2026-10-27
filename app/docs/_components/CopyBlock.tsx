@@ -12,11 +12,22 @@ const NO_LIGATURES = {
 
 /**
  * A command or a config file with a copy button, the same block the MCP page
- * and the component pages use. `title` names the file above a config.
+ * and the component pages use. `title` names the file above a config. `wrap`
+ * is for a prompt written as a sentence: it wraps instead of scrolling sideways.
  */
-export function CopyBlock({ code, title, label = 'code' }: { code: string; title?: string; label?: string }) {
+export function CopyBlock({
+  code,
+  title,
+  label = 'code',
+  wrap = false,
+}: {
+  code: string
+  title?: string
+  label?: string
+  wrap?: boolean
+}) {
   const { copied, copy } = useCopied(code)
-  const multiline = code.includes('\n')
+  const multiline = wrap || code.includes('\n')
   return (
     <div className="my-5 overflow-hidden rounded-xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
       {title && (
@@ -26,7 +37,7 @@ export function CopyBlock({ code, title, label = 'code' }: { code: string; title
       )}
       <div className={`flex gap-3 py-3 pl-4 pr-2.5 ${multiline ? 'items-start' : 'items-center'}`}>
         <pre
-          className="min-w-0 flex-1 overflow-x-auto py-0.5 font-mono text-sm leading-relaxed text-sand-800 dark:text-sand-200"
+          className={`min-w-0 flex-1 py-0.5 ${wrap ? 'whitespace-pre-wrap break-words' : 'overflow-x-auto'} font-mono text-sm leading-relaxed text-sand-800 dark:text-sand-200`}
           style={NO_LIGATURES}
         >
           <code>{code}</code>

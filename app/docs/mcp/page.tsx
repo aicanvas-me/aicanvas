@@ -128,7 +128,7 @@ export default function McpDocsPage() {
 
       <H2 id="try-it">Try it</H2>
       <P>Ask your agent:</P>
-      <CopyBlock label="test prompt" code="What categories of components does AI Canvas have?" />
+      <CopyBlock wrap label="test prompt" code="What categories of components does AI Canvas have?" />
       <P>It should list the categories with their counts. Then try:</P>
       <UL>
         <li>&quot;Find a navbar in AI Canvas and install it.&quot;</li>
@@ -170,7 +170,7 @@ export default function McpDocsPage() {
       <H3>Install</H3>
       <Table
         head={['Tool', 'What it does']}
-        rows={[[<C key="1">get_install_command</C>, 'The shadcn command for any component, system or template.']]}
+        rows={[[<C key="1">get_install_command</C>, 'The shadcn command for one standalone or design-system component. Whole systems and templates list theirs in get_system and get_template.']]}
       />
       <P>
         The best order for a new page: <C>compose_page</C> to plan, <C>get_component_props</C> before writing each component,{' '}
@@ -200,8 +200,8 @@ export default function McpDocsPage() {
         ]}
       />
       <P>
-        <C>npx -y @aicanvas/mcp</C> runs the latest published version each time your tool starts it. The package is on{' '}
-        <A href="https://www.npmjs.com/package/@aicanvas/mcp">npm</A>.
+        <C>npx</C> can reuse a copy it cached earlier. To always start the newest version, use <C>@aicanvas/mcp@latest</C> in the
+        command. The package is on <A href="https://www.npmjs.com/package/@aicanvas/mcp">npm</A>.
       </P>
 
       <H2 id="troubleshooting">Troubleshooting</H2>

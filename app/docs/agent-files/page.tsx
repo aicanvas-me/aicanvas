@@ -39,7 +39,7 @@ export default function AgentFilesDocPage() {
       <H2 id="llms-txt">llms.txt</H2>
       <P>
         <C>llms.txt</C> follows the <A href="https://llmstxt.org">llms.txt convention</A>: a Markdown index an AI model can read in
-        one go. Ours opens with the install rule, then lists the design systems with their install commands, the collections and
+        one go. Ours opens with what AI Canvas is and how to install, then lists the design systems with their install commands, the collections and
         every component. Point an agent at it when it needs to know what exists.
       </P>
 

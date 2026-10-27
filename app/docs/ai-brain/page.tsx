@@ -54,6 +54,7 @@ export default function AiBrainDocPage() {
         prompt:
       </P>
       <CopyBlock
+        wrap
         label="prompt"
         code="Read design-systems/andromeda-pro/ before you build. Build the settings page from Andromeda Pro components and follow its rules."
       />

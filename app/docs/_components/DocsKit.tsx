@@ -11,8 +11,9 @@ import type { ReactNode } from 'react'
 import { ArrowLeft, ArrowRight, ArrowUpRight, Info } from '@phosphor-icons/react/dist/ssr'
 import { SITE_URL } from '../../lib/config'
 import { docPosition } from '../_lib/nav'
+import { Toc, type TocItem } from './Toc'
 
-export type TocItem = { id: string; title: string }
+export type { TocItem }
 
 const LINK = 'font-semibold text-olive-600 underline-offset-4 hover:text-olive-800 hover:underline dark:text-olive-400 dark:hover:text-olive-300'
 
@@ -109,18 +110,7 @@ export function DocPage({
         <aside className="hidden w-52 shrink-0 xl:block">
           <div className="sticky top-6">
             <p className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">On this page</p>
-            <ul className="mt-3 space-y-2 border-l border-sand-200 dark:border-sand-800">
-              {toc.map((t) => (
-                <li key={t.id}>
-                  <a
-                    href={`#${t.id}`}
-                    className="-ml-px block border-l border-transparent pl-3 text-sm text-sand-600 transition-colors hover:border-sand-400 hover:text-sand-900 dark:text-sand-400 dark:hover:border-sand-600 dark:hover:text-sand-50"
-                  >
-                    {t.title}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <Toc items={toc} />
           </div>
         </aside>
       )}

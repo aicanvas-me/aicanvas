@@ -1,6 +1,6 @@
 'use client'
 
-import { useId, useState, type ReactNode } from 'react'
+import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
 
 /**
  * One panel at a time under a row of tabs: the MCP setup per agent, the way
@@ -11,9 +11,24 @@ import { useId, useState, type ReactNode } from 'react'
 export function Tabs({ tabs }: { tabs: { label: string; content: ReactNode }[] }) {
   const [active, setActive] = useState(0)
   const id = useId()
+  const list = useRef<HTMLDivElement>(null)
+  // Arrow keys, Home and End move between tabs, the standard tab-list keys.
+  const onKey = (e: KeyboardEvent) => {
+    const last = tabs.length - 1
+    const to =
+      e.key === 'ArrowRight' ? (active === last ? 0 : active + 1)
+      : e.key === 'ArrowLeft' ? (active === 0 ? last : active - 1)
+      : e.key === 'Home' ? 0
+      : e.key === 'End' ? last
+      : -1
+    if (to < 0) return
+    e.preventDefault()
+    setActive(to)
+    list.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]')[to]?.focus()
+  }
   return (
     <div className="my-6">
-      <div role="tablist" className="flex flex-wrap gap-1 rounded-xl border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900">
+      <div ref={list} role="tablist" onKeyDown={onKey} className="flex flex-wrap gap-1 rounded-xl border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900">
         {tabs.map((t, i) => (
           <button
             key={t.label}
@@ -22,6 +37,7 @@ export function Tabs({ tabs }: { tabs: { label: string; content: ReactNode }[] }
             id={`${id}-tab-${i}`}
             aria-selected={active === i}
             aria-controls={`${id}-panel-${i}`}
+            tabIndex={active === i ? 0 : -1}
             onClick={() => setActive(i)}
             className={`rounded-lg px-3 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
               active === i
