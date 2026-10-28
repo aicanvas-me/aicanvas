@@ -167,10 +167,12 @@ export function IconsOverview({
           <div className="w-full flex-[1_1_390px] sm:min-w-[350px] xl:min-w-[420px] xl:flex-[0_0_420px] min-[1440px]:min-w-[460px] min-[1440px]:flex-[0_0_460px]">
             <StylePicker value={style} onChange={setStyle} compact loading={loading} />
           </div>
-          <div className="h-10 min-w-[115px] flex-1 [&>div>div]:h-10">
+          {/* Second row: the sliders get the full width instead of being squeezed beside search and style. */}
+          <div aria-hidden className="h-0 basis-full" />
+          <div className="h-10 min-w-[140px] flex-1 [&>div>div]:h-10">
             <Slider themed label="Size" value={size} onChange={setSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
           </div>
-          <div className="h-10 min-w-[115px] flex-1 [&>div>div]:h-10">
+          <div className="h-10 min-w-[140px] flex-1 [&>div>div]:h-10">
             <Slider themed label="Stroke" value={strokeWidth} onChange={setStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
           </div>
           <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} className="h-10" />

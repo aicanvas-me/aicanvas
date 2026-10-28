@@ -4,9 +4,10 @@ import { useState } from 'react'
 import { IconSvg } from './IconSvg'
 
 const PREVIEW_SIZES = [16, 20, 24, 32, 48]
-// The stage shows the picked size magnified 3x, so Size visibly grows and
-// shrinks the icon while the line stays true to that size.
-const STAGE_SCALE = 3
+// The stage shows the picked size magnified, so Size visibly grows and shrinks
+// the icon while the line stays true to that size: 4x up to 64 px, then a
+// gentler slope so 96 px still fits the stage (24 -> 96, 64 -> 256, 96 -> 304).
+const stageSize = (size: number) => Math.round(Math.min(size * 4, 160 + size * 1.5))
 
 export function PreviewSizeStrip({
   markup,
@@ -99,8 +100,8 @@ export function PreviewStage({
         </div>
         {counter && <p className={surface === 'dark' ? 'text-xs text-white/45' : 'text-xs text-black/45'}>{counter}</p>}
       </div>
-      <div className={`flex min-h-[220px] flex-1 items-center justify-center ${surface === 'dark' ? 'bg-[#0f0f10]' : 'bg-[#f6f4ee]'}`}>
-        <IconSvg markup={markup} size={size * STAGE_SCALE} apiSize={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} label={name} />
+      <div className={`flex min-h-[220px] flex-1 items-center justify-center p-4 ${surface === 'dark' ? 'bg-[#0f0f10]' : 'bg-[#f6f4ee]'}`}>
+        <IconSvg className="max-h-full max-w-full" markup={markup} size={stageSize(size)} apiSize={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} label={name} />
       </div>
       {showSizes && <PreviewSizeStrip markup={markup} strokeWidth={strokeWidth} absolute={absolute} colour={colour} surface={surface} embedded />}
     </section>
