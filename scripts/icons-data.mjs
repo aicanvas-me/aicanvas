@@ -1,18 +1,35 @@
 #!/usr/bin/env node
 // Builds the /icons page data from the icon set's vault checkout. The icons
 // live only in the vault, so the output is gitignored, like the injected
-// premium components. ICONS_LOCAL_PATH points at the vault's icons/ folder.
+// premium components. It runs in the dev and build chains right after
+// inject-premium. The source, first that has icons/svg: ICONS_LOCAL_PATH (the
+// icons/ folder), PREMIUM_LOCAL_PATH/icons, then the icon-library worktree.
+// With none it writes empty data, so the pages build and list no icons.
 //
 //   app/icons/_data/icons.generated.json    every icon: name, category, tags, added, isNew
 //   public/icons-data/<style>.json          name -> inner SVG markup, one file per style
 import { execFileSync } from 'node:child_process'
-import { mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
 
-const SRC = process.env.ICONS_LOCAL_PATH ?? join(homedir(), 'aicanvas-premium-icon-library/icons')
 const ROOT = new URL('..', import.meta.url).pathname
 const STYLES = { line: 'svg', duotone: 'svg-duotone', solid: 'svg-solid', 'solid-duotone': 'svg-solid-duotone' }
+
+const SRC = [
+  process.env.ICONS_LOCAL_PATH,
+  process.env.PREMIUM_LOCAL_PATH && join(process.env.PREMIUM_LOCAL_PATH, 'icons'),
+  join(homedir(), 'aicanvas-premium-icon-library/icons'),
+].find((dir) => dir && existsSync(join(dir, 'svg')))
+
+if (!SRC) {
+  mkdirSync(join(ROOT, 'app/icons/_data'), { recursive: true })
+  writeFileSync(join(ROOT, 'app/icons/_data/icons.generated.json'), '[]')
+  mkdirSync(join(ROOT, 'public/icons-data'), { recursive: true })
+  for (const style of Object.keys(STYLES)) writeFileSync(join(ROOT, `public/icons-data/${style}.json`), '{}')
+  console.warn('icons-data: no icon source found, /icons builds empty')
+  process.exit(0)
+}
 
 const metaOf = (name) => {
   const src = readFileSync(join(SRC, 'src', `${name}.mjs`), 'utf8')
