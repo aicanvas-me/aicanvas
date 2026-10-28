@@ -14,6 +14,7 @@ import { titleCase } from '../_lib/icon-utils'
 import type { IconMarkupMap, IconMeta, IconStyle } from '../_lib/types'
 import { ActionBar } from './ActionBar'
 import { CodeTabs } from './CodeTabs'
+import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
 import { ColourControl } from './ColourControl'
 import { IconSvg } from './IconSvg'
 import { PreviewStage } from './PreviewStage'
@@ -32,6 +33,8 @@ export function IconDialog({
   onSize,
   strokeWidth,
   onStrokeWidth,
+  absolute,
+  onAbsolute,
   colour,
   onColour,
 }: {
@@ -47,6 +50,8 @@ export function IconDialog({
   onSize: (size: number) => void
   strokeWidth: number
   onStrokeWidth: (stroke: number) => void
+  absolute: boolean
+  onAbsolute: (absolute: boolean) => void
   colour: string | null
   onColour: (colour: string) => void
 }) {
@@ -133,6 +138,7 @@ export function IconDialog({
           name={titleCase(icon.name)}
           size={size}
           strokeWidth={strokeWidth}
+          absolute={absolute}
           colour={previewColour}
           surface={previewSurface}
           onSurfaceChange={setPreviewSurface}
@@ -175,15 +181,16 @@ export function IconDialog({
           <div className="mt-2">
             <StylePicker value={style} onChange={onStyle} markup={markup} loading={loadingStyle} />
           </div>
-          <div className="mt-2 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2">
+          <div className="mt-2 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
             <Slider themed label="Size" value={size} onChange={onSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
             <Slider themed label="Stroke" value={strokeWidth} onChange={onStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
+            <AbsoluteStrokeControl value={absolute} onChange={onAbsolute} className="h-7 px-1" />
             <ColourControl value={previewColour} onChange={onColour} className="h-7 px-1" />
           </div>
           <div className="mt-2">
-            <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={previewColour} style={style} />
+            <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
           </div>
-          <CodeTabs compact className="mt-2" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={previewColour} style={style} />
+          <CodeTabs compact className="mt-2" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
           <div className="mt-2">
             <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">Similar</p>
             <div className="grid grid-cols-8 gap-1.5">
@@ -198,7 +205,7 @@ export function IconDialog({
                   }}
                   className="flex aspect-square items-center justify-center rounded-lg bg-sand-50 text-sand-800 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:bg-sand-950 dark:text-sand-200 dark:hover:bg-sand-800"
                 >
-                  <IconSvg markup={data[item.name] ?? ''} size={20} strokeWidth={strokeWidth} colour={previewColour} />
+                  <IconSvg markup={data[item.name] ?? ''} size={20} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} />
                 </button>
               ))}
             </div>

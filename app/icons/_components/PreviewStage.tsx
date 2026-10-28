@@ -4,16 +4,21 @@ import { useState } from 'react'
 import { IconSvg } from './IconSvg'
 
 const PREVIEW_SIZES = [16, 20, 24, 32, 48]
+// The stage shows the picked size magnified 3x, so Size visibly grows and
+// shrinks the icon while the line stays true to that size.
+const STAGE_SCALE = 3
 
 export function PreviewSizeStrip({
   markup,
   strokeWidth,
+  absolute,
   colour,
   surface,
   embedded = false,
 }: {
   markup: string
   strokeWidth: number
+  absolute: boolean
   colour: string
   surface: 'dark' | 'light'
   embedded?: boolean
@@ -26,7 +31,7 @@ export function PreviewSizeStrip({
     >
       {PREVIEW_SIZES.map((previewSize) => (
         <div key={previewSize} className="flex min-w-6 flex-col items-center gap-2 text-[10px]">
-          <IconSvg markup={markup} size={previewSize} apiSize={previewSize} strokeWidth={strokeWidth} colour={colour} />
+          <IconSvg markup={markup} size={previewSize} apiSize={previewSize} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />
           <span>{previewSize}</span>
         </div>
       ))}
@@ -39,6 +44,7 @@ export function PreviewStage({
   name,
   size,
   strokeWidth,
+  absolute,
   colour,
   className = '',
   counter,
@@ -50,6 +56,7 @@ export function PreviewStage({
   name: string
   size: number
   strokeWidth: number
+  absolute: boolean
   colour: string
   className?: string
   counter?: string
@@ -93,9 +100,9 @@ export function PreviewStage({
         {counter && <p className={surface === 'dark' ? 'text-xs text-white/45' : 'text-xs text-black/45'}>{counter}</p>}
       </div>
       <div className={`flex min-h-[220px] flex-1 items-center justify-center ${surface === 'dark' ? 'bg-[#0f0f10]' : 'bg-[#f6f4ee]'}`}>
-        <IconSvg markup={markup} size={184} apiSize={size} strokeWidth={strokeWidth} colour={colour} label={name} />
+        <IconSvg markup={markup} size={size * STAGE_SCALE} apiSize={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} label={name} />
       </div>
-      {showSizes && <PreviewSizeStrip markup={markup} strokeWidth={strokeWidth} colour={colour} surface={surface} embedded />}
+      {showSizes && <PreviewSizeStrip markup={markup} strokeWidth={strokeWidth} absolute={absolute} colour={colour} surface={surface} embedded />}
     </section>
   )
 }

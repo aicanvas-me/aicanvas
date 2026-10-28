@@ -8,6 +8,7 @@ export function IconSvg({
   className = '',
   label,
   apiSize,
+  absolute = true,
 }: {
   markup: string
   size: number
@@ -16,6 +17,7 @@ export function IconSvg({
   className?: string
   label?: string
   apiSize?: number
+  absolute?: boolean
 }) {
   return (
     <svg
@@ -24,7 +26,7 @@ export function IconSvg({
       height={size}
       fill="none"
       stroke="currentColor"
-      strokeWidth={effectiveStrokeWidth(apiSize ?? size, strokeWidth)}
+      strokeWidth={effectiveStrokeWidth(apiSize ?? size, strokeWidth, absolute)}
       strokeLinecap="round"
       strokeLinejoin="round"
       style={{ color: colour }}

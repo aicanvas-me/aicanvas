@@ -14,13 +14,14 @@ import { formatDate, iconLead, titleCase } from '../_lib/icon-utils'
 import type { IconMarkupMap, IconMeta, IconStyle, IconWithMarkup } from '../_lib/types'
 import { ActionBar } from './ActionBar'
 import { CodeTabs } from './CodeTabs'
+import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
 import { ColourControl } from './ColourControl'
 import { IconSvg } from './IconSvg'
 import { PreviewSizeStrip, PreviewStage } from './PreviewStage'
 import { StylePicker } from './StylePicker'
 import { useIconVariant } from './useIconVariant'
 
-function SuggestedTile({ icon, size, strokeWidth, colour }: { icon: IconWithMarkup; size: number; strokeWidth: number; colour: string }) {
+function SuggestedTile({ icon, size, strokeWidth, absolute, colour }: { icon: IconWithMarkup; size: number; strokeWidth: number; absolute: boolean; colour: string }) {
   return (
     <article className="group relative aspect-square overflow-hidden rounded-xl border border-transparent bg-sand-100 transition-colors hover:border-sand-300 dark:bg-sand-900 dark:hover:border-sand-700">
       {icon.isNew && <span aria-label="New" className="absolute left-3 top-3 z-10 h-1.5 w-1.5 rounded-full bg-olive-500" />}
@@ -28,8 +29,8 @@ function SuggestedTile({ icon, size, strokeWidth, colour }: { icon: IconWithMark
         href={`/icons/${icon.name}`}
         className="flex h-full flex-col items-center justify-center gap-3 px-2 pb-2 pt-4 text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 dark:text-sand-50"
       >
-        <IconSvg markup={icon.markup} size={Math.min(size, 32)} strokeWidth={strokeWidth} colour={colour} />
-        <span className="line-clamp-2 min-h-7 text-center text-[10px] leading-3.5 text-sand-600 dark:text-sand-400">{icon.name}</span>
+        <IconSvg markup={icon.markup} size={Math.min(size, 48)} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />
+        <span className="line-clamp-2 min-h-7 text-center text-[11px] leading-4 text-sand-600 dark:text-sand-400">{icon.name}</span>
       </Link>
       <button
         type="button"
@@ -62,6 +63,7 @@ export function IconDetail({
   const [style, setStyle] = useState<IconStyle>('line')
   const [size, setSize] = useState(24)
   const [strokeWidth, setStrokeWidth] = useState(2)
+  const [absolute, setAbsolute] = useState(true)
   const [colourOverride, setColourOverride] = useState<string | null>(null)
   const [previewSurface, setPreviewSurface] = useState<'dark' | 'light'>(theme)
   const siteColour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
@@ -75,6 +77,7 @@ export function IconDetail({
     setStyle('line')
     setSize(24)
     setStrokeWidth(2)
+    setAbsolute(true)
     setColourOverride(null)
   }
 
@@ -111,6 +114,7 @@ export function IconDetail({
               name={title}
               size={size}
               strokeWidth={strokeWidth}
+              absolute={absolute}
               colour={previewColour}
               surface={previewSurface}
               onSurfaceChange={setPreviewSurface}
@@ -120,6 +124,7 @@ export function IconDetail({
             <PreviewSizeStrip
               markup={markup}
               strokeWidth={strokeWidth}
+              absolute={absolute}
               colour={previewColour}
               surface={previewSurface}
             />
@@ -132,7 +137,10 @@ export function IconDetail({
               <Slider themed label="Size" value={size} onChange={setSize} min={16} max={96} step={4} format={(value) => `${value}px`} />
               <Slider themed label="Stroke" value={strokeWidth} onChange={setStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
               <div className="flex items-center justify-between">
-                <ColourControl value={previewColour} onChange={setColourOverride} />
+                <div className="flex flex-wrap items-center gap-1">
+                  <ColourControl value={previewColour} onChange={setColourOverride} />
+                  <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} label="Absolute stroke" />
+                </div>
                 <button
                   type="button"
                   onClick={reset}
@@ -144,9 +152,9 @@ export function IconDetail({
               </div>
             </div>
             <div className="mt-4">
-              <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={previewColour} style={style} />
+              <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
             </div>
-            <CodeTabs className="mt-4 min-h-[188px]" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={previewColour} style={style} />
+            <CodeTabs className="mt-4 min-h-[188px]" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
           </aside>
         </div>
 
@@ -158,9 +166,9 @@ export function IconDetail({
               <ArrowRight weight="regular" size={13} />
             </Link>
           </div>
-          <div className="grid grid-cols-3 gap-2 min-[360px]:grid-cols-4 sm:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9">
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {suggestions.map((suggestion) => (
-              <SuggestedTile key={suggestion.name} icon={suggestion} size={size} strokeWidth={strokeWidth} colour={siteColour} />
+              <SuggestedTile key={suggestion.name} icon={suggestion} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={siteColour} />
             ))}
           </div>
         </section>
@@ -169,14 +177,14 @@ export function IconDetail({
           {previous ? (
             <Link href={`/icons/${previous.name}`} className="flex min-h-16 items-center gap-4 rounded-xl bg-sand-100 px-5 py-3 text-sand-900 transition-colors hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:bg-sand-900 dark:text-sand-50 dark:hover:bg-sand-800">
               <ArrowLeft weight="regular" size={18} />
-              <IconSvg markup={previous.markup} size={28} strokeWidth={strokeWidth} colour={siteColour} />
+              <IconSvg markup={previous.markup} size={28} strokeWidth={strokeWidth} absolute={absolute} colour={siteColour} />
               <span><span className="block text-[10px] text-sand-600 dark:text-sand-400">Previous</span><span className="font-bold">{titleCase(previous.name)}</span></span>
             </Link>
           ) : <span />}
           {next && (
             <Link href={`/icons/${next.name}`} className="flex min-h-16 items-center justify-end gap-4 rounded-xl bg-sand-100 px-5 py-3 text-right text-sand-900 transition-colors hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:bg-sand-900 dark:text-sand-50 dark:hover:bg-sand-800">
               <span><span className="block text-[10px] text-sand-600 dark:text-sand-400">Next</span><span className="font-bold">{titleCase(next.name)}</span></span>
-              <IconSvg markup={next.markup} size={28} strokeWidth={strokeWidth} colour={siteColour} />
+              <IconSvg markup={next.markup} size={28} strokeWidth={strokeWidth} absolute={absolute} colour={siteColour} />
               <ArrowRight weight="regular" size={18} />
             </Link>
           )}

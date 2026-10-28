@@ -23,7 +23,8 @@ export function pascalCase(slug: string): string {
     .join('')
 }
 
-export function effectiveStrokeWidth(size: number, strokeWidth: number): number {
+export function effectiveStrokeWidth(size: number, strokeWidth: number, absolute = true): number {
+  if (!absolute) return strokeWidth
   return Number(((strokeWidth * 24) / size).toFixed(4))
 }
 

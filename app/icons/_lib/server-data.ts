@@ -14,7 +14,7 @@ export function getIcon(name: string): IconMeta | undefined {
   return icons.find((icon) => icon.name === name)
 }
 
-export function suggestedIcons(icon: IconMeta, limit = 36): IconMeta[] {
+export function suggestedIcons(icon: IconMeta, limit = 24): IconMeta[] {
   const tagSet = new Set(icon.tags.map((tag) => tag.toLowerCase()))
   return icons
     .filter((candidate) => candidate.name !== icon.name)

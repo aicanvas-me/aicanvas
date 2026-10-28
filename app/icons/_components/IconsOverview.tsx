@@ -14,6 +14,7 @@ import { ICON_CATEGORIES, ICON_CATEGORY_LABELS, ICON_COUNT, type IconCategorySlu
 import { ALL_ICONS_INSTALL, DARK_PREVIEW_COLOUR, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 import { overviewMarkdown } from '../_lib/markdown'
 import type { IconGridMeta, IconMarkupMap, IconMeta, IconStyle } from '../_lib/types'
+import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
 import { ColourControl } from './ColourControl'
 import { IconDialog } from './IconDialog'
 import { IconTile } from './IconTile'
@@ -22,9 +23,9 @@ import { useIconVariant } from './useIconVariant'
 
 let metadataRequest: Promise<IconMeta[]> | null = null
 
-const ICON_GRID = 'grid grid-cols-3 gap-2 min-[360px]:grid-cols-4 sm:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9'
+const ICON_GRID = 'grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
 const ICON_TILE_SKIN =
-  '[&_[data-icon-tile]]:relative [&_[data-icon-tile]]:aspect-square [&_[data-icon-tile]]:min-h-0 [&_[data-icon-tile]]:overflow-hidden [&_[data-icon-tile]]:rounded-xl [&_[data-icon-tile]]:border [&_[data-icon-tile]]:border-transparent [&_[data-icon-tile]]:bg-sand-100 [&_[data-icon-tile]]:transition-colors [&_[data-icon-tile]:hover]:border-sand-300 dark:[&_[data-icon-tile]]:bg-sand-900 dark:[&_[data-icon-tile]:hover]:border-sand-700 [&_[data-icon-link]]:flex [&_[data-icon-link]]:h-full [&_[data-icon-link]]:w-full [&_[data-icon-link]]:flex-col [&_[data-icon-link]]:items-center [&_[data-icon-link]]:justify-center [&_[data-icon-link]]:gap-2 [&_[data-icon-link]]:px-1.5 [&_[data-icon-link]]:pb-1.5 [&_[data-icon-link]]:pt-3 [&_[data-icon-link]]:text-sand-900 [&_[data-icon-link]]:outline-none focus-visible:[&_[data-icon-link]]:ring-2 focus-visible:[&_[data-icon-link]]:ring-inset focus-visible:[&_[data-icon-link]]:ring-olive-500/40 dark:[&_[data-icon-link]]:text-sand-50 [&_[data-icon-name]]:w-full [&_[data-icon-name]]:truncate [&_[data-icon-name]]:text-center [&_[data-icon-name]]:text-[9px] [&_[data-icon-name]]:leading-3 [&_[data-icon-name]]:text-sand-600 sm:[&_[data-icon-name]]:text-[10px] dark:[&_[data-icon-name]]:text-sand-400 [&_[data-icon-placeholder]]:h-8 [&_[data-icon-placeholder]]:w-8 [&_[data-icon-new]]:absolute [&_[data-icon-new]]:left-2 [&_[data-icon-new]]:top-2 [&_[data-icon-new]]:z-10 [&_[data-icon-new]]:h-1.5 [&_[data-icon-new]]:w-1.5 [&_[data-icon-new]]:rounded-full [&_[data-icon-new]]:bg-olive-500'
+  '[&_[data-icon-tile]]:relative [&_[data-icon-tile]]:aspect-square [&_[data-icon-tile]]:min-h-0 [&_[data-icon-tile]]:overflow-hidden [&_[data-icon-tile]]:rounded-xl [&_[data-icon-tile]]:border [&_[data-icon-tile]]:border-transparent [&_[data-icon-tile]]:bg-sand-100 [&_[data-icon-tile]]:transition-colors [&_[data-icon-tile]:hover]:border-sand-300 dark:[&_[data-icon-tile]]:bg-sand-900 dark:[&_[data-icon-tile]:hover]:border-sand-700 [&_[data-icon-link]]:flex [&_[data-icon-link]]:h-full [&_[data-icon-link]]:w-full [&_[data-icon-link]]:flex-col [&_[data-icon-link]]:items-center [&_[data-icon-link]]:justify-center [&_[data-icon-link]]:gap-3 [&_[data-icon-link]]:px-1.5 [&_[data-icon-link]]:pb-1.5 [&_[data-icon-link]]:pt-3 [&_[data-icon-link]]:text-sand-900 [&_[data-icon-link]]:outline-none focus-visible:[&_[data-icon-link]]:ring-2 focus-visible:[&_[data-icon-link]]:ring-inset focus-visible:[&_[data-icon-link]]:ring-olive-500/40 dark:[&_[data-icon-link]]:text-sand-50 [&_[data-icon-name]]:w-full [&_[data-icon-name]]:truncate [&_[data-icon-name]]:text-center [&_[data-icon-name]]:text-[10px] [&_[data-icon-name]]:leading-4 [&_[data-icon-name]]:text-sand-600 sm:[&_[data-icon-name]]:text-[11px] dark:[&_[data-icon-name]]:text-sand-400 [&_[data-icon-placeholder]]:h-8 [&_[data-icon-placeholder]]:w-8 [&_[data-icon-new]]:absolute [&_[data-icon-new]]:left-2 [&_[data-icon-new]]:top-2 [&_[data-icon-new]]:z-10 [&_[data-icon-new]]:h-1.5 [&_[data-icon-new]]:w-1.5 [&_[data-icon-new]]:rounded-full [&_[data-icon-new]]:bg-olive-500'
 
 export function IconsOverview({
   icons,
@@ -40,8 +41,9 @@ export function IconsOverview({
   const { theme } = useTheme()
   const [query, setQuery] = useState('')
   const [style, setStyle] = useState<IconStyle>('line')
-  const [size, setSize] = useState(32)
+  const [size, setSize] = useState(40)
   const [strokeWidth, setStrokeWidth] = useState(2)
+  const [absolute, setAbsolute] = useState(true)
   const [colourOverride, setColourOverride] = useState<string | null>(null)
   const [selected, setSelected] = useState<string | null>(null)
   const [metadata, setMetadata] = useState<IconMeta[] | null>(null)
@@ -102,8 +104,9 @@ export function IconsOverview({
   const reset = () => {
     setQuery('')
     setStyle('line')
-    setSize(32)
+    setSize(40)
     setStrokeWidth(2)
+    setAbsolute(true)
     setColourOverride(null)
   }
 
@@ -170,6 +173,7 @@ export function IconsOverview({
           <div className="h-10 min-w-[115px] flex-1 [&>div>div]:h-10">
             <Slider themed label="Stroke" value={strokeWidth} onChange={setStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
           </div>
+          <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} className="h-10" />
           <ColourControl value={colour} onChange={setColourOverride} className="h-10" />
           <button
             type="button"
@@ -198,6 +202,7 @@ export function IconsOverview({
                       markup={data[icon.name] ?? lineIcons[icon.name] ?? ''}
                       size={size}
                       strokeWidth={strokeWidth}
+                      absolute={absolute}
                       colour={colour}
                       style={style}
                       onOpen={() => {
@@ -231,6 +236,8 @@ export function IconsOverview({
           onSize={setSize}
           strokeWidth={strokeWidth}
           onStrokeWidth={setStrokeWidth}
+          absolute={absolute}
+          onAbsolute={setAbsolute}
           colour={colourOverride}
           onColour={setColourOverride}
         />

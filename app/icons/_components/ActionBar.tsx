@@ -54,6 +54,7 @@ export function ActionBar({
   markup,
   size,
   strokeWidth,
+  absolute,
   colour,
   style,
   condensed = false,
@@ -62,15 +63,16 @@ export function ActionBar({
   markup: string
   size: number
   strokeWidth: number
+  absolute: boolean
   colour: string
   style: IconStyle
   condensed?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-  const prompt = agentPrompt(name, size, strokeWidth, style)
-  const jsx = iconJsxLine(name, size, strokeWidth, style)
-  const svg = buildSvg(markup, size, strokeWidth, colour)
+  const prompt = agentPrompt(name, size, strokeWidth, style, absolute)
+  const jsx = iconJsxLine(name, size, strokeWidth, style, absolute)
+  const svg = buildSvg(markup, size, strokeWidth, colour, absolute)
   const { copied, copy } = useCopied(prompt)
 
   useEffect(() => {
