@@ -8,10 +8,11 @@ export type IconMeta = {
   isNew: boolean
 }
 
+export type IconGridMeta = Pick<IconMeta, 'name' | 'category' | 'isNew'>
+
 export type IconStyle = 'line' | 'duotone' | 'solid' | 'solid-duotone'
 export type IconMarkupMap = Record<string, string>
 
 export type IconWithMarkup = IconMeta & {
   markup: string
 }
-

@@ -15,7 +15,7 @@ import { ActionBar } from './ActionBar'
 import { CodeTabs } from './CodeTabs'
 import { ColourControl } from './ColourControl'
 import { IconSvg } from './IconSvg'
-import { PreviewStage } from './PreviewStage'
+import { PreviewSizeStrip, PreviewStage } from './PreviewStage'
 import { StylePicker } from './StylePicker'
 import { useIconVariant } from './useIconVariant'
 
@@ -62,6 +62,7 @@ export function IconDetail({
   const [size, setSize] = useState(24)
   const [strokeWidth, setStrokeWidth] = useState(2)
   const [colourOverride, setColourOverride] = useState<string | null>(null)
+  const [previewSurface, setPreviewSurface] = useState<'dark' | 'light'>('dark')
   const colour = colourOverride ?? (theme === 'dark' ? '#f5f3ff' : '#1b1a17')
   const { data, loading } = useIconVariant(lineIcons, style)
   const markup = data[icon.name] ?? lineIcons[icon.name] ?? ''
@@ -102,7 +103,25 @@ export function IconDetail({
         </header>
 
         <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1.45fr)_minmax(350px,1fr)]">
-          <PreviewStage markup={markup} name={title} size={size} strokeWidth={strokeWidth} colour={colour} className="min-h-[490px]" />
+          <div className="min-w-0 space-y-2">
+            <PreviewStage
+              markup={markup}
+              name={title}
+              size={size}
+              strokeWidth={strokeWidth}
+              colour={colour}
+              surface={previewSurface}
+              onSurfaceChange={setPreviewSurface}
+              showSizes={false}
+              className="h-[360px] sm:h-[390px]"
+            />
+            <PreviewSizeStrip
+              markup={markup}
+              strokeWidth={strokeWidth}
+              colour={colour}
+              surface={previewSurface}
+            />
+          </div>
           <aside className="min-w-0">
             <h2 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-sand-600 dark:text-sand-400">Style</h2>
             <StylePicker value={style} onChange={setStyle} markup={markup} loading={loading} />
@@ -137,7 +156,7 @@ export function IconDetail({
               <ArrowRight weight="regular" size={13} />
             </Link>
           </div>
-          <div className="grid grid-cols-2 gap-2 min-[500px]:grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-9">
+          <div className="grid grid-cols-3 gap-2 min-[360px]:grid-cols-4 sm:grid-cols-5 lg:grid-cols-7 xl:grid-cols-9">
             {suggestions.map((suggestion) => (
               <SuggestedTile key={suggestion.name} icon={suggestion} size={size} strokeWidth={strokeWidth} colour={colour} />
             ))}
@@ -164,4 +183,3 @@ export function IconDetail({
     </main>
   )
 }
-

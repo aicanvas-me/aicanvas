@@ -132,7 +132,7 @@ export function IconDialog({
           counter={`${index + 1} of ${icons.length}${icons.every((item) => item.category === icon.category) ? ` in ${categoryLabel}` : ''}`}
           className="rounded-none border-0 md:min-h-0"
         />
-        <div className="relative min-h-0 overflow-y-auto bg-sand-100 p-5 dark:bg-sand-900 sm:p-6">
+        <div className="relative flex min-h-0 flex-col overflow-y-auto bg-sand-100 p-4 dark:bg-sand-900 min-[1104px]:overflow-hidden">
           <button
             type="button"
             onClick={onClose}
@@ -144,7 +144,7 @@ export function IconDialog({
           <span className="inline-flex rounded-full bg-sand-200 px-2 py-0.5 text-[10px] font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
             {categoryLabel}
           </span>
-          <div className="mt-2 flex items-center gap-2 pr-10">
+          <div className="mt-1 flex items-center gap-2 pr-10">
             <h2 id="icon-dialog-title" className="text-2xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50">
               {titleCase(icon.name)}
             </h2>
@@ -157,28 +157,28 @@ export function IconDialog({
               <Copy weight="regular" size={12} />
             </button>
           </div>
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-1 flex flex-wrap gap-1">
             {icon.tags.slice(0, 6).map((tag) => (
-              <span key={tag} className="rounded-full border border-sand-300 px-2 py-0.5 text-[10px] text-sand-600 dark:border-sand-700 dark:text-sand-400">
+              <span key={tag} className="rounded-full border border-sand-300 px-1.5 py-px text-[9px] text-sand-600 dark:border-sand-700 dark:text-sand-400">
                 {tag}
               </span>
             ))}
           </div>
 
-          <div className="mt-3">
+          <div className="mt-2">
             <StylePicker value={style} onChange={onStyle} markup={markup} loading={loadingStyle} />
           </div>
-          <div className="mt-3 grid grid-cols-[1fr_auto] gap-2">
+          <div className="mt-2 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2">
             <Slider label="Size" value={size} onChange={onSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
-            <ColourControl value={colour} onChange={onColour} />
             <Slider label="Stroke" value={strokeWidth} onChange={onStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
+            <ColourControl value={colour} onChange={onColour} className="h-7 px-1" />
           </div>
-          <div className="mt-3">
+          <div className="mt-2">
             <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={colour} style={style} />
           </div>
-          <CodeTabs className="mt-3" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={colour} style={style} />
-          <div className="mt-4">
-            <p className="mb-2 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">Similar</p>
+          <CodeTabs compact className="mt-2" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={colour} style={style} />
+          <div className="mt-2">
+            <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">Similar</p>
             <div className="grid grid-cols-8 gap-1.5">
               {similar.map((item) => (
                 <button
@@ -196,7 +196,7 @@ export function IconDialog({
               ))}
             </div>
           </div>
-          <footer className="mt-5 flex flex-wrap items-center justify-between gap-3">
+          <footer className="sticky bottom-0 z-10 mt-auto flex flex-wrap items-center justify-between gap-3 bg-sand-100 py-2 dark:bg-sand-900">
             <Link href={`/icons/${icon.name}`} className={buttonClasses({ variant: 'accent', size: 'xs' })}>
               Open icon page
               <ArrowRight weight="regular" size={14} />

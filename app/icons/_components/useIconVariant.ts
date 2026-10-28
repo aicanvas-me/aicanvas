@@ -5,17 +5,21 @@ import type { IconMarkupMap, IconStyle } from '../_lib/types'
 
 const sessionVariantCache = new Map<IconStyle, IconMarkupMap>()
 
-export function useIconVariant(initialLine: IconMarkupMap, style: IconStyle) {
+export function useIconVariant(initialLine: IconMarkupMap, style: IconStyle, loadFullLine = false) {
   const [, setLoadedStyle] = useState<IconStyle | null>(null)
   const [failedStyles, setFailedStyles] = useState<IconStyle[]>([])
-  const cached = style === 'line' ? initialLine : sessionVariantCache.get(style)
-  const data = cached ?? initialLine
+  const cached = sessionVariantCache.get(style)
+  const lineData = cached ?? initialLine
+  const selectedData = style === 'line' ? lineData : cached
+  const data = selectedData ?? initialLine
   const failed = failedStyles.includes(style)
   const loading = style !== 'line' && !cached && !failed
 
   useEffect(() => {
     let alive = true
-    if (style === 'line' || sessionVariantCache.has(style) || failedStyles.includes(style)) return
+    const needsFullLine = style === 'line' && loadFullLine && !sessionVariantCache.has('line')
+    const needsVariant = style !== 'line' && !sessionVariantCache.has(style)
+    if ((!needsFullLine && !needsVariant) || failedStyles.includes(style)) return
 
     fetch(`/icons-data/${style}.json`)
       .then((response) => {
@@ -33,7 +37,7 @@ export function useIconVariant(initialLine: IconMarkupMap, style: IconStyle) {
     return () => {
       alive = false
     }
-  }, [failedStyles, style])
+  }, [failedStyles, loadFullLine, style])
 
   return { data, loading }
 }

@@ -37,10 +37,9 @@ export function formatDate(value: string): string {
 }
 
 export function iconLead(icon: IconMeta, categoryLabel: string): string {
-  return `${titleCase(icon.name)} is an icon for ${categoryLabel.toLowerCase()} interfaces, available in four styles.`
+  return `${titleCase(icon.name)} is an icon for ${categoryLabel} interfaces, available in four styles.`
 }
 
 export function variantProp(style: IconStyle): string {
   return style === 'line' ? '' : ` variant="${style}"`
 }
-

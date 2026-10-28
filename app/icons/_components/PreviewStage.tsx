@@ -5,6 +5,36 @@ import { IconSvg } from './IconSvg'
 
 const PREVIEW_SIZES = [16, 20, 24, 32, 48]
 
+export function PreviewSizeStrip({
+  markup,
+  strokeWidth,
+  colour,
+  surface,
+  embedded = false,
+}: {
+  markup: string
+  strokeWidth: number
+  colour: string
+  surface: 'dark' | 'light'
+  embedded?: boolean
+}) {
+  const previewColour = colour === '#f5f3ff' ? (surface === 'dark' ? '#f5f3ff' : '#181714') : colour
+  return (
+    <div
+      className={`flex items-end justify-evenly gap-2 px-4 py-4 ${
+        embedded ? '' : 'rounded-2xl border border-sand-200 dark:border-sand-800'
+      } ${surface === 'dark' ? 'bg-[#0f0f10] text-white/55' : 'bg-[#f6f4ee] text-black/50'}`}
+    >
+      {PREVIEW_SIZES.map((previewSize) => (
+        <div key={previewSize} className="flex min-w-6 flex-col items-center gap-2 text-[10px]">
+          <IconSvg markup={markup} size={previewSize} apiSize={previewSize} strokeWidth={strokeWidth} colour={previewColour} />
+          <span>{previewSize}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function PreviewStage({
   markup,
   name,
@@ -13,6 +43,9 @@ export function PreviewStage({
   colour,
   className = '',
   counter,
+  surface: controlledSurface,
+  onSurfaceChange,
+  showSizes = true,
 }: {
   markup: string
   name: string
@@ -21,8 +54,16 @@ export function PreviewStage({
   colour: string
   className?: string
   counter?: string
+  surface?: 'dark' | 'light'
+  onSurfaceChange?: (surface: 'dark' | 'light') => void
+  showSizes?: boolean
 }) {
-  const [surface, setSurface] = useState<'dark' | 'light'>('dark')
+  const [internalSurface, setInternalSurface] = useState<'dark' | 'light'>('dark')
+  const surface = controlledSurface ?? internalSurface
+  const setSurface = (next: 'dark' | 'light') => {
+    setInternalSurface(next)
+    onSurfaceChange?.(next)
+  }
   const previewColour = colour === '#f5f3ff' ? (surface === 'dark' ? '#f5f3ff' : '#181714') : colour
 
   return (
@@ -57,14 +98,7 @@ export function PreviewStage({
       <div className={`flex min-h-[220px] flex-1 items-center justify-center ${surface === 'dark' ? 'bg-[#0f0f10]' : 'bg-[#f6f4ee]'}`}>
         <IconSvg markup={markup} size={184} apiSize={size} strokeWidth={strokeWidth} colour={previewColour} label={name} />
       </div>
-      <div className={`flex items-end justify-center gap-7 px-5 pb-5 pt-3 ${surface === 'dark' ? 'bg-[#0f0f10] text-white/55' : 'bg-[#f6f4ee] text-black/50'}`}>
-        {PREVIEW_SIZES.map((previewSize) => (
-          <div key={previewSize} className="flex min-w-6 flex-col items-center gap-2 text-[10px]">
-            <IconSvg markup={markup} size={previewSize} apiSize={previewSize} strokeWidth={strokeWidth} colour={previewColour} />
-            <span>{previewSize}</span>
-          </div>
-        ))}
-      </div>
+      {showSizes && <PreviewSizeStrip markup={markup} strokeWidth={strokeWidth} colour={colour} surface={surface} embedded />}
     </section>
   )
 }
