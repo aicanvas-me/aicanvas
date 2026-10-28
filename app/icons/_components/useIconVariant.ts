@@ -6,12 +6,10 @@ import type { IconMarkupMap, IconStyle } from '../_lib/types'
 const sessionVariantCache = new Map<IconStyle, IconMarkupMap>()
 
 export function useIconVariant(initialLine: IconMarkupMap, style: IconStyle, loadFullLine = false) {
-  const [, setLoadedStyle] = useState<IconStyle | null>(null)
+  const [loadedVariants, setLoadedVariants] = useState<Partial<Record<IconStyle, IconMarkupMap>>>({})
   const [failedStyles, setFailedStyles] = useState<IconStyle[]>([])
-  const cached = sessionVariantCache.get(style)
-  const lineData = cached ?? initialLine
-  const selectedData = style === 'line' ? lineData : cached
-  const data = selectedData ?? initialLine
+  const cached = loadedVariants[style] ?? sessionVariantCache.get(style)
+  const data = cached ?? initialLine
   const failed = failedStyles.includes(style)
   const loading = style !== 'line' && !cached && !failed
 
@@ -28,7 +26,9 @@ export function useIconVariant(initialLine: IconMarkupMap, style: IconStyle, loa
       })
       .then((next) => {
         sessionVariantCache.set(style, next)
-        if (alive) setLoadedStyle(style)
+        if (alive) {
+          setLoadedVariants((current) => ({ ...current, [style]: next }))
+        }
       })
       .catch(() => {
         if (alive) setFailedStyles((current) => [...current, style])

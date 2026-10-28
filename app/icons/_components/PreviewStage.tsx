@@ -18,7 +18,6 @@ export function PreviewSizeStrip({
   surface: 'dark' | 'light'
   embedded?: boolean
 }) {
-  const previewColour = colour === '#f5f3ff' ? (surface === 'dark' ? '#f5f3ff' : '#181714') : colour
   return (
     <div
       className={`flex items-end justify-evenly gap-2 px-4 py-4 ${
@@ -27,7 +26,7 @@ export function PreviewSizeStrip({
     >
       {PREVIEW_SIZES.map((previewSize) => (
         <div key={previewSize} className="flex min-w-6 flex-col items-center gap-2 text-[10px]">
-          <IconSvg markup={markup} size={previewSize} apiSize={previewSize} strokeWidth={strokeWidth} colour={previewColour} />
+          <IconSvg markup={markup} size={previewSize} apiSize={previewSize} strokeWidth={strokeWidth} colour={colour} />
           <span>{previewSize}</span>
         </div>
       ))}
@@ -64,8 +63,6 @@ export function PreviewStage({
     setInternalSurface(next)
     onSurfaceChange?.(next)
   }
-  const previewColour = colour === '#f5f3ff' ? (surface === 'dark' ? '#f5f3ff' : '#181714') : colour
-
   return (
     <section
       className={`flex min-h-0 flex-col overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900 ${className}`}
@@ -96,7 +93,7 @@ export function PreviewStage({
         {counter && <p className={surface === 'dark' ? 'text-xs text-white/45' : 'text-xs text-black/45'}>{counter}</p>}
       </div>
       <div className={`flex min-h-[220px] flex-1 items-center justify-center ${surface === 'dark' ? 'bg-[#0f0f10]' : 'bg-[#f6f4ee]'}`}>
-        <IconSvg markup={markup} size={184} apiSize={size} strokeWidth={strokeWidth} colour={previewColour} label={name} />
+        <IconSvg markup={markup} size={184} apiSize={size} strokeWidth={strokeWidth} colour={colour} label={name} />
       </div>
       {showSizes && <PreviewSizeStrip markup={markup} strokeWidth={strokeWidth} colour={colour} surface={surface} embedded />}
     </section>

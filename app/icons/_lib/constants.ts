@@ -2,6 +2,8 @@ import { pascalCase, variantProp } from './icon-utils'
 import type { IconStyle } from './types'
 
 export const ALL_ICONS_INSTALL = 'npx shadcn@latest add https://aicanvas.me/r/icons.json'
+export const DARK_PREVIEW_COLOUR = '#F4F4FA'
+export const LIGHT_PREVIEW_COLOUR = '#1B1B1C'
 
 export const iconInstallCommand = (name: string) =>
   `npx shadcn@latest add https://aicanvas.me/r/icons/${name}.json`

@@ -1,13 +1,15 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useEffectEvent, useMemo, useRef } from 'react'
+import { useEffect, useEffectEvent, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, ArrowRight, Copy, X } from '@phosphor-icons/react'
 import { Slider } from '@/app/lab/_lib/particleMark/controls/Slider'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { copyText } from '@/app/components/useCopied'
 import { useDialogFocus } from '@/app/components/useDialogFocus'
+import { useTheme } from '@/app/components/ThemeProvider'
 import { ICON_CATEGORY_LABELS } from '../_lib/categories'
+import { DARK_PREVIEW_COLOUR, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 import { titleCase } from '../_lib/icon-utils'
 import type { IconMarkupMap, IconMeta, IconStyle } from '../_lib/types'
 import { ActionBar } from './ActionBar'
@@ -45,9 +47,12 @@ export function IconDialog({
   onSize: (size: number) => void
   strokeWidth: number
   onStrokeWidth: (stroke: number) => void
-  colour: string
+  colour: string | null
   onColour: (colour: string) => void
 }) {
+  const { theme } = useTheme()
+  const [previewSurface, setPreviewSurface] = useState<'dark' | 'light'>(theme)
+  const previewColour = colour ?? (previewSurface === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
   const panelRef = useRef<HTMLDivElement>(null)
   useDialogFocus(panelRef, true)
   const index = Math.max(0, icons.findIndex((icon) => icon.name === selectedName))
@@ -128,7 +133,9 @@ export function IconDialog({
           name={titleCase(icon.name)}
           size={size}
           strokeWidth={strokeWidth}
-          colour={colour}
+          colour={previewColour}
+          surface={previewSurface}
+          onSurfaceChange={setPreviewSurface}
           counter={`${index + 1} of ${icons.length}${icons.every((item) => item.category === icon.category) ? ` in ${categoryLabel}` : ''}`}
           className="rounded-none border-0 md:min-h-0"
         />
@@ -141,7 +148,7 @@ export function IconDialog({
           >
             <X weight="regular" size={18} />
           </button>
-          <span className="inline-flex rounded-full bg-sand-200 px-2 py-0.5 text-[10px] font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
+          <span className="inline-flex w-fit self-start rounded-full bg-sand-200 px-2 py-0.5 text-[10px] font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
             {categoryLabel}
           </span>
           <div className="mt-1 flex items-center gap-2 pr-10">
@@ -169,14 +176,14 @@ export function IconDialog({
             <StylePicker value={style} onChange={onStyle} markup={markup} loading={loadingStyle} />
           </div>
           <div className="mt-2 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] gap-2">
-            <Slider label="Size" value={size} onChange={onSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
-            <Slider label="Stroke" value={strokeWidth} onChange={onStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
-            <ColourControl value={colour} onChange={onColour} className="h-7 px-1" />
+            <Slider themed label="Size" value={size} onChange={onSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
+            <Slider themed label="Stroke" value={strokeWidth} onChange={onStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
+            <ColourControl value={previewColour} onChange={onColour} className="h-7 px-1" />
           </div>
           <div className="mt-2">
-            <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={colour} style={style} />
+            <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={previewColour} style={style} />
           </div>
-          <CodeTabs compact className="mt-2" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={colour} style={style} />
+          <CodeTabs compact className="mt-2" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} colour={previewColour} style={style} />
           <div className="mt-2">
             <p className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">Similar</p>
             <div className="grid grid-cols-8 gap-1.5">
@@ -191,7 +198,7 @@ export function IconDialog({
                   }}
                   className="flex aspect-square items-center justify-center rounded-lg bg-sand-50 text-sand-800 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:bg-sand-950 dark:text-sand-200 dark:hover:bg-sand-800"
                 >
-                  <IconSvg markup={data[item.name] ?? ''} size={20} strokeWidth={strokeWidth} colour={colour} />
+                  <IconSvg markup={data[item.name] ?? ''} size={20} strokeWidth={strokeWidth} colour={previewColour} />
                 </button>
               ))}
             </div>

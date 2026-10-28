@@ -1,6 +1,6 @@
 'use client'
 
-import { CheckCircle, Sparkle } from '@phosphor-icons/react'
+import { Sparkle } from '@phosphor-icons/react'
 import { ICON_STYLES } from '../_lib/icon-utils'
 import type { IconStyle } from '../_lib/types'
 import { IconSvg } from './IconSvg'
@@ -39,7 +39,7 @@ export function StylePicker({
             onClick={() => onChange(style.id)}
             className={`${
               compact
-                ? 'h-8 rounded-lg px-1 sm:px-2'
+                ? 'h-8 rounded-lg px-1'
                 : 'relative h-16 rounded-xl border px-2 py-1.5'
             } flex min-w-0 ${compact ? 'flex-row' : 'flex-col'} items-center justify-center gap-1 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
               selected
@@ -54,9 +54,9 @@ export function StylePicker({
             {!compact && markup && (
               <IconSvg
                 markup={markup}
-                size={24}
+                size={20}
                 strokeWidth={2}
-                className={loading && selected ? 'animate-pulse motion-reduce:animate-none' : ''}
+                className={`shrink-0 ${loading && selected ? 'animate-pulse motion-reduce:animate-none' : ''}`}
               />
             )}
             {compact && (
@@ -64,26 +64,25 @@ export function StylePicker({
                 weight={style.id === 'line' ? 'regular' : style.id === 'duotone' || style.id === 'solid-duotone' ? 'duotone' : 'fill'}
                 size={12}
                 aria-hidden
-                className="hidden shrink-0 sm:block"
+                className="hidden shrink-0 min-[1440px]:block"
               />
             )}
-            <span className="flex min-w-0 items-center gap-1 text-[10px] font-semibold sm:text-[11px]">
-              {selected && !compact && <CheckCircle weight="regular" size={11} aria-hidden />}
-              <span className="truncate">{style.shortLabel}</span>
+            <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-[10px] font-semibold sm:text-[11px]">
+              <span>{style.shortLabel}</span>
             </span>
             <span
               aria-label={style.tier}
-              className={`${compact ? 'h-1.5 w-1.5 shrink-0 rounded-full sm:h-auto sm:w-auto sm:rounded-none sm:text-[8px]' : 'text-[9px]'} font-semibold ${
+              className={`${compact ? 'h-1.5 w-1.5 shrink-0 rounded-full xl:h-auto xl:w-auto xl:rounded-none xl:text-[8px]' : 'text-[9px]'} font-semibold ${
                 style.tier === 'Free'
                   ? compact
-                    ? 'bg-olive-600 text-olive-600 dark:bg-olive-400 dark:text-olive-400 sm:bg-transparent dark:sm:bg-transparent'
+                    ? 'bg-olive-600 text-olive-600 dark:bg-olive-400 dark:text-olive-400 xl:bg-transparent dark:xl:bg-transparent'
                     : 'text-olive-600 dark:text-olive-400'
                   : compact
-                    ? 'bg-sand-600 text-sand-600 dark:bg-sand-400 dark:text-sand-400 sm:bg-transparent dark:sm:bg-transparent'
+                    ? 'bg-sand-600 text-sand-600 dark:bg-sand-400 dark:text-sand-400 xl:bg-transparent dark:xl:bg-transparent'
                     : 'text-sand-600 dark:text-sand-400'
               }`}
             >
-              <span className={compact ? 'hidden sm:inline' : ''}>{style.tier}</span>
+              <span className={compact ? 'hidden xl:inline' : ''}>{style.tier}</span>
             </span>
           </button>
         )

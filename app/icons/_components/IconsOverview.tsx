@@ -11,7 +11,7 @@ import { copyText } from '@/app/components/useCopied'
 import { useTheme } from '@/app/components/ThemeProvider'
 import { Slider } from '@/app/lab/_lib/particleMark/controls/Slider'
 import { ICON_CATEGORIES, ICON_CATEGORY_LABELS, ICON_COUNT, type IconCategorySlug } from '../_lib/categories'
-import { ALL_ICONS_INSTALL } from '../_lib/constants'
+import { ALL_ICONS_INSTALL, DARK_PREVIEW_COLOUR, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 import { overviewMarkdown } from '../_lib/markdown'
 import type { IconGridMeta, IconMarkupMap, IconMeta, IconStyle } from '../_lib/types'
 import { ColourControl } from './ColourControl'
@@ -46,7 +46,7 @@ export function IconsOverview({
   const [selected, setSelected] = useState<string | null>(null)
   const [metadata, setMetadata] = useState<IconMeta[] | null>(null)
   const [installCopied, setInstallCopied] = useState(false)
-  const colour = colourOverride ?? (theme === 'dark' ? '#f5f3ff' : '#1b1a17')
+  const colour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
   const { data, loading } = useIconVariant(lineIcons, style, loadFullLine)
   const loadMetadata = useCallback(() => {
     metadataRequest ??= fetch('/icons/icon-data').then((response) => {
@@ -148,7 +148,7 @@ export function IconsOverview({
           aria-label="Icon filters"
           className="z-30 -mx-2 mt-8 flex flex-wrap items-center gap-2 rounded-2xl bg-sand-50/95 p-2 shadow-[0_12px_32px_rgba(0,0,0,0.08)] backdrop-blur-xl dark:bg-sand-950/95 dark:shadow-[0_12px_32px_rgba(0,0,0,0.45)] sm:sticky sm:top-0"
         >
-          <label className="relative min-w-[220px] flex-[1_1_280px]">
+          <label className="relative min-w-[180px] flex-[1_1_180px]">
             <MagnifyingGlass weight="regular" size={17} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sand-600 dark:text-sand-400" />
             <input
               type="search"
@@ -161,14 +161,14 @@ export function IconsOverview({
               className="h-10 w-full rounded-xl border border-sand-300 bg-sand-100 pl-10 pr-3 text-sm text-sand-900 outline-none placeholder:text-sand-600 focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-400"
             />
           </label>
-          <div className="w-full flex-[1_1_390px] sm:min-w-[330px]">
+          <div className="w-full flex-[1_1_390px] sm:min-w-[350px] xl:min-w-[420px] xl:flex-[0_0_420px] min-[1440px]:min-w-[460px] min-[1440px]:flex-[0_0_460px]">
             <StylePicker value={style} onChange={setStyle} compact loading={loading} />
           </div>
-          <div className="h-10 min-w-[125px] flex-1 [&>div>div]:h-10">
-            <Slider label="Size" value={size} onChange={setSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
+          <div className="h-10 min-w-[115px] flex-1 [&>div>div]:h-10">
+            <Slider themed label="Size" value={size} onChange={setSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
           </div>
-          <div className="h-10 min-w-[125px] flex-1 [&>div>div]:h-10">
-            <Slider label="Stroke" value={strokeWidth} onChange={setStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
+          <div className="h-10 min-w-[115px] flex-1 [&>div>div]:h-10">
+            <Slider themed label="Stroke" value={strokeWidth} onChange={setStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
           </div>
           <ColourControl value={colour} onChange={setColourOverride} className="h-10" />
           <button
@@ -231,7 +231,7 @@ export function IconsOverview({
           onSize={setSize}
           strokeWidth={strokeWidth}
           onStrokeWidth={setStrokeWidth}
-          colour={colour}
+          colour={colourOverride}
           onColour={setColourOverride}
         />
       )}
