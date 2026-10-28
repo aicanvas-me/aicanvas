@@ -4,6 +4,9 @@ import { COLLECTIONS } from '../lib/collections'
 import { COMPONENT_NAMES } from '../lib/component-nav.generated'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
+import iconData from '../icons/_data/icons.generated.json'
+import { ICON_CATEGORY_LABELS } from '../icons/_lib/categories'
+import { titleCase } from '../icons/_lib/icon-utils'
 
 // The breadcrumb trail of the crumb row above each catalog page's title
 // (PageCrumbs), derived from the URL alone, so every page draws the same row
@@ -93,6 +96,7 @@ const INSTALL_SLOTS: Record<string, string> = {
 
 export function installSlotId(pathname: string): string | null {
   if (BRAIN_READER_RE.test(pathname)) return 'brain-install-slot'
+  if (/^\/icons(?:\/[^/]+)?\/?$/.test(pathname)) return 'icons-copy-page-slot'
   return INSTALL_SLOTS[pathname.replace(/\/$/, '') || '/'] ?? null
 }
 
@@ -135,6 +139,21 @@ export function offerPillMode(pathname: string): OfferPillMode | null {
 
 export function buildTopBarCrumbs(pathname: string): Crumb[] | null {
   const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
+
+  // ── Icons ──
+  if (path === '/icons') return [{ label: 'Icons' }]
+  const iconMatch = path.match(/^\/icons\/([^/]+)$/)
+  if (iconMatch) {
+    const icon = iconData.find((candidate) => candidate.name === iconMatch[1])
+    if (icon) {
+      const category = icon.category as keyof typeof ICON_CATEGORY_LABELS
+      return [
+        { label: 'Icons', href: '/icons' },
+        { label: ICON_CATEGORY_LABELS[category], href: `/icons?category=${category}` },
+        { label: titleCase(icon.name) },
+      ]
+    }
+  }
 
   // ── Components & Blocks ──
   if (path === '/components') return [{ label: 'Components & Blocks' }]

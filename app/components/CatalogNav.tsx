@@ -10,6 +10,13 @@ import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
 import { SystemTierChip } from '../_components/SystemTierChip'
+import iconData from '../icons/_data/icons.generated.json'
+import {
+  ICON_CATEGORIES,
+  ICON_CATEGORY_COUNTS,
+  ICON_COUNT,
+  isIconCategory,
+} from '../icons/_lib/categories'
 
 // The catalog list of the rail and of the phone drawer: a three-way switch on
 // top (Design systems, Components, Icons), a heading with a count under it,
@@ -453,7 +460,7 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
   const counts: Record<CatalogSegment, number | null> = {
     'design-systems': DESIGN_SYSTEM_COUNT,
     components: TOTAL_COMPONENTS,
-    icons: null,
+    icons: ICON_COUNT,
   }
 
   // Every panel is rendered and the ones not on are hidden, so all the
@@ -581,16 +588,35 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
 
       {panel(
         'icons',
-        <Guided>
-          {/* /icons is linked ahead of its page; no prefetch until it exists. */}
-          <CatalogRow
-            href="/icons"
-            label="All icons"
-            active={pathname === '/icons'}
-            onNavigate={onNavigate}
-            prefetch={false}
-          />
-        </Guided>,
+        <>
+          <Guided>
+            <CatalogRow
+              href="/icons"
+              label="All icons"
+              active={pathname === '/icons' && !isIconCategory(searchParams.get('category') ?? undefined)}
+              onNavigate={onNavigate}
+            />
+          </Guided>
+          <Section id={`${baseId}-icon-categories`} label="Categories" count={ICON_CATEGORIES.length}>
+            {ICON_CATEGORIES.map(([slug, label]) => {
+              const iconName = pathname.match(/^\/icons\/([^/]+)$/)?.[1]
+              const pageCategory = iconName ? iconData.find((icon) => icon.name === iconName)?.category : undefined
+              const queryCategory = pathname === '/icons' ? searchParams.get('category') : undefined
+              const active = pageCategory === slug || queryCategory === slug
+              return (
+                <CatalogRow
+                  key={slug}
+                  href={`/icons?category=${slug}`}
+                  label={label}
+                  active={active}
+                  onNavigate={onNavigate}
+                >
+                  <CountChip count={ICON_CATEGORY_COUNTS[slug]} />
+                </CatalogRow>
+              )
+            })}
+          </Section>
+        </>,
       )}
     </div>
   )

@@ -12,6 +12,11 @@ import { ANDROMEDA_COMPONENT_META as PRO_COMPONENT_META } from '../_lib/andromed
 import { ANDROMEDA_COMPONENT_META as LEGACY_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { Sidebar } from './Sidebar'
 import { segmentForPath } from './CatalogNav'
+import {
+  ICON_CATEGORIES,
+  ICON_CATEGORY_COUNTS,
+  ICON_COUNT,
+} from '../icons/_lib/categories'
 
 // The route the rail is rendered on, per test.
 let currentPath = '/components'
@@ -421,9 +426,10 @@ describe('the catalog rail', () => {
     expect(visible()[0].querySelector('a[href="/design-systems/andromeda"]')).not.toBeNull()
 
     fireEvent.click(within(aside).getByRole('tab', { name: 'Icons' }))
-    expect(visible()[0].querySelector('p')?.textContent).toBe('Icons')
+    expect(visible()[0].querySelector('p')?.textContent).toBe(`Icons${ICON_COUNT}`)
     expect([...visible()[0].querySelectorAll('a')].map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
       ['All icons', '/icons'],
+      ...ICON_CATEGORIES.map(([slug, label]) => [`${label}${ICON_CATEGORY_COUNTS[slug]}`, `/icons?category=${slug}`]),
     ])
 
     const icons = within(aside).getByRole('tab', { name: 'Icons' })
