@@ -42,6 +42,8 @@ import {
   ANDROMEDA_TEMPLATE_META as PRO_TEMPLATES,
 } from '../_lib/andromeda-pro/andromeda-meta'
 import { premiumEnabled } from '../../lib/flags'
+import { wordVariants } from '../lib/search-match'
+import { DOCS_NAV } from '../docs/_lib/nav'
 
 type Tab = 'all' | 'systems' | 'templates' | 'components' | 'pages'
 // What it costs to install: Andromeda Pro is all paid (its own cyan), a
@@ -69,7 +71,7 @@ const TABS: { id: Tab; label: string }[] = [
 const PRO = '/design-systems/andromeda-pro'
 const LEGACY = '/design-systems/andromeda'
 
-const page = (name: string, href: string): Item => ({ id: `page:${href}`, name, href, keywords: '', icon: FileText })
+const page = (name: string, href: string, keywords = ''): Item => ({ id: `page:${href}`, name, href, keywords, icon: FileText })
 
 const GROUPS: Group[] = [
   {
@@ -147,6 +149,12 @@ const GROUPS: Group[] = [
     tab: 'pages',
     items: [
       page('All components & blocks', '/components'),
+      page('Andromeda Pro AI Brain', `${PRO}/brain`, 'brain rules design skill agent'),
+      page('Andromeda Legacy AI Brain', `${LEGACY}/brain`, 'brain rules design skill agent mit'),
+      ...DOCS_NAV.flatMap((s) => s.pages).map((d) =>
+        page(d.href === '/docs' ? 'Docs' : `Docs: ${d.title}`, d.href, `docs documentation guide ${d.description}`),
+      ),
+      page('Sign in to your account', '/account/sign-in', 'log in account'),
       page('MCP server', '/mcp'),
       page('Pricing', '/pricing'),
       page('About', '/about'),
@@ -178,11 +186,14 @@ function score(item: Item, words: string[]): number {
   let total = 0
   let matched = 0
   for (const w of words) {
+    // A synonym counts like the word itself: "login" finds Sign In.
     let s = 0
-    if (name.startsWith(w)) s = 6
-    else if (name.includes(` ${w}`)) s = 5
-    else if (name.includes(w)) s = 3
-    else if (keywords.includes(w)) s = 1
+    for (const v of wordVariants(w)) {
+      if (name.startsWith(v)) s = Math.max(s, 6)
+      else if (name.includes(` ${v}`)) s = Math.max(s, 5)
+      else if (name.includes(v)) s = Math.max(s, 3)
+      else if (keywords.includes(v)) s = Math.max(s, 1)
+    }
     if (s) {
       matched++
       total += s
