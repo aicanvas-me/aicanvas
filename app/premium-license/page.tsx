@@ -23,7 +23,7 @@ export default function PremiumLicensePage() {
           AI Canvas Premium License
         </h1>
         <p className="mt-3 text-sm text-sand-600 dark:text-sand-500">
-          Version 1.0. Effective date: [effective date]. This License governs the
+          Version 1.0. Effective date: 2026-07-01. This License governs the
           AI Canvas Premium Components only. It is separate from, and no
           replacement for, the MIT License that covers the free, open-source AI
           Canvas registry.
