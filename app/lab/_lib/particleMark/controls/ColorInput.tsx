@@ -107,7 +107,7 @@ export function ColorInput({
       aria-label={appearance === 'solid' ? 'Change colour' : 'Pick a custom colour'}
       title={appearance === 'solid' ? value : 'Custom colour'}
       className={`relative flex h-7 w-7 items-center justify-center rounded-full transition-all hover:scale-110 ${
-        active ? 'ring-2 ring-olive-500/60 ring-offset-1 ring-offset-sand-100 dark:ring-offset-sand-900' : ''
+        active ? 'ring-2 ring-accent/60 ring-offset-1 ring-offset-sand-100 dark:ring-offset-sand-900' : ''
       }`}
       style={{
         background:
@@ -168,7 +168,7 @@ export function ColorInput({
               color={value}
               onChange={onChange}
               prefixed={false}
-              className="w-full flex-1 rounded-md border border-sand-300 bg-sand-100 px-2 py-1.5 font-mono text-xs uppercase text-sand-800 outline-none transition-colors focus:border-olive-500 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-100"
+              className="w-full flex-1 rounded-md border border-sand-300 bg-sand-100 px-2 py-1.5 font-mono text-xs uppercase text-sand-800 outline-none transition-colors focus:border-accent dark:border-sand-700 dark:bg-sand-800 dark:text-sand-100"
             />
             {eyedropperAvailable && (
               <button

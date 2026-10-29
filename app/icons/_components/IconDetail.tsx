@@ -25,10 +25,10 @@ import { useIconVariant } from './useIconVariant'
 function SuggestedTile({ icon, size, strokeWidth, absolute, colour }: { icon: IconWithMarkup; size: number; strokeWidth: number; absolute: boolean; colour: string }) {
   return (
     <article className="group relative aspect-square overflow-hidden rounded-section border border-transparent bg-sand-100 transition-colors hover:border-sand-300 dark:bg-sand-900 dark:hover:border-sand-700">
-      {icon.isNew && <span aria-label="New" className="absolute left-3 top-3 z-10 h-1.5 w-1.5 rounded-full bg-olive-500" />}
+      {icon.isNew && <span aria-label="New" className="absolute left-3 top-3 z-10 h-1.5 w-1.5 rounded-full bg-accent" />}
       <Link
         href={`/icons/${icon.name}`}
-        className="flex h-full flex-col items-center justify-center gap-3 px-2 pb-2 pt-4 text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 dark:text-sand-50"
+        className="flex h-full flex-col items-center justify-center gap-3 px-2 pb-2 pt-4 text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/40 dark:text-sand-50"
       >
         <IconSvg markup={icon.markup} size={Math.min(size, 48)} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />
         <span className="line-clamp-2 min-h-7 text-center text-[11px] leading-4 text-sand-600 dark:text-sand-400">{icon.name}</span>
@@ -37,7 +37,7 @@ function SuggestedTile({ icon, size, strokeWidth, absolute, colour }: { icon: Ic
         type="button"
         aria-label={`Copy ${icon.name} slug`}
         onClick={() => void copyText(icon.name)}
-        className="absolute right-2 top-2 flex h-6 w-6 translate-y-1 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 opacity-0 shadow-sm transition-[opacity,transform] group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 motion-reduce:transition-none dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300"
+        className="absolute right-2 top-2 flex h-6 w-6 translate-y-1 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 opacity-0 shadow-sm transition-[opacity,transform] group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 motion-reduce:transition-none dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300"
       >
         <Copy weight="regular" size={12} />
       </button>
@@ -95,7 +95,7 @@ export function IconDetail({
             <button
               type="button"
               onClick={() => void copyText(icon.name)}
-              className="inline-flex h-8 items-center gap-2 rounded-full border border-sand-300 px-3.5 font-mono text-xs text-sand-700 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-700 dark:text-sand-300 dark:hover:text-sand-50"
+              className="inline-flex h-8 items-center gap-2 rounded-full border border-sand-300 px-3.5 font-mono text-xs text-sand-700 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-300 dark:hover:text-sand-50"
             >
               {icon.name}
               <Copy weight="regular" size={13} />
@@ -147,7 +147,7 @@ export function IconDetail({
                 <button
                   type="button"
                   onClick={reset}
-                  className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-sand-600 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
+                  className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-sand-600 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
                 >
                   <ArrowCounterClockwise weight="regular" size={14} />
                   Reset
@@ -164,7 +164,7 @@ export function IconDetail({
         <section className="mt-9" aria-labelledby="suggested-icons">
           <div className="mb-3 flex items-center justify-between gap-4">
             <h2 id="suggested-icons" className="text-[11px] font-bold uppercase tracking-wider text-sand-600 dark:text-sand-400">Suggested icons</h2>
-            <Link href={`/icons?category=${icon.category}`} className="inline-flex items-center gap-1 text-xs font-semibold text-olive-600 hover:text-olive-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-olive-400">
+            <Link href={`/icons?category=${icon.category}`} className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:text-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40">
               All {categoryLabel} icons
               <ArrowRight weight="regular" size={13} />
             </Link>
@@ -178,14 +178,14 @@ export function IconDetail({
 
         <nav aria-label="Adjacent icons" className="mt-8 grid gap-3 sm:grid-cols-2">
           {previous ? (
-            <Link href={`/icons/${previous.name}`} className="flex min-h-16 items-center gap-4 rounded-card bg-sand-100 px-5 py-3 text-sand-900 transition-colors hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:bg-sand-900 dark:text-sand-50 dark:hover:bg-sand-800">
+            <Link href={`/icons/${previous.name}`} className="flex min-h-16 items-center gap-4 rounded-card bg-sand-100 px-5 py-3 text-sand-900 transition-colors hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:bg-sand-900 dark:text-sand-50 dark:hover:bg-sand-800">
               <ArrowLeft weight="regular" size={18} />
               <IconSvg markup={previous.markup} size={28} strokeWidth={strokeWidth} absolute={absolute} colour={siteColour} />
               <span><span className="block text-[10px] text-sand-600 dark:text-sand-400">Previous</span><span className="font-bold">{titleCase(previous.name)}</span></span>
             </Link>
           ) : <span />}
           {next && (
-            <Link href={`/icons/${next.name}`} className="flex min-h-16 items-center justify-end gap-4 rounded-card bg-sand-100 px-5 py-3 text-right text-sand-900 transition-colors hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:bg-sand-900 dark:text-sand-50 dark:hover:bg-sand-800">
+            <Link href={`/icons/${next.name}`} className="flex min-h-16 items-center justify-end gap-4 rounded-card bg-sand-100 px-5 py-3 text-right text-sand-900 transition-colors hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:bg-sand-900 dark:text-sand-50 dark:hover:bg-sand-800">
               <span><span className="block text-[10px] text-sand-600 dark:text-sand-400">Next</span><span className="font-bold">{titleCase(next.name)}</span></span>
               <IconSvg markup={next.markup} size={28} strokeWidth={strokeWidth} absolute={absolute} colour={siteColour} />
               <ArrowRight weight="regular" size={18} />

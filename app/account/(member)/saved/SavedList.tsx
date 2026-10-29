@@ -145,7 +145,7 @@ export function SavedList({ initial }: { initial: SavedRow[] }) {
               >
                 <SavedThumbnail src={row.image} alt="" />
                 <div className="min-w-0 flex-1">
-                  <div className="truncate font-semibold text-sand-900 transition-colors group-hover:text-olive-600 dark:text-sand-50 dark:group-hover:text-olive-400">
+                  <div className="truncate font-semibold text-sand-900 transition-colors group-hover:text-accent dark:text-sand-50">
                     {row.name}
                   </div>
                   {row.system && (
@@ -244,7 +244,7 @@ function FilteredEmptyState({ onReset }: { onReset: () => void }) {
   )
 }
 
-// Folder-graphic tabs. Each folder is a 64×56 SVG (olive paper when the tab
+// Folder-graphic tabs. Each folder is a 64×56 SVG (white paper when the tab
 // is active, sand paper when idle) with the collection name + item count
 // underneath. Collections are created exclusively by assigning saves via the
 // per-row CollectionPicker dropdown — a folder only exists once it has at
@@ -347,7 +347,7 @@ function FolderTabs({
               onKeyDown={(e) => { if (e.key === 'Escape') { setDraft(''); setCreating(false) } }}
               placeholder="Folder name…"
               maxLength={40}
-              className="w-full rounded-chip border border-olive-500 bg-sand-100 px-2 py-1 text-base text-sand-900 outline-none md:text-xs dark:bg-sand-900 dark:text-sand-50"
+              className="w-full rounded-chip border border-accent bg-sand-100 px-2 py-1 text-base text-sand-900 outline-none md:text-xs dark:bg-sand-900 dark:text-sand-50"
             />
             <p className="text-center text-[10px] text-sand-600 dark:text-sand-500">Enter to create · Esc to cancel</p>
           </form>
@@ -358,7 +358,7 @@ function FolderTabs({
               onClick={() => { setCreating(true); setConfirmDelete(null) }}
               aria-label="Create new folder"
               title="Create new folder"
-              className="mt-[14px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-dashed border-sand-400 text-sand-700 transition-colors hover:border-olive-600 hover:text-olive-600 dark:border-sand-600 dark:text-sand-300 dark:hover:border-olive-400 dark:hover:text-olive-400"
+              className="mt-[14px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-dashed border-sand-400 text-sand-700 transition-colors hover:border-accent hover:text-accent dark:border-sand-600 dark:text-sand-300"
             >
               <Plus size={14} weight="regular" />
             </button>
@@ -402,7 +402,7 @@ function Folder({
         type="button"
         onClick={onClick}
         aria-pressed={active}
-        className="flex flex-col items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-olive-500 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50 dark:focus-visible:ring-offset-sand-950"
+        className="flex flex-col items-center gap-2 outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50 dark:focus-visible:ring-offset-sand-950"
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -470,7 +470,7 @@ function CollectionPicker({
         onClick={() => setOpen((o) => !o)}
         className={`flex shrink-0 items-center gap-1 rounded-control border px-2.5 py-1 text-xs font-semibold transition-colors ${
           value
-            ? 'border-olive-500/40 bg-olive-500/10 text-olive-600 dark:text-olive-400'
+            ? 'border-accent/40 bg-accent/10 text-accent'
             : 'border-dashed border-sand-200 bg-transparent text-sand-600 hover:border-sand-300 hover:text-sand-700 dark:border-sand-700 dark:text-sand-500 dark:hover:border-sand-600 dark:hover:text-sand-300'
         }`}
       >
@@ -506,7 +506,7 @@ function CollectionPicker({
                     onClick={() => commit(name)}
                     className={`flex w-full items-center justify-between px-3 py-2 text-xs font-medium transition-colors hover:bg-sand-50 dark:hover:bg-sand-800 ${
                       value === name
-                        ? 'text-olive-600 dark:text-olive-400'
+                        ? 'text-accent'
                         : 'text-sand-700 dark:text-sand-300'
                     }`}
                   >
@@ -526,14 +526,14 @@ function CollectionPicker({
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="New collection…"
-                className="flex-1 rounded-chip border border-sand-200 bg-sand-50 px-2 py-1 text-base text-sand-900 outline-none focus:border-olive-500 md:text-xs dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50"
+                className="flex-1 rounded-chip border border-sand-200 bg-sand-50 px-2 py-1 text-base text-sand-900 outline-none focus:border-accent md:text-xs dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50"
                 maxLength={40}
               />
               <button
                 type="submit"
                 disabled={!draft.trim()}
                 aria-label="Create collection"
-                className="rounded-chip bg-olive-500 p-1 text-sand-950 transition-colors hover:bg-olive-400 disabled:opacity-30"
+                className="rounded-chip bg-accent p-1 text-accent-foreground transition-colors hover:bg-accent/85 disabled:opacity-30"
               >
                 <Plus size={12} weight="bold" />
               </button>

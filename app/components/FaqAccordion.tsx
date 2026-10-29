@@ -19,7 +19,7 @@ function AnswerText({ item }: { item: FaqItem }) {
       {a.slice(0, idx)}
       <Link
         href={link.href}
-        className="font-medium text-olive-600 underline decoration-olive-500/40 underline-offset-2 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+        className="font-medium text-accent underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent/70"
       >
         {link.label}
       </Link>
@@ -42,7 +42,7 @@ function QuestionText({ item }: { item: FaqItem }) {
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        className="text-olive-600 underline decoration-olive-500/40 underline-offset-2 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+        className="text-accent underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent/70"
       >
         {qLink.label}
       </a>
@@ -95,7 +95,7 @@ export function FaqAccordion({
             >
               <span
                 className={`w-7 shrink-0 text-sm font-bold tabular-nums ${
-                  isOpen ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-600'
+                  isOpen ? 'text-accent' : 'text-sand-600 dark:text-sand-600'
                 }`}
               >
                 {String(i + 1).padStart(2, '0')}
@@ -114,7 +114,7 @@ export function FaqAccordion({
                   weight="regular"
                   size={16}
                   className={`transition-transform duration-200 ${
-                    isOpen ? 'rotate-90 text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-600'
+                    isOpen ? 'rotate-90 text-accent' : 'text-sand-600 dark:text-sand-600'
                   }`}
                 />
               </button>

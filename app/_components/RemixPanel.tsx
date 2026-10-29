@@ -174,7 +174,7 @@ export function RemixPanel({
                 {/* Same pill as the tag row on the page behind. Says what the
                     lock further down is about before the reader reaches it. */}
                 {premium && (
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-olive-600/40 bg-olive-500/10 px-2.5 py-0.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400">
+                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent dark:border-accent/25">
                     <Lightning weight="regular" size={12} />
                     Premium
                   </span>
@@ -255,7 +255,7 @@ export function RemixPanel({
 
             {/* The exact install, after the prompt: this panel is for remixing,
                 so the prompt leads and installing is the quiet way out. */}
-            <div className="mt-8 rounded-inset border border-olive-500/40 bg-olive-500/10 p-5">
+            <div className="mt-8 rounded-inset border border-accent/40 bg-accent/10 p-5">
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Want the exact component?
               </p>

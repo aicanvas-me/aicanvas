@@ -17,7 +17,7 @@ import { ArrowRight, Plus } from '@phosphor-icons/react'
 export type FaqRow = { q: string; a: string; link?: { label: string; href: string } }
 
 const LINK =
-  'font-medium text-olive-600 underline decoration-olive-500/40 underline-offset-2 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300'
+  'font-medium text-accent underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent/70'
 
 function Answer({ a, link }: FaqRow) {
   if (!link || !a.includes(link.label)) return <>{a}</>
@@ -80,7 +80,7 @@ export function FaqRows({
                 aria-expanded={on}
                 aria-controls={id}
                 onClick={() => toggle(i)}
-                className="flex w-full items-center gap-4 rounded-shell-inner px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:px-7 sm:py-5"
+                className="flex w-full items-center gap-4 rounded-shell-inner px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:px-7 sm:py-5"
               >
                 <span className="flex-1 text-base font-semibold text-sand-900 dark:text-sand-50">{item.q}</span>
                 <Plus
@@ -113,14 +113,14 @@ export function FaqRows({
 }
 
 // The card under a list of questions: the homepage's "Still have a question?"
-// row, a thin olive light on its top edge. `allQuestions` drops the link to
+// row, a thin accent light on its top edge. `allQuestions` drops the link to
 // /faq on the FAQ page itself.
 export function FaqHelpCard({ allQuestions = true }: { allQuestions?: boolean }) {
   return (
     <div className="relative mt-6 overflow-hidden rounded-shell border border-sand-200 px-5 py-5 sm:px-7 dark:border-sand-800">
       <div
         aria-hidden
-        className="absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-olive-600 to-transparent dark:via-olive-400"
+        className="absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-accent to-transparent"
       />
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>

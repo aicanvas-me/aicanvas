@@ -384,7 +384,7 @@ export default function AndromedaShowcase({
         `}</style>
 
         {/* Page header — AI Canvas site style (Manrope), not the Andromeda mono
-            aesthetic of the demos below. Site sand/olive pairs so the header follows
+            aesthetic of the demos below. Site sand/accent pairs so the header follows
             the site theme like the rest of the page. */}
         {/* A div, not a header: the site bar is the page's banner landmark. */}
         <div style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>

@@ -82,7 +82,7 @@ export function ClaimForm() {
           ref={sentRef}
           tabIndex={-1}
           role="status"
-          className="rounded-xl border border-olive-500/30 bg-olive-500/10 px-4 py-3.5 text-left text-sm leading-relaxed text-sand-200 outline-none"
+          className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3.5 text-left text-sm leading-relaxed text-sand-200 outline-none"
         >
           Check your inbox. If an account exists for <strong className="text-sand-50">{email}</strong>,
           a one-time sign-in link is on its way. It expires in 1 hour.
@@ -93,7 +93,7 @@ export function ClaimForm() {
             setSent(false)
             setEmail('')
           }}
-          className="mt-3 rounded-md text-sm font-medium text-sand-400 transition-colors hover:text-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
+          className="mt-3 rounded-md text-sm font-medium text-sand-400 transition-colors hover:text-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           Use a different email
         </button>
@@ -117,7 +117,7 @@ export function ClaimForm() {
           clearStatus()
         }}
         placeholder="Email you used at checkout"
-        className="h-11 w-full rounded-lg border border-sand-700 bg-sand-950 px-4 text-sm text-sand-100 transition-colors placeholder:text-sand-500 hover:border-sand-600 focus:border-olive-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/25"
+        className="h-11 w-full rounded-lg border border-sand-700 bg-sand-950 px-4 text-sm text-sand-100 transition-colors placeholder:text-sand-500 hover:border-sand-600 focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/25"
       />
       <button
         type="submit"

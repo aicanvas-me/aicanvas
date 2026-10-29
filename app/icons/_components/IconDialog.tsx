@@ -121,7 +121,7 @@ export function IconDialog({
         aria-label="Previous icon"
         disabled={index === 0}
         onClick={() => step(-1)}
-        className="absolute left-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-sand-700 bg-sand-900 text-sand-200 disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 lg:flex"
+        className="absolute left-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-sand-700 bg-sand-900 text-sand-200 disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 lg:flex"
       >
         <ArrowLeft weight="regular" size={18} />
       </button>
@@ -150,7 +150,7 @@ export function IconDialog({
             type="button"
             onClick={onClose}
             aria-label="Close icon details"
-            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-sand-600 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
+            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-sand-600 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
           >
             <X weight="regular" size={18} />
           </button>
@@ -164,7 +164,7 @@ export function IconDialog({
             <button
               type="button"
               onClick={() => void copyText(icon.name)}
-              className="inline-flex h-7 items-center gap-1.5 rounded-full border border-sand-300 px-2.5 font-mono text-[11px] text-sand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-700 dark:text-sand-300"
+              className="inline-flex h-7 items-center gap-1.5 rounded-full border border-sand-300 px-2.5 font-mono text-[11px] text-sand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-300"
             >
               {icon.name}
               <Copy weight="regular" size={12} />
@@ -203,7 +203,7 @@ export function IconDialog({
                     const target = icons.find((candidate) => candidate.name === item.name)
                     if (target) onSelect(target.name)
                   }}
-                  className="flex aspect-square items-center justify-center rounded-card bg-sand-50 text-sand-800 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:bg-sand-950 dark:text-sand-200 dark:hover:bg-sand-800"
+                  className="flex aspect-square items-center justify-center rounded-card bg-sand-50 text-sand-800 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:bg-sand-950 dark:text-sand-200 dark:hover:bg-sand-800"
                 >
                   <IconSvg markup={data[item.name] ?? ''} size={20} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} />
                 </button>
@@ -230,7 +230,7 @@ export function IconDialog({
         aria-label="Next icon"
         disabled={index === icons.length - 1}
         onClick={() => step(1)}
-        className="absolute right-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-sand-700 bg-sand-900 text-sand-200 disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 lg:flex"
+        className="absolute right-4 top-1/2 z-20 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-sand-700 bg-sand-900 text-sand-200 disabled:opacity-30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 lg:flex"
       >
         <ArrowRight weight="regular" size={18} />
       </button>

@@ -88,10 +88,9 @@ export function Paywall({
   const chip = themed
     ? 'border-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_62%,#000)] bg-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_90%,#000)] dark:border-sand-800 dark:bg-sand-900'
     : 'border-sand-800 bg-sand-900'
-  // Stepping the fill down costs the glyph contrast, so it steps down with it:
-  // olive-600 fell to 1.6-2.5:1 on the new fills, olive-700 clears 3:1 on all
-  // three themed grounds.
-  const lockIcon = themed ? 'text-olive-700 dark:text-olive-400' : 'text-olive-400'
+  // Themed grounds follow the site theme, so the glyph takes the accent ink;
+  // the plain ground is dark in both themes and keeps a fixed light ink.
+  const lockIcon = themed ? 'text-accent' : 'text-sand-50'
   const heading = themed ? 'text-sand-900 dark:text-sand-50' : 'text-sand-50'
   const sub = themed ? 'text-sand-600 dark:text-sand-400' : 'text-sand-400'
   // transition-colors lives per appearance, not on the button, because only the
@@ -122,7 +121,7 @@ export function Paywall({
         <div className="mt-1 flex items-center gap-2">
           <Link
             href="/pricing"
-            className="rounded-control bg-olive-500 px-4 py-2 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
+            className="rounded-control bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/85"
           >
             Get Premium
           </Link>

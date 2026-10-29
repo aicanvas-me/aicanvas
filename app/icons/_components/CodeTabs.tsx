@@ -18,7 +18,7 @@ function SyntaxCode({ code, enabled }: { code: string; enabled: boolean }) {
         if (!part) return null
         let tone = ''
         if (part === 'import' || part === 'from') tone = 'text-[#7c3aed] dark:text-[#c4a7ff]'
-        else if (/^['"]/.test(part)) tone = 'text-olive-700 dark:text-olive-300'
+        else if (/^['"]/.test(part)) tone = 'text-accent'
         else if (/^<\/?[A-Za-z]/.test(part)) tone = 'text-[#2563eb] dark:text-[#7dd3fc]'
         else if (/^[A-Za-z_:][\w:.-]*$/.test(part)) tone = 'text-[#a14b0b] dark:text-[#f0ab70]'
         else if (/^\{[\d.]+\}$/.test(part)) tone = 'text-[#c2410c] dark:text-[#f59e8b]'
@@ -68,9 +68,9 @@ export function CodeTabs({
             role="tab"
             aria-selected={tab === option}
             onClick={() => setTab(option)}
-            className={`${compact ? 'h-7' : 'h-8'} border-b-2 px-3 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+            className={`${compact ? 'h-7' : 'h-8'} border-b-2 px-3 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
               tab === option
-                ? 'border-olive-500 text-sand-900 dark:text-sand-50'
+                ? 'border-accent text-sand-900 dark:text-sand-50'
                 : 'border-transparent text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
             }`}
           >

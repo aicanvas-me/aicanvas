@@ -15,7 +15,7 @@ Three tiers; every task routes to exactly one:
 |---|---|---|---|
 | Standalone components | `components-workspace/<slug>/` | Creative freedom (except container chrome) | `components-workspace/CLAUDE.md` |
 | Design systems | `design-systems/<system>/` | Strict, each system's own `tokens.ts` | `design-systems/CLAUDE.md` |
-| Site chrome | `app/`, `app/components/` | sand/olive/Manrope | `supervisor/skills/site-design-tokens.md` |
+| Site chrome | `app/`, `app/components/` | sand/accent/Manrope | `supervisor/skills/site-design-tokens.md` |
 
 The component pipeline (create + modify, gates, registry rules) lives in `supervisor/CLAUDE.md`. Every built or modified component gets an independent review pass against the checklist in `reviewer/CLAUDE.md` before the user sees it. Integration steps live in `integration/CLAUDE.md`. Known recurring mistakes: `supervisor/mistakes.md`. The component inventory is `app/lib/component-registry.tsx` — the registry IS the status ledger; do not maintain a separate one.
 
@@ -40,9 +40,9 @@ This repository is public. A leaked secret is exposed the moment it is committed
 
 ## Design system (site chrome)
 
-- **Default theme**: dark. The toggle lives at the bottom of the left rail and persists to a `theme` cookie, read server-side in `app/layout.tsx` so the first byte carries the right class and there is no flash. Dark is class-based (`.dark` on `<html>`, Tailwind v4 `@variant dark`). Aesthetic: Phosphor-inspired — neutral cool-gray surfaces, editorial typography, olive accent.
+- **Default theme**: dark. The toggle lives at the bottom of the left rail and persists to a `theme` cookie, read server-side in `app/layout.tsx` so the first byte carries the right class and there is no flash. Dark is class-based (`.dark` on `<html>`, Tailwind v4 `@variant dark`). Aesthetic: Phosphor-inspired — neutral cool-gray surfaces, editorial typography, a neutral ink accent (no brand hue).
 - **Site theme and preview theme are ONE linked theme (ruled 2026-09-29), with one writer.** `ThemeProvider` is the only writer of `<html>` and the cookie. A component, block or Andromeda preview reads the site theme, and its own light/dark toggle calls `ThemeProvider.setTheme`, so flipping the site moves every preview and flipping a preview moves the site (the template pages always worked this way). A dark-only component pins itself dark and its toggle is disabled. A preview still owns a `[data-card-theme]` wrapper, and the `@variant dark` selector at the top of `app/globals.css` keeps that wrapper correct when it disagrees with the site (dark-only on a light site, a preview route with `?theme=`); its comment explains both directions. Never write `<html>` or the cookie from a preview: two writers is the exact bug that got the first site toggle deleted, and `lib/theme/scope.test.ts` guards it.
-- **Full token reference** (sand + olive scales, hex values, typography table, spacing grid): `supervisor/skills/site-design-tokens.md` — the single source of truth for site-chrome styling.
+- **Full token reference** (sand scale, accent roles, hex values, typography table, spacing grid): `supervisor/skills/site-design-tokens.md` — the single source of truth for site-chrome styling.
 
 Semantic quick reference:
 
@@ -55,14 +55,15 @@ Semantic quick reference:
 | Secondary text | `text-sand-600` | `dark:text-sand-400` |
 | Border | `border-sand-200` | `dark:border-sand-800` |
 | Border hover | `border-sand-300` | `dark:border-sand-700` |
-| Accent text | `text-olive-600` | `dark:text-olive-400` |
-| Accent hover | `text-olive-800` | `dark:text-olive-300` |
+| Accent text, icon, fill | `text-accent` / `bg-accent` (flips on its own, no `dark:` half) | same |
+| Text on an accent fill | `text-accent-foreground` | same |
+| Confirmation (copied, sent, saved) | `text-success` | same |
 
-The olive ramp was drawn to glow on `sand-950`, so olive-400 and olive-500 cannot carry accent text on a light page. Light accent text is `olive-600` (a deliberate design call at roughly 3:1, carried by size and weight), its hover is `olive-800`. Selected text is neutral, never olive: `sand-300` under `sand-900` on light, `sand-700` under `sand-50` on dark. `bg-olive-500` stays the accent FILL in both themes, always with `text-sand-950` on it; a tiny decorative fill may deepen to `olive-700` on light. `text-sand-500` is not a text colour in light mode (3.9:1); it survives only on a decorative glyph.
+The site accent is neutral (ruled 2026-10-29): `accent` is ink, sand-900 on light and sand-50 on dark, defined once in `app/globals.css` (`--accent`), so a colour change is one line. Site chrome never uses olive, cyan or another hue; the only colours are the status set: `success` for confirmations and the red family for errors. Tints come from opacity on the role (`bg-accent/10`, `ring-accent/40`); an accent-text hover fades to `hover:text-accent/70`. A surface that is dark in both themes (the component preview stage) takes fixed `sand-50` ink, not `accent`. Selected text is `sand-300` under `sand-900` on light, `sand-700` under `sand-50` on dark. `text-sand-500` is not a text colour in light mode (3.9:1); it survives only on a decorative glyph.
 
 This table is for NEW code. When adding a light half to an element that already had only a dark value, keep that element's existing dark value exactly and change only the light base: dark is the default theme and must not shift. `lib/theme/scope.test.ts` guards the scope contract itself.
 
-- Olive buttons use `text-sand-950`, never white (contrast). Component preview backgrounds are always `bg-sand-950` regardless of theme. Typography weights: 800 hero h1, 700 section headings, 600 UI labels/buttons, 400 body.
+- Accent fills carry `text-accent-foreground`, never a fixed sand step (it flips with the fill). Component preview backgrounds are always `bg-sand-950` regardless of theme. Typography weights: 800 hero h1, 700 section headings, 600 UI labels/buttons, 400 body.
 
 ## Prompt file contract
 Every `prompts.ts` exports a `prompts` object typed `Partial<Record<Platform, string>>`. The `Platform` union is defined in `app/components/ComponentCard.tsx` — verify against that file, not docs. The UI surfaces ONE general prompt per component: the `'Claude Code'` lane (the comprehensive, platform-agnostic one), shown in the Remix side panel and server-rendered for SEO. Legacy `'Lovable'`/`'V0'` lanes remain valid data on older components but are never surfaced and no longer authored. Write new components with the `'Claude Code'` lane only.

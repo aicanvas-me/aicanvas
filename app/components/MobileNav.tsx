@@ -135,7 +135,7 @@ export function MobileNav() {
                     placeholder="Search..."
                     // 16px font-size prevents iOS Safari from auto-zooming on focus.
                     style={{ fontSize: 16 }}
-                    className="w-full rounded-control border border-sand-200 bg-sand-100 py-1.5 pl-8 pr-8 text-sand-900 outline-none transition-colors placeholder:text-sand-600 hover:border-sand-300 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-600 dark:focus:border-olive-500 dark:focus:ring-olive-500/20"
+                    className="w-full rounded-control border border-sand-200 bg-sand-100 py-1.5 pl-8 pr-8 text-sand-900 outline-none transition-colors placeholder:text-sand-600 hover:border-sand-300 focus:border-accent focus:ring-2 focus:ring-accent/20 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-600"
                   />
                   {searchValue && (
                     <button

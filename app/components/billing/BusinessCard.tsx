@@ -66,11 +66,11 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
   return (
     <>
       <div className={`mx-auto max-w-md ${compact ? '' : 'mt-12 sm:mt-16'}`}>
-        <div className="relative flex flex-col rounded-section border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
+        <div className="relative flex flex-col rounded-section border border-accent/50 bg-sand-100 p-2 dark:border-accent/40 dark:bg-sand-900">
           <div className={cardPad}>
             {/* The unreleased marker sits on the card, in the corner the eye
                 leaves the price by, so it qualifies the number rather than the
-                tab. Neutral sand on purpose: olive is the buy colour. */}
+                tab. Neutral sand on purpose: accent is the buy colour. */}
             <span className="absolute right-5 top-5 rounded-full bg-sand-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-sand-700 dark:bg-sand-950 dark:text-sand-300">
               Soon
             </span>
@@ -92,14 +92,14 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
                     aria-pressed={selected}
                     className={`relative rounded-chip px-3 py-1 text-xs font-semibold transition-colors ${
                       selected
-                        ? 'text-sand-950'
+                        ? 'text-accent-foreground'
                         : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
                     }`}
                   >
                     {selected && (
                       <motion.span
                         layoutId={`business-cycle-pill-${pillId}`}
-                        className="absolute inset-0 rounded-chip bg-olive-500"
+                        className="absolute inset-0 rounded-chip bg-accent"
                         transition={
                           reduceMotion
                             ? { duration: 0 }
@@ -121,7 +121,7 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
                 / {price.suffix}
               </span>
               {price.perMonth && (
-                <span className="text-sm font-semibold text-olive-600 dark:text-olive-400">
+                <span className="text-sm font-semibold text-accent">
                   ({price.perMonth})
                 </span>
               )}
@@ -144,7 +144,7 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
                   <CheckCircle
                     weight="regular"
                     size={18}
-                    className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400"
+                    className="mt-0.5 shrink-0 text-accent"
                   />
                   <span>{feature}</span>
                 </li>

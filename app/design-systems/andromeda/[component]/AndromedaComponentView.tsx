@@ -468,7 +468,7 @@ export function AndromedaComponentView({
                         className="ml-auto shrink-0 rounded-chip p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {cliCopied
-                          ? <Check weight="regular" size={14} className="text-olive-500" />
+                          ? <Check weight="regular" size={14} className="text-success" />
                           : <Copy weight="regular" size={14} />}
                       </button>
                     </div>
@@ -510,7 +510,7 @@ export function AndromedaComponentView({
                         className="shrink-0 rounded-chip p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {codeCopied
-                          ? <Check weight="regular" size={14} className="text-olive-500" />
+                          ? <Check weight="regular" size={14} className="text-success" />
                           : <Copy weight="regular" size={14} />}
                       </button>
                     </div>
@@ -714,7 +714,7 @@ export function AndromedaComponentView({
           }}
         >
           <div className="flex items-center gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
-            <Check weight="regular" size={16} className="shrink-0 text-olive-500" />
+            <Check weight="regular" size={16} className="shrink-0 text-success" />
             <div>
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Install command copied

@@ -144,7 +144,7 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
                     aria-expanded={on}
                     aria-controls={id}
                     onClick={() => setOpen(on ? null : i)}
-                    className="flex w-full items-center gap-4 rounded-shell-inner px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:px-7 sm:py-5"
+                    className="flex w-full items-center gap-4 rounded-shell-inner px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:px-7 sm:py-5"
                   >
                     <span className="flex-1 text-base font-semibold text-sand-900 dark:text-sand-50">{q}</span>
                     <Plus
@@ -172,7 +172,7 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
         <div className="relative mt-6 overflow-hidden rounded-shell border border-sand-200 px-5 py-5 sm:px-7 dark:border-sand-800">
           <div
             aria-hidden
-            className="absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-olive-600 to-transparent dark:via-olive-400"
+            className="absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-accent to-transparent"
           />
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>

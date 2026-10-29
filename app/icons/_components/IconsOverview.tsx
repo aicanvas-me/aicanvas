@@ -26,7 +26,7 @@ let metadataRequest: Promise<IconMeta[]> | null = null
 
 const ICON_GRID = 'grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
 const ICON_TILE_SKIN =
-  '[&_[data-icon-tile]]:relative [&_[data-icon-tile]]:aspect-square [&_[data-icon-tile]]:min-h-0 [&_[data-icon-tile]]:overflow-hidden [&_[data-icon-tile]]:rounded-section [&_[data-icon-tile]]:border [&_[data-icon-tile]]:border-transparent [&_[data-icon-tile]]:bg-sand-100 [&_[data-icon-tile]]:transition-colors [&_[data-icon-tile]:hover]:border-sand-300 dark:[&_[data-icon-tile]]:bg-sand-900 dark:[&_[data-icon-tile]:hover]:border-sand-700 [&_[data-icon-link]]:flex [&_[data-icon-link]]:h-full [&_[data-icon-link]]:w-full [&_[data-icon-link]]:flex-col [&_[data-icon-link]]:items-center [&_[data-icon-link]]:justify-center [&_[data-icon-link]]:gap-3 [&_[data-icon-link]]:px-1.5 [&_[data-icon-link]]:pb-1.5 [&_[data-icon-link]]:pt-3 [&_[data-icon-link]]:text-sand-900 [&_[data-icon-link]]:outline-none focus-visible:[&_[data-icon-link]]:ring-2 focus-visible:[&_[data-icon-link]]:ring-inset focus-visible:[&_[data-icon-link]]:ring-olive-500/40 dark:[&_[data-icon-link]]:text-sand-50 [&_[data-icon-name]]:w-full [&_[data-icon-name]]:truncate [&_[data-icon-name]]:text-center [&_[data-icon-name]]:text-[10px] [&_[data-icon-name]]:leading-4 [&_[data-icon-name]]:text-sand-600 sm:[&_[data-icon-name]]:text-[11px] dark:[&_[data-icon-name]]:text-sand-400 [&_[data-icon-placeholder]]:h-8 [&_[data-icon-placeholder]]:w-8 [&_[data-icon-new]]:absolute [&_[data-icon-new]]:left-2 [&_[data-icon-new]]:top-2 [&_[data-icon-new]]:z-10 [&_[data-icon-new]]:h-1.5 [&_[data-icon-new]]:w-1.5 [&_[data-icon-new]]:rounded-full [&_[data-icon-new]]:bg-olive-500'
+  '[&_[data-icon-tile]]:relative [&_[data-icon-tile]]:aspect-square [&_[data-icon-tile]]:min-h-0 [&_[data-icon-tile]]:overflow-hidden [&_[data-icon-tile]]:rounded-section [&_[data-icon-tile]]:border [&_[data-icon-tile]]:border-transparent [&_[data-icon-tile]]:bg-sand-100 [&_[data-icon-tile]]:transition-colors [&_[data-icon-tile]:hover]:border-sand-300 dark:[&_[data-icon-tile]]:bg-sand-900 dark:[&_[data-icon-tile]:hover]:border-sand-700 [&_[data-icon-link]]:flex [&_[data-icon-link]]:h-full [&_[data-icon-link]]:w-full [&_[data-icon-link]]:flex-col [&_[data-icon-link]]:items-center [&_[data-icon-link]]:justify-center [&_[data-icon-link]]:gap-3 [&_[data-icon-link]]:px-1.5 [&_[data-icon-link]]:pb-1.5 [&_[data-icon-link]]:pt-3 [&_[data-icon-link]]:text-sand-900 [&_[data-icon-link]]:outline-none focus-visible:[&_[data-icon-link]]:ring-2 focus-visible:[&_[data-icon-link]]:ring-inset focus-visible:[&_[data-icon-link]]:ring-accent/40 dark:[&_[data-icon-link]]:text-sand-50 [&_[data-icon-name]]:w-full [&_[data-icon-name]]:truncate [&_[data-icon-name]]:text-center [&_[data-icon-name]]:text-[10px] [&_[data-icon-name]]:leading-4 [&_[data-icon-name]]:text-sand-600 sm:[&_[data-icon-name]]:text-[11px] dark:[&_[data-icon-name]]:text-sand-400 [&_[data-icon-placeholder]]:h-8 [&_[data-icon-placeholder]]:w-8 [&_[data-icon-new]]:absolute [&_[data-icon-new]]:left-2 [&_[data-icon-new]]:top-2 [&_[data-icon-new]]:z-10 [&_[data-icon-new]]:h-1.5 [&_[data-icon-new]]:w-1.5 [&_[data-icon-new]]:rounded-full [&_[data-icon-new]]:bg-accent'
 
 export function IconsOverview({
   icons,
@@ -132,9 +132,9 @@ export function IconsOverview({
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">{icons.length}</strong> icons</span>
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">4</strong> styles</span>
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">{ICON_CATEGORIES.length}</strong> categories</span>
-            {/* The key to the olive dot a new icon carries in the grid's corner. */}
+            {/* The key to the accent dot a new icon carries in the grid's corner. */}
             <span className="inline-flex items-center gap-1.5">
-              <i aria-hidden className="h-1.5 w-1.5 rounded-full bg-olive-500" />
+              <i aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
               <span><strong className="font-bold text-sand-900 dark:text-sand-50">{icons.filter((icon) => icon.isNew).length}</strong> new</span>
             </span>
           </div>
@@ -142,7 +142,7 @@ export function IconsOverview({
             <button
               type="button"
               onClick={() => void copyInstall()}
-              className="inline-flex h-8 max-w-full items-center gap-2 rounded-full border border-sand-300 px-3.5 font-mono text-[11px] text-sand-800 hover:border-sand-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-700 dark:text-sand-200 dark:hover:border-sand-600"
+              className="inline-flex h-8 max-w-full items-center gap-2 rounded-full border border-sand-300 px-3.5 font-mono text-[11px] text-sand-800 hover:border-sand-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-200 dark:hover:border-sand-600"
             >
               {installCopied ? <Check weight="regular" size={13} className="shrink-0" /> : <Copy weight="regular" size={13} className="shrink-0" />}
               <span className="truncate">{ALL_ICONS_INSTALL}</span>
@@ -169,7 +169,7 @@ export function IconsOverview({
                 if (event.target.value) loadMetadata()
               }}
               placeholder={`Search ${category ? icons.length : ICON_COUNT} icons by name or tag`}
-              className="h-10 w-full rounded-full border border-sand-300 bg-sand-100 pl-10 pr-3 text-sm text-sand-900 outline-none placeholder:text-sand-600 focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-400"
+              className="h-10 w-full rounded-full border border-sand-300 bg-sand-100 pl-10 pr-3 text-sm text-sand-900 outline-none placeholder:text-sand-600 focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-400"
             />
           </label>
           <div className="w-full flex-[1_1_390px] sm:min-w-[350px] xl:min-w-[420px] xl:flex-[0_0_420px] min-[1440px]:min-w-[460px] min-[1440px]:flex-[0_0_460px]">
@@ -190,7 +190,7 @@ export function IconsOverview({
             onClick={reset}
             aria-label="Reset icon controls"
             title="Reset"
-            className="flex h-10 w-10 items-center justify-center rounded-full text-sand-600 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-sand-600 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
           >
             <ArrowCounterClockwise weight="regular" size={16} />
           </button>

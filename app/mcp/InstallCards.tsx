@@ -171,7 +171,7 @@ function Toast({ message }: { message: string | null }) {
           className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-2 rounded-full border border-sand-200 bg-sand-100/95 px-4 py-2.5 text-sm font-semibold text-sand-900 shadow-xl backdrop-blur dark:border-sand-700 dark:bg-sand-800/95 dark:text-sand-50"
           role="status"
         >
-          <Check weight="regular" size={15} className="text-olive-600 dark:text-olive-500" />
+          <Check weight="regular" size={15} className="text-success" />
           {message}
         </motion.div>
       ) : null}
@@ -218,11 +218,11 @@ function CodeBlock({
       <button
         type="button"
         onClick={onCopy}
-        className="shrink-0 rounded-control p-2 text-sand-600 transition-all hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 active:scale-90 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-100"
+        className="shrink-0 rounded-control p-2 text-sand-600 transition-all hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-90 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-100"
         aria-label={`Copy ${label}`}
       >
         {copied ? (
-          <Check weight="regular" size={14} className="text-olive-600 dark:text-olive-400" />
+          <Check weight="regular" size={14} className="text-success" />
         ) : (
           <Copy weight="regular" size={14} />
         )}
@@ -303,7 +303,7 @@ export function InstallCards() {
                   setTestCopied(false)
                 }}
                 aria-pressed={active}
-                className={`relative flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-inset px-2 py-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:gap-2 sm:px-4 sm:text-sm ${
+                className={`relative flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-inset px-2 py-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:gap-2 sm:px-4 sm:text-sm ${
                   active
                     ? 'text-sand-900 dark:text-sand-50'
                     : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
@@ -339,7 +339,7 @@ export function InstallCards() {
                     type="button"
                     onClick={() => setScope(s.id)}
                     aria-pressed={active}
-                    className={`relative whitespace-nowrap px-3 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 ${
+                    className={`relative whitespace-nowrap px-3 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/40 ${
                       active
                         ? 'text-sand-900 dark:text-sand-50'
                         : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'

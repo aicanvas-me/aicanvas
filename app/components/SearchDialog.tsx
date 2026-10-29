@@ -46,8 +46,8 @@ import { wordVariants } from '../lib/search-match'
 import { DOCS_NAV } from '../docs/_lib/nav'
 
 type Tab = 'all' | 'systems' | 'templates' | 'components' | 'pages'
-// What it costs to install: Andromeda Pro is all paid (its own cyan), a
-// standalone is paid when badged Premium (olive), and Andromeda Legacy and the
+// What it costs to install: Andromeda Pro is all paid, a
+// standalone is paid when badged Premium, and Andromeda Legacy and the
 // other standalones are free. Categories and pages carry no tier.
 type Tier = 'pro' | 'premium' | 'free'
 type Item = {
@@ -232,10 +232,10 @@ const TIER_FILTER: Record<string, 'free' | 'paid'> = { free: 'free', mit: 'free'
 const inTier = (item: Item, want: 'free' | 'paid') => (want === 'free' ? item.tier === 'free' : item.tier === 'pro' || item.tier === 'premium')
 
 // Same chip shape as SystemTierChip, with the tier colours the component grid
-// already uses: Pro cyan, premium standalone olive, free neutral.
+// already uses: Pro and premium take the accent, free is neutral.
 const TIER_CHIP: Record<Tier, string> = {
-  pro: 'bg-cyan-500/10 text-cyan-700 ring-cyan-500/40 dark:text-cyan-400',
-  premium: 'bg-olive-500/10 text-olive-600 ring-olive-500/40 dark:text-olive-400',
+  pro: 'bg-accent/10 text-accent ring-accent/40',
+  premium: 'bg-accent/10 text-accent ring-accent/40',
   free: 'text-sand-600 ring-sand-300 dark:text-sand-400 dark:ring-sand-700',
 }
 

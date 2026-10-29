@@ -54,7 +54,7 @@ export default async function MemberLayout({ children }: { children: ReactNode }
             </h1>
             {showTier && (
               isPremium ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-olive-500 px-3 py-1 text-xs font-semibold text-sand-950">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
                   <Lightning weight="regular" size={12} />
                   Premium
                 </span>

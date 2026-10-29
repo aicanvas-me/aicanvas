@@ -18,22 +18,22 @@ import { CARD, EYEBROW, PageHero, PageShell } from '../components/PageKit'
 
 // Inputs sit one step lighter than the card in light and one step darker in
 // dark, so a field reads as a well in the surface in both themes. The focus
-// border uses olive-600 on light: olive-500 is too pale on sand-50 to mark
-// focus on its own.
+// border is the accent, which stays dark enough on sand-50 to mark focus on
+// its own.
 const INPUT_CLASS =
-  'block w-full rounded-control border border-sand-300 bg-sand-50 px-4 py-2.5 text-base text-sand-900 outline-none transition-[border-color,box-shadow] placeholder:text-sand-600 hover:border-sand-400 focus:border-olive-600 focus:ring-4 focus:ring-olive-500/15 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-700 dark:focus:border-olive-500 dark:focus:ring-olive-500/20 md:text-sm'
+  'block w-full rounded-control border border-sand-300 bg-sand-50 px-4 py-2.5 text-base text-sand-900 outline-none transition-[border-color,box-shadow] placeholder:text-sand-600 hover:border-sand-400 focus:border-accent focus:ring-4 focus:ring-accent/15 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-700 dark:focus:ring-accent/20 md:text-sm'
 const LABEL_CLASS = `mb-2 block ${EYEBROW}`
 // The form card: the v3 surface, centred under the hero, rising in on the
 // hero's stagger so the page arrives as one sequence.
 const CARD_CLASS = `aic-hero-rise relative mx-auto mt-12 w-full max-w-2xl overflow-hidden sm:mt-14 ${CARD}`
 
-// A thin olive light on the card's top edge, the same mark the "Still have a
+// A thin accent light on the card's top edge, the same mark the "Still have a
 // question?" card carries on the pages that link here.
 function CardLight() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-olive-600 to-transparent dark:via-olive-400"
+      className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-accent to-transparent"
     />
   )
 }
@@ -75,7 +75,7 @@ export default function ContactPage() {
     <PageShell>
       <PageHero
         pill="Get in touch"
-        pillIcon={<EnvelopeSimple weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />}
+        pillIcon={<EnvelopeSimple weight="regular" size={12} className="text-accent" aria-hidden />}
         title="Contact"
         size="md"
         sub={
@@ -96,8 +96,8 @@ export default function ContactPage() {
             style={{ animationDelay: '0.05s' }}
           >
             <CardLight />
-            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-olive-600/30 bg-olive-500/10 dark:border-olive-500/30">
-              <CheckCircle weight="regular" size={24} className="text-olive-600 dark:text-olive-400" />
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-success/30 bg-success/10">
+              <CheckCircle weight="regular" size={24} className="text-success" />
             </span>
             <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Message sent</h2>
             <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-sand-700 dark:text-sand-300">
@@ -137,7 +137,7 @@ export default function ContactPage() {
                     the required state assistive tech announces comes from each
                     input's `required` attribute. Matches /feedback. */}
                 <label htmlFor="name" className={LABEL_CLASS}>
-                  Name <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
+                  Name <span aria-hidden="true" className="text-accent">*</span>
                 </label>
                 <input
                   id="name"
@@ -155,7 +155,7 @@ export default function ContactPage() {
 
               <div>
                 <label htmlFor="email" className={LABEL_CLASS}>
-                  Email <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
+                  Email <span aria-hidden="true" className="text-accent">*</span>
                 </label>
                 <input
                   id="email"
@@ -173,7 +173,7 @@ export default function ContactPage() {
 
             <div>
               <label htmlFor="subject" className={LABEL_CLASS}>
-                Subject <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
+                Subject <span aria-hidden="true" className="text-accent">*</span>
               </label>
               <input
                 id="subject"
@@ -189,7 +189,7 @@ export default function ContactPage() {
 
             <div>
               <label htmlFor="message" className={LABEL_CLASS}>
-                Message <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
+                Message <span aria-hidden="true" className="text-accent">*</span>
               </label>
               <textarea
                 id="message"

@@ -15,7 +15,7 @@ import { DocsCopyPage } from './DocsCopyPage'
 
 export type { TocItem }
 
-const LINK = 'font-semibold text-olive-600 underline-offset-4 hover:text-olive-800 hover:underline dark:text-olive-400 dark:hover:text-olive-300'
+const LINK = 'font-semibold text-accent underline-offset-4 hover:text-accent/70 hover:underline'
 
 export function DocPage({
   href,

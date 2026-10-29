@@ -75,7 +75,7 @@ export function ComponentFilter({
               tabIndex={on ? 0 : -1}
               onClick={() => setSelected(t)}
               onKeyDown={(e) => onKeyDown(e, i)}
-              className={`inline-flex h-8 shrink-0 items-center whitespace-nowrap rounded-full border px-4 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+              className={`inline-flex h-8 shrink-0 items-center whitespace-nowrap rounded-full border px-4 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
                 on
                   ? 'border-sand-900 bg-sand-900 text-sand-50 dark:border-sand-50 dark:bg-sand-50 dark:text-sand-950'
                   : 'border-sand-300 text-sand-700 hover:border-sand-400 hover:text-sand-900 dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100'

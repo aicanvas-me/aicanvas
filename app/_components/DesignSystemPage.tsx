@@ -40,10 +40,10 @@ export function PageFrame({
 export const PAGE_TOP = 'pt-10 sm:pt-16'
 export const PAGE_BOTTOM = 'pb-16 sm:pb-20'
 
-// The small olive label above the page title.
+// The small accent label above the page title.
 export function PageOverline({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <p className={`text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400 ${className}`}>
+    <p className={`text-xs font-semibold uppercase tracking-wider text-accent ${className}`}>
       {children}
     </p>
   )

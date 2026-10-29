@@ -84,7 +84,7 @@ export function PreviewStage({
               type="button"
               onClick={() => setSurface(option)}
               aria-pressed={surface === option}
-              className={`h-7 rounded-full px-3 text-xs font-semibold capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+              className={`h-7 rounded-full px-3 text-xs font-semibold capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
                 surface === option
                   ? surface === 'dark'
                     ? 'bg-white/10 text-white'

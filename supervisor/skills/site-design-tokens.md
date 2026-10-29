@@ -24,23 +24,23 @@ Always `bg-sand-950` — never zinc, never black, never transparent.
 | `sand-900` | `#1B1B1C` | Dark card / panel surfaces |
 | `sand-950` | `#0E0E0F` | **Dark page + component preview bg** |
 
-## Olive scale (accent)
+## Accent roles (neutral, ruled 2026-10-29)
 
-| Token | Hex | Use |
-|---|---|---|
-| `olive-400` | `#DAE4A0` | Dark-mode accent text, hover state, gradient end |
-| `olive-500` | `#A8B94D` | **Accent fill** — buttons, badges, highlights. On DARK surfaces it is also accent text |
-| `olive-600` | `#869631` | **Light-mode accent text**, pressed / active state |
-| `olive-700` | `#56631F` | Small decorative fill on light |
-| `olive-800` | `#4A551A` | Light-mode accent hover |
+The site has no brand hue. The accent is ink that flips with the theme, defined once in `app/globals.css` (`--accent`, `--accent-foreground`, `--success` in the `:root` / `.dark` blocks, named in `@theme`). Change a value there and every surface follows.
 
-> Olive buttons must use `text-sand-950` — NOT white. Olive has insufficient contrast with white.
+| Utility | Light | Dark | Use |
+|---|---|---|---|
+| `accent` | `sand-900` | `sand-50` | Primary fill, emphasised text and icons, links, selected borders, focus rings (`ring-accent/40`), tints (`bg-accent/10`) |
+| `accent-foreground` | `sand-50` | `sand-950` | Text and icons ON an accent fill |
+| `success` | `#047857` | `#34D399` | Confirmation only: copied, sent, saved |
+| red family | `red-700` | `red-400` | Errors (unchanged) |
+
+> A role class needs no `dark:` half; it flips on its own. An accent link hovers to
+> `hover:text-accent/70`; an accent fill hovers to `hover:bg-accent/85`.
 >
-> The top of the ramp is for dark surfaces only. On a light page olive-400/500
-> measure 1.2 and 2.0 against the background, so an accent link painted with them
-> is invisible. Light accent text is `olive-600` (~3:1, a deliberate call carried
-> by size and weight), hover is `olive-800`. Selected text is neutral, never olive:
-> `sand-300` under `sand-900` on light, `sand-700` under `sand-50` on dark.
+> Olive and cyan scales still exist in `@theme` for the frozen cancellation flow and
+> the studio tools. Site chrome never uses them, nor any other hue. Selected text is
+> neutral: `sand-300` under `sand-900` on light, `sand-700` under `sand-50` on dark.
 
 ## Light mode
 
@@ -66,22 +66,19 @@ read before changing anything here.
 | Primary text, headings | `text-sand-900` | `dark:text-sand-50` |
 | Body text | `text-sand-700` | `dark:text-sand-300` |
 | Secondary, muted, helper | `text-sand-600` | `dark:text-sand-400` |
-| Accent text | `text-olive-600` | `dark:text-olive-400` |
-| Accent hover | `text-olive-800` | `dark:text-olive-300` |
+| Accent text | `text-accent` | (same class) |
+| Accent hover | `hover:text-accent/70` | (same class) |
 
 Three traps, all of them measured rather than guessed:
 
-- **The top of the olive ramp does not work on light.** olive-400/500 land near 1.2
-  and 2.0 against a light page and cannot carry text. Accent TEXT on light is
-  `olive-600` — a deliberate design call at roughly 3:1, carried by size and
-  weight; if a small accent label ever looks washed out, `olive-700` (6.0) is the
-  higher-contrast step. Hover stays `olive-800`. `bg-olive-500` remains the accent
-  FILL in both themes, always carrying `text-sand-950`; a tiny decorative fill
-  (the pulsing dot) may deepen to `olive-700` on light where olive-500 would
-  vanish.
+- **An accent fill takes `text-accent-foreground`, never a fixed sand step.** The
+  fill is near-black on light and near-white on dark, so `text-sand-950` on it
+  vanishes on light. A label that sits over a separate accent pill (a sliding
+  segmented control) needs the same class on the label.
+- **`accent` follows the theme, so it vanishes on a surface that is dark in both
+  themes** (the component preview stage, its badges). Those take fixed `sand-50`.
 - **`text-sand-500` is not a text colour in light mode** (3.9 on the page — the
-  bar here is gray legibility, and olive-600 above is a deliberate accent
-  exception below it). Use `sand-600` for anything a reader reads; `sand-500` is
+  bar here is gray legibility). Use `sand-600` for anything a reader reads; `sand-500` is
   fine only on a decorative glyph such as a separator dot or a chevron.
 - **Never change an element's DARK value while adding its light half.** Dark is the
   default theme; a sweep that pairs `text-sand-500` to `dark:text-sand-400` because
@@ -110,7 +107,7 @@ Three traps, all of them measured rather than guessed:
 | Primary text | `text-sand-50` |
 | Secondary / muted | `text-sand-400` |
 | Placeholder / icon | `text-sand-500` |
-| Accent | `text-olive-400` |
+| Accent | `text-sand-50` (fixed: the stage is dark in both themes) |
 
 ## Borders in dark preview context
 
@@ -134,7 +131,7 @@ Site chrome never writes a size like `rounded-xl`. It names the role, and `app/g
 | `rounded-tag` | 4px | tier labels, the tiniest marks |
 | `rounded-full` | pill | chips, prompts, segmented pickers, switches, search and filter fields, round icon buttons |
 
-Colours follow the same rule: use the sand, olive, ember, cyan and `glow` tokens; an inline style or gradient takes `var(--color-…)` or `color-mix(in srgb, var(--color-…) N%, transparent)`, never a copied hex. Brand logos, canvas/WebGL colour tables and the design systems' own `--at-*` values are the exceptions.
+Colours follow the same rule: use the sand scale, the accent roles (`accent`, `accent-foreground`, `success`) and `glow`; an inline style or gradient takes `var(--color-…)` or `color-mix(in srgb, var(--color-…) N%, transparent)`, never a copied hex. Brand logos, canvas/WebGL colour tables and the design systems' own `--at-*` values are the exceptions.
 
 ## Typography weights
 

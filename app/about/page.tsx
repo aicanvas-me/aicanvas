@@ -35,7 +35,7 @@ function Chapter({ title, children }: { title: ReactNode; children: ReactNode })
 }
 
 // The pull quotes leave the reading column and set the pace of the page. The
-// second sentence carries the olive accent, the way the homepage hero's
+// second sentence carries the accent, the way the homepage hero's
 // second line does; the two halves stay inline so the quote reads as one line.
 function PullQuote({ lead, accent }: { lead: ReactNode; accent: ReactNode }) {
   return (
@@ -46,13 +46,13 @@ function PullQuote({ lead, accent }: { lead: ReactNode; accent: ReactNode }) {
             glyph sits at the top of its line box. */}
         <span
           aria-hidden="true"
-          className="mx-auto flex h-12 w-12 items-center justify-center rounded-card border border-sand-300 bg-sand-100 text-olive-600 dark:border-sand-700 dark:bg-sand-900 dark:text-olive-400"
+          className="mx-auto flex h-12 w-12 items-center justify-center rounded-card border border-sand-300 bg-sand-100 text-accent dark:border-sand-700 dark:bg-sand-900"
         >
           <span className="translate-y-3.5 text-6xl font-extrabold leading-none">&ldquo;</span>
         </span>
         <blockquote className="mt-7">
           <p className="text-balance text-2xl font-bold leading-snug tracking-tight text-sand-900 sm:text-4xl sm:leading-tight dark:text-sand-50">
-            {lead} <span className="text-olive-600 dark:text-olive-500">{accent}</span>
+            {lead} <span className="text-accent">{accent}</span>
           </p>
         </blockquote>
       </figure>
@@ -73,7 +73,7 @@ export default function AboutPage() {
       {/* ── Hook ── */}
       <PageHero
         pill="About"
-        pillIcon={<Info weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />}
+        pillIcon={<Info weight="regular" size={12} className="text-accent" aria-hidden />}
         title="Stop building on sand"
         sub={
           <p className="text-pretty">

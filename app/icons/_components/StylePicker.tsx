@@ -41,11 +41,11 @@ export function StylePicker({
               compact
                 ? 'h-8 rounded-full px-1'
                 : 'relative h-16 rounded-card border px-2 py-1.5'
-            } flex min-w-0 ${compact ? 'flex-row' : 'flex-col'} items-center justify-center gap-1 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+            } flex min-w-0 ${compact ? 'flex-row' : 'flex-col'} items-center justify-center gap-1 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
               selected
                 ? compact
                   ? 'bg-sand-50 text-sand-900 shadow-sm dark:bg-sand-800 dark:text-sand-50'
-                  : 'border-olive-500 bg-olive-500/5 text-sand-900 dark:text-sand-50'
+                  : 'border-accent bg-accent/5 text-sand-900 dark:text-sand-50'
                 : compact
                   ? 'text-sand-600 hover:bg-sand-200/70 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/70 dark:hover:text-sand-100'
                   : 'border-sand-200 bg-sand-100 text-sand-600 hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700'
@@ -75,8 +75,8 @@ export function StylePicker({
               className={`${compact ? 'h-1.5 w-1.5 shrink-0 rounded-full xl:h-auto xl:w-auto xl:rounded-none xl:text-[8px]' : 'text-[9px]'} font-semibold ${
                 style.tier === 'Free'
                   ? compact
-                    ? 'bg-olive-600 text-olive-600 dark:bg-olive-400 dark:text-olive-400 xl:bg-transparent dark:xl:bg-transparent'
-                    : 'text-olive-600 dark:text-olive-400'
+                    ? 'bg-accent text-accent xl:bg-transparent'
+                    : 'text-accent'
                   : compact
                     ? 'bg-sand-600 text-sand-600 dark:bg-sand-400 dark:text-sand-400 xl:bg-transparent dark:xl:bg-transparent'
                     : 'text-sand-600 dark:text-sand-400'

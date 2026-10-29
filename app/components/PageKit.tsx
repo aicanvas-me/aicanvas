@@ -43,7 +43,7 @@ export function PageShell({ children }: { children: ReactNode }) {
 // The hero: the homepage's centred stack. The pill rises in, the heading only
 // slides (it is the LCP element, so it paints opaque from the first frame),
 // then the line under it and the actions. CSS animations, so it renders from
-// the server HTML with no script to wait for. `accent` is the olive second
+// the server HTML with no script to wait for. `accent` is the accent-coloured second
 // line, a step smaller than the heading, as on the homepage. `size="md"` is
 // the quieter heading for reference pages (policies, credits).
 export function PageHero({
@@ -82,7 +82,7 @@ export function PageHero({
           <>
             <br />
             <span
-              className={`mt-3 inline-block text-olive-600 dark:text-olive-500 ${
+              className={`mt-3 inline-block text-accent ${
                 size === 'lg' ? 'text-2xl sm:text-4xl' : 'text-xl sm:text-3xl'
               }`}
             >
@@ -158,7 +158,7 @@ export function CtaBand({
     <section className="mx-auto mt-20 max-w-4xl sm:mt-32">
       <Reveal
         y={12}
-        className="relative overflow-hidden rounded-section border border-olive-500/20 px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
+        className="relative overflow-hidden rounded-section border border-accent/20 px-6 py-12 text-center ring-1 ring-inset ring-accent/10 sm:py-16"
       >
         <TopLight />
         {eyebrow && <p className={`relative ${EYEBROW}`}>{eyebrow}</p>}

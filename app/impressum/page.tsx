@@ -21,7 +21,7 @@ const DE = 'mt-4 leading-relaxed text-sand-600 dark:text-sand-400'
 const EN =
   'mt-3 border-l-2 border-sand-200 pl-4 leading-relaxed text-sand-600 dark:border-sand-800 dark:text-sand-500'
 const LINK =
-  'font-medium text-olive-600 underline-offset-4 hover:text-olive-800 hover:underline dark:text-olive-400 dark:hover:text-olive-300'
+  'font-medium text-accent underline-offset-4 hover:text-accent/70 hover:underline'
 
 export default function ImpressumPage() {
   return (
@@ -29,7 +29,7 @@ export default function ImpressumPage() {
       <PageHero
         size="md"
         pill="Legal"
-        pillIcon={<Scales weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />}
+        pillIcon={<Scales weight="regular" size={12} className="text-accent" aria-hidden />}
         title="Impressum"
         sub={
           // Each line wraps at its slash, so the German sits over its English

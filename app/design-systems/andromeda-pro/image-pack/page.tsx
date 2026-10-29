@@ -1,6 +1,6 @@
 // The Andromeda Pro image pack: 18 astronaut concepts in light and dark, free to
 // download, plus the two Pro files that explain how the set stays consistent.
-// Site chrome (sand/olive, Manrope) like the components index: no Andromeda
+// Site chrome (sand/accent, Manrope) like the components index: no Andromeda
 // component renders here.
 import { DownloadSimple } from '@phosphor-icons/react/dist/ssr'
 import { buttonClasses } from '../../../components/buttonClasses'

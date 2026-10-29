@@ -36,22 +36,22 @@ import { CARD, EYEBROW, PageHero, PageShell } from '../components/PageKit'
 
 // Inputs sit one step lighter than the card in light and one step darker in
 // dark, so a field reads as a well in the surface in both themes. The focus
-// border uses olive-600 on light: olive-500 is too pale on sand-50 to mark
-// focus on its own.
+// border is the accent, which stays dark enough on sand-50 to mark focus on
+// its own.
 const INPUT_CLASS =
-  'block w-full rounded-control border border-sand-300 bg-sand-50 px-4 py-2.5 text-base text-sand-900 outline-none transition-[border-color,box-shadow] placeholder:text-sand-600 hover:border-sand-400 focus:border-olive-600 focus:ring-4 focus:ring-olive-500/15 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-700 dark:focus:border-olive-500 dark:focus:ring-olive-500/20 md:text-sm'
+  'block w-full rounded-control border border-sand-300 bg-sand-50 px-4 py-2.5 text-base text-sand-900 outline-none transition-[border-color,box-shadow] placeholder:text-sand-600 hover:border-sand-400 focus:border-accent focus:ring-4 focus:ring-accent/15 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-700 dark:focus:ring-accent/20 md:text-sm'
 const LABEL_CLASS = `mb-2 block ${EYEBROW}`
 // The form card: the v3 surface, centred under the hero, rising in on the
 // hero's stagger so the page arrives as one sequence.
 const CARD_CLASS = `aic-hero-rise relative mx-auto mt-12 w-full max-w-2xl overflow-hidden sm:mt-14 ${CARD}`
 
-// A thin olive light on the card's top edge, the same mark the "Still have a
+// A thin accent light on the card's top edge, the same mark the "Still have a
 // question?" card carries on the pages that link to /contact.
 function CardLight() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-olive-600 to-transparent dark:via-olive-400"
+      className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-accent to-transparent"
     />
   )
 }
@@ -65,11 +65,11 @@ const CATEGORIES: { id: CategoryId; label: string; icon: React.ReactNode }[] = [
   { id: 'other', label: 'Something else', icon: <DotsThreeCircle weight="regular" size={18} /> },
 ]
 
-// Rating rail, red → amber → olive. Same visual language as the mood-tracker
+// Rating rail, red → amber → success green. Same visual language as the mood-tracker
 // standalone (colored rail, white puck with an accent ring) but built on a
 // native range input, so drag, touch, arrow keys, Home/End and the screen-reader
 // slider semantics all come from the platform instead of pointer handlers.
-const RAIL = 'linear-gradient(90deg, #B4553A 0%, #C08A3E 35%, #C8B44A 65%, var(--color-olive-500) 100%)'
+const RAIL = 'linear-gradient(90deg, #B4553A 0%, #C08A3E 35%, #C8B44A 65%, var(--color-success) 100%)'
 
 // The ring takes the rail's own color at the current stop, so the puck reads as
 // picking up whatever it is sitting on. Eleven fixed samples of RAIL rather than
@@ -77,10 +77,10 @@ const RAIL = 'linear-gradient(90deg, #B4553A 0%, #C08A3E 35%, #C8B44A 65%, var(-
 // both shorter and exact. Regenerate this alongside any change to RAIL.
 const RING = [
   '#B4553A', '#B7643B', '#BB733C', '#BE823D', '#C19140', '#C49F44',
-  '#C7AD48', '#C3B54A', '#BAB64B', '#B1B84C', 'var(--color-olive-500)',
+  '#C7AD48', '#C3B54A', '#BAB64B', '#B1B84C', 'var(--color-success)',
 ]
 
-// Dark core + olive ring, so the puck reads as a hole punched in the rail rather
+// Dark core + colored ring, so the puck reads as a hole punched in the rail rather
 // than a light dot floating over a dark page. The shadow is two layers: a tight
 // contact shadow that seats it on the rail, plus a wider soft one that lifts it.
 //
@@ -117,14 +117,13 @@ const THUMB = [
 // utilities in one string would resolve by CSS order rather than by intent.
 //
 // Unselected chips share the inputs' well colour so the whole form reads as one
-// set of fields; the selected one takes the olive hairline (olive-600 on light,
-// where olive-500 is too pale to read as a border) and an olive icon.
+// set of fields; the selected one takes the accent hairline and an accent icon.
 const CHIP_BASE =
-  'flex cursor-pointer items-center rounded-control border px-4 text-sm font-semibold transition-colors has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-olive-500/20'
+  'flex cursor-pointer items-center rounded-control border px-4 text-sm font-semibold transition-colors has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-accent/20'
 
 function chipTone(selected: boolean): string {
   return selected
-    ? 'border-olive-600 bg-olive-500/10 text-sand-900 dark:border-olive-500 dark:text-sand-50'
+    ? 'border-accent bg-accent/10 text-sand-900 dark:text-sand-50'
     : 'border-sand-300 bg-sand-50 text-sand-700 hover:border-sand-400 hover:text-sand-900 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-100'
 }
 
@@ -196,7 +195,7 @@ export default function FeedbackPage() {
     <PageShell>
       <PageHero
         pill="Shape what's next"
-        pillIcon={<Lightbulb weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />}
+        pillIcon={<Lightbulb weight="regular" size={12} className="text-accent" aria-hidden />}
         title="Feedback"
         size="md"
         sub={
@@ -217,8 +216,8 @@ export default function FeedbackPage() {
             style={{ animationDelay: '0.05s' }}
           >
             <CardLight />
-            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-olive-600/30 bg-olive-500/10 dark:border-olive-500/30">
-              <CheckCircle weight="regular" size={24} className="text-olive-600 dark:text-olive-400" />
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-success/30 bg-success/10">
+              <CheckCircle weight="regular" size={24} className="text-success" />
             </span>
             <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Got it, thank you</h2>
             <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-sand-700 dark:text-sand-300">
@@ -268,7 +267,7 @@ export default function FeedbackPage() {
                       className="sr-only"
                     />
                     <span
-                      className={`shrink-0 transition-colors ${category === c.id ? 'text-olive-600 dark:text-olive-400' : ''}`}
+                      className={`shrink-0 transition-colors ${category === c.id ? 'text-accent' : ''}`}
                     >
                       {c.icon}
                     </span>
@@ -285,7 +284,7 @@ export default function FeedbackPage() {
                     How has AI Canvas been so far?
                   </label>
                   <span
-                    className={`text-xs font-semibold tabular-nums ${rated ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-500'}`}
+                    className={`text-xs font-semibold tabular-nums ${rated ? 'text-accent' : 'text-sand-600 dark:text-sand-500'}`}
                   >
                     {rated ? `${score} / 10` : 'optional'}
                   </span>
@@ -298,7 +297,7 @@ export default function FeedbackPage() {
                     than the thumb pushes the puck above the rail. Keeping the
                     three equal makes top-aligned and centred the same thing,
                     which is why there is no margin offset here to drift. */}
-                <div className="relative mt-1 h-9 w-full rounded-full has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-olive-500/40">
+                <div className="relative mt-1 h-9 w-full rounded-full has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-accent/40">
                   <div
                     aria-hidden="true"
                     className={`pointer-events-none absolute inset-x-0 top-1/2 h-1 -translate-y-1/2 rounded-full transition-opacity ${rated ? 'opacity-100' : 'opacity-40'}`}
@@ -354,7 +353,7 @@ export default function FeedbackPage() {
                     : 'Your feedback'}{' '}
                 {/* Decorative: the required state itself comes from the input's
                     `required` attribute, which is what assistive tech reads. */}
-                <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
+                <span aria-hidden="true" className="text-accent">*</span>
               </label>
               <textarea
                 id="message"
@@ -377,7 +376,7 @@ export default function FeedbackPage() {
             <div>
               <label htmlFor="email" className={LABEL_CLASS}>
                 {category === 'billing' ? 'Email used at checkout' : 'Email'}{' '}
-                <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
+                <span aria-hidden="true" className="text-accent">*</span>
               </label>
               <input
                 id="email"

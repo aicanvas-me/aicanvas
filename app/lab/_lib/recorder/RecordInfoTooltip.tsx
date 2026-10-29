@@ -36,7 +36,7 @@ export function RecordInfoTooltip() {
         aria-label="About the recorder"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
-        className="flex h-7 w-7 items-center justify-center rounded-lg border border-sand-300 bg-sand-50/90 text-sand-600 backdrop-blur transition-colors hover:border-sand-400 hover:text-sand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-olive-500 dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-400 dark:hover:border-sand-600 dark:hover:text-sand-100"
+        className="flex h-7 w-7 items-center justify-center rounded-lg border border-sand-300 bg-sand-50/90 text-sand-600 backdrop-blur transition-colors hover:border-sand-400 hover:text-sand-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-400 dark:hover:border-sand-600 dark:hover:text-sand-100"
       >
         <Info weight="regular" size={13} />
       </button>

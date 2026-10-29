@@ -25,13 +25,13 @@ const PALETTE = {
   light: {
     'surface-base': 'var(--color-sand-50)', 'surface-raised': 'var(--color-sand-100)',
     'text-primary': 'var(--color-sand-900)', 'text-secondary': 'var(--color-sand-600)', 'text-faint': 'var(--color-sand-500)',
-    'accent-400': 'var(--color-olive-500)', 'accent-300': 'var(--color-olive-600)', 'accent-on': 'var(--color-sand-950)',
+    'accent-400': 'var(--color-accent)', 'accent-300': 'var(--color-accent)', 'accent-on': 'var(--color-sand-950)',
     'border-subtle': 'var(--color-sand-200)', 'border-base': 'var(--color-sand-300)',
   },
   dark: {
     'surface-base': 'var(--color-sand-950)', 'surface-raised': 'var(--color-sand-900)',
     'text-primary': 'var(--color-sand-50)', 'text-secondary': 'var(--color-sand-400)', 'text-faint': 'var(--color-sand-500)',
-    'accent-400': 'var(--color-olive-500)', 'accent-300': 'var(--color-olive-400)', 'accent-on': 'var(--color-sand-950)',
+    'accent-400': 'var(--color-accent)', 'accent-300': 'var(--color-accent)', 'accent-on': 'var(--color-sand-950)',
     'border-subtle': 'var(--color-sand-800)', 'border-base': 'var(--color-sand-700)',
   },
 } as const

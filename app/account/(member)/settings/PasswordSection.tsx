@@ -158,7 +158,7 @@ export function PasswordSection({ hasPassword, email }: Props) {
           </div>
         )}
         {done && (
-          <div className="rounded-control border border-olive-500/30 bg-olive-500/10 px-3 py-2 text-sm text-sand-700 dark:text-sand-200">
+          <div className="rounded-control border border-accent/30 bg-accent/10 px-3 py-2 text-sm text-sand-700 dark:text-sand-200">
             {hasPassword
               ? 'Password updated.'
               : 'Password set. You can now sign in with your email and password too.'}

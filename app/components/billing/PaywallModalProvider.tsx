@@ -177,7 +177,7 @@ function PaywallModalView({
             <Link
               href="/welcome"
               onClick={onClose}
-              className="font-medium text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+              className="font-medium text-accent transition-colors hover:text-accent/70"
             >
               Sign in with the address you used at checkout
             </Link>

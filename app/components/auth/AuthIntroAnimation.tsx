@@ -6,7 +6,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 // ─── AuthIntroAnimation ──────────────────────────────────────────────────────
 // Generic two-phase intro animation used atop both auth modals. Cycles between
 // a "before" illustration + headline and an "after" illustration + headline,
-// with a flash burst, olive aura, and slide-in motion on each transition.
+// with a flash burst, accent aura, and slide-in motion on each transition.
 //
 // Used by:
 //   • NerdToHero      — sign-up flow (nerd → superhero, "YOU just got superpowers.")
@@ -57,7 +57,7 @@ export function AuthIntroAnimation({
     <div className="flex flex-row items-center gap-4">
       {/* Illustration */}
       <div className="relative h-[104px] w-[84px] shrink-0">
-        {/* Olive aura behind the "after" — fades in only on after phase */}
+        {/* Accent aura behind the "after" — fades in only on after phase */}
         <AnimatePresence>
           {isAfter && !reduceMotion && (
             <motion.div
@@ -70,7 +70,7 @@ export function AuthIntroAnimation({
               className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center"
             >
               <div
-                className="h-24 w-24 rounded-full bg-olive-500/25 blur-2xl"
+                className="h-24 w-24 rounded-full bg-accent/25 blur-2xl"
                 style={{ animation: 'authIntroPulse 2.4s ease-in-out infinite' }}
               />
             </motion.div>
@@ -88,7 +88,7 @@ export function AuthIntroAnimation({
               transition={{ duration: 0.55, ease: 'easeOut' }}
               className="pointer-events-none absolute inset-0 flex items-center justify-center"
             >
-              <div className="h-16 w-16 rounded-full bg-olive-400/70 blur-xl" />
+              <div className="h-16 w-16 rounded-full bg-accent/70 blur-xl" />
             </motion.div>
           )}
         </AnimatePresence>

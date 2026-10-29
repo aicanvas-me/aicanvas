@@ -392,7 +392,7 @@ function PreviewChrome({
                   so dots in the margin still light up as you move the mouse. */}
               <div className="pointer-events-none absolute inset-0">
                 {/* Themed to match the page: a seamless page-ground backdrop,
-                    faint sand-neutral dots that light up to the olive accent
+                    faint sand-neutral dots that light up to the accent ink
                     near the cursor. Raw rgb values (a canvas can't read
                     Tailwind tokens); the token each value maps to is noted
                     inline below. The grid reads these live, so a toggle
@@ -402,7 +402,7 @@ function PreviewChrome({
                   colors={{
                     background: isDark ? '#0E0E0F' : '#F4F4FA', // sand-950 / sand-50 — matches the backdrop
                     dot: '123,123,125', //     sand-500 — faint neutral grid
-                    highlight: isDark ? '218,228,160' : '134,150,49', // olive-400 / olive-600 — accent, lit near the cursor
+                    highlight: isDark ? '244,244,250' : '27,27,28', // sand-50 / sand-900 — the ink accent, lit near the cursor
                     baseAlpha: 0.22,
                     peakAlpha: 0.95,
                   }}
@@ -548,10 +548,10 @@ function TopBar({
   )
 }
 
-// ── Template switcher: the olive template crumb becomes a dropdown that jumps
+// ── Template switcher: the accent template crumb becomes a dropdown that jumps
 // to any sibling template of the same design system (the current one checked).
 // The full list comes from DESIGN_SYSTEM_META — client-safe, no registry pull.
-// Falls back to the plain olive label when the system has no other template.
+// Falls back to the plain accent label when the system has no other template.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // One icon per template, keyed by the slug with its design-system prefix
@@ -597,9 +597,9 @@ function TemplateSwitcher({
     }
   }, [open])
 
-  // Nothing to switch to → keep the original static olive crumb.
+  // Nothing to switch to → keep the original static accent crumb.
   if (!systemSlug || siblings.length < 2) {
-    return <span className="truncate text-olive-600 dark:text-olive-500">{templateName}</span>
+    return <span className="truncate text-accent">{templateName}</span>
   }
 
   return (
@@ -610,7 +610,7 @@ function TemplateSwitcher({
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Switch template"
-        className="flex min-w-0 items-center gap-1 rounded-chip text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-300"
+        className="flex min-w-0 items-center gap-1 rounded-chip text-accent transition-colors hover:text-accent/70"
       >
         <span className="truncate">{templateName}</span>
         <CaretUpDown weight="regular" size={14} className="shrink-0 opacity-70" />
@@ -636,18 +636,18 @@ function TemplateSwitcher({
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
                   active
-                    ? 'font-semibold text-olive-600 dark:text-olive-400'
+                    ? 'font-semibold text-accent'
                     : 'text-sand-700 hover:bg-sand-50/70 dark:text-sand-300 dark:hover:bg-sand-800/70'
                 }`}
               >
                 <Icon
                   weight="regular"
                   size={16}
-                  className={`shrink-0 ${active ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-500'}`}
+                  className={`shrink-0 ${active ? 'text-accent' : 'text-sand-600 dark:text-sand-500'}`}
                 />
                 <span className="truncate">{t.name}</span>
                 {/* Every row keeps its category, including the one you are on:
-                    the active row is already named by its olive colour and its
+                    the active row is already named by its accent colour and its
                     weight, so it needs no second marker. */}
                 {t.category && (
                   <span className="ml-auto shrink-0 rounded-chip bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
@@ -792,7 +792,7 @@ function InstallButton({
                 <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   CLI install
                 </span>
-                <span className="rounded-chip border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+                <span className="rounded-chip border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
                   One command
                 </span>
               </div>
@@ -804,7 +804,7 @@ function InstallButton({
               >
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-olive-600 dark:text-olive-400" />
+                    <Check weight="regular" size={13} className="text-success" />
                     Copied
                   </>
                 ) : (
@@ -821,7 +821,7 @@ function InstallButton({
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-olive-600 dark:text-olive-400" />
+                  <Check weight="bold" size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

@@ -109,7 +109,7 @@ export function StackedCards({ cards = HELLO_CARDS }: { cards?: string[] } = {})
           >
             {(relPos < 6 || isExiting) && (
               <span className={`text-sm font-bold leading-none ${
-                (isFront || isExiting) ? 'text-olive-600 dark:text-olive-400'
+                (isFront || isExiting) ? 'text-accent'
                 : relPos === 1         ? 'text-sand-700 dark:text-sand-300'
                 : relPos === 2         ? 'text-sand-600 dark:text-sand-400'
                 : relPos === 3         ? 'text-sand-600'

@@ -472,7 +472,7 @@ export default function ParticleMarkLabPage() {
                   aria-label={`Use ${hex} as background`}
                   className={`h-7 w-7 rounded-full border transition-all ${
                     active
-                      ? 'border-olive-500 ring-2 ring-olive-500/40'
+                      ? 'border-accent ring-2 ring-accent/40'
                       : 'border-sand-400 hover:scale-110 dark:border-sand-700'
                   }`}
                   style={{ background: hex }}
@@ -802,7 +802,7 @@ function CanvasArea({
     >
       <Renderer config={config} onCanvasReady={onCanvasReady} />
       {dragOver && (
-        <div className="pointer-events-none absolute inset-2 flex items-center justify-center rounded-lg border-2 border-dashed border-olive-500 bg-olive-500/10 text-sm font-semibold text-olive-500 dark:text-olive-400">
+        <div className="pointer-events-none absolute inset-2 flex items-center justify-center rounded-lg border-2 border-dashed border-accent bg-accent/10 text-sm font-semibold text-accent">
           Drop SVG to load
         </div>
       )}

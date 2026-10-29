@@ -24,7 +24,7 @@ export interface ComponentCardProps {
   slug: string
   position: number
   source: CardSource
-  /** 'pro' paints the badge in Andromeda Pro's cyan, the colour of its tier chip. */
+  /** 'pro' marks the badge as Andromeda Pro's. */
   badgeTone?: 'pro'
 }
 
@@ -39,22 +39,22 @@ export function ComponentCard({ name, description, href, image, badge, badgeTone
     <Link
       href={href}
       onClick={() => track('Component Card Click', { component: slug, position, source })}
-      className="group relative isolate flex flex-col overflow-hidden rounded-shell border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:focus-visible:ring-offset-sand-950"
+      className="group relative isolate flex flex-col overflow-hidden rounded-shell border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/60 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:focus-visible:ring-offset-sand-950"
     >
       {/* Preview. Save action intentionally lives on the component detail
           page only; keeping it off the card keeps the preview uncluttered. */}
       <div className="relative aspect-video overflow-hidden bg-sand-900">
         {badge && (
           // Aceternity-style pill: just a filled icon at rest, slides open to
-          // the label on card hover. Premium keeps the olive bolt; Free gets a
+          // the label on card hover. Premium keeps the bolt; Free gets a
           // quieter sand seal so the paid tier stays the visual accent.
           <div
             className={`absolute left-4 top-4 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 ring-1 backdrop-blur-sm ${
               badge === 'Free'
                 ? 'text-sand-300 ring-sand-500/40'
                 : badgeTone === 'pro'
-                  ? 'text-cyan-400 ring-cyan-500/40'
-                  : 'text-olive-400 ring-olive-500/40'
+                  ? 'text-sand-50 ring-sand-50/30'
+                  : 'text-sand-50 ring-sand-50/30'
             }`}
           >
             {badge === 'Free' ? (

@@ -85,7 +85,7 @@ export default function McpPage() {
         <PageHero
           pill="MCP server"
           pillIcon={
-            <PlugsConnected weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />
+            <PlugsConnected weight="regular" size={12} className="text-accent" aria-hidden />
           }
           title="AI Canvas MCP connected with"
           accent="Claude Code, Codex, and Cursor."
@@ -117,12 +117,12 @@ export default function McpPage() {
             {BENEFITS.map((card, i) => (
               <Reveal key={card.title} delay={i * 0.08} className="h-full">
                 <div className={`relative h-full overflow-hidden p-6 sm:p-8 ${CARD}`}>
-                  {/* One soft olive light on the middle card, so the row has a
+                  {/* One soft accent light on the middle card, so the row has a
                       centre without any card claiming more weight. */}
                   {i === 1 && (
                     <div
                       aria-hidden
-                      className="pointer-events-none absolute -left-16 -top-16 h-44 w-44 rounded-full bg-olive-400/35 blur-3xl dark:bg-olive-500/20"
+                      className="pointer-events-none absolute -left-16 -top-16 h-44 w-44 rounded-full bg-accent/35 blur-3xl dark:bg-accent/20"
                     />
                   )}
                   <div className="relative flex h-10 w-10 items-center justify-center rounded-inset border border-sand-300 bg-sand-50 text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-200">
@@ -155,7 +155,7 @@ export default function McpPage() {
                     weight="regular"
                     size={16}
                     aria-hidden
-                    className="mt-1 shrink-0 text-olive-600 dark:text-olive-400"
+                    className="mt-1 shrink-0 text-accent"
                   />
                   <span>{prompt}</span>
                 </li>

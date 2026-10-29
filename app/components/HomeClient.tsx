@@ -22,7 +22,7 @@ import {
 // Search covers both design systems. Each one's entries carry its OWN url
 // prefix and label: pairing one system's component list with the other's URLs
 // is how 15 of these links came to 404. Pro's cards, components and templates
-// alike, take its cyan badge.
+// alike, take its Pro badge.
 const SEARCHABLE_SYSTEMS = [
   { slug: 'andromeda', label: 'Andromeda Legacy', badgeTone: undefined, components: ANDROMEDA_COMPONENT_META, templates: ANDROMEDA_TEMPLATE_META },
   { slug: 'andromeda-pro', label: 'Andromeda Pro', badgeTone: 'pro', components: ANDROMEDA_PRO_COMPONENT_META, templates: ANDROMEDA_PRO_TEMPLATE_META },
@@ -397,7 +397,7 @@ export function HomeClient({
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="flex items-center justify-center"
                 >
-                  <EmptyIcon weight="thin" size={48} className="text-olive-600 dark:text-olive-500" />
+                  <EmptyIcon weight="thin" size={48} className="text-accent" />
                 </motion.span>
               </AnimatePresence>
             </div>
@@ -437,7 +437,7 @@ export function HomeClient({
                     <button
                       key={word}
                       onClick={() => applySuggestion(word)}
-                      className="group flex items-center gap-1.5 rounded-full border border-olive-500/30 bg-olive-500/10 px-3.5 py-1.5 text-sm font-semibold text-olive-600 transition-all hover:border-olive-500/60 hover:bg-olive-500/20 active:scale-95 dark:text-olive-400"
+                      className="group flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-sm font-semibold text-accent transition-all hover:border-accent/60 hover:bg-accent/20 active:scale-95"
                     >
                       <Sparkle weight="regular" size={13} className="opacity-60 transition-opacity group-hover:opacity-100" />
                       {word}

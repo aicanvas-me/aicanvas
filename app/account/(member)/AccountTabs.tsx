@@ -37,7 +37,7 @@ export function AccountTabs() {
               href={href}
               aria-label={label}
               aria-current={active ? 'page' : undefined}
-              className={`relative flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-control px-2.5 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:flex-none sm:px-5 ${
+              className={`relative flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-control px-2.5 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:flex-none sm:px-5 ${
                 active
                   ? 'text-sand-900 dark:text-sand-50'
                   : 'text-sand-600 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-200'

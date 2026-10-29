@@ -23,7 +23,7 @@ export function audiencePanelId(prefix: string, key: PlanAudience) {
  * section and in the paywall modal, where there is nothing to switch between.
  *
  * Same sliding-pill mechanic as the billing-cycle toggle inside the Premium
- * card: one olive element travels between the options, so the eye follows the
+ * card: one accent element travels between the options, so the eye follows the
  * selection instead of watching one box blink off and another blink on.
  */
 export function PlanAudienceTabs({

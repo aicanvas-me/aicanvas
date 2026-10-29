@@ -232,7 +232,7 @@ export default async function RootLayout({
             links before the page itself. Hidden until focused. */}
         <a
           href="#page-content"
-          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-sand-50 focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-sand-900 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-olive-500/60 dark:focus:bg-sand-900 dark:focus:text-sand-50"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-lg focus:bg-sand-50 focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-sand-900 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/60 dark:focus:bg-sand-900 dark:focus:text-sand-50"
         >
           Skip to content
         </a>

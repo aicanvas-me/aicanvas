@@ -40,7 +40,7 @@ export default function FaqPage() {
       <PageShell>
         <PageHero
           pill="FAQ"
-          pillIcon={<Question weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />}
+          pillIcon={<Question weight="regular" size={12} className="text-accent" aria-hidden />}
           title="Questions, answered."
           sub="Everything worth knowing before you ship your first component. Start free, install with one command, and upgrade only when AI Canvas is already paying off."
         />

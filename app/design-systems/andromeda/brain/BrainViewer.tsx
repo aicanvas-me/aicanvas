@@ -12,21 +12,21 @@ import { useCopied } from '@/app/components/useCopied'
 import { track } from '@/app/lib/analytics'
 import { InstallCopiedToast } from '@/app/_components/InstallCopiedToast'
 
-// AI Canvas site tokens: sand neutrals + olive accent, Manrope UI + Geist mono for code.
+// AI Canvas site tokens: sand neutrals + the neutral ink accent, Manrope UI + Geist mono for code.
 // One flat palette per site theme, read through CSS variables (brainVars) so
 // the reader follows the `dark` class on <html>. accent.fill/on are the one
-// olive button: olive-500 with sand-950 ink in both themes, per the site rule.
+// accent button: ink fill with the page colour on it, flipping with the theme.
 const PALETTE = {
   dark: {
     'surface-base': '#0E0E0F', 'surface-raised': '#1B1B1C', 'surface-hover': '#232325', 'surface-active': '#2D2D2E',
     'text-primary': '#F4F4FA', 'text-secondary': '#9B9B9E', 'text-muted': '#9B9B9E', 'text-faint': '#7B7B7D',
-    'accent-100': '#EAF0C8', 'accent-300': '#DAE4A0', 'accent-400': '#A8B94D', 'accent-500': '#869631', 'accent-fill': '#A8B94D', 'accent-on': '#0E0E0F',
+    'accent-100': '#FFFFFF', 'accent-300': '#F4F4FA', 'accent-400': '#CACACD', 'accent-500': '#7B7B7D', 'accent-fill': '#F4F4FA', 'accent-on': '#0E0E0F',
     'border-subtle': '#2D2D2E', 'border-base': '#373738',
   },
   light: {
     'surface-base': '#F4F4FA', 'surface-raised': '#EEEEF3', 'surface-hover': '#DFDFE3', 'surface-active': '#CACACD',
     'text-primary': '#1B1B1C', 'text-secondary': '#575759', 'text-muted': '#575759', 'text-faint': '#7B7B7D',
-    'accent-100': '#4A551A', 'accent-300': '#869631', 'accent-400': '#869631', 'accent-500': '#A8B94D', 'accent-fill': '#A8B94D', 'accent-on': '#0E0E0F',
+    'accent-100': '#0E0E0F', 'accent-300': '#1B1B1C', 'accent-400': '#373738', 'accent-500': '#9B9B9E', 'accent-fill': '#1B1B1C', 'accent-on': '#F4F4FA',
     'border-subtle': '#DFDFE3', 'border-base': '#CACACD',
   },
 } as const
@@ -637,7 +637,7 @@ function BrainInstallButton({
                 <span className="text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400">
                   CLI install
                 </span>
-                <span className="rounded-chip border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+                <span className="rounded-chip border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
                   One command
                 </span>
               </div>
@@ -649,7 +649,7 @@ function BrainInstallButton({
               >
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-olive-500 dark:text-olive-400" />
+                    <Check weight="regular" size={13} className="text-success" />
                     Copied
                   </>
                 ) : (
@@ -666,7 +666,7 @@ function BrainInstallButton({
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-olive-500 dark:text-olive-400" />
+                  <Check weight="bold" size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

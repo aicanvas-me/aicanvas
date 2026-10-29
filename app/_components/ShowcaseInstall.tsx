@@ -147,14 +147,14 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
                 <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   {active.label}
                 </span>
-                <span className="rounded-chip border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+                <span className="rounded-chip border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
                   One command
                 </span>
               </div>
               <Button variant="outline" size="xs" onClick={handleCopy} aria-label="Copy install command">
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-olive-600 dark:text-olive-400" />
+                    <Check weight="regular" size={13} className="text-success" />
                     Copied
                   </>
                 ) : (
@@ -171,7 +171,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-olive-600 dark:text-olive-400" />
+                  <Check weight="bold" size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

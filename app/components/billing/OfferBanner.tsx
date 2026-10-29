@@ -53,11 +53,11 @@ const ENDS_LABEL = OFFER_ENDS.toLocaleDateString('en-GB', {
   timeZone: 'Europe/Berlin',
 })
 
-/** The soft-olive chip without the states a control earns. Mirrors the
+/** The soft accent chip without the states a control earns. Mirrors the
  *  `accent` button at size xs; the hover, focus and press skins are exactly
  *  what is left out. */
 const STATIC_PILL =
-  'inline-flex items-center justify-center gap-1.5 rounded-full border border-olive-600/40 bg-olive-500/10 px-3 py-1.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400'
+  'inline-flex items-center justify-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent dark:border-accent/25'
 
 export function OfferBanner({ mode }: { mode: OfferPillMode }) {
   const premium = usePremiumStatus()

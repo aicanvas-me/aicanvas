@@ -33,7 +33,7 @@ function ClaimCard({ note }: { note: ReactNode }) {
         <ClaimForm />
       </div>
       <div className="flex items-start gap-2.5 rounded-2xl bg-sand-950 px-4 py-4 text-sm leading-relaxed text-sand-400 sm:px-5">
-        <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-400" />
+        <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-accent" />
         <span>{note}</span>
       </div>
     </div>
@@ -101,7 +101,7 @@ export default async function WelcomePage() {
                 pill={pill}
                 title={
                   <>
-                    You&rsquo;re <span className="text-olive-500">Premium</span>.
+                    You&rsquo;re <span className="text-accent">Premium</span>.
                   </>
                 }
                 sub={
@@ -134,7 +134,7 @@ export default async function WelcomePage() {
                   className="aic-hero-rise mx-auto mt-6 flex w-full max-w-xl items-start justify-center gap-2 text-left text-sm leading-relaxed text-sand-400"
                   style={{ animationDelay: '0.4s' }}
                 >
-                  <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-400" />
+                  <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-accent" />
                   <span className="text-balance">
                     Copy install commands while signed in with this account. That is
                     what bakes your personal token into them.
@@ -167,11 +167,11 @@ export default async function WelcomePage() {
               />
               <p className="mt-8 text-center text-sm leading-relaxed text-sand-400">
                 No purchase yet?{' '}
-                <Link href="/pricing" className="font-semibold text-olive-400 transition-colors hover:text-olive-300">
+                <Link href="/pricing" className="font-semibold text-accent transition-colors hover:text-accent/70">
                   See Premium plans
                 </Link>
                 {' '}&middot; Subscribed with this email?{' '}
-                <Link href="/account/settings" className="font-semibold text-olive-400 transition-colors hover:text-olive-300">
+                <Link href="/account/settings" className="font-semibold text-accent transition-colors hover:text-accent/70">
                   Check billing
                 </Link>
               </p>
@@ -182,7 +182,7 @@ export default async function WelcomePage() {
                 pill={pill}
                 title={
                   <>
-                    Payment received. You&rsquo;re <span className="text-olive-500">Premium</span>.
+                    Payment received. You&rsquo;re <span className="text-accent">Premium</span>.
                   </>
                 }
                 sub={

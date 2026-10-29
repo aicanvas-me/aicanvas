@@ -156,13 +156,13 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
     return (
       <>
         <TerminatorReveal />
-        <div className="mt-6 rounded-control border border-olive-500/30 bg-olive-500/10 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
+        <div className="mt-6 rounded-control border border-accent/30 bg-accent/10 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
           Check your inbox. If an account exists for <strong>{email}</strong>, a one-time sign-in link is on its way. It expires in 1 hour.
         </div>
         <button
           type="button"
           onClick={() => setMagicSent(false)}
-          className="mt-4 text-sm font-semibold text-olive-600 hover:underline dark:text-olive-400"
+          className="mt-4 text-sm font-semibold text-accent hover:underline"
         >
           Use a different email
         </button>
@@ -210,7 +210,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
                 setEmail(e.target.value)
                 clearStatus()
               }}
-              className="w-full rounded-control border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
+              className="w-full rounded-control border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-accent focus:ring-2 focus:ring-accent/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
             />
             {linkMode && (
               // Tied to the input via aria-describedby, so a screen reader that
@@ -242,7 +242,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
               />
               <Link
                 href="/account/forgot-password"
-                className="mt-2 inline-block text-xs font-semibold text-olive-600 hover:underline dark:text-olive-400"
+                className="mt-2 inline-block text-xs font-semibold text-accent hover:underline"
               >
                 Forgot password?
               </Link>
@@ -315,14 +315,14 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           <button
             type="button"
             onClick={onSwitchToSignUp}
-            className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
+            className="font-semibold text-accent hover:underline"
           >
             Create an account
           </button>
         ) : (
           <Link
             href={`/account/sign-up?next=${encodeURIComponent(next)}`}
-            className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
+            className="font-semibold text-accent hover:underline"
           >
             Create an account
           </Link>

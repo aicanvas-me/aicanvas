@@ -85,7 +85,7 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
       transition={{ duration: 0.55, delay, ease: [0.25, 0.1, 0.25, 1] }}
       className={`relative flex flex-col rounded-section border bg-sand-100 p-2 dark:bg-sand-900 ${
         plan.featured
-          ? 'border-olive-500/50 dark:border-olive-500/40'
+          ? 'border-accent/50 dark:border-accent/40'
           : 'border-sand-200 dark:border-sand-800'
       }`}
     >
@@ -135,7 +135,7 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
                 size={18}
                 className={`mt-0.5 shrink-0 ${
                   plan.featured
-                    ? 'text-olive-600 dark:text-olive-400'
+                    ? 'text-accent'
                     : 'text-sand-600 dark:text-sand-300'
                 }`}
               />
@@ -162,7 +162,7 @@ export function PricingView() {
     <>
       <PageHero
         pill="Pricing"
-        pillIcon={<Sparkle weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />}
+        pillIcon={<Sparkle weight="regular" size={12} className="text-accent" aria-hidden />}
         title={premium ? 'Simple, honest pricing' : 'Pick your side'}
         sub={
           // The line follows the audience switch below it. The Free vs

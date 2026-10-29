@@ -90,6 +90,23 @@
   --foreground: #1B1B1C;
 }
 
+/* Accent role values (the roles are named in the @theme block below). Same
+   two scopes as the dark variant: the site first, then a preview wrapper that
+   disagrees with it. Success: emerald-700 holds 5:1 on the light page,
+   emerald-400 glows on sand-950. */
+:root,
+[data-card-theme="light"] {
+  --accent: var(--color-sand-900);
+  --accent-foreground: var(--color-sand-50);
+  --success: #047857;
+}
+.dark,
+[data-card-theme="dark"] {
+  --accent: var(--color-sand-50);
+  --accent-foreground: var(--color-sand-950);
+  --success: #34D399;
+}
+
 /* Tell the browser which way the page leans, so every control it draws for us
    — scrollbars above all — comes out in the right palette without us styling
    it. This is what lets the custom scrollbar CSS stay deleted: a native bar on
@@ -151,7 +168,24 @@ html {
   --color-sand-900: #1B1B1C;
   --color-sand-950: #0E0E0F;
 
-  /* ── Olive accent — primary (actions) ── */
+  /* ── Accent roles (site chrome) ──
+     The site's accent is NEUTRAL: the primary fill, links, focus rings and
+     selected marks are ink, near-black on light and near-white on dark. Every
+     site surface reads these roles, never a raw hue, so a colour change is one
+     edit to --accent below. Opacity modifiers (bg-accent/10, ring-accent/40)
+     tint from the same ink.
+       accent             fills, emphasised text and icons, borders, rings
+       accent-foreground  text and icons sitting ON an accent fill
+       success            confirmation only: copied, sent, saved
+     Error stays the red family already in use. The values flip per theme in
+     the :root / .dark blocks above, under the same two scopes as the dark
+     variant. */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+
+  /* ── Olive — the former site accent. Site chrome no longer uses it; kept
+     for the cancellation flow (frozen as shipped) and the studio tools. ── */
   --color-olive-400: #DAE4A0;
   --color-olive-500: #A8B94D;
   --color-olive-600: #869631;
@@ -172,8 +206,8 @@ html {
   --color-ember-500: #F59E42;
   --color-ember-600: #D97B1A;
 
-  /* ── Cyan accent — complementary, used sparingly for occasional highlights
-     (e.g. the "Updated" nav badge) so they read distinct from the olive. ── */
+  /* ── Cyan — the former Andromeda Pro tier colour. Site chrome no longer
+     uses it; kept so the internal palette page still draws its swatches. ── */
   --color-cyan-400: #7DD3FC;
   --color-cyan-500: #38BDF8;
   --color-cyan-600: #0284C7;

@@ -1,5 +1,5 @@
 // Overview variant B: state the deal, make it exact in a ledger, then prove it.
-// Site chrome throughout (sand, olive, Manrope). The only surfaces drawn in
+// Site chrome throughout (sand, accent, Manrope). The only surfaces drawn in
 // Andromeda's own tokens are the compare stage, the foundation wells and the
 // Brain preview.
 'use client'
@@ -110,7 +110,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
   return (
     <Link
       href={`/design-systems/andromeda-pro/templates/${t.folder}`}
-      className={`group flex flex-col rounded-card border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
+      className={`group flex flex-col rounded-card border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
         lead ? 'lg:col-span-2' : ''
       }`}
     >
@@ -172,7 +172,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
         </div>
         <h3 className="mt-3 text-base font-bold text-sand-900 dark:text-sand-50">{t.name}</h3>
         <p className="mt-1 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{t.blurb}</p>
-        <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-olive-600 transition-colors group-hover:text-olive-800 dark:text-olive-400 dark:group-hover:text-olive-300">
+        <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-accent transition-colors group-hover:text-accent">
           View template
           <ArrowRight
             weight="regular"
@@ -188,7 +188,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
 function LedgerMark({ included, column }: { included: boolean; column: string }) {
   return included ? (
     <>
-      <Check weight="regular" aria-hidden className="size-5 text-olive-600 dark:text-olive-400" />
+      <Check weight="regular" aria-hidden className="size-5 text-accent" />
       <span className="sr-only">{column}: Included</span>
     </>
   ) : (
@@ -434,7 +434,7 @@ export function OverviewB({
                     <PointIcon
                       weight="regular"
                       aria-hidden
-                      className="mt-0.5 size-5 shrink-0 text-olive-600 dark:text-olive-400"
+                      className="mt-0.5 size-5 shrink-0 text-accent"
                     />
                     <div>
                       <p className="text-base font-semibold text-sand-900 dark:text-sand-50">{title}</p>
@@ -481,10 +481,10 @@ export function OverviewB({
       <PageFrame className="mt-20">
         <section
           aria-labelledby="ovb-price"
-          className="relative overflow-hidden rounded-card border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
+          className="relative overflow-hidden rounded-card border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10"
         >
           <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
+            <div className="h-40 w-64 rounded-full bg-accent/10 blur-3xl" />
           </div>
           <h2
             id="ovb-price"
@@ -506,7 +506,7 @@ export function OverviewB({
             Andromeda Legacy, {legacyComponents} components under the MIT license, stays live and supported.{' '}
             <Link
               href="/design-systems/andromeda"
-              className="font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+              className="font-semibold text-accent transition-colors hover:text-accent/70"
             >
               Visit Andromeda Legacy
             </Link>

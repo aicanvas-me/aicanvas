@@ -93,7 +93,7 @@ export function FaqView({ categories }: { categories: FaqCategory[] }) {
                       aria-current={on ? 'location' : undefined}
                       className={`-ml-px block border-l py-1.5 pl-4 text-sm leading-snug transition-colors ${
                         on
-                          ? 'border-olive-600 font-medium text-sand-900 dark:border-olive-400 dark:text-sand-50'
+                          ? 'border-accent font-medium text-sand-900 dark:text-sand-50'
                           : 'border-transparent text-sand-600 hover:border-sand-400 hover:text-sand-900 dark:text-sand-400 dark:hover:border-sand-600 dark:hover:text-sand-100'
                       }`}
                     >

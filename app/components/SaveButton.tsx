@@ -9,7 +9,7 @@ import { Button } from './Button'
 // ─── SaveButton ───────────────────────────────────────────────────────────────
 // Heart toggle for saving a component. Renders as a 32×32 icon-only Button
 // from the unified system (size="sm") so it aligns with the sm label buttons
-// it sits next to in the component action bar. Saved-state styling (olive
+// it sits next to in the component action bar. Saved-state styling (accent
 // heart) is layered on top via className.
 //
 // Always rendered, even signed out — clicking it while signed out opens the
@@ -53,7 +53,7 @@ export function SaveButton({ slug, system = null, className = '', size = 15 }: S
       onClick={handleClick}
       aria-label={saved ? 'Unsave component' : 'Save component'}
       aria-pressed={saved}
-      className={`${saved ? 'text-olive-500 dark:text-olive-400' : ''} ${className}`.trim()}
+      className={`${saved ? 'text-accent' : ''} ${className}`.trim()}
     >
       <Heart weight={saved ? 'fill' : 'regular'} size={size} />
     </Button>

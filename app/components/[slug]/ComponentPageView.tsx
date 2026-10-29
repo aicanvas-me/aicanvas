@@ -519,7 +519,7 @@ export default function ComponentPageView({
                   <TagIcon weight="regular" size={14} className="shrink-0 text-sand-600 dark:text-sand-500" />
                   {designSystem && <PremiumBadge />}
                   {premium && (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-olive-600/40 bg-olive-500/10 px-2.5 py-0.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400">
+                    <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent dark:border-accent/25">
                       <Lightning weight="regular" size={12} />
                       Premium
                     </span>
@@ -530,7 +530,7 @@ export default function ComponentPageView({
                       className={
                         premium
                           ? 'rounded-full border border-sand-300 bg-sand-200 px-2.5 py-0.5 text-xs font-semibold text-sand-600 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-400'
-                          : 'rounded-full border border-olive-600/40 bg-olive-500/10 px-2.5 py-0.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400'
+                          : 'rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent dark:border-accent/25'
                       }
                     >
                       {tag.label}
@@ -673,10 +673,9 @@ export default function ComponentPageView({
                 {/* Fullscreen — preview only */}
                 {activeTab === 'preview' && (
                   <div className="group/fullscreen relative">
-                    {/* Solid olive, the strongest control on the card. The soft
-                        accent it used before all but vanished on the light
-                        theme, and full screen is the view people most need to
-                        find. */}
+                    {/* An outline button: the soft accent all but vanishes on the
+                        light theme, and full screen is the view people most
+                        need to find. */}
                     <Button
                       variant="outline"
                       size="md"
@@ -865,7 +864,7 @@ export default function ComponentPageView({
                   // Same Aceternity-style pill as the card overview: filled
                   // bolt at rest, slides open to the label on hover — a
                   // reminder that the install below is premium-gated.
-                  <span className="group/premium flex items-center rounded-full bg-sand-950/85 p-1.5 text-olive-400 ring-1 ring-olive-500/40 backdrop-blur-sm">
+                  <span className="group/premium flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-50 ring-1 ring-sand-50/30 backdrop-blur-sm">
                     <Lightning weight="fill" size={14} className="shrink-0" />
                     <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover/premium:grid-cols-[1fr]">
                       <span className="overflow-hidden">
@@ -969,7 +968,7 @@ export default function ComponentPageView({
                                 className="ml-auto shrink-0 rounded-chip p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
                               >
                                 {depsCopied
-                                  ? <Check weight="regular" size={14} className="text-olive-500" />
+                                  ? <Check weight="regular" size={14} className="text-success" />
                                   : <Copy weight="regular" size={14} />}
                               </button>
                             </div>
@@ -1082,7 +1081,7 @@ export default function ComponentPageView({
                               className="shrink-0 rounded-chip p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
                             >
                               {depsCopied
-                                ? <Check weight="regular" size={14} className="text-olive-500" />
+                                ? <Check weight="regular" size={14} className="text-success" />
                                 : <Copy weight="regular" size={14} />}
                             </button>
                           </div>
@@ -1110,7 +1109,7 @@ export default function ComponentPageView({
                                 className="shrink-0 rounded-chip p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90 disabled:cursor-not-allowed disabled:opacity-40"
                               >
                                 {codeCopied
-                                  ? <Check weight="regular" size={14} className="text-olive-500" />
+                                  ? <Check weight="regular" size={14} className="text-success" />
                                   : <Copy weight="regular" size={14} />}
                               </button>
                             </div>
@@ -1234,7 +1233,7 @@ export default function ComponentPageView({
                           aria-label="Copy MCP token"
                         >
                           {mcpTokenCopied
-                            ? <Check weight="regular" size={14} className="text-olive-500" />
+                            ? <Check weight="regular" size={14} className="text-success" />
                             : <Copy weight="regular" size={14} />}
                         </button>
                       </div>
@@ -1434,7 +1433,7 @@ export default function ComponentPageView({
                         <Link
                           href={`/components/${c.slug}`}
                           onClick={() => track('Component Card Click', { component: c.slug, position: relatedStart + i, source: 'related' })}
-                          className="group flex h-full flex-col overflow-hidden rounded-shell border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-olive-500 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+                          className="group flex h-full flex-col overflow-hidden rounded-shell border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
                         >
                           {/* The grid card's shape (ComponentCard): the
                               preview fades into the card and the text sits
@@ -1554,7 +1553,7 @@ export default function ComponentPageView({
             }}
           >
             <div className="flex items-center gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
-              <Check weight="regular" size={16} className="shrink-0 text-olive-500" />
+              <Check weight="regular" size={16} className="shrink-0 text-success" />
               <div>
                 <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                   Install command copied
@@ -1611,7 +1610,7 @@ function DarkModeStep({ number, isLast, copied, onCopy }: CopyStepProps) {
           className="shrink-0 rounded-chip p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
         >
           {copied
-            ? <Check weight="regular" size={14} className="text-olive-500" />
+            ? <Check weight="regular" size={14} className="text-success" />
             : <Copy weight="regular" size={14} />}
         </button>
       </div>
@@ -1652,7 +1651,7 @@ function FontStep({
             className="ml-auto shrink-0 rounded-chip p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
           >
             {copied
-              ? <Check weight="regular" size={14} className="text-olive-500" />
+              ? <Check weight="regular" size={14} className="text-success" />
               : <Copy weight="regular" size={14} />}
           </button>
         </div>
@@ -1694,7 +1693,7 @@ function PackageFontStep({
           aria-label="Copy install command"
           className="shrink-0 rounded-chip p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
         >
-          {installCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
+          {installCopied ? <Check weight="regular" size={14} className="text-success" /> : <Copy weight="regular" size={14} />}
         </button>
       </div>
       {snippet && (
@@ -1706,7 +1705,7 @@ function PackageFontStep({
               aria-label="Copy font setup snippet"
               className="shrink-0 rounded-chip p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
             >
-              {snippetCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
+              {snippetCopied ? <Check weight="regular" size={14} className="text-success" /> : <Copy weight="regular" size={14} />}
             </button>
           </div>
           <div className="px-4 py-3.5">

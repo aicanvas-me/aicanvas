@@ -63,7 +63,7 @@ export function IconTile({
             aria-label={`Copy ${icon.name} SVG`}
             title="Copy SVG"
             onClick={() => void copyText(buildSvg(markup, size, strokeWidth, colour, absolute))}
-            className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
+            className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
             <Copy weight="regular" size={12} />
           </button>
@@ -72,7 +72,7 @@ export function IconTile({
             aria-label={`Copy ${icon.name} JSX`}
             title="Copy JSX"
             onClick={() => void copyText(iconJsxLine(icon.name, size, strokeWidth, style, absolute))}
-            className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
+            className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
             <Code weight="regular" size={12} />
           </button>

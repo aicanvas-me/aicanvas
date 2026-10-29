@@ -57,9 +57,9 @@ export function AvatarSection() {
     router.refresh()
   }
 
-  const tile = 'relative flex h-14 w-14 items-center justify-center rounded-full transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 motion-reduce:transition-none disabled:opacity-50'
+  const tile = 'relative flex h-14 w-14 items-center justify-center rounded-full transition-transform hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 motion-reduce:transition-none disabled:opacity-50'
   const ring = (selected: boolean) =>
-    selected ? 'ring-2 ring-olive-500 ring-offset-2 ring-offset-sand-100 dark:ring-offset-sand-900' : ''
+    selected ? 'ring-2 ring-accent ring-offset-2 ring-offset-sand-100 dark:ring-offset-sand-900' : ''
 
   return (
     <section className={`${CARD} p-6 sm:p-8`}>
@@ -113,7 +113,7 @@ export function AvatarSection() {
 
 function Selected() {
   return (
-    <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-olive-500 text-sand-950">
+    <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-accent-foreground">
       <Check size={12} weight="bold" />
     </span>
   )

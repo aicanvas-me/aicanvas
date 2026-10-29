@@ -40,8 +40,8 @@ import { BRAIN_FAQ } from './brain-faq'
 // reach, so they ride CSS variables (see brainVars below) that flip with the
 // `dark` class on <html>.
 const PALETTE = {
-  dark:  { accent: 'var(--color-olive-400)', accentBtn: 'var(--color-olive-500)', muted: 'var(--color-sand-500)', line: 'var(--color-sand-800)' },
-  light: { accent: 'var(--color-olive-600)', accentBtn: 'var(--color-olive-600)', muted: 'var(--color-sand-500)', line: 'var(--color-sand-200)' },
+  dark:  { accent: 'var(--color-accent)', accentBtn: 'var(--color-accent)', muted: 'var(--color-sand-500)', line: 'var(--color-sand-800)' },
+  light: { accent: 'var(--color-accent)', accentBtn: 'var(--color-accent)', muted: 'var(--color-sand-500)', line: 'var(--color-sand-200)' },
 } as const satisfies Record<Theme, Record<string, string>>
 type BrainColor = keyof typeof PALETTE.dark
 const C = Object.fromEntries((Object.keys(PALETTE.dark) as BrainColor[]).map((k) => [k, `var(--brain-${k})`])) as Record<BrainColor, string>
@@ -416,11 +416,11 @@ function BrainFlow() {
 
         <div className="flow-mid">
           {/* The focal card is the void in both site themes, like the hero
-              stage, so its inks are fixed for the dark ground. The olive border
+              stage, so its inks are fixed for the dark ground. The accent border
               stays a hairline: full strength read heavy beside the sand
               hairlines around it. */}
           <div
-            className="flex w-full flex-col items-center justify-start rounded-[10px] border border-olive-500/40 bg-sand-950"
+            className="flex w-full flex-col items-center justify-start rounded-[10px] border border-accent/40 bg-sand-950"
             style={{ height: CARD_H, padding: `${CARD_PAD_TOP}px 0 ${CARD_PAD_BOTTOM}px` }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -434,7 +434,7 @@ function BrainFlow() {
               style={{ display: 'block' }}
             />
             <span className="text-[13px] font-bold text-sand-50" style={{ marginTop: IMG_GAP }}>Andromeda Pro AI Brain</span>
-            <span className="mt-0.5 font-mono text-[11px] text-olive-400">{`${BRAIN_TEASER.totalFiles} files`}</span>
+            <span className="mt-0.5 font-mono text-[11px] text-sand-50">{`${BRAIN_TEASER.totalFiles} files`}</span>
           </div>
         </div>
 
@@ -559,7 +559,7 @@ function CorpusExplorer() {
               aria-controls={PANEL_ID}
               tabIndex={selected ? 0 : -1}
               onClick={() => select(s.id)}
-              className={`flex shrink-0 items-baseline justify-between gap-3 rounded-control px-4 py-3 text-left text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 ${
+              className={`flex shrink-0 items-baseline justify-between gap-3 rounded-control px-4 py-3 text-left text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/40 ${
                 selected
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                   : 'text-sand-600 hover:bg-sand-200/60 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-50'
@@ -568,7 +568,7 @@ function CorpusExplorer() {
               <span>{sentenceCase(s.label)}</span>
               <span
                 className={`font-mono text-xs tabular-nums ${
-                  selected ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-400'
+                  selected ? 'text-accent' : 'text-sand-600 dark:text-sand-400'
                 }`}
               >
                 {s.files.length}
@@ -591,7 +591,7 @@ function CorpusExplorer() {
                   key={f}
                   ref={i === PHONE_PREVIEW ? firstRevealedRef : undefined}
                   tabIndex={i === PHONE_PREVIEW ? -1 : undefined}
-                  className={`flex min-w-0 items-center gap-2 rounded-tag py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 ${!expanded && i >= PHONE_PREVIEW ? 'max-sm:hidden' : ''}`}
+                  className={`flex min-w-0 items-center gap-2 rounded-tag py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/40 ${!expanded && i >= PHONE_PREVIEW ? 'max-sm:hidden' : ''}`}
                 >
                   <LockSimple weight="regular" size={14} aria-hidden className="shrink-0 text-sand-400 dark:text-sand-600" />
                   <span title={name} className="truncate font-mono text-[13px] text-sand-700 dark:text-sand-300">
@@ -605,7 +605,7 @@ function CorpusExplorer() {
             <button
               type="button"
               onClick={() => setExpanded(true)}
-              className="mt-2 rounded-tag text-sm font-semibold text-olive-600 hover:text-olive-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:hidden dark:text-olive-400 dark:hover:text-olive-300"
+              className="mt-2 rounded-tag text-sm font-semibold text-accent hover:text-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:hidden"
             >
               {`Show all ${sec.files.length} files`}
             </button>
@@ -1067,7 +1067,7 @@ export function BrainStoryV4() {
                   </th>
                   {/* The lifted column, like the overview ledger's Premium
                       column: one surface, no colour. */}
-                  <th scope="col" className="border-l border-sand-200 bg-sand-50 px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-olive-600 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-olive-400">
+                  <th scope="col" className="border-l border-sand-200 bg-sand-50 px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-accent sm:px-5 dark:border-sand-800 dark:bg-sand-950">
                     With the AI Brain
                   </th>
                 </tr>
@@ -1083,7 +1083,7 @@ export function BrainStoryV4() {
                     </td>
                     <td className="border-l border-t border-sand-200 bg-sand-50 px-4 py-3.5 align-top text-sm leading-relaxed text-sand-900 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50">
                       <div className="flex gap-2.5">
-                        <Check weight="regular" size={15} aria-hidden className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+                        <Check weight="regular" size={15} aria-hidden className="mt-0.5 shrink-0 text-accent" />
                         <span className="min-w-0 break-words">{row.brain}</span>
                       </div>
                     </td>
@@ -1138,7 +1138,7 @@ export function BrainStoryV4() {
                   <th scope="col" className="px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-sand-600 sm:px-5 dark:text-sand-400">
                     Legacy AI Brain
                   </th>
-                  <th scope="col" className="border-l border-sand-200 bg-sand-50 px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-olive-600 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-olive-400">
+                  <th scope="col" className="border-l border-sand-200 bg-sand-50 px-4 py-3 font-mono text-[11px] font-normal uppercase tracking-[0.14em] text-accent sm:px-5 dark:border-sand-800 dark:bg-sand-950">
                     Pro AI Brain
                   </th>
                 </tr>
@@ -1189,7 +1189,7 @@ export function BrainStoryV4() {
           <ol className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
             {LOOP.map((step, i) => (
               <li key={step.title} className={`${PANEL_CLASS} flex flex-col p-5`}>
-                <span aria-hidden className="font-mono text-xs font-semibold tabular-nums text-olive-600 dark:text-olive-400">
+                <span aria-hidden className="font-mono text-xs font-semibold tabular-nums text-accent">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <h3 className="mt-3 text-base font-bold text-sand-900 dark:text-sand-50">{step.title}</h3>
@@ -1225,10 +1225,10 @@ export function BrainStoryV4() {
             subscriber gets the reader, everyone else gets pricing. */}
         <Section
           aria-labelledby="brain-get"
-          className="relative mt-20 overflow-hidden rounded-card border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
+          className="relative mt-20 overflow-hidden rounded-card border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10"
         >
           <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
+            <div className="h-40 w-64 rounded-full bg-accent/10 blur-3xl" />
           </div>
           <h2 id="brain-get" className="relative text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
             Give your agent the AI Brain.

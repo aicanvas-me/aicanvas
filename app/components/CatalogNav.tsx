@@ -119,7 +119,7 @@ export function segmentForPath(pathname: string | null | undefined): CatalogSegm
 
 // Same row skin the rail has always used: muted at rest, the raised pill when
 // it is the page you are on.
-const ROW = 'group flex items-center gap-2 rounded-chip px-2 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40'
+const ROW = 'group flex items-center gap-2 rounded-chip px-2 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40'
 const ROW_ACTIVE = 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
 const ROW_IDLE =
   'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
@@ -518,7 +518,7 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
             onClick={() => pick(s.id)}
             // Sized so the longest label, "Design systems", fits the 240px
             // rail whole: 12px text, 32px idle tabs, tight active padding.
-            className={`inline-flex h-8 items-center justify-center gap-1 rounded-full text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+            className={`inline-flex h-8 items-center justify-center gap-1 rounded-full text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
               selected
                 ? 'min-w-0 flex-1 bg-sand-50 px-2.5 text-sand-900 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)] dark:bg-sand-800 dark:text-sand-50 dark:shadow-[0_1px_2px_rgba(0,0,0,0.5)]'
                 : 'w-8 shrink-0 text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50'
@@ -566,7 +566,7 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
                     href={`/components/category/${cat.slug}`}
                     onClick={onNavigate}
                     aria-current={current ? 'page' : undefined}
-                    className={`rounded-sm transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:hover:text-sand-100 ${
+                    className={`rounded-sm transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:hover:text-sand-100 ${
                       current ? 'text-sand-900 dark:text-sand-50' : ''
                     }`}
                   >

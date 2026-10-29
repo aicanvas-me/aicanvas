@@ -1,7 +1,7 @@
 'use client'
 
 // Foundation — the WHAT of the Andromeda token system, on site chrome
-// (sand/olive, Manrope), same editorial rhythm as the components gallery.
+// (sand/accent, Manrope), same editorial rhythm as the components gallery.
 // Swatches and bars are plain painted divs showing the primitive VALUES, which
 // is what this page is for. The one Andromeda component is the Badge inside
 // the shared layer cards.
@@ -619,7 +619,7 @@ export function FoundationView() {
             href="https://fonts.google.com/specimen/Manrope"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-5 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+            className="mt-5 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-accent transition-colors hover:text-accent/70"
           >
             Manrope on Google Fonts
             <ArrowUpRight size={14} weight="regular" aria-hidden />

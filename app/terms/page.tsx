@@ -15,7 +15,7 @@ const SECTION = 'mt-12 first:mt-0'
 const HEADING = 'text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50'
 const BODY = 'mt-4 leading-relaxed text-sand-600 dark:text-sand-400'
 const LINK =
-  'font-medium text-olive-600 underline-offset-4 hover:text-olive-800 hover:underline dark:text-olive-400 dark:hover:text-olive-300'
+  'font-medium text-accent underline-offset-4 hover:text-accent/70 hover:underline'
 // A bulleted clause list; the bullets stay quieter than the words.
 const LIST =
   'list-disc space-y-3 pl-5 leading-relaxed text-sand-600 marker:text-sand-400 dark:text-sand-400 dark:marker:text-sand-600'
@@ -28,7 +28,7 @@ export default function TermsPage() {
       <PageHero
         size="md"
         pill="Legal"
-        pillIcon={<Scales weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />}
+        pillIcon={<Scales weight="regular" size={12} className="text-accent" aria-hidden />}
         title="Terms & Conditions"
         sub={
           <span className="block text-balance">

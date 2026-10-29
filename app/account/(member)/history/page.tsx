@@ -123,7 +123,7 @@ export default async function HistoryPage() {
               >
                 <ActivityThumbnail src={image} />
                 <div className="min-w-0">
-                  <div className="truncate font-semibold text-sand-900 transition-colors group-hover:text-olive-600 dark:text-sand-50 dark:group-hover:text-olive-400">{name}</div>
+                  <div className="truncate font-semibold text-sand-900 transition-colors group-hover:text-accent dark:text-sand-50">{name}</div>
                   <div className="mt-0.5 truncate text-xs text-sand-600 sm:hidden dark:text-sand-400">
                     {[row.system, row.pkg_manager].filter(Boolean).join(' · ') || '—'}
                   </div>

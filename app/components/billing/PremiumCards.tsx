@@ -27,7 +27,7 @@ const FREE_FEATURES = [
   'Save your favorite components',
 ]
 
-// The toggle's two options. One olive fill for both: the highlight keeps its
+// The toggle's two options. One accent fill for both: the highlight keeps its
 // colour and only travels, so nothing about it changes except where it is.
 const CYCLES = ['monthly', 'yearly'] as const
 
@@ -161,13 +161,13 @@ export function PremiumCards({
       {/* ── Premium card ── (the Monthly plan when Lifetime is on) */}
       <div
         className={`relative flex flex-col rounded-section border bg-sand-100 p-2 dark:bg-sand-900 ${
-          threeUp ? 'border-sand-200 dark:border-sand-800' : 'border-olive-500/50 dark:border-olive-500/40'
+          threeUp ? 'border-sand-200 dark:border-sand-800' : 'border-accent/50 dark:border-accent/40'
         }`}
       >
         <div className={cardPad}>
           <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
             {threeUp ? 'Monthly' : 'Premium'}
-            <Lightning weight="regular" size={22} className="text-olive-600 dark:text-olive-400" />
+            <Lightning weight="regular" size={22} className="text-accent" />
           </h2>
 
           {/* Billing cycle toggle + struck yearly-anchor price sit side by side.
@@ -190,14 +190,14 @@ export function PremiumCards({
                   aria-pressed={selected}
                   className={`relative rounded-chip px-3 py-1 text-xs font-semibold transition-colors ${
                     selected
-                      ? 'text-sand-950'
+                      ? 'text-accent-foreground'
                       : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
                   {selected && (
                     <motion.span
                       layoutId={`billing-cycle-pill-${pillId}`}
-                      className="absolute inset-0 rounded-chip bg-olive-500"
+                      className="absolute inset-0 rounded-chip bg-accent"
                       transition={
                         reduceMotion
                           ? { duration: 0 }
@@ -211,7 +211,7 @@ export function PremiumCards({
                     ) : (
                       <>
                         Yearly{' '}
-                        <span className={selected ? 'opacity-80' : 'text-olive-600 dark:text-olive-400'}>
+                        <span className={selected ? 'opacity-80' : 'text-accent'}>
                           · save {YEARLY_SAVING_PCT}%
                         </span>
                       </>
@@ -236,7 +236,7 @@ export function PremiumCards({
             </span>
             <span className="text-sm font-medium text-sand-600 dark:text-sand-500">/ {suffix}</span>
             {perMonthHint && (
-              <span className="text-sm font-semibold text-olive-600 dark:text-olive-400">
+              <span className="text-sm font-semibold text-accent">
                 ({perMonthHint})
               </span>
             )}
@@ -281,7 +281,7 @@ export function PremiumCards({
           <ul className={showFree ? 'mt-4 space-y-3' : 'space-y-3'}>
             {PREMIUM_FEATURES.map((feature) => (
               <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
-                <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+                <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-accent" />
                 <span>{feature}</span>
               </li>
             ))}
@@ -297,7 +297,7 @@ export function PremiumCards({
 }
 
 // ── Lifetime card ──
-// One payment, Premium for life. The featured plan of the three: the olive
+// One payment, Premium for life. The featured plan of the three: the accent
 // edge and the site's light from straight above (TopLight). The description is one short
 // line, like the other two cards; the Lifetime terms live on the licence page,
 // not on the card.
@@ -318,15 +318,15 @@ function LifetimeCard({
   priceText: string
 }) {
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-section border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
+    <div className="relative flex flex-col overflow-hidden rounded-section border border-accent/50 bg-sand-100 p-2 dark:border-accent/40 dark:bg-sand-900">
       <TopLight />
-      <span className="absolute right-4 top-4 rounded-full border border-olive-500/40 bg-olive-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-olive-700 dark:text-olive-300">
+      <span className="absolute right-4 top-4 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-[11px] font-semibold text-accent">
         Pay once
       </span>
       <div className={`relative ${cardPad}`}>
         <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
           Lifetime
-          <InfinityIcon weight="regular" size={22} className="text-olive-600 dark:text-olive-400" />
+          <InfinityIcon weight="regular" size={22} className="text-accent" />
         </h2>
         <div className="mt-4 flex items-baseline gap-2">
           <span className={`${priceText} font-extrabold tracking-tight text-sand-900 dark:text-sand-50`}>
@@ -357,7 +357,7 @@ function LifetimeCard({
         <ul className="mt-4 space-y-3">
           {LIFETIME_FEATURES.map((feature) => (
             <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
-              <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+              <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-accent" />
               <span>{feature}</span>
             </li>
           ))}
@@ -386,11 +386,11 @@ function TrustStrip() {
     <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-card border border-sand-200 bg-sand-100/60 px-6 py-4 dark:border-sand-800 dark:bg-sand-900/50 sm:flex-row">
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-sand-700 dark:text-sand-200">
         <span className="flex items-center gap-1.5">
-          <Lock weight="regular" size={16} className="text-olive-600 dark:text-olive-400" />
+          <Lock weight="regular" size={16} className="text-accent" />
           Secure payment encryption
         </span>
         <span className="flex items-center gap-1.5">
-          <Lightning weight="regular" size={16} className="text-olive-600 dark:text-olive-400" />
+          <Lightning weight="regular" size={16} className="text-accent" />
           Instant access
         </span>
       </div>

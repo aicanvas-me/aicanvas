@@ -82,10 +82,10 @@ const SEMANTIC_ROLES = [
   { role: 'Secondary text', light: 'text-sand-600', dark: 'text-sand-400' },
   { role: 'Border default', light: 'border-sand-200', dark: 'border-sand-800' },
   { role: 'Border hover', light: 'border-sand-300', dark: 'border-sand-700' },
-  { role: 'Accent', light: 'text-olive-600', dark: 'text-olive-400' },
-  { role: 'Accent hover', light: 'text-olive-800', dark: 'text-olive-300' },
+  { role: 'Accent', light: 'text-accent', dark: 'text-accent' },
+  { role: 'Accent hover', light: 'text-accent', dark: 'text-accent' },
   { role: 'Secondary accent', light: 'text-ember-500', dark: 'text-ember-400' },
-  { role: 'Highlight (occasional)', light: 'text-cyan-600', dark: 'text-cyan-400' },
+  { role: 'Highlight (occasional)', light: 'text-accent', dark: 'text-accent' },
 ]
 
 // ─── Spacing scale ───────────────────────────────────────────────────────────
@@ -264,7 +264,7 @@ export default function DesignSystemPage() {
               className="rounded-2xl border border-sand-200 p-6 dark:border-sand-800"
             >
               <div className="mb-2 flex items-baseline gap-3">
-                <span className="font-mono text-xs text-olive-600 dark:text-olive-500">{t.weight}</span>
+                <span className="font-mono text-xs text-accent">{t.weight}</span>
                 <span className="text-sm font-semibold text-sand-700 dark:text-sand-300">{t.name}</span>
                 <span className="text-xs text-sand-600 dark:text-sand-500">{t.usage}</span>
               </div>
@@ -286,7 +286,7 @@ export default function DesignSystemPage() {
           {SPACING.map((s) => (
             <div key={s} className="flex flex-col items-center gap-2">
               <div
-                className="rounded-lg bg-olive-500"
+                className="rounded-lg bg-accent"
                 style={{ width: s, height: s }}
               />
               <span className="font-mono text-[10px] text-sand-600 dark:text-sand-500">{s}px</span>
@@ -302,7 +302,7 @@ export default function DesignSystemPage() {
           {RADII.map((r) => (
             <div key={r.name} className="flex flex-col items-center gap-2">
               <div
-                className="h-16 w-16 border-2 border-olive-500 bg-olive-500/10"
+                className="h-16 w-16 border-2 border-accent bg-accent/10"
                 style={{ borderRadius: r.value }}
               />
               <span className="font-mono text-xs font-semibold text-sand-700 dark:text-sand-300">{r.name}</span>
@@ -340,7 +340,7 @@ export default function DesignSystemPage() {
                   <a
                     href={asset.svg}
                     download
-                    className="rounded-lg bg-olive-500 px-3.5 py-1.5 text-xs font-semibold text-sand-950 transition-colors hover:bg-olive-400"
+                    className="rounded-lg bg-accent px-3.5 py-1.5 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85"
                   >
                     SVG
                   </a>

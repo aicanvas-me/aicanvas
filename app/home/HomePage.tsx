@@ -124,7 +124,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
             <br />
             {/* One step below the headline: the problem every agent builder
                 names, then what solves it. */}
-            <span className="mt-3 inline-block text-2xl sm:text-4xl text-olive-600 dark:text-olive-500">
+            <span className="mt-3 inline-block text-2xl sm:text-4xl text-accent">
               Design systems your agent builds with.
             </span>
           </h1>
@@ -237,8 +237,8 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                           do not have to overpromise: the cache window is 24h, so
                           "Live" would be false. See REVALIDATE_SECONDS. */}
                       <span className="relative flex h-1.5 w-1.5" aria-hidden>
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-olive-700 opacity-75 dark:bg-olive-400" />
-                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-olive-700 dark:bg-olive-400" />
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-accent" />
                       </span>
                       Updates daily
                     </span>
@@ -267,19 +267,19 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
               {/* Right: the facts */}
               <Reveal delay={0.08} className="h-full">
                 <div className="relative flex h-full flex-col justify-center rounded-section p-4 sm:p-5">
-                  {/* One light only, olive, from straight above like the left
+                  {/* One light only, the accent, from straight above like the left
                       card.
 
-                      Olive is the brand accent (--color-olive-400, #DAE4A0), so
-                      this card is on-palette. Its alpha is lower than the blue
-                      card's because olive is a light, high-chroma yellow-green and
-                      reads far stronger at the same value. */}
+                      The accent is the site's own ink, so this card is
+                      on-palette. Its alpha is lower than the blue card's
+                      because a neutral ink reads far stronger than a tinted
+                      light at the same value. */}
                   <div
                     aria-hidden
                     className="pointer-events-none absolute inset-0 rounded-section"
                     style={{
                       background:
-                        'radial-gradient(65% 65% at 50% 0%, color-mix(in srgb, var(--color-olive-400) 2.8%, transparent), transparent 60%)',
+                        'radial-gradient(65% 65% at 50% 0%, color-mix(in srgb, var(--color-accent) 2.8%, transparent), transparent 60%)',
                     }}
                   />
                   {/* Every row links. These four sat in the most valuable space on
@@ -433,7 +433,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                   </div>
                   <div className="flex-1 pt-0.5">
                     <div className="flex items-center gap-2.5">
-                      <span className="text-base font-bold tabular-nums text-olive-600 dark:text-olive-500">{step.num}</span>
+                      <span className="text-base font-bold tabular-nums text-accent">{step.num}</span>
                       <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">{step.title}</h3>
                     </div>
                     <p className="mt-1.5 text-base leading-relaxed text-sand-600 dark:text-sand-400">{step.desc}</p>
@@ -447,7 +447,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-100"
-                  style={{ backgroundImage: 'radial-gradient(60% 55% at 50% 0%, color-mix(in srgb, var(--color-olive-500) 8%, transparent), transparent 70%)' }}
+                  style={{ backgroundImage: 'radial-gradient(60% 55% at 50% 0%, color-mix(in srgb, var(--color-accent) 8%, transparent), transparent 70%)' }}
                 />
                 <AgentInstall />
               </div>
@@ -508,7 +508,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
         <section className="mx-auto mt-20 max-w-4xl sm:mt-32">
           <Reveal
             y={12}
-            className="relative overflow-hidden rounded-section border border-olive-500/20 px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
+            className="relative overflow-hidden rounded-section border border-accent/20 px-6 py-12 text-center ring-1 ring-inset ring-accent/10 sm:py-16"
           >
             <TopLight />
             <p className={`relative ${EYEBROW}`}>Ready to build?</p>

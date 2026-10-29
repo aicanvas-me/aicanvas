@@ -39,7 +39,7 @@ export function Tabs({ tabs }: { tabs: { label: string; content: ReactNode }[] }
             aria-controls={`${id}-panel-${i}`}
             tabIndex={active === i ? 0 : -1}
             onClick={() => setActive(i)}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+            className={`rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
               active === i
                 ? 'bg-sand-50 text-sand-900 shadow-sm dark:bg-sand-800 dark:text-sand-50'
                 : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50'

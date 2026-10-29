@@ -23,7 +23,7 @@ const LABEL = 'text-sm font-semibold text-sand-100'
 const WELL = 'mt-2.5 flex items-center gap-1 rounded-xl border border-sand-800 bg-sand-900 py-1.5 pr-1.5 pl-4'
 const CODE = 'min-w-0 flex-1 overflow-x-auto whitespace-nowrap py-1.5 font-mono text-xs text-sand-300'
 const ICON_BTN =
-  'shrink-0 rounded-lg p-2 text-sand-400 transition-all hover:bg-sand-800 hover:text-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 active:scale-90'
+  'shrink-0 rounded-lg p-2 text-sand-400 transition-all hover:bg-sand-800 hover:text-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-90'
 const HELP = 'mt-2.5 text-sm leading-relaxed text-sand-400'
 
 export function PremiumQuickstart({ token }: { token: string | null }) {
@@ -54,10 +54,10 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
   if (!token) {
     return (
       <div className="mx-auto mt-14 flex w-full max-w-xl items-start gap-2.5 rounded-3xl border border-sand-800 bg-sand-900 px-5 py-5 text-left text-sm leading-relaxed text-sand-300 sm:mt-16 sm:px-6">
-        <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-olive-400" />
+        <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-accent" />
         <span className="text-pretty">
           Your install token isn&rsquo;t set up yet. Check{' '}
-          <Link href="/account/settings" className="font-semibold text-olive-400 transition-colors hover:text-olive-300">
+          <Link href="/account/settings" className="font-semibold text-accent transition-colors hover:text-accent/70">
             account settings
           </Link>{' '}
           in a moment, or reach out to support if it stays missing.
@@ -81,7 +81,7 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
           <div className={WELL}>
             <code className={CODE}>{cmd(revealed ? token : MASK)}</code>
             <button type="button" onClick={copyCmd} aria-label="Copy install command" className={ICON_BTN}>
-              {cmdCopied ? <Check weight="regular" size={16} className="text-olive-400" /> : <Copy weight="regular" size={16} />}
+              {cmdCopied ? <Check weight="regular" size={16} className="text-success" /> : <Copy weight="regular" size={16} />}
             </button>
           </div>
           <p className={HELP}>
@@ -104,12 +104,12 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
               {revealed ? <EyeSlash weight="regular" size={16} /> : <Eye weight="regular" size={16} />}
             </button>
             <button type="button" onClick={copyToken} aria-label="Copy MCP token" className={ICON_BTN}>
-              {tokenCopied ? <Check weight="regular" size={16} className="text-olive-400" /> : <Copy weight="regular" size={16} />}
+              {tokenCopied ? <Check weight="regular" size={16} className="text-success" /> : <Copy weight="regular" size={16} />}
             </button>
           </div>
           <p className={HELP}>
             For AI agents and the AI Canvas MCP server. Keep it private. Both live in{' '}
-            <Link href="/account/settings" className="font-semibold text-olive-400 transition-colors hover:text-olive-300">
+            <Link href="/account/settings" className="font-semibold text-accent transition-colors hover:text-accent/70">
               account settings
             </Link>{' '}
             too.

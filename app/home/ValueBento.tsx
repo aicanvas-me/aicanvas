@@ -52,7 +52,7 @@ function MemberCard() {
             <img src="/ai-canvas-icon.svg" alt="" aria-hidden className="h-6 w-auto" />
             <span className={`${MONO} text-sand-300`}>Premium</span>
           </div>
-          <span aria-hidden className="h-7 w-10 rounded-chip bg-[linear-gradient(135deg,var(--color-olive-400),var(--color-olive-500))] opacity-90 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.15)]" />
+          <span aria-hidden className="h-7 w-10 rounded-chip bg-[linear-gradient(135deg,var(--color-accent),var(--color-accent))] opacity-90 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.15)]" />
           <div className="flex items-end justify-between">
             <div>
               <span className={`${MONO} block text-sand-500`}>Member since</span>
@@ -73,13 +73,13 @@ function CodePeek() {
   return (
     <div className="rounded-card border border-sand-200 bg-sand-50 font-mono text-[12px] leading-6 dark:border-sand-800 dark:bg-sand-950">
       <div className="flex items-center gap-2 border-b border-sand-200 px-4 py-2 text-sand-600 dark:border-sand-800 dark:text-sand-400">
-        <span aria-hidden className="size-1.5 rounded-full bg-olive-600 dark:bg-olive-400" />
+        <span aria-hidden className="size-1.5 rounded-full bg-accent" />
         components/aicanvas/slice-type.tsx
       </div>
       <div className="overflow-hidden px-4 py-3 text-sand-700 dark:text-sand-300">
         <p className="truncate text-sand-600 max-xl:whitespace-normal dark:text-sand-500">$ npx shadcn@latest add @aicanvas/slice-type</p>
         <p className="truncate max-xl:whitespace-normal">
-          <span className="text-olive-600 dark:text-olive-400">export default function</span> SliceType() {'{'}
+          <span className="text-accent">export default function</span> SliceType() {'{'}
         </p>
         <p className="truncate pl-4 text-sand-600 max-xl:whitespace-normal dark:text-sand-500">{'// yours now: read it, change it'}</p>
         <p>{'}'}</p>
@@ -130,14 +130,14 @@ function CheckDial() {
               y2={50 + Math.sin(a) * r2}
               strokeWidth={1.2}
               strokeLinecap="round"
-              className={lit ? 'stroke-olive-600 dark:stroke-olive-400' : 'stroke-sand-300 dark:stroke-sand-700'}
+              className={lit ? 'stroke-accent' : 'stroke-sand-300 dark:stroke-sand-700'}
             />
           )
         })}
       </svg>
       <div className="absolute inset-[18%]">
         <div className="flex size-full items-center justify-center rounded-full border border-sand-200 bg-sand-50 shadow-[0_2px_4px_rgba(0,0,0,0.06),0_10px_20px_-8px_rgba(0,0,0,0.18)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_12px_24px_-8px_rgba(0,0,0,0.7)]">
-          <Check weight="regular" size={28} className="text-olive-600 dark:text-olive-400" />
+          <Check weight="regular" size={28} className="text-accent" />
         </div>
       </div>
     </div>
@@ -261,7 +261,7 @@ export function ValueBento({ freeTotal, freeShots }: { freeTotal: number; freeSh
         <div className={CARD}>
           <div className="flex flex-1 items-center justify-center py-6">
             <Well>
-              <Briefcase weight="regular" size={28} className="text-olive-600 dark:text-olive-400" />
+              <Briefcase weight="regular" size={28} className="text-accent" />
             </Well>
           </div>
           <Copy title="Commercial work is allowed.">

@@ -75,12 +75,12 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
       <NerdToHero />
 
       {sent ? (
-        <div className="mt-6 rounded-control border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
+        <div className="mt-6 rounded-control border border-accent/30 bg-accent/10 p-4 text-sm text-sand-900 dark:text-sand-100">
           Confirmation email sent to <strong>{email}</strong>. Click the link
           inside to finish creating your account.
         </div>
       ) : existing ? (
-        <div className="mt-6 rounded-control border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
+        <div className="mt-6 rounded-control border border-accent/30 bg-accent/10 p-4 text-sm text-sand-900 dark:text-sand-100">
           <p>
             <strong>{email}</strong> already has an account. Sign in to continue,
             no password needed if you choose &ldquo;Email me a sign-in link.&rdquo;
@@ -91,14 +91,14 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               <button
                 type="button"
                 onClick={onSwitchToSignIn}
-                className="inline-flex h-9 items-center justify-center rounded-control bg-olive-500 px-4 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
+                className="inline-flex h-9 items-center justify-center rounded-control bg-accent px-4 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/85"
               >
                 Sign in
               </button>
             ) : (
               <Link
                 href={`/account/sign-in?next=${encodeURIComponent(next)}`}
-                className="inline-flex h-9 items-center justify-center rounded-control bg-olive-500 px-4 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
+                className="inline-flex h-9 items-center justify-center rounded-control bg-accent px-4 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/85"
               >
                 Sign in
               </Link>
@@ -139,7 +139,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
                     setEmail(e.target.value)
                     clearStatus()
                   }}
-                  className="w-full rounded-control border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
+                  className="w-full rounded-control border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-accent focus:ring-2 focus:ring-accent/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
                 />
               </div>
 
@@ -189,14 +189,14 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               <button
                 type="button"
                 onClick={onSwitchToSignIn}
-                className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
+                className="font-semibold text-accent hover:underline"
               >
                 Sign in
               </button>
             ) : (
               <Link
                 href={`/account/sign-in?next=${encodeURIComponent(next)}`}
-                className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
+                className="font-semibold text-accent hover:underline"
               >
                 Sign in
               </Link>

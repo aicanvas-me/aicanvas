@@ -31,7 +31,7 @@ export function AccountMenuItems({
         <button
           type="button"
           onClick={onUpgrade}
-          className="flex w-full items-center gap-2 border-b border-sand-200 px-3 py-2 text-sm font-semibold text-olive-600 transition-colors hover:bg-sand-50 dark:border-sand-700 dark:text-olive-500 dark:hover:bg-sand-800"
+          className="flex w-full items-center gap-2 border-b border-sand-200 px-3 py-2 text-sm font-semibold text-accent transition-colors hover:bg-sand-50 dark:border-sand-700 dark:hover:bg-sand-800"
         >
           <Lightning size={14} weight="regular" />
           Upgrade to Premium

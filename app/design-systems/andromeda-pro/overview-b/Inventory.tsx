@@ -67,12 +67,12 @@ const DOCS: Doc[] = [
 ]
 
 // One drawing per document, in the drawer's own two inks: a thin neutral line
-// for the structure and a single olive mark for the thing being counted. Each
+// for the structure and a single accent mark for the thing being counted. Each
 // one is a diagram of its number rather than an icon of its subject, so it
 // says something the copy does not.
 const LINE = 'stroke-sand-400 dark:stroke-sand-600'
-const OLIVE_LINE = 'stroke-olive-500'
-const OLIVE = 'fill-olive-500'
+const ACCENT_LINE = 'stroke-accent'
+const ACCENT = 'fill-accent'
 // The open card's own background. A mark is only ever seen while its document
 // is out, and an out document is always the tinted surface, so a shape filled
 // with this occludes cleanly instead of letting the stack show through.
@@ -101,7 +101,7 @@ function Mark({ k }: { k: keyof OverviewStats }) {
           <path d="M 56 29 h 13" {...s} className={LINE} />
           {/* toggle, on */}
           <rect x={88} y={21} width={32} height={16} rx={8} {...s} className={LINE} />
-          <circle cx={112} cy={29} r={5.5} className={OLIVE} />
+          <circle cx={112} cy={29} r={5.5} className={ACCENT} />
           {/* avatar */}
           <circle cx={28} cy={73} r={9} {...s} className={LINE} />
           {/* checkbox */}
@@ -131,7 +131,7 @@ function Mark({ k }: { k: keyof OverviewStats }) {
             height={h}
             rx={r}
             {...s}
-            className={i === 3 ? OLIVE_LINE : LINE}
+            className={i === 3 ? ACCENT_LINE : LINE}
           />
         ))}
 
@@ -139,10 +139,10 @@ function Mark({ k }: { k: keyof OverviewStats }) {
       {k === 'states' && (
         <>
           <rect x={12} y={20} width={44} height={22} rx={6} {...s} className={LINE} />
-          <rect x={76} y={20} width={44} height={22} rx={6} className={OLIVE} />
+          <rect x={76} y={20} width={44} height={22} rx={6} className={ACCENT} />
           <rect x={12} y={62} width={44} height={22} rx={6} {...s} className={LINE} strokeDasharray="3 4" />
           <rect x={76} y={62} width={44} height={22} rx={6} {...s} className={LINE} />
-          <rect x={71} y={57} width={54} height={32} rx={10} {...s} className={OLIVE_LINE} />
+          <rect x={71} y={57} width={54} height={32} rx={10} {...s} className={ACCENT_LINE} />
         </>
       )}
 
@@ -154,7 +154,7 @@ function Mark({ k }: { k: keyof OverviewStats }) {
           <path d="M 30 24 v 56" {...s} className={LINE} />
           <path d="M 30 24 h 14 M 30 52 h 14 M 30 80 h 14" {...s} className={LINE} />
           <rect x={44} y={15} width={52} height={18} rx={5} {...s} className={LINE} />
-          <rect x={44} y={43} width={70} height={18} rx={5} className={OLIVE} />
+          <rect x={44} y={43} width={70} height={18} rx={5} className={ACCENT} />
           <rect x={44} y={71} width={58} height={18} rx={5} {...s} className={LINE} />
         </>
       )}
@@ -168,7 +168,7 @@ function Mark({ k }: { k: keyof OverviewStats }) {
           <rect x={24} y={25} width={94} height={56} rx={7} vectorEffect="non-scaling-stroke" className={`${CARD} ${LINE}`} />
           <rect x={14} y={36} width={104} height={54} rx={7} vectorEffect="non-scaling-stroke" className={`${CARD} ${LINE}`} />
           <path d="M 14 50 h 104 M 44 50 v 40" {...s} className={LINE} />
-          <rect x={52} y={58} width={26} height={14} rx={3} className={OLIVE} />
+          <rect x={52} y={58} width={26} height={14} rx={3} className={ACCENT} />
           <path d="M 86 65 h 22 M 52 80 h 56" {...s} className={LINE} />
           <path d="M 22 58 h 14 M 22 66 h 14 M 22 74 h 10" {...s} className={LINE} />
         </>
@@ -177,9 +177,9 @@ function Mark({ k }: { k: keyof OverviewStats }) {
       {/* Themes: two treatments, one set of tokens, sharing the middle. */}
       {k === 'themes' && (
         <>
-          <circle cx={82} cy={52} r={28} className={OLIVE} />
+          <circle cx={82} cy={52} r={28} className={ACCENT} />
           <circle cx={50} cy={52} r={28} {...s} className={LINE} />
-          <circle cx={82} cy={52} r={28} {...s} className={OLIVE_LINE} />
+          <circle cx={82} cy={52} r={28} {...s} className={ACCENT_LINE} />
         </>
       )}
     </svg>
@@ -397,11 +397,11 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
         </div>
       </div>
 
-      {/* The drawer front, with its label printed on it. An olive pill here
+      {/* The drawer front, with its label printed on it. An accent pill here
           read as a button, and nothing on the drawer front is clickable. */}
       <div className="relative flex h-14 items-center justify-center rounded-b-inset border border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900">
         <span className="flex items-center gap-3">
-          <span aria-hidden className="size-1.5 rounded-full bg-olive-500" />
+          <span aria-hidden className="size-1.5 rounded-full bg-accent" />
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-sand-700 dark:text-sand-300">
             Andromeda Pro
           </span>

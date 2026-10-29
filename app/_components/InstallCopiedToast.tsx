@@ -30,7 +30,7 @@ export function InstallCopiedToast({ show }: { show: boolean }) {
           className="fixed bottom-16 left-1/2 z-50 -translate-x-1/2"
         >
           <div className="flex items-center gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
-            <Check weight="regular" size={16} className="shrink-0 text-olive-500" />
+            <Check weight="regular" size={16} className="shrink-0 text-success" />
             <div>
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Install command copied

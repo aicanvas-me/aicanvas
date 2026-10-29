@@ -235,7 +235,7 @@ export function ThemeCompare() {
             style={{ left: gripLeft, ...(gripTop !== null && { top: gripTop }) }}
           >
             <span
-              className={`flex h-10 w-3 items-center justify-center rounded-full bg-sand-50 text-sand-950 ${LINE_SHADOW} group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-olive-500`}
+              className={`flex h-10 w-3 items-center justify-center rounded-full bg-sand-50 text-sand-950 ${LINE_SHADOW} group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-accent`}
             >
               <DotsSixVertical weight="regular" className="size-4 shrink-0" />
             </span>

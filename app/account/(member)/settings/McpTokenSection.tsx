@@ -80,7 +80,7 @@ export function McpTokenSection({ token }: Props) {
                 aria-label="Copy token"
               >
                 {copied
-                  ? <Check weight="regular" size={16} className="text-olive-500" />
+                  ? <Check weight="regular" size={16} className="text-success" />
                   : <Copy weight="regular" size={16} />}
               </button>
             </div>
@@ -100,7 +100,7 @@ export function McpTokenSection({ token }: Props) {
               aria-label="Copy install command"
             >
               {cmdCopied
-                ? <Check weight="regular" size={16} className="text-olive-500" />
+                ? <Check weight="regular" size={16} className="text-success" />
                 : <Copy weight="regular" size={16} />}
             </button>
           </div>

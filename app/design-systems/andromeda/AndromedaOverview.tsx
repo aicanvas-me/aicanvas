@@ -5,7 +5,7 @@
 // grid lives at /design-systems/andromeda/system; the old preview URL
 // /design-systems/andromeda/overview 308-redirects (permanent) here (see next.config.ts).
 //
-// IDENTITY: pure AI Canvas — sand/olive tokens (Tailwind), Manrope (the site
+// IDENTITY: pure AI Canvas — sand/accent tokens (Tailwind), Manrope (the site
 // --font-sans default), and the site's button system (buttonClasses). It
 // deliberately does NOT use Andromeda's tokens/mono/turquoise; the page is AI
 // Canvas chrome that *presents* Andromeda. The scroll column (AndromedaContentColumn)
@@ -346,7 +346,7 @@ export function AndromedaOverview() {
           className="group relative flex flex-col overflow-hidden rounded-card border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
         >
           <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">
-            <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-accent">
               System
             </span>
             <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
@@ -357,7 +357,7 @@ export function AndromedaOverview() {
               one page, live and interactive.
             </p>
             <div className="mt-1">
-              <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-olive-400`}>
+              <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-accent/85`}>
                 View the System
                 <ArrowUpRight weight="bold" size={15} />
               </span>
@@ -379,7 +379,7 @@ export function AndromedaOverview() {
             <BrainWireframePreview />
           </div>
           <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">
-            <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-accent">
               The AI Brain
             </span>
             <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
@@ -391,7 +391,7 @@ export function AndromedaOverview() {
               matches the system instead of a guess.
             </p>
             <div className="mt-1">
-              <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-olive-400`}>
+              <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-accent/85`}>
                 Explore more
                 <ArrowUpRight weight="bold" size={15} />
               </span>
@@ -419,7 +419,7 @@ export function AndromedaOverview() {
                 {/* Premium badge — same Aceternity-style pill as premium
                     component cards: a filled bolt at rest, slides open to the
                     label on card hover. Templates are premium. */}
-                <div className="absolute left-3 top-3 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 text-olive-400 ring-1 ring-olive-500/40 backdrop-blur-sm">
+                <div className="absolute left-3 top-3 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-50 ring-1 ring-sand-50/30 backdrop-blur-sm">
                   <Lightning weight="fill" size={14} className="shrink-0" />
                   <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
                     <span className="overflow-hidden">

@@ -66,7 +66,7 @@ export function PropsTable({ propTables }: { propTables: PropTable[] }) {
                           {p.name}
                         </span>
                         {!p.optional && (
-                          <span className="ml-1.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-olive-600 dark:text-olive-400">
+                          <span className="ml-1.5 align-middle text-[10px] font-semibold uppercase tracking-wide text-accent">
                             req
                           </span>
                         )}
