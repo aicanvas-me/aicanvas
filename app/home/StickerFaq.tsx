@@ -15,6 +15,7 @@ import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ArrowRight, Plus } from '@phosphor-icons/react'
 import { ClaudeMark, CursorMark } from '../mcp/InstallCards'
+import { useMedia } from './useMedia'
 
 export type FaqItem = { q: string; a: string }
 
@@ -82,6 +83,7 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
   const [open, setOpen] = useState<number | null>(0)
   const area = useRef<HTMLDivElement>(null)
   const reduce = useReducedMotion()
+  const wide = useMedia('(min-width: 1280px)', false)
 
   return (
     <div ref={area} className="relative">
@@ -91,28 +93,32 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
         @media (prefers-reduced-motion: reduce) { .v3-bob { animation: none } }
       `}</style>
 
-      {/* Stickers: decorative, pointer only. */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 hidden xl:block">
-        {STICKERS.map((s) => (
-          <motion.div
-            key={s.id}
-            drag
-            dragConstraints={area}
-            dragElastic={0.12}
-            dragTransition={{ bounceStiffness: 320, bounceDamping: 22 }}
-            whileHover={reduce ? undefined : { scale: 1.05 }}
-            whileDrag={reduce ? { cursor: 'grabbing' } : { scale: 1.1, rotate: 0, cursor: 'grabbing' }}
-            initial={false}
-            animate={{ rotate: s.tilt }}
-            className="pointer-events-auto absolute cursor-grab touch-none"
-            style={s.pos}
-          >
-            <div className="v3-bob" style={{ animationDelay: `-${s.bob}s`, filter: DIE_CUT }}>
-              {s.art}
-            </div>
-          </motion.div>
-        ))}
-      </div>
+      {/* Stickers: decorative, pointer only. Mounted only at xl: a drag
+          constraint measured while the layer is hidden places every sticker
+          on one spot once the window widens. */}
+      {wide && (
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          {STICKERS.map((s) => (
+            <motion.div
+              key={s.id}
+              drag
+              dragConstraints={area}
+              dragElastic={0.12}
+              dragTransition={{ bounceStiffness: 320, bounceDamping: 22 }}
+              whileHover={reduce ? undefined : { scale: 1.05 }}
+              whileDrag={reduce ? { cursor: 'grabbing' } : { scale: 1.1, rotate: 0, cursor: 'grabbing' }}
+              initial={false}
+              animate={{ rotate: s.tilt }}
+              className="pointer-events-auto absolute cursor-grab touch-none"
+              style={s.pos}
+            >
+              <div className="v3-bob" style={{ animationDelay: `-${s.bob}s`, filter: DIE_CUT }}>
+                {s.art}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* z-10: the column sits above the stickers, so one dropped on it slides
           underneath and never covers a question. */}
