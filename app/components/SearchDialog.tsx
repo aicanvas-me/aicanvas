@@ -378,7 +378,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
         role="dialog"
         aria-modal="true"
         aria-label="Search"
-        className="relative flex h-[min(36rem,76vh)] w-full max-w-xl flex-col overflow-hidden rounded-inset border border-sand-200 bg-sand-50 shadow-[0_2px_4px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.16)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_16px_40px_rgba(0,0,0,0.6)]"
+        className="relative flex h-[min(36rem,76vh)] w-full max-w-xl flex-col overflow-hidden rounded-section border border-sand-200 bg-sand-50 shadow-[0_2px_4px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.16)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_16px_40px_rgba(0,0,0,0.6)]"
         initial={{ opacity: 0, y: -6, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
@@ -453,7 +453,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
                       aria-selected={selected}
                       onPointerMove={() => setActive(index)}
                       onClick={() => go(item)}
-                      className={`flex cursor-pointer items-center gap-3 rounded-inset px-3 py-2.5 ${
+                      className={`flex cursor-pointer items-center gap-3 rounded-control px-3 py-2.5 ${
                         selected ? 'bg-sand-100 dark:bg-sand-900' : ''
                       }`}
                     >

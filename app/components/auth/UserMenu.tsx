@@ -50,7 +50,7 @@ export function UserMenu() {
         <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${open ? '-rotate-180' : ''}`} />
       </button>
       {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-1 overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
+        <div className="absolute bottom-full left-0 right-0 mb-1 overflow-hidden rounded-section border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
           <AccountMenuItems
             showUpgrade={status === 'not-premium'}
             onUpgrade={() => { setOpen(false); openPaywall({ reason: 'upgrade' }) }}

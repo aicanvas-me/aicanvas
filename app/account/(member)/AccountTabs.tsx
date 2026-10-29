@@ -28,7 +28,7 @@ export function AccountTabs() {
     // column and drops the icons, so the four words always fit without a
     // horizontal scroll; from `sm:` it sits centred with icon and label.
     <nav className="flex justify-center">
-      <div className="flex w-full rounded-inset border border-sand-200 bg-sand-100 p-1 sm:inline-flex sm:w-auto dark:border-sand-800 dark:bg-sand-900">
+      <div className="flex w-full rounded-control border border-sand-200 bg-sand-100 p-1 sm:inline-flex sm:w-auto dark:border-sand-800 dark:bg-sand-900">
         {TABS.map(({ href, label, Icon }) => {
           const active = pathname === href
           return (
