@@ -234,7 +234,7 @@ const inTier = (item: Item, want: 'free' | 'paid') => (want === 'free' ? item.ti
 // Same chip shape as SystemTierChip, with the tier colours the component grid
 // already uses: Pro cyan, premium standalone olive, free neutral.
 const TIER_CHIP: Record<Tier, string> = {
-  pro: 'bg-cyan-500/10 text-cyan-600 ring-cyan-500/40 dark:text-cyan-400',
+  pro: 'bg-cyan-500/10 text-cyan-700 ring-cyan-500/40 dark:text-cyan-400',
   premium: 'bg-olive-500/10 text-olive-600 ring-olive-500/40 dark:text-olive-400',
   free: 'text-sand-600 ring-sand-300 dark:text-sand-400 dark:ring-sand-700',
 }
