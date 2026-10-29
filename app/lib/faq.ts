@@ -357,7 +357,7 @@ export const SITE_FAQ: FaqEntry[] = [
   {
     id: 'tool-affiliations',
     category: 'about',
-    q: 'Is AI Canvas affiliated with Claude, Cursor, Lovable, or V0?',
+    q: 'Is AI Canvas affiliated with Claude Code, Codex, or Cursor?',
     a: 'No. It is an independent, solo-built project with no sponsorship, partnership, or endorsement from those tools. It works beside them to give your existing AI workflow finished components.',
   },
   {

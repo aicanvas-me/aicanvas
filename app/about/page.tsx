@@ -259,8 +259,8 @@ export default function AboutPage() {
           </h2>
           <p className="mt-3 text-pretty text-base leading-relaxed text-sand-600 dark:text-sand-400">
             AI Canvas is not sponsored by, partnered with, or endorsed by Claude
-            Code, Codex, Cursor, Lovable, or V0. It simply works alongside the
-            tools builders already use.
+            Code, Codex, Cursor, or any other AI tool. It simply works alongside
+            the tools builders already use.
           </p>
         </section>
       </Reveal>
