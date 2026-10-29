@@ -132,6 +132,11 @@ export function IconsOverview({
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">{icons.length}</strong> icons</span>
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">4</strong> styles</span>
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">{ICON_CATEGORIES.length}</strong> categories</span>
+            {/* The key to the olive dot a new icon carries in the grid's corner. */}
+            <span className="inline-flex items-center gap-1.5">
+              <i aria-hidden className="h-1.5 w-1.5 rounded-full bg-olive-500" />
+              <span><strong className="font-bold text-sand-900 dark:text-sand-50">{icons.filter((icon) => icon.isNew).length}</strong> new</span>
+            </span>
           </div>
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <button

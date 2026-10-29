@@ -47,7 +47,7 @@ export function IconTile({
         if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false)
       }}
     >
-      {icon.isNew && <i data-icon-new="" aria-label="New" />}
+      {icon.isNew && <i data-icon-new="" role="img" aria-label="New" />}
       <a href={`/icons/${icon.name}`} data-icon-link="" onClick={openPopup} aria-label={`Open ${icon.name} details`}>
         {markup ? (
           <IconSvg markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />

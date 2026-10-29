@@ -139,7 +139,7 @@ export function PremiumCards({
               href={user ? '/components' : '/account/sign-up'}
               className={`mt-6 ${buttonClasses({ variant: 'outline', size: 'lg', fullWidth: true })}`}
             >
-              {user ? 'Browse Components' : 'Sign up Free'}
+              {user ? 'Browse components' : 'Sign up free'}
             </Link>
           </div>
           <div className={`flex-1 rounded-2xl bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, GithubLogo, Info, Quotes } from '@phosphor-icons/react/dist/ssr'
+import { ArrowRight, GithubLogo, Info } from '@phosphor-icons/react/dist/ssr'
 import { GITHUB_URL } from '../lib/config'
 import { buttonClasses } from '../components/buttonClasses'
 import { CARD, CtaBand, PageHero, PageShell } from '../components/PageKit'
@@ -41,12 +41,14 @@ function PullQuote({ lead, accent }: { lead: ReactNode; accent: ReactNode }) {
   return (
     <Reveal y={16} className="mx-auto my-20 max-w-4xl text-center sm:my-28">
       <figure>
-        {/* Phosphor's mark is a closing quote; turned over it opens one. */}
+        {/* The type's own opening quote, set heavy: Phosphor's thin outline
+            mark turned over read as the digits 66. Nudged down because the
+            glyph sits at the top of its line box. */}
         <span
           aria-hidden="true"
           className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-sand-300 bg-sand-100 text-olive-600 dark:border-sand-700 dark:bg-sand-900 dark:text-olive-400"
         >
-          <Quotes weight="regular" size={22} className="rotate-180" />
+          <span className="translate-y-3.5 text-6xl font-extrabold leading-none">&ldquo;</span>
         </span>
         <blockquote className="mt-7">
           <p className="text-balance text-2xl font-bold leading-snug tracking-tight text-sand-900 sm:text-4xl sm:leading-tight dark:text-sand-50">

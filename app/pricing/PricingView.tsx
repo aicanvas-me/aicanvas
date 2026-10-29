@@ -57,7 +57,7 @@ const PLANS: Plan[] = [
     priceLabel: 'Free',
     priceSuffix: 'Forever',
     cta: {
-      label: 'Sign up Free',
+      label: 'Sign up free',
       href: '/account/sign-up',
       variant: 'primary',
     },

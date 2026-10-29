@@ -90,10 +90,10 @@ export default function McpPage() {
           title="AI Canvas MCP connected with"
           accent="Claude Code, Codex, and Cursor."
           sub={
-            <span className="block text-balance">
+            <>
               Save tokens. Don&rsquo;t start from scratch. Your agent pulls a finished component with the design
               spec and the motion included, and you just adapt it to your project.
-            </span>
+            </>
           }
         />
 
