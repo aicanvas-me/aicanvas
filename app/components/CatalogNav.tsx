@@ -146,6 +146,12 @@ const EDGE = 24
 
 // The element that scrolls the list: the rail's nav, or the phone drawer's.
 // Never the page itself.
+// The list fades in under the switch and out above the rail's foot.
+const LIST_MASK = {
+  maskImage: 'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
+  WebkitMaskImage: 'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
+}
+
 function scrollerOf(from: HTMLElement): HTMLElement | null {
   for (let el = from.parentElement; el && el !== document.body; el = el.parentElement) {
     const { overflowY } = getComputedStyle(el)
@@ -382,7 +388,7 @@ function SystemSections({
   )
 }
 
-export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
+export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => void; rail?: boolean }) {
   const pathname = usePathname() ?? ''
   const searchParams = useSearchParams()
   const baseId = useId()
@@ -413,7 +419,7 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
   const shownSegment = useRef(segment)
   useEffect(() => {
     const root = rootRef.current
-    const list = root && scrollerOf(root)
+    const list = root && (root.querySelector<HTMLElement>('[data-catalog-list]') ?? scrollerOf(root))
     if (!root || !list || !list.clientHeight) return
     const swapped = shownSegment.current !== segment
     shownSegment.current = segment
@@ -486,46 +492,48 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
     )
   }
 
-  return (
-    <div ref={rootRef}>
-      <div
-        role="tablist"
-        aria-label="Catalog section"
-        onKeyDown={onKeyDown}
-        className="flex items-center gap-0.5 rounded-full bg-sand-100 p-1 dark:bg-sand-900"
-      >
-        {SEGMENTS.map((s, i) => {
-          const selected = s.id === segment
-          return (
-            <button
-              key={s.id}
-              ref={(el) => {
-                tabRefs.current[i] = el
-              }}
-              type="button"
-              role="tab"
-              id={`${baseId}-tab-${s.id}`}
-              aria-selected={selected}
-              aria-controls={`${baseId}-panel-${s.id}`}
-              aria-label={s.label}
-              title={s.label}
-              tabIndex={selected ? 0 : -1}
-              onClick={() => pick(s.id)}
-              // Sized so the longest label, "Design systems", fits the 240px
-              // rail whole: 12px text, 32px idle tabs, tight active padding.
-              className={`inline-flex h-8 items-center justify-center gap-1 rounded-full text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
-                selected
-                  ? 'min-w-0 flex-1 bg-sand-50 px-2.5 text-sand-900 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)] dark:bg-sand-800 dark:text-sand-50 dark:shadow-[0_1px_2px_rgba(0,0,0,0.5)]'
-                  : 'w-8 shrink-0 text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50'
-              }`}
-            >
-              <span className="shrink-0">{s.icon}</span>
-              {selected && <span className="truncate">{s.label}</span>}
-            </button>
-          )
-        })}
-      </div>
+  const tabs = (
+    <div
+      role="tablist"
+      aria-label="Catalog section"
+      onKeyDown={onKeyDown}
+      className="flex items-center gap-0.5 rounded-full bg-sand-100 p-1 dark:bg-sand-900"
+    >
+      {SEGMENTS.map((s, i) => {
+        const selected = s.id === segment
+        return (
+          <button
+            key={s.id}
+            ref={(el) => {
+              tabRefs.current[i] = el
+            }}
+            type="button"
+            role="tab"
+            id={`${baseId}-tab-${s.id}`}
+            aria-selected={selected}
+            aria-controls={`${baseId}-panel-${s.id}`}
+            aria-label={s.label}
+            title={s.label}
+            tabIndex={selected ? 0 : -1}
+            onClick={() => pick(s.id)}
+            // Sized so the longest label, "Design systems", fits the 240px
+            // rail whole: 12px text, 32px idle tabs, tight active padding.
+            className={`inline-flex h-8 items-center justify-center gap-1 rounded-full text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+              selected
+                ? 'min-w-0 flex-1 bg-sand-50 px-2.5 text-sand-900 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)] dark:bg-sand-800 dark:text-sand-50 dark:shadow-[0_1px_2px_rgba(0,0,0,0.5)]'
+                : 'w-8 shrink-0 text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50'
+            }`}
+          >
+            <span className="shrink-0">{s.icon}</span>
+            {selected && <span className="truncate">{s.label}</span>}
+          </button>
+        )
+      })}
+    </div>
+  )
 
+  const panels = (
+    <>
       {panel('design-systems', <DesignSystemsList onNavigate={onNavigate} />)}
 
       {panel(
@@ -618,6 +626,38 @@ export function CatalogNav({ onNavigate }: { onNavigate?: () => void }) {
           </Section>
         </>,
       )}
+    </>
+  )
+
+  // The drawer scrolls this whole block with its own list, switch included.
+  if (!rail) {
+    return (
+      <div ref={rootRef}>
+        {tabs}
+        {panels}
+      </div>
+    )
+  }
+
+  // The desktop rail pins the switch and scrolls only the list under it, so
+  // the scrollbar starts below the switch and the switch never leaves view.
+  //
+  // The thin scrollbar (globals.css) takes width when the list scrolls, and
+  // the widest row, a system name with its NEW chip, has no slack to give:
+  // it truncated the moment the bar appeared. A stable gutter keeps that strip
+  // reserved whether or not the list scrolls, so every row has one width in
+  // both states. The right-hand space then has to come from padding OR
+  // gutter, never both, and which one depends on the browser: a classic bar
+  // takes width, an overlay bar (Safari on a trackpad, for one) takes none.
+  // The rail is a size container, so 100cqw is its width and 100% is the
+  // list's width minus whatever the bar took; their difference IS the bar.
+  // The padding is 12px minus that, never under 1px.
+  return (
+    <div ref={rootRef} className="flex min-h-0 flex-1 flex-col">
+      <div className="shrink-0 px-3 pt-2">{tabs}</div>
+      <div data-catalog-list className="min-h-0 flex-1 overflow-y-auto pb-2 [scrollbar-gutter:stable]" style={LIST_MASK}>
+        <div className="pl-3 pr-[max(1px,calc(12px_-_(100cqw_-_100%)))]">{panels}</div>
+      </div>
     </div>
   )
 }

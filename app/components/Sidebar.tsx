@@ -47,35 +47,10 @@ export function Sidebar() {
         </div>
       )}
 
-      {/* ── Navigation ── */}
-      {/* The thin scrollbar (globals.css) takes width when the list scrolls,
-          and the widest row, a system name with its NEW chip, has no slack to
-          give: it truncated the moment the bar appeared. A stable gutter keeps
-          that strip reserved whether or not the list scrolls, so every row has
-          one width in both states.
-
-          The right-hand space then has to come from padding OR gutter, never
-          both, and which one depends on the browser: a classic bar takes
-          width, an overlay bar (Safari on a trackpad, for one) takes none and
-          reserves no gutter. The inner wrapper works it out. The aside is a
-          size container, so 100cqw is the rail's width and 100% is the
-          nav's width minus whatever the bar took; their difference IS the bar.
-          The padding is 12px (the old px-3) minus that, never under 1px, so an
-          overlay browser keeps the full 12px and a classic one keeps the row
-          width this fix was checked at. */}
-      <nav
-        aria-label="Catalog"
-        className="flex-1 overflow-y-auto pt-2 pb-2 [scrollbar-gutter:stable]"
-        style={{
-          maskImage:
-            'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
-          WebkitMaskImage:
-            'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
-        }}
-      >
-        <div className="pl-3 pr-[max(1px,calc(12px_-_(100cqw_-_100%)))]">
-          <CatalogNav />
-        </div>
+      {/* ── Navigation ── the switch stays put, its list scrolls under it
+          (the gutter and padding notes live in CatalogNav). */}
+      <nav aria-label="Catalog" className="flex min-h-0 flex-1 flex-col">
+        <CatalogNav rail />
       </nav>
 
       {/* ── Social icons ── GitHub + X float quietly at the foot of the rail,
