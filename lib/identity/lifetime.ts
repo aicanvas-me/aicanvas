@@ -486,3 +486,146 @@ export async function grantFromTransaction(admin: AdminClient, txn: any): Promis
   const live = granted.row.granted_at != null && granted.row.revoked_at == null
   return { status: 'granted', live, inserted: granted.inserted, row: granted.row }
 }
+
+/** Pure: the revoke state Paddle's full adjustment list implies for one
+ *  transaction, folded oldest first with the same rules as the webhook. */
+export function foldAdjustments(adjs: any[]): { revoked: boolean; reason: 'refund' | 'chargeback' | null } {
+  let reason: 'refund' | 'chargeback' | null = null
+  const sorted = [...adjs].sort((a, b) => String(a?.created_at ?? '').localeCompare(String(b?.created_at ?? '')))
+  for (const adj of sorted) {
+    const effect = adjustmentEffect(adj, { revoke_reason: reason })
+    if (effect.kind === 'revoke' && reason == null) reason = effect.reason
+    if (effect.kind === 'restore') reason = null
+  }
+  return { revoked: reason != null, reason }
+}
+
+async function paddleList(firstUrl: string, apiKey: string, maxPages = 20): Promise<any[] | 'failed'> {
+  const out: any[] = []
+  let url: string | null = firstUrl
+  for (let page = 0; url && page < maxPages; page++) {
+    const res: Response = await fetch(url, { headers: { Authorization: `Bearer ${apiKey}` }, signal: AbortSignal.timeout(10_000) })
+    if (!res.ok) {
+      console.error('[lifetime reconcile] Paddle list failed, status', res.status, firstUrl.split('?')[0])
+      return 'failed'
+    }
+    const j = await res.json()
+    out.push(...(Array.isArray(j?.data) ? j.data : []))
+    url = j?.meta?.pagination?.has_more ? j.meta.pagination.next ?? null : null
+  }
+  return out
+}
+
+const RECONCILE_DAYS = 30
+
+/**
+ * The daily self-heal for Lifetime, in the reconcile cron:
+ * 1. Lifetime purchases completed in the last 30 days at Paddle get their row
+ *    if a webhook was missed (same grant, same user chain), then the cancel of
+ *    an old subscription and the email, each with its own send-once guard.
+ * 2. Their adjustments are re-read and the revoke state Paddle implies is
+ *    written where ours differs (compare-and-set, so a webhook landing during
+ *    the read wins).
+ * 3. Every live purchase whose holder still has a live subscription gets the
+ *    cancel scheduled if it is not yet (gift holders excluded).
+ * Never throws; a failed step is counted and retried tomorrow. Listing
+ * transactions needs a Paddle key allowed to read transactions.
+ */
+export async function reconcileLifetime(
+  admin: AdminClient,
+  now: Date = new Date(),
+): Promise<{ granted: number; revokes: number; restores: number; cancelChecks: number; failed: number }> {
+  const stats = { granted: 0, revokes: 0, restores: 0, cancelChecks: 0, failed: 0 }
+  try {
+    const apiKey = process.env.PADDLE_API_KEY
+    const priceId = lifetimePriceId()
+    if (!apiKey || !priceId) {
+      console.error('[lifetime reconcile] PADDLE_API_KEY or the Lifetime price is not set; skipped')
+      stats.failed++
+      return stats
+    }
+    const since = new Date(now.getTime() - RECONCILE_DAYS * 86_400_000).toISOString()
+    const txns = await paddleList(
+      `${paddleApiBase()}/transactions?status=completed&subscription_id=null&billed_at[GTE]=${since}&order_by=billed_at[ASC]`,
+      apiKey,
+    )
+    const lifetimeTxns = txns === 'failed' ? [] : txns.filter((t) => hasLifetimeItem(t, priceId))
+    if (txns === 'failed') stats.failed++
+
+    for (const txn of lifetimeTxns) {
+      const out = await grantFromTransaction(admin, txn)
+      if (out.status !== 'granted') {
+        if (out.status !== 'ignored') stats.failed++
+        continue
+      }
+      if (out.inserted) stats.granted++
+      if (out.live && !out.row.welcome_claimed_at) {
+        const d1 = await cancelSubscriptionForLifetime(admin, out.row.user_id)
+        await sendLifetimeEmail(admin, out.row, d1.scheduledCancel)
+      }
+    }
+
+    const ids: string[] = lifetimeTxns.map((t) => t.id).filter((id: unknown) => typeof id === 'string')
+    for (let i = 0; i < ids.length; i += 20) {
+      const chunk = ids.slice(i, i + 20)
+      const adjs = await paddleList(`${paddleApiBase()}/adjustments?transaction_id=${chunk.join(',')}&per_page=50`, apiKey)
+      if (adjs === 'failed') {
+        stats.failed++
+        continue
+      }
+      for (const txId of chunk) {
+        const read = await readLifetimeRow(admin, txId)
+        if ('error' in read || !read.row) continue
+        const row = read.row
+        const want = foldAdjustments(adjs.filter((a) => a?.transaction_id === txId))
+        const isRevoked = row.revoked_at != null
+        if (want.revoked === isRevoked) continue
+        const patch = want.revoked
+          ? { revoked_at: now.toISOString(), revoke_reason: want.reason }
+          : { revoked_at: null, revoke_reason: null }
+        const base = admin.from('user_lifetime_access').update(patch).eq('id', row.id)
+        const guarded = row.last_adjustment_at ? base.eq('last_adjustment_at', row.last_adjustment_at) : base.is('last_adjustment_at', null)
+        const { data, error } = await guarded.select('id')
+        if (error || !data || data.length === 0) {
+          stats.failed++
+          continue
+        }
+        if (want.revoked) stats.revokes++
+        else stats.restores++
+      }
+    }
+
+    const live = await admin
+      .from('user_lifetime_access')
+      .select('user_id')
+      .eq('source', 'purchase')
+      .not('granted_at', 'is', null)
+      .is('revoked_at', null)
+    if (live.error) {
+      stats.failed++
+      return stats
+    }
+    const holders = [...new Set((live.data ?? []).map((r) => r.user_id as string))]
+    if (holders.length > 0) {
+      const subs = await admin
+        .from('user_subscriptions')
+        .select('user_id')
+        .in('user_id', holders)
+        .in('status', LIVE_SUB_STATUSES)
+        .not('paddle_subscription_id', 'is', null)
+      if (subs.error) {
+        stats.failed++
+        return stats
+      }
+      for (const s of subs.data ?? []) {
+        stats.cancelChecks++
+        const d1 = await cancelSubscriptionForLifetime(admin, s.user_id as string)
+        if (d1.failed) stats.failed++
+      }
+    }
+  } catch (e) {
+    console.error('[lifetime reconcile] failed:', e)
+    stats.failed++
+  }
+  return stats
+}

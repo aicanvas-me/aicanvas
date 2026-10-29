@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/app/lib/supabase/admin'
 import { paddleApiBase } from '@/app/lib/paddle/server'
 import { mapSubscriptionFields } from '@/lib/identity/sub-mapping'
+import { reconcileLifetime } from '@/lib/identity/lifetime'
+import { resendPendingAlerts } from '@/lib/identity/billing-events'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
@@ -15,6 +17,8 @@ export const maxDuration = 60
  * this. Once a day we re-pull each non-terminal subscription's LIVE state from
  * Paddle (the source of truth) and repair our cache to match, so a missed
  * webhook can't permanently strand anyone.
+ *
+ * It also runs the Lifetime self-heal and re-sends failed billing alerts.
  *
  * Secured by CRON_SECRET: Vercel Cron sends it as `Authorization: Bearer <secret>`.
  * Never throws on a Paddle hiccup — it just logs and retries tomorrow.
@@ -105,5 +109,13 @@ export async function GET(req: NextRequest) {
   }
 
   console.log(`[reconcile] checked=${checked} repaired=${repaired} fresh=${fresh} skipped=${skipped} failed=${failed}`)
-  return NextResponse.json({ ok: true, checked, repaired, fresh, skipped, failed })
+
+  // Lifetime self-heal (missed grants, revokes, subscription cancels), then the
+  // billing alerts whose email failed. Both never throw.
+  const lifetime = await reconcileLifetime(admin)
+  console.log(`[reconcile] lifetime ${JSON.stringify(lifetime)}`)
+  const alerts = await resendPendingAlerts(admin)
+  console.log(`[reconcile] alerts resent=${alerts.resent} failed=${alerts.failed}`)
+
+  return NextResponse.json({ ok: true, checked, repaired, fresh, skipped, failed, lifetime, alerts })
 }
