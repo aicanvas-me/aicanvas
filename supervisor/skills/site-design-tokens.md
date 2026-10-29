@@ -119,6 +119,23 @@ Three traps, all of them measured rather than guessed:
 | Default border | `border-sand-800` |
 | Hover border | `border-sand-700` |
 
+## Corner radius roles
+
+Site chrome never writes a size like `rounded-xl`. It names the role, and `app/globals.css` (`@theme` radius block) holds the one value per role, so a single line reshapes the whole site.
+
+| Utility | Value | Role |
+|---|---|---|
+| `rounded-section` | 24px | big boxes: homepage chapters, bento and plan cards, CTA bands, the icons toolbar and tiles |
+| `rounded-shell` / `rounded-shell-inner` | 28px / 22px | outer and inner frame of a double bezel (FAQ, catalog card, component preview) |
+| `rounded-card` | 16px | a card or panel inside a section, menus, popovers, code tabs |
+| `rounded-inset` | 12px | media or a well inside a card |
+| `rounded-control` | 8px | buttons and text fields |
+| `rounded-chip` | 6px | keyboard keys, small square chips, the smallest icon buttons |
+| `rounded-tag` | 4px | tier labels, the tiniest marks |
+| `rounded-full` | pill | chips, prompts, segmented pickers, switches, search and filter fields, round icon buttons |
+
+Colours follow the same rule: use the sand, olive, ember, cyan and `glow` tokens; an inline style or gradient takes `var(--color-…)` or `color-mix(in srgb, var(--color-…) N%, transparent)`, never a copied hex. Brand logos, canvas/WebGL colour tables and the design systems' own `--at-*` values are the exceptions.
+
 ## Typography weights
 
 | Role | Weight |
