@@ -379,7 +379,7 @@ export function AndromedaComponentView({
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
       <div ref={mainCardRef} className="overflow-hidden rounded-section border border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
         {/* Tab bar */}
-        <div className="flex items-center justify-between border-b border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-between px-3 py-3 sm:px-5 sm:py-4">
           <div className="flex items-center gap-0.5">
             <button
               type="button"
@@ -486,16 +486,18 @@ export function AndromedaComponentView({
           )}
         </div>
 
-        {/* Content area */}
-        <div className="group/preview relative min-h-[420px]">
+        {/* Content area: its own inset card between the two bars, 8px from
+            the shell, so its 16px corners run parallel to the shell's 24. */}
+        <div className="group/preview relative mx-2 min-h-[420px] overflow-hidden rounded-card border border-sand-300 dark:border-sand-800">
           {tab === 'preview' ? (
             <>
             <div
-              /* Horizontal inset matches the tab bar above (px-3 sm:px-5) so the
-                 case cards line up with the Preview tab and the fullscreen
-                 button instead of sitting 28px inside them. Vertical padding
-                 stays generous: that is breathing room, not alignment. */
-              className="flex min-h-[420px] items-center justify-center overflow-auto px-3 py-8 sm:px-5 sm:py-12"
+              /* Horizontal inset plus the card's 8px matches the tab bar above
+                 (px-3 sm:px-5), so the case cards line up with the Preview tab
+                 and the fullscreen button instead of sitting inside them.
+                 Vertical padding stays generous: that is breathing room, not
+                 alignment. */
+              className="flex min-h-[420px] items-center justify-center overflow-auto px-1 py-8 sm:px-3 sm:py-12"
               // The theme channel: light sets --at-surface-base on the wrap.
               style={{ backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }}
             >
@@ -537,7 +539,7 @@ export function AndromedaComponentView({
             what the tier sells, so it is offered per component, behind the same
             paywall as the source. Andromeda Legacy keeps the original
             behaviour and has no Remix button. */}
-        <div className="flex items-center justify-end gap-2 border-t border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-end gap-2 px-3 py-3 sm:px-5 sm:py-4">
           {/* Save — signed out, opens the same soft-gate modal as Copy Command.
               Keyed on the REGISTRY slug (not the page slug) so a renamed
               page (table-basic and the rest) saves under its real registry

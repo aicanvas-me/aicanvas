@@ -561,7 +561,7 @@ export default function ComponentPageView({
           <div ref={mainCardRef} className="overflow-hidden rounded-section border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
 
             {/* Tab bar — tabs left, card theme toggle right */}
-            <div className="flex items-center justify-between border-b border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+            <div className="flex items-center justify-between px-3 py-3 sm:px-5 sm:py-4">
 
               {/* Preview / Code tabs */}
               <div className="flex items-center gap-0.5">
@@ -699,7 +699,9 @@ export default function ComponentPageView({
               </div>
             </div>
 
-            {/* Content area — background controlled by cardTheme, isolated from global theme */}
+            {/* Content area — background controlled by cardTheme, isolated from global theme.
+                It is its own inset card between the two bars: 8px from the
+                shell, so its 16px corners run parallel to the shell's 24. */}
             <div
               data-card-theme={cardTheme}
               // overflow-hidden boxes are still programmatically scrollable, so
@@ -710,8 +712,8 @@ export default function ComponentPageView({
                 e.currentTarget.scrollLeft = 0
                 e.currentTarget.scrollTop = 0
               }}
-              className={`relative isolate h-[320px] overflow-hidden transition-colors duration-300 sm:h-[480px] ${
-                cardTheme === 'dark' ? 'dark bg-sand-950' : 'bg-sand-100'
+              className={`relative isolate mx-2 h-[320px] overflow-hidden rounded-card border transition-colors duration-300 sm:h-[480px] ${
+                cardTheme === 'dark' ? 'dark border-sand-800 bg-sand-950' : 'border-sand-200 bg-sand-100'
               }`}
             >
               {/* Both tabs stay mounted so the syntax-highlighted code is in the
@@ -812,7 +814,7 @@ export default function ComponentPageView({
             </div>
 
             {/* Action bar */}
-            <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+            <div className="flex items-center justify-end gap-2 px-3 py-3 sm:px-5 sm:py-4">
 
               {/* Save — signed out, opens the same soft-gate modal as Copy Command. */}
               <SaveButton slug={slug} system={designSystem ?? null} />

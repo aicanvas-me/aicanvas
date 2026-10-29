@@ -276,7 +276,7 @@ export function AndromedaComponentView({
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
       <div ref={mainCardRef} className="overflow-hidden rounded-section border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
         {/* Tab bar */}
-        <div className="flex items-center justify-between border-b border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-between px-3 py-3 sm:px-5 sm:py-4">
           <div className="flex items-center gap-0.5">
             <button
               type="button"
@@ -316,10 +316,11 @@ export function AndromedaComponentView({
           )}
         </div>
 
-        {/* Content area */}
+        {/* Content area: its own inset card between the two bars, 8px from
+            the shell, so its 16px corners run parallel to the shell's 24. */}
         {/* isolate: an opened demo menu (z 1000 inside the stage) must never
             paint over the sticky top bar. */}
-        <div className="relative isolate min-h-[420px]">
+        <div className="relative isolate mx-2 min-h-[420px] overflow-hidden rounded-card border border-sand-200 dark:border-sand-800">
           {tab === 'preview' ? (
             <div
               className="flex min-h-[420px] items-center justify-center overflow-auto bg-sand-50 p-8 dark:bg-sand-950 sm:p-12"
@@ -348,7 +349,7 @@ export function AndromedaComponentView({
             Remix with AI deliberately omitted because mutating a system
             component breaks the system contract. Users compose AT the
             system level, not per-component. */}
-        <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-end gap-2 px-3 py-3 sm:px-5 sm:py-4">
           {/* Save — signed out, opens the same soft-gate modal as Copy Command.
               Keyed on the REGISTRY slug (not the page slug) so the Button
               saves under its override (andromeda-button-system), not the
