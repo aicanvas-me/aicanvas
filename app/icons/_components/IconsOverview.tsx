@@ -18,6 +18,7 @@ import {
   LIGHT_TILE,
 } from '../_lib/constants'
 import { overviewMarkdown } from '../_lib/markdown'
+import { toIconQuery, type IconSettings } from '../_lib/settings-query'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconGridMeta, IconMarkupMap, IconMeta, IconStyle } from '../_lib/types'
 import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
@@ -26,6 +27,9 @@ import { IconTile } from './IconTile'
 import { StylePicker } from './StylePicker'
 import { TuneSlider } from './TuneSlider'
 import { useIconVariant } from './useIconVariant'
+
+// The toolbar's starting look; only what differs from it rides to the icon page.
+const OVERVIEW_DEFAULTS: IconSettings = { style: 'line', size: 40, strokeWidth: 2, absolute: true, colour: null }
 
 let metadataRequest: Promise<IconMeta[]> | null = null
 
@@ -101,6 +105,7 @@ export function IconsOverview({
   useTopBarLeft(categoryCrumbs)
 
   const searchRef = useRef<HTMLInputElement>(null)
+  const settingsQuery = toIconQuery({ style, size, strokeWidth, absolute, colour: colourOverride }, OVERVIEW_DEFAULTS)
   const isDefault =
     !query && style === 'line' && size === 40 && strokeWidth === 2 && absolute && colourOverride === null
 
@@ -298,6 +303,7 @@ export function IconsOverview({
                       absolute={absolute}
                       colour={colour}
                       style={style}
+                      href={`/icons/${icon.name}${settingsQuery}`}
                     />
                   ))}
                 </div>

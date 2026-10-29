@@ -16,6 +16,7 @@ export function IconTile({
   absolute,
   colour,
   style,
+  href = `/icons/${icon.name}`,
 }: {
   icon: IconGridMeta
   markup: string
@@ -24,6 +25,7 @@ export function IconTile({
   absolute: boolean
   colour: string
   style: IconStyle
+  href?: string
 }) {
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
@@ -40,7 +42,7 @@ export function IconTile({
       }}
     >
       {icon.isNew && <i data-icon-new="" role="img" aria-label="New" />}
-      <a href={`/icons/${icon.name}`} data-icon-link="" aria-label={`Open ${icon.name} details`}>
+      <a href={href} data-icon-link="" aria-label={`Open ${icon.name} details`}>
         {markup ? (
           <IconSvg markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />
         ) : (

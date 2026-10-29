@@ -12,6 +12,7 @@ import { useTheme } from '@/app/components/ThemeProvider'
 import { ICON_CATEGORY_LABELS } from '../_lib/categories'
 import { DARK_PREVIEW_COLOUR, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 import { formatDate, iconLead, titleCase } from '../_lib/icon-utils'
+import { fromIconQuery, toIconQuery, type IconSettings } from '../_lib/settings-query'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconMarkupMap, IconMeta, IconStyle, IconWithMarkup } from '../_lib/types'
 import { ActionBar } from './ActionBar'
@@ -28,10 +29,13 @@ import { useIconVariant } from './useIconVariant'
 // tiles at the size they were built for.
 const TILE_MAX_SIZE = 64
 
+// The page's starting look; the URL carries only what differs from it.
+const PAGE_DEFAULTS: IconSettings = { style: 'line', size: 24, strokeWidth: 2, absolute: true, colour: null }
+
 const ROUND_BUTTON =
   'inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-sand-300 text-sand-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-300'
 
-function AdjacentLink({ icon, direction }: { icon?: IconWithMarkup; direction: 'previous' | 'next' }) {
+function AdjacentLink({ icon, direction, query }: { icon?: IconWithMarkup; direction: 'previous' | 'next'; query: string }) {
   const Arrow = direction === 'previous' ? ArrowLeft : ArrowRight
   const word = direction === 'previous' ? 'Previous' : 'Next'
   if (!icon) {
@@ -44,7 +48,7 @@ function AdjacentLink({ icon, direction }: { icon?: IconWithMarkup; direction: '
   const label = `${word} icon: ${titleCase(icon.name)}`
   return (
     <Link
-      href={`/icons/${icon.name}`}
+      href={`/icons/${icon.name}${query}`}
       aria-label={label}
       title={label}
       className={`${ROUND_BUTTON} hover:border-sand-400 hover:bg-sand-200/50 hover:text-sand-900 dark:hover:border-sand-600 dark:hover:bg-sand-800/60 dark:hover:text-sand-50`}
@@ -105,11 +109,39 @@ export function IconDetail({
   const categoryLabel = ICON_CATEGORY_LABELS[icon.category]
   const title = titleCase(icon.name)
   const isDefault = style === 'line' && size === 24 && strokeWidth === 2 && absolute && colourOverride === null
+  const query = toIconQuery({ style, size, strokeWidth, absolute, colour: colourOverride }, PAGE_DEFAULTS)
+
+  // The look arrives in the query (from the overview, a shared link or the
+  // previous icon). Read on mount rather than through useSearchParams, which
+  // would pull the statically built page out to the client. The URL is not
+  // there to read during the server render, so this sets state from an effect.
+  const [restored, setRestored] = useState(false)
+  useEffect(() => {
+    const settings = fromIconQuery(window.location.search)
+    /* eslint-disable react-hooks/set-state-in-effect */
+    if (settings.style !== undefined) setStyle(settings.style)
+    if (settings.size !== undefined) setSize(settings.size)
+    if (settings.strokeWidth !== undefined) setStrokeWidth(settings.strokeWidth)
+    if (settings.absolute !== undefined) setAbsolute(settings.absolute)
+    if (settings.colour !== undefined) setColourOverride(settings.colour)
+    setRestored(true)
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [])
+
+  // The URL then follows the look in place, so it can be shared as it looks.
+  // Waiting for the restore keeps the first pass from wiping the incoming query.
+  useEffect(() => {
+    if (!restored) return
+    const url = `${window.location.pathname}${query}${window.location.hash}`
+    if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+      window.history.replaceState(window.history.state, '', url)
+    }
+  }, [query, restored])
 
   // Left and Right walk the category, unless focus is somewhere that takes
   // typing or uses the arrows itself (the sliders, the style track, the tabs).
-  const previousHref = previous ? `/icons/${previous.name}` : null
-  const nextHref = next ? `/icons/${next.name}` : null
+  const previousHref = previous ? `/icons/${previous.name}${query}` : null
+  const nextHref = next ? `/icons/${next.name}${query}` : null
   useEffect(() => {
     const walk = (event: KeyboardEvent) => {
       if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return
@@ -143,8 +175,8 @@ export function IconDetail({
           <div className="flex items-start justify-between gap-4">
             <h1 className="min-w-0 break-words text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">{title}</h1>
             <nav aria-label="Adjacent icons" className="flex shrink-0 items-center gap-2 pt-1 sm:pt-2">
-              <AdjacentLink icon={previous} direction="previous" />
-              <AdjacentLink icon={next} direction="next" />
+              <AdjacentLink icon={previous} direction="previous" query={query} />
+              <AdjacentLink icon={next} direction="next" query={query} />
             </nav>
           </div>
           <p className="mt-2 text-base text-sand-700 dark:text-sand-300">{iconLead(icon, categoryLabel)}</p>
@@ -241,6 +273,7 @@ export function IconDetail({
                   absolute={absolute}
                   colour={siteColour}
                   style={style}
+                  href={`/icons/${suggestion.name}${query}`}
                 />
               ))}
             </div>
