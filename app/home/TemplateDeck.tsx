@@ -175,81 +175,113 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
         </div>
       </div>
 
-      {/* The frame */}
-      <div className="mx-auto mt-6 max-w-5xl rounded-shell border border-sand-200 bg-sand-100 p-2 shadow-[0_2px_6px_rgba(0,0,0,0.04),0_24px_48px_-24px_rgba(0,0,0,0.18)] sm:p-2.5 dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.3),0_32px_64px_-24px_rgba(0,0,0,0.7)]">
-        {/* Template row + live link */}
-        <div className="flex items-center gap-2 px-1 pt-1 pb-2 sm:pb-2.5">
-          <div
-            role="group"
-            aria-label="Templates"
-            className="flex min-w-0 flex-1 gap-1 overflow-x-auto [mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          >
-            {templates.map((tpl, i) => {
-              const TabIcon = ICONS[tpl.folder] ?? Monitor
-              const on = i === active
-              return (
-                <button
-                  key={tpl.folder}
-                  type="button"
-                  aria-pressed={on}
-                  aria-controls="v3-template-screen"
-                  onClick={() => setActive(i)}
-                  className={`inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
-                    on
-                      ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                      : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
-                  }`}
-                >
-                  <TabIcon weight="regular" size={15} aria-hidden />
-                  {tpl.name}
-                </button>
-              )
-            })}
-          </div>
-          <Link
-            href={href(t.folder)}
-            className="hidden h-8 shrink-0 items-center gap-1 rounded-control border border-sand-300 px-2.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 sm:inline-flex dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
-          >
-            Live preview
-            <ArrowUpRight weight="regular" size={13} aria-hidden />
-          </Link>
-        </div>
-
-        {/* Screen */}
+      {/* The stage: a wide panel lit from straight above, the frame set into
+          it. Its fill is brightest at the top centre and falls to the page by
+          the lower half, so the stage has no bottom edge. The two colours are
+          per theme custom properties, read by one inline gradient (commas in
+          an arbitrary value escape awkwardly). The light is a radial with
+          eased stops, never a blurred disc, so it shows no bands. */}
+      <div
+        className="relative mt-6 overflow-hidden rounded-section px-3 pt-8 sm:px-8 sm:pt-14 lg:px-16 lg:pt-20 [--stage-light:var(--color-sand-50)] [--stage-tint:var(--color-sand-200)] dark:[--stage-light:color-mix(in_srgb,var(--color-sand-50)_20%,transparent)] dark:[--stage-tint:color-mix(in_srgb,var(--color-sand-50)_5%,transparent)]"
+        style={{
+          background: [
+            'radial-gradient(70% 45% at 50% 0%,var(--stage-light), color-mix(in srgb, var(--stage-light) 70%, transparent) 22%, color-mix(in srgb, var(--stage-light) 38%, transparent) 45%, color-mix(in srgb, var(--stage-light) 14%, transparent) 70%, transparent)',
+            'linear-gradient(to bottom, var(--stage-tint), transparent 65%)',
+          ].join(', '),
+        }}
+      >
+        {/* The rim: catches the light along the top, gone halfway down the
+            sides. */}
         <div
-          id="v3-template-screen"
-          role="region"
-          aria-label={`${t.name} template, ${d.label.toLowerCase()} view`}
-          ref={screenRef}
-          className="relative aspect-[4/5] overflow-hidden rounded-[calc(var(--radius-shell)_-_0.5rem)] border border-sand-200 bg-sand-50 sm:aspect-[16/10] dark:border-sand-800 dark:bg-sand-950"
-        >
-          {/* Poster under the desktop view, so the frame is never empty while
-              the live page loads. Only once the section is near: before that
-              neither theme's poster downloads. */}
-          {near && device === 'desktop' && (
-            <>
-              {t.image ? (
-                <img
-                  src={t.image}
-                  alt=""
-                  aria-hidden
-                  decoding="async"
-                  className={`absolute inset-0 h-full w-full object-cover object-[left_top] ${t.imageLight ? 'hidden dark:block' : ''}`}
-                />
-              ) : null}
-              {t.imageLight ? (
-                <img
-                  src={t.imageLight}
-                  alt=""
-                  aria-hidden
-                  decoding="async"
-                  className={`absolute inset-0 h-full w-full object-cover object-[left_top] ${t.image ? 'dark:hidden' : ''}`}
-                />
-              ) : null}
-            </>
-          )}
+          aria-hidden
+          className="pointer-events-none absolute inset-0 rounded-[inherit] border border-sand-300 [mask-image:linear-gradient(to_bottom,black,transparent_55%)] dark:border-sand-50/15"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 hidden h-px dark:block"
+          style={{
+            background:
+              'linear-gradient(90deg, transparent 15%, color-mix(in srgb, var(--color-sand-50) 45%, transparent) 50%, transparent 85%)',
+          }}
+        />
 
-          {near && <LiveFrame key={`${t.folder}-${device}`} t={t} device={device} box={box} />}
+        {/* The frame. Its lower part dissolves into the stage instead of ending
+            on an edge. */}
+        <div className="relative mx-auto max-w-5xl rounded-shell border border-sand-200 bg-sand-100 p-2 shadow-[0_2px_6px_rgba(0,0,0,0.04),0_24px_48px_-24px_rgba(0,0,0,0.18)] [mask-image:linear-gradient(to_bottom,black_60%,transparent)] sm:p-2.5 sm:[mask-image:linear-gradient(to_bottom,black_50%,transparent)] dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.3),0_32px_64px_-24px_rgba(0,0,0,0.7)]">
+          {/* Template row + live link */}
+          <div className="flex items-center gap-2 px-1 pt-1 pb-2 sm:pb-2.5">
+            <div
+              role="group"
+              aria-label="Templates"
+              className="flex min-w-0 flex-1 gap-1 overflow-x-auto [mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+            >
+              {templates.map((tpl, i) => {
+                const TabIcon = ICONS[tpl.folder] ?? Monitor
+                const on = i === active
+                return (
+                  <button
+                    key={tpl.folder}
+                    type="button"
+                    aria-pressed={on}
+                    aria-controls="v3-template-screen"
+                    onClick={() => setActive(i)}
+                    className={`inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
+                      on
+                        ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
+                        : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
+                    }`}
+                  >
+                    <TabIcon weight="regular" size={15} aria-hidden />
+                    {tpl.name}
+                  </button>
+                )
+              })}
+            </div>
+            <Link
+              href={href(t.folder)}
+              className="hidden h-8 shrink-0 items-center gap-1 rounded-control border border-sand-300 px-2.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 sm:inline-flex dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
+            >
+              Live preview
+              <ArrowUpRight weight="regular" size={13} aria-hidden />
+            </Link>
+          </div>
+
+          {/* Screen */}
+          <div
+            id="v3-template-screen"
+            role="region"
+            aria-label={`${t.name} template, ${d.label.toLowerCase()} view`}
+            ref={screenRef}
+            className="relative aspect-[4/5] overflow-hidden rounded-[calc(var(--radius-shell)_-_0.5rem)] border border-sand-200 bg-sand-50 sm:aspect-[16/10] dark:border-sand-800 dark:bg-sand-950"
+          >
+            {/* Poster under the desktop view, so the frame is never empty while
+                the live page loads. Only once the section is near: before that
+                neither theme's poster downloads. */}
+            {near && device === 'desktop' && (
+              <>
+                {t.image ? (
+                  <img
+                    src={t.image}
+                    alt=""
+                    aria-hidden
+                    decoding="async"
+                    className={`absolute inset-0 h-full w-full object-cover object-[left_top] ${t.imageLight ? 'hidden dark:block' : ''}`}
+                  />
+                ) : null}
+                {t.imageLight ? (
+                  <img
+                    src={t.imageLight}
+                    alt=""
+                    aria-hidden
+                    decoding="async"
+                    className={`absolute inset-0 h-full w-full object-cover object-[left_top] ${t.image ? 'dark:hidden' : ''}`}
+                  />
+                ) : null}
+              </>
+            )}
+
+            {near && <LiveFrame key={`${t.folder}-${device}`} t={t} device={device} box={box} />}
+          </div>
         </div>
       </div>
 
