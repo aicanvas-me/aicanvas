@@ -93,9 +93,6 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
     ANDROMEDA_PRO_COMPONENT_META.length +
     ANDROMEDA_PRO_TEMPLATE_META.length
   const standalonesFloor = `${Math.floor(total / 10) * 10}+`
-  const freeShots = ['polaroid-stack', 'sticker-wall', 'glass-ai-compose']
-    .map((slug) => wall.find((w) => w.slug === slug))
-    .filter((w) => w !== undefined)
 
   return (
     <div
@@ -481,7 +478,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
               Pick a system or a single component. Build with it yourself or with an agent. The source stays yours.
             </p>
           </Reveal>
-          <ValueBento freeTotal={freeTotal} freeShots={freeShots} />
+          <ValueBento freeTotal={freeTotal} />
         </section>
 
         {/* ── Pricing ──
