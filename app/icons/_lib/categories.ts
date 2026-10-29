@@ -1,4 +1,7 @@
-import icons from '../_data/icons.generated.json'
+import iconsJson from '../_data/icons.generated.json'
+
+// Typed so an empty generated file (a checkout without icon data) still compiles.
+const icons = iconsJson as { category: string }[]
 
 export const ICON_CATEGORIES = [
   ['ai-dev', 'AI & Dev'],

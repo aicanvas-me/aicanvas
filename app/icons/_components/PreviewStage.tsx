@@ -26,8 +26,10 @@ export function PreviewSizeStrip({
 }) {
   return (
     <div
-      className={`flex items-end justify-evenly gap-2 px-4 py-4 ${
-        embedded ? '' : 'rounded-section border border-sand-200 dark:border-sand-800'
+      className={`flex shrink-0 items-end justify-evenly gap-2 px-4 py-4 ${
+        embedded
+          ? `border-t ${surface === 'dark' ? 'border-white/10' : 'border-black/10'}`
+          : 'rounded-section border border-sand-200 dark:border-sand-800'
       } ${surface === 'dark' ? 'bg-sand-950 text-white/55' : 'bg-sand-50 text-black/50'}`}
     >
       {PREVIEW_SIZES.map((previewSize) => (
@@ -73,10 +75,14 @@ export function PreviewStage({
   }
   return (
     <section
-      className={`flex min-h-0 flex-col overflow-hidden rounded-section border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900 ${className}`}
+      className={`relative flex min-h-0 flex-col overflow-hidden rounded-card border border-sand-200 dark:border-sand-800 ${
+        surface === 'dark' ? 'bg-sand-950' : 'bg-sand-50'
+      } ${className}`}
       aria-label={`${name} preview`}
     >
-      <div className={`flex items-center justify-between gap-4 p-4 ${surface === 'dark' ? 'bg-sand-950' : 'bg-sand-50'}`}>
+      {/* The surface pill floats in the card's top-left corner, so the icon
+          centres on the whole card above the size ladder, not under a bar. */}
+      <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 p-3">
         <div className={`inline-flex rounded-full border p-0.5 ${surface === 'dark' ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
           {(['dark', 'light'] as const).map((option) => (
             <button
@@ -100,7 +106,7 @@ export function PreviewStage({
         </div>
         {counter && <p className={surface === 'dark' ? 'text-xs text-white/45' : 'text-xs text-black/45'}>{counter}</p>}
       </div>
-      <div className={`flex min-h-[220px] flex-1 items-center justify-center p-4 ${surface === 'dark' ? 'bg-sand-950' : 'bg-sand-50'}`}>
+      <div className="flex min-h-0 flex-1 items-center justify-center px-4 pb-4 pt-14">
         <IconSvg className="max-h-full max-w-full" markup={markup} size={stageSize(size)} apiSize={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} label={name} />
       </div>
       {showSizes && <PreviewSizeStrip markup={markup} strokeWidth={strokeWidth} absolute={absolute} colour={colour} surface={surface} embedded />}

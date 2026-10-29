@@ -1,47 +1,77 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
-import { ArrowCounterClockwise, ArrowLeft, ArrowRight, Copy } from '@phosphor-icons/react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useState } from 'react'
+import { ArrowCounterClockwise, ArrowLeft, ArrowRight, Check, Copy } from '@phosphor-icons/react'
 import { CopyPage } from '@/app/components/CopyPage'
 import { PAGE_TOP, PageFrame } from '@/app/_components/DesignSystemPage'
 import { PageCrumbs } from '@/app/components/PageCrumbs'
-import { copyText } from '@/app/components/useCopied'
+import { useCopied } from '@/app/components/useCopied'
 import { useTheme } from '@/app/components/ThemeProvider'
-import { Slider } from '@/app/lab/_lib/particleMark/controls/Slider'
 import { ICON_CATEGORY_LABELS } from '../_lib/categories'
 import { DARK_PREVIEW_COLOUR, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 import { formatDate, iconLead, titleCase } from '../_lib/icon-utils'
+import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconMarkupMap, IconMeta, IconStyle, IconWithMarkup } from '../_lib/types'
 import { ActionBar } from './ActionBar'
 import { CodeTabs } from './CodeTabs'
 import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
 import { ColourControl } from './ColourControl'
-import { IconSvg } from './IconSvg'
-import { PreviewSizeStrip, PreviewStage } from './PreviewStage'
+import { IconTile } from './IconTile'
+import { PreviewStage } from './PreviewStage'
 import { StylePicker } from './StylePicker'
+import { TuneSlider } from './TuneSlider'
 import { useIconVariant } from './useIconVariant'
 
-function SuggestedTile({ icon, size, strokeWidth, absolute, colour }: { icon: IconWithMarkup; size: number; strokeWidth: number; absolute: boolean; colour: string }) {
-  return (
-    <article className="group relative aspect-square overflow-hidden rounded-section border border-transparent bg-sand-100 transition-colors hover:border-sand-300 dark:bg-sand-900 dark:hover:border-sand-700">
-      {icon.isNew && <span aria-label="New" className="absolute left-3 top-3 z-10 h-1.5 w-1.5 rounded-full bg-accent" />}
-      <Link
-        href={`/icons/${icon.name}`}
-        className="flex h-full flex-col items-center justify-center gap-3 px-2 pb-2 pt-4 text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/40 dark:text-sand-50"
-      >
-        <IconSvg markup={icon.markup} size={Math.min(size, 48)} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />
-        <span className="line-clamp-2 min-h-7 text-center text-[11px] leading-4 text-sand-600 dark:text-sand-400">{icon.name}</span>
-      </Link>
-      <button
-        type="button"
-        aria-label={`Copy ${icon.name} slug`}
-        onClick={() => void copyText(icon.name)}
-        className="absolute right-2 top-2 flex h-6 w-6 translate-y-1 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 opacity-0 shadow-sm transition-[opacity,transform] group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 motion-reduce:transition-none dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300"
-      >
-        <Copy weight="regular" size={12} />
+// The overview's tiles stop at 64px; a bigger pick here still draws the related
+// tiles at the size they were built for.
+const TILE_MAX_SIZE = 64
+
+const ROUND_BUTTON =
+  'inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-sand-300 text-sand-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-300'
+
+function AdjacentLink({ icon, direction }: { icon?: IconWithMarkup; direction: 'previous' | 'next' }) {
+  const Arrow = direction === 'previous' ? ArrowLeft : ArrowRight
+  const word = direction === 'previous' ? 'Previous' : 'Next'
+  if (!icon) {
+    return (
+      <button type="button" disabled aria-label={`No ${word.toLowerCase()} icon`} className={`${ROUND_BUTTON} cursor-default opacity-40`}>
+        <Arrow weight="regular" aria-hidden className="size-4" />
       </button>
-    </article>
+    )
+  }
+  const label = `${word} icon: ${titleCase(icon.name)}`
+  return (
+    <Link
+      href={`/icons/${icon.name}`}
+      aria-label={label}
+      title={label}
+      className={`${ROUND_BUTTON} hover:border-sand-400 hover:bg-sand-200/50 hover:text-sand-900 dark:hover:border-sand-600 dark:hover:bg-sand-800/60 dark:hover:text-sand-50`}
+    >
+      <Arrow weight="regular" aria-hidden className="size-4" />
+    </Link>
+  )
+}
+
+function SlugChip({ name }: { name: string }) {
+  const { copied, copy } = useCopied(name)
+  return (
+    <button
+      type="button"
+      onClick={() => void copy()}
+      aria-label={`Copy the slug ${name}`}
+      title="Copy slug"
+      className="-mx-1.5 inline-flex h-6 items-center gap-1.5 rounded-chip px-1.5 font-mono text-[11px] text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-50"
+    >
+      {name}
+      {copied ? (
+        <Check weight="regular" aria-hidden className="size-3 text-success" />
+      ) : (
+        <Copy weight="regular" aria-hidden className="size-3" />
+      )}
+      <span aria-live="polite" className="sr-only">{copied ? 'Slug copied' : ''}</span>
+    </button>
   )
 }
 
@@ -60,6 +90,7 @@ export function IconDetail({
   next?: IconWithMarkup
   markdown: string
 }) {
+  const router = useRouter()
   const { theme } = useTheme()
   const [style, setStyle] = useState<IconStyle>('line')
   const [size, setSize] = useState(24)
@@ -73,6 +104,25 @@ export function IconDetail({
   const markup = data[icon.name] ?? lineIcons[icon.name] ?? ''
   const categoryLabel = ICON_CATEGORY_LABELS[icon.category]
   const title = titleCase(icon.name)
+  const isDefault = style === 'line' && size === 24 && strokeWidth === 2 && absolute && colourOverride === null
+
+  // Left and Right walk the category, unless focus is somewhere that takes
+  // typing or uses the arrows itself (the sliders, the style track, the tabs).
+  const previousHref = previous ? `/icons/${previous.name}` : null
+  const nextHref = next ? `/icons/${next.name}` : null
+  useEffect(() => {
+    const walk = (event: KeyboardEvent) => {
+      if (event.defaultPrevented || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) return
+      const href = event.key === 'ArrowLeft' ? previousHref : event.key === 'ArrowRight' ? nextHref : null
+      if (!href) return
+      const target = event.target as HTMLElement | null
+      if (target?.closest('input, textarea, select, [contenteditable="true"], [role="radiogroup"], [role="tablist"], [role="slider"]')) return
+      event.preventDefault()
+      router.push(href)
+    }
+    document.addEventListener('keydown', walk)
+    return () => document.removeEventListener('keydown', walk)
+  }, [previousHref, nextHref, router])
 
   const reset = () => {
     setStyle('line')
@@ -90,108 +140,119 @@ export function IconDetail({
         <PageCrumbs />
         <CopyPage markdown={markdown} markdownHref={`/icons/${icon.name}/md`} />
         <header>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">{title}</h1>
-            <button
-              type="button"
-              onClick={() => void copyText(icon.name)}
-              className="inline-flex h-8 items-center gap-2 rounded-full border border-sand-300 px-3.5 font-mono text-xs text-sand-700 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-300 dark:hover:text-sand-50"
-            >
-              {icon.name}
-              <Copy weight="regular" size={13} />
-            </button>
+          <div className="flex items-start justify-between gap-4">
+            <h1 className="min-w-0 break-words text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">{title}</h1>
+            <nav aria-label="Adjacent icons" className="flex shrink-0 items-center gap-2 pt-1 sm:pt-2">
+              <AdjacentLink icon={previous} direction="previous" />
+              <AdjacentLink icon={next} direction="next" />
+            </nav>
           </div>
           <p className="mt-2 text-base text-sand-700 dark:text-sand-300">{iconLead(icon, categoryLabel)}</p>
-          <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-3 text-xs">
-            <div><dt className="text-sand-600 dark:text-sand-400">Category</dt><dd className="mt-0.5 font-semibold text-sand-900 dark:text-sand-50">{categoryLabel}</dd></div>
-            <div><dt className="text-sand-600 dark:text-sand-400">Styles</dt><dd className="mt-0.5 font-semibold text-sand-900 dark:text-sand-50">4</dd></div>
-            <div><dt className="text-sand-600 dark:text-sand-400">Added</dt><dd className="mt-0.5 font-semibold text-sand-900 dark:text-sand-50">{formatDate(icon.added)}</dd></div>
-            <div className="min-w-0 flex-1"><dt className="text-sand-600 dark:text-sand-400">Tags</dt><dd className="mt-0.5 font-semibold text-sand-900 dark:text-sand-50">{icon.tags.join(', ')}</dd></div>
-          </dl>
+          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-sand-600 dark:text-sand-400">
+            <Link
+              href={`/icons?category=${icon.category}`}
+              className="rounded-chip font-semibold text-sand-700 transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-300 dark:hover:text-sand-50"
+            >
+              {categoryLabel}
+            </Link>
+            <span aria-hidden className="text-sand-500">·</span>
+            <span>Added {formatDate(icon.added)}</span>
+            <span aria-hidden className="text-sand-500">·</span>
+            <SlugChip name={icon.name} />
+          </div>
         </header>
 
-        <div className="mt-7 grid gap-7 lg:grid-cols-[minmax(0,1.45fr)_minmax(350px,1fr)]">
-          <div className="min-w-0 space-y-2">
-            <PreviewStage
-              markup={markup}
-              name={title}
-              size={size}
-              strokeWidth={strokeWidth}
-              absolute={absolute}
-              colour={previewColour}
-              surface={previewSurface}
-              onSurfaceChange={setPreviewSurface}
-              showSizes={false}
-              className="h-[360px] sm:h-[390px]"
+        {/* One shell, the overview toolbar's surface: the preview is a card set
+            8px into it, the controls sit on the shell itself. */}
+        <div className="mt-6 grid rounded-section border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900 lg:grid-cols-[minmax(0,1.4fr)_minmax(340px,1fr)]">
+          <PreviewStage
+            markup={markup}
+            name={title}
+            size={size}
+            strokeWidth={strokeWidth}
+            absolute={absolute}
+            colour={previewColour}
+            surface={previewSurface}
+            onSurfaceChange={setPreviewSurface}
+            className="h-[300px] min-w-0 sm:h-[380px] lg:h-[440px]"
+          />
+          <div className="@container flex min-w-0 flex-col gap-2 p-3 pt-5 sm:p-5">
+            <StylePicker value={style} onChange={setStyle} compact loading={loading} />
+            <TuneSlider
+              label="Size"
+              value={size}
+              onChange={setSize}
+              min={16}
+              max={96}
+              step={4}
+              format={(value) => `${value}px`}
+              valueText={(value) => `${value} pixels`}
             />
-            <PreviewSizeStrip
-              markup={markup}
-              strokeWidth={strokeWidth}
-              absolute={absolute}
-              colour={previewColour}
-              surface={previewSurface}
+            <TuneSlider
+              label="Stroke"
+              value={strokeWidth}
+              onChange={setStrokeWidth}
+              min={1}
+              max={3}
+              step={0.25}
+              format={(value) => value.toFixed(2)}
+              valueText={(value) => `${value.toFixed(2)} pixels`}
             />
+            <div className="relative flex items-center gap-1">
+              <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} className="h-8" />
+              <ColourControl value={colourOverride} resolved={previewColour} onChange={setColourOverride} align="start" />
+              <button
+                type="button"
+                onClick={reset}
+                disabled={isDefault}
+                aria-label="Reset"
+                title="Reset"
+                className="ml-auto inline-flex size-8 shrink-0 items-center justify-center rounded-full text-sand-600 transition-colors hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:pointer-events-none disabled:opacity-40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
+              >
+                <ArrowCounterClockwise weight="regular" aria-hidden className="size-4" />
+              </button>
+            </div>
+            <div aria-hidden className="my-2 h-px bg-sand-200 dark:bg-sand-800" />
+            <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
+            <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
           </div>
-          <aside className="min-w-0">
-            <h2 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-sand-600 dark:text-sand-400">Style</h2>
-            <StylePicker value={style} onChange={setStyle} markup={markup} loading={loading} />
-            <h2 className="mb-2 mt-5 text-[11px] font-bold uppercase tracking-wider text-sand-600 dark:text-sand-400">Customize</h2>
-            <div className="space-y-2">
-              <Slider themed pill label="Size" value={size} onChange={setSize} min={16} max={96} step={4} format={(value) => `${value}px`} />
-              <Slider themed pill label="Stroke" value={strokeWidth} onChange={setStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
-              <div className="flex items-center justify-between">
-                <div className="flex flex-wrap items-center gap-1">
-                  <ColourControl value={colourOverride} resolved={previewColour} onChange={setColourOverride} align="start" />
-                  <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} label="Absolute stroke" />
-                </div>
-                <button
-                  type="button"
-                  onClick={reset}
-                  className="inline-flex h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold text-sand-600 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
-                >
-                  <ArrowCounterClockwise weight="regular" size={14} />
-                  Reset
-                </button>
-              </div>
-            </div>
-            <div className="mt-4">
-              <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
-            </div>
-            <CodeTabs className="mt-4 min-h-[188px]" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
-          </aside>
         </div>
 
-        <section className="mt-9" aria-labelledby="suggested-icons">
-          <div className="mb-3 flex items-center justify-between gap-4">
-            <h2 id="suggested-icons" className="text-[11px] font-bold uppercase tracking-wider text-sand-600 dark:text-sand-400">Suggested icons</h2>
-            <Link href={`/icons?category=${icon.category}`} className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:text-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40">
-              All {categoryLabel} icons
-              <ArrowRight weight="regular" size={13} />
-            </Link>
-          </div>
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-            {suggestions.map((suggestion) => (
-              <SuggestedTile key={suggestion.name} icon={suggestion} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={siteColour} />
-            ))}
-          </div>
-        </section>
+        {suggestions.length > 0 && (
+          <section className="mt-12" aria-labelledby="related-icons">
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <h2 id="related-icons" className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Related icons</h2>
+              <Link
+                href={`/icons?category=${icon.category}`}
+                className="inline-flex items-center gap-1 rounded-chip text-xs font-semibold text-accent transition-colors hover:text-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              >
+                All {categoryLabel} icons
+                <ArrowRight weight="regular" aria-hidden className="size-3.5" />
+              </Link>
+            </div>
+            <div className={ICON_GRID_CLASS}>
+              {suggestions.map((suggestion) => (
+                <IconTile
+                  key={suggestion.name}
+                  icon={suggestion}
+                  markup={data[suggestion.name] ?? suggestion.markup ?? ''}
+                  size={Math.min(size, TILE_MAX_SIZE)}
+                  strokeWidth={strokeWidth}
+                  absolute={absolute}
+                  colour={siteColour}
+                  style={style}
+                />
+              ))}
+            </div>
+          </section>
+        )}
 
-        <nav aria-label="Adjacent icons" className="mt-8 grid gap-3 sm:grid-cols-2">
-          {previous ? (
-            <Link href={`/icons/${previous.name}`} className="flex min-h-16 items-center gap-4 rounded-card bg-sand-100 px-5 py-3 text-sand-900 transition-colors hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:bg-sand-900 dark:text-sand-50 dark:hover:bg-sand-800">
-              <ArrowLeft weight="regular" size={18} />
-              <IconSvg markup={previous.markup} size={28} strokeWidth={strokeWidth} absolute={absolute} colour={siteColour} />
-              <span><span className="block text-[10px] text-sand-600 dark:text-sand-400">Previous</span><span className="font-bold">{titleCase(previous.name)}</span></span>
-            </Link>
-          ) : <span />}
-          {next && (
-            <Link href={`/icons/${next.name}`} className="flex min-h-16 items-center justify-end gap-4 rounded-card bg-sand-100 px-5 py-3 text-right text-sand-900 transition-colors hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:bg-sand-900 dark:text-sand-50 dark:hover:bg-sand-800">
-              <span><span className="block text-[10px] text-sand-600 dark:text-sand-400">Next</span><span className="font-bold">{titleCase(next.name)}</span></span>
-              <IconSvg markup={next.markup} size={28} strokeWidth={strokeWidth} absolute={absolute} colour={siteColour} />
-              <ArrowRight weight="regular" size={18} />
-            </Link>
-          )}
-        </nav>
+        {icon.tags.length > 0 && (
+          <p className="mt-6 text-xs text-sand-600 dark:text-sand-400">
+            <span className="mr-2 font-semibold text-sand-700 dark:text-sand-300">Tags</span>
+            {icon.tags.join(', ')}
+          </p>
+        )}
       </PageFrame>
     </main>
   )

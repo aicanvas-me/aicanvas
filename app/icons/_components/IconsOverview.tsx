@@ -18,10 +18,10 @@ import {
   LIGHT_TILE,
 } from '../_lib/constants'
 import { overviewMarkdown } from '../_lib/markdown'
+import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconGridMeta, IconMarkupMap, IconMeta, IconStyle } from '../_lib/types'
 import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
 import { ColourControl } from './ColourControl'
-import { IconDialog } from './IconDialog'
 import { IconTile } from './IconTile'
 import { StylePicker } from './StylePicker'
 import { TuneSlider } from './TuneSlider'
@@ -32,9 +32,6 @@ let metadataRequest: Promise<IconMeta[]> | null = null
 const INSTALL_PREFIX = ALL_ICONS_INSTALL.slice(0, ALL_ICONS_INSTALL.lastIndexOf(' '))
 const INSTALL_URL = ALL_ICONS_INSTALL.slice(ALL_ICONS_INSTALL.lastIndexOf(' ') + 1)
 
-const ICON_GRID = 'grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'
-const ICON_TILE_SKIN =
-  '[&_[data-icon-tile]]:relative [&_[data-icon-tile]]:aspect-square [&_[data-icon-tile]]:min-h-0 [&_[data-icon-tile]]:overflow-hidden [&_[data-icon-tile]]:rounded-section [&_[data-icon-tile]]:border [&_[data-icon-tile]]:border-transparent [&_[data-icon-tile]]:bg-sand-100 [&_[data-icon-tile]]:transition-colors [&_[data-icon-tile]:hover]:border-sand-300 dark:[&_[data-icon-tile]]:bg-sand-900 dark:[&_[data-icon-tile]:hover]:border-sand-700 [&_[data-icon-link]]:flex [&_[data-icon-link]]:h-full [&_[data-icon-link]]:w-full [&_[data-icon-link]]:flex-col [&_[data-icon-link]]:items-center [&_[data-icon-link]]:justify-center [&_[data-icon-link]]:gap-3 [&_[data-icon-link]]:px-1.5 [&_[data-icon-link]]:pb-1.5 [&_[data-icon-link]]:pt-3 [&_[data-icon-link]]:text-sand-900 [&_[data-icon-link]]:outline-none focus-visible:[&_[data-icon-link]]:ring-2 focus-visible:[&_[data-icon-link]]:ring-inset focus-visible:[&_[data-icon-link]]:ring-accent/40 dark:[&_[data-icon-link]]:text-sand-50 [&_[data-icon-name]]:w-full [&_[data-icon-name]]:truncate [&_[data-icon-name]]:text-center [&_[data-icon-name]]:text-[10px] [&_[data-icon-name]]:leading-4 [&_[data-icon-name]]:text-sand-600 sm:[&_[data-icon-name]]:text-[11px] dark:[&_[data-icon-name]]:text-sand-400 [&_[data-icon-placeholder]]:h-8 [&_[data-icon-placeholder]]:w-8 [&_[data-icon-new]]:absolute [&_[data-icon-new]]:left-2 [&_[data-icon-new]]:top-2 [&_[data-icon-new]]:z-10 [&_[data-icon-new]]:h-1.5 [&_[data-icon-new]]:w-1.5 [&_[data-icon-new]]:rounded-full [&_[data-icon-new]]:bg-accent'
 
 export function IconsOverview({
   icons,
@@ -54,7 +51,6 @@ export function IconsOverview({
   const [strokeWidth, setStrokeWidth] = useState(2)
   const [absolute, setAbsolute] = useState(true)
   const [colourOverride, setColourOverride] = useState<string | null>(null)
-  const [selected, setSelected] = useState<string | null>(null)
   const [metadata, setMetadata] = useState<IconMeta[] | null>(null)
   const [installCopied, setInstallCopied] = useState(false)
   const colour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
@@ -91,12 +87,6 @@ export function IconsOverview({
     [visible],
   )
   const categoryLabel = category ? ICON_CATEGORY_LABELS[category] : undefined
-  const selectedIcon = selected ? visible.find((icon) => icon.name === selected) : undefined
-  const dialogIcons: IconMeta[] = selectedIcon
-    ? visible
-        .filter((icon) => icon.category === selectedIcon.category)
-        .map((icon) => metadataByName.get(icon.name) ?? { ...icon, tags: [], added: '' })
-    : []
   const heading = categoryLabel ? `${categoryLabel} icons` : 'Icons'
   const lead = categoryLabel
     ? `Browse ${icons.length} ${categoryLabel} icons in four styles.`
@@ -115,10 +105,10 @@ export function IconsOverview({
     !query && style === 'line' && size === 40 && strokeWidth === 2 && absolute && colourOverride === null
 
   // "/" jumps to search from anywhere on the page, unless something else
-  // already takes typing or the icon dialog is open.
+  // already takes typing.
   useEffect(() => {
     const focusSearch = (event: KeyboardEvent) => {
-      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey || selected) return
+      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return
       const target = event.target as HTMLElement | null
       if (target?.closest('input, textarea, select, [contenteditable="true"]')) return
       event.preventDefault()
@@ -126,7 +116,7 @@ export function IconsOverview({
     }
     document.addEventListener('keydown', focusSearch)
     return () => document.removeEventListener('keydown', focusSearch)
-  }, [selected])
+  }, [])
 
   const reset = () => {
     setQuery('')
@@ -290,14 +280,14 @@ export function IconsOverview({
         </section>
 
         {visible.length > 0 ? (
-          <div className={`mt-8 space-y-8 ${ICON_TILE_SKIN}`}>
+          <div className="mt-8 space-y-8">
             {grouped.map((group) => (
               <section key={group.slug} aria-labelledby={`icons-${group.slug}`}>
                 <h2 id={`icons-${group.slug}`} className="mb-3 text-sm font-bold text-sand-900 dark:text-sand-50">
                   {group.label}
                   <span className="ml-2 font-normal text-sand-600 dark:text-sand-400">{group.icons.length}</span>
                 </h2>
-                <div className={ICON_GRID}>
+                <div className={ICON_GRID_CLASS}>
                   {group.icons.map((icon) => (
                     <IconTile
                       key={icon.name}
@@ -308,10 +298,6 @@ export function IconsOverview({
                       absolute={absolute}
                       colour={colour}
                       style={style}
-                      onOpen={() => {
-                        setSelected(icon.name)
-                        loadMetadata()
-                      }}
                     />
                   ))}
                 </div>
@@ -325,26 +311,6 @@ export function IconsOverview({
           </div>
         )}
       </PageFrame>
-      {selected && dialogIcons.length > 0 && (
-        <IconDialog
-          icons={dialogIcons}
-          selectedName={selected}
-          onSelect={setSelected}
-          onClose={() => setSelected(null)}
-          data={data}
-          style={style}
-          onStyle={setStyle}
-          loadingStyle={loading}
-          size={size}
-          onSize={setSize}
-          strokeWidth={strokeWidth}
-          onStrokeWidth={setStrokeWidth}
-          absolute={absolute}
-          onAbsolute={setAbsolute}
-          colour={colourOverride}
-          onColour={setColourOverride}
-        />
-      )}
     </main>
   )
 }

@@ -10,13 +10,17 @@ import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
 import { AndromedaIcon } from '../../design-systems/andromeda/AndromedaIcon'
 import { SystemTierChip } from '../_components/SystemTierChip'
-import iconData from '../icons/_data/icons.generated.json'
+import iconsJson from '../icons/_data/icons.generated.json'
 import {
   ICON_CATEGORIES,
   ICON_CATEGORY_COUNTS,
   ICON_COUNT,
   isIconCategory,
 } from '../icons/_lib/categories'
+import type { IconMeta } from '../icons/_lib/types'
+
+// Typed so an empty generated file (a checkout without icon data) still compiles.
+const iconData = iconsJson as IconMeta[]
 
 // The catalog list of the rail and of the phone drawer: a three-way switch on
 // top (Design systems, Components, Icons), a heading with a count under it,

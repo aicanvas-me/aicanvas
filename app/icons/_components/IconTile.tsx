@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type MouseEvent } from 'react'
+import { useState } from 'react'
 import { Code, Copy } from '@phosphor-icons/react'
 import { copyText } from '@/app/components/useCopied'
 import { iconJsxLine } from '../_lib/constants'
@@ -16,7 +16,6 @@ export function IconTile({
   absolute,
   colour,
   style,
-  onOpen,
 }: {
   icon: IconGridMeta
   markup: string
@@ -25,17 +24,10 @@ export function IconTile({
   absolute: boolean
   colour: string
   style: IconStyle
-  onOpen: () => void
 }) {
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
   const showActions = hovered || focused
-
-  const openPopup = (event: MouseEvent<HTMLAnchorElement>) => {
-    if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
-    event.preventDefault()
-    onOpen()
-  }
 
   return (
     <div
@@ -48,7 +40,7 @@ export function IconTile({
       }}
     >
       {icon.isNew && <i data-icon-new="" role="img" aria-label="New" />}
-      <a href={`/icons/${icon.name}`} data-icon-link="" onClick={openPopup} aria-label={`Open ${icon.name} details`}>
+      <a href={`/icons/${icon.name}`} data-icon-link="" aria-label={`Open ${icon.name} details`}>
         {markup ? (
           <IconSvg markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />
         ) : (

@@ -45,8 +45,12 @@ import {
 import { premiumEnabled } from '../../lib/flags'
 import { wordVariants } from '../lib/search-match'
 import { DOCS_NAV } from '../docs/_lib/nav'
-import ICONS from '../icons/_data/icons.generated.json'
+import iconsJson from '../icons/_data/icons.generated.json'
 import { ICON_CATEGORY_LABELS, ICON_COUNT, type IconCategorySlug } from '../icons/_lib/categories'
+import type { IconMeta } from '../icons/_lib/types'
+
+// Typed so an empty generated file (a checkout without icon data) still compiles.
+const ICONS = iconsJson as IconMeta[]
 
 type Tab = 'all' | 'systems' | 'templates' | 'components' | 'icons' | 'pages'
 // What it costs to install: Andromeda Pro is all paid, a

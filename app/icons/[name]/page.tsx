@@ -26,7 +26,7 @@ export default async function IconPage({ params }: { params: Promise<{ name: str
   if (!icon) notFound()
 
   const line = await readLineIcons()
-  const suggestions = suggestedIcons(icon)
+  const suggestions = suggestedIcons(icon, 12)
   const categoryIcons = icons
     .filter((candidate) => candidate.category === icon.category)
     .sort((a, b) => a.name.localeCompare(b.name))
