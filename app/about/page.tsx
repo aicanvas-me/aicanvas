@@ -5,6 +5,7 @@ import { GITHUB_URL } from '../lib/config'
 import { buttonClasses } from '../components/buttonClasses'
 import { CARD, CtaBand, PageHero, PageShell } from '../components/PageKit'
 import { Reveal } from '../home/Reveal'
+import { OpenLock, SystemFill } from '../components/LoopArt'
 import { TOTAL_COMPONENTS } from '../lib/component-nav.generated'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
@@ -22,12 +23,21 @@ const P = 'mt-5 text-pretty text-[17px] leading-[1.8] text-sand-700 dark:text-sa
 const H = 'text-balance text-2xl font-bold tracking-tight text-sand-900 sm:text-[1.75rem] sm:leading-tight dark:text-sand-50'
 
 // A chapter of the essay: its heading and paragraphs, rising in as it scrolls
-// into view.
-function Chapter({ title, children }: { title: ReactNode; children: ReactNode }) {
+// into view. A chapter with a picture shows it on a quiet stage under the
+// heading, lit from above, so a long read gets a place to rest the eye.
+function Chapter({ title, art, children }: { title: ReactNode; art?: ReactNode; children: ReactNode }) {
   return (
     <Reveal className="mx-auto mt-16 max-w-2xl sm:mt-20">
       <section>
         <h2 className={H}>{title}</h2>
+        {art && (
+          <div
+            aria-hidden
+            className="mt-6 flex h-48 items-center justify-center rounded-section border border-sand-200 bg-[radial-gradient(ellipse_80%_90%_at_50%_0%,var(--color-sand-100),transparent)] sm:h-56 dark:border-sand-800 dark:bg-[radial-gradient(ellipse_80%_90%_at_50%_0%,var(--color-sand-900),transparent)]"
+          >
+            {art}
+          </div>
+        )}
         {children}
       </section>
     </Reveal>
@@ -116,7 +126,7 @@ export default function AboutPage() {
       </Chapter>
 
       {/* ── Systems ── the turn from components to design systems you own. */}
-      <Chapter title="From components to a system you own">
+      <Chapter title="From components to a system you own" art={<SystemFill />}>
         <p className={P}>
           Good components fixed one screen at a time. They did not stop the
           agent from mixing three spacing scales on the next one. The agent
@@ -241,7 +251,7 @@ export default function AboutPage() {
       />
 
       {/* ── Open + free to start ── */}
-      <Chapter title="Open, and free to start">
+      <Chapter title="Open, and free to start" art={<OpenLock />}>
         <p className={P}>
           The free library is open source under MIT, and its source is never
           hidden. Browsing and previewing are free, installing is free with a
