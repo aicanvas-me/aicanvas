@@ -1466,11 +1466,11 @@ export default function ComponentPageView({
                                 }}
                               />
                             )}
-                            {/* A dark-only shot on a light site ends on a clean
-                                edge, as on the grid card. */}
-                            <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-900 ${c.dualTheme ? '' : 'hidden dark:block'}`} />
+                            {/* Every card fades, a dark-only shot on a light
+                                site included, as on the grid card. */}
+                            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-900" />
                           </div>
-                          <div className={`relative px-4 pb-4 ${c.dualTheme ? '-mt-2' : 'mt-3 dark:-mt-2'}`}>
+                          <div className="relative -mt-2 px-4 pb-4">
                             <h3 className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">
                               {c.name}
                             </h3>

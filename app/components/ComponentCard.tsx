@@ -40,7 +40,6 @@ const IMG = 'absolute inset-0 h-full w-full object-cover transition-[transform,f
 // surface: no panel behind the text and no button, because the whole card is
 // the target. Hover steps the border up one and lifts the preview a touch.
 export function ComponentCard({ name, description, href, image, imageLight, badge, badgeTone, slug, position, source }: ComponentCardProps) {
-  const darkOnly = !!image && !imageLight
   return (
     <Link
       href={href}
@@ -49,11 +48,7 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
     >
       {/* Preview. Save action intentionally lives on the component detail
           page only; keeping it off the card keeps the preview uncluttered. */}
-      {/* A dark-only shot on a light site ends on a clean edge (no fade, see
-          below). The box keeps its size so the card stays the height of its
-          row; the picture is clipped 28px short of it instead, which leaves
-          the same 16px over the title that the fade gives every other card. */}
-      <div className={`relative aspect-video overflow-hidden bg-sand-900 ${darkOnly ? '[clip-path:inset(0_0_1.75rem_0)] dark:[clip-path:none]' : ''}`}>
+      <div className="relative aspect-video overflow-hidden bg-sand-900">
         {badge && (
           // Aceternity-style pill: just a filled icon at rest, slides open to
           // the label on card hover. Premium keeps the bolt; Free gets a
@@ -107,10 +102,9 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
           </div>
         )}
         {/* The fade: the preview's lower edge melts into the card's surface,
-            so the image and the text read as one piece. A dark-only shot on a
-            light site gets no fade: a dark picture melting into a light card
-            reads as a muddy band, so it ends on a clean edge instead. */}
-        <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-950 ${darkOnly ? 'hidden dark:block' : ''}`} />
+            so the image and the text read as one piece. Every card, a
+            dark-only shot on a light site included. */}
+        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-950" />
       </div>
 
       <div className="relative -mt-3 flex flex-1 flex-col px-5 pb-5">
