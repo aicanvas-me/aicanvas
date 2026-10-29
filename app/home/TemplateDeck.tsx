@@ -178,7 +178,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
       {/* The frame */}
       <div className="mx-auto mt-6 max-w-5xl rounded-shell border border-sand-200 bg-sand-100 p-2 shadow-[0_2px_6px_rgba(0,0,0,0.04),0_24px_48px_-24px_rgba(0,0,0,0.18)] sm:p-2.5 dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.3),0_32px_64px_-24px_rgba(0,0,0,0.7)]">
         {/* Template row + live link */}
-        <div className="flex items-center gap-2 px-1 pb-2 sm:pb-2.5">
+        <div className="flex items-center gap-2 px-1 pt-1 pb-2 sm:pb-2.5">
           <div
             role="group"
             aria-label="Templates"
@@ -194,7 +194,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
                   aria-pressed={on}
                   aria-controls="v3-template-screen"
                   onClick={() => setActive(i)}
-                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
+                  className={`inline-flex h-8 shrink-0 items-center gap-1.5 rounded-full px-3 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
                     on
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
@@ -208,7 +208,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
           </div>
           <Link
             href={href(t.folder)}
-            className="hidden shrink-0 items-center gap-1 rounded-control border border-sand-300 px-2.5 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 sm:inline-flex dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
+            className="hidden h-8 shrink-0 items-center gap-1 rounded-control border border-sand-300 px-2.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 sm:inline-flex dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
           >
             Live preview
             <ArrowUpRight weight="regular" size={13} aria-hidden />
