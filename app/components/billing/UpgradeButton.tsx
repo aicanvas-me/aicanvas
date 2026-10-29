@@ -6,7 +6,7 @@ import { track } from '../../lib/analytics'
 import { checkoutComingSoon } from '../../../lib/flags'
 
 /**
- * Opens the Paddle overlay for the chosen cycle. No account is required up
+ * Opens the Paddle overlay for the chosen cycle, or the one-time Lifetime. No account is required up
  * front: signed-out users check out anonymously (Paddle collects the email),
  * and the webhook provisions the account from that email, then emails a
  * magic-link claim. Signed-in users pass customData.user_id so the webhook +
@@ -31,7 +31,8 @@ export function UpgradeButton({
 
   async function onClick() {
     if (comingSoon) return
-    track('Subscribe Click', { cycle })
+    if (cycle === 'lifetime') track('Lifetime Click', {})
+    else track('Subscribe Click', { cycle })
     const paddle = await getPaddle()
     // A ?promo=CODE in the URL is passed as discountCode and applied silently.
     // Paddle ignores an unknown code and opens at full price, so no validation here.
@@ -39,7 +40,8 @@ export function UpgradeButton({
     // Signed-in: attribute the sale to the account up front (user_id + email).
     // Signed-out: open anonymously, Paddle collects the email itself and the
     // webhook keys the new/linked account off it (no user_id to pass).
-    const promo = new URLSearchParams(window.location.search).get('promo')?.trim()
+    // Lifetime never takes a promo: discounts are for Monthly only.
+    const promo = cycle === 'lifetime' ? undefined : new URLSearchParams(window.location.search).get('promo')?.trim()
     paddle?.Checkout.open({
       items: [{ priceId: PRICES[cycle], quantity: 1 }],
       ...(user

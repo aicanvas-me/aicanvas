@@ -2,14 +2,15 @@
 
 import { useId, useState } from 'react'
 import Link from 'next/link'
-import { CheckCircle, Lightning, Lock } from '@phosphor-icons/react'
+import { CheckCircle, Infinity as InfinityIcon, Lightning, Lock } from '@phosphor-icons/react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { buttonClasses } from '../buttonClasses'
 import { TerminatorCool, TerminatorSkull } from '../auth/TerminatorReveal'
 import { useSession } from '../auth/SessionProvider'
-import { usePremiumStatus } from './usePremiumStatus'
+import { usePremiumDetails } from './usePremiumStatus'
 import { UpgradeButton } from './UpgradeButton'
-import { MONTHLY_PRICE, YEARLY_ANCHOR, YEARLY_PER_MONTH, YEARLY_PRICE, YEARLY_SAVING_PCT, usd } from '../../lib/offer'
+import { LIFETIME_PRICE, MONTHLY_PRICE, YEARLY_ANCHOR, YEARLY_PER_MONTH, YEARLY_PRICE, YEARLY_SAVING_PCT, usd } from '../../lib/offer'
+import { lifetimeEnabled } from '../../../lib/flags'
 
 // Single source of truth for the Free / Premium cards. Rendered full-size on
 // /pricing and `compact` inside the Code-tab paywall. The Premium card lists
@@ -42,6 +43,20 @@ export const PREMIUM_FEATURES = [
   'Cancel anytime',
 ]
 
+// The Lifetime card's own list: what one payment adds on top of Premium, each
+// line from the Lifetime ruling (every future release, no renewal, installs
+// stay theirs). Shown only while the Lifetime switch is on.
+const LIFETIME_FEATURES = [
+  'One payment, no renewal to manage',
+  'Every future premium release included',
+  'Installed components stay yours forever',
+]
+
+const LIFETIME = lifetimeEnabled()
+// Side by side, the three descriptions share one height (two lines) so the
+// prices and buttons line up across the row.
+const DESC_3UP = 'lg:min-h-[2.875rem]'
+
 export function PremiumCards({
   show = 'both',
   compact = false,
@@ -60,7 +75,11 @@ export function PremiumCards({
   // layoutId would make framer treat both highlights as one element and fly it
   // from the page into the modal.
   const pillId = useId()
-  const [cycle, setCycle] = useState<'monthly' | 'yearly'>('yearly')
+  const [chosen, setCycle] = useState<'monthly' | 'yearly'>('yearly')
+  // With Lifetime on, Yearly is gone for new buyers: the Premium card is the
+  // monthly plan, with no cycle toggle. Existing annual subscribers keep
+  // renewing; only the offer leaves the site.
+  const cycle = LIFETIME ? 'monthly' : chosen
   const price = cycle === 'yearly' ? usd(YEARLY_PRICE) : usd(MONTHLY_PRICE)
   const suffix = cycle === 'yearly' ? 'year' : 'month'
   // Per-month equivalent of the yearly plan ($49.99 / 12 ≈ $4.17) — a hook that
@@ -69,9 +88,12 @@ export function PremiumCards({
 
   // Reflect the real subscription so a premium user isn't pitched "Go Premium";
   // 'unknown' renders a neutral disabled CTA instead of flashing the wrong one.
-  const premiumState = usePremiumStatus()
+  const { status: premiumState, lifetime: hasLifetime } = usePremiumDetails()
 
   const showFree = show === 'both'
+  // Three plans side by side: Free, Monthly, Lifetime. The compact paywall
+  // keeps its one card and points to Lifetime in a line under it.
+  const threeUp = LIFETIME && showFree && !compact
   const iconBox = compact ? 'h-12 w-12' : 'h-16 w-16'
   const heading = compact ? 'text-2xl' : 'text-3xl'
   const priceText = compact ? 'text-4xl' : 'text-4xl sm:text-5xl'
@@ -81,7 +103,7 @@ export function PremiumCards({
   return (
     <>
     <div
-      className={`grid gap-6 ${showFree ? 'md:grid-cols-2' : 'mx-auto max-w-md'} ${
+      className={`grid gap-6 ${threeUp ? 'mx-auto max-w-md lg:max-w-none lg:grid-cols-3 lg:gap-5' : showFree ? 'md:grid-cols-2' : 'mx-auto max-w-md'} ${
         compact ? '' : 'mt-12 sm:mt-16'
       } ${className ?? ''}`}
     >
@@ -97,23 +119,27 @@ export function PremiumCards({
                 Free
               </h2>
             </div>
-            <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+            <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${threeUp ? DESC_3UP : ''}`}>
               Install and remix every free component, free forever.
             </p>
             {/* Invisible mirror of the Premium card's billing-cycle toggle so the
-                price and CTA align across both cards. */}
-            <div
-              aria-hidden
-              className="invisible mt-3 inline-flex rounded-lg border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950"
-            >
-              <span className="rounded-md px-3 py-1 text-xs font-semibold">Monthly</span>
-            </div>
+                price and CTA align across both cards. Three plans have no
+                toggle; there the mirror is the tax line under the paid prices. */}
+            {!LIFETIME && (
+              <div
+                aria-hidden
+                className="invisible mt-3 inline-flex rounded-lg border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950"
+              >
+                <span className="rounded-md px-3 py-1 text-xs font-semibold">Monthly</span>
+              </div>
+            )}
             <div className="mt-4 flex items-baseline gap-2">
               <span className={`${priceText} font-extrabold tracking-tight text-sand-900 dark:text-sand-50`}>
                 $0
               </span>
               <span className="text-sm font-medium text-sand-600 dark:text-sand-500">/ forever</span>
             </div>
+            {threeUp && <p aria-hidden className="invisible mt-1.5 text-xs">+ VAT where applicable</p>}
             <Link
               href={user ? '/components' : '/account/sign-up'}
               className={`mt-6 ${buttonClasses({ variant: 'outline', size: 'lg', fullWidth: true })}`}
@@ -137,23 +163,29 @@ export function PremiumCards({
         </div>
       )}
 
-      {/* ── Premium card ── */}
-      <div className="relative flex flex-col rounded-3xl border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
+      {/* ── Premium card ── (the Monthly plan when Lifetime is on) */}
+      <div
+        className={`relative flex flex-col rounded-3xl border bg-sand-100 p-2 dark:bg-sand-900 ${
+          threeUp ? 'border-sand-200 dark:border-sand-800' : 'border-olive-500/50 dark:border-olive-500/40'
+        }`}
+      >
         <div className={cardPad}>
           <div className="flex items-center gap-4">
             <div className={`flex ${iconBox} shrink-0 items-end justify-center`}>
               <TerminatorSkull />
             </div>
             <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
-              Premium
+              {threeUp ? 'Monthly' : 'Premium'}
               <Lightning weight="regular" size={22} className="text-olive-600 dark:text-olive-400" />
             </h2>
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${threeUp ? DESC_3UP : ''}`}>
             Design systems, templates, components and blocks.
           </p>
 
-          {/* Billing cycle toggle + struck yearly-anchor price sit side by side. */}
+          {/* Billing cycle toggle + struck yearly-anchor price sit side by side.
+              Gone with Lifetime on: the card is the monthly plan only. */}
+          {!LIFETIME && (
           <div className="mt-3 flex items-center gap-3">
           {/* Billing cycle toggle — defaults to Yearly. The highlight is one
               element that slides between the two options, so the eye follows
@@ -209,6 +241,7 @@ export function PremiumCards({
             </span>
           )}
           </div>
+          )}
 
           <div className="mt-4 flex items-baseline gap-2">
             <span className={`${priceText} font-extrabold tracking-tight text-sand-900 dark:text-sand-50`}>
@@ -221,6 +254,7 @@ export function PremiumCards({
               </span>
             )}
           </div>
+          {LIFETIME && <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">+ VAT where applicable</p>}
 
           {user && premiumState === 'unknown' ? (
             <button
@@ -235,7 +269,7 @@ export function PremiumCards({
               href="/account/settings"
               className={`mt-6 ${buttonClasses({ variant: 'outline', size: 'lg', fullWidth: true })}`}
             >
-              You&rsquo;re on Premium · Manage
+              {hasLifetime ? 'You have Lifetime' : <>You&rsquo;re on Premium · Manage</>}
             </Link>
           ) : (
             <UpgradeButton
@@ -264,9 +298,114 @@ export function PremiumCards({
           </ul>
         </div>
       </div>
+      {threeUp && (
+        <LifetimeCard
+          cardPad={cardPad}
+          listPad={listPad}
+          heading={heading}
+          priceText={priceText}
+          iconBox={iconBox}
+          checking={Boolean(user) && premiumState === 'unknown'}
+          hasLifetime={hasLifetime}
+        />
+      )}
     </div>
+    {/* The compact paywall has room for one card: Lifetime is a line under it. */}
+    {LIFETIME && !threeUp && !hasLifetime && (
+      <p className="mx-auto mt-3 max-w-md text-center text-xs leading-relaxed text-sand-600 dark:text-sand-400">
+        Rather pay once? Lifetime is {usd(LIFETIME_PRICE)}, every future release included.{' '}
+        <Link href="/pricing" className="font-semibold text-olive-600 underline-offset-2 hover:text-olive-800 hover:underline dark:text-olive-400 dark:hover:text-olive-300">
+          See Lifetime
+        </Link>
+      </p>
+    )}
     {!compact && <TrustStrip />}
     </>
+  )
+}
+
+// ── Lifetime card ──
+// One payment, Premium for life. The featured plan of the three: the olive
+// edge the Premium card carries when it stands alone. The description is one
+// short line, like the other two cards; the Lifetime terms live on the licence
+// page, not on the card.
+function LifetimeCard({
+  cardPad,
+  listPad,
+  heading,
+  priceText,
+  iconBox,
+  checking,
+  hasLifetime,
+}: {
+  cardPad: string
+  listPad: string
+  heading: string
+  priceText: string
+  iconBox: string
+  checking: boolean
+  hasLifetime: boolean
+}) {
+  return (
+    <div className="relative flex flex-col rounded-3xl border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
+      <span className="absolute right-4 top-4 rounded-full bg-olive-500 px-2.5 py-0.5 text-[11px] font-semibold text-sand-950">
+        Pay once
+      </span>
+      <div className={cardPad}>
+        <div className="flex items-center gap-4">
+          <div className={`flex ${iconBox} shrink-0 items-center justify-center`}>
+            <InfinityIcon weight="regular" size={40} className="text-olive-600 dark:text-olive-400" />
+          </div>
+          <h2 className={`${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>Lifetime</h2>
+        </div>
+        <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${DESC_3UP}`}>
+          Everything in Monthly, paid once. Future releases included.
+        </p>
+        <div className="mt-4 flex items-baseline gap-2">
+          <span className={`${priceText} font-extrabold tracking-tight text-sand-900 dark:text-sand-50`}>
+            {usd(LIFETIME_PRICE)}
+          </span>
+          <span className="text-sm font-medium text-sand-600 dark:text-sand-500">/ one time</span>
+        </div>
+        <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">+ VAT where applicable</p>
+        {checking ? (
+          <button
+            type="button"
+            disabled
+            className={`mt-6 ${buttonClasses({ variant: 'outline', size: 'lg', fullWidth: true })}`}
+          >
+            Checking your plan…
+          </button>
+        ) : hasLifetime ? (
+          <Link
+            href="/account/settings"
+            className={`mt-6 ${buttonClasses({ variant: 'outline', size: 'lg', fullWidth: true })}`}
+          >
+            You have Lifetime
+          </Link>
+        ) : (
+          <UpgradeButton
+            cycle="lifetime"
+            className={`mt-6 ${buttonClasses({ variant: 'primary', size: 'lg', fullWidth: true })}`}
+          >
+            Get Lifetime
+          </UpgradeButton>
+        )}
+      </div>
+      <div className={`flex-1 rounded-2xl bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">
+          EVERYTHING IN PREMIUM, PLUS
+        </p>
+        <ul className="mt-4 space-y-3">
+          {LIFETIME_FEATURES.map((feature) => (
+            <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
+              <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+              <span>{feature}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
   )
 }
 
