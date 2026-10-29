@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import { CheckCircle, Sparkle } from '@phosphor-icons/react'
@@ -10,12 +10,6 @@ import { PremiumCards } from '../components/billing/PremiumCards'
 import { FaqHelpCard, FaqRows } from '../components/FaqRows'
 import { PRICING_FAQ } from '../lib/faq'
 import { PageHero, SectionHead } from '../components/PageKit'
-import { BusinessCards } from '../components/billing/BusinessCard'
-import {
-  PlanAudienceTabs,
-  audiencePanelId,
-  type PlanAudience,
-} from '../components/billing/PlanAudienceTabs'
 
 // ─── Plan data ──────────────────────────────────────────────────────────────
 // Legacy fallback, rendered only when premiumEnabled() is false. The first card
@@ -151,13 +145,12 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
 
 
 // ─── Page ───────────────────────────────────────────────────────────────────
-// The client half of /pricing: the hero line follows the audience switch, so
-// the hero, the switch, the plans and the questions live here. page.tsx wraps
-// them in the shared page shell and closes with the site band.
+// The client half of /pricing: the hero, the plans and the questions live
+// here. page.tsx wraps them in the shared page shell and closes with the site
+// band. One plan family for one person; there is no Business plan.
 
 export function PricingView() {
   const premium = premiumEnabled()
-  const [audience, setAudience] = useState<PlanAudience>('individual')
   return (
     <>
       <PageHero
@@ -165,15 +158,9 @@ export function PricingView() {
         pillIcon={<Sparkle weight="regular" size={12} className="text-accent" aria-hidden />}
         title={premium ? 'Simple, honest pricing' : 'Pick your side'}
         sub={
-          // The line follows the audience switch below it. The Free vs
-          // Premium sentence describes a pair the Business view does not
-          // show, so leaving it fixed made the header answer a question the
-          // visitor had just switched away from.
           !premium
             ? 'The free library is free, forever. Browse anonymously, or sign up to save your favorites.'
-            : audience === 'business'
-              ? 'One subscription for up to 10 people, and one shared AI Brain, so every agent on the team builds to the same rules.'
-              : 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'
+            : 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'
         }
       />
 
@@ -181,21 +168,9 @@ export function PricingView() {
           Monthly, Lifetime) take the wider column. */}
       <div className={`mx-auto ${lifetimeEnabled() ? 'max-w-6xl' : 'max-w-4xl'}`}>
         {premium ? (
-          <>
-            {/* Audience switch. Individual keeps the Free vs Premium pair
-                the rest of the site already uses; Business swaps in the
-                single team card, so neither view has to explain the other. */}
-            <div className="mt-10 sm:mt-12">
-              <PlanAudienceTabs value={audience} onChange={setAudience} idPrefix="pricing-audience" />
-            </div>
-            <div
-              role="tabpanel"
-              id={audiencePanelId('pricing-audience', audience)}
-              aria-labelledby={`pricing-audience-${audience}-tab`}
-            >
-              {audience === 'individual' ? <PremiumCards /> : <BusinessCards />}
-            </div>
-          </>
+          <div className="mt-10 sm:mt-12">
+            <PremiumCards />
+          </div>
         ) : (
           <div className="mt-12 grid gap-6 sm:mt-16 md:grid-cols-2">
             {PLANS.map((plan, i) => (
