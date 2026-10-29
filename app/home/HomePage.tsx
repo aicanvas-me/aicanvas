@@ -134,10 +134,9 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
             className="aic-hero-rise mt-5 max-w-2xl text-base leading-relaxed text-sand-600 sm:text-lg dark:text-sand-400"
             style={{ animationDelay: '0.26s' }}
           >
-            Complete React design systems your agent builds with in Claude Code, Cursor or Codex, and you reshape:
-            change the colors, swap components, add your own. Plus {standalonesFloor} standalone components and blocks,
-            effects and motion that fit any system. Install with one shadcn command, or let your agent do it through
-            the AI Canvas MCP.
+            Complete React design systems for Claude Code, Cursor and Codex, yours to reshape. Plus {standalonesFloor}{' '}
+            standalone components that fit any of them. Everything installs with one shadcn command or through the AI
+            Canvas MCP.
           </p>
 
           <div
