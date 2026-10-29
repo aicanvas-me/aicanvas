@@ -66,7 +66,7 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
   return (
     <>
       <div className={`mx-auto max-w-md ${compact ? '' : 'mt-12 sm:mt-16'}`}>
-        <div className="relative flex flex-col rounded-3xl border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
+        <div className="relative flex flex-col rounded-section border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
           <div className={cardPad}>
             {/* The unreleased marker sits on the card, in the corner the eye
                 leaves the price by, so it qualifies the number rather than the
@@ -81,7 +81,7 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
             {/* Billing cycle toggle — same sliding-pill mechanic as the Premium
                 card, minus the discount chip and the struck yearly anchor,
                 which were deliberately removed from this tier. */}
-            <div className="mt-5 inline-flex rounded-lg border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950">
+            <div className="mt-5 inline-flex rounded-control border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950">
               {CYCLES.map((key) => {
                 const selected = cycle === key
                 return (
@@ -90,7 +90,7 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
                     type="button"
                     onClick={() => setCycle(key)}
                     aria-pressed={selected}
-                    className={`relative rounded-md px-3 py-1 text-xs font-semibold transition-colors ${
+                    className={`relative rounded-chip px-3 py-1 text-xs font-semibold transition-colors ${
                       selected
                         ? 'text-sand-950'
                         : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
@@ -99,7 +99,7 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
                     {selected && (
                       <motion.span
                         layoutId={`business-cycle-pill-${pillId}`}
-                        className="absolute inset-0 rounded-md bg-olive-500"
+                        className="absolute inset-0 rounded-chip bg-olive-500"
                         transition={
                           reduceMotion
                             ? { duration: 0 }
@@ -131,7 +131,7 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
             <BusinessWaitlist plan={cycle} featured />
           </div>
 
-          <div className={`flex-1 rounded-2xl bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
+          <div className={`flex-1 rounded-card bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">
               EVERYTHING INCLUDED
             </p>

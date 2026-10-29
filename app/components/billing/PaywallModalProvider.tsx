@@ -121,13 +121,13 @@ function PaywallModalView({
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="relative z-10 my-auto w-full max-w-lg rounded-2xl bg-sand-100 p-6 shadow-2xl outline-none sm:p-8 dark:bg-sand-950"
+        className="relative z-10 my-auto w-full max-w-lg rounded-card bg-sand-100 p-6 shadow-2xl outline-none sm:p-8 dark:bg-sand-950"
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg text-sand-600 transition-colors hover:bg-sand-200 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-100"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-control text-sand-600 transition-colors hover:bg-sand-200 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-100"
         >
           <X weight="regular" size={18} />
         </button>
@@ -162,7 +162,7 @@ function PaywallModalView({
             checkout to accept a card at, and no subscription to have been paid
             under another address. */}
         {!business && (
-          <div className="mx-auto mt-5 max-w-md rounded-2xl border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-900/50">
+          <div className="mx-auto mt-5 max-w-md rounded-card border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-900/50">
             <PaymentMethods />
           </div>
         )}

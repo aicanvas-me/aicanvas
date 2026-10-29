@@ -18,15 +18,15 @@ const noop = () => () => {}
 const isMac = () => /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent)
 
 const KBD =
-  'rounded border border-sand-200 bg-sand-50 px-1 font-sans text-[11px] font-medium leading-4 text-sand-600 dark:border-sand-700 dark:bg-sand-950 dark:text-sand-400'
+  'rounded-tag border border-sand-200 bg-sand-50 px-1 font-sans text-[11px] font-medium leading-4 text-sand-600 dark:border-sand-700 dark:bg-sand-950 dark:text-sand-400'
 
 const BAR =
-  'inline-flex h-8 items-center gap-2 rounded-lg border border-sand-200 bg-sand-100 px-2.5 text-sm font-medium text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-50'
+  'inline-flex h-8 items-center gap-2 rounded-control border border-sand-200 bg-sand-100 px-2.5 text-sm font-medium text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-50'
 
 // The sidebar box keeps the look of the text field it replaced (same border,
 // fill, height and placeholder tone), so the rail does not change shape.
 const FIELD =
-  'flex w-full items-center gap-2 rounded-lg border border-sand-200 bg-sand-100 py-1.5 pl-3 pr-2 text-sm text-sand-600 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/20 focus-visible:border-olive-500 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-500 dark:hover:border-sand-600'
+  'flex w-full items-center gap-2 rounded-control border border-sand-200 bg-sand-100 py-1.5 pl-3 pr-2 text-sm text-sand-600 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/20 focus-visible:border-olive-500 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-500 dark:hover:border-sand-600'
 
 export function SiteSearch({ variant = 'bar' }: { variant?: 'bar' | 'field' }) {
   const [open, setOpen] = useState(false)

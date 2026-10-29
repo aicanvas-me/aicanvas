@@ -107,7 +107,7 @@ export function PremiumCards({
     >
       {/* ── Free card ── */}
       {showFree && (
-        <div className="relative flex flex-col rounded-3xl border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900">
+        <div className="relative flex flex-col rounded-section border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900">
           {/* Name, price, then the one-line description: every plan card
               reads in that order. */}
           <div className={cardPad}>
@@ -120,9 +120,9 @@ export function PremiumCards({
             {!threeUp && (
               <div
                 aria-hidden
-                className="invisible mt-3 inline-flex rounded-lg border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950"
+                className="invisible mt-3 inline-flex rounded-control border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950"
               >
-                <span className="rounded-md px-3 py-1 text-xs font-semibold">Monthly</span>
+                <span className="rounded-chip px-3 py-1 text-xs font-semibold">Monthly</span>
               </div>
             )}
             <div className="mt-4 flex items-baseline gap-2">
@@ -142,7 +142,7 @@ export function PremiumCards({
               {user ? 'Browse components' : 'Sign up free'}
             </Link>
           </div>
-          <div className={`flex-1 rounded-2xl bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
+          <div className={`flex-1 rounded-card bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
             <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">
               ALWAYS INCLUDED
             </p>
@@ -160,7 +160,7 @@ export function PremiumCards({
 
       {/* ── Premium card ── (the Monthly plan when Lifetime is on) */}
       <div
-        className={`relative flex flex-col rounded-3xl border bg-sand-100 p-2 dark:bg-sand-900 ${
+        className={`relative flex flex-col rounded-section border bg-sand-100 p-2 dark:bg-sand-900 ${
           threeUp ? 'border-sand-200 dark:border-sand-800' : 'border-olive-500/50 dark:border-olive-500/40'
         }`}
       >
@@ -179,7 +179,7 @@ export function PremiumCards({
               the selection instead of watching one box blink off and another
               blink on. It resizes as it travels, because the two labels are
               different widths. */}
-          <div className="inline-flex rounded-lg border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950">
+          <div className="inline-flex rounded-control border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950">
             {CYCLES.map((key) => {
               const selected = cycle === key
               return (
@@ -188,7 +188,7 @@ export function PremiumCards({
                   type="button"
                   onClick={() => setCycle(key)}
                   aria-pressed={selected}
-                  className={`relative rounded-md px-3 py-1 text-xs font-semibold transition-colors ${
+                  className={`relative rounded-chip px-3 py-1 text-xs font-semibold transition-colors ${
                     selected
                       ? 'text-sand-950'
                       : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
@@ -197,7 +197,7 @@ export function PremiumCards({
                   {selected && (
                     <motion.span
                       layoutId={`billing-cycle-pill-${pillId}`}
-                      className="absolute inset-0 rounded-md bg-olive-500"
+                      className="absolute inset-0 rounded-chip bg-olive-500"
                       transition={
                         reduceMotion
                           ? { duration: 0 }
@@ -270,7 +270,7 @@ export function PremiumCards({
             </UpgradeButton>
           )}
         </div>
-        <div className={`flex-1 rounded-2xl bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
+        <div className={`flex-1 rounded-card bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
           {/* The comparison label only makes sense next to the Free card;
               the premium-only modal renders the list without it. */}
           {showFree && (
@@ -318,7 +318,7 @@ function LifetimeCard({
   priceText: string
 }) {
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-3xl border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
+    <div className="relative flex flex-col overflow-hidden rounded-section border border-olive-500/50 bg-sand-100 p-2 dark:border-olive-500/40 dark:bg-sand-900">
       <TopLight />
       <span className="absolute right-4 top-4 rounded-full border border-olive-500/40 bg-olive-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-olive-700 dark:text-olive-300">
         Pay once
@@ -350,7 +350,7 @@ function LifetimeCard({
           Coming soon
         </button>
       </div>
-      <div className={`relative flex-1 rounded-2xl bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
+      <div className={`relative flex-1 rounded-card bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
         <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">
           EVERYTHING IN PREMIUM, PLUS
         </p>
@@ -383,7 +383,7 @@ const PAYMENT_LOGOS: [string, string][] = [
 
 function TrustStrip() {
   return (
-    <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-2xl border border-sand-200 bg-sand-100/60 px-6 py-4 dark:border-sand-800 dark:bg-sand-900/50 sm:flex-row">
+    <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-card border border-sand-200 bg-sand-100/60 px-6 py-4 dark:border-sand-800 dark:bg-sand-900/50 sm:flex-row">
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-sand-700 dark:text-sand-200">
         <span className="flex items-center gap-1.5">
           <Lock weight="regular" size={16} className="text-olive-600 dark:text-olive-400" />
@@ -396,7 +396,7 @@ function TrustStrip() {
       </div>
       <div className="flex flex-wrap items-center justify-center gap-2">
         {PAYMENT_LOGOS.map(([file, label]) => (
-          <span key={file} className="flex h-7 items-center rounded-md bg-white px-1.5 shadow-sm">
+          <span key={file} className="flex h-7 items-center rounded-chip bg-white px-1.5 shadow-sm">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={`/payment/${file}.svg`} alt={label} className="h-4 w-auto" />
           </span>

@@ -236,7 +236,7 @@ export function RemixPanel({
                 still reads as a single document. Rendering head, lock and tail as
                 three rounded cards made a paywalled prompt look broken rather
                 than gated. */}
-            <div className="mt-4 overflow-hidden rounded-xl bg-sand-200 dark:bg-sand-950 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
+            <div className="mt-4 overflow-hidden rounded-inset bg-sand-200 dark:bg-sand-950 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
               <pre
                 className={`whitespace-pre-wrap break-words px-5 pt-5 ${
                   promptLocked
@@ -255,7 +255,7 @@ export function RemixPanel({
 
             {/* The exact install, after the prompt: this panel is for remixing,
                 so the prompt leads and installing is the quiet way out. */}
-            <div className="mt-8 rounded-xl border border-olive-500/40 bg-olive-500/10 p-5">
+            <div className="mt-8 rounded-inset border border-olive-500/40 bg-olive-500/10 p-5">
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Want the exact component?
               </p>
@@ -268,7 +268,7 @@ export function RemixPanel({
                     that wraps to two lines and turns a tidy card into a wall of
                     monospace. Nothing is lost by cutting it: the visible form
                     is masked anyway, and the button copies the real command. */}
-                <code className="min-w-0 flex-1 truncate rounded-lg bg-sand-200 dark:bg-sand-950 px-3 py-2 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
+                <code className="min-w-0 flex-1 truncate rounded-control bg-sand-200 dark:bg-sand-950 px-3 py-2 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
                   npx shadcn@latest add {cliReference}
                 </code>
                 {/* onCopyCli already sends a non-subscriber to the paywall

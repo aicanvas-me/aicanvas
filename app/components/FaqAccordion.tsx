@@ -81,7 +81,7 @@ export function FaqAccordion({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-30px' }}
             transition={{ duration: 0.3 }}
-            className={`rounded-xl border transition-colors ${
+            className={`rounded-inset border transition-colors ${
               isOpen
                 ? 'border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900'
                 : 'border-sand-200 bg-sand-100/60 hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900/50 dark:hover:border-sand-700'

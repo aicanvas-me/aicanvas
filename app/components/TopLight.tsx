@@ -8,7 +8,7 @@ export function TopLight() {
     <div
       aria-hidden
       className="pointer-events-none absolute inset-x-0 top-0 h-40"
-      style={{ backgroundImage: 'radial-gradient(70% 100% at 50% 0%, rgb(168 185 77 / 0.12), transparent 70%)' }}
+      style={{ backgroundImage: 'radial-gradient(70% 100% at 50% 0%, color-mix(in srgb, var(--color-olive-500) 12%, transparent), transparent 70%)' }}
     />
   )
 }

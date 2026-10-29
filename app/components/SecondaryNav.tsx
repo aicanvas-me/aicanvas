@@ -69,7 +69,7 @@ export function SecondaryNav({
             key={href}
             href={href}
             onClick={onNavigate}
-            className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
+            className={`mb-1 flex w-full items-center gap-2 rounded-chip px-2 py-1.5 text-sm font-semibold transition-colors ${
               active ? ACTIVE : IDLE
             }`}
           >

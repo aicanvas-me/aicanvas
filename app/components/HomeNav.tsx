@@ -43,7 +43,7 @@ const MORE: NavLink[] = [
 // Plain text links in a muted tone that steps up to the primary text on hover,
 // while a menu is open, and on the page you are on; no pill behind them.
 const ITEM =
-  'inline-flex h-8 items-center gap-1 rounded-lg px-2 text-sm font-medium text-sand-600 transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-expanded:text-sand-900 aria-[current=page]:text-sand-900 aria-[current=true]:text-sand-900 data-[active]:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50 dark:aria-expanded:text-sand-50 dark:aria-[current=page]:text-sand-50 dark:aria-[current=true]:text-sand-50 dark:data-[active]:text-sand-50 xl:px-3'
+  'inline-flex h-8 items-center gap-1 rounded-control px-2 text-sm font-medium text-sand-600 transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-expanded:text-sand-900 aria-[current=page]:text-sand-900 aria-[current=true]:text-sand-900 data-[active]:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50 dark:aria-expanded:text-sand-50 dark:aria-[current=page]:text-sand-50 dark:aria-[current=true]:text-sand-50 dark:data-[active]:text-sand-50 xl:px-3'
 
 const isOn = (pathname: string, href: string) => pathname === href || pathname.startsWith(`${href}/`)
 
@@ -108,7 +108,7 @@ function Menu({
       {open && (
         <ul
           id={listId}
-          className={`absolute left-0 top-full z-40 mt-1.5 grid gap-0.5 rounded-xl border border-sand-200 bg-sand-50 p-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.12)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_8px_24px_rgba(0,0,0,0.5)] ${
+          className={`absolute left-0 top-full z-40 mt-1.5 grid gap-0.5 rounded-inset border border-sand-200 bg-sand-50 p-1.5 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_8px_24px_rgba(0,0,0,0.12)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_8px_24px_rgba(0,0,0,0.5)] ${
             columns === 2 ? 'w-[26rem] grid-cols-2' : 'w-56 grid-cols-1'
           }`}
         >
@@ -119,7 +119,7 @@ function Menu({
                 prefetch={l.prefetch}
                 onClick={() => setOpen(false)}
                 aria-current={pathname === l.href ? 'page' : undefined}
-                className="block rounded-lg px-2.5 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-[current=page]:bg-sand-100 aria-[current=page]:font-semibold aria-[current=page]:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50 dark:aria-[current=page]:bg-sand-900 dark:aria-[current=page]:text-sand-50"
+                className="block rounded-control px-2.5 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 aria-[current=page]:bg-sand-100 aria-[current=page]:font-semibold aria-[current=page]:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50 dark:aria-[current=page]:bg-sand-900 dark:aria-[current=page]:text-sand-50"
               >
                 {l.label}
               </Link>

@@ -109,7 +109,7 @@ export function LegalArticle({ children }: { children: ReactNode }) {
 
       <div className="min-w-0">
         {toc.length > 0 && (
-          <details className="group mb-10 rounded-2xl border border-sand-200 bg-sand-100 lg:hidden dark:border-sand-800 dark:bg-sand-900">
+          <details className="group mb-10 rounded-card border border-sand-200 bg-sand-100 lg:hidden dark:border-sand-800 dark:bg-sand-900">
             <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-3.5 text-sm font-semibold text-sand-900 dark:text-sand-50 [&::-webkit-details-marker]:hidden">
               On this page
               <CaretDown

@@ -21,7 +21,7 @@ export const SUB = 'text-base leading-relaxed text-sand-600 dark:text-sand-400'
 export const PILL =
   'inline-flex items-center gap-1.5 rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300'
 // A bordered surface, the homepage card.
-export const CARD = 'rounded-3xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
+export const CARD = 'rounded-section border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
 
 // The page itself: the 7xl column the homepage uses, the footer, and the AI
 // CANVAS wordmark signing it off. It does not own the scroll (no
@@ -158,7 +158,7 @@ export function CtaBand({
     <section className="mx-auto mt-20 max-w-4xl sm:mt-32">
       <Reveal
         y={12}
-        className="relative overflow-hidden rounded-3xl border border-olive-500/20 px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
+        className="relative overflow-hidden rounded-section border border-olive-500/20 px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
       >
         <TopLight />
         {eyebrow && <p className={`relative ${EYEBROW}`}>{eyebrow}</p>}

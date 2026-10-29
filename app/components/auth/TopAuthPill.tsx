@@ -62,7 +62,7 @@ export function TopAuthPill() {
           onClick={() => setOpen((v) => !v)}
           aria-label={`Account menu for ${email}`}
           aria-expanded={open}
-          className="group flex cursor-pointer items-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
+          className="group flex cursor-pointer items-center gap-1 rounded-chip focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
         >
           <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-7 w-7 text-xs" />
           <CaretUpDown
@@ -72,7 +72,7 @@ export function TopAuthPill() {
           />
         </button>
         {open && (
-          <div className="absolute right-0 top-full mt-1 w-48 overflow-hidden rounded-lg border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
+          <div className="absolute right-0 top-full mt-1 w-48 overflow-hidden rounded-control border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
             <div className="border-b border-sand-200 px-3 py-2 text-xs text-sand-600 dark:border-sand-800 dark:text-sand-400">
               <span className="block truncate">{email}</span>
             </div>

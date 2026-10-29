@@ -122,7 +122,7 @@ export function Paywall({
         <div className="mt-1 flex items-center gap-2">
           <Link
             href="/pricing"
-            className="rounded-lg bg-olive-500 px-4 py-2 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
+            className="rounded-control bg-olive-500 px-4 py-2 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
           >
             Get Premium
           </Link>
@@ -130,7 +130,7 @@ export function Paywall({
             <button
               type="button"
               onClick={() => open()}
-              className={`rounded-lg border px-4 py-2 text-sm font-semibold ${login}`}
+              className={`rounded-control border px-4 py-2 text-sm font-semibold ${login}`}
             >
               Log in
             </button>

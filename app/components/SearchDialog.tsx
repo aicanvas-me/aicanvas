@@ -242,7 +242,7 @@ const TIER_CHIP: Record<Tier, string> = {
 function TierChip({ tier }: { tier: Tier }) {
   return (
     <span
-      className={`inline-flex shrink-0 items-center rounded px-1.5 py-px text-xxs font-semibold uppercase tracking-wider ring-1 ring-inset ${TIER_CHIP[tier]}`}
+      className={`inline-flex shrink-0 items-center rounded-tag px-1.5 py-px text-xxs font-semibold uppercase tracking-wider ring-1 ring-inset ${TIER_CHIP[tier]}`}
     >
       {tier === 'free' ? 'Free' : 'Premium'}
     </span>
@@ -250,7 +250,7 @@ function TierChip({ tier }: { tier: Tier }) {
 }
 
 const KEY_BASE =
-  'inline-flex h-5 items-center justify-center rounded border border-sand-200 text-sand-600 dark:border-sand-800 dark:text-sand-400'
+  'inline-flex h-5 items-center justify-center rounded-tag border border-sand-200 text-sand-600 dark:border-sand-800 dark:text-sand-400'
 const KEY = `${KEY_BASE} w-5`
 
 export default function SearchDialog({ onClose }: { onClose: () => void }) {
@@ -352,7 +352,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
         role="dialog"
         aria-modal="true"
         aria-label="Search"
-        className="relative flex h-[min(36rem,76vh)] w-full max-w-xl flex-col overflow-hidden rounded-xl border border-sand-200 bg-sand-50 shadow-[0_2px_4px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.16)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_16px_40px_rgba(0,0,0,0.6)]"
+        className="relative flex h-[min(36rem,76vh)] w-full max-w-xl flex-col overflow-hidden rounded-inset border border-sand-200 bg-sand-50 shadow-[0_2px_4px_rgba(0,0,0,0.06),0_16px_40px_rgba(0,0,0,0.16)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_16px_40px_rgba(0,0,0,0.6)]"
         initial={{ opacity: 0, y: -6, scale: 0.98 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
@@ -394,7 +394,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
               tabIndex={-1}
               aria-selected={tab === t.id}
               onClick={() => pickTab(t.id)}
-              className={`h-7 shrink-0 rounded-md px-2.5 text-xs font-semibold transition-colors ${
+              className={`h-7 shrink-0 rounded-chip px-2.5 text-xs font-semibold transition-colors ${
                 tab === t.id
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                   : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50'
@@ -427,7 +427,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
                       aria-selected={selected}
                       onPointerMove={() => setActive(index)}
                       onClick={() => go(item)}
-                      className={`flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 ${
+                      className={`flex cursor-pointer items-center gap-3 rounded-control px-3 py-2.5 ${
                         selected ? 'bg-sand-100 dark:bg-sand-900' : ''
                       }`}
                     >

@@ -249,7 +249,7 @@ function FramePayload({ children }: { children: ReactNode }) {
            theme transition is untouched. */
         html:not([data-frame-light]) { color-scheme: dark; }
         html:not([data-frame-light]), html:not([data-frame-light]) body {
-          background: #0E0E0F !important;
+          background: var(--color-sand-950) !important;
           transition: none !important;
         }
         html[data-frame-light], html[data-frame-light] body {
@@ -267,7 +267,7 @@ function FramePayload({ children }: { children: ReactNode }) {
            :has() matches ancestors only, so the composition's own surfaces are
            untouched. */
         html:not([data-frame-light]) body *:has(.mc-frame-viewport) {
-          background: #0E0E0F !important;
+          background: var(--color-sand-950) !important;
           transition: none !important;
         }
         html[data-frame-light] body *:has(.mc-frame-viewport) {
@@ -421,7 +421,7 @@ function PreviewChrome({
                 // paints. It follows the site theme, as the frame's own
                 // document does (AndromedaThemeSync mirrors the parent).
                 style={{ width: DEVICES.phone.width, colorScheme: theme }}
-                className="relative h-full max-w-full shrink-0 rounded-2xl border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-800 dark:bg-sand-950"
+                className="relative h-full max-w-full shrink-0 rounded-card border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-800 dark:bg-sand-950"
                 initial={{ scale: reduce ? 1 : 0.985 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: reduce ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -502,7 +502,7 @@ function TopBar({
             right-side buttons (~32px). Shown from md up; the cluster hides on a
             real phone, where you already see the responsive layout. The site
             theme toggle on the right moves every template preview with it. */}
-        <div className="hidden items-center gap-0.5 justify-self-center rounded-lg border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
+        <div className="hidden items-center gap-0.5 justify-self-center rounded-control border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
           {DEVICE_ORDER.map(({ key, label, icon: Icon }) => {
             const active = device === key
             return (
@@ -512,7 +512,7 @@ function TopBar({
                 onClick={() => onDevice(key)}
                 aria-label={`${label} preview`}
                 aria-pressed={active}
-                className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
+                className={`flex h-7 w-7 items-center justify-center rounded-chip transition-colors ${
                   active
                     ? 'bg-sand-100 text-sand-900 shadow-sm dark:bg-sand-800 dark:text-sand-50'
                     : 'text-sand-600 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100'
@@ -528,7 +528,7 @@ function TopBar({
             onClick={onReload}
             aria-label="Replay animation"
             title="Replay animation"
-            className="flex h-7 w-7 items-center justify-center rounded-md text-sand-600 transition-colors hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100"
+            className="flex h-7 w-7 items-center justify-center rounded-chip text-sand-600 transition-colors hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100"
           >
             <ArrowClockwise weight="regular" size={15} />
           </button>
@@ -610,7 +610,7 @@ function TemplateSwitcher({
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Switch template"
-        className="flex min-w-0 items-center gap-1 rounded-md text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-300"
+        className="flex min-w-0 items-center gap-1 rounded-chip text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-300"
       >
         <span className="truncate">{templateName}</span>
         <CaretUpDown weight="regular" size={14} className="shrink-0 opacity-70" />
@@ -621,7 +621,7 @@ function TemplateSwitcher({
           phone-width menu never runs off the right edge; desktop viewports keep
           the full 260px (100vw-170px is >260 there, so min() picks 260). */}
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-[min(260px,calc(100vw-170px))] overflow-hidden rounded-xl border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute left-0 top-full z-50 mt-2 w-[min(260px,calc(100vw-170px))] overflow-hidden rounded-inset border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           {siblings.map((t) => {
             const active = t.slug === templateSlug
             const folder = t.slug.startsWith(`${systemSlug}-`)
@@ -650,7 +650,7 @@ function TemplateSwitcher({
                     the active row is already named by its olive colour and its
                     weight, so it needs no second marker. */}
                 {t.category && (
-                  <span className="ml-auto shrink-0 rounded-md bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
+                  <span className="ml-auto shrink-0 rounded-chip bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
                     {t.category}
                   </span>
                 )}
@@ -785,14 +785,14 @@ function InstallButton({
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-xl border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-inset border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   CLI install
                 </span>
-                <span className="rounded-md border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+                <span className="rounded-chip border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
                   One command
                 </span>
               </div>
@@ -815,7 +815,7 @@ function InstallButton({
                 )}
               </Button>
             </div>
-            <div className="rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
+            <div className="rounded-control bg-sand-200 dark:bg-sand-950 px-4 py-3">
               <code className="block break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">

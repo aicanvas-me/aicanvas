@@ -39,7 +39,7 @@ export function ComponentCard({ name, description, href, image, badge, badgeTone
     <Link
       href={href}
       onClick={() => track('Component Card Click', { component: slug, position, source })}
-      className="group relative isolate flex flex-col overflow-hidden rounded-[28px] border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:focus-visible:ring-offset-sand-950"
+      className="group relative isolate flex flex-col overflow-hidden rounded-shell border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/60 focus-visible:ring-offset-2 focus-visible:ring-offset-sand-50 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:focus-visible:ring-offset-sand-950"
     >
       {/* Preview. Save action intentionally lives on the component detail
           page only; keeping it off the card keeps the preview uncluttered. */}

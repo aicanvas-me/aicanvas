@@ -156,7 +156,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
     return (
       <>
         <TerminatorReveal />
-        <div className="mt-6 rounded-lg border border-olive-500/30 bg-olive-500/10 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
+        <div className="mt-6 rounded-control border border-olive-500/30 bg-olive-500/10 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
           Check your inbox. If an account exists for <strong>{email}</strong>, a one-time sign-in link is on its way. It expires in 1 hour.
         </div>
         <button
@@ -210,7 +210,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
                 setEmail(e.target.value)
                 clearStatus()
               }}
-              className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
+              className="w-full rounded-control border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
             />
             {linkMode && (
               // Tied to the input via aria-describedby, so a screen reader that
@@ -252,7 +252,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           {error && (
             // role="alert": this box replaced the browser's own validation
             // bubble for the password, which screen readers used to announce.
-            <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+            <div role="alert" className="rounded-control border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}

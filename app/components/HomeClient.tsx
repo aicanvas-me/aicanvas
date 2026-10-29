@@ -452,7 +452,7 @@ export function HomeClient({
             {suggestions.length === 0 && (
               <button
                 onClick={clearSearch}
-                className="mt-8 rounded-lg border border-sand-200 bg-sand-100 px-4 py-2 text-sm font-semibold text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 active:scale-95 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
+                className="mt-8 rounded-control border border-sand-200 bg-sand-100 px-4 py-2 text-sm font-semibold text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 active:scale-95 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
               >
                 Browse all components
               </button>

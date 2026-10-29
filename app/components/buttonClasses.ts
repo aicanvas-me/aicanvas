@@ -22,17 +22,17 @@ const BASE = 'inline-flex items-center justify-center font-semibold transition-c
 const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40'
 
 const LABEL_SIZES: Record<ButtonSize, string> = {
-  xs: 'gap-1.5 rounded-lg px-3 py-1.5 text-xs',
-  sm: 'gap-1.5 rounded-lg px-3.5 py-1.5 text-sm',
-  md: 'gap-2 rounded-lg px-4 py-2 text-sm',
-  lg: 'gap-2 rounded-lg px-5 py-2.5 text-sm',
+  xs: 'gap-1.5 rounded-control px-3 py-1.5 text-xs',
+  sm: 'gap-1.5 rounded-control px-3.5 py-1.5 text-sm',
+  md: 'gap-2 rounded-control px-4 py-2 text-sm',
+  lg: 'gap-2 rounded-control px-5 py-2.5 text-sm',
 }
 
 const ICON_SIZES: Record<ButtonSize, string> = {
-  xs: 'h-7 w-7 rounded-md',
-  sm: 'h-8 w-8 rounded-lg',
-  md: 'h-9 w-9 rounded-lg',
-  lg: 'h-10 w-10 rounded-lg',
+  xs: 'h-7 w-7 rounded-chip',
+  sm: 'h-8 w-8 rounded-control',
+  md: 'h-9 w-9 rounded-control',
+  lg: 'h-10 w-10 rounded-control',
 }
 
 const VARIANTS: Record<ButtonVariant, string> = {

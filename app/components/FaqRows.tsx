@@ -61,14 +61,14 @@ export function FaqRows({
     })
 
   return (
-    <div className="space-y-1.5 rounded-[28px] border border-sand-200 p-1.5 dark:border-sand-800">
+    <div className="space-y-1.5 rounded-shell border border-sand-200 p-1.5 dark:border-sand-800">
       {items.map((item, i) => {
         const on = open.has(i)
         const id = `${idPrefix}-${i}`
         return (
           <div
             key={item.q}
-            className={`rounded-[22px] border transition-colors ${
+            className={`rounded-shell-inner border transition-colors ${
               on
                 ? 'border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900'
                 : 'border-transparent bg-sand-100/70 hover:bg-sand-100 dark:bg-sand-900/60 dark:hover:bg-sand-900'
@@ -80,7 +80,7 @@ export function FaqRows({
                 aria-expanded={on}
                 aria-controls={id}
                 onClick={() => toggle(i)}
-                className="flex w-full items-center gap-4 rounded-[22px] px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:px-7 sm:py-5"
+                className="flex w-full items-center gap-4 rounded-shell-inner px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:px-7 sm:py-5"
               >
                 <span className="flex-1 text-base font-semibold text-sand-900 dark:text-sand-50">{item.q}</span>
                 <Plus
@@ -117,7 +117,7 @@ export function FaqRows({
 // /faq on the FAQ page itself.
 export function FaqHelpCard({ allQuestions = true }: { allQuestions?: boolean }) {
   return (
-    <div className="relative mt-6 overflow-hidden rounded-[28px] border border-sand-200 px-5 py-5 sm:px-7 dark:border-sand-800">
+    <div className="relative mt-6 overflow-hidden rounded-shell border border-sand-200 px-5 py-5 sm:px-7 dark:border-sand-800">
       <div
         aria-hidden
         className="absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-olive-600 to-transparent dark:via-olive-400"
@@ -131,7 +131,7 @@ export function FaqHelpCard({ allQuestions = true }: { allQuestions?: boolean })
           {allQuestions && (
             <Link
               href="/faq"
-              className="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-sand-700 transition-colors hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-100"
+              className="inline-flex items-center rounded-control px-3 py-2 text-sm font-semibold text-sand-700 transition-colors hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-100"
             >
               All questions
             </Link>
