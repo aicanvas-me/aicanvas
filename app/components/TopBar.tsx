@@ -6,7 +6,6 @@ import { SiteSearch } from './SiteSearch'
 import { ThemeToggle } from './ThemeToggle'
 import { TopAuthPill } from './auth/TopAuthPill'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
-import { isRaillessRoute } from '../lib/railless'
 import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE } from './top-bar-crumbs'
 
 // The site's one top bar. It is rendered once by the root layout and never
@@ -42,20 +41,13 @@ export function TopBar() {
   if (isChromeless(pathname)) return null
 
   // One bar on every page: logo left, the site's sections in the middle,
-  // search and the account on the right. Without the rail (app/lib/railless.ts)
-  // its content sits in the same 7xl column as the page below and the middle
-  // is truly centred from xl, where both sides have room to be equal. Beside
-  // the rail it runs edge to edge, the logo lined up with the rail's rows.
-  // The same elements either way, so crossing between the two never remounts
-  // the bar.
-  const railless = isRaillessRoute(pathname)
+  // search and the account on the right. It runs edge to edge on every route,
+  // the logo lined up with the rail's rows, so the logo and the account never
+  // move when a click crosses between a rail page and a rail-less one. The
+  // middle is truly centred from xl, where both sides have room to be equal.
   return (
     <header className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
-      <div
-        className={`flex w-full items-center justify-between gap-4 xl:grid xl:grid-cols-[1fr_auto_1fr] ${
-          railless ? 'mx-auto max-w-7xl px-6' : 'px-5'
-        }`}
-      >
+      <div className="flex w-full items-center justify-between gap-4 px-5 xl:grid xl:grid-cols-[1fr_auto_1fr]">
         <HomeLogo />
         <HomeNav />
         <div className="flex shrink-0 items-center justify-end gap-2">
