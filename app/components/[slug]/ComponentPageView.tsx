@@ -675,11 +675,11 @@ export default function ComponentPageView({
                 {/* Fullscreen — preview only */}
                 {activeTab === 'preview' && (
                   <div className="group/fullscreen relative">
-                    {/* An outline button: the soft accent all but vanishes on the
-                        light theme, and full screen is the view people most
+                    {/* The one filled button in the bar, the same as on the
+                        Andromeda pages: full screen is the view people most
                         need to find. */}
                     <Button
-                      variant="outline"
+                      variant="primary"
                       size="md"
                       iconOnly
                       aria-label="Full screen"
