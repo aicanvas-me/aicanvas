@@ -1,7 +1,12 @@
 /**
  * Capture component screenshots and upload them to ImageKit.
- * Usage: npm run screenshot            — all components
- *        npm run screenshot -- <slug>  — single component
+ * Usage: npm run screenshot                    — all components
+ *        npm run screenshot -- <slug> [<slug>…] — some components
+ *   --light   shoot the site's light theme, saved as <slug>-light.png (the
+ *             card shows it on a light site; the dark <slug>.png is untouched)
+ *   --dry     keep the PNGs in .screenshots-tmp and upload nothing, to look
+ *             at them first
+ *   --upload  upload the PNGs a --dry run left, without shooting again
  *
  * Requires dev server running at localhost:3000
  */
@@ -99,8 +104,12 @@ const ALL_SLUGS = [
   'diamond-grid',
 ]
 
-const arg   = process.argv[2]
-const SLUGS = arg ? [arg] : ALL_SLUGS
+const flags = new Set(process.argv.slice(2).filter((a) => a.startsWith('--')))
+const picked = process.argv.slice(2).filter((a) => !a.startsWith('--'))
+const SLUGS = picked.length ? picked : ALL_SLUGS
+const LIGHT = flags.has('--light')
+const DRY = flags.has('--dry')
+const UPLOAD_ONLY = flags.has('--upload')
 
 const BASE_URL         = process.env.BASE_URL || 'http://localhost:3000'
 const IMAGEKIT_PRIVATE = process.env.IMAGEKIT_PRIVATE_KEY
@@ -357,9 +366,18 @@ const INTERACTIONS = {
   // New Project Modal — click the pill to open the modal so the screenshot
   // shows the full feature (inputs, swatches, Private toggle, Create button).
   // The modal is fixed-positioned to the viewport so it overlays the preview.
-  'new-project-modal': async (preview, page) => {
+  // New Project Modal and Voice Chat Pill are shot closed: open, either panel
+  // is taller than the 480px preview and its top is cut off.
+
+  // 3D Gem Pricing — the gem is WebGL inside the framed block's own document
+  '3d-gem-pricing-section': async (preview, page) => {
+    await page.waitForTimeout(4000)
+  },
+
+  // Filter Menu — open, the state its poster shows
+  'filter-menu': async (preview, page) => {
     await preview.locator('button').first().click()
-    await page.waitForTimeout(700) // let the morph spring settle
+    await page.waitForTimeout(1000)
   },
 
   // Delete Button — click the default pill to morph into the "Cancel
@@ -489,17 +507,26 @@ async function main() {
   await mkdir(TEMP_DIR, { recursive: true })
 
   const browser = await chromium.launch()
-  const page    = await browser.newPage()
+  const context = await browser.newContext()
+  // The site reads its theme from this cookie on the server, so the first
+  // paint of the page is already the theme being shot.
+  if (LIGHT) await context.addCookies([{ name: 'theme', value: 'light', url: BASE_URL }])
+  const page    = await context.newPage()
   await page.setViewportSize({ width: 1440, height: 900 })
 
   let ok = 0, fail = 0
 
   for (const slug of SLUGS) {
-    const fileName  = `${slug}.png`
+    const fileName  = `${slug}${LIGHT ? '-light' : ''}.png`
     const localPath = path.join(TEMP_DIR, fileName)
 
     try {
       process.stdout.write(`  ${slug}... `)
+      if (UPLOAD_ONLY) {
+        console.log(`✓  ${await uploadToImageKit({ localPath, fileName, privateKey: IMAGEKIT_PRIVATE })}`)
+        ok++
+        continue
+      }
 
       await page.goto(`${BASE_URL}/components/${slug}`, {
         waitUntil: 'load',
@@ -522,6 +549,9 @@ async function main() {
           try { await f.addStyleTag({ content: hideDevChrome }) } catch {}
         }
       }
+      // The pointer stays where the last shot's interaction left it; over a
+      // framed block it raises the "Click for full view" pill into the shot.
+      await page.mouse.move(0, 0)
       await page.waitForTimeout(SETTLE_MS)
 
       const preview = page.locator('[data-card-theme]').first()
@@ -533,6 +563,11 @@ async function main() {
 
       await preview.screenshot({ path: localPath })
 
+      if (DRY) {
+        console.log(`✓  ${localPath}`)
+        ok++
+        continue
+      }
       const url = await uploadToImageKit({ localPath, fileName, privateKey: IMAGEKIT_PRIVATE })
       console.log(`✓  ${url}`)
       ok++
@@ -543,9 +578,9 @@ async function main() {
   }
 
   await browser.close()
-  await rm(TEMP_DIR, { recursive: true, force: true })
+  if (!DRY) await rm(TEMP_DIR, { recursive: true, force: true })
 
-  console.log(`\n${ok} uploaded, ${fail} failed → https://ik.imagekit.io/aitoolkit/`)
+  console.log(DRY ? `\n${ok} saved in ${TEMP_DIR}, ${fail} failed` : `\n${ok} uploaded, ${fail} failed → https://ik.imagekit.io/aitoolkit/`)
 }
 
 main().catch((err) => { console.error(err); process.exit(1) })

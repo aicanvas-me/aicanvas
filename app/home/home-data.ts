@@ -2,7 +2,7 @@ import type { WallItem } from './ComponentWall'
 // Registry-free metadata so the homepage never bundles the heavy registry
 // (three.js etc.); mirrors COMPONENT_META.map(toMeta).
 import { COMPONENT_META } from '../lib/component-meta.generated'
-import { optimizeImageKitUrl } from '../lib/imagekit'
+import { lightShot, optimizeImageKitUrl } from '../lib/imagekit'
 import { getRegistryPulls } from '../lib/registry-stats'
 import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-data'
 
@@ -44,7 +44,13 @@ export async function getHomeData() {
   const wall: WallItem[] = WALL_SLUGS.flatMap((slug) => {
     const c = COMPONENT_META.find((m) => m.slug === slug)
     return c?.image
-      ? [{ slug: c.slug, name: c.name, image: optimizeImageKitUrl(c.image, 'card'), premium: c.badge === 'Premium' }]
+      ? [{
+          slug: c.slug,
+          name: c.name,
+          image: optimizeImageKitUrl(c.image, 'card'),
+          ...(c.dualTheme ? { imageLight: optimizeImageKitUrl(lightShot(c.slug), 'card') } : {}),
+          premium: c.badge === 'Premium',
+        }]
       : []
   })
 

@@ -479,7 +479,7 @@ for (const slug of premiumSlugDirs) {
   let pmeta = {}
   try { pmeta = JSON.parse(readFileSync(join(premiumWsDir, slug, 'meta.json'), 'utf-8')) } catch { /* fall back below */ }
   if (!HIDDEN_SLUGS.has(slug)) {
-    premiumMetas.push({ slug, name: pmeta.name || toTitle(slug), description: pmeta.description || '', tags: pmeta.tags || [], image: pmeta.image, dependencies: getDeps(content) })
+    premiumMetas.push({ slug, name: pmeta.name || toTitle(slug), description: pmeta.description || '', tags: pmeta.tags || [], image: pmeta.image, dualTheme: pmeta.dualTheme === true, dependencies: getDeps(content) })
   }
   const item = {
     $schema: SCHEMA,
@@ -1530,6 +1530,9 @@ const navTs =
       const entry = { slug: m.slug, name: m.name, description: m.description, tags: transformTags(m) }
       if (m.image) entry.image = m.image
       if (m.badge) entry.badge = m.badge
+      // Both themes means a light shot exists too, and the card shows it on a
+      // light site (lightShot in app/lib/imagekit.ts).
+      if (m.dualTheme) entry.dualTheme = true
       return entry
     })
   // Premium components are first-class listings — woven into the grid, search
@@ -1538,6 +1541,7 @@ const navTs =
   const premiumMetaList = premiumMetas.map((m) => {
     const entry = { slug: m.slug, name: m.name, description: m.description, tags: transformTags(m), badge: 'Premium' }
     if (m.image) entry.image = m.image
+    if (m.dualTheme) entry.dualTheme = true
     return entry
   })
 

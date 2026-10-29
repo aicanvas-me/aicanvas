@@ -10,7 +10,7 @@
 import { useEffect, useRef } from 'react'
 import Link from 'next/link'
 
-export type WallItem = { slug: string; name: string; image: string; premium: boolean }
+export type WallItem = { slug: string; name: string; image: string; imageLight?: string; premium: boolean }
 
 // Seconds for one full loop of a column; each column gets its own pace so the
 // wall never moves in lockstep.
@@ -20,6 +20,8 @@ const PACE = [70, 86, 64, 92]
 // sides by --wall-x.
 const WALL_MASK =
   'linear-gradient(to bottom, transparent, black var(--wall-y), black calc(100% - var(--wall-b)), transparent), linear-gradient(to right, transparent, black var(--wall-x), black calc(100% - var(--wall-x)), transparent)'
+
+const IMG = 'absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out motion-safe:group-hover:scale-[1.03]'
 
 function Card({ item, hidden }: { item: WallItem; hidden?: boolean }) {
   return (
@@ -41,8 +43,19 @@ function Card({ item, hidden }: { item: WallItem; hidden?: boolean }) {
           alt={hidden ? '' : `${item.name} component preview`}
           loading="lazy"
           decoding="async"
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out motion-safe:group-hover:scale-[1.03]"
+          className={`${IMG} ${item.imageLight ? 'hidden dark:block' : ''}`}
         />
+        {/* The light shot on a light site; display:none keeps the other one
+            from loading. */}
+        {item.imageLight && (
+          <img
+            src={item.imageLight}
+            alt={hidden ? '' : `${item.name} component preview`}
+            loading="lazy"
+            decoding="async"
+            className={`${IMG} dark:hidden`}
+          />
+        )}
       </span>
     </Link>
   )

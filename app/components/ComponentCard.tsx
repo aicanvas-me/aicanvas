@@ -19,6 +19,9 @@ export interface ComponentCardProps {
   description: string
   tags: Tag[]
   image?: string
+  /** The light-theme shot, for a component that ships both themes; the card
+   *  shows it on a light site and `image` on a dark one. */
+  imageLight?: string
   href: string
   badge?: string
   slug: string
@@ -30,11 +33,14 @@ export interface ComponentCardProps {
 
 // ─── ComponentCard ─────────────────────────────────────────────────────────────
 
+const IMG = 'absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] group-hover:brightness-110'
+
 // One rounded card, one link. The preview fills the top and fades into the
 // card's own surface, and the title and description sit straight on that
 // surface: no panel behind the text and no button, because the whole card is
 // the target. Hover steps the border up one and lifts the preview a touch.
-export function ComponentCard({ name, description, href, image, badge, badgeTone, slug, position, source }: ComponentCardProps) {
+export function ComponentCard({ name, description, href, image, imageLight, badge, badgeTone, slug, position, source }: ComponentCardProps) {
+  const darkOnly = !!image && !imageLight
   return (
     <Link
       href={href}
@@ -77,7 +83,14 @@ export function ComponentCard({ name, description, href, image, badge, badgeTone
           </div>
         )}
         {image ? (
-          <img src={optimizeImageKitUrl(image, 'card')} alt={name} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] group-hover:brightness-110" />
+          <>
+            <img src={optimizeImageKitUrl(image, 'card')} alt={name} loading="lazy" decoding="async" className={`${IMG} ${imageLight ? 'hidden dark:block' : ''}`} />
+            {/* display:none keeps a lazy image from loading, so each theme
+                fetches only its own shot. */}
+            {imageLight && (
+              <img src={optimizeImageKitUrl(imageLight, 'card')} alt={name} loading="lazy" decoding="async" className={`${IMG} dark:hidden`} />
+            )}
+          </>
         ) : (
           <div
             className="absolute inset-0 flex items-center justify-center"
@@ -90,11 +103,13 @@ export function ComponentCard({ name, description, href, image, badge, badgeTone
           </div>
         )}
         {/* The fade: the preview's lower edge melts into the card's surface,
-            so the image and the text read as one piece. */}
-        <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-950" />
+            so the image and the text read as one piece. A dark-only shot on a
+            light site gets no fade: a dark picture melting into a light card
+            reads as a muddy band, so it ends on a clean edge instead. */}
+        <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-950 ${darkOnly ? 'hidden dark:block' : ''}`} />
       </div>
 
-      <div className="relative -mt-3 flex flex-1 flex-col px-5 pb-5">
+      <div className={`relative flex flex-1 flex-col px-5 pb-5 ${darkOnly ? 'mt-4 dark:-mt-3' : '-mt-3'}`}>
         <h3 className="font-semibold text-sand-900 dark:text-sand-50">{name}</h3>
         <p className="mt-1 line-clamp-2 text-sm font-normal text-sand-600 dark:text-sand-400">
           {description}

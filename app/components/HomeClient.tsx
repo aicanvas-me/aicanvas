@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ComponentCard } from './ComponentCard'
 import { track } from '../lib/analytics'
+import { lightShot } from '../lib/imagekit'
 import { PageCrumbs, useTopBarLeft } from './PageCrumbs'
 import { RailFooter } from './RailFooter'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
@@ -358,6 +359,7 @@ export function HomeClient({
                     description={entry.description}
                     tags={entry.tags}
                     image={entry.image}
+                    imageLight={entry.dualTheme ? lightShot(entry.slug) : undefined}
                     // Every standalone is labeled: Premium keeps its badge,
                     // everything else is explicitly Free (the listing copy
                     // makes no free/paid claims - the badge does).

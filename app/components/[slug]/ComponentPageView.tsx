@@ -54,6 +54,7 @@ import { PremiumBadge } from '../billing/PremiumBadge'
 import { Paywall, type PaywallReason } from '../billing/Paywall'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
 import { RemixPanel } from '../../_components/RemixPanel'
+import { lightShot, optimizeImageKitUrl } from '../../lib/imagekit'
 
 type FontFramework = 'html' | 'nextjs'
 
@@ -121,6 +122,7 @@ interface ComponentPageViewProps {
 }
 
 const RELATED_PAGE_SIZE = 3
+const RELATED_IMG = 'absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] group-hover:brightness-110'
 
 export default function ComponentPageView({
   slug,
@@ -1442,11 +1444,16 @@ export default function ComponentPageView({
                               the sliding row clips anything drawn outside. */}
                           <div className="relative aspect-video overflow-hidden bg-sand-950">
                             {c.image ? (
-                              <img
-                                src={c.image}
-                                alt={c.name}
-                                className="absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] group-hover:brightness-110"
-                              />
+                              <>
+                                <img
+                                  src={c.image}
+                                  alt={c.name}
+                                  className={`${RELATED_IMG} ${c.dualTheme ? 'hidden dark:block' : ''}`}
+                                />
+                                {c.dualTheme && (
+                                  <img src={optimizeImageKitUrl(lightShot(c.slug), 'card')} alt={c.name} loading="lazy" className={`${RELATED_IMG} dark:hidden`} />
+                                )}
+                              </>
                             ) : (
                               <div
                                 className="absolute inset-0"
@@ -1457,9 +1464,11 @@ export default function ComponentPageView({
                                 }}
                               />
                             )}
-                            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-900" />
+                            {/* A dark-only shot on a light site ends on a clean
+                                edge, as on the grid card. */}
+                            <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-900 ${c.dualTheme ? '' : 'hidden dark:block'}`} />
                           </div>
-                          <div className="relative -mt-2 px-4 pb-4">
+                          <div className={`relative px-4 pb-4 ${c.dualTheme ? '-mt-2' : 'mt-3 dark:-mt-2'}`}>
                             <h3 className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">
                               {c.name}
                             </h3>
