@@ -53,9 +53,11 @@ const LIFETIME_FEATURES = [
 ]
 
 const LIFETIME = lifetimeEnabled()
-// Side by side, the three descriptions share one height (two lines) so the
-// prices and buttons line up across the row.
+// Side by side, the descriptions share one height (two lines) so the prices
+// and buttons line up across the row: three plans on /pricing from lg, the
+// modal's two from sm.
 const DESC_3UP = 'lg:min-h-[2.875rem]'
+const DESC_2UP = 'sm:min-h-[2.875rem]'
 
 export function PremiumCards({
   show = 'both',
@@ -91,9 +93,11 @@ export function PremiumCards({
   const { status: premiumState, lifetime: hasLifetime } = usePremiumDetails()
 
   const showFree = show === 'both'
-  // Three plans side by side: Free, Monthly, Lifetime. The compact paywall
-  // keeps its one card and points to Lifetime in a line under it.
+  // Three plans side by side: Free, Monthly, Lifetime. The premium-only set
+  // (the upgrade modal) shows the two paid plans side by side.
   const threeUp = LIFETIME && showFree && !compact
+  const pairUp = LIFETIME && !showFree
+  const desc = threeUp ? DESC_3UP : pairUp ? DESC_2UP : ''
   const iconBox = compact ? 'h-12 w-12' : 'h-16 w-16'
   const heading = compact ? 'text-2xl' : 'text-3xl'
   const priceText = compact ? 'text-4xl' : 'text-4xl sm:text-5xl'
@@ -103,7 +107,7 @@ export function PremiumCards({
   return (
     <>
     <div
-      className={`grid gap-6 ${threeUp ? 'mx-auto max-w-md lg:max-w-none lg:grid-cols-3 lg:gap-5' : showFree ? 'md:grid-cols-2' : 'mx-auto max-w-md'} ${
+      className={`grid gap-6 ${threeUp ? 'mx-auto max-w-md lg:max-w-none lg:grid-cols-3 lg:gap-5' : pairUp ? 'mx-auto max-w-md sm:max-w-none sm:grid-cols-2 sm:gap-4' : showFree ? 'md:grid-cols-2' : 'mx-auto max-w-md'} ${
         compact ? '' : 'mt-12 sm:mt-16'
       } ${className ?? ''}`}
     >
@@ -119,7 +123,7 @@ export function PremiumCards({
                 Free
               </h2>
             </div>
-            <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${threeUp ? DESC_3UP : ''}`}>
+            <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${desc}`}>
               Install and remix every free component, free forever.
             </p>
             {/* Invisible mirror of the Premium card's billing-cycle toggle so the
@@ -166,7 +170,7 @@ export function PremiumCards({
       {/* ── Premium card ── (the Monthly plan when Lifetime is on) */}
       <div
         className={`relative flex flex-col rounded-3xl border bg-sand-100 p-2 dark:bg-sand-900 ${
-          threeUp ? 'border-sand-200 dark:border-sand-800' : 'border-olive-500/50 dark:border-olive-500/40'
+          threeUp || pairUp ? 'border-sand-200 dark:border-sand-800' : 'border-olive-500/50 dark:border-olive-500/40'
         }`}
       >
         <div className={cardPad}>
@@ -175,11 +179,11 @@ export function PremiumCards({
               <TerminatorSkull />
             </div>
             <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
-              {threeUp ? 'Monthly' : 'Premium'}
+              {threeUp || pairUp ? 'Monthly' : 'Premium'}
               <Lightning weight="regular" size={22} className="text-olive-600 dark:text-olive-400" />
             </h2>
           </div>
-          <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${threeUp ? DESC_3UP : ''}`}>
+          <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${desc}`}>
             Design systems, templates, components and blocks.
           </p>
 
@@ -298,8 +302,9 @@ export function PremiumCards({
           </ul>
         </div>
       </div>
-      {threeUp && (
+      {(threeUp || pairUp) && (
         <LifetimeCard
+          desc={threeUp ? DESC_3UP : DESC_2UP}
           cardPad={cardPad}
           listPad={listPad}
           heading={heading}
@@ -310,8 +315,9 @@ export function PremiumCards({
         />
       )}
     </div>
-    {/* The compact paywall has room for one card: Lifetime is a line under it. */}
-    {LIFETIME && !threeUp && !hasLifetime && (
+    {/* A compact Free + Premium pair has no room for a third card: Lifetime
+        is a line under it. */}
+    {LIFETIME && !threeUp && !pairUp && !hasLifetime && (
       <p className="mx-auto mt-3 max-w-md text-center text-xs leading-relaxed text-sand-600 dark:text-sand-400">
         Rather pay once? Lifetime is {usd(LIFETIME_PRICE)}, every future release included.{' '}
         <Link href="/pricing" className="font-semibold text-olive-600 underline-offset-2 hover:text-olive-800 hover:underline dark:text-olive-400 dark:hover:text-olive-300">
@@ -330,6 +336,7 @@ export function PremiumCards({
 // short line, like the other two cards; the Lifetime terms live on the licence
 // page, not on the card.
 function LifetimeCard({
+  desc,
   cardPad,
   listPad,
   heading,
@@ -338,6 +345,7 @@ function LifetimeCard({
   checking,
   hasLifetime,
 }: {
+  desc: string
   cardPad: string
   listPad: string
   heading: string
@@ -358,7 +366,7 @@ function LifetimeCard({
           </div>
           <h2 className={`${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>Lifetime</h2>
         </div>
-        <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${DESC_3UP}`}>
+        <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${desc}`}>
           Everything in Monthly, paid once. Future releases included.
         </p>
         <div className="mt-4 flex items-baseline gap-2">

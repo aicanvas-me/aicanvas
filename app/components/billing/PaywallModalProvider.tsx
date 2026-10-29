@@ -10,6 +10,7 @@ import { PaymentMethods } from './PaymentMethods'
 import { track } from '../../lib/analytics'
 import { useDialogFocus } from '../useDialogFocus'
 import { useSession } from '../auth/SessionProvider'
+import { lifetimeEnabled } from '../../../lib/flags'
 
 // ─── PaywallModalProvider ───────────────────────────────────────────────────
 // Global, full-screen upgrade modal — the paywall equivalent of AuthModal.
@@ -121,7 +122,9 @@ function PaywallModalView({
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="relative z-10 my-auto w-full max-w-lg rounded-2xl bg-sand-100 p-6 shadow-2xl outline-none sm:p-8 dark:bg-sand-950"
+        // Wide enough for Monthly and Lifetime side by side when Lifetime is
+        // on; one card otherwise.
+        className={`relative z-10 my-auto w-full ${lifetimeEnabled() ? 'max-w-3xl' : 'max-w-lg'} rounded-2xl bg-sand-100 p-6 shadow-2xl outline-none sm:p-8 dark:bg-sand-950`}
       >
         <button
           type="button"
