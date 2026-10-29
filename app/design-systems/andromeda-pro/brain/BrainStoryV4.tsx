@@ -1199,7 +1199,7 @@ export function BrainStoryV4() {
                     {step.chips.map((chip) => (
                       <span
                         key={chip}
-                        className="rounded-chip border border-sand-200 bg-sand-50 px-2 py-0.5 font-mono text-[11px] text-sand-700 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-300"
+                        className="rounded-full border border-sand-200 bg-sand-50 px-2 py-0.5 font-mono text-[11px] text-sand-700 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-300"
                       >
                         {chip}
                       </span>

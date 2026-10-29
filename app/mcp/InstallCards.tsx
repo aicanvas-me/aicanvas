@@ -303,7 +303,7 @@ export function InstallCards() {
                   setTestCopied(false)
                 }}
                 aria-pressed={active}
-                className={`relative flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-inset px-2 py-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:gap-2 sm:px-4 sm:text-sm ${
+                className={`relative flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-control px-2 py-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:gap-2 sm:px-4 sm:text-sm ${
                   active
                     ? 'text-sand-900 dark:text-sand-50'
                     : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
@@ -312,7 +312,7 @@ export function InstallCards() {
                 {active && (
                   <motion.span
                     layoutId="mcpToolHighlight"
-                    className="absolute inset-0 rounded-inset bg-sand-50 shadow-sm ring-1 ring-sand-300 dark:bg-sand-800 dark:ring-sand-700"
+                    className="absolute inset-0 rounded-control bg-sand-50 shadow-sm ring-1 ring-sand-300 dark:bg-sand-800 dark:ring-sand-700"
                     transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                   />
                 )}

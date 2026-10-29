@@ -44,12 +44,12 @@ export function AndromedaComponentCard({
         {/* One canonical look is not a count: "1 variants" reads as a
             component that lost the other two. */}
         {variants > 1 && (
-          <span className="rounded-chip bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
+          <span className="rounded-full bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
             {variants} variants
           </span>
         )}
         {states > 0 && (
-          <span className="rounded-chip bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
+          <span className="rounded-full bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
             {states} states
           </span>
         )}

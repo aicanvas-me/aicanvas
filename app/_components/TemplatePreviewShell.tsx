@@ -650,7 +650,7 @@ function TemplateSwitcher({
                     the active row is already named by its accent colour and its
                     weight, so it needs no second marker. */}
                 {t.category && (
-                  <span className="ml-auto shrink-0 rounded-chip bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
+                  <span className="ml-auto shrink-0 rounded-full bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
                     {t.category}
                   </span>
                 )}
@@ -792,7 +792,7 @@ function InstallButton({
                 <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   CLI install
                 </span>
-                <span className="rounded-chip border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
+                <span className="rounded-full border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
                   One command
                 </span>
               </div>

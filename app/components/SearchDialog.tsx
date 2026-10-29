@@ -268,7 +268,7 @@ const TIER_CHIP: Record<Tier, string> = {
 function TierChip({ tier }: { tier: Tier }) {
   return (
     <span
-      className={`inline-flex shrink-0 items-center rounded-tag px-1.5 py-px text-xxs font-semibold uppercase tracking-wider ring-1 ring-inset ${TIER_CHIP[tier]}`}
+      className={`inline-flex shrink-0 items-center rounded-full px-1.5 py-px text-xxs font-semibold uppercase tracking-wider ring-1 ring-inset ${TIER_CHIP[tier]}`}
     >
       {tier === 'free' ? 'Free' : 'Premium'}
     </span>

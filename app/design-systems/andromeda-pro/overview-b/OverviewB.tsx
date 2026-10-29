@@ -165,7 +165,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
       </div>
       <div className="flex flex-1 flex-col px-2 pb-2 pt-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-chip bg-sand-200 px-2 py-0.5 text-xs font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
+          <span className="rounded-full bg-sand-200 px-2 py-0.5 text-xs font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
             Premium template
           </span>
           {t.category ? <span className="text-xs text-sand-600 dark:text-sand-400">{t.category}</span> : null}

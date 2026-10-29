@@ -6,7 +6,7 @@
 export function SystemTierChip({ tier, label, className = '' }: { tier: 'pro' | 'mit'; label?: string; className?: string }) {
   return (
     <span
-      className={`inline-flex shrink-0 items-center rounded-tag px-1.5 py-px text-xxs font-semibold uppercase tracking-wider ring-1 ring-inset ${className} ${
+      className={`inline-flex shrink-0 items-center rounded-full px-1.5 py-px text-xxs font-semibold uppercase tracking-wider ring-1 ring-inset ${className} ${
         tier === 'pro'
           ? 'bg-accent/10 text-accent ring-accent/40'
           : 'text-sand-600 ring-sand-300 dark:text-sand-400 dark:ring-sand-700'
