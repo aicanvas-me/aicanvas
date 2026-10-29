@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type UIEvent } from 'react'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { CaretDown, Cube, DiamondsFour, Shapes, Sparkle } from '@phosphor-icons/react'
 import { CATEGORIES } from '../lib/categories'
 import { CATEGORY_COMPONENTS, TOTAL_COMPONENTS } from '../lib/component-nav.generated'
@@ -32,10 +32,13 @@ import {
 //
 // The switch is a real tab control: role="tablist" with role="tab" buttons,
 // the arrow keys (and Home / End) move between them, and only the selected
-// tab sits in the tab order. Picking a segment swaps the list in place and
-// never navigates. The segment on at load follows the route, and a pick by
-// hand holds until the next navigation, which hands the choice back to the
-// route.
+// tab sits in the tab order. On the rail, a click (or Enter) on another
+// segment opens that segment's landing page (LANDING), so the page and the
+// list move together; the arrow keys only swap the list in place, to look
+// before going. The phone drawer closes on every route change, so there a
+// click swaps the list in place too, and the drawer stays open to browse it.
+// The segment on at load follows the route, and a pick by hand holds until
+// the next navigation, which hands the choice back to the route.
 
 export type CatalogSegment = 'design-systems' | 'components' | 'icons'
 
@@ -44,6 +47,14 @@ const SEGMENTS: { id: CatalogSegment; label: string; icon: ReactNode }[] = [
   { id: 'components', label: 'Components', icon: <DiamondsFour weight="regular" size={16} aria-hidden /> },
   { id: 'icons', label: 'Icons', icon: <Shapes weight="regular" size={16} aria-hidden /> },
 ]
+
+// Where a rail click on a segment lands: the section's front page. Design
+// systems has no index route, so it opens the flagship system's overview.
+const LANDING: Record<CatalogSegment, string> = {
+  'design-systems': '/design-systems/andromeda-pro',
+  components: '/components',
+  icons: '/icons',
+}
 
 // The design systems the Design systems tab lists. Two systems live side by
 // side, each at its own routes: Andromeda Pro and Andromeda Legacy (MIT).
@@ -407,6 +418,14 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
   }
   const segment = hand ?? segmentForPath(pathname)
   const pick = (next: CatalogSegment) => setHand(next)
+  const router = useRouter()
+  // A click on the rail: the list flips at once, the page follows. A segment
+  // the route already belongs to stays where it is (Components on a
+  // component page does not throw you back to the grid).
+  const open = (next: CatalogSegment) => {
+    pick(next)
+    if (rail && next !== segmentForPath(pathname)) router.push(LANDING[next])
+  }
 
   // Keep the page you are on in sight. Landing on a component deep in the
   // list (from search, or a card on the grid) left the rail at its top with
@@ -527,7 +546,8 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
             aria-label={s.label}
             title={s.label}
             tabIndex={selected ? 0 : -1}
-            onClick={() => pick(s.id)}
+            onClick={() => open(s.id)}
+            onPointerEnter={rail ? () => router.prefetch(LANDING[s.id]) : undefined}
             // Sized so the longest label, "Design systems", fits the 256px
             // rail whole: 12px text, 32px idle tabs, tight active padding.
             className={`inline-flex h-8 items-center justify-center gap-1 rounded-full text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${

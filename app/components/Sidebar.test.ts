@@ -20,8 +20,10 @@ import {
 
 // The route the rail is rendered on, per test.
 let currentPath = '/components'
+const router = vi.hoisted(() => ({ push: vi.fn(), prefetch: vi.fn() }))
 vi.mock('next/navigation', () => ({
   usePathname: () => currentPath,
+  useRouter: () => router,
   useSearchParams: () => new URLSearchParams(),
 }))
 vi.mock('next/link', () => ({
@@ -41,6 +43,7 @@ vi.mock('@phosphor-icons/react', () => {
 afterEach(() => {
   cleanup()
   currentPath = '/components'
+  router.push.mockClear()
 })
 
 // One rail, rendered once. Before this, four call sites mounted `<Sidebar>` —
@@ -416,16 +419,21 @@ describe('the catalog rail', () => {
     }
   })
 
-  it('switches the list in place on a click or an arrow key, without navigating', () => {
+  it('swaps the list at once and opens the landing page on a click; arrow keys only swap the list', () => {
     const aside = rail('/components')
     const visible = () => within(aside).getAllByRole('tabpanel').filter((p) => !p.hidden)
+    // The segment the route is in already: no trip back to its landing page.
+    fireEvent.click(within(aside).getByRole('tab', { name: 'Components' }))
+    expect(router.push).not.toHaveBeenCalled()
     fireEvent.click(within(aside).getByRole('tab', { name: 'Design systems' }))
+    expect(router.push).toHaveBeenLastCalledWith('/design-systems/andromeda-pro')
     expect(visible()).toHaveLength(1)
     expect(visible()[0].querySelector('p')?.textContent).toBe('Design systems2')
     expect(visible()[0].querySelector('a[href="/design-systems/andromeda-pro"]')).not.toBeNull()
     expect(visible()[0].querySelector('a[href="/design-systems/andromeda"]')).not.toBeNull()
 
     fireEvent.click(within(aside).getByRole('tab', { name: 'Icons' }))
+    expect(router.push).toHaveBeenLastCalledWith('/icons')
     expect(visible()[0].querySelector('p')?.textContent).toBe(`Icons${ICON_COUNT}`)
     expect([...visible()[0].querySelectorAll('a')].map((a) => [a.textContent, a.getAttribute('href')])).toEqual([
       ['All icons', '/icons'],
@@ -440,6 +448,8 @@ describe('the catalog rail', () => {
     expect(selectedTab(aside)).toBe('Icons')
     fireEvent.keyDown(document.activeElement!, { key: 'Home' })
     expect(selectedTab(aside)).toBe('Design systems')
+    // Two clicks navigated, the arrow keys did not.
+    expect(router.push).toHaveBeenCalledTimes(2)
     // Only the selected tab is in the tab order.
     expect(within(aside).getAllByRole('tab').map((t) => t.tabIndex)).toEqual([0, -1, -1])
   })
