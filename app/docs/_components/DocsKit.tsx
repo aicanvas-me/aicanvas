@@ -63,7 +63,7 @@ export function DocPage({
                 href={a.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-lg border border-sand-200 px-3 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 dark:border-sand-800 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-50"
+                className="inline-flex items-center gap-1.5 rounded-control border border-sand-200 px-3 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 dark:border-sand-800 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-50"
               >
                 {a.label}
                 <ArrowUpRight weight="regular" size={12} />
@@ -79,7 +79,7 @@ export function DocPage({
             {prev ? (
               <Link
                 href={prev.href}
-                className="group rounded-2xl border border-sand-200 p-4 transition-colors hover:border-sand-300 dark:border-sand-800 dark:hover:border-sand-700"
+                className="group rounded-card border border-sand-200 p-4 transition-colors hover:border-sand-300 dark:border-sand-800 dark:hover:border-sand-700"
               >
                 <span className="flex items-center gap-1.5 text-xs font-semibold text-sand-600 dark:text-sand-400">
                   <ArrowLeft weight="regular" size={12} />
@@ -93,7 +93,7 @@ export function DocPage({
             {next && (
               <Link
                 href={next.href}
-                className="group rounded-2xl border border-sand-200 p-4 text-right transition-colors hover:border-sand-300 dark:border-sand-800 dark:hover:border-sand-700"
+                className="group rounded-card border border-sand-200 p-4 text-right transition-colors hover:border-sand-300 dark:border-sand-800 dark:hover:border-sand-700"
               >
                 <span className="flex items-center justify-end gap-1.5 text-xs font-semibold text-sand-600 dark:text-sand-400">
                   Next
@@ -149,7 +149,7 @@ export function OL({ children }: { children: ReactNode }) {
 /** A file name, command or identifier inside a sentence. */
 export function C({ children }: { children: ReactNode }) {
   return (
-    <code className="rounded-md border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-[0.85em] text-sand-800 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-200">
+    <code className="rounded-chip border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-[0.85em] text-sand-800 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-200">
       {children}
     </code>
   )
@@ -174,7 +174,7 @@ export function A({ href, children }: { href: string; children: ReactNode }) {
 /** A short aside the reader should not miss: a requirement, a trap. */
 export function Note({ children }: { children: ReactNode }) {
   return (
-    <div className="mt-5 flex gap-3 rounded-xl border border-sand-200 bg-sand-100 px-4 py-3 text-sm leading-6 text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
+    <div className="mt-5 flex gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 text-sm leading-6 text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
       <Info weight="regular" size={16} className="mt-1 shrink-0 text-sand-600 dark:text-sand-400" />
       <div className="min-w-0">{children}</div>
     </div>
@@ -184,7 +184,7 @@ export function Note({ children }: { children: ReactNode }) {
 /** A plain reference table: a header row, then rows of cells. */
 export function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   return (
-    <div className="mt-5 overflow-x-auto rounded-xl border border-sand-200 dark:border-sand-800">
+    <div className="mt-5 overflow-x-auto rounded-inset border border-sand-200 dark:border-sand-800">
       <table className="w-full text-left text-sm">
         <thead className="bg-sand-100 dark:bg-sand-900">
           <tr>
@@ -219,7 +219,7 @@ export function Cards({ items }: { items: { title: string; href: string; body: s
         <Link
           key={it.href}
           href={it.href}
-          className="rounded-2xl border border-sand-200 bg-sand-100 p-4 transition-colors hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+          className="rounded-card border border-sand-200 bg-sand-100 p-4 transition-colors hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
         >
           <span className="font-semibold text-sand-900 dark:text-sand-50">{it.title}</span>
           <span className="mt-1 block text-sm leading-6 text-sand-600 dark:text-sand-400">{it.body}</span>

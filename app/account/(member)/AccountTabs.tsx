@@ -28,7 +28,7 @@ export function AccountTabs() {
     // column and drops the icons, so the four words always fit without a
     // horizontal scroll; from `sm:` it sits centred with icon and label.
     <nav className="flex justify-center">
-      <div className="flex w-full rounded-xl border border-sand-200 bg-sand-100 p-1 sm:inline-flex sm:w-auto dark:border-sand-800 dark:bg-sand-900">
+      <div className="flex w-full rounded-inset border border-sand-200 bg-sand-100 p-1 sm:inline-flex sm:w-auto dark:border-sand-800 dark:bg-sand-900">
         {TABS.map(({ href, label, Icon }) => {
           const active = pathname === href
           return (
@@ -37,7 +37,7 @@ export function AccountTabs() {
               href={href}
               aria-label={label}
               aria-current={active ? 'page' : undefined}
-              className={`relative flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-2.5 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:flex-none sm:px-5 ${
+              className={`relative flex flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-control px-2.5 py-2 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:flex-none sm:px-5 ${
                 active
                   ? 'text-sand-900 dark:text-sand-50'
                   : 'text-sand-600 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-200'
@@ -46,7 +46,7 @@ export function AccountTabs() {
               {active && (
                 <motion.span
                   layoutId="account-tab-pill"
-                  className="absolute inset-0 rounded-lg bg-sand-50 shadow-sm dark:bg-sand-800"
+                  className="absolute inset-0 rounded-control bg-sand-50 shadow-sm dark:bg-sand-800"
                   transition={
                     reduceMotion
                       ? { duration: 0 }

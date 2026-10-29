@@ -29,7 +29,7 @@ export function CopyBlock({
   const { copied, copy } = useCopied(code)
   const multiline = wrap || code.includes('\n')
   return (
-    <div className="my-5 overflow-hidden rounded-xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
+    <div className="my-5 overflow-hidden rounded-inset border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
       {title && (
         <div className="border-b border-sand-200 px-4 py-2 font-mono text-xs text-sand-600 dark:border-sand-800 dark:text-sand-400">
           {title}
@@ -46,7 +46,7 @@ export function CopyBlock({
           type="button"
           onClick={() => void copy()}
           aria-label={`Copy ${label}`}
-          className="shrink-0 rounded-lg p-2 text-sand-600 transition-all hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 active:scale-90 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-100"
+          className="shrink-0 rounded-control p-2 text-sand-600 transition-all hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 active:scale-90 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-100"
         >
           {copied ? (
             <Check weight="regular" size={14} className="text-olive-600 dark:text-olive-400" />

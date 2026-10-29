@@ -350,7 +350,7 @@ function BrainFlow() {
           {/* Border stays 1px, as every card here is. Full-strength olive read
               heavy beside the sand hairlines around it, so it is dialled back to
               a true hairline that still marks this as the focal card. */}
-          <div style={{ ...node, height: CARD_H, width: '100%', padding: `${CARD_PAD_TOP}px 0 ${CARD_PAD_BOTTOM}px`, alignItems: 'center', justifyContent: 'flex-start', background: C.base, borderColor: 'rgba(168,185,77,0.55)' }}>
+          <div style={{ ...node, height: CARD_H, width: '100%', padding: `${CARD_PAD_TOP}px 0 ${CARD_PAD_BOTTOM}px`, alignItems: 'center', justifyContent: 'flex-start', background: C.base, borderColor: 'color-mix(in srgb, var(--color-olive-500) 55%, transparent)' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className="brain-wire"
@@ -865,7 +865,7 @@ export function BrainStoryV4() {
             its background is the page base colour per theme (C.base), not a
             fixed dark ground. ── */}
         <div
-          className={`relative mt-10 h-[380px] overflow-hidden rounded-2xl border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
+          className={`relative mt-10 h-[380px] overflow-hidden rounded-card border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
           style={{ background: C.base }}
         >
           <div
@@ -1014,7 +1014,7 @@ export function BrainStoryV4() {
               <div className="cmp-cell cmp-left" style={{ borderRight: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`, fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted }}>
                 Classic design system
               </div>
-              <div className="cmp-cell" style={{ borderBottom: `1px solid ${C.line}`, background: 'rgba(168,185,77,0.05)', fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>
+              <div className="cmp-cell" style={{ borderBottom: `1px solid ${C.line}`, background: 'color-mix(in srgb, var(--color-olive-500) 5%, transparent)', fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>
                 AI-native design system
               </div>
             </div>
@@ -1024,7 +1024,7 @@ export function BrainStoryV4() {
                   <XIcon weight="regular" size={15} color={C.muted} style={{ flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 14, color: C.node, lineHeight: 1.5 }}>{row.classic}</span>
                 </div>
-                <div className="cmp-cell" style={{ borderTop: i === 0 ? 'none' : `1px solid ${C.line}`, background: 'rgba(168,185,77,0.05)' }}>
+                <div className="cmp-cell" style={{ borderTop: i === 0 ? 'none' : `1px solid ${C.line}`, background: 'color-mix(in srgb, var(--color-olive-500) 5%, transparent)' }}>
                   <Check weight="regular" size={15} color={C.accentBtn} style={{ flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 14, color: C.bright, lineHeight: 1.5 }}>{row.native}</span>
                 </div>
@@ -1033,7 +1033,7 @@ export function BrainStoryV4() {
           </div>
           {/* A typed asterisk rather than a 16px icon: it reads as a footnote
               marker on the sentence, which is what it is. */}
-          <div style={{ marginTop: 20, border: `1px solid ${C.line}`, borderRadius: 16, padding: '16px 24px', background: 'rgba(168,185,77,0.05)' }}>
+          <div style={{ marginTop: 20, border: `1px solid ${C.line}`, borderRadius: 16, padding: '16px 24px', background: 'color-mix(in srgb, var(--color-olive-500) 5%, transparent)' }}>
             <p style={{ fontSize: 14, fontWeight: 600, color: C.accentBtn, lineHeight: 1.5, margin: 0 }}>
               <span style={{ marginRight: 6 }}>*</span>
               The agent builds fast and accurate. You stay in the loop, and you decide what ships.
@@ -1086,7 +1086,7 @@ export function BrainStoryV4() {
             two pages close the same way. The primary button stays premium-aware:
             a subscriber gets the reader, everyone else gets pricing. */}
         <Section className="mt-16 sm:mt-24" style={{ marginBottom: 8 }}>
-          <div className="relative overflow-hidden rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10">
+          <div className="relative overflow-hidden rounded-card border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10">
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
             </div>

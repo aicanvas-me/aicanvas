@@ -46,7 +46,7 @@ function PullQuote({ lead, accent }: { lead: ReactNode; accent: ReactNode }) {
             glyph sits at the top of its line box. */}
         <span
           aria-hidden="true"
-          className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl border border-sand-300 bg-sand-100 text-olive-600 dark:border-sand-700 dark:bg-sand-900 dark:text-olive-400"
+          className="mx-auto flex h-12 w-12 items-center justify-center rounded-card border border-sand-300 bg-sand-100 text-olive-600 dark:border-sand-700 dark:bg-sand-900 dark:text-olive-400"
         >
           <span className="translate-y-3.5 text-6xl font-extrabold leading-none">&ldquo;</span>
         </span>

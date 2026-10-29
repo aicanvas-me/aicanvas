@@ -533,7 +533,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
         {/* The overview's brand-blue brain, INDEX ONLY, directly above the heading. */}
         {isIndex && (
           <div className="brain-pad-x" style={{ maxWidth: 780, padding: '4px 40px 0' }}>
-            <div className="relative overflow-hidden rounded-xl" style={{ height: 400 }}>
+            <div className="relative overflow-hidden rounded-inset" style={{ height: 400 }}>
               <BrainWireframe />
             </div>
           </div>
@@ -646,14 +646,14 @@ function BrainInstallButton({
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-xl border border-sand-300 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-inset border border-sand-300 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400">
                   CLI install
                 </span>
-                <span className="rounded-md border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+                <span className="rounded-chip border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
                   One command
                 </span>
               </div>
@@ -671,7 +671,7 @@ function BrainInstallButton({
                 )}
               </Button>
             </div>
-            <div className="rounded-lg bg-sand-950 px-4 py-3">
+            <div className="rounded-control bg-sand-950 px-4 py-3">
               <code className="block break-all font-mono text-xs text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">

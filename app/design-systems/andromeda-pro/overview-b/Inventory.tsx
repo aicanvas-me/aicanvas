@@ -318,7 +318,7 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
                 </span>
                 <motion.span
                   id={`inv-${doc.key}`}
-                  className={`-mt-px block origin-top overflow-hidden rounded-2xl border border-sand-300 p-5 transition-colors duration-150 dark:border-sand-700 sm:p-6 ${
+                  className={`-mt-px block origin-top overflow-hidden rounded-card border border-sand-300 p-5 transition-colors duration-150 dark:border-sand-700 sm:p-6 ${
                     lit === doc.key || isOpen
                       ? 'bg-sand-200 dark:bg-sand-800'
                       : 'bg-sand-100 dark:bg-sand-900'
@@ -399,7 +399,7 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
 
       {/* The drawer front, with its label printed on it. An olive pill here
           read as a button, and nothing on the drawer front is clickable. */}
-      <div className="relative flex h-14 items-center justify-center rounded-b-xl border border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900">
+      <div className="relative flex h-14 items-center justify-center rounded-b-inset border border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900">
         <span className="flex items-center gap-3">
           <span aria-hidden className="size-1.5 rounded-full bg-olive-500" />
           <span className="text-xs font-semibold uppercase tracking-[0.2em] text-sand-700 dark:text-sand-300">

@@ -69,7 +69,7 @@ function Pill({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-lg border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
+      className={`inline-flex items-center gap-1.5 rounded-control border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
         active
           ? 'border-olive-500 bg-olive-500/15 text-olive-600 dark:text-olive-400'
           : 'border-sand-200 bg-sand-100 text-sand-700 hover:border-sand-300 hover:text-sand-900 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100'

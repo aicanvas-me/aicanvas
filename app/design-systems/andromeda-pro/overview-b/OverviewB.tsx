@@ -30,7 +30,7 @@ import { PageCrumbs } from '../../../components/PageCrumbs'
 const BTN_PRIMARY = `${buttonClasses({ variant: 'primary', size: 'md' })} h-10`
 const BTN_SECONDARY = `${buttonClasses({ variant: 'outline', size: 'md' })} h-10`
 
-const PANEL = 'rounded-2xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
+const PANEL = 'rounded-card border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
 const PANEL_SHADOW =
   'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
 
@@ -110,11 +110,11 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
   return (
     <Link
       href={`/design-systems/andromeda-pro/templates/${t.folder}`}
-      className={`group flex flex-col rounded-2xl border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
+      className={`group flex flex-col rounded-card border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
         lead ? 'lg:col-span-2' : ''
       }`}
     >
-      <div className={`relative overflow-hidden rounded-xl bg-sand-900 ${lead ? 'aspect-video' : 'aspect-[16/10]'}`}>
+      <div className={`relative overflow-hidden rounded-inset bg-sand-900 ${lead ? 'aspect-video' : 'aspect-[16/10]'}`}>
         {t.image || t.imageLight ? (
           // The poster follows the SITE theme: the light shot on a light page,
           // the dark shot on a dark one. Two images and the `dark:` variant, so
@@ -160,12 +160,12 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
         )}
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-sand-950/10 dark:ring-sand-50/10"
+          className="pointer-events-none absolute inset-0 rounded-inset ring-1 ring-inset ring-sand-950/10 dark:ring-sand-50/10"
         />
       </div>
       <div className="flex flex-1 flex-col px-2 pb-2 pt-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-md bg-sand-200 px-2 py-0.5 text-xs font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
+          <span className="rounded-chip bg-sand-200 px-2 py-0.5 text-xs font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
             Premium template
           </span>
           {t.category ? <span className="text-xs text-sand-600 dark:text-sand-400">{t.category}</span> : null}
@@ -285,7 +285,7 @@ export function OverviewB({
                   column 3, so the eye lands there without any colour. */}
               <div
                 aria-hidden
-                className="rounded-xl border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950"
+                className="rounded-inset border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950"
                 style={{ gridColumn: 3, gridRow: '1 / -1' }}
               />
               <div style={{ gridColumn: 1, gridRow: 1 }} className="relative" />
@@ -453,7 +453,7 @@ export function OverviewB({
                 </Link>
               </div>
             </div>
-            <div className="relative h-60 overflow-hidden rounded-xl sm:h-72 lg:h-auto lg:min-h-[360px]">
+            <div className="relative h-60 overflow-hidden rounded-inset sm:h-72 lg:h-auto lg:min-h-[360px]">
               <BrainWireframe />
             </div>
           </div>
@@ -481,7 +481,7 @@ export function OverviewB({
       <PageFrame className="mt-20">
         <section
           aria-labelledby="ovb-price"
-          className="relative overflow-hidden rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
+          className="relative overflow-hidden rounded-card border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
         >
           <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />

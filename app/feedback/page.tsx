@@ -39,7 +39,7 @@ import { CARD, EYEBROW, PageHero, PageShell } from '../components/PageKit'
 // border uses olive-600 on light: olive-500 is too pale on sand-50 to mark
 // focus on its own.
 const INPUT_CLASS =
-  'block w-full rounded-lg border border-sand-300 bg-sand-50 px-4 py-2.5 text-base text-sand-900 outline-none transition-[border-color,box-shadow] placeholder:text-sand-600 hover:border-sand-400 focus:border-olive-600 focus:ring-4 focus:ring-olive-500/15 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-700 dark:focus:border-olive-500 dark:focus:ring-olive-500/20 md:text-sm'
+  'block w-full rounded-control border border-sand-300 bg-sand-50 px-4 py-2.5 text-base text-sand-900 outline-none transition-[border-color,box-shadow] placeholder:text-sand-600 hover:border-sand-400 focus:border-olive-600 focus:ring-4 focus:ring-olive-500/15 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-700 dark:focus:border-olive-500 dark:focus:ring-olive-500/20 md:text-sm'
 const LABEL_CLASS = `mb-2 block ${EYEBROW}`
 // The form card: the v3 surface, centred under the hero, rising in on the
 // hero's stagger so the page arrives as one sequence.
@@ -69,7 +69,7 @@ const CATEGORIES: { id: CategoryId; label: string; icon: React.ReactNode }[] = [
 // standalone (colored rail, white puck with an accent ring) but built on a
 // native range input, so drag, touch, arrow keys, Home/End and the screen-reader
 // slider semantics all come from the platform instead of pointer handlers.
-const RAIL = 'linear-gradient(90deg, #B4553A 0%, #C08A3E 35%, #C8B44A 65%, #A8B94D 100%)'
+const RAIL = 'linear-gradient(90deg, #B4553A 0%, #C08A3E 35%, #C8B44A 65%, var(--color-olive-500) 100%)'
 
 // The ring takes the rail's own color at the current stop, so the puck reads as
 // picking up whatever it is sitting on. Eleven fixed samples of RAIL rather than
@@ -77,7 +77,7 @@ const RAIL = 'linear-gradient(90deg, #B4553A 0%, #C08A3E 35%, #C8B44A 65%, #A8B9
 // both shorter and exact. Regenerate this alongside any change to RAIL.
 const RING = [
   '#B4553A', '#B7643B', '#BB733C', '#BE823D', '#C19140', '#C49F44',
-  '#C7AD48', '#C3B54A', '#BAB64B', '#B1B84C', '#A8B94D',
+  '#C7AD48', '#C3B54A', '#BAB64B', '#B1B84C', 'var(--color-olive-500)',
 ]
 
 // Dark core + olive ring, so the puck reads as a hole punched in the rail rather
@@ -120,7 +120,7 @@ const THUMB = [
 // set of fields; the selected one takes the olive hairline (olive-600 on light,
 // where olive-500 is too pale to read as a border) and an olive icon.
 const CHIP_BASE =
-  'flex cursor-pointer items-center rounded-lg border px-4 text-sm font-semibold transition-colors has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-olive-500/20'
+  'flex cursor-pointer items-center rounded-control border px-4 text-sm font-semibold transition-colors has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-olive-500/20'
 
 function chipTone(selected: boolean): string {
   return selected
@@ -393,7 +393,7 @@ export default function FeedbackPage() {
             </div>
 
             {error && (
-              <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+              <div className="rounded-control border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
                 {error}
               </div>
             )}

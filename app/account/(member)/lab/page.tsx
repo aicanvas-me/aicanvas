@@ -87,7 +87,7 @@ export default async function MadeInLabPage() {
 function EmptyState() {
   return (
     <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
-      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
+      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-card border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
         <Flask size={22} weight="regular" />
       </div>
       <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Nothing saved yet</h2>

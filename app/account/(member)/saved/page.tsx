@@ -37,7 +37,7 @@ export default async function SavedPage() {
   if (raw.length === 0) {
     return (
       <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
-        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
+        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-card border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
           <Heart weight="regular" size={22} />
         </div>
         <p className="text-sm text-sand-600 dark:text-sand-400">

@@ -274,14 +274,14 @@ export function AndromedaComponentView({
       </div>
 
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
-      <div ref={mainCardRef} className="overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
+      <div ref={mainCardRef} className="overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
         {/* Tab bar */}
         <div className="flex items-center justify-between border-b border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           <div className="flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => setTab('preview')}
-              className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-2 rounded-control px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'preview'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                   : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
@@ -293,7 +293,7 @@ export function AndromedaComponentView({
             <button
               type="button"
               onClick={() => setTab('code')}
-              className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-2 rounded-control px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'code'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                   : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
@@ -309,7 +309,7 @@ export function AndromedaComponentView({
               <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={() => { track('Fullscreen Open', { component: registrySlug }); setFullscreen(true) }}>
                 <CornersOut weight="regular" size={16} />
               </Button>
-              <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-700 bg-sand-800 px-2.5 py-1.5 text-xs text-sand-300 group-hover/fullscreen:block">
+              <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-control border border-sand-700 bg-sand-800 px-2.5 py-1.5 text-xs text-sand-300 group-hover/fullscreen:block">
                 Full screen
               </div>
             </div>
@@ -379,7 +379,7 @@ export function AndromedaComponentView({
         </p>
 
         {/* CLI / Manual tabs */}
-        <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
+        <div className="overflow-hidden rounded-inset border border-sand-300 dark:border-sand-800">
           <div className="flex border-b border-sand-300 bg-sand-50 dark:border-sand-800 dark:bg-sand-900">
             <button
               type="button"
@@ -427,19 +427,19 @@ export function AndromedaComponentView({
                 <Step number={1} isLast>
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Run the following command. New project? Run{' '}
-                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                    <code className="rounded-tag bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       npx shadcn@latest init
                     </code>{' '}
                     first to set up Tailwind and path aliases.
                   </p>
-                  <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
+                  <div className="overflow-hidden rounded-control bg-sand-200 dark:bg-sand-950">
                     <div className="flex items-center gap-1 border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                         <button
                           key={pm}
                           type="button"
                           onClick={() => { setPkgManager(pm); setCliCopied(false) }}
-                          className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                          className={`rounded-chip px-2.5 py-1 text-xs font-medium transition-colors ${
                             pkgManager === pm
                               ? 'bg-sand-300 text-sand-900 dark:bg-sand-800 dark:text-sand-100'
                               : 'text-sand-600 hover:text-sand-800 dark:text-sand-500 dark:hover:text-sand-300'
@@ -465,7 +465,7 @@ export function AndromedaComponentView({
                           trackInstall(registrySlug, 'andromeda', pkgManager)
                           showCliToast()
                         }}
-                        className="ml-auto shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                        className="ml-auto shrink-0 rounded-chip p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {cliCopied
                           ? <Check weight="regular" size={14} className="text-olive-500" />
@@ -499,7 +499,7 @@ export function AndromedaComponentView({
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Copy and paste the following code into your project:
                   </p>
-                  <div className="relative rounded-lg bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
+                  <div className="relative rounded-control bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
                     <div className="flex items-center justify-between border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                         {name}.tsx
@@ -507,7 +507,7 @@ export function AndromedaComponentView({
                       <button
                         type="button"
                         onClick={copyCode}
-                        className="shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                        className="shrink-0 rounded-chip p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {codeCopied
                           ? <Check weight="regular" size={14} className="text-olive-500" />
@@ -524,11 +524,11 @@ export function AndromedaComponentView({
                 <Step number={2} isLast>
                   <p className="text-sm text-sand-600 dark:text-sand-400">
                     This file imports the Andromeda foundation, so it expects{' '}
-                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                    <code className="rounded-tag bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       tokens.ts
                     </code>{' '}
                     one folder up and the{' '}
-                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                    <code className="rounded-tag bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       lib/
                     </code>{' '}
                     folder beside it, plus any Andromeda component it renders.
@@ -558,7 +558,7 @@ export function AndromedaComponentView({
                   onClick={() => pageRelated(-1)}
                   disabled={!canGoPrev}
                   aria-label="Previous components"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-sand-300 bg-sand-50 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-100 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
+                  className="flex h-8 w-8 items-center justify-center rounded-control border border-sand-300 bg-sand-50 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-100 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
                 >
                   <ArrowLeft weight="regular" size={15} />
                 </button>
@@ -567,7 +567,7 @@ export function AndromedaComponentView({
                   onClick={() => pageRelated(1)}
                   disabled={!canGoNext}
                   aria-label="Next components"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-sand-300 bg-sand-50 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-100 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
+                  className="flex h-8 w-8 items-center justify-center rounded-control border border-sand-300 bg-sand-50 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-100 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
                 >
                   <ArrowRight weight="regular" size={15} />
                 </button>
@@ -607,7 +607,7 @@ export function AndromedaComponentView({
                   >
                     <Link
                       href={`/design-systems/andromeda/${c.slug}`}
-                      className="group flex flex-col overflow-hidden rounded-xl border border-sand-300 bg-sand-50 transition-colors duration-200 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+                      className="group flex flex-col overflow-hidden rounded-inset border border-sand-300 bg-sand-50 transition-colors duration-200 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
                     >
                       <div
                         className="relative aspect-video overflow-hidden"
@@ -679,7 +679,7 @@ export function AndromedaComponentView({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-2xl sm:border sm:border-sand-800 sm:shadow-2xl"
+            className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-card sm:border sm:border-sand-800 sm:shadow-2xl"
             style={{ backgroundColor: themeColor.surface.base }}
             onClick={(e) => e.stopPropagation()}
           >
@@ -690,7 +690,7 @@ export function AndromedaComponentView({
             <button
               type="button"
               onClick={() => setFullscreen(false)}
-              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
+              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-control border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
             >
               <X weight="regular" size={16} />
             </button>
@@ -713,7 +713,7 @@ export function AndromedaComponentView({
             left: toastLeft ?? '50%',
           }}
         >
-          <div className="flex items-center gap-3 rounded-xl border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
+          <div className="flex items-center gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
             <Check weight="regular" size={16} className="shrink-0 text-olive-500" />
             <div>
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">

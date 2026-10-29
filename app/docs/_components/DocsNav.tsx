@@ -6,7 +6,7 @@ import { CaretDown } from '@phosphor-icons/react'
 import { DOCS_NAV, DOC_PAGES } from '../_lib/nav'
 
 const ROW =
-  'block rounded-lg px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40'
+  'block rounded-control px-3 py-1.5 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40'
 const ROW_ON = 'bg-sand-200 font-semibold text-sand-900 dark:bg-sand-800 dark:text-sand-50'
 const ROW_OFF =
   'text-sand-600 hover:bg-sand-100 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-900 dark:hover:text-sand-50'
@@ -60,7 +60,7 @@ export function DocsMobileNav() {
   return (
     <details
       key={pathname}
-      className="group mb-8 rounded-2xl border border-sand-200 bg-sand-100 lg:hidden dark:border-sand-800 dark:bg-sand-900"
+      className="group mb-8 rounded-card border border-sand-200 bg-sand-100 lg:hidden dark:border-sand-800 dark:bg-sand-900"
     >
       <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-sand-900 dark:text-sand-50 [&::-webkit-details-marker]:hidden">
         <span>

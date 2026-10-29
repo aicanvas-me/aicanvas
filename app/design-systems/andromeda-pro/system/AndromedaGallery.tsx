@@ -68,7 +68,7 @@ export function AndromedaGallery({
           variants and its interaction states.
         </PageLead>
 
-        <label className="mt-8 flex max-w-md items-center gap-3 rounded-xl border border-sand-300 bg-sand-100 px-4 py-3 transition-colors hover:border-sand-400 focus-within:border-olive-500 focus-within:ring-2 focus-within:ring-olive-500/20 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600">
+        <label className="mt-8 flex max-w-md items-center gap-3 rounded-inset border border-sand-300 bg-sand-100 px-4 py-3 transition-colors hover:border-sand-400 focus-within:border-olive-500 focus-within:ring-2 focus-within:ring-olive-500/20 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600">
           <MagnifyingGlass weight="regular" size={18} className="shrink-0 text-sand-500" />
           <span className="sr-only">Search Andromeda components</span>
           <input

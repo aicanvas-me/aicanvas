@@ -53,18 +53,18 @@ const MODEL_URL = '/models/brain.glb'
 // The stage is the void in both site themes, like the overview's brain card,
 // so its inks are fixed instead of following the site palette.
 const STAGE_INK = {
-  label: '#9B9B9E',
-  hero: '#F4F4FA',
+  label: 'var(--color-sand-400)',
+  hero: 'var(--color-sand-50)',
   lit: tokens.color.brand[300],
   halo: 'rgba(0,0,0,0.9)',
-  status: '#7B7B7D',
+  status: 'var(--color-sand-500)',
 }
 
 // Medium buttons, class for class with the overview hero.
 const BTN_PRIMARY = `${buttonClasses({ variant: 'primary', size: 'md' })} h-10`
 const BTN_SECONDARY = `${buttonClasses({ variant: 'outline', size: 'md' })} h-10`
 // The overview's card surface.
-const PANEL_CLASS = 'rounded-2xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
+const PANEL_CLASS = 'rounded-card border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
 const PANEL_SHADOW =
   'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
 
@@ -559,7 +559,7 @@ function CorpusExplorer() {
               aria-controls={PANEL_ID}
               tabIndex={selected ? 0 : -1}
               onClick={() => select(s.id)}
-              className={`flex shrink-0 items-baseline justify-between gap-3 rounded-lg px-4 py-3 text-left text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 ${
+              className={`flex shrink-0 items-baseline justify-between gap-3 rounded-control px-4 py-3 text-left text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 ${
                 selected
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                   : 'text-sand-600 hover:bg-sand-200/60 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-50'
@@ -591,7 +591,7 @@ function CorpusExplorer() {
                   key={f}
                   ref={i === PHONE_PREVIEW ? firstRevealedRef : undefined}
                   tabIndex={i === PHONE_PREVIEW ? -1 : undefined}
-                  className={`flex min-w-0 items-center gap-2 rounded py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 ${!expanded && i >= PHONE_PREVIEW ? 'max-sm:hidden' : ''}`}
+                  className={`flex min-w-0 items-center gap-2 rounded-tag py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-olive-500/40 ${!expanded && i >= PHONE_PREVIEW ? 'max-sm:hidden' : ''}`}
                 >
                   <LockSimple weight="regular" size={14} aria-hidden className="shrink-0 text-sand-400 dark:text-sand-600" />
                   <span title={name} className="truncate font-mono text-[13px] text-sand-700 dark:text-sand-300">
@@ -605,7 +605,7 @@ function CorpusExplorer() {
             <button
               type="button"
               onClick={() => setExpanded(true)}
-              className="mt-2 rounded text-sm font-semibold text-olive-600 hover:text-olive-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:hidden dark:text-olive-400 dark:hover:text-olive-300"
+              className="mt-2 rounded-tag text-sm font-semibold text-olive-600 hover:text-olive-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:hidden dark:text-olive-400 dark:hover:text-olive-300"
             >
               {`Show all ${sec.files.length} files`}
             </button>
@@ -1006,7 +1006,7 @@ export function BrainStoryV4() {
 
         {/* ── The stage: the void in both site themes, like the overview's brain card ── */}
         <div
-          className={`relative mt-10 h-[380px] overflow-hidden rounded-2xl border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
+          className={`relative mt-10 h-[380px] overflow-hidden rounded-card border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
           style={{ background: BRAIN_GROUND }}
         >
           <div
@@ -1199,7 +1199,7 @@ export function BrainStoryV4() {
                     {step.chips.map((chip) => (
                       <span
                         key={chip}
-                        className="rounded-md border border-sand-200 bg-sand-50 px-2 py-0.5 font-mono text-[11px] text-sand-700 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-300"
+                        className="rounded-chip border border-sand-200 bg-sand-50 px-2 py-0.5 font-mono text-[11px] text-sand-700 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-300"
                       >
                         {chip}
                       </span>
@@ -1225,7 +1225,7 @@ export function BrainStoryV4() {
             subscriber gets the reader, everyone else gets pricing. */}
         <Section
           aria-labelledby="brain-get"
-          className="relative mt-20 overflow-hidden rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
+          className="relative mt-20 overflow-hidden rounded-card border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
         >
           <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />

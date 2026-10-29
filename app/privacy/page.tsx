@@ -26,7 +26,7 @@ const LIST =
 // The term a clause or list item opens with.
 const STRONG = 'font-semibold text-sand-900 dark:text-sand-200'
 const CODE =
-  'rounded-md border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-[0.8125rem] text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
+  'rounded-chip border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-[0.8125rem] text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
 // A subsection inside a numbered section: a step under the section heading,
 // sentence case so a run of them reads as text, not as labels.
 const SUBHEAD = 'mt-8 font-semibold text-sand-900 first-of-type:mt-6 dark:text-sand-50'
@@ -61,7 +61,7 @@ export default function PrivacyPage() {
             The controller responsible for the processing of personal data on
             this site is:
           </p>
-          <p className="mt-4 inline-block rounded-2xl border border-sand-200 bg-sand-100 px-5 py-4 leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
+          <p className="mt-4 inline-block rounded-card border border-sand-200 bg-sand-100 px-5 py-4 leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
             AI Canvas, Inhaber Alexandru-Daniel Tatu
             <br />
             c/o flexdienst – #21685

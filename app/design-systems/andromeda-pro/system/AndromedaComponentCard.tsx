@@ -27,7 +27,7 @@ export function AndromedaComponentCard({
   return (
     <Link
       href={`/design-systems/andromeda-pro/${slug}`}
-      className="group flex h-full flex-col rounded-2xl border border-sand-300 bg-sand-100 p-4 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600"
+      className="group flex h-full flex-col rounded-card border border-sand-300 bg-sand-100 p-4 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600"
     >
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">{name}</h3>
@@ -44,12 +44,12 @@ export function AndromedaComponentCard({
         {/* One canonical look is not a count: "1 variants" reads as a
             component that lost the other two. */}
         {variants > 1 && (
-          <span className="rounded-md bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
+          <span className="rounded-chip bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
             {variants} variants
           </span>
         )}
         {states > 0 && (
-          <span className="rounded-md bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
+          <span className="rounded-chip bg-sand-200 px-2 py-1 text-xxs font-semibold text-sand-600 dark:bg-sand-800 dark:text-sand-400">
             {states} states
           </span>
         )}

@@ -125,7 +125,7 @@ export default function McpPage() {
                       className="pointer-events-none absolute -left-16 -top-16 h-44 w-44 rounded-full bg-olive-400/35 blur-3xl dark:bg-olive-500/20"
                     />
                   )}
-                  <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-sand-300 bg-sand-50 text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-200">
+                  <div className="relative flex h-10 w-10 items-center justify-center rounded-inset border border-sand-300 bg-sand-50 text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-200">
                     {card.icon}
                   </div>
                   <h3 className="relative mt-6 text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">
@@ -149,7 +149,7 @@ export default function McpPage() {
               {PROMPTS.map((prompt) => (
                 <li
                   key={prompt}
-                  className="flex items-start gap-3 rounded-2xl border border-sand-200 bg-sand-100 px-5 py-4 text-[15px] leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300"
+                  className="flex items-start gap-3 rounded-card border border-sand-200 bg-sand-100 px-5 py-4 text-[15px] leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300"
                 >
                   <Sparkle
                     weight="regular"

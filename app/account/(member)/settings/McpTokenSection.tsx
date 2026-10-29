@@ -57,7 +57,7 @@ export function McpTokenSection({ token }: Props) {
 
       {token ? (
         <>
-          <div className="mt-5 flex items-center justify-between gap-2 rounded-xl border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-950">
+          <div className="mt-5 flex items-center justify-between gap-2 rounded-inset border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-950">
             <code className="min-w-0 flex-1 truncate font-mono text-sm text-sand-800 dark:text-sand-300">
               {revealed ? token : MASKED}
             </code>
@@ -65,7 +65,7 @@ export function McpTokenSection({ token }: Props) {
               <button
                 type="button"
                 onClick={() => setRevealed((v) => !v)}
-                className="rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                className="rounded-chip p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                 aria-label={revealed ? 'Hide token' : 'Reveal token'}
                 aria-pressed={revealed}
               >
@@ -76,7 +76,7 @@ export function McpTokenSection({ token }: Props) {
               <button
                 type="button"
                 onClick={copy}
-                className="rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                className="rounded-chip p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                 aria-label="Copy token"
               >
                 {copied
@@ -89,14 +89,14 @@ export function McpTokenSection({ token }: Props) {
           <h3 className="mt-6 text-sm font-semibold text-sand-900 dark:text-sand-50">
             Personal install command
           </h3>
-          <div className="mt-2 flex items-center justify-between gap-2 rounded-xl border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-950">
+          <div className="mt-2 flex items-center justify-between gap-2 rounded-inset border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-950">
             <code className="min-w-0 flex-1 overflow-x-auto whitespace-nowrap font-mono text-xs text-sand-800 dark:text-sand-300">
               {installCmd(revealed ? token : MASKED)}
             </code>
             <button
               type="button"
               onClick={copyCmd}
-              className="shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+              className="shrink-0 rounded-chip p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
               aria-label="Copy install command"
             >
               {cmdCopied
@@ -111,7 +111,7 @@ export function McpTokenSection({ token }: Props) {
           </p>
         </>
       ) : (
-        <div className="mt-5 rounded-xl border border-sand-200 bg-sand-50 px-4 py-3 text-sm leading-relaxed text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
+        <div className="mt-5 rounded-inset border border-sand-200 bg-sand-50 px-4 py-3 text-sm leading-relaxed text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
           Your token isn&rsquo;t set up yet. Install the AI Canvas MCP once, or
           reach out to support if this persists.
         </div>

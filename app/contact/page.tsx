@@ -21,7 +21,7 @@ import { CARD, EYEBROW, PageHero, PageShell } from '../components/PageKit'
 // border uses olive-600 on light: olive-500 is too pale on sand-50 to mark
 // focus on its own.
 const INPUT_CLASS =
-  'block w-full rounded-lg border border-sand-300 bg-sand-50 px-4 py-2.5 text-base text-sand-900 outline-none transition-[border-color,box-shadow] placeholder:text-sand-600 hover:border-sand-400 focus:border-olive-600 focus:ring-4 focus:ring-olive-500/15 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-700 dark:focus:border-olive-500 dark:focus:ring-olive-500/20 md:text-sm'
+  'block w-full rounded-control border border-sand-300 bg-sand-50 px-4 py-2.5 text-base text-sand-900 outline-none transition-[border-color,box-shadow] placeholder:text-sand-600 hover:border-sand-400 focus:border-olive-600 focus:ring-4 focus:ring-olive-500/15 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-700 dark:focus:border-olive-500 dark:focus:ring-olive-500/20 md:text-sm'
 const LABEL_CLASS = `mb-2 block ${EYEBROW}`
 // The form card: the v3 surface, centred under the hero, rising in on the
 // hero's stagger so the page arrives as one sequence.
@@ -204,7 +204,7 @@ export default function ContactPage() {
             </div>
 
             {error && (
-              <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+              <div className="rounded-control border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
                 {error}
               </div>
             )}

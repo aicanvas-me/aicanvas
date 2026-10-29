@@ -52,7 +52,7 @@ export function ForgotPasswordForm() {
       </p>
 
       {sent ? (
-        <div className="mt-6 rounded-xl border border-olive-500/30 bg-olive-500/10 p-4 text-sm leading-relaxed text-sand-900 dark:text-sand-100">
+        <div className="mt-6 rounded-inset border border-olive-500/30 bg-olive-500/10 p-4 text-sm leading-relaxed text-sand-900 dark:text-sand-100">
           If an account uses <strong>{email}</strong>, a reset link is on its
           way. Check your inbox (and spam folder) — the link expires in about
           an hour.
@@ -78,12 +78,12 @@ export function ForgotPasswordForm() {
                 setEmail(e.target.value)
                 clearStatus()
               }}
-              className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
+              className="w-full rounded-control border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
             />
           </div>
 
           {error && (
-            <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+            <div role="alert" className="rounded-control border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}

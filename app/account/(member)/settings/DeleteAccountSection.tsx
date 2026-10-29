@@ -51,7 +51,7 @@ export function DeleteAccountSection() {
   }
 
   return (
-    <div className="rounded-3xl border border-red-500/30 bg-red-500/5 p-6 sm:p-8 dark:border-red-500/20">
+    <div className="rounded-section border border-red-500/30 bg-red-500/5 p-6 sm:p-8 dark:border-red-500/20">
       <div className="flex items-start gap-3">
         <div className="mt-0.5 shrink-0 text-red-700 dark:text-red-400">
           <Warning weight="regular" size={20} />

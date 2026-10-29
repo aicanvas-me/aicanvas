@@ -39,7 +39,7 @@ export function AuthPagePopup({ children, closeHref = '/' }: Props) {
         className="pointer-events-none absolute inset-0 -z-10 hidden dark:block"
         style={{ backgroundImage: 'radial-gradient(36rem 24rem at 50% 50%, rgb(168 185 77 / 0.07), transparent 70%)' }}
       />
-      <div className="aic-hero-rise relative w-full max-w-md rounded-3xl border border-sand-200 bg-sand-100 p-6 shadow-[0_1px_2px_rgba(0,0,0,0.05),0_16px_40px_-16px_rgba(0,0,0,0.14)] sm:p-10 dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_24px_56px_-20px_rgba(0,0,0,0.7)]">
+      <div className="aic-hero-rise relative w-full max-w-md rounded-section border border-sand-200 bg-sand-100 p-6 shadow-[0_1px_2px_rgba(0,0,0,0.05),0_16px_40px_-16px_rgba(0,0,0,0.14)] sm:p-10 dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_24px_56px_-20px_rgba(0,0,0,0.7)]">
         <Button
           variant="icon"
           size="md"

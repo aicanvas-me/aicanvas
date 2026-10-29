@@ -83,7 +83,7 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
       initial={{ opacity: 0, y: 24 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.55, delay, ease: [0.25, 0.1, 0.25, 1] }}
-      className={`relative flex flex-col rounded-3xl border bg-sand-100 p-2 dark:bg-sand-900 ${
+      className={`relative flex flex-col rounded-section border bg-sand-100 p-2 dark:bg-sand-900 ${
         plan.featured
           ? 'border-olive-500/50 dark:border-olive-500/40'
           : 'border-sand-200 dark:border-sand-800'
@@ -120,7 +120,7 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
       </div>
 
       {/* Bottom — features inset */}
-      <div className="flex-1 rounded-2xl bg-sand-50/70 px-5 py-6 dark:bg-sand-950 sm:px-6">
+      <div className="flex-1 rounded-card bg-sand-50/70 px-5 py-6 dark:bg-sand-950 sm:px-6">
         <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">
           {plan.listLabel}
         </p>

@@ -37,7 +37,7 @@ const ROW_META = 'hidden truncate text-sm text-sand-600 sm:block dark:text-sand-
 
 function ActivityThumbnail({ src }: { src: string | null }) {
   return (
-    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-lg bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
+    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-control bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
@@ -62,7 +62,7 @@ export default async function HistoryPage() {
   if (rows.length === 0) {
     return (
       <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
-        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-2xl border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
+        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-card border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
           <ClockClockwise weight="regular" size={22} />
         </div>
         <p className="mx-auto max-w-md text-balance text-sm leading-relaxed text-sand-600 dark:text-sand-400">
@@ -118,7 +118,7 @@ export default async function HistoryPage() {
             <li key={row.id}>
               <Link
                 href={itemHref(row)}
-                className={`${ROW_GRID} group rounded-2xl border border-sand-200 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-300 sm:px-4 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700`}
+                className={`${ROW_GRID} group rounded-card border border-sand-200 bg-sand-100 px-3 py-3 transition-colors hover:border-sand-300 sm:px-4 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700`}
                 aria-label={`Open ${name}`}
               >
                 <ActivityThumbnail src={image} />
