@@ -637,7 +637,7 @@ export function AndromedaComponentView({
 
       {/* ── Installation ─────────────────────────────────────────────── */}
       <section className="mt-12">
-        <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+        <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
           Add to your project
         </h2>
         <p className="mb-4 mt-1 text-sm text-sand-500 dark:text-sand-400">
@@ -829,7 +829,7 @@ export function AndromedaComponentView({
       {related.length > 0 && (
         <section className="mt-16">
           <div className="mb-5 flex items-end justify-between gap-4">
-            <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+            <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
               More Andromeda Pro components
             </h2>
             {canPaginate && (

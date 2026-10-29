@@ -22,7 +22,7 @@ export function PropsTable({ propTables }: { propTables: PropTable[] }) {
   if (!propTables.length) return null
   return (
     <section className="mt-12">
-      <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">Props</h2>
+      <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Props</h2>
       <p className="mb-4 mt-1 text-sm text-sand-600 dark:text-sand-400">
         Every prop this component accepts. Any other prop is forwarded to the
         underlying element.

@@ -678,7 +678,7 @@ export default function ComponentPageView({
                         theme, and full screen is the view people most need to
                         find. */}
                     <Button
-                      variant="primary"
+                      variant="outline"
                       size="md"
                       iconOnly
                       aria-label="Full screen"
@@ -859,7 +859,7 @@ export default function ComponentPageView({
             }
             return (
             <section className="mt-12">
-              <h2 className="flex items-center gap-2.5 text-base font-bold text-sand-900 dark:text-sand-50">
+              <h2 className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Add to your project
                 {premium && (
                   // Same Aceternity-style pill as the card overview: filled
@@ -1187,7 +1187,7 @@ export default function ComponentPageView({
               install section so the two install paths read as siblings.
               Same heading + description + button rhythm. */}
           <section className="mt-12">
-              <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+              <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Install with AI Canvas MCP
               </h2>
               <p className="mb-4 mt-1 text-sm text-sand-600 dark:text-sand-400">
@@ -1266,7 +1266,7 @@ export default function ComponentPageView({
           {about && (
             <>
               <section className="mt-16">
-                <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+                <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                   About {name}
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400 sm:text-base">
@@ -1282,7 +1282,7 @@ export default function ComponentPageView({
                 if (stackTags.length === 0) return null
                 return (
                   <section className="mt-8">
-                    <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+                    <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                       Built with
                     </h2>
                     <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-sand-700 dark:text-sand-300">
@@ -1326,7 +1326,7 @@ export default function ComponentPageView({
               is visible text in the crawled HTML. ── */}
           {faq && faq.length > 0 && (
             <section className="mt-16">
-              <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+              <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Frequently asked questions
               </h2>
               <dl className="mt-4 space-y-5">
@@ -1348,7 +1348,7 @@ export default function ComponentPageView({
               this component appears in. ── */}
           {collections && collections.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+              <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Featured in collections
               </h2>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -1369,7 +1369,7 @@ export default function ComponentPageView({
           {related.length > 0 && (
             <section className="mt-16">
               <div className="mb-5 flex items-end justify-between gap-4">
-                <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+                <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                   More like this
                 </h2>
                 {canPaginate && (
