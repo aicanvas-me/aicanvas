@@ -391,13 +391,25 @@ const INTERACTIONS = {
 
   // Signature Pad — click pill to open modal, then draw a signature on canvas
   // so the screenshot shows the whole feature in its filled state. The modal
-  // is taller than new-project-modal, so center the preview in the viewport
-  // first — otherwise the fixed-position modal escapes the preview's bounds.
+  // is fixed and centres on the viewport, which the left rail puts off the
+  // preview's centre; a transform on the preview makes it the containing
+  // block, so the modal centres in the shot instead.
   'signature-pad': async (preview, page) => {
-    await preview.evaluate((el) => el.scrollIntoView({ block: 'center' }))
+    await preview.evaluate((el) => {
+      el.scrollIntoView({ block: 'center' })
+      el.style.transform = 'translateZ(0)'
+    })
     await page.waitForTimeout(250)
     await preview.locator('button').first().click()
     await page.waitForTimeout(700)
+    // The open modal dims the page behind it (28% black + blur). On dark that
+    // is invisible; on light it turns the whole poster grey, so the poster
+    // drops it and shows the modal on the component's own ground.
+    await preview.locator('div.fixed.inset-0').first().evaluate((el) => {
+      el.style.backgroundColor = 'transparent'
+      el.style.backdropFilter = 'none'
+      el.style.webkitBackdropFilter = 'none'
+    })
 
     const canvas = preview.locator('canvas').first()
     const box = await canvas.boundingBox()
@@ -541,6 +553,12 @@ async function main() {
       // never be a production concern, only a poster one.
       const hideDevChrome = '[data-dev-overlay], nextjs-portal { display: none !important }'
       await page.addStyleTag({ content: hideDevChrome })
+      // The preview is an inset card on the page (border + rounded corners);
+      // a poster is a plain rectangle, so both go before the shot. The border
+      // goes entirely: a transparent one still shows the card's colour, not
+      // the component's, as a hairline frame. No margin either, so a new shot
+      // keeps the full-width framing every existing poster was taken at.
+      await page.addStyleTag({ content: '[data-card-theme] { margin: 0 !important; border-width: 0 !important; border-radius: 0 !important }' })
       page.on('frameattached', async (f) => {
         try { await f.addStyleTag({ content: hideDevChrome }) } catch {}
       })
