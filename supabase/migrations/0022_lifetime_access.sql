@@ -54,7 +54,10 @@ alter table public.user_lifetime_access enable row level security;
 create policy "lifetime: owner read" on public.user_lifetime_access
   for select to authenticated using ((select auth.uid()) = user_id);
 
-revoke all on table public.user_lifetime_access from anon;
+-- Revoke from authenticated too: the project's default privileges grant every
+-- role ALL on a new table, TRUNCATE included, which row security does not stop.
+-- Then grant back only the read the owner policy allows.
+revoke all on table public.user_lifetime_access from anon, authenticated;
 revoke all on sequence public.user_lifetime_access_id_seq from anon, authenticated;
 grant select on table public.user_lifetime_access to authenticated;
 grant select, insert, update on table public.user_lifetime_access to service_role;
