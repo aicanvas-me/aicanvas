@@ -712,7 +712,11 @@ export default function ComponentPageView({
                 e.currentTarget.scrollLeft = 0
                 e.currentTarget.scrollTop = 0
               }}
-              className={`relative isolate mx-2 h-[320px] overflow-hidden rounded-card border transition-colors duration-300 sm:h-[480px] ${
+              // No colour transition: a theme flip freezes every other surface
+              // and spares this wrapper (for the component's own animations),
+              // so a fade here lagged 300ms behind the shell, a flash on the
+              // border.
+              className={`relative isolate mx-2 h-[320px] overflow-hidden rounded-card border sm:h-[480px] ${
                 cardTheme === 'dark' ? 'dark border-sand-800 bg-sand-950' : 'border-sand-200 bg-sand-100'
               }`}
             >
@@ -779,6 +783,9 @@ export default function ComponentPageView({
                 initial={false}
                 animate={{ opacity: activeTab === 'code' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
+                // Site chrome inside the preview wrapper: it flips with the
+                // site at once (see [data-card-chrome] in globals.css).
+                data-card-chrome
                 className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 [--paywall-surface:var(--color-sand-50)] [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)] dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
@@ -1537,7 +1544,7 @@ export default function ComponentPageView({
               </div>
               <div
                 data-card-theme={cardTheme}
-                className={`isolate mx-2 mb-2 min-h-0 flex-1 overflow-hidden rounded-card border transition-colors duration-300 ${
+                className={`isolate mx-2 mb-2 min-h-0 flex-1 overflow-hidden rounded-card border ${
                   cardTheme === 'dark' ? 'dark border-sand-800 bg-sand-950' : 'border-sand-200 bg-sand-100'
                 }`}
               >

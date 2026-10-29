@@ -334,6 +334,13 @@ html[data-frame][data-frame-light] {
   ) {
   transition: none !important;
 }
+/* Site chrome that lives inside a preview wrapper (the Code tab: source,
+   paywall, its buttons) is not the component's animation, so it freezes with
+   the rest of the site and lands on the new theme at once. */
+.theme-switching [data-card-chrome],
+.theme-switching [data-card-chrome] * {
+  transition: none !important;
+}
 
 /* ── Theme-switch view transition ── */
 /* The only cross-page animation the site runs is the theme toggle's view
