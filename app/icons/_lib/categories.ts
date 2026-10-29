@@ -1,8 +1,4 @@
-import iconJson from '../_data/icons.generated.json'
-import type { IconMeta } from './types'
-
-// A build without the icon source writes [], which TypeScript reads as never[].
-const icons = iconJson as IconMeta[]
+import icons from '../_data/icons.generated.json'
 
 export const ICON_CATEGORIES = [
   ['ai-dev', 'AI & Dev'],

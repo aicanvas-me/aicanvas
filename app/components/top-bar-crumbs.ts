@@ -4,13 +4,9 @@ import { COLLECTIONS } from '../lib/collections'
 import { COMPONENT_NAMES } from '../lib/component-nav.generated'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
-import iconJson from '../icons/_data/icons.generated.json'
-import type { IconMeta } from '../icons/_lib/types'
+import iconData from '../icons/_data/icons.generated.json'
 import { ICON_CATEGORY_LABELS } from '../icons/_lib/categories'
 import { titleCase } from '../icons/_lib/icon-utils'
-
-// A build without the icon source writes [], which TypeScript reads as never[].
-const iconData = iconJson as IconMeta[]
 
 // The breadcrumb trail of the crumb row above each catalog page's title
 // (PageCrumbs), derived from the URL alone, so every page draws the same row

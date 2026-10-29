@@ -45,12 +45,8 @@ import {
 import { premiumEnabled } from '../../lib/flags'
 import { wordVariants } from '../lib/search-match'
 import { DOCS_NAV } from '../docs/_lib/nav'
-import iconJson from '../icons/_data/icons.generated.json'
-import type { IconMeta } from '../icons/_lib/types'
+import ICONS from '../icons/_data/icons.generated.json'
 import { ICON_CATEGORY_LABELS, ICON_COUNT, type IconCategorySlug } from '../icons/_lib/categories'
-
-// A build without the icon source writes [], which TypeScript reads as never[].
-const ICONS = iconJson as IconMeta[]
 
 type Tab = 'all' | 'systems' | 'templates' | 'components' | 'icons' | 'pages'
 // What it costs to install: Andromeda Pro is all paid, a
