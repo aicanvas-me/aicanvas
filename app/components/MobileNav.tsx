@@ -8,7 +8,7 @@ import { List, X, GithubLogo, XLogo, MagnifyingGlass } from '@phosphor-icons/rea
 import { GITHUB_URL, X_URL } from '../lib/config'
 import { CatalogNav } from './CatalogNav'
 import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE } from './top-bar-crumbs'
-import { SecondaryNav } from './SecondaryNav'
+import { SecondaryNav, SectionTiles } from './SecondaryNav'
 import { useComponentSearch } from './useComponentSearch'
 import { Button } from './Button'
 import { buttonClasses } from './buttonClasses'
@@ -22,9 +22,10 @@ import { SignInCta } from './auth/SignInCta'
 // ─── MobileNav ────────────────────────────────────────────────────────────────
 
 // The phone's only navigation: the bar at the top and the drawer it opens. The
-// drawer carries everything the desktop bar and rail do: search, the catalog
-// switch (CatalogNav, shared with the rail), MCP, Pricing and the info pages
-// (SecondaryNav), the socials, the theme and the account.
+// drawer carries everything the desktop bar and rail do: search, the site's
+// sections (Docs, MCP, Pricing) as tiles, the catalog switch (CatalogNav,
+// shared with the rail), the info pages (SecondaryNav), the socials, the theme
+// and the account.
 export function MobileNav() {
   const pathname = usePathname()
 
@@ -147,6 +148,11 @@ export function MobileNav() {
                     </button>
                   )}
                 </div>
+              </div>
+
+              {/* The site's sections, one tap away above the long catalog list. */}
+              <div className="shrink-0 px-3 pb-2">
+                <SectionTiles pathname={pathname} onNavigate={() => setOpen(false)} />
               </div>
 
               {/* Navigation */}
