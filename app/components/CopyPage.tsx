@@ -5,13 +5,22 @@ import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
 import { CaretDown, Check, Copy, FileText, LinkSimple } from '@phosphor-icons/react'
 import { useTopBarInstallSlot } from './PageCrumbs'
-import { copyText, useCopied } from './useCopied'
+import { copyText } from './useCopied'
 
-export function CopyPage({ markdown, markdownHref }: { markdown: string; markdownHref: string }) {
-  const slot = useTopBarInstallSlot()
+// The page's Markdown, or a function that builds it at the moment of the click
+// (the docs read their own rendered article, so the copy is never stale).
+type MarkdownSource = string | (() => string)
+const read = (source: MarkdownSource) => (typeof source === 'function' ? source() : source)
+
+const ITEM =
+  'flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-800'
+
+// The split "Copy page" button, drawn where it is placed. Without a
+// `markdownHref`, "View as Markdown" opens the copied text in a new tab.
+export function CopyPageButton({ markdown, markdownHref }: { markdown: MarkdownSource; markdownHref?: string }) {
   const [open, setOpen] = useState(false)
+  const [copied, setCopied] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-  const { copied, copy } = useCopied(markdown)
 
   useEffect(() => {
     if (!open) return
@@ -29,9 +38,20 @@ export function CopyPage({ markdown, markdownHref }: { markdown: string; markdow
     }
   }, [open])
 
-  if (!slot) return null
+  const copy = async () => {
+    if (!(await copyText(read(markdown)))) return
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
-  return createPortal(
+  const viewText = () => {
+    const url = URL.createObjectURL(new Blob([read(markdown)], { type: 'text/plain;charset=utf-8' }))
+    window.open(url, '_blank', 'noopener')
+    setTimeout(() => URL.revokeObjectURL(url), 60_000)
+    setOpen(false)
+  }
+
+  return (
     <div ref={menuRef} className="relative inline-flex">
       <button
         type="button"
@@ -55,38 +75,45 @@ export function CopyPage({ markdown, markdownHref }: { markdown: string; markdow
           <button
             type="button"
             onClick={() => {
-              void copyText(markdown)
+              void copyText(read(markdown))
               setOpen(false)
             }}
-            className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-800"
+            className={ITEM}
           >
             <Copy weight="regular" size={15} />
             Copy as Markdown
           </button>
-          <Link
-            href={markdownHref}
-            target="_blank"
-            onClick={() => setOpen(false)}
-            className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-800"
-          >
-            <FileText weight="regular" size={15} />
-            View as Markdown
-          </Link>
+          {markdownHref ? (
+            <Link href={markdownHref} target="_blank" onClick={() => setOpen(false)} className={ITEM}>
+              <FileText weight="regular" size={15} />
+              View as Markdown
+            </Link>
+          ) : (
+            <button type="button" onClick={viewText} className={ITEM}>
+              <FileText weight="regular" size={15} />
+              View as Markdown
+            </button>
+          )}
           <button
             type="button"
             onClick={() => {
               void copyText(window.location.href)
               setOpen(false)
             }}
-            className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-800"
+            className={ITEM}
           >
             <LinkSimple weight="regular" size={15} />
             Copy link
           </button>
         </div>
       )}
-    </div>,
-    slot,
+    </div>
   )
 }
 
+// The catalog pages' placement: the right end of the crumb line above the title.
+export function CopyPage({ markdown, markdownHref }: { markdown: string; markdownHref: string }) {
+  const slot = useTopBarInstallSlot()
+  if (!slot) return null
+  return createPortal(<CopyPageButton markdown={markdown} markdownHref={markdownHref} />, slot)
+}

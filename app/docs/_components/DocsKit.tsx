@@ -8,26 +8,14 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, ArrowUpRight, Info } from '@phosphor-icons/react/dist/ssr'
-import { SITE_URL } from '../../lib/config'
+import { ArrowLeft, ArrowRight, Info } from '@phosphor-icons/react/dist/ssr'
 import { docPosition } from '../_lib/nav'
 import { Toc, type TocItem } from './Toc'
+import { DocsCopyPage } from './DocsCopyPage'
 
 export type { TocItem }
 
 const LINK = 'font-semibold text-olive-600 underline-offset-4 hover:text-olive-800 hover:underline dark:text-olive-400 dark:hover:text-olive-300'
-
-// "Open in Claude" and "Open in ChatGPT" are plain links with a prefilled
-// prompt that points at this page, the way shadcn's docs do it: no API, the
-// assistant reads the page itself.
-function askLinks(href: string) {
-  const prompt = `I'm reading this AI Canvas documentation: ${SITE_URL}${href}. Help me understand it and apply it to my project. Be ready to explain, give examples, or help debug based on it.`
-  const q = encodeURIComponent(prompt)
-  return [
-    { label: 'Open in Claude', url: `https://claude.ai/new?q=${q}` },
-    { label: 'Open in ChatGPT', url: `https://chatgpt.com/?q=${q}` },
-  ]
-}
 
 export function DocPage({
   href,
@@ -45,31 +33,24 @@ export function DocPage({
   const { section, prev, next } = docPosition(href)
   return (
     <div className="flex gap-10">
-      <article className="min-w-0 max-w-3xl flex-1">
+      <article data-doc-article className="min-w-0 max-w-3xl flex-1">
         <header className="border-b border-sand-200 pb-8 dark:border-sand-800">
-          {section && (
-            <p className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
-              {section}
-            </p>
-          )}
+          {/* The section on the left and the page as Markdown on the right, on
+              the same line the catalog pages give their crumbs and Copy page. */}
+          <div className="flex min-h-8 items-center justify-between gap-4">
+            {section ? (
+              <p data-md-skip className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
+                {section}
+              </p>
+            ) : (
+              <span />
+            )}
+            <DocsCopyPage />
+          </div>
           <h1 className="mt-2 text-balance text-3xl font-extrabold tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50">
             {title}
           </h1>
           <p className="mt-3 text-pretty text-lg leading-relaxed text-sand-600 dark:text-sand-400">{lead}</p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {askLinks(href).map((a) => (
-              <a
-                key={a.label}
-                href={a.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 rounded-control border border-sand-200 px-3 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 dark:border-sand-800 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-50"
-              >
-                {a.label}
-                <ArrowUpRight weight="regular" size={12} />
-              </a>
-            ))}
-          </div>
         </header>
 
         <div className="pt-2">{children}</div>
