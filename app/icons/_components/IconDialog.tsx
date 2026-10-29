@@ -131,7 +131,7 @@ export function IconDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="icon-dialog-title"
-        className="grid h-full w-full min-w-0 overflow-hidden bg-sand-50 shadow-2xl focus:outline-none dark:bg-sand-900 sm:max-h-[calc(100vh-48px)] sm:w-[min(1056px,calc(100vw-48px))] sm:rounded-2xl sm:border sm:border-sand-700 md:aspect-video md:h-auto md:grid-cols-[1fr_1.05fr]"
+        className="grid h-full w-full min-w-0 overflow-hidden bg-sand-50 shadow-2xl focus:outline-none dark:bg-sand-900 sm:max-h-[calc(100vh-48px)] sm:w-[min(1056px,calc(100vw-48px))] sm:rounded-section sm:border sm:border-sand-700 md:aspect-video md:h-auto md:grid-cols-[1fr_1.05fr]"
       >
         <PreviewStage
           markup={markup}
@@ -150,7 +150,7 @@ export function IconDialog({
             type="button"
             onClick={onClose}
             aria-label="Close icon details"
-            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg text-sand-600 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
+            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-sand-600 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
           >
             <X weight="regular" size={18} />
           </button>
@@ -164,7 +164,7 @@ export function IconDialog({
             <button
               type="button"
               onClick={() => void copyText(icon.name)}
-              className="inline-flex h-7 items-center gap-1.5 rounded-lg border border-sand-300 px-2 font-mono text-[11px] text-sand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-700 dark:text-sand-300"
+              className="inline-flex h-7 items-center gap-1.5 rounded-full border border-sand-300 px-2.5 font-mono text-[11px] text-sand-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-700 dark:text-sand-300"
             >
               {icon.name}
               <Copy weight="regular" size={12} />
@@ -182,8 +182,8 @@ export function IconDialog({
             <StylePicker value={style} onChange={onStyle} markup={markup} loading={loadingStyle} />
           </div>
           <div className="mt-2 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
-            <Slider themed label="Size" value={size} onChange={onSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
-            <Slider themed label="Stroke" value={strokeWidth} onChange={onStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
+            <Slider themed pill label="Size" value={size} onChange={onSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
+            <Slider themed pill label="Stroke" value={strokeWidth} onChange={onStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
             <AbsoluteStrokeControl value={absolute} onChange={onAbsolute} className="h-7 px-1" />
             <ColourControl value={previewColour} onChange={onColour} className="h-7 px-1" />
           </div>
@@ -203,7 +203,7 @@ export function IconDialog({
                     const target = icons.find((candidate) => candidate.name === item.name)
                     if (target) onSelect(target.name)
                   }}
-                  className="flex aspect-square items-center justify-center rounded-lg bg-sand-50 text-sand-800 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:bg-sand-950 dark:text-sand-200 dark:hover:bg-sand-800"
+                  className="flex aspect-square items-center justify-center rounded-card bg-sand-50 text-sand-800 hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:bg-sand-950 dark:text-sand-200 dark:hover:bg-sand-800"
                 >
                   <IconSvg markup={data[item.name] ?? ''} size={20} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} />
                 </button>
@@ -216,10 +216,10 @@ export function IconDialog({
               <ArrowRight weight="regular" size={14} />
             </Link>
             <div className="flex items-center gap-2 text-[10px] text-sand-600 dark:text-sand-400">
-              <kbd className="rounded border border-sand-300 px-1.5 py-0.5 dark:border-sand-700">←</kbd>
-              <kbd className="rounded border border-sand-300 px-1.5 py-0.5 dark:border-sand-700">→</kbd>
+              <kbd className="rounded-tag border border-sand-300 px-1.5 py-0.5 dark:border-sand-700">←</kbd>
+              <kbd className="rounded-tag border border-sand-300 px-1.5 py-0.5 dark:border-sand-700">→</kbd>
               <span>browse</span>
-              <kbd className="ml-1 rounded border border-sand-300 px-1.5 py-0.5 dark:border-sand-700">Esc</kbd>
+              <kbd className="ml-1 rounded-tag border border-sand-300 px-1.5 py-0.5 dark:border-sand-700">Esc</kbd>
               <span>close</span>
             </div>
           </footer>

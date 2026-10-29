@@ -106,7 +106,7 @@ export function ActionBar({
         <button
           type="button"
           onClick={() => void copy()}
-          className="inline-flex h-8 items-center gap-1.5 rounded-l-lg bg-olive-500 px-3 text-xs font-semibold text-sand-950 transition-colors hover:bg-olive-400 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
+          className="inline-flex h-8 items-center gap-1.5 rounded-l-control bg-olive-500 px-3 text-xs font-semibold text-sand-950 transition-colors hover:bg-olive-400 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
         >
           {copied ? <Check weight="regular" size={14} /> : <Robot weight="regular" size={14} />}
           {copied ? 'Copied' : 'Copy for agent'}
@@ -116,12 +116,12 @@ export function ActionBar({
           aria-label="More copy and download options"
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-r-lg border-l border-sand-950/20 bg-olive-500 text-sand-950 transition-colors hover:bg-olive-400 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-r-control border-l border-sand-950/20 bg-olive-500 text-sand-950 transition-colors hover:bg-olive-400 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
         >
           <CaretDown weight="regular" size={13} />
         </button>
         {open && (
-          <div className="absolute left-0 top-10 z-50 w-56 rounded-xl border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900">
+          <div className="absolute left-0 top-10 z-50 w-56 rounded-card border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900">
             {items.map((item) => (
               <button
                 key={item.label}
@@ -130,7 +130,7 @@ export function ActionBar({
                   void item.action()
                   setOpen(false)
                 }}
-                className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50"
+                className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50"
               >
                 <item.icon weight="regular" size={15} aria-hidden />
                 {item.label}

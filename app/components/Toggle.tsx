@@ -85,7 +85,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
             display: 'block',
             position: 'relative',
           }}
-          className={`shrink-0 rounded-lg border transition-colors duration-200 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-olive-500/40 ${
+          className={`shrink-0 rounded-full border transition-colors duration-200 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-olive-500/40 ${
             checked
               ? 'border-olive-500 bg-olive-500/15'
               : 'border-sand-200 bg-sand-100 dark:border-sand-700 dark:bg-sand-800'
@@ -105,7 +105,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
               justifyContent: 'center',
               overflow: 'hidden',
             }}
-            className={`rounded-md ${
+            className={`rounded-full ${
               checked
                 ? 'bg-olive-500'
                 : 'bg-sand-400 dark:bg-sand-600'

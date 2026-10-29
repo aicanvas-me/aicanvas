@@ -15,6 +15,7 @@ export function Slider({
   disabled,
   format,
   themed = false,
+  pill = false,
 }: {
   label: string
   value: number
@@ -25,6 +26,10 @@ export function Slider({
   disabled?: boolean
   format?: (v: number) => string
   themed?: boolean
+  /** Fully round track, for the site's pill-shaped filter bars. A prop, not an
+   *  appended class: two radius utilities on one element are settled by
+   *  stylesheet order, not by the caller. */
+  pill?: boolean
 }) {
   const range = max - min
   const pct = range > 0 ? Math.max(0, Math.min(100, ((value - min) / range) * 100)) : 0
@@ -46,7 +51,7 @@ export function Slider({
       <div
         className={
           themed
-            ? 'relative flex h-7 items-center overflow-hidden rounded-lg border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
+            ? `relative flex h-7 items-center overflow-hidden ${pill ? 'rounded-full' : 'rounded-lg'} border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900`
             : 'relative flex h-7 items-center overflow-hidden rounded-lg border border-sand-300 bg-sand-50 dark:border-sand-800 dark:bg-sand-900'
         }
       >

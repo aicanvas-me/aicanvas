@@ -24,7 +24,7 @@ export function StylePicker({
       aria-label="Icon style"
       className={
         compact
-          ? 'grid h-10 min-w-0 grid-cols-4 gap-0.5 rounded-xl border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900'
+          ? 'grid h-10 min-w-0 grid-cols-4 gap-0.5 rounded-full border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900'
           : 'grid grid-cols-2 gap-2 sm:grid-cols-4'
       }
     >
@@ -39,8 +39,8 @@ export function StylePicker({
             onClick={() => onChange(style.id)}
             className={`${
               compact
-                ? 'h-8 rounded-lg px-1'
-                : 'relative h-16 rounded-xl border px-2 py-1.5'
+                ? 'h-8 rounded-full px-1'
+                : 'relative h-16 rounded-card border px-2 py-1.5'
             } flex min-w-0 ${compact ? 'flex-row' : 'flex-col'} items-center justify-center gap-1 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
               selected
                 ? compact

@@ -59,7 +59,7 @@ export function CodeTabs({
         : iconInstallCommand(name)
 
   return (
-    <section className={`overflow-hidden rounded-xl border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 ${className}`}>
+    <section className={`overflow-hidden rounded-card border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 ${className}`}>
       <div role="tablist" aria-label="Code format" className={`flex items-center gap-1 px-2 ${compact ? 'pt-1' : 'pt-2'}`}>
         {(['React', 'SVG', 'Install'] as const).map((option) => (
           <button

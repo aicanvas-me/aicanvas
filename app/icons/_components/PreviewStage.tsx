@@ -27,8 +27,8 @@ export function PreviewSizeStrip({
   return (
     <div
       className={`flex items-end justify-evenly gap-2 px-4 py-4 ${
-        embedded ? '' : 'rounded-2xl border border-sand-200 dark:border-sand-800'
-      } ${surface === 'dark' ? 'bg-[#0f0f10] text-white/55' : 'bg-[#f6f4ee] text-black/50'}`}
+        embedded ? '' : 'rounded-section border border-sand-200 dark:border-sand-800'
+      } ${surface === 'dark' ? 'bg-sand-950 text-white/55' : 'bg-sand-50 text-black/50'}`}
     >
       {PREVIEW_SIZES.map((previewSize) => (
         <div key={previewSize} className="flex min-w-6 flex-col items-center gap-2 text-[10px]">
@@ -73,22 +73,22 @@ export function PreviewStage({
   }
   return (
     <section
-      className={`flex min-h-0 flex-col overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900 ${className}`}
+      className={`flex min-h-0 flex-col overflow-hidden rounded-section border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900 ${className}`}
       aria-label={`${name} preview`}
     >
-      <div className={`flex items-center justify-between gap-4 p-4 ${surface === 'dark' ? 'bg-[#0f0f10]' : 'bg-[#f6f4ee]'}`}>
-        <div className={`inline-flex rounded-lg border p-0.5 ${surface === 'dark' ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
+      <div className={`flex items-center justify-between gap-4 p-4 ${surface === 'dark' ? 'bg-sand-950' : 'bg-sand-50'}`}>
+        <div className={`inline-flex rounded-full border p-0.5 ${surface === 'dark' ? 'border-white/10 bg-white/5' : 'border-black/10 bg-black/5'}`}>
           {(['dark', 'light'] as const).map((option) => (
             <button
               key={option}
               type="button"
               onClick={() => setSurface(option)}
               aria-pressed={surface === option}
-              className={`h-7 rounded-md px-3 text-xs font-semibold capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+              className={`h-7 rounded-full px-3 text-xs font-semibold capitalize focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
                 surface === option
                   ? surface === 'dark'
                     ? 'bg-white/10 text-white'
-                    : 'bg-white text-[#181714] shadow-sm'
+                    : 'bg-white text-sand-900 shadow-sm'
                   : surface === 'dark'
                     ? 'text-white/55'
                     : 'text-black/55'
@@ -100,7 +100,7 @@ export function PreviewStage({
         </div>
         {counter && <p className={surface === 'dark' ? 'text-xs text-white/45' : 'text-xs text-black/45'}>{counter}</p>}
       </div>
-      <div className={`flex min-h-[220px] flex-1 items-center justify-center p-4 ${surface === 'dark' ? 'bg-[#0f0f10]' : 'bg-[#f6f4ee]'}`}>
+      <div className={`flex min-h-[220px] flex-1 items-center justify-center p-4 ${surface === 'dark' ? 'bg-sand-950' : 'bg-sand-50'}`}>
         <IconSvg className="max-h-full max-w-full" markup={markup} size={stageSize(size)} apiSize={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} label={name} />
       </div>
       {showSizes && <PreviewSizeStrip markup={markup} strokeWidth={strokeWidth} absolute={absolute} colour={colour} surface={surface} embedded />}
