@@ -6,6 +6,7 @@ import { ArrowCounterClockwise, Check, Copy, DownloadSimple, MagnifyingGlass } f
 import { Breadcrumbs } from '@/app/components/Breadcrumbs'
 import { PageCrumbs, useTopBarLeft } from '@/app/components/PageCrumbs'
 import { CopyPage } from '@/app/components/CopyPage'
+import { PAGE_TOP, PageFrame } from '@/app/_components/DesignSystemPage'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { copyText } from '@/app/components/useCopied'
 import { useTheme } from '@/app/components/ThemeProvider'
@@ -118,8 +119,10 @@ export function IconsOverview({
   }
 
   return (
-    <main className="min-h-full bg-sand-50 pb-20 pt-8 dark:bg-sand-950 sm:pt-10">
-      <div className="mx-auto w-full max-w-[1160px] px-4 sm:px-6">
+    <main className="min-h-full bg-sand-50 pb-20 dark:bg-sand-950">
+      {/* The design-system pages' frame, so the title and the grid start on the
+          same edge as /components and every system page beside the rail. */}
+      <PageFrame className={PAGE_TOP}>
         <PageCrumbs />
         <CopyPage markdown={overviewMarkdown()} markdownHref="/icons/md" />
         <header>
@@ -223,7 +226,7 @@ export function IconsOverview({
             <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">Try another name or tag.</p>
           </div>
         )}
-      </div>
+      </PageFrame>
       {selected && dialogIcons.length > 0 && (
         <IconDialog
           icons={dialogIcons}

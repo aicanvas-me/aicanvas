@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { ArrowCounterClockwise, ArrowLeft, ArrowRight, Copy } from '@phosphor-icons/react'
 import { CopyPage } from '@/app/components/CopyPage'
+import { PAGE_TOP, PageFrame } from '@/app/_components/DesignSystemPage'
 import { PageCrumbs } from '@/app/components/PageCrumbs'
 import { copyText } from '@/app/components/useCopied'
 import { useTheme } from '@/app/components/ThemeProvider'
@@ -82,8 +83,10 @@ export function IconDetail({
   }
 
   return (
-    <main className="min-h-full bg-sand-50 pb-20 pt-8 dark:bg-sand-950 sm:pt-10">
-      <div className="mx-auto w-full max-w-[1160px] px-4 sm:px-6">
+    <main className="min-h-full bg-sand-50 pb-20 dark:bg-sand-950">
+      {/* The design-system pages' frame, so the title and the grid start on the
+          same edge as /components and every system page beside the rail. */}
+      <PageFrame className={PAGE_TOP}>
         <PageCrumbs />
         <CopyPage markdown={markdown} markdownHref={`/icons/${icon.name}/md`} />
         <header>
@@ -189,7 +192,7 @@ export function IconDetail({
             </Link>
           )}
         </nav>
-      </div>
+      </PageFrame>
     </main>
   )
 }
