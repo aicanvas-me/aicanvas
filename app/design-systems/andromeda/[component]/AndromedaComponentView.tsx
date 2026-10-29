@@ -274,7 +274,7 @@ export function AndromedaComponentView({
       </div>
 
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
-      <div ref={mainCardRef} className="overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
+      <div ref={mainCardRef} className="overflow-hidden rounded-section border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
         {/* Tab bar */}
         <div className="flex items-center justify-between border-b border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           <div className="flex items-center gap-0.5">
@@ -379,7 +379,7 @@ export function AndromedaComponentView({
         </p>
 
         {/* CLI / Manual tabs */}
-        <div className="overflow-hidden rounded-inset border border-sand-300 dark:border-sand-800">
+        <div className="overflow-hidden rounded-section border border-sand-300 dark:border-sand-800">
           <div className="flex border-b border-sand-300 bg-sand-50 dark:border-sand-800 dark:bg-sand-900">
             <button
               type="button"
@@ -607,7 +607,7 @@ export function AndromedaComponentView({
                   >
                     <Link
                       href={`/design-systems/andromeda/${c.slug}`}
-                      className="group flex flex-col overflow-hidden rounded-inset border border-sand-300 bg-sand-50 transition-colors duration-200 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+                      className="group flex flex-col overflow-hidden rounded-section border border-sand-300 bg-sand-50 transition-colors duration-200 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
                     >
                       <div
                         className="relative aspect-video overflow-hidden"
@@ -679,7 +679,7 @@ export function AndromedaComponentView({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-card sm:border sm:border-sand-800 sm:shadow-2xl"
+            className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-section sm:border sm:border-sand-800 sm:shadow-2xl"
             style={{ backgroundColor: themeColor.surface.base }}
             onClick={(e) => e.stopPropagation()}
           >

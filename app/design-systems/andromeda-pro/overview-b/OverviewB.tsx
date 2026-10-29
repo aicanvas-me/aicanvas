@@ -30,7 +30,7 @@ import { PageCrumbs } from '../../../components/PageCrumbs'
 const BTN_PRIMARY = `${buttonClasses({ variant: 'primary', size: 'md' })} h-10`
 const BTN_SECONDARY = `${buttonClasses({ variant: 'outline', size: 'md' })} h-10`
 
-const PANEL = 'rounded-card border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
+const PANEL = 'rounded-section border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
 const PANEL_SHADOW =
   'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
 
@@ -110,7 +110,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
   return (
     <Link
       href={`/design-systems/andromeda-pro/templates/${t.folder}`}
-      className={`group flex flex-col rounded-card border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
+      className={`group flex flex-col rounded-section border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
         lead ? 'lg:col-span-2' : ''
       }`}
     >
@@ -481,7 +481,7 @@ export function OverviewB({
       <PageFrame className="mt-20">
         <section
           aria-labelledby="ovb-price"
-          className="relative overflow-hidden rounded-card border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10"
+          className="relative overflow-hidden rounded-section border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10"
         >
           <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="h-40 w-64 rounded-full bg-accent/10 blur-3xl" />

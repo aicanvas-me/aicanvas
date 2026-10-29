@@ -333,7 +333,7 @@ export function FoundationView() {
       <div className="space-y-5">
         {THEME_ORDER.map((theme) => (
           <ThemeBlock key={theme} theme={theme}>
-            <div className="overflow-hidden rounded-inset border border-sand-300 dark:border-sand-800">
+            <div className="overflow-hidden rounded-section border border-sand-300 dark:border-sand-800">
               <div className="flex">
                 {NEUTRALS.map((n) => (
                   <div
@@ -374,7 +374,7 @@ export function FoundationView() {
             <div className="flex-1 space-y-3">
               {THEME_ORDER.map((theme) => (
                 <ThemeBlock key={theme} theme={theme}>
-                  <div className="flex h-12 overflow-hidden rounded-inset border border-sand-300 dark:border-sand-800">
+                  <div className="flex h-12 overflow-hidden rounded-card border border-sand-300 dark:border-sand-800">
                     {FAMILY_STOPS.map((stop) => (
                       <div
                         key={stop}
@@ -401,7 +401,7 @@ export function FoundationView() {
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
         Components never read a primitive. They say what they mean, in eight role groups:
       </p>
-      <div className="overflow-hidden rounded-inset border border-sand-300 dark:border-sand-800">
+      <div className="overflow-hidden rounded-section border border-sand-300 dark:border-sand-800">
         {SEMANTIC_GROUPS.map(([name, what], i) => (
           <div
             key={name}
@@ -435,7 +435,7 @@ export function FoundationView() {
         Both columns are resolved from the same functions the site paints with, so they cannot
         drift from what you see.
       </p>
-      <div className="overflow-x-auto rounded-inset border border-sand-300 dark:border-sand-800">
+      <div className="overflow-x-auto rounded-card border border-sand-300 dark:border-sand-800">
         <div className="min-w-[44rem]">
           <div className="grid grid-cols-[13rem_repeat(4,1fr)] gap-x-4 border-b border-sand-300 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-sand-500 dark:border-sand-800">
             <span>Role</span>
@@ -501,7 +501,7 @@ export function FoundationView() {
                 single column left most of the width empty. The first row of each
                 column keeps its top border off, and the right column carries a
                 divider so the pair still reads as one table. */}
-            <div className="grid grid-cols-1 overflow-hidden rounded-inset border border-sand-300 sm:grid-cols-2 dark:border-sand-800">
+            <div className="grid grid-cols-1 overflow-hidden rounded-section border border-sand-300 sm:grid-cols-2 dark:border-sand-800">
               {group.rows.map((r, i) => (
                 <div
                   key={r.token}
@@ -557,7 +557,7 @@ export function FoundationView() {
           ['3.0 : 1', 'Large text and non-text', 'Display sizes, and the status icons, dots and borders, the chart lines and the focus ring. WCAG 1.4.3 and 1.4.11.'],
           ['10 : 1', 'Measured headroom', 'The script checks the 4.5 floor. Measured, the primary, secondary and muted text inks sit above 10:1 in both themes, past the 7:1 of AAA.'],
         ].map(([ratio, who, what]) => (
-          <div key={ratio} className="rounded-inset border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
+          <div key={ratio} className="rounded-section border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
             <p className="text-base font-bold tabular-nums text-sand-900 dark:text-sand-50">{ratio}</p>
             <p className="text-[13px] font-semibold text-sand-700 dark:text-sand-300">{who}</p>
             <p className="mt-1 text-[12px] leading-relaxed text-sand-500">{what}</p>
@@ -567,7 +567,7 @@ export function FoundationView() {
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {A11Y_PRACTICES.map(({ icon: Icon, title, body }) => (
-          <div key={title} className="rounded-inset border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
+          <div key={title} className="rounded-section border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
             <Icon size={18} weight="regular" aria-hidden className="text-sand-600 dark:text-sand-400" />
             <p className="mt-3 text-[13px] font-semibold text-sand-900 dark:text-sand-50">{title}</p>
             <p className="mt-1 text-[12px] leading-relaxed text-sand-600 dark:text-sand-400">{body}</p>
@@ -581,7 +581,7 @@ export function FoundationView() {
         One free, open-source face from Google Fonts carries every label, value and heading in
         the system.
       </p>
-      <div className="grid gap-6 rounded-inset border border-sand-300 p-5 sm:grid-cols-[auto_1fr] sm:gap-10 dark:border-sand-800">
+      <div className="grid gap-6 rounded-section border border-sand-300 p-5 sm:grid-cols-[auto_1fr] sm:gap-10 dark:border-sand-800">
         <p
           className="text-[96px] font-semibold leading-none text-sand-900 dark:text-sand-50"
           style={{ fontFamily: FACE }}
@@ -638,7 +638,7 @@ export function FoundationView() {
       {/* The specimen is the point, so it gets the flexible column and the
           numbers are pinned right. Wide on purpose: the row scrolls inside its
           own container rather than squeezing the display steps. */}
-      <div className="overflow-x-auto rounded-inset border border-sand-300 dark:border-sand-800">
+      <div className="overflow-x-auto rounded-card border border-sand-300 dark:border-sand-800">
         <div className="min-w-[46rem]">
           <div className="grid grid-cols-[7rem_1fr_9rem_9rem_8rem] gap-x-6 border-b border-sand-300 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-sand-500 dark:border-sand-800">
             <span>Step</span>

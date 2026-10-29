@@ -421,7 +421,7 @@ function PreviewChrome({
                 // paints. It follows the site theme, as the frame's own
                 // document does (AndromedaThemeSync mirrors the parent).
                 style={{ width: DEVICES.phone.width, colorScheme: theme }}
-                className="relative h-full max-w-full shrink-0 rounded-card border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-800 dark:bg-sand-950"
+                className="relative h-full max-w-full shrink-0 rounded-section border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-800 dark:bg-sand-950"
                 initial={{ scale: reduce ? 1 : 0.985 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: reduce ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -621,7 +621,7 @@ function TemplateSwitcher({
           phone-width menu never runs off the right edge; desktop viewports keep
           the full 260px (100vw-170px is >260 there, so min() picks 260). */}
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-[min(260px,calc(100vw-170px))] overflow-hidden rounded-inset border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute left-0 top-full z-50 mt-2 w-[min(260px,calc(100vw-170px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           {siblings.map((t) => {
             const active = t.slug === templateSlug
             const folder = t.slug.startsWith(`${systemSlug}-`)
@@ -785,7 +785,7 @@ function InstallButton({
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-inset border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">

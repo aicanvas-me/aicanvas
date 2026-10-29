@@ -318,7 +318,7 @@ export function Inventory({ stats }: { stats: OverviewStats }) {
                 </span>
                 <motion.span
                   id={`inv-${doc.key}`}
-                  className={`-mt-px block origin-top overflow-hidden rounded-card border border-sand-300 p-5 transition-colors duration-150 dark:border-sand-700 sm:p-6 ${
+                  className={`-mt-px block origin-top overflow-hidden rounded-section border border-sand-300 p-5 transition-colors duration-150 dark:border-sand-700 sm:p-6 ${
                     lit === doc.key || isOpen
                       ? 'bg-sand-200 dark:bg-sand-800'
                       : 'bg-sand-100 dark:bg-sand-900'

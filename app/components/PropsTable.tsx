@@ -35,7 +35,7 @@ export function PropsTable({ propTables }: { propTables: PropTable[] }) {
                 {t.table}
               </h3>
             )}
-            <div className="overflow-x-auto rounded-inset border border-sand-200 dark:border-sand-800">
+            <div className="overflow-x-auto rounded-card border border-sand-200 dark:border-sand-800">
               {/* table-fixed + shared colgroup: every table on the page uses
                   identical column widths, so stacked tables (compound
                   components) line up and the Description column stays bounded

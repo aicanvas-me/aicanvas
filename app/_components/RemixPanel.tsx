@@ -236,7 +236,7 @@ export function RemixPanel({
                 still reads as a single document. Rendering head, lock and tail as
                 three rounded cards made a paywalled prompt look broken rather
                 than gated. */}
-            <div className="mt-4 overflow-hidden rounded-inset bg-sand-200 dark:bg-sand-950 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
+            <div className="mt-4 overflow-hidden rounded-card bg-sand-200 dark:bg-sand-950 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
               <pre
                 className={`whitespace-pre-wrap break-words px-5 pt-5 ${
                   promptLocked
@@ -255,7 +255,7 @@ export function RemixPanel({
 
             {/* The exact install, after the prompt: this panel is for remixing,
                 so the prompt leads and installing is the quiet way out. */}
-            <div className="mt-8 rounded-inset border border-accent/40 bg-accent/10 p-5">
+            <div className="mt-8 rounded-section border border-accent/40 bg-accent/10 p-5">
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Want the exact component?
               </p>

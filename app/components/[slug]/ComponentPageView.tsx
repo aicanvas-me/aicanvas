@@ -556,7 +556,7 @@ export default function ComponentPageView({
           </div>
 
           {/* Main card */}
-          <div ref={mainCardRef} className="overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
+          <div ref={mainCardRef} className="overflow-hidden rounded-section border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
 
             {/* Tab bar — tabs left, card theme toggle right */}
             <div className="flex items-center justify-between border-b border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
@@ -881,7 +881,7 @@ export default function ComponentPageView({
               </p>
 
               {/* CLI / Manual tabs */}
-              <div className="overflow-hidden rounded-inset border border-sand-200 dark:border-sand-800">
+              <div className="overflow-hidden rounded-section border border-sand-200 dark:border-sand-800">
                 <div className="flex border-b border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
                   <button
                     onClick={() => {
@@ -1511,7 +1511,7 @@ export default function ComponentPageView({
               // component overflows this panel by the sm:inset-10 (80px) and
               // drifts under the wheel while visibly fitting.
               data-preview-fullscreen
-              className={`absolute inset-0 isolate overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:none] transition-colors duration-300 sm:inset-10 sm:rounded-card sm:border sm:shadow-2xl [&::-webkit-scrollbar]:hidden ${
+              className={`absolute inset-0 isolate overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:none] transition-colors duration-300 sm:inset-10 sm:rounded-section sm:border sm:shadow-2xl [&::-webkit-scrollbar]:hidden ${
                 cardTheme === 'dark'
                   ? 'dark bg-sand-950 sm:border-sand-800'
                   : 'bg-sand-100 sm:border-sand-200'

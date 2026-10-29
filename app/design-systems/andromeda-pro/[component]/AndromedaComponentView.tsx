@@ -80,7 +80,7 @@ const coverageChip =
   'rounded-control bg-sand-200 px-2.5 py-1.5 text-xs font-semibold text-sand-600 transition-colors hover:bg-sand-300 hover:text-sand-900 dark:bg-sand-800 dark:text-sand-400 dark:hover:bg-sand-700 dark:hover:text-sand-50'
 
 const coveragePanel =
-  'rounded-card border border-sand-300 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
+  'rounded-section border border-sand-300 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
 
 // The case the top frame leads with, for EVERY component: the frame shows ONE
 // live instance and
@@ -377,7 +377,7 @@ export function AndromedaComponentView({
       </div>
 
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
-      <div ref={mainCardRef} className="overflow-hidden rounded-card border border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
+      <div ref={mainCardRef} className="overflow-hidden rounded-section border border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
         {/* Tab bar */}
         <div className="flex items-center justify-between border-b border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
           <div className="flex items-center gap-0.5">
@@ -645,7 +645,7 @@ export function AndromedaComponentView({
         </p>
 
         {/* CLI / Manual tabs */}
-        <div className="overflow-hidden rounded-inset border border-sand-300 dark:border-sand-800">
+        <div className="overflow-hidden rounded-section border border-sand-300 dark:border-sand-800">
           <div className="flex border-b border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
             <button
               type="button"
@@ -928,7 +928,7 @@ export function AndromedaComponentView({
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
               data-andromeda-theme={previewTheme?.theme ?? 'dark'}
-              className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-card sm:border sm:border-sand-800 sm:shadow-2xl"
+              className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-section sm:border sm:border-sand-800 sm:shadow-2xl"
               // React context crosses the portal, CSS inheritance does not,
               // so the panel re-spreads the theme set itself.
               style={{

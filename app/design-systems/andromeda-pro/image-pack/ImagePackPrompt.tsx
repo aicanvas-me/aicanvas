@@ -17,7 +17,7 @@ export function ImagePackPrompt({ prompt }: { prompt: string }) {
   }
 
   return (
-    <div className="mt-3 flex flex-col gap-3 rounded-card border border-sand-300 bg-sand-100 p-4 sm:flex-row sm:items-center dark:border-sand-800 dark:bg-sand-900">
+    <div className="mt-3 flex flex-col gap-3 rounded-section border border-sand-300 bg-sand-100 p-4 sm:flex-row sm:items-center dark:border-sand-800 dark:bg-sand-900">
       <p className="flex-1 text-sm leading-relaxed text-sand-900 dark:text-sand-50">{prompt}</p>
       <button
         type="button"

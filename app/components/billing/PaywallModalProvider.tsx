@@ -121,7 +121,7 @@ function PaywallModalView({
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="relative z-10 my-auto w-full max-w-lg rounded-card bg-sand-100 p-6 shadow-2xl outline-none sm:p-8 dark:bg-sand-950"
+        className="relative z-10 my-auto w-full max-w-lg rounded-section bg-sand-100 p-6 shadow-2xl outline-none sm:p-8 dark:bg-sand-950"
       >
         <button
           type="button"

@@ -64,7 +64,7 @@ const STAGE_INK = {
 const BTN_PRIMARY = `${buttonClasses({ variant: 'primary', size: 'md' })} h-10`
 const BTN_SECONDARY = `${buttonClasses({ variant: 'outline', size: 'md' })} h-10`
 // The overview's card surface.
-const PANEL_CLASS = 'rounded-card border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
+const PANEL_CLASS = 'rounded-section border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
 const PANEL_SHADOW =
   'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
 
@@ -343,7 +343,7 @@ function FlowLinks({ mode }: { mode: 'in' | 'out' }) {
   )
 }
 
-const FLOW_NODE = 'flex flex-col justify-center rounded-[10px] border border-sand-200 bg-sand-100 px-3.5 dark:border-sand-800 dark:bg-sand-900'
+const FLOW_NODE = 'flex flex-col justify-center rounded-card border border-sand-200 bg-sand-100 px-3.5 dark:border-sand-800 dark:bg-sand-900'
 const FLOW_HEAD = 'mb-2.5 font-mono text-[10px] uppercase tracking-[0.14em] text-sand-600 dark:text-sand-400'
 
 function FlowNode({ title, sub }: { title: string; sub: string }) {
@@ -420,7 +420,7 @@ function BrainFlow() {
               stays a hairline: full strength read heavy beside the sand
               hairlines around it. */}
           <div
-            className="flex w-full flex-col items-center justify-start rounded-[10px] border border-accent/40 bg-sand-950"
+            className="flex w-full flex-col items-center justify-start rounded-card border border-accent/40 bg-sand-950"
             style={{ height: CARD_H, padding: `${CARD_PAD_TOP}px 0 ${CARD_PAD_BOTTOM}px` }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1006,7 +1006,7 @@ export function BrainStoryV4() {
 
         {/* ── The stage: the void in both site themes, like the overview's brain card ── */}
         <div
-          className={`relative mt-10 h-[380px] overflow-hidden rounded-card border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
+          className={`relative mt-10 h-[380px] overflow-hidden rounded-section border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
           style={{ background: BRAIN_GROUND }}
         >
           <div
@@ -1225,7 +1225,7 @@ export function BrainStoryV4() {
             subscriber gets the reader, everyone else gets pricing. */}
         <Section
           aria-labelledby="brain-get"
-          className="relative mt-20 overflow-hidden rounded-card border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10"
+          className="relative mt-20 overflow-hidden rounded-section border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10"
         >
           <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="h-40 w-64 rounded-full bg-accent/10 blur-3xl" />

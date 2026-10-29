@@ -865,7 +865,7 @@ export function BrainStoryV4() {
             its background is the page base colour per theme (C.base), not a
             fixed dark ground. ── */}
         <div
-          className={`relative mt-10 h-[380px] overflow-hidden rounded-card border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
+          className={`relative mt-10 h-[380px] overflow-hidden rounded-section border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
           style={{ background: C.base }}
         >
           <div
@@ -1086,7 +1086,7 @@ export function BrainStoryV4() {
             two pages close the same way. The primary button stays premium-aware:
             a subscriber gets the reader, everyone else gets pricing. */}
         <Section className="mt-16 sm:mt-24" style={{ marginBottom: 8 }}>
-          <div className="relative overflow-hidden rounded-card border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10">
+          <div className="relative overflow-hidden rounded-section border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10">
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
               <div className="h-40 w-64 rounded-full bg-accent/10 blur-3xl" />
             </div>

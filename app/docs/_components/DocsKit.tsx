@@ -74,7 +74,7 @@ export function DocPage({
             {next && (
               <Link
                 href={next.href}
-                className="group rounded-card border border-sand-200 p-4 text-right transition-colors hover:border-sand-300 dark:border-sand-800 dark:hover:border-sand-700"
+                className="group rounded-section border border-sand-200 p-4 text-right transition-colors hover:border-sand-300 dark:border-sand-800 dark:hover:border-sand-700"
               >
                 <span className="flex items-center justify-end gap-1.5 text-xs font-semibold text-sand-600 dark:text-sand-400">
                   Next
@@ -165,7 +165,7 @@ export function Note({ children }: { children: ReactNode }) {
 /** A plain reference table: a header row, then rows of cells. */
 export function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
   return (
-    <div className="mt-5 overflow-x-auto rounded-inset border border-sand-200 dark:border-sand-800">
+    <div className="mt-5 overflow-x-auto rounded-card border border-sand-200 dark:border-sand-800">
       <table className="w-full text-left text-sm">
         <thead className="bg-sand-100 dark:bg-sand-900">
           <tr>
@@ -200,7 +200,7 @@ export function Cards({ items }: { items: { title: string; href: string; body: s
         <Link
           key={it.href}
           href={it.href}
-          className="rounded-card border border-sand-200 bg-sand-100 p-4 transition-colors hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+          className="rounded-section border border-sand-200 bg-sand-100 p-4 transition-colors hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
         >
           <span className="font-semibold text-sand-900 dark:text-sand-50">{it.title}</span>
           <span className="mt-1 block text-sm leading-6 text-sand-600 dark:text-sand-400">{it.body}</span>

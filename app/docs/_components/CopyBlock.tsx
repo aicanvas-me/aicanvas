@@ -29,7 +29,7 @@ export function CopyBlock({
   const { copied, copy } = useCopied(code)
   const multiline = wrap || code.includes('\n')
   return (
-    <div className="my-5 overflow-hidden rounded-inset border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
+    <div className="my-5 overflow-hidden rounded-card border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
       {title && (
         <div className="border-b border-sand-200 px-4 py-2 font-mono text-xs text-sand-600 dark:border-sand-800 dark:text-sand-400">
           {title}

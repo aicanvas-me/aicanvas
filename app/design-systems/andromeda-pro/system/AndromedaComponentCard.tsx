@@ -27,7 +27,7 @@ export function AndromedaComponentCard({
   return (
     <Link
       href={`/design-systems/andromeda-pro/${slug}`}
-      className="group flex h-full flex-col rounded-card border border-sand-300 bg-sand-100 p-4 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600"
+      className="group flex h-full flex-col rounded-section border border-sand-300 bg-sand-100 p-4 transition-colors hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600"
     >
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">{name}</h3>
