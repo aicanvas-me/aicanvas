@@ -502,7 +502,7 @@ function TopBar({
             right-side buttons (~32px). Shown from md up; the cluster hides on a
             real phone, where you already see the responsive layout. The site
             theme toggle on the right moves every template preview with it. */}
-        <div className="hidden items-center gap-0.5 justify-self-center rounded-control border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
+        <div className="hidden items-center gap-0.5 justify-self-center rounded-full border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
           {DEVICE_ORDER.map(({ key, label, icon: Icon }) => {
             const active = device === key
             return (
@@ -512,7 +512,7 @@ function TopBar({
                 onClick={() => onDevice(key)}
                 aria-label={`${label} preview`}
                 aria-pressed={active}
-                className={`flex h-7 w-7 items-center justify-center rounded-chip transition-colors ${
+                className={`flex h-7 w-7 items-center justify-center rounded-full transition-colors ${
                   active
                     ? 'bg-sand-100 text-sand-900 shadow-sm dark:bg-sand-800 dark:text-sand-50'
                     : 'text-sand-600 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100'

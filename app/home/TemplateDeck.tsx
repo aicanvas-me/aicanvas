@@ -154,7 +154,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
         <div
           role="group"
           aria-label="Preview size"
-          className="inline-flex items-center gap-1 rounded-inset border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900"
+          className="inline-flex items-center gap-1 rounded-full border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900"
         >
           {(Object.keys(DEVICES) as Device[]).map((id) => {
             const { label, icon: DeviceIcon } = DEVICES[id]
@@ -165,7 +165,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
                 type="button"
                 aria-pressed={on}
                 onClick={() => setPicked(id)}
-                className={`inline-flex items-center gap-1.5 rounded-control px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${pressedClass(on)}`}
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${pressedClass(on)}`}
               >
                 <DeviceIcon weight="regular" size={14} aria-hidden />
                 {label}
@@ -194,7 +194,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
                   aria-pressed={on}
                   aria-controls="v3-template-screen"
                   onClick={() => setActive(i)}
-                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-control px-2.5 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
                     on
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'

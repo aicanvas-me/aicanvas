@@ -394,7 +394,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
               tabIndex={-1}
               aria-selected={tab === t.id}
               onClick={() => pickTab(t.id)}
-              className={`h-7 shrink-0 rounded-chip px-2.5 text-xs font-semibold transition-colors ${
+              className={`h-7 shrink-0 rounded-full px-3 text-xs font-semibold transition-colors ${
                 tab === t.id
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                   : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50'

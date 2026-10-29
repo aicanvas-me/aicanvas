@@ -566,7 +566,7 @@ export default function ComponentPageView({
                 <button
                   type="button"
                   onClick={() => setActiveTab('preview')}
-                  className={`flex items-center gap-2 rounded-control px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'preview'
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
@@ -582,7 +582,7 @@ export default function ComponentPageView({
                   // it is done by the time the tab opens.
                   onPointerEnter={prefetchCode}
                   onFocus={prefetchCode}
-                  className={`flex items-center gap-2 rounded-control px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'code'
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
@@ -936,7 +936,7 @@ export default function ComponentPageView({
                                 <button
                                   key={pm}
                                   onClick={() => { setPkgManager(pm); setDepsCopied(false) }}
-                                  className={`rounded-chip px-2.5 py-1 text-xs font-medium transition-colors ${
+                                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                                     pkgManager === pm
                                       ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
@@ -979,7 +979,7 @@ export default function ComponentPageView({
                               <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                                 <button
                                   onClick={() => setInstallTier('component')}
-                                  className={`rounded-chip px-2.5 py-1 text-xs font-medium transition-colors ${
+                                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'component'
                                       ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
@@ -992,7 +992,7 @@ export default function ComponentPageView({
                                     setInstallTier('system')
                                     track('System Install Tier Click', { component: slug, system: systemMeta.slug })
                                   }}
-                                  className={`rounded-chip px-2.5 py-1 text-xs font-medium transition-colors ${
+                                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'system'
                                       ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
@@ -1641,7 +1641,7 @@ function FontStep({
             <button
               key={fw}
               onClick={() => onSelectFramework(fw)}
-              className={`rounded-chip px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
+              className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
             >
               {fw === 'html' ? 'HTML' : 'Next.js'}
             </button>
