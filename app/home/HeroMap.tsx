@@ -30,16 +30,13 @@ import {
   type Transition,
 } from 'framer-motion'
 import { IconSvg } from '../icons/_components/IconSvg'
-import type { WallItem } from './ComponentWall'
 
 export type HeroIcon = { name: string; markup: string }
 
 // The timeline, in seconds from the moment the map comes into view.
 const T = {
   tiles: 0.45, // the four design-system tiles land
-  tileStep: 0.15,
-  deal: 1.2, // the screenshots deal in
-  dealStep: 0.08,
+  tileStep: 0.15, // design systems take tiles 0-3, standalones 4-7
   rail: 1.8, // the icon rail slides in
   wires: 2.0, // the connectors draw
   settled: 3.2, // intro done, loops may start
@@ -78,17 +75,11 @@ function useAt() {
 const noSubscribe = () => () => {}
 
 export function HeroMap({
-  wall,
   standalonesFloor,
-  dsComponents,
-  dsTemplates,
   icons,
   iconCount,
 }: {
-  wall: WallItem[]
   standalonesFloor: string
-  dsComponents: number
-  dsTemplates: number
   icons: HeroIcon[]
   iconCount: number
 }) {
@@ -118,8 +109,8 @@ export function HeroMap({
         className="w-full"
       >
         <div className="grid gap-4 sm:grid-cols-[3fr_2fr]">
-          <DesignSystemsFrame components={dsComponents} templates={dsTemplates} />
-          <PiecesFrame wall={wall} floor={standalonesFloor} />
+          <DesignSystemsFrame />
+          <PiecesFrame floor={standalonesFloor} />
         </div>
 
         {/* The connectors: one per frame from sm, a single short line on a
@@ -153,7 +144,7 @@ function Rise({ delay, y = 12, className, children }: { delay: number; y?: numbe
   )
 }
 
-function DesignSystemsFrame({ components, templates }: { components: number; templates: number }) {
+function DesignSystemsFrame() {
   return (
     <Rise delay={0} className="h-full">
       <Link
@@ -168,11 +159,6 @@ function DesignSystemsFrame({ components, templates }: { components: number; tem
           </span>
         </div>
         <p className={CAPTION}>Foundations, components, templates and the skills your agent reads.</p>
-        {components > 0 || templates > 0 ? (
-          <p className="mt-1 font-mono text-[11px] tracking-wide text-sand-600 dark:text-sand-400">
-            {components} components · {templates} templates
-          </p>
-        ) : null}
 
         <div aria-hidden className="mt-4 grid flex-1 grid-cols-2 gap-2 sm:gap-3">
           <Tile label="Foundations" index={0}>{(land) => <Foundations land={land} />}</Tile>
@@ -185,53 +171,20 @@ function DesignSystemsFrame({ components, templates }: { components: number; tem
   )
 }
 
-function PiecesFrame({ wall, floor }: { wall: WallItem[]; floor: string }) {
-  const { play } = useContext(MapContext)
-  const at = useAt()
-  const shots: (WallItem | null)[] = Array.from({ length: 6 }, (_, i) => wall[i] ?? null)
-
+// Drawn like the design-system tiles, not screenshots: four of the largest
+// standalone categories, so the two frames read as one family.
+function PiecesFrame({ floor }: { floor: string }) {
   return (
     <Rise delay={0.06} className="h-full">
       <Link href="/components" aria-label="Standalone components and blocks: browse components" className={FRAME}>
         <span className={TITLE}>Standalone components and blocks</span>
         <p className={CAPTION}>{floor} pieces that fit any system.</p>
 
-        <div aria-hidden className="mt-4 grid flex-1 auto-rows-fr grid-cols-3 gap-2">
-          {shots.map((item, i) => {
-            const tilt = i % 2 === 0 ? -4 : 3
-            const hidden = { opacity: 0, y: -14, rotate: tilt, scale: 0.94 }
-            return (
-              <motion.div
-                key={item?.slug ?? i}
-                initial={hidden}
-                animate={play ? { opacity: 1, y: 0, rotate: 0, scale: 1 } : hidden}
-                transition={at(T.deal + i * T.dealStep, 0.45)}
-                className="relative aspect-[4/3] overflow-hidden rounded-inset border border-sand-200 bg-sand-200 sm:aspect-auto sm:min-h-16 dark:border-sand-800 dark:bg-sand-950"
-              >
-                {item ? (
-                  <>
-                    <img
-                      src={item.image}
-                      alt=""
-                      loading="lazy"
-                      decoding="async"
-                      className={`absolute inset-0 h-full w-full object-cover ${item.imageLight ? 'hidden dark:block' : ''}`}
-                    />
-                    {/* The light shot on a light site, as on the component wall. */}
-                    {item.imageLight ? (
-                      <img
-                        src={item.imageLight}
-                        alt=""
-                        loading="lazy"
-                        decoding="async"
-                        className="absolute inset-0 h-full w-full object-cover dark:hidden"
-                      />
-                    ) : null}
-                  </>
-                ) : null}
-              </motion.div>
-            )
-          })}
+        <div aria-hidden className="mt-4 grid flex-1 grid-cols-2 gap-2 sm:gap-3">
+          <Tile label="Backgrounds" index={4}>{(land) => <Backgrounds land={land} />}</Tile>
+          <Tile label="Widgets" index={5}>{(land) => <Widgets land={land} />}</Tile>
+          <Tile label="Typography" index={6}>{(land) => <Typography land={land} />}</Tile>
+          <Tile label="Blocks" index={7}>{(land) => <Blocks land={land} />}</Tile>
         </div>
       </Link>
     </Rise>
@@ -494,6 +447,123 @@ function Skills({ land }: { land: number }) {
   )
 }
 
+// ─── Standalone tiles ────────────────────────────────────────────────────────
+
+const DOT_COLS = 9
+const DOT_ROWS = 4
+
+/** A dot field that fades in, then a slow diagonal wave runs through it. */
+function Backgrounds({ land }: { land: number }) {
+  const { play, idle, reduce } = useContext(MapContext)
+  const at = useAt()
+  return (
+    <div className="grid h-full grid-cols-9 place-items-center">
+      {Array.from({ length: DOT_COLS * DOT_ROWS }, (_, i) => {
+        const step = (i % DOT_COLS) + Math.floor(i / DOT_COLS)
+        return (
+          <motion.span
+            key={i}
+            className="block size-1 rounded-full bg-sand-900 dark:bg-sand-50"
+            initial={{ opacity: 0 }}
+            animate={!play ? { opacity: 0 } : idle ? { opacity: [0.15, 0.75, 0.15] } : { opacity: reduce ? 0.4 : 0.15 }}
+            transition={
+              idle
+                ? { duration: 2.4, repeat: Infinity, repeatDelay: 0.6, delay: step * 0.1, ease: 'easeInOut' }
+                : at(land + step * 0.02, 0.3)
+            }
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+/** A stat widget: a ring that fills to 72% beside two value bars. */
+function Widgets({ land }: { land: number }) {
+  const { play } = useContext(MapContext)
+  const at = useAt()
+  return (
+    <div className="flex h-full items-center gap-3">
+      <svg viewBox="0 0 36 36" className="size-11 shrink-0 -rotate-90 sm:size-12" fill="none">
+        <circle cx="18" cy="18" r="15" strokeWidth="3" className="stroke-sand-200 dark:stroke-sand-800" />
+        <motion.circle
+          cx="18"
+          cy="18"
+          r="15"
+          strokeWidth="3"
+          strokeLinecap="round"
+          className="stroke-accent"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: play ? 0.72 : 0 }}
+          transition={at(land, 0.9)}
+        />
+      </svg>
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+        <Bit delay={land + 0.1} from={{ opacity: 0, scaleX: 0 }} className="block h-2 w-3/4 origin-left rounded-tag bg-sand-300 dark:bg-sand-700" />
+        <Bit delay={land + 0.18} from={{ opacity: 0, scaleX: 0 }} className="block h-2 w-1/2 origin-left rounded-tag bg-sand-200 dark:bg-sand-800" />
+      </div>
+    </div>
+  )
+}
+
+const TYPE_WORD = 'Type'
+
+/** One word whose letters breathe through the font's weight axis. */
+function Typography({ land }: { land: number }) {
+  const { play, idle, reduce } = useContext(MapContext)
+  const at = useAt()
+  return (
+    <div className="flex h-full items-end">
+      {TYPE_WORD.split('').map((letter, i) => (
+        <motion.span
+          key={i}
+          className="block text-[26px] leading-none tracking-tight text-sand-900 sm:text-[28px] dark:text-sand-50"
+          initial={{ opacity: 0, y: 8, fontWeight: 300 }}
+          animate={
+            !play
+              ? { opacity: 0, y: 8, fontWeight: 300 }
+              : idle
+                ? { opacity: 1, y: 0, fontWeight: [300, 800, 300] }
+                : { opacity: 1, y: 0, fontWeight: reduce ? 600 : 300 }
+          }
+          transition={
+            idle
+              ? { fontWeight: { duration: 1.6, repeat: Infinity, repeatDelay: 1.2, delay: i * 0.12, ease: 'easeInOut' } }
+              : at(land + i * 0.06, 0.35)
+          }
+        >
+          {letter}
+        </motion.span>
+      ))}
+    </div>
+  )
+}
+
+/** A pricing block: three plans, the middle one raised. */
+function Blocks({ land }: { land: number }) {
+  return (
+    <div className="flex h-full items-end gap-1.5">
+      {[0, 1, 2].map((i) => {
+        const featured = i === 1
+        return (
+          <Bit
+            key={i}
+            delay={land + i * 0.08}
+            from={{ opacity: 0, y: 8 }}
+            className={`flex flex-1 flex-col gap-1 rounded-tag border bg-sand-100 p-1.5 dark:bg-sand-900 ${
+              featured ? 'h-full border-sand-400 dark:border-sand-600' : 'h-[80%] border-sand-200 dark:border-sand-800'
+            }`}
+          >
+            <span className="block h-1.5 w-2/3 rounded-tag bg-sand-300 dark:bg-sand-700" />
+            <span className="block h-2.5 w-1/2 rounded-tag bg-sand-400 dark:bg-sand-600" />
+            <span className={`mt-auto block h-2 w-full rounded-full ${featured ? 'bg-accent' : 'bg-sand-200 dark:bg-sand-800'}`} />
+          </Bit>
+        )
+      })}
+    </div>
+  )
+}
+
 // ─── Connectors ──────────────────────────────────────────────────────────────
 
 function Wire({ left, className = '', order }: { left: string; className?: string; order: number }) {
@@ -587,7 +657,7 @@ function Marquee({ icons }: { icons: HeroIcon[] }) {
           icons.map((icon) => (
             <span key={`${c}-${icon.name}`} className="pr-2">
               <span className={`grid size-10 place-items-center rounded-inset text-sand-700 dark:text-sand-300 ${WELL}`}>
-                <IconSvg markup={icon.markup} size={20} strokeWidth={2} />
+                <IconSvg markup={icon.markup} size={20} strokeWidth={1.5} />
               </span>
             </span>
           )),

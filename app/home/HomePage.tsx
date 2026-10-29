@@ -159,10 +159,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
             column, so it sits outside it. */}
         <div className="mx-auto mt-12 w-full max-w-5xl sm:mt-16">
           <HeroMap
-            wall={wall.slice(0, 6)}
             standalonesFloor={standalonesFloor}
-            dsComponents={ANDROMEDA_PRO_COMPONENT_META.length}
-            dsTemplates={ANDROMEDA_PRO_TEMPLATE_META.length}
             icons={heroIcons}
             iconCount={iconCount}
           />
