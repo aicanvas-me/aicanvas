@@ -1,5 +1,5 @@
 // The homepage (rendered at / and /home): hero, proof, the Andromeda chapter,
-// the library, how to get it, questions, value, plans, as a home for the whole
+// the library, how to get it, value, plans, questions, as a home for the whole
 // catalog. Server component: copy and counts render as static HTML; the
 // template frame, the FAQ stickers, the agent install panel and the islands
 // hydrate.
@@ -460,17 +460,6 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
           </div>
         </section>
 
-        {/* ── FAQ ── */}
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_FAQ_JSON_LD) }} />
-        <section aria-label="Frequently asked questions" className="mt-20 sm:mt-32">
-          <StickerFaq
-            items={HOME_FAQ}
-            eyebrow="FAQ"
-            title="Questions, answered."
-            sub="The short version of everything people ask before adding their first component."
-          />
-        </section>
-
         {/* ── Why AI Canvas ── */}
         <section aria-labelledby="v3-why" className="mx-auto mt-20 max-w-6xl sm:mt-32">
           <Reveal className="mb-10 max-w-2xl">
@@ -506,6 +495,19 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
             </div>
           </section>
         )}
+
+        {/* ── FAQ ──
+            After the plans, so the questions a price raises are answered
+            right under it, then the final call to action. */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(HOME_FAQ_JSON_LD) }} />
+        <section aria-label="Frequently asked questions" className="mt-20 sm:mt-32">
+          <StickerFaq
+            items={HOME_FAQ}
+            eyebrow="FAQ"
+            title="Questions, answered."
+            sub="The short version of everything people ask before adding their first component."
+          />
+        </section>
 
         {/* ── Final CTA ── */}
         <section className="mx-auto mt-20 max-w-4xl sm:mt-32">
