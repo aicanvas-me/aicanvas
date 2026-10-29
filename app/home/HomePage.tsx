@@ -364,18 +364,20 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                 Andromeda Pro templates for AI products, operations, sign in and marketing. Try the real page at every
                 size before you install it.
               </p>
-              <div className="mt-6">
-                <Link
-                  href="/design-systems/andromeda-pro#ovb-templates"
-                  className={buttonClasses({ variant: 'primary', size: 'md' })}
-                >
-                  Browse all {ANDROMEDA_PRO_TEMPLATE_META.length} templates
-                </Link>
-              </div>
             </Reveal>
             <Reveal y={16} delay={0.05} className="mt-8">
               <TemplateDeck templates={templates} />
             </Reveal>
+            {/* Below the deck, the way the standalone library closes. */}
+            <div className="mt-8 flex justify-center">
+              <Link
+                href="/design-systems/andromeda-pro#ovb-templates"
+                className={buttonClasses({ variant: 'outline', size: 'lg' })}
+              >
+                Browse all {ANDROMEDA_PRO_TEMPLATE_META.length} templates
+                <ArrowRight weight="regular" size={14} />
+              </Link>
+            </div>
           </section>
         </div>
 
