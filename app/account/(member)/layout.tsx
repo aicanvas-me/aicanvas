@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 import { Lightning } from '@phosphor-icons/react/dist/ssr'
 import { createClient } from '../../lib/supabase/server'
 import { premiumEnabled } from '../../../lib/flags'
-import { isPremiumNow, type SubStatus } from '../../../lib/identity/tier'
+import { getPremiumForUser } from '../../../lib/identity/premium'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
 import { AccountTabs } from './AccountTabs'
 
@@ -14,19 +14,18 @@ export default async function MemberLayout({ children }: { children: ReactNode }
 
   const email = user.email ?? 'Account'
 
-  // Real tier badge (flag-gated). RLS restricts this read to the owner's row.
+  // Real tier badge (flag-gated). RLS restricts the reads to the owner's rows.
+  // A failed read hides the badge: this layout wraps the portal and cancel
+  // access, so it must render even when the premium check throws.
   let showTier = false
   let isPremium = false
   if (premiumEnabled()) {
-    showTier = true
-    const { data: sub } = await supabase
-      .from('user_subscriptions')
-      .select('status, current_period_end')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    isPremium = sub
-      ? isPremiumNow(sub.status as SubStatus, sub.current_period_end ?? null)
-      : false
+    try {
+      isPremium = (await getPremiumForUser(supabase, user.id)).premium
+      showTier = true
+    } catch {
+      showTier = false
+    }
   }
 
   return (
