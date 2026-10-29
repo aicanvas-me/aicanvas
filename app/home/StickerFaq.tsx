@@ -1,6 +1,6 @@
 'use client'
 
-// The FAQ: one centred column of rounded rows, a plus that turns into a cross
+// The FAQ: one centred column of rounded-tag rows, a plus that turns into a cross
 // when a row opens, and a few die-cut stickers of the tools AI Canvas lives
 // with, scattered in the margins. The stickers can be picked up and moved
 // anywhere in the section; they bob gently while left alone. They only show
@@ -125,14 +125,14 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
           <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">{sub}</p>
         </div>
 
-        <div className="mt-10 space-y-1.5 rounded-[28px] border border-sand-200 p-1.5 dark:border-sand-800">
+        <div className="mt-10 space-y-1.5 rounded-shell border border-sand-200 p-1.5 dark:border-sand-800">
           {items.map(({ q, a }, i) => {
             const on = open === i
             const id = `v3-faq-${i}`
             return (
               <div
                 key={q}
-                className={`rounded-[22px] border transition-colors ${
+                className={`rounded-shell-inner border transition-colors ${
                   on
                     ? 'border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900'
                     : 'border-transparent bg-sand-100/70 hover:bg-sand-100 dark:bg-sand-900/60 dark:hover:bg-sand-900'
@@ -144,7 +144,7 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
                     aria-expanded={on}
                     aria-controls={id}
                     onClick={() => setOpen(on ? null : i)}
-                    className="flex w-full items-center gap-4 rounded-[22px] px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:px-7 sm:py-5"
+                    className="flex w-full items-center gap-4 rounded-shell-inner px-5 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 sm:px-7 sm:py-5"
                   >
                     <span className="flex-1 text-base font-semibold text-sand-900 dark:text-sand-50">{q}</span>
                     <Plus
@@ -169,7 +169,7 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
         </div>
 
         {/* Still have a question? */}
-        <div className="relative mt-6 overflow-hidden rounded-[28px] border border-sand-200 px-5 py-5 sm:px-7 dark:border-sand-800">
+        <div className="relative mt-6 overflow-hidden rounded-shell border border-sand-200 px-5 py-5 sm:px-7 dark:border-sand-800">
           <div
             aria-hidden
             className="absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-olive-600 to-transparent dark:via-olive-400"
@@ -182,7 +182,7 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
             <div className="flex flex-wrap items-center gap-2">
               <Link
                 href="/faq"
-                className="inline-flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-sand-700 transition-colors hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-100"
+                className="inline-flex items-center rounded-control px-3 py-2 text-sm font-semibold text-sand-700 transition-colors hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-100"
               >
                 All questions
               </Link>

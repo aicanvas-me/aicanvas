@@ -156,7 +156,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
           {/* ── Proof pair ──
                Two cards side by side under the hero: the live pull counter on the
                left, the at-a-glance facts on the right. Both share one shell so
-               they read as a pair (rounded-2xl / border-sand-800 / bg-sand-900).
+               they read as a pair (rounded-card / border-sand-800 / bg-sand-900).
 
                In both cards the big value and its label sit on ONE baseline-
                aligned row rather than stacked, which is what makes this read as a
@@ -179,7 +179,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                   rides the edge instead of sitting inside it. Absolutely
                   positioned, so it is not a grid item and does not affect layout.
 
-                  rx matches the cards' rounded-3xl (24px). Animation and the
+                  rx matches the cards' rounded-section (24px). Animation and the
                   dash-length rationale: .aic-beam-* in globals.css. */}
               <svg
                 aria-hidden
@@ -187,7 +187,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                 fill="none"
               >
                 <rect
-                  className="aic-beam-tail stroke-sand-600 dark:stroke-[#D6E2FF]"
+                  className="aic-beam-tail stroke-sand-600 dark:stroke-glow"
                   x="0"
                   y="0"
                   width="100%"
@@ -200,7 +200,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                   opacity={0.22}
                 />
                 <rect
-                  className="aic-beam-head stroke-sand-600 [filter:drop-shadow(0_0_5px_rgba(87,87,89,0.35))] dark:stroke-[#D6E2FF] dark:[filter:drop-shadow(0_0_5px_rgba(214,226,255,0.65))]"
+                  className="aic-beam-head stroke-sand-600 [filter:drop-shadow(0_0_5px_color-mix(in_srgb,var(--color-sand-600)_35%,transparent))] dark:stroke-glow dark:[filter:drop-shadow(0_0_5px_color-mix(in_srgb,var(--color-glow)_65%,transparent))]"
                   x="0"
                   y="0"
                   width="100%"
@@ -216,7 +216,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
 
               {/* Left: the live counter */}
               <Reveal className="h-full">
-                <div className="relative flex h-full flex-col justify-center rounded-3xl p-4 sm:p-5">
+                <div className="relative flex h-full flex-col justify-center rounded-section p-4 sm:p-5">
                   {/* No border, no fill — the soft light IS the card. One light
                       only, cool blue, from straight above like every lit
                       surface on the site.
@@ -225,10 +225,10 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                       commas, which arbitrary values escape awkwardly. */}
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 rounded-3xl"
+                    className="pointer-events-none absolute inset-0 rounded-section"
                     style={{
                       background:
-                        'radial-gradient(85% 85% at 50% 0%, rgba(214,226,255,0.075), transparent 58%)',
+                        'radial-gradient(85% 85% at 50% 0%, color-mix(in srgb, var(--color-glow) 7.5%, transparent), transparent 58%)',
                     }}
                   />
                   <div className="relative">
@@ -266,7 +266,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
 
               {/* Right: the facts */}
               <Reveal delay={0.08} className="h-full">
-                <div className="relative flex h-full flex-col justify-center rounded-3xl p-4 sm:p-5">
+                <div className="relative flex h-full flex-col justify-center rounded-section p-4 sm:p-5">
                   {/* One light only, olive, from straight above like the left
                       card.
 
@@ -276,10 +276,10 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                       reads far stronger at the same value. */}
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute inset-0 rounded-3xl"
+                    className="pointer-events-none absolute inset-0 rounded-section"
                     style={{
                       background:
-                        'radial-gradient(65% 65% at 50% 0%, rgba(218,228,160,0.028), transparent 60%)',
+                        'radial-gradient(65% 65% at 50% 0%, color-mix(in srgb, var(--color-olive-400) 2.8%, transparent), transparent 60%)',
                     }}
                   />
                   {/* Every row links. These four sat in the most valuable space on
@@ -313,7 +313,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                         <Link
                           href={href}
                           {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                          className="group flex items-center gap-x-5 rounded-lg"
+                          className="group flex items-center gap-x-5 rounded-control"
                         >
                           {/* Fixed width so every label starts on the same x, which
                               is what makes the rows scan as a column. It has to
@@ -420,7 +420,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                 aria-hidden
                 className="v3-dot-flow absolute bottom-16 left-[19px] top-6 w-px overflow-hidden"
                 style={{
-                  backgroundImage: 'radial-gradient(circle, rgba(123,123,125,0.6) 1px, transparent 1px)',
+                  backgroundImage: 'radial-gradient(circle, color-mix(in srgb, var(--color-sand-500) 60%, transparent) 1px, transparent 1px)',
                   backgroundSize: '1px 8px',
                   animation: 'v3DotFlow 1.5s linear infinite',
                 }}
@@ -428,7 +428,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
               <style>{`@keyframes v3DotFlow { from { background-position-y: 0 } to { background-position-y: 8px } } @media (prefers-reduced-motion: reduce) { .v3-dot-flow { animation: none !important } }`}</style>
               {STEPS.map((step, i) => (
                 <Reveal key={step.num} x={-20} y={0} delay={i * 0.12} className="flex items-start gap-5 py-5">
-                  <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sand-300 bg-sand-100 text-sand-700 shadow-[0_2px_10px_rgba(0,0,0,0.08)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
+                  <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-inset border border-sand-300 bg-sand-100 text-sand-700 shadow-[0_2px_10px_rgba(0,0,0,0.08)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
                     {step.icon}
                   </div>
                   <div className="flex-1 pt-0.5">
@@ -443,11 +443,11 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
             </div>
 
             <Reveal y={16} className="lg:col-span-7">
-              <div className="relative isolate overflow-hidden rounded-3xl border border-sand-200 px-5 py-10 sm:px-8 sm:py-12 dark:border-sand-800">
+              <div className="relative isolate overflow-hidden rounded-section border border-sand-200 px-5 py-10 sm:px-8 sm:py-12 dark:border-sand-800">
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-0 -z-10 opacity-60 dark:opacity-100"
-                  style={{ backgroundImage: 'radial-gradient(60% 55% at 50% 0%, rgb(168 185 77 / 0.08), transparent 70%)' }}
+                  style={{ backgroundImage: 'radial-gradient(60% 55% at 50% 0%, color-mix(in srgb, var(--color-olive-500) 8%, transparent), transparent 70%)' }}
                 />
                 <AgentInstall />
               </div>
@@ -508,7 +508,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
         <section className="mx-auto mt-20 max-w-4xl sm:mt-32">
           <Reveal
             y={12}
-            className="relative overflow-hidden rounded-3xl border border-olive-500/20 px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
+            className="relative overflow-hidden rounded-section border border-olive-500/20 px-6 py-12 text-center ring-1 ring-inset ring-olive-500/10 sm:py-16"
           >
             <TopLight />
             <p className={`relative ${EYEBROW}`}>Ready to build?</p>

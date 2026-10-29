@@ -65,7 +65,7 @@ export function AndromedaProSection() {
   return (
     <section aria-labelledby="home-andromeda-pro" className="mt-16 sm:mt-24">
       {/* One box holds the intro, the stack and the Brain, so they read as one section. */}
-      <div className="relative isolate overflow-hidden rounded-3xl border border-sand-200 p-4 sm:p-8 lg:p-10 dark:border-sand-800">
+      <div className="relative isolate overflow-hidden rounded-section border border-sand-200 p-4 sm:p-8 lg:p-10 dark:border-sand-800">
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[520px] dark:hidden" style={gridStyle('rgb(0 0 0 / 0.05)')} />
         <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 hidden h-[520px] dark:block" style={gridStyle('rgb(255 255 255 / 0.045)')} />
 

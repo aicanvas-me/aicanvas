@@ -61,7 +61,7 @@ function PromptPill() {
   return (
     <div
       ref={ref}
-      className="mt-7 flex w-full max-w-xl items-center gap-2.5 rounded-full border border-sand-200 bg-sand-100/60 px-4 py-2.5 text-left max-xl:rounded-2xl dark:border-sand-800 dark:bg-sand-900/60"
+      className="mt-7 flex w-full max-w-xl items-center gap-2.5 rounded-full border border-sand-200 bg-sand-100/60 px-4 py-2.5 text-left max-xl:rounded-card dark:border-sand-800 dark:bg-sand-900/60"
     >
       <Sparkle weight="regular" size={15} aria-hidden className="shrink-0 text-olive-600 dark:text-olive-400" />
       {/* One line on wide screens, cut with an ellipsis. Narrower, the prompt
@@ -87,7 +87,7 @@ function PromptPill() {
 }
 
 const BUTTON =
-  'inline-flex items-center gap-2 rounded-xl border border-sand-200 bg-sand-100 px-4 py-2.5 text-sm font-semibold text-sand-900 transition-colors hover:border-sand-300 hover:bg-sand-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-50 dark:hover:border-sand-700 dark:hover:bg-sand-800'
+  'inline-flex items-center gap-2 rounded-inset border border-sand-200 bg-sand-100 px-4 py-2.5 text-sm font-semibold text-sand-900 transition-colors hover:border-sand-300 hover:bg-sand-200/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-50 dark:hover:border-sand-700 dark:hover:bg-sand-800'
 
 export function AgentInstall() {
   const [copied, setCopied] = useState<Copyable | null>(null)

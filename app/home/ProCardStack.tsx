@@ -99,7 +99,7 @@ function FactGlyph({ glyph, count, on, still }: { glyph: Glyph; count: number; o
         ].map(([skin, name], i) => (
           <motion.span
             key={name}
-            className={`flex h-9 flex-1 items-center justify-between rounded-md px-3 ring-1 ring-inset ring-sand-300 dark:ring-sand-700 ${skin}`}
+            className={`flex h-9 flex-1 items-center justify-between rounded-chip px-3 ring-1 ring-inset ring-sand-300 dark:ring-sand-700 ${skin}`}
             initial={still ? false : { opacity: 0, x: -12 }}
             animate={show ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }}
             transition={show ? t(0.1 + i * 0.14, 0.4) : { duration: 0 }}
@@ -151,7 +151,7 @@ function CardBody({ fact, index, on, still }: { fact: Fact; index: number; on: b
 }
 
 const CARD =
-  'overflow-hidden rounded-xl border border-sand-200 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900'
+  'overflow-hidden rounded-inset border border-sand-200 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900'
 
 export function ProCardStack({
   states,

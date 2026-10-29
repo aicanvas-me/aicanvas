@@ -101,7 +101,7 @@ export function StackedCards({ cards = HELLO_CARDS }: { cards?: string[] } = {})
                 handleClick()
               }
             } : undefined}
-            className={`absolute flex h-20 w-28 flex-col items-center justify-center rounded-2xl border border-sand-300 bg-sand-100 transition-[border-color,box-shadow] duration-200 hover:border-sand-500 dark:border-sand-700 dark:bg-sand-800 dark:hover:border-sand-600 ${isFront ? 'touch-none shadow-[0_4px_16px_rgba(0,0,0,0.10)] dark:shadow-[0_6px_28px_rgba(0,0,0,0.28)]' : 'shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-[0_3px_10px_rgba(0,0,0,0.14)]'}`}
+            className={`absolute flex h-20 w-28 flex-col items-center justify-center rounded-card border border-sand-300 bg-sand-100 transition-[border-color,box-shadow] duration-200 hover:border-sand-500 dark:border-sand-700 dark:bg-sand-800 dark:hover:border-sand-600 ${isFront ? 'touch-none shadow-[0_4px_16px_rgba(0,0,0,0.10)] dark:shadow-[0_6px_28px_rgba(0,0,0,0.28)]' : 'shadow-[0_2px_8px_rgba(0,0,0,0.06)] dark:shadow-[0_3px_10px_rgba(0,0,0,0.14)]'}`}
             style={{
               zIndex: isExiting ? 11 : pos.zIndex,
               transformOrigin: 'bottom center',

@@ -27,7 +27,7 @@ function Card({ item, hidden }: { item: WallItem; hidden?: boolean }) {
       href={`/components/${item.slug}`}
       tabIndex={hidden ? -1 : undefined}
       aria-hidden={hidden || undefined}
-      className="group block rounded-2xl border border-sand-200 bg-sand-100 p-2 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+      className="group block rounded-card border border-sand-200 bg-sand-100 p-2 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
     >
       <span className="flex items-center justify-between gap-2 px-1.5 pb-2 pt-1">
         <span className="truncate font-mono text-[11px] tracking-wide text-sand-600 dark:text-sand-400">{item.name}</span>
@@ -35,7 +35,7 @@ function Card({ item, hidden }: { item: WallItem; hidden?: boolean }) {
           <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-olive-600 dark:text-olive-400">Premium</span>
         ) : null}
       </span>
-      <span className="relative block aspect-[4/3] overflow-hidden rounded-xl bg-sand-950">
+      <span className="relative block aspect-[4/3] overflow-hidden rounded-inset bg-sand-950">
         <img
           src={item.image}
           alt={hidden ? '' : `${item.name} component preview`}

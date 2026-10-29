@@ -177,6 +177,40 @@ html {
   --color-cyan-400: #7DD3FC;
   --color-cyan-500: #38BDF8;
   --color-cyan-600: #0284C7;
+  /* Light-theme text step for the cyan chips: 6:1 on sand-50 at 10px, where
+     600 reads 3.7:1. The same sky family as the steps above. */
+  --color-cyan-700: #0369A1;
+
+  /* ── Glow — the cool blue light on the homepage proof cards and their
+     tracing beam, the one lit colour that is not olive. ── */
+  --color-glow: #D6E2FF;
+}
+
+/* ── Corner radius roles (site chrome) ──
+   One value per role, so changing a line here reshapes every surface that
+   plays that role across the site. Not inline: the utilities read the
+   variables, so a value can also be overridden at runtime.
+     section      the big boxes: homepage chapters, bento cards, plan cards,
+                  call-to-action bands, the icons toolbar and tiles
+     shell        the outer frame of a double bezel (FAQ, catalog card,
+                  component preview); shell-inner is the frame inside it
+     card         a card or panel inside a section, menus and popovers
+     inset        media or a well inside a card, code blocks
+     control      buttons and text fields
+     chip         keyboard keys, small square chips, the smallest icon buttons
+     tag          tier labels and the tiniest marks
+   Pills and circles stay rounded-full: that shape is geometry, not a size.
+   Standalone components and the design systems keep their own radii; only
+   site chrome reads these. */
+@theme {
+  --radius-section: 1.5rem;
+  --radius-shell: 1.75rem;
+  --radius-shell-inner: calc(var(--radius-shell) - 0.375rem);
+  --radius-card: 1rem;
+  --radius-inset: 0.75rem;
+  --radius-control: 0.5rem;
+  --radius-chip: 0.375rem;
+  --radius-tag: 0.25rem;
 }
 
 body {

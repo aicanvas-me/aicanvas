@@ -11,7 +11,7 @@ import { ClaudeMark, CodexMark, CursorMark } from '../mcp/InstallCards'
 type Shot = { slug: string; name: string; image: string }
 
 const CARD =
-  'group relative flex h-full flex-col overflow-hidden rounded-3xl border border-sand-200 bg-gradient-to-b from-sand-100 to-sand-50 p-6 transition-[transform,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-sand-300 sm:p-8 dark:border-sand-800 dark:from-sand-900 dark:to-sand-950 dark:hover:border-sand-700'
+  'group relative flex h-full flex-col overflow-hidden rounded-section border border-sand-200 bg-gradient-to-b from-sand-100 to-sand-50 p-6 transition-[transform,border-color] duration-300 ease-out hover:-translate-y-0.5 hover:border-sand-300 sm:p-8 dark:border-sand-800 dark:from-sand-900 dark:to-sand-950 dark:hover:border-sand-700'
 const TITLE = 'text-base font-semibold text-sand-900 dark:text-sand-50'
 const BODY = 'mt-2 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400'
 const MONO = 'font-mono text-[10px] uppercase tracking-[0.18em]'
@@ -41,10 +41,10 @@ function Well({ children }: { children: ReactNode }) {
 function MemberCard() {
   return (
     <div className="w-full max-w-[320px]">
-      <div className="relative aspect-[1.6/1] w-full rotate-[-5deg] rounded-2xl border border-white/10 bg-[linear-gradient(135deg,#232326,#121214)] p-5 text-left shadow-[0_2px_6px_rgba(0,0,0,0.25),0_24px_40px_-12px_rgba(0,0,0,0.55)] transition-[rotate,translate] duration-500 ease-out group-hover:-translate-y-1 group-hover:rotate-[-1deg]">
+      <div className="relative aspect-[1.6/1] w-full rotate-[-5deg] rounded-card border border-white/10 bg-[linear-gradient(135deg,#232326,#121214)] p-5 text-left shadow-[0_2px_6px_rgba(0,0,0,0.25),0_24px_40px_-12px_rgba(0,0,0,0.55)] transition-[rotate,translate] duration-500 ease-out group-hover:-translate-y-1 group-hover:rotate-[-1deg]">
         <div
           aria-hidden
-          className="absolute inset-0 rounded-2xl opacity-40"
+          className="absolute inset-0 rounded-card opacity-40"
           style={{ backgroundImage: 'repeating-linear-gradient(135deg, rgb(255 255 255 / 0.035) 0 2px, transparent 2px 7px)' }}
         />
         <div className="relative flex h-full flex-col justify-between">
@@ -52,7 +52,7 @@ function MemberCard() {
             <img src="/ai-canvas-icon.svg" alt="" aria-hidden className="h-6 w-auto" />
             <span className={`${MONO} text-sand-300`}>Premium</span>
           </div>
-          <span aria-hidden className="h-7 w-10 rounded-md bg-[linear-gradient(135deg,#DAE4A0,#A8B94D)] opacity-90 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.15)]" />
+          <span aria-hidden className="h-7 w-10 rounded-chip bg-[linear-gradient(135deg,var(--color-olive-400),var(--color-olive-500))] opacity-90 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.15)]" />
           <div className="flex items-end justify-between">
             <div>
               <span className={`${MONO} block text-sand-500`}>Member since</span>
@@ -71,7 +71,7 @@ function MemberCard() {
 
 function CodePeek() {
   return (
-    <div className="rounded-2xl border border-sand-200 bg-sand-50 font-mono text-[12px] leading-6 dark:border-sand-800 dark:bg-sand-950">
+    <div className="rounded-card border border-sand-200 bg-sand-50 font-mono text-[12px] leading-6 dark:border-sand-800 dark:bg-sand-950">
       <div className="flex items-center gap-2 border-b border-sand-200 px-4 py-2 text-sand-600 dark:border-sand-800 dark:text-sand-400">
         <span aria-hidden className="size-1.5 rounded-full bg-olive-600 dark:bg-olive-400" />
         components/aicanvas/slice-type.tsx
@@ -195,7 +195,7 @@ function StackTiles() {
     <div className="flex flex-wrap gap-3">
       {STACK.map(({ name, art }) => (
         <div key={name} className="flex flex-col items-center gap-2">
-          <span className="flex size-14 items-center justify-center rounded-2xl border border-sand-200 bg-sand-50 shadow-[0_2px_4px_rgba(0,0,0,0.05),0_8px_16px_-8px_rgba(0,0,0,0.15)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_10px_20px_-8px_rgba(0,0,0,0.6)]">
+          <span className="flex size-14 items-center justify-center rounded-card border border-sand-200 bg-sand-50 shadow-[0_2px_4px_rgba(0,0,0,0.05),0_8px_16px_-8px_rgba(0,0,0,0.15)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_10px_20px_-8px_rgba(0,0,0,0.6)]">
             {art}
           </span>
           <span className="text-[11px] font-medium text-sand-600 dark:text-sand-400">{name}</span>
@@ -217,9 +217,9 @@ function FreeFan({ shots }: { shots: Shot[] }) {
       {shots.slice(0, 3).map((s, i) => (
         <div
           key={s.slug}
-          className={`absolute left-1/2 top-4 w-[52%] max-w-[220px] rounded-xl border border-sand-200 bg-sand-100 p-1.5 shadow-[0_2px_6px_rgba(0,0,0,0.08),0_20px_32px_-12px_rgba(0,0,0,0.3)] transition-transform duration-500 ease-out dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.4),0_24px_40px_-12px_rgba(0,0,0,0.75)] ${pose[i]}`}
+          className={`absolute left-1/2 top-4 w-[52%] max-w-[220px] rounded-inset border border-sand-200 bg-sand-100 p-1.5 shadow-[0_2px_6px_rgba(0,0,0,0.08),0_20px_32px_-12px_rgba(0,0,0,0.3)] transition-transform duration-500 ease-out dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.4),0_24px_40px_-12px_rgba(0,0,0,0.75)] ${pose[i]}`}
         >
-          <img src={s.image} alt="" aria-hidden loading="lazy" decoding="async" className="aspect-[4/3] w-full rounded-lg object-cover" />
+          <img src={s.image} alt="" aria-hidden loading="lazy" decoding="async" className="aspect-[4/3] w-full rounded-control object-cover" />
         </div>
       ))}
     </div>

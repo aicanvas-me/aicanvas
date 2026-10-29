@@ -154,7 +154,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
         <div
           role="group"
           aria-label="Preview size"
-          className="inline-flex items-center gap-1 rounded-xl border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900"
+          className="inline-flex items-center gap-1 rounded-inset border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900"
         >
           {(Object.keys(DEVICES) as Device[]).map((id) => {
             const { label, icon: DeviceIcon } = DEVICES[id]
@@ -165,7 +165,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
                 type="button"
                 aria-pressed={on}
                 onClick={() => setPicked(id)}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${pressedClass(on)}`}
+                className={`inline-flex items-center gap-1.5 rounded-control px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${pressedClass(on)}`}
               >
                 <DeviceIcon weight="regular" size={14} aria-hidden />
                 {label}
@@ -176,7 +176,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
       </div>
 
       {/* The frame */}
-      <div className="mx-auto mt-6 max-w-5xl rounded-[28px] border border-sand-200 bg-sand-100 p-2 shadow-[0_2px_6px_rgba(0,0,0,0.04),0_24px_48px_-24px_rgba(0,0,0,0.18)] sm:p-2.5 dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.3),0_32px_64px_-24px_rgba(0,0,0,0.7)]">
+      <div className="mx-auto mt-6 max-w-5xl rounded-shell border border-sand-200 bg-sand-100 p-2 shadow-[0_2px_6px_rgba(0,0,0,0.04),0_24px_48px_-24px_rgba(0,0,0,0.18)] sm:p-2.5 dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.3),0_32px_64px_-24px_rgba(0,0,0,0.7)]">
         {/* Template row + live link */}
         <div className="flex items-center gap-2 px-1 pb-2 sm:pb-2.5">
           <div
@@ -194,7 +194,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
                   aria-pressed={on}
                   aria-controls="v3-template-screen"
                   onClick={() => setActive(i)}
-                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
+                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-control px-2.5 py-1.5 text-[13px] font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 ${
                     on
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
@@ -208,7 +208,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
           </div>
           <Link
             href={href(t.folder)}
-            className="hidden shrink-0 items-center gap-1 rounded-lg border border-sand-300 px-2.5 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 sm:inline-flex dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
+            className="hidden shrink-0 items-center gap-1 rounded-control border border-sand-300 px-2.5 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 sm:inline-flex dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
           >
             Live preview
             <ArrowUpRight weight="regular" size={13} aria-hidden />
@@ -221,7 +221,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
           role="region"
           aria-label={`${t.name} template, ${d.label.toLowerCase()} view`}
           ref={screenRef}
-          className="relative aspect-[4/5] overflow-hidden rounded-[20px] border border-sand-200 bg-sand-50 sm:aspect-[16/10] dark:border-sand-800 dark:bg-sand-950"
+          className="relative aspect-[4/5] overflow-hidden rounded-[calc(var(--radius-shell)_-_0.5rem)] border border-sand-200 bg-sand-50 sm:aspect-[16/10] dark:border-sand-800 dark:bg-sand-950"
         >
           {/* Poster under the desktop view, so the frame is never empty while
               the live page loads. Only once the section is near: before that
