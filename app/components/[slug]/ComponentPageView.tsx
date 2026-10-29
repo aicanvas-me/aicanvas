@@ -1492,13 +1492,17 @@ export default function ComponentPageView({
       <RailFooter />
 
       {/* ── Fullscreen overlay ───────────────────────────────────────────────
-          The panel scrolls its own overflow: it is fixed, so a component taller
-          than the panel (a scroll-driven block) would otherwise have no
+          The same layers as the inline frame: a bar with the name and the
+          close button, then the preview in its own inset card.
+
+          The card scrolls its own overflow: it is fixed, so a component taller
+          than the card (a scroll-driven block) would otherwise have no
           scrollable ancestor and sit frozen at its first frame. The page behind
-          is NOT locked (that lock is the Remix panel's), so the panel keeps its
+          is NOT locked (that lock is the Remix panel's), so the card keeps its
           scroll to itself with overscroll-contain, and hides the scrollbar it
-          now technically has: every min-h-screen component overflows this
-          panel by the inset, and a visible gutter would shift each one. */}
+          now technically has: every min-h-screen component overflows the card
+          by the bar and insets, and a visible gutter would shift each one.
+          Only the card scrolls, so the close button in the bar stays put. */}
       <AnimatePresence>
         {fullscreen && (
           <motion.div
@@ -1516,33 +1520,39 @@ export default function ComponentPageView({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              data-card-theme={cardTheme}
-              // Collapses each min-h-screen child to the panel's own height —
-              // see [data-preview-fullscreen] in globals.css. Without it every
-              // component overflows this panel by the sm:inset-10 (80px) and
-              // drifts under the wheel while visibly fitting.
-              data-preview-fullscreen
-              className={`absolute inset-0 isolate overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:none] transition-colors duration-300 sm:inset-10 sm:rounded-section sm:border sm:shadow-2xl [&::-webkit-scrollbar]:hidden ${
-                cardTheme === 'dark'
-                  ? 'dark bg-sand-950 sm:border-sand-800'
-                  : 'bg-sand-100 sm:border-sand-200'
-              }`}
+              className="absolute inset-0 flex flex-col overflow-hidden bg-sand-100 dark:bg-sand-900 sm:inset-10 sm:rounded-section sm:border sm:border-sand-200 sm:shadow-2xl sm:dark:border-sand-800"
               onClick={(e) => e.stopPropagation()}
             >
-              {children}
+              <div className="flex shrink-0 items-center justify-between gap-3 px-3 py-3 sm:px-5 sm:py-4">
+                <p className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">{name}</p>
+                <Button
+                  variant="outline"
+                  size="md"
+                  iconOnly
+                  onClick={() => setFullscreen(false)}
+                  aria-label="Close full screen"
+                >
+                  <X weight="regular" size={16} />
+                </Button>
+              </div>
+              <div
+                data-card-theme={cardTheme}
+                className={`isolate mx-2 mb-2 min-h-0 flex-1 overflow-hidden rounded-card border transition-colors duration-300 ${
+                  cardTheme === 'dark' ? 'dark border-sand-800 bg-sand-950' : 'border-sand-200 bg-sand-100'
+                }`}
+              >
+                <div
+                  // Collapses each min-h-screen child to the card's own height —
+                  // see [data-preview-fullscreen] in globals.css. Without it every
+                  // component overflows the card by the bar and insets and
+                  // drifts under the wheel while visibly fitting.
+                  data-preview-fullscreen
+                  className="h-full overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                >
+                  {children}
+                </div>
+              </div>
             </motion.div>
-
-            {/* Close button, outside the panel on purpose: the panel scrolls its
-                own overflow, so a button inside it scrolls away with a tall
-                block. Out here on the fixed backdrop it stays put, and the
-                offsets line up with the panel's own top right corner. */}
-            <button
-              onClick={() => setFullscreen(false)}
-              aria-label="Close fullscreen preview"
-              className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-control border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95 sm:top-14 sm:right-14"
-            >
-              <X weight="regular" size={16} />
-            </button>
           </motion.div>
         )}
       </AnimatePresence>

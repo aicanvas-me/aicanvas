@@ -680,21 +680,35 @@ export function AndromedaComponentView({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.96 }}
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-section sm:border sm:border-sand-800 sm:shadow-2xl"
-            style={{ backgroundColor: themeColor.surface.base }}
+            // The same layers as the inline frame: a bar with the name and the
+            // close button, then the preview in its own inset card. Only the
+            // card scrolls, so the close button never scrolls away and the
+            // scrollbar stays inside the card's corners.
+            className="absolute inset-0 flex flex-col overflow-hidden bg-sand-100 dark:bg-sand-900 sm:inset-10 sm:rounded-section sm:border sm:border-sand-200 sm:shadow-2xl sm:dark:border-sand-800"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex min-h-full items-center justify-center p-8 sm:p-12">
-              <AndromedaDemo slug={slug} />
+            <div className="flex shrink-0 items-center justify-between gap-3 px-3 py-3 sm:px-5 sm:py-4">
+              <p className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">{name}</p>
+              <Button
+                variant="outline"
+                size="md"
+                iconOnly
+                onClick={() => setFullscreen(false)}
+                aria-label="Close full screen"
+              >
+                <X weight="regular" size={16} />
+              </Button>
             </div>
-
-            <button
-              type="button"
-              onClick={() => setFullscreen(false)}
-              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-control border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
+            <div
+              className="mx-2 mb-2 min-h-0 flex-1 overflow-hidden rounded-card border border-sand-200 dark:border-sand-800"
+              style={{ backgroundColor: themeColor.surface.base }}
             >
-              <X weight="regular" size={16} />
-            </button>
+              <div className="h-full overflow-auto overscroll-contain">
+                <div className="flex min-h-full items-center justify-center p-8 sm:p-12">
+                  <AndromedaDemo slug={slug} />
+                </div>
+              </div>
+            </div>
           </motion.div>
         </motion.div>
       )}
