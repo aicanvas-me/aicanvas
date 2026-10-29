@@ -51,7 +51,10 @@ type Cell = {
   noise: string
 }
 
-type Streak = { y: number; right: number; length: number; pattern: string; speed: number }
+// A row of code fragments beside the shape: `edge` is the column next to it,
+// and the stream runs `length` columns away from there, to the left (-1) or
+// the right (1).
+type Streak = { row: number; edge: number; side: -1 | 1; length: number; pattern: string; speed: number }
 
 // public/ai-canvas-icon.svg, its viewBox and its three regions.
 const MARK_BOX = [36.64, 62.29, 340, 291.43] as const
@@ -66,7 +69,8 @@ const MARK_GRADIENT = [147.286, 98.714, 340.061, 268.714] as const
 // the body, because the wall it stands on is the way in.
 const LOCK_BOX = [0, 0, 100, 100] as const
 
-const DENSE = '@%#*+'
+// Densest first. No @: it reads as a blob at this size.
+const DENSE = '#*+=-'
 const NOISE = '#%&*+=<>/\\|-:'
 const TOKENS = ['</>', '{ }', '//', '<div>', '=>', '[ ]', '( )', '::', '/>']
 
@@ -146,7 +150,7 @@ export function AsciiArt({ subject = 'mark', className = '' }: { subject?: Ascii
     let raf = 0
     let last = 0
     let onScreen = true
-    let pointer: { x: number; y: number } | null = null
+    let padX = 0
 
     function layout() {
       const rect = canvas!.getBoundingClientRect()
@@ -160,10 +164,9 @@ export function AsciiArt({ subject = 'mark', className = '' }: { subject?: Ascii
       // Big enough that each glyph reads as a glyph, not as grey noise.
       cell = Math.max(9, Math.min(13, Math.round(Math.min(width, height) / 34)))
       const [bx, by, bw, bh] = subject === 'mark' ? MARK_BOX : LOCK_BOX
-      const scale = Math.min((width * 0.72) / bw, (height * 0.66) / bh)
-      // Nudged right of centre, so the streams coming in from the left have
-      // room to run.
-      const ox = (width - bw * scale) / 2 + width * 0.05
+      // Centred, with room on both sides for the streams.
+      const scale = Math.min((width * 0.66) / bw, (height * 0.66) / bh)
+      const ox = (width - bw * scale) / 2
       const oy = (height - bh * scale) / 2
       const m = new DOMMatrix().translate(ox, oy).scale(scale).translate(-bx, -by)
       const regions = subject === 'mark' ? markRegions(m) : lockRegions(m)
@@ -173,9 +176,10 @@ export function AsciiArt({ subject = 'mark', className = '' }: { subject?: Ascii
       ctx!.setTransform(1, 0, 0, 1, 0, 0)
       const cols = Math.floor(width / cell)
       const rows = Math.floor(height / cell)
-      const padX = (width - cols * cell) / 2
+      padX = (width - cols * cell) / 2
       const padY = (height - rows * cell) / 2
-      const leftEdge = new Map<number, number>()
+      // The first and last column the shape covers on each row.
+      const span = new Map<number, [number, number]>()
       cells = []
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
@@ -183,7 +187,7 @@ export function AsciiArt({ subject = 'mark', className = '' }: { subject?: Ascii
           const y = padY + r * cell + cell / 2
           const region = regions.find((g) => ctx!.isPointInPath(g.path, x, y, g.rule))
           if (!region || !region.ramp) continue
-          if (!leftEdge.has(r)) leftEdge.set(r, x)
+          span.set(r, [span.get(r)?.[0] ?? c, c])
           const t = region.shade((x - ox) / scale + bx, (y - oy) / scale + by)
           const d = clamp01(((x - ox) / (bw * scale)) * 0.62 + ((y - oy) / (bh * scale)) * 0.38)
           cells.push({
@@ -201,25 +205,31 @@ export function AsciiArt({ subject = 'mark', className = '' }: { subject?: Ascii
         }
       }
 
-      // Streams on every few rows that carry the shape, ending one cell short
-      // of its left edge.
-      const edgeRows = [...leftEdge.keys()]
+      // Streams on rows that carry the shape, on both sides, each one empty
+      // cell clear of it. Many run into the shape from the left and two run
+      // out on the right: one flow passing through, the code built in.
+      const shapeRows = [...span.keys()]
       streaks = []
-      const want = Math.min(7, Math.max(3, Math.round(edgeRows.length / 7)))
-      for (let i = 0; i < want; i++) {
-        const r = edgeRows[Math.floor(((i + 0.5) / want) * edgeRows.length)]
-        const right = leftEdge.get(r)! - cell * 1.5
-        const room = Math.floor((right - padX) / cell)
-        if (room < 4) continue
-        const length = Math.max(4, Math.min(room, Math.round(room * (0.35 + Math.random() * 0.55))))
-        const token = TOKENS[(i * 5 + r) % TOKENS.length]
-        streaks.push({
-          y: padY + r * cell + cell / 2,
-          right,
-          length,
-          pattern: `${token}${'·'.repeat(2 + (i % 3))}`,
-          speed: 0.6 + (i % 3) * 0.35,
-        })
+      const incoming = Math.min(6, Math.max(4, Math.round(shapeRows.length / 5)))
+      const rowsFor = { [-1]: [...Array(incoming).keys()].map((i) => (i + 0.5) / incoming), [1]: [0.36, 0.7] }
+      for (const side of [-1, 1] as const) {
+        for (const [i, at] of rowsFor[side].entries()) {
+          const r = shapeRows[Math.min(shapeRows.length - 1, Math.floor(at * shapeRows.length))]
+          const [first, lastCol] = span.get(r)!
+          const edge = side === -1 ? first - 2 : lastCol + 2
+          const room = side === -1 ? edge + 1 : cols - edge
+          if (room < 4) continue
+          const length = Math.max(4, Math.min(room, Math.round(room * (0.35 + Math.random() * 0.55))))
+          const token = TOKENS[(i * 5 + r + (side === 1 ? 3 : 0)) % TOKENS.length]
+          streaks.push({
+            row: padY + r * cell + cell / 2,
+            edge,
+            side,
+            length,
+            pattern: `${token}${'·'.repeat(2 + (i % 3))}`,
+            speed: 0.6 + (i % 3) * 0.35,
+          })
+        }
       }
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
@@ -232,11 +242,11 @@ export function AsciiArt({ subject = 'mark', className = '' }: { subject?: Ascii
       ctx!.fillStyle = ink
       ctx!.textAlign = 'center'
       ctx!.textBaseline = 'middle'
-      ctx!.font = `700 ${Math.round(cell * 1.1)}px ${family}`
+      // Regular weight: a light hand, the glyphs read as type, not as blocks.
+      ctx!.font = `400 ${Math.round(cell * 1.1)}px ${family}`
 
       // The band: a diagonal light that crosses the shape every 6s.
       const band = reduceMotion ? -1 : ((elapsed % 6000) / 6000) * 1.6 - 0.3
-      const radius = cell * 6
 
       for (const k of cells) {
         let glyph = k.glyph
@@ -252,28 +262,23 @@ export function AsciiArt({ subject = 'mark', className = '' }: { subject?: Ascii
           }
           const lift = 1 - Math.abs(k.d - band) / 0.09
           if (lift > 0) alpha = Math.min(1, alpha + lift * 0.45)
-          if (pointer) {
-            const dx = k.x - pointer.x
-            const dy = k.y - pointer.y
-            if (dx * dx + dy * dy < radius * radius) {
-              if (Math.random() < 0.35) glyph = k.scramble[Math.floor(Math.random() * k.scramble.length)]
-              alpha = Math.min(1, alpha + 0.35)
-            }
-          }
         }
         ctx!.globalAlpha = alpha
         ctx!.fillText(glyph, k.x, k.y)
       }
 
-      // Streams: the pattern runs toward the shape and fades with distance
-      // from it.
+      // Streams: every pattern moves left to right (into the shape on the
+      // left, out of it on the right), indexed by absolute column so a token
+      // reads forwards on both sides, and fades with distance from the shape.
+      const n = (a: number, b: number) => ((a % b) + b) % b
       for (const s of streaks) {
         const shift = reduceMotion ? 0 : Math.floor((elapsed / 1000) * s.speed * 6)
         for (let i = 0; i < s.length; i++) {
-          const ch = s.pattern[(((i + shift) % s.pattern.length) + s.pattern.length) % s.pattern.length]
+          const col = s.edge + s.side * i
+          const ch = s.pattern[n(col - shift, s.pattern.length)]
           if (ch === ' ') continue
           ctx!.globalAlpha = 0.5 * (1 - i / s.length)
-          ctx!.fillText(ch, s.right - i * cell, s.y)
+          ctx!.fillText(ch, padX + col * cell + cell / 2, s.row)
         }
       }
       ctx!.globalAlpha = 1
@@ -321,26 +326,11 @@ export function AsciiArt({ subject = 'mark', className = '' }: { subject?: Ascii
           })
     io?.observe(canvas)
 
-    const host = canvas.parentElement
-    const move = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect()
-      pointer = { x: e.clientX - r.left, y: e.clientY - r.top }
-    }
-    const leave = () => {
-      pointer = null
-    }
-    if (!reduceMotion) {
-      host?.addEventListener('pointermove', move)
-      host?.addEventListener('pointerleave', leave)
-    }
-
     return () => {
       cancelAnimationFrame(raf)
       ro.disconnect()
       mo?.disconnect()
       io?.disconnect()
-      host?.removeEventListener('pointermove', move)
-      host?.removeEventListener('pointerleave', leave)
     }
   }, [subject])
 
