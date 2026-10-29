@@ -53,7 +53,7 @@ export function IconDialog({
   absolute: boolean
   onAbsolute: (absolute: boolean) => void
   colour: string | null
-  onColour: (colour: string) => void
+  onColour: (colour: string | null) => void
 }) {
   const { theme } = useTheme()
   const [previewSurface, setPreviewSurface] = useState<'dark' | 'light'>(theme)
@@ -185,7 +185,7 @@ export function IconDialog({
             <Slider themed pill label="Size" value={size} onChange={onSize} min={16} max={64} step={4} format={(value) => `${value}px`} />
             <Slider themed pill label="Stroke" value={strokeWidth} onChange={onStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
             <AbsoluteStrokeControl value={absolute} onChange={onAbsolute} className="h-7 px-1" />
-            <ColourControl value={previewColour} onChange={onColour} className="h-7 px-1" />
+            <ColourControl value={colour} resolved={previewColour} onChange={onColour} triggerClassName="h-7 pl-2 pr-1.5" />
           </div>
           <div className="mt-2">
             <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />

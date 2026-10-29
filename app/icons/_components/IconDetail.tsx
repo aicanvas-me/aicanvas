@@ -141,7 +141,7 @@ export function IconDetail({
               <Slider themed pill label="Stroke" value={strokeWidth} onChange={setStrokeWidth} min={1} max={3} step={0.25} format={(value) => value.toFixed(2)} />
               <div className="flex items-center justify-between">
                 <div className="flex flex-wrap items-center gap-1">
-                  <ColourControl value={previewColour} onChange={setColourOverride} />
+                  <ColourControl value={colourOverride} resolved={previewColour} onChange={setColourOverride} align="start" />
                   <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} label="Absolute stroke" />
                 </div>
                 <button
