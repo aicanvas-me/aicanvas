@@ -438,6 +438,18 @@ html[data-frame][data-frame-light] {
     scrollbar-width: auto;
     scrollbar-color: auto;
   }
+  /* The sidebar catalog list: no thumb at rest, the usual thin thumb while it
+     scrolls (CatalogNav sets data-scrolling). The track stays reserved by its
+     stable gutter, so nothing shifts when the thumb appears. */
+  [data-catalog-list] {
+    scrollbar-color: transparent transparent;
+  }
+  [data-catalog-list][data-scrolling] {
+    scrollbar-color: var(--color-sand-300) transparent;
+  }
+  .dark [data-catalog-list][data-scrolling] {
+    scrollbar-color: var(--color-sand-800) transparent;
+  }
 }
 
 /* Step timeline connector — used by app/components/Step.tsx */

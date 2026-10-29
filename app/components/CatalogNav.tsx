@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type UIEvent } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { CaretDown, Cube, DiamondsFour, Shapes, Sparkle } from '@phosphor-icons/react'
 import { CATEGORIES } from '../lib/categories'
@@ -435,6 +435,18 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
     list.scrollTop += r.top - box.top - (box.height - r.height) / 2
   }, [pathname, segment])
 
+  // The list's scrollbar is invisible at rest and shows only while the list
+  // moves: data-scrolling is set on every scroll event and cleared 900ms
+  // after the last one (globals.css paints the thumb only under it).
+  const scrollIdle = useRef<ReturnType<typeof setTimeout>>(undefined)
+  useEffect(() => () => clearTimeout(scrollIdle.current), [])
+  const onListScroll = (e: UIEvent<HTMLDivElement>) => {
+    const list = e.currentTarget
+    list.dataset.scrolling = ''
+    clearTimeout(scrollIdle.current)
+    scrollIdle.current = setTimeout(() => delete list.dataset.scrolling, 900)
+  }
+
   // Active category resolves from the path first (canonical
   // /components/category/<slug>), then falls back to the legacy ?category=
   // query param so old bookmarks still highlight correctly.
@@ -516,7 +528,7 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
             title={s.label}
             tabIndex={selected ? 0 : -1}
             onClick={() => pick(s.id)}
-            // Sized so the longest label, "Design systems", fits the 240px
+            // Sized so the longest label, "Design systems", fits the 256px
             // rail whole: 12px text, 32px idle tabs, tight active padding.
             className={`inline-flex h-8 items-center justify-center gap-1 rounded-full text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
               selected
@@ -655,7 +667,7 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
   return (
     <div ref={rootRef} className="flex min-h-0 flex-1 flex-col">
       <div className="shrink-0 px-3 pt-2">{tabs}</div>
-      <div data-catalog-list className="min-h-0 flex-1 overflow-y-auto pb-2 [scrollbar-gutter:stable]" style={LIST_MASK}>
+      <div data-catalog-list onScroll={onListScroll} className="min-h-0 flex-1 overflow-y-auto pb-2 [scrollbar-gutter:stable]" style={LIST_MASK}>
         <div className="pl-3 pr-[max(1px,calc(12px_-_(100cqw_-_100%)))]">{panels}</div>
       </div>
     </div>

@@ -452,11 +452,11 @@ function TopBar({
 }) {
   return (
     <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center border-b border-sand-200 bg-sand-50/90 backdrop-blur dark:border-sand-800 dark:bg-sand-950/90">
-      {/* Logo block — mirrors the site Sidebar rail exactly (w-60, px-4, gap-2,
+      {/* Logo block — mirrors the site Sidebar rail exactly (w-64, px-4, gap-2,
           wordmark always shown) and carries the SAME full-height border-r the
           sidebar draws. Keeps the logo in the identical spot and makes the
           divider read as one continuous line with the rest of the site. */}
-      <div className="flex h-full w-auto shrink-0 items-center border-r border-sand-200 px-4 md:w-60 dark:border-sand-800">
+      <div className="flex h-full w-auto shrink-0 items-center border-r border-sand-200 px-4 md:w-64 dark:border-sand-800">
         <Link
           href="/"
           aria-label="AI Canvas home"

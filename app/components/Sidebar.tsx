@@ -40,7 +40,7 @@ export function Sidebar() {
   if (hideSidebar) return null
 
   return (
-    <aside className={`@container flex h-full w-60 shrink-0 flex-col bg-sand-50 dark:bg-sand-950 ${pinnedDark ? 'dark' : ''}`}>
+    <aside className={`@container flex h-full w-64 shrink-0 flex-col bg-sand-50 dark:bg-sand-950 ${pinnedDark ? 'dark' : ''}`}>
       {ownBar && (
         <div className="flex h-14 shrink-0 items-center px-5">
           <HomeLogo />
