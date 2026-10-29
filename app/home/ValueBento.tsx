@@ -1,11 +1,12 @@
 // "Why AI Canvas": seven cards in three rows (wide + narrow, three equal,
 // narrow + wide), each a short claim with a small picture of it. Every picture
-// is drawn UI on the hero map's wells (the repo, the licence, the system, the
-// stack, the free library, the Premium panel), CSS and inline SVG only.
-// Server component; hover moves a picture a little, nothing loops.
+// is drawn UI or a small drawn object (the repo, two ways in, a stamped
+// licence, a system filling in, the stack, an open lock, the Premium panel),
+// CSS and inline SVG only. Server component; three pictures loop quietly,
+// still under reduced motion.
 
 import type { ReactNode } from 'react'
-import { Brain, Browser, Check, Cube, LockOpen, Plus, Sparkle, SquaresFour } from '@phosphor-icons/react/dist/ssr'
+import { Brain, Browser, Cube, LockOpen, Sparkle, SquaresFour } from '@phosphor-icons/react/dist/ssr'
 import { Reveal } from './Reveal'
 import { ClaudeMark, CodexMark, CursorMark } from '../mcp/InstallCards'
 
@@ -135,66 +136,68 @@ function TwoWaysIn() {
   )
 }
 
-// A licence read the way a buyer reads one: what am I allowed to do.
-function LicenceSheet() {
-  const rows = ['Personal projects', 'Client projects', 'Your own products']
+// Three small pictures with one quiet loop each (keyframes below). The
+// resting style of every moving part is its finished frame, so under reduced
+// motion each picture stands still in its final state.
+const ANIM = `
+.vb-art .vb-move { transform-box: fill-box; transform-origin: center }
+.vb-shackle { transform: translateY(-12px); animation: vb-unlock 4.8s cubic-bezier(.22,1,.36,1) infinite }
+.vb-glow { animation: vb-glow 4.8s cubic-bezier(.22,1,.36,1) infinite }
+.vb-seal { animation: vb-stamp 4.8s cubic-bezier(.22,1,.36,1) infinite }
+.vb-ripple { opacity: 0; animation: vb-ripple 4.8s ease-out infinite }
+.vb-fill { animation: vb-fill 5.2s cubic-bezier(.22,1,.36,1) infinite }
+.vb-scan { opacity: 0; animation: vb-scan 5.2s ease-in-out infinite }
+.vb-check { animation: vb-check 5.2s cubic-bezier(.22,1,.36,1) infinite }
+@keyframes vb-unlock { 0%, 18% { transform: translateY(0) } 34%, 82% { transform: translateY(-12px) } 100% { transform: translateY(0) } }
+@keyframes vb-glow { 0%, 22% { opacity: 0; transform: scale(.85) } 40%, 80% { opacity: 1; transform: scale(1) } 100% { opacity: 0; transform: scale(.85) } }
+@keyframes vb-stamp { 0%, 10% { opacity: 0; transform: translate(10px, -16px) scale(1.35) } 26% { opacity: 1; transform: translate(0, 0) scale(.94) } 32%, 84% { opacity: 1; transform: none } 100% { opacity: 0; transform: none } }
+@keyframes vb-ripple { 0%, 26% { opacity: 0; transform: scale(1) } 30% { opacity: .5 } 60%, 100% { opacity: 0; transform: scale(1.8) } }
+@keyframes vb-fill { 0%, 14% { opacity: 0; transform: scale(.5) } 30%, 88% { opacity: 1; transform: scale(1) } 100% { opacity: 0; transform: scale(.5) } }
+@keyframes vb-scan { 0%, 32% { opacity: 0; transform: translateY(0) } 36% { opacity: .5 } 58% { opacity: .5; transform: translateY(92px) } 62%, 100% { opacity: 0; transform: translateY(92px) } }
+@keyframes vb-check { 0%, 60% { opacity: 0; transform: scale(.4) } 68%, 88% { opacity: 1; transform: scale(1) } 100% { opacity: 0; transform: scale(1) } }
+@media (prefers-reduced-motion: reduce) { .vb-art * { animation: none !important } }
+`
+
+const PAPER = 'fill-sand-50 stroke-sand-300 dark:fill-sand-950 dark:stroke-sand-700'
+const LINE = 'fill-sand-200 dark:fill-sand-800'
+const PAPER_SHADOW = { filter: 'drop-shadow(0 8px 12px rgb(0 0 0 / 0.16))' }
+
+// Commercial use: a licence sheet, stamped.
+function LicenceStamp() {
   return (
-    <div className={`${WELL} ${LIFT} mx-auto w-full max-w-[240px] p-4 transition-transform duration-500 ease-out group-hover:-translate-y-0.5`}>
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-sand-600 dark:text-sand-400">Licence</span>
-        <span className="flex gap-1">
-          {['MIT', 'Premium'].map((l) => (
-            <span key={l} className="rounded-full border border-sand-300 px-1.5 py-0.5 text-[10px] font-semibold leading-none text-sand-700 dark:border-sand-700 dark:text-sand-300">
-              {l}
-            </span>
-          ))}
-        </span>
-      </div>
-      <ul className="mt-3 divide-y divide-sand-200 dark:divide-sand-800">
-        {rows.map((r) => (
-          <li key={r} className="flex items-center justify-between py-2 text-[12px] font-medium text-sand-800 dark:text-sand-200">
-            {r}
-            <span className="flex size-4 items-center justify-center rounded-full bg-success/15">
-              <Check weight="regular" size={10} className={OK} />
-            </span>
-          </li>
-        ))}
-      </ul>
-    </div>
+    <svg viewBox="0 0 120 120" className="vb-art mx-auto size-36 overflow-visible" aria-hidden>
+      <rect x="30" y="14" width="60" height="80" rx="10" strokeWidth="1.5" className={PAPER} style={PAPER_SHADOW} />
+      <rect x="40" y="27" width="24" height="4" rx="2" className="fill-sand-300 dark:fill-sand-700" />
+      <rect x="40" y="39" width="40" height="3" rx="1.5" className={LINE} />
+      <rect x="40" y="47" width="34" height="3" rx="1.5" className={LINE} />
+      <rect x="40" y="55" width="38" height="3" rx="1.5" className={LINE} />
+      <rect x="40" y="63" width="22" height="3" rx="1.5" className={LINE} />
+      <circle cx="80" cy="86" r="17" fill="none" strokeWidth="1.5" className="vb-move vb-ripple stroke-accent" />
+      <g className="vb-move vb-seal">
+        <circle cx="80" cy="86" r="17" className="fill-accent" />
+        <path d="M72.5 86.5l5 5 10-11" fill="none" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" className="stroke-accent-foreground" />
+      </g>
+    </svg>
   )
 }
 
-// The system the agent already holds, a new piece joining it, and the checks
-// it passes before the work is called done.
-function SystemGrows() {
-  const glyphs: ReactNode[] = [
-    <span key="b" className="block h-2.5 w-8 rounded-control bg-accent" />,
-    <span key="t" className="relative block h-2.5 w-5 rounded-full bg-sand-300 dark:bg-sand-700"><span className="absolute right-0.5 top-0.5 size-1.5 rounded-full bg-sand-50" /></span>,
-    <span key="a" className="block size-4 rounded-full bg-sand-300 dark:bg-sand-700" />,
-    <span key="i" className="block h-2.5 w-9 rounded-control border border-sand-300 dark:border-sand-700" />,
-    <span key="c" className="block h-2.5 w-6 rounded-full border border-sand-300 dark:border-sand-700" />,
-  ]
+// The agent extends the system: the empty slot fills, a check runs over the
+// grid, and it passes.
+function SystemFill() {
+  const cells = [0, 1, 2, 3, 4, 5, 6, 7].map((i) => ({ x: 16 + (i % 3) * 32, y: 16 + Math.floor(i / 3) * 32 }))
   return (
-    <div className="mx-auto w-full max-w-[236px]">
-      <div className="grid grid-cols-3 gap-1.5">
-        {glyphs.map((g, i) => (
-          <span key={i} className={`${WELL} flex h-11 items-center justify-center`}>
-            {g}
-          </span>
-        ))}
-        <span className="flex h-11 items-center justify-center rounded-card border border-dashed border-sand-400 text-sand-600 transition-colors duration-300 group-hover:border-solid group-hover:bg-sand-50 dark:border-sand-600 dark:text-sand-400 dark:group-hover:bg-sand-950">
-          <Plus weight="regular" size={14} />
-        </span>
-      </div>
-      <div className="mt-3 flex flex-wrap justify-center gap-1.5">
-        {['Tokens', 'Radius', 'States'].map((c) => (
-          <span key={c} className="flex items-center gap-1 rounded-full border border-sand-200 bg-sand-50 px-2 py-0.5 text-[10px] font-semibold text-sand-700 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-300">
-            <Check weight="regular" size={10} className={OK} />
-            {c}
-          </span>
-        ))}
-      </div>
-    </div>
+    <svg viewBox="0 0 120 120" className="vb-art mx-auto size-36 overflow-visible" aria-hidden>
+      {cells.map(({ x, y }, i) => (
+        <rect key={i} x={x} y={y} width="24" height="24" rx="7" className={LINE} />
+      ))}
+      <rect x="80.75" y="80.75" width="22.5" height="22.5" rx="6.5" fill="none" strokeWidth="1.5" strokeDasharray="3 3" className="stroke-sand-400 dark:stroke-sand-600" />
+      <rect x="80" y="80" width="24" height="24" rx="7" className="vb-move vb-fill fill-accent" />
+      <rect x="10" y="12" width="100" height="1.5" rx="0.75" className="vb-scan fill-accent" />
+      <g className="vb-move vb-check">
+        <circle cx="104" cy="80" r="8" className="fill-success" />
+        <path d="M100.5 80.2l2.4 2.4 4.6-5" fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="stroke-sand-50 dark:stroke-sand-950" />
+      </g>
+    </svg>
   )
 }
 
@@ -202,7 +205,7 @@ const STACK: { name: string; art: ReactNode }[] = [
   {
     name: 'React',
     art: (
-      <svg viewBox="-11.5 -10.23 23 20.46" className="size-4" aria-hidden>
+      <svg viewBox="-11.5 -10.23 23 20.46" className="size-6" aria-hidden>
         <circle r="2.05" fill="#58C4DC" />
         <g fill="none" stroke="#58C4DC" strokeWidth="1.2">
           <ellipse rx="11" ry="4.2" />
@@ -215,15 +218,15 @@ const STACK: { name: string; art: ReactNode }[] = [
   {
     name: 'TypeScript',
     art: (
-      <span aria-hidden className="flex size-4 items-end justify-end rounded-[3px] bg-[#3178C6] px-px pb-px text-[7px] font-bold leading-none text-white">
+      <span aria-hidden className="flex size-6 items-end justify-end rounded-[4px] bg-[#3178C6] px-0.5 pb-px text-[10px] font-bold leading-none text-white">
         TS
       </span>
     ),
   },
   {
-    name: 'Tailwind CSS',
+    name: 'Tailwind',
     art: (
-      <svg viewBox="0 0 24 24" className="size-4" aria-hidden>
+      <svg viewBox="0 0 24 24" className="size-6" aria-hidden>
         <path
           fill="#38BDF8"
           d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.337 6.182 14.976 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.337 13.382 8.976 12 6.001 12z"
@@ -232,9 +235,9 @@ const STACK: { name: string; art: ReactNode }[] = [
     ),
   },
   {
-    name: 'shadcn CLI',
+    name: 'shadcn',
     art: (
-      <svg viewBox="0 0 256 256" className="size-4 text-sand-900 dark:text-sand-50" aria-hidden>
+      <svg viewBox="0 0 256 256" className="size-6 text-sand-900 dark:text-sand-50" aria-hidden>
         <g fill="none" stroke="currentColor" strokeWidth="26" strokeLinecap="round">
           <line x1="208" y1="128" x2="128" y2="208" />
           <line x1="192" y1="40" x2="40" y2="192" />
@@ -244,55 +247,32 @@ const STACK: { name: string; art: ReactNode }[] = [
   },
 ]
 
-// The stack as layers resting on the project you already have; on hover they
-// fan out a little, like plates lifted off a pile.
-function LayerStack() {
+function StackTiles() {
   return (
-    <div className="mx-auto flex w-full max-w-[220px] flex-col gap-1.5">
-      {STACK.map(({ name, art }, i) => (
-        <span
-          key={name}
-          className={`${WELL} flex h-8 items-center gap-2.5 px-3 text-[12px] font-medium text-sand-800 transition-transform duration-500 ease-out dark:text-sand-200`}
-          style={{ transform: `translateX(${(STACK.length - 1 - i) * 3}px)` }}
-        >
-          {art}
-          {name}
-        </span>
+    <div className="flex flex-wrap gap-3">
+      {STACK.map(({ name, art }) => (
+        <div key={name} className="flex flex-col items-center gap-2">
+          <span className="flex size-14 items-center justify-center rounded-card border border-sand-200 bg-sand-50 shadow-[0_2px_4px_rgba(0,0,0,0.05),0_8px_16px_-8px_rgba(0,0,0,0.15)] dark:border-sand-800 dark:bg-sand-950 dark:shadow-[0_2px_4px_rgba(0,0,0,0.4),0_10px_20px_-8px_rgba(0,0,0,0.6)]">
+            {art}
+          </span>
+          <span className="text-[11px] font-medium text-sand-600 dark:text-sand-400">{name}</span>
+        </div>
       ))}
-      <span className="flex h-8 items-center justify-center rounded-card border border-dashed border-sand-400 font-mono text-[11px] text-sand-600 dark:border-sand-600 dark:text-sand-400">
-        your project
-      </span>
     </div>
   )
 }
 
-// One square per free piece, a few lit at random, so the size of the free
-// library reads at a glance.
-function FreeMosaic({ count }: { count: number }) {
+// Free means MIT: the lock is open.
+function OpenLock() {
   return (
-    <div className="mx-auto w-full max-w-[260px]">
-      <div className="grid grid-cols-[repeat(13,minmax(0,1fr))] gap-1">
-        {Array.from({ length: count }, (_, i) => {
-          const lit = (i * 7) % 11 === 0
-          return (
-            <span
-              key={i}
-              className={`block aspect-square rounded-[3px] transition-colors duration-500 ${
-                lit
-                  ? 'bg-accent'
-                  : i % 2
-                    ? 'bg-sand-200 group-hover:bg-sand-300 dark:bg-sand-800 dark:group-hover:bg-sand-700'
-                    : 'bg-sand-200 dark:bg-sand-800'
-              }`}
-            />
-          )
-        })}
-      </div>
-      <div className="mt-3 flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-sand-600 dark:text-sand-400">
-        <span>{count} free</span>
-        <span>MIT</span>
-      </div>
-    </div>
+    <svg viewBox="0 0 120 120" className="vb-art mx-auto size-36 overflow-visible" aria-hidden>
+      <circle cx="60" cy="72" r="46" className="vb-move vb-glow fill-sand-200/70 dark:fill-sand-800/40" />
+      <path d="M44 64V42a16 16 0 0 1 32 0v22" fill="none" strokeWidth="7" strokeLinecap="round" className="vb-shackle stroke-sand-400 dark:stroke-sand-600" />
+      <rect x="28" y="56" width="64" height="46" rx="14" strokeWidth="1.5" className={PAPER} style={PAPER_SHADOW} />
+      <text x="60" y="84" textAnchor="middle" className="fill-sand-900 font-mono text-[12px] font-semibold tracking-[0.2em] dark:fill-sand-50">
+        MIT
+      </text>
+    </svg>
   )
 }
 
@@ -335,6 +315,7 @@ export function ValueBento({ freeTotal }: { freeTotal: number }) {
   // what you may do with it, then free and Premium last, right above the plans.
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <style>{ANIM}</style>
       {/* Row 1 */}
       <Reveal y={12} className="h-full lg:col-span-2">
         <div className={`${CARD} sm:flex-row sm:items-center sm:gap-10`}>
@@ -364,7 +345,7 @@ export function ValueBento({ freeTotal }: { freeTotal: number }) {
       <Reveal y={12} className="h-full">
         <div className={CARD}>
           <div className="flex flex-1 items-center justify-center py-6">
-            <LicenceSheet />
+            <LicenceStamp />
           </div>
           <Copy title="Commercial work is allowed.">
             Client projects and your own products alike. The MIT library and the Premium License both allow personal and
@@ -375,7 +356,7 @@ export function ValueBento({ freeTotal }: { freeTotal: number }) {
       <Reveal y={12} delay={0.06} className="h-full">
         <div className={CARD}>
           <div className="flex flex-1 items-center justify-center py-6">
-            <SystemGrows />
+            <SystemFill />
           </div>
           <Copy title="A system your agent can extend.">
             The AI Brain hands your agent the whole system, so new screens and new components fit, and scripts check
@@ -385,8 +366,8 @@ export function ValueBento({ freeTotal }: { freeTotal: number }) {
       </Reveal>
       <Reveal y={12} delay={0.12} className="h-full">
         <div className={CARD}>
-          <div className="flex flex-1 items-center justify-center py-6">
-            <LayerStack />
+          <div className="flex flex-1 items-center py-6">
+            <StackTiles />
           </div>
           <Copy title="The stack you already use.">
             React, TypeScript and Tailwind CSS, with Framer Motion for movement, installed by the shadcn CLI into the
@@ -399,7 +380,7 @@ export function ValueBento({ freeTotal }: { freeTotal: number }) {
       <Reveal y={12} className="h-full">
         <div className={CARD}>
           <div className="flex flex-1 items-center py-6">
-            <FreeMosaic count={freeTotal} />
+            <OpenLock />
           </div>
           <div className="mt-6">
             <Copy title="Free means MIT.">
