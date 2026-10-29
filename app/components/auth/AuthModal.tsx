@@ -2,9 +2,8 @@
 
 import { useEffect, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { X } from '@phosphor-icons/react'
-import { Button } from '../Button'
 import { useDialogFocus } from '../useDialogFocus'
+import { AuthCard } from './AuthCard'
 import { useAuthModal } from './AuthModalProvider'
 import { isPinnedDarkRoute } from '../../lib/pinned-dark'
 import { AuthGateScreen } from './AuthGateScreen'
@@ -15,7 +14,8 @@ import { SignUpFormFields } from './SignUpFormFields'
 // Global auth dialog. Opens via useAuthModal().open() and closes on X click
 // or any pathname change — backdrop clicks and ESC are intentionally NOT
 // handled, so users only exit deliberately via the close button. Renders
-// SignInFormFields or SignUpFormFields depending on `mode`. The internal
+// SignInFormFields or SignUpFormFields depending on `mode`, inside the shared
+// AuthCard (art left, form right on a laptop). The internal
 // "Create an account" / "Already have one? Sign in" links flip the mode in
 // place rather than navigating, keeping the modal open for a single
 // seamless flow.
@@ -85,7 +85,7 @@ export function AuthModal() {
       // the root layout and so sits outside that route's scoped `dark` wrapper.
       // Without this a light-theme visitor gets a light sand dialog over a dark
       // console. Match the page it is covering.
-      className={`fixed inset-0 z-[100] flex items-center justify-center px-4 py-6 ${
+      className={`fixed inset-0 z-[100] flex justify-center overflow-y-auto px-4 py-6 ${
         isPinnedDarkRoute(pathname) ? 'dark' : ''
       }`}
     >
@@ -94,24 +94,12 @@ export function AuthModal() {
           accidentally. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-sand-950/80 backdrop-blur-sm"
+        className="fixed inset-0 bg-sand-950/80 backdrop-blur-sm"
       />
 
-      {/* Dialog */}
-      <div
-        ref={dialogRef}
-        className="relative z-10 w-full max-w-md rounded-section border border-sand-200 bg-sand-100 p-8 shadow-2xl dark:border-sand-800 dark:bg-sand-900"
-      >
-        <Button
-          variant="icon"
-          size="md"
-          onClick={close}
-          aria-label="Close"
-          className="absolute right-3 top-3"
-        >
-          <X weight="regular" size={18} />
-        </Button>
-
+      {/* Dialog. my-auto centres it while it fits and lets the wrapper scroll
+          when a short window cannot hold the form. */}
+      <AuthCard ref={dialogRef} onClose={close} className="z-10 my-auto shadow-2xl">
         {mode === 'gate' ? (
           <AuthGateScreen
             title={title ?? undefined}
@@ -131,7 +119,7 @@ export function AuthModal() {
             onSwitchToSignIn={() => setMode('sign-in')}
           />
         )}
-      </div>
+      </AuthCard>
     </div>
   )
 }

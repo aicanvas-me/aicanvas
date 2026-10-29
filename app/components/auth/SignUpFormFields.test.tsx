@@ -10,7 +10,6 @@ vi.mock('../../lib/supabase/client', () => ({
 // The wording of a Supabase error is not under test; pass it straight through.
 vi.mock('../../lib/auth-errors', () => ({ formatAuthError: (e: { message: string }) => e.message }))
 vi.mock('../../lib/analytics', () => ({ track: () => {} }))
-vi.mock('./NerdToHero', () => ({ NerdToHero: () => null }))
 vi.mock('../../account/GoogleSignInButton', () => ({ GoogleSignInButton: () => null }))
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,

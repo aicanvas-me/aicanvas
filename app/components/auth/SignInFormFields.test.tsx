@@ -11,7 +11,6 @@ const signInWithOtp = vi.fn()
 vi.mock('../../lib/supabase/client', () => ({
   createClient: () => ({ auth: { signInWithPassword, signInWithOtp } }),
 }))
-vi.mock('./TerminatorReveal', () => ({ TerminatorReveal: () => null }))
 vi.mock('../../account/GoogleSignInButton', () => ({ GoogleSignInButton: () => null }))
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,

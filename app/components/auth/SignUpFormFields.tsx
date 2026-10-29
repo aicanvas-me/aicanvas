@@ -8,7 +8,7 @@ import { track } from '../../lib/analytics'
 import { GoogleSignInButton } from '../../account/GoogleSignInButton'
 import { PasswordInput } from '../../account/PasswordInput'
 import { Button } from '../Button'
-import { NerdToHero } from './NerdToHero'
+import { AuthHeading } from './AuthCard'
 
 // ─── SignUpFormFields ─────────────────────────────────────────────────────────
 // Sign-up form body, mirroring SignInFormFields. Shared between the standalone
@@ -72,7 +72,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
 
   return (
     <>
-      <NerdToHero />
+      <AuthHeading title="Create your account." subtitle="Free and unlimited. Install any free component with one command and keep a collection of your own." />
 
       {sent ? (
         <div className="mt-6 rounded-inset border border-accent/30 bg-accent/10 p-4 text-sm text-sand-900 dark:text-sand-100">

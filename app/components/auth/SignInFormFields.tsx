@@ -8,10 +8,10 @@ import { formatAuthError } from '../../lib/auth-errors'
 import { GoogleSignInButton } from '../../account/GoogleSignInButton'
 import { PasswordInput } from '../../account/PasswordInput'
 import { Button } from '../Button'
-import { TerminatorReveal } from './TerminatorReveal'
+import { AuthHeading } from './AuthCard'
 
 // ─── SignInFormFields ─────────────────────────────────────────────────────────
-// The actual sign-in form. Mirrors SignUpFormFields visually — same NerdToHero
+// The actual sign-in form. Mirrors SignUpFormFields visually — same AuthHeading
 // header, same Google → divider → form → switch-link → legal rhythm — so the
 // two modes feel like a single product surface in two flavors.
 //
@@ -155,7 +155,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
   if (magicSent) {
     return (
       <>
-        <TerminatorReveal />
+        <AuthHeading title="Welcome back." subtitle="One more step, in your inbox." />
         <div className="mt-6 rounded-inset border border-accent/30 bg-accent/10 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
           Check your inbox. If an account exists for <strong>{email}</strong>, a one-time sign-in link is on its way. It expires in 1 hour.
         </div>
@@ -174,7 +174,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
 
   return (
     <>
-      <TerminatorReveal />
+      <AuthHeading title="Welcome back." subtitle="Sign in to install, save and remix components." />
 
       <div className="mt-6 space-y-3">
         <GoogleSignInButton next={next} label="Sign in with Google" />
