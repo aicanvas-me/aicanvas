@@ -306,7 +306,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
                         // a bare "Open source" here would be false. Every other
                         // surface (terms, faq, impressum, about) already scopes it.
                         { text: 'MIT', label: 'Free library, open source', href: `${GITHUB_URL}/blob/main/LICENSE`, external: true },
-                        { text: 'CLI', label: 'One command, done in seconds', href: '#how-remix' },
+                        { text: 'CLI', label: 'One shadcn command, editable source', href: '#how-remix' },
                         { text: 'MCP', label: 'Ready for your AI editor', href: '/mcp' },
                       ] as { count?: number; text?: string; label: string; href: string; external?: boolean }[]
                     ).map(({ count, text, label, href, external }) => (

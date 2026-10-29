@@ -92,7 +92,7 @@ export default function McpPage() {
           sub={
             <span className="block text-balance">
               Save tokens. Don&rsquo;t start from scratch. Your agent pulls a finished component with the design
-              spec and the motion included, and you just adapt it to your project. It takes seconds.
+              spec and the motion included, and you just adapt it to your project.
             </span>
           }
         />
