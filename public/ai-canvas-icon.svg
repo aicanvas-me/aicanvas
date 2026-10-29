@@ -5,8 +5,8 @@
 <path fill-rule="evenodd" clip-rule="evenodd" d="M195.857 208H86.5715L147.286 98.7144H259.607L195.857 208Z" fill="#373738" style="fill:#373738;fill:color(display-p3 0.2157 0.2157 0.2196);fill-opacity:1;"/>
 <defs>
 <linearGradient id="paint0_linear_609_292" x1="147.286" y1="98.7142" x2="340.061" y2="268.714" gradientUnits="userSpaceOnUse">
-<stop stop-color="#BECF5D" style="stop-color:#BECF5D;stop-color:color(display-p3 0.7451 0.8118 0.3647);stop-opacity:1;"/>
-<stop offset="1" stop-color="#92A143" style="stop-color:#92A143;stop-color:color(display-p3 0.5721 0.6300 0.2622);stop-opacity:1;"/>
+<stop stop-color="#C6C6CB"/>
+<stop offset="1" stop-color="#99999D"/>
 </linearGradient>
 </defs>
 </svg>

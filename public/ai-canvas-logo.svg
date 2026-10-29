@@ -8,8 +8,8 @@
 <text x="38" y="18" font-family="Manrope, ui-sans-serif, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" letter-spacing="-0.4" fill="#1B1B1C">AI Canvas</text>
 <defs>
 <linearGradient id="ai_canvas_logo_grad" x1="147.286" y1="98.7142" x2="340.061" y2="268.714" gradientUnits="userSpaceOnUse">
-<stop stop-color="#BECF5D"/>
-<stop offset="1" stop-color="#92A143"/>
+<stop stop-color="#C6C6CB"/>
+<stop offset="1" stop-color="#99999D"/>
 </linearGradient>
 </defs>
 </svg>
