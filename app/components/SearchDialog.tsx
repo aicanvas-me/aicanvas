@@ -27,6 +27,7 @@ import {
   FolderSimple,
   Layout,
   MagnifyingGlass,
+  Shapes,
   SquaresFour,
   Stack,
   type IconProps,
@@ -44,8 +45,10 @@ import {
 import { premiumEnabled } from '../../lib/flags'
 import { wordVariants } from '../lib/search-match'
 import { DOCS_NAV } from '../docs/_lib/nav'
+import ICONS from '../icons/_data/icons.generated.json'
+import { ICON_CATEGORY_LABELS, ICON_COUNT, type IconCategorySlug } from '../icons/_lib/categories'
 
-type Tab = 'all' | 'systems' | 'templates' | 'components' | 'pages'
+type Tab = 'all' | 'systems' | 'templates' | 'components' | 'icons' | 'pages'
 // What it costs to install: Andromeda Pro is all paid, a
 // standalone is paid when badged Premium, and Andromeda Legacy and the
 // other standalones are free. Categories and pages carry no tier.
@@ -58,13 +61,16 @@ type Item = {
   icon: ComponentType<IconProps>
   tier?: Tier
 }
-type Group = { label: string; tab: Exclude<Tab, 'all'>; items: Item[] }
+// `idle` is what a group lists before a word is typed, for a group too long
+// to show whole (the icon set lists its page, not 821 rows).
+type Group = { label: string; tab: Exclude<Tab, 'all'>; items: Item[]; idle?: Item[] }
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'systems', label: 'Design systems' },
   { id: 'templates', label: 'Templates' },
   { id: 'components', label: 'Components & blocks' },
+  { id: 'icons', label: 'Icons' },
   { id: 'pages', label: 'Pages' },
 ]
 
@@ -72,6 +78,8 @@ const PRO = '/design-systems/andromeda-pro'
 const LEGACY = '/design-systems/andromeda'
 
 const page = (name: string, href: string, keywords = ''): Item => ({ id: `page:${href}`, name, href, keywords, icon: FileText })
+
+const ICONS_PAGE: Item = { ...page('Icons', '/icons', `all ${ICON_COUNT} icon set svg line duotone solid`), icon: Shapes }
 
 const GROUPS: Group[] = [
   {
@@ -145,6 +153,21 @@ const GROUPS: Group[] = [
     })),
   },
   {
+    label: 'Icons',
+    tab: 'icons',
+    idle: [ICONS_PAGE],
+    items: [
+      ICONS_PAGE,
+      ...ICONS.map((i) => ({
+        id: `icon:${i.name}`,
+        name: i.name,
+        href: `/icons/${i.name}`,
+        keywords: `${ICON_CATEGORY_LABELS[i.category as IconCategorySlug]} ${i.tags.join(' ')}`,
+        icon: Shapes,
+      })),
+    ],
+  },
+  {
     label: 'Pages',
     tab: 'pages',
     items: [
@@ -199,6 +222,9 @@ function score(item: Item, words: string[]): number {
       total += s
     }
   }
+  // A one-word query that IS the name ("icons" for Icons) ranks above a name
+  // that only starts with it (Icon Button).
+  if (words.length === 1 && name.replace(/s$/, '') === words[0]) total += 4
   const need = Math.ceil(words.length / 2)
   return matched >= need ? total + matched * 10 : 0
 }
@@ -211,7 +237,7 @@ function search(tab: Tab, query: string): Group[] {
   const tierWord = all.find((w) => w in TIER_FILTER && !(w === 'pro' && all.includes('andromeda')))
   const want = tierWord ? TIER_FILTER[tierWord] : undefined
   const words = all.filter((w) => w !== tierWord)
-  if (!want && words.length === 0) return groups
+  if (!want && words.length === 0) return groups.map((g) => (g.idle ? { ...g, items: g.idle } : g))
   return groups
     .map((g) => {
       const ranked = g.items
