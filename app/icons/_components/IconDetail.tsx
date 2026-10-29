@@ -208,7 +208,9 @@ export function IconDetail({
             onSurfaceChange={setPreviewSurface}
             className="h-[300px] min-w-0 sm:h-[380px] lg:h-[440px]"
           />
-          <div className="@container flex min-w-0 flex-col gap-2 p-3 pt-5 sm:p-5">
+          {/* On a phone the controls share the preview card's edges, which
+              leaves the style track room for all four styles. */}
+          <div className="@container flex min-w-0 flex-col gap-2 px-0 pb-1 pt-5 sm:p-5">
             <StylePicker value={style} onChange={setStyle} compact loading={loading} />
             <TuneSlider
               label="Size"
@@ -252,11 +254,13 @@ export function IconDetail({
 
         {suggestions.length > 0 && (
           <section className="mt-12" aria-labelledby="related-icons">
-            <div className="mb-4 flex items-center justify-between gap-4">
-              <h2 id="related-icons" className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Related icons</h2>
+            {/* When the link does not fit beside the heading it drops below it,
+                instead of both wrapping onto two lines. */}
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+              <h2 id="related-icons" className="whitespace-nowrap text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Related icons</h2>
               <Link
                 href={`/icons?category=${icon.category}`}
-                className="inline-flex items-center gap-1 rounded-chip text-xs font-semibold text-accent transition-colors hover:text-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+                className="inline-flex items-center gap-1 whitespace-nowrap rounded-chip text-xs font-semibold text-accent transition-colors hover:text-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
               >
                 All {categoryLabel} icons
                 <ArrowRight weight="regular" aria-hidden className="size-3.5" />

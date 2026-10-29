@@ -108,7 +108,9 @@ function StyleTrack({
             {index === 1 && (
               <>
                 <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-sand-300 dark:bg-sand-700" />
-                <span aria-hidden className="shrink-0 pl-1 pr-1.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
+                {/* The narrowest phones drop the caption and keep the divider;
+                    each segment's label still names its tier. */}
+                <span aria-hidden className="shrink-0 pl-1 pr-1.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 @max-[300px]:hidden dark:text-sand-400">
                   Premium
                 </span>
               </>

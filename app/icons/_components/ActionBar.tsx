@@ -57,7 +57,6 @@ export function ActionBar({
   absolute,
   colour,
   style,
-  condensed = false,
 }: {
   name: string
   markup: string
@@ -66,7 +65,6 @@ export function ActionBar({
   absolute: boolean
   colour: string
   style: IconStyle
-  condensed?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -101,12 +99,14 @@ export function ActionBar({
   ]
 
   return (
-    <div className="flex flex-wrap items-center gap-2">
-      <div ref={menuRef} className="relative inline-flex">
+    // On a phone the split button takes the whole first row and the two
+    // secondaries share the second, half each, instead of one wrapping alone.
+    <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
+      <div ref={menuRef} className="relative col-span-2 flex sm:inline-flex">
         <button
           type="button"
           onClick={() => void copy()}
-          className="inline-flex h-8 items-center gap-1.5 rounded-l-control bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+          className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-l-control sm:flex-none bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           {copied ? <Check weight="regular" size={14} /> : <Robot weight="regular" size={14} />}
           {copied ? 'Copied' : 'Copy for agent'}
@@ -139,13 +139,11 @@ export function ActionBar({
           </div>
         )}
       </div>
-      {!condensed && (
-        <button type="button" onClick={() => void copyText(jsx)} className={buttonClasses({ variant: 'outline', size: 'xs' })}>
-          <Code weight="regular" size={14} />
-          Copy JSX
-        </button>
-      )}
-      <button type="button" onClick={() => downloadSvg(name, svg)} className={buttonClasses({ variant: 'outline', size: 'xs' })}>
+      <button type="button" onClick={() => void copyText(jsx)} className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
+        <Code weight="regular" size={14} />
+        Copy JSX
+      </button>
+      <button type="button" onClick={() => downloadSvg(name, svg)} className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
         <DownloadSimple weight="regular" size={14} />
         SVG
       </button>
