@@ -215,10 +215,21 @@ export function buildAlert(
   return { subject, text: lines.join('\n') }
 }
 
+/** Our own account for this customer first (subscription row, then a Lifetime
+ *  row), Paddle's customer record last. */
 async function customerEmail(admin: AdminClient, userId: string | null | undefined, customerId: unknown): Promise<string | null> {
   try {
-    if (userId) {
-      const { data } = await admin.auth.admin.getUserById(userId)
+    let id = userId ?? null
+    if (!id && typeof customerId === 'string' && customerId) {
+      const subs = await admin.from('user_subscriptions').select('user_id').eq('paddle_customer_id', customerId).limit(1)
+      id = subs.data?.[0]?.user_id ?? null
+      if (!id) {
+        const life = await admin.from('user_lifetime_access').select('user_id').eq('paddle_customer_id', customerId).limit(1)
+        id = life.data?.[0]?.user_id ?? null
+      }
+    }
+    if (id) {
+      const { data } = await admin.auth.admin.getUserById(id)
       if (data?.user?.email) return data.user.email
     }
     if (typeof customerId === 'string' && customerId) {

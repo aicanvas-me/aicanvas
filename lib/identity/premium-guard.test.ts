@@ -13,6 +13,7 @@ const root = join(__dirname, '..', '..')
 const ALLOWED = [
   /^lib\/identity\/premium\.ts$/,
   /^lib\/identity\/lifetime\.ts$/,
+  /^lib\/identity\/billing-events\.ts$/,
   /^app\/api\/billing\/portal\/route\.ts$/,
   /^app\/api\/me\/subscription\/route\.ts$/,
   /^app\/api\/cron\/[^/]+\/route\.ts$/,
