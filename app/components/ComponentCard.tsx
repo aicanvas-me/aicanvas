@@ -49,7 +49,11 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
     >
       {/* Preview. Save action intentionally lives on the component detail
           page only; keeping it off the card keeps the preview uncluttered. */}
-      <div className="relative aspect-video overflow-hidden bg-sand-900">
+      {/* A dark-only shot on a light site ends on a clean edge (no fade, see
+          below). The box keeps its size so the card stays the height of its
+          row; the picture is clipped 28px short of it instead, which leaves
+          the same 16px over the title that the fade gives every other card. */}
+      <div className={`relative aspect-video overflow-hidden bg-sand-900 ${darkOnly ? '[clip-path:inset(0_0_1.75rem_0)] dark:[clip-path:none]' : ''}`}>
         {badge && (
           // Aceternity-style pill: just a filled icon at rest, slides open to
           // the label on card hover. Premium keeps the bolt; Free gets a
@@ -109,7 +113,7 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
         <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-950 ${darkOnly ? 'hidden dark:block' : ''}`} />
       </div>
 
-      <div className={`relative flex flex-1 flex-col px-5 pb-5 ${darkOnly ? 'mt-4 dark:-mt-3' : '-mt-3'}`}>
+      <div className="relative -mt-3 flex flex-1 flex-col px-5 pb-5">
         <h3 className="font-semibold text-sand-900 dark:text-sand-50">{name}</h3>
         <p className="mt-1 line-clamp-2 text-sm font-normal text-sand-600 dark:text-sand-400">
           {description}
