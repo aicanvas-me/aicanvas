@@ -486,22 +486,34 @@ function writeShimFile(outFile, root, injectedNames, fromV2Tree, headerLines, an
   if (fromV2Tree) {
     out.push('', `export { tokens } from '${root}/tokens'`)
   } else {
-    // v1 called the two semantic colour scales orange/red; v2 renamed them
-    // warning/danger. App code is written against the v2 names, so alias them
+    // v1 called three colour scales accent/orange/red; v2 renamed them
+    // brand/warning/danger. App code is written against the v2 names, so alias them
     // here rather than let a fork read undefined and throw at render — same
     // colours, same roles, nothing invented. What v1 genuinely lacks (`control`)
     // stays absent, and the one call site optional-chains it.
     // anyTypedDegraded (Pro only) types the merged object `any` — same runtime
-    // value, but Pro's token shape (brand/success/neutral/role/…, which v1
+    // value, but Pro's token shape (success/neutral/role/…, which v1
     // genuinely lacks) is never checked against it.
     out.push(
       '',
       `import { tokens as v1Tokens } from '${root}/tokens'`,
       `export const tokens${anyTypedDegraded ? ': any' : ''} = {`,
       '  ...v1Tokens,',
-      '  color: { ...v1Tokens.color, warning: v1Tokens.color.orange, danger: v1Tokens.color.red },',
+      '  color: { ...v1Tokens.color, brand: v1Tokens.color.accent, warning: v1Tokens.color.orange, danger: v1Tokens.color.red },',
       '}',
     )
+    // Pro only: Legacy's shim is written in production too and must not change.
+    if (anyTypedDegraded) {
+      out.push(
+        'const { surface: s, border: b, text: t, accent, orange, red } = v1Tokens.color',
+        'Object.assign(tokens.color, {',
+        '  success: accent,',
+        '  neutral: { 100: s.base, 200: s.raised, 300: s.overlay, 400: s.hover, 500: b.subtle, 600: s.active, 700: b.base, 800: b.bright, 900: b.strong, 1000: t.faint, 1100: t.muted, 1200: t.secondary, 1300: t.primary },',
+        '  status: { info: { mark: accent[300] }, success: { mark: accent[300] }, warning: { mark: orange[300] }, danger: { mark: red[300] } },',
+        '})',
+        'tokens.typography = { ...v1Tokens.typography, leading: {}, role: {} }',
+      )
+    }
   }
   out.push('', `export const V2_COMPONENT_NAMES = ${JSON.stringify(injectedNames)}`, '')
   writeFileSync(outFile, out.join('\n'))

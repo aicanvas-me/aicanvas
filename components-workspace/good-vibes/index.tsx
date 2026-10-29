@@ -2,10 +2,6 @@
 
 // npm install framer-motion
 // font: Science Gothic
-/**
- * Renders variable-font text whose glyphs react to pointer and touch proximity.
- * Nearby letters gain weight, scale, and spacing with eased falloff.
- */
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
@@ -88,7 +84,6 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
 
 const LetterSpan = motion(LetterSpanComponent)
 
-// customize: change the text and pointer response values below
 const TEXT = 'GOOD VIBES'
 const INFLUENCE_RADIUS = 300
 const MAX_WEIGHT = 700
@@ -97,6 +92,7 @@ const MAX_SCALE = 2
 const MIN_SCALE = 1
 const MAX_LETTER_SPACING = 0.3
 const MIN_LETTER_SPACING = 0
+// Per-frame blend factor (0 to 1), not seconds: higher follows faster.
 const EASE_DURATION = 0.15
 
 export default function GoodVibes() {

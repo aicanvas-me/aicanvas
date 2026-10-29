@@ -2,10 +2,6 @@
 
 // npm install framer-motion geist
 // font-pkg: geist/font/pixel|GeistPixelGrid
-/**
- * Displays words whose characters continuously scramble while idle.
- * Hovering resolves each word from left to right before restoring the loop.
- */
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
@@ -16,7 +12,6 @@ import { GeistPixelGrid } from 'geist/font/pixel'
 
 
 
-// customize: replace the scramble characters and resolved words below
 const CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&!'
 const WORDS = ['DECRYPT', 'ACCESS']
 
@@ -84,21 +79,16 @@ function useScramble(word: string, isHovered: boolean) {
 
 function Crosshair({ style }: { style: React.CSSProperties }) {
   const color = 'rgba(190,207,93,0.35)'
-  const arm = 14   
-  const gap = 3    
-  const thick = 1  
+  const arm = 14
+  const gap = 3
+  const thick = 1
   return (
     <div className="pointer-events-none absolute" style={{ width: arm * 2 + gap * 2, height: arm * 2 + gap * 2, ...style }}>
       <svg width="100%" height="100%" viewBox={`0 0 ${arm * 2 + gap * 2} ${arm * 2 + gap * 2}`} fill="none">
-        {}
         <line x1={arm + gap} y1={0} x2={arm + gap} y2={arm} stroke={color} strokeWidth={thick} />
-        {}
         <line x1={arm + gap} y1={arm + gap * 2} x2={arm + gap} y2={arm * 2 + gap * 2} stroke={color} strokeWidth={thick} />
-        {}
         <line x1={0} y1={arm + gap} x2={arm} y2={arm + gap} stroke={color} strokeWidth={thick} />
-        {}
         <line x1={arm + gap * 2} y1={arm + gap} x2={arm * 2 + gap * 2} y2={arm + gap} stroke={color} strokeWidth={thick} />
-        {}
         <circle cx={arm + gap} cy={arm + gap} r={1.5} fill={color} />
       </svg>
     </div>
@@ -111,7 +101,6 @@ export default function ScrambleText() {
   const chars1 = useScramble(WORDS[1]!, isHovered)
   const rows = [chars0, chars1]
 
-  
   const charStyle: React.CSSProperties = {
     color: '#BECF5D',
     fontSize: 'clamp(1.75rem, 9vw, 3.75rem)',
@@ -122,17 +111,19 @@ export default function ScrambleText() {
       className="relative flex h-full w-full cursor-default items-center justify-center"
       style={{ background: '#292929' }}
     >
-      {}
       <Crosshair style={{ top: '10%', right: '8%' }} />
-      {}
       <Crosshair style={{ bottom: '10%', left: '8%' }} />
       <div
         className="flex select-none flex-col items-center gap-4"
         style={{ padding: 'clamp(1.5rem, 8vw, 60px) clamp(1rem, 10vw, 80px)' }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onPointerEnter={e => {
+          if (e.pointerType === 'mouse') setIsHovered(true)
+        }}
+        onPointerLeave={e => {
+          if (e.pointerType === 'mouse') setIsHovered(false)
+        }}
         onPointerDown={e => {
-          
+          // Touch has no hover, so non-mouse pointers reveal on press.
           if (e.pointerType !== 'mouse') setIsHovered(true)
         }}
         onPointerUp={e => {
@@ -162,7 +153,6 @@ export default function ScrambleText() {
           </div>
         ))}
 
-        {}
         <motion.p
           className={`mt-2 text-xs font-medium uppercase tracking-[0.2em] ${GeistPixelGrid.className}`}
           style={{ color: 'rgba(190,207,93,0.45)' }}

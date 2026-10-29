@@ -1,12 +1,3 @@
-// ============================================================
-// COMPONENT: NavItem
-// shadcn/ui-aligned API: variant/state, asChild, forwardRef, cva.
-// Active state: accent text + a small square indicator on the right.
-// No background fill — the indicator alone marks the selected row.
-// Inactive: text.secondary, hover surface.hover.
-// Mono label is the default; pass `mono={false}` for sans labels.
-// ============================================================
-
 'use client';
 
 import { forwardRef } from 'react';
@@ -20,11 +11,7 @@ import { cn, andromedaVars, easingArray } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
 
-// Touch-target floor — a nav row is full-bleed (no isolated chrome to protect),
-// so on coarse pointers we raise its min-height to spacing[10] (40px) so the
-// whole row is a comfortable tap. Vertical centering is preserved by the row's
-// existing `items-center`. Scoped className, !important to out-specify the cva
-// base. the Andromeda responsive rules → "Grow touch targets on coarse pointers".
+// Touch screens: the whole row grows to at least 40px tall.
 const TOUCH_TARGET_STYLE = `
   ${mq.coarse} {
     .andromeda-navitem-touch {
@@ -33,11 +20,8 @@ const TOUCH_TARGET_STYLE = `
   }
 `;
 
-// Sliding-indicator transition — token-driven. The active dot uses framer's
-// `layoutId` to animate between sibling NavItems when wrapped in a
-// <LayoutGroup>. See the Andromeda motion rules.
+// Returns seconds: Framer Motion takes seconds, tokens store ms.
 const ms = (v: string) => parseInt(v, 10) / 1000;
-// framer boundary: derived from tokens, cannot follow runtime var overrides
 const INDICATOR_TX: Transition = {
   duration: ms(tokens.motion.duration.slow),
   ease: easingArray(tokens.motion.easing.standard),
@@ -122,7 +106,6 @@ type NavItemOwnProps = {
 export type NavItemProps = NavItemOwnProps &
   Omit<ComponentPropsWithoutRef<'button'>, keyof NavItemOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<NavItemProps & React.ButtonHTMLAttributes<HTMLButtonElement>>} */
 export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavItem(
   {
     className,
@@ -151,8 +134,6 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavI
         style={{ ...andromedaVars(), ...style }}
         {...props}
       >
-        {/* Right indicator square — when wrapped in <LayoutGroup>, this slides
-            between sibling NavItems on active change via `layoutId`. */}
         {active ? (
           <motion.span
             layoutId={layoutGroupId}
@@ -167,7 +148,6 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavI
               height: 'var(--andromeda-1, 4px)',
               flexShrink: 0,
               background: 'var(--andromeda-accent-300)',
-              // Glow offsets are identity constants, no token
               boxShadow: '-2px 0 8px var(--andromeda-accent-500)',
             }}
           />

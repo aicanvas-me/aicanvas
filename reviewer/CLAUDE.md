@@ -22,6 +22,7 @@ Independent review of every built or modified component before the user previews
 - [ ] Root element className contains `min-h-screen`, `w-full`, and the dual-theme background `bg-sand-100 dark:bg-sand-950`
 - [ ] No `bg-zinc-950` anywhere (mistake #001)
 - [ ] Top-of-file `// npm install ...` comment lists every non-React dependency
+- [ ] Comments follow skills/code-comments.md (no header, no narration, nothing internal)
 
 ### 4. Animations
 - [ ] Animation uses `framer-motion` (`motion.` present for animated components)

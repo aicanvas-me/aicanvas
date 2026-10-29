@@ -122,6 +122,12 @@ const nextConfig: NextConfig = {
         destination: "/r/andromeda-button-system.json",
         permanent: true,
       },
+      // The standalone Wild Morph was retired; its page lands on the component catalog.
+      {
+        source: "/components/wild-morph",
+        destination: "/components",
+        permanent: true,
+      },
     ];
   },
 };

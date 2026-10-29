@@ -2,11 +2,6 @@
 
 // npm install framer-motion @phosphor-icons/react
 
-/**
- * Presents a staged account deletion control with a five-second countdown.
- * The pending state offers undo before showing a temporary confirmation.
- */
-
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, type Transition } from 'framer-motion'
 import { ArrowUUpLeft, Check } from '@phosphor-icons/react'

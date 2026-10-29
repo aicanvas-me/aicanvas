@@ -7,6 +7,7 @@ import { prompts as floatingCardsPrompts } from '../../components-workspace/floa
 import TextBlurReveal from '../../components-workspace/text-blur-reveal'
 import { prompts as textBlurRevealPrompts } from '../../components-workspace/text-blur-reveal/prompts'
 import ParticleSphere from '../../components-workspace/particle-sphere'
+import { prompts as particleSpherePrompts } from '../../components-workspace/particle-sphere/prompts'
 import PolaroidStack from '../../components-workspace/polaroid-stack'
 import { prompts as polaroidStackPrompts } from '../../components-workspace/polaroid-stack/prompts'
 import GlitchButton from '../../components-workspace/glitch-button'
@@ -115,8 +116,6 @@ import GoodVibes from '../../components-workspace/good-vibes'
 import { prompts as goodVibesPrompts } from '../../components-workspace/good-vibes/prompts'
 import Playful from '../../components-workspace/playful'
 import { prompts as playfulPrompts } from '../../components-workspace/playful/prompts'
-import WildMorph from '../../components-workspace/wild-morph'
-import { prompts as wildMorphPrompts } from '../../components-workspace/wild-morph/prompts'
 import Orbit from '../../components-workspace/orbit'
 import { prompts as orbitPrompts } from '../../components-workspace/orbit/prompts'
 import HaloType from '../../components-workspace/halo-type'
@@ -502,55 +501,10 @@ const COMPONENTS_RAW: ComponentEntry[] = [
       { label: '3D & Shaders', accent: true },
       { label: 'Three.js' },
     ],
+    dualTheme: true,
     PreviewComponent: ParticleSphere,
     code: componentCodes['particle-sphere'],
-    prompts: {
-      'Claude Code': `Before building, verify your project has the following setup:
-- React / Next.js
-- TypeScript
-- Tailwind CSS v4
-
-If any are missing, set up via the shadcn CLI:
-  npx shadcn@latest init
-
----
-
-Create a new file called ParticleSphere.tsx. It should export a React client component that renders an animated 3D particle sphere using Three.js.
-
-Requirements:
-- 'use client' at the top
-- Import useEffect, useRef from react; import * as THREE from 'three'
-- PARTICLE_COUNT = 9000
-- makeSprite(): creates a 64×64 canvas with radial white→transparent gradient, returns THREE.CanvasTexture
-- colorFromY(ny): returns [r,g,b]. For ny≥0: warm gold [1, 0.55+ny*0.37, ny*0.63]; ny<0: silver [v,v,v+...] where v=0.38+(-ny)*0.62
-- useEffect: create scene, PerspectiveCamera(52, W/H, 0.1, 100), camera.position.z=2.9
-- WebGLRenderer, setClearColor(0x000000), appendChild to container div
-- Fill positions/colors Float32Arrays using spherical coords (acos(2*rand-1), 2π*rand) with r±0.07 jitter
-- BufferGeometry with position + color attributes
-- PointsMaterial: size 0.032, map=sprite, vertexColors, transparent, depthWrite false, blending THREE.AdditiveBlending
-- mesh.rotation.x=0.28, mesh.rotation.z=0.08 (tilt)
-- RAF loop: t+=0.004/frame, mesh.rotation.y=t, z wobble via sin
-- Cleanup: cancelAnimationFrame, dispose geo/mat/sprite/renderer, removeChild
-- Return: <div ref={containerRef} className="h-full w-full" />`,
-      'Lovable': `Create a new file called ParticleSphere.tsx. It should export a React client component that renders an animated 3D particle sphere using Three.js.
-
-Requirements:
-- 'use client' at the top
-- Import useEffect, useRef from react; import * as THREE from 'three'
-- PARTICLE_COUNT = 9000
-- makeSprite(): creates a 64×64 canvas with radial white→transparent gradient, returns THREE.CanvasTexture
-- colorFromY(ny): returns [r,g,b]. For ny≥0: warm gold [1, 0.55+ny*0.37, ny*0.63]; ny<0: silver [v,v,v+...] where v=0.38+(-ny)*0.62
-- useEffect: create scene, PerspectiveCamera(52, W/H, 0.1, 100), camera.position.z=2.9
-- WebGLRenderer, setClearColor(0x000000), appendChild to container div
-- Fill positions/colors Float32Arrays using spherical coords (acos(2*rand-1), 2π*rand) with r±0.07 jitter
-- BufferGeometry with position + color attributes
-- PointsMaterial: size 0.032, map=sprite, vertexColors, transparent, depthWrite false, blending THREE.AdditiveBlending
-- mesh.rotation.x=0.28, mesh.rotation.z=0.08 (tilt)
-- RAF loop: t+=0.004/frame, mesh.rotation.y=t, z wobble via sin
-- Cleanup: cancelAnimationFrame, dispose geo/mat/sprite/renderer, removeChild
-- Return: <div ref={containerRef} className="h-full w-full" />`,
-      'V0': `Create a ParticleSphere component using React and Three.js. Render 9,000 particles distributed uniformly across a sphere surface using spherical coordinates (theta = acos(2*rand-1), phi = 2π*rand). Add slight radial jitter (r = 1 ± 0.07) for volumetric depth. Color each particle by its normalised Y position: upper hemisphere → warm gold-to-orange (rgb 1.0, 0.55+t*0.37, t*0.63), lower hemisphere → cool white-to-silver (v = 0.38+t*0.62). Use THREE.PointsMaterial with AdditiveBlending, a soft radial glow sprite as the map, and depthWrite: false. Tilt the mesh (rotation.x=0.28, rotation.z=0.08) and animate rotation.y continuously. Black background. TypeScript + 'use client'.`,
-    },
+    prompts: particleSpherePrompts,
   },
   {
     slug: 'polaroid-stack',
@@ -1095,21 +1049,6 @@ Requirements:
     PreviewComponent: Playful,
     code: componentCodes['playful'],
     prompts: playfulPrompts,
-  },
-  {
-    slug: 'wild-morph',
-    name: 'Wild Morph',
-    description: 'Italic SVG word that warps under the cursor, a spring-physics text animation.',
-    tags: [
-      { label: 'Typography', accent: true },
-      { label: 'Interactive' },
-      { label: 'Animation' },
-    ],
-    dualTheme: true,
-    image: 'https://ik.imagekit.io/aitoolkit/wild-morph.png',
-    PreviewComponent: WildMorph,
-    code: componentCodes['wild-morph'],
-    prompts: wildMorphPrompts,
   },
   {
     slug: 'orbit',

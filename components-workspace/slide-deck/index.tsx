@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Presents a responsive deck of numbered presentation slides.
- * Dragging or using navigation controls moves the focused slide through the stack.
- */
 
 import { useRef, useState, useCallback, useLayoutEffect, useEffect } from 'react'
 import { motion } from 'framer-motion'
@@ -13,7 +9,6 @@ const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffec
 
 
 
-// customize: replace the slide content and colors below
 const SLIDES = [
   {
     id: 0,
@@ -61,12 +56,10 @@ const SLIDES = [
   },
 ]
 
-// tune: change both dimensions to resize the slide cards
 const CARD_W = 260
 const CARD_H = 300
 
 
-// tune: adjust to change the stacked slide positions
 const STACK = [
   { x: 0, y: 0,  scale: 1.000, opacity: 1 },
   { x: 0, y: 11, scale: 0.962, opacity: 1 },
@@ -98,18 +91,14 @@ export default function SlideDeck() {
 
   const [current, setCurrent] = useState(0)
   const [direction, setDirection] = useState<1 | -1>(1)
-  
   const [exitInfo, setExitInfo] = useState<{ slideId: number; xTarget: number } | null>(null)
-  
   const [enterFromRight, setEnterFromRight] = useState<number | null>(null)
 
   const goTo = useCallback((newIdx: number, dir: 1 | -1) => {
     if (dir > 0) {
-      
       setExitInfo({ slideId: SLIDES[current].id, xTarget: -380 })
       setEnterFromRight(null)
     } else {
-      
       setExitInfo(null)
       setEnterFromRight(SLIDES[newIdx].id)
     }
@@ -127,7 +116,6 @@ export default function SlideDeck() {
       className="flex h-full w-full flex-col items-center justify-center bg-[#E8E8DF] dark:bg-[#1A1A19]"
       style={{ isolation: 'isolate' }}
     >
-      {}
       <div
         style={{
           position: 'relative',
@@ -137,13 +125,10 @@ export default function SlideDeck() {
         }}
       >
         {SLIDES.map(slide => {
-          
           const offset = (slide.id - current + SLIDES.length) % SLIDES.length
 
-          
           const isExiting = exitInfo?.slideId === slide.id && offset === SLIDES.length - 1
 
-          
           const isEnteringFromRight = enterFromRight === slide.id && offset === 0
 
           const animTarget = isExiting
@@ -152,7 +137,6 @@ export default function SlideDeck() {
               ? STACK[offset]
               : OFFSCREEN
 
-          
           const zIndex = isEnteringFromRight ? 20
             : isExiting ? 15
             : offset === 0 ? 10
@@ -191,10 +175,8 @@ export default function SlideDeck() {
                 else if (info.offset.x > 60 || info.velocity.x > 400) navigate(-1)
               } : undefined}
             >
-              {}
               <ShapeDecor type={slide.shape} accent={slide.accent} primary={slide.textPrimary} />
 
-              {}
               <div
                 style={{
                   position: 'absolute',
@@ -205,7 +187,6 @@ export default function SlideDeck() {
                   justifyContent: 'space-between',
                 }}
               >
-                {}
                 <div
                   style={{
                     display: 'flex',
@@ -236,7 +217,6 @@ export default function SlideDeck() {
                   </span>
                 </div>
 
-                {}
                 <div>
                   <div
                     style={{
@@ -272,7 +252,6 @@ export default function SlideDeck() {
         })}
       </div>
 
-      {}
       <div style={{ display: 'flex', gap: 6, marginTop: 32 }}>
         {SLIDES.map((s, i) => (
           <motion.button

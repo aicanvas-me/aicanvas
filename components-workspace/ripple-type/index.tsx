@@ -1,33 +1,24 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Renders a word around a rotating fan of repeated glyph layers.
- * Pointer engagement increases the ripple amplitude and rotation rate.
- */
 
 import React, { useEffect, useId, useRef, useState } from 'react'
 import { useAnimationFrame } from 'framer-motion'
 
 
-// customize: replace the display word below
 const WORD = 'RIPPLE'
 
 
 const LEVEL_COUNT       = 1
-// tune: raise to build ripple intensity faster
 const LEVEL_RAMP        = 1.0
-// tune: raise to release ripple intensity faster
 const LEVEL_DECAY       = 2.5
-// tune: raise to increase the maximum ripple scale
 const MAX_SCALE         = 36
 const OSCILLATION_HZ    = 0.09
 const REST_FREQ         = 0.001
 const HOVER_FREQ        = 0.009
-const RIPPLE_PHASE_RATE = 0.9  
+const RIPPLE_PHASE_RATE = 0.9
 
 
-// tune: raise the divisor to slow the engaged fan
 const FAN_FULL_RATE = (Math.PI * 2) / 0.6
 const FAN_REDUCED_RATE = (Math.PI * 2) / 2.0
 
@@ -86,13 +77,10 @@ export default function RippleType() {
     return () => mq.removeEventListener('change', update)
   }, [])
 
-  
   const [fanOn, setFanOn] = useState(false)
   const fanOnRef = useRef(false)
   useEffect(() => { fanOnRef.current = fanOn }, [fanOn])
 
-  
-  
   const levelRef      = useRef(0)
   const fanAngleRef   = useRef(0)
   const ripplePhaseRef = useRef(0)
@@ -109,16 +97,14 @@ export default function RippleType() {
     const dt = last == null ? 0 : Math.max(0, Math.min(0.05, (t - last) / 1000))
     lastTimeRef.current = t
 
-    
     if (fanOnRef.current) {
       levelRef.current = Math.min(LEVEL_COUNT, levelRef.current + LEVEL_RAMP * dt)
     } else {
       levelRef.current = Math.max(0, levelRef.current - LEVEL_DECAY * dt)
     }
 
-    const intensity = levelRef.current / LEVEL_COUNT  
+    const intensity = levelRef.current / LEVEL_COUNT
 
-    
     const secs = t / 1000
     const breath = Math.sin(secs * Math.PI * 2 * OSCILLATION_HZ)
 
@@ -128,9 +114,6 @@ export default function RippleType() {
       REST_FREQ + (HOVER_FREQ - REST_FREQ) * intensity + 0.004 * breath * intensity
     )
 
-    
-    
-    
     ripplePhaseRef.current += intensity * RIPPLE_PHASE_RATE * dt
     const p = ripplePhaseRef.current
     const liveFreqX = Math.max(0.002, freq + 0.007 * Math.sin(p) * intensity)
@@ -138,15 +121,12 @@ export default function RippleType() {
     turb.setAttribute('baseFrequency', `${liveFreqX} ${liveFreqY}`)
     disp.setAttribute('scale', String(scale))
 
-    
-    
     const textSvgEl = textSvgRef.current
     if (textSvgEl) {
       const skew = reducedMotion ? 0 : intensity * 13
       textSvgEl.style.transform = `skewX(${skew}deg)`
     }
 
-    
     if (blades) {
       const rate = reducedMotion ? FAN_REDUCED_RATE : FAN_FULL_RATE
       fanAngleRef.current += rate * intensity * dt
@@ -163,7 +143,6 @@ export default function RippleType() {
     }
   }
 
-  
   const fan = (
     <div
       role="button"
@@ -193,7 +172,6 @@ export default function RippleType() {
         height: 'clamp(56px, 11vw, 112px)',
       }}
     >
-      {}
       <circle
         cx="50"
         cy="50"
@@ -222,7 +200,6 @@ export default function RippleType() {
         opacity="0.25"
       />
 
-      {}
       <g
         ref={bladesRef}
         style={{
@@ -242,7 +219,6 @@ export default function RippleType() {
         ))}
       </g>
 
-      {}
       <circle cx="50" cy="50" r="4.5" fill={fanStroke} />
       <circle cx="50" cy="50" r="1.6" fill={bg} />
     </svg>
@@ -324,7 +300,6 @@ export default function RippleType() {
       className="relative min-h-screen w-full overflow-hidden"
       style={{ backgroundColor: bg }}
     >
-      {}
       <div
         aria-hidden
         style={{
@@ -335,7 +310,6 @@ export default function RippleType() {
         }}
       />
 
-      {}
       <div
         style={{
           position: 'absolute',

@@ -11,7 +11,7 @@ export const orb: MatrixSpec = {
   // Full-surface piece, so it gets a full-row card and room to read; a 260px
   // stub reads as a widget, which is the one thing an Object is not.
   render: (_size, props) => (
-    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative' }}>
+    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative', margin: '0 auto' }}>
       <Orb {...props} />
     </div>
   ),

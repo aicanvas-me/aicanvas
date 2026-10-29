@@ -87,7 +87,6 @@ const ALL_SLUGS = [
   'responsive-letters',
   'good-vibes',
   'playful',
-  'wild-morph',
   'orbit',
   'halo-type',
   'slice-type',

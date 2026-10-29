@@ -18,8 +18,9 @@ const DEMO_QUEUE = [
 ]
 
 // The player on this page is wired, so every transport button does what it
-// shows: Previous and Next step through the queue, and stepping past either end
-// wraps around, playing on with Repeat and landing paused without it. With
+// shows: Previous and Next step through the queue, the end of a track steps to
+// the next one, and stepping past either end wraps around, playing on with
+// Repeat and landing paused without it. With
 // Shuffle on, Next jumps to a random other track. A case's `playing`,
 // `shuffle` and `repeat` are where it starts.
 export function MusicPlayerDemo({ playing: startPlaying, shuffle: startShuffle, repeat: startRepeat, ...props }) {
@@ -47,6 +48,7 @@ export function MusicPlayerDemo({ playing: startPlaying, shuffle: startShuffle, 
       repeat={repeat}
       onTogglePlay={() => setPlaying((p) => !p)}
       onNext={() => step(1)}
+      onEnded={() => step(1)}
       onPrev={() => step(-1)}
       onShuffle={() => setShuffle((v) => !v)}
       onRepeat={() => setRepeat((v) => !v)}
@@ -68,7 +70,7 @@ export const musicPlayer: MatrixSpec = {
   // two different components. Capping the case AT the breakpoint (the container
   // query is max-width, so equal still matches) keeps them the same.
   render: (_size, props, c) => (
-    <div style={{ maxWidth: tokens.breakpoints.md }}>
+    <div style={{ width: '100%', maxWidth: tokens.breakpoints.md, margin: '0 auto' }}>
       {c?.label === UNWIRED_CASE ? <MusicPlayer {...props} /> : <MusicPlayerDemo {...props} />}
     </div>
   ),

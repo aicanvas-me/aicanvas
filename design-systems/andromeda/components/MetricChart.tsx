@@ -1,43 +1,3 @@
-// ============================================================
-// COMPONENT: MetricChart
-// The framed single-series live-telemetry chart panel: a self-framed
-// surface (CornerMarkers + kicker/title header + status Badge) around
-// ONE area chart that fits its y-domain to the data by default.
-//
-// The line between this and TrendChart is the FRAME, not the domain.
-// TrendChart renders content only, for a Card you compose yourself,
-// and baselines at 0; this brings its own frame and fits the axis,
-// because a lone measurement (altitude, NRR %, latency, throughput)
-// is usually a sliver against a zero floor. Both take a `domain`, so
-// a non-zero floor is not on its own a reason to restructure a
-// working card into this component.
-//
-// Props:
-//   label       — card kicker label
-//   title       — card title (uppercase mono)
-//   description — optional card description line
-//   data        — array of { [xKey], [dataKey] } points
-//   dataKey     — value key (default 'v')
-//   xKey        — x-axis key (default 't')
-//   unit        — unit suffix shown after the tooltip value
-//   variant     — 'accent' | 'warning' | 'fault' — changes the
-//                 header Badge ONLY; chart ink stays neutral
-//                 (the Andromeda charts rule: colour is measurement,
-//                 never decoration — text.primary stroke always)
-//   badgeText   — badge label (default 'Live'; null hides the badge)
-//   domain      — recharts y-domain (default fitted:
-//                 ['dataMin - 1', 'dataMax + 1'])
-//   xInterval   — x tick interval (default 3)
-//   height      — plot height in px (default 224) or 'fill' to grow
-//                 into a flex parent panel
-//   className / style passthrough
-//
-// Defaults to a built-in 24h altitude-like series so the component
-// renders meaningfully with zero props. The left-to-right draw
-// reveal is gated on useInView (once) and honours
-// prefers-reduced-motion (reduced → final state instantly).
-// ============================================================
-
 'use client';
 
 import { forwardRef, useId, useRef } from 'react';
@@ -62,18 +22,12 @@ import { CornerMarkers } from './CornerMarkers';
 import { Badge } from './Badge';
 import type { BadgeProps } from './Badge';
 
-// Framer wants seconds + a cubic-bezier array; tokens store ms strings and
-// CSS cubic-bezier() strings. Convert at the boundary, same pattern as
-// RadarChart / TrendChart / lib/motion.
+// Returns seconds: Framer Motion takes seconds, tokens store ms.
 const ms = (v: string) => parseInt(v, 10) / 1000;
-// Token-driven equivalent of tokens.motion.easing.out
-// ('cubic-bezier(0, 0, 0.2, 1)') — fast start, soft landing. Keep in sync.
+// Mirrors tokens.motion.easing.out; change both.
 const EASE_OUT: [number, number, number, number] = [0, 0, 0.2, 1];
 
-// ── Plot colors ──────────────────────────────────────────────────────────────
-// Every color recharts needs, as [custom property, literal]. recharts hands its
-// color props to SVG presentation ATTRIBUTES, which never substitute a var(),
-// so these are read back resolved from the panel's own root instead.
+// Plot colours must come from c.*: raw token values stay dark-theme on light pages.
 const CHART_VARS = {
   textPrimary:   ['--andromeda-text-primary',   tokens.color.text.primary],
   textMuted:     ['--andromeda-text-muted',     tokens.color.text.muted],
@@ -84,23 +38,14 @@ const CHART_VARS = {
 
 type MetricChartVariant = 'accent' | 'warning' | 'fault';
 
-// The variant only routes to the Badge — the chart ink is ALWAYS neutral
-// (text.primary stroke, 0.12 → 0 gradient fill). Colour enters the panel
-// through the badge dot, nowhere else.
 const BADGE_VARIANT: Record<MetricChartVariant, NonNullable<BadgeProps['variant']>> = {
   accent:  'accent',
   warning: 'warning',
   fault:   'fault',
 };
 
-// Fitted default domain — the whole reason this component exists. A zero
-// floor on non-zero data (altitude ~420, NRR ~100%) crams the signal into
-// a sliver; dataMin/dataMax ± 1 keeps the curve filling the plot.
 const DEFAULT_DOMAIN: [AxisDomainItem, AxisDomainItem] = ['dataMin - 1', 'dataMax + 1'];
 
-// ── Default demo data ────────────────────────────────────────────────────────
-// 24h of altitude-like telemetry (slow decay, a reboost burn mid-afternoon,
-// settle). Non-zero floor on purpose — it demos the fitted domain.
 const DEFAULT_DATA = [
   { t: '00:00', v: 421 }, { t: '01:00', v: 420 }, { t: '02:00', v: 420 },
   { t: '03:00', v: 419 }, { t: '04:00', v: 418 }, { t: '05:00', v: 418 },
@@ -114,18 +59,10 @@ const DEFAULT_DATA = [
 
 const AXIS_TICK = {
   fontFamily: tokens.typography.fontMono,
-  // recharts expects a number; derive it from the xs token ('10px') so the
-  // chart axis follows the system scale.
   fontSize: parseInt(tokens.typography.size.xs, 10),
   letterSpacing: '0.05em',
 };
 
-// ── Tooltip ──────────────────────────────────────────────────────
-// The TrendChart contract: compact, non-blocking, pinned out of the plot
-// (position + allowEscapeViewBox live on the RechartsTooltip element below).
-// Label row + value row; the unit rides muted after the value.
-// recharts clones the returned element with the hover state, so every prop it
-// injects is optional here.
 type MetricTooltipProps = {
   active?: boolean;
   payload?: readonly { value?: number }[];
@@ -144,9 +81,6 @@ function MetricTooltip({ active, payload, label, unit }: MetricTooltipProps) {
         padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`,
         fontFamily: tokens.typography.fontMono,
         maxWidth: '220px',
-        // Compact + non-interactive: the readout must never swallow the plot
-        // on small charts, and must not eat the pointer. The crosshair +
-        // activeDot mark WHERE; this box only states the value.
         pointerEvents: 'none',
       }}
     >
@@ -186,7 +120,6 @@ function MetricTooltip({ active, payload, label, unit }: MetricTooltipProps) {
   );
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
 /**
  * @typedef {object} MetricChartProps
  * @property {string} [label='/// Telemetry']   Card kicker label.
@@ -225,7 +158,6 @@ type MetricChartOwnProps = {
 type MetricChartProps = MetricChartOwnProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof MetricChartOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<MetricChartProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function MetricChart(
   {
     label = '/// Telemetry',
@@ -246,22 +178,10 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
   },
   outerRef,
 ) {
-  // Unique gradient id — useId, NOT title-derived, so two panels with the
-  // same title never collide. Sanitised because useId's delimiters (":"/"«»")
-  // are not safe inside an SVG url(#…) reference.
+  // Strip ':' and '«»' that some React versions add; they can break url(#…).
   const gradientId = `andromeda-metric-fill-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
-  // Stable chart id for the same reason, one level deeper: recharts derives its
-  // internal clipPath id from a module-level counter when no `id` is passed, and
-  // that counter cannot agree between the server render and hydration — every
-  // SSR page carrying a chart reported a React mismatch.
   const chartId = `andromeda-metric-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
-  // Scroll-aware draw reveal. The line materialises left-to-right across
-  // time the first time the panel enters the viewport — a measurement
-  // arriving, not decoration. Gated on useInView so a panel below the fold
-  // doesn't burn its reveal off-screen (same contract as TrendChart /
-  // RadarChart). `margin: '-10% 0px'` triggers slightly before it's fully
-  // on-screen.
   const internalRef = useRef<HTMLDivElement | null>(null);
   const setRefs = (node: HTMLDivElement | null) => {
     internalRef.current = node;
@@ -270,12 +190,9 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
   };
   const inView = useInView(internalRef, { once: true, margin: '-10% 0px' });
   const reducedMotion = useReducedMotion();
-  // Plot colors, resolved off the panel's own root (see CHART_VARS).
   const c = useResolvedColors(internalRef, CHART_VARS);
 
-  // Wipe from hidden (inset right→left) to fully revealed once in view. Reduced
-  // motion starts from the same hidden state, so server and client markup
-  // match, then shows the chart fully drawn at once: no wipe, no wait for view.
+  // Same hidden start with reduced motion, so server and client HTML match.
   const revealProps = {
     initial: { clipPath: 'inset(0 100% 0 0)', opacity: 0 },
     animate: reducedMotion || inView
@@ -286,7 +203,6 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
       : { duration: ms(tokens.motion.duration.cascade), ease: EASE_OUT },
   };
 
-  // height={number} → fixed; height="fill" → grow to fill a flex parent panel.
   const fill = height === 'fill';
   const plotHeight = fill ? '100%' : height;
 
@@ -309,7 +225,6 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
     >
       <CornerMarkers />
 
-      {/* Header — kicker + title column on the left, status Badge on the right */}
       <div
         style={{
           position: 'relative',
@@ -374,7 +289,6 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
         {badgeText ? <Badge variant={badgeVariant}>{badgeText}</Badge> : null}
       </div>
 
-      {/* Plot */}
       <div
         role="img"
         aria-label={unit ? `${title} telemetry chart, measured in ${unit}` : `${title} telemetry chart`}
@@ -385,17 +299,8 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
           minHeight: fill ? 0 : undefined,
         }}
       >
-        {/* Draw-reveal wrapper. width/height 100% so ResponsiveContainer
-            still measures the chart correctly — the motion.div must not
-            collapse the sizing box. The clipPath wipe + opacity is driven
-            by `revealProps` above (hidden on first paint, then shown instantly when reduced motion). */}
+        {/* ResponsiveContainer needs this box to have a real width and height. */}
         <motion.div style={{ width: '100%', height: plotHeight }} {...revealProps}>
-          {/* initialDimension: recharts' size detector measures -1×-1 on its
-              first render (before its ResizeObserver reports) and logs a
-              "width(-1) and height(-1)" console warning — in production too.
-              A positive initial size silences it; the real measure replaces
-              it on mount, and the pre-measure frame is invisible anyway
-              behind the clip reveal above. */}
           <ResponsiveContainer width="100%" height="100%" initialDimension={{ width: 480, height: 224 }}>
             <AreaChart id={chartId} data={data} margin={{ top: 8, right: 12, left: -12, bottom: 0 }}>
               <defs>
@@ -422,10 +327,6 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
                 axisLine={false}
                 tickLine={false}
               />
-              {/* Pinned out of the plot (charts.md must): the tooltip floats
-                  at the plot top and slides horizontally, clamped INSIDE the
-                  plot on x so a narrow column never clips it; the crosshair +
-                  activeDot always mark the hover position on the curve. */}
               <RechartsTooltip
                 content={<MetricTooltip unit={unit} />}
                 cursor={{ stroke: c.borderBright, strokeWidth: 1, strokeDasharray: '2 4' }}
@@ -434,8 +335,6 @@ export const MetricChart = forwardRef<HTMLDivElement, MetricChartProps>(function
                 offset={12}
                 wrapperStyle={{ zIndex: 40 }}
               />
-              {/* isAnimationActive off — the framer draw reveal owns the
-                  motion; recharts never tweens. Stroke is ALWAYS neutral. */}
               <Area
                 type="monotone"
                 dataKey={dataKey}

@@ -38,7 +38,7 @@ Inner GlassCardItem (defined inline in same file):
 - handleMouse: rect = cardRef.current!.getBoundingClientRect(); mouseX.set((e.clientX-rect.left)/rect.width); mouseY similar.
 - handleLeave: reset both to 0.5.
 
-Outer card motion.div: ref, onMouseMove, onMouseLeave, style {rotateX, rotateY, transformPerspective: 800}, className "relative w-64 cursor-pointer overflow-hidden rounded-3xl p-[1px]".
+Outer card motion.div: ref, onMouseMove, onMouseLeave, style {rotateX, rotateY, transformPerspective: 800}, className "relative w-64 overflow-hidden rounded-3xl p-[1px]".
 
 Inside:
 (a) Rotating border motion.div: className "absolute inset-0 rounded-3xl opacity-30", style background \`linear-gradient(135deg, \${gradient}, transparent 60%)\`, animate {rotate:[0,360]}, transition {duration:20, repeat:Infinity, ease:'linear'}.
@@ -46,7 +46,7 @@ Inside:
   - Icon badge motion.div: mb-5 flex h-12 w-12 items-center justify-center rounded-xl, style {background: \`\${color}18\`, border: \`1px solid \${color}22\`}, whileHover {scale:1.1, rotate:5}, transition {type:'spring', stiffness:400, damping:15}. Child: <Icon size={22} weight="regular" style={{color}} />.
   - <h3 className="mb-2 text-base font-semibold text-white/90">{title}</h3>
   - <p className="mb-5 text-sm leading-relaxed text-white/40">{subtitle}</p>
-  - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} weight="regular" style={{color:'rgba(255,255,255,0.55)'}} />.
+  - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full cursor-pointer items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} weight="regular" style={{color:'rgba(255,255,255,0.55)'}} />.
   - Top edge highlight div: absolute left-6 right-6 top-0 h-[1px] background "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)".
 
 No entrance animation. Always dark. Icons from @phosphor-icons/react (weight="regular"): ChartLineUp, Lightning, ShieldCheck, ArrowRight. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.

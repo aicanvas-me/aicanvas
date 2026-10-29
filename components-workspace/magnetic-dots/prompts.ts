@@ -35,8 +35,8 @@ Dot: { restX, restY, x, y, vx, vy }. Build grid: cols = ceil(w/SPACING)+1, rows 
 Canvas DPR: rect = getBoundingClientRect; canvas.width = round(rect.width*dpr); canvas.height = round(rect.height*dpr); ctx.setTransform(dpr,0,0,dpr,0,0).
 
 Per frame:
-- hoverStr += (target - hoverStr) * LERP_FACTOR, target = 1 if pointer else 0
-- If pointer: smoothMx += (rawX - smoothMx) * MOUSE_LERP (snap on first contact via a -99999 sentinel). Else reset sentinel.
+- hoverStrRef.current += (target - hoverStrRef.current) * LERP_FACTOR, target = 1 if pointer else 0; then define hStr = hoverStrRef.current and raw = mouseRef.current
+- If raw exists: smoothMx += (raw.x - smoothMx) * MOUSE_LERP and likewise for smoothMy (snap both on first contact via a -99999 sentinel). Otherwise, hold smoothMx/smoothMy at the last smoothed position while hStr fades, and reset both to -99999 only once hStr <= 0.001. This lets the pull ease out where the pointer left; re-entry during the fade continues from the held position.
 - clearRect. fillStyle = dark ? 'rgba(255,255,255,0.5)' : 'rgba(28,25,22,0.4)'.
 - For each dot:
   - If hoverStr > 0.001 and dist2 < INFLUENCE_R^2 and dist2 > 0.01: t = 1 - dist/INFLUENCE_R; force = t*t*MAG_STRENGTH*hoverStr; vx += (-dx/dist)*force; vy += (-dy/dist)*force (pulls toward cursor).

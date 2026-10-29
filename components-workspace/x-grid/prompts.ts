@@ -59,7 +59,7 @@ For each mark d with b>=0.05, look up 4 neighbours [row][col+1], [row+1][col], [
 useState isDark + isDarkRef + MutationObserver.
 
 ## Mouse / touch
-updateMouse reads canvas.getBoundingClientRect, sets mouseRef = { x:cx-rect.left, y:cy-rect.top }. Handlers on outer div: onMouseMove/onMouseLeave/onTouchMove/onTouchEnd.
+updateMouse reads canvas.getBoundingClientRect, sets mouseRef = { x:cx-rect.left, y:cy-rect.top }. Handlers on outer div: onMouseMove/onMouseLeave/onTouchStart/onTouchMove/onTouchEnd. onTouchStart runs the same update as onTouchMove, so a tap without moving lights the cells under the finger.
 
 ## JSX
 \`\`\`
@@ -124,7 +124,7 @@ For each mark d with b>=0.05, look up 4 neighbours [row][col+1], [row+1][col], [
 useState isDark + isDarkRef + MutationObserver.
 
 ## Mouse / touch
-updateMouse reads canvas.getBoundingClientRect, sets mouseRef = { x:cx-rect.left, y:cy-rect.top }. Handlers on outer div: onMouseMove/onMouseLeave/onTouchMove/onTouchEnd.
+updateMouse reads canvas.getBoundingClientRect, sets mouseRef = { x:cx-rect.left, y:cy-rect.top }. Handlers on outer div: onMouseMove/onMouseLeave/onTouchStart/onTouchMove/onTouchEnd. onTouchStart runs the same update as onTouchMove, so a tap without moving lights the cells under the finger.
 
 ## JSX
 \`\`\`
@@ -189,7 +189,7 @@ For each mark d with b>=0.05, look up 4 neighbours [row][col+1], [row+1][col], [
 useState isDark + isDarkRef + MutationObserver.
 
 ## Mouse / touch
-updateMouse reads canvas.getBoundingClientRect, sets mouseRef = { x:cx-rect.left, y:cy-rect.top }. Handlers on outer div: onMouseMove/onMouseLeave/onTouchMove/onTouchEnd.
+updateMouse reads canvas.getBoundingClientRect, sets mouseRef = { x:cx-rect.left, y:cy-rect.top }. Handlers on outer div: onMouseMove/onMouseLeave/onTouchStart/onTouchMove/onTouchEnd. onTouchStart runs the same update as onTouchMove, so a tap without moving lights the cells under the finger.
 
 ## JSX
 \`\`\`

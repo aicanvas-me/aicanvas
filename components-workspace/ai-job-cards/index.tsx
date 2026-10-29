@@ -1,9 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Displays AI job card stacks that cycle by button press or vertical drag.
- */
 
 import { useRef, useState, useLayoutEffect, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
@@ -21,8 +18,9 @@ interface CardData {
 interface StackData {
   logo: LogoKey
   company: string
+  // Both colors: 6-digit hex only, since the card border appends a 1A alpha.
   borderColor: string
-  borderColorLight?: string  
+  borderColorLight?: string
   cards: [CardData, CardData, CardData]
 }
 
@@ -60,13 +58,13 @@ const STACKS: StackData[] = [
   },
 ]
 
-const CARD_H = 234  // tune: raise to make each card taller
-const PEEK   = 20   // tune: raise to reveal more of the stacked cards
+const CARD_H = 234
+const PEEK   = 20
 
 const SLOTS = [
-  { y: 0,        scale: 1,    z: 3 },  
-  { y: PEEK,     scale: 0.96, z: 2 },  
-  { y: PEEK * 2, scale: 0.92, z: 1 },  
+  { y: 0,        scale: 1,    z: 3 },
+  { y: PEEK,     scale: 0.96, z: 2 },
+  { y: PEEK * 2, scale: 0.92, z: 1 },
 ]
 
 function ClaudeLogo() {
@@ -132,7 +130,6 @@ function VercelLogo({ isDark }: { isDark: boolean }) {
 function MistralLogo() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {}
       <rect x="3" y="3" width="8" height="8" rx="1.5" fill="#FF7000" />
       <rect x="13" y="3" width="8" height="8" rx="1.5" fill="#FF7000" opacity="0.7" />
       <rect x="3" y="13" width="8" height="8" rx="1.5" fill="#FF7000" opacity="0.7" />
@@ -188,7 +185,7 @@ interface SingleCardProps {
   stack: StackData
   isDark: boolean
   isFront: boolean
-  frontIndex: number       
+  frontIndex: number
   onCycle: () => void
 }
 
@@ -235,7 +232,6 @@ function SingleCard({ card, stack, isDark, isFront, frontIndex, onCycle }: Singl
         overflow: 'hidden',
       }}
     >
-      {}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
         <span style={{ fontSize: 12, fontWeight: 600, color: rateColor, letterSpacing: '0.02em' }}>
           {card.rate}
@@ -251,7 +247,6 @@ function SingleCard({ card, stack, isDark, isFront, frontIndex, onCycle }: Singl
         </motion.button>
       </div>
 
-      {}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14, flex: 1 }}>
         <h3
           style={{
@@ -294,10 +289,8 @@ function SingleCard({ card, stack, isDark, isFront, frontIndex, onCycle }: Singl
         </motion.button>
       </div>
 
-      {}
       <div style={{ height: 1, background: dividerColor, marginBottom: 14 }} />
 
-      {}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 24, height: 24, flexShrink: 0 }}>
@@ -389,6 +382,7 @@ function CardStack({ stack, isDark }: CardStackProps) {
           ? { y: exitDir.current === 'down' ? 160 : -160, scale: 0.88, opacity: 0 }
           : { y: slot.y, scale: slot.scale, opacity: 1 }
 
+        // The exit duration must equal the 380 ms timeout in cycle().
         const animTransition = isExiting
           ? { duration: 0.38, ease: [0.4, 0, 0.2, 1] as [number, number, number, number] }
           : isReturning

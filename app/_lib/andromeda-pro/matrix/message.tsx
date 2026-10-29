@@ -159,7 +159,7 @@ export const message: MatrixSpec = {
   soloCentered: true,
   statePairColumns: true,
   render: (_size, props) => (
-    <div style={{ width: '100%', maxWidth: 640 }}>
+    <div style={{ width: '100%', maxWidth: 640, margin: '0 auto' }}>
       {props.from === 'user' ? <UserTurn /> : <AssistantTurn busy={props.busy} stopped={props.stopped} />}
     </div>
   ),

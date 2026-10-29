@@ -20,7 +20,7 @@ export const accordion: MatrixSpec = {
   render: (_size, props) => {
     const { type = 'single', defaultValue, force } = props
     return (
-      <div style={{ width: 440, maxWidth: '100%' }}>
+      <div style={{ width: 440, maxWidth: '100%', margin: '0 auto' }}>
         <Accordion as="ol" type={type} defaultValue={defaultValue}>
           {QUESTIONS.map((item, i) => (
             <AccordionItem key={item.q} value={String(i)} data-force={i === 0 ? force : undefined}>

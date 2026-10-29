@@ -1,31 +1,68 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents a glass upgrade modal with an animated entrance and feature list.
- * The close control removes the card with an exit transition.
- */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { X, Check, ShieldCheck } from '@phosphor-icons/react'
 
 export default function GlassModal() {
   const [open, setOpen] = useState(true)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const focusOnOpen = useRef(false)
+
+  useEffect(() => {
+    if (!open) triggerRef.current?.focus()
+    else if (focusOnOpen.current) {
+      closeRef.current?.focus()
+      focusOnOpen.current = false
+    }
+  }, [open])
+
+  function close() {
+    setOpen(false)
+  }
 
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
-      {}
       <img
         src="https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866"
         alt=""
         className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60"
       />
 
-      {}
       <AnimatePresence>
+        {!open && (
+          <motion.button
+            key="trigger"
+            ref={triggerRef}
+            type="button"
+            onClick={() => {
+              focusOnOpen.current = true
+              setOpen(true)
+            }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            whileHover={{ scale: 1.04, background: 'rgba(255,255,255,0.1)' }}
+            whileTap={{ scale: 0.96 }}
+            transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+            className="absolute cursor-pointer rounded-full px-5 py-3 text-sm font-medium text-white/60"
+            style={{
+              background: 'rgba(255, 255, 255, 0.06)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(40px) saturate(1.8)',
+              WebkitBackdropFilter: 'blur(40px) saturate(1.8)',
+            }}
+          >
+            View Upgrade
+          </motion.button>
+        )}
         {open && (
       <motion.div
+        key="card"
+        // No opacity in initial: below 1 it hides the blur until the fade ends.
         initial={{ scale: 0.9, y: 16 }}
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.9, y: 16, opacity: 0 }}
@@ -37,22 +74,21 @@ export default function GlassModal() {
           boxShadow: '0 24px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05), inset 0 1px 0 rgba(255,255,255,0.1)',
         }}
       >
-        {}
+        {/* z-[-1] relies on the card's isolate; without it the blur falls behind the page. */}
         <div
           className="pointer-events-none absolute inset-0 z-[-1] rounded-3xl"
           style={{ backdropFilter: 'blur(40px) saturate(1.8)', WebkitBackdropFilter: 'blur(40px) saturate(1.8)' }}
         />
-        {}
         <div
           className="absolute left-8 right-8 top-0 h-[1px]"
           style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)' }}
         />
 
-        {}
         <motion.button
+          ref={closeRef}
           type="button"
           aria-label="Close"
-          onClick={() => setOpen(false)}
+          onClick={close}
           whileHover={{ scale: 1.15, rotate: 90 }}
           whileTap={{ scale: 0.9 }}
           transition={{ duration: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
@@ -62,9 +98,7 @@ export default function GlassModal() {
           <X size={14} weight="regular" className="text-white/60" />
         </motion.button>
 
-        {}
         <div className="flex flex-col items-center px-8 pb-8 pt-10">
-          {}
           <motion.div
             initial={{ scale: 0, rotate: -20 }}
             animate={{ scale: 1, rotate: 0 }}
@@ -96,7 +130,6 @@ export default function GlassModal() {
             Unlock premium components, priority support, and early access to new features.
           </motion.p>
 
-          {}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -122,9 +155,10 @@ export default function GlassModal() {
             ))}
           </motion.div>
 
-          {}
           <div className="flex w-full flex-col gap-2">
             <motion.button
+              type="button"
+              onClick={close}
               whileHover={{
                 scale: 1.04,
                 background: 'linear-gradient(135deg, rgba(255, 180, 80, 0.9), rgba(235, 75, 45, 0.8))',
@@ -142,6 +176,8 @@ export default function GlassModal() {
               Upgrade Now
             </motion.button>
             <motion.button
+              type="button"
+              onClick={close}
               whileHover={{ scale: 1.04, background: 'rgba(255,255,255,0.1)' }}
               whileTap={{ scale: 0.96 }}
               transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}

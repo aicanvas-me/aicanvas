@@ -1,22 +1,15 @@
 'use client'
 
-/**
- * Renders a theme-aware canvas field of granular dots and connections.
- * Pointer proximity changes the brightness of nearby particles and lines.
- */
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
 
-// tune: lower the divisor to add more dots
-const DENSITY     = 1 / 120   
-// tune: raise to permit more dots on large canvases
-const MAX_DOTS    = 3000      
-// tune: raise to widen pointer influence
-const RADIUS      = 200      
-// tune: raise to connect dots across larger gaps
-const NEIGHBOUR_D = 35       
+const DENSITY     = 1 / 120
+// The neighbour search is O(n²) on every resize; raising this cap slows resizes fast.
+const MAX_DOTS    = 3000
+const RADIUS      = 200
+const NEIGHBOUR_D = 35
 const BASE_A_DARK  = 0.18
 const BASE_A_LIGHT = 0.28
 const PEAK_A      = 0.14
@@ -32,7 +25,6 @@ export default function NoiseBg() {
   const isDarkRef = useRef(typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
   const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
 
-  
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -52,7 +44,6 @@ export default function NoiseBg() {
     return () => observer.disconnect()
   }, [])
 
-  
   useEffect(() => {
     const canvas: HTMLCanvasElement = canvasRef.current!
     const ctx = canvas.getContext('2d')!
@@ -73,7 +64,6 @@ export default function NoiseBg() {
       canvas.height = Math.round(ch * dpr)
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      
       const count = Math.min(Math.round(cw * ch * DENSITY), MAX_DOTS)
       dots = Array.from({ length: count }, () => ({
         x: Math.random() * cw,
@@ -81,7 +71,6 @@ export default function NoiseBg() {
         b: 0,
       }))
 
-      
       const nd2 = NEIGHBOUR_D * NEIGHBOUR_D
       pairs = []
       for (let i = 0; i < dots.length; i++) {
@@ -103,7 +92,6 @@ export default function NoiseBg() {
       const dotRGB = isDarkRef.current ? '255,255,255' : '28,25,22'
       const baseA  = isDarkRef.current ? BASE_A_DARK : BASE_A_LIGHT
 
-      
       for (const d of dots) {
         const dx    = d.x - mx
         const dy    = d.y - my
@@ -114,12 +102,11 @@ export default function NoiseBg() {
         if (d.b < 0.004) d.b = 0
 
         const alpha = baseA + (PEAK_A - baseA) * d.b
-        const sz    = 0.8 + d.b * 0.6   
+        const sz    = 0.8 + d.b * 0.6
         ctx.fillStyle = `rgba(${dotRGB},${alpha.toFixed(2)})`
         ctx.fillRect(d.x - sz / 2, d.y - sz / 2, sz, sz)
       }
 
-      
       for (const [a, b] of pairs) {
         if (a.b < 0.05 || b.b < 0.05) continue
         const lineAlpha = Math.min(a.b, b.b) * 0.10

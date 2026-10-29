@@ -1,11 +1,3 @@
-// ============================================================
-// COMPONENT: ProgressBar
-// shadcn/ui-aligned API: variant, forwardRef, ARIA progressbar.
-// Variants: default | warning | fault
-// Visual: a row of bars, each bar = a single square. All bars
-// are the same height.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useEffect, useRef, useState } from 'react';
@@ -14,12 +6,12 @@ import { useInView } from 'framer-motion';
 import { cn, andromedaVars } from './lib/utils';
 import { tokens } from '../tokens';
 
-const BARS       = 30;  // number of columns
-const SQUARES    = 1;   // squares per column
-const SQUARE_W   = 6;   // width in px
-const SQUARE_H   = parseInt(tokens.spacing[4]);  // height in px (spacing[4] = 16px)
-const GAP_INNER  = 2;   // identity constant
-const GAP_COL    = 3;   // gap between columns
+const BARS       = 30;
+const SQUARES    = 1;
+const SQUARE_W   = 6;
+const SQUARE_H   = parseInt(tokens.spacing[4]);
+const GAP_INNER  = 2;
+const GAP_COL    = 3;
 
 const variantConfig = {
   default: {
@@ -71,28 +63,14 @@ type ProgressBarOwnProps = {
 export type ProgressBarProps = ProgressBarOwnProps &
   Omit<ComponentPropsWithoutRef<'div'>, keyof ProgressBarOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<ProgressBarProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(function ProgressBar(
   { className, label, value, variant = 'default', style, ...props },
   outerRef,
 ) {
   const clamped     = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
-  // Any positive value lights at least one segment — a 1% reading should
-  // never render an empty bar.
   const activeCount = clamped > 0 ? Math.max(1, Math.round((clamped / 100) * BARS)) : 0;
   const cfg         = variantConfig[variant] ?? variantConfig.default;
 
-  // Scroll-aware fill: render with zero-active first, then on first
-  // viewport intersection switch to `activeCount` so the per-bar
-  // transition-delay below lights them up left→right at the moment
-  // the user actually sees the bar. ProgressBars below the fold no
-  // longer animate invisibly.
-  //
-  // `once: true` — animate only the first time. Re-entering the
-  // viewport (scroll up, scroll down again) doesn't re-trigger.
-  // `amount: 0.3` — wait until 30% of the bar is visible. Higher
-  // than the cascade's 0.15 because the bar's reveal is its own
-  // motion event; we want the user clearly looking at it.
   const internalRef = useRef<HTMLDivElement | null>(null);
   const setRefs = (node: HTMLDivElement | null) => {
     internalRef.current = node;
@@ -121,7 +99,6 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(function
         </div>
       ) : null}
 
-      {/* Grid: BARS columns × SQUARES rows */}
       <div
         role="progressbar"
         aria-valuenow={clamped}
@@ -152,7 +129,6 @@ export const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(function
                     width:  `${SQUARE_W}px`,
                     height: `${SQUARE_H}px`,
                     flexShrink: 0,
-                    // the -12deg skew is an identity constant, no token
                     transform: 'skewX(-12deg)',
                     background: active
                       ? cfg.activeColor

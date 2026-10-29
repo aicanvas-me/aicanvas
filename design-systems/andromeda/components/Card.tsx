@@ -1,11 +1,3 @@
-// ============================================================
-// COMPONENT: Card
-// shadcn/ui-aligned compound component:
-//   <Card><CardHeader/><CardContent/><CardFooter/></Card>
-// Variant: default | glow (adds accent.shade2 tint + bright markers)
-// Sharp corners, surface.raised background, thin border.subtle.
-// ============================================================
-
 'use client';
 
 import { forwardRef } from 'react';
@@ -35,8 +27,6 @@ const cardVariants = cva(
     },
     compoundVariants: [
       { variant: 'default', bordered: true, class: 'border-[color:var(--andromeda-border-base)]' },
-      // Glow uses accent-500 (matches the gradient peak) so the perimeter
-      // blends with the fill instead of fighting it. accent-400 was too bright.
       { variant: 'glow',    bordered: true, class: 'border-[color:var(--andromeda-accent-500)]' },
     ],
     defaultVariants: {
@@ -64,12 +54,10 @@ export type CardProps = ComponentPropsWithoutRef<'div'> &
     children?: ReactNode;
   };
 
-/** @type {React.ForwardRefExoticComponent<CardProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
   { className, variant = 'default', bordered = false, markers = true, markerProps, children, style, ...props },
   ref,
 ) {
-  // EITHER a perimeter border OR corner markers, never both.
   const showMarkers = markers && !bordered;
   return (
     <div
@@ -94,7 +82,6 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(function Card(
 
 export type CardSectionProps = ComponentPropsWithoutRef<'div'>;
 
-/** @type {React.ForwardRefExoticComponent<CardSectionProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const CardHeader = forwardRef<HTMLDivElement, CardSectionProps>(function CardHeader(
   { className, children, ...props },
   ref,
@@ -107,8 +94,6 @@ export const CardHeader = forwardRef<HTMLDivElement, CardSectionProps>(function 
         'relative',
         'flex items-center justify-between gap-[var(--andromeda-3)]',
         'px-[var(--andromeda-3)] py-[var(--andromeda-3)]',
-        // Inset divider via ::after — left/right match the section padding
-        // so the line stops short of the card's vertical edges.
         'after:content-[""] after:absolute after:bottom-0',
         'after:left-[var(--andromeda-3)] after:right-[var(--andromeda-3)]',
         'after:h-[var(--andromeda-border-width,1px)] after:bg-[color:var(--andromeda-border-subtle)]',
@@ -121,7 +106,6 @@ export const CardHeader = forwardRef<HTMLDivElement, CardSectionProps>(function 
   );
 });
 
-/** @type {React.ForwardRefExoticComponent<CardSectionProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const CardContent = forwardRef<HTMLDivElement, CardSectionProps>(function CardContent(
   { className, children, ...props },
   ref,
@@ -138,7 +122,6 @@ export const CardContent = forwardRef<HTMLDivElement, CardSectionProps>(function
   );
 });
 
-/** @type {React.ForwardRefExoticComponent<CardSectionProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const CardFooter = forwardRef<HTMLDivElement, CardSectionProps>(function CardFooter(
   { className, children, ...props },
   ref,
@@ -151,8 +134,6 @@ export const CardFooter = forwardRef<HTMLDivElement, CardSectionProps>(function 
         'relative',
         'flex items-center gap-[var(--andromeda-3)]',
         'px-[var(--andromeda-3)] py-[var(--andromeda-3)]',
-        // Inset divider via ::before — left/right match the section padding
-        // so the line stops short of the card's vertical edges.
         'before:content-[""] before:absolute before:top-0',
         'before:left-[var(--andromeda-3)] before:right-[var(--andromeda-3)]',
         'before:h-[var(--andromeda-border-width,1px)] before:bg-[color:var(--andromeda-border-subtle)]',
@@ -165,7 +146,6 @@ export const CardFooter = forwardRef<HTMLDivElement, CardSectionProps>(function 
   );
 });
 
-/** @type {React.ForwardRefExoticComponent<{ children?: React.ReactNode, className?: string } & React.HTMLAttributes<HTMLHeadingElement>>} */
 export const CardTitle = forwardRef<HTMLHeadingElement, ComponentPropsWithoutRef<'h3'>>(function CardTitle(
   { className, children, ...props },
   ref,
@@ -190,7 +170,6 @@ export const CardTitle = forwardRef<HTMLHeadingElement, ComponentPropsWithoutRef
   );
 });
 
-/** @type {React.ForwardRefExoticComponent<{ children?: React.ReactNode, className?: string } & React.HTMLAttributes<HTMLParagraphElement>>} */
 export const CardDescription = forwardRef<HTMLParagraphElement, ComponentPropsWithoutRef<'p'>>(function CardDescription(
   { className, children, ...props },
   ref,

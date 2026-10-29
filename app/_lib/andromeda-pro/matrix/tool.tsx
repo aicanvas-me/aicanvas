@@ -38,7 +38,7 @@ export const tool: MatrixSpec = {
     const { status = 'done', title = 'Read the pipeline', ...rest } = props
     const text = BODY[status]
     return (
-      <div style={{ width: 280, maxWidth: '100%' }}>
+      <div style={{ width: 280, maxWidth: '100%', margin: '0 auto' }}>
         <Tool size={size ?? 'sm'} status={status} title={title} {...rest}>
           {text ? <p style={body}>{text}</p> : null}
         </Tool>

@@ -290,7 +290,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'table',
     name: 'Table',
     description:
-      'Compound data-table primitive: Table / TableHead / TableBody / TableRow / TableHeader / TableCell. Sortable column headers, row hover highlight, selected-row accent edge. Render TableStyles once on the page to enable the hover styling.',
+      'Compound data-table primitive: Table / TableHead / TableBody / TableRow / TableHeader / TableCell. Sortable column headers, row hover highlight, selected-row accent edge. Render TableStyles once on the page to enable the hover styling. On narrow screens, it scrolls sideways; use DataTable for phone layouts.',
     sourceFile: 'Table.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/table.png?v=3',
   },

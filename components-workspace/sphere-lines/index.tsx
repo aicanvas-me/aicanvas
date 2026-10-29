@@ -1,39 +1,28 @@
 'use client'
 
-/**
- * Renders a rotating canvas sphere from layered latitude lines.
- * Pointer engagement accelerates the waves and distorts nearby line segments.
- */
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
 
-// tune: raise to add more latitude lines
-const N_LATS      = 42      
-// tune: raise to smooth each latitude line
-const N_STEPS     = 240     
-// tune: raise to increase wave displacement
-const WAVE_PHI    = 0.28    
-const WAVE_FREQ_T = 2.0     
-const WAVE_FREQ_P = 1.8     
-// tune: raise to speed idle wave motion
-const WAVE_SPEED_IDLE  = 0.003   
-// tune: raise to speed engaged wave motion
-const WAVE_SPEED_HOVER = 0.012   
-const ROT_SPEED_IDLE   = 0.003   
-const ROT_SPEED_HOVER  = 0.012   
-const BACK_A      = 0.05    
-const ALPHA_MIN   = 0.12    
-const ALPHA_MAX   = 0.40    
-const LW_MIN      = 0.35    
-const LW_MAX      = 0.90    
-const BAND_SIGMA  = 0.35    
-const BAND_FREQ   = 2.5     
-// tune: raise to widen local pointer distortion
-const HOVER_RADIUS = 90     
-// tune: raise to strengthen local pointer distortion
-const HOVER_AMP    = 0.45   
+const N_LATS      = 42
+const N_STEPS     = 240
+const WAVE_PHI    = 0.28
+const WAVE_FREQ_T = 2.0
+const WAVE_FREQ_P = 1.8
+const WAVE_SPEED_IDLE  = 0.003
+const WAVE_SPEED_HOVER = 0.012
+const ROT_SPEED_IDLE   = 0.003
+const ROT_SPEED_HOVER  = 0.012
+const BACK_A      = 0.05
+const ALPHA_MIN   = 0.12
+const ALPHA_MAX   = 0.40
+const LW_MIN      = 0.35
+const LW_MAX      = 0.90
+const BAND_SIGMA  = 0.35
+const BAND_FREQ   = 2.5
+const HOVER_RADIUS = 90
+const HOVER_AMP    = 0.45
 const TWO_PI      = Math.PI * 2
 
 export default function SphereLines() {
@@ -43,7 +32,6 @@ export default function SphereLines() {
   const isDarkRef = useRef(typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
   const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
 
-  
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -63,7 +51,6 @@ export default function SphereLines() {
     return () => observer.disconnect()
   }, [])
 
-  
   useEffect(() => {
     const canvas = canvasRef.current!
     const ctx    = canvas.getContext('2d')!
@@ -86,7 +73,6 @@ export default function SphereLines() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
 
-    
     const xs = new Float32Array(N_STEPS + 1)
     const ys = new Float32Array(N_STEPS + 1)
     const zs = new Float32Array(N_STEPS + 1)
@@ -105,11 +91,9 @@ export default function SphereLines() {
       const cx         = cw / 2
       const cy         = ch / 2
       const mouse      = mouseRef.current
-      
       const bandCenter = Math.sin(t * BAND_FREQ) * (Math.PI * 0.4)
       const dotRGB     = isDarkRef.current ? '255,255,255' : '28,25,22'
 
-      
       ctx.save()
       ctx.beginPath()
       ctx.arc(cx, cy, R, 0, Math.PI * 2)
@@ -118,29 +102,23 @@ export default function SphereLines() {
       for (let i = 0; i < N_LATS; i++) {
         const phi  = -Math.PI / 2 + (i + 1) * Math.PI / (N_LATS + 1)
 
-        
         const depth = Math.cos(phi)
         const lineA = ALPHA_MIN + depth * (ALPHA_MAX - ALPHA_MIN)
         const lw    = LW_MIN + depth * (LW_MAX - LW_MIN)
 
-        
         const dist    = phi - bandCenter
         const autoEnv = Math.exp(-(dist * dist) / (2 * BAND_SIGMA * BAND_SIGMA))
         const autoAmp = WAVE_PHI * autoEnv
 
-        
         for (let j = 0; j <= N_STEPS; j++) {
           const theta = j * 2 * Math.PI / N_STEPS
           const tR    = theta + rot
 
-          
           const autoDPhi = autoAmp * (
             Math.sin(tR * WAVE_FREQ_T + phi * WAVE_FREQ_P + t) +
             0.45 * Math.sin(tR * WAVE_FREQ_T * 1.7 + phi * WAVE_FREQ_P * 1.3 + t * 1.4)
           )
 
-          
-          
           let localDPhi = 0
           if (mouse && hoverStr > 0.01) {
             const sx = cx + R * Math.cos(phi) * Math.cos(tR)
@@ -157,7 +135,6 @@ export default function SphereLines() {
           ys[j] = cy - R * Math.sin(phiD)
         }
 
-        
         ctx.strokeStyle = `rgba(${dotRGB},${BACK_A})`
         ctx.lineWidth   = 0.4
         ctx.beginPath()
@@ -176,9 +153,6 @@ export default function SphereLines() {
           ctx.stroke()
         }
 
-        
-        
-        
         let startJ = 0
         for (let j = 0; j < N_STEPS; j++) {
           if (Math.sin(j * TWO_PI / N_STEPS + rot) < 0) { startJ = j; break }

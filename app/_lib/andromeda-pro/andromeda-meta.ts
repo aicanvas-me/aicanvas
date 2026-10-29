@@ -266,7 +266,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'table-basic',
     name: 'Table Basic',
     description:
-      'Builds a table row by row, for cells that need their own structure.',
+      'Builds a table row by row, for cells that need their own structure. On narrow screens, it scrolls sideways; use Data Table for phone layouts.',
     sourceFile: 'Table.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/table-basic.png?v=2',
   },

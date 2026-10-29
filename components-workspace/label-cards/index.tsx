@@ -1,10 +1,6 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Presents a responsive stack of labeled portfolio cards.
- * Hover and focus separate the overlapping cards while preserving their spread.
- */
 
 import { useRef, useState, useLayoutEffect, useEffect } from 'react'
 import { motion } from 'framer-motion'
@@ -13,13 +9,11 @@ const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffec
 
 
 
-// tune: change both dimensions to resize the card stack
 const BASE_CARD_W = 300
-const BASE_CARD_H = 169 
+const BASE_CARD_H = 169
 
 
 
-// customize: replace the card labels, colors, and resting positions below
 const CARDS = [
   {
     id: 0,
@@ -72,6 +66,16 @@ const CARDS = [
     idle: { x: 84, y: -86, rotate: 18 },
   },
 ]
+
+const CARD_WIDTH_DIVISOR = 2 * Math.max(
+  ...CARDS.map(card => {
+    const radians = card.idle.rotate * Math.PI / 180
+    return Math.abs(card.idle.x)
+      + BASE_CARD_W / 2 * Math.abs(Math.cos(radians))
+      + (BASE_CARD_W * 9 / 16) / 2 * Math.abs(Math.sin(radians))
+  }),
+  1.05 * BASE_CARD_W / 2,
+) / BASE_CARD_W
 
 const BAR_PATTERN = [1,2,1,1,3,1,2,1,1,3,1,1,2,1,2,1,3,1,1,2,1,3,1,2,1,1,2,1]
 
@@ -132,7 +136,6 @@ export default function LabelCards() {
     const el = containerRef.current
     if (!el) return
 
-    
     const checkTheme = () => {
       const card = el.closest('[data-card-theme]')
       setIsDark(
@@ -145,7 +148,6 @@ export default function LabelCards() {
     const cardWrapper = el.closest('[data-card-theme]')
     if (cardWrapper) themeObs.observe(cardWrapper, { attributes: true, attributeFilter: ['class'] })
 
-    
     const sizeObs = new ResizeObserver(entries => {
       setContainerW(entries[0].contentRect.width)
     })
@@ -154,9 +156,8 @@ export default function LabelCards() {
     return () => { themeObs.disconnect(); sizeObs.disconnect() }
   }, [])
 
-  
-  
-  const cardW  = Math.min(BASE_CARD_W, Math.floor(containerW / 1.56))
+  // Scale to fit the widest rotated idle card or the enlarged selected card.
+  const cardW  = Math.min(BASE_CARD_W, Math.floor(containerW / CARD_WIDTH_DIVISOR))
   const cardH  = Math.round(cardW * 9 / 16)
   const scale  = cardW / BASE_CARD_W
 
@@ -165,7 +166,6 @@ export default function LabelCards() {
       ref={containerRef}
       className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#E8E8DF] dark:bg-[#1A1A19]"
     >
-      {}
       <div
         style={{
           position: 'absolute',
@@ -218,7 +218,6 @@ export default function LabelCards() {
                 boxSizing: 'border-box',
               }}
             >
-              {}
               <div
                 style={{
                   display: 'flex',
@@ -240,10 +239,8 @@ export default function LabelCards() {
                 </span>
               </div>
 
-              {}
               <div style={{ height: 1, background: card.fg, opacity: 0.22, marginBottom: 9 * scale, flexShrink: 0 }} />
 
-              {}
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <p style={{ margin: 0, fontSize: 11.5 * scale, fontWeight: 600, color: card.fg, lineHeight: 1.35 }}>
@@ -254,7 +251,6 @@ export default function LabelCards() {
                   </p>
                 </div>
 
-                {}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                   <Barcode color={card.fg} scale={scale} />
                   <LogoMark color={card.fg} scale={scale} />
@@ -265,7 +261,6 @@ export default function LabelCards() {
         )
       })}
 
-      {}
       <motion.p
         style={{
           position: 'absolute',

@@ -1,9 +1,5 @@
 'use client'
 // npm install framer-motion qrcode.react
-/**
- * Presents a Wi-Fi card with a peelable corner containing a QR code.
- * Hover teases the fold, while click and keyboard input lock the reveal open.
- */
 
 import { useEffect, useRef, useState } from 'react'
 import type { KeyboardEvent as ReactKeyboardEvent, RefObject } from 'react'
@@ -57,10 +53,9 @@ const VB_W = 500
 const VB_H = 620
 const CARD_W = 320
 const CARD_H = 440
-const CARD_X = 90 
-const CARD_Y = 70 
-// tune: raise to round the fixed card corners further
-const CARD_RADIUS = 12 
+const CARD_X = 90
+const CARD_Y = 70
+const CARD_RADIUS = 12
 
 
 const TL = { x: CARD_X, y: CARD_Y }
@@ -84,9 +79,6 @@ export default function PeelCornerReveal() {
   const [isHovered, setIsHovered] = useState(false)
   const qrGroupRef = useRef<SVGGElement>(null)
 
-  
-  
-  
   const PAGE_BG = theme === 'dark' ? '#2E2E2C' : '#D0CCC4'
   const CARD_FILL = theme === 'dark' ? '#FFFFFF' : '#121212'
   const CARD_INK = theme === 'dark' ? '#0A0A0A' : '#F5F5F0'
@@ -96,15 +88,12 @@ export default function PeelCornerReveal() {
     ? '4px 4px 24px rgba(0,0,0,0.55)'
     : '4px 4px 24px rgba(20,15,10,0.28)'
 
-  
-  
   const target = useMotionValue(0)
   useEffect(() => {
     target.set(isOpen ? 1 : isHovered ? 0.18 : 0)
   }, [isOpen, isHovered, target])
   const progress = useSpring(target, { stiffness: 170, damping: 22, mass: 0.9 })
 
-  
   const w = useTransform(
     progress,
     [0, 1],
@@ -116,38 +105,16 @@ export default function PeelCornerReveal() {
     [REST_H_PCT * CARD_H, OPEN_H_PCT * CARD_H],
   )
 
-  
   const Ax = useTransform(w, (v) => BR.x - v)
   const Ay = useMotionValue(BR.y)
   const Bx = useMotionValue(BR.x)
   const By = useTransform(h, (v) => BR.y - v)
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   const Cx = useTransform<number, number>([Ax, By], ([ax, by]) => {
     const dx = BR.x - ax
     const dy = by - BR.y
     const len2 = dx * dx + dy * dy
     if (len2 === 0) return BR.x
-    
     const t = (dx * dx) / len2
     const footX = ax + t * dx
     return 2 * footX - BR.x
@@ -162,37 +129,26 @@ export default function PeelCornerReveal() {
     return 2 * footY - BR.y
   })
 
-  
   const angle = useTransform<number, number>([Ax, By], ([ax, by]) => {
-    const dy = by - BR.y 
-    const dx = BR.x - ax 
+    const dy = by - BR.y
+    const dx = BR.x - ax
     return (Math.atan2(dy, dx) * 180) / Math.PI
   })
 
-  
-  
   const cardPoints = useMotionTemplate`${TL.x},${TL.y} ${TR.x},${TR.y} ${Bx},${By} ${Ax},${Ay} ${BL.x},${BL.y}`
 
-  
-  
-  
   const cardPath = useMotionTemplate`M ${TL.x + CARD_RADIUS} ${TL.y} L ${TR.x - CARD_RADIUS} ${TR.y} A ${CARD_RADIUS} ${CARD_RADIUS} 0 0 1 ${TR.x} ${TR.y + CARD_RADIUS} L ${Bx} ${By} L ${Ax} ${Ay} L ${BL.x + CARD_RADIUS} ${BL.y} A ${CARD_RADIUS} ${CARD_RADIUS} 0 0 1 ${BL.x} ${BL.y - CARD_RADIUS} L ${TL.x} ${TL.y + CARD_RADIUS} A ${CARD_RADIUS} ${CARD_RADIUS} 0 0 1 ${TL.x + CARD_RADIUS} ${TL.y} Z`
 
-  
   const peelPoints = useMotionTemplate`${Ax},${Ay} ${Bx},${By} ${Cx},${Cy}`
 
-  
   const foldX1 = Ax
   const foldY1 = Ay
   const foldX2 = Bx
   const foldY2 = By
 
-  
   const foldMidX = useTransform<number, number>([Ax, Bx], ([ax, bx]) => (ax + bx) / 2)
   const foldMidY = useTransform<number, number>([Ay, By], ([ay, by]) => (ay + by) / 2)
 
-  
-  
   const bobRaw = useMotionValue(0)
   useEffect(() => {
     let raf = 0
@@ -227,19 +183,12 @@ export default function PeelCornerReveal() {
     }
   }
 
-  
   const revealOpacity = useTransform(progress, [0.35, 0.75], [0, 1])
 
-  // tune: change to resize the QR code
   const QR_SIZE = 110
-  // tune: raise to move the QR anchor toward the right fold endpoint
-  const QR_ALONG_FRAC = 0.3 
-  // tune: raise to move the QR anchor farther from the fold
-  const QR_PERP_FRAC = 0.7 
+  const QR_ALONG_FRAC = 0.3
+  const QR_PERP_FRAC = 0.7
 
-  
-  
-  
   const QR_OFFSET_X = 54
   const QR_OFFSET_Y = 18
   const qrAnchorX = useTransform<number, number>(
@@ -253,8 +202,6 @@ export default function PeelCornerReveal() {
       ay + QR_ALONG_FRAC * (by - ay) + (QR_PERP_FRAC / 2) * (cy - BR.y) + QR_OFFSET_Y,
   )
 
-  
-  
   const qrAngle = useTransform(angle, (a) => a + 31)
   const qrTransform = useMotionTemplate`translate(${qrAnchorX} ${qrAnchorY}) rotate(${qrAngle})`
 
@@ -297,7 +244,6 @@ export default function PeelCornerReveal() {
           aria-hidden
         >
           <defs>
-            {}
             <motion.linearGradient
               id="pcr-peel-gradient"
               gradientUnits="userSpaceOnUse"
@@ -311,25 +257,20 @@ export default function PeelCornerReveal() {
               <stop offset="100%" stopColor={PEEL_FILL} />
             </motion.linearGradient>
 
-            {}
             <clipPath id="pcr-peel-clip">
               <motion.polygon points={peelPoints} />
             </clipPath>
 
-            {}
             <clipPath id="pcr-card-clip">
               <motion.path d={cardPath} />
             </clipPath>
           </defs>
 
-          {}
           <motion.g>
             <motion.path d={cardPath} fill={CARD_FILL} />
           </motion.g>
 
-          {}
           <g clipPath="url(#pcr-card-clip)">
-            {}
             <g
               transform={`translate(${CARD_X + 24}, ${CARD_Y + 62}) scale(1.5)`}
               stroke={PEEL_FILL}
@@ -374,7 +315,6 @@ export default function PeelCornerReveal() {
               />
             </g>
 
-            {}
             <text
               x={CARD_X + 24}
               y={CARD_Y + 190}
@@ -400,7 +340,6 @@ export default function PeelCornerReveal() {
               Wi-Fi
             </text>
 
-            {}
             <line
               x1={CARD_X + 40}
               y1={CARD_Y + 316}
@@ -411,7 +350,6 @@ export default function PeelCornerReveal() {
               opacity={0.15}
             />
 
-            {}
             <text
               x={CARD_X + 24}
               y={CARD_Y + CARD_H - 20}
@@ -425,7 +363,6 @@ export default function PeelCornerReveal() {
             </text>
           </g>
 
-          {}
           <motion.g>
             <motion.polygon
               points={peelPoints}
@@ -433,7 +370,6 @@ export default function PeelCornerReveal() {
             />
           </motion.g>
 
-          {}
           <motion.line
             x1={foldX1}
             y1={foldY1}
@@ -444,7 +380,6 @@ export default function PeelCornerReveal() {
             strokeLinecap="round"
           />
 
-          {}
           <motion.g
             clipPath="url(#pcr-peel-clip)"
             style={{ opacity: revealOpacity }}
@@ -467,6 +402,7 @@ export default function PeelCornerReveal() {
                   }}
                 >
                   <QRCodeSVG
+                    // Escape \ ; , : in the Wi-Fi name and password with a backslash, or phones misread them.
                     value="WIFI:S:SlowBrew_4G;T:WPA;P:BREW_ME_BABY!;;"
                     size={QR_SIZE - 12}
                     level="M"

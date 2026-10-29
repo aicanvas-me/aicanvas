@@ -1,15 +1,10 @@
 'use client'
 
-/**
- * Canvas field of outlined bubbles that react to nearby pointer and touch input.
- * Each affected bubble expands, fades, and reforms in a repeating burst.
- */
-
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
-const SPACING     = 20    // tune: raise to spread the circles farther apart
+const SPACING     = 20
 const RADIUS      = 200
 const BASE_R      = 1.5
 const BURST_R     = 16

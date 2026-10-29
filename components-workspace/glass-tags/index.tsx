@@ -1,18 +1,13 @@
 'use client'
 
 // npm install framer-motion
-/**
- * Renders a configurable row of selectable glass tags.
- * Clicking a tag toggles its checkmark and selection glow without shifting layout.
- */
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 
-// customize: replace the background and tag labels below
-
 const BACKGROUND = 'https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%203%20(1).png?updatedAt=1775226815629'
 
+// 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const TAGS = [
   { label: 'Design',       color: '#FF9A3C' },
   { label: 'Development',  color: '#FFBE0B' },
@@ -37,6 +32,7 @@ function GlassTag({ label, color, index }: { label: string; color: string; index
 
   return (
     <motion.button
+      // No opacity in initial: below 1 it hides the blur until the fade ends.
       initial={{ scale: 0.8, y: 12 }}
       animate={{ scale: 1, y: 0 }}
       transition={{ type: 'spring', stiffness: 260, damping: 20, delay: index * 0.04 }}
@@ -61,12 +57,11 @@ function GlassTag({ label, color, index }: { label: string; color: string; index
         transition: 'background 0.2s ease, border 0.2s ease, box-shadow 0.2s ease',
       }}
     >
-      {}
+      {/* z-[-1] relies on the tag's isolate; without it the blur falls behind the page. */}
       <div
         className="pointer-events-none absolute inset-0 z-[-1] rounded-full"
         style={{ backdropFilter: GLASS_FILTER, WebkitBackdropFilter: GLASS_FILTER }}
       />
-      {}
       <motion.div
         className="absolute inset-0 rounded-full"
         animate={{ opacity: selected ? 0.15 : 0 }}
@@ -75,7 +70,6 @@ function GlassTag({ label, color, index }: { label: string; color: string; index
       />
 
       <div className="relative z-10 flex items-center gap-2">
-        {}
         <div className="relative h-3.5 w-3.5 shrink-0">
           <motion.div
             animate={{ scale: selected ? 0 : 1, opacity: selected ? 0 : hovered ? 0.8 : 0.5 }}
