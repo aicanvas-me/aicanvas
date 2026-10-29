@@ -46,3 +46,15 @@ jobs:
           done
           echo "::error title=Premium missing in production::Production is NOT serving the pinned premium ($PIN) [$last]. Paying subscribers may be on a free-only build. Check GITHUB_PAT_PREMIUM in Vercel Production and the latest deploy logs, then roll back if needed."
           exit 1
+      # Separate from the premium check above on purpose: a missing Lifetime
+      # price is fixed by setting the variable in Vercel, never by a rollback.
+      - name: Confirm the Lifetime price is configured
+        run: |
+          set -euo pipefail
+          body="$(curl -fsS "https://aicanvas.me/api/premium/health" || echo '{}')"
+          conf="$(echo "$body" | jq -r '.lifetimePriceConfigured')"
+          echo "lifetimePriceConfigured=$conf"
+          if [[ "$conf" != "true" ]]; then
+            echo "::error title=Lifetime price not configured::NEXT_PUBLIC_PADDLE_PRICE_LIFETIME is not set in Vercel Production. Lifetime purchases are not granted until it is: set it and redeploy."
+            exit 1
+          fi
