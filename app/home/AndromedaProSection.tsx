@@ -43,7 +43,7 @@ function Brain() {
         <BrainWireframe followSite />
       </div>
       <div className="flex flex-col justify-center p-6 sm:p-8">
-        <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">The AI Brain</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">The AI Brain</span>
         <h3 className="mt-2 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
           Your design system, written for AI.
         </h3>
@@ -75,7 +75,7 @@ export function AndromedaProSection() {
           {/* ── Intro on the left, the card stack on the right; stacks on phones ── */}
           <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16">
             <div className="min-w-0">
-              <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">New design system</span>
+              <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">New design system</span>
               <div className="mt-3 flex flex-wrap items-center gap-3">
                 <h2
                   id="home-andromeda-pro"

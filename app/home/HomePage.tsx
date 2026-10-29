@@ -10,7 +10,6 @@ import {
   CaretRight,
   Code,
   MagnifyingGlass,
-  Sparkle,
   Terminal,
 } from '@phosphor-icons/react/dist/ssr'
 import { buttonClasses } from '../components/buttonClasses'
@@ -357,11 +356,8 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
 
           <section aria-labelledby="v3-templates" className="mt-14 sm:mt-16">
             <Reveal className="mx-auto max-w-2xl text-center">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-sand-300 bg-sand-100 px-2.5 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300">
-                <Sparkle weight="regular" size={12} className="text-olive-600 dark:text-olive-400" aria-hidden />
-                Included with Premium
-              </span>
-              <h2 id="v3-templates" className={`mt-4 ${H2}`}>
+              <p className={EYEBROW}>Included with Premium</p>
+              <h2 id="v3-templates" className={`mt-2 ${H2}`}>
                 Start from a complete screen.
               </h2>
               <p className={`mx-auto mt-3 max-w-xl ${SUB}`}>
@@ -461,12 +457,12 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
 
         {/* ── Why AI Canvas ── */}
         <section aria-labelledby="v3-why" className="mx-auto mt-20 max-w-6xl sm:mt-32">
-          <Reveal className="mb-10 max-w-2xl">
+          <Reveal className="mx-auto mb-10 max-w-2xl text-center">
             <p className={EYEBROW}>Why AI Canvas</p>
             <h2 id="v3-why" className={`mt-2 ${H2} sm:text-5xl`}>
               More than a component gallery.
             </h2>
-            <p className={`mt-3 ${SUB}`}>
+            <p className={`mx-auto mt-3 max-w-xl ${SUB}`}>
               Pick a system or a single component. Build with it yourself or with an agent. The source stays yours.
             </p>
           </Reveal>
