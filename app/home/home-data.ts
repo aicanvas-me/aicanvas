@@ -5,6 +5,8 @@ import { COMPONENT_META } from '../lib/component-meta.generated'
 import { lightShot, optimizeImageKitUrl } from '../lib/imagekit'
 import { getRegistryPulls } from '../lib/registry-stats'
 import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-data'
+import { icons, readLineIcons } from '../icons/_lib/server-data'
+import type { HeroIcon } from './HeroMap'
 
 // The homepage renders at / and at /home; both routes share this data and
 // these words.
@@ -31,9 +33,31 @@ const WALL_SLUGS = [
   'sphere-lines', 'polaroid-stack', 'charging-widget', 'traveldeck',
 ]
 
+// The hero map's icon rail, in this order; names missing from the icon set
+// are skipped.
+const HERO_ICON_NAMES = [
+  'agent-skill', 'mcp-server', 'palette', 'sparkle', 'code', 'terminal', 'toggle-left',
+  'image', 'chart-bar', 'lock', 'bell', 'search', 'calendar', 'globe', 'heart',
+  'command', 'layers', 'pen-tool', 'wand',
+]
+
+// A build without the icon source writes empty data (or none at all), so this
+// never throws: no markup means an empty rail, not a broken homepage.
+async function getHeroIcons(): Promise<HeroIcon[]> {
+  try {
+    const markup = await readLineIcons()
+    return HERO_ICON_NAMES.flatMap((name) =>
+      typeof markup[name] === 'string' && markup[name] ? [{ name, markup: markup[name] }] : [],
+    )
+  } catch {
+    return []
+  }
+}
+
 export async function getHomeData() {
   const total = COMPONENT_META.length
-  const pulls = await getRegistryPulls()
+  const [pulls, heroIcons] = await Promise.all([getRegistryPulls(), getHeroIcons()])
+  const iconCount = Array.isArray(icons) ? icons.length : 0
   // The free MIT standalones: everything not badged Premium.
   const freeTotal = COMPONENT_META.filter((c) => c.badge !== 'Premium').length
 
@@ -54,5 +78,5 @@ export async function getHomeData() {
       : []
   })
 
-  return { total, freeTotal, pulls, templates, wall }
+  return { total, freeTotal, pulls, templates, wall, heroIcons, iconCount }
 }

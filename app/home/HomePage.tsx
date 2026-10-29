@@ -17,7 +17,7 @@ import { SiteFooter } from '../components/SiteFooter'
 import { PremiumCards } from '../components/billing/PremiumCards'
 import { AndromedaProSection } from './AndromedaProSection'
 import { Reveal } from './Reveal'
-import { StackedCards, AnimatedCount, WireIcons } from './islands'
+import { AnimatedCount, WireIcons } from './islands'
 import { GITHUB_URL } from '../lib/config'
 import { HOME_FAQ, faqJsonLd } from '../lib/faq'
 import { lifetimeEnabled, premiumEnabled } from '../../lib/flags'
@@ -28,6 +28,7 @@ import {
 } from '../_lib/andromeda-pro/andromeda-meta'
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
+import { HeroMap, type HeroIcon } from './HeroMap'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
 import { ValueBento } from './ValueBento'
@@ -43,6 +44,10 @@ interface Props {
   pulls: number
   templates: DeckTemplate[]
   wall: WallItem[]
+  /** The hero map's icon rail (line markup); empty in a build without the icon source. */
+  heroIcons: HeroIcon[]
+  /** Every icon in the set; 0 in a build without the icon source. */
+  iconCount: number
 }
 
 const PREMIUM = premiumEnabled()
@@ -77,7 +82,7 @@ const STEPS = [
   },
 ]
 
-export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
+export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, iconCount }: Props) {
   // Everything installable, counted from source so it can never drift from
   // reality: standalones (`total`, premium included) + the Andromeda
   // design-system components and templates, which live in their own registry.
@@ -104,11 +109,9 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
       data-owns-scroll
       className="aic-page-scroll flex min-h-full flex-col overflow-x-hidden bg-sand-50 dark:bg-sand-950"
     >
-      <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
+      <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pt-12 pb-8 sm:px-6 sm:pt-20">
         {/* ── Hero ── */}
         <section className="mx-auto flex max-w-4xl flex-col items-center text-center">
-          <StackedCards />
-
           <span
             className="aic-hero-rise mb-5 inline-flex items-center rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300"
             style={{ animationDelay: '0.1s' }}
@@ -151,6 +154,19 @@ export function HomePage({ total, freeTotal, pulls, templates, wall }: Props) {
             </Link>
           </div>
         </section>
+
+        {/* What AI Canvas is, in three groups: wider than the hero's text
+            column, so it sits outside it. */}
+        <div className="mx-auto mt-12 w-full max-w-5xl sm:mt-16">
+          <HeroMap
+            wall={wall.slice(0, 6)}
+            standalonesFloor={standalonesFloor}
+            dsComponents={ANDROMEDA_PRO_COMPONENT_META.length}
+            dsTemplates={ANDROMEDA_PRO_TEMPLATE_META.length}
+            icons={heroIcons}
+            iconCount={iconCount}
+          />
+        </div>
 
         <div className="mx-auto max-w-4xl">
           {/* ── Proof pair ──
