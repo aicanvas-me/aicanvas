@@ -209,7 +209,7 @@ export function AndromedaThemeToggle({ className = '', label }: { className?: st
             aria-label={name}
             aria-pressed={active}
             title={name}
-            className={`relative flex h-7 w-7 items-center justify-center rounded-chip transition-colors ${
+            className={`relative flex h-7 w-7 items-center justify-center rounded-control transition-colors ${
               active
                 ? 'text-sand-900 dark:text-sand-50'
                 : 'text-sand-500 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100'
@@ -220,7 +220,7 @@ export function AndromedaThemeToggle({ className = '', label }: { className?: st
                 aria-hidden
                 layoutId={chipId}
                 transition={{ type: 'spring', stiffness: 500, damping: 36 }}
-                className="absolute inset-0 rounded-chip bg-sand-50 shadow-sm dark:bg-sand-800"
+                className="absolute inset-0 rounded-control bg-sand-50 shadow-sm dark:bg-sand-800"
               />
             ) : null}
             <Icon weight="regular" size={16} className="relative" />

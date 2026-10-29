@@ -125,9 +125,9 @@ Site chrome never writes a size like `rounded-xl`. It names the role, and `app/g
 | `rounded-section` | 24px | big boxes: homepage chapters, bento and plan cards, CTA bands, the icons toolbar and tiles |
 | `rounded-shell` / `rounded-shell-inner` | 28px / 22px | outer and inner frame of a double bezel (FAQ, catalog card, component preview) |
 | `rounded-card` | 16px | a card or panel inside a section, menus, popovers, code tabs |
-| `rounded-inset` | 12px | media or a well inside a card |
-| `rounded-control` | 8px | buttons and text fields |
-| `rounded-chip` | 6px | keyboard keys, small square chips, the smallest icon buttons |
+| `rounded-inset` | 12px | media or a well inside a card, code wells, alerts, tooltips, multi-line text areas, result rows |
+| `rounded-control` | pill | every control: buttons, icon buttons, text and search fields, tabs, nav rows, segmented pickers (ruled 2026-10-29) |
+| `rounded-chip` | 6px | keyboard keys, inline code, logo chips, menu rows inside a small menu |
 | `rounded-tag` | 4px | tier labels, the tiniest marks |
 | `rounded-full` | pill | chips, prompts, segmented pickers, switches, search and filter fields, round icon buttons |
 

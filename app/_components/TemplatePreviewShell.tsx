@@ -528,7 +528,7 @@ function TopBar({
             onClick={onReload}
             aria-label="Replay animation"
             title="Replay animation"
-            className="flex h-7 w-7 items-center justify-center rounded-chip text-sand-600 transition-colors hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-sand-600 transition-colors hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100"
           >
             <ArrowClockwise weight="regular" size={15} />
           </button>
@@ -610,7 +610,7 @@ function TemplateSwitcher({
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Switch template"
-        className="flex min-w-0 items-center gap-1 rounded-chip text-accent transition-colors hover:text-accent/70"
+        className="flex min-w-0 items-center gap-1 rounded-control text-accent transition-colors hover:text-accent/70"
       >
         <span className="truncate">{templateName}</span>
         <CaretUpDown weight="regular" size={14} className="shrink-0 opacity-70" />
@@ -815,7 +815,7 @@ function InstallButton({
                 )}
               </Button>
             </div>
-            <div className="rounded-control bg-sand-200 dark:bg-sand-950 px-4 py-3">
+            <div className="rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3">
               <code className="block break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">

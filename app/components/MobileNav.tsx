@@ -142,7 +142,7 @@ export function MobileNav() {
                       type="button"
                       onClick={clearSearch}
                       aria-label="Clear search"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-chip p-0.5 text-sand-600 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-control p-0.5 text-sand-600 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
                     >
                       <X weight="regular" size={13} />
                     </button>

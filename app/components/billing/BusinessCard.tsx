@@ -90,7 +90,7 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
                     type="button"
                     onClick={() => setCycle(key)}
                     aria-pressed={selected}
-                    className={`relative rounded-chip px-3 py-1 text-xs font-semibold transition-colors ${
+                    className={`relative rounded-control px-3 py-1 text-xs font-semibold transition-colors ${
                       selected
                         ? 'text-accent-foreground'
                         : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
@@ -99,7 +99,7 @@ export function BusinessCards({ compact = false }: { compact?: boolean }) {
                     {selected && (
                       <motion.span
                         layoutId={`business-cycle-pill-${pillId}`}
-                        className="absolute inset-0 rounded-chip bg-accent"
+                        className="absolute inset-0 rounded-control bg-accent"
                         transition={
                           reduceMotion
                             ? { duration: 0 }

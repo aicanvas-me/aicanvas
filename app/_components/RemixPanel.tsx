@@ -268,7 +268,7 @@ export function RemixPanel({
                     that wraps to two lines and turns a tidy card into a wall of
                     monospace. Nothing is lost by cutting it: the visible form
                     is masked anyway, and the button copies the real command. */}
-                <code className="min-w-0 flex-1 truncate rounded-control bg-sand-200 dark:bg-sand-950 px-3 py-2 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
+                <code className="min-w-0 flex-1 truncate rounded-inset bg-sand-200 dark:bg-sand-950 px-3 py-2 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
                   npx shadcn@latest add {cliReference}
                 </code>
                 {/* onCopyCli already sends a non-subscriber to the paywall

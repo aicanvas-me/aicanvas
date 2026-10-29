@@ -119,7 +119,7 @@ export function segmentForPath(pathname: string | null | undefined): CatalogSegm
 
 // Same row skin the rail has always used: muted at rest, the raised pill when
 // it is the page you are on.
-const ROW = 'group flex items-center gap-2 rounded-chip px-2 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40'
+const ROW = 'group flex items-center gap-2 rounded-control px-2 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40'
 const ROW_ACTIVE = 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
 const ROW_IDLE =
   'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'

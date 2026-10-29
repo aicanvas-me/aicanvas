@@ -219,7 +219,7 @@ function FreeFan({ shots }: { shots: Shot[] }) {
           key={s.slug}
           className={`absolute left-1/2 top-4 w-[52%] max-w-[220px] rounded-inset border border-sand-200 bg-sand-100 p-1.5 shadow-[0_2px_6px_rgba(0,0,0,0.08),0_20px_32px_-12px_rgba(0,0,0,0.3)] transition-transform duration-500 ease-out dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_2px_6px_rgba(0,0,0,0.4),0_24px_40px_-12px_rgba(0,0,0,0.75)] ${pose[i]}`}
         >
-          <img src={s.image} alt="" aria-hidden loading="lazy" decoding="async" className="aspect-[4/3] w-full rounded-control object-cover" />
+          <img src={s.image} alt="" aria-hidden loading="lazy" decoding="async" className="aspect-[4/3] w-full rounded-inset object-cover" />
         </div>
       ))}
     </div>

@@ -117,7 +117,7 @@ export function ClaimForm() {
           clearStatus()
         }}
         placeholder="Email you used at checkout"
-        className="h-11 w-full rounded-lg border border-sand-700 bg-sand-950 px-4 text-sm text-sand-100 transition-colors placeholder:text-sand-500 hover:border-sand-600 focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/25"
+        className="h-11 w-full rounded-control border border-sand-700 bg-sand-950 px-4 text-sm text-sand-100 transition-colors placeholder:text-sand-500 hover:border-sand-600 focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/25"
       />
       <button
         type="submit"

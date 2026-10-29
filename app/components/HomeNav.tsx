@@ -119,7 +119,7 @@ function Menu({
                 prefetch={l.prefetch}
                 onClick={() => setOpen(false)}
                 aria-current={pathname === l.href ? 'page' : undefined}
-                className="block rounded-control px-2.5 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 aria-[current=page]:bg-sand-100 aria-[current=page]:font-semibold aria-[current=page]:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50 dark:aria-[current=page]:bg-sand-900 dark:aria-[current=page]:text-sand-50"
+                className="block rounded-chip px-2.5 py-2 text-sm text-sand-700 transition-colors hover:bg-sand-100 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 aria-[current=page]:bg-sand-100 aria-[current=page]:font-semibold aria-[current=page]:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-900 dark:hover:text-sand-50 dark:aria-[current=page]:bg-sand-900 dark:aria-[current=page]:text-sand-50"
               >
                 {l.label}
               </Link>

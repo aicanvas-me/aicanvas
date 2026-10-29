@@ -122,7 +122,7 @@ export function PremiumCards({
                 aria-hidden
                 className="invisible mt-3 inline-flex rounded-control border border-sand-200 bg-sand-50/70 p-0.5 dark:border-sand-700 dark:bg-sand-950"
               >
-                <span className="rounded-chip px-3 py-1 text-xs font-semibold">Monthly</span>
+                <span className="rounded-control px-3 py-1 text-xs font-semibold">Monthly</span>
               </div>
             )}
             <div className="mt-4 flex items-baseline gap-2">
@@ -188,7 +188,7 @@ export function PremiumCards({
                   type="button"
                   onClick={() => setCycle(key)}
                   aria-pressed={selected}
-                  className={`relative rounded-chip px-3 py-1 text-xs font-semibold transition-colors ${
+                  className={`relative rounded-control px-3 py-1 text-xs font-semibold transition-colors ${
                     selected
                       ? 'text-accent-foreground'
                       : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
@@ -197,7 +197,7 @@ export function PremiumCards({
                   {selected && (
                     <motion.span
                       layoutId={`billing-cycle-pill-${pillId}`}
-                      className="absolute inset-0 rounded-chip bg-accent"
+                      className="absolute inset-0 rounded-control bg-accent"
                       transition={
                         reduceMotion
                           ? { duration: 0 }

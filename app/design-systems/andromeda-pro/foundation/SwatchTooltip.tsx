@@ -165,7 +165,7 @@ export function SwatchTooltip({ root }: { root: RefObject<HTMLElement | null> })
             animate={{ opacity: 1, x: 0, y: 0, scale: 1 }}
             exit={reduce ? { opacity: 0 } : { opacity: 0, y: 4, transition: { duration: 0.12 } }}
             transition={reduce ? { duration: 0.12 } : SPRING}
-            className="flex max-w-[calc(100vw-16px)] items-center gap-2.5 whitespace-nowrap rounded-control border border-sand-800 bg-sand-900 px-2.5 py-1.5 text-sand-50 shadow-[0_1px_2px_rgba(0,0,0,0.20),0_8px_20px_rgba(0,0,0,0.25)] dark:border-sand-200 dark:bg-sand-50 dark:text-sand-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_8px_20px_rgba(0,0,0,0.50)]"
+            className="flex max-w-[calc(100vw-16px)] items-center gap-2.5 whitespace-nowrap rounded-inset border border-sand-800 bg-sand-900 px-2.5 py-1.5 text-sand-50 shadow-[0_1px_2px_rgba(0,0,0,0.20),0_8px_20px_rgba(0,0,0,0.25)] dark:border-sand-200 dark:bg-sand-50 dark:text-sand-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_8px_20px_rgba(0,0,0,0.50)]"
           >
             <span
               aria-hidden

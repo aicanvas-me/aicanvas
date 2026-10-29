@@ -37,7 +37,7 @@ const ROW_META = 'hidden truncate text-sm text-sand-600 sm:block dark:text-sand-
 
 function ActivityThumbnail({ src }: { src: string | null }) {
   return (
-    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-control bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
+    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-inset bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />

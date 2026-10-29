@@ -23,7 +23,7 @@ const LABEL = 'text-sm font-semibold text-sand-100'
 const WELL = 'mt-2.5 flex items-center gap-1 rounded-xl border border-sand-800 bg-sand-900 py-1.5 pr-1.5 pl-4'
 const CODE = 'min-w-0 flex-1 overflow-x-auto whitespace-nowrap py-1.5 font-mono text-xs text-sand-300'
 const ICON_BTN =
-  'shrink-0 rounded-lg p-2 text-sand-400 transition-all hover:bg-sand-800 hover:text-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-90'
+  'shrink-0 rounded-control p-2 text-sand-400 transition-all hover:bg-sand-800 hover:text-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-90'
 const HELP = 'mt-2.5 text-sm leading-relaxed text-sand-400'
 
 export function PremiumQuickstart({ token }: { token: string | null }) {

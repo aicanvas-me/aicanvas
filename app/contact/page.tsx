@@ -199,12 +199,12 @@ export default function ContactPage() {
                 placeholder="What's on your mind?"
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className={`${INPUT_CLASS} min-h-[160px] resize-y leading-relaxed`}
+                className={`${INPUT_CLASS.replace('rounded-control', 'rounded-inset')} min-h-[160px] resize-y leading-relaxed`}
               />
             </div>
 
             {error && (
-              <div className="rounded-control border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+              <div className="rounded-inset border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
                 {error}
               </div>
             )}

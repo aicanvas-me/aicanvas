@@ -165,7 +165,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
                 )}
               </Button>
             </div>
-            <div className="rounded-control bg-sand-200 dark:bg-sand-950 px-4 py-3">
+            <div className="rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3">
               <code className="block break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">

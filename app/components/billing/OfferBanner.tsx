@@ -129,7 +129,7 @@ export function OfferBanner({ mode }: { mode: OfferPillMode }) {
           href="/pricing"
           onClick={() => track('Offer Banner Click', {})}
           aria-label={`${offer}. See pricing`}
-          className={`whitespace-nowrap ${buttonClasses({ variant: 'accent', size: 'xs', pill: true })}`}
+          className={`whitespace-nowrap ${buttonClasses({ variant: 'accent', size: 'xs' })}`}
         >
           {row}
         </Link>

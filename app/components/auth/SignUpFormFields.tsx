@@ -75,12 +75,12 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
       <NerdToHero />
 
       {sent ? (
-        <div className="mt-6 rounded-control border border-accent/30 bg-accent/10 p-4 text-sm text-sand-900 dark:text-sand-100">
+        <div className="mt-6 rounded-inset border border-accent/30 bg-accent/10 p-4 text-sm text-sand-900 dark:text-sand-100">
           Confirmation email sent to <strong>{email}</strong>. Click the link
           inside to finish creating your account.
         </div>
       ) : existing ? (
-        <div className="mt-6 rounded-control border border-accent/30 bg-accent/10 p-4 text-sm text-sand-900 dark:text-sand-100">
+        <div className="mt-6 rounded-inset border border-accent/30 bg-accent/10 p-4 text-sm text-sand-900 dark:text-sand-100">
           <p>
             <strong>{email}</strong> already has an account. Sign in to continue,
             no password needed if you choose &ldquo;Email me a sign-in link.&rdquo;
@@ -165,7 +165,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               </div>
 
               {error && (
-                <div role="alert" className="rounded-control border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+                <div role="alert" className="rounded-inset border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
                   {error}
                 </div>
               )}

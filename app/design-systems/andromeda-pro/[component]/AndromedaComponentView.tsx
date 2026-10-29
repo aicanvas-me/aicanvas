@@ -457,7 +457,7 @@ export function AndromedaComponentView({
                     )}
                   </AnimatePresence>
                 </Button>
-                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-control border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/toggle:block">
+                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/toggle:block">
                   {previewTheme?.theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
                 </div>
               </div>
@@ -469,7 +469,7 @@ export function AndromedaComponentView({
                 <Button variant="outline" size="md" iconOnly onClick={refreshPreview} aria-label="Restart animation">
                   <ArrowClockwise weight="regular" size={16} />
                 </Button>
-                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-control border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/refresh:block">
+                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/refresh:block">
                   Refresh
                 </div>
               </div>
@@ -478,7 +478,7 @@ export function AndromedaComponentView({
                 <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={openFullscreen}>
                   <CornersOut weight="regular" size={16} />
                 </Button>
-                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-control border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
+                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
                   Full screen
                 </div>
               </div>
@@ -694,14 +694,14 @@ export function AndromedaComponentView({
                     </code>{' '}
                     first to set up Tailwind and path aliases.
                   </p>
-                  <div className="overflow-hidden rounded-control bg-sand-200 dark:bg-sand-950">
+                  <div className="overflow-hidden rounded-inset bg-sand-200 dark:bg-sand-950">
                     <div className="flex items-center gap-1 border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                         <button
                           key={pm}
                           type="button"
                           onClick={() => { setPkgManager(pm); setCliCopied(false) }}
-                          className={`rounded-chip px-2.5 py-1 text-xs font-medium transition-colors ${
+                          className={`rounded-control px-2.5 py-1 text-xs font-medium transition-colors ${
                             pkgManager === pm
                               ? 'bg-sand-300 text-sand-900 dark:bg-sand-800 dark:text-sand-100'
                               : 'text-sand-600 hover:text-sand-800 dark:text-sand-500 dark:hover:text-sand-300'
@@ -727,7 +727,7 @@ export function AndromedaComponentView({
                           trackInstall(registrySlug, 'andromeda-pro', pkgManager)
                           showCliToast()
                         }}
-                        className="ml-auto shrink-0 rounded-chip p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                        className="ml-auto shrink-0 rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {cliCopied
                           ? <Check weight="regular" size={14} className="text-success" />
@@ -775,7 +775,7 @@ export function AndromedaComponentView({
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Copy and paste the following code into your project:
                   </p>
-                  <div className="relative rounded-control bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
+                  <div className="relative rounded-inset bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
                     <div className="flex items-center justify-between border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                         {name}.tsx
@@ -783,7 +783,7 @@ export function AndromedaComponentView({
                       <button
                         type="button"
                         onClick={copyCode}
-                        className="shrink-0 rounded-chip p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                        className="shrink-0 rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {codeCopied
                           ? <Check weight="regular" size={14} className="text-success" />

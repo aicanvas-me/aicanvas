@@ -156,7 +156,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
     return (
       <>
         <TerminatorReveal />
-        <div className="mt-6 rounded-control border border-accent/30 bg-accent/10 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
+        <div className="mt-6 rounded-inset border border-accent/30 bg-accent/10 px-4 py-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
           Check your inbox. If an account exists for <strong>{email}</strong>, a one-time sign-in link is on its way. It expires in 1 hour.
         </div>
         <button
@@ -252,7 +252,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           {error && (
             // role="alert": this box replaced the browser's own validation
             // bubble for the password, which screen readers used to announce.
-            <div role="alert" className="rounded-control border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+            <div role="alert" className="rounded-inset border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
               {error}
             </div>
           )}

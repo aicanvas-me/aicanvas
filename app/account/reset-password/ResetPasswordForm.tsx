@@ -142,7 +142,7 @@ export function ResetPasswordForm({ hasRecoveryMarker }: Props) {
         </div>
 
         {error && (
-          <div role="alert" className="rounded-control border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+          <div role="alert" className="rounded-inset border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
             {error}
           </div>
         )}

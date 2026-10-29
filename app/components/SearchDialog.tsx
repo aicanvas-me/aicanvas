@@ -453,7 +453,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
                       aria-selected={selected}
                       onPointerMove={() => setActive(index)}
                       onClick={() => go(item)}
-                      className={`flex cursor-pointer items-center gap-3 rounded-control px-3 py-2.5 ${
+                      className={`flex cursor-pointer items-center gap-3 rounded-inset px-3 py-2.5 ${
                         selected ? 'bg-sand-100 dark:bg-sand-900' : ''
                       }`}
                     >

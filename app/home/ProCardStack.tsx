@@ -99,7 +99,7 @@ function FactGlyph({ glyph, count, on, still }: { glyph: Glyph; count: number; o
         ].map(([skin, name], i) => (
           <motion.span
             key={name}
-            className={`flex h-9 flex-1 items-center justify-between rounded-chip px-3 ring-1 ring-inset ring-sand-300 dark:ring-sand-700 ${skin}`}
+            className={`flex h-9 flex-1 items-center justify-between rounded-control px-3 ring-1 ring-inset ring-sand-300 dark:ring-sand-700 ${skin}`}
             initial={still ? false : { opacity: 0, x: -12 }}
             animate={show ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }}
             transition={show ? t(0.1 + i * 0.14, 0.4) : { duration: 0 }}

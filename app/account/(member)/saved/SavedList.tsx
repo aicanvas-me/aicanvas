@@ -211,7 +211,7 @@ function EmptyState() {
 // placeholder for rows the registry has no image for.
 function SavedThumbnail({ src, alt }: { src: string | null; alt: string }) {
   return (
-    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-control bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
+    <div className="relative h-10 w-14 shrink-0 overflow-hidden rounded-inset bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800">
       {src ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt={alt} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
@@ -347,7 +347,7 @@ function FolderTabs({
               onKeyDown={(e) => { if (e.key === 'Escape') { setDraft(''); setCreating(false) } }}
               placeholder="Folder name…"
               maxLength={40}
-              className="w-full rounded-chip border border-accent bg-sand-100 px-2 py-1 text-base text-sand-900 outline-none md:text-xs dark:bg-sand-900 dark:text-sand-50"
+              className="w-full rounded-control border border-accent bg-sand-100 px-2 py-1 text-base text-sand-900 outline-none md:text-xs dark:bg-sand-900 dark:text-sand-50"
             />
             <p className="text-center text-[10px] text-sand-600 dark:text-sand-500">Enter to create · Esc to cancel</p>
           </form>
@@ -526,14 +526,14 @@ function CollectionPicker({
                 value={draft}
                 onChange={(e) => setDraft(e.target.value)}
                 placeholder="New collection…"
-                className="flex-1 rounded-chip border border-sand-200 bg-sand-50 px-2 py-1 text-base text-sand-900 outline-none focus:border-accent md:text-xs dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50"
+                className="flex-1 rounded-control border border-sand-200 bg-sand-50 px-2 py-1 text-base text-sand-900 outline-none focus:border-accent md:text-xs dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50"
                 maxLength={40}
               />
               <button
                 type="submit"
                 disabled={!draft.trim()}
                 aria-label="Create collection"
-                className="rounded-chip bg-accent p-1 text-accent-foreground transition-colors hover:bg-accent/85 disabled:opacity-30"
+                className="rounded-control bg-accent p-1 text-accent-foreground transition-colors hover:bg-accent/85 disabled:opacity-30"
               >
                 <Plus size={12} weight="bold" />
               </button>

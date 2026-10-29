@@ -374,7 +374,7 @@ export function FoundationView() {
             <div className="flex-1 space-y-3">
               {THEME_ORDER.map((theme) => (
                 <ThemeBlock key={theme} theme={theme}>
-                  <div className="flex h-12 overflow-hidden rounded-control border border-sand-300 dark:border-sand-800">
+                  <div className="flex h-12 overflow-hidden rounded-inset border border-sand-300 dark:border-sand-800">
                     {FAMILY_STOPS.map((stop) => (
                       <div
                         key={stop}

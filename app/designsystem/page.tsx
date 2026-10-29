@@ -340,14 +340,14 @@ export default function DesignSystemPage() {
                   <a
                     href={asset.svg}
                     download
-                    className="rounded-lg bg-accent px-3.5 py-1.5 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85"
+                    className="rounded-control bg-accent px-3.5 py-1.5 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85"
                   >
                     SVG
                   </a>
                   <a
                     href={asset.png}
                     download
-                    className="rounded-lg border border-sand-200 px-3.5 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:bg-sand-100 dark:border-sand-700 dark:text-sand-300 dark:hover:bg-sand-800"
+                    className="rounded-control border border-sand-200 px-3.5 py-1.5 text-xs font-semibold text-sand-700 transition-colors hover:bg-sand-100 dark:border-sand-700 dark:text-sand-300 dark:hover:bg-sand-800"
                   >
                     PNG
                   </a>

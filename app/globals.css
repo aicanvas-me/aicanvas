@@ -229,9 +229,12 @@ html {
      shell        the outer frame of a double bezel (FAQ, catalog card,
                   component preview); shell-inner is the frame inside it
      card         a card or panel inside a section, menus and popovers
-     inset        media or a well inside a card, code blocks
-     control      buttons and text fields
-     chip         keyboard keys, small square chips, the smallest icon buttons
+     inset        media or a well inside a card, code blocks, alerts, tooltips,
+                  multi-line text areas
+     control      every control: buttons, text and search fields, tabs, nav
+                  rows, segmented pickers. Fully round (ruled 2026-10-29), so a
+                  box that only borrowed this size takes inset instead
+     chip         keyboard keys, inline code, logo chips, menu rows in a small menu
      tag          tier labels and the tiniest marks
    Pills and circles stay rounded-full: that shape is geometry, not a size.
    Standalone components and the design systems keep their own radii; only
@@ -242,7 +245,7 @@ html {
   --radius-shell-inner: calc(var(--radius-shell) - 0.375rem);
   --radius-card: 1rem;
   --radius-inset: 0.75rem;
-  --radius-control: 0.5rem;
+  --radius-control: calc(infinity * 1px);
   --radius-chip: 0.375rem;
   --radius-tag: 0.25rem;
 }
