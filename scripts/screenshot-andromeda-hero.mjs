@@ -4,10 +4,10 @@
  * AND dark. Every shot is 1280×720 pixels; a pose's size comes from the
  * device scale factor, so portalled bubbles scale with it and stay sharp.
  *
- * Each pose is measured first (its painted ink, popups included), shifted so the
- * ink sits dead centre, and its scale capped so the ink stays inside SAFE: a grid
+ * Each pose is measured first (the pixels it paints, popups included), shifted so
+ * that ink sits dead centre, and its scale capped so it stays inside SAFE: a grid
  * card that crops the art to 16:10 still shows the whole component with room on
- * every side. After each shot the ink is measured again and any tight or
+ * every side. After each shot the pixels are measured again and any tight or
  * off-centre shot is listed at the end.
  *
  * Local only: PNGs land in OUT_DIR as <slug>-<theme>.png, plus report.json.
@@ -51,6 +51,8 @@ const SCALE = {
   'date-range-picker': 1.8,
 }
 const FIT_SKIP = new Set(['drawer'])
+// Measured by its elements only: a faint stray pixel at its edge pulls it off centre.
+const DOM_ONLY = new Set(['tabs'])
 // Scrolling bands: reduced motion holds them as one still, complete row.
 const STILL = new Set(['logo-cloud', 'marquee'])
 
@@ -133,11 +135,16 @@ function measureInk() {
   return { L, T, R, B, vw, vh, pw: pose.width, ph: pose.height }
 }
 
-// The box of every pixel that differs from the ground, read off a screenshot of
-// the page with its dot grid off. It sees what DOM boxes miss: panels drawn by
-// pseudo-elements, shadows, canvas art.
+// The box of every pixel that differs from the ground, read off a screenshot
+// taken with the dot grid off. It sees what DOM boxes miss (panels drawn by
+// pseudo-elements, shadows, canvas art) and ignores invisible boxes they count.
+// Returned in CSS px.
 async function measurePixels(page) {
+  const frame = page.locator('[data-capture-frame]')
+  const grid = await frame.evaluate((f) => f.style.backgroundImage)
+  await frame.evaluate((f) => { f.style.backgroundImage = 'none' })
   const png = (await page.screenshot()).toString('base64')
+  await frame.evaluate((f, g) => { f.style.backgroundImage = g }, grid)
   return page.evaluate(async (src) => {
     const img = new Image()
     img.src = `data:image/png;base64,${src}`
@@ -161,7 +168,8 @@ async function measurePixels(page) {
         if (y > B) B = y
       }
     }
-    return { L, T, R: R + 1, B: B + 1 }
+    const k = devicePixelRatio
+    return { L: L / k, T: T / k, R: (R + 1) / k, B: (B + 1) / k }
   }, png)
 }
 
@@ -179,7 +187,7 @@ async function open(browser, slug, theme, s, shift = { dx: 0, dy: 0 }) {
   const page = await context.newPage()
   await page.route('**/pufi.js', (r) => r.abort())
   await page.route('**/koko.js', (r) => r.abort())
-  await page.goto(`${BASE_URL}/andromeda-capture/${slug}/hero?scale=${s}&dx=${shift.dx}&dy=${shift.dy}${s === 1 ? '&grid=0' : ''}`, { waitUntil: 'load', timeout: 90_000 })
+  await page.goto(`${BASE_URL}/andromeda-capture/${slug}/hero?scale=${s}&dx=${shift.dx}&dy=${shift.dy}`, { waitUntil: 'load', timeout: 90_000 })
   await page.waitForSelector('[data-capture-ready]', { timeout: 30_000 })
   await page.waitForTimeout(SETTLE_MS)
   if (INTERACTIONS[slug]) await INTERACTIONS[slug](page)
@@ -198,10 +206,7 @@ for (const slug of SLUGS) {
     const ink = await probe.page.evaluate(measureInk)
     const px = await measurePixels(probe.page)
     await probe.context.close()
-    if (px.R > px.L) {
-      ink.L = Math.min(ink.L, px.L); ink.T = Math.min(ink.T, px.T)
-      ink.R = Math.max(ink.R, px.R); ink.B = Math.max(ink.B, px.B)
-    }
+    if (px.R > px.L && !DOM_ONLY.has(slug)) Object.assign(ink, { L: px.L, T: px.T, R: px.R, B: px.B })
     const fit = Math.min(
       (W * SAFE.w) / (ink.R - ink.L), (H * SAFE.h) / (ink.B - ink.T),
       (W * 0.98) / ink.pw, (H * 0.98) / ink.ph,
@@ -215,6 +220,8 @@ for (const slug of SLUGS) {
     for (const theme of ['dark', 'light']) {
       const { context, page } = await open(browser, slug, theme, s, shift)
       const m = await page.evaluate(measureInk)
+      const px = await measurePixels(page)
+      if (px.R > px.L && !DOM_ONLY.has(slug)) Object.assign(m, { L: px.L, T: px.T, R: px.R, B: px.B })
       await page.screenshot({ path: path.join(OUT_DIR, `${slug}-${theme}.png`) })
       await context.close()
       const margin = {
