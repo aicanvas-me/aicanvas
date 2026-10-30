@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
 import { Code, Copy } from '@phosphor-icons/react'
 import { copyText } from '@/app/components/useCopied'
@@ -48,14 +49,16 @@ export function IconTile({
       }}
     >
       {icon.isNew && <i data-icon-new="" role="img" aria-label="New" />}
-      <a href={href} data-icon-link="" aria-label={`Open ${icon.name} details`}>
+      {/* In-app navigation keeps the section's look (lib/settings-store) and
+          opens the icon page already in it; no prefetch for 800 tiles. */}
+      <Link href={href} prefetch={false} data-icon-link="" aria-label={`Open ${icon.name} details`}>
         {markup ? (
           <IconSvg markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />
         ) : (
           <span data-icon-placeholder="" aria-hidden />
         )}
         <span data-icon-name="">{icon.name}</span>
-      </a>
+      </Link>
       {showActions && markup && (
         <div className="absolute right-1.5 top-1.5 z-20 flex gap-1">
           <button

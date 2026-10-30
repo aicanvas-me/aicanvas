@@ -12,7 +12,8 @@ import { useTheme } from '@/app/components/ThemeProvider'
 import { ICON_CATEGORY_LABELS } from '../_lib/categories'
 import { DARK_PREVIEW_COLOUR, FIXED_WEIGHT, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 import { formatDate, iconLead, takesStroke, titleCase } from '../_lib/icon-utils'
-import { fromIconQuery, toIconQuery, type IconSettings } from '../_lib/settings-query'
+import { fromIconQuery, toIconQuery } from '../_lib/settings-query'
+import { ICON_DEFAULTS, isSeeded, storeSettings, storedSettings } from '../_lib/settings-store'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconMarkupMap, IconMeta, IconStyle, IconWithMarkup } from '../_lib/types'
 import { ActionBar } from './ActionBar'
@@ -28,9 +29,6 @@ import { useIconVariant } from './useIconVariant'
 // The overview's tiles stop at 64px; a bigger pick here still draws the related
 // tiles at the size they were built for.
 const TILE_MAX_SIZE = 64
-
-// The page's starting look; the URL carries only what differs from it.
-const PAGE_DEFAULTS: IconSettings = { style: 'line', size: 24, strokeWidth: 2, absolute: true, colour: null }
 
 const ROUND_BUTTON =
   'inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-sand-300 text-sand-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-300'
@@ -96,11 +94,12 @@ export function IconDetail({
 }) {
   const router = useRouter()
   const { theme } = useTheme()
-  const [style, setStyle] = useState<IconStyle>('line')
-  const [size, setSize] = useState(24)
-  const [strokeWidth, setStrokeWidth] = useState(2)
-  const [absolute, setAbsolute] = useState(true)
-  const [colourOverride, setColourOverride] = useState<string | null>(null)
+  // the section's look (lib/settings-store), so the page mounts already in it
+  const [style, setStyle] = useState<IconStyle>(() => storedSettings().style)
+  const [size, setSize] = useState(() => storedSettings().size)
+  const [strokeWidth, setStrokeWidth] = useState(() => storedSettings().strokeWidth)
+  const [absolute, setAbsolute] = useState(() => storedSettings().absolute)
+  const [colourOverride, setColourOverride] = useState<string | null>(() => storedSettings().colour)
   const [previewSurface, setPreviewSurface] = useState<'dark' | 'light'>(theme)
   const siteColour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
   const previewColour = colourOverride ?? (previewSurface === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
@@ -108,15 +107,19 @@ export function IconDetail({
   const markup = data[icon.name] ?? lineIcons[icon.name] ?? ''
   const categoryLabel = ICON_CATEGORY_LABELS[icon.category]
   const title = titleCase(icon.name)
-  const isDefault = style === 'line' && size === 24 && strokeWidth === 2 && absolute && colourOverride === null
-  const query = toIconQuery({ style, size, strokeWidth, absolute, colour: colourOverride }, PAGE_DEFAULTS)
+  const settings = { style, size, strokeWidth, absolute, colour: colourOverride }
+  const isDefault = toIconQuery(settings, ICON_DEFAULTS) === ''
+  const query = toIconQuery(settings, ICON_DEFAULTS)
 
   // The look arrives in the query (from the overview, a shared link or the
   // previous icon). Read on mount rather than through useSearchParams, which
   // would pull the statically built page out to the client. The URL is not
   // there to read during the server render, so this sets state from an effect.
-  const [restored, setRestored] = useState(false)
+  // Within the section the look is already set (lib/settings-store) and wins;
+  // only a fresh load reads the URL, with the controls hidden until it has.
+  const [restored, setRestored] = useState(isSeeded)
   useEffect(() => {
+    if (isSeeded()) return
     const settings = fromIconQuery(window.location.search)
     /* eslint-disable react-hooks/set-state-in-effect */
     if (settings.style !== undefined) setStyle(settings.style)
@@ -132,11 +135,12 @@ export function IconDetail({
   // Waiting for the restore keeps the first pass from wiping the incoming query.
   useEffect(() => {
     if (!restored) return
+    storeSettings({ style, size, strokeWidth, absolute, colour: colourOverride })
     const url = `${window.location.pathname}${query}${window.location.hash}`
     if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
       window.history.replaceState(window.history.state, '', url)
     }
-  }, [query, restored])
+  }, [query, restored, style, size, strokeWidth, absolute, colourOverride])
 
   // Left and Right walk the category, unless focus is somewhere that takes
   // typing or uses the arrows itself (the sliders, the style track, the tabs).
@@ -157,11 +161,11 @@ export function IconDetail({
   }, [previousHref, nextHref, router])
 
   const reset = () => {
-    setStyle('line')
-    setSize(24)
-    setStrokeWidth(2)
-    setAbsolute(true)
-    setColourOverride(null)
+    setStyle(ICON_DEFAULTS.style)
+    setSize(ICON_DEFAULTS.size)
+    setStrokeWidth(ICON_DEFAULTS.strokeWidth)
+    setAbsolute(ICON_DEFAULTS.absolute)
+    setColourOverride(ICON_DEFAULTS.colour)
   }
 
   return (
@@ -210,7 +214,7 @@ export function IconDetail({
           />
           {/* On a phone the controls share the preview card's edges, which
               leaves the style track room for all four styles. */}
-          <div className="@container flex min-w-0 flex-col gap-2 px-0 pb-1 pt-5 sm:p-5">
+          <div className={`@container flex min-w-0 flex-col gap-2 px-0 pb-1 pt-5 sm:p-5 ${restored ? '' : 'invisible'}`}>
             <StylePicker value={style} onChange={setStyle} compact loading={loading} />
             <TuneSlider
               label="Size"
@@ -235,7 +239,7 @@ export function IconDetail({
               valueText={(value) => `${value.toFixed(2)} pixels`}
             />
             <div className="relative flex items-center gap-1">
-              <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} disabled={!takesStroke(style)} hint={FIXED_WEIGHT} className="h-8" />
+              <AbsoluteStrokeControl key={restored ? 'restored' : 'first'} value={absolute} onChange={setAbsolute} disabled={!takesStroke(style)} hint={FIXED_WEIGHT} className="h-8" />
               <ColourControl value={colourOverride} resolved={previewColour} onChange={setColourOverride} align="start" />
               <button
                 type="button"

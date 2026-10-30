@@ -20,7 +20,8 @@ import {
 } from '../_lib/constants'
 import { takesStroke } from '../_lib/icon-utils'
 import { overviewMarkdown } from '../_lib/markdown'
-import { toIconQuery, type IconSettings } from '../_lib/settings-query'
+import { toIconQuery } from '../_lib/settings-query'
+import { ICON_DEFAULTS, storeSettings, storedSettings } from '../_lib/settings-store'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconGridMeta, IconMarkupMap, IconMeta, IconStyle } from '../_lib/types'
 import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
@@ -30,8 +31,9 @@ import { StylePicker } from './StylePicker'
 import { TuneSlider } from './TuneSlider'
 import { useIconVariant } from './useIconVariant'
 
-// The toolbar's starting look; only what differs from it rides to the icon page.
-const OVERVIEW_DEFAULTS: IconSettings = { style: 'line', size: 40, strokeWidth: 2, absolute: true, colour: null }
+// The grid's slider stops at 64; a bigger size picked on an icon page shows
+// here at 64.
+const GRID_MAX_SIZE = 64
 
 let metadataRequest: Promise<IconMeta[]> | null = null
 
@@ -52,11 +54,12 @@ export function IconsOverview({
 }) {
   const { theme } = useTheme()
   const [query, setQuery] = useState('')
-  const [style, setStyle] = useState<IconStyle>('line')
-  const [size, setSize] = useState(40)
-  const [strokeWidth, setStrokeWidth] = useState(2)
-  const [absolute, setAbsolute] = useState(true)
-  const [colourOverride, setColourOverride] = useState<string | null>(null)
+  // the section's look (lib/settings-store): an icon page's picks are still set here
+  const [style, setStyle] = useState<IconStyle>(() => storedSettings().style)
+  const [size, setSize] = useState(() => Math.min(storedSettings().size, GRID_MAX_SIZE))
+  const [strokeWidth, setStrokeWidth] = useState(() => storedSettings().strokeWidth)
+  const [absolute, setAbsolute] = useState(() => storedSettings().absolute)
+  const [colourOverride, setColourOverride] = useState<string | null>(() => storedSettings().colour)
   const [metadata, setMetadata] = useState<IconMeta[] | null>(null)
   const [installCopied, setInstallCopied] = useState(false)
   const colour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
@@ -107,9 +110,11 @@ export function IconsOverview({
   useTopBarLeft(categoryCrumbs)
 
   const searchRef = useRef<HTMLInputElement>(null)
-  const settingsQuery = toIconQuery({ style, size, strokeWidth, absolute, colour: colourOverride }, OVERVIEW_DEFAULTS)
-  const isDefault =
-    !query && style === 'line' && size === 40 && strokeWidth === 2 && absolute && colourOverride === null
+  const settingsQuery = toIconQuery({ style, size, strokeWidth, absolute, colour: colourOverride }, ICON_DEFAULTS)
+  const isDefault = !query && settingsQuery === ''
+  useEffect(() => {
+    storeSettings({ style, size, strokeWidth, absolute, colour: colourOverride })
+  }, [style, size, strokeWidth, absolute, colourOverride])
 
   // "/" jumps to search from anywhere on the page, unless something else
   // already takes typing.
@@ -127,11 +132,11 @@ export function IconsOverview({
 
   const reset = () => {
     setQuery('')
-    setStyle('line')
-    setSize(40)
-    setStrokeWidth(2)
-    setAbsolute(true)
-    setColourOverride(null)
+    setStyle(ICON_DEFAULTS.style)
+    setSize(ICON_DEFAULTS.size)
+    setStrokeWidth(ICON_DEFAULTS.strokeWidth)
+    setAbsolute(ICON_DEFAULTS.absolute)
+    setColourOverride(ICON_DEFAULTS.colour)
   }
 
   const copyInstall = async () => {
