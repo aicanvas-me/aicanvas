@@ -54,8 +54,9 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
           // Aceternity-style pill: just a filled icon at rest, slides open to
           // the label on card hover. Premium keeps the bolt; Free gets a
           // quieter sand seal so the paid tier stays the visual accent.
+          // No backdrop blur: over a lazy image Chrome painted it as a bare square.
           <div
-            className={`absolute left-4 top-4 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 ring-1 backdrop-blur-sm ${
+            className={`absolute left-4 top-4 z-10 flex items-center rounded-full bg-sand-950/90 p-1.5 ring-1 ${
               badge === 'Free'
                 ? 'text-sand-300 ring-sand-500/40'
                 : badgeTone === 'pro'
