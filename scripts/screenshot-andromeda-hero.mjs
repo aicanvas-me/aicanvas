@@ -200,13 +200,20 @@ const report = []
 
 for (const slug of SLUGS) {
   try {
-    // Probe at 1:1 (DOM ink and pixels together): centre the ink, and cap the preferred scale so the ink fits
+    // Probe at 1:1: centre the ink, and cap the preferred scale so the ink fits
     // SAFE and the pose's own box still fits the smaller viewport.
-    const probe = await open(browser, slug, 'dark', 1)
-    const ink = await probe.page.evaluate(measureInk)
-    const px = await measurePixels(probe.page)
-    await probe.context.close()
-    if (px.R > px.L && !DOM_ONLY.has(slug)) Object.assign(ink, { L: px.L, T: px.T, R: px.R, B: px.B })
+    // Both themes: light adds drop shadows that dark does not paint.
+    let ink
+    for (const theme of ['dark', 'light']) {
+      const probe = await open(browser, slug, theme, 1)
+      const m = await probe.page.evaluate(measureInk)
+      const px = await measurePixels(probe.page)
+      await probe.context.close()
+      if (px.R > px.L && !DOM_ONLY.has(slug)) Object.assign(m, { L: px.L, T: px.T, R: px.R, B: px.B })
+      ink = ink
+        ? { ...ink, L: Math.min(ink.L, m.L), T: Math.min(ink.T, m.T), R: Math.max(ink.R, m.R), B: Math.max(ink.B, m.B) }
+        : m
+    }
     const fit = Math.min(
       (W * SAFE.w) / (ink.R - ink.L), (H * SAFE.h) / (ink.B - ink.T),
       (W * 0.98) / ink.pw, (H * 0.98) / ink.ph,
