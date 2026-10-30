@@ -826,8 +826,7 @@ export function AndromedaComponentView({
 
       {/* ── More Andromeda Pro components ─────────────────────────────────
           Cards are the exact ones the components index page renders
-          (system/AndromedaComponentCard), not a captured image — see that
-          file's header comment for why the two can't drift apart. */}
+          (system/AndromedaComponentCard), so the two can't drift apart. */}
       {related.length > 0 && (
         <section className="mt-16">
           <div className="mb-5 flex items-end justify-between gap-4">
@@ -890,6 +889,7 @@ export function AndromedaComponentView({
                   >
                     <AndromedaComponentCard
                       slug={c.slug}
+                      source="related"
                       name={c.name}
                       description={c.description}
                       variants={c.variants}

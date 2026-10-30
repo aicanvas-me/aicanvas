@@ -6,8 +6,14 @@
 // Extracted from AndromedaGallery's inline card JSX so the
 // component index page and the "More Andromeda Pro components" carousel on
 // each component page render the exact same card and can never drift apart.
+//
+// A component with hero card art renders the standalone grid's own card, so the
+// Pro grid looks and works exactly like it; the text card is the fallback.
 import Link from 'next/link'
 import { ArrowUpRight } from '@phosphor-icons/react'
+import { ComponentCard } from '../../../components/ComponentCard'
+import type { CardSource } from '../../../lib/analytics'
+import { ANDROMEDA_COMPONENT_META } from '../../../_lib/andromeda-pro/andromeda-meta'
 
 export type AndromedaComponentCardData = {
   slug: string
@@ -15,7 +21,11 @@ export type AndromedaComponentCardData = {
   description: string
   variants: number
   states: number
+  position?: number
+  source?: CardSource
 }
+
+const ART = new Map(ANDROMEDA_COMPONENT_META.map((m) => [m.slug, m]))
 
 export function AndromedaComponentCard({
   slug,
@@ -23,7 +33,25 @@ export function AndromedaComponentCard({
   description,
   variants,
   states,
+  position = 0,
+  source = 'index',
 }: AndromedaComponentCardData) {
+  const art = ART.get(slug)
+  if (art?.image) {
+    return (
+      <ComponentCard
+        name={name}
+        description={description}
+        tags={[]}
+        image={art.image}
+        imageLight={art.imageLight}
+        href={`/design-systems/andromeda-pro/${slug}`}
+        slug={`andromeda-pro-${slug}`}
+        position={position}
+        source={source}
+      />
+    )
+  }
   return (
     <Link
       href={`/design-systems/andromeda-pro/${slug}`}

@@ -169,6 +169,7 @@ export function HomeClient({
               name: c.name,
               description: c.description,
               image: c.image,
+              imageLight: 'imageLight' in c ? (c.imageLight as string | undefined) : undefined,
               href: `/design-systems/${sys.slug}/${c.slug}`,
               badge: sys.label,
               badgeTone: sys.badgeTone,
@@ -180,6 +181,7 @@ export function HomeClient({
               name: t.name,
               description: t.description,
               image: t.image,
+              imageLight: undefined,
               href: `/design-systems/${sys.slug}/templates/${t.folder}`,
               badge: sys.badgeTone === 'pro' ? 'Premium template' : 'Free',
               badgeTone: sys.badgeTone,
@@ -323,6 +325,7 @@ export function HomeClient({
                     description={e.description}
                     tags={[]}
                     image={e.image}
+                    imageLight={e.imageLight}
                     badge={e.badge}
                     badgeTone={e.badgeTone}
                     href={e.href}

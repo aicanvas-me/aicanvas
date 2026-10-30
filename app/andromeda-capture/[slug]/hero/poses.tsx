@@ -1,3 +1,4 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck — renders JSX design-system components whose forwardRef wrappers
 // carry no TypeScript prop types (same reason as the matrix specs).
 'use client'

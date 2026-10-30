@@ -1,6 +1,7 @@
 // Hero capture route (not user-facing): one Andromeda Pro pose, alone and
 // centered, on the themed ground. Size comes from the screenshot script's
 // device scale factor, so portalled bubbles scale with the component.
+import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import { HeroFrame } from './HeroFrame'
 
@@ -11,5 +12,9 @@ export default async function AndromedaHeroCapturePage({
 }) {
   const { slug } = await params
   if (process.env.NODE_ENV === 'production') notFound()
-  return <HeroFrame slug={slug} />
+  return (
+    <Suspense>
+      <HeroFrame slug={slug} />
+    </Suspense>
+  )
 }

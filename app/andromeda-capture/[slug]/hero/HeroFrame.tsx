@@ -5,7 +5,7 @@
 // the component pages use, so light and dark match what visitors see.
 import { useEffect, useState } from 'react'
 import { JetBrains_Mono } from 'next/font/google'
-import { notFound } from 'next/navigation'
+import { notFound, useSearchParams } from 'next/navigation'
 import { AndromedaThemeWrap } from '../../../design-systems/andromeda-pro/AndromedaThemeWrap'
 import { tokens } from '../../../lib/andromeda-pro.generated'
 import { Pose, hasPose } from './poses'
@@ -24,12 +24,10 @@ export function HeroFrame({ slug }: { slug: string }) {
   const [ready, setReady] = useState(false)
   // The script's device scale factor (so the dot grid lands at one image size on
   // every card) and the shift that puts the pose's measured ink dead centre.
-  const [scale, setScale] = useState(1)
-  const [shift, setShift] = useState({ dx: 0, dy: 0 })
+  const q = useSearchParams()
+  const scale = Number(q.get('scale')) || 1
+  const shift = { dx: Number(q.get('dx')) || 0, dy: Number(q.get('dy')) || 0 }
   useEffect(() => {
-    const q = new URLSearchParams(window.location.search)
-    setScale(Number(q.get('scale')) || 1)
-    setShift({ dx: Number(q.get('dx')) || 0, dy: Number(q.get('dy')) || 0 })
     document.fonts.ready.then(() => requestAnimationFrame(() => setReady(true)))
   }, [])
   if (!hasPose(slug)) notFound()
