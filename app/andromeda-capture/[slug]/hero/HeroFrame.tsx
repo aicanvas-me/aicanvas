@@ -26,10 +26,13 @@ export function HeroFrame({ slug }: { slug: string }) {
   // every card) and the shift that puts the pose's measured ink dead centre.
   const [scale, setScale] = useState(1)
   const [shift, setShift] = useState({ dx: 0, dy: 0 })
+  // The script's pixel probe turns the grid off so only the pose differs from the ground.
+  const [grid, setGrid] = useState(true)
   useEffect(() => {
     const q = new URLSearchParams(window.location.search)
     setScale(Number(q.get('scale')) || 1)
     setShift({ dx: Number(q.get('dx')) || 0, dy: Number(q.get('dy')) || 0 })
+    setGrid(q.get('grid') !== '0')
     document.fonts.ready.then(() => requestAnimationFrame(() => setReady(true)))
   }, [])
   if (!hasPose(slug)) notFound()
@@ -51,7 +54,7 @@ export function HeroFrame({ slug }: { slug: string }) {
           alignItems: 'center',
           justifyContent: 'center',
           background: GROUND,
-          backgroundImage: `radial-gradient(circle, ${DOT} ${2 / scale}px, transparent ${2 / scale}px)`,
+          backgroundImage: grid ? `radial-gradient(circle, ${DOT} ${2 / scale}px, transparent ${2 / scale}px)` : 'none',
           backgroundSize: `${40 / scale}px ${40 / scale}px`,
           backgroundPosition: 'center',
         }}

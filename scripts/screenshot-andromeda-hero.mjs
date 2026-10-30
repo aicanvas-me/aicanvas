@@ -51,6 +51,8 @@ const SCALE = {
   'date-range-picker': 1.8,
 }
 const FIT_SKIP = new Set(['drawer'])
+// Scrolling bands: reduced motion holds them as one still, complete row.
+const STILL = new Set(['logo-cloud', 'marquee'])
 
 // Open-on-capture steps, run after the frame reports ready. Panels with a
 // static-open prop use it in poses.tsx instead.
@@ -131,6 +133,38 @@ function measureInk() {
   return { L, T, R, B, vw, vh, pw: pose.width, ph: pose.height }
 }
 
+// The box of every pixel that differs from the ground, read off a screenshot of
+// the page with its dot grid off. It sees what DOM boxes miss: panels drawn by
+// pseudo-elements, shadows, canvas art.
+async function measurePixels(page) {
+  const png = (await page.screenshot()).toString('base64')
+  return page.evaluate(async (src) => {
+    const img = new Image()
+    img.src = `data:image/png;base64,${src}`
+    await img.decode()
+    const c = document.createElement('canvas')
+    c.width = img.width
+    c.height = img.height
+    const g = c.getContext('2d')
+    g.drawImage(img, 0, 0)
+    const d = g.getImageData(0, 0, c.width, c.height).data
+    const at = (i) => [d[i], d[i + 1], d[i + 2]]
+    const ground = at(0)
+    let L = Infinity, T = Infinity, R = -Infinity, B = -Infinity
+    for (let y = 0; y < c.height; y++) {
+      for (let x = 0; x < c.width; x++) {
+        const p = at((y * c.width + x) * 4)
+        if (Math.max(...p.map((v, k) => Math.abs(v - ground[k]))) <= 4) continue
+        if (x < L) L = x
+        if (x > R) R = x
+        if (y < T) T = y
+        if (y > B) B = y
+      }
+    }
+    return { L, T, R: R + 1, B: B + 1 }
+  }, png)
+}
+
 const META = readFileSync(path.resolve('app/_lib/andromeda-pro/andromeda-meta.ts'), 'utf8')
 const ALL = [...META.matchAll(/slug:\s*'([^']+)'/g)].map((m) => m[1])
 const SLUGS = process.argv.slice(2).length ? process.argv.slice(2) : ALL
@@ -139,12 +173,13 @@ async function open(browser, slug, theme, s, shift = { dx: 0, dy: 0 }) {
   const context = await browser.newContext({
     viewport: { width: Math.round(W / s), height: Math.round(H / s) },
     deviceScaleFactor: s,
+    reducedMotion: STILL.has(slug) ? 'reduce' : 'no-preference',
   })
   await context.addCookies([{ name: 'theme', value: theme, url: BASE_URL }])
   const page = await context.newPage()
   await page.route('**/pufi.js', (r) => r.abort())
   await page.route('**/koko.js', (r) => r.abort())
-  await page.goto(`${BASE_URL}/andromeda-capture/${slug}/hero?scale=${s}&dx=${shift.dx}&dy=${shift.dy}`, { waitUntil: 'load', timeout: 90_000 })
+  await page.goto(`${BASE_URL}/andromeda-capture/${slug}/hero?scale=${s}&dx=${shift.dx}&dy=${shift.dy}${s === 1 ? '&grid=0' : ''}`, { waitUntil: 'load', timeout: 90_000 })
   await page.waitForSelector('[data-capture-ready]', { timeout: 30_000 })
   await page.waitForTimeout(SETTLE_MS)
   if (INTERACTIONS[slug]) await INTERACTIONS[slug](page)
@@ -157,11 +192,16 @@ const report = []
 
 for (const slug of SLUGS) {
   try {
-    // Probe at 1:1: centre the ink, and cap the preferred scale so the ink fits
+    // Probe at 1:1 (DOM ink and pixels together): centre the ink, and cap the preferred scale so the ink fits
     // SAFE and the pose's own box still fits the smaller viewport.
     const probe = await open(browser, slug, 'dark', 1)
     const ink = await probe.page.evaluate(measureInk)
+    const px = await measurePixels(probe.page)
     await probe.context.close()
+    if (px.R > px.L) {
+      ink.L = Math.min(ink.L, px.L); ink.T = Math.min(ink.T, px.T)
+      ink.R = Math.max(ink.R, px.R); ink.B = Math.max(ink.B, px.B)
+    }
     const fit = Math.min(
       (W * SAFE.w) / (ink.R - ink.L), (H * SAFE.h) / (ink.B - ink.T),
       (W * 0.98) / ink.pw, (H * 0.98) / ink.ph,

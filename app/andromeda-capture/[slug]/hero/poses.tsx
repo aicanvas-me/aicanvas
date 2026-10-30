@@ -121,12 +121,15 @@ const CASE: Record<string, string> = {
 const WIDTH: Record<string, number> = {
   accordion: 520, artifact: 560, 'bento-grid': 640, card: 420, 'chart-funnel': 640,
   'chart-metric': 640, 'chart-radar': 420, 'chart-trend': 720, 'choice-card': 440, collapsible: 480,
-  'empty-state': 520, footer: 820, 'logo-cloud': 600, marquee: 900, message: 520,
+  'empty-state': 520, footer: 820, 'logo-cloud': 900, marquee: 640, message: 520,
   'music-player': 420, navbar: 800, 'panel-header': 520, 'progress-bar': 420, 'prompt-input': 560,
   'search-field': 420, 'section-heading': 720, 'strength-meter': 360, 'table-basic': 900,
   'table-data': 900, tabs: 360, textarea: 420, tool: 520, 'top-bar': 760, waveform: 640,
   burst: 520, cube: 420, nodes: 560, orb: 420, planet: 420,
 }
+
+// A full-height column gets a shorter frame so it reads at card size.
+const HEIGHT: Record<string, number> = { sidebar: 440 }
 
 export function hasPose(slug: string) {
   return slug in POSES || slug in SPEC_BY_SLUG
@@ -134,9 +137,8 @@ export function hasPose(slug: string) {
 
 export function Pose({ slug }: { slug: string }) {
   if (slug in POSES) return POSES[slug]
-  const w = WIDTH[slug]
   return (
-    <div style={w ? { width: w } : undefined}>
+    <div style={{ width: WIDTH[slug], height: HEIGHT[slug] }}>
       <MatrixSolo spec={SPEC_BY_SLUG[slug]} label={CASE[slug]} />
     </div>
   )
