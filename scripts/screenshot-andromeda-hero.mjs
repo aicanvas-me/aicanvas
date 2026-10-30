@@ -7,17 +7,20 @@
  * Each pose is measured first (the pixels it paints, popups included), shifted so
  * that ink sits dead centre, and its scale capped so it stays inside SAFE: a grid
  * card that crops the art to 16:10 still shows the whole component with room on
- * every side. After each shot the pixels are measured again and any tight or
- * off-centre shot is listed at the end.
+ * every side. After each shot the pixels are measured again; a shot that is
+ * tight, off centre, empty, small, or a different size in light and dark is
+ * flagged, so only flagged shots and the contact sheets need a human look.
  *
- * Local only: PNGs land in OUT_DIR as <slug>-<theme>.png, plus report.json.
+ * Local only: PNGs land in OUT_DIR as <slug>-<theme>.png, plus report.json and
+ * sheet-NN.png (8 components per sheet, dark beside light).
  *
  * Usage: node scripts/screenshot-andromeda-hero.mjs [slug ...]   (no slug = all)
- * Env:   BASE_URL (default http://localhost:3001), OUT_DIR (default .screenshots-hero)
+ * Env:   BASE_URL (default http://localhost:3001), OUT_DIR (default .screenshots-hero),
+ *        WORKERS (default 4, components shot at once)
  */
 
 import { chromium } from 'playwright'
-import { mkdir, writeFile } from 'fs/promises'
+import { mkdir, rm, writeFile } from 'fs/promises'
 import { readFileSync } from 'fs'
 import path from 'path'
 
@@ -31,6 +34,12 @@ const SAFE = { w: 0.8, h: 0.72 }
 // A finished shot is flagged under these margins (px) or this far off centre.
 const MIN_MARGIN = { x: 100, y: 70 }
 const MAX_OFFSET = 40
+// Flagged as small when the ink is under this share of BOTH frame sides, and as a
+// theme mismatch when light and dark ink differ by more than this (px): a popup
+// that opened in one theme only.
+const SMALL = 0.15
+const THEME_DIFF = 60
+const WORKERS = Number(process.env.WORKERS) || 4
 
 // Preferred device scale: small controls zoom in; the fit can only lower it.
 const DEFAULT_SCALE = 2.5
@@ -194,11 +203,8 @@ async function open(browser, slug, theme, s, shift = { dx: 0, dy: 0 }) {
   return { context, page }
 }
 
-await mkdir(OUT_DIR, { recursive: true })
-const browser = await chromium.launch()
-const report = []
-
-for (const slug of SLUGS) {
+async function shoot(browser, slug) {
+  const out = []
   try {
     // Probe at 1:1: centre the ink, and cap the preferred scale so the ink fits
     // SAFE and the pose's own box still fits the smaller viewport.
@@ -240,15 +246,55 @@ for (const slug of SLUGS) {
       if (Math.min(margin.top, margin.bottom) < MIN_MARGIN.y) issues.push('tight y')
       if (Math.abs(margin.left - margin.right) / 2 > MAX_OFFSET) issues.push('off-centre x')
       if (Math.abs(margin.top - margin.bottom) / 2 > MAX_OFFSET) issues.push('off-centre y')
-      report.push({ slug, theme, scale: s, shift, margin, issues })
-      console.log(`${issues.length ? '!' : '✓'} ${slug} ${theme} @${s} ${JSON.stringify(margin)} ${issues.join(', ')}`)
+      const iw = (m.R - m.L) * s
+      const ih = (m.B - m.T) * s
+      if (!(iw > 4 && ih > 4)) issues.push('empty')
+      else if (iw < W * SMALL && ih < H * SMALL) issues.push('small')
+      out.push({ slug, theme, scale: s, shift, margin, ink: { w: Math.round(iw), h: Math.round(ih) }, issues })
+    }
+    const [d, l] = out
+    if (Math.abs(d.ink.w - l.ink.w) > THEME_DIFF || Math.abs(d.ink.h - l.ink.h) > THEME_DIFF) {
+      d.issues.push('theme mismatch')
+      l.issues.push('theme mismatch')
     }
   } catch (err) {
-    report.push({ slug, error: err.message.split('\n')[0] })
-    console.log(`✗ ${slug}: ${err.message.split('\n')[0]}`)
+    out.push({ slug, error: err.message.split('\n')[0] })
   }
+  for (const e of out) {
+    console.log(e.error
+      ? `✗ ${e.slug}: ${e.error}`
+      : `${e.issues.length ? '!' : '✓'} ${e.slug} ${e.theme} @${e.scale} ${JSON.stringify(e.margin)} ${e.issues.join(', ')}`)
+  }
+  return out
 }
 
+// Contact sheets for the human look: 8 components each, dark beside light.
+async function sheets(browser, slugs) {
+  const page = await browser.newPage({ viewport: { width: 976, height: 400 } })
+  const html = path.join(OUT_DIR, '_sheet.html')
+  for (let i = 0; i < slugs.length; i += 8) {
+    const rows = slugs.slice(i, i + 8).map((slug) =>
+      `<div style="font:600 18px system-ui;color:#fff;margin:6px 4px">${slug}</div>` +
+      `<div style="display:flex;gap:8px;margin-bottom:10px"><img src="${slug}-dark.png" width=480><img src="${slug}-light.png" width=480></div>`,
+    ).join('')
+    await writeFile(html, `<body style="margin:4px;background:#777">${rows}</body>`)
+    await page.goto(`file://${html}`)
+    await page.waitForTimeout(400)
+    await page.screenshot({ path: path.join(OUT_DIR, `sheet-${String(i / 8 + 1).padStart(2, '0')}.png`), fullPage: true })
+  }
+  await rm(html)
+  await page.close()
+}
+
+await mkdir(OUT_DIR, { recursive: true })
+const browser = await chromium.launch()
+const queue = [...SLUGS]
+const done = new Map()
+await Promise.all(Array.from({ length: Math.min(WORKERS, queue.length) }, async () => {
+  for (let slug = queue.shift(); slug; slug = queue.shift()) done.set(slug, await shoot(browser, slug))
+}))
+const report = SLUGS.flatMap((slug) => done.get(slug))
+await sheets(browser, SLUGS.filter((slug) => !done.get(slug).some((e) => e.error)))
 await browser.close()
 await writeFile(path.join(OUT_DIR, 'report.json'), JSON.stringify(report, null, 2))
 const flagged = report.filter((r) => r.error || r.issues?.length)
