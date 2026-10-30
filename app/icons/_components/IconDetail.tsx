@@ -247,8 +247,8 @@ export function IconDetail({
               </button>
             </div>
             <div aria-hidden className="my-2 h-px bg-sand-200 dark:bg-sand-800" />
-            <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
-            <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={previewColour} style={style} />
+            <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={colourOverride} style={style} />
+            <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={colourOverride} style={style} />
           </div>
         </div>
 
@@ -273,9 +273,11 @@ export function IconDetail({
                   icon={suggestion}
                   markup={data[suggestion.name] ?? suggestion.markup ?? ''}
                   size={Math.min(size, TILE_MAX_SIZE)}
+                  exportSize={size}
                   strokeWidth={strokeWidth}
                   absolute={absolute}
                   colour={siteColour}
+                  exportColour={colourOverride}
                   style={style}
                   href={`/icons/${suggestion.name}${query}`}
                 />

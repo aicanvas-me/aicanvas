@@ -58,7 +58,8 @@ export function CodeTabs({
   size: number
   strokeWidth: number
   absolute: boolean
-  colour: string
+  // the user's pick, null for none
+  colour: string | null
   style: IconStyle
   className?: string
   compact?: boolean
@@ -66,7 +67,7 @@ export function CodeTabs({
   const [tab, setTab] = useState<CodeTab>('React')
   const code =
     tab === 'React'
-      ? `${iconImportLine(name)}\n\n${iconJsxLine(name, size, strokeWidth, style, absolute)}`
+      ? `${iconImportLine(name)}\n\n${iconJsxLine(name, size, strokeWidth, style, absolute, colour)}`
       : tab === 'SVG'
         ? buildSvg(markup, size, strokeWidth, colour, absolute)
         : iconInstallCommand(name)

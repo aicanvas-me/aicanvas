@@ -63,13 +63,14 @@ export function ActionBar({
   size: number
   strokeWidth: number
   absolute: boolean
-  colour: string
+  // the user's pick, null for none (the icon keeps the text colour)
+  colour: string | null
   style: IconStyle
 }) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
-  const prompt = agentPrompt(name, size, strokeWidth, style, absolute)
-  const jsx = iconJsxLine(name, size, strokeWidth, style, absolute)
+  const prompt = agentPrompt(name, size, strokeWidth, style, absolute, colour)
+  const jsx = iconJsxLine(name, size, strokeWidth, style, absolute, colour)
   const svg = buildSvg(markup, size, strokeWidth, colour, absolute)
   const { copied, copy } = useCopied(prompt)
 

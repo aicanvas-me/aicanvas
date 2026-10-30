@@ -302,6 +302,7 @@ export function IconsOverview({
                       strokeWidth={strokeWidth}
                       absolute={absolute}
                       colour={colour}
+                      exportColour={colourOverride}
                       style={style}
                       href={`/icons/${icon.name}${settingsQuery}`}
                     />

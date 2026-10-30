@@ -28,10 +28,11 @@ export const iconInstallCommand = (name: string) =>
 export const iconImportLine = (name: string) =>
   `import { ${pascalCase(name)} } from '@/components/icons'`
 
-export const iconJsxLine = (name: string, size: number, strokeWidth: number, style: IconStyle, absolute = true) =>
-  `<${pascalCase(name)} size={${size}} strokeWidth={${strokeWidth}}${absolute ? '' : ' absoluteStrokeWidth={false}'}${variantProp(style)} />`
+// colour: the user's pick, or null to leave the icon on the text colour
+export const iconJsxLine = (name: string, size: number, strokeWidth: number, style: IconStyle, absolute = true, colour: string | null = null) =>
+  `<${pascalCase(name)} size={${size}} strokeWidth={${strokeWidth}}${absolute ? '' : ' absoluteStrokeWidth={false}'}${colour ? ` color="${colour}"` : ''}${variantProp(style)} />`
 
-export function agentPrompt(name: string, size: number, strokeWidth: number, style: IconStyle, absolute = true): string {
+export function agentPrompt(name: string, size: number, strokeWidth: number, style: IconStyle, absolute = true, colour: string | null = null): string {
   const component = pascalCase(name)
-  return `Use the ${component} icon in the ${style} style at ${size}px with strokeWidth ${strokeWidth}${absolute ? '' : ', the line scaling with the size (absoluteStrokeWidth off)'}. If this project does not have the icon, install it with \`${iconInstallCommand(name)}\`. Import it with \`${iconImportLine(name)}\`, then render \`${iconJsxLine(name, size, strokeWidth, style, absolute)}\`.`
+  return `Use the ${component} icon in the ${style} style at ${size}px with strokeWidth ${strokeWidth}${absolute ? '' : ', the line scaling with the size (absoluteStrokeWidth off)'}${colour ? `, in ${colour}` : ''}. If this project does not have the icon, install it with \`${iconInstallCommand(name)}\`. Import it with \`${iconImportLine(name)}\`, then render \`${iconJsxLine(name, size, strokeWidth, style, absolute, colour)}\`.`
 }

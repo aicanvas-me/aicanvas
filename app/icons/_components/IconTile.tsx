@@ -15,6 +15,8 @@ export function IconTile({
   strokeWidth,
   absolute,
   colour,
+  exportColour,
+  exportSize = size,
   style,
   href = `/icons/${icon.name}`,
 }: {
@@ -24,6 +26,10 @@ export function IconTile({
   strokeWidth: number
   absolute: boolean
   colour: string
+  // what Copy SVG and Copy JSX carry: the user's pick, null for none
+  exportColour: string | null
+  // the size copies carry when the tile is drawn smaller (a capped suggestion)
+  exportSize?: number
   style: IconStyle
   href?: string
 }) {
@@ -56,7 +62,7 @@ export function IconTile({
             type="button"
             aria-label={`Copy ${icon.name} SVG`}
             title="Copy SVG"
-            onClick={() => void copyText(buildSvg(markup, size, strokeWidth, colour, absolute))}
+            onClick={() => void copyText(buildSvg(markup, exportSize, strokeWidth, exportColour, absolute))}
             className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
             <Copy weight="regular" size={12} />
@@ -65,7 +71,7 @@ export function IconTile({
             type="button"
             aria-label={`Copy ${icon.name} JSX`}
             title="Copy JSX"
-            onClick={() => void copyText(iconJsxLine(icon.name, size, strokeWidth, style, absolute))}
+            onClick={() => void copyText(iconJsxLine(icon.name, exportSize, strokeWidth, style, absolute, exportColour))}
             className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
             <Code weight="regular" size={12} />
