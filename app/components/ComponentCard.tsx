@@ -48,7 +48,8 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
     >
       {/* Preview. Save action intentionally lives on the component detail
           page only; keeping it off the card keeps the preview uncluttered. */}
-      <div className="relative aspect-video overflow-hidden bg-sand-900">
+      {/* Light fill on a light site: the rounded clip anti-aliases this ground into the edge. */}
+      <div className="relative aspect-video overflow-hidden bg-sand-100 dark:bg-sand-900">
         {badge && (
           // Aceternity-style pill: just a filled icon at rest, slides open to
           // the label on card hover. Premium keeps the bolt; Free gets a
