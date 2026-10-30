@@ -141,7 +141,6 @@ Design system landing pages (`/design-systems/andromeda`, etc.) target a differe
 |---|---|---|
 | Andromeda | `sci-fi design system react` | Blueprint/technical aesthetic with AI prompts |
 | Glass | `glassmorphism design system react` | Frosted glass component suite with AI prompts |
-| Meridian | `react design system components` | Editorial dashboard system with AI prompts |
 
 The uncontested phrase **"design system with AI prompts built in"** should appear naturally in the description copy for every design system landing page.
 

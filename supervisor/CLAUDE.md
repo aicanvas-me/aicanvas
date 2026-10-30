@@ -9,7 +9,7 @@ The brief's `design-system:` field routes every task:
 | `design-system:` | Rules | Spec location |
 |---|---|---|
 | `standalone` | `components-workspace/CLAUDE.md` (creative freedom, strict TS) | `components-workspace/<slug>/spec.md` |
-| `andromeda` / `meridian` / named system | `design-systems/CLAUDE.md` + the system's `tokens.ts` (strict tokens) | `design-systems/<system>/specs/<slug>.md` |
+| `andromeda` / named system | `design-systems/CLAUDE.md` + the system's `tokens.ts` (strict tokens) | `design-systems/<system>/specs/<slug>.md` |
 | site chrome | `supervisor/skills/site-design-tokens.md` | n/a |
 
 `tier: premium` (closed-source): pipeline is identical, but the source lives outside this repo and is never committed here. Read the maintainer-only `premium-authoring` skill, which is not part of this repo, before delegating a premium brief. If tier is unspecified, ask — don't guess.
@@ -18,7 +18,7 @@ The brief's `design-system:` field routes every task:
 
 ```
 Component: <name>          Slug: <kebab-case, permanent>
-design-system: standalone | andromeda | meridian     tier: free | premium
+design-system: standalone | andromeda     tier: free | premium
 Description / Visual / Behaviour / Mobile / Tech notes
 ```
 

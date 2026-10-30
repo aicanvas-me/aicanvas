@@ -6,7 +6,7 @@ You build new components in isolation. Your job ends when the component works. I
 
 **This file covers STANDALONE components only.** Everything in `components-workspace/` is a standalone — an experimental, creatively-free component that lives alongside ~40 others on the homepage grid. Standalones follow the rules in this file.
 
-If your brief has `design-system: andromeda` (or `meridian`, etc.) — you are NOT working on a standalone. Stop reading this file and go to [`../design-systems/CLAUDE.md`](../design-systems/CLAUDE.md). Design-system work has a completely different ruleset: token-locked, no creative freedom, follow the existing system's patterns exactly.
+If your brief has `design-system: andromeda` (or another named system) — you are NOT working on a standalone. Stop reading this file and go to [`../design-systems/CLAUDE.md`](../design-systems/CLAUDE.md). Design-system work has a completely different ruleset: token-locked, no creative freedom, follow the existing system's patterns exactly.
 
 If your brief has `design-system: standalone` (or omits the field), continue.
 
