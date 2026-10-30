@@ -8,9 +8,6 @@
 //
 //   app/icons/_data/icons.generated.json    every icon: name, category, tags, added, isNew
 //   public/icons-data/<style>.json          name -> inner SVG markup, one file per style
-// A solid style's markup is wrapped in <g data-fit="cx cy l"> from the set's
-// solid-fit.json, so the export can keep its outer edge with a line's at any
-// line weight (app/icons/_lib/icon-utils.ts fitMarkup).
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
@@ -61,16 +58,12 @@ const index = names.map((name) => {
 mkdirSync(join(ROOT, 'app/icons/_data'), { recursive: true })
 writeFileSync(join(ROOT, 'app/icons/_data/icons.generated.json'), JSON.stringify(index))
 
-const fits = existsSync(join(SRC, 'solid-fit.json')) ? JSON.parse(readFileSync(join(SRC, 'solid-fit.json'), 'utf8')) : {}
-
 mkdirSync(join(ROOT, 'public/icons-data'), { recursive: true })
 for (const [style, dir] of Object.entries(STYLES)) {
   const out = {}
   for (const name of names) {
     const svg = readFileSync(join(SRC, dir, `${name}.svg`), 'utf8')
-    const inner = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/\s*\n\s*/g, '').trim()
-    const fit = fits[name]?.[style]
-    out[name] = fit ? `<g data-fit="${fit.join(' ')}">${inner}</g>` : inner
+    out[name] = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/\s*\n\s*/g, '').trim()
   }
   writeFileSync(join(ROOT, `public/icons-data/${style}.json`), JSON.stringify(out))
 }
