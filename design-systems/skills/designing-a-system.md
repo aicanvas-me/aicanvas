@@ -7,7 +7,7 @@ This skill file explains the philosophy and workflow for creating or extending a
 When fleshed out, this file should cover:
 
 - **Token-first workflow.** Tokens (`tokens.ts`) come before components. If a color or spacing value you need isn't in `tokens.ts`, add it there first — don't hardcode in the component.
-- **When to start a new system vs. extend an existing one.** Meridian is intentionally small today (9 components) and will grow; Andromeda is broader (19 components) but still opinionated. Neither is a "complete" system — both are governed by a consistent aesthetic that any new addition must respect.
+- **When to start a new system vs. extend an existing one.** Andromeda is broad but still opinionated, and not a "complete" system: it is governed by a consistent aesthetic that any new addition must respect.
 - **Variant naming and surface semantics.** How to decide variant names (`default` | `outline` | `ghost` | `destructive` | `link`), how to think about surface layers (base / raised / overlay / hover / active), and how to avoid accidentally re-inventing shadcn.
 - **When a component belongs in a DS vs. as a standalone.** If the component is a showpiece (experimental motion, novel interaction, one-off aesthetic) → standalone. If it's a primitive that a real product could compose into a UI (button, input, card, dialog) → design system.
 - **The promotion mechanism.** A DS component can be promoted to the homepage grid via a thin re-export wrapper in `components-workspace/`. See `components-workspace/skills/promotion-guide.md`.

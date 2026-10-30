@@ -18,7 +18,7 @@ components-workspace/andromeda-button/
 
 ## Naming convention
 
-Prefix the wrapper folder with the DS name: `andromeda-button`, `andromeda-card`, `meridian-stat-tile`, `meridian-input`, etc. This:
+Prefix the wrapper folder with the DS name: `andromeda-button`, `andromeda-card`, etc. This:
 
 - Makes the relationship obvious in the folder list
 - Prevents name collisions with pure standalones (e.g. if someone builds a non-DS `button` experiment later)
@@ -146,7 +146,6 @@ Precedent: existing dark-only standalones (`x-grid`, `grid-lines`, `dot-grid`) a
 | System   | Container background       | Why                                    |
 |----------|---------------------------|----------------------------------------|
 | Andromeda | `#0E0E0F` (void)          | DS tokens define this as `surface.void` — the canvas color every Andromeda example uses |
-| Meridian  | TBD — first promotion of a Meridian component will fill this in |
 
 If a future DS is **intrinsically light or neutral** and its components render correctly against `sand-100 dark:bg-sand-950`, then the standard container-chrome rule applies and no override is needed. This has not happened yet.
 
@@ -297,7 +296,7 @@ Some DS components don't make sense as homepage cards. Don't promote them.
 - **Layout-dependent components.** Andromeda's `CornerMarkers` is a decorative overlay that only reads correctly when it wraps an outer container in a real UI layout. On its own in a 480×480 card, it's just four disconnected brackets. Not worth promoting.
 - **Composition-only components.** `CardHeader`, `CardContent`, `CardFooter` — these are sub-parts of `Card`. Promote `Card` (which includes them), not the sub-parts individually.
 - **Data-dependent components.** Things that only look right when filled with real data (`StatTile` might qualify if the stat value is the interesting part). You can still promote them by hard-coding plausible sample data in the wrapper, but consider whether the hardcoded data tells a complete story on its own.
-- **Dashboard-scale compositions.** Don't promote entire example dashboards (like Andromeda's `mission-control` or Meridian's `dashboard`). Those live under `examples/` and are showcased at the DS's own route — they're not standalone components.
+- **Dashboard-scale compositions.** Don't promote entire example dashboards (like Andromeda's `mission-control`). Those live under `examples/` and are showcased at the DS's own route — they're not standalone components.
 
 ## Worked example inventory
 
