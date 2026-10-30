@@ -27,7 +27,7 @@ Before writing or modifying ANY component inside `design-systems/<system>/`:
 3. **Never hardcode colors or spacing in components.** Use the `var(--andromeda-…)` CSS custom properties emitted by the system's helper (e.g. `andromedaVars()`), or reference `tokens.xxx` directly when that pattern is already established.
 4. **Match existing component patterns.** If `Button.tsx` uses `cva` + `forwardRef` + `andromedaVars()`, a new `Select.tsx` should follow the same shape. Consistency inside a system is more important than micro-optimizations.
 5. **One system per folder.** Do not import tokens, helpers, or components from one system's folder into another's.
-6. **Examples are examples, not library code.** Files under `<system>/examples/` demonstrate how a system composes into a real UI (mission-control dashboard, editorial dashboard). Don't import FROM `examples/` INTO `components/` — data flows the other way.
+6. **Examples are examples, not library code.** Files under `<system>/examples/` demonstrate how a system composes into a real UI (e.g. the mission-control dashboard). Don't import FROM `examples/` INTO `components/` — data flows the other way.
 7. **When the user corrects a design decision, write the rule back to `rules.md` immediately.** The brain is a living document — every correction should land before the session ends, so the same mistake never costs time twice.
 
 ## TypeScript status
