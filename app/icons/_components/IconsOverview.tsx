@@ -14,9 +14,11 @@ import {
   ALL_ICONS_INSTALL,
   DARK_PREVIEW_COLOUR,
   DARK_TILE,
+  FIXED_WEIGHT,
   LIGHT_PREVIEW_COLOUR,
   LIGHT_TILE,
 } from '../_lib/constants'
+import { takesStroke } from '../_lib/icon-utils'
 import { overviewMarkdown } from '../_lib/markdown'
 import { toIconQuery, type IconSettings } from '../_lib/settings-query'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
@@ -251,6 +253,8 @@ export function IconsOverview({
             />
             <TuneSlider
               label="Stroke"
+              disabled={!takesStroke(style)}
+              hint={FIXED_WEIGHT}
               value={strokeWidth}
               onChange={setStrokeWidth}
               min={1}
@@ -262,7 +266,7 @@ export function IconsOverview({
             />
             <span aria-hidden className="mx-1 hidden h-5 w-px shrink-0 bg-sand-300 @min-[640px]:block dark:bg-sand-700" />
             <div className="col-span-2 flex items-center gap-1 @min-[640px]:contents">
-              <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} className="h-8" />
+              <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} disabled={!takesStroke(style)} hint={FIXED_WEIGHT} className="h-8" />
               <ColourControl
                 value={colourOverride}
                 resolved={colour}

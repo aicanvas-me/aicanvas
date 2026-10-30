@@ -10,8 +10,8 @@ import { PageCrumbs } from '@/app/components/PageCrumbs'
 import { useCopied } from '@/app/components/useCopied'
 import { useTheme } from '@/app/components/ThemeProvider'
 import { ICON_CATEGORY_LABELS } from '../_lib/categories'
-import { DARK_PREVIEW_COLOUR, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
-import { formatDate, iconLead, titleCase } from '../_lib/icon-utils'
+import { DARK_PREVIEW_COLOUR, FIXED_WEIGHT, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
+import { formatDate, iconLead, takesStroke, titleCase } from '../_lib/icon-utils'
 import { fromIconQuery, toIconQuery, type IconSettings } from '../_lib/settings-query'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconMarkupMap, IconMeta, IconStyle, IconWithMarkup } from '../_lib/types'
@@ -224,6 +224,8 @@ export function IconDetail({
             />
             <TuneSlider
               label="Stroke"
+              disabled={!takesStroke(style)}
+              hint={FIXED_WEIGHT}
               value={strokeWidth}
               onChange={setStrokeWidth}
               min={1}
@@ -233,7 +235,7 @@ export function IconDetail({
               valueText={(value) => `${value.toFixed(2)} pixels`}
             />
             <div className="relative flex items-center gap-1">
-              <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} className="h-8" />
+              <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} disabled={!takesStroke(style)} hint={FIXED_WEIGHT} className="h-8" />
               <ColourControl value={colourOverride} resolved={previewColour} onChange={setColourOverride} align="start" />
               <button
                 type="button"

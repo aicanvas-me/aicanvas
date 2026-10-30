@@ -41,6 +41,12 @@ export function iconLead(icon: IconMeta, categoryLabel: string): string {
   return `${titleCase(icon.name)} is an icon for ${categoryLabel} interfaces, available in four styles.`
 }
 
+// The solid styles are filled shapes with a fixed weight: strokeWidth and
+// absoluteStrokeWidth do not change them.
+export function takesStroke(style: IconStyle): boolean {
+  return style === 'line' || style === 'duotone'
+}
+
 export function variantProp(style: IconStyle): string {
   return style === 'line' ? '' : ` variant="${style}"`
 }

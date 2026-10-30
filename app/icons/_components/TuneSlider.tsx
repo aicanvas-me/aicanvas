@@ -15,6 +15,8 @@ export function TuneSlider({
   format,
   valueText,
   className = '',
+  disabled = false,
+  hint,
 }: {
   label: string
   value: number
@@ -25,6 +27,9 @@ export function TuneSlider({
   format: (value: number) => string
   valueText: (value: number) => string
   className?: string
+  // disabled: the control does nothing for what is shown; hint says why
+  disabled?: boolean
+  hint?: string
 }) {
   const t = Math.max(0, Math.min(1, (value - min) / (max - min)))
   // Fill and needle stay clear of the round ends, the way the native thumb does.
@@ -32,8 +37,9 @@ export function TuneSlider({
   const display = format(value)
 
   return (
-    <div className={`relative h-8 min-w-0 ${className}`}>
+    <div className={`relative h-8 min-w-0 ${disabled ? 'cursor-not-allowed opacity-50' : ''} ${className}`} title={disabled ? hint : undefined}>
       <input
+        disabled={disabled}
         type="range"
         min={min}
         max={max}
@@ -42,7 +48,7 @@ export function TuneSlider({
         onChange={(event) => onChange(parseFloat(event.target.value))}
         aria-label={label}
         aria-valuetext={valueText(value)}
-        className="peer absolute inset-0 z-10 h-full w-full cursor-ew-resize opacity-0"
+        className="peer absolute inset-0 z-10 h-full w-full cursor-ew-resize opacity-0 disabled:pointer-events-none"
       />
       <div className="relative flex h-8 items-center overflow-hidden rounded-full border border-sand-200 bg-sand-50 transition-colors peer-hover:border-sand-300 peer-focus-visible:ring-2 peer-focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-950 dark:peer-hover:border-sand-700">
         {/* Ticks run in the gap between label and value, so they never cross

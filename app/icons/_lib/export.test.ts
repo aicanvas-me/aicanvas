@@ -45,8 +45,13 @@ describe('React line and agent text', () => {
     expect(iconJsxLine('image-sparkle', 40, 1.5, 'line', false)).toBe('<ImageSparkle size={40} strokeWidth={1.5} absoluteStrokeWidth={false} />')
   })
   it('carries the picked colour, and none when nothing is picked', () => {
-    expect(iconJsxLine('image-sparkle', 24, 2, 'solid-duotone', true, '#E5484D')).toBe('<ImageSparkle size={24} strokeWidth={2} color="#E5484D" variant="solid-duotone" />')
+    expect(iconJsxLine('image-sparkle', 24, 2, 'duotone', true, '#E5484D')).toBe('<ImageSparkle size={24} strokeWidth={2} color="#E5484D" variant="duotone" />')
     expect(iconJsxLine('image-sparkle', 24, 2, 'solid-duotone', true, null)).not.toContain('color=')
+  })
+  it('leaves the line weight out for the solid styles, which do not take it', () => {
+    expect(iconJsxLine('image-sparkle', 48, 1.5, 'solid', false, '#E5484D')).toBe('<ImageSparkle size={48} color="#E5484D" variant="solid" />')
+    expect(iconJsxLine('image-sparkle', 48, 1.5, 'solid-duotone', true)).toBe('<ImageSparkle size={48} variant="solid-duotone" />')
+    expect(agentPrompt('image-sparkle', 48, 1.5, 'solid', false)).not.toContain('strokeWidth 1.5')
   })
   it('names the variant for every style but line', () => {
     expect(iconJsxLine('x', 24, 2, 'duotone')).toContain('variant="duotone"')
