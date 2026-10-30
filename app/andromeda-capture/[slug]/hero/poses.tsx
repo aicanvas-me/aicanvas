@@ -17,9 +17,12 @@ import {
   Tooltip,
 } from '../../../lib/andromeda-pro.generated'
 import { PickerCombobox } from '../../../_lib/andromeda-pro/matrix/combobox'
+import { MatrixSolo } from '../../../_lib/andromeda-pro/matrix/Matrix'
+import { SPEC_BY_SLUG } from '../../../_lib/andromeda-pro/matrix'
 
-// One hero per component: the single state that best sells it, alone. Scale and
-// any open-on-capture step live beside the slug in scripts/screenshot-andromeda.mjs.
+// One hero per component: the single state that best sells it, alone. Hand-built
+// poses come first; every other slug shows one matrix case through MatrixSolo.
+// Scale and open-on-capture steps live in scripts/screenshot-andromeda-hero.mjs.
 const RANGE = { start: new Date(2026, 6, 22), end: new Date(2026, 7, 20) }
 
 export const POSES: Record<string, ReactNode> = {
@@ -74,4 +77,67 @@ export const POSES: Record<string, ReactNode> = {
       <DateRangePicker value={RANGE} presetLabel="Last month" staticOpen />
     </div>
   ),
+}
+
+// The matrix case each remaining component shows. Absent = the component page's own hero.
+const CASE: Record<string, string> = {
+  accordion: 'Open by default',
+  alert: 'Accent',
+  avatar: 'Image',
+  card: 'Glow',
+  'chart-funnel': 'Tone from data',
+  'chart-metric': 'Tone from data',
+  'choice-card': 'Radio group',
+  collapsible: 'Open',
+  'empty-state': 'With actions',
+  'heat-grid': 'Live',
+  item: 'With description',
+  'media-card': 'Play action',
+  message: 'Assistant',
+  'music-player': 'Playing',
+  'nav-item': 'Active',
+  'panel-header': 'With actions',
+  'panel-menu': 'Open',
+  'payment-card': 'Brand',
+  // Opened by a click in the script: mounted open, its fade-in never runs.
+  popover: 'Closed',
+  'pricing-card': 'Featured',
+  'prompt-input': 'With draft',
+  radio: 'With description',
+  'segmented-control': 'Live',
+  spinner: 'Accent',
+  'stat-tile': 'Rising',
+  stepper: 'Mid-way',
+  'strength-meter': 'Strong',
+  suggestion: 'With icon',
+  'table-data': 'Selected row',
+  tag: 'Dismissible',
+  tool: 'Done open',
+  'user-card': 'Open down',
+  'user-menu': 'Open down',
+}
+
+// A block that spans its container gets a set column; the script then fits it.
+const WIDTH: Record<string, number> = {
+  accordion: 520, artifact: 560, 'bento-grid': 640, card: 420, 'chart-funnel': 640,
+  'chart-metric': 640, 'chart-radar': 420, 'chart-trend': 720, 'choice-card': 440, collapsible: 480,
+  'empty-state': 520, footer: 820, 'logo-cloud': 600, marquee: 900, message: 520,
+  'music-player': 420, navbar: 800, 'panel-header': 520, 'progress-bar': 420, 'prompt-input': 560,
+  'search-field': 420, 'section-heading': 720, 'strength-meter': 360, 'table-basic': 900,
+  'table-data': 900, tabs: 360, textarea: 420, tool: 520, 'top-bar': 760, waveform: 640,
+  burst: 520, cube: 420, nodes: 560, orb: 420, planet: 420,
+}
+
+export function hasPose(slug: string) {
+  return slug in POSES || slug in SPEC_BY_SLUG
+}
+
+export function Pose({ slug }: { slug: string }) {
+  if (slug in POSES) return POSES[slug]
+  const w = WIDTH[slug]
+  return (
+    <div style={w ? { width: w } : undefined}>
+      <MatrixSolo spec={SPEC_BY_SLUG[slug]} label={CASE[slug]} />
+    </div>
+  )
 }
