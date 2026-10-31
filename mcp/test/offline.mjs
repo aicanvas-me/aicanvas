@@ -30,6 +30,8 @@ import { McpClient } from './client.mjs'
 const BAD_URL = 'http://127.0.0.1:1/r' // Port 1 — guaranteed unreachable
 // registry-data/ lives at the repo root, two levels up from mcp/test/.
 const REGISTRY_DATA_DIR = new URL('../../registry-data/', import.meta.url).pathname
+// Files the generator only writes with the icon set present (icons-index.json).
+const FIXTURES_DIR = new URL('./fixtures/', import.meta.url).pathname
 
 let pass = 0
 let fail = 0
@@ -61,7 +63,7 @@ function startLocalRegistry() {
           res.writeHead(404).end('not found')
           return
         }
-        const body = await readFile(join(REGISTRY_DATA_DIR, name))
+        const body = await readFile(join(REGISTRY_DATA_DIR, name)).catch(() => readFile(join(FIXTURES_DIR, name)))
         res.writeHead(200, { 'Content-Type': 'application/json' }).end(body)
       } catch {
         res.writeHead(404, { 'Content-Type': 'application/json' }).end('{}')
@@ -111,7 +113,7 @@ try {
   const toolsRes = await client.request('tools/list')
   record(
     'tools/list works without registry (schemas are local)',
-    Array.isArray(toolsRes?.result?.tools) && toolsRes.result.tools.length === 13,
+    Array.isArray(toolsRes?.result?.tools) && toolsRes.result.tools.length === 15,
     `got ${toolsRes?.result?.tools?.length} tools`,
   )
 
@@ -623,6 +625,50 @@ try {
     'local: get_audit_checklist(component) includes the structure rules',
     (acC?.items ?? []).some((i) => /use client/.test(i)),
     JSON.stringify(acC?.items)?.slice(0, 120),
+  )
+
+  // Icons: the catalog drives search, and the install answer names the exact file, import and tier.
+  const si = sc(await call('search_icons', { query: 'delete' }))
+  record(
+    'local: search_icons finds an icon by tag',
+    si?.icons?.[0]?.name === 'trash' && /\/icons\/trash$/.test(si?.icons?.[0]?.pageUrl ?? ''),
+    JSON.stringify(si)?.slice(0, 160),
+  )
+  const siExact = sc(await call('search_icons', { query: 'search' }))
+  record(
+    'local: search_icons ranks the exact name first',
+    siExact?.icons?.[0]?.name === 'search' && siExact?.icons?.length === 2,
+    JSON.stringify(siExact?.icons?.map((i) => i.name)),
+  )
+  const siCat = sc(await call('search_icons', { query: 'search', category: 'arrows' }))
+  record('local: search_icons honours the category filter', siCat?.count === 0, JSON.stringify(siCat)?.slice(0, 120))
+  const gi = sc(await call('get_icon_install', { name: 'arrow-up-right' }))
+  record(
+    'local: get_icon_install(line) returns the free command, import and usage',
+    gi?.installCommand === 'npx shadcn@latest add @aicanvas/icon-arrow-up-right' &&
+      gi?.importLine === "import { ArrowUpRight } from '@/components/icons/arrow-up-right'" &&
+      gi?.usage === '<ArrowUpRight size={20} />' && gi?.tier === 'free',
+    JSON.stringify(gi)?.slice(0, 200),
+  )
+  const giSolid = await call('get_icon_install', { name: 'search', style: 'solid-duotone' })
+  record(
+    'local: get_icon_install(paid style) names the Premium tier and the suffixed file',
+    sc(giSolid)?.installCommand === 'npx shadcn@latest add @aicanvas/icon-search-solid-duotone' &&
+      sc(giSolid)?.component === 'SearchSolidDuotone' && sc(giSolid)?.tier === 'premium' &&
+      /Premium/.test(giSolid?.result?.content?.[0]?.text ?? ''),
+    JSON.stringify(sc(giSolid))?.slice(0, 200),
+  )
+  const giMiss = await call('get_icon_install', { name: 'serch' })
+  record(
+    'local: get_icon_install on an unknown name is an error with suggestions',
+    giMiss?.result?.isError === true && /search/.test(giMiss?.result?.content?.[0]?.text ?? ''),
+    JSON.stringify(giMiss?.result)?.slice(0, 160),
+  )
+  const giT = sc(await tokenClient.request('tools/call', { name: 'get_icon_install', arguments: { name: 'trash', style: 'duotone' } }))
+  record(
+    'local+token: get_icon_install returns the tokenized URL form',
+    giT?.installCommand === `npx shadcn@latest add "${local.base}/icon-trash-duotone.json?token=${TOKEN}"`,
+    `got ${giT?.installCommand}`,
   )
 } catch (err) {
   console.log(`!! HARNESS ERROR: ${err.message}`)

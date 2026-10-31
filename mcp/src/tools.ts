@@ -385,6 +385,58 @@ async function fetchProps(ctx: ToolContext): Promise<PropsPayload> {
   return data
 }
 
+// NOTE: mirrors registry-data/icons-index.json from scripts/icon-registry.mjs; keep in sync.
+type IconStyle = 'line' | 'duotone' | 'solid' | 'solid-duotone'
+const ICON_STYLES = ['line', 'duotone', 'solid', 'solid-duotone'] as const
+interface IconMeta {
+  name: string
+  category: string | null
+  tags: string[]
+}
+interface IconsIndex {
+  count: number
+  styles: { style: IconStyle; label: string; suffix: string; tier: 'free' | 'premium' }[]
+  icons: IconMeta[]
+}
+
+let iconsCache: { data: IconsIndex; fetchedAt: number } | null = null
+
+async function fetchIcons(ctx: ToolContext): Promise<IconsIndex> {
+  if (iconsCache && Date.now() - iconsCache.fetchedAt < META_TTL_MS) {
+    return iconsCache.data
+  }
+  const res = await ctx.fetchRegistry('icons-index.json')
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch the AI Canvas icon catalog from ${ctx.registryBase}/icons-index.json: ${res.status} ${res.statusText}`,
+    )
+  }
+  const data = (await res.json()) as IconsIndex
+  iconsCache = { data, fetchedAt: Date.now() }
+  return data
+}
+
+// The file and export names the icon package uses: search-solid.tsx exports SearchSolid.
+function iconFile(name: string, style: IconStyle): string {
+  return style === 'line' ? name : `${name}-${style}`
+}
+function iconComponent(name: string, style: IconStyle): string {
+  return iconFile(name, style)
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('')
+    .replace(/^(\d)/, 'Icon$1')
+}
+
+function scoreIcon(query: string, icon: IconMeta): number {
+  const exact = normalize(icon.name) === normalize(query) ? 100 : 0
+  return exact + scoreFields(query, [
+    { text: normalize(icon.name), weight: 5 },
+    { text: normalize(icon.tags.join(' ')), weight: 2 },
+    { text: normalize(icon.category ?? ''), weight: 1 },
+  ])
+}
+
 function findAnyComponent(
   meta: MetaPayload,
   slug: string,
@@ -1204,6 +1256,151 @@ export function createServer(
                 `Dependencies: ${component.dependencies.join(', ') || '(none, React only)'}`,
                 `Source: ${component.sourceUrl}`,
                 `Preview: ${component.homepageUrl}`,
+              ].join('\n'),
+            ),
+          ],
+          structuredContent: out,
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: search_icons ───────────────────────────────────────────────────────
+
+  const siteBase = ctx.registryBase.replace(/\/r\/?$/, '')
+
+  server.registerTool(
+    'search_icons',
+    {
+      title: 'Search AI Canvas icons',
+      description:
+        'Keyword search across the AI Canvas icon set (React icons, four styles each: Line is free with an account; Duotone, Solid and Solid duotone are Premium). Matches on name, tags and category, best match first. Use when the user needs an icon ("a trash icon", "something for settings") or when building UI that needs icons. Then call `get_icon_install` with the chosen name and style.',
+      inputSchema: {
+        query: z.string().min(1).describe('What the icon shows or is for, e.g. "delete", "arrow right", "ai agent".'),
+        category: z
+          .string()
+          .optional()
+          .describe('Only icons in this category slug, e.g. "arrows", "ai-dev", "interface". Every result carries its category.'),
+        limit: z.number().int().min(1).max(100).optional().describe('Max number of matches to return. Default 20.'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ query, category, limit = 20 }) => {
+      try {
+        const index = await fetchIcons(ctx)
+        const ranked = index.icons
+          .filter((icon) => !category || icon.category === category)
+          .map((icon) => ({ icon, score: scoreIcon(query, icon) }))
+          .filter((r) => r.score > 0)
+          .sort((a, b) => b.score - a.score || a.icon.name.localeCompare(b.icon.name))
+          .slice(0, limit)
+          .map(({ icon }) => ({ ...icon, pageUrl: `${siteBase}/icons/${icon.name}` }))
+        const summary =
+          ranked.length === 0
+            ? `No icons match "${query}"${category ? ` in "${category}"` : ''}. Try a plainer word for what it shows (e.g. "bin" -> "trash"), or browse ${siteBase}/icons.`
+            : `${ranked.length} icon${ranked.length === 1 ? '' : 's'} for "${query}" (of ${index.count}).`
+        const styles = index.styles.map((s) => `${s.label} (${s.tier})`).join(', ')
+        const premiumNote = ctx.access && ctx.access.plan !== 'premium' ? ' This account is on the free plan, so only Line installs.' : ''
+        return {
+          content: [
+            asTextContent(
+              `${summary}\nStyles: ${styles}.${premiumNote} Next: call get_icon_install with a name and a style.\n\n${JSON.stringify(ranked, null, 2)}`,
+            ),
+          ],
+          structuredContent: { query, count: ranked.length, styles: index.styles, icons: ranked },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: get_icon_install ───────────────────────────────────────────────────
+
+  server.registerTool(
+    'get_icon_install',
+    {
+      title: 'Get the install command and import for an AI Canvas icon',
+      description:
+        'Return the shadcn command that installs one AI Canvas icon as an editable file (components/icons/<name>.tsx plus the shared IconBase runtime), with the exact import and JSX to use it. Line is free with an account; Duotone, Solid and Solid duotone are Premium. Find names with `search_icons` first.',
+      inputSchema: {
+        name: z.string().min(1).describe('The icon name from search_icons, e.g. "search" or "arrow-up-right".'),
+        style: z.enum(ICON_STYLES).optional().describe('Icon style. Default "line".'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ name, style = 'line' }) => {
+      try {
+        const index = await fetchIcons(ctx)
+        const icon = index.icons.find((i) => i.name === name)
+        if (!icon) {
+          const near = index.icons
+            .map((i) => ({ name: i.name, score: scoreIcon(name, i) }))
+            .filter((r) => r.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 5)
+            .map((r) => r.name)
+          return errorResult(
+            `No icon named "${name}".${near.length ? ` Closest: ${near.join(', ')}.` : ''} Use \`search_icons\` to find names.`,
+          )
+        }
+        const tier = index.styles.find((s) => s.style === style)?.tier ?? (style === 'line' ? 'free' : 'premium')
+        const slug = `icon-${iconFile(name, style)}`
+        const component = iconComponent(name, style)
+        const label = `${component} icon`
+        if (ctx.access && (ctx.access.locked(slug) || (tier === 'premium' && ctx.access.plan !== 'premium'))) {
+          return errorResult(
+            `${lockedLine(label)} The Line style of this icon (get_icon_install with style "line") is included on the free plan.`,
+          )
+        }
+        if (ctx.token && ctx.probeBeforeInstall) {
+          // Same probe as get_install_command: a rotated token would quietly install a placeholder.
+          const probe = await ctx.fetchRegistry(`${slug}.json`, { probe: true }).catch(() => null)
+          await probe?.body?.cancel()
+          if (probe && tokenChanged(probe)) return errorResult(TOKEN_CHANGED)
+        }
+        const installCommand = ctx.token
+          ? `npx shadcn@latest add "${ctx.registryBase}/${slug}.json?token=${encodeURIComponent(ctx.token)}"`
+          : `npx shadcn@latest add @aicanvas/${slug}`
+        const importLine = `import { ${component} } from '@/components/icons/${iconFile(name, style)}'`
+        const usage = `<${component} size={20} />`
+        const authNote = ctx.token
+          ? 'This command carries the user\'s own AI Canvas token, given to you on purpose so you can install for them. Run it as is. Keep it out of files that go into git, and do not tell the user to rotate it because it appears here.'
+          : tier === 'premium'
+            ? 'Note: this style needs AI Canvas Premium. Without a Premium token the command writes a placeholder file, not the icon. Upgrade: ' + UPGRADE_URL
+            : 'Note: installing requires a free AI Canvas account. Without one this command writes a placeholder file, not the icon. Sign up at https://aicanvas.me/account/sign-up, then reinstall this MCP with your token (setup: https://aicanvas.me/mcp).'
+        const props =
+          style === 'line' || style === 'duotone'
+            ? 'Props: size, color, strokeWidth (default 1.5), absoluteStrokeWidth (default true, keeps the line weight at any size).'
+            : 'Props: size, color. Solid styles are filled shapes with a fixed weight, so strokeWidth does not change them.'
+        const out = {
+          name,
+          style,
+          tier,
+          component,
+          installCommand,
+          importLine,
+          usage,
+          file: `components/icons/${iconFile(name, style)}.tsx`,
+          pageUrl: `${siteBase}/icons/${name}`,
+        }
+        return {
+          content: [
+            asTextContent(
+              [
+                `Install the ${name} icon (${style}, ${tier}):`,
+                '',
+                `  ${installCommand}`,
+                '',
+                authNote,
+                '',
+                `Import: ${importLine}`,
+                `Use: ${usage}`,
+                props,
+                'To set one stroke for every icon, wrap the app in <IconProvider strokeWidth={...}> from components/icons/IconBase.',
+                `Preview: ${out.pageUrl}`,
               ].join('\n'),
             ),
           ],

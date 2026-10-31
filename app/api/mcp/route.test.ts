@@ -1,4 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, vi, beforeAll, beforeEach, afterAll, afterEach } from 'vitest'
+import { copyFileSync, existsSync, rmSync } from 'node:fs'
+import { join } from 'node:path'
 
 // Only the identity layer is stubbed. The registry reads the REAL registry-data/ files through
 // the real /r handler in process, so these cases prove what an agent receives end to end.
@@ -288,5 +290,44 @@ describe('hosted MCP: a premium account', () => {
     const r = await call('list_components', { limit: 200 })
     const items = r.structuredContent!.components as Array<{ access: string }>
     expect(items.every((c) => c.access === 'included')).toBe(true)
+  })
+})
+
+describe('hosted MCP: icons', () => {
+  // registry-data/ only holds the catalog when the icon set is present; the MCP fixture stands in.
+  const catalog = join(process.cwd(), 'registry-data/icons-index.json')
+  let wrote = false
+  beforeAll(() => {
+    if (existsSync(catalog)) return
+    copyFileSync(join(process.cwd(), 'mcp/test/fixtures/icons-index.json'), catalog)
+    wrote = true
+  })
+  afterAll(() => {
+    if (wrote) rmSync(catalog)
+  })
+
+  it('refuses a paid style to a free account and points at the free Line style', async () => {
+    asPlan('free')
+    const r = await call('get_icon_install', { name: 'search', style: 'solid' })
+    expect(r.isError).toBe(true)
+    expect(r.content[0].text).toContain('https://aicanvas.me/pricing')
+    expect(r.content[0].text).toContain('style "line"')
+  })
+
+  it('hands a free account the Line command with its key', async () => {
+    asPlan('free')
+    const r = await call('get_icon_install', { name: 'search' })
+    expect(r.structuredContent!.installCommand).toBe(
+      `npx shadcn@latest add "https://aicanvas.me/r/icon-search.json?token=${TOKEN}"`,
+    )
+  })
+
+  it('hands a premium account a paid style with its key', async () => {
+    asPlan('premium')
+    const r = await call('get_icon_install', { name: 'search', style: 'solid-duotone' })
+    expect(r.isError).toBeFalsy()
+    expect(r.structuredContent!.installCommand).toBe(
+      `npx shadcn@latest add "https://aicanvas.me/r/icon-search-solid-duotone.json?token=${TOKEN}"`,
+    )
   })
 })

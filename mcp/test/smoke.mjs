@@ -95,6 +95,8 @@ try {
     'validate_usage',
     'compose_page',
     'get_audit_checklist',
+    'search_icons',
+    'get_icon_install',
   ]
   for (const t of expected) {
     record(`tools/list contains ${t}`, toolNames.has(t), `got [${[...toolNames].join(', ')}]`)
