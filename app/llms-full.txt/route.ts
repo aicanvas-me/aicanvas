@@ -2,6 +2,8 @@ import { COMPONENTS } from '../lib/component-registry'
 import { SITE_URL } from '../lib/config'
 import { ICON_CATEGORIES } from '../icons/_lib/categories'
 import { icons } from '../icons/_lib/server-data'
+import { classifyContent } from '@/lib/registry/content-type'
+import { loadContentLookup } from '@/lib/registry/lookup'
 
 export const dynamic = 'force-static'
 
@@ -51,11 +53,13 @@ No account needed to read: every free component's complete source is inlined bel
 
   // Names only, never geometry: install and usage notes are in llms.txt.
   if (icons.length) {
+    const lookup = loadContentLookup()
+    const tier = (slug: string) => (classifyContent(slug, lookup) === 'standalone' ? 'free account' : 'Premium')
     const byCategory = ICON_CATEGORIES.map(([slug, label]) => {
       const names = icons.filter((icon) => icon.category === slug).map((icon) => icon.name)
       return names.length ? `${label}: ${names.join(', ')}` : ''
     }).filter(Boolean)
-    parts.push(`---\n\n## Icons\n\n${icons.length} React icons at ${SITE_URL}/icons, four styles each: Line (free account), Duotone, Solid and Solid duotone (Premium). Install one with \`npx shadcn@latest add @aicanvas/icon-<name>\` (add -duotone, -solid or -solid-duotone for the other styles). Setup and usage: ${SITE_URL}/llms.txt\n\n${byCategory.join('\n\n')}`)
+    parts.push(`---\n\n## Icons\n\n${icons.length} React icons at ${SITE_URL}/icons, four styles each: Line (${tier('icon-search')}), Duotone, Solid and Solid duotone (${tier('icon-search-duotone')}). Install one with \`npx shadcn@latest add @aicanvas/icon-<name>\` (add -duotone, -solid or -solid-duotone for the other styles). Setup and usage: ${SITE_URL}/llms.txt\n\n${byCategory.join('\n\n')}`)
   }
 
   const body = parts.join('\n\n') + '\n'
