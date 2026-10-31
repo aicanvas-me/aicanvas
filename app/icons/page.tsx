@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-import { ICON_CATEGORIES, isIconCategory } from './_lib/categories'
+import { ICON_CATEGORIES, ICON_COUNT, isIconCategory } from './_lib/categories'
 import { icons, readLineIcons } from './_lib/server-data'
 import { IconsOverview } from './_components/IconsOverview'
 
 export const metadata: Metadata = {
-  title: '821 Icons for React and AI Agents',
-  description: 'Browse 821 interface icons in four styles, customize their size, stroke and colour, then copy SVG or React usage.',
+  title: `${ICON_COUNT} Icons for React and AI Agents`,
+  description: `Browse ${ICON_COUNT} interface icons in four styles, customize their size, stroke and colour, then copy SVG or React usage.`,
 }
 
 export default async function IconsPage({

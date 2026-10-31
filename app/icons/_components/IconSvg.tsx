@@ -1,4 +1,5 @@
 import { effectiveStrokeWidth } from '../_lib/icon-utils'
+import { isPreview, previewSrc } from '../_lib/preview'
 
 export function IconSvg({
   markup,
@@ -19,6 +20,18 @@ export function IconSvg({
   apiSize?: number
   absolute?: boolean
 }) {
+  if (isPreview(markup)) {
+    const mask = `url(${previewSrc(markup)}) center / contain no-repeat`
+    return (
+      <span
+        className={`inline-block shrink-0 ${className}`}
+        style={{ width: size, height: size, backgroundColor: colour, mask, WebkitMask: mask }}
+        role={label ? 'img' : undefined}
+        aria-label={label}
+        aria-hidden={label ? undefined : true}
+      />
+    )
+  }
   return (
     <svg
       viewBox="0 0 24 24"

@@ -54,6 +54,8 @@ const nextConfig: NextConfig = {
     // The image pack's two Pro files are read with fs at request time from the
     // injected (gitignored) Andromeda Pro tree.
     "/api/andromeda-pro/image-pack/[file]": ["./design-systems/andromeda-pro/image-pack/*"],
+    // The paid icon styles' markup, read with fs and served only to Premium.
+    "/icons/style-data/[style]": ["./.icons-data/*.json"],
   },
   async headers() {
     return [

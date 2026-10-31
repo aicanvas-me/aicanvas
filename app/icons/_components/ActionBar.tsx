@@ -1,5 +1,7 @@
 'use client'
 
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { Check } from '@/app/_icons/icons/check'
@@ -12,6 +14,7 @@ import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { copyText, useCopied } from '@/app/components/useCopied'
 import { agentPrompt, iconInstallCommand, iconJsxLine } from '../_lib/constants'
+import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
 import type { IconStyle } from '../_lib/types'
 
@@ -67,9 +70,12 @@ export function ActionBar({
 }) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+  // A preview carries no vector: the SVG and PNG actions become the way to Premium.
+  const locked = isPreview(markup)
   const prompt = agentPrompt(name, size, strokeWidth, style, absolute, colour)
   const jsx = iconJsxLine(name, size, strokeWidth, style, absolute, colour)
-  const svg = buildSvg(markup, size, strokeWidth, colour, absolute)
+  const svg = locked ? '' : buildSvg(markup, size, strokeWidth, colour, absolute)
   const { copied, copy } = useCopied(prompt)
 
   useEffect(() => {
@@ -92,9 +98,13 @@ export function ActionBar({
     { label: 'Copy for agent', icon: Bot, action: () => copyText(prompt) },
     { label: 'Copy install command', icon: SquareTerminal, action: () => copyText(iconInstallCommand(name, style)) },
     { label: 'Copy JSX', icon: Code, action: () => copyText(jsx) },
-    { label: 'Copy SVG', icon: Copy, action: () => copyText(svg) },
-    { label: 'Download SVG', icon: FileImage, action: () => downloadSvg(name, svg) },
-    { label: 'Download PNG', icon: Download, action: () => downloadPng(name, svg, size) },
+    ...(locked
+      ? [{ label: 'SVG and PNG with Premium', icon: Download, action: () => router.push('/pricing') }]
+      : [
+          { label: 'Copy SVG', icon: Copy, action: () => copyText(svg) },
+          { label: 'Download SVG', icon: FileImage, action: () => downloadSvg(name, svg) },
+          { label: 'Download PNG', icon: Download, action: () => downloadPng(name, svg, size) },
+        ]),
   ]
 
   return (
@@ -142,10 +152,17 @@ export function ActionBar({
         <Code size={14} />
         Copy JSX
       </button>
-      <button type="button" onClick={() => downloadSvg(name, svg)} className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
-        <Download size={14} />
-        SVG
-      </button>
+      {locked ? (
+        <Link href="/pricing" className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
+          <Download size={14} />
+          SVG with Premium
+        </Link>
+      ) : (
+        <button type="button" onClick={() => downloadSvg(name, svg)} className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
+          <Download size={14} />
+          SVG
+        </button>
+      )}
     </div>
   )
 }

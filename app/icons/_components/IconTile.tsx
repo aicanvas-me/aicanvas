@@ -6,6 +6,7 @@ import { Code } from '@/app/_icons/icons/code'
 import { Copy } from '@/app/_icons/icons/copy'
 import { copyText } from '@/app/components/useCopied'
 import { iconJsxLine } from '../_lib/constants'
+import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
 import type { IconGridMeta, IconStyle } from '../_lib/types'
 import { IconSvg } from './IconSvg'
@@ -62,7 +63,8 @@ export function IconTile({
       </Link>
       {showActions && markup && (
         <div className="absolute right-1.5 top-1.5 z-20 flex gap-1">
-          <button
+          {/* A raster preview has no SVG to copy; JSX stays, its install is gated on /r. */}
+          {!isPreview(markup) && <button
             type="button"
             aria-label={`Copy ${icon.name} SVG`}
             title="Copy SVG"
@@ -70,7 +72,7 @@ export function IconTile({
             className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
             <Copy size={12} />
-          </button>
+          </button>}
           <button
             type="button"
             aria-label={`Copy ${icon.name} JSX`}
