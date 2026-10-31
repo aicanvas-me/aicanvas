@@ -1,6 +1,7 @@
-// The site's icons: our icon set, built from the vault by scripts/site-icons.mjs.
+// Types for the site's icons. Import each icon from its own file (@/app/_icons/icons/<name>):
+// built by scripts/site-icons.mjs from the vault package, with no barrel on purpose.
 import type { ComponentType } from 'react'
-import type { IconProps } from './site-icons.premium.generated'
+import type { IconProps } from './Icon'
 
-export * from './site-icons.premium.generated'
+export type { IconProps, IconVariant } from './Icon'
 export type SiteIcon = ComponentType<IconProps>

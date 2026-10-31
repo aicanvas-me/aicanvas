@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { ChevronsUpDown, LogIn } from '@/app/_icons'
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down'
+import { LogIn } from '@/app/_icons/icons/log-in'
 import { useSession } from './SessionProvider'
 import { useAuthModal } from './AuthModalProvider'
 import { createClient } from '../../lib/supabase/client'

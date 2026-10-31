@@ -1,7 +1,10 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { Search, Sparkle, Ghost, CircleQuestion } from '@/app/_icons'
+import { Search } from '@/app/_icons/icons/search'
+import { Sparkle } from '@/app/_icons/icons/sparkle'
+import { Ghost } from '@/app/_icons/icons/ghost'
+import { CircleQuestion } from '@/app/_icons/icons/circle-question'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ComponentCard } from './ComponentCard'

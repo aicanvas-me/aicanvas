@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { ChevronDown, TriangleAlert } from '@/app/_icons'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert'
 import { SHADE_MAX, SHADE_MIN, contrast, hexToOklch, normalizeHex, oklchToHex, type Oklch } from '../_lib/colour'
 import { COLOUR_SWATCHES, DARK_PREVIEW_COLOUR, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 

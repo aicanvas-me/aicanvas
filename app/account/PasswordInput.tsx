@@ -1,7 +1,8 @@
 'use client'
 
 import { forwardRef, useState } from 'react'
-import { Eye, EyeOff } from '@/app/_icons'
+import { Eye } from '@/app/_icons/icons/eye'
+import { EyeOff } from '@/app/_icons/icons/eye-off'
 import { Button } from '../components/Button'
 
 // ─── PasswordInput ────────────────────────────────────────────────────────────

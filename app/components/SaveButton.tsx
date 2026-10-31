@@ -1,6 +1,6 @@
 'use client'
 
-import { Heart } from '@/app/_icons'
+import { Heart } from '@/app/_icons/icons/heart'
 import { usePathname } from 'next/navigation'
 import { useSession } from './auth/SessionProvider'
 import { useAuthModal } from './auth/AuthModalProvider'

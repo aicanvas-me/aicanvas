@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Check, Copy, Bolt } from '@/app/_icons'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Bolt } from '@/app/_icons/icons/bolt'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { useInstallToken } from '../_lib/useInstallToken'

@@ -2,7 +2,8 @@
 
 import { forwardRef, useId, useState, type ChangeEvent, type CSSProperties, type InputHTMLAttributes } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, X } from '@/app/_icons'
+import { Check } from '@/app/_icons/icons/check'
+import { X } from '@/app/_icons/icons/x'
 
 // Site-chrome Toggle — visual language adapted from the Mark Toggle standalone
 // (components-workspace/mark-toggle/index.tsx): iOS-style pill, sliding thumb,

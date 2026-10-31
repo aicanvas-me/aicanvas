@@ -4,7 +4,7 @@
 // pair reads as one row of chrome. Tooltip pops upward since this lives at
 // the bottom of the canvas.
 
-import { Info } from '@/app/_icons'
+import { Info } from '@/app/_icons/icons/info'
 import { useEffect, useRef, useState } from 'react'
 
 export function RecordInfoTooltip() {

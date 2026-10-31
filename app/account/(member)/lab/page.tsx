@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Flask } from '@/app/_icons'
+import { Flask } from '@/app/_icons/icons/flask'
 import { createClient } from '../../../lib/supabase/server'
 import type { SerializedParticleConfig } from '../../../lab/_lib/preset/serialize'
 import { LabPresetCard } from '../../../lab/_lib/preset/LabPresetCard'

@@ -1,5 +1,10 @@
 import Link from 'next/link'
-import { History, Gear, Heart, Bolt, LogOut, User } from '@/app/_icons'
+import { History } from '@/app/_icons/icons/history'
+import { Gear } from '@/app/_icons/icons/gear'
+import { Heart } from '@/app/_icons/icons/heart'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { LogOut } from '@/app/_icons/icons/log-out'
+import { User } from '@/app/_icons/icons/user'
 import type { ReactNode } from 'react'
 
 const LINKS: { href: string; label: string; icon: ReactNode }[] = [

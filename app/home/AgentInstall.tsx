@@ -10,7 +10,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRight, Check, Sparkle } from '@/app/_icons'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Check } from '@/app/_icons/icons/check'
+import { Sparkle } from '@/app/_icons/icons/sparkle'
 import { useMedia } from './useMedia'
 import { ClaudeMark, CodexMark, CursorMark, CURSOR_DEEPLINK_BASE, claudeCommand, codexCommand } from '../mcp/InstallCards'
 

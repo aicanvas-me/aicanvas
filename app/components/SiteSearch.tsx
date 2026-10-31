@@ -8,7 +8,7 @@
 // page bundle.
 
 import { lazy, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { Search } from '@/app/_icons'
+import { Search } from '@/app/_icons/icons/search'
 
 const loadDialog = () => import('./SearchDialog')
 const SearchDialog = lazy(loadDialog)

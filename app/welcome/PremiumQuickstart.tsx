@@ -2,7 +2,11 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Check, Copy, Eye, EyeOff, Info } from '@/app/_icons'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Eye } from '@/app/_icons/icons/eye'
+import { EyeOff } from '@/app/_icons/icons/eye-off'
+import { Info } from '@/app/_icons/icons/info'
 import { track } from '../lib/analytics'
 import { copyText } from '../components/useCopied'
 

@@ -3,7 +3,11 @@
 import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
-import { ChevronDown, Check, Copy, FileText, LinkSimple } from '@/app/_icons'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { FileText } from '@/app/_icons/icons/file-text'
+import { LinkSimple } from '@/app/_icons/icons/link-simple'
 import { useTopBarInstallSlot } from './PageCrumbs'
 import { copyText } from './useCopied'
 

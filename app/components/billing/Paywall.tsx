@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { LockSimple } from '@/app/_icons'
+import { LockSimple } from '@/app/_icons/icons/lock-simple'
 import { useAuthModal } from '../auth/AuthModalProvider'
 import { useSession } from '../auth/SessionProvider'
 import type { PaywallReason } from './PaywallModalProvider'

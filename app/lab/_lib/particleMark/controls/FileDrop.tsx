@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Image as ImageIcon } from '@/app/_icons'
+import { Image as ImageIcon } from '@/app/_icons/icons/image'
 
 interface FileDropProps {
   accept: string

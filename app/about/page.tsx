@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Info } from '@/app/_icons'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Info } from '@/app/_icons/icons/info'
 import { GithubLogo } from '@phosphor-icons/react/dist/ssr'
 import { GITHUB_URL } from '../lib/config'
 import { buttonClasses } from '../components/buttonClasses'

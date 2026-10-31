@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowDown } from '@/app/_icons'
+import { ArrowDown } from '@/app/_icons/icons/arrow-down'
 import { Button } from './Button'
 
 // ─── Constants ───────────────────────────────────────────────────────────────

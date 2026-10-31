@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { Bolt } from '@/app/_icons'
+import { Bolt } from '@/app/_icons/icons/bolt'
 import { createClient } from '../../lib/supabase/server'
 import { premiumEnabled } from '../../../lib/flags'
 import { isPremiumNow, type SubStatus } from '../../../lib/identity/tier'

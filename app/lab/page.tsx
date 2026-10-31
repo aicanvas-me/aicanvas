@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Flask } from '@/app/_icons'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Flask } from '@/app/_icons/icons/flask'
 import { SiteFooter } from '../components/SiteFooter'
 import { optimizeImageKitUrl } from '../lib/imagekit'
 import { IconCluster } from './_components/IconCluster'

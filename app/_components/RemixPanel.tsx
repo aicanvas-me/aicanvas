@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Copy, Bolt, LockSimple, Terminal, X } from '@/app/_icons'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { LockSimple } from '@/app/_icons/icons/lock-simple'
+import { Terminal } from '@/app/_icons/icons/terminal'
+import { X } from '@/app/_icons/icons/x'
 import { Button } from '../components/Button'
 import { track } from '../lib/analytics'
 import { copyText } from '../components/useCopied'

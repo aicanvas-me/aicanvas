@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Clock } from '@/app/_icons'
+import { Clock } from '@/app/_icons/icons/clock'
 import { buttonClasses } from '../buttonClasses'
 import { usePremiumStatus } from './usePremiumStatus'
 import { track } from '../../lib/analytics'

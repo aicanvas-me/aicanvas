@@ -1,23 +1,26 @@
 #!/usr/bin/env node
 // Gives the site its icons from the icon set's vault checkout: the React
 // package's own files, copied unchanged, so the site runs exactly what a
-// customer installs. The icons live only in the vault, so the output is
-// gitignored, like the /icons data. app/_icons/site-icons.json lists the icons
-// the site uses, each with the Phosphor icon it falls back to when no vault
-// checkout is found (a public clone, a free-only build), so the site always
-// builds with icons. The source, as in icons-data.mjs: ICONS_LOCAL_PATH,
-// PREMIUM_LOCAL_PATH/icons, then the icon-library worktree.
+// customer installs, laid out as the package is (Icon.tsx + icons/<name>.ts).
+// Site code imports each icon from its own file, never through a barrel: a
+// server component importing one icon from a barrel ships every icon in it.
+// The icons live only in the vault, so the output is gitignored, like the
+// /icons data. app/_icons/site-icons.json lists the icons the site uses, each
+// with the Phosphor icon it falls back to when no vault checkout is found (a
+// public clone, a free-only build), so the site always builds with icons. The
+// source, as in icons-data.mjs: ICONS_LOCAL_PATH, PREMIUM_LOCAL_PATH/icons,
+// then the icon-library worktree.
 //
-//   app/_icons/vault/                              Icon.tsx + icons/<name>.ts, from icons/react
-//   app/_icons/site-icons.premium.generated.tsx    re-exports them (or the Phosphor stand-ins)
+//   app/_icons/Icon.tsx           the package's Icon.tsx (or the Phosphor stand-in)
+//   app/_icons/icons/<name>.ts    one per site icon
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const ROOT = new URL('..', import.meta.url).pathname
-const OUT = join(ROOT, 'app/_icons/site-icons.premium.generated.tsx')
-const VAULT = join(ROOT, 'app/_icons/vault')
-const icons = JSON.parse(readFileSync(join(ROOT, 'app/_icons/site-icons.json'), 'utf8'))
+const ROOT = fileURLToPath(new URL('..', import.meta.url))
+const OUT = join(ROOT, 'app/_icons')
+const icons = JSON.parse(readFileSync(join(OUT, 'site-icons.json'), 'utf8'))
 const pascal = (name) => name.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join('')
 
 const SRC = [
@@ -28,24 +31,22 @@ const SRC = [
 
 // The leak guard blocks a commit of the output; the marker is joined so it skips this file.
 const MARKER = ['AICANVAS', 'PREMIUM', 'DO', 'NOT', 'COMMIT'].join('-')
-const HEAD = `// ${MARKER} - built by scripts/site-icons.mjs, do not edit.\n`
 
-rmSync(VAULT, { recursive: true, force: true })
-let body
+rmSync(join(OUT, 'icons'), { recursive: true, force: true })
+mkdirSync(join(OUT, 'icons'))
 if (SRC) {
   const missing = Object.keys(icons).filter((name) => !existsSync(join(SRC, 'react/icons', `${name}.ts`)))
   if (missing.length) throw new Error(`site-icons: not in the icon set: ${missing.join(', ')}`)
-  mkdirSync(join(VAULT, 'icons'), { recursive: true })
-  copyFileSync(join(SRC, 'react/Icon.tsx'), join(VAULT, 'Icon.tsx'))
-  for (const name of Object.keys(icons)) copyFileSync(join(SRC, 'react/icons', `${name}.ts`), join(VAULT, 'icons', `${name}.ts`))
-  body = `export type { IconProps, IconVariant } from './vault/Icon'
-${Object.keys(icons).map((name) => `export { ${pascal(name)} } from './vault/icons/${name}'`).join('\n')}
-`
+  copyFileSync(join(SRC, 'react/Icon.tsx'), join(OUT, 'Icon.tsx'))
+  for (const name of Object.keys(icons)) copyFileSync(join(SRC, 'react/icons', `${name}.ts`), join(OUT, 'icons', `${name}.ts`))
 } else {
-  const names = Object.values(icons).filter((p, i, all) => all.indexOf(p) === i)
-  body = `import type { SVGProps } from 'react'
+  // Same contract as the package: client modules, ref, size 24, aria-hidden unless labelled, aic-icon classes.
+  writeFileSync(
+    join(OUT, 'Icon.tsx'),
+    `'use client'
+// ${MARKER} - built by scripts/site-icons.mjs, do not edit.
+import { forwardRef, type ReactNode, type SVGProps } from 'react'
 import type { Icon as PhosphorIcon, IconWeight } from '@phosphor-icons/react'
-import { ${names.map((p) => `${p} as Ph${p}`).join(', ')} } from '@phosphor-icons/react/dist/ssr'
 
 export type IconVariant = 'linear' | 'duotone' | 'solid' | 'solid-duotone'
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'ref'> {
@@ -55,17 +56,37 @@ export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'ref'> {
   absoluteStrokeWidth?: boolean
 }
 
-// No vault checkout: the Phosphor icon each site icon stands in for.
-const WEIGHT: Record<IconVariant, IconWeight> = { linear: 'regular', duotone: 'duotone', solid: 'fill', 'solid-duotone': 'fill' }
-const wrap = (P: PhosphorIcon) =>
-  function Icon({ variant = 'linear', strokeWidth = 1.5, absoluteStrokeWidth, ...rest }: IconProps) {
-    void absoluteStrokeWidth
-    return <P weight={variant === 'linear' && Number(strokeWidth) >= 2 ? 'bold' : WEIGHT[variant]} {...(rest as object)} />
-  }
-
-${Object.entries(icons).map(([name, p]) => `export const ${pascal(name)} = wrap(Ph${p})`).join('\n')}
-`
+// Accepts the package's defaults so code type-checks; the stand-ins do not read them.
+export function IconProvider({ children }: Pick<IconProps, 'variant' | 'size' | 'color' | 'strokeWidth' | 'absoluteStrokeWidth' | 'className'> & { children: ReactNode }) {
+  return children
 }
 
-writeFileSync(OUT, HEAD + body)
+// No vault checkout: the Phosphor icon each site icon stands in for.
+const WEIGHT: Record<IconVariant, IconWeight> = { linear: 'regular', duotone: 'duotone', solid: 'fill', 'solid-duotone': 'fill' }
+export function wrap(name: string, P: PhosphorIcon) {
+  const Icon = forwardRef<SVGSVGElement, IconProps>(function Icon({ variant = 'linear', size = 24, strokeWidth = 1.5, absoluteStrokeWidth, className, ...rest }, ref) {
+    void absoluteStrokeWidth
+    const labelled = rest['aria-label'] != null || rest['aria-labelledby'] != null || rest.role != null
+    return (
+      <P
+        ref={ref}
+        size={size}
+        weight={variant === 'linear' && Number(strokeWidth) >= 2 ? 'bold' : WEIGHT[variant]}
+        className={['aic-icon', \`aic-icon-\${name}\`, className].filter(Boolean).join(' ')}
+        {...(labelled ? {} : { 'aria-hidden': true })}
+        {...(rest as object)}
+      />
+    )
+  })
+  Icon.displayName = name
+  return Icon
+}
+`,
+  )
+  for (const [name, p] of Object.entries(icons))
+    writeFileSync(
+      join(OUT, 'icons', `${name}.ts`),
+      `'use client'\n// ${MARKER} - built by scripts/site-icons.mjs, do not edit.\nimport { ${p} as Ph } from '@phosphor-icons/react'\nimport { wrap } from '../Icon'\n\nexport const ${pascal(name)} = wrap('${name}', Ph)\n`,
+    )
+}
 console.log(`site-icons: ${Object.keys(icons).length} icons from ${SRC ?? 'Phosphor (no vault checkout)'}`)

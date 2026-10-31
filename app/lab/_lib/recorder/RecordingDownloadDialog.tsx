@@ -7,7 +7,10 @@
 // so the lab popups feel consistent.
 
 import { useEffect, useState } from 'react'
-import { X, FilmReel, Clapperboard, CircleCheck } from '@/app/_icons'
+import { X } from '@/app/_icons/icons/x'
+import { FilmReel } from '@/app/_icons/icons/film-reel'
+import { Clapperboard } from '@/app/_icons/icons/clapperboard'
+import { CircleCheck } from '@/app/_icons/icons/circle-check'
 import { Button } from '../../../components/Button'
 
 type Props = {

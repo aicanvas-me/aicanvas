@@ -1,4 +1,4 @@
-import { Scale } from '@/app/_icons'
+import { Scale } from '@/app/_icons/icons/scale'
 import { CONTACT_EMAIL } from '../lib/config'
 import { PageHero, PageShell } from '../components/PageKit'
 import { LegalArticle } from '../components/LegalArticle'

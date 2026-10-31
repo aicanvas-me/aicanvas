@@ -1,5 +1,10 @@
 import Link from 'next/link'
-import { BookOpenText, MessageCircleText, Mail, Info, PiggyBank, CircleQuestion } from '@/app/_icons'
+import { BookOpenText } from '@/app/_icons/icons/book-open-text'
+import { MessageCircleText } from '@/app/_icons/icons/message-circle-text'
+import { Mail } from '@/app/_icons/icons/mail'
+import { Info } from '@/app/_icons/icons/info'
+import { PiggyBank } from '@/app/_icons/icons/piggy-bank'
+import { CircleQuestion } from '@/app/_icons/icons/circle-question'
 import type { ReactNode } from 'react'
 
 // The Model Context Protocol's own mark, drawn from the official asset rather

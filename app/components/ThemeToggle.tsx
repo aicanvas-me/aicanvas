@@ -1,6 +1,7 @@
 'use client'
 
-import { Moon, Sun } from '@/app/_icons'
+import { Moon } from '@/app/_icons/icons/moon'
+import { Sun } from '@/app/_icons/icons/sun'
 import { buttonClasses } from './buttonClasses'
 import { useTheme } from './ThemeProvider'
 

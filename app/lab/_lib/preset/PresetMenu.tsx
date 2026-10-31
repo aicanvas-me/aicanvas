@@ -1,7 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ChevronDown, Pen2, Trash, FolderOpen } from '@/app/_icons'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
+import { Pen2 } from '@/app/_icons/icons/pen-2'
+import { Trash } from '@/app/_icons/icons/trash'
+import { FolderOpen } from '@/app/_icons/icons/folder-open'
 import { Button } from '../../../components/Button'
 
 // "My presets" dropdown for in-tool preset switching. Lists the user's

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { X } from '@/app/_icons'
+import { X } from '@/app/_icons/icons/x'
 import { Button } from '../../../components/Button'
 
 // Lightweight name-input dialog. Styled to match the AuthModal (centered,

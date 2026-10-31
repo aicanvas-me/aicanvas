@@ -1,4 +1,4 @@
-import { Scale } from '@/app/_icons'
+import { Scale } from '@/app/_icons/icons/scale'
 import Link from 'next/link'
 import { CONTACT_EMAIL } from '../lib/config'
 import { PageHero, PageShell } from '../components/PageKit'

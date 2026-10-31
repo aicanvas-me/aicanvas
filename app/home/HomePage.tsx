@@ -5,7 +5,11 @@
 // hydrate.
 
 import Link from 'next/link'
-import { ArrowRight, ChevronRight, Code, Search, Terminal } from '@/app/_icons'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { ChevronRight } from '@/app/_icons/icons/chevron-right'
+import { Code } from '@/app/_icons/icons/code'
+import { Search } from '@/app/_icons/icons/search'
+import { Terminal } from '@/app/_icons/icons/terminal'
 import { buttonClasses } from '../components/buttonClasses'
 import { SiteFooter } from '../components/SiteFooter'
 import { PremiumCards } from '../components/billing/PremiumCards'

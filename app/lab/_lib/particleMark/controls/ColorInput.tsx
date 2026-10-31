@@ -10,7 +10,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { HexColorPicker, HexColorInput } from 'react-colorful'
-import { Pipette, Plus } from '@/app/_icons'
+import { Pipette } from '@/app/_icons/icons/pipette'
+import { Plus } from '@/app/_icons/icons/plus'
 
 // Chromium-based browsers expose a screen-eyedropper. Feature-detected at
 // runtime so unsupported browsers (Firefox, Safari) hide the button.

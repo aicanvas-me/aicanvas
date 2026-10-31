@@ -13,7 +13,11 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
-import { CircleHalf, HandTap, Grid2x2, Swatches, type SiteIcon as Icon } from '@/app/_icons'
+import { CircleHalf } from '@/app/_icons/icons/circle-half'
+import { HandTap } from '@/app/_icons/icons/hand-tap'
+import { Grid2x2 } from '@/app/_icons/icons/grid-2x2'
+import { Swatches } from '@/app/_icons/icons/swatches'
+import { type SiteIcon as Icon } from '@/app/_icons'
 
 const LAND_MS = 450
 const TURN_MS = 3200

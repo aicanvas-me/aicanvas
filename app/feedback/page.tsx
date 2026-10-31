@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Bug, MessageCircleText, CircleCheck, CreditCard, CircleEllipsis, Lightbulb } from '@/app/_icons'
+import { Bug } from '@/app/_icons/icons/bug'
+import { MessageCircleText } from '@/app/_icons/icons/message-circle-text'
+import { CircleCheck } from '@/app/_icons/icons/circle-check'
+import { CreditCard } from '@/app/_icons/icons/credit-card'
+import { CircleEllipsis } from '@/app/_icons/icons/circle-ellipsis'
+import { Lightbulb } from '@/app/_icons/icons/lightbulb'
 import { Button } from '../components/Button'
 import { buttonClasses } from '../components/buttonClasses'
 import { CARD, EYEBROW, PageHero, PageShell } from '../components/PageKit'

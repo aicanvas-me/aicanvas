@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode, Ref } from 'react'
-import { X } from '@/app/_icons'
+import { X } from '@/app/_icons/icons/x'
 import { Button } from '../Button'
 import { AsciiArt } from './AsciiArt'
 

@@ -12,7 +12,7 @@
 // heading above LINE, so the section you jumped to is the one marked.
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { ChevronDown } from '@/app/_icons'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 
 type Entry = { id: string; label: string }
 

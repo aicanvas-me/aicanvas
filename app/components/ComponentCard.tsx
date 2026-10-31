@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { ImageSquare, Bolt, BadgeCheck } from '@/app/_icons'
+import { ImageSquare } from '@/app/_icons/icons/image-square'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { BadgeCheck } from '@/app/_icons/icons/badge-check'
 import { track, type CardSource } from '../lib/analytics'
 import { optimizeImageKitUrl } from '../lib/imagekit'
 

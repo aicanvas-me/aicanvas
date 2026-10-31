@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Code, Copy } from '@/app/_icons'
+import { Code } from '@/app/_icons/icons/code'
+import { Copy } from '@/app/_icons/icons/copy'
 import { copyText } from '@/app/components/useCopied'
 import { iconJsxLine } from '../_lib/constants'
 import { buildSvg } from '../_lib/svg'

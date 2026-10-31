@@ -8,7 +8,9 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, Info } from '@/app/_icons'
+import { ArrowLeft } from '@/app/_icons/icons/arrow-left'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Info } from '@/app/_icons/icons/info'
 import { docPosition } from '../_lib/nav'
 import { Toc, type TocItem } from './Toc'
 import { DocsCopyPage } from './DocsCopyPage'

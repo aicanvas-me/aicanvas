@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check } from '@/app/_icons'
+import { Check } from '@/app/_icons/icons/check'
 import { useSession } from '../../components/auth/SessionProvider'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
 import { createClient } from '../../lib/supabase/client'

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Heart } from '@/app/_icons'
+import { Heart } from '@/app/_icons/icons/heart'
 import { createClient } from '../../../lib/supabase/server'
 import type { SavedComponent } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'

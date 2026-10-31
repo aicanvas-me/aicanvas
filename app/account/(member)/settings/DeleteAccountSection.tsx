@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { TriangleAlert } from '@/app/_icons'
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert'
 import { createClient } from '../../../lib/supabase/client'
 import { Button } from '../../../components/Button'
 

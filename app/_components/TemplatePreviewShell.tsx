@@ -2,9 +2,24 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState, type ComponentType, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { RotateCw, Broadcast, Buildings, CalendarBlank, ChevronsUpDown, Check, ClipboardText, Copy, Smartphone, Bolt, Monitor, Rocket, Sparkle, Grid2x2, Terminal } from '@/app/_icons'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw'
+import type { SiteIcon } from '@/app/_icons'
+import { Broadcast } from '@/app/_icons/icons/broadcast'
+import { Buildings } from '@/app/_icons/icons/buildings'
+import { CalendarBlank } from '@/app/_icons/icons/calendar-blank'
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down'
+import { Check } from '@/app/_icons/icons/check'
+import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Smartphone } from '@/app/_icons/icons/smartphone'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { Monitor } from '@/app/_icons/icons/monitor'
+import { Rocket } from '@/app/_icons/icons/rocket'
+import { Sparkle } from '@/app/_icons/icons/sparkle'
+import { Grid2x2 } from '@/app/_icons/icons/grid-2x2'
+import { Terminal } from '@/app/_icons/icons/terminal'
 import { useInstallToken } from '../_lib/useInstallToken'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { copyText } from '../components/useCopied'
@@ -59,7 +74,7 @@ const DEVICES: Record<
   phone: { label: 'Mobile', width: 390 },
 }
 
-const DEVICE_ORDER: { key: Device; label: string; icon: ComponentType<{ weight?: 'regular'; size?: number }> }[] = [
+const DEVICE_ORDER: { key: Device; label: string; icon: SiteIcon }[] = [
   { key: 'desktop', label: 'Desktop', icon: Monitor },
   { key: 'phone', label: 'Mobile', icon: Smartphone },
 ]
@@ -541,7 +556,7 @@ function TopBar({
 // One icon per template, keyed by the slug with its design-system prefix
 // stripped, so Legacy and Pro share the map. A template with no entry falls
 // back to the generic tile icon rather than leaving a ragged left edge.
-const TEMPLATE_ICONS: Record<string, ComponentType<{ weight?: 'regular'; size?: number; className?: string }>> = {
+const TEMPLATE_ICONS: Record<string, SiteIcon> = {
   'city-operations': Buildings,
   'mission-control': Rocket,
   'service-order': ClipboardText,

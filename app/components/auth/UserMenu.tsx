@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronDown } from '@/app/_icons'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { useSession } from './SessionProvider'
 import { createClient } from '../../lib/supabase/client'
 import { AccountMenuItems } from './AccountMenuItems'

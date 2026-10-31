@@ -6,7 +6,8 @@
 // states: idle (outline + red dot icon), recording (filled red pill +
 // pulse + live timer), encoding (disabled outline + Saving…).
 
-import { Record, Stop } from '@/app/_icons'
+import { Record } from '@/app/_icons/icons/record'
+import { Stop } from '@/app/_icons/icons/stop'
 
 export type RecordButtonProps = {
   state: 'idle' | 'recording' | 'encoding'

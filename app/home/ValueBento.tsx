@@ -7,7 +7,17 @@
 // motion.
 
 import type { ReactNode } from 'react'
-import { ArrowUp, Brain, Braces, Browser, ChevronDown, Check, Box, LockOpen, Sparkle, Grid2x2, SquareTerminal } from '@/app/_icons'
+import { ArrowUp } from '@/app/_icons/icons/arrow-up'
+import { Brain } from '@/app/_icons/icons/brain'
+import { Braces } from '@/app/_icons/icons/braces'
+import { Browser } from '@/app/_icons/icons/browser'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
+import { Check } from '@/app/_icons/icons/check'
+import { Box } from '@/app/_icons/icons/box'
+import { LockOpen } from '@/app/_icons/icons/lock-open'
+import { Sparkle } from '@/app/_icons/icons/sparkle'
+import { Grid2x2 } from '@/app/_icons/icons/grid-2x2'
+import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
 import { Reveal } from './Reveal'
 import { ClaudeMark, CodexMark, CursorMark } from '../mcp/InstallCards'
 

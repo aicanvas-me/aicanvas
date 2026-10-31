@@ -36,7 +36,12 @@ import { Segmented } from '../_lib/particleMark/controls/Segmented'
 import { Slider } from '../_lib/particleMark/controls/Slider'
 import { ColorInput } from '../_lib/particleMark/controls/ColorInput'
 import { FileDrop } from '../_lib/particleMark/controls/FileDrop'
-import { Contrast, Sun, Ban, Bookmark, ChevronDown, Check } from '@/app/_icons'
+import { Contrast } from '@/app/_icons/icons/contrast'
+import { Sun } from '@/app/_icons/icons/sun'
+import { Ban } from '@/app/_icons/icons/ban'
+import { Bookmark } from '@/app/_icons/icons/bookmark'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
+import { Check } from '@/app/_icons/icons/check'
 import { useLabAuthGate } from '../_lib/useLabAuthGate'
 import {
   serializeParticleConfig,

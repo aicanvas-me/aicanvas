@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Check } from '@/app/_icons'
+import { Check } from '@/app/_icons/icons/check'
 
 /**
  * The "Install command copied" toast a Copy Command button shows when it lives

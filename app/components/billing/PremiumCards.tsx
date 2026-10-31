@@ -2,7 +2,10 @@
 
 import { useId, useState } from 'react'
 import Link from 'next/link'
-import { CircleCheck, Infinity as InfinityIcon, Bolt, Lock } from '@/app/_icons'
+import { CircleCheck } from '@/app/_icons/icons/circle-check'
+import { Infinity as InfinityIcon } from '@/app/_icons/icons/infinity'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { Lock } from '@/app/_icons/icons/lock'
 import { motion, useReducedMotion } from 'framer-motion'
 import { buttonClasses } from '../buttonClasses'
 import { TopLight } from '../TopLight'

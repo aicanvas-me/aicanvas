@@ -1,6 +1,6 @@
 'use client'
 
-import { LogIn } from '@/app/_icons'
+import { LogIn } from '@/app/_icons/icons/log-in'
 import { useAuthModal } from './AuthModalProvider'
 
 export function SignInCta() {

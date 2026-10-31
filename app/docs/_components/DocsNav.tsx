@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ChevronDown } from '@/app/_icons'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { DOCS_NAV, DOC_PAGES } from '../_lib/nav'
 
 const ROW =

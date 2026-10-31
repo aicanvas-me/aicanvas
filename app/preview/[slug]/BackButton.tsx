@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ArrowLeft } from '@/app/_icons'
+import { ArrowLeft } from '@/app/_icons/icons/arrow-left'
 
 // Client child: isolates the Phosphor icon (which calls React.createContext at
 // module load) so the parent /preview/[slug] page can stay a SERVER component

@@ -1,6 +1,7 @@
 'use client'
 
-import { Check, Copy } from '@/app/_icons'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
 import { useCopied } from '../../components/useCopied'
 
 // Geist Mono shapes `--` as a ligature, which swallows the space before it in a

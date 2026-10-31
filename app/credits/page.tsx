@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Handshake } from '@/app/_icons'
+import { Handshake } from '@/app/_icons/icons/handshake'
 import { PageHero, PageShell } from '../components/PageKit'
 import { LegalArticle } from '../components/LegalArticle'
 

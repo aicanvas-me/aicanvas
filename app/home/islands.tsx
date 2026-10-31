@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { HandTap } from '@/app/_icons'
+import { HandTap } from '@/app/_icons/icons/hand-tap'
 
 // ─── Hello card data ─────────────────────────────────────────────────────────
 

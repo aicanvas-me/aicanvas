@@ -2,7 +2,12 @@
 
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { ChevronDown, Check, Heart, Plus, PinOff, X } from '@/app/_icons'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
+import { Check } from '@/app/_icons/icons/check'
+import { Heart } from '@/app/_icons/icons/heart'
+import { Plus } from '@/app/_icons/icons/plus'
+import { PinOff } from '@/app/_icons/icons/pin-off'
+import { X } from '@/app/_icons/icons/x'
 import { Button } from '../../../components/Button'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { CARD } from '../../../components/PageKit'

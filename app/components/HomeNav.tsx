@@ -16,7 +16,7 @@
 import Link from 'next/link'
 import { useEffect, useId, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { ChevronDown } from '@/app/_icons'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { CATEGORIES } from '../lib/categories'
 
 // prefetch false: a page linked ahead of its launch (/icons) is not prefetched.

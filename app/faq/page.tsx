@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, CircleQuestion } from '@/app/_icons'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { CircleQuestion } from '@/app/_icons/icons/circle-question'
 import { SITE_URL } from '../lib/config'
 import { FAQ_PAGE_CATEGORIES, faqJsonLd } from '../lib/faq'
 import { buttonClasses } from '../components/buttonClasses'

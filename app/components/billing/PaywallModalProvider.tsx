@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode, useRef } from 'react'
 import Link from 'next/link'
-import { X } from '@/app/_icons'
+import { X } from '@/app/_icons/icons/x'
 import { PremiumCards } from './PremiumCards'
 import { PaymentMethods } from './PaymentMethods'
 import { track } from '../../lib/analytics'

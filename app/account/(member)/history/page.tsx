@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { History } from '@/app/_icons'
+import { History } from '@/app/_icons/icons/history'
 import { createClient } from '../../../lib/supabase/server'
 import type { InstallHistoryRow } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'

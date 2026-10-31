@@ -2,7 +2,12 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { RotateCcw, Check, Copy, Download, Search, SquareTerminal } from '@/app/_icons'
+import { RotateCcw } from '@/app/_icons/icons/rotate-ccw'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Download } from '@/app/_icons/icons/download'
+import { Search } from '@/app/_icons/icons/search'
+import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
 import { Breadcrumbs } from '@/app/components/Breadcrumbs'
 import { PageCrumbs, useTopBarLeft } from '@/app/components/PageCrumbs'
 import { CopyPage } from '@/app/components/CopyPage'

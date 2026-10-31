@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ChevronRight } from '@/app/_icons'
+import { ChevronRight } from '@/app/_icons/icons/chevron-right'
 import type { FaqItem } from '../faq/FaqView'
 
 export type { FaqItem }

@@ -3,15 +3,17 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
-import { History, Gear, Heart, User } from '@/app/_icons'
-import type { ComponentType } from 'react'
+import { History } from '@/app/_icons/icons/history'
+import type { SiteIcon } from '@/app/_icons'
+import { Gear } from '@/app/_icons/icons/gear'
+import { Heart } from '@/app/_icons/icons/heart'
+import { User } from '@/app/_icons/icons/user'
 
 // Tabs mirror the dropdown menu entries (TopAuthPill + UserMenu) — same
 // order, same icons — so the surfaces feel like a single navigation system
 // just rendered two ways.
-type IconComponent = ComponentType<{ size?: number; weight?: 'regular' | 'bold' | 'fill'; className?: string }>
 
-const TABS: { href: string; label: string; Icon: IconComponent }[] = [
+const TABS: { href: string; label: string; Icon: SiteIcon }[] = [
   { href: '/account/saved', label: 'Saved', Icon: Heart },
   { href: '/account/history', label: 'Activity', Icon: History },
   { href: '/account/settings', label: 'Settings', Icon: Gear },

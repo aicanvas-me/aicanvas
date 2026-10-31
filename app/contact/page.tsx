@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CircleCheck, Mail } from '@/app/_icons'
+import { CircleCheck } from '@/app/_icons/icons/circle-check'
+import { Mail } from '@/app/_icons/icons/mail'
 import { Button } from '../components/Button'
 import { CARD, EYEBROW, PageHero, PageShell } from '../components/PageKit'
 

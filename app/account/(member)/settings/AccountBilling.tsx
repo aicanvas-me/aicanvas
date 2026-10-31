@@ -2,7 +2,9 @@
 
 import { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Bolt, Key, ShieldCheck } from '@/app/_icons'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { Key } from '@/app/_icons/icons/key'
+import { ShieldCheck } from '@/app/_icons/icons/shield-check'
 import { premiumEnabled } from '../../../../lib/flags'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { CARD } from '../../../components/PageKit'

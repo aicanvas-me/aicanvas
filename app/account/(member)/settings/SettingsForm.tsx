@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Check } from '@/app/_icons'
+import { Check } from '@/app/_icons/icons/check'
 import { useSession } from '../../../components/auth/SessionProvider'
 import { Toggle } from '../../../components/Toggle'
 import { CARD } from '../../../components/PageKit'

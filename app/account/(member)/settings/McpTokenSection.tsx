@@ -1,7 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, Eye, EyeOff } from '@/app/_icons'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Check } from '@/app/_icons/icons/check'
+import { Eye } from '@/app/_icons/icons/eye'
+import { EyeOff } from '@/app/_icons/icons/eye-off'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
 import { CARD } from '../../../components/PageKit'

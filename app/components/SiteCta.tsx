@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight } from '@/app/_icons'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { buttonClasses } from './buttonClasses'
 import { CtaBand } from './PageKit'
 import { CATALOG_TOTAL } from '../lib/catalog-count'

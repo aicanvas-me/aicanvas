@@ -1,6 +1,6 @@
 'use client'
 
-import { Bolt } from '@/app/_icons'
+import { Bolt } from '@/app/_icons/icons/bolt'
 import { premiumEnabled } from '../../../lib/flags'
 
 /**

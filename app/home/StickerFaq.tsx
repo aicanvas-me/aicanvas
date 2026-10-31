@@ -9,7 +9,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Plus } from '@/app/_icons'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Plus } from '@/app/_icons/icons/plus'
 
 export type FaqItem = { q: string; a: string }
 
