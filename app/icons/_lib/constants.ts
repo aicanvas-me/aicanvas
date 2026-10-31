@@ -1,7 +1,10 @@
-import { pascalCase, takesStroke, variantProp } from './icon-utils'
+import { iconComponentName, iconFileName, takesStroke } from './icon-utils'
 import type { IconStyle } from './types'
 
-export const ALL_ICONS_INSTALL = 'npx shadcn@latest add https://aicanvas.me/r/icons.json'
+const REGISTRY_BASE = 'https://aicanvas.me'
+export const ALL_ICONS_INSTALL = `npx shadcn@latest add ${REGISTRY_BASE}/r/icons.json`
+// Reuse the existing registry's premium install wording.
+export const PREMIUM_ICON_INSTALL_NOTE = 'Requires AI Canvas Premium to install.'
 export const DARK_PREVIEW_COLOUR = '#F4F4FA'
 export const LIGHT_PREVIEW_COLOUR = '#1B1B1C'
 // The grid tiles' fills (sand-100, sand-900), for the colour picker's contrast note.
@@ -26,19 +29,19 @@ export const COLOUR_SWATCHES: { label: string; hex: string }[] = [
   { label: 'Pink', hex: '#DB4AA0' },
 ]
 
-export const iconInstallCommand = (name: string) =>
-  `npx shadcn@latest add https://aicanvas.me/r/icons/${name}.json`
+export const iconInstallCommand = (name: string, style: IconStyle = 'line') =>
+  `npx shadcn@latest add ${REGISTRY_BASE}/r/icon-${iconFileName(name, style)}.json`
 
-export const iconImportLine = (name: string) =>
-  `import { ${pascalCase(name)} } from '@/components/icons'`
+export const iconImportLine = (name: string, style: IconStyle = 'line') =>
+  `import { ${iconComponentName(name, style)} } from '@/components/icons/${iconFileName(name, style)}'`
 
 // colour: the user's pick, or null to leave the icon on the text colour
 // A solid style leaves strokeWidth and absoluteStrokeWidth out: they do not change it.
 export const iconJsxLine = (name: string, size: number, strokeWidth: number, style: IconStyle, absolute = true, colour: string | null = null) =>
-  `<${pascalCase(name)} size={${size}}${takesStroke(style) ? ` strokeWidth={${strokeWidth}}${absolute ? '' : ' absoluteStrokeWidth={false}'}` : ''}${colour ? ` color="${colour}"` : ''}${variantProp(style)} />`
+  `<${iconComponentName(name, style)} size={${size}}${takesStroke(style) ? ` strokeWidth={${strokeWidth}}${absolute ? '' : ' absoluteStrokeWidth={false}'}` : ''}${colour ? ` color="${colour}"` : ''} />`
 
 export function agentPrompt(name: string, size: number, strokeWidth: number, style: IconStyle, absolute = true, colour: string | null = null): string {
-  const component = pascalCase(name)
+  const component = iconComponentName(name, style)
   const weight = takesStroke(style) ? ` with strokeWidth ${strokeWidth}${absolute ? '' : ', the line scaling with the size (absoluteStrokeWidth off)'}` : ''
-  return `Use the ${component} icon in the ${style} style at ${size}px${weight}${colour ? `, in ${colour}` : ''}. If this project does not have the icon, install it with \`${iconInstallCommand(name)}\`. Import it with \`${iconImportLine(name)}\`, then render \`${iconJsxLine(name, size, strokeWidth, style, absolute, colour)}\`.`
+  return `Use the ${component} icon in the ${style} style at ${size}px${weight}${colour ? `, in ${colour}` : ''}.${style === 'line' ? '' : ` ${PREMIUM_ICON_INSTALL_NOTE}`} If this project does not have the icon, install it with \`${iconInstallCommand(name, style)}\`. Import it with \`${iconImportLine(name, style)}\`, then render \`${iconJsxLine(name, size, strokeWidth, style, absolute, colour)}\`.`
 }

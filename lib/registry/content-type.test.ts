@@ -89,6 +89,15 @@ describe('classifyContent', () => {
     expect(classifyContent('andromeda-tokens', lookup)).toBe('meta')
   })
 
+  it('gates the three paid icon styles and keeps Line, the base and the Line set free', () => {
+    for (const slug of ['icon-search-duotone', 'icon-search-solid', 'icon-search-solid-duotone', 'icon-heart-solid.json']) {
+      expect(classifyContent(slug, lookup), slug).toBe('premium-standalone')
+    }
+    for (const slug of ['icon-search', 'icon-base', 'icons', 'icon-arrow-up-right']) {
+      expect(classifyContent(slug, lookup), slug).toBe('standalone')
+    }
+  })
+
   it('strips a .json suffix before classifying', () => {
     expect(classifyContent('andromeda-all.json', lookup)).toBe('design-system')
     expect(classifyContent('glass-navbar.json', lookup)).toBe('standalone')

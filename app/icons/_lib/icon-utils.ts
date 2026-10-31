@@ -21,6 +21,7 @@ export function pascalCase(slug: string): string {
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join('')
+    .replace(/^(\d)/, 'Icon$1')
 }
 
 export function effectiveStrokeWidth(size: number, strokeWidth: number, absolute = true): number {
@@ -47,6 +48,10 @@ export function takesStroke(style: IconStyle): boolean {
   return style === 'line' || style === 'duotone'
 }
 
-export function variantProp(style: IconStyle): string {
-  return style === 'line' ? '' : ` variant="${style}"`
+export function iconFileName(name: string, style: IconStyle): string {
+  return style === 'line' ? name : `${name}-${style}`
+}
+
+export function iconComponentName(name: string, style: IconStyle): string {
+  return pascalCase(iconFileName(name, style))
 }

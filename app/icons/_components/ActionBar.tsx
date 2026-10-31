@@ -90,7 +90,7 @@ export function ActionBar({
 
   const items = [
     { label: 'Copy for agent', icon: Bot, action: () => copyText(prompt) },
-    { label: 'Copy install command', icon: SquareTerminal, action: () => copyText(iconInstallCommand(name)) },
+    { label: 'Copy install command', icon: SquareTerminal, action: () => copyText(iconInstallCommand(name, style)) },
     { label: 'Copy JSX', icon: Code, action: () => copyText(jsx) },
     { label: 'Copy SVG', icon: Copy, action: () => copyText(svg) },
     { label: 'Download SVG', icon: FileImage, action: () => downloadSvg(name, svg) },
@@ -149,4 +149,3 @@ export function ActionBar({
     </div>
   )
 }
-

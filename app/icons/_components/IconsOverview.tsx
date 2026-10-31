@@ -178,7 +178,7 @@ export function IconsOverview({
               <button
                 type="button"
                 onClick={() => void copyInstall()}
-                aria-label="Copy the install command for every icon"
+                aria-label="Copy the install command for every Line icon"
                 title={ALL_ICONS_INSTALL}
                 className="group inline-flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-sand-200 bg-sand-100 pl-6 pr-1 text-left transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
               >

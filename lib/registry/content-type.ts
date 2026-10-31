@@ -35,6 +35,8 @@ export interface ContentLookup {
 // Catalog/index files the CLI and MCP need to browse — never gated.
 const META_SLUGS = new Set(['registry', 'aicanvas-mcp', 'aicanvas-props'])
 
+const PAID_ICON_STYLE = /-(duotone|solid|solid-duotone)$/
+
 /**
  * Classify a registry slug (with or without a trailing `.json`).
  *
@@ -86,6 +88,10 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
   for (const system of lookup.paidSystemSlugs) {
     if (slug.startsWith(`${system}-`)) return 'premium-standalone'
   }
+
+  // Icons: the Line style is free; Duotone, Solid and Solid duotone are paid. The
+  // suffix alone decides, fail-closed: no free item may end in a paid style name.
+  if (slug.startsWith('icon-') && PAID_ICON_STYLE.test(slug)) return 'premium-standalone'
 
   // Individual design-system components are FREE like standalones: the source is
   // public, and the one-command install just needs a free account (unlimited,

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { agentPrompt, iconJsxLine } from './constants'
+import { agentPrompt, ALL_ICONS_INSTALL, iconImportLine, iconInstallCommand, iconJsxLine, PREMIUM_ICON_INSTALL_NOTE } from './constants'
 import { buildSvg } from './svg'
 import type { IconStyle } from './types'
 
@@ -45,18 +45,20 @@ describe('React line and agent text', () => {
     expect(iconJsxLine('image-sparkle', 40, 1.5, 'line', false)).toBe('<ImageSparkle size={40} strokeWidth={1.5} absoluteStrokeWidth={false} />')
   })
   it('carries the picked colour, and none when nothing is picked', () => {
-    expect(iconJsxLine('image-sparkle', 24, 2, 'duotone', true, '#E5484D')).toBe('<ImageSparkle size={24} strokeWidth={2} color="#E5484D" variant="duotone" />')
+    expect(iconJsxLine('image-sparkle', 24, 2, 'duotone', true, '#E5484D')).toBe('<ImageSparkleDuotone size={24} strokeWidth={2} color="#E5484D" />')
     expect(iconJsxLine('image-sparkle', 24, 2, 'solid-duotone', true, null)).not.toContain('color=')
   })
   it('leaves the line weight out for the solid styles, which do not take it', () => {
-    expect(iconJsxLine('image-sparkle', 48, 1.5, 'solid', false, '#E5484D')).toBe('<ImageSparkle size={48} color="#E5484D" variant="solid" />')
-    expect(iconJsxLine('image-sparkle', 48, 1.5, 'solid-duotone', true)).toBe('<ImageSparkle size={48} variant="solid-duotone" />')
+    expect(iconJsxLine('image-sparkle', 48, 1.5, 'solid', false, '#E5484D')).toBe('<ImageSparkleSolid size={48} color="#E5484D" />')
+    expect(iconJsxLine('image-sparkle', 48, 1.5, 'solid-duotone', true)).toBe('<ImageSparkleSolidDuotone size={48} />')
     expect(agentPrompt('image-sparkle', 48, 1.5, 'solid', false)).not.toContain('strokeWidth 1.5')
   })
-  it('names the variant for every style but line', () => {
-    expect(iconJsxLine('x', 24, 2, 'duotone')).toContain('variant="duotone"')
-    expect(iconJsxLine('x', 24, 2, 'solid')).toContain('variant="solid"')
-    expect(iconJsxLine('x', 24, 2, 'line')).not.toContain('variant=')
+  it('uses a separate component for each style without a variant prop', () => {
+    expect(iconJsxLine('x', 24, 2, 'line')).toBe('<X size={24} strokeWidth={2} />')
+    expect(iconJsxLine('x', 24, 2, 'duotone')).toBe('<XDuotone size={24} strokeWidth={2} />')
+    expect(iconJsxLine('x', 24, 2, 'solid')).toBe('<XSolid size={24} />')
+    expect(iconJsxLine('x', 24, 2, 'solid-duotone')).toBe('<XSolidDuotone size={24} />')
+    for (const style of STYLES) expect(iconJsxLine('x', 24, 2, style)).not.toContain('variant=')
   })
   it('agent text carries size, weight, absolute and colour', () => {
     const text = agentPrompt('image-sparkle', 64, 3, 'duotone', false, '#2A9461')
@@ -64,6 +66,32 @@ describe('React line and agent text', () => {
     expect(text).toContain('strokeWidth 3')
     expect(text).toContain('absoluteStrokeWidth off')
     expect(text).toContain('in #2A9461')
-    expect(text).toContain('<ImageSparkle size={64} strokeWidth={3} absoluteStrokeWidth={false} color="#2A9461" variant="duotone" />')
+    expect(text).toContain('<ImageSparkleDuotone size={64} strokeWidth={3} absoluteStrokeWidth={false} color="#2A9461" />')
+  })
+})
+
+describe('icon registry install and import strings', () => {
+  const cases: [IconStyle, string, string][] = [
+    ['line', '', 'ImageSparkle'],
+    ['duotone', '-duotone', 'ImageSparkleDuotone'],
+    ['solid', '-solid', 'ImageSparkleSolid'],
+    ['solid-duotone', '-solid-duotone', 'ImageSparkleSolidDuotone'],
+  ]
+  it.each(cases)('matches the %s registry item and package export', (style, suffix, component) => {
+    const install = `npx shadcn@latest add https://aicanvas.me/r/icon-image-sparkle${suffix}.json`
+    const importLine = `import { ${component} } from '@/components/icons/image-sparkle${suffix}'`
+    expect(iconInstallCommand('image-sparkle', style)).toBe(install)
+    expect(iconImportLine('image-sparkle', style)).toBe(importLine)
+    const prompt = agentPrompt('image-sparkle', 24, 2, style)
+    expect(prompt).toContain(install)
+    expect(prompt).toContain(importLine)
+    expect(prompt).toContain(iconJsxLine('image-sparkle', 24, 2, style))
+    expect(prompt).not.toContain('variant=')
+    expect(prompt.includes(PREMIUM_ICON_INSTALL_NOTE)).toBe(style !== 'line')
+  })
+  it('defaults to Line for markdown and installs the full Line set', () => {
+    expect(iconInstallCommand('search')).toBe('npx shadcn@latest add https://aicanvas.me/r/icon-search.json')
+    expect(iconImportLine('search')).toBe("import { Search } from '@/components/icons/search'")
+    expect(ALL_ICONS_INSTALL).toBe('npx shadcn@latest add https://aicanvas.me/r/icons.json')
   })
 })

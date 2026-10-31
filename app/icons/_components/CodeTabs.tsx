@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, type ReactNode } from 'react'
-import { iconImportLine, iconInstallCommand, iconJsxLine } from '../_lib/constants'
+import { iconImportLine, iconInstallCommand, iconJsxLine, PREMIUM_ICON_INSTALL_NOTE } from '../_lib/constants'
 import { buildSvg } from '../_lib/svg'
 import type { IconStyle } from '../_lib/types'
 
@@ -67,10 +67,10 @@ export function CodeTabs({
   const [tab, setTab] = useState<CodeTab>('React')
   const code =
     tab === 'React'
-      ? `${iconImportLine(name)}\n\n${iconJsxLine(name, size, strokeWidth, style, absolute, colour)}`
+      ? `${iconImportLine(name, style)}\n\n${iconJsxLine(name, size, strokeWidth, style, absolute, colour)}`
       : tab === 'SVG'
         ? buildSvg(markup, size, strokeWidth, colour, absolute)
-        : iconInstallCommand(name)
+        : iconInstallCommand(name, style)
 
   return (
     <section className={`overflow-hidden rounded-card border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 ${className}`}>
@@ -95,6 +95,11 @@ export function CodeTabs({
       <pre className={`${compact ? 'max-h-[86px] px-3 py-2 text-[11px] leading-5' : 'max-h-44 px-4 py-4 text-[12px] leading-6 sm:max-h-36'} overflow-auto whitespace-pre-wrap break-words font-mono text-sand-800 dark:text-sand-200`}>
         <code><SyntaxCode code={code} enabled={tab !== 'Install'} /></code>
       </pre>
+      {tab === 'Install' && style !== 'line' && (
+        <p className={`${compact ? 'px-3 pb-2' : 'px-4 pb-4'} text-xs text-sand-600 dark:text-sand-400`}>
+          {PREMIUM_ICON_INSTALL_NOTE}
+        </p>
+      )}
     </section>
   )
 }
