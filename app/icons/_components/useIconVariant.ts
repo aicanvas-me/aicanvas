@@ -27,7 +27,14 @@ export function useIconVariant(initialLine: IconMarkupMap, style: IconStyle, loa
     const needsVariant = style !== 'line' && !sessionVariantCache.has(style)
     if ((!needsFullLine && !needsVariant) || failedStyles.includes(style) || lockedStyles.includes(style)) return
 
-    fetch(variantUrl(style))
+    // A subscriber whose sign-in check blipped gets one 403 or 503; ask once more before locking.
+    const load = () => fetch(variantUrl(style))
+    load()
+      .then((response) =>
+        response.status === 403 || response.status === 503
+          ? new Promise<Response>((resolve) => setTimeout(resolve, 600)).then(load)
+          : response,
+      )
       .then((response) => {
         if (response.status === 403) return null
         if (!response.ok) throw new Error(`Could not load ${style} icons`)
