@@ -56,6 +56,8 @@ const nextConfig: NextConfig = {
     "/api/andromeda-pro/image-pack/[file]": ["./design-systems/andromeda-pro/image-pack/*"],
     // The paid icon styles' markup, read with fs and served only to Premium.
     "/icons/style-data/[style]": ["./.icons-data/*.json"],
+    // Download all reads every style's markup and the shipped React files.
+    "/api/icons/download": ["./.icons-data/*.json", "./public/icons-data/line.json", "./registry-data/icon-*.json"],
   },
   async headers() {
     return [

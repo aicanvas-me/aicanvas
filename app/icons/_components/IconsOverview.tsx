@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { RotateCcw } from '@/app/_icons/icons/rotate-ccw'
 import { Check } from '@/app/_icons/icons/check'
@@ -45,6 +45,140 @@ let metadataRequest: Promise<IconMeta[]> | null = null
 const INSTALL_PREFIX = ALL_ICONS_INSTALL.slice(0, ALL_ICONS_INSTALL.lastIndexOf(' '))
 const INSTALL_URL = ALL_ICONS_INSTALL.slice(ALL_ICONS_INSTALL.lastIndexOf(' ') + 1)
 
+type DownloadFormat = 'svg' | 'png' | 'react'
+
+function saveBlob(blob: Blob, filename: string) {
+  const url = URL.createObjectURL(blob)
+  const anchor = document.createElement('a')
+  anchor.href = url
+  anchor.download = filename
+  anchor.click()
+  URL.revokeObjectURL(url)
+}
+
+function downloadFileName(header: string | null): string {
+  if (!header) return 'aicanvas-icons.zip'
+  const encoded = header.match(/filename\*=UTF-8''([^;]+)/i)?.[1]
+  if (encoded) {
+    try {
+      return decodeURIComponent(encoded.trim())
+    } catch {}
+  }
+  return (
+    header.match(/filename="([^"]+)"/i)?.[1]
+    ?? header.match(/filename=([^;]+)/i)?.[1]?.trim()
+    ?? 'aicanvas-icons.zip'
+  )
+}
+
+function DownloadAll({
+  style,
+  size,
+  strokeWidth,
+  absolute,
+  colour,
+  category,
+}: {
+  style: IconStyle
+  size: number
+  strokeWidth: number
+  absolute: boolean
+  colour: string | null
+  category?: IconCategorySlug
+}) {
+  const [open, setOpen] = useState(false)
+  const [busy, setBusy] = useState(false)
+  const [failed, setFailed] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    if (!open) return
+    const close = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) setOpen(false)
+    }
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setOpen(false)
+    }
+    document.addEventListener('mousedown', close)
+    document.addEventListener('keydown', escape)
+    return () => {
+      document.removeEventListener('mousedown', close)
+      document.removeEventListener('keydown', escape)
+    }
+  }, [open])
+
+  const download = async (format: DownloadFormat) => {
+    if (busy) return
+    setOpen(false)
+    setBusy(true)
+    setFailed(false)
+    try {
+      const response = await fetch('/api/icons/download', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          style,
+          format,
+          size,
+          strokeWidth,
+          absolute,
+          colour,
+          ...(category ? { category } : {}),
+        }),
+      })
+      if (response.status === 401 || response.status === 403) {
+        router.push('/pricing')
+        return
+      }
+      if (!response.ok) throw new Error('Download failed')
+      saveBlob(await response.blob(), downloadFileName(response.headers.get('Content-Disposition')))
+    } catch {
+      setFailed(true)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  return (
+    <div ref={menuRef} className="relative shrink-0">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-busy={busy}
+        disabled={busy}
+        onClick={() => setOpen((value) => !value)}
+        className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-accent pl-4 pr-1.5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95 disabled:cursor-wait disabled:opacity-70"
+      >
+        <Download aria-hidden className="size-4" />
+        {busy ? 'Downloading...' : 'Download all'}
+        <span className="inline-flex h-7 items-center rounded-full bg-accent-foreground/15 px-2.5 text-xs font-semibold">Premium</span>
+      </button>
+      {open && (
+        <div
+          role="menu"
+          className="absolute right-0 top-12 z-50 w-48 max-w-[calc(100vw-2rem)] rounded-section border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900"
+        >
+          {(['svg', 'png', 'react'] as const).map((format) => (
+            <button
+              key={format}
+              type="button"
+              role="menuitem"
+              onClick={() => void download(format)}
+              className="flex w-full items-center rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 transition-colors hover:bg-sand-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-300 dark:hover:bg-sand-800"
+            >
+              {format === 'react' ? 'React' : format.toUpperCase()}
+            </button>
+          ))}
+        </div>
+      )}
+      <span aria-live="polite" className="absolute right-0 top-12 whitespace-nowrap text-xs text-sand-700 dark:text-sand-300">
+        {failed && !open ? 'Download failed, try again' : ''}
+      </span>
+    </div>
+  )
+}
 
 export function IconsOverview({
   icons,
@@ -201,14 +335,14 @@ export function IconsOverview({
                   {installCopied ? 'Install command copied' : ''}
                 </span>
               </button>
-              <Link
-                href="/pricing"
-                className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-accent pl-4 pr-1.5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95"
-              >
-                <Download aria-hidden className="size-4" />
-                Download all
-                <span className="inline-flex h-7 items-center rounded-full bg-accent-foreground/15 px-2.5 text-xs font-semibold">Premium</span>
-              </Link>
+              <DownloadAll
+                style={style}
+                size={size}
+                strokeWidth={strokeWidth}
+                absolute={absolute}
+                colour={colourOverride}
+                category={category}
+              />
             </div>
           </div>
         </header>
