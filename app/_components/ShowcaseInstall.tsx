@@ -174,7 +174,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check strokeWidth={2} size={12} className="shrink-0 text-accent" />
+                  <Check size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

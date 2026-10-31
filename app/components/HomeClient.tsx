@@ -405,7 +405,7 @@ export function HomeClient({
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="flex items-center justify-center"
                 >
-                  <EmptyIcon strokeWidth={1} size={48} className="text-accent" />
+                  <EmptyIcon size={48} className="text-accent" />
                 </motion.span>
               </AnimatePresence>
             </div>

@@ -438,7 +438,7 @@ function Folder({
           title={`Delete ${label}`}
           className="absolute right-2 top-0 flex h-5 w-5 items-center justify-center rounded-full border border-sand-200 bg-sand-100 text-sand-700 opacity-0 shadow-sm transition-all hover:border-red-400 hover:bg-red-500 hover:text-white focus-visible:opacity-100 group-hover:opacity-100 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-200 dark:hover:border-red-500 dark:hover:bg-red-600"
         >
-          <X size={10} strokeWidth={2} />
+          <X size={10} />
         </button>
       )}
     </div>
@@ -516,7 +516,7 @@ function CollectionPicker({
                     }`}
                   >
                     {name}
-                    {value === name && <Check size={12} strokeWidth={2} />}
+                    {value === name && <Check size={12} />}
                   </button>
                 </li>
               ))}
@@ -540,7 +540,7 @@ function CollectionPicker({
                 aria-label="Create collection"
                 className="rounded-control bg-accent p-1 text-accent-foreground transition-colors hover:bg-accent/85 disabled:opacity-30"
               >
-                <Plus size={12} strokeWidth={2} />
+                <Plus size={12} />
               </button>
             </form>
           </div>

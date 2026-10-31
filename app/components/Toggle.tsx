@@ -122,7 +122,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
                   transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <Check size={ICON} strokeWidth={2} className="text-accent-foreground" />
+                  <Check size={ICON} className="text-accent-foreground" />
                 </motion.span>
               ) : (
                 <motion.span
@@ -133,7 +133,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
                   transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <X size={ICON} strokeWidth={2} className="text-sand-50" />
+                  <X size={ICON} className="text-sand-50" />
                 </motion.span>
               )}
             </AnimatePresence>

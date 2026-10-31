@@ -7,6 +7,7 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { ThemeProvider } from './components/ThemeProvider'
+import { IconProvider } from './_icons/Icon'
 import { Sidebar } from './components/Sidebar'
 import { ScrollMemory } from './components/ScrollMemory'
 import { MobileNav } from './components/MobileNav'
@@ -23,6 +24,9 @@ import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
 import { AI_CANVAS_DEFINITION, GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
 import { isFramedPayloadRequest } from './lib/frame'
+
+// The site's icon line weight, a touch lighter than the package default of 1.5.
+const SITE_ICON_STROKE = 1.25
 
 const manrope = Manrope({
   variable: '--font-manrope',
@@ -166,7 +170,9 @@ export default async function RootLayout({
         {/* No overflow-hidden and no scroll column: a framed template preview
             pans its own document, and the site's chrome is what owns that
             scroller on the full page. */}
-        <body className="h-full">{children}</body>
+        <body className="h-full">
+          <IconProvider strokeWidth={SITE_ICON_STROKE}>{children}</IconProvider>
+        </body>
       </html>
     )
   }
@@ -237,6 +243,7 @@ export default async function RootLayout({
           Skip to content
         </a>
         <ThemeProvider initial={theme}>
+         <IconProvider strokeWidth={SITE_ICON_STROKE}>
           <SessionProvider initialUser={user}>
             <AuthModalProvider>
              <PaywallModalProvider>
@@ -292,6 +299,7 @@ export default async function RootLayout({
              </PaywallModalProvider>
             </AuthModalProvider>
           </SessionProvider>
+         </IconProvider>
         </ThemeProvider>
         {/* Two deliberate systems: Vercel Analytics keeps the visitors count
             and dashboard (per-day hash, disclosed in /privacy); SiteBeacon +

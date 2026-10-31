@@ -114,7 +114,7 @@ export function AvatarSection() {
 function Selected() {
   return (
     <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-accent-foreground">
-      <Check size={12} strokeWidth={2} />
+      <Check size={12} />
     </span>
   )
 }

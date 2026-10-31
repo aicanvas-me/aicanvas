@@ -122,7 +122,6 @@ export function ColorInput({
       )}
       <Plus
         size={appearance === 'solid' ? 14 : 12}
-        strokeWidth={2}
         className="relative text-white"
         style={appearance === 'solid' ? { filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6))' } : undefined}
       />
