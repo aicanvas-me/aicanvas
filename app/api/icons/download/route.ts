@@ -13,7 +13,7 @@ export const maxDuration = 60
 // Download all: every icon of one style, built on the server from the toolbar's
 // settings. A bulk download is Premium for every style, Line included.
 const STYLES = new Set<IconStyle>(['line', 'duotone', 'solid', 'solid-duotone'])
-const FORMATS = new Set<ZipFormat>(['svg', 'png', 'react'])
+const FORMATS = new Set<ZipFormat>(['svg', 'react'])
 const NO_STORE = { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization' }
 
 const fail = (status: number, error: string) => Response.json({ error }, { status, headers: NO_STORE })

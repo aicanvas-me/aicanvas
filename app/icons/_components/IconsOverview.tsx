@@ -45,7 +45,7 @@ let metadataRequest: Promise<IconMeta[]> | null = null
 const INSTALL_PREFIX = ALL_ICONS_INSTALL.slice(0, ALL_ICONS_INSTALL.lastIndexOf(' '))
 const INSTALL_URL = ALL_ICONS_INSTALL.slice(ALL_ICONS_INSTALL.lastIndexOf(' ') + 1)
 
-type DownloadFormat = 'svg' | 'png' | 'react'
+type DownloadFormat = 'svg' | 'react'
 
 function saveBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -160,7 +160,7 @@ function DownloadAll({
           role="menu"
           className="absolute right-0 top-12 z-50 w-48 max-w-[calc(100vw-2rem)] rounded-section border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900"
         >
-          {(['svg', 'png', 'react'] as const).map((format) => (
+          {(['svg', 'react'] as const).map((format) => (
             <button
               key={format}
               type="button"

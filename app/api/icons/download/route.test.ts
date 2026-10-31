@@ -61,6 +61,7 @@ describe('POST /api/icons/download', () => {
     for (const bad of [
       { ...SETTINGS, style: 'bold' },
       { ...SETTINGS, format: 'pdf' },
+      { ...SETTINGS, format: 'png' },
       { ...SETTINGS, size: 1000 },
       { ...SETTINGS, size: 25 },
       { ...SETTINGS, strokeWidth: 9 },

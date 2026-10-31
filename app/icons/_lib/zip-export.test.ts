@@ -1,4 +1,3 @@
-import sharp from 'sharp'
 import { strFromU8, unzipSync } from 'fflate'
 import { describe, expect, it } from 'vitest'
 import { buildSvg } from './svg'
@@ -62,17 +61,6 @@ describe('buildIconZip', () => {
       count: 2,
     })
     expect(new Date(saved.generatedAt as string).toISOString()).toBe(saved.generatedAt)
-  })
-
-  it('renders transparent 2x PNGs and resolves a null colour', async () => {
-    const files = unzip(await buildIconZip(input({ format: 'png', size: 18, colour: null })))
-
-    expect(Object.keys(files)).toEqual(['png/alpha@2x.png', 'png/beta@2x.png', 'preset.json', 'README.txt'])
-    for (const name of ['alpha', 'beta']) {
-      const metadata = await sharp(files[`png/${name}@2x.png`]).metadata()
-      expect(metadata).toMatchObject({ format: 'png', width: 36, height: 36, hasAlpha: true })
-    }
-    expect(json(files['preset.json'])).toMatchObject({ format: 'png', colour: null, count: 2 })
   })
 
   it.each(['solid', 'solid-duotone'] as const)(

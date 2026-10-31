@@ -1,12 +1,11 @@
 import 'server-only'
 
 import { strToU8, zipSync, type Zippable } from 'fflate'
-import sharp from 'sharp'
 import { buildSvg } from './svg'
 import { iconFileName, takesStroke } from './icon-utils'
 import type { IconStyle } from './types'
 
-export type ZipFormat = 'svg' | 'png' | 'react'
+export type ZipFormat = 'svg' | 'react'
 
 export interface IconZipInput {
   style: IconStyle
@@ -20,15 +19,10 @@ export interface IconZipInput {
   react: { base: string; files: Record<string, string> }
 }
 
-const PNG_CONCURRENCY = 32
 const ZIP_DATE = new Date('1980-01-01T00:00:00.000Z')
 
 function addText(entries: Zippable, path: string, text: string) {
   entries[path] = [strToU8(text), { mtime: ZIP_DATE }]
-}
-
-function addBytes(entries: Zippable, path: string, bytes: Uint8Array) {
-  entries[path] = [bytes, { mtime: ZIP_DATE }]
 }
 
 function preset(input: IconZipInput) {
@@ -46,7 +40,7 @@ function preset(input: IconZipInput) {
 }
 
 function readme(input: IconZipInput): string {
-  const colour = input.colour ?? (input.format === 'png' ? '#000000' : 'currentColor')
+  const colour = input.colour ?? 'currentColor'
   const stroke = takesStroke(input.style)
     ? `${input.strokeWidth}px stroke with absolute stroke width ${input.absolute ? 'on' : 'off'}`
     : 'fixed solid weight'
@@ -71,28 +65,6 @@ function readme(input: IconZipInput): string {
     'Licensed to AI Canvas Premium subscribers: https://aicanvas.me/premium-license',
     '',
   ].join('\n')
-}
-
-async function addPngFiles(entries: Zippable, input: IconZipInput) {
-  for (let start = 0; start < input.names.length; start += PNG_CONCURRENCY) {
-    const names = input.names.slice(start, start + PNG_CONCURRENCY)
-    const rendered = await Promise.all(
-      names.map(async (name) => {
-        const svg = buildSvg(
-          input.markup[name],
-          input.size,
-          input.strokeWidth,
-          input.colour ?? '#000000',
-          input.absolute,
-        )
-        // Rasterize the vector at 2x density, never upscale a 1x render.
-        const bytes = await sharp(Buffer.from(svg), { density: 144 }).png().toBuffer()
-        return { name, bytes }
-      }),
-    )
-
-    for (const { name, bytes } of rendered) addBytes(entries, `png/${name}@2x.png`, bytes)
-  }
 }
 
 function addReactFiles(entries: Zippable, input: IconZipInput) {
@@ -124,8 +96,6 @@ export async function buildIconZip(input: IconZipInput): Promise<Uint8Array> {
         buildSvg(input.markup[name], input.size, input.strokeWidth, input.colour, input.absolute),
       )
     }
-  } else if (input.format === 'png') {
-    await addPngFiles(entries, input)
   } else {
     addReactFiles(entries, input)
   }
