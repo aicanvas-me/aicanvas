@@ -51,10 +51,10 @@ if (SRC) {
 
 type IconNode = ReadonlyArray<readonly ['path' | 'circle', Readonly<Record<string, string>>]>
 
-// The vault Icon's render, without its context: line weight stays strokeWidth px at any size.
+// The vault Icon's render, without its context. Its nonScalingStroke mode: lines stay
+// strokeWidth screen px even when a class sets the size (size-4) instead of the size prop.
 function createIcon(name: string, node: IconNode, styles: Partial<Record<Exclude<IconVariant, 'linear'>, IconNode>> = {}) {
   function Icon({ variant = 'linear', size = 24, color = 'currentColor', strokeWidth = 1.5, className, children, ...rest }: IconProps) {
-    const px = Number(size)
     const labelled = rest['aria-label'] != null || rest['aria-labelledby'] != null || rest.role != null
     return createElement(
       'svg',
@@ -66,14 +66,14 @@ function createIcon(name: string, node: IconNode, styles: Partial<Record<Exclude
         fill: 'none',
         color,
         stroke: 'currentColor',
-        strokeWidth: px > 0 ? (Number(strokeWidth) * 24) / px : strokeWidth,
+        strokeWidth,
         strokeLinecap: 'round',
         strokeLinejoin: 'round',
         className: ['aic-icon', \`aic-icon-\${name}\`, className].filter(Boolean).join(' '),
         ...(labelled ? {} : { 'aria-hidden': true }),
         ...rest,
       },
-      ...(variant === 'linear' ? node : (styles[variant] ?? node)).map(([tag, attrs], i) => createElement(tag, { key: i, ...attrs })),
+      ...(variant === 'linear' ? node : (styles[variant] ?? node)).map(([tag, attrs], i) => createElement(tag, { key: i, ...attrs, vectorEffect: 'non-scaling-stroke' })),
       children,
     )
   }
