@@ -135,3 +135,4 @@ app/icons/_data/
 /public/icons-data/
 app/_icons/IconBase.tsx
 app/_icons/icons/
+/.icons-source/

@@ -14,20 +14,16 @@
 //   app/_icons/IconBase.tsx       the package's runtime (or the Phosphor stand-in)
 //   app/_icons/icons/<key>.tsx    one per site icon and style
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
-import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { iconSourceCandidates } from './lib/icon-source.mjs'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const OUT = join(ROOT, 'app/_icons')
 const icons = JSON.parse(readFileSync(join(OUT, 'site-icons.json'), 'utf8'))
 const pascal = (name) => name.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join('')
 
-const SRC = [
-  process.env.ICONS_LOCAL_PATH,
-  process.env.PREMIUM_LOCAL_PATH && join(process.env.PREMIUM_LOCAL_PATH, 'icons'),
-  join(homedir(), 'aicanvas-premium-icon-library/icons'),
-].find((dir) => dir && existsSync(join(dir, 'react/IconBase.tsx')))
+const SRC = iconSourceCandidates(ROOT).find((dir) => existsSync(join(dir, 'react/IconBase.tsx')))
 
 // The leak guard blocks a commit of the output; the marker is joined so it skips this file.
 const MARKER = ['AICANVAS', 'PREMIUM', 'DO', 'NOT', 'COMMIT'].join('-')

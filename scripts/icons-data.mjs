@@ -10,18 +10,14 @@
 //   public/icons-data/<style>.json          name -> inner SVG markup, one file per style
 import { execFileSync } from 'node:child_process'
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
-import { homedir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { iconSourceCandidates } from './lib/icon-source.mjs'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const STYLES = { line: 'svg', duotone: 'svg-duotone', solid: 'svg-solid', 'solid-duotone': 'svg-solid-duotone' }
 
-const SRC = [
-  process.env.ICONS_LOCAL_PATH,
-  process.env.PREMIUM_LOCAL_PATH && join(process.env.PREMIUM_LOCAL_PATH, 'icons'),
-  join(homedir(), 'aicanvas-premium-icon-library/icons'),
-].find((dir) => dir && existsSync(join(dir, 'svg')))
+const SRC = iconSourceCandidates(ROOT).find((dir) => existsSync(join(dir, 'svg')))
 
 if (!SRC) {
   mkdirSync(join(ROOT, 'app/icons/_data'), { recursive: true })
@@ -43,7 +39,12 @@ const metaOf = (name) => {
 // last date seen for a file is its first add.
 const added = {}
 let date = ''
-for (const line of execFileSync('git', ['-C', SRC, 'log', '--diff-filter=A', '--format=@%ad', '--date=short', '--name-only', '--', 'svg/'], { encoding: 'utf8', maxBuffer: 64 << 20 }).split('\n')) {
+// A kept copy (.icons-source) is not a git checkout: no Added dates then.
+let log = ''
+try {
+  log = execFileSync('git', ['-C', SRC, 'log', '--diff-filter=A', '--format=@%ad', '--date=short', '--name-only', '--', 'svg/'], { encoding: 'utf8', maxBuffer: 64 << 20, stdio: ['ignore', 'pipe', 'ignore'] })
+} catch {}
+for (const line of log.split('\n')) {
   if (line.startsWith('@')) date = line.slice(1)
   else if (line.startsWith('icons/svg/') || line.startsWith('svg/')) added[line.split('/').pop().replace(/\.svg$/, '')] = date
 }

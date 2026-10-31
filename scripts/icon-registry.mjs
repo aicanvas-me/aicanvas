@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Run after generate-registry.mjs, whose stale-file sweep removes icon items.
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
-import { homedir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { iconSourceCandidates } from './lib/icon-source.mjs'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const REGISTRY_BASE = (process.env.AICANVAS_REGISTRY_BASE ?? 'https://aicanvas.me').replace(/\/+$/, '')
@@ -16,11 +16,7 @@ const STYLES = [
 ]
 
 function findIconSource() {
-  return [
-    process.env.ICONS_LOCAL_PATH,
-    process.env.PREMIUM_LOCAL_PATH && join(process.env.PREMIUM_LOCAL_PATH, 'icons'),
-    join(homedir(), 'aicanvas-premium-icon-library/icons'),
-  ].find((dir) => dir && existsSync(join(dir, 'react/IconBase.tsx')))
+  return iconSourceCandidates(process.cwd()).find((dir) => existsSync(join(dir, 'react/IconBase.tsx')))
 }
 
 function shippedContent(source) {

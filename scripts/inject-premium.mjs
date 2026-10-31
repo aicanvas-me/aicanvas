@@ -32,6 +32,7 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync
 import { join, dirname, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { FREE_DS_PLACEHOLDER_SENTINEL, DESIGN_SYSTEMS } from './lib/design-systems.config.mjs'
+import { ICONS_KEPT } from './lib/icon-source.mjs'
 
 const ROOT = process.cwd()
 const TARGET = join(ROOT, 'components-workspace-premium')
@@ -1066,6 +1067,7 @@ if (!source) {
   // teaser modules must still exist — write both from the committed fallback.
   writeBrainTeaser(BRAIN_TEASER_MODULE, null)
   writeBrainTeaser(BRAIN_TEASER_PRO_MODULE, null)
+  rmSync(join(ROOT, ICONS_KEPT), { recursive: true, force: true })
   log('no PREMIUM_LOCAL_PATH and no GITHUB_PAT_PREMIUM — free-only build (skip).')
   process.exit(0)
 }
@@ -1493,6 +1495,20 @@ const shim = [...imports, '', ...decls, '', 'export const PREMIUM_COMPONENTS: Co
 writeFileSync(SHIM, shim)
 
 writeBuildInfo(builtSha, brainFileCounts)
+
+// The icon set ships from the same vault checkout; keep the parts the icon scripts
+// read (scripts/lib/icon-source.mjs) before the clone goes. Never fails the inject.
+rmSync(join(ROOT, ICONS_KEPT), { recursive: true, force: true })
+try {
+  const icons = join(source, 'icons')
+  if (source && existsSync(join(icons, 'react/IconBase.tsx'))) {
+    for (const part of ['react', 'src', 'svg', 'svg-duotone', 'svg-solid', 'svg-solid-duotone', 'batch-4.json']) {
+      if (existsSync(join(icons, part))) cpSync(join(icons, part), join(ROOT, ICONS_KEPT, part), { recursive: true })
+    }
+  }
+} catch (e) {
+  console.warn(`[inject-premium] icon source not kept: ${e.message}`)
+}
 
 if (tmpClone) rmSync(tmpClone, { recursive: true, force: true })
 log(
