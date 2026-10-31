@@ -12,7 +12,7 @@
 // heading above LINE, so the section you jumped to is the one marked.
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { CaretDown } from '@phosphor-icons/react'
+import { ChevronDown } from '@/app/_icons'
 
 type Entry = { id: string; label: string }
 
@@ -112,8 +112,7 @@ export function LegalArticle({ children }: { children: ReactNode }) {
           <details className="group mb-10 rounded-card border border-sand-200 bg-sand-100 lg:hidden dark:border-sand-800 dark:bg-sand-900">
             <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-3.5 text-sm font-semibold text-sand-900 dark:text-sand-50 [&::-webkit-details-marker]:hidden">
               On this page
-              <CaretDown
-                weight="regular"
+              <ChevronDown
                 size={14}
                 aria-hidden
                 className="text-sand-600 transition-transform group-open:rotate-180 dark:text-sand-400"

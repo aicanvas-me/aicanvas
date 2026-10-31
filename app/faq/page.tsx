@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Question } from '@phosphor-icons/react/dist/ssr'
+import { ArrowRight, CircleQuestion } from '@/app/_icons'
 import { SITE_URL } from '../lib/config'
 import { FAQ_PAGE_CATEGORIES, faqJsonLd } from '../lib/faq'
 import { buttonClasses } from '../components/buttonClasses'
@@ -40,7 +40,7 @@ export default function FaqPage() {
       <PageShell>
         <PageHero
           pill="FAQ"
-          pillIcon={<Question weight="regular" size={12} className="text-accent" aria-hidden />}
+          pillIcon={<CircleQuestion size={12} className="text-accent" aria-hidden />}
           title="Questions, answered."
           sub="Everything worth knowing before you ship your first component. Start free, install with one command, and upgrade only when AI Canvas is already paying off."
         />
@@ -54,7 +54,7 @@ export default function FaqPage() {
         >
           <Link href="/components" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
             Browse Components
-            <ArrowRight weight="regular" size={14} />
+            <ArrowRight size={14} />
           </Link>
           <Link href="/pricing" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
             See Pricing

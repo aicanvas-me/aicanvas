@@ -19,19 +19,7 @@ import { useEffect, useId, useMemo, useRef, useState, type ComponentType } from 
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import {
-  ArrowDown,
-  ArrowElbowDownLeft,
-  ArrowUp,
-  FileText,
-  FolderSimple,
-  Layout,
-  MagnifyingGlass,
-  Shapes,
-  SquaresFour,
-  Stack,
-  type IconProps,
-} from '@phosphor-icons/react'
+import { ArrowDown, CornerDownLeft, ArrowUp, FileText, Folder, LayoutTemplate, Search, Shapes, Grid2x2, Layers, type IconProps } from '@/app/_icons'
 import { COMPONENT_META } from '../lib/component-meta.generated'
 import { CATEGORIES } from '../lib/categories'
 import {
@@ -90,8 +78,8 @@ const GROUPS: Group[] = [
     label: 'Design systems',
     tab: 'systems',
     items: [
-      { id: 'ds:pro', name: 'Andromeda Pro', href: PRO, keywords: 'design system light dark', icon: Stack, tier: 'pro' },
-      { id: 'ds:legacy', name: 'Andromeda Legacy', href: LEGACY, keywords: 'design system mit', icon: Stack, tier: 'free' },
+      { id: 'ds:pro', name: 'Andromeda Pro', href: PRO, keywords: 'design system light dark', icon: Layers, tier: 'pro' },
+      { id: 'ds:legacy', name: 'Andromeda Legacy', href: LEGACY, keywords: 'design system mit', icon: Layers, tier: 'free' },
     ],
   },
   {
@@ -102,7 +90,7 @@ const GROUPS: Group[] = [
       name: c.name,
       href: `${PRO}/${c.slug}`,
       keywords: c.description,
-      icon: SquaresFour,
+      icon: Grid2x2,
       tier: 'pro' as const,
     })),
   },
@@ -117,7 +105,7 @@ const GROUPS: Group[] = [
       name: t.name,
       href: `${t.base}/templates/${t.folder}`,
       keywords: `template page ${t.description}`,
-      icon: Layout,
+      icon: LayoutTemplate,
       tier: t.tier,
     })),
   },
@@ -129,7 +117,7 @@ const GROUPS: Group[] = [
       name: c.name,
       href: `/components/${c.slug}`,
       keywords: `${c.tags.map((t) => t.label).join(' ')} ${c.description}`,
-      icon: SquaresFour,
+      icon: Grid2x2,
       tier: c.badge === 'Premium' ? ('premium' as const) : ('free' as const),
     })),
   },
@@ -141,7 +129,7 @@ const GROUPS: Group[] = [
       name: c.name,
       href: `${LEGACY}/${c.slug}`,
       keywords: c.description,
-      icon: SquaresFour,
+      icon: Grid2x2,
       tier: 'free' as const,
     })),
   },
@@ -153,7 +141,7 @@ const GROUPS: Group[] = [
       name: c.label,
       href: `/components/category/${c.slug}`,
       keywords: `category ${c.description}`,
-      icon: FolderSimple,
+      icon: Folder,
     })),
   },
   {
@@ -306,7 +294,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
       name: `Show all results for “${q}” in the components grid`,
       href: `/components?q=${encodeURIComponent(q)}`,
       keywords: '',
-      icon: MagnifyingGlass,
+      icon: Search,
     }
     return [{ label: 'Components grid', tab: 'components' as const, items: [grid] }, ...found]
   }, [tab, query])
@@ -388,7 +376,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
         transition={{ duration: 0.16, ease: [0.22, 1, 0.36, 1] }}
       >
         <div className="flex shrink-0 items-center gap-3 border-b border-sand-200 px-4 dark:border-sand-800">
-          <MagnifyingGlass weight="regular" size={16} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-400" />
+          <Search size={16} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-400" />
           <input
             ref={inputRef}
             type="text"
@@ -461,14 +449,14 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
                         selected ? 'bg-sand-100 dark:bg-sand-900' : ''
                       }`}
                     >
-                      <Icon weight="regular" size={16} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-400" />
+                      <Icon size={16} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-400" />
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-sm font-medium text-sand-900 dark:text-sand-50">{item.name}</div>
                         <div className="truncate font-mono text-xs text-sand-600 dark:text-sand-400">{item.href}</div>
                       </div>
                       {showTiers && item.tier && <TierChip tier={item.tier} />}
                       {selected && (
-                        <ArrowElbowDownLeft weight="regular" size={14} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-400" />
+                        <CornerDownLeft size={14} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-400" />
                       )}
                     </div>
                   )
@@ -480,12 +468,12 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
 
         <div className="flex shrink-0 items-center gap-4 border-t border-sand-200 px-4 py-2.5 text-xs text-sand-600 dark:border-sand-800 dark:text-sand-400">
           <span className="flex items-center gap-1.5">
-            <span className={KEY}><ArrowUp weight="regular" size={11} aria-hidden /></span>
-            <span className={KEY}><ArrowDown weight="regular" size={11} aria-hidden /></span>
+            <span className={KEY}><ArrowUp size={11} aria-hidden /></span>
+            <span className={KEY}><ArrowDown size={11} aria-hidden /></span>
             Navigate
           </span>
           <span className="flex items-center gap-1.5">
-            <span className={KEY}><ArrowElbowDownLeft weight="regular" size={11} aria-hidden /></span>
+            <span className={KEY}><CornerDownLeft size={11} aria-hidden /></span>
             Open
           </span>
           <span className="hidden items-center gap-1.5 sm:flex">

@@ -10,7 +10,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowRight, Check, Sparkle } from '@phosphor-icons/react'
+import { ArrowRight, Check, Sparkle } from '@/app/_icons'
 import { useMedia } from './useMedia'
 import { ClaudeMark, CodexMark, CursorMark, CURSOR_DEEPLINK_BASE, claudeCommand, codexCommand } from '../mcp/InstallCards'
 
@@ -63,7 +63,7 @@ function PromptPill() {
       ref={ref}
       className="mt-7 flex w-full max-w-xl items-center gap-2.5 rounded-full border border-sand-200 bg-sand-100/60 px-4 py-2.5 text-left max-xl:rounded-card dark:border-sand-800 dark:bg-sand-900/60"
     >
-      <Sparkle weight="regular" size={15} aria-hidden className="shrink-0 text-accent" />
+      <Sparkle size={15} aria-hidden className="shrink-0 text-accent" />
       {/* One line on wide screens, cut with an ellipsis. Narrower, the prompt
           wraps instead, in a grid cell sized by every prompt laid out
           invisibly underneath, so the pill keeps one height while it types. */}
@@ -131,13 +131,13 @@ export function AgentInstall() {
         </a>
         <button type="button" onClick={() => copy('claude')} className={BUTTON}>
           <span className="text-[#D97757] [&>svg]:size-4">
-            {copied === 'claude' ? <Check weight="regular" size={16} /> : <ClaudeMark />}
+            {copied === 'claude' ? <Check size={16} /> : <ClaudeMark />}
           </span>
           {copied === 'claude' ? 'Command copied' : 'Claude Code'}
         </button>
         <button type="button" onClick={() => copy('codex')} className={BUTTON}>
           <span className="text-sand-900 dark:text-sand-50 [&>svg]:size-4">
-            {copied === 'codex' ? <Check weight="regular" size={16} /> : <CodexMark />}
+            {copied === 'codex' ? <Check size={16} /> : <CodexMark />}
           </span>
           {copied === 'codex' ? 'Command copied' : 'Codex'}
         </button>
@@ -153,7 +153,7 @@ export function AgentInstall() {
         className="mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-accent transition-colors hover:text-accent/70"
       >
         Full setup guide and example prompts
-        <ArrowRight weight="regular" size={14} aria-hidden />
+        <ArrowRight size={14} aria-hidden />
       </Link>
     </div>
   )

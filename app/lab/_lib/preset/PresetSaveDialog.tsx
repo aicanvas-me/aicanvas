@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { X } from '@phosphor-icons/react'
+import { X } from '@/app/_icons'
 import { Button } from '../../../components/Button'
 
 // Lightweight name-input dialog. Styled to match the AuthModal (centered,
@@ -97,7 +97,7 @@ export function PresetSaveDialog({
           aria-label="Close"
           className="absolute right-3 top-3"
         >
-          <X weight="regular" size={18} />
+          <X size={18} />
         </Button>
 
         <h2 className="text-xl font-bold text-sand-900 dark:text-sand-50">{title}</h2>

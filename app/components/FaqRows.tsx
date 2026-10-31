@@ -12,7 +12,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Plus } from '@phosphor-icons/react'
+import { ArrowRight, Plus } from '@/app/_icons'
 
 export type FaqRow = { q: string; a: string; link?: { label: string; href: string } }
 
@@ -84,7 +84,6 @@ export function FaqRows({
               >
                 <span className="flex-1 text-base font-semibold text-sand-900 dark:text-sand-50">{item.q}</span>
                 <Plus
-                  weight="regular"
                   size={18}
                   aria-hidden
                   className={`shrink-0 transition-transform duration-200 motion-reduce:transition-none ${
@@ -141,7 +140,7 @@ export function FaqHelpCard({ allQuestions = true }: { allQuestions?: boolean })
             className="inline-flex items-center gap-2 rounded-full border border-sand-300 bg-sand-50 px-4 py-2 text-sm font-semibold text-sand-900 transition-colors hover:border-sand-400 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:hover:border-sand-600"
           >
             Get in touch
-            <ArrowRight weight="regular" size={14} aria-hidden />
+            <ArrowRight size={14} aria-hidden />
           </Link>
         </div>
       </div>

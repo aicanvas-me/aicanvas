@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Scales } from '@phosphor-icons/react/dist/ssr'
+import { Scale } from '@/app/_icons'
 import { CONTACT_EMAIL } from '../lib/config'
 import { PageHero, PageShell } from '../components/PageKit'
 import { LegalArticle } from '../components/LegalArticle'
@@ -28,7 +28,7 @@ export default function TermsPage() {
       <PageHero
         size="md"
         pill="Legal"
-        pillIcon={<Scales weight="regular" size={12} className="text-accent" aria-hidden />}
+        pillIcon={<Scale size={12} className="text-accent" aria-hidden />}
         title="Terms & Conditions"
         sub={
           <span className="block text-balance">

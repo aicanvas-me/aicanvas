@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Flask } from '@phosphor-icons/react/dist/ssr'
+import { ArrowRight, Flask } from '@/app/_icons'
 import { SiteFooter } from '../components/SiteFooter'
 import { optimizeImageKitUrl } from '../lib/imagekit'
 import { IconCluster } from './_components/IconCluster'
@@ -123,7 +123,7 @@ export default function LabPage() {
           </h1>
           <div className="relative z-10">
             <p className="mb-3 inline-flex items-center gap-1.5 text-base font-semibold text-accent">
-              <Flask weight="regular" size={18} />
+              <Flask size={18} />
               Lab
             </p>
             {/* Headline — matches the site's H1 spec (text-3xl sm:text-4xl,
@@ -216,7 +216,6 @@ export default function LabPage() {
                         {isPlanned ? 'Coming soon' : 'Open tool'}
                         {!isPlanned && (
                           <ArrowRight
-                            weight="regular"
                             size={14}
                             className="transition-transform group-hover:translate-x-0.5"
                           />

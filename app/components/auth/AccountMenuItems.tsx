@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import { ClockClockwise, Gear, Heart, Lightning, SignOut, User } from '@phosphor-icons/react'
+import { History, Gear, Heart, Bolt, LogOut, User } from '@/app/_icons'
 import type { ReactNode } from 'react'
 
 const LINKS: { href: string; label: string; icon: ReactNode }[] = [
-  { href: '/account/saved', label: 'Saved', icon: <Heart size={14} weight="regular" /> },
-  { href: '/account/history', label: 'Activity', icon: <ClockClockwise size={14} weight="regular" /> },
-  { href: '/account/settings', label: 'Settings', icon: <Gear size={14} weight="regular" /> },
-  { href: '/account', label: 'Profile', icon: <User size={14} weight="regular" /> },
+  { href: '/account/saved', label: 'Saved', icon: <Heart size={14} /> },
+  { href: '/account/history', label: 'Activity', icon: <History size={14} /> },
+  { href: '/account/settings', label: 'Settings', icon: <Gear size={14} /> },
+  { href: '/account', label: 'Profile', icon: <User size={14} /> },
 ]
 
 const ROW =
@@ -37,7 +37,7 @@ export function AccountMenuItems({
           onClick={onUpgrade}
           className={`${ROW} font-semibold text-accent`}
         >
-          <Lightning size={14} weight="regular" />
+          <Bolt size={14} />
           Upgrade to Premium
         </button>
       )}
@@ -54,7 +54,7 @@ export function AccountMenuItems({
         onClick={onSignOut}
         className={LINK_CLASS}
       >
-        <SignOut size={14} weight="regular" />
+        <LogOut size={14} />
         Sign out
       </button>
     </div>

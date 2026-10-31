@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Info } from '@phosphor-icons/react/dist/ssr'
+import { ArrowRight, Info } from '@/app/_icons'
 import { PageHero, PageShell } from '../components/PageKit'
 import { buttonClasses } from '../components/buttonClasses'
 import { StackedCards } from '../home/islands'
@@ -33,7 +33,7 @@ function ClaimCard({ note }: { note: ReactNode }) {
         <ClaimForm />
       </div>
       <div className="flex items-start gap-2.5 rounded-2xl bg-sand-950 px-4 py-4 text-sm leading-relaxed text-sand-400 sm:px-5">
-        <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-accent" />
+        <Info size={16} className="mt-0.5 shrink-0 text-accent" />
         <span>{note}</span>
       </div>
     </div>
@@ -123,7 +123,7 @@ export default async function WelcomePage() {
               >
                 <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
                   Browse Andromeda Pro
-                  <ArrowRight weight="regular" size={14} />
+                  <ArrowRight size={14} />
                 </Link>
                 <Link href="/components" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
                   All components
@@ -134,7 +134,7 @@ export default async function WelcomePage() {
                   className="aic-hero-rise mx-auto mt-6 flex w-full max-w-xl items-start justify-center gap-2 text-left text-sm leading-relaxed text-sand-400"
                   style={{ animationDelay: '0.4s' }}
                 >
-                  <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-accent" />
+                  <Info size={16} className="mt-0.5 shrink-0 text-accent" />
                   <span className="text-balance">
                     Copy install commands while signed in with this account. That is
                     what bakes your personal token into them.

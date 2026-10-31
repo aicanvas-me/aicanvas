@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowCounterClockwise, Check, Copy, DownloadSimple, MagnifyingGlass, TerminalWindow } from '@phosphor-icons/react'
+import { RotateCcw, Check, Copy, Download, Search, SquareTerminal } from '@/app/_icons'
 import { Breadcrumbs } from '@/app/components/Breadcrumbs'
 import { PageCrumbs, useTopBarLeft } from '@/app/components/PageCrumbs'
 import { CopyPage } from '@/app/components/CopyPage'
@@ -177,7 +177,7 @@ export function IconsOverview({
                 title={ALL_ICONS_INSTALL}
                 className="group inline-flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-sand-200 bg-sand-100 pl-6 pr-1 text-left transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
               >
-                <TerminalWindow weight="regular" aria-hidden className="size-4 shrink-0 text-sand-600 dark:text-sand-400" />
+                <SquareTerminal aria-hidden className="size-4 shrink-0 text-sand-600 dark:text-sand-400" />
                 <span className="min-w-0 flex-1 truncate font-mono text-xs">
                   {/* The registry URL is the part worth reading; where the row is
                       narrow it is all that shows, and the copy is still the whole command. */}
@@ -186,9 +186,9 @@ export function IconsOverview({
                 </span>
                 <span className="inline-flex size-8 shrink-0 items-center justify-center gap-1.5 rounded-full text-xs font-semibold text-sand-700 transition-colors group-hover:bg-sand-200 group-hover:text-sand-900 sm:w-auto sm:px-3 dark:text-sand-300 dark:group-hover:bg-sand-800 dark:group-hover:text-sand-50">
                   {installCopied ? (
-                    <Check weight="regular" aria-hidden className="size-3.5 text-success" />
+                    <Check aria-hidden className="size-3.5 text-success" />
                   ) : (
-                    <Copy weight="regular" aria-hidden className="size-3.5" />
+                    <Copy aria-hidden className="size-3.5" />
                   )}
                   <span className="hidden sm:inline">{installCopied ? 'Copied' : 'Copy'}</span>
                 </span>
@@ -200,7 +200,7 @@ export function IconsOverview({
                 href="/pricing"
                 className="inline-flex h-10 shrink-0 items-center justify-center gap-2 rounded-full bg-accent pl-4 pr-1.5 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-95"
               >
-                <DownloadSimple weight="regular" aria-hidden className="size-4" />
+                <Download aria-hidden className="size-4" />
                 Download all
                 <span className="inline-flex h-7 items-center rounded-full bg-accent-foreground/15 px-2.5 text-xs font-semibold">Premium</span>
               </Link>
@@ -219,7 +219,7 @@ export function IconsOverview({
           <div className="flex flex-col gap-2 p-2 @min-[760px]:flex-row @min-[760px]:items-center">
             <label className="relative min-w-0 flex-1">
               <span className="sr-only">Search icons</span>
-              <MagnifyingGlass weight="regular" aria-hidden className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-sand-600 dark:text-sand-400" />
+              <Search aria-hidden className="pointer-events-none absolute left-4 top-1/2 size-4 -translate-y-1/2 text-sand-600 dark:text-sand-400" />
               <input
                 ref={searchRef}
                 type="search"
@@ -287,7 +287,7 @@ export function IconsOverview({
                 title="Reset"
                 className="ml-auto inline-flex size-8 shrink-0 items-center justify-center rounded-full text-sand-600 transition-colors hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:pointer-events-none disabled:opacity-40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50 @min-[640px]:ml-0"
               >
-                <ArrowCounterClockwise weight="regular" aria-hidden className="size-4" />
+                <RotateCcw aria-hidden className="size-4" />
               </button>
             </div>
           </div>

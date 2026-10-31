@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
-import { CaretDown, Check, Copy, FileText, LinkSimple } from '@phosphor-icons/react'
+import { ChevronDown, Check, Copy, FileText, LinkSimple } from '@/app/_icons'
 import { useTopBarInstallSlot } from './PageCrumbs'
 import { copyText } from './useCopied'
 
@@ -58,7 +58,7 @@ export function CopyPageButton({ markdown, markdownHref }: { markdown: MarkdownS
         onClick={() => void copy()}
         className="inline-flex h-8 items-center gap-1.5 rounded-l-control border border-sand-300 px-3 text-xs font-semibold text-sand-800 hover:border-sand-400 hover:text-sand-900 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-200 dark:hover:border-sand-600 dark:hover:text-sand-50"
       >
-        {copied ? <Check weight="regular" size={14} /> : <Copy weight="regular" size={14} />}
+        {copied ? <Check size={14} /> : <Copy size={14} />}
         {copied ? 'Copied' : 'Copy page'}
       </button>
       <button
@@ -68,7 +68,7 @@ export function CopyPageButton({ markdown, markdownHref }: { markdown: MarkdownS
         onClick={() => setOpen((value) => !value)}
         className="inline-flex h-8 w-8 items-center justify-center rounded-r-control border border-l-0 border-sand-300 text-sand-700 hover:border-sand-400 hover:text-sand-900 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-50"
       >
-        <CaretDown weight="regular" size={13} />
+        <ChevronDown size={13} />
       </button>
       {open && (
         <div className="absolute right-0 top-10 z-50 w-52 rounded-section border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900">
@@ -80,17 +80,17 @@ export function CopyPageButton({ markdown, markdownHref }: { markdown: MarkdownS
             }}
             className={ITEM}
           >
-            <Copy weight="regular" size={15} />
+            <Copy size={15} />
             Copy as Markdown
           </button>
           {markdownHref ? (
             <Link href={markdownHref} target="_blank" onClick={() => setOpen(false)} className={ITEM}>
-              <FileText weight="regular" size={15} />
+              <FileText size={15} />
               View as Markdown
             </Link>
           ) : (
             <button type="button" onClick={viewText} className={ITEM}>
-              <FileText weight="regular" size={15} />
+              <FileText size={15} />
               View as Markdown
             </button>
           )}
@@ -102,7 +102,7 @@ export function CopyPageButton({ markdown, markdownHref }: { markdown: MarkdownS
             }}
             className={ITEM}
           >
-            <LinkSimple weight="regular" size={15} />
+            <LinkSimple size={15} />
             Copy link
           </button>
         </div>

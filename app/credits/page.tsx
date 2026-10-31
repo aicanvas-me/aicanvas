@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { HandHeart } from '@phosphor-icons/react/dist/ssr'
+import { Handshake } from '@/app/_icons'
 import { PageHero, PageShell } from '../components/PageKit'
 import { LegalArticle } from '../components/LegalArticle'
 
@@ -29,7 +29,7 @@ export default function CreditsPage() {
       <PageHero
         size="md"
         pill="Credits"
-        pillIcon={<HandHeart weight="regular" size={12} className="text-accent" aria-hidden />}
+        pillIcon={<Handshake size={12} className="text-accent" aria-hidden />}
         title="Credits"
         sub={
           <span className="block text-balance">

@@ -8,7 +8,7 @@
 // page bundle.
 
 import { lazy, Suspense, useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
-import { MagnifyingGlass } from '@phosphor-icons/react'
+import { Search } from '@/app/_icons'
 
 const loadDialog = () => import('./SearchDialog')
 const SearchDialog = lazy(loadDialog)
@@ -63,12 +63,12 @@ export function SiteSearch({ variant = 'bar' }: { variant?: 'bar' | 'field' }) {
       >
         {variant === 'field' ? (
           <>
-            <MagnifyingGlass weight="regular" size={14} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-500" />
+            <Search size={14} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-500" />
             <span className="flex-1 text-left">Search…</span>
           </>
         ) : (
           <>
-            <MagnifyingGlass weight="regular" size={14} aria-hidden className="lg:hidden" />
+            <Search size={14} aria-hidden className="lg:hidden" />
             <span className="hidden lg:inline">Search</span>
           </>
         )}

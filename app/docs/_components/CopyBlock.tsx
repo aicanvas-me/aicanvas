@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, Copy } from '@phosphor-icons/react'
+import { Check, Copy } from '@/app/_icons'
 import { useCopied } from '../../components/useCopied'
 
 // Geist Mono shapes `--` as a ligature, which swallows the space before it in a
@@ -49,9 +49,9 @@ export function CopyBlock({
           className="shrink-0 rounded-control p-2 text-sand-600 transition-all hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-90 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-100"
         >
           {copied ? (
-            <Check weight="regular" size={14} className="text-success" />
+            <Check size={14} className="text-success" />
           ) : (
-            <Copy weight="regular" size={14} />
+            <Copy size={14} />
           )}
         </button>
       </div>

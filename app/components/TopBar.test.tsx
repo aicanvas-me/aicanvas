@@ -37,8 +37,6 @@ vi.mock('./SiteSearch', () => ({ SiteSearch: () => h('button', { type: 'button',
 vi.mock('./ThemeToggle', () => ({ ThemeToggle: () => null }))
 vi.mock('./auth/TopAuthPill', () => ({ TopAuthPill: () => null }))
 vi.mock('./billing/OfferBanner', () => ({ OfferBanner: () => h('span', { 'data-offer': '' }) }))
-// The icon barrel is thousands of modules the bar never needs in a test.
-vi.mock('@phosphor-icons/react', () => ({ CaretDown: () => null }))
 
 afterEach(() => {
   cleanup()

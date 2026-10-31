@@ -2,14 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import {
-  Bug,
-  ChatCircleText,
-  CheckCircle,
-  CreditCard,
-  DotsThreeCircle,
-  Lightbulb,
-} from '@phosphor-icons/react'
+import { Bug, MessageCircleText, CircleCheck, CreditCard, CircleEllipsis, Lightbulb } from '@/app/_icons'
 import { Button } from '../components/Button'
 import { buttonClasses } from '../components/buttonClasses'
 import { CARD, EYEBROW, PageHero, PageShell } from '../components/PageKit'
@@ -59,10 +52,10 @@ function CardLight() {
 type CategoryId = 'general' | 'bug' | 'billing' | 'other'
 
 const CATEGORIES: { id: CategoryId; label: string; icon: React.ReactNode }[] = [
-  { id: 'general', label: 'General feedback', icon: <ChatCircleText weight="regular" size={18} /> },
-  { id: 'bug', label: 'Found a bug', icon: <Bug weight="regular" size={18} /> },
-  { id: 'billing', label: 'Payment or subscription', icon: <CreditCard weight="regular" size={18} /> },
-  { id: 'other', label: 'Something else', icon: <DotsThreeCircle weight="regular" size={18} /> },
+  { id: 'general', label: 'General feedback', icon: <MessageCircleText size={18} /> },
+  { id: 'bug', label: 'Found a bug', icon: <Bug size={18} /> },
+  { id: 'billing', label: 'Payment or subscription', icon: <CreditCard size={18} /> },
+  { id: 'other', label: 'Something else', icon: <CircleEllipsis size={18} /> },
 ]
 
 // Rating rail, red → amber → success green. Same visual language as the mood-tracker
@@ -195,7 +188,7 @@ export default function FeedbackPage() {
     <PageShell>
       <PageHero
         pill="Shape what's next"
-        pillIcon={<Lightbulb weight="regular" size={12} className="text-accent" aria-hidden />}
+        pillIcon={<Lightbulb size={12} className="text-accent" aria-hidden />}
         title="Feedback"
         size="md"
         sub={
@@ -217,7 +210,7 @@ export default function FeedbackPage() {
           >
             <CardLight />
             <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-success/30 bg-success/10">
-              <CheckCircle weight="regular" size={24} className="text-success" />
+              <CircleCheck size={24} className="text-success" />
             </span>
             <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Got it, thank you</h2>
             <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-sand-700 dark:text-sand-300">

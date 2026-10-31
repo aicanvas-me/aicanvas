@@ -1,7 +1,7 @@
 'use client'
 
 import type { ReactNode, Ref } from 'react'
-import { X } from '@phosphor-icons/react'
+import { X } from '@/app/_icons'
 import { Button } from '../Button'
 import { AsciiArt } from './AsciiArt'
 
@@ -45,7 +45,7 @@ export function AuthCard({
         aria-label="Close"
         className="absolute right-3 top-3 md:right-4 md:top-4"
       >
-        <X weight="regular" size={18} />
+        <X size={18} />
       </Button>
     </div>
   )

@@ -7,19 +7,7 @@
 // motion.
 
 import type { ReactNode } from 'react'
-import {
-  ArrowUp,
-  Brain,
-  BracketsCurly,
-  Browser,
-  CaretDown,
-  Check,
-  Cube,
-  LockOpen,
-  Sparkle,
-  SquaresFour,
-  TerminalWindow,
-} from '@phosphor-icons/react/dist/ssr'
+import { ArrowUp, Brain, Braces, Browser, ChevronDown, Check, Box, LockOpen, Sparkle, Grid2x2, SquareTerminal } from '@/app/_icons'
 import { Reveal } from './Reveal'
 import { ClaudeMark, CodexMark, CursorMark } from '../mcp/InstallCards'
 
@@ -138,10 +126,10 @@ function AgentComposer() {
               ))}
             </span>
             Any agent
-            <CaretDown weight="regular" size={10} />
+            <ChevronDown size={10} />
           </span>
           <span className="ml-auto flex size-7 items-center justify-center rounded-full bg-accent text-accent-foreground">
-            <ArrowUp weight="regular" size={14} />
+            <ArrowUp size={14} />
           </span>
         </div>
       </div>
@@ -191,7 +179,7 @@ function BrainChecks() {
         {checks.map(({ name, note }) => (
           <div key={name} className={ROW}>
             <span className="flex size-4 shrink-0 items-center justify-center rounded-full bg-success text-sand-50 dark:text-sand-950">
-              <Check weight="regular" size={10} />
+              <Check size={10} />
             </span>
             <span className={`text-[13px] font-medium ${STRONG}`}>{name}</span>
             <span className={`text-[12px] ${MUTED}`}>{note}</span>
@@ -266,8 +254,8 @@ const STACK_ROWS: Tile[][] = [
   ],
   [
     { name: 'blank-e' },
-    { name: 'CLI', art: <TerminalWindow weight="regular" size={22} /> },
-    { name: 'Code', art: <BracketsCurly weight="regular" size={22} /> },
+    { name: 'CLI', art: <SquareTerminal size={22} /> },
+    { name: 'Code', art: <Braces size={22} /> },
     { name: 'blank-f' },
   ],
 ]
@@ -319,11 +307,11 @@ function LicenceFile() {
 // What Premium opens, as the panel a member sees.
 function Included() {
   const rows: { icon: ReactNode; name: string; note: string }[] = [
-    { icon: <SquaresFour weight="regular" size={15} />, name: 'Andromeda Pro', note: 'the full design system' },
-    { icon: <Browser weight="regular" size={15} />, name: 'Pro templates', note: 'whole apps, ready to edit' },
-    { icon: <Brain weight="regular" size={15} />, name: 'The AI Brain', note: 'the system, for your agent' },
-    { icon: <Cube weight="regular" size={15} />, name: 'Premium standalones', note: 'every premium piece' },
-    { icon: <Sparkle weight="regular" size={15} />, name: 'New releases', note: 'included as they ship' },
+    { icon: <Grid2x2 size={15} />, name: 'Andromeda Pro', note: 'the full design system' },
+    { icon: <Browser size={15} />, name: 'Pro templates', note: 'whole apps, ready to edit' },
+    { icon: <Brain size={15} />, name: 'The AI Brain', note: 'the system, for your agent' },
+    { icon: <Box size={15} />, name: 'Premium standalones', note: 'every premium piece' },
+    { icon: <Sparkle size={15} />, name: 'New releases', note: 'included as they ship' },
   ]
   return (
     <div className={`${PANEL} absolute -right-12 left-6 top-10 p-2 sm:left-12 sm:top-12 lg:right-auto lg:w-[560px]`}>
@@ -340,7 +328,7 @@ function Included() {
             <span className={MUTED}>{icon}</span>
             <span className={`text-[13px] font-medium ${STRONG}`}>{name}</span>
             <span className={`text-[12px] ${MUTED}`}>{note}</span>
-            <LockOpen weight="regular" size={14} className="ml-auto shrink-0 text-sand-500" />
+            <LockOpen size={14} className="ml-auto shrink-0 text-sand-500" />
           </div>
         ))}
       </div>

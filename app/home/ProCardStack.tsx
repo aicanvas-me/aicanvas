@@ -13,8 +13,7 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
-import { CircleHalf, HandTap, SquaresFour, Swatches } from '@phosphor-icons/react'
-import type { Icon } from '@phosphor-icons/react'
+import { CircleHalf, HandTap, Grid2x2, Swatches, type SiteIcon as Icon } from '@/app/_icons'
 
 const LAND_MS = 450
 const TURN_MS = 3200
@@ -27,7 +26,7 @@ type Fact = { icon: Icon; label: string; value: string; count: number; line: str
 
 function facts(states: number, variants: number, components: number, templates: number): Fact[] {
   return [
-    { icon: SquaresFour, label: 'Components', value: `${components} components`, count: components, line: `Plus ${templates} full templates`, glyph: 'grid' },
+    { icon: Grid2x2, label: 'Components', value: `${components} components`, count: components, line: `Plus ${templates} full templates`, glyph: 'grid' },
     { icon: Swatches, label: 'Token driven', value: '3 layers', count: 3, line: 'Swap one ramp, every part follows', glyph: 'layers' },
     { icon: CircleHalf, label: 'Dual themes', value: 'Dark + light', count: 2, line: 'Every component, both themes', glyph: 'themes' },
     { icon: HandTap, label: 'Premium interactions', value: `${variants} variants`, count: variants, line: `${states} interaction states designed`, glyph: 'ruler' },
@@ -137,7 +136,7 @@ function CardBody({ fact, index, on, still }: { fact: Fact; index: number; on: b
     <div className="relative">
       <div className="flex items-center justify-between gap-3">
         <span className={`${MONO} ${MUTED}`}>{`${pad(index + 1)} · ${fact.label}`}</span>
-        <FactIcon weight="regular" aria-hidden className={`size-4 ${MUTED}`} />
+        <FactIcon aria-hidden className={`size-4 ${MUTED}`} />
       </div>
       <p className={`mt-3 text-2xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
       <p className={`mt-1 text-[13px] ${MUTED}`}>{fact.line}</p>

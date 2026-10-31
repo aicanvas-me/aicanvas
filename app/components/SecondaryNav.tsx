@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { BookOpenText, ChatCircleText, EnvelopeSimple, Info, PiggyBank, Question } from '@phosphor-icons/react'
+import { BookOpenText, MessageCircleText, Mail, Info, PiggyBank, CircleQuestion } from '@/app/_icons'
 import type { ReactNode } from 'react'
 
 // The Model Context Protocol's own mark, drawn from the official asset rather
@@ -42,15 +42,15 @@ type NavItem = {
 // so a phone reaches Docs, MCP and Pricing in one tap instead of scrolling past
 // the whole catalog. The info pages close it, as rows, the way a footer would.
 const SECTIONS: NavItem[] = [
-  { label: 'Docs', href: '/docs', icon: <BookOpenText weight="regular" size={18} />, match: 'prefix' },
+  { label: 'Docs', href: '/docs', icon: <BookOpenText size={18} />, match: 'prefix' },
   { label: 'MCP', href: '/mcp', icon: <McpMark size={18} />, match: 'exact' },
-  { label: 'Pricing', href: '/pricing', icon: <PiggyBank weight="regular" size={18} />, match: 'exact' },
+  { label: 'Pricing', href: '/pricing', icon: <PiggyBank size={18} />, match: 'exact' },
 ]
 const INFO: NavItem[] = [
-  { label: 'About', href: '/about', icon: <Info weight="regular" size={16} />, match: 'exact' },
-  { label: 'FAQ', href: '/faq', icon: <Question weight="regular" size={16} />, match: 'exact' },
-  { label: 'Contact', href: '/contact', icon: <EnvelopeSimple weight="regular" size={16} /> },
-  { label: 'Feedback', href: '/feedback', icon: <ChatCircleText weight="regular" size={16} /> },
+  { label: 'About', href: '/about', icon: <Info size={16} />, match: 'exact' },
+  { label: 'FAQ', href: '/faq', icon: <CircleQuestion size={16} />, match: 'exact' },
+  { label: 'Contact', href: '/contact', icon: <Mail size={16} /> },
+  { label: 'Feedback', href: '/feedback', icon: <MessageCircleText size={16} /> },
 ]
 
 const ACTIVE = 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'

@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { LockSimple } from '@phosphor-icons/react'
+import { LockSimple } from '@/app/_icons'
 import { useAuthModal } from '../auth/AuthModalProvider'
 import { useSession } from '../auth/SessionProvider'
 import type { PaywallReason } from './PaywallModalProvider'
@@ -131,7 +131,7 @@ export function Paywall({
         </div>
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center @2xl:items-start @2xl:px-12 @2xl:text-left">
           <div className={`flex h-11 w-11 items-center justify-center rounded-full border @2xl:hidden ${chip}`}>
-            <LockSimple weight="regular" size={20} className={lockIcon} />
+            <LockSimple size={20} className={lockIcon} />
           </div>
           <h3 className={`text-base font-bold @2xl:text-xl ${heading}`}>{title}</h3>
           <p className={`max-w-xs text-sm leading-relaxed ${sub}`}>{subtitle}</p>

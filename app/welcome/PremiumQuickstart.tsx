@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Check, Copy, Eye, EyeSlash, Info } from '@phosphor-icons/react'
+import { Check, Copy, Eye, EyeOff, Info } from '@/app/_icons'
 import { track } from '../lib/analytics'
 import { copyText } from '../components/useCopied'
 
@@ -54,7 +54,7 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
   if (!token) {
     return (
       <div className="mx-auto mt-14 flex w-full max-w-xl items-start gap-2.5 rounded-3xl border border-sand-800 bg-sand-900 px-5 py-5 text-left text-sm leading-relaxed text-sand-300 sm:mt-16 sm:px-6">
-        <Info weight="regular" size={16} className="mt-0.5 shrink-0 text-accent" />
+        <Info size={16} className="mt-0.5 shrink-0 text-accent" />
         <span className="text-pretty">
           Your install token isn&rsquo;t set up yet. Check{' '}
           <Link href="/account/settings" className="font-semibold text-accent transition-colors hover:text-accent/70">
@@ -81,7 +81,7 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
           <div className={WELL}>
             <code className={CODE}>{cmd(revealed ? token : MASK)}</code>
             <button type="button" onClick={copyCmd} aria-label="Copy install command" className={ICON_BTN}>
-              {cmdCopied ? <Check weight="regular" size={16} className="text-success" /> : <Copy weight="regular" size={16} />}
+              {cmdCopied ? <Check size={16} className="text-success" /> : <Copy size={16} />}
             </button>
           </div>
           <p className={HELP}>
@@ -101,10 +101,10 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
               aria-pressed={revealed}
               className={ICON_BTN}
             >
-              {revealed ? <EyeSlash weight="regular" size={16} /> : <Eye weight="regular" size={16} />}
+              {revealed ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
             <button type="button" onClick={copyToken} aria-label="Copy MCP token" className={ICON_BTN}>
-              {tokenCopied ? <Check weight="regular" size={16} className="text-success" /> : <Copy weight="regular" size={16} />}
+              {tokenCopied ? <Check size={16} className="text-success" /> : <Copy size={16} />}
             </button>
           </div>
           <p className={HELP}>

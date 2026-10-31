@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useMemo, useState } from 'react'
-import { CaretDown, Check, Heart, Plus, PushPinSlash, X } from '@phosphor-icons/react'
+import { ChevronDown, Check, Heart, Plus, PinOff, X } from '@/app/_icons'
 import { Button } from '../../../components/Button'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { CARD } from '../../../components/PageKit'
@@ -173,7 +173,7 @@ export function SavedList({ initial }: { initial: SavedRow[] }) {
                 title="Remove from saved"
                 className="shrink-0"
               >
-                <PushPinSlash size={16} weight="regular" />
+                <PinOff size={16} />
               </Button>
             </li>
           ))}
@@ -190,7 +190,7 @@ function EmptyState() {
   return (
     <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
       <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-card border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
-        <Heart weight="regular" size={22} />
+        <Heart size={22} />
       </div>
       <p className="text-sm text-sand-600 dark:text-sand-400">
         You haven&apos;t saved anything yet.
@@ -360,7 +360,7 @@ function FolderTabs({
               title="Create new folder"
               className="mt-[14px] flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-dashed border-sand-400 text-sand-700 transition-colors hover:border-accent hover:text-accent dark:border-sand-600 dark:text-sand-300"
             >
-              <Plus size={14} weight="regular" />
+              <Plus size={14} />
             </button>
           )
         )}
@@ -433,7 +433,7 @@ function Folder({
           title={`Delete ${label}`}
           className="absolute right-2 top-0 flex h-5 w-5 items-center justify-center rounded-full border border-sand-200 bg-sand-100 text-sand-700 opacity-0 shadow-sm transition-all hover:border-red-400 hover:bg-red-500 hover:text-white focus-visible:opacity-100 group-hover:opacity-100 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-200 dark:hover:border-red-500 dark:hover:bg-red-600"
         >
-          <X size={10} weight="bold" />
+          <X size={10} strokeWidth={2} />
         </button>
       )}
     </div>
@@ -475,7 +475,7 @@ function CollectionPicker({
         }`}
       >
         {value ?? 'Add to collection'}
-        <CaretDown size={10} weight="regular" className={`transition-transform ${open ? '-rotate-180' : ''}`} />
+        <ChevronDown size={10} className={`transition-transform ${open ? '-rotate-180' : ''}`} />
       </button>
 
       {open && (
@@ -494,7 +494,7 @@ function CollectionPicker({
                 onClick={() => commit(null)}
                 className="flex w-full items-center gap-2 border-b border-sand-200 px-3 py-2 text-xs font-medium text-sand-600 transition-colors hover:bg-sand-50 dark:border-sand-800 dark:text-sand-400 dark:hover:bg-sand-800"
               >
-                <X size={12} weight="regular" />
+                <X size={12} />
                 Remove from collection
               </button>
             )}
@@ -511,7 +511,7 @@ function CollectionPicker({
                     }`}
                   >
                     {name}
-                    {value === name && <Check size={12} weight="bold" />}
+                    {value === name && <Check size={12} strokeWidth={2} />}
                   </button>
                 </li>
               ))}
@@ -535,7 +535,7 @@ function CollectionPicker({
                 aria-label="Create collection"
                 className="rounded-control bg-accent p-1 text-accent-foreground transition-colors hover:bg-accent/85 disabled:opacity-30"
               >
-                <Plus size={12} weight="bold" />
+                <Plus size={12} strokeWidth={2} />
               </button>
             </form>
           </div>

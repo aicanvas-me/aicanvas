@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Check, Copy, Lightning, Terminal } from '@phosphor-icons/react'
+import { Check, Copy, Bolt, Terminal } from '@/app/_icons'
 import { useTopBarInstallSlot } from '../components/PageCrumbs'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
@@ -118,7 +118,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   if (!canInstall) {
     return (
       <Link href="/pricing" className={buttonClasses({ variant: 'primary', size: 'xs' })}>
-        <Lightning weight="regular" size={13} />
+        <Bolt size={13} />
         Unlock with Premium
       </Link>
     )
@@ -134,7 +134,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
           size="xs"
           onClick={() => handleInstall(action.slug)}
         >
-          <Terminal weight="regular" size={13} />
+          <Terminal size={13} />
           {action.label}
         </Button>
       ))}
@@ -154,12 +154,12 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
               <Button variant="outline" size="xs" onClick={handleCopy} aria-label="Copy install command">
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-success" />
+                    <Check size={13} className="text-success" />
                     Copied
                   </>
                 ) : (
                   <>
-                    <Copy weight="regular" size={13} />
+                    <Copy size={13} />
                     Copy Command
                   </>
                 )}
@@ -171,7 +171,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-accent" />
+                  <Check strokeWidth={2} size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

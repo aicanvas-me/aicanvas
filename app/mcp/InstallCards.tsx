@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Copy } from '@phosphor-icons/react'
+import { Check, Copy } from '@/app/_icons'
 import { Step } from '../components/Step'
 import { buttonClasses } from '../components/buttonClasses'
 
@@ -171,7 +171,7 @@ function Toast({ message }: { message: string | null }) {
           className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-2 rounded-full border border-sand-200 bg-sand-100/95 px-4 py-2.5 text-sm font-semibold text-sand-900 shadow-xl backdrop-blur dark:border-sand-700 dark:bg-sand-800/95 dark:text-sand-50"
           role="status"
         >
-          <Check weight="regular" size={15} className="text-success" />
+          <Check size={15} className="text-success" />
           {message}
         </motion.div>
       ) : null}
@@ -222,9 +222,9 @@ function CodeBlock({
         aria-label={`Copy ${label}`}
       >
         {copied ? (
-          <Check weight="regular" size={14} className="text-success" />
+          <Check size={14} className="text-success" />
         ) : (
-          <Copy weight="regular" size={14} />
+          <Copy size={14} />
         )}
       </button>
     </div>

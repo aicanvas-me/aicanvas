@@ -1,6 +1,6 @@
 'use client'
 
-import { SignIn } from '@phosphor-icons/react'
+import { LogIn } from '@/app/_icons'
 import { useAuthModal } from './AuthModalProvider'
 
 export function SignInCta() {
@@ -11,7 +11,7 @@ export function SignInCta() {
       onClick={() => open()}
       className="flex w-full items-center gap-2 rounded-control px-2 py-1.5 text-sm font-semibold text-sand-700 transition-colors hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
     >
-      <SignIn size={16} weight="regular" />
+      <LogIn size={16} />
       <span>Sign in</span>
     </button>
   )

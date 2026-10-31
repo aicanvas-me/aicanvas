@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { ImageSquare, Lightning, SealCheck } from '@phosphor-icons/react'
+import { ImageSquare, Bolt, BadgeCheck } from '@/app/_icons'
 import { track, type CardSource } from '../lib/analytics'
 import { optimizeImageKitUrl } from '../lib/imagekit'
 
@@ -65,9 +65,9 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
             }`}
           >
             {badge === 'Free' ? (
-              <SealCheck weight="fill" size={14} className="shrink-0" />
+              <BadgeCheck variant="solid" size={14} className="shrink-0" />
             ) : (
-              <Lightning weight="fill" size={14} className="shrink-0" />
+              <Bolt variant="solid" size={14} className="shrink-0" />
             )}
             <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
               <span className="overflow-hidden">
@@ -100,7 +100,7 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
               backgroundSize: '22px 22px',
             }}
           >
-            <ImageSquare weight="regular" size={28} className="text-sand-700" />
+            <ImageSquare size={28} className="text-sand-700" />
           </div>
         )}
         {/* The fade: the preview's lower edge melts into the card's surface,

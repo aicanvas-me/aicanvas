@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { List, X, GithubLogo, XLogo, MagnifyingGlass } from '@phosphor-icons/react'
+import { Menu, X, Search } from '@/app/_icons'
+import { GithubLogo, XLogo } from '@phosphor-icons/react'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import { CatalogNav } from './CatalogNav'
 import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE } from './top-bar-crumbs'
@@ -75,7 +76,7 @@ export function MobileNav() {
         </Link>
 
         <Button variant="icon" size="md" onClick={() => setOpen(true)} aria-label="Open menu">
-          <List weight="regular" size={20} />
+          <Menu size={20} />
         </Button>
       </div>
 
@@ -115,15 +116,14 @@ export function MobileNav() {
                   AI Canvas
                 </Link>
                 <Button variant="icon" size="sm" onClick={() => setOpen(false)} aria-label="Close menu">
-                  <X weight="regular" size={18} />
+                  <X size={18} />
                 </Button>
               </div>
 
               {/* Search */}
               <div className="shrink-0 px-3 py-3">
                 <div className="relative">
-                  <MagnifyingGlass
-                    weight="regular"
+                  <Search
                     size={14}
                     className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sand-600 dark:text-sand-500"
                   />
@@ -144,7 +144,7 @@ export function MobileNav() {
                       aria-label="Clear search"
                       className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-control p-0.5 text-sand-600 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
                     >
-                      <X weight="regular" size={13} />
+                      <X size={13} />
                     </button>
                   )}
                 </div>

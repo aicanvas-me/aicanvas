@@ -5,13 +5,7 @@
 // hydrate.
 
 import Link from 'next/link'
-import {
-  ArrowRight,
-  CaretRight,
-  Code,
-  MagnifyingGlass,
-  Terminal,
-} from '@phosphor-icons/react/dist/ssr'
+import { ArrowRight, ChevronRight, Code, Search, Terminal } from '@/app/_icons'
 import { buttonClasses } from '../components/buttonClasses'
 import { SiteFooter } from '../components/SiteFooter'
 import { PremiumCards } from '../components/billing/PremiumCards'
@@ -64,19 +58,19 @@ const HOME_FAQ_JSON_LD = faqJsonLd(HOME_FAQ)
 const STEPS = [
   {
     num: '01',
-    icon: <MagnifyingGlass weight="regular" size={16} />,
+    icon: <Search size={16} />,
     title: 'Browse',
     desc: 'Find a standalone, a design system or a ready-made template, and preview it live.',
   },
   {
     num: '02',
-    icon: <Terminal weight="regular" size={16} />,
+    icon: <Terminal size={16} />,
     title: 'Install',
     desc: 'Run one shadcn command, or connect the free AI Canvas MCP once and ask your agent.',
   },
   {
     num: '03',
-    icon: <Code weight="regular" size={16} />,
+    icon: <Code size={16} />,
     title: 'Build',
     desc: 'Change colors, swap parts or add your own components, by hand or through your agent. It is all your source.',
   },
@@ -144,7 +138,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
           >
             <Link href="/components" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
               Browse components
-              <ArrowRight weight="regular" size={14} />
+              <ArrowRight size={14} />
             </Link>
             <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
               Explore Andromeda Pro
@@ -339,8 +333,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
                           </span>
                           {/* ml-auto pins the arrow to the right edge regardless of
                               label length, so all four line up in a column. */}
-                          <CaretRight
-                            weight="regular"
+                          <ChevronRight
                             size={13}
                             aria-hidden
                             className="ml-auto shrink-0 text-sand-600 transition-all group-hover:translate-x-0.5 group-hover:text-sand-800 dark:group-hover:text-sand-300"
@@ -385,7 +378,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
                 className={buttonClasses({ variant: 'outline', size: 'lg' })}
               >
                 Browse all {ANDROMEDA_PRO_TEMPLATE_META.length} templates
-                <ArrowRight weight="regular" size={14} />
+                <ArrowRight size={14} />
               </Link>
             </div>
           </section>
@@ -409,7 +402,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
           <div className="mt-8 flex justify-center">
             <Link href="/components" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
               Browse all {total} standalones
-              <ArrowRight weight="regular" size={14} />
+              <ArrowRight size={14} />
             </Link>
           </div>
         </section>
@@ -532,7 +525,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
             <div className="relative mt-7 flex flex-wrap items-center justify-center gap-3">
               <Link href="/components" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
                 Browse components
-                <ArrowRight weight="regular" size={14} />
+                <ArrowRight size={14} />
               </Link>
               <Link href="/mcp" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
                 Set up MCP

@@ -2,7 +2,7 @@
 
 import { forwardRef, useId, useState, type ChangeEvent, type CSSProperties, type InputHTMLAttributes } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, X } from '@phosphor-icons/react'
+import { Check, X } from '@/app/_icons'
 
 // Site-chrome Toggle — visual language adapted from the Mark Toggle standalone
 // (components-workspace/mark-toggle/index.tsx): iOS-style pill, sliding thumb,
@@ -121,7 +121,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
                   transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <Check size={ICON} weight="bold" className="text-accent-foreground" />
+                  <Check size={ICON} strokeWidth={2} className="text-accent-foreground" />
                 </motion.span>
               ) : (
                 <motion.span
@@ -132,7 +132,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
                   transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <X size={ICON} weight="bold" className="text-sand-50" />
+                  <X size={ICON} strokeWidth={2} className="text-sand-50" />
                 </motion.span>
               )}
             </AnimatePresence>

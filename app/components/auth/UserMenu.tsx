@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { CaretDown } from '@phosphor-icons/react'
+import { ChevronDown } from '@/app/_icons'
 import { useSession } from './SessionProvider'
 import { createClient } from '../../lib/supabase/client'
 import { AccountMenuItems } from './AccountMenuItems'
@@ -47,7 +47,7 @@ export function UserMenu() {
       >
         <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-6 w-6 text-xs" />
         <span className="flex-1 truncate text-left">{email}</span>
-        <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${open ? '-rotate-180' : ''}`} />
+        <ChevronDown size={12} className={`shrink-0 transition-transform ${open ? '-rotate-180' : ''}`} />
       </button>
       {open && (
         <div className="absolute bottom-full left-0 right-0 mb-1 overflow-hidden rounded-section border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">

@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Check, Copy, Lightning } from '@phosphor-icons/react'
+import { Check, Copy, Bolt } from '@/app/_icons'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { useInstallToken } from '../_lib/useInstallToken'
@@ -140,7 +140,7 @@ export function ShowcaseInstallCard() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
         {bullets.map((line, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-            <Check weight="bold" size={13} color={C.accent[400]} style={{ flexShrink: 0, marginTop: 2 }} />
+            <Check strokeWidth={2} size={13} color={C.accent[400]} style={{ flexShrink: 0, marginTop: 2 }} />
             <span style={{ fontSize: 13, lineHeight: 1.5, color: C.text.secondary }}>{line}</span>
           </div>
         ))}
@@ -181,7 +181,7 @@ export function ShowcaseInstallCard() {
               cursor: 'pointer',
             }}
           >
-            {copied ? <Check weight="regular" size={14} /> : <Copy weight="regular" size={14} />}
+            {copied ? <Check size={14} /> : <Copy size={14} />}
             {copied ? 'Copied' : 'Copy Command'}
           </button>
         </>
@@ -203,7 +203,7 @@ export function ShowcaseInstallCard() {
             textDecoration: 'none',
           }}
         >
-          <Lightning weight="regular" size={14} />
+          <Bolt size={14} />
           Unlock with Premium
         </Link>
       )}

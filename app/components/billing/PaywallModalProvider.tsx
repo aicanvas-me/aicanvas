@@ -2,7 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode, useRef } from 'react'
 import Link from 'next/link'
-import { X } from '@phosphor-icons/react'
+import { X } from '@/app/_icons'
 import { PremiumCards } from './PremiumCards'
 import { PaymentMethods } from './PaymentMethods'
 import { track } from '../../lib/analytics'
@@ -122,7 +122,7 @@ function PaywallModalView({
           aria-label="Close"
           className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-control text-sand-400 transition-colors hover:bg-sand-800 hover:text-sand-100"
         >
-          <X weight="regular" size={18} />
+          <X size={18} />
         </button>
 
         <div className="text-center">

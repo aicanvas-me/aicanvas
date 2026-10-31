@@ -2,7 +2,7 @@
 
 import { useId, useState } from 'react'
 import Link from 'next/link'
-import { CheckCircle, Infinity as InfinityIcon, Lightning, Lock } from '@phosphor-icons/react'
+import { CircleCheck, Infinity as InfinityIcon, Bolt, Lock } from '@/app/_icons'
 import { motion, useReducedMotion } from 'framer-motion'
 import { buttonClasses } from '../buttonClasses'
 import { TopLight } from '../TopLight'
@@ -147,7 +147,7 @@ export function PremiumCards({
             <ul className="mt-4 space-y-3">
               {FREE_FEATURES.map((feature) => (
                 <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
-                  <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-300" />
+                  <CircleCheck size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-300" />
                   <span>{feature}</span>
                 </li>
               ))}
@@ -165,7 +165,7 @@ export function PremiumCards({
         <div className={cardPad}>
           <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
             {threeUp ? 'Monthly' : 'Premium'}
-            <Lightning weight="regular" size={22} className="text-accent" />
+            <Bolt size={22} className="text-accent" />
           </h2>
 
           {/* Billing cycle toggle + struck yearly-anchor price sit side by side.
@@ -279,7 +279,7 @@ export function PremiumCards({
           <ul className={showFree ? 'mt-4 space-y-3' : 'space-y-3'}>
             {PREMIUM_FEATURES.map((feature) => (
               <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
-                <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-accent" />
+                <CircleCheck size={18} className="mt-0.5 shrink-0 text-accent" />
                 <span>{feature}</span>
               </li>
             ))}
@@ -324,7 +324,7 @@ function LifetimeCard({
       <div className={`relative ${cardPad}`}>
         <h2 className={`flex items-center gap-2 ${heading} font-bold tracking-tight text-sand-900 dark:text-sand-50`}>
           Lifetime
-          <InfinityIcon weight="regular" size={22} className="text-accent" />
+          <InfinityIcon size={22} className="text-accent" />
         </h2>
         <div className="mt-4 flex items-baseline gap-2">
           <span className={`${priceText} font-extrabold tracking-tight text-sand-900 dark:text-sand-50`}>
@@ -355,7 +355,7 @@ function LifetimeCard({
         <ul className="mt-4 space-y-3">
           {LIFETIME_FEATURES.map((feature) => (
             <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
-              <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-accent" />
+              <CircleCheck size={18} className="mt-0.5 shrink-0 text-accent" />
               <span>{feature}</span>
             </li>
           ))}
@@ -384,11 +384,11 @@ function TrustStrip() {
     <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-card border border-sand-200 bg-sand-100/60 px-6 py-4 dark:border-sand-800 dark:bg-sand-900/50 sm:flex-row">
       <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-sand-700 dark:text-sand-200">
         <span className="flex items-center gap-1.5">
-          <Lock weight="regular" size={16} className="text-accent" />
+          <Lock size={16} className="text-accent" />
           Secure payment encryption
         </span>
         <span className="flex items-center gap-1.5">
-          <Lightning weight="regular" size={16} className="text-accent" />
+          <Bolt size={16} className="text-accent" />
           Instant access
         </span>
       </div>

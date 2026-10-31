@@ -14,22 +14,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion, useInView, useReducedMotion } from 'framer-motion'
-import {
-  ArrowUpRight,
-  Broadcast,
-  Buildings,
-  ChatCircleDots,
-  DeviceMobile,
-  DeviceTablet,
-  Kanban,
-  Monitor,
-  RocketLaunch,
-  SignIn,
-  UserPlus,
-  Wallet,
-  Wrench,
-} from '@phosphor-icons/react'
-import type { Icon } from '@phosphor-icons/react'
+import { ArrowUpRight, Broadcast, Buildings, MessageCircleDots, Smartphone, Tablet, Kanban, Monitor, RocketLaunch, LogIn, UserPlus, Wallet, Wrench, type SiteIcon as Icon } from '@/app/_icons'
 import { useMedia } from './useMedia'
 
 export type DeckTemplate = {
@@ -45,18 +30,18 @@ type Device = 'desktop' | 'tablet' | 'mobile'
 // desktop layout; tablet and phone are common portrait sizes.
 const DEVICES: Record<Device, { w: number; h: number; label: string; icon: Icon }> = {
   desktop: { w: 1440, h: 900, label: 'Desktop', icon: Monitor },
-  tablet: { w: 820, h: 1180, label: 'Tablet', icon: DeviceTablet },
-  mobile: { w: 390, h: 844, label: 'Mobile', icon: DeviceMobile },
+  tablet: { w: 820, h: 1180, label: 'Tablet', icon: Tablet },
+  mobile: { w: 390, h: 844, label: 'Mobile', icon: Smartphone },
 }
 
 const ICONS: Record<string, Icon> = {
-  'ai-chat': ChatCircleDots,
+  'ai-chat': MessageCircleDots,
   'city-operations': Buildings,
   'fintech-landing': Wallet,
   'mission-control': RocketLaunch,
   'resource-planning': Kanban,
   'service-order': Wrench,
-  'sign-in': SignIn,
+  'sign-in': LogIn,
   'sign-up': UserPlus,
   'signal-room': Broadcast,
 }
@@ -167,7 +152,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
                 onClick={() => setPicked(id)}
                 className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${pressedClass(on)}`}
               >
-                <DeviceIcon weight="regular" size={14} aria-hidden />
+                <DeviceIcon size={14} aria-hidden />
                 {label}
               </button>
             )
@@ -231,7 +216,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
                         : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
                     }`}
                   >
-                    <TabIcon weight="regular" size={15} aria-hidden />
+                    <TabIcon size={15} aria-hidden />
                     {tpl.name}
                   </button>
                 )
@@ -242,7 +227,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
               className="hidden h-8 shrink-0 items-center gap-1 rounded-control border border-sand-300 px-2.5 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 sm:inline-flex dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
             >
               Live preview
-              <ArrowUpRight weight="regular" size={13} aria-hidden />
+              <ArrowUpRight size={13} aria-hidden />
             </Link>
           </div>
 
@@ -291,7 +276,7 @@ export function TemplateDeck({ templates }: { templates: DeckTemplate[] }) {
           className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent/70"
         >
           Open {t.name}
-          <ArrowUpRight weight="regular" size={14} aria-hidden />
+          <ArrowUpRight size={14} aria-hidden />
         </Link>
       </div>
     </div>

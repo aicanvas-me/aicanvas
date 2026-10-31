@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { CheckCircle, WarningCircle } from '@phosphor-icons/react'
+import { CircleCheck, CircleAlert } from '@/app/_icons'
 import { CONTACT_EMAIL } from '../lib/config'
 import { SiteFooter } from '../components/SiteFooter'
 import { HeaderSocials } from '../components/HeaderSocials'
@@ -136,7 +136,7 @@ function KuendigenForm() {
         {/* Post-confirm banners (from the email link) */}
         {state === 'confirmed' && (
           <div className="mt-6 flex items-start gap-2 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4">
-            <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+            <CircleCheck size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
             <p className="text-sm text-sand-700 dark:text-sand-200">
               Deine Kündigung ist bestätigt. Du behältst Premium bis zum Ende deines Abrechnungszeitraums. /
               Your cancellation is confirmed. You keep Premium until the end of your billing period.
@@ -145,7 +145,7 @@ function KuendigenForm() {
         )}
         {state === 'already' && (
           <div className="mt-6 flex items-start gap-2 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4">
-            <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+            <CircleCheck size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
             <p className="text-sm text-sand-700 dark:text-sand-200">
               Dein Abo ist bereits zur Kündigung vorgemerkt und endet zum Ende deines Abrechnungszeitraums. Du musst
               nichts weiter tun. / Your subscription is already scheduled to cancel and ends at the end of your
@@ -155,7 +155,7 @@ function KuendigenForm() {
         )}
         {state === 'invalid' && (
           <div className="mt-6 flex items-start gap-2 rounded-lg border border-sand-300 dark:border-sand-700 bg-sand-100 dark:bg-sand-900 p-4">
-            <WarningCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
+            <CircleAlert size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
             <p className="text-sm text-sand-700 dark:text-sand-300">
               Dieser Bestätigungslink ist ungültig oder abgelaufen. Bitte sende das Formular erneut. /
               This confirmation link is invalid or expired. Please submit the form again below.
@@ -164,7 +164,7 @@ function KuendigenForm() {
         )}
         {state === 'error' && (
           <div className="mt-6 flex items-start gap-2 rounded-lg border border-sand-300 dark:border-sand-700 bg-sand-100 dark:bg-sand-900 p-4">
-            <WarningCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
+            <CircleAlert size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
             <p className="text-sm text-sand-700 dark:text-sand-300">
               Wir konnten die Kündigung gerade nicht abschließen. Bitte schreib uns an{' '}
               <a href={`mailto:${CONTACT_EMAIL}`} className="text-olive-600 dark:text-olive-400 hover:underline">
@@ -177,7 +177,7 @@ function KuendigenForm() {
 
         {state === 'submitted' ? (
           <div className="mt-8 rounded-2xl border border-sand-200 dark:border-sand-800 bg-sand-100 dark:bg-sand-900 p-6">
-            <CheckCircle weight="regular" size={24} className="text-olive-600 dark:text-olive-400" />
+            <CircleCheck size={24} className="text-olive-600 dark:text-olive-400" />
             <h2 className="mt-3 text-lg font-bold text-sand-900 dark:text-sand-50">Anfrage erhalten / Request received</h2>
             <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
               Falls für diese Adresse ein aktives Premium-Abo besteht, haben wir dir eine E-Mail mit einem
@@ -321,7 +321,7 @@ function KuendigenForm() {
 
             {error && (
               <p className="flex items-start gap-2 text-sm text-red-700 dark:text-red-400">
-                <WarningCircle weight="regular" size={16} className="mt-0.5 shrink-0" />
+                <CircleAlert size={16} className="mt-0.5 shrink-0" />
                 {error}
               </p>
             )}

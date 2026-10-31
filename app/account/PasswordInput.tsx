@@ -1,7 +1,7 @@
 'use client'
 
 import { forwardRef, useState } from 'react'
-import { Eye, EyeSlash } from '@phosphor-icons/react'
+import { Eye, EyeOff } from '@/app/_icons'
 import { Button } from '../components/Button'
 
 // ─── PasswordInput ────────────────────────────────────────────────────────────
@@ -36,7 +36,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, Props>(function Passwo
         tabIndex={-1}
         className="absolute right-2 top-1/2 -translate-y-1/2"
       >
-        {visible ? <EyeSlash weight="regular" size={16} /> : <Eye weight="regular" size={16} />}
+        {visible ? <EyeOff size={16} /> : <Eye size={16} />}
       </Button>
     </div>
   )

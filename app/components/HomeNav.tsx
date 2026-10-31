@@ -16,7 +16,7 @@
 import Link from 'next/link'
 import { useEffect, useId, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { CaretDown } from '@phosphor-icons/react'
+import { ChevronDown } from '@/app/_icons'
 import { CATEGORIES } from '../lib/categories'
 
 // prefetch false: a page linked ahead of its launch (/icons) is not prefetched.
@@ -99,8 +99,7 @@ function Menu({
         className={ITEM}
       >
         {label}
-        <CaretDown
-          weight="regular"
+        <ChevronDown
           aria-hidden
           className={`size-3 transition-transform duration-150 ${open ? 'rotate-180' : ''}`}
         />

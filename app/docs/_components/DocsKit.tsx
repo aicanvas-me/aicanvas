@@ -8,7 +8,7 @@
 
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, Info } from '@phosphor-icons/react/dist/ssr'
+import { ArrowLeft, ArrowRight, Info } from '@/app/_icons'
 import { docPosition } from '../_lib/nav'
 import { Toc, type TocItem } from './Toc'
 import { DocsCopyPage } from './DocsCopyPage'
@@ -63,7 +63,7 @@ export function DocPage({
                 className="group rounded-card border border-sand-200 p-4 transition-colors hover:border-sand-300 dark:border-sand-800 dark:hover:border-sand-700"
               >
                 <span className="flex items-center gap-1.5 text-xs font-semibold text-sand-600 dark:text-sand-400">
-                  <ArrowLeft weight="regular" size={12} />
+                  <ArrowLeft size={12} />
                   Previous
                 </span>
                 <span className="mt-1 block font-semibold text-sand-900 dark:text-sand-50">{prev.title}</span>
@@ -78,7 +78,7 @@ export function DocPage({
               >
                 <span className="flex items-center justify-end gap-1.5 text-xs font-semibold text-sand-600 dark:text-sand-400">
                   Next
-                  <ArrowRight weight="regular" size={12} />
+                  <ArrowRight size={12} />
                 </span>
                 <span className="mt-1 block font-semibold text-sand-900 dark:text-sand-50">{next.title}</span>
               </Link>
@@ -156,7 +156,7 @@ export function A({ href, children }: { href: string; children: ReactNode }) {
 export function Note({ children }: { children: ReactNode }) {
   return (
     <div className="mt-5 flex gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 text-sm leading-6 text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
-      <Info weight="regular" size={16} className="mt-1 shrink-0 text-sand-600 dark:text-sand-400" />
+      <Info size={16} className="mt-1 shrink-0 text-sand-600 dark:text-sand-400" />
       <div className="min-w-0">{children}</div>
     </div>
   )

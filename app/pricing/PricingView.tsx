@@ -3,7 +3,7 @@
 import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
-import { CheckCircle, Sparkle } from '@phosphor-icons/react'
+import { CircleCheck, Sparkle } from '@/app/_icons'
 import { buttonClasses } from '../components/buttonClasses'
 import { lifetimeEnabled, premiumEnabled } from '../../lib/flags'
 import { PremiumCards } from '../components/billing/PremiumCards'
@@ -124,8 +124,7 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
               key={feature}
               className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200"
             >
-              <CheckCircle
-                weight="regular"
+              <CircleCheck
                 size={18}
                 className={`mt-0.5 shrink-0 ${
                   plan.featured
@@ -155,7 +154,7 @@ export function PricingView() {
     <>
       <PageHero
         pill="Pricing"
-        pillIcon={<Sparkle weight="regular" size={12} className="text-accent" aria-hidden />}
+        pillIcon={<Sparkle size={12} className="text-accent" aria-hidden />}
         title={premium ? 'Simple, honest pricing' : 'Pick your side'}
         sub={
           !premium

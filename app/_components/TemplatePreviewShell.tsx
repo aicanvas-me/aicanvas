@@ -4,23 +4,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState, type ComponentType, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import {
-  ArrowClockwise,
-  Broadcast,
-  Buildings,
-  CalendarBlank,
-  CaretUpDown,
-  Check,
-  ClipboardText,
-  Copy,
-  DeviceMobile,
-  Lightning,
-  Monitor,
-  Rocket,
-  Sparkle,
-  SquaresFour,
-  Terminal,
-} from '@phosphor-icons/react'
+import { RotateCw, Broadcast, Buildings, CalendarBlank, ChevronsUpDown, Check, ClipboardText, Copy, Smartphone, Bolt, Monitor, Rocket, Sparkle, Grid2x2, Terminal } from '@/app/_icons'
 import { useInstallToken } from '../_lib/useInstallToken'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { copyText } from '../components/useCopied'
@@ -77,7 +61,7 @@ const DEVICES: Record<
 
 const DEVICE_ORDER: { key: Device; label: string; icon: ComponentType<{ weight?: 'regular'; size?: number }> }[] = [
   { key: 'desktop', label: 'Desktop', icon: Monitor },
-  { key: 'phone', label: 'Mobile', icon: DeviceMobile },
+  { key: 'phone', label: 'Mobile', icon: Smartphone },
 ]
 
 interface TemplatePreviewShellProps {
@@ -518,7 +502,7 @@ function TopBar({
                     : 'text-sand-600 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100'
                 }`}
               >
-                <Icon weight="regular" size={16} />
+                <Icon size={16} />
               </button>
             )
           })}
@@ -530,7 +514,7 @@ function TopBar({
             title="Replay animation"
             className="flex h-7 w-7 items-center justify-center rounded-control text-sand-600 transition-colors hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100"
           >
-            <ArrowClockwise weight="regular" size={15} />
+            <RotateCw size={15} />
           </button>
         </div>
 
@@ -613,7 +597,7 @@ function TemplateSwitcher({
         className="flex min-w-0 items-center gap-1 rounded-control text-accent transition-colors hover:text-accent/70"
       >
         <span className="truncate">{templateName}</span>
-        <CaretUpDown weight="regular" size={14} className="shrink-0 opacity-70" />
+        <ChevronsUpDown size={14} className="shrink-0 opacity-70" />
       </button>
 
       {/* Menu: left-anchored to the trigger, which sits ~150px in on mobile
@@ -627,7 +611,7 @@ function TemplateSwitcher({
             const folder = t.slug.startsWith(`${systemSlug}-`)
               ? t.slug.slice(systemSlug.length + 1)
               : t.slug
-            const Icon = TEMPLATE_ICONS[folder] ?? SquaresFour
+            const Icon = TEMPLATE_ICONS[folder] ?? Grid2x2
             return (
               <Link
                 key={t.slug}
@@ -641,7 +625,7 @@ function TemplateSwitcher({
                 }`}
               >
                 <Icon
-                  weight="regular"
+                 
                   size={16}
                   className={`shrink-0 ${active ? 'text-accent' : 'text-sand-600 dark:text-sand-500'}`}
                 />
@@ -687,7 +671,7 @@ function RightCluster({
         <InstallButton templateSlug={templateSlug} systemName={systemName} description={description} />
       ) : (
         <Link href="/pricing" className={buttonClasses({ variant: 'primary', size: 'xs' })}>
-          <Lightning weight="regular" size={13} />
+          <Bolt size={13} />
           <span className="hidden sm:inline">Unlock with Premium</span>
           <span className="sm:hidden">Unlock</span>
         </Link>
@@ -780,7 +764,7 @@ function InstallButton({
     <div className="relative" ref={ref}>
       <InstallCopiedToast show={copied} />
       <Button variant="primary" size="xs" onClick={handleInstall}>
-        <Terminal weight="regular" size={13} />
+        <Terminal size={13} />
         Install
       </Button>
 
@@ -804,12 +788,12 @@ function InstallButton({
               >
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-success" />
+                    <Check size={13} className="text-success" />
                     Copied
                   </>
                 ) : (
                   <>
-                    <Copy weight="regular" size={13} />
+                    <Copy size={13} />
                     Copy Command
                   </>
                 )}
@@ -821,7 +805,7 @@ function InstallButton({
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-accent" />
+                  <Check strokeWidth={2} size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

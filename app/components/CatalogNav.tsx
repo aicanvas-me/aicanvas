@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type UIEvent } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { CaretDown, Cube, DiamondsFour, Shapes, Sparkle } from '@phosphor-icons/react'
+import { ChevronDown, Box, Component, Shapes, Sparkle } from '@/app/_icons'
 import { CATEGORIES } from '../lib/categories'
 import { CATEGORY_COMPONENTS, TOTAL_COMPONENTS } from '../lib/component-nav.generated'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
@@ -47,9 +47,9 @@ const iconData = iconsJson as IconMeta[]
 export type CatalogSegment = 'design-systems' | 'components' | 'icons'
 
 const SEGMENTS: { id: CatalogSegment; label: string; icon: ReactNode }[] = [
-  { id: 'design-systems', label: 'Design systems', icon: <Cube weight="regular" size={16} aria-hidden /> },
-  { id: 'components', label: 'Components', icon: <DiamondsFour weight="regular" size={16} aria-hidden /> },
-  { id: 'icons', label: 'Icons', icon: <Shapes weight="regular" size={16} aria-hidden /> },
+  { id: 'design-systems', label: 'Design systems', icon: <Box size={16} aria-hidden /> },
+  { id: 'components', label: 'Components', icon: <Component size={16} aria-hidden /> },
+  { id: 'icons', label: 'Icons', icon: <Shapes size={16} aria-hidden /> },
 ]
 
 // Where a rail click on a segment lands: the section's front page. Design
@@ -309,9 +309,8 @@ function DesignSystemsList({ onNavigate }: { onNavigate?: () => void }) {
                   <SystemTierChip tier={system.tier} label={system.badge} className="!px-1" />
                 </span>
               )}
-              <CaretDown
+              <ChevronDown
                 size={12}
-                weight="regular"
                 aria-hidden
                 className={`ml-auto shrink-0 text-sand-600 transition-transform dark:text-sand-500 ${expanded ? '' : '-rotate-90'}`}
               />
@@ -368,7 +367,7 @@ function SystemSections({
           <CatalogRow href={`${root}/brain`} label="AI Brain" active={brainActive} onNavigate={onNavigate}>
             {/* The one icon left in the list: the Brain is the system's AI
                 layer, and the mark says so. */}
-            <Sparkle weight="regular" size={13} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-500" />
+            <Sparkle size={13} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-500" />
             <span className="sr-only">Premium</span>
           </CatalogRow>
         )}

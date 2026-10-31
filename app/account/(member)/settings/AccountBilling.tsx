@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
-import { Lightning, Key, ShieldCheck } from '@phosphor-icons/react'
+import { Bolt, Key, ShieldCheck } from '@/app/_icons'
 import { premiumEnabled } from '../../../../lib/flags'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { CARD } from '../../../components/PageKit'
@@ -150,7 +150,7 @@ export function AccountBilling() {
               disabled={portalLoading}
               className={buttonClasses({ variant: 'outline', size: 'sm' })}
             >
-              <Lightning weight="regular" size={15} />
+              <Bolt size={15} />
               {portalLoading ? 'Opening…' : 'Manage subscription'}
             </button>
           ) : status === 'not-premium' ? (
@@ -159,12 +159,12 @@ export function AccountBilling() {
               onClick={() => openPaywall({ reason: 'upgrade' })}
               className={buttonClasses({ variant: 'primary', size: 'sm' })}
             >
-              <Lightning weight="regular" size={15} />
+              <Bolt size={15} />
               Upgrade to Premium
             </button>
           ) : (
             <button type="button" disabled className={buttonClasses({ variant: 'outline', size: 'sm' })}>
-              <Lightning weight="regular" size={15} />
+              <Bolt size={15} />
               Checking your plan…
             </button>
           )}
@@ -177,7 +177,7 @@ export function AccountBilling() {
         )}
 
         <p className="mt-6 flex items-start gap-2 border-t border-sand-200 pt-5 text-xs leading-relaxed text-sand-600 dark:border-sand-800 dark:text-sand-400">
-          <ShieldCheck weight="regular" size={15} className="mt-px shrink-0 text-accent" />
+          <ShieldCheck size={15} className="mt-px shrink-0 text-accent" />
           <span>
             Billing is securely handled by{' '}
             <span className="font-semibold text-sand-700 dark:text-sand-300">Paddle</span>, our
@@ -202,7 +202,7 @@ export function AccountBilling() {
             disabled={rotateState === 'rotating' || refreshing}
             className={buttonClasses({ variant: 'outline', size: 'sm' })}
           >
-            <Key weight="regular" size={15} />
+            <Key size={15} />
             {rotateState === 'rotating' || refreshing ? 'Rotating…' : 'Rotate API token'}
           </button>
         </div>

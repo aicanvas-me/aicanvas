@@ -5,24 +5,7 @@ import { useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import {
-  Eye,
-  EyeSlash,
-  Code,
-  Check,
-  Copy,
-  ArrowLeft,
-  ArrowRight,
-  Tag as TagIcon,
-  Sun,
-  Moon,
-  CornersOut,
-  X,
-  ArrowClockwise,
-  Terminal,
-  Sparkle,
-  Lightning,
-} from '@phosphor-icons/react'
+import { Eye, EyeOff, Code, Check, Copy, ArrowLeft, ArrowRight, Tag as TagIcon, Sun, Moon, Fullscreen, X, RotateCw, Terminal, Sparkle, Bolt } from '@/app/_icons'
 import type { Tag, Platform } from '../ComponentCard'
 import { isStackLabel, STACK_ICONS, stackIconWidthForHeight, type Stack } from '../../lib/stack'
 import { PageCrumbs } from '../PageCrumbs'
@@ -485,7 +468,7 @@ export default function ComponentPageView({
             onClick={() => router.back()}
             className="mb-4 flex items-center gap-2 text-sm font-semibold text-sand-700 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-200 md:hidden"
           >
-            <ArrowLeft weight="regular" size={15} />
+            <ArrowLeft size={15} />
             Back
           </button>
 
@@ -518,11 +501,11 @@ export default function ComponentPageView({
               const useCaseChips = (useCases ?? []).slice(0, 3)
               return (
                 <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <TagIcon weight="regular" size={14} className="shrink-0 text-sand-600 dark:text-sand-500" />
+                  <TagIcon size={14} className="shrink-0 text-sand-600 dark:text-sand-500" />
                   {designSystem && <PremiumBadge />}
                   {premium && (
                     <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent dark:border-accent/25">
-                      <Lightning weight="regular" size={12} />
+                      <Bolt size={12} />
                       Premium
                     </span>
                   )}
@@ -552,7 +535,7 @@ export default function ComponentPageView({
                 className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100"
               >
                 Part of {systemMeta.name} design system
-                <ArrowRight weight="regular" size={12} />
+                <ArrowRight size={12} />
               </Link>
             )}
           </div>
@@ -574,7 +557,7 @@ export default function ComponentPageView({
                       : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
-                  <Eye weight="regular" size={15} />
+                  <Eye size={15} />
                   Preview
                 </button>
                 <button
@@ -590,7 +573,7 @@ export default function ComponentPageView({
                       : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
-                  <Code weight="regular" size={15} />
+                  <Code size={15} />
                   Code
                 </button>
               </div>
@@ -632,7 +615,7 @@ export default function ComponentPageView({
                           exit={{ y: -12, opacity: 0 }}
                           transition={{ duration: 0.18 }}
                         >
-                          <Moon weight="regular" size={16} />
+                          <Moon size={16} />
                         </motion.span>
                       ) : (
                         <motion.span
@@ -642,7 +625,7 @@ export default function ComponentPageView({
                           exit={{ y: -12, opacity: 0 }}
                           transition={{ duration: 0.18 }}
                         >
-                          <Sun weight="regular" size={16} />
+                          <Sun size={16} />
                         </motion.span>
                       )}
                     </AnimatePresence>
@@ -664,7 +647,7 @@ export default function ComponentPageView({
                       onClick={refreshPreview}
                       aria-label="Restart animation"
                     >
-                      <ArrowClockwise weight="regular" size={16} />
+                      <RotateCw size={16} />
                     </Button>
                     <div className="pointer-events-none absolute top-full right-0 z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/refresh:block">
                       Refresh
@@ -688,7 +671,7 @@ export default function ComponentPageView({
                         setFullscreen(true)
                       }}
                     >
-                      <CornersOut weight="regular" size={16} />
+                      <Fullscreen size={16} />
                     </Button>
                     <div className="pointer-events-none absolute top-full right-0 z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
                       Full screen
@@ -766,7 +749,7 @@ export default function ComponentPageView({
                         className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center opacity-0 transition-opacity duration-150 focus-visible:opacity-100 group-hover/preview:opacity-100 [@media(hover:none)]:pointer-events-auto [@media(hover:none)]:opacity-100"
                       >
                         <span className="pointer-events-auto flex items-center gap-2 rounded-control border border-sand-100/0 bg-sand-950/90 px-3 py-2 text-xs font-semibold text-sand-100 shadow-lg transition-colors duration-150 hover:bg-sand-900">
-                          <CornersOut weight="regular" size={14} />
+                          <Fullscreen size={14} />
                           <span className="[@media(hover:none)]:hidden">Click for full view</span>
                           <span className="[@media(hover:hover)]:hidden">Tap for full view</span>
                         </span>
@@ -840,7 +823,7 @@ export default function ComponentPageView({
                     setRemixOpen(true)
                   }}
                 >
-                  <Sparkle weight="regular" size={15} className="max-[379px]:hidden" />
+                  <Sparkle size={15} className="max-[379px]:hidden" />
                   Remix<span className="hidden sm:inline"> with AI</span>
                 </Button>
               )}
@@ -851,8 +834,8 @@ export default function ComponentPageView({
                   out, copyCli() opens the auth modal instead of copying. */}
               <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
                 {cliCopied
-                  ? <Check weight="regular" size={15} className="max-[379px]:hidden" />
-                  : <Terminal weight="regular" size={15} className="max-[379px]:hidden" />}
+                  ? <Check size={15} className="max-[379px]:hidden" />
+                  : <Terminal size={15} className="max-[379px]:hidden" />}
                 {cliCopied ? 'Copied!' : 'Copy Command'}
               </Button>
 
@@ -876,7 +859,7 @@ export default function ComponentPageView({
                   // bolt at rest, slides open to the label on hover — a
                   // reminder that the install below is premium-gated.
                   <span className="group/premium flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-50 ring-1 ring-sand-50/30 backdrop-blur-sm">
-                    <Lightning weight="fill" size={14} className="shrink-0" />
+                    <Bolt variant="solid" size={14} className="shrink-0" />
                     <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover/premium:grid-cols-[1fr]">
                       <span className="overflow-hidden">
                         <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
@@ -979,8 +962,8 @@ export default function ComponentPageView({
                                 className="ml-auto shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
                               >
                                 {depsCopied
-                                  ? <Check weight="regular" size={14} className="text-success" />
-                                  : <Copy weight="regular" size={14} />}
+                                  ? <Check size={14} className="text-success" />
+                                  : <Copy size={14} />}
                               </button>
                             </div>
 
@@ -1092,8 +1075,8 @@ export default function ComponentPageView({
                               className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
                             >
                               {depsCopied
-                                ? <Check weight="regular" size={14} className="text-success" />
-                                : <Copy weight="regular" size={14} />}
+                                ? <Check size={14} className="text-success" />
+                                : <Copy size={14} />}
                             </button>
                           </div>
                       </Step>
@@ -1120,8 +1103,8 @@ export default function ComponentPageView({
                                 className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90 disabled:cursor-not-allowed disabled:opacity-40"
                               >
                                 {codeCopied
-                                  ? <Check weight="regular" size={14} className="text-success" />
-                                  : <Copy weight="regular" size={14} />}
+                                  ? <Check size={14} className="text-success" />
+                                  : <Copy size={14} />}
                               </button>
                             </div>
                             <div className="max-h-64 overflow-y-auto p-4 [scrollbar-color:#C4BFB7_transparent] dark:[scrollbar-color:#4A453F_transparent]" style={{ scrollbarWidth: 'thin' }}>
@@ -1212,7 +1195,7 @@ export default function ComponentPageView({
                   className={buttonClasses({ variant: 'outline', size: 'sm' })}
                 >
                   Get MCP
-                  <ArrowRight weight="regular" size={13} />
+                  <ArrowRight size={13} />
                 </Link>
               </div>
 
@@ -1235,8 +1218,8 @@ export default function ComponentPageView({
                           aria-pressed={mcpTokenRevealed}
                         >
                           {mcpTokenRevealed
-                            ? <EyeSlash weight="regular" size={14} />
-                            : <Eye weight="regular" size={14} />}
+                            ? <EyeOff size={14} />
+                            : <Eye size={14} />}
                         </button>
                         <button
                           onClick={copyMcpToken}
@@ -1244,8 +1227,8 @@ export default function ComponentPageView({
                           aria-label="Copy MCP token"
                         >
                           {mcpTokenCopied
-                            ? <Check weight="regular" size={14} className="text-success" />
-                            : <Copy weight="regular" size={14} />}
+                            ? <Check size={14} className="text-success" />
+                            : <Copy size={14} />}
                         </button>
                       </div>
                     </div>
@@ -1392,7 +1375,7 @@ export default function ComponentPageView({
                       disabled={!canGoPrev}
                       aria-label="Previous related components"
                     >
-                      <ArrowLeft weight="regular" size={15} />
+                      <ArrowLeft size={15} />
                     </Button>
                     <Button
                       variant="outline"
@@ -1402,7 +1385,7 @@ export default function ComponentPageView({
                       disabled={!canGoNext}
                       aria-label="Next related components"
                     >
-                      <ArrowRight weight="regular" size={15} />
+                      <ArrowRight size={15} />
                     </Button>
                   </div>
                 )}
@@ -1539,7 +1522,7 @@ export default function ComponentPageView({
                   onClick={() => setFullscreen(false)}
                   aria-label="Close full screen"
                 >
-                  <X weight="regular" size={16} />
+                  <X size={16} />
                 </Button>
               </div>
               <div
@@ -1581,7 +1564,7 @@ export default function ComponentPageView({
             }}
           >
             <div className="flex items-center gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
-              <Check weight="regular" size={16} className="shrink-0 text-success" />
+              <Check size={16} className="shrink-0 text-success" />
               <div>
                 <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                   Install command copied
@@ -1638,8 +1621,8 @@ function DarkModeStep({ number, isLast, copied, onCopy }: CopyStepProps) {
           className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
         >
           {copied
-            ? <Check weight="regular" size={14} className="text-success" />
-            : <Copy weight="regular" size={14} />}
+            ? <Check size={14} className="text-success" />
+            : <Copy size={14} />}
         </button>
       </div>
     </Step>
@@ -1679,8 +1662,8 @@ function FontStep({
             className="ml-auto shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
           >
             {copied
-              ? <Check weight="regular" size={14} className="text-success" />
-              : <Copy weight="regular" size={14} />}
+              ? <Check size={14} className="text-success" />
+              : <Copy size={14} />}
           </button>
         </div>
         <div className="px-4 py-3.5">
@@ -1721,7 +1704,7 @@ function PackageFontStep({
           aria-label="Copy install command"
           className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
         >
-          {installCopied ? <Check weight="regular" size={14} className="text-success" /> : <Copy weight="regular" size={14} />}
+          {installCopied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
         </button>
       </div>
       {snippet && (
@@ -1733,7 +1716,7 @@ function PackageFontStep({
               aria-label="Copy font setup snippet"
               className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
             >
-              {snippetCopied ? <Check weight="regular" size={14} className="text-success" /> : <Copy weight="regular" size={14} />}
+              {snippetCopied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
             </button>
           </div>
           <div className="px-4 py-3.5">

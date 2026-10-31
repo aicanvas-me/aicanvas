@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ClockClockwise } from '@phosphor-icons/react/dist/ssr'
+import { History } from '@/app/_icons'
 import { createClient } from '../../../lib/supabase/server'
 import type { InstallHistoryRow } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
@@ -63,7 +63,7 @@ export default async function HistoryPage() {
     return (
       <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
         <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-card border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
-          <ClockClockwise weight="regular" size={22} />
+          <History size={22} />
         </div>
         <p className="mx-auto max-w-md text-balance text-sm leading-relaxed text-sand-600 dark:text-sand-400">
           No install history yet. Copy a CLI command from any component and it&apos;ll show up here.

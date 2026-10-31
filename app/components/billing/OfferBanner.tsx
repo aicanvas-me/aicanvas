@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Clock } from '@phosphor-icons/react'
+import { Clock } from '@/app/_icons'
 import { buttonClasses } from '../buttonClasses'
 import { usePremiumStatus } from './usePremiumStatus'
 import { track } from '../../lib/analytics'
@@ -105,7 +105,7 @@ export function OfferBanner({ mode }: { mode: OfferPillMode }) {
   // static chip.
   const row = (
     <span aria-hidden className="inline-flex items-center gap-1.5">
-      <Clock weight="regular" size={16} />
+      <Clock size={16} />
       Founding Members
       <span className="opacity-60">·</span>
       <span className="line-through opacity-70">{usd(YEARLY_ANCHOR)}</span>

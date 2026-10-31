@@ -1,6 +1,6 @@
 'use client'
 
-import { ArrowDown } from '@phosphor-icons/react'
+import { ArrowDown } from '@/app/_icons'
 import { Button } from './Button'
 
 // ─── Constants ───────────────────────────────────────────────────────────────
@@ -22,7 +22,7 @@ export function LoadMore({ hasMore, remaining, onLoadMore }: LoadMoreProps) {
   return (
     <div className="flex flex-col items-center gap-2 pt-10 pb-2">
       <Button variant="outline" size="lg" onClick={onLoadMore}>
-        <ArrowDown weight="regular" size={15} />
+        <ArrowDown size={15} />
         Load more
       </Button>
       <span className="text-xs text-sand-600 dark:text-sand-600">

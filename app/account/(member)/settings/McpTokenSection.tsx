@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, Eye, EyeSlash } from '@phosphor-icons/react'
+import { Copy, Check, Eye, EyeOff } from '@/app/_icons'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
 import { CARD } from '../../../components/PageKit'
@@ -70,8 +70,8 @@ export function McpTokenSection({ token }: Props) {
                 aria-pressed={revealed}
               >
                 {revealed
-                  ? <EyeSlash weight="regular" size={16} />
-                  : <Eye weight="regular" size={16} />}
+                  ? <EyeOff size={16} />
+                  : <Eye size={16} />}
               </button>
               <button
                 type="button"
@@ -80,8 +80,8 @@ export function McpTokenSection({ token }: Props) {
                 aria-label="Copy token"
               >
                 {copied
-                  ? <Check weight="regular" size={16} className="text-success" />
-                  : <Copy weight="regular" size={16} />}
+                  ? <Check size={16} className="text-success" />
+                  : <Copy size={16} />}
               </button>
             </div>
           </div>
@@ -100,8 +100,8 @@ export function McpTokenSection({ token }: Props) {
               aria-label="Copy install command"
             >
               {cmdCopied
-                ? <Check weight="regular" size={16} className="text-success" />
-                : <Copy weight="regular" size={16} />}
+                ? <Check size={16} className="text-success" />
+                : <Copy size={16} />}
             </button>
           </div>
           <p className="mt-2 text-xs leading-relaxed text-sand-600 dark:text-sand-400">

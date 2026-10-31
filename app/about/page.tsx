@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, GithubLogo, Info } from '@phosphor-icons/react/dist/ssr'
+import { ArrowRight, Info } from '@/app/_icons'
+import { GithubLogo } from '@phosphor-icons/react/dist/ssr'
 import { GITHUB_URL } from '../lib/config'
 import { buttonClasses } from '../components/buttonClasses'
 import { CARD, CtaBand, PageHero, PageShell } from '../components/PageKit'
@@ -83,7 +84,7 @@ export default function AboutPage() {
       {/* ── Hook ── */}
       <PageHero
         pill="About"
-        pillIcon={<Info weight="regular" size={12} className="text-accent" aria-hidden />}
+        pillIcon={<Info size={12} className="text-accent" aria-hidden />}
         title="Stop building on sand"
         sub={
           <p className="text-pretty">
@@ -294,7 +295,7 @@ export default function AboutPage() {
       >
         <Link href="/components" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
           Browse Components
-          <ArrowRight weight="regular" size={14} />
+          <ArrowRight size={14} />
         </Link>
         <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
           Discover Andromeda Pro

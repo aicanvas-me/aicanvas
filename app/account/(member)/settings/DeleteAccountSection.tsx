@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Warning } from '@phosphor-icons/react'
+import { TriangleAlert } from '@/app/_icons'
 import { createClient } from '../../../lib/supabase/client'
 import { Button } from '../../../components/Button'
 
@@ -54,7 +54,7 @@ export function DeleteAccountSection() {
     <div className="rounded-section border border-red-500/30 bg-red-500/5 p-6 sm:p-8 dark:border-red-500/20">
       <div className="flex items-start gap-3">
         <div className="mt-0.5 shrink-0 text-red-700 dark:text-red-400">
-          <Warning weight="regular" size={20} />
+          <TriangleAlert size={20} />
         </div>
         <div className="flex-1">
           <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Danger zone</h2>

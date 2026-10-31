@@ -1,16 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import {
-  CaretDown,
-  Check,
-  Code,
-  Copy,
-  DownloadSimple,
-  FileSvg,
-  Robot,
-  TerminalWindow,
-} from '@phosphor-icons/react'
+import { ChevronDown, Check, Code, Copy, Download, FileImage, Bot, SquareTerminal } from '@/app/_icons'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { copyText, useCopied } from '@/app/components/useCopied'
 import { agentPrompt, iconInstallCommand, iconJsxLine } from '../_lib/constants'
@@ -91,12 +82,12 @@ export function ActionBar({
   }, [open])
 
   const items = [
-    { label: 'Copy for agent', icon: Robot, action: () => copyText(prompt) },
-    { label: 'Copy install command', icon: TerminalWindow, action: () => copyText(iconInstallCommand(name)) },
+    { label: 'Copy for agent', icon: Bot, action: () => copyText(prompt) },
+    { label: 'Copy install command', icon: SquareTerminal, action: () => copyText(iconInstallCommand(name)) },
     { label: 'Copy JSX', icon: Code, action: () => copyText(jsx) },
     { label: 'Copy SVG', icon: Copy, action: () => copyText(svg) },
-    { label: 'Download SVG', icon: FileSvg, action: () => downloadSvg(name, svg) },
-    { label: 'Download PNG', icon: DownloadSimple, action: () => downloadPng(name, svg, size) },
+    { label: 'Download SVG', icon: FileImage, action: () => downloadSvg(name, svg) },
+    { label: 'Download PNG', icon: Download, action: () => downloadPng(name, svg, size) },
   ]
 
   return (
@@ -109,7 +100,7 @@ export function ActionBar({
           onClick={() => void copy()}
           className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-l-control sm:flex-none bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
-          {copied ? <Check weight="regular" size={14} /> : <Robot weight="regular" size={14} />}
+          {copied ? <Check size={14} /> : <Bot size={14} />}
           {copied ? 'Copied' : 'Copy for agent'}
         </button>
         <button
@@ -119,7 +110,7 @@ export function ActionBar({
           onClick={() => setOpen((value) => !value)}
           className="inline-flex h-8 w-8 items-center justify-center rounded-r-control border-l border-accent-foreground/20 bg-accent text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
-          <CaretDown weight="regular" size={13} />
+          <ChevronDown size={13} />
         </button>
         {open && (
           <div className="absolute left-0 top-10 z-50 w-56 rounded-section border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900">
@@ -133,7 +124,7 @@ export function ActionBar({
                 }}
                 className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50"
               >
-                <item.icon weight="regular" size={15} aria-hidden />
+                <item.icon size={15} aria-hidden />
                 {item.label}
               </button>
             ))}
@@ -141,11 +132,11 @@ export function ActionBar({
         )}
       </div>
       <button type="button" onClick={() => void copyText(jsx)} className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
-        <Code weight="regular" size={14} />
+        <Code size={14} />
         Copy JSX
       </button>
       <button type="button" onClick={() => downloadSvg(name, svg)} className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
-        <DownloadSimple weight="regular" size={14} />
+        <Download size={14} />
         SVG
       </button>
     </div>

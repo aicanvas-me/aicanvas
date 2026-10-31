@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Check } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons'
 import { useSession } from '../../components/auth/SessionProvider'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
 import { createClient } from '../../lib/supabase/client'
@@ -114,7 +114,7 @@ export function AvatarSection() {
 function Selected() {
   return (
     <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-accent text-accent-foreground">
-      <Check size={12} weight="bold" />
+      <Check size={12} strokeWidth={2} />
     </span>
   )
 }

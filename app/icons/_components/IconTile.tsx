@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Code, Copy } from '@phosphor-icons/react'
+import { Code, Copy } from '@/app/_icons'
 import { copyText } from '@/app/components/useCopied'
 import { iconJsxLine } from '../_lib/constants'
 import { buildSvg } from '../_lib/svg'
@@ -68,7 +68,7 @@ export function IconTile({
             onClick={() => void copyText(buildSvg(markup, exportSize, strokeWidth, exportColour, absolute))}
             className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
-            <Copy weight="regular" size={12} />
+            <Copy size={12} />
           </button>
           <button
             type="button"
@@ -77,7 +77,7 @@ export function IconTile({
             onClick={() => void copyText(iconJsxLine(icon.name, exportSize, strokeWidth, style, absolute, exportColour))}
             className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
-            <Code weight="regular" size={12} />
+            <Code size={12} />
           </button>
         </div>
       )}

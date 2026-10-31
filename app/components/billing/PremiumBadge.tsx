@@ -1,6 +1,6 @@
 'use client'
 
-import { Lightning } from '@phosphor-icons/react'
+import { Bolt } from '@/app/_icons'
 import { premiumEnabled } from '../../../lib/flags'
 
 /**
@@ -15,7 +15,7 @@ export function PremiumBadge({ className = '', label = 'Premium' }: { className?
     <span
       className={`inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-[11px] font-semibold text-accent-foreground ${className}`}
     >
-      <Lightning weight="regular" size={11} />
+      <Bolt size={11} />
       {label}
     </span>
   )

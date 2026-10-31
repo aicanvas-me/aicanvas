@@ -1,4 +1,4 @@
-import { Scales } from '@phosphor-icons/react/dist/ssr'
+import { Scale } from '@/app/_icons'
 import Link from 'next/link'
 import { CONTACT_EMAIL } from '../lib/config'
 import { PageHero, PageShell } from '../components/PageKit'
@@ -29,7 +29,7 @@ export default function ImpressumPage() {
       <PageHero
         size="md"
         pill="Legal"
-        pillIcon={<Scales weight="regular" size={12} className="text-accent" aria-hidden />}
+        pillIcon={<Scale size={12} className="text-accent" aria-hidden />}
         title="Impressum"
         sub={
           // Each line wraps at its slash, so the German sits over its English

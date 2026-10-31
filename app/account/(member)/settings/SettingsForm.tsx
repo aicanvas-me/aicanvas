@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Check } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons'
 import { useSession } from '../../../components/auth/SessionProvider'
 import { Toggle } from '../../../components/Toggle'
 import { CARD } from '../../../components/PageKit'
@@ -75,7 +75,7 @@ function Pill({
           : 'border-sand-200 bg-sand-100 text-sand-700 hover:border-sand-300 hover:text-sand-900 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100'
       }`}
     >
-      {active && <Check weight="bold" size={12} />}
+      {active && <Check strokeWidth={2} size={12} />}
       {children}
     </button>
   )

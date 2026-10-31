@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { ArrowRight } from '@phosphor-icons/react/dist/ssr'
+import { ArrowRight } from '@/app/_icons'
 import { buttonClasses } from './buttonClasses'
 import { CtaBand } from './PageKit'
 import { CATALOG_TOTAL } from '../lib/catalog-count'
@@ -16,7 +16,7 @@ export function SiteCta() {
     >
       <Link href="/components" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
         Browse components
-        <ArrowRight weight="regular" size={14} />
+        <ArrowRight size={14} />
       </Link>
       <Link href="/mcp" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
         Set up MCP

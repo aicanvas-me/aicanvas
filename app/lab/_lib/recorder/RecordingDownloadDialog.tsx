@@ -7,7 +7,7 @@
 // so the lab popups feel consistent.
 
 import { useEffect, useState } from 'react'
-import { X, FilmReel, FilmSlate, CheckCircle } from '@phosphor-icons/react'
+import { X, FilmReel, Clapperboard, CircleCheck } from '@/app/_icons'
 import { Button } from '../../../components/Button'
 
 type Props = {
@@ -114,7 +114,7 @@ export function RecordingDownloadDialog({
           aria-label="Close"
           className="absolute right-3 top-3"
         >
-          <X weight="regular" size={18} />
+          <X size={18} />
         </Button>
 
         {savingFps === null ? (
@@ -131,7 +131,7 @@ export function RecordingDownloadDialog({
                 label="60 fps"
                 sublabel="Smooth motion"
                 sizeHint={formatMB(sizeAt60)}
-                icon={<FilmReel weight="regular" size={22} />}
+                icon={<FilmReel size={22} />}
                 badge="Original"
                 onClick={() => handlePick(60)}
               />
@@ -139,7 +139,7 @@ export function RecordingDownloadDialog({
                 label="30 fps"
                 sublabel="Smaller file, share-friendly"
                 sizeHint={`~${formatMB(sizeAt30)}`}
-                icon={<FilmSlate weight="regular" size={22} />}
+                icon={<Clapperboard size={22} />}
                 onClick={() => handlePick(30)}
               />
             </div>
@@ -170,7 +170,7 @@ function SavingView({ fps }: { fps: 30 | 60 }) {
       : "It'll land in your downloads when the re-encode finishes. You can close this and keep working."
   return (
     <div className="flex flex-col items-center gap-3 py-6 text-center">
-      <CheckCircle weight="fill" size={36} className="text-success" />
+      <CircleCheck variant="solid" size={36} className="text-success" />
       <h2 className="text-xl font-bold text-sand-900 dark:text-sand-50">{headline}</h2>
       <p className="max-w-sm text-sm text-sand-600 dark:text-sand-400">{body}</p>
     </div>

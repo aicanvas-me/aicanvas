@@ -1,6 +1,6 @@
 'use client'
 
-import { Heart } from '@phosphor-icons/react'
+import { Heart } from '@/app/_icons'
 import { usePathname } from 'next/navigation'
 import { useSession } from './auth/SessionProvider'
 import { useAuthModal } from './auth/AuthModalProvider'
@@ -55,7 +55,7 @@ export function SaveButton({ slug, system = null, className = '', size = 15 }: S
       aria-pressed={saved}
       className={`${saved ? 'text-accent' : ''} ${className}`.trim()}
     >
-      <Heart weight={saved ? 'fill' : 'regular'} size={size} />
+      <Heart variant={saved ? 'solid' : 'linear'} size={size} />
     </Button>
   )
 }

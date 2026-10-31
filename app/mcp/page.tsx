@@ -1,14 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import type { ReactNode } from 'react'
-import {
-  ArrowRight,
-  ArrowsClockwise,
-  Package,
-  PlugsConnected,
-  Sparkle,
-  Terminal,
-} from '@phosphor-icons/react/dist/ssr'
+import { ArrowRight, Refresh, Package, PlugsConnected, Sparkle, Terminal } from '@/app/_icons'
 import { InstallCards } from './InstallCards'
 import { buttonClasses } from '../components/buttonClasses'
 import { FaqRows } from '../components/FaqRows'
@@ -49,17 +42,17 @@ const BENEFITS: { title: string; body: string; icon: ReactNode }[] = [
   {
     title: 'One command, then forget it',
     body: 'Install the MCP with a single command. After that your agent can search, inspect, and install AI Canvas components on its own.',
-    icon: <Terminal weight="regular" size={18} />,
+    icon: <Terminal size={18} />,
   },
   {
     title: 'No more from-scratch UI',
     body: 'Instead of generating UI from zero, your agent pulls a real component with full source, the design spec, and Framer Motion.',
-    icon: <Package weight="regular" size={18} />,
+    icon: <Package size={18} />,
   },
   {
     title: 'Always current',
     body: 'The server fetches from the live registry at runtime, so new components reach your agent about five minutes after they ship.',
-    icon: <ArrowsClockwise weight="regular" size={18} />,
+    icon: <Refresh size={18} />,
   },
 ]
 
@@ -85,7 +78,7 @@ export default function McpPage() {
         <PageHero
           pill="MCP server"
           pillIcon={
-            <PlugsConnected weight="regular" size={12} className="text-accent" aria-hidden />
+            <PlugsConnected size={12} className="text-accent" aria-hidden />
           }
           title="AI Canvas MCP connected with"
           accent="Claude Code, Codex, and Cursor."
@@ -152,7 +145,6 @@ export default function McpPage() {
                   className="flex items-start gap-3 rounded-card border border-sand-200 bg-sand-100 px-5 py-4 text-[15px] leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300"
                 >
                   <Sparkle
-                    weight="regular"
                     size={16}
                     aria-hidden
                     className="mt-1 shrink-0 text-accent"
@@ -176,7 +168,7 @@ export default function McpPage() {
         <CtaBand eyebrow="Ready to build?" title="Start with the source, not a blank prompt.">
           <Link href="/components" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
             Browse components
-            <ArrowRight weight="regular" size={14} />
+            <ArrowRight size={14} />
           </Link>
           <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
             Explore Andromeda Pro

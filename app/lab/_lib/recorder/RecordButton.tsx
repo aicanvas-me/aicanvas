@@ -6,7 +6,7 @@
 // states: idle (outline + red dot icon), recording (filled red pill +
 // pulse + live timer), encoding (disabled outline + Saving…).
 
-import { Record, Stop } from '@phosphor-icons/react'
+import { Record, Stop } from '@/app/_icons'
 
 export type RecordButtonProps = {
   state: 'idle' | 'recording' | 'encoding'
@@ -57,7 +57,7 @@ export function RecordButton({
         aria-label="Saving recording"
         className={`${BASE} cursor-not-allowed border border-sand-300 bg-sand-50/90 text-sand-500 dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-500`}
       >
-        <Stop weight="fill" size={11} />
+        <Stop variant="solid" size={11} />
         Saving…
       </button>
     )
@@ -71,7 +71,7 @@ export function RecordButton({
       aria-label="Record MP4"
       className={`${BASE} border border-sand-300 bg-sand-50/90 text-sand-800 hover:border-sand-400 disabled:cursor-not-allowed disabled:opacity-50 dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-100 dark:hover:border-sand-600`}
     >
-      <Record weight="fill" size={11} className="text-red-500" />
+      <Record variant="solid" size={11} className="text-red-500" />
       Record MP4
     </button>
   )

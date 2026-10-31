@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, useReducedMotion } from 'framer-motion'
-import { ClockClockwise, Gear, Heart, User } from '@phosphor-icons/react'
+import { History, Gear, Heart, User } from '@/app/_icons'
 import type { ComponentType } from 'react'
 
 // Tabs mirror the dropdown menu entries (TopAuthPill + UserMenu) — same
@@ -13,7 +13,7 @@ type IconComponent = ComponentType<{ size?: number; weight?: 'regular' | 'bold' 
 
 const TABS: { href: string; label: string; Icon: IconComponent }[] = [
   { href: '/account/saved', label: 'Saved', Icon: Heart },
-  { href: '/account/history', label: 'Activity', Icon: ClockClockwise },
+  { href: '/account/history', label: 'Activity', Icon: History },
   { href: '/account/settings', label: 'Settings', Icon: Gear },
   { href: '/account', label: 'Profile', Icon: User },
 ]
@@ -54,7 +54,7 @@ export function AccountTabs() {
                   }
                 />
               )}
-              <Icon size={16} weight="regular" className="relative hidden sm:block" />
+              <Icon size={16} className="relative hidden sm:block" />
               <span className="relative">{label}</span>
             </Link>
           )

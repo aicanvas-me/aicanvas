@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CheckCircle, EnvelopeSimple } from '@phosphor-icons/react'
+import { CircleCheck, Mail } from '@/app/_icons'
 import { Button } from '../components/Button'
 import { CARD, EYEBROW, PageHero, PageShell } from '../components/PageKit'
 
@@ -75,7 +75,7 @@ export default function ContactPage() {
     <PageShell>
       <PageHero
         pill="Get in touch"
-        pillIcon={<EnvelopeSimple weight="regular" size={12} className="text-accent" aria-hidden />}
+        pillIcon={<Mail size={12} className="text-accent" aria-hidden />}
         title="Contact"
         size="md"
         sub={
@@ -97,7 +97,7 @@ export default function ContactPage() {
           >
             <CardLight />
             <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-success/30 bg-success/10">
-              <CheckCircle weight="regular" size={24} className="text-success" />
+              <CircleCheck size={24} className="text-success" />
             </span>
             <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Message sent</h2>
             <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-sand-700 dark:text-sand-300">

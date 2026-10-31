@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useRef, useState, type CSSProperties, type KeyboardEvent } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import { CaretDown, Warning } from '@phosphor-icons/react'
+import { ChevronDown, TriangleAlert } from '@/app/_icons'
 import { SHADE_MAX, SHADE_MIN, contrast, hexToOklch, normalizeHex, oklchToHex, type Oklch } from '../_lib/colour'
 import { COLOUR_SWATCHES, DARK_PREVIEW_COLOUR, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 
@@ -99,8 +99,7 @@ export function ColourControl({
       >
         Colour
         <span aria-hidden className={`size-5 rounded-full ${DOT_RING}`} style={value ? { backgroundColor: value } : THEME_DISC} />
-        <CaretDown
-          weight="regular"
+        <ChevronDown
           aria-hidden
           className={`size-3 text-sand-600 transition-transform dark:text-sand-400 ${open ? 'rotate-180' : ''}`}
         />
@@ -303,7 +302,7 @@ function ColourPanel({
       </div>
       {lowContrast && (
         <p className="mt-2 flex items-center gap-1.5 text-xs text-sand-600 dark:text-sand-400">
-          <Warning weight="regular" aria-hidden className="size-3.5 shrink-0" />
+          <TriangleAlert aria-hidden className="size-3.5 shrink-0" />
           Low contrast on this background
         </p>
       )}

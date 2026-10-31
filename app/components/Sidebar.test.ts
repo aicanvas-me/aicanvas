@@ -37,7 +37,7 @@ vi.mock('next/link', () => ({
 // The icon barrel is thousands of modules the rail never needs in a test.
 vi.mock('@phosphor-icons/react', () => {
   const Icon = () => null
-  return { CaretDown: Icon, Cube: Icon, DiamondsFour: Icon, Shapes: Icon, GithubLogo: Icon, XLogo: Icon, Sparkle: Icon }
+  return { GithubLogo: Icon, XLogo: Icon }
 })
 
 afterEach(() => {

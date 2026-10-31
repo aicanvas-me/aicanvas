@@ -10,7 +10,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { HexColorPicker, HexColorInput } from 'react-colorful'
-import { Eyedropper, Plus } from '@phosphor-icons/react'
+import { Pipette, Plus } from '@/app/_icons'
 
 // Chromium-based browsers expose a screen-eyedropper. Feature-detected at
 // runtime so unsupported browsers (Firefox, Safari) hide the button.
@@ -121,7 +121,7 @@ export function ColorInput({
       )}
       <Plus
         size={appearance === 'solid' ? 14 : 12}
-        weight="bold"
+        strokeWidth={2}
         className="relative text-white"
         style={appearance === 'solid' ? { filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6))' } : undefined}
       />
@@ -178,7 +178,7 @@ export function ColorInput({
                 title="Pick from screen"
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-sand-300 bg-sand-100 text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-50"
               >
-                <Eyedropper size={14} weight="regular" />
+                <Pipette size={14} />
               </button>
             )}
           </div>

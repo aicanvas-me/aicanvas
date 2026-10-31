@@ -1,6 +1,6 @@
 'use client'
 
-import { Moon, Sun } from '@phosphor-icons/react'
+import { Moon, Sun } from '@/app/_icons'
 import { buttonClasses } from './buttonClasses'
 import { useTheme } from './ThemeProvider'
 
@@ -35,14 +35,12 @@ export function ThemeToggle({
     >
       <span className="relative block" style={{ height: glyph, width: glyph }} data-theme-keep-transition>
         <Sun
-          weight="regular"
           size={glyph}
           className={`absolute inset-0 transition-all duration-200 ${
             dark ? 'rotate-0 scale-100 opacity-100' : '-rotate-90 scale-75 opacity-0'
           }`}
         />
         <Moon
-          weight="regular"
           size={glyph}
           className={`absolute inset-0 transition-all duration-200 ${
             dark ? 'rotate-90 scale-75 opacity-0' : 'rotate-0 scale-100 opacity-100'

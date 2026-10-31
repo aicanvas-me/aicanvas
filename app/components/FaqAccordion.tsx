@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { CaretRight } from '@phosphor-icons/react'
+import { ChevronRight } from '@/app/_icons'
 import type { FaqItem } from '../faq/FaqView'
 
 export type { FaqItem }
@@ -110,8 +110,7 @@ export function FaqAccordion({
                 onClick={(e) => { e.stopPropagation(); toggle(i) }}
                 className="shrink-0"
               >
-                <CaretRight
-                  weight="regular"
+                <ChevronRight
                   size={16}
                   className={`transition-transform duration-200 ${
                     isOpen ? 'rotate-90 text-accent' : 'text-sand-600 dark:text-sand-600'

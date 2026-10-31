@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { ArrowCounterClockwise, ArrowLeft, ArrowRight, Check, Copy } from '@phosphor-icons/react'
+import { RotateCcw, ArrowLeft, ArrowRight, Check, Copy } from '@/app/_icons'
 import { CopyPage } from '@/app/components/CopyPage'
 import { PAGE_TOP, PageFrame } from '@/app/_components/DesignSystemPage'
 import { PageCrumbs } from '@/app/components/PageCrumbs'
@@ -39,7 +39,7 @@ function AdjacentLink({ icon, direction, query }: { icon?: IconWithMarkup; direc
   if (!icon) {
     return (
       <button type="button" disabled aria-label={`No ${word.toLowerCase()} icon`} className={`${ROUND_BUTTON} cursor-default opacity-40`}>
-        <Arrow weight="regular" aria-hidden className="size-4" />
+        <Arrow aria-hidden className="size-4" />
       </button>
     )
   }
@@ -51,7 +51,7 @@ function AdjacentLink({ icon, direction, query }: { icon?: IconWithMarkup; direc
       title={label}
       className={`${ROUND_BUTTON} hover:border-sand-400 hover:bg-sand-200/50 hover:text-sand-900 dark:hover:border-sand-600 dark:hover:bg-sand-800/60 dark:hover:text-sand-50`}
     >
-      <Arrow weight="regular" aria-hidden className="size-4" />
+      <Arrow aria-hidden className="size-4" />
     </Link>
   )
 }
@@ -68,9 +68,9 @@ function SlugChip({ name }: { name: string }) {
     >
       {name}
       {copied ? (
-        <Check weight="regular" aria-hidden className="size-3 text-success" />
+        <Check aria-hidden className="size-3 text-success" />
       ) : (
-        <Copy weight="regular" aria-hidden className="size-3" />
+        <Copy aria-hidden className="size-3" />
       )}
       <span aria-live="polite" className="sr-only">{copied ? 'Slug copied' : ''}</span>
     </button>
@@ -249,7 +249,7 @@ export function IconDetail({
                 title="Reset"
                 className="ml-auto inline-flex size-8 shrink-0 items-center justify-center rounded-full text-sand-600 transition-colors hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 disabled:pointer-events-none disabled:opacity-40 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-50"
               >
-                <ArrowCounterClockwise weight="regular" aria-hidden className="size-4" />
+                <RotateCcw aria-hidden className="size-4" />
               </button>
             </div>
             <div aria-hidden className="my-2 h-px bg-sand-200 dark:bg-sand-800" />
@@ -269,7 +269,7 @@ export function IconDetail({
                 className="inline-flex items-center gap-1 whitespace-nowrap rounded-chip text-xs font-semibold text-accent transition-colors hover:text-accent/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
               >
                 All {categoryLabel} icons
-                <ArrowRight weight="regular" aria-hidden className="size-3.5" />
+                <ArrowRight aria-hidden className="size-3.5" />
               </Link>
             </div>
             <div className={ICON_GRID_CLASS}>

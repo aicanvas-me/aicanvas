@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { CaretDown } from '@phosphor-icons/react'
+import { ChevronDown } from '@/app/_icons'
 import { DOCS_NAV, DOC_PAGES } from '../_lib/nav'
 
 const ROW =
@@ -67,8 +67,7 @@ export function DocsMobileNav() {
           <span className="text-sand-600 dark:text-sand-400">Docs</span>
           {current && <span> / {current.title}</span>}
         </span>
-        <CaretDown
-          weight="regular"
+        <ChevronDown
           size={14}
           className="shrink-0 text-sand-600 transition-transform group-open:rotate-180 dark:text-sand-400"
         />

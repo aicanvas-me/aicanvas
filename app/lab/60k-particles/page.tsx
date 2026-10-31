@@ -36,7 +36,7 @@ import { Segmented } from '../_lib/particleMark/controls/Segmented'
 import { Slider } from '../_lib/particleMark/controls/Slider'
 import { ColorInput } from '../_lib/particleMark/controls/ColorInput'
 import { FileDrop } from '../_lib/particleMark/controls/FileDrop'
-import { CircleHalfTilt, Sun, Prohibit, BookmarkSimple, CaretDown, Check } from '@phosphor-icons/react'
+import { Contrast, Sun, Ban, Bookmark, ChevronDown, Check } from '@/app/_icons'
 import { useLabAuthGate } from '../_lib/useLabAuthGate'
 import {
   serializeParticleConfig,
@@ -56,10 +56,10 @@ const TOOL = '60k-particles' as const
 // a sphere shaded as if the light were coming from that direction — much more
 // semantically accurate than plain directional arrows.
 const LIGHT_ICONS: Record<Light, React.ReactNode> = {
-  'Top-Right': <CircleHalfTilt size={16} weight="regular" />,
-  'Top-Left':  <CircleHalfTilt size={16} weight="regular" className="-scale-x-100" />,
-  'Center':    <Sun            size={16} weight="regular" />,
-  'None':      <Prohibit       size={16} weight="regular" />,
+  'Top-Right': <Contrast size={16} />,
+  'Top-Left':  <Contrast size={16} className="-scale-x-100" />,
+  'Center':    <Sun            size={16} />,
+  'None':      <Ban       size={16} />,
 }
 
 const COLOR_MODE_OPTIONS: readonly ColorMode[]   = ['Original', 'Mono'] as const
@@ -573,7 +573,7 @@ export default function ParticleMarkLabPage() {
               onDelete={onDeletePreset}
             />
             <Button variant="outline" size="xs" fullWidth onClick={() => gate.run('save-preset')}>
-              <BookmarkSimple size={12} weight="regular" />
+              <Bookmark size={12} />
               Save preset
             </Button>
           </div>
@@ -589,11 +589,10 @@ export default function ParticleMarkLabPage() {
               onClick={() => setExportMenuOpen((o) => !o)}
               className="relative"
             >
-              {imageSaved && <Check weight="regular" size={12} />}
+              {imageSaved && <Check size={12} />}
               {imageSaved ? 'Saved!' : 'Save image'}
               {!imageSaved && (
-                <CaretDown
-                  weight="regular"
+                <ChevronDown
                   size={12}
                   className={`absolute right-3 transition-transform ${exportMenuOpen ? 'rotate-180' : ''}`}
                 />

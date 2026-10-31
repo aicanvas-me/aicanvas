@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import { MagnifyingGlass, Sparkle, Ghost, Question } from '@phosphor-icons/react'
+import { Search, Sparkle, Ghost, CircleQuestion } from '@/app/_icons'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ComponentCard } from './ComponentCard'
@@ -249,9 +249,9 @@ export function HomeClient({
   // Synced: each icon has its own matching line, flipping together every 1.5s.
   // Only ticks when the empty state is actually on screen.
   const EMPTY_BEATS = [
-    { Icon: MagnifyingGlass, phrase: 'hmm…' },
+    { Icon: Search, phrase: 'hmm…' },
     { Icon: Ghost,           phrase: 'nothing here…' },
-    { Icon: Question,        phrase: "where'd it go?" },
+    { Icon: CircleQuestion,        phrase: "where'd it go?" },
   ]
   const [emptyIdx, setEmptyIdx] = useState(0)
   useEffect(() => {
@@ -402,7 +402,7 @@ export function HomeClient({
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="flex items-center justify-center"
                 >
-                  <EmptyIcon weight="thin" size={48} className="text-accent" />
+                  <EmptyIcon strokeWidth={1} size={48} className="text-accent" />
                 </motion.span>
               </AnimatePresence>
             </div>
@@ -444,7 +444,7 @@ export function HomeClient({
                       onClick={() => applySuggestion(word)}
                       className="group flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-sm font-semibold text-accent transition-all hover:border-accent/60 hover:bg-accent/20 active:scale-95"
                     >
-                      <Sparkle weight="regular" size={13} className="opacity-60 transition-opacity group-hover:opacity-100" />
+                      <Sparkle size={13} className="opacity-60 transition-opacity group-hover:opacity-100" />
                       {word}
                     </button>
                   ))}

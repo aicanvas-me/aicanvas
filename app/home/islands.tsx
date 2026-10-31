@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useInView } from 'framer-motion'
-import { HandTap } from '@phosphor-icons/react'
+import { HandTap } from '@/app/_icons'
 
 // ─── Hello card data ─────────────────────────────────────────────────────────
 
@@ -119,7 +119,7 @@ export function StackedCards({ cards = HELLO_CARDS }: { cards?: string[] } = {})
               </span>
             )}
             {isFront && !isExiting && (
-              <HandTap weight="regular" size={18} className="absolute bottom-2 right-2 text-sand-500" />
+              <HandTap size={18} className="absolute bottom-2 right-2 text-sand-500" />
             )}
           </motion.div>
         )
