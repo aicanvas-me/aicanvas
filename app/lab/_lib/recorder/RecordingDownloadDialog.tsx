@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react'
 import { X } from '@/app/_icons/icons/x'
 import { FilmReel } from '@/app/_icons/icons/film-reel'
 import { Clapperboard } from '@/app/_icons/icons/clapperboard'
-import { CircleCheck } from '@/app/_icons/icons/circle-check'
+import { CircleCheckSolid } from '@/app/_icons/icons/circle-check-solid'
 import { Button } from '../../../components/Button'
 
 type Props = {
@@ -173,7 +173,7 @@ function SavingView({ fps }: { fps: 30 | 60 }) {
       : "It'll land in your downloads when the re-encode finishes. You can close this and keep working."
   return (
     <div className="flex flex-col items-center gap-3 py-6 text-center">
-      <CircleCheck variant="solid" size={36} className="text-success" />
+      <CircleCheckSolid size={36} className="text-success" />
       <h2 className="text-xl font-bold text-sand-900 dark:text-sand-50">{headline}</h2>
       <p className="max-w-sm text-sm text-sand-600 dark:text-sand-400">{body}</p>
     </div>

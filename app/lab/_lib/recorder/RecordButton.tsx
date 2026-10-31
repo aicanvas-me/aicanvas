@@ -6,8 +6,8 @@
 // states: idle (outline + red dot icon), recording (filled red pill +
 // pulse + live timer), encoding (disabled outline + Saving…).
 
-import { Record } from '@/app/_icons/icons/record'
-import { Stop } from '@/app/_icons/icons/stop'
+import { RecordSolid } from '@/app/_icons/icons/record-solid'
+import { StopSolid } from '@/app/_icons/icons/stop-solid'
 
 export type RecordButtonProps = {
   state: 'idle' | 'recording' | 'encoding'
@@ -58,7 +58,7 @@ export function RecordButton({
         aria-label="Saving recording"
         className={`${BASE} cursor-not-allowed border border-sand-300 bg-sand-50/90 text-sand-500 dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-500`}
       >
-        <Stop variant="solid" size={11} />
+        <StopSolid size={11} />
         Saving…
       </button>
     )
@@ -72,7 +72,7 @@ export function RecordButton({
       aria-label="Record MP4"
       className={`${BASE} border border-sand-300 bg-sand-50/90 text-sand-800 hover:border-sand-400 disabled:cursor-not-allowed disabled:opacity-50 dark:border-sand-700 dark:bg-sand-900/90 dark:text-sand-100 dark:hover:border-sand-600`}
     >
-      <Record variant="solid" size={11} className="text-red-500" />
+      <RecordSolid size={11} className="text-red-500" />
       Record MP4
     </button>
   )

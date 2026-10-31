@@ -2,8 +2,8 @@
 
 import Link from 'next/link'
 import { ImageSquare } from '@/app/_icons/icons/image-square'
-import { Bolt } from '@/app/_icons/icons/bolt'
-import { BadgeCheck } from '@/app/_icons/icons/badge-check'
+import { BoltSolid } from '@/app/_icons/icons/bolt-solid'
+import { BadgeCheckSolid } from '@/app/_icons/icons/badge-check-solid'
 import { track, type CardSource } from '../lib/analytics'
 import { optimizeImageKitUrl } from '../lib/imagekit'
 
@@ -67,9 +67,9 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
             }`}
           >
             {badge === 'Free' ? (
-              <BadgeCheck variant="solid" size={14} className="shrink-0" />
+              <BadgeCheckSolid size={14} className="shrink-0" />
             ) : (
-              <Bolt variant="solid" size={14} className="shrink-0" />
+              <BoltSolid size={14} className="shrink-0" />
             )}
             <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
               <span className="overflow-hidden">

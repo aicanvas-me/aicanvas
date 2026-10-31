@@ -21,6 +21,7 @@ import { RotateCw } from '@/app/_icons/icons/rotate-cw'
 import { Terminal } from '@/app/_icons/icons/terminal'
 import { Sparkle } from '@/app/_icons/icons/sparkle'
 import { Bolt } from '@/app/_icons/icons/bolt'
+import { BoltSolid } from '@/app/_icons/icons/bolt-solid'
 import type { Tag, Platform } from '../ComponentCard'
 import { isStackLabel, STACK_ICONS, stackIconWidthForHeight, type Stack } from '../../lib/stack'
 import { PageCrumbs } from '../PageCrumbs'
@@ -874,7 +875,7 @@ export default function ComponentPageView({
                   // bolt at rest, slides open to the label on hover — a
                   // reminder that the install below is premium-gated.
                   <span className="group/premium flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-50 ring-1 ring-sand-50/30 backdrop-blur-sm">
-                    <Bolt variant="solid" size={14} className="shrink-0" />
+                    <BoltSolid size={14} className="shrink-0" />
                     <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover/premium:grid-cols-[1fr]">
                       <span className="overflow-hidden">
                         <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">

@@ -1,6 +1,7 @@
 'use client'
 
 import { Heart } from '@/app/_icons/icons/heart'
+import { HeartSolid } from '@/app/_icons/icons/heart-solid'
 import { usePathname } from 'next/navigation'
 import { useSession } from './auth/SessionProvider'
 import { useAuthModal } from './auth/AuthModalProvider'
@@ -55,7 +56,7 @@ export function SaveButton({ slug, system = null, className = '', size = 15 }: S
       aria-pressed={saved}
       className={`${saved ? 'text-accent' : ''} ${className}`.trim()}
     >
-      <Heart variant={saved ? 'solid' : 'linear'} size={size} />
+      {saved ? <HeartSolid size={size} /> : <Heart size={size} />}
     </Button>
   )
 }

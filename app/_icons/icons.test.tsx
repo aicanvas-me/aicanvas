@@ -1,49 +1,66 @@
+// @vitest-environment jsdom
 import { readFileSync, readdirSync } from 'node:fs'
 import { join } from 'node:path'
+import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { IconProvider } from './Icon'
+import { IconProvider } from './IconBase'
 import { Check } from './icons/check'
 import { Search } from './icons/search'
 
 // The site runs the icon set's React package unchanged (scripts/site-icons.mjs
-// copies it from the vault), so these are what a customer gets. Each case broke
-// once: a server component crashed on any icon, a class-set size thinned the
-// line, a nested provider dropped the outer defaults, a <title> stayed hidden.
-const fromVault = readFileSync(join(__dirname, 'Icon.tsx'), 'utf8').includes('export function createIcon')
+// copies it from the vault). Phosphor stand-ins do not implement its geometry
+// or CSS stroke behavior, so only exercise these contracts with the package.
+const fromVault = readFileSync(join(__dirname, 'IconBase.tsx'), 'utf8').includes('export function createIcon')
+
+function render(element: ReactNode) {
+  const container = document.createElement('div')
+  container.innerHTML = renderToStaticMarkup(element)
+  return container
+}
 
 describe.skipIf(!fromVault)('the icon package a customer installs', () => {
-  it('marks Icon.tsx and every icon file as client modules, so a server component can render them', () => {
-    const files = ['Icon.tsx', ...readdirSync(join(__dirname, 'icons')).map((f) => `icons/${f}`)]
-    for (const f of files) expect(readFileSync(join(__dirname, f), 'utf8').startsWith(`'use client'`), f).toBe(true)
-  })
-
-  it('keeps the line at 1.5px however the size is set', () => {
-    for (const el of [<Search key="p" size={16} />, <Search key="c" className="size-4" />, <Check key="d" />]) {
-      const html = renderToStaticMarkup(el)
-      expect(html).toContain('stroke-width="1.5"')
-      expect(html.match(/<(path|circle) /g)?.length).toBe(html.match(/vector-effect="non-scaling-stroke"/g)?.length)
+  it('keeps the runtime and every icon server-safe without context', () => {
+    const files = ['IconBase.tsx', ...readdirSync(join(__dirname, 'icons')).filter((f) => f.endsWith('.tsx')).map((f) => `icons/${f}`)]
+    expect(files.length).toBeGreaterThan(1)
+    for (const file of files) {
+      expect(readFileSync(join(__dirname, file), 'utf8'), file).not.toMatch(/use client|createContext|useContext/)
     }
   })
 
-  it('scales the line with the size when absolute stroke is off', () => {
-    const html = renderToStaticMarkup(<Search size={48} absoluteStrokeWidth={false} />)
-    expect(html).toContain('stroke-width="1.5"')
-    expect(html).not.toContain('vector-effect')
+  it('uses inherited CSS stroke defaults however the size is set', () => {
+    for (const el of [<Search key="d" />, <Search key="p" size={16} />, <Search key="c" className="size-4" />, <Check key="check" />]) {
+      const container = render(el)
+      expect(container.querySelector('svg')?.style.strokeWidth).toBe('var(--aic-icon-stroke, 1.5)')
+      const stroked = container.querySelectorAll<SVGElement>('path:not([stroke="none"]), circle:not([stroke="none"])')
+      expect(stroked.length).toBeGreaterThan(0)
+      for (const child of stroked) {
+        expect(child.style.vectorEffect).toBe('var(--aic-icon-vector-effect, non-scaling-stroke)')
+      }
+    }
   })
 
-  it('lets a nested provider change only what it sets', () => {
-    const html = renderToStaticMarkup(
-      <IconProvider size={32} color="red" className="a">
-        <IconProvider variant="duotone" className="b">
-          <Search />
-        </IconProvider>
+  it('lets an explicit stroke width override the CSS default', () => {
+    expect(render(<Search strokeWidth={2} />).querySelector('svg')?.style.strokeWidth).toBe('2')
+  })
+
+  it('scales the line with the size when absolute stroke is off', () => {
+    const container = render(<Search size={48} absoluteStrokeWidth={false} />)
+    const stroked = container.querySelectorAll<SVGElement>('path, circle')
+    expect(stroked.length).toBeGreaterThan(0)
+    for (const child of stroked) expect(child.style.vectorEffect).toBe('none')
+  })
+
+  it('provides stroke defaults through a display: contents span', () => {
+    const container = render(
+      <IconProvider strokeWidth={1.25}>
+        <Search />
       </IconProvider>,
     )
-    expect(html).toContain('width="32"')
-    expect(html).toContain('color="red"')
-    expect(html).toContain('class="aic-icon aic-icon-search a b"')
-    expect(html).toContain('opacity=".12"')
+    const provider = container.querySelector('span')
+    expect(provider?.style.display).toBe('contents')
+    expect(provider?.style.getPropertyValue('--aic-icon-stroke')).toBe('1.25')
+    expect(provider?.querySelector('svg')).not.toBeNull()
   })
 
   it('hides a bare icon from screen readers and names one that carries a title', () => {
@@ -55,5 +72,13 @@ describe.skipIf(!fromVault)('the icon package a customer installs', () => {
     )
     expect(titled).not.toContain('aria-hidden')
     expect(titled).toContain('role="img"')
+  })
+
+  it('keeps solid heart geometry out of the Line icon module', () => {
+    const line = readFileSync(join(__dirname, 'icons/heart.tsx'), 'utf8')
+    const solid = readFileSync(join(__dirname, 'icons/heart-solid.tsx'), 'utf8')
+    const paths = Array.from(solid.matchAll(/["']d["']\s*:\s*["']([^"']+)["']/g), ([, path]) => path)
+    expect(paths.length).toBeGreaterThan(0)
+    for (const path of paths) expect(line).not.toContain(path)
   })
 })

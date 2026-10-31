@@ -133,5 +133,5 @@ app/lib/andromeda-pro-brain-teaser.generated.ts
 # icon set data, built from the vault by scripts/icons-data.mjs
 app/icons/_data/
 /public/icons-data/
-app/_icons/Icon.tsx
+app/_icons/IconBase.tsx
 app/_icons/icons/
