@@ -57,6 +57,7 @@ export function generateIconRegistry({
   sourceDir = findIconSource(),
   outDir = join(ROOT, 'registry-data'),
   baseUrl = REGISTRY_BASE,
+  metaFile = join(ROOT, 'app/icons/_data/icons.generated.json'),
 } = {}) {
   if (!sourceDir || !existsSync(join(sourceDir, 'react/IconBase.tsx'))) {
     console.log('icon-registry: no icon checkout; nothing written')
@@ -89,6 +90,17 @@ export function generateIconRegistry({
   }
   items.push(registryItem('icons', 'Icons (Line)', `All ${names.length} Line icons and their shared React runtime.`, lineFiles))
 
+  // The catalog the MCP and agents search: names, categories, tags, never geometry.
+  const meta = existsSync(metaFile) ? JSON.parse(readFileSync(metaFile, 'utf8')) : []
+  const metaByName = new Map(meta.map((icon) => [icon.name, icon]))
+  const catalog = {
+    name: 'icons-index',
+    description: 'Every AI Canvas icon: name, category and tags. Install one with icon-<name>[-style].json.',
+    count: names.length,
+    styles: STYLES.map(({ suffix, label }) => ({ style: suffix.slice(1) || 'line', label, suffix, tier: suffix ? 'premium' : 'free' })),
+    icons: names.map((name) => ({ name, category: metaByName.get(name)?.category ?? null, tags: metaByName.get(name)?.tags ?? [] })),
+  }
+
   // Read the complete set before writing, so an incomplete checkout fails
   // without leaving a partially generated set. The index and manifest belong
   // to the existing registry generator and are never read or written here.
@@ -96,7 +108,8 @@ export function generateIconRegistry({
   for (const item of items) {
     writeFileSync(join(outDir, `${item.name}.json`), JSON.stringify(item, null, 2) + '\n')
   }
-  console.log(`icon-registry: ${names.length} icons × ${STYLES.length} styles + base + Line set = ${items.length} items`)
+  writeFileSync(join(outDir, 'icons-index.json'), JSON.stringify(catalog) + '\n')
+  console.log(`icon-registry: ${names.length} icons × ${STYLES.length} styles + base + Line set = ${items.length} items, + icons-index`)
   return { iconCount: names.length, itemCount: items.length }
 }
 

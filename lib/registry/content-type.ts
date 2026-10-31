@@ -33,7 +33,7 @@ export interface ContentLookup {
 }
 
 // Catalog/index files the CLI and MCP need to browse — never gated.
-const META_SLUGS = new Set(['registry', 'aicanvas-mcp', 'aicanvas-props'])
+const META_SLUGS = new Set(['registry', 'aicanvas-mcp', 'aicanvas-props', 'icons-index'])
 
 const PAID_ICON_STYLE = /-(duotone|solid|solid-duotone)$/
 

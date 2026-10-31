@@ -76,7 +76,7 @@ describe('icon registry generator', () => {
 
     expect(generateIconRegistry({ sourceDir, outDir, baseUrl: 'https://registry.example///' }))
       .toEqual({ iconCount: 3, itemCount: 14 })
-    expect(readdirSync(outDir)).toHaveLength(17)
+    expect(readdirSync(outDir)).toHaveLength(18)
     for (const filename of untouched) expect(readFileSync(join(outDir, filename), 'utf8')).toBe('{"keep":true}\n')
 
     const base = readItem('icon-base')
@@ -122,7 +122,7 @@ describe('icon registry generator', () => {
 
   it('strips only the specified lines and rewrites the runtime import in every shipped file', () => {
     generateIconRegistry({ sourceDir, outDir })
-    for (const filename of readdirSync(outDir)) {
+    for (const filename of readdirSync(outDir).filter((file) => file !== 'icons-index.json')) {
       const item = readItem(filename.slice(0, -5))
       for (const file of item.files) {
         expect(file.content).not.toContain(MARKER)
@@ -161,6 +161,23 @@ describe('icon registry generator', () => {
     const content = readItem('icon-search').files[0].content
     expect(content).toContain('// Keep this comment.\r\n')
     expect(content).not.toMatch(/(?<!\r)\n/)
+  })
+
+  it('writes a geometry-free catalog with each icon\'s category, tags and style tiers', () => {
+    const metaFile = join(workDir, 'icons.generated.json')
+    writeFileSync(metaFile, JSON.stringify([{ name: 'search', category: 'interface', tags: ['find', 'magnifier'], added: null, isNew: false }]))
+    generateIconRegistry({ sourceDir, outDir, metaFile })
+    const raw = readFileSync(join(outDir, 'icons-index.json'), 'utf8')
+    for (const { path } of STYLES) expect(raw).not.toContain(path)
+    const catalog = JSON.parse(raw)
+    expect(catalog).toMatchObject({ name: 'icons-index', count: 3 })
+    expect(catalog.styles.map((s: { style: string; tier: string }) => `${s.style}:${s.tier}`))
+      .toEqual(['line:free', 'duotone:premium', 'solid:premium', 'solid-duotone:premium'])
+    expect(catalog.icons).toEqual([
+      { name: 'image-sparkle', category: null, tags: [] },
+      { name: 'map', category: null, tags: [] },
+      { name: 'search', category: 'interface', tags: ['find', 'magnifier'] },
+    ])
   })
 
   it('writes nothing and logs once when no checkout exists', () => {
