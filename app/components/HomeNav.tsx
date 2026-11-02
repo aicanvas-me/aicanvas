@@ -18,6 +18,7 @@ import { useEffect, useId, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { CATEGORIES } from '../lib/categories'
+import { BrandIcon } from './BrandIcon'
 
 // prefetch false: a page linked ahead of its launch (/icons) is not prefetched.
 type NavLink = { label: string; href: string; prefetch?: false }
@@ -133,7 +134,7 @@ function Menu({
 export function HomeLogo() {
   return (
     <Link href="/" className="flex shrink-0 items-center gap-2 justify-self-start font-bold text-sand-900 dark:text-sand-50">
-      <img src="/ai-canvas-icon.svg" alt="" width={20} height={17} className="shrink-0" />
+      <BrandIcon width={20} height={17} className="shrink-0" />
       AI Canvas
     </Link>
   )

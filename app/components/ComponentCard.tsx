@@ -54,8 +54,9 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
       <div className="relative aspect-video overflow-hidden bg-sand-100 dark:bg-sand-900">
         {badge && (
           // Aceternity-style pill: just a filled icon at rest, slides open to
-          // the label on card hover. Premium keeps the bolt; Free gets a
-          // quieter sand seal so the paid tier stays the visual accent.
+          // the label on card hover. Only the icon takes the tier hue: an orange
+          // bolt for Premium, a green seal for Free. The pill is dark in both
+          // themes, so the icons use the fixed dark steps.
           // No backdrop blur: over a lazy image Chrome painted it as a bare square.
           <div
             className={`absolute left-4 top-4 z-10 flex items-center rounded-full bg-sand-950/90 p-1.5 ring-1 ${
@@ -67,9 +68,9 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
             }`}
           >
             {badge === 'Free' ? (
-              <BadgeCheckSolid size={14} className="shrink-0" />
+              <BadgeCheckSolid size={14} className="shrink-0 text-emerald-400" />
             ) : (
-              <BoltSolid size={14} className="shrink-0" />
+              <BoltSolid size={14} className="shrink-0 text-ember-400" />
             )}
             <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
               <span className="overflow-hidden">

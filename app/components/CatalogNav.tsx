@@ -370,8 +370,8 @@ function SystemSections({
         {system.brain && (
           <CatalogRow href={`${root}/brain`} label="AI Brain" active={brainActive} onNavigate={onNavigate}>
             {/* The one icon left in the list: the Brain is the system's AI
-                layer, and the mark says so. */}
-            <Sparkle size={13} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-500" />
+                layer, and the mark says so in the AI cyan. */}
+            <Sparkle size={13} aria-hidden className="shrink-0 text-ai" />
             <span className="sr-only">Premium</span>
           </CatalogRow>
         )}

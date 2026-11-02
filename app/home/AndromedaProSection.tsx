@@ -43,7 +43,7 @@ function Brain() {
         <BrainWireframe followSite />
       </div>
       <div className="flex flex-col justify-center p-6 sm:p-8">
-        <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">The AI Brain</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-ai">The AI Brain</span>
         <h3 className="mt-2 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
           Your design system, written for AI.
         </h3>

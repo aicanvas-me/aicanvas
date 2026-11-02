@@ -32,6 +32,7 @@ import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
 import dynamic from 'next/dynamic'
+import { BrandIcon } from '../components/BrandIcon'
 import { useTheme } from '../components/ThemeProvider'
 import { InstallCopiedToast } from './InstallCopiedToast'
 // The dot-grid standalone, reused as the mobile preview backdrop. Loaded
@@ -461,7 +462,7 @@ function TopBar({
           aria-label="AI Canvas home"
           className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50"
         >
-          <img src="/ai-canvas-icon.svg" alt="" width={20} height={17} className="shrink-0" />
+          <BrandIcon width={20} height={17} className="shrink-0" />
           {/* Icon-only below md so the narrow bar leaves room for the breadcrumb
               (otherwise the template name truncates to "An…"); wordmark returns
               at md, matching the site sidebar rail. */}

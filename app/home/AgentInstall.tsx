@@ -13,6 +13,7 @@ import Link from 'next/link'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Check } from '@/app/_icons/icons/check'
 import { Sparkle } from '@/app/_icons/icons/sparkle'
+import { BrandIcon } from '../components/BrandIcon'
 import { useMedia } from './useMedia'
 import { ClaudeMark, CodexMark, CursorMark, CURSOR_DEEPLINK_BASE, claudeCommand, codexCommand } from '../mcp/InstallCards'
 
@@ -111,7 +112,7 @@ export function AgentInstall() {
 
   return (
     <div className="flex flex-col items-center text-center">
-      <img src="/ai-canvas-icon.svg" alt="" aria-hidden className="h-14 w-auto sm:h-16" />
+      <BrandIcon className="h-14 w-auto text-sand-900 sm:h-16 dark:text-sand-50" />
       <h3 className="mt-6 text-balance text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50">
         Install AI Canvas in your agent.
       </h3>

@@ -34,7 +34,7 @@ function Card({ item, hidden }: { item: WallItem; hidden?: boolean }) {
       <span className="flex items-center justify-between gap-2 px-1.5 pb-2 pt-1">
         <span className="truncate font-mono text-[11px] tracking-wide text-sand-600 dark:text-sand-400">{item.name}</span>
         {item.premium ? (
-          <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-accent">Premium</span>
+          <span className="shrink-0 font-mono text-[10px] uppercase tracking-[0.12em] text-premium">Premium</span>
         ) : null}
       </span>
       <span className="relative block aspect-[4/3] overflow-hidden rounded-inset bg-sand-950">

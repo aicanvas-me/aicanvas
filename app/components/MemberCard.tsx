@@ -3,6 +3,8 @@
 // the page, not page chrome. Kept for the About or Premium License page; the
 // homepage bento no longer uses it.
 
+import { BrandIcon } from './BrandIcon'
+
 const MONO = 'font-mono text-[10px] uppercase tracking-[0.18em]'
 
 export function MemberCard() {
@@ -16,7 +18,7 @@ export function MemberCard() {
         />
         <div className="relative flex h-full flex-col justify-between">
           <div className="flex items-start justify-between">
-            <img src="/ai-canvas-icon.svg" alt="" aria-hidden className="h-6 w-auto" />
+            <BrandIcon className="h-6 w-auto text-sand-50" />
             <span className={`${MONO} text-sand-300`}>Premium</span>
           </div>
           <span aria-hidden className="h-7 w-10 rounded-chip bg-[linear-gradient(135deg,var(--color-accent),var(--color-accent))] opacity-90 shadow-[inset_0_0_0_1px_rgba(0,0,0,0.15)]" />
