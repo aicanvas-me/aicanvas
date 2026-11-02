@@ -3,21 +3,19 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  ArrowClockwise,
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Code,
-  Copy,
-  CornersOut,
-  Eye,
-  Moon,
-  Sparkle,
-  Sun,
-  Terminal,
-  X,
-} from '@phosphor-icons/react'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw'
+import { ArrowLeft } from '@/app/_icons/icons/arrow-left'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Check } from '@/app/_icons/icons/check'
+import { Code } from '@/app/_icons/icons/code'
+import { CopyIcon } from '@/app/_icons/icons/copy'
+import { Fullscreen } from '@/app/_icons/icons/fullscreen'
+import { Eye } from '@/app/_icons/icons/eye'
+import { Moon } from '@/app/_icons/icons/moon'
+import { Sparkle } from '@/app/_icons/icons/sparkle'
+import { Sun } from '@/app/_icons/icons/sun'
+import { Terminal } from '@/app/_icons/icons/terminal'
+import { X } from '@/app/_icons/icons/x'
 import { Step } from '../../../components/Step'
 import { useAndromedaPreviewTheme } from '../AndromedaThemeWrap'
 import { andromedaLightVars } from '../../../lib/andromeda-pro-helpers.generated'
@@ -390,7 +388,7 @@ export function AndromedaComponentView({
                   : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
-              <Eye weight="regular" size={15} />
+              <Eye size={15} />
               Preview
             </button>
             <button
@@ -402,7 +400,7 @@ export function AndromedaComponentView({
                   : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
-              <Code weight="regular" size={15} />
+              <Code size={15} />
               Code
             </button>
           </div>
@@ -442,7 +440,7 @@ export function AndromedaComponentView({
                         exit={{ y: -12, opacity: 0 }}
                         transition={{ duration: 0.18 }}
                       >
-                        <Moon weight="regular" size={16} />
+                        <Moon size={16} />
                       </motion.span>
                     ) : (
                       <motion.span
@@ -452,7 +450,7 @@ export function AndromedaComponentView({
                         exit={{ y: -12, opacity: 0 }}
                         transition={{ duration: 0.18 }}
                       >
-                        <Sun weight="regular" size={16} />
+                        <Sun size={16} />
                       </motion.span>
                     )}
                   </AnimatePresence>
@@ -467,7 +465,7 @@ export function AndromedaComponentView({
                   refreshPreview(). */}
               <div className="group/refresh relative">
                 <Button variant="outline" size="md" iconOnly onClick={refreshPreview} aria-label="Restart animation">
-                  <ArrowClockwise weight="regular" size={16} />
+                  <RotateCw size={16} />
                 </Button>
                 <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/refresh:block">
                   Refresh
@@ -476,7 +474,7 @@ export function AndromedaComponentView({
 
               <div className="group/fullscreen relative">
                 <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={openFullscreen}>
-                  <CornersOut weight="regular" size={16} />
+                  <Fullscreen size={16} />
                 </Button>
                 <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
                   Full screen
@@ -513,7 +511,7 @@ export function AndromedaComponentView({
               onClick={openFullscreen}
               className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-control bg-sand-950/90 px-3 py-2 text-xs font-semibold text-sand-100 opacity-0 shadow-lg transition-[opacity,background-color] duration-150 hover:bg-sand-900 focus-visible:opacity-100 group-hover/preview:opacity-100 [@media(hover:none)]:opacity-100"
             >
-              <CornersOut weight="regular" size={14} />
+              <Fullscreen size={14} />
               <span className="[@media(hover:none)]:hidden">Click for full view</span>
               <span className="[@media(hover:hover)]:hidden">Tap for full view</span>
             </button>
@@ -559,7 +557,7 @@ export function AndromedaComponentView({
                 setRemixOpen(true)
               }}
             >
-              <Sparkle weight="regular" size={15} className="max-[379px]:hidden" />
+              <Sparkle size={15} className="max-[379px]:hidden" />
               Remix<span className="hidden sm:inline"> with AI</span>
             </Button>
           )}
@@ -569,9 +567,9 @@ export function AndromedaComponentView({
               premium paywall modal instead of copying. */}
           <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
             {cliCopied ? (
-              <Check weight="regular" size={15} className="max-[379px]:hidden" />
+              <Check size={15} className="max-[379px]:hidden" />
             ) : (
-              <Terminal weight="regular" size={15} className="max-[379px]:hidden" />
+              <Terminal size={15} className="max-[379px]:hidden" />
             )}
             {cliCopied ? 'Copied!' : 'Copy Command'}
           </Button>
@@ -732,8 +730,8 @@ export function AndromedaComponentView({
                         className="ml-auto shrink-0 rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {cliCopied
-                          ? <Check weight="regular" size={14} className="text-success" />
-                          : <Copy weight="regular" size={14} />}
+                          ? <Check size={14} className="text-success" />
+                          : <CopyIcon size={14} />}
                       </button>
                     </div>
                     <div className="px-4 py-3.5">
@@ -788,8 +786,8 @@ export function AndromedaComponentView({
                         className="shrink-0 rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {codeCopied
-                          ? <Check weight="regular" size={14} className="text-success" />
-                          : <Copy weight="regular" size={14} />}
+                          ? <Check size={14} className="text-success" />
+                          : <CopyIcon size={14} />}
                       </button>
                     </div>
                     <div className="max-h-96 overflow-auto p-4 [scrollbar-color:#C4BFB7_transparent] dark:[scrollbar-color:#4A453F_transparent]" style={{ scrollbarWidth: 'thin' }}>
@@ -842,7 +840,7 @@ export function AndromedaComponentView({
                   aria-label="Previous components"
                   className="flex h-8 w-8 items-center justify-center rounded-control border border-sand-300 bg-sand-100 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-50 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
                 >
-                  <ArrowLeft weight="regular" size={15} />
+                  <ArrowLeft size={15} />
                 </button>
                 <button
                   type="button"
@@ -851,7 +849,7 @@ export function AndromedaComponentView({
                   aria-label="Next components"
                   className="flex h-8 w-8 items-center justify-center rounded-control border border-sand-300 bg-sand-100 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-50 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
                 >
-                  <ArrowRight weight="regular" size={15} />
+                  <ArrowRight size={15} />
                 </button>
               </div>
             )}
@@ -945,7 +943,7 @@ export function AndromedaComponentView({
                   onClick={() => setFullscreen(false)}
                   aria-label="Close full screen"
                 >
-                  <X weight="regular" size={16} />
+                  <X size={16} />
                 </Button>
               </div>
               <div
@@ -987,7 +985,7 @@ export function AndromedaComponentView({
           }}
         >
           <div className="flex items-center gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
-            <Check weight="regular" size={16} className="shrink-0 text-success" />
+            <Check size={16} className="shrink-0 text-success" />
             <div>
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Install command copied

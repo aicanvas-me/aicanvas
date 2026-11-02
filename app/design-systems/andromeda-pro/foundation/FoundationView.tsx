@@ -10,7 +10,13 @@
 // shim, whose modules carry 'use client' — the same pattern the component
 // demos use. Everything here renders statically all the same.
 import { useRef } from 'react'
-import { ArrowUpRight, Crosshair, Eye, HandTap, Keyboard, ListChecks, Pause } from '@phosphor-icons/react'
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right'
+import { Crosshair } from '@/app/_icons/icons/crosshair'
+import { Eye } from '@/app/_icons/icons/eye'
+import { HandTap } from '@/app/_icons/icons/hand-tap'
+import { Keyboard } from '@/app/_icons/icons/keyboard'
+import { ListChecks } from '@/app/_icons/icons/list-checks'
+import { Pause } from '@/app/_icons/icons/pause'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { SwatchTooltip } from './SwatchTooltip'
 import { LayerCards } from '../overview-b/FoundationLayers'
@@ -568,7 +574,7 @@ export function FoundationView() {
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {A11Y_PRACTICES.map(({ icon: Icon, title, body }) => (
           <div key={title} className="rounded-section border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
-            <Icon size={18} weight="regular" aria-hidden className="text-sand-600 dark:text-sand-400" />
+            <Icon size={18} aria-hidden className="text-sand-600 dark:text-sand-400" />
             <p className="mt-3 text-[13px] font-semibold text-sand-900 dark:text-sand-50">{title}</p>
             <p className="mt-1 text-[12px] leading-relaxed text-sand-600 dark:text-sand-400">{body}</p>
           </div>
@@ -622,7 +628,7 @@ export function FoundationView() {
             className="mt-5 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-accent transition-colors hover:text-accent/70"
           >
             Manrope on Google Fonts
-            <ArrowUpRight size={14} weight="regular" aria-hidden />
+            <ArrowUpRight size={14} aria-hidden />
           </a>
         </div>
       </div>

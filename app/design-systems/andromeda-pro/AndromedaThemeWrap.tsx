@@ -18,7 +18,8 @@
 
 import { createContext, useContext, useEffect, useId, useLayoutEffect, useMemo, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { Moon, Sun } from '@phosphor-icons/react'
+import { Moon } from '@/app/_icons/icons/moon'
+import { Sun } from '@/app/_icons/icons/sun'
 import { andromedaLightVars } from '../../lib/andromeda-pro-helpers.generated'
 import { useTheme } from '../../components/ThemeProvider'
 
@@ -223,7 +224,7 @@ export function AndromedaThemeToggle({ className = '', label }: { className?: st
                 className="absolute inset-0 rounded-control bg-sand-50 shadow-sm dark:bg-sand-800"
               />
             ) : null}
-            <Icon weight="regular" size={16} className="relative" />
+            <Icon size={16} className="relative" />
           </button>
         )
       })}

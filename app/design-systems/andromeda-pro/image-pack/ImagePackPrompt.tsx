@@ -2,7 +2,8 @@
 
 // The one-sentence prompt a buyer gives their agent alongside the two Pro files.
 import { useState } from 'react'
-import { Check, Copy } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check'
+import { CopyIcon } from '@/app/_icons/icons/copy'
 import { buttonClasses } from '../../../components/buttonClasses'
 
 export function ImagePackPrompt({ prompt }: { prompt: string }) {
@@ -24,7 +25,7 @@ export function ImagePackPrompt({ prompt }: { prompt: string }) {
         onClick={copy}
         className={`${buttonClasses({ variant: 'outline', size: 'sm' })} self-start sm:self-auto`}
       >
-        {copied ? <Check weight="regular" size={14} /> : <Copy weight="regular" size={14} />}
+        {copied ? <Check size={14} /> : <CopyIcon size={14} />}
         {copied ? 'Copied' : 'Copy prompt'}
       </button>
     </div>

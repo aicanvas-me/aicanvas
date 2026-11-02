@@ -10,7 +10,7 @@
 // A component with hero card art renders the standalone grid's own card, so the
 // Pro grid looks and works exactly like it; the text card is the fallback.
 import Link from 'next/link'
-import { ArrowUpRight } from '@phosphor-icons/react'
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right'
 import { ComponentCard } from '../../../components/ComponentCard'
 import type { CardSource } from '../../../lib/analytics'
 import { ANDROMEDA_COMPONENT_META } from '../../../_lib/andromeda-pro/andromeda-meta'
@@ -60,7 +60,6 @@ export function AndromedaComponentCard({
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-base font-bold text-sand-900 dark:text-sand-50">{name}</h3>
         <ArrowUpRight
-          weight="regular"
           size={16}
           className="mt-0.5 shrink-0 text-sand-400 transition-colors group-hover:text-sand-700 dark:text-sand-500 dark:group-hover:text-sand-300"
         />

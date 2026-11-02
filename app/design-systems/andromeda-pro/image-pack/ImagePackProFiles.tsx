@@ -4,7 +4,8 @@
 // paywall; premium (and the in-flight unknown window) downloads, and a 402 from
 // the route still falls back to the paywall, so the server stays the gate.
 import { useState } from 'react'
-import { DownloadSimple, LockSimple } from '@phosphor-icons/react'
+import { Download } from '@/app/_icons/icons/download'
+import { LockSimple } from '@/app/_icons/icons/lock-simple'
 import { usePaywallModal } from '../../../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
 import { buttonClasses } from '../../../components/buttonClasses'
@@ -60,9 +61,9 @@ export function ImagePackProFiles() {
               className={buttonClasses({ variant: 'outline', size: 'sm' })}
             >
               {status === 'not-premium' ? (
-                <LockSimple weight="regular" size={14} />
+                <LockSimple size={14} />
               ) : (
-                <DownloadSimple weight="regular" size={14} />
+                <Download size={14} />
               )}
               {status === 'not-premium' ? 'Unlock with Premium' : 'Download'}
             </button>

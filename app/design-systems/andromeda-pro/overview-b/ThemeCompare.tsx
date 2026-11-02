@@ -14,7 +14,7 @@
 
 import { useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react'
 import { motion, useMotionValue, useMotionValueEvent, useTransform } from 'framer-motion'
-import { DotsSixVertical } from '@phosphor-icons/react'
+import { GripVertical } from '@/app/_icons/icons/grip-vertical'
 import { andromedaLightVars, andromedaVars } from '../../../lib/andromeda-pro-helpers.generated'
 import { CompareBento } from './CompareBento'
 
@@ -237,7 +237,7 @@ export function ThemeCompare() {
             <span
               className={`flex h-10 w-3 items-center justify-center rounded-full bg-sand-50 text-sand-950 ${LINE_SHADOW} group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-accent`}
             >
-              <DotsSixVertical weight="regular" className="size-4 shrink-0" />
+              <GripVertical size="1em" className="size-4 shrink-0" />
             </span>
           </motion.div>
         </div>
