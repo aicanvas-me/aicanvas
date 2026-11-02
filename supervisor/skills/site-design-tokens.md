@@ -24,23 +24,31 @@ Always `bg-sand-950` — never zinc, never black, never transparent.
 | `sand-900` | `#1B1B1C` | Dark card / panel surfaces |
 | `sand-950` | `#0E0E0F` | **Dark page + component preview bg** |
 
-## Accent roles (neutral, ruled 2026-10-29)
+## Accent roles
 
-The site has no brand hue. The accent is ink that flips with the theme, defined once in `app/globals.css` (`--accent`, `--accent-foreground`, `--success` in the `:root` / `.dark` blocks, named in `@theme`). Change a value there and every surface follows.
+The accent is ink that flips with the theme. All roles are defined once in `app/globals.css` in the `:root` / `.dark` blocks and named in `@theme`. Change a value there and every surface follows.
 
 | Utility | Light | Dark | Use |
 |---|---|---|---|
 | `accent` | `sand-900` | `sand-50` | Primary fill, emphasised text and icons, links, selected borders, focus rings (`ring-accent/40`), tints (`bg-accent/10`) |
 | `accent-foreground` | `sand-50` | `sand-950` | Text and icons ON an accent fill |
 | `success` | `#047857` | `#34D399` | Confirmation only: copied, sent, saved |
+| `premium` | `#0369A1` | `#7DD3FC` | Premium tier mark |
+| `free` | `#B45309` | `#FFB574` | Free or MIT tier mark |
+| `new` | `#6D28D9` | `#B79CFF` | New mark |
+| `ai` | `#0369A1` | `#7DD3FC` | AI Brain marks, same value as `premium` |
 | red family | `red-700` | `red-400` | Errors (unchanged) |
 
 > A role class needs no `dark:` half; it flips on its own. An accent link hovers to
-> `hover:text-accent/70`; an accent fill hovers to `hover:bg-accent/85`.
+> `hover:text-accent/70`; an accent fill hovers to `hover:bg-accent/85`. The `ai`
+> role shares the `premium` values.
 >
-> Olive and cyan scales still exist in `@theme` for the frozen cancellation flow and
-> the studio tools. Site chrome never uses them, nor any other hue. Selected text is
-> neutral: `sand-300` under `sand-900` on light, `sand-700` under `sand-50` on dark.
+> Role chips use `bg-<role>/10 text-<role> ring-1 ring-inset ring-<role>/30 rounded-full`
+> with small semibold text. Hue belongs only on chips, tier icons, eyebrows and check
+> glyphs, never buttons, fills behind body text or headings. The cancellation page
+> uses `accent` and `success`. Olive remains in `@theme` for studio tools only and is
+> not a site colour. Selected text is neutral: `sand-300` under `sand-900` on light,
+> `sand-700` under `sand-50` on dark.
 
 ## Light mode
 
@@ -131,7 +139,7 @@ Site chrome never writes a size like `rounded-xl`. It names the role, and `app/g
 | `rounded-tag` | 4px | tier labels, the tiniest marks |
 | `rounded-full` | pill | chips, prompts, segmented pickers, switches, search and filter fields, round icon buttons |
 
-Colours follow the same rule: use the sand scale, the accent roles (`accent`, `accent-foreground`, `success`) and `glow`; an inline style or gradient takes `var(--color-…)` or `color-mix(in srgb, var(--color-…) N%, transparent)`, never a copied hex. Brand logos, canvas/WebGL colour tables and the design systems' own `--at-*` values are the exceptions.
+Colours follow the same rule: use the sand scale, the accent roles (`accent`, `accent-foreground`, `success`, `premium`, `free`, `new`, `ai`) and `glow`; an inline style or gradient takes `var(--color-…)` or `color-mix(in srgb, var(--color-…) N%, transparent)`, never a copied hex. Brand logos, canvas/WebGL colour tables and the design systems' own `--at-*` values are the exceptions.
 
 ## Typography weights
 

@@ -118,7 +118,7 @@ function StyleTrack({
               tabIndex={selected ? 0 : -1}
               onClick={() => onChange(style.id)}
               onKeyDown={(event) => onKey(event, index)}
-              className={`relative inline-flex h-8 min-w-0 flex-auto items-center justify-center gap-2 whitespace-nowrap rounded-full px-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 @min-[560px]:px-3 ${
+              className={`relative inline-flex h-8 min-w-0 flex-auto items-center justify-center gap-1 whitespace-nowrap rounded-full px-1.5 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 @min-[560px]:gap-2 @min-[560px]:px-3 ${
                 selected
                   ? 'text-sand-900 dark:text-sand-50'
                   : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50'
@@ -137,10 +137,9 @@ function StyleTrack({
                 className={`relative hidden @min-[560px]:block ${loading && selected ? 'animate-pulse motion-reduce:animate-none' : ''}`}
               />
               <span className="relative">{style.shortLabel}</span>
-              {/* Line is the free style; the chip says so in the free orange. The
-                  narrowest rows drop it and the radio's label still names the tier. */}
+              {/* Line is the free style; the chip says so in the free orange. */}
               {!premium && (
-                <span aria-hidden className="relative rounded-full bg-free/10 px-1.5 py-px text-[10px] font-semibold text-free ring-1 ring-inset ring-free/30 @max-[420px]:hidden">
+                <span aria-hidden className="relative rounded-full bg-free/10 px-1.5 py-px text-[10px] font-semibold text-free ring-1 ring-inset ring-free/30">
                   Free
                 </span>
               )}

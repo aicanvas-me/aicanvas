@@ -32,24 +32,17 @@ const SAND_USAGE: Record<string, string> = {
   'sand-950': 'Deepest dark, preview background',
 }
 
-const OLIVE_USAGE: Record<string, string> = {
-  'olive-400': 'Hover accent, gradient end',
-  'olive-500': 'Primary accent: buttons, badges, logo',
-  'olive-600': 'Light-mode accent text, pressed state',
-  'olive-700': 'Selection highlight',
-  'olive-800': 'Light-mode accent hover',
-}
-
 const EMBER_USAGE: Record<string, string> = {
-  'ember-400': 'Hover / lighter state',
-  'ember-500': 'Secondary accent: attention, rhythm',
-  'ember-600': 'Pressed or darker state',
+  'ember-400': 'Free mark, dark theme',
+  'ember-500': 'Free mark scale, middle tone',
+  'ember-600': 'Free mark scale, deeper tone',
 }
 
 const CYAN_USAGE: Record<string, string> = {
-  'cyan-400': 'Light stop — dark-mode text',
-  'cyan-500': 'Complementary accent, used sparingly (e.g. the Updated badge)',
-  'cyan-600': 'Dark stop — light-mode text',
+  'cyan-400': 'Premium mark, dark theme',
+  'cyan-500': 'Premium mark scale, middle tone',
+  'cyan-600': 'Premium mark scale, deeper tone',
+  'cyan-700': 'Premium mark, light theme',
 }
 
 const withUsage = (
@@ -58,7 +51,6 @@ const withUsage = (
 ): Swatch[] => scale.map((c) => ({ ...c, usage: usage[c.token] ?? '' }))
 
 const SAND_SCALE = withUsage(readScale('sand'), SAND_USAGE)
-const OLIVE_SCALE = withUsage(readScale('olive'), OLIVE_USAGE)
 const EMBER_SCALE = withUsage(readScale('ember'), EMBER_USAGE)
 const CYAN_SCALE = withUsage(readScale('cyan'), CYAN_USAGE)
 
@@ -73,7 +65,9 @@ const TYPOGRAPHY = [
 
 // ─── Semantic mappings ───────────────────────────────────────────────────────
 
-const SEMANTIC_ROLES = [
+type SemanticRole = { role: string; light: string; dark: string; dot?: string }
+
+const SEMANTIC_ROLES: SemanticRole[] = [
   { role: 'Page background', light: 'bg-sand-50', dark: 'bg-sand-950' },
   { role: 'Card / surface', light: 'bg-sand-100', dark: 'bg-sand-900' },
   { role: 'Elevated (navbar)', light: 'bg-sand-50/90', dark: 'bg-sand-950/90' },
@@ -82,10 +76,11 @@ const SEMANTIC_ROLES = [
   { role: 'Secondary text', light: 'text-sand-600', dark: 'text-sand-400' },
   { role: 'Border default', light: 'border-sand-200', dark: 'border-sand-800' },
   { role: 'Border hover', light: 'border-sand-300', dark: 'border-sand-700' },
-  { role: 'Accent', light: 'text-accent', dark: 'text-accent' },
-  { role: 'Accent hover', light: 'text-accent', dark: 'text-accent' },
-  { role: 'Secondary accent', light: 'text-ember-500', dark: 'text-ember-400' },
-  { role: 'Highlight (occasional)', light: 'text-accent', dark: 'text-accent' },
+  { role: 'Accent: neutral ink', light: 'text-accent', dark: 'text-accent', dot: 'bg-accent' },
+  { role: 'Success: confirmation', light: 'text-success', dark: 'text-success', dot: 'bg-success' },
+  { role: 'Premium: tier mark', light: 'text-premium', dark: 'text-premium', dot: 'bg-premium' },
+  { role: 'Free: Free / MIT tier mark', light: 'text-free', dark: 'text-free', dot: 'bg-free' },
+  { role: 'New: new mark', light: 'text-new', dark: 'text-new', dot: 'bg-new' },
 ]
 
 // ─── Spacing scale ───────────────────────────────────────────────────────────
@@ -164,21 +159,14 @@ export default function DesignSystemPage() {
           ))}
         </div>
 
-        <SubTitle>Olive scale (muted green accent)</SubTitle>
-        <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {OLIVE_SCALE.map((c) => (
-            <ColorSwatch key={c.token} {...c} />
-          ))}
-        </div>
-
-        <SubTitle>Ember scale (secondary accent)</SubTitle>
+        <SubTitle>Ember scale (Free mark)</SubTitle>
         <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {EMBER_SCALE.map((c) => (
             <ColorSwatch key={c.token} {...c} />
           ))}
         </div>
 
-        <SubTitle>Cyan scale (complementary accent)</SubTitle>
+        <SubTitle>Cyan scale (Premium mark)</SubTitle>
         <div className="mb-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {CYAN_SCALE.map((c) => (
             <ColorSwatch key={c.token} {...c} />
@@ -189,14 +177,6 @@ export default function DesignSystemPage() {
         <SubTitle>Full palette</SubTitle>
         <div className="flex overflow-hidden rounded-2xl">
           {SAND_SCALE.map((c) => (
-            <div
-              key={c.token}
-              className="h-16 flex-1"
-              style={{ background: c.hex }}
-              title={`${c.token} ${c.hex}`}
-            />
-          ))}
-          {OLIVE_SCALE.map((c) => (
             <div
               key={c.token}
               className="h-16 flex-1"
@@ -241,7 +221,14 @@ export default function DesignSystemPage() {
                   key={row.role}
                   className={i % 2 === 0 ? 'bg-sand-100 dark:bg-sand-950' : 'bg-sand-50 dark:bg-sand-900'}
                 >
-                  <td className="px-4 py-3 text-sand-900 dark:text-sand-100">{row.role}</td>
+                  <td className="px-4 py-3 text-sand-900 dark:text-sand-100">
+                    {row.dot ? (
+                      <span className="flex items-center gap-2">
+                        <span aria-hidden className={`size-2 shrink-0 rounded-full ${row.dot}`} />
+                        <span>{row.role}</span>
+                      </span>
+                    ) : row.role}
+                  </td>
                   <td className="px-4 py-3 font-mono text-xs text-sand-600 dark:text-sand-400">{row.light}</td>
                   <td className="px-4 py-3 font-mono text-xs text-sand-600 dark:text-sand-400">{row.dark}</td>
                 </tr>
