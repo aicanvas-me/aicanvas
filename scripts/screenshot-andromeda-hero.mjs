@@ -95,6 +95,17 @@ const INTERACTIONS = LEGACY ? {
     await page.getByRole('button', { name: /open drawer/i }).click()
     await page.waitForTimeout(750)
   },
+  // The snake's keyframes never run in the headless page, so three perimeter
+  // cells are pinned to the lit colour.
+  spinner: async (page) => {
+    await page.evaluate(() => {
+      const cells = document.querySelector('[data-capture-frame] [role=status]').children
+      for (const i of [0, 1, 2]) {
+        cells[i].style.animation = 'none'
+        cells[i].style.background = 'var(--andromeda-spinner-bright)'
+      }
+    })
+  },
   planet: async (page) => {
     await page.waitForTimeout(2500)
   },

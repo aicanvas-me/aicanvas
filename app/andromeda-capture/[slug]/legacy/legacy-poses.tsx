@@ -233,20 +233,25 @@ export const POSES: Record<string, ReactNode> = {
     </div>
   ),
   'panel-header': (
-    <div style={{ width: 420, position: 'relative', background: themeColor.surface.raised }}>
+    <div style={{ width: 460, position: 'relative', background: themeColor.surface.raised }}>
       <CornerMarkers />
       <PanelHeader
         title="Requests"
         actions={
-          <PanelMenu
-            ariaLabel="Requests options"
-            items={[
-              { label: 'Refresh', icon: Refresh, onSelect: () => {} },
-              { label: 'Export', icon: ShareIcon, onSelect: () => {} },
-              { type: 'separator' },
-              { label: 'Hide', icon: EyeOff, onSelect: () => {} },
-            ]}
-          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[2] }}>
+            <Badge variant="accent">Live</Badge>
+            <IconButton size="sm" variant="ghost" aria-label="Refresh" icon={Refresh} />
+            <PanelMenu
+              staticOpen
+              ariaLabel="Requests options"
+              items={[
+                { label: 'Refresh', icon: Refresh, onSelect: () => {} },
+                { label: 'Export', icon: ShareIcon, onSelect: () => {} },
+                { type: 'separator' },
+                { label: 'Hide', icon: EyeOff, onSelect: () => {} },
+              ]}
+            />
+          </div>
         }
       />
     </div>
@@ -267,8 +272,8 @@ export const POSES: Record<string, ReactNode> = {
     </div>
   ),
   planet: (
-    <div style={{ width: 320, height: 300, position: 'relative' }}>
-      <Planet />
+    <div style={{ width: 360, height: 340, position: 'relative' }}>
+      <Planet paused particleCount={9000} particleSize={0.05} />
     </div>
   ),
   'progress-bar': (
