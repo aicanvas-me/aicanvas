@@ -119,7 +119,7 @@ function measureInk() {
   }
   for (const el of document.body.querySelectorAll('*')) {
     if (el === frame || /^(STYLE|SCRIPT|NOSCRIPT|TEMPLATE|LINK|META)$/.test(el.tagName)) continue
-    if (el.closest('[data-dev-overlay],nextjs-portal')) continue
+    if (el.closest('[data-dev-overlay],nextjs-portal,.sr-only')) continue
     if (!el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) continue
     const r = el.getBoundingClientRect()
     if (r.width >= vw * 0.98 && r.height >= vh * 0.98) continue

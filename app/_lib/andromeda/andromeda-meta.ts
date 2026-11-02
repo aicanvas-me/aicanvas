@@ -3,7 +3,7 @@
 // registry (which reads source files via `fs`) lives in
 // `andromeda-registry.ts` and imports this file as the metadata source.
 
-import { TEMPLATE_ART_VERSION } from '../../lib/imagekit'
+import { TEMPLATE_ART_BASE, TEMPLATE_ART_VERSION } from '../../lib/imagekit'
 
 export type AndromedaComponentMeta = {
   slug: string
@@ -372,7 +372,7 @@ const TEMPLATE_ART: Record<string, string> = {
   'signal-room': 'Signal_Room_dark.png',
 }
 const templateArt = (folder: string) =>
-  `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(
+  `${TEMPLATE_ART_BASE}${encodeURIComponent(
     TEMPLATE_ART[folder] ?? '',
   )}?v=${TEMPLATE_ART_VERSION}`
 

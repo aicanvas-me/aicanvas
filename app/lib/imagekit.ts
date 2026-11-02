@@ -30,7 +30,10 @@ const PRESETS: Record<Preset, string> = {
  * feed the home grid. A per-file version was a trap: bump one, forget another,
  * and that surface silently serves stale art. Bump this on every re-shoot.
  */
-export const TEMPLATE_ART_VERSION = 14
+export const TEMPLATE_ART_VERSION = 15
+
+/** Folder the template posters are read from. Change both: scripts/screenshot-andromeda-templates.mjs (IMAGEKIT_FOLDER). */
+export const TEMPLATE_ART_BASE = 'https://ik.imagekit.io/aitoolkit/andromeda/templates-2/'
 
 /**
  * The light-theme screenshot of a component that ships both themes.

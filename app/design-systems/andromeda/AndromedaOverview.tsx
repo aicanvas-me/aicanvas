@@ -29,7 +29,7 @@ import type { Group, Mesh, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Button } from '../../components/Button'
 import { buttonClasses } from '../../components/buttonClasses'
-import { optimizeImageKitUrl, TEMPLATE_ART_VERSION } from '../../lib/imagekit'
+import { optimizeImageKitUrl, TEMPLATE_ART_BASE, TEMPLATE_ART_VERSION } from '../../lib/imagekit'
 import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoop } from '../../_components/FoundationLoop'
@@ -50,7 +50,7 @@ const TEMPLATE_BLURBS: Record<string, string> = {
     'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
 }
 
-// Card art uploaded to ImageKit (andromeda/templates/). Names are underscored:
+// Card art uploaded to ImageKit (andromeda/templates-2/). Names are underscored:
 // ImageKit rewrites a space in an uploaded filename to an underscore, so a name
 // written with spaces here would 404 while the upload still reported success.
 const TEMPLATE_IMAGE_FILE: Record<string, string> = {
@@ -74,7 +74,7 @@ const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
 const templateArt = (file: string | undefined) =>
   file
     ? optimizeImageKitUrl(
-        `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`,
+        `${TEMPLATE_ART_BASE}${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`,
         'detail',
       )
     : null

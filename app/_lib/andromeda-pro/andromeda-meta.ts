@@ -3,7 +3,7 @@
 // registry (which reads source files via `fs`) lives in
 // `andromeda-registry.ts` and imports this file as the metadata source.
 
-import { TEMPLATE_ART_VERSION } from '../../lib/imagekit'
+import { TEMPLATE_ART_BASE, TEMPLATE_ART_VERSION } from '../../lib/imagekit'
 
 export type AndromedaComponentMeta = {
   slug: string
@@ -15,9 +15,10 @@ export type AndromedaComponentMeta = {
 }
 
 // Hero card art, one shot per theme (scripts/screenshot-andromeda-hero.mjs). Bump on a reshoot.
-const HERO_VERSION = 1
+// Folder: change both with scripts/upload-andromeda-hero.mjs (FOLDER).
+const HERO_VERSION = 2
 const heroShot = (slug: string, theme: 'dark' | 'light') =>
-  `https://ik.imagekit.io/aitoolkit/andromeda-pro/hero/${slug}-${theme}.png?v=${HERO_VERSION}`
+  `https://ik.imagekit.io/aitoolkit/andromeda-pro/hero-2/${slug}-${theme}.png?v=${HERO_VERSION}`
 
 export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
   {
@@ -721,7 +722,7 @@ const TEMPLATE_ART: Record<string, string> = {
 const templateArt = (folder: string) => {
   const file = TEMPLATE_ART[folder] ?? ''
   if (!file) return ''
-  return `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(
+  return `${TEMPLATE_ART_BASE}${encodeURIComponent(
     file,
   )}?v=${TEMPLATE_ART_VERSION}`
 }
