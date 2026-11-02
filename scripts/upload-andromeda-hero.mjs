@@ -2,8 +2,7 @@
  * Upload hero card art shot by screenshot-andromeda-hero.mjs to ImageKit
  * `andromeda-pro/hero-2/<slug>-<theme>.png`, then print the slug → URL map.
  *
- * A NEW folder on purpose: the live site reads `andromeda-pro/<slug>.png`, so an
- * upload here changes nothing live until a branch wiring these URLs ships.
+ * The site reads this folder (heroShot in app/_lib/andromeda-pro/andromeda-meta.ts).
  * Refuses a file that already exists unless --replace, so a reshoot never
  * overwrites art a shipped page uses by accident.
  *
