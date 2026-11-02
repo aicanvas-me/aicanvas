@@ -16,9 +16,11 @@ import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
 import { Copy } from '@/app/_icons/icons/copy'
 import { Smartphone } from '@/app/_icons/icons/smartphone'
 import { Bolt } from '@/app/_icons/icons/bolt'
+import { LogIn } from '@/app/_icons/icons/log-in'
 import { Monitor } from '@/app/_icons/icons/monitor'
 import { Rocket } from '@/app/_icons/icons/rocket'
 import { Sparkle } from '@/app/_icons/icons/sparkle'
+import { UserPlus } from '@/app/_icons/icons/user-plus'
 import { Grid2x2 } from '@/app/_icons/icons/grid-2x2'
 import { Terminal } from '@/app/_icons/icons/terminal'
 import { useInstallToken } from '../_lib/useInstallToken'
@@ -566,6 +568,8 @@ const TEMPLATE_ICONS: Record<string, SiteIcon> = {
   'signal-room': Broadcast,
   'ai-chat': Sparkle,
   'fintech-landing': CircleDollarSign,
+  'sign-in': LogIn,
+  'sign-up': UserPlus,
 }
 
 function TemplateSwitcher({
