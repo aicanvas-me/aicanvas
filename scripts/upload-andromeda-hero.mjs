@@ -1,12 +1,14 @@
 /**
  * Upload hero card art shot by screenshot-andromeda-hero.mjs to ImageKit
- * `andromeda-pro/hero-2/<slug>-<theme>.png`, then print the slug → URL map.
+ * `<folder>/<slug>-<theme>.png`, then print the slug → URL map. Pro goes to
+ * `andromeda-pro/hero-2`, Legacy (--legacy) to `andromeda/hero`.
  *
- * The site reads this folder (heroShot in app/_lib/andromeda-pro/andromeda-meta.ts).
+ * The site reads these folders (heroShot in app/_lib/andromeda-pro/andromeda-meta.ts
+ * and app/_lib/andromeda/andromeda-meta.ts).
  * Refuses a file that already exists unless --replace, so a reshoot never
  * overwrites art a shipped page uses by accident.
  *
- * Usage: node scripts/upload-andromeda-hero.mjs <dir> [--replace]
+ * Usage: node scripts/upload-andromeda-hero.mjs <dir> [--legacy] [--replace]
  */
 
 import { readdirSync } from 'fs'
@@ -21,13 +23,16 @@ if (!key) {
   console.error('IMAGEKIT_PRIVATE_KEY is not set')
   process.exit(1)
 }
-const [dir, flag] = process.argv.slice(2)
+const args = process.argv.slice(2)
+const dir = args.find((a) => !a.startsWith('--'))
+const replace = args.includes('--replace')
+const legacy = args.includes('--legacy')
 if (!dir) {
-  console.error('usage: node scripts/upload-andromeda-hero.mjs <dir> [--replace]')
+  console.error('usage: node scripts/upload-andromeda-hero.mjs <dir> [--legacy] [--replace]')
   process.exit(1)
 }
-// Change both: heroShot in app/_lib/andromeda-pro/andromeda-meta.ts.
-const FOLDER = '/andromeda-pro/hero-2'
+// Change with heroShot in the matching andromeda-meta.ts.
+const FOLDER = legacy ? '/andromeda/hero' : '/andromeda-pro/hero-2'
 const files = readdirSync(dir).filter((f) => /^[a-z0-9-]+-(dark|light)\.png$/.test(f)).sort()
 
 const auth = Buffer.from(`${key}:`).toString('base64')
@@ -36,7 +41,7 @@ const res = await fetch(`https://api.imagekit.io/v1/files?path=${encodeURICompon
 })
 const existing = new Set((await res.json()).map?.((f) => f.name) ?? [])
 const clash = files.filter((f) => existing.has(f))
-if (clash.length && flag !== '--replace') {
+if (clash.length && !replace) {
   console.error(`${clash.length} already in ${FOLDER} (pass --replace to overwrite): ${clash.slice(0, 5).join(', ')}`)
   process.exit(1)
 }

@@ -16,7 +16,7 @@ export type AndromedaComponentMeta = {
 
 // Hero card art, one shot per theme (scripts/screenshot-andromeda-hero.mjs). Bump on a reshoot.
 // Folder: change both with scripts/upload-andromeda-hero.mjs (FOLDER).
-const HERO_VERSION = 2
+const HERO_VERSION = 3
 const heroShot = (slug: string, theme: 'dark' | 'light') =>
   `https://ik.imagekit.io/aitoolkit/andromeda-pro/hero-2/${slug}-${theme}.png?v=${HERO_VERSION}`
 

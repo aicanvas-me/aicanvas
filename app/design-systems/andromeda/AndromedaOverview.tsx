@@ -551,13 +551,24 @@ export function AndromedaOverview() {
                   >
                     <div className="relative aspect-video overflow-hidden bg-sand-950">
                       {c.image ? (
-                        <img
-                          src={optimizeImageKitUrl(c.image, 'card')}
-                          alt={c.name}
-                          loading="lazy"
-                          decoding="async"
-                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                        />
+                        <>
+                          <img
+                            src={optimizeImageKitUrl(c.image, 'card')}
+                            alt={c.name}
+                            decoding="async"
+                            className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110 ${
+                              c.imageLight ? 'hidden dark:block' : ''
+                            }`}
+                          />
+                          {c.imageLight ? (
+                            <img
+                              src={optimizeImageKitUrl(c.imageLight, 'card')}
+                              alt={c.name}
+                              decoding="async"
+                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110 dark:hidden"
+                            />
+                          ) : null}
+                        </>
                       ) : (
                         <div
                           className="absolute inset-0"

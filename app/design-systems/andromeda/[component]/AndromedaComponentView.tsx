@@ -33,7 +33,7 @@ import { PropsTable } from '../../../components/PropsTable'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { PageCrumbs } from '../../../components/PageCrumbs'
 
-type RelatedItem = { slug: string; name: string; image?: string }
+type RelatedItem = { slug: string; name: string; image?: string; imageLight?: string }
 
 interface Props {
   slug: string
@@ -613,13 +613,24 @@ export function AndromedaComponentView({
                         style={{ backgroundColor: themeColor.surface.base }}
                       >
                         {c.image ? (
-                          <img
-                            src={optimizeImageKitUrl(c.image, 'card')}
-                            alt={c.name}
-                            loading="lazy"
-                            decoding="async"
-                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                          />
+                          <>
+                            <img
+                              src={optimizeImageKitUrl(c.image, 'card')}
+                              alt={c.name}
+                              decoding="async"
+                              className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
+                                c.imageLight ? 'hidden dark:block' : ''
+                              }`}
+                            />
+                            {c.imageLight ? (
+                              <img
+                                src={optimizeImageKitUrl(c.imageLight, 'card')}
+                                alt={c.name}
+                                decoding="async"
+                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 dark:hidden"
+                              />
+                            ) : null}
+                          </>
                         ) : (
                           <>
                             <div
