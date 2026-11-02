@@ -2,7 +2,8 @@
 
 import { forwardRef, useId } from 'react';
 import type { ComponentPropsWithoutRef } from 'react';
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn, andromedaVars } from './lib/utils';
 
@@ -58,7 +59,7 @@ const inputVariants = cva(
 
 type InputOwnProps = {
   label?: string;
-  icon?: PhosphorIcon;
+  icon?: ComponentType<IconProps>;
   error?: string;
   wrapperClassName?: string;
 };
@@ -115,7 +116,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
               'text-[color:var(--andromeda-text-muted)]',
             )}
           >
-            <Icon size={20} weight="regular" />
+            <Icon size={20} />
           </div>
         ) : null}
 

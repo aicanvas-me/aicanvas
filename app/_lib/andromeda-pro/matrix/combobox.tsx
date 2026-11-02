@@ -3,7 +3,8 @@
 'use client'
 
 import { useState } from 'react'
-import { Buildings, ChatCircle } from '@phosphor-icons/react'
+import { Buildings } from '@/app/_icons/icons/buildings';
+import { MessageCircle } from '@/app/_icons/icons/message-circle';
 // v2 component: imported through the build-time shim.
 import { Combobox } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
@@ -11,9 +12,9 @@ import type { MatrixSpec } from './types'
 // A mixed set, so the glyph is how the eye sorts the list (Combobox.rules.md):
 // recent chats and the accounts they are about.
 export const COMBOBOX_OPTIONS = [
-  { id: 'chat-q3', label: 'Q3 pipeline risk', icon: ChatCircle, meta: 'Today', keywords: ['forecast'] },
-  { id: 'chat-churn', label: 'Churn drivers by segment', icon: ChatCircle, meta: 'Yesterday' },
-  { id: 'chat-renewal', label: 'Draft a renewal email', icon: ChatCircle, meta: 'Mon' },
+  { id: 'chat-q3', label: 'Q3 pipeline risk', icon: MessageCircle, meta: 'Today', keywords: ['forecast'] },
+  { id: 'chat-churn', label: 'Churn drivers by segment', icon: MessageCircle, meta: 'Yesterday' },
+  { id: 'chat-renewal', label: 'Draft a renewal email', icon: MessageCircle, meta: 'Mon' },
   { id: 'acme', label: 'Acme Corp', icon: Buildings, meta: '$540K' },
   { id: 'northwind', label: 'Northwind', icon: Buildings, meta: '$212K' },
   { id: 'globex', label: 'Globex', icon: Buildings, meta: '$98K' },

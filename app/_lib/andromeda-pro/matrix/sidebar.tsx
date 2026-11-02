@@ -3,7 +3,15 @@
 'use client'
 
 import { useState } from 'react'
-import { Bell, BookOpen, ChartLine, Compass, Gear, Pulse, SignOut, UserCircle, Users } from '@phosphor-icons/react'
+import { Bell } from '@/app/_icons/icons/bell';
+import { BookOpen } from '@/app/_icons/icons/book-open';
+import { ChartLine } from '@/app/_icons/icons/chart-line';
+import { Compass } from '@/app/_icons/icons/compass';
+import { Gear } from '@/app/_icons/icons/gear';
+import { Activity } from '@/app/_icons/icons/activity';
+import { LogOut } from '@/app/_icons/icons/log-out';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
+import { Users } from '@/app/_icons/icons/users';
 import { Sidebar } from '../../../lib/andromeda-pro.generated'
 import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
@@ -11,7 +19,7 @@ import { SAMPLE_AVATARS } from '../sample-pictures'
 
 const NAV_ITEMS = [
   { label: 'Overview', icon: Compass },
-  { label: 'Activity', icon: Pulse },
+  { label: 'Activity', icon: Activity },
   { label: 'Reports', icon: ChartLine },
   { label: 'Alerts', icon: Bell },
   { label: 'Members', icon: Users },
@@ -30,10 +38,10 @@ const USER = {
   src: SAMPLE_AVATARS.butterflyVisor.dark,
   lightSrc: SAMPLE_AVATARS.butterflyVisor.light,
   items: [
-    { id: 'profile', label: 'Profile', icon: UserCircle },
+    { id: 'profile', label: 'Profile', icon: CircleUser },
     { id: 'preferences', label: 'Preferences', icon: Gear },
     { id: 'sep1', type: 'separator' },
-    { id: 'signout', label: 'Sign out', icon: SignOut },
+    { id: 'signout', label: 'Sign out', icon: LogOut },
   ],
 }
 

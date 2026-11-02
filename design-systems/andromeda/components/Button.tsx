@@ -7,7 +7,8 @@ import { motion } from 'framer-motion';
 import type { HTMLMotionProps, TargetAndTransition, Transition } from 'framer-motion';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
-import type { Icon } from '@phosphor-icons/react';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { cn, andromedaVars, easingArray } from './lib/utils';
 import { useReducedMotion } from './lib/motion';
 import { mq } from './lib/responsive';
@@ -123,7 +124,7 @@ const buttonVariants = cva(
 
 type ButtonOwnProps = VariantProps<typeof buttonVariants> & {
   asChild?: boolean;
-  icon?: Icon;
+  icon?: ComponentType<IconProps>;
   style?: CSSProperties;
 };
 
@@ -164,7 +165,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   const baseStyle = { ...andromedaVars(), ...style };
   const content = (
     <>
-      {Icon ? <Icon size={iconSize} weight="regular" /> : null}
+      {Icon ? <Icon size={iconSize} /> : null}
       {children}
     </>
   );

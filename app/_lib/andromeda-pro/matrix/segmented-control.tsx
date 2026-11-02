@@ -3,7 +3,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ChartBar, ChartLine } from '@phosphor-icons/react'
+import { ChartBar } from '@/app/_icons/icons/chart-bar';
+import { ChartLine } from '@/app/_icons/icons/chart-line';
 import { SegmentedControl } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 

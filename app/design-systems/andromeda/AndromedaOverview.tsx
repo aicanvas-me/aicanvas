@@ -16,8 +16,15 @@ import { useState, useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { ArrowLeft, ArrowRight, ArrowUpRight, Lightning, Robot, Wrench, CaretDown } from '@phosphor-icons/react'
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
+import { ArrowLeft } from '@/app/_icons/icons/arrow-left';
+import { ArrowRight } from '@/app/_icons/icons/arrow-right';
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right';
+import { Bolt } from '@/app/_icons/icons/bolt';
+import { Bot } from '@/app/_icons/icons/bot';
+import { Wrench } from '@/app/_icons/icons/wrench';
+import { ChevronDown } from '@/app/_icons/icons/chevron-down';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import type { Group, Mesh, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Button } from '../../components/Button'
@@ -209,7 +216,7 @@ function ValueItem({
   children,
   delay = 0,
 }: {
-  icon: PhosphorIcon
+  icon: ComponentType<IconProps>
   heading: string
   children: ReactNode
   delay?: number
@@ -231,11 +238,10 @@ function ValueItem({
               1px border, soft drop shadow. Dark mode matches that section exactly;
               light mode gets the neutral equivalent. */}
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-inset border border-sand-300 bg-sand-50 text-sand-600 shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
-            <Icon weight="regular" size={16} />
+            <Icon size={16} />
           </span>
           <span className="text-base font-bold text-sand-900 dark:text-sand-50">{heading}</span>
-          <CaretDown
-            weight="bold"
+          <ChevronDown strokeWidth={1.5}
             size={15}
             className={`ml-auto shrink-0 text-sand-500 transition-transform duration-200 group-hover:text-sand-700 dark:group-hover:text-sand-300 ${open ? 'rotate-180' : ''}`}
           />
@@ -307,7 +313,7 @@ export function AndromedaOverview() {
             They sit below the header, so opening a card never moves the header. ── */}
       <section className="mt-10">
         <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
-          <ValueItem icon={Robot} heading="Build with an agent" delay={0}>
+          <ValueItem icon={Bot} heading="Build with an agent" delay={0}>
             Your AI agent installs Andromeda and builds on its real tokens and components. What it
             generates carries the same surfaces, framing, and spacing as everything else you ship, so
             new screens land already matching the system.
@@ -359,7 +365,7 @@ export function AndromedaOverview() {
             <div className="mt-1">
               <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-accent/85`}>
                 View the System
-                <ArrowUpRight weight="bold" size={15} />
+                <ArrowUpRight strokeWidth={1.5} size={15} />
               </span>
             </div>
           </div>
@@ -393,7 +399,7 @@ export function AndromedaOverview() {
             <div className="mt-1">
               <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-accent/85`}>
                 Explore more
-                <ArrowUpRight weight="bold" size={15} />
+                <ArrowUpRight strokeWidth={1.5} size={15} />
               </span>
             </div>
           </div>
@@ -420,7 +426,7 @@ export function AndromedaOverview() {
                     component cards: a filled bolt at rest, slides open to the
                     label on card hover. Templates are premium. */}
                 <div className="absolute left-3 top-3 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-50 ring-1 ring-sand-50/30 backdrop-blur-sm">
-                  <Lightning weight="fill" size={14} className="shrink-0" />
+                  <Bolt fill="currentColor" size={14} className="shrink-0" />
                   <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
                     <span className="overflow-hidden">
                       <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
@@ -467,7 +473,7 @@ export function AndromedaOverview() {
                 <div className="mt-auto pt-1">
                   <span className={`${buttonClasses({ variant: 'outline', size: 'md', fullWidth: true })} text-xs group-hover:border-sand-400 group-hover:text-sand-900 dark:group-hover:border-sand-600 dark:group-hover:text-sand-100`}>
                     View template
-                    <ArrowRight weight="regular" size={14} className="transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>
               </div>
@@ -497,7 +503,7 @@ export function AndromedaOverview() {
                 disabled={!compCanGoPrev}
                 aria-label="Previous components"
               >
-                <ArrowLeft weight="regular" size={15} />
+                <ArrowLeft size={15} />
               </Button>
               <Button
                 variant="outline"
@@ -507,7 +513,7 @@ export function AndromedaOverview() {
                 disabled={!compCanGoNext}
                 aria-label="Next components"
               >
-                <ArrowRight weight="regular" size={15} />
+                <ArrowRight size={15} />
               </Button>
             </div>
           )}

@@ -5,7 +5,11 @@
 
 'use client';
 
-import { Eye, EyeSlash, X, ArrowsOutSimple, ListBullets } from '@phosphor-icons/react';
+import { Eye } from '@/app/_icons/icons/eye';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
+import { X } from '@/app/_icons/icons/x';
+import { Maximize } from '@/app/_icons/icons/maximize';
+import { List } from '@/app/_icons/icons/list';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
@@ -195,7 +199,7 @@ function ChartHeader() {
         <TimeframeChip label="1D" active />
         <TimeframeChip label="1W" />
         <TimeframeChip label="1M" />
-        <IconButton aria-label="More indicators" variant="ghost" size="sm" icon={ListBullets} />
+        <IconButton aria-label="More indicators" variant="ghost" size="sm" icon={List} />
       </div>
 
       <div className="ex-chart-header-spacer" style={{ flex: 1 }} />
@@ -204,7 +208,7 @@ function ChartHeader() {
         <ViewTab label="Original" active />
         <ViewTab label="Trading View" />
         <ViewTab label="Depth" />
-        <IconButton aria-label="Fullscreen" variant="ghost" size="sm" icon={ArrowsOutSimple} />
+        <IconButton aria-label="Fullscreen" variant="ghost" size="sm" icon={Maximize} />
       </div>
     </div>
   );
@@ -299,9 +303,9 @@ function LegendStrip() {
       <LegendDivider />
 
       <span style={{ display: 'flex', gap: tokens.spacing[2], color: themeColor.text.faint }}>
-        <Eye weight="regular" size={13} />
-        <EyeSlash weight="regular" size={13} />
-        <X weight="regular" size={13} />
+        <Eye size={13} />
+        <EyeOff size={13} />
+        <X size={13} />
       </span>
     </div>
   );
@@ -523,9 +527,9 @@ function VolumeLegend() {
       <span style={{ color: themeColor.text.muted }}>VOL</span>
       <span style={{ color: themeColor.accent[200] }}>{fmt(last.v)}</span>
       <span style={{ display: 'flex', gap: tokens.spacing[2], color: themeColor.text.faint }}>
-        <Eye weight="regular" size={13} />
-        <EyeSlash weight="regular" size={13} />
-        <X weight="regular" size={13} />
+        <Eye size={13} />
+        <EyeOff size={13} />
+        <X size={13} />
       </span>
     </div>
   );

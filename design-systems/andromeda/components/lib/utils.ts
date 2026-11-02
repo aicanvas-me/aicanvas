@@ -76,6 +76,9 @@ export const themeColor = {
   },
 };
 
+// Line weight of every icon inside an Andromeda root, read by the icon components.
+export const iconVars: Record<string, string> = { '--aic-icon-stroke': '1' };
+
 export function andromedaVars() {
   const t = tokens;
   // Colours only through themeColor or themed(); a literal here ignores the light theme.
@@ -198,6 +201,7 @@ export function andromedaVars() {
     '--andromeda-stagger-cascade':     t.motion.stagger.cascade,
     '--andromeda-stagger-row':         t.motion.stagger.row,
     '--andromeda-stagger-progressbar': t.motion.stagger.progressBar,
+    ...iconVars,
   };
 }
 

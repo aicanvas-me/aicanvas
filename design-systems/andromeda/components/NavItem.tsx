@@ -6,7 +6,8 @@ import { Slot } from '@radix-ui/react-slot';
 import { motion } from 'framer-motion';
 import type { Transition } from 'framer-motion';
 import { cva } from 'class-variance-authority';
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { cn, andromedaVars, easingArray } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
@@ -93,7 +94,7 @@ const navItemVariants = cva(
  */
 
 type NavItemOwnProps = {
-  icon?: PhosphorIcon;
+  icon?: ComponentType<IconProps>;
   label: ReactNode;
   active?: boolean;
   mono?: boolean;
@@ -152,7 +153,7 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavI
             }}
           />
         ) : null}
-        {Icon ? <Icon size={20} weight="regular" /> : null}
+        {Icon ? <Icon size={20} /> : null}
         <span>{label}</span>
       </Comp>
       <style>{TOUCH_TARGET_STYLE}</style>

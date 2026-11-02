@@ -18,20 +18,18 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  ArrowsClockwise,
-  CheckCircle,
-  EyeSlash,
-  Gear,
-  Keyboard,
-  SignOut,
-  UserCircle,
-  Warning,
-  XCircle,
-} from '@phosphor-icons/react';
+import { Refresh } from '@/app/_icons/icons/refresh';
+import { CircleCheck } from '@/app/_icons/icons/circle-check';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
+import { Gear } from '@/app/_icons/icons/gear';
+import { KeyboardIcon } from '@/app/_icons/icons/keyboard';
+import { LogOut } from '@/app/_icons/icons/log-out';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
+import { CircleX } from '@/app/_icons/icons/circle-x';
 import { motion, LayoutGroup } from 'framer-motion';
 import { tokens } from '../../tokens';
-import { themeColor } from '../../components/lib/utils';
+import { themeColor, iconVars } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Badge } from '../../components/Badge';
@@ -150,11 +148,11 @@ function NavLinks({ orientation = 'horizontal', onNavigate }: {
 
 // ── User menu items (shared shape with mission-control / resource-planning) ─
 const userMenuItems: UserMenuItem[] = [
-  { id: 'profile',     label: 'Profile',             icon: UserCircle },
+  { id: 'profile',     label: 'Profile',             icon: CircleUser },
   { id: 'preferences', label: 'Preferences',         icon: Gear },
-  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
+  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: KeyboardIcon },
   { id: 'sep1',        type: 'separator' },
-  { id: 'signout',     label: 'Sign Out',            icon: SignOut },
+  { id: 'signout',     label: 'Sign Out',            icon: LogOut },
 ];
 
 // ── Top bar ───────────────────────────────────────────────────────
@@ -286,9 +284,9 @@ function PageHeaderStrip() {
 
       <div className="so-page-header-cluster" style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: tokens.spacing[5] }}>
         {[
-          { label: 'Issues',    value: pageMetrics[0].value, icon: Warning,      color: themeColor.orange[300] },
-          { label: 'Accidents', value: pageMetrics[2].value, icon: XCircle,      color: themeColor.red[300]    },
-          { label: 'Resolved',  value: pageMetrics[1].value, icon: CheckCircle,  color: themeColor.accent[300] },
+          { label: 'Issues',    value: pageMetrics[0].value, icon: TriangleAlert,      color: themeColor.orange[300] },
+          { label: 'Accidents', value: pageMetrics[2].value, icon: CircleX,      color: themeColor.red[300]    },
+          { label: 'Resolved',  value: pageMetrics[1].value, icon: CircleCheck,  color: themeColor.accent[300] },
         ].map(({ label, value, icon: Icon, color }) => (
           <span
             key={label}
@@ -303,7 +301,7 @@ function PageHeaderStrip() {
               textTransform: 'uppercase',
             }}
           >
-            <Icon weight="regular" size={14} style={{ color }} />
+            <Icon size={14} style={{ color }} />
             {label}
             <span style={{ color }}>{value}</span>
           </span>
@@ -311,8 +309,8 @@ function PageHeaderStrip() {
 
         <span aria-hidden style={{ width: 'var(--andromeda-border-width, 1px)', height: tokens.spacing[5], background: themeColor.border.base }} />
 
-        <Tooltip label="Refresh"><IconButton aria-label="Refresh" variant="ghost" size="sm" icon={ArrowsClockwise} /></Tooltip>
-        <Tooltip label="Hide"><IconButton aria-label="Hide"    variant="ghost" size="sm" icon={EyeSlash} /></Tooltip>
+        <Tooltip label="Refresh"><IconButton aria-label="Refresh" variant="ghost" size="sm" icon={Refresh} /></Tooltip>
+        <Tooltip label="Hide"><IconButton aria-label="Hide"    variant="ghost" size="sm" icon={EyeOff} /></Tooltip>
       </div>
 
       <style>{`
@@ -353,6 +351,7 @@ export default function ServiceOrder() {
     <div
       className="so-shell"
       style={{
+        ...iconVars,
         display: 'flex',
         flexDirection: 'column',
         // 100% (not 100vh): fill the parent, don't measure the raw viewport —

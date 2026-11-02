@@ -4,7 +4,8 @@
 
 'use client';
 
-import { Funnel, Printer } from '@phosphor-icons/react';
+import { Funnel } from '@/app/_icons/icons/funnel';
+import { PrinterIcon } from '@/app/_icons/icons/printer';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
@@ -151,7 +152,7 @@ export function OrderBook() {
           align="right"
         />
 
-        <IconButton aria-label="Print depth" variant="outline" size="sm" icon={Printer} />
+        <IconButton aria-label="Print depth" variant="outline" size="sm" icon={PrinterIcon} />
       </div>
 
       {/* Column headers */}
@@ -231,7 +232,7 @@ export function OrderBook() {
         >
           More
         </span>
-        <Funnel weight="regular" size={14} style={{ color: themeColor.accent[300] }} />
+        <Funnel size={14} style={{ color: themeColor.accent[300] }} />
       </div>
 
       {/* Bids */}

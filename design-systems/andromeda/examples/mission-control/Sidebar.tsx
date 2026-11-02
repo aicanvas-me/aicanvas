@@ -11,12 +11,10 @@
 // ============================================================
 
 import { motion, LayoutGroup } from 'framer-motion';
-import {
-  UserCircle,
-  Gear,
-  Keyboard,
-  SignOut,
-} from '@phosphor-icons/react';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
+import { Gear } from '@/app/_icons/icons/gear';
+import { KeyboardIcon } from '@/app/_icons/icons/keyboard';
+import { LogOut } from '@/app/_icons/icons/log-out';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import type { useCascadeProps } from '../../components/lib/motion';
@@ -51,11 +49,11 @@ type SidebarNavProps = {
 };
 
 const userMenuItems: UserMenuItem[] = [
-  { id: 'profile',     label: 'Profile',             icon: UserCircle },
+  { id: 'profile',     label: 'Profile',             icon: CircleUser },
   { id: 'preferences', label: 'Preferences',         icon: Gear },
-  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
+  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: KeyboardIcon },
   { id: 'sep1',        type: 'separator' },
-  { id: 'signout',     label: 'Sign Out',            icon: SignOut },
+  { id: 'signout',     label: 'Sign Out',            icon: LogOut },
 ];
 
 // Console nav — section label + NavItem list. Shared verbatim by the desktop

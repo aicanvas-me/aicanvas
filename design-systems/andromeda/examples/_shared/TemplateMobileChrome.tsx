@@ -24,7 +24,11 @@
 
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { List, UserCircle, Gear, Keyboard, SignOut } from '@phosphor-icons/react';
+import { MenuIcon } from '@/app/_icons/icons/menu';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
+import { Gear } from '@/app/_icons/icons/gear';
+import { KeyboardIcon } from '@/app/_icons/icons/keyboard';
+import { LogOut } from '@/app/_icons/icons/log-out';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
@@ -39,11 +43,11 @@ import { AndromedaIcon } from '../../AndromedaIcon';
 // Generic account menu — same set the desktop sidebars use. Templates can
 // override via `user.items`, but they all share this by default.
 const DEFAULT_USER_MENU_ITEMS: UserMenuItem[] = [
-  { id: 'profile', label: 'Profile', icon: UserCircle },
+  { id: 'profile', label: 'Profile', icon: CircleUser },
   { id: 'preferences', label: 'Preferences', icon: Gear },
-  { id: 'shortcuts', label: 'Keyboard Shortcuts', icon: Keyboard },
+  { id: 'shortcuts', label: 'Keyboard Shortcuts', icon: KeyboardIcon },
   { id: 'sep1', type: 'separator' },
-  { id: 'signout', label: 'Sign Out', icon: SignOut },
+  { id: 'signout', label: 'Sign Out', icon: LogOut },
 ];
 
 // Brand lockup — icon + "Andromeda" over the template name, mono uppercase.
@@ -120,7 +124,7 @@ export function MobileTopBar({ templateName, onMenuOpen, menuOpen = false }: {
       <IconButton
         variant="ghost"
         size="lg"
-        icon={List}
+        icon={MenuIcon}
         aria-label="Open navigation"
         aria-expanded={menuOpen}
         data-state={menuOpen ? 'open' : 'closed'}

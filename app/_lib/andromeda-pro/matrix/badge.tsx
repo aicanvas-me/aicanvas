@@ -1,4 +1,5 @@
-import { Check, WarningOctagon } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check';
+import { OctagonAlert } from '@/app/_icons/icons/octagon-alert';
 import { Badge } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
@@ -19,7 +20,7 @@ export const badge: MatrixSpec = {
     // A fault badge takes the octagon, not the tick: the icon carries the same
     // meaning as the colour, and a check beside ACTIVE in red says two opposite
     // things at once.
-    { label: 'Icon fault', props: { variant: 'fault', icon: WarningOctagon } },
+    { label: 'Icon fault', props: { variant: 'fault', icon: OctagonAlert } },
   ],
   // A badge is a label, not a control: the source declares no hover, focus,
   // active or disabled treatment at all, so it gets no states grid rather than

@@ -2,7 +2,9 @@
 
 import { forwardRef, useEffect } from 'react';
 import type { ComponentPropsWithoutRef } from 'react';
-import { CaretUp, CaretDown, CaretUpDown } from '@phosphor-icons/react';
+import { ChevronUp } from '@/app/_icons/icons/chevron-up';
+import { ChevronDown } from '@/app/_icons/icons/chevron-down';
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down';
 import { tokens } from '../tokens';
 import { andromedaVars, themeColor } from './lib/utils';
 import { mq } from './lib/responsive';
@@ -150,9 +152,9 @@ export const TableHeader = forwardRef<HTMLTableCellElement, TableHeaderProps>(fu
     sort === 'sortable' ? 'none'       :
     undefined;
   const sortIcon =
-    sort === 'asc'      ? <CaretUp     weight="bold"    size={10} /> :
-    sort === 'desc'     ? <CaretDown   weight="bold"    size={10} /> :
-    sort === 'sortable' ? <CaretUpDown weight="regular" size={10} /> :
+    sort === 'asc'      ? <ChevronUp strokeWidth={1.5}    size={10} /> :
+    sort === 'desc'     ? <ChevronDown strokeWidth={1.5}    size={10} /> :
+    sort === 'sortable' ? <ChevronsUpDown size={10} /> :
     null;
 
   return (

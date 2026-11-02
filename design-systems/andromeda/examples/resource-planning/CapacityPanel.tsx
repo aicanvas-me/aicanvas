@@ -15,7 +15,10 @@ import { mq } from '../../components/lib/responsive';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { PanelHeader } from '../../components/PanelHeader';
 import { PanelMenu } from '../../components/PanelMenu';
-import { ArrowClockwise, Sliders, Export, EyeSlash } from '@phosphor-icons/react';
+import { RotateCw } from '@/app/_icons/icons/rotate-cw';
+import { SlidersVertical } from '@/app/_icons/icons/sliders-vertical';
+import { ShareIcon } from '@/app/_icons/icons/share';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
 import { clusterUtilisation, missionSuccessRate, activeAllocations } from './data';
 
 // ── Reusable cell wrapper ─────────────────────────────────────────
@@ -290,11 +293,11 @@ export function CapacityPanel() {
           <PanelMenu
             ariaLabel="Capacity options"
             items={[
-              { label: 'Refresh',   icon: ArrowClockwise, onSelect: () => {} },
-              { label: 'Configure', icon: Sliders,        onSelect: () => {} },
-              { label: 'Export',    icon: Export,         onSelect: () => {} },
+              { label: 'Refresh',   icon: RotateCw, onSelect: () => {} },
+              { label: 'Configure', icon: SlidersVertical,        onSelect: () => {} },
+              { label: 'Export',    icon: ShareIcon,         onSelect: () => {} },
               { type: 'separator' },
-              { label: 'Hide',      icon: EyeSlash,       onSelect: () => {} },
+              { label: 'Hide',      icon: EyeOff,       onSelect: () => {} },
             ]}
           />
         }

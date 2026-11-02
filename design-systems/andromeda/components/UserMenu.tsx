@@ -7,8 +7,9 @@ import type {
   MouseEvent as ReactMouseEvent,
 } from 'react';
 import { motion } from 'framer-motion';
-import { CaretUpDown } from '@phosphor-icons/react';
-import type { Icon } from '@phosphor-icons/react';
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { tokens } from '../tokens';
 import { Avatar } from './Avatar';
 import { andromedaVars, themeColor } from './lib/utils';
@@ -54,7 +55,7 @@ function handleMenuKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
 export type UserMenuItem = {
   id?: string;
   label?: string;
-  icon?: Icon;
+  icon?: ComponentType<IconProps>;
   onSelect?: () => void;
   destructive?: boolean;
   type?: 'separator';
@@ -152,7 +153,7 @@ function UserMenuItemRow({ item, onClose }: { item: UserMenuItem; onClose: () =>
         transition: `background ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}, color ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}`,
       }}
     >
-      {Icon ? <Icon size={14} weight="regular" /> : <span style={{ width: '14px' }} />}
+      {Icon ? <Icon size={14} /> : <span style={{ width: '14px' }} />}
       <span style={{ flex: 1 }}>{item.label}</span>
     </button>
   );
@@ -342,7 +343,7 @@ export const UserMenu = forwardRef<HTMLDivElement, UserMenuProps>(function UserM
             transition: `color ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}`,
           }}
         >
-          <CaretUpDown size={14} weight="regular" />
+          <ChevronsUpDown size={14} />
         </motion.span>
       </button>
 

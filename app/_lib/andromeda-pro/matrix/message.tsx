@@ -3,7 +3,12 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowClockwise, Check, Copy, Sparkle, ThumbsDown, ThumbsUp } from '@phosphor-icons/react'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw';
+import { Check } from '@/app/_icons/icons/check';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { Sparkle } from '@/app/_icons/icons/sparkle';
+import { ThumbsDown } from '@/app/_icons/icons/thumbs-down';
+import { ThumbsUp } from '@/app/_icons/icons/thumbs-up';
 // v2 component: imported through the build-time shim.
 import { Message, MessageActions, MessageAvatar, MessageContent } from '../../../lib/andromeda-pro.generated'
 import { Avatar } from '../../../lib/andromeda-pro.generated'
@@ -40,7 +45,7 @@ function CopyAction({ text }: { text: string }) {
     <IconButton
       size="sm"
       variant="ghost"
-      icon={copied ? Check : Copy}
+      icon={copied ? Check : CopyIcon}
       aria-label={copied ? 'Copied' : 'Copy'}
       onClick={copy}
     />
@@ -98,7 +103,7 @@ export function AssistantTurn({
   return (
     <Message from="assistant" busy={busy}>
       <MessageAvatar>
-        <Sparkle size={tokens.iconSize.md} weight="regular" />
+        <Sparkle size={tokens.iconSize.md} />
       </MessageAvatar>
       <MessageContent>
         {busy ? (
@@ -120,7 +125,7 @@ export function AssistantTurn({
       </MessageContent>
       <MessageActions meta={stopped ? '09:41 · Stopped' : '09:41 · 4 s'}>
         {stopped ? (
-          <IconButton size="sm" variant="ghost" icon={ArrowClockwise} aria-label="Regenerate" onClick={regenerate} />
+          <IconButton size="sm" variant="ghost" icon={RotateCw} aria-label="Regenerate" onClick={regenerate} />
         ) : (
           <>
             <CopyAction text={text} />
@@ -140,7 +145,7 @@ export function AssistantTurn({
               pressed={rating === 'down'}
               onClick={() => rate('down')}
             />
-            <IconButton size="sm" variant="ghost" icon={ArrowClockwise} aria-label="Regenerate" onClick={regenerate} />
+            <IconButton size="sm" variant="ghost" icon={RotateCw} aria-label="Regenerate" onClick={regenerate} />
           </>
         )}
       </MessageActions>

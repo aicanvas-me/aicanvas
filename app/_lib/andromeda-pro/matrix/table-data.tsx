@@ -1,6 +1,6 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
-import { Play } from '@phosphor-icons/react'
+import { Play } from '@/app/_icons/icons/play';
 // v2 component: imported through the build-time shim.
 import { DataTable } from '../../../lib/andromeda-pro.generated'
 import { IconButton } from '../../../lib/andromeda-pro.generated'

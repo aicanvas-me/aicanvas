@@ -2,7 +2,7 @@
 
 import { forwardRef, useId, useState, useEffect } from 'react';
 import type { ChangeEvent, ComponentPropsWithoutRef } from 'react';
-import { Check } from '@phosphor-icons/react';
+import { Check } from '@/app/_icons/icons/check';
 
 function useSpacePopIn() {
   useEffect(() => {
@@ -165,7 +165,6 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           {checked ? (
             <Check
               size={12}
-              weight="light"
               style={{
                 color: 'var(--andromeda-accent-on, var(--andromeda-accent-100))',
                 animation: `andromeda-pop-in var(--andromeda-duration-normal, ${tokens.motion.duration.normal}) var(--andromeda-easing-out, ${tokens.motion.easing.out})`,

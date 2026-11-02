@@ -2,7 +2,9 @@
 
 import { forwardRef } from 'react';
 import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
-import { Play, Pause, ArrowUpRight } from '@phosphor-icons/react';
+import { Play } from '@/app/_icons/icons/play';
+import { Pause } from '@/app/_icons/icons/pause';
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right';
 import { tokens } from '../tokens';
 import { cn, andromedaVars } from './lib/utils';
 import { Card } from './Card';

@@ -6,7 +6,8 @@ import { motion } from 'framer-motion';
 import type { HTMLMotionProps, TargetAndTransition, Transition } from 'framer-motion';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { cn, andromedaVars, easingArray } from './lib/utils';
 import { useReducedMotion } from './lib/motion';
 import { mq } from './lib/responsive';
@@ -130,7 +131,7 @@ const ICON_SIZE: Record<NonNullable<VariantProps<typeof iconButtonVariants>['siz
 type IconButtonOwnProps = {
   variant?: NonNullable<VariantProps<typeof iconButtonVariants>['variant']>;
   size?: NonNullable<VariantProps<typeof iconButtonVariants>['size']>;
-  icon?: PhosphorIcon;
+  icon?: ComponentType<IconProps>;
   children?: ReactNode;
   className?: string;
   style?: CSSProperties;
@@ -167,7 +168,7 @@ export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(functio
         whileTap={reducedMotion || disabled ? undefined : PRESS_DOWN}
         {...props}
       >
-        {Icon ? <Icon size={ICON_SIZE[size]} weight="regular" /> : children}
+        {Icon ? <Icon size={ICON_SIZE[size]} /> : children}
       </motion.button>
       <style>{TOUCH_TARGET_STYLE}</style>
     </>
