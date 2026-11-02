@@ -194,8 +194,8 @@ html {
   --color-premium: var(--premium);
   --color-ai: var(--ai);
 
-  /* ── Olive — the former site accent. Site chrome no longer uses it; kept
-     for the cancellation flow (frozen as shipped) and the studio tools. ── */
+  /* ── Olive — the former site accent. No site page uses it; kept for the
+     studio tools and the internal palette page. ── */
   --color-olive-400: #DAE4A0;
   --color-olive-500: #A8B94D;
   --color-olive-600: #869631;

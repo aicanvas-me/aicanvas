@@ -1,15 +1,9 @@
 <svg width="150" height="24" viewBox="0 0 150 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 <title>AI Canvas</title>
+<style>.m{fill:#F4F4FA}@media (prefers-color-scheme:light){.m{fill:#1B1B1C}}</style>
 <g transform="scale(0.0823515) translate(-40.7272 -62.2856)">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M279.051 62.2856C287.689 62.2856 295.676 66.8735 300.029 74.3345L314.25 98.7142L363.724 183.526C372.546 198.65 372.546 217.35 363.724 232.474L314.25 317.286L300.029 341.665C295.676 349.126 287.689 353.714 279.051 353.714H136.949C128.311 353.714 120.324 349.126 115.972 341.665L45.1382 220.237C40.7272 212.675 40.7272 203.325 45.1382 195.763L115.972 74.3345C120.324 66.8735 128.311 62.2856 136.949 62.2856H279.051ZM86.5714 208L147.286 317.286H259.607L195.857 208L259.607 98.7142H147.286L86.5714 208Z" fill="url(#ai_canvas_logo_grad)"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M147.286 317.286L86.5715 208H195.857L259.607 317.286H147.286Z" fill="#1E1E1E"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M195.857 208H86.5715L147.286 98.7144H259.607L195.857 208Z" fill="#373738"/>
+<path fill-rule="evenodd" clip-rule="evenodd" d="M279.051 62.2856C287.689 62.2856 295.676 66.8735 300.029 74.3345L314.25 98.7142L363.724 183.526C372.546 198.65 372.546 217.35 363.724 232.474L314.25 317.286L300.029 341.665C295.676 349.126 287.689 353.714 279.051 353.714H136.949C128.311 353.714 120.324 349.126 115.972 341.665L45.1382 220.237C40.7272 212.675 40.7272 203.325 45.1382 195.763L115.972 74.3345C120.324 66.8735 128.311 62.2856 136.949 62.2856H279.051ZM86.5714 208L147.286 317.286H259.607L195.857 208L259.607 98.7142H147.286L86.5714 208Z" class="m"/>
+<path fill-rule="evenodd" clip-rule="evenodd" class="m" fill-opacity="0.2" d="M195.857 208H86.5715L147.286 98.7144H259.607L195.857 208Z"/>
 </g>
-<text x="38" y="18" font-family="Manrope, ui-sans-serif, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" letter-spacing="-0.4" fill="#1B1B1C">AI Canvas</text>
-<defs>
-<linearGradient id="ai_canvas_logo_grad" x1="147.286" y1="98.7142" x2="340.061" y2="268.714" gradientUnits="userSpaceOnUse">
-<stop stop-color="#C6C6CB"/>
-<stop offset="1" stop-color="#99999D"/>
-</linearGradient>
-</defs>
+<text x="38" y="18" font-family="Manrope, ui-sans-serif, system-ui, -apple-system, sans-serif" font-weight="700" font-size="19" letter-spacing="-0.4" class="m">AI Canvas</text>
 </svg>
