@@ -15,7 +15,7 @@ export function renewalThanksEmail(opts: { plan: 'monthly' | 'annual' }): { subj
     `<p ${emailText(kind, `margin:${margin};font-size:${kind === 'muted' ? 13 : 15}px;line-height:1.6;`)}>${text}</p>`
   const html = emailShell({
     title: 'A quick thank you from AI Canvas',
-    heading: 'You make this <span class="ac-accent" style="color:#869631;">possible</span>.',
+    heading: 'You make this <span class="ac-accent" style="color:#0369A1;">possible</span>.',
     bodyHtml: p('AI Canvas is built by one person, and every Premium member is the reason it keeps going. So before your plan renews, I just wanted to say thank you.', 'secondary', '0'),
     button: { label: 'See what your support built lately', url: 'https://aicanvas.me' },
     afterHtml:
@@ -48,7 +48,7 @@ export function welcomeEmail(): { subject: string; html: string } {
 export function welcomeToPremiumEmail(): { subject: string; html: string } {
   const html = emailShell({
     title: 'You just got superpowers',
-    heading: 'You just got <span class="ac-accent" style="color:#869631;">superpowers</span>.',
+    heading: 'You just got <span class="ac-accent" style="color:#0369A1;">superpowers</span>.',
     bodyHtml: `<p ${emailText('secondary', 'margin:0;font-size:15px;line-height:1.6;')}>Premium is live on your account. Every design system drops in with one command, and every premium component and template is yours, including every new one the moment it ships. Go build something only you could.</p>`,
     button: { label: 'Use your powers', url: 'https://aicanvas.me/components' },
     footerNoteHtml: 'Manage or cancel your plan anytime from your account settings.',
@@ -67,7 +67,7 @@ export function welcomeToPremiumEmail(): { subject: string; html: string } {
 export function claimPremiumAccountEmail(): { subject: string; html: string } {
   const html = emailShell({
     title: 'Access your Premium account',
-    heading: 'You just got <span class="ac-accent" style="color:#869631;">superpowers</span>.',
+    heading: 'You just got <span class="ac-accent" style="color:#0369A1;">superpowers</span>.',
     bodyHtml: `<p ${emailText('secondary', 'margin:0;font-size:15px;line-height:1.6;')}>Your payment went through and Premium is live on your account. Sign in with the email you used at checkout to get in, no password needed. Every design system, premium component, and template is yours, including every new one the moment it ships.</p>`,
     button: { label: 'Claim your Premium account', url: 'https://aicanvas.me/welcome' },
     footerNoteHtml: 'The claim page asks for this address and emails you a one-time sign-in link. You can add a password later in your account settings. If you did not buy AI Canvas Premium, ignore this email.',
