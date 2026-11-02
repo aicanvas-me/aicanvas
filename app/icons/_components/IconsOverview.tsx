@@ -305,9 +305,9 @@ export function IconsOverview({
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">{icons.length}</strong> icons</span>
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">4</strong> styles</span>
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">{ICON_CATEGORIES.length}</strong> categories</span>
-            {/* The key to the purple corner a new icon carries in the grid. */}
+            {/* The key to the purple dot a new icon carries in the grid. */}
             <span className="inline-flex items-center gap-1.5">
-              <i aria-hidden className="size-2 rounded-tl-[3px] bg-new [clip-path:polygon(0_0,100%_0,0_100%)]" />
+              <i aria-hidden className="size-1.5 rounded-full bg-new" />
               <span><strong className="font-bold text-sand-900 dark:text-sand-50">{icons.filter((icon) => icon.isNew).length}</strong> new</span>
             </span>
           </div>
