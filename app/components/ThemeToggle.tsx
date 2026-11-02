@@ -13,18 +13,18 @@ import { useTheme } from './ThemeProvider'
  * Both icons stay mounted and cross-fade. Swapping the element instead would
  * drop focus off the button mid-press for anyone driving it from the keyboard.
  */
-// 28px square by default, the height every other control in a top bar has.
+// A 32px outlined circle by default, the height and border of Search beside it.
 // The roomier 36px is for touch rows (the mobile menu), which ask for it.
 export function ThemeToggle({
   className = '',
-  size = 'xs',
+  size = 'sm',
 }: {
   className?: string
-  size?: 'xs' | 'md'
+  size?: 'sm' | 'md'
 }) {
   const { theme, setTheme } = useTheme()
   const dark = theme === 'dark'
-  const glyph = size === 'xs' ? 16 : 18
+  const glyph = size === 'md' ? 18 : 16
 
   return (
     <button
@@ -32,7 +32,7 @@ export function ThemeToggle({
       onClick={() => setTheme(dark ? 'light' : 'dark')}
       aria-label={dark ? 'Switch to light theme' : 'Switch to dark theme'}
       title={dark ? 'Light theme' : 'Dark theme'}
-      className={`${buttonClasses({ variant: 'icon', size })} ${className}`}
+      className={`${buttonClasses({ variant: 'outline', size, iconOnly: true })} ${className}`}
     >
       <span className="relative block" style={{ height: glyph, width: glyph }} data-theme-keep-transition>
         <Sun
