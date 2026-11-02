@@ -293,6 +293,8 @@ function walkDependencies(entries, rootDirAbs, excludedFiles = new Set()) {
 function iconItemFor(spec) {
   const m = spec.match(/^@\/app\/_icons\/(?:icons\/([a-z0-9-]+)|(IconBase))$/)
   if (!m) return null
+  // A paid style would make a free install stop on a locked icon.
+  if (/-(duotone|solid|solid-duotone)$/.test(m[1] ?? '')) throw new Error(`generate-registry: ${spec} is a paid icon style`)
   return m[1] ? `icon-${m[1]}` : 'icon-base'
 }
 
