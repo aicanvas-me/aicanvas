@@ -272,7 +272,7 @@ async function shoot(browser, slug) {
       ? { dx: 0, dy: 0 }
       : { dx: Math.round(ink.vw / 2 - (ink.L + ink.R) / 2), dy: Math.round(ink.vh / 2 - (ink.T + ink.B) / 2) }
 
-    // Legacy: art that paints differently at the final scale (a canvas) is nudged
+    // Legacy: art that paints differently at the final scale (a canvas, say) is nudged
     // once by its measured offset and reshot.
     for (let pass = 0; pass < (LEGACY ? 2 : 1); pass++) {
     out.length = 0

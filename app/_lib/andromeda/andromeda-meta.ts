@@ -14,7 +14,7 @@ export type AndromedaComponentMeta = {
   imageLight?: string
 }
 
-// Hero card art, one shot per theme (scripts/screenshot-andromeda-hero.mjs, SYSTEM=legacy). Bump on a reshoot.
+// Hero card art per theme (screenshot-andromeda-hero.mjs, SYSTEM=legacy). Bump on a reshoot.
 // Folder: change both with scripts/upload-andromeda-hero.mjs (FOLDER).
 const HERO_VERSION = 1
 const heroShot = (slug: string, theme: 'dark' | 'light') =>
