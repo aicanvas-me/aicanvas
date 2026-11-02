@@ -13,7 +13,9 @@ import { PAGE_TOP, PageFrame } from '@/app/_components/DesignSystemPage'
 import { PageCrumbs } from '@/app/components/PageCrumbs'
 import { useCopied } from '@/app/components/useCopied'
 import { useTheme } from '@/app/components/ThemeProvider'
-import { ICON_CATEGORY_LABELS } from '../_lib/categories'
+import { RailFooter } from '@/app/components/RailFooter'
+import { ICON_CATEGORIES, ICON_CATEGORY_COUNTS, ICON_CATEGORY_LABELS, type IconCategorySlug } from '../_lib/categories'
+import { iconInstallCommand } from '../_lib/constants'
 import { DARK_PREVIEW_COLOUR, FIXED_WEIGHT, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 import { formatDate, iconLead, takesStroke, titleCase } from '../_lib/icon-utils'
 import { fromIconQuery, toIconQuery } from '../_lib/settings-query'
@@ -173,7 +175,10 @@ export function IconDetail({
   }
 
   return (
-    <main className="min-h-full bg-sand-50 pb-20 dark:bg-sand-950">
+    <>
+    {/* shrink-0: the scroll column is a flex column, and a shrinking main
+        clipped its own bottom padding, so the page ended flush on the tags. */}
+    <main className="min-h-full shrink-0 bg-sand-50 pb-20 dark:bg-sand-950">
       {/* The design-system pages' frame, so the title and the grid start on the
           same edge as /components and every system page beside the rail. */}
       <PageFrame className={PAGE_TOP}>
@@ -297,12 +302,88 @@ export function IconDetail({
         )}
 
         {icon.tags.length > 0 && (
-          <p className="mt-6 text-xs text-sand-600 dark:text-sand-400">
-            <span className="mr-2 font-semibold text-sand-700 dark:text-sand-300">Tags</span>
-            {icon.tags.join(', ')}
-          </p>
+          <div className="mt-6 flex flex-wrap items-center gap-1.5">
+            <span className="mr-1 text-xs font-semibold text-sand-700 dark:text-sand-300">Tags</span>
+            {icon.tags.map((tag) => (
+              <span key={tag} className="rounded-full border border-sand-200 px-2 py-0.5 text-xs text-sand-600 dark:border-sand-800 dark:text-sand-400">
+                {tag}
+              </span>
+            ))}
+          </div>
         )}
+
+        <PropsReference name={icon.name} />
+        <CategoryLinks current={icon.category} />
       </PageFrame>
     </main>
+    <RailFooter />
+    </>
+  )
+}
+
+// What the component takes, with the defaults IconBase applies, so the page
+// answers "how do I size it" without opening the docs.
+const PROPS: { prop: string; type: string; fallback: string; note: string }[] = [
+  { prop: 'size', type: 'number | string', fallback: '24', note: 'Width and height in pixels.' },
+  { prop: 'strokeWidth', type: 'number | string', fallback: '1.5', note: 'Line weight. Line and Duotone only.' },
+  { prop: 'absoluteStrokeWidth', type: 'boolean', fallback: 'true', note: 'Keeps the line weight the same at every size.' },
+  { prop: 'color', type: 'string', fallback: 'currentColor', note: 'Follows the text colour unless set.' },
+  { prop: 'className', type: 'string', fallback: '', note: 'Any utility class, passed to the svg.' },
+]
+
+function PropsReference({ name }: { name: string }) {
+  return (
+    <section className="mt-14" aria-labelledby="icon-props">
+      <h2 id="icon-props" className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Props</h2>
+      <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
+        Every icon takes the same props. Set them once for a whole tree with{' '}
+        <code className="font-mono text-xs text-sand-900 dark:text-sand-50">IconProvider</code>.
+      </p>
+      <div className="mt-4 overflow-x-auto rounded-section border border-sand-200 dark:border-sand-800">
+        <table className="w-full min-w-[560px] text-left text-sm">
+          <thead className="bg-sand-100 text-xs text-sand-600 dark:bg-sand-900 dark:text-sand-400">
+            <tr>
+              <th className="px-4 py-2.5 font-semibold">Prop</th>
+              <th className="px-4 py-2.5 font-semibold">Type</th>
+              <th className="px-4 py-2.5 font-semibold">Default</th>
+              <th className="px-4 py-2.5 font-semibold">What it does</th>
+            </tr>
+          </thead>
+          <tbody>
+            {PROPS.map((row) => (
+              <tr key={row.prop} className="border-t border-sand-200 dark:border-sand-800">
+                <td className="px-4 py-2.5 font-mono text-xs text-sand-900 dark:text-sand-50">{row.prop}</td>
+                <td className="whitespace-nowrap px-4 py-2.5 font-mono text-xs text-sand-600 dark:text-sand-400">{row.type}</td>
+                <td className="px-4 py-2.5 font-mono text-xs text-sand-700 dark:text-sand-300">{row.fallback || '-'}</td>
+                <td className="px-4 py-2.5 text-sand-700 dark:text-sand-300">{row.note}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="mt-3 text-xs text-sand-600 dark:text-sand-400">
+        Install this icon alone: <code className="break-all font-mono text-sand-900 dark:text-sand-50">{iconInstallCommand(name)}</code>
+      </p>
+    </section>
+  )
+}
+
+function CategoryLinks({ current }: { current: IconCategorySlug }) {
+  return (
+    <section className="mt-14" aria-labelledby="icon-categories">
+      <h2 id="icon-categories" className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Browse by category</h2>
+      <div className="mt-4 flex flex-wrap gap-2">
+        {ICON_CATEGORIES.filter(([slug]) => slug !== current).map(([slug, label]) => (
+          <Link
+            key={slug}
+            href={`/icons?category=${slug}`}
+            className="inline-flex items-center gap-1.5 rounded-full border border-sand-200 px-3 py-1 text-xs font-semibold text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-50"
+          >
+            {label}
+            <span className="font-normal text-sand-600 dark:text-sand-400">{ICON_CATEGORY_COUNTS[slug]}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
   )
 }

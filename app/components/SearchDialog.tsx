@@ -260,11 +260,11 @@ const TIER_FILTER: Record<string, 'free' | 'paid'> = { free: 'free', mit: 'free'
 const inTier = (item: Item, want: 'free' | 'paid') => (want === 'free' ? item.tier === 'free' : item.tier === 'pro' || item.tier === 'premium')
 
 // Same chip shape as SystemTierChip, with the tier colours the component grid
-// already uses: Pro and premium wear the premium orange, free the green.
+// already uses: Pro and premium wear the premium cyan, free the orange.
 const TIER_CHIP: Record<Tier, string> = {
   pro: 'bg-premium/10 text-premium ring-premium/30',
   premium: 'bg-premium/10 text-premium ring-premium/30',
-  free: 'bg-success/10 text-success ring-success/30',
+  free: 'bg-free/10 text-free ring-free/30',
 }
 
 function TierChip({ tier }: { tier: Tier }) {

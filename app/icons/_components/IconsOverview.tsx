@@ -27,6 +27,7 @@ import { takesStroke } from '../_lib/icon-utils'
 import { overviewMarkdown } from '../_lib/markdown'
 import { toIconQuery } from '../_lib/settings-query'
 import { ICON_DEFAULTS, storeSettings, storedSettings } from '../_lib/settings-store'
+import { RailFooter } from '@/app/components/RailFooter'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconGridMeta, IconMarkupMap, IconMeta, IconStyle } from '../_lib/types'
 import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
@@ -153,7 +154,9 @@ function DownloadAll({
       >
         <Download aria-hidden className="size-4" />
         {busy ? 'Downloading...' : 'Download all'}
-        <span className="inline-flex h-7 items-center rounded-full bg-accent-foreground/15 px-2.5 text-xs font-semibold">Premium</span>
+        {/* The premium cyan on the button's own ground: the button is ink, so the
+            chip takes the opposite theme's step (700 on the light button). */}
+        <span className="inline-flex h-7 items-center rounded-full bg-cyan-400/15 px-2.5 text-xs font-semibold text-cyan-400 dark:bg-cyan-700/10 dark:text-cyan-700">Premium</span>
       </button>
       {open && (
         <div
@@ -286,7 +289,10 @@ export function IconsOverview({
   }
 
   return (
-    <main className="min-h-full bg-sand-50 pb-20 dark:bg-sand-950">
+    <>
+    {/* shrink-0: in the flex scroll column a shrinking main clipped its own
+        bottom padding. */}
+    <main className="min-h-full shrink-0 bg-sand-50 pb-20 dark:bg-sand-950">
       {/* The design-system pages' frame, so the title and the grid start on the
           same edge as /components and every system page beside the rail. */}
       <PageFrame className={PAGE_TOP}>
@@ -299,9 +305,9 @@ export function IconsOverview({
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">{icons.length}</strong> icons</span>
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">4</strong> styles</span>
             <span><strong className="font-bold text-sand-900 dark:text-sand-50">{ICON_CATEGORIES.length}</strong> categories</span>
-            {/* The key to the accent dot a new icon carries in the grid's corner. */}
+            {/* The key to the purple corner a new icon carries in the grid. */}
             <span className="inline-flex items-center gap-1.5">
-              <i aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+              <i aria-hidden className="size-2 rounded-tl-[3px] bg-new [clip-path:polygon(0_0,100%_0,0_100%)]" />
               <span><strong className="font-bold text-sand-900 dark:text-sand-50">{icons.filter((icon) => icon.isNew).length}</strong> new</span>
             </span>
           </div>
@@ -467,5 +473,7 @@ export function IconsOverview({
         )}
       </PageFrame>
     </main>
+    <RailFooter />
+    </>
   )
 }

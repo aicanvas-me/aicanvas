@@ -105,16 +105,7 @@ function StyleTrack({
         const premium = style.tier === 'Premium'
         return (
           <Fragment key={style.id}>
-            {index === 1 && (
-              <>
-                <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-sand-300 dark:bg-sand-700" />
-                {/* The narrowest phones drop the caption and keep the divider;
-                    each segment's label still names its tier. */}
-                <span aria-hidden className="shrink-0 pl-1 pr-1.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 @max-[300px]:hidden dark:text-sand-400">
-                  Premium
-                </span>
-              </>
-            )}
+            {index === 1 && <span aria-hidden className="mx-1 h-4 w-px shrink-0 bg-sand-300 dark:bg-sand-700" />}
             <button
               ref={(node) => {
                 refs.current[index] = node
@@ -146,6 +137,13 @@ function StyleTrack({
                 className={`relative hidden @min-[560px]:block ${loading && selected ? 'animate-pulse motion-reduce:animate-none' : ''}`}
               />
               <span className="relative">{style.shortLabel}</span>
+              {/* Line is the free style; the chip says so in the free orange. The
+                  narrowest rows drop it and the radio's label still names the tier. */}
+              {!premium && (
+                <span aria-hidden className="relative rounded-full bg-free/10 px-1.5 py-px text-[10px] font-semibold text-free ring-1 ring-inset ring-free/30 @max-[420px]:hidden">
+                  Free
+                </span>
+              )}
             </button>
           </Fragment>
         )

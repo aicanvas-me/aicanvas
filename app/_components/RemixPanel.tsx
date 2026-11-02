@@ -179,7 +179,7 @@ export function RemixPanel({
                 {/* Same pill as the tag row on the page behind. Says what the
                     lock further down is about before the reader reaches it. */}
                 {premium && (
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent dark:border-accent/25">
+                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-premium/10 px-2.5 py-0.5 text-xs font-semibold text-premium ring-1 ring-inset ring-premium/30">
                     <Bolt size={12} />
                     Premium
                   </span>

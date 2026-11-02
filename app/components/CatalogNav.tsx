@@ -310,7 +310,7 @@ function DesignSystemsList({ onNavigate }: { onNavigate?: () => void }) {
               <span className="min-w-0 truncate font-semibold">{system.name}</span>
               {system.badge && (
                 <span aria-hidden className="flex">
-                  <SystemTierChip tier={system.tier} label={system.badge} className="!px-1" />
+                  <SystemTierChip tier="new" label={system.badge} className="!px-1" />
                 </span>
               )}
               <ChevronDown

@@ -93,23 +93,28 @@
 /* Accent role values (the roles are named in the @theme block below). Same
    two scopes as the dark variant: the site first, then a preview wrapper that
    disagrees with it. Success: emerald-700 holds 5:1 on the light page,
-   emerald-400 glows on sand-950. Premium and AI follow the same split: a deep
-   step that reads on sand-50, a light step that glows on sand-950. */
+   emerald-400 glows on sand-950. Premium, Free and New follow the same split: a
+   deep step that reads on sand-50, a light step that glows on sand-950. The AI
+   Brain is part of Premium, so ai is the premium cyan. */
 :root,
 [data-card-theme="light"] {
   --accent: var(--color-sand-900);
   --accent-foreground: var(--color-sand-50);
   --success: #047857;
-  --premium: #B45309;
-  --ai: var(--color-cyan-700);
+  --premium: var(--color-cyan-700);
+  --free: #B45309;
+  --new: #6D28D9;
+  --ai: var(--premium);
 }
 .dark,
 [data-card-theme="dark"] {
   --accent: var(--color-sand-50);
   --accent-foreground: var(--color-sand-950);
   --success: #34D399;
-  --premium: var(--color-ember-400);
-  --ai: var(--color-cyan-400);
+  --premium: var(--color-cyan-400);
+  --free: var(--color-ember-400);
+  --new: #B79CFF;
+  --ai: var(--premium);
 }
 
 /* Tell the browser which way the page leans, so every control it draws for us
@@ -181,10 +186,12 @@ html {
      tint from the same ink.
        accent             fills, emphasised text and icons, borders, rings
        accent-foreground  text and icons sitting ON an accent fill
-       success            confirmation, and the Free / MIT tier mark
-       premium            the Premium tier mark (orange)
-       ai                 the AI Brain and agent marks (cyan)
-     The three hues colour SMALL marks only: chips, tier icons, eyebrows, check
+       success            confirmation only: copied, sent, saved (green)
+       premium            the Premium tier mark (cyan)
+       free               the Free / MIT tier mark (orange)
+       new                the New mark (purple)
+       ai                 the AI Brain marks, the premium cyan
+     These hues colour SMALL marks only: chips, tier icons, eyebrows, check
      glyphs. Never a button, a fill behind text, or a heading. Error stays the
      red family already in use. The values flip per theme in the :root / .dark
      blocks above, under the same two scopes as the dark variant. */
@@ -192,6 +199,8 @@ html {
   --color-accent-foreground: var(--accent-foreground);
   --color-success: var(--success);
   --color-premium: var(--premium);
+  --color-free: var(--free);
+  --color-new: var(--new);
   --color-ai: var(--ai);
 
   /* ── Olive — the former site accent. No site page uses it; kept for the
@@ -211,12 +220,12 @@ html {
      higher-contrast 700) and this for its hover; dark mode never touches it. */
   --color-olive-800: #4A551A;
 
-  /* ── Ember — the Premium mark on dark (the premium role above). ── */
+  /* ── Ember — the Free mark on dark (the free role above). ── */
   --color-ember-400: #FFB574;
   --color-ember-500: #F59E42;
   --color-ember-600: #D97B1A;
 
-  /* ── Cyan — the AI mark: 400 on dark, 700 on light (the ai role above). ── */
+  /* ── Cyan — the Premium mark: 400 on dark, 700 on light (the premium role). ── */
   --color-cyan-400: #7DD3FC;
   --color-cyan-500: #38BDF8;
   --color-cyan-600: #0284C7;

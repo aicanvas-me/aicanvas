@@ -494,7 +494,18 @@ export default function ComponentPageView({
                 200 tokens on each page carry a definitional answer. Falls
                 back to the plain description when there is no subtitle. */}
             <PageCrumbs />
-            <PageTitle gap="none" rank="section">{name}</PageTitle>
+            {/* The tier sits on the title's line so a paid page says so at first
+                glance; outside the h1, so the heading stays the name alone. */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <PageTitle gap="none" rank="section">{name}</PageTitle>
+              {designSystem && <PremiumBadge className="!gap-1.5 !px-3 !py-1 !text-sm" />}
+              {premium && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-premium/10 px-3 py-1 text-sm font-semibold text-premium ring-1 ring-inset ring-premium/30">
+                  <Bolt size={14} />
+                  Premium
+                </span>
+              )}
+            </div>
             {headingSubtitle ? (
               <PageLead>{headingSubtitle}</PageLead>
             ) : (
@@ -511,20 +522,13 @@ export default function ComponentPageView({
               // was the wrong half to cut: it left premium blocks as the only
               // things on the site with no category at all, while the noun they
               // were losing it to is repeated again above the install section.
-              // The pill states the TIER here and the type noun lives further
-              // down, so the two chips now read "Premium" then "Blocks".
+              // The TIER now sits on the title's line above, and the type noun
+              // lives further down.
               const categoryTags = tags.filter((t) => t.accent)
               const useCaseChips = (useCases ?? []).slice(0, 3)
               return (
                 <div className="mt-4 flex flex-wrap items-center gap-2">
                   <TagIcon size={14} className="shrink-0 text-sand-600 dark:text-sand-500" />
-                  {designSystem && <PremiumBadge />}
-                  {premium && (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent dark:border-accent/25">
-                      <Bolt size={12} />
-                      Premium
-                    </span>
-                  )}
                   {categoryTags.map((tag) => (
                     <span
                       key={tag.label}
@@ -875,7 +879,7 @@ export default function ComponentPageView({
                   // bolt at rest, slides open to the label on hover — a
                   // reminder that the install below is premium-gated.
                   <span className="group/premium flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-50 ring-1 ring-sand-50/30 backdrop-blur-sm">
-                    <BoltSolid size={14} className="shrink-0" />
+                    <BoltSolid size={14} className="shrink-0 text-cyan-400" />
                     <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover/premium:grid-cols-[1fr]">
                       <span className="overflow-hidden">
                         <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">

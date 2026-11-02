@@ -321,7 +321,7 @@ function LifetimeCard({
   return (
     <div className="relative flex flex-col overflow-hidden rounded-section border border-accent/50 bg-sand-100 p-2 dark:border-accent/40 dark:bg-sand-900">
       <TopLight />
-      <span className="absolute right-4 top-4 rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-[11px] font-semibold text-accent">
+      <span className="absolute right-4 top-4 rounded-full border border-premium/30 bg-premium/10 px-2.5 py-0.5 text-[11px] font-semibold text-premium">
         Pay once
       </span>
       <div className={`relative ${cardPad}`}>

@@ -5,7 +5,7 @@ import { createClient } from '../../lib/supabase/server'
 import { premiumEnabled } from '../../../lib/flags'
 import { isPremiumNow, type SubStatus } from '../../../lib/identity/tier'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
-import { PageShell, PILL } from '../../components/PageKit'
+import { PageShell } from '../../components/PageKit'
 import { AccountTabs } from './AccountTabs'
 
 export default async function MemberLayout({ children }: { children: ReactNode }) {
@@ -54,12 +54,12 @@ export default async function MemberLayout({ children }: { children: ReactNode }
             </h1>
             {showTier && (
               isPremium ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-premium/10 px-3 py-1 text-xs font-semibold text-premium ring-1 ring-inset ring-premium/30">
                   <Bolt size={12} />
                   Premium
                 </span>
               ) : (
-                <span className={PILL}>Free</span>
+                <span className="inline-flex items-center rounded-full bg-free/10 px-3 py-1 text-xs font-semibold text-free ring-1 ring-inset ring-free/30">Free</span>
               )
             )}
           </div>

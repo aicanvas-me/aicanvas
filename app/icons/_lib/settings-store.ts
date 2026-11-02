@@ -2,7 +2,7 @@ import type { IconSettings } from './settings-query'
 
 // The starting look on the grid and on every icon page; the URL carries only
 // what differs from it.
-export const ICON_DEFAULTS: IconSettings = { style: 'line', size: 48, strokeWidth: 2, absolute: true, colour: null }
+export const ICON_DEFAULTS: IconSettings = { style: 'line', size: 48, strokeWidth: 1.5, absolute: true, colour: null }
 
 // One look for the whole icons section while the tab stays on the site: the
 // grid's picks open an icon page as they were, the arrows carry them from icon

@@ -163,7 +163,7 @@ function ProjectList() {
             {letter}
           </span>
           <span className={`text-[13px] font-medium ${STRONG}`}>{name}</span>
-          <span className="rounded-full border border-success/30 bg-success/10 px-1.5 py-px text-[10px] font-semibold text-success">
+          <span className="rounded-full border border-free/30 bg-free/10 px-1.5 py-px text-[10px] font-semibold text-free">
             {tag}
           </span>
           <span className={`text-[12px] ${MUTED}`}>{note}</span>
@@ -299,7 +299,7 @@ function LicenceFile() {
     <div className={`${PANEL} absolute -right-8 left-6 top-10 overflow-hidden sm:left-8`}>
       <div className={`flex items-center justify-between border-b border-sand-200 px-4 py-2 dark:border-sand-800 ${LABEL}`}>
         <span>LICENSE</span>
-        <span className="text-success">MIT</span>
+        <span className="text-free">MIT</span>
       </div>
       <div className={`p-4 font-mono text-[11px] leading-5 ${MUTED}`}>
         <p className={STRONG}>MIT License</p>
