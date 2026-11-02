@@ -11,6 +11,7 @@ import { Buildings } from '@/app/_icons/icons/buildings'
 import { CalendarBlank } from '@/app/_icons/icons/calendar-blank'
 import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down'
 import { Check } from '@/app/_icons/icons/check'
+import { CircleDollarSign } from '@/app/_icons/icons/circle-dollar-sign'
 import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
 import { Copy } from '@/app/_icons/icons/copy'
 import { Smartphone } from '@/app/_icons/icons/smartphone'
@@ -564,6 +565,7 @@ const TEMPLATE_ICONS: Record<string, SiteIcon> = {
   'resource-planning': CalendarBlank,
   'signal-room': Broadcast,
   'ai-chat': Sparkle,
+  'fintech-landing': CircleDollarSign,
 }
 
 function TemplateSwitcher({
