@@ -299,7 +299,8 @@ function iconItemFor(spec) {
 }
 
 function toInstalledIconPaths(content) {
-  return content.replace(/(['"])@\/app\/_icons\//g, '$1@/components/icons/')
+  // icon-registry.mjs installs icons flat in components/icons/, so `icons/` drops.
+  return content.replace(/(['"])@\/app\/_icons\/(?:icons\/)?/g, '$1@/components/icons/')
 }
 
 // Convert an absolute file path inside the system's rootDir into the registry
