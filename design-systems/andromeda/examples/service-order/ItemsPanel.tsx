@@ -7,7 +7,7 @@
 //
 // Selected row uses surface.active background plus an accent-300 left
 // edge bar; row hover uses surface.hover. Sortable columns get a
-// CaretUp/Down indicator on the active sort column.
+// ChevronUp/Down indicator on the active sort column.
 // ============================================================
 
 'use client';

@@ -12,7 +12,7 @@ import { andromedaVars, themeColor } from './lib/utils';
  * @typedef {object} SearchFieldProps
  * @property {string} [placeholder='Search anything'] Text shown when empty. Defaults to "Search anything".
  * @property {string|null} [shortcut='⌘ K'] Keyboard shortcut chip. Pass null to hide. Defaults to "⌘ K".
- * @property {React.ComponentType<{ size?: number, weight?: string, color?: string, style?: React.CSSProperties }>} [icon=MagnifyingGlass] Phosphor-style leading icon. Defaults to MagnifyingGlass. Pass null to hide.
+ * @property {React.ComponentType<IconProps>} [icon=Search] Leading icon. Defaults to Search. Pass null to hide.
  * @property {string} [value] Controlled value.
  * @property {string} [defaultValue] Uncontrolled initial value.
  * @property {(next: string) => void} [onValueChange] Called when typed value changes.

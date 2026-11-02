@@ -19,7 +19,7 @@ import { andromedaVars, inheritedThemeVars, themeColor } from './lib/utils';
 /**
  * @typedef {object} MenuItem
  * @property {string}   [label] Text shown for the menu item.
- * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon] Icon rendered to the left of the label.
+ * @property {React.ComponentType<IconProps>} [icon] Icon rendered to the left of the label.
  * @property {() => void} [onSelect] Handler called when the item is chosen (ignored on items with a submenu).
  * @property {MenuItem[]} [submenu] Nested items opened as a flyout submenu.
  * @property {boolean}  [selected] Marks the item as the active choice, styling it accordingly.

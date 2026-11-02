@@ -46,7 +46,7 @@ function handleMenuKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
  * @typedef {object} UserMenuItem
  * @property {string}   [id]           Stable key for the row, falling back to its array index.
  * @property {string}   [label]        Text shown on the menu item, rendered uppercase.
- * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon] Icon component rendered before the label.
+ * @property {React.ComponentType<IconProps>} [icon] Icon component rendered before the label.
  * @property {() => void} [onSelect]   Handler called when the item is chosen; the menu closes after.
  * @property {boolean}  [destructive]  Renders the item in the destructive red color.
  * @property {'separator'} [type]      Set to 'separator' to render a divider instead of an item.

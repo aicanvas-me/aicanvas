@@ -78,7 +78,7 @@ const navItemVariants = cva(
 
 /**
  * @typedef {object} NavItemProps
- * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon]
+ * @property {React.ComponentType<IconProps>} [icon]
  *   Optional icon component rendered at 20px before the label.
  * @property {React.ReactNode} label Visible content of the nav row.
  * @property {boolean} [active=false] Marks the row as the current selection, applying accent text and the indicator dot.

@@ -92,7 +92,7 @@ function maxAmount(rows: (typeof asks)[number][]) {
 }
 
 // Two small coloured bars stacked — represents both / asks / bids view mode.
-// Used as `children` of IconButton (custom glyph, not a phosphor icon).
+// Used as `children` of IconButton (custom glyph, not an icon component).
 function ModeIcon({ topColor, botColor }: { topColor: string; botColor: string }) {
   return (
     <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>

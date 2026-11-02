@@ -117,8 +117,8 @@ const ICON_SIZE: Record<NonNullable<VariantProps<typeof iconButtonVariants>['siz
  * @typedef {object} IconButtonProps
  * @property {'default'|'outline'|'ghost'|'destructive'} [variant='outline']
  * @property {'sm'|'md'|'lg'} [size='md']
- * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon]
- *   Phosphor / Lucide icon. Pass either `icon` OR `children` for custom glyphs.
+ * @property {React.ComponentType<IconProps>} [icon]
+ *   Icon component. Pass either `icon` OR `children` for custom glyphs.
  * @property {React.ReactNode} [children] Custom icon content (SVG, bars, etc.)
  * @property {string} [aria-label]  Required for accessibility (no visible text).
  * @property {string} [className]

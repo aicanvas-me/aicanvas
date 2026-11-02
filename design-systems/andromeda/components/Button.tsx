@@ -135,7 +135,7 @@ export type ButtonProps = ButtonOwnProps & Omit<HTMLMotionProps<'button'>, keyof
  * @property {'default'|'outline'|'ghost'|'destructive'|'link'} [variant='default']
  * @property {'sm'|'md'|'lg'} [size='md']
  * @property {boolean} [asChild=false]  When true, renders the only child element with the button's props/styles.
- * @property {React.ComponentType<{ size?: number }>} [icon] Phosphor / Lucide icon component rendered before children.
+ * @property {React.ComponentType<IconProps>} [icon] Icon component rendered before children.
  * @property {React.ReactNode} [children]
  * @property {string} [className]
  * @property {React.CSSProperties} [style]
