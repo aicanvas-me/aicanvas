@@ -60,7 +60,7 @@ The icon prop renders before children at a size proportional to the button size:
 - `md` → 18px icon
 - `lg` → 20px icon
 
-The icon size is intentionally one step taller than the text x-height so it reads as the button's lead, not as decoration. Phosphor icons inherit `currentColor` — set the text color, the icon follows.
+The icon size is intentionally one step taller than the text x-height so it reads as the button's lead, not as decoration. AI Canvas icons inherit `currentColor` — set the text color, the icon follows.
 
 `should` — Lock the button height with `style={{ height: tokens.spacing[N] }}` if a button with an icon sits in a row alongside non-growing components. The icon (18px at md) is taller than text content; without an explicit height, the row may misalign.
 
