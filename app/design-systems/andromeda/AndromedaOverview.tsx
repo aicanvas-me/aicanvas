@@ -555,6 +555,7 @@ export function AndromedaOverview() {
                           <img
                             src={optimizeImageKitUrl(c.image, 'card')}
                             alt={c.name}
+                            loading="lazy"
                             decoding="async"
                             className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110 ${
                               c.imageLight ? 'hidden dark:block' : ''
@@ -564,6 +565,7 @@ export function AndromedaOverview() {
                             <img
                               src={optimizeImageKitUrl(c.imageLight, 'card')}
                               alt={c.name}
+                              loading="lazy"
                               decoding="async"
                               className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110 dark:hidden"
                             />
