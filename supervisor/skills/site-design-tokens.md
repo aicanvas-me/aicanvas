@@ -155,5 +155,5 @@ Font: Manrope via `--font-sans`. Use `font-sans` class.
 ## Icons
 
 - Library: AI Canvas icons, one file per icon from `app/_icons/icons/<name>` (names listed in `app/_icons/site-icons.json`)
-- Weight: the package default (Regular) everywhere; no call site sets its own weight; Line style only
+- Weight: Regular by default; small glyphs may use `weight="bold"`; Line style only
 - Size: use Tailwind sizing (`className="size-5"`) not the `size` prop

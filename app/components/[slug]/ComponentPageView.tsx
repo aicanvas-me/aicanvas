@@ -125,8 +125,6 @@ interface ComponentPageViewProps {
 const RELATED_PAGE_SIZE = 3
 const RELATED_IMG = 'absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] group-hover:brightness-110'
 
-// A buyer's install draws icons at the set's 1.5 default, not the site's 1.25.
-
 export default function ComponentPageView({
   slug,
   propTables = [],

@@ -45,7 +45,7 @@ describe('fromIconQuery', () => {
     expect(fromIconQuery('?size=35.5')).toEqual({ size: 36 })
   })
 
-  it('takes a weight only as one of the four ids', () => {
+  it('takes a weight only as one of the five ids', () => {
     for (const weight of ['thin', 'light', 'regular', 'bold', 'extrabold'] as const) {
       expect(fromIconQuery(`?weight=${weight}`)).toEqual({ weight })
     }

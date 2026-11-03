@@ -18,7 +18,7 @@ export const FAQ_CATEGORY_META: { slug: string; category: string; blurb: string 
   { slug: 'design-systems', category: 'Design systems', blurb: 'Design systems your agent builds with and you reshape. Change the tokens and every component follows.' },
   { slug: 'ai-design-skills', category: 'AI design skills', blurb: 'Give Claude Code, Cursor, and Codex the whole system, so what they build next fits it.' },
   { slug: 'standalone', category: 'Standalone components', blurb: 'Effects, motion and blocks that belong to no design system and drop into any of them.' },
-  { slug: 'icons', category: 'Icons', blurb: 'An in-house icon set in four styles, free to use, with the size and stroke width yours to set.' },
+  { slug: 'icons', category: 'Icons', blurb: 'An in-house icon set in four styles, free to use, with the size and weight yours to set.' },
   { slug: 'plans', category: 'Plans and Premium', blurb: 'Start free with unlimited installs. Upgrade for Andromeda Pro, the AI Brain, complete systems, templates, and premium standalone components and blocks.' },
   { slug: 'billing', category: 'Payments and billing', blurb: 'Paddle handles checkout, taxes, and payment details. Cancel Premium at any time and keep access through the paid period.' },
   { slug: 'about', category: 'About AI Canvas', blurb: 'Understand the code, licences, compatibility, and people it serves. One designer builds the project one component at a time.' },
@@ -212,7 +212,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'ai-canvas-icons',
     category: 'icons',
     q: 'Does AI Canvas have icons?',
-    a: 'Yes. AI Canvas has its own icon set, drawn in house on one 24-pixel grid, in four styles: line, duotone, solid, and solid duotone. You set the size and the stroke width, and the stroke keeps its width at any size.',
+    a: 'Yes. AI Canvas has its own icon set, drawn in house on one 24-pixel grid, in four styles: line, duotone, solid, and solid duotone. You set the size and pick one of five weights, thin, light, regular, bold or extra bold, and the line scales with the icon.',
   },
   {
     id: 'are-icons-free',

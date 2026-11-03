@@ -160,7 +160,7 @@ export default function AboutPage() {
         </p>
         <p className={P}>
           Underneath both sits a free icon set in four styles, line, duotone,
-          solid, and solid duotone, with the size and stroke width yours to
+          solid, and solid duotone, with the size and weight yours to
           set.
         </p>
       </Chapter>
