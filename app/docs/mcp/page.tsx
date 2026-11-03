@@ -260,6 +260,14 @@ export default function McpDocsPage() {
         head={['Tool', 'What it does']}
         rows={[[<C key="1">get_install_command</C>, 'The shadcn command for one standalone or design-system component. Whole systems and templates list theirs in get_system and get_template.']]}
       />
+      <H3>Icons</H3>
+      <Table
+        head={['Tool', 'What it does']}
+        rows={[
+          [<C key="1">search_icons</C>, 'Finds icons by name, tag or category, best match first.'],
+          [<C key="2">get_icon_install</C>, 'The shadcn command, import line and JSX for one icon in one style.'],
+        ]}
+      />
       {hosted && (
         <>
           <H3>Account (sign-in only)</H3>
@@ -282,6 +290,7 @@ export default function McpDocsPage() {
         <li>Browsing, search, props and install commands need no account.</li>
         <li>Reading source needs a free account: set <C>AICANVAS_TOKEN</C>.</li>
         <li>Premium design systems and templates need an account with <A href="/pricing">Premium</A>.</li>
+        <li>Icons in the Line style install with a free account. Duotone, Solid and Solid duotone need Premium.</li>
         {hosted && (
           <li>
             With sign-in, your plan comes along: Premium items show as locked with an upgrade link, and upgrading unlocks them on the

@@ -23,6 +23,7 @@ describe('/docs/mcp and the hosted sign-in flag', () => {
     for (const id of ['sign-in', 'your-account', 'ci', 'stuck', 'what-we-store']) expect(html).not.toContain(`id="${id}"`)
     expect(html).not.toContain('mcp.aicanvas.me')
     expect(html).not.toContain('whoami')
+    expect(html).toContain('search_icons')
   })
 
   it('leads with the sign-in sections while the flag is on', async () => {
