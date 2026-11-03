@@ -13,8 +13,7 @@ function input(overrides: Partial<IconZipInput> = {}): IconZipInput {
     style: 'line',
     format: 'svg',
     size: 20,
-    strokeWidth: 1.75,
-    absolute: false,
+    weight: 'light',
     colour: '#336699',
     names: ['alpha', 'beta'],
     markup: MARKUP,
@@ -44,10 +43,10 @@ describe('buildIconZip', () => {
 
     expect(Object.keys(files)).toEqual(['svg/alpha.svg', 'svg/beta.svg', 'preset.json', 'README.txt'])
     expect(strFromU8(files['svg/alpha.svg'])).toBe(
-      buildSvg(MARKUP.alpha, value.size, value.strokeWidth, value.colour, value.absolute),
+      buildSvg(MARKUP.alpha, value.size, value.weight, value.colour),
     )
     expect(strFromU8(files['svg/beta.svg'])).toBe(
-      buildSvg(MARKUP.beta, value.size, value.strokeWidth, value.colour, value.absolute),
+      buildSvg(MARKUP.beta, value.size, value.weight, value.colour),
     )
 
     const saved = json(files['preset.json'])
@@ -55,16 +54,18 @@ describe('buildIconZip', () => {
       style: 'line',
       format: 'svg',
       size: 20,
-      strokeWidth: 1.75,
-      absoluteStrokeWidth: false,
+      weight: 'light',
       colour: '#336699',
       count: 2,
     })
+    expect(saved).not.toHaveProperty('strokeWidth')
+    expect(saved).not.toHaveProperty('absoluteStrokeWidth')
+    expect(strFromU8(files['README.txt'])).toContain('Preset: line style, 20px, light weight, colour #336699.')
     expect(new Date(saved.generatedAt as string).toISOString()).toBe(saved.generatedAt)
   })
 
   it.each(['solid', 'solid-duotone'] as const)(
-    'keeps React sources byte-identical and nulls stroke settings for %s',
+    'keeps React sources byte-identical and nulls the weight for %s',
     async (style) => {
       const base = 'export const IconBase = "untouched"\n'
       const suffix = style === 'solid' ? 'solid' : 'solid-duotone'
@@ -101,12 +102,13 @@ describe('buildIconZip', () => {
         style,
         format: 'react',
         size: 20,
-        strokeWidth: null,
-        absoluteStrokeWidth: null,
+        weight: null,
         colour: '#336699',
         count: 2,
       })
-      expect(strFromU8(files['README.txt'])).not.toContain('\u2014')
+      const readme = strFromU8(files['README.txt'])
+      expect(readme).not.toContain('\u2014')
+      expect(readme).toContain('<IconProvider weight="..."> from IconBase sets defaults.')
     },
   )
 

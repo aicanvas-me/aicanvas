@@ -19,7 +19,7 @@ import { ChevronLeft } from '@/components/icons/chevron-left'
 import { ChevronRight } from '@/components/icons/chevron-right'
 import { ArrowUpRight } from '@/components/icons/arrow-up-right'
 
-Icons are AI Canvas icons (Line style, 1.5px stroke). Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Icons are AI Canvas icons (Line style, Regular weight). Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## 2. Constants
 

@@ -172,7 +172,7 @@ export default function FloatingCards() {
                     background: '#BECF5D',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <ArrowUpRight strokeWidth={2} size={13} style={{ color: '#1A1A19' }} />
+                    <ArrowUpRight weight="bold" size={13} style={{ color: '#1A1A19' }} />
                   </div>
                 </div>
 

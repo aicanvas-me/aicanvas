@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import type { IconWeight } from '../_lib/icon-utils'
 import { IconSvg } from './IconSvg'
 
 const PREVIEW_SIZES = [16, 20, 24, 32, 48]
@@ -11,15 +12,13 @@ const stageSize = (size: number) => Math.round(Math.min(size * 4, 160 + size * 1
 
 export function PreviewSizeStrip({
   markup,
-  strokeWidth,
-  absolute,
+  weight,
   colour,
   surface,
   embedded = false,
 }: {
   markup: string
-  strokeWidth: number
-  absolute: boolean
+  weight: IconWeight
   colour: string
   surface: 'dark' | 'light'
   embedded?: boolean
@@ -34,7 +33,7 @@ export function PreviewSizeStrip({
     >
       {PREVIEW_SIZES.map((previewSize) => (
         <div key={previewSize} className="flex min-w-6 flex-col items-center gap-2 text-[10px]">
-          <IconSvg markup={markup} size={previewSize} apiSize={previewSize} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />
+          <IconSvg markup={markup} size={previewSize} weight={weight} colour={colour} />
           <span>{previewSize}</span>
         </div>
       ))}
@@ -46,8 +45,7 @@ export function PreviewStage({
   markup,
   name,
   size,
-  strokeWidth,
-  absolute,
+  weight,
   colour,
   className = '',
   counter,
@@ -58,8 +56,7 @@ export function PreviewStage({
   markup: string
   name: string
   size: number
-  strokeWidth: number
-  absolute: boolean
+  weight: IconWeight
   colour: string
   className?: string
   counter?: string
@@ -107,9 +104,9 @@ export function PreviewStage({
         {counter && <p className={surface === 'dark' ? 'text-xs text-white/45' : 'text-xs text-black/45'}>{counter}</p>}
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center px-4 pb-4 pt-14">
-        <IconSvg className="max-h-full max-w-full" markup={markup} size={stageSize(size)} apiSize={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} label={name} />
+        <IconSvg className="max-h-full max-w-full" markup={markup} size={stageSize(size)} weight={weight} colour={colour} label={name} />
       </div>
-      {showSizes && <PreviewSizeStrip markup={markup} strokeWidth={strokeWidth} absolute={absolute} colour={colour} surface={surface} embedded />}
+      {showSizes && <PreviewSizeStrip markup={markup} weight={weight} colour={colour} surface={surface} embedded />}
     </section>
   )
 }

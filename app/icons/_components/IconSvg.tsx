@@ -1,24 +1,20 @@
-import { effectiveStrokeWidth } from '../_lib/icon-utils'
+import { weightStroke, type IconWeight } from '../_lib/icon-utils'
 import { isPreview, previewSrc } from '../_lib/preview'
 
 export function IconSvg({
   markup,
   size,
-  strokeWidth,
+  weight,
   colour = 'currentColor',
   className = '',
   label,
-  apiSize,
-  absolute = true,
 }: {
   markup: string
   size: number
-  strokeWidth: number
+  weight: IconWeight
   colour?: string
   className?: string
   label?: string
-  apiSize?: number
-  absolute?: boolean
 }) {
   if (isPreview(markup)) {
     const mask = `url(${previewSrc(markup)}) center / contain no-repeat`
@@ -39,7 +35,7 @@ export function IconSvg({
       height={size}
       fill="none"
       stroke="currentColor"
-      strokeWidth={effectiveStrokeWidth(apiSize ?? size, strokeWidth, absolute)}
+      strokeWidth={weightStroke(weight)}
       strokeLinecap="round"
       strokeLinejoin="round"
       style={{ color: colour }}

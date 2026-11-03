@@ -34,7 +34,7 @@ import { CircleUser } from '@/app/_icons/icons/circle-user';
 import { Download } from '@/app/_icons/icons/download';
 import { motion, LayoutGroup } from 'framer-motion';
 import { tokens } from '../../tokens';
-import { themeColor, iconVars } from '../../components/lib/utils';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Button } from '../../components/Button';
@@ -338,7 +338,6 @@ export default function ResourcePlanning() {
     <div
       className="rp-shell"
       style={{
-        ...iconVars,
         display: 'flex',
         flexDirection: 'column',
         // 100% (not 100vh): the shell fills its PARENT's height, not the raw

@@ -542,7 +542,7 @@ function ModalCard({
               className="flex size-9 shrink-0 items-center justify-center rounded-full"
               style={{ backgroundColor: palette.fieldBg, color: palette.labelColor }}
             >
-              <X size={16} strokeWidth={2} />
+              <X size={16} weight="bold" />
             </motion.button>
           </motion.div>
 
@@ -697,7 +697,7 @@ function SaveButton({
             transition={{ type: 'spring', stiffness: 400, damping: 22 }}
             className="flex items-center justify-center"
           >
-            <Check size={16} strokeWidth={2} />
+            <Check size={16} weight="bold" />
           </motion.span>
         ) : (
           <motion.span

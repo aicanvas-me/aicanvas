@@ -19,7 +19,7 @@ import {
 } from 'framer-motion'
 import { ChevronDown } from '@/components/icons/chevron-down'
 
-ChevronDown is an AI Canvas icon (Line style, 1.5px stroke). Install it with \`npx shadcn@latest add https://aicanvas.me/r/icon-chevron-down.json\`.
+ChevronDown is an AI Canvas icon (Line style, Regular weight). Install it with \`npx shadcn@latest add https://aicanvas.me/r/icon-chevron-down.json\`.
 
 ## 2. Constants
 

@@ -1692,7 +1692,7 @@ export default function CryptoSwap() {
                         : { type: 'spring', stiffness: 520, damping: 16, delay: 0.04 }
                     }
                   >
-                    <CircleCheck size={22} strokeWidth={2} style={{ color: swapSuccessText }} />
+                    <CircleCheck size={22} weight="bold" style={{ color: swapSuccessText }} />
                   </motion.span>
 
                   {!reduced &&

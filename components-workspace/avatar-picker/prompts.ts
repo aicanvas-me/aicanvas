@@ -17,7 +17,7 @@ import { motion } from 'framer-motion'
 import { Check } from '@/components/icons/check'
 \`\`\`
 
-Both framer-motion imports matter: \`motion\` is used for the cards, the dots, the confirm button and the hint text. This component is animated end to end. There is no AnimatePresence import and none is needed. \`Check\` is an AI Canvas icon (Line style, 1.5px stroke). Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Both framer-motion imports matter: \`motion\` is used for the cards, the dots, the confirm button and the hint text. This component is animated end to end. There is no AnimatePresence import and none is needed. \`Check\` is an AI Canvas icon (Line style, Regular weight). Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## 2. Constants
 
@@ -148,7 +148,7 @@ div ref={containerRef} className="relative flex min-h-screen w-full select-none 
             p style={{ color: '#fff', fontSize: 14, fontWeight: 700, letterSpacing: 0.2, margin: 0, lineHeight: 1.2, fontFamily: 'var(--font-sans, sans-serif)' }}   → {photo.name}
             p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 11, fontWeight: 400, margin: '2px 0 0', letterSpacing: 0.3, fontFamily: 'var(--font-sans, sans-serif)' }}   → {photo.role}
           [if isSelected] motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ width: 24, height: 24, borderRadius: '50%', background: '#2DD4BF', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
-            Check size={13} strokeWidth={2} color="#0f2e2b"
+            Check size={13} weight="bold" color="#0f2e2b"
         [if isSelected] div style={{ position: 'absolute', inset: 0, borderRadius: RADIUS, border: '2.5px solid #2DD4BF', pointerEvents: 'none' }}
   div style={{ display: 'flex', gap: 5, alignItems: 'center' }}
     motion.div [map PHOTOS.map(photo => ...)]
@@ -160,7 +160,7 @@ div ref={containerRef} className="relative flex min-h-screen w-full select-none 
       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
   div style={{ height: 34, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     [if selectedId !== null] motion.button key="confirmed" initial={{ opacity: 0, scale: 0.88, y: 6 }} animate={{ opacity: 1, scale: 1, y: 0 }} onClick={() => setSelectedId(null)} style={{ display: 'flex', alignItems: 'center', gap: 8, background: '#2DD4BF', borderRadius: 20, padding: '7px 18px', border: 'none', cursor: 'pointer' }}
-      Check size={13} strokeWidth={2} color="#0f2e2b"
+      Check size={13} weight="bold" color="#0f2e2b"
       span style={{ fontSize: 11, fontWeight: 700, color: '#0f2e2b', letterSpacing: '0.07em', textTransform: 'uppercase', fontFamily: 'var(--font-sans, sans-serif)' }}   → {PHOTOS.find(p => p.id === selectedId)?.name} Selected
     [else] motion.p key="hint" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} className="text-[#21211F] dark:text-white/35" style={{ margin: 0, fontSize: 11, fontFamily: 'var(--font-sans, sans-serif)', letterSpacing: '0.05em' }}   → swipe to browse
 \`\`\`

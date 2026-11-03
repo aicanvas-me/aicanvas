@@ -33,4 +33,4 @@ Card fills viewport width with 16px horizontal margins (`Math.min(480, window.in
 
 ## Tech notes
 
-Framer Motion for all animations (spring + tween per-property transitions). `useDark()` inlined hook avoids internal app imports. Icons use a 2px stroke. Manrope via `font-sans`. No design tokens — raw hex throughout.
+Framer Motion for all animations (spring + tween per-property transitions). `useDark()` inlined hook avoids internal app imports. Icons use the Bold weight. Manrope via `font-sans`. No design tokens — raw hex throughout.

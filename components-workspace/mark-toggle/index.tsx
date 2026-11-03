@@ -152,7 +152,7 @@ export default function MarkToggle() {
                   transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <Check size={iconSize} strokeWidth={2} color={iconColor} />
+                  <Check size={iconSize} weight="bold" color={iconColor} />
                 </motion.span>
               ) : (
                 <motion.span
@@ -163,7 +163,7 @@ export default function MarkToggle() {
                   transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <X size={iconSize} strokeWidth={2} color={iconColor} />
+                  <X size={iconSize} weight="bold" color={iconColor} />
                 </motion.span>
               )}
             </AnimatePresence>

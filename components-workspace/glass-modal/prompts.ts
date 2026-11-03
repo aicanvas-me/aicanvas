@@ -72,7 +72,7 @@ Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-ful
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
 - type="button", onClick={close}: closes the modal, same as X.
 
-Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Check } from '@/components/icons/check'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Check } from '@/components/icons/check'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -135,7 +135,7 @@ Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-ful
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
 - type="button", onClick={close}: closes the modal, same as X.
 
-Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Check } from '@/components/icons/check'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Check } from '@/components/icons/check'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -198,7 +198,7 @@ Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-ful
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
 - type="button", onClick={close}: closes the modal, same as X.
 
-Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Check } from '@/components/icons/check'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Check } from '@/components/icons/check'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif

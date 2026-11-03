@@ -25,6 +25,6 @@
 
 ## Tech notes
 - Framer Motion: useMotionValue, useTransform, animate(), AnimatePresence
-- Icons: X and Check (2px stroke for legibility at small sizes)
+- Icons: X and Check (Bold weight for legibility at small sizes)
 - Icon size ≈ 50% of thumb diameter
 - Follow pill-toggle patterns exactly for resize, theme detection, and spring config

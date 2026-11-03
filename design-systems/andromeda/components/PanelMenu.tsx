@@ -270,7 +270,7 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
       >
         {Icon ? <Icon size={14} /> : <span style={{ width: '14px' }} />}
         <span style={{ flex: 1 }}>{item.label}</span>
-        {hasSub ? <ChevronRight size={10} strokeWidth={1.5} /> : null}
+        {hasSub ? <ChevronRight size={10} weight="bold" /> : null}
       </button>
 
       {hasSub && submenuOpen ? (

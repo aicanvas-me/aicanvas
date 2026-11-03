@@ -33,7 +33,7 @@ CHROME AND MOBILE
 const CLAUDE_SPEC = SPEC
   .replace(
     'BUTTON STATES\n',
-    'BUTTON STATES\n- Initialize addedProducts with useState<Set<string>>(() => new Set()). For each card, isAdded = addedProducts.has(card.title); pass it and an onToggleAdded callback through FlickCard to CardFace. The callback clones the Set, removes the title if present or adds it otherwise, then stores the new Set. Import Check from AI Canvas icons (`@/components/icons/check`, e.g. `import { Check } from "@/components/icons/check"`), Line style, 1.5px stroke. Install each icon with `npx shadcn@latest add https://aicanvas.me/r/icon-check.json`.\n',
+    'BUTTON STATES\n- Initialize addedProducts with useState<Set<string>>(() => new Set()). For each card, isAdded = addedProducts.has(card.title); pass it and an onToggleAdded callback through FlickCard to CardFace. The callback clones the Set, removes the title if present or adds it otherwise, then stores the new Set. Import Check from AI Canvas icons (`@/components/icons/check`, e.g. `import { Check } from "@/components/icons/check"`), Line style, Regular weight. Install each icon with `npx shadcn@latest add https://aicanvas.me/r/icon-check.json`.\n',
   )
   .replace(
     'Left: the product name (color #111111, 16px, weight 700, single line, ellipsis on overflow). Right: a pill button showing the label: background #141312, color #F5F1E8, fully rounded (borderRadius 9999), padding "8px 16px", 12px / weight 600.',

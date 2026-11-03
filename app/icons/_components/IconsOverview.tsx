@@ -23,14 +23,13 @@ import {
   LIGHT_PREVIEW_COLOUR,
   LIGHT_TILE,
 } from '../_lib/constants'
-import { takesStroke } from '../_lib/icon-utils'
+import { ICON_WEIGHTS, takesStroke, type IconWeight } from '../_lib/icon-utils'
 import { overviewMarkdown } from '../_lib/markdown'
 import { toIconQuery } from '../_lib/settings-query'
 import { ICON_DEFAULTS, storeSettings, storedSettings } from '../_lib/settings-store'
 import { RailFooter } from '@/app/components/RailFooter'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconGridMeta, IconMarkupMap, IconMeta, IconStyle } from '../_lib/types'
-import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
 import { ColourControl } from './ColourControl'
 import { IconTile } from './IconTile'
 import { StylePicker } from './StylePicker'
@@ -75,15 +74,13 @@ function downloadFileName(header: string | null): string {
 function DownloadAll({
   style,
   size,
-  strokeWidth,
-  absolute,
+  weight,
   colour,
   category,
 }: {
   style: IconStyle
   size: number
-  strokeWidth: number
-  absolute: boolean
+  weight: IconWeight
   colour: string | null
   category?: IconCategorySlug
 }) {
@@ -122,8 +119,7 @@ function DownloadAll({
           style,
           format,
           size,
-          strokeWidth,
-          absolute,
+          weight,
           colour,
           ...(category ? { category } : {}),
         }),
@@ -199,8 +195,7 @@ export function IconsOverview({
   // the section's look (lib/settings-store): an icon page's picks are still set here
   const [style, setStyle] = useState<IconStyle>(() => storedSettings().style)
   const [size, setSize] = useState(() => Math.min(storedSettings().size, GRID_MAX_SIZE))
-  const [strokeWidth, setStrokeWidth] = useState(() => storedSettings().strokeWidth)
-  const [absolute, setAbsolute] = useState(() => storedSettings().absolute)
+  const [weight, setWeight] = useState<IconWeight>(() => storedSettings().weight)
   const [colourOverride, setColourOverride] = useState<string | null>(() => storedSettings().colour)
   const [metadata, setMetadata] = useState<IconMeta[] | null>(null)
   const [installCopied, setInstallCopied] = useState(false)
@@ -252,11 +247,11 @@ export function IconsOverview({
   useTopBarLeft(categoryCrumbs)
 
   const searchRef = useRef<HTMLInputElement>(null)
-  const settingsQuery = toIconQuery({ style, size, strokeWidth, absolute, colour: colourOverride }, ICON_DEFAULTS)
+  const settingsQuery = toIconQuery({ style, size, weight, colour: colourOverride }, ICON_DEFAULTS)
   const isDefault = !query && settingsQuery === ''
   useEffect(() => {
-    storeSettings({ style, size, strokeWidth, absolute, colour: colourOverride })
-  }, [style, size, strokeWidth, absolute, colourOverride])
+    storeSettings({ style, size, weight, colour: colourOverride })
+  }, [style, size, weight, colourOverride])
 
   // "/" jumps to search from anywhere on the page, unless something else
   // already takes typing.
@@ -276,8 +271,7 @@ export function IconsOverview({
     setQuery('')
     setStyle(ICON_DEFAULTS.style)
     setSize(ICON_DEFAULTS.size)
-    setStrokeWidth(ICON_DEFAULTS.strokeWidth)
-    setAbsolute(ICON_DEFAULTS.absolute)
+    setWeight(ICON_DEFAULTS.weight)
     setColourOverride(ICON_DEFAULTS.colour)
   }
 
@@ -344,8 +338,7 @@ export function IconsOverview({
               <DownloadAll
                 style={style}
                 size={size}
-                strokeWidth={strokeWidth}
-                absolute={absolute}
+                weight={weight}
                 colour={colourOverride}
                 category={category}
               />
@@ -354,7 +347,7 @@ export function IconsOverview({
         </header>
 
         {/* One panel in two bands: find (search, style) over tune (size,
-            stroke, absolute, colour, reset). Its controls are wells set into
+            weight, colour, reset). Its controls are wells set into
             the panel, and every width answers to the panel itself, because the
             rail beside the page makes viewport breakpoints lie. */}
         <section
@@ -402,21 +395,20 @@ export function IconsOverview({
               className="@min-[640px]:flex-1"
             />
             <TuneSlider
-              label="Stroke"
+              label="Weight"
               disabled={!takesStroke(style)}
               hint={FIXED_WEIGHT}
-              value={strokeWidth}
-              onChange={setStrokeWidth}
-              min={1}
+              value={ICON_WEIGHTS.findIndex((entry) => entry.id === weight)}
+              onChange={(index) => setWeight(ICON_WEIGHTS[index].id)}
+              min={0}
               max={3}
-              step={0.25}
-              format={(value) => value.toFixed(2)}
-              valueText={(value) => `${value.toFixed(2)} pixels`}
+              step={1}
+              format={(index) => ICON_WEIGHTS[index].label}
+              valueText={(index) => ICON_WEIGHTS[index].label}
               className="@min-[640px]:flex-1"
             />
             <span aria-hidden className="mx-1 hidden h-5 w-px shrink-0 bg-sand-300 @min-[640px]:block dark:bg-sand-700" />
             <div className="col-span-2 flex items-center gap-1 @min-[640px]:contents">
-              <AbsoluteStrokeControl value={absolute} onChange={setAbsolute} disabled={!takesStroke(style)} hint={FIXED_WEIGHT} className="h-8" />
               <ColourControl
                 value={colourOverride}
                 resolved={colour}
@@ -453,8 +445,7 @@ export function IconsOverview({
                       icon={icon}
                       markup={data[icon.name] ?? lineIcons[icon.name] ?? ''}
                       size={size}
-                      strokeWidth={strokeWidth}
-                      absolute={absolute}
+                      weight={weight}
                       colour={colour}
                       exportColour={colourOverride}
                       style={style}

@@ -2,7 +2,7 @@ import 'server-only'
 
 import { strToU8, zipSync, type Zippable } from 'fflate'
 import { buildSvg } from './svg'
-import { iconFileName, takesStroke } from './icon-utils'
+import { iconFileName, takesStroke, type IconWeight } from './icon-utils'
 import type { IconStyle } from './types'
 
 export type ZipFormat = 'svg' | 'react'
@@ -11,8 +11,7 @@ export interface IconZipInput {
   style: IconStyle
   format: ZipFormat
   size: number
-  strokeWidth: number
-  absolute: boolean
+  weight: IconWeight
   colour: string | null
   names: string[]
   markup: Record<string, string>
@@ -31,8 +30,7 @@ function preset(input: IconZipInput) {
     style: input.style,
     format: input.format,
     size: input.size,
-    strokeWidth: hasStroke ? input.strokeWidth : null,
-    absoluteStrokeWidth: hasStroke ? input.absolute : null,
+    weight: hasStroke ? input.weight : null,
     colour: input.colour,
     count: input.names.length,
     generatedAt: new Date().toISOString(),
@@ -41,9 +39,7 @@ function preset(input: IconZipInput) {
 
 function readme(input: IconZipInput): string {
   const colour = input.colour ?? 'currentColor'
-  const stroke = takesStroke(input.style)
-    ? `${input.strokeWidth}px stroke with absolute stroke width ${input.absolute ? 'on' : 'off'}`
-    : 'fixed solid weight'
+  const weight = takesStroke(input.style) ? `${input.weight} weight` : 'fixed solid weight'
   const contents =
     input.format === 'react'
       ? 'React icon components and their shared IconBase runtime'
@@ -51,14 +47,14 @@ function readme(input: IconZipInput): string {
 
   return [
     `AI Canvas icons: ${contents}.`,
-    `Preset: ${input.style} style, ${input.size}px, ${stroke}, colour ${colour}.`,
+    `Preset: ${input.style} style, ${input.size}px, ${weight}, colour ${colour}.`,
     input.format === 'react'
       ? "Import example: import { Search } from '@/components/icons/search'"
       : `Files are in the ${input.format}/ folder.`,
     ...(input.format === 'react'
       ? [
           'The export name is the PascalCase file name. Paid styles add Duotone / Solid / SolidDuotone. A name starting with a digit gets an Icon prefix.',
-          '<IconProvider strokeWidth={...}> from IconBase sets defaults.',
+          '<IconProvider weight="..."> from IconBase sets defaults.',
         ]
       : []),
     'See preset.json for the machine-readable settings used for this export.',
@@ -93,7 +89,7 @@ export async function buildIconZip(input: IconZipInput): Promise<Uint8Array> {
       addText(
         entries,
         `svg/${name}.svg`,
-        buildSvg(input.markup[name], input.size, input.strokeWidth, input.colour, input.absolute),
+        buildSvg(input.markup[name], input.size, input.weight, input.colour),
       )
     }
   } else {

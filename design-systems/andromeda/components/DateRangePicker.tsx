@@ -332,7 +332,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
         <CalendarBlank size={13} />
         {presetLabel ? `${presetLabel} · ` : ''}
         {formatRangeChip(value)}
-        <ChevronDown strokeWidth={1.5}
+        <ChevronDown weight="bold"
           size={10}
           style={{
             color: V.textFaint,
@@ -389,7 +389,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                 borderRadius: tokens.radius.frame,
               }}
             >
-              <ChevronLeft strokeWidth={1.5} size={12} />
+              <ChevronLeft weight="bold" size={12} />
             </button>
 
             <span
@@ -423,7 +423,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                 borderRadius: tokens.radius.frame,
               }}
             >
-              <ChevronRight strokeWidth={1.5} size={12} />
+              <ChevronRight weight="bold" size={12} />
             </button>
           </div>
 

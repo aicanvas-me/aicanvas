@@ -67,7 +67,7 @@ Divider: mx-4 h-[1px] rgba(255,255,255,0.07).
 
 Model switcher row (px-3 py-2.5): 4 buttons flex-1 rounded-lg px-3 py-1.5. Active button renders motion.div layoutId="model-pill" absolute inset-0 rounded-lg with bg \`\${color}18\` border \`1px solid \${color}22\` spring {stiffness:400, damping:28}. Label text-[11px] font-semibold color=isActive?color:'rgba(255,255,255,0.50)'.
 
-Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Send } from '@/components/icons/send'\`), Line style, 1.5px stroke: send, image-square, globe-simple, x. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Framer Motion: motion, AnimatePresence, useReducedMotion.
+Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Send } from '@/components/icons/send'\`), Line style, Regular weight: send, image-square, globe-simple, x. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Framer Motion: motion, AnimatePresence, useReducedMotion.
 
 ## Typography
 - Font: project default sans-serif
@@ -125,7 +125,7 @@ Divider: mx-4 h-[1px] rgba(255,255,255,0.07).
 
 Model switcher row (px-3 py-2.5): 4 buttons flex-1 rounded-lg px-3 py-1.5. Active button renders motion.div layoutId="model-pill" absolute inset-0 rounded-lg with bg \`\${color}18\` border \`1px solid \${color}22\` spring {stiffness:400, damping:28}. Label text-[11px] font-semibold color=isActive?color:'rgba(255,255,255,0.50)'.
 
-Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Send } from '@/components/icons/send'\`), Line style, 1.5px stroke: send, image-square, globe-simple, x. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Framer Motion: motion, AnimatePresence, useReducedMotion.
+Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Send } from '@/components/icons/send'\`), Line style, Regular weight: send, image-square, globe-simple, x. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Framer Motion: motion, AnimatePresence, useReducedMotion.
 
 ## Typography
 - Font: project default sans-serif
@@ -183,7 +183,7 @@ Divider: mx-4 h-[1px] rgba(255,255,255,0.07).
 
 Model switcher row (px-3 py-2.5): 4 buttons flex-1 rounded-lg px-3 py-1.5. Active button renders motion.div layoutId="model-pill" absolute inset-0 rounded-lg with bg \`\${color}18\` border \`1px solid \${color}22\` spring {stiffness:400, damping:28}. Label text-[11px] font-semibold color=isActive?color:'rgba(255,255,255,0.50)'.
 
-Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Send } from '@/components/icons/send'\`), Line style, 1.5px stroke: send, image-square, globe-simple, x. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Framer Motion: motion, AnimatePresence, useReducedMotion.
+Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Send } from '@/components/icons/send'\`), Line style, Regular weight: send, image-square, globe-simple, x. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Framer Motion: motion, AnimatePresence, useReducedMotion.
 
 ## Typography
 - Font: project default sans-serif

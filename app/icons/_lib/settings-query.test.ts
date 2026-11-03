@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { fromIconQuery, toIconQuery, type IconSettings } from './settings-query'
 
-const PAGE: IconSettings = { style: 'line', size: 24, strokeWidth: 2, absolute: true, colour: null }
+const PAGE: IconSettings = { style: 'line', size: 24, weight: 'regular', colour: null }
 
 describe('toIconQuery', () => {
   it('gives an empty string when nothing differs from the defaults', () => {
@@ -11,20 +11,19 @@ describe('toIconQuery', () => {
 
   it('writes only the keys that differ', () => {
     expect(toIconQuery({ ...PAGE, size: 40 }, PAGE)).toBe('?size=40')
-    expect(toIconQuery({ ...PAGE, absolute: false }, PAGE)).toBe('?abs=0')
-    expect(toIconQuery({ ...PAGE, strokeWidth: 1.25 }, PAGE)).toBe('?stroke=1.25')
+    expect(toIconQuery({ ...PAGE, weight: 'bold' }, PAGE)).toBe('?weight=bold')
     expect(toIconQuery({ ...PAGE, colour: '#3E7BFA' }, PAGE)).toBe('?colour=%233E7BFA')
-    expect(toIconQuery({ style: 'solid-duotone', size: 48, strokeWidth: 1.5, absolute: false, colour: '#E5484D' }, PAGE)).toBe(
-      '?style=solid-duotone&size=48&stroke=1.5&abs=0&colour=%23E5484D',
+    expect(toIconQuery({ style: 'solid-duotone', size: 48, weight: 'thin', colour: '#E5484D' }, PAGE)).toBe(
+      '?style=solid-duotone&size=48&weight=thin&colour=%23E5484D',
     )
   })
 })
 
 describe('fromIconQuery', () => {
   it('round trips every setting', () => {
-    const settings: IconSettings = { style: 'duotone', size: 64, strokeWidth: 2.75, absolute: false, colour: '#8E5BD9' }
+    const settings: IconSettings = { style: 'duotone', size: 64, weight: 'light', colour: '#8E5BD9' }
     expect(fromIconQuery(toIconQuery(settings, PAGE))).toEqual(settings)
-    expect(fromIconQuery(toIconQuery({ ...PAGE, absolute: true }, { ...PAGE, absolute: false }))).toEqual({ absolute: true })
+    expect(fromIconQuery(toIconQuery({ ...PAGE, weight: 'regular' }, { ...PAGE, weight: 'bold' }))).toEqual({ weight: 'regular' })
     expect(fromIconQuery('')).toEqual({})
   })
 
@@ -46,25 +45,27 @@ describe('fromIconQuery', () => {
     expect(fromIconQuery('?size=35.5')).toEqual({ size: 36 })
   })
 
-  it('clamps the stroke to 1..3 and snaps it to 0.25', () => {
-    expect(fromIconQuery('?stroke=0')).toEqual({ strokeWidth: 1 })
-    expect(fromIconQuery('?stroke=9')).toEqual({ strokeWidth: 3 })
-    expect(fromIconQuery('?stroke=1.3')).toEqual({ strokeWidth: 1.25 })
-    expect(fromIconQuery('?stroke=1.4')).toEqual({ strokeWidth: 1.5 })
+  it('takes a weight only as one of the four ids', () => {
+    for (const weight of ['thin', 'light', 'regular', 'bold'] as const) {
+      expect(fromIconQuery(`?weight=${weight}`)).toEqual({ weight })
+    }
+    expect(fromIconQuery('?weight=Bold')).toEqual({})
+    expect(fromIconQuery('?weight=heavy')).toEqual({})
+    expect(fromIconQuery('?weight=2')).toEqual({})
+    expect(fromIconQuery('?weight=')).toEqual({})
   })
 
   it('drops numbers that are not numbers', () => {
-    expect(fromIconQuery('?size=&stroke=')).toEqual({})
-    expect(fromIconQuery('?size=big&stroke=thin')).toEqual({})
-    expect(fromIconQuery('?size=Infinity&stroke=NaN')).toEqual({})
+    expect(fromIconQuery('?size=')).toEqual({})
+    expect(fromIconQuery('?size=big')).toEqual({})
+    expect(fromIconQuery('?size=Infinity')).toEqual({})
+    expect(fromIconQuery('?size=NaN')).toEqual({})
     expect(fromIconQuery('?size=%20')).toEqual({})
   })
 
-  it('takes abs only as 0 or 1', () => {
-    expect(fromIconQuery('?abs=0')).toEqual({ absolute: false })
-    expect(fromIconQuery('?abs=1')).toEqual({ absolute: true })
-    expect(fromIconQuery('?abs=false')).toEqual({})
-    expect(fromIconQuery('?abs=')).toEqual({})
+  it('ignores the old stroke and abs keys, so an old link falls back to the default weight', () => {
+    expect(fromIconQuery('?stroke=2&abs=0')).toEqual({})
+    expect(fromIconQuery('?size=40&stroke=1.25&abs=1')).toEqual({ size: 40 })
   })
 
   it('takes a colour only in the picker’s form', () => {

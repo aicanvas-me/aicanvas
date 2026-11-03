@@ -236,7 +236,7 @@ export default function AvatarPicker() {
                       flexShrink: 0,
                     }}
                   >
-                    <Check size={13} strokeWidth={2} color="#0f2e2b" />
+                    <Check size={13} weight="bold" color="#0f2e2b" />
                   </motion.div>
                 )}
               </div>
@@ -289,7 +289,7 @@ export default function AvatarPicker() {
               cursor: 'pointer',
             }}
           >
-            <Check size={13} strokeWidth={2} color="#0f2e2b" />
+            <Check size={13} weight="bold" color="#0f2e2b" />
             <span style={{
               fontSize: 11,
               fontWeight: 700,

@@ -1,4 +1,3 @@
-import type { CSSProperties } from 'react'
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { COMPONENTS } from '../../lib/component-registry'
@@ -44,8 +43,7 @@ export default async function FullScreenPreview({
     <div
       data-card-theme={light ? 'light' : 'dark'}
       className={`fixed inset-0 z-50 ${light ? 'bg-sand-100' : 'dark bg-sand-950'}`}
-      // A buyer's install draws icons at the set's 1.5 default, not the site's 1.25.
-      style={{ contain: 'strict', '--aic-icon-stroke': 1.5 } as CSSProperties}
+      style={{ contain: 'strict' }}
     >
       <PreviewComponent />
       {/* Framed = this render IS the detail page's preview box. The box has its

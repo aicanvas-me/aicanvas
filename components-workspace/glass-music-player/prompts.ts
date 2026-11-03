@@ -71,7 +71,7 @@ Inside (flex flex-col items-center px-7 pb-7 pt-6):
    - SkipForward size=26 fill="currentColor" onClick skipTo(1) (same style as SkipBack).
    - ListMusic motion.button size=19 style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
 
-Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useAnimationFrame, useMotionValue, useReducedMotion, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, ListMusic, ArrowLeft from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Play } from '@/components/icons/play'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useAnimationFrame, useMotionValue, useReducedMotion, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, ListMusic, ArrowLeft from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Play } from '@/components/icons/play'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -133,7 +133,7 @@ Inside (flex flex-col items-center px-7 pb-7 pt-6):
    - SkipForward size=26 fill="currentColor" onClick skipTo(1) (same style as SkipBack).
    - ListMusic motion.button size=19 style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
 
-Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useMotionValue, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, ListMusic, ArrowLeft from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Play } from '@/components/icons/play'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useMotionValue, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, ListMusic, ArrowLeft from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Play } from '@/components/icons/play'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -195,7 +195,7 @@ Inside (flex flex-col items-center px-7 pb-7 pt-6):
    - SkipForward size=26 fill="currentColor" onClick skipTo(1) (same style as SkipBack).
    - ListMusic motion.button size=19 style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
 
-Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useMotionValue, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, ListMusic, ArrowLeft from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Play } from '@/components/icons/play'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useMotionValue, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, ListMusic, ArrowLeft from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Play } from '@/components/icons/play'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif

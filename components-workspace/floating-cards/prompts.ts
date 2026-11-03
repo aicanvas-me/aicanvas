@@ -18,7 +18,7 @@ If any are missing, set up via the shadcn CLI:
 
 Create a React client component named FloatingCards, a swipeable deck of 3 travel destination cards. The front card is draggable downward; releasing it past a threshold flings it off-screen and the next card slides to the front. Each card shows a hotels count that animates up from 0 when it becomes the front card. Theme-aware (light + dark). Write as a single self-contained React client component. Inline everything (you may keep one small inline useCountUp hook and a HotelsCounter sub-component in the same file). 'use client' at the top. No 'any' types.
 
-Imports: useRef, useState, useEffect from 'react'; motion from 'framer-motion'; { Buildings } from '@/components/icons/buildings'; { ArrowUpRight } from '@/components/icons/arrow-up-right'. Both are AI Canvas icons, Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useRef, useState, useEffect from 'react'; motion from 'framer-motion'; { Buildings } from '@/components/icons/buildings'; { ArrowUpRight } from '@/components/icons/arrow-up-right'. Both are AI Canvas icons, Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 Constants: CARD_W = 280, CARD_H = 200.
 
@@ -59,7 +59,7 @@ Card contents:
 Top section: div style padding '10px 10px 0', flex column gap 8, flex '0 0 auto'.
   Header row: flex row justify-between items-center.
     Left: <HotelsCounter target={card.hotels} active={isFront && !isExiting} />.
-    Right: circular 26×26 button style borderRadius '50%' background '#BECF5D' (olive accent) flex center, containing <ArrowUpRight strokeWidth={2} size={13} style={{color:'#1A1A19'}}/>.
+    Right: circular 26×26 button style borderRadius '50%' background '#BECF5D' (olive accent) flex center, containing <ArrowUpRight weight="bold" size={13} style={{color:'#1A1A19'}}/>.
   Title row: flex row items-baseline justify-between.
     Left: p fontSize 17, fontWeight 800, lineHeight 1.15, color '#FFFFFF', letterSpacing '-0.02em', margin 0 → {card.title}.
     Right: span fontSize 10, fontWeight 500, color 'rgba(255,255,255,0.45)', letterSpacing '0.04em' → {card.country}.
@@ -83,7 +83,7 @@ Key details:
 
   'Lovable': `Create a React client component named FloatingCards — a swipeable deck of 3 travel destination cards. The front card is draggable downward; releasing it past a threshold flings it off-screen and the next card slides to the front. Each card shows a hotels count that animates up from 0 when it becomes the front card. Theme-aware (light + dark). Write as a single self-contained React client component. Inline everything (you may keep one small inline useCountUp hook and a HotelsCounter sub-component in the same file). 'use client' at the top. No 'any' types.
 
-Imports: useRef, useState, useEffect from 'react'; motion from 'framer-motion'; { Buildings } from '@/components/icons/buildings'; { ArrowUpRight } from '@/components/icons/arrow-up-right'. Both are AI Canvas icons, Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useRef, useState, useEffect from 'react'; motion from 'framer-motion'; { Buildings } from '@/components/icons/buildings'; { ArrowUpRight } from '@/components/icons/arrow-up-right'. Both are AI Canvas icons, Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 Constants: CARD_W = 280, CARD_H = 200.
 
@@ -124,7 +124,7 @@ Card contents:
 Top section: div style padding '10px 10px 0', flex column gap 8, flex '0 0 auto'.
   Header row: flex row justify-between items-center.
     Left: <HotelsCounter target={card.hotels} active={isFront && !isExiting} />.
-    Right: circular 26×26 button style borderRadius '50%' background '#BECF5D' (olive accent) flex center, containing <ArrowUpRight strokeWidth={2} size={13} style={{color:'#1A1A19'}}/>.
+    Right: circular 26×26 button style borderRadius '50%' background '#BECF5D' (olive accent) flex center, containing <ArrowUpRight weight="bold" size={13} style={{color:'#1A1A19'}}/>.
   Title row: flex row items-baseline justify-between.
     Left: p fontSize 17, fontWeight 800, lineHeight 1.15, color '#FFFFFF', letterSpacing '-0.02em', margin 0 → {card.title}.
     Right: span fontSize 10, fontWeight 500, color 'rgba(255,255,255,0.45)', letterSpacing '0.04em' → {card.country}.
@@ -148,7 +148,7 @@ Key details:
 
   'V0': `Create a React client component named FloatingCards — a swipeable deck of 3 travel destination cards. The front card is draggable downward; releasing it past a threshold flings it off-screen and the next card slides to the front. Each card shows a hotels count that animates up from 0 when it becomes the front card. Theme-aware (light + dark). Write as a single self-contained React client component. Inline everything (you may keep one small inline useCountUp hook and a HotelsCounter sub-component in the same file). 'use client' at the top. No 'any' types.
 
-Imports: useRef, useState, useEffect from 'react'; motion from 'framer-motion'; { Buildings } from '@/components/icons/buildings'; { ArrowUpRight } from '@/components/icons/arrow-up-right'. Both are AI Canvas icons, Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useRef, useState, useEffect from 'react'; motion from 'framer-motion'; { Buildings } from '@/components/icons/buildings'; { ArrowUpRight } from '@/components/icons/arrow-up-right'. Both are AI Canvas icons, Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 Constants: CARD_W = 280, CARD_H = 200.
 
@@ -189,7 +189,7 @@ Card contents:
 Top section: div style padding '10px 10px 0', flex column gap 8, flex '0 0 auto'.
   Header row: flex row justify-between items-center.
     Left: <HotelsCounter target={card.hotels} active={isFront && !isExiting} />.
-    Right: circular 26×26 button style borderRadius '50%' background '#BECF5D' (olive accent) flex center, containing <ArrowUpRight strokeWidth={2} size={13} style={{color:'#1A1A19'}}/>.
+    Right: circular 26×26 button style borderRadius '50%' background '#BECF5D' (olive accent) flex center, containing <ArrowUpRight weight="bold" size={13} style={{color:'#1A1A19'}}/>.
   Title row: flex row items-baseline justify-between.
     Left: p fontSize 17, fontWeight 800, lineHeight 1.15, color '#FFFFFF', letterSpacing '-0.02em', margin 0 → {card.title}.
     Right: span fontSize 10, fontWeight 500, color 'rgba(255,255,255,0.45)', letterSpacing '0.04em' → {card.country}.

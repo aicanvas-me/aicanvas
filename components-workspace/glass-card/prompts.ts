@@ -49,7 +49,7 @@ Inside:
   - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full cursor-pointer items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} style={{color:'rgba(255,255,255,0.55)'}} />.
   - Top edge highlight div: absolute left-6 right-6 top-0 h-[1px] background "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)".
 
-No entrance animation. Always dark. Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bolt } from '@/components/icons/bolt'\`), Line style, 1.5px stroke: chart-line-up, bolt, shield-check, arrow-right. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
+No entrance animation. Always dark. Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bolt } from '@/components/icons/bolt'\`), Line style, Regular weight: chart-line-up, bolt, shield-check, arrow-right. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
 
 ## Typography
 - Font: project default sans-serif
@@ -89,7 +89,7 @@ Inside:
   - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} style={{color:'rgba(255,255,255,0.55)'}} />.
   - Top edge highlight div: absolute left-6 right-6 top-0 h-[1px] background "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)".
 
-No entrance animation. Always dark. Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bolt } from '@/components/icons/bolt'\`), Line style, 1.5px stroke: chart-line-up, bolt, shield-check, arrow-right. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
+No entrance animation. Always dark. Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bolt } from '@/components/icons/bolt'\`), Line style, Regular weight: chart-line-up, bolt, shield-check, arrow-right. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
 
 ## Typography
 - Font: project default sans-serif
@@ -129,7 +129,7 @@ Inside:
   - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} style={{color:'rgba(255,255,255,0.55)'}} />.
   - Top edge highlight div: absolute left-6 right-6 top-0 h-[1px] background "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)".
 
-No entrance animation. Always dark. Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bolt } from '@/components/icons/bolt'\`), Line style, 1.5px stroke: chart-line-up, bolt, shield-check, arrow-right. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
+No entrance animation. Always dark. Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bolt } from '@/components/icons/bolt'\`), Line style, Regular weight: chart-line-up, bolt, shield-check, arrow-right. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
 
 ## Typography
 - Font: project default sans-serif

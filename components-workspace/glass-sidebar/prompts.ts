@@ -26,7 +26,7 @@ Constants:
 - \`COLLAPSED_WIDTH = 64\`, \`EXPANDED_WIDTH = 220\`
 - \`ICON_TILE_SIZE = 44\`, \`TOGGLE_BUTTON_HEIGHT = 36\`
 
-Nav items (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Nav items (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 - \`house\` / "Home" / #3A86FF
 - \`search\` / "Search" / #B388FF
 - \`folders\` / "Projects" / #FFBE0B
@@ -73,7 +73,7 @@ Constants:
 - \`COLLAPSED_WIDTH = 64\`, \`EXPANDED_WIDTH = 220\`
 - \`ICON_TILE_SIZE = 44\`, \`TOGGLE_BUTTON_HEIGHT = 36\`
 
-Nav items (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Nav items (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 - \`house\` / "Home" / #3A86FF
 - \`search\` / "Search" / #B388FF
 - \`folders\` / "Projects" / #FFBE0B
@@ -120,7 +120,7 @@ Constants:
 - \`COLLAPSED_WIDTH = 64\`, \`EXPANDED_WIDTH = 220\`
 - \`ICON_TILE_SIZE = 44\`, \`TOGGLE_BUTTON_HEIGHT = 36\`
 
-Nav items (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Nav items (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 - \`house\` / "Home" / #3A86FF
 - \`search\` / "Search" / #B388FF
 - \`folders\` / "Projects" / #FFBE0B

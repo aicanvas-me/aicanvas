@@ -28,38 +28,33 @@ describe.skipIf(!fromVault)('the icon package a customer installs', () => {
     }
   })
 
-  it('uses inherited CSS stroke defaults however the size is set', () => {
+  it('uses the inherited CSS stroke default however the size is set', () => {
     for (const el of [<Search key="d" />, <Search key="p" size={16} />, <Search key="c" className="size-4" />, <Check key="check" />]) {
       const container = render(el)
-      expect(container.querySelector('svg')?.style.strokeWidth).toBe('var(--aic-icon-stroke, 1.5)')
+      expect(container.querySelector('svg')?.style.strokeWidth).toBe('var(--aic-icon-stroke, 1.515)')
       const stroked = container.querySelectorAll<SVGElement>('path:not([stroke="none"]), circle:not([stroke="none"])')
       expect(stroked.length).toBeGreaterThan(0)
-      for (const child of stroked) {
-        expect(child.style.vectorEffect).toBe('var(--aic-icon-vector-effect, non-scaling-stroke)')
-      }
+      for (const child of stroked) expect(child.style.vectorEffect).toBe('')
     }
   })
 
-  it('lets an explicit stroke width override the CSS default', () => {
-    expect(render(<Search strokeWidth={2} />).querySelector('svg')?.style.strokeWidth).toBe('2')
+  it('maps each named weight to its stroke, none landing on a whole pixel at 16px', () => {
+    const strokes = { thin: '0.7575', light: '1.13625', regular: '1.515', bold: '2.2725' } as const
+    for (const [weight, stroke] of Object.entries(strokes)) {
+      expect(render(<Search weight={weight as keyof typeof strokes} />).querySelector('svg')?.style.strokeWidth).toBe(stroke)
+      expect((Number(stroke) * 16) / 24 % 1).not.toBe(0)
+    }
   })
 
-  it('scales the line with the size when absolute stroke is off', () => {
-    const container = render(<Search size={48} absoluteStrokeWidth={false} />)
-    const stroked = container.querySelectorAll<SVGElement>('path, circle')
-    expect(stroked.length).toBeGreaterThan(0)
-    for (const child of stroked) expect(child.style.vectorEffect).toBe('none')
-  })
-
-  it('provides stroke defaults through a display: contents span', () => {
+  it('provides the weight default through a display: contents span', () => {
     const container = render(
-      <IconProvider strokeWidth={1.25}>
+      <IconProvider weight="light">
         <Search />
       </IconProvider>,
     )
     const provider = container.querySelector('span')
     expect(provider?.style.display).toBe('contents')
-    expect(provider?.style.getPropertyValue('--aic-icon-stroke')).toBe('1.25')
+    expect(provider?.style.getPropertyValue('--aic-icon-stroke')).toBe('1.13625')
     expect(provider?.querySelector('svg')).not.toBeNull()
   })
 

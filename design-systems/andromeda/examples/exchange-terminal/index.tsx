@@ -13,7 +13,7 @@ import { CirclePlay } from '@/app/_icons/icons/circle-play';
 import { Ellipsis } from '@/app/_icons/icons/ellipsis';
 import { motion } from 'framer-motion';
 import { tokens } from '../../tokens';
-import { themeColor, iconVars } from '../../components/lib/utils';
+import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Avatar } from '../../components/Avatar';
 import { IconButton } from '../../components/IconButton';
@@ -361,7 +361,7 @@ function PairHeader() {
             letterSpacing: tokens.typography.tracking.widest,
           }}
         >
-          <Ellipsis strokeWidth={1.5} size={10} />
+          <Ellipsis weight="bold" size={10} />
           {pair.longName}
         </span>
       </div>
@@ -627,7 +627,6 @@ export default function ExchangeTerminal() {
     <div
       className="ex-shell"
       style={{
-        ...iconVars,
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',

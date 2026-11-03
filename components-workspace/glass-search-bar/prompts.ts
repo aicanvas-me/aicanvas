@@ -34,7 +34,7 @@ When active (focused), animate boxShadow to:
 \`0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1.5px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.08)\`
 via spring \`{ stiffness: 400, damping: 30 }\`.
 
-Left: 48x48 slot containing AI Canvas icon \`search\` (\`@/components/icons/search\`, Line style, 1.5px stroke) size 20, \`text-white/50\`. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Left: 48x48 slot containing AI Canvas icon \`search\` (\`@/components/icons/search\`, Line style, Regular weight) size 20, \`text-white/50\`. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 Input: transparent, \`text-sm font-medium text-white/90 placeholder-white/30\`, caret \`#7D8D41\`, placeholder "Search components...".
 Right: when \`query.length > 0\`, show a 20x20 circular clear button (\`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`) with AI Canvas icon \`x\` size 10. Enter/exit via \`AnimatePresence\` scaling from 0.5, whileHover bg \`rgba(255,255,255,0.14)\`, whileTap scale 0.88.
 
@@ -74,7 +74,7 @@ When active (focused), animate boxShadow to:
 \`0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1.5px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.08)\`
 via spring \`{ stiffness: 400, damping: 30 }\`.
 
-Left: 48x48 slot containing AI Canvas icon \`search\` (\`@/components/icons/search\`, Line style, 1.5px stroke) size 20, \`text-white/50\`. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Left: 48x48 slot containing AI Canvas icon \`search\` (\`@/components/icons/search\`, Line style, Regular weight) size 20, \`text-white/50\`. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 Input: transparent, \`text-sm font-medium text-white/90 placeholder-white/30\`, caret \`#7D8D41\`, placeholder "Search components...".
 Right: when \`query.length > 0\`, show a 20x20 circular clear button (\`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`) with AI Canvas icon \`x\` size 10. Enter/exit via \`AnimatePresence\` scaling from 0.5, whileHover bg \`rgba(255,255,255,0.14)\`, whileTap scale 0.88.
 
@@ -114,7 +114,7 @@ When active (focused), animate boxShadow to:
 \`0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 1.5px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.08)\`
 via spring \`{ stiffness: 400, damping: 30 }\`.
 
-Left: 48x48 slot containing AI Canvas icon \`search\` (\`@/components/icons/search\`, Line style, 1.5px stroke) size 20, \`text-white/50\`. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Left: 48x48 slot containing AI Canvas icon \`search\` (\`@/components/icons/search\`, Line style, Regular weight) size 20, \`text-white/50\`. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 Input: transparent, \`text-sm font-medium text-white/90 placeholder-white/30\`, caret \`#7D8D41\`, placeholder "Search components...".
 Right: when \`query.length > 0\`, show a 20x20 circular clear button (\`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`) with AI Canvas icon \`x\` size 10. Enter/exit via \`AnimatePresence\` scaling from 0.5, whileHover bg \`rgba(255,255,255,0.14)\`, whileTap scale 0.88.
 

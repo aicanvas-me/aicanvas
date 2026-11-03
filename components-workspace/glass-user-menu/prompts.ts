@@ -29,7 +29,7 @@ Write this as a single self-contained React client component. Inline everything.
   - Account: Profile (\`user\` icon, #3A86FF), Settings (\`gear\` icon, #B388FF)
   - Workspace: Team (\`users\` icon, #06D6A0), Billing (\`credit-card\` icon, #FFBE0B)
 - Log Out row at the bottom: \`log-out\` icon, color #FF5A5A, label "Log Out"
-- Icons: AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { User } from '@/components/icons/user'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- Icons: AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { User } from '@/components/icons/user'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Glass tokens (inline as constants)
 \`glassPanel = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)' }\` (the two fully transparent trailing layers match ACTIVE_GLOW layer for layer, same count, order and number of lengths, so the glow fades in and out instead of snapping)
@@ -73,7 +73,7 @@ Write this as a single self-contained React client component. Inline everything.
   - Account: Profile (\`user\` icon, #3A86FF), Settings (\`gear\` icon, #B388FF)
   - Workspace: Team (\`users\` icon, #06D6A0), Billing (\`credit-card\` icon, #FFBE0B)
 - Log Out row at the bottom: \`log-out\` icon, color #FF5A5A, label "Log Out"
-- Icons: AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { User } from '@/components/icons/user'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- Icons: AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { User } from '@/components/icons/user'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Glass tokens (inline as constants)
 \`glassPanel = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)' }\` (the two fully transparent trailing layers match ACTIVE_GLOW layer for layer, same count, order and number of lengths, so the glow fades in and out instead of snapping)
@@ -117,7 +117,7 @@ Write this as a single self-contained React client component. Inline everything.
   - Account: Profile (\`user\` icon, #3A86FF), Settings (\`gear\` icon, #B388FF)
   - Workspace: Team (\`users\` icon, #06D6A0), Billing (\`credit-card\` icon, #FFBE0B)
 - Log Out row at the bottom: \`log-out\` icon, color #FF5A5A, label "Log Out"
-- Icons: AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { User } from '@/components/icons/user'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- Icons: AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { User } from '@/components/icons/user'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Glass tokens (inline as constants)
 \`glassPanel = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)' }\` (the two fully transparent trailing layers match ACTIVE_GLOW layer for layer, same count, order and number of lengths, so the glow fades in and out instead of snapping)

@@ -3,7 +3,7 @@ import type { Platform } from '../../app/components/ComponentCard'
 export const prompts: Partial<Record<Platform, string>> = {
   'Claude Code': `Build a standalone React component called RadialCards.
 
-Stack: React + TypeScript + Framer Motion + AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Fire } from '@/components/icons/fire'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. Single file, 'use client', default export, min-h-screen wrapper.
+Stack: React + TypeScript + Framer Motion + AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Fire } from '@/components/icons/fire'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. Single file, 'use client', default export, min-h-screen wrapper.
 // npm install framer-motion
 
 --- LAYOUT ---
@@ -75,7 +75,7 @@ Each card tracks a per-card cardRotation MotionValue with two modes:
 
   Lovable: `Build a standalone React component called RadialCards.
 
-Stack: React + TypeScript + Framer Motion + AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Fire } from '@/components/icons/fire'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. Single file, 'use client', default export, min-h-screen wrapper.
+Stack: React + TypeScript + Framer Motion + AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Fire } from '@/components/icons/fire'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. Single file, 'use client', default export, min-h-screen wrapper.
 
 --- LAYOUT ---
 7 health-metric cards arranged as a rotating flower. All cards share a single anchor at the canvas centre. Each card pivots from its bottom-left corner (transform-origin: 0% 100%), extends upward from the anchor, and is rotated by its hand-tuned slot angle so the bouquet fans out organically.
@@ -123,7 +123,7 @@ Background: dark #1A1A19 / light #F0F0E8 via theme detection.`,
 
   V0: `Build a standalone React component called RadialCards.
 
-Stack: React + TypeScript + Framer Motion + AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Fire } from '@/components/icons/fire'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. Single file, 'use client', default export, min-h-screen wrapper.
+Stack: React + TypeScript + Framer Motion + AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Fire } from '@/components/icons/fire'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. Single file, 'use client', default export, min-h-screen wrapper.
 
 --- LAYOUT ---
 7 health-metric cards arranged as a rotating flower. All cards share a single anchor at the canvas centre. Each card pivots from its bottom-left corner (transform-origin: 0% 100%), extends upward from the anchor, and is rotated by its hand-tuned slot angle so the bouquet fans out organically.

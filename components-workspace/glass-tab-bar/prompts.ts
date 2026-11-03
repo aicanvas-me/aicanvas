@@ -22,7 +22,7 @@ Write this as a single self-contained React client component. Inline everything.
 
 Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866\`, \`object-cover opacity-60\`, over \`bg-[#1A1A19]\`.
 
-Tabs (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Tabs (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 - \`house\` / "Home" / #3A86FF
 - \`compass\` / "Explore" / #FF7B54
 - \`circle-plus\` / "Create" / #06D6A0
@@ -63,7 +63,7 @@ Write this as a single self-contained React client component. Inline everything.
 
 Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866\`, \`object-cover opacity-60\`, over \`bg-[#1A1A19]\`.
 
-Tabs (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Tabs (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 - \`house\` / "Home" / #3A86FF
 - \`compass\` / "Explore" / #FF7B54
 - \`circle-plus\` / "Create" / #06D6A0
@@ -104,7 +104,7 @@ Write this as a single self-contained React client component. Inline everything.
 
 Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866\`, \`object-cover opacity-60\`, over \`bg-[#1A1A19]\`.
 
-Tabs (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Tabs (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 - \`house\` / "Home" / #3A86FF
 - \`compass\` / "Explore" / #FF7B54
 - \`circle-plus\` / "Create" / #06D6A0

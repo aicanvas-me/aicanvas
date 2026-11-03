@@ -148,7 +148,7 @@ function ColHeader({ children, sorted, align = 'left' }: ColHeaderProps) {
     >
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[1], lineHeight: 'var(--andromeda-leading-none, 1)', height: '16px' }}>
         {children}
-        {sorted ? <ChevronUp strokeWidth={1.5} size={10} /> : null}
+        {sorted ? <ChevronUp weight="bold" size={10} /> : null}
       </span>
     </th>
   );

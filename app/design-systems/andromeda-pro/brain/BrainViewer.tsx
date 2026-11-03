@@ -680,7 +680,7 @@ function BrainInstallButton({
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check strokeWidth={1.5} size={12} className="shrink-0 text-accent" />
+                  <Check weight="bold" size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}
@@ -754,7 +754,7 @@ function BrainInstallCard({
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
         {bullets.map((line, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-            <Check strokeWidth={1.5} size={13} color={C.accent[400]} style={{ flexShrink: 0, marginTop: 2 }} />
+            <Check weight="bold" size={13} color={C.accent[400]} style={{ flexShrink: 0, marginTop: 2 }} />
             <span style={{ fontSize: 13, lineHeight: 1.5, color: C.text.secondary }}>{line}</span>
           </div>
         ))}

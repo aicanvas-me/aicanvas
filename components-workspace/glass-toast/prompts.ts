@@ -24,7 +24,7 @@ Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal
 
 Constants: \`TOAST_DURATION = 4000\`, \`MAX_TOASTS = 3\`.
 
-Variants (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { Info } from '@/components/icons/info'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Variants (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { Info } from '@/components/icons/info'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 - success: color #06D6A0, gradient "#06D6A0, #00BFA5", icon \`circle-check\`, label "Success"
 - error:   color #FF5C8A, gradient "#FF5C8A, #FF1744", icon \`circle-x\`,     label "Error"
 - warning: color #FFBE0B, gradient "#FFBE0B, #FF9800", icon \`triangle-alert\`, label "Warning"
@@ -71,7 +71,7 @@ Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal
 
 Constants: \`TOAST_DURATION = 4000\`, \`MAX_TOASTS = 3\`.
 
-Variants (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { Info } from '@/components/icons/info'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Variants (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { Info } from '@/components/icons/info'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 - success: color #06D6A0, gradient "#06D6A0, #00BFA5", icon \`circle-check\`, label "Success"
 - error:   color #FF5C8A, gradient "#FF5C8A, #FF1744", icon \`circle-x\`,     label "Error"
 - warning: color #FFBE0B, gradient "#FFBE0B, #FF9800", icon \`triangle-alert\`, label "Warning"
@@ -118,7 +118,7 @@ Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal
 
 Constants: \`TOAST_DURATION = 4000\`, \`MAX_TOASTS = 3\`.
 
-Variants (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { Info } from '@/components/icons/info'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Variants (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { Info } from '@/components/icons/info'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 - success: color #06D6A0, gradient "#06D6A0, #00BFA5", icon \`circle-check\`, label "Success"
 - error:   color #FF5C8A, gradient "#FF5C8A, #FF1744", icon \`circle-x\`,     label "Error"
 - warning: color #FFBE0B, gradient "#FFBE0B, #FF9800", icon \`triangle-alert\`, label "Warning"

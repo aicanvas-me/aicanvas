@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and AI Canvas icons (\`pause\`, \`play\`, \`rotate-ccw\`, \`x\`, \`maximize\`, \`minimize\`; \`@/components/icons/<name>\`, e.g. \`import { Pause } from '@/components/icons/pause'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+  'Claude Code': `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and AI Canvas icons (\`pause\`, \`play\`, \`rotate-ccw\`, \`x\`, \`maximize\`, \`minimize\`; \`@/components/icons/<name>\`, e.g. \`import { Pause } from '@/components/icons/pause'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Environment
 Verify Tailwind CSS v4, TypeScript, and React are set up. Use the shadcn CLI if missing.
@@ -53,7 +53,7 @@ Inline \`useDarkMode(ref)\` hook: check \`[data-card-theme]\` ancestor first, fa
 
 Single file. \`'use client'\` at top. \`export default function UploadProgress()\`.`,
 
-  Lovable: `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and AI Canvas icons (\`pause\`, \`play\`, \`rotate-ccw\`, \`x\`, \`maximize\`, \`minimize\`; \`@/components/icons/<name>\`, e.g. \`import { Pause } from '@/components/icons/pause'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+  Lovable: `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and AI Canvas icons (\`pause\`, \`play\`, \`rotate-ccw\`, \`x\`, \`maximize\`, \`minimize\`; \`@/components/icons/<name>\`, e.g. \`import { Pause } from '@/components/icons/pause'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Component: UploadProgress
 
@@ -91,7 +91,7 @@ Inline \`useDarkMode(ref)\` that checks \`[data-card-theme]\` ancestor then \`do
 
 Single file. \`'use client'\`. \`export default function UploadProgress()\`.`,
 
-  V0: `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and AI Canvas icons (\`pause\`, \`play\`, \`rotate-ccw\`, \`x\`, \`maximize\`, \`minimize\`; \`@/components/icons/<name>\`, e.g. \`import { Pause } from '@/components/icons/pause'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+  V0: `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and AI Canvas icons (\`pause\`, \`play\`, \`rotate-ccw\`, \`x\`, \`maximize\`, \`minimize\`; \`@/components/icons/<name>\`, e.g. \`import { Pause } from '@/components/icons/pause'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Component: UploadProgress
 

@@ -80,7 +80,7 @@ export default function NewProjectModal() {
         }}
         className="flex items-center gap-2 rounded-full bg-[#1a1a18] px-5 py-3 font-sans text-[16px] font-semibold text-[#f1f1f0] dark:bg-[#f1f1f0] dark:text-[#1a1a18]"
       >
-        <Plus size={18} strokeWidth={2} />
+        <Plus size={18} weight="bold" />
         New Project
       </motion.button>
 
@@ -208,7 +208,7 @@ function ModalCard({
               className="absolute right-0 flex size-9 items-center justify-center rounded-full text-[#6c6c6c]"
               style={{ backgroundColor: '#f8f8f8' }}
             >
-              <X size={16} strokeWidth={2} />
+              <X size={16} weight="bold" />
             </motion.button>
           </motion.div>
 
@@ -312,7 +312,7 @@ function ModalCard({
                       transition={{ type: 'spring', stiffness: 500, damping: 26 }}
                       className="flex"
                     >
-                      <Check size={14} strokeWidth={2} color="#f1f1f0" />
+                      <Check size={14} weight="bold" color="#f1f1f0" />
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -406,7 +406,7 @@ function CreateButton({ onValidate, onConfirm }: { onValidate: () => boolean; on
             transition={{ type: 'spring', stiffness: 400, damping: 22 }}
             className="flex items-center justify-center"
           >
-            <Check size={16} strokeWidth={2} />
+            <Check size={16} weight="bold" />
           </motion.span>
         ) : (
           <motion.span

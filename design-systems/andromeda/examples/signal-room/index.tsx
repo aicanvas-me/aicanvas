@@ -29,7 +29,7 @@
 
 import { useState } from 'react';
 import { tokens } from '../../tokens';
-import { themeColor, iconVars } from '../../components/lib/utils';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { useCascadeProps } from '../../components/lib/motion';
 import { Sidebar, SidebarNav } from './Sidebar';
@@ -108,7 +108,6 @@ export default function SignalRoom() {
     <div
       className="sr-shell"
       style={{
-        ...iconVars,
         display: 'flex',
         height: '100%',
         width: '100%',

@@ -37,7 +37,7 @@ if (SRC) {
   copyFileSync(join(SRC, 'react/IconBase.tsx'), join(OUT, 'IconBase.tsx'))
   for (const name of names) copyFileSync(join(SRC, 'react/icons', `${name}.tsx`), join(OUT, 'icons', `${name}.tsx`))
 } else {
-  // Same server-safe contract; the placeholder ignores the provider's CSS variables.
+  // Same server-safe contract; the placeholder ignores weight.
   writeFileSync(
     join(OUT, 'IconBase.tsx'),
     `// ${MARKER} - built by scripts/site-icons.mjs, do not edit.
@@ -45,39 +45,30 @@ import { Children, forwardRef, isValidElement, type CSSProperties, type ReactNod
 
 export type IconNode = ReadonlyArray<readonly ['path' | 'circle', Readonly<Record<string, string>>]>
 export type IconStyle = 'line' | 'duotone' | 'solid' | 'solid-duotone'
-export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'ref'> {
+export type IconWeight = 'thin' | 'light' | 'regular' | 'bold'
+export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'ref' | 'strokeWidth'> {
   size?: number | string
   color?: string
-  strokeWidth?: number | string
-  absoluteStrokeWidth?: boolean
+  weight?: IconWeight
 }
 
 export interface IconProviderProps {
-  strokeWidth?: number | string
-  absoluteStrokeWidth?: boolean
+  weight?: IconWeight
   color?: string
   children: ReactNode
 }
 
-type ProviderStyle = CSSProperties & {
-  '--aic-icon-stroke'?: number | string
-  '--aic-icon-vector-effect'?: 'none'
-}
-
-export function IconProvider({ strokeWidth, absoluteStrokeWidth, color, children }: IconProviderProps) {
-  const style: ProviderStyle = { display: 'contents' }
-  if (strokeWidth !== undefined) style['--aic-icon-stroke'] = strokeWidth
-  if (absoluteStrokeWidth === false) style['--aic-icon-vector-effect'] = 'none'
+export function IconProvider({ color, children }: IconProviderProps) {
+  const style: CSSProperties = { display: 'contents' }
   if (color !== undefined) style.color = color
   return <span style={style}>{children}</span>
 }
 
 // No vault checkout: an empty placeholder of the right size.
 export function wrap(name: string, iconStyle: IconStyle) {
-  const Icon = forwardRef<SVGSVGElement, IconProps>(function Icon({ size = 24, color, strokeWidth, absoluteStrokeWidth, className, children, ...rest }, ref) {
+  const Icon = forwardRef<SVGSVGElement, IconProps>(function Icon({ size = 24, color, weight, className, children, ...rest }, ref) {
     void color
-    void strokeWidth
-    void absoluteStrokeWidth
+    void weight
     const titled = Children.toArray(children).some((child) => isValidElement(child) && child.type === 'title')
     const labelled = titled || rest['aria-label'] != null || rest['aria-labelledby'] != null || rest.role != null
     return (

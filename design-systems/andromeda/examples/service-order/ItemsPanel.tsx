@@ -258,8 +258,8 @@ function ColHeader({ children, align = 'left', sort }: {
 }) {
   // sort: 'asc' | 'desc' | 'sortable' | undefined
   const sortIcon =
-    sort === 'asc'  ? <ChevronUp strokeWidth={1.5} size={10} /> :
-    sort === 'desc' ? <ChevronDown strokeWidth={1.5} size={10} /> :
+    sort === 'asc'  ? <ChevronUp weight="bold" size={10} /> :
+    sort === 'desc' ? <ChevronDown weight="bold" size={10} /> :
     sort === 'sortable' ? <ChevronsUpDown size={10} /> :
     null;
 

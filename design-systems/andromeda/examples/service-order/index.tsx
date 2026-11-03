@@ -29,7 +29,7 @@ import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
 import { CircleX } from '@/app/_icons/icons/circle-x';
 import { motion, LayoutGroup } from 'framer-motion';
 import { tokens } from '../../tokens';
-import { themeColor, iconVars } from '../../components/lib/utils';
+import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Badge } from '../../components/Badge';
@@ -351,7 +351,6 @@ export default function ServiceOrder() {
     <div
       className="so-shell"
       style={{
-        ...iconVars,
         display: 'flex',
         flexDirection: 'column',
         // 100% (not 100vh): fill the parent, don't measure the raw viewport —

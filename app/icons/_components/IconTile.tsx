@@ -6,6 +6,7 @@ import { Code } from '@/app/_icons/icons/code'
 import { Copy } from '@/app/_icons/icons/copy'
 import { copyText } from '@/app/components/useCopied'
 import { iconJsxLine } from '../_lib/constants'
+import type { IconWeight } from '../_lib/icon-utils'
 import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
 import type { IconGridMeta, IconStyle } from '../_lib/types'
@@ -15,8 +16,7 @@ export function IconTile({
   icon,
   markup,
   size,
-  strokeWidth,
-  absolute,
+  weight,
   colour,
   exportColour,
   exportSize = size,
@@ -26,8 +26,7 @@ export function IconTile({
   icon: IconGridMeta
   markup: string
   size: number
-  strokeWidth: number
-  absolute: boolean
+  weight: IconWeight
   colour: string
   // what Copy SVG and Copy JSX carry: the user's pick, null for none
   exportColour: string | null
@@ -55,7 +54,7 @@ export function IconTile({
           opens the icon page already in it; no prefetch for 800 tiles. */}
       <Link href={href} prefetch={false} data-icon-link="" aria-label={`Open ${icon.name} details`}>
         {markup ? (
-          <IconSvg markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={colour} />
+          <IconSvg markup={markup} size={size} weight={weight} colour={colour} />
         ) : (
           <span data-icon-placeholder="" aria-hidden />
         )}
@@ -68,7 +67,7 @@ export function IconTile({
             type="button"
             aria-label={`Copy ${icon.name} SVG`}
             title="Copy SVG"
-            onClick={() => void copyText(buildSvg(markup, exportSize, strokeWidth, exportColour, absolute))}
+            onClick={() => void copyText(buildSvg(markup, exportSize, weight, exportColour))}
             className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
             <Copy size={12} />
@@ -77,7 +76,7 @@ export function IconTile({
             type="button"
             aria-label={`Copy ${icon.name} JSX`}
             title="Copy JSX"
-            onClick={() => void copyText(iconJsxLine(icon.name, exportSize, strokeWidth, style, absolute, exportColour))}
+            onClick={() => void copyText(iconJsxLine(icon.name, exportSize, weight, style, exportColour))}
             className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
             <Code size={12} />

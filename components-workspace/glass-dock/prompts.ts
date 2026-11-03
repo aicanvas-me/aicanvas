@@ -55,7 +55,7 @@ Tooltip motion.div: className "pointer-events-none absolute -top-10 rounded-lg p
 
 Icon badge motion.div (notification-style tinted, NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "relative flex items-center justify-center group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[rgba(255,255,255,0.6)]". Inside: <Icon size={22} style={{color}} />. Under it, AnimatePresence springs a 4px dot in the item color from opacity/scale 0 to 1 when isOpen, positioned at bottom -6 and left calc(50% - 2px), with stiffness 500 and damping 30.
 
-Imports: useEffect, useRef, useState from react; AnimatePresence, motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, Music, Coffee, Leaf, Star, Moon, Flame, Cloud from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Sun } from '@/components/icons/sun'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, Music, Coffee, Leaf, Star, Moon, Flame, Cloud from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Sun } from '@/components/icons/sun'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -100,7 +100,7 @@ Tooltip motion.div: className "pointer-events-none absolute -top-10 rounded-lg p
 
 Icon badge motion.div (notification-style tinted — NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "flex items-center justify-center". Inside: <Icon size={22} style={{color}} />.
 
-Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, Music, Coffee, Leaf, Star, Moon, Flame, Cloud from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Sun } from '@/components/icons/sun'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, Music, Coffee, Leaf, Star, Moon, Flame, Cloud from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Sun } from '@/components/icons/sun'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -145,7 +145,7 @@ Tooltip motion.div: className "pointer-events-none absolute -top-10 rounded-lg p
 
 Icon badge motion.div (notification-style tinted — NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "flex items-center justify-center". Inside: <Icon size={22} style={{color}} />.
 
-Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, Music, Coffee, Leaf, Star, Moon, Flame, Cloud from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Sun } from '@/components/icons/sun'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, Music, Coffee, Leaf, Star, Moon, Flame, Cloud from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Sun } from '@/components/icons/sun'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif

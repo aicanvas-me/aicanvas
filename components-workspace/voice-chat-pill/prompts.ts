@@ -29,7 +29,7 @@ A \`motion.button\` ref'd as \`pillRef\`, pill-shaped (rounded-full), no bottom 
 
 2. **Avatar stack**: 4 overlapping circles (32×32), negative margin \`-10px\`, z-index decreasing. Each wrapped in \`motion.span\` that animates \`y: -1.5, scale: 1.06\` when this avatar is the current speaker (spring 380/24). Ring: \`ring-2 ring-[#1a1a18] dark:ring-[#e0dfd8]\` (matches pill bg per theme).
 
-3. **Count + chevron**: \`+{hiddenCount}\` and \`<ChevronDown strokeWidth={2} size={13} />\` in a flex span. Color: \`text-[#f1f1f0] dark:text-[#1a1a18]\`. Icons are AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { ChevronDown } from '@/components/icons/chevron-down'\`), Line style, 2px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+3. **Count + chevron**: \`+{hiddenCount}\` and \`<ChevronDown weight="bold" size={13} />\` in a flex span. Color: \`text-[#f1f1f0] dark:text-[#1a1a18]\`. Icons are AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { ChevronDown } from '@/components/icons/chevron-down'\`), Line style, Bold weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ---
 
@@ -90,7 +90,7 @@ Centered fixed div z-50. \`motion.div\` morphs from pill origin:
 
 **Avatar grid:** \`grid-cols-4 gap-x-3 gap-y-4\`. Each cell: avatar (60×60, rounded-full, \`motion.div\` scale 1.04 when speaking) + name (13px, weight 500, \`#1a1a18\`). Active speaker shows a badge (\`AnimatePresence\`) top-right of avatar: 22×22 dark circle (\`#1a1a18\`) with \`SpeakingBars size={10}\` in light color, spring pop-in/out.
 
-**Join Now button:** Full-width rounded-full, \`bg-[#1a1a18]\`, hover \`#2d2d2b\`, text \`#f2f1ec\` (15px bold). Has a \`joining\` state: on click → \`setJoining(true)\`, button scale 0.96, bg \`#3a3a38\`, label swaps to animated \`check\` icon (size 18, 2px stroke, spring 400/22 in/out via AnimatePresence mode:wait). After 700ms → \`close()\` and \`setJoining(false)\`.
+**Join Now button:** Full-width rounded-full, \`bg-[#1a1a18]\`, hover \`#2d2d2b\`, text \`#f2f1ec\` (15px bold). Has a \`joining\` state: on click → \`setJoining(true)\`, button scale 0.96, bg \`#3a3a38\`, label swaps to animated \`check\` icon (size 18, Bold weight, spring 400/22 in/out via AnimatePresence mode:wait). After 700ms → \`close()\` and \`setJoining(false)\`.
 
 ---
 

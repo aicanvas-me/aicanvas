@@ -10,7 +10,7 @@ Create four tabs in this exact order:
 3. Alerts with Bell
 4. Search with search
 
-Use size="1.18em" on every icon. The icons are AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Mail } from '@/components/icons/mail'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Store the active label in React state and initialize it to "Inbox". Exactly one tab is active at a time. Clicking any tab makes it active.
+Use size="1.18em" on every icon. The icons are AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Mail } from '@/components/icons/mail'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Store the active label in React state and initialize it to "Inbox". Exactly one tab is active at a time. Clicking any tab makes it active.
 
 Define one shared motion transition exactly as { type: 'spring', stiffness: 420, damping: 30, mass: 0.7 } and use it throughout. The active tab is an expanded rounded pill containing its icon and title-case label. Inactive tabs are 40px circles containing only their icons. Each motion.button uses layout and the shared spring so its width morphs smoothly. Inactive buttons use whileHover={{ scale: 1.045 }} and all buttons use whileTap={{ scale: 0.94 }}.
 

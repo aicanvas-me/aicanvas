@@ -5,7 +5,7 @@ import { IconsOverview } from './_components/IconsOverview'
 
 export const metadata: Metadata = {
   title: `${ICON_COUNT} Icons for React and AI Agents`,
-  description: `Browse ${ICON_COUNT} interface icons in four styles, customize their size, stroke and colour, then copy SVG or React usage.`,
+  description: `Browse ${ICON_COUNT} interface icons in four styles, customize their size, weight and colour, then copy SVG or React usage.`,
 }
 
 export default async function IconsPage({

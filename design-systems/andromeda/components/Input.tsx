@@ -51,7 +51,7 @@ const inputVariants = cva(
 /**
  * @typedef {object} InputProps
  * @property {string} [label] Uppercase mono label rendered above the field.
- * @property {React.ComponentType<{ size?: number, strokeWidth?: number }>} [icon] Optional left icon.
+ * @property {React.ComponentType<{ size?: number, weight?: 'thin' | 'light' | 'regular' | 'bold' }>} [icon] Optional left icon.
  * @property {string} [error] When set, switches the field into the error state and renders the message.
  * @property {string} [className] Class name forwarded to the <input> element.
  * @property {string} [wrapperClassName] Class name forwarded to the outer wrapper.

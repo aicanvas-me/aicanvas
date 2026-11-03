@@ -5,7 +5,7 @@ import type { Platform } from '../../app/components/ComponentCard'
 const SPEC = `Build a single, self-contained, copy-paste React + TypeScript component: a "Delete Account" pill button that turns account deletion into a three-state undo flow instead of a confirm dialog.
 
 STACK
-- React + TypeScript, Tailwind CSS v4, Framer Motion, AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Undo } from '@/components/icons/undo'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. No other dependencies.
+- React + TypeScript, Tailwind CSS v4, Framer Motion, AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Undo } from '@/components/icons/undo'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. No other dependencies.
 - One default-exported component named DeleteButton, in a single file. 'use client' at the top. Add a comment: // npm install framer-motion
 - Root element: className="flex min-h-screen w-full items-center justify-center bg-[#E3E3E8] dark:bg-[#0E0E0F]". Use Tailwind's dark: variant (class-based dark mode), not a manual theme hook: this component only needs the two hardcoded page colors plus theme-branched Tailwind classes on the pill itself, no inline hex switching.
 

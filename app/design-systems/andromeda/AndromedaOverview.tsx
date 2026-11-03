@@ -241,7 +241,7 @@ function ValueItem({
             <Icon size={16} />
           </span>
           <span className="text-base font-bold text-sand-900 dark:text-sand-50">{heading}</span>
-          <ChevronDown strokeWidth={1.5}
+          <ChevronDown weight="bold"
             size={15}
             className={`ml-auto shrink-0 text-sand-500 transition-transform duration-200 group-hover:text-sand-700 dark:group-hover:text-sand-300 ${open ? 'rotate-180' : ''}`}
           />
@@ -365,7 +365,7 @@ export function AndromedaOverview() {
             <div className="mt-1">
               <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-accent/85`}>
                 View the System
-                <ArrowUpRight strokeWidth={1.5} size={15} />
+                <ArrowUpRight weight="bold" size={15} />
               </span>
             </div>
           </div>
@@ -399,7 +399,7 @@ export function AndromedaOverview() {
             <div className="mt-1">
               <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-accent/85`}>
                 Explore more
-                <ArrowUpRight strokeWidth={1.5} size={15} />
+                <ArrowUpRight weight="bold" size={15} />
               </span>
             </div>
           </div>

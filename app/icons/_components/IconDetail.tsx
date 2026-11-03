@@ -17,14 +17,13 @@ import { RailFooter } from '@/app/components/RailFooter'
 import { ICON_CATEGORIES, ICON_CATEGORY_COUNTS, ICON_CATEGORY_LABELS, type IconCategorySlug } from '../_lib/categories'
 import { iconInstallCommand } from '../_lib/constants'
 import { DARK_PREVIEW_COLOUR, FIXED_WEIGHT, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
-import { formatDate, iconLead, takesStroke, titleCase } from '../_lib/icon-utils'
+import { formatDate, iconLead, ICON_WEIGHTS, takesStroke, titleCase, type IconWeight } from '../_lib/icon-utils'
 import { fromIconQuery, toIconQuery } from '../_lib/settings-query'
 import { ICON_DEFAULTS, isSeeded, storeSettings, storedSettings } from '../_lib/settings-store'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconMarkupMap, IconMeta, IconStyle, IconWithMarkup } from '../_lib/types'
 import { ActionBar } from './ActionBar'
 import { CodeTabs } from './CodeTabs'
-import { AbsoluteStrokeControl } from './AbsoluteStrokeControl'
 import { ColourControl } from './ColourControl'
 import { IconTile } from './IconTile'
 import { PreviewStage } from './PreviewStage'
@@ -103,8 +102,7 @@ export function IconDetail({
   // the section's look (lib/settings-store), so the page mounts already in it
   const [style, setStyle] = useState<IconStyle>(() => storedSettings().style)
   const [size, setSize] = useState(() => storedSettings().size)
-  const [strokeWidth, setStrokeWidth] = useState(() => storedSettings().strokeWidth)
-  const [absolute, setAbsolute] = useState(() => storedSettings().absolute)
+  const [weight, setWeight] = useState<IconWeight>(() => storedSettings().weight)
   const [colourOverride, setColourOverride] = useState<string | null>(() => storedSettings().colour)
   const [previewSurface, setPreviewSurface] = useState<'dark' | 'light'>(theme)
   const siteColour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
@@ -113,7 +111,7 @@ export function IconDetail({
   const markup = data[icon.name] ?? lineIcons[icon.name] ?? ''
   const categoryLabel = ICON_CATEGORY_LABELS[icon.category]
   const title = titleCase(icon.name)
-  const settings = { style, size, strokeWidth, absolute, colour: colourOverride }
+  const settings = { style, size, weight, colour: colourOverride }
   const isDefault = toIconQuery(settings, ICON_DEFAULTS) === ''
   const query = toIconQuery(settings, ICON_DEFAULTS)
 
@@ -130,8 +128,7 @@ export function IconDetail({
     /* eslint-disable react-hooks/set-state-in-effect */
     if (settings.style !== undefined) setStyle(settings.style)
     if (settings.size !== undefined) setSize(settings.size)
-    if (settings.strokeWidth !== undefined) setStrokeWidth(settings.strokeWidth)
-    if (settings.absolute !== undefined) setAbsolute(settings.absolute)
+    if (settings.weight !== undefined) setWeight(settings.weight)
     if (settings.colour !== undefined) setColourOverride(settings.colour)
     setRestored(true)
     /* eslint-enable react-hooks/set-state-in-effect */
@@ -141,12 +138,12 @@ export function IconDetail({
   // Waiting for the restore keeps the first pass from wiping the incoming query.
   useEffect(() => {
     if (!restored) return
-    storeSettings({ style, size, strokeWidth, absolute, colour: colourOverride })
+    storeSettings({ style, size, weight, colour: colourOverride })
     const url = `${window.location.pathname}${query}${window.location.hash}`
     if (url !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
       window.history.replaceState(window.history.state, '', url)
     }
-  }, [query, restored, style, size, strokeWidth, absolute, colourOverride])
+  }, [query, restored, style, size, weight, colourOverride])
 
   // Left and Right walk the category, unless focus is somewhere that takes
   // typing or uses the arrows itself (the sliders, the style track, the tabs).
@@ -169,8 +166,7 @@ export function IconDetail({
   const reset = () => {
     setStyle(ICON_DEFAULTS.style)
     setSize(ICON_DEFAULTS.size)
-    setStrokeWidth(ICON_DEFAULTS.strokeWidth)
-    setAbsolute(ICON_DEFAULTS.absolute)
+    setWeight(ICON_DEFAULTS.weight)
     setColourOverride(ICON_DEFAULTS.colour)
   }
 
@@ -214,8 +210,7 @@ export function IconDetail({
             markup={markup}
             name={title}
             size={size}
-            strokeWidth={strokeWidth}
-            absolute={absolute}
+            weight={weight}
             colour={previewColour}
             surface={previewSurface}
             onSurfaceChange={setPreviewSurface}
@@ -236,19 +231,18 @@ export function IconDetail({
               valueText={(value) => `${value} pixels`}
             />
             <TuneSlider
-              label="Stroke"
+              label="Weight"
               disabled={!takesStroke(style)}
               hint={FIXED_WEIGHT}
-              value={strokeWidth}
-              onChange={setStrokeWidth}
-              min={1}
+              value={ICON_WEIGHTS.findIndex((entry) => entry.id === weight)}
+              onChange={(index) => setWeight(ICON_WEIGHTS[index].id)}
+              min={0}
               max={3}
-              step={0.25}
-              format={(value) => value.toFixed(2)}
-              valueText={(value) => `${value.toFixed(2)} pixels`}
+              step={1}
+              format={(index) => ICON_WEIGHTS[index].label}
+              valueText={(index) => ICON_WEIGHTS[index].label}
             />
             <div className="relative flex items-center gap-1">
-              <AbsoluteStrokeControl key={restored ? 'restored' : 'first'} value={absolute} onChange={setAbsolute} disabled={!takesStroke(style)} hint={FIXED_WEIGHT} className="h-8" />
               <ColourControl value={colourOverride} resolved={previewColour} onChange={setColourOverride} align="start" />
               <button
                 type="button"
@@ -262,8 +256,8 @@ export function IconDetail({
               </button>
             </div>
             <div aria-hidden className="my-2 h-px bg-sand-200 dark:bg-sand-800" />
-            <ActionBar name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={colourOverride} style={style} />
-            <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} strokeWidth={strokeWidth} absolute={absolute} colour={colourOverride} style={style} />
+            <ActionBar name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} />
+            <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} />
           </div>
         </div>
 
@@ -289,8 +283,7 @@ export function IconDetail({
                   markup={data[suggestion.name] ?? suggestion.markup ?? ''}
                   size={Math.min(size, TILE_MAX_SIZE)}
                   exportSize={size}
-                  strokeWidth={strokeWidth}
-                  absolute={absolute}
+                  weight={weight}
                   colour={siteColour}
                   exportColour={colourOverride}
                   style={style}
@@ -325,8 +318,7 @@ export function IconDetail({
 // answers "how do I size it" without opening the docs.
 const PROPS: { prop: string; type: string; fallback: string; note: string }[] = [
   { prop: 'size', type: 'number | string', fallback: '24', note: 'Width and height in pixels.' },
-  { prop: 'strokeWidth', type: 'number | string', fallback: '1.5', note: 'Line weight. Line and Duotone only.' },
-  { prop: 'absoluteStrokeWidth', type: 'boolean', fallback: 'true', note: 'Keeps the line weight the same at every size.' },
+  { prop: 'weight', type: "'thin' | 'light' | 'regular' | 'bold'", fallback: "'regular'", note: 'Line weight; it scales with the size. Line and Duotone only.' },
   { prop: 'color', type: 'string', fallback: 'currentColor', note: 'Follows the text colour unless set.' },
   { prop: 'className', type: 'string', fallback: '', note: 'Any utility class, passed to the svg.' },
 ]

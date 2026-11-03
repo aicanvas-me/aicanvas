@@ -57,7 +57,7 @@ NotificationCard (inner function component):
 
 Empty state: AnimatePresence containing motion.div when notifications.length===0: initial {opacity:0, scale:0.9} animate {opacity:1, scale:1} className "flex flex-col items-center gap-3 py-12". Text: <span className="text-sm text-white/60">All caught up</span>.
 
-Imports: useState, type Ref from react; motion, AnimatePresence from framer-motion; Bell, MessageCircle, Heart, ShieldCheck, X, ArrowUp from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bell } from '@/components/icons/bell'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useState, type Ref from react; motion, AnimatePresence from framer-motion; Bell, MessageCircle, Heart, ShieldCheck, X, ArrowUp from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bell } from '@/components/icons/bell'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -104,7 +104,7 @@ NotificationCard (inner function component):
 
 Empty state: AnimatePresence containing motion.div when notifications.length===0: initial {opacity:0, scale:0.9} animate {opacity:1, scale:1} className "flex flex-col items-center gap-3 py-12". Text: <span className="text-sm text-white/60">All caught up</span>.
 
-Imports: useState, type Ref from react; motion, AnimatePresence from framer-motion; Bell, MessageCircle, Heart, ShieldCheck, X, ArrowUp from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bell } from '@/components/icons/bell'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useState, type Ref from react; motion, AnimatePresence from framer-motion; Bell, MessageCircle, Heart, ShieldCheck, X, ArrowUp from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bell } from '@/components/icons/bell'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -151,7 +151,7 @@ NotificationCard (inner function component):
 
 Empty state: AnimatePresence containing motion.div when notifications.length===0: initial {opacity:0, scale:0.9} animate {opacity:1, scale:1} className "flex flex-col items-center gap-3 py-12". Text: <span className="text-sm text-white/60">All caught up</span>.
 
-Imports: useState, type Ref from react; motion, AnimatePresence from framer-motion; Bell, MessageCircle, Heart, ShieldCheck, X, ArrowUp from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bell } from '@/components/icons/bell'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
+Imports: useState, type Ref from react; motion, AnimatePresence from framer-motion; Bell, MessageCircle, Heart, ShieldCheck, X, ArrowUp from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bell } from '@/components/icons/bell'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif

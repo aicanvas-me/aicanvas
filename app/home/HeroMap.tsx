@@ -657,7 +657,7 @@ function Marquee({ icons }: { icons: HeroIcon[] }) {
           icons.map((icon) => (
             <span key={`${c}-${icon.name}`} className="pr-2">
               <span className={`grid size-10 place-items-center rounded-inset text-sand-700 dark:text-sand-300 ${WELL}`}>
-                <IconSvg markup={icon.markup} size={20} strokeWidth={1.5} />
+                <IconSvg markup={icon.markup} size={20} weight="regular" />
               </span>
             </span>
           )),

@@ -130,7 +130,7 @@ export default function VoiceChatPill() {
 
         <span className="flex items-center gap-0.5 font-sans text-[14px] font-semibold text-[#f1f1f0] dark:text-[#1a1a18]">
           +{hiddenCount}
-          <ChevronDown strokeWidth={2} size={13} />
+          <ChevronDown weight="bold" size={13} />
         </span>
       </motion.button>
 
@@ -237,7 +237,7 @@ function ModalCard({
               className="absolute right-0 flex size-9 items-center justify-center rounded-full text-[#6c6c6c]"
               style={{ backgroundColor: '#f8f8f8' }}
             >
-              <X size={16} strokeWidth={2} />
+              <X size={16} weight="bold" />
             </motion.button>
           </motion.div>
 
@@ -316,7 +316,7 @@ function ModalCard({
                   transition={{ type: 'spring', stiffness: 400, damping: 22 }}
                   className="flex items-center justify-center"
                 >
-                  <Check size={18} strokeWidth={2} />
+                  <Check size={18} weight="bold" />
                 </motion.span>
               ) : (
                 <motion.span

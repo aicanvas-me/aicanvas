@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import type { CSSProperties, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { Eye } from '@/app/_icons/icons/eye'
@@ -126,7 +126,6 @@ const RELATED_PAGE_SIZE = 3
 const RELATED_IMG = 'absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] group-hover:brightness-110'
 
 // A buyer's install draws icons at the set's 1.5 default, not the site's 1.25.
-const PREVIEW_ICON_STROKE = { '--aic-icon-stroke': 1.5 } as CSSProperties
 
 export default function ComponentPageView({
   slug,
@@ -800,7 +799,7 @@ export default function ComponentPageView({
                       </button>
                     </>
                   ) : (
-                    <div key={previewKey} className="contents" style={PREVIEW_ICON_STROKE}>
+                    <div key={previewKey} className="contents">
                       {children}
                     </div>
                   )
@@ -1607,7 +1606,6 @@ export default function ComponentPageView({
                   // component overflows the card by the bar and insets and
                   // drifts under the wheel while visibly fitting.
                   data-preview-fullscreen
-                  style={PREVIEW_ICON_STROKE}
                   className="h-full overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
                 >
                   {children}

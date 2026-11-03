@@ -34,7 +34,7 @@ import { LinkSimple } from '@/components/icons/link-simple'
 import { Palette } from '@/components/icons/palette'
 \`\`\`
 
-Icons are AI Canvas icons (\`@/components/icons/<name>\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Icons are AI Canvas icons (\`@/components/icons/<name>\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Geometry constants (exact)
 \`\`\`
@@ -131,7 +131,7 @@ import { LinkSimple } from '@/components/icons/link-simple'
 import { Palette } from '@/components/icons/palette'
 \`\`\`
 
-Icons are AI Canvas icons (\`@/components/icons/<name>\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Icons are AI Canvas icons (\`@/components/icons/<name>\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Geometry constants (exact)
 \`\`\`
@@ -228,7 +228,7 @@ import { LinkSimple } from '@/components/icons/link-simple'
 import { Palette } from '@/components/icons/palette'
 \`\`\`
 
-Icons are AI Canvas icons (\`@/components/icons/<name>\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+Icons are AI Canvas icons (\`@/components/icons/<name>\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Geometry constants (exact)
 \`\`\`

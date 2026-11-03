@@ -12,7 +12,7 @@ import { buildIconZip } from '@/app/icons/_lib/zip-export'
 
 const entitlement = vi.mocked(getEntitlement)
 const build = vi.mocked(buildIconZip)
-const SETTINGS = { style: 'solid', format: 'svg', size: 24, strokeWidth: 1.5, absolute: true, colour: null }
+const SETTINGS = { style: 'solid', format: 'svg', size: 24, weight: 'regular', colour: null }
 const post = (body: unknown) =>
   POST(new Request('https://aicanvas.me/api/icons/download', { method: 'POST', body: JSON.stringify(body) }))
 
@@ -64,7 +64,8 @@ describe('POST /api/icons/download', () => {
       { ...SETTINGS, format: 'png' },
       { ...SETTINGS, size: 1000 },
       { ...SETTINGS, size: 25 },
-      { ...SETTINGS, strokeWidth: 9 },
+      { ...SETTINGS, weight: 'heavy' },
+      { ...SETTINGS, weight: undefined },
       { ...SETTINGS, colour: 'red"/><script>' },
       { ...SETTINGS, category: '../secret' },
       null,
