@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Bot } from '@/app/_icons/icons/bot'
+import { Plus } from '@/app/_icons/icons/plus'
 import { TriangleAlert } from '@/app/_icons/icons/triangle-alert'
 import { CARD } from '../../../components/PageKit'
 import { buttonClasses } from '../../../components/buttonClasses'
@@ -56,18 +57,31 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
 
   return (
     <section id="ai-agents" className={`scroll-mt-20 ${CARD} p-6 sm:p-8`}>
-      <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Connected AI agents</h2>
-      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-        AI agents you allowed to use your account through the AI Canvas MCP.{' '}
-        <Link href="/account/connect" className="font-semibold text-accent transition-colors hover:text-accent/70">
-          Connect an AI agent
-        </Link>
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <div className="min-w-0">
+          <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Connected AI agents</h2>
+          <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+            AI agents you allowed to use your account through the AI Canvas MCP. Each one signs in on its own.
+          </p>
+        </div>
+        {agents.length > 0 && (
+          <Link href="/account/connect" className={buttonClasses({ variant: 'outline', size: 'sm' })}>
+            <Plus size={16} />
+            Connect another
+          </Link>
+        )}
+      </div>
 
       {agents.length === 0 ? (
-        <p className="mt-5 rounded-inset border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 px-4 py-3 text-sm text-sand-600 dark:text-sand-400">
-          No AI agents connected.
-        </p>
+        <div className="mt-5 flex flex-col items-start gap-4 rounded-inset border border-sand-200 bg-sand-50 px-4 py-4 dark:border-sand-800 dark:bg-sand-950 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-sand-600 dark:text-sand-400">
+            No AI agents connected yet. Add AI Canvas to Claude Code, Cursor, Codex or VS Code and sign in once.
+          </p>
+          <Link href="/account/connect" className={`shrink-0 ${buttonClasses({ variant: 'primary', size: 'md' })}`}>
+            <Plus size={16} />
+            Connect an AI agent
+          </Link>
+        </div>
       ) : (
         <>
           <ul className="mt-5 space-y-2">

@@ -47,15 +47,20 @@ function Hint({ children }: { children: React.ReactNode }) {
   return <p className="mb-2.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{children}</p>
 }
 
-// heading={false} where the page draws the section heading itself (/mcp).
+// heading={false} where the page draws the section heading itself (/mcp). `note` sits
+// under the heading, e.g. the agents an account already connected (/account/connect).
 export function ConnectAgentCard({
   skipHref,
   showDocsLink = true,
   heading = true,
+  title = 'Connect your AI agent',
+  note,
 }: {
   skipHref?: string
   showDocsLink?: boolean
   heading?: boolean
+  title?: string
+  note?: React.ReactNode
 }) {
   const [agent, setAgent] = useState<Agent>('claude')
   const [copied, setCopied] = useState<string | null>(null)
@@ -92,7 +97,7 @@ export function ConnectAgentCard({
       {heading && (
         <>
           <div className="mb-2 flex items-center gap-2">
-            <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Connect your AI agent</h2>
+            <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">{title}</h2>
             <span className="rounded-full border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
               Beta
             </span>
@@ -100,6 +105,7 @@ export function ConnectAgentCard({
           <p className="mb-5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
             Add AI Canvas to your AI agent and sign in once in the browser. No key to copy.
           </p>
+          {note && <div className="mb-5">{note}</div>}
         </>
       )}
 
