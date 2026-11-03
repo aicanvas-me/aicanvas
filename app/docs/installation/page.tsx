@@ -90,13 +90,14 @@ export default function Page() {
         head={['You installed', 'Files land in']}
         rows={[
           ['A standalone component', <C key="s">components/aicanvas/&lt;name&gt;.tsx</C>],
+          ['The icons it uses', <C key="i">components/icons/&lt;name&gt;.tsx</C>],
           ['A design system or one of its components', <C key="d">components/aicanvas/&lt;system&gt;/...</C>],
           ['An AI Brain', <C key="b">design-systems/&lt;system&gt;/...</C>],
         ]}
       />
       <P>
         The CLI also adds the component&apos;s npm packages to <C>package.json</C>, for example <C>framer-motion</C> or{' '}
-        <C>@phosphor-icons/react</C>. Nothing else in your project is touched. The files are yours: edit them like any other code.
+        <C>three</C>. Nothing else in your project is touched. The files are yours: edit them like any other code.
       </P>
 
       <H2 id="manual-install">Manual install</H2>

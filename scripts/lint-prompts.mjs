@@ -313,7 +313,7 @@ function scanPackages(source) {
  * Not just the first: measured false positives on three corpus prompts that mention
  * "npm install" in prose before the real line ("…npm install framer-motion" comment at
  * the top."). Splitting on punctuation as well as whitespace is what stops the trailing
- * backtick in "…@phosphor-icons/react`." from making the package look absent.
+ * backtick in "…framer-motion three`." from making the package look absent.
  */
 function npmInstallTokens(text) {
   return [...text.matchAll(/npm install\s+([^\n]*)/g)]
@@ -701,9 +701,9 @@ function selftest() {
   const assert = (cond, msg) => { if (!cond) { console.log(`✗ ${msg}`); process.exitCode = 1 } else console.log(`  ok  ${msg}`) }
 
   const src = `'use client'
-// npm install framer-motion @phosphor-icons/react
+// npm install framer-motion three
 import { motion } from 'framer-motion'
-import { Check } from '@phosphor-icons/react'
+import * as THREE from 'three'
 
 function Badge() {
   return (
@@ -743,7 +743,7 @@ export default function DemoThing() {
   // A realistic filled scaffold: every block has substance, prose blocks respect the caps.
   const good = [
     '## 1. Setup',
-    '// npm install framer-motion @phosphor-icons/react',
+    '// npm install framer-motion three',
     "'use client' · export default function DemoThing()",
     "import { motion } from 'framer-motion'",
     '## 2. Constants',
@@ -801,8 +801,8 @@ export default function DemoThing() {
   // The other measured FP: prose says "npm install" before the real line, and the real
   // line ends in a backtick. Both used to make present packages look missing.
   const proseFirst = good.replace(
-    '// npm install framer-motion @phosphor-icons/react',
-    'Add a "// npm install framer-motion" comment at the top.\n// npm install framer-motion @phosphor-icons/react`.'
+    '// npm install framer-motion three',
+    'Add a "// npm install framer-motion" comment at the top.\n// npm install framer-motion three`.'
   )
   assert(!strictCheck(src, proseFirst).issues.some(i => i.startsWith('[6 setup]')), 'prose "npm install" mention + trailing backtick do not fake a missing package')
   console.log()

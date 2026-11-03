@@ -2,7 +2,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Info } from '@/app/_icons/icons/info'
-import { GithubLogo } from '@phosphor-icons/react/dist/ssr'
+import { GithubLogo } from '../components/BrandLogos'
 import { GITHUB_URL } from '../lib/config'
 import { buttonClasses } from '../components/buttonClasses'
 import { CARD, CtaBand, PageHero, PageShell } from '../components/PageKit'
@@ -53,7 +53,7 @@ function PullQuote({ lead, accent }: { lead: ReactNode; accent: ReactNode }) {
   return (
     <Reveal y={16} className="mx-auto my-20 max-w-4xl text-center sm:my-28">
       <figure>
-        {/* The type's own opening quote, set heavy: Phosphor's thin outline
+        {/* The type's own opening quote, set heavy: a thin outline
             mark turned over read as the digits 66. Nudged down because the
             glyph sits at the top of its line box. */}
         <span
@@ -308,7 +308,7 @@ export default function AboutPage() {
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-sm text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50"
           >
-            <GithubLogo weight="regular" size={16} />
+            <GithubLogo size={14} />
             Read the source on GitHub
           </a>
         </div>

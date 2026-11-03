@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Menu } from '@/app/_icons/icons/menu'
 import { X } from '@/app/_icons/icons/x'
 import { Search } from '@/app/_icons/icons/search'
-import { GithubLogo, XLogo } from '@phosphor-icons/react'
+import { GithubLogo, XLogo } from './BrandLogos'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import { CatalogNav } from './CatalogNav'
 import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE } from './top-bar-crumbs'
@@ -186,7 +186,7 @@ export function MobileNav() {
                   aria-label="GitHub repository"
                   className={buttonClasses({ variant: 'icon', size: 'md' })}
                 >
-                  <GithubLogo weight="regular" size={20} />
+                  <GithubLogo size={18} />
                 </a>
                 <a
                   href={X_URL}
@@ -195,7 +195,7 @@ export function MobileNav() {
                   aria-label="X profile"
                   className={buttonClasses({ variant: 'icon', size: 'md' })}
                 >
-                  <XLogo weight="regular" size={20} />
+                  <XLogo size={17} />
                 </a>
                 {/* Far edge: a site setting, not a third social link. */}
                 <ThemeToggle className="ml-auto" size="md" />

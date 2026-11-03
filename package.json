@@ -31,7 +31,6 @@
   "dependencies": {
     "@carbon/icons-react": "^11.78.0",
     "@paddle/paddle-js": "^1.6.4",
-    "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-slot": "^1.2.4",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",

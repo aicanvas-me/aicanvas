@@ -9,7 +9,7 @@ import { Check } from './icons/check'
 import { Search } from './icons/search'
 
 // The site runs the icon set's React package unchanged (scripts/site-icons.mjs
-// copies it from the vault). Phosphor stand-ins do not implement its geometry
+// copies it from the vault). Empty placeholders do not implement its geometry
 // or CSS stroke behavior, so only exercise these contracts with the package.
 const fromVault = readFileSync(join(__dirname, 'IconBase.tsx'), 'utf8').includes('export function createIcon')
 

@@ -10,9 +10,8 @@ import type { ReactNode } from 'react'
 // The Model Context Protocol's own mark, drawn from the official asset rather
 // than approximated: a row that names someone else's protocol should carry
 // their mark, not a stand-in for it. Stroked in currentColor so it takes the
-// row's colour in both themes, and the weight lands at 6.1% of the box, which
-// is near enough to Phosphor's regular that it reads as one set with the rows
-// above and below it.
+// row's colour in both themes, and the weight lands at 6.1% of the box, so it
+// reads as one set with the rows above and below it.
 function McpMark({ size = 16 }: { size?: number }) {
   return (
     <svg
