@@ -1,26 +1,3 @@
-// ============================================================
-// COMPONENT: UserMenu
-// Avatar-trigger user menu. Click the avatar (with a small
-// CaretUpDown indicator) to open a popover with Profile /
-// Preferences / Sign Out etc. Pair with `UserCard` when the
-// trigger needs to also show the user's name and role.
-//
-// Follows the Andromeda popover spec (the Andromeda interaction-states rules):
-//  - position: relative wrapper, position: absolute panel
-//  - solid `surface.raised` panel, `0 8px 32px surface.base` shadow
-//  - frame is a single 1px `border.base` — no CornerMarkers (the
-//    "border OR corners, never both" rule applies; menu-style
-//    popovers default to the simple border).
-//  - ESC / outside-click close (listeners only attached while open)
-//  - the only animation is the trigger's caret rotation; the panel
-//    itself does NOT fade in.
-//
-// Internals (`useUserMenuPanel`, `UserMenuPanel`) are exported so
-// `UserCard` can compose the same panel with a different trigger.
-// Consumers of the system should reach for `UserMenu` / `UserCard`,
-// not the internals.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useEffect, useRef, useState } from 'react';
@@ -37,17 +14,11 @@ import { Avatar } from './Avatar';
 import { andromedaVars, themeColor } from './lib/utils';
 import { mq } from './lib/responsive';
 
-// Motion locals — framer-motion takes seconds + a 4-tuple bezier, but
-// `tokens.motion` exposes ms strings and CSS cubic-bezier() strings.
-// These two helpers keep every value traceable to a token while
-// adapting to framer's shape (same convention as Drawer.tsx).
+// Returns seconds: Framer Motion takes seconds, tokens store ms.
 const toSeconds = (ms: string) => parseInt(ms, 10) / 1000;
-const EASE_STANDARD: [number, number, number, number] = [0.4, 0, 0.2, 1]; // tokens.motion.easing.standard
+// Mirrors tokens.motion.easing.standard; change both.
+const EASE_STANDARD: [number, number, number, number] = [0.4, 0, 0.2, 1];
 
-// Roving arrow-key navigation for the `role="menu"` panel. Queries the
-// menuitem buttons, finds the focused one, and moves focus up/down with
-// wrap-around; Home/End jump to first/last. Separators are ignored because
-// they are not `role="menuitem"` buttons. Bound to the panel's onKeyDown.
 function handleMenuKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
   const itemsList = Array.from(
     e.currentTarget.querySelectorAll<HTMLElement>('button[role="menuitem"]'),
@@ -89,24 +60,9 @@ export type UserMenuItem = {
   type?: 'separator';
 };
 
-/**
- * Shared state hook — owns the open/close lifecycle, the wrapper ref,
- * and the listeners for outside-click + Escape. Used by both
- * `UserMenu` and `UserCard` so the trigger behavior stays identical.
- *
- * `initialOpen` lets callers render the menu pre-opened (showcases /
- * docs); outside-click and Escape still dismiss it.
- *
- * `staticOpen` pins the panel open: the outside-click + Escape dismissers
- * are not attached, so it survives clicks elsewhere on the page. For
- * showcases / docs where several popovers are shown open at once and one
- * must not close the others. The trigger can still toggle it.
- */
 export function useUserMenuPanel(initialOpen = false, staticOpen = false) {
   const [open, setOpen] = useState(initialOpen || staticOpen);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
-  // The element to return focus to on close — captured when the trigger
-  // toggles the menu open (interactive open only).
   const returnFocusRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -123,18 +79,13 @@ export function useUserMenuPanel(initialOpen = false, staticOpen = false) {
     };
   }, [open, staticOpen]);
 
-  // Focus the first menuitem when the panel opens — NEVER in staticOpen mode,
-  // where multiple pinned menus would fight over focus. Queried from the
-  // wrapper (which both UserMenu and UserCard set) so the panel ref does not
-  // need threading through every trigger component.
+  // Never in staticOpen: every pinned menu would pull page focus on load.
   useEffect(() => {
     if (!open || staticOpen) return;
     const first = wrapperRef.current?.querySelector<HTMLElement>('[role="menu"] button[role="menuitem"]');
     if (first) first.focus();
   }, [open, staticOpen]);
 
-  // Return focus to the trigger when the panel closes after an interactive
-  // open. Skipped in staticOpen mode (no focus stealing on showcase pages).
   useEffect(() => {
     if (open || staticOpen) return;
     const target = returnFocusRef.current;
@@ -143,7 +94,6 @@ export function useUserMenuPanel(initialOpen = false, staticOpen = false) {
   }, [open, staticOpen]);
 
   const toggle = (e?: ReactMouseEvent<HTMLElement>) => {
-    // Capture the trigger as the focus-return target before opening.
     if (!open && !staticOpen) {
       returnFocusRef.current = e?.currentTarget ?? (document.activeElement as HTMLElement | null);
     }
@@ -208,11 +158,6 @@ function UserMenuItemRow({ item, onClose }: { item: UserMenuItem; onClose: () =>
   );
 }
 
-/**
- * Shared panel — renders the floating menu surface and its items.
- * Visibility, placement, and alignment are controlled by props so
- * each trigger component can pick its own canonical defaults.
- */
 export function UserMenuPanel({ open, items, placement = 'bottom', align = 'start', panelMinWidth = 200, ariaLabel = 'User menu', onClose }: {
   open: boolean;
   items: UserMenuItem[];
@@ -245,9 +190,7 @@ export function UserMenuPanel({ open, items, placement = 'bottom', align = 'star
         ...vertical,
         ...horizontal,
         minWidth: `${panelMinWidth}px`,
-        // Cap to a token-inset of the viewport so the absolutely-positioned
-        // panel can never push past the screen and force horizontal page
-        // scroll on a phone. box-sizing keeps the border inside that cap.
+        // Phone guard: without this cap a wide panel pushes the page into sideways scroll.
         maxWidth: `calc(100vw - ${tokens.spacing[4]})`,
         boxSizing: 'border-box',
         background: themeColor.surface.raised,
@@ -265,10 +208,7 @@ export function UserMenuPanel({ open, items, placement = 'bottom', align = 'star
   );
 }
 
-// Hover/focus styles for the menuitem buttons. Marked `!important`
-// because the buttons carry inline `style={{ background:'transparent' }}`
-// which would otherwise beat any non-important class rule — same
-// precedence trap covered in the Andromeda interaction-states rules.
+// Hover and active need !important: the item buttons set background and color inline.
 function UserMenuStyles() {
   return (
     <style>{`
@@ -302,9 +242,6 @@ function UserMenuStyles() {
   );
 }
 
-// Export so UserCard can mount the same stylesheet without
-// duplicating it. Both components must end up with the same
-// selectors active or hover state will silently regress.
 export { UserMenuStyles };
 
 /**
@@ -336,7 +273,6 @@ export type UserMenuProps = ComponentPropsWithoutRef<'div'> & {
   ariaLabel?: string;
 };
 
-/** @type {React.ForwardRefExoticComponent<UserMenuProps>} */
 export const UserMenu = forwardRef<HTMLDivElement, UserMenuProps>(function UserMenu(
   {
     name,
@@ -362,6 +298,7 @@ export const UserMenu = forwardRef<HTMLDivElement, UserMenuProps>(function UserM
   return (
     <div
       ref={(node) => {
+        // wrapperRef must wrap trigger and panel: outside-click and first-item focus read it.
         wrapperRef.current = node;
         if (typeof ref === 'function') ref(node);
         else if (ref) ref.current = node;

@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents formatting tools around an expandable radial menu.
- * Opening fans the controls outward, while selection toggles each tool state.
- */
 
 import { useState, useLayoutEffect, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -31,14 +27,12 @@ interface Tool {
 
 const CX = 120
 const CY = 120
-const R_IN  = 30   
-// tune: raise to widen the expanded toolbar
+// Half the 60px center button, so the wedges meet its edge; change both together.
+const R_IN  = 30
 const R_OUT = 114
-// tune: raise to move icons farther from the center
 const R_ICON = 78
 const GAP   = 0
 
-// customize: replace the toolbar actions below
 const TOOLS: Tool[] = [
   { id: 'bold',    label: 'Bold',          Icon: TextB },
   { id: 'italic',  label: 'Italic',        Icon: TextItalic },
@@ -100,7 +94,6 @@ export default function RadialToolbar() {
   return (
     <div ref={containerRef} className="relative flex h-full w-full items-center justify-center" style={{ background: isDark ? '#0a0a0a' : '#F5F1EA' }}>
 
-      {}
       <AnimatePresence>
         {open && (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -150,7 +143,6 @@ export default function RadialToolbar() {
                 })}
               </svg>
 
-              {}
               {TOOLS.map((tool, i) => {
                 const { x, y } = iconXY(i * 60 + 30)
                 const isH = hoveredId === tool.id
@@ -188,7 +180,6 @@ export default function RadialToolbar() {
         )}
       </AnimatePresence>
 
-      {}
       <motion.button
         style={{
           position: 'relative',
@@ -212,7 +203,6 @@ export default function RadialToolbar() {
       >
         <AnimatePresence mode="wait">
           {!open ? (
-            
             <motion.span
               key="edit"
               initial={{ opacity: 0, scale: 0.7 }}
@@ -231,7 +221,6 @@ export default function RadialToolbar() {
               EDIT
             </motion.span>
           ) : (
-            
             <motion.span
               key="x-icon"
               initial={{ opacity: 0, rotate: -90, scale: 0.4 }}
@@ -246,7 +235,6 @@ export default function RadialToolbar() {
         </AnimatePresence>
       </motion.button>
 
-      {}
       <AnimatePresence>
         {open && labelTool && (
           <motion.div

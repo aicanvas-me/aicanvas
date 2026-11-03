@@ -9,7 +9,7 @@ export const burst: MatrixSpec = {
   // Full-surface piece: a full-row card, sized so the convergence has somewhere
   // to converge from.
   render: (_size, props) => (
-    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative' }}>
+    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative', margin: '0 auto' }}>
       <Burst {...props} />
     </div>
   ),

@@ -1,13 +1,3 @@
-// ============================================================
-// COMPONENT: Button
-// shadcn/ui-aligned API: variant, size, asChild, forwardRef.
-// Variants: default | outline | ghost | destructive | link
-// Sizes:    sm | md | lg
-// All interactive states (hover, focus-visible, active, disabled)
-// are expressed as cva variants and trace back to Andromeda tokens
-// via CSS custom properties from `andromedaVars()`.
-// ============================================================
-
 'use client';
 
 import { forwardRef } from 'react';
@@ -23,12 +13,7 @@ import { useReducedMotion } from './lib/motion';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
 
-// Touch-target expander — desktop chrome stays exactly as authored; on coarse
-// pointers a centered, transparent ::before overlay grows the *hit area* toward
-// spacing[10] (40px) without enlarging the visible button. Scoped className so
-// the rule never leaks; declarations are !important because the cva/inline base
-// would otherwise out-specify a bare class rule (Andromeda rule: "Hover on inline-styled
-// controls"). See the Andromeda responsive rules → "Grow touch targets on coarse pointers".
+// Touch screens: an invisible ::before grows the tap area to at least 40px (32px for sm).
 const TOUCH_TARGET_STYLE = `
   ${mq.coarse} {
     .andromeda-btn-touch::before {
@@ -52,38 +37,26 @@ const TOUCH_TARGET_STYLE = `
   }
 `;
 
-// Token-driven framer transitions. tokens.motion.duration values are
-// strings like "140ms"; framer expects seconds, so parseInt → /1000.
+// Returns seconds: Framer Motion takes seconds, tokens store ms.
 const ms = (v: string) => parseInt(v, 10) / 1000;
-// framer boundary: derived from tokens, cannot follow runtime var overrides
 const HOVER_TX: Transition = { duration: ms(tokens.motion.duration.normal), ease: easingArray(tokens.motion.easing.out) };
 const PRESS_TX: Transition = { duration: ms(tokens.motion.duration.fast),   ease: easingArray(tokens.motion.easing.in) };
-// whileHover / whileTap targets — transitions inlined inside the variant
-// so hover uses duration.normal and press uses duration.fast independently.
 const HOVER_LIFT: TargetAndTransition = { y: -1, filter: 'brightness(1.05)', transition: HOVER_TX };
 const PRESS_DOWN: TargetAndTransition = { scale: 0.98, transition: PRESS_TX };
 
 const buttonVariants = cva(
   [
-    // structural
     'relative inline-flex items-center justify-center select-none whitespace-nowrap',
     'gap-[var(--andromeda-2)]',
     'border-[length:var(--andromeda-border-width,1px)] border-solid',
     'rounded-[var(--andromeda-radius-frame,0px)]',
-    // typography (all token-driven via CSS vars)
     '[font-family:var(--andromeda-font-mono)]',
     'font-[number:var(--andromeda-weight-medium)]',
     'uppercase [letter-spacing:var(--andromeda-tracking-wider)]',
     '[line-height:var(--andromeda-leading-tight)]',
-    // motion — colours/border/shadow tween via CSS at duration.normal so the
-    // focus ring fades in (was previously a hard snap). Transform/lift/press
-    // are driven by framer-motion's whileHover/whileTap on the motion.button
-    // root, see below — they get duration.normal (hover) and duration.fast
-    // (press) per `tokens.motion`.
     'cursor-pointer',
     'transition-[background-color,border-color,box-shadow,color] [transition-duration:var(--andromeda-duration-normal)] [transition-timing-function:var(--andromeda-easing-out)]',
     '[backdrop-filter:blur(2px)] [-webkit-backdrop-filter:blur(2px)]',
-    // focus & disabled
     'focus-visible:outline-none',
     'focus-visible:shadow-[0_0_0_var(--andromeda-border-width,1px)_var(--andromeda-accent-400),0_0_var(--andromeda-glow,8px)_var(--andromeda-accent-500)]',
     'disabled:cursor-not-allowed disabled:opacity-[var(--andromeda-opacity-disabled)] disabled:pointer-events-none',
@@ -92,8 +65,6 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: [
-          // On-accent foreground: tracks the accent family, NOT the neutral
-          // text ramp, so a theme that darkens text keeps the label legible.
           'text-[color:var(--andromeda-accent-on)]',
           'bg-[color:var(--andromeda-accent-500)]',
           'border-[color:var(--andromeda-accent-400)]',
@@ -118,7 +89,6 @@ const buttonVariants = cva(
           'active:bg-[color:var(--andromeda-surface-hover)]',
         ],
         destructive: [
-          // On-fault foreground: bound to the red family, not the text ramp.
           'text-[color:var(--andromeda-red-on)]',
           'bg-[color:var(--andromeda-red-500)]',
           'border-[color:var(--andromeda-red-400)]',
@@ -134,7 +104,6 @@ const buttonVariants = cva(
           'border-transparent',
           'underline-offset-4 hover:underline',
           'hover:text-[color:var(--andromeda-text-primary)]',
-          // link variant has no shadow ring on focus
           'focus-visible:shadow-none',
           'focus-visible:underline',
         ],
@@ -174,7 +143,6 @@ export type ButtonProps = ButtonOwnProps & Omit<HTMLMotionProps<'button'>, keyof
  * @property {(e: React.MouseEvent<HTMLButtonElement>) => void} [onClick]
  */
 
-/** @type {React.ForwardRefExoticComponent<ButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>>} */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     className,
@@ -190,7 +158,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   },
   ref,
 ) {
-  // Icons render ~1.3× the label size so they read clearly next to the text.
   const iconSize = size === 'sm' ? tokens.iconSize.sm : size === 'md' ? tokens.iconSize.md : tokens.iconSize.lg;
   const reducedMotion = useReducedMotion();
   const baseClass = cn(buttonVariants({ variant, size }), 'andromeda-btn-touch', className);
@@ -202,10 +169,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     </>
   );
 
-  // asChild path — Slot composes onto whatever child was passed (typically
-  // an <a>). Slot can't accept framer-motion gesture props, so the asChild
-  // path falls back to CSS-only transitions defined in cva. The hover lift
-  // + press scale are skipped for this path; this is a known trade-off.
   if (asChild) {
     return (
       <>

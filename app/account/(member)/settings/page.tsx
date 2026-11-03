@@ -57,7 +57,7 @@ export default async function SettingsPage() {
   const agents = hostedMcpOAuthEnabled() ? await connectedAgents(user.id) : null
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <SettingsForm initial={initial} />
       <PasswordSection hasPassword={hasPassword} email={user.email ?? ''} />
       <AccountBilling />

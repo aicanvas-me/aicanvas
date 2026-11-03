@@ -1,9 +1,5 @@
 'use client'
 // npm install framer-motion @phosphor-icons/react
-/**
- * Displays a pill-shaped tab list with icon-only inactive tabs.
- * Selecting a tab expands it to reveal its label with layout animation.
- */
 
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'

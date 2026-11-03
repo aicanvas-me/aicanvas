@@ -1,10 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Displays staggered glass progress bars with animated counters and fills.
- * The replay control resets every bar and runs the sequence again.
- */
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, useSpring, useMotionValueEvent, useReducedMotion } from 'framer-motion'
@@ -44,6 +40,7 @@ interface BarConfig {
 }
 
 
+// color must be 6-digit hex: two-digit alpha suffixes are appended to it.
 const BARS: BarConfig[] = [
   { label: 'Storage', value: 72, color: '#3A86FF', gradient: '#3A86FF, #2962FF', delay: 200 },
   { label: 'Upload',  value: 45, color: '#FF5C8A', gradient: '#FF5C8A, #FF1744', delay: 400 },
@@ -99,7 +96,6 @@ function GlassProgressBar({
 
   return (
     <div className="w-full">
-      {}
       <div className="mb-2 flex items-center justify-between px-1">
         {label && (
           <span className="text-[10px] font-semibold uppercase tracking-widest text-white/40 font-sans">
@@ -114,18 +110,15 @@ function GlassProgressBar({
         </span>
       </div>
 
-      {}
       <div
         className="relative h-2 w-full overflow-hidden rounded-full"
         style={{ ...GLASS_PANEL }}
       >
-        {}
         <div
           className="pointer-events-none absolute inset-0 rounded-full"
           style={GLASS_BLUR}
         />
 
-        {}
         <motion.div
           className="absolute bottom-0 left-0 top-0 rounded-full"
           style={{
@@ -172,7 +165,6 @@ export default function GlassProgress() {
 
   return (
     <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]">
-      {}
       <img
         src={BACKGROUND_IMAGE}
         alt=""
@@ -180,27 +172,25 @@ export default function GlassProgress() {
       />
 
       <div className="relative flex w-full max-w-[340px] flex-col items-center gap-4 px-4">
-        {}
         <motion.div
+          // No opacity in initial: below 1 it hides the blur until the fade ends.
           initial={{ scale: 0.92, y: 16 }}
           animate={{ scale: 1, y: 0 }}
           transition={{ type: 'spring', stiffness: 300, damping: 26 }}
           className="relative isolate w-full overflow-hidden rounded-3xl"
           style={{ ...GLASS_PANEL }}
         >
-          {}
+          {/* z-[-1] relies on the panel's isolate; without it the blur falls behind the page. */}
           <div
             className="pointer-events-none absolute inset-0 z-[-1] rounded-3xl"
             style={GLASS_BLUR}
           />
 
-          {}
           <div
             className="absolute left-8 right-8 top-0 h-[1px]"
             style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)' }}
           />
 
-          {}
           <div className="flex flex-col gap-5 px-6 py-6">
             {BARS.map((bar, i) => (
               <GlassProgressBar
@@ -215,7 +205,6 @@ export default function GlassProgress() {
           </div>
         </motion.div>
 
-        {}
         <motion.button
           onClick={replay}
           whileHover={{ scale: 1.12, background: 'rgba(255,255,255,0.12)' }}

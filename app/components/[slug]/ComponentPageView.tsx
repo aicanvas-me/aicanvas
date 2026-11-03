@@ -5,26 +5,26 @@ import { useRouter } from 'next/navigation'
 import type { ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import {
-  Eye,
-  Code,
-  Check,
-  Copy,
-  ArrowLeft,
-  ArrowRight,
-  Tag as TagIcon,
-  Sun,
-  Moon,
-  CornersOut,
-  X,
-  ArrowClockwise,
-  Terminal,
-  Sparkle,
-  Lightning,
-} from '@phosphor-icons/react'
+import { Eye } from '@/app/_icons/icons/eye'
+import { Code } from '@/app/_icons/icons/code'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { ArrowLeft } from '@/app/_icons/icons/arrow-left'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Tag as TagIcon } from '@/app/_icons/icons/tag'
+import { Sun } from '@/app/_icons/icons/sun'
+import { Moon } from '@/app/_icons/icons/moon'
+import { Fullscreen } from '@/app/_icons/icons/fullscreen'
+import { X } from '@/app/_icons/icons/x'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw'
+import { Terminal } from '@/app/_icons/icons/terminal'
+import { Sparkle } from '@/app/_icons/icons/sparkle'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { BoltSolid } from '@/app/_icons/icons/bolt-solid'
 import type { Tag, Platform } from '../ComponentCard'
 import { isStackLabel, STACK_ICONS, stackIconWidthForHeight, type Stack } from '../../lib/stack'
-import { SiteFooter } from '../SiteFooter'
+import { PageCrumbs } from '../PageCrumbs'
+import { RailFooter } from '../RailFooter'
 import { PropsTable, type PropTable } from '../PropsTable'
 import { Step } from '../Step'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../_components/DesignSystemPage'
@@ -52,6 +52,7 @@ import { PremiumBadge } from '../billing/PremiumBadge'
 import { Paywall, type PaywallReason } from '../billing/Paywall'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
 import { RemixPanel } from '../../_components/RemixPanel'
+import { lightShot, optimizeImageKitUrl } from '../../lib/imagekit'
 
 type FontFramework = 'html' | 'nextjs'
 
@@ -119,6 +120,7 @@ interface ComponentPageViewProps {
 }
 
 const RELATED_PAGE_SIZE = 3
+const RELATED_IMG = 'absolute inset-0 h-full w-full object-cover transition-[transform,filter] duration-500 ease-out group-hover:scale-[1.04] group-hover:brightness-110'
 
 export default function ComponentPageView({
   slug,
@@ -477,7 +479,7 @@ export default function ComponentPageView({
             onClick={() => router.back()}
             className="mb-4 flex items-center gap-2 text-sm font-semibold text-sand-700 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-200 md:hidden"
           >
-            <ArrowLeft weight="regular" size={15} />
+            <ArrowLeft size={15} />
             Back
           </button>
 
@@ -486,7 +488,19 @@ export default function ComponentPageView({
             {/* Page heading. Subtitle is an answer-block for GEO: the first
                 200 tokens on each page carry a definitional answer. Falls
                 back to the plain description when there is no subtitle. */}
-            <PageTitle gap="none" rank="section">{name}</PageTitle>
+            <PageCrumbs />
+            {/* The tier sits on the title's line so a paid page says so at first
+                glance; outside the h1, so the heading stays the name alone. */}
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+              <PageTitle gap="none" rank="section">{name}</PageTitle>
+              {designSystem && <PremiumBadge className="!gap-1.5 !px-3 !py-1 !text-sm" />}
+              {premium && (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-premium/10 px-3 py-1 text-sm font-semibold text-premium ring-1 ring-inset ring-premium/30">
+                  <Bolt size={14} />
+                  Premium
+                </span>
+              )}
+            </div>
             {headingSubtitle ? (
               <PageLead>{headingSubtitle}</PageLead>
             ) : (
@@ -503,27 +517,20 @@ export default function ComponentPageView({
               // was the wrong half to cut: it left premium blocks as the only
               // things on the site with no category at all, while the noun they
               // were losing it to is repeated again above the install section.
-              // The pill states the TIER here and the type noun lives further
-              // down, so the two chips now read "Premium" then "Blocks".
+              // The TIER now sits on the title's line above, and the type noun
+              // lives further down.
               const categoryTags = tags.filter((t) => t.accent)
               const useCaseChips = (useCases ?? []).slice(0, 3)
               return (
                 <div className="mt-4 flex flex-wrap items-center gap-2">
-                  <TagIcon weight="regular" size={14} className="shrink-0 text-sand-600 dark:text-sand-500" />
-                  {designSystem && <PremiumBadge />}
-                  {premium && (
-                    <span className="inline-flex items-center gap-1 rounded-full border border-olive-600/40 bg-olive-500/10 px-2.5 py-0.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400">
-                      <Lightning weight="regular" size={12} />
-                      Premium
-                    </span>
-                  )}
+                  <TagIcon size={14} className="shrink-0 text-sand-600 dark:text-sand-500" />
                   {categoryTags.map((tag) => (
                     <span
                       key={tag.label}
                       className={
                         premium
                           ? 'rounded-full border border-sand-300 bg-sand-200 px-2.5 py-0.5 text-xs font-semibold text-sand-600 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-400'
-                          : 'rounded-full border border-olive-600/40 bg-olive-500/10 px-2.5 py-0.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400'
+                          : 'rounded-full border border-accent/40 bg-accent/10 px-2.5 py-0.5 text-xs font-semibold text-accent dark:border-accent/25'
                       }
                     >
                       {tag.label}
@@ -543,29 +550,29 @@ export default function ComponentPageView({
                 className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-sand-600 transition-colors hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100"
               >
                 Part of {systemMeta.name} design system
-                <ArrowRight weight="regular" size={12} />
+                <ArrowRight size={12} />
               </Link>
             )}
           </div>
 
           {/* Main card */}
-          <div ref={mainCardRef} className="overflow-hidden rounded-2xl border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
+          <div ref={mainCardRef} className="overflow-hidden rounded-section border border-sand-200 bg-sand-100 shadow-sm dark:border-sand-800 dark:bg-sand-900 dark:shadow-none">
 
             {/* Tab bar — tabs left, card theme toggle right */}
-            <div className="flex items-center justify-between border-b border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+            <div className="flex items-center justify-between px-3 py-3 sm:px-5 sm:py-4">
 
               {/* Preview / Code tabs */}
               <div className="flex items-center gap-0.5">
                 <button
                   type="button"
                   onClick={() => setActiveTab('preview')}
-                  className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'preview'
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
-                  <Eye weight="regular" size={15} />
+                  <Eye size={15} />
                   Preview
                 </button>
                 <button
@@ -575,13 +582,13 @@ export default function ComponentPageView({
                   // it is done by the time the tab opens.
                   onPointerEnter={prefetchCode}
                   onFocus={prefetchCode}
-                  className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
                     activeTab === 'code'
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
-                  <Code weight="regular" size={15} />
+                  <Code size={15} />
                   Code
                 </button>
               </div>
@@ -623,7 +630,7 @@ export default function ComponentPageView({
                           exit={{ y: -12, opacity: 0 }}
                           transition={{ duration: 0.18 }}
                         >
-                          <Moon weight="regular" size={16} />
+                          <Moon size={16} />
                         </motion.span>
                       ) : (
                         <motion.span
@@ -633,12 +640,12 @@ export default function ComponentPageView({
                           exit={{ y: -12, opacity: 0 }}
                           transition={{ duration: 0.18 }}
                         >
-                          <Sun weight="regular" size={16} />
+                          <Sun size={16} />
                         </motion.span>
                       )}
                     </AnimatePresence>
                   </Button>
-                  <div className="pointer-events-none absolute top-full right-0 z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/toggle:block">
+                  <div className="pointer-events-none absolute top-full right-0 z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/toggle:block">
                     {dualTheme
                       ? cardTheme === 'dark' ? 'Switch to light' : 'Switch to dark'
                       : 'Dark mode only'}
@@ -655,9 +662,9 @@ export default function ComponentPageView({
                       onClick={refreshPreview}
                       aria-label="Restart animation"
                     >
-                      <ArrowClockwise weight="regular" size={16} />
+                      <RotateCw size={16} />
                     </Button>
-                    <div className="pointer-events-none absolute top-full right-0 z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/refresh:block">
+                    <div className="pointer-events-none absolute top-full right-0 z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/refresh:block">
                       Refresh
                     </div>
                   </div>
@@ -666,10 +673,9 @@ export default function ComponentPageView({
                 {/* Fullscreen — preview only */}
                 {activeTab === 'preview' && (
                   <div className="group/fullscreen relative">
-                    {/* Solid olive, the strongest control on the card. The soft
-                        accent it used before all but vanished on the light
-                        theme, and full screen is the view people most need to
-                        find. */}
+                    {/* The one filled button in the bar, the same as on the
+                        Andromeda pages: full screen is the view people most
+                        need to find. */}
                     <Button
                       variant="primary"
                       size="md"
@@ -680,9 +686,9 @@ export default function ComponentPageView({
                         setFullscreen(true)
                       }}
                     >
-                      <CornersOut weight="regular" size={16} />
+                      <Fullscreen size={16} />
                     </Button>
-                    <div className="pointer-events-none absolute top-full right-0 z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
+                    <div className="pointer-events-none absolute top-full right-0 z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
                       Full screen
                     </div>
                   </div>
@@ -691,7 +697,9 @@ export default function ComponentPageView({
               </div>
             </div>
 
-            {/* Content area — background controlled by cardTheme, isolated from global theme */}
+            {/* Content area — background controlled by cardTheme, isolated from global theme.
+                It is its own inset card between the two bars: 8px from the
+                shell, so its 16px corners run parallel to the shell's 24. */}
             <div
               data-card-theme={cardTheme}
               // overflow-hidden boxes are still programmatically scrollable, so
@@ -702,8 +710,12 @@ export default function ComponentPageView({
                 e.currentTarget.scrollLeft = 0
                 e.currentTarget.scrollTop = 0
               }}
-              className={`relative isolate h-[320px] overflow-hidden transition-colors duration-300 sm:h-[480px] ${
-                cardTheme === 'dark' ? 'dark bg-sand-950' : 'bg-sand-100'
+              // No colour transition: a theme flip freezes every other surface
+              // and spares this wrapper (for the component's own animations),
+              // so a fade here lagged 300ms behind the shell, a flash on the
+              // border.
+              className={`relative isolate mx-2 h-[320px] overflow-hidden rounded-card border sm:h-[480px] ${
+                cardTheme === 'dark' ? 'dark border-sand-800 bg-sand-950' : 'border-sand-200 bg-sand-100'
               }`}
             >
               {/* Both tabs stay mounted so the syntax-highlighted code is in the
@@ -751,8 +763,8 @@ export default function ComponentPageView({
                         }}
                         className="pointer-events-none absolute inset-0 z-30 flex items-center justify-center opacity-0 transition-opacity duration-150 focus-visible:opacity-100 group-hover/preview:opacity-100 [@media(hover:none)]:pointer-events-auto [@media(hover:none)]:opacity-100"
                       >
-                        <span className="pointer-events-auto flex items-center gap-2 rounded-lg border border-sand-100/0 bg-sand-950/90 px-3 py-2 text-xs font-semibold text-sand-100 shadow-lg transition-colors duration-150 hover:bg-sand-900">
-                          <CornersOut weight="regular" size={14} />
+                        <span className="pointer-events-auto flex items-center gap-2 rounded-control border border-sand-100/0 bg-sand-950/90 px-3 py-2 text-xs font-semibold text-sand-100 shadow-lg transition-colors duration-150 hover:bg-sand-900">
+                          <Fullscreen size={14} />
                           <span className="[@media(hover:none)]:hidden">Click for full view</span>
                           <span className="[@media(hover:hover)]:hidden">Tap for full view</span>
                         </span>
@@ -769,6 +781,9 @@ export default function ComponentPageView({
                 initial={false}
                 animate={{ opacity: activeTab === 'code' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
+                // Site chrome inside the preview wrapper: it flips with the
+                // site at once (see [data-card-chrome] in globals.css).
+                data-card-chrome
                 className="absolute inset-0 overflow-y-auto overflow-x-hidden bg-sand-50 p-5 [--paywall-surface:var(--color-sand-50)] [scrollbar-color:#C4BFB7_transparent] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)] dark:[scrollbar-color:#4A453F_transparent]"
                 style={{
                   scrollbarWidth: 'thin',
@@ -804,7 +819,7 @@ export default function ComponentPageView({
             </div>
 
             {/* Action bar */}
-            <div className="flex items-center justify-end gap-2 border-t border-sand-200 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+            <div className="flex items-center justify-end gap-2 px-3 py-3 sm:px-5 sm:py-4">
 
               {/* Save — signed out, opens the same soft-gate modal as Copy Command. */}
               <SaveButton slug={slug} system={designSystem ?? null} />
@@ -823,7 +838,7 @@ export default function ComponentPageView({
                     setRemixOpen(true)
                   }}
                 >
-                  <Sparkle weight="regular" size={15} className="max-[379px]:hidden" />
+                  <Sparkle size={15} className="max-[379px]:hidden" />
                   Remix<span className="hidden sm:inline"> with AI</span>
                 </Button>
               )}
@@ -834,8 +849,8 @@ export default function ComponentPageView({
                   out, copyCli() opens the auth modal instead of copying. */}
               <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
                 {cliCopied
-                  ? <Check weight="regular" size={15} className="max-[379px]:hidden" />
-                  : <Terminal weight="regular" size={15} className="max-[379px]:hidden" />}
+                  ? <Check size={15} className="max-[379px]:hidden" />
+                  : <Terminal size={15} className="max-[379px]:hidden" />}
                 {cliCopied ? 'Copied!' : 'Copy Command'}
               </Button>
 
@@ -852,14 +867,14 @@ export default function ComponentPageView({
             }
             return (
             <section className="mt-12">
-              <h2 className="flex items-center gap-2.5 text-base font-bold text-sand-900 dark:text-sand-50">
+              <h2 className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Add to your project
                 {premium && (
                   // Same Aceternity-style pill as the card overview: filled
                   // bolt at rest, slides open to the label on hover — a
                   // reminder that the install below is premium-gated.
-                  <span className="group/premium flex items-center rounded-full bg-sand-950/85 p-1.5 text-olive-400 ring-1 ring-olive-500/40 backdrop-blur-sm">
-                    <Lightning weight="fill" size={14} className="shrink-0" />
+                  <span className="group/premium flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-50 ring-1 ring-sand-50/30 backdrop-blur-sm">
+                    <BoltSolid size={14} className="shrink-0 text-cyan-400" />
                     <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover/premium:grid-cols-[1fr]">
                       <span className="overflow-hidden">
                         <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
@@ -875,7 +890,7 @@ export default function ComponentPageView({
               </p>
 
               {/* CLI / Manual tabs */}
-              <div className="overflow-hidden rounded-xl border border-sand-200 dark:border-sand-800">
+              <div className="overflow-hidden rounded-section border border-sand-200 dark:border-sand-800">
                 <div className="flex border-b border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
                   <button
                     onClick={() => {
@@ -920,16 +935,16 @@ export default function ComponentPageView({
                           button opens the auth modal instead of copying. */}
                       <Step number={1}>
                           <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
-                            Run the following command. New project? Run <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">npx shadcn@latest init</code> first to set up Tailwind and path aliases.
+                            Run the following command. New project? Run <code className="rounded-tag bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">npx shadcn@latest init</code> first to set up Tailwind and path aliases.
                           </p>
-                          <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
+                          <div className="overflow-hidden rounded-inset bg-sand-200 dark:bg-sand-950">
                             {/* Package manager switcher */}
                             <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                                 <button
                                   key={pm}
                                   onClick={() => { setPkgManager(pm); setDepsCopied(false) }}
-                                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                                     pkgManager === pm
                                       ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
@@ -959,11 +974,11 @@ export default function ComponentPageView({
                                   setTimeout(() => setDepsCopied(false), 2000)
                                 }}
                                 aria-label="Copy install command"
-                                className="ml-auto shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+                                className="ml-auto shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
                               >
                                 {depsCopied
-                                  ? <Check weight="regular" size={14} className="text-olive-500" />
-                                  : <Copy weight="regular" size={14} />}
+                                  ? <Check size={14} className="text-success" />
+                                  : <Copy size={14} />}
                               </button>
                             </div>
 
@@ -972,7 +987,7 @@ export default function ComponentPageView({
                               <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                                 <button
                                   onClick={() => setInstallTier('component')}
-                                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'component'
                                       ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
@@ -985,7 +1000,7 @@ export default function ComponentPageView({
                                     setInstallTier('system')
                                     track('System Install Tier Click', { component: slug, system: systemMeta.slug })
                                   }}
-                                  className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
                                     installTier === 'system'
                                       ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
@@ -1065,18 +1080,18 @@ export default function ComponentPageView({
                           <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                             Install the following dependencies:
                           </p>
-                          <div className="flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
+                          <div className="flex items-center justify-between rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3">
                             <code className="font-mono text-sm text-sand-700 dark:text-sand-300">
                               {depsCommand}
                             </code>
                             <button
                               onClick={copyDeps}
                               aria-label="Copy install command"
-                              className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+                              className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
                             >
                               {depsCopied
-                                ? <Check weight="regular" size={14} className="text-olive-500" />
-                                : <Copy weight="regular" size={14} />}
+                                ? <Check size={14} className="text-success" />
+                                : <Copy size={14} />}
                             </button>
                           </div>
                       </Step>
@@ -1091,7 +1106,7 @@ export default function ComponentPageView({
                           <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                             Copy and paste the following code into your project:
                           </p>
-                          <div className="relative rounded-lg bg-sand-200 dark:bg-sand-950">
+                          <div className="relative rounded-inset bg-sand-200 dark:bg-sand-950">
                             <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
                               <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                                 {slug}.tsx
@@ -1100,11 +1115,11 @@ export default function ComponentPageView({
                                 onClick={copyCode}
                                 aria-label="Copy code"
                                 disabled={enforcing && codeState.status !== 'ready'}
-                                className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90 disabled:cursor-not-allowed disabled:opacity-40"
+                                className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90 disabled:cursor-not-allowed disabled:opacity-40"
                               >
                                 {codeCopied
-                                  ? <Check weight="regular" size={14} className="text-olive-500" />
-                                  : <Copy weight="regular" size={14} />}
+                                  ? <Check size={14} className="text-success" />
+                                  : <Copy size={14} />}
                               </button>
                             </div>
                             <div className="max-h-64 overflow-y-auto p-4 [scrollbar-color:#C4BFB7_transparent] dark:[scrollbar-color:#4A453F_transparent]" style={{ scrollbarWidth: 'thin' }}>
@@ -1180,7 +1195,7 @@ export default function ComponentPageView({
               install section so the two install paths read as siblings.
               Same heading + description + button rhythm. */}
           <section className="mt-12">
-              <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+              <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Install with AI Canvas MCP
               </h2>
               <p className="mb-4 mt-1 text-sm text-sand-600 dark:text-sand-400">
@@ -1195,7 +1210,7 @@ export default function ComponentPageView({
                   className={buttonClasses({ variant: 'outline', size: 'sm' })}
                 >
                   Get MCP
-                  <ArrowRight weight="regular" size={13} />
+                  <ArrowRight size={13} />
                 </Link>
               </div>
             </section>
@@ -1213,7 +1228,7 @@ export default function ComponentPageView({
           {about && (
             <>
               <section className="mt-16">
-                <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+                <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                   About {name}
                 </h2>
                 <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400 sm:text-base">
@@ -1229,7 +1244,7 @@ export default function ComponentPageView({
                 if (stackTags.length === 0) return null
                 return (
                   <section className="mt-8">
-                    <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+                    <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                       Built with
                     </h2>
                     <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-sand-700 dark:text-sand-300">
@@ -1273,7 +1288,7 @@ export default function ComponentPageView({
               is visible text in the crawled HTML. ── */}
           {faq && faq.length > 0 && (
             <section className="mt-16">
-              <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+              <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Frequently asked questions
               </h2>
               <dl className="mt-4 space-y-5">
@@ -1295,7 +1310,7 @@ export default function ComponentPageView({
               this component appears in. ── */}
           {collections && collections.length > 0 && (
             <section className="mt-8">
-              <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+              <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Featured in collections
               </h2>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -1316,7 +1331,7 @@ export default function ComponentPageView({
           {related.length > 0 && (
             <section className="mt-16">
               <div className="mb-5 flex items-end justify-between gap-4">
-                <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+                <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                   More like this
                 </h2>
                 {canPaginate && (
@@ -1329,7 +1344,7 @@ export default function ComponentPageView({
                       disabled={!canGoPrev}
                       aria-label="Previous related components"
                     >
-                      <ArrowLeft weight="regular" size={15} />
+                      <ArrowLeft size={15} />
                     </Button>
                     <Button
                       variant="outline"
@@ -1339,7 +1354,7 @@ export default function ComponentPageView({
                       disabled={!canGoNext}
                       aria-label="Next related components"
                     >
-                      <ArrowRight weight="regular" size={15} />
+                      <ArrowRight size={15} />
                     </Button>
                   </div>
                 )}
@@ -1381,15 +1396,25 @@ export default function ComponentPageView({
                         <Link
                           href={`/components/${c.slug}`}
                           onClick={() => track('Component Card Click', { component: c.slug, position: relatedStart + i, source: 'related' })}
-                          className="group flex flex-col overflow-hidden rounded-xl border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+                          className="group flex h-full flex-col overflow-hidden rounded-shell border border-sand-200 bg-sand-100 transition-colors duration-200 hover:border-sand-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
                         >
+                          {/* The grid card's shape (ComponentCard): the
+                              preview fades into the card and the text sits
+                              straight on it. The focus mark is an inset
+                              outline, which paints over the preview, because
+                              the sliding row clips anything drawn outside. */}
                           <div className="relative aspect-video overflow-hidden bg-sand-950">
                             {c.image ? (
-                              <img
-                                src={c.image}
-                                alt={c.name}
-                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                              />
+                              <>
+                                <img
+                                  src={c.image}
+                                  alt={c.name}
+                                  className={`${RELATED_IMG} ${c.dualTheme ? 'hidden dark:block' : ''}`}
+                                />
+                                {c.dualTheme && (
+                                  <img src={optimizeImageKitUrl(lightShot(c.slug), 'card')} alt={c.name} loading="lazy" className={`${RELATED_IMG} dark:hidden`} />
+                                )}
+                              </>
                             ) : (
                               <div
                                 className="absolute inset-0"
@@ -1400,11 +1425,17 @@ export default function ComponentPageView({
                                 }}
                               />
                             )}
+                            {/* Every card fades, a dark-only shot on a light
+                                site included, as on the grid card. */}
+                            <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-sand-100 dark:to-sand-900" />
                           </div>
-                          <div className="px-3 py-2.5">
+                          <div className="relative -mt-2 px-4 pb-4">
                             <h3 className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">
                               {c.name}
                             </h3>
+                            <p className="mt-0.5 line-clamp-1 text-xs text-sand-600 dark:text-sand-400">
+                              {c.description}
+                            </p>
                           </div>
                         </Link>
                       </motion.div>
@@ -1415,18 +1446,22 @@ export default function ComponentPageView({
             </section>
           )}
 
-          <SiteFooter />
         </PageFrame>
       </main>
+      <RailFooter />
 
       {/* ── Fullscreen overlay ───────────────────────────────────────────────
-          The panel scrolls its own overflow: it is fixed, so a component taller
-          than the panel (a scroll-driven block) would otherwise have no
+          The same layers as the inline frame: a bar with the name and the
+          close button, then the preview in its own inset card.
+
+          The card scrolls its own overflow: it is fixed, so a component taller
+          than the card (a scroll-driven block) would otherwise have no
           scrollable ancestor and sit frozen at its first frame. The page behind
-          is NOT locked (that lock is the Remix panel's), so the panel keeps its
+          is NOT locked (that lock is the Remix panel's), so the card keeps its
           scroll to itself with overscroll-contain, and hides the scrollbar it
-          now technically has: every min-h-screen component overflows this
-          panel by the inset, and a visible gutter would shift each one. */}
+          now technically has: every min-h-screen component overflows the card
+          by the bar and insets, and a visible gutter would shift each one.
+          Only the card scrolls, so the close button in the bar stays put. */}
       <AnimatePresence>
         {fullscreen && (
           <motion.div
@@ -1444,33 +1479,39 @@ export default function ComponentPageView({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              data-card-theme={cardTheme}
-              // Collapses each min-h-screen child to the panel's own height —
-              // see [data-preview-fullscreen] in globals.css. Without it every
-              // component overflows this panel by the sm:inset-10 (80px) and
-              // drifts under the wheel while visibly fitting.
-              data-preview-fullscreen
-              className={`absolute inset-0 isolate overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:none] transition-colors duration-300 sm:inset-10 sm:rounded-2xl sm:border sm:shadow-2xl [&::-webkit-scrollbar]:hidden ${
-                cardTheme === 'dark'
-                  ? 'dark bg-sand-950 sm:border-sand-800'
-                  : 'bg-sand-100 sm:border-sand-200'
-              }`}
+              className="absolute inset-0 flex flex-col overflow-hidden bg-sand-100 dark:bg-sand-900 sm:inset-10 sm:rounded-section sm:border sm:border-sand-200 sm:shadow-2xl sm:dark:border-sand-800"
               onClick={(e) => e.stopPropagation()}
             >
-              {children}
+              <div className="flex shrink-0 items-center justify-between gap-3 px-3 py-3 sm:px-5 sm:py-4">
+                <p className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">{name}</p>
+                <Button
+                  variant="outline"
+                  size="md"
+                  iconOnly
+                  onClick={() => setFullscreen(false)}
+                  aria-label="Close full screen"
+                >
+                  <X size={16} />
+                </Button>
+              </div>
+              <div
+                data-card-theme={cardTheme}
+                className={`isolate mx-2 mb-2 min-h-0 flex-1 overflow-hidden rounded-card border ${
+                  cardTheme === 'dark' ? 'dark border-sand-800 bg-sand-950' : 'border-sand-200 bg-sand-100'
+                }`}
+              >
+                <div
+                  // Collapses each min-h-screen child to the card's own height —
+                  // see [data-preview-fullscreen] in globals.css. Without it every
+                  // component overflows the card by the bar and insets and
+                  // drifts under the wheel while visibly fitting.
+                  data-preview-fullscreen
+                  className="h-full overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                >
+                  {children}
+                </div>
+              </div>
             </motion.div>
-
-            {/* Close button, outside the panel on purpose: the panel scrolls its
-                own overflow, so a button inside it scrolls away with a tall
-                block. Out here on the fixed backdrop it stays put, and the
-                offsets line up with the panel's own top right corner. */}
-            <button
-              onClick={() => setFullscreen(false)}
-              aria-label="Close fullscreen preview"
-              className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95 sm:top-14 sm:right-14"
-            >
-              <X weight="regular" size={16} />
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -1491,8 +1532,8 @@ export default function ComponentPageView({
                 : '50%',
             }}
           >
-            <div className="flex items-center gap-3 rounded-xl border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
-              <Check weight="regular" size={16} className="shrink-0 text-olive-500" />
+            <div className="flex items-center gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
+              <Check size={16} className="shrink-0 text-success" />
               <div>
                 <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                   Install command copied
@@ -1537,20 +1578,20 @@ function DarkModeStep({ number, isLast, copied, onCopy }: CopyStepProps) {
     <Step number={number} isLast={isLast}>
       <div className="mb-2.5 flex items-center gap-2">
         <p className="text-sm text-sand-600 dark:text-sand-400">
-          For dark mode, add the <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">dark</code> class to your <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">&lt;html&gt;</code> element:
+          For dark mode, add the <code className="rounded-tag bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">dark</code> class to your <code className="rounded-tag bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">&lt;html&gt;</code> element:
         </p>
         <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
       </div>
-      <div className="flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
+      <div className="flex items-center justify-between rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3">
         <code className="font-mono text-sm text-sand-700 dark:text-sand-300">{'<html class="dark">'}</code>
         <button
           onClick={onCopy}
           aria-label="Copy dark mode snippet"
-          className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+          className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
         >
           {copied
-            ? <Check weight="regular" size={14} className="text-olive-500" />
-            : <Copy weight="regular" size={14} />}
+            ? <Check size={14} className="text-success" />
+            : <Copy size={14} />}
         </button>
       </div>
     </Step>
@@ -1573,13 +1614,13 @@ function FontStep({
         </p>
         <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
       </div>
-      <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
+      <div className="overflow-hidden rounded-inset bg-sand-200 dark:bg-sand-950">
         <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
           {(['html', 'nextjs'] as const).map((fw) => (
             <button
               key={fw}
               onClick={() => onSelectFramework(fw)}
-              className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
+              className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${framework === fw ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100' : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'}`}
             >
               {fw === 'html' ? 'HTML' : 'Next.js'}
             </button>
@@ -1587,11 +1628,11 @@ function FontStep({
           <button
             onClick={onCopy}
             aria-label="Copy font snippet"
-            className="ml-auto shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+            className="ml-auto shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
           >
             {copied
-              ? <Check weight="regular" size={14} className="text-olive-500" />
-              : <Copy weight="regular" size={14} />}
+              ? <Check size={14} className="text-success" />
+              : <Copy size={14} />}
           </button>
         </div>
         <div className="px-4 py-3.5">
@@ -1621,30 +1662,30 @@ function PackageFontStep({
     <Step number={number} isLast>
       <div className="mb-2.5 flex items-center gap-2">
         <p className="text-sm text-sand-600 dark:text-sand-400">
-          This component uses <span className="font-semibold text-sand-700 dark:text-sand-300">{fontClass}</span> from <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">{packageName}</code>.{action}
+          This component uses <span className="font-semibold text-sand-700 dark:text-sand-300">{fontClass}</span> from <code className="rounded-tag bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">{packageName}</code>.{action}
         </p>
         <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">Optional</span>
       </div>
-      <div className={`flex items-center justify-between rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3 ${snippet ? 'mb-2' : ''}`}>
+      <div className={`flex items-center justify-between rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3 ${snippet ? 'mb-2' : ''}`}>
         <code className="font-mono text-sm text-sand-700 dark:text-sand-300">{install}</code>
         <button
           onClick={onCopyInstall}
           aria-label="Copy install command"
-          className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+          className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
         >
-          {installCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
+          {installCopied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
         </button>
       </div>
       {snippet && (
-        <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
+        <div className="overflow-hidden rounded-inset bg-sand-200 dark:bg-sand-950">
           <div className="flex items-center justify-between border-b border-sand-300 dark:border-sand-800 px-4 py-2">
             <span className="font-mono text-xs text-sand-600 dark:text-sand-500">layout.tsx</span>
             <button
               onClick={onCopySnippet}
               aria-label="Copy font setup snippet"
-              className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+              className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
             >
-              {snippetCopied ? <Check weight="regular" size={14} className="text-olive-500" /> : <Copy weight="regular" size={14} />}
+              {snippetCopied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
             </button>
           </div>
           <div className="px-4 py-3.5">

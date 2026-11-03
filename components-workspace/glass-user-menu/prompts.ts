@@ -31,7 +31,7 @@ Write this as a single self-contained React client component. Inline everything.
 - Log Out row at the bottom: SignOut icon, color #FF5A5A, label "Log Out"
 
 ## Glass tokens (inline as constants)
-\`glassPanel = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1)' }\`
+\`glassPanel = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)' }\` (the two fully transparent trailing layers match ACTIVE_GLOW layer for layer, same count, order and number of lengths, so the glow fades in and out instead of snapping)
 \`glassPanelBlur = { backdropFilter: 'blur(24px) saturate(1.8)', WebkitBackdropFilter: 'blur(24px) saturate(1.8)' }\`
 \`ACTIVE_GLOW = '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 1.5px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.08)'\`
 
@@ -74,7 +74,7 @@ Write this as a single self-contained React client component. Inline everything.
 - Log Out row at the bottom: SignOut icon, color #FF5A5A, label "Log Out"
 
 ## Glass tokens (inline as constants)
-\`glassPanel = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1)' }\`
+\`glassPanel = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)' }\` (the two fully transparent trailing layers match ACTIVE_GLOW layer for layer, same count, order and number of lengths, so the glow fades in and out instead of snapping)
 \`glassPanelBlur = { backdropFilter: 'blur(24px) saturate(1.8)', WebkitBackdropFilter: 'blur(24px) saturate(1.8)' }\`
 \`ACTIVE_GLOW = '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 1.5px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.08)'\`
 
@@ -117,7 +117,7 @@ Write this as a single self-contained React client component. Inline everything.
 - Log Out row at the bottom: SignOut icon, color #FF5A5A, label "Log Out"
 
 ## Glass tokens (inline as constants)
-\`glassPanel = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1)' }\`
+\`glassPanel = { background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)' }\` (the two fully transparent trailing layers match ACTIVE_GLOW layer for layer, same count, order and number of lengths, so the glow fades in and out instead of snapping)
 \`glassPanelBlur = { backdropFilter: 'blur(24px) saturate(1.8)', WebkitBackdropFilter: 'blur(24px) saturate(1.8)' }\`
 \`ACTIVE_GLOW = '0 8px 40px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 1.5px rgba(255,255,255,0.4), 0 0 20px rgba(255,255,255,0.08)'\`
 

@@ -3,11 +3,11 @@ import { HomeClient } from './HomeClient'
 // Registry-free metadata so the grid never bundles the heavy registry
 // (three.js etc.); mirrors COMPONENTS.map(toMeta).
 import { COMPONENT_META } from '../lib/component-meta.generated'
-import { getCategoryByLabel, COMPONENTS_SECTION_OVERLINE } from '../lib/categories'
+import { getCategoryByLabel } from '../lib/categories'
 import { SITE_URL } from '../lib/config'
 
-const INDEX_TITLE = `All Components: Browse ${COMPONENT_META.length} Animated React Components`
-const INDEX_DESCRIPTION = `Browse all ${COMPONENT_META.length} components in the AI Canvas registry: animated cards, glass morphism, backgrounds, buttons, and more. Each installable via the shadcn CLI.`
+const INDEX_TITLE = `React Component Library: ${COMPONENT_META.length} shadcn Components | AI Canvas`
+const INDEX_DESCRIPTION = `Browse ${COMPONENT_META.length} standalone shadcn components and blocks for React, from backgrounds and glass to 3D and buttons. Install with the shadcn CLI or MCP.`
 
 export async function generateMetadata({
   searchParams,
@@ -67,10 +67,9 @@ export default async function ComponentsPage({
     category && category !== 'All Components'
       ? undefined
       : {
-          overline: COMPONENTS_SECTION_OVERLINE,
-          h1: 'Animated React Components and Blocks',
+          h1: `React Component Library: ${COMPONENT_META.length} shadcn Components`,
           intro:
-            'Standalone React components and blocks, built with Tailwind CSS and Motion. Each one installs with the shadcn CLI and ships a remix prompt for any AI tool.',
+            'AI agents can install these standalone React components and blocks with the shadcn CLI or MCP, and each includes a remix prompt.',
         }
 
   return <HomeClient components={filtered} heading={heading} />

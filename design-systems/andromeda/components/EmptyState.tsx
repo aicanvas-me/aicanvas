@@ -1,18 +1,3 @@
-// ============================================================
-// COMPONENT: EmptyState
-// shadcn/ui-aligned API: forwardRef + compound parts.
-// Centered icon + uppercase mono title + sans description +
-// optional action slot. Built on Card so it inherits the
-// bracket motif automatically.
-//
-//   <EmptyState>
-//     <EmptyStateIcon><Inbox /></EmptyStateIcon>
-//     <EmptyStateTitle>No transmissions</EmptyStateTitle>
-//     <EmptyStateDescription>Awaiting signal from the array.</EmptyStateDescription>
-//     <EmptyStateAction><Button>Refresh</Button></EmptyStateAction>
-//   </EmptyState>
-// ============================================================
-
 'use client';
 
 import { forwardRef } from 'react';
@@ -30,7 +15,6 @@ import type { CardProps } from './Card';
 
 export type EmptyStateProps = CardProps;
 
-/** @type {React.ForwardRefExoticComponent<EmptyStateProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(function EmptyState(
   { className, children, style, ...props },
   ref,
@@ -135,8 +119,6 @@ export const EmptyStateAction = forwardRef<HTMLDivElement, ComponentPropsWithout
     <div
       ref={ref}
       data-slot="empty-state-action"
-      // flex-wrap + justify-center so multiple buttons wrap and stay centered
-      // on narrow widths instead of overflowing the centered card.
       className={cn('mt-[var(--andromeda-3)] flex flex-wrap items-center justify-center gap-[var(--andromeda-3)]', className)}
       {...props}
     >

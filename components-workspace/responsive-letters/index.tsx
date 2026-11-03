@@ -1,21 +1,19 @@
 'use client'
 
-// npm install framer-motion next
+// npm install framer-motion
 // font: Science Gothic
-/**
- * Renders variable-font letters that react independently to pointer distance.
- * Nearby glyphs adjust width, weight, slant, and scale with eased falloff.
- */
 
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Science_Gothic } from 'next/font/google'
 
 
 
 
 
-const scienceGothic = Science_Gothic({ subsets: ['latin'], axes: ['wdth'] })
+// Science Gothic from Google Fonts, loaded by the stylesheet import inside the
+// root, so the component runs in any React app (Next.js, Vite, anything else).
+const FONT_FAMILY = "'Science Gothic', sans-serif"
+const FONT_URL = 'https://fonts.googleapis.com/css2?family=Science+Gothic:wdth,wght@50..200,100..900&display=swap'
 
 
 
@@ -36,20 +34,17 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
 
     const updateStyle = () => {
       const italicVar = getComputedStyle(element).getPropertyValue('--italic')
-      const italicValue = parseFloat(italicVar) || 1
-      
+      const parsedItalic = parseFloat(italicVar)
+      const italicValue = Number.isNaN(parsedItalic) ? 1 : parsedItalic
       setFontStyle(italicValue > 0.5 ? 'italic' : 'normal')
     }
 
-    
     updateStyle()
 
-    
     const observer = new MutationObserver(updateStyle)
     observer.observe(element, { attributes: true, attributeFilter: ['style'] })
 
-    
-    const interval = setInterval(updateStyle, 16) 
+    const interval = setInterval(updateStyle, 16)
 
     return () => {
       observer.disconnect()
@@ -57,7 +52,6 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
     }
   }, [])
 
-  
   useEffect(() => {
     if (forwardedRef) {
       if (typeof forwardedRef === 'function') {
@@ -75,15 +69,14 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
       style={{
         fontSize: 'clamp(4rem, 12vw, 7rem)',
         fontWeight: 'var(--font-weight, 100)',
-        
-        
+        // Set wdth by tag: font-stretch maps to it inconsistently across browsers.
         fontVariationSettings: `'wdth' var(--font-width, 100)`,
         fontFamily,
         fontStyle,
         lineHeight: 1,
         letterSpacing: 'var(--letter-spacing, 0.15em)',
         wordSpacing: '0.8em',
-        transform: `skewY(var(--skew, 0)deg)`,
+        transform: `skewY(calc(var(--skew, 0) * 1deg))`,
       }}
     >
       {letter}
@@ -94,21 +87,17 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
 const LetterSpan = motion(LetterSpanComponent)
 
 
-// customize: replace the display text below
 const TEXT = 'WHAT ?!'
-// tune: raise to widen pointer influence
-const INFLUENCE_RADIUS = 300  
-// tune: adjust these bounds to change the variable-font response
-const MAX_WEIGHT = 900        
-const MIN_WEIGHT = 100        
-const MAX_STRETCH = 200       
-const MIN_STRETCH = 100       
-const MAX_LETTER_SPACING = 0.4 
-const MIN_LETTER_SPACING = 0 
-const MAX_SKEW = 18           
-const MIN_SKEW = 0            
-// tune: raise to slow glyph transitions
-const EASE_DURATION = 0.3     
+const INFLUENCE_RADIUS = 300
+const MAX_WEIGHT = 900
+const MIN_WEIGHT = 100
+const MAX_STRETCH = 200
+const MIN_STRETCH = 100
+const MAX_LETTER_SPACING = 0.4
+const MIN_LETTER_SPACING = 0
+const MAX_SKEW = 18
+const MIN_SKEW = 0
+const EASE_DURATION = 0.3
 
 export default function ResponsiveLetters() {
   const [isDark, setIsDark] = useState(true)
@@ -118,11 +107,8 @@ export default function ResponsiveLetters() {
   const animIdRef = useRef<number>(0)
   const aliveRef = useRef(true)
 
-  
-  
   useEffect(() => {
     function detectTheme(): boolean {
-      
       let element: HTMLElement | null = containerRef.current
       while (element) {
         const cardTheme = element.getAttribute('data-card-theme')
@@ -132,32 +118,26 @@ export default function ResponsiveLetters() {
         element = element.parentElement
       }
 
-      
       return document.documentElement.classList.contains('dark')
     }
 
-    
     setIsDark(detectTheme())
 
-    
     const observer = new MutationObserver(() => {
       setIsDark(detectTheme())
     })
 
-    
     let element: HTMLElement | null = containerRef.current
     while (element) {
       observer.observe(element, { attributes: true, attributeFilter: ['data-card-theme', 'class'] })
       element = element.parentElement
     }
 
-    
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
 
     return () => observer.disconnect()
   }, [])
 
-  
   const exitStateRef = useRef<Array<{
     weight: number
     stretch: number
@@ -166,13 +146,11 @@ export default function ResponsiveLetters() {
     italic: number
   }>>([])
 
-  
   useEffect(() => {
     aliveRef.current = true
     const container = containerRef.current
     if (!container) return
 
-    
     TEXT.split('').forEach((_, i) => {
       if (!exitStateRef.current[i]) {
         exitStateRef.current[i] = {
@@ -185,7 +163,6 @@ export default function ResponsiveLetters() {
       }
     })
 
-    
     const exitSpring = { type: 'spring', damping: 6, stiffness: 35 }
 
     function animate() {
@@ -193,7 +170,7 @@ export default function ResponsiveLetters() {
 
       const mx = mouseRef.current?.x ?? -99999
       const my = mouseRef.current?.y ?? -99999
-      const isExiting = !mouseRef.current 
+      const isExiting = !mouseRef.current
 
       TEXT.split('').forEach((_, i) => {
         const letterEl = lettersRef.current[i]
@@ -203,48 +180,33 @@ export default function ResponsiveLetters() {
         const letterCenterX = rect.left + rect.width / 2
         const letterCenterY = rect.top + rect.height / 2
 
-        
         const dx = letterCenterX - mx
         const dy = letterCenterY - my
         const dist = Math.sqrt(dx * dx + dy * dy)
 
-        
         let influence = 0
         if (dist < INFLUENCE_RADIUS) {
-          
           influence = 1 - dist / INFLUENCE_RADIUS
-          
           influence = influence * influence * (3 - 2 * influence)
         }
 
-        
         const targetWeight = MIN_WEIGHT + (MAX_WEIGHT - MIN_WEIGHT) * influence
         const targetStretch = MIN_STRETCH + (MAX_STRETCH - MIN_STRETCH) * influence
         const targetLetterSpacing = MIN_LETTER_SPACING + (MAX_LETTER_SPACING - MIN_LETTER_SPACING) * influence
 
-        
-        
-        
         const italicValue = 1 - influence
 
-        
-        
         let targetSkew = 0
         if (influence > 0) {
-          
           const angle = Math.atan2(dy, dx)
-          
           const skewDirection = Math.sin(angle)
           targetSkew = (MAX_SKEW - MIN_SKEW) * influence * skewDirection
         }
 
-        
         const state = exitStateRef.current[i]
 
-        
-        
         const spring = isExiting ? exitSpring : { type: 'spring', damping: 10, stiffness: 160 }
-        const easing = isExiting ? 0.05 : 0.15 
+        const easing = isExiting ? 0.05 : 0.15
 
         state.weight += (targetWeight - state.weight) * easing
         state.stretch += (targetStretch - state.stretch) * easing
@@ -252,9 +214,6 @@ export default function ResponsiveLetters() {
         state.skew += (targetSkew - state.skew) * easing
         state.italic += (italicValue - state.italic) * easing
 
-        
-        
-        
         letterEl.style.setProperty('--font-weight', Math.round(state.weight).toString())
         letterEl.style.setProperty('--font-width', state.stretch.toFixed(1))
         letterEl.style.setProperty('--letter-spacing', `${state.letterSpacing.toFixed(3)}em`)
@@ -297,22 +256,21 @@ export default function ResponsiveLetters() {
     }, 600)
   }
 
-  
   const bgColor = isDark ? '#0d001a' : '#40FFA7'
   const textColor = isDark ? 'text-[#40FFA7]' : 'text-[#0d001a]'
 
   return (
     <div
       ref={containerRef}
-      className={`flex min-h-screen w-full flex-col items-center justify-center gap-8 px-6 sm:px-10 ${scienceGothic.className}`}
-      style={{ backgroundColor: bgColor }}
+      className={`flex min-h-screen w-full flex-col items-center justify-center gap-8 px-6 sm:px-10`}
+      style={{ backgroundColor: bgColor, fontFamily: FONT_FAMILY }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      {}
+      <style>{`@import url('${FONT_URL}');`}</style>
       <div className="flex flex-wrap items-center justify-center gap-0.5 sm:gap-1">
         {TEXT.split('').map((letter, i) => (
           <LetterSpan
@@ -322,7 +280,7 @@ export default function ResponsiveLetters() {
               if (el) lettersRef.current[i] = el
             }}
             textColor={textColor}
-            fontFamily={scienceGothic.style.fontFamily}
+            fontFamily={FONT_FAMILY}
           />
         ))}
       </div>

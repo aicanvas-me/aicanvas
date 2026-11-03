@@ -6,8 +6,7 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import Link from 'next/link'
 import { JetBrains_Mono } from 'next/font/google'
-import { SiteFooter } from '../../../components/SiteFooter'
-import { PageFrame, PageOverline, PageTitle, PageLead } from '../../../_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead } from '../../../_components/DesignSystemPage'
 import {
   MagnifyingGlass,
   Bell,
@@ -107,6 +106,7 @@ import {
 import { MetricChart, Gauge, Waveform, MediaCard, DataTable, MusicPlayer } from '../../../lib/andromeda-v2.generated'
 import { ShowcaseInstall } from '../../../_components/ShowcaseInstall'
 import { ShowcaseInstallCard } from '../../../_components/ShowcaseInstallCard'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // Same JetBrains Mono setup as the dashboard page so the showcase
 // matches the design system's only font exactly.
@@ -384,12 +384,12 @@ export default function AndromedaShowcase({
         `}</style>
 
         {/* Page header — AI Canvas site style (Manrope), not the Andromeda mono
-            aesthetic of the demos below. Site sand/olive pairs so the header follows
+            aesthetic of the demos below. Site sand/accent pairs so the header follows
             the site theme like the rest of the page. */}
         {/* A div, not a header: the site bar is the page's banner landmark. */}
         <div style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
-          <PageOverline>Andromeda</PageOverline>
-          <PageTitle>System</PageTitle>
+          <PageCrumbs />
+          <PageTitle gap="none">System</PageTitle>
           <PageLead>
             Built for designers, developers, and teams who want a system, not a stylesheet. Tokens, components, templates, and a documented AI Brain that keeps everyone aligned.
           </PageLead>
@@ -1961,7 +1961,6 @@ export default function AndromedaShowcase({
         {/* Bottom install card — the two packages, like the brain's card. */}
         <ShowcaseInstallCard />
       </PageFrame>
-      <SiteFooter />
     </div>
     </>
   )

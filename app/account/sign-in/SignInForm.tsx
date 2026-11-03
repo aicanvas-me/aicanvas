@@ -11,8 +11,8 @@ import { AuthPagePopup } from '../AuthPagePopup'
 // avoid the `useSearchParams` Suspense dance and the error message renders
 // on the first paint (instead of post-hydration).
 //
-// Wrapped in AuthPagePopup so the standalone page looks like the in-app
-// AuthModal — same dark backdrop + centered card + X close button.
+// Wrapped in AuthPagePopup so the standalone page carries the in-app
+// AuthModal's card and X close, set under the site's top navigation.
 
 type Props = {
   next: string

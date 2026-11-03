@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { LockSimple } from '@phosphor-icons/react'
+import { LockSimple } from '@/app/_icons/icons/lock-simple'
 import { useAuthModal } from '../auth/AuthModalProvider'
 import { useSession } from '../auth/SessionProvider'
 import type { PaywallReason } from './PaywallModalProvider'
+import { AsciiArt } from '../auth/AsciiArt'
 
 export type { PaywallReason }
 
@@ -88,10 +89,9 @@ export function Paywall({
   const chip = themed
     ? 'border-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_62%,#000)] bg-[color-mix(in_srgb,var(--paywall-surface,var(--paywall-fallback))_90%,#000)] dark:border-sand-800 dark:bg-sand-900'
     : 'border-sand-800 bg-sand-900'
-  // Stepping the fill down costs the glyph contrast, so it steps down with it:
-  // olive-600 fell to 1.6-2.5:1 on the new fills, olive-700 clears 3:1 on all
-  // three themed grounds.
-  const lockIcon = themed ? 'text-olive-700 dark:text-olive-400' : 'text-olive-400'
+  // Themed grounds follow the site theme, so the glyph takes the accent ink;
+  // the plain ground is dark in both themes and keeps a fixed light ink.
+  const lockIcon = themed ? 'text-accent' : 'text-sand-50'
   const heading = themed ? 'text-sand-900 dark:text-sand-50' : 'text-sand-50'
   const sub = themed ? 'text-sand-600 dark:text-sand-400' : 'text-sand-400'
   // transition-colors lives per appearance, not on the button, because only the
@@ -103,38 +103,57 @@ export function Paywall({
     ? 'border-sand-500 text-sand-700 hover:border-sand-600 hover:text-sand-900 dark:border-sand-700 dark:text-sand-200 dark:hover:border-sand-600 dark:hover:text-sand-50'
     : 'transition-colors border-sand-700 text-sand-200 hover:border-sand-600 hover:text-sand-50'
 
+  // Wide enough (the Code tab, an install box), the wall is the sign-in card's
+  // split: an open padlock in glyphs on the left in its own inset card, the
+  // words on the right, on a solid ground. Narrow (the remix side panel), it
+  // stays the centred lock over the blurred teaser. The switch is a container
+  // query, so each caller gets the layout its own width can hold.
+  const splitGround = themed
+    ? '@2xl:bg-none @2xl:bg-[var(--paywall-surface,var(--paywall-fallback))]'
+    : '@2xl:bg-none @2xl:bg-sand-950'
+  const artCard = themed
+    ? 'border-sand-200 bg-sand-100 text-sand-900 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-100'
+    : 'border-sand-800 bg-sand-900 text-sand-100'
+
   return (
-    <div className="relative min-h-[360px] w-full overflow-hidden">
+    // h-full fills a pane of fixed height (the Code tab); in a pane that grows
+    // with its content it resolves to auto and the 360px floor holds.
+    <div className="@container relative h-full min-h-[360px] w-full overflow-hidden">
       <pre
         aria-hidden
-        className="pointer-events-none absolute inset-0 select-none overflow-hidden whitespace-pre-wrap p-5 font-mono text-sm leading-relaxed text-sand-600 opacity-30 blur-[3px]"
+        className="pointer-events-none absolute inset-0 select-none overflow-hidden whitespace-pre-wrap p-5 font-mono text-sm leading-relaxed text-sand-600 opacity-30 blur-[3px] @2xl:hidden"
       >
         {teaser}
       </pre>
-      <div className={`absolute inset-0 flex flex-col items-center justify-center gap-3 px-4 text-center ${overlay}`}>
-        <div className={`flex h-11 w-11 items-center justify-center rounded-full border ${chip}`}>
-          <LockSimple weight="regular" size={20} className={lockIcon} />
+      <div className={`absolute inset-0 flex ${overlay} ${splitGround} @2xl:p-2`}>
+        <div aria-hidden className={`relative hidden w-1/2 shrink-0 overflow-hidden rounded-card border @2xl:block ${artCard}`}>
+          <AsciiArt subject="lock" />
         </div>
-        <h3 className={`text-base font-bold ${heading}`}>{title}</h3>
-        <p className={`max-w-xs text-sm leading-relaxed ${sub}`}>{subtitle}</p>
-        {/* Hand-skinned, not buttonClasses: the wall pairs its buttons with its
-            own ground per appearance. */}
-        <div className="mt-1 flex items-center gap-2">
-          <Link
-            href="/pricing"
-            className="rounded-lg bg-olive-500 px-4 py-2 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
-          >
-            Get Premium
-          </Link>
-          {!user && (
-            <button
-              type="button"
-              onClick={() => open()}
-              className={`rounded-lg border px-4 py-2 text-sm font-semibold ${login}`}
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 px-4 text-center @2xl:items-start @2xl:px-12 @2xl:text-left">
+          <div className={`flex h-11 w-11 items-center justify-center rounded-full border @2xl:hidden ${chip}`}>
+            <LockSimple size={20} className={lockIcon} />
+          </div>
+          <h3 className={`text-base font-bold @2xl:text-xl ${heading}`}>{title}</h3>
+          <p className={`max-w-xs text-sm leading-relaxed ${sub}`}>{subtitle}</p>
+          {/* Hand-skinned, not buttonClasses: the wall pairs its buttons with its
+              own ground per appearance. */}
+          <div className="mt-1 flex items-center gap-2">
+            <Link
+              href="/pricing"
+              className="rounded-control bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/85"
             >
-              Log in
-            </button>
-          )}
+              Get Premium
+            </Link>
+            {!user && (
+              <button
+                type="button"
+                onClick={() => open()}
+                className={`rounded-control border px-4 py-2 text-sm font-semibold ${login}`}
+              >
+                Log in
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

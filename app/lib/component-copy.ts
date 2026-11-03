@@ -25,7 +25,6 @@ export const ACCURATE_STACKS: Record<string, string[]> = {
   '3d-gem-pricing-section': ['Three.js', 'Canvas', 'Tailwind CSS'],
   '3d-product-card': ['Three.js', 'Tailwind CSS'],
   'ai-job-cards': ['Motion', 'Tailwind CSS'],
-  'andromeda-button': ['Tailwind CSS'],
   'blind-pull-toggle': ['Motion', 'Tailwind CSS'],
   'bubble-field': ['Canvas', 'Tailwind CSS'],
   'charging-widget': ['Motion', 'Tailwind CSS'],
@@ -109,7 +108,6 @@ export const ACCURATE_STACKS: Record<string, string[]> = {
   'upload-progress': ['Motion', 'Tailwind CSS'],
   'voice-chat-pill': ['Motion', 'Tailwind CSS'],
   'wave-lines': ['Canvas', 'Tailwind CSS'],
-  'wild-morph': ['Motion', 'Tailwind CSS'],
   'x-grid': ['Canvas', 'Tailwind CSS'],
 }
 
@@ -227,11 +225,6 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
     useCases: ['Settings', 'Dashboard', 'Theme switcher'],
     about:
       'Glass Toggle is an on/off switch housed in a frosted glass track, with a thumb that glides on a soft Motion spring while the track color transitions smoothly between states. The glass surface picks up the page behind it through backdrop-filter, so it always feels consistent with whatever you put under it. Drop it into glassmorphism dashboards, settings panels, theme switchers, or any UI that already leans on the same visual language for cards and modals.',
-  },
-  'andromeda-button': {
-    useCases: ['Dashboard', 'Admin panel', 'Internal tools'],
-    about:
-      'Andromeda Button is the canonical button primitive from the Andromeda design system: a sci-fi blueprint aesthetic with five variants (default, outline, ghost, destructive, link), three sizes, optional leading icon, and complete state coverage for hover, focus, active, and disabled. Transparent hairline surfaces sit on a near-black canvas, and the electric-blue accent brightens and glows on interaction so the button always tells you exactly which state it is in. It is the standard control for any dashboard or internal tool built in the Andromeda visual language.',
   },
   'delete-button': {
     useCases: ['Account settings', 'Admin panel', 'Confirmation flow'],
@@ -477,11 +470,6 @@ export const COMPONENT_COPY: Record<string, ComponentCopy> = {
     useCases: ['Hero section', 'Game UI', 'Children\'s site'],
     about:
       'Playful is kinetic typography that makes letters jump, drop, and rotate as your cursor approaches each one, like the headline is sneezing or hopping out of the way. Motion drives the per-letter physics and the staggered randomness so the effect feels organic rather than mechanical. It is the right pick for children-focused sites, game-UI headlines, festival posters, and any moment where typography should feel like a character with its own mood.',
-  },
-  'wild-morph': {
-    useCases: ['Hero section', 'Type specimen', 'Brand site'],
-    about:
-      'Wild Morph is an italic SVG word that warps under your cursor, with each path control point pulled and released by a Motion-driven spring so the deformation rebounds rather than smearing. Because the morph is on SVG paths rather than canvas pixels, the word stays infinitely scalable and crisp at any size. It is the right hero element for type specimens, brand sites, and any landing page where the headline should feel like liquid metal under the pointer.',
   },
   'orbit': {
     useCases: ['Hero section', 'About page', 'Type specimen'],

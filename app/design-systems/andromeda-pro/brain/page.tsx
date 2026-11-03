@@ -2,6 +2,7 @@ import { preload } from 'react-dom'
 import { JetBrains_Mono } from 'next/font/google'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-pro-brain-teaser.generated'
 import { BrainStoryV4 } from './BrainStoryV4'
+import { BRAIN_FAQ_JSON_LD } from './brain-faq'
 
 // The Andromeda Pro Brain landing: the public marketing story. Anyone can view
 // it (it renders only the structure teaser, never brain content). The reader
@@ -11,8 +12,8 @@ const jbm = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mon
 const total = BRAIN_TEASER.totalFiles
 
 export const metadata = {
-  title: 'Andromeda Pro AI Brain: Design Rules Your AI Agent Reads',
-  description: `${total} files your AI agent reads before it builds with Andromeda Pro: foundations, a rule file per component, skills and a done-gate. Every file name is open.`,
+  title: 'Andromeda Pro AI Brain: Design Skill for Claude Code',
+  description: `The design skill for Claude Code, Cursor and Codex: ${total} files of foundations, component rules, build and review skills and a done-gate for Andromeda Pro.`,
 }
 
 export default function AndromedaBrainLandingPage() {
@@ -22,6 +23,7 @@ export default function AndromedaBrainLandingPage() {
 
   return (
     <div className={jbm.variable}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(BRAIN_FAQ_JSON_LD) }} />
       <BrainStoryV4 />
     </div>
   )

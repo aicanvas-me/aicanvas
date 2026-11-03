@@ -15,7 +15,7 @@ export function PaymentMethods({ className }: { className?: string }) {
   return (
     <div className={`flex flex-wrap items-center justify-center gap-2 ${className ?? ''}`}>
       {METHODS.map((m) => (
-        <span key={m.alt} className="flex h-7 items-center rounded-md bg-white px-1.5 shadow-sm">
+        <span key={m.alt} className="flex h-7 items-center rounded-chip bg-white px-1.5 shadow-sm">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={m.src} alt={m.alt} className="h-4 w-auto" />
         </span>

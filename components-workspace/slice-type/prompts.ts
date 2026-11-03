@@ -132,12 +132,13 @@ After 700ms, play one open-and-close cycle so users discover the interaction:
 const INTRO_DELAY_MS = 700, INTRO_HOLD_MS = 1100, INTRO_PEAK = 0.7, INTRO_DURATION_S = 0.9
 \`\`\`
 Use \`animate(engage, INTRO_PEAK, { duration: INTRO_DURATION_S, ease: [0.22, 1, 0.36, 1] })\`, await it, hold, then close. Skip if \`prefers-reduced-motion\` is set.
+The effect's cancel function sets its cancelled flag, calls \`engage.stop()\` to stop a running animate, clears the start timer and any close timer, is assigned to \`cancelTeaserRef.current\`, and is returned as cleanup.
 
 ---
 
 ## Pointer events
 
-Set on the root motion.div: \`onPointerEnter/Leave/Down/Up/Cancel\` → \`engage.set(1)\` or \`engage.set(0)\`.
+Define \`cancelTeaserRef = useRef<(() => void) | null>(null)\` and \`cancelTeaser\` to call its current function, then set the ref to null. Define \`touchOpenRef = useRef(false)\`. For mouse pointers, \`handlePointerEnter\` calls \`cancelTeaser()\` before \`engage.set(1)\`, while \`handlePointerLeave\` calls \`engage.set(0)\`. For non-mouse pointers, \`handlePointerDown\` calls \`cancelTeaser()\`, toggles \`touchOpenRef.current\`, then calls \`engage.set(touchOpenRef.current ? 1 : 0)\`. Set these three handlers on the root motion.div so hover or tap takes over immediately during the intro.
 
 ---
 

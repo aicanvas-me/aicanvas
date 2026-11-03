@@ -8,6 +8,8 @@
 
 export const MONTHLY_PRICE = 8.99
 export const YEARLY_PRICE = 49.99
+/** One payment, Premium for life (RULED 2026-10-11, tax-exclusive like Monthly). */
+export const LIFETIME_PRICE = 125
 
 /** Twelve monthly payments: what a year costs without the annual plan. A real
  *  alternative price rather than an invented "was", which is what makes the
@@ -26,7 +28,7 @@ export const YEARLY_PER_MONTH = YEARLY_PRICE / 12
  *  passes, so the bar can never show a timer at zero or a sale that has ended.
  *  Moving the date means moving the offer with it: a countdown that resets to
  *  the same price is the one thing this file cannot keep honest. */
-export const OFFER_ENDS = new Date('2026-10-01T00:00:00+02:00')
+export const OFFER_ENDS = new Date('2026-10-14T23:59:59+02:00')
 
 /** Prices are quoted to the cent everywhere on the site. */
 export const usd = (n: number) => `$${n.toFixed(2)}`

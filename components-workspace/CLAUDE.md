@@ -32,7 +32,7 @@ These live at the project root, one level up from this file:
 
 ### Site design tokens (when you need them)
 
-- `../supervisor/skills/site-design-tokens.md` — the main AI Canvas sand/olive/Manrope system. You rarely need this for a standalone's internals (creative freedom), but the **container chrome** uses sand-100/sand-950 from this file, and if a standalone deliberately echoes the site's look you can reference it here.
+- `../supervisor/skills/site-design-tokens.md` — the main AI Canvas sand/accent/Manrope system. You rarely need this for a standalone's internals (creative freedom), but the **container chrome** uses sand-100/sand-950 from this file, and if a standalone deliberately echoes the site's look you can reference it here.
 - `../supervisor/skills/seo-metadata.md` — SEO rules for writing the `description` field. The description you write in `spec.md` and the registry entry becomes the component's Google meta description. Read this before writing any description.
 
 ## Extended skills (`.claude/skills/`) — read for complex visual components
@@ -51,13 +51,14 @@ These live at the project root, one level up from this file:
 - `'use client'` at the top (always)
 - Export a single **default** function that matches the folder name in PascalCase (e.g. folder `glowing-button` → `export default function GlowingButton()`)
 - Add a `// npm install` comment after `'use client'` listing external npm packages (e.g. `// npm install framer-motion @phosphor-icons/react`). Omit for React-only components. This gives users a copy-pasteable install command.
+- Comments follow skills/code-comments.md: one short line, only where an edit would break something silently. No file header. Delete the template's scaffolding comments when you build.
 - Root element must fill the viewport standalone: `className="flex min-h-screen w-full items-center justify-center bg-sand-100 dark:bg-sand-950"` — use `min-h-screen` (not `h-full`) so the component works when copy-pasted into any project without a parent height chain
 - **`min-h-screen` belongs on the root element ONLY.** For inner elements that need to fill their parent, use `h-full`. The build's registry generator transforms the root `h-full` → `min-h-screen` automatically; never write `min-h-screen` on an inner className. `scripts/lint-registry-json.mjs` enforces this on every build and will fail Vercel deploy if violated.
 - **Single root element.** The `return (...)` of your component must contain a single JSX element (not a Fragment with multiple top-level children). The build's root-detector reads attributes from the first JSX element after `return (` — Fragment-wrapped multi-roots break detection. If you need a `<style>` or similar sibling, place it inside the root `<div>` instead.
 - **Support both light AND dark mode** — always use `dark:` Tailwind variants so the component looks great in both themes. The preview page has a theme toggle; the user will check both modes.
 - For colors set via inline styles (e.g. custom hex values), import `useTheme` from `../../app/components/ThemeProvider` and pick different values per theme.
 - Design a distinct but cohesive light version — lighter surface, darker/adjusted accent colors that maintain contrast on light backgrounds.
-- **Be creative** — components are visual showcases. You are NOT required to use the site's sand/olive design tokens inside component internals. Use whatever colors, gradients, and styles make the component look its best in both modes.
+- **Be creative** — components are visual showcases. You are NOT required to use the site's sand/accent design tokens inside component internals. Use whatever colors, gradients, and styles make the component look its best in both modes.
 - Use **Framer Motion** for all animations — no CSS-only keyframes
 - Use `@phosphor-icons/react` with `weight="regular"` for any icons. Small glyphs (a checkmark or an X only a few pixels across) may use `bold` or `fill` where regular reads too thin.
 - No hardcoded widths/heights — components must look good in a 480×480 preview box

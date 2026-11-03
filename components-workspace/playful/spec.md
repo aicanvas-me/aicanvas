@@ -26,7 +26,7 @@ Cursor-proximity based animation (600px influence radius):
 Touch-friendly — onTouchStart captures the first touch position to trigger the effect, onTouchEnd clears with 600ms delay so the effect stays visible briefly.
 
 ## Tech notes
-- Science Gothic variable font from next/font/google
+- Science Gothic variable font from Google Fonts (weight 100 to 900), loaded by a style element with an @import inside the root, so it runs in any React app
 - Per-letter state: rotate, translateY, scale — stored in a ref, updated via requestAnimationFrame
 - CSS custom properties (`--rotate`, `--translate-y`, `--scale`) for per-letter animation state
 - Combined transform: `translateY(var(--translate-y)) rotate(var(--rotate)) scale(var(--scale))`

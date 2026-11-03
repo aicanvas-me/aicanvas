@@ -54,6 +54,10 @@ const nextConfig: NextConfig = {
     // The image pack's two Pro files are read with fs at request time from the
     // injected (gitignored) Andromeda Pro tree.
     "/api/andromeda-pro/image-pack/[file]": ["./design-systems/andromeda-pro/image-pack/*"],
+    // The paid icon styles' markup, read with fs and served only to Premium.
+    "/icons/style-data/[style]": ["./.icons-data/*.json"],
+    // Download all reads every style's markup and the shipped React files.
+    "/api/icons/download": ["./.icons-data/*.json", "./public/icons-data/line.json", "./registry-data/icon-*.json"],
   },
   async headers() {
     return [
@@ -114,6 +118,29 @@ const nextConfig: NextConfig = {
       {
         source: "/design-systems/andromeda/showcase",
         destination: "/design-systems/andromeda/system",
+        permanent: true,
+      },
+      // The standalone Andromeda Button copied the design system's Button and
+      // was retired. Its page and its install URL land on the system Button.
+      {
+        source: "/components/andromeda-button",
+        destination: "/design-systems/andromeda/button",
+        permanent: true,
+      },
+      {
+        source: "/components/andromeda-button/:path*",
+        destination: "/design-systems/andromeda/button",
+        permanent: true,
+      },
+      {
+        source: "/r/andromeda-button.json",
+        destination: "/r/andromeda-button-system.json",
+        permanent: true,
+      },
+      // The standalone Wild Morph was retired; its page lands on the component catalog.
+      {
+        source: "/components/wild-morph",
+        destination: "/components",
         permanent: true,
       },
     ];

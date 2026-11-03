@@ -1,6 +1,11 @@
 export const GITHUB_URL = 'https://github.com/aicanvas-me/aicanvas'
 export const X_URL = 'https://x.com/uiNerd'
 export const SITE_URL = 'https://aicanvas.me'
+// The one-sentence answer to "what is AI Canvas?". The homepage FAQ, the /faq
+// page and the Organization structured data all quote it, so answer engines
+// read the same definition wherever they look.
+export const AI_CANVAS_DEFINITION =
+  'The design layer for AI coding agents: design systems your agent builds with and you reshape to your project, plus standalone React components that fit any of them, all installed as editable source with shadcn or MCP.'
 // Shown on the legal pages; forwards to CONTACT_INBOX via Porkbun forwarding.
 export const CONTACT_EMAIL = 'contact@aicanvas.me'
 

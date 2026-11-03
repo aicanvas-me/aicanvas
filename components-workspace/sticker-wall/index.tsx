@@ -1,10 +1,6 @@
 'use client'
 
-// npm install framer-motion matter-js
-/**
- * Presents a physics wall where text and emoji stickers can be added and dragged.
- * New stickers fall into the scene and collide with existing bodies and boundaries.
- */
+// npm install framer-motion matter-js @types/matter-js
 
 import { useEffect, useLayoutEffect, useRef, useState, FormEvent } from 'react'
 import { motion } from 'framer-motion'
@@ -13,33 +9,30 @@ import type { Engine, Runner, World, Body, MouseConstraint as MC, Mouse as Matte
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
-// tune: raise to make stickers fall faster
 const GRAVITY_SCALE = 0.0012
-// tune: raise to increase collision bounce
 const RESTITUTION   = 0.05
 const FRICTION      = 0.6
 const FRICTION_AIR  = 0.02
 const DENSITY       = 0.0015
-// tune: raise to allow more stickers in the scene
 const STICKER_CAP   = 60
-// tune: raise to slow sticker removal fades
 const FADE_MS       = 250
 
 const WALL_THICKNESS = 60
 
 const TEXT_FONT_PX   = 15
-// tune: raise to allow wider text stickers
 const TEXT_MAX_WIDTH = 180
 const TEXT_PAD_X     = 14
 const TEXT_PAD_Y     = 10
 const TEXT_LINE_H    = 20
 
-// tune: change to resize emoji sticker bodies
 const EMOJI_SIZE     = 72
 const EMOJI_FONT_PX  = 42
 
 const CARD_RADIUS    = 32
 const BORDER_WIDTH   = 2
+
+const PASSIVE_LISTENER = { capture: false, passive: true } as const
+const ACTIVE_LISTENER = { capture: false, passive: false } as const
 
 
 const PALETTE_DARK = ['#FDE68A', '#BBF7D0', '#FBCFE8', '#C7D2FE', '#BAE6FD', '#FED7AA']
@@ -50,7 +43,6 @@ const STICKER_TEXT_COLOR_LIGHT = '#FFFFFF'
 const BG_DARK  = '#0F0F12'
 const BG_LIGHT = '#F5F1E8'
 
-// customize: replace the initial text and emoji stickers below
 const SEED_QUOTES = [
   'love the new layout',
   'prompts are 🔥',
@@ -76,12 +68,19 @@ interface Sticker {
   w: number
   h: number
   color: string
-  lines: string[] 
+  lines: string[]
   createdAt: number
   fadeStart?: number
 }
 
 type BodyWithPlugin = Body & { plugin: { sticker?: Sticker } }
+
+type MouseWithHandlers = MatterMouse & {
+  mousemove: EventListener
+  mousedown: EventListener
+  mouseup: EventListener
+  mousewheel: EventListener
+}
 
 
 function roundedRect(
@@ -114,7 +113,6 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxWidth: number)
     if (width <= maxWidth) {
       current = candidate
     } else if (!current) {
-      
       lines.push(word)
       current = ''
     } else {
@@ -158,15 +156,12 @@ export default function StickerWall() {
   const canvasRef    = useRef<HTMLCanvasElement>(null)
   const inputRef     = useRef<HTMLInputElement>(null)
 
-  
   const engineRef    = useRef<Engine | null>(null)
   const worldRef     = useRef<World | null>(null)
   const stickersRef  = useRef<Sticker[]>([])
   const sizeRef      = useRef<{ w: number; h: number }>({ w: 0, h: 0 })
-  
   const measureCtxRef = useRef<CanvasRenderingContext2D | null>(null)
   const paletteRef   = useRef<string[]>(PALETTE_DARK)
-  
   const matterRef    = useRef<typeof import('matter-js') | null>(null)
 
   const [isDark, setIsDark] = useState<boolean>(() =>
@@ -186,7 +181,6 @@ export default function StickerWall() {
     })
   }, [isDark])
 
-  
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -206,7 +200,6 @@ export default function StickerWall() {
     return () => observer.disconnect()
   }, [])
 
-  
   useEffect(() => {
     const canvas    = canvasRef.current
     const container = containerRef.current
@@ -218,14 +211,17 @@ export default function StickerWall() {
     let alive = true
     let rafId = 0
 
-    
     let engine: Engine | null = null
     let runner: Runner | null = null
     let world: World | null = null
     let walls: Body[] = []
-    let mouse: MatterMouse | null = null
+    let mouse: MouseWithHandlers | null = null
     let mouseConstraint: MC | null = null
     let ro: ResizeObserver | null = null
+    let touchDragging = false
+    let onTouchStart: ((event: TouchEvent) => void) | null = null
+    let onTouchMove: ((event: TouchEvent) => void) | null = null
+    let onTouchEnd: ((event: TouchEvent) => void) | null = null
 
     let dpr = Math.min(window.devicePixelRatio || 1, 2)
 
@@ -233,10 +229,10 @@ export default function StickerWall() {
       const t = WALL_THICKNESS
       const opts = { isStatic: true, render: { visible: false } }
       return [
-        Matter.Bodies.rectangle(w / 2, -t / 2, w + t * 2, t, opts), 
-        Matter.Bodies.rectangle(w / 2, h + t / 2, w + t * 2, t, opts), 
-        Matter.Bodies.rectangle(-t / 2, h / 2, t, h + t * 2, opts), 
-        Matter.Bodies.rectangle(w + t / 2, h / 2, t, h + t * 2, opts), 
+        Matter.Bodies.rectangle(w / 2, -t / 2, w + t * 2, t, opts),
+        Matter.Bodies.rectangle(w / 2, h + t / 2, w + t * 2, t, opts),
+        Matter.Bodies.rectangle(-t / 2, h / 2, t, h + t * 2, opts),
+        Matter.Bodies.rectangle(w + t / 2, h / 2, t, h + t * 2, opts),
       ]
     }
 
@@ -306,7 +302,6 @@ export default function StickerWall() {
 
     function seed(Matter: typeof import('matter-js'), w: number, h: number) {
       const palette = paletteRef.current
-      
       for (let i = 0; i < SEED_QUOTES.length; i++) {
         const quote = SEED_QUOTES[i]
         const color = palette[i % palette.length]
@@ -318,7 +313,6 @@ export default function StickerWall() {
         Matter.Composite.add(world!, sticker.body)
         stickersRef.current.push(sticker)
       }
-      
       for (let i = 0; i < SEED_EMOJIS.length; i++) {
         const emoji = SEED_EMOJIS[i]
         const color = palette[(i + 3) % palette.length]
@@ -345,14 +339,12 @@ export default function StickerWall() {
       canvas!.style.height = `${h}px`
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
 
-      
       if (walls.length > 0) {
         for (const wall of walls) Matter.Composite.remove(world, wall)
       }
       walls = buildWalls(Matter, w, h)
       Matter.Composite.add(world, walls)
 
-      
       for (const s of stickersRef.current) {
         const p = s.body.position
         let nx = p.x
@@ -374,7 +366,6 @@ export default function StickerWall() {
       const bg = dark ? BG_DARK : BG_LIGHT
       const { w: W, h: H } = sizeRef.current
 
-      
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0)
       ctx!.fillStyle = bg
       ctx!.fillRect(0, 0, W, H)
@@ -382,7 +373,6 @@ export default function StickerWall() {
       const stickers = stickersRef.current
       const Matter = matterRef.current
 
-      
       if (Matter && world) {
         for (let i = stickers.length - 1; i >= 0; i--) {
           const s = stickers[i]
@@ -396,7 +386,6 @@ export default function StickerWall() {
         }
       }
 
-      
       for (const s of stickers) {
         const { body, w, h, color, kind, lines, content } = s
 
@@ -411,12 +400,10 @@ export default function StickerWall() {
         ctx!.translate(body.position.x, body.position.y)
         ctx!.rotate(body.angle)
 
-        
         ctx!.fillStyle = color
         roundedRect(ctx!, -w / 2, -h / 2, w, h, CARD_RADIUS)
         ctx!.fill()
 
-        
         ctx!.strokeStyle = 'rgba(255,255,255,0.7)'
         ctx!.lineWidth = BORDER_WIDTH
         const inset = BORDER_WIDTH
@@ -453,7 +440,6 @@ export default function StickerWall() {
       rafId = requestAnimationFrame(drawFrame)
     }
 
-    
     import('matter-js').then((Matter) => {
       if (!alive) return
       matterRef.current = Matter
@@ -467,10 +453,36 @@ export default function StickerWall() {
       runner = Matter.Runner.create()
       Matter.Runner.run(runner, engine)
 
-      
-      
       resize()
-      mouse = Matter.Mouse.create(canvas!)
+      mouse = Matter.Mouse.create(canvas!) as MouseWithHandlers
+      canvas!.removeEventListener('wheel', mouse.mousewheel, ACTIVE_LISTENER)
+      canvas!.removeEventListener('touchmove', mouse.mousemove, ACTIVE_LISTENER)
+      canvas!.removeEventListener('touchstart', mouse.mousedown, ACTIVE_LISTENER)
+      canvas!.removeEventListener('touchend', mouse.mouseup, ACTIVE_LISTENER)
+
+      onTouchStart = (event) => {
+        const touch = event.changedTouches[0]
+        if (!touch || !mouse) return
+        const bounds = canvas!.getBoundingClientRect()
+        const point = { x: touch.clientX - bounds.left, y: touch.clientY - bounds.top }
+        const bodies = stickersRef.current.map((sticker) => sticker.body)
+        if (Matter.Query.point(bodies, point).length === 0) return
+        touchDragging = true
+        mouse.mousedown(event)
+      }
+      onTouchMove = (event) => {
+        if (touchDragging) mouse?.mousemove(event)
+      }
+      onTouchEnd = (event) => {
+        if (!touchDragging) return
+        touchDragging = false
+        mouse?.mouseup(event)
+      }
+      canvas!.addEventListener('touchstart', onTouchStart, ACTIVE_LISTENER)
+      canvas!.addEventListener('touchmove', onTouchMove, ACTIVE_LISTENER)
+      canvas!.addEventListener('touchend', onTouchEnd, ACTIVE_LISTENER)
+      canvas!.addEventListener('touchcancel', onTouchEnd, ACTIVE_LISTENER)
+      // Must equal canvas.width / clientWidth or drags miss on HiDPI.
       mouse.pixelRatio = dpr
       mouseConstraint = Matter.MouseConstraint.create(engine, {
         mouse,
@@ -494,6 +506,21 @@ export default function StickerWall() {
       alive = false
       cancelAnimationFrame(rafId)
       if (ro) ro.disconnect()
+      if (mouse) {
+        canvas.removeEventListener('mousemove', mouse.mousemove, PASSIVE_LISTENER)
+        canvas.removeEventListener('mousedown', mouse.mousedown, PASSIVE_LISTENER)
+        canvas.removeEventListener('mouseup', mouse.mouseup, PASSIVE_LISTENER)
+        canvas.removeEventListener('wheel', mouse.mousewheel, ACTIVE_LISTENER)
+        canvas.removeEventListener('touchmove', mouse.mousemove, ACTIVE_LISTENER)
+        canvas.removeEventListener('touchstart', mouse.mousedown, ACTIVE_LISTENER)
+        canvas.removeEventListener('touchend', mouse.mouseup, ACTIVE_LISTENER)
+      }
+      if (onTouchStart) canvas.removeEventListener('touchstart', onTouchStart, ACTIVE_LISTENER)
+      if (onTouchMove) canvas.removeEventListener('touchmove', onTouchMove, ACTIVE_LISTENER)
+      if (onTouchEnd) {
+        canvas.removeEventListener('touchend', onTouchEnd, ACTIVE_LISTENER)
+        canvas.removeEventListener('touchcancel', onTouchEnd, ACTIVE_LISTENER)
+      }
       const Matter = matterRef.current
       if (Matter) {
         if (runner) Matter.Runner.stop(runner)
@@ -508,7 +535,6 @@ export default function StickerWall() {
     }
   }, [])
 
-  
   function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const input = inputRef.current
@@ -556,7 +582,6 @@ export default function StickerWall() {
     Matter.Composite.add(world, body)
     stickersRef.current.push(sticker)
 
-    
     if (stickersRef.current.length > STICKER_CAP) {
       for (const s of stickersRef.current) {
         if (s.fadeStart === undefined) {
@@ -612,7 +637,7 @@ export default function StickerWall() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
         className="relative h-full w-full overflow-hidden"
-        style={{ background: bg, touchAction: 'none' }}
+        style={{ background: bg, touchAction: 'auto' }}
       >
         <canvas
           ref={canvasRef}

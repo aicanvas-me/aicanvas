@@ -6,6 +6,7 @@
  * CONTENT MARKER, and by SECRET SHAPE:
  *   - injected premium working folders   (components-workspace|design-systems)/zz-premium-*
  *   - generated premium shims            *.premium.generated.(ts|tsx), premium-registry.generated.*
+ *   - injected vault systems and output  design-systems/andromeda-pro/, the inject shims, _premium.json
  *   - the premium source marker          a fixed token the inject script stamps
  *                                         into every premium file (in ANY path)
  *   - a GitHub Personal Access Token     ghp_… / github_pat_…
@@ -56,6 +57,16 @@ const PREMIUM_PATH =
   /(^|\/)(components-workspace-premium|design-systems-premium)\/|(^|\/)(components-workspace|design-systems)\/zz-premium-/
 const PREMIUM_GENERATED =
   /\.premium\.generated\.(ts|tsx|js)$|(^|\/)premium-registry\.generated\.|(^|\/)component-copy\.premium\.generated\./
+// Whole-system trees inject copies from the vault (manifest key `systems`), and
+// the shims and stamps inject writes beside them. All gitignored, so only a
+// force-add reaches here. Slugs are static, one per injected-only system, the
+// same list as .gitignore. Case-insensitive: macOS treats Andromeda-Pro/ as the
+// same folder. app/_lib/andromeda-pro/ is the public site's own code, not matched.
+const INJECTED_SYSTEM = /^design-systems\/andromeda-pro\//i
+const INJECTED_GENERATED =
+  /^app\/lib\/(andromeda-(v2|pro|pro-examples|pro-helpers|pro-brain-teaser|brain-teaser)|premium-build-info)\.generated\.(ts|tsx)$/i
+// Inject's manifest stamp; brain bundles beside it are BRAIN_JSON below.
+const INJECTED_MANIFEST = /^registry-data\/_premium\.json$/i
 // Assembled from parts so THIS file does not contain the literal marker (which
 // would make the content scan flag the guard itself). Keep in sync with inject.
 const MARKER = new RegExp(['AICANVAS', 'PREMIUM', 'DO', 'NOT', 'COMMIT'].join('-'))
@@ -73,15 +84,24 @@ const PAT = /\bghp_[A-Za-z0-9]{36}\b|\bgithub_pat_[A-Za-z0-9_]{20,}\b/
 // inject follows (committed always wins, the vault only fills gaps), so it is
 // never reported. info/exclude is shared by every worktree, and an older
 // worktree's block can still list a file this branch has since committed.
+// The same holds for a file committed on public main or on the commit being
+// merged in: while a branch merges main, HEAD is still the old branch, so a
+// file main took over (the Andromeda components that went MIT) arrives staged
+// and would read as an injected copy. Anything already on public main is
+// public by definition, so those paths are the repo's own source too.
 function committedPaths() {
-  try {
-    return new Set(
-      execSync('git ls-tree -r --name-only HEAD design-systems', { encoding: 'utf8' })
-        .split('\n').map((s) => s.trim()).filter(Boolean),
-    )
-  } catch {
-    return new Set() // no HEAD yet / no git
+  const paths = new Set()
+  for (const ref of ['HEAD', 'MERGE_HEAD', 'origin/main']) {
+    try {
+      execSync(`git ls-tree -r --name-only ${ref} design-systems`, {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      })
+        .split('\n').map((s) => s.trim()).filter(Boolean)
+        .forEach((p) => paths.add(p))
+    } catch { /* ref absent: no HEAD yet, no merge in progress, or a shallow clone */ }
   }
+  return paths
 }
 function injectedFreeDsPaths() {
   const paths = new Set()
@@ -136,6 +156,9 @@ const violations = []
 for (const f of files) {
   if (PREMIUM_PATH.test(f)) violations.push(`tracked premium working folder: ${f}`)
   if (PREMIUM_GENERATED.test(f)) violations.push(`tracked premium generated shim: ${f}`)
+  if (INJECTED_SYSTEM.test(f)) violations.push(`injected vault design system: ${f} (vault-only, injected at build time)`)
+  if (INJECTED_GENERATED.test(f)) violations.push(`injected build shim: ${f} (written by inject-premium.mjs, never tracked)`)
+  if (INJECTED_MANIFEST.test(f)) violations.push(`injected premium manifest: ${f} (written by inject-premium.mjs, never tracked)`)
   if (FREE_DS_INJECTED.has(f)) {
     violations.push(
       `build-time-injected free design-system component: ${f} ` +

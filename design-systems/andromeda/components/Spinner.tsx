@@ -1,16 +1,3 @@
-// ============================================================
-// COMPONENT: Spinner
-// 3×3 grid of square pixels with a "snake game" trail running
-// clockwise around the perimeter. The 8 perimeter cells share a
-// single keyframe; each cell's animation-delay is negative so all
-// cells run on phase from the moment the spinner mounts. The
-// center cell stays as a static dim square. Variants only colour
-// the bright phase — the dim phase is always `text.faint`.
-//
-// Variants: default | accent | warning | fault
-// Sizes:    sm (14px) | md (20px) | lg (28px)
-// ============================================================
-
 'use client';
 
 import { forwardRef, useEffect } from 'react';
@@ -19,9 +6,6 @@ import { tokens } from '../tokens';
 import { andromedaVars } from './lib/utils';
 
 const STYLE_ID = 'andromeda-spinner-keyframes';
-// 0-37.5% bright, 37.5-100% dim. The 37.6% stop snaps the colour change so
-// the trail moves like discrete LCD pixels instead of fading. Over 1.2 s
-// of cycle the linear interpolation is imperceptible — it just looks crisp.
 const KEYFRAMES = `
   @keyframes andromeda-spinner-snake {
     0%, 37.5%   { background: var(--andromeda-spinner-bright); }
@@ -38,6 +22,7 @@ function ensureKeyframesInjected() {
   document.head.appendChild(style);
 }
 
+// wrap must equal 3 * cell + 2 * gap; change them together.
 const SIZE_MAP = {
   sm: { wrap: 14, cell: 4, gap: 1 },
   md: { wrap: 20, cell: 6, gap: 1 },
@@ -51,8 +36,6 @@ const colorByVariant = {
   fault:   `var(--andromeda-red-300, ${tokens.color.red[300]})`,
 };
 
-// Clockwise perimeter starting top-left. Center cell (1,1) is intentionally
-// excluded — it stays statically dim like a snake-game arena interior.
 const PERIMETER_ORDER = [
   [0, 0], [0, 1], [0, 2],
   [1, 2],
@@ -79,7 +62,6 @@ export type SpinnerProps = ComponentPropsWithoutRef<'span'> & {
   label?: string;
 };
 
-/** @type {React.ForwardRefExoticComponent<SpinnerProps & React.HTMLAttributes<HTMLSpanElement>>} */
 export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinner(
   { className, variant = 'default', size = 'md', label = 'Loading', style, ...props },
   ref,
@@ -88,8 +70,6 @@ export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinne
 
   const sz = SIZE_MAP[size] ?? SIZE_MAP.md;
   const bright = colorByVariant[variant] ?? colorByVariant.default;
-  // Resting cells are quiet graphics, not text: border weight, not text ink,
-  // so they recede on both grounds instead of reading as solid blocks.
   const dim = `var(--andromeda-border-base, ${tokens.color.border.base})`;
 
   const cells: ReactElement[] = [];
@@ -97,9 +77,6 @@ export const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(function Spinne
     for (let c = 0; c < 3; c++) {
       const peri = PERIMETER_ORDER.findIndex(([pr, pc]) => pr === r && pc === c);
       const isCenter = peri === -1;
-      // delay = -((STEPS - peri) % STEPS) * step — at t=0 cell `peri` is at
-      // (peri/STEPS) of its cycle. peri=0 starts bright; the trail extends
-      // backward from there (cells 7 and 6 are still inside the bright window).
       const delayMs = isCenter ? 0 : -((STEPS - peri) % STEPS) * STEP_MS;
       cells.push(
         <span

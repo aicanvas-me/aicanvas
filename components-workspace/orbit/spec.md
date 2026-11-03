@@ -29,7 +29,7 @@ Full circle of text in Anton bold. Four 4px dots in a 2×2 grid centered in the 
 - onTouchStart captures first touch, onTouchEnd clears with 600ms delay
 
 ## Tech notes
-- Anton from next/font/google (weight: '400', single-weight font)
+- Anton from Google Fonts (weight 400, single-weight font), loaded by a style element with an @import inside the root, so it runs in any React app
 - Circle layout: outer spans positioned via trigonometry (not SVG)
   - textRadius = radius * 0.88
   - angle = (i / TOTAL) * 2π − π/2

@@ -1,9 +1,5 @@
 'use client'
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents a voice-chat pill that expands into participant controls.
- * Opening reveals selectable people and speaking indicators before collapsing again.
- */
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -11,7 +7,6 @@ import { CaretDown, X, Check } from '@phosphor-icons/react'
 
 const MORPH = { type: 'spring' as const, stiffness: 320, damping: 30, mass: 1 }
 
-// customize: replace the participant names and avatars below
 const PEOPLE = [
   { id: 0, name: 'David',   avatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=240&h=240&fit=crop&q=80' },
   { id: 1, name: 'Kira',    avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=240&h=240&fit=crop&q=80' },
@@ -83,7 +78,6 @@ export default function VoiceChatPill() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center bg-[#E8E8DF] dark:bg-[#1A1A19]">
 
-      {}
       <motion.button
         ref={pillRef}
         onClick={handleOpen}
@@ -100,12 +94,10 @@ export default function VoiceChatPill() {
         }}
         className="flex items-center gap-3 rounded-full bg-[#1a1a18] px-2 py-2 pr-4 transition-colors duration-150 hover:bg-[#2d2d2b] dark:bg-[#e0dfd8] dark:hover:bg-[#d4d3cc]"
       >
-        {}
         <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#f1f1f0] text-[#1a1a18] dark:bg-[#1a1a18] dark:text-[#f1f1f0]">
           <SpeakingBars size={14} />
         </span>
 
-        {}
         <div className="flex">
           {visiblePeople.map((p, i) => (
             <motion.span
@@ -134,14 +126,12 @@ export default function VoiceChatPill() {
           ))}
         </div>
 
-        {}
         <span className="flex items-center gap-0.5 font-sans text-[14px] font-semibold text-[#f1f1f0] dark:text-[#1a1a18]">
           +{hiddenCount}
           <CaretDown weight="bold" size={13} />
         </span>
       </motion.button>
 
-      {}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -156,7 +146,6 @@ export default function VoiceChatPill() {
         )}
       </AnimatePresence>
 
-      {}
       <AnimatePresence>
         {open && origin && (
           <ModalCard origin={origin} onClose={close} speakerId={speakerId} />
@@ -176,6 +165,7 @@ function ModalCard({
   speakerId: number
 }) {
   const [joining, setJoining] = useState(false)
+  // Must match max-w-[440px] and px-4 below, or the morph starts at the wrong width.
   const targetW = typeof window !== 'undefined' ? Math.min(440, window.innerWidth - 32) : 440
 
   const initialOffsetX = origin.x + origin.w / 2 - window.innerWidth / 2
@@ -228,7 +218,6 @@ function ModalCard({
           animate="show"
           exit="exit"
         >
-          {}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: -6 },
@@ -250,7 +239,6 @@ function ModalCard({
             </motion.button>
           </motion.div>
 
-          {}
           <motion.div
             variants={{
               hidden: { opacity: 0, y: 8 },
@@ -298,7 +286,6 @@ function ModalCard({
             ))}
           </motion.div>
 
-          {}
           <motion.button
             variants={{
               hidden: { opacity: 0, y: 8 },

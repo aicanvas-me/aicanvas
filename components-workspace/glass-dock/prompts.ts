@@ -33,28 +33,29 @@ Sun #FFBE0B "Energy" · Heart #FF5C8A "Love" · MusicNote #FF7B54 "Joy" · Coffe
 
 Root: div relative flex h-full w-full items-center justify-end overflow-hidden bg-[#1A1A19] pb-8. Background <img>.
 
-GlassDock: const mouseX = useMotionValue(-200). Dock motion.div:
+GlassDock: const mouseX = useMotionValue(-200), plus openItems as a Set<string>. toggleItem(label) clones the Set and adds or removes that label. Dock motion.div:
 - initial {y:50}, animate {y:0}, transition {type:'spring', stiffness:180, damping:20}
 - onMouseMove: mouseX.set(e.clientX); onMouseLeave: mouseX.set(-200)
 - className "relative isolate mx-auto flex items-end gap-2 rounded-3xl px-4 pb-3 pt-3"
 - style: background 'rgba(255,255,255,0.06)', border '1px solid rgba(255,255,255,0.1)', boxShadow '0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)'
 - Separate blur layer: pointer-events-none absolute inset-0 z-[-1] rounded-3xl, style { backdropFilter:'blur(24px) saturate(1.8)', WebkitBackdropFilter same }. Non-animating layer so magnification frames don't re-blur.
-- Map DOCK_ITEMS to DockItem.
+- Map DOCK_ITEMS to DockItem, passing isOpen={openItems.has(item.label)} and onToggle={() => toggleItem(item.label)}.
 
-DockItem props: { icon: Icon, color, label, mouseX, index }.
-- ref = useRef<HTMLDivElement>(null)
+DockItem props: { icon: Icon, color, label, mouseX, index, isOpen, onToggle }.
+- ref = useRef<HTMLButtonElement>(null)
+- Keep touch-tooltip state and a timeout ref, clear the timeout on unmount, and show the tooltip for 1200ms after a touch pointerup.
 - distance = useTransform(mouseX, mx => { el=ref.current; if(!el||mx<0) return 200; const rect=el.getBoundingClientRect(); const center=rect.left+rect.width/2; return Math.abs(mx-center) })
 - rawSize = useTransform(distance, [0, MAG_RANGE], [ICON_SIZE*MAG_SCALE, ICON_SIZE])
 - size = useSpring(rawSize, { stiffness:300, damping:22, mass:0.5 })
 - y = useTransform(size, [ICON_SIZE, ICON_SIZE*MAG_SCALE], [0, -12])
 
-Outer motion.div: className "group relative flex cursor-pointer flex-col items-center", entrance initial {opacity:0, y:20} animate {opacity:1, y:0}, transition {type:'spring', stiffness:200, damping:18, delay: index*0.04}.
+Outer motion.button: type="button", aria-label={label}, aria-pressed={isOpen}, onClick={onToggle}, className "group relative flex cursor-pointer appearance-none flex-col items-center border-0 bg-transparent p-0 outline-none", entrance initial {opacity:0, y:20} animate {opacity:1, y:0}, transition {type:'spring', stiffness:200, damping:18, delay: index*0.04}.
 
-Tooltip motion.div: className "pointer-events-none absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium text-white/90 opacity-0 group-hover:opacity-100", style background 'rgba(255,255,255,0.1)', backdropFilter 'blur(16px)', border '1px solid rgba(255,255,255,0.1)', transition 'opacity 0.15s'.
+Tooltip motion.div: className "pointer-events-none absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium text-white/90 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100", with opacity-100 also applied while the touch tooltip state is visible. Style background 'rgba(255,255,255,0.1)', backdropFilter 'blur(16px)', border '1px solid rgba(255,255,255,0.1)', transition 'opacity 0.15s'.
 
-Icon badge motion.div (notification-style tinted, NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "flex items-center justify-center". Inside: <Icon size={22} weight="regular" style={{color}} />.
+Icon badge motion.div (notification-style tinted, NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "relative flex items-center justify-center group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[rgba(255,255,255,0.6)]". Inside: <Icon size={22} weight="regular" style={{color}} />. Under it, AnimatePresence springs a 4px dot in the item color from opacity/scale 0 to 1 when isOpen, positioned at bottom -6 and left calc(50% - 2px), with stiffness 500 and damping 30.
 
-Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, MusicNote, Coffee, Leaf, Star, Moon, Flame, Cloud from @phosphor-icons/react (all weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, MusicNote, Coffee, Leaf, Star, Moon, Flame, Cloud from @phosphor-icons/react (all weight="regular").
 
 ## Typography
 - Font: project default sans-serif

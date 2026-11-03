@@ -32,6 +32,16 @@ const PRESETS: Record<Preset, string> = {
  */
 export const TEMPLATE_ART_VERSION = 14
 
+/**
+ * The light-theme screenshot of a component that ships both themes.
+ * `scripts/screenshot.mjs --light` uploads it as <slug>-light.png. Built from
+ * the slug, not from the dark image's URL: a few dark shots carry older
+ * names (traveldeck's is floating-cards.png).
+ */
+export function lightShot(slug: string): string {
+  return `https://ik.imagekit.io/aitoolkit/${slug}-light.png`
+}
+
 export function optimizeImageKitUrl(url: string, preset: Preset = 'card'): string {
   if (!url.includes('ik.imagekit.io')) return url
   const sep = url.includes('?') ? '&' : '?'

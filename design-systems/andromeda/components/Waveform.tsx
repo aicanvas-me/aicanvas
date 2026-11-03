@@ -1,14 +1,3 @@
-// ============================================================================
-// WAVEFORM
-// ============================================================================
-// A fluid signal visualisation for live audio and telemetry. Use it when continuous
-// movement communicates that a measured signal is active, with a static frame retained
-// whenever motion is paused or reduced.
-//
-// Props: samples, speed, and amplitude shape the signal; height and color control its
-// presentation; showBars and showCenterline toggle reference layers; paused freezes motion;
-// className and style support root-level composition.
-
 'use client';
 
 import { forwardRef, useEffect, useMemo, useRef } from 'react';
@@ -32,8 +21,6 @@ const DEFAULT_WAVEFORM = Object.freeze({
   paused: false,
 });
 
-// Pure superposition of sines — fractional `t` keeps the morph smooth instead of snapping.
-// Values are normalised so geometry can scale independently through the amplitude prop.
 function computeValues(t: number, samples: number) {
   const out: number[] = new Array(samples);
   for (let i = 0; i < samples; i++) {
@@ -58,7 +45,6 @@ function pointsFrom(values: number[], height: number, amplitude: number) {
   return out;
 }
 
-// All mirrored level bars share one path, keeping each animation frame to one `d` write.
 function barsFrom(values: number[], height: number) {
   const stepX = WAVE_W / (values.length - 1);
   const midY = height / 2;
@@ -102,7 +88,6 @@ type WaveformOwnProps = {
 
 type WaveformProps = WaveformOwnProps & Omit<ComponentPropsWithoutRef<'div'>, keyof WaveformOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<WaveformProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const Waveform = forwardRef<HTMLDivElement, WaveformProps>(function Waveform(
   {
     samples = DEFAULT_WAVEFORM.samples,
@@ -122,9 +107,10 @@ export const Waveform = forwardRef<HTMLDivElement, WaveformProps>(function Wavef
   const reduced = useReducedMotion();
   const lineRef = useRef<SVGPolylineElement | null>(null);
   const barsRef = useRef<SVGPathElement | null>(null);
+  const timeRef = useRef(0);
   const sampleCount = Math.max(2, Math.floor(samples));
 
-  // Build the first frame during render so SSR and motion-free modes never start empty.
+  // Built during render so paused, reduced-motion and server-rendered views never start empty.
   const initialFrame = useMemo(() => {
     const values = computeValues(0, sampleCount);
     return {
@@ -134,24 +120,31 @@ export const Waveform = forwardRef<HTMLDivElement, WaveformProps>(function Wavef
   }, [sampleCount, height, amplitude]);
 
   useEffect(() => {
-    if (reduced || paused) return undefined;
+    if (reduced) return undefined;
 
-    let raf = 0;
-    let last = performance.now();
-    let t = 0;
-
-    const tick = (now: number) => {
-      const dt = (now - last) / 1000;
-      last = now;
-      t += dt * speed;
-
-      const values = computeValues(t, sampleCount);
+    const draw = () => {
+      const values = computeValues(timeRef.current, sampleCount);
       if (lineRef.current) {
         lineRef.current.setAttribute('points', pointsFrom(values, height, amplitude));
       }
       if (barsRef.current) {
         barsRef.current.setAttribute('d', barsFrom(values, height));
       }
+    };
+
+    if (paused) {
+      draw();
+      return undefined;
+    }
+
+    let raf = 0;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      const dt = (now - last) / 1000;
+      last = now;
+      timeRef.current += dt * speed;
+      draw();
 
       raf = requestAnimationFrame(tick);
     };

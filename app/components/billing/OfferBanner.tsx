@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Clock } from '@phosphor-icons/react'
+import { Clock } from '@/app/_icons/icons/clock'
 import { buttonClasses } from '../buttonClasses'
 import { usePremiumStatus } from './usePremiumStatus'
 import { track } from '../../lib/analytics'
@@ -46,18 +46,18 @@ function remaining(ms: number): string {
   return days > 0 ? `${days}d ${hh}:${mm}:${ss}` : `${hh}:${mm}:${ss}`
 }
 
-/** 1 October, spelled the way the pill's accessible name reads it. */
+/** The closing date, spelled the way the pill's accessible name reads it. */
 const ENDS_LABEL = OFFER_ENDS.toLocaleDateString('en-GB', {
   day: 'numeric',
   month: 'long',
   timeZone: 'Europe/Berlin',
 })
 
-/** The soft-olive chip without the states a control earns. Mirrors the
+/** The soft accent chip without the states a control earns. Mirrors the
  *  `accent` button at size xs; the hover, focus and press skins are exactly
  *  what is left out. */
 const STATIC_PILL =
-  'inline-flex items-center justify-center gap-1.5 rounded-full border border-olive-600/40 bg-olive-500/10 px-3 py-1.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400'
+  'inline-flex items-center justify-center gap-1.5 rounded-full border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent dark:border-accent/25'
 
 export function OfferBanner({ mode }: { mode: OfferPillMode }) {
   const premium = usePremiumStatus()
@@ -105,7 +105,7 @@ export function OfferBanner({ mode }: { mode: OfferPillMode }) {
   // static chip.
   const row = (
     <span aria-hidden className="inline-flex items-center gap-1.5">
-      <Clock weight="regular" size={16} />
+      <Clock size={16} />
       Founding Members
       <span className="opacity-60">·</span>
       <span className="line-through opacity-70">{usd(YEARLY_ANCHOR)}</span>
@@ -129,7 +129,7 @@ export function OfferBanner({ mode }: { mode: OfferPillMode }) {
           href="/pricing"
           onClick={() => track('Offer Banner Click', {})}
           aria-label={`${offer}. See pricing`}
-          className={`whitespace-nowrap ${buttonClasses({ variant: 'accent', size: 'xs', pill: true })}`}
+          className={`whitespace-nowrap ${buttonClasses({ variant: 'accent', size: 'xs' })}`}
         >
           {row}
         </Link>

@@ -1,11 +1,3 @@
-// ============================================================
-// COMPONENT: IconButton
-// Square, label-less companion to Button. Same variant + size
-// vocabulary so the two compose into a single coherent toolbar.
-// Variants: default | outline | ghost | destructive
-// Sizes:    sm (24px) | md (32px) | lg (40px)
-// ============================================================
-
 'use client';
 
 import { forwardRef } from 'react';
@@ -20,11 +12,7 @@ import { useReducedMotion } from './lib/motion';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
 
-// Touch-target expander — the visible square stays its desktop size token; on
-// coarse pointers a centered, transparent ::before overlay grows the *hit area*
-// toward spacing[10] (40px). The sm/md squares (24/32px) sit below a comfortable
-// touch minimum; this enlarges only what the finger lands on. Scoped className,
-// !important to out-specify the cva/inline base. the Andromeda responsive rules.
+// Touch screens: an invisible ::before grows the tap area to at least 40px (32px for sm).
 const TOUCH_TARGET_STYLE = `
   ${mq.coarse} {
     .andromeda-iconbtn-touch::before {
@@ -50,29 +38,22 @@ const TOUCH_TARGET_STYLE = `
   }
 `;
 
+// Returns seconds: Framer Motion takes seconds, tokens store ms.
 const ms = (v: string) => parseInt(v, 10) / 1000;
-// framer boundary: derived from tokens, cannot follow runtime var overrides
 const HOVER_TX: Transition = { duration: ms(tokens.motion.duration.normal), ease: easingArray(tokens.motion.easing.out) };
 const PRESS_TX: Transition = { duration: ms(tokens.motion.duration.fast),   ease: easingArray(tokens.motion.easing.in) };
 const HOVER_LIFT: TargetAndTransition = { y: -1, filter: 'brightness(1.05)', transition: HOVER_TX };
-// IconButton is denser than Button so its press is a touch deeper, matching
-// the original 0.95 active scale that signalled the squeeze on a small target.
 const PRESS_DOWN: TargetAndTransition = { scale: 0.95, transition: PRESS_TX };
 
 const iconButtonVariants = cva(
   [
-    // structural — perfectly square, icon dead-center
     'relative inline-flex items-center justify-center select-none flex-shrink-0',
     'border-[length:var(--andromeda-border-width,1px)] border-solid',
     'rounded-[var(--andromeda-radius-frame,0px)]',
     'p-0',
-    // motion — colours/border/shadow tween via CSS at duration.normal so the
-    // focus ring fades in. Lift + press are framer-motion gesture props on
-    // the motion.button root.
     'cursor-pointer',
     'transition-[background-color,border-color,box-shadow,color] [transition-duration:var(--andromeda-duration-normal)] [transition-timing-function:var(--andromeda-easing-out)]',
     '[backdrop-filter:blur(var(--andromeda-blur-sm,2px))] [-webkit-backdrop-filter:blur(var(--andromeda-blur-sm,2px))]',
-    // focus + disabled — match Button.tsx exactly
     'focus-visible:outline-none',
     'focus-visible:shadow-[0_0_0_var(--andromeda-border-width,1px)_var(--andromeda-accent-400),0_0_var(--andromeda-glow,8px)_var(--andromeda-accent-500)]',
     'disabled:cursor-not-allowed disabled:opacity-[var(--andromeda-opacity-disabled)] disabled:pointer-events-none',
@@ -117,8 +98,6 @@ const iconButtonVariants = cva(
         ],
       },
       size: {
-        // Each step matches a Button height so the two line up in a strip.
-        // Button sm = 24px, md = 32px, lg = 40px (computed from py + line-height).
         sm: 'w-[var(--andromeda-6)] h-[var(--andromeda-6)]',
         md: 'w-[var(--andromeda-8)] h-[var(--andromeda-8)]',
         lg: 'w-[var(--andromeda-10)] h-[var(--andromeda-10)]',
@@ -131,9 +110,6 @@ const iconButtonVariants = cva(
   },
 );
 
-// Not tokens.iconSize: that scale (12/16/18/22) doesn't contain 14, and
-// mapping by shifted names (md button -> iconSize.sm) would drift if the
-// icon grid is retuned. Deliberate per-button-size glyph scale.
 const ICON_SIZE: Record<NonNullable<VariantProps<typeof iconButtonVariants>['size']>, number> = { sm: 14, md: 16, lg: 20 };
 
 /**
@@ -163,7 +139,6 @@ type IconButtonOwnProps = {
 export type IconButtonProps = IconButtonOwnProps &
   Omit<HTMLMotionProps<'button'>, keyof IconButtonOwnProps>;
 
-/** @type {React.ForwardRefExoticComponent<IconButtonProps & React.ButtonHTMLAttributes<HTMLButtonElement>>} */
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(function IconButton(
   {
     className,

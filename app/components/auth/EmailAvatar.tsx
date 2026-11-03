@@ -1,6 +1,6 @@
 // Identity glyph for the signed-in user. Three states: a picked catalogue avatar
 // or the provider photo drawn alone (never a letter under it, catalogue art has
-// transparent areas the letter showed through); a flat olive-500 tile with the
+// transparent areas the letter showed through); a flat accent tile with the
 // first letter when there is no photo URL; and that same tile when a photo URL
 // fails to load.
 //
@@ -56,10 +56,10 @@ export function EmailAvatar({ email, photoUrl, className = '' }: Props) {
   return (
     <span
       aria-hidden="true"
-      // The olive tile belongs to the LETTER state only: behind a picture it put
-      // an olive rim around art drawn as a circle on transparent corners.
+      // The accent tile belongs to the LETTER state only: behind a picture it put
+      // an accent rim around art drawn as a circle on transparent corners.
       className={`relative flex items-center justify-center overflow-hidden border border-sand-200 font-semibold leading-none dark:border-sand-800 ${
-        photoUrl ? '' : 'bg-olive-500 text-sand-950'
+        photoUrl ? '' : 'bg-accent text-accent-foreground'
       } rounded-full ${className}`}
     >
       {photoUrl ? <AvatarPicture src={photoUrl} initial={initial} /> : initial}

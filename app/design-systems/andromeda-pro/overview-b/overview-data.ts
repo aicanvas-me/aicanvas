@@ -62,6 +62,8 @@ const TEMPLATE_BLURBS: Record<string, string> = {
     'A whole authentication flow: create an account, sign in, recover a password and set a new one.',
   'andromeda-pro-sign-up':
     'The same authentication flow with no columns: a hairline lattice is the ground and the form floats on it.',
+  'andromeda-pro-fintech-landing':
+    'A landing page for a money app: a product hero, use cases on tabs, live cards, security, plans and a journal, every section built from the system.',
   'andromeda-pro-city-operations':
     'A city operations centre: a live incident map, air and traffic readings, an alert queue and response trends.',
   'andromeda-pro-ai-chat':
@@ -82,6 +84,7 @@ export const TEMPLATE_IMAGE_FILE: Record<string, string> = {
   'andromeda-pro-signal-room': 'Signal_Room_pro_dark.png',
   'andromeda-pro-sign-in': 'Sign_in_pro_dark.png',
   'andromeda-pro-sign-up': 'Sign_up_pro_dark.png',
+  'andromeda-pro-fintech-landing': 'Fintech_landing_pro_dark.png',
   'andromeda-pro-city-operations': 'City_operations_pro_dark.png',
   'andromeda-pro-ai-chat': 'Ai_chat_pro_dark.png',
 }
@@ -94,6 +97,7 @@ const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
   'andromeda-pro-signal-room': 'Signal_Room_pro_light.png',
   'andromeda-pro-sign-in': 'Sign_in_pro_light.png',
   'andromeda-pro-sign-up': 'Sign_up_pro_light.png',
+  'andromeda-pro-fintech-landing': 'Fintech_landing_pro_light.png',
   'andromeda-pro-city-operations': 'City_operations_pro_light.png',
   'andromeda-pro-ai-chat': 'Ai_chat_pro_light.png',
 }
@@ -112,6 +116,7 @@ const TEMPLATE_ORDER = [
   'andromeda-pro-mission-control',
   'andromeda-pro-service-order',
   'andromeda-pro-resource-planning',
+  'andromeda-pro-fintech-landing',
 ]
 
 // City Operations leads the bento at double width and is the densest shot in

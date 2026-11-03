@@ -1,9 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Displays a responsive pull control whose slat animation swaps between moon and sun icons.
- */
 
 import { useState, useCallback, useLayoutEffect, useEffect, useRef } from 'react'
 import { motion, useAnimate, stagger } from 'framer-motion'
@@ -11,15 +8,15 @@ import { Moon, Sun } from '@phosphor-icons/react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 const SLATS      = 6
-const MAX_SIZE   = 80  // tune: raise to increase the maximum control size
-const MIN_SIZE   = 48  // tune: raise to increase the minimum control size
+const MAX_SIZE   = 80
+const MIN_SIZE   = 48
 
 export default function BlindPullToggle() {
   const [toggleDark, setToggleDark] = useState(true)
   const [pageIsDark, setPageIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
   const [animating, setAnimating]   = useState(false)
-  const [size, setSize]             = useState(MAX_SIZE) 
-  const sizeRef                     = useRef(MAX_SIZE)   
+  const [size, setSize]             = useState(MAX_SIZE)
+  const sizeRef                     = useRef(MAX_SIZE)
   const [scope, animate]            = useAnimate()
 
   useIsomorphicLayoutEffect(() => {
@@ -57,10 +54,10 @@ export default function BlindPullToggle() {
     return () => ro.disconnect()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const iconSize   = Math.round(size * 0.45)               // tune: raise the multiplier to enlarge the icon
-  const radius     = Math.round(size * 0.275)              // tune: raise the multiplier to round the corners further
-  const cordRestH  = Math.round(size * 0.30)               // tune: raise the multiplier to lengthen the resting cord
-  const dotSize    = Math.max(8, Math.round(size * 0.138)) // tune: raise the multiplier to enlarge the pull dot
+  const iconSize   = Math.round(size * 0.45)
+  const radius     = Math.round(size * 0.275)
+  const cordRestH  = Math.round(size * 0.30)
+  const dotSize    = Math.max(8, Math.round(size * 0.138))
 
   const previewBg    = pageIsDark ? '#110F0C' : '#EDEAE5'
   const buttonBg     = pageIsDark
@@ -83,8 +80,10 @@ export default function BlindPullToggle() {
     setAnimating(true)
 
     const pullH = Math.round(sizeRef.current * 0.65)
+    // Keep 0.30 equal to cordRestH's multiplier, or the cord settles at a new length.
     const restH = Math.round(sizeRef.current * 0.30)
 
+    // animate() finds .cord-line and .slat by class name: rename both sides together.
     await animate('.cord-line', { height: pullH }, { duration: 0.1, ease: [0.4, 0, 1, 1] })
     animate('.cord-line', { height: restH }, { type: 'spring', stiffness: 300, damping: 18 })
     await animate('.slat', { scaleY: 0 }, { delay: stagger(0.04), duration: 0.1, ease: 'easeIn' })

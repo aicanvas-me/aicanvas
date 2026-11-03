@@ -9,7 +9,7 @@ export const cube: MatrixSpec = {
   // Full-surface piece, framed exactly like the other Objects: a full-row card
   // and a positioned box that is the whole stage.
   render: (_size, props) => (
-    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative' }}>
+    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative', margin: '0 auto' }}>
       <Cube {...props} />
     </div>
   ),

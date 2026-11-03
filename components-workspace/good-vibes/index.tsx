@@ -1,17 +1,15 @@
 'use client'
 
-// npm install framer-motion next
+// npm install framer-motion
 // font: Science Gothic
-/**
- * Renders variable-font text whose glyphs react to pointer and touch proximity.
- * Nearby letters gain weight, scale, and spacing with eased falloff.
- */
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Science_Gothic } from 'next/font/google'
 
-const scienceGothic = Science_Gothic({ subsets: ['latin'] })
+// Science Gothic from Google Fonts, loaded by the stylesheet import inside the
+// root, so the component runs in any React app (Next.js, Vite, anything else).
+const FONT_FAMILY = "'Science Gothic', sans-serif"
+const FONT_URL = 'https://fonts.googleapis.com/css2?family=Science+Gothic:wght@100..900&display=swap'
 
 function useTheme(ref: React.RefObject<HTMLElement | null>) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
@@ -86,7 +84,6 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
 
 const LetterSpan = motion(LetterSpanComponent)
 
-// customize: change the text and pointer response values below
 const TEXT = 'GOOD VIBES'
 const INFLUENCE_RADIUS = 300
 const MAX_WEIGHT = 700
@@ -95,6 +92,7 @@ const MAX_SCALE = 2
 const MIN_SCALE = 1
 const MAX_LETTER_SPACING = 0.3
 const MIN_LETTER_SPACING = 0
+// Per-frame blend factor (0 to 1), not seconds: higher follows faster.
 const EASE_DURATION = 0.15
 
 export default function GoodVibes() {
@@ -211,14 +209,15 @@ export default function GoodVibes() {
   return (
     <div
       ref={containerRef}
-      className={`flex min-h-screen w-full flex-col items-center justify-center gap-8 px-6 sm:px-10 ${scienceGothic.className}`}
-      style={{ backgroundColor: bgColor }}
+      className={`flex min-h-screen w-full flex-col items-center justify-center gap-8 px-6 sm:px-10`}
+      style={{ backgroundColor: bgColor, fontFamily: FONT_FAMILY }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <style>{`@import url('${FONT_URL}');`}</style>
       <div className="flex flex-nowrap items-center justify-center gap-1 sm:gap-4">
         {TEXT.split('').map((letter, i) => (
           <LetterSpan
@@ -228,7 +227,7 @@ export default function GoodVibes() {
               if (el) lettersRef.current[i] = el
             }}
             textColor={textColor}
-            fontFamily={scienceGothic.style.fontFamily}
+            fontFamily={FONT_FAMILY}
           />
         ))}
       </div>

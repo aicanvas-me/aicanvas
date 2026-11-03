@@ -32,6 +32,7 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync
 import { join, dirname, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { FREE_DS_PLACEHOLDER_SENTINEL, DESIGN_SYSTEMS } from './lib/design-systems.config.mjs'
+import { ICONS_KEPT } from './lib/icon-source.mjs'
 
 const ROOT = process.cwd()
 const TARGET = join(ROOT, 'components-workspace-premium')
@@ -207,15 +208,19 @@ const V2_FALLBACK_NAMES = ['MetricChart', 'Gauge', 'Waveform', 'MediaCard', 'Dat
 // (ChoiceCardGroup, EmptyStateMedia). UPDATE when app code imports a new
 // v2-only name — same contract as V2_FALLBACK_NAMES above.
 const V2_ONLY_NAMES = [
+  'Accordion', 'AccordionContent', 'AccordionItem', 'AccordionTrigger',
   'Artifact', 'ArtifactAction', 'ArtifactActions', 'ArtifactClose', 'ArtifactContent',
   'ArtifactDescription', 'ArtifactHeader', 'ArtifactTitle',
-  'Burst', 'ChoiceCard', 'ChoiceCardGroup',
+  'BentoGrid', 'BentoGridItem', 'Burst', 'ChoiceCard', 'ChoiceCardGroup',
   'Collapsible', 'CollapsibleContent', 'CollapsibleTrigger', 'Combobox', 'Cube', 'EmptyStateMedia',
-  'FunnelChart', 'Item', 'ItemActions', 'ItemContent', 'ItemDescription', 'ItemMedia', 'ItemTitle',
-  'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Nodes', 'Orb',
+  'Footer', 'FooterWordmark', 'FunnelChart', 'Item', 'ItemActions', 'ItemContent', 'ItemDescription', 'ItemMedia', 'ItemTitle',
+  'LogoCloud', 'Marquee', 'Message', 'MessageActions', 'MessageAvatar', 'MessageContent', 'Navbar', 'Nodes', 'Orb',
+  'PaymentCard',
   'Popover', 'PopoverContent', 'PopoverLabel', 'PopoverSeparator', 'PopoverTrigger',
-  'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
-  'Sidebar', 'Skeleton', 'StrengthMeter', 'Suggestion', 'Tool', 'TopBar',
+  'PricingCard', 'PricingGrid', 'PromptInput', 'PromptInputSubmit', 'PromptInputTextarea', 'PromptInputToolbar', 'PromptInputTools',
+  'SectionHeading', 'Sidebar', 'Skeleton', 'Stepper', 'StepperDescription', 'StepperItem', 'StepperMeta', 'StepperTitle',
+  'StrengthMeter', 'Suggestion', 'Tabs', 'TabsContent', 'TabsList', 'TabsTrigger',
+  'Tool', 'TopBar',
 ]
 
 // components/lib/* modules the HELPERS shim re-exports (both trees have them),
@@ -482,22 +487,34 @@ function writeShimFile(outFile, root, injectedNames, fromV2Tree, headerLines, an
   if (fromV2Tree) {
     out.push('', `export { tokens } from '${root}/tokens'`)
   } else {
-    // v1 called the two semantic colour scales orange/red; v2 renamed them
-    // warning/danger. App code is written against the v2 names, so alias them
+    // v1 called three colour scales accent/orange/red; v2 renamed them
+    // brand/warning/danger. App code is written against the v2 names, so alias them
     // here rather than let a fork read undefined and throw at render — same
     // colours, same roles, nothing invented. What v1 genuinely lacks (`control`)
     // stays absent, and the one call site optional-chains it.
     // anyTypedDegraded (Pro only) types the merged object `any` — same runtime
-    // value, but Pro's token shape (brand/success/neutral/role/…, which v1
+    // value, but Pro's token shape (success/neutral/role/…, which v1
     // genuinely lacks) is never checked against it.
     out.push(
       '',
       `import { tokens as v1Tokens } from '${root}/tokens'`,
       `export const tokens${anyTypedDegraded ? ': any' : ''} = {`,
       '  ...v1Tokens,',
-      '  color: { ...v1Tokens.color, warning: v1Tokens.color.orange, danger: v1Tokens.color.red },',
+      '  color: { ...v1Tokens.color, brand: v1Tokens.color.accent, warning: v1Tokens.color.orange, danger: v1Tokens.color.red },',
       '}',
     )
+    // Pro only: Legacy's shim is written in production too and must not change.
+    if (anyTypedDegraded) {
+      out.push(
+        'const { surface: s, border: b, text: t, accent, orange, red } = v1Tokens.color',
+        'Object.assign(tokens.color, {',
+        '  success: accent,',
+        '  neutral: { 100: s.base, 200: s.raised, 300: s.overlay, 400: s.hover, 500: b.subtle, 600: s.active, 700: b.base, 800: b.bright, 900: b.strong, 1000: t.faint, 1100: t.muted, 1200: t.secondary, 1300: t.primary },',
+        '  status: { info: { mark: accent[300] }, success: { mark: accent[300] }, warning: { mark: orange[300] }, danger: { mark: red[300] } },',
+        '})',
+        'tokens.typography = { ...v1Tokens.typography, leading: {}, role: {} }',
+      )
+    }
   }
   out.push('', `export const V2_COMPONENT_NAMES = ${JSON.stringify(injectedNames)}`, '')
   writeFileSync(outFile, out.join('\n'))
@@ -625,6 +642,7 @@ function writeProHelpersShim(fromV2Tree) {
 const V2_EXAMPLE_EXPORTS = {
   AiChat: 'ai-chat',
   CityOperations: 'city-operations',
+  FintechLanding: 'fintech-landing',
   MissionControl: 'mission-control',
   ResourcePlanning: 'resource-planning',
   ServiceOrder: 'service-order',
@@ -1049,6 +1067,7 @@ if (!source) {
   // teaser modules must still exist — write both from the committed fallback.
   writeBrainTeaser(BRAIN_TEASER_MODULE, null)
   writeBrainTeaser(BRAIN_TEASER_PRO_MODULE, null)
+  rmSync(join(ROOT, ICONS_KEPT), { recursive: true, force: true })
   log('no PREMIUM_LOCAL_PATH and no GITHUB_PAT_PREMIUM — free-only build (skip).')
   process.exit(0)
 }
@@ -1476,6 +1495,20 @@ const shim = [...imports, '', ...decls, '', 'export const PREMIUM_COMPONENTS: Co
 writeFileSync(SHIM, shim)
 
 writeBuildInfo(builtSha, brainFileCounts)
+
+// The icon set ships from the same vault checkout; keep the parts the icon scripts
+// read (scripts/lib/icon-source.mjs) before the clone goes. Never fails the inject.
+rmSync(join(ROOT, ICONS_KEPT), { recursive: true, force: true })
+try {
+  const icons = join(source, 'icons')
+  if (source && existsSync(join(icons, 'react/IconBase.tsx'))) {
+    for (const part of ['react', 'src', 'svg', 'svg-duotone', 'svg-solid', 'svg-solid-duotone', 'batch-4.json']) {
+      if (existsSync(join(icons, part))) cpSync(join(icons, part), join(ROOT, ICONS_KEPT, part), { recursive: true })
+    }
+  }
+} catch (e) {
+  console.warn(`[inject-premium] icon source not kept: ${e.message}`)
+}
 
 if (tmpClone) rmSync(tmpClone, { recursive: true, force: true })
 log(

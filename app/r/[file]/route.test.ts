@@ -432,3 +432,37 @@ describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle wi
     )
   })
 })
+
+// Icon items exist only where the icon library checkout was found at build time.
+const ICON_ITEMS = existsSync(join(process.cwd(), 'registry-data', 'icon-search-duotone.json'))
+
+describe.skipIf(!ICON_ITEMS)('GET /r/icon-*.json — Line free, the other styles paid', () => {
+  const get = (file: string) =>
+    GET(new NextRequest(`http://localhost/r/${file}`), { params: Promise.resolve({ file }) })
+
+  it('hands a signed-in free account the real Line icon', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    const res = await get('icon-search.json')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('standalone')
+    expect(await res.text()).toContain('createIcon(')
+  })
+
+  it('locks every paid style for a free account, with no geometry in the reply', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    for (const file of ['icon-search-duotone.json', 'icon-search-solid.json', 'icon-search-solid-duotone.json']) {
+      const res = await get(file)
+      const body = await res.text()
+      expect(res.headers.get('X-AICanvas-Content-Type'), file).toBe('premium-standalone')
+      expect(body, file).not.toContain('createIcon(')
+      expect(body, file).toContain('pricing')
+    }
+  })
+
+  it('hands a premium account the real paid style', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'premium', userId: 'u1' })
+    const res = await get('icon-search-duotone.json')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('premium-standalone')
+    const item = (await res.json()) as { files: { content: string }[] }
+    expect(item.files[0]?.content).toContain('createIcon("search", "duotone"')
+  })
+})

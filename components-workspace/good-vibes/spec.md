@@ -24,7 +24,7 @@ Cursor-proximity based animation:
 Works on both mouse and touch. Component is fully interactive on mobile with no hover-only limitations.
 
 ## Tech notes
-- Science Gothic variable font from next/font/google
+- Science Gothic variable font from Google Fonts (weight 100 to 900), loaded by a style element with an @import inside the root, so it runs in any React app
 - Cursor-proximity per-letter animation using requestAnimationFrame at 60fps
 - Three animated properties per letter: font-weight, transform scale, letter-spacing (via CSS custom properties)
 - Distance-based influence curve with smoothstep falloff for natural feel

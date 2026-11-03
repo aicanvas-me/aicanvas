@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment -- the whole file opts out of type checking, see below */
 // @ts-nocheck — showcase consumes JSX design-system components whose
 // forwardRef wrappers lack TypeScript prop types in a .tsx context.
 //
@@ -24,7 +25,6 @@ import { Fragment, useRef, type ReactNode } from 'react'
 import Link from 'next/link'
 import { JetBrains_Mono } from 'next/font/google'
 import { ArrowUpRight } from '@phosphor-icons/react'
-import { SiteFooter } from '../../../../components/SiteFooter'
 import { tokens } from '../../../../lib/andromeda-pro.generated'
 import { mq } from '../../../../lib/andromeda-pro-helpers.generated'
 import { buttonVariants } from '../../../../lib/andromeda-pro.generated'
@@ -47,7 +47,7 @@ import { CATEGORY } from '../categories'
 // the meta order holds. A slug missing from the map lands in Other, visible.
 const CATEGORY_ORDER = [
   'Actions', 'Forms', 'Data display', 'Charts', 'Overlays', 'AI', 'Feedback',
-  'Navigation', 'Surfaces', 'Media', 'Objects', 'Other',
+  'Navigation', 'Surfaces', 'Media', 'Marketing', 'Objects', 'Other',
 ] as const
 const GROUPED_META = CATEGORY_ORDER.map((category) => ({
   category,
@@ -55,6 +55,7 @@ const GROUPED_META = CATEGORY_ORDER.map((category) => ({
 })).filter((g) => g.items.length > 0)
 import { ShowcaseInstall } from '../../../../_components/ShowcaseInstall'
 import { ShowcaseInstallCard } from '../../../../_components/ShowcaseInstallCard'
+import { PageCrumbs } from '../../../../components/PageCrumbs'
 
 // Same JetBrains Mono setup as the dashboard page so the showcase
 // matches the design system's only font exactly.
@@ -605,18 +606,7 @@ export default function AndromedaShowcase({
             toggle, so light-on-dark values cannot be pinned here. */}
         {/* A div, not a header: the site bar is the page's banner landmark. */}
         <div style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
-          <div
-            style={{
-              fontSize: 12,
-              fontWeight: 600,
-              color: 'var(--at-text-secondary, #DAE4A0)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.12em',
-              marginBottom: 10,
-            }}
-          >
-            Andromeda
-          </div>
+          <PageCrumbs />
           <h1
             className="as-title"
             style={{
@@ -862,7 +852,7 @@ export default function AndromedaShowcase({
                     marginTop: tokens.spacing[6],
                   }}
                 >
-                  /// {g.category} · {g.items.length}
+                  {'///'} {g.category} · {g.items.length}
                 </h2>
                 {g.items.map((m) => {
               const spec = SPEC_BY_SLUG[m.slug]
@@ -892,7 +882,6 @@ export default function AndromedaShowcase({
         {/* Bottom install card — the two packages, like the brain's card. */}
         <ShowcaseInstallCard />
       </div>
-      <SiteFooter />
     </div>
     </AndromedaThemeWrap>
   )

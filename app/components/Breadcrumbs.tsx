@@ -6,7 +6,7 @@ export type Crumb = {
   label: string
   // Present → clickable link. Absent → plain context (e.g. "Design Systems",
   // which has no dedicated page). The LAST crumb is always the current page and
-  // renders as active (olive, non-clickable) regardless of href.
+  // renders as active (accent, non-clickable) regardless of href.
   href?: string
 }
 
@@ -18,7 +18,9 @@ export type Crumb = {
 // keep their own chrome).
 export function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
   return (
-    <nav aria-label="Breadcrumb" className="flex min-w-0 items-center text-sm font-semibold">
+    // flex-wrap: on a phone a long trail breaks onto a second line instead of
+    // pushing the page sideways.
+    <nav aria-label="Breadcrumb" className="flex min-w-0 flex-wrap items-center gap-y-1 text-sm font-semibold">
       {crumbs.map((c, i) => {
         const isLast = i === crumbs.length - 1
         return (
@@ -29,7 +31,7 @@ export function Breadcrumbs({ crumbs }: { crumbs: Crumb[] }) {
               </span>
             )}
             {isLast ? (
-              <span aria-current="page" className="truncate text-olive-600 dark:text-olive-500">
+              <span aria-current="page" className="truncate text-accent">
                 {c.label}
               </span>
             ) : c.href ? (

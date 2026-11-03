@@ -3,7 +3,7 @@
 // Andromeda gallery INDEX — the public /system page. Same editorial rhythm as
 // the Lumen gallery: category eyebrow, oversized display heading, lede, one
 // search field, then category sections of cards linking to the
-// component pages. AI Canvas chrome (sand/olive, Manrope), so it reads as a
+// component pages. AI Canvas chrome (sand/accent, Manrope), so it reads as a
 // site page and follows the light/dark toggle.
 //
 // No Andromeda COMPONENT renders here, which is the point: the void surface and
@@ -11,8 +11,9 @@
 // page is site chrome.
 import { useMemo, useState } from 'react'
 import { MagnifyingGlass } from '@phosphor-icons/react'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { AndromedaComponentCard } from './AndromedaComponentCard'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 export type GalleryItem = {
   slug: string
@@ -55,8 +56,8 @@ export function AndromedaGallery({
   return (
     <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
       <header className="border-b border-sand-300 pb-10 dark:border-sand-800">
-        <PageOverline>Andromeda Pro · Components</PageOverline>
-        <PageTitle className="max-w-3xl">
+        <PageCrumbs />
+        <PageTitle gap="none" className="max-w-3xl">
           One control room.
           <br />
           {components.length > 0 ? `${components.length} components.` : 'Every component.'}
@@ -67,7 +68,7 @@ export function AndromedaGallery({
           variants and its interaction states.
         </PageLead>
 
-        <label className="mt-8 flex max-w-md items-center gap-3 rounded-xl border border-sand-300 bg-sand-100 px-4 py-3 transition-colors hover:border-sand-400 focus-within:border-olive-500 focus-within:ring-2 focus-within:ring-olive-500/20 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600">
+        <label className="mt-8 flex max-w-md items-center gap-3 rounded-control border border-sand-300 bg-sand-100 px-4 py-3 transition-colors hover:border-sand-400 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600">
           <MagnifyingGlass weight="regular" size={18} className="shrink-0 text-sand-500" />
           <span className="sr-only">Search Andromeda components</span>
           <input
@@ -95,7 +96,7 @@ export function AndromedaGallery({
               {items.length}
             </span>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => (
               <AndromedaComponentCard
                 key={item.slug}

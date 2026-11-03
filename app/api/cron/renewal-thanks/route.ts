@@ -3,6 +3,7 @@ import { createAdminClient } from '@/app/lib/supabase/admin'
 import { paddleApiBase } from '@/app/lib/paddle/server'
 import { mapSubscriptionFields } from '@/lib/identity/sub-mapping'
 import { renewalThanksEmail } from '@/app/lib/email/messages'
+import { isThankYouRenewal } from '@/app/lib/billing/renewal-thanks-cadence'
 import { CONTACT_FROM } from '@/app/lib/config'
 
 export const runtime = 'nodejs'
@@ -20,6 +21,10 @@ export const maxDuration = 60
  * row) and its next charge falls on the target date. Anything unclear is a skip:
  * a missed thank-you costs nothing, a "renews soon" sent to someone who
  * cancelled does.
+ *
+ * Not every renewal is thanked: annual plans every time, monthly plans the next
+ * renewal of anyone never thanked and then 12 months after the last thank-you
+ * (see app/lib/billing/renewal-thanks-cadence).
  *
  * This is not a transactional email (it thanks and asks for feedback), so it
  * only goes to someone whose Product updates toggle reads on: a
@@ -90,12 +95,17 @@ export async function GET(req: NextRequest) {
         skipped++; continue
       }
 
+      const plan = mapSubscriptionFields(sub).plan ?? 'monthly'
       const period = sub.current_billing_period as { starts_at?: unknown } | null | undefined
       const periodKey = typeof period?.starts_at === 'string' ? period.starts_at : nextBilledAt
 
       const { data: { user }, error: userErr } = await admin.auth.admin.getUserById(row.user_id)
       if (userErr) { console.error('[renewal-thanks] user read failed', row.user_id, userErr); failed++; continue }
-      if (!user?.email || user.user_metadata?.renewal_thanks_sent_for === periodKey) {
+      const lastThankedFor = user?.user_metadata?.renewal_thanks_sent_for
+      if (!user?.email || lastThankedFor === periodKey) {
+        skipped++; continue
+      }
+      if (!isThankYouRenewal({ plan, lastThankedFor, periodStart: periodKey })) {
         skipped++; continue
       }
 
@@ -123,7 +133,7 @@ export async function GET(req: NextRequest) {
       })
       if (flagErr) { console.error('[renewal-thanks] flag write failed', row.user_id, flagErr); failed++; continue }
 
-      const mail = renewalThanksEmail({ plan: mapSubscriptionFields(sub).plan ?? 'monthly' })
+      const mail = renewalThanksEmail({ plan })
       const sendRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         signal: AbortSignal.timeout(10_000),

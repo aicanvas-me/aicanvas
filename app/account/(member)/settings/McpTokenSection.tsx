@@ -2,9 +2,13 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Copy, Check, Eye, EyeSlash } from '@phosphor-icons/react'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Check } from '@/app/_icons/icons/check'
+import { Eye } from '@/app/_icons/icons/eye'
+import { EyeOff } from '@/app/_icons/icons/eye-off'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
+import { CARD } from '../../../components/PageKit'
 
 // ─── McpTokenSection ──────────────────────────────────────────────────────────
 // Shows the signed-in user's AI Canvas API token on /account/settings, the
@@ -32,9 +36,9 @@ export function McpTokenSection({ token }: Props) {
   }
 
   return (
-    <section className="rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
-      <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">API token</h2>
-      <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
+    <section className={`${CARD} p-6 sm:p-8`}>
+      <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">API token</h2>
+      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
         You don&rsquo;t need to copy this token for installs. Open any component and
         press <span className="font-semibold">Copy CLI</span>. The command it copies
         already includes your token.
@@ -42,7 +46,7 @@ export function McpTokenSection({ token }: Props) {
 
       {token ? (
         <>
-          <div className="mt-4 flex items-center justify-between gap-2 rounded-lg bg-sand-200 px-4 py-3 dark:bg-sand-950">
+          <div className="mt-5 flex items-center justify-between gap-2 rounded-inset border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-950">
             <code className="min-w-0 flex-1 truncate font-mono text-sm text-sand-800 dark:text-sand-300">
               {revealed ? token : MASKED}
             </code>
@@ -50,23 +54,23 @@ export function McpTokenSection({ token }: Props) {
               <button
                 type="button"
                 onClick={() => setRevealed((v) => !v)}
-                className="rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                className="rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                 aria-label={revealed ? 'Hide token' : 'Reveal token'}
                 aria-pressed={revealed}
               >
                 {revealed
-                  ? <EyeSlash weight="regular" size={16} />
-                  : <Eye weight="regular" size={16} />}
+                  ? <EyeOff size={16} />
+                  : <Eye size={16} />}
               </button>
               <button
                 type="button"
                 onClick={copy}
-                className="rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                className="rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                 aria-label="Copy token"
               >
                 {copied
-                  ? <Check weight="regular" size={16} className="text-olive-500" />
-                  : <Copy weight="regular" size={16} />}
+                  ? <Check size={16} className="text-success" />
+                  : <Copy size={16} />}
               </button>
             </div>
           </div>
@@ -81,7 +85,7 @@ export function McpTokenSection({ token }: Props) {
           </p>
         </>
       ) : (
-        <div className="mt-4 rounded-lg border border-sand-200 bg-sand-100 px-4 py-3 text-sm text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
+        <div className="mt-5 rounded-inset border border-sand-200 bg-sand-50 px-4 py-3 text-sm leading-relaxed text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
           Your token isn&rsquo;t set up yet. Install the AI Canvas MCP once, or
           reach out to support if this persists.
         </div>

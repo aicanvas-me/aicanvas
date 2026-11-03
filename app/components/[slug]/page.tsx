@@ -207,6 +207,7 @@ function toMeta(c: (typeof COMPONENTS)[number]): ComponentMeta {
     description: c.description,
     tags: c.tags,
     image: c.image,
+    dualTheme: c.dualTheme,
   }
 }
 

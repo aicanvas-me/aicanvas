@@ -1,7 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { CaretDown, PencilSimple, Trash, FolderOpen } from '@phosphor-icons/react'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
+import { Pen2 } from '@/app/_icons/icons/pen-2'
+import { Trash } from '@/app/_icons/icons/trash'
+import { FolderOpen } from '@/app/_icons/icons/folder-open'
 import { Button } from '../../../components/Button'
 
 // "My presets" dropdown for in-tool preset switching. Lists the user's
@@ -48,14 +51,13 @@ export function PresetMenu({ presets, loading, signedIn, onLoad, onRename, onDel
         onClick={() => setOpen((v) => !v)}
         className="relative"
       >
-        <FolderOpen size={12} weight="regular" />
+        <FolderOpen size={12} />
         My presets
         {signedIn && presets.length > 0 && (
           <span className="text-sand-500">({presets.length})</span>
         )}
-        <CaretDown
+        <ChevronDown
           size={12}
-          weight="regular"
           className={`absolute right-3 transition-transform ${open ? 'rotate-180' : ''}`}
         />
       </Button>
@@ -130,7 +132,7 @@ function PresetRow({
         title="Rename"
         className="rounded p-1.5 text-sand-500 transition-colors hover:bg-sand-50 hover:text-sand-900 dark:hover:bg-sand-800 dark:hover:text-sand-100"
       >
-        <PencilSimple size={14} weight="regular" />
+        <Pen2 size={14} />
       </button>
       <button
         type="button"
@@ -139,7 +141,7 @@ function PresetRow({
         title="Delete"
         className="rounded p-1.5 text-sand-500 transition-colors hover:bg-red-500/10 hover:text-red-500"
       >
-        <Trash size={14} weight="regular" />
+        <Trash size={14} />
       </button>
     </li>
   )

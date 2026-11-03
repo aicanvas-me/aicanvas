@@ -5,28 +5,28 @@ import { createPortal } from 'react-dom'
 import { Check, Copy, DownloadSimple, Terminal } from '@phosphor-icons/react'
 import { zipSync, strToU8 } from 'fflate'
 import { Button } from '../../../components/Button'
-import { useTopBarInstallSlot } from '../../../components/TopBar'
+import { PageCrumbs, useTopBarInstallSlot } from '../../../components/PageCrumbs'
 import { BrainWireframe } from '../overview-b/BrainWireframe'
 import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { useInstallToken } from '../../../_lib/useInstallToken'
 import { useCopied } from '@/app/components/useCopied'
 import { InstallCopiedToast } from '@/app/_components/InstallCopiedToast'
 
-// AI Canvas site tokens: sand neutrals + olive accent, Manrope UI + Geist mono for code.
+// AI Canvas site tokens: sand neutrals + the neutral ink accent, Manrope UI + Geist mono for code.
 // One flat palette per site theme, read through CSS variables (brainVars) so
 // the reader follows the `dark` class on <html>. accent.fill/on are the one
-// olive button: olive-500 with sand-950 ink in both themes, per the site rule.
+// accent button: ink fill with the page colour on it, flipping with the theme.
 const PALETTE = {
   dark: {
     'surface-base': '#0E0E0F', 'surface-raised': '#1B1B1C', 'surface-hover': '#232325', 'surface-active': '#2D2D2E',
     'text-primary': '#F4F4FA', 'text-secondary': '#9B9B9E', 'text-muted': '#9B9B9E', 'text-faint': '#7B7B7D',
-    'accent-100': '#EAF0C8', 'accent-300': '#DAE4A0', 'accent-400': '#A8B94D', 'accent-500': '#869631', 'accent-fill': '#A8B94D', 'accent-on': '#0E0E0F',
+    'accent-100': '#FFFFFF', 'accent-300': '#F4F4FA', 'accent-400': '#CACACD', 'accent-500': '#7B7B7D', 'accent-fill': '#F4F4FA', 'accent-on': '#0E0E0F',
     'border-subtle': '#2D2D2E', 'border-base': '#373738',
   },
   light: {
     'surface-base': '#F4F4FA', 'surface-raised': '#EEEEF3', 'surface-hover': '#DFDFE3', 'surface-active': '#CACACD',
     'text-primary': '#1B1B1C', 'text-secondary': '#575759', 'text-muted': '#575759', 'text-faint': '#7B7B7D',
-    'accent-100': '#4A551A', 'accent-300': '#869631', 'accent-400': '#869631', 'accent-500': '#A8B94D', 'accent-fill': '#A8B94D', 'accent-on': '#0E0E0F',
+    'accent-100': '#0E0E0F', 'accent-300': '#1B1B1C', 'accent-400': '#373738', 'accent-500': '#9B9B9E', 'accent-fill': '#1B1B1C', 'accent-on': '#F4F4FA',
     'border-subtle': '#DFDFE3', 'border-base': '#CACACD',
   },
 } as const
@@ -299,7 +299,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
 
   // Jump back to the top of the content whenever the active file changes.
   // The content panel is not a scroller itself (the page column scrolls), so
-  // scroll the column via scrollIntoView; scrollMarginTop clears the sticky bar.
+  // scroll the column via scrollIntoView; no bar sits inside that scroller.
   useEffect(() => {
     contentRef.current?.scrollIntoView({ block: 'start' })
   }, [activeFile])
@@ -337,18 +337,21 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
   // click). sizeKb is undefined until then — the copy omits it gracefully.
   const [zip, setZip] = useState<{ sizeKb: number; bytes: ReturnType<typeof zipSync> } | null>(null)
   useEffect(() => {
-    const entries: Record<string, Uint8Array> = {}
-    for (const f of files) entries[f.path] = strToU8(f.content)
-    const zipped = zipSync(entries, { level: 6 })
-    setZip({ sizeKb: Math.round(zipped.length / 1024), bytes: zipped })
+    // A task of its own, so the deflate never runs inside the commit.
+    const id = setTimeout(() => {
+      const entries: Record<string, Uint8Array> = {}
+      for (const f of files) entries[f.path] = strToU8(f.content)
+      const zipped = zipSync(entries, { level: 6 })
+      setZip({ sizeKb: Math.round(zipped.length / 1024), bytes: zipped })
+    }, 0)
+    return () => clearTimeout(id)
   }, [files])
   const sizeKb = zip?.sizeKb
 
-  // The Install button lives in the sticky top bar (template-page pattern) but
-  // is OWNED here, portaled into the bar's slot — the zip needs the loaded
-  // files, which only this component has. The slot div is display:none below
-  // md (the whole bar is), so a portal there would be invisible on mobile; the
-  // inline md:hidden fallback below covers small screens instead.
+  // The Install button lives in the crumb row above the reader (PageCrumbs)
+  // but is OWNED here, portaled into the row's slot — the zip needs the loaded
+  // files, which only this component has. The row is drawn at every width, so
+  // the one portal serves phones too.
   const installSlot = useTopBarInstallSlot()
 
   // Download the pre-zipped bytes — the secondary path for anyone who prefers a
@@ -409,8 +412,11 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
           width: 220,
           flexShrink: 0,
           borderLeft: `1px solid ${C.border.subtle}`,
+          // Sticks to the top of the Andromeda layout's own scroller
+          // (data-owns-scroll), which starts under the 56px site bar; the bar
+          // does not sit inside it, so nothing to clear.
           position: 'sticky',
-          top: 56,
+          top: 0,
           maxHeight: 'calc(100vh - 56px)',
           overflowY: 'auto',
           padding: '20px 0',
@@ -476,21 +482,20 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
         style={{
           flex: 1,
           minWidth: 0,
-          scrollMarginTop: 56,
+          scrollMarginTop: 0,
           display: 'flex',
           flexDirection: 'column',
         }}
       >
-        {/* Install lives in the sticky top bar (template pattern) via portal;
-            below md the bar is hidden, so an inline copy takes over. */}
+        {/* The crumb row, with the install control portaled into its slot. */}
+        <div className="brain-pad-x" style={{ maxWidth: 780, padding: '20px 40px 0' }}>
+          <PageCrumbs className="!mb-0" />
+        </div>
         {installSlot &&
           createPortal(
             <BrainInstallButton fileCount={fileCount} sizeKb={sizeKb} onDownloadZip={downloadBrain} />,
             installSlot,
           )}
-        <div className="brain-pad-x md:hidden" style={{ padding: '20px 40px 0', alignSelf: 'flex-start' }}>
-          <BrainInstallButton fileCount={fileCount} sizeKb={sizeKb} onDownloadZip={downloadBrain} />
-        </div>
 
         {/* Mobile file picker — the right nav is hidden below md, so navigate
             the brain files from this dropdown instead. */}
@@ -528,7 +533,7 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
         {/* The overview's brand-blue brain, INDEX ONLY, directly above the heading. */}
         {isIndex && (
           <div className="brain-pad-x" style={{ maxWidth: 780, padding: '4px 40px 0' }}>
-            <div className="relative overflow-hidden rounded-xl" style={{ height: 400 }}>
+            <div className="relative overflow-hidden rounded-inset" style={{ height: 400 }}>
               <BrainWireframe />
             </div>
           </div>
@@ -641,21 +646,21 @@ function BrainInstallButton({
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-xl border border-sand-300 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-300 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-400">
                   CLI install
                 </span>
-                <span className="rounded-md border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+                <span className="rounded-full border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
                   One command
                 </span>
               </div>
               <Button variant="outline" size="xs" onClick={handleCopy} aria-label="Copy install command">
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-olive-500 dark:text-olive-400" />
+                    <Check weight="regular" size={13} className="text-success" />
                     Copied
                   </>
                 ) : (
@@ -666,13 +671,13 @@ function BrainInstallButton({
                 )}
               </Button>
             </div>
-            <div className="rounded-lg bg-sand-950 px-4 py-3">
+            <div className="rounded-inset bg-sand-950 px-4 py-3">
               <code className="block break-all font-mono text-xs text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-olive-500 dark:text-olive-400" />
+                  <Check weight="bold" size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

@@ -1,21 +1,3 @@
-// ============================================================
-// COMPONENT: RadarChart
-// Andromeda-styled radar/spider chart built on recharts primitives.
-// No shadcn chart wrapper needed — everything is styled directly
-// via andromeda tokens and inline SVG overrides.
-//
-// Props:
-//   data        — array of { axis, [key]: number } objects
-//   series      — array of { key, label, color? } descriptors
-//   label       — card kicker label
-//   title       — card title
-//   description — card description line
-//   className / style passthrough
-//
-// Defaults to two series, "Nominal" and "Critical", forming a
-// ship-systems diagnostic if no data/series are provided.
-// ============================================================
-
 'use client';
 
 import { forwardRef, useId, useState, useEffect, useRef } from 'react';
@@ -36,12 +18,9 @@ import { useReducedMotion } from './lib/motion';
 import { tokens } from '../tokens';
 import { CornerMarkers } from './CornerMarkers';
 
-// Framer wants seconds + a cubic-bezier array; tokens store ms strings and
-// CSS cubic-bezier() strings. Convert at the boundary, same pattern as
-// StatTile / lib/motion.
+// Returns seconds: Framer Motion takes seconds, tokens store ms.
 const ms = (v: string) => parseInt(v, 10) / 1000;
-// Token-driven equivalent of tokens.motion.easing.out
-// ('cubic-bezier(0, 0, 0.2, 1)') — fast start, soft landing. Keep in sync.
+// Mirrors tokens.motion.easing.out; change both.
 const EASE_OUT: [number, number, number, number] = [0, 0, 0.2, 1];
 
 type RadarRow = Record<string, string | number>;
@@ -52,9 +31,7 @@ type RadarSeries = {
   color?: string;
 };
 
-// The colors recharts needs, as [custom property, dark literal]. recharts hands
-// its color props to SVG presentation ATTRIBUTES, which never substitute a
-// var(), so these are read back resolved from the DOM (./lib/theme).
+// Plot colours must come from c.*: raw token values stay dark-theme on light pages.
 const RADAR_VARS = {
   borderSubtle: ['--andromeda-border-subtle', tokens.color.border.subtle],
   accent300:    ['--andromeda-accent-300',    tokens.color.accent[300]],
@@ -63,11 +40,8 @@ const RADAR_VARS = {
 
 type RadarColors = Record<keyof typeof RADAR_VARS, string>;
 
-// `stop` is internal: the two built-in series name a palette stop instead of
-// carrying a fixed color, so they follow the theme. Callers set `color`.
 type RadarSeriesInternal = RadarSeries & { stop?: keyof RadarColors };
 
-// ── Default demo data ────────────────────────────────────────────────────────
 const DEFAULT_DATA: RadarRow[] = [
   { axis: 'HULL',   nominal: 92, critical: 68 },
   { axis: 'POWER',  nominal: 78, critical: 45 },
@@ -82,9 +56,6 @@ const DEFAULT_SERIES: RadarSeriesInternal[] = [
   { key: 'critical', label: 'Critical', stop: 'red300' },
 ];
 
-// ── Custom tooltip ───────────────────────────────────────────────────────────
-// recharts clones this element with the hover state, so every prop it injects
-// is optional here.
 type RadarTooltipEntry = {
   dataKey?: string;
   value?: string | number;
@@ -108,17 +79,12 @@ function SpaceTooltip({ active, payload, label, series, onFirstActive }: SpaceTo
 
   return (
     <div style={{
-      // Solid raised surface so text is always legible against any chart color
       background: themeColor.surface.raised,
-      // tokens.border.thin === 'var(--andromeda-border-width, 1px) solid'; keep
-      // color.border.base to stay pixel-identical (siblings use bright, but
-      // switching here would change default rendering — hard rule 1).
       border: `${tokens.border.thin} ${themeColor.border.base}`,
       padding: `${tokens.spacing[2]} ${tokens.spacing[3]}`,
       backdropFilter: 'blur(12px)',
       WebkitBackdropFilter: 'blur(12px)',
       position: 'relative',
-      // Slide-in from slightly above, fade in — triggered on every mount
       animation: 'andromeda-tooltip-in var(--andromeda-duration-normal, 140ms) var(--andromeda-easing-out, cubic-bezier(0, 0, 0.2, 1)) both',
       minWidth: 120,
     }}>
@@ -162,7 +128,6 @@ function SpaceTooltip({ active, payload, label, series, onFirstActive }: SpaceTo
   );
 }
 
-// ── Custom polar angle tick ──────────────────────────────────────────────────
 type SpaceTickProps = {
   x: number;
   y: number;
@@ -172,9 +137,7 @@ type SpaceTickProps = {
 };
 
 function SpaceTick(props: Partial<SpaceTickProps>) {
-  // recharts hands a polar tick element its full geometry when it clones it.
   const { x, y, payload, cx, cy } = props as SpaceTickProps;
-  // Nudge label slightly away from center
   const dx = x - cx;
   const dy = y - cy;
   const len = Math.sqrt(dx * dx + dy * dy) || 1;
@@ -189,7 +152,6 @@ function SpaceTick(props: Partial<SpaceTickProps>) {
       dominantBaseline="central"
       style={{
         fontFamily: tokens.typography.fontMono,
-        // Identity constant: the 9px polar tick is off the text scale
         fontSize: '9px',
         fill: themeColor.text.muted,
         textTransform: 'uppercase',
@@ -201,7 +163,6 @@ function SpaceTick(props: Partial<SpaceTickProps>) {
   );
 }
 
-// ── Component ─────────────────────────────────────────────────────────────────
 /**
  * @typedef {object} RadarSeries
  * @property {string} key Key in each data row whose numeric value this series plots.
@@ -218,9 +179,6 @@ function SpaceTick(props: Partial<SpaceTickProps>) {
  * @property {React.CSSProperties} [style] Inline styles merged onto the root element.
  */
 
-// After the tooltip first becomes active, we enable CSS transition on the
-// wrapper so movement between segments is smooth. On first appearance the
-// transition is suppressed so the tooltip snaps to the cursor (no fly from 0,0).
 function useTooltipTransition() {
   const [shown, setShown] = useState(false);
   const shownRef = useRef(false);
@@ -228,7 +186,6 @@ function useTooltipTransition() {
   const onFirstActivation = () => {
     if (shownRef.current) return;
     shownRef.current = true;
-    // One rAF: let recharts place wrapper at cursor, then enable transition.
     requestAnimationFrame(() => setShown(true));
   };
 
@@ -243,7 +200,6 @@ type RadarChartProps = ComponentPropsWithoutRef<'div'> & {
   description?: string;
 };
 
-/** @type {React.ForwardRefExoticComponent<RadarChartProps & React.HTMLAttributes<HTMLDivElement>>} */
 export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function RadarChart(
   {
     data = DEFAULT_DATA,
@@ -259,16 +215,8 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
 ) {
   const { shown, onFirstActivation } = useTooltipTransition();
 
-  // Stable chart id — see TrendChart. Without one, recharts' internal clipPath
-  // id comes from a module-level counter that desynchronises between the server
-  // render and hydration, producing a React mismatch on every SSR page.
   const chartId = `andromeda-radar-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`;
 
-  // Scroll-aware scan reveal. The chart wipes itself in top-to-bottom the
-  // first time it enters the viewport — a measurement revealing itself, not
-  // decoration. Gated on useInView so a RadarChart below the fold doesn't
-  // burn its reveal off-screen (same contract as StatTile / ProgressBar).
-  // `margin: '-10% 0px'` triggers slightly before it's fully on-screen.
   const internalRef = useRef<HTMLDivElement | null>(null);
   const setRefs = (node: HTMLDivElement | null) => {
     internalRef.current = node;
@@ -278,16 +226,10 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
   const inView = useInView(internalRef, { once: true, margin: '-10% 0px' });
   const reducedMotion = useReducedMotion();
 
-  // Plot colors, resolved off this chart's own root (see RADAR_VARS). An
-  // explicit series `color` always wins; otherwise the series draws its named
-  // stop, and anything unnamed falls back to the accent, as it always has.
   const c = useResolvedColors(internalRef, RADAR_VARS);
   const plotColor = (s: RadarSeries) =>
     s.color ?? c[(s as RadarSeriesInternal).stop ?? 'accent300'];
 
-  // Reduced motion: render the chart fully visible immediately — no wipe,
-  // no transition. Otherwise wipe from hidden (inset top→bottom) to fully
-  // revealed once in view.
   const revealProps = reducedMotion
     ? { initial: false, animate: { clipPath: 'inset(0 0 0% 0)', opacity: 1 } }
     : {
@@ -311,7 +253,6 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
     >
       <CornerMarkers />
 
-      {/* Header */}
       <div style={{
         position: 'relative',
         padding: `${tokens.spacing[3]} ${tokens.spacing[4]}`,
@@ -361,41 +302,29 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
         ) : null}
       </div>
 
-      {/* Chart area */}
       <div
         role="img"
         aria-label="Systems radar chart"
         style={{ padding: `${tokens.spacing[4]} ${tokens.spacing[2]}`, position: 'relative' }}
       >
 
-        {/* Scan-reveal wrapper. width/height 100% so ResponsiveContainer
-            still measures the chart correctly — the motion.div must not
-            collapse the sizing box. The clipPath wipe + opacity is driven
-            by `revealProps` above (static when reduced motion). */}
+        {/* ResponsiveContainer needs this box to have a real width and height. */}
         <motion.div style={{ width: '100%', height: 280 }} {...revealProps}>
         <ResponsiveContainer width="100%" height={280}>
           <ReRadarChart id={chartId} data={data} margin={{ top: 16, right: 24, bottom: 16, left: 24 }}>
-            {/* Grid rings */}
-            {/* RESOLVED: recharts attribute sink, var() cannot resolve */}
             <PolarGrid
               stroke={c.borderSubtle}
               strokeWidth={parseInt(tokens.border.width)}
               gridType="polygon"
             />
 
-            {/* Axis labels */}
             <PolarAngleAxis
               dataKey="axis"
               tick={<SpaceTick />}
               tickLine={false}
-              // RESOLVED: recharts attribute sink, var() cannot resolve
               axisLine={{ stroke: c.borderSubtle, strokeWidth: parseInt(tokens.border.width) }}
             />
 
-            {/* isAnimationActive always off — recharts never tweens position.
-                CSS transition on wrapperStyle handles smooth between-segment
-                glide, but only after first activation (shown=true), so the
-                first appearance snaps to cursor with no travel from (0,0). */}
             <Tooltip
               cursor={false}
               isAnimationActive={false}
@@ -408,8 +337,6 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
               }}
             />
 
-            {/* Series */}
-            {/* RESOLVED: recharts attribute sink, var() cannot resolve */}
             {series.map((s, i) => (
               <Radar
                 key={s.key}
@@ -431,7 +358,6 @@ export const RadarChart = forwardRef<HTMLDivElement, RadarChartProps>(function R
         </motion.div>
       </div>
 
-      {/* Legend */}
       <div style={{
         position: 'relative',
         padding: `${tokens.spacing[2]} ${tokens.spacing[4]} ${tokens.spacing[3]}`,

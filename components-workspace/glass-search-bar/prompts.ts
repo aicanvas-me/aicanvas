@@ -27,7 +27,7 @@ Layout: container \`absolute w-[calc(100%-2rem)] max-w-[380px]\`, positioned at 
 Search bar: 48px tall, \`borderRadius: 24\`, glass panel:
 - \`background: rgba(255,255,255,0.08)\`
 - \`border: 1px solid rgba(255,255,255,0.1)\`
-- \`boxShadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)\`
+- \`boxShadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)\` (the two fully transparent trailing layers match the active glow below layer for layer, same count, order and number of lengths, so the glow fades in and out instead of snapping)
 - separate non-animating absolute blur layer: \`backdropFilter: blur(24px) saturate(1.8)\`
 
 When active (focused), animate boxShadow to:
@@ -67,7 +67,7 @@ Layout: container \`absolute w-[calc(100%-2rem)] max-w-[380px]\`, positioned at 
 Search bar: 48px tall, \`borderRadius: 24\`, glass panel —
 - \`background: rgba(255,255,255,0.08)\`
 - \`border: 1px solid rgba(255,255,255,0.1)\`
-- \`boxShadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)\`
+- \`boxShadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)\` (the two fully transparent trailing layers match the active glow below layer for layer, same count, order and number of lengths, so the glow fades in and out instead of snapping)
 - separate non-animating absolute blur layer: \`backdropFilter: blur(24px) saturate(1.8)\`
 
 When active (focused), animate boxShadow to:
@@ -107,7 +107,7 @@ Layout: container \`absolute w-[calc(100%-2rem)] max-w-[380px]\`, positioned at 
 Search bar: 48px tall, \`borderRadius: 24\`, glass panel —
 - \`background: rgba(255,255,255,0.08)\`
 - \`border: 1px solid rgba(255,255,255,0.1)\`
-- \`boxShadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08)\`
+- \`boxShadow: 0 8px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08), 0 0 0 0 rgba(255,255,255,0), 0 0 0 rgba(255,255,255,0)\` (the two fully transparent trailing layers match the active glow below layer for layer, same count, order and number of lengths, so the glow fades in and out instead of snapping)
 - separate non-animating absolute blur layer: \`backdropFilter: blur(24px) saturate(1.8)\`
 
 When active (focused), animate boxShadow to:

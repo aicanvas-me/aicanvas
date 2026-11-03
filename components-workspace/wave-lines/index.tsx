@@ -1,28 +1,18 @@
 'use client'
 
-/**
- * Renders a theme-aware canvas field of vertically sampled wave lines.
- * Pointer presence amplifies the field and repels nearby line segments.
- */
 import { useLayoutEffect, useEffect, useRef, useState } from 'react'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
 
-// tune: raise to spread the lines farther apart
-const SPACING      = 32     
-// tune: lower to smooth each line with more samples
-const ROW_STEP     = 4      
-// tune: raise to increase resting wave amplitude
-const AMP          = 18     
-const FREQ_Y       = 0.015  
-const FREQ_X       = 0.006  
-// tune: raise to amplify the field further on hover
-const HOVER_BOOST  = 5.0    
-// tune: raise to strengthen local pointer repulsion
-const LOCAL_AMP    = 58     
-// tune: raise to widen local pointer repulsion
-const LOCAL_RADIUS = 220    
+const SPACING      = 32
+const ROW_STEP     = 4
+const AMP          = 18
+const FREQ_Y       = 0.015
+const FREQ_X       = 0.006
+const HOVER_BOOST  = 5.0
+const LOCAL_AMP    = 58
+const LOCAL_RADIUS = 220
 const LINE_A_DARK  = 0.55
 const LINE_A_LIGHT = 0.75
 
@@ -33,7 +23,6 @@ export default function WaveLines() {
   const isDarkRef = useRef(typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
   const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
 
-  
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current
     if (!el) return
@@ -53,7 +42,6 @@ export default function WaveLines() {
     return () => observer.disconnect()
   }, [])
 
-  
   useEffect(() => {
     const canvas = canvasRef.current!
     const ctx    = canvas.getContext('2d')!
@@ -84,7 +72,6 @@ export default function WaveLines() {
       if (!alive) return
       t += 0.003
 
-      
       const hasHover = mouseRef.current !== null
       hoverStr += ((hasHover ? 1 : 0) - hoverStr) * (hasHover ? 0.018 : 0.010)
 
@@ -101,7 +88,6 @@ export default function WaveLines() {
       ctx.strokeStyle = `rgba(${dotRGB},${lineA.toFixed(3)})`
       ctx.lineWidth = 0.8
 
-      
       for (let c = 0; c < cols; c++) {
         const rx = ox + c * SPACING
         ctx.beginPath()
@@ -111,13 +97,10 @@ export default function WaveLines() {
         for (let r = 0; r <= rows; r++) {
           const ry = r * ROW_STEP
 
-          
           const wx = amp * Math.sin(ry * FREQ_Y + rx * FREQ_X + t)
                    + amp * 0.38 * Math.sin(ry * FREQ_Y * 1.6 + rx * FREQ_X * 1.4 + t * 1.5 + 1.1)
-          
           const wy = amp * 0.12 * Math.cos(rx * FREQ_X * 0.9 + ry * FREQ_Y * 0.4 + t * 0.8)
 
-          
           const dx = rx - mx
           const dy = ry - my
           const dist2 = dx * dx + dy * dy
@@ -135,7 +118,6 @@ export default function WaveLines() {
           if (r === 0) {
             ctx.moveTo(x, y)
           } else {
-            
             const mx2 = (prevX + x) / 2
             const my2 = (prevY + y) / 2
             ctx.quadraticCurveTo(prevX, prevY, mx2, my2)
@@ -143,7 +125,6 @@ export default function WaveLines() {
           prevX = x
           prevY = y
         }
-        
         ctx.lineTo(prevX, prevY)
         ctx.stroke()
       }

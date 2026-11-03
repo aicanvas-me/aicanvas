@@ -50,10 +50,6 @@ describe('classifyContent', () => {
     expect(classifyContent('glass-navbar', lookup)).toBe('standalone')
   })
 
-  it('keeps a name-colliding standalone as standalone (andromeda-button is NOT the system)', () => {
-    expect(classifyContent('andromeda-button', lookup)).toBe('standalone')
-  })
-
   it('classifies an individual design-system component as metered (not premium)', () => {
     // Individual components are free-metered like standalones; only templates
     // and whole-system aggregates stay premium.
@@ -89,8 +85,19 @@ describe('classifyContent', () => {
     expect(classifyContent('registry', lookup)).toBe('meta')
     expect(classifyContent('aicanvas-mcp', lookup)).toBe('meta')
     expect(classifyContent('aicanvas-props', lookup)).toBe('meta')
+    // the icon catalog: names, categories and tags only, no geometry
+    expect(classifyContent('icons-index', lookup)).toBe('meta')
     // the free token foundation is meta — uncounted, never gated (c3a3a1e)
     expect(classifyContent('andromeda-tokens', lookup)).toBe('meta')
+  })
+
+  it('gates the three paid icon styles and keeps Line, the base and the Line set free', () => {
+    for (const slug of ['icon-search-duotone', 'icon-search-solid', 'icon-search-solid-duotone', 'icon-heart-solid.json']) {
+      expect(classifyContent(slug, lookup), slug).toBe('premium-standalone')
+    }
+    for (const slug of ['icon-search', 'icon-base', 'icons', 'icon-arrow-up-right']) {
+      expect(classifyContent(slug, lookup), slug).toBe('standalone')
+    }
   })
 
   it('strips a .json suffix before classifying', () => {

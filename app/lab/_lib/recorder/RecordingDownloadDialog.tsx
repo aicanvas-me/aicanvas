@@ -7,7 +7,10 @@
 // so the lab popups feel consistent.
 
 import { useEffect, useState } from 'react'
-import { X, FilmReel, FilmSlate, CheckCircle } from '@phosphor-icons/react'
+import { X } from '@/app/_icons/icons/x'
+import { FilmReel } from '@/app/_icons/icons/film-reel'
+import { Clapperboard } from '@/app/_icons/icons/clapperboard'
+import { CircleCheckSolid } from '@/app/_icons/icons/circle-check-solid'
 import { Button } from '../../../components/Button'
 
 type Props = {
@@ -114,7 +117,7 @@ export function RecordingDownloadDialog({
           aria-label="Close"
           className="absolute right-3 top-3"
         >
-          <X weight="regular" size={18} />
+          <X size={18} />
         </Button>
 
         {savingFps === null ? (
@@ -131,7 +134,7 @@ export function RecordingDownloadDialog({
                 label="60 fps"
                 sublabel="Smooth motion"
                 sizeHint={formatMB(sizeAt60)}
-                icon={<FilmReel weight="regular" size={22} />}
+                icon={<FilmReel size={22} />}
                 badge="Original"
                 onClick={() => handlePick(60)}
               />
@@ -139,7 +142,7 @@ export function RecordingDownloadDialog({
                 label="30 fps"
                 sublabel="Smaller file, share-friendly"
                 sizeHint={`~${formatMB(sizeAt30)}`}
-                icon={<FilmSlate weight="regular" size={22} />}
+                icon={<Clapperboard size={22} />}
                 onClick={() => handlePick(30)}
               />
             </div>
@@ -170,7 +173,7 @@ function SavingView({ fps }: { fps: 30 | 60 }) {
       : "It'll land in your downloads when the re-encode finishes. You can close this and keep working."
   return (
     <div className="flex flex-col items-center gap-3 py-6 text-center">
-      <CheckCircle weight="fill" size={36} className="text-olive-500 dark:text-olive-400" />
+      <CircleCheckSolid size={36} className="text-success" />
       <h2 className="text-xl font-bold text-sand-900 dark:text-sand-50">{headline}</h2>
       <p className="max-w-sm text-sm text-sand-600 dark:text-sand-400">{body}</p>
     </div>
@@ -199,12 +202,12 @@ function DownloadCard({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="group relative flex flex-col items-start gap-2 rounded-lg border border-sand-300 bg-sand-100 p-4 text-left transition-colors hover:border-olive-500 hover:bg-sand-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-sand-700 dark:bg-sand-800 dark:hover:border-olive-400 dark:hover:bg-sand-800"
+      className="group relative flex flex-col items-start gap-2 rounded-lg border border-sand-300 bg-sand-100 p-4 text-left transition-colors hover:border-accent hover:bg-sand-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-sand-700 dark:bg-sand-800 dark:hover:bg-sand-800"
     >
       <div className="flex w-full items-center justify-between">
         <div className="text-sand-700 dark:text-sand-300">{icon}</div>
         {badge && (
-          <span className="rounded-full bg-olive-500/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+          <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
             {badge}
           </span>
         )}

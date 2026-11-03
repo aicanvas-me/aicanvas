@@ -98,7 +98,7 @@ export const promptInput: MatrixSpec = {
   wide: true,
   statePairColumns: true,
   render: (_size, props) => (
-    <div style={{ width: '100%', maxWidth: 640 }}>
+    <div style={{ width: '100%', maxWidth: 640, margin: '0 auto' }}>
       <LiveComposer {...props} />
     </div>
   ),

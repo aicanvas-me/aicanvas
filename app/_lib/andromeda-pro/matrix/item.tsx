@@ -73,7 +73,7 @@ export const item: MatrixSpec = {
     const { interactive, ...rest } = props
     const asControl = interactive || c?.label === REST.label
     return (
-      <div style={{ width: 260, maxWidth: '100%' }}>
+      <div style={{ width: 260, maxWidth: '100%', margin: '0 auto' }}>
         {asControl ? <CheckRow size={size ?? 'md'} {...rest} /> : <StaticRow size={size ?? 'md'} {...rest} />}
       </div>
     )

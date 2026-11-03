@@ -290,7 +290,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'table',
     name: 'Table',
     description:
-      'Compound data-table primitive: Table / TableHead / TableBody / TableRow / TableHeader / TableCell. Sortable column headers, row hover highlight, selected-row accent edge. Render TableStyles once on the page to enable the hover styling.',
+      'Compound data-table primitive: Table / TableHead / TableBody / TableRow / TableHeader / TableCell. Sortable column headers, row hover highlight, selected-row accent edge. Render TableStyles once on the page to enable the hover styling. On narrow screens, it scrolls sideways; use DataTable for phone layouts.',
     sourceFile: 'Table.tsx',
     image: 'https://ik.imagekit.io/aitoolkit/andromeda/table.png?v=3',
   },
@@ -328,9 +328,9 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
   },
 ]
 
-// Per-file registry-slug overrides. Button's natural slug (andromeda-button)
-// is owned by the free standalone in components-workspace/andromeda-button/,
-// so the design-system Button gets its own slug. Source of truth:
+// Per-file registry-slug overrides. The design-system Button ships as
+// andromeda-button-system: that slug is what Saved rows and install commands
+// already hold, and the retired andromeda-button install URL redirects to it. Source of truth:
 // scripts/lib/design-systems.config.mjs `slugOverrides` — mirrored here (typed,
 // Node-free) for use by the component page (forward) and the Saved list
 // (reverse, to resolve a saved registry slug back to its page + display name).

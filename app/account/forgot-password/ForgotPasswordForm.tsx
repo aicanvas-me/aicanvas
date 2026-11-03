@@ -9,15 +9,21 @@ import { AuthPagePopup } from '../AuthPagePopup'
 
 // ─── ForgotPasswordForm ──────────────────────────────────────────────────────
 // Step 1 of recovery: user enters email, we send a Supabase recovery link.
-// The email's link points at /account/auth/callback?next=/account/reset-password
-// — the existing callback exchanges the code for a recovery session and then
-// the user lands on the reset-password page already authenticated.
+// The email's link lands on /account/auth/confirm, which verifies it on our
+// server (any browser works), sets the recovery marker, and sends the user to
+// the reset-password page already authenticated. A reset link always goes to
+// the reset page, so `redirectTo` below no longer steers it.
 
-export function ForgotPasswordForm() {
+type Props = {
+  /** Shown on first paint, e.g. when a reset link had already been used. */
+  initialError?: string | null
+}
+
+export function ForgotPasswordForm({ initialError = null }: Props) {
   const [email, setEmail] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [sent, setSent] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(initialError)
 
   // Any edit clears the last message: a note about an address the user has
   // since corrected is worse than none.
@@ -43,68 +49,68 @@ export function ForgotPasswordForm() {
 
   return (
     <AuthPagePopup closeHref="/account/sign-in">
-      <h1 className="text-2xl font-bold text-sand-900 dark:text-sand-50">
+      <h1 className="pr-10 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
         Reset your password
       </h1>
-        <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
-          Enter the email on your account and we&apos;ll send you a link to set a new
-          password.
-        </p>
+      <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+        Enter the email on your account and we&apos;ll send you a link to set a new
+        password.
+      </p>
 
-        {sent ? (
-          <div className="mt-6 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
-            If an account uses <strong>{email}</strong>, a reset link is on its
-            way. Check your inbox (and spam folder) — the link expires in about
-            an hour.
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
-              >
-                Email
-              </label>
-              <input
-                id="email"
-                type="email"
-                required
-                autoFocus
-                autoComplete="email"
-                placeholder="you@example.com"
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value)
-                  clearStatus()
-                }}
-                className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-700 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-600"
-              />
-            </div>
-
-            {error && (
-              <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
-                {error}
-              </div>
-            )}
-
-            <Button
-              type="submit"
-              variant="primary"
-              size="md"
-              fullWidth
-              disabled={submitting}
+      {sent ? (
+        <div className="mt-6 rounded-inset border border-accent/30 bg-accent/10 p-4 text-sm leading-relaxed text-sand-900 dark:text-sand-100">
+          If an account uses <strong>{email}</strong>, a reset link is on its
+          way. Check your inbox (and spam folder) — the link expires in about
+          an hour.
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div>
+            <label
+              htmlFor="email"
+              className="mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400"
             >
-              {submitting ? 'Sending…' : 'Send reset link'}
-            </Button>
-          </form>
-        )}
+              Email
+            </label>
+            <input
+              id="email"
+              type="email"
+              required
+              autoFocus
+              autoComplete="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                clearStatus()
+              }}
+              className="w-full rounded-control border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-accent focus:ring-2 focus:ring-accent/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
+            />
+          </div>
+
+          {error && (
+            <div role="alert" className="rounded-inset border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+              {error}
+            </div>
+          )}
+
+          <Button
+            type="submit"
+            variant="primary"
+            size="md"
+            fullWidth
+            disabled={submitting}
+          >
+            {submitting ? 'Sending…' : 'Send reset link'}
+          </Button>
+        </form>
+      )}
 
       <p className="mt-6 text-center text-sm text-sand-600 dark:text-sand-400">
         Remembered it?{' '}
         <Link
           href="/account/sign-in"
-          className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
+          className="font-semibold text-accent hover:underline"
         >
           Sign in
         </Link>

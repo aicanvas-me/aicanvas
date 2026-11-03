@@ -68,8 +68,10 @@ const INTERACTIONS = {
     await page.waitForTimeout(750) // slide-in spring
   },
   // Tooltip is hover-only — reveal one bubble so the card isn't just icons.
+  // Hover the first button of the BOTTOM row: a top bubble covers the row
+  // label above it, a bottom one opens into empty space.
   tooltip: async (frame, page) => {
-    await frame.locator('button').first().hover()
+    await frame.locator('button').nth(3).hover()
     await page.waitForTimeout(450)
   },
   // The cube flies in over 2s the first time it is on screen; shoot it landed.

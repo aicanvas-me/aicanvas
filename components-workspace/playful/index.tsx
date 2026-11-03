@@ -1,17 +1,15 @@
 'use client'
 
-// npm install framer-motion next
+// npm install framer-motion
 // font: Science Gothic
-/**
- * Renders variable-font lettering that responds to pointer proximity.
- * Nearby glyphs change width, weight, and position as the pointer moves.
- */
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Science_Gothic } from 'next/font/google'
 
-const scienceGothic = Science_Gothic({ subsets: ['latin'] })
+// Science Gothic from Google Fonts, loaded by the stylesheet import inside the
+// root, so the component runs in any React app (Next.js, Vite, anything else).
+const FONT_FAMILY = "'Science Gothic', sans-serif"
+const FONT_URL = 'https://fonts.googleapis.com/css2?family=Science+Gothic:wght@100..900&display=swap'
 
 function useTheme(ref: React.RefObject<HTMLElement | null>) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
@@ -90,22 +88,15 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, textShadow, forwar
 const LetterSpan = motion(LetterSpanComponent)
 
 
-// customize: replace the two text rows below
 const TEXT_ROW_1 = 'STAY'
 const TEXT_ROW_2 = 'WEIRD'
 const ALL_LETTERS = TEXT_ROW_1 + TEXT_ROW_2
-// tune: raise to widen pointer influence
 const INFLUENCE_RADIUS = 600
-// tune: raise to increase maximum glyph rotation
 const MAX_ROTATION = 75
-// tune: raise to increase vertical glyph travel
 const MAX_TRANSLATE_Y = 100
-// tune: raise to enlarge nearby glyphs further
 const MAX_SCALE = 1.4
 const MIN_SCALE = 1
-// tune: raise to quicken the active response
 const EASE_ACTIVE = 0.15
-// tune: raise to quicken the return to rest
 const EASE_EXIT = 0.05
 
 export default function Playful() {
@@ -165,7 +156,6 @@ export default function Playful() {
           influence = influence * influence * (3 - 2 * influence)
         }
 
-        
         let targetRotate = 0
         if (influence > 0) {
           const angle = Math.atan2(dy, dx)
@@ -173,11 +163,9 @@ export default function Playful() {
           targetRotate = MAX_ROTATION * influence * rotateDirection
         }
 
-        
         const direction = i % 2 === 0 ? -1 : 1
         const targetTranslateY = MAX_TRANSLATE_Y * influence * direction
 
-        
         const targetScale = MIN_SCALE + (MAX_SCALE - MIN_SCALE) * influence
 
         const state = stateRef.current[i]
@@ -236,14 +224,15 @@ export default function Playful() {
   return (
     <div
       ref={containerRef}
-      className={`flex min-h-screen w-full flex-col items-center justify-center px-6 sm:px-10 ${scienceGothic.className}`}
-      style={{ backgroundColor: bgColor }}
+      className={`flex min-h-screen w-full flex-col items-center justify-center px-6 sm:px-10`}
+      style={{ backgroundColor: bgColor, fontFamily: FONT_FAMILY }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <style>{`@import url('${FONT_URL}');`}</style>
       <div className="flex flex-col items-center justify-center gap-2 sm:gap-4">
         <div className="flex flex-nowrap items-center justify-center gap-1 sm:gap-2">
           {TEXT_ROW_1.split('').map((letter, i) => (
@@ -255,7 +244,7 @@ export default function Playful() {
               }}
               textColor={textColor}
               textShadow={textShadow}
-              fontFamily={scienceGothic.style.fontFamily}
+              fontFamily={FONT_FAMILY}
             />
           ))}
         </div>
@@ -269,7 +258,7 @@ export default function Playful() {
               }}
               textColor={textColor}
               textShadow={textShadow}
-              fontFamily={scienceGothic.style.fontFamily}
+              fontFamily={FONT_FAMILY}
             />
           ))}
         </div>

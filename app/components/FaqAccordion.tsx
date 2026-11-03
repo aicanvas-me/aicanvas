@@ -3,13 +3,13 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { CaretRight } from '@phosphor-icons/react'
+import { ChevronRight } from '@/app/_icons/icons/chevron-right'
 import type { FaqItem } from '../faq/FaqView'
 
 export type { FaqItem }
 
 // Renders an answer, turning the first occurrence of link.label into a link.
-// (Mirrors FaqView's AnswerText so `a` can stay plain text.)
+// (The same rule as FaqRows' Answer, so `a` can stay plain text.)
 function AnswerText({ item }: { item: FaqItem }) {
   const { a, link } = item
   if (!link || !a.includes(link.label)) return <>{a}</>
@@ -19,7 +19,7 @@ function AnswerText({ item }: { item: FaqItem }) {
       {a.slice(0, idx)}
       <Link
         href={link.href}
-        className="font-medium text-olive-600 underline decoration-olive-500/40 underline-offset-2 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+        className="font-medium text-accent underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent/70"
       >
         {link.label}
       </Link>
@@ -42,7 +42,7 @@ function QuestionText({ item }: { item: FaqItem }) {
         target="_blank"
         rel="noopener noreferrer"
         onClick={(e) => e.stopPropagation()}
-        className="text-olive-600 underline decoration-olive-500/40 underline-offset-2 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+        className="text-accent underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent/70"
       >
         {qLink.label}
       </a>
@@ -81,7 +81,7 @@ export function FaqAccordion({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-30px' }}
             transition={{ duration: 0.3 }}
-            className={`rounded-xl border transition-colors ${
+            className={`rounded-inset border transition-colors ${
               isOpen
                 ? 'border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900'
                 : 'border-sand-200 bg-sand-100/60 hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900/50 dark:hover:border-sand-700'
@@ -95,7 +95,7 @@ export function FaqAccordion({
             >
               <span
                 className={`w-7 shrink-0 text-sm font-bold tabular-nums ${
-                  isOpen ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-600'
+                  isOpen ? 'text-accent' : 'text-sand-600 dark:text-sand-600'
                 }`}
               >
                 {String(i + 1).padStart(2, '0')}
@@ -110,11 +110,10 @@ export function FaqAccordion({
                 onClick={(e) => { e.stopPropagation(); toggle(i) }}
                 className="shrink-0"
               >
-                <CaretRight
-                  weight="regular"
+                <ChevronRight
                   size={16}
                   className={`transition-transform duration-200 ${
-                    isOpen ? 'rotate-90 text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-600'
+                    isOpen ? 'rotate-90 text-accent' : 'text-sand-600 dark:text-sand-600'
                   }`}
                 />
               </button>

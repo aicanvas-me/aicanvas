@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import { usePathname } from 'next/navigation'
+import { RailFooter } from '../../components/RailFooter'
 import { tokens } from '../../lib/andromeda-pro.generated'
 
 // Template leaf routes own the full viewport (sidebar + topbar are suppressed).
@@ -54,8 +55,14 @@ export function AndromedaContentColumn({ children }: { children: ReactNode }) {
           top bar, which the root layout renders above this column.
           The wrapper is flex-transparent (flex-1 min-h-0 column) so template
           leaves keep their full-height math and normal pages keep flowing. */}
-      <div className="isolate flex min-h-0 flex-1 flex-col">
+      <div className={`isolate flex min-h-0 flex-1 flex-col ${isTemplate ? '' : '[&>*]:shrink-0'}`}>
         {children}
+        {/* The site footer, at the end of the scroller this column is. Template
+            leaves are full-screen compositions and carry none. Off the
+            templates nothing in here shrinks ([&>*]:shrink-0): a page root with
+            a min-height of its own would otherwise give way to the footer and
+            leave its content running out under it. */}
+        {!isTemplate && <RailFooter />}
       </div>
     </div>
   )

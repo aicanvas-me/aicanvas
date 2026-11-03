@@ -1,9 +1,6 @@
 'use client'
 
 // npm install @phosphor-icons/react framer-motion
-/**
- * Presents an avatar stack that advances on horizontal swipes and confirms a tapped selection.
- */
 
 import { useState, useLayoutEffect, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
@@ -171,6 +168,7 @@ export default function AvatarPicker() {
                       opacity: 1,
                     }
               }
+              // The exit duration must stay within the 420 ms timeout in dismiss().
               transition={
                 isExiting
                   ? { duration: 0.4, ease: [0.4, 0, 0.2, 1] }

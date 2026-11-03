@@ -12,7 +12,7 @@
 // chart and Object components re-resolve from documentElement and would ignore
 // a layer's local set.
 
-import { useId, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react'
+import { useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from 'react'
 import { motion, useMotionValue, useMotionValueEvent, useTransform } from 'framer-motion'
 import { DotsSixVertical } from '@phosphor-icons/react'
 import { andromedaLightVars, andromedaVars } from '../../../lib/andromeda-pro-helpers.generated'
@@ -70,6 +70,31 @@ export function ThemeCompare() {
 
   const areaRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
+
+  // The grip rests in the gap between two rows of tiles nearest the middle,
+  // never over a tile's words. Half way down is a gap on wide screens, but on
+  // a phone the tiles stack in one column and half way lands inside one.
+  const [gripTop, setGripTop] = useState<number | null>(null)
+  useLayoutEffect(() => {
+    const area = areaRef.current
+    const grid = area?.firstElementChild?.firstElementChild
+    if (!area || !grid) return
+    const place = () => {
+      const box = area.getBoundingClientRect()
+      const tiles = [...grid.children].map((t) => t.getBoundingClientRect()).filter((r) => r.height > 0)
+      const gaps: number[] = []
+      for (const a of tiles) {
+        const below = tiles.filter((b) => b.top >= a.bottom)
+        if (below.length) gaps.push((a.bottom + Math.min(...below.map((b) => b.top))) / 2 - box.top)
+      }
+      const mid = box.height / 2
+      setGripTop(gaps.length ? gaps.reduce((best, g) => (Math.abs(g - mid) < Math.abs(best - mid) ? g : best)) : null)
+    }
+    place()
+    const ro = new ResizeObserver(place)
+    ro.observe(area)
+    return () => ro.disconnect()
+  }, [])
   const pending = useRef<{ id: number; x: number; y: number } | null>(null)
   const touched = useRef(false)
   // No intro sweep. The line used to run itself left and right on first
@@ -151,7 +176,7 @@ export function ThemeCompare() {
   return (
     <div>
       <div
-        className="rounded-2xl border border-sand-200 bg-sand-100 p-3 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]"
+        className="rounded-section border border-sand-200 bg-sand-100 p-3 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]"
       >
         <p id={descId} className="sr-only">
           Andromeda Pro components shown side by side in the dark and light themes
@@ -173,7 +198,7 @@ export function ThemeCompare() {
 
         <div
           ref={areaRef}
-          className="relative cursor-ew-resize select-none overflow-hidden rounded-xl"
+          className="relative cursor-ew-resize select-none overflow-hidden rounded-inset"
           style={{ touchAction: 'pan-y' }}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
@@ -207,10 +232,10 @@ export function ThemeCompare() {
             onKeyDown={onKeyDown}
             onFocus={takeOver}
             className="group absolute top-1/2 z-20 flex size-11 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize items-center justify-center outline-none"
-            style={{ left: gripLeft }}
+            style={{ left: gripLeft, ...(gripTop !== null && { top: gripTop }) }}
           >
             <span
-              className={`flex h-10 w-3 items-center justify-center rounded-full bg-sand-50 text-sand-950 ${LINE_SHADOW} group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-olive-500`}
+              className={`flex h-10 w-3 items-center justify-center rounded-full bg-sand-50 text-sand-950 ${LINE_SHADOW} group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-accent`}
             >
               <DotsSixVertical weight="regular" className="size-4 shrink-0" />
             </span>

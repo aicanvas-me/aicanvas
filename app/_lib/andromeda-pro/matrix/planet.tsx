@@ -9,7 +9,7 @@ export const planet: MatrixSpec = {
   // Three.js needs a sized, positioned box to fill, and this one is a
   // full-surface piece: a full-row card, not a 260px stub.
   render: (_size, props) => (
-    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative' }}>
+    <div style={{ width: 760, maxWidth: '100%', height: 440, position: 'relative', margin: '0 auto' }}>
       <Planet {...props} />
     </div>
   ),
