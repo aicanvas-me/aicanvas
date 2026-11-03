@@ -45,7 +45,7 @@ import { Children, forwardRef, isValidElement, type CSSProperties, type ReactNod
 
 export type IconNode = ReadonlyArray<readonly ['path' | 'circle', Readonly<Record<string, string>>]>
 export type IconStyle = 'line' | 'duotone' | 'solid' | 'solid-duotone'
-export type IconWeight = 'thin' | 'light' | 'regular' | 'bold'
+export type IconWeight = 'thin' | 'light' | 'regular' | 'bold' | 'extrabold'
 export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'ref' | 'strokeWidth'> {
   size?: number | string
   color?: string

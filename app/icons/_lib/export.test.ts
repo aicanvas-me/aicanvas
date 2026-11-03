@@ -15,7 +15,7 @@ const MARKUP: Record<IconStyle, string> = {
 const STYLES = Object.keys(MARKUP) as IconStyle[]
 const strokeOf = (svg: string) => Number(svg.match(/stroke-width="([\d.]+)"/)?.[1])
 // IconBase's weights in viewBox units: the same at every size, so the line scales with it.
-const STROKES: Record<IconWeight, number> = { thin: 0.7575, light: 1.13625, regular: 1.515, bold: 2.2725 }
+const STROKES: Record<IconWeight, number> = { thin: 0.7575, light: 1.13625, regular: 1.515, bold: 1.89375, extrabold: 2.2725 }
 const WEIGHTS = Object.keys(STROKES) as IconWeight[]
 
 describe('buildSvg: every style, size, weight and colour', () => {

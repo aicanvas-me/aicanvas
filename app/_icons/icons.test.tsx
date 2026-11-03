@@ -39,7 +39,7 @@ describe.skipIf(!fromVault)('the icon package a customer installs', () => {
   })
 
   it('maps each named weight to its stroke, none landing on a whole pixel at 16px', () => {
-    const strokes = { thin: '0.7575', light: '1.13625', regular: '1.515', bold: '2.2725' } as const
+    const strokes = { thin: '0.7575', light: '1.13625', regular: '1.515', bold: '1.89375', extrabold: '2.2725' } as const
     for (const [weight, stroke] of Object.entries(strokes)) {
       expect(render(<Search weight={weight as keyof typeof strokes} />).querySelector('svg')?.style.strokeWidth).toBe(stroke)
       expect((Number(stroke) * 16) / 24 % 1).not.toBe(0)

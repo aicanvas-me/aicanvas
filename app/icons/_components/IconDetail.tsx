@@ -237,7 +237,7 @@ export function IconDetail({
               value={ICON_WEIGHTS.findIndex((entry) => entry.id === weight)}
               onChange={(index) => setWeight(ICON_WEIGHTS[index].id)}
               min={0}
-              max={3}
+              max={4}
               step={1}
               format={(index) => ICON_WEIGHTS[index].label}
               valueText={(index) => ICON_WEIGHTS[index].label}
@@ -318,7 +318,7 @@ export function IconDetail({
 // answers "how do I size it" without opening the docs.
 const PROPS: { prop: string; type: string; fallback: string; note: string }[] = [
   { prop: 'size', type: 'number | string', fallback: '24', note: 'Width and height in pixels.' },
-  { prop: 'weight', type: "'thin' | 'light' | 'regular' | 'bold'", fallback: "'regular'", note: 'Line weight; it scales with the size. Line and Duotone only.' },
+  { prop: 'weight', type: "'thin' | 'light' | 'regular' | 'bold' | 'extrabold'", fallback: "'regular'", note: 'Line weight; it scales with the size. Line and Duotone only.' },
   { prop: 'color', type: 'string', fallback: 'currentColor', note: 'Follows the text colour unless set.' },
   { prop: 'className', type: 'string', fallback: '', note: 'Any utility class, passed to the svg.' },
 ]

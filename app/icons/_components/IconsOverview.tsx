@@ -401,7 +401,7 @@ export function IconsOverview({
               value={ICON_WEIGHTS.findIndex((entry) => entry.id === weight)}
               onChange={(index) => setWeight(ICON_WEIGHTS[index].id)}
               min={0}
-              max={3}
+              max={4}
               step={1}
               format={(index) => ICON_WEIGHTS[index].label}
               valueText={(index) => ICON_WEIGHTS[index].label}
