@@ -5,9 +5,9 @@
 
 ## Visual
 
-- Collapsed: compact frosted pill (~48px) with centered `MagnifyingGlass` icon, matching the glass family aesthetic (`rgba(255,255,255,0.06)` background, `blur(24px) saturate(1.8)`, white/10 border, deep shadow)
+- Collapsed: compact frosted pill (~48px) with centered `Search` icon, matching the glass family aesthetic (`rgba(255,255,255,0.06)` background, `blur(24px) saturate(1.8)`, white/10 border, deep shadow)
 - Expanded: wider frosted input field with the search icon on the left, typed text, and a fade-in `X` clear button on the right
-- Dropdown: frosted glass panel below the input with 3-5 suggestion rows, each with a Phosphor icon on the left and label text
+- Dropdown: frosted glass panel below the input with 3-5 suggestion rows, each with an AI Canvas icon on the left and label text
 - Glowing accent ring on focus (olive-tinted or white glow, consistent with the glass family)
 - Dark preview bg (`bg-sand-950`), light + dark mode support via `dark:` variants
 
@@ -26,7 +26,7 @@
 - Single self-contained `.tsx` file, default export
 - Framer Motion springs only -- no linear/ease-in-out tweens
 - `useReducedMotion` from Framer Motion for accessibility
-- Phosphor Icons: `MagnifyingGlass`, `X`, plus suggestion icons (e.g. `Clock`, `Star`, `MusicNote`, `File`, `Lightning`)
+- AI Canvas icons: `Search`, `X`, plus suggestion icons (e.g. `Star`, `Music`, `File`, `Bolt`)
 - All touch targets >= 44x44px
 - Manrope font via `font-sans`
 - Glass styles split: blur on a static layer (no recomputation during spring), visual styles on the animated layer (matching glass-sidebar pattern)

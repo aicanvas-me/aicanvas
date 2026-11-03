@@ -1,15 +1,13 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import {
-  PaperPlaneRight,
-  ImageSquare,
-  GlobeSimple,
-  X,
-} from '@phosphor-icons/react'
+import { Send } from '@/app/_icons/icons/send'
+import { ImageSquare } from '@/app/_icons/icons/image-square'
+import { GlobeSimple } from '@/app/_icons/icons/globe-simple'
+import { X } from '@/app/_icons/icons/x'
 
 
 const BACKGROUND =
@@ -124,7 +122,7 @@ function ImageThumbnail({
           border: '1px solid rgba(255, 255, 255, 0.15)',
         }}
       >
-        <X size={10} weight="regular" className="text-white/80" />
+        <X size={10} className="text-white/80" />
       </motion.button>
     </motion.div>
   )
@@ -314,7 +312,6 @@ export default function GlassAiCompose() {
                 >
                   <ImageSquare
                     size={16}
-                    weight="regular"
                     style={{
                       color: 'rgba(255, 255, 255, 0.5)',
                       transition: 'color 0.15s',
@@ -346,7 +343,6 @@ export default function GlassAiCompose() {
                 >
                   <GlobeSimple
                     size={16}
-                    weight="regular"
                     style={{
                       color: webSearch ? activeModel.color : 'rgba(255, 255, 255, 0.5)',
                       transition: 'color 0.15s',
@@ -396,9 +392,8 @@ export default function GlassAiCompose() {
                   pointerEvents: canSend ? 'auto' : 'none',
                 }}
               >
-                <PaperPlaneRight
+                <Send
                   size={16}
-                  weight="regular"
                   style={{
                     color: canSend
                       ? activeModel.color

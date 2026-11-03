@@ -7,7 +7,7 @@
 
 ## Visual
 
-- **Trigger button:** pill-shaped, dark bg `#1a1a18` / light text, `Plus` Phosphor icon + "New Project" label at 16px Manrope semibold. Inverted in dark mode. Drop shadow only, no border.
+- **Trigger button:** pill-shaped, dark bg `#1a1a18` / light text, `Plus` icon + "New Project" label at 16px Manrope semibold. Inverted in dark mode. Drop shadow only, no border.
 - **Modal card:** 480px max-width, 28px border-radius, `#f1f1f0` bg (light) / `#232321` (dark). Drop shadow `0px 16px 56px rgba(0,0,0,0.14)`.
   - **Header:** "New Project" centred 18px bold + circular X close button (36px, `#f8f8f8` bg) top-right.
   - **Title input:** pill `h-[52px]`, `#f8f8f8` bg, border-2 transparent → `#1a1a18` on focus. Required — shows "Title is required" error below on empty submit.
@@ -33,4 +33,4 @@ Card fills viewport width with 16px horizontal margins (`Math.min(480, window.in
 
 ## Tech notes
 
-Framer Motion for all animations (spring + tween per-property transitions). `useDark()` inlined hook avoids internal app imports. `@phosphor-icons/react` with `weight="bold"`. Manrope via `font-sans`. No design tokens — raw hex throughout.
+Framer Motion for all animations (spring + tween per-property transitions). `useDark()` inlined hook avoids internal app imports. Icons use a 2px stroke. Manrope via `font-sans`. No design tokens — raw hex throughout.

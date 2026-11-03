@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -26,14 +26,14 @@ Constants:
 - \`COLLAPSED_WIDTH = 64\`, \`EXPANDED_WIDTH = 220\`
 - \`ICON_TILE_SIZE = 44\`, \`TOGGLE_BUTTON_HEIGHT = 36\`
 
-Nav items (Phosphor, \`weight="regular"\`):
-- \`House\` / "Home" / #3A86FF
-- \`MagnifyingGlass\` / "Search" / #B388FF
-- \`Folders\` / "Projects" / #FFBE0B
-- \`Bell\` / "Notifications" / #FF5C8A
-- \`ChartLine\` / "Analytics" / #06D6A0
-- \`Gear\` / "Settings" / #C9A96E
-- \`User\` / "Profile" / #FF7B54
+Nav items (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- \`house\` / "Home" / #3A86FF
+- \`search\` / "Search" / #B388FF
+- \`folders\` / "Projects" / #FFBE0B
+- \`bell\` / "Notifications" / #FF5C8A
+- \`chart-line\` / "Analytics" / #06D6A0
+- \`gear\` / "Settings" / #C9A96E
+- \`user\` / "Profile" / #FF7B54
 
 Panel: \`rounded-3xl px-2.5 py-3\`, glass:
 - \`background: rgba(255,255,255,0.06)\`
@@ -52,7 +52,7 @@ Each nav row:
 
 Divider: \`h-[1px]\` full-width \`rgba(255,255,255,0.1)\`.
 
-Toggle button: 44x36 \`rounded-2xl\`, bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`. Hover \`scale: 1.08\`, tap \`0.90\`, spring \`{ stiffness: 300, damping: 20 }\`. Contains \`AnimatePresence mode="wait"\`: \`ArrowRight\` (collapsed) or \`ArrowLeft\` (open), each spinning 90° on enter/exit with \`duration: 0.18\`. Container justifies center when collapsed, start (\`px-1\`) when open.
+Toggle button: 44x36 \`rounded-2xl\`, bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`. Hover \`scale: 1.08\`, tap \`0.90\`, spring \`{ stiffness: 300, damping: 20 }\`. Contains \`AnimatePresence mode="wait"\`: \`arrow-right\` (collapsed) or \`arrow-left\` (open), each spinning 90° on enter/exit with \`duration: 0.18\`. Container justifies center when collapsed, start (\`px-1\`) when open.
 
 Clicking toggle flips \`isOpen\` and calls \`widthSpring.set(next ? EXPANDED_WIDTH : COLLAPSED_WIDTH)\`.
 
@@ -73,14 +73,14 @@ Constants:
 - \`COLLAPSED_WIDTH = 64\`, \`EXPANDED_WIDTH = 220\`
 - \`ICON_TILE_SIZE = 44\`, \`TOGGLE_BUTTON_HEIGHT = 36\`
 
-Nav items (Phosphor, \`weight="regular"\`):
-- \`House\` / "Home" / #3A86FF
-- \`MagnifyingGlass\` / "Search" / #B388FF
-- \`Folders\` / "Projects" / #FFBE0B
-- \`Bell\` / "Notifications" / #FF5C8A
-- \`ChartLine\` / "Analytics" / #06D6A0
-- \`Gear\` / "Settings" / #C9A96E
-- \`User\` / "Profile" / #FF7B54
+Nav items (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- \`house\` / "Home" / #3A86FF
+- \`search\` / "Search" / #B388FF
+- \`folders\` / "Projects" / #FFBE0B
+- \`bell\` / "Notifications" / #FF5C8A
+- \`chart-line\` / "Analytics" / #06D6A0
+- \`gear\` / "Settings" / #C9A96E
+- \`user\` / "Profile" / #FF7B54
 
 Panel: \`rounded-3xl px-2.5 py-3\`, glass —
 - \`background: rgba(255,255,255,0.06)\`
@@ -99,7 +99,7 @@ Each nav row:
 
 Divider: \`h-[1px]\` full-width \`rgba(255,255,255,0.1)\`.
 
-Toggle button: 44x36 \`rounded-2xl\`, bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`. Hover \`scale: 1.08\`, tap \`0.90\`, spring \`{ stiffness: 300, damping: 20 }\`. Contains \`AnimatePresence mode="wait"\`: \`ArrowRight\` (collapsed) or \`ArrowLeft\` (open), each spinning 90° on enter/exit with \`duration: 0.18\`. Container justifies center when collapsed, start (\`px-1\`) when open.
+Toggle button: 44x36 \`rounded-2xl\`, bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`. Hover \`scale: 1.08\`, tap \`0.90\`, spring \`{ stiffness: 300, damping: 20 }\`. Contains \`AnimatePresence mode="wait"\`: \`arrow-right\` (collapsed) or \`arrow-left\` (open), each spinning 90° on enter/exit with \`duration: 0.18\`. Container justifies center when collapsed, start (\`px-1\`) when open.
 
 Clicking toggle flips \`isOpen\` and calls \`widthSpring.set(next ? EXPANDED_WIDTH : COLLAPSED_WIDTH)\`.
 
@@ -120,14 +120,14 @@ Constants:
 - \`COLLAPSED_WIDTH = 64\`, \`EXPANDED_WIDTH = 220\`
 - \`ICON_TILE_SIZE = 44\`, \`TOGGLE_BUTTON_HEIGHT = 36\`
 
-Nav items (Phosphor, \`weight="regular"\`):
-- \`House\` / "Home" / #3A86FF
-- \`MagnifyingGlass\` / "Search" / #B388FF
-- \`Folders\` / "Projects" / #FFBE0B
-- \`Bell\` / "Notifications" / #FF5C8A
-- \`ChartLine\` / "Analytics" / #06D6A0
-- \`Gear\` / "Settings" / #C9A96E
-- \`User\` / "Profile" / #FF7B54
+Nav items (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- \`house\` / "Home" / #3A86FF
+- \`search\` / "Search" / #B388FF
+- \`folders\` / "Projects" / #FFBE0B
+- \`bell\` / "Notifications" / #FF5C8A
+- \`chart-line\` / "Analytics" / #06D6A0
+- \`gear\` / "Settings" / #C9A96E
+- \`user\` / "Profile" / #FF7B54
 
 Panel: \`rounded-3xl px-2.5 py-3\`, glass —
 - \`background: rgba(255,255,255,0.06)\`
@@ -146,7 +146,7 @@ Each nav row:
 
 Divider: \`h-[1px]\` full-width \`rgba(255,255,255,0.1)\`.
 
-Toggle button: 44x36 \`rounded-2xl\`, bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`. Hover \`scale: 1.08\`, tap \`0.90\`, spring \`{ stiffness: 300, damping: 20 }\`. Contains \`AnimatePresence mode="wait"\`: \`ArrowRight\` (collapsed) or \`ArrowLeft\` (open), each spinning 90° on enter/exit with \`duration: 0.18\`. Container justifies center when collapsed, start (\`px-1\`) when open.
+Toggle button: 44x36 \`rounded-2xl\`, bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`. Hover \`scale: 1.08\`, tap \`0.90\`, spring \`{ stiffness: 300, damping: 20 }\`. Contains \`AnimatePresence mode="wait"\`: \`arrow-right\` (collapsed) or \`arrow-left\` (open), each spinning 90° on enter/exit with \`duration: 0.18\`. Container justifies center when collapsed, start (\`px-1\`) when open.
 
 Clicking toggle flips \`isOpen\` and calls \`widthSpring.set(next ? EXPANDED_WIDTH : COLLAPSED_WIDTH)\`.
 

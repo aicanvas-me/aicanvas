@@ -13,7 +13,7 @@ Use **kebab-case** for the folder name (e.g. `glowing-button`, `wave-text`).
 - Build the component inside `<div className="flex h-full w-full items-center justify-center bg-sand-100 dark:bg-sand-950">`
 - The preview container is **480×480px** — design for this viewport
 - Use **Framer Motion** for all animations
-- Use `@phosphor-icons/react` with `weight="regular"` for icons (never `duotone` or `fill` — known mistake #002)
+- Use AI Canvas icons, one file per icon, e.g. `import { Sun } from '@/app/_icons/icons/sun'` (never a barrel import, Line style by default)
 - Mark the file `'use client'`
 - Clean up all effects (cancel RAF, stop animations, unsubscribe MotionValues)
 

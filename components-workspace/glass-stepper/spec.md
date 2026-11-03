@@ -8,7 +8,7 @@
 - Frosted glass pill (`rounded-2xl`) matching glass-toast/sidebar aesthetic
 - Glass panel: `rgba(255,255,255,0.06)` bg, `rgba(255,255,255,0.1)` border, blur(24px) saturate(1.8) on separate layer, standard box shadow
 - Minus button (left), number display (center), plus button (right) — all inside one pill
-- Buttons styled as glass sub-pills: `rgba(255,255,255,0.08)` bg, `rgba(255,255,255,0.12)` border, `rounded-xl`, using `Minus` and `Plus` Phosphor icons, `text-white/60`
+- Buttons styled as glass sub-pills: `rgba(255,255,255,0.08)` bg, `rgba(255,255,255,0.12)` border, `rounded-xl`, using `Minus` and `Plus` icons, `text-white/60`
 - Number: `text-lg font-bold text-white/90 font-sans`, fixed width center area to prevent layout shift
 - Optional label above: `text-[10px] font-semibold uppercase tracking-widest text-white/40 font-sans`
 - Same pink flower ImageKit background at 60% opacity

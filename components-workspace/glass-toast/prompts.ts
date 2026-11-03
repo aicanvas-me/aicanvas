@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="flex min-h-screen w-full items-center justify-center bg-[#1A1A19]"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -24,11 +24,11 @@ Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal
 
 Constants: \`TOAST_DURATION = 4000\`, \`MAX_TOASTS = 3\`.
 
-Variants (Phosphor \`weight="regular"\`):
-- success: color #06D6A0, gradient "#06D6A0, #00BFA5", icon \`CheckCircle\`, label "Success"
-- error:   color #FF5C8A, gradient "#FF5C8A, #FF1744", icon \`XCircle\`,     label "Error"
-- warning: color #FFBE0B, gradient "#FFBE0B, #FF9800", icon \`Warning\`,     label "Warning"
-- info:    color #3A86FF, gradient "#3A86FF, #2962FF", icon \`Info\`,        label "Info"
+Variants (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { Info } from '@/components/icons/info'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- success: color #06D6A0, gradient "#06D6A0, #00BFA5", icon \`circle-check\`, label "Success"
+- error:   color #FF5C8A, gradient "#FF5C8A, #FF1744", icon \`circle-x\`,     label "Error"
+- warning: color #FFBE0B, gradient "#FFBE0B, #FF9800", icon \`triangle-alert\`, label "Warning"
+- info:    color #3A86FF, gradient "#3A86FF, #2962FF", icon \`info\`,        label "Info"
 
 Demo content per variant:
 - success: "Changes saved" / "Your settings have been updated successfully"
@@ -48,7 +48,7 @@ Toast container: \`fixed bottom-4 left-4 right-4 z-50 flex flex-col-reverse gap-
 
 Toast card: \`motion.div layout relative w-full overflow-hidden rounded-2xl\` + glass panel, with \`ref={ref}\` on this root motion.div. Enter \`{ opacity:0, x:80, scale:0.95 }\` → \`{ opacity:1, x:0, scale:1 }\` → exit same as enter, spring \`{ stiffness: 300, damping: 26 }\`. Slight hover scale 1.01. Inside: a separate absolute \`z-0\` blur layer, a content row \`relative z-10 flex items-center gap-3 py-3.5 pl-4 pr-10\` with a 36x36 tinted icon tile (bg \`\${variant.color}18\`, border \`\${variant.color}22\`, icon size 18), and a text column with a \`text-sm font-semibold text-white/90\` truncated title and an optional \`text-xs text-white/50\` description.
 
-Close button: a 44x44 touch target on the right, containing a 20x20 circular button (bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`) with Phosphor \`X\` size 10 \`text-white/60\`; whileHover bg \`rgba(255,255,255,0.14)\`, whileTap scale 0.88.
+Close button: a 44x44 touch target on the right, containing a 20x20 circular button (bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`) with icon \`x\` size 10 \`text-white/60\`; whileHover bg \`rgba(255,255,255,0.14)\`, whileTap scale 0.88.
 
 Progress bar: \`absolute bottom-0 left-0 right-0 h-[2px]\`, inner div \`origin-left\` bg \`\${variant.color}99\`. Drive with a requestAnimationFrame loop: track \`elapsed\` across frames, computed \`fraction = max(0, 1 - elapsed / TOAST_DURATION)\`, write directly to \`style.transform = scaleX(fraction)\`. When hovered, freeze elapsed (don't advance). When fraction hits 0, dismiss. Always cancel RAF on unmount.
 
@@ -71,11 +71,11 @@ Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal
 
 Constants: \`TOAST_DURATION = 4000\`, \`MAX_TOASTS = 3\`.
 
-Variants (Phosphor \`weight="regular"\`):
-- success: color #06D6A0, gradient "#06D6A0, #00BFA5", icon \`CheckCircle\`, label "Success"
-- error:   color #FF5C8A, gradient "#FF5C8A, #FF1744", icon \`XCircle\`,     label "Error"
-- warning: color #FFBE0B, gradient "#FFBE0B, #FF9800", icon \`Warning\`,     label "Warning"
-- info:    color #3A86FF, gradient "#3A86FF, #2962FF", icon \`Info\`,        label "Info"
+Variants (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { Info } from '@/components/icons/info'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- success: color #06D6A0, gradient "#06D6A0, #00BFA5", icon \`circle-check\`, label "Success"
+- error:   color #FF5C8A, gradient "#FF5C8A, #FF1744", icon \`circle-x\`,     label "Error"
+- warning: color #FFBE0B, gradient "#FFBE0B, #FF9800", icon \`triangle-alert\`, label "Warning"
+- info:    color #3A86FF, gradient "#3A86FF, #2962FF", icon \`info\`,        label "Info"
 
 Demo content per variant:
 - success: "Changes saved" / "Your settings have been updated successfully"
@@ -95,7 +95,7 @@ Toast container: \`fixed bottom-4 left-4 right-4 z-50 flex flex-col-reverse gap-
 
 Toast card: \`motion.div layout relative w-full overflow-hidden rounded-2xl\` + glass panel, with \`ref={ref}\` on this root motion.div. Enter \`{ opacity:0, x:80, scale:0.95 }\` → \`{ opacity:1, x:0, scale:1 }\` → exit same as enter, spring \`{ stiffness: 300, damping: 26 }\`. Slight hover scale 1.01. Inside: a separate absolute \`z-0\` blur layer, a content row \`relative z-10 flex items-center gap-3 py-3.5 pl-4 pr-10\` with a 36x36 tinted icon tile (bg \`\${variant.color}18\`, border \`\${variant.color}22\`, icon size 18), and a text column with a \`text-sm font-semibold text-white/90\` truncated title and an optional \`text-xs text-white/50\` description.
 
-Close button: a 44x44 touch target on the right, containing a 20x20 circular button (bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`) with Phosphor \`X\` size 10 \`text-white/60\`; whileHover bg \`rgba(255,255,255,0.14)\`, whileTap scale 0.88.
+Close button: a 44x44 touch target on the right, containing a 20x20 circular button (bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`) with icon \`x\` size 10 \`text-white/60\`; whileHover bg \`rgba(255,255,255,0.14)\`, whileTap scale 0.88.
 
 Progress bar: \`absolute bottom-0 left-0 right-0 h-[2px]\`, inner div \`origin-left\` bg \`\${variant.color}99\`. Drive with a requestAnimationFrame loop: track \`elapsed\` across frames, computed \`fraction = max(0, 1 - elapsed / TOAST_DURATION)\`, write directly to \`style.transform = scaleX(fraction)\`. When hovered, freeze elapsed (don't advance). When fraction hits 0, dismiss. Always cancel RAF on unmount.
 
@@ -118,11 +118,11 @@ Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal
 
 Constants: \`TOAST_DURATION = 4000\`, \`MAX_TOASTS = 3\`.
 
-Variants (Phosphor \`weight="regular"\`):
-- success: color #06D6A0, gradient "#06D6A0, #00BFA5", icon \`CheckCircle\`, label "Success"
-- error:   color #FF5C8A, gradient "#FF5C8A, #FF1744", icon \`XCircle\`,     label "Error"
-- warning: color #FFBE0B, gradient "#FFBE0B, #FF9800", icon \`Warning\`,     label "Warning"
-- info:    color #3A86FF, gradient "#3A86FF, #2962FF", icon \`Info\`,        label "Info"
+Variants (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { Info } from '@/components/icons/info'\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- success: color #06D6A0, gradient "#06D6A0, #00BFA5", icon \`circle-check\`, label "Success"
+- error:   color #FF5C8A, gradient "#FF5C8A, #FF1744", icon \`circle-x\`,     label "Error"
+- warning: color #FFBE0B, gradient "#FFBE0B, #FF9800", icon \`triangle-alert\`, label "Warning"
+- info:    color #3A86FF, gradient "#3A86FF, #2962FF", icon \`info\`,        label "Info"
 
 Demo content per variant:
 - success: "Changes saved" / "Your settings have been updated successfully"
@@ -142,7 +142,7 @@ Toast container: \`fixed bottom-4 left-4 right-4 z-50 flex flex-col-reverse gap-
 
 Toast card: \`motion.div layout relative w-full overflow-hidden rounded-2xl\` + glass panel, with \`ref={ref}\` on this root motion.div. Enter \`{ opacity:0, x:80, scale:0.95 }\` → \`{ opacity:1, x:0, scale:1 }\` → exit same as enter, spring \`{ stiffness: 300, damping: 26 }\`. Slight hover scale 1.01. Inside: a separate absolute \`z-0\` blur layer, a content row \`relative z-10 flex items-center gap-3 py-3.5 pl-4 pr-10\` with a 36x36 tinted icon tile (bg \`\${variant.color}18\`, border \`\${variant.color}22\`, icon size 18), and a text column with a \`text-sm font-semibold text-white/90\` truncated title and an optional \`text-xs text-white/50\` description.
 
-Close button: a 44x44 touch target on the right, containing a 20x20 circular button (bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`) with Phosphor \`X\` size 10 \`text-white/60\`; whileHover bg \`rgba(255,255,255,0.14)\`, whileTap scale 0.88.
+Close button: a 44x44 touch target on the right, containing a 20x20 circular button (bg \`rgba(255,255,255,0.08)\`, border \`rgba(255,255,255,0.12)\`) with icon \`x\` size 10 \`text-white/60\`; whileHover bg \`rgba(255,255,255,0.14)\`, whileTap scale 0.88.
 
 Progress bar: \`absolute bottom-0 left-0 right-0 h-[2px]\`, inner div \`origin-left\` bg \`\${variant.color}99\`. Drive with a requestAnimationFrame loop: track \`elapsed\` across frames, computed \`fraction = max(0, 1 - elapsed / TOAST_DURATION)\`, write directly to \`style.transform = scaleX(fraction)\`. When hovered, freeze elapsed (don't advance). When fraction hits 0, dismiss. Always cancel RAF on unmount.
 

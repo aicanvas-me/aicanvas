@@ -1,9 +1,11 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, X, Check } from '@phosphor-icons/react'
+import { Plus } from '@/app/_icons/icons/plus'
+import { X } from '@/app/_icons/icons/x'
+import { Check } from '@/app/_icons/icons/check'
 
 const MORPH = { type: 'spring' as const, stiffness: 320, damping: 30, mass: 1 }
 
@@ -78,7 +80,7 @@ export default function NewProjectModal() {
         }}
         className="flex items-center gap-2 rounded-full bg-[#1a1a18] px-5 py-3 font-sans text-[16px] font-semibold text-[#f1f1f0] dark:bg-[#f1f1f0] dark:text-[#1a1a18]"
       >
-        <Plus size={18} weight="bold" />
+        <Plus size={18} strokeWidth={2} />
         New Project
       </motion.button>
 
@@ -206,7 +208,7 @@ function ModalCard({
               className="absolute right-0 flex size-9 items-center justify-center rounded-full text-[#6c6c6c]"
               style={{ backgroundColor: '#f8f8f8' }}
             >
-              <X size={16} weight="bold" />
+              <X size={16} strokeWidth={2} />
             </motion.button>
           </motion.div>
 
@@ -310,7 +312,7 @@ function ModalCard({
                       transition={{ type: 'spring', stiffness: 500, damping: 26 }}
                       className="flex"
                     >
-                      <Check size={14} weight="bold" color="#f1f1f0" />
+                      <Check size={14} strokeWidth={2} color="#f1f1f0" />
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -404,7 +406,7 @@ function CreateButton({ onValidate, onConfirm }: { onValidate: () => boolean; on
             transition={{ type: 'spring', stiffness: 400, damping: 22 }}
             className="flex items-center justify-center"
           >
-            <Check size={16} weight="bold" />
+            <Check size={16} strokeWidth={2} />
           </motion.span>
         ) : (
           <motion.span

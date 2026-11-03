@@ -5,7 +5,7 @@ Description: A monochrome tab bar of icon circles. Click one and it expands into
 
 Visual:
 - Page background: #E3E3E8 light / #0E0E0F dark, centered content
-- Pill-shaped outer rail (role="tablist") holding four tab buttons: Inbox (EnvelopeSimple), Calendar (CalendarBlank), Alerts (Bell), Search (MagnifyingGlass)
+- Pill-shaped outer rail (role="tablist") holding four tab buttons: Inbox (Mail), Calendar (CalendarBlank), Alerts (Bell), Search (Search)
 - Active tab: a wider rounded pill (icon + title-case label) on a lighter surface with a stronger elevation shadow
 - Inactive tabs: 40px icon-only circles on a slightly dimmer surface with a lighter elevation shadow
 - Skeuomorphic finish: soft drop-shadow elevation on every button plus an inset top-highlight (1px on the outer rail, 2px on each button, alphas tuned separately for active/inactive and light/dark)
@@ -26,9 +26,9 @@ Mobile:
 Tech notes:
 - Framer Motion `layout` on the outer rail and each button drives the width morph; the icon wrapper deliberately carries no `layout` prop so it can't fight the button's own layout animation
 - AnimatePresence (initial={false}) mounts/unmounts the label with a slide-in-from-left fade
-- Icons: Phosphor EnvelopeSimple, CalendarBlank, Bell, MagnifyingGlass, weight="regular", size 1.18em
+- Icons: AI Canvas Mail, CalendarBlank, Bell, Search, size 1.18em
 - Full keyboard/screen-reader support: type="button", role="tab", aria-selected, aria-label per tab, aria-hidden icons, visible focus rings
-- No external state/animation libraries beyond framer-motion and @phosphor-icons/react
+- No external state/animation libraries beyond framer-motion
 
 Approval:
 - [x] Visual approved by user after several motion-bug fix rounds + skeuomorphic inset-highlight polish

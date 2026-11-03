@@ -299,7 +299,8 @@ function scanPackages(source) {
   let m
   while ((m = re.exec(source)) !== null) {
     const p = m[1]
-    if (p.startsWith('.') || p.startsWith('/')) continue
+    // `@/` is the project alias (our icons install there), never an npm package.
+    if (p.startsWith('.') || p.startsWith('/') || p.startsWith('@/')) continue
     const pkg = getPackageName(p)
     if (!isAlwaysAvailable(pkg)) pkgs.add(pkg)
   }

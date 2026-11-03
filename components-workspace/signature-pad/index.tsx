@@ -1,9 +1,12 @@
 'use client'
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Check, Eraser, Signature } from '@phosphor-icons/react'
+import { X } from '@/app/_icons/icons/x'
+import { Check } from '@/app/_icons/icons/check'
+import { Eraser } from '@/app/_icons/icons/eraser'
+import { Signature } from '@/app/_icons/icons/signature'
 
 type Pt = { x: number; y: number; t: number }
 type Stroke = Pt[]
@@ -177,7 +180,7 @@ export default function SignaturePad() {
           className="flex size-9 shrink-0 items-center justify-center rounded-full"
           style={{ backgroundColor: pill.iconTileBg, color: pill.iconTileFg }}
         >
-          <Signature size={18} weight="regular" />
+          <Signature size={18} />
         </span>
         {savedSignature ? (
           <>
@@ -512,7 +515,7 @@ function ModalCard({
                   color: palette.titleColor,
                 }}
               >
-                <Signature size={20} weight="regular" />
+                <Signature size={20} />
               </div>
               <div className="flex flex-col gap-0.5">
                 <span
@@ -539,7 +542,7 @@ function ModalCard({
               className="flex size-9 shrink-0 items-center justify-center rounded-full"
               style={{ backgroundColor: palette.fieldBg, color: palette.labelColor }}
             >
-              <X size={16} weight="bold" />
+              <X size={16} strokeWidth={2} />
             </motion.button>
           </motion.div>
 
@@ -608,7 +611,7 @@ function ModalCard({
                     className="flex items-center gap-1.5 rounded-full px-2 py-1 font-sans text-[13px] font-semibold"
                     style={{ color: palette.labelColor }}
                   >
-                    <Eraser size={14} weight="regular" />
+                    <Eraser size={14} />
                     Clear
                   </motion.button>
                 )}
@@ -694,7 +697,7 @@ function SaveButton({
             transition={{ type: 'spring', stiffness: 400, damping: 22 }}
             className="flex items-center justify-center"
           >
-            <Check size={16} weight="bold" />
+            <Check size={16} strokeWidth={2} />
           </motion.span>
         ) : (
           <motion.span

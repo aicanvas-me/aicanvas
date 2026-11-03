@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, unlinkSy
 import { join, dirname, resolve, relative, sep, posix } from 'path'
 import { execSync } from 'child_process'
 import { createJiti } from 'jiti'
-import { transformRootHeightClass } from './lib/copy-paste-transform.mjs'
+import { toInstalledIconPaths, transformRootHeightClass } from './lib/copy-paste-transform.mjs'
 import { DESIGN_SYSTEMS, FREE_DS_PLACEHOLDER_SENTINEL } from './lib/design-systems.config.mjs'
 import { reconcileLedger } from './lib/order-ledger.mjs'
 import { parseJsdocProps } from './lib/parse-jsdoc-props.mjs'
@@ -298,10 +298,12 @@ function iconItemFor(spec) {
   return m[1] ? `icon-${m[1]}` : 'icon-base'
 }
 
-function toInstalledIconPaths(content) {
-  // icon-registry.mjs installs icons flat in components/icons/, so `icons/` drops.
-  return content.replace(/(['"])@\/app\/_icons\/(?:icons\/)?/g, '$1@/components/icons/')
+// A standalone is one file, so its icons arrive as registryDependencies (none: no key).
+function standaloneIconDeps(content) {
+  const deps = [...new Set(extractImportSpecifiers(content).map(iconItemFor).filter(Boolean))]
+  return deps.length ? { registryDependencies: deps.sort().map(depUrl) } : {}
 }
+
 
 // Convert an absolute file path inside the system's rootDir into the registry
 // `path` / `target` (POSIX, forward slashes). Layout under rootDir is preserved
@@ -435,6 +437,7 @@ for (const dir of dirs) {
   // Make copy-paste ready: h-full → min-h-screen on the ROOT element only
   // (see scripts/lib/copy-paste-transform.mjs for why root-only)
   const copyPasteReady = transformRootHeightClass(content)
+  const iconDeps = standaloneIconDeps(content)
 
   // Build the registry item JSON
   const item = {
@@ -445,10 +448,11 @@ for (const dir of dirs) {
     description,
     author: 'aicanvas <https://aicanvas.me>',
     dependencies: deps,
+    ...iconDeps,
     files: [
       {
         path: `components/aicanvas/${name}.tsx`,
-        content: directiveFirst(copyPasteReady),
+        content: toInstalledIconPaths(directiveFirst(copyPasteReady)),
         type: 'registry:ui',
         target: `components/aicanvas/${name}.tsx`,
       },
@@ -465,6 +469,7 @@ for (const dir of dirs) {
     title,
     description,
     dependencies: deps,
+    ...iconDeps,
     files: [
       {
         path: `components/aicanvas/${name}.tsx`,
@@ -508,10 +513,11 @@ for (const slug of premiumSlugDirs) {
     description: pmeta.description || '',
     author: 'aicanvas <https://aicanvas.me>',
     dependencies: getDeps(content),
+    ...standaloneIconDeps(content),
     files: [
       {
         path: `components/aicanvas/${slug}.tsx`,
-        content: directiveFirst(transformRootHeightClass(content)),
+        content: toInstalledIconPaths(directiveFirst(transformRootHeightClass(content))),
         type: 'registry:ui',
         target: `components/aicanvas/${slug}.tsx`,
       },

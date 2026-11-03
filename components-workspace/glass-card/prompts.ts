@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -24,9 +24,9 @@ Background (absolute inset-0 object-cover opacity-60 pointer-events-none):
 \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png?updatedAt=1775226802133\`
 
 CARDS (title, subtitle, color, gradient pair, cta, Icon):
-1. Analytics | "Real-time metrics and insights for your application." | #5B8FF9 / '#5B8FF9, #A78BFA' | "View Dashboard" | ChartLineUp
-2. Automation | "Streamline your workflows with intelligent triggers." | #FF6BF5 / '#FF6BF5, #FF6680' | "Create Workflow" | Lightning
-3. Security | "Enterprise-grade protection for your data." | #FF7B54 / '#FF7B54, #FFBE0B' | "View Report" | ShieldCheck
+1. Analytics | "Real-time metrics and insights for your application." | #5B8FF9 / '#5B8FF9, #A78BFA' | "View Dashboard" | chart-line-up
+2. Automation | "Streamline your workflows with intelligent triggers." | #FF6BF5 / '#FF6BF5, #FF6680' | "Create Workflow" | bolt
+3. Security | "Enterprise-grade protection for your data." | #FF7B54 / '#FF7B54, #FFBE0B' | "View Report" | shield-check
 
 Root: relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]. Inside: background <img>, then a flex-wrap gap-6 px-6 row mapping cards.
 
@@ -43,13 +43,13 @@ Outer card motion.div: ref, onMouseMove, onMouseLeave, style {rotateX, rotateY, 
 Inside:
 (a) Rotating border motion.div: className "absolute inset-0 rounded-3xl opacity-30", style background \`linear-gradient(135deg, \${gradient}, transparent 60%)\`, animate {rotate:[0,360]}, transition {duration:20, repeat:Infinity, ease:'linear'}.
 (b) Card body div className "relative rounded-3xl p-6", style: background 'rgba(255,255,255,0.08)', backdropFilter 'blur(24px) saturate(1.8)', WebkitBackdropFilter same, boxShadow '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)'.
-  - Icon badge motion.div: mb-5 flex h-12 w-12 items-center justify-center rounded-xl, style {background: \`\${color}18\`, border: \`1px solid \${color}22\`}, whileHover {scale:1.1, rotate:5}, transition {type:'spring', stiffness:400, damping:15}. Child: <Icon size={22} weight="regular" style={{color}} />.
+  - Icon badge motion.div: mb-5 flex h-12 w-12 items-center justify-center rounded-xl, style {background: \`\${color}18\`, border: \`1px solid \${color}22\`}, whileHover {scale:1.1, rotate:5}, transition {type:'spring', stiffness:400, damping:15}. Child: <Icon size={22} style={{color}} />.
   - <h3 className="mb-2 text-base font-semibold text-white/90">{title}</h3>
   - <p className="mb-5 text-sm leading-relaxed text-white/40">{subtitle}</p>
-  - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full cursor-pointer items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} weight="regular" style={{color:'rgba(255,255,255,0.55)'}} />.
+  - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full cursor-pointer items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} style={{color:'rgba(255,255,255,0.55)'}} />.
   - Top edge highlight div: absolute left-6 right-6 top-0 h-[1px] background "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)".
 
-No entrance animation. Always dark. Icons from @phosphor-icons/react (weight="regular"): ChartLineUp, Lightning, ShieldCheck, ArrowRight. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
+No entrance animation. Always dark. Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bolt } from '@/components/icons/bolt'\`), Line style, 1.5px stroke: chart-line-up, bolt, shield-check, arrow-right. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
 
 ## Typography
 - Font: project default sans-serif
@@ -64,9 +64,9 @@ Background (absolute inset-0 object-cover opacity-60 pointer-events-none):
 \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png?updatedAt=1775226802133\`
 
 CARDS (title, subtitle, color, gradient pair, cta, Icon):
-1. Analytics — "Real-time metrics and insights for your application." — #5B8FF9 / '#5B8FF9, #A78BFA' — "View Dashboard" — ChartLineUp
-2. Automation — "Streamline your workflows with intelligent triggers." — #FF6BF5 / '#FF6BF5, #FF6680' — "Create Workflow" — Lightning
-3. Security — "Enterprise-grade protection for your data." — #FF7B54 / '#FF7B54, #FFBE0B' — "View Report" — ShieldCheck
+1. Analytics — "Real-time metrics and insights for your application." — #5B8FF9 / '#5B8FF9, #A78BFA' — "View Dashboard" — chart-line-up
+2. Automation — "Streamline your workflows with intelligent triggers." — #FF6BF5 / '#FF6BF5, #FF6680' — "Create Workflow" — bolt
+3. Security — "Enterprise-grade protection for your data." — #FF7B54 / '#FF7B54, #FFBE0B' — "View Report" — shield-check
 
 Root: relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]. Inside: background <img>, then a flex-wrap gap-6 px-6 row mapping cards.
 
@@ -83,13 +83,13 @@ Outer card motion.div: ref, onMouseMove, onMouseLeave, style {rotateX, rotateY, 
 Inside:
 (a) Rotating border motion.div: className "absolute inset-0 rounded-3xl opacity-30", style background \`linear-gradient(135deg, \${gradient}, transparent 60%)\`, animate {rotate:[0,360]}, transition {duration:20, repeat:Infinity, ease:'linear'}.
 (b) Card body div className "relative rounded-3xl p-6", style: background 'rgba(255,255,255,0.08)', backdropFilter 'blur(24px) saturate(1.8)', WebkitBackdropFilter same, boxShadow '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)'.
-  - Icon badge motion.div: mb-5 flex h-12 w-12 items-center justify-center rounded-xl, style {background: \`\${color}18\`, border: \`1px solid \${color}22\`}, whileHover {scale:1.1, rotate:5}, transition {type:'spring', stiffness:400, damping:15}. Child: <Icon size={22} weight="regular" style={{color}} />.
+  - Icon badge motion.div: mb-5 flex h-12 w-12 items-center justify-center rounded-xl, style {background: \`\${color}18\`, border: \`1px solid \${color}22\`}, whileHover {scale:1.1, rotate:5}, transition {type:'spring', stiffness:400, damping:15}. Child: <Icon size={22} style={{color}} />.
   - <h3 className="mb-2 text-base font-semibold text-white/90">{title}</h3>
   - <p className="mb-5 text-sm leading-relaxed text-white/40">{subtitle}</p>
-  - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} weight="regular" style={{color:'rgba(255,255,255,0.55)'}} />.
+  - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} style={{color:'rgba(255,255,255,0.55)'}} />.
   - Top edge highlight div: absolute left-6 right-6 top-0 h-[1px] background "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)".
 
-No entrance animation. Always dark. Icons from @phosphor-icons/react (weight="regular"): ChartLineUp, Lightning, ShieldCheck, ArrowRight. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
+No entrance animation. Always dark. Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bolt } from '@/components/icons/bolt'\`), Line style, 1.5px stroke: chart-line-up, bolt, shield-check, arrow-right. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
 
 ## Typography
 - Font: project default sans-serif
@@ -104,9 +104,9 @@ Background (absolute inset-0 object-cover opacity-60 pointer-events-none):
 \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png?updatedAt=1775226802133\`
 
 CARDS (title, subtitle, color, gradient pair, cta, Icon):
-1. Analytics — "Real-time metrics and insights for your application." — #5B8FF9 / '#5B8FF9, #A78BFA' — "View Dashboard" — ChartLineUp
-2. Automation — "Streamline your workflows with intelligent triggers." — #FF6BF5 / '#FF6BF5, #FF6680' — "Create Workflow" — Lightning
-3. Security — "Enterprise-grade protection for your data." — #FF7B54 / '#FF7B54, #FFBE0B' — "View Report" — ShieldCheck
+1. Analytics — "Real-time metrics and insights for your application." — #5B8FF9 / '#5B8FF9, #A78BFA' — "View Dashboard" — chart-line-up
+2. Automation — "Streamline your workflows with intelligent triggers." — #FF6BF5 / '#FF6BF5, #FF6680' — "Create Workflow" — bolt
+3. Security — "Enterprise-grade protection for your data." — #FF7B54 / '#FF7B54, #FFBE0B' — "View Report" — shield-check
 
 Root: relative flex h-full w-full items-center justify-center overflow-hidden bg-[#1A1A19]. Inside: background <img>, then a flex-wrap gap-6 px-6 row mapping cards.
 
@@ -123,13 +123,13 @@ Outer card motion.div: ref, onMouseMove, onMouseLeave, style {rotateX, rotateY, 
 Inside:
 (a) Rotating border motion.div: className "absolute inset-0 rounded-3xl opacity-30", style background \`linear-gradient(135deg, \${gradient}, transparent 60%)\`, animate {rotate:[0,360]}, transition {duration:20, repeat:Infinity, ease:'linear'}.
 (b) Card body div className "relative rounded-3xl p-6", style: background 'rgba(255,255,255,0.08)', backdropFilter 'blur(24px) saturate(1.8)', WebkitBackdropFilter same, boxShadow '0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12)'.
-  - Icon badge motion.div: mb-5 flex h-12 w-12 items-center justify-center rounded-xl, style {background: \`\${color}18\`, border: \`1px solid \${color}22\`}, whileHover {scale:1.1, rotate:5}, transition {type:'spring', stiffness:400, damping:15}. Child: <Icon size={22} weight="regular" style={{color}} />.
+  - Icon badge motion.div: mb-5 flex h-12 w-12 items-center justify-center rounded-xl, style {background: \`\${color}18\`, border: \`1px solid \${color}22\`}, whileHover {scale:1.1, rotate:5}, transition {type:'spring', stiffness:400, damping:15}. Child: <Icon size={22} style={{color}} />.
   - <h3 className="mb-2 text-base font-semibold text-white/90">{title}</h3>
   - <p className="mb-5 text-sm leading-relaxed text-white/40">{subtitle}</p>
-  - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} weight="regular" style={{color:'rgba(255,255,255,0.55)'}} />.
+  - CTA motion.button: whileHover {scale:1.03}, whileTap {scale:0.97}, className "flex w-full items-center justify-between rounded-2xl px-4 py-3". Style: background \`linear-gradient(135deg, \${color1}40, \${color2}28)\`, border \`1px solid \${color1}55\`, boxShadow \`0 2px 12px \${color1}25\`. onMouseEnter updates boxShadow to \`0 4px 20px \${color1}45\`; onMouseLeave back. Split gradient by ','. Inside: <span style={{color:'rgba(255,255,255,0.75)'}} text-sm font-semibold>{cta}</span> + <ArrowRight size={16} style={{color:'rgba(255,255,255,0.55)'}} />.
   - Top edge highlight div: absolute left-6 right-6 top-0 h-[1px] background "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)".
 
-No entrance animation. Always dark. Icons from @phosphor-icons/react (weight="regular"): ChartLineUp, Lightning, ShieldCheck, ArrowRight. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
+No entrance animation. Always dark. Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Bolt } from '@/components/icons/bolt'\`), Line style, 1.5px stroke: chart-line-up, bolt, shield-check, arrow-right. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Imports: useRef from react; motion, useMotionValue, useTransform, useSpring from framer-motion.
 
 ## Typography
 - Font: project default sans-serif

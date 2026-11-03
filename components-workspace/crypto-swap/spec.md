@@ -52,9 +52,9 @@ A circular **flip** button straddles the Sell/Buy seam.
   throughout (no scale/spring/glow/sparks; instant transitions).
 
 ## Tech notes
-- React + TypeScript + Tailwind v4 + Framer Motion + `@phosphor-icons/react`. No external
+- React + TypeScript + Tailwind v4 + Framer Motion + AI Canvas icons. No external
   coin-icon dependency. Copy-paste single file, `min-h-screen` root only, default export
-  `CryptoSwap`. `// npm install framer-motion @phosphor-icons/react`.
+  `CryptoSwap`. `// npm install framer-motion`.
 
 ## Tags
 - `Widgets` (accent), `Interactive`, `Motion`

@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="relative flex min-h-screen w-full items-center justify-end overflow-hidden bg-[#1A1A19] pb-8"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -29,7 +29,7 @@ Constants:
 - MAG_SCALE = 1.55
 
 DOCK_ITEMS (icon, label, color):
-Sun #FFBE0B "Energy" · Heart #FF5C8A "Love" · MusicNote #FF7B54 "Joy" · Coffee #C9A96E "Comfort" · Leaf #06D6A0 "Nature" · Star #FFBE0B "Dreams" · Moon #B388FF "Rest" · Flame #FF5C8A "Passion" · Cloud #3A86FF "Peace".
+Sun #FFBE0B "Energy" · Heart #FF5C8A "Love" · Music #FF7B54 "Joy" · Coffee #C9A96E "Comfort" · Leaf #06D6A0 "Nature" · Star #FFBE0B "Dreams" · Moon #B388FF "Rest" · Flame #FF5C8A "Passion" · Cloud #3A86FF "Peace".
 
 Root: div relative flex h-full w-full items-center justify-end overflow-hidden bg-[#1A1A19] pb-8. Background <img>.
 
@@ -53,9 +53,9 @@ Outer motion.button: type="button", aria-label={label}, aria-pressed={isOpen}, o
 
 Tooltip motion.div: className "pointer-events-none absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium text-white/90 opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100", with opacity-100 also applied while the touch tooltip state is visible. Style background 'rgba(255,255,255,0.1)', backdropFilter 'blur(16px)', border '1px solid rgba(255,255,255,0.1)', transition 'opacity 0.15s'.
 
-Icon badge motion.div (notification-style tinted, NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "relative flex items-center justify-center group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[rgba(255,255,255,0.6)]". Inside: <Icon size={22} weight="regular" style={{color}} />. Under it, AnimatePresence springs a 4px dot in the item color from opacity/scale 0 to 1 when isOpen, positioned at bottom -6 and left calc(50% - 2px), with stiffness 500 and damping 30.
+Icon badge motion.div (notification-style tinted, NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "relative flex items-center justify-center group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[rgba(255,255,255,0.6)]". Inside: <Icon size={22} style={{color}} />. Under it, AnimatePresence springs a 4px dot in the item color from opacity/scale 0 to 1 when isOpen, positioned at bottom -6 and left calc(50% - 2px), with stiffness 500 and damping 30.
 
-Imports: useEffect, useRef, useState from react; AnimatePresence, motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, MusicNote, Coffee, Leaf, Star, Moon, Flame, Cloud from @phosphor-icons/react (all weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, Music, Coffee, Leaf, Star, Moon, Flame, Cloud from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Sun } from '@/components/icons/sun'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -75,7 +75,7 @@ Constants:
 - MAG_SCALE = 1.55
 
 DOCK_ITEMS (icon, label, color):
-Sun #FFBE0B "Energy" · Heart #FF5C8A "Love" · MusicNote #FF7B54 "Joy" · Coffee #C9A96E "Comfort" · Leaf #06D6A0 "Nature" · Star #FFBE0B "Dreams" · Moon #B388FF "Rest" · Flame #FF5C8A "Passion" · Cloud #3A86FF "Peace".
+Sun #FFBE0B "Energy" · Heart #FF5C8A "Love" · Music #FF7B54 "Joy" · Coffee #C9A96E "Comfort" · Leaf #06D6A0 "Nature" · Star #FFBE0B "Dreams" · Moon #B388FF "Rest" · Flame #FF5C8A "Passion" · Cloud #3A86FF "Peace".
 
 Root: div relative flex h-full w-full items-center justify-end overflow-hidden bg-[#1A1A19] pb-8. Background <img>.
 
@@ -98,9 +98,9 @@ Outer motion.div: className "group relative flex cursor-pointer flex-col items-c
 
 Tooltip motion.div: className "pointer-events-none absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium text-white/90 opacity-0 group-hover:opacity-100", style background 'rgba(255,255,255,0.1)', backdropFilter 'blur(16px)', border '1px solid rgba(255,255,255,0.1)', transition 'opacity 0.15s'.
 
-Icon badge motion.div (notification-style tinted — NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "flex items-center justify-center". Inside: <Icon size={22} weight="regular" style={{color}} />.
+Icon badge motion.div (notification-style tinted — NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "flex items-center justify-center". Inside: <Icon size={22} style={{color}} />.
 
-Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, MusicNote, Coffee, Leaf, Star, Moon, Flame, Cloud from @phosphor-icons/react (all weight="regular").
+Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, Music, Coffee, Leaf, Star, Moon, Flame, Cloud from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Sun } from '@/components/icons/sun'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -120,7 +120,7 @@ Constants:
 - MAG_SCALE = 1.55
 
 DOCK_ITEMS (icon, label, color):
-Sun #FFBE0B "Energy" · Heart #FF5C8A "Love" · MusicNote #FF7B54 "Joy" · Coffee #C9A96E "Comfort" · Leaf #06D6A0 "Nature" · Star #FFBE0B "Dreams" · Moon #B388FF "Rest" · Flame #FF5C8A "Passion" · Cloud #3A86FF "Peace".
+Sun #FFBE0B "Energy" · Heart #FF5C8A "Love" · Music #FF7B54 "Joy" · Coffee #C9A96E "Comfort" · Leaf #06D6A0 "Nature" · Star #FFBE0B "Dreams" · Moon #B388FF "Rest" · Flame #FF5C8A "Passion" · Cloud #3A86FF "Peace".
 
 Root: div relative flex h-full w-full items-center justify-end overflow-hidden bg-[#1A1A19] pb-8. Background <img>.
 
@@ -143,9 +143,9 @@ Outer motion.div: className "group relative flex cursor-pointer flex-col items-c
 
 Tooltip motion.div: className "pointer-events-none absolute -top-10 rounded-lg px-3 py-1.5 text-xs font-medium text-white/90 opacity-0 group-hover:opacity-100", style background 'rgba(255,255,255,0.1)', backdropFilter 'blur(16px)', border '1px solid rgba(255,255,255,0.1)', transition 'opacity 0.15s'.
 
-Icon badge motion.div (notification-style tinted — NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "flex items-center justify-center". Inside: <Icon size={22} weight="regular" style={{color}} />.
+Icon badge motion.div (notification-style tinted — NOT gradient, NOT gloss, NOT squircle): style {width:size, height:size, y, background: \`\${color}18\`, border: \`1px solid \${color}22\`, borderRadius:12}, whileTap {scale:0.82}, className "flex items-center justify-center". Inside: <Icon size={22} style={{color}} />.
 
-Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, MusicNote, Coffee, Leaf, Star, Moon, Flame, Cloud from @phosphor-icons/react (all weight="regular").
+Imports: useRef from react; motion, useMotionValue, useSpring, useTransform from framer-motion; Sun, Heart, Music, Coffee, Leaf, Star, Moon, Flame, Cloud from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Sun } from '@/components/icons/sun'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif

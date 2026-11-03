@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="flex min-h-screen w-full items-center justify-center"
 The root ships full height with min-h-screen and the CLI install delivers it exactly as shown, so a standalone paste needs no change. Drop it into a container of your own and that container needs a real height, or the root collapses and takes its absolute layers with it.
@@ -27,7 +27,7 @@ Three stacked card columns, one each for Anthropic, Perplexity, and Google. Each
 - Stacks max-width 760px
 
 ## Card anatomy (top → bottom)
-1. Rate badge ($120/hr) left, BookmarkSimple icon (phosphor) top-right, click to toggle filled/outline + scale-pop spring
+1. Rate badge ($120/hr) left, bookmark icon from AI Canvas icons (\`@/components/icons/bookmark\`, Line style, 1.5px stroke) top-right, click to toggle filled with currentColor/outline + scale-pop spring. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 2. Job title (bold 20px, up to 2 lines, maxWidth 72%), vertical pagination dots column on the right
 3. Divider
 4. Brand logo (24px inline SVG) + company + role label, dark pill "View" button
@@ -96,7 +96,7 @@ Three stacked card columns — one each for Anthropic, Perplexity, and Google. E
 - Stacks max-width 760px
 
 ## Card anatomy (top → bottom)
-1. Rate badge ($120/hr) left — BookmarkSimple icon (phosphor) top-right, click to toggle filled/outline + scale-pop spring
+1. Rate badge ($120/hr) left — bookmark icon from AI Canvas icons (\`@/components/icons/bookmark\`, Line style, 1.5px stroke) top-right, click to toggle filled with currentColor/outline + scale-pop spring. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 2. Job title (bold 20px, up to 2 lines, maxWidth 72%) — vertical pagination dots column on the right
 3. Divider
 4. Brand logo (24px inline SVG) + company + role label — dark pill "View" button
@@ -165,7 +165,7 @@ Three stacked card columns — one each for Anthropic, Perplexity, and Google. E
 - Stacks max-width 760px
 
 ## Card anatomy (top → bottom)
-1. Rate badge ($120/hr) left — BookmarkSimple icon (phosphor) top-right, click to toggle filled/outline + scale-pop spring
+1. Rate badge ($120/hr) left — bookmark icon from AI Canvas icons (\`@/components/icons/bookmark\`, Line style, 1.5px stroke) top-right, click to toggle filled with currentColor/outline + scale-pop spring. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 2. Job title (bold 20px, up to 2 lines, maxWidth 72%) — vertical pagination dots column on the right
 3. Divider
 4. Brand logo (24px inline SVG) + company + role label — dark pill "View" button

@@ -1,10 +1,10 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useRef, useState, useLayoutEffect, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { BookmarkSimple } from '@phosphor-icons/react'
+import { Bookmark } from '@/app/_icons/icons/bookmark'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 type LogoKey = 'claude' | 'openai' | 'gemini' | 'vercel' | 'mistral' | 'perplexity'
@@ -243,7 +243,7 @@ function SingleCard({ card, stack, isDark, isFront, frontIndex, onCycle }: Singl
           style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 2, display: 'flex' }}
           aria-label={bookmarked ? 'Remove bookmark' : 'Add bookmark'}
         >
-          <BookmarkSimple weight={bookmarked ? 'fill' : 'regular'} size={18} color={bookmarked ? '#e05c6a' : arrowColor} />
+          <Bookmark fill={bookmarked ? 'currentColor' : 'none'} size={18} color={bookmarked ? '#e05c6a' : arrowColor} />
         </motion.button>
       </div>
 

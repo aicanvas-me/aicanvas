@@ -59,7 +59,8 @@ function parseImportedPackages(source) {
     let m
     while ((m = re.exec(source)) !== null) {
       const path = m[1]
-      if (path.startsWith('.') || path.startsWith('/')) continue
+      // `@/` is the project alias (our icons install there), never an npm package.
+      if (path.startsWith('.') || path.startsWith('/') || path.startsWith('@/')) continue
       const pkg = getPackageName(path)
       if (!isAlwaysAvailable(pkg)) packages.add(pkg)
     }
@@ -115,6 +116,8 @@ function checkInternalImports(source) {
   let m
   while ((m = re.exec(source)) !== null) {
     const path = m[1]
+    // Our icons are the exception: the registry installs each one and rewrites the path.
+    if (path.startsWith('@/app/_icons/')) continue
     if (
       path.includes('/design-systems/') ||
       path.includes('/app/') ||

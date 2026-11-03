@@ -33,15 +33,11 @@ CHROME AND MOBILE
 const CLAUDE_SPEC = SPEC
   .replace(
     'BUTTON STATES\n',
-    'BUTTON STATES\n- Initialize addedProducts with useState<Set<string>>(() => new Set()). For each card, isAdded = addedProducts.has(card.title); pass it and an onToggleAdded callback through FlickCard to CardFace. The callback clones the Set, removes the title if present or adds it otherwise, then stores the new Set. Import Check from @phosphor-icons/react.\n',
-  )
-  .replace(
-    'Add a "// npm install framer-motion" comment at the top.',
-    'Add a "// npm install framer-motion @phosphor-icons/react" comment at the top.',
+    'BUTTON STATES\n- Initialize addedProducts with useState<Set<string>>(() => new Set()). For each card, isAdded = addedProducts.has(card.title); pass it and an onToggleAdded callback through FlickCard to CardFace. The callback clones the Set, removes the title if present or adds it otherwise, then stores the new Set. Import Check from AI Canvas icons (`@/components/icons/check`, e.g. `import { Check } from "@/components/icons/check"`), Line style, 1.5px stroke. Install each icon with `npx shadcn@latest add https://aicanvas.me/r/icon-check.json`.\n',
   )
   .replace(
     'Left: the product name (color #111111, 16px, weight 700, single line, ellipsis on overflow). Right: a pill button showing the label: background #141312, color #F5F1E8, fully rounded (borderRadius 9999), padding "8px 16px", 12px / weight 600.',
-    'Left: the product name (color #111111, 16px, weight 700, lineHeight 1.4, single line, ellipsis on overflow). Right: a pill button that toggles between the label and a Phosphor Check (14, regular) plus "Added": background #141312, color #F5F1E8, fully rounded (borderRadius 9999), padding "8px 16px", 12px / weight 600.',
+    'Left: the product name (color #111111, 16px, weight 700, lineHeight 1.4, single line, ellipsis on overflow). Right: a pill button that toggles between the label and a Check icon (size 14) plus "Added": background #141312, color #F5F1E8, fully rounded (borderRadius 9999), padding "8px 16px", 12px / weight 600.',
   )
   .replace(
     'The pill button is a motion.button with whileHover { scale: 1.06, backgroundColor: "#2C2825" } and whileTap { scale: 0.93, backgroundColor: "#000000" }, with a spring transition (stiffness 500, damping 30). Call stopPropagation on its onPointerDown and onClick so pressing the button never starts a card drag.',
@@ -49,7 +45,7 @@ const CLAUDE_SPEC = SPEC
   )
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `Verify this project has Tailwind CSS, TypeScript, and React set up, plus Framer Motion and Phosphor Icons (npm install framer-motion @phosphor-icons/react). If anything is missing, initialize with the shadcn CLI:
+  'Claude Code': `Verify this project has Tailwind CSS, TypeScript, and React set up, plus Framer Motion (npm install framer-motion). If anything is missing, initialize with the shadcn CLI:
   npx shadcn@latest init
 
 ---

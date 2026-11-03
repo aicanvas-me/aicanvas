@@ -34,7 +34,7 @@ This repository is public. A leaked secret is exposed the moment it is committed
 - **Language**: TypeScript (strict)
 - **Styling**: Tailwind CSS v4 (configured via CSS `@theme inline`, no `tailwind.config.ts`)
 - **Animations**: Framer Motion (required for all animated components)
-- **Icons**: `@phosphor-icons/react` — always use `weight="regular"`
+- **Icons**: AI Canvas icons, one file per icon (`import { Check } from '@/app/_icons/icons/check'`, installed as `@/components/icons/check`); Line style, a new name is added to `app/_icons/site-icons.json` first
 - **Font**: Manrope (loaded via `next/font/google`, registered as `--font-sans`)
 - **3D**: Three.js (optional, only when truly needed)
 

@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -48,18 +48,18 @@ Modal card (motion.div, key="card"):
 Close button (motion.button): className "absolute right-4 top-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full", bg 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.08)'.
 - whileHover { scale:1.15, rotate:90 }
 - whileTap {scale:0.9}, transition {duration:0.2, ease:[0.25,0.1,0.25,1]}
-- X icon size={14} weight="regular" className="text-white/60"
+- X icon size={14} className="text-white/60"
 - ref={closeRef}, type="button", aria-label="Close", onClick={close}
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
-1) Icon badge (motion.div), notification-style tinted: className "mb-5 flex h-16 w-16 items-center justify-center rounded-xl", style background '#FFA03218' border '1px solid #FFA03222'. Entrance: initial {scale:0, rotate:-20}, animate {scale:1, rotate:0}, transition {type:'spring', stiffness:300, damping:18, delay:0.15}. Child: <ShieldCheck size={28} weight="regular" style={{color:'#FFA032'}} />.
+1) Icon badge (motion.div), notification-style tinted: className "mb-5 flex h-16 w-16 items-center justify-center rounded-xl", style background '#FFA03218' border '1px solid #FFA03222'. Entrance: initial {scale:0, rotate:-20}, animate {scale:1, rotate:0}, transition {type:'spring', stiffness:300, damping:18, delay:0.15}. Child: <ShieldCheck size={28} style={{color:'#FFA032'}} />.
 
 2) Heading motion.h2: "Upgrade to Pro", className "mb-2 text-lg font-semibold text-white/90", initial {opacity:0, y:8} animate {opacity:1, y:0} transition {delay:0.2}.
 
 3) Description motion.p: "Unlock premium components, priority support, and early access to new features." className "mb-6 text-center text-sm leading-relaxed text-white/40", initial {opacity:0, y:8}, transition {delay:0.25}.
 
-4) Features motion.div wrapper initial {opacity:0} animate {opacity:1} transition {delay:0.3} className "mb-6 flex w-full flex-col gap-3". Items ['Unlimited components', 'Source code access', 'Priority support']. Each motion.div: initial {opacity:0, x:-12}, animate {opacity:1, x:0}, transition {delay:0.35 + i*0.08}, className "flex items-center gap-3". Badge: h-5 w-5 rounded-full flex centered, bg 'rgba(255,155,50,0.18)'. Check icon size={10} weight="regular" color 'rgba(255,155,50,1)'. Label: span text-sm text-white/60.
+4) Features motion.div wrapper initial {opacity:0} animate {opacity:1} transition {delay:0.3} className "mb-6 flex w-full flex-col gap-3". Items ['Unlimited components', 'Source code access', 'Priority support']. Each motion.div: initial {opacity:0, x:-12}, animate {opacity:1, x:0}, transition {delay:0.35 + i*0.08}, className "flex items-center gap-3". Badge: h-5 w-5 rounded-full flex centered, bg 'rgba(255,155,50,0.18)'. Check icon size={10} color 'rgba(255,155,50,1)'. Label: span text-sm text-white/60.
 
 5) Buttons flex flex-col gap-2 w-full.
 Primary motion.button ("Upgrade Now") className "w-full cursor-pointer rounded-full py-3 text-sm font-semibold text-white":
@@ -72,7 +72,7 @@ Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-ful
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
 - type="button", onClick={close}: closes the modal, same as X.
 
-Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Check } from '@/components/icons/check'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -111,18 +111,18 @@ Modal card (motion.div, key="card"):
 Close button (motion.button): className "absolute right-4 top-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full", bg 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.08)'.
 - whileHover { scale:1.15, rotate:90 }
 - whileTap {scale:0.9}, transition {duration:0.2, ease:[0.25,0.1,0.25,1]}
-- X icon size={14} weight="regular" className="text-white/60"
+- X icon size={14} className="text-white/60"
 - ref={closeRef}, type="button", aria-label="Close", onClick={close}
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
-1) Icon badge (motion.div) — notification-style tinted: className "mb-5 flex h-16 w-16 items-center justify-center rounded-xl", style background '#FFA03218' border '1px solid #FFA03222'. Entrance: initial {scale:0, rotate:-20}, animate {scale:1, rotate:0}, transition {type:'spring', stiffness:300, damping:18, delay:0.15}. Child: <ShieldCheck size={28} weight="regular" style={{color:'#FFA032'}} />.
+1) Icon badge (motion.div) — notification-style tinted: className "mb-5 flex h-16 w-16 items-center justify-center rounded-xl", style background '#FFA03218' border '1px solid #FFA03222'. Entrance: initial {scale:0, rotate:-20}, animate {scale:1, rotate:0}, transition {type:'spring', stiffness:300, damping:18, delay:0.15}. Child: <ShieldCheck size={28} style={{color:'#FFA032'}} />.
 
 2) Heading motion.h2: "Upgrade to Pro", className "mb-2 text-lg font-semibold text-white/90", initial {opacity:0, y:8} animate {opacity:1, y:0} transition {delay:0.2}.
 
 3) Description motion.p: "Unlock premium components, priority support, and early access to new features." className "mb-6 text-center text-sm leading-relaxed text-white/40", initial {opacity:0, y:8}, transition {delay:0.25}.
 
-4) Features motion.div wrapper initial {opacity:0} animate {opacity:1} transition {delay:0.3} className "mb-6 flex w-full flex-col gap-3". Items ['Unlimited components', 'Source code access', 'Priority support']. Each motion.div: initial {opacity:0, x:-12}, animate {opacity:1, x:0}, transition {delay:0.35 + i*0.08}, className "flex items-center gap-3". Badge: h-5 w-5 rounded-full flex centered, bg 'rgba(255,155,50,0.18)'. Check icon size={10} weight="regular" color 'rgba(255,155,50,1)'. Label: span text-sm text-white/60.
+4) Features motion.div wrapper initial {opacity:0} animate {opacity:1} transition {delay:0.3} className "mb-6 flex w-full flex-col gap-3". Items ['Unlimited components', 'Source code access', 'Priority support']. Each motion.div: initial {opacity:0, x:-12}, animate {opacity:1, x:0}, transition {delay:0.35 + i*0.08}, className "flex items-center gap-3". Badge: h-5 w-5 rounded-full flex centered, bg 'rgba(255,155,50,0.18)'. Check icon size={10} color 'rgba(255,155,50,1)'. Label: span text-sm text-white/60.
 
 5) Buttons flex flex-col gap-2 w-full.
 Primary motion.button ("Upgrade Now") className "w-full cursor-pointer rounded-full py-3 text-sm font-semibold text-white":
@@ -135,7 +135,7 @@ Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-ful
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
 - type="button", onClick={close}: closes the modal, same as X.
 
-Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Check } from '@/components/icons/check'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -174,18 +174,18 @@ Modal card (motion.div, key="card"):
 Close button (motion.button): className "absolute right-4 top-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full", bg 'rgba(255,255,255,0.08)', border '1px solid rgba(255,255,255,0.08)'.
 - whileHover { scale:1.15, rotate:90 }
 - whileTap {scale:0.9}, transition {duration:0.2, ease:[0.25,0.1,0.25,1]}
-- X icon size={14} weight="regular" className="text-white/60"
+- X icon size={14} className="text-white/60"
 - ref={closeRef}, type="button", aria-label="Close", onClick={close}
 
 Content container: flex flex-col items-center px-8 pb-8 pt-10.
 
-1) Icon badge (motion.div) — notification-style tinted: className "mb-5 flex h-16 w-16 items-center justify-center rounded-xl", style background '#FFA03218' border '1px solid #FFA03222'. Entrance: initial {scale:0, rotate:-20}, animate {scale:1, rotate:0}, transition {type:'spring', stiffness:300, damping:18, delay:0.15}. Child: <ShieldCheck size={28} weight="regular" style={{color:'#FFA032'}} />.
+1) Icon badge (motion.div) — notification-style tinted: className "mb-5 flex h-16 w-16 items-center justify-center rounded-xl", style background '#FFA03218' border '1px solid #FFA03222'. Entrance: initial {scale:0, rotate:-20}, animate {scale:1, rotate:0}, transition {type:'spring', stiffness:300, damping:18, delay:0.15}. Child: <ShieldCheck size={28} style={{color:'#FFA032'}} />.
 
 2) Heading motion.h2: "Upgrade to Pro", className "mb-2 text-lg font-semibold text-white/90", initial {opacity:0, y:8} animate {opacity:1, y:0} transition {delay:0.2}.
 
 3) Description motion.p: "Unlock premium components, priority support, and early access to new features." className "mb-6 text-center text-sm leading-relaxed text-white/40", initial {opacity:0, y:8}, transition {delay:0.25}.
 
-4) Features motion.div wrapper initial {opacity:0} animate {opacity:1} transition {delay:0.3} className "mb-6 flex w-full flex-col gap-3". Items ['Unlimited components', 'Source code access', 'Priority support']. Each motion.div: initial {opacity:0, x:-12}, animate {opacity:1, x:0}, transition {delay:0.35 + i*0.08}, className "flex items-center gap-3". Badge: h-5 w-5 rounded-full flex centered, bg 'rgba(255,155,50,0.18)'. Check icon size={10} weight="regular" color 'rgba(255,155,50,1)'. Label: span text-sm text-white/60.
+4) Features motion.div wrapper initial {opacity:0} animate {opacity:1} transition {delay:0.3} className "mb-6 flex w-full flex-col gap-3". Items ['Unlimited components', 'Source code access', 'Priority support']. Each motion.div: initial {opacity:0, x:-12}, animate {opacity:1, x:0}, transition {delay:0.35 + i*0.08}, className "flex items-center gap-3". Badge: h-5 w-5 rounded-full flex centered, bg 'rgba(255,155,50,0.18)'. Check icon size={10} color 'rgba(255,155,50,1)'. Label: span text-sm text-white/60.
 
 5) Buttons flex flex-col gap-2 w-full.
 Primary motion.button ("Upgrade Now") className "w-full cursor-pointer rounded-full py-3 text-sm font-semibold text-white":
@@ -198,7 +198,7 @@ Ghost motion.button ("Maybe Later") className "w-full cursor-pointer rounded-ful
 - whileHover {scale:1.04, background:'rgba(255,255,255,0.1)'}, whileTap {scale:0.96}, same ease.
 - type="button", onClick={close}: closes the modal, same as X.
 
-Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from @phosphor-icons/react (weight="regular").
+Imports: useEffect, useRef, useState from react; AnimatePresence, motion from framer-motion; X, Check, ShieldCheck from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Check } from '@/components/icons/check'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif

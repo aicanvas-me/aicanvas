@@ -20,4 +20,4 @@
 - Click outside → closes
 - Staggered entrance for menu items
 
-**Tech notes:** Framer Motion, Phosphor icons, glass design tokens matching the rest of the glass collection.
+**Tech notes:** Framer Motion, glass design tokens matching the rest of the glass collection.

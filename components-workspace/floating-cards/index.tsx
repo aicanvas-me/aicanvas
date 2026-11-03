@@ -1,10 +1,11 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useRef, useState, useLayoutEffect, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Buildings, ArrowUpRight } from '@phosphor-icons/react'
+import { Buildings } from '@/app/_icons/icons/buildings'
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
@@ -49,7 +50,7 @@ function HotelsCounter({ target, active }: { target: number; active: boolean }) 
       alignItems: 'center',
       gap: 5,
     }}>
-      <Buildings weight="regular" size={16} style={{ color: '#E8E8DF', opacity: 0.55 }} />
+      <Buildings size={16} style={{ color: '#E8E8DF', opacity: 0.55 }} />
       <span style={{
         fontSize: 10,
         fontWeight: 500,
@@ -171,7 +172,7 @@ export default function FloatingCards() {
                     background: '#BECF5D',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    <ArrowUpRight weight="bold" size={13} style={{ color: '#1A1A19' }} />
+                    <ArrowUpRight strokeWidth={2} size={13} style={{ color: '#1A1A19' }} />
                   </div>
                 </div>
 

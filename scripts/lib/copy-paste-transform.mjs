@@ -94,3 +94,9 @@ export function findJSXReturnContentStart(content, startPos) {
   }
   return -1
 }
+
+// Our icons install flat in components/icons/ (scripts/icon-registry.mjs), so every
+// `@/app/_icons/...` import is rewritten to where an install puts it.
+export function toInstalledIconPaths(content) {
+  return content.replace(/(['"])@\/app\/_icons\/(?:icons\/)?/g, '$1@/components/icons/')
+}

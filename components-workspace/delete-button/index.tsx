@@ -1,10 +1,11 @@
 'use client'
 
-// npm install framer-motion @phosphor-icons/react
+// npm install framer-motion
 
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion, type Transition } from 'framer-motion'
-import { ArrowUUpLeft, Check } from '@phosphor-icons/react'
+import { Undo } from '@/app/_icons/icons/undo'
+import { Check } from '@/app/_icons/icons/check'
 
 type DeletionState = 'default' | 'counting' | 'deleted'
 
@@ -106,7 +107,7 @@ export default function DeleteButton() {
                 className='grid size-10 shrink-0 place-items-center rounded-full bg-red-600 text-white shadow-[0_1px_2px_0_rgb(0_0_0_/_0.05),inset_0_2px_0_rgba(255,255,255,0.3)] outline-none focus-visible:ring-4 focus-visible:ring-red-400/45 dark:bg-red-500 dark:shadow-[0_1px_2px_0_rgb(0_0_0_/_0.05),inset_0_2px_0_rgba(255,255,255,0.18)]'
                 aria-label='Undo account deletion'
               >
-                <ArrowUUpLeft size='1.1em' weight='regular' aria-hidden='true' />
+                <Undo size='1.1em' aria-hidden='true' />
               </motion.button>
 
               <span className='whitespace-nowrap px-0.5 text-sm font-semibold'>
@@ -146,7 +147,7 @@ export default function DeleteButton() {
               aria-live='polite'
             >
               <span className='grid size-5 place-items-center rounded-full bg-stone-500 text-white shadow-[inset_0_2px_0_rgba(255,255,255,0.3)] dark:bg-stone-600 dark:shadow-[inset_0_2px_0_rgba(255,255,255,0.15)]'>
-                <Check size='0.9em' weight='regular' aria-hidden='true' />
+                <Check size='0.9em' aria-hidden='true' />
               </span>
               Account Deleted
             </motion.div>

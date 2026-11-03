@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="@container relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -44,11 +44,11 @@ Desktop group (hidden items-center gap-1 @min-[640px]:flex): each NAV_ITEM → m
 
 "Get Started" motion.button (ml-2 cursor-pointer whitespace-nowrap rounded-full px-5 py-2 text-sm font-semibold text-white): style=ctaStyle. whileHover {scale:1.04, ...ctaHoverStyle}. whileTap {scale:0.96}. transition {duration:0.25, ease:[0.25,0.1,0.25,1]}.
 
-MOBILE hamburger motion.button (mr-2 flex cursor-pointer items-center justify-center rounded-full p-2 text-white/70 @min-[640px]:hidden): style bg 'rgba(255,255,255,0.08)'. onClick toggles menuOpen. whileTap {scale:0.9}. Inside AnimatePresence mode="wait" initial={false}: menuOpen ? motion.span key="x" initial {rotate:-90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:90, opacity:0} {duration:0.15} with <X size={18} weight="bold" /> : motion.span key="menu" initial {rotate:90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:-90, opacity:0} with <List size={18} weight="bold" />.
+MOBILE hamburger motion.button (mr-2 flex cursor-pointer items-center justify-center rounded-full p-2 text-white/70 @min-[640px]:hidden): style bg 'rgba(255,255,255,0.08)'. onClick toggles menuOpen. whileTap {scale:0.9}. Inside AnimatePresence mode="wait" initial={false}: menuOpen ? motion.span key="x" initial {rotate:-90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:90, opacity:0} {duration:0.15} with <X size={18} strokeWidth={2} /> : motion.span key="menu" initial {rotate:90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:-90, opacity:0} with <Menu size={18} strokeWidth={2} />.
 
 MOBILE DROPDOWN: AnimatePresence wraps an outer motion.div with className "mt-2 @min-[640px]:hidden". Animate it from {height:0, y:-8, overflow:'hidden'} to {height:'auto', y:0, transitionEnd:{overflow:'visible'}} and back, using the 0.22s ease. Inside, a separate motion.div holds glassStyle and the blur layer, scaling from 0.97 to 1 and back with no opacity animation. Any element that holds backdrop blur must remain fully opaque so the blur stays visible. NAV_ITEMS map → plain buttons rounded-full px-5 py-2.5 text-left text-sm font-medium cursor-pointer. Style color: active===i? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)'; bg: active===i? 'rgba(255,255,255,0.1)' : 'transparent'. onClick setActive(i)+setMenuOpen(false). Final Get Started button mt-1 rounded-full px-5 py-2.5 text-sm font-semibold text-white, style=ctaStyle, onClick setMenuOpen(false).
 
-Imports: useState from react; motion, AnimatePresence from framer-motion; List, X from @phosphor-icons/react.
+Imports: useState from react; motion, AnimatePresence from framer-motion; Menu, X from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Menu } from '@/components/icons/menu'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -83,11 +83,11 @@ Desktop group (hidden items-center gap-1 sm:flex): each NAV_ITEM → motion.butt
 
 "Get Started" motion.button (ml-2 rounded-full px-5 py-2 text-sm font-semibold text-white cursor-pointer): style=ctaStyle. whileHover {scale:1.04, ...ctaHoverStyle}. whileTap {scale:0.96}. transition {duration:0.25, ease:[0.25,0.1,0.25,1]}.
 
-MOBILE hamburger motion.button (mr-2 flex cursor-pointer items-center justify-center rounded-full p-2 text-white/70 sm:hidden): style bg 'rgba(255,255,255,0.08)'. onClick toggles menuOpen. whileTap {scale:0.9}. Inside AnimatePresence mode="wait" initial={false}: menuOpen ? motion.span key="x" initial {rotate:-90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:90, opacity:0} {duration:0.15} with <X size={18} weight="bold" /> : motion.span key="menu" initial {rotate:90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:-90, opacity:0} with <List size={18} weight="bold" />.
+MOBILE hamburger motion.button (mr-2 flex cursor-pointer items-center justify-center rounded-full p-2 text-white/70 sm:hidden): style bg 'rgba(255,255,255,0.08)'. onClick toggles menuOpen. whileTap {scale:0.9}. Inside AnimatePresence mode="wait" initial={false}: menuOpen ? motion.span key="x" initial {rotate:-90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:90, opacity:0} {duration:0.15} with <X size={18} strokeWidth={2} /> : motion.span key="menu" initial {rotate:90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:-90, opacity:0} with <Menu size={18} strokeWidth={2} />.
 
 MOBILE DROPDOWN: AnimatePresence wrapping motion.div (mt-2 relative isolate flex flex-col gap-1 rounded-2xl p-2 sm:hidden, style=glassStyle + blur layer inside). initial {opacity:0, y:-8, scale:0.97} animate {opacity:1, y:0, scale:1} exit {opacity:0, y:-8, scale:0.97} transition {duration:0.22, ease:[0.25,0.1,0.25,1]}. NAV_ITEMS map → plain buttons rounded-full px-5 py-2.5 text-left text-sm font-medium cursor-pointer. Style color: active===i? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)'; bg: active===i? 'rgba(255,255,255,0.1)' : 'transparent'. onClick setActive(i)+setMenuOpen(false). Final Get Started button mt-1 rounded-full px-5 py-2.5 text-sm font-semibold text-white, style=ctaStyle, onClick setMenuOpen(false).
 
-Imports: useState from react; motion, AnimatePresence from framer-motion; List, X from @phosphor-icons/react.
+Imports: useState from react; motion, AnimatePresence from framer-motion; Menu, X from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Menu } from '@/components/icons/menu'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -122,11 +122,11 @@ Desktop group (hidden items-center gap-1 sm:flex): each NAV_ITEM → motion.butt
 
 "Get Started" motion.button (ml-2 rounded-full px-5 py-2 text-sm font-semibold text-white cursor-pointer): style=ctaStyle. whileHover {scale:1.04, ...ctaHoverStyle}. whileTap {scale:0.96}. transition {duration:0.25, ease:[0.25,0.1,0.25,1]}.
 
-MOBILE hamburger motion.button (mr-2 flex cursor-pointer items-center justify-center rounded-full p-2 text-white/70 sm:hidden): style bg 'rgba(255,255,255,0.08)'. onClick toggles menuOpen. whileTap {scale:0.9}. Inside AnimatePresence mode="wait" initial={false}: menuOpen ? motion.span key="x" initial {rotate:-90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:90, opacity:0} {duration:0.15} with <X size={18} weight="bold" /> : motion.span key="menu" initial {rotate:90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:-90, opacity:0} with <List size={18} weight="bold" />.
+MOBILE hamburger motion.button (mr-2 flex cursor-pointer items-center justify-center rounded-full p-2 text-white/70 sm:hidden): style bg 'rgba(255,255,255,0.08)'. onClick toggles menuOpen. whileTap {scale:0.9}. Inside AnimatePresence mode="wait" initial={false}: menuOpen ? motion.span key="x" initial {rotate:-90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:90, opacity:0} {duration:0.15} with <X size={18} strokeWidth={2} /> : motion.span key="menu" initial {rotate:90, opacity:0} animate {rotate:0, opacity:1} exit {rotate:-90, opacity:0} with <Menu size={18} strokeWidth={2} />.
 
 MOBILE DROPDOWN: AnimatePresence wrapping motion.div (mt-2 relative isolate flex flex-col gap-1 rounded-2xl p-2 sm:hidden, style=glassStyle + blur layer inside). initial {opacity:0, y:-8, scale:0.97} animate {opacity:1, y:0, scale:1} exit {opacity:0, y:-8, scale:0.97} transition {duration:0.22, ease:[0.25,0.1,0.25,1]}. NAV_ITEMS map → plain buttons rounded-full px-5 py-2.5 text-left text-sm font-medium cursor-pointer. Style color: active===i? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.55)'; bg: active===i? 'rgba(255,255,255,0.1)' : 'transparent'. onClick setActive(i)+setMenuOpen(false). Final Get Started button mt-1 rounded-full px-5 py-2.5 text-sm font-semibold text-white, style=ctaStyle, onClick setMenuOpen(false).
 
-Imports: useState from react; motion, AnimatePresence from framer-motion; List, X from @phosphor-icons/react.
+Imports: useState from react; motion, AnimatePresence from framer-motion; Menu, X from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Menu } from '@/components/icons/menu'\`), Line style, 1.5px stroke. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif

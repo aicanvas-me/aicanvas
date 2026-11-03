@@ -27,7 +27,7 @@ State at the top level: \`open\` (bool), \`origin\` (\`{x, y, w, h} | null\`, th
 **Animation:** \`animate={{ opacity: open ? 0 : 1, scale: open ? 0.85 : 1, backgroundColor }}\`. When open: \`transition={{ duration: 0.18 }}\` and \`pointerEvents: 'none'\`. When closed: spring stiffness 400 damping 28. \`whileHover={{ scale: 1.03, backgroundColor: hover }}\`, \`whileTap={{ scale: 0.97 }}\`.
 
 **Layout:** \`flex items-center gap-3 py-2 pl-2 pr-5 font-sans text-[15px] font-semibold\`. Children:
-1. Icon tile: \`flex size-9 shrink-0 items-center justify-center rounded-full\`. Phosphor \`<Signature size={18} weight="regular" />\` inside.
+1. Icon tile: \`flex size-9 shrink-0 items-center justify-center rounded-full\`. \`<Signature size={18} />\` inside, an AI Canvas icon (\`@/components/icons/signature\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 2. Label: \`{savedSignature ? (<><SignaturePreview signature={savedSignature} /><span className="sr-only">Edit your digital signature</span></>) : 'Create your digital signature'}\`. Before the first save it reads "Create your digital signature"; after a save the pill shows the saved strokes instead, and the sr-only text keeps its accessible name.
 
 **Signature preview** (module-level, above \`SignaturePad\`): an \`aria-hidden\` SVG in \`h-7 w-24\`, viewBox taken from the saved canvas size, \`currentColor\` stroke 1.8 with \`vectorEffect="non-scaling-stroke"\` so it inherits the pill text colour at any scale, quadratic curves to midpoints like the canvas, and a one-point stroke drawn as a tiny \`l 0.01 0\` line so its round cap shows a dot:
@@ -142,12 +142,12 @@ variants={{
 \`flex items-start justify-between gap-3\`, \`mb-5\`.
 
 **Left** (\`flex items-start gap-3\`):
-- Icon tile: \`flex size-10 shrink-0 items-center justify-center rounded-full\`, \`backgroundColor: fieldBg\`, \`color: titleColor\`. Phosphor \`<Signature size={20} weight="regular" />\`.
+- Icon tile: \`flex size-10 shrink-0 items-center justify-center rounded-full\`, \`backgroundColor: fieldBg\`, \`color: titleColor\`. \`<Signature size={20} />\`.
 - Title block (\`flex flex-col gap-0.5\`):
   - "Create your digital signature": \`font-sans text-[17px] font-bold leading-tight\`, color \`titleColor\`.
   - "Draw using your mouse or finger": \`font-sans text-[13px] font-medium\`, color \`labelColor\`.
 
-**Right**: close button (\`flex size-9 shrink-0 items-center justify-center rounded-full\`), \`backgroundColor: fieldBg\`, \`color: labelColor\`. \`whileHover={{ scale:1.1, backgroundColor: fieldHover }}\`, \`whileTap={{ scale:0.88 }}\`, spring 400/26. Phosphor \`<X size={16} weight="bold" />\`. \`onClick={onClose}\`.
+**Right**: close button (\`flex size-9 shrink-0 items-center justify-center rounded-full\`), \`backgroundColor: fieldBg\`, \`color: labelColor\`. \`whileHover={{ scale:1.1, backgroundColor: fieldHover }}\`, \`whileTap={{ scale:0.88 }}\`, spring 400/26. \`<X size={16} strokeWidth={2} />\`. \`onClick={onClose}\`.
 
 ---
 
@@ -208,7 +208,7 @@ A full \`redrawAll\` (replays all strokes from the array) runs after \`setupCanv
 
 **Left**: date stamp. Lazy-set in a \`useEffect\` (\`new Date().toLocaleDateString(undefined, { month:'long', day:'numeric', year:'numeric' })\`) so SSR renders empty, no hydration mismatch. \`font-sans text-[12px] font-medium tabular-nums\`, color \`labelColor\` opacity 0.7.
 
-**Right**: \`Clear\` button, \`AnimatePresence\` fades it in (\`initial:{opacity:0,x:6}\`, \`animate:{opacity:1,x:0}\`, \`exit:{opacity:0,x:6}\`, 0.18s) only when \`hasInk && !confirming\`. Style \`flex items-center gap-1.5 rounded-full px-2 py-1 font-sans text-[13px] font-semibold\`, color \`labelColor\`. Phosphor \`<Eraser size={14} weight="regular" />\` + label "Clear". \`onClick\` clears \`strokesRef\`/\`currentRef\`, sets \`hasInk=false\`, calls \`redrawAll\`.
+**Right**: \`Clear\` button, \`AnimatePresence\` fades it in (\`initial:{opacity:0,x:6}\`, \`animate:{opacity:1,x:0}\`, \`exit:{opacity:0,x:6}\`, 0.18s) only when \`hasInk && !confirming\`. Style \`flex items-center gap-1.5 rounded-full px-2 py-1 font-sans text-[13px] font-semibold\`, color \`labelColor\`. \`<Eraser size={14} />\` + label "Clear". \`onClick\` clears \`strokesRef\`/\`currentRef\`, sets \`hasInk=false\`, calls \`redrawAll\`.
 
 ---
 
@@ -222,7 +222,7 @@ A full \`redrawAll\` (replays all strokes from the array) runs after \`setupCanv
 
 **Save flow:**
 1. \`onClick\` → \`setConfirming(true)\`, then \`onSave(strokesRef.current.map(stroke => stroke.map(point => ({ ...point }))), { ...sizeRef.current })\` hands a copy of the strokes and the canvas size to the parent.
-2. Button label is replaced via \`<AnimatePresence mode="wait">\` with a centered \`<Check size={16} weight="bold" />\` (initial \`{opacity:0,scale:0.5}\`, animate \`{opacity:1,scale:1}\`, exit \`{opacity:0,scale:0.5}\`, spring 400/22). The button itself animates \`scale: 0.96\`.
+2. Button label is replaced via \`<AnimatePresence mode="wait">\` with a centered \`<Check size={16} strokeWidth={2} />\` (initial \`{opacity:0,scale:0.5}\`, animate \`{opacity:1,scale:1}\`, exit \`{opacity:0,scale:0.5}\`, spring 400/22). The button itself animates \`scale: 0.96\`.
 3. After ~1100ms, call \`onClose()\`. The modal exit-animates back to the pill, the pill fades back in showing the saved signature preview. \`ModalCard\` unmounts, so the next open starts from \`initialStrokes\`, the saved strokes; Cancel, the X and the backdrop never call \`onSave\`, so they keep the last saved signature.
 
 ---
@@ -230,14 +230,17 @@ A full \`redrawAll\` (replays all strokes from the array) runs after \`setupCanv
 ## Dependencies
 
 \`\`\`
-npm install framer-motion @phosphor-icons/react
+npm install framer-motion
 \`\`\`
 
 Imports:
 \`\`\`ts
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Check, Eraser, Signature } from '@phosphor-icons/react'
+import { X } from '@/components/icons/x'
+import { Check } from '@/components/icons/check'
+import { Eraser } from '@/components/icons/eraser'
+import { Signature } from '@/components/icons/signature'
 \`\`\`
 
 ## Typography

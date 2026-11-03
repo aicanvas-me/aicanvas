@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="relative flex min-h-screen w-full items-center justify-center"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -25,9 +25,16 @@ Write this as a single self-contained React client component. Inline everything.
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
-import { X, TextB, TextItalic, TextUnderline, TextStrikethrough, LinkSimple, Palette } from '@phosphor-icons/react'
+import { X } from '@/components/icons/x'
+import { Bold } from '@/components/icons/bold'
+import { Italic } from '@/components/icons/italic'
+import { Underline } from '@/components/icons/underline'
+import { Strikethrough } from '@/components/icons/strikethrough'
+import { LinkSimple } from '@/components/icons/link-simple'
+import { Palette } from '@/components/icons/palette'
 \`\`\`
+
+Icons are AI Canvas icons (\`@/components/icons/<name>\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Geometry constants (exact)
 \`\`\`
@@ -48,7 +55,7 @@ const GAP = 0
 \`iconXY(midDeg)\` returns \`{ x: CX + R_ICON*cos(toRad(mid)), y: CY + R_ICON*sin(toRad(mid)) }\`.
 
 ## Tools (clockwise from top, 60° each)
-\`[ {id:'bold', label:'Bold', Icon: TextB}, {id:'italic', label:'Italic', Icon: TextItalic}, {id:'under', label:'Underline', Icon: TextUnderline}, {id:'strike', label:'Strikethrough', Icon: TextStrikethrough}, {id:'link', label:'Link', Icon: LinkSimple}, {id:'color', label:'Color', Icon: Palette} ]\`
+\`[ {id:'bold', label:'Bold', Icon: Bold}, {id:'italic', label:'Italic', Icon: Italic}, {id:'under', label:'Underline', Icon: Underline}, {id:'strike', label:'Strikethrough', Icon: Strikethrough}, {id:'link', label:'Link', Icon: LinkSimple}, {id:'color', label:'Color', Icon: Palette} ]\`
 
 ## State
 \`open\` (bool), \`hoveredId\` (string|null), \`activeId\` (string|null), \`isDark\` (bool, default true).
@@ -73,7 +80,7 @@ Inside the motion.div:
    - style \`{ left: x-12, top: y-12, width:24, height:24, pointerEvents:'none' }\`
    - \`initial { opacity:0, scale:0.4 }\`, \`animate { opacity:1, scale:1 }\`
    - \`transition { type:'spring', stiffness:320, damping:28, delay: i*0.035 + 0.05 }\`
-   - Inside: \`<tool.Icon size={18} weight="regular" color={...} />\` where color = active → \`isDark?'#ffffff':'#110F0C'\`; hover → \`isDark?'#e4e4e7':'#2E2A24'\`; idle → \`isDark?'#71717a':'#9E9890'\`.
+   - Inside: \`<tool.Icon size={18} color={...} />\` where color = active → \`isDark?'#ffffff':'#110F0C'\`; hover → \`isDark?'#e4e4e7':'#2E2A24'\`; idle → \`isDark?'#71717a':'#9E9890'\`.
 
 ## Persistent EDIT button
 \`motion.button\` (always rendered, not inside AnimatePresence) with style:
@@ -86,7 +93,7 @@ Inside the motion.div:
 
 Inside, an \`AnimatePresence mode="wait"\`:
 - !open → \`motion.span key="edit"\`, \`initial { opacity:0, scale:0.7 }\`, \`animate { opacity:1, scale:1 }\`, \`exit { opacity:0, scale:0.7 }\`, \`transition { duration:0.14, ease:'easeOut' }\`. Style \`{ fontFamily:'var(--font-sans, sans-serif)', fontSize:11, fontWeight:700, letterSpacing:'0.1em', color: isDark?'#e4e4e7':'#2E2A24', userSelect:'none' }\`. Text "EDIT".
-- open → \`motion.span key="x-icon"\`, \`initial { opacity:0, rotate:-90, scale:0.4 }\`, \`animate { opacity:1, rotate:0, scale:1 }\`, \`exit { opacity:0, rotate:-90, scale:0.4 }\`, \`transition { type:'spring', stiffness:260, damping:24 }\`, style \`{ display:'flex' }\`. Inside: \`<X size={16} weight="regular" color={isDark?'#a1a1aa':'#4A453F'} />\`.
+- open → \`motion.span key="x-icon"\`, \`initial { opacity:0, rotate:-90, scale:0.4 }\`, \`animate { opacity:1, rotate:0, scale:1 }\`, \`exit { opacity:0, rotate:-90, scale:0.4 }\`, \`transition { type:'spring', stiffness:260, damping:24 }\`, style \`{ display:'flex' }\`. Inside: \`<X size={16} color={isDark?'#a1a1aa':'#4A453F'} />\`.
 
 ## Label pill (AnimatePresence)
 When open AND \`labelTool\` exists. \`labelTool = TOOLS.find(t=>t.id===hoveredId) ?? TOOLS.find(t=>t.id===activeId)\`. \`motion.div key={labelTool.id}\` className \`pointer-events-none absolute flex items-center gap-1.5 rounded-full px-3 py-1.5\`. style:
@@ -97,7 +104,7 @@ When open AND \`labelTool\` exists. \`labelTool = TOOLS.find(t=>t.id===hoveredId
 
 Enter \`{ opacity:0, y:8, scale:0.9 }\` → \`{ opacity:1, y:0, scale:1 }\`, exit \`{ opacity:0, y:4, scale:0.95 }\`, \`transition { type:'spring', stiffness:500, damping:30 }\`.
 
-Inside: \`<labelTool.Icon size={11} weight="regular" color={activeId===labelTool.id ? (isDark?'#e4e4e7':'#2E2A24') : (isDark?'#71717a':'#9E9890')} />\`, \`<span className="text-xs font-medium" style={{ color: isDark?'#a1a1aa':'#736D65' }}>{labelTool.label}</span>\`, and if \`activeId===labelTool.id\` a \`motion.span className="h-1 w-1 rounded-full" style={{ background: isDark?'#ffffff':'#1C1916' }} initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:600, damping:20 }} />\`.
+Inside: \`<labelTool.Icon size={11} color={activeId===labelTool.id ? (isDark?'#e4e4e7':'#2E2A24') : (isDark?'#71717a':'#9E9890')} />\`, \`<span className="text-xs font-medium" style={{ color: isDark?'#a1a1aa':'#736D65' }}>{labelTool.label}</span>\`, and if \`activeId===labelTool.id\` a \`motion.span className="h-1 w-1 rounded-full" style={{ background: isDark?'#ffffff':'#1C1916' }} initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:600, damping:20 }} />\`.
 
 Use Manrope font. The button must remain visible at all times. Opening only adds the wheel around it, never replaces it.
 
@@ -115,9 +122,16 @@ Write this as a single self-contained React client component. Inline everything.
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
-import { X, TextB, TextItalic, TextUnderline, TextStrikethrough, LinkSimple, Palette } from '@phosphor-icons/react'
+import { X } from '@/components/icons/x'
+import { Bold } from '@/components/icons/bold'
+import { Italic } from '@/components/icons/italic'
+import { Underline } from '@/components/icons/underline'
+import { Strikethrough } from '@/components/icons/strikethrough'
+import { LinkSimple } from '@/components/icons/link-simple'
+import { Palette } from '@/components/icons/palette'
 \`\`\`
+
+Icons are AI Canvas icons (\`@/components/icons/<name>\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Geometry constants (exact)
 \`\`\`
@@ -138,7 +152,7 @@ const GAP = 0
 \`iconXY(midDeg)\` returns \`{ x: CX + R_ICON*cos(toRad(mid)), y: CY + R_ICON*sin(toRad(mid)) }\`.
 
 ## Tools (clockwise from top, 60° each)
-\`[ {id:'bold', label:'Bold', Icon: TextB}, {id:'italic', label:'Italic', Icon: TextItalic}, {id:'under', label:'Underline', Icon: TextUnderline}, {id:'strike', label:'Strikethrough', Icon: TextStrikethrough}, {id:'link', label:'Link', Icon: LinkSimple}, {id:'color', label:'Color', Icon: Palette} ]\`
+\`[ {id:'bold', label:'Bold', Icon: Bold}, {id:'italic', label:'Italic', Icon: Italic}, {id:'under', label:'Underline', Icon: Underline}, {id:'strike', label:'Strikethrough', Icon: Strikethrough}, {id:'link', label:'Link', Icon: LinkSimple}, {id:'color', label:'Color', Icon: Palette} ]\`
 
 ## State
 \`open\` (bool), \`hoveredId\` (string|null), \`activeId\` (string|null), \`isDark\` (bool, default true).
@@ -163,7 +177,7 @@ Inside the motion.div:
    - style \`{ left: x-12, top: y-12, width:24, height:24, pointerEvents:'none' }\`
    - \`initial { opacity:0, scale:0.4 }\`, \`animate { opacity:1, scale:1 }\`
    - \`transition { type:'spring', stiffness:320, damping:28, delay: i*0.035 + 0.05 }\`
-   - Inside: \`<tool.Icon size={18} weight="regular" color={...} />\` where color = active → \`isDark?'#ffffff':'#110F0C'\`; hover → \`isDark?'#e4e4e7':'#2E2A24'\`; idle → \`isDark?'#71717a':'#9E9890'\`.
+   - Inside: \`<tool.Icon size={18} color={...} />\` where color = active → \`isDark?'#ffffff':'#110F0C'\`; hover → \`isDark?'#e4e4e7':'#2E2A24'\`; idle → \`isDark?'#71717a':'#9E9890'\`.
 
 ## Persistent EDIT button
 \`motion.button\` (always rendered, not inside AnimatePresence) with style:
@@ -176,7 +190,7 @@ Inside the motion.div:
 
 Inside, an \`AnimatePresence mode="wait"\`:
 - !open → \`motion.span key="edit"\`, \`initial { opacity:0, scale:0.7 }\`, \`animate { opacity:1, scale:1 }\`, \`exit { opacity:0, scale:0.7 }\`, \`transition { duration:0.14, ease:'easeOut' }\`. Style \`{ fontFamily:'var(--font-sans, sans-serif)', fontSize:11, fontWeight:700, letterSpacing:'0.1em', color: isDark?'#e4e4e7':'#2E2A24', userSelect:'none' }\`. Text "EDIT".
-- open → \`motion.span key="x-icon"\`, \`initial { opacity:0, rotate:-90, scale:0.4 }\`, \`animate { opacity:1, rotate:0, scale:1 }\`, \`exit { opacity:0, rotate:-90, scale:0.4 }\`, \`transition { type:'spring', stiffness:260, damping:24 }\`, style \`{ display:'flex' }\`. Inside: \`<X size={16} weight="regular" color={isDark?'#a1a1aa':'#4A453F'} />\`.
+- open → \`motion.span key="x-icon"\`, \`initial { opacity:0, rotate:-90, scale:0.4 }\`, \`animate { opacity:1, rotate:0, scale:1 }\`, \`exit { opacity:0, rotate:-90, scale:0.4 }\`, \`transition { type:'spring', stiffness:260, damping:24 }\`, style \`{ display:'flex' }\`. Inside: \`<X size={16} color={isDark?'#a1a1aa':'#4A453F'} />\`.
 
 ## Label pill (AnimatePresence)
 When open AND \`labelTool\` exists. \`labelTool = TOOLS.find(t=>t.id===hoveredId) ?? TOOLS.find(t=>t.id===activeId)\`. \`motion.div key={labelTool.id}\` className \`pointer-events-none absolute flex items-center gap-1.5 rounded-full px-3 py-1.5\`. style:
@@ -187,7 +201,7 @@ When open AND \`labelTool\` exists. \`labelTool = TOOLS.find(t=>t.id===hoveredId
 
 Enter \`{ opacity:0, y:8, scale:0.9 }\` → \`{ opacity:1, y:0, scale:1 }\`, exit \`{ opacity:0, y:4, scale:0.95 }\`, \`transition { type:'spring', stiffness:500, damping:30 }\`.
 
-Inside: \`<labelTool.Icon size={11} weight="regular" color={activeId===labelTool.id ? (isDark?'#e4e4e7':'#2E2A24') : (isDark?'#71717a':'#9E9890')} />\`, \`<span className="text-xs font-medium" style={{ color: isDark?'#a1a1aa':'#736D65' }}>{labelTool.label}</span>\`, and if \`activeId===labelTool.id\` a \`motion.span className="h-1 w-1 rounded-full" style={{ background: isDark?'#ffffff':'#1C1916' }} initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:600, damping:20 }} />\`.
+Inside: \`<labelTool.Icon size={11} color={activeId===labelTool.id ? (isDark?'#e4e4e7':'#2E2A24') : (isDark?'#71717a':'#9E9890')} />\`, \`<span className="text-xs font-medium" style={{ color: isDark?'#a1a1aa':'#736D65' }}>{labelTool.label}</span>\`, and if \`activeId===labelTool.id\` a \`motion.span className="h-1 w-1 rounded-full" style={{ background: isDark?'#ffffff':'#1C1916' }} initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:600, damping:20 }} />\`.
 
 Use Manrope font. The button must remain visible at all times — opening only adds the wheel around it, never replaces it.
 
@@ -205,9 +219,16 @@ Write this as a single self-contained React client component. Inline everything.
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
-import { X, TextB, TextItalic, TextUnderline, TextStrikethrough, LinkSimple, Palette } from '@phosphor-icons/react'
+import { X } from '@/components/icons/x'
+import { Bold } from '@/components/icons/bold'
+import { Italic } from '@/components/icons/italic'
+import { Underline } from '@/components/icons/underline'
+import { Strikethrough } from '@/components/icons/strikethrough'
+import { LinkSimple } from '@/components/icons/link-simple'
+import { Palette } from '@/components/icons/palette'
 \`\`\`
+
+Icons are AI Canvas icons (\`@/components/icons/<name>\`), Line style, 1.5px stroke. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Geometry constants (exact)
 \`\`\`
@@ -228,7 +249,7 @@ const GAP = 0
 \`iconXY(midDeg)\` returns \`{ x: CX + R_ICON*cos(toRad(mid)), y: CY + R_ICON*sin(toRad(mid)) }\`.
 
 ## Tools (clockwise from top, 60° each)
-\`[ {id:'bold', label:'Bold', Icon: TextB}, {id:'italic', label:'Italic', Icon: TextItalic}, {id:'under', label:'Underline', Icon: TextUnderline}, {id:'strike', label:'Strikethrough', Icon: TextStrikethrough}, {id:'link', label:'Link', Icon: LinkSimple}, {id:'color', label:'Color', Icon: Palette} ]\`
+\`[ {id:'bold', label:'Bold', Icon: Bold}, {id:'italic', label:'Italic', Icon: Italic}, {id:'under', label:'Underline', Icon: Underline}, {id:'strike', label:'Strikethrough', Icon: Strikethrough}, {id:'link', label:'Link', Icon: LinkSimple}, {id:'color', label:'Color', Icon: Palette} ]\`
 
 ## State
 \`open\` (bool), \`hoveredId\` (string|null), \`activeId\` (string|null), \`isDark\` (bool, default true).
@@ -253,7 +274,7 @@ Inside the motion.div:
    - style \`{ left: x-12, top: y-12, width:24, height:24, pointerEvents:'none' }\`
    - \`initial { opacity:0, scale:0.4 }\`, \`animate { opacity:1, scale:1 }\`
    - \`transition { type:'spring', stiffness:320, damping:28, delay: i*0.035 + 0.05 }\`
-   - Inside: \`<tool.Icon size={18} weight="regular" color={...} />\` where color = active → \`isDark?'#ffffff':'#110F0C'\`; hover → \`isDark?'#e4e4e7':'#2E2A24'\`; idle → \`isDark?'#71717a':'#9E9890'\`.
+   - Inside: \`<tool.Icon size={18} color={...} />\` where color = active → \`isDark?'#ffffff':'#110F0C'\`; hover → \`isDark?'#e4e4e7':'#2E2A24'\`; idle → \`isDark?'#71717a':'#9E9890'\`.
 
 ## Persistent EDIT button
 \`motion.button\` (always rendered, not inside AnimatePresence) with style:
@@ -266,7 +287,7 @@ Inside the motion.div:
 
 Inside, an \`AnimatePresence mode="wait"\`:
 - !open → \`motion.span key="edit"\`, \`initial { opacity:0, scale:0.7 }\`, \`animate { opacity:1, scale:1 }\`, \`exit { opacity:0, scale:0.7 }\`, \`transition { duration:0.14, ease:'easeOut' }\`. Style \`{ fontFamily:'var(--font-sans, sans-serif)', fontSize:11, fontWeight:700, letterSpacing:'0.1em', color: isDark?'#e4e4e7':'#2E2A24', userSelect:'none' }\`. Text "EDIT".
-- open → \`motion.span key="x-icon"\`, \`initial { opacity:0, rotate:-90, scale:0.4 }\`, \`animate { opacity:1, rotate:0, scale:1 }\`, \`exit { opacity:0, rotate:-90, scale:0.4 }\`, \`transition { type:'spring', stiffness:260, damping:24 }\`, style \`{ display:'flex' }\`. Inside: \`<X size={16} weight="regular" color={isDark?'#a1a1aa':'#4A453F'} />\`.
+- open → \`motion.span key="x-icon"\`, \`initial { opacity:0, rotate:-90, scale:0.4 }\`, \`animate { opacity:1, rotate:0, scale:1 }\`, \`exit { opacity:0, rotate:-90, scale:0.4 }\`, \`transition { type:'spring', stiffness:260, damping:24 }\`, style \`{ display:'flex' }\`. Inside: \`<X size={16} color={isDark?'#a1a1aa':'#4A453F'} />\`.
 
 ## Label pill (AnimatePresence)
 When open AND \`labelTool\` exists. \`labelTool = TOOLS.find(t=>t.id===hoveredId) ?? TOOLS.find(t=>t.id===activeId)\`. \`motion.div key={labelTool.id}\` className \`pointer-events-none absolute flex items-center gap-1.5 rounded-full px-3 py-1.5\`. style:
@@ -277,7 +298,7 @@ When open AND \`labelTool\` exists. \`labelTool = TOOLS.find(t=>t.id===hoveredId
 
 Enter \`{ opacity:0, y:8, scale:0.9 }\` → \`{ opacity:1, y:0, scale:1 }\`, exit \`{ opacity:0, y:4, scale:0.95 }\`, \`transition { type:'spring', stiffness:500, damping:30 }\`.
 
-Inside: \`<labelTool.Icon size={11} weight="regular" color={activeId===labelTool.id ? (isDark?'#e4e4e7':'#2E2A24') : (isDark?'#71717a':'#9E9890')} />\`, \`<span className="text-xs font-medium" style={{ color: isDark?'#a1a1aa':'#736D65' }}>{labelTool.label}</span>\`, and if \`activeId===labelTool.id\` a \`motion.span className="h-1 w-1 rounded-full" style={{ background: isDark?'#ffffff':'#1C1916' }} initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:600, damping:20 }} />\`.
+Inside: \`<labelTool.Icon size={11} color={activeId===labelTool.id ? (isDark?'#e4e4e7':'#2E2A24') : (isDark?'#71717a':'#9E9890')} />\`, \`<span className="text-xs font-medium" style={{ color: isDark?'#a1a1aa':'#736D65' }}>{labelTool.label}</span>\`, and if \`activeId===labelTool.id\` a \`motion.span className="h-1 w-1 rounded-full" style={{ background: isDark?'#ffffff':'#1C1916' }} initial={{ scale:0 }} animate={{ scale:1 }} transition={{ type:'spring', stiffness:600, damping:20 }} />\`.
 
 Use Manrope font. The button must remain visible at all times — opening only adds the wheel around it, never replaces it.
 

@@ -5,8 +5,8 @@ import type { Platform } from '../../app/components/ComponentCard'
 const SPEC = `Build a single, self-contained, copy-paste React + TypeScript component: a Uniswap-style crypto→crypto token swap card. IMPORTANT: this is a CRYPTO-TO-CRYPTO swap (e.g. ETH → USDC), not a fiat exchange. The USD figures are only reference values used to derive the rate; the user trades one token for another.
 
 STACK
-- React + TypeScript, Tailwind CSS v4, Framer Motion, @phosphor-icons/react (always weight="regular" unless noted). No other dependencies.
-- One default-exported component in a single file. 'use client' at the top. Add a comment: // npm install framer-motion @phosphor-icons/react
+- React + TypeScript, Tailwind CSS v4, Framer Motion, AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { ChevronDown } from '@/components/icons/chevron-down'\`), Line style, 1.5px stroke unless noted. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. No other dependencies.
+- One default-exported component in a single file. 'use client' at the top. Add a comment: // npm install framer-motion
 - Root element: className="flex min-h-screen w-full items-center justify-center px-4 py-10" with the page background set via inline style. Center the card.
 - Must be fully responsive down to 320px wide, and respect prefers-reduced-motion (use Framer Motion's useReducedMotion and gate every animation: reduced motion gets instant snaps / plain crossfades, no springs, no spinners spinning, no live drift).
 - No external coin-icon library: inline the brand coin SVGs (see below).
@@ -81,7 +81,7 @@ NUMBER FORMATTING (adaptive precision, never a misleading "0")
 - A "cap for input" helper truncates (not rounds) a precise amount to the adaptive digit count and trims trailing zeros / a dangling dot for seeding the Sell field (used by flip + Max); if truncation would zero out a nonzero value, fall back to value.toPrecision(4) so a tiny amount stays seedable. Returns "" for a genuine 0.
 - formatUsd: en-US currency, 2 decimals.
 - formatRate: adaptive, abs ≥1000 → 2; ≥1 → 4; ≥0.01 → 6; else 8 decimals.
-- 24h change is rendered SIGN-LESS (e.g. "2.41%"). Direction is shown only by the caret (CaretUp/CaretDown, weight="fill", 12px) + red/green color. Within ±0.05% it reads flat/neutral (grey, no caret), so the ~0% stablecoins read flat.
+- 24h change is rendered SIGN-LESS (e.g. "2.41%"). Direction is shown only by the caret (a solid triangle from the \`triangle\` icon, filled with currentColor, 12px, rotated 180deg for down) + red/green color. Within ±0.05% it reads flat/neutral (grey, no caret), so the ~0% stablecoins read flat.
 
 TOKEN PICKER (a compact, component-bounded dropdown, and this is a key detail)
 - Clicking a pill TOGGLES that side's picker (open if closed; close if already open for that side). Only one picker open at a time.
@@ -101,8 +101,8 @@ TOKEN PILL
 
 DETAILS / RATE ACCORDION (COLLAPSED BY DEFAULT)
 - Collapsed it shows only a fixed 48px rate row (so it reads as one block the same height as the Swap button):
-  - LEFT: a button "1 {SELL} = {rate} {BUY}" with an ArrowsLeftRight icon. Tap to INVERT the rate (rate becomes 1/midRate; swap the from/to symbols). The text crossfades+slides on invert (AnimatePresence mode="wait", 0.26s ease [0.22,1,0.36,1]).
-  - RIGHT: a chevron (CaretDown) toggle that rotates 180° (spring 360/26) and expands the breakdown. aria-expanded.
+  - LEFT: a button "1 {SELL} = {rate} {BUY}" with an \`arrow-left-right\` icon. Tap to INVERT the rate (rate becomes 1/midRate; swap the from/to symbols). The text crossfades+slides on invert (AnimatePresence mode="wait", 0.26s ease [0.22,1,0.36,1]).
+  - RIGHT: a chevron (\`chevron-down\`) toggle that rotates 180° (spring 360/26) and expands the breakdown. aria-expanded.
   - The whole row gets a faint pointer-only hover-lift.
 - Expanded breakdown (animate height auto + opacity, 0.28s ease [0.22,1,0.36,1]; a faint inset top divider line):
   - "Price impact": -{impact}% colored by severity: green <0.5%, amber (#F5A524 dark / #C77700 light) 0.5–2%, red >2%. Show an em dash when no amount.
@@ -111,7 +111,7 @@ DETAILS / RATE ACCORDION (COLLAPSED BY DEFAULT)
   - "Min received": {amount} {BUY}, or an em dash when no amount.
 
 FLIP BUTTON
-- The 44×44 circle straddling the Sell/Buy seam. Clicking it: swaps the sell/buy SYMBOLS and carries the computed buy amount up into the Sell input (cap-for-input precision; empty if zero). The ArrowsDownUp icon (18px) rotates via a motion value.
+- The 44×44 circle straddling the Sell/Buy seam. Clicking it: swaps the sell/buy SYMBOLS and carries the computed buy amount up into the Sell input (cap-for-input precision; empty if zero). The \`arrow-down-up\` icon (18px) rotates via a motion value.
 - Aim the caret at an EXACT multiple of 180 every click: keep a flipCount ref, target = flipCount × 180, STOP any in-flight spring before starting the next so rapid clicks re-target the clean grid and self-correct (never compound a fractional off-axis offset). Spring stiffness 320, damping 22. Instant set under reduced motion. Stop the animation on unmount.
 - Pointer-only hover: scale 1.08 + faint fill lighten (spring 400/24). whileTap scale 0.9. Inert (0.6 opacity, no-op) while confirming.
 
@@ -124,7 +124,7 @@ TOKEN-SELECTION RULES
 SWAP BUTTON STATE MACHINE
 - Full-width, height 48px, rounded-3xl, 16px bold, periwinkle fill with near-black text.
 - Disabled (no amount) → muted fill (#26262A dark / #DCDCD8 light) + muted text + label "Enter an amount" (cursor not-allowed). With an amount → label "Swap".
-- On click (idle + has amount): go idle → "swapping" for SWAP_SWAPPING_MS = 900ms (label "Swapping…" with a spinning 18px ring border made of swapText with a transparent top, linear 0.8s loop) → "success" held for SWAP_SUCCESS_MS = 1600ms (the success state shows a green fill with near-black text, the label "Swapped!", and a CheckCircle weight="fill" 22px that springs in with overshoot [stiffness 520, damping 16, delay 0.04] + a one-shot burst of 6 evenly-spaced tiny 4px sparks flying out ~22px + a soft green "bloom" ring that expands to box-shadow spread 14px and fades over 0.7s) → reset to idle. Amounts are kept across the cycle.
+- On click (idle + has amount): go idle → "swapping" for SWAP_SWAPPING_MS = 900ms (label "Swapping…" with a spinning 18px ring border made of swapText with a transparent top, linear 0.8s loop) → "success" held for SWAP_SUCCESS_MS = 1600ms (the success state shows a green fill with near-black text, the label "Swapped!", and a \`circle-check\` icon, 2px stroke, 22px that springs in with overshoot [stiffness 520, damping 16, delay 0.04] + a one-shot burst of 6 evenly-spaced tiny 4px sparks flying out ~22px + a soft green "bloom" ring that expands to box-shadow spread 14px and fades over 0.7s) → reset to idle. Amounts are kept across the cycle.
 - Drive the button FILL by status (not the disabled flag) so swapping/success never inherit the disabled grey: ease the background into green on success (0.32s), and a quick scale pop [1,1.04,1] over 0.42s when success lands. Labels crossfade (AnimatePresence mode="wait", small y, 0.18s). Reduced motion → plain crossfades, no spinner spin, no sparks, no bloom, no pop.
 - While confirming (swapping/success), the whole trade is LOCKED: flip, pills, Max, and the picker all go inert so the trade can't mutate mid-confirmation.
 
@@ -140,7 +140,7 @@ export const prompts: Partial<Record<Platform, string>> = {
   'Claude Code': `Before building, verify the project is set up for this stack and scaffold anything missing:
 - Tailwind CSS v4 (CSS-first \`@theme\`, no tailwind.config.js), TypeScript, and React must all be configured.
 - If the project isn't initialized for this, use the shadcn CLI to scaffold the base (e.g. \`npx shadcn@latest init\`) so Tailwind v4 + TS + React are wired up before you write the component.
-- Install deps: \`npm install framer-motion @phosphor-icons/react\`.
+- Install deps: \`npm install framer-motion\`.
 
 Then build the component. Inline EVERYTHING into a single file: one default-exported component, all helpers, types, the token table, and the inlined coin SVGs in the same module. Trust idiomatic React + Framer Motion; you don't need scaffolding files or comments explaining basics.
 

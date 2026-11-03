@@ -1,10 +1,17 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useAnimationFrame, useMotionValue, useReducedMotion, useTransform } from 'framer-motion'
-import { Play, Pause, SkipBack, SkipForward, Heart, Shuffle, Queue, ArrowLeft } from '@phosphor-icons/react'
+import { Play } from '@/app/_icons/icons/play'
+import { Pause } from '@/app/_icons/icons/pause'
+import { SkipBack } from '@/app/_icons/icons/skip-back'
+import { SkipForward } from '@/app/_icons/icons/skip-forward'
+import { Heart } from '@/app/_icons/icons/heart'
+import { Shuffle } from '@/app/_icons/icons/shuffle'
+import { ListMusic } from '@/app/_icons/icons/list-music'
+import { ArrowLeft } from '@/app/_icons/icons/arrow-left'
 
 // 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const TRACKS = [
@@ -117,7 +124,7 @@ export default function GlassMusicPlayer() {
               whileTap={{ scale: 0.85 }}
               style={{ color: 'rgba(255,255,255,0.35)' }}
             >
-              <ArrowLeft size={20} weight="regular" />
+              <ArrowLeft size={20} />
             </motion.div>
 
             <span
@@ -135,7 +142,7 @@ export default function GlassMusicPlayer() {
               animate={{ color: liked ? track.color : 'rgba(255,255,255,0.35)' }}
               transition={{ duration: 0.2 }}
             >
-              <Heart size={20} weight={liked ? 'fill' : 'regular'} />
+              <Heart size={20} fill={liked ? 'currentColor' : 'none'} />
             </motion.button>
           </div>
 
@@ -261,7 +268,7 @@ export default function GlassMusicPlayer() {
               animate={{ color: shuffled ? track.color : 'rgba(255,255,255,0.35)' }}
               transition={{ duration: 0.2 }}
             >
-              <Shuffle size={19} weight="regular" />
+              <Shuffle size={19} />
             </motion.button>
 
             <motion.button
@@ -271,7 +278,7 @@ export default function GlassMusicPlayer() {
               className="cursor-pointer"
               style={{ color: 'rgba(255,255,255,0.65)' }}
             >
-              <SkipBack size={26} weight="fill" />
+              <SkipBack size={26} fill="currentColor" />
             </motion.button>
 
             <motion.button
@@ -294,7 +301,7 @@ export default function GlassMusicPlayer() {
                     exit={{ scale: 0.6, opacity: 0 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <Pause size={22} weight="fill" className="text-white" />
+                    <Pause size={22} fill="currentColor" className="text-white" />
                   </motion.div>
                 ) : (
                   <motion.div
@@ -304,7 +311,7 @@ export default function GlassMusicPlayer() {
                     exit={{ scale: 0.6, opacity: 0 }}
                     transition={{ duration: 0.15 }}
                   >
-                    <Play size={22} weight="fill" className="ml-0.5 text-white" />
+                    <Play size={22} fill="currentColor" className="ml-0.5 text-white" />
                   </motion.div>
                 )}
               </AnimatePresence>
@@ -317,7 +324,7 @@ export default function GlassMusicPlayer() {
               className="cursor-pointer"
               style={{ color: 'rgba(255,255,255,0.65)' }}
             >
-              <SkipForward size={26} weight="fill" />
+              <SkipForward size={26} fill="currentColor" />
             </motion.button>
 
             <motion.div
@@ -326,7 +333,7 @@ export default function GlassMusicPlayer() {
               whileTap={{ scale: 0.85 }}
               style={{ color: 'rgba(255,255,255,0.35)' }}
             >
-              <Queue size={19} weight="regular" />
+              <ListMusic size={19} />
             </motion.div>
 
           </div>
