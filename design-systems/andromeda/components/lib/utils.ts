@@ -77,7 +77,7 @@ export const themeColor = {
 };
 
 // Line weight of every icon inside an Andromeda root, read by the icon components.
-export const iconVars: Record<string, string> = { '--aic-icon-stroke': '1' };
+export const iconVars: Record<string, string> = { '--aic-icon-stroke': '1.5' };
 
 export function andromedaVars() {
   const t = tokens;
