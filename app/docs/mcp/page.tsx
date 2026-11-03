@@ -72,7 +72,7 @@ export default function McpDocsPage() {
             <li>Add the address to your agent.</li>
             <li>
               Your browser opens when the agent connects, or when you click its Connect button (in Cursor: Settings, Tools &amp;
-              MCPs). Sign in to AI Canvas or create a free account, then click Allow right away: some agents stop waiting after a
+              MCPs). Sign in to AI Canvas or create a free account, then click Allow right away: some agents stop waiting in less than a
               minute.
             </li>
             <li>Ask for what you want in plain words.</li>
@@ -111,7 +111,7 @@ export default function McpDocsPage() {
           <UL>
             <li>You disconnected the agent in settings.</li>
             <li>
-              The sign-in took longer than your agent waits. Some wait only a minute. If the browser says it cannot reach localhost
+              The sign-in took longer than your agent waits. Some wait less than a minute. If the browser says it cannot reach localhost
               after you click Allow, your agent had already stopped waiting.
             </li>
             <li>The browser says &ldquo;This sign-in request has ended&rdquo; because the request expired or was already answered.</li>
