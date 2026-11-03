@@ -182,8 +182,8 @@ export default function McpDocsPage() {
             content: (
               <>
                 <P>
-                  Add the server to <C>~/.cursor/mcp.json</C> for every project, or <C>.cursor/mcp.json</C> for one, then restart
-                  Cursor. The <A href="/mcp">MCP page</A> also has a one-click install.
+                  Add the <C>aicanvas</C> entry to <C>~/.cursor/mcp.json</C> → Cursor Settings → Tools &amp; MCPs → <C>aicanvas</C>{' '}
+                  on. Your token stays in your home folder, out of git. One click instead: the <A href="/mcp">MCP page</A>.
                 </P>
                 <CopyBlock title="~/.cursor/mcp.json" label="Cursor config" code={JSON_CONFIG} />
               </>

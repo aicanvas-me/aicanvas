@@ -173,7 +173,7 @@ export function ConnectAgentCard({
             <>
               <Step number={1}>
                 <Hint>
-                  One click opens Cursor. Click <span className="font-semibold">Install</span>.
+                  Click → <span className="font-semibold">Install</span>
                 </Hint>
                 <a
                   href={CURSOR_DEEPLINK}
@@ -183,26 +183,20 @@ export function ConnectAgentCard({
                   Add to Cursor
                 </a>
                 <p className="mb-2.5 mt-5 text-sm text-sand-600 dark:text-sand-400">
-                  Or add this to <Inline>~/.cursor/mcp.json</Inline>:
+                  Or add the <Inline>aicanvas</Inline> entry to <Inline>~/.cursor/mcp.json</Inline> (it replaces the npm one):
                 </p>
                 {block('cursor-config', CURSOR_CONFIG, 'config', true)}
-                <p className="mt-2.5 text-sm text-sand-600 dark:text-sand-400">
-                  Already have servers there? Add only the <Inline>aicanvas</Inline> entry inside <Inline>mcpServers</Inline>. If
-                  you use the npm version, this replaces its <Inline>aicanvas</Inline> entry.
-                </p>
               </Step>
               <Step number={2}>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
-                  In Cursor Settings, open <span className="font-semibold">Tools &amp; MCPs</span> and click{' '}
-                  <span className="font-semibold">Connect</span> next to aicanvas. Not listed yet? Open the page again. Your
-                  browser opens: sign in and click <span className="font-semibold">Allow</span> within half a minute. Cursor
-                  stops waiting after that.
+                  Cursor Settings → <span className="font-semibold">Tools &amp; MCPs</span> →{' '}
+                  <span className="font-semibold">Connect</span> → sign in → <span className="font-semibold">Allow</span>{' '}
+                  (within 30 seconds)
                 </p>
               </Step>
               <Step number={3} isLast>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
-                  Check it: ask Cursor to <span className="font-semibold">use the aicanvas whoami tool</span>. It answers with your
-                  email and plan.
+                  Ask Cursor <span className="font-semibold">&ldquo;use aicanvas whoami&rdquo;</span> → your email and plan
                 </p>
               </Step>
             </>

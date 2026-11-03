@@ -368,8 +368,7 @@ export function InstallCards() {
               {isCursor ? (
                 <>
                   <p className="mb-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                    One click installs it. The button opens Cursor with the config
-                    filled in, so you just enable it.
+                    Click → <span className="font-semibold">Install</span>
                   </p>
                   <a
                     href={cursorDeeplink(userToken ?? '')}
@@ -379,11 +378,8 @@ export function InstallCards() {
                     Add to Cursor
                   </a>
                   <p className="mb-2.5 mt-5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                    Or paste this into{' '}
-                    <code className={INLINE_CODE}>~/.cursor/mcp.json</code>{' '}
-                    (global) or{' '}
-                    <code className={INLINE_CODE}>.cursor/mcp.json</code>{' '}
-                    (one project):
+                    Or add the <code className={INLINE_CODE}>aicanvas</code> entry to{' '}
+                    <code className={INLINE_CODE}>~/.cursor/mcp.json</code>:
                   </p>
                   <CodeBlock
                     command={cursorConfig(displayToken)}
@@ -422,7 +418,11 @@ export function InstallCards() {
                   />
                 </>
               )}
-              {tokenLoaded && (userToken ? (
+              {tokenLoaded && (userToken && isCursor ? (
+                <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  Your token is in it → full source. It lives in your home folder, out of git.
+                </p>
+              ) : userToken ? (
                 <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
                   Your token is baked into the command above, so installs can pull
                   source. View or rotate it in your{' '}
@@ -442,20 +442,24 @@ export function InstallCards() {
                   >
                     Sign in
                   </Link>{' '}
-                  to bake your token into the command (free or premium account).
-                  Without it your agent can browse components but can&rsquo;t pull
-                  their source.
+                  → your token goes in → full source. A free account works. Signed out, your agent can only browse.
                 </p>
               ))}
             </Step>
 
             <Step number={2}>
-              <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                {isCursor ? 'Reload the Cursor window.' : `Restart ${toolLabel}.`}{' '}
-                The{' '}
-                <code className={INLINE_CODE}>aicanvas</code>{' '}
-                MCP loads automatically.
-              </p>
+              {isCursor ? (
+                <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  Cursor Settings → <span className="font-semibold">Tools &amp; MCPs</span> →{' '}
+                  <code className={INLINE_CODE}>aicanvas</code> on
+                </p>
+              ) : (
+                <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  Restart {toolLabel}. The{' '}
+                  <code className={INLINE_CODE}>aicanvas</code>{' '}
+                  MCP loads automatically.
+                </p>
+              )}
             </Step>
 
             <Step number={3} isLast>
