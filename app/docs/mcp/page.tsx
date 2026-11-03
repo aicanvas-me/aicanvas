@@ -1,6 +1,9 @@
+import { hostedMcpOAuthEnabled } from '../../../lib/flags'
+import { HOSTED_MCP_URL } from '../../lib/hosted-mcp'
 import { pageMetadata } from '../../lib/page-metadata'
+import { ConnectAgentCard } from '../../mcp/ConnectAgentCard'
 import { CopyBlock } from '../_components/CopyBlock'
-import { A, C, DocPage, H2, H3, Note, P, Table, UL } from '../_components/DocsKit'
+import { A, C, DocPage, H2, H3, Note, OL, P, Table, UL } from '../_components/DocsKit'
 import { Tabs } from '../_components/Tabs'
 
 export const metadata = pageMetadata({
@@ -10,6 +13,15 @@ export const metadata = pageMetadata({
     'Set up @aicanvas/mcp in Claude Code, Codex, Cursor or Claude Desktop. Your agent searches, reads, plans and installs AI Canvas components and design systems from the chat.',
   url: '/docs/mcp',
 })
+
+// The sign-in sections exist only while HOSTED_MCP_OAUTH is on; off, the page is the npm docs alone.
+const HOSTED_TOC = [
+  { id: 'sign-in', title: 'Connect with sign-in' },
+  { id: 'your-account', title: 'Your account stays yours' },
+  { id: 'ci', title: 'No browser? CI and remote shells' },
+  { id: 'stuck', title: 'Stuck signed out?' },
+  { id: 'what-we-store', title: 'What we store' },
+]
 
 const TOC = [
   { id: 'quick-start', title: 'Quick start' },
@@ -31,20 +43,96 @@ const JSON_CONFIG = `{
 }`
 
 export default function McpDocsPage() {
+  const hosted = hostedMcpOAuthEnabled()
   return (
     <DocPage
       href="/docs/mcp"
       title="MCP server"
-      lead="@aicanvas/mcp lets your agent search, read and install AI Canvas components and design systems without leaving the chat."
-      toc={TOC}
+      lead={
+        hosted
+          ? 'Connect your agent with one address and a browser sign-in, or run @aicanvas/mcp on your machine. Either way it searches, reads and installs AI Canvas components and design systems without leaving the chat.'
+          : '@aicanvas/mcp lets your agent search, read and install AI Canvas components and design systems without leaving the chat.'
+      }
+      toc={hosted ? [...HOSTED_TOC, ...TOC.map((t) => (t.id === 'quick-start' ? { ...t, title: 'Run it locally with npm' } : t))] : TOC}
     >
       <P>
         The server speaks the Model Context Protocol (MCP), the standard AI coding tools use to reach outside data. It reads the live
-        registry, so new components show up within minutes with no update. Every tool is read-only: nothing changes on AI
-        Canvas&apos;s side.
+        registry, so new components show up within minutes with no update.{' '}
+        {hosted
+          ? 'Every tool only reads, except disconnect, which ends your own agent\'s connection.'
+          : <>Every tool is read-only: nothing changes on AI Canvas&apos;s side.</>}
       </P>
 
-      <H2 id="quick-start">Quick start</H2>
+      {hosted && (
+        <>
+          <H2 id="sign-in">Connect with sign-in</H2>
+          <P>Add this address to your agent. It speaks Streamable HTTP. Sign-in is in beta.</P>
+          <CopyBlock label="server address" code={HOSTED_MCP_URL} />
+          <OL>
+            <li>Add the address to your agent.</li>
+            <li>
+              The first time it connects, your browser opens. Sign in to AI Canvas or create a free account, then click Allow.
+            </li>
+            <li>Ask for what you want in plain words.</li>
+          </OL>
+          <div className="mt-6">
+            <ConnectAgentCard heading={false} showDocsLink={false} />
+          </div>
+
+          <H2 id="your-account">Your account stays yours</H2>
+          <P>
+            Your agent gets its own sign-in. It never gets your password or your browser session. It cannot change your account, your
+            password or your plan, and it cannot buy anything.
+          </P>
+          <P>
+            Each sign-in lasts an hour and renews itself until you disconnect the agent. You get an email when a new agent connects.
+          </P>
+          <P>
+            See and disconnect every agent in <A href="/account/settings">Settings, Connected AI agents</A>. An agent can also
+            disconnect itself with the <C>disconnect</C> tool.
+          </P>
+
+          <H2 id="ci">No browser? CI and remote shells</H2>
+          <P>
+            Send your API key to the same address as the header <C>Authorization: Bearer &lt;your key&gt;</C>. Get or rotate the key
+            in <A href="/account/settings">Account settings</A>. Store it as a secret in your CI, never in git. Use either the browser
+            sign-in or the header, never both: a saved header overrides the sign-in, so every call would fail.
+          </P>
+          <CopyBlock
+            title="Claude Code"
+            label="Claude Code command with a key"
+            code={`claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL} --header "Authorization: Bearer aic_your_key"`}
+          />
+
+          <H2 id="stuck">Stuck signed out?</H2>
+          <P>AI Canvas tools may stop answering, or your agent may say it is not authorized. Possible causes:</P>
+          <UL>
+            <li>You disconnected the agent in settings.</li>
+            <li>The sign-in took longer than your agent waits. It usually waits a few minutes, so it gave up.</li>
+            <li>The browser says &ldquo;This sign-in request has ended&rdquo; because the request expired or was already answered.</li>
+            <li>
+              The browser says &ldquo;Your AI agent needs to connect again&rdquo;: its saved connection is no longer valid. Starting
+              again reuses it, so remove the server from your agent and add it again.
+            </li>
+            <li>If you use the header method, you rotated your API key.</li>
+          </UL>
+          <P>
+            To fix it, start the sign-in again from your agent. For Claude Code, run <C>claude mcp login aicanvas</C>. For Codex, run{' '}
+            <C>codex mcp login aicanvas</C>. In other agents, use the reconnect or sign-in action, or remove the server and add it
+            again. If you are already signed in to aicanvas.me in that browser, it goes straight to Allow. For the header method, copy
+            your new key.
+          </P>
+
+          <H2 id="what-we-store">What we store</H2>
+          <P>
+            For each connected agent, we store its name, the address it returns to after sign-in, when it connected, when it was last
+            used, and the country of the browser and the agent. Sign-in tokens are stored only as hashes. Disconnecting deletes the
+            connection. Read the <A href="/privacy">Privacy Policy</A>.
+          </P>
+        </>
+      )}
+
+      <H2 id="quick-start">{hosted ? 'Run it locally with npm' : 'Quick start'}</H2>
       <P>
         Pick your agent. Replace <C>your-token</C> with the token from <A href="/account/settings">Account settings</A>, or sign in
         on the <A href="/mcp">MCP page</A> and copy a command with your token already in it.
@@ -172,6 +260,18 @@ export default function McpDocsPage() {
         head={['Tool', 'What it does']}
         rows={[[<C key="1">get_install_command</C>, 'The shadcn command for one standalone or design-system component. Whole systems and templates list theirs in get_system and get_template.']]}
       />
+      {hosted && (
+        <>
+          <H3>Account (sign-in only)</H3>
+          <Table
+            head={['Tool', 'What it does']}
+            rows={[
+              [<C key="1">whoami</C>, 'The connected AI Canvas account, its plan and what that plan can install.'],
+              [<C key="2">disconnect</C>, 'Ends this agent\'s connection when you ask it to sign out.'],
+            ]}
+          />
+        </>
+      )}
       <P>
         The best order for a new page: <C>compose_page</C> to plan, <C>get_component_props</C> before writing each component,{' '}
         <C>validate_usage</C> on the finished file, <C>get_audit_checklist</C> before calling it done.
@@ -182,6 +282,12 @@ export default function McpDocsPage() {
         <li>Browsing, search, props and install commands need no account.</li>
         <li>Reading source needs a free account: set <C>AICANVAS_TOKEN</C>.</li>
         <li>Premium design systems and templates need an account with <A href="/pricing">Premium</A>.</li>
+        {hosted && (
+          <li>
+            With sign-in, your plan comes along: Premium items show as locked with an upgrade link, and upgrading unlocks them on the
+            same connection. There is no daily request limit.
+          </li>
+        )}
       </UL>
       <P>
         Without a token, a source request returns a short note asking for a free account instead of the code.

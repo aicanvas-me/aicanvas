@@ -96,7 +96,7 @@ export default async function StoppedPage({ searchParams }: { searchParams: Prom
       )}
       <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">
         Still stuck?{' '}
-        <Link href="/mcp/docs#stuck" className={linkClass}>
+        <Link href="/docs/mcp#stuck" className={linkClass}>
           Read the fix
         </Link>
         .

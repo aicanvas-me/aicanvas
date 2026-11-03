@@ -15,7 +15,7 @@ import { HOSTED_MCP_URL } from '../lib/hosted-mcp'
 // The hosted MCP setup: add one address to the AI agent, sign in once in the browser,
 // never copy a key. Shown on /mcp, on /welcome for Premium and on /account/connect after
 // sign-up, only while HOSTED_MCP_OAUTH is on (the pages decide). Machines with no browser
-// (CI, a remote shell) use the API key; /mcp/docs#ci covers that, not this card.
+// (CI, a remote shell) use the API key; /docs/mcp#ci covers that, not this card.
 
 type Agent = 'claude' | 'cursor' | 'vscode' | 'codex' | 'desktop' | 'other'
 
@@ -237,7 +237,7 @@ export function ConnectAgentCard({
         </div>
       </div>
 
-      {showDocsLink && <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">Stuck, or setting up CI? <Link href="/mcp/docs" className="font-semibold text-accent transition-colors hover:text-accent/70">Read the docs</Link>.</p>}
+      {showDocsLink && <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">Stuck, or setting up CI? <Link href="/docs/mcp#sign-in" className="font-semibold text-accent transition-colors hover:text-accent/70">Read the docs</Link>.</p>}
 
       {skipHref && (
         <div className="mt-6 text-center">

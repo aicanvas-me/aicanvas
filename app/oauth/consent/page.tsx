@@ -57,7 +57,7 @@ function Ended() {
       <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">
         Another AI agent, or still stuck?{' '}
         <Link
-          href="/mcp/docs#stuck"
+          href="/docs/mcp#stuck"
           className="font-semibold text-accent transition-colors hover:text-accent/70"
         >
           Read the fix
