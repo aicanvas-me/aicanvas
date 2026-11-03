@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hostedMcpOAuthEnabled } from '../../../lib/flags'
-import { CaretDown } from '@phosphor-icons/react/dist/ssr'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { HOSTED_MCP_URL } from '../../lib/hosted-mcp'
 import { Card } from '../Card'
 
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-const linkClass = 'font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300'
+const linkClass = 'font-semibold text-accent transition-colors hover:text-accent/70'
 const codeClass =
-  'overflow-x-auto rounded-lg bg-sand-200 px-4 py-3 font-mono text-sm text-sand-700 dark:bg-sand-950 dark:text-sand-300'
+  'overflow-x-auto rounded-inset border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 px-4 py-3 font-mono text-sm text-sand-700 dark:text-sand-300'
 
 const COPY = {
   // The agent kept a registration this server no longer accepts. Starting again reuses it,
@@ -69,12 +69,12 @@ export default async function StoppedPage({ searchParams }: { searchParams: Prom
       {copy.fresh && (
         <>
           <p className="mt-5 text-xs font-semibold text-sand-600 dark:text-sand-400">Pick your AI agent:</p>
-          <div className="mt-2 divide-y divide-sand-200 rounded-lg border border-sand-200 dark:divide-sand-800 dark:border-sand-800">
+          <div className="mt-2 divide-y divide-sand-200 rounded-inset border border-sand-200 dark:divide-sand-800 dark:border-sand-800">
             {RECONNECT.map(({ agent, code, text }) => (
               <details key={agent} className="group">
                 <summary className="flex cursor-pointer list-none items-center justify-between px-3.5 py-2.5 text-sm font-semibold text-sand-900 dark:text-sand-50 [&::-webkit-details-marker]:hidden">
                   {agent}
-                  <CaretDown weight="regular" size={14} className="text-sand-600 transition-transform group-open:rotate-180 dark:text-sand-400" />
+                  <ChevronDown size={14} className="text-sand-600 transition-transform group-open:rotate-180 dark:text-sand-400" />
                 </summary>
                 <div className="px-3.5 pb-3.5">
                   {code ? (

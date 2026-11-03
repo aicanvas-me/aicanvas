@@ -19,7 +19,7 @@ export function SwitchAccount({ next }: { next: string }) {
       type="button"
       onClick={switchAccount}
       disabled={busy}
-      className="font-semibold text-olive-600 transition-colors hover:text-olive-800 disabled:opacity-50 dark:text-olive-400 dark:hover:text-olive-300"
+      className="font-semibold text-accent transition-colors hover:text-accent/70 disabled:opacity-50"
     >
       {busy ? 'Signing out…' : 'Switch account'}
     </button>

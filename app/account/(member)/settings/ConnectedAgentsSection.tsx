@@ -3,7 +3,9 @@
 import { useState, useTransition } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Robot, Warning } from '@phosphor-icons/react'
+import { Bot } from '@/app/_icons/icons/bot'
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert'
+import { CARD } from '../../../components/PageKit'
 import { buttonClasses } from '../../../components/buttonClasses'
 
 // ─── ConnectedAgentsSection ───────────────────────────────────────────────────
@@ -53,27 +55,27 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
   }
 
   return (
-    <section id="ai-agents" className="scroll-mt-20 rounded-2xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
-      <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">Connected AI agents</h2>
-      <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
+    <section id="ai-agents" className={`scroll-mt-20 ${CARD} p-6 sm:p-8`}>
+      <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Connected AI agents</h2>
+      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
         AI agents you allowed to use your account through the AI Canvas MCP.{' '}
-        <Link href="/account/connect" className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300">
+        <Link href="/account/connect" className="font-semibold text-accent transition-colors hover:text-accent/70">
           Connect an AI agent
         </Link>
       </p>
 
       {agents.length === 0 ? (
-        <p className="mt-4 rounded-lg bg-sand-200 px-4 py-3 text-sm text-sand-600 dark:bg-sand-950 dark:text-sand-400">
+        <p className="mt-5 rounded-inset border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 px-4 py-3 text-sm text-sand-600 dark:text-sand-400">
           No AI agents connected.
         </p>
       ) : (
         <>
-          <ul className="mt-4 space-y-2">
+          <ul className="mt-5 space-y-2">
             {agents.map((agent) => (
-              <li key={agent.id} className="rounded-lg bg-sand-200 px-4 py-3 dark:bg-sand-950">
+              <li key={agent.id} className="rounded-inset border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 px-4 py-3">
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex min-w-0 items-start gap-3">
-                    <Robot weight="regular" size={20} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
+                    <Bot size={20} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">{agent.name}</p>
                       <p className="mt-0.5 text-xs text-sand-600 dark:text-sand-400">
@@ -93,7 +95,7 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
                 </div>
                 {(agent.countryMismatch || agent.staleRefreshAt) && (
                   <p className="mt-2 flex items-start gap-1.5 text-xs text-red-700 dark:text-red-400">
-                    <Warning weight="regular" size={14} className="mt-0.5 shrink-0" />
+                    <TriangleAlert size={14} className="mt-0.5 shrink-0" />
                     {agent.countryMismatch ?? `An old sign-in of this agent was used on ${day(agent.staleRefreshAt!)}.`}
                   </p>
                 )}

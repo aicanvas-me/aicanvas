@@ -69,7 +69,7 @@ const NO_LIGATURES = {
 
 // A file name or command inside a sentence. Bordered, so it reads on both the
 // card and the darker inset the steps sit on.
-const INLINE_CODE =
+export const INLINE_CODE =
   'rounded-chip border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-xs text-sand-800 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-200'
 
 type Tool = 'claude' | 'codex' | 'cursor'

@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Code, Robot } from '@phosphor-icons/react'
+import { Code } from '@/app/_icons/icons/code'
+import { Bot } from '@/app/_icons/icons/bot'
+import { buttonClasses } from '../components/buttonClasses'
 import { Step } from '../components/Step'
 import { copyText } from '../components/useCopied'
-import { ClaudeMark, CodeBlock, CodexMark, CursorMark, Toast, useToast } from './InstallCards'
+import { ClaudeMark, CodeBlock, CodexMark, CursorMark, INLINE_CODE, Toast, useToast } from './InstallCards'
 import { HOSTED_MCP_URL } from '../lib/hosted-mcp'
 
 // ─── ConnectAgentCard ─────────────────────────────────────────────────────────
@@ -20,10 +22,10 @@ type Agent = 'claude' | 'cursor' | 'vscode' | 'codex' | 'desktop' | 'other'
 const AGENTS: { id: Agent; label: string; mark: React.ReactNode }[] = [
   { id: 'claude', label: 'Claude Code', mark: <ClaudeMark /> },
   { id: 'cursor', label: 'Cursor', mark: <CursorMark /> },
-  { id: 'vscode', label: 'VS Code', mark: <Code weight="regular" className="size-4" /> },
+  { id: 'vscode', label: 'VS Code', mark: <Code size={16} /> },
   { id: 'codex', label: 'Codex', mark: <CodexMark /> },
   { id: 'desktop', label: 'Claude Desktop', mark: <ClaudeMark /> },
-  { id: 'other', label: 'Other', mark: <Robot weight="regular" className="size-4" /> },
+  { id: 'other', label: 'Other', mark: <Bot size={16} /> },
 ]
 
 const CLAUDE_ADD = `claude mcp add --transport http --scope user aicanvas ${HOSTED_MCP_URL}`
@@ -37,17 +39,24 @@ const VSCODE_CONFIG = JSON.stringify({ servers: { aicanvas: { type: 'http', url:
 
 function Inline({ children }: { children: React.ReactNode }) {
   return (
-    <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
-      {children}
-    </code>
+    <code className={INLINE_CODE}>{children}</code>
   )
 }
 
 function Hint({ children }: { children: React.ReactNode }) {
-  return <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">{children}</p>
+  return <p className="mb-2.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{children}</p>
 }
 
-export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?: string; showDocsLink?: boolean }) {
+// heading={false} where the page draws the section heading itself (/mcp).
+export function ConnectAgentCard({
+  skipHref,
+  showDocsLink = true,
+  heading = true,
+}: {
+  skipHref?: string
+  showDocsLink?: boolean
+  heading?: boolean
+}) {
   const [agent, setAgent] = useState<Agent>('claude')
   const [copied, setCopied] = useState<string | null>(null)
   const toast = useToast()
@@ -80,18 +89,23 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
 
   return (
     <section>
-      <div className="mb-3 flex items-center gap-2">
-        <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">Connect your AI agent</h2>
-        <span className="rounded-full bg-sand-200 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-sand-700 dark:bg-sand-950 dark:text-sand-300">
-          Beta
-        </span>
-      </div>
-      <p className="mb-4 text-sm text-sand-600 dark:text-sand-400">
-        Add AI Canvas to your AI agent and sign in once in the browser. No key to copy.
-      </p>
+      {heading && (
+        <>
+          <div className="mb-2 flex items-center gap-2">
+            <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Connect your AI agent</h2>
+            <span className="rounded-full border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
+              Beta
+            </span>
+          </div>
+          <p className="mb-5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+            Add AI Canvas to your AI agent and sign in once in the browser. No key to copy.
+          </p>
+        </>
+      )}
 
-      <div className="overflow-hidden rounded-xl border border-sand-200 dark:border-sand-800">
-        <div className="isolate flex gap-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-b border-sand-200 bg-sand-100 p-1.5 dark:border-sand-800 dark:bg-sand-900">
+      {/* Built like the npm install card: the agent switch on the card, the steps in the inset. */}
+      <div className="rounded-section border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900">
+        <div className="isolate flex gap-1.5 overflow-x-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {AGENTS.map((a) => {
             const active = agent === a.id
             return (
@@ -100,16 +114,16 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
                 type="button"
                 onClick={() => setAgent(a.id)}
                 aria-pressed={active}
-                className={`relative flex shrink-0 items-center justify-center rounded-lg px-3 py-2.5 text-xs font-semibold transition-colors sm:flex-1 sm:px-3 sm:text-sm ${
+                className={`relative flex shrink-0 items-center justify-center rounded-control px-3 py-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:flex-1 sm:text-sm ${
                   active
                     ? 'text-sand-900 dark:text-sand-50'
-                    : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
+                    : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
                 }`}
               >
                 {active && (
                   <motion.span
                     layoutId="connectAgentHighlight"
-                    className="absolute inset-0 rounded-lg bg-sand-50 shadow-sm ring-1 ring-sand-300 dark:bg-sand-800 dark:ring-sand-700"
+                    className="absolute inset-0 rounded-control bg-sand-50 shadow-sm ring-1 ring-sand-300 dark:bg-sand-800 dark:ring-sand-700"
                     transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                   />
                 )}
@@ -122,7 +136,7 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
           })}
         </div>
 
-        <div className="space-y-6 bg-sand-100 p-4 sm:p-6 dark:bg-sand-900">
+        <div className="mt-2 space-y-6 rounded-card bg-sand-50/70 px-4 py-6 sm:px-7 sm:py-8 dark:bg-sand-950">
           {agent === 'claude' && (
             <>
               <Step number={1}>
@@ -155,7 +169,7 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
                 <Hint>One click adds it to Cursor.</Hint>
                 <a
                   href={CURSOR_DEEPLINK}
-                  className="inline-flex items-center gap-2 rounded-lg bg-olive-500 px-4 py-2.5 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
+                  className={buttonClasses({ variant: 'primary', size: 'lg' })}
                 >
                   <CursorMark />
                   Add to Cursor
@@ -223,7 +237,7 @@ export function ConnectAgentCard({ skipHref, showDocsLink = true }: { skipHref?:
         </div>
       </div>
 
-      {showDocsLink && <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">Stuck, or setting up CI? <Link href="/mcp/docs" className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300">Read the docs</Link>.</p>}
+      {showDocsLink && <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">Stuck, or setting up CI? <Link href="/mcp/docs" className="font-semibold text-accent transition-colors hover:text-accent/70">Read the docs</Link>.</p>}
 
       {skipHref && (
         <div className="mt-6 text-center">

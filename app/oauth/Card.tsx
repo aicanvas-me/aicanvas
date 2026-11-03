@@ -9,7 +9,7 @@ export function Card({ children }: { children: React.ReactNode }) {
         <img src="/ai-canvas-icon.svg" alt="" width={20} height={17} className="shrink-0" />
         AI Canvas
       </Link>
-      <div className="w-full max-w-md rounded-xl border border-sand-200 bg-sand-100 p-6 sm:p-8 dark:border-sand-800 dark:bg-sand-900">
+      <div className="aic-hero-rise w-full max-w-md rounded-section border border-sand-200 bg-sand-100 p-6 shadow-[0_1px_2px_rgba(0,0,0,0.05),0_16px_40px_-16px_rgba(0,0,0,0.14)] sm:p-10 dark:border-sand-800 dark:bg-sand-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_24px_56px_-20px_rgba(0,0,0,0.7)]">
         {children}
       </div>
     </div>

@@ -78,7 +78,7 @@ export function McpTokenSection({ token }: Props) {
           <p className="mt-2 text-xs leading-relaxed text-sand-600 dark:text-sand-400">
             You only need it to set things up by hand, or to give to your AI agent. The
             Copy CLI button and the{' '}
-            <Link href="/mcp" className="font-medium text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300">
+            <Link href="/mcp" className="font-semibold text-accent transition-colors hover:text-accent/70">
               MCP setup page
             </Link>{' '}
             already include it.

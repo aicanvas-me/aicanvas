@@ -104,9 +104,14 @@ export default function McpPage() {
         {hostedMcpOAuthEnabled() ? (
           <>
             <section aria-labelledby="mcp-install" className="mx-auto mt-16 max-w-4xl sm:mt-24">
-              <SectionHead id="mcp-install" eyebrow="Setup" title="Connect your AI agent" />
+              <SectionHead
+                id="mcp-install"
+                eyebrow="Setup · Beta"
+                title="Connect your AI agent"
+                sub="Add AI Canvas to your AI agent and sign in once in the browser. No key to copy."
+              />
               <div className="mt-10">
-                <ConnectAgentCard />
+                <ConnectAgentCard heading={false} />
               </div>
             </section>
             <section aria-labelledby="mcp-local" className="mx-auto mt-20 max-w-4xl sm:mt-32">

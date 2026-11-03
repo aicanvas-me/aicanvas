@@ -1,7 +1,11 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound, redirect } from 'next/navigation'
-import { DotsThree, DownloadSimple, MagnifyingGlass, Robot, Stack } from '@phosphor-icons/react/dist/ssr'
+import { Bot } from '@/app/_icons/icons/bot'
+import { Download } from '@/app/_icons/icons/download'
+import { Ellipsis } from '@/app/_icons/icons/ellipsis'
+import { Layers } from '@/app/_icons/icons/layers'
+import { Search } from '@/app/_icons/icons/search'
 import { createClient } from '../../lib/supabase/server'
 import { buttonClasses } from '../../components/buttonClasses'
 import { hostedMcpOAuthEnabled } from '../../../lib/flags'
@@ -24,13 +28,13 @@ export const metadata: Metadata = {
 // name is whatever it registered as, and a borrowed logo would lend a look-alike trust.
 function Pairing() {
   const tile =
-    'flex h-12 w-12 items-center justify-center rounded-xl border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950'
+    'flex h-12 w-12 items-center justify-center rounded-inset border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950'
   return (
     <div className="mb-6 flex items-center justify-center gap-3" aria-hidden="true">
       <div className={tile}>
-        <Robot weight="regular" size={24} className="text-sand-700 dark:text-sand-300" />
+        <Bot size={24} className="text-sand-700 dark:text-sand-300" />
       </div>
-      <DotsThree weight="regular" size={24} className="text-sand-500" />
+      <Ellipsis size={24} className="text-sand-500" />
       <div className={tile}>
         <img src="/ai-canvas-icon.svg" alt="" width={24} height={20} />
       </div>
@@ -47,14 +51,14 @@ function Ended() {
       <p className="mt-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
         It expired or was already answered. Start the sign-in again from your AI agent. In Claude Code or Codex:
       </p>
-      <pre className="mt-3 overflow-x-auto rounded-lg bg-sand-200 px-4 py-3 font-mono text-sm text-sand-700 dark:bg-sand-950 dark:text-sand-300">
+      <pre className="mt-3 overflow-x-auto rounded-inset border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 px-4 py-3 font-mono text-sm text-sand-700 dark:text-sand-300">
         <code>{'claude mcp login aicanvas\ncodex mcp login aicanvas'}</code>
       </pre>
       <p className="mt-4 text-sm text-sand-600 dark:text-sand-400">
         Another AI agent, or still stuck?{' '}
         <Link
           href="/mcp/docs#stuck"
-          className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+          className="font-semibold text-accent transition-colors hover:text-accent/70"
         >
           Read the fix
         </Link>
@@ -94,20 +98,20 @@ export default async function ConsentPage({
       <p className="mt-6 text-xs font-semibold text-sand-600 dark:text-sand-400">This lets it:</p>
       <ul className="mt-3 space-y-3 text-sm text-sand-700 dark:text-sand-300">
         {[
-          { Icon: MagnifyingGlass, line: 'Search AI Canvas and read what is inside' },
-          { Icon: DownloadSimple, line: 'Install the components, design systems and templates your plan includes' },
-          { Icon: Stack, line: 'Check its work against each design system\'s rules' },
+          { Icon: Search, line: 'Search AI Canvas and read what is inside' },
+          { Icon: Download, line: 'Install the components, design systems and templates your plan includes' },
+          { Icon: Layers, line: 'Check its work against each design system\'s rules' },
         ].map(({ Icon, line }) => (
           <li key={line} className="flex items-start gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
-              <Icon weight="regular" size={15} className="text-sand-700 dark:text-sand-300" />
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-chip border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950">
+              <Icon size={15} className="text-sand-700 dark:text-sand-300" />
             </span>
             <span className="pt-1">{line}</span>
           </li>
         ))}
       </ul>
       {target && (
-        <p className="mt-6 rounded-lg border border-red-500/40 px-3 py-2.5 text-xs leading-relaxed text-red-700 dark:border-red-500/30 dark:text-red-400">
+        <p className="mt-6 rounded-inset border border-red-500/40 px-3 py-2.5 text-xs leading-relaxed text-red-700 dark:border-red-500/30 dark:text-red-400">
           This sign-in will be sent to <span className="font-semibold">{target}</span>. Only allow it
           if you know it.
         </p>
@@ -128,7 +132,7 @@ export default async function ConsentPage({
         Disconnect it anytime in{' '}
         <Link
           href="/account/settings"
-          className="font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+          className="font-semibold text-accent transition-colors hover:text-accent/70"
         >
           Settings, Connected AI agents
         </Link>

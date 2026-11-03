@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { hostedMcpOAuthEnabled } from '../../../lib/flags'
-import { SiteFooter } from '../../components/SiteFooter'
+import { BookOpenText } from '@/app/_icons/icons/book-open-text'
+import { PageHero, PageShell } from '../../components/PageKit'
 import { SITE_URL } from '../../lib/config'
 import { ConnectAgentCard } from '../ConnectAgentCard'
 import { HOSTED_MCP_URL } from '../../lib/hosted-mcp'
@@ -68,37 +69,35 @@ const toolGroups = [
 ] as const
 
 const linkClass =
-  'font-medium text-olive-600 hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300'
+  'font-semibold text-accent transition-colors hover:text-accent/70'
 const sectionClass = 'mt-14 sm:mt-16'
 const headingClass = 'scroll-mt-24 text-xl font-bold text-sand-900 dark:text-sand-50'
 const bodyClass = 'mt-3 text-sand-700 dark:text-sand-300'
 const codeClass =
-  'overflow-x-auto rounded-lg bg-sand-200 px-4 py-3.5 font-mono text-sm text-sand-700 dark:bg-sand-950 dark:text-sand-300'
+  'overflow-x-auto rounded-inset border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950 px-4 py-3.5 font-mono text-sm text-sand-700 dark:text-sand-300'
 
 export default function HostedMcpDocsPage() {
   if (!hostedMcpOAuthEnabled()) notFound()
 
   return (
-    <>
-      <main className="relative mx-auto w-full max-w-4xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
-        {/* Mobile breadcrumb */}
-        <p className="mb-6 text-sm font-semibold md:hidden">
-          <span className="text-olive-600 dark:text-olive-500">/MCP / Docs</span>
-        </p>
-
-        <header className="mb-10 sm:mb-14">
-          <h1 className="max-w-xl text-3xl font-extrabold leading-[1.2] tracking-tight text-sand-900 sm:text-4xl dark:text-sand-50">
-            Hosted MCP docs
-          </h1>
-          <p className="mt-5 max-w-2xl text-lg text-sand-600 dark:text-sand-300">
+    <PageShell>
+      <PageHero
+        size="md"
+        pill="MCP docs"
+        pillIcon={<BookOpenText size={12} className="text-accent" aria-hidden />}
+        title="Hosted MCP docs"
+        sub={
+          <span className="block text-balance">
             Connect any AI agent that supports remote MCP servers with one address, then sign in once in your browser.
             There is nothing to install and no key to paste.
-          </p>
-        </header>
+          </span>
+        }
+      />
 
+      <div className="mx-auto mt-12 max-w-4xl sm:mt-16">
         <nav
           aria-labelledby="on-this-page"
-          className="rounded-xl border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900"
+          className="rounded-section border border-sand-200 bg-sand-100 p-6 sm:p-8 dark:border-sand-800 dark:bg-sand-900"
         >
           <p id="on-this-page" className="font-bold text-sand-900 dark:text-sand-50">
             On this page
@@ -144,7 +143,7 @@ export default function HostedMcpDocsPage() {
             {toolGroups.map((group) => (
               <div
                 key={group.title}
-                className="overflow-hidden rounded-xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900"
+                className="overflow-hidden rounded-section border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900"
               >
                 <h3 className="border-b border-sand-200 px-4 py-3 text-sm font-bold text-sand-900 dark:border-sand-800 dark:text-sand-50">
                   {group.title}
@@ -259,8 +258,7 @@ export default function HostedMcpDocsPage() {
           </p>
         </section>
 
-        <SiteFooter />
-      </main>
-    </>
+      </div>
+    </PageShell>
   )
 }
