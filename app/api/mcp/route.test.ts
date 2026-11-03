@@ -33,14 +33,14 @@ const TOKEN = 'aic_' + 'c'.repeat(48)
 const FREE_SLUG = 'peel-corner-reveal'
 const PREMIUM_SLUG = 'filter-menu'
 
-function rpc(method: string, params: unknown, auth: string | null = `Bearer ${TOKEN}`) {
+function rpc(method: string, params: unknown, auth: string | null = `Bearer ${TOKEN}`, url = 'https://mcp.aicanvas.me/') {
   const headers: Record<string, string> = {
     'content-type': 'application/json',
     accept: 'application/json, text/event-stream',
   }
   if (auth) headers.authorization = auth
   return POST(
-    new Request('https://mcp.aicanvas.me/', {
+    new Request(url, {
       method: 'POST',
       headers,
       body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
@@ -258,6 +258,15 @@ describe('hosted MCP: a free account', () => {
     const r = await call('get_install_command', { slug: FREE_SLUG })
     expect(r.structuredContent!.installCommand).toBe(
       `npx shadcn@latest add "https://aicanvas.me/r/${FREE_SLUG}.json?token=${TOKEN}"`,
+    )
+  })
+
+  // A local or preview server must not hand out commands that pull from production.
+  it('points the install command at the site the agent connected through', async () => {
+    const res = await rpc('tools/call', { name: 'get_install_command', arguments: { slug: FREE_SLUG } }, `Bearer ${TOKEN}`, 'http://localhost:3021/api/mcp')
+    const { result } = await res.json()
+    expect(result.structuredContent.installCommand).toBe(
+      `npx shadcn@latest add "http://localhost:3021/r/${FREE_SLUG}.json?token=${TOKEN}"`,
     )
   })
 

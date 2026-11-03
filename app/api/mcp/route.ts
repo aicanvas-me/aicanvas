@@ -4,7 +4,7 @@ import { createServer } from '@/mcp/src/tools'
 import mcpPackage from '@/mcp/package.json'
 import { agentContext, HOSTED_INSTRUCTIONS } from '@/app/lib/agent-context'
 import { phCapture } from '@/app/lib/analytics-server'
-import { agentForAccessToken, endConnection, isAccessToken, resourceMetadataUrl } from '@/app/lib/mcp-oauth'
+import { agentForAccessToken, endConnection, isAccessToken, resourceMetadataUrl, siteOriginFor } from '@/app/lib/mcp-oauth'
 import { hostedMcpEnabled, hostedMcpOAuthEnabled } from '@/lib/flags'
 import { isWellFormedToken } from '@/lib/identity/token'
 
@@ -69,7 +69,7 @@ async function handle(req: Request): Promise<Response> {
 
   let ctx
   try {
-    ctx = await agentContext(bearer)
+    ctx = await agentContext(bearer, siteOriginFor(new URL(req.url)))
   } catch (err) {
     return unavailable(err)
   }

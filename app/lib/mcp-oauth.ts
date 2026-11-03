@@ -59,8 +59,8 @@ export function endpointFor(url: URL, name: Endpoint): string {
   return url.host === MCP_HOST ? `https://${MCP_HOST}/${name}` : `${url.origin}/api/mcp/oauth/${name}`
 }
 
-/** The consent page lives on the site, where the person's session cookie is. */
-function consentOrigin(url: URL): string {
+/** The site behind this address: the consent page (where the session cookie is) and /r. */
+export function siteOriginFor(url: URL): string {
   return url.host === MCP_HOST ? 'https://aicanvas.me' : url.origin
 }
 
@@ -358,7 +358,7 @@ export function authorize(url: URL, country: string | null): AuthorizeOutcome {
     exp: Date.now() + REQUEST_TTL_MS,
     nonce: randomBytes(16).toString('base64url'),
   }
-  return { kind: 'redirect', location: `${consentOrigin(url)}/oauth/consent?request=${encodeURIComponent(sign('request', request))}` }
+  return { kind: 'redirect', location: `${siteOriginFor(url)}/oauth/consent?request=${encodeURIComponent(sign('request', request))}` }
 }
 
 /** The pending request behind a consent page, or null when tampered with or expired. */

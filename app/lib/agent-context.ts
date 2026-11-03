@@ -27,9 +27,10 @@ export interface AgentContext extends ToolContext {
 /**
  * The tool context for one hosted request, from the account's API token. Null when the token
  * matches no account (rotated or never issued), which the route answers with a 401. A failed
- * subscription read throws, like it does for /r, and the route answers 503.
+ * subscription read throws, like it does for /r, and the route answers 503. `siteOrigin` is
+ * the site the agent connected through, so a local or preview server hands out its own /r.
  */
-export async function agentContext(token: string): Promise<AgentContext | null> {
+export async function agentContext(token: string, siteOrigin: string): Promise<AgentContext | null> {
   const entitlement = await getEntitlement(
     new Request(`${REGISTRY_BASE}/aicanvas-mcp.json`, { headers: { authorization: `Bearer ${token}` } }),
   )
@@ -41,7 +42,7 @@ export async function agentContext(token: string): Promise<AgentContext | null> 
   return {
     userId,
     plan,
-    registryBase: REGISTRY_BASE,
+    registryBase: `${siteOrigin}/r`,
     token,
     // The token is read fresh for every request, so it cannot have gone stale since setup.
     probeBeforeInstall: false,
