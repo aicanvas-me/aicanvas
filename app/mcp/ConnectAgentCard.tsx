@@ -187,8 +187,9 @@ export function ConnectAgentCard({
               </Step>
               <Step number={2} isLast>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
-                  The first time you ask Cursor for something from AI Canvas, your browser opens: sign in and click{' '}
-                  <span className="font-semibold">Allow</span>.
+                  In Cursor Settings, open <span className="font-semibold">Tools &amp; MCPs</span> and click{' '}
+                  <span className="font-semibold">Connect</span> next to aicanvas. Your browser opens: sign in and click{' '}
+                  <span className="font-semibold">Allow</span> right away: Cursor stops waiting after a minute.
                 </p>
               </Step>
             </>

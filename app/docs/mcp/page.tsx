@@ -71,7 +71,9 @@ export default function McpDocsPage() {
           <OL>
             <li>Add the address to your agent.</li>
             <li>
-              The first time it connects, your browser opens. Sign in to AI Canvas or create a free account, then click Allow.
+              Your browser opens when the agent connects, or when you click its Connect button (in Cursor: Settings, Tools &amp;
+              MCPs). Sign in to AI Canvas or create a free account, then click Allow right away: some agents stop waiting after a
+              minute.
             </li>
             <li>Ask for what you want in plain words.</li>
           </OL>
@@ -108,7 +110,10 @@ export default function McpDocsPage() {
           <P>AI Canvas tools may stop answering, or your agent may say it is not authorized. Possible causes:</P>
           <UL>
             <li>You disconnected the agent in settings.</li>
-            <li>The sign-in took longer than your agent waits. It usually waits a few minutes, so it gave up.</li>
+            <li>
+              The sign-in took longer than your agent waits. Some wait only a minute. If the browser says it cannot reach localhost
+              after you click Allow, your agent had already stopped waiting.
+            </li>
             <li>The browser says &ldquo;This sign-in request has ended&rdquo; because the request expired or was already answered.</li>
             <li>
               The browser says &ldquo;Your AI agent needs to connect again&rdquo;: its saved connection is no longer valid. Starting
@@ -121,6 +126,11 @@ export default function McpDocsPage() {
             <C>codex mcp login aicanvas</C>. In other agents, use the reconnect or sign-in action, or remove the server and add it
             again. If you are already signed in to aicanvas.me in that browser, it goes straight to Allow. For the header method, copy
             your new key.
+          </P>
+          <P>
+            In Cursor, click Authenticate when it appears in the chat, or open Cursor Settings, Tools &amp; MCPs and click Connect
+            next to aicanvas. Until you sign in again it shows Error there: click Logout, then Connect. If the Error stays after
+            that, quit Cursor and open it again.
           </P>
 
           <H2 id="what-we-store">What we store</H2>
