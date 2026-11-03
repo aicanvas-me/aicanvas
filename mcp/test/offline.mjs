@@ -63,7 +63,8 @@ function startLocalRegistry() {
           res.writeHead(404).end('not found')
           return
         }
-        const body = await readFile(join(REGISTRY_DATA_DIR, name)).catch(() => readFile(join(FIXTURES_DIR, name)))
+        // A fixture wins over a generated file: the icon checks expect the fixture's few icons.
+        const body = await readFile(join(FIXTURES_DIR, name)).catch(() => readFile(join(REGISTRY_DATA_DIR, name)))
         res.writeHead(200, { 'Content-Type': 'application/json' }).end(body)
       } catch {
         res.writeHead(404, { 'Content-Type': 'application/json' }).end('{}')
