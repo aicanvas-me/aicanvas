@@ -1716,7 +1716,7 @@ export function createServer(
         code: z.string().min(1).describe('The full contents of the file to check.'),
         path: z.string().optional().describe('The file path, used only in the report.'),
         tags: z
-          .record(z.string())
+          .record(z.string(), z.string())
           .optional()
           .describe(
             'Optional map from JSX tag name to registry slug, e.g. { "Button": "andromeda-button-system" }, for tags the import scan cannot resolve.',
