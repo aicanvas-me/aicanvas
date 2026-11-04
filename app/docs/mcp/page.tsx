@@ -161,15 +161,11 @@ export default function McpDocsPage() {
             label: 'Claude Code',
             content: (
               <>
-                <P>Run this in any terminal. With <C>--scope user</C> the server works in every project you open.</P>
+                <P>Run this in any terminal → works in every project. Your token lives in your home folder, out of git.</P>
                 <CopyBlock
                   label="Claude Code command"
                   code="claude mcp add aicanvas --scope user --env AICANVAS_TOKEN=your-token -- npx -y @aicanvas/mcp"
                 />
-                <P>
-                  Use <C>--scope project</C> to share it with your team through <C>.mcp.json</C>, or <C>--scope local</C> for only
-                  you, in only this project.
-                </P>
               </>
             ),
           },

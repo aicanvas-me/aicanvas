@@ -19,7 +19,7 @@ const MASKED_TOKEN = 'aic_••••••••'
 // The install command / config bakes the account token in as an AICANVAS_TOKEN
 // env var so the MCP authenticates on first run (the README's intended flow).
 // `token` = real value (for copy), the masked form (for display), or '' when
-// signed out (plain command, browse-only). Claude Code has three --scope modes.
+// signed out (plain command, browse-only). User scope only: it lives in the home folder, out of git.
 export function claudeCommand(scope: Scope, token: string) {
   const env = token ? ` --env AICANVAS_TOKEN=${token}` : ''
   return `claude mcp add ${SERVER_NAME} --scope ${scope}${env} -- npx -y ${PACKAGE}`
@@ -57,7 +57,7 @@ function cursorDeeplink(token: string) {
   return `cursor://anysphere.cursor-deeplink/mcp/install?name=${SERVER_NAME}&config=${config}`
 }
 
-const TEST_PROMPT = `Use the aicanvas MCP: find the best navbar component and install it.`
+const TEST_PROMPT = `Use the aicanvas MCP: what can you add to my app?`
 
 // Geist Mono shapes `--` as a ligature/contextual alternate, which visually
 // swallows the space before it (e.g. `aicanvas--scope`). Disable ligatures so
@@ -73,7 +73,7 @@ export const INLINE_CODE =
   'rounded-chip border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-xs text-sand-800 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-200'
 
 type Tool = 'claude' | 'codex' | 'cursor'
-type Scope = 'user' | 'project' | 'local'
+type Scope = 'user'
 
 const TOOL_META: Record<Tool, { label: string; ask: string }> = {
   claude: { label: 'Claude Code', ask: 'Claude' },
@@ -111,41 +111,6 @@ const TOOLS: { id: Tool; mark: React.ReactNode }[] = [
   { id: 'claude', mark: <ClaudeMark /> },
   { id: 'codex', mark: <CodexMark /> },
   { id: 'cursor', mark: <CursorMark /> },
-]
-
-const SCOPES: { id: Scope; label: string; desc: React.ReactNode }[] = [
-  {
-    id: 'user',
-    label: 'User',
-    desc: (
-      <>
-        Run this in any terminal. The MCP works in every project you open.
-        Install once, then forget it exists.
-      </>
-    ),
-  },
-  {
-    id: 'project',
-    label: 'Project',
-    desc: (
-      <>
-        Run this in your project root. Saved to{' '}
-        <code className={INLINE_CODE}>.mcp.json</code>{' '}
-        and shared through git, so everyone on the project gets it. Best for
-        teams.
-      </>
-    ),
-  },
-  {
-    id: 'local',
-    label: 'Local',
-    desc: (
-      <>
-        Run this in your project root. Only you see the MCP, and only in this
-        project.
-      </>
-    ),
-  },
 ]
 
 // ── Toast ────────────────────────────────────────────────────────────────────
@@ -237,7 +202,6 @@ export function CodeBlock({
 export function InstallCards() {
   const { message, show } = useToast()
   const [tool, setTool] = useState<Tool>('claude')
-  const [scope, setScope] = useState<Scope>('user')
   const [installCopied, setInstallCopied] = useState(false)
   const [testCopied, setTestCopied] = useState(false)
   const [userToken, setUserToken] = useState<string | null>(null)
@@ -279,10 +243,10 @@ export function InstallCards() {
   const displayToken = userToken ? MASKED_TOKEN : ''
   const installCommandDisplay = isCodex
     ? codexCommand(displayToken)
-    : claudeCommand(scope, displayToken)
+    : claudeCommand('user', displayToken)
   const installCommandCopy = isCodex
     ? codexCommand(userToken ?? '')
-    : claudeCommand(scope, userToken ?? '')
+    : claudeCommand('user', userToken ?? '')
 
   return (
     <div>
@@ -329,39 +293,6 @@ export function InstallCards() {
         </div>
 
         <div className="mt-2 overflow-hidden rounded-card bg-sand-50/70 dark:bg-sand-950">
-          {/* Scope tabs — Claude Code only (Codex/Cursor have no --scope) */}
-          {tool === 'claude' && (
-            <div className="flex overflow-x-auto border-b border-sand-200 px-2 sm:px-4 dark:border-sand-800">
-              {SCOPES.map((s) => {
-                const active = scope === s.id
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    onClick={() => setScope(s.id)}
-                    aria-pressed={active}
-                    className={`relative whitespace-nowrap px-3 py-3 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/40 ${
-                      active
-                        ? 'text-sand-900 dark:text-sand-50'
-                        : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
-                    }`}
-                  >
-                    {s.label}
-                    {active && (
-                      <motion.span
-                        layoutId="mcpScopeUnderline"
-                        // Inside the row, not over its border: the row scrolls
-                        // sideways, which clips anything hanging below it.
-                        className="absolute inset-x-3 bottom-0 h-0.5 rounded-full bg-sand-900 dark:bg-sand-50"
-                        transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                      />
-                    )}
-                  </button>
-                )
-              })}
-            </div>
-          )}
-
           {/* Steps */}
           <div className="space-y-6 px-4 py-6 sm:px-7 sm:py-8">
             <Step number={1}>
@@ -394,11 +325,7 @@ export function InstallCards() {
               ) : (
                 <>
                   <p className="mb-2.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                    {isCodex ? (
-                      'Run this in any terminal → works in every project'
-                    ) : (
-                      SCOPES.find((s) => s.id === scope)!.desc
-                    )}
+                    Run this in any terminal → works in every project
                   </p>
                   <CodeBlock
                     command={installCommandDisplay}
@@ -414,20 +341,9 @@ export function InstallCards() {
                   />
                 </>
               )}
-              {tokenLoaded && (userToken && (isCursor || isCodex) ? (
+              {tokenLoaded && (userToken ? (
                 <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
                   Your token is in it → full source. It lives in your home folder, out of git.
-                </p>
-              ) : userToken ? (
-                <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                  Your token is in it → full source. View or rotate it in{' '}
-                  <Link
-                    href="/account/settings"
-                    className="font-medium text-sand-700 underline underline-offset-2 hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-50"
-                  >
-                    account settings
-                  </Link>
-                  .
                 </p>
               ) : (
                 <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
