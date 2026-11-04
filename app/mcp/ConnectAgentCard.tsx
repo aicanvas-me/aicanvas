@@ -17,13 +17,14 @@ import { HOSTED_MCP_URL } from '../lib/hosted-mcp'
 // sign-up, only while HOSTED_MCP_OAUTH is on (the pages decide). Machines with no browser
 // (CI, a remote shell) use the API key; /docs/mcp#ci covers that, not this card.
 
-type Agent = 'claude' | 'cursor' | 'vscode' | 'codex' | 'desktop' | 'other'
+type Agent = 'claude' | 'cursor' | 'vscode' | 'codex' | 'chatgpt' | 'desktop' | 'other'
 
 const AGENTS: { id: Agent; label: string; mark: React.ReactNode }[] = [
   { id: 'claude', label: 'Claude Code', mark: <ClaudeMark /> },
   { id: 'cursor', label: 'Cursor', mark: <CursorMark /> },
   { id: 'vscode', label: 'VS Code', mark: <Code size={16} /> },
   { id: 'codex', label: 'Codex', mark: <CodexMark /> },
+  { id: 'chatgpt', label: 'ChatGPT', mark: <CodexMark /> },
   { id: 'desktop', label: 'Claude Desktop', mark: <ClaudeMark /> },
   { id: 'other', label: 'Other', mark: <Bot size={16} /> },
 ]
@@ -177,6 +178,29 @@ export function ConnectAgentCard({
                 </p>
                 <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
                   No browser, or &ldquo;Authentication required&rdquo; later? Run <Inline>{CODEX_LOGIN}</Inline>
+                </p>
+              </Step>
+              {check(3)}
+            </>
+          )}
+
+          {agent === 'chatgpt' && (
+            <>
+              <Step number={1}>
+                <Hint>
+                  ChatGPT desktop app → Settings → <span className="font-semibold">Plugins</span> →{' '}
+                  <span className="font-semibold">MCPs</span> → <span className="font-semibold">Add</span> → Streamable HTTP,
+                  name <Inline>aicanvas</Inline>, this address:
+                </Hint>
+                {block('chatgpt-url', HOSTED_MCP_URL, 'address')}
+                <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
+                  Added it with the Codex command? It is already there: ChatGPT and Codex share one list.
+                </p>
+              </Step>
+              <Step number={2}>
+                <p className="text-sm text-sand-700 dark:text-sand-300">
+                  <span className="font-semibold">Authenticate</span> next to aicanvas → sign in →{' '}
+                  <span className="font-semibold">Allow</span>
                 </p>
               </Step>
               {check(3)}

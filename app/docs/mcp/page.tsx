@@ -136,6 +136,10 @@ export default function McpDocsPage() {
             Codex does not open the sign-in by itself: its AI Canvas tools answer &ldquo;Authentication required&rdquo;. Run{' '}
             <C>codex mcp login aicanvas</C> in a terminal, then click Allow.
           </P>
+          <P>
+            In the ChatGPT desktop app, open Settings, Plugins, MCPs and click Authenticate next to aicanvas. ChatGPT and Codex share
+            that list, so signing in from one signs in both.
+          </P>
 
           <H2 id="what-we-store">What we store</H2>
           <P>
