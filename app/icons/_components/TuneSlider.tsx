@@ -63,7 +63,7 @@ export function TuneSlider({
               />
             ))}
           </div>
-          <span className="invisible shrink-0 px-3 font-mono text-[11px] tabular-nums">{display}</span>
+          <span className="invisible shrink-0 pl-3 pr-4 font-mono text-[11px] tabular-nums">{display}</span>
         </div>
         <div aria-hidden className="pointer-events-none absolute inset-y-0 left-0 bg-sand-200 dark:bg-sand-800" style={{ width: position }} />
         <div
@@ -72,7 +72,7 @@ export function TuneSlider({
           style={{ left: position }}
         />
         <span className="relative z-[1] flex-1 truncate pl-3 text-xs font-semibold text-sand-900 dark:text-sand-50">{label}</span>
-        <span className="relative z-[1] pr-3 font-mono text-[11px] tabular-nums text-sand-600 dark:text-sand-400">{display}</span>
+        <span className="relative z-[1] pr-4 font-mono text-[11px] tabular-nums text-sand-600 dark:text-sand-400">{display}</span>
       </div>
     </div>
   )

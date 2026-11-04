@@ -382,7 +382,7 @@ export function IconsOverview({
             <StylePicker value={style} onChange={setStyle} compact loading={loading} />
           </div>
           <div aria-hidden className="h-px bg-sand-200 dark:bg-sand-800" />
-          <div className="relative grid grid-cols-2 gap-2 p-2 @min-[640px]:flex @min-[640px]:items-center">
+          <div className="relative grid grid-cols-1 gap-2 p-2 @min-[480px]:grid-cols-2 @min-[640px]:flex @min-[640px]:items-center">
             <TuneSlider
               label="Size"
               value={size}
@@ -408,7 +408,7 @@ export function IconsOverview({
               className="@min-[640px]:flex-1"
             />
             <span aria-hidden className="mx-1 hidden h-5 w-px shrink-0 bg-sand-300 @min-[640px]:block dark:bg-sand-700" />
-            <div className="col-span-2 flex items-center gap-1 @min-[640px]:contents">
+            <div className="col-span-full flex items-center gap-1 @min-[640px]:contents">
               <ColourControl
                 value={colourOverride}
                 resolved={colour}
