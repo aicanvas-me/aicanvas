@@ -90,8 +90,7 @@ export default async function ConsentPage({
     <Card>
       <Pairing />
       {/* The name is the agent's own, so it is shown only when the sign-in returns to this
-          computer or a known app. A sign-in sent to a website keeps the plain heading and the
-          warning below: a look-alike agent can copy any name, never the address. */}
+          computer or a known app: a website could copy any name. */}
       <h1 className="text-center text-xl font-bold leading-tight tracking-tight text-sand-900 dark:text-sand-50">
         {target || request.n === 'An app' ? 'Allow your AI agent to use your AI Canvas account?' : `Allow ${request.n} to use your AI Canvas account?`}
       </h1>
@@ -110,12 +109,6 @@ export default async function ConsentPage({
           </li>
         ))}
       </ul>
-      {target && (
-        <p className="mt-6 rounded-inset border border-red-500/40 px-3 py-2.5 text-xs leading-relaxed text-red-700 dark:border-red-500/30 dark:text-red-400">
-          This sign-in will be sent to <span className="font-semibold">{target}</span>. Only allow it
-          if you know it.
-        </p>
-      )}
       <form action="/oauth/consent/decision" method="post" className="mt-6 flex gap-3">
         <input type="hidden" name="request" value={signed} />
         <button type="submit" name="decision" value="allow" className={buttonClasses({ variant: 'primary', size: 'md', fullWidth: true })}>

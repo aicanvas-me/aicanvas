@@ -190,9 +190,8 @@ export function isAllowedRedirect(uri: string): boolean {
 }
 
 /**
- * What the consent screen must name loudly before Allow, or null when the sign-in goes back
- * to this computer (loopback) or to a known or reverse-DNS app. A website is the phishing
- * shape: a look-alike agent can copy any name, never this address.
+ * The website a sign-in goes to, or null when it goes back to this computer (loopback) or to
+ * a known or reverse-DNS app. The consent screen hides the agent's name for a website.
  */
 export function redirectWarning(uri: string): string | null {
   let url: URL
