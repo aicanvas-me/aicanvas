@@ -64,10 +64,10 @@ const BENEFITS: { title: string; body: string; icon: ReactNode }[] = [
 ]
 
 const PROMPTS = [
-  'Use AI Canvas to show me what categories of components are available.',
-  'Add the task cards from AI Canvas to my dashboard and match my dark theme.',
-  'My hero section feels boring. Find something animated in AI Canvas to fix it.',
-  'I need an animated background for my landing page. Find me a good one in AI Canvas.',
+  'Use the aicanvas MCP to show me what categories of components are available.',
+  'Use the aicanvas MCP: add the task cards to my dashboard and match my dark theme.',
+  'Use the aicanvas MCP: my hero section feels boring, find something animated to fix it.',
+  'Use the aicanvas MCP to find me a good animated background for my landing page.',
 ]
 
 export default function McpPage() {

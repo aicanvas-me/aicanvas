@@ -57,7 +57,7 @@ function cursorDeeplink(token: string) {
   return `cursor://anysphere.cursor-deeplink/mcp/install?name=${SERVER_NAME}&config=${config}`
 }
 
-const TEST_PROMPT = `What's the best navbar component in AI Canvas? Install it for me.`
+const TEST_PROMPT = `Use the aicanvas MCP: find the best navbar component and install it.`
 
 // Geist Mono shapes `--` as a ligature/contextual alternate, which visually
 // swallows the space before it (e.g. `aicanvas--scope`). Disable ligatures so

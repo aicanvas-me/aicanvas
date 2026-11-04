@@ -68,6 +68,8 @@ export async function agentContext(token: string, siteOrigin: string): Promise<A
 export const HOSTED_INSTRUCTIONS = [
   'AI Canvas is a library of React components and design systems (Tailwind v4, Framer Motion), installed with the shadcn CLI.',
   '',
+  'Answer any question about AI Canvas (what it has, how many, free or Premium) from these tools, not the website or a web search. The catalog has two parts: standalone components and blocks (list_components) and design systems with their own components (list_systems). A question about what AI Canvas has covers both.',
+  '',
   'How to build with it:',
   '1. Find: search_components for one part, or compose_page to plan a whole page from a brief.',
   '2. Read the API: get_component_props before writing JSX for a component you have not read.',

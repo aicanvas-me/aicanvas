@@ -229,13 +229,13 @@ export default function McpDocsPage() {
       />
 
       <H2 id="try-it">Try it</H2>
-      <P>Ask your agent:</P>
-      <CopyBlock wrap label="test prompt" code="What categories of components does AI Canvas have?" />
+      <P>Start every prompt with &ldquo;use the aicanvas MCP&rdquo;. Agents often skip MCP tools and search the web unless you name them.</P>
+      <CopyBlock wrap label="test prompt" code="Use the aicanvas MCP to list the component categories." />
       <P>It should list the categories with their counts. Then try:</P>
       <UL>
-        <li>&quot;Find a navbar in AI Canvas and install it.&quot;</li>
-        <li>&quot;Plan a settings page from Andromeda Pro, then build it.&quot;</li>
-        <li>&quot;Check the AI Canvas components in this file against their props.&quot;</li>
+        <li>&quot;Use the aicanvas MCP to find a navbar and install it.&quot;</li>
+        <li>&quot;Use the aicanvas MCP to plan a settings page from Andromeda Pro, then build it.&quot;</li>
+        <li>&quot;Use the aicanvas MCP to check the components in this file against their props.&quot;</li>
       </UL>
 
       <H2 id="tools">Tools</H2>

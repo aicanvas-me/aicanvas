@@ -85,9 +85,18 @@ export function ConnectAgentCard({
   )
 
   const signIn = (
-    <Step number={2} isLast>
+    <Step number={2}>
       <p className="text-sm text-sand-700 dark:text-sand-300">
-        Your browser opens. Sign in to AI Canvas and click <span className="font-semibold">Allow</span>. That&rsquo;s it.
+        Your browser opens. Sign in to AI Canvas and click <span className="font-semibold">Allow</span>.
+      </p>
+    </Step>
+  )
+
+  // Agents skip MCP tools unless the prompt names the server, so every check names it.
+  const check = (n: number) => (
+    <Step number={n} isLast>
+      <p className="text-sm text-sand-700 dark:text-sand-300">
+        Ask your agent <span className="font-semibold">&ldquo;use the aicanvas MCP: whoami&rdquo;</span> → your email and plan
       </p>
     </Step>
   )
@@ -151,6 +160,7 @@ export function ConnectAgentCard({
                 <div className="mt-3">{block('claude-login', CLAUDE_LOGIN, 'sign-in command')}</div>
               </Step>
               {signIn}
+              {check(3)}
             </>
           )}
 
@@ -169,11 +179,7 @@ export function ConnectAgentCard({
                   No browser, or &ldquo;Authentication required&rdquo; later? Run <Inline>{CODEX_LOGIN}</Inline>
                 </p>
               </Step>
-              <Step number={3} isLast>
-                <p className="text-sm text-sand-700 dark:text-sand-300">
-                  Ask Codex <span className="font-semibold">&ldquo;use aicanvas whoami&rdquo;</span> → your email and plan
-                </p>
-              </Step>
+              {check(3)}
             </>
           )}
 
@@ -202,11 +208,7 @@ export function ConnectAgentCard({
                   (within 30 seconds)
                 </p>
               </Step>
-              <Step number={3} isLast>
-                <p className="text-sm text-sand-700 dark:text-sand-300">
-                  Ask Cursor <span className="font-semibold">&ldquo;use aicanvas whoami&rdquo;</span> → your email and plan
-                </p>
-              </Step>
+              {check(3)}
             </>
           )}
 
@@ -218,12 +220,13 @@ export function ConnectAgentCard({
                 </Hint>
                 {block('vscode-config', VSCODE_CONFIG, 'config', true)}
               </Step>
-              <Step number={2} isLast>
+              <Step number={2}>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
                   The first time your agent uses AI Canvas, your browser opens: sign in and click{' '}
                   <span className="font-semibold">Allow</span>.
                 </p>
               </Step>
+              {check(3)}
             </>
           )}
 
@@ -233,12 +236,13 @@ export function ConnectAgentCard({
                 <Hint>In Claude Desktop, open Settings, then Connectors, and add a custom connector with this address:</Hint>
                 {block('desktop-url', HOSTED_MCP_URL, 'address')}
               </Step>
-              <Step number={2} isLast>
+              <Step number={2}>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
                   Click Connect. Your browser opens: sign in to AI Canvas and click{' '}
                   <span className="font-semibold">Allow</span>.
                 </p>
               </Step>
+              {check(3)}
             </>
           )}
 
@@ -248,12 +252,13 @@ export function ConnectAgentCard({
                 <Hint>Any AI agent that supports remote MCP servers works. Add this server address:</Hint>
                 {block('other-url', HOSTED_MCP_URL, 'address')}
               </Step>
-              <Step number={2} isLast>
+              <Step number={2}>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
                   When it asks you to sign in, your browser opens: sign in to AI Canvas and click{' '}
                   <span className="font-semibold">Allow</span>.
                 </p>
               </Step>
+              {check(3)}
             </>
           )}
         </div>

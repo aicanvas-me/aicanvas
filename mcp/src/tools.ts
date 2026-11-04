@@ -926,7 +926,7 @@ export function createServer(
     {
       title: 'List AI Canvas components',
       description:
-        'Return AI Canvas components, optionally filtered by category. Use after `list_categories` to drill into one, or pass no filter to browse everything. Each result includes slug, name, description, categories, screenshot URL, install command, and homepage URL, enough to evaluate without a separate `get_component` call. Pagination via `limit` and `offset`.',
+        'Return AI Canvas standalone components and blocks, optionally filtered by category. Design-system components (Andromeda and others) are not here: use `list_systems`. Use after `list_categories` to drill into one, or pass no filter to browse everything. Each result includes slug, name, description, categories, screenshot URL, install command, and homepage URL, enough to evaluate without a separate `get_component` call. Pagination via `limit` and `offset`.',
       inputSchema: {
         category: z
           .string()
