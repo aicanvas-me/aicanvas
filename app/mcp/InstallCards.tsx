@@ -395,11 +395,7 @@ export function InstallCards() {
                 <>
                   <p className="mb-2.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
                     {isCodex ? (
-                      <>
-                        Run this in any terminal. Codex registers the MCP globally,
-                        so it works in every project. Its CLI has no per-project
-                        scope yet.
-                      </>
+                      'Run this in any terminal → works in every project'
                     ) : (
                       SCOPES.find((s) => s.id === scope)!.desc
                     )}
@@ -418,14 +414,13 @@ export function InstallCards() {
                   />
                 </>
               )}
-              {tokenLoaded && (userToken && isCursor ? (
+              {tokenLoaded && (userToken && (isCursor || isCodex) ? (
                 <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
                   Your token is in it → full source. It lives in your home folder, out of git.
                 </p>
               ) : userToken ? (
                 <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                  Your token is baked into the command above, so installs can pull
-                  source. View or rotate it in your{' '}
+                  Your token is in it → full source. View or rotate it in{' '}
                   <Link
                     href="/account/settings"
                     className="font-medium text-sand-700 underline underline-offset-2 hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-50"
@@ -455,9 +450,7 @@ export function InstallCards() {
                 </p>
               ) : (
                 <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                  Restart {toolLabel}. The{' '}
-                  <code className={INLINE_CODE}>aicanvas</code>{' '}
-                  MCP loads automatically.
+                  Restart {toolLabel} → <code className={INLINE_CODE}>aicanvas</code> loads
                 </p>
               )}
             </Step>
@@ -465,7 +458,7 @@ export function InstallCards() {
             <Step number={3} isLast>
               <div className="mb-2.5 flex items-center gap-2">
                 <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-                  Test it. Ask {askLabel}:
+                  Ask {askLabel}:
                 </p>
                 <span className="ml-auto shrink-0 rounded-full border border-sand-200 bg-sand-100 px-2 py-0.5 text-xs font-medium text-sand-600 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400">
                   Optional

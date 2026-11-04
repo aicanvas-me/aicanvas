@@ -173,7 +173,7 @@ export default function McpDocsPage() {
             label: 'Codex',
             content: (
               <>
-                <P>Run this in any terminal. Codex registers the server for every project.</P>
+                <P>Run this in any terminal → works in every project</P>
                 <CopyBlock
                   label="Codex command"
                   code="codex mcp add aicanvas --env AICANVAS_TOKEN=your-token -- npx -y @aicanvas/mcp"
