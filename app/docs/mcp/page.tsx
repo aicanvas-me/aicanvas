@@ -132,6 +132,10 @@ export default function McpDocsPage() {
             next to aicanvas. Until you sign in again it shows Error there: click Logout, then Connect. If the Error stays after
             that, quit Cursor and open it again.
           </P>
+          <P>
+            Codex does not open the sign-in by itself: its AI Canvas tools answer &ldquo;Authentication required&rdquo;. Run{' '}
+            <C>codex mcp login aicanvas</C> in a terminal, then click Allow.
+          </P>
 
           <H2 id="what-we-store">What we store</H2>
           <P>

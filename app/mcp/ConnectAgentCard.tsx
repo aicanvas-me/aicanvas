@@ -157,13 +157,21 @@ export function ConnectAgentCard({
           {agent === 'codex' && (
             <>
               <Step number={1}>
-                <Hint>Run this in any terminal. It opens the sign-in by itself.</Hint>
+                <Hint>Run this in any terminal</Hint>
                 {block('codex-add', CODEX_ADD, 'command')}
               </Step>
-              <Step number={2} isLast>
+              <Step number={2}>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
-                  Your browser opens. Sign in to AI Canvas and click <span className="font-semibold">Allow</span>. If it
-                  does not open, run <Inline>{CODEX_LOGIN}</Inline>.
+                  Browser opens → sign in → <span className="font-semibold">Allow</span> → terminal says{' '}
+                  <span className="font-semibold">&ldquo;Successfully logged in&rdquo;</span>
+                </p>
+                <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
+                  No browser, or &ldquo;Authentication required&rdquo; later? Run <Inline>{CODEX_LOGIN}</Inline>
+                </p>
+              </Step>
+              <Step number={3} isLast>
+                <p className="text-sm text-sand-700 dark:text-sand-300">
+                  Ask Codex <span className="font-semibold">&ldquo;use aicanvas whoami&rdquo;</span> → your email and plan
                 </p>
               </Step>
             </>
