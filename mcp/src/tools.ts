@@ -1239,7 +1239,8 @@ export function createServer(
           slug: component.slug,
           name: component.name,
           installCommand,
-          sourceUrl: component.sourceUrl,
+          // The bare source URL has no token, so for premium it serves the placeholder.
+          ...(ctx.token ? {} : { sourceUrl: component.sourceUrl }),
           homepageUrl: component.homepageUrl,
           dependencies: component.dependencies,
         }
@@ -1254,7 +1255,7 @@ export function createServer(
                 authNote,
                 '',
                 `Dependencies: ${component.dependencies.join(', ') || '(none, React only)'}`,
-                `Source: ${component.sourceUrl}`,
+                ctx.token ? 'To read the code first, call get_component.' : `Source: ${component.sourceUrl}`,
                 `Preview: ${component.homepageUrl}`,
               ].join('\n'),
             ),

@@ -331,6 +331,12 @@ try {
         `npx shadcn@latest add "${local.base}/andromeda-heat-grid.json?token=${TOKEN}"`,
     `got ${gicTSc?.installCommand}`,
   )
+  const gicTText = gicT?.result?.content?.[0]?.text ?? ''
+  record(
+    'local+token: get_install_command drops the token-less Source URL',
+    gicTSc?.sourceUrl === undefined && !gicTText.includes('Source:') && gicTText.includes('get_component'),
+    `got sourceUrl=${gicTSc?.sourceUrl}`,
+  )
 
   // search_components → a DS component surfaces
   const srB = await call('search_components', { query: 'heat grid', limit: 10 })
