@@ -189,7 +189,8 @@ export function ConnectAgentCard({
               <Step number={1}>
                 <Hint>
                   ChatGPT desktop app → Settings → <span className="font-semibold">Plugins</span> →{' '}
-                  <span className="font-semibold">MCPs</span> → <span className="font-semibold">Add</span> → Streamable HTTP,
+                  <span className="font-semibold">MCPs</span> → <span className="font-semibold">Add</span> →{' '}
+                  <span className="font-semibold">Add MCP server</span> → Streamable HTTP,
                   name <Inline>aicanvas</Inline>, this address, token and headers empty:
                 </Hint>
                 {block('chatgpt-url', HOSTED_MCP_URL, 'address')}
