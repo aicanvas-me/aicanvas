@@ -202,9 +202,6 @@ export function ConnectAgentCard({
                   <span className="font-semibold">Authenticate</span> next to aicanvas → sign in →{' '}
                   <span className="font-semibold">Allow</span>
                 </p>
-                <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
-                  The page asks to allow Codex: that is the ChatGPT app.
-                </p>
               </Step>
               {check(3)}
             </>
