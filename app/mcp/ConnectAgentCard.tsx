@@ -93,11 +93,11 @@ export function ConnectAgentCard({
     </Step>
   )
 
-  // Agents skip MCP tools unless the prompt names the server, so every check names it.
+  // Agents skip MCP tools unless the prompt names the server, so the first prompt names it.
   const check = (n: number) => (
     <Step number={n} isLast>
       <p className="text-sm text-sand-700 dark:text-sand-300">
-        Ask your agent <span className="font-semibold">&ldquo;use the aicanvas MCP: whoami&rdquo;</span> → your email and plan
+        Ask your agent <span className="font-semibold">&ldquo;Use the aicanvas MCP: what can you add to my app?&rdquo;</span>
       </p>
     </Step>
   )
