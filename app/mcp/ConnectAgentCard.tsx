@@ -25,7 +25,7 @@ const AGENTS: { id: Agent; label: string; mark: React.ReactNode }[] = [
   { id: 'vscode', label: 'VS Code', mark: <Code size={16} /> },
   { id: 'codex', label: 'Codex', mark: <CodexMark /> },
   { id: 'chatgpt', label: 'ChatGPT', mark: <CodexMark /> },
-  { id: 'desktop', label: 'Claude Desktop', mark: <ClaudeMark /> },
+  { id: 'desktop', label: 'Claude', mark: <ClaudeMark /> },
   { id: 'other', label: 'Other', mark: <Bot size={16} /> },
 ]
 
@@ -258,13 +258,17 @@ export function ConnectAgentCard({
           {agent === 'desktop' && (
             <>
               <Step number={1}>
-                <Hint>In Claude Desktop, open Settings, then Connectors, and add a custom connector with this address:</Hint>
+                <Hint>
+                  Claude app or claude.ai → Settings → <span className="font-semibold">Customize</span> →{' '}
+                  <span className="font-semibold">Connectors</span> → <span className="font-semibold">Add</span> → custom
+                  connector, name <Inline>aicanvas</Inline>, this address:
+                </Hint>
                 {block('desktop-url', HOSTED_MCP_URL, 'address')}
               </Step>
               <Step number={2}>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
-                  Click Connect. Your browser opens: sign in to AI Canvas and click{' '}
-                  <span className="font-semibold">Allow</span>.
+                  <span className="font-semibold">Continue</span> → keep the sign-in settings it detects → sign in →{' '}
+                  <span className="font-semibold">Allow</span>
                 </p>
               </Step>
               {check(3)}
