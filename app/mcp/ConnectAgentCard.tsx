@@ -8,7 +8,7 @@ import { Bot } from '@/app/_icons/icons/bot'
 import { buttonClasses } from '../components/buttonClasses'
 import { Step } from '../components/Step'
 import { copyText } from '../components/useCopied'
-import { ClaudeMark, CodeBlock, CodexMark, CursorMark, INLINE_CODE, Toast, useToast } from './InstallCards'
+import { ClaudeCodeMark, ClaudeMark, CodeBlock, CodexMark, CursorMark, INLINE_CODE, Toast, useToast } from './InstallCards'
 import { HOSTED_MCP_URL } from '../lib/hosted-mcp'
 
 // ─── ConnectAgentCard ─────────────────────────────────────────────────────────
@@ -20,12 +20,12 @@ import { HOSTED_MCP_URL } from '../lib/hosted-mcp'
 type Agent = 'claude' | 'cursor' | 'vscode' | 'codex' | 'chatgpt' | 'desktop' | 'other'
 
 const AGENTS: { id: Agent; label: string; mark: React.ReactNode }[] = [
-  { id: 'claude', label: 'Claude Code', mark: <ClaudeMark /> },
-  { id: 'cursor', label: 'Cursor', mark: <CursorMark /> },
-  { id: 'vscode', label: 'VS Code', mark: <Code size={16} /> },
-  { id: 'codex', label: 'Codex', mark: <CodexMark /> },
-  { id: 'chatgpt', label: 'ChatGPT', mark: <CodexMark /> },
+  { id: 'claude', label: 'Claude Code', mark: <ClaudeCodeMark /> },
   { id: 'desktop', label: 'Claude', mark: <ClaudeMark /> },
+  { id: 'chatgpt', label: 'ChatGPT', mark: <CodexMark /> },
+  { id: 'codex', label: 'Codex', mark: <CodexMark /> },
+  { id: 'vscode', label: 'VS Code', mark: <Code size={16} /> },
+  { id: 'cursor', label: 'Cursor', mark: <CursorMark /> },
   { id: 'other', label: 'Other', mark: <Bot size={16} /> },
 ]
 
