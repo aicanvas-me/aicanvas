@@ -190,7 +190,7 @@ export function ConnectAgentCard({
                 <Hint>
                   ChatGPT desktop app → Settings → <span className="font-semibold">Plugins</span> →{' '}
                   <span className="font-semibold">MCPs</span> → <span className="font-semibold">Add</span> → Streamable HTTP,
-                  name <Inline>aicanvas</Inline>, this address:
+                  name <Inline>aicanvas</Inline>, this address, token and headers empty:
                 </Hint>
                 {block('chatgpt-url', HOSTED_MCP_URL, 'address')}
                 <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
@@ -201,6 +201,9 @@ export function ConnectAgentCard({
                 <p className="text-sm text-sand-700 dark:text-sand-300">
                   <span className="font-semibold">Authenticate</span> next to aicanvas → sign in →{' '}
                   <span className="font-semibold">Allow</span>
+                </p>
+                <p className="mt-2 text-sm text-sand-600 dark:text-sand-400">
+                  The page asks to allow Codex: that is the ChatGPT app.
                 </p>
               </Step>
               {check(3)}
