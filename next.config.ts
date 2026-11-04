@@ -15,6 +15,8 @@ function currentGitBranch(): string {
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  // Dev only: lets a cloudflared tunnel load the dev server's scripts (see MCP_PUBLIC_ORIGIN).
+  allowedDevOrigins: ['*.trycloudflare.com'],
   turbopack: {
     root: path.resolve(__dirname),
   },

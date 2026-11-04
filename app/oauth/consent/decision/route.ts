@@ -23,7 +23,7 @@ export async function POST(req: Request): Promise<Response> {
 
   const form = await req.formData()
   const request = readRequest(String(form.get('request') ?? ''))
-  const ended = NextResponse.redirect(new URL('/oauth/consent', req.url), 303)
+  const ended = NextResponse.redirect(new URL('/oauth/consent', publicUrl(req)), 303)
   if (!request) return ended
 
   if (form.get('decision') !== 'allow') return NextResponse.redirect(deny(request), 303)
