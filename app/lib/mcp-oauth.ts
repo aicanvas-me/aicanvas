@@ -36,6 +36,13 @@ export const TOKEN_PREFIX = { code: 'aicm_ac_', access: 'aicm_at_', refresh: 'ai
 
 // ─── Addresses ────────────────────────────────────────────────────────────────
 
+/** The request's address. In `next dev`, MCP_PUBLIC_ORIGIN puts a tunnel's origin on it. */
+export function publicUrl(req: Request): URL {
+  const url = new URL(req.url)
+  const origin = process.env.NODE_ENV === 'development' ? process.env.MCP_PUBLIC_ORIGIN : undefined
+  return origin ? new URL(url.pathname + url.search, origin) : url
+}
+
 /** The address the agent connected to; its tokens are bound to it (RFC 8707 `resource`). */
 export function resourceFor(url: URL): string {
   return url.host === MCP_HOST ? `https://${MCP_HOST}` : `${url.origin}/api/mcp`

@@ -4,7 +4,7 @@ import { createServer } from '@/mcp/src/tools'
 import mcpPackage from '@/mcp/package.json'
 import { agentContext, HOSTED_INSTRUCTIONS } from '@/app/lib/agent-context'
 import { phCapture } from '@/app/lib/analytics-server'
-import { agentForAccessToken, endConnection, isAccessToken, resourceMetadataUrl, siteOriginFor } from '@/app/lib/mcp-oauth'
+import { agentForAccessToken, endConnection, isAccessToken, publicUrl, resourceMetadataUrl, siteOriginFor } from '@/app/lib/mcp-oauth'
 import { hostedMcpEnabled, hostedMcpOAuthEnabled } from '@/lib/flags'
 import { isWellFormedToken } from '@/lib/identity/token'
 
@@ -30,7 +30,7 @@ const DESCRIPTIONS: Record<Unauthorized, string> = {
 function unauthorized(req: Request, reason: Unauthorized): Response {
   const error = reason === 'missing' ? 'invalid_request' : 'invalid_token'
   const challenge = hostedMcpOAuthEnabled()
-    ? `Bearer resource_metadata="${resourceMetadataUrl(new URL(req.url))}"${reason === 'missing' ? '' : `, error="${error}"`}`
+    ? `Bearer resource_metadata="${resourceMetadataUrl(publicUrl(req))}"${reason === 'missing' ? '' : `, error="${error}"`}`
     : `Bearer realm="aicanvas", error="${error}"`
   return Response.json(
     { error, error_description: DESCRIPTIONS[reason] },
@@ -55,7 +55,7 @@ async function handle(req: Request): Promise<Response> {
   if (hostedMcpOAuthEnabled() && isAccessToken(bearer)) {
     let agent
     try {
-      agent = await agentForAccessToken(bearer, new URL(req.url))
+      agent = await agentForAccessToken(bearer, publicUrl(req))
     } catch (err) {
       return unavailable(err)
     }
@@ -69,7 +69,7 @@ async function handle(req: Request): Promise<Response> {
 
   let ctx
   try {
-    ctx = await agentContext(bearer, siteOriginFor(new URL(req.url)))
+    ctx = await agentContext(bearer, siteOriginFor(publicUrl(req)))
   } catch (err) {
     return unavailable(err)
   }

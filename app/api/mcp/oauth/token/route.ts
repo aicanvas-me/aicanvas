@@ -1,6 +1,6 @@
 import { after } from 'next/server'
 import { sendAgentConnectedNotice } from '@/app/lib/agent-connected-notice'
-import { exchange } from '@/app/lib/mcp-oauth'
+import { exchange, publicUrl } from '@/app/lib/mcp-oauth'
 import { ipFromHeaders } from '@/app/lib/quota'
 import { rateLimiter } from '@/app/lib/rate-limit'
 import { hostedMcpOAuthEnabled } from '@/lib/flags'
@@ -24,7 +24,7 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   try {
-    const result = await exchange(form, new URL(req.url), country(req))
+    const result = await exchange(form, publicUrl(req), country(req))
     const connected = result.connected
     if (connected) after(() => sendAgentConnectedNotice(connected))
     return json(result.status, result.body)

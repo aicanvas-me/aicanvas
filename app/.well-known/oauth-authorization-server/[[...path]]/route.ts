@@ -1,4 +1,4 @@
-import { authorizationServerMetadata } from '@/app/lib/mcp-oauth'
+import { authorizationServerMetadata, publicUrl } from '@/app/lib/mcp-oauth'
 import { hostedMcpOAuthEnabled } from '@/lib/flags'
 
 export const dynamic = 'force-dynamic'
@@ -8,5 +8,5 @@ export const dynamic = 'force-dynamic'
 // fall back to the MCP address itself.
 export function GET(req: Request): Response {
   if (!hostedMcpOAuthEnabled()) return Response.json({ error: 'not found' }, { status: 404 })
-  return Response.json(authorizationServerMetadata(new URL(req.url)), { headers: { 'access-control-allow-origin': '*' } })
+  return Response.json(authorizationServerMetadata(publicUrl(req)), { headers: { 'access-control-allow-origin': '*' } })
 }

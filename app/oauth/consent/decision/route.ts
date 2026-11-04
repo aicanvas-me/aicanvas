@@ -1,7 +1,7 @@
 import { after, NextResponse } from 'next/server'
 import { phCapture } from '../../../lib/analytics-server'
 import { createClient } from '../../../lib/supabase/server'
-import { approve, deny, readRequest } from '../../../lib/mcp-oauth'
+import { approve, deny, publicUrl, readRequest } from '../../../lib/mcp-oauth'
 import { hostedMcpOAuthEnabled } from '../../../../lib/flags'
 
 export const runtime = 'nodejs'
@@ -14,7 +14,7 @@ function fromThisSite(req: Request): boolean {
   const site = req.headers.get('sec-fetch-site')
   if (site) return site === 'same-origin'
   const origin = req.headers.get('origin')
-  return origin !== null && origin === new URL(req.url).origin
+  return origin !== null && origin === publicUrl(req).origin
 }
 
 export async function POST(req: Request): Promise<Response> {

@@ -1,4 +1,4 @@
-import { authorize } from '@/app/lib/mcp-oauth'
+import { authorize, publicUrl } from '@/app/lib/mcp-oauth'
 import { hostedMcpOAuthEnabled } from '@/lib/flags'
 import { country, notFound } from '../http'
 
@@ -10,7 +10,7 @@ export const runtime = 'nodejs'
 // the site's own /oauth/stopped page instead, with a reason code (never free text).
 export function GET(req: Request): Response {
   if (!hostedMcpOAuthEnabled()) return notFound()
-  const outcome = authorize(new URL(req.url), country(req))
+  const outcome = authorize(publicUrl(req), country(req))
   if (outcome.kind === 'redirect') {
     return new Response(null, { status: 302, headers: { location: outcome.location, 'cache-control': 'no-store' } })
   }

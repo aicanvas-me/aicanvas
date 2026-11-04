@@ -71,6 +71,7 @@ import {
   cleanName,
   deny,
   exchange,
+  publicUrl,
   readClient,
   readRequest,
   redirectMatches,
@@ -364,5 +365,27 @@ describe('registrations outlive the signing secret', () => {
     const outcome = authorize(authorizeUrl(LOCAL, register()), null)
     const signed = outcome.kind === 'redirect' ? new URL(outcome.location).searchParams.get('request')! : ''
     expect(readClient(signed)).toBeNull()
+  })
+})
+
+describe('publicUrl', () => {
+  afterEach(() => vi.unstubAllEnvs())
+  const req = new Request('http://localhost:3021/api/mcp?x=1')
+
+  it('is the request address when MCP_PUBLIC_ORIGIN is unset', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    expect(publicUrl(req).href).toBe('http://localhost:3021/api/mcp?x=1')
+  })
+
+  it('takes the tunnel origin in next dev', () => {
+    vi.stubEnv('NODE_ENV', 'development')
+    vi.stubEnv('MCP_PUBLIC_ORIGIN', 'https://abc.trycloudflare.com')
+    expect(publicUrl(req).href).toBe('https://abc.trycloudflare.com/api/mcp?x=1')
+  })
+
+  it('ignores MCP_PUBLIC_ORIGIN outside next dev', () => {
+    vi.stubEnv('NODE_ENV', 'production')
+    vi.stubEnv('MCP_PUBLIC_ORIGIN', 'https://evil.example')
+    expect(publicUrl(req).href).toBe('http://localhost:3021/api/mcp?x=1')
   })
 })
