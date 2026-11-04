@@ -55,6 +55,7 @@ export async function agentContext(token: string, siteOrigin: string): Promise<A
       ),
     access: {
       plan,
+      premium: (slug) => PREMIUM_ONLY.has(classifyContent(slug, lookup)),
       locked: (slug) => plan !== 'premium' && PREMIUM_ONLY.has(classifyContent(slug, lookup)),
     },
     whoami: async () => {
@@ -76,5 +77,5 @@ export const HOSTED_INSTRUCTIONS = [
   '3. Install: get_install_command, then run the command it returns in the user\'s project. It needs a components.json; if the project has none, set up shadcn first. The command carries the user\'s own AI Canvas key on purpose: run it as is and keep it out of files that go into git.',
   '4. Check: validate_usage on every file that uses AI Canvas components, then get_audit_checklist.',
   '',
-  'Items marked "locked" are AI Canvas Premium and this account cannot install them. Say so and offer the upgrade link; never write a placeholder in their place. whoami tells you which account and plan this connection uses.',
+  'Every item has a "tier": free or premium, the same for every account; count free items by tier. "access" is this account: items marked "locked" are AI Canvas Premium and this account cannot install them. Say so and offer the upgrade link; never write a placeholder in their place. whoami tells you which account and plan this connection uses.',
 ].join('\n')

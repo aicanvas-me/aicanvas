@@ -29,6 +29,8 @@ export interface ToolContext {
    */
   access?: {
     plan: 'free' | 'premium'
+    /** The item's tier for every account, so a Premium account can still count free items. */
+    premium(slug: string): boolean
     locked(slug: string): boolean
   }
   /** Hosted only: the account this connection is signed in as, for the whoami tool. */
@@ -38,6 +40,7 @@ export interface ToolContext {
 }
 
 type Access = 'included' | 'locked'
+type Tier = 'free' | 'premium'
 
 // Hosted only: a catalog command in the bare `@aicanvas/<slug>` form runs in the user's shell
 // without a key and installs a placeholder, so hosted answers hand out the form that carries
@@ -56,17 +59,19 @@ function keyed(ctx: ToolContext, command: string): string {
 function forAccount<T extends { slug: string; installCommand?: string; tokensInstallCommand?: string }>(
   ctx: ToolContext,
   item: T,
-): T | (Omit<T, 'installCommand' | 'tokensInstallCommand'> & { access: Access }) {
+): T | (Omit<T, 'installCommand' | 'tokensInstallCommand'> & { access: Access; tier: Tier }) {
   if (!ctx.access) return item
+  const tier: Tier = ctx.access.premium(item.slug) ? 'premium' : 'free'
   if (ctx.access.locked(item.slug)) {
     const { installCommand: _i, tokensInstallCommand: _t, ...rest } = item
-    return { ...rest, access: 'locked' }
+    return { ...rest, access: 'locked', tier }
   }
   return {
     ...item,
     ...(item.installCommand ? { installCommand: keyed(ctx, item.installCommand) } : {}),
     ...(item.tokensInstallCommand ? { tokensInstallCommand: keyed(ctx, item.tokensInstallCommand) } : {}),
     access: 'included',
+    tier,
   }
 }
 
@@ -962,13 +967,15 @@ export function createServer(
         }
         const total = pool.length
         const slice = pool.slice(offset, offset + limit).map((c) => forAccount(ctx, c))
+        const premiumCount = ctx.access ? pool.filter((c) => ctx.access!.premium(c.slug)).length : 0
+        const tierLine = ctx.access ? `: ${total - premiumCount} free, ${premiumCount} Premium` : ''
         const summary =
           category != null
-            ? `${total} components in category "${category}"` +
+            ? `${total} components in category "${category}"${tierLine}` +
               (total > slice.length
                 ? ` (showing ${slice.length} from offset ${offset})`
                 : '')
-            : `${total} components total` +
+            : `${total} components total${tierLine}` +
               (total > slice.length
                 ? ` (showing ${slice.length} from offset ${offset})`
                 : '')
@@ -1438,7 +1445,7 @@ export function createServer(
           `${systems.length} design system${systems.length === 1 ? '' : 's'} on AI Canvas:`,
           '',
           ...systems.map((s) =>
-            `  ${s.name.padEnd(16)}  ${String(s.componentCount).padStart(2)} components, ${s.templateSlugs.length} templates${ctx.access?.locked(s.slug) ? ', locked' : ''}`,
+            `  ${s.name.padEnd(16)}  ${String(s.componentCount).padStart(2)} components, ${s.templateSlugs.length} templates${ctx.access ? `, ${ctx.access.premium(s.slug) ? 'Premium' : 'free'}` : ''}${ctx.access?.locked(s.slug) ? ', locked' : ''}`,
           ),
           '',
           'Use `get_system` to fetch the full source of a system, or `list_templates` to see the ready-made screens built from one.',
