@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     'claude code ui',
     'claude design skill',
     'ai slop',
-    'animated react components',
+    'standalone react components',
     'design systems for AI agents',
     'design rules for AI agents',
     'react components for AI agents',

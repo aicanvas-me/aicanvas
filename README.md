@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://aicanvas.me">
-    <img width="100%" alt="AI Canvas: open-source animated React and Tailwind components, design systems, and templates, installable with the shadcn CLI or your AI editor over MCP" src="https://ik.imagekit.io/aitoolkit/readme-banner.png" />
+    <img width="100%" alt="AI Canvas: design systems your AI agent builds with and you reshape, plus standalone React components that fit any of them, installed as editable source with shadcn or MCP" src="https://ik.imagekit.io/aitoolkit/readme-banner.png" />
   </a>
 </p>
 
@@ -14,7 +14,7 @@
   <em>Finished Components, Not Headless Primitives</em>
 </p>
 
-A growing collection of animated React components and composed page blocks, installed as real source code in your project rather than as a dependency.
+Design systems your AI agent builds with and you reshape to your project, plus standalone React components and page blocks that fit any of them, installed as real source code in your project rather than as a dependency.
 
 <p align="center">
   <a href="./LICENSE"><img src="assets/readme-buttons/btn-license.png" alt="License: MIT" width="154" height="45" valign="middle" /></a>

@@ -92,7 +92,7 @@ export async function generateMetadata({
       `${entry.name.toLowerCase()} component`,
       `${entry.name.toLowerCase()} ai prompt`,
       `${category.toLowerCase()} react component`,
-      'animated react component',
+      'standalone react component',
       'react component AI prompt',
       'shadcn registry',
       'copy paste react component',

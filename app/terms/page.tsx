@@ -61,8 +61,9 @@ export default function TermsPage() {
         <section className={SECTION}>
           <h2 className={HEADING}>2. The Service</h2>
           <p className={BODY}>
-            AI Canvas is an open-source registry of animated React components,
-            offered through a free tier and an optional paid Premium tier. It
+            AI Canvas is an open-source registry of design systems that AI
+            agents build with and standalone React components that fit any of
+            them, offered through a free tier and an optional paid Premium tier. It
             also publishes design-system templates and an MCP integration that
             exposes the registry to AI coding tools. Browsing is always free, and
             every free component publishes its full AI remix prompt. Premium

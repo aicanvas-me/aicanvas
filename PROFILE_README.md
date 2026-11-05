@@ -11,7 +11,7 @@
 
 A growing collection of AI-native components.
 
-An open marketplace of animated React components. Free components ship their full source and a comprehensive AI remix prompt that works in any AI tool. Premium adds closed-source components, blocks, design systems, and templates. Browse, copy, ship.
+Design systems your AI agent builds with and you reshape, plus standalone React components that fit any of them. Free components ship their full source and a comprehensive AI remix prompt that works in any AI tool. Premium adds closed-source components, blocks, design systems, and templates. Browse, copy, ship.
 
 ```bash
 npx shadcn@latest add @aicanvas/task-cards
