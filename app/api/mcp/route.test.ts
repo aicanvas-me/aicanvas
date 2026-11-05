@@ -111,7 +111,7 @@ describe('hosted MCP: the door', () => {
       clientInfo: { name: 'test', version: '0' },
     })
     const body = await res.json()
-    expect(body.result.serverInfo.name).toBe('aicanvas-mcp')
+    expect(body.result.serverInfo.name).toBe('aicanvas')
     expect(body.result.instructions).toContain('get_install_command')
   })
 

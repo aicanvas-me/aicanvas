@@ -883,7 +883,7 @@ export function createServer(
   info: { version: string; instructions?: string },
 ): McpServer {
   const server = new McpServer(
-    { name: 'aicanvas-mcp', version: info.version },
+    { name: 'aicanvas', version: info.version },
     {
       capabilities: { tools: {}, logging: {} },
       ...(info.instructions ? { instructions: info.instructions } : {}),

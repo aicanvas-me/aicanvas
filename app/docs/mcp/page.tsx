@@ -145,7 +145,7 @@ export default function McpDocsPage() {
           </P>
           <P>
             VS Code asks to sign in again by itself: click Allow, then Allow in the browser. If Copilot answers without AI Canvas,
-            start your prompt with <C>#aicanvas-mcp</C>.
+            start your prompt with <C>#aicanvas</C>.
           </P>
           <P>
             Codex does not open the sign-in by itself: its AI Canvas tools answer &ldquo;Authentication required&rdquo;. Run{' '}
@@ -202,7 +202,7 @@ export default function McpDocsPage() {
               <>
                 <P>
                   Command Palette → <C>MCP: Open User Configuration</C> → add the <C>aicanvas</C> entry → Start above it. Your token
-                  stays in your home folder, out of git. Start prompts with <C>#aicanvas-mcp</C> so Copilot uses it.
+                  stays in your home folder, out of git. Start prompts with <C>#aicanvas</C> so Copilot uses it.
                 </P>
                 <CopyBlock title="mcp.json" label="VS Code config" code={VSCODE_JSON_CONFIG} />
               </>

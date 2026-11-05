@@ -63,7 +63,7 @@ try {
   })
   record(
     'initialize returns serverInfo',
-    initRes?.result?.serverInfo?.name === 'aicanvas-mcp',
+    initRes?.result?.serverInfo?.name === 'aicanvas',
     `got ${JSON.stringify(initRes?.result?.serverInfo)}`,
   )
   record(

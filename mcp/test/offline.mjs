@@ -105,7 +105,7 @@ try {
   })
   record(
     'initialize succeeds with bad registry URL (no startup network)',
-    initRes?.result?.serverInfo?.name === 'aicanvas-mcp',
+    initRes?.result?.serverInfo?.name === 'aicanvas',
     `got ${JSON.stringify(initRes?.result)?.slice(0, 100)}`,
   )
 
@@ -187,7 +187,7 @@ try {
   })
   record(
     'local: initialize succeeds',
-    initB?.result?.serverInfo?.name === 'aicanvas-mcp',
+    initB?.result?.serverInfo?.name === 'aicanvas',
     `got ${JSON.stringify(initB?.result)?.slice(0, 100)}`,
   )
   localClient.notify('notifications/initialized')

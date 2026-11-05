@@ -252,7 +252,7 @@ export function ConnectAgentCard({
                 </p>
               </Step>
               {/* VS Code hides MCP tools from the model unless the prompt tags the server with #. */}
-              {check(3, 'Ask Copilot', '#aicanvas-mcp what can you add to my app?')}
+              {check(3, 'Ask Copilot', '#aicanvas what can you add to my app?')}
             </>
           )}
 

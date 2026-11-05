@@ -74,7 +74,7 @@ function cursorDeeplink(token: string) {
 
 const TEST_PROMPT = `Use the aicanvas MCP: what can you add to my app?`
 // VS Code hides MCP tools from the model unless the prompt tags the server with #.
-const VSCODE_TEST_PROMPT = `#aicanvas-mcp what can you add to my app?`
+const VSCODE_TEST_PROMPT = `#aicanvas what can you add to my app?`
 
 // Geist Mono shapes `--` as a ligature/contextual alternate, which visually
 // swallows the space before it (e.g. `aicanvas--scope`). Disable ligatures so
