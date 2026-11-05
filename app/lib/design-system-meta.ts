@@ -22,6 +22,8 @@ export interface DesignSystemTemplateMeta {
 export interface DesignSystemMeta {
   slug: DesignSystemSlug
   name: string
+  /** Paid to install, like design-systems.config.mjs `paidToInstall`; change both. */
+  paid: boolean
   templates: DesignSystemTemplateMeta[]
 }
 
@@ -29,6 +31,7 @@ export const DESIGN_SYSTEM_META: Record<DesignSystemSlug, DesignSystemMeta> = {
   andromeda: {
     slug: 'andromeda',
     name: 'Andromeda Legacy',
+    paid: false,
     templates: [
       { slug: 'andromeda-mission-control',   name: 'Mission Control',   category: 'Dashboard' },
       { slug: 'andromeda-service-order',     name: 'Service Order',     category: 'CRM' },
@@ -40,6 +43,7 @@ export const DESIGN_SYSTEM_META: Record<DesignSystemSlug, DesignSystemMeta> = {
   'andromeda-pro': {
     slug: 'andromeda-pro',
     name: 'Andromeda Pro',
+    paid: true,
     // Pro owns its own `andromeda-pro-` slug namespace, so a template here can
     // never be mistaken for a Legacy one by the switcher or the installer.
     // Same order as the overview's template bento (TEMPLATE_ORDER in

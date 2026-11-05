@@ -37,7 +37,7 @@ Component and design-system links below point at each page's markdown version (t
 ## Install
 Install command: \`npx shadcn@latest add @aicanvas/<component-name>\`. The @aicanvas registry is listed in the official shadcn directory, so the CLI resolves it with no extra setup.
 
-One-command installs require a free AI Canvas account. Signed out, the command still exits 0 but writes a small placeholder file titled "(free account required)" instead of the real component. Check for that title before reporting success. Premium components, templates, and the design-system installs marked Premium below additionally require a Premium subscription.
+One-command installs require a free AI Canvas account. Signed out, the command still exits 0 but writes a small placeholder file titled "(free account required)" instead of the real component. Check for that title before reporting success. Premium components and every install marked Premium below additionally require a Premium subscription.
 
 To authenticate installs: sign in and copy your personal token from ${SITE_URL}/account/settings, set it as AICANVAS_TOKEN in .env.local, and configure the registry once in the project's components.json:
 
@@ -100,7 +100,8 @@ Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes.
       const templates = (s.templates ?? []).map((t) => {
         const pageSlug = t.slug.replace(new RegExp(`^${s.slug}-`), '')
         const kind = t.category ? `${t.category} template` : 'template'
-        return `  - [${t.name}](${SITE_URL}/design-systems/${s.slug}/templates/${pageSlug}): Premium ${kind} built entirely from ${s.name} components. Install (Premium, requires an AI Canvas token): \`npx shadcn@latest add @aicanvas/${t.slug}\``
+        const tier = installTier(t.slug)
+        return `  - [${t.name}](${SITE_URL}/design-systems/${s.slug}/templates/${pageSlug}): ${tier === 'free account' ? 'Free' : 'Premium'} ${kind} built entirely from ${s.name} components. Install (${tier}): \`npx shadcn@latest add @aicanvas/${t.slug}\``
       })
       // Every install the system offers, grouped under the tier the gate gives
       // it. The component form carries one real slug from the manifest, plus any

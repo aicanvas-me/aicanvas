@@ -19,7 +19,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { ArrowLeft } from '@/app/_icons/icons/arrow-left';
 import { ArrowRight } from '@/app/_icons/icons/arrow-right';
 import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right';
-import { Bolt } from '@/app/_icons/icons/bolt';
+import { BadgeCheckSolid } from '@/app/_icons/icons/badge-check-solid';
 import { Bot } from '@/app/_icons/icons/bot';
 import { Wrench } from '@/app/_icons/icons/wrench';
 import { ChevronDown } from '@/app/_icons/icons/chevron-down';
@@ -422,15 +422,14 @@ export function AndromedaOverview() {
               className="group relative flex flex-col overflow-hidden rounded-section border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl hover:shadow-sand-300/60 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:hover:shadow-2xl dark:hover:shadow-black/50"
             >
               <div className="relative aspect-video overflow-hidden bg-sand-900">
-                {/* Premium badge — same Aceternity-style pill as premium
-                    component cards: a filled bolt at rest, slides open to the
-                    label on card hover. Templates are premium. */}
-                <div className="absolute left-3 top-3 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-50 ring-1 ring-sand-50/30 backdrop-blur-sm">
-                  <Bolt fill="currentColor" size={14} className="shrink-0" />
+                {/* Free badge, the same pill the component grid gives these
+                    templates: the seal at rest, the label on card hover. */}
+                <div className="absolute left-3 top-3 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-300 ring-1 ring-sand-500/40 backdrop-blur-sm">
+                  <BadgeCheckSolid size={14} className="shrink-0 text-ember-400" />
                   <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
                     <span className="overflow-hidden">
                       <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
-                        Premium template
+                        Free
                       </span>
                     </span>
                   </span>

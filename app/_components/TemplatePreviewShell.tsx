@@ -694,7 +694,7 @@ function TemplateSwitcher({
   )
 }
 
-// ── Right cluster: Install (premium) / Unlock (free-anon) + auth ─────────────
+// ── Right cluster: Install / Unlock (a paid template, free-anon) + auth ──────
 
 function RightCluster({
   templateSlug,
@@ -709,8 +709,10 @@ function RightCluster({
   // premium / in-flight 'unknown' → Install; resolved free/anon → the small
   // "Unlock with Premium" CTA. Keeping Install up during 'unknown' avoids
   // flashing an upgrade at a paying customer mid-load; anon derives to
-  // 'not-premium' synchronously.
-  const canInstall = status !== 'not-premium'
+  // 'not-premium' synchronously. A free system's template installs on a free
+  // account, like its components, so its command is shown to everyone.
+  const free = getDesignSystemTemplateMeta(templateSlug)?.system.paid === false
+  const canInstall = free || status !== 'not-premium'
 
   return (
     <>
@@ -749,8 +751,8 @@ function InstallButton({
   const ref = useRef<HTMLDivElement>(null)
 
   // Tokenized install for signed-in users so the registry attributes the pull
-  // to the account (templates are premium — a plain command would 402). The
-  // token is masked on screen; copy writes the real one.
+  // to the account (a plain command writes a placeholder). The token is masked
+  // on screen; copy writes the real one.
   const userToken = useInstallToken()
   const installReference = userToken
     ? `"https://aicanvas.me/r/${templateSlug}.json?token=${userToken}"`

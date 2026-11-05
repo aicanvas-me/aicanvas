@@ -25,7 +25,8 @@ interface InstallAction {
   /**
    * This item installs on a free account, so its command is shown to everyone.
    * Set it only for content the registry itself serves on the free lane: a free
-   * system's components bundle, never a template, a brain or an `-all` bundle.
+   * system's components bundle or template, never a paid system's item, a brain
+   * or an `-all` bundle.
    */
   free?: boolean
 }

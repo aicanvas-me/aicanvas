@@ -16,7 +16,7 @@ import { InstallCopiedToast } from './InstallCopiedToast'
 const PACKAGES = [
   { slug: 'andromeda-all', label: 'Everything' },
   // MIT source on the free lane: an account installs it, a subscription is not
-  // needed. "Everything" adds the templates and the brain, which are paid.
+  // needed. "Everything" adds the templates and the brain, and the brain is paid.
   { slug: 'andromeda', label: 'All components', free: true },
 ]
 const FREE_PACKAGE = PACKAGES.find((p) => p.free)!.slug
