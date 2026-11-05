@@ -27,13 +27,13 @@ const PALETTE = {
   light: {
     'surface-base': 'var(--color-sand-50)', 'surface-raised': 'var(--color-sand-100)',
     'text-primary': 'var(--color-sand-900)', 'text-secondary': 'var(--color-sand-600)', 'text-faint': 'var(--color-sand-500)',
-    'accent-400': 'var(--color-accent)', 'accent-300': 'var(--color-accent)', 'accent-on': 'var(--color-sand-950)',
+    'accent-400': 'var(--color-accent)', 'accent-300': 'color-mix(in srgb, var(--color-accent) 85%, transparent)', 'accent-on': 'var(--color-accent-foreground)',
     'border-subtle': 'var(--color-sand-200)', 'border-base': 'var(--color-sand-300)',
   },
   dark: {
     'surface-base': 'var(--color-sand-950)', 'surface-raised': 'var(--color-sand-900)',
     'text-primary': 'var(--color-sand-50)', 'text-secondary': 'var(--color-sand-400)', 'text-faint': 'var(--color-sand-500)',
-    'accent-400': 'var(--color-accent)', 'accent-300': 'var(--color-accent)', 'accent-on': 'var(--color-sand-950)',
+    'accent-400': 'var(--color-accent)', 'accent-300': 'color-mix(in srgb, var(--color-accent) 85%, transparent)', 'accent-on': 'var(--color-accent-foreground)',
     'border-subtle': 'var(--color-sand-800)', 'border-base': 'var(--color-sand-700)',
   },
 } as const
@@ -142,7 +142,7 @@ export function ShowcaseInstallCard() {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
         {bullets.map((line, i) => (
           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-            <Check size={13} color={C.accent[400]} style={{ flexShrink: 0, marginTop: 2 }} />
+            <Check weight="bold" size={13} color={C.accent[400]} style={{ flexShrink: 0, marginTop: 2 }} />
             <span style={{ fontSize: 13, lineHeight: 1.5, color: C.text.secondary }}>{line}</span>
           </div>
         ))}
