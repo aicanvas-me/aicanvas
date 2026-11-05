@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { renewalThanksEmail } from './messages'
+import { renewalThanksEmail, agentConnectedEmail } from './messages'
 
 describe('renewalThanksEmail', () => {
   it('names the plan without a calendar date', () => {
@@ -16,5 +16,21 @@ describe('renewalThanksEmail', () => {
     const button = html.indexOf('See what your support built lately')
     expect(button).toBeGreaterThan(html.indexOf('just wanted to say thank you'))
     expect(html.indexOf('What should I build next?')).toBeGreaterThan(button)
+  })
+})
+
+describe('agentConnectedEmail', () => {
+  it('says an AI agent connected, escapes its self-given name, and links to the settings section', () => {
+    const { subject, html } = agentConnectedEmail({ agentName: '<b>Claude</b>', agentCountry: 'Germany', browserCountry: 'Germany' })
+    expect(subject).toBe('An AI agent connected to your AI Canvas account')
+    expect(html).toContain('&lt;b&gt;Claude&lt;/b&gt;')
+    expect(html).not.toContain('<b>Claude</b>')
+    expect(html).toContain('https://aicanvas.me/account/settings#ai-agents')
+    expect(html).not.toContain('while your browser was in')
+  })
+
+  it('warns when the agent finished signing in from another country than the browser', () => {
+    const { html } = agentConnectedEmail({ agentName: 'x', agentCountry: 'Brazil', browserCountry: 'Germany' })
+    expect(html).toContain('It finished signing in from Brazil while your browser was in Germany.')
   })
 })

@@ -54,14 +54,31 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     expect(res.status).toBe(200)
     expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
     // Steers the user to create a free account, and existing accounts to the
-    // tokened install command in settings.
+    // tokened install command on the component page.
     expect(body).toContain('account/sign-up')
-    expect(body).toContain('account/settings')
+    expect(body).toContain('copy its install command')
     // ZERO real source: the stub must not leak the component's actual code.
     expect(body).not.toContain('useState')
     expect(body).not.toContain('useEffect')
     // A stub is not a pull.
     expect(mockedTrackPull).not.toHaveBeenCalled()
+    // No token sent, so nothing to call stale.
+    expect(res.headers.get('X-AICanvas-Token')).toBeNull()
+  })
+
+  it('case 1b: gate ON + a token that matches no account → the same stub, tagged so the MCP can say it changed', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+    const anon = await (await call()).text()
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null, tokenUnknown: true })
+
+    const res = await call()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Token')).toBe('unknown')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
+    // Access is exactly anonymous: byte-for-byte the anonymous placeholder.
+    expect(await res.text()).toBe(anon)
   })
 
   it("case 2: gate ON + signed-in 'free' tier → REAL standalone source (the gap this closes)", async () => {
@@ -76,9 +93,22 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     // A signed-in free account gets the real, unstubbed source.
     expect(body).toContain('useState')
     expect(body).toContain('export default')
+    expect(res.headers.get('X-AICanvas-Token')).toBeNull()
     // Real source to a known account leaves exactly one note, with its kind.
     expect(mockedTrackPull).toHaveBeenCalledTimes(1)
     expect(mockedTrackPull).toHaveBeenCalledWith('u1', SLUG, 'standalone')
+  })
+
+  it("case 2b: the MCP's token check before an install command gets the source but leaves no note", async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+
+    const req = new NextRequest(`http://localhost/r/${FILE}`, { headers: { 'x-aicanvas-probe': '1' } })
+    const res = await GET(req, { params: Promise.resolve({ file: FILE }) })
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('standalone')
+    expect(mockedTrackPull).not.toHaveBeenCalled()
   })
 
   it('case 3: gate ON + premium tier → REAL standalone source', async () => {
@@ -153,7 +183,20 @@ describe.skipIf(!brainAvailable)('GET /r/andromeda-brain.json — mode-independe
     expect(item.files[0].target).toContain('BRAIN-LOCKED.md')
     expect(item.files[0].content).toContain('aicanvas.me/pricing')
     // A subscribed-but-untokened CLI must learn where its command lives.
-    expect(item.files[0].content).toContain('account/settings')
+    expect(item.files[0].content).toContain('Copy Command')
+    expect(res.headers.get('X-AICanvas-Token')).toBeNull()
+  })
+
+  it('a token that matches no account → the same locked placeholder, tagged so the MCP can say it changed', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+    const anon = await (await callBrain()).text()
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null, tokenUnknown: true })
+
+    const res = await callBrain()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Token')).toBe('unknown')
+    expect(await res.text()).toBe(anon)
   })
 
   it("signed-in 'free' tier → same locked placeholder", async () => {
@@ -229,7 +272,7 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     expect(res.status).toBe(200) // never a cryptic 402
     expect(body).toContain('aicanvas.me/pricing')
     // A subscribed-but-untokened CLI must learn where its command lives.
-    expect(body).toContain('account/settings')
+    expect(body).toContain('copy its install command')
     // EVERY file's content is the placeholder — zero real component source
     // (the real file paths remain, but their bodies are all stubbed out).
     const item = JSON.parse(body)
@@ -325,7 +368,7 @@ describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle wi
     // The file says exactly what the terminal prints.
     expect(notice.content).toContain(item.docs)
     expect(notice.content).toContain('aicanvas.me/pricing')
-    expect(notice.content).toContain('account/settings')
+    expect(notice.content).toContain('copy its install command')
   })
 
   it("signed-in 'free' tier with a token → the same single notice, token never stamped", async () => {
@@ -387,5 +430,39 @@ describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle wi
     expect(tokened.registryDependencies).toEqual(
       JSON.parse(raw).registryDependencies.map(expectedDep),
     )
+  })
+})
+
+// Icon items exist only where the icon library checkout was found at build time.
+const ICON_ITEMS = existsSync(join(process.cwd(), 'registry-data', 'icon-search-duotone.json'))
+
+describe.skipIf(!ICON_ITEMS)('GET /r/icon-*.json — Line free, the other styles paid', () => {
+  const get = (file: string) =>
+    GET(new NextRequest(`http://localhost/r/${file}`), { params: Promise.resolve({ file }) })
+
+  it('hands a signed-in free account the real Line icon', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    const res = await get('icon-search.json')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('standalone')
+    expect(await res.text()).toContain('createIcon(')
+  })
+
+  it('locks every paid style for a free account, with no geometry in the reply', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    for (const file of ['icon-search-duotone.json', 'icon-search-solid.json', 'icon-search-solid-duotone.json']) {
+      const res = await get(file)
+      const body = await res.text()
+      expect(res.headers.get('X-AICanvas-Content-Type'), file).toBe('premium-standalone')
+      expect(body, file).not.toContain('createIcon(')
+      expect(body, file).toContain('pricing')
+    }
+  })
+
+  it('hands a premium account the real paid style', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'premium', userId: 'u1' })
+    const res = await get('icon-search-duotone.json')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('premium-standalone')
+    const item = (await res.json()) as { files: { content: string }[] }
+    expect(item.files[0]?.content).toContain('createIcon("search", "duotone"')
   })
 })

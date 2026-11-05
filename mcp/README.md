@@ -112,7 +112,9 @@ args = ["-y", "@aicanvas/mcp"]
 
 Inside any of the AI editors above, ask:
 
-> "What categories of components does AI Canvas have?"
+> "Use the aicanvas MCP to list the component categories."
+
+Start prompts with "use the aicanvas MCP": agents often skip MCP tools unless you name them.
 
 You should see all 11 categories with counts. If you don't, check the host's MCP logs. Typically a "Failed to spawn process" or network error means npx couldn't fetch the package, or the host wasn't restarted after editing the config.
 

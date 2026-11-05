@@ -6,6 +6,7 @@ import { SITE_URL } from './lib/config'
 import { ANDROMEDA_COMPONENT_META } from './_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from './_lib/andromeda-pro/andromeda-meta'
 import { availableDesignSystems } from './lib/available-design-systems'
+import { DOC_PAGES } from './docs/_lib/nav'
 
 // No `lastModified`. Every entry used to emit `new Date()`, i.e. the build
 // timestamp, so all 154 URLs claimed to change on every deploy. Google only
@@ -113,6 +114,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.7,
     },
+    ...DOC_PAGES.map((p) => ({
+      url: `${SITE_URL}${p.href}`,
+      changeFrequency: 'monthly' as const,
+      priority: p.href === '/docs' ? 0.7 : 0.6,
+    })),
     ...designSystemPages,
     ...categoryPages,
     ...collectionPages,

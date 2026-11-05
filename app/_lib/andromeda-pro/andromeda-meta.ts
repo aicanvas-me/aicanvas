@@ -11,7 +11,13 @@ export type AndromedaComponentMeta = {
   description: string
   sourceFile: string
   image?: string
+  imageLight?: string
 }
+
+// Hero card art, one shot per theme (scripts/screenshot-andromeda-hero.mjs). Bump on a reshoot.
+const HERO_VERSION = 1
+const heroShot = (slug: string, theme: 'dark' | 'light') =>
+  `https://ik.imagekit.io/aitoolkit/andromeda-pro/hero/${slug}-${theme}.png?v=${HERO_VERSION}`
 
 export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
   {
@@ -20,7 +26,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Lists questions that each open their answer below them, one at a time or several at once.',
     sourceFile: 'Accordion.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/accordion.png?v=2',
+    image: heroShot('accordion', 'dark'),
+    imageLight: heroShot('accordion', 'light'),
   },
   {
     slug: 'alert',
@@ -28,7 +35,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a status message in the flow of the page, at a severity from note to fault.',
     sourceFile: 'Alert.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/alert.png?v=2',
+    image: heroShot('alert', 'dark'),
+    imageLight: heroShot('alert', 'light'),
   },
   {
     slug: 'artifact',
@@ -36,7 +44,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Frames something an agent produced, such as a table or a chart, under a title bar with its actions.',
     sourceFile: 'Artifact.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/artifact.png?v=1',
+    image: heroShot('artifact', 'dark'),
+    imageLight: heroShot('artifact', 'light'),
   },
   {
     slug: 'avatar',
@@ -44,7 +53,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Represents a person as a square image tile that falls back to their initials.',
     sourceFile: 'Avatar.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/avatar.png?v=2',
+    image: heroShot('avatar', 'dark'),
+    imageLight: heroShot('avatar', 'light'),
   },
   {
     slug: 'badge',
@@ -52,7 +62,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays the state a row or cell reports, such as online, queued, or fault.',
     sourceFile: 'Badge.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/badge.png?v=2',
+    image: heroShot('badge', 'dark'),
+    imageLight: heroShot('badge', 'light'),
   },
   {
     slug: 'bento-grid',
@@ -60,7 +71,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Lays out cards on a grid where one can span several columns and cards in a row line up their parts.',
     sourceFile: 'BentoGrid.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/bento-grid.png?v=2',
+    image: heroShot('bento-grid', 'dark'),
+    imageLight: heroShot('bento-grid', 'light'),
   },
   {
     slug: 'button',
@@ -68,7 +80,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Triggers an action or event, at the level of emphasis the action deserves.',
     sourceFile: 'Button.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/button.png?v=2',
+    image: heroShot('button', 'dark'),
+    imageLight: heroShot('button', 'light'),
   },
   {
     slug: 'card',
@@ -76,7 +89,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Frames a region of related content with corner brackets instead of a border.',
     sourceFile: 'Card.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/card.png?v=2',
+    image: heroShot('card', 'dark'),
+    imageLight: heroShot('card', 'light'),
   },
   {
     slug: 'checkbox',
@@ -84,7 +98,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Selects any number of options from a set, or turns a single one on and off.',
     sourceFile: 'Checkbox.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/checkbox.png?v=2',
+    image: heroShot('checkbox', 'dark'),
+    imageLight: heroShot('checkbox', 'light'),
   },
   {
     slug: 'choice-card',
@@ -92,7 +107,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Presents an option as a whole selectable card with a title and a supporting line.',
     sourceFile: 'ChoiceCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/choice-card.png?v=1',
+    image: heroShot('choice-card', 'dark'),
+    imageLight: heroShot('choice-card', 'light'),
   },
   {
     slug: 'collapsible',
@@ -100,7 +116,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Opens and closes the section under a one-line row, for detail the reader may want.',
     sourceFile: 'Collapsible.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/collapsible.png?v=1',
+    image: heroShot('collapsible', 'dark'),
+    imageLight: heroShot('collapsible', 'light'),
   },
   {
     slug: 'combobox',
@@ -108,7 +125,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Finds one thing in a known set as you type, from a list that opens under the field.',
     sourceFile: 'Combobox.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/combobox.png?v=1',
+    image: heroShot('combobox', 'dark'),
+    imageLight: heroShot('combobox', 'light'),
   },
   {
     slug: 'corner-markers',
@@ -116,7 +134,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Frames any container with the four L-shaped brackets that stand in for a border.',
     sourceFile: 'CornerMarkers.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/corner-markers.png?v=2',
+    image: heroShot('corner-markers', 'dark'),
+    imageLight: heroShot('corner-markers', 'light'),
   },
   {
     slug: 'date-range-picker',
@@ -124,7 +143,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Selects a start and an end date from a calendar popover.',
     sourceFile: 'DateRangePicker.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/date-range-picker.png?v=2',
+    image: heroShot('date-range-picker', 'dark'),
+    imageLight: heroShot('date-range-picker', 'light'),
   },
   {
     slug: 'drawer',
@@ -132,7 +152,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays content in a panel that slides in from the edge of the screen.',
     sourceFile: 'Drawer.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/drawer.png?v=2',
+    image: heroShot('drawer', 'dark'),
+    imageLight: heroShot('drawer', 'light'),
   },
   {
     slug: 'empty-state',
@@ -140,7 +161,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Explains why a region has nothing to show, and offers the way out.',
     sourceFile: 'EmptyState.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/empty-state.png?v=2',
+    image: heroShot('empty-state', 'dark'),
+    imageLight: heroShot('empty-state', 'light'),
   },
   {
     slug: 'footer',
@@ -148,7 +170,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Closes a page with the brand, its secondary links in titled columns, and an optional large name.',
     sourceFile: 'Footer.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/footer.png?v=2',
+    image: heroShot('footer', 'dark'),
+    imageLight: heroShot('footer', 'light'),
   },
   {
     slug: 'chart-funnel',
@@ -156,7 +179,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Charts how much of a population survives each stage of a sequence.',
     sourceFile: 'FunnelChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/chart-funnel.png?v=1',
+    image: heroShot('chart-funnel', 'dark'),
+    imageLight: heroShot('chart-funnel', 'light'),
   },
   {
     slug: 'chart-metric',
@@ -164,7 +188,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Charts one measurement over time in a panel that frames itself.',
     sourceFile: 'MetricChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/chart-metric.png?v=2',
+    image: heroShot('chart-metric', 'dark'),
+    imageLight: heroShot('chart-metric', 'light'),
   },
   {
     slug: 'chart-radar',
@@ -172,7 +197,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Compares several series across one shared set of axes.',
     sourceFile: 'RadarChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/chart-radar.png?v=2',
+    image: heroShot('chart-radar', 'dark'),
+    imageLight: heroShot('chart-radar', 'light'),
   },
   {
     slug: 'chart-trend',
@@ -180,7 +206,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Charts several series over time as lines, areas, or bars.',
     sourceFile: 'TrendChart.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/chart-trend.png?v=2',
+    image: heroShot('chart-trend', 'dark'),
+    imageLight: heroShot('chart-trend', 'light'),
   },
   {
     slug: 'gauge',
@@ -188,7 +215,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a single bounded reading as a radial arc.',
     sourceFile: 'Gauge.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/gauge.png?v=2',
+    image: heroShot('gauge', 'dark'),
+    imageLight: heroShot('gauge', 'light'),
   },
   {
     slug: 'heat-grid',
@@ -196,7 +224,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a single bounded reading as a matrix of cells that fill as it rises.',
     sourceFile: 'HeatGrid.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/heat-grid.png?v=2',
+    image: heroShot('heat-grid', 'dark'),
+    imageLight: heroShot('heat-grid', 'light'),
   },
   {
     slug: 'icon-button',
@@ -204,7 +233,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Triggers an action with an icon alone, for controls whose glyph reads as the label.',
     sourceFile: 'IconButton.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/icon-button.png?v=2',
+    image: heroShot('icon-button', 'dark'),
+    imageLight: heroShot('icon-button', 'light'),
   },
   {
     slug: 'input',
@@ -212,7 +242,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Collects a single line of text.',
     sourceFile: 'Input.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/input.png?v=2',
+    image: heroShot('input', 'dark'),
+    imageLight: heroShot('input', 'light'),
   },
   {
     slug: 'item',
@@ -220,7 +251,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Lays out one row of a list or a menu: a glyph, a name with a line under it, and its actions.',
     sourceFile: 'Item.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/item.png?v=1',
+    image: heroShot('item', 'dark'),
+    imageLight: heroShot('item', 'light'),
   },
   {
     slug: 'waveform',
@@ -228,7 +260,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a live signal as a moving trace, showing that a feed is running.',
     sourceFile: 'Waveform.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/waveform.png?v=2',
+    image: heroShot('waveform', 'dark'),
+    imageLight: heroShot('waveform', 'light'),
   },
   {
     slug: 'logo-cloud',
@@ -236,7 +269,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Shows the names or logos of customers in a slow moving band under a short line of text.',
     sourceFile: 'LogoCloud.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/logo-cloud.png?v=2',
+    image: heroShot('logo-cloud', 'dark'),
+    imageLight: heroShot('logo-cloud', 'light'),
   },
   {
     slug: 'marquee',
@@ -244,7 +278,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Loops a row of items slowly across its width, so a long list shows without taking room.',
     sourceFile: 'Marquee.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/marquee.png?v=2',
+    image: heroShot('marquee', 'dark'),
+    imageLight: heroShot('marquee', 'light'),
   },
   {
     slug: 'media-card',
@@ -252,7 +287,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Presents an item on its own artwork, for content the image identifies.',
     sourceFile: 'MediaCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/media-card.png?v=2',
+    image: heroShot('media-card', 'dark'),
+    imageLight: heroShot('media-card', 'light'),
   },
   {
     slug: 'message',
@@ -260,7 +296,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Shows one turn of a conversation, from the user or from the assistant, with its actions.',
     sourceFile: 'Message.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/message.png?v=1',
+    image: heroShot('message', 'dark'),
+    imageLight: heroShot('message', 'light'),
   },
   {
     slug: 'table-basic',
@@ -268,7 +305,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Builds a table row by row, for cells that need their own structure. On narrow screens, it scrolls sideways; use Data Table for phone layouts.',
     sourceFile: 'Table.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/table-basic.png?v=2',
+    image: heroShot('table-basic', 'dark'),
+    imageLight: heroShot('table-basic', 'light'),
   },
   {
     slug: 'table-data',
@@ -276,7 +314,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Renders a table from a column definition and a set of rows.',
     sourceFile: 'DataTable.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/table-data.png?v=2',
+    image: heroShot('table-data', 'dark'),
+    imageLight: heroShot('table-data', 'light'),
   },
   {
     slug: 'music-player',
@@ -284,7 +323,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Controls playback in one bar: track identity, transport, and a scrub slider.',
     sourceFile: 'MusicPlayer.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/music-player.png?v=2',
+    image: heroShot('music-player', 'dark'),
+    imageLight: heroShot('music-player', 'light'),
   },
   {
     slug: 'navbar',
@@ -292,7 +332,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Keeps the brand, page links and main action at the top of a page, and marks the section you are reading.',
     sourceFile: 'Navbar.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/navbar.png?v=2',
+    image: heroShot('navbar', 'dark'),
+    imageLight: heroShot('navbar', 'light'),
   },
   {
     slug: 'nav-item',
@@ -300,7 +341,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Links to one destination in a sidebar, in full or icon-only form.',
     sourceFile: 'NavItem.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/nav-item.png?v=2',
+    image: heroShot('nav-item', 'dark'),
+    imageLight: heroShot('nav-item', 'light'),
   },
   {
     slug: 'panel-header',
@@ -308,7 +350,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Titles a dashboard panel and holds the actions that belong to it.',
     sourceFile: 'PanelHeader.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/panel-header.png?v=2',
+    image: heroShot('panel-header', 'dark'),
+    imageLight: heroShot('panel-header', 'light'),
   },
   {
     slug: 'panel-menu',
@@ -316,7 +359,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       "Collects a panel's secondary actions behind a kebab trigger.",
     sourceFile: 'PanelMenu.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/panel-menu.png?v=2',
+    image: heroShot('panel-menu', 'dark'),
+    imageLight: heroShot('panel-menu', 'light'),
   },
   {
     slug: 'payment-card',
@@ -324,7 +368,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Shows a payment card as the card itself, with its name, last four digits and expiry, and tilts toward the pointer.',
     sourceFile: 'PaymentCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/payment-card.png?v=2',
+    image: heroShot('payment-card', 'dark'),
+    imageLight: heroShot('payment-card', 'light'),
   },
   {
     slug: 'planet',
@@ -332,7 +377,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Renders a slowly rotating particle sphere as a hero object.',
     sourceFile: 'Planet.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/planet.png?v=2',
+    image: heroShot('planet', 'dark'),
+    imageLight: heroShot('planet', 'light'),
   },
   {
     slug: 'popover',
@@ -340,7 +386,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Floats a panel of mixed content off a trigger, such as a picker with a setting under it.',
     sourceFile: 'Popover.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/popover.png?v=1',
+    image: heroShot('popover', 'dark'),
+    imageLight: heroShot('popover', 'light'),
   },
   {
     slug: 'pricing-card',
@@ -348,7 +395,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Shows one plan with its price, what it includes and the button to choose it, lined up with the plans beside it.',
     sourceFile: 'PricingCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/pricing-card.png?v=2',
+    image: heroShot('pricing-card', 'dark'),
+    imageLight: heroShot('pricing-card', 'light'),
   },
   {
     slug: 'progress-bar',
@@ -356,7 +404,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays a single bounded reading as a horizontal meter.',
     sourceFile: 'ProgressBar.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/progress-bar.png?v=2',
+    image: heroShot('progress-bar', 'dark'),
+    imageLight: heroShot('progress-bar', 'light'),
   },
   {
     slug: 'prompt-input',
@@ -364,7 +413,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Collects a prompt in a growing field, with its tools and one Send that becomes Stop.',
     sourceFile: 'PromptInput.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/prompt-input.png?v=1',
+    image: heroShot('prompt-input', 'dark'),
+    imageLight: heroShot('prompt-input', 'light'),
   },
   {
     slug: 'radio',
@@ -372,7 +422,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Selects exactly one option from a small set that stays visible.',
     sourceFile: 'Radio.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/radio.png?v=2',
+    image: heroShot('radio', 'dark'),
+    imageLight: heroShot('radio', 'light'),
   },
   {
     slug: 'search-field',
@@ -380,7 +431,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Collects a search query, with room for a keyboard shortcut hint.',
     sourceFile: 'SearchField.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/search-field.png?v=2',
+    image: heroShot('search-field', 'dark'),
+    imageLight: heroShot('search-field', 'light'),
   },
   {
     slug: 'section-heading',
@@ -388,7 +440,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Opens a page section with a short label, a title and a sentence that says what the section covers.',
     sourceFile: 'SectionHeading.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/section-heading.png?v=2',
+    image: heroShot('section-heading', 'dark'),
+    imageLight: heroShot('section-heading', 'light'),
   },
   {
     slug: 'segmented-control',
@@ -396,7 +449,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Switches between a few mutually exclusive views or modes.',
     sourceFile: 'SegmentedControl.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/segmented-control.png?v=2',
+    image: heroShot('segmented-control', 'dark'),
+    imageLight: heroShot('segmented-control', 'light'),
   },
   {
     slug: 'sidebar',
@@ -404,7 +458,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Navigates a console from a left rail that folds between labelled rows and icons.',
     sourceFile: 'Sidebar.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/sidebar.png?v=1',
+    image: heroShot('sidebar', 'dark'),
+    imageLight: heroShot('sidebar', 'light'),
   },
   {
     slug: 'skeleton',
@@ -412,7 +467,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Holds the place of text that is still loading, as bars a single light passes over.',
     sourceFile: 'Skeleton.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/skeleton.png?v=1',
+    image: heroShot('skeleton', 'dark'),
+    imageLight: heroShot('skeleton', 'light'),
   },
   {
     slug: 'slider',
@@ -420,7 +476,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Sets one continuous value by dragging along a track.',
     sourceFile: 'Slider.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/slider.png?v=2',
+    image: heroShot('slider', 'dark'),
+    imageLight: heroShot('slider', 'light'),
   },
   {
     slug: 'spinner',
@@ -428,7 +485,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Signals that work is running when the remaining time is unknown.',
     sourceFile: 'Spinner.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/spinner.png?v=2',
+    image: heroShot('spinner', 'dark'),
+    imageLight: heroShot('spinner', 'light'),
   },
   {
     slug: 'stepper',
@@ -436,7 +494,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Shows a run of steps in order, marking each one done, running or still to come.',
     sourceFile: 'Stepper.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/stepper.png?v=2',
+    image: heroShot('stepper', 'dark'),
+    imageLight: heroShot('stepper', 'light'),
   },
   {
     slug: 'stat-tile',
@@ -444,7 +503,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Displays one headline number with its unit and its change.',
     sourceFile: 'StatTile.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/stat-tile.png?v=2',
+    image: heroShot('stat-tile', 'dark'),
+    imageLight: heroShot('stat-tile', 'light'),
   },
   {
     slug: 'strength-meter',
@@ -452,7 +512,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Reports how strong a password is, in three steps and one word.',
     sourceFile: 'StrengthMeter.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/strength-meter.png?v=1',
+    image: heroShot('strength-meter', 'dark'),
+    imageLight: heroShot('strength-meter', 'light'),
   },
   {
     slug: 'suggestion',
@@ -460,7 +521,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Offers a proposed next move the reader can take, such as a follow-up prompt or a task lane.',
     sourceFile: 'Suggestion.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/suggestion.png?v=1',
+    image: heroShot('suggestion', 'dark'),
+    imageLight: heroShot('suggestion', 'light'),
   },
   {
     slug: 'tabs',
@@ -468,7 +530,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Splits content into named panels and shows one at a time, as a row of tabs or a list whose rows can each carry a sentence.',
     sourceFile: 'Tabs.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tabs.png?v=2',
+    image: heroShot('tabs', 'dark'),
+    imageLight: heroShot('tabs', 'light'),
   },
   {
     slug: 'tag',
@@ -476,7 +539,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Labels content for categorizing or filtering, and can be dismissed.',
     sourceFile: 'Tag.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tag.png?v=2',
+    image: heroShot('tag', 'dark'),
+    imageLight: heroShot('tag', 'light'),
   },
   {
     slug: 'textarea',
@@ -484,7 +548,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Collects text that runs to more than one line.',
     sourceFile: 'Textarea.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/textarea.png?v=2',
+    image: heroShot('textarea', 'dark'),
+    imageLight: heroShot('textarea', 'light'),
   },
   {
     slug: 'toggle',
@@ -492,7 +557,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Switches a setting that takes effect the moment it flips.',
     sourceFile: 'Toggle.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/toggle.png?v=2',
+    image: heroShot('toggle', 'dark'),
+    imageLight: heroShot('toggle', 'light'),
   },
   {
     slug: 'tool',
@@ -500,7 +566,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Reports one agent step with its status and duration, and opens to show what it produced.',
     sourceFile: 'Tool.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tool.png?v=1',
+    image: heroShot('tool', 'dark'),
+    imageLight: heroShot('tool', 'light'),
   },
   {
     slug: 'tooltip',
@@ -508,7 +575,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Names a control that carries no text of its own, on hover or focus.',
     sourceFile: 'Tooltip.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/tooltip.png?v=2',
+    image: heroShot('tooltip', 'dark'),
+    imageLight: heroShot('tooltip', 'light'),
   },
   {
     slug: 'top-bar',
@@ -516,7 +584,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Spans the top of a dashboard with the brand, the nav, and the account cluster.',
     sourceFile: 'TopBar.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/top-bar.png?v=1',
+    image: heroShot('top-bar', 'dark'),
+    imageLight: heroShot('top-bar', 'light'),
   },
   {
     slug: 'user-card',
@@ -524,7 +593,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Opens the account menu from a row that names the signed-in user and their role.',
     sourceFile: 'UserCard.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/user-card.png?v=2',
+    image: heroShot('user-card', 'dark'),
+    imageLight: heroShot('user-card', 'light'),
   },
   {
     slug: 'user-menu',
@@ -532,7 +602,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       "Opens the account menu from the signed-in user's avatar.",
     sourceFile: 'UserMenu.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/user-menu.png?v=2',
+    image: heroShot('user-menu', 'dark'),
+    imageLight: heroShot('user-menu', 'light'),
   },
 
   // Objects — the system's sanctioned decorative class (Planet is its first
@@ -543,7 +614,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Sweeps one circle through a full turn into a sphere of hairline loops.',
     sourceFile: 'Orb.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/orb.png?v=1',
+    image: heroShot('orb', 'dark'),
+    imageLight: heroShot('orb', 'light'),
   },
   {
     slug: 'nodes',
@@ -551,7 +623,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Spreads light across a hairline lattice, one crossing igniting the next.',
     sourceFile: 'Nodes.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/nodes.png?v=1',
+    image: heroShot('nodes', 'dark'),
+    imageLight: heroShot('nodes', 'light'),
   },
   {
     slug: 'burst',
@@ -559,7 +632,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Draws hundreds of hairlines converging on a single focal point.',
     sourceFile: 'Burst.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/burst.png?v=1',
+    image: heroShot('burst', 'dark'),
+    imageLight: heroShot('burst', 'light'),
   },
   {
     slug: 'cube',
@@ -567,7 +641,8 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     description:
       'Turns a lattice of dots a quarter at a time, the way a puzzle cube twists.',
     sourceFile: 'Cube.tsx',
-    image: 'https://ik.imagekit.io/aitoolkit/andromeda-pro/cube.png?v=1',
+    image: heroShot('cube', 'dark'),
+    imageLight: heroShot('cube', 'light'),
   },
 ]
 

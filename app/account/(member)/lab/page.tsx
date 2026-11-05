@@ -1,9 +1,10 @@
 import Link from 'next/link'
-import { Flask } from '@phosphor-icons/react/dist/ssr'
+import { Flask } from '@/app/_icons/icons/flask'
 import { createClient } from '../../../lib/supabase/server'
 import type { SerializedParticleConfig } from '../../../lab/_lib/preset/serialize'
 import { LabPresetCard } from '../../../lab/_lib/preset/LabPresetCard'
 import { buttonClasses } from '../../../components/buttonClasses'
+import { CARD } from '../../../components/PageKit'
 
 // Made in Lab — lists the signed-in user's saved presets grouped by tool.
 // Each card links back to the matching /lab/<tool>?preset=<id> page where
@@ -55,11 +56,11 @@ export default async function MadeInLabPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {Array.from(grouped.entries()).map(([tool, rows]) => (
         <section key={tool}>
-          <header className="mb-3 flex items-baseline justify-between">
-            <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+          <header className="mb-4 flex items-baseline justify-between gap-4">
+            <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">
               {TOOL_NAMES[tool] ?? tool}
             </h2>
             <span className="text-xs text-sand-600 dark:text-sand-500">{rows.length} preset{rows.length === 1 ? '' : 's'}</span>
@@ -85,16 +86,18 @@ export default async function MadeInLabPage() {
 
 function EmptyState() {
   return (
-    <div className="rounded-xl border border-dashed border-sand-200 bg-sand-100/40 p-10 text-center dark:border-sand-800 dark:bg-sand-900/40">
-      <Flask size={40} weight="regular" className="mx-auto text-sand-600 dark:text-sand-400" />
-      <h2 className="mt-4 text-lg font-bold text-sand-900 dark:text-sand-50">Nothing saved yet</h2>
-      <p className="mt-1 text-sm text-sand-600 dark:text-sand-400">
+    <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
+      <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-card border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
+        <Flask size={22} />
+      </div>
+      <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Nothing saved yet</h2>
+      <p className="mx-auto mt-1.5 max-w-md text-balance text-sm leading-relaxed text-sand-600 dark:text-sand-400">
         Experiment in a lab tool, save what you like. This page becomes your collection.
       </p>
       <div className="mt-5">
         <Link
           href="/lab"
-          className={buttonClasses({ variant: 'primary', size: 'sm' })}
+          className={buttonClasses({ variant: 'primary', size: 'md' })}
         >
           Open LAB
         </Link>

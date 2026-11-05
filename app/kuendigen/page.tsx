@@ -3,7 +3,8 @@
 import { Suspense, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { CheckCircle, WarningCircle } from '@phosphor-icons/react'
+import { CircleCheck } from '@/app/_icons/icons/circle-check'
+import { CircleAlert } from '@/app/_icons/icons/circle-alert'
 import { CONTACT_EMAIL } from '../lib/config'
 import { SiteFooter } from '../components/SiteFooter'
 import { HeaderSocials } from '../components/HeaderSocials'
@@ -28,7 +29,7 @@ const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY
 type Status = 'idle' | 'submitting'
 
 const inputCls =
-  'w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-sm text-sand-900 placeholder:text-sand-400 focus:border-olive-500 focus:outline-none dark:border-sand-800 dark:bg-sand-900 dark:text-sand-50'
+  'w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-sm text-sand-900 placeholder:text-sand-400 focus:border-sand-500 focus:outline-none dark:border-sand-800 dark:bg-sand-900 dark:text-sand-50'
 const labelCls = 'block text-sm font-semibold text-sand-900 dark:text-sand-50'
 const helpCls = 'mt-1 text-xs text-sand-600 dark:text-sand-500'
 
@@ -108,7 +109,7 @@ function KuendigenForm() {
     <div className="min-h-full bg-sand-50 dark:bg-sand-950">
       <header className="sticky top-0 z-50 hidden h-14 grid-cols-[1fr_auto_1fr] items-center gap-4 border-b border-sand-200 dark:border-sand-800 bg-sand-50 dark:bg-sand-950 px-6 md:grid">
         <div />
-        <Link href="/kuendigen" className="text-sm font-semibold text-olive-600 dark:text-olive-500 transition-colors hover:text-olive-800 dark:hover:text-olive-400">
+        <Link href="/kuendigen" className="text-sm font-semibold text-accent underline-offset-4 transition-colors hover:underline">
           /Kündigen
         </Link>
         <div className="flex items-center justify-end">
@@ -118,7 +119,7 @@ function KuendigenForm() {
 
       <main className="relative mx-auto max-w-2xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
         <p className="mb-6 text-sm font-semibold md:hidden">
-          <span className="text-olive-600 dark:text-olive-500">/Kündigen</span>
+          <span className="text-accent">/Kündigen</span>
         </p>
 
         <h1 className="text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">Verträge kündigen</h1>
@@ -126,7 +127,7 @@ function KuendigenForm() {
           Kündige hier deine AI Canvas Premium-Mitgliedschaft. Kein Login nötig.{' '}
           <span className="text-sand-600 dark:text-sand-500">
             Cancel your AI Canvas Premium subscription here. No login required. You can also{' '}
-            <Link href="/account/settings" className="text-olive-600 dark:text-olive-400 hover:underline">
+            <Link href="/account/settings" className="text-accent underline underline-offset-2">
               sign in
             </Link>{' '}
             and cancel from your account.
@@ -135,8 +136,8 @@ function KuendigenForm() {
 
         {/* Post-confirm banners (from the email link) */}
         {state === 'confirmed' && (
-          <div className="mt-6 flex items-start gap-2 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4">
-            <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+          <div className="mt-6 flex items-start gap-2 rounded-lg border border-success/30 bg-success/10 p-4">
+            <CircleCheck size={18} className="mt-0.5 shrink-0 text-success" />
             <p className="text-sm text-sand-700 dark:text-sand-200">
               Deine Kündigung ist bestätigt. Du behältst Premium bis zum Ende deines Abrechnungszeitraums. /
               Your cancellation is confirmed. You keep Premium until the end of your billing period.
@@ -144,8 +145,8 @@ function KuendigenForm() {
           </div>
         )}
         {state === 'already' && (
-          <div className="mt-6 flex items-start gap-2 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4">
-            <CheckCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
+          <div className="mt-6 flex items-start gap-2 rounded-lg border border-success/30 bg-success/10 p-4">
+            <CircleCheck size={18} className="mt-0.5 shrink-0 text-success" />
             <p className="text-sm text-sand-700 dark:text-sand-200">
               Dein Abo ist bereits zur Kündigung vorgemerkt und endet zum Ende deines Abrechnungszeitraums. Du musst
               nichts weiter tun. / Your subscription is already scheduled to cancel and ends at the end of your
@@ -155,7 +156,7 @@ function KuendigenForm() {
         )}
         {state === 'invalid' && (
           <div className="mt-6 flex items-start gap-2 rounded-lg border border-sand-300 dark:border-sand-700 bg-sand-100 dark:bg-sand-900 p-4">
-            <WarningCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
+            <CircleAlert size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
             <p className="text-sm text-sand-700 dark:text-sand-300">
               Dieser Bestätigungslink ist ungültig oder abgelaufen. Bitte sende das Formular erneut. /
               This confirmation link is invalid or expired. Please submit the form again below.
@@ -164,10 +165,10 @@ function KuendigenForm() {
         )}
         {state === 'error' && (
           <div className="mt-6 flex items-start gap-2 rounded-lg border border-sand-300 dark:border-sand-700 bg-sand-100 dark:bg-sand-900 p-4">
-            <WarningCircle weight="regular" size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
+            <CircleAlert size={18} className="mt-0.5 shrink-0 text-sand-600 dark:text-sand-400" />
             <p className="text-sm text-sand-700 dark:text-sand-300">
               Wir konnten die Kündigung gerade nicht abschließen. Bitte schreib uns an{' '}
-              <a href={`mailto:${CONTACT_EMAIL}`} className="text-olive-600 dark:text-olive-400 hover:underline">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="text-accent underline underline-offset-2">
                 {CONTACT_EMAIL}
               </a>
               . / We couldn&apos;t complete the cancellation just now. Please email us.
@@ -177,7 +178,7 @@ function KuendigenForm() {
 
         {state === 'submitted' ? (
           <div className="mt-8 rounded-2xl border border-sand-200 dark:border-sand-800 bg-sand-100 dark:bg-sand-900 p-6">
-            <CheckCircle weight="regular" size={24} className="text-olive-600 dark:text-olive-400" />
+            <CircleCheck size={24} className="text-success" />
             <h2 className="mt-3 text-lg font-bold text-sand-900 dark:text-sand-50">Anfrage erhalten / Request received</h2>
             <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
               Falls für diese Adresse ein aktives Premium-Abo besteht, haben wir dir eine E-Mail mit einem
@@ -203,7 +204,7 @@ function KuendigenForm() {
                     name="kind"
                     checked={kind === 'ordentlich'}
                     onChange={() => setKind('ordentlich')}
-                    className="accent-olive-500"
+                    className="accent-accent"
                   />
                   Ordentlich / Ordinary
                 </label>
@@ -213,7 +214,7 @@ function KuendigenForm() {
                     name="kind"
                     checked={kind === 'ausserordentlich'}
                     onChange={() => setKind('ausserordentlich')}
-                    className="accent-olive-500"
+                    className="accent-accent"
                   />
                   Außerordentlich / Extraordinary
                 </label>
@@ -321,7 +322,7 @@ function KuendigenForm() {
 
             {error && (
               <p className="flex items-start gap-2 text-sm text-red-700 dark:text-red-400">
-                <WarningCircle weight="regular" size={16} className="mt-0.5 shrink-0" />
+                <CircleAlert size={16} className="mt-0.5 shrink-0" />
                 {error}
               </p>
             )}

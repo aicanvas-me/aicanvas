@@ -6,14 +6,14 @@ export const prompts: Partial<Record<Platform, string>> = {
 ## Requirements
 
 ### Setup
-- Use Next.js 16 with TypeScript
+- Use React with TypeScript (any React app)
 - Verify Tailwind CSS v4 is installed (configured via @theme inline in globals.css)
-- Install: framer-motion, next/font
+- Install: framer-motion
 - The component should be a client-side React component ('use client')
 
 ### Typography & Text
 - Display the text: "WHAT ?!"
-- Use Science Gothic font from next/font/google with subsets: ['latin']
+- Use the Science Gothic font from Google Fonts: render <style>{"@import url('https://fonts.googleapis.com/css2?family=Science+Gothic:wdth,wght@50..200,100..900&display=swap');"}</style> as the first child of the root and set font-family: 'Science Gothic', sans-serif on the root and on each letter. This works in any React app (Next.js, Vite or anything else)
 - Font size: clamp(5rem, 12vw, 9rem) to be responsive across all screen sizes
 - Line height: 1
 - Base letter spacing: 0.15em
@@ -143,7 +143,7 @@ Create this as a fully functional, copy-paste-ready component that showcases var
 
 ### Setup
 - Ensure TypeScript, React, Tailwind CSS v4, and framer-motion are available
-- Font: Science Gothic from next/font/google
+- Font: Science Gothic from Google Fonts (a style element with an @import of the Google Fonts stylesheet inside the root, no framework font loader)
 - Text: "WHAT ?!"
 
 ### Theme Support (Dark & Light)
@@ -218,7 +218,7 @@ Build a fully functional, production-ready component that showcases smooth curso
 
 ### Setup
 - TypeScript, React, Tailwind CSS v4, framer-motion
-- Font: Science Gothic from next/font/google
+- Font: Science Gothic from Google Fonts (a style element with an @import of the Google Fonts stylesheet inside the root, no framework font loader)
 - Display text: "WHAT ?!"
 
 ### Theme (Dark & Light)

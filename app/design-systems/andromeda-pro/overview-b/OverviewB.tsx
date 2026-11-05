@@ -1,5 +1,5 @@
 // Overview variant B: state the deal, make it exact in a ledger, then prove it.
-// Site chrome throughout (sand, olive, Manrope). The only surfaces drawn in
+// Site chrome throughout (sand, accent, Manrope). The only surfaces drawn in
 // Andromeda's own tokens are the compare stage, the foundation wells and the
 // Brain preview.
 'use client'
@@ -9,7 +9,6 @@ import Link from 'next/link'
 import { ArrowRight, Brain, ChatText, Check, Minus, TerminalWindow, type Icon } from '@phosphor-icons/react'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
-import { SiteFooter } from '../../../components/SiteFooter'
 import { SystemTierChip } from '../../../_components/SystemTierChip'
 import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { AndromedaComponentCard } from '../system/AndromedaComponentCard'
@@ -25,12 +24,13 @@ import {
   type OverviewStats,
   type OverviewTemplate,
 } from './overview-data'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // Medium buttons are 40px tall with 14px text and 16px side padding.
 const BTN_PRIMARY = `${buttonClasses({ variant: 'primary', size: 'md' })} h-10`
 const BTN_SECONDARY = `${buttonClasses({ variant: 'outline', size: 'md' })} h-10`
 
-const PANEL = 'rounded-2xl border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
+const PANEL = 'rounded-section border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900'
 const PANEL_SHADOW =
   'shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_32px_rgba(0,0,0,0.10)] dark:shadow-[0_1px_2px_rgba(0,0,0,0.40),0_12px_32px_rgba(0,0,0,0.55)]'
 
@@ -67,8 +67,8 @@ const LEDGER_ROWS: { label: string; free: boolean }[] = [
 const BRAIN_POINTS: { icon: Icon; title: string; line: string }[] = [
   {
     icon: Brain,
-    title: 'Foundations and rules',
-    line: 'Color, type, spacing and motion, written as rules an agent follows.',
+    title: 'The whole system, written down',
+    line: 'Color, type, spacing and motion as decisions your agent carries into anything new.',
   },
   {
     icon: ChatText,
@@ -110,11 +110,11 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
   return (
     <Link
       href={`/design-systems/andromeda-pro/templates/${t.folder}`}
-      className={`group flex flex-col rounded-2xl border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
+      className={`group flex flex-col rounded-section border border-sand-200 bg-sand-100 p-3 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 ${
         lead ? 'lg:col-span-2' : ''
       }`}
     >
-      <div className={`relative overflow-hidden rounded-xl bg-sand-900 ${lead ? 'aspect-video' : 'aspect-[16/10]'}`}>
+      <div className={`relative overflow-hidden rounded-inset bg-sand-900 ${lead ? 'aspect-video' : 'aspect-[16/10]'}`}>
         {t.image || t.imageLight ? (
           // The poster follows the SITE theme: the light shot on a light page,
           // the dark shot on a dark one. Two images and the `dark:` variant, so
@@ -160,19 +160,19 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
         )}
         <span
           aria-hidden
-          className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-sand-950/10 dark:ring-sand-50/10"
+          className="pointer-events-none absolute inset-0 rounded-inset ring-1 ring-inset ring-sand-950/10 dark:ring-sand-50/10"
         />
       </div>
       <div className="flex flex-1 flex-col px-2 pb-2 pt-4">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-md bg-sand-200 px-2 py-0.5 text-xs font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
+          <span className="rounded-full bg-sand-200 px-2 py-0.5 text-xs font-semibold text-sand-700 dark:bg-sand-800 dark:text-sand-300">
             Premium template
           </span>
           {t.category ? <span className="text-xs text-sand-600 dark:text-sand-400">{t.category}</span> : null}
         </div>
         <h3 className="mt-3 text-base font-bold text-sand-900 dark:text-sand-50">{t.name}</h3>
         <p className="mt-1 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{t.blurb}</p>
-        <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-olive-600 transition-colors group-hover:text-olive-800 dark:text-olive-400 dark:group-hover:text-olive-300">
+        <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-accent transition-colors group-hover:text-accent">
           View template
           <ArrowRight
             weight="regular"
@@ -188,7 +188,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
 function LedgerMark({ included, column }: { included: boolean; column: string }) {
   return included ? (
     <>
-      <Check weight="regular" aria-hidden className="size-5 text-olive-600 dark:text-olive-400" />
+      <Check weight="regular" aria-hidden className="size-5 text-accent" />
       <span className="sr-only">{column}: Included</span>
     </>
   ) : (
@@ -225,11 +225,11 @@ export function OverviewB({
     <main className={`w-full ${PAGE_TOP}`}>
       {/* ── 1. Hero ─────────────────────────────────────────── */}
       <PageFrame>
+        <PageCrumbs />
         <section aria-labelledby="ovb-hero" className="max-w-3xl">
-          <PageOverline>Design system</PageOverline>
           {/* Same hero row as Legacy: the chip sits beside the h1, not inside
               it, so the heading stays the system's name alone. */}
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <PageTitle id="ovb-hero" gap="none">
               Andromeda Pro
             </PageTitle>
@@ -285,7 +285,7 @@ export function OverviewB({
                   column 3, so the eye lands there without any colour. */}
               <div
                 aria-hidden
-                className="rounded-xl border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950"
+                className="rounded-inset border border-sand-200 bg-sand-50 dark:border-sand-800 dark:bg-sand-950"
                 style={{ gridColumn: 3, gridRow: '1 / -1' }}
               />
               <div style={{ gridColumn: 1, gridRow: 1 }} className="relative" />
@@ -421,12 +421,12 @@ export function OverviewB({
                 id="ovb-brain"
                 className="mt-2 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50"
               >
-                Your agent reads the rules first.
+                Your agent gets the whole system.
               </h2>
               <p className="mt-3 text-base leading-relaxed text-sand-700 dark:text-sand-300">
                 The AI Brain holds the foundations, component rules and skills an AI agent reads before it
-                writes a line. Every component also carries its own remix prompt, so what your agent builds
-                stays on the system.
+                writes a line, so new screens and components of your own fit the system. Change the tokens and
+                it builds with yours. Every component also carries its own remix prompt.
               </p>
               <ul className="mt-6 flex flex-col gap-4">
                 {BRAIN_POINTS.map(({ icon: PointIcon, title, line }) => (
@@ -434,7 +434,7 @@ export function OverviewB({
                     <PointIcon
                       weight="regular"
                       aria-hidden
-                      className="mt-0.5 size-5 shrink-0 text-olive-600 dark:text-olive-400"
+                      className="mt-0.5 size-5 shrink-0 text-accent"
                     />
                     <div>
                       <p className="text-base font-semibold text-sand-900 dark:text-sand-50">{title}</p>
@@ -453,7 +453,7 @@ export function OverviewB({
                 </Link>
               </div>
             </div>
-            <div className="relative h-60 overflow-hidden rounded-xl sm:h-72 lg:h-auto lg:min-h-[360px]">
+            <div className="relative h-60 overflow-hidden rounded-inset sm:h-72 lg:h-auto lg:min-h-[360px]">
               <BrainWireframe />
             </div>
           </div>
@@ -481,10 +481,10 @@ export function OverviewB({
       <PageFrame className="mt-20">
         <section
           aria-labelledby="ovb-price"
-          className="relative overflow-hidden rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10"
+          className="relative overflow-hidden rounded-section border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10"
         >
           <div aria-hidden className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
+            <div className="h-40 w-64 rounded-full bg-accent/10 blur-3xl" />
           </div>
           <h2
             id="ovb-price"
@@ -506,17 +506,12 @@ export function OverviewB({
             Andromeda Legacy, {legacyComponents} components under the MIT license, stays live and supported.{' '}
             <Link
               href="/design-systems/andromeda"
-              className="font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+              className="font-semibold text-accent transition-colors hover:text-accent/70"
             >
               Visit Andromeda Legacy
             </Link>
           </p>
         </section>
-      </PageFrame>
-
-      {/* ── 9. Footer ──────────────────────────────────────────────────── */}
-      <PageFrame className="mt-16 pb-10">
-        <SiteFooter />
       </PageFrame>
     </main>
   )

@@ -2,7 +2,8 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { CaretUpDown, SignIn } from '@phosphor-icons/react'
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down'
+import { LogIn } from '@/app/_icons/icons/log-in'
 import { useSession } from './SessionProvider'
 import { useAuthModal } from './AuthModalProvider'
 import { createClient } from '../../lib/supabase/client'
@@ -36,7 +37,7 @@ export function TopAuthPill() {
   if (!user) {
     return (
       <Button variant="outline" size="xs" onClick={() => openAuthModal()}>
-        <SignIn size={13} weight="regular" />
+        <LogIn size={13} />
         Sign in
       </Button>
     )
@@ -62,17 +63,16 @@ export function TopAuthPill() {
           onClick={() => setOpen((v) => !v)}
           aria-label={`Account menu for ${email}`}
           aria-expanded={open}
-          className="group flex cursor-pointer items-center gap-1 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40"
+          className="group flex cursor-pointer items-center gap-1 rounded-control focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-7 w-7 text-xs" />
-          <CaretUpDown
+          <ChevronsUpDown
             size={12}
-            weight="regular"
             className="text-sand-500 transition-colors group-hover:text-sand-700 dark:text-sand-400 dark:group-hover:text-sand-200"
           />
         </button>
         {open && (
-          <div className="absolute right-0 top-full mt-1 w-48 overflow-hidden rounded-lg border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
+          <div className="absolute right-0 top-full mt-1 w-48 overflow-hidden rounded-section border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
             <div className="border-b border-sand-200 px-3 py-2 text-xs text-sand-600 dark:border-sand-800 dark:text-sand-400">
               <span className="block truncate">{email}</span>
             </div>

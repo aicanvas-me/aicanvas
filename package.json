@@ -6,12 +6,13 @@
   "scripts": {
     "prepare": "git config core.hooksPath .githooks || true",
     "predev": "node scripts/check-deps.mjs",
-    "dev": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs --dev && next dev -p 3001 --turbopack",
-    "dev:webpack": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs --dev && next dev -p 3001 --webpack",
-    "build": "node scripts/inject-premium.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs && NODE_OPTIONS=--max-old-space-size=4096 next build",
+    "dev": "node scripts/inject-premium.mjs && node scripts/icons-data.mjs && node scripts/site-icons.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs --dev && node scripts/icon-registry.mjs && next dev -p 3001 --turbopack",
+    "dev:webpack": "node scripts/inject-premium.mjs && node scripts/site-icons.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs --dev && node scripts/icon-registry.mjs && next dev -p 3001 --webpack",
+    "build": "node scripts/inject-premium.mjs && node scripts/icons-data.mjs && node scripts/site-icons.mjs && node scripts/generate-component-codes.mjs && node scripts/generate-registry.mjs && node scripts/icon-registry.mjs && NODE_OPTIONS=--max-old-space-size=4096 next build",
     "start": "next start",
     "publish-premium": "node scripts/publish-premium.mjs",
     "lint": "eslint",
+    "pretest": "node scripts/site-icons.mjs",
     "test": "vitest run",
     "test:watch": "vitest",
     "screenshot": "node scripts/screenshot.mjs",
@@ -29,6 +30,7 @@
   },
   "dependencies": {
     "@carbon/icons-react": "^11.78.0",
+    "@modelcontextprotocol/sdk": "~1.29.0",
     "@paddle/paddle-js": "^1.6.4",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-slot": "^1.2.4",
@@ -58,7 +60,8 @@
     "server-only": "^0.0.1",
     "shiki": "^4.0.2",
     "tailwind-merge": "^3.5.0",
-    "three": "^0.183.2"
+    "three": "^0.183.2",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -75,6 +78,7 @@
     "jiti": "^2.6.1",
     "jsdom": "^29.1.1",
     "playwright": "^1.59.1",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^3.2.6"

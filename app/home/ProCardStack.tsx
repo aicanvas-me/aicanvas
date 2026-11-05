@@ -13,8 +13,11 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion'
-import { CircleHalf, HandTap, SquaresFour, Swatches } from '@phosphor-icons/react'
-import type { Icon } from '@phosphor-icons/react'
+import { CircleHalf } from '@/app/_icons/icons/circle-half'
+import { HandTap } from '@/app/_icons/icons/hand-tap'
+import { Grid2x2 } from '@/app/_icons/icons/grid-2x2'
+import { Swatches } from '@/app/_icons/icons/swatches'
+import { type SiteIcon as Icon } from '@/app/_icons'
 
 const LAND_MS = 450
 const TURN_MS = 3200
@@ -27,7 +30,7 @@ type Fact = { icon: Icon; label: string; value: string; count: number; line: str
 
 function facts(states: number, variants: number, components: number, templates: number): Fact[] {
   return [
-    { icon: SquaresFour, label: 'Components', value: `${components} components`, count: components, line: `Plus ${templates} full templates`, glyph: 'grid' },
+    { icon: Grid2x2, label: 'Components', value: `${components} components`, count: components, line: `Plus ${templates} full templates`, glyph: 'grid' },
     { icon: Swatches, label: 'Token driven', value: '3 layers', count: 3, line: 'Swap one ramp, every part follows', glyph: 'layers' },
     { icon: CircleHalf, label: 'Dual themes', value: 'Dark + light', count: 2, line: 'Every component, both themes', glyph: 'themes' },
     { icon: HandTap, label: 'Premium interactions', value: `${variants} variants`, count: variants, line: `${states} interaction states designed`, glyph: 'ruler' },
@@ -99,7 +102,7 @@ function FactGlyph({ glyph, count, on, still }: { glyph: Glyph; count: number; o
         ].map(([skin, name], i) => (
           <motion.span
             key={name}
-            className={`flex h-9 flex-1 items-center justify-between rounded-md px-3 ring-1 ring-inset ring-sand-300 dark:ring-sand-700 ${skin}`}
+            className={`flex h-9 flex-1 items-center justify-between rounded-control px-3 ring-1 ring-inset ring-sand-300 dark:ring-sand-700 ${skin}`}
             initial={still ? false : { opacity: 0, x: -12 }}
             animate={show ? { opacity: 1, x: 0 } : { opacity: 0, x: -12 }}
             transition={show ? t(0.1 + i * 0.14, 0.4) : { duration: 0 }}
@@ -137,7 +140,7 @@ function CardBody({ fact, index, on, still }: { fact: Fact; index: number; on: b
     <div className="relative">
       <div className="flex items-center justify-between gap-3">
         <span className={`${MONO} ${MUTED}`}>{`${pad(index + 1)} · ${fact.label}`}</span>
-        <FactIcon weight="regular" aria-hidden className={`size-4 ${MUTED}`} />
+        <FactIcon aria-hidden className={`size-4 ${MUTED}`} />
       </div>
       <p className={`mt-3 text-2xl font-bold tracking-tight ${INK}`}>{fact.value}</p>
       <p className={`mt-1 text-[13px] ${MUTED}`}>{fact.line}</p>
@@ -151,7 +154,7 @@ function CardBody({ fact, index, on, still }: { fact: Fact; index: number; on: b
 }
 
 const CARD =
-  'overflow-hidden rounded-xl border border-sand-200 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900'
+  'overflow-hidden rounded-inset border border-sand-200 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900'
 
 export function ProCardStack({
   states,

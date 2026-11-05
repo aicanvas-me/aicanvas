@@ -9,14 +9,14 @@ Create a circular typography component where a looping phrase rotates continuous
 ## Requirements
 
 ### Setup
-- Use Next.js 16 with TypeScript
+- Use React with TypeScript (any React app)
 - Verify Tailwind CSS v4 is installed (configured via @theme inline in globals.css)
-- Install: react, next/font
+- Install: react
 - The component should be a client-side React component ('use client')
 
 ### Typography & Text
 - Text content: "KEEP MOVING • KEEP MOVING • " repeated twice to fill the circle (FULL_TEXT = BASE_TEXT + BASE_TEXT)
-- Use Anton font from next/font/google with subsets: ['latin'], weight: '400'
+- Use the Anton font (400) from Google Fonts: render <style>{"@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');"}</style> as the first child of the root and set font-family: 'Anton', sans-serif on the ring. This works in any React app (Next.js, Vite or anything else)
 - Font size: size * 0.076 (proportional to container, calibrated for Anton's character widths at 56 chars)
 - Each letter is an inline-block span with userSelect: none
 
@@ -96,8 +96,8 @@ Build a fully functional copy-paste-ready component that showcases a circular ro
   V0: `Create a circular typography component where letters arranged around a rotating wheel respond to cursor proximity.
 
 ## Setup
-- TypeScript, React, Tailwind CSS v4, next/font
-- Font: Anton from next/font/google (weight: '400')
+- TypeScript, React, Tailwind CSS v4
+- Font: Anton 400 from Google Fonts (a style element with an @import of the Google Fonts stylesheet inside the root, no framework font loader)
 - Text: "KEEP MOVING • KEEP MOVING • " repeated twice around the full circle
 
 ## Theme
@@ -141,8 +141,8 @@ Build a smooth copy-paste-ready circular typography component.`,
   Lovable: `Create a circular typography component where a looping phrase rotates continuously around a wheel, with letters responding to cursor proximity.
 
 ## Setup
-- TypeScript, React, Tailwind CSS v4, next/font
-- Font: Anton from next/font/google (weight: '400')
+- TypeScript, React, Tailwind CSS v4
+- Font: Anton 400 from Google Fonts (a style element with an @import of the Google Fonts stylesheet inside the root, no framework font loader)
 - Text: "KEEP MOVING • KEEP MOVING • " repeated twice (FULL_TEXT = BASE_TEXT + BASE_TEXT)
 
 ## Theme

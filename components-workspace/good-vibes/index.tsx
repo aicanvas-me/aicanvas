@@ -1,14 +1,15 @@
 'use client'
 
-// npm install framer-motion next
+// npm install framer-motion
 // font: Science Gothic
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Science_Gothic } from 'next/font/google'
 
-// Needs a variable font: a static font snaps between its few weights.
-const scienceGothic = Science_Gothic({ subsets: ['latin'] })
+// Science Gothic from Google Fonts, loaded by the stylesheet import inside the
+// root, so the component runs in any React app (Next.js, Vite, anything else).
+const FONT_FAMILY = "'Science Gothic', sans-serif"
+const FONT_URL = 'https://fonts.googleapis.com/css2?family=Science+Gothic:wght@100..900&display=swap'
 
 function useTheme(ref: React.RefObject<HTMLElement | null>) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
@@ -208,14 +209,15 @@ export default function GoodVibes() {
   return (
     <div
       ref={containerRef}
-      className={`flex min-h-screen w-full flex-col items-center justify-center gap-8 px-6 sm:px-10 ${scienceGothic.className}`}
-      style={{ backgroundColor: bgColor }}
+      className={`flex min-h-screen w-full flex-col items-center justify-center gap-8 px-6 sm:px-10`}
+      style={{ backgroundColor: bgColor, fontFamily: FONT_FAMILY }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <style>{`@import url('${FONT_URL}');`}</style>
       <div className="flex flex-nowrap items-center justify-center gap-1 sm:gap-4">
         {TEXT.split('').map((letter, i) => (
           <LetterSpan
@@ -225,7 +227,7 @@ export default function GoodVibes() {
               if (el) lettersRef.current[i] = el
             }}
             textColor={textColor}
-            fontFamily={scienceGothic.style.fontFamily}
+            fontFamily={FONT_FAMILY}
           />
         ))}
       </div>

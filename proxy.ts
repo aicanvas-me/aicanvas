@@ -23,9 +23,23 @@ import type { NextFetchEvent, NextRequest } from 'next/server'
 import { updateSession } from './app/lib/supabase/proxy'
 import { phCapture, posthogConfigured } from './app/lib/analytics-server'
 import { FRAME_HEADER, isFramePayload } from './app/lib/frame'
+import { ACCOUNT_PATH_HEADER } from './app/lib/account-path'
+
+const MCP_OAUTH_PATHS = new Set(['/authorize', '/token', '/register', '/revoke'])
 
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl
+
+  // mcp.aicanvas.me is the hosted MCP, its sign-in endpoints and their discovery
+  // documents, nothing else. A page someone opens there goes to the site; anything else
+  // (a POST that missed) is a 404, never replayed across hosts.
+  if (request.nextUrl.hostname === 'mcp.aicanvas.me') {
+    if (pathname === '/') return NextResponse.rewrite(new URL('/api/mcp', request.url))
+    if (MCP_OAUTH_PATHS.has(pathname)) return NextResponse.rewrite(new URL(`/api/mcp/oauth${pathname}${request.nextUrl.search}`, request.url))
+    if (pathname.startsWith('/api/mcp') || pathname.startsWith('/.well-known/')) return NextResponse.next()
+    if (request.method !== 'GET' && request.method !== 'HEAD') return new NextResponse(null, { status: 404 })
+    return NextResponse.redirect(new URL(`${pathname}${request.nextUrl.search}`, 'https://aicanvas.me'), 307)
+  }
 
   // Case-sensitive redirect: /MCP → /mcp. Next's redirects() matcher is
   // case-insensitive, so it would loop on lowercase /mcp.
@@ -51,6 +65,12 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.next()
   }
 
+  // The hosted MCP authenticates every request by its own header and never
+  // reads a cookie, so it skips the Supabase refresh hop too.
+  if (pathname.startsWith('/api/mcp') || pathname.startsWith('/.well-known/')) {
+    return NextResponse.next()
+  }
+
   try {
     if (posthogConfigured && isPageview(request)) {
       event.waitUntil(logPageview(request))
@@ -64,6 +84,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   if (isFramePayload(request.nextUrl)) {
     request.headers.set(FRAME_HEADER, '1')
   }
+  request.headers.delete(ACCOUNT_PATH_HEADER)
+  if (pathname.startsWith('/account/')) request.headers.set(ACCOUNT_PATH_HEADER, pathname)
 
   return await updateSession(request)
 }
@@ -123,6 +145,9 @@ async function logPageview(request: NextRequest): Promise<void> {
     $referrer: referrer.split('?')[0],
     $referring_domain: referringDomain,
     nav: 'load',
+    // One allowlisted tag survives: links the MCP hands an agent carry ?ref=mcp, so the
+    // pricing visits it drives can be counted. A fixed value, never the query itself.
+    ...(request.nextUrl.searchParams.get('ref') === 'mcp' ? { source: 'mcp' } : {}),
     country: request.headers.get('x-vercel-ip-country') ?? undefined,
     region: request.headers.get('x-vercel-ip-country-region') ?? undefined,
   })

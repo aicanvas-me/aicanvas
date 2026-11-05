@@ -2,24 +2,42 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { CheckCircle } from '@phosphor-icons/react'
+import { CircleCheck } from '@/app/_icons/icons/circle-check'
+import { Mail } from '@/app/_icons/icons/mail'
 import { Button } from '../components/Button'
-import { SiteFooter } from '../components/SiteFooter'
+import { CARD, EYEBROW, PageHero, PageShell } from '../components/PageKit'
 
 // ─── /contact ─────────────────────────────────────────────────────────────────
 // The public contact form. Posts {name, email, message} to /api/contact, which
 // sends a branded email from contact@aicanvas.me to the project inbox with
 // reply_to set to the visitor. Replaces the old mailto: links in the nav.
 //
-// Layout: the page is a flex column so the footer is pushed to the bottom when
-// the content is short (e.g. the success state). The footer lives INSIDE <main>
-// so it shares the same max-width + horizontal padding as the content and their
-// left/right edges line up (matching /privacy and /terms).
+// Layout: the shared page shell (homepage column, footer, wordmark) with the
+// hero centred over one form card. A client page because of the form state;
+// the shell and hero render the same here as on the server pages. Kept in step
+// with /feedback, so the two forms read as siblings.
 
+// Inputs sit one step lighter than the card in light and one step darker in
+// dark, so a field reads as a well in the surface in both themes. The focus
+// border is the accent, which stays dark enough on sand-50 to mark focus on
+// its own.
 const INPUT_CLASS =
-  'w-full rounded-lg border border-sand-300 bg-sand-50 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 md:text-sm'
-const LABEL_CLASS =
-  'mb-1 block text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400'
+  'block w-full rounded-control border border-sand-300 bg-sand-50 px-4 py-2.5 text-base text-sand-900 outline-none transition-[border-color,box-shadow] placeholder:text-sand-600 hover:border-sand-400 focus:border-accent focus:ring-4 focus:ring-accent/15 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-700 dark:focus:ring-accent/20 md:text-sm'
+const LABEL_CLASS = `mb-2 block ${EYEBROW}`
+// The form card: the v3 surface, centred under the hero, rising in on the
+// hero's stagger so the page arrives as one sequence.
+const CARD_CLASS = `aic-hero-rise relative mx-auto mt-12 w-full max-w-2xl overflow-hidden sm:mt-14 ${CARD}`
+
+// A thin accent light on the card's top edge, the same mark the "Still have a
+// question?" card carries on the pages that link here.
+function CardLight() {
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-x-0 top-0 mx-auto h-px w-40 bg-gradient-to-r from-transparent via-accent to-transparent"
+    />
+  )
+}
 
 export default function ContactPage() {
   const [name, setName] = useState('')
@@ -55,61 +73,72 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="flex min-h-full flex-col bg-sand-50 dark:bg-sand-950">
-      <main className="relative mx-auto flex w-full max-w-4xl flex-1 flex-col px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
-        <div className="flex-1">
-          <p className="mb-6 text-sm font-semibold md:hidden">
-            <span className="text-olive-600 dark:text-olive-500">/Contact</span>
-          </p>
-
-          <h1 className="text-center text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
-            Contact
-          </h1>
-          <p className="mx-auto mt-3 max-w-xl text-center text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+    <PageShell>
+      <PageHero
+        pill="Get in touch"
+        pillIcon={<Mail size={12} className="text-accent" aria-hidden />}
+        title="Contact"
+        size="md"
+        sub={
+          // Balanced, so the centred lines break evenly instead of leaving
+          // a short last line under the column.
+          <span className="block text-balance">
             Have a question, spotted a bug, or want a component built? Send a
             message and it lands straight in our inbox. We read every one and
             reply by email, usually within a day or two.
-          </p>
+          </span>
+        }
+      />
 
-          {sent ? (
-            <div className="mx-auto mt-8 w-full max-w-xl rounded-2xl border border-olive-500/30 bg-olive-500/10 p-6">
-              <div className="flex items-start gap-3">
-                <CheckCircle weight="regular" size={22} className="mt-0.5 shrink-0 text-olive-600 dark:text-olive-400" />
-                <div>
-                  <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">Message sent</h2>
-                  <p className="mt-1 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
-                    Thanks, {name || 'there'}. Your message is on its way and we&apos;ll
-                    reply to <strong className="text-sand-900 dark:text-sand-100">{email}</strong>. No
-                    account or follow-up needed on your end.
-                  </p>
-                </div>
-              </div>
+      <div className="pb-12 sm:pb-20">
+        {sent ? (
+          <div
+            className={`${CARD_CLASS} px-6 py-12 text-center sm:px-12 sm:py-14`}
+            style={{ animationDelay: '0.05s' }}
+          >
+            <CardLight />
+            <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full border border-success/30 bg-success/10">
+              <CircleCheck size={24} className="text-success" />
+            </span>
+            <h2 className="mt-5 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Message sent</h2>
+            <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-sand-700 dark:text-sand-300">
+              Thanks, {name || 'there'}. Your message is on its way and we&apos;ll
+              reply to <strong className="font-semibold text-sand-900 dark:text-sand-50">{email}</strong>. No
+              account or follow-up needed on your end.
+            </p>
+          </div>
+        ) : (
+          <form
+            onSubmit={handleSubmit}
+            className={`${CARD_CLASS} space-y-6 p-6 sm:p-10`}
+            style={{ animationDelay: '0.42s' }}
+          >
+            <CardLight />
+
+            {/* Honeypot: off-screen, hidden from humans and assistive tech. */}
+            <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden">
+              <label htmlFor="website">Website</label>
+              <input
+                id="website"
+                name="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+              />
             </div>
-          ) : (
-            <form
-              onSubmit={handleSubmit}
-              className="mx-auto mt-8 w-full max-w-xl space-y-4 rounded-2xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900 sm:p-8"
-            >
-              {/* Honeypot: off-screen, hidden from humans and assistive tech. */}
-              <div aria-hidden="true" className="absolute -left-[9999px] top-0 h-0 w-0 overflow-hidden">
-                <label htmlFor="website">Website</label>
-                <input
-                  id="website"
-                  name="website"
-                  type="text"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  value={website}
-                  onChange={(e) => setWebsite(e.target.value)}
-                />
-              </div>
 
+            {/* Name and email share a row from sm up: two short answers
+                side by side keep the card compact and the message field
+                the clear centre of the form. */}
+            <div className="grid gap-6 sm:grid-cols-2 sm:gap-5">
               <div>
                 {/* All four fields are required. The asterisk is decorative:
                     the required state assistive tech announces comes from each
                     input's `required` attribute. Matches /feedback. */}
                 <label htmlFor="name" className={LABEL_CLASS}>
-                  Name <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
+                  Name <span aria-hidden="true" className="text-accent">*</span>
                 </label>
                 <input
                   id="name"
@@ -127,7 +156,7 @@ export default function ContactPage() {
 
               <div>
                 <label htmlFor="email" className={LABEL_CLASS}>
-                  Email <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
+                  Email <span aria-hidden="true" className="text-accent">*</span>
                 </label>
                 <input
                   id="email"
@@ -141,63 +170,63 @@ export default function ContactPage() {
                   className={INPUT_CLASS}
                 />
               </div>
+            </div>
 
-              <div>
-                <label htmlFor="subject" className={LABEL_CLASS}>
-                  Subject <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
-                </label>
-                <input
-                  id="subject"
-                  type="text"
-                  required
-                  maxLength={200}
-                  placeholder="What's this about?"
-                  value={subject}
-                  onChange={(e) => setSubject(e.target.value)}
-                  className={INPUT_CLASS}
-                />
+            <div>
+              <label htmlFor="subject" className={LABEL_CLASS}>
+                Subject <span aria-hidden="true" className="text-accent">*</span>
+              </label>
+              <input
+                id="subject"
+                type="text"
+                required
+                maxLength={200}
+                placeholder="What's this about?"
+                value={subject}
+                onChange={(e) => setSubject(e.target.value)}
+                className={INPUT_CLASS}
+              />
+            </div>
+
+            <div>
+              <label htmlFor="message" className={LABEL_CLASS}>
+                Message <span aria-hidden="true" className="text-accent">*</span>
+              </label>
+              <textarea
+                id="message"
+                required
+                maxLength={5000}
+                rows={6}
+                placeholder="What's on your mind?"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                className={`${INPUT_CLASS.replace('rounded-control', 'rounded-inset')} min-h-[160px] resize-y leading-relaxed`}
+              />
+            </div>
+
+            {error && (
+              <div className="rounded-inset border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+                {error}
               </div>
+            )}
 
-              <div>
-                <label htmlFor="message" className={LABEL_CLASS}>
-                  Message <span aria-hidden="true" className="text-olive-600 dark:text-olive-400">*</span>
-                </label>
-                <textarea
-                  id="message"
-                  required
-                  maxLength={5000}
-                  rows={6}
-                  placeholder="What's on your mind?"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  className={`${INPUT_CLASS} min-h-[140px] resize-y`}
-                />
-              </div>
-
-              {error && (
-                <div className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
-                  {error}
-                </div>
-              )}
-
-              <Button type="submit" variant="primary" size="md" fullWidth disabled={submitting}>
+            <div className="space-y-4 pt-1">
+              <Button type="submit" variant="primary" size="lg" fullWidth disabled={submitting}>
                 {submitting ? 'Sending…' : 'Send message'}
               </Button>
 
               {/* Matches /feedback. Only true while the route uses the address
                   for reply_to and nothing else: no Brevo call, no list. */}
-              <p className="text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
+              <p className="text-center text-xs leading-relaxed text-sand-600 dark:text-sand-400">
                 We only use your email to reply.{' '}
-                <Link href="/privacy" className="underline underline-offset-2 hover:text-sand-900 dark:hover:text-sand-300">
+                <Link href="/privacy" className="underline underline-offset-2 hover:text-sand-900 dark:hover:text-sand-200">
                   Privacy policy
                 </Link>
               </p>
-            </form>
-          )}
-        </div>
-
-        <SiteFooter />
-      </main>
-    </div>
+            </div>
+          </form>
+        )}
+      </div>
+    </PageShell>
   )
 }

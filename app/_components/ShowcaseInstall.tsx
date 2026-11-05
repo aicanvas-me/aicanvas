@@ -3,8 +3,11 @@
 import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
-import { Check, Copy, Lightning, Terminal } from '@phosphor-icons/react'
-import { useTopBarInstallSlot } from '../components/TopBar'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { Terminal } from '@/app/_icons/icons/terminal'
+import { useTopBarInstallSlot } from '../components/PageCrumbs'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { Button } from '../components/Button'
@@ -27,39 +30,19 @@ interface InstallAction {
   free?: boolean
 }
 
-// Showcase install — the SAME top-bar pattern as the brain reader and the
-// template pages: install button(s) next to the auth pill, each opening a CLI
+// Showcase install — the SAME pattern as the brain reader: install button(s)
+// in the crumb row above the page title (PageCrumbs), each opening a CLI
 // popover (One command / Copy Command / masked tokenized command / contents
-// bullets). Portaled into the top-bar slot on desktop; a floating fallback
-// below md (where the top bar is hidden). Premium-gated: a resolved free/anon
-// tier sees "Unlock with Premium" → /pricing.
-// `phoneFallback={false}` drops the floating copy: Andromeda Pro's content
-// column is its own stacking context (`isolate`), so a fixed control inside it
-// sits under the phone menu bar, unseen but still reachable by Tab.
-export function ShowcaseInstall({
-  installs,
-  phoneFallback = true,
-}: {
-  installs: InstallAction[]
-  phoneFallback?: boolean
-}) {
+// bullets). Portaled into the row's slot, which is drawn at every width.
+// Premium-gated: a resolved free/anon tier sees "Unlock with Premium" →
+// /pricing.
+export function ShowcaseInstall({ installs }: { installs: InstallAction[] }) {
   const slot = useTopBarInstallSlot()
-
-  return (
-    <>
-      {slot && createPortal(<ShowcaseInstallButtons installs={installs} />, slot)}
-      {/* The top bar is hidden below md, so float the install control top-right. */}
-      {phoneFallback && (
-        <div className="fixed right-3 top-3 z-50 md:hidden">
-          <ShowcaseInstallButtons installs={installs} />
-        </div>
-      )}
-    </>
-  )
+  return slot ? createPortal(<ShowcaseInstallButtons installs={installs} />, slot) : null
 }
 
-// Self-contained button group + popover (own state, so the desktop portal and
-// the mobile fallback never share a popover).
+// Self-contained button group + popover (own state, so two copies never share a
+// popover).
 function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   const { open: openPaywall } = usePaywallModal()
   const status = usePremiumStatus()
@@ -138,7 +121,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   if (!canInstall) {
     return (
       <Link href="/pricing" className={buttonClasses({ variant: 'primary', size: 'xs' })}>
-        <Lightning weight="regular" size={13} />
+        <Bolt size={13} />
         Unlock with Premium
       </Link>
     )
@@ -154,44 +137,44 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
           size="xs"
           onClick={() => handleInstall(action.slug)}
         >
-          <Terminal weight="regular" size={13} />
+          <Terminal size={13} />
           {action.label}
         </Button>
       ))}
 
       {active && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-xl border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   {active.label}
                 </span>
-                <span className="rounded-md border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+                <span className="rounded-full border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
                   One command
                 </span>
               </div>
               <Button variant="outline" size="xs" onClick={handleCopy} aria-label="Copy install command">
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-olive-600 dark:text-olive-400" />
+                    <Check size={13} className="text-success" />
                     Copied
                   </>
                 ) : (
                   <>
-                    <Copy weight="regular" size={13} />
+                    <Copy size={13} />
                     Copy Command
                   </>
                 )}
               </Button>
             </div>
-            <div className="rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
+            <div className="rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3">
               <code className="block break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-olive-600 dark:text-olive-400" />
+                  <Check size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

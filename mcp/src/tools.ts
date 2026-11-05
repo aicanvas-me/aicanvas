@@ -1,0 +1,2164 @@
+/**
+ * AI Canvas MCP tools
+ * -------------------
+ * The tools, shared by the npm package (stdio, index.ts) and the hosted
+ * server on aicanvas.me. Everything that differs between the two (where the
+ * registry is, which token goes into install commands, whether to check that
+ * token first, which items the account cannot install) comes in through the
+ * ToolContext; the tools themselves are the same code for both.
+ */
+
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
+import { z } from 'zod'
+
+const META_TTL_MS = 5 * 60 * 1000 // 5 minutes — meta updates with deploys
+
+export interface ToolContext {
+  /** The registry base, as it appears in the commands and links the tools hand out. */
+  registryBase: string
+  /** Fetch one registry file by name, e.g. "aicanvas-mcp.json". `probe` marks a token check that is not a pull. */
+  fetchRegistry(file: string, opts?: { probe?: boolean }): Promise<Response>
+  /** The user's token for install commands, '' when there is none. */
+  token: string
+  /** Ask the registry before handing out an install command, so a token rotated since setup is caught. */
+  probeBeforeInstall: boolean
+  /**
+   * Hosted only: the signed-in account's plan and what it cannot install, so results are
+   * labelled and a locked item is never handed back as if it were source. The npm package
+   * leaves this out, and its answers stay exactly what they were.
+   */
+  access?: {
+    plan: 'free' | 'premium'
+    /** The item's tier for every account, so a Premium account can still count free items. */
+    premium(slug: string): boolean
+    locked(slug: string): boolean
+  }
+  /** Hosted only: the account this connection is signed in as, for the whoami tool. */
+  whoami?: () => Promise<{ email: string | null; plan: 'free' | 'premium' }>
+  /** Hosted, browser sign-in only: ends this AI agent's connection, for the disconnect tool. */
+  disconnect?: () => Promise<void>
+}
+
+type Access = 'included' | 'locked'
+type Tier = 'free' | 'premium'
+
+// Hosted only: a catalog command in the bare `@aicanvas/<slug>` form runs in the user's shell
+// without a key and installs a placeholder, so hosted answers hand out the form that carries
+// the account's key, as get_install_command does. The npm package keeps the bare form.
+function keyed(ctx: ToolContext, command: string): string {
+  if (!ctx.access || !ctx.token) return command
+  return command.replace(
+    /@aicanvas\/([a-z0-9-]+)/,
+    (_, slug: string) => `"${ctx.registryBase}/${slug}.json?token=${encodeURIComponent(ctx.token)}"`,
+  )
+}
+
+// Hosted only: every catalog item says whether this account can install it, and only an
+// item it can install carries a command. Without an access context (the npm package) items
+// pass through untouched.
+function forAccount<T extends { slug: string; installCommand?: string; tokensInstallCommand?: string }>(
+  ctx: ToolContext,
+  item: T,
+): T | (Omit<T, 'installCommand' | 'tokensInstallCommand'> & { access: Access; tier: Tier }) {
+  if (!ctx.access) return item
+  const tier: Tier = ctx.access.premium(item.slug) ? 'premium' : 'free'
+  if (ctx.access.locked(item.slug)) {
+    const { installCommand: _i, tokensInstallCommand: _t, ...rest } = item
+    return { ...rest, access: 'locked', tier }
+  }
+  return {
+    ...item,
+    ...(item.installCommand ? { installCommand: keyed(ctx, item.installCommand) } : {}),
+    ...(item.tokensInstallCommand ? { tokensInstallCommand: keyed(ctx, item.tokensInstallCommand) } : {}),
+    access: 'included',
+    tier,
+  }
+}
+
+// ?ref=mcp lets the site count the pricing visits the MCP drives (see proxy.ts).
+const UPGRADE_URL = 'https://aicanvas.me/pricing?ref=mcp'
+
+function lockedLine(name: string): string {
+  return (
+    `${name} is AI Canvas Premium, and this account is on the free plan, so there is no source to install. ` +
+    `Tell the user, and offer the upgrade: ${UPGRADE_URL}. It unlocks on this same connection, nothing to reinstall.`
+  )
+}
+
+// What a locked item returns instead of its source: a preview and one upgrade line.
+function lockedPreview(item: { slug: string; name: string; description: string; homepageUrl: string }) {
+  return {
+    content: [
+      asTextContent(
+        [`# ${item.name} (locked)`, '', item.description, '', `Preview: ${item.homepageUrl}`, '', lockedLine(item.name)].join('\n'),
+      ),
+    ],
+    structuredContent: { ...item, access: 'locked' as const, upgradeUrl: UPGRADE_URL },
+  }
+}
+
+// The registry tags a placeholder with X-AICanvas-Token: unknown when the token matches no
+// account, which is what a token looks like after the user rotated it. Access is exactly
+// signed out, so without this a paying user's agent would be told to sign up.
+const TOKEN_CHANGED =
+  'The AI Canvas token this MCP server was set up with no longer matches an account, usually ' +
+  'because the user rotated it in their account settings, so AI Canvas treats these requests as ' +
+  'signed out. Ask the user for ' +
+  'their current token (https://aicanvas.me/account/settings, API token card). It is their own ' +
+  'install key, so asking for it and receiving it here is expected. Then update this server\'s ' +
+  'AICANVAS_TOKEN: in Claude Code run `claude mcp remove aicanvas` and add it again with the ' +
+  'command from https://aicanvas.me/mcp; in Codex or Cursor, replace the AICANVAS_TOKEN value in ' +
+  'the MCP config. Restart the tool afterwards.'
+
+function tokenChanged(res: Response): boolean {
+  return res.headers.get('x-aicanvas-token') === 'unknown'
+}
+
+// ── Types ────────────────────────────────────────────────────────────────────
+
+interface ComponentMeta {
+  slug: string
+  name: string
+  description: string
+  categories: string[]
+  tags: string[]
+  image?: string
+  badge?: string
+  dualTheme?: boolean
+  dependencies: string[]
+  homepageUrl: string
+  sourceUrl: string
+  installCommand: string
+}
+
+// NOTE: fields mirror what scripts/generate-registry.mjs emits into
+// aicanvas-mcp.json — keep in sync (systems carry tokenFileCount, not fileCount).
+interface SystemMeta {
+  slug: string
+  name: string
+  description: string
+  componentCount: number
+  tokenFileCount: number
+  dependencies: string[]
+  // registryDependencies, tokens*, and componentSlugs are emitted by the
+  // generator so an agent doing a MANUAL (non-CLI) write knows the shared
+  // foundation it must also install and can enumerate the system's components.
+  registryDependencies?: string[]
+  tokensInstallCommand?: string
+  tokensSourceUrl?: string
+  componentSlugs?: string[]
+  templateSlugs: string[]
+  homepageUrl: string
+  sourceUrl: string
+  installCommand: string
+}
+
+// A single design-system COMPONENT (e.g. andromeda-heat-grid). Kept in its own
+// `systemComponents` bucket — installable + searchable via the MCP, but NOT part
+// of the standalone components[] catalog or its categories.
+interface SystemComponentMeta {
+  slug: string
+  name: string
+  description: string
+  system: string
+  dependencies: string[]
+  registryDependencies?: string[]
+  homepageUrl: string
+  sourceUrl: string
+  installCommand: string
+}
+
+interface TemplateMeta {
+  slug: string
+  name: string
+  system: string
+  category?: string
+  description: string
+  fileCount: number
+  dependencies: string[]
+  // The base components + tokens a manual write must also install. The CLI
+  // resolves these automatically; a hand-written file copy does not.
+  registryDependencies?: string[]
+  homepageUrl: string
+  sourceUrl: string
+  installCommand: string
+}
+
+// One ranked result from `search_components`. Standalones and design-system
+// components keep their own shape; templates carry a `kind` tag so the caller
+// knows to reach for `get_template` instead of `get_component`.
+type SearchHit =
+  | ComponentMeta
+  | SystemComponentMeta
+  | (TemplateMeta & { kind: 'template' })
+
+interface MetaPayload {
+  name: string
+  homepage: string
+  generatedAt: string
+  componentCount: number
+  categories: Array<{ label: string; count: number }>
+  components: ComponentMeta[]
+  // Older deploys may not include these fields — treat as optional.
+  systems?: SystemMeta[]
+  templates?: TemplateMeta[]
+  systemComponents?: SystemComponentMeta[]
+}
+
+interface ShadcnRegistryItem {
+  name: string
+  type: string
+  title: string
+  description: string
+  dependencies: string[]
+  files: Array<{ path: string; content: string; type: string; target: string }>
+}
+
+// ── Cached fetchers ──────────────────────────────────────────────────────────
+
+let metaCache: { data: MetaPayload; fetchedAt: number } | null = null
+
+async function fetchMeta(ctx: ToolContext): Promise<MetaPayload> {
+  if (metaCache && Date.now() - metaCache.fetchedAt < META_TTL_MS) {
+    return metaCache.data
+  }
+  const res = await ctx.fetchRegistry('aicanvas-mcp.json')
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch AI Canvas registry meta from ${ctx.registryBase}/aicanvas-mcp.json: ${res.status} ${res.statusText}`,
+    )
+  }
+  const data = (await res.json()) as MetaPayload
+  metaCache = { data, fetchedAt: Date.now() }
+  return data
+}
+
+async function fetchComponentSource(ctx: ToolContext, slug: string): Promise<ShadcnRegistryItem> {
+  const url = `${ctx.registryBase}/${encodeURIComponent(slug)}.json`
+  const res = await ctx.fetchRegistry(`${encodeURIComponent(slug)}.json`)
+  if (tokenChanged(res)) throw new Error(TOKEN_CHANGED)
+  if (res.status === 402) {
+    const j = (await res.json().catch(() => ({}))) as { message?: string }
+    throw new Error(
+      j.message ??
+        'This is premium AI Canvas content. Upgrade at https://aicanvas.me/pricing, ' +
+        'then use the AI Canvas MCP config from your account (your token is included) ' +
+        'and update with: npx @aicanvas/mcp@latest',
+    )
+  }
+  // Free component pulled without an account: the registry returns a 200
+  // placeholder (not a 402), tagged with this header. Surface a warm sign-up
+  // CTA instead of handing the placeholder back as if it were real source.
+  if (res.headers.get('x-aicanvas-content-type') === 'free-account-required') {
+    const j = (await res.json().catch(() => ({}))) as { title?: string }
+    const name =
+      typeof j.title === 'string'
+        ? j.title.replace(/\s*\(free account required\)\s*$/i, '')
+        : slug
+    throw new Error(
+      `Almost there! "${name}" is free with an AI Canvas account (free, unlimited installs). ` +
+        `Sign up at https://aicanvas.me/account/sign-up, then use the AI Canvas MCP config from ` +
+        `your account (your token is included) and ask again.`,
+    )
+  }
+  // NOTE: premium standalones ALSO return a 200 placeholder (header
+  // 'premium-standalone'), but that header value is NOT unique to the
+  // placeholder — an entitled subscriber's REAL source carries it too (the
+  // success path stamps the contentType). Keying the MCP on it would strip a
+  // paying subscriber's real component. So premium is deliberately NOT
+  // intercepted here. Closing that footgun safely needs premiumStub to emit a
+  // distinct header (like freeAccountStub's 'free-account-required'); tracked
+  // as a separate, billing-reviewed follow-up.
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch source for "${slug}" from ${url}: ${res.status} ${res.statusText}`,
+    )
+  }
+  return (await res.json()) as ShadcnRegistryItem
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+function normalize(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+}
+
+type ScoredField = { text: string; weight: number }
+
+// Token scoring shared by standalone and design-system search: whole-word
+// hits count double, substrings count once. Tokens of two characters or fewer
+// are dropped because they match inside unrelated words ("no" hits
+// "notification").
+function scoreFields(query: string, fields: ScoredField[]): number {
+  const q = normalize(query)
+  if (!q) return 0
+  const tokens = q.split(/\s+/).filter((t) => t.length > 2)
+  if (tokens.length === 0) return 0
+  let score = 0
+  for (const tok of tokens) {
+    for (const f of fields) {
+      if (!f.text) continue
+      if (new RegExp(`\\b${escapeRegExp(tok)}\\b`).test(f.text)) {
+        score += f.weight * 2
+      } else if (f.text.includes(tok)) {
+        score += f.weight
+      }
+    }
+  }
+  return score
+}
+
+// Searchable surface of a standalone: slug carries the most weight, then name,
+// then categories, then description and tags.
+function scoreMatch(query: string, c: ComponentMeta): number {
+  return scoreFields(query, [
+    { text: normalize(c.slug), weight: 5 },
+    { text: normalize(c.name), weight: 4 },
+    { text: normalize(c.description), weight: 1 },
+    { text: normalize(c.categories.join(' ')), weight: 2 },
+    { text: normalize(c.tags.join(' ')), weight: 1 },
+  ])
+}
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+// Searchable surface of a design-system component: slug, name, description
+// and the system name, so they rank alongside standalones.
+function scoreSystemComponent(query: string, c: SystemComponentMeta): number {
+  return scoreFields(query, [
+    { text: normalize(c.slug), weight: 5 },
+    { text: normalize(c.name), weight: 4 },
+    { text: normalize(c.description), weight: 1 },
+    { text: normalize(c.system), weight: 2 },
+  ])
+}
+
+function asTextContent(value: unknown): { type: 'text'; text: string } {
+  return {
+    type: 'text',
+    text: typeof value === 'string' ? value : JSON.stringify(value, null, 2),
+  }
+}
+
+function errorResult(message: string) {
+  return {
+    content: [asTextContent(`Error: ${message}`)],
+    isError: true as const,
+  }
+}
+
+// ── Prop tables (the documented API per component) ───────────────────────────
+// A second registry file, separate from the catalog so search stays small. It
+// carries the same rows the component pages render: every prop of a component
+// with its type, whether it is required, its default and one sentence on what
+// it does. Metadata, never source, so it needs no account.
+
+interface PropRow {
+  name: string
+  type: string
+  optional: boolean
+  default: string
+  description: string
+}
+interface PropTable {
+  table: string
+  props: PropRow[]
+}
+interface PropsPayload {
+  name: string
+  generatedAt: string
+  componentCount: number
+  props: Record<string, PropTable[]>
+}
+
+let propsCache: { data: PropsPayload; fetchedAt: number } | null = null
+
+async function fetchProps(ctx: ToolContext): Promise<PropsPayload> {
+  if (propsCache && Date.now() - propsCache.fetchedAt < META_TTL_MS) {
+    return propsCache.data
+  }
+  const res = await ctx.fetchRegistry('aicanvas-props.json')
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch AI Canvas prop tables from ${ctx.registryBase}/aicanvas-props.json: ${res.status} ${res.statusText}`,
+    )
+  }
+  const data = (await res.json()) as PropsPayload
+  propsCache = { data, fetchedAt: Date.now() }
+  return data
+}
+
+// NOTE: mirrors registry-data/icons-index.json from scripts/icon-registry.mjs; keep in sync.
+type IconStyle = 'line' | 'duotone' | 'solid' | 'solid-duotone'
+const ICON_STYLES = ['line', 'duotone', 'solid', 'solid-duotone'] as const
+interface IconMeta {
+  name: string
+  category: string | null
+  tags: string[]
+}
+interface IconsIndex {
+  count: number
+  styles: { style: IconStyle; label: string; suffix: string; tier: 'free' | 'premium' }[]
+  icons: IconMeta[]
+}
+
+let iconsCache: { data: IconsIndex; fetchedAt: number } | null = null
+
+async function fetchIcons(ctx: ToolContext): Promise<IconsIndex> {
+  if (iconsCache && Date.now() - iconsCache.fetchedAt < META_TTL_MS) {
+    return iconsCache.data
+  }
+  const res = await ctx.fetchRegistry('icons-index.json')
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch the AI Canvas icon catalog from ${ctx.registryBase}/icons-index.json: ${res.status} ${res.statusText}`,
+    )
+  }
+  const data = (await res.json()) as IconsIndex
+  iconsCache = { data, fetchedAt: Date.now() }
+  return data
+}
+
+// The file and export names the icon package uses: search-solid.tsx exports SearchSolid.
+function iconFile(name: string, style: IconStyle): string {
+  return style === 'line' ? name : `${name}-${style}`
+}
+function iconComponent(name: string, style: IconStyle): string {
+  return iconFile(name, style)
+    .split('-')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join('')
+    .replace(/^(\d)/, 'Icon$1')
+}
+
+function scoreIcon(query: string, icon: IconMeta): number {
+  const exact = normalize(icon.name) === normalize(query) ? 100 : 0
+  return exact + scoreFields(query, [
+    { text: normalize(icon.name), weight: 5 },
+    { text: normalize(icon.tags.join(' ')), weight: 2 },
+    { text: normalize(icon.category ?? ''), weight: 1 },
+  ])
+}
+
+function findAnyComponent(
+  meta: MetaPayload,
+  slug: string,
+): ComponentMeta | SystemComponentMeta | undefined {
+  return (
+    meta.components.find((c) => c.slug === slug) ??
+    (meta.systemComponents ?? []).find((c) => c.slug === slug)
+  )
+}
+
+function cell(s: string): string {
+  return s.replace(/\|/g, '\\|')
+}
+
+function renderPropTables(tables: PropTable[]): string {
+  return tables
+    .map((t) =>
+      [
+        `## ${t.table}`,
+        '',
+        '| Prop | Type | Required | Default | Description |',
+        '|---|---|---|---|---|',
+        ...t.props.map(
+          (p) =>
+            `| ${p.name} | \`${cell(p.type)}\` | ${p.optional ? 'no' : 'yes'} | ${
+              p.default ? '`' + cell(p.default) + '`' : ''
+            } | ${cell(p.description)} |`,
+        ),
+      ].join('\n'),
+    )
+    .join('\n\n')
+}
+
+// A type that is purely a union of string literals, as a list of the options.
+// Anything else (a generic, an object, a plain string) returns null.
+function unionOptions(type: string): string[] | null {
+  const cleaned = type.replace(/\s+/g, '')
+  if (!/^('[^']*'\|?)+(\|?undefined)?$/.test(cleaned)) return null
+  return (type.match(/'[^']+'/g) ?? []).map((s) => s.slice(1, -1))
+}
+
+// ── Usage scanner for validate_usage ─────────────────────────────────────────
+// This is a string scanner, not a TypeScript parse. It reads import lines and
+// JSX opening tags with balanced braces, which covers ordinary component files.
+// Its ceiling: props passed through a spread object, tags built at runtime, and
+// JSX inside template strings are not seen. The TypeScript compiler would close
+// that gap at the cost of a large download for every npx user.
+
+interface ImportBinding {
+  local: string
+  imported: string
+  path: string
+}
+
+function scanImports(code: string): ImportBinding[] {
+  const out: ImportBinding[] = []
+  const re =
+    /import\s+(?:type\s+)?([A-Za-z_$][\w$]*)?\s*,?\s*(?:\{([^}]*)\})?\s*from\s*['"]([^'"]+)['"]/g
+  let m: RegExpExecArray | null
+  while ((m = re.exec(code))) {
+    const [, def, named, path] = m
+    if (def) out.push({ local: def, imported: 'default', path })
+    if (named) {
+      for (const part of named.split(',')) {
+        const seg = part.trim().replace(/^type\s+/, '')
+        if (!seg) continue
+        const [imported, local] = seg.split(/\s+as\s+/).map((s) => s.trim())
+        out.push({ local: local ?? imported, imported, path })
+      }
+    }
+  }
+  return out
+}
+
+interface JsxAttr {
+  name: string
+  value: string | null
+  kind: 'string' | 'expr' | 'bare'
+}
+interface JsxUsage {
+  tag: string
+  attrs: JsxAttr[]
+  spread: boolean
+  line: number
+}
+
+// Index just past the brace that closes the one opening at `i`.
+function skipBrace(text: string, i: number): number {
+  let depth = 0
+  let quote: string | null = null
+  for (; i < text.length; i++) {
+    const ch = text[i]
+    if (quote) {
+      if (ch === quote && text[i - 1] !== '\\') quote = null
+      continue
+    }
+    if (ch === '"' || ch === "'" || ch === '`') {
+      quote = ch
+      continue
+    }
+    if (ch === '{') depth++
+    else if (ch === '}') {
+      depth--
+      if (depth === 0) return i + 1
+    }
+  }
+  return text.length
+}
+
+function parseAttrs(text: string): { attrs: JsxAttr[]; spread: boolean } {
+  const attrs: JsxAttr[] = []
+  let spread = false
+  let i = 0
+  const n = text.length
+  while (i < n) {
+    const ch = text[i]
+    if (/\s/.test(ch) || ch === '/') {
+      i++
+      continue
+    }
+    if (ch === '{') {
+      if (text.slice(i + 1, i + 4) === '...') spread = true
+      i = skipBrace(text, i)
+      continue
+    }
+    const nm = /^[A-Za-z_$][\w$:.-]*/.exec(text.slice(i))
+    if (!nm) {
+      i++
+      continue
+    }
+    const name = nm[0]
+    i += name.length
+    while (i < n && /\s/.test(text[i])) i++
+    if (text[i] !== '=') {
+      attrs.push({ name, value: null, kind: 'bare' })
+      continue
+    }
+    i++
+    while (i < n && /\s/.test(text[i])) i++
+    if (text[i] === '"' || text[i] === "'") {
+      const q = text[i]
+      const end = text.indexOf(q, i + 1)
+      attrs.push({ name, value: text.slice(i + 1, end < 0 ? n : end), kind: 'string' })
+      i = end < 0 ? n : end + 1
+      continue
+    }
+    if (text[i] === '{') {
+      const end = skipBrace(text, i)
+      attrs.push({ name, value: text.slice(i + 1, end - 1).trim(), kind: 'expr' })
+      i = end
+      continue
+    }
+    attrs.push({ name, value: null, kind: 'bare' })
+  }
+  return { attrs, spread }
+}
+
+// Comments and string literals that carry JSX-looking text ("<Button ...")
+// are replaced by spaces, newlines kept, so line numbers survive and a
+// commented-out or quoted <Button> is never scored as a usage. A quote opens a
+// string only after =, (, ,, :, [, {, ?, + or a line start, so an apostrophe in
+// JSX text (don't) does not; "//" after ":" is a URL, not a comment.
+// There is no real tokenizer, so a regex literal containing quotes can throw it.
+function blankNoise(code: string): string {
+  const out = code.split('')
+  const blank = (from: number, to: number) => {
+    for (let k = from; k < to; k++) if (out[k] !== '\n') out[k] = ' '
+  }
+  const opensString = (i: number) => {
+    let j = i - 1
+    while (j >= 0 && (code[j] === ' ' || code[j] === '\t')) j--
+    return j < 0 || code[j] === '\n' || '=(,:[{?+'.includes(code[j])
+  }
+  let i = 0
+  while (i < code.length) {
+    const ch = code[i]
+    const next = code[i + 1]
+    if (ch === '/' && next === '*') {
+      const end = code.indexOf('*/', i + 2)
+      const to = end === -1 ? code.length : end + 2
+      blank(i, to)
+      i = to
+      continue
+    }
+    if (ch === '/' && next === '/' && code[i - 1] !== ':') {
+      const end = code.indexOf('\n', i)
+      const to = end === -1 ? code.length : end
+      blank(i, to)
+      i = to
+      continue
+    }
+    if ((ch === '"' || ch === "'" || ch === '`') && opensString(i)) {
+      let j = i + 1
+      while (j < code.length && code[j] !== ch && (ch === '`' || code[j] !== '\n')) {
+        if (code[j] === '\\') j++
+        j++
+      }
+      if (j < code.length && code[j] === ch && /<[A-Z]/.test(code.slice(i + 1, j))) blank(i + 1, j)
+      i = j + 1
+      continue
+    }
+    i++
+  }
+  return out.join('')
+}
+
+function scanJsx(code: string): JsxUsage[] {
+  const out: JsxUsage[] = []
+  // PascalCase tags only: lowercase tags are DOM elements. A "<" glued to an
+  // identifier (Array<Drawer>) is a type argument, not a tag.
+  const re = /(?<![\w$.])<([A-Z][\w$]*)(?=[\s/>])/g
+  let m: RegExpExecArray | null
+  while ((m = re.exec(code))) {
+    const start = re.lastIndex
+    let i = start
+    let depth = 0
+    let quote: string | null = null
+    for (; i < code.length; i++) {
+      const ch = code[i]
+      if (quote) {
+        if (ch === quote && code[i - 1] !== '\\') quote = null
+        continue
+      }
+      if (ch === '"' || ch === "'" || ch === '`') {
+        quote = ch
+        continue
+      }
+      if (ch === '{') depth++
+      else if (ch === '}') depth--
+      else if (ch === '>' && depth === 0) break
+    }
+    const { attrs, spread } = parseAttrs(code.slice(start, i))
+    out.push({ tag: m[1], attrs, spread, line: code.slice(0, m.index).split('\n').length })
+    re.lastIndex = i
+  }
+  return out
+}
+
+interface ResolvedTag {
+  slug: string
+  table: PropTable
+}
+
+// Map each JSX tag in the file to a documented component. A default import
+// whose path ends in a registry slug is that standalone; an import from a path
+// that carries a design-system slug is looked up among that system's tables by
+// the imported name. An explicit `tags` map from the caller wins over both.
+function resolveTags(
+  code: string,
+  meta: MetaPayload,
+  props: PropsPayload,
+  forced: Record<string, string>,
+): { index: Map<string, ResolvedTag>; unresolved: string[] } {
+  const index = new Map<string, ResolvedTag>()
+  const unresolved: string[] = []
+  const systems = (meta.systems ?? []).map((s) => s.slug).sort((a, b) => b.length - a.length)
+  const entries = Object.entries(props.props)
+  // Which system a design-system slug belongs to, from the catalog, so a lookup
+  // inside "andromeda" never sweeps in "andromeda-pro-*" slugs by prefix.
+  const systemOf = new Map((meta.systemComponents ?? []).map((c) => [c.slug, c.system]))
+
+  const tableFor = (slug: string, name: string): PropTable | undefined => {
+    const tables = props.props[slug] ?? []
+    return tables.find((t) => t.table === name) ?? (tables.length === 1 ? tables[0] : undefined)
+  }
+
+  for (const [tag, slug] of Object.entries(forced)) {
+    const table = tableFor(slug, tag)
+    if (table) index.set(tag, { slug, table })
+    else unresolved.push(`<${tag}> (forced to "${slug}", which has no documented API)`)
+  }
+
+  for (const b of scanImports(code)) {
+    if (index.has(b.local)) continue
+    const segs = b.path.replace(/\.(tsx|ts|jsx|js)$/, '').split('/')
+    const base = segs[segs.length - 1] === 'index' ? segs[segs.length - 2] : segs[segs.length - 1]
+    const name = b.imported === 'default' ? base : b.imported
+
+    // 1. Path ends in a registry slug: a standalone or a per-slug install.
+    if (props.props[base]) {
+      const table = tableFor(base, name) ?? tableFor(base, b.local)
+      if (table) index.set(b.local, { slug: base, table })
+      continue
+    }
+    // 2. Path carries a design-system slug: look the name up in that system.
+    const system = systems.find((s) => segs.includes(s))
+    const pool = system ? entries.filter(([slug]) => systemOf.get(slug) === system) : entries
+    const hits = pool.filter(([, tables]) => tables.some((t) => t.table === name))
+    if (hits.length === 1) {
+      index.set(b.local, { slug: hits[0][0], table: hits[0][1].find((t) => t.table === name)! })
+    } else if (hits.length > 1 || /aicanvas|andromeda/i.test(b.path)) {
+      unresolved.push(
+        `<${b.local}> from "${b.path}"` +
+          (hits.length > 1
+            ? ` matches ${hits.length} components (${hits.map(([s]) => s).join(', ')}); pass tags: { "${b.local}": "<slug>" }`
+            : ' has no documented API here'),
+      )
+    }
+  }
+  return { index, unresolved }
+}
+
+const PASSTHROUGH = new Set(['key', 'ref', 'children'])
+
+interface UsageIssue {
+  severity: 'error' | 'warning' | 'info'
+  line: number
+  tag: string
+  prop: string
+  message: string
+}
+
+const ARTICLES = /^(a|an|the|some)\s+/i
+// Grammar words score against every description; they say nothing about which
+// screen a brief wants, so the template match drops them first.
+const STOP_WORDS = new Set([
+  'and', 'with', 'for', 'the', 'that', 'this', 'from', 'into', 'then', 'plus', 'some',
+  'our', 'your', 'one', 'two', 'has', 'have', 'want', 'need', 'like', 'make', 'build',
+  'plan', 'create', 'design', 'add', 'use', 'using', 'show', 'page', 'screen',
+])
+function withoutStopWords(text: string): string {
+  return text
+    .split(/\s+/)
+    .filter((w) => !STOP_WORDS.has(w.toLowerCase()))
+    .join(' ')
+}
+
+// A pick needs one whole word of the ask in the item's name or slug. Substring
+// scoring alone let "plan" pick Planet and the Resource Planning template.
+function namedHit(ask: string, item: { slug: string; name: string; category?: string }): boolean {
+  const names = `${normalize(item.slug)} ${normalize(item.name)} ${normalize(item.category ?? '')}`
+  return normalize(withoutStopWords(ask))
+    .split(/\s+/)
+    .filter((t) => t.length > 2)
+    .some((t) => new RegExp(`\\b${escapeRegExp(t)}\\b`).test(names))
+}
+
+const MAX_PARTS = 8
+function briefSegments(brief: string): { segments: string[]; omitted: string[] } {
+  const seen = new Set<string>()
+  const out: string[] = []
+  for (const raw of brief.split(/,|;|\n|\band\b|\bwith\b|\bplus\b|\bthen\b/i)) {
+    const seg = raw.trim().replace(ARTICLES, '').trim()
+    const key = normalize(seg)
+    if (key.length < 3 || seen.has(key)) continue
+    seen.add(key)
+    out.push(seg)
+  }
+  return { segments: out.slice(0, MAX_PARTS), omitted: out.slice(MAX_PARTS) }
+}
+
+// Narrower page types first: "pricing page for a SaaS site" is a pricing page.
+const PAGE_RECIPES = {
+  'sign-in': {
+    triggers: ['sign in', 'sign-in', 'login', 'log in', 'sign up', 'signup', 'auth page'],
+    sections: ['sign-in form', 'social sign-in'],
+  },  pricing: {
+    triggers: ['pricing page', 'plans page'],
+    sections: ['pricing', 'comparison', 'faq', 'call to action'],
+  },  dashboard: {
+    triggers: ['dashboard', 'admin', 'analytics', 'console'],
+    sections: ['sidebar', 'top bar', 'stats', 'chart', 'table', 'activity feed'],
+  },  landing: {
+    triggers: ['landing', 'homepage', 'home page', 'marketing page', 'website', 'saas site'],
+    sections: [
+      'navbar',
+      'hero',
+      'features',
+      'testimonials',
+      'pricing',
+      'faq',
+      'call to action',
+      'footer',
+    ],
+  },} as const
+
+type PageType = keyof typeof PAGE_RECIPES
+
+function pageTypeFor(brief: string): PageType | null {
+  const normalized = ` ${normalize(brief)} `
+  for (const pageType of Object.keys(PAGE_RECIPES) as PageType[]) {
+    if (PAGE_RECIPES[pageType].triggers.some((trigger) => normalized.includes(` ${normalize(trigger)} `))) {
+      return pageType
+    }
+  }
+  return null
+}
+
+const CHECKLIST_SHARED = [
+  '## Install',
+  '- Every AI Canvas piece came in through its CLI command (get_install_command), so its npm dependencies and registry dependencies such as shared tokens are present. A hand-copied file needs those installed too.',
+  '- The packages named in the `// npm install` comment at the top of each component are installed.',
+  '',
+  '## Props',
+  '- validate_usage on the file reports no errors. A warning is a prop outside the documented API: keep it only if the component spreads unknown props onto its root.',
+  '',
+  '## Themes',
+  '- The result renders in light and dark. Design-system components read their theme from the shared tokens; standalones carry their own dark variants. Nothing is pinned to one theme by a hard-coded colour.',
+  '',
+  '## Layout',
+  '- Works at 320px wide with no horizontal scroll. Hover-only interactions have a tap equivalent. Text meant to be read is at least 14px.',
+  '- No fixed pixel widths or heights on layout containers. A component sizes from its parent; a canvas sizes from its container.',
+  '',
+  '## Motion',
+  '- Animation respects prefers-reduced-motion. Every effect that starts a loop, a timer or a listener cleans it up on unmount.',
+  '',
+  '## Accessibility',
+  '- Every interactive element is reachable by keyboard with a visible focus state. Icons that carry meaning have a label; decorative ones are hidden from assistive technology. Text contrast passes on both themes.',
+]
+
+const CHECKLIST_PAGE = [
+  '# AI Canvas audit checklist: page',
+  'Run this on the finished screen before calling it done.',
+  '',
+  ...CHECKLIST_SHARED,
+  '',
+  '## Composition',
+  '- One design system per screen. Components from two systems are not mixed, and a system component is not restyled with utility classes that fight its tokens.',
+  '- Repeated content goes through props or data, never by editing a component source per instance.',
+  '- The shared tokens are installed once and imported from their installed path, not copied into the page.',
+]
+
+const CHECKLIST_COMPONENT = [
+  '# AI Canvas audit checklist: component',
+  'Run this on a component you adapted or built to the AI Canvas standard.',
+  '',
+  ...CHECKLIST_SHARED,
+  '',
+  '## Structure',
+  "- `'use client'` is the first line when the file uses hooks, effects or browser APIs.",
+  '- One default export, named after the file. The root element fills its container; nothing inside sets its own viewport height.',
+  '- Props have sensible defaults so the component renders with none, and a className prop merges onto the root.',
+]
+
+// ── Server ───────────────────────────────────────────────────────────────────
+
+export function createServer(
+  ctx: ToolContext,
+  info: { version: string; instructions?: string },
+): McpServer {
+  const server = new McpServer(
+    { name: 'aicanvas', version: info.version },
+    {
+      capabilities: { tools: {}, logging: {} },
+      ...(info.instructions ? { instructions: info.instructions } : {}),
+    },
+  )
+
+  // ── Tool: list_categories ────────────────────────────────────────────────────
+
+  server.registerTool(
+    'list_categories',
+    {
+      title: 'List AI Canvas categories',
+      description:
+        'Return every category in the AI Canvas standalone component library, with the number of components in each. Use to orient before listing or searching, e.g. "what kinds of components are available?"',
+      inputSchema: {},
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async () => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const lines = [
+          `AI Canvas: ${meta.componentCount} components across ${meta.categories.length} categories.`,
+          '',
+          ...meta.categories.map(
+            (c) => `  ${c.label.padEnd(24)}  ${String(c.count).padStart(3)} components`,
+          ),
+        ]
+        return {
+          content: [asTextContent(lines.join('\n'))],
+          structuredContent: {
+            componentCount: meta.componentCount,
+            categories: meta.categories,
+          },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: list_components ────────────────────────────────────────────────────
+
+  server.registerTool(
+    'list_components',
+    {
+      title: 'List AI Canvas components',
+      description:
+        'Return AI Canvas standalone components and blocks, optionally filtered by category. Design-system components (Andromeda and others) are not here: use `list_systems`. Use after `list_categories` to drill into one, or pass no filter to browse everything. Each result includes slug, name, description, categories, screenshot URL, install command, and homepage URL, enough to evaluate without a separate `get_component` call. Pagination via `limit` and `offset`.',
+      inputSchema: {
+        category: z
+          .string()
+          .optional()
+          .describe(
+            'Optional category label, e.g. "Cards & Modals", "Backgrounds", "Typography". Case-insensitive. Omit to list all components.',
+          ),
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(200)
+          .optional()
+          .describe('Max number of components to return. Default 25.'),
+        offset: z
+          .number()
+          .int()
+          .min(0)
+          .optional()
+          .describe('Number of components to skip (for pagination). Default 0.'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ category, limit = 25, offset = 0 }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        let pool = meta.components
+        if (category) {
+          const wanted = normalize(category)
+          pool = pool.filter((c) =>
+            c.categories.some((cat) => normalize(cat) === wanted),
+          )
+        }
+        const total = pool.length
+        const slice = pool.slice(offset, offset + limit).map((c) => forAccount(ctx, c))
+        const premiumCount = ctx.access ? pool.filter((c) => ctx.access!.premium(c.slug)).length : 0
+        const tierLine = ctx.access ? `: ${total - premiumCount} free, ${premiumCount} Premium` : ''
+        const summary =
+          category != null
+            ? `${total} components in category "${category}"${tierLine}` +
+              (total > slice.length
+                ? ` (showing ${slice.length} from offset ${offset})`
+                : '')
+            : `${total} components total${tierLine}` +
+              (total > slice.length
+                ? ` (showing ${slice.length} from offset ${offset})`
+                : '')
+
+        return {
+          content: [asTextContent(summary + '\n\n' + JSON.stringify(slice, null, 2))],
+          structuredContent: {
+            total,
+            offset,
+            limit,
+            returned: slice.length,
+            components: slice,
+          },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: search_components ──────────────────────────────────────────────────
+
+  server.registerTool(
+    'search_components',
+    {
+      title: 'Search AI Canvas components',
+      description:
+        'Fuzzy keyword search across standalone components, design-system components, AND ready-made templates (whole example screens). Matches on slug, name, description, categories, and tags; returns best matches ranked by relevance. Use when the user describes what they want in their own words, e.g. "an animated card stack", "background with waves", "a mission control dashboard". Results include screenshot URLs and install commands for immediate evaluation. A result tagged `"kind": "template"` is a full screen. Fetch it with `get_template`, not `get_component`.',
+      inputSchema: {
+        query: z
+          .string()
+          .min(1)
+          .describe(
+            'Free-text search query. Multiple words are tokenized and matched independently.',
+          ),
+        limit: z
+          .number()
+          .int()
+          .min(1)
+          .max(50)
+          .optional()
+          .describe('Max number of matches to return. Default 10.'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ query, limit = 10 }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        // Rank standalones AND design-system components together so DS slugs
+        // (e.g. "andromeda-heat-grid") surface in search. Each result object stays
+        // usable: standalones keep their full shape; DS components carry their
+        // metadata (slug, name, description, system, install command, …).
+        const standaloneRanked = meta.components.map((c) => ({
+          item: c as SearchHit,
+          score: scoreMatch(query, c),
+        }))
+        const systemRanked = (meta.systemComponents ?? []).map((c) => ({
+          item: c as SearchHit,
+          score: scoreSystemComponent(query, c),
+        }))
+        // Templates rank in the same list, otherwise the most natural query for a
+        // whole screen ("dashboard", "mission control") matches nothing at all.
+        // Tagged so the agent calls `get_template`, not `get_component`. The
+        // category ("Dashboard", "CRM") folds into the system field to stay
+        // searchable, which is what an agent asking for a dashboard types.
+        const templateRanked = (meta.templates ?? []).map((t) => ({
+          item: { ...t, kind: 'template' as const } as SearchHit,
+          score: scoreSystemComponent(query, {
+            ...t,
+            system: t.category ? `${t.system} ${t.category}` : t.system,
+          }),
+        }))
+
+        const ranked = [...standaloneRanked, ...systemRanked, ...templateRanked]
+          .filter((r) => r.score > 0)
+          .sort((a, b) => b.score - a.score)
+          .slice(0, limit)
+          .map((r) => forAccount(ctx, r.item))
+
+        const summary =
+          ranked.length === 0
+            ? `No matches for "${query}". Try \`list_categories\` to browse standalones, \`list_systems\` for design systems, or \`list_templates\` for ready-made screens.`
+            : `${ranked.length} match${ranked.length === 1 ? '' : 'es'} for "${query}"`
+
+        // Hosted only: say how many results this account cannot install and what to do next,
+        // so the agent shows them honestly instead of skipping them or writing a placeholder.
+        // The npm package (no access context) answers exactly as before.
+        const lockedCount = ctx.access ? ranked.filter((r) => 'access' in r && r.access === 'locked').length : 0
+        const guidance: string[] = []
+        if (ctx.access && ranked.length) {
+          if (lockedCount) {
+            guidance.push(
+              `${lockedCount} of these ${lockedCount === 1 ? 'is' : 'are'} AI Canvas Premium (access: "locked") and this account cannot install ${lockedCount === 1 ? 'it' : 'them'}. Show ${lockedCount === 1 ? 'it' : 'them'} anyway, say so, and offer the upgrade: ${UPGRADE_URL}. It unlocks on this same connection.`,
+            )
+          }
+          guidance.push(
+            'Next: show the user the top 2 or 3 as images from `image`, linked to `homepageUrl`, so they can pick by eye. Then read the API with get_component_props and install with the `installCommand` of an included item.',
+          )
+        }
+
+        return {
+          content: [asTextContent([summary, ...guidance].join('\n') + '\n\n' + JSON.stringify(ranked, null, 2))],
+          structuredContent: {
+            query,
+            count: ranked.length,
+            components: ranked,
+            ...(ctx.access && ranked.length ? { locked: lockedCount, ...(lockedCount ? { upgradeUrl: UPGRADE_URL } : {}) } : {}),
+          },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: get_component ──────────────────────────────────────────────────────
+
+  server.registerTool(
+    'get_component',
+    {
+      title: 'Get an AI Canvas component (full metadata + source code)',
+      description:
+        'Return the complete record for a single component: metadata + the entire .tsx source code as a string. Use after the user picks one from a search/list result and wants to see the implementation, or before installing if they want to inspect first. The source is the exact file the CLI install would write into a project.',
+      inputSchema: {
+        slug: z
+          .string()
+          .min(1)
+          .describe(
+            'The component slug, e.g. "ai-job-cards", "wave-lines", "halo-type". Use exact slugs from list/search results.',
+          ),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ slug }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const component = meta.components.find((c) => c.slug === slug)
+        // Fall back to design-system components (kept out of components[]).
+        const systemComponent = component
+          ? undefined
+          : (meta.systemComponents ?? []).find((c) => c.slug === slug)
+
+        if (!component && !systemComponent) {
+          return errorResult(
+            `No component found with slug "${slug}". Use \`search_components\` or \`list_components\` to find standalone slugs, ` +
+              `or \`list_systems\` / \`get_system\` for design-system components (e.g. "andromeda-heat-grid").`,
+          )
+        }
+        if (ctx.access?.locked(slug)) return lockedPreview((component ?? systemComponent)!)
+
+        const source = await fetchComponentSource(ctx, slug)
+        const code = source.files[0]?.content ?? ''
+        const filePath = source.files[0]?.path ?? `components/aicanvas/${slug}.tsx`
+
+        if (systemComponent) {
+          const result = { ...forAccount(ctx, systemComponent), filePath, code }
+          return {
+            content: [
+              asTextContent(
+                [
+                  `# ${systemComponent.name}`,
+                  '',
+                  systemComponent.description,
+                  '',
+                  `Design system: ${systemComponent.system}`,
+                  `Dependencies: ${systemComponent.dependencies.join(', ') || '(none)'}`,
+                  `Registry dependencies: ${(systemComponent.registryDependencies ?? []).join(', ') || '(none)'}`,
+                  `Install: ${keyed(ctx, systemComponent.installCommand)}`,
+                  `Homepage: ${systemComponent.homepageUrl}`,
+                  '',
+                  'Note: a manual (non-CLI) write must ALSO install the shared tokens this component depends on (see registry dependencies above and `get_system`). The CLI install resolves them automatically.',
+                  '',
+                  `--- ${filePath} ---`,
+                  code,
+                ].join('\n'),
+              ),
+            ],
+            structuredContent: result,
+          }
+        }
+
+        const result = {
+          ...forAccount(ctx, component!),
+          filePath,
+          code,
+        }
+
+        return {
+          content: [
+            asTextContent(
+              [
+                `# ${component!.name}`,
+                '',
+                component!.description,
+                '',
+                `Categories: ${component!.categories.join(', ') || '(none)'}`,
+                `Dependencies: ${component!.dependencies.join(', ') || '(none)'}`,
+                `Install: ${keyed(ctx, component!.installCommand)}`,
+                `Homepage: ${component!.homepageUrl}`,
+                '',
+                `--- ${filePath} ---`,
+                code,
+              ].join('\n'),
+            ),
+          ],
+          structuredContent: result,
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: get_install_command ────────────────────────────────────────────────
+
+  server.registerTool(
+    'get_install_command',
+    {
+      title: 'Get the AI Canvas install command for a component',
+      description:
+        'Return the shadcn CLI command to install a single component into the user\'s project. After calling this, suggest the user run the command (or run it yourself if you have shell access). Requires shadcn-aware setup (Tailwind v4, components.json). For projects without that, fall back to `get_component` and write the file manually.',
+      inputSchema: {
+        slug: z
+          .string()
+          .min(1)
+          .describe('The component slug, e.g. "ai-job-cards".'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ slug }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const component =
+          meta.components.find((c) => c.slug === slug) ??
+          (meta.systemComponents ?? []).find((c) => c.slug === slug) ??
+          // Hosted: templates and whole systems get their command here too, with the key in it.
+          (ctx.access ? [...(meta.templates ?? []), ...(meta.systems ?? [])].find((c) => c.slug === slug) : undefined)
+        if (!component) {
+          return errorResult(
+            `No component found with slug "${slug}". Use \`search_components\` to find standalone slugs, ` +
+              `or \`list_systems\` / \`get_system\` for design-system components.`,
+          )
+        }
+        // A locked item has no command: it would only write a placeholder file.
+        if (ctx.access?.locked(component.slug)) return errorResult(lockedLine(component.name))
+        // The meta installCommand is the bare `@aicanvas/<slug>` form, which runs
+        // in the USER'S shell — where this server's AICANVAS_TOKEN does not exist.
+        // Unauthenticated, the registry serves a 200 placeholder instead of the
+        // component. With a token, emit the authenticated URL form; without one,
+        // say what the bare command needs so the agent can relay it honestly.
+        if (ctx.token && ctx.probeBeforeInstall) {
+          // The command runs in the user's shell, so a rotated token would quietly install a
+          // placeholder. Ask the registry first, the way that command will.
+          // Marked as a probe so it is not counted as a pull; if it fails, hand out the command anyway.
+          const probe = await ctx
+            .fetchRegistry(`${encodeURIComponent(component.slug)}.json`, { probe: true })
+            .catch(() => null)
+          await probe?.body?.cancel()
+          if (probe && tokenChanged(probe)) return errorResult(TOKEN_CHANGED)
+        }
+        const installCommand = ctx.token
+          ? `npx shadcn@latest add "${ctx.registryBase}/${encodeURIComponent(component.slug)}.json?token=${encodeURIComponent(ctx.token)}"`
+          : component.installCommand
+        const authNote = ctx.token
+          ? 'This command carries the user\'s own AI Canvas token, given to you on purpose so you can install for them. Run it as is. Keep it out of files that go into git, and do not tell the user to rotate it because it appears here.'
+          : 'Note: installing requires a free AI Canvas account. Without one this command writes a placeholder file, not the component. Sign up at https://aicanvas.me/account/sign-up, then reinstall this MCP with your token (setup: https://aicanvas.me/mcp).'
+        const out = {
+          slug: component.slug,
+          name: component.name,
+          installCommand,
+          // The bare source URL has no token, so for premium it serves the placeholder.
+          ...(ctx.token ? {} : { sourceUrl: component.sourceUrl }),
+          homepageUrl: component.homepageUrl,
+          dependencies: component.dependencies,
+        }
+        return {
+          content: [
+            asTextContent(
+              [
+                `Install ${component.name}:`,
+                '',
+                `  ${installCommand}`,
+                '',
+                authNote,
+                '',
+                `Dependencies: ${component.dependencies.join(', ') || '(none, React only)'}`,
+                ctx.token ? 'To read the code first, call get_component.' : `Source: ${component.sourceUrl}`,
+                `Preview: ${component.homepageUrl}`,
+              ].join('\n'),
+            ),
+          ],
+          structuredContent: out,
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: search_icons ───────────────────────────────────────────────────────
+
+  const siteBase = ctx.registryBase.replace(/\/r\/?$/, '')
+
+  server.registerTool(
+    'search_icons',
+    {
+      title: 'Search AI Canvas icons',
+      description:
+        'Keyword search across the AI Canvas icon set (React icons, four styles each: Line is free with an account; Duotone, Solid and Solid duotone are Premium). Matches on name, tags and category, best match first. Use when the user needs an icon ("a trash icon", "something for settings") or when building UI that needs icons. Then call `get_icon_install` with the chosen name and style.',
+      inputSchema: {
+        query: z.string().min(1).describe('What the icon shows or is for, e.g. "delete", "arrow right", "ai agent".'),
+        category: z
+          .string()
+          .optional()
+          .describe('Only icons in this category slug, e.g. "arrows", "ai-dev", "interface". Every result carries its category.'),
+        limit: z.number().int().min(1).max(100).optional().describe('Max number of matches to return. Default 20.'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ query, category, limit = 20 }) => {
+      try {
+        const index = await fetchIcons(ctx)
+        const ranked = index.icons
+          .filter((icon) => !category || icon.category === category)
+          .map((icon) => ({ icon, score: scoreIcon(query, icon) }))
+          .filter((r) => r.score > 0)
+          .sort((a, b) => b.score - a.score || a.icon.name.localeCompare(b.icon.name))
+          .slice(0, limit)
+          .map(({ icon }) => ({ ...icon, pageUrl: `${siteBase}/icons/${icon.name}` }))
+        const summary =
+          ranked.length === 0
+            ? `No icons match "${query}"${category ? ` in "${category}"` : ''}. Try a plainer word for what it shows (e.g. "bin" -> "trash"), or browse ${siteBase}/icons.`
+            : `${ranked.length} icon${ranked.length === 1 ? '' : 's'} for "${query}" (of ${index.count}).`
+        const styles = index.styles.map((s) => `${s.label} (${s.tier})`).join(', ')
+        const premiumNote = ctx.access && ctx.access.plan !== 'premium' ? ' This account is on the free plan, so only Line installs.' : ''
+        return {
+          content: [
+            asTextContent(
+              `${summary}\nStyles: ${styles}.${premiumNote} Next: call get_icon_install with a name and a style.\n\n${JSON.stringify(ranked, null, 2)}`,
+            ),
+          ],
+          structuredContent: { query, count: ranked.length, styles: index.styles, icons: ranked },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: get_icon_install ───────────────────────────────────────────────────
+
+  server.registerTool(
+    'get_icon_install',
+    {
+      title: 'Get the install command and import for an AI Canvas icon',
+      description:
+        'Return the shadcn command that installs one AI Canvas icon as an editable file (components/icons/<name>.tsx plus the shared IconBase runtime), with the exact import and JSX to use it. Line is free with an account; Duotone, Solid and Solid duotone are Premium. Find names with `search_icons` first.',
+      inputSchema: {
+        name: z.string().min(1).describe('The icon name from search_icons, e.g. "search" or "arrow-up-right".'),
+        style: z.enum(ICON_STYLES).optional().describe('Icon style. Default "line".'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ name, style = 'line' }) => {
+      try {
+        const index = await fetchIcons(ctx)
+        const icon = index.icons.find((i) => i.name === name)
+        if (!icon) {
+          const near = index.icons
+            .map((i) => ({ name: i.name, score: scoreIcon(name, i) }))
+            .filter((r) => r.score > 0)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 5)
+            .map((r) => r.name)
+          return errorResult(
+            `No icon named "${name}".${near.length ? ` Closest: ${near.join(', ')}.` : ''} Use \`search_icons\` to find names.`,
+          )
+        }
+        const tier = index.styles.find((s) => s.style === style)?.tier ?? (style === 'line' ? 'free' : 'premium')
+        const slug = `icon-${iconFile(name, style)}`
+        const component = iconComponent(name, style)
+        const label = `${component} icon`
+        if (ctx.access && (ctx.access.locked(slug) || (tier === 'premium' && ctx.access.plan !== 'premium'))) {
+          return errorResult(
+            `${lockedLine(label)} The Line style of this icon (get_icon_install with style "line") is included on the free plan.`,
+          )
+        }
+        if (ctx.token && ctx.probeBeforeInstall) {
+          // Same probe as get_install_command: a rotated token would quietly install a placeholder.
+          const probe = await ctx.fetchRegistry(`${slug}.json`, { probe: true }).catch(() => null)
+          await probe?.body?.cancel()
+          if (probe && tokenChanged(probe)) return errorResult(TOKEN_CHANGED)
+        }
+        const installCommand = ctx.token
+          ? `npx shadcn@latest add "${ctx.registryBase}/${slug}.json?token=${encodeURIComponent(ctx.token)}"`
+          : `npx shadcn@latest add @aicanvas/${slug}`
+        const importLine = `import { ${component} } from '@/components/icons/${iconFile(name, style)}'`
+        const usage = `<${component} size={20} />`
+        const authNote = ctx.token
+          ? 'This command carries the user\'s own AI Canvas token, given to you on purpose so you can install for them. Run it as is. Keep it out of files that go into git, and do not tell the user to rotate it because it appears here.'
+          : tier === 'premium'
+            ? 'Note: this style needs AI Canvas Premium. Without a Premium token the command writes a placeholder file, not the icon. Upgrade: ' + UPGRADE_URL
+            : 'Note: installing requires a free AI Canvas account. Without one this command writes a placeholder file, not the icon. Sign up at https://aicanvas.me/account/sign-up, then reinstall this MCP with your token (setup: https://aicanvas.me/mcp).'
+        const props =
+          style === 'line' || style === 'duotone'
+            ? 'Props: size, color, strokeWidth (default 1.5), absoluteStrokeWidth (default true, keeps the line weight at any size).'
+            : 'Props: size, color. Solid styles are filled shapes with a fixed weight, so strokeWidth does not change them.'
+        const out = {
+          name,
+          style,
+          tier,
+          component,
+          installCommand,
+          importLine,
+          usage,
+          file: `components/icons/${iconFile(name, style)}.tsx`,
+          pageUrl: `${siteBase}/icons/${name}`,
+        }
+        return {
+          content: [
+            asTextContent(
+              [
+                `Install the ${name} icon (${style}, ${tier}):`,
+                '',
+                `  ${installCommand}`,
+                '',
+                authNote,
+                '',
+                `Import: ${importLine}`,
+                `Use: ${usage}`,
+                props,
+                'To set one stroke for every icon, wrap the app in <IconProvider strokeWidth={...}> from components/icons/IconBase.',
+                `Preview: ${out.pageUrl}`,
+              ].join('\n'),
+            ),
+          ],
+          structuredContent: out,
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: list_systems ───────────────────────────────────────────────────────
+
+  server.registerTool(
+    'list_systems',
+    {
+      title: 'List AI Canvas design systems',
+      description:
+        'Return every design system available on AI Canvas. A design system is a coordinated set of components plus shared tokens and utilities, installable in one CLI command. Use when the user asks about "themes", "design systems", or wants more than a single component.',
+      inputSchema: {},
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async () => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const systems = meta.systems ?? []
+        if (systems.length === 0) {
+          return {
+            content: [asTextContent('No design systems available in this registry build.')],
+            structuredContent: { systems: [] },
+          }
+        }
+        const lines = [
+          `${systems.length} design system${systems.length === 1 ? '' : 's'} on AI Canvas:`,
+          '',
+          ...systems.map((s) =>
+            `  ${s.name.padEnd(16)}  ${String(s.componentCount).padStart(2)} components, ${s.templateSlugs.length} templates${ctx.access ? `, ${ctx.access.premium(s.slug) ? 'Premium' : 'free'}` : ''}${ctx.access?.locked(s.slug) ? ', locked' : ''}`,
+          ),
+          '',
+          'Use `get_system` to fetch the full source of a system, or `list_templates` to see the ready-made screens built from one.',
+        ]
+        return {
+          content: [asTextContent(lines.join('\n'))],
+          structuredContent: { systems: systems.map((s) => forAccount(ctx, s)) },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: get_system ─────────────────────────────────────────────────────────
+
+  server.registerTool(
+    'get_system',
+    {
+      title: 'Get a complete AI Canvas design system (every file)',
+      description:
+        'Return all files for a design system in a single response (every component, plus shared tokens and utilities), ready to write into the user\'s project. Use when the user wants to adopt a whole system rather than pick individual components.',
+      inputSchema: {
+        slug: z
+          .string()
+          .min(1)
+          .describe('Design system slug, e.g. "andromeda". Use `list_systems` to discover.'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ slug }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const system = (meta.systems ?? []).find((s) => s.slug === slug)
+        if (!system) {
+          return errorResult(
+            `No design system found with slug "${slug}". Use \`list_systems\` to see what's available.`,
+          )
+        }
+        if (ctx.access?.locked(slug)) return lockedPreview(system)
+        const item = await fetchComponentSource(ctx, slug)
+
+        // The system's own design-system components, with their per-component
+        // install commands — so an agent can install (or hand-write) any subset.
+        const components = (meta.systemComponents ?? []).filter(
+          (c) =>
+            c.system === system.slug ||
+            (system.componentSlugs ?? []).includes(c.slug),
+        )
+
+        const summary = [
+          `# ${system.name} design system`,
+          '',
+          system.description,
+          '',
+          `Files: ${item.files.length}`,
+          `Dependencies: ${system.dependencies.join(', ') || '(none)'}`,
+          `Registry dependencies: ${(system.registryDependencies ?? []).join(', ') || '(none)'}`,
+          `Install (whole system): ${keyed(ctx, system.installCommand)}`,
+          ...(system.tokensInstallCommand
+            ? [`Install (shared tokens only): ${keyed(ctx, system.tokensInstallCommand)}`]
+            : []),
+          ...(system.tokensSourceUrl ? [`Tokens source: ${system.tokensSourceUrl}`] : []),
+          `Homepage: ${system.homepageUrl}`,
+          '',
+          'Note: the shared tokens ship as a SEPARATE registry dependency. For a manual (non-CLI) file write you must ALSO install the tokens (see "Install (shared tokens only)" above); the CLI resolves them automatically.',
+          '',
+          `--- components (${components.length}) ---`,
+          ...components.map((c) => `  ${c.slug.padEnd(28)}  ${keyed(ctx, c.installCommand)}`),
+          '',
+          `--- file index ---`,
+          ...item.files.map((f) => `  ${f.path}`),
+        ].join('\n')
+
+        return {
+          content: [asTextContent(summary)],
+          structuredContent: {
+            ...forAccount(ctx, system),
+            components: components.map((c) => forAccount(ctx, c)),
+            files: item.files,
+          },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: list_templates ─────────────────────────────────────────────────────
+
+  server.registerTool(
+    'list_templates',
+    {
+      title: 'List AI Canvas design-system templates',
+      description:
+        'Return every ready-made template on AI Canvas. A template is a complete example screen built from one design system (a dashboard, a console, a control room), installable in one CLI command. Use to discover what full screens exist before fetching one with `get_template`, or when the user asks for "a dashboard" / "an admin screen" rather than a single component.',
+      inputSchema: {
+        system: z
+          .string()
+          .optional()
+          .describe(
+            'Optional design system slug to filter by, e.g. "andromeda". Omit to list templates from every system.',
+          ),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ system }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const all = meta.templates ?? []
+        const templates = system
+          ? all.filter((t) => t.system.toLowerCase() === system.toLowerCase())
+          : all
+
+        if (templates.length === 0) {
+          return {
+            content: [
+              asTextContent(
+                system
+                  ? `No templates found for design system "${system}". Use \`list_systems\` to see which systems exist.`
+                  : 'No templates available in this registry build.',
+              ),
+            ],
+            structuredContent: { templates: [] },
+          }
+        }
+
+        const lines = [
+          `${templates.length} template${templates.length === 1 ? '' : 's'}${system ? ` in ${system}` : ' on AI Canvas'}:`,
+          '',
+          ...templates.map(
+            (t) =>
+              `  ${t.slug.padEnd(32)}  ${t.system}${t.category ? ` · ${t.category}` : ''}, ${t.fileCount} files${ctx.access?.locked(t.slug) ? ', locked' : ''}`,
+          ),
+          '',
+          'Use `get_template` with a slug above to fetch every file for one template.',
+        ]
+        return {
+          content: [asTextContent(lines.join('\n'))],
+          structuredContent: { templates: templates.map((t) => forAccount(ctx, t)) },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: get_template ───────────────────────────────────────────────────────
+
+  server.registerTool(
+    'get_template',
+    {
+      title: 'Get a complete AI Canvas design-system template (every file)',
+      description:
+        'Return all files for a single template: the example composition plus every component it uses plus shared tokens. Use for "I want exactly this dashboard" / "give me the entire mission-control screen". One CLI command installs all files.',
+      inputSchema: {
+        slug: z
+          .string()
+          .min(1)
+          .describe(
+            'Template slug, e.g. "andromeda-mission-control", "andromeda-signal-room". Use `list_templates` to discover.',
+          ),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ slug }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const template = (meta.templates ?? []).find((t) => t.slug === slug)
+        if (!template) {
+          return errorResult(
+            `No template found with slug "${slug}". Use \`list_templates\` to see available templates.`,
+          )
+        }
+        if (ctx.access?.locked(slug)) return lockedPreview(template)
+        const item = await fetchComponentSource(ctx, slug)
+        const summary = [
+          `# ${template.name} (${template.system}${template.category ? ` · ${template.category}` : ''})`,
+          '',
+          template.description,
+          '',
+          `Files: ${item.files.length}`,
+          `Dependencies: ${template.dependencies.join(', ') || '(none)'}`,
+          `Registry dependencies: ${(template.registryDependencies ?? []).join(', ') || '(none)'}`,
+          `Install: ${keyed(ctx, template.installCommand)}`,
+          `Preview: ${template.homepageUrl}`,
+          '',
+          'Note: a manual (non-CLI) file write must ALSO install the registry dependencies above (the base components + shared tokens) for the composition to build. The CLI install resolves them automatically.',
+          '',
+          `--- file index ---`,
+          ...item.files.map((f) => `  ${f.path}`),
+        ].join('\n')
+
+        return {
+          content: [asTextContent(summary)],
+          structuredContent: {
+            ...forAccount(ctx, template),
+            files: item.files,
+          },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: get_component_props ────────────────────────────────────────────────
+
+  server.registerTool(
+    'get_component_props',
+    {
+      title: 'Get the documented props (API) of an AI Canvas component',
+      description:
+        'Return the prop table of one component: every prop with its type, whether it is required, its default and what it does. Free, needs no account, and far smaller than the full source. Call it before writing JSX for a component you have not read, or to answer "what can I configure on X". A component with no table takes no props: it is self-contained and adapted by editing its source.',
+      inputSchema: {
+        slug: z
+          .string()
+          .min(1)
+          .describe(
+            'Registry slug from a search or list result, e.g. "andromeda-button-system", "filter-menu".',
+          ),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ slug }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const component = findAnyComponent(meta, slug)
+        if (!component) {
+          return errorResult(
+            `No component found with slug "${slug}". Use \`search_components\` to find the slug.`,
+          )
+        }
+        const props = await fetchProps(ctx)
+        const tables = props.props[slug] ?? []
+        if (tables.length === 0) {
+          return {
+            content: [
+              asTextContent(
+                `${component.name} takes no props: it is self-contained. Install it (${keyed(ctx, component.installCommand)}) and adapt the source directly.`,
+              ),
+            ],
+            structuredContent: { slug, name: component.name, tables: [] },
+          }
+        }
+        return {
+          content: [
+            asTextContent(
+              [
+                `# ${component.name} props`,
+                '',
+                renderPropTables(tables),
+                '',
+                `Install: ${keyed(ctx, component.installCommand)}`,
+                `Homepage: ${component.homepageUrl}`,
+              ].join('\n'),
+            ),
+          ],
+          structuredContent: { slug, name: component.name, tables },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: validate_usage ─────────────────────────────────────────────────────
+
+  server.registerTool(
+    'validate_usage',
+    {
+      title: 'Validate AI Canvas component usage in a file',
+      description:
+        'Check a file\'s JSX against the documented props of the AI Canvas components it imports. Reports props that do not exist on the component, required props that are missing, and string values outside a prop\'s allowed options, each with a line number. Run it on every file that uses AI Canvas components before you finish. Components are matched by import path (components/aicanvas/<slug> for standalones, components/aicanvas/<system>/... for design-system components); pass `tags` to map a tag to a slug by hand.',
+      inputSchema: {
+        code: z.string().min(1).describe('The full contents of the file to check.'),
+        path: z.string().optional().describe('The file path, used only in the report.'),
+        tags: z
+          .record(z.string(), z.string())
+          .optional()
+          .describe(
+            'Optional map from JSX tag name to registry slug, e.g. { "Button": "andromeda-button-system" }, for tags the import scan cannot resolve.',
+          ),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ code, path, tags }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const props = await fetchProps(ctx)
+        const clean = blankNoise(code)
+        const { index, unresolved } = resolveTags(clean, meta, props, tags ?? {})
+        const usages = scanJsx(clean)
+        const issues: UsageIssue[] = []
+        const checked: Array<{ tag: string; slug: string; table: string; line: number }> = []
+
+        for (const u of usages) {
+          const r = index.get(u.tag)
+          if (!r) continue
+          checked.push({ tag: u.tag, slug: r.slug, table: r.table.table, line: u.line })
+          const known = new Map(r.table.props.map((p) => [p.name, p]))
+          for (const a of u.attrs) {
+            if (PASSTHROUGH.has(a.name) || /^(data|aria)-/.test(a.name)) continue
+            const p = known.get(a.name)
+            if (!p) {
+              issues.push({
+                severity: u.spread ? 'info' : 'warning',
+                line: u.line,
+                tag: u.tag,
+                prop: a.name,
+                message: `"${a.name}" is not in the documented ${r.table.table} API (${r.slug}). It only works if the component spreads unknown props onto its root.`,
+              })
+              continue
+            }
+            const opts = unionOptions(p.type)
+            const literal =
+              a.kind === 'string'
+                ? a.value
+                : a.kind === 'expr' && a.value && /^(['"])[^'"]*\1$/.test(a.value)
+                  ? a.value.slice(1, -1)
+                  : null
+            if (opts && literal !== null && !opts.includes(literal)) {
+              issues.push({
+                severity: 'error',
+                line: u.line,
+                tag: u.tag,
+                prop: a.name,
+                message: `"${literal}" is not an allowed value of ${a.name}. One of: ${opts.join(', ')}.`,
+              })
+            }
+            if (a.kind === 'bare' && !/boolean/.test(p.type)) {
+              issues.push({
+                severity: 'warning',
+                line: u.line,
+                tag: u.tag,
+                prop: a.name,
+                message: `${a.name} is passed without a value, but its type is ${p.type}.`,
+              })
+            }
+          }
+          if (!u.spread) {
+            for (const p of r.table.props) {
+              if (!p.optional && !u.attrs.some((a) => a.name === p.name)) {
+                issues.push({
+                  severity: 'error',
+                  line: u.line,
+                  tag: u.tag,
+                  prop: p.name,
+                  message: `required prop ${p.name} (${p.type}) is missing.`,
+                })
+              }
+            }
+          }
+        }
+
+        const errors = issues.filter((i) => i.severity === 'error').length
+        const warnings = issues.filter((i) => i.severity === 'warning').length
+        const where = path ?? 'the file'
+        const lines: string[] = []
+        if (checked.length === 0) {
+          lines.push(
+            `No AI Canvas component usages found in ${where}.`,
+            'Components are matched by import path: components/aicanvas/<slug> (standalones) or components/aicanvas/<system>/... (design-system components). Pass `tags` to map a tag to a slug by hand.',
+          )
+        } else {
+          lines.push(
+            `Checked ${checked.length} AI Canvas component usage${checked.length === 1 ? '' : 's'} in ${where}: ${errors} error${errors === 1 ? '' : 's'}, ${warnings} warning${warnings === 1 ? '' : 's'}.`,
+          )
+          if (issues.length === 0) lines.push('', 'Every prop matches the documented API.')
+          else {
+            lines.push('')
+            for (const i of issues.sort((a, b) => a.line - b.line)) {
+              lines.push(`- line ${i.line} <${i.tag}> ${i.severity}: ${i.message}`)
+            }
+          }
+        }
+        if (unresolved.length) {
+          lines.push('', 'Not checked:', ...unresolved.map((u) => `- ${u}`))
+        }
+        return {
+          content: [asTextContent(lines.join('\n'))],
+          structuredContent: { path: path ?? null, checked, issues, unresolved, errors, warnings },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: compose_page ───────────────────────────────────────────────────────
+
+  server.registerTool(
+    'compose_page',
+    {
+      title: 'Plan a page from AI Canvas components',
+      description:
+        'Turn a one-line brief ("a CRM dashboard with a pipeline board and an activity feed") into a build plan: the closest ready-made template if one fits, one AI Canvas component per part of the brief with two alternatives, the install commands in order (shared tokens first), which picks have a documented API to read, and the parts nothing in the catalog covers so you build only those. It plans; it generates no code. Follow it with get_component_props, then validate_usage on the result.',
+      inputSchema: {
+        brief: z.string().min(3).describe('What the page needs, in plain words. Separate parts with commas or "and".'),
+        system: z
+          .string()
+          .optional()
+          .describe(
+            'Prefer components from this design system, e.g. "andromeda". Omit to rank standalones and design-system components together.',
+          ),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ brief, system }) => {
+      try {
+        const meta = await fetchMeta(ctx)
+        const props = await fetchProps(ctx).catch(() => null)
+        const wanted = system?.toLowerCase()
+        const systemMeta = wanted ? (meta.systems ?? []).find((s) => s.slug === wanted) : undefined
+        if (wanted && !systemMeta) {
+          return errorResult(
+            `No design system with slug "${system}". Use \`list_systems\` to see what exists, or omit the filter.`,
+          )
+        }
+
+        // The closest whole screen, scored against the entire brief. One whole-word
+        // hit on the template's name or its category (Dashboard, CRM, Scheduling,
+        // Media, Authentication) scores 8; anything below that is a stray token in
+        // a description, not a screen the brief is asking for.
+        const MIN_TEMPLATE_SCORE = 8
+        const templates = (meta.templates ?? []).filter((t) => !wanted || t.system === wanted)
+        const templatePick = templates
+          .map((t) => ({
+            item: t,
+            score: scoreFields(withoutStopWords(brief), [
+              { text: normalize(t.slug), weight: 5 },
+              { text: normalize(t.name), weight: 4 },
+              { text: normalize(t.category ?? ''), weight: 4 },
+              { text: normalize(t.description), weight: 1 },
+              { text: normalize(t.system), weight: 2 },
+            ]),
+          }))
+          .filter((r) => r.score >= MIN_TEMPLATE_SCORE && namedHit(brief, r.item))
+          .sort((a, b) => b.score - a.score)[0]?.item
+
+        let { segments, omitted } = briefSegments(brief)
+        type Pick = ComponentMeta | SystemComponentMeta
+        const systemOf = new Map((meta.systemComponents ?? []).map((c) => [c.slug, c.system]))
+        const rankAll = (lock: string | undefined) =>
+          segments.map((ask) => {
+            const query = withoutStopWords(ask)
+            const ds = (meta.systemComponents ?? [])
+              .filter((c) => !lock || c.system === lock)
+              .map((c) => ({ item: c as Pick, score: scoreSystemComponent(query, c) }))
+              .filter((r) => r.score > 0 && namedHit(ask, r.item))
+            const sa = wanted
+              ? []
+              : meta.components
+                  .map((c) => ({ item: c as Pick, score: scoreMatch(query, c) }))
+                  .filter((r) => r.score > 0 && namedHit(ask, r.item))
+            return { ask, ranked: [...ds, ...sa].sort((a, b) => b.score - a.score).map((r) => r.item) }
+          })
+
+        // One design system per screen (the audit checklist's own rule). With no
+        // `system` given, the system behind most first picks wins and the parts
+        // are ranked again inside it; a tie goes to the first pick's system.
+        let ranked = rankAll(wanted)
+        const detectedPageType = pageTypeFor(brief)
+        const pageType =
+          detectedPageType && segments.length <= 1 && ranked.every((r) => r.ranked.length === 0)
+            ? detectedPageType
+            : null
+        if (pageType) {
+          segments = [...PAGE_RECIPES[pageType].sections]
+          ranked = rankAll(wanted)
+        }
+        let locked = wanted
+        if (!wanted) {
+          const votes = new Map<string, number>()
+          for (const r of ranked) {
+            const sys = r.ranked[0] && systemOf.get(r.ranked[0].slug)
+            if (sys) votes.set(sys, (votes.get(sys) ?? 0) + 1)
+          }
+          if (votes.size > 1) {
+            locked = [...votes.entries()].sort((a, b) => b[1] - a[1])[0][0]
+            ranked = rankAll(locked)
+          }
+        }
+
+        const sections: Array<{
+          ask: string
+          pick: { slug: string; name: string; installCommand: string; homepageUrl: string; hasProps: boolean } | null
+          alternatives: Array<{ slug: string; name: string }>
+        }> = []
+        for (const r of ranked) {
+          const pick = r.ranked[0]
+          // Two parts of the brief that resolve to the same component are one part.
+          const twin = pick && sections.find((s) => s.pick?.slug === pick.slug)
+          if (twin) {
+            twin.ask = `${twin.ask}, ${r.ask}`
+            continue
+          }
+          sections.push({
+            ask: r.ask,
+            pick: pick
+              ? {
+                  slug: pick.slug,
+                  name: pick.name,
+                  // A locked pick carries no command: it would only write a placeholder.
+                  installCommand: ctx.access?.locked(pick.slug) ? '' : keyed(ctx, pick.installCommand),
+                  homepageUrl: pick.homepageUrl,
+                  hasProps: !!props?.props[pick.slug],
+                }
+              : null,
+            alternatives: r.ranked.slice(1, 3).map((c) => ({ slug: c.slug, name: c.name })),
+          })
+        }
+        const gaps = sections.filter((s) => !s.pick).map((s) => s.ask)
+        const picks = sections.flatMap((s) => (s.pick ? [s.pick] : []))
+
+        // Install order: shared tokens of every system used, then each pick once.
+        const systemsUsed = new Set(
+          picks.flatMap((p) => {
+            const sc = (meta.systemComponents ?? []).find((c) => c.slug === p.slug)
+            return sc ? [sc.system] : []
+          }),
+        )
+        const install: string[] = []
+        for (const s of systemsUsed) {
+          const bare = (meta.systems ?? []).find((x) => x.slug === s)?.tokensInstallCommand
+          const cmd = bare && !ctx.access?.locked(`${s}-tokens`) ? keyed(ctx, bare) : null
+          if (cmd && !install.includes(cmd)) install.push(cmd)
+        }
+        // Hosted: a pick this account cannot install stays in the plan, marked, but out of the
+        // install list, where it would only write a placeholder.
+        const lockedPicks = picks.filter((p) => ctx.access?.locked(p.slug))
+        for (const p of picks) {
+          if (!lockedPicks.includes(p) && !install.includes(p.installCommand)) install.push(p.installCommand)
+        }
+
+        const lines: string[] = [`# Plan for: ${brief}`, '']
+        if (templatePick) {
+          lines.push(
+            `Closest ready-made screen: ${templatePick.name} (${templatePick.system}${templatePick.category ? ` · ${templatePick.category}` : ''}), ${templatePick.fileCount} files${ctx.access?.locked(templatePick.slug) ? ', locked' : ''}.`,
+            ctx.access?.locked(templatePick.slug)
+              ? `  Locked on this account (Premium): offer the upgrade (${UPGRADE_URL}).`
+              : `  Install: ${keyed(ctx, templatePick.installCommand)}`,
+            `  Preview: ${templatePick.homepageUrl}`,
+            '  Start from it when the brief is mostly this screen; fetch it with `get_template`.',
+            '',
+          )
+        }
+        if (locked && !wanted && systemsUsed.size) {
+          lines.push(`Design system: ${locked} (one system per screen; pass \`system\` to choose another).`, '')
+        }
+        lines.push('## Parts')
+        if (pageType) {
+          lines.push(`Sections inferred for a ${pageType} page. Name the parts yourself (comma-separated) to plan something else.`)
+        }
+        for (const s of sections) {
+          if (s.pick) {
+            lines.push(
+              `- ${s.ask}: ${s.pick.name} (${s.pick.slug})${s.pick.hasProps ? ', documented API' : ', self-contained'}${ctx.access?.locked(s.pick.slug) ? ', locked' : ''}` +
+                (s.alternatives.length
+                  ? `. Alternatives: ${s.alternatives.map((a) => a.slug).join(', ')}`
+                  : ''),
+            )
+          } else {
+            lines.push(`- ${s.ask}: nothing in the catalog. Build it by hand.`)
+          }
+        }
+        if (omitted.length) {
+          lines.push(
+            `- Not planned (a brief takes ${MAX_PARTS} parts): ${omitted.join('; ')}. Run compose_page again for these.`,
+          )
+        }
+        lines.push('', '## Steps')
+        let n = 1
+        if (install.length) {
+          lines.push(`${n++}. Install, in this order:`, ...install.map((c) => `   ${c}`))
+        }
+        const withApi = picks.filter(
+          (p, i) => p.hasProps && picks.findIndex((q) => q.slug === p.slug) === i,
+        )
+        if (withApi.length) {
+          lines.push(
+            `${n++}. Read the API before writing JSX: get_component_props on ${withApi.map((p) => p.slug).join(', ')}.`,
+          )
+        }
+        if (lockedPicks.length) {
+          lines.push(
+            `${n++}. Locked on this account (Premium): ${lockedPicks.map((p) => p.slug).join(', ')}. Tell the user, and offer the upgrade (${UPGRADE_URL}) or an alternative.`,
+          )
+        }
+        if (gaps.length) {
+          lines.push(
+            `${n++}. Build by hand: ${gaps.join('; ')}. Hold it to get_audit_checklist.`,
+          )
+        }
+        lines.push(
+          `${n++}. Compose the page, then run validate_usage on the file.`,
+          '',
+          'This is a plan from the catalog. No code was generated.',
+        )
+
+        return {
+          content: [asTextContent(lines.join('\n'))],
+          structuredContent: {
+            brief,
+            system: locked ?? null,
+            pageType,
+            omitted,
+            template: templatePick
+              ? {
+                  slug: templatePick.slug,
+                  name: templatePick.name,
+                  installCommand: ctx.access?.locked(templatePick.slug) ? '' : keyed(ctx, templatePick.installCommand),
+                  homepageUrl: templatePick.homepageUrl,
+                }
+              : null,
+            sections,
+            gaps,
+            install,
+          },
+        }
+      } catch (err) {
+        return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: get_audit_checklist ────────────────────────────────────────────────
+
+  server.registerTool(
+    'get_audit_checklist',
+    {
+      title: 'Get the AI Canvas audit checklist',
+      description:
+        'Return the checklist to run on a finished page or component built with AI Canvas parts: install completeness, prop correctness (via validate_usage), both themes, layout at 320px, motion cleanup and reduced motion, keyboard and contrast, and composition rules. Use it as the last step of compose_page, or whenever the user asks "is this done right".',
+      inputSchema: {
+        scope: z
+          .enum(['page', 'component'])
+          .optional()
+          .describe('"page" (default) for a composed screen, "component" for a single adapted or hand-built component.'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+    },
+    async ({ scope = 'page' }) => {
+      const list = scope === 'component' ? CHECKLIST_COMPONENT : CHECKLIST_PAGE
+      return {
+        content: [asTextContent(list.join('\n'))],
+        structuredContent: { scope, items: list.filter((l) => l.startsWith('- ')).map((l) => l.slice(2)) },
+      }
+    },
+  )
+
+  // ── Tool: whoami (hosted only) ───────────────────────────────────────────────
+
+  const whoami = ctx.whoami
+  if (whoami) {
+    server.registerTool(
+      'whoami',
+      {
+        title: 'Show the AI Canvas account this connection uses',
+        description:
+          'Return the AI Canvas account this connection is signed in as, its plan (free or premium) and what that plan installs. Use when the user asks which account is connected, or before explaining why an item is locked.',
+        inputSchema: {},
+        annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
+      },
+      async () => {
+        try {
+          const me = await whoami()
+          const scope =
+            me.plan === 'premium'
+              ? 'Every component, design system and template installs in full.'
+              : `Free components and design-system components install in full. Premium items show as locked; upgrading at ${UPGRADE_URL} unlocks them on this same connection.`
+          return {
+            content: [
+              asTextContent(
+                `Signed in to AI Canvas as ${me.email ?? 'an account with no email on file'}, ${me.plan === 'premium' ? 'Premium' : 'Free'} plan. ${scope}`,
+              ),
+            ],
+            structuredContent: { email: me.email, plan: me.plan },
+          }
+        } catch (err) {
+          return errorResult(err instanceof Error ? err.message : String(err))
+        }
+      },
+    )
+  }
+
+  const disconnect = ctx.disconnect
+  if (disconnect) {
+    server.registerTool(
+      'disconnect',
+      {
+        title: 'Disconnect this AI agent from AI Canvas',
+        description:
+          'End this AI agent\'s connection to the user\'s AI Canvas account. Use ONLY when the user asks to disconnect or sign out this agent. Afterwards every AI Canvas tool needs a new sign-in.',
+        inputSchema: {},
+        annotations: { readOnlyHint: false, destructiveHint: true, idempotentHint: true, openWorldHint: false },
+      },
+      async () => {
+        try {
+          await disconnect()
+          return {
+            content: [
+              asTextContent(
+                'Disconnected. This AI agent can no longer use the AI Canvas account. To connect again, sign in from the agent. Install commands it already ran carried the account\'s API key; the user can change that key in AI Canvas settings.',
+              ),
+            ],
+          }
+        } catch (err) {
+          return errorResult(err instanceof Error ? err.message : String(err))
+        }
+      },
+    )
+  }
+
+  return server
+}

@@ -15,6 +15,8 @@ function currentGitBranch(): string {
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  // Dev only: lets a cloudflared tunnel load the dev server's scripts (see MCP_PUBLIC_ORIGIN).
+  allowedDevOrigins: ['*.trycloudflare.com'],
   turbopack: {
     root: path.resolve(__dirname),
   },
@@ -54,6 +56,10 @@ const nextConfig: NextConfig = {
     // The image pack's two Pro files are read with fs at request time from the
     // injected (gitignored) Andromeda Pro tree.
     "/api/andromeda-pro/image-pack/[file]": ["./design-systems/andromeda-pro/image-pack/*"],
+    // The paid icon styles' markup, read with fs and served only to Premium.
+    "/icons/style-data/[style]": ["./.icons-data/*.json"],
+    // Download all reads every style's markup and the shipped React files.
+    "/api/icons/download": ["./.icons-data/*.json", "./public/icons-data/line.json", "./registry-data/icon-*.json"],
   },
   async headers() {
     return [
@@ -66,11 +72,24 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         ],
       },
+      {
+        // The AI agent consent screen: never framed (an Allow button under someone
+        // else's page is the click-jack), never cached, never leaked in a Referer.
+        source: "/oauth/:path*",
+        headers: [
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Cache-Control", value: "no-store" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      },
     ];
   },
   async redirects() {
     return [
       { source: "/r", destination: "/components", permanent: true },
+      // The hosted MCP docs live in the docs section; this keeps an early link working.
+      { source: "/mcp/docs", destination: "/docs/mcp", permanent: true },
       // The Lab is off the site. Its routes stay in the tree, so these two
       // redirects are the whole switch: temporary (307) rather than permanent,
       // so browsers and crawlers do not cache the move if the Lab comes back.

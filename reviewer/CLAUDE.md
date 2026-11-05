@@ -30,7 +30,7 @@ Independent review of every built or modified component before the user previews
 - [ ] Every `useEffect` cleans up (cancel RAF, stop animations, unsubscribe)
 
 ### 5. Styling + type scale
-- [ ] Inside the component: raw values, not site tokens (sand-*/olive-* belong to site chrome; the root container chrome is the one exception)
+- [ ] Inside the component: raw values, not site tokens (sand-* and the accent roles belong to site chrome; the root container chrome is the one exception)
 - [ ] Font sizes on the fixed scale (10/12/14/16/20/24/28); spacing on the 4px grid
 - [ ] No hardcoded pixel dimensions on layout containers — fluid sizing
 

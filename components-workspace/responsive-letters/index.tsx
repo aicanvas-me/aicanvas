@@ -1,18 +1,19 @@
 'use client'
 
-// npm install framer-motion next
+// npm install framer-motion
 // font: Science Gothic
 
 import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Science_Gothic } from 'next/font/google'
 
 
 
 
 
-// Without axes: ['wdth'] the font ships no width axis and the stretch does nothing.
-const scienceGothic = Science_Gothic({ subsets: ['latin'], axes: ['wdth'] })
+// Science Gothic from Google Fonts, loaded by the stylesheet import inside the
+// root, so the component runs in any React app (Next.js, Vite, anything else).
+const FONT_FAMILY = "'Science Gothic', sans-serif"
+const FONT_URL = 'https://fonts.googleapis.com/css2?family=Science+Gothic:wdth,wght@50..200,100..900&display=swap'
 
 
 
@@ -261,14 +262,15 @@ export default function ResponsiveLetters() {
   return (
     <div
       ref={containerRef}
-      className={`flex min-h-screen w-full flex-col items-center justify-center gap-8 px-6 sm:px-10 ${scienceGothic.className}`}
-      style={{ backgroundColor: bgColor }}
+      className={`flex min-h-screen w-full flex-col items-center justify-center gap-8 px-6 sm:px-10`}
+      style={{ backgroundColor: bgColor, fontFamily: FONT_FAMILY }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <style>{`@import url('${FONT_URL}');`}</style>
       <div className="flex flex-wrap items-center justify-center gap-0.5 sm:gap-1">
         {TEXT.split('').map((letter, i) => (
           <LetterSpan
@@ -278,7 +280,7 @@ export default function ResponsiveLetters() {
               if (el) lettersRef.current[i] = el
             }}
             textColor={textColor}
-            fontFamily={scienceGothic.style.fontFamily}
+            fontFamily={FONT_FAMILY}
           />
         ))}
       </div>

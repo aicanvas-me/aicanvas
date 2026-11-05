@@ -40,7 +40,10 @@ function readTheme(el: HTMLElement | null): Theme {
 }
 
 function useTheme(rootRef: React.RefObject<HTMLElement | null>): { theme: Theme } {
-  const [theme, setTheme] = useState<Theme>(() => readTheme(rootRef.current))
+  // Start dark, as the server rendered it, and read the real theme after
+  // mount: hydration keeps the server's colours, so reading the page in the
+  // first render left a light page painted dark.
+  const [theme, setTheme] = useState<Theme>('dark')
   useEffect(() => {
     const el = rootRef.current
     setTheme(readTheme(el))

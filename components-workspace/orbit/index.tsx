@@ -1,12 +1,13 @@
 'use client'
 
-// npm install next
 // font: Anton
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { Anton } from 'next/font/google'
 
-const anton = Anton({ subsets: ['latin'], weight: '400' })
+// Anton from Google Fonts, loaded by the stylesheet import inside the root, so
+// the component runs in any React app (Next.js, Vite, anything else).
+const FONT_FAMILY = "'Anton', sans-serif"
+const FONT_URL = 'https://fonts.googleapis.com/css2?family=Anton&display=swap'
 
 function useTheme(ref: React.RefObject<HTMLElement | null>) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
@@ -199,11 +200,12 @@ export default function Orbit() {
         }, 600)
       }}
     >
+      <style>{`@import url('${FONT_URL}');`}</style>
       <div style={{ position: 'relative', flexShrink: 0 }}>
       <div
         ref={wheelRef}
-        className={anton.className}
         style={{
+          fontFamily: FONT_FAMILY,
           position: 'relative',
           width: 'clamp(200px, 48vw, 420px)',
           height: 'clamp(200px, 48vw, 420px)',

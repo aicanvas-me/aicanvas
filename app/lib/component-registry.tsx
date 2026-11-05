@@ -211,7 +211,7 @@ export function isBlockEntry(entry: { isBlock?: boolean; tags: Tag[] }): boolean
 // (related grid, prev/next nav, etc).
 export type ComponentMeta = Pick<
   ComponentEntry,
-  'slug' | 'name' | 'description' | 'tags' | 'image' | 'badge'
+  'slug' | 'name' | 'description' | 'tags' | 'image' | 'badge' | 'dualTheme'
 >
 
 // Code strings are now auto-generated from source files — see component-codes.generated.ts

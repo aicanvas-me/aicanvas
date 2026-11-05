@@ -2,10 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode, useRef } from 'react'
 import Link from 'next/link'
-import { X } from '@phosphor-icons/react'
+import { X } from '@/app/_icons/icons/x'
 import { PremiumCards } from './PremiumCards'
-import { BusinessCards } from './BusinessCard'
-import { PlanAudienceTabs, audiencePanelId, type PlanAudience } from './PlanAudienceTabs'
 import { PaymentMethods } from './PaymentMethods'
 import { track } from '../../lib/analytics'
 import { useDialogFocus } from '../useDialogFocus'
@@ -68,18 +66,10 @@ function PaywallModalView({
   const { user } = useSession()
   // Metering is gone, so the modal only ever pitches Premium content now.
   // Both 'premium-only' and 'upgrade' resolve to a single Premium card; the
-  // reason just tunes the heading and subtitle.
+  // reason just tunes the heading and subtitle. One plan family, no
+  // individual / business switch: Business is not a plan.
   const title = reason === 'upgrade' ? 'Upgrade to Premium' : 'Premium content'
-  // The same audience switch the pricing page carries. A visitor who hits a
-  // gate at work is the one most likely to want the team answer, and sending
-  // them to /pricing to find it loses the thing they were trying to open.
-  const [audience, setAudience] = useState<PlanAudience>('individual')
-  const business = audience === 'business'
-  const subtitle = business
-    ? 'One subscription for up to 10 people, and one shared AI Brain, so every agent on the team builds to the same rules.'
-    : reason === 'upgrade'
-      ? null
-      : 'Unlock this with a Premium subscription.'
+  const subtitle = reason === 'upgrade' ? null : 'Unlock this with a Premium subscription.'
 
   // Keyboard: Tab stays inside the card, focus returns on close, and the card
   // itself takes focus on open so screen readers land in the dialog.
@@ -117,67 +107,52 @@ function PaywallModalView({
         className="fixed inset-0 bg-sand-950/85 backdrop-blur-sm"
       />
 
-      {/* Width hugs the content: just the single Premium card + padding. */}
+      {/* Width hugs the content: just the single Premium card + padding. No
+          ground of its own: the blurred backdrop is the panel, and the card
+          sits straight on it. That backdrop is dark in both themes, so the
+          words and the close button around the card take fixed light ink. */}
       <div
         ref={panelRef}
         tabIndex={-1}
-        className="relative z-10 my-auto w-full max-w-lg rounded-2xl bg-sand-100 p-6 shadow-2xl outline-none sm:p-8 dark:bg-sand-950"
+        className="relative z-10 my-auto w-full max-w-lg p-6 outline-none sm:p-8"
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Close"
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-lg text-sand-600 transition-colors hover:bg-sand-200 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-100"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-control text-sand-400 transition-colors hover:bg-sand-800 hover:text-sand-100"
         >
-          <X weight="regular" size={18} />
+          <X size={18} />
         </button>
 
         <div className="text-center">
-          <h3 className="text-xl font-bold text-sand-900 dark:text-sand-50">{title}</h3>
+          <h3 className="text-xl font-bold text-sand-50">{title}</h3>
           {subtitle && (
-            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-sand-600 dark:text-sand-400">{subtitle}</p>
+            <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-sand-400">{subtitle}</p>
           )}
         </div>
 
-        <div className="mt-5">
-          <PlanAudienceTabs
-            value={audience}
-            onChange={setAudience}
-            idPrefix="paywall-audience"
-          />
-        </div>
-
-        <div
-          role="tabpanel"
-          id={audiencePanelId('paywall-audience', audience)}
-          aria-labelledby={`paywall-audience-${audience}-tab`}
-          className="mt-5"
-        >
-          {business ? <BusinessCards compact /> : <PremiumCards show="premium-only" compact />}
+        <div className="mt-6">
+          <PremiumCards show="premium-only" compact />
         </div>
 
         {/* Accepted payment methods — a card-width container matching the
             Premium card so it reads as the bottom of the same column. */}
-        {/* Both of these are facts about the Premium checkout. Business has no
-            checkout to accept a card at, and no subscription to have been paid
-            under another address. */}
-        {!business && (
-          <div className="mx-auto mt-5 max-w-md rounded-2xl border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-900/50">
-            <PaymentMethods />
-          </div>
-        )}
+        <div className="mx-auto mt-5 max-w-md rounded-card border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-900/50">
+          <PaymentMethods />
+        </div>
 
         {/* Wrong-account net: a signed-in FREE user staring at this paywall may
             have PAID under a different email (real case: OAuth sign-in with a
             gmail address after checking out with hotmail). One line, shown only
             when signed in, pointing at the claim flow on /welcome. */}
-        {user && !business && (
-          <p className="mx-auto mt-4 max-w-md text-center text-xs leading-relaxed text-sand-500">
+        {user && (
+          <p className="mx-auto mt-4 max-w-md text-center text-xs leading-relaxed text-sand-400">
             Paid with a different email?{' '}
             <Link
               href="/welcome"
               onClick={onClose}
-              className="font-medium text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+              className="font-medium text-sand-50 transition-colors hover:text-sand-50/70"
             >
               Sign in with the address you used at checkout
             </Link>

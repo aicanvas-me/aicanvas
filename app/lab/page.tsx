@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { ArrowRight, Flask } from '@phosphor-icons/react/dist/ssr'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Flask } from '@/app/_icons/icons/flask'
 import { SiteFooter } from '../components/SiteFooter'
 import { optimizeImageKitUrl } from '../lib/imagekit'
 import { IconCluster } from './_components/IconCluster'
@@ -88,11 +89,11 @@ const TOOLS: Array<{
 
 const STATUS_STYLES: Record<Status, string> = {
   active:
-    'border-olive-500/30 bg-olive-500/10 text-olive-600 dark:text-olive-400',
+    'border-accent/30 bg-accent/10 text-accent',
   planned:
     'border-sand-300 bg-sand-200/60 text-sand-600 dark:border-sand-700 dark:bg-sand-800/60 dark:text-sand-400',
   live:
-    'border-olive-500/30 bg-olive-500/15 text-olive-600 dark:text-olive-300',
+    'border-accent/30 bg-accent/15 text-accent',
 }
 
 // Display label for the status pill. Decoupled from the status key so we can
@@ -122,8 +123,8 @@ export default function LabPage() {
             </div>
           </h1>
           <div className="relative z-10">
-            <p className="mb-3 inline-flex items-center gap-1.5 text-base font-semibold text-olive-500">
-              <Flask weight="regular" size={18} />
+            <p className="mb-3 inline-flex items-center gap-1.5 text-base font-semibold text-accent">
+              <Flask size={18} />
               Lab
             </p>
             {/* Headline — matches the site's H1 spec (text-3xl sm:text-4xl,
@@ -154,7 +155,7 @@ export default function LabPage() {
               // Active cards get an olive border at rest so the live tool
               // visually separates from the planned placeholders.
               const cardChromeClasses = isActive
-                ? 'border-olive-500/40 hover:border-olive-500/60 dark:border-olive-400/40 dark:hover:border-olive-400/60'
+                ? 'border-accent/40 hover:border-accent/60'
                 : 'border-sand-300 hover:border-sand-400 dark:border-sand-800 dark:hover:border-sand-700'
               const card = (
                 <article className={`group flex h-full items-stretch overflow-hidden rounded-2xl border bg-sand-50 transition-all duration-200 hover:shadow-md dark:bg-sand-900 dark:hover:shadow-black/30 ${cardChromeClasses}`}>
@@ -216,7 +217,6 @@ export default function LabPage() {
                         {isPlanned ? 'Coming soon' : 'Open tool'}
                         {!isPlanned && (
                           <ArrowRight
-                            weight="regular"
                             size={14}
                             className="transition-transform group-hover:translate-x-0.5"
                           />
@@ -233,7 +233,7 @@ export default function LabPage() {
                   ) : (
                     <Link
                       href={`/lab/${tool.slug}`}
-                      className="block h-full rounded-2xl focus:outline-none focus:ring-2 focus:ring-olive-500 focus:ring-offset-2 focus:ring-offset-sand-200 dark:focus:ring-offset-sand-950"
+                      className="block h-full rounded-2xl focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-sand-200 dark:focus:ring-offset-sand-950"
                     >
                       {card}
                     </Link>

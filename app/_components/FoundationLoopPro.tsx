@@ -13,7 +13,7 @@
 // and its own theme channel; sharing one component made the Legacy landing and
 // the homepage render Pro's palette. Renders in Andromeda's own visual language
 // (surface.base void, JetBrains Mono, blue/orange/red scales), not the
-// site's sand/olive tokens — intentional, since this IS a preview of the
+// site's sand/accent tokens — intentional, since this IS a preview of the
 // system.
 
 import { useState, useEffect, useRef } from 'react'

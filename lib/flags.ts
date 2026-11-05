@@ -19,3 +19,28 @@ function isCheckoutComingSoon(raw: string | undefined): boolean {
 export function checkoutComingSoon(): boolean {
   return isCheckoutComingSoon(process.env.NEXT_PUBLIC_CHECKOUT_COMING_SOON)
 }
+
+/** The hosted MCP server (mcp.aicanvas.me) and every surface that sends people
+ *  to it. Server-only; defaults to off, so it ships dark. */
+export function hostedMcpEnabled(): boolean {
+  return process.env.HOSTED_MCP === 'on'
+}
+
+/** Browser sign-in for the hosted MCP (our own OAuth server, consent page,
+ *  discovery route). Off: the server takes API keys only. Server-only. */
+export function hostedMcpOAuthEnabled(): boolean {
+  return hostedMcpEnabled() && process.env.HOSTED_MCP_OAUTH === 'on'
+}
+
+/** Pure reader for the Lifetime kill switch; defaults to off. */
+export function isLifetimeEnabled(raw: string | undefined): boolean {
+  return raw === 'true'
+}
+
+/** Shows the one-time Lifetime plan and drops Yearly for new buyers
+ *  (devtools handoffs/lifetime-build.md, section 10). Build-time value, so a
+ *  flip needs a redeploy. Only turn it on once the Lifetime checkout and its
+ *  webhook grant are live: before that the card is design only. */
+export function lifetimeEnabled(): boolean {
+  return isLifetimeEnabled(process.env.NEXT_PUBLIC_LIFETIME_ENABLED)
+}

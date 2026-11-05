@@ -4,6 +4,9 @@ import { PasswordSection } from './PasswordSection'
 import { AccountBilling } from './AccountBilling'
 import { McpTokenSection } from './McpTokenSection'
 import { DeleteAccountSection } from './DeleteAccountSection'
+import { ConnectedAgentsSection } from './ConnectedAgentsSection'
+import { connectedAgents } from './connected-agents'
+import { hostedMcpOAuthEnabled } from '../../../../lib/flags'
 import type { PackageManager } from '../../../lib/supabase/types'
 
 export default async function SettingsPage() {
@@ -51,14 +54,17 @@ export default async function SettingsPage() {
     .maybeSingle()
   const apiToken = (keyRow?.token ?? null) as string | null
 
+  const agents = hostedMcpOAuthEnabled() ? await connectedAgents(user.id) : null
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <SettingsForm initial={initial} />
       <PasswordSection hasPassword={hasPassword} email={user.email ?? ''} />
       <AccountBilling />
       {/* Rendered outside AccountBilling so the token never depends on the
           premium/billing feature flag — it always shows for signed-in users. */}
       <McpTokenSection token={apiToken} />
+      {agents && <ConnectedAgentsSection agents={agents} />}
       <DeleteAccountSection />
     </div>
   )

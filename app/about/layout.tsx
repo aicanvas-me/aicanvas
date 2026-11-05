@@ -1,7 +1,7 @@
 import { pageMetadata } from '../lib/page-metadata'
 
 const description =
-  'Why AI Canvas exists: real, reviewed components with every state built, instead of an AI guessing an interface from nothing.'
+  'AI Canvas gives Claude Code, Cursor, and Codex reviewed components and coherent design systems, replacing AI slop and guesswork with editable React source.'
 
 export const metadata = pageMetadata({
   title: 'About',

@@ -1,9 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Check } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check'
 import { useSession } from '../../../components/auth/SessionProvider'
 import { Toggle } from '../../../components/Toggle'
+import { CARD } from '../../../components/PageKit'
 import type { PackageManager } from '../../../lib/supabase/types'
 
 const PACKAGE_MANAGERS: PackageManager[] = ['pnpm', 'npm', 'yarn', 'bun']
@@ -35,7 +36,7 @@ export function SettingsForm({ initial }: { initial: Initial }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <Field
         label="Preferred package manager"
         description="The CLI install drawer opens with this selected."
@@ -68,21 +69,21 @@ function Pill({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center gap-1.5 rounded-lg border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
+      className={`inline-flex items-center gap-1.5 rounded-control border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
         active
-          ? 'border-olive-500 bg-olive-500/15 text-olive-600 dark:text-olive-400'
+          ? 'border-accent bg-accent/15 text-accent'
           : 'border-sand-200 bg-sand-100 text-sand-700 hover:border-sand-300 hover:text-sand-900 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100'
       }`}
     >
-      {active && <Check weight="bold" size={12} />}
+      {active && <Check size={12} />}
       {children}
     </button>
   )
 }
 
-// Each field is its own card surface so the three preferences don't read as
-// one undifferentiated block — title + description sit on a sand-100 card
-// (sand-900 dark) with consistent padding.
+// Each field is its own card surface so the preferences don't read as one
+// undifferentiated block — title + description sit on the site's card
+// (sand-100, sand-900 dark) with the same padding as every account card.
 function Field<T extends string>({
   label,
   description,
@@ -102,10 +103,10 @@ function Field<T extends string>({
   }
 
   return (
-    <div className="rounded-xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
-      <div className="text-lg font-bold text-sand-900 dark:text-sand-50">{label}</div>
-      <div className="mt-1 text-sm text-sand-600 dark:text-sand-400">{description}</div>
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+    <div className={`${CARD} p-6 sm:p-8`}>
+      <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">{label}</h2>
+      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">{description}</p>
+      <div className="mt-5 flex flex-wrap items-center gap-2">
         {options.map((opt) => (
           <Pill key={opt} active={value === opt} onClick={() => handle(opt)}>
             {opt}
@@ -116,8 +117,10 @@ function Field<T extends string>({
   )
 }
 
-// Boolean variant of Field — a single switch on the third row, strict on/off
-// (no null state). The toggle's own colour communicates state.
+// Boolean variant of Field — a single switch, strict on/off (no null state).
+// The toggle's own colour communicates state. It sits level with the title on
+// the right, the way a settings switch reads, instead of alone on a row of its
+// own under the description.
 function BooleanField({
   label,
   description,
@@ -130,10 +133,12 @@ function BooleanField({
   onSelect: (value: boolean) => Promise<void>
 }) {
   return (
-    <div className="rounded-xl border border-sand-200 bg-sand-100 p-6 dark:border-sand-800 dark:bg-sand-900">
-      <div className="text-lg font-bold text-sand-900 dark:text-sand-50">{label}</div>
-      <div className="mt-1 text-sm text-sand-600 dark:text-sand-400">{description}</div>
-      <div className="mt-4 flex flex-wrap items-center gap-2">
+    <div className={`${CARD} flex items-start justify-between gap-6 p-6 sm:p-8`}>
+      <div className="min-w-0">
+        <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">{label}</h2>
+        <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">{description}</p>
+      </div>
+      <div className="shrink-0 pt-0.5">
         <Toggle checked={value} onCheckedChange={onSelect} aria-label={label} />
       </div>
     </div>

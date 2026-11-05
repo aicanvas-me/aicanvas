@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -21,7 +21,6 @@ import {
 import { Step } from '../../../components/Step'
 import { useAndromedaPreviewTheme } from '../AndromedaThemeWrap'
 import { andromedaLightVars } from '../../../lib/andromeda-pro-helpers.generated'
-import { SiteFooter } from '../../../components/SiteFooter'
 import { Button } from '../../../components/Button'
 import { SaveButton } from '../../../components/SaveButton'
 import { HighlightedCodeView } from '../../../components/HighlightedCodeView'
@@ -46,6 +45,7 @@ import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
 import { RemixPanel } from '../../../_components/RemixPanel'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // Matches the Pro components index card's data shape (system/AndromedaGallery
 // GalleryItem) so [component]/page.tsx and this view share one contract.
@@ -77,10 +77,10 @@ interface Props {
 // Same chip and panel chrome the sibling system's component pages use, so the
 // two read as one site.
 const coverageChip =
-  'rounded-lg bg-sand-200 px-2.5 py-1.5 text-xs font-semibold text-sand-600 transition-colors hover:bg-sand-300 hover:text-sand-900 dark:bg-sand-800 dark:text-sand-400 dark:hover:bg-sand-700 dark:hover:text-sand-50'
+  'rounded-control bg-sand-200 px-2.5 py-1.5 text-xs font-semibold text-sand-600 transition-colors hover:bg-sand-300 hover:text-sand-900 dark:bg-sand-800 dark:text-sand-400 dark:hover:bg-sand-700 dark:hover:text-sand-50'
 
 const coveragePanel =
-  'rounded-2xl border border-sand-300 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
+  'rounded-section border border-sand-300 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900'
 
 // The case the top frame leads with, for EVERY component: the frame shows ONE
 // live instance and
@@ -95,6 +95,10 @@ const coveragePanel =
 // its cases, not by a list of exceptions here.
 const SOLO_HERO_CASE = 'Live'
 
+
+// useSyncExternalStore with nothing to subscribe to: false on the server and
+// during hydration, true after.
+const noopSubscribe = () => () => {}
 
 export function AndromedaComponentView({
   slug,
@@ -155,8 +159,7 @@ export function AndromedaComponentView({
   const previewTheme = useAndromedaPreviewTheme()
   // The full-screen preview is portalled to <body>, and document.body does not
   // exist during the server render — so the portal waits for mount.
-  const [portalReady, setPortalReady] = useState(false)
-  useEffect(() => setPortalReady(true), [])
+  const portalReady = useSyncExternalStore(noopSubscribe, () => true, () => false)
   const [installTab, setInstallTab] = useState<'cli' | 'manual'>('cli')
   // Same events as the Andromeda Legacy page, so the two views compare
   // directly. A tab switch counts only when the tab actually changes.
@@ -166,6 +169,15 @@ export function AndromedaComponentView({
   }
   const [pkgManager, setPkgManager] = useState<'pnpm' | 'npm' | 'yarn' | 'bun'>('npm')
   const mainCardRef = useRef<HTMLDivElement>(null)
+  // Where the copied toast centres: under the main card, read when the toast
+  // opens (a ref is not read during render).
+  const [toastLeft, setToastLeft] = useState<number | null>(null)
+  const showCliToast = () => {
+    const card = mainCardRef.current
+    setToastLeft(card ? card.getBoundingClientRect().left + card.offsetWidth / 2 : null)
+    setCliCopied(true)
+    setTimeout(() => setCliCopied(false), 2000)
+  }
 
   // Source is never shipped in this page's HTML. It's fetched on demand from
   // the gated endpoint when the Code tab (or Manual install) opens. Reading a
@@ -201,17 +213,28 @@ export function AndromedaComponentView({
     }
   }, [registrySlug])
   // Fetch the first time the source becomes visible (Code tab or Manual tab).
+  // The fetch starts in a task of its own, so its first state write never lands
+  // inside the commit; a change of tab before it fires cancels it.
   useEffect(() => {
-    if ((tab === 'code' || installTab === 'manual') && codeState.status === 'idle') void openCode()
+    if (!((tab === 'code' || installTab === 'manual') && codeState.status === 'idle')) return
+    const id = setTimeout(() => void openCode(), 0)
+    return () => clearTimeout(id)
   }, [tab, installTab, codeState.status, openCode])
-  // Re-fetch when navigating to another component.
-  useEffect(() => { setCodeState({ status: 'idle' }) }, [slug])
+  // Re-fetch when navigating to another component (state adjusted during
+  // render, the moment the slug changes).
+  const [codeSlug, setCodeSlug] = useState(slug)
+  if (codeSlug !== slug) {
+    setCodeSlug(slug)
+    setCodeState({ status: 'idle' })
+  }
 
   // Adopt the user's preferred package manager once preferences load.
   // We don't override an in-progress click — only the initial default.
-  useEffect(() => {
-    if (preferences.package_manager) setPkgManager(preferences.package_manager)
-  }, [preferences.package_manager])
+  const [pmPref, setPmPref] = useState<typeof preferences.package_manager | null>(null)
+  if (preferences.package_manager && preferences.package_manager !== pmPref) {
+    setPmPref(preferences.package_manager)
+    setPkgManager(preferences.package_manager)
+  }
 
   const RELATED_PAGE_SIZE = 3
   const [relatedStart, setRelatedStart] = useState(0)
@@ -334,8 +357,7 @@ export function AndromedaComponentView({
     const ok = await copyText(cliCommand)
     track('CLI Copy', { component: registrySlug, ok })
     if (!ok) return
-    setCliCopied(true)
-    setTimeout(() => setCliCopied(false), 2000)
+    showCliToast()
   }
 
   return (
@@ -349,19 +371,20 @@ export function AndromedaComponentView({
           --at- text colour here was authored for the system's dark void and
           read as invisible ink the moment the page ground went light. */}
       <div className="mb-8">
+        <PageCrumbs />
         <PageTitle gap="none" rank="section">{name}</PageTitle>
         <PageLead>{description}</PageLead>
       </div>
 
       {/* ── Main card (Preview / Code) ──────────────────────────────────── */}
-      <div ref={mainCardRef} className="overflow-hidden rounded-2xl border border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
+      <div ref={mainCardRef} className="overflow-hidden rounded-section border border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
         {/* Tab bar */}
-        <div className="flex items-center justify-between border-b border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-between px-3 py-3 sm:px-5 sm:py-4">
           <div className="flex items-center gap-0.5">
             <button
               type="button"
               onClick={() => setTab('preview')}
-              className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-2 rounded-control px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'preview'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                   : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
@@ -373,7 +396,7 @@ export function AndromedaComponentView({
             <button
               type="button"
               onClick={() => setTab('code')}
-              className={`flex items-center gap-2 rounded-lg px-3.5 py-2 text-sm font-semibold transition-colors ${
+              className={`flex items-center gap-2 rounded-control px-3.5 py-2 text-sm font-semibold transition-colors ${
                 tab === 'code'
                   ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                   : 'text-sand-400 hover:text-sand-600 dark:text-sand-500 dark:hover:text-sand-300'
@@ -434,7 +457,7 @@ export function AndromedaComponentView({
                     )}
                   </AnimatePresence>
                 </Button>
-                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/toggle:block">
+                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/toggle:block">
                   {previewTheme?.theme === 'dark' ? 'Switch to light' : 'Switch to dark'}
                 </div>
               </div>
@@ -446,7 +469,7 @@ export function AndromedaComponentView({
                 <Button variant="outline" size="md" iconOnly onClick={refreshPreview} aria-label="Restart animation">
                   <ArrowClockwise weight="regular" size={16} />
                 </Button>
-                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/refresh:block">
+                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/refresh:block">
                   Refresh
                 </div>
               </div>
@@ -455,7 +478,7 @@ export function AndromedaComponentView({
                 <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={openFullscreen}>
                   <CornersOut weight="regular" size={16} />
                 </Button>
-                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-lg border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
+                <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-300 bg-sand-100 px-2.5 py-1.5 text-xs text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 group-hover/fullscreen:block">
                   Full screen
                 </div>
               </div>
@@ -463,16 +486,18 @@ export function AndromedaComponentView({
           )}
         </div>
 
-        {/* Content area */}
-        <div className="group/preview relative min-h-[420px]">
+        {/* Content area: its own inset card between the two bars, 8px from
+            the shell, so its 16px corners run parallel to the shell's 24. */}
+        <div className="group/preview relative mx-2 min-h-[420px] overflow-hidden rounded-card border border-sand-300 dark:border-sand-800">
           {tab === 'preview' ? (
             <>
             <div
-              /* Horizontal inset matches the tab bar above (px-3 sm:px-5) so the
-                 case cards line up with the Preview tab and the fullscreen
-                 button instead of sitting 28px inside them. Vertical padding
-                 stays generous: that is breathing room, not alignment. */
-              className="flex min-h-[420px] items-center justify-center overflow-auto px-3 py-8 sm:px-5 sm:py-12"
+              /* Horizontal inset plus the card's 8px matches the tab bar above
+                 (px-3 sm:px-5), so the case cards line up with the Preview tab
+                 and the fullscreen button instead of sitting inside them.
+                 Vertical padding stays generous: that is breathing room, not
+                 alignment. */
+              className="flex min-h-[420px] items-center justify-center overflow-auto px-1 py-8 sm:px-3 sm:py-12"
               // The theme channel: light sets --at-surface-base on the wrap.
               style={{ backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})` }}
             >
@@ -486,7 +511,7 @@ export function AndromedaComponentView({
             <button
               type="button"
               onClick={openFullscreen}
-              className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-lg bg-sand-950/90 px-3 py-2 text-xs font-semibold text-sand-100 opacity-0 shadow-lg transition-[opacity,background-color] duration-150 hover:bg-sand-900 focus-visible:opacity-100 group-hover/preview:opacity-100 [@media(hover:none)]:opacity-100"
+              className="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2 rounded-control bg-sand-950/90 px-3 py-2 text-xs font-semibold text-sand-100 opacity-0 shadow-lg transition-[opacity,background-color] duration-150 hover:bg-sand-900 focus-visible:opacity-100 group-hover/preview:opacity-100 [@media(hover:none)]:opacity-100"
             >
               <CornersOut weight="regular" size={14} />
               <span className="[@media(hover:none)]:hidden">Click for full view</span>
@@ -514,7 +539,7 @@ export function AndromedaComponentView({
             what the tier sells, so it is offered per component, behind the same
             paywall as the source. Andromeda Legacy keeps the original
             behaviour and has no Remix button. */}
-        <div className="flex items-center justify-end gap-2 border-t border-sand-300 px-3 py-3 dark:border-sand-800 sm:px-5 sm:py-4">
+        <div className="flex items-center justify-end gap-2 px-3 py-3 sm:px-5 sm:py-4">
           {/* Save — signed out, opens the same soft-gate modal as Copy Command.
               Keyed on the REGISTRY slug (not the page slug) so a renamed
               page (table-basic and the rest) saves under its real registry
@@ -614,7 +639,7 @@ export function AndromedaComponentView({
 
       {/* ── Installation ─────────────────────────────────────────────── */}
       <section className="mt-12">
-        <h2 className="text-base font-bold text-sand-900 dark:text-sand-50">
+        <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
           Add to your project
         </h2>
         <p className="mb-4 mt-1 text-sm text-sand-500 dark:text-sand-400">
@@ -622,7 +647,7 @@ export function AndromedaComponentView({
         </p>
 
         {/* CLI / Manual tabs */}
-        <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
+        <div className="overflow-hidden rounded-section border border-sand-300 dark:border-sand-800">
           <div className="flex border-b border-sand-300 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
             <button
               type="button"
@@ -666,19 +691,19 @@ export function AndromedaComponentView({
                 <Step number={1} isLast>
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Run the following command. New project? Run{' '}
-                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                    <code className="rounded-tag bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       npx shadcn@latest init
                     </code>{' '}
                     first to set up Tailwind and path aliases.
                   </p>
-                  <div className="overflow-hidden rounded-lg bg-sand-200 dark:bg-sand-950">
+                  <div className="overflow-hidden rounded-inset bg-sand-200 dark:bg-sand-950">
                     <div className="flex items-center gap-1 border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                         <button
                           key={pm}
                           type="button"
                           onClick={() => { setPkgManager(pm); setCliCopied(false) }}
-                          className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                          className={`rounded-control px-2.5 py-1 text-xs font-medium transition-colors ${
                             pkgManager === pm
                               ? 'bg-sand-300 text-sand-900 dark:bg-sand-800 dark:text-sand-100'
                               : 'text-sand-600 hover:text-sand-800 dark:text-sand-500 dark:hover:text-sand-300'
@@ -702,13 +727,12 @@ export function AndromedaComponentView({
                             : `npx shadcn@latest add ${installReference}`
                           navigator.clipboard.writeText(cmd)
                           trackInstall(registrySlug, 'andromeda-pro', pkgManager)
-                          setCliCopied(true)
-                          setTimeout(() => setCliCopied(false), 2000)
+                          showCliToast()
                         }}
-                        className="ml-auto shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                        className="ml-auto shrink-0 rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {cliCopied
-                          ? <Check weight="regular" size={14} className="text-olive-500" />
+                          ? <Check weight="regular" size={14} className="text-success" />
                           : <Copy weight="regular" size={14} />}
                       </button>
                     </div>
@@ -726,15 +750,15 @@ export function AndromedaComponentView({
                   </div>
                   <p className="mt-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Light and dark both come with the install and follow the{' '}
-                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                    <code className="rounded-tag bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       dark
                     </code>{' '}
                     class on{' '}
-                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                    <code className="rounded-tag bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       &lt;html&gt;
                     </code>
                     , the shadcn dark mode setup (next-themes with{' '}
-                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                    <code className="rounded-tag bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       attribute=&quot;class&quot;
                     </code>
                     ).
@@ -753,7 +777,7 @@ export function AndromedaComponentView({
                   <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                     Copy and paste the following code into your project:
                   </p>
-                  <div className="relative rounded-lg bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
+                  <div className="relative rounded-inset bg-sand-200 [--paywall-surface:var(--color-sand-200)] dark:bg-sand-950 dark:[--paywall-surface:var(--color-sand-950)]">
                     <div className="flex items-center justify-between border-b border-sand-300 px-4 py-2 dark:border-sand-800">
                       <span className="font-mono text-xs text-sand-600 dark:text-sand-500">
                         {name}.tsx
@@ -761,10 +785,10 @@ export function AndromedaComponentView({
                       <button
                         type="button"
                         onClick={copyCode}
-                        className="shrink-0 rounded-md p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
+                        className="shrink-0 rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {codeCopied
-                          ? <Check weight="regular" size={14} className="text-olive-500" />
+                          ? <Check weight="regular" size={14} className="text-success" />
                           : <Copy weight="regular" size={14} />}
                       </button>
                     </div>
@@ -778,11 +802,11 @@ export function AndromedaComponentView({
                 <Step number={2} isLast>
                   <p className="text-sm text-sand-600 dark:text-sand-400">
                     This file imports the Andromeda Pro foundation, so it expects{' '}
-                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                    <code className="rounded-tag bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       tokens.ts
                     </code>{' '}
                     one folder up and the{' '}
-                    <code className="rounded bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
+                    <code className="rounded-tag bg-sand-200 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
                       lib/
                     </code>{' '}
                     folder beside it, plus the other Andromeda Pro files it imports.
@@ -802,12 +826,11 @@ export function AndromedaComponentView({
 
       {/* ── More Andromeda Pro components ─────────────────────────────────
           Cards are the exact ones the components index page renders
-          (system/AndromedaComponentCard), not a captured image — see that
-          file's header comment for why the two can't drift apart. */}
+          (system/AndromedaComponentCard), so the two can't drift apart. */}
       {related.length > 0 && (
         <section className="mt-16">
           <div className="mb-5 flex items-end justify-between gap-4">
-            <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
+            <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
               More Andromeda Pro components
             </h2>
             {canPaginate && (
@@ -817,7 +840,7 @@ export function AndromedaComponentView({
                   onClick={() => pageRelated(-1)}
                   disabled={!canGoPrev}
                   aria-label="Previous components"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-sand-300 bg-sand-100 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-50 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
+                  className="flex h-8 w-8 items-center justify-center rounded-control border border-sand-300 bg-sand-100 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-50 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
                 >
                   <ArrowLeft weight="regular" size={15} />
                 </button>
@@ -826,7 +849,7 @@ export function AndromedaComponentView({
                   onClick={() => pageRelated(1)}
                   disabled={!canGoNext}
                   aria-label="Next components"
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-sand-300 bg-sand-100 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-50 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
+                  className="flex h-8 w-8 items-center justify-center rounded-control border border-sand-300 bg-sand-100 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-50 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
                 >
                   <ArrowRight weight="regular" size={15} />
                 </button>
@@ -866,6 +889,7 @@ export function AndromedaComponentView({
                   >
                     <AndromedaComponentCard
                       slug={c.slug}
+                      source="related"
                       name={c.name}
                       description={c.description}
                       variants={c.variants}
@@ -878,8 +902,6 @@ export function AndromedaComponentView({
           </div>
         </section>
       )}
-
-      <SiteFooter />
     </PageFrame>
 
     {/* Portalled to <body>. The page content sits inside an `isolate` wrapper
@@ -907,29 +929,42 @@ export function AndromedaComponentView({
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.96 }}
               transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-              data-andromeda-theme={previewTheme?.theme ?? 'dark'}
-              className="absolute inset-0 overflow-auto sm:inset-10 sm:rounded-2xl sm:border sm:border-sand-800 sm:shadow-2xl"
-              // React context crosses the portal, CSS inheritance does not,
-              // so the panel re-spreads the theme set itself.
-              style={{
-                ...(previewTheme?.theme === 'light' ? (andromedaLightVars() as React.CSSProperties) : null),
-                backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})`,
-              }}
+              // The same layers as the inline frame: a bar with the name and
+              // the close button, then the preview in its own inset card. Only
+              // the card scrolls, so the close button never scrolls away and
+              // the scrollbar stays inside the card's corners.
+              className="absolute inset-0 flex flex-col overflow-hidden bg-sand-100 dark:bg-sand-900 sm:inset-10 sm:rounded-section sm:border sm:border-sand-300 sm:shadow-2xl sm:dark:border-sand-800"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* Same inset rule as the inline preview above. */}
-              <div className="flex min-h-full items-center justify-center px-3 py-8 sm:px-5 sm:py-12">
-                {spec ? <MatrixPreview spec={spec} /> : null}
+              <div className="flex shrink-0 items-center justify-between gap-3 px-3 py-3 sm:px-5 sm:py-4">
+                <p className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">{name}</p>
+                <Button
+                  variant="outline"
+                  size="md"
+                  iconOnly
+                  onClick={() => setFullscreen(false)}
+                  aria-label="Close full screen"
+                >
+                  <X weight="regular" size={16} />
+                </Button>
               </div>
-
-              <button
-                type="button"
-                onClick={() => setFullscreen(false)}
-                aria-label="Close fullscreen preview"
-                className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-lg border border-sand-700 bg-sand-900/95 text-sand-400 transition-all duration-150 hover:border-sand-500 hover:bg-sand-800 hover:text-sand-100 active:scale-95"
+              <div
+                data-andromeda-theme={previewTheme?.theme ?? 'dark'}
+                className="mx-2 mb-2 min-h-0 flex-1 overflow-hidden rounded-card border border-sand-300 dark:border-sand-800"
+                // React context crosses the portal, CSS inheritance does not,
+                // so the card re-spreads the theme set itself.
+                style={{
+                  ...(previewTheme?.theme === 'light' ? (andromedaLightVars() as React.CSSProperties) : null),
+                  backgroundColor: `var(--at-surface-base, ${tokens.color.surface.base})`,
+                }}
               >
-                <X weight="regular" size={16} />
-              </button>
+                {/* Same inset rule as the inline preview above. */}
+                <div className="h-full overflow-auto overscroll-contain">
+                  <div className="flex min-h-full items-center justify-center px-1 py-8 sm:px-3 sm:py-12">
+                    {spec ? <MatrixPreview spec={spec} /> : null}
+                  </div>
+                </div>
+              </div>
             </motion.div>
           </motion.div>
         )}
@@ -948,13 +983,11 @@ export function AndromedaComponentView({
           transition={{ type: 'spring', stiffness: 400, damping: 28 }}
           className="fixed bottom-16 z-[60] -translate-x-1/2"
           style={{
-            left: mainCardRef.current
-              ? mainCardRef.current.getBoundingClientRect().left + mainCardRef.current.offsetWidth / 2
-              : '50%',
+            left: toastLeft ?? '50%',
           }}
         >
-          <div className="flex items-center gap-3 rounded-xl border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
-            <Check weight="regular" size={16} className="shrink-0 text-olive-500" />
+          <div className="flex items-center gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
+            <Check weight="regular" size={16} className="shrink-0 text-success" />
             <div>
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Install command copied

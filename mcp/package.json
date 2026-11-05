@@ -1,6 +1,6 @@
 {
   "name": "@aicanvas/mcp",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "mcpName": "io.github.aicanvas-me/aicanvas",
   "description": "Model Context Protocol server for AI Canvas: search, inspect, and install components from the aicanvas.me registry directly from your AI editor.",
   "keywords": [
@@ -50,12 +50,13 @@
     "test": "npm run build && node test/smoke.mjs && node test/offline.mjs",
     "test:smoke": "npm run build && node test/smoke.mjs",
     "test:offline": "npm run build && node test/offline.mjs",
+    "test:golden": "npm run build && node test/golden.mjs",
     "inspect": "npm run build && npx -y @modelcontextprotocol/inspector node dist/index.js",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.29.0",
-    "zod": "^3.25.0"
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

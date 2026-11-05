@@ -8,6 +8,8 @@
 
 export const MONTHLY_PRICE = 8.99
 export const YEARLY_PRICE = 49.99
+/** One payment, Premium for life (RULED 2026-10-11, tax-exclusive like Monthly). */
+export const LIFETIME_PRICE = 125
 
 /** Twelve monthly payments: what a year costs without the annual plan. A real
  *  alternative price rather than an invented "was", which is what makes the

@@ -4,6 +4,7 @@ import { SITE_URL } from '../lib/config'
 import { availableDesignSystems } from '../lib/available-design-systems'
 import { classifyContent } from '@/lib/registry/content-type'
 import { loadContentLookup } from '@/lib/registry/lookup'
+import { ICON_COUNT } from '../icons/_lib/categories'
 
 export const dynamic = 'force-static'
 
@@ -16,12 +17,13 @@ export function GET() {
 
   const intro = `# AI Canvas
 
-> AI Canvas is an open-core, shadcn-compatible registry of ${total} animated React components, design systems, and templates built with Tailwind CSS and Motion. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components ship with a comprehensive AI remix prompt, so developers can install the code directly or recreate their own variation in any AI builder. On free components that prompt is public in full; on premium components and blocks only part of it is public (the setup and the constants), and the rest of the build spec requires a Premium subscription.
+> AI Canvas is the design layer for AI coding agents: design systems your agent builds with and you reshape to your project, plus ${total} standalone React components and blocks that fit any of them, all installed as editable source with shadcn or MCP. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components include an AI remix prompt for recreating a variation in an AI builder. For free components, the full prompt is public. For premium components and blocks, the setup and constants are public, while the rest of the build specification requires a Premium subscription.
 
 ## Overview
-- [Homepage](${SITE_URL}): Browse all components.
-- [All components](${SITE_URL}/components): Full component list.
-- [About](${SITE_URL}/about): About AI Canvas.
+- [Homepage](${SITE_URL}): Design systems and standalone React components for AI coding agents.
+- [All components](${SITE_URL}/components): Browse ${total} standalone shadcn components and blocks for React.
+- [About](${SITE_URL}/about): Learn how AI Canvas works with Claude Code, Cursor, and Codex.
+- [Docs](${SITE_URL}/docs): Installation, components.json, design systems, the AI Brain, the MCP server and the files for agents.
 - [Registry index](${SITE_URL}/r/registry.json): Machine-readable registry index.
 
 ## Install
@@ -38,7 +40,7 @@ To authenticate installs: sign in and copy your personal token from ${SITE_URL}/
 After that, every \`npx shadcn@latest add @aicanvas/<component-name>\` is authenticated. Alternatively, each component page shows a ready tokenized install command when signed in.
 
 ## MCP server
-AI agents can browse and install AI Canvas components through the official MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: list_categories, list_components, search_components, get_component, get_component_props, get_install_command, list_systems, get_system, list_templates, get_template, validate_usage, compose_page, get_audit_checklist. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp
+AI agents can browse and install AI Canvas components through the official MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: list_categories, list_components, search_components, get_component, get_component_props, get_install_command, list_systems, get_system, list_templates, get_template, validate_usage, compose_page, get_audit_checklist, search_icons, get_icon_install. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp
 `
 
   const grouped = new Map<string, typeof COMPONENTS>()
@@ -141,7 +143,18 @@ AI agents can browse and install AI Canvas components through the official MCP s
     )
     .join('\n')
 
-  const body = `${intro}\n## Design systems and templates\n${systems}\n\n## Collections\n${collections}\n\n## Components\n\n${sections.join('\n\n')}\n`
+  // Tiers come from the gate, so the paid styles are never listed as free. A build
+  // without the icon set lists no icons.
+  const iconsSection = ICON_COUNT
+    ? `\n## Icons
+- [Icons](${SITE_URL}/icons): ${ICON_COUNT} React icons in four styles: Line, Duotone, Solid and Solid duotone. Each icon installs as one editable file plus a shared IconBase runtime in components/icons/.
+- Install one icon (${installTier('icon-search')}): \`npx shadcn@latest add @aicanvas/icon-<name>\`, for example \`icon-search\`. The other styles add a suffix (${installTier('icon-search-duotone')}): \`icon-<name>-duotone\`, \`icon-<name>-solid\`, \`icon-<name>-solid-duotone\`.
+- Install every Line icon at once (${installTier('icons')}): \`npx shadcn@latest add @aicanvas/icons\`.
+- Use: \`import { Search } from '@/components/icons/search'\`, then \`<Search size={20} />\`. The export is the name in PascalCase plus the style (\`SearchDuotone\`, \`SearchSolid\`, \`SearchSolidDuotone\`). Props: size, color, strokeWidth (default 1.5, Line and Duotone only), absoluteStrokeWidth (default true). \`<IconProvider strokeWidth={...}>\` from components/icons/IconBase sets the defaults for every icon inside it.
+- [Icon catalog](${SITE_URL}/r/icons-index.json) (${installTier('icons-index')}): every icon's name, category and tags as JSON. The MCP tools search_icons and get_icon_install read it.\n`
+    : ''
+
+  const body = `${intro}${iconsSection}\n## Design systems and templates\n${systems}\n\n## Collections\n${collections}\n\n## Components\n\n${sections.join('\n\n')}\n`
 
   return new Response(body, {
     headers: {

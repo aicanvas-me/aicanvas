@@ -1,15 +1,18 @@
 'use client'
 
 import { useState, useEffect, useMemo, useRef } from 'react'
-import Link from 'next/link'
-import { MagnifyingGlass, Sparkle, Ghost, Question } from '@phosphor-icons/react'
+import { Search } from '@/app/_icons/icons/search'
+import { Sparkle } from '@/app/_icons/icons/sparkle'
+import { Ghost } from '@/app/_icons/icons/ghost'
+import { CircleQuestion } from '@/app/_icons/icons/circle-question'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ComponentCard } from './ComponentCard'
 import { track } from '../lib/analytics'
-import { useTopBarLeft } from './TopBar'
-import { SiteFooter } from './SiteFooter'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
+import { lightShot } from '../lib/imagekit'
+import { PageCrumbs, useTopBarLeft } from './PageCrumbs'
+import { RailFooter } from './RailFooter'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../_components/DesignSystemPage'
 import { INITIAL_LOAD, LOAD_MORE_SIZE } from './LoadMore'
 import { LoadMore } from './LoadMore'
 import type { ComponentMeta } from '../lib/component-registry'
@@ -23,7 +26,7 @@ import {
 // Search covers both design systems. Each one's entries carry its OWN url
 // prefix and label: pairing one system's component list with the other's URLs
 // is how 15 of these links came to 404. Pro's cards, components and templates
-// alike, take its cyan badge.
+// alike, take its Pro badge.
 const SEARCHABLE_SYSTEMS = [
   { slug: 'andromeda', label: 'Andromeda Legacy', badgeTone: undefined, components: ANDROMEDA_COMPONENT_META, templates: ANDROMEDA_TEMPLATE_META },
   { slug: 'andromeda-pro', label: 'Andromeda Pro', badgeTone: 'pro', components: ANDROMEDA_PRO_COMPONENT_META, templates: ANDROMEDA_PRO_TEMPLATE_META },
@@ -120,7 +123,7 @@ export function HomeClient({
   /** Optional H1 + intro rendered above the grid. Passed by the category and
    *  collection pages so each listing page carries crawlable on-page copy;
    *  the plain /components index omits it. */
-  heading?: { overline?: string; h1: string; intro: string }
+  heading?: { h1: string; intro: string }
 }) {
   const router        = useRouter()
   const searchParams  = useSearchParams()
@@ -157,7 +160,8 @@ export function HomeClient({
   // them: on the plain /components search (not a scoped category/collection), an
   // active query also scans those two meta sources and they render as their own
   // group below the grid, reusing ComponentCard so the aesthetic matches. They
-  // link out to their own pages. Andromeda components are Free; templates Premium.
+  // link out to their own pages. A component card names its system; a template
+  // reads Premium on Andromeda Pro and Free on Andromeda Legacy, which is MIT.
   const extras =
     q && !category
       ? SEARCHABLE_SYSTEMS.flatMap((sys, si) => [
@@ -168,10 +172,10 @@ export function HomeClient({
               name: c.name,
               description: c.description,
               image: c.image,
+              imageLight: 'imageLight' in c ? (c.imageLight as string | undefined) : undefined,
               href: `/design-systems/${sys.slug}/${c.slug}`,
               badge: sys.label,
               badgeTone: sys.badgeTone,
-              cta: 'View Component',
             })),
           ...sys.templates
             .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].templates[i], tokens))
@@ -180,10 +184,10 @@ export function HomeClient({
               name: t.name,
               description: t.description,
               image: t.image,
+              imageLight: undefined,
               href: `/design-systems/${sys.slug}/templates/${t.folder}`,
-              badge: 'Premium template',
+              badge: sys.badgeTone === 'pro' ? 'Premium template' : 'Free',
               badgeTone: sys.badgeTone,
-              cta: 'View template',
             })),
         ])
       : []
@@ -248,9 +252,9 @@ export function HomeClient({
   // Synced: each icon has its own matching line, flipping together every 1.5s.
   // Only ticks when the empty state is actually on screen.
   const EMPTY_BEATS = [
-    { Icon: MagnifyingGlass, phrase: 'hmm…' },
+    { Icon: Search, phrase: 'hmm…' },
     { Icon: Ghost,           phrase: 'nothing here…' },
-    { Icon: Question,        phrase: "where'd it go?" },
+    { Icon: CircleQuestion,        phrase: "where'd it go?" },
   ]
   const [emptyIdx, setEmptyIdx] = useState(0)
   useEffect(() => {
@@ -264,9 +268,8 @@ export function HomeClient({
   const EmptyIcon = EMPTY_BEATS[emptyIdx].Icon
   const emptyPhrase = EMPTY_BEATS[emptyIdx].phrase
 
-  // While a search is active the site top bar shows the live result count in
-  // place of the breadcrumb. The bar itself lives in the root layout; this is
-  // the one line of it this page owns.
+  // While a search is active the crumb row above the title shows the live
+  // result count in place of the breadcrumb.
   //
   // The node MUST keep its identity between renders that did not change it.
   // useTopBarLeft stores it in context, and this page reads that same context,
@@ -291,27 +294,15 @@ export function HomeClient({
           "no results" block centres in the space left over and the footer sits
           at the bottom edge instead of halfway up the page. */}
       <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}${showEmpty ? ' flex flex-1 flex-col' : ''}`}>
-        {/* Mobile breadcrumb — shown above cards on small screens */}
-        <p className="mb-4 text-sm font-semibold md:hidden">
-          {q && !category ? (
-            <span className="text-sand-600 dark:text-sand-400">
-              {totalResults} {totalResults === 1 ? 'result' : 'results'} for{' '}
-              <span className="text-sand-900 dark:text-sand-50">&ldquo;{query}&rdquo;</span>
-            </span>
-          ) : (
-            <>
-              <Link href="/components" className="text-sand-900 transition-colors hover:text-sand-600 dark:text-sand-50 dark:hover:text-sand-400">Components &amp; Blocks</Link>
-              {category && <span className="text-olive-600 dark:text-olive-500">/{category}</span>}
-            </>
-          )}
-        </p>
-        {/* The hero (overline, h1, lead) describes the whole grid, so it is
+        {/* The crumb trail above the title, at every width. While a search
+            is active it carries the live result count instead (searchCount). */}
+        <PageCrumbs />
+        {/* The hero (h1, lead) describes the whole grid, so it is
             dropped while a search is active: the results — or the empty state —
             start at the top. */}
         {heading && !(q && !category) && (
           <header className="mb-6">
-            {heading.overline && <PageOverline>{heading.overline}</PageOverline>}
-            <PageTitle gap={heading.overline ? 'overline' : 'none'}>{heading.h1}</PageTitle>
+            <PageTitle gap="none">{heading.h1}</PageTitle>
             <PageLead>{heading.intro}</PageLead>
           </header>
         )}
@@ -337,9 +328,9 @@ export function HomeClient({
                     description={e.description}
                     tags={[]}
                     image={e.image}
+                    imageLight={e.imageLight}
                     badge={e.badge}
                     badgeTone={e.badgeTone}
-                    cta={e.cta}
                     href={e.href}
                     slug={e.key}
                     position={i}
@@ -374,6 +365,7 @@ export function HomeClient({
                     description={entry.description}
                     tags={entry.tags}
                     image={entry.image}
+                    imageLight={entry.dualTheme ? lightShot(entry.slug) : undefined}
                     // Every standalone is labeled: Premium keeps its badge,
                     // everything else is explicitly Free (the listing copy
                     // makes no free/paid claims - the badge does).
@@ -413,7 +405,7 @@ export function HomeClient({
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                   className="flex items-center justify-center"
                 >
-                  <EmptyIcon weight="thin" size={48} className="text-olive-600 dark:text-olive-500" />
+                  <EmptyIcon size={48} className="text-accent" />
                 </motion.span>
               </AnimatePresence>
             </div>
@@ -453,9 +445,9 @@ export function HomeClient({
                     <button
                       key={word}
                       onClick={() => applySuggestion(word)}
-                      className="group flex items-center gap-1.5 rounded-full border border-olive-500/30 bg-olive-500/10 px-3.5 py-1.5 text-sm font-semibold text-olive-600 transition-all hover:border-olive-500/60 hover:bg-olive-500/20 active:scale-95 dark:text-olive-400"
+                      className="group flex items-center gap-1.5 rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 text-sm font-semibold text-accent transition-all hover:border-accent/60 hover:bg-accent/20 active:scale-95"
                     >
-                      <Sparkle weight="regular" size={13} className="opacity-60 transition-opacity group-hover:opacity-100" />
+                      <Sparkle size={13} className="opacity-60 transition-opacity group-hover:opacity-100" />
                       {word}
                     </button>
                   ))}
@@ -468,7 +460,7 @@ export function HomeClient({
             {suggestions.length === 0 && (
               <button
                 onClick={clearSearch}
-                className="mt-8 rounded-lg border border-sand-200 bg-sand-100 px-4 py-2 text-sm font-semibold text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 active:scale-95 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
+                className="mt-8 rounded-control border border-sand-200 bg-sand-100 px-4 py-2 text-sm font-semibold text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 active:scale-95 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100"
               >
                 Browse all components
               </button>
@@ -476,8 +468,8 @@ export function HomeClient({
           </motion.div>
         )}
 
-        <SiteFooter />
       </PageFrame>
+      <RailFooter />
     </div>
   )
 }

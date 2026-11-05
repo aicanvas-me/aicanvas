@@ -1,11 +1,10 @@
 // The Andromeda Pro image pack: 18 astronaut concepts in light and dark, free to
 // download, plus the two Pro files that explain how the set stays consistent.
-// Site chrome (sand/olive, Manrope) like the components index: no Andromeda
+// Site chrome (sand/accent, Manrope) like the components index: no Andromeda
 // component renders here.
 import { DownloadSimple } from '@phosphor-icons/react/dist/ssr'
-import { SiteFooter } from '../../../components/SiteFooter'
 import { buttonClasses } from '../../../components/buttonClasses'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import {
   IMAGE_PACK_CHECKS,
   IMAGE_PACK_CONCEPTS,
@@ -17,6 +16,7 @@ import {
 } from '../../../_lib/andromeda-pro/image-pack'
 import { ImagePackProFiles } from './ImagePackProFiles'
 import { ImagePackPrompt } from './ImagePackPrompt'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 export const metadata = {
   title: 'Image Pack · Andromeda Pro',
@@ -50,8 +50,8 @@ export default function ImagePackPage() {
     <>
       <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
         <header className="border-b border-sand-300 pb-10 dark:border-sand-800">
-          <PageOverline>Andromeda Pro · Image pack</PageOverline>
-          <PageTitle className="max-w-3xl">
+          <PageCrumbs />
+          <PageTitle gap="none" className="max-w-3xl">
             {IMAGE_PACK_CONCEPTS.length} scenes.
             <br />
             Each in light and dark.
@@ -115,7 +115,7 @@ export default function ImagePackPage() {
             {RECIPE.map((step, i) => (
               <li
                 key={step.title}
-                className="rounded-2xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900"
+                className="rounded-section border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900"
               >
                 <span className="text-xs font-semibold tabular-nums text-sand-600 dark:text-sand-400">
                   {String(i + 1).padStart(2, '0')}
@@ -129,9 +129,6 @@ export default function ImagePackPage() {
           <ImagePackPrompt prompt={EXAMPLE_PROMPT} />
         </section>
       </PageFrame>
-      <PageFrame className="pb-10">
-        <SiteFooter />
-      </PageFrame>
     </>
   )
 }
@@ -139,7 +136,7 @@ export default function ImagePackPage() {
 function ConceptCard({ concept }: { concept: ImagePackConcept }) {
   const [number] = concept.slug.split('-')
   return (
-    <article className="rounded-2xl border border-sand-300 bg-sand-100 p-3 dark:border-sand-800 dark:bg-sand-900">
+    <article className="rounded-section border border-sand-300 bg-sand-100 p-3 dark:border-sand-800 dark:bg-sand-900">
       <div className="grid grid-cols-2 gap-2">
         {(['dark', 'light'] as const).map((mode) => (
           <ImageVersion key={mode} concept={concept} mode={mode} />
@@ -167,7 +164,7 @@ function ImageVersion({ concept, mode }: { concept: ImagePackConcept; mode: Imag
         height={1200}
         loading="lazy"
         decoding="async"
-        className="aspect-[4/5] w-full rounded-xl bg-sand-200 object-cover dark:bg-sand-800"
+        className="aspect-[4/5] w-full rounded-inset bg-sand-200 object-cover dark:bg-sand-800"
       />
       <figcaption className="mt-2 flex items-center justify-between gap-2 px-1">
         <span className="text-xs font-semibold text-sand-700 dark:text-sand-300">{label}</span>

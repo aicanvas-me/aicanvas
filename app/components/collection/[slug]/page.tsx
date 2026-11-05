@@ -8,7 +8,6 @@ import {
   collectionMembers,
   getCollectionBySlug,
 } from '../../../lib/collections'
-import { COMPONENTS_SECTION_OVERLINE } from '../../../lib/categories'
 import { SITE_URL } from '../../../lib/config'
 import { buildItemListJsonLd } from '../../../lib/jsonld'
 import { buildBreadcrumbJsonLd, pageMetadata } from '../../../lib/page-metadata'
@@ -76,7 +75,7 @@ export default async function CollectionPage({
       <HomeClient
         components={members}
         categoryLabel={collection.h1}
-        heading={{ overline: COMPONENTS_SECTION_OVERLINE, h1: collection.h1, intro: collection.intro }}
+        heading={{ h1: collection.h1, intro: collection.intro }}
       />
     </>
   )

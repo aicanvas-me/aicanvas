@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Copy, Lightning, LockSimple, Terminal, X } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { LockSimple } from '@/app/_icons/icons/lock-simple'
+import { Terminal } from '@/app/_icons/icons/terminal'
+import { X } from '@/app/_icons/icons/x'
 import { Button } from '../components/Button'
 import { track } from '../lib/analytics'
 import { copyText } from '../components/useCopied'
@@ -174,8 +179,8 @@ export function RemixPanel({
                 {/* Same pill as the tag row on the page behind. Says what the
                     lock further down is about before the reader reaches it. */}
                 {premium && (
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-olive-600/40 bg-olive-500/10 px-2.5 py-0.5 text-xs font-semibold text-olive-600 dark:border-olive-500/25 dark:text-olive-400">
-                    <Lightning weight="regular" size={12} />
+                  <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-premium/10 px-2.5 py-0.5 text-xs font-semibold text-premium ring-1 ring-inset ring-premium/30">
+                    <Bolt size={12} />
                     Premium
                   </span>
                 )}
@@ -193,7 +198,7 @@ export function RemixPanel({
               aria-label="Close Remix panel"
               className="shrink-0"
             >
-              <X weight="regular" size={16} />
+              <X size={16} />
             </Button>
           </div>
 
@@ -219,14 +224,14 @@ export function RemixPanel({
                   size="sm"
                   onClick={() => openPaywallModal({ reason: 'premium-only' })}
                 >
-                  <LockSimple weight="regular" size={15} />
+                  <LockSimple size={15} />
                   Unlock full prompt
                 </Button>
               ) : (
                 <Button variant="primary" size="sm" onClick={copyRemixPrompt}>
                   {remixCopied
-                    ? <Check weight="regular" size={15} />
-                    : <Copy weight="regular" size={15} />}
+                    ? <Check size={15} />
+                    : <Copy size={15} />}
                   {remixCopied ? 'Copied!' : 'Copy prompt'}
                 </Button>
               )}
@@ -236,7 +241,7 @@ export function RemixPanel({
                 still reads as a single document. Rendering head, lock and tail as
                 three rounded cards made a paywalled prompt look broken rather
                 than gated. */}
-            <div className="mt-4 overflow-hidden rounded-xl bg-sand-200 dark:bg-sand-950 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
+            <div className="mt-4 overflow-hidden rounded-card bg-sand-200 dark:bg-sand-950 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
               <pre
                 className={`whitespace-pre-wrap break-words px-5 pt-5 ${
                   promptLocked
@@ -255,7 +260,7 @@ export function RemixPanel({
 
             {/* The exact install, after the prompt: this panel is for remixing,
                 so the prompt leads and installing is the quiet way out. */}
-            <div className="mt-8 rounded-xl border border-olive-500/40 bg-olive-500/10 p-5">
+            <div className="mt-8 rounded-section border border-accent/40 bg-accent/10 p-5">
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Want the exact component?
               </p>
@@ -268,7 +273,7 @@ export function RemixPanel({
                     that wraps to two lines and turns a tidy card into a wall of
                     monospace. Nothing is lost by cutting it: the visible form
                     is masked anyway, and the button copies the real command. */}
-                <code className="min-w-0 flex-1 truncate rounded-lg bg-sand-200 dark:bg-sand-950 px-3 py-2 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
+                <code className="min-w-0 flex-1 truncate rounded-inset bg-sand-200 dark:bg-sand-950 px-3 py-2 font-mono text-xs leading-relaxed text-sand-800 dark:text-sand-200">
                   npx shadcn@latest add {cliReference}
                 </code>
                 {/* onCopyCli already sends a non-subscriber to the paywall
@@ -277,10 +282,10 @@ export function RemixPanel({
                     Same treatment as the locked prompt above. */}
                 <Button variant="outline" size="sm" onClick={onCopyCli}>
                   {needsPremium
-                    ? <LockSimple weight="regular" size={15} />
+                    ? <LockSimple size={15} />
                     : cliCopied
-                    ? <Check weight="regular" size={15} />
-                    : <Terminal weight="regular" size={15} />}
+                    ? <Check size={15} />
+                    : <Terminal size={15} />}
                   {needsPremium
                     ? 'Unlock to install'
                     : cliCopied ? 'Copied!' : 'Copy Command'}
