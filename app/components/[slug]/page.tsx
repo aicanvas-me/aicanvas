@@ -9,8 +9,7 @@ import { HighlightedCode } from '../../components/HighlightedCode'
 import { GITHUB_URL, SITE_URL } from '../../lib/config'
 import { collectionsForComponent } from '../../lib/collections'
 import { buildBreadcrumbJsonLd } from '../../lib/page-metadata'
-import { classifyContent } from '@/lib/registry/content-type'
-import { loadContentLookup } from '@/lib/registry/lookup'
+import { classifyPremium } from '@/lib/registry/premium-gate'
 import { splitPromptAtPaywall } from '@/lib/registry/prompt-blocks'
 import { getSessionEntitlement } from '@/app/lib/entitlement'
 
@@ -51,21 +50,6 @@ function computeTitle(entry: ComponentEntry): string {
   return `${entry.name} - ${descriptor} React Component`
 }
 
-// A degraded lookup fails closed (treated as premium) so nothing ever claims
-// "Free and open source" over closed content.
-function classifyPremium(slug: string) {
-  const lookup = loadContentLookup()
-  const contentType = classifyContent(slug, lookup)
-  return {
-    contentType,
-    isPremium:
-      lookup.degraded === true ||
-      contentType === 'premium-standalone' ||
-      contentType === 'design-system' ||
-      contentType === 'template',
-  }
-}
-
 function computeMetaDescription(entry: ComponentEntry, isPremium: boolean): string {
   const max = 150
   const base = entry.description.length > max
@@ -99,7 +83,9 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: url },
+    // The markdown twin (app/md/components/[slug]) is advertised here so an
+    // agent that fetched the HTML can follow it (Codex does).
+    alternates: { canonical: url, types: { 'text/markdown': `${url}.md` } },
     keywords: [
       `${entry.name.toLowerCase()} react`,
       `${entry.name.toLowerCase()} framer motion`,

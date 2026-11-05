@@ -42,7 +42,7 @@ export default function PrivacyPage() {
         title="Privacy Policy"
         sub={
           <span className="block text-balance">
-            Last updated: 2026-09-20. This policy describes how AI Canvas processes
+            Last updated: 2026-10-15. This policy describes how AI Canvas processes
             personal data, in line with the EU General Data Protection Regulation
             (GDPR / DSGVO) and the German Bundesdatenschutzgesetz (BDSG).
           </span>
@@ -248,14 +248,21 @@ export default function PrivacyPage() {
             identifier is created and no cross-site tracking is possible. We
             also measure site usage ourselves, without cookies: our own server
             collects page views (path, referrer, country and region, and whether
-            the visit came from a link the AI Canvas MCP gave an AI agent), clicks on
+            the visit came from a link the AI Canvas MCP gave an AI agent), requests
+            for the machine-readable versions of our pages, such as llms.txt
+            (the page path and the kind of tool that asked), clicks on
             key buttons (for example copying an install command), an AI agent
             connecting to or using the AI Canvas MCP (counted, with no account
             attached), searches on
             the site (the typed query and its result count), script errors in
             your browser, and errors raised on our own server while handling a
             request (the affected route, the error message and an error id),
-            and stores them as anonymous events in our analytics tool. Every
+            and stores them as anonymous events in our analytics tool. When a
+            visit comes from an AI assistant such as ChatGPT or Claude, the page
+            view also records that assistant&apos;s name; to recognise it, the
+            server briefly reads the referrer and the link&apos;s source tag,
+            and to name the kind of tool it briefly reads the user-agent, then
+            stores only the name. Every
             such event carries at most a country and region. Nothing is stored
             on or read from your device for this, no visitor identifier is
             created, and your IP address never reaches the analytics store.

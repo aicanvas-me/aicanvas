@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   title: 'AI Canvas MCP: shadcn Components for Claude Code, Cursor, Codex',
   description:
     'Connect Claude Code, Cursor or Codex to AI Canvas components and design systems through MCP. Your agent installs editable React source with shadcn.',
-  alternates: { canonical: `${SITE_URL}/mcp` },
+  alternates: { canonical: `${SITE_URL}/mcp`, types: { 'text/markdown': `${SITE_URL}/mcp.md` } },
   openGraph: {
     title: 'AI Canvas MCP connects Claude Code, Codex, and Cursor',
     description:

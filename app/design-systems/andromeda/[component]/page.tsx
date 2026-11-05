@@ -23,7 +23,10 @@ export async function generateMetadata({
   return {
     title: `${entry.name} · Andromeda Design System`,
     description: entry.description,
-    alternates: { canonical: `/design-systems/andromeda/${entry.slug}` },
+    alternates: {
+      canonical: `/design-systems/andromeda/${entry.slug}`,
+      types: { 'text/markdown': `/design-systems/andromeda/${entry.slug}.md` },
+    },
   }
 }
 

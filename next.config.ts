@@ -84,6 +84,36 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // Markdown twins for AI agents (app/md/*, built by lib/agent-markdown). Two
+  // ways in, both answered from the same static route: the `.md` URL that the
+  // page advertises with <link rel="alternate" type="text/markdown"> (Codex
+  // follows it), and the page URL itself with Accept: text/markdown (Claude
+  // Code, Cursor and Copilot send it alongside text/html; markdown wins the
+  // tie). beforeFiles, so the rewrite runs before the prerendered HTML page
+  // can answer. Browsers never send text/markdown, so they always get HTML.
+  async rewrites() {
+    const wantsMarkdown = [{ type: "header" as const, key: "accept", value: ".*text/markdown.*" }];
+    return {
+      beforeFiles: [
+        { source: "/index.md", destination: "/md/home" },
+        { source: "/", has: wantsMarkdown, destination: "/md/home" },
+        { source: "/mcp.md", destination: "/md/mcp" },
+        { source: "/mcp", has: wantsMarkdown, destination: "/md/mcp" },
+        { source: "/components.md", destination: "/md/components" },
+        { source: "/components/:slug.md", destination: "/md/components/:slug" },
+        { source: "/components", has: wantsMarkdown, destination: "/md/components" },
+        { source: "/components/:slug", has: wantsMarkdown, destination: "/md/components/:slug" },
+        // A system's own pages (system, brain, foundation...) share the
+        // :component shape; the twin answers those with the system overview.
+        { source: "/design-systems/:system.md", destination: "/md/design-systems/:system" },
+        { source: "/design-systems/:system/:component.md", destination: "/md/design-systems/:system/:component" },
+        { source: "/design-systems/:system", has: wantsMarkdown, destination: "/md/design-systems/:system" },
+        { source: "/design-systems/:system/:component", has: wantsMarkdown, destination: "/md/design-systems/:system/:component" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
+  },
   async redirects() {
     return [
       { source: "/r", destination: "/components", permanent: true },

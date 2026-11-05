@@ -2,8 +2,9 @@ import { COMPONENTS } from '../lib/component-registry'
 import { COLLECTIONS, collectionMembers } from '../lib/collections'
 import { SITE_URL } from '../lib/config'
 import { availableDesignSystems } from '../lib/available-design-systems'
-import { classifyContent } from '@/lib/registry/content-type'
 import { loadContentLookup } from '@/lib/registry/lookup'
+import { installTier as gateInstallTier, systemOfSlug } from '@/lib/registry/premium-gate'
+import { MCP_TOOLS } from '@/lib/agent-markdown/site'
 import { ICON_COUNT } from '../icons/_lib/categories'
 
 export const dynamic = 'force-static'
@@ -15,16 +16,23 @@ function categoryOf(tags: { label: string; accent?: boolean }[]): string {
 export function GET() {
   const total = COMPONENTS.length
 
+  // Who may install what comes from the /r gate itself (its manifest and
+  // classifier), so this file never promises an install the gate refuses.
+  const lookup = loadContentLookup()
+  const installTier = (slug: string) => gateInstallTier(slug, lookup)
+
   const intro = `# AI Canvas
 
 > AI Canvas is the design layer for AI coding agents: design systems your agent builds with and you reshape to your project, plus ${total} standalone React components and blocks that fit any of them, all installed as editable source with shadcn or MCP. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components include an AI remix prompt for recreating a variation in an AI builder. For free components, the full prompt is public. For premium components and blocks, the setup and constants are public, while the rest of the build specification requires a Premium subscription.
 
+Component and design-system links below point at each page's markdown version (the page URL plus \`.md\`): description, install command, props and, where the page shows one, the remix prompt. These pages also answer in markdown at their own URL when the request sends \`Accept: text/markdown\`: the home page (or ${SITE_URL}/index.md), /mcp (or ${SITE_URL}/mcp.md), /components, each /components/<slug>, each /design-systems/<system> and each /design-systems/<system>/<component>. Other pages, such as templates, answer in HTML only.
+
 ## Overview
 - [Homepage](${SITE_URL}): Design systems and standalone React components for AI coding agents.
-- [All components](${SITE_URL}/components): Browse ${total} standalone shadcn components and blocks for React.
+- [All components](${SITE_URL}/components.md): Every one of the ${total} standalone shadcn components and blocks for React, by category, as markdown.
 - [About](${SITE_URL}/about): Learn how AI Canvas works with Claude Code, Cursor, and Codex.
 - [Docs](${SITE_URL}/docs): Installation, components.json, design systems, the AI Brain, the MCP server and the files for agents.
-- [Registry index](${SITE_URL}/r/registry.json): Machine-readable registry index.
+- [Registry index](${SITE_URL}/r/registry.json): Machine-readable registry index (see Read API below).
 
 ## Install
 Install command: \`npx shadcn@latest add @aicanvas/<component-name>\`. The @aicanvas registry is listed in the official shadcn directory, so the CLI resolves it with no extra setup.
@@ -40,7 +48,15 @@ To authenticate installs: sign in and copy your personal token from ${SITE_URL}/
 After that, every \`npx shadcn@latest add @aicanvas/<component-name>\` is authenticated. Alternatively, each component page shows a ready tokenized install command when signed in.
 
 ## MCP server
-AI agents can browse and install AI Canvas components through the official MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: list_categories, list_components, search_components, get_component, get_component_props, get_install_command, list_systems, get_system, list_templates, get_template, validate_usage, compose_page, get_audit_checklist, search_icons, get_icon_install. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp
+AI agents can browse AI Canvas and get install commands through the official, read-only MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: ${MCP_TOOLS.join(', ')}. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp.md
+
+## Read API
+Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes. Use these to list and search the catalog without the MCP server.
+- [registry.json](${SITE_URL}/r/registry.json): The shadcn registry index. \`items[]\` lists every installable item with \`name\` (the install slug), \`type\` (\`registry:ui\` component, \`registry:block\` page section, \`registry:lib\` helper), \`title\`, \`description\`, \`dependencies\` and \`files\` (target paths only, no source).
+- [aicanvas-mcp.json](${SITE_URL}/r/aicanvas-mcp.json): The catalog the MCP server reads. \`components[]\` carry \`slug\`, \`name\`, \`description\`, \`categories\`, \`tags\`, \`image\`, \`dependencies\`, \`homepageUrl\` and \`installCommand\`; it also lists \`systems\`, \`systemComponents\`, \`templates\` and \`brains\`.
+- [aicanvas-props.json](${SITE_URL}/r/aicanvas-props.json): \`props\` maps a component's slug to its documented prop tables. Components that take no props are absent.
+- Per-item files, \`${SITE_URL}/r/<slug>.json\`, are the install payloads the shadcn CLI fetches. They need the token described under Install: without it, a free item returns a placeholder titled "(free account required)" and a Premium item returns a Premium placeholder, both with no source.
+- Markdown pages, \`${SITE_URL}/components/<slug>.md\` and \`${SITE_URL}/components.md\`, are the readable form of the same catalog.
 `
 
   const grouped = new Map<string, typeof COMPONENTS>()
@@ -53,10 +69,12 @@ AI agents can browse and install AI Canvas components through the official MCP s
   const sections: string[] = []
   for (const [category, items] of grouped) {
     // Premium standalones must carry the same label the DS/template lines have,
-    // so an assistant never presents a premium install as free.
+    // so an assistant never presents a premium install as free. The label comes
+    // from the gate's own classifier, the same one the page and its markdown
+    // twin use, and each link goes to the twin (agents read it far cheaper).
     const lines = items.map(
       (c) =>
-        `- [${c.name}](${SITE_URL}/components/${c.slug}): ${c.description} Install${c.badge === 'Premium' ? ' (Premium, requires an AI Canvas token)' : ' (free account)'}: \`npx shadcn@latest add @aicanvas/${c.slug}\`. Registry: ${SITE_URL}/r/${c.slug}.json`,
+        `- [${c.name}](${SITE_URL}/components/${c.slug}.md): ${c.description} Install (${installTier(c.slug)}): \`npx shadcn@latest add @aicanvas/${c.slug}\`. Registry: ${SITE_URL}/r/${c.slug}.json`,
     )
     sections.push(`## ${category}\n${lines.join('\n')}`)
   }
@@ -71,21 +89,7 @@ AI agents can browse and install AI Canvas components through the official MCP s
     andromeda: '/system',
     'andromeda-pro': '/components',
   }
-  // Who may install what comes from the /r gate itself (its manifest and
-  // classifier), so this file never promises an install the gate refuses.
-  const lookup = loadContentLookup()
-  const installTier = (slug: string) => {
-    const type = classifyContent(slug, lookup)
-    if (type === 'meta') return 'no account needed'
-    if (type === 'standalone' || type === 'design-system-component') return 'free account'
-    return 'Premium, requires an AI Canvas token'
-  }
-  // The longest system name a slug starts with owns it, so Legacy's
-  // `andromeda-` never claims an `andromeda-pro-` component.
-  const systemOf = (slug: string) =>
-    [...lookup.systemSlugs]
-      .filter((sys) => slug.startsWith(`${sys}-`))
-      .sort((a, b) => b.length - a.length)[0]
+  const systemOf = (slug: string) => systemOfSlug(slug, lookup)
   const systems = availableDesignSystems().map(
     (s: {
       slug: string
@@ -125,7 +129,7 @@ AI agents can browse and install AI Canvas components through the official MCP s
         ? [`  - [AI Brain](${SITE_URL}/design-systems/${s.slug}/brain): Rule files an AI agent reads to build on-brand ${s.name} UI (tokens, layout, motion, per-component rules). Install or update (${installTier(brain)}): \`npx shadcn@latest add --overwrite @aicanvas/${brain}\``]
         : []
       return [
-        `- [${s.name}](${SITE_URL}/design-systems/${s.slug}): Design system (tokens + components). Browse free: ${SITE_URL}/design-systems/${s.slug}${SYSTEM_BROWSE[s.slug] ?? ''}. ${install}`,
+        `- [${s.name}](${SITE_URL}/design-systems/${s.slug}.md): Design system (tokens + components). Browse free: ${SITE_URL}/design-systems/${s.slug}${SYSTEM_BROWSE[s.slug] ?? ''}. ${install}`,
         ...brainLine,
         ...templates,
       ].join('\n')

@@ -6,7 +6,7 @@ import { SITE_URL } from './lib/config'
 export const metadata: Metadata = {
   title: { absolute: HOMEPAGE_TITLE },
   description: HOMEPAGE_DESCRIPTION,
-  alternates: { canonical: SITE_URL },
+  alternates: { canonical: SITE_URL, types: { 'text/markdown': `${SITE_URL}/index.md` } },
   openGraph: {
     title: HOMEPAGE_TITLE,
     description: HOMEPAGE_DESCRIPTION,
