@@ -363,10 +363,11 @@ export default function PremiumLicensePage() {
             Icons&rdquo;) is licensed free of charge under this License to
             anyone, with or without a Subscription. Sections 3 to 6 apply to
             each Line Icon you install, copy, or download as if it were an
-            Installed Component: you may use, modify, and ship it in your own
-            and client End Products, open-source End Products included, but you
-            may not redistribute or resell the Line Icons as a set or kit, or
-            use them to build a competing icon library.
+            Installed Component, except that the Line Icons an End Product uses
+            may be published as part of that End Product&apos;s source,
+            open-source End Products included. You may not redistribute or
+            resell the Line Icons as a set or kit, or use them to build a
+            competing icon library.
           </p>
           <p className={BODY}>
             <strong className={STRONG}>Credit without a
