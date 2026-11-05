@@ -21,7 +21,7 @@ import { CAPTURE_LEAF_RE, FOCUS_ROUTE_RE, TEMPLATE_LEAF_RE } from './top-bar-cru
 // sits outside the scroll column, so it stays put while the page scrolls. No
 // bottom rule: the bar and the page share one surface.
 const BAR_CLASS =
-  'sticky top-0 z-20 hidden h-14 shrink-0 items-center bg-sand-50 dark:bg-sand-950 md:flex'
+  'sticky top-0 z-40 hidden h-14 shrink-0 items-center bg-sand-50 dark:bg-sand-950 md:flex'
 
 // Routes that carry no site chrome: the lab has its own bar, and template
 // leaves are full-screen compositions, focus pages (the agent sign-in
