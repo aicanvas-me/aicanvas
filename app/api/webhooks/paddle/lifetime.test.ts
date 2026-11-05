@@ -434,6 +434,21 @@ describe('billing log and alerts', () => {
     expect(alerts()[0].text).toContain('Takes effect at: 2026-11-24 08:00 UTC')
   })
 
+  it('a scheduled cancel for a Lifetime buyer says the user upgraded; a gift or a revoked buy does not', async () => {
+    const cancel = { status: 'active', scheduled_change: { action: 'cancel', effective_at: '2026-11-24T08:00:00Z' } }
+    const row = { id: 1, user_id: USER, source: 'purchase', paddle_transaction_id: 'txn_l', gift_for_subscription_id: null, granted_at: '2026-10-29T10:00:00Z', revoked_at: null as string | null }
+    life().push(row)
+    await post(sub('subscription.updated', cancel, '2026-10-29T11:00:00Z', 'evt_up'))
+    expect(alerts()[0].subject).toBe('[Billing] USER UPGRADED FROM MONTHLY TO LIFETIME: buyer@example.com')
+    expect(alerts()[0].text).toMatch(/^USER UPGRADED FROM MONTHLY TO LIFETIME\n/)
+
+    for (const [i, change] of [{ revoked_at: '2026-10-29T12:00:00Z' }, { source: 'gift', paddle_transaction_id: null, gift_for_subscription_id: 'sub_1' }].entries()) {
+      Object.assign(row, { source: 'purchase', revoked_at: null }, change)
+      await post(sub('subscription.updated', { status: 'active', scheduled_change: { action: 'cancel', effective_at: `2026-12-2${i}T08:00:00Z` } }, `2026-10-29T13:0${i}:00Z`, `evt_no${i}`))
+      expect(alerts()[i + 1].subject).toBe('[Billing] Cancel scheduled: Monthly, buyer@example.com')
+    }
+  })
+
   it('an incidental subscription.updated with no scheduled cancel sends nothing', async () => {
     await post(sub('subscription.updated', { status: 'active', scheduled_change: null }, '2026-10-29T11:00:00Z'))
     expect(alerts()).toEqual([])

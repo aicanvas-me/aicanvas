@@ -152,7 +152,7 @@ export interface AlertContext {
 export function buildAlert(
   kind: AlertKind,
   evt: PaddleEvent,
-  ctx: { email: string | null; lifetime?: AlertContext['lifetime']; paidAt?: string | null },
+  ctx: { email: string | null; lifetime?: AlertContext['lifetime']; paidAt?: string | null; upgraded?: boolean },
   now: Date = new Date(),
 ): { subject: string; text: string } {
   const d = evt.data ?? {}
@@ -162,7 +162,9 @@ export function buildAlert(
   let subject: string
 
   if (kind === 'cancel_scheduled') {
-    subject = `[Billing] Cancel scheduled: ${planOf(d)}, ${who}`
+    const upgrade = `USER UPGRADED FROM ${planOf(d).toUpperCase()} TO LIFETIME`
+    subject = ctx.upgraded ? `[Billing] ${upgrade}: ${who}` : `[Billing] Cancel scheduled: ${planOf(d)}, ${who}`
+    if (ctx.upgraded) lines.push(upgrade, '')
     lines.push(
       `Plan: ${planOf(d)}`,
       `Customer: ${who}`,
@@ -260,6 +262,23 @@ async function transactionPaidAt(transactionId: unknown): Promise<string | null>
   }
 }
 
+/** Best effort: this user holds a live, bought Lifetime (a gift never counts). */
+async function hasBoughtLifetime(admin: AdminClient, userId: string | null | undefined): Promise<boolean> {
+  if (!userId) return false
+  try {
+    const { data } = await admin
+      .from('user_lifetime_access')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('source', 'purchase')
+      .is('revoked_at', null)
+      .limit(1)
+    return (data ?? []).length > 0
+  } catch {
+    return false
+  }
+}
+
 async function sendAlertEmail(alert: { subject: string; text: string }): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY
   if (!apiKey) return false
@@ -287,7 +306,8 @@ export async function sendBillingAlert(admin: AdminClient, evt: PaddleEvent, ctx
     const d = evt.data ?? {}
     const email = await customerEmail(admin, ctx.userId, d.customer_id)
     const paidAt = hit.kind === 'adjustment' && !ctx.lifetime ? await transactionPaidAt(d.transaction_id) : null
-    const alert = buildAlert(hit.kind, evt, { email, lifetime: ctx.lifetime ?? null, paidAt })
+    const upgraded = hit.kind === 'cancel_scheduled' && (await hasBoughtLifetime(admin, ctx.userId))
+    const alert = buildAlert(hit.kind, evt, { email, lifetime: ctx.lifetime ?? null, paidAt, upgraded })
     const summary = { ...summarizeEvent(evt), alert, alert_tries: 0 }
 
     const { data: claimed, error: claimErr } = await admin
