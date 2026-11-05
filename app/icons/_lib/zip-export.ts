@@ -58,7 +58,7 @@ function readme(input: IconZipInput): string {
         ]
       : []),
     'See preset.json for the machine-readable settings used for this export.',
-    'Licensed to AI Canvas Premium subscribers: https://aicanvas.me/premium-license',
+    'Licensed to AI Canvas Premium members: https://aicanvas.me/premium-license',
     '',
   ].join('\n')
 }

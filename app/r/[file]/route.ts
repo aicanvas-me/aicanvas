@@ -288,7 +288,7 @@ function brainStub(realBody: string, slug: string): NextResponse {
       `"${title}" is premium AI Canvas content. This install wrote a locked ` +
       `placeholder, not the real rules. Unlock it with Premium at ` +
       `https://aicanvas.me/pricing, then re-run the same command. Already ` +
-      `subscribed? Sign in at https://aicanvas.me/design-systems/${system}/brain/explore ` +
+      `Premium? Sign in at https://aicanvas.me/design-systems/${system}/brain/explore ` +
       `and press Copy Command: that command includes your token.`,
     dependencies: [],
     registryDependencies: [],

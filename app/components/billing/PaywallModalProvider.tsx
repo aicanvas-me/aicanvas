@@ -66,8 +66,9 @@ function PaywallModalView({
 }: PaywallState & { onClose: () => void }) {
   const { user } = useSession()
   // Metering is gone, so the modal only ever pitches Premium content now.
-  // Both 'premium-only' and 'upgrade' show the same plan cards (Lifetime
-  // beside Premium when it is on); the reason tunes the heading and subtitle. One plan family, no
+  // Both 'premium-only' and 'upgrade' show the same plan cards (Monthly and
+  // Lifetime when Lifetime is on); the reason tunes the heading and
+  // subtitle. One plan family, no
   // individual / business switch: Business is not a plan.
   const title = reason === 'upgrade' ? 'Upgrade to Premium' : 'Premium content'
   const subtitle = reason === 'upgrade' ? null : 'Unlock this with Premium.'

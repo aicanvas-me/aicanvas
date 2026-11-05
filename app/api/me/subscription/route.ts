@@ -3,6 +3,7 @@ import { createClient } from '@/app/lib/supabase/server'
 import { paddleApiBase } from '@/app/lib/paddle/server'
 import { mapSubscriptionFields } from '@/lib/identity/sub-mapping'
 import { isPremiumNow, type SubStatus } from '@/lib/identity/tier'
+import { LIVE_SUB_STATUSES } from '@/lib/identity/lifetime'
 
 export const runtime = 'nodejs'
 
@@ -12,18 +13,17 @@ export const runtime = 'nodejs'
  * cancel are always current). Session-only like /api/me/entitlement — no
  * token/Bearer. Read-only: this route never writes to Supabase or Paddle.
  *
- * Returns DISPLAY FIELDS ONLY — never Paddle ids. Every failure path returns
+ * Returns DISPLAY FIELDS ONLY — never Paddle ids. Every read failure returns
  * { subscription: null, unavailable: true } so the account page degrades to the
- * plain status line instead of showing a guess, and can tell "none" from "unknown".
+ * plain status line instead of showing a guess, and can tell "none" from
+ * "unknown". A live row we do not read details for (paused, or a period end
+ * already passed) is "unknown" too: the portal can still manage it.
  */
 export async function GET() {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ subscription: null }, { status: 401 })
-
-    const apiKey = process.env.PADDLE_API_KEY
-    if (!apiKey) return NextResponse.json({ subscription: null, unavailable: true })
 
     // RLS owner-read. Only currently-premium users trigger a Paddle read.
     const { data: row, error } = await supabase
@@ -34,8 +34,13 @@ export async function GET() {
     if (error) return NextResponse.json({ subscription: null, unavailable: true })
     if (!row?.paddle_subscription_id) return NextResponse.json({ subscription: null })
     if (!isPremiumNow(row.status as SubStatus, row.current_period_end ?? null)) {
-      return NextResponse.json({ subscription: null })
+      return LIVE_SUB_STATUSES.includes(row.status as string)
+        ? NextResponse.json({ subscription: null, unavailable: true })
+        : NextResponse.json({ subscription: null })
     }
+
+    const apiKey = process.env.PADDLE_API_KEY
+    if (!apiKey) return NextResponse.json({ subscription: null, unavailable: true })
 
     const res = await fetch(`${paddleApiBase()}/subscriptions/${row.paddle_subscription_id}`, {
       headers: { Authorization: `Bearer ${apiKey}` },

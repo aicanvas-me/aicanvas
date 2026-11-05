@@ -80,7 +80,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'copy-source-code',
     category: 'installing',
     q: 'Can I copy the source code instead of using the CLI?',
-    a: 'Yes. Every free component page has a Manual tab with its packages and full source; the free library is MIT and its source is never hidden. Subscribers see premium source and full remix prompts under a durable proprietary licence to use and ship, not redistribute.',
+    a: 'Yes. Every free component page has a Manual tab with its packages and full source; the free library is MIT and its source is never hidden. Premium members see premium source and full remix prompts under a durable proprietary licence to use and ship, not redistribute.',
   },
   {
     id: 'supported-frameworks',

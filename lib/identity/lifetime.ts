@@ -151,7 +151,7 @@ export interface ScheduledCancel {
   effectiveAt: string | null
 }
 
-const LIVE_SUB_STATUSES = ['active', 'trialing', 'past_due', 'paused']
+export const LIVE_SUB_STATUSES = ['active', 'trialing', 'past_due', 'paused']
 
 /**
  * A subscriber who bought Lifetime should not be charged again. Schedule
