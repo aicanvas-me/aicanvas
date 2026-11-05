@@ -159,9 +159,9 @@ export default function AboutPage() {
           Recolor them, retime them, rebuild them. The source is yours.
         </p>
         <p className={P}>
-          Underneath both sits a free icon set in four styles, line, duotone,
-          solid, and solid duotone, with the size and weight yours to
-          set.
+          Underneath both sits an icon set in four styles, Line, Duotone,
+          Solid and Solid duotone, with the size and weight yours to set.
+          Line is free to use, the other three come with Premium.
         </p>
       </Chapter>
 
