@@ -19,6 +19,7 @@ export function TuneSlider({
   className = '',
   disabled = false,
   hint,
+  disabledValue,
 }: {
   label: string
   value: number
@@ -32,17 +33,19 @@ export function TuneSlider({
   // disabled: the control does nothing for what is shown; hint says why
   disabled?: boolean
   hint?: string
+  // shown in the value slot while disabled, so the reason reads without an extra row
+  disabledValue?: string
 }) {
   const t = Math.max(0, Math.min(1, (value - min) / (max - min)))
   // Fill and needle stay clear of the round ends, the way the native thumb does.
   const position = `calc(12px + (100% - 24px) * ${t})`
-  const display = format(value)
+  const display = disabled && disabledValue ? disabledValue : format(value)
   const hintId = useId()
   const showHint = disabled && Boolean(hint)
 
   return (
     <div className={`min-w-0 ${className}`}>
-      <div className={`relative h-8 ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}>
+      <div title={showHint ? hint : undefined} className={`relative h-8 ${disabled ? 'cursor-not-allowed opacity-50' : ''}`}>
         <input
           disabled={disabled}
           type="range"
@@ -82,9 +85,9 @@ export function TuneSlider({
         </div>
       </div>
       {showHint && (
-        <p id={hintId} className="mt-1.5 px-3 text-xs text-sand-600 dark:text-sand-400">
+        <span id={hintId} className="sr-only">
           {hint}
-        </p>
+        </span>
       )}
     </div>
   )

@@ -13,6 +13,7 @@ function renderSlider(disabled: boolean) {
       label="Weight"
       disabled={disabled}
       hint={HINT}
+      disabledValue="Fixed"
       value={2}
       onChange={() => {}}
       min={0}
@@ -26,15 +27,18 @@ function renderSlider(disabled: boolean) {
 }
 
 describe('TuneSlider', () => {
-  it('shows why it is disabled as visible text the control is described by', () => {
+  it('reads Fixed in the value slot and describes the reason without an extra row', () => {
     const slider = renderSlider(true)
     const hint = screen.getByText(HINT)
     expect(slider.getAttribute('aria-describedby')).toBe(hint.id)
+    expect(hint.className).toContain('sr-only')
+    expect(screen.getAllByText('Fixed').length).toBeGreaterThan(0)
   })
 
   it('shows no hint while enabled', () => {
     const slider = renderSlider(false)
     expect(screen.queryByText(HINT)).toBeNull()
     expect(slider.hasAttribute('aria-describedby')).toBe(false)
+    expect(screen.queryAllByText('Fixed')).toHaveLength(0)
   })
 })

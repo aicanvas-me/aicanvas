@@ -238,6 +238,7 @@ export function IconDetail({
               label="Weight"
               disabled={!takesStroke(style)}
               hint={FIXED_WEIGHT}
+              disabledValue="Fixed"
               value={ICON_WEIGHTS.findIndex((entry) => entry.id === weight)}
               onChange={(index) => setWeight(ICON_WEIGHTS[index].id)}
               min={0}
