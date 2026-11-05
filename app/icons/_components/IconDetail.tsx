@@ -197,8 +197,12 @@ export function IconDetail({
               {categoryLabel}
             </Link>
             <span aria-hidden className="text-sand-500">·</span>
-            <span>Added {formatDate(icon.added)}</span>
-            <span aria-hidden className="text-sand-500">·</span>
+            {icon.added && (
+              <>
+                <span>Added {formatDate(icon.added)}</span>
+                <span aria-hidden className="text-sand-500">·</span>
+              </>
+            )}
             <SlugChip name={icon.name} />
           </div>
         </header>
