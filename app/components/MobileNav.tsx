@@ -10,7 +10,7 @@ import { Search } from '@/app/_icons/icons/search'
 import { GithubLogo, XLogo } from './BrandLogos'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import { CatalogNav } from './CatalogNav'
-import { CAPTURE_LEAF_RE, TEMPLATE_LEAF_RE } from './top-bar-crumbs'
+import { CAPTURE_LEAF_RE, FOCUS_ROUTE_RE, TEMPLATE_LEAF_RE } from './top-bar-crumbs'
 import { SecondaryNav, SectionTiles } from './SecondaryNav'
 import { useComponentSearch } from './useComponentSearch'
 import { Button } from './Button'
@@ -56,11 +56,13 @@ export function MobileNav() {
   // The desktop Sidebar hides itself below md on every route, so this drawer
   // is the only mobile nav there is — it must stay visible everywhere.
   // Suppress it only where a route owns the full viewport: full-screen
-  // template leaves and the /lab subtree (LAB ships its own top bar).
+  // template leaves, the /lab subtree (LAB ships its own top bar) and the
+  // agent sign-in consent, as the desktop bar and rail do.
   const hideMobileNav =
     pathname?.startsWith('/lab') ||
     TEMPLATE_LEAF_RE.test(pathname ?? '') ||
-    CAPTURE_LEAF_RE.test(pathname ?? '')
+    CAPTURE_LEAF_RE.test(pathname ?? '') ||
+    FOCUS_ROUTE_RE.test(pathname ?? '')
   if (hideMobileNav) return null
 
   // On a route that pins itself dark, this drawer is the one piece of site
