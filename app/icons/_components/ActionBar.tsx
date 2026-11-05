@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { Check } from '@/app/_icons/icons/check'
 import { Code } from '@/app/_icons/icons/code'
@@ -69,6 +69,9 @@ export function ActionBar({
 }) {
   const [open, setOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const triggerRef = useRef<HTMLButtonElement>(null)
+  const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const menuId = useId()
   const router = useRouter()
   // A preview carries no vector: the SVG and PNG actions become the way to Premium.
   const locked = isPreview(markup)
@@ -77,18 +80,26 @@ export function ActionBar({
   const svg = locked ? '' : buildSvg(markup, size, weight, colour)
   const { copied, copy } = useCopied(prompt)
 
+  const close = () => {
+    setOpen(false)
+    triggerRef.current?.focus()
+  }
+
   useEffect(() => {
     if (!open) return
-    const close = (event: MouseEvent) => {
+    itemRefs.current[0]?.focus()
+    const outside = (event: MouseEvent) => {
       if (!menuRef.current?.contains(event.target as Node)) setOpen(false)
     }
-    const escape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setOpen(false)
+    const escape = (event: globalThis.KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+      setOpen(false)
+      triggerRef.current?.focus()
     }
-    document.addEventListener('mousedown', close)
+    document.addEventListener('mousedown', outside)
     document.addEventListener('keydown', escape)
     return () => {
-      document.removeEventListener('mousedown', close)
+      document.removeEventListener('mousedown', outside)
       document.removeEventListener('keydown', escape)
     }
   }, [open])
@@ -106,11 +117,34 @@ export function ActionBar({
         ]),
   ]
 
+  // Arrows stop here, natively too: the page's document listener walks icons on them.
+  const onMenuKey = (event: KeyboardEvent) => {
+    const index = itemRefs.current.indexOf(document.activeElement as HTMLButtonElement)
+    const last = items.length - 1
+    const targets: Record<string, number> = {
+      ArrowDown: index >= last ? 0 : index + 1,
+      ArrowUp: index <= 0 ? last : index - 1,
+      Home: 0,
+      End: last,
+    }
+    if (event.key in targets) itemRefs.current[targets[event.key]]?.focus()
+    else if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return
+    event.preventDefault()
+    event.stopPropagation()
+    event.nativeEvent.stopImmediatePropagation()
+  }
+
   return (
     // On a phone the split button takes the whole first row and the two
     // secondaries share the second, half each, instead of one wrapping alone.
     <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
-      <div ref={menuRef} className="relative col-span-2 flex sm:inline-flex">
+      <div
+        ref={menuRef}
+        className="relative col-span-2 flex sm:inline-flex"
+        onBlur={(event) => {
+          if (open && event.relatedTarget && !menuRef.current?.contains(event.relatedTarget as Node)) setOpen(false)
+        }}
+      >
         <button
           type="button"
           onClick={() => void copy()}
@@ -120,23 +154,37 @@ export function ActionBar({
           {copied ? 'Copied' : 'Copy for agent'}
         </button>
         <button
+          ref={triggerRef}
           type="button"
           aria-label="More copy and download options"
+          aria-haspopup="menu"
           aria-expanded={open}
+          aria-controls={open ? menuId : undefined}
           onClick={() => setOpen((value) => !value)}
           className="inline-flex h-8 w-8 items-center justify-center rounded-r-control border-l border-accent-foreground/20 bg-accent text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           <ChevronDown size={13} />
         </button>
         {open && (
-          <div className="absolute left-0 top-10 z-50 w-56 rounded-section border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900">
-            {items.map((item) => (
+          <div
+            id={menuId}
+            role="menu"
+            aria-label="Copy and download options"
+            onKeyDown={onMenuKey}
+            className="absolute left-0 top-10 z-50 w-56 rounded-section border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900"
+          >
+            {items.map((item, index) => (
               <button
                 key={item.label}
+                ref={(node) => {
+                  itemRefs.current[index] = node
+                }}
                 type="button"
+                role="menuitem"
+                tabIndex={-1}
                 onClick={() => {
                   void item.action()
-                  setOpen(false)
+                  close()
                 }}
                 className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50"
               >
