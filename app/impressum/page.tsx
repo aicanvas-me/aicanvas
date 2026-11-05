@@ -13,7 +13,7 @@ import { LegalArticle } from '../components/LegalArticle'
 // client piece (its "On this page" list).
 
 const SECTION = 'mt-12 first:mt-0'
-const HEADING = 'text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50'
+const HEADING = 'break-words text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50'
 // German, the authoritative text.
 const DE = 'mt-4 leading-relaxed text-sand-600 dark:text-sand-400'
 // English, the companion: a step quieter, set in from a hairline rule so the
