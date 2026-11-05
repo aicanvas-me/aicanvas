@@ -46,7 +46,7 @@ const PULSE_EVERY = 2.4
 const TOGGLE_EVERY = 3
 const SKILL_EVERY = 2.6
 
-const SKILL_LINES = ['Buttons come in two sizes.', 'Cards sit on the inset radius.', 'Never invent a colour.']
+const SKILL_LINES = ['Buttons come in two sizes.', 'Cards sit on the inset radius.', 'Never invent a color.']
 
 // Two drop layers, light from straight above; the same pair the site's raised
 // cards use.

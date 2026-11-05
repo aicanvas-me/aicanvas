@@ -176,7 +176,7 @@ function ProjectList() {
 // The agent extends the system: a new screen and the checks it passed.
 function BrainChecks() {
   const checks = [
-    { name: 'Tokens', note: 'no raw colours' },
+    { name: 'Tokens', note: 'no raw colors' },
     { name: 'Components', note: 'from the system' },
     { name: 'Spacing', note: 'on the scale' },
     { name: 'Contrast', note: 'passes AA' },
