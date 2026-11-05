@@ -67,7 +67,7 @@ export function PremiumCards({
 }: {
   /** `both` = Free + Premium (anonymous); `premium-only` = just the Premium card. */
   show?: 'both' | 'premium-only'
-  /** Tighter footprint for the Code-tab overlay. */
+  /** Tighter footprint for the upgrade modal. */
   compact?: boolean
   className?: string
 }) {
@@ -282,12 +282,12 @@ export function PremiumCards({
           {(showFree || pairUp) && (
             <p
               aria-hidden={showFree ? undefined : true}
-              className={`text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500 ${showFree ? '' : 'invisible'}`}
+              className={`text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500 ${showFree ? '' : 'invisible hidden md:block'}`}
             >
               EVERYTHING IN FREE, PLUS
             </p>
           )}
-          <ul className={showFree || pairUp ? 'mt-4 space-y-3' : 'space-y-3'}>
+          <ul className={showFree ? 'mt-4 space-y-3' : pairUp ? 'space-y-3 md:mt-4' : 'space-y-3'}>
             {PREMIUM_FEATURES.map((feature) => (
               <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
                 <CircleCheck size={18} className="mt-0.5 shrink-0 text-accent" />

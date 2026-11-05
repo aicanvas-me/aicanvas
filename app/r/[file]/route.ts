@@ -198,7 +198,7 @@ function premiumStub(realBody: string, slug: string): NextResponse {
   const msg =
     `"${title}" is premium AI Canvas content. ` +
     `This is a placeholder. Unlock the real source with an AI Canvas Premium ` +
-    `account at https://aicanvas.me/pricing. Already subscribed? Sign in, open it on ` +
+    `account at https://aicanvas.me/pricing. Already Premium? Sign in, open it on ` +
     `aicanvas.me and copy its install command there: that command includes your token.`
   const stub =
     `const PREMIUM_NOTICE =\n` +
@@ -272,7 +272,7 @@ function brainStub(realBody: string, slug: string): NextResponse {
     '',
     '- Upgrade: https://aicanvas.me/pricing',
     `- See what is inside: https://aicanvas.me/design-systems/${system}/brain`,
-    `- Already subscribed? Sign in at https://aicanvas.me/design-systems/${system}/brain/explore and press Copy Command: that command includes your token.`,
+    `- Already Premium? Sign in at https://aicanvas.me/design-systems/${system}/brain/explore and press Copy Command: that command includes your token.`,
     '',
   ].join('\n')
   const target = `~/design-systems/${system}/BRAIN-LOCKED.md`

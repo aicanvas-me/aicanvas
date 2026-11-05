@@ -59,7 +59,7 @@ export function systemMarkdown(s: SystemInput): string {
 
   out.push(
     [
-      `- License: ${s.paid ? 'Premium (proprietary): installing needs a Premium subscription' : 'MIT'}`,
+      `- License: ${s.paid ? 'Premium (proprietary): installing needs Premium' : 'MIT'}`,
       `- Components: ${s.components.length}`,
       s.templates.length > 0 && `- Templates: ${s.templates.length}`,
       `- Typeface: ${s.font}`,

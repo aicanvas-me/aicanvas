@@ -53,7 +53,9 @@ export function AccountBilling() {
     fetch('/api/me/subscription')
       .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((j) => {
-        if (!cancelled && j?.subscription) setSub(j.subscription)
+        if (cancelled) return
+        if (j?.subscription) setSub(j.subscription)
+        else if (j?.unavailable) setSubFailed(true)
       })
       .catch(() => {
         if (!cancelled) setSubFailed(true)
@@ -151,33 +153,33 @@ export function AccountBilling() {
         )}
 
         {!(status === 'premium' && lifetime && !sub && !subFailed) && (
-        <div className="mt-5">
-          {status === 'premium' ? (
-            <button
-              type="button"
-              onClick={manageSubscription}
-              disabled={portalLoading}
-              className={buttonClasses({ variant: 'outline', size: 'sm' })}
-            >
-              <Bolt size={15} />
-              {portalLoading ? 'Opening…' : 'Manage subscription'}
-            </button>
-          ) : status === 'not-premium' ? (
-            <button
-              type="button"
-              onClick={() => openPaywall({ reason: 'upgrade' })}
-              className={buttonClasses({ variant: 'primary', size: 'sm' })}
-            >
-              <Bolt size={15} />
-              Upgrade to Premium
-            </button>
-          ) : (
-            <button type="button" disabled className={buttonClasses({ variant: 'outline', size: 'sm' })}>
-              <Bolt size={15} />
-              Checking your plan…
-            </button>
-          )}
-        </div>
+          <div className="mt-5">
+            {status === 'premium' ? (
+              <button
+                type="button"
+                onClick={manageSubscription}
+                disabled={portalLoading}
+                className={buttonClasses({ variant: 'outline', size: 'sm' })}
+              >
+                <Bolt size={15} />
+                {portalLoading ? 'Opening…' : 'Manage subscription'}
+              </button>
+            ) : status === 'not-premium' ? (
+              <button
+                type="button"
+                onClick={() => openPaywall({ reason: 'upgrade' })}
+                className={buttonClasses({ variant: 'primary', size: 'sm' })}
+              >
+                <Bolt size={15} />
+                Upgrade to Premium
+              </button>
+            ) : (
+              <button type="button" disabled className={buttonClasses({ variant: 'outline', size: 'sm' })}>
+                <Bolt size={15} />
+                Checking your plan…
+              </button>
+            )}
+          </div>
         )}
 
         {noPortal && (
