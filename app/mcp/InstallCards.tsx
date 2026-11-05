@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check } from '@/app/_icons/icons/check'
 import { Copy } from '@/app/_icons/icons/copy'
+import { Code } from '@/app/_icons/icons/code'
 import { Step } from '../components/Step'
 import { buttonClasses } from '../components/buttonClasses'
 
@@ -42,6 +43,20 @@ function cursorConfig(token: string) {
 }`
 }
 
+// VS Code's user mcp.json: its own `servers` + `type` shape, not Cursor's `mcpServers`.
+function vscodeConfig(token: string) {
+  const env = token ? `,\n      "env": { "AICANVAS_TOKEN": "${token}" }` : ''
+  return `{
+  "servers": {
+    "${SERVER_NAME}": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "${PACKAGE}"]${env}
+    }
+  }
+}`
+}
+
 // Cursor one-click deep link — config is base64 of the INNER server object.
 // Without a token we use the prebuilt string; with one we rebuild it so the
 // deep link installs already authenticated. btoa runs client-side only (token
@@ -58,6 +73,8 @@ function cursorDeeplink(token: string) {
 }
 
 const TEST_PROMPT = `Use the aicanvas MCP: what can you add to my app?`
+// VS Code hides MCP tools from the model unless the prompt tags the server with #.
+const VSCODE_TEST_PROMPT = `#aicanvas-mcp what can you add to my app?`
 
 // Geist Mono shapes `--` as a ligature/contextual alternate, which visually
 // swallows the space before it (e.g. `aicanvas--scope`). Disable ligatures so
@@ -72,12 +89,13 @@ const NO_LIGATURES = {
 export const INLINE_CODE =
   'rounded-chip border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-xs text-sand-800 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-200'
 
-type Tool = 'claude' | 'codex' | 'cursor'
+type Tool = 'claude' | 'codex' | 'vscode' | 'cursor'
 type Scope = 'user'
 
 const TOOL_META: Record<Tool, { label: string; ask: string }> = {
   claude: { label: 'Claude Code', ask: 'Claude' },
   codex: { label: 'Codex', ask: 'Codex' },
+  vscode: { label: 'VS Code', ask: 'Copilot' },
   cursor: { label: 'Cursor', ask: 'Cursor' },
 }
 
@@ -118,6 +136,7 @@ export function CursorMark() {
 const TOOLS: { id: Tool; mark: React.ReactNode }[] = [
   { id: 'claude', mark: <ClaudeCodeMark /> },
   { id: 'codex', mark: <CodexMark /> },
+  { id: 'vscode', mark: <Code size={15} /> },
   { id: 'cursor', mark: <CursorMark /> },
 ]
 
@@ -246,6 +265,8 @@ export function InstallCards() {
 
   const isCodex = tool === 'codex'
   const isCursor = tool === 'cursor'
+  const isVscode = tool === 'vscode'
+  const testPrompt = isVscode ? VSCODE_TEST_PROMPT : TEST_PROMPT
   const { label: toolLabel, ask: askLabel } = TOOL_META[tool]
   // Masked for display, real value for the copy handler.
   const displayToken = userToken ? MASKED_TOKEN : ''
@@ -262,7 +283,7 @@ export function InstallCards() {
           on the card, the steps in the darker inset under it. The page owns
           the section heading. */}
       <div className="rounded-section border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900">
-        {/* Tool toggle — Claude Code / Codex / Cursor */}
+        {/* Tool toggle — Claude Code / Codex / VS Code / Cursor */}
         <div className="isolate flex gap-1.5 p-1">
           {TOOLS.map((t) => {
             const active = tool === t.id
@@ -330,6 +351,22 @@ export function InstallCards() {
                     multiline
                   />
                 </>
+              ) : isVscode ? (
+                <>
+                  <p className="mb-2.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                    Command Palette → <span className="font-semibold">MCP: Open User Configuration</span> → add the{' '}
+                    <code className={INLINE_CODE}>aicanvas</code> entry → works in every project
+                  </p>
+                  <CodeBlock
+                    command={vscodeConfig(displayToken)}
+                    copied={installCopied}
+                    onCopy={() =>
+                      copy(vscodeConfig(userToken ?? ''), 'Config copied', setInstallCopied)
+                    }
+                    label="VS Code config"
+                    multiline
+                  />
+                </>
               ) : (
                 <>
                   <p className="mb-2.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
@@ -372,6 +409,11 @@ export function InstallCards() {
                   Cursor Settings → <span className="font-semibold">Tools &amp; MCPs</span> →{' '}
                   <code className={INLINE_CODE}>aicanvas</code> on
                 </p>
+              ) : isVscode ? (
+                <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  <span className="font-semibold">Start</span> above <code className={INLINE_CODE}>aicanvas</code> in
+                  mcp.json → it shows the tool count
+                </p>
               ) : (
                 <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
                   Restart {toolLabel} → <code className={INLINE_CODE}>aicanvas</code> loads
@@ -389,9 +431,9 @@ export function InstallCards() {
                 </span>
               </div>
               <CodeBlock
-                command={TEST_PROMPT}
+                command={testPrompt}
                 copied={testCopied}
-                onCopy={() => copy(TEST_PROMPT, 'Test prompt copied', setTestCopied)}
+                onCopy={() => copy(testPrompt, 'Test prompt copied', setTestCopied)}
                 label="test prompt"
               />
             </Step>

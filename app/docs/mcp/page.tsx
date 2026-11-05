@@ -10,7 +10,7 @@ export const metadata = pageMetadata({
   title: 'MCP Server Docs: Connect Claude Code, Codex and Cursor to AI Canvas',
   social: 'AI Canvas MCP server docs',
   description:
-    'Set up @aicanvas/mcp in Claude Code, Codex, Cursor or Claude Desktop. Your agent searches, reads, plans and installs AI Canvas components and design systems from the chat.',
+    'Set up @aicanvas/mcp in Claude Code, Codex, VS Code, Cursor or Claude Desktop. Your agent searches, reads, plans and installs AI Canvas components and design systems from the chat.',
   url: '/docs/mcp',
 })
 
@@ -35,6 +35,17 @@ const TOC = [
 const JSON_CONFIG = `{
   "mcpServers": {
     "aicanvas": {
+      "command": "npx",
+      "args": ["-y", "@aicanvas/mcp"],
+      "env": { "AICANVAS_TOKEN": "your-token" }
+    }
+  }
+}`
+
+const VSCODE_JSON_CONFIG = `{
+  "servers": {
+    "aicanvas": {
+      "type": "stdio",
       "command": "npx",
       "args": ["-y", "@aicanvas/mcp"],
       "env": { "AICANVAS_TOKEN": "your-token" }
@@ -182,6 +193,18 @@ export default function McpDocsPage() {
                   label="Codex command"
                   code="codex mcp add aicanvas --env AICANVAS_TOKEN=your-token -- npx -y @aicanvas/mcp"
                 />
+              </>
+            ),
+          },
+          {
+            label: 'VS Code',
+            content: (
+              <>
+                <P>
+                  Command Palette → <C>MCP: Open User Configuration</C> → add the <C>aicanvas</C> entry → Start above it. Your token
+                  stays in your home folder, out of git. Start prompts with <C>#aicanvas-mcp</C> so Copilot uses it.
+                </P>
+                <CopyBlock title="mcp.json" label="VS Code config" code={VSCODE_JSON_CONFIG} />
               </>
             ),
           },
