@@ -154,7 +154,7 @@ export interface ScheduledCancel {
 const LIVE_SUB_STATUSES = ['active', 'trialing', 'past_due', 'paused']
 
 /**
- * D1: a subscriber who bought Lifetime should not be charged again. Schedule
+ * A subscriber who bought Lifetime should not be charged again. Schedule
  * their subscription to cancel at the END of the paid period, never
  * immediately (a canceled Paddle subscription cannot be reinstated, and they
  * paid for the current period). Monthly and annual alike. Users holding a gift

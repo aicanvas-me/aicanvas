@@ -40,7 +40,7 @@ export function UpgradeButton({
     // Signed-in: attribute the sale to the account up front (user_id + email).
     // Signed-out: open anonymously, Paddle collects the email itself and the
     // webhook keys the new/linked account off it (no user_id to pass).
-    // Lifetime never takes a promo: discounts are for Monthly only.
+    // Lifetime never takes a promo code.
     const promo = cycle === 'lifetime' ? undefined : new URLSearchParams(window.location.search).get('promo')?.trim()
     paddle?.Checkout.open({
       items: [{ priceId: PRICES[cycle], quantity: 1 }],

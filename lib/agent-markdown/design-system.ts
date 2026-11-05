@@ -142,7 +142,7 @@ export function systemComponentMarkdown(input: SystemComponentInput): string {
   install.push(
     input.installTier === 'free account'
       ? `Needs a free AI Canvas account; signed out, the command writes a placeholder titled "(free account required)".`
-      : `Requires a Premium subscription. Without a Premium token the command writes a placeholder instead of the component.`,
+      : `Requires Premium. Without a Premium token the command writes a placeholder instead of the component.`,
   )
   install.push(`Every ${system.name} component at once: \`npx shadcn@latest add @aicanvas/${system.slug}\`.`)
   install.push(`Token setup: the Install section of ${siteUrl}/llms.txt.`)

@@ -47,7 +47,7 @@ describe('systemComponentMarkdown', () => {
   it('Pro: public prompt head only, Premium install wording, no source', () => {
     const md = systemComponentMarkdown(base)
     expect(md).toContain('npx shadcn@latest add @aicanvas/andromeda-pro-accordion')
-    expect(md).toContain('Requires a Premium subscription.')
+    expect(md).toContain('Requires Premium.')
     expect(md).toContain('## Remix prompt')
     for (const gone of ['## 3. State', 'engineRef', 'data-secret-tree', '```tsx']) {
       expect(md).not.toContain(gone)

@@ -5,7 +5,7 @@ import { PageHero, PageShell } from '../components/PageKit'
 import { LegalArticle } from '../components/LegalArticle'
 
 // ─── /premium-license ─────────────────────────────────────────────────────────
-// The AI Canvas Premium License (a EULA). Versioned v1.0 on its own URL, mirroring
+// The AI Canvas Premium License (a EULA). Versioned v1.1 on its own URL, mirroring
 // the convention used by paid component vendors (Tailwind Plus, CoreUI PRO, MUI).
 // The public Terms (§ 2b, § 4, § 7b) reference this page by link. It governs the
 // closed-source Premium Components, design systems, and templates, and the free
@@ -124,7 +124,7 @@ export default function PremiumLicensePage() {
             and to Premium Components we add after you subscribe. This access
             right ends automatically when your Subscription ends for any reason.
           </p>
-          <p id="lifetime" className={`${BODY} scroll-mt-24`}>
+          <p id="lifetime" className={`${BODY} scroll-mt-10`}>
             <strong className={STRONG}>Lifetime (one payment, no
             renewal).</strong>{' '}
             Lifetime gives you the access right above for as long as AI Canvas

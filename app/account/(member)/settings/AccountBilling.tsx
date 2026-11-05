@@ -43,6 +43,7 @@ export function AccountBilling() {
   const [refreshing, startRefresh] = useTransition()
   const [rotateState, setRotateState] = useState<'idle' | 'rotating' | 'done' | 'error'>('idle')
   const [sub, setSub] = useState<SubDetails | null>(null)
+  const [subFailed, setSubFailed] = useState(false)
 
   // Live subscription details, premium users only. Any failure leaves `sub`
   // null and the panel falls back to the plain status line — never a guess.
@@ -50,11 +51,13 @@ export function AccountBilling() {
     if (status !== 'premium') return
     let cancelled = false
     fetch('/api/me/subscription')
-      .then((r) => (r.ok ? r.json() : null))
+      .then((r) => (r.ok ? r.json() : Promise.reject()))
       .then((j) => {
         if (!cancelled && j?.subscription) setSub(j.subscription)
       })
-      .catch(() => {})
+      .catch(() => {
+        if (!cancelled) setSubFailed(true)
+      })
     return () => {
       cancelled = true
     }
@@ -116,19 +119,12 @@ export function AccountBilling() {
         <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
           {status === 'premium'
             ? lifetime
-              ? 'You have Lifetime.'
+              ? 'You have Lifetime: Premium for good, nothing to renew.'
               : "You're on Premium."
             : status === 'not-premium'
               ? "You're on the Free plan."
               : 'Checking your plan…'}
         </p>
-
-        {lifetime && (
-          <p className="mt-3 text-sm font-semibold text-sand-700 dark:text-sand-300">
-            Lifetime{' · '}
-            <span className="font-normal">Premium for good, nothing to renew</span>
-          </p>
-        )}
 
         {status === 'premium' && sub && (
           <div className="mt-3 space-y-1">
@@ -154,8 +150,9 @@ export function AccountBilling() {
           </div>
         )}
 
+        {!(status === 'premium' && lifetime && !sub && !subFailed) && (
         <div className="mt-5">
-          {status === 'premium' && lifetime && !sub ? null : status === 'premium' ? (
+          {status === 'premium' ? (
             <button
               type="button"
               onClick={manageSubscription}
@@ -181,6 +178,7 @@ export function AccountBilling() {
             </button>
           )}
         </div>
+        )}
 
         {noPortal && (
           <p className="mt-3 text-xs text-sand-600 dark:text-sand-400">

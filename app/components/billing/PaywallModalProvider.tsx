@@ -66,11 +66,11 @@ function PaywallModalView({
 }: PaywallState & { onClose: () => void }) {
   const { user } = useSession()
   // Metering is gone, so the modal only ever pitches Premium content now.
-  // Both 'premium-only' and 'upgrade' resolve to a single Premium card; the
-  // reason just tunes the heading and subtitle. One plan family, no
+  // Both 'premium-only' and 'upgrade' resolve to the same plan cards (Monthly,
+  // plus Lifetime when it is on); the reason just tunes the heading and subtitle. One plan family, no
   // individual / business switch: Business is not a plan.
   const title = reason === 'upgrade' ? 'Upgrade to Premium' : 'Premium content'
-  const subtitle = reason === 'upgrade' ? null : 'Unlock this with a Premium subscription.'
+  const subtitle = reason === 'upgrade' ? null : 'Unlock this with Premium.'
 
   // Keyboard: Tab stays inside the card, focus returns on close, and the card
   // itself takes focus on open so screen readers land in the dialog.
@@ -108,7 +108,7 @@ function PaywallModalView({
         className="fixed inset-0 bg-sand-950/85 backdrop-blur-sm"
       />
 
-      {/* Width hugs the content: just the single Premium card + padding. No
+      {/* Width hugs the content: the plan cards + padding. No
           ground of its own: the blurred backdrop is the panel, and the card
           sits straight on it. That backdrop is dark in both themes, so the
           words and the close button around the card take fixed light ink. */}
@@ -139,9 +139,9 @@ function PaywallModalView({
           <PremiumCards show="premium-only" compact />
         </div>
 
-        {/* Accepted payment methods — a card-width container matching the
-            Premium card so it reads as the bottom of the same column. */}
-        <div className="mx-auto mt-5 max-w-md rounded-card border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-900/50">
+        {/* Accepted payment methods, as wide as the cards above so it reads as
+            the bottom of the same column. */}
+        <div className={`mx-auto mt-5 ${lifetimeEnabled() ? 'max-w-md md:max-w-none' : 'max-w-md'} rounded-card border border-sand-200 bg-sand-50 px-4 py-3 dark:border-sand-800 dark:bg-sand-900/50`}>
           <PaymentMethods />
         </div>
 

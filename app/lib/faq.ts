@@ -153,7 +153,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'is-mcp-free',
     category: 'mcp',
     q: 'Is the AI Canvas MCP free?',
-    a: 'Yes. MCP access and browsing component details are free and never metered. Pulling source requires a free account for free items, while premium standalone components, Andromeda Pro, its templates and the AI Brain require Premium at $8.99 per month or $49.99 per year.',
+    a: `Yes. MCP access and browsing component details are free and never metered. Pulling source requires a free account for free items, while premium standalone components, Andromeda Pro, its templates and the AI Brain require Premium at ${LIFETIME ? '$8.99 per month, or $125 once for Lifetime' : '$8.99 per month or $49.99 per year'}.`,
   },
   {
     id: 'design-system-contents',
@@ -335,7 +335,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'open-source',
     category: 'about',
     q: 'Is AI Canvas open source?',
-    a: 'The free library is open source under MIT, its full source and remix prompts stay public, and the public repository lets you read, use, and change that code. Premium source is proprietary under a durable licence to use and ship, not redistribute, and full premium remix prompts require a subscription.',
+    a: 'The free library is open source under MIT, its full source and remix prompts stay public, and the public repository lets you read, use, and change that code. Premium source is proprietary under a durable licence to use and ship, not redistribute, and full premium remix prompts require Premium.',
   },
   {
     id: 'commercial-use',

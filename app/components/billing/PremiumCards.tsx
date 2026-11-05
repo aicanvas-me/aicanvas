@@ -16,7 +16,7 @@ import { LIFETIME_PRICE, MONTHLY_PRICE, YEARLY_ANCHOR, YEARLY_PER_MONTH, YEARLY_
 import { lifetimeEnabled } from '../../../lib/flags'
 
 // Single source of truth for the Free / Premium cards. Rendered full-size on
-// /pricing and `compact` inside the Code-tab paywall. The Premium card lists
+// /pricing and `compact` inside the upgrade modal. The Premium card lists
 // only real unlocks; every free perk stays on the Free card so the copy never
 // sells free things as premium. Every free perk is scoped to FREE entries:
 // premium source and the full premium remix prompt are both withheld
@@ -56,9 +56,9 @@ const LIFETIME_FEATURES = [
 const LIFETIME = lifetimeEnabled()
 // Side by side, the descriptions share one height (two lines) so the prices
 // and buttons line up across the row: three plans on /pricing from lg, the
-// modal's two from sm.
+// modal's two from md.
 const DESC_3UP = 'lg:min-h-[2.875rem]'
-const DESC_2UP = 'sm:min-h-[2.875rem]'
+const DESC_2UP = 'md:min-h-[2.875rem]'
 
 export function PremiumCards({
   show = 'both',
@@ -107,7 +107,7 @@ export function PremiumCards({
   return (
     <>
     <div
-      className={`grid gap-6 ${threeUp ? 'mx-auto max-w-md lg:max-w-none lg:grid-cols-3 lg:gap-5' : pairUp ? 'mx-auto max-w-md sm:max-w-none sm:grid-cols-2 sm:gap-4' : showFree ? 'md:grid-cols-2' : 'mx-auto max-w-md'} ${
+      className={`grid gap-6 ${threeUp ? 'mx-auto max-w-md lg:max-w-none lg:grid-cols-3 lg:gap-5' : pairUp ? 'mx-auto max-w-md md:max-w-none md:grid-cols-2 md:gap-4' : showFree ? 'md:grid-cols-2' : 'mx-auto max-w-md'} ${
         compact ? '' : 'mt-12 sm:mt-16'
       } ${className ?? ''}`}
     >
@@ -277,14 +277,17 @@ export function PremiumCards({
           )}
         </div>
         <div className={`flex-1 rounded-card bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
-          {/* The comparison label only makes sense next to the Free card;
-              the premium-only modal renders the list without it. */}
-          {showFree && (
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">
+          {/* The comparison label only makes sense next to the Free card; beside
+              Lifetime in the modal an invisible copy keeps both lists level. */}
+          {(showFree || pairUp) && (
+            <p
+              aria-hidden={showFree ? undefined : true}
+              className={`text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500 ${showFree ? '' : 'invisible'}`}
+            >
               EVERYTHING IN FREE, PLUS
             </p>
           )}
-          <ul className={showFree ? 'mt-4 space-y-3' : 'space-y-3'}>
+          <ul className={showFree || pairUp ? 'mt-4 space-y-3' : 'space-y-3'}>
             {PREMIUM_FEATURES.map((feature) => (
               <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
                 <CircleCheck size={18} className="mt-0.5 shrink-0 text-accent" />
@@ -306,16 +309,6 @@ export function PremiumCards({
         />
       )}
     </div>
-    {/* A compact Free + Premium pair has no room for a third card: Lifetime
-        is a line under it. */}
-    {LIFETIME && !threeUp && !pairUp && !hasLifetime && (
-      <p className="mx-auto mt-3 max-w-md text-center text-xs leading-relaxed text-sand-600 dark:text-sand-400">
-        Rather pay once? Lifetime is {usd(LIFETIME_PRICE)}, every future release included.{' '}
-        <Link href="/pricing" className="font-semibold text-accent underline-offset-4 hover:text-accent/70 hover:underline">
-          See Lifetime
-        </Link>
-      </p>
-    )}
     {!compact && <TrustStrip />}
     </>
   )
@@ -390,7 +383,7 @@ function LifetimeCard({
       </div>
       <div className={`relative flex-1 rounded-card bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
         <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">
-          EVERYTHING IN PREMIUM, PLUS
+          EVERYTHING IN MONTHLY, PLUS
         </p>
         <ul className="mt-4 space-y-3">
           {LIFETIME_FEATURES.map((feature) => (

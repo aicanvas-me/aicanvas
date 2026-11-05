@@ -80,7 +80,7 @@ describe('componentMarkdown', () => {
       expect(md).not.toContain(gone)
     }
     expect(md).toContain('The source is Premium and is not published.')
-    expect(md).toContain('Requires a Premium subscription.')
+    expect(md).toContain('Requires Premium.')
     // The directive lines are public on the page, so they stay public here.
     expect(md).toContain('npm install framer-motion three')
   })

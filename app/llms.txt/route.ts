@@ -23,7 +23,7 @@ export function GET() {
 
   const intro = `# AI Canvas
 
-> AI Canvas is the design layer for AI coding agents: design systems your agent builds with and you reshape to your project, plus ${total} standalone React components and blocks that fit any of them, all installed as editable source with shadcn or MCP. The free components and Andromeda Legacy are MIT; Premium components, Andromeda Pro, its templates and the AI Brain are proprietary, and the Line icons are free under the AI Canvas Premium License, not MIT, with a one-line credit kept in the code. Many components include an AI remix prompt for recreating a variation in an AI builder. For free components, the full prompt is public. For premium components and blocks, the setup and constants are public, while the rest of the build specification requires a Premium subscription.
+> AI Canvas is the design layer for AI coding agents: design systems your agent builds with and you reshape to your project, plus ${total} standalone React components and blocks that fit any of them, all installed as editable source with shadcn or MCP. The free components and Andromeda Legacy are MIT; Premium components, Andromeda Pro, its templates and the AI Brain are proprietary, and the Line icons are free under the AI Canvas Premium License, not MIT, with a one-line credit kept in the code. Many components include an AI remix prompt for recreating a variation in an AI builder. For free components, the full prompt is public. For premium components and blocks, the setup and constants are public, while the rest of the build specification requires Premium.
 
 Component and design-system links below point at each page's markdown version (the page URL plus \`.md\`): description, install command, props and, where the page shows one, the remix prompt. These pages also answer in markdown at their own URL when the request sends \`Accept: text/markdown\`: the home page (or ${SITE_URL}/index.md), /mcp (or ${SITE_URL}/mcp.md), /components, each /components/<slug>, each /design-systems/<system> and each /design-systems/<system>/<component>. Other pages, such as templates, answer in HTML only.
 
@@ -37,7 +37,7 @@ Component and design-system links below point at each page's markdown version (t
 ## Install
 Install command: \`npx shadcn@latest add @aicanvas/<component-name>\`. The @aicanvas registry is listed in the official shadcn directory, so the CLI resolves it with no extra setup.
 
-One-command installs require a free AI Canvas account. Signed out, the command still exits 0 but writes a small placeholder file titled "(free account required)" instead of the real component. Check for that title before reporting success. Premium components and every install marked Premium below additionally require a Premium subscription.
+One-command installs require a free AI Canvas account. Signed out, the command still exits 0 but writes a small placeholder file titled "(free account required)" instead of the real component. Check for that title before reporting success. Premium components and every install marked Premium below additionally require Premium.
 
 To authenticate installs: sign in and copy your personal token from ${SITE_URL}/account/settings, set it as AICANVAS_TOKEN in .env.local, and configure the registry once in the project's components.json:
 
