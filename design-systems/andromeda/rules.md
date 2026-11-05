@@ -662,7 +662,7 @@ The fix is mechanical, not architectural: every hover/active/selected/focus decl
 - `PanelMenu` — hover, active, and `[data-selected]` rules
 - `DateRangePicker` — `.adp-day` hover (default / inrange / selected) and `.adp-nav` hover
 
-The "feels working" tell: the *icon* colour seems to change on hover but the *background* doesn't lift. That's because Phosphor SVGs inherit `currentColor` and the rule's `color: ... !important` is the one declaration the dev remembered to mark important.
+The "feels working" tell: the *icon* colour seems to change on hover but the *background* doesn't lift. That's because the AI Canvas icons inherit `currentColor` and the rule's `color: ... !important` is the one declaration the dev remembered to mark important.
 
 If you build a new component that mixes inline styles + class hover, mark every reactive declaration `!important` from the start. Don't wait for the bug report.
 

@@ -38,7 +38,7 @@ export default async function AndromedaComponentPage({
 
   // The components after this one in sidebar order, wrapping around.
   const related = nextInOrder(ANDROMEDA_COMPONENTS, entry.slug).map(
-    (c) => ({ slug: c.slug, name: c.name, image: c.image }),
+    (c) => ({ slug: c.slug, name: c.name, image: c.image, imageLight: c.imageLight }),
   )
 
   // Prop tables parsed from the component's @typedef JSDoc at build time, keyed

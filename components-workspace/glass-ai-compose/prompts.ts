@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -58,16 +58,16 @@ Compose area (relative z-10 flex flex-col gap-6 p-4 pb-2):
 - textarea placeholder "Ask anything..." rows=1, bg-transparent text-white/90 placeholder-white/40, caretColor: activeModel.color, maxHeight 160.
 - AnimatePresence thumbnails: motion.div wrapper (opacity/height 0↔auto). Map each image object with key={image.id}, render image.src, and remove it by filtering for id !== image.id, never by array index. Each thumbnail is 64px rounded-xl border rgba(255,255,255,0.12), spring {stiffness:350, damping:25} scale 0.8↔1; X button (5x5 absolute top-1 right-1, bg rgba(0,0,0,0.6), X size 10 text-white/80).
 - Toolbar flex justify-between:
-  Left (gap-2): Upload button 32x32 rounded-xl bg rgba(255,255,255,0.08) border rgba(255,255,255,0.12), ImageSquare size 16 color rgba(255,255,255,0.5). Hidden file input accept image/* multiple.
+  Left (gap-2): Upload button 32x32 rounded-xl bg rgba(255,255,255,0.08) border rgba(255,255,255,0.12), image-square size 16 color rgba(255,255,255,0.5). Hidden file input accept image/* multiple.
   Globe toggle 32x32 same base; when webSearch: bg \`\${activeModel.color}18\`, border \`1px solid \${activeModel.color}22\`, icon activeModel.color. whileHover scale 1.08 bg white/14 (or \`\${color}28\` when active); whileTap 0.88; spring {320,20}.
   AnimatePresence "Web search on" label: motion.span text-[10px] font-semibold, color \`\${activeModel.color}88\`, opacity+x -4 fade.
-  Right: Send button 36x36 rounded-xl. animate: canSend ? { background: \`\${activeModel.color}40\`, border: \`1px solid \${activeModel.color}66\` } : { background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.08)' }. opacity canSend?1:0.4 pointerEvents none when disabled. PaperPlaneRight size 16 colored accent or white/30.
+  Right: Send button 36x36 rounded-xl. animate: canSend ? { background: \`\${activeModel.color}40\`, border: \`1px solid \${activeModel.color}66\` } : { background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.08)' }. opacity canSend?1:0.4 pointerEvents none when disabled. send size 16 colored accent or white/30.
 
 Divider: mx-4 h-[1px] rgba(255,255,255,0.07).
 
 Model switcher row (px-3 py-2.5): 4 buttons flex-1 rounded-lg px-3 py-1.5. Active button renders motion.div layoutId="model-pill" absolute inset-0 rounded-lg with bg \`\${color}18\` border \`1px solid \${color}22\` spring {stiffness:400, damping:28}. Label text-[11px] font-semibold color=isActive?color:'rgba(255,255,255,0.50)'.
 
-Icons from @phosphor-icons/react (weight="regular"): PaperPlaneRight, ImageSquare, GlobeSimple, X. Framer Motion: motion, AnimatePresence, useReducedMotion.
+Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Send } from '@/components/icons/send'\`), Line style, Regular weight: send, image-square, globe-simple, x. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Framer Motion: motion, AnimatePresence, useReducedMotion.
 
 ## Typography
 - Font: project default sans-serif
@@ -116,16 +116,16 @@ Compose area (relative z-10 flex flex-col gap-6 p-4 pb-2):
 - textarea placeholder "Ask anything..." rows=1, bg-transparent text-white/90 placeholder-white/40, caretColor: activeModel.color, maxHeight 160.
 - AnimatePresence thumbnails: motion.div wrapper (opacity/height 0↔auto). Each thumbnail 64px rounded-xl border rgba(255,255,255,0.12), spring {stiffness:350, damping:25} scale 0.8↔1; X button (5x5 absolute top-1 right-1, bg rgba(0,0,0,0.6), X size 10 text-white/80).
 - Toolbar flex justify-between:
-  Left (gap-2): Upload button 32x32 rounded-xl bg rgba(255,255,255,0.08) border rgba(255,255,255,0.12), ImageSquare size 16 color rgba(255,255,255,0.5). Hidden file input accept image/* multiple.
+  Left (gap-2): Upload button 32x32 rounded-xl bg rgba(255,255,255,0.08) border rgba(255,255,255,0.12), image-square size 16 color rgba(255,255,255,0.5). Hidden file input accept image/* multiple.
   Globe toggle 32x32 same base; when webSearch: bg \`\${activeModel.color}18\`, border \`1px solid \${activeModel.color}22\`, icon activeModel.color. whileHover scale 1.08 bg white/14 (or \`\${color}28\` when active); whileTap 0.88; spring {320,20}.
   AnimatePresence "Web search on" label: motion.span text-[10px] font-semibold, color \`\${activeModel.color}88\`, opacity+x -4 fade.
-  Right: Send button 36x36 rounded-xl. animate: canSend ? { background: \`\${activeModel.color}40\`, border: \`1px solid \${activeModel.color}66\` } : { background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.08)' }. opacity canSend?1:0.4 pointerEvents none when disabled. PaperPlaneRight size 16 colored accent or white/30.
+  Right: Send button 36x36 rounded-xl. animate: canSend ? { background: \`\${activeModel.color}40\`, border: \`1px solid \${activeModel.color}66\` } : { background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.08)' }. opacity canSend?1:0.4 pointerEvents none when disabled. send size 16 colored accent or white/30.
 
 Divider: mx-4 h-[1px] rgba(255,255,255,0.07).
 
 Model switcher row (px-3 py-2.5): 4 buttons flex-1 rounded-lg px-3 py-1.5. Active button renders motion.div layoutId="model-pill" absolute inset-0 rounded-lg with bg \`\${color}18\` border \`1px solid \${color}22\` spring {stiffness:400, damping:28}. Label text-[11px] font-semibold color=isActive?color:'rgba(255,255,255,0.50)'.
 
-Icons from @phosphor-icons/react (weight="regular"): PaperPlaneRight, ImageSquare, GlobeSimple, X. Framer Motion: motion, AnimatePresence, useReducedMotion.
+Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Send } from '@/components/icons/send'\`), Line style, Regular weight: send, image-square, globe-simple, x. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Framer Motion: motion, AnimatePresence, useReducedMotion.
 
 ## Typography
 - Font: project default sans-serif
@@ -174,16 +174,16 @@ Compose area (relative z-10 flex flex-col gap-6 p-4 pb-2):
 - textarea placeholder "Ask anything..." rows=1, bg-transparent text-white/90 placeholder-white/40, caretColor: activeModel.color, maxHeight 160.
 - AnimatePresence thumbnails: motion.div wrapper (opacity/height 0↔auto). Each thumbnail 64px rounded-xl border rgba(255,255,255,0.12), spring {stiffness:350, damping:25} scale 0.8↔1; X button (5x5 absolute top-1 right-1, bg rgba(0,0,0,0.6), X size 10 text-white/80).
 - Toolbar flex justify-between:
-  Left (gap-2): Upload button 32x32 rounded-xl bg rgba(255,255,255,0.08) border rgba(255,255,255,0.12), ImageSquare size 16 color rgba(255,255,255,0.5). Hidden file input accept image/* multiple.
+  Left (gap-2): Upload button 32x32 rounded-xl bg rgba(255,255,255,0.08) border rgba(255,255,255,0.12), image-square size 16 color rgba(255,255,255,0.5). Hidden file input accept image/* multiple.
   Globe toggle 32x32 same base; when webSearch: bg \`\${activeModel.color}18\`, border \`1px solid \${activeModel.color}22\`, icon activeModel.color. whileHover scale 1.08 bg white/14 (or \`\${color}28\` when active); whileTap 0.88; spring {320,20}.
   AnimatePresence "Web search on" label: motion.span text-[10px] font-semibold, color \`\${activeModel.color}88\`, opacity+x -4 fade.
-  Right: Send button 36x36 rounded-xl. animate: canSend ? { background: \`\${activeModel.color}40\`, border: \`1px solid \${activeModel.color}66\` } : { background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.08)' }. opacity canSend?1:0.4 pointerEvents none when disabled. PaperPlaneRight size 16 colored accent or white/30.
+  Right: Send button 36x36 rounded-xl. animate: canSend ? { background: \`\${activeModel.color}40\`, border: \`1px solid \${activeModel.color}66\` } : { background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.08)' }. opacity canSend?1:0.4 pointerEvents none when disabled. send size 16 colored accent or white/30.
 
 Divider: mx-4 h-[1px] rgba(255,255,255,0.07).
 
 Model switcher row (px-3 py-2.5): 4 buttons flex-1 rounded-lg px-3 py-1.5. Active button renders motion.div layoutId="model-pill" absolute inset-0 rounded-lg with bg \`\${color}18\` border \`1px solid \${color}22\` spring {stiffness:400, damping:28}. Label text-[11px] font-semibold color=isActive?color:'rgba(255,255,255,0.50)'.
 
-Icons from @phosphor-icons/react (weight="regular"): PaperPlaneRight, ImageSquare, GlobeSimple, X. Framer Motion: motion, AnimatePresence, useReducedMotion.
+Icons from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Send } from '@/components/icons/send'\`), Line style, Regular weight: send, image-square, globe-simple, x. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Framer Motion: motion, AnimatePresence, useReducedMotion.
 
 ## Typography
 - Font: project default sans-serif

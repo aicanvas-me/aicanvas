@@ -34,11 +34,6 @@ vi.mock('next/link', () => ({
     return h('a', attrs, props.children)
   },
 }))
-// The icon barrel is thousands of modules the rail never needs in a test.
-vi.mock('@phosphor-icons/react', () => {
-  const Icon = () => null
-  return { GithubLogo: Icon, XLogo: Icon }
-})
 
 afterEach(() => {
   cleanup()

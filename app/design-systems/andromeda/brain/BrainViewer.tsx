@@ -2,7 +2,10 @@
 
 import { useState, useCallback, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { Check, Copy, DownloadSimple, Terminal } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { Download } from '@/app/_icons/icons/download';
+import { Terminal } from '@/app/_icons/icons/terminal';
 import { zipSync, strToU8 } from 'fflate'
 import { Button } from '../../../components/Button'
 import { PageCrumbs, useTopBarInstallSlot } from '../../../components/PageCrumbs'
@@ -625,7 +628,7 @@ function BrainInstallButton({
           setOpen((o) => !o)
         }}
       >
-        <Terminal weight="regular" size={13} />
+        <Terminal size={13} />
         Get the AI Brain
       </Button>
 
@@ -649,12 +652,12 @@ function BrainInstallButton({
               >
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-success" />
+                    <Check size={13} className="text-success" />
                     Copied
                   </>
                 ) : (
                   <>
-                    <Copy weight="regular" size={13} />
+                    <CopyIcon size={13} />
                     Copy Command
                   </>
                 )}
@@ -673,7 +676,7 @@ function BrainInstallButton({
             </div>
             <div className="border-t border-sand-300 pt-2.5 dark:border-sand-800">
               <Button variant="outline" size="xs" onClick={onDownloadZip}>
-                <DownloadSimple weight="regular" size={13} />
+                <Download size={13} />
                 Or download as a zip
               </Button>
             </div>
@@ -767,7 +770,7 @@ function BrainInstallCard({
             cursor: 'pointer',
           }}
         >
-          {copied ? <Check weight="regular" size={14} /> : <Copy weight="regular" size={14} />}
+          {copied ? <Check size={14} /> : <CopyIcon size={14} />}
           {copied ? 'Copied' : 'Copy Command'}
         </button>
         <button
@@ -788,7 +791,7 @@ function BrainInstallCard({
             cursor: 'pointer',
           }}
         >
-          <DownloadSimple weight="regular" size={15} />
+          <Download size={15} />
           Download
         </button>
       </div>

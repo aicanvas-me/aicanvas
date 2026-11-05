@@ -5,7 +5,7 @@ export const prompts: Partial<Record<Platform, string>> = {
 A scroll-driven editorial gallery: five full-bleed photos, each wiped in from a different edge under one settling headline.
 
 ## 1. Setup
-// npm install framer-motion @phosphor-icons/react
+// npm install framer-motion
 File: components-workspace/scroll-wipe-gallery/index.tsx  ·  'use client'  ·  export default function ScrollWipeGallery()
 
 import { useEffect, useRef, useState, type RefObject } from 'react'
@@ -17,7 +17,9 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion'
-import { CaretDown } from '@phosphor-icons/react'
+import { ChevronDown } from '@/components/icons/chevron-down'
+
+ChevronDown is an AI Canvas icon (Line style, Regular weight). Install it with \`npx shadcn@latest add https://aicanvas.me/r/icon-chevron-down.json\`.
 
 ## 2. Constants
 
@@ -316,7 +318,7 @@ section  ref={wrapperRef}  aria-label="Editorial photo gallery"  className="rela
       motion.div  className="absolute inset-x-0 bottom-6 flex flex-col items-center gap-2 md:bottom-8"  style={{ opacity: cueOpacity }}
         span  className="text-[12px] font-semibold uppercase tracking-[0.18em]"  > Scroll
         motion.span  className="flex"  animate={shouldReduceMotion ? undefined : { y: [0, 6, 0] }}  transition={{ duration: 1.8, repeat: Infinity, ease: [0.4, 0, 0.2, 1] }}
-          CaretDown  size={16}  weight="regular"
+          ChevronDown  size={16}
 
 The sticky panel is a PLAIN div, not motion.div: its height is a string from React state, so a
 re-render is what writes it to the DOM. The separator span's children are literally a leading
@@ -397,7 +399,7 @@ motion.span  aria-hidden="true"  className="pointer-events-none absolute inset-0
 A line that fails is a bug in your build; fix it and re-check.
 - A naked paste fills the viewport: the root keeps min-h-screen next to its inline height: SECTION_HEIGHT, the sticky panel gets a px height from panelHeight once mounted, and nothing collapses to zero.
 - Every hex value and every key expression appears unchanged from block 2: #0A0A0A and #FFFFFF, key={step.photo.src} and key={\`\${word}-\${index}\`}, along with 0.18, 0.72, 0.45, 0.16, 0.02, 48, 0.03 and cubicBezier(0.16, 1, 0.3, 1).
-- Every element carrying initial/animate/exit or a MotionValue style is a motion.* tag, not a plain tag or a bare icon: motion.div for each photo layer and the scroll cue, motion.span for the frame label, the caret carrier and every title word. The sticky panel is the one deliberate plain div, because its height is a state string. CaretDown sits inside motion.span className="flex" and is never animated itself.
+- Every element carrying initial/animate/exit or a MotionValue style is a motion.* tag, not a plain tag or a bare icon: motion.div for each photo layer and the scroll cue, motion.span for the frame label, the caret carrier and every title word. The sticky panel is the one deliberate plain div, because its height is a state string. ChevronDown sits inside motion.span className="flex" and is never animated itself.
 - Scroll from top to bottom: exactly one title is readable at any moment, never two overlapping, and the counter climbs 01 through 05, flipping at each cut's midpoint rather than at its start or its end. The counter reads in the bottom right corner, clear of anything the host page puts top right.
 - Watch the computed clip-path through a full wipe in devtools. It is always an inset() with four explicit percentages; if it ever reads none, a slot lost its % and that layer is unclipped.
 - The four cuts arrive from different edges in order down, right, up, left, and each headline is pushed WITH its own wipe: down enters from above, right enters from the left, up from below, left from the right. The frame lands first and the type finishes a beat later. No title reflows to a different number of lines while it is tightening.

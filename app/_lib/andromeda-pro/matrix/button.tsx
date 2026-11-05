@@ -1,4 +1,4 @@
-import { Lightning } from '@phosphor-icons/react'
+import { Bolt } from '@/app/_icons/icons/bolt';
 import { Button } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
@@ -15,7 +15,7 @@ export const button: MatrixSpec = {
     { label: 'Link', props: { variant: 'link' } },
     // The icon slot is orthogonal to variant, so it is its own case rather than
     // a fifth copy of the ladder.
-    { label: 'With icon', props: { icon: Lightning } },
+    { label: 'With icon', props: { icon: Bolt } },
     // `pressed` makes it a toggle button that stays on. The held look (the
     // surface.active fill, primary ink) is painted on the two neutral lanes
     // only: default and destructive already read as on through their fill, so

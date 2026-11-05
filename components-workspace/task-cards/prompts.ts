@@ -5,13 +5,21 @@ export const prompts: Partial<Record<Platform, string>> = {
 A swipeable 3-up deck of coloured project cards with an animated progress footer.
 
 ## 1. Setup
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 File: components-workspace/task-cards/index.tsx  ·  'use client'  ·  export default function TaskCards()
 
-import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
+import { useRef, useState, useCallback, useEffect, useLayoutEffect, type ComponentType } from 'react'
 import { motion, MotionConfig, useMotionValue, useTransform } from 'framer-motion'
-import { PaintBrush, Megaphone, Code, ChartBar, CaretLeft, CaretRight, ArrowUpRight } from '@phosphor-icons/react'
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
+import type { IconProps } from '@/components/icons/IconBase'
+import { Paintbrush } from '@/components/icons/paintbrush'
+import { Megaphone } from '@/components/icons/megaphone'
+import { Code } from '@/components/icons/code'
+import { ChartBar } from '@/components/icons/chart-bar'
+import { ChevronLeft } from '@/components/icons/chevron-left'
+import { ChevronRight } from '@/components/icons/chevron-right'
+import { ArrowUpRight } from '@/components/icons/arrow-up-right'
+
+Icons are AI Canvas icons (Line style, Regular weight). Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## 2. Constants
 
@@ -32,7 +40,7 @@ const TASKS: Array<{
   darkOnAccent?: boolean
   darkLabel?: string
   lightLabel?: string
-  icon: PhosphorIcon
+  icon: ComponentType<IconProps>
 }> = [
   {
     id: 0,
@@ -44,7 +52,7 @@ const TASKS: Array<{
     accentLight: '#2980A0',
     bg: '#0C1E27',
     bgLight: '#EAF4F8',
-    icon: PaintBrush,
+    icon: Paintbrush,
   },
   {
     id: 1,
@@ -250,9 +258,9 @@ const fillBg     = darkText ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.85)'
       >
         <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', background: topBg, border: \`2px solid \${cardBg}\`, borderRadius: 24, padding: '28px 20px 16px', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', position: 'relative' }}>
           <span aria-hidden="true" style={{ position: 'absolute', top: 14, right: 14, width: 28, height: 28, borderRadius: '50%', border: \`1.5px solid \${catColor}\`, background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', color: catColor, flexShrink: 0 }}>
-            <ArrowUpRight weight="regular" size={13} />
+            <ArrowUpRight size={13} />
           <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-            <Icon weight="regular" size={11} style={{ color: catColor }} />
+            <Icon size={11} style={{ color: catColor }} />
             <span style={{ fontSize: 10, fontWeight: 700, color: catColor, letterSpacing: '0.1em', textTransform: 'uppercase' }}> {task.category}
           <div style={{ height: 28, flexShrink: 0 }} />
           <h2 style={{ fontSize: 20, fontWeight: 800, color: titleColor, lineHeight: 1.15, letterSpacing: '-0.02em', margin: 0, flexShrink: 0 }}> {task.title}
@@ -261,7 +269,7 @@ const fillBg     = darkText ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.85)'
         <div style={{ padding: '12px 20px 14px', flexShrink: 0 }}>
           <AnimatedProgress progress={task.progress} isActive={isFront} darkText={task.darkOnAccent} />
   <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
-    <motion.button  [map ([{ dir: 'left' as const, icon: <CaretLeft weight="regular" size={16} />, label: 'Previous' }, { dir: 'right' as const, icon: <CaretRight weight="regular" size={16} />, label: 'Next' }] as const).map(({ dir, icon, label }) => ...)]
+    <motion.button  [map ([{ dir: 'left' as const, icon: <ChevronLeft size={16} />, label: 'Previous' }, { dir: 'right' as const, icon: <ChevronRight size={16} />, label: 'Next' }] as const).map(({ dir, icon, label }) => ...)]
       key={dir}
       onClick={() => dir === 'left' ? showPrevious() : dismiss(dir)}
       aria-label={label}

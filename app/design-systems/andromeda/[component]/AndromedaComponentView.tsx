@@ -3,17 +3,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Code,
-  Copy,
-  CornersOut,
-  Eye,
-  Terminal,
-  X,
-} from '@phosphor-icons/react'
+import { ArrowLeft } from '@/app/_icons/icons/arrow-left';
+import { ArrowRight } from '@/app/_icons/icons/arrow-right';
+import { Check } from '@/app/_icons/icons/check';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { Fullscreen } from '@/app/_icons/icons/fullscreen';
+import { Eye } from '@/app/_icons/icons/eye';
+import { Terminal } from '@/app/_icons/icons/terminal';
+import { X } from '@/app/_icons/icons/x';
+import { Code } from '@/app/_icons/icons/code';
 import { Step } from '../../../components/Step'
 import { copyText } from '../../../components/useCopied'
 import { Button } from '../../../components/Button'
@@ -35,7 +33,7 @@ import { PropsTable } from '../../../components/PropsTable'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { PageCrumbs } from '../../../components/PageCrumbs'
 
-type RelatedItem = { slug: string; name: string; image?: string }
+type RelatedItem = { slug: string; name: string; image?: string; imageLight?: string }
 
 interface Props {
   slug: string
@@ -287,7 +285,7 @@ export function AndromedaComponentView({
                   : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
-              <Eye weight="regular" size={15} />
+              <Eye size={15} />
               Preview
             </button>
             <button
@@ -299,7 +297,7 @@ export function AndromedaComponentView({
                   : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
               }`}
             >
-              <Code weight="regular" size={15} />
+              <Code size={15} />
               Code
             </button>
           </div>
@@ -307,7 +305,7 @@ export function AndromedaComponentView({
           {tab === 'preview' && (
             <div className="group/fullscreen relative">
               <Button variant="primary" size="md" iconOnly aria-label="Full screen" onClick={() => { track('Fullscreen Open', { component: registrySlug }); setFullscreen(true) }}>
-                <CornersOut weight="regular" size={16} />
+                <Fullscreen size={16} />
               </Button>
               <div className="pointer-events-none absolute right-0 top-full z-10 mt-1.5 hidden whitespace-nowrap rounded-inset border border-sand-700 bg-sand-800 px-2.5 py-1.5 text-xs text-sand-300 group-hover/fullscreen:block">
                 Full screen
@@ -361,9 +359,9 @@ export function AndromedaComponentView({
               copyCli() opens the auth modal instead of copying. */}
           <Button variant="primary" size="sm" className="whitespace-nowrap" onClick={copyCli}>
             {cliCopied ? (
-              <Check weight="regular" size={15} />
+              <Check size={15} />
             ) : (
-              <Terminal weight="regular" size={15} />
+              <Terminal size={15} />
             )}
             {cliCopied ? 'Copied!' : 'Copy Command'}
           </Button>
@@ -469,8 +467,8 @@ export function AndromedaComponentView({
                         className="ml-auto shrink-0 rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {cliCopied
-                          ? <Check weight="regular" size={14} className="text-success" />
-                          : <Copy weight="regular" size={14} />}
+                          ? <Check size={14} className="text-success" />
+                          : <CopyIcon size={14} />}
                       </button>
                     </div>
                     <div className="px-4 py-3.5">
@@ -511,8 +509,8 @@ export function AndromedaComponentView({
                         className="shrink-0 rounded-control p-1.5 text-sand-600 transition-all hover:text-sand-800 active:scale-90 dark:text-sand-500 dark:hover:text-sand-200"
                       >
                         {codeCopied
-                          ? <Check weight="regular" size={14} className="text-success" />
-                          : <Copy weight="regular" size={14} />}
+                          ? <Check size={14} className="text-success" />
+                          : <CopyIcon size={14} />}
                       </button>
                     </div>
                     <div className="max-h-96 overflow-auto p-4 [scrollbar-color:#C4BFB7_transparent] dark:[scrollbar-color:#4A453F_transparent]" style={{ scrollbarWidth: 'thin' }}>
@@ -561,7 +559,7 @@ export function AndromedaComponentView({
                   aria-label="Previous components"
                   className="flex h-8 w-8 items-center justify-center rounded-control border border-sand-300 bg-sand-50 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-100 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
                 >
-                  <ArrowLeft weight="regular" size={15} />
+                  <ArrowLeft size={15} />
                 </button>
                 <button
                   type="button"
@@ -570,7 +568,7 @@ export function AndromedaComponentView({
                   aria-label="Next components"
                   className="flex h-8 w-8 items-center justify-center rounded-control border border-sand-300 bg-sand-50 text-sand-600 transition-all duration-150 hover:border-sand-400 hover:bg-sand-100 hover:text-sand-900 active:scale-95 disabled:pointer-events-none disabled:opacity-30 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700 dark:hover:bg-sand-800 dark:hover:text-sand-100"
                 >
-                  <ArrowRight weight="regular" size={15} />
+                  <ArrowRight size={15} />
                 </button>
               </div>
             )}
@@ -615,13 +613,26 @@ export function AndromedaComponentView({
                         style={{ backgroundColor: themeColor.surface.base }}
                       >
                         {c.image ? (
-                          <img
-                            src={optimizeImageKitUrl(c.image, 'card')}
-                            alt={c.name}
-                            loading="lazy"
-                            decoding="async"
-                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                          />
+                          <>
+                            <img
+                              src={optimizeImageKitUrl(c.image, 'card')}
+                              alt={c.name}
+                              loading="lazy"
+                              decoding="async"
+                              className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${
+                                c.imageLight ? 'hidden dark:block' : ''
+                              }`}
+                            />
+                            {c.imageLight ? (
+                              <img
+                                src={optimizeImageKitUrl(c.imageLight, 'card')}
+                                alt={c.name}
+                                loading="lazy"
+                                decoding="async"
+                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105 dark:hidden"
+                              />
+                            ) : null}
+                          </>
                         ) : (
                           <>
                             <div
@@ -696,7 +707,7 @@ export function AndromedaComponentView({
                 onClick={() => setFullscreen(false)}
                 aria-label="Close full screen"
               >
-                <X weight="regular" size={16} />
+                <X size={16} />
               </Button>
             </div>
             <div
@@ -729,7 +740,7 @@ export function AndromedaComponentView({
           }}
         >
           <div className="flex items-center gap-3 rounded-inset border border-sand-200 bg-sand-100 px-4 py-3 shadow-lg dark:border-sand-700 dark:bg-sand-800">
-            <Check weight="regular" size={16} className="shrink-0 text-success" />
+            <Check size={16} className="shrink-0 text-success" />
             <div>
               <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">
                 Install command copied

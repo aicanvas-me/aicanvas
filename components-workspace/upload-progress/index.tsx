@@ -1,16 +1,14 @@
 'use client'
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Pause,
-  Play,
-  ArrowCounterClockwise,
-  X,
-  ArrowsOutSimple,
-  ArrowsInSimple,
-} from '@phosphor-icons/react'
+import { Pause } from '@/app/_icons/icons/pause'
+import { Play } from '@/app/_icons/icons/play'
+import { RotateCcw } from '@/app/_icons/icons/rotate-ccw'
+import { X } from '@/app/_icons/icons/x'
+import { Maximize } from '@/app/_icons/icons/maximize'
+import { Minimize } from '@/app/_icons/icons/minimize'
 
 const FILES = [
   { name: 'Brand reel.mp4', durationMs: 8000 },
@@ -233,7 +231,7 @@ export default function UploadProgress() {
                                 transition={SPRING}
                                 className="flex"
                               >
-                                <Play size={15} weight="regular" />
+                                <Play size={15} />
                               </motion.span>
                             ) : (
                               <motion.span
@@ -244,14 +242,14 @@ export default function UploadProgress() {
                                 transition={SPRING}
                                 className="flex"
                               >
-                                <Pause size={15} weight="regular" />
+                                <Pause size={15} />
                               </motion.span>
                             )}
                           </AnimatePresence>
                         </IconBtn>
 
                         <IconBtn onClick={handleRefresh} bg={btnBg} color={btnColor}>
-                          <ArrowCounterClockwise size={15} weight="regular" />
+                          <RotateCcw size={15} />
                         </IconBtn>
                       </motion.div>
                     )}
@@ -272,7 +270,7 @@ export default function UploadProgress() {
                           transition={SPRING}
                           className="flex"
                         >
-                          <ArrowsInSimple size={15} weight="regular" />
+                          <Minimize size={15} />
                         </motion.span>
                       ) : (
                         <motion.span
@@ -283,7 +281,7 @@ export default function UploadProgress() {
                           transition={SPRING}
                           className="flex"
                         >
-                          <ArrowsOutSimple size={15} weight="regular" />
+                          <Maximize size={15} />
                         </motion.span>
                       )}
                     </AnimatePresence>
@@ -300,7 +298,7 @@ export default function UploadProgress() {
                         className="flex items-center"
                       >
                         <IconBtn onClick={handleStop} bg={btnBg} color={btnColor}>
-                          <X size={15} weight="regular" />
+                          <X size={15} />
                         </IconBtn>
                       </motion.div>
                     )}

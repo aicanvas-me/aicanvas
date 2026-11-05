@@ -6,7 +6,10 @@ import type {
   ComponentPropsWithoutRef,
   KeyboardEvent as ReactKeyboardEvent,
 } from 'react';
-import { CalendarBlank, CaretDown, CaretLeft, CaretRight } from '@phosphor-icons/react';
+import { CalendarBlank } from '@/app/_icons/icons/calendar-blank';
+import { ChevronDown } from '@/app/_icons/icons/chevron-down';
+import { ChevronLeft } from '@/app/_icons/icons/chevron-left';
+import { ChevronRight } from '@/app/_icons/icons/chevron-right';
 import { tokens } from '../tokens';
 import { andromedaVars, cn } from './lib/utils';
 import { mq } from './lib/responsive';
@@ -326,11 +329,10 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
           cursor: 'pointer',
         }}
       >
-        <CalendarBlank weight="regular" size={13} />
+        <CalendarBlank size={13} />
         {presetLabel ? `${presetLabel} · ` : ''}
         {formatRangeChip(value)}
-        <CaretDown
-          weight="bold"
+        <ChevronDown weight="bold"
           size={10}
           style={{
             color: V.textFaint,
@@ -387,7 +389,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                 borderRadius: tokens.radius.frame,
               }}
             >
-              <CaretLeft weight="bold" size={12} />
+              <ChevronLeft weight="bold" size={12} />
             </button>
 
             <span
@@ -421,7 +423,7 @@ export const DateRangePicker = forwardRef<HTMLDivElement, DateRangePickerProps>(
                 borderRadius: tokens.radius.frame,
               }}
             >
-              <CaretRight weight="bold" size={12} />
+              <ChevronRight weight="bold" size={12} />
             </button>
           </div>
 

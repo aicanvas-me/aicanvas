@@ -4,7 +4,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import type { ReactNode } from 'react'
-import { Paperclip } from '@phosphor-icons/react'
+import { Paperclip } from '@/app/_icons/icons/paperclip';
 // v2 component: imported through the build-time shim.
 import {
   PromptInput,

@@ -4,8 +4,10 @@ const SPEC = `Build a self-contained "New Project Modal" React component. Export
 
 ## Install
 \`\`\`
-npm install framer-motion @phosphor-icons/react
+npm install framer-motion
 \`\`\`
+
+Icons: \`plus\`, \`x\`, \`check\` from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Plus } from '@/components/icons/plus'\`), Line style, Bold weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Colour palette (raw hex, no design tokens)
 - Page bg: \`#E8E8DF\` light / \`#1A1A19\` dark
@@ -37,7 +39,7 @@ const COLORS = [
 \`open\`, \`origin: { x, y, w, h } | null\`, \`title\`, \`description\`, \`isPrivate: false\`, \`titleError: false\`, \`color: string | null\`. Plus \`buttonRef\` for BoundingClientRect and \`titleRef\` for auto-focus.
 
 ## Trigger button
-Pill-shaped \`motion.button\` (rounded-full), Phosphor \`Plus\` icon (size 18, weight="bold") + label "New Project", 16px semibold, font-sans. Dark bg \`#1a1a18\` / light text \`#f1f1f0\` (inverted in dark mode). Drop shadow only, no border.
+Pill-shaped \`motion.button\` (rounded-full), \`plus\` icon (size 18, Bold weight) + label "New Project", 16px semibold, font-sans. Dark bg \`#1a1a18\` / light text \`#f1f1f0\` (inverted in dark mode). Drop shadow only, no border.
 
 - On click: capture \`buttonRef.current.getBoundingClientRect()\` → store as \`origin\`, then \`setOpen(true)\`.
 - When open: \`animate={{ opacity: 0, scale: 0.85 }}\`, \`pointerEvents: none\`.
@@ -74,7 +76,7 @@ Wrap inner content in \`motion.div\` with variants \`hidden / show / exit\`:
 Each section uses \`variants={{ hidden: { opacity:0, y:8 }, show: { opacity:1, y:0, transition:{duration:0.2} } }}\`.
 
 ### Header
-Relative container, \`mb-5 flex items-center justify-center\`. Title "New Project" (18px bold, \`#1a1a18\`). Absolute right: circular close button size-9 rounded-full bg \`#f8f8f8\` text \`#6c6c6c\`, X icon (size 16, weight bold). whileHover scale 1.1 + bg \`#ececec\`, whileTap scale 0.88.
+Relative container, \`mb-5 flex items-center justify-center\`. Title "New Project" (18px bold, \`#1a1a18\`). Absolute right: circular close button size-9 rounded-full bg \`#f8f8f8\` text \`#6c6c6c\`, \`x\` icon (size 16, Bold weight). whileHover scale 1.1 + bg \`#ececec\`, whileTap scale 0.88.
 
 ### Inputs
 Two pill inputs h-[52px] rounded-full bg-[#f8f8f8] px-5, font-sans 15px medium, text \`#1a1a18\`, placeholder \`#a0a09a\`, caretColor \`#1a1a18\`, outline-none.
@@ -92,9 +94,9 @@ Two pill inputs h-[52px] rounded-full bg-[#f8f8f8] px-5, font-sans 15px medium, 
 - Default selected: None (color === null).
 
 ### Footer (mt-4, flex justify-between items-center)
-**Private toggle:** button that toggles \`isPrivate\`. Square checkbox size-7 rounded-lg border border-[#1a1a18]. animate backgroundColor \`#f8f8f8\` ↔ \`#6c6c6c\` (checked), duration 0.15. Check icon size 14 weight bold color \`#f1f1f0\` springs in/out (scale 0.4→1, rotate -10→0, spring 500/26, AnimatePresence mode="wait"). Label "Private" (15px semibold, \`#1a1a18\`).
+**Private toggle:** button that toggles \`isPrivate\`. Square checkbox size-7 rounded-lg border border-[#1a1a18]. animate backgroundColor \`#f8f8f8\` ↔ \`#6c6c6c\` (checked), duration 0.15. \`check\` icon size 14, Bold weight, color \`#f1f1f0\` springs in/out (scale 0.4→1, rotate -10→0, spring 500/26, AnimatePresence mode="wait"). Label "Private" (15px semibold, \`#1a1a18\`).
 
-**Create button:** CreateButton component, rounded-full px-7 py-3 bg \`#1a1a18\` text \`#f2f1ec\` 15px bold. On click: run \`onValidate()\` (sets titleError if empty, returns false). If valid: \`confirming=true\`, animate scale→0.96 bg→\`#3a3a38\`, swap label → Check icon (size 16, spring 400/22) via AnimatePresence mode="wait". After 600ms: \`confirming=false\`, call \`onConfirm()\`.
+**Create button:** CreateButton component, rounded-full px-7 py-3 bg \`#1a1a18\` text \`#f2f1ec\` 15px bold. On click: run \`onValidate()\` (sets titleError if empty, returns false). If valid: \`confirming=true\`, animate scale→0.96 bg→\`#3a3a38\`, swap label → \`check\` icon (size 16, Bold weight, spring 400/22) via AnimatePresence mode="wait". After 600ms: \`confirming=false\`, call \`onConfirm()\`.
 
 ### close() resets
 title='', description='', isPrivate=false, titleError=false, color=null.

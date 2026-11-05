@@ -6,9 +6,8 @@
  * of them taller than the other.
  *
  * Its own module, free of React and of any icon import, because both callers are
- * SERVER components. Living beside the card meant importing that file — and with
- * it @phosphor-icons — into the RSC graph, where the icon package's
- * `createContext` call is a hard 500.
+ * SERVER components. Living beside the card meant importing that file, and the
+ * card's client-only code with it, into the RSC graph.
  */
 export const firstSentence = (text: string) => {
   const end = text.indexOf('. ')

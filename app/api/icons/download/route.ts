@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { getEntitlement } from '@/app/lib/entitlement'
 import { isIconCategory } from '@/app/icons/_lib/categories'
+import { ICON_WEIGHTS, type IconWeight } from '@/app/icons/_lib/icon-utils'
 import { icons } from '@/app/icons/_lib/server-data'
 import { buildIconZip, zipFileName, type ZipFormat } from '@/app/icons/_lib/zip-export'
 import type { IconStyle } from '@/app/icons/_lib/types'
@@ -43,13 +44,12 @@ export async function POST(req: Request) {
   if (tier !== 'premium') return fail(403, 'premium-required')
 
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null
-  const { style, format, size, strokeWidth, absolute, colour, category } = body ?? {}
+  const { style, format, size, weight, colour, category } = body ?? {}
   if (
     !STYLES.has(style as IconStyle) ||
     !FORMATS.has(format as ZipFormat) ||
     !inRange(size, 16, 96, 4) ||
-    !inRange(strokeWidth, 1, 3, 0.25) ||
-    typeof absolute !== 'boolean' ||
+    !ICON_WEIGHTS.some((candidate) => candidate.id === weight) ||
     !(colour === null || (typeof colour === 'string' && /^#[0-9A-F]{6}$/.test(colour))) ||
     !(category === undefined || (typeof category === 'string' && isIconCategory(category)))
   ) {
@@ -75,8 +75,7 @@ export async function POST(req: Request) {
     style: iconStyle,
     format: format as ZipFormat,
     size: size as number,
-    strokeWidth: strokeWidth as number,
-    absolute,
+    weight: weight as IconWeight,
     colour: colour as string | null,
     names,
     markup,

@@ -2,18 +2,16 @@
 
 import { forwardRef, useEffect, useState } from 'react';
 import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
-import {
-  Play,
-  Pause,
-  SkipBack,
-  SkipForward,
-  Shuffle,
-  Repeat,
-  SpeakerHigh,
-  ListBullets,
-  Heart,
-  Broadcast,
-} from '@phosphor-icons/react';
+import { Play } from '@/app/_icons/icons/play';
+import { Pause } from '@/app/_icons/icons/pause';
+import { List } from '@/app/_icons/icons/list';
+import { Heart } from '@/app/_icons/icons/heart';
+import { SkipBack } from '@/app/_icons/icons/skip-back';
+import { SkipForward } from '@/app/_icons/icons/skip-forward';
+import { Shuffle } from '@/app/_icons/icons/shuffle';
+import { Repeat } from '@/app/_icons/icons/repeat';
+import { VolumeHigh } from '@/app/_icons/icons/volume-high';
+import { Broadcast } from '@/app/_icons/icons/broadcast';
 import { tokens } from '../tokens';
 import { cn, andromedaVars } from './lib/utils';
 import { CornerMarkers } from './CornerMarkers';
@@ -65,8 +63,7 @@ function Cover({ cover, title }: { cover: string | null; title: string }) {
       {cover ? null : (
         <Broadcast
           size={tokens.iconSize.sm}
-          weight="regular"
-          style={{ fill: `var(--andromeda-text-muted, ${tokens.color.text.muted})` }}
+          style={{ color: `var(--andromeda-text-muted, ${tokens.color.text.muted})` }}
         />
       )}
     </div>
@@ -288,9 +285,8 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
             style={{ display: 'none' }}
           >
             <Heart
-              size={16}
-              weight={liked ? 'fill' : 'regular'}
-              style={{ fill: liked ? `var(--andromeda-red-300, ${tokens.color.red[300]})` : undefined }}
+              size={16} fill={liked ? 'currentColor' : 'none'}
+              style={{ color: liked ? `var(--andromeda-red-300, ${tokens.color.red[300]})` : undefined }}
             />
           </IconButton>
         </div>
@@ -304,7 +300,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
             style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: tokens.spacing[3] }}
           >
             <IconButton variant="ghost" size="md" aria-label="Shuffle" aria-pressed={shuffle} onClick={toggleShuffle}>
-              <Shuffle size={16} weight="regular" style={{ fill: shuffle ? PRESSED_INK : undefined }} />
+              <Shuffle size={16} style={{ color: shuffle ? PRESSED_INK : undefined }} />
             </IconButton>
             <IconButton variant="ghost" size="lg" icon={SkipBack} aria-label="Previous" onClick={onPrev ?? restart} />
             <IconButton
@@ -316,7 +312,7 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
             />
             <IconButton variant="ghost" size="lg" icon={SkipForward} aria-label="Next" onClick={onNext ?? restart} />
             <IconButton variant="ghost" size="md" aria-label="Repeat" aria-pressed={repeat} onClick={toggleRepeat}>
-              <Repeat size={16} weight="regular" style={{ fill: repeat ? PRESSED_INK : undefined }} />
+              <Repeat size={16} style={{ color: repeat ? PRESSED_INK : undefined }} />
             </IconButton>
           </div>
 
@@ -359,19 +355,17 @@ export const MusicPlayer = forwardRef<HTMLDivElement, MusicPlayerProps>(function
         >
           <IconButton variant="ghost" size="md" className="andro-mp-aux-like" aria-label={liked ? 'Unlike' : 'Like'} onClick={toggleLike}>
             <Heart
-              size={16}
-              weight={liked ? 'fill' : 'regular'}
-              style={{ fill: liked ? `var(--andromeda-red-300, ${tokens.color.red[300]})` : undefined }}
+              size={16} fill={liked ? 'currentColor' : 'none'}
+              style={{ color: liked ? `var(--andromeda-red-300, ${tokens.color.red[300]})` : undefined }}
             />
           </IconButton>
           <div className="andro-mp-volume" style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[3], minWidth: 0 }}>
             <IconButton variant="ghost" size="md" aria-label="Lyrics" aria-pressed={lyrics} onClick={toggleLyrics}>
-              <ListBullets size={16} weight="regular" style={{ fill: lyrics ? PRESSED_INK : undefined }} />
+              <List size={16} style={{ color: lyrics ? PRESSED_INK : undefined }} />
             </IconButton>
-            <SpeakerHigh
+            <VolumeHigh
               size={16}
-              weight="regular"
-              style={{ fill: `var(--andromeda-text-muted, ${tokens.color.text.muted})`, flexShrink: 0 }}
+              style={{ color: `var(--andromeda-text-muted, ${tokens.color.text.muted})`, flexShrink: 0 }}
             />
             <div style={{ width: '120px', minWidth: '72px' }}>
               <Slider min={0} max={100} step={1} value={volume} onValueChange={handleVolume} showValue={false} aria-label="Volume" />

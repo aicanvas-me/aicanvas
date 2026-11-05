@@ -1,17 +1,15 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  User,
-  Gear,
-  SignOut,
-  Users,
-  CreditCard,
-  CaretUpDown,
-} from '@phosphor-icons/react'
+import { User } from '@/app/_icons/icons/user'
+import { Gear } from '@/app/_icons/icons/gear'
+import { LogOut } from '@/app/_icons/icons/log-out'
+import { Users } from '@/app/_icons/icons/users'
+import { CreditCard } from '@/app/_icons/icons/credit-card'
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down'
 
 
 const BACKGROUND = 'https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866'
@@ -99,7 +97,7 @@ function MenuItem({
             border: `1px solid ${color}22`,
           }}
         >
-          <Icon size={16} weight="regular" style={{ color }} />
+          <Icon size={16} style={{ color }} />
         </div>
         <span
           className="text-sm font-medium"
@@ -165,7 +163,7 @@ export default function GlassUserMenu() {
             className="h-8 w-8 shrink-0 rounded-full object-cover"
           />
           <span className="text-sm font-semibold text-white/80">{USER.name}</span>
-          <CaretUpDown size={16} weight="regular" className="text-white/40" />
+          <ChevronsUpDown size={16} className="text-white/40" />
         </motion.button>
 
         <AnimatePresence>
@@ -239,7 +237,7 @@ function LogOutItem({ index }: { index: number }) {
             border: '1px solid #FF5A5A22',
           }}
         >
-          <SignOut size={16} weight="regular" style={{ color: '#FF5A5A' }} />
+          <LogOut size={16} style={{ color: '#FF5A5A' }} />
         </div>
         <span
           className="text-sm font-medium"

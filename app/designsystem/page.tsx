@@ -354,7 +354,7 @@ export default function DesignSystemPage() {
             { name: 'TypeScript', detail: 'Strict mode' },
             { name: 'Tailwind CSS v4', detail: '@theme inline' },
             { name: 'Motion', detail: 'All animations' },
-            { name: 'Phosphor Icons', detail: 'weight="regular"' },
+            { name: 'AI Canvas icons', detail: 'Line style' },
             { name: 'Manrope', detail: 'Primary font' },
           ].map((tech) => (
             <div

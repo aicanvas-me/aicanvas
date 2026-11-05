@@ -8,7 +8,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Pencil, FileText, Clock, CaretDown } from '@phosphor-icons/react';
+import { Pen } from '@/app/_icons/icons/pen';
+import { FileText } from '@/app/_icons/icons/file-text';
+import { ClockIcon } from '@/app/_icons/icons/clock';
+import { ChevronDown } from '@/app/_icons/icons/chevron-down';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
@@ -84,8 +87,7 @@ function FollowUpDropdown({ initial = '24:00 Hours' }: { initial?: string }) {
       >
         {value}
         {/* transition below is off-token: 140ms + 'ease' — no matching motion token, left literal */}
-        <CaretDown
-          weight="regular"
+        <ChevronDown
           size={tokens.iconSize.xs}
           style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 140ms ease', flexShrink: 0 }}
         />
@@ -252,14 +254,14 @@ function HeaderStrip() {
           letterSpacing: tokens.typography.tracking.wider,
         }}
       >
-        <Clock weight="regular" size={14} />
+        <ClockIcon size={14} />
         {formatSeconds(seconds)}
       </span>
 
       <div className="so-meta-header-spacer" style={{ flex: 1 }} />
 
       <div className="so-meta-actions" style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[3] }}>
-        <Button variant="outline" size="sm" icon={Pencil}>
+        <Button variant="outline" size="sm" icon={Pen}>
           Edit
         </Button>
         <Button variant="default" size="sm" icon={FileText}>

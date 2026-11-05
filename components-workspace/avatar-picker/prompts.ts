@@ -7,17 +7,17 @@ A swipeable stack of four crew portrait cards with drag-to-dismiss, tap-to-selec
 
 ## 1. Setup
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 File: components-workspace/avatar-picker/index.tsx  ·  'use client'  ·  export default function AvatarPicker()
 
 \`\`\`tsx
 import { useState, useLayoutEffect, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { Check } from '@phosphor-icons/react'
+import { Check } from '@/components/icons/check'
 \`\`\`
 
-Both framer-motion imports matter: \`motion\` is used for the cards, the dots, the confirm button and the hint text. This component is animated end to end. There is no AnimatePresence import and none is needed.
+Both framer-motion imports matter: \`motion\` is used for the cards, the dots, the confirm button and the hint text. This component is animated end to end. There is no AnimatePresence import and none is needed. \`Check\` is an AI Canvas icon (Line style, Regular weight). Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## 2. Constants
 
@@ -77,7 +77,6 @@ const SPRING = { type: 'spring' as const, stiffness: 280, damping: 26 }
 
 \`\`\`tsx
 const containerRef = useRef<HTMLDivElement>(null)
-const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
 
 // order[i] = photo ID at slot i (0 = front, 3 = back)
 const [order, setOrder] = useState<number[]>([0, 1, 2, 3])
@@ -91,15 +90,6 @@ const orderRef = useRef(order)
 const dismissing = useRef(false)
 const dragDelta = useRef(0)
 useIsomorphicLayoutEffect(() => { orderRef.current = order }, [order])
-
-// Theme detection
-useIsomorphicLayoutEffect(() => {
-  const check = () => setIsDark(document.documentElement.classList.contains('dark'))
-  check()
-  const obs = new MutationObserver(check)
-  obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-  return () => obs.disconnect()
-}, [])
 
 const dismiss = useCallback((dir: 'left' | 'right') => {
   if (dismissing.current) return
@@ -128,8 +118,6 @@ const handleSelect = useCallback(() => {
   const frontId = orderRef.current[0]
   setSelectedId(prev => prev === frontId ? null : frontId)
 }, [])
-
-const labelColor = isDark ? 'rgba(255,255,255,0.35)' : '#1a1a18'
 \`\`\`
 
 ## 4. Tree
@@ -188,7 +176,7 @@ The source ships h-full because AI Canvas renders it inside a sized preview fram
 - \`orderRef\` mirrors \`order\` because \`dismiss\` and \`handleSelect\` are \`useCallback\` with \`[]\` deps and would otherwise permanently close over \`[0,1,2,3]\`.
 - \`key={photo.id}\` and the map over \`PHOTOS\` (never over \`order\`) keep each card mounted as its own DOM node while only its slot changes, which is what lets framer tween x/y/rotate/scale between slots. Mapping \`order\` or keying by index swaps nodes and kills the motion.
 - Cards are centred by \`left:50% top:50%\` plus negative half-margins, so every x/y in \`animate\` is a transform offset from that centre, not a layout position. The parent needs \`position: 'relative'\` with explicit CARD_W/CARD_H or the whole stack has nothing to sit in.
-- \`onClick\` fires after a drag too, so \`dragDelta.current\` under 8px is the only thing separating tap-to-select from swipe. \`labelColor\` is computed and deliberately never used: the label and hint take their colours from className.
+- \`onClick\` fires after a drag too, so \`dragDelta.current\` under 8px is the only thing separating tap-to-select from swipe. The label and hint take their colours from className.
 
 ## 6. Remix
 
@@ -202,10 +190,10 @@ A line that fails is a bug in your build; fix it and re-check.
 
 - A naked paste fills the viewport: the root carries min-h-screen w-full and the stack sits centred, not squashed at the top.
 - Every hex value and every key expression appears unchanged from block 2: #E8E8DF, #1A1A19, #21211F, #2DD4BF, #0f2e2b, #fff, rgba(0,0,0,0.72), rgba(255,255,255,0.5), and all four Unsplash URLs including their \`?w=400&h=500&fit=crop&auto=format&q=80\` query strings.
-- Every element carrying initial/animate/exit is a motion.* tag, not a plain tag or a bare icon: the card, the check badge, each dot, the confirm button and the hint paragraph. The Phosphor \`Check\` is a plain child inside a motion.div, never animated itself.
+- Every element carrying initial/animate/exit is a motion.* tag, not a plain tag or a bare icon: the card, the check badge, each dot, the confirm button and the hint paragraph. The \`Check\` icon is a plain child inside a motion.div, never animated itself.
 - Drag the front card past 80px and release: it flies out, and roughly 420ms later it is sitting at the back of the stack with no visible return flight. Repeat four times and you are back at Capt. Vroom in front.
 - Swipe twice in quick succession: only one card leaves per gesture, and \`order\` never advances by two.
 - Tap the front card: a 2.5px #2DD4BF ring appears on the card, a 24px teal circle with the check appears bottom-right of the gradient, and the action row swaps the hint for the teal pill reading NAME SELECTED in #0f2e2b. Tap that pill and selection clears, with the "swipe to browse" hint fading back in.
 - The active dot is 20px wide at full opacity, the other three are 5px at 0.28, and the widening follows the front card after every swipe.
-- Toggle \`dark\` on \`document.documentElement\` at runtime: the background, the label and the dots flip without a reload, because the MutationObserver is watching the class attribute.`,
+- Toggle \`dark\` on \`document.documentElement\` at runtime: the background, the label and the dots flip without a reload, because every colour comes from a dark: class.`,
 }

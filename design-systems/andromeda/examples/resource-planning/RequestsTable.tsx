@@ -11,7 +11,8 @@
 import { useState } from 'react';
 import type { ReactNode } from 'react';
 import { motion, AnimatePresence, LayoutGroup } from 'framer-motion';
-import { MagnifyingGlass, CaretUp } from '@phosphor-icons/react';
+import { Search } from '@/app/_icons/icons/search';
+import { ChevronUp } from '@/app/_icons/icons/chevron-up';
 import { tokens } from '../../tokens';
 import { CornerMarkers } from '../../components/CornerMarkers';
 import { Checkbox } from '../../components/Checkbox';
@@ -147,7 +148,7 @@ function ColHeader({ children, sorted, align = 'left' }: ColHeaderProps) {
     >
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[1], lineHeight: 'var(--andromeda-leading-none, 1)', height: '16px' }}>
         {children}
-        {sorted ? <CaretUp weight="bold" size={10} /> : null}
+        {sorted ? <ChevronUp weight="bold" size={10} /> : null}
       </span>
     </th>
   );
@@ -243,7 +244,7 @@ export function RequestsTable() {
             color: themeColor.text.muted,
           }}
         >
-          <MagnifyingGlass weight="regular" size={14} />
+          <Search size={14} />
           <input
             type="text"
             value={query}

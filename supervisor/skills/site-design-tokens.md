@@ -154,6 +154,6 @@ Font: Manrope via `--font-sans`. Use `font-sans` class.
 
 ## Icons
 
-- Library: `@phosphor-icons/react`
-- Weight: always `weight="regular"` — never duotone, never fill, never bold
+- Library: AI Canvas icons, one file per icon from `app/_icons/icons/<name>` (names listed in `app/_icons/site-icons.json`)
+- Weight: Regular by default; small glyphs may use `weight="bold"`; Line style only
 - Size: use Tailwind sizing (`className="size-5"`) not the `size` prop

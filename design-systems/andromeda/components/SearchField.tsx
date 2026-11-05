@@ -2,8 +2,9 @@
 
 import { forwardRef, useState } from 'react';
 import type { ChangeEvent, ComponentPropsWithoutRef, CSSProperties } from 'react';
-import { MagnifyingGlass } from '@phosphor-icons/react';
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
+import { Search } from '@/app/_icons/icons/search';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { tokens } from '../tokens';
 import { andromedaVars, themeColor } from './lib/utils';
 
@@ -11,7 +12,7 @@ import { andromedaVars, themeColor } from './lib/utils';
  * @typedef {object} SearchFieldProps
  * @property {string} [placeholder='Search anything'] Text shown when empty. Defaults to "Search anything".
  * @property {string|null} [shortcut='⌘ K'] Keyboard shortcut chip. Pass null to hide. Defaults to "⌘ K".
- * @property {React.ComponentType<{ size?: number, weight?: string, color?: string, style?: React.CSSProperties }>} [icon=MagnifyingGlass] Phosphor-style leading icon. Defaults to MagnifyingGlass. Pass null to hide.
+ * @property {React.ComponentType<IconProps>} [icon=Search] Leading icon. Defaults to Search. Pass null to hide.
  * @property {string} [value] Controlled value.
  * @property {string} [defaultValue] Uncontrolled initial value.
  * @property {(next: string) => void} [onValueChange] Called when typed value changes.
@@ -24,7 +25,7 @@ import { andromedaVars, themeColor } from './lib/utils';
 type SearchFieldOwnProps = {
   placeholder?: string;
   shortcut?: string | null;
-  icon?: PhosphorIcon | null;
+  icon?: ComponentType<IconProps> | null;
   value?: string;
   defaultValue?: string;
   onValueChange?: (next: string) => void;
@@ -41,7 +42,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
   {
     placeholder = 'Search anything',
     shortcut = '⌘ K',
-    icon: Icon = MagnifyingGlass,
+    icon: Icon = Search,
     value: controlledValue,
     defaultValue = '',
     onValueChange,
@@ -117,7 +118,6 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
       {Icon ? (
         <Icon
           size={14}
-          weight="regular"
           style={{
             flexShrink: 0,
             color: iconColor,

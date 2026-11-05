@@ -7,34 +7,32 @@ import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import Link from 'next/link'
 import { JetBrains_Mono } from 'next/font/google'
 import { PageFrame, PageTitle, PageLead } from '../../../_components/DesignSystemPage'
-import {
-  MagnifyingGlass,
-  Bell,
-  Gear,
-  Pulse,
-  Users,
-  Database,
-  Compass,
-  Envelope,
-  EnvelopeOpen,
-  Warning,
-  Info,
-  ArrowUpRight,
-  ArrowClockwise,
-  Sliders,
-  Export,
-  EyeSlash,
-  Trash,
-  Pencil,
-  Copy,
-  Star,
-  ChartLine,
-  ChartBar,
-  Clock,
-  Keyboard,
-  SignOut,
-  UserCircle,
-} from '@phosphor-icons/react'
+import { Search } from '@/app/_icons/icons/search';
+import { Bell } from '@/app/_icons/icons/bell';
+import { Gear } from '@/app/_icons/icons/gear';
+import { Activity } from '@/app/_icons/icons/activity';
+import { Users } from '@/app/_icons/icons/users';
+import { Database } from '@/app/_icons/icons/database';
+import { Compass } from '@/app/_icons/icons/compass';
+import { Mail } from '@/app/_icons/icons/mail';
+import { MailOpen } from '@/app/_icons/icons/mail-open';
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
+import { InfoIcon } from '@/app/_icons/icons/info';
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right';
+import { RotateCw } from '@/app/_icons/icons/rotate-cw';
+import { SlidersVertical } from '@/app/_icons/icons/sliders-vertical';
+import { ShareIcon } from '@/app/_icons/icons/share';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
+import { Trash } from '@/app/_icons/icons/trash';
+import { Pen } from '@/app/_icons/icons/pen';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { Star } from '@/app/_icons/icons/star';
+import { ChartLine } from '@/app/_icons/icons/chart-line';
+import { ChartBar } from '@/app/_icons/icons/chart-bar';
+import { ClockIcon } from '@/app/_icons/icons/clock';
+import { KeyboardIcon } from '@/app/_icons/icons/keyboard';
+import { LogOut } from '@/app/_icons/icons/log-out';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
 import { tokens, light } from '../../../../design-systems/andromeda/tokens'
 import { subscribeToTheme } from '../../../../design-systems/andromeda/components/lib/theme'
 import { mq } from '../../../../design-systems/andromeda/components/lib/responsive'
@@ -229,7 +227,7 @@ function Section({
             style={andromedaVars() as CSSProperties}
           >
             Open {title}
-            <ArrowUpRight weight="regular" size={14} />
+            <ArrowUpRight size={14} />
           </Link>
         ) : null}
       </CardHeader>
@@ -795,10 +793,10 @@ export default function AndromedaShowcase({
                           ariaLabel="Requests options"
                           staticOpen
                           items={[
-                            { label: 'Refresh', icon: ArrowClockwise, onSelect: () => {} },
-                            { label: 'Export',  icon: Export,         onSelect: () => {} },
+                            { label: 'Refresh', icon: RotateCw, onSelect: () => {} },
+                            { label: 'Export',  icon: ShareIcon,         onSelect: () => {} },
                             { type: 'separator' },
-                            { label: 'Hide',    icon: EyeSlash,       onSelect: () => {} },
+                            { label: 'Hide',    icon: EyeOff,       onSelect: () => {} },
                           ]}
                         />
                       }
@@ -849,11 +847,11 @@ export default function AndromedaShowcase({
                     align="left"
                     staticOpen
                     items={[
-                      { label: 'Refresh',   icon: ArrowClockwise, onSelect: () => {} },
-                      { label: 'Configure', icon: Sliders,        onSelect: () => {} },
-                      { label: 'Export',    icon: Export,         onSelect: () => {} },
+                      { label: 'Refresh',   icon: RotateCw, onSelect: () => {} },
+                      { label: 'Configure', icon: SlidersVertical,        onSelect: () => {} },
+                      { label: 'Export',    icon: ShareIcon,         onSelect: () => {} },
                       { type: 'separator' },
-                      { label: 'Hide',      icon: EyeSlash,       onSelect: () => {} },
+                      { label: 'Hide',      icon: EyeOff,       onSelect: () => {} },
                     ]}
                   />
                 </div>
@@ -863,15 +861,15 @@ export default function AndromedaShowcase({
                     align="left"
                     staticOpen
                     items={[
-                      { label: 'Edit',   icon: Pencil,  onSelect: () => {} },
-                      { label: 'Copy',   icon: Copy,    onSelect: () => {} },
+                      { label: 'Edit',   icon: Pen,  onSelect: () => {} },
+                      { label: 'Copy',   icon: CopyIcon,    onSelect: () => {} },
                       {
                         label: 'Move to',
                         icon: ArrowUpRight,
                         submenu: [
                           { label: 'Starred', icon: Star,     onSelect: () => {} },
                           { label: 'Archive', icon: Database, onSelect: () => {} },
-                          { label: 'Snoozed', icon: Clock,    onSelect: () => {} },
+                          { label: 'Snoozed', icon: ClockIcon,    onSelect: () => {} },
                         ],
                       },
                       { type: 'separator' },
@@ -1050,10 +1048,10 @@ export default function AndromedaShowcase({
             }}
           >
             <Input label="Callsign" placeholder="ENTER CALLSIGN" />
-            <Input label="Search" icon={MagnifyingGlass} placeholder="QUERY DATABASE" />
+            <Input label="Search" icon={Search} placeholder="QUERY DATABASE" />
             <Input
               label="Operator"
-              icon={Envelope}
+              icon={Mail}
               placeholder="OPERATOR@DOMAIN.COM"
             />
             <Input
@@ -1101,7 +1099,7 @@ export default function AndromedaShowcase({
           >
             <CornerMarkers />
             <NavItem icon={Compass} label="Overview" active />
-            <NavItem icon={Pulse} label="Activity" />
+            <NavItem icon={Activity} label="Activity" />
             <NavItem icon={Users} label="Members" />
             <NavItem icon={Database} label="Logs" />
             <NavItem icon={Gear} label="Settings" />
@@ -1445,28 +1443,28 @@ export default function AndromedaShowcase({
             }}
           >
             <Alert variant="default">
-              <AlertIcon><Info weight="light" /></AlertIcon>
+              <AlertIcon><InfoIcon size="1em" /></AlertIcon>
               <AlertContent>
                 <AlertTitle>System nominal</AlertTitle>
                 <AlertDescription>All systems reporting in.</AlertDescription>
               </AlertContent>
             </Alert>
             <Alert variant="accent">
-              <AlertIcon><Pulse weight="light" /></AlertIcon>
+              <AlertIcon><Activity size="1em" /></AlertIcon>
               <AlertContent>
                 <AlertTitle>New activity</AlertTitle>
                 <AlertDescription>Burst received from VHCL-04.</AlertDescription>
               </AlertContent>
             </Alert>
             <Alert variant="warning">
-              <AlertIcon><Warning weight="light" /></AlertIcon>
+              <AlertIcon><TriangleAlert size="1em" /></AlertIcon>
               <AlertContent>
                 <AlertTitle>Caution</AlertTitle>
                 <AlertDescription>Heat shield within 12% of operational limit.</AlertDescription>
               </AlertContent>
             </Alert>
             <Alert variant="fault">
-              <AlertIcon><Warning weight="light" /></AlertIcon>
+              <AlertIcon><TriangleAlert size="1em" /></AlertIcon>
               <AlertContent>
                 <AlertTitle>Connection lost</AlertTitle>
                 <AlertDescription>Reconnecting. ETA 8 seconds.</AlertDescription>
@@ -1482,7 +1480,7 @@ export default function AndromedaShowcase({
           description="Centered icon + uppercase mono title + sans description + optional action. Built on Card so it inherits the bracket motif."
         >
           <EmptyState>
-            <EmptyStateIcon><EnvelopeOpen weight="light" /></EmptyStateIcon>
+            <EmptyStateIcon><MailOpen size="1em" /></EmptyStateIcon>
             <EmptyStateTitle>No activity</EmptyStateTitle>
             <EmptyStateDescription>
               Awaiting signal from the deep-space array. The next pass is in
@@ -1748,7 +1746,7 @@ export default function AndromedaShowcase({
         >
           <Row label="Position · top (default)">
             <Tooltip label="Refresh">
-              <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+              <IconButton aria-label="Refresh" icon={RotateCw} />
             </Tooltip>
             <Tooltip label="Settings">
               <IconButton aria-label="Settings" icon={Gear} />
@@ -1757,7 +1755,7 @@ export default function AndromedaShowcase({
               <IconButton aria-label="Notifications" icon={Bell} />
             </Tooltip>
             <Tooltip label="Export">
-              <IconButton aria-label="Export" variant="outline" icon={Export} />
+              <IconButton aria-label="Export" variant="outline" icon={ShareIcon} />
             </Tooltip>
             <Tooltip label="Delete" >
               <IconButton aria-label="Delete" variant="destructive" icon={Trash} />
@@ -1765,7 +1763,7 @@ export default function AndromedaShowcase({
           </Row>
           <Row label="Position · bottom">
             <Tooltip label="Refresh" position="bottom">
-              <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+              <IconButton aria-label="Refresh" icon={RotateCw} />
             </Tooltip>
             <Tooltip label="Settings" position="bottom">
               <IconButton aria-label="Settings" icon={Gear} />
@@ -1787,7 +1785,7 @@ export default function AndromedaShowcase({
               }}
             >
               <Tooltip label="Refresh" portal>
-                <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+                <IconButton aria-label="Refresh" icon={RotateCw} />
               </Tooltip>
               <Tooltip label="Settings" portal>
                 <IconButton aria-label="Settings" icon={Gear} />
@@ -1843,11 +1841,11 @@ export default function AndromedaShowcase({
         >
           {(() => {
             const items = [
-              { id: 'profile',     label: 'Profile',             icon: UserCircle },
+              { id: 'profile',     label: 'Profile',             icon: CircleUser },
               { id: 'preferences', label: 'Preferences',         icon: Gear },
-              { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
+              { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: KeyboardIcon },
               { id: 'sep1',        type: 'separator' as const },
-              { id: 'signout',     label: 'Sign Out',            icon: SignOut },
+              { id: 'signout',     label: 'Sign Out',            icon: LogOut },
             ];
             return (
               <div
@@ -1902,11 +1900,11 @@ export default function AndromedaShowcase({
         >
           {(() => {
             const items = [
-              { id: 'profile',     label: 'Profile',             icon: UserCircle },
+              { id: 'profile',     label: 'Profile',             icon: CircleUser },
               { id: 'preferences', label: 'Preferences',         icon: Gear },
-              { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
+              { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: KeyboardIcon },
               { id: 'sep1',        type: 'separator' as const },
-              { id: 'signout',     label: 'Sign Out',            icon: SignOut },
+              { id: 'signout',     label: 'Sign Out',            icon: LogOut },
             ];
             return (
               <div

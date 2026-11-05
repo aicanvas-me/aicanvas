@@ -1,26 +1,24 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
-import {
-  Sun,
-  Heart,
-  MusicNote,
-  Coffee,
-  Leaf,
-  Star,
-  Moon,
-  Flame,
-  Cloud,
-} from '@phosphor-icons/react'
+import { Sun } from '@/app/_icons/icons/sun'
+import { Heart } from '@/app/_icons/icons/heart'
+import { Music } from '@/app/_icons/icons/music'
+import { Coffee } from '@/app/_icons/icons/coffee'
+import { Leaf } from '@/app/_icons/icons/leaf'
+import { Star } from '@/app/_icons/icons/star'
+import { Moon } from '@/app/_icons/icons/moon'
+import { Flame } from '@/app/_icons/icons/flame'
+import { Cloud } from '@/app/_icons/icons/cloud'
 
 // 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const DOCK_ITEMS = [
   { icon: Sun,       color: '#FFBE0B', label: 'Energy' },
   { icon: Heart,     color: '#FF5C8A', label: 'Love' },
-  { icon: MusicNote, color: '#FF7B54', label: 'Joy' },
+  { icon: Music, color: '#FF7B54', label: 'Joy' },
   { icon: Coffee,    color: '#C9A96E', label: 'Comfort' },
   { icon: Leaf,      color: '#06D6A0', label: 'Nature' },
   { icon: Star,      color: '#FFBE0B', label: 'Dreams' },
@@ -122,7 +120,7 @@ function DockItem({
         whileTap={{ scale: 0.82 }}
         className="relative flex items-center justify-center group-focus-visible:outline group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-[rgba(255,255,255,0.6)]"
       >
-        <Icon size={22} weight="regular" style={{ color }} />
+        <Icon size={22} style={{ color }} />
         <AnimatePresence>
           {isOpen && (
             <motion.span

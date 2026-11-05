@@ -3,7 +3,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Envelope, Eye, EyeSlash, Lock } from '@phosphor-icons/react'
+import { Mail } from '@/app/_icons/icons/mail';
+import { Eye } from '@/app/_icons/icons/eye';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
+import { LockIcon } from '@/app/_icons/icons/lock';
 import { Input } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 
@@ -18,7 +21,7 @@ function LivePasswordInput({ size, ...props }) {
       {...props}
       size={size}
       type={visible ? 'text' : 'password'}
-      trailingIcon={visible ? EyeSlash : Eye}
+      trailingIcon={visible ? EyeOff : Eye}
       trailingIconLabel={visible ? 'Hide password' : 'Show password'}
       onTrailingIconClick={() => setVisible((value) => !value)}
     />
@@ -57,14 +60,14 @@ export const input: MatrixSpec = {
     // "Node ID" / "ND-4471", and an envelope glyph next to a node ID reads as
     // a mismatch — the field's own copy has to agree with what the icon says
     // it's for, same reasoning as the Password case below.
-    { label: 'With icon', props: { icon: Envelope, label: 'Email', placeholder: 'you@node.dev' } },
+    { label: 'With icon', props: { icon: Mail, label: 'Email', placeholder: 'you@node.dev' } },
     {
       label: 'Password',
       props: {
         label: 'Password',
         type: 'password',
         defaultValue: 'ND-8830',
-        icon: Lock,
+        icon: LockIcon,
       },
     },
     // A hint and an error are the same slot, and the error wins: this pair of

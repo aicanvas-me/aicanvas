@@ -1,10 +1,11 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useCallback, useLayoutEffect, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion'
-import { X, Check } from '@phosphor-icons/react'
+import { X } from '@/app/_icons/icons/x'
+import { Check } from '@/app/_icons/icons/check'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 

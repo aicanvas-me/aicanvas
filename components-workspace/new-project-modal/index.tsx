@@ -1,9 +1,11 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, X, Check } from '@phosphor-icons/react'
+import { Plus } from '@/app/_icons/icons/plus'
+import { X } from '@/app/_icons/icons/x'
+import { Check } from '@/app/_icons/icons/check'
 
 const MORPH = { type: 'spring' as const, stiffness: 320, damping: 30, mass: 1 }
 

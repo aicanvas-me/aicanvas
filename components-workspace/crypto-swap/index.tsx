@@ -1,6 +1,6 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion react-dom
+// npm install framer-motion react-dom
 
 import {
   useState,
@@ -21,14 +21,12 @@ import {
   animate,
   useReducedMotion,
 } from 'framer-motion'
-import {
-  CaretDown,
-  CaretUp,
-  ArrowsDownUp,
-  ArrowsLeftRight,
-  CheckCircle,
-  GearSix,
-} from '@phosphor-icons/react'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
+import { Triangle } from '@/app/_icons/icons/triangle'
+import { ArrowDownUp } from '@/app/_icons/icons/arrow-down-up'
+import { ArrowLeftRight } from '@/app/_icons/icons/arrow-left-right'
+import { CircleCheck } from '@/app/_icons/icons/circle-check'
+import { GearSix } from '@/app/_icons/icons/gear-six'
 
 type Theme = 'light' | 'dark'
 
@@ -347,8 +345,8 @@ function TrendChip({ token, isDark }: { token: Token; isDark: boolean }) {
       className="inline-flex items-center gap-0.5 tabular-nums"
       style={{ color, fontSize: 12, fontWeight: 600, lineHeight: 1 }}
     >
-      {dir === 'up' && <CaretUp size={12} weight="fill" />}
-      {dir === 'down' && <CaretDown size={12} weight="fill" />}
+      {dir === 'up' && <Triangle size={12} fill="currentColor" />}
+      {dir === 'down' && <Triangle size={12} fill="currentColor" className="rotate-180" />}
       {formatChange(token.change24h)}
     </span>
   )
@@ -973,7 +971,7 @@ const TokenPill = forwardRef<
         }
         style={{ display: 'inline-flex' }}
       >
-        <CaretDown size={14} weight="regular" style={{ color: caretColor }} />
+        <ChevronDown size={14} style={{ color: caretColor }} />
       </motion.span>
     </motion.button>
   )
@@ -1099,9 +1097,8 @@ function DetailsPanel({
               1 {fromTok.symbol} = {formatRate(rate)} {toTok.symbol}
             </motion.span>
           </AnimatePresence>
-          <ArrowsLeftRight
+          <ArrowLeftRight
             size={14}
-            weight="regular"
             className="shrink-0 transition-colors [@media(hover:hover)]:group-hover:text-[var(--invert-hover)]"
             style={
               { color: labelColor, '--invert-hover': valueColor } as React.CSSProperties
@@ -1126,7 +1123,7 @@ function DetailsPanel({
               transition={reduced ? { duration: 0 } : { type: 'spring', stiffness: 360, damping: 26 }}
               style={{ display: 'inline-flex' }}
             >
-              <CaretDown size={14} weight="regular" style={{ color: labelColor }} />
+              <ChevronDown size={14} style={{ color: labelColor }} />
             </motion.span>
           </span>
         </button>
@@ -1191,7 +1188,7 @@ function DetailsPanel({
                     className="flex items-center gap-1.5 rounded-full px-2.5 py-1 transition-colors"
                     style={{ background: chipBg, boxShadow: chipShadow }}
                   >
-                    <GearSix size={14} weight="regular" style={{ color: labelColor }} />
+                    <GearSix size={14} style={{ color: labelColor }} />
                     <span className="text-[12px] font-semibold tabular-nums" style={{ color: valueColor }}>
                       {slipDisplay}
                     </span>
@@ -1559,7 +1556,7 @@ export default function CryptoSwap() {
                       transformOrigin: 'center',
                     }}
                   >
-                    <ArrowsDownUp size={18} weight="regular" style={{ color: flipIconColor }} />
+                    <ArrowDownUp size={18} style={{ color: flipIconColor }} />
                   </motion.span>
                 </motion.button>
               </div>
@@ -1695,7 +1692,7 @@ export default function CryptoSwap() {
                         : { type: 'spring', stiffness: 520, damping: 16, delay: 0.04 }
                     }
                   >
-                    <CheckCircle size={22} weight="fill" style={{ color: swapSuccessText }} />
+                    <CircleCheck size={22} weight="bold" style={{ color: swapSuccessText }} />
                   </motion.span>
 
                   {!reduced &&

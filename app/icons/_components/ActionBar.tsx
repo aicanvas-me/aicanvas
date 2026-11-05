@@ -14,6 +14,7 @@ import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { copyText, useCopied } from '@/app/components/useCopied'
 import { agentPrompt, iconInstallCommand, iconJsxLine } from '../_lib/constants'
+import type { IconWeight } from '../_lib/icon-utils'
 import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
 import type { IconStyle } from '../_lib/types'
@@ -54,16 +55,14 @@ export function ActionBar({
   name,
   markup,
   size,
-  strokeWidth,
-  absolute,
+  weight,
   colour,
   style,
 }: {
   name: string
   markup: string
   size: number
-  strokeWidth: number
-  absolute: boolean
+  weight: IconWeight
   // the user's pick, null for none (the icon keeps the text colour)
   colour: string | null
   style: IconStyle
@@ -73,9 +72,9 @@ export function ActionBar({
   const router = useRouter()
   // A preview carries no vector: the SVG and PNG actions become the way to Premium.
   const locked = isPreview(markup)
-  const prompt = agentPrompt(name, size, strokeWidth, style, absolute, colour)
-  const jsx = iconJsxLine(name, size, strokeWidth, style, absolute, colour)
-  const svg = locked ? '' : buildSvg(markup, size, strokeWidth, colour, absolute)
+  const prompt = agentPrompt(name, size, weight, style, colour)
+  const jsx = iconJsxLine(name, size, weight, style, colour)
+  const svg = locked ? '' : buildSvg(markup, size, weight, colour)
   const { copied, copy } = useCopied(prompt)
 
   useEffect(() => {

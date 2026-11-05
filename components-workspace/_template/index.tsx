@@ -1,8 +1,8 @@
 'use client'
 
 import { motion } from 'framer-motion'
-// Add Phosphor icons as needed:
-// import { IconName } from '@phosphor-icons/react'
+// Add AI Canvas icons as needed:
+// import { IconName } from '@/app/_icons/icons/icon-name'
 
 // ─── ComponentName ────────────────────────────────────────────────────────────
 // Rename this function to match your component (PascalCase).

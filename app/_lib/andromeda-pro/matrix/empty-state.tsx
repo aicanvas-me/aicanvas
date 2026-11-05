@@ -1,6 +1,6 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
-import { EnvelopeOpen } from '@phosphor-icons/react'
+import { MailOpen } from '@/app/_icons/icons/mail-open';
 import {
   EmptyState,
   EmptyStateIcon,
@@ -38,7 +38,7 @@ export const emptyState: MatrixSpec = {
       children: (
         <>
           <EmptyStateIcon>
-            <EnvelopeOpen weight="light" />
+            <MailOpen size="1em" />
           </EmptyStateIcon>
           <EmptyStateTitle>No activity</EmptyStateTitle>
           <EmptyStateDescription>
@@ -59,7 +59,7 @@ export const emptyState: MatrixSpec = {
       children: (
         <>
           <EmptyStateIcon>
-            <EnvelopeOpen weight="light" />
+            <MailOpen size="1em" />
           </EmptyStateIcon>
           <EmptyStateTitle>No activity</EmptyStateTitle>
           <EmptyStateDescription>Nothing has happened in the last 30 days.</EmptyStateDescription>
@@ -72,7 +72,7 @@ export const emptyState: MatrixSpec = {
       children: (
         <>
           <EmptyStateIcon>
-            <EnvelopeOpen weight="light" />
+            <MailOpen size="1em" />
           </EmptyStateIcon>
           <EmptyStateTitle>No files yet</EmptyStateTitle>
           <EmptyStateDescription>

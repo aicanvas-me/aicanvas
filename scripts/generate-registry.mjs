@@ -12,7 +12,7 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, unlinkSy
 import { join, dirname, resolve, relative, sep, posix } from 'path'
 import { execSync } from 'child_process'
 import { createJiti } from 'jiti'
-import { transformRootHeightClass } from './lib/copy-paste-transform.mjs'
+import { toInstalledIconPaths, transformRootHeightClass } from './lib/copy-paste-transform.mjs'
 import { DESIGN_SYSTEMS, FREE_DS_PLACEHOLDER_SENTINEL } from './lib/design-systems.config.mjs'
 import { reconcileLedger } from './lib/order-ledger.mjs'
 import { parseJsdocProps } from './lib/parse-jsdoc-props.mjs'
@@ -239,12 +239,13 @@ function resolveImport(fromFile, spec) {
  * @param {string[]} entries        Absolute paths to entry files
  * @param {string}   rootDirAbs     Absolute path to the system's root directory
  * @param {Set<string>} [excludedFiles=new Set()]  Files already shipped by deps
- * @returns {{ files: string[], npmDeps: string[] }}
+ * @returns {{ files: string[], npmDeps: string[], iconDeps: string[] }}
  */
 function walkDependencies(entries, rootDirAbs, excludedFiles = new Set()) {
   const shipped = new Set()
   const queue = entries.filter((f) => !excludedFiles.has(f))
   const npmDeps = new Set()
+  const iconDeps = new Set()
 
   while (queue.length > 0) {
     const file = queue.shift()
@@ -271,6 +272,8 @@ function walkDependencies(entries, rootDirAbs, excludedFiles = new Set()) {
         // Boundary: file is provided by a registry dep — record the edge and stop.
         if (excludedFiles.has(resolved)) continue
         queue.push(resolved)
+      } else if (iconItemFor(spec)) {
+        iconDeps.add(iconItemFor(spec))
       } else {
         const pkg = toPackageName(spec)
         if (!isProjectBuiltin(pkg)) npmDeps.add(pkg)
@@ -281,8 +284,26 @@ function walkDependencies(entries, rootDirAbs, excludedFiles = new Set()) {
   return {
     files: [...shipped].sort(),
     npmDeps: [...npmDeps].sort(),
+    iconDeps: [...iconDeps].sort(),
   }
 }
+
+// Our icons are not part of a system: an `@/app/_icons/...` import installs as
+// the icon's own registry item (scripts/icon-registry.mjs, components/icons/).
+function iconItemFor(spec) {
+  const m = spec.match(/^@\/app\/_icons\/(?:icons\/([a-z0-9-]+)|(IconBase))$/)
+  if (!m) return null
+  // A paid style would make a free install stop on a locked icon.
+  if (/-(duotone|solid|solid-duotone)$/.test(m[1] ?? '')) throw new Error(`generate-registry: ${spec} is a paid icon style`)
+  return m[1] ? `icon-${m[1]}` : 'icon-base'
+}
+
+// A standalone is one file, so its icons arrive as registryDependencies (none: no key).
+function standaloneIconDeps(content) {
+  const deps = [...new Set(extractImportSpecifiers(content).map(iconItemFor).filter(Boolean))]
+  return deps.length ? { registryDependencies: deps.sort().map(depUrl) } : {}
+}
+
 
 // Convert an absolute file path inside the system's rootDir into the registry
 // `path` / `target` (POSIX, forward slashes). Layout under rootDir is preserved
@@ -416,6 +437,7 @@ for (const dir of dirs) {
   // Make copy-paste ready: h-full → min-h-screen on the ROOT element only
   // (see scripts/lib/copy-paste-transform.mjs for why root-only)
   const copyPasteReady = transformRootHeightClass(content)
+  const iconDeps = standaloneIconDeps(content)
 
   // Build the registry item JSON
   const item = {
@@ -426,10 +448,11 @@ for (const dir of dirs) {
     description,
     author: 'aicanvas <https://aicanvas.me>',
     dependencies: deps,
+    ...iconDeps,
     files: [
       {
         path: `components/aicanvas/${name}.tsx`,
-        content: directiveFirst(copyPasteReady),
+        content: toInstalledIconPaths(directiveFirst(copyPasteReady)),
         type: 'registry:ui',
         target: `components/aicanvas/${name}.tsx`,
       },
@@ -446,6 +469,7 @@ for (const dir of dirs) {
     title,
     description,
     dependencies: deps,
+    ...iconDeps,
     files: [
       {
         path: `components/aicanvas/${name}.tsx`,
@@ -489,10 +513,11 @@ for (const slug of premiumSlugDirs) {
     description: pmeta.description || '',
     author: 'aicanvas <https://aicanvas.me>',
     dependencies: getDeps(content),
+    ...standaloneIconDeps(content),
     files: [
       {
         path: `components/aicanvas/${slug}.tsx`,
-        content: directiveFirst(transformRootHeightClass(content)),
+        content: toInstalledIconPaths(directiveFirst(transformRootHeightClass(content))),
         type: 'registry:ui',
         target: `components/aicanvas/${slug}.tsx`,
       },
@@ -543,7 +568,7 @@ function makeFile(fileAbs, rootDirAbs, slug) {
   const target = targetPathFor(fileAbs, rootDirAbs, slug)
   return {
     path: target,
-    content: directiveFirst(readFileSync(fileAbs, 'utf-8')),
+    content: toInstalledIconPaths(directiveFirst(readFileSync(fileAbs, 'utf-8'))),
     type: 'registry:lib',
     target,
   }
@@ -688,7 +713,7 @@ for (const ds of SYSTEMS) {
     title: `${ds.name} design system`,
     description: `Every ${ds.name} component (${systemFiles.length} files). Installs the foundation tokens automatically.`,
     author: 'aicanvas <https://aicanvas.me>',
-    registryDependencies: [depUrl(tokensSlug)],
+    registryDependencies: [depUrl(tokensSlug), ...systemWalk.iconDeps.map(depUrl)],
     ...dependencyFields(ds, systemWalk.npmDeps),
     files: systemFiles,
   }
@@ -811,7 +836,7 @@ for (const ds of SYSTEMS) {
         `${ds.name} ${compLabel} component. Install just this piece. Tokens and any sibling components are pulled in automatically.` +
         (itemEntries.length > 1 ? ' Includes a ready-made example.' : ''),
       author: 'aicanvas <https://aicanvas.me>',
-      registryDependencies: [...componentRegistryDeps].sort().map(depUrl),
+      registryDependencies: [...[...componentRegistryDeps].sort(), ...compWalk.iconDeps].map(depUrl),
       ...dependencyFields(ds, compWalk.npmDeps),
       files: compFiles,
     }
@@ -847,7 +872,7 @@ for (const ds of SYSTEMS) {
         usedComponentSlugs.add(dsComponentSlug(ds, relPosix, relPosix.split('/').pop()))
       }
     }
-    const templateDeps = [`${ds.slug}-tokens`, ...[...usedComponentSlugs].sort()].map(depUrl)
+    const templateDeps = [`${ds.slug}-tokens`, ...[...usedComponentSlugs].sort(), ...templateWalk.iconDeps].map(depUrl)
     // The install also writes what those components depend on (UserCard brings
     // Avatar), so the count follows the chain. A Set's loop visits what is added
     // during it, each component counts once, and tokens are not a component.

@@ -7,7 +7,6 @@ import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import './globals.css'
 import { ThemeProvider } from './components/ThemeProvider'
-import { IconProvider } from './_icons/IconBase'
 import { Sidebar } from './components/Sidebar'
 import { ScrollMemory } from './components/ScrollMemory'
 import { MobileNav } from './components/MobileNav'
@@ -25,9 +24,6 @@ import { AI_CANVAS_DEFINITION, GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
 import { isFramedPayloadRequest } from './lib/frame'
 import { hostedMcpOAuthEnabled } from '../lib/flags'
-
-// The site's icon line weight, a touch lighter than the package default of 1.5.
-const SITE_ICON_STROKE = 1.25
 
 const manrope = Manrope({
   variable: '--font-manrope',
@@ -172,7 +168,7 @@ export default async function RootLayout({
             pans its own document, and the site's chrome is what owns that
             scroller on the full page. */}
         <body className="h-full">
-          <IconProvider strokeWidth={SITE_ICON_STROKE}>{children}</IconProvider>
+          {children}
         </body>
       </html>
     )
@@ -244,63 +240,61 @@ export default async function RootLayout({
           Skip to content
         </a>
         <ThemeProvider initial={theme}>
-         <IconProvider strokeWidth={SITE_ICON_STROKE}>
-          <SessionProvider initialUser={user} showConnect={hostedMcpOAuthEnabled()}>
-            <AuthModalProvider>
-             <PaywallModalProvider>
-             <TopBarProvider>
-              {/* The one top bar, across the whole window above the rail and
-                  the content, drawn from md up and never remounted: a
-                  navigation swaps only what is below it. It reads the URL, so
-                  it sits inside a Suspense like the rail. */}
-              <Suspense fallback={null}>
-                <TopBar />
-              </Suspense>
-              {/* Mobile nav — visible only below md */}
-              <Suspense fallback={null}>
-                <MobileNav />
-              </Suspense>
-              {/* The rail and the content sit side by side under the bar.
-                  min-h-0 lets the row take the height the bar leaves and no
-                  more, so each of the two scrolls on its own. */}
-              <div className="flex min-h-0 flex-1">
-              {/* Desktop sidebar — hidden on mobile */}
-              <Suspense fallback={null}>
-                <div className="hidden md:flex">
-                  <Sidebar />
-                </div>
-              </Suspense>
-              {/* Content area scrolls independently of the sidebar.
-                  .app-scroll-column (globals.css) reserves the scrollbar
-                  gutter so the visible width never shifts between auth
-                  states, and releases it on routes that clip themselves and
-                  own their own scroller — otherwise this column reserves a
-                  full-height strip it can never paint a bar in. In CSS rather
-                  than an inline style so the :has() release can out-specify
-                  it; an inline declaration would always win. */}
-              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 dark:bg-sand-950">
-                {/* The page slot. Page roots ask for min-h-full, and this
-                    wrapper is what that 100% resolves against.
-                    min-h-0 is load-bearing: a flex item's automatic minimum is
-                    its content, which would grow this slot to the full page
-                    height, stop every overflow-hidden layout root below from
-                    clipping, and hand the scroll to this column instead of to
-                    the page that declares data-owns-scroll. A long page still
-                    scrolls: its overflow is visible and this column is the
-                    scroller. */}
-                <div id="page-content" tabIndex={-1} className="flex min-h-0 flex-1 flex-col">{children}</div>
-              </div>
-              </div>
-              {/* Owns this column's scroll across navigations: a new page
-                  starts at its top, Back returns to where you were. */}
-              <ScrollMemory />
-              {/* Global auth dialog — toggles between sign-in and sign-up modes */}
-              <AuthModal />
-             </TopBarProvider>
-             </PaywallModalProvider>
-            </AuthModalProvider>
-          </SessionProvider>
-         </IconProvider>
+         <SessionProvider initialUser={user} showConnect={hostedMcpOAuthEnabled()}>
+           <AuthModalProvider>
+            <PaywallModalProvider>
+            <TopBarProvider>
+             {/* The one top bar, across the whole window above the rail and
+                 the content, drawn from md up and never remounted: a
+                 navigation swaps only what is below it. It reads the URL, so
+                 it sits inside a Suspense like the rail. */}
+             <Suspense fallback={null}>
+               <TopBar />
+             </Suspense>
+             {/* Mobile nav — visible only below md */}
+             <Suspense fallback={null}>
+               <MobileNav />
+             </Suspense>
+             {/* The rail and the content sit side by side under the bar.
+                 min-h-0 lets the row take the height the bar leaves and no
+                 more, so each of the two scrolls on its own. */}
+             <div className="flex min-h-0 flex-1">
+             {/* Desktop sidebar — hidden on mobile */}
+             <Suspense fallback={null}>
+               <div className="hidden md:flex">
+                 <Sidebar />
+               </div>
+             </Suspense>
+             {/* Content area scrolls independently of the sidebar.
+                 .app-scroll-column (globals.css) reserves the scrollbar
+                 gutter so the visible width never shifts between auth
+                 states, and releases it on routes that clip themselves and
+                 own their own scroller — otherwise this column reserves a
+                 full-height strip it can never paint a bar in. In CSS rather
+                 than an inline style so the :has() release can out-specify
+                 it; an inline declaration would always win. */}
+             <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 dark:bg-sand-950">
+               {/* The page slot. Page roots ask for min-h-full, and this
+                   wrapper is what that 100% resolves against.
+                   min-h-0 is load-bearing: a flex item's automatic minimum is
+                   its content, which would grow this slot to the full page
+                   height, stop every overflow-hidden layout root below from
+                   clipping, and hand the scroll to this column instead of to
+                   the page that declares data-owns-scroll. A long page still
+                   scrolls: its overflow is visible and this column is the
+                   scroller. */}
+               <div id="page-content" tabIndex={-1} className="flex min-h-0 flex-1 flex-col">{children}</div>
+             </div>
+             </div>
+             {/* Owns this column's scroll across navigations: a new page
+                 starts at its top, Back returns to where you were. */}
+             <ScrollMemory />
+             {/* Global auth dialog — toggles between sign-in and sign-up modes */}
+             <AuthModal />
+            </TopBarProvider>
+            </PaywallModalProvider>
+           </AuthModalProvider>
+         </SessionProvider>
         </ThemeProvider>
         {/* Two deliberate systems: Vercel Analytics keeps the visitors count
             and dashboard (per-day hash, disclosed in /privacy); SiteBeacon +

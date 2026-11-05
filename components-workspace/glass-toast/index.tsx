@@ -1,16 +1,14 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useRef, useEffect, useCallback, type Ref } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import {
-  CheckCircle,
-  XCircle,
-  Warning,
-  Info,
-  X,
-} from '@phosphor-icons/react'
+import { CircleCheck } from '@/app/_icons/icons/circle-check'
+import { CircleX } from '@/app/_icons/icons/circle-x'
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert'
+import { Info } from '@/app/_icons/icons/info'
+import { X } from '@/app/_icons/icons/x'
 
 
 const GLASS_BLUR = {
@@ -44,15 +42,15 @@ interface Toast {
 interface VariantConfig {
   color: string
   gradient: string
-  icon: typeof CheckCircle
+  icon: typeof CircleCheck
   label: string
 }
 
 // color must be 6-digit hex: two-digit alpha suffixes are appended to it.
 const VARIANTS: Record<ToastVariant, VariantConfig> = {
-  success: { color: '#06D6A0', gradient: '#06D6A0, #00BFA5', icon: CheckCircle, label: 'Success' },
-  error:   { color: '#FF5C8A', gradient: '#FF5C8A, #FF1744', icon: XCircle,     label: 'Error' },
-  warning: { color: '#FFBE0B', gradient: '#FFBE0B, #FF9800', icon: Warning,     label: 'Warning' },
+  success: { color: '#06D6A0', gradient: '#06D6A0, #00BFA5', icon: CircleCheck, label: 'Success' },
+  error:   { color: '#FF5C8A', gradient: '#FF5C8A, #FF1744', icon: CircleX,     label: 'Error' },
+  warning: { color: '#FFBE0B', gradient: '#FFBE0B, #FF9800', icon: TriangleAlert, label: 'Warning' },
   info:    { color: '#3A86FF', gradient: '#3A86FF, #2962FF', icon: Info,        label: 'Info' },
 }
 
@@ -183,7 +181,7 @@ function ToastCard({
             border: `1px solid ${variant.color}22`,
           }}
         >
-          <Icon size={18} weight="regular" style={{ color: variant.color }} />
+          <Icon size={18} style={{ color: variant.color }} />
         </div>
 
         <div className="flex min-w-0 flex-1 flex-col">
@@ -217,7 +215,7 @@ function ToastCard({
             border: '1px solid rgba(255, 255, 255, 0.12)',
           }}
         >
-          <X size={10} weight="regular" className="text-white/60" />
+          <X size={10} className="text-white/60" />
         </motion.span>
       </motion.button>
 
@@ -270,7 +268,7 @@ function TriggerButton({
           border: `1px solid ${config.color}22`,
         }}
       >
-        <Icon size={16} weight="regular" style={{ color: config.color }} />
+        <Icon size={16} style={{ color: config.color }} />
       </div>
 
       <span className="text-sm font-semibold text-white/70">{config.label}</span>

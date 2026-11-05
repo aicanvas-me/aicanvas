@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import { transformRootHeightClass } from './lib/copy-paste-transform.mjs'
+import { toInstalledIconPaths, transformRootHeightClass } from './lib/copy-paste-transform.mjs'
 
 interface ShadCNFile {
   target: string
@@ -86,8 +86,8 @@ async function validateRegistryJSON(slug: string): Promise<ValidationResult> {
   }
 
   const rawSourceContent = fs.readFileSync(sourceComponentPath, 'utf-8')
-  // Apply the same copy-paste transform that generate-registry applies (root-only h-full → min-h-screen)
-  const sourceContent = transformRootHeightClass(rawSourceContent)
+  // Apply the same copy-paste transforms generate-registry applies (root h-full, icon paths)
+  const sourceContent = toInstalledIconPaths(transformRootHeightClass(rawSourceContent))
   // JSON content is escaped; unescape it for comparison
   const jsonContent = json.files[0].content
   if (jsonContent !== sourceContent) {
@@ -110,7 +110,8 @@ async function validateRegistryJSON(slug: string): Promise<ValidationResult> {
   while ((match = importRegex.exec(sourceContent)) !== null) {
     const importPath = match[1]
     // Skip relative imports (start with . or /) and built-ins (no . or /)
-    if (!importPath.startsWith('.') && !importPath.startsWith('/')) {
+    // `@/` is the project alias: our icons arrive as registryDependencies, not npm packages.
+    if (!importPath.startsWith('.') && !importPath.startsWith('/') && !importPath.startsWith('@/')) {
       // Extract package name — scoped packages (@scope/pkg) need two segments
       const parts = importPath.split('/')
       const packageName = importPath.startsWith('@') ? `${parts[0]}/${parts[1]}` : parts[0]

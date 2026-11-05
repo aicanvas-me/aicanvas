@@ -1,4 +1,4 @@
-import { Sparkle } from '@phosphor-icons/react'
+import { Sparkle } from '@/app/_icons/icons/sparkle';
 import { Suggestion, tokens } from '../../../lib/andromeda-pro.generated'
 import { CONTROL_STATES, type MatrixSpec } from './types'
 

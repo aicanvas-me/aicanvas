@@ -2,7 +2,9 @@
 // MISSION CONTROL: Row 3 right — Comms Log
 // ============================================================
 
-import { ArrowDown, ArrowUp, Warning } from '@phosphor-icons/react';
+import { ArrowDown } from '@/app/_icons/icons/arrow-down';
+import { ArrowUp } from '@/app/_icons/icons/arrow-up';
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
@@ -38,7 +40,7 @@ const dirConfig = {
     border:themeColor.border.base,
   },
   alert: {
-    icon:  Warning,
+    icon:  TriangleAlert,
     label: '!',
     color: themeColor.orange[300],
     bg:    themeColor.orange[500],
@@ -74,7 +76,7 @@ function CommsItem({ entry, isLast }: { entry: (typeof commsLog)[number]; isLast
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <Icon size={20} weight="light" />
+        <Icon size={20} />
       </div>
 
       {/* Content */}

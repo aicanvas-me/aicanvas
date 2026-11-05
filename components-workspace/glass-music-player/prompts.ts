@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -49,9 +49,9 @@ Card motion.div: initial {y:24, scale:0.95} animate {y:0, scale:1} transition {t
 Inside (flex flex-col items-center px-7 pb-7 pt-6):
 
 1) Top bar mb-6 flex justify-between:
-   - ArrowLeft size=20 weight="regular" motion.button whileHover {scale:1.15, color:'rgba(255,255,255,0.8)'} whileTap {scale:0.85}, style color 'rgba(255,255,255,0.35)'.
+   - ArrowLeft size=20 motion.button whileHover {scale:1.15, color:'rgba(255,255,255,0.8)'} whileTap {scale:0.85}, style color 'rgba(255,255,255,0.35)'.
    - "Now Playing" span text-[10px] font-semibold uppercase tracking-[0.18em] color 'rgba(255,255,255,0.4)'.
-   - Heart motion.button size=20 weight={liked?'fill':'regular'}, animate color liked?track.color:'rgba(255,255,255,0.35)', transition {duration:0.2}, whileHover {scale:1.15} whileTap {scale:0.85}. onClick toggle liked.
+   - Heart motion.button size=20 fill={liked?'currentColor':'none'}, animate color liked?track.color:'rgba(255,255,255,0.35)', transition {duration:0.2}, whileHover {scale:1.15} whileTap {scale:0.85}. onClick toggle liked.
 
 2) Album disc: AnimatePresence mode="wait" key=trackIdx → motion.div initial {opacity:0, scale:0.85} animate {opacity:1, scale:1} exit {opacity:0, scale:0.85} transition {type:'spring', stiffness:260, damping:26} className "relative mb-7".
    Ambient glow div: absolute inset-0 rounded-full, background track.color, opacity 0.18, filter 'blur(28px)', transform 'scale(1.15)'.
@@ -65,13 +65,13 @@ Inside (flex flex-col items-center px-7 pb-7 pt-6):
 5) Progress bar mb-5 w-full: track div relative h-[3px] w-full overflow-hidden rounded-full, bg 'rgba(255,255,255,0.07)'. Fill motion.div absolute left-0 top-0 h-full rounded-full, style {width:barWidth, background:\`linear-gradient(90deg, \${track.color}70, \${track.color}dd)\`}. Below: flex justify-between, two spans text-[10px] font-medium tabular-nums color 'rgba(255,255,255,0.28)': formatTime(elapsed), formatTime(track.duration).
 
 6) Controls row flex w-full items-center justify-between:
-   - Shuffle motion.button size=19 weight="regular" onClick toggle shuffled, animate color shuffled?track.color:'rgba(255,255,255,0.35)' transition {duration:0.2}, whileHover {scale:1.15, color: shuffled?track.color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
-   - SkipBack motion.button size=26 weight="fill" onClick skipTo(-1), style color 'rgba(255,255,255,0.65)', whileHover {scale:1.12, color:'rgba(255,255,255,0.95)'} whileTap {scale:0.9}.
-   - Play/Pause motion.button h-[52px] w-[52px] rounded-full flex centered, animate {background:\`radial-gradient(circle at 38% 35%, \${track.color}ee, \${track.color}99)\`, boxShadow:\`0 4px 20px \${track.color}55, 0 0 0 1px \${track.color}33\`}, transition {duration:0.3}, whileHover {scale:1.07} whileTap {scale:0.92}. onClick toggle playing. Inside AnimatePresence mode="wait": Pause or Play motion.div key swap initial {scale:0.6, opacity:0} animate {scale:1, opacity:1} exit {scale:0.6, opacity:0} {duration:0.15}. Pause size=22 weight="fill" text-white. Play size=22 weight="fill" ml-0.5 text-white.
-   - SkipForward size=26 weight="fill" onClick skipTo(1) (same style as SkipBack).
-   - Queue motion.button size=19 weight="regular" style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
+   - Shuffle motion.button size=19 onClick toggle shuffled, animate color shuffled?track.color:'rgba(255,255,255,0.35)' transition {duration:0.2}, whileHover {scale:1.15, color: shuffled?track.color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
+   - SkipBack motion.button size=26 fill="currentColor" onClick skipTo(-1), style color 'rgba(255,255,255,0.65)', whileHover {scale:1.12, color:'rgba(255,255,255,0.95)'} whileTap {scale:0.9}.
+   - Play/Pause motion.button h-[52px] w-[52px] rounded-full flex centered, animate {background:\`radial-gradient(circle at 38% 35%, \${track.color}ee, \${track.color}99)\`, boxShadow:\`0 4px 20px \${track.color}55, 0 0 0 1px \${track.color}33\`}, transition {duration:0.3}, whileHover {scale:1.07} whileTap {scale:0.92}. onClick toggle playing. Inside AnimatePresence mode="wait": Pause or Play motion.div key swap initial {scale:0.6, opacity:0} animate {scale:1, opacity:1} exit {scale:0.6, opacity:0} {duration:0.15}. Pause size=22 fill="currentColor" text-white. Play size=22 fill="currentColor" ml-0.5 text-white.
+   - SkipForward size=26 fill="currentColor" onClick skipTo(1) (same style as SkipBack).
+   - ListMusic motion.button size=19 style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
 
-Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useAnimationFrame, useMotionValue, useReducedMotion, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, Queue, ArrowLeft from @phosphor-icons/react.
+Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useAnimationFrame, useMotionValue, useReducedMotion, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, ListMusic, ArrowLeft from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Play } from '@/components/icons/play'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -111,9 +111,9 @@ Card motion.div: initial {y:24, scale:0.95} animate {y:0, scale:1} transition {t
 Inside (flex flex-col items-center px-7 pb-7 pt-6):
 
 1) Top bar mb-6 flex justify-between:
-   - ArrowLeft size=20 weight="regular" motion.button whileHover {scale:1.15, color:'rgba(255,255,255,0.8)'} whileTap {scale:0.85}, style color 'rgba(255,255,255,0.35)'.
+   - ArrowLeft size=20 motion.button whileHover {scale:1.15, color:'rgba(255,255,255,0.8)'} whileTap {scale:0.85}, style color 'rgba(255,255,255,0.35)'.
    - "Now Playing" span text-[10px] font-semibold uppercase tracking-[0.18em] color 'rgba(255,255,255,0.4)'.
-   - Heart motion.button size=20 weight={liked?'fill':'regular'}, animate color liked?track.color:'rgba(255,255,255,0.35)', transition {duration:0.2}, whileHover {scale:1.15} whileTap {scale:0.85}. onClick toggle liked.
+   - Heart motion.button size=20 fill={liked?'currentColor':'none'}, animate color liked?track.color:'rgba(255,255,255,0.35)', transition {duration:0.2}, whileHover {scale:1.15} whileTap {scale:0.85}. onClick toggle liked.
 
 2) Album disc — AnimatePresence mode="wait" key=trackIdx → motion.div initial {opacity:0, scale:0.85} animate {opacity:1, scale:1} exit {opacity:0, scale:0.85} transition {type:'spring', stiffness:260, damping:26} className "relative mb-7".
    Ambient glow div: absolute inset-0 rounded-full, background track.color, opacity 0.18, filter 'blur(28px)', transform 'scale(1.15)'.
@@ -127,13 +127,13 @@ Inside (flex flex-col items-center px-7 pb-7 pt-6):
 5) Progress bar mb-5 w-full: track div relative h-[3px] w-full overflow-hidden rounded-full, bg 'rgba(255,255,255,0.07)'. Fill motion.div absolute left-0 top-0 h-full rounded-full, style {width:barWidth, background:\`linear-gradient(90deg, \${track.color}70, \${track.color}dd)\`}. Below: flex justify-between — two spans text-[10px] font-medium tabular-nums color 'rgba(255,255,255,0.28)': formatTime(elapsed), formatTime(track.duration).
 
 6) Controls row flex w-full items-center justify-between:
-   - Shuffle motion.button size=19 weight="regular" onClick toggle shuffled, animate color shuffled?track.color:'rgba(255,255,255,0.35)' transition {duration:0.2}, whileHover {scale:1.15, color: shuffled?track.color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
-   - SkipBack motion.button size=26 weight="fill" onClick skipTo(-1), style color 'rgba(255,255,255,0.65)', whileHover {scale:1.12, color:'rgba(255,255,255,0.95)'} whileTap {scale:0.9}.
-   - Play/Pause motion.button h-[52px] w-[52px] rounded-full flex centered, animate {background:\`radial-gradient(circle at 38% 35%, \${track.color}ee, \${track.color}99)\`, boxShadow:\`0 4px 20px \${track.color}55, 0 0 0 1px \${track.color}33\`}, transition {duration:0.3}, whileHover {scale:1.07} whileTap {scale:0.92}. onClick toggle playing. Inside AnimatePresence mode="wait": Pause or Play motion.div key swap initial {scale:0.6, opacity:0} animate {scale:1, opacity:1} exit {scale:0.6, opacity:0} {duration:0.15}. Pause size=22 weight="fill" text-white. Play size=22 weight="fill" ml-0.5 text-white.
-   - SkipForward size=26 weight="fill" onClick skipTo(1) (same style as SkipBack).
-   - Queue motion.button size=19 weight="regular" style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
+   - Shuffle motion.button size=19 onClick toggle shuffled, animate color shuffled?track.color:'rgba(255,255,255,0.35)' transition {duration:0.2}, whileHover {scale:1.15, color: shuffled?track.color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
+   - SkipBack motion.button size=26 fill="currentColor" onClick skipTo(-1), style color 'rgba(255,255,255,0.65)', whileHover {scale:1.12, color:'rgba(255,255,255,0.95)'} whileTap {scale:0.9}.
+   - Play/Pause motion.button h-[52px] w-[52px] rounded-full flex centered, animate {background:\`radial-gradient(circle at 38% 35%, \${track.color}ee, \${track.color}99)\`, boxShadow:\`0 4px 20px \${track.color}55, 0 0 0 1px \${track.color}33\`}, transition {duration:0.3}, whileHover {scale:1.07} whileTap {scale:0.92}. onClick toggle playing. Inside AnimatePresence mode="wait": Pause or Play motion.div key swap initial {scale:0.6, opacity:0} animate {scale:1, opacity:1} exit {scale:0.6, opacity:0} {duration:0.15}. Pause size=22 fill="currentColor" text-white. Play size=22 fill="currentColor" ml-0.5 text-white.
+   - SkipForward size=26 fill="currentColor" onClick skipTo(1) (same style as SkipBack).
+   - ListMusic motion.button size=19 style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
 
-Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useMotionValue, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, Queue, ArrowLeft from @phosphor-icons/react.
+Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useMotionValue, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, ListMusic, ArrowLeft from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Play } from '@/components/icons/play'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif
@@ -173,9 +173,9 @@ Card motion.div: initial {y:24, scale:0.95} animate {y:0, scale:1} transition {t
 Inside (flex flex-col items-center px-7 pb-7 pt-6):
 
 1) Top bar mb-6 flex justify-between:
-   - ArrowLeft size=20 weight="regular" motion.button whileHover {scale:1.15, color:'rgba(255,255,255,0.8)'} whileTap {scale:0.85}, style color 'rgba(255,255,255,0.35)'.
+   - ArrowLeft size=20 motion.button whileHover {scale:1.15, color:'rgba(255,255,255,0.8)'} whileTap {scale:0.85}, style color 'rgba(255,255,255,0.35)'.
    - "Now Playing" span text-[10px] font-semibold uppercase tracking-[0.18em] color 'rgba(255,255,255,0.4)'.
-   - Heart motion.button size=20 weight={liked?'fill':'regular'}, animate color liked?track.color:'rgba(255,255,255,0.35)', transition {duration:0.2}, whileHover {scale:1.15} whileTap {scale:0.85}. onClick toggle liked.
+   - Heart motion.button size=20 fill={liked?'currentColor':'none'}, animate color liked?track.color:'rgba(255,255,255,0.35)', transition {duration:0.2}, whileHover {scale:1.15} whileTap {scale:0.85}. onClick toggle liked.
 
 2) Album disc — AnimatePresence mode="wait" key=trackIdx → motion.div initial {opacity:0, scale:0.85} animate {opacity:1, scale:1} exit {opacity:0, scale:0.85} transition {type:'spring', stiffness:260, damping:26} className "relative mb-7".
    Ambient glow div: absolute inset-0 rounded-full, background track.color, opacity 0.18, filter 'blur(28px)', transform 'scale(1.15)'.
@@ -189,13 +189,13 @@ Inside (flex flex-col items-center px-7 pb-7 pt-6):
 5) Progress bar mb-5 w-full: track div relative h-[3px] w-full overflow-hidden rounded-full, bg 'rgba(255,255,255,0.07)'. Fill motion.div absolute left-0 top-0 h-full rounded-full, style {width:barWidth, background:\`linear-gradient(90deg, \${track.color}70, \${track.color}dd)\`}. Below: flex justify-between — two spans text-[10px] font-medium tabular-nums color 'rgba(255,255,255,0.28)': formatTime(elapsed), formatTime(track.duration).
 
 6) Controls row flex w-full items-center justify-between:
-   - Shuffle motion.button size=19 weight="regular" onClick toggle shuffled, animate color shuffled?track.color:'rgba(255,255,255,0.35)' transition {duration:0.2}, whileHover {scale:1.15, color: shuffled?track.color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
-   - SkipBack motion.button size=26 weight="fill" onClick skipTo(-1), style color 'rgba(255,255,255,0.65)', whileHover {scale:1.12, color:'rgba(255,255,255,0.95)'} whileTap {scale:0.9}.
-   - Play/Pause motion.button h-[52px] w-[52px] rounded-full flex centered, animate {background:\`radial-gradient(circle at 38% 35%, \${track.color}ee, \${track.color}99)\`, boxShadow:\`0 4px 20px \${track.color}55, 0 0 0 1px \${track.color}33\`}, transition {duration:0.3}, whileHover {scale:1.07} whileTap {scale:0.92}. onClick toggle playing. Inside AnimatePresence mode="wait": Pause or Play motion.div key swap initial {scale:0.6, opacity:0} animate {scale:1, opacity:1} exit {scale:0.6, opacity:0} {duration:0.15}. Pause size=22 weight="fill" text-white. Play size=22 weight="fill" ml-0.5 text-white.
-   - SkipForward size=26 weight="fill" onClick skipTo(1) (same style as SkipBack).
-   - Queue motion.button size=19 weight="regular" style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
+   - Shuffle motion.button size=19 onClick toggle shuffled, animate color shuffled?track.color:'rgba(255,255,255,0.35)' transition {duration:0.2}, whileHover {scale:1.15, color: shuffled?track.color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
+   - SkipBack motion.button size=26 fill="currentColor" onClick skipTo(-1), style color 'rgba(255,255,255,0.65)', whileHover {scale:1.12, color:'rgba(255,255,255,0.95)'} whileTap {scale:0.9}.
+   - Play/Pause motion.button h-[52px] w-[52px] rounded-full flex centered, animate {background:\`radial-gradient(circle at 38% 35%, \${track.color}ee, \${track.color}99)\`, boxShadow:\`0 4px 20px \${track.color}55, 0 0 0 1px \${track.color}33\`}, transition {duration:0.3}, whileHover {scale:1.07} whileTap {scale:0.92}. onClick toggle playing. Inside AnimatePresence mode="wait": Pause or Play motion.div key swap initial {scale:0.6, opacity:0} animate {scale:1, opacity:1} exit {scale:0.6, opacity:0} {duration:0.15}. Pause size=22 fill="currentColor" text-white. Play size=22 fill="currentColor" ml-0.5 text-white.
+   - SkipForward size=26 fill="currentColor" onClick skipTo(1) (same style as SkipBack).
+   - ListMusic motion.button size=19 style color 'rgba(255,255,255,0.35)', whileHover {scale:1.15, color:'rgba(255,255,255,0.75)'} whileTap {scale:0.85}.
 
-Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useMotionValue, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, Queue, ArrowLeft from @phosphor-icons/react.
+Imports: useState, useEffect, useRef from react; motion, AnimatePresence, useMotionValue, useTransform from framer-motion; Play, Pause, SkipBack, SkipForward, Heart, Shuffle, ListMusic, ArrowLeft from AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Play } from '@/components/icons/play'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json.
 
 ## Typography
 - Font: project default sans-serif

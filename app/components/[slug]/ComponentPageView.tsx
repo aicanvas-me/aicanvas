@@ -105,6 +105,8 @@ interface ComponentPageViewProps {
   // provided so the install UI (deps + font setup) survives even when the full
   // `code` is withheld in enforcing mode.
   codeDirectives?: string
+  // Registry items of the icons the code imports (icon-<name>), for the manual steps.
+  iconItems?: string[]
   children: ReactNode
   // Per-component copy slots. Render when the slot is filled; components
   // without `about` simply omit that section. Sourced from the registry
@@ -142,6 +144,7 @@ export default function ComponentPageView({
   enforcing = false,
   freeAccountGate = false,
   codeDirectives,
+  iconItems = [],
   children,
   about,
   useCases,
@@ -300,6 +303,24 @@ export default function ComponentPageView({
     bun: `bun add ${depsPackages}`,
   }
   const depsCommand = depsPackages ? PKG_COMMANDS[pkgManager] : null
+
+  const PKG_RUNNERS: Record<typeof pkgManager, string> = { pnpm: 'pnpm dlx', npm: 'npx', yarn: 'yarn dlx', bun: 'bunx' }
+  const iconsCommand = iconItems.length
+    ? `${PKG_RUNNERS[pkgManager]} shadcn@latest add ${iconItems
+        .map((item) => (userToken ? `"https://aicanvas.me/r/${item}.json?token=${userToken}"` : `@aicanvas/${item}`))
+        .join(' ')}`
+    : null
+  const iconsCommandShown = iconsCommand && userToken ? iconsCommand.replaceAll(userToken, 'aic_••••••••') : iconsCommand
+  const [iconsCopied, setIconsCopied] = useState(false)
+
+  async function copyIcons() {
+    if (!iconsCommand) return
+    // Icon items install like any free item: an account first.
+    if (freeAccountGate && !user) { promptFreeAccount(); return }
+    if (!(await copyText(iconsCommand))) return
+    setIconsCopied(true)
+    setTimeout(() => setIconsCopied(false), 2000)
+  }
 
   async function copyDeps() {
     if (!depsCommand) return
@@ -860,10 +881,11 @@ export default function ComponentPageView({
           {/* ── Installation ─────────────────────────────────────────────── */}
           {(() => {
             // Dynamic step numbers for Manual tab — deps step is optional
+            const hasSetupStep = !!(depsCommand || iconsCommand)
             const manualStep = {
-              code: depsCommand ? 2 : 1,
-              dark: depsCommand ? 3 : 2,
-              font: depsCommand ? 4 : 3,
+              code: hasSetupStep ? 2 : 1,
+              dark: hasSetupStep ? 3 : 2,
+              font: hasSetupStep ? 4 : 3,
             }
             return (
             <section className="mt-12">
@@ -1074,9 +1096,11 @@ export default function ComponentPageView({
                     </div>
                   ) : (
                     <div className="space-y-6">
-                      {/* Step 1 — Install deps (only when component has deps) */}
-                      {depsCommand && (
+                      {/* Step 1 — Install deps and icons (only when the component has either) */}
+                      {hasSetupStep && (
                       <Step number={1}>
+                          {depsCommand && (
+                          <>
                           <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
                             Install the following dependencies:
                           </p>
@@ -1094,6 +1118,29 @@ export default function ComponentPageView({
                                 : <Copy size={14} />}
                             </button>
                           </div>
+                          </>
+                          )}
+                          {iconsCommand && (
+                          <>
+                          <p className={`mb-2.5 text-sm text-sand-600 dark:text-sand-400 ${depsCommand ? 'mt-4' : ''}`}>
+                            Add the icons it uses:
+                          </p>
+                          <div className="flex items-center justify-between gap-3 rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3">
+                            <code className="min-w-0 break-all font-mono text-sm text-sand-700 dark:text-sand-300">
+                              {iconsCommandShown}
+                            </code>
+                            <button
+                              onClick={copyIcons}
+                              aria-label="Copy icons install command"
+                              className="shrink-0 rounded-control p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+                            >
+                              {iconsCopied
+                                ? <Check size={14} className="text-success" />
+                                : <Copy size={14} />}
+                            </button>
+                          </div>
+                          </>
+                          )}
                       </Step>
                       )}
 

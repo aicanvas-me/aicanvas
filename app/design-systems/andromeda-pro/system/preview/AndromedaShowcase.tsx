@@ -24,7 +24,7 @@
 import { Fragment, useRef, type ReactNode } from 'react'
 import Link from 'next/link'
 import { JetBrains_Mono } from 'next/font/google'
-import { ArrowUpRight } from '@phosphor-icons/react'
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right'
 import { tokens } from '../../../../lib/andromeda-pro.generated'
 import { mq } from '../../../../lib/andromeda-pro-helpers.generated'
 import { buttonVariants } from '../../../../lib/andromeda-pro.generated'
@@ -154,7 +154,7 @@ function Section({
             style={andromedaVars()}
           >
             Open {title}
-            <ArrowUpRight weight="regular" size={14} />
+            <ArrowUpRight size={14} />
           </Link>
         ) : null}
       </CardHeader>

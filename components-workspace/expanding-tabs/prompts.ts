@@ -1,16 +1,16 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
-const body = `Create a single self-contained React client component named ExpandingTabs. It is a premium monochrome expanding tab bar built with TypeScript, Tailwind CSS v4, Framer Motion, and @phosphor-icons/react. Put 'use client' at the top. Do not use the TypeScript any type. Do not create extra files.
+const body = `Create a single self-contained React client component named ExpandingTabs. It is a premium monochrome expanding tab bar built with TypeScript, Tailwind CSS v4, Framer Motion, and AI Canvas icons. Put 'use client' at the top. Do not use the TypeScript any type. Do not create extra files.
 
-Install dependencies with: npm install framer-motion @phosphor-icons/react
+Install dependencies with: npm install framer-motion
 
 Create four tabs in this exact order:
-1. Inbox with EnvelopeSimple
-2. Calendar with CalendarBlank
+1. Inbox with mail
+2. Calendar with calendar-blank
 3. Alerts with Bell
-4. Search with MagnifyingGlass
+4. Search with search
 
-Use weight="regular" on every Phosphor icon and size="1.18em". Store the active label in React state and initialize it to "Inbox". Exactly one tab is active at a time. Clicking any tab makes it active.
+Use size="1.18em" on every icon. The icons are AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Mail } from '@/components/icons/mail'\`), Line style, Regular weight. Install each icon with npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json. Store the active label in React state and initialize it to "Inbox". Exactly one tab is active at a time. Clicking any tab makes it active.
 
 Define one shared motion transition exactly as { type: 'spring', stiffness: 420, damping: 30, mass: 0.7 } and use it throughout. The active tab is an expanded rounded pill containing its icon and title-case label. Inactive tabs are 40px circles containing only their icons. Each motion.button uses layout and the shared spring so its width morphs smoothly. Inactive buttons use whileHover={{ scale: 1.045 }} and all buttons use whileTap={{ scale: 0.94 }}.
 

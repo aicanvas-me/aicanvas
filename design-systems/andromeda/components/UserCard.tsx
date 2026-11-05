@@ -3,7 +3,7 @@
 import { forwardRef, useState } from 'react';
 import type { ComponentProps, ComponentPropsWithoutRef, RefObject } from 'react';
 import { motion } from 'framer-motion';
-import { CaretUpDown } from '@phosphor-icons/react';
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down';
 import { tokens } from '../tokens';
 import { Avatar } from './Avatar';
 import { andromedaVars, easingArray, themeColor } from './lib/utils';
@@ -150,7 +150,7 @@ export const UserCard = forwardRef<HTMLDivElement, UserCardProps>(function UserC
             transition: `color var(--andromeda-duration-fast, ${tokens.motion.duration.fast}) var(--andromeda-easing-standard, ${tokens.motion.easing.standard})`,
           }}
         >
-          <CaretUpDown size={14} weight="regular" />
+          <ChevronsUpDown size={14} />
         </motion.span>
       </button>
 

@@ -41,7 +41,7 @@ export function StylePicker({
               <IconSvg
                 markup={markup}
                 size={20}
-                strokeWidth={2}
+                weight="regular"
                 className={`shrink-0 ${loading && selected ? 'animate-pulse motion-reduce:animate-none' : ''}`}
               />
             )}

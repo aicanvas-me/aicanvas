@@ -23,6 +23,6 @@
 
 **Tech notes:**
 - Notification-style tinted icon badges on toolbar buttons
-- Phosphor icons: PaperPlaneRight, ImageSquare, Sparkle (or similar for modes)
+- AI Canvas icons: Send, ImageSquare, Sparkle (or similar for modes)
 - Spring animations throughout, reduced-motion support
 - All glass family patterns: blur layer z-[-1] with isolate, top highlight, panel styles

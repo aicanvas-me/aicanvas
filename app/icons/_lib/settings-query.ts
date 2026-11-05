@@ -1,4 +1,4 @@
-import { ICON_STYLES } from './icon-utils'
+import { ICON_STYLES, ICON_WEIGHTS, type IconWeight } from './icon-utils'
 import type { IconStyle } from './types'
 
 // The look of an icon as a query string, so the overview's choices carry into
@@ -7,8 +7,7 @@ import type { IconStyle } from './types'
 export type IconSettings = {
   style: IconStyle
   size: number
-  strokeWidth: number
-  absolute: boolean
+  weight: IconWeight
   /** The picked colour, or null for the theme's own ink. */
   colour: string | null
 }
@@ -17,9 +16,6 @@ export type IconSettings = {
 const SIZE_MIN = 16
 const SIZE_MAX = 96
 const SIZE_STEP = 4
-const STROKE_MIN = 1
-const STROKE_MAX = 3
-const STROKE_STEP = 0.25
 // The one form the colour picker hands out: six uppercase hex digits.
 const COLOUR = /^#[0-9A-F]{6}$/
 
@@ -37,8 +33,7 @@ export function toIconQuery(settings: IconSettings, defaults: IconSettings): str
   const params = new URLSearchParams()
   if (settings.style !== defaults.style) params.set('style', settings.style)
   if (settings.size !== defaults.size) params.set('size', String(Math.round(settings.size)))
-  if (settings.strokeWidth !== defaults.strokeWidth) params.set('stroke', String(Number(settings.strokeWidth.toFixed(2))))
-  if (settings.absolute !== defaults.absolute) params.set('abs', settings.absolute ? '1' : '0')
+  if (settings.weight !== defaults.weight) params.set('weight', settings.weight)
   if (settings.colour !== defaults.colour && settings.colour !== null) params.set('colour', settings.colour)
   const query = params.toString()
   return query ? `?${query}` : ''
@@ -55,11 +50,8 @@ export function fromIconQuery(search: string): Partial<IconSettings> {
   const size = toNumber(params.get('size'))
   if (size !== null) settings.size = snap(size, SIZE_MIN, SIZE_MAX, SIZE_STEP)
 
-  const stroke = toNumber(params.get('stroke'))
-  if (stroke !== null) settings.strokeWidth = snap(stroke, STROKE_MIN, STROKE_MAX, STROKE_STEP)
-
-  const abs = params.get('abs')
-  if (abs === '0' || abs === '1') settings.absolute = abs === '1'
+  const weight = ICON_WEIGHTS.find((candidate) => candidate.id === params.get('weight'))
+  if (weight) settings.weight = weight.id
 
   const colour = params.get('colour')
   if (colour !== null && COLOUR.test(colour)) settings.colour = colour

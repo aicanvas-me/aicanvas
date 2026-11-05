@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and @phosphor-icons/react.
+  'Claude Code': `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and AI Canvas icons (\`pause\`, \`play\`, \`rotate-ccw\`, \`x\`, \`maximize\`, \`minimize\`; \`@/components/icons/<name>\`, e.g. \`import { Pause } from '@/components/icons/pause'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Environment
 Verify Tailwind CSS v4, TypeScript, and React are set up. Use the shadcn CLI if missing.
@@ -39,8 +39,8 @@ All 36px circles (\`size-9\`), bg \`#ededea\`, icon \`#6c6c6c\`. Spring hover sc
 
 Order from left to right:
 1. **Pause/Play toggle**: Pause icon while uploading; Play icon while paused. AnimatePresence mode="wait" icon swap. Hidden in complete state.
-2. **Refresh** (\`ArrowCounterClockwise\`): Resets all progress to 0 and resumes. Hidden in complete state.
-3. **Expand/Collapse** (\`ArrowsOutSimple\` / \`ArrowsInSimple\`): Always visible (including in complete state).
+2. **Refresh** (\`rotate-ccw\`): Resets all progress to 0 and resumes. Hidden in complete state.
+3. **Expand/Collapse** (\`maximize\` / \`minimize\`): Always visible (including in complete state).
 4. **Stop / Close** (\`X\`): Resets to idle. Hidden in complete state.
 
 Structure: wrap buttons 1+2 in one AnimatePresence (hidden when complete), button 3 always rendered standalone, wrap button 4 in its own AnimatePresence (hidden when complete). This keeps the close button last and to the right of expand/collapse.
@@ -53,7 +53,7 @@ Inline \`useDarkMode(ref)\` hook: check \`[data-card-theme]\` ancestor first, fa
 
 Single file. \`'use client'\` at top. \`export default function UploadProgress()\`.`,
 
-  Lovable: `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and @phosphor-icons/react.
+  Lovable: `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and AI Canvas icons (\`pause\`, \`play\`, \`rotate-ccw\`, \`x\`, \`maximize\`, \`minimize\`; \`@/components/icons/<name>\`, e.g. \`import { Pause } from '@/components/icons/pause'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Component: UploadProgress
 
@@ -77,8 +77,8 @@ Root: \`flex min-h-screen w-full items-center justify-center\`, bg \`#E8E8DF\` l
 
 ### 4 action buttons (36px circles) — order left to right
 1. **Pause/Play** — Pause icon when uploading → Play icon when paused. AnimatePresence swap. Hidden when complete.
-2. **Refresh** (ArrowCounterClockwise) — resets progress to 0 and resumes. Hidden when complete.
-3. **Expand/Collapse** (ArrowsOutSimple / ArrowsInSimple) — always visible.
+2. **Refresh** (rotate-ccw) — resets progress to 0 and resumes. Hidden when complete.
+3. **Expand/Collapse** (maximize / minimize) — always visible.
 4. **Stop / Close** (X) — resets to idle. Hidden when complete.
 
 Wrap 1+2 in one AnimatePresence, render 3 standalone, wrap 4 in its own AnimatePresence — so the X stays after Expand/Collapse.
@@ -91,7 +91,7 @@ Inline \`useDarkMode(ref)\` that checks \`[data-card-theme]\` ancestor then \`do
 
 Single file. \`'use client'\`. \`export default function UploadProgress()\`.`,
 
-  V0: `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and @phosphor-icons/react.
+  V0: `Build a self-contained animated file upload progress widget in a single React file using Framer Motion and AI Canvas icons (\`pause\`, \`play\`, \`rotate-ccw\`, \`x\`, \`maximize\`, \`minimize\`; \`@/components/icons/<name>\`, e.g. \`import { Pause } from '@/components/icons/pause'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
 
 ## Component: UploadProgress
 
@@ -115,8 +115,8 @@ Root: \`flex min-h-screen w-full items-center justify-center\`, bg \`#E8E8DF\` l
 
 ### 4 action buttons (36px circles) — order left to right
 1. **Pause/Play** — Pause icon when uploading → Play icon when paused. AnimatePresence swap. Hidden when complete.
-2. **Refresh** (ArrowCounterClockwise) — resets progress to 0 and resumes. Hidden when complete.
-3. **Expand/Collapse** (ArrowsOutSimple / ArrowsInSimple) — always visible.
+2. **Refresh** (rotate-ccw) — resets progress to 0 and resumes. Hidden when complete.
+3. **Expand/Collapse** (maximize / minimize) — always visible.
 4. **Stop / Close** (X) — resets to idle. Hidden when complete.
 
 Wrap 1+2 in one AnimatePresence, render 3 standalone, wrap 4 in its own AnimatePresence — so the X stays after Expand/Collapse.

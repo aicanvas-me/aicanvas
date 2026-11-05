@@ -14,7 +14,8 @@
 
 'use client';
 
-import { Play, Heart } from '@phosphor-icons/react';
+import { Play } from '@/app/_icons/icons/play';
+import { Heart } from '@/app/_icons/icons/heart';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';

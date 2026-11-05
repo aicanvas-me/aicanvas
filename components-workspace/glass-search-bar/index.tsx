@@ -1,20 +1,18 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import {
-  MagnifyingGlass,
-  X,
-  MusicNote,
-  File,
-  Lightning,
-} from '@phosphor-icons/react'
+import { Search } from '@/app/_icons/icons/search'
+import { X } from '@/app/_icons/icons/x'
+import { Music } from '@/app/_icons/icons/music'
+import { File } from '@/app/_icons/icons/file'
+import { Bolt } from '@/app/_icons/icons/bolt'
 
 
 interface Suggestion {
-  icon: typeof MusicNote
+  icon: typeof Music
   label: string
   color: string
 }
@@ -25,9 +23,9 @@ const BACKGROUND =
 
 // 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const SUGGESTIONS: Suggestion[] = [
-  { icon: MusicNote, label: 'Audio visualizers',   color: '#FF5C8A' },
+  { icon: Music, label: 'Audio visualizers',   color: '#FF5C8A' },
   { icon: File,      label: 'Documentation files', color: '#3A86FF' },
-  { icon: Lightning, label: 'Quick actions',       color: '#06D6A0' },
+  { icon: Bolt, label: 'Quick actions',       color: '#06D6A0' },
 ]
 
 const BAR_HEIGHT = 48
@@ -108,7 +106,7 @@ function SuggestionRow({
             border: `1px solid ${suggestion.color}22`,
           }}
         >
-          <Icon size={16} weight="regular" style={{ color: suggestion.color }} />
+          <Icon size={16} style={{ color: suggestion.color }} />
         </div>
 
         <span
@@ -259,9 +257,8 @@ export default function GlassSearchBar() {
               minHeight: MIN_TOUCH_TARGET,
             }}
           >
-            <MagnifyingGlass
+            <Search
               size={20}
-              weight="regular"
               className="text-white/50"
             />
           </div>
@@ -310,7 +307,7 @@ export default function GlassSearchBar() {
                 whileTap={{ scale: 0.88 }}
                 aria-label="Clear search"
               >
-                <X size={10} weight="regular" className="text-white/60" />
+                <X size={10} className="text-white/60" />
               </motion.button>
             )}
           </AnimatePresence>

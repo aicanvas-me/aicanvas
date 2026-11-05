@@ -7,7 +7,7 @@
 - Same pill track + sliding thumb layout as pill-toggle
 - Off: warm sand/clay track, thumb shows a small X icon
 - On: rich earthy olive/moss track, thumb shows a ✓ icon
-- White thumb circle with Phosphor icon centered inside
+- White thumb circle with icon centered inside
 - All tones are warm and earthy — no cool greys
 
 ## Colour palette
@@ -25,6 +25,6 @@
 
 ## Tech notes
 - Framer Motion: useMotionValue, useTransform, animate(), AnimatePresence
-- Phosphor icons: X and Check (weight="bold" for legibility at small sizes)
+- Icons: X and Check (Bold weight for legibility at small sizes)
 - Icon size ≈ 50% of thumb diameter
 - Follow pill-toggle patterns exactly for resize, theme detection, and spring config

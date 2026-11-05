@@ -25,7 +25,7 @@ import { Monitor } from '@/app/_icons/icons/monitor'
 import { RocketLaunch } from '@/app/_icons/icons/rocket-launch'
 import { LogIn } from '@/app/_icons/icons/log-in'
 import { UserPlus } from '@/app/_icons/icons/user-plus'
-import { Wallet } from '@/app/_icons/icons/wallet'
+import { CircleDollarSign } from '@/app/_icons/icons/circle-dollar-sign'
 import { Wrench } from '@/app/_icons/icons/wrench'
 import { type SiteIcon as Icon } from '@/app/_icons'
 import { useMedia } from './useMedia'
@@ -50,7 +50,7 @@ const DEVICES: Record<Device, { w: number; h: number; label: string; icon: Icon 
 const ICONS: Record<string, Icon> = {
   'ai-chat': MessageCircleDots,
   'city-operations': Buildings,
-  'fintech-landing': Wallet,
+  'fintech-landing': CircleDollarSign,
   'mission-control': RocketLaunch,
   'resource-planning': Kanban,
   'service-order': Wrench,

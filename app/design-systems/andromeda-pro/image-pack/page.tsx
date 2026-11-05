@@ -2,7 +2,7 @@
 // download, plus the two Pro files that explain how the set stays consistent.
 // Site chrome (sand/accent, Manrope) like the components index: no Andromeda
 // component renders here.
-import { DownloadSimple } from '@phosphor-icons/react/dist/ssr'
+import { Download } from '@/app/_icons/icons/download'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import {
@@ -68,7 +68,7 @@ export default function ImagePackPage() {
               download
               className={buttonClasses({ variant: 'primary', size: 'lg' })}
             >
-              <DownloadSimple weight="regular" size={16} />
+              <Download size={16} />
               Download all {imageCount} images
             </a>
             <span className="text-xs font-semibold text-sand-600 dark:text-sand-400">
@@ -174,7 +174,7 @@ function ImageVersion({ concept, mode }: { concept: ImagePackConcept; mode: Imag
           aria-label={`Download ${concept.title}, ${mode} version, PNG`}
           className={buttonClasses({ variant: 'link', size: 'xs' })}
         >
-          <DownloadSimple weight="regular" size={14} />
+          <Download size={14} />
           PNG · {formatMegabytes(concept.bytes[mode])}
         </a>
       </figcaption>

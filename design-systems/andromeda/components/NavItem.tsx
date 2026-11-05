@@ -6,7 +6,8 @@ import { Slot } from '@radix-ui/react-slot';
 import { motion } from 'framer-motion';
 import type { Transition } from 'framer-motion';
 import { cva } from 'class-variance-authority';
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { cn, andromedaVars, easingArray } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
@@ -77,7 +78,7 @@ const navItemVariants = cva(
 
 /**
  * @typedef {object} NavItemProps
- * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon]
+ * @property {React.ComponentType<IconProps>} [icon]
  *   Optional icon component rendered at 20px before the label.
  * @property {React.ReactNode} label Visible content of the nav row.
  * @property {boolean} [active=false] Marks the row as the current selection, applying accent text and the indicator dot.
@@ -93,7 +94,7 @@ const navItemVariants = cva(
  */
 
 type NavItemOwnProps = {
-  icon?: PhosphorIcon;
+  icon?: ComponentType<IconProps>;
   label: ReactNode;
   active?: boolean;
   mono?: boolean;
@@ -152,7 +153,7 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavI
             }}
           />
         ) : null}
-        {Icon ? <Icon size={20} weight="regular" /> : null}
+        {Icon ? <Icon size={20} /> : null}
         <span>{label}</span>
       </Comp>
       <style>{TOUCH_TARGET_STYLE}</style>

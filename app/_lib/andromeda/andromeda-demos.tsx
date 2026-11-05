@@ -1,33 +1,31 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  ArrowClockwise,
-  Bell,
-  ChartBar,
-  ChartLine,
-  Clock,
-  Compass,
-  Copy,
-  Database,
-  EnvelopeOpen,
-  Envelope,
-  Export,
-  EyeSlash,
-  Gear,
-  Info,
-  Keyboard,
-  MagnifyingGlass,
-  Pencil,
-  Pulse,
-  SignOut,
-  Sliders,
-  Star,
-  Trash,
-  UserCircle,
-  Users,
-  Warning,
-} from '@phosphor-icons/react'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw';
+import { Bell } from '@/app/_icons/icons/bell';
+import { ChartBar } from '@/app/_icons/icons/chart-bar';
+import { ChartLine } from '@/app/_icons/icons/chart-line';
+import { ClockIcon } from '@/app/_icons/icons/clock';
+import { Compass } from '@/app/_icons/icons/compass';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { Database } from '@/app/_icons/icons/database';
+import { MailOpen } from '@/app/_icons/icons/mail-open';
+import { Mail } from '@/app/_icons/icons/mail';
+import { ShareIcon } from '@/app/_icons/icons/share';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
+import { Gear } from '@/app/_icons/icons/gear';
+import { InfoIcon } from '@/app/_icons/icons/info';
+import { KeyboardIcon } from '@/app/_icons/icons/keyboard';
+import { Search } from '@/app/_icons/icons/search';
+import { Pen } from '@/app/_icons/icons/pen';
+import { Activity } from '@/app/_icons/icons/activity';
+import { LogOut } from '@/app/_icons/icons/log-out';
+import { SlidersVertical } from '@/app/_icons/icons/sliders-vertical';
+import { Star } from '@/app/_icons/icons/star';
+import { Trash } from '@/app/_icons/icons/trash';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
+import { Users } from '@/app/_icons/icons/users';
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
 
 import { tokens } from '../../../design-systems/andromeda/tokens'
 import { themeColor } from '../../../design-systems/andromeda/components/lib/utils'
@@ -120,7 +118,7 @@ function IconButtonDemo() {
       <Row label="Variants">
         <IconButton variant="default" aria-label="Notifications" icon={Bell} />
         <IconButton variant="outline" aria-label="Settings" icon={Gear} />
-        <IconButton variant="ghost" aria-label="Refresh" icon={ArrowClockwise} />
+        <IconButton variant="ghost" aria-label="Refresh" icon={RotateCw} />
         <IconButton variant="destructive" aria-label="Delete" icon={Trash} />
       </Row>
       <Row label="Sizes">
@@ -313,8 +311,8 @@ function InputDemo() {
       }}
     >
       <Input label="Callsign" placeholder="ENTER CALLSIGN" />
-      <Input label="Search" icon={MagnifyingGlass} placeholder="QUERY DATABASE" />
-      <Input label="Email" icon={Envelope} placeholder="OPERATOR@DOMAIN.COM" />
+      <Input label="Search" icon={Search} placeholder="QUERY DATABASE" />
+      <Input label="Email" icon={Mail} placeholder="OPERATOR@DOMAIN.COM" />
       <Input label="Validation" defaultValue="INVALID" error="Field cannot be empty" />
     </div>
   )
@@ -350,7 +348,7 @@ function NavItemDemo() {
     >
       <CornerMarkers />
       <NavItem icon={Compass} label="Overview" active />
-      <NavItem icon={Pulse} label="Activity" />
+      <NavItem icon={Activity} label="Activity" />
       <NavItem icon={Users} label="Members" />
       <NavItem icon={Database} label="Logs" />
       <NavItem icon={Gear} label="Settings" />
@@ -609,7 +607,7 @@ function TooltipDemo() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[8] }}>
       <Row label="Position · top (default)">
         <Tooltip label="Refresh">
-          <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+          <IconButton aria-label="Refresh" icon={RotateCw} />
         </Tooltip>
         <Tooltip label="Settings">
           <IconButton aria-label="Settings" icon={Gear} />
@@ -620,7 +618,7 @@ function TooltipDemo() {
       </Row>
       <Row label="Position · bottom">
         <Tooltip label="Refresh" position="bottom">
-          <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+          <IconButton aria-label="Refresh" icon={RotateCw} />
         </Tooltip>
         <Tooltip label="Settings" position="bottom">
           <IconButton aria-label="Settings" icon={Gear} />
@@ -692,28 +690,28 @@ function AlertDemo() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[3], width: '100%', maxWidth: 640 }}>
       <Alert variant="default">
-        <AlertIcon><Info weight="light" /></AlertIcon>
+        <AlertIcon><InfoIcon size="1em" /></AlertIcon>
         <AlertContent>
           <AlertTitle>System nominal</AlertTitle>
           <AlertDescription>All systems reporting in.</AlertDescription>
         </AlertContent>
       </Alert>
       <Alert variant="accent">
-        <AlertIcon><Pulse weight="light" /></AlertIcon>
+        <AlertIcon><Activity size="1em" /></AlertIcon>
         <AlertContent>
           <AlertTitle>New activity</AlertTitle>
           <AlertDescription>Burst received from VHCL-04.</AlertDescription>
         </AlertContent>
       </Alert>
       <Alert variant="warning">
-        <AlertIcon><Warning weight="light" /></AlertIcon>
+        <AlertIcon><TriangleAlert size="1em" /></AlertIcon>
         <AlertContent>
           <AlertTitle>Caution</AlertTitle>
           <AlertDescription>Heat shield within 12% of operational limit.</AlertDescription>
         </AlertContent>
       </Alert>
       <Alert variant="fault">
-        <AlertIcon><Warning weight="light" /></AlertIcon>
+        <AlertIcon><TriangleAlert size="1em" /></AlertIcon>
         <AlertContent>
           <AlertTitle>Connection lost</AlertTitle>
           <AlertDescription>Reconnecting. ETA 8 seconds.</AlertDescription>
@@ -726,7 +724,7 @@ function AlertDemo() {
 function EmptyStateDemo() {
   return (
     <EmptyState>
-      <EmptyStateIcon><EnvelopeOpen weight="light" /></EmptyStateIcon>
+      <EmptyStateIcon><MailOpen size="1em" /></EmptyStateIcon>
       <EmptyStateTitle>No activity</EmptyStateTitle>
       <EmptyStateDescription>
         Awaiting signal from the deep-space array. The next pass is in
@@ -827,10 +825,10 @@ function PanelHeaderDemo() {
               <PanelMenu
                 ariaLabel="Requests options"
                 items={[
-                  { label: 'Refresh', icon: ArrowClockwise, onSelect: () => {} },
-                  { label: 'Export',  icon: Export,         onSelect: () => {} },
+                  { label: 'Refresh', icon: RotateCw, onSelect: () => {} },
+                  { label: 'Export',  icon: ShareIcon,         onSelect: () => {} },
                   { type: 'separator' },
-                  { label: 'Hide',    icon: EyeSlash,       onSelect: () => {} },
+                  { label: 'Hide',    icon: EyeOff,       onSelect: () => {} },
                 ]}
               />
             }
@@ -850,11 +848,11 @@ function PanelMenuDemo() {
             align="left"
             staticOpen
             items={[
-              { label: 'Refresh',   icon: ArrowClockwise, onSelect: () => {} },
-              { label: 'Configure', icon: Sliders,        onSelect: () => {} },
-              { label: 'Export',    icon: Export,         onSelect: () => {} },
+              { label: 'Refresh',   icon: RotateCw, onSelect: () => {} },
+              { label: 'Configure', icon: SlidersVertical,        onSelect: () => {} },
+              { label: 'Export',    icon: ShareIcon,         onSelect: () => {} },
               { type: 'separator' },
-              { label: 'Hide',      icon: EyeSlash,       onSelect: () => {} },
+              { label: 'Hide',      icon: EyeOff,       onSelect: () => {} },
             ]}
           />
         </Row>
@@ -865,15 +863,15 @@ function PanelMenuDemo() {
             align="left"
             staticOpen
             items={[
-              { label: 'Edit', icon: Pencil, onSelect: () => {} },
-              { label: 'Copy', icon: Copy,   onSelect: () => {} },
+              { label: 'Edit', icon: Pen, onSelect: () => {} },
+              { label: 'Copy', icon: CopyIcon,   onSelect: () => {} },
               {
                 label: 'Move to',
                 icon: Database,
                 submenu: [
                   { label: 'Starred', icon: Star,     onSelect: () => {} },
                   { label: 'Archive', icon: Database, onSelect: () => {} },
-                  { label: 'Snoozed', icon: Clock,    onSelect: () => {} },
+                  { label: 'Snoozed', icon: ClockIcon,    onSelect: () => {} },
                 ],
               },
               { type: 'separator' },
@@ -945,11 +943,11 @@ function DrawerDemo() {
 }
 
 const USER_MENU_ITEMS = [
-  { id: 'profile',     label: 'Profile',             icon: UserCircle },
+  { id: 'profile',     label: 'Profile',             icon: CircleUser },
   { id: 'preferences', label: 'Preferences',         icon: Gear },
-  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
+  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: KeyboardIcon },
   { id: 'sep1',        type: 'separator' as const },
-  { id: 'signout',     label: 'Sign Out',            icon: SignOut },
+  { id: 'signout',     label: 'Sign Out',            icon: LogOut },
 ]
 
 const USER_AVATAR_SRC =

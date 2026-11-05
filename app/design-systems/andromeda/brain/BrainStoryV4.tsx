@@ -21,7 +21,12 @@ import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import { Rotate3d } from 'lucide-react'
-import { ArrowRight, Fire, Target, Gauge, Check, X as XIcon } from '@phosphor-icons/react'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right';
+import { Fire } from '@/app/_icons/icons/fire';
+import { Target } from '@/app/_icons/icons/target';
+import { Gauge } from '@/app/_icons/icons/gauge';
+import { Check } from '@/app/_icons/icons/check';
+import { X as XIcon } from '@/app/_icons/icons/x';
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
 import { SystemTierChip } from '@/app/_components/SystemTierChip'
@@ -122,9 +127,9 @@ const GLOSS: Record<string, string> = {
 // diagram above already names the outcomes, and when these read as outcomes too
 // the page made the same three promises twice within a screen of each other.
 const BENEFITS = [
-  { label: 'Faster', icon: <Gauge weight="regular" size={18} />, body: 'It starts from decisions that are already written down, instead of trying options until one looks right.' },
-  { label: 'Accurate', icon: <Target weight="regular" size={18} />, body: 'It reaches for the components that already exist before it invents anything new.' },
-  { label: 'Efficient', icon: <Fire weight="regular" size={18} />, body: 'No tokens burned exploring ground the system already settled.' },
+  { label: 'Faster', icon: <Gauge size={18} />, body: 'It starts from decisions that are already written down, instead of trying options until one looks right.' },
+  { label: 'Accurate', icon: <Target size={18} />, body: 'It reaches for the components that already exist before it invents anything new.' },
+  { label: 'Efficient', icon: <Fire size={18} />, body: 'No tokens burned exploring ground the system already settled.' },
 ]
 
 // Classic workflow pains (left) vs what an AI-native system delivers (right).
@@ -1021,11 +1026,11 @@ export function BrainStoryV4() {
             {COMPARE.map((row, i) => (
               <div key={i} className="cmp-grid">
                 <div className="cmp-cell cmp-left" style={{ borderRight: `1px solid ${C.line}`, borderTop: i === 0 ? 'none' : `1px solid ${C.line}` }}>
-                  <XIcon weight="regular" size={15} color={C.muted} style={{ flexShrink: 0, marginTop: 2 }} />
+                  <XIcon size={15} color={C.muted} style={{ flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 14, color: C.node, lineHeight: 1.5 }}>{row.classic}</span>
                 </div>
                 <div className="cmp-cell" style={{ borderTop: i === 0 ? 'none' : `1px solid ${C.line}`, background: 'color-mix(in srgb, var(--color-accent) 5%, transparent)' }}>
-                  <Check weight="regular" size={15} color={C.accentBtn} style={{ flexShrink: 0, marginTop: 2 }} />
+                  <Check size={15} color={C.accentBtn} style={{ flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 14, color: C.bright, lineHeight: 1.5 }}>{row.native}</span>
                 </div>
               </div>
@@ -1102,7 +1107,7 @@ export function BrainStoryV4() {
             <div className="relative mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link href={ctaHref} className={buttonClasses({ variant: 'primary', size: 'lg' })}>
                 {ctaLabel}
-                <ArrowRight weight="regular" size={14} />
+                <ArrowRight size={14} />
               </Link>
               <Link href="/design-systems/andromeda" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
                 Explore Andromeda

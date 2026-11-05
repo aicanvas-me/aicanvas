@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -39,7 +39,7 @@ Pill: \`relative isolate overflow-hidden rounded-2xl\` with glass:
 
 Content row: \`relative z-10 flex items-stretch justify-between p-2\`.
 
-Minus/Plus buttons: Phosphor \`Minus\`/\`Plus\` size 16 \`weight="regular"\`. 36px wide rounded-xl. Enabled: bg \`\${color}18\`, border \`\${color}22\`. Disabled (at min/max): bg \`\${color}0a\`, border \`\${color}0a\`, opacity 0.4, pointer-events none, icon color \`rgba(255,255,255,0.3)\`. \`whileHover { scale: 1.08 }\`, \`whileTap { scale: 0.88 }\`, spring \`{ stiffness: 300, damping: 20 }\` (skip when disabled or \`prefersReduced\`).
+Minus/Plus buttons: AI Canvas icons \`minus\`/\`plus\` (\`@/components/icons/minus\`, e.g. \`import { Minus } from '@/components/icons/minus'\`), Line style, Regular weight, size 16. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. 36px wide rounded-xl. Enabled: bg \`\${color}18\`, border \`\${color}22\`. Disabled (at min/max): bg \`\${color}0a\`, border \`\${color}0a\`, opacity 0.4, pointer-events none, icon color \`rgba(255,255,255,0.3)\`. \`whileHover { scale: 1.08 }\`, \`whileTap { scale: 0.88 }\`, spring \`{ stiffness: 300, damping: 20 }\` (skip when disabled or \`prefersReduced\`).
 
 Number display: width 36, \`flex items-center justify-center overflow-hidden\`. Use \`AnimatePresence mode="popLayout" initial={false}\` with \`key={value}\` and a \`directionRef\` (1 for increment, -1 for decrement). Enter \`{ opacity: 0, y: direction * 24, scale: 0.5 }\`, animate \`{ opacity: 1, y: 0, scale: 1 }\`, exit \`{ opacity: 0, y: direction * -24, scale: 1.4 }\`, spring \`{ stiffness: 260, damping: 18 }\`. Text is \`text-base font-bold tabular-nums\` with a gradient clipped to text: \`linear-gradient(135deg, \${gradient})\`, \`WebkitBackgroundClip: 'text'\`, \`WebkitTextFillColor: 'transparent'\`.
 
@@ -75,7 +75,7 @@ Pill: \`relative isolate overflow-hidden rounded-2xl\` with glass —
 
 Content row: \`relative z-10 flex items-stretch justify-between p-2\`.
 
-Minus/Plus buttons: Phosphor \`Minus\`/\`Plus\` size 16 \`weight="regular"\`. 36px wide rounded-xl. Enabled: bg \`\${color}18\`, border \`\${color}22\`. Disabled (at min/max): bg \`\${color}0a\`, border \`\${color}0a\`, opacity 0.4, pointer-events none, icon color \`rgba(255,255,255,0.3)\`. \`whileHover { scale: 1.08 }\`, \`whileTap { scale: 0.88 }\`, spring \`{ stiffness: 300, damping: 20 }\` (skip when disabled or \`prefersReduced\`).
+Minus/Plus buttons: AI Canvas icons \`minus\`/\`plus\` (\`@/components/icons/minus\`, e.g. \`import { Minus } from '@/components/icons/minus'\`), Line style, Regular weight, size 16. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. 36px wide rounded-xl. Enabled: bg \`\${color}18\`, border \`\${color}22\`. Disabled (at min/max): bg \`\${color}0a\`, border \`\${color}0a\`, opacity 0.4, pointer-events none, icon color \`rgba(255,255,255,0.3)\`. \`whileHover { scale: 1.08 }\`, \`whileTap { scale: 0.88 }\`, spring \`{ stiffness: 300, damping: 20 }\` (skip when disabled or \`prefersReduced\`).
 
 Number display: width 36, \`flex items-center justify-center overflow-hidden\`. Use \`AnimatePresence mode="popLayout" initial={false}\` with \`key={value}\` and a \`directionRef\` (1 for increment, -1 for decrement). Enter \`{ opacity: 0, y: direction * 24, scale: 0.5 }\`, animate \`{ opacity: 1, y: 0, scale: 1 }\`, exit \`{ opacity: 0, y: direction * -24, scale: 1.4 }\`, spring \`{ stiffness: 260, damping: 18 }\`. Text is \`text-base font-bold tabular-nums\` with a gradient clipped to text: \`linear-gradient(135deg, \${gradient})\`, \`WebkitBackgroundClip: 'text'\`, \`WebkitTextFillColor: 'transparent'\`.
 
@@ -111,7 +111,7 @@ Pill: \`relative isolate overflow-hidden rounded-2xl\` with glass —
 
 Content row: \`relative z-10 flex items-stretch justify-between p-2\`.
 
-Minus/Plus buttons: Phosphor \`Minus\`/\`Plus\` size 16 \`weight="regular"\`. 36px wide rounded-xl. Enabled: bg \`\${color}18\`, border \`\${color}22\`. Disabled (at min/max): bg \`\${color}0a\`, border \`\${color}0a\`, opacity 0.4, pointer-events none, icon color \`rgba(255,255,255,0.3)\`. \`whileHover { scale: 1.08 }\`, \`whileTap { scale: 0.88 }\`, spring \`{ stiffness: 300, damping: 20 }\` (skip when disabled or \`prefersReduced\`).
+Minus/Plus buttons: AI Canvas icons \`minus\`/\`plus\` (\`@/components/icons/minus\`, e.g. \`import { Minus } from '@/components/icons/minus'\`), Line style, Regular weight, size 16. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. 36px wide rounded-xl. Enabled: bg \`\${color}18\`, border \`\${color}22\`. Disabled (at min/max): bg \`\${color}0a\`, border \`\${color}0a\`, opacity 0.4, pointer-events none, icon color \`rgba(255,255,255,0.3)\`. \`whileHover { scale: 1.08 }\`, \`whileTap { scale: 0.88 }\`, spring \`{ stiffness: 300, damping: 20 }\` (skip when disabled or \`prefersReduced\`).
 
 Number display: width 36, \`flex items-center justify-center overflow-hidden\`. Use \`AnimatePresence mode="popLayout" initial={false}\` with \`key={value}\` and a \`directionRef\` (1 for increment, -1 for decrement). Enter \`{ opacity: 0, y: direction * 24, scale: 0.5 }\`, animate \`{ opacity: 1, y: 0, scale: 1 }\`, exit \`{ opacity: 0, y: direction * -24, scale: 1.4 }\`, spring \`{ stiffness: 260, damping: 18 }\`. Text is \`text-base font-bold tabular-nums\` with a gradient clipped to text: \`linear-gradient(135deg, \${gradient})\`, \`WebkitBackgroundClip: 'text'\`, \`WebkitTextFillColor: 'transparent'\`.
 

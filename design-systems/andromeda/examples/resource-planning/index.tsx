@@ -26,14 +26,12 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Download,
-  Gear,
-  Keyboard,
-  SignOut,
-  Sliders,
-  UserCircle,
-} from '@phosphor-icons/react';
+import { Gear } from '@/app/_icons/icons/gear';
+import { KeyboardIcon } from '@/app/_icons/icons/keyboard';
+import { LogOut } from '@/app/_icons/icons/log-out';
+import { SlidersVertical } from '@/app/_icons/icons/sliders-vertical';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
+import { Download } from '@/app/_icons/icons/download';
 import { motion, LayoutGroup } from 'framer-motion';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
@@ -72,11 +70,11 @@ function HoverStyles() {
 
 // ─── User menu items (shared shape with mission-control / service-order) ─
 const userMenuItems: UserMenuItem[] = [
-  { id: 'profile',     label: 'Profile',             icon: UserCircle },
+  { id: 'profile',     label: 'Profile',             icon: CircleUser },
   { id: 'preferences', label: 'Preferences',         icon: Gear },
-  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
+  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: KeyboardIcon },
   { id: 'sep1',        type: 'separator' },
-  { id: 'signout',     label: 'Sign Out',            icon: SignOut },
+  { id: 'signout',     label: 'Sign Out',            icon: LogOut },
 ];
 
 // ─── Inline horizontal nav (desktop TopBar) ──────────────────────────────
@@ -309,7 +307,7 @@ function StatusBar() {
           letterSpacing: tokens.typography.tracking.wider,
         }}
       >
-        <Sliders weight="regular" size={14} />
+        <SlidersVertical size={14} />
         Manage layout
       </button>
     </div>

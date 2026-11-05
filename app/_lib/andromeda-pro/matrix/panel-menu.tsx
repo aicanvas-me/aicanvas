@@ -1,29 +1,38 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
-import { ArrowClockwise, Copy, Database, Export, EyeSlash, Pencil, Sliders, Star, Clock, Trash } from '@phosphor-icons/react'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { Database } from '@/app/_icons/icons/database';
+import { ShareIcon } from '@/app/_icons/icons/share';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
+import { Pen } from '@/app/_icons/icons/pen';
+import { SlidersVertical } from '@/app/_icons/icons/sliders-vertical';
+import { Star } from '@/app/_icons/icons/star';
+import { ClockIcon } from '@/app/_icons/icons/clock';
+import { Trash } from '@/app/_icons/icons/trash';
 import { PanelMenu } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 const noop = () => {}
 
 const ITEMS = [
-  { label: 'Refresh', icon: ArrowClockwise, onSelect: noop },
-  { label: 'Configure', icon: Sliders, onSelect: noop },
-  { label: 'Export', icon: Export, onSelect: noop },
+  { label: 'Refresh', icon: RotateCw, onSelect: noop },
+  { label: 'Configure', icon: SlidersVertical, onSelect: noop },
+  { label: 'Export', icon: ShareIcon, onSelect: noop },
   { type: 'separator' },
-  { label: 'Hide', icon: EyeSlash, onSelect: noop },
+  { label: 'Hide', icon: EyeOff, onSelect: noop },
 ]
 
 const SUBMENU_ITEMS = [
-  { label: 'Edit', icon: Pencil, onSelect: noop },
-  { label: 'Copy', icon: Copy, onSelect: noop },
+  { label: 'Edit', icon: Pen, onSelect: noop },
+  { label: 'Copy', icon: CopyIcon, onSelect: noop },
   {
     label: 'Move to',
     icon: Database,
     submenu: [
       { label: 'Starred', icon: Star, onSelect: noop },
       { label: 'Archive', icon: Database, onSelect: noop },
-      { label: 'Snoozed', icon: Clock, onSelect: noop },
+      { label: 'Snoozed', icon: ClockIcon, onSelect: noop },
     ],
   },
   { type: 'separator' },

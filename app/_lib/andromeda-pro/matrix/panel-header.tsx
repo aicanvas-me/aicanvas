@@ -1,6 +1,6 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
-import { CornersOut } from '@phosphor-icons/react'
+import { Fullscreen } from '@/app/_icons/icons/fullscreen';
 import { PanelHeader } from '../../../lib/andromeda-pro.generated'
 import { IconButton } from '../../../lib/andromeda-pro.generated'
 import { CornerMarkers } from '../../../lib/andromeda-pro.generated'
@@ -39,7 +39,7 @@ export const panelHeader: MatrixSpec = {
       label: 'With actions',
       // The actions control matches the header rung by name, which is the
       // pairing the component's own JSDoc prescribes.
-      props: { actions: <IconButton size="md" variant="ghost" aria-label="Expand" icon={CornersOut} /> },
+      props: { actions: <IconButton size="md" variant="ghost" aria-label="Expand" icon={Fullscreen} /> },
     },
   ],
   // The header itself is chrome; any interaction belongs to whatever control

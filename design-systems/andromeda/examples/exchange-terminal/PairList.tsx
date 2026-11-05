@@ -4,7 +4,8 @@
 
 'use client';
 
-import { Star, MagnifyingGlass } from '@phosphor-icons/react';
+import { Star } from '@/app/_icons/icons/star';
+import { Search } from '@/app/_icons/icons/search';
 import { motion } from 'framer-motion';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
@@ -77,7 +78,7 @@ function TabButton({ label, active, hasMenu, leadingStar }: { label: string; act
       }}
     >
       {leadingStar ? (
-        <Star weight="regular" size={13} style={{ color: themeColor.text.faint }} />
+        <Star size={13} style={{ color: themeColor.text.faint }} />
       ) : null}
       {label}
       {hasMenu ? <span style={{ color: themeColor.text.faint }}>▾</span> : null}
@@ -117,7 +118,7 @@ function PairRow({ row }: { row: (typeof pairs)[number] }) {
       }}
     >
       <span style={{ display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[1] }}>
-        <Star weight="regular" size={11} style={{ color: themeColor.text.faint, flexShrink: 0 }} />
+        <Star size={11} style={{ color: themeColor.text.faint, flexShrink: 0 }} />
         <span style={{ color: themeColor.text.primary }}>{row.sym}</span>
         <span style={{ color: themeColor.text.faint }}>/BTC</span>
         {row.lev ? (
@@ -252,7 +253,7 @@ export function PairList() {
             border: `${tokens.border.thin} ${themeColor.border.base}`,
           }}
         >
-          <MagnifyingGlass weight="regular" size={13} style={{ color: themeColor.text.faint, flexShrink: 0 }} />
+          <Search size={13} style={{ color: themeColor.text.faint, flexShrink: 0 }} />
           <input
             type="text"
             placeholder="Search"

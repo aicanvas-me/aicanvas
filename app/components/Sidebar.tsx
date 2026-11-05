@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { GithubLogo, XLogo } from '@phosphor-icons/react'
+import { GithubLogo, XLogo } from './BrandLogos'
 import { GITHUB_URL, X_URL } from '../lib/config'
 import { buttonClasses } from './buttonClasses'
 import { CatalogNav } from './CatalogNav'
@@ -66,7 +66,7 @@ export function Sidebar() {
             aria-label="GitHub repository"
             className={buttonClasses({ variant: 'icon', size: 'md' })}
           >
-            <GithubLogo weight="regular" size={18} />
+            <GithubLogo size={16} />
           </a>
           <a
             href={X_URL}
@@ -75,7 +75,7 @@ export function Sidebar() {
             aria-label="X profile"
             className={buttonClasses({ variant: 'icon', size: 'md' })}
           >
-            <XLogo weight="regular" size={18} />
+            <XLogo size={15} />
           </a>
         </div>
       </div>

@@ -1,11 +1,17 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
-import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react'
+import { useRef, useState, useCallback, useEffect, useLayoutEffect, type ComponentType } from 'react'
 import { motion, MotionConfig, useMotionValue, useTransform } from 'framer-motion'
-import { PaintBrush, Megaphone, Code, ChartBar, CaretLeft, CaretRight, ArrowUpRight } from '@phosphor-icons/react'
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
+import type { IconProps } from '@/app/_icons/IconBase'
+import { Paintbrush } from '@/app/_icons/icons/paintbrush'
+import { Megaphone } from '@/app/_icons/icons/megaphone'
+import { Code } from '@/app/_icons/icons/code'
+import { ChartBar } from '@/app/_icons/icons/chart-bar'
+import { ChevronLeft } from '@/app/_icons/icons/chevron-left'
+import { ChevronRight } from '@/app/_icons/icons/chevron-right'
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right'
 
 
 
@@ -27,7 +33,7 @@ const TASKS: Array<{
   darkOnAccent?: boolean
   darkLabel?: string
   lightLabel?: string
-  icon: PhosphorIcon
+  icon: ComponentType<IconProps>
 }> = [
   {
     id: 0,
@@ -39,7 +45,7 @@ const TASKS: Array<{
     accentLight: '#2980A0',
     bg: '#0C1E27',
     bgLight: '#EAF4F8',
-    icon: PaintBrush,
+    icon: Paintbrush,
   },
   {
     id: 1,
@@ -364,10 +370,10 @@ export default function TaskCards() {
                       flexShrink: 0,
                     }}
                   >
-                    <ArrowUpRight weight="regular" size={13} />
+                    <ArrowUpRight size={13} />
                   </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-                    <Icon weight="regular" size={11} style={{ color: catColor }} />
+                    <Icon size={11} style={{ color: catColor }} />
                     <span style={{
                       fontSize: 10,
                       fontWeight: 700,
@@ -420,8 +426,8 @@ export default function TaskCards() {
 
       <div style={{ display: 'flex', gap: 10, marginTop: 24 }}>
         {([
-          { dir: 'left' as const, icon: <CaretLeft weight="regular" size={16} />, label: 'Previous' },
-          { dir: 'right' as const, icon: <CaretRight weight="regular" size={16} />, label: 'Next' },
+          { dir: 'left' as const, icon: <ChevronLeft size={16} />, label: 'Previous' },
+          { dir: 'right' as const, icon: <ChevronRight size={16} />, label: 'Next' },
         ] as const).map(({ dir, icon, label }) => (
           <motion.button
             key={dir}

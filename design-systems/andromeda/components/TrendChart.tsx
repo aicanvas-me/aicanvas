@@ -8,7 +8,8 @@ import {
 } from 'recharts';
 import type { AxisDomainItem, YAxisTickContentProps } from 'recharts';
 import { motion, useInView } from 'framer-motion';
-import { ChartLine, ChartBar } from '@phosphor-icons/react';
+import { ChartLine } from '@/app/_icons/icons/chart-line';
+import { ChartBar } from '@/app/_icons/icons/chart-bar';
 import { tokens } from '../tokens';
 import { andromedaVars, easingArray, themeColor } from './lib/utils';
 import { useResolvedColors } from './lib/theme';

@@ -10,7 +10,7 @@
 // the mono type belong to the component pages and the internal preview. This
 // page is site chrome.
 import { useMemo, useState } from 'react'
-import { MagnifyingGlass } from '@phosphor-icons/react'
+import { Search } from '@/app/_icons/icons/search'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { AndromedaComponentCard } from './AndromedaComponentCard'
 import { PageCrumbs } from '../../../components/PageCrumbs'
@@ -69,7 +69,7 @@ export function AndromedaGallery({
         </PageLead>
 
         <label className="mt-8 flex max-w-md items-center gap-3 rounded-control border border-sand-300 bg-sand-100 px-4 py-3 transition-colors hover:border-sand-400 focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-600">
-          <MagnifyingGlass weight="regular" size={18} className="shrink-0 text-sand-500" />
+          <Search size={18} className="shrink-0 text-sand-500" />
           <span className="sr-only">Search Andromeda components</span>
           <input
             type="search"

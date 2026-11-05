@@ -59,8 +59,8 @@ export default function StandaloneDocsPage() {
 
       <H2 id="stack">Stack</H2>
       <P>
-        React with TypeScript, Tailwind CSS v4 and Framer Motion, with Three.js in some 3D components. Icons come from Phosphor. The
-        CLI installs whichever of these a component needs.
+        React with TypeScript, Tailwind CSS v4 and Framer Motion, with Three.js in some 3D components. Icons come from the AI Canvas icon set. The
+        CLI installs whichever of these a component needs, icons included.
       </P>
     </DocPage>
   )

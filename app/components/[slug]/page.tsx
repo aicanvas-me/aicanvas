@@ -157,18 +157,20 @@ function buildFaq(
   const stacks = entry.tags.filter((t) => !t.accent).map((t) => t.label)
   // Section-scale entries are blocks, not components (see isBlockEntry).
   const noun = isBlockEntry(entry) ? 'block' : 'component'
+  const usesIcons = entry.code.includes('@/components/icons/')
   const faq: { q: string; a: string }[] = [
     {
       q: `Is ${entry.name} free to use?`,
       a: isPremium
         ? `${entry.name} is a Premium AI Canvas ${noun}. Premium unlocks the full source code, the full remix prompt, and one-command installs for every Premium component, block, and template.`
-        : `Yes. ${entry.name} is part of the free AI Canvas library and is open source under the MIT license, so you can use it in personal and commercial projects.`,
+        : `Yes. ${entry.name} is part of the free AI Canvas library and is open source under the MIT license, so you can use it in personal and commercial projects.` +
+          (usesIcons ? ' Its icons come from the AI Canvas icon set and are free to use too.' : ''),
     },
     {
       q: `How do I install ${entry.name}?`,
       a: isPremium
         ? `Premium unlocks one-command installs: run the shadcn CLI with your AI Canvas token, or connect the AI Canvas MCP server and ask your AI editor to install it for you. Premium also unlocks the full remix prompt in the Remix panel.`
-        : `One command: npx shadcn@latest add ${SITE_URL}/r/${entry.slug}.json, free with a free AI Canvas account. Or connect the AI Canvas MCP server and ask your AI editor to install ${entry.name} for you. You can also copy the source straight from the Code tab, no account needed. It works in any React project with Tailwind CSS.`,
+        : `One command: npx shadcn@latest add ${SITE_URL}/r/${entry.slug}.json, free with a free AI Canvas account. Or connect the AI Canvas MCP server and ask your AI editor to install ${entry.name} for you. You can also copy the source straight from the Code tab, no account needed${usesIcons ? '; its icons install with the same free account' : ''}. It works in any React project with Tailwind CSS.`,
     },
     {
       q: `What is ${entry.name} built with?`,
@@ -286,6 +288,10 @@ export default async function Page({
     entry.code.match(/^\/\/ font-pkg: .+$/m)?.[0],
     entry.code.match(/^\/\/ npm install .+$/m)?.[0],
   ].filter(Boolean).join('\n')
+  const iconItems = [...new Set(
+    [...entry.code.matchAll(/from ['"]@\/components\/icons\/([A-Za-z0-9-]+)['"]/g)]
+      .map(([, name]) => (name === 'IconBase' ? 'icon-base' : `icon-${name}`)),
+  )].sort()
 
   // ── Related ──────────────────────────────────────────────────────────────
   // Pass the full pool of same-category siblings, most related then newest
@@ -377,6 +383,7 @@ export default async function Page({
         enforcing={enforcing || isPremium}
         freeAccountGate={freeAccountGate}
         codeDirectives={codeDirectives}
+        iconItems={iconItems}
         useCases={entry.useCases}
         about={entry.about}
         faq={faq}

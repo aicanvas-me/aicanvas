@@ -12,7 +12,8 @@
 
 import type { CSSProperties, ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowDown, ArrowRight } from '@phosphor-icons/react'
+import { ArrowDown } from '@/app/_icons/icons/arrow-down'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { Badge, tokens } from '../../../lib/andromeda-pro.generated'
 import { andromedaLightVars, andromedaVars } from '../../../lib/andromeda-pro-helpers.generated'
@@ -106,8 +107,8 @@ function LayerCard({
 function Step() {
   return (
     <li aria-hidden className="flex items-center justify-center text-sand-400 dark:text-sand-600">
-      <ArrowDown weight="regular" className="size-4 lg:hidden" />
-      <ArrowRight weight="regular" className="hidden size-4 lg:block" />
+      <ArrowDown size="1em" className="size-4 lg:hidden" />
+      <ArrowRight size="1em" className="hidden size-4 lg:block" />
     </li>
   )
 }
@@ -210,7 +211,7 @@ export function FoundationLayers() {
           className={`${buttonClasses({ variant: 'outline', size: 'md' })} h-10 self-start sm:self-auto`}
         >
           See the foundation
-          <ArrowRight weight="regular" aria-hidden className="size-4" />
+          <ArrowRight size="1em" aria-hidden className="size-4" />
         </Link>
       </div>
       <LayerCards className="mt-5" />

@@ -1,10 +1,11 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useRef } from 'react'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { Minus, Plus } from '@phosphor-icons/react'
+import { Minus } from '@/app/_icons/icons/minus'
+import { Plus } from '@/app/_icons/icons/plus'
 
 
 const glassBlur = {
@@ -117,7 +118,7 @@ function GlassStepperField({
               pointerEvents: atMin ? 'none' : 'auto',
             }}
           >
-            <Minus size={16} weight="regular" style={{ color: atMin ? 'rgba(255,255,255,0.3)' : color }} />
+            <Minus size={16} style={{ color: atMin ? 'rgba(255,255,255,0.3)' : color }} />
           </motion.button>
 
           <div
@@ -177,7 +178,7 @@ function GlassStepperField({
               pointerEvents: atMax ? 'none' : 'auto',
             }}
           >
-            <Plus size={16} weight="regular" style={{ color: atMax ? 'rgba(255,255,255,0.3)' : color }} />
+            <Plus size={16} style={{ color: atMax ? 'rgba(255,255,255,0.3)' : color }} />
           </motion.button>
         </div>
       </div>

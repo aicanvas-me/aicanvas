@@ -7,6 +7,7 @@ import {
   ANDROMEDA_COMPONENT_META,
   type AndromedaComponentMeta,
 } from './andromeda-meta'
+import { toInstalledIconPaths } from '../installed-icon-paths'
 
 const COMPONENTS_ROOT = join(
   process.cwd(),
@@ -21,7 +22,7 @@ export type AndromedaComponentEntry = AndromedaComponentMeta & {
 
 function readSource(file: string): string {
   try {
-    return readFileSync(join(COMPONENTS_ROOT, file), 'utf-8')
+    return toInstalledIconPaths(readFileSync(join(COMPONENTS_ROOT, file), 'utf-8'))
   } catch {
     return `// Source not found: ${file}`
   }

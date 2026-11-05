@@ -4,7 +4,7 @@ import { forwardRef, useId } from 'react';
 import type { ComponentPropsWithoutRef, ComponentType } from 'react';
 import { motion } from 'framer-motion';
 import type { Transition } from 'framer-motion';
-import type { IconWeight } from '@phosphor-icons/react';
+import type { IconProps } from '@/app/_icons/IconBase';
 import { cn, andromedaVars, easingArray, themeColor } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
@@ -60,14 +60,14 @@ const INDICATOR_TX: Transition = {
  * @typedef {object} SegmentOption
  * @property {string} value Unique value that identifies this segment.
  * @property {string} [label] Text shown on the segment.
- * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon] Icon component rendered in the segment, optionally alongside its label.
+ * @property {React.ComponentType<IconProps>} [icon] Icon component rendered in the segment, optionally alongside its label.
  * @property {string} [ariaLabel] Accessible name for the segment, falling back to label when omitted.
  */
 
 type SegmentOption = {
   value: string;
   label?: string;
-  icon?: ComponentType<{ size?: number; weight?: IconWeight }>;
+  icon?: ComponentType<IconProps>;
   ariaLabel?: string;
 };
 
@@ -175,7 +175,7 @@ export const SegmentedControl = forwardRef<HTMLDivElement, SegmentedControlProps
               />
             ) : null}
             <span style={{ position: 'relative', zIndex: 1, display: 'inline-flex', alignItems: 'center', gap: tokens.spacing[2] }}>
-              {Icon ? <Icon size={iconSize} weight="regular" /> : null}
+              {Icon ? <Icon size={iconSize} /> : null}
               {opt.label && Icon ? <span>{opt.label}</span> : null}
               {showLabel ? opt.label : null}
             </span>

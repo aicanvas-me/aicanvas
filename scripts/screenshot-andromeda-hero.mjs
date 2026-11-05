@@ -1,7 +1,8 @@
 /**
- * Shoot Andromeda Pro hero card art: one pose per component (poses.tsx in
- * app/andromeda-capture/[slug]/hero/), centered on the themed ground, in light
- * AND dark. Every shot is 1280×720 pixels; a pose's size comes from the
+ * Shoot Andromeda hero card art: one pose per component, centered on the themed
+ * ground, in light AND dark. Pro poses live in poses.tsx under
+ * app/andromeda-capture/[slug]/hero/, Legacy poses in legacy-poses.tsx under
+ * .../legacy/ (SYSTEM=legacy). Every shot is 1280×720 pixels; a pose's size comes from the
  * device scale factor, so portalled bubbles scale with it and stay sharp.
  *
  * Each pose is measured first (the pixels it paints, popups included), shifted so
@@ -15,8 +16,9 @@
  * sheet-NN.png (8 components per sheet, dark beside light).
  *
  * Usage: node scripts/screenshot-andromeda-hero.mjs [slug ...]   (no slug = all)
- * Env:   BASE_URL (default http://localhost:3001), OUT_DIR (default .screenshots-hero),
- *        WORKERS (default 4, components shot at once)
+ * Env:   BASE_URL (default http://localhost:3001), WORKERS (default 4, components
+ *        shot at once), SYSTEM (unset = Pro; legacy = Andromeda Legacy),
+ *        OUT_DIR (default .screenshots-hero, or .screenshots-hero-legacy for Legacy)
  */
 
 import { chromium } from 'playwright'
@@ -25,7 +27,8 @@ import { readFileSync } from 'fs'
 import path from 'path'
 
 const BASE_URL = process.env.BASE_URL || 'http://localhost:3001'
-const OUT_DIR = path.resolve(process.env.OUT_DIR || '.screenshots-hero')
+const LEGACY = process.env.SYSTEM === 'legacy'
+const OUT_DIR = path.resolve(process.env.OUT_DIR || (LEGACY ? '.screenshots-hero-legacy' : '.screenshots-hero'))
 const W = 1280
 const H = 720
 const SETTLE_MS = 1800
@@ -59,15 +62,54 @@ const SCALE = {
   combobox: 2.6,
   'date-range-picker': 1.8,
 }
+const LEGACY_SCALE = {
+  button: 3,
+  badge: 5,
+  toggle: 3,
+  tooltip: 3,
+  avatar: 6,
+  tag: 4,
+  spinner: 8,
+  'icon-button': 5,
+  'nav-item': 3,
+  checkbox: 3.5,
+  radio: 3,
+  drawer: 1.5,
+  'date-range-picker': 2.4,
+}
+const SCALES = LEGACY ? LEGACY_SCALE : SCALE
 const FIT_SKIP = new Set(['drawer'])
 // Measured by its elements only: a faint stray pixel at its edge pulls it off centre.
 const DOM_ONLY = new Set(['tabs'])
 // Scrolling bands: reduced motion holds them as one still, complete row.
-const STILL = new Set(['logo-cloud', 'marquee'])
+const STILL = new Set(LEGACY ? [] : ['logo-cloud', 'marquee'])
 
 // Open-on-capture steps, run after the frame reports ready. Panels with a
 // static-open prop use it in poses.tsx instead.
-const INTERACTIONS = {
+const INTERACTIONS = LEGACY ? {
+  tooltip: async (page) => {
+    await page.locator('[data-capture-frame] button').first().hover()
+    await page.waitForTimeout(450)
+  },
+  drawer: async (page) => {
+    await page.getByRole('button', { name: /open drawer/i }).click()
+    await page.waitForTimeout(750)
+  },
+  // The snake's keyframes never run in the headless page, so three perimeter
+  // cells are pinned to the lit colour.
+  spinner: async (page) => {
+    await page.evaluate(() => {
+      const cells = document.querySelector('[data-capture-frame] [role=status]').children
+      for (const i of [0, 1, 2]) {
+        cells[i].style.animation = 'none'
+        cells[i].style.background = 'var(--andromeda-spinner-bright)'
+      }
+    })
+  },
+  planet: async (page) => {
+    await page.waitForTimeout(2500)
+  },
+} : {
   combobox: async (page) => {
     await page.locator('[data-capture-frame] input').first().click()
     await page.keyboard.type('a')
@@ -119,7 +161,7 @@ function measureInk() {
   }
   for (const el of document.body.querySelectorAll('*')) {
     if (el === frame || /^(STYLE|SCRIPT|NOSCRIPT|TEMPLATE|LINK|META)$/.test(el.tagName)) continue
-    if (el.closest('[data-dev-overlay],nextjs-portal')) continue
+    if (el.closest('[data-dev-overlay],nextjs-portal,.sr-only')) continue
     if (!el.checkVisibility({ opacityProperty: true, visibilityProperty: true })) continue
     const r = el.getBoundingClientRect()
     if (r.width >= vw * 0.98 && r.height >= vh * 0.98) continue
@@ -182,7 +224,7 @@ async function measurePixels(page) {
   }, png)
 }
 
-const META = readFileSync(path.resolve('app/_lib/andromeda-pro/andromeda-meta.ts'), 'utf8')
+const META = readFileSync(path.resolve(`app/_lib/${LEGACY ? 'andromeda' : 'andromeda-pro'}/andromeda-meta.ts`), 'utf8')
 const ALL = [...META.matchAll(/slug:\s*'([^']+)'/g)].map((m) => m[1])
 const SLUGS = process.argv.slice(2).length ? process.argv.slice(2) : ALL
 
@@ -196,7 +238,7 @@ async function open(browser, slug, theme, s, shift = { dx: 0, dy: 0 }) {
   const page = await context.newPage()
   await page.route('**/pufi.js', (r) => r.abort())
   await page.route('**/koko.js', (r) => r.abort())
-  await page.goto(`${BASE_URL}/andromeda-capture/${slug}/hero?scale=${s}&dx=${shift.dx}&dy=${shift.dy}`, { waitUntil: 'load', timeout: 90_000 })
+  await page.goto(`${BASE_URL}/andromeda-capture/${slug}/${LEGACY ? 'legacy' : 'hero'}?scale=${s}&dx=${shift.dx}&dy=${shift.dy}`, { waitUntil: 'load', timeout: 90_000 })
   await page.waitForSelector('[data-capture-ready]', { timeout: 30_000 })
   await page.waitForTimeout(SETTLE_MS)
   if (INTERACTIONS[slug]) await INTERACTIONS[slug](page)
@@ -224,12 +266,16 @@ async function shoot(browser, slug) {
       (W * SAFE.w) / (ink.R - ink.L), (H * SAFE.h) / (ink.B - ink.T),
       (W * 0.98) / ink.pw, (H * 0.98) / ink.ph,
     )
-    const pref = SCALE[slug] ?? DEFAULT_SCALE
+    const pref = SCALES[slug] ?? DEFAULT_SCALE
     const s = Math.round((FIT_SKIP.has(slug) ? pref : Math.min(pref, fit)) * 100) / 100
-    const shift = FIT_SKIP.has(slug)
+    let shift = FIT_SKIP.has(slug)
       ? { dx: 0, dy: 0 }
       : { dx: Math.round(ink.vw / 2 - (ink.L + ink.R) / 2), dy: Math.round(ink.vh / 2 - (ink.T + ink.B) / 2) }
 
+    // Legacy: art that paints differently at the final scale (a canvas, say) is nudged
+    // once by its measured offset and reshot.
+    for (let pass = 0; pass < (LEGACY ? 2 : 1); pass++) {
+    out.length = 0
     for (const theme of ['dark', 'light']) {
       const { context, page } = await open(browser, slug, theme, s, shift)
       const m = await page.evaluate(measureInk)
@@ -251,6 +297,11 @@ async function shoot(browser, slug) {
       if (!(iw > 4 && ih > 4)) issues.push('empty')
       else if (iw < W * SMALL && ih < H * SMALL) issues.push('small')
       out.push({ slug, theme, scale: s, shift, margin, ink: { w: Math.round(iw), h: Math.round(ih) }, issues })
+    }
+    const g = out[0].margin
+    const fix = { dx: Math.round((g.right - g.left) / 2 / s), dy: Math.round((g.bottom - g.top) / 2 / s) }
+    if (FIT_SKIP.has(slug) || (Math.abs(fix.dx) * s <= MAX_OFFSET && Math.abs(fix.dy) * s <= MAX_OFFSET)) break
+    shift = { dx: shift.dx + fix.dx, dy: shift.dy + fix.dy }
     }
     const [d, l] = out
     if (Math.abs(d.ink.w - l.ink.w) > THEME_DIFF || Math.abs(d.ink.h - l.ink.h) > THEME_DIFF) {

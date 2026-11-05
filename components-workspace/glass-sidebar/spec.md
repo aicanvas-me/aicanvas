@@ -24,7 +24,7 @@
 | Icon | Label | Colour |
 |---|---|---|
 | House | Home | `#3A86FF` |
-| MagnifyingGlass | Search | `#B388FF` |
+| Search | Search | `#B388FF` |
 | Folders | Projects | `#FFBE0B` |
 | Bell | Notifications | `#FF5C8A` |
 | ChartLine | Analytics | `#06D6A0` |

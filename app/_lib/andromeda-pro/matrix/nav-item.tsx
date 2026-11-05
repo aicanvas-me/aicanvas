@@ -1,6 +1,8 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
-import { Compass, PencilSimple, PushPin } from '@phosphor-icons/react'
+import { Compass } from '@/app/_icons/icons/compass';
+import { Pen2 } from '@/app/_icons/icons/pen-2';
+import { Pin } from '@/app/_icons/icons/pin';
 import { NavItem } from '../../../lib/andromeda-pro.generated'
 import { PanelMenu } from '../../../lib/andromeda-pro.generated'
 import { Tooltip } from '../../../lib/andromeda-pro.generated'
@@ -16,8 +18,8 @@ const ACTION = (
     size="sm"
     ariaLabel="Overview options"
     items={[
-      { label: 'Rename', icon: PencilSimple, onSelect: noop },
-      { label: 'Pin', icon: PushPin, onSelect: noop },
+      { label: 'Rename', icon: Pen2, onSelect: noop },
+      { label: 'Pin', icon: Pin, onSelect: noop },
     ]}
   />
 )

@@ -34,13 +34,13 @@ This repository is public. A leaked secret is exposed the moment it is committed
 - **Language**: TypeScript (strict)
 - **Styling**: Tailwind CSS v4 (configured via CSS `@theme inline`, no `tailwind.config.ts`)
 - **Animations**: Framer Motion (required for all animated components)
-- **Icons**: `@phosphor-icons/react` — always use `weight="regular"`
+- **Icons**: AI Canvas icons, one file per icon (`import { Check } from '@/app/_icons/icons/check'`, installed as `@/components/icons/check`); Line style, a new name is added to `app/_icons/site-icons.json` first
 - **Font**: Manrope (loaded via `next/font/google`, registered as `--font-sans`)
 - **3D**: Three.js (optional, only when truly needed)
 
 ## Design system (site chrome)
 
-- **Default theme**: dark. The toggle lives at the bottom of the left rail and persists to a `theme` cookie, read server-side in `app/layout.tsx` so the first byte carries the right class and there is no flash. Dark is class-based (`.dark` on `<html>`, Tailwind v4 `@variant dark`). Aesthetic: Phosphor-inspired — neutral cool-gray surfaces, editorial typography, a neutral ink accent (no brand hue).
+- **Default theme**: dark. The toggle lives at the bottom of the left rail and persists to a `theme` cookie, read server-side in `app/layout.tsx` so the first byte carries the right class and there is no flash. Dark is class-based (`.dark` on `<html>`, Tailwind v4 `@variant dark`). Aesthetic: neutral cool-gray surfaces, editorial typography, a neutral ink accent (no brand hue).
 - **Site theme and preview theme are ONE linked theme (ruled 2026-09-29), with one writer.** `ThemeProvider` is the only writer of `<html>` and the cookie. A component, block or Andromeda preview reads the site theme, and its own light/dark toggle calls `ThemeProvider.setTheme`, so flipping the site moves every preview and flipping a preview moves the site (the template pages always worked this way). A dark-only component pins itself dark and its toggle is disabled. A preview still owns a `[data-card-theme]` wrapper, and the `@variant dark` selector at the top of `app/globals.css` keeps that wrapper correct when it disagrees with the site (dark-only on a light site, a preview route with `?theme=`); its comment explains both directions. Never write `<html>` or the cookie from a preview: two writers is the exact bug that got the first site toggle deleted, and `lib/theme/scope.test.ts` guards it.
 - **Full token reference** (sand scale, accent roles, hex values, typography table, spacing grid): `supervisor/skills/site-design-tokens.md` — the single source of truth for site-chrome styling.
 

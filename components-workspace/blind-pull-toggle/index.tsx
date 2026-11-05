@@ -1,10 +1,11 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useCallback, useLayoutEffect, useEffect, useRef } from 'react'
 import { motion, useAnimate, stagger } from 'framer-motion'
-import { Moon, Sun } from '@phosphor-icons/react'
+import { Moon } from '@/app/_icons/icons/moon'
+import { Sun } from '@/app/_icons/icons/sun'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 const SLATS      = 6
@@ -165,9 +166,9 @@ export default function BlindPullToggle() {
                     }}
                   >
                     {toggleDark ? (
-                      <Moon size={iconSize} weight="regular" />
+                      <Moon size={iconSize} />
                     ) : (
-                      <Sun size={iconSize} weight="regular" />
+                      <Sun size={iconSize} />
                     )}
                   </div>
                 </div>

@@ -4,7 +4,9 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { ArrowClockwise, Envelope, Lightning } from '@phosphor-icons/react'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { Mail } from '@/app/_icons/icons/mail'
+import { Refresh } from '@/app/_icons/icons/refresh'
 import {
   Badge,
   Button,
@@ -28,7 +30,7 @@ const RANGE = { start: new Date(2026, 6, 22), end: new Date(2026, 7, 20) }
 
 export const POSES: Record<string, ReactNode> = {
   button: (
-    <Button size="lg" icon={Lightning}>
+    <Button size="lg" icon={Bolt}>
       Deploy
     </Button>
   ),
@@ -58,7 +60,7 @@ export const POSES: Record<string, ReactNode> = {
   tooltip: (
     <div style={{ paddingTop: 32 }}>
       <Tooltip label="Refresh" position="top">
-        <IconButton aria-label="Refresh" icon={ArrowClockwise} size="lg" />
+        <IconButton aria-label="Refresh" icon={Refresh} size="lg" />
       </Tooltip>
     </div>
   ),
@@ -69,7 +71,7 @@ export const POSES: Record<string, ReactNode> = {
   ),
   input: (
     <div style={{ width: 340 }}>
-      <Input size="lg" label="Email" icon={Envelope} defaultValue="ops@orbital.dev" />
+      <Input size="lg" label="Email" icon={Mail} defaultValue="ops@orbital.dev" />
     </div>
   ),
   gauge: <Gauge size="lg" value={82} label="CPU" thresholds={{ warning: 90, fault: 95 }} />,

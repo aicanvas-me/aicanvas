@@ -1,16 +1,20 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { House, Compass, PlusCircle, ChatCircle, User } from '@phosphor-icons/react'
+import { House } from '@/app/_icons/icons/house'
+import { Compass } from '@/app/_icons/icons/compass'
+import { CirclePlus } from '@/app/_icons/icons/circle-plus'
+import { MessageCircle } from '@/app/_icons/icons/message-circle'
+import { User } from '@/app/_icons/icons/user'
 
 const TABS = [
   { icon: House,       label: 'Home',     color: '#3A86FF' },
   { icon: Compass,     label: 'Explore',  color: '#FF7B54' },
-  { icon: PlusCircle,  label: 'Create',   color: '#06D6A0' },
-  { icon: ChatCircle,  label: 'Messages', color: '#FF5C8A' },
+  { icon: CirclePlus,  label: 'Create',   color: '#06D6A0' },
+  { icon: MessageCircle, label: 'Messages', color: '#FF5C8A' },
   { icon: User,        label: 'Profile',  color: '#B388FF' },
 ]
 
@@ -83,7 +87,6 @@ export default function GlassTabBar() {
                 >
                   <Icon
                     size={20}
-                    weight="regular"
                     style={{
                       color: isActive ? tab.color : isHover ? 'rgba(255,255,255,0.7)' : 'rgba(255,255,255,0.32)',
                       transition: 'color 0.2s ease',

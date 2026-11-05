@@ -12,7 +12,7 @@
 - Pill-shaped surface, light bg (`#f1f1f0` light / `#21211f` dark), subtle inset bottom shadow.
 - Left: a dark round button (`#1a1a18`, light icon) showing 4 vertical audio bars that animate continuously to indicate live voice activity.
 - Center: 4 circular avatars (32×32), overlapping by ~10px with a 2px ring matching the pill bg. The currently-speaking avatar lifts and scales slightly (springy).
-- Right: `+4` count + `CaretDown` chevron, indicating 4 more participants are hidden.
+- Right: `+4` count + `ChevronDown` chevron, indicating 4 more participants are hidden.
 
 ### Expanded (modal)
 
@@ -35,4 +35,4 @@ Modal width is `min(440, window.innerWidth - 32)`. Avatar grid stays 4-col; cell
 
 ## Tech notes
 
-Framer Motion for everything. Phosphor icons (`CaretDown`, `X`). Manrope via `font-sans`. Self-contained — no props, no external state. Photos via Unsplash CDN.
+Framer Motion for everything. Icons (`ChevronDown`, `X`). Manrope via `font-sans`. Self-contained — no props, no external state. Photos via Unsplash CDN.

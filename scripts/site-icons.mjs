@@ -5,13 +5,13 @@
 // Site code imports each icon from its own file, never through a barrel: a
 // server component importing one icon from a barrel ships every icon in it.
 // The icons live only in the vault, so the output is gitignored, like the
-// /icons data. app/_icons/site-icons.json lists the icons the site uses, each
-// with the Phosphor icon it falls back to when no vault checkout is found (a
-// public clone, a free-only build), so the site always builds with icons. The
-// source, as in icons-data.mjs: ICONS_LOCAL_PATH, PREMIUM_LOCAL_PATH/icons,
+// /icons data. app/_icons/site-icons.json lists the icons the site uses. When no
+// vault checkout is found (a public clone, a free-only build) each one becomes an
+// empty placeholder of the right size, so a build without the vault still compiles.
+// The source, as in icons-data.mjs: ICONS_LOCAL_PATH, PREMIUM_LOCAL_PATH/icons,
 // then the icon-library worktree.
 //
-//   app/_icons/IconBase.tsx       the package's runtime (or the Phosphor stand-in)
+//   app/_icons/IconBase.tsx       the package's runtime (or the placeholder runtime)
 //   app/_icons/icons/<key>.tsx    one per site icon and style
 import { copyFileSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
@@ -20,7 +20,7 @@ import { iconSourceCandidates } from './lib/icon-source.mjs'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const OUT = join(ROOT, 'app/_icons')
-const icons = JSON.parse(readFileSync(join(OUT, 'site-icons.json'), 'utf8'))
+const names = JSON.parse(readFileSync(join(OUT, 'site-icons.json'), 'utf8'))
 const pascal = (name) => name.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join('')
 
 const SRC = iconSourceCandidates(ROOT).find((dir) => existsSync(join(dir, 'react/IconBase.tsx')))
@@ -32,65 +32,58 @@ rmSync(join(OUT, 'Icon.tsx'), { force: true })
 rmSync(join(OUT, 'icons'), { recursive: true, force: true })
 mkdirSync(join(OUT, 'icons'))
 if (SRC) {
-  const missing = Object.keys(icons).filter((name) => !existsSync(join(SRC, 'react/icons', `${name}.tsx`)))
+  const missing = names.filter((name) => !existsSync(join(SRC, 'react/icons', `${name}.tsx`)))
   if (missing.length) throw new Error(`site-icons: not in the icon set: ${missing.join(', ')}`)
   copyFileSync(join(SRC, 'react/IconBase.tsx'), join(OUT, 'IconBase.tsx'))
-  for (const name of Object.keys(icons)) copyFileSync(join(SRC, 'react/icons', `${name}.tsx`), join(OUT, 'icons', `${name}.tsx`))
+  for (const name of names) copyFileSync(join(SRC, 'react/icons', `${name}.tsx`), join(OUT, 'icons', `${name}.tsx`))
 } else {
-  // Same server-safe contract; Phosphor does not read the provider's CSS variables.
+  // Same server-safe contract; the placeholder ignores weight.
   writeFileSync(
     join(OUT, 'IconBase.tsx'),
     `// ${MARKER} - built by scripts/site-icons.mjs, do not edit.
 import { Children, forwardRef, isValidElement, type CSSProperties, type ReactNode, type SVGProps } from 'react'
-import type { Icon as PhosphorIcon, IconWeight } from '@phosphor-icons/react'
 
 export type IconNode = ReadonlyArray<readonly ['path' | 'circle', Readonly<Record<string, string>>]>
 export type IconStyle = 'line' | 'duotone' | 'solid' | 'solid-duotone'
-export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'ref'> {
+export type IconWeight = 'thin' | 'light' | 'regular' | 'bold' | 'extrabold'
+export interface IconProps extends Omit<SVGProps<SVGSVGElement>, 'ref' | 'strokeWidth'> {
   size?: number | string
   color?: string
-  strokeWidth?: number | string
-  absoluteStrokeWidth?: boolean
+  weight?: IconWeight
 }
 
 export interface IconProviderProps {
-  strokeWidth?: number | string
-  absoluteStrokeWidth?: boolean
+  weight?: IconWeight
   color?: string
   children: ReactNode
 }
 
-type ProviderStyle = CSSProperties & {
-  '--aic-icon-stroke'?: number | string
-  '--aic-icon-vector-effect'?: 'none'
-}
-
-export function IconProvider({ strokeWidth, absoluteStrokeWidth, color, children }: IconProviderProps) {
-  const style: ProviderStyle = { display: 'contents' }
-  if (strokeWidth !== undefined) style['--aic-icon-stroke'] = strokeWidth
-  if (absoluteStrokeWidth === false) style['--aic-icon-vector-effect'] = 'none'
+export function IconProvider({ color, children }: IconProviderProps) {
+  const style: CSSProperties = { display: 'contents' }
   if (color !== undefined) style.color = color
   return <span style={style}>{children}</span>
 }
 
-// No vault checkout: the Phosphor icon each site icon stands in for.
-const WEIGHT: Record<IconStyle, IconWeight> = { line: 'regular', duotone: 'duotone', solid: 'fill', 'solid-duotone': 'fill' }
-export function wrap(name: string, iconStyle: IconStyle, P: PhosphorIcon) {
-  const Icon = forwardRef<SVGSVGElement, IconProps>(function Icon({ size = 24, strokeWidth, absoluteStrokeWidth, className, children, ...rest }, ref) {
-    void absoluteStrokeWidth
+// No vault checkout: an empty placeholder of the right size.
+export function wrap(name: string, iconStyle: IconStyle) {
+  const Icon = forwardRef<SVGSVGElement, IconProps>(function Icon({ size = 24, color, weight, className, children, ...rest }, ref) {
+    void color
+    void weight
     const titled = Children.toArray(children).some((child) => isValidElement(child) && child.type === 'title')
     const labelled = titled || rest['aria-label'] != null || rest['aria-labelledby'] != null || rest.role != null
     return (
-      <P
+      <svg
         ref={ref}
-        size={size}
-        weight={iconStyle === 'line' && Number(strokeWidth) >= 2 ? 'bold' : WEIGHT[iconStyle]}
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
         className={['aic-icon', \`aic-icon-\${name}\`, iconStyle !== 'line' && \`aic-icon-\${iconStyle}\`, className].filter(Boolean).join(' ')}
         {...(labelled ? (titled && rest.role == null ? { role: 'img' } : {}) : { 'aria-hidden': true })}
         {...rest}
       >
         {children}
-      </P>
+      </svg>
     )
   })
   Icon.displayName = name
@@ -98,14 +91,14 @@ export function wrap(name: string, iconStyle: IconStyle, P: PhosphorIcon) {
 }
 `,
   )
-  for (const [key, p] of Object.entries(icons)) {
+  for (const key of names) {
     const suffix = key.match(/-(solid-duotone|solid|duotone)$/)
     const name = suffix ? key.slice(0, -suffix[0].length) : key
     const iconStyle = suffix?.[1] ?? 'line'
     writeFileSync(
       join(OUT, 'icons', `${key}.tsx`),
-      `// ${MARKER} - built by scripts/site-icons.mjs, do not edit.\nimport { ${p} as Ph } from '@phosphor-icons/react/dist/ssr'\nimport { wrap } from '../IconBase'\n\nexport const ${pascal(key)} = wrap('${name}', '${iconStyle}', Ph)\nexport const ${pascal(key)}Icon = ${pascal(key)}\n`,
+      `// ${MARKER} - built by scripts/site-icons.mjs, do not edit.\nimport { wrap } from '../IconBase'\n\nexport const ${pascal(key)} = wrap('${name}', '${iconStyle}')\nexport const ${pascal(key)}Icon = ${pascal(key)}\n`,
     )
   }
 }
-console.log(`site-icons: ${Object.keys(icons).length} icons from ${SRC ?? 'Phosphor (no vault checkout)'}`)
+console.log(`site-icons: ${names.length} icons from ${SRC ?? 'empty placeholders (no vault checkout)'}`)

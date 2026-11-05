@@ -20,7 +20,9 @@ import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { motion, useInView, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
 import { Rotate3d } from 'lucide-react'
-import { Check, LockSimple, X as XIcon } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check'
+import { LockSimple } from '@/app/_icons/icons/lock-simple'
+import { X as XIcon } from '@/app/_icons/icons/x'
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
 import { SystemTierChip } from '@/app/_components/SystemTierChip'
@@ -593,7 +595,7 @@ function CorpusExplorer() {
                   tabIndex={i === PHONE_PREVIEW ? -1 : undefined}
                   className={`flex min-w-0 items-center gap-2 rounded-tag py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/40 ${!expanded && i >= PHONE_PREVIEW ? 'max-sm:hidden' : ''}`}
                 >
-                  <LockSimple weight="regular" size={14} aria-hidden className="shrink-0 text-sand-400 dark:text-sand-600" />
+                  <LockSimple size={14} aria-hidden className="shrink-0 text-sand-400 dark:text-sand-600" />
                   <span title={name} className="truncate font-mono text-[13px] text-sand-700 dark:text-sand-300">
                     {name}
                   </span>
@@ -1077,13 +1079,13 @@ export function BrainStoryV4() {
                   <tr key={row.classic}>
                     <td className="border-t border-sand-200 px-4 py-3.5 align-top text-sm leading-relaxed text-sand-600 sm:px-5 dark:border-sand-800 dark:text-sand-400">
                       <div className="flex gap-2.5">
-                        <XIcon weight="regular" size={15} aria-hidden className="mt-0.5 shrink-0 text-sand-400 dark:text-sand-600" />
+                        <XIcon size={15} aria-hidden className="mt-0.5 shrink-0 text-sand-400 dark:text-sand-600" />
                         <span className="min-w-0 break-words">{row.classic}</span>
                       </div>
                     </td>
                     <td className="border-l border-t border-sand-200 bg-sand-50 px-4 py-3.5 align-top text-sm leading-relaxed text-sand-900 sm:px-5 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50">
                       <div className="flex gap-2.5">
-                        <Check weight="regular" size={15} aria-hidden className="mt-0.5 shrink-0 text-accent" />
+                        <Check size={15} aria-hidden className="mt-0.5 shrink-0 text-accent" />
                         <span className="min-w-0 break-words">{row.brain}</span>
                       </div>
                     </td>

@@ -6,7 +6,14 @@
 
 import { Fragment, type ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowRight, Brain, ChatText, Check, Minus, TerminalWindow, type Icon } from '@phosphor-icons/react'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Brain } from '@/app/_icons/icons/brain'
+import { MessageCircleText } from '@/app/_icons/icons/message-circle-text'
+import { Check } from '@/app/_icons/icons/check'
+import { Minus } from '@/app/_icons/icons/minus'
+import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
+import type { ComponentType } from 'react'
+import type { IconProps } from '@/app/_icons/IconBase'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
 import { SystemTierChip } from '../../../_components/SystemTierChip'
@@ -64,19 +71,19 @@ const LEDGER_ROWS: { label: string; free: boolean }[] = [
 ]
 
 // What the Brain gives an agent, in the order it matters.
-const BRAIN_POINTS: { icon: Icon; title: string; line: string }[] = [
+const BRAIN_POINTS: { icon: ComponentType<IconProps>; title: string; line: string }[] = [
   {
     icon: Brain,
     title: 'The whole system, written down',
     line: 'Color, type, spacing and motion as decisions your agent carries into anything new.',
   },
   {
-    icon: ChatText,
+    icon: MessageCircleText,
     title: 'A remix prompt per component',
     line: 'Ask for a variation in any AI tool and it stays on the system.',
   },
   {
-    icon: TerminalWindow,
+    icon: SquareTerminal,
     title: 'One-command install',
     line: 'The CLI drops components straight into your repo.',
   },
@@ -175,7 +182,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
         <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-accent transition-colors group-hover:text-accent">
           View template
           <ArrowRight
-            weight="regular"
+            size="1em"
             aria-hidden
             className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5"
           />
@@ -188,12 +195,12 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
 function LedgerMark({ included, column }: { included: boolean; column: string }) {
   return included ? (
     <>
-      <Check weight="regular" aria-hidden className="size-5 text-accent" />
+      <Check size="1em" aria-hidden className="size-5 text-accent" />
       <span className="sr-only">{column}: Included</span>
     </>
   ) : (
     <>
-      <Minus weight="regular" aria-hidden className="size-5 text-sand-400 dark:text-sand-500" />
+      <Minus size="1em" aria-hidden className="size-5 text-sand-400 dark:text-sand-500" />
       <span className="sr-only">{column}: Not included</span>
     </>
   )
@@ -404,7 +411,7 @@ export function OverviewB({
           <div className="mt-8">
             <Link href="/design-systems/andromeda-pro/components" className={BTN_SECONDARY}>
               See all {stats.components} components
-              <ArrowRight weight="regular" aria-hidden className="size-4" />
+              <ArrowRight size="1em" aria-hidden className="size-4" />
             </Link>
           </div>
           <WithPremium>the code view and a one-command install on every component.</WithPremium>
@@ -432,7 +439,7 @@ export function OverviewB({
                 {BRAIN_POINTS.map(({ icon: PointIcon, title, line }) => (
                   <li key={title} className="flex gap-3">
                     <PointIcon
-                      weight="regular"
+                      size="1em"
                       aria-hidden
                       className="mt-0.5 size-5 shrink-0 text-accent"
                     />
@@ -449,7 +456,7 @@ export function OverviewB({
               <div className="mt-6">
                 <Link href="/design-systems/andromeda-pro/brain" className={BTN_SECONDARY}>
                   Explore the AI Brain
-                  <ArrowRight weight="regular" aria-hidden className="size-4" />
+                  <ArrowRight size="1em" aria-hidden className="size-4" />
                 </Link>
               </div>
             </div>

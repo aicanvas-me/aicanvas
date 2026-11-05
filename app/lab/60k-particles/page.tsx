@@ -57,7 +57,7 @@ import { MobileControlSheet } from '../_components/MobileControlSheet'
 const MAX_RECORDING_MS = 20_000
 const TOOL = '60k-particles' as const
 
-// Phosphor icons for the Light Direction segmented control. Each icon depicts
+// Icons for the Light Direction segmented control. Each icon depicts
 // a sphere shaded as if the light were coming from that direction — much more
 // semantically accurate than plain directional arrows.
 const LIGHT_ICONS: Record<Light, React.ReactNode> = {

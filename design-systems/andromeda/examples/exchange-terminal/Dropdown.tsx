@@ -9,7 +9,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { CaretDown } from '@phosphor-icons/react';
+import { ChevronDown } from '@/app/_icons/icons/chevron-down';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 
@@ -108,8 +108,7 @@ export function Dropdown({
       >
         {label}
         {leadingBadge}
-        <CaretDown
-          weight="regular"
+        <ChevronDown
           size={iconSize}
           style={{
             color: themeColor.text.muted,

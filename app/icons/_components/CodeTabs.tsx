@@ -2,6 +2,7 @@
 
 import { useState, type ReactNode } from 'react'
 import { iconImportLine, iconInstallCommand, iconJsxLine, PREMIUM_ICON_INSTALL_NOTE } from '../_lib/constants'
+import type { IconWeight } from '../_lib/icon-utils'
 import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
 import type { IconStyle } from '../_lib/types'
@@ -28,7 +29,7 @@ function SyntaxCode({ code, enabled }: { code: string; enabled: boolean }) {
   for (let index = 0; index < parts.length; index++) {
     const part = parts[index]
     // An attribute keeps its value on its line: on a phone the browser would
-    // otherwise wrap between `strokeWidth=` and `{2}`.
+    // otherwise wrap between `size=` and `{24}`.
     if (parts[index + 1] === '=' && /^\{[\d.]+\}$/.test(parts[index + 2] ?? '')) {
       out.push(
         <span key={index} className="whitespace-nowrap">
@@ -47,8 +48,7 @@ export function CodeTabs({
   name,
   markup,
   size,
-  strokeWidth,
-  absolute,
+  weight,
   colour,
   style,
   className = '',
@@ -57,8 +57,7 @@ export function CodeTabs({
   name: string
   markup: string
   size: number
-  strokeWidth: number
-  absolute: boolean
+  weight: IconWeight
   // the user's pick, null for none
   colour: string | null
   style: IconStyle
@@ -68,11 +67,11 @@ export function CodeTabs({
   const [tab, setTab] = useState<CodeTab>('React')
   const code =
     tab === 'React'
-      ? `${iconImportLine(name, style)}\n\n${iconJsxLine(name, size, strokeWidth, style, absolute, colour)}`
+      ? `${iconImportLine(name, style)}\n\n${iconJsxLine(name, size, weight, style, colour)}`
       : tab === 'SVG'
         ? isPreview(markup)
           ? 'The SVG of this style comes with AI Canvas Premium.'
-          : buildSvg(markup, size, strokeWidth, colour, absolute)
+          : buildSvg(markup, size, weight, colour)
         : iconInstallCommand(name, style)
 
   return (
