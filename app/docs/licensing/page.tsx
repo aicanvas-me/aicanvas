@@ -35,8 +35,10 @@ export default function LicensingDocPage() {
         ]}
       />
       <P>
-        Icons are not MIT. The Line icons the free components use are free to use under their own terms; Duotone, Solid and Solid
-        duotone come with Premium.
+        Icons are not MIT. The Line icons the free components use are free under the{' '}
+        <A href="/premium-license">AI Canvas Premium License</A> (Section 11), with a one-line credit kept in the code: keep the
+        AI Canvas notice at the top of each Line icon file, and name AI Canvas in your credits or licence file when you publish your
+        source. No visible credit is needed, and Premium members need neither. Duotone, Solid and Solid duotone come with Premium.
       </P>
 
       <H2 id="what-needs-what">What needs what</H2>
@@ -51,8 +53,8 @@ export default function LicensingDocPage() {
       <H2 id="commercial-use">Commercial use</H2>
       <P>
         Free components and Andromeda Legacy use MIT, so you can change them and ship them in personal or commercial projects.
-        Keep the MIT licence notice in the source; no visible credit is needed. The Line icons they use are free to use under
-        their own terms, not MIT. Premium components, Andromeda Pro, its templates and the AI Brain use the AI Canvas Premium
+        Keep the MIT licence notice in the source; no visible credit is needed. The Line icons they use are not MIT: they are
+        free under the AI Canvas Premium License, with a one-line credit kept in the code. Premium components, Andromeda Pro, its templates and the AI Brain use the AI Canvas Premium
         License, a durable licence to use and ship but not redistribute. Third-party assets, fonts and images follow their own
         terms where a component says so.
       </P>

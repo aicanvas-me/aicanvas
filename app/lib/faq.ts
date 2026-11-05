@@ -218,7 +218,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'are-icons-free',
     category: 'icons',
     q: 'Are the icons free?',
-    a: 'The Line style is. Every Line icon is free to use, to install, copy or download one at a time. Duotone, Solid and Solid duotone come with Premium, and so does the download of the whole set. The icons are not MIT, and there is no public icon repository.',
+    a: 'The Line style is. Every Line icon is free to use, to install, copy or download one at a time, under the AI Canvas Premium License with a one-line credit kept in the code; no visible credit is needed, and Premium members need none. Duotone, Solid and Solid duotone come with Premium, and so does the download of the whole set. The icons are not MIT, and there is no public icon repository.',
   },
   {
     id: 'design-skill-for-claude-code',
@@ -328,7 +328,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'commercial-use',
     category: 'about',
     q: 'Can I use the components in commercial projects?',
-    a: 'Yes. Free components and Andromeda Legacy use the permissive MIT licence, so you can change them and ship them in personal or commercial projects. Keep the MIT licence notice in the source; no visible credit is needed. The Line icons they use are free to use under their own terms, not MIT. Premium components, Andromeda Pro, its templates and the AI Brain use the AI Canvas Premium License, a durable licence to use and ship but not redistribute. Third-party assets, fonts, and images follow their own terms when specified.',
+    a: 'Yes. Free components and Andromeda Legacy use the permissive MIT licence, so you can change them and ship them in personal or commercial projects. Keep the MIT licence notice in the source; no visible credit is needed. The Line icons they use are not MIT: they are free under the AI Canvas Premium License, with a one-line credit kept in the code. Premium components, Andromeda Pro, its templates and the AI Brain use the AI Canvas Premium License, a durable licence to use and ship but not redistribute. Third-party assets, fonts, and images follow their own terms when specified.',
   },
   {
     id: 'component-tech-stack',

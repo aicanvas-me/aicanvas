@@ -8,7 +8,7 @@ export function overviewMarkdown(): string {
     ([slug, label]) => `- [${label}](https://aicanvas.me/icons?category=${slug}): ${ICON_CATEGORY_COUNTS[slug]}`,
   ).join('\n')
 
-  return `# Icons\n\nDrawn on one 24 px grid, in four styles. Line is free, the other three come with Premium.\n\n## Facts\n\n- Icons: ${ICON_COUNT}\n- Styles: 4\n- Categories: ${ICON_CATEGORIES.length}\n\n## Categories\n\n${categories}\n\n## Install\n\n\`\`\`sh\n${ALL_ICONS_INSTALL}\n\`\`\``
+  return `# Icons\n\nDrawn on one 24 px grid, in four styles. Line is free with a one-line credit in the code, the other three come with Premium.\n\n## Facts\n\n- Icons: ${ICON_COUNT}\n- Styles: 4\n- Categories: ${ICON_CATEGORIES.length}\n\n## Categories\n\n${categories}\n\n## Install\n\n\`\`\`sh\n${ALL_ICONS_INSTALL}\n\`\`\``
 }
 
 export function iconMarkdown(icon: IconMeta, svg: string): string {

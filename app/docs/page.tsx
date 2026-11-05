@@ -65,7 +65,7 @@ export default function DocsIntroPage() {
       <UL>
         <li>
           <strong className="text-sand-900 dark:text-sand-50">Open code.</strong> You get source, not a black box. Free components and
-          Andromeda Legacy are MIT and their source is always public; the Line icons they use are free to use under their own terms.
+          Andromeda Legacy are MIT and their source is always public; the Line icons they use are free under the AI Canvas Premium License, with a one-line credit kept in the code.
         </li>
         <li>
           <strong className="text-sand-900 dark:text-sand-50">Systems before snippets.</strong> An agent builds better when it starts from

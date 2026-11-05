@@ -97,7 +97,9 @@ export default function Page() {
       />
       <P>
         The CLI also adds the component&apos;s npm packages to <C>package.json</C>, for example <C>framer-motion</C> or{' '}
-        <C>three</C>. Nothing else in your project is touched. The files are yours: edit them like any other code.
+        <C>three</C>. Nothing else in your project is touched. The files are yours: edit them like any other code. Each Line
+        icon file opens with a one-line AI Canvas notice: Line icons are free under the AI Canvas Premium License with that
+        credit kept in the code.
       </P>
 
       <H2 id="manual-install">Manual install</H2>

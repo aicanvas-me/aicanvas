@@ -242,7 +242,7 @@ export function IconsOverview({
   const heading = categoryLabel ? `${categoryLabel} icons` : 'Icons'
   const lead = categoryLabel
     ? `Browse ${icons.length} ${categoryLabel} icons in four styles.`
-    : 'Drawn on one 24 px grid, in four styles. Line is free, the other three come with Premium.'
+    : 'Drawn on one 24 px grid, in four styles. Line is free with a one-line credit in the code, the other three come with Premium.'
   const categoryCrumbs = useMemo(
     () =>
       categoryLabel ? (
