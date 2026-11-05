@@ -14,7 +14,7 @@ import { KeyboardIcon } from '@/app/_icons/icons/keyboard'
 import { LogOut } from '@/app/_icons/icons/log-out'
 import { Mail } from '@/app/_icons/icons/mail'
 import { MailOpen } from '@/app/_icons/icons/mail-open'
-import { Refresh } from '@/app/_icons/icons/refresh'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw'
 import { ShareIcon } from '@/app/_icons/icons/share'
 import { SlidersVertical } from '@/app/_icons/icons/sliders-vertical'
 import { Users } from '@/app/_icons/icons/users'
@@ -240,12 +240,12 @@ export const POSES: Record<string, ReactNode> = {
         actions={
           <div style={{ display: 'flex', alignItems: 'center', gap: tokens.spacing[2] }}>
             <Badge variant="accent">Live</Badge>
-            <IconButton size="sm" variant="ghost" aria-label="Refresh" icon={Refresh} />
+            <IconButton size="sm" variant="ghost" aria-label="Refresh" icon={RotateCw} />
             <PanelMenu
               staticOpen
               ariaLabel="Requests options"
               items={[
-                { label: 'Refresh', icon: Refresh, onSelect: () => {} },
+                { label: 'Refresh', icon: RotateCw, onSelect: () => {} },
                 { label: 'Export', icon: ShareIcon, onSelect: () => {} },
                 { type: 'separator' },
                 { label: 'Hide', icon: EyeOff, onSelect: () => {} },
@@ -262,7 +262,7 @@ export const POSES: Record<string, ReactNode> = {
         align="left"
         staticOpen
         items={[
-          { label: 'Refresh', icon: Refresh, onSelect: () => {} },
+          { label: 'Refresh', icon: RotateCw, onSelect: () => {} },
           { label: 'Configure', icon: SlidersVertical, onSelect: () => {} },
           { label: 'Export', icon: ShareIcon, onSelect: () => {} },
           { type: 'separator' },
@@ -348,7 +348,7 @@ export const POSES: Record<string, ReactNode> = {
   tooltip: (
     <div style={{ paddingTop: 32 }}>
       <Tooltip label="Refresh" position="top">
-        <IconButton aria-label="Refresh" icon={Refresh} size="lg" />
+        <IconButton aria-label="Refresh" icon={RotateCw} size="lg" />
       </Tooltip>
     </div>
   ),
