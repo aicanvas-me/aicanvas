@@ -76,7 +76,7 @@ function CommsItem({ entry, isLast }: { entry: (typeof commsLog)[number]; isLast
         alignItems: 'center',
         justifyContent: 'center',
       }}>
-        <Icon size={20} />
+        <Icon size={20} weight="light" />
       </div>
 
       {/* Content */}

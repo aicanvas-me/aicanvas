@@ -165,6 +165,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
           {checked ? (
             <Check
               size={12}
+              weight="light"
               style={{
                 color: 'var(--andromeda-accent-on, var(--andromeda-accent-100))',
                 animation: `andromeda-pop-in var(--andromeda-duration-normal, ${tokens.motion.duration.normal}) var(--andromeda-easing-out, ${tokens.motion.easing.out})`,
