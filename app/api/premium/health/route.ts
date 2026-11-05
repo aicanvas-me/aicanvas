@@ -22,6 +22,15 @@ try {
   /* no premium injected — free-only build */
 }
 
+// Same guard for the /icons data that scripts/icons-data.mjs writes from the vault.
+let iconCount = 0
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  iconCount = (require('@/app/icons/_data/icons.generated.json') as unknown[]).length
+} catch {
+  /* no icon data generated */
+}
+
 /**
  * Public premium health surface: counts and mode ONLY, never source. After every
  * deploy premiumStandaloneCount should equal the manifest, `degraded` must be
@@ -39,6 +48,9 @@ try {
  * `brainFileCounts` is how many files each design-system brain bundled at build
  * time. The build already fails when a count differs from the manifest; this
  * shows the count prod actually carries. Numbers only, never file names.
+ *
+ * `iconCount` is how many icons the /icons pages list. 0 on production means the
+ * icon set never reached the build and /icons is blank.
  */
 export async function GET() {
   const lookup = loadContentLookup()
@@ -55,6 +67,7 @@ export async function GET() {
       pinnedSha: PREMIUM_BUILD.pinnedSha,
       deployedSha: PREMIUM_BUILD.appSha,
       brainFileCounts: PREMIUM_BUILD.brainFileCounts ?? {},
+      iconCount,
     },
     { headers: { 'Cache-Control': 'private, no-store' } },
   )

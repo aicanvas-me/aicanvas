@@ -32,7 +32,7 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync
 import { join, dirname, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { FREE_DS_PLACEHOLDER_SENTINEL, DESIGN_SYSTEMS } from './lib/design-systems.config.mjs'
-import { ICONS_KEPT } from './lib/icon-source.mjs'
+import { ICONS_KEPT, ICON_PARTS, iconSetAction, isPinnedBuild } from './lib/icon-source.mjs'
 
 const ROOT = process.cwd()
 const TARGET = join(ROOT, 'components-workspace-premium')
@@ -1001,7 +1001,7 @@ mkdirSync(TARGET, { recursive: true })
 // ── 1. Resolve the source ──────────────────────────────────────────────────
 let source = process.env.PREMIUM_LOCAL_PATH || ''
 let tmpClone = ''
-if (!source && process.env.GITHUB_PAT_PREMIUM) {
+if (isPinnedBuild(process.env)) {
   tmpClone = '/tmp/aicanvas-premium-inject'
   rmSync(tmpClone, { recursive: true, force: true })
   const remote = `https://x-access-token:${process.env.GITHUB_PAT_PREMIUM}@github.com/aicanvas-me/aicanvas-premium.git`
@@ -1499,16 +1499,29 @@ writeFileSync(SHIM, shim)
 writeBuildInfo(builtSha, brainFileCounts)
 
 // The icon set ships from the same vault checkout; keep the parts the icon scripts
-// read (scripts/lib/icon-source.mjs) before the clone goes. Never fails the inject.
+// read (scripts/lib/icon-source.mjs) before the clone goes. Only a pinned build fails here.
 rmSync(join(ROOT, ICONS_KEPT), { recursive: true, force: true })
+const pinnedIcons = isPinnedBuild(process.env)
+const iconsFailLoud = (why) => {
+  console.error(
+    `\n🚫 [inject-premium] ICON SET MISSING FROM THE PIN ${pinnedSha}: ${why}\n` +
+      '   The icon set must be in the pinned vault commit (icons/react/IconBase.tsx and its folders).\n' +
+      '   Without it /icons ships blank. Pin a vault commit that has icons/, do not ship.',
+  )
+  if (tmpClone) rmSync(tmpClone, { recursive: true, force: true })
+  process.exit(1)
+}
 try {
   const icons = join(source, 'icons')
-  if (source && existsSync(join(icons, 'react/IconBase.tsx'))) {
-    for (const part of ['react', 'src', 'svg', 'svg-duotone', 'svg-solid', 'svg-solid-duotone', 'batch-4.json']) {
+  const action = iconSetAction({ pinned: pinnedIcons, iconsDir: icons })
+  if (action === 'fail') iconsFailLoud('icons/react/IconBase.tsx not found')
+  if (action === 'copy') {
+    for (const part of ICON_PARTS) {
       if (existsSync(join(icons, part))) cpSync(join(icons, part), join(ROOT, ICONS_KEPT, part), { recursive: true })
     }
   }
 } catch (e) {
+  if (pinnedIcons) iconsFailLoud(`copy failed: ${e.message}`)
   console.warn(`[inject-premium] icon source not kept: ${e.message}`)
 }
 
