@@ -376,7 +376,10 @@ export default function PremiumLicensePage() {
             file carries, and when you publish the source of an End Product,
             name AI Canvas in its credits or licence file. No visible credit in
             the End Product is required. If you hold a Subscription, neither the
-            notice nor the credit is required.
+            notice nor the credit is required. An End Product you shipped while
+            you held a Subscription needs nothing added after it ends; Line
+            Icons you install, copy, or download without a Subscription follow
+            this paragraph.
           </p>
           <p className={BODY}>
             The Line Icons are not licensed under the MIT License, including
