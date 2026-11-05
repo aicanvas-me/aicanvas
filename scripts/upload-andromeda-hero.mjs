@@ -39,7 +39,12 @@ const auth = Buffer.from(`${key}:`).toString('base64')
 const res = await fetch(`https://api.imagekit.io/v1/files?path=${encodeURIComponent(FOLDER)}&limit=1000`, {
   headers: { Authorization: `Basic ${auth}` },
 })
-const existing = new Set((await res.json()).map?.((f) => f.name) ?? [])
+const listing = res.ok ? await res.json() : null
+if (!Array.isArray(listing)) {
+  console.error(`Could not list ${FOLDER} (HTTP ${res.status}); refusing to upload blind`)
+  process.exit(1)
+}
+const existing = new Set(listing.map((f) => f.name))
 const clash = files.filter((f) => existing.has(f))
 if (clash.length && !replace) {
   console.error(`${clash.length} already in ${FOLDER} (pass --replace to overwrite): ${clash.slice(0, 5).join(', ')}`)
