@@ -80,7 +80,7 @@ export function ActionBar({
   const locked = isPreview(markup)
   const prompt = agentPrompt(name, size, weight, style, colour)
   const jsx = iconJsxLine(name, size, weight, style, colour)
-  const svg = locked ? '' : buildSvg(markup, size, weight, colour)
+  const svg = locked ? '' : buildSvg(markup, size, weight, colour, style)
   const { copied, copy } = useCopied(prompt)
 
   const close = () => {

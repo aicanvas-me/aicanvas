@@ -43,10 +43,10 @@ describe('buildIconZip', () => {
 
     expect(Object.keys(files)).toEqual(['svg/alpha.svg', 'svg/beta.svg', 'preset.json', 'README.txt'])
     expect(strFromU8(files['svg/alpha.svg'])).toBe(
-      buildSvg(MARKUP.alpha, value.size, value.weight, value.colour),
+      buildSvg(MARKUP.alpha, value.size, value.weight, value.colour, value.style),
     )
     expect(strFromU8(files['svg/beta.svg'])).toBe(
-      buildSvg(MARKUP.beta, value.size, value.weight, value.colour),
+      buildSvg(MARKUP.beta, value.size, value.weight, value.colour, value.style),
     )
 
     const saved = json(files['preset.json'])

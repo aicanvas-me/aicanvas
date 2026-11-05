@@ -72,7 +72,7 @@ export function IconTile({
             type="button"
             aria-label={`Copy ${icon.name} SVG`}
             title="Copy SVG"
-            onClick={() => void copyText(buildSvg(markup, exportSize, weight, exportColour))}
+            onClick={() => void copyText(buildSvg(markup, exportSize, weight, exportColour, style))}
             className="flex h-6 w-6 items-center justify-center rounded-full border border-sand-300 bg-sand-50 text-sand-700 shadow-sm hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:text-sand-50"
           >
             <Copy size={12} />

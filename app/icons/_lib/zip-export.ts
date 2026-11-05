@@ -89,7 +89,7 @@ export async function buildIconZip(input: IconZipInput): Promise<Uint8Array> {
       addText(
         entries,
         `svg/${name}.svg`,
-        buildSvg(input.markup[name], input.size, input.weight, input.colour),
+        buildSvg(input.markup[name], input.size, input.weight, input.colour, input.style),
       )
     }
   } else {

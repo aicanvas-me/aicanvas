@@ -33,7 +33,7 @@ export default async function IconPage({ params }: { params: Promise<{ name: str
   const index = categoryIcons.findIndex((candidate) => candidate.name === icon.name)
   const previousMeta = index > 0 ? categoryIcons[index - 1] : undefined
   const nextMeta = index < categoryIcons.length - 1 ? categoryIcons[index + 1] : undefined
-  const currentSvg = buildSvg(line[icon.name], 24, 'regular')
+  const currentSvg = buildSvg(line[icon.name], 24, 'regular', null, 'line')
 
   return (
     <IconDetail

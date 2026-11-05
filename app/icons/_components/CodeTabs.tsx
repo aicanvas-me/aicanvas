@@ -74,7 +74,7 @@ export function CodeTabs({
       : tab === 'SVG'
         ? isPreview(markup)
           ? 'The SVG of this style comes with AI Canvas Premium.'
-          : buildSvg(markup, size, weight, colour)
+          : buildSvg(markup, size, weight, colour, style)
         : iconInstallCommand(name, style)
 
   const onKey = (event: KeyboardEvent, index: number) => {

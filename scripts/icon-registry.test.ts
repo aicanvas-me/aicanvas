@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { generateIconRegistry } from './icon-registry.mjs'
+import { ICON_RUNTIME_NOTICE, LINE_ICON_NOTICE } from './lib/icon-notice.mjs'
 
 const MARKER = ['AICANVAS', 'PREMIUM', 'DO', 'NOT', 'COMMIT'].join('-')
 const NAMES = ['search', 'image-sparkle', 'map']
@@ -81,7 +82,7 @@ describe('icon registry generator', () => {
     expect(base.name).toBe('icon-base')
     expect(base.files).toEqual([{
       path: 'components/icons/IconBase.tsx',
-      content: 'export const createIcon = () => null\n',
+      content: `// ${ICON_RUNTIME_NOTICE}\nexport const createIcon = () => null\n`,
       type: 'registry:ui',
       target: 'components/icons/IconBase.tsx',
     }])
@@ -129,8 +130,10 @@ describe('icon registry generator', () => {
         if (file.target.endsWith('/IconBase.tsx')) continue
         expect(file.content).toContain("from './IconBase'")
         expect(file.content).not.toContain("from '../IconBase'")
-        const original = readFileSync(join(sourceDir, 'react/icons', file.target.split('/').at(-1)!), 'utf8')
-        const expected = original.split('\n').filter((line) => !line.startsWith('//')).join('\n')
+        const filename = file.target.split('/').at(-1)!
+        const original = readFileSync(join(sourceDir, 'react/icons', filename), 'utf8')
+        const notice = /-(?:duotone|solid)\.tsx$/.test(filename) ? '' : `// ${LINE_ICON_NOTICE}\n`
+        const expected = notice + original.split('\n').filter((line) => !line.startsWith('//')).join('\n')
           .replace("from '../IconBase'", "from './IconBase'")
         expect(file.content).toBe(expected)
         expect(file.content).toMatch(/export const \w+Icon = \w+\n$/)

@@ -23,7 +23,7 @@ describe('buildSvg: every style, size, weight and colour', () => {
     for (const size of [16, 24, 40, 64])
       for (const weight of WEIGHTS)
         for (const colour of [null, '#E5484D']) {
-          const svg = buildSvg(MARKUP[style], size, weight, colour)
+          const svg = buildSvg(MARKUP[style], size, weight, colour, style)
           it(`${style} ${size}px ${weight} colour ${colour}`, () => {
             expect(svg).toContain(`width="${size}" height="${size}"`)
             expect(strokeOf(svg)).toBe(STROKES[weight])
