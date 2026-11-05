@@ -9,9 +9,6 @@ export function AndromedaIcon({ size = 24, mono = false, style = undefined, ...p
   const width = size;
   const height = (size * 24) / 28;
 
-  // `mono` collapses the two-tone brand mark into a flat silhouette in
-  // `currentColor`, so the icon reads like every other line icon
-  // when dropped into nav rows that inherit text color from a parent.
   // andromeda-allow: brand mark. The logo's own two tones, deliberately NOT
   // system colours — they must not shift when a consumer rethemes the accent.
   const fillBack = mono ? 'currentColor' : '#C1C1C1';
