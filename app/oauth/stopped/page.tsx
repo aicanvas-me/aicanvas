@@ -64,7 +64,7 @@ export default async function StoppedPage({ searchParams }: { searchParams: Prom
   const copy = COPY[reason === 'unregistered' || reason === 'redirect' ? reason : 'invalid']
 
   return (
-    <Card>
+    <Card wide={copy.fresh}>
       <h1 className="text-xl font-bold leading-tight tracking-tight text-sand-900 dark:text-sand-50">{copy.title}</h1>
       <p className="mt-3 text-sm leading-relaxed text-sand-700 dark:text-sand-300">{copy.body}</p>
       {copy.fresh && (
