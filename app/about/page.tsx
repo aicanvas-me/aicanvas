@@ -258,9 +258,9 @@ export default function AboutPage() {
           The free library is open source under MIT, and its source is never
           hidden. Browsing and previewing are free, installing is free with a
           free account, and remixing the free library with AI stays free.
-          Premium is the one paid exception: proprietary components, design
-          systems, and templates for people who lean on AI Canvas every day,
-          and their sales keep the free library growing.
+          Premium is the one paid exception: Andromeda Pro, its templates,
+          the AI Brain and the premium standalones, for people who lean on AI
+          Canvas every day, and their sales keep the free library growing.
         </p>
       </Chapter>
 

@@ -160,7 +160,7 @@ export function PricingView() {
         sub={
           !premium
             ? 'The free library is free, forever. Browse anonymously, or sign up to save your favorites.'
-            : 'Every open component installs with one command, free with an account. Premium adds the design systems, blocks and templates, and the AI Brain.'
+            : 'Every open component installs with one command, free with an account. Premium adds Andromeda Pro, its templates, the AI Brain and the premium standalones.'
         }
       />
 
