@@ -1381,8 +1381,8 @@ export function createServer(
             : 'Note: installing requires a free AI Canvas account. Without one this command writes a placeholder file, not the icon. Sign up at https://aicanvas.me/account/sign-up, then reinstall this MCP with your token (setup: https://aicanvas.me/mcp).'
         const props =
           style === 'line' || style === 'duotone'
-            ? 'Props: size, color, strokeWidth (default 1.5), absoluteStrokeWidth (default true, keeps the line weight at any size).'
-            : 'Props: size, color. Solid styles are filled shapes with a fixed weight, so strokeWidth does not change them.'
+            ? 'Props: size, color, weight (thin, light, regular, bold or extrabold; default regular).'
+            : 'Props: size, color. Solid styles are filled shapes, so weight does not change them.'
         const out = {
           name,
           style,
@@ -1407,7 +1407,7 @@ export function createServer(
                 `Import: ${importLine}`,
                 `Use: ${usage}`,
                 props,
-                'To set one stroke for every icon, wrap the app in <IconProvider strokeWidth={...}> from components/icons/IconBase.',
+                'To set one weight for every icon, wrap the app in <IconProvider weight="..."> from components/icons/IconBase.',
                 `Preview: ${out.pageUrl}`,
               ].join('\n'),
             ),
