@@ -71,11 +71,11 @@ import {
   cleanName,
   deny,
   exchange,
+  isUntrustedRedirect,
   publicUrl,
   readClient,
   readRequest,
   redirectMatches,
-  redirectWarning,
   registerClient,
   revoke,
 } from './mcp-oauth'
@@ -313,19 +313,19 @@ describe('redirect safety', () => {
     }
   })
 
-  it('warns on consent for websites and unknown app schemes, not for loopback or known apps', () => {
-    expect(redirectWarning('http://127.0.0.1:5000/callback')).toBeNull()
-    expect(redirectWarning('cursor://anysphere.cursor-mcp/oauth/callback')).toBeNull()
-    expect(redirectWarning('com.example.agent:/callback')).toBeNull()
-    expect(redirectWarning('https://evil.example/cb')).toBe('evil.example')
-    expect(redirectWarning('opera://evil.example/cb')).toBe('opera://evil.example/cb')
+  it('flags websites and unknown app schemes on consent, not loopback or known apps', () => {
+    expect(isUntrustedRedirect('http://127.0.0.1:5000/callback')).toBe(false)
+    expect(isUntrustedRedirect('cursor://anysphere.cursor-mcp/oauth/callback')).toBe(false)
+    expect(isUntrustedRedirect('com.example.agent:/callback')).toBe(false)
+    expect(isUntrustedRedirect('https://evil.example/cb')).toBe(true)
+    expect(isUntrustedRedirect('opera://evil.example/cb')).toBe(true)
   })
 
-  it('names the whole address when an app address carries a website onward', () => {
-    expect(redirectWarning('vivaldi:https://evil.example/cb')).toBe('vivaldi:https://evil.example/cb')
-    expect(redirectWarning('arc://open?url=https://evil.example')).toBe('arc://open?url=https://evil.example')
-    expect(redirectWarning('com.example.agent:/open?url=https%3A%2F%2Fevil.example')).not.toBeNull()
-    expect(redirectWarning('cursor://anysphere.cursor-mcp/oauth?next=https://evil.example')).not.toBeNull()
+  it('flags an app address that carries a website onward', () => {
+    expect(isUntrustedRedirect('vivaldi:https://evil.example/cb')).toBe(true)
+    expect(isUntrustedRedirect('arc://open?url=https://evil.example')).toBe(true)
+    expect(isUntrustedRedirect('com.example.agent:/open?url=https%3A%2F%2Fevil.example')).toBe(true)
+    expect(isUntrustedRedirect('cursor://anysphere.cursor-mcp/oauth?next=https://evil.example')).toBe(true)
   })
 
   it('still reads a client whose addresses pass today\'s rules', () => {

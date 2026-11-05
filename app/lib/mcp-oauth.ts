@@ -14,10 +14,9 @@ import { createAdminClient } from '@/app/lib/supabase/admin'
 // client_id, and a pending request travels as a signed blob to the consent page. Tokens
 // are stored as SHA-256 hashes in mcp_grants.
 //
-// Kill switches: HOSTED_MCP_OAUTH off stops everything at once. Rotating MCP_OAUTH_SECRET
-// voids every registration, pending request and refresh at once, but an access token
-// already issued lives out its hour (it is a stored hash, not signed); delete the
-// mcp_grants rows to end those too.
+// Kill switches: HOSTED_MCP_OAUTH off stops everything at once; deleting mcp_grants rows
+// ends those connections. Rotating MCP_OAUTH_SECRET only voids pending consent requests:
+// readClient still reads older registrations, and codes and tokens are stored hashes.
 
 export const MCP_HOST = 'mcp.aicanvas.me'
 
@@ -190,26 +189,24 @@ export function isAllowedRedirect(uri: string): boolean {
 }
 
 /**
- * The website a sign-in goes to, or null when it goes back to this computer (loopback) or to
- * a known or reverse-DNS app. The consent screen hides the agent's name for a website.
+ * True when a sign-in goes to a website or an unknown app, false when it goes back to this
+ * computer (loopback) or to a known or reverse-DNS app. The consent screen hides the agent's
+ * name for an untrusted redirect, since a website could copy any name.
  */
-export function redirectWarning(uri: string): string | null {
+export function isUntrustedRedirect(uri: string): boolean {
   let url: URL
   try {
     url = new URL(uri)
   } catch {
-    return uri
+    return true
   }
-  if (LOOPBACK.has(url.hostname)) return null
+  if (LOOPBACK.has(url.hostname)) return false
   const scheme = url.protocol.slice(0, -1)
-  if (scheme === 'https' || scheme === 'http') return url.host
+  if (scheme === 'https' || scheme === 'http') return true
   // A known or reverse-DNS app is trusted only when nothing in the address carries a web
   // address onward (vivaldi:https://..., arc://open?url=...).
   const forwards = /https?:|url=|%3a%2f%2f/i.test(uri.slice(scheme.length + 1))
-  if ((KNOWN_APP_SCHEMES.has(scheme) || scheme.includes('.')) && !forwards) return null
-  // An unknown app address is shown whole (shortened), since the scheme and host alone can
-  // hide the website it sends to.
-  return uri.length > 80 ? `${uri.slice(0, 77)}...` : uri
+  return !(KNOWN_APP_SCHEMES.has(scheme) || scheme.includes('.')) || forwards
 }
 
 /**

@@ -9,7 +9,7 @@ import { Search } from '@/app/_icons/icons/search'
 import { createClient } from '../../lib/supabase/server'
 import { buttonClasses } from '../../components/buttonClasses'
 import { hostedMcpOAuthEnabled } from '../../../lib/flags'
-import { readRequest, redirectWarning } from '../../lib/mcp-oauth'
+import { isUntrustedRedirect, readRequest } from '../../lib/mcp-oauth'
 import { SwitchAccount } from './SwitchAccount'
 import { Card } from '../Card'
 
@@ -84,7 +84,7 @@ export default async function ConsentPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect(`/account/sign-in?next=${encodeURIComponent(here)}`)
 
-  const target = redirectWarning(request.ru)
+  const untrusted = isUntrustedRedirect(request.ru)
 
   return (
     <Card>
@@ -92,7 +92,7 @@ export default async function ConsentPage({
       {/* The name is the agent's own, so it is shown only when the sign-in returns to this
           computer or a known app: a website could copy any name. */}
       <h1 className="text-center text-xl font-bold leading-tight tracking-tight text-sand-900 dark:text-sand-50">
-        {target || request.n === 'An app' ? 'Allow your AI agent to use your AI Canvas account?' : `Allow ${request.n} to use your AI Canvas account?`}
+        {untrusted || request.n === 'An app' ? 'Allow your AI agent to use your AI Canvas account?' : `Allow ${request.n} to use your AI Canvas account?`}
       </h1>
       <p className="mt-6 text-xs font-semibold text-sand-600 dark:text-sand-400">This lets it:</p>
       <ul className="mt-3 space-y-3 text-sm text-sand-700 dark:text-sand-300">
