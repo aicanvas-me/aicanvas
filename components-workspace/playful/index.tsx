@@ -6,8 +6,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 
-// Science Gothic from Google Fonts, loaded by the stylesheet import inside the
-// root, so the component runs in any React app (Next.js, Vite, anything else).
 const FONT_FAMILY = "'Science Gothic', sans-serif"
 const FONT_URL = 'https://fonts.googleapis.com/css2?family=Science+Gothic:wght@100..900&display=swap'
 

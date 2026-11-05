@@ -4,8 +4,6 @@
 
 import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
-// Anton from Google Fonts, loaded by the stylesheet import inside the root, so
-// the component runs in any React app (Next.js, Vite, anything else).
 const FONT_FAMILY = "'Anton', sans-serif"
 const FONT_URL = 'https://fonts.googleapis.com/css2?family=Anton&display=swap'
 
