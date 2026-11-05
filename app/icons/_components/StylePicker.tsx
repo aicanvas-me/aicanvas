@@ -17,7 +17,6 @@ export function StylePicker({
   value: IconStyle
   onChange: (style: IconStyle) => void
   loading?: boolean
-  compact?: boolean
 }) {
   const reduce = useReducedMotion()
   const refs = useRef<(HTMLButtonElement | null)[]>([])

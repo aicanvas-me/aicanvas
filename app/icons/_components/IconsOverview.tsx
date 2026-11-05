@@ -53,7 +53,8 @@ function saveBlob(blob: Blob, filename: string) {
   anchor.href = url
   anchor.download = filename
   anchor.click()
-  URL.revokeObjectURL(url)
+  // Revoked late: an immediate revoke can cancel the download in Safari and Firefox.
+  setTimeout(() => URL.revokeObjectURL(url), 5000)
 }
 
 function downloadFileName(header: string | null): string {
@@ -384,7 +385,7 @@ export function IconsOverview({
                 </kbd>
               )}
             </label>
-            <StylePicker value={style} onChange={setStyle} compact loading={loading} />
+            <StylePicker value={style} onChange={setStyle} loading={loading} />
           </div>
           <div aria-hidden className="h-px bg-sand-200 dark:bg-sand-800" />
           <div className="relative grid grid-cols-1 gap-2 p-2 @min-[480px]:grid-cols-2 @min-[640px]:flex @min-[640px]:items-center">
