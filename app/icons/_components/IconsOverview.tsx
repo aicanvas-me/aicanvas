@@ -202,10 +202,15 @@ export function IconsOverview({
   const colour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
   const { data, loading } = useIconVariant(lineIcons, style, loadFullLine)
   const loadMetadata = useCallback(() => {
-    metadataRequest ??= fetch('/icons/icon-data').then((response) => {
-      if (!response.ok) throw new Error('Could not load icon metadata')
-      return response.json() as Promise<IconMeta[]>
-    })
+    metadataRequest ??= fetch('/icons/icon-data')
+      .then((response) => {
+        if (!response.ok) throw new Error('Could not load icon metadata')
+        return response.json() as Promise<IconMeta[]>
+      })
+      .catch((error: unknown) => {
+        metadataRequest = null
+        throw error
+      })
     void metadataRequest.then(setMetadata).catch(() => {})
   }, [])
   const metadataByName = useMemo(
