@@ -18,7 +18,7 @@ export const FAQ_CATEGORY_META: { slug: string; category: string; blurb: string 
   { slug: 'design-systems', category: 'Design systems', blurb: 'Design systems your agent builds with and you reshape. Change the tokens and every component follows.' },
   { slug: 'ai-design-skills', category: 'AI design skills', blurb: 'Give Claude Code, Cursor, and Codex the whole system, so what they build next fits it.' },
   { slug: 'standalone', category: 'Standalone components', blurb: 'Effects, motion and blocks that belong to no design system and drop into any of them.' },
-  { slug: 'icons', category: 'Icons', blurb: 'An in-house icon set in four styles, free to use, with the size and weight yours to set.' },
+  { slug: 'icons', category: 'Icons', blurb: 'An in-house icon set in four styles, with the size and weight yours to set. Line is free to use, the other three come with Premium.' },
   { slug: 'plans', category: 'Plans and Premium', blurb: 'Start free with unlimited installs. Upgrade for Andromeda Pro, the AI Brain, complete systems, templates, and premium standalone components and blocks.' },
   { slug: 'billing', category: 'Payments and billing', blurb: 'Paddle handles checkout, taxes, and payment details. Cancel Premium at any time and keep access through the paid period.' },
   { slug: 'about', category: 'About AI Canvas', blurb: 'Understand the code, licences, compatibility, and people it serves. One designer builds the project one component at a time.' },
@@ -108,7 +108,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'free-install-count',
     category: 'installing',
     q: 'How many components can I install for free?',
-    a: 'Unlimited. A free account unlocks uncounted one-command installs and free remix prompts for every free component, forever. Premium adds proprietary premium standalone components and blocks with full prompts, complete design systems, and templates.',
+    a: 'Unlimited. A free account unlocks uncounted one-command installs and free remix prompts for every free component, forever. Premium adds Andromeda Pro, its templates, the AI Brain and the premium standalones, with full prompts.',
   },
   {
     id: 'ai-canvas-mcp-server',
@@ -218,7 +218,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'are-icons-free',
     category: 'icons',
     q: 'Are the icons free?',
-    a: 'Yes. The icon set is free and public in its own repository, and every icon downloads free one at a time. Premium adds the bulk download of the whole set.',
+    a: 'The Line style is. Every Line icon is free to use, to install, copy or download one at a time. Duotone, Solid and Solid duotone come with Premium, and so does the download of the whole set. The icons are not MIT, and there is no public icon repository.',
   },
   {
     id: 'design-skill-for-claude-code',
@@ -328,7 +328,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'commercial-use',
     category: 'about',
     q: 'Can I use the components in commercial projects?',
-    a: 'Yes. Free components use the permissive MIT licence, so you can modify and ship them in personal or commercial projects without credit. Premium components, design systems, and templates use the AI Canvas Premium License, a durable licence to use and ship but not redistribute. Third-party assets, fonts, and images follow their own terms when specified.',
+    a: 'Yes. Free components and Andromeda Legacy use the permissive MIT licence, so you can change them and ship them in personal or commercial projects. Keep the MIT licence notice in the source; no visible credit is needed. The Line icons they use are free to use under their own terms, not MIT. Premium components, Andromeda Pro, templates and the AI Brain use the AI Canvas Premium License, a durable licence to use and ship but not redistribute. Third-party assets, fonts, and images follow their own terms when specified.',
   },
   {
     id: 'component-tech-stack',
