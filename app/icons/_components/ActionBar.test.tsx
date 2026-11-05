@@ -1,13 +1,17 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
-import { cleanup, fireEvent, render, screen } from '@testing-library/react'
+import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { ActionBar } from './ActionBar'
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }))
 
 const MARKUP = '<path d="M4 12h16" />'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  vi.restoreAllMocks()
+  vi.useRealTimers()
+})
 
 function openMenu() {
   render(<ActionBar name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="line" />)
@@ -56,5 +60,35 @@ describe('ActionBar menu', () => {
     fireEvent.click(screen.getAllByRole('menuitem')[2])
     expect(screen.queryByRole('menu')).toBeNull()
     expect(document.activeElement).toBe(trigger)
+  })
+})
+
+describe('ActionBar downloads', () => {
+  const { createObjectURL, revokeObjectURL } = URL
+  afterEach(() => {
+    URL.createObjectURL = createObjectURL
+    URL.revokeObjectURL = revokeObjectURL
+  })
+
+  it('revokes the download URL only after a delay', () => {
+    vi.useFakeTimers()
+    const revoke = vi.fn()
+    URL.createObjectURL = () => 'blob:icon'
+    URL.revokeObjectURL = revoke
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    render(<ActionBar name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="line" />)
+    fireEvent.click(screen.getByRole('button', { name: 'SVG' }))
+    expect(revoke).not.toHaveBeenCalled()
+    vi.advanceTimersByTime(5000)
+    expect(revoke).toHaveBeenCalledWith('blob:icon')
+  })
+
+  it('says so when the PNG export fails', async () => {
+    URL.createObjectURL = () => {
+      throw new Error('no blob URLs')
+    }
+    const { items } = openMenu()
+    fireEvent.click(items.find((item) => item.textContent === 'Download PNG')!)
+    await waitFor(() => expect(screen.getByRole('alert').textContent).toMatch(/PNG download failed/))
   })
 })

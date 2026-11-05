@@ -25,7 +25,8 @@ function saveBlob(blob: Blob, filename: string) {
   anchor.href = url
   anchor.download = filename
   anchor.click()
-  URL.revokeObjectURL(url)
+  // Revoked late: an immediate revoke can cancel the download in Safari and Firefox.
+  setTimeout(() => URL.revokeObjectURL(url), 5000)
 }
 
 function downloadSvg(name: string, svg: string) {
@@ -42,10 +43,11 @@ async function downloadPng(name: string, svg: string, size: number) {
     canvas.width = size * 2
     canvas.height = size * 2
     const context = canvas.getContext('2d')
-    if (!context) return
+    if (!context) throw new Error('No canvas to draw the PNG on')
     context.drawImage(image, 0, 0, canvas.width, canvas.height)
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'))
-    if (blob) saveBlob(blob, `${name}@2x.png`)
+    if (!blob) throw new Error('The PNG could not be encoded')
+    saveBlob(blob, `${name}@2x.png`)
   } finally {
     URL.revokeObjectURL(source)
   }
@@ -68,6 +70,7 @@ export function ActionBar({
   style: IconStyle
 }) {
   const [open, setOpen] = useState(false)
+  const [pngFailed, setPngFailed] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
@@ -113,7 +116,11 @@ export function ActionBar({
       : [
           { label: 'Copy SVG', icon: Copy, action: () => copyText(svg) },
           { label: 'Download SVG', icon: FileImage, action: () => downloadSvg(name, svg) },
-          { label: 'Download PNG', icon: Download, action: () => downloadPng(name, svg, size) },
+          {
+            label: 'Download PNG',
+            icon: Download,
+            action: () => downloadPng(name, svg, size).catch(() => setPngFailed(true)),
+          },
         ]),
   ]
 
@@ -183,6 +190,7 @@ export function ActionBar({
                 role="menuitem"
                 tabIndex={-1}
                 onClick={() => {
+                  setPngFailed(false)
                   void item.action()
                   close()
                 }}
@@ -209,6 +217,11 @@ export function ActionBar({
           <Download size={14} />
           SVG
         </button>
+      )}
+      {pngFailed && (
+        <p role="alert" className="col-span-2 text-xs text-sand-700 sm:basis-full dark:text-sand-300">
+          PNG download failed, try again
+        </p>
       )}
     </div>
   )
