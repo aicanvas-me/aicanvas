@@ -133,6 +133,10 @@ export default function McpDocsPage() {
             that, quit Cursor and open it again.
           </P>
           <P>
+            VS Code asks to sign in again by itself: click Allow, then Allow in the browser. If Copilot answers without AI Canvas,
+            start your prompt with <C>#aicanvas-mcp</C>.
+          </P>
+          <P>
             Codex does not open the sign-in by itself: its AI Canvas tools answer &ldquo;Authentication required&rdquo;. Run{' '}
             <C>codex mcp login aicanvas</C> in a terminal, then click Allow.
           </P>

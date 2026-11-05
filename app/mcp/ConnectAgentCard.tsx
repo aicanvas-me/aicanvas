@@ -94,10 +94,10 @@ export function ConnectAgentCard({
   )
 
   // Agents skip MCP tools unless the prompt names the server, so the first prompt names it.
-  const check = (n: number) => (
+  const check = (n: number, ask = 'Ask your agent', prompt = 'Use the aicanvas MCP: what can you add to my app?') => (
     <Step number={n} isLast>
       <p className="text-sm text-sand-700 dark:text-sand-300">
-        Ask your agent <span className="font-semibold">&ldquo;Use the aicanvas MCP: what can you add to my app?&rdquo;</span>
+        {ask} <span className="font-semibold">&ldquo;{prompt}&rdquo;</span>
       </p>
     </Step>
   )
@@ -241,17 +241,18 @@ export function ConnectAgentCard({
             <>
               <Step number={1}>
                 <Hint>
-                  Add this to <Inline>.vscode/mcp.json</Inline> in your project:
+                  Add this to <Inline>.vscode/mcp.json</Inline> in your project → trust the folder:
                 </Hint>
                 {block('vscode-config', VSCODE_CONFIG, 'config', true)}
               </Step>
               <Step number={2}>
                 <p className="text-sm text-sand-700 dark:text-sand-300">
-                  The first time your agent uses AI Canvas, your browser opens: sign in and click{' '}
-                  <span className="font-semibold">Allow</span>.
+                  <span className="font-semibold">Start</span> above aicanvas in mcp.json → browser opens → sign in →{' '}
+                  <span className="font-semibold">Allow</span>
                 </p>
               </Step>
-              {check(3)}
+              {/* VS Code hides MCP tools from the model unless the prompt tags the server with #. */}
+              {check(3, 'Ask Copilot', '#aicanvas-mcp what can you add to my app?')}
             </>
           )}
 
