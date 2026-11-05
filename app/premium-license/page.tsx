@@ -5,7 +5,7 @@ import { CONTACT_EMAIL } from '../lib/config'
 import { SiteFooter } from '../components/SiteFooter'
 
 // ─── /premium-license ─────────────────────────────────────────────────────────
-// The AI Canvas Premium License (a EULA). Versioned v1.0 on its own URL, mirroring
+// The AI Canvas Premium License (a EULA). Versioned v1.1 on its own URL, mirroring
 // the convention used by paid component vendors (Tailwind Plus, CoreUI PRO, MUI).
 // The public Terms (§ 2b, § 4, § 7b) reference this page by link. It governs the
 // closed-source Premium Components, design systems, and templates only. The free
@@ -23,7 +23,7 @@ export default function PremiumLicensePage() {
           AI Canvas Premium License
         </h1>
         <p className="mt-3 text-sm text-sand-600 dark:text-sand-500">
-          Version 1.0. Effective date: 2026-07-01. This License governs the
+          Version 1.1. Effective date: 2026-11-05. This License governs the
           AI Canvas Premium Components only. It is separate from, and no
           replacement for, the MIT License that covers the free, open-source AI
           Canvas registry.
@@ -358,7 +358,9 @@ export default function PremiumLicensePage() {
         <section className="mt-10">
           <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">11. Versioning</h2>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
-            This is AI Canvas Premium License version 1.0. The version in force
+            This is AI Canvas Premium License version 1.1. Version 1.1 adds
+            Lifetime and reduces no right granted under version 1.0 (effective
+            2026-07-01). The version in force
             for a given Installed Component is the version current when you
             installed it. A later version will not retroactively reduce the
             perpetual licence you already hold to that Installed Component.
