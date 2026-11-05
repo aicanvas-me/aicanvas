@@ -1,6 +1,6 @@
 'use client'
 
-// The FAQ: one centred column of rounded-tag rows, a plus that turns into a
+// The FAQ: one centred column of rounded-shell-inner rows, a plus that turns into a
 // cross when a row opens; under reduced motion the accordion opens without
 // animating.
 //

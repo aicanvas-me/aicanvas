@@ -4,9 +4,8 @@ import { buttonClasses } from './buttonClasses'
 import { CtaBand } from './PageKit'
 import { CATALOG_TOTAL } from '../lib/catalog-count'
 
-// The homepage's closing band, word for word, for the pages that end on a way
-// in (pricing, MCP, about, FAQ). A server component: the count comes from
-// source at build time.
+// The homepage's closing band, word for word. Only pricing uses it; MCP and
+// About draw their own. A server component: the count comes from source at build time.
 export function SiteCta() {
   return (
     <CtaBand

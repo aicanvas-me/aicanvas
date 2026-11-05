@@ -2,9 +2,9 @@
 // narrow, three equal, narrow + wide). Each cell shows a quiet piece of real
 // UI that fades into the page (the install in a terminal, a prompt to an
 // agent, where the work may ship, the AI Brain's checks, the stack, the MIT
-// licence, the Premium panel), with its claim at the bottom left. CSS only,
-// server component; the one moving part is a text caret, still under reduced
-// motion.
+// licence, the Premium panel), with its claim at the bottom left. A server
+// component; each cell scroll-reveals and a text caret blinks, both still under
+// reduced motion.
 
 import type { ReactNode } from 'react'
 import { ArrowUp } from '@/app/_icons/icons/arrow-up'
