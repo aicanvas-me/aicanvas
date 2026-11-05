@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { Eye } from '@/app/_icons/icons/eye'
@@ -86,6 +86,9 @@ interface ComponentPageViewProps {
   // the vault's meta.json files are next touched anyway, so the two repos don't
   // have to ship in lockstep for it.
   framedPreview?: boolean
+  // Taller live preview box for cards that do not fit the default 480 / 320.
+  previewHeight?: number
+  previewHeightMobile?: number
   // Label-only: names the type above the install section, "Premium block"
   // rather than "Premium component". The chip row by the title states the tier
   // alone, so the category chip beside it carries the type there instead.
@@ -138,6 +141,8 @@ export default function ComponentPageView({
   designSystem,
   premium = false,
   framedPreview = false,
+  previewHeight,
+  previewHeightMobile,
   isBlock = false,
   related,
   highlightedCode,
@@ -735,9 +740,15 @@ export default function ComponentPageView({
               // and spares this wrapper (for the component's own animations),
               // so a fade here lagged 300ms behind the shell, a flash on the
               // border.
-              className={`relative isolate mx-2 h-[320px] overflow-hidden rounded-card border sm:h-[480px] ${
+              className={`relative isolate mx-2 h-[var(--pv-h-m,320px)] overflow-hidden rounded-card border sm:h-[var(--pv-h,480px)] ${
                 cardTheme === 'dark' ? 'dark border-sand-800 bg-sand-950' : 'border-sand-200 bg-sand-100'
               }`}
+              style={
+                {
+                  ...(previewHeight ? { '--pv-h': `${previewHeight}px` } : {}),
+                  ...(previewHeightMobile ? { '--pv-h-m': `${previewHeightMobile}px` } : {}),
+                } as CSSProperties
+              }
             >
               {/* Both tabs stay mounted so the syntax-highlighted code is in the
                   server-rendered HTML — Google indexes it even while the Preview

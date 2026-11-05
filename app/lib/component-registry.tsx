@@ -178,6 +178,10 @@ export interface ComponentEntry {
   // kept only because renaming it means shipping the public repo and the vault
   // in lockstep. `image` is still the grid card and OG shot for every entry.
   staticPreview?: boolean
+  // Live preview box height in px for a card taller than the default box
+  // (480 from sm, 320 below). Mobile falls back to the desktop value.
+  previewHeight?: number
+  previewHeightMobile?: number
   // Label-only: shows "Premium block" instead of "Premium component" on the
   // detail page. Does not change `badge` (other surfaces key off badge ===
   // 'Premium' for real classification logic) or the grid/registry treatment —
