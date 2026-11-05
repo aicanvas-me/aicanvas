@@ -1912,7 +1912,7 @@ export function createServer(
         let ranked = rankAll(wanted)
         const detectedPageType = pageTypeFor(brief)
         // A "for ..." clause names the product, not a UI part: "page for a note app" is no note.
-        const subject = brief.replace(/\s+for\s+.*$/is, '')
+        const subject = brief.replace(/\s+for\s[\s\S]*$/i, '')
         const pageType =
           detectedPageType &&
           segments.length <= 1 &&
