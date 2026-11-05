@@ -2,7 +2,7 @@ import { COMPONENTS } from '../lib/component-registry'
 import { SITE_URL } from '../lib/config'
 import { ICON_CATEGORIES } from '../icons/_lib/categories'
 import { icons } from '../icons/_lib/server-data'
-import { classifyContent } from '@/lib/registry/content-type'
+import { installTier } from '@/lib/registry/premium-gate'
 import { loadContentLookup } from '@/lib/registry/lookup'
 
 export const dynamic = 'force-static'
@@ -54,7 +54,7 @@ No account needed to read: every free component's complete source is inlined bel
   // Names only, never geometry: install and usage notes are in llms.txt.
   if (icons.length) {
     const lookup = loadContentLookup()
-    const tier = (slug: string) => (classifyContent(slug, lookup) === 'standalone' ? 'free account' : 'Premium')
+    const tier = (slug: string) => installTier(slug, lookup)
     const byCategory = ICON_CATEGORIES.map(([slug, label]) => {
       const names = icons.filter((icon) => icon.category === slug).map((icon) => icon.name)
       return names.length ? `${label}: ${names.join(', ')}` : ''
