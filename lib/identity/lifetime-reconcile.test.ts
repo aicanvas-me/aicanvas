@@ -71,6 +71,16 @@ describe('foldAdjustments', () => {
     expect(foldAdjustments([{ action: 'refund', type: 'full', status: 'pending_approval', created_at: '1' }]).revoked).toBe(false)
   })
 
+  it("the dashboard's full refund (type partial, every item full) revokes; a partial item does not", () => {
+    // Shape of the real sandbox refund adj_01m6p0jkxhep20qfs5sqf8cazc (2026-11-05).
+    const dashboardFull = { action: 'refund', type: 'partial', items: [{ type: 'full', amount: '1070' }], created_at: '1' }
+    expect(foldAdjustments([{ ...dashboardFull, status: 'approved' }])).toEqual({ revoked: true, reason: 'refund' })
+    expect(foldAdjustments([{ ...dashboardFull, status: 'pending_approval' }]).revoked).toBe(false)
+    const partialItem = { action: 'refund', type: 'partial', items: [{ type: 'partial', amount: '500' }], created_at: '1' }
+    expect(foldAdjustments([{ ...partialItem, status: 'approved' }]).revoked).toBe(false)
+    expect(foldAdjustments([{ action: 'refund', type: 'partial', items: [], status: 'approved', created_at: '1' }]).revoked).toBe(false)
+  })
+
   it('a reversed chargeback and its reversal leave it live', () => {
     expect(
       foldAdjustments([

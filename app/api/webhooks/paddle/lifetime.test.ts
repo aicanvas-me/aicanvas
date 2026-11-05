@@ -57,6 +57,7 @@ function adjustment(opts: {
   id?: string
   action?: string
   kind?: string | null
+  items?: { type: string }[]
   status?: string
   txn?: string
   sub?: string | null
@@ -69,6 +70,7 @@ function adjustment(opts: {
       id: opts.id ?? 'adj_1',
       action: opts.action ?? 'refund',
       type: opts.kind === undefined ? 'full' : opts.kind,
+      ...(opts.items ? { items: opts.items } : {}),
       status: opts.status ?? 'approved',
       transaction_id: opts.txn ?? 'txn_1',
       subscription_id: opts.sub ?? null,
@@ -297,10 +299,19 @@ describe('Lifetime adjustments', () => {
     expect(captured).toContain('Lifetime Revoked')
   })
 
+  it("the dashboard's full refund (type partial, its item full) revokes", async () => {
+    await post(purchase())
+    expect((await post(adjustment({ at: at(1), kind: 'partial', items: [{ type: 'full' }] }))).status).toBe(200)
+    expect(life()[0]).toMatchObject({ revoke_reason: 'refund', last_adjustment_at: at(1) })
+    expect(life()[0].revoked_at).toBeTruthy()
+  })
+
   it.each([
     ['pending refund', { status: 'pending_approval' }],
     ['rejected refund', { status: 'rejected' }],
     ['partial refund', { kind: 'partial' }],
+    ['partial refund of its item', { kind: 'partial', items: [{ type: 'partial' }] }],
+    ['pending dashboard full refund', { kind: 'partial', items: [{ type: 'full' }], status: 'pending_approval' }],
     ['refund with no type', { kind: null }],
     ['chargeback warning', { action: 'chargeback_warning', status: 'approved' }],
     ['credit', { action: 'credit' }],

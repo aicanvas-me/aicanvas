@@ -265,10 +265,18 @@ export async function fetchPaddleTransaction(transactionId: string): Promise<Tra
 
 export type AdjustmentEffect = { kind: 'revoke'; reason: 'refund' | 'chargeback' } | { kind: 'restore' } | { kind: 'none' }
 
+function isFullRefund(adj: any): boolean {
+  if (adj?.type === 'full') return true
+  const items = adj?.items
+  return Array.isArray(items) && items.length > 0 && items.every((i: any) => i?.type === 'full')
+}
+
 /**
  * Pure: what a Paddle adjustment does to a Lifetime row.
  * - A FULL refund that is APPROVED revokes. Pending, rejected and partial
- *   refunds change nothing (a partial refund keeps Lifetime).
+ *   refunds change nothing (a partial refund keeps Lifetime). Full means
+ *   `type: 'full'` or every refunded item `full`: the dashboard's "Full refund"
+ *   arrives as `type: 'partial'` with its one item `full` (sandbox, 2026-11-05).
  * - A chargeback revokes whatever status Paddle gives it (undocumented), except
  *   one already reversed or rejected: Paddle may update the original chargeback
  *   to `reversed` after the reversal, and that must not undo the restore.
@@ -278,7 +286,7 @@ export type AdjustmentEffect = { kind: 'revoke'; reason: 'refund' | 'chargeback'
 export function adjustmentEffect(adj: any, row: Pick<LifetimeRow, 'revoke_reason'>): AdjustmentEffect {
   const action = adj?.action
   const status = adj?.status
-  if (action === 'refund' && status === 'approved' && adj?.type === 'full') return { kind: 'revoke', reason: 'refund' }
+  if (action === 'refund' && status === 'approved' && isFullRefund(adj)) return { kind: 'revoke', reason: 'refund' }
   if (action === 'chargeback' && status !== 'reversed' && status !== 'rejected') return { kind: 'revoke', reason: 'chargeback' }
   if (action === 'chargeback_reverse' && status !== 'rejected' && row.revoke_reason === 'chargeback') return { kind: 'restore' }
   return { kind: 'none' }
