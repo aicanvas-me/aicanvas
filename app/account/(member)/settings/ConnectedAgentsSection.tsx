@@ -26,6 +26,15 @@ export type ConnectedAgent = {
 
 const day = (iso: string) =>
   new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
+// UTC, like day(): the row renders on the server first, so a local time would mismatch.
+const time = (iso: string) =>
+  `${new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })} UTC`
+
+function connectedLine(agent: ConnectedAgent, twin: boolean) {
+  const connected = `Connected ${day(agent.connectedAt)}${twin ? `, ${time(agent.connectedAt)}` : ''}`
+  const used = agent.lastUsedAt ? `Last used ${day(agent.lastUsedAt)}` : twin ? 'Never used' : null
+  return [agent.destination, connected, used].filter(Boolean).join(' · ')
+}
 
 async function post(url: string, body?: unknown): Promise<boolean> {
   try {
@@ -45,6 +54,8 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
   const [busy, setBusy] = useState<string | null>(null)
   const [failed, setFailed] = useState(false)
   const [, startRefresh] = useTransition()
+  // Rows with the same name and destination look identical; those get the time and use state.
+  const sameAs = (a: ConnectedAgent) => agents.filter((b) => b.name === a.name && b.destination === a.destination).length
 
   async function run(key: string, body: { id: string } | { all: true }) {
     setBusy(key)
@@ -93,8 +104,7 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
                     <div className="min-w-0">
                       <p className="truncate text-sm font-semibold text-sand-900 dark:text-sand-50">{agent.name}</p>
                       <p className="mt-0.5 text-xs text-sand-600 dark:text-sand-400">
-                        {agent.destination} · Connected {day(agent.connectedAt)}
-                        {agent.lastUsedAt ? ` · Last used ${day(agent.lastUsedAt)}` : ''}
+                        {connectedLine(agent, sameAs(agent) > 1)}
                       </p>
                     </div>
                   </div>
