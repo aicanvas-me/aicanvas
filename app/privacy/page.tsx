@@ -175,7 +175,7 @@ export default function PrivacyPage() {
             browser, is never sent to an analytics provider, and is never used
             for advertising or profiling.
           </p>
-          <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={BODY}>
             When you allow an AI agent to use your account through the AI Canvas
             MCP, we keep the name the agent gave itself, where it returns after
             signing in, when it connected and was last used, and the country (never
