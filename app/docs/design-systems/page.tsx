@@ -58,7 +58,7 @@ export default function DesignSystemsDocPage() {
           [
             <A key="l" href="/design-systems/andromeda">Andromeda Legacy</A>,
             'MIT',
-            'Tokens: no account. Components: free account. Templates and AI Brain: Premium',
+            'Tokens: no account. Components and templates: free account. AI Brain and the Everything install: Premium',
           ],
         ]}
       />

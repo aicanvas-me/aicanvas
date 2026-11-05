@@ -137,7 +137,7 @@ This opens a browser UI where you can call each tool by hand.
 
 ### Accounts and premium content
 
-Browsing metadata (`list_categories`, `list_components`, `search_components`, `list_systems`, `list_templates`, `get_install_command`) is free and needs no account. Pulling actual source (`get_component`, `get_system`, `get_template`) runs against a free AI Canvas account: set `AICANVAS_TOKEN` from your account and the website gives you the ready-made config. Without a token, a free-component source pull returns a short "create a free account" notice instead of the code, and premium content (full design systems and templates) returns HTTP 402 with an upgrade link at [aicanvas.me/pricing](https://aicanvas.me/pricing). Update anytime with `npx @aicanvas/mcp@latest`.
+Browsing metadata (`list_categories`, `list_components`, `search_components`, `list_systems`, `list_templates`, `get_install_command`) is free and needs no account. Pulling actual source (`get_component`, `get_system`, `get_template`) runs against a free AI Canvas account: set `AICANVAS_TOKEN` from your account and the website gives you the ready-made config. Without a token, a free-component source pull returns a short "create a free account" notice instead of the code, and premium content (Andromeda Pro, its templates, the AI Brain and full design-system installs) returns HTTP 402 with an upgrade link at [aicanvas.me/pricing](https://aicanvas.me/pricing). Update anytime with `npx @aicanvas/mcp@latest`.
 
 ## How the registry stays fresh
 

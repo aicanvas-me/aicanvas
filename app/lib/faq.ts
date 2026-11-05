@@ -19,7 +19,7 @@ export const FAQ_CATEGORY_META: { slug: string; category: string; blurb: string 
   { slug: 'ai-design-skills', category: 'AI design skills', blurb: 'Give Claude Code, Cursor, and Codex the whole system, so what they build next fits it.' },
   { slug: 'standalone', category: 'Standalone components', blurb: 'Effects, motion and blocks that belong to no design system and drop into any of them.' },
   { slug: 'icons', category: 'Icons', blurb: 'An in-house icon set in four styles, with the size and weight yours to set. Line is free to use, the other three come with Premium.' },
-  { slug: 'plans', category: 'Plans and Premium', blurb: 'Start free with unlimited installs. Upgrade for Andromeda Pro, the AI Brain, complete systems, templates, and premium standalone components and blocks.' },
+  { slug: 'plans', category: 'Plans and Premium', blurb: 'Start free with unlimited installs. Upgrade for Andromeda Pro, its templates, the AI Brain, complete systems, and premium standalone components and blocks.' },
   { slug: 'billing', category: 'Payments and billing', blurb: 'Paddle handles checkout, taxes, and payment details. Cancel Premium at any time and keep access through the paid period.' },
   { slug: 'about', category: 'About AI Canvas', blurb: 'Understand the code, licences, compatibility, and people it serves. One designer builds the project one component at a time.' },
 ]
@@ -29,7 +29,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'what-is-ai-canvas',
     category: 'getting-started',
     q: 'What is AI Canvas?',
-    a: `${AI_CANVAS_DEFINITION} Free components come with full source and remix prompts under MIT, and a free account adds unlimited one-command installs. Premium adds Andromeda Pro, the AI Brain, templates and every premium standalone component and block.`,
+    a: `${AI_CANVAS_DEFINITION} Free components come with full source and remix prompts under MIT, and a free account adds unlimited one-command installs. Premium adds Andromeda Pro, its templates, the AI Brain and every premium standalone component and block.`,
   },
   {
     id: 'need-to-code',
@@ -60,7 +60,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'is-ai-canvas-free',
     category: 'getting-started',
     q: 'Is AI Canvas free?',
-    a: 'Yes. Browsing, previews, the MCP, saving favorites, and full remix prompts for free components cost nothing; public browsing, previews, and prompts need no account. A free account adds unlimited one-command installs forever, while Premium adds proprietary source and full prompts for premium items, Andromeda Pro, the AI Brain, templates, and premium standalone components and blocks.',
+    a: 'Yes. Browsing, previews, the MCP, saving favorites, and full remix prompts for free components cost nothing; public browsing, previews, and prompts need no account. A free account adds unlimited one-command installs forever, while Premium adds proprietary source and full prompts for premium items, Andromeda Pro, its templates, the AI Brain, and premium standalone components and blocks.',
   },
   {
     id: 'install-a-component',
@@ -151,7 +151,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'is-mcp-free',
     category: 'mcp',
     q: 'Is the AI Canvas MCP free?',
-    a: 'Yes. MCP access and browsing component details are free and never metered. Pulling source requires a free account for free items, while premium standalone components, design systems, and templates require Premium at $8.99 per month or $49.99 per year.',
+    a: 'Yes. MCP access and browsing component details are free and never metered. Pulling source requires a free account for free items, while premium standalone components, Andromeda Pro, its templates and the AI Brain require Premium at $8.99 per month or $49.99 per year.',
   },
   {
     id: 'design-system-contents',
@@ -169,13 +169,13 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'design-systems-free-or-premium',
     category: 'design-systems',
     q: 'Are design systems free or Premium?',
-    a: 'Individual free components from a system install with a free account, with unlimited one-command installs. Premium installs a complete system in one command and unlocks its proprietary components and templates.',
+    a: 'Andromeda Legacy components and templates install with a free account, with unlimited one-command installs. Premium installs a complete system in one command and unlocks Andromeda Pro, its components and templates.',
   },
   {
     id: 'premium-design-systems',
     category: 'design-systems',
     q: 'What does Premium add for design systems?',
-    a: 'Free components remain available individually. Premium installs the entire design system in one command and unlocks its proprietary components and templates for $8.99 per month or $49.99 per year.',
+    a: 'Andromeda Legacy components and templates stay free with an account. Premium installs the entire design system in one command and unlocks Andromeda Pro, its components and templates, for $8.99 per month or $49.99 per year.',
   },
   {
     id: 'design-system-for-ai-agents',
@@ -285,7 +285,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'premium-for-beginners',
     category: 'plans',
     q: 'Is Premium worth it for someone just starting out?',
-    a: 'Start free. Unlimited installs and complete remix prompts for the free library cover early projects. Upgrade when you want Andromeda Pro, the AI Brain, proprietary premium standalone components and blocks, complete design systems, or templates.',
+    a: 'Start free. Unlimited installs and complete remix prompts for the free library cover early projects. Upgrade when you want Andromeda Pro, its templates, the AI Brain, proprietary premium standalone components and blocks, or complete design systems.',
   },
   {
     id: 'payments-and-paddle',

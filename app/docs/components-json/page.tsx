@@ -73,7 +73,7 @@ export default function ComponentsJsonPage() {
 
       <H2 id="premium">Premium items</H2>
       <P>
-        The same token unlocks Premium components, Andromeda Pro, templates and the AI Brain when your account has{' '}
+        The same token unlocks Premium components, Andromeda Pro, its templates and the AI Brain when your account has{' '}
         <A href="/pricing">Premium</A>. Nothing else changes in the setup.
       </P>
       <Note>

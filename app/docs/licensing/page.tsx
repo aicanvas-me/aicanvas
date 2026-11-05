@@ -42,7 +42,7 @@ export default function LicensingDocPage() {
       <H2 id="what-needs-what">What needs what</H2>
       <UL>
         <li>No account: browsing, previews, free source, full remix prompts for free components, props.</li>
-        <li>Free account: installing free components and Andromeda Legacy components, unlimited.</li>
+        <li>Free account: installing free components and Andromeda Legacy components and templates, unlimited.</li>
         <li>
           <A href="/pricing">Premium</A>: Premium components, Andromeda Pro, its templates, the AI Brain and full Premium remix prompts.
         </li>
