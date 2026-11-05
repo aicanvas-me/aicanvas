@@ -182,7 +182,7 @@ export function Table({ head, rows }: { head: string[]; rows: ReactNode[][] }) {
           {rows.map((r, i) => (
             <tr key={i} className="border-t border-sand-200 dark:border-sand-800">
               {r.map((cell, j) => (
-                <td key={j} className="px-4 py-2.5 align-top leading-6 text-sand-700 dark:text-sand-300">
+                <td key={j} className="px-4 py-2.5 align-top leading-6 text-sand-700 max-lg:min-w-40 dark:text-sand-300">
                   {cell}
                 </td>
               ))}

@@ -592,13 +592,13 @@ export default function ComponentPageView({
                 <button
                   type="button"
                   onClick={() => setActiveTab('preview')}
-                  className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-colors sm:px-3.5 ${
                     activeTab === 'preview'
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
-                  <Eye size={15} />
+                  <Eye size={15} className="hidden min-[360px]:block" />
                   Preview
                 </button>
                 <button
@@ -608,19 +608,19 @@ export default function ComponentPageView({
                   // it is done by the time the tab opens.
                   onPointerEnter={prefetchCode}
                   onFocus={prefetchCode}
-                  className={`flex items-center gap-2 rounded-full px-3.5 py-2 text-sm font-semibold transition-colors ${
+                  className={`flex items-center gap-2 rounded-full px-3 py-2 text-sm font-semibold transition-colors sm:px-3.5 ${
                     activeTab === 'code'
                       ? 'bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
                       : 'text-sand-400 hover:text-sand-900 dark:text-sand-500 dark:hover:text-sand-300'
                   }`}
                 >
-                  <Code size={15} />
+                  <Code size={15} className="hidden min-[360px]:block" />
                   Code
                 </button>
               </div>
 
               {/* Right-side controls */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 sm:gap-2">
 
                 {/* Theme toggle — hidden on code tab */}
                 <div className="group/toggle relative" style={{ cursor: !dualTheme ? 'not-allowed' : undefined, display: activeTab === 'code' ? 'none' : undefined }}>
@@ -959,7 +959,7 @@ export default function ComponentPageView({
                   </button>
                 </div>
 
-                <div className="bg-sand-100 px-5 py-6 dark:bg-sand-900">
+                <div className="bg-sand-100 px-4 py-5 sm:px-5 sm:py-6 dark:bg-sand-900">
                   {installTab === 'cli' ? (
                     <div className="space-y-6">
                       {/* Step 1 — shadcn add. The command + package-manager row
@@ -972,12 +972,12 @@ export default function ComponentPageView({
                           </p>
                           <div className="overflow-hidden rounded-inset bg-sand-200 dark:bg-sand-950">
                             {/* Package manager switcher */}
-                            <div className="flex items-center gap-1 border-b border-sand-300 dark:border-sand-800 px-4 py-2">
+                            <div className="flex items-center gap-0.5 border-b border-sand-300 px-2 py-2 sm:gap-1 sm:px-4 dark:border-sand-800">
                               {(['pnpm', 'npm', 'yarn', 'bun'] as const).map((pm) => (
                                 <button
                                   key={pm}
                                   onClick={() => { setPkgManager(pm); setDepsCopied(false) }}
-                                  className={`rounded-full px-2.5 py-1 text-xs font-medium transition-colors ${
+                                  className={`rounded-full px-1.5 py-1 text-xs min-[360px]:px-2 sm:px-2.5 font-medium transition-colors ${
                                     pkgManager === pm
                                       ? 'bg-sand-300 dark:bg-sand-800 text-sand-900 dark:text-sand-100'
                                       : 'text-sand-600 dark:text-sand-500 hover:text-sand-700 dark:hover:text-sand-300'
@@ -1046,7 +1046,7 @@ export default function ComponentPageView({
 
                             {/* Command */}
                             <div className="px-4 py-3.5">
-                              <code className="font-mono text-sm text-sand-700 dark:text-sand-300 break-all">
+                              <code className="font-mono text-sm text-sand-700 wrap-anywhere sm:break-all dark:text-sand-300">
                                 {pkgManager === 'pnpm'
                                   ? `pnpm dlx shadcn@latest add ${installReferenceMasked}`
                                   : pkgManager === 'bun'

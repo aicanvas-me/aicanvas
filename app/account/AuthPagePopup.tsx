@@ -34,7 +34,7 @@ type Props = {
 export function AuthPagePopup({ children, closeHref = '/', aside }: Props) {
   const router = useRouter()
   return (
-    <main className="relative isolate flex flex-1 flex-col items-center justify-center overflow-x-clip px-4 py-10 sm:py-16">
+    <main className="relative isolate flex flex-1 flex-col items-center justify-center overflow-x-clip px-4 py-6 sm:py-16">
       {/* A radial gradient, not a blurred disc: a blur this large renders as
           visible vertical bands in Chrome on the dark page. */}
       <div
