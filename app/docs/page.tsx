@@ -64,8 +64,8 @@ export default function DocsIntroPage() {
       <H2 id="principles">Principles</H2>
       <UL>
         <li>
-          <strong className="text-sand-900 dark:text-sand-50">Open code.</strong> You get source, not a black box. The free library is MIT
-          and its source is always public.
+          <strong className="text-sand-900 dark:text-sand-50">Open code.</strong> You get source, not a black box. Free components and
+          Andromeda Legacy are MIT and their source is always public; the Line icons they use are free to use under their own terms.
         </li>
         <li>
           <strong className="text-sand-900 dark:text-sand-50">Systems before snippets.</strong> An agent builds better when it starts from
@@ -87,7 +87,7 @@ export default function DocsIntroPage() {
           { title: 'Installation', href: '/docs/installation', body: 'Set up a project and install your first component.' },
           { title: 'Design systems', href: '/docs/design-systems', body: 'Install a whole system, or start from its tokens.' },
           { title: 'MCP server', href: '/docs/mcp', body: 'Connect Claude Code, Codex or Cursor in one step.' },
-          { title: 'Licences and plans', href: '/docs/licensing', body: 'What is free under MIT and what comes with Premium.' },
+          { title: 'Licences and plans', href: '/docs/licensing', body: 'What is MIT, what is free to use and what comes with Premium.' },
         ]}
       />
     </DocPage>

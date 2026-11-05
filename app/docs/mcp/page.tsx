@@ -330,7 +330,7 @@ export default function McpDocsPage() {
       <UL>
         <li>Browsing, search, props and install commands need no account.</li>
         <li>Reading source needs a free account: set <C>AICANVAS_TOKEN</C>.</li>
-        <li>Premium design systems and templates need an account with <A href="/pricing">Premium</A>.</li>
+        <li>Premium components, Andromeda Pro, templates and the AI Brain need an account with <A href="/pricing">Premium</A>.</li>
         <li>Icons in the Line style install with a free account. Duotone, Solid and Solid duotone need Premium.</li>
         {hosted && (
           <li>
