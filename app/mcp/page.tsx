@@ -15,19 +15,24 @@ import { Reveal } from '../home/Reveal'
 import { ConnectAgentCard } from './ConnectAgentCard'
 import { hostedMcpOAuthEnabled } from '../../lib/flags'
 import { SITE_URL } from '../lib/config'
+import { pageMetadata } from '../lib/page-metadata'
 import { MCP_FAQ, faqJsonLd } from '../lib/faq'
 
-export const metadata: Metadata = {
+const MCP_SOCIAL_DESCRIPTION =
+  'Connect Claude Code, Cursor, or Codex to browse, inspect, and install AI Canvas components, design systems, and templates as editable source with shadcn.'
+const MCP_HEAD = pageMetadata({
   title: 'AI Canvas MCP: shadcn Components for Claude Code, Cursor, Codex',
+  social: 'AI Canvas MCP connects Claude Code, Codex, and Cursor',
   description:
     'Connect Claude Code, Cursor or Codex to AI Canvas components and design systems through MCP. Your agent installs editable React source with shadcn.',
+  url: `${SITE_URL}/mcp`,
+})
+
+export const metadata: Metadata = {
+  ...MCP_HEAD,
   alternates: { canonical: `${SITE_URL}/mcp`, types: { 'text/markdown': `${SITE_URL}/mcp.md` } },
-  openGraph: {
-    title: 'AI Canvas MCP connects Claude Code, Codex, and Cursor',
-    description:
-      'Connect Claude Code, Cursor, or Codex to browse, inspect, and install AI Canvas components, design systems, and templates as editable source with shadcn.',
-    url: `${SITE_URL}/mcp`,
-  },
+  openGraph: { ...MCP_HEAD.openGraph, description: MCP_SOCIAL_DESCRIPTION },
+  twitter: { ...MCP_HEAD.twitter, description: MCP_SOCIAL_DESCRIPTION },
 }
 
 const jsonLd = {

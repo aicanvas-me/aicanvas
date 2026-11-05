@@ -350,6 +350,8 @@ function PreviewChrome({
         onDevice={setDevice}
         onReload={reload}
       />
+      {/* Above the region on phones: compositions there grow past it, so a bar below would sit under them. */}
+      <LegalBar className="flex border-b md:hidden" />
 
       {/* Preview region */}
       <div className="relative min-h-0 flex-1">
@@ -433,7 +435,31 @@ function PreviewChrome({
           )}
         </AnimatePresence>
       </div>
+      <LegalBar className="hidden border-t md:flex" />
     </div>
+  )
+}
+
+// Template leaves carry no site footer, and German law (§ 5 DDG, § 312k BGB, GDPR)
+// wants these links one click away on every page.
+const LEGAL_LINKS = [
+  { href: '/privacy', label: 'Privacy Policy' },
+  { href: '/kuendigen', label: 'Verträge hier kündigen' },
+  { href: '/impressum', label: 'Impressum' },
+] as const
+
+function LegalBar({ className }: { className: string }) {
+  return (
+    <nav
+      aria-label="Legal"
+      className={`shrink-0 flex-wrap items-center justify-end gap-x-4 gap-y-1 border-sand-200 bg-sand-50 px-4 py-1.5 text-xs text-sand-600 md:px-6 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400 ${className}`}
+    >
+      {LEGAL_LINKS.map(({ href, label }) => (
+        <Link key={href} href={href} className="transition-colors hover:text-sand-900 dark:hover:text-sand-100">
+          {label}
+        </Link>
+      ))}
+    </nav>
   )
 }
 

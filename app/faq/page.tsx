@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { CircleQuestion } from '@/app/_icons/icons/circle-question'
 import { SITE_URL } from '../lib/config'
+import { pageMetadata } from '../lib/page-metadata'
 import { FAQ_PAGE_CATEGORIES, faqJsonLd } from '../lib/faq'
 import { buttonClasses } from '../components/buttonClasses'
 import { CtaBand, PageHero, PageShell } from '../components/PageKit'
@@ -15,17 +16,12 @@ const FAQ_CATEGORIES: FaqCategory[] = FAQ_PAGE_CATEGORIES
 const FAQ_DESCRIPTION =
   'Answers about AI Canvas: installing components with the shadcn CLI, the MCP server for AI agents, design systems, plans and Premium pricing, secure payments through Paddle, and remixing with AI. Free to start and open source.'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'FAQ',
+  social: 'AI Canvas FAQ',
   description: FAQ_DESCRIPTION,
-  alternates: { canonical: `${SITE_URL}/faq` },
-  openGraph: {
-    title: 'AI Canvas FAQ',
-    description: FAQ_DESCRIPTION,
-    url: `${SITE_URL}/faq`,
-    type: 'website',
-  },
-}
+  url: `${SITE_URL}/faq`,
+})
 
 const FAQ_JSON_LD = faqJsonLd(FAQ_PAGE_CATEGORIES.flatMap((c) => c.items))
 
