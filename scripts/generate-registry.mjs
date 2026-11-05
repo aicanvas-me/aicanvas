@@ -1095,8 +1095,8 @@ console.log(`Generated app/lib/standalone-props.generated.ts (${Object.keys(stan
 // run `add`, whether an item resolves to real code anonymously. So append a
 // one-line gating note to every index description. Free items install with a
 // free account (source is public to read); paid design systems, their templates
-// and the `-all` bundles are premium. The token foundation installs anonymously (classified 'meta'), so it
-// carries no note. Classification MIRRORS classifyContent() in
+// and the `-all` bundles are premium. The token foundation installs anonymously
+// (classified 'meta'), so it carries no note. Classification MIRRORS classifyContent() in
 // lib/registry/content-type.ts, reusing the gate manifest built above, so the
 // note can never drift from what app/r/[file]/route.ts actually serves. The note
 // goes on the INDEX only — per-slug item files already self-declare at fetch time
