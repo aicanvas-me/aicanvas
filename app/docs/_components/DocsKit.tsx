@@ -62,7 +62,7 @@ export function DocPage({
             {prev ? (
               <Link
                 href={prev.href}
-                className="group rounded-card border border-sand-200 p-4 transition-colors hover:border-sand-300 dark:border-sand-800 dark:hover:border-sand-700"
+                className="group rounded-section border border-sand-200 p-4 transition-colors hover:border-sand-300 dark:border-sand-800 dark:hover:border-sand-700"
               >
                 <span className="flex items-center gap-1.5 text-xs font-semibold text-sand-600 dark:text-sand-400">
                   <ArrowLeft size={12} />

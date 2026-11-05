@@ -673,7 +673,6 @@ function TemplateSwitcher({
                 }`}
               >
                 <Icon
-                 
                   size={16}
                   className={`shrink-0 ${active ? 'text-accent' : 'text-sand-600 dark:text-sand-500'}`}
                 />
