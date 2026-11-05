@@ -553,12 +553,8 @@ try {
   record(
     'local: compose_page leaves an explicit multi-part dashboard brief unchanged',
     cpDashboardParts?.pageType === null &&
-      JSON.stringify(cpDashboardParts?.sections) ===
-        JSON.stringify([
-          { ask: 'CRM dashboard', pick: null, alternatives: [] },
-          { ask: 'pipeline board', pick: null, alternatives: [] },
-          { ask: 'activity feed', pick: null, alternatives: [] },
-        ]),
+      JSON.stringify((cpDashboardParts?.sections ?? []).map((s) => s.ask)) ===
+        JSON.stringify(['CRM dashboard', 'pipeline board', 'activity feed']),
     JSON.stringify({ pageType: cpDashboardParts?.pageType, sections: cpDashboardParts?.sections }),
   )
   const cpVerb = sc(

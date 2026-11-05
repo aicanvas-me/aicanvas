@@ -1911,8 +1911,12 @@ export function createServer(
         // are ranked again inside it; a tie goes to the first pick's system.
         let ranked = rankAll(wanted)
         const detectedPageType = pageTypeFor(brief)
+        // A "for ..." clause names the product, not a UI part: "page for a note app" is no note.
+        const subject = brief.replace(/\s+for\s+.*$/is, '')
         const pageType =
-          detectedPageType && segments.length <= 1 && ranked.every((r) => r.ranked.length === 0)
+          detectedPageType &&
+          segments.length <= 1 &&
+          ranked.every((r) => r.ranked.every((item) => !namedHit(subject, item)))
             ? detectedPageType
             : null
         if (pageType) {
