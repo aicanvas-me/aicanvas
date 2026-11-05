@@ -8,8 +8,9 @@ import { LegalArticle } from '../components/LegalArticle'
 // The AI Canvas Premium License (a EULA). Versioned v1.0 on its own URL, mirroring
 // the convention used by paid component vendors (Tailwind Plus, CoreUI PRO, MUI).
 // The public Terms (§ 2b, § 4, § 7b) reference this page by link. It governs the
-// closed-source Premium Components, design systems, and templates only. The free
-// public registry stays MIT (LICENSE file). Operator details live in /impressum.
+// closed-source Premium Components, design systems, and templates, and the free
+// Line icons (§ 11). The free public registry stays MIT (LICENSE file). Operator
+// details live in /impressum.
 //
 // A server component: the licence is static text, and LegalArticle is the one
 // client piece (its "On this page" list).
@@ -36,9 +37,9 @@ export default function PremiumLicensePage() {
         sub={
           <span className="block text-balance">
             Version 1.0. Effective date: 2026-07-01. This License governs the
-            AI Canvas Premium Components only. It is separate from, and no
-            replacement for, the MIT License that covers the free, open-source AI
-            Canvas registry.
+            AI Canvas Premium Components and, under Section 11, the Line icons.
+            It is separate from, and no replacement for, the MIT License that
+            covers the free, open-source AI Canvas registry.
           </span>
         }
       />
@@ -354,9 +355,39 @@ export default function PremiumLicensePage() {
           </p>
         </section>
 
-        {/* ── 11. Versioning ───────────────────────────────────────────── */}
+        {/* ── 11. Line icons ───────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>11. Versioning</h2>
+          <h2 className={HEADING}>11. Line icons</h2>
+          <p className={BODY}>
+            The Line style of the AI Canvas icons (the &ldquo;Line
+            Icons&rdquo;) is licensed free of charge under this License to
+            anyone, with or without a Subscription. Sections 3 to 6 apply to
+            each Line Icon you install, copy, or download as if it were an
+            Installed Component: you may use, modify, and ship it in your own
+            and client End Products, open-source End Products included, but you
+            may not redistribute or resell the Line Icons as a set or kit, or
+            use them to build a competing icon library.
+          </p>
+          <p className={BODY}>
+            <strong className={STRONG}>Credit without a
+            Subscription.</strong>{' '}
+            Keep the one-line AI Canvas notice that each delivered Line Icon
+            file carries, and when you publish the source of an End Product,
+            name AI Canvas in its credits or licence file. No visible credit in
+            the End Product is required. If you hold a Subscription, neither the
+            notice nor the credit is required.
+          </p>
+          <p className={BODY}>
+            The Line Icons are not licensed under the MIT License, including
+            where they are installed with, imported by, or shipped inside an
+            MIT-licensed free component: MIT covers that component&apos;s own
+            code, and this License covers the Line Icons it uses.
+          </p>
+        </section>
+
+        {/* ── 12. Versioning ───────────────────────────────────────────── */}
+        <section className={SECTION}>
+          <h2 className={HEADING}>12. Versioning</h2>
           <p className={BODY}>
             This is AI Canvas Premium License version 1.0. The version in force
             for a given Installed Component is the version current when you
@@ -365,9 +396,9 @@ export default function PremiumLicensePage() {
           </p>
         </section>
 
-        {/* ── 12. Governing law ────────────────────────────────────────── */}
+        {/* ── 13. Governing law ────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>12. Governing law</h2>
+          <h2 className={HEADING}>13. Governing law</h2>
           <p className={BODY}>
             This License is governed by the law of the Federal Republic of
             Germany, excluding the UN Convention on Contracts for the
@@ -377,9 +408,9 @@ export default function PremiumLicensePage() {
           </p>
         </section>
 
-        {/* ── 13. Severability ─────────────────────────────────────────── */}
+        {/* ── 14. Severability ─────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>13. Severability</h2>
+          <h2 className={HEADING}>14. Severability</h2>
           <p className={BODY}>
             If any provision of this License is or becomes invalid, the remaining
             provisions stay in full effect. The invalid provision falls away and
@@ -387,9 +418,9 @@ export default function PremiumLicensePage() {
           </p>
         </section>
 
-        {/* ── 14. Contact ──────────────────────────────────────────────── */}
+        {/* ── 15. Contact ──────────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>14. Contact</h2>
+          <h2 className={HEADING}>15. Contact</h2>
           <p className={BODY}>
             Questions about this License? Email{' '}
             <a href={`mailto:${CONTACT_EMAIL}`} className={LINK}>
