@@ -42,7 +42,11 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     if (MCP_OAUTH_PATHS.has(pathname)) return NextResponse.rewrite(new URL(`/api/mcp/oauth${pathname}${request.nextUrl.search}`, request.url))
     if (pathname.startsWith('/api/mcp') || pathname.startsWith('/.well-known/')) return NextResponse.next()
     if (request.method !== 'GET' && request.method !== 'HEAD') return new NextResponse(null, { status: 404 })
-    return NextResponse.redirect(new URL(`${pathname}${request.nextUrl.search}`, 'https://aicanvas.me'), 307)
+    // Set on a fixed URL: as a relative path, //host or /\host would leave aicanvas.me.
+    const site = new URL('https://aicanvas.me')
+    site.pathname = pathname
+    site.search = request.nextUrl.search
+    return NextResponse.redirect(site, 307)
   }
 
   // Case-sensitive redirect: /MCP → /mcp. Next's redirects() matcher is
