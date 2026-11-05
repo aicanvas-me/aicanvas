@@ -42,9 +42,14 @@ export function IconTile({
   return (
     <div
       data-icon-tile=""
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocus={() => setFocused(true)}
+      // Only a mouse reveals the copy buttons, so a touch tap opens the icon instead.
+      onPointerEnter={(event) => {
+        if (event.pointerType === 'mouse') setHovered(true)
+      }}
+      onPointerLeave={() => setHovered(false)}
+      onFocus={(event) => {
+        if (event.target.matches(':focus-visible')) setFocused(true)
+      }}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false)
       }}
