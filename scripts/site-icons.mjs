@@ -9,7 +9,7 @@
 // vault checkout is found (a public clone, a free-only build) each one becomes an
 // empty placeholder of the right size, so a build without the vault still compiles.
 // The source, as in icons-data.mjs: ICONS_LOCAL_PATH, PREMIUM_LOCAL_PATH/icons,
-// then the icon-library worktree.
+// then the .icons-source copy inject keeps.
 //
 //   app/_icons/IconBase.tsx       the package's runtime (or the placeholder runtime)
 //   app/_icons/icons/<key>.tsx    one per site icon and style

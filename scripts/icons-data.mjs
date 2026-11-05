@@ -3,7 +3,7 @@
 // live only in the vault, so the output is gitignored, like the injected
 // premium components. It runs in the dev and build chains right after
 // inject-premium. The source, first that has icons/svg: ICONS_LOCAL_PATH (the
-// icons/ folder), PREMIUM_LOCAL_PATH/icons, then the icon-library worktree.
+// icons/ folder), PREMIUM_LOCAL_PATH/icons, then the .icons-source copy inject keeps.
 // With none it writes empty data, so the pages build and list no icons.
 //
 //   app/icons/_data/icons.generated.json    every icon: name, category, tags, added (added-dates.json), isNew
