@@ -490,7 +490,7 @@ function CollectionPicker({
             type="button"
             aria-label="Close collection picker"
             onClick={() => { setOpen(false); setDraft('') }}
-            className="fixed inset-0 z-30 cursor-default"
+            className="fixed inset-0 z-40 cursor-default"
           />
           <div className="absolute left-0 top-full z-40 mt-1.5 w-56 sm:left-auto sm:right-0 overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_12px_28px_-10px_rgba(0,0,0,0.2)] dark:border-sand-700 dark:bg-sand-900 dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_16px_36px_-12px_rgba(0,0,0,0.7)]">
             {value && (

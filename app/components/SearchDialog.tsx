@@ -363,7 +363,7 @@ export default function SearchDialog({ onClose }: { onClose: () => void }) {
   let row = -1
 
   // Portalled to <body>: the top bar is sticky with its own z-index, so a
-  // dialog rendered inside it would sit under any page layer above z-40. The
+  // dialog rendered inside it would sit under any page layer at or above z-40. The
   // body itself never scrolls (the page scrolls in its own column), so the
   // page behind needs no scroll lock.
   return createPortal(

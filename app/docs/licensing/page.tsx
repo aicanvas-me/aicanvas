@@ -27,7 +27,7 @@ export default function LicensingDocPage() {
       <Table
         head={['', 'Free', 'Premium']}
         rows={[
-          ['Covers', 'Free components and Andromeda Legacy', 'Premium components, Andromeda Pro, templates and the AI Brain'],
+          ['Covers', 'Free components and Andromeda Legacy', 'Premium components, Andromeda Pro, its templates and the AI Brain'],
           ['Licence', 'MIT', <A key="l" href="/premium-license">AI Canvas Premium License</A>],
           ['Source', 'Public, in the open repository', 'Installed into your project with Premium'],
           ['Use and ship', 'Yes, personal and commercial', 'Yes, personal and commercial'],
@@ -44,7 +44,7 @@ export default function LicensingDocPage() {
         <li>No account: browsing, previews, free source, full remix prompts for free components, props.</li>
         <li>Free account: installing free components and Andromeda Legacy components, unlimited.</li>
         <li>
-          <A href="/pricing">Premium</A>: Premium components, Andromeda Pro, every template, the AI Brain and full Premium remix prompts.
+          <A href="/pricing">Premium</A>: Premium components, Andromeda Pro, its templates, the AI Brain and full Premium remix prompts.
         </li>
       </UL>
 
@@ -52,7 +52,7 @@ export default function LicensingDocPage() {
       <P>
         Free components and Andromeda Legacy use MIT, so you can change them and ship them in personal or commercial projects.
         Keep the MIT licence notice in the source; no visible credit is needed. The Line icons they use are free to use under
-        their own terms, not MIT. Premium components, Andromeda Pro, templates and the AI Brain use the AI Canvas Premium
+        their own terms, not MIT. Premium components, Andromeda Pro, its templates and the AI Brain use the AI Canvas Premium
         License, a durable licence to use and ship but not redistribute. Third-party assets, fonts and images follow their own
         terms where a component says so.
       </P>

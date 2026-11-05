@@ -328,7 +328,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'commercial-use',
     category: 'about',
     q: 'Can I use the components in commercial projects?',
-    a: 'Yes. Free components and Andromeda Legacy use the permissive MIT licence, so you can change them and ship them in personal or commercial projects. Keep the MIT licence notice in the source; no visible credit is needed. The Line icons they use are free to use under their own terms, not MIT. Premium components, Andromeda Pro, templates and the AI Brain use the AI Canvas Premium License, a durable licence to use and ship but not redistribute. Third-party assets, fonts, and images follow their own terms when specified.',
+    a: 'Yes. Free components and Andromeda Legacy use the permissive MIT licence, so you can change them and ship them in personal or commercial projects. Keep the MIT licence notice in the source; no visible credit is needed. The Line icons they use are free to use under their own terms, not MIT. Premium components, Andromeda Pro, its templates and the AI Brain use the AI Canvas Premium License, a durable licence to use and ship but not redistribute. Third-party assets, fonts, and images follow their own terms when specified.',
   },
   {
     id: 'component-tech-stack',
