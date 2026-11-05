@@ -5,13 +5,13 @@
 import { Activity } from '@/app/_icons/icons/activity';
 import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
 import { Wrench } from '@/app/_icons/icons/wrench';
-import { LayoutDashboard } from '@/app/_icons/icons/layout-dashboard';
+import { LayoutGrid } from '@/app/_icons/icons/layout-grid';
 import { Rocket } from '@/app/_icons/icons/rocket';
 import { Radio } from '@/app/_icons/icons/radio';
 
 // ---- Sidebar nav ----
 export const navItems = [
-  { id: 'overview',    label: 'Overview',    icon: LayoutDashboard },
+  { id: 'overview',    label: 'Overview',    icon: LayoutGrid },
   { id: 'telemetry',   label: 'Telemetry',   icon: Activity       },
   { id: 'vehicles',    label: 'Vehicles',    icon: Rocket      },
   { id: 'comms',       label: 'Comms',       icon: Radio       },
