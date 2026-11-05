@@ -25,7 +25,7 @@ const MASK = 'aic_••••••••'
 
 // One value row's pieces, shared so the command and the token line up.
 const LABEL = 'text-sm font-semibold text-sand-100'
-const WELL = 'mt-2.5 flex items-center gap-1 rounded-xl border border-sand-800 bg-sand-900 py-1.5 pr-1.5 pl-4'
+const WELL = 'mt-2.5 flex items-center gap-1 rounded-inset border border-sand-800 bg-sand-900 py-1.5 pr-1.5 pl-4'
 const CODE = 'min-w-0 flex-1 overflow-x-auto whitespace-nowrap py-1.5 font-mono text-xs text-sand-300'
 const ICON_BTN =
   'shrink-0 rounded-control p-2 text-sand-400 transition-all hover:bg-sand-800 hover:text-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-90'
@@ -58,7 +58,7 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
 
   if (!token) {
     return (
-      <div className="mx-auto mt-14 flex w-full max-w-xl items-start gap-2.5 rounded-3xl border border-sand-800 bg-sand-900 px-5 py-5 text-left text-sm leading-relaxed text-sand-300 sm:mt-16 sm:px-6">
+      <div className="mx-auto mt-14 flex w-full max-w-xl items-start gap-2.5 rounded-section border border-sand-800 bg-sand-900 px-5 py-5 text-left text-sm leading-relaxed text-sand-300 sm:mt-16 sm:px-6">
         <Info size={16} className="mt-0.5 shrink-0 text-accent" />
         <span className="text-pretty">
           Your install token isn&rsquo;t set up yet. Check{' '}
@@ -72,7 +72,7 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
   }
 
   return (
-    <div className="mx-auto mt-14 w-full max-w-3xl rounded-3xl border border-sand-800 bg-sand-900 p-2 text-left sm:mt-16">
+    <div className="mx-auto mt-14 w-full max-w-3xl rounded-shell border border-sand-800 bg-sand-900 p-2 text-left sm:mt-16">
       <div className="px-4 pt-5 pb-5 sm:px-6 sm:pt-6">
         <p className="text-xs font-semibold uppercase tracking-wider text-sand-400">Quickstart</p>
         <h2 className="mt-2 text-xl font-bold tracking-tight text-sand-50">
@@ -80,7 +80,7 @@ export function PremiumQuickstart({ token }: { token: string | null }) {
         </h2>
       </div>
 
-      <div className="space-y-7 rounded-2xl bg-sand-950 px-4 py-6 sm:px-6">
+      <div className="space-y-7 rounded-shell-inner bg-sand-950 px-4 py-6 sm:px-6">
         <div>
           <p className={LABEL}>Install command</p>
           <div className={WELL}>
