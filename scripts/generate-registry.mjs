@@ -14,6 +14,7 @@ import { execSync } from 'child_process'
 import { createJiti } from 'jiti'
 import { toInstalledIconPaths, transformRootHeightClass } from './lib/copy-paste-transform.mjs'
 import { DESIGN_SYSTEMS, FREE_DS_PLACEHOLDER_SENTINEL } from './lib/design-systems.config.mjs'
+import { extractImportSpecifiers } from './lib/import-specifiers.mjs'
 import { reconcileLedger } from './lib/order-ledger.mjs'
 import { parseJsdocProps } from './lib/parse-jsdoc-props.mjs'
 
@@ -196,20 +197,6 @@ function toPackageName(spec) {
     return parts.slice(0, 2).join('/')
   }
   return spec.split('/')[0]
-}
-
-// Match every quoted specifier reachable via `from '...'` (covers all variants
-// of `import` / `import type` / `export ... from`) plus bare side-effect
-// `import '...'` lines. The `from` keyword is unambiguous in JS/TS source so
-// false positives in code strings are extremely rare.
-function extractImportSpecifiers(content) {
-  const specs = []
-  const fromRe = /\bfrom\s+['"]([^'"]+)['"]/g
-  let m
-  while ((m = fromRe.exec(content)) !== null) specs.push(m[1])
-  const sideRe = /^\s*import\s+['"]([^'"]+)['"]/gm
-  while ((m = sideRe.exec(content)) !== null) specs.push(m[1])
-  return specs
 }
 
 function resolveImport(fromFile, spec) {

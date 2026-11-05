@@ -1,8 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-// Add AI Canvas icons as needed:
-// import { IconName } from '@/app/_icons/icons/icon-name'
+// Add AI Canvas icons as needed: one import per icon, each from its own file.
 
 // ─── ComponentName ────────────────────────────────────────────────────────────
 // Rename this function to match your component (PascalCase).
