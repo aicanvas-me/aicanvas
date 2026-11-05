@@ -121,6 +121,7 @@ export function ColorInput({
         <span className="absolute inset-[3px] rounded-full bg-sand-900 dark:bg-sand-950" />
       )}
       <Plus
+        weight="bold"
         size={appearance === 'solid' ? 14 : 12}
         className="relative text-white"
         style={appearance === 'solid' ? { filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6))' } : undefined}
