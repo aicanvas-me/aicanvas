@@ -133,7 +133,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'mcp-agent-tools',
     category: 'mcp',
     q: 'What can my agent do once it is connected?',
-    a: 'It gets eight read-only tools to browse categories, search components, inspect details and source, list design systems and templates, and retrieve exact install commands. It can put the right code in your project from the chat without changing anything on AI Canvas.',
+    a: 'It gets read-only tools to browse categories, search components and icons, inspect details, props and source, list design systems and templates, plan and check a page, and retrieve exact install commands. It can put the right code in your project from the chat without changing anything on AI Canvas.',
   },
   {
     id: 'mcp-versus-shadcn-cli',
