@@ -3,7 +3,12 @@ import { classifyContent, type ContentLookup } from './content-type'
 
 const lookup: ContentLookup = {
   designSystemSlugs: new Set(['andromeda-card', 'andromeda-pro-card', 'andromeda-pro-burst']),
-  templateSlugs: new Set(['andromeda-mission-control', 'andromeda-service-order']),
+  templateSlugs: new Set([
+    'andromeda-mission-control',
+    'andromeda-service-order',
+    'andromeda-pro-mission-control',
+    'andromeda-pro-sign-in',
+  ]),
   systemSlugs: new Set(['andromeda', 'andromeda-pro']),
   paidSystemSlugs: new Set(['andromeda-pro']),
   premiumSlugs: new Set(['aurora-pricing-table']),
@@ -51,20 +56,35 @@ describe('classifyContent', () => {
   })
 
   it('classifies an individual design-system component as metered (not premium)', () => {
-    // Individual components are free-metered like standalones; only templates
-    // and whole-system aggregates stay premium.
+    // Individual components are free-metered like standalones; only a paid
+    // system's templates and the whole-system aggregates stay premium.
     expect(classifyContent('andromeda-card', lookup)).toBe('design-system-component')
   })
 
-  it('classifies a template', () => {
-    expect(classifyContent('andromeda-mission-control', lookup)).toBe('template')
+  it("a free system's template takes its components' free lane", () => {
+    expect(classifyContent('andromeda-mission-control', lookup)).toBe('design-system-component')
+    expect(classifyContent('andromeda-service-order.json', lookup)).toBe('design-system-component')
+  })
+
+  it("a paid system's template stays premium, even when the manifest forgets its system", () => {
+    expect(classifyContent('andromeda-pro-mission-control', lookup)).toBe('template')
+    expect(classifyContent('andromeda-pro-sign-in.json', lookup)).toBe('template')
+    // Legacy's `andromeda-` prefix must never claim a Pro template, and the paid
+    // floor still holds when the manifest lists only the free system.
+    const partial = { ...lookup, systemSlugs: new Set(['andromeda']) }
+    expect(classifyContent('andromeda-pro-mission-control', partial)).toBe('template')
+  })
+
+  it('a template no known system owns stays premium', () => {
+    const orphan = { ...lookup, templateSlugs: new Set(['nebula-dashboard']) }
+    expect(classifyContent('nebula-dashboard', orphan)).toBe('template')
   })
 
   it('classifies the whole-system aggregates', () => {
     // A FREE system's components bundle is the free lane: it carries the same
     // MIT source its per-component files already serve, so it asks for an
     // account and nothing more. The `-all` bundle is a different thing: it
-    // pulls the templates and the brain in, and both are paid.
+    // pulls the brain in, and the brain is paid.
     expect(classifyContent('andromeda', lookup)).toBe('design-system-component')
     expect(classifyContent('andromeda-all', lookup)).toBe('design-system')
   })

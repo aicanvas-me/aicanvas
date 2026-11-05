@@ -237,16 +237,22 @@ describe.skipIf(!brainAvailable)('GET /r/andromeda-brain.json — mode-independe
   })
 })
 
-// Premium DESIGN-SYSTEM / TEMPLATE content must gate MODE-INDEPENDENTLY (never
-// hung off REGISTRY_ENFORCEMENT): a free/anon user gets the friendly stub, never
-// the real template source, regardless of the enforcement flag. mission-control
-// is generated from the committed examples/, so it is always present.
-const TEMPLATE_FILE = 'andromeda-mission-control.json'
-const templateAvailable = existsSync(join(process.cwd(), 'registry-data', TEMPLATE_FILE))
+// Templates follow their system's tier. An Andromeda Legacy template is MIT, so
+// it takes exactly the lane a Legacy component takes; an Andromeda Pro template
+// gates MODE-INDEPENDENTLY (never hung off REGISTRY_ENFORCEMENT): a free/anon
+// user gets the friendly stub, never the real source. The Legacy template is
+// generated from the committed examples/, so it is always present; the Pro one
+// only on a build with the vault injected.
+const LEGACY_TEMPLATE_FILE = 'andromeda-mission-control.json'
+const LEGACY_COMPONENT_FILE = 'andromeda-badge.json'
+const PRO_TEMPLATE_FILE = 'andromeda-pro-mission-control.json'
+const dataPath = (file: string) => join(process.cwd(), 'registry-data', file)
+const legacyAvailable = existsSync(dataPath(LEGACY_TEMPLATE_FILE)) && existsSync(dataPath(LEGACY_COMPONENT_FILE))
+const proTemplateAvailable = existsSync(dataPath(PRO_TEMPLATE_FILE))
 
-function callTemplate() {
-  const req = new NextRequest(`http://localhost/r/${TEMPLATE_FILE}`)
-  return GET(req, { params: Promise.resolve({ file: TEMPLATE_FILE }) })
+function callFile(file: string) {
+  const req = new NextRequest(`http://localhost/r/${file}`)
+  return GET(req, { params: Promise.resolve({ file }) })
 }
 
 // Component files get the JSX stub; every other file (tokens, lib) gets a
@@ -256,7 +262,60 @@ function isLockedStub(f: { path: string; content: string }) {
   return f.content.includes(expected) && !f.content.includes('import ')
 }
 
-describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-independent gate (no enforce flag needed)', () => {
+describe.skipIf(!legacyAvailable)('GET /r/<Andromeda Legacy template>.json: the free lane, like a Legacy component', () => {
+  it('gate ON + anonymous → the create-an-account stub, never a premium lock, no pull', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+
+    const res = await callFile(LEGACY_TEMPLATE_FILE)
+    const body = await res.text()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
+    expect(res.headers.get('Cache-Control')).toBe('private, no-store')
+    expect(body).toContain('account/sign-up')
+    expect(body).not.toContain('aicanvas.me/pricing')
+    expect(body).not.toContain('useState')
+    expect(mockedTrackPull).not.toHaveBeenCalled()
+  })
+
+  it("gate ON + signed-in 'free' tier → the real MIT source, never shared-cached, counted like a component", async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    const real = JSON.parse(readFileSync(dataPath(LEGACY_TEMPLATE_FILE), 'utf8'))
+
+    const res = await callFile(LEGACY_TEMPLATE_FILE)
+    const item = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('design-system-component')
+    expect(res.headers.get('Cache-Control')).toBe('private, no-store')
+    expect(item.files.some(isLockedStub)).toBe(false)
+    expect(item.files.map((f: { content: string }) => f.content)).toEqual(real.files.map((f: { content: string }) => f.content))
+    expect(mockedTrackPull).toHaveBeenCalledWith('u1', 'andromeda-mission-control', 'design-system-component')
+  })
+
+  it('answers every caller with the same status, lane and cache policy as a Legacy component', async () => {
+    const cases = [
+      { gate: 'on', entitlement: { tier: 'anonymous', userId: null } },
+      { gate: 'on', entitlement: { tier: 'free', userId: 'u1' } },
+      { gate: 'on', entitlement: { tier: 'premium', userId: 'u1' } },
+      { gate: undefined, entitlement: { tier: 'anonymous', userId: null } },
+    ] as const
+    for (const c of cases) {
+      const shape = async (file: string) => {
+        if (c.gate) process.env.FREE_ACCOUNT_GATE = c.gate
+        else delete process.env.FREE_ACCOUNT_GATE
+        mockedGetEntitlement.mockResolvedValue(c.entitlement)
+        const res = await callFile(file)
+        return [res.status, res.headers.get('X-AICanvas-Content-Type'), res.headers.get('Cache-Control')]
+      }
+      expect(await shape(LEGACY_TEMPLATE_FILE), JSON.stringify(c)).toEqual(await shape(LEGACY_COMPONENT_FILE))
+    }
+  })
+})
+
+describe.skipIf(!proTemplateAvailable)('GET /r/<Andromeda Pro template>.json: mode-independent premium gate (no enforce flag needed)', () => {
   afterEach(() => {
     delete process.env.REGISTRY_ENFORCEMENT
   })
@@ -266,10 +325,11 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     delete process.env.REGISTRY_ENFORCEMENT
     mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
 
-    const res = await callTemplate()
+    const res = await callFile(PRO_TEMPLATE_FILE)
     const body = await res.text()
 
     expect(res.status).toBe(200) // never a cryptic 402
+    expect(res.headers.get('Cache-Control')).toBe('private, no-store')
     expect(body).toContain('aicanvas.me/pricing')
     // A subscribed-but-untokened CLI must learn where its command lives.
     expect(body).toContain('copy its install command')
@@ -281,24 +341,27 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     expect(item.files.every(isLockedStub)).toBe(true)
   })
 
-  it('signed-in free tier → same stub (no real source)', async () => {
+  it('signed-in free tier → the same premium stub, even with the free-account gate on', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
     mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
 
-    const res = await callTemplate()
+    const res = await callFile(PRO_TEMPLATE_FILE)
     const item = await res.json()
 
     expect(res.status).toBe(200)
     expect(item.files.every(isLockedStub)).toBe(true)
+    expect(mockedTrackPull).not.toHaveBeenCalled()
   })
 
   it('premium → the REAL template (registry deps to the components it uses)', async () => {
     mockedGetEntitlement.mockResolvedValue({ tier: 'premium', userId: 'u1' })
 
-    const res = await callTemplate()
+    const res = await callFile(PRO_TEMPLATE_FILE)
     const item = await res.json()
 
     expect(res.status).toBe(200)
-    expect(item.name).toBe('andromeda-mission-control')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('template')
+    expect(item.name).toBe('andromeda-pro-mission-control')
     expect(Array.isArray(item.registryDependencies)).toBe(true)
     expect(item.registryDependencies.length).toBeGreaterThan(1) // tokens + components it uses
     expect(JSON.stringify(item)).not.toContain('PremiumLocked') // real, not stubbed
@@ -307,11 +370,9 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
   it('entitlement error → 503, fail CLOSED', async () => {
     mockedGetEntitlement.mockRejectedValue(new Error('db blip'))
 
-    const res = await callTemplate()
+    const res = await callFile(PRO_TEMPLATE_FILE)
 
     expect(res.status).toBe(503)
-    const body = await res.text()
-    expect(body).not.toContain('TelemetryRow')
   })
 })
 

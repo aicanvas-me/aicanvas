@@ -1094,8 +1094,8 @@ console.log(`Generated app/lib/standalone-props.generated.ts (${Object.keys(stan
 // The directory reviewer's #1 ask: the index must tell installers, BEFORE they
 // run `add`, whether an item resolves to real code anonymously. So append a
 // one-line gating note to every index description. Free items install with a
-// free account (source is public to read); design systems and templates are
-// premium. The token foundation installs anonymously (classified 'meta'), so it
+// free account (source is public to read); paid design systems, their templates
+// and the `-all` bundles are premium. The token foundation installs anonymously (classified 'meta'), so it
 // carries no note. Classification MIRRORS classifyContent() in
 // lib/registry/content-type.ts, reusing the gate manifest built above, so the
 // note can never drift from what app/r/[file]/route.ts actually serves. The note
@@ -1113,7 +1113,12 @@ const gate = {
 }
 function gateNoteFor(name) {
   if (name === 'registry' || name === 'aicanvas-mcp') return null // meta
-  if (gate.templates.has(name)) return PREMIUM_GATE_NOTE
+  if (gate.templates.has(name)) {
+    // A free system's template rides its components' free lane; fail closed otherwise.
+    const paid = [...gate.paidSystems].some((s) => name.startsWith(`${s}-`))
+    const known = [...gate.systems].some((s) => name.startsWith(`${s}-`))
+    return known && !paid ? FREE_GATE_NOTE : PREMIUM_GATE_NOTE
+  }
   if (gate.brains.has(name)) return PREMIUM_GATE_NOTE
   for (const system of gate.systems) {
     // A PAID system's foundation is premium like the rest of it; only a free

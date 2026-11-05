@@ -3,6 +3,7 @@ export type ContentType =
   | 'premium-standalone'
   | 'design-system-component'
   | 'design-system'
+  /** A paid system's template. A free system's template classifies as design-system-component. */
   | 'template'
   | 'brain'
   | 'meta'
@@ -50,7 +51,14 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
   const slug = slugOrFile.replace(/\.json$/, '')
 
   if (META_SLUGS.has(slug)) return 'meta'
-  if (lookup.templateSlugs.has(slug)) return 'template'
+  if (lookup.templateSlugs.has(slug)) {
+    // A template follows its system's tier. A free MIT system's template is the
+    // same public source as its components, so it takes their free-account lane.
+    // Fail closed: a paid system's prefix, or no known system, keeps it premium.
+    const paid = [...lookup.paidSystemSlugs].some((s) => slug.startsWith(`${s}-`))
+    const known = [...lookup.systemSlugs].some((s) => slug.startsWith(`${s}-`))
+    return known && !paid ? 'design-system-component' : 'template'
+  }
 
   // Design-system brains (the .md rules corpus) gate like premium-standalone.
   if (lookup.brainSlugs.has(slug)) return 'brain'
@@ -65,8 +73,8 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
     if (slug === `${system}-tokens`) {
       return lookup.paidSystemSlugs.has(system) ? 'premium-standalone' : 'meta'
     }
-    // `<system>-all` pulls the templates and the brain in with the components,
-    // and those are paid on both systems, so it stays premium either way.
+    // `<system>-all` pulls the brain in with the components and templates, and
+    // the brain is paid on both systems, so it stays premium either way.
     if (slug === `${system}-all`) return 'design-system'
     // The bare aggregate is that system's COMPONENTS in one install, nothing
     // else. On a paid system that is the product. On a free MIT system it is
@@ -95,7 +103,8 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
 
   // Individual design-system components are FREE like standalones: the source is
   // public, and the one-command install just needs a free account (unlimited,
-  // uncounted). Only templates and the whole-system aggregates above are premium.
+  // uncounted). Only a paid system's templates and the whole-system aggregates
+  // above are premium.
   if (lookup.designSystemSlugs.has(slug)) return 'design-system-component'
 
   // Premium-only standalones gate like a design system: binary access, never
