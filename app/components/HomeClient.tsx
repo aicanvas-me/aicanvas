@@ -175,7 +175,6 @@ export function HomeClient({
               imageLight: 'imageLight' in c ? (c.imageLight as string | undefined) : undefined,
               href: `/design-systems/${sys.slug}/${c.slug}`,
               badge: sys.label,
-              badgeTone: sys.badgeTone,
             })),
           ...sys.templates
             .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].templates[i], tokens))
@@ -187,7 +186,6 @@ export function HomeClient({
               imageLight: undefined,
               href: `/design-systems/${sys.slug}/templates/${t.folder}`,
               badge: sys.badgeTone === 'pro' ? 'Premium template' : 'Free',
-              badgeTone: sys.badgeTone,
             })),
         ])
       : []
@@ -330,7 +328,6 @@ export function HomeClient({
                     image={e.image}
                     imageLight={e.imageLight}
                     badge={e.badge}
-                    badgeTone={e.badgeTone}
                     href={e.href}
                     slug={e.key}
                     position={i}

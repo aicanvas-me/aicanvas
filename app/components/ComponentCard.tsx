@@ -29,8 +29,6 @@ export interface ComponentCardProps {
   slug: string
   position: number
   source: CardSource
-  /** 'pro' marks the badge as Andromeda Pro's. */
-  badgeTone?: 'pro'
 }
 
 // ─── ComponentCard ─────────────────────────────────────────────────────────────
@@ -41,7 +39,7 @@ const IMG = 'absolute inset-0 h-full w-full object-cover transition-[transform,f
 // card's own surface, and the title and description sit straight on that
 // surface: no panel behind the text and no button, because the whole card is
 // the target. Hover steps the border up one and lifts the preview a touch.
-export function ComponentCard({ name, description, href, image, imageLight, badge, badgeTone, slug, position, source }: ComponentCardProps) {
+export function ComponentCard({ name, description, href, image, imageLight, badge, slug, position, source }: ComponentCardProps) {
   return (
     <Link
       href={href}
@@ -60,11 +58,7 @@ export function ComponentCard({ name, description, href, image, imageLight, badg
           // No backdrop blur: over a lazy image Chrome painted it as a bare square.
           <div
             className={`absolute left-4 top-4 z-10 flex items-center rounded-full bg-sand-950/90 p-1.5 ring-1 ${
-              badge === 'Free'
-                ? 'text-sand-300 ring-sand-500/40'
-                : badgeTone === 'pro'
-                  ? 'text-sand-50 ring-sand-50/30'
-                  : 'text-sand-50 ring-sand-50/30'
+              badge === 'Free' ? 'text-sand-300 ring-sand-500/40' : 'text-sand-50 ring-sand-50/30'
             }`}
           >
             {badge === 'Free' ? (

@@ -1,8 +1,7 @@
 'use client'
 
 // The site's Search trigger and its ⌘K / Ctrl+K shortcut: a compact button in
-// the homepage bar (`bar`), a full-width box in the sidebar (`field`). A page
-// renders exactly one of the two, so one shortcut listener is live. The dialog itself
+// the top bar, which renders once, so one shortcut listener is live. The dialog itself
 // is a separate chunk, fetched the first time the pointer or focus reaches the
 // button (or the shortcut fires), so the metadata it searches stays out of the
 // page bundle.
@@ -23,12 +22,7 @@ const KBD =
 const BAR =
   'inline-flex h-8 items-center gap-2 rounded-control border border-sand-200 bg-sand-100 px-2.5 text-sm font-medium text-sand-700 transition-colors hover:border-sand-300 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300 dark:hover:border-sand-700 dark:hover:text-sand-50'
 
-// The sidebar box keeps the look of the text field it replaced (same border,
-// fill, height and placeholder tone), so the rail does not change shape.
-const FIELD =
-  'flex w-full items-center gap-2 rounded-control border border-sand-200 bg-sand-100 py-1.5 pl-3 pr-2 text-sm text-sand-600 transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/20 focus-visible:border-accent dark:border-sand-700 dark:bg-sand-900 dark:text-sand-500 dark:hover:border-sand-600'
-
-export function SiteSearch({ variant = 'bar' }: { variant?: 'bar' | 'field' }) {
+export function SiteSearch() {
   const [open, setOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const mac = useSyncExternalStore(noop, isMac, () => true)
@@ -59,20 +53,11 @@ export function SiteSearch({ variant = 'bar' }: { variant?: 'bar' | 'field' }) {
         onClick={() => setOpen(true)}
         onPointerEnter={loadDialog}
         onFocus={loadDialog}
-        className={variant === 'field' ? FIELD : BAR}
+        className={BAR}
       >
-        {variant === 'field' ? (
-          <>
-            <Search size={14} aria-hidden className="shrink-0 text-sand-600 dark:text-sand-500" />
-            <span className="flex-1 text-left">Search…</span>
-          </>
-        ) : (
-          <>
-            <Search size={14} aria-hidden className="lg:hidden" />
-            <span className="hidden lg:inline">Search</span>
-          </>
-        )}
-        <span aria-hidden className={`items-center gap-0.5 ${variant === 'field' ? 'flex' : 'hidden lg:flex'}`}>
+        <Search size={14} aria-hidden className="lg:hidden" />
+        <span className="hidden lg:inline">Search</span>
+        <span aria-hidden className="hidden items-center gap-0.5 lg:flex">
           <kbd className={KBD}>{mac ? '⌘' : 'Ctrl'}</kbd>
           <kbd className={KBD}>K</kbd>
         </span>

@@ -21,9 +21,6 @@ export type FaqItem = {
   // JSON-LD), and the first occurrence of `link.label` inside `a` is rendered
   // as an anchor. Add a link without ever breaking the structured data.
   link?: { label: string; href: string }
-  // Same idea for the question. Rendered by FaqAccordion only (external
-  // anchor, new tab); FaqView ignores it.
-  qLink?: { label: string; href: string }
 }
 export type FaqCategory = {
   category: string
