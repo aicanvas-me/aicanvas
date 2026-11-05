@@ -29,7 +29,7 @@ export function PreviewSizeStrip({
         embedded
           ? `border-t ${surface === 'dark' ? 'border-white/10' : 'border-black/10'}`
           : 'rounded-section border border-sand-200 dark:border-sand-800'
-      } ${surface === 'dark' ? 'bg-sand-950 text-white/55' : 'bg-sand-50 text-black/50'}`}
+      } ${surface === 'dark' ? 'bg-sand-950 text-white/55' : 'bg-sand-50 text-black/55'}`}
     >
       {PREVIEW_SIZES.map((previewSize) => (
         <div key={previewSize} className="flex min-w-6 flex-col items-center gap-2 text-[10px]">
@@ -101,7 +101,7 @@ export function PreviewStage({
             </button>
           ))}
         </div>
-        {counter && <p className={surface === 'dark' ? 'text-xs text-white/45' : 'text-xs text-black/45'}>{counter}</p>}
+        {counter && <p className={surface === 'dark' ? 'text-xs text-white/45' : 'text-xs text-black/55'}>{counter}</p>}
       </div>
       <div className="flex min-h-0 flex-1 items-center justify-center px-4 pb-4 pt-14">
         <IconSvg className="max-h-full max-w-full" markup={markup} size={stageSize(size)} weight={weight} colour={colour} label={name} />
