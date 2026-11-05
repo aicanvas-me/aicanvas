@@ -1,10 +1,9 @@
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { fileURLToPath } from 'node:url'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { generateIconRegistry } from './icon-registry.mjs'
 
-const OUTPUT_ROOT = fileURLToPath(new URL('../registry-data/', import.meta.url))
 const MARKER = ['AICANVAS', 'PREMIUM', 'DO', 'NOT', 'COMMIT'].join('-')
 const NAMES = ['search', 'image-sparkle', 'map']
 const STYLES = [
@@ -36,8 +35,7 @@ function readItem(name: string): RegistryItem {
 }
 
 beforeEach(() => {
-  mkdirSync(OUTPUT_ROOT, { recursive: true })
-  workDir = mkdtempSync(join(OUTPUT_ROOT, '.icon-registry-test-'))
+  workDir = mkdtempSync(join(tmpdir(), 'icon-registry-test-'))
   sourceDir = join(workDir, 'source')
   outDir = join(workDir, 'output')
   mkdirSync(join(sourceDir, 'react/icons'), { recursive: true })
