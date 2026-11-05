@@ -1886,7 +1886,9 @@ export function createServer(
           .filter((r) => r.score >= MIN_TEMPLATE_SCORE && namedHit(brief, r.item))
           .sort((a, b) => b.score - a.score)[0]?.item
 
-        let { segments, omitted } = briefSegments(brief)
+        const parts = briefSegments(brief)
+        let segments = parts.segments
+        const omitted = parts.omitted
         type Pick = ComponentMeta | SystemComponentMeta
         const systemOf = new Map((meta.systemComponents ?? []).map((c) => [c.slug, c.system]))
         const rankAll = (lock: string | undefined) =>
