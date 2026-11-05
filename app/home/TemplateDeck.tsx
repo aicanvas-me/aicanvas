@@ -85,7 +85,7 @@ function LiveFrame({ t, device, box }: { t: DeckTemplate; device: Device; box: {
       {/* Loading pulse for tablet and phone, where no poster fits. */}
       {framed && !loaded && (
         <div aria-hidden className="absolute inset-0 flex items-center justify-center">
-          <span className="size-2 animate-ping rounded-full bg-sand-400 dark:bg-sand-600" />
+          <span className="size-2 animate-ping rounded-full bg-sand-400 motion-reduce:animate-none dark:bg-sand-600" />
         </div>
       )}
       <motion.div
