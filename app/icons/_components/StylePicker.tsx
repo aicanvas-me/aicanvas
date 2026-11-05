@@ -4,76 +4,20 @@ import { Fragment, useRef, type KeyboardEvent } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { ICON_STYLES } from '../_lib/icon-utils'
 import type { IconStyle } from '../_lib/types'
-import { IconSvg } from './IconSvg'
 
+// The style switch: one track, the pick sliding between segments. Line, the
+// free style, stands apart from the three paid ones, and nothing looks locked:
+// every style previews free, the tier only gates downloads.
+// Widths answer to the toolbar's container (`@container` on the panel).
 export function StylePicker({
   value,
   onChange,
-  markup,
   loading = false,
-  compact = false,
 }: {
   value: IconStyle
   onChange: (style: IconStyle) => void
-  markup?: string
   loading?: boolean
   compact?: boolean
-}) {
-  if (compact) return <StyleTrack value={value} onChange={onChange} loading={loading} />
-  return (
-    <div role="radiogroup" aria-label="Icon style" className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-      {ICON_STYLES.map((style) => {
-        const selected = value === style.id
-        return (
-          <button
-            key={style.id}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            onClick={() => onChange(style.id)}
-            className={`relative flex h-16 min-w-0 flex-col items-center justify-center gap-1 rounded-card border px-2 py-1.5 text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
-              selected
-                ? 'border-accent bg-accent/5 text-sand-900 dark:text-sand-50'
-                : 'border-sand-200 bg-sand-100 text-sand-600 hover:border-sand-300 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400 dark:hover:border-sand-700'
-            }`}
-          >
-            {markup && (
-              <IconSvg
-                markup={markup}
-                size={20}
-                weight="regular"
-                className={`shrink-0 ${loading && selected ? 'animate-pulse motion-reduce:animate-none' : ''}`}
-              />
-            )}
-            <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-[10px] font-semibold sm:text-[11px]">
-              <span>{style.shortLabel}</span>
-            </span>
-            <span
-              aria-label={style.tier}
-              className={`text-[9px] font-semibold ${style.tier === 'Free' ? 'text-accent' : 'text-sand-600 dark:text-sand-400'}`}
-            >
-              <span>{style.tier}</span>
-            </span>
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
-// The toolbar's style switch: one track, the pick sliding between segments.
-// Line stands alone; one "Premium" caption heads the three paid styles, so
-// the tier is said once instead of on every segment, and nothing looks locked:
-// every style previews free, the tier only gates downloads.
-// Widths answer to the toolbar's container (`@container` on the panel).
-function StyleTrack({
-  value,
-  onChange,
-  loading,
-}: {
-  value: IconStyle
-  onChange: (style: IconStyle) => void
-  loading: boolean
 }) {
   const reduce = useReducedMotion()
   const refs = useRef<(HTMLButtonElement | null)[]>([])

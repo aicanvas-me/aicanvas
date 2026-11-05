@@ -223,7 +223,7 @@ export function IconDetail({
           {/* On a phone the controls share the preview card's edges, which
               leaves the style track room for all four styles. */}
           <div className={`@container flex min-w-0 flex-col gap-2 px-0 pb-1 pt-5 sm:p-5 ${restored ? '' : 'invisible'}`}>
-            <StylePicker value={style} onChange={setStyle} compact loading={loading} />
+            <StylePicker value={style} onChange={setStyle} loading={loading} />
             <TuneSlider
               label="Size"
               value={size}
