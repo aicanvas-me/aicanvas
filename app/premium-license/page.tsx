@@ -30,9 +30,9 @@ export default function PremiumLicensePage() {
         </p>
         <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
           By installing or using any Premium Component, you agree to this License.
-          A paid subscription is purchased and accepted through Paddle, our
-          reseller and Merchant of Record, and this License applies to the
-          Premium Components delivered to you.
+          A paid subscription or Lifetime is purchased and accepted through
+          Paddle, our reseller and Merchant of Record, and this License applies
+          to the Premium Components delivered to you.
         </p>
 
         {/* ── 1. Definitions ───────────────────────────────────────────── */}
@@ -59,7 +59,12 @@ export default function PremiumLicensePage() {
             </li>
             <li>
               <strong className="text-sand-700 dark:text-sand-200">Subscription:</strong>{' '}your
-              active, paid AI Canvas Premium plan.
+              active, paid AI Canvas Premium plan: a recurring plan, or Lifetime.
+            </li>
+            <li>
+              <strong className="text-sand-700 dark:text-sand-200">Lifetime:</strong>{' '}AI
+              Canvas Premium bought with one payment and no renewal, as set out in
+              Section 2. Lifetime stays active until it ends under Section 2.
             </li>
             <li>
               <strong className="text-sand-700 dark:text-sand-200">You, Licensee:</strong>{' '}the
@@ -70,7 +75,7 @@ export default function PremiumLicensePage() {
               specific Premium Component, in the version delivered to you, that
               you actually installed or downloaded through the Premium install
               channel while your Subscription was active and while the payment
-              for that period had not been reversed.
+              for that period, or for Lifetime, had not been reversed.
             </li>
             <li>
               <strong className="text-sand-700 dark:text-sand-200">End Product:</strong>{' '}an
@@ -92,12 +97,24 @@ export default function PremiumLicensePage() {
             2. Subscription access and component licence are two distinct rights
           </h2>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
-            <strong className="text-sand-700 dark:text-sand-200">Access right (lasts only while you
-            pay).</strong>{' '}
+            <strong className="text-sand-700 dark:text-sand-200">Access right (lasts only while your
+            Subscription is active).</strong>{' '}
             While your Subscription is active we give you access to the full
             Premium catalogue, to updates and bug fixes for Premium Components,
             and to Premium Components we add after you subscribe. This access
             right ends automatically when your Subscription ends for any reason.
+          </p>
+          <p id="lifetime" className="mt-3 scroll-mt-24 leading-relaxed text-sand-600 dark:text-sand-400">
+            <strong className="text-sand-700 dark:text-sand-200">Lifetime (one payment, no
+            renewal).</strong>{' '}
+            Lifetime gives you the access right above for as long as AI Canvas
+            exists, for one payment and with nothing to renew, including every
+            Premium Component we release later. If AI Canvas continues under
+            another name, Lifetime continues with it. Lifetime is personal to you
+            and cannot be transferred, sold, or shared. It ends early only if its
+            payment is refunded in full, if its payment is reversed or charged
+            back (Section 7.4), or if this License is terminated for breach
+            (Section 7.3). A partial refund does not end it.
           </p>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             <strong className="text-sand-700 dark:text-sand-200">Component licence (perpetual, per
@@ -261,8 +278,9 @@ export default function PremiumLicensePage() {
             forfeited, for any order whose payment is later reversed, charged
             back, or otherwise undone. For the purposes of this License, your
             Subscription is not &ldquo;active&rdquo; during any period whose
-            payment is reversed, so components installed in reliance on that
-            payment do not survive under Section 7.2.
+            payment is reversed, and Lifetime whose payment is reversed counts as
+            never active, so components installed in reliance on that payment do
+            not survive under Section 7.2.
           </p>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             <strong className="text-sand-700 dark:text-sand-200">7.5 Survival of clauses.</strong>{' '}

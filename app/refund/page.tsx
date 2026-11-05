@@ -23,7 +23,7 @@ export default function RefundPage() {
           Refund &amp; Cancellation Policy
         </h1>
         <p className="mt-3 text-sm text-sand-600 dark:text-sand-500">
-          Last updated: 2026-06-14. This policy applies to the AI Canvas Premium subscription.
+          Last updated: 2026-11-05. This policy applies to AI Canvas Premium: the subscription and Lifetime.
         </p>
 
         {/* ── 1. Overview ──────────────────────────────────────────────── */}
@@ -34,9 +34,10 @@ export default function RefundPage() {
             installing free components with a free account are always free:
             there is nothing to pay and nothing to refund. This policy covers the
             optional paid{' '}
-            <strong className="font-semibold text-sand-700 dark:text-sand-300">Premium</strong>{' '}
-            subscription, which unlocks the premium closed-source components,
-            blocks, design systems and templates.
+            <strong className="font-semibold text-sand-700 dark:text-sand-300">Premium</strong>
+            , sold as a subscription or as Lifetime, a one-time purchase. Premium
+            unlocks the premium closed-source components, blocks, design systems
+            and templates.
           </p>
         </section>
 
@@ -44,7 +45,9 @@ export default function RefundPage() {
         <section className="mt-10">
           <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">2. How billing works</h2>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
-            Premium is billed at $8.99 per month or $49.99 per year through{' '}
+            Premium costs $8.99 per month as a subscription, or $125 once for
+            Lifetime. Yearly subscriptions started earlier at $49.99 per year
+            keep renewing on the same terms. Payment runs through{' '}
             <a
               href="https://www.paddle.com"
               target="_blank"
@@ -65,7 +68,7 @@ export default function RefundPage() {
               Paddle&apos;s buyer terms
             </a>
             . Your subscription renews automatically at the end of each billing
-            period until you cancel.
+            period until you cancel. Lifetime is paid once and never renews.
           </p>
         </section>
 
@@ -81,6 +84,12 @@ export default function RefundPage() {
             your current billing period: you keep Premium access until then, and
             you are not charged again.
           </p>
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+            Lifetime has nothing to cancel. If you buy Lifetime while a
+            subscription is active, we cancel that subscription for the end of
+            its current billing period, so you are not charged for it again.
+            Lifetime starts the moment you buy it.
+          </p>
         </section>
 
         {/* ── 4. Refunds & EU/UK right of withdrawal ───────────────────── */}
@@ -90,10 +99,11 @@ export default function RefundPage() {
           </h2>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             Premium is digital content that is made available immediately. By
-            starting a subscription you consent to immediate performance and
-            acknowledge that your EU/UK 14-day right of withdrawal ends once
-            access begins, except where the law provides otherwise. Where a
-            statutory right to a refund applies, it is honoured.
+            starting a subscription or buying Lifetime you consent to immediate
+            performance and acknowledge that your EU/UK 14-day right of
+            withdrawal ends once access begins, except where the law provides
+            otherwise. Where a statutory right to a refund applies, it is
+            honoured.
           </p>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
             Beyond that, refund requests are handled by Paddle under its buyer
@@ -104,6 +114,10 @@ export default function RefundPage() {
             </a>{' '}
             or reach Paddle directly through the receipt email Paddle sends after
             purchase.
+          </p>
+          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+            Lifetime follows these same rules. A full refund of a Lifetime
+            payment ends Lifetime access; a partial refund keeps it.
           </p>
         </section>
 

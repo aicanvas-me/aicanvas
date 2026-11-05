@@ -20,7 +20,7 @@ export default function TermsPage() {
           Terms &amp; Conditions
         </h1>
         <p className="mt-3 text-sm text-sand-600 dark:text-sand-500">
-          Last updated: 2026-05-10. These terms govern your use of AI Canvas.
+          Last updated: 2026-11-05. These terms govern your use of AI Canvas.
         </p>
 
         {/* ── 1. Creator ───────────────────────────────────────────────── */}
@@ -60,20 +60,28 @@ export default function TermsPage() {
         {/* ── 2b. Premium subscription ─────────────────────────────────── */}
         <section className="mt-10">
           <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
-            2b. Premium subscription
+            2b. Premium subscription and Lifetime
           </h2>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
-            Premium is billed at $8.99 per month or $49.99 per year through
-            Paddle.com, our reseller and Merchant of Record. Paddle is the
-            seller of record for these transactions and handles payment and
-            applicable taxes; your purchase is also subject to Paddle&apos;s
-            terms. A subscription requires an account and renews automatically
-            at the end of each billing period until cancelled.
+            Premium is sold as a subscription at $8.99 per month, or as
+            Lifetime for a one-time payment of $125. Yearly subscriptions
+            started earlier at $49.99 per year keep renewing on the same terms.
+            Payment runs through Paddle.com, our reseller and Merchant of
+            Record. Paddle is the seller of record for these transactions and
+            handles payment and applicable taxes; your purchase is also subject
+            to Paddle&apos;s terms. A subscription requires an account and
+            renews automatically at the end of each billing period until
+            cancelled. Lifetime also requires an account, is paid once, never
+            renews, and lasts as long as AI Canvas exists, as set out in the
+            AI Canvas Premium License.
           </p>
           <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
-            You can cancel at any time from the customer portal linked in your
-            account settings; cancellation takes effect at the end of the
-            current period and you keep access until then. Because Premium is
+            You can cancel a subscription at any time from the customer portal
+            linked in your account settings; cancellation takes effect at the
+            end of the current period and you keep access until then. Lifetime
+            has nothing to cancel. If you buy Lifetime while a subscription is
+            active, we cancel that subscription for the end of its current
+            period, so you are not charged for it again. Because Premium is
             digital content supplied immediately, by starting it you consent to
             immediate performance and acknowledge that your EU/UK 14-day right
             of withdrawal ends once access begins, except where the law provides
@@ -85,8 +93,8 @@ export default function TermsPage() {
             <Link href="/premium-license" className="text-olive-600 dark:text-olive-400 hover:underline">
               AI Canvas Premium License
             </Link>
-            , not under MIT. A paid subscription provides ongoing access,
-            updates, and new Premium Components; the licence to Premium
+            , not under MIT. A paid subscription or Lifetime provides ongoing
+            access, updates, and new Premium Components; the licence to Premium
             Components you have already installed is perpetual and survives
             cancellation, so you may keep using and shipping them in your
             projects, except where your payment is reversed or charged back or
@@ -241,13 +249,14 @@ export default function TermsPage() {
             AI Canvas Premium Components, design systems, and templates are NOT
             released under the MIT License and are not part of the public
             registry or repository. They are proprietary works, made available
-            only to subscribers with an active Premium subscription, and are
-            licensed solely under the{' '}
+            only to holders of an active Premium subscription or Lifetime, and
+            are licensed solely under the{' '}
             <Link href="/premium-license" className="text-olive-600 dark:text-olive-400 hover:underline">
               AI Canvas Premium License
             </Link>
-            , which forms part of these terms by reference. By subscribing to or
-            installing any Premium Component, you agree to that License. In
+            , which forms part of these terms by reference. By subscribing to
+            Premium, buying Lifetime, or installing any Premium Component, you
+            agree to that License. In
             particular, you may not redistribute, resell, sublicense, or
             publicly publish the source of any Premium Component, nor use Premium
             Components to build a competing component library, template, theme,

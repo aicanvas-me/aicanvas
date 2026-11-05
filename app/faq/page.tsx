@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { SITE_URL } from '../lib/config'
+import { lifetimeEnabled } from '../../lib/flags'
 import { FaqView, type FaqCategory } from './FaqView'
 
 // ─── FAQ content ──────────────────────────────────────────────────────────────
@@ -14,8 +15,9 @@ import { FaqView, type FaqCategory } from './FaqView'
 // the viewer is Premium; the one-command install needs a free account
 // (unlimited, uncounted); Premium adds the closed-source premium components,
 // blocks, design systems, and templates plus their full remix prompts.
-// Prices ($8.99/mo, $49.99/yr)
+// Prices ($8.99/mo, $125 Lifetime, or $49.99/yr with the Lifetime switch off)
 // mirror PremiumCards.tsx — update in lockstep.
+const LIFETIME = lifetimeEnabled()
 const FAQ_CATEGORIES: FaqCategory[] = [
   {
     category: 'Getting started',
@@ -178,8 +180,17 @@ const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         q: 'How much does Premium cost?',
-        a: 'Premium is $8.99 per month or $49.99 per year, and the yearly plan is a big saving. A free account stays $0 forever, so you only upgrade once AI Canvas is already paying off for you.',
+        a: LIFETIME
+          ? 'Premium is $8.99 per month, or $125 once for Lifetime, which keeps Premium for as long as AI Canvas exists with nothing to renew. A free account stays $0 forever, so you only upgrade once AI Canvas is already paying off for you.'
+          : 'Premium is $8.99 per month or $49.99 per year, and the yearly plan is a big saving. A free account stays $0 forever, so you only upgrade once AI Canvas is already paying off for you.',
       },
+      ...(LIFETIME
+        ? [{
+            q: 'What does Lifetime mean?',
+            a: 'One payment of $125, plus VAT where applicable, gives you Premium for as long as AI Canvas exists: every premium component, design system and template, including every one we release later, with nothing to renew. Components you install stay yours. A full refund or a chargeback ends it. The full terms are in the Premium License.',
+            link: { label: 'Premium License', href: '/premium-license#lifetime' },
+          }]
+        : []),
       {
         q: 'Is Premium worth it for someone just starting out?',
         a: 'Start with a free account, since unlimited installs and the free library’s remix prompts cover most early projects. When you want the closed-source premium components, full design systems, and templates, Premium is the natural next step.',
@@ -210,7 +221,7 @@ const FAQ_CATEGORIES: FaqCategory[] = [
       },
       {
         q: 'Can I cancel anytime?',
-        a: 'Yes. Premium renews automatically, and you can cancel whenever you like from your account settings. You keep full Premium access until the end of the period you already paid for.',
+        a: `Yes. Premium renews automatically, and you can cancel whenever you like from your account settings. You keep full Premium access until the end of the period you already paid for.${LIFETIME ? ' Lifetime has nothing to cancel.' : ''}`,
       },
     ],
   },

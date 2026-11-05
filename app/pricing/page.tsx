@@ -8,7 +8,7 @@ import type { ComponentType, ReactNode } from 'react'
 import { buttonClasses } from '../components/buttonClasses'
 import { SiteFooter } from '../components/SiteFooter'
 import { TerminatorCool } from '../components/auth/TerminatorReveal'
-import { premiumEnabled } from '../../lib/flags'
+import { lifetimeEnabled, premiumEnabled } from '../../lib/flags'
 import { PremiumCards } from '../components/billing/PremiumCards'
 import { FaqAccordion, type FaqItem } from '../components/FaqAccordion'
 import { BusinessCards } from '../components/billing/BusinessCard'
@@ -189,6 +189,13 @@ function PlanCard({ plan, delay }: { plan: Plan; delay: number }) {
 // Curated billing/about FAQ shown under the pricing cards. These mirror entries
 // on /faq — keep the answers in sync if those change.
 const PRICING_FAQ: FaqItem[] = [
+  ...(lifetimeEnabled()
+    ? [{
+        q: 'What does Lifetime mean?',
+        a: 'One payment of $125, plus VAT where applicable, gives you Premium for as long as AI Canvas exists: every premium component, design system and template, including every one we release later, with nothing to renew. Components you install stay yours. A full refund or a chargeback ends it. The full terms are in the Premium License.',
+        link: { label: 'Premium License', href: '/premium-license#lifetime' },
+      }]
+    : []),
   {
     q: 'How are payments handled, and what is Paddle?',
     qLink: { label: 'Paddle', href: 'https://www.paddle.com/' },

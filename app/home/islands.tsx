@@ -12,6 +12,7 @@ import { ArrowRight, ImageSquare, Lightning, HandTap, CaretLeft, CaretRight } fr
 import { Reveal } from './Reveal'
 import { track } from '../lib/analytics'
 import type { ComponentMeta } from '../lib/component-registry'
+import { lifetimeEnabled } from '../../lib/flags'
 
 // ─── Hello card data ─────────────────────────────────────────────────────────
 
@@ -563,7 +564,7 @@ const FAQ_ITEMS: { q: string; a: string }[] = [
   },
   {
     q: 'Is AI Canvas free?',
-    a: 'Yes. Browsing, previewing, and copying the full prompt of any free component are always free, and a free account unlocks unlimited one-command installs, free forever. Premium adds the closed-source premium components and blocks with their full remix prompts, design systems, and templates at $8.99 per month or $49.99 per year when you want more.',
+    a: `Yes. Browsing, previewing, and copying the full prompt of any free component are always free, and a free account unlocks unlimited one-command installs, free forever. Premium adds the closed-source premium components and blocks with their full remix prompts, design systems, and templates at ${lifetimeEnabled() ? '$8.99 per month, or $125 once for Lifetime,' : '$8.99 per month or $49.99 per year'} when you want more.`,
   },
   {
     q: 'How do I get my first component in under a minute?',
