@@ -244,7 +244,7 @@ export function PremiumCards({
           </div>
           {LIFETIME && <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">+ VAT where applicable</p>}
           <p className={`mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400 ${threeUp ? DESC_3UP : ''}`}>
-            Design systems, templates, components and blocks.
+            Andromeda Pro, its templates, premium components and blocks.
           </p>
 
           {user && premiumState === 'unknown' ? (

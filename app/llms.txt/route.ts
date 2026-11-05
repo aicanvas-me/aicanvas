@@ -155,7 +155,7 @@ Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes.
 - [Icons](${SITE_URL}/icons): ${ICON_COUNT} React icons in four styles: Line, Duotone, Solid and Solid duotone. Each icon installs as one editable file plus a shared IconBase runtime in components/icons/.
 - Install one icon (${installTier('icon-search')}): \`npx shadcn@latest add @aicanvas/icon-<name>\`, for example \`icon-search\`. The other styles add a suffix (${installTier('icon-search-duotone')}): \`icon-<name>-duotone\`, \`icon-<name>-solid\`, \`icon-<name>-solid-duotone\`.
 - Install every Line icon at once (${installTier('icons')}): \`npx shadcn@latest add @aicanvas/icons\`.
-- Licence: Line icons are free under the AI Canvas Premium License, not MIT. Keep the one-line AI Canvas notice at the top of each Line icon file.
+- Licence: Line icons are free under the AI Canvas Premium License, not MIT. Without Premium, keep the one-line AI Canvas notice at the top of each Line icon file and name AI Canvas in your credits or licence file when you publish source; Premium members need neither.
 - Use: \`import { Search } from '@/components/icons/search'\`, then \`<Search size={20} />\`. The export is the name in PascalCase plus the style (\`SearchDuotone\`, \`SearchSolid\`, \`SearchSolidDuotone\`). Props: size, color, weight (thin, light, regular, bold or extrabold; default regular; Line and Duotone only). \`<IconProvider weight="...">\` from components/icons/IconBase sets the defaults for every icon inside it.
 - [Icon catalog](${SITE_URL}/r/icons-index.json) (${installTier('icons-index')}): every icon's name, category and tags as JSON. The MCP tools search_icons and get_icon_install read it.\n`
     : ''

@@ -36,7 +36,7 @@ export default function PremiumLicensePage() {
         title="AI Canvas Premium License"
         sub={
           <span className="block text-balance">
-            Version 1.0. Effective date: 2026-07-01. This License governs the
+            Version 1.1. Effective date: 2026-11-05. This License governs the
             AI Canvas Premium Components and, under Section 11, the Line icons.
             It is separate from, and no replacement for, the MIT License that
             covers the free, open-source AI Canvas registry.
@@ -82,7 +82,8 @@ export default function PremiumLicensePage() {
             </li>
             <li>
               <strong className={STRONG}>You, Licensee:</strong>{' '}the
-              individual or entity that holds the Subscription.
+              individual or entity that holds the Subscription, or that uses
+              the Line Icons under Section 11.
             </li>
             <li>
               <strong className={STRONG}>Installed Component:</strong>{' '}a
@@ -285,7 +286,7 @@ export default function PremiumLicensePage() {
           </p>
           <p className={BODY}>
             <strong className={STRONG}>7.5 Survival of clauses.</strong>{' '}
-            Sections 4, 5, 6, 8, 9, and 10 survive any termination of this
+            Sections 4, 5, 6, 8, 9, 10, and 11 survive any termination of this
             License.
           </p>
         </section>
@@ -360,7 +361,8 @@ export default function PremiumLicensePage() {
           <h2 className={HEADING}>11. Line icons</h2>
           <p className={BODY}>
             The Line style of the AI Canvas icons (the &ldquo;Line
-            Icons&rdquo;) is licensed free of charge under this License to
+            Icons&rdquo;, together with the shared icon runtime they need) is
+            licensed free of charge under this License to
             anyone, with or without a Subscription. Sections 3 to 6 apply to
             each Line Icon you install, copy, or download as if it were an
             Installed Component, except that the Line Icons an End Product uses
@@ -393,7 +395,8 @@ export default function PremiumLicensePage() {
         <section className={SECTION}>
           <h2 className={HEADING}>12. Versioning</h2>
           <p className={BODY}>
-            This is AI Canvas Premium License version 1.0. The version in force
+            This is AI Canvas Premium License version 1.1, which added Section 11
+            to version 1.0 of 2026-07-01. The version in force
             for a given Installed Component is the version current when you
             installed it. A later version will not retroactively reduce the
             perpetual licence you already hold to that Installed Component.

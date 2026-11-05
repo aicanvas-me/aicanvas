@@ -218,7 +218,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'are-icons-free',
     category: 'icons',
     q: 'Are the icons free?',
-    a: 'The Line style is. Every Line icon is free to use, to install, copy or download one at a time, under the AI Canvas Premium License with a one-line credit kept in the code; no visible credit is needed, and Premium members need none. Duotone, Solid and Solid duotone come with Premium, and so does the download of the whole set. The icons are not MIT, and there is no public icon repository.',
+    a: 'The Line style is. Every Line icon is free to use, to install, copy or download one at a time, under the AI Canvas Premium License with a one-line credit kept in the code and AI Canvas named in your credits when you publish your source; no visible credit is needed, and Premium members need none. Duotone, Solid and Solid duotone come with Premium, and so does the download of the whole set. The icons are not MIT, and there is no public icon repository.',
   },
   {
     id: 'design-skill-for-claude-code',
