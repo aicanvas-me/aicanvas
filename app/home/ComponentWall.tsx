@@ -2,13 +2,16 @@
 
 // A wall of standalone components: columns of cards, each a name in mono over
 // its screenshot, drifting slowly up and down in turn, with the edges fading
-// into the page. The wall holds still while hovered and while it is off
-// screen. Keyboard focus stops the drift and resets the column to its start,
-// where the focusable originals sit (the loop's second copy is untabbable).
-// Reduced motion shows it still. Every card opens its component page.
+// into the page. The whole wall holds still while hovered, focused, paused by
+// its toggle or off screen. Keyboard focus also resets the focused column to its
+// start, where the focusable originals sit (the loop's second copy is
+// untabbable). Reduced motion shows it still. Every card opens its component page.
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { Pause } from '@/app/_icons/icons/pause'
+import { Play } from '@/app/_icons/icons/play'
+import { buttonClasses } from '../components/buttonClasses'
 
 export type WallItem = { slug: string; name: string; image: string; imageLight?: string; premium: boolean }
 
@@ -63,6 +66,7 @@ function Card({ item, hidden }: { item: WallItem; hidden?: boolean }) {
 
 export function ComponentWall({ items }: { items: WallItem[] }) {
   const wallRef = useRef<HTMLDivElement>(null)
+  const [paused, setPaused] = useState(false)
 
   // Off screen = paused. Written straight to a data attribute the CSS reads,
   // so scrolling past never re-renders the wall.
@@ -81,46 +85,62 @@ export function ComponentWall({ items }: { items: WallItem[] }) {
   const columns = [0, 1, 2, 3].map((c) => items.filter((_, i) => i % 4 === c))
 
   return (
-    <div
-      ref={wallRef}
-      // The fade runs about a third as far on the light page: the screenshots are
-      // dark on both themes, and a dark picture fading into a light page goes
-      // grey on the way, so the band stays thin there. Dark keeps its long fade.
-      className="v3-wall relative h-[560px] overflow-hidden [--wall-b:5%] [--wall-x:2%] [--wall-y:4%] sm:h-[640px] lg:h-[720px] dark:[--wall-b:14%] dark:[--wall-x:6%] dark:[--wall-y:10%]"
-      style={{ maskImage: WALL_MASK, maskComposite: 'intersect', WebkitMaskImage: WALL_MASK, WebkitMaskComposite: 'source-in' }}
-    >
-      <style>{`
-        @keyframes v3-wall-up { from { transform: translateY(0) } to { transform: translateY(-50%) } }
-        @keyframes v3-wall-down { from { transform: translateY(-50%) } to { transform: translateY(0) } }
-        .v3-wall-col:hover, .v3-wall[data-off] .v3-wall-col { animation-play-state: paused }
-        .v3-wall-col:focus-within { animation: none }
-        @media (prefers-reduced-motion: reduce) { .v3-wall-col { animation: none !important } }
-      `}</style>
-      <div className="grid h-full grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        {columns.map((col, c) => (
-          <div key={c} className={`min-w-0 ${c >= 2 ? 'hidden lg:block' : ''}`}>
-            <div
-              className="v3-wall-col flex flex-col"
-              style={{ animation: `${c % 2 === 0 ? 'v3-wall-up' : 'v3-wall-down'} ${PACE[c]}s linear infinite` }}
-            >
-              {/* The column twice over, so the loop has no seam: spacing is
-                  padding, not gap, so both halves are exactly the same height
-                  and -50% lands on the copy's first card. The copy is hidden
-                  from assistive tech and the tab order. */}
-              {col.map((item) => (
-                <div key={item.slug} className="pb-3 sm:pb-4">
-                  <Card item={item} />
-                </div>
-              ))}
-              {col.map((item) => (
-                <div key={`${item.slug}-again`} className="pb-3 motion-reduce:hidden sm:pb-4">
-                  <Card item={item} hidden />
-                </div>
-              ))}
+    <>
+      <div
+        ref={wallRef}
+        data-paused={paused || undefined}
+        // The fade runs about a third as far on the light page: the screenshots are
+        // dark on both themes, and a dark picture fading into a light page goes
+        // grey on the way, so the band stays thin there. Dark keeps its long fade.
+        className="v3-wall relative h-[560px] overflow-hidden [--wall-b:5%] [--wall-x:2%] [--wall-y:4%] sm:h-[640px] lg:h-[720px] dark:[--wall-b:14%] dark:[--wall-x:6%] dark:[--wall-y:10%]"
+        style={{ maskImage: WALL_MASK, maskComposite: 'intersect', WebkitMaskImage: WALL_MASK, WebkitMaskComposite: 'source-in' }}
+      >
+        <style>{`
+          @keyframes v3-wall-up { from { transform: translateY(0) } to { transform: translateY(-50%) } }
+          @keyframes v3-wall-down { from { transform: translateY(-50%) } to { transform: translateY(0) } }
+          .v3-wall:hover .v3-wall-col, .v3-wall:focus-within .v3-wall-col,
+          .v3-wall[data-paused] .v3-wall-col, .v3-wall[data-off] .v3-wall-col { animation-play-state: paused }
+          .v3-wall-col:focus-within { animation: none }
+          @media (prefers-reduced-motion: reduce) { .v3-wall-col { animation: none !important } }
+        `}</style>
+        <div className="grid h-full grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+          {columns.map((col, c) => (
+            <div key={c} className={`min-w-0 ${c >= 2 ? 'hidden lg:block' : ''}`}>
+              <div
+                className="v3-wall-col flex flex-col"
+                style={{ animation: `${c % 2 === 0 ? 'v3-wall-up' : 'v3-wall-down'} ${PACE[c]}s linear infinite` }}
+              >
+                {/* The column twice over, so the loop has no seam: spacing is
+                    padding, not gap, so both halves are exactly the same height
+                    and -50% lands on the copy's first card. The copy is hidden
+                    from assistive tech and the tab order. */}
+                {col.map((item) => (
+                  <div key={item.slug} className="pb-3 sm:pb-4">
+                    <Card item={item} />
+                  </div>
+                ))}
+                {col.map((item) => (
+                  <div key={`${item.slug}-again`} className="pb-3 motion-reduce:hidden sm:pb-4">
+                    <Card item={item} hidden />
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
+      {/* Touch has no hover, so the wall needs its own way to stop. */}
+      <div className="mt-3 flex justify-end motion-reduce:hidden">
+        <button
+          type="button"
+          aria-label="Pause the component wall"
+          aria-pressed={paused}
+          onClick={() => setPaused((p) => !p)}
+          className={buttonClasses({ variant: 'outline', size: 'sm', iconOnly: true })}
+        >
+          {paused ? <Play size={14} aria-hidden /> : <Pause size={14} aria-hidden />}
+        </button>
+      </div>
+    </>
   )
 }
