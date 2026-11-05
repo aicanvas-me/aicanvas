@@ -108,17 +108,16 @@ export function HeroMap({
         aria-label="AI Canvas in three groups: design systems, standalone components and blocks, and the icons used across both."
         className="w-full"
       >
-        <div className="grid gap-4 sm:grid-cols-[3fr_2fr]">
+        <div className="grid gap-4 lg:grid-cols-[3fr_2fr]">
           <DesignSystemsFrame />
           <PiecesFrame floor={standalonesFloor} />
         </div>
 
-        {/* The connectors: one per frame from sm, a single short line on a
-            phone where everything stacks. */}
+        {/* The connectors: one per frame from lg, a single short line below it. */}
         <div className="relative h-8 sm:h-12">
-          <Wire left="50%" className="sm:hidden" order={0} />
-          <Wire left={DS_X} className="hidden sm:block" order={0} />
-          <Wire left={PIECES_X} className="hidden sm:block" order={1} />
+          <Wire left="50%" className="lg:hidden" order={0} />
+          <Wire left={DS_X} className="hidden lg:block" order={0} />
+          <Wire left={PIECES_X} className="hidden lg:block" order={1} />
         </div>
 
         <IconRail icons={icons} count={iconCount} />
@@ -212,7 +211,7 @@ function Tile({
       initial={hidden}
       animate={play ? { opacity: 1, y: 0, scale: 1 } : hidden}
       transition={at(land, 0.35)}
-      className={`flex h-[112px] min-w-0 flex-col rounded-card p-2.5 sm:h-[120px] sm:p-3 lg:h-[132px] ${WELL}`}
+      className={`flex h-[136px] min-w-0 flex-col rounded-card p-2.5 sm:h-[120px] sm:p-3 lg:h-[132px] ${WELL}`}
     >
       <span className="text-xs font-semibold leading-none text-sand-700 dark:text-sand-300">{label}</span>
       <div className="relative mt-2.5 min-h-0 flex-1">{children(land + 0.2)}</div>
@@ -412,7 +411,7 @@ function Skills({ land }: { land: number }) {
       <Bit
         delay={land}
         from={{ opacity: 0 }}
-        className="flex min-h-0 flex-1 flex-col justify-center gap-1 rounded-b-chip rounded-tr-chip border border-sand-300 bg-sand-100 px-2 dark:border-sand-700 dark:bg-sand-900"
+        className="flex min-h-0 flex-1 flex-col justify-center gap-0.5 rounded-b-chip rounded-tr-chip border border-sand-300 bg-sand-100 px-2 sm:gap-1 dark:border-sand-700 dark:bg-sand-900"
       >
         {SKILL_LINES.map((line, i) => {
           const isActive = i === active
@@ -420,15 +419,15 @@ function Skills({ land }: { land: number }) {
           // put once the intro has typed them.
           const key = isActive ? `a${cycle}` : `s${i}`
           return (
-            <span key={i} className="flex min-w-0 items-center gap-1">
+            <span key={i} className="flex min-w-0 items-start gap-1 sm:items-center">
               <span
-                className={`block size-1 shrink-0 rounded-full transition-colors duration-300 ${
+                className={`mt-[3.5px] block size-1 shrink-0 rounded-full transition-colors duration-300 sm:mt-0 ${
                   isActive ? 'bg-accent' : 'bg-sand-300 dark:bg-sand-700'
                 }`}
               />
               <motion.span
                 key={key}
-                className={`block min-w-0 truncate text-[9.5px] leading-tight transition-colors duration-300 sm:text-[10px] ${
+                className={`block min-w-0 text-[9.5px] leading-[1.15] transition-colors duration-300 sm:truncate sm:text-[10px] sm:leading-tight ${
                   isActive ? 'text-sand-900 dark:text-sand-50' : 'text-sand-600 dark:text-sand-400'
                 }`}
                 initial={settled && !isActive ? false : { clipPath: blank }}

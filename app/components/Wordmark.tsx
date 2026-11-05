@@ -31,7 +31,7 @@ export function Wordmark({ fit = 'viewport' }: { fit?: 'viewport' | 'column' }) 
       `}</style>
       <p
         className="v3-wordmark -mb-[0.2em] whitespace-nowrap bg-clip-text text-center font-extrabold leading-[0.82] tracking-[-0.055em] text-transparent [-webkit-background-clip:text]"
-        style={{ fontSize: fit === 'column' ? 'clamp(4rem, 18.5cqw, 22rem)' : 'clamp(4rem, 18.5vw, 22rem)' }}
+        style={{ fontSize: fit === 'column' ? 'clamp(3rem, 18.5cqw, 22rem)' : 'clamp(3rem, 18.5vw, 22rem)' }}
       >
         AI<span className="inline-block w-[0.24em]" />CANVAS
       </p>

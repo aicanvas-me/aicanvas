@@ -28,7 +28,7 @@ export function Tabs({ tabs }: { tabs: { label: string; content: ReactNode }[] }
   }
   return (
     <div className="my-6">
-      <div ref={list} role="tablist" onKeyDown={onKey} className="flex w-fit max-w-full flex-wrap gap-1 rounded-full border border-sand-200 bg-sand-100 p-1 dark:border-sand-800 dark:bg-sand-900">
+      <div ref={list} role="tablist" onKeyDown={onKey} className="flex w-fit max-w-full flex-wrap gap-1 rounded-full border border-sand-200 bg-sand-100 p-1 max-lg:flex-nowrap max-lg:overflow-x-auto max-lg:[scrollbar-width:none] dark:border-sand-800 dark:bg-sand-900">
         {tabs.map((t, i) => (
           <button
             key={t.label}
@@ -39,7 +39,7 @@ export function Tabs({ tabs }: { tabs: { label: string; content: ReactNode }[] }
             aria-controls={`${id}-panel-${i}`}
             tabIndex={active === i ? 0 : -1}
             onClick={() => setActive(i)}
-            className={`rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
+            className={`shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
               active === i
                 ? 'bg-sand-50 text-sand-900 shadow-sm dark:bg-sand-800 dark:text-sand-50'
                 : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50'

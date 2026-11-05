@@ -35,7 +35,7 @@ export function AuthCard({
       <div className="relative hidden min-h-[480px] overflow-hidden rounded-card border border-sand-200 bg-sand-50 text-sand-900 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-100 md:block">
         <AsciiArt subject="mark" />
       </div>
-      <div className="flex flex-col justify-center p-8 sm:p-10 md:px-10 md:py-12">
+      <div className="flex flex-col justify-center px-6 py-7 sm:p-10 md:px-10 md:py-12">
         <div className="mx-auto w-full max-w-sm">{children}</div>
       </div>
       <Button
@@ -55,7 +55,7 @@ export function AuthCard({
 export function AuthHeading({ title, subtitle, as: Tag = 'h1' }: { title: ReactNode; subtitle?: ReactNode; as?: 'h1' | 'h2' }) {
   return (
     <div>
-      <Tag className="text-2xl font-bold leading-tight tracking-tight text-sand-900 dark:text-sand-50">{title}</Tag>
+      <Tag className="pr-10 text-2xl font-bold leading-tight tracking-tight text-sand-900 md:pr-0 dark:text-sand-50">{title}</Tag>
       {subtitle && <p className="mt-2 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{subtitle}</p>}
     </div>
   )
