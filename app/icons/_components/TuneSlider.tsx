@@ -33,7 +33,7 @@ export function TuneSlider({
   // disabled: the control does nothing for what is shown; hint says why
   disabled?: boolean
   hint?: string
-  // shown in the value slot while disabled, so the reason reads without an extra row
+  // shown in the value slot while disabled, so the state reads without an extra row
   disabledValue?: string
 }) {
   const t = Math.max(0, Math.min(1, (value - min) / (max - min)))
@@ -55,7 +55,7 @@ export function TuneSlider({
           value={value}
           onChange={(event) => onChange(parseFloat(event.target.value))}
           aria-label={label}
-          aria-valuetext={valueText(value)}
+          aria-valuetext={disabled && disabledValue ? disabledValue : valueText(value)}
           aria-describedby={showHint ? hintId : undefined}
           className="peer absolute inset-0 z-10 h-full w-full cursor-ew-resize opacity-0 disabled:pointer-events-none"
         />

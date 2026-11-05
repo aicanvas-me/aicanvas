@@ -33,6 +33,7 @@ describe('TuneSlider', () => {
     expect(slider.getAttribute('aria-describedby')).toBe(hint.id)
     expect(hint.className).toContain('sr-only')
     expect(screen.getAllByText('Fixed').length).toBeGreaterThan(0)
+    expect(slider.getAttribute('aria-valuetext')).toBe('Fixed')
   })
 
   it('shows no hint while enabled', () => {
