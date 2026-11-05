@@ -152,7 +152,6 @@ export interface ScheduledCancel {
   effectiveAt: string | null
 }
 
-
 /**
  * A subscriber who bought Lifetime should not be charged again. Schedule
  * their subscription to cancel at the END of the paid period, never
