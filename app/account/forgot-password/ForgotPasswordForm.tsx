@@ -60,7 +60,7 @@ export function ForgotPasswordForm({ initialError = null }: Props) {
       {sent ? (
         <div className="mt-6 rounded-inset border border-accent/30 bg-accent/10 p-4 text-sm leading-relaxed text-sand-900 dark:text-sand-100">
           If an account uses <strong>{email}</strong>, a reset link is on its
-          way. Check your inbox (and spam folder) — the link expires in about
+          way. Check your inbox (and spam folder). The link expires in about
           an hour.
         </div>
       ) : (
