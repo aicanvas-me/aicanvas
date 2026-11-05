@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { agentPrompt, ALL_ICONS_INSTALL, iconImportLine, iconInstallCommand, iconJsxLine, PREMIUM_ICON_INSTALL_NOTE } from './constants'
 import type { IconWeight } from './icon-utils'
+import { LINE_ICON_NOTICE } from '../../../scripts/lib/icon-notice.mjs'
 import { buildSvg } from './svg'
 import type { IconStyle } from './types'
 
@@ -40,6 +41,23 @@ describe('buildSvg: every style, size, weight and colour', () => {
             expect(svg.replaceAll(colour ?? 'currentColor', 'currentColor')).toContain(MARKUP[style])
           })
         }
+})
+
+describe('buildSvg: the Line licence notice', () => {
+  const NOTICE = `<!--! ${LINE_ICON_NOTICE} -->`
+  it('opens a Line SVG with the notice comment, once, at every setting', () => {
+    for (const colour of [null, '#E5484D'])
+      for (const weight of WEIGHTS) {
+        const svg = buildSvg(MARKUP.line, 32, weight, colour, 'line')
+        expect(svg).toMatch(new RegExp(`^<svg [^>]+>${NOTICE.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}<path `))
+        expect(svg.split(NOTICE)).toHaveLength(2)
+        expect(svg.endsWith('</svg>')).toBe(true)
+      }
+  })
+  it('leaves the notice out of every paid style', () => {
+    for (const style of STYLES.filter((s) => s !== 'line'))
+      expect(buildSvg(MARKUP[style], 24, 'regular', null, style)).not.toContain('<!--')
+  })
 })
 
 describe('React line and agent text', () => {

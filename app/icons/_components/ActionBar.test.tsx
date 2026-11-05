@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react'
+import { LINE_ICON_NOTICE } from '../../../scripts/lib/icon-notice.mjs'
 import { ActionBar } from './ActionBar'
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }))
@@ -81,6 +82,30 @@ describe('ActionBar downloads', () => {
     expect(revoke).not.toHaveBeenCalled()
     vi.advanceTimersByTime(5000)
     expect(revoke).toHaveBeenCalledWith('blob:icon')
+  })
+
+  it('copies and downloads a Line SVG with its licence notice, and a paid style without', async () => {
+    const blobs: Blob[] = []
+    URL.createObjectURL = (blob: Blob | MediaSource) => {
+      blobs.push(blob as Blob)
+      return 'blob:icon'
+    }
+    URL.revokeObjectURL = () => {}
+    vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {})
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+
+    const { items } = openMenu()
+    fireEvent.click(items.find((item) => item.textContent === 'Copy SVG')!)
+    fireEvent.click(screen.getByRole('button', { name: 'SVG' }))
+    await waitFor(() => expect(writeText).toHaveBeenCalled())
+    expect(writeText.mock.calls[0][0]).toContain(`<!--! ${LINE_ICON_NOTICE} -->`)
+    expect(await blobs[0].text()).toContain(`<!--! ${LINE_ICON_NOTICE} -->`)
+
+    cleanup()
+    render(<ActionBar name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="duotone" />)
+    fireEvent.click(screen.getByRole('button', { name: 'SVG' }))
+    expect(await blobs[1].text()).not.toContain('<!--')
   })
 
   it('says so when the PNG export fails', async () => {

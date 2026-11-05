@@ -141,6 +141,24 @@ describe('icon registry generator', () => {
     }
   })
 
+  it('opens every Line file and the runtime with the licence notice, and no paid style file', () => {
+    generateIconRegistry({ sourceDir, outDir })
+    expect(readItem('icon-base').files[0].content.split('\n')[0]).toBe(`// ${ICON_RUNTIME_NOTICE}`)
+    for (const name of NAMES) {
+      const line = readItem(`icon-${name}`).files[0].content
+      expect(line.split('\n')[0]).toBe(`// ${LINE_ICON_NOTICE}`)
+      expect(line.split(LINE_ICON_NOTICE)).toHaveLength(2)
+      for (const { suffix } of STYLES.slice(1)) {
+        const paid = readItem(`icon-${name}${suffix}`).files[0].content
+        expect(paid).not.toContain('AI Canvas Premium License')
+        expect(paid).not.toContain('aicanvas.me')
+      }
+    }
+    for (const file of readItem('icons').files) expect(file.content).toMatch(/^\/\/ AI Canvas (Line icon|icon runtime) \(aicanvas\.me\)\./)
+    expect(LINE_ICON_NOTICE.length + 3).toBeLessThanOrEqual(100)
+    expect(LINE_ICON_NOTICE).not.toMatch(/[\u2013\u2014\n]/)
+  })
+
   it('never includes Solid path data in a Line item or the free full set', () => {
     generateIconRegistry({ sourceDir, outDir })
     for (const name of NAMES) {
