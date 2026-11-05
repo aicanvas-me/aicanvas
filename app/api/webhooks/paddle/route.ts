@@ -3,109 +3,28 @@ import { verifyPaddleSignature } from '@/lib/identity/paddle-signature'
 import { createAdminClient } from '@/app/lib/supabase/admin'
 import { mapSubscriptionFields } from '@/lib/identity/sub-mapping'
 import { welcomeToPremiumEmail, claimPremiumAccountEmail } from '@/app/lib/email/messages'
-import { NOREPLY_FROM, SITE_URL } from '@/app/lib/config'
-import { paddleApiBase } from '@/app/lib/paddle/server'
+import { NOREPLY_FROM } from '@/app/lib/config'
+import { fetchPaddleCustomerEmail, provisionUserByEmail } from '@/lib/identity/paddle-provision'
 import { phCapture } from '@/app/lib/analytics-server'
+import {
+  applyLifetimeAdjustment,
+  cancelSubscriptionForLifetime,
+  grantFromTransaction,
+  sendLifetimeEmail,
+} from '@/lib/identity/lifetime'
+import { logBillingEvent, sendBillingAlert, type AlertContext, type PaddleEvent } from '@/lib/identity/billing-events'
 
 export const runtime = 'nodejs'
 
 type AdminClient = ReturnType<typeof createAdminClient>
 
-/** Resolve the email a buyer entered at Paddle checkout (anonymous purchases
- *  carry no user_id). Subscription events only include customer_id, so we read
- *  the email from the Paddle API. Crucially this DISTINGUISHES a transient
- *  failure (rate limit / 5xx / network / our API key refused) — which the
- *  caller turns into a 500 so Paddle re-delivers — from a genuine miss, so one
- *  API hiccup or a dead key never permanently strands a charged customer (the
- *  webhook is the SOLE provisioning path for an anonymous buyer). */
-type EmailLookup = { email: string } | { transient: true } | { missing: true }
-async function fetchPaddleCustomerEmail(customerId: string): Promise<EmailLookup> {
-  const apiKey = process.env.PADDLE_API_KEY
-  if (!apiKey) return { transient: true }
-  try {
-    const res = await fetch(`${paddleApiBase()}/customers/${customerId}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-      signal: AbortSignal.timeout(10_000), // a hang is transient too: Paddle retries
-    })
-    // 429/5xx = transient. A 404 right after subscription.activated is usually
-    // the customer record not yet being queryable (eventual consistency), so
-    // treat it as transient too — a Paddle retry recovers it rather than
-    // permanently stranding a charged buyer. 401/403 means Paddle refused OUR
-    // key (expired, rotated or mis-scoped), which says nothing about the buyer:
-    // transient, so Paddle keeps re-delivering while the key is replaced instead
-    // of a 200 that leaves a charged buyer with no account. Other 4xx = a
-    // genuine miss.
-    if (res.status === 401 || res.status === 403) {
-      console.error('[paddle webhook] Paddle refused PADDLE_API_KEY on customer lookup, status', res.status)
-      return { transient: true }
-    }
-    if (res.status === 429 || res.status === 404 || res.status >= 500) return { transient: true }
-    if (!res.ok) return { missing: true }
-    const { data } = await res.json()
-    // A 200 with no email is also treated as transient (eventual consistency):
-    // a real anonymous checkout always yields a customer carrying an email, so
-    // an empty one is a not-yet-consistent read, not a permanent absence.
-    return typeof data?.email === 'string' && data.email ? { email: data.email } : { transient: true }
-  } catch {
-    return { transient: true }
-  }
-}
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-/** Provision (or link) a Supabase account from the checkout email. We use
- *  createUser so we can tell a genuinely NEW buyer (created) from an email that
- *  already has an account (email_exists): only the new account is flagged
- *  `anon_provisioned`, which is what later routes the first-activation email to
- *  the sign-in CLAIM (vs the logged-in welcome) regardless of which event
- *  activates.
- *
- *  We deliberately DO NOT mint or email a one-time magic-link token here. The
- *  claim is the existing self-service sign-in (the buyer requests a fresh OTP),
- *  so there is no single-slot token a concurrent webhook delivery could
- *  invalidate — the previous design's created+activated race that could email a
- *  dead claim link is gone. generateLink is used ONLY to resolve an EXISTING
- *  user's id (its token is never sent). Returns 'transient' on a recoverable
- *  failure so the caller forces a Paddle retry instead of stranding the buyer.
- *
- *  SECURITY / ACCEPTED RESIDUAL: Paddle does not prove the buyer controls the
- *  email typed at one-off checkout, so this provisions an account from an
- *  attacker-controllable address. The DANGEROUS half is closed — the claim path
- *  is self-service OTP (no emailed token), so the account is reachable ONLY by
- *  whoever controls the inbox; an attacker who pays with someone else's email
- *  gets no session and no premium. What remains is self-limiting griefing (each
- *  attempt costs a full paid subscription): an unsolicited account/premium under
- *  a victim's address. Do NOT widen this (e.g. never email a one-time token to
- *  this address, never grant access without an OTP). A fuller fix (defer account
- *  creation until the buyer proves mailbox control) is tracked for a tested pass. */
-async function provisionUserByEmail(
-  admin: AdminClient,
-  email: string,
-): Promise<{ userId: string; createdNew: boolean } | 'transient'> {
-  const { data: created, error: createErr } = await admin.auth.admin.createUser({
-    email,
-    email_confirm: true,
-    user_metadata: { anon_provisioned: true },
-  })
-  if (!createErr && created?.user?.id) return { userId: created.user.id, createdNew: true }
-
-  const errCode = (createErr as { code?: string } | null)?.code
-  const errStatus = (createErr as { status?: number } | null)?.status
-  const alreadyExists = errCode === 'email_exists' || errCode === 'user_already_exists' || errStatus === 422
-  if (!alreadyExists) {
-    console.error('[paddle webhook] createUser failed (transient):', createErr?.message)
-    return 'transient'
-  }
-  // Email already has an account — resolve its id. generateLink returns the
-  // existing user; we use ONLY data.user.id (the token is irrelevant, never sent).
-  const { data: link, error: linkErr } = await admin.auth.admin.generateLink({
-    type: 'magiclink',
-    email,
-    options: { redirectTo: `${SITE_URL}/account` },
-  })
-  if (linkErr || !link?.user?.id) {
-    console.error('[paddle webhook] existing-user resolve failed (transient):', linkErr?.message)
-    return 'transient'
-  }
-  return { userId: link.user.id, createdNew: false }
+/** A handler's response plus what the billing alert needs to know. */
+interface Handled {
+  res: NextResponse
+  userId?: string | null
+  lifetime?: AlertContext['lifetime']
 }
 
 // Only react to subscription lifecycle events; the STATUS comes from the
@@ -124,6 +43,10 @@ const SUBSCRIPTION_EVENTS = new Set([
   'subscription.canceled',
 ])
 
+// Lifetime is a one-time price: its purchase is a transaction, its refunds and
+// chargebacks are adjustments.
+const LIFETIME_EVENTS = new Set(['transaction.completed', 'adjustment.created', 'adjustment.updated'])
+
 export async function POST(req: NextRequest) {
   // Fail CLOSED on misconfiguration: HMAC with an empty key is publicly
   // computable, so an unset secret must never fall back to ''.
@@ -141,22 +64,78 @@ export async function POST(req: NextRequest) {
 
   // 400 (not 500) on malformed JSON so Paddle stops retrying a permanently
   // broken payload.
-  let evt: { event_type?: string; occurred_at?: string; data?: Record<string, unknown> }
+  let evt: PaddleEvent
   try {
     evt = JSON.parse(raw)
   } catch {
     return NextResponse.json({ error: 'invalid json' }, { status: 400 })
   }
-  if (!evt.event_type || !SUBSCRIPTION_EVENTS.has(evt.event_type)) {
-    return NextResponse.json({ ok: true, ignored: evt.event_type ?? 'unknown' })
-  }
-
-  /* eslint-disable @typescript-eslint/no-explicit-any */
-  const data: any = evt.data ?? {}
-  const fields = mapSubscriptionFields(data)
-  if (!fields.status) return NextResponse.json({ ok: true, ignored_status: data.status })
+  if (!evt.event_type) return NextResponse.json({ ok: true, ignored: 'unknown' })
 
   const admin = createAdminClient()
+
+  // Our own record of every verified event, before any handling. It never
+  // fails the webhook.
+  await logBillingEvent(admin, evt)
+
+  let handled: Handled
+  if (LIFETIME_EVENTS.has(evt.event_type)) handled = await handleLifetimeEvent(admin, evt)
+  else if (SUBSCRIPTION_EVENTS.has(evt.event_type)) handled = await handleSubscriptionEvent(admin, evt)
+  else handled = { res: NextResponse.json({ ok: true, ignored: evt.event_type }) }
+
+  // The maintainer's billing alert, after access handling and only when that
+  // did not fail: a failed delivery comes back, and the alert goes with it. One
+  // email per change (the alert key); it never changes access or the response.
+  if (handled.res.status < 500) {
+    await sendBillingAlert(admin, evt, { userId: handled.userId, lifetime: handled.lifetime })
+  }
+  return handled.res
+}
+
+
+/**
+ * Lifetime: transaction.completed grants (only for the Lifetime price; every
+ * renewal and other transaction is ignored), adjustments revoke or restore.
+ * These payloads never pass through the subscription mapper or reach the
+ * subscription row.
+ */
+async function handleLifetimeEvent(admin: AdminClient, evt: PaddleEvent): Promise<Handled> {
+  const data: any = evt.data ?? {}
+
+  if (evt.event_type === 'transaction.completed') {
+    const out = await grantFromTransaction(admin, data)
+    if (out.status === 'transient') return { res: NextResponse.json({ error: out.reason }, { status: 500 }) }
+    if (out.status === 'ignored') return { res: NextResponse.json({ ok: true, ignored: out.reason }) }
+    if (out.status === 'unmatched') return { res: NextResponse.json({ ok: true, unmatched: true }) }
+    const userId = out.row.user_id
+    // A refund or chargeback landed before the purchase: the grant stays
+    // revoked, so no cancel and no email.
+    if (!out.live) return { res: NextResponse.json({ ok: true, revoked: true }), userId }
+    // A duplicate delivery runs both again: the cancel checks Paddle first and
+    // the email has its own send-once claim.
+    const d1 = await cancelSubscriptionForLifetime(admin, userId)
+    await sendLifetimeEmail(admin, out.row, d1.scheduledCancel)
+    if (out.inserted) await phCapture('Lifetime Purchased', {})
+    return { res: NextResponse.json({ ok: true, lifetime: true }), userId }
+  }
+
+  const out = await applyLifetimeAdjustment(admin, data, evt.occurred_at ?? null)
+  if (out.status === 'transient') return { res: NextResponse.json({ error: out.reason }, { status: 500 }) }
+  if (out.status === 'ignored') return { res: NextResponse.json({ ok: true, ignored: out.reason }) }
+  const lifetime = {
+    revokedNow: out.status === 'applied' && out.revokedNow,
+    revoked: out.row.revoked_at != null,
+    grantedAt: out.row.granted_at,
+  }
+  if (out.status === 'stale') return { res: NextResponse.json({ ok: true, stale: true }), userId: out.row.user_id, lifetime }
+  if (out.revokedNow) await phCapture('Lifetime Revoked', { reason: out.row.revoke_reason })
+  return { res: NextResponse.json({ ok: true, effect: out.effect }), userId: out.row.user_id, lifetime }
+}
+
+async function handleSubscriptionEvent(admin: AdminClient, evt: PaddleEvent): Promise<Handled> {
+  const data: any = evt.data ?? {}
+  const fields = mapSubscriptionFields(data)
+  if (!fields.status) return { res: NextResponse.json({ ok: true, ignored_status: data.status }) }
 
   // Attribute the event to a user: custom_data.user_id (set at checkout) is
   // primary; fall back to an existing row's paddle_customer_id so renewals /
@@ -184,12 +163,12 @@ export async function POST(req: NextRequest) {
   if (!userId && data.customer_id && fields.status === 'active') {
     const lookup = await fetchPaddleCustomerEmail(data.customer_id)
     if ('transient' in lookup) {
-      return NextResponse.json({ error: 'customer lookup failed' }, { status: 500 })
+      return { res: NextResponse.json({ error: 'customer lookup failed' }, { status: 500 }) }
     }
     if ('email' in lookup) {
       const provisioned = await provisionUserByEmail(admin, lookup.email)
       if (provisioned === 'transient') {
-        return NextResponse.json({ error: 'provisioning failed' }, { status: 500 })
+        return { res: NextResponse.json({ error: 'provisioning failed' }, { status: 500 }) }
       }
       userId = provisioned.userId
     }
@@ -197,7 +176,7 @@ export async function POST(req: NextRequest) {
 
   if (!userId) {
     console.error('[paddle webhook] unmatched event — no user_id, unknown customer, or no checkout email:', evt.event_type, data.customer_id)
-    return NextResponse.json({ ok: true, unmatched: true })
+    return { res: NextResponse.json({ ok: true, unmatched: true }) }
   }
 
   const occurredAt: string | null = evt.occurred_at ?? null
@@ -221,7 +200,7 @@ export async function POST(req: NextRequest) {
     existing?.last_event_at &&
     new Date(existing.last_event_at).getTime() >= new Date(occurredAt).getTime()
   ) {
-    return NextResponse.json({ ok: true, stale: true })
+    return { res: NextResponse.json({ ok: true, stale: true }), userId }
   }
   const wasActive = existing?.status === 'active'
 
@@ -247,7 +226,7 @@ export async function POST(req: NextRequest) {
   // mechanism for transient DB errors.
   if (error) {
     console.error('[paddle webhook] upsert failed:', error)
-    return NextResponse.json({ error: 'write failed' }, { status: 500 })
+    return { res: NextResponse.json({ error: 'write failed' }, { status: 500 }) }
   }
 
   // Anonymous conversion/churn counters (no user id, no email — just a
@@ -341,5 +320,5 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  return NextResponse.json({ ok: true })
+  return { res: NextResponse.json({ ok: true }), userId }
 }

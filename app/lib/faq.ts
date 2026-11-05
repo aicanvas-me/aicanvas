@@ -1,6 +1,7 @@
 import { AI_CANVAS_DEFINITION } from './config'
 import { BRAIN_TEASER } from './andromeda-pro-brain-teaser.generated'
 import type { FaqRow } from '../components/FaqRows'
+import { lifetimeEnabled } from '../../lib/flags'
 
 // Every FAQ answer on the site, in one place. A question that appears on more
 // than one page (homepage, /faq, pricing, the AI Brain page) is ONE entry here,
@@ -8,6 +9,7 @@ import type { FaqRow } from '../components/FaqRows'
 // the same strings render the visible rows and the FAQPage structured data.
 // Prices mirror PremiumCards.tsx; update them in lockstep.
 const BRAIN_FILES = BRAIN_TEASER.totalFiles
+const LIFETIME = lifetimeEnabled()
 
 export type FaqEntry = FaqRow & { id: string; category: string }
 
@@ -175,7 +177,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'premium-design-systems',
     category: 'design-systems',
     q: 'What does Premium add for design systems?',
-    a: 'Andromeda Legacy components and templates stay free with an account. Premium installs the entire design system in one command and unlocks Andromeda Pro, its components and templates, for $8.99 per month or $49.99 per year.',
+    a: `Andromeda Legacy components and templates stay free with an account. Premium installs the entire design system in one command and unlocks Andromeda Pro, its components and templates, for ${LIFETIME ? '$8.99 per month, or $125 once for Lifetime' : '$8.99 per month or $49.99 per year'}.`,
   },
   {
     id: 'design-system-for-ai-agents',
@@ -279,8 +281,19 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'premium-price',
     category: 'plans',
     q: 'How much does Premium cost?',
-    a: 'A free account stays $0 forever. Premium costs $8.99 per month or $49.99 per year, and the yearly plan saves money compared with paying monthly.',
+    a: LIFETIME
+      ? 'A free account stays $0 forever. Premium costs $8.99 per month, or $125 once for Lifetime, which keeps Premium for as long as AI Canvas exists with nothing to renew.'
+      : 'A free account stays $0 forever. Premium costs $8.99 per month or $49.99 per year, and the yearly plan saves money compared with paying monthly.',
   },
+  ...(LIFETIME
+    ? [{
+        id: 'lifetime-meaning',
+        category: 'plans',
+        q: 'What does Lifetime mean?',
+        a: 'One payment of $125, plus VAT where applicable, gives you Premium for as long as AI Canvas exists: every premium component, design system and template, including every one we release later, with nothing to renew. Components you install stay yours. A full refund or a chargeback ends it. The full terms are in the Premium License.',
+        link: { label: 'Premium License', href: '/premium-license#lifetime' },
+      }]
+    : []),
   {
     id: 'premium-for-beginners',
     category: 'plans',
@@ -316,7 +329,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'cancel-premium',
     category: 'billing',
     q: 'Can I cancel anytime?',
-    a: 'Yes. Premium renews automatically, and you can cancel from your account settings at any time. Your access continues until the end of the period you already paid for.',
+    a: `Yes. Premium renews automatically, and you can cancel from your account settings at any time. Your access continues until the end of the period you already paid for.${LIFETIME ? ' Lifetime has nothing to cancel.' : ''}`,
   },
   {
     id: 'open-source',
@@ -383,7 +396,7 @@ function pick(ids: string[]): FaqEntry[] {
 }
 
 export const HOME_FAQ = pick(['what-is-ai-canvas', 'is-ai-canvas-free', 'stop-ai-slop', 'reshape-design-system', 'install-a-component', 'ai-canvas-mcp-server', 'what-are-standalone-components', 'ai-canvas-icons', 'premium-includes', 'commercial-use'])
-export const PRICING_FAQ = pick(['payments-and-paddle', 'payment-security', 'taxes', 'who-is-ai-canvas-for', 'tool-affiliations'])
+export const PRICING_FAQ = pick([...(LIFETIME ? ['lifetime-meaning'] : []), 'payments-and-paddle', 'payment-security', 'taxes', 'who-is-ai-canvas-for', 'tool-affiliations'])
 export const BRAIN_FAQ = pick(['andromeda-pro-ai-brain', 'design-skill-for-claude-code', 'ai-brain-cursor-codex', 'stop-ai-slop', 'install-ai-brain'])
 export const MCP_FAQ = pick(['ai-canvas-mcp-server', 'mcp-supported-agents', 'mcp-agent-tools', 'works-with-shadcn', 'mcp-versus-shadcn-cli', 'is-mcp-free'])
 

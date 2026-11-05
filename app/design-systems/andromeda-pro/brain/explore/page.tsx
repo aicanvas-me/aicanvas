@@ -3,7 +3,7 @@ import { join } from 'node:path'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/app/lib/supabase/server'
 import { createAdminClient } from '@/app/lib/supabase/admin'
-import { deriveTier, type SubStatus } from '@/lib/identity/tier'
+import { getPremiumForUser } from '@/lib/identity/premium'
 import { BrainViewer } from '../BrainViewer'
 
 export const dynamic = 'force-dynamic'
@@ -33,20 +33,10 @@ export default async function AndromedaBrainReaderPage() {
       data: { user },
     } = await supabase.auth.getUser()
     if (user) {
-      const admin = createAdminClient()
-      const { data, error } = await admin
-        .from('user_subscriptions')
-        .select('status, current_period_end')
-        .eq('user_id', user.id)
-        .maybeSingle()
-      // A failed read here should not silently downgrade a paying user — throw
-      // so the outer catch renders the paywall (safe) instead of serving content.
-      if (error) throw error
-      tier = deriveTier({
-        hasUser: true,
-        status: (data?.status ?? 'none') as SubStatus,
-        currentPeriodEnd: data?.current_period_end ?? null,
-      })
+      // A failed read throws, so the outer catch fails closed instead of
+      // serving content.
+      const { premium } = await getPremiumForUser(createAdminClient(), user.id)
+      tier = premium ? 'premium' : 'free'
     }
   } catch {
     // Fail closed: entitlement error → treated as non-premium below (never serve brain content)

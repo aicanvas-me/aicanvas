@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { createClient } from '../../lib/supabase/server'
 import { hostedMcpOAuthEnabled, premiumEnabled } from '../../../lib/flags'
-import { isPremiumNow, type SubStatus } from '../../../lib/identity/tier'
+import { getPremiumForUser } from '../../../lib/identity/premium'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
 import { PageShell } from '../../components/PageKit'
 import { AccountTabs } from './AccountTabs'
@@ -21,19 +21,18 @@ export default async function MemberLayout({ children }: { children: ReactNode }
 
   const email = user.email ?? 'Account'
 
-  // Real tier badge (flag-gated). RLS restricts this read to the owner's row.
+  // Real tier badge (flag-gated). RLS restricts the reads to the owner's rows.
+  // A failed read hides the badge: this layout wraps the portal and cancel
+  // access, so it must render even when the premium check throws.
   let showTier = false
   let isPremium = false
   if (premiumEnabled()) {
-    showTier = true
-    const { data: sub } = await supabase
-      .from('user_subscriptions')
-      .select('status, current_period_end')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    isPremium = sub
-      ? isPremiumNow(sub.status as SubStatus, sub.current_period_end ?? null)
-      : false
+    try {
+      isPremium = (await getPremiumForUser(supabase, user.id)).premium
+      showTier = true
+    } catch {
+      showTier = false
+    }
   }
 
   // The site's page shell and the homepage's centred hero stack: avatar, the

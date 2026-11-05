@@ -51,6 +51,12 @@ try {
  *
  * `iconCount` is how many icons the /icons pages list. 0 on production means the
  * icon set never reached the build and /icons is blank.
+ *
+ * `lifetimePriceConfigured` says the Lifetime price id is set. It is separate
+ * from `degraded` on purpose: `degraded` drives the rollback, and a missing
+ * price is fixed by setting the variable, not by rolling back. The webhook
+ * answers 500 to a Lifetime purchase while it is missing, so Paddle keeps
+ * re-delivering until it is set.
  */
 export async function GET() {
   const lookup = loadContentLookup()
@@ -68,6 +74,7 @@ export async function GET() {
       deployedSha: PREMIUM_BUILD.appSha,
       brainFileCounts: PREMIUM_BUILD.brainFileCounts ?? {},
       iconCount,
+      lifetimePriceConfigured: Boolean(process.env.NEXT_PUBLIC_PADDLE_PRICE_LIFETIME),
     },
     { headers: { 'Cache-Control': 'private, no-store' } },
   )

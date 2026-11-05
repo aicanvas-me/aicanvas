@@ -10,7 +10,7 @@ import { buttonClasses } from '../../../components/buttonClasses'
 import { CARD } from '../../../components/PageKit'
 import { track } from '../../../lib/analytics'
 import { usePaywallModal } from '../../../components/billing/PaywallModalProvider'
-import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
+import { usePremiumDetails } from '../../../components/billing/usePremiumStatus'
 
 /** Display fields from /api/me/subscription (live Paddle read, never ids). */
 type SubDetails = {
@@ -29,13 +29,14 @@ function fmtDate(iso: string): string {
 
 /**
  * Account billing + token controls. Flag-gated (premium UI). Premium users get
- * the Paddle customer portal ("Manage subscription"); free users get an
- * "Upgrade to Premium" CTA that opens the upgrade modal. "Rotate API token" is
+ * the Paddle customer portal ("Manage subscription") while a subscription
+ * exists; a Lifetime-only account has nothing to manage or cancel. Free users
+ * get an "Upgrade to Premium" CTA that opens the upgrade modal. "Rotate API token" is
  * for any signed-in user: the one-click fix for a leaked token.
  */
 export function AccountBilling() {
   const { open: openPaywall } = usePaywallModal()
-  const status = usePremiumStatus()
+  const { status, lifetime } = usePremiumDetails()
   const [portalLoading, setPortalLoading] = useState(false)
   const [noPortal, setNoPortal] = useState(false)
   const router = useRouter()
@@ -114,11 +115,20 @@ export function AccountBilling() {
         <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Subscription</h2>
         <p className="mt-1.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
           {status === 'premium'
-            ? "You're on Premium."
+            ? lifetime
+              ? 'You have Lifetime.'
+              : "You're on Premium."
             : status === 'not-premium'
               ? "You're on the Free plan."
               : 'Checking your plan…'}
         </p>
+
+        {lifetime && (
+          <p className="mt-3 text-sm font-semibold text-sand-700 dark:text-sand-300">
+            Lifetime{' · '}
+            <span className="font-normal">Premium for good, nothing to renew</span>
+          </p>
+        )}
 
         {status === 'premium' && sub && (
           <div className="mt-3 space-y-1">
@@ -145,7 +155,7 @@ export function AccountBilling() {
         )}
 
         <div className="mt-5">
-          {status === 'premium' ? (
+          {status === 'premium' && lifetime && !sub ? null : status === 'premium' ? (
             <button
               type="button"
               onClick={manageSubscription}

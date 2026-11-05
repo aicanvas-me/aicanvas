@@ -66,6 +66,7 @@ export function getPaddle(): Promise<Paddle | undefined> {
 export const PRICES = {
   monthly: process.env.NEXT_PUBLIC_PADDLE_PRICE_MONTHLY ?? '',
   yearly: process.env.NEXT_PUBLIC_PADDLE_PRICE_YEARLY ?? '',
+  lifetime: process.env.NEXT_PUBLIC_PADDLE_PRICE_LIFETIME ?? '',
 }
 
 /** Shared overlay settings; showAddDiscounts:false hides the public discount box so promos stay targeted. */
@@ -75,4 +76,5 @@ export const CHECKOUT_SETTINGS: CheckoutSettings = {
   showAddDiscounts: false,
 }
 
-export type BillingCycle = 'monthly' | 'yearly'
+/** What the buy button sells: a subscription cycle, or the one-time Lifetime. */
+export type BillingCycle = 'monthly' | 'yearly' | 'lifetime'

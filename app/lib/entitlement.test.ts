@@ -8,8 +8,11 @@ const rows: { user_api_keys: Row; user_subscriptions: Row } = {
   user_api_keys: null,
   user_subscriptions: null,
 }
-function table(name: keyof typeof rows) {
+// Lifetime rows are a list (a user may hold a purchase and a gift).
+let lifetimeRows: Record<string, unknown>[] = []
+function table(name: keyof typeof rows | 'user_lifetime_access') {
   const filters: [string, unknown][] = []
+  const matches = (row: Record<string, unknown>) => filters.every(([c, v]) => !(c in row) || row[c] === v)
   const q = {
     select: () => q,
     eq: (col: string, val: unknown) => {
@@ -17,10 +20,13 @@ function table(name: keyof typeof rows) {
       return q
     },
     maybeSingle: async () => {
-      const row = rows[name]
-      const hit = row !== null && filters.every(([c, v]) => !(c in row) || row[c] === v)
+      const row = rows[name as keyof typeof rows]
+      const hit = row !== null && matches(row)
       return { data: hit ? row : null, error: null }
     },
+    // A list read (no maybeSingle) is awaited directly.
+    then: (resolve: (v: { data: unknown; error: null }) => void) =>
+      resolve({ data: lifetimeRows.filter(matches), error: null }),
     update: () => ({ eq: () => ({ then: (cb: () => void) => Promise.resolve().then(cb) }) }),
   }
   return q
@@ -40,6 +46,7 @@ const req = () => new Request(`https://aicanvas.me/r/x.json?token=${TOKEN}`)
 beforeEach(() => {
   rows.user_api_keys = null
   rows.user_subscriptions = null
+  lifetimeRows = []
 })
 
 describe('getEntitlement (token path)', () => {
@@ -68,5 +75,24 @@ describe('getEntitlement (token path)', () => {
     rows.user_api_keys = { user_id: 'u3' }
     rows.user_subscriptions = { status: 'canceled', current_period_end: '2020-01-01T00:00:00Z' }
     expect(await getEntitlement(req())).toEqual({ tier: 'free', userId: 'u3' })
+  })
+
+  it('a live Lifetime row is premium with no subscription', async () => {
+    rows.user_api_keys = { user_id: 'u5' }
+    lifetimeRows = [{ user_id: 'u5', granted_at: '2026-10-29T10:00:00Z', revoked_at: null }]
+    expect(await getEntitlement(req())).toEqual({ tier: 'premium', userId: 'u5' })
+  })
+
+  it('a revoked Lifetime row with a lapsed subscription is free', async () => {
+    rows.user_api_keys = { user_id: 'u6' }
+    rows.user_subscriptions = { status: 'canceled', current_period_end: '2020-01-01T00:00:00Z' }
+    lifetimeRows = [{ user_id: 'u6', granted_at: '2026-10-29T10:00:00Z', revoked_at: '2026-10-30T10:00:00Z' }]
+    expect(await getEntitlement(req())).toEqual({ tier: 'free', userId: 'u6' })
+  })
+
+  it('another user\'s Lifetime row grants nothing', async () => {
+    rows.user_api_keys = { user_id: 'u7' }
+    lifetimeRows = [{ user_id: 'someone-else', granted_at: '2026-10-29T10:00:00Z', revoked_at: null }]
+    expect(await getEntitlement(req())).toEqual({ tier: 'free', userId: 'u7' })
   })
 })

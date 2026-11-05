@@ -49,9 +49,9 @@ export default function PremiumLicensePage() {
             before the numbered sections. */}
         <p className="mb-12 rounded-card border border-sand-200 bg-sand-100 px-5 py-4 leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
           By installing or using any Premium Component, you agree to this License.
-          A paid subscription is purchased and accepted through Paddle, our
-          reseller and Merchant of Record, and this License applies to the
-          Premium Components delivered to you.
+          A paid subscription or Lifetime is purchased and accepted through
+          Paddle, our reseller and Merchant of Record, and this License applies
+          to the Premium Components delivered to you.
         </p>
 
         {/* ── 1. Definitions ───────────────────────────────────────────── */}
@@ -78,7 +78,12 @@ export default function PremiumLicensePage() {
             </li>
             <li>
               <strong className={STRONG}>Subscription:</strong>{' '}your
-              active, paid AI Canvas Premium plan.
+              active, paid AI Canvas Premium plan: a recurring plan, or Lifetime.
+            </li>
+            <li>
+              <strong className={STRONG}>Lifetime:</strong>{' '}AI Canvas
+              Premium bought with one payment and no renewal, as set out in
+              Section 2. Lifetime stays active until it ends under Section 2.
             </li>
             <li>
               <strong className={STRONG}>You, Licensee:</strong>{' '}the
@@ -90,7 +95,7 @@ export default function PremiumLicensePage() {
               specific Premium Component, in the version delivered to you, that
               you actually installed or downloaded through the Premium install
               channel while your Subscription was active and while the payment
-              for that period had not been reversed.
+              for that period, or for Lifetime, had not been reversed.
             </li>
             <li>
               <strong className={STRONG}>End Product:</strong>{' '}an
@@ -112,12 +117,24 @@ export default function PremiumLicensePage() {
             2. Subscription access and component licence are two distinct rights
           </h2>
           <p className={BODY}>
-            <strong className={STRONG}>Access right (lasts only while you
-            pay).</strong>{' '}
+            <strong className={STRONG}>Access right (lasts only while your
+            Subscription is active).</strong>{' '}
             While your Subscription is active we give you access to the full
             Premium catalogue, to updates and bug fixes for Premium Components,
             and to Premium Components we add after you subscribe. This access
             right ends automatically when your Subscription ends for any reason.
+          </p>
+          <p id="lifetime" className={`${BODY} scroll-mt-24`}>
+            <strong className={STRONG}>Lifetime (one payment, no
+            renewal).</strong>{' '}
+            Lifetime gives you the access right above for as long as AI Canvas
+            exists, for one payment and with nothing to renew, including every
+            Premium Component we release later. If AI Canvas continues under
+            another name, Lifetime continues with it. Lifetime is personal to you
+            and cannot be transferred, sold, or shared. It ends early only if its
+            payment is refunded in full, if its payment is reversed or charged
+            back (Section 7.4), or if this License is terminated for breach
+            (Section 7.3). A partial refund does not end it.
           </p>
           <p className={BODY}>
             <strong className={STRONG}>Component licence (perpetual, per
@@ -281,8 +298,9 @@ export default function PremiumLicensePage() {
             forfeited, for any order whose payment is later reversed, charged
             back, or otherwise undone. For the purposes of this License, your
             Subscription is not &ldquo;active&rdquo; during any period whose
-            payment is reversed, so components installed in reliance on that
-            payment do not survive under Section 7.2.
+            payment is reversed, and Lifetime whose payment is reversed counts as
+            never active, so components installed in reliance on that payment do
+            not survive under Section 7.2.
           </p>
           <p className={BODY}>
             <strong className={STRONG}>7.5 Survival of clauses.</strong>{' '}
@@ -395,8 +413,9 @@ export default function PremiumLicensePage() {
         <section className={SECTION}>
           <h2 className={HEADING}>12. Versioning</h2>
           <p className={BODY}>
-            This is AI Canvas Premium License version 1.1, which added Section 11
-            to version 1.0 of 2026-07-01. The version in force
+            This is AI Canvas Premium License version 1.1, which added Lifetime
+            (Section 2) and Section 11 to version 1.0 of 2026-07-01 and reduces
+            no right granted under it. The version in force
             for a given Installed Component is the version current when you
             installed it. A later version will not retroactively reduce the
             perpetual licence you already hold to that Installed Component.

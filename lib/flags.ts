@@ -37,10 +37,10 @@ export function isLifetimeEnabled(raw: string | undefined): boolean {
   return raw === 'true'
 }
 
-/** Shows the one-time Lifetime plan and drops Yearly for new buyers
- *  (devtools handoffs/lifetime-build.md, section 10). Build-time value, so a
- *  flip needs a redeploy. Only turn it on once the Lifetime checkout and its
- *  webhook grant are live: before that the card is design only. */
+/** Shows the one-time Lifetime plan and drops Yearly for new buyers. A
+ *  build-time value, so a flip needs a redeploy. It hides the card and the
+ *  button only: the webhook grant never depends on it, so a buyer who already
+ *  paid is always granted. */
 export function lifetimeEnabled(): boolean {
   return isLifetimeEnabled(process.env.NEXT_PUBLIC_LIFETIME_ENABLED)
 }

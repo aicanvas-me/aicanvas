@@ -22,6 +22,7 @@ type EventMap = {
   // The Andromeda Brain's zip download, the one install path with no command.
   'Brain Download': Record<string, never>
   'Subscribe Click': { cycle: string }
+  'Lifetime Click': Record<string, never>
   'Paywall Shown': { reason: string }
   'Install Gate Shown': Record<string, never>
   'Sign Up': Record<string, never>
@@ -50,6 +51,7 @@ export const BEACON_EVENTS = [
   'System Install Tier Click',
   'Brain Download',
   'Subscribe Click',
+  'Lifetime Click',
   'Paywall Shown',
   'Install Gate Shown',
   'Sign Up',

@@ -42,7 +42,7 @@ export default function PrivacyPage() {
         title="Privacy Policy"
         sub={
           <span className="block text-balance">
-            Last updated: 2026-10-15. This policy describes how AI Canvas processes
+            Last updated: 2026-11-05. This policy describes how AI Canvas processes
             personal data, in line with the EU General Data Protection Regulation
             (GDPR / DSGVO) and the German Bundesdatenschutzgesetz (BDSG).
           </span>
@@ -191,17 +191,29 @@ export default function PrivacyPage() {
             Subscription &amp; billing data
           </h3>
           <p className={SUBBODY}>
-            When you take out a Premium subscription, payment is handled by our
+            When you take out a Premium subscription or buy Lifetime, payment is handled by our
             payment provider and Merchant of Record, Paddle (Section 5). You enter
             your card and billing details at Paddle&apos;s checkout; those details
             are held by Paddle under its own privacy policy, and we never receive
             or store your card number. From Paddle&apos;s notifications we store a
             small amount of subscription metadata on your account: your
             subscription status, the plan (monthly or yearly), the current renewal
-            date, and the customer and subscription identifiers Paddle assigns. We
-            use it to unlock your Premium access, show your current plan, and let
-            you cancel. If you cancel through the cancellation form, we also
-            process the details you submit there in order to end your subscription.
+            date, and the customer and subscription identifiers Paddle assigns.
+            For Lifetime we store when it was granted, the transaction and
+            customer identifiers Paddle assigns, and, if it ends, when and
+            whether by refund or chargeback. We use this data to unlock your
+            Premium access, show your current plan, and let you cancel. If you
+            cancel through the cancellation form, we also process the details
+            you submit there in order to end your subscription.
+          </p>
+          <p className={SUBBODY}>
+            We also keep a log of the billing notifications Paddle sends us: the
+            event type and time, the status, the amount, and Paddle&apos;s
+            identifiers. When a subscription is cancelled, a refund or
+            chargeback changes, or a payment fails, we send ourselves a short
+            notice by email through Resend (Section 5) that names your email
+            address. We use the log and these notices to answer billing
+            questions and to spot problems with your access early.
           </p>
 
           <h3 className={SUBHEAD}>
@@ -377,7 +389,9 @@ export default function PrivacyPage() {
               necessary to perform the Premium contract you entered into. Keeping
               billing and accounting records for the statutory period rests on
               Art. 6 (1)(c) GDPR (compliance with our retention duties under
-              German commercial and tax law).
+              German commercial and tax law). The billing log and our billing
+              notices rest on Art. 6 (1)(f) GDPR (our legitimate interest in
+              answering billing questions and keeping access correct).
             </li>
             <li>
               <strong className={STRONG}>Bot protection on the cancellation
@@ -434,8 +448,9 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong className={STRONG}>Resend (Resend, Inc.)</strong>{' '}(USA):
-              delivers our outbound email: the account emails above and any
-              message you send through the contact form. Mail is sent via Amazon
+              delivers our outbound email: the account emails above, our billing
+              notices to ourselves, and any message you send through the contact
+              form. Mail is sent via Amazon
               SES in the EU region (Ireland) and authenticated with SPF/DKIM; we
               use no open- or click-tracking.
             </li>
@@ -511,6 +526,12 @@ export default function PrivacyPage() {
               account. During that period we restrict their processing to what the
               law requires. As Merchant of Record, Paddle issues and retains the
               invoices for your purchases under its own obligations.
+            </li>
+            <li>
+              <strong className={STRONG}>The billing log and our billing notices</strong>{' '}
+              are kept for as long as we need them to answer billing questions,
+              refunds, and disputes, and for no longer than ten years. They stay
+              after you delete your account.
             </li>
           </ul>
         </section>

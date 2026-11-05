@@ -20,6 +20,7 @@ import { Grid2x2 } from '@/app/_icons/icons/grid-2x2'
 import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
 import { Reveal } from './Reveal'
 import { ClaudeMark, CodexMark, CursorMark } from '../mcp/InstallCards'
+import { lifetimeEnabled } from '../../lib/flags'
 
 const TITLE = 'text-base font-semibold text-sand-900 dark:text-sand-50'
 const BODY = 'mt-2 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400'
@@ -380,8 +381,9 @@ export function ValueBento({ freeTotal }: { freeTotal: number }) {
         them.
       </Cell>
       <Cell span="lg:col-span-2" title="Premium opens the whole catalog." art={<Included />} fade={FADE_RIGHT_BOTTOM} delay={0.06}>
-        One subscription unlocks Andromeda Pro and its templates, the AI Brain and every premium standalone, with new
-        pieces included as they ship. Monthly or yearly, cancel anytime.
+        {lifetimeEnabled()
+          ? 'One plan unlocks Andromeda Pro and its templates, the AI Brain and every premium standalone, with new pieces included as they ship. Pay monthly and cancel anytime, or pay once for Lifetime.'
+          : 'One subscription unlocks Andromeda Pro and its templates, the AI Brain and every premium standalone, with new pieces included as they ship. Monthly or yearly, cancel anytime.'}
       </Cell>
     </div>
   )

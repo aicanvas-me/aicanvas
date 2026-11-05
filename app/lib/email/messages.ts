@@ -122,3 +122,44 @@ export function agentConnectedEmail(opts: {
   })
   return { subject: 'An AI agent connected to your AI Canvas account', html }
 }
+
+/** Sent ONCE per Lifetime purchase, after the grant. The send-once guard
+ *  (welcome_claimed_at on the user_lifetime_access row, one conditional UPDATE)
+ *  lives in lib/identity/lifetime.ts. An anonymous buyer (an account the webhook
+ *  created from the checkout email) gets the sign-in claim variant. When the
+ *  buyer's old subscription is set to cancel, the email says when it stops, so
+ *  there is no separate cancel email. */
+export function lifetimeEmail(opts: {
+  claim: boolean
+  planStops: { plan: 'monthly' | 'annual' | null; effectiveAt: string | null } | null
+}): { subject: string; html: string } {
+  const p = (text: string, kind: 'secondary' | 'muted' = 'secondary', margin = '0 0 16px 0') =>
+    `<p ${emailText(kind, `margin:${margin};font-size:${kind === 'muted' ? 13 : 15}px;line-height:1.6;`)}>${text}</p>`
+  const lead = opts.claim
+    ? 'Your Lifetime payment went through and Premium is live on your account for good. Sign in with the email you used at checkout to get in, no password needed.'
+    : 'Your Lifetime payment went through and Premium is live on your account for good.'
+  let stops = ''
+  if (opts.planStops) {
+    const plan = opts.planStops.plan === 'annual' ? 'yearly' : opts.planStops.plan === 'monthly' ? 'monthly' : 'subscription'
+    const d = opts.planStops.effectiveAt ? new Date(opts.planStops.effectiveAt) : null
+    const when = d && !isNaN(d.getTime())
+      ? d.toISOString().replace('T', ' ').slice(0, 16) + ' UTC'
+      : 'the end of its current billing period'
+    stops = p(`Your ${plan} plan stops on <strong ${emailText('primary')}>${when}</strong>, nothing more will be charged.`)
+  }
+  const html = emailShell({
+    title: 'Premium is yours for life',
+    heading: 'Premium is yours <span class="ac-accent" style="color:#0369A1;">for life</span>.',
+    bodyHtml: p(`${lead} Every design system, premium component and template is yours, including every new one the moment it ships. One payment, nothing to renew.`, 'secondary', stops ? '0 0 16px 0' : '0') + stops,
+    button: opts.claim
+      ? { label: 'Claim your Premium account', url: 'https://aicanvas.me/welcome' }
+      : { label: 'Use your powers', url: 'https://aicanvas.me/components' },
+    footerNoteHtml: opts.claim
+      ? 'The claim page asks for this address and emails you a one-time sign-in link. If you did not buy AI Canvas Lifetime, ignore this email.'
+      : 'Lifetime has no renewal and nothing to cancel.',
+  })
+  return {
+    subject: opts.claim ? 'Access your AI Canvas Lifetime account' : 'Premium is yours for life',
+    html,
+  }
+}
