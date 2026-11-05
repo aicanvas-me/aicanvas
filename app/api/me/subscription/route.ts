@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/app/lib/supabase/server'
 import { paddleApiBase } from '@/app/lib/paddle/server'
 import { mapSubscriptionFields } from '@/lib/identity/sub-mapping'
-import { isPremiumNow, type SubStatus } from '@/lib/identity/tier'
-import { LIVE_SUB_STATUSES } from '@/lib/identity/lifetime'
+import { isPremiumNow, LIVE_SUB_STATUSES, type SubStatus } from '@/lib/identity/tier'
 
 export const runtime = 'nodejs'
 
@@ -16,8 +15,8 @@ export const runtime = 'nodejs'
  * Returns DISPLAY FIELDS ONLY — never Paddle ids. Every read failure returns
  * { subscription: null, unavailable: true } so the account page degrades to the
  * plain status line instead of showing a guess, and can tell "none" from
- * "unknown". A live row we do not read details for (paused, or a period end
- * already passed) is "unknown" too: the portal can still manage it.
+ * "unknown". A live row we do not read details for (paused, past due, or a
+ * period end already passed) is "unknown" too: the portal can still manage it.
  */
 export async function GET() {
   try {

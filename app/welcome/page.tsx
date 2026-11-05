@@ -181,7 +181,7 @@ export default async function WelcomePage() {
                 <Link href="/pricing" className="font-semibold text-accent transition-colors hover:text-accent/70">
                   See Premium plans
                 </Link>
-                {' '}&middot; Subscribed with this email?{' '}
+                {' '}&middot; Paid with this email?{' '}
                 <Link href="/account/settings" className="font-semibold text-accent transition-colors hover:text-accent/70">
                   Check billing
                 </Link>

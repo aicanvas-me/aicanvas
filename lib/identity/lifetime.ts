@@ -4,6 +4,7 @@ import { paddleApiBase } from '@/app/lib/paddle/server'
 import { NOREPLY_FROM } from '@/app/lib/config'
 import { lifetimeEmail } from '@/app/lib/email/messages'
 import { fetchPaddleCustomerEmail, provisionUserByEmail } from './paddle-provision'
+import { LIVE_SUB_STATUSES } from './tier'
 
 // Lifetime: a one-time Paddle price that grants Premium with no expiry. Rows
 // live in user_lifetime_access (migration 0022), never in user_subscriptions.
@@ -151,7 +152,6 @@ export interface ScheduledCancel {
   effectiveAt: string | null
 }
 
-export const LIVE_SUB_STATUSES = ['active', 'trialing', 'past_due', 'paused']
 
 /**
  * A subscriber who bought Lifetime should not be charged again. Schedule
