@@ -71,26 +71,46 @@ export function homeMarkdown(input: {
   ].join('\n\n') + '\n'
 }
 
-export function mcpMarkdown(input: { siteUrl: string }): string {
-  const { siteUrl } = input
-  const cmd = (tool: 'claude' | 'codex') =>
-    tool === 'claude'
-      ? `claude mcp add ${MCP_SERVER_NAME} --scope user -- npx -y ${MCP_PACKAGE}`
-      : `codex mcp add ${MCP_SERVER_NAME} -- npx -y ${MCP_PACKAGE}`
-  const cursorConfig = JSON.stringify(
-    { mcpServers: { [MCP_SERVER_NAME]: { command: 'npx', args: ['-y', MCP_PACKAGE] } } },
-    null,
-    2,
-  )
+/**
+ * The /mcp twin. `hostedUrl` is the hosted server's address while its browser sign-in is
+ * on (the page shows the connect card then); null keeps the twin to the npm server.
+ */
+export function mcpMarkdown(input: { siteUrl: string; hostedUrl: string | null }): string {
+  const { siteUrl, hostedUrl } = input
+  const fence = (lang: string, body: string) => `${'```'}${lang}\n${body}\n${'```'}`
+  const npmJson = (shape: 'cursor' | 'vscode') =>
+    JSON.stringify(
+      shape === 'cursor'
+        ? { mcpServers: { [MCP_SERVER_NAME]: { command: 'npx', args: ['-y', MCP_PACKAGE] } } }
+        : { servers: { [MCP_SERVER_NAME]: { type: 'stdio', command: 'npx', args: ['-y', MCP_PACKAGE] } } },
+      null,
+      2,
+    )
+  const ask = (who: string, prompt = `Use the ${MCP_SERVER_NAME} MCP: what can you add to my app?`) => `Then ask ${who}: "${prompt}"`
+
+  const hosted = hostedUrl
+    ? [
+        `## Connect your AI agent (hosted, beta)\n\nAdd the hosted server at \`${hostedUrl}\` (streamable HTTP) and sign in once in the browser: sign in to AI Canvas and click Allow. No key to copy.`,
+        `### Claude Code\n\nRun this in any terminal. It works in every project.\n\n${fence('bash', `claude mcp add --transport http --scope user ${MCP_SERVER_NAME} ${hostedUrl}\nclaude mcp login ${MCP_SERVER_NAME}`)}\n\nYour browser opens: sign in and click Allow. ${ask('your agent')}`,
+        `### Codex\n\n${fence('bash', `codex mcp add ${MCP_SERVER_NAME} --url ${hostedUrl}`)}\n\nThe browser opens: sign in, click Allow, and the terminal says "Successfully logged in". No browser, or "Authentication required" later: run \`codex mcp login ${MCP_SERVER_NAME}\`. ${ask('your agent')}`,
+        `### ChatGPT\n\nChatGPT desktop app: Settings, Plugins, MCPs, Add, Add MCP server. Choose Streamable HTTP, name \`${MCP_SERVER_NAME}\`, address \`${hostedUrl}\`, token and headers empty. Then Authenticate next to ${MCP_SERVER_NAME}, sign in and click Allow. ChatGPT and Codex share one list, so a server added with the Codex command is already there.`,
+        `### Claude app or claude.ai\n\nSettings, Customize, Connectors, Add, custom connector: name \`${MCP_SERVER_NAME}\`, address \`${hostedUrl}\`. Continue, keep the sign-in settings it detects, sign in and click Allow.`,
+        `### Cursor\n\nAdd the \`${MCP_SERVER_NAME}\` entry to \`~/.cursor/mcp.json\` (it replaces the npm one):\n\n${fence('json', JSON.stringify({ mcpServers: { [MCP_SERVER_NAME]: { url: hostedUrl } } }, null, 2))}\n\nThen Cursor Settings, Tools & MCPs, Connect, sign in and click Allow within 30 seconds.`,
+        `### VS Code\n\nAdd this to \`.vscode/mcp.json\` in your project and trust the folder:\n\n${fence('json', JSON.stringify({ servers: { [MCP_SERVER_NAME]: { type: 'http', url: hostedUrl } } }, null, 2))}\n\nClick Start above ${MCP_SERVER_NAME} in mcp.json, sign in in the browser and click Allow. ${ask('Copilot', `#${MCP_SERVER_NAME} what can you add to my app?`)}`,
+        `### Any other AI agent\n\nAny AI agent that supports remote MCP servers works: add \`${hostedUrl}\`, and when it asks you to sign in, sign in to AI Canvas and click Allow.\n\nStuck, or setting up CI: ${siteUrl}/docs/mcp#sign-in`,
+      ]
+    : []
 
   return [
     pointer(siteUrl),
     '# AI Canvas MCP server',
-    `\`${MCP_PACKAGE}\` is an MCP server (stdio) that lets Claude Code, Codex, Cursor and any MCP client search the AI Canvas catalog: design systems, standalone components, blocks and templates, with props, design specs and install commands. It is read-only: it returns the install command, and the agent runs it. It reads the live registry at runtime, so new components reach it about five minutes after they ship.`,
-    `## Install\n\nClaude Code (user scope, every project):\n\n${'```bash'}\n${cmd('claude')}\n${'```'}\n\nCodex:\n\n${'```bash'}\n${cmd('codex')}\n${'```'}\n\nCursor: add this to \`~/.cursor/mcp.json\`, then reload the window.\n\n${'```json'}\n${cursorConfig}\n${'```'}\n\nAny other MCP client: run \`npx -y ${MCP_PACKAGE}\` as a stdio server.`,
-    `## Account token\n\nWithout a token the agent can browse and search, but installs write a placeholder instead of the source. To let installs pull source, sign in at ${siteUrl}/account/settings, copy your token, and pass it to the server as the \`AICANVAS_TOKEN\` environment variable (for Claude Code: \`--env AICANVAS_TOKEN=<token>\` before \`--\`). Keep the token out of files that are committed to git.`,
-    `## Tools\n\n${MCP_TOOLS.map((t) => `- \`${t}\``).join('\n')}`,
-    `## Try it\n\nAfter installing, restart the client and ask:\n\n- Use AI Canvas to show me what categories of components are available.\n- What's the best navbar component in AI Canvas? Install it for me.\n- I need an animated background for my landing page. Find me a good one in AI Canvas.`,
-    `## More\n\n- Package: https://www.npmjs.com/package/${MCP_PACKAGE}\n- Page: ${siteUrl}/mcp\n- Full index: ${siteUrl}/llms.txt`,
+    `The AI Canvas MCP connects Claude Code, Codex, Cursor and any other MCP client to AI Canvas: design systems, standalone components, blocks, templates and icons, with props, design specs and install commands. Its catalog tools are read-only: they return the install command, and the agent runs it. It reads the live registry at runtime, so new components reach it about five minutes after they ship.${hostedUrl ? ' Connect the hosted server with a browser sign-in, or run the npm package locally.' : ''}`,
+    ...hosted,
+    `## ${hostedUrl ? 'Run it locally with npm' : 'Install'}\n\n\`${MCP_PACKAGE}\` runs as a stdio server on your machine.\n\nClaude Code (user scope, every project):\n\n${fence('bash', `claude mcp add ${MCP_SERVER_NAME} --scope user -- npx -y ${MCP_PACKAGE}`)}\n\nCodex:\n\n${fence('bash', `codex mcp add ${MCP_SERVER_NAME} -- npx -y ${MCP_PACKAGE}`)}\n\nRestart Claude Code or Codex and \`${MCP_SERVER_NAME}\` loads.\n\nCursor: add this to \`~/.cursor/mcp.json\`, then turn \`${MCP_SERVER_NAME}\` on in Cursor Settings, Tools & MCPs.\n\n${fence('json', npmJson('cursor'))}\n\nVS Code: Command Palette, MCP: Open User Configuration, add this entry, then click Start above \`${MCP_SERVER_NAME}\`.\n\n${fence('json', npmJson('vscode'))}\n\nAny other MCP client: run \`npx -y ${MCP_PACKAGE}\` as a stdio server.`,
+    `## Account token (npm)\n\nWithout a token the agent can browse and search, but installs write a placeholder instead of the source. A free account works. To let installs pull source, sign in at ${siteUrl}/account/settings, copy your token, and pass it to the server as the \`AICANVAS_TOKEN\` environment variable (for Claude Code: \`--env AICANVAS_TOKEN=<token>\` before \`--\`). Keep the token in your user configuration, out of files that are committed to git.`,
+    `## What you get\n\n- One command, then forget it: after setup your agent searches, inspects and installs AI Canvas components on its own.\n- No more from-scratch UI: your agent pulls a real component with full source, the design spec and the motion included.\n- Always current: the server reads the live registry, so new components reach your agent about five minutes after they ship.`,
+    `## Tools\n\n${MCP_TOOLS.map((t) => `- \`${t}\``).join('\n')}${hostedUrl ? `\n\nSigned in, the hosted server adds \`whoami\` (the account and plan this connection uses) and \`disconnect\` (ends this agent's connection to your account).` : ''}`,
+    `## Try it\n\nAfter connecting, ask:\n\n- Use the ${MCP_SERVER_NAME} MCP to show me what categories of components are available.\n- Use the ${MCP_SERVER_NAME} MCP: add the task cards to my dashboard and match my dark theme.\n- Use the ${MCP_SERVER_NAME} MCP: my hero section feels boring, find something animated to fix it.\n- Use the ${MCP_SERVER_NAME} MCP to find me a good animated background for my landing page.`,
+    `## More\n\n- Page: ${siteUrl}/mcp\n- Docs: ${siteUrl}/docs/mcp\n- Package: https://www.npmjs.com/package/${MCP_PACKAGE}\n- Full index: ${siteUrl}/llms.txt`,
   ].join('\n\n') + '\n'
 }

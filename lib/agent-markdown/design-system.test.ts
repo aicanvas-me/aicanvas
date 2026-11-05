@@ -115,9 +115,20 @@ describe('site twins', () => {
   })
 
   it('mcp twin carries no token and says the server is read-only', () => {
-    const md = mcpMarkdown({ siteUrl: SITE })
+    const md = mcpMarkdown({ siteUrl: SITE, hostedUrl: null })
     expect(md).toContain('claude mcp add aicanvas --scope user -- npx -y @aicanvas/mcp')
     expect(md).toContain('read-only')
+    expect(md).not.toMatch(/AICANVAS_TOKEN=[^<]/)
+    expect(md).not.toContain('sign in once')
+  })
+
+  it('mcp twin leads with the hosted sign-in while it is on, npm below it', () => {
+    const md = mcpMarkdown({ siteUrl: SITE, hostedUrl: 'https://mcp.aicanvas.me' })
+    expect(md).toContain('claude mcp add --transport http --scope user aicanvas https://mcp.aicanvas.me')
+    expect(md).toContain('codex mcp add aicanvas --url https://mcp.aicanvas.me')
+    expect(md.indexOf('## Connect your AI agent')).toBeLessThan(md.indexOf('## Run it locally with npm'))
+    expect(md).toContain('claude mcp add aicanvas --scope user -- npx -y @aicanvas/mcp')
+    expect(md).toContain('`whoami`')
     expect(md).not.toMatch(/AICANVAS_TOKEN=[^<]/)
   })
 })
