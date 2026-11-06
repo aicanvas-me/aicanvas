@@ -125,7 +125,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
             className="aic-hero-rise mt-5 max-w-2xl text-base leading-relaxed text-sand-600 sm:text-lg dark:text-sand-400"
             style={{ animationDelay: '0.26s' }}
           >
-            Complete React design systems for Claude Code, Cursor, Codex or any AI tool, yours to reshape. Plus{' '}
+            Complete React design systems for Claude, ChatGPT, Cursor or any AI agent. Plus{' '}
             {standalonesFloor} standalone components and blocks that fit any of them
             {iconCount > 0 ? `, and ${iconCount} icons` : ''}. Each piece installs with one shadcn command or through
             the AI Canvas MCP.
