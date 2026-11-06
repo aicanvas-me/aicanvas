@@ -26,6 +26,7 @@ export function generateStaticParams() {
 // 'Blocks' is deliberately absent: a block is a page section, so the plain
 // 'Animated' default reads better than naming it.
 const DESCRIPTOR_PREFIXES: Record<string, string> = {
+  'AI Agent UI': 'AI Agent UI',
   Backgrounds: 'Animated Background',
   Typography: 'Animated Text',
   Widgets: 'Animated Widget',

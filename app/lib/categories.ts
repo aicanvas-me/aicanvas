@@ -15,6 +15,16 @@ export type Category = {
 
 export const CATEGORIES: readonly Category[] = [
   {
+    label: 'AI Agent UI',
+    slug: 'ai-agent-ui',
+    title: 'AI Agent UI Components for React, Tailwind & shadcn',
+    description:
+      'React components for AI agent products: plans, tool calls, reasoning traces, approvals, streaming answers and context meters. Tailwind CSS and Motion.',
+    h1: 'AI Agent UI Components for React',
+    intro:
+      'Components for the screens an AI agent works in: its plan, its tool calls, its reasoning, the answer as it streams and the moments it needs your approval. Built with Tailwind CSS and Motion, ready to install via the shadcn CLI.',
+  },
+  {
     label: 'Cards & Modals',
     slug: 'cards-modals',
     title: 'Animated React Cards and Modals: Free + Tailwind',

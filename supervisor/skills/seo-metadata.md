@@ -84,6 +84,7 @@ Every component description must include its category's primary SEO keyword natu
 
 | Category | Required keyword in description |
 |---|---|
+| AI Agent UI | AI agent, agent UI, or the agent job it shows (plan, tool call, reasoning, approval) |
 | Backgrounds | canvas, interactive, animated background, particle, grid, wave |
 | Buttons & Toggles | button, toggle, animated, glitch, spring |
 | Navigation | navbar, sidebar, navigation, tab bar, dock |
