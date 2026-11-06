@@ -8,7 +8,7 @@ import { Bolt } from '@/app/_icons/icons/bolt'
 import { Lock } from '@/app/_icons/icons/lock'
 import { motion, useReducedMotion } from 'framer-motion'
 import { buttonClasses } from '../buttonClasses'
-import { TopLight } from '../TopLight'
+import { StageLight } from '../StageLight'
 import { useSession } from '../auth/SessionProvider'
 import { usePremiumDetails } from './usePremiumStatus'
 import { UpgradeButton } from './UpgradeButton'
@@ -315,10 +315,10 @@ export function PremiumCards({
 }
 
 // ── Lifetime card ──
-// One payment, Premium for life. The featured plan of the three: the accent
-// edge and the site's light from straight above (TopLight). The description is one short
-// line, like the other two cards; the Lifetime terms live on the licence page,
-// not on the card.
+// One payment, Premium for life. The featured plan of the three, lit like
+// every highlighted panel (StageLight). The description is one short line,
+// like the other two cards; the Lifetime terms live on the licence page, not
+// on the card.
 function LifetimeCard({
   desc,
   cardPad,
@@ -337,8 +337,8 @@ function LifetimeCard({
   hasLifetime: boolean
 }) {
   return (
-    <div className="relative flex flex-col overflow-hidden rounded-section border border-accent/50 bg-sand-100 p-2 dark:border-accent/40 dark:bg-sand-900">
-      <TopLight />
+    <div className="relative flex flex-col overflow-hidden rounded-section bg-sand-100 p-2 dark:bg-sand-900">
+      <StageLight />
       <span className="absolute right-4 top-4 rounded-full border border-premium/30 bg-premium/10 px-2.5 py-0.5 text-[11px] font-semibold text-premium">
         Pay once
       </span>

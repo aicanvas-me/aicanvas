@@ -3,6 +3,10 @@ import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Refresh } from '@/app/_icons/icons/refresh'
+import { Bot } from '@/app/_icons/icons/bot'
+import { Check } from '@/app/_icons/icons/check'
+import { ListChecks } from '@/app/_icons/icons/list-checks'
+import { Swatches } from '@/app/_icons/icons/swatches'
 import { Package } from '@/app/_icons/icons/package'
 import { PlugsConnected } from '@/app/_icons/icons/plugs-connected'
 import { Sparkle } from '@/app/_icons/icons/sparkle'
@@ -12,6 +16,7 @@ import { buttonClasses } from '../components/buttonClasses'
 import { FaqRows } from '../components/FaqRows'
 import { CARD, CtaBand, PageHero, PageShell, SectionHead } from '../components/PageKit'
 import { Reveal } from '../home/Reveal'
+import { StageLight } from '../components/StageLight'
 import { ConnectAgentCard } from './ConnectAgentCard'
 import { hostedMcpOAuthEnabled } from '../../lib/flags'
 import { SITE_URL } from '../lib/config'
@@ -66,7 +71,68 @@ const BENEFITS: { title: string; body: string; icon: ReactNode }[] = [
     body: 'The server fetches from the live registry at runtime, so new components reach your agent about five minutes after they ship.',
     icon: <Refresh size={18} />,
   },
+  {
+    title: 'Works in the agent you use',
+    body: 'Claude Code, Claude, ChatGPT, Codex, VS Code and Cursor, or any other client that speaks MCP.',
+    icon: <Bot size={18} />,
+  },
+  {
+    title: 'A whole system in one call',
+    body: 'Ask for a design system and your agent gets every component plus the shared tokens in a single response.',
+    icon: <Swatches size={18} />,
+  },
+  {
+    title: 'Checks its own work',
+    body: 'Before it finishes, your agent can flag props that do not exist, required props it missed and values outside the allowed options, each with its line.',
+    icon: <ListChecks size={18} />,
+  },
 ]
+
+// The lit panel's marquee: real tool calls, two rows running opposite ways.
+const CALL_ROWS = [
+  [
+    'search_components("animated hero")',
+    'get_system("andromeda-pro")',
+    'compose_page("crm dashboard")',
+    'get_component("plan-runner")',
+    'list_templates()',
+    'list_categories()',
+  ],
+  [
+    'get_component_props("glass-ai-compose")',
+    'validate_usage("page.tsx")',
+    'search_icons("arrow")',
+    'get_install_command("charging-widget")',
+    'list_systems()',
+    'get_audit_checklist()',
+  ],
+]
+
+// One row, listed twice so the loop has no seam; the copy is hidden from
+// screen readers. Hover pauses it; reduced motion holds it still.
+function CallRow({ calls, reverse }: { calls: string[]; reverse?: boolean }) {
+  return (
+    <div className="mcp-calls flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+      {[0, 1].map((copy) => (
+        <ul
+          key={copy}
+          aria-hidden={copy === 1 || undefined}
+          className={`mcp-calls-track flex shrink-0 gap-2 pr-2 ${reverse ? 'mcp-calls-rev' : ''}`}
+        >
+          {calls.map((call) => (
+            <li
+              key={call}
+              className="flex shrink-0 items-center gap-1.5 rounded-chip border border-sand-200 bg-sand-50 px-2.5 py-1.5 font-mono text-[12px] text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300"
+            >
+              <Check size={12} className="text-success" aria-hidden />
+              {call}
+            </li>
+          ))}
+        </ul>
+      ))}
+    </div>
+  )
+}
 
 const PROMPTS = [
   'Use the aicanvas MCP to show me what categories of components are available.',
@@ -116,7 +182,7 @@ export default function McpPage() {
                 sub="Add AI Canvas to your AI agent and sign in once in the browser. No key to copy."
               />
               <div className="mt-10">
-                <ConnectAgentCard heading={false} />
+                <ConnectAgentCard heading={false} lit />
               </div>
             </section>
             <section aria-labelledby="mcp-local" className="mx-auto mt-20 max-w-4xl sm:mt-32">
@@ -135,32 +201,44 @@ export default function McpPage() {
           </section>
         )}
 
-        {/* ── What you get ── */}
+        {/* ── What you get ── one lit panel (the agent at work, as the calls it
+            makes), then the six reasons as plain cards. */}
         <section aria-labelledby="mcp-get" className="mx-auto mt-20 max-w-6xl sm:mt-32">
           <SectionHead id="mcp-get" eyebrow="Why connect it" title="What you get" />
-          {/* Three across only from lg: at tablet width a third of the column
-              leaves the body a narrow strip of six or seven lines. */}
-          <div className="mt-10 grid gap-4 lg:grid-cols-3">
+          <style>{`
+            @keyframes mcp-calls { from { transform: translateX(0) } to { transform: translateX(-100%) } }
+            .mcp-calls-track { animation: mcp-calls 48s linear infinite }
+            .mcp-calls-rev { animation-direction: reverse }
+            .mcp-calls:hover .mcp-calls-track { animation-play-state: paused }
+            @media (prefers-reduced-motion: reduce) { .mcp-calls-track { animation: none } }
+          `}</style>
+          <Reveal y={16} delay={0.05} className="mt-10">
+            <div className="relative overflow-hidden rounded-section px-4 pb-10 pt-12 text-center sm:px-10 sm:pt-14">
+              <StageLight />
+              <h3 className="relative text-balance text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50">
+                Your agent works the catalog itself
+              </h3>
+              <p className="relative mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">
+                It searches, plans the page, pulls the source and checks the result, one tool call at a time.
+              </p>
+              <div className="relative mt-8 space-y-2">
+                {CALL_ROWS.map((calls, i) => (
+                  <CallRow key={i} calls={calls} reverse={i === 1} />
+                ))}
+              </div>
+            </div>
+          </Reveal>
+          {/* Two across from sm, three from lg: at tablet width a third of the
+              column would leave the body a narrow strip. */}
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {BENEFITS.map((card, i) => (
-              <Reveal key={card.title} delay={i * 0.08} className="h-full">
-                <div className={`relative h-full overflow-hidden p-6 sm:p-8 ${CARD}`}>
-                  {/* One soft accent light on the middle card, so the row has a
-                      centre without any card claiming more weight. */}
-                  {i === 1 && (
-                    <div
-                      aria-hidden
-                      className="pointer-events-none absolute -left-16 -top-16 h-44 w-44 rounded-full bg-accent/35 blur-3xl dark:bg-accent/20"
-                    />
-                  )}
-                  <div className="relative flex h-10 w-10 items-center justify-center rounded-inset border border-sand-300 bg-sand-50 text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-200">
+              <Reveal key={card.title} delay={(i % 3) * 0.08} className="h-full">
+                <div className={`h-full p-6 sm:p-8 ${CARD}`}>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-inset border border-sand-300 bg-sand-50 text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-200">
                     {card.icon}
                   </div>
-                  <h3 className="relative mt-6 text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">
-                    {card.title}
-                  </h3>
-                  <p className="relative mt-2 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">
-                    {card.body}
-                  </p>
+                  <h3 className="mt-6 text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">{card.title}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{card.body}</p>
                 </div>
               </Reveal>
             ))}

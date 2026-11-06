@@ -31,7 +31,7 @@ import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
 import { ValueBento } from './ValueBento'
 import { Wordmark } from '../components/Wordmark'
-import { TopLight } from '../components/TopLight'
+import { StageLight } from '../components/StageLight'
 
 interface Props {
   /** Every standalone, free and premium. */
@@ -385,8 +385,8 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
                 Start from a complete screen.
               </h2>
               <p className={`mx-auto mt-3 max-w-xl ${SUB}`}>
-                Andromeda Pro templates for AI products, operations, sign in and marketing. Try the real page at every
-                size before you install it.
+                Andromeda Pro templates for AI products, operations, sign in and marketing. Try the real page before
+                you install it.
               </p>
             </Reveal>
             <Reveal y={16} delay={0.05} className="mt-8">
@@ -534,9 +534,9 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
         <section className="mx-auto mt-20 max-w-4xl sm:mt-32">
           <Reveal
             y={12}
-            className="relative overflow-hidden rounded-section border border-accent/20 px-6 py-12 text-center ring-1 ring-inset ring-accent/10 sm:py-16"
+            className="relative overflow-hidden rounded-section px-6 py-12 text-center sm:py-16"
           >
-            <TopLight />
+            <StageLight />
             <p className={`relative ${EYEBROW}`}>Ready to build?</p>
             <h2 className={`relative mt-2 ${H2}`}>Start with the source, not a blank prompt.</h2>
             <p className={`relative mx-auto mt-3 max-w-xl ${SUB}`}>

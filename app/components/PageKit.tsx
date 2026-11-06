@@ -9,7 +9,7 @@
 import type { ReactNode } from 'react'
 import { SiteFooter } from './SiteFooter'
 import { Wordmark } from './Wordmark'
-import { TopLight } from './TopLight'
+import { StageLight } from './StageLight'
 import { Reveal } from '../home/Reveal'
 
 // The homepage type ladder, shared so a section heading reads the same on
@@ -158,9 +158,9 @@ export function CtaBand({
     <section className="mx-auto mt-20 max-w-4xl sm:mt-32">
       <Reveal
         y={12}
-        className="relative overflow-hidden rounded-section border border-accent/20 px-6 py-12 text-center ring-1 ring-inset ring-accent/10 sm:py-16"
+        className="relative overflow-hidden rounded-section px-6 py-12 text-center sm:py-16"
       >
-        <TopLight />
+        <StageLight />
         {eyebrow && <p className={`relative ${EYEBROW}`}>{eyebrow}</p>}
         <h2 className={`relative ${eyebrow ? 'mt-2' : ''} ${H2}`}>{title}</h2>
         {sub && <p className={`relative mx-auto mt-3 max-w-xl text-pretty ${SUB}`}>{sub}</p>}

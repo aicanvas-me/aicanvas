@@ -62,7 +62,7 @@ export async function getHomeData() {
 
   const templates = TEMPLATE_TABS.map((slug) => TEMPLATES.find((t) => t.slug === slug))
     .filter((t) => t !== undefined)
-    .map(({ folder, name, image, imageLight }) => ({ folder, name, image, imageLight }))
+    .map(({ folder, name }) => ({ folder, name }))
 
   const wall: WallItem[] = WALL_SLUGS.flatMap((slug) => {
     const c = COMPONENT_META.find((m) => m.slug === slug)

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion'
 import { Code } from '@/app/_icons/icons/code'
 import { Bot } from '@/app/_icons/icons/bot'
 import { buttonClasses } from '../components/buttonClasses'
+import { StageLight } from '../components/StageLight'
 import { Step } from '../components/Step'
 import { copyText } from '../components/useCopied'
 import { ClaudeCodeMark, ClaudeMark, CodeBlock, CodexMark, CursorMark, INLINE_CODE, Toast, useToast } from './InstallCards'
@@ -50,18 +51,21 @@ function Hint({ children }: { children: React.ReactNode }) {
 
 // heading={false} where the page draws the section heading itself (/mcp). `note` sits
 // under the heading, e.g. the agents an account already connected (/account/connect).
+// `lit` draws the card as the page's highlighted panel (StageLight) instead of a plain one.
 export function ConnectAgentCard({
   skipHref,
   showDocsLink = true,
   heading = true,
   title = 'Connect your AI agent',
   note,
+  lit = false,
 }: {
   skipHref?: string
   showDocsLink?: boolean
   heading?: boolean
   title?: string
   note?: React.ReactNode
+  lit?: boolean
 }) {
   const [agent, setAgent] = useState<Agent>('claude')
   const [copied, setCopied] = useState<string | null>(null)
@@ -120,8 +124,15 @@ export function ConnectAgentCard({
       )}
 
       {/* Built like the npm install card: the agent switch on the card, the steps in the inset. */}
-      <div className="rounded-section border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900">
-        <div className="isolate flex gap-1.5 overflow-x-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+      <div
+        className={
+          lit
+            ? 'relative overflow-hidden rounded-section p-2'
+            : 'rounded-section border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900'
+        }
+      >
+        {lit && <StageLight />}
+        <div className="relative isolate flex gap-1.5 overflow-x-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {AGENTS.map((a) => {
             const active = agent === a.id
             return (
@@ -152,7 +163,7 @@ export function ConnectAgentCard({
           })}
         </div>
 
-        <div className="mt-2 space-y-6 rounded-card bg-sand-50/70 px-4 py-6 sm:px-7 sm:py-8 dark:bg-sand-950">
+        <div className="relative mt-2 space-y-6 rounded-card bg-sand-50/70 px-4 py-6 sm:px-7 sm:py-8 dark:bg-sand-950">
           {agent === 'claude' && (
             <>
               <Step number={1}>
