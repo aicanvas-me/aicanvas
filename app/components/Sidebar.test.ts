@@ -273,7 +273,16 @@ describe('the catalog rail', () => {
     // Then one labelled group per category, in categories.ts order.
     const groups = within(panel).getAllByRole('group')
     expect(groups.map((g) => g.querySelector(':scope > p a')?.textContent)).toEqual(CATEGORIES.map((c) => c.label))
-    const listed = new Set<string>()
+    // Who lists each component: its first category in categories.ts order,
+    // except a glass piece, which Glass takes unless that first category is
+    // made only of glass pieces.
+    const glass = new Set((CATEGORY_COMPONENTS.Glass ?? []).map((r) => r.slug))
+    const owner = new Map<string, string>()
+    for (const c of CATEGORIES) for (const r of CATEGORY_COMPONENTS[c.label] ?? []) if (!owner.has(r.slug)) owner.set(r.slug, c.label)
+    for (const slug of glass) {
+      const first = owner.get(slug)!
+      if (!(CATEGORY_COMPONENTS[first] ?? []).every((r) => glass.has(r.slug))) owner.set(slug, 'Glass')
+    }
     groups.forEach((g, i) => {
       const cat = CATEGORIES[i]
       const heading = g.querySelector(':scope > p')!
@@ -283,9 +292,8 @@ describe('the catalog rail', () => {
       // The header's count is the category's count, the one its page shows.
       expect(heading.textContent, cat.label).toBe(`${cat.label}, ${CATEGORY_COUNTS[cat.label] ?? 0}`)
       expect(all.length, cat.label).toBe(CATEGORY_COUNTS[cat.label] ?? 0)
-      // Its rows are the components no earlier category listed.
-      const rows = all.filter((r) => !listed.has(r.slug))
-      for (const r of rows) listed.add(r.slug)
+      // Its rows are the components it owns, in its own order.
+      const rows = all.filter((r) => owner.get(r.slug) === cat.label)
       expect(
         [...g.querySelectorAll('li a')].map((a) => [a.textContent, a.getAttribute('href')]),
         cat.label,
