@@ -119,11 +119,6 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
             style={{ animationDelay: '0.18s' }}
           >
             AI agents finally design badass interfaces.
-            <br />
-            {/* One step below the headline: the promise, then what keeps it. */}
-            <span className="mt-3 inline-block text-2xl sm:text-4xl text-accent">
-              Design systems your agent builds with.
-            </span>
           </h1>
 
           <p
