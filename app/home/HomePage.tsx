@@ -111,17 +111,16 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
             className="aic-hero-rise mb-5 inline-flex items-center rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300"
             style={{ animationDelay: '0.1s' }}
           >
-            Best in class, by design
+            No more AI slop.
           </span>
 
           <h1
             className="aic-hero-slide text-balance text-3xl font-extrabold tracking-tight text-sand-900 sm:text-5xl dark:text-sand-50"
             style={{ animationDelay: '0.18s' }}
           >
-            No more AI slop.
+            AI agents finally design badass interfaces.
             <br />
-            {/* One step below the headline: the problem every agent builder
-                names, then what solves it. */}
+            {/* One step below the headline: the promise, then what keeps it. */}
             <span className="mt-3 inline-block text-2xl sm:text-4xl text-accent">
               Design systems your agent builds with.
             </span>
