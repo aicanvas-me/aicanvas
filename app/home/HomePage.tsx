@@ -26,6 +26,7 @@ import {
 } from '../_lib/andromeda-pro/andromeda-meta'
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
+import { HeroLight } from './HeroLight'
 import { HeroMap, type HeroIcon } from './HeroMap'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
@@ -104,6 +105,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
       data-owns-scroll
       className="aic-page-scroll flex min-h-full flex-col overflow-x-hidden bg-sand-50 dark:bg-sand-950"
     >
+      <HeroLight />
       <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pt-12 pb-8 sm:px-6 sm:pt-20">
         {/* ── Hero ── */}
         <section className="mx-auto flex max-w-4xl flex-col items-center text-center">

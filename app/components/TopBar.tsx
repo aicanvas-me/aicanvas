@@ -19,9 +19,10 @@ import { CAPTURE_LEAF_RE, FOCUS_ROUTE_RE, TEMPLATE_LEAF_RE } from './top-bar-cru
 
 // The bar spans the whole window, above the rail and the content alike, and
 // sits outside the scroll column, so it stays put while the page scrolls. No
-// bottom rule: the bar and the page share one surface.
-const BAR_CLASS =
-  'sticky top-0 z-40 hidden h-14 shrink-0 items-center bg-sand-50 dark:bg-sand-950 md:flex'
+// bottom rule: the bar and the page share one surface. On the homepage the bar
+// is see-through so the hero's light (HeroLight) shows behind it.
+const BAR_BASE = 'sticky top-0 z-40 hidden h-14 shrink-0 items-center md:flex'
+const BAR_CLASS = `${BAR_BASE} bg-sand-50 dark:bg-sand-950`
 
 // Routes that carry no site chrome: the lab has its own bar, and template
 // leaves are full-screen compositions, focus pages (the agent sign-in
@@ -48,7 +49,15 @@ export function TopBar() {
   // move when a click crosses between a rail page and a rail-less one. The
   // middle is truly centred from xl, where both sides have room to be equal.
   return (
-    <header className={isPinnedDarkRoute(pathname) ? `dark ${BAR_CLASS}` : BAR_CLASS}>
+    <header
+      className={
+        pathname === '/' || pathname === '/home'
+          ? BAR_BASE
+          : isPinnedDarkRoute(pathname)
+            ? `dark ${BAR_CLASS}`
+            : BAR_CLASS
+      }
+    >
       <div className="flex w-full items-center justify-between gap-4 px-5 xl:grid xl:grid-cols-[1fr_auto_1fr]">
         <HomeLogo />
         <HomeNav />
