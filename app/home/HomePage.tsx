@@ -26,8 +26,7 @@ import {
 } from '../_lib/andromeda-pro/andromeda-meta'
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
-import { HeroMap, type HeroIcon } from './HeroMap'
-import { HeroBoard, HeroSwitch, type BoardPiece, type BoardSystem } from './HeroBoard'
+import { HeroBoard, type BoardPiece, type BoardSystem, type HeroIcon } from './HeroBoard'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
 import { ValueBento } from './ValueBento'
@@ -43,7 +42,7 @@ interface Props {
   pulls: number
   templates: DeckTemplate[]
   wall: WallItem[]
-  /** The hero map's icon rail (line markup); empty in a build without the icon source. */
+  /** The hero board's Line icons (markup); empty in a build without the icon source. */
   heroIcons: HeroIcon[]
   /** Every icon in the set; 0 in a build without the icon source. */
   iconCount: number
@@ -94,7 +93,6 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
     ANDROMEDA_PRO_COMPONENT_META.length +
     ANDROMEDA_PRO_TEMPLATE_META.length
   const standalonesFloor = `${Math.floor(total / 10) * 10}+`
-  const heroMap = <HeroMap standalonesFloor={standalonesFloor} icons={heroIcons} iconCount={iconCount} />
   const boardSystems: BoardSystem[] = [
     {
       slug: 'andromeda-pro',
@@ -167,26 +165,15 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
           </div>
         </section>
 
-        {/* What AI Canvas is, in three groups: the full page column, so it
-            sits outside the hero's text column. */}
+        {/* An agent building from AI Canvas: the full page column, so it sits
+            outside the hero's text column. */}
         <div className="mt-12 w-full sm:mt-16">
-          {/* ?hero=board tries the agent board from lg; below lg it keeps the map. */}
-          <HeroSwitch
-            map={heroMap}
-            board={
-              <>
-                <div className="lg:hidden">{heroMap}</div>
-                <div className="hidden lg:block">
-                  <HeroBoard
-                    systems={boardSystems}
-                    pieces={boardPieces}
-                    icons={heroIcons}
-                    standalonesFloor={standalonesFloor}
-                    iconCount={iconCount}
-                  />
-                </div>
-              </>
-            }
+          <HeroBoard
+            systems={boardSystems}
+            pieces={boardPieces}
+            icons={heroIcons}
+            standalonesFloor={standalonesFloor}
+            iconCount={iconCount}
           />
         </div>
 

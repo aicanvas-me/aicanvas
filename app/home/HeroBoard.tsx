@@ -3,8 +3,8 @@
 // The hero as an agent at work: a thread with your agent in front, the AI
 // Canvas catalog laid out as a board behind it, and each call the agent makes
 // marks the piece it pulled. Plays once when it comes into view, about 6 s,
-// then holds still. Reduced motion shows the finished frame. Desktop only:
-// below lg the homepage keeps HeroMap.
+// then holds still. Reduced motion shows the finished frame. From lg the
+// thread overlaps the board; below it the thread stacks above the board.
 
 import {
   createContext,
@@ -35,8 +35,7 @@ import { Sparkle } from '@/app/_icons/icons/sparkle'
 import { User } from '@/app/_icons/icons/user'
 import { BrandIcon } from '../components/BrandIcon'
 import { IconSvg } from '../icons/_components/IconSvg'
-import type { HeroIcon } from './HeroMap'
-
+export type HeroIcon = { name: string; markup: string }
 export type BoardSystem = {
   slug: string
   name: string
@@ -67,11 +66,11 @@ const CALLS: { fn: string; arg: string; result: string; marks?: string; mark?: s
   { fn: 'validate_usage', arg: '"run-screen.tsx"', result: '0 issues' },
 ]
 
-// The thread sits on the board's left edge; the board's columns start where
-// the thread ends, so nothing on the board hides behind it.
-const BOARD_LEFT = 22
-const THREAD_W = 36
-const GUTTER = `calc(${((THREAD_W - BOARD_LEFT) / (100 - BOARD_LEFT)) * 100}% + 1rem)`
+// From lg the board starts at 22% and the thread is 36% wide; the board's
+// columns start where the thread ends (14 / 78 of the board), so nothing hides.
+const BOARD_AT = 'lg:absolute lg:inset-y-0 lg:right-0 lg:left-[22%] lg:h-auto'
+const THREAD_AT = 'lg:absolute lg:left-0 lg:top-16 lg:z-10 lg:w-[36%]'
+const COLUMNS_AT = 'lg:grid-cols-3 lg:pl-[calc(17.95%+1rem)]'
 
 // The board runs on past the frame: it fades out to the right and below.
 const FADE_MASK = 'linear-gradient(to right, #000 86%, transparent), linear-gradient(to bottom, #000 70%, transparent)'
@@ -132,7 +131,7 @@ export function HeroBoard({
       <figure
         ref={ref}
         aria-label="An agent building a screen from AI Canvas: design systems, standalone components and blocks, and icons."
-        className="relative h-[540px] w-full"
+        className="relative flex w-full flex-col gap-4 lg:block lg:h-[540px]"
       >
         <Board systems={systems} pieces={pieces} icons={icons} floor={standalonesFloor} iconCount={iconCount} />
         <Thread />
@@ -147,14 +146,12 @@ function Appear({
   x = 0,
   y = 8,
   className,
-  style,
   children,
 }: {
   delay: number
   x?: number
   y?: number
   className?: string
-  style?: CSSProperties
   children: ReactNode
 }) {
   const { play } = useContext(BoardContext)
@@ -163,7 +160,6 @@ function Appear({
   return (
     <motion.div
       className={className}
-      style={style}
       initial={hidden}
       animate={play ? { opacity: 1, x: 0, y: 0 } : hidden}
       transition={at(delay)}
@@ -191,7 +187,7 @@ function Board({
   // Cards land column by column, top to bottom.
   const land = (col: number, row: number) => 0.15 + col * 0.08 + row * 0.06
   return (
-    <Appear delay={0} y={12} className="absolute inset-y-0 right-0" style={{ left: `${BOARD_LEFT}%` }}>
+    <Appear delay={0} y={12} className={`relative h-[380px] ${BOARD_AT}`}>
       <div
         className="flex h-full flex-col overflow-hidden rounded-section border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900/40"
         style={FADE}
@@ -203,14 +199,15 @@ function Board({
             <ChevronRight size={12} className="text-sand-400 dark:text-sand-600" />
             <span className={`font-medium ${MUTED}`}>Catalog</span>
           </span>
-          <span aria-hidden className="flex items-center gap-1">
+          <span aria-hidden className="hidden items-center gap-1 sm:flex">
             <Filter selected>All</Filter>
             <Filter dot="bg-free">Free</Filter>
             <Filter dot="bg-premium">Premium</Filter>
           </span>
         </div>
 
-        <div className="grid min-h-0 flex-1 grid-cols-3 gap-3 py-3 pr-3" style={{ paddingLeft: GUTTER }}>
+        {/* Below lg the columns keep a fixed width and run off to the right. */}
+        <div className={`grid min-h-0 flex-1 grid-cols-[repeat(3,220px)] gap-3 p-3 ${COLUMNS_AT}`}>
           <Column title="Design systems" count={systems.length} icon={<Layers size={14} />} href="/design-systems/andromeda-pro">
             {systems.map((s, row) => (
               <Card
@@ -400,7 +397,7 @@ function Tier({ premium }: { premium: boolean }) {
 
 function Thread() {
   return (
-    <Appear delay={T.thread} x={-16} y={0} className="absolute left-0 top-16 z-10" style={{ width: `${THREAD_W}%` }}>
+    <Appear delay={T.thread} x={-16} y={0} className={`order-first ${THREAD_AT}`}>
       <div
         aria-hidden
         className={`flex flex-col rounded-section border border-sand-200 bg-sand-50 dark:border-sand-700/80 dark:bg-sand-900 ${LIFT}`}
@@ -538,14 +535,4 @@ function Composer() {
       </span>
     </div>
   )
-}
-
-// ─── The test switch ─────────────────────────────────────────────────────────
-
-const readHero = () => new URLSearchParams(window.location.search).get('hero') === 'board'
-
-/** Shows `board` when the URL carries ?hero=board, `map` otherwise. */
-export function HeroSwitch({ map, board }: { map: ReactNode; board: ReactNode }) {
-  const isBoard = useSyncExternalStore(noSubscribe, readHero, () => false)
-  return isBoard ? board : map
 }

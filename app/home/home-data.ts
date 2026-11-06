@@ -6,8 +6,7 @@ import { lightShot, optimizeImageKitUrl } from '../lib/imagekit'
 import { getRegistryPulls } from '../lib/registry-stats'
 import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-data'
 import { icons, readLineIcons } from '../icons/_lib/server-data'
-import type { HeroIcon } from './HeroMap'
-import type { BoardPiece } from './HeroBoard'
+import type { BoardPiece, HeroIcon } from './HeroBoard'
 
 // The homepage renders at / and at /home; both routes share this data and
 // these words.
@@ -34,19 +33,15 @@ const WALL_SLUGS = [
   'sphere-lines', 'polaroid-stack', 'charging-widget', 'traveldeck',
 ]
 
-// The hero map's icon rail, in this order; names missing from the icon set
+// The hero board's Line card, in this order; names missing from the icon set
 // are skipped.
-const HERO_ICON_NAMES = [
-  'agent-skill', 'mcp-server', 'palette', 'sparkle', 'code', 'terminal', 'toggle-left',
-  'image', 'chart-bar', 'lock', 'bell', 'search', 'calendar', 'globe', 'heart',
-  'command', 'layers', 'pen-tool', 'wand',
-]
+const HERO_ICON_NAMES = ['agent-skill', 'mcp-server', 'palette', 'sparkle', 'code', 'terminal']
 
 // The hero board's standalone column, in this order; the agent pulls the first.
 const BOARD_SLUGS = ['plan-runner', 'glass-ai-compose', '3d-gem-pricing-section', 'charging-widget']
 
 // A build without the icon source writes empty data (or none at all), so this
-// never throws: no markup means an empty rail, not a broken homepage.
+// never throws: no markup means an empty Line card, not a broken homepage.
 async function getHeroIcons(): Promise<HeroIcon[]> {
   try {
     const markup = await readLineIcons()
