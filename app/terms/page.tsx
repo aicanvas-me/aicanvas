@@ -32,7 +32,7 @@ export default function TermsPage() {
         title="Terms & Conditions"
         sub={
           <span className="block text-balance">
-            Last updated: 2026-11-05. These terms govern your use of AI Canvas.
+            Last updated: 2026-11-06. These terms govern your use of AI Canvas.
           </span>
         }
       />
