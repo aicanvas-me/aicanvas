@@ -151,9 +151,9 @@ const HEADING =
 // Each component's first category in categories.ts order: the one section
 // that lists it. Listing a component under every category it carries put a
 // quarter of the rows in twice. Glass is the exception: a look that cuts
-// across the others, so in that order it listed nothing. It takes its pieces
-// back, except from a category made only of glass pieces (Notifications),
-// which would be left with no rows.
+// across the others, so in that order it listed nothing. It takes every glass
+// piece back; a category made only of glass pieces (Notifications) keeps its
+// header, its count and its page link, with no rows under it.
 const FIRST_CATEGORY = new Map<string, number>()
 CATEGORIES.forEach((cat, i) => {
   for (const c of CATEGORY_COMPONENTS[cat.label] ?? []) if (!FIRST_CATEGORY.has(c.slug)) FIRST_CATEGORY.set(c.slug, i)
@@ -162,9 +162,7 @@ const GLASS = CATEGORIES.findIndex((c) => c.label === 'Glass')
 const GLASS_SLUGS = new Set((CATEGORY_COMPONENTS.Glass ?? []).map((c) => c.slug))
 for (const slug of GLASS_SLUGS) {
   const i = FIRST_CATEGORY.get(slug)
-  if (GLASS < 0 || i === undefined || i === GLASS) continue
-  const allGlass = (CATEGORY_COMPONENTS[CATEGORIES[i].label] ?? []).every((c) => GLASS_SLUGS.has(c.slug))
-  if (!allGlass) FIRST_CATEGORY.set(slug, GLASS)
+  if (GLASS >= 0 && i !== undefined) FIRST_CATEGORY.set(slug, GLASS)
 }
 const firstCategoryIndex = (slug: string) => FIRST_CATEGORY.get(slug)
 

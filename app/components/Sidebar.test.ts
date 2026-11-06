@@ -273,16 +273,11 @@ describe('the catalog rail', () => {
     // Then one labelled group per category, in categories.ts order.
     const groups = within(panel).getAllByRole('group')
     expect(groups.map((g) => g.querySelector(':scope > p a')?.textContent)).toEqual(CATEGORIES.map((c) => c.label))
-    // Who lists each component: its first category in categories.ts order,
-    // except a glass piece, which Glass takes unless that first category is
-    // made only of glass pieces.
-    const glass = new Set((CATEGORY_COMPONENTS.Glass ?? []).map((r) => r.slug))
+    // Who lists each component: Glass for every glass piece, else its first
+    // category in categories.ts order.
     const owner = new Map<string, string>()
+    for (const r of CATEGORY_COMPONENTS.Glass ?? []) owner.set(r.slug, 'Glass')
     for (const c of CATEGORIES) for (const r of CATEGORY_COMPONENTS[c.label] ?? []) if (!owner.has(r.slug)) owner.set(r.slug, c.label)
-    for (const slug of glass) {
-      const first = owner.get(slug)!
-      if (!(CATEGORY_COMPONENTS[first] ?? []).every((r) => glass.has(r.slug))) owner.set(slug, 'Glass')
-    }
     groups.forEach((g, i) => {
       const cat = CATEGORIES[i]
       const heading = g.querySelector(':scope > p')!
