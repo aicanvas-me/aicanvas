@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type UIEvent } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { LayoutGroup, motion, useReducedMotion } from 'framer-motion'
 import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { Box } from '@/app/_icons/icons/box'
 import { Component } from '@/app/_icons/icons/component'
@@ -418,6 +419,7 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
   const searchParams = useSearchParams()
   const baseId = useId()
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
+  const reduceMotion = useReducedMotion()
 
   // A pick by hand holds only until the next navigation, which hands the
   // choice back to the route. The rail stays mounted across pages, so the pick
@@ -537,7 +539,11 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
     )
   }
 
+  // The tabs resize and the lit pill slides on one spring; the label fades in once the tab opens.
+  const spring = reduceMotion ? { duration: 0 } : { type: 'spring' as const, stiffness: 380, damping: 36, mass: 0.8 }
+
   const tabs = (
+    <LayoutGroup id={baseId}>
     <div
       role="tablist"
       aria-label="Catalog section"
@@ -547,8 +553,11 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
       {SEGMENTS.map((s, i) => {
         const selected = s.id === segment
         return (
-          <button
+          <motion.button
             key={s.id}
+            layout
+            transition={spring}
+            style={{ borderRadius: 9999 }}
             ref={(el) => {
               tabRefs.current[i] = el
             }}
@@ -564,18 +573,40 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
             onPointerEnter={rail ? () => router.prefetch(LANDING[s.id]) : undefined}
             // Sized so the longest label, "Design systems", fits the 256px
             // rail whole: 12px text, 32px idle tabs, tight active padding.
-            className={`inline-flex h-8 items-center justify-center gap-1 rounded-full text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
+            className={`relative inline-flex h-8 items-center justify-center gap-1 text-xs font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 ${
               selected
-                ? 'min-w-0 flex-1 bg-sand-50 px-2.5 text-sand-900 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)] dark:bg-sand-800 dark:text-sand-50 dark:shadow-[0_1px_2px_rgba(0,0,0,0.5)]'
+                ? 'min-w-0 flex-1 px-2.5 text-sand-900 dark:text-sand-50'
                 : 'w-8 shrink-0 text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-50'
             }`}
           >
-            <span className="shrink-0">{s.icon}</span>
-            {selected && <span className="truncate">{s.label}</span>}
-          </button>
+            {selected && (
+              <motion.span
+                aria-hidden
+                layoutId="catalog-tab-pill"
+                transition={spring}
+                style={{ borderRadius: 9999 }}
+                className="absolute inset-0 bg-sand-50 shadow-[0_1px_2px_rgba(0,0,0,0.08),0_1px_1px_rgba(0,0,0,0.04)] dark:bg-sand-800 dark:shadow-[0_1px_2px_rgba(0,0,0,0.5)]"
+              />
+            )}
+            <motion.span layout="position" transition={spring} className="relative shrink-0">
+              {s.icon}
+            </motion.span>
+            {selected && (
+              <motion.span
+                layout="position"
+                initial={reduceMotion ? false : { opacity: 0, filter: 'blur(2px)' }}
+                animate={{ opacity: 1, filter: 'blur(0px)' }}
+                transition={reduceMotion ? { duration: 0 } : { ...spring, opacity: { duration: 0.2, delay: 0.08 }, filter: { duration: 0.2, delay: 0.08 } }}
+                className="relative truncate"
+              >
+                {s.label}
+              </motion.span>
+            )}
+          </motion.button>
         )
       })}
     </div>
+    </LayoutGroup>
   )
 
   const panels = (
