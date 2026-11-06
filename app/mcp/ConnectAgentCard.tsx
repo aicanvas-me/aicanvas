@@ -51,7 +51,7 @@ function Hint({ children }: { children: React.ReactNode }) {
 
 // heading={false} where the page draws the section heading itself (/mcp). `note` sits
 // under the heading, e.g. the agents an account already connected (/account/connect).
-// `lit` draws the card as the page's highlighted panel (StageLight) instead of a plain one.
+// `lit` draws the card as the page's highlighted panel: solid, with StageLight on top.
 export function ConnectAgentCard({
   skipHref,
   showDocsLink = true,
@@ -127,7 +127,7 @@ export function ConnectAgentCard({
       <div
         className={
           lit
-            ? 'relative overflow-hidden rounded-section p-2'
+            ? 'relative overflow-hidden rounded-section bg-sand-100 p-2 dark:bg-sand-900'
             : 'rounded-section border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900'
         }
       >
@@ -163,7 +163,7 @@ export function ConnectAgentCard({
           })}
         </div>
 
-        <div className="relative mt-2 space-y-6 rounded-card bg-sand-50/70 px-4 py-6 sm:px-7 sm:py-8 dark:bg-sand-950">
+        <div className={`relative mt-2 space-y-6 rounded-card px-4 py-6 sm:px-7 sm:py-8 dark:bg-sand-950 ${lit ? 'bg-sand-50' : 'bg-sand-50/70'}`}>
           {agent === 'claude' && (
             <>
               <Step number={1}>
