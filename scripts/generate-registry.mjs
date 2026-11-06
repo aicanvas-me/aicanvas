@@ -277,17 +277,17 @@ function walkDependencies(entries, rootDirAbs, excludedFiles = new Set()) {
 
 // Our icons are not part of a system: an `@/app/_icons/...` import installs as
 // the icon's own registry item (scripts/icon-registry.mjs, components/icons/).
-function iconItemFor(spec) {
+function iconItemFor(spec, allowPaid = false) {
   const m = spec.match(/^@\/app\/_icons\/(?:icons\/([a-z0-9-]+)|(IconBase))$/)
   if (!m) return null
-  // A paid style would make a free install stop on a locked icon.
-  if (/-(duotone|solid|solid-duotone)$/.test(m[1] ?? '')) throw new Error(`generate-registry: ${spec} is a paid icon style`)
+  // A paid style would lock a free install; a premium item installs with premium.
+  if (!allowPaid && /-(duotone|solid|solid-duotone)$/.test(m[1] ?? '')) throw new Error(`generate-registry: ${spec} is a paid icon style`)
   return m[1] ? `icon-${m[1]}` : 'icon-base'
 }
 
 // A standalone is one file, so its icons arrive as registryDependencies (none: no key).
-function standaloneIconDeps(content) {
-  const deps = [...new Set(extractImportSpecifiers(content).map(iconItemFor).filter(Boolean))]
+function standaloneIconDeps(content, allowPaid = false) {
+  const deps = [...new Set(extractImportSpecifiers(content).map((spec) => iconItemFor(spec, allowPaid)).filter(Boolean))]
   return deps.length ? { registryDependencies: deps.sort().map(depUrl) } : {}
 }
 
@@ -500,7 +500,7 @@ for (const slug of premiumSlugDirs) {
     description: pmeta.description || '',
     author: 'aicanvas <https://aicanvas.me>',
     dependencies: getDeps(content),
-    ...standaloneIconDeps(content),
+    ...standaloneIconDeps(content, true),
     files: [
       {
         path: `components/aicanvas/${slug}.tsx`,
