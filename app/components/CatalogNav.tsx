@@ -594,9 +594,9 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
             {selected && (
               <motion.span
                 layout="position"
-                initial={reduceMotion ? false : { opacity: 0, filter: 'blur(2px)' }}
-                animate={{ opacity: 1, filter: 'blur(0px)' }}
-                transition={reduceMotion ? { duration: 0 } : { ...spring, opacity: { duration: 0.2, delay: 0.08 }, filter: { duration: 0.2, delay: 0.08 } }}
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={reduceMotion ? { duration: 0 } : { ...spring, opacity: { duration: 0.2, delay: 0.08 } }}
                 className="relative truncate"
               >
                 {s.label}
