@@ -27,6 +27,7 @@ import {
 import { TemplateDeck, type DeckTemplate } from './TemplateDeck'
 import { ComponentWall, type WallItem } from './ComponentWall'
 import { HeroMap, type HeroIcon } from './HeroMap'
+import { HeroBoard, HeroSwitch, type BoardPiece, type BoardSystem } from './HeroBoard'
 import { AgentInstall } from './AgentInstall'
 import { StickerFaq } from './StickerFaq'
 import { ValueBento } from './ValueBento'
@@ -46,6 +47,8 @@ interface Props {
   heroIcons: HeroIcon[]
   /** Every icon in the set; 0 in a build without the icon source. */
   iconCount: number
+  /** The hero board's standalone cards. */
+  boardPieces: BoardPiece[]
 }
 
 const PREMIUM = premiumEnabled()
@@ -80,7 +83,7 @@ const STEPS = [
   },
 ]
 
-export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, iconCount }: Props) {
+export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, iconCount, boardPieces }: Props) {
   // Everything installable, counted from source so it can never drift from
   // reality: standalones (`total`, premium included) + the Andromeda
   // design-system components and templates, which live in their own registry.
@@ -91,6 +94,25 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
     ANDROMEDA_PRO_COMPONENT_META.length +
     ANDROMEDA_PRO_TEMPLATE_META.length
   const standalonesFloor = `${Math.floor(total / 10) * 10}+`
+  const heroMap = <HeroMap standalonesFloor={standalonesFloor} icons={heroIcons} iconCount={iconCount} />
+  const boardSystems: BoardSystem[] = [
+    {
+      slug: 'andromeda-pro',
+      name: 'Andromeda Pro',
+      premium: true,
+      isNew: true,
+      components: ANDROMEDA_PRO_COMPONENT_META.length,
+      templates: ANDROMEDA_PRO_TEMPLATE_META.length,
+    },
+    {
+      slug: 'andromeda',
+      name: 'Andromeda Legacy',
+      premium: false,
+      isNew: false,
+      components: ANDROMEDA_COMPONENT_META.length,
+      templates: ANDROMEDA_TEMPLATE_META.length,
+    },
+  ]
 
   return (
     <div
@@ -148,10 +170,23 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
         {/* What AI Canvas is, in three groups: the full page column, so it
             sits outside the hero's text column. */}
         <div className="mt-12 w-full sm:mt-16">
-          <HeroMap
-            standalonesFloor={standalonesFloor}
-            icons={heroIcons}
-            iconCount={iconCount}
+          {/* ?hero=board tries the agent board from lg; below lg it keeps the map. */}
+          <HeroSwitch
+            map={heroMap}
+            board={
+              <>
+                <div className="lg:hidden">{heroMap}</div>
+                <div className="hidden lg:block">
+                  <HeroBoard
+                    systems={boardSystems}
+                    pieces={boardPieces}
+                    icons={heroIcons}
+                    standalonesFloor={standalonesFloor}
+                    iconCount={iconCount}
+                  />
+                </div>
+              </>
+            }
           />
         </div>
 

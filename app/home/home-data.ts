@@ -7,6 +7,7 @@ import { getRegistryPulls } from '../lib/registry-stats'
 import { TEMPLATES } from '../design-systems/andromeda-pro/overview-b/overview-data'
 import { icons, readLineIcons } from '../icons/_lib/server-data'
 import type { HeroIcon } from './HeroMap'
+import type { BoardPiece } from './HeroBoard'
 
 // The homepage renders at / and at /home; both routes share this data and
 // these words.
@@ -40,6 +41,9 @@ const HERO_ICON_NAMES = [
   'image', 'chart-bar', 'lock', 'bell', 'search', 'calendar', 'globe', 'heart',
   'command', 'layers', 'pen-tool', 'wand',
 ]
+
+// The hero board's standalone column, in this order; the agent pulls the first.
+const BOARD_SLUGS = ['plan-runner', 'glass-ai-compose', '3d-gem-pricing-section', 'charging-widget']
 
 // A build without the icon source writes empty data (or none at all), so this
 // never throws: no markup means an empty rail, not a broken homepage.
@@ -78,5 +82,11 @@ export async function getHomeData() {
       : []
   })
 
-  return { total, freeTotal, pulls, templates, wall, heroIcons, iconCount }
+  const boardPieces: BoardPiece[] = BOARD_SLUGS.flatMap((slug) => {
+    const c = COMPONENT_META.find((m) => m.slug === slug)
+    const kind = c?.tags[0]?.label ?? 'Component'
+    return c ? [{ slug, name: c.name, premium: c.badge === 'Premium', kind: kind === 'Blocks' ? 'Block' : kind }] : []
+  })
+
+  return { total, freeTotal, pulls, templates, wall, heroIcons, iconCount, boardPieces }
 }
