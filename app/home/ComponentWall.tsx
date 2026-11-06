@@ -19,10 +19,10 @@ export type WallItem = { slug: string; name: string; image: string; imageLight?:
 // wall never moves in lockstep.
 const PACE = [70, 86, 64, 92]
 
-// Edges fade into the page: the top by --wall-y, the bottom by --wall-b, the
-// sides by --wall-x.
+// The top and bottom fade into the page, by --wall-y and --wall-b; the sides
+// end clean.
 const WALL_MASK =
-  'linear-gradient(to bottom, transparent, black var(--wall-y), black calc(100% - var(--wall-b)), transparent), linear-gradient(to right, transparent, black var(--wall-x), black calc(100% - var(--wall-x)), transparent)'
+  'linear-gradient(to bottom, transparent, black var(--wall-y), black calc(100% - var(--wall-b)), transparent)'
 
 const IMG = 'absolute inset-0 h-full w-full object-cover transition-transform duration-300 ease-out motion-safe:group-hover:scale-[1.03]'
 
@@ -92,8 +92,8 @@ export function ComponentWall({ items }: { items: WallItem[] }) {
         // The fade runs about a third as far on the light page: the screenshots are
         // dark on both themes, and a dark picture fading into a light page goes
         // grey on the way, so the band stays thin there. Dark keeps its long fade.
-        className="v3-wall relative h-[560px] overflow-hidden [--wall-b:5%] [--wall-x:2%] [--wall-y:4%] sm:h-[640px] lg:h-[720px] dark:[--wall-b:14%] dark:[--wall-x:6%] dark:[--wall-y:10%]"
-        style={{ maskImage: WALL_MASK, maskComposite: 'intersect', WebkitMaskImage: WALL_MASK, WebkitMaskComposite: 'source-in' }}
+        className="v3-wall relative h-[560px] overflow-hidden [--wall-b:5%] [--wall-y:4%] sm:h-[640px] lg:h-[720px] dark:[--wall-b:14%] dark:[--wall-y:10%]"
+        style={{ maskImage: WALL_MASK, WebkitMaskImage: WALL_MASK }}
       >
         <style>{`
           @keyframes v3-wall-up { from { transform: translateY(0) } to { transform: translateY(-50%) } }
