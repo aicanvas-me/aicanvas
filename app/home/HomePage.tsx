@@ -155,12 +155,12 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
             className="aic-hero-rise mt-8 flex flex-wrap items-center justify-center gap-3"
             style={{ animationDelay: '0.34s' }}
           >
-            <Link href="/components" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-              Browse components
+            <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
+              Explore design systems
               <ArrowRight size={14} />
             </Link>
-            <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-              Explore Andromeda Pro
+            <Link href="/components" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
+              Browse components
             </Link>
           </div>
         </section>
