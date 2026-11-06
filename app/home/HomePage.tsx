@@ -150,9 +150,9 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
           </div>
         </section>
 
-        {/* What AI Canvas is, in three groups: wider than the hero's text
-            column, so it sits outside it. */}
-        <div className="mx-auto mt-12 w-full max-w-5xl sm:mt-16">
+        {/* What AI Canvas is, in three groups: the full page column, so it
+            sits outside the hero's text column. */}
+        <div className="mt-12 w-full sm:mt-16">
           <HeroMap
             standalonesFloor={standalonesFloor}
             icons={heroIcons}
