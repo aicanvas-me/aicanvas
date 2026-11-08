@@ -189,8 +189,8 @@ function Board({
   return (
     <Appear delay={0} y={12} className={`relative h-[380px] ${BOARD_AT}`}>
       <div
-        // Tabbing to a clipped card scrolls this box; snap it back.
-        onScroll={(e) => {
+        // Tabbing to a clipped card scrolls this box; snap back once focus leaves it.
+        onBlur={(e) => {
           e.currentTarget.scrollLeft = 0
           e.currentTarget.scrollTop = 0
         }}
