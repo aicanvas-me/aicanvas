@@ -8,7 +8,7 @@ A sci-fi / blueprint design system for AI Canvas. Near-monochrome, JetBrains Mon
 
 **Andromeda Pro (premium).** The full design brain (the deep rules and the build workflow), the template library, and one-command bulk install. Free to explore; installing it requires Premium.
 
-Learn more: https://aicanvas.me/andromeda
+Learn more: https://aicanvas.me/design-systems/andromeda
 
 ## Development
 
