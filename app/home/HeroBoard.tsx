@@ -189,6 +189,11 @@ function Board({
   return (
     <Appear delay={0} y={12} className={`relative h-[380px] ${BOARD_AT}`}>
       <div
+        // Tabbing to a clipped card scrolls this box; snap it back.
+        onScroll={(e) => {
+          e.currentTarget.scrollLeft = 0
+          e.currentTarget.scrollTop = 0
+        }}
         className="flex h-full flex-col overflow-hidden rounded-section border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900/40"
         style={FADE}
       >
