@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import type { Tag, Platform } from '../components/ComponentCard'
 import { COMPONENT_COPY, ACCURATE_STACKS } from './component-copy'
 import type { DesignSystemSlug } from './design-system-meta'
@@ -194,6 +194,8 @@ export interface ComponentEntry {
   // tier toggle in the install drawer.
   designSystem?: DesignSystemSlug
   PreviewComponent: ComponentType
+  // Extra presets shown under the preview; premium standalones only, buyers never receive them.
+  Examples?: ComponentType<{ Frame: ComponentType<{ title: string; children: ReactNode }> }>
   code: string
   prompts: Partial<Record<Platform, string>>
   // Long-form copy + use-case chips for the per-component page. Lives in

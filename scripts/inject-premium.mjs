@@ -1148,7 +1148,11 @@ for (const slug of standalones) {
     writeFileSync(join(outDir, 'prompts.ts'), strippedPrompts)
   }
 
-  injected.push({ slug, meta, hasPrompts })
+  const examplesPath = join(srcDir, 'examples.tsx')
+  const hasExamples = existsSync(examplesPath)
+  if (hasExamples) writeFileSync(join(outDir, 'examples.tsx'), stripMarkerBlock(readFileSync(examplesPath, 'utf8')))
+
+  injected.push({ slug, meta, hasPrompts, hasExamples })
 }
 
 // ── 4. Bijection: manifest ⇄ injected folders ──────────────────────────────
@@ -1469,10 +1473,11 @@ const imports = [
 ]
 const decls = []
 const entries = []
-for (const { slug, meta, hasPrompts } of injected) {
+for (const { slug, meta, hasPrompts, hasExamples } of injected) {
   const v = ident(slug)
   if (hasPrompts) imports.push(`import { prompts as ${v}_p } from '../../components-workspace-premium/${slug}/prompts'`)
   decls.push(`const ${v} = dynamic(() => import('../../components-workspace-premium/${slug}'))`)
+  if (hasExamples) decls.push(`const ${v}_e = dynamic(() => import('../../components-workspace-premium/${slug}/examples'))`)
   const tags = JSON.stringify(meta.tags ?? [{ label: 'Cards', accent: true }])
   entries.push(
     '  {\n' +
@@ -1488,6 +1493,7 @@ for (const { slug, meta, hasPrompts } of injected) {
       (meta.isBlock ? '    isBlock: true,\n' : '') +
       `    badge: 'Premium',\n` +
       `    PreviewComponent: ${v},\n` +
+      (hasExamples ? `    Examples: ${v}_e,\n` : '') +
       `    code: componentCodes[${JSON.stringify(slug)}] ?? '',\n` +
       `    prompts: ${hasPrompts ? `${v}_p` : '{}'},\n` +
       '  },',

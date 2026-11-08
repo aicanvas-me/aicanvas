@@ -115,6 +115,7 @@ interface ComponentPageViewProps {
   // without `about` simply omit that section. Sourced from the registry
   // (which merges them in from app/lib/component-copy.ts).
   about?: string                                    // ~70-110 word paragraph below the install section
+  examples?: ReactNode                        // preset states shown under the preview
   useCases?: string[]                               // up to 3 chips shown next to the category in the header
   // Programmatic FAQ built server-side from registry data (page.tsx also
   // emits it as FAQPage JSON-LD); rendered above the related section.
@@ -152,6 +153,7 @@ export default function ComponentPageView({
   iconItems = [],
   children,
   about,
+  examples,
   useCases,
   faq,
   collections,
@@ -890,6 +892,13 @@ export default function ComponentPageView({
           </div>
 
           {/* ── Installation ─────────────────────────────────────────────── */}
+          {examples && (
+            <section className="mt-12">
+              <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Examples</h2>
+              <div className="mt-4 grid gap-8">{examples}</div>
+            </section>
+          )}
+
           {(() => {
             // Dynamic step numbers for Manual tab — deps step is optional
             const hasSetupStep = !!(depsCommand || iconsCommand)

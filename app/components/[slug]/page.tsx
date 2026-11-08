@@ -5,6 +5,7 @@ import { rankRelated } from '../../lib/related-order'
 import COMPONENT_ORDER from '../../../component-order.json'
 import { STANDALONE_PROPS } from '../../lib/standalone-props.generated'
 import ComponentPageView from './ComponentPageView'
+import { ExampleFrame } from './ExampleFrame'
 import { HighlightedCode } from '../../components/HighlightedCode'
 import { GITHUB_URL, SITE_URL } from '../../lib/config'
 import { collectionsForComponent } from '../../lib/collections'
@@ -209,7 +210,7 @@ export default async function Page({
   const entry = COMPONENTS.find((c) => c.slug === slug)
   if (!entry) notFound()
 
-  const { PreviewComponent } = entry
+  const { PreviewComponent, Examples } = entry
 
   // When the registry gate is enforcing (launch), source must NOT ship in the
   // page HTML — otherwise anyone reads it without a metered pull. The Code tab
@@ -377,6 +378,7 @@ export default async function Page({
         about={entry.about}
         faq={faq}
         collections={collections}
+        examples={Examples ? <Examples Frame={ExampleFrame} /> : undefined}
       >
         <PreviewComponent />
       </ComponentPageView>
