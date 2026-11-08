@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useId, useRef, useState, type KeyboardEvent, type ReactNode, type UIEvent } from 'react'
+import { useEffect, useId, useRef, useState, useSyncExternalStore, type KeyboardEvent, type ReactNode, type UIEvent } from 'react'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { LayoutGroup, motion, useReducedMotion } from 'framer-motion'
 import { ChevronDown } from '@/app/_icons/icons/chevron-down'
@@ -420,6 +420,8 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
   const baseId = useId()
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const reduceMotion = useReducedMotion()
+  // False in server HTML and first paint, so the selected label is never blank.
+  const mounted = useSyncExternalStore(() => () => {}, () => true, () => false)
 
   // A pick by hand holds only until the next navigation, which hands the
   // choice back to the route. The rail stays mounted across pages, so the pick
@@ -594,7 +596,7 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
             {selected && (
               <motion.span
                 layout="position"
-                initial={reduceMotion ? false : { opacity: 0 }}
+                initial={mounted && !reduceMotion ? { opacity: 0 } : false}
                 animate={{ opacity: 1 }}
                 transition={reduceMotion ? { duration: 0 } : { ...spring, opacity: { duration: 0.2, delay: 0.08 } }}
                 className="relative truncate"
