@@ -11,7 +11,7 @@ import type { BoardPiece, HeroIcon } from './HeroBoard'
 // The homepage renders at / and at /home; both routes share this data and
 // these words.
 export const HOMEPAGE_TITLE = 'AI Canvas: No More AI Slop. Design Systems for AI Agents'
-export const HOMEPAGE_DESCRIPTION = 'No more AI slop. Design systems your agent builds with and you reshape, plus standalone components for any project, in Claude Code, Cursor or Codex.'
+export const HOMEPAGE_DESCRIPTION = 'No more AI slop. Design systems your agent builds with and you reshape, plus standalone components for any project, in Claude, ChatGPT, Cursor or any AI agent.'
 
 // The device frame's tabs, in order: one of each kind of screen.
 const TEMPLATE_TABS = [
