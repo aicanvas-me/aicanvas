@@ -197,6 +197,11 @@ function NewChip() {
 }
 
 const NEW_PRO_TEMPLATES = new Set(['city-operations', 'ai-chat', 'fintech-landing'])
+const NEW_PRO_COMPONENTS = new Set([
+  'orb', 'strength-meter', 'artifact', 'collapsible', 'combobox', 'cube', 'item', 'message',
+  'popover', 'prompt-input', 'skeleton', 'suggestion', 'tool', 'accordion', 'bento-grid', 'footer',
+  'logo-cloud', 'marquee', 'navbar', 'payment-card', 'pricing-card', 'section-heading', 'stepper', 'tabs',
+])
 
 function CatalogRow({
   href,
@@ -409,7 +414,9 @@ function SystemSections({
             label={c.name}
             active={pathname === `${root}/${c.slug}`}
             onNavigate={onNavigate}
-          />
+          >
+            {system.tier === 'pro' && NEW_PRO_COMPONENTS.has(c.slug) && <NewChip />}
+          </CatalogRow>
         ))}
       </Section>
     </>
