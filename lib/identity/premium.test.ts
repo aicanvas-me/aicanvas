@@ -85,11 +85,29 @@ describe('getPremiumForUser', () => {
     expect(await getPremiumForUser(client({}), 'u')).toEqual({ premium: false, lifetime: false })
   })
 
-  it('a failed subscription read throws, never free', async () => {
-    await expect(getPremiumForUser(client({ subError: true, life: [{ granted_at: GRANTED, revoked_at: null }] }), 'u')).rejects.toBeTruthy()
+  it('a live Lifetime row is premium even when the subscription read failed', async () => {
+    const c = client({ subError: true, life: [{ granted_at: GRANTED, revoked_at: null }] })
+    expect(await getPremiumForUser(c, 'u')).toEqual({ premium: true, lifetime: true })
   })
 
-  it('a failed Lifetime read throws, never free', async () => {
-    await expect(getPremiumForUser(client({ lifeError: true, sub: { status: 'active', current_period_end: FUTURE } }), 'u')).rejects.toBeTruthy()
+  it('a premium subscription is premium even when the Lifetime read failed, Lifetime unknown', async () => {
+    const c = client({ lifeError: true, sub: { status: 'active', current_period_end: FUTURE } })
+    expect(await getPremiumForUser(c, 'u')).toEqual({ premium: true, lifetime: null })
+  })
+
+  it('a failed subscription read with no live Lifetime throws, never free', async () => {
+    await expect(getPremiumForUser(client({ subError: true }), 'u')).rejects.toBeTruthy()
+    const revoked = client({ subError: true, life: [{ granted_at: GRANTED, revoked_at: '2026-10-30T10:00:00Z' }] })
+    await expect(getPremiumForUser(revoked, 'u')).rejects.toBeTruthy()
+  })
+
+  it('a failed Lifetime read with no premium subscription throws, never free', async () => {
+    await expect(getPremiumForUser(client({ lifeError: true }), 'u')).rejects.toBeTruthy()
+    const lapsed = client({ lifeError: true, sub: { status: 'canceled', current_period_end: PAST } })
+    await expect(getPremiumForUser(lapsed, 'u')).rejects.toBeTruthy()
+  })
+
+  it('both reads failing throws', async () => {
+    await expect(getPremiumForUser(client({ subError: true, lifeError: true }), 'u')).rejects.toBeTruthy()
   })
 })
