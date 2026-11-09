@@ -118,7 +118,7 @@ export function CheckoutSplit({
     >
       <div className="grid min-h-full md:grid-cols-2">
         <section className="flex justify-center border-b border-sand-200 bg-sand-100 px-5 py-5 sm:px-8 md:justify-end md:border-b-0 md:border-r md:py-8 lg:px-14 dark:border-sand-800 dark:bg-sand-900">
-          <div className="w-full max-w-md">
+          <div className="flex w-full max-w-md flex-col">
             <div className="flex items-center justify-between gap-3">
               <span className="flex items-center gap-2 font-bold">
                 <BrandIcon width={20} height={17} className="shrink-0" />
@@ -136,63 +136,64 @@ export function CheckoutSplit({
               </button>
             </div>
 
-            <div className="mt-8 md:mt-16">
+            <div className="mt-8 md:my-auto md:py-10">
               <p className="text-sm font-semibold text-sand-600 dark:text-sand-400">AI Canvas Premium, {plan.name}</p>
               <p className="mt-2 flex items-baseline gap-2">
                 <span className="text-4xl font-bold tracking-tight">{usd(plan.price)}</span>
                 <span className="text-sm text-sand-600 dark:text-sand-400">{plan.suffix}</span>
               </p>
-            </div>
 
-            <dl aria-live="polite" className="mt-6 space-y-2 border-t border-sand-200 pt-5 text-sm dark:border-sand-800">
-              <div className="flex justify-between gap-4">
-                <dt className="text-sand-600 dark:text-sand-400">Subtotal</dt>
-                <dd>{totals ? money(totals.totals.subtotal, totals.currency_code) : '…'}</dd>
-              </div>
-              <div className="flex justify-between gap-4">
-                <dt className="text-sand-600 dark:text-sand-400">Tax</dt>
-                <dd>{totals ? money(totals.totals.tax, totals.currency_code) : '…'}</dd>
-              </div>
-              {totals && totals.totals.discount > 0 && (
+              <dl aria-live="polite" className="mt-6 space-y-2 border-t border-sand-200 pt-5 text-sm dark:border-sand-800">
                 <div className="flex justify-between gap-4">
-                  <dt className="text-sand-600 dark:text-sand-400">Discount</dt>
-                  <dd>-{money(totals.totals.discount, totals.currency_code)}</dd>
+                  <dt className="text-sand-600 dark:text-sand-400">Subtotal</dt>
+                  <dd>{totals ? money(totals.totals.subtotal, totals.currency_code) : '…'}</dd>
                 </div>
-              )}
-              <div className="flex justify-between gap-4 pt-1 text-base font-semibold">
-                <dt>Due today</dt>
-                <dd>{totals ? money(totals.totals.total, totals.currency_code) : '…'}</dd>
-              </div>
-            </dl>
+                <div className="flex justify-between gap-4">
+                  <dt className="text-sand-600 dark:text-sand-400">Tax</dt>
+                  <dd>{totals ? money(totals.totals.tax, totals.currency_code) : '…'}</dd>
+                </div>
+                {totals && totals.totals.discount > 0 && (
+                  <div className="flex justify-between gap-4">
+                    <dt className="text-sand-600 dark:text-sand-400">Discount</dt>
+                    <dd>-{money(totals.totals.discount, totals.currency_code)}</dd>
+                  </div>
+                )}
+                <div className="flex justify-between gap-4 pt-1 text-base font-semibold">
+                  <dt>Due today</dt>
+                  <dd>{totals ? money(totals.totals.total, totals.currency_code) : '…'}</dd>
+                </div>
+              </dl>
 
-            <div className="mt-6 hidden border-t border-sand-200 pt-5 md:block dark:border-sand-800">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">{plan.label}</p>
-              <ul className="mt-4 space-y-3">
-                {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
-                    <CircleCheck size={18} className="mt-0.5 shrink-0 text-accent" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-6 hidden border-t border-sand-200 pt-5 md:block dark:border-sand-800">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500">{plan.label}</p>
+                <ul className="mt-4 space-y-3">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
+                      <CircleCheck size={18} className="mt-0.5 shrink-0 text-accent" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
+            <div aria-hidden className="hidden h-9 shrink-0 md:block" />
           </div>
         </section>
 
-        <section className="flex justify-center px-5 py-6 sm:px-8 md:justify-start md:py-8 lg:px-14">
+        <section className="flex justify-center px-5 py-6 sm:px-8 md:items-center md:justify-start md:py-8 lg:px-14">
           <div className="w-full max-w-md">
             {stage === 'error' && (
               <p role="alert" className="mb-3 rounded-card border border-sand-200 bg-sand-100 px-4 py-3 text-sm text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
                 The checkout could not load. Go back and try again, or contact support if it keeps happening.
               </p>
             )}
-            <div className="relative min-h-[520px]">
+            <div className={`relative ${stage === 'ready' ? '' : 'min-h-[520px]'}`}>
               {(stage === 'loading' || completing) && (
                 <p role="status" className="absolute inset-0 flex items-center justify-center text-center text-sm text-sand-600 dark:text-sand-400">
                   {completing ? 'Payment received, activating your account…' : 'Loading secure checkout…'}
                 </p>
               )}
-              <div className="paddle-checkout-frame" />
+              <div className={`paddle-checkout-frame ${completing ? 'invisible' : ''}`} />
             </div>
           </div>
         </section>
