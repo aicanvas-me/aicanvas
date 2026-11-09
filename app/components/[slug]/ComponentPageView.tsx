@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import type { CSSProperties, ReactNode } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -243,6 +243,10 @@ export default function ComponentPageView({
   // A dark-only component ignores the theme: it has no light rendering to show.
   const { theme: siteTheme, setTheme: setSiteTheme } = useTheme()
   const cardTheme: 'dark' | 'light' = dualTheme ? siteTheme : 'dark'
+  // A component can't read the theme during SSR and renders dark first, so a light
+  // card stays empty until hydration instead of flashing that dark render.
+  const [previewHydrated, setPreviewHydrated] = useState(false)
+  useLayoutEffect(() => setPreviewHydrated(true), [])
   const [cliCopied, setCliCopied] = useState(false)
   const [codeCopied, setCodeCopied] = useState(false)
   const [depsCopied, setDepsCopied] = useState(false)
@@ -764,7 +768,9 @@ export default function ComponentPageView({
                 initial={false}
                 animate={{ opacity: activeTab === 'preview' ? 1 : 0 }}
                 transition={{ duration: 0.18 }}
-                className="group/preview absolute inset-0 flex items-center justify-center"
+                className={`group/preview absolute inset-0 flex items-center justify-center ${
+                  cardTheme === 'light' && !previewHydrated ? 'invisible' : ''
+                }`}
                 style={{ zIndex: activeTab === 'preview' ? 1 : 0 }}
                 aria-hidden={activeTab !== 'preview'}
               >
