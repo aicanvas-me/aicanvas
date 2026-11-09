@@ -32,3 +32,22 @@ export const OFFER_ENDS = new Date('2026-10-14T23:59:59+02:00')
 
 /** Prices are quoted to the cent everywhere on the site. */
 export const usd = (n: number) => `$${n.toFixed(2)}`
+
+export const PREMIUM_FEATURES = [
+  'Every premium component and block, one command install',
+  'Remix with AI on every component',
+  'Full design systems, tokens to templates',
+  'All premium templates, source included',
+  'New premium releases included as they ship',
+  'Use in commercial and client projects',
+  'Cancel anytime',
+]
+
+// The Lifetime card's own list: what one payment adds on top of Premium, each
+// line from the Lifetime ruling (every future release, no renewal, installs
+// stay theirs). Shown only while the Lifetime switch is on.
+export const LIFETIME_FEATURES = [
+  'One payment, no renewal to manage',
+  'Every future premium release included',
+  'Installed components stay yours forever',
+]
