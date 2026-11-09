@@ -24,7 +24,7 @@ State: isOn=false, animating=false, pageIsDark=true, trackW=80. Refs: containerR
 
 Root: div ref=containerRef, className "flex h-full w-full items-center justify-center", style background '#110F0C' dark / '#EDEAE5' light.
 
-Theme + resize (single useEffect): closest [data-card-theme] .dark else documentElement .dark. MutationObserver on both. ResizeObserver sets trackW = clamp(MIN, MAX, round(min(offsetW, offsetH)*0.18)). Separate useEffect on trackW: thumbX.set(isOnRef.current ? onX : offX).
+Theme + resize (single useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint): closest [data-card-theme] .dark else documentElement .dark. MutationObserver on both. ResizeObserver sets trackW = clamp(MIN, MAX, round(min(offsetW, offsetH)*0.18)). Separate useEffect on trackW: thumbX.set(isOnRef.current ? onX : offX).
 
 Derived dimensions (computed each render): trackH = round(trackW*0.55); thumb = round(trackW*0.45); pad = max(3, round(trackW*0.05)); offX = pad; onX = trackW - thumb - pad.
 
@@ -45,7 +45,7 @@ State: isOn=false, animating=false, pageIsDark=true, trackW=80. Refs: containerR
 
 Root: div ref=containerRef, className "flex h-full w-full items-center justify-center", style background '#110F0C' dark / '#EDEAE5' light.
 
-Theme + resize (single useEffect): closest [data-card-theme] .dark else documentElement .dark. MutationObserver on both. ResizeObserver sets trackW = clamp(MIN, MAX, round(min(offsetW, offsetH)*0.18)). Separate useEffect on trackW: thumbX.set(isOnRef.current ? onX : offX).
+Theme + resize (single useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint): closest [data-card-theme] .dark else documentElement .dark. MutationObserver on both. ResizeObserver sets trackW = clamp(MIN, MAX, round(min(offsetW, offsetH)*0.18)). Separate useEffect on trackW: thumbX.set(isOnRef.current ? onX : offX).
 
 Derived dimensions (computed each render): trackH = round(trackW*0.55); thumb = round(trackW*0.45); pad = max(3, round(trackW*0.05)); offX = pad; onX = trackW - thumb - pad.
 
@@ -66,7 +66,7 @@ State: isOn=false, animating=false, pageIsDark=true, trackW=80. Refs: containerR
 
 Root: div ref=containerRef, className "flex h-full w-full items-center justify-center", style background '#110F0C' dark / '#EDEAE5' light.
 
-Theme + resize (single useEffect): closest [data-card-theme] .dark else documentElement .dark. MutationObserver on both. ResizeObserver sets trackW = clamp(MIN, MAX, round(min(offsetW, offsetH)*0.18)). Separate useEffect on trackW: thumbX.set(isOnRef.current ? onX : offX).
+Theme + resize (single useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint): closest [data-card-theme] .dark else documentElement .dark. MutationObserver on both. ResizeObserver sets trackW = clamp(MIN, MAX, round(min(offsetW, offsetH)*0.18)). Separate useEffect on trackW: thumbX.set(isOnRef.current ? onX : offX).
 
 Derived dimensions (computed each render): trackH = round(trackW*0.55); thumb = round(trackW*0.45); pad = max(3, round(trackW*0.05)); offX = pad; onX = trackW - thumb - pad.
 

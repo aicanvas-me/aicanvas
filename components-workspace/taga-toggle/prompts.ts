@@ -23,7 +23,7 @@ Write this as a single self-contained React client component. Inline everything.
 ## Imports
 \`\`\`
 'use client'
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useLayoutEffect, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion'
 \`\`\`
 
@@ -47,7 +47,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, animate } from '
 \`isOn\` (bool, default false), \`animating\` (bool), \`pageIsDark\` (bool, default true), \`trackW\` (number, default MAX_TRACK_W).
 Keep a \`isOnRef = useRef(false)\` synchronized with \`isOn\` to read in the resize snap effect.
 
-## Theme + resize detection (single useEffect)
+## Theme + resize detection (single useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint)
 Get \`containerRef.current\`. Theme: find \`closest('[data-card-theme]')\` → if found use \`.classList.contains('dark')\`, else \`document.documentElement.classList.contains('dark')\`. MutationObserver on both. Resize: \`ResizeObserver\` on the container, compute \`s = max(MIN_TRACK_W, min(MAX_TRACK_W, round(min(el.offsetWidth, el.offsetHeight) * 0.18)))\` → \`setTrackW(s)\`. Cleanup disconnects both.
 
 ## Resize snap (separate useEffect on trackW)
@@ -104,7 +104,7 @@ Write this as a single self-contained React client component. Inline everything.
 ## Imports
 \`\`\`
 'use client'
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useLayoutEffect, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion'
 \`\`\`
 
@@ -128,7 +128,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, animate } from '
 \`isOn\` (bool, default false), \`animating\` (bool), \`pageIsDark\` (bool, default true), \`trackW\` (number, default MAX_TRACK_W).
 Keep a \`isOnRef = useRef(false)\` synchronized with \`isOn\` to read in the resize snap effect.
 
-## Theme + resize detection (single useEffect)
+## Theme + resize detection (single useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint)
 Get \`containerRef.current\`. Theme: find \`closest('[data-card-theme]')\` → if found use \`.classList.contains('dark')\`, else \`document.documentElement.classList.contains('dark')\`. MutationObserver on both. Resize: \`ResizeObserver\` on the container — compute \`s = max(MIN_TRACK_W, min(MAX_TRACK_W, round(min(el.offsetWidth, el.offsetHeight) * 0.18)))\` → \`setTrackW(s)\`. Cleanup disconnects both.
 
 ## Resize snap (separate useEffect on trackW)
@@ -185,7 +185,7 @@ Write this as a single self-contained React client component. Inline everything.
 ## Imports
 \`\`\`
 'use client'
-import { useState, useCallback, useEffect, useRef } from 'react'
+import { useState, useCallback, useLayoutEffect, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion'
 \`\`\`
 
@@ -209,7 +209,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform, animate } from '
 \`isOn\` (bool, default false), \`animating\` (bool), \`pageIsDark\` (bool, default true), \`trackW\` (number, default MAX_TRACK_W).
 Keep a \`isOnRef = useRef(false)\` synchronized with \`isOn\` to read in the resize snap effect.
 
-## Theme + resize detection (single useEffect)
+## Theme + resize detection (single useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint)
 Get \`containerRef.current\`. Theme: find \`closest('[data-card-theme]')\` → if found use \`.classList.contains('dark')\`, else \`document.documentElement.classList.contains('dark')\`. MutationObserver on both. Resize: \`ResizeObserver\` on the container — compute \`s = max(MIN_TRACK_W, min(MAX_TRACK_W, round(min(el.offsetWidth, el.offsetHeight) * 0.18)))\` → \`setTrackW(s)\`. Cleanup disconnects both.
 
 ## Resize snap (separate useEffect on trackW)

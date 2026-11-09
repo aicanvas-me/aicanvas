@@ -16,7 +16,7 @@ If any are missing, set up via the shadcn CLI:
 
 ---
 
-Create \`components-workspace/slide-deck/index.tsx\`. Export a named function \`SlideDeck\`. Single file, \`'use client'\`, no \`any\`.
+Create \`components-workspace/slide-deck/index.tsx\`. Export a default function \`SlideDeck\`. Single file, \`'use client'\`, no \`any\`.
 
 A swipeable editorial card deck with 4 cards always mounted in a layered stack. The top 3 are visible (y-offset + scale gives depth). Swiping forward flies the top card out left and reveals the one behind it. Swiping backward slides the new card in from the right, on top.
 
@@ -93,7 +93,7 @@ Container: \`className="flex h-full w-full flex-col items-center justify-center 
 - Sizes: 10px, 11px, 26px, 88px
 - Weights: 700, 800, 900`,
 
-  'Lovable': `Create \`components-workspace/slide-deck/index.tsx\`. Export a named function \`SlideDeck\`. Single file, \`'use client'\`, no \`any\`.
+  'Lovable': `Create \`components-workspace/slide-deck/index.tsx\`. Export a default function \`SlideDeck\`. Single file, \`'use client'\`, no \`any\`.
 
 A swipeable editorial card deck — 4 cards always mounted in a layered stack. The top 3 are visible (y-offset + scale gives depth). Swiping forward flies the top card out left and reveals the one behind it. Swiping backward slides the new card in from the right, on top.
 
@@ -170,7 +170,7 @@ Container: \`className="flex h-full w-full flex-col items-center justify-center 
 - Sizes: 10px, 11px, 26px, 88px
 - Weights: 700, 800, 900`,
 
-  'V0': `Create \`components-workspace/slide-deck/index.tsx\`. Export a named function \`SlideDeck\`. Single file, \`'use client'\`, no \`any\`.
+  'V0': `Create \`components-workspace/slide-deck/index.tsx\`. Export a default function \`SlideDeck\`. Single file, \`'use client'\`, no \`any\`.
 
 A swipeable editorial card deck — 4 cards always mounted in a layered stack. The top 3 are visible (y-offset + scale gives depth). Swiping forward flies the top card out left and reveals the one behind it. Swiping backward slides the new card in from the right, on top.
 

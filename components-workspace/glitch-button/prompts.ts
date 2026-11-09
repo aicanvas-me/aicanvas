@@ -20,7 +20,7 @@ Create a React client component named \`GlitchButton\`: a terminal-inspired butt
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
-Imports: useState, useRef, useEffect, useCallback from 'react'; motion from 'framer-motion'.
+Imports: useState, useRef, useEffect, useLayoutEffect, useCallback from 'react'; motion from 'framer-motion'.
 
 Constants:
 - LABEL = 'INITIALIZE'
@@ -32,7 +32,7 @@ Palettes:
 DARK { text:'#00ff41', textDim:'rgba(0, 255, 65, 0.6)', glow:'rgba(0, 255, 65, 0.15)', borderDefault:'#2E2A24' }
 LIGHT { text:'#2a6b0a', textDim:'rgba(42, 107, 10, 0.7)', glow:'rgba(42, 107, 10, 0.12)', borderDefault:'#DDD8CE' }
 
-Theme detection: useEffect, find closest [data-card-theme], else use document.documentElement.classList.contains('dark'). MutationObserver on both with attributeFilter ['class']. Cleanup disconnect.
+Theme detection: useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint, find closest [data-card-theme], else use document.documentElement.classList.contains('dark'). MutationObserver on both with attributeFilter ['class']. Cleanup disconnect.
 
 State: isDark, displayText (init LABEL), isHovered. Refs: rafRef (number, 0), isHoveredRef (false), startTimeRef (0), lastUpdateRef (0).
 
@@ -61,7 +61,7 @@ Inside: <span className="relative z-10">{displayText}</span>.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
-Imports: useState, useRef, useEffect, useCallback from 'react'; motion from 'framer-motion'.
+Imports: useState, useRef, useEffect, useLayoutEffect, useCallback from 'react'; motion from 'framer-motion'.
 
 Constants:
 - LABEL = 'INITIALIZE'
@@ -73,7 +73,7 @@ Palettes:
 DARK { text:'#00ff41', textDim:'rgba(0, 255, 65, 0.6)', glow:'rgba(0, 255, 65, 0.15)', borderDefault:'#2E2A24' }
 LIGHT { text:'#2a6b0a', textDim:'rgba(42, 107, 10, 0.7)', glow:'rgba(42, 107, 10, 0.12)', borderDefault:'#DDD8CE' }
 
-Theme detection: useEffect, find closest [data-card-theme], else use document.documentElement.classList.contains('dark'). MutationObserver on both with attributeFilter ['class']. Cleanup disconnect.
+Theme detection: useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint, find closest [data-card-theme], else use document.documentElement.classList.contains('dark'). MutationObserver on both with attributeFilter ['class']. Cleanup disconnect.
 
 State: isDark, displayText (init LABEL), isHovered. Refs: rafRef (number, 0), isHoveredRef (false), startTimeRef (0), lastUpdateRef (0).
 
@@ -102,7 +102,7 @@ Inside: <span className="relative z-10">{displayText}</span>.
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types.
 
-Imports: useState, useRef, useEffect, useCallback from 'react'; motion from 'framer-motion'.
+Imports: useState, useRef, useEffect, useLayoutEffect, useCallback from 'react'; motion from 'framer-motion'.
 
 Constants:
 - LABEL = 'INITIALIZE'
@@ -114,7 +114,7 @@ Palettes:
 DARK { text:'#00ff41', textDim:'rgba(0, 255, 65, 0.6)', glow:'rgba(0, 255, 65, 0.15)', borderDefault:'#2E2A24' }
 LIGHT { text:'#2a6b0a', textDim:'rgba(42, 107, 10, 0.7)', glow:'rgba(42, 107, 10, 0.12)', borderDefault:'#DDD8CE' }
 
-Theme detection: useEffect, find closest [data-card-theme], else use document.documentElement.classList.contains('dark'). MutationObserver on both with attributeFilter ['class']. Cleanup disconnect.
+Theme detection: useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint, find closest [data-card-theme], else use document.documentElement.classList.contains('dark'). MutationObserver on both with attributeFilter ['class']. Cleanup disconnect.
 
 State: isDark, displayText (init LABEL), isHovered. Refs: rafRef (number, 0), isHoveredRef (false), startTimeRef (0), lastUpdateRef (0).
 

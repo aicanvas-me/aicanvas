@@ -20,7 +20,7 @@ Create a React client component named \`RunwayLoader\`: a playful progress indic
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types. Define the Airplane SVG as a plain inner function component in the same file (not an exported helper).
 
-Imports: useEffect, useRef, useState from 'react'; motion, AnimatePresence from 'framer-motion'.
+Imports: useEffect, useLayoutEffect, useRef, useState from 'react'; motion, AnimatePresence from 'framer-motion'.
 
 Airplane({isDark}): <svg className="w-[52px] sm:w-[72px] h-auto" viewBox="0 0 72 46" fill="none" style={{filter: isDark ? 'drop-shadow(0 4px 12px rgba(0,0,0,0.75)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' : 'drop-shadow(0 2px 8px rgba(0,0,0,0.35)) drop-shadow(0 1px 3px rgba(0,0,0,0.2))'}}>
 Colors (dark vs light): bodyTop '#ececec'/'#c8c8c8', bodyMid '#ffffff'/'#dedede', bodyBot '#d0d0d0'/'#b4b4b4', wingLight '#f8f8f8'/'#d8d8d8', wingDark '#bababa'/'#909090', tail '#c8c8c8'/'#a8a8a8', nose '#f4f4f4'/'#d8d8d8'.
@@ -44,7 +44,7 @@ State/refs in RunwayLoader:
 - rafRef number 0, startRef undefined, aliveRef true, disappearedRef false
 - const WALL_PCT = 91
 
-Theme effect: same closest [data-card-theme] / html fallback pattern. MutationObserver on both, cleanup disconnect.
+Theme effect: useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint; same closest [data-card-theme] / html fallback pattern. MutationObserver on both, cleanup disconnect.
 
 Animation effect (runs once):
 - aliveRef.current=true; disappearedRef.current=false; TAXI_MS=5500.
@@ -107,7 +107,7 @@ JSX:
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types. Define the Airplane SVG as a plain inner function component in the same file (not an exported helper).
 
-Imports: useEffect, useRef, useState from 'react'; motion, AnimatePresence from 'framer-motion'.
+Imports: useEffect, useLayoutEffect, useRef, useState from 'react'; motion, AnimatePresence from 'framer-motion'.
 
 Airplane({isDark}): <svg className="w-[52px] sm:w-[72px] h-auto" viewBox="0 0 72 46" fill="none" style={{filter: isDark ? 'drop-shadow(0 4px 12px rgba(0,0,0,0.75)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' : 'drop-shadow(0 2px 8px rgba(0,0,0,0.35)) drop-shadow(0 1px 3px rgba(0,0,0,0.2))'}}>
 Colors (dark vs light): bodyTop '#ececec'/'#c8c8c8', bodyMid '#ffffff'/'#dedede', bodyBot '#d0d0d0'/'#b4b4b4', wingLight '#f8f8f8'/'#d8d8d8', wingDark '#bababa'/'#909090', tail '#c8c8c8'/'#a8a8a8', nose '#f4f4f4'/'#d8d8d8'.
@@ -131,7 +131,7 @@ State/refs in RunwayLoader:
 - rafRef number 0, startRef undefined, aliveRef true, disappearedRef false
 - const WALL_PCT = 91
 
-Theme effect: same closest [data-card-theme] / html fallback pattern. MutationObserver on both, cleanup disconnect.
+Theme effect: useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint; same closest [data-card-theme] / html fallback pattern. MutationObserver on both, cleanup disconnect.
 
 Animation effect (runs once):
 - aliveRef.current=true; disappearedRef.current=false; TAXI_MS=5500.
@@ -194,7 +194,7 @@ JSX:
 
 Write this as a single self-contained React client component. Inline everything. Do not extract helper hooks, utility functions, or separate files. 'use client' at the top. No 'any' types. Define the Airplane SVG as a plain inner function component in the same file (not an exported helper).
 
-Imports: useEffect, useRef, useState from 'react'; motion, AnimatePresence from 'framer-motion'.
+Imports: useEffect, useLayoutEffect, useRef, useState from 'react'; motion, AnimatePresence from 'framer-motion'.
 
 Airplane({isDark}): <svg className="w-[52px] sm:w-[72px] h-auto" viewBox="0 0 72 46" fill="none" style={{filter: isDark ? 'drop-shadow(0 4px 12px rgba(0,0,0,0.75)) drop-shadow(0 2px 4px rgba(0,0,0,0.5))' : 'drop-shadow(0 2px 8px rgba(0,0,0,0.35)) drop-shadow(0 1px 3px rgba(0,0,0,0.2))'}}>
 Colors (dark vs light): bodyTop '#ececec'/'#c8c8c8', bodyMid '#ffffff'/'#dedede', bodyBot '#d0d0d0'/'#b4b4b4', wingLight '#f8f8f8'/'#d8d8d8', wingDark '#bababa'/'#909090', tail '#c8c8c8'/'#a8a8a8', nose '#f4f4f4'/'#d8d8d8'.
@@ -218,7 +218,7 @@ State/refs in RunwayLoader:
 - rafRef number 0, startRef undefined, aliveRef true, disappearedRef false
 - const WALL_PCT = 91
 
-Theme effect: same closest [data-card-theme] / html fallback pattern. MutationObserver on both, cleanup disconnect.
+Theme effect: useIsomorphicLayoutEffect (useLayoutEffect in the browser, useEffect on the server), so the dark start value is corrected before paint; same closest [data-card-theme] / html fallback pattern. MutationObserver on both, cleanup disconnect.
 
 Animation effect (runs once):
 - aliveRef.current=true; disappearedRef.current=false; TAXI_MS=5500.
