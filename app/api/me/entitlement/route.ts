@@ -19,9 +19,9 @@ export async function GET() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ tier: 'anonymous' })
 
-    // RLS restricts both reads to the caller's own rows. A failed read throws
-    // into the 503 below, and so does an unknown Lifetime: a guess of "no" would
-    // offer the buy button to someone who already owns it.
+    // RLS restricts both reads to the caller's own rows. An unproven free answer
+    // throws into the 503 below, and so does an unknown Lifetime: a guess of "no"
+    // would offer the buy button to someone who already owns it.
     const { premium, lifetime } = await getPremiumForUser(supabase, user.id)
     if (lifetime === null) throw new Error('Lifetime read failed')
     return NextResponse.json({ tier: premium ? 'premium' : 'free', lifetime })

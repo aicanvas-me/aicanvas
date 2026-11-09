@@ -23,8 +23,7 @@ export function isLifetimeLive(row: { granted_at: string | null; revoked_at: str
  * Works with the admin client or a session client (RLS lets the owner read both
  * tables). A read that proves premium wins even when the other read failed, so
  * one table being down never locks out a customer the other one proves paid. A
- * free answer needs both reads: if either failed it THROWS, never coerced to
- * free, and callers turn the throw into a retryable 503 or a fail-closed paywall.
+ * free answer needs both reads: if either failed it THROWS, never coerced to free.
  */
 export async function getPremiumForUser(client: Pick<SupabaseClient, 'from'>, userId: string): Promise<PremiumState> {
   const [sub, life] = await Promise.all([

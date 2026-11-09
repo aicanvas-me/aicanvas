@@ -33,8 +33,8 @@ export default async function AndromedaBrainReaderPage() {
       data: { user },
     } = await supabase.auth.getUser()
     if (user) {
-      // A failed read throws, so the outer catch fails closed instead of
-      // serving content.
+      // An unproven free answer throws, so the outer catch fails closed instead
+      // of serving content.
       const { premium } = await getPremiumForUser(createAdminClient(), user.id)
       tier = premium ? 'premium' : 'free'
     }

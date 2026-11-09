@@ -23,10 +23,10 @@ export interface Entitlement {
  * derived live from the subscription and Lifetime rows (getPremiumForUser).
  *
  * A FAILED read must NOT be coerced to free: that silently downgrades a paying
- * customer and 402s them on content they paid for. getPremiumForUser throws on
- * a read failure; the premium gate's try/catch turns that into a retryable 503
- * and the standalone path fails OPEN, so a paying customer is never wrongly
- * blocked on a transient DB blip.
+ * customer and 402s them on content they paid for. getPremiumForUser throws when
+ * a failed read leaves free unproven; the premium gate's try/catch turns that
+ * into a retryable 503 and the standalone path fails OPEN, so a paying customer
+ * is never wrongly blocked on a transient DB blip.
  */
 export async function getEntitlement(req: Request): Promise<Entitlement> {
   const token = extractToken(req)
