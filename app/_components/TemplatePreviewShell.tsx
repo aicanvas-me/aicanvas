@@ -350,8 +350,6 @@ function PreviewChrome({
         onDevice={setDevice}
         onReload={reload}
       />
-      {/* Above the region on phones: compositions there grow past it, so a bar below would sit under them. */}
-
       {/* Preview region */}
       <div className="relative min-h-0 flex-1">
         {/* Desktop: native, full-bleed. Kept mounted AND visible so the mobile
