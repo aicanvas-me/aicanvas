@@ -5,15 +5,18 @@ import { createPortal } from 'react-dom'
 import type { CheckoutEventsData } from '@paddle/paddle-js/types/checkout/events'
 import { ArrowLeft } from '@/app/_icons/icons/arrow-left'
 import { CircleCheck } from '@/app/_icons/icons/circle-check'
+import { Lock } from '@/app/_icons/icons/lock'
+import { Refresh } from '@/app/_icons/icons/refresh'
+import { ShieldCheck } from '@/app/_icons/icons/shield-check'
 import { BrandIcon } from '../BrandIcon'
 import { buttonClasses } from '../buttonClasses'
 import { getPaddle, PRICES, subscribePaddleEvents, type BillingCycle } from '../../lib/paddle/client'
 import { LIFETIME_FEATURES, LIFETIME_PRICE, MONTHLY_PRICE, PREMIUM_FEATURES, YEARLY_PRICE, usd } from '../../lib/offer'
 
 const PLANS = {
-  monthly: { name: 'Monthly', price: MONTHLY_PRICE, suffix: '/ month', label: 'What you get', features: PREMIUM_FEATURES },
-  yearly: { name: 'Yearly', price: YEARLY_PRICE, suffix: '/ year', label: 'What you get', features: PREMIUM_FEATURES },
-  lifetime: { name: 'Lifetime', price: LIFETIME_PRICE, suffix: '/ one time', label: 'Everything in Monthly, plus', features: LIFETIME_FEATURES },
+  monthly: { name: 'Monthly', price: MONTHLY_PRICE, suffix: '/ month', label: 'What you get', features: PREMIUM_FEATURES, terms: 'Renews monthly, cancel anytime' },
+  yearly: { name: 'Yearly', price: YEARLY_PRICE, suffix: '/ year', label: 'What you get', features: PREMIUM_FEATURES, terms: 'Renews yearly, cancel anytime' },
+  lifetime: { name: 'Lifetime', price: LIFETIME_PRICE, suffix: '/ one time', label: 'Everything in Monthly, plus', features: LIFETIME_FEATURES, terms: 'One payment, no subscription' },
 }
 
 type Totals = Pick<CheckoutEventsData, 'totals' | 'currency_code'>
@@ -186,6 +189,21 @@ export function CheckoutSplit({
                   ))}
                 </ul>
               </div>
+
+              <ul className="mt-6 space-y-2 border-t border-sand-200 pt-5 text-xs text-sand-600 dark:border-sand-800 dark:text-sand-400">
+                <li className="flex items-center gap-2.5">
+                  <Lock size={14} className="shrink-0" aria-hidden />
+                  Secure checkout by Paddle
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <ShieldCheck size={14} className="shrink-0" aria-hidden />
+                  Paddle handles payment, tax and your receipt
+                </li>
+                <li className="flex items-center gap-2.5">
+                  <Refresh size={14} className="shrink-0" aria-hidden />
+                  {plan.terms}
+                </li>
+              </ul>
             </div>
             <div aria-hidden className="hidden h-9 shrink-0 md:block" />
           </div>
