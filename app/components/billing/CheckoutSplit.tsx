@@ -41,6 +41,7 @@ export function CheckoutSplit({
   const [stage, setStage] = useState<Stage>('loading')
   const [totals, setTotals] = useState<Totals | null>(null)
   const backRef = useRef<HTMLButtonElement>(null)
+  const frameRef = useRef<HTMLDivElement>(null)
   const plan = PLANS[cycle]
   const completing = stage === 'completing'
 
@@ -77,6 +78,16 @@ export function CheckoutSplit({
       }),
     [],
   )
+
+  // Paddle resizes its frame a beat after the content changes; without this a
+  // scrollbar flashes inside it on every switch of payment method.
+  useEffect(() => {
+    const frame = frameRef.current
+    if (!frame) return
+    const observer = new MutationObserver(() => frame.querySelector('iframe')?.setAttribute('scrolling', 'no'))
+    observer.observe(frame, { childList: true, subtree: true })
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     let live = true
@@ -193,7 +204,7 @@ export function CheckoutSplit({
                   {completing ? 'Payment received, activating your account…' : 'Loading secure checkout…'}
                 </p>
               )}
-              <div className={`paddle-checkout-frame ${completing ? 'invisible' : ''}`} />
+              <div ref={frameRef} className={`paddle-checkout-frame ${completing ? 'invisible' : ''}`} />
             </div>
           </div>
         </section>
