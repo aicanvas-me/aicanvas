@@ -277,17 +277,15 @@ export function PremiumCards({
           )}
         </div>
         <div className={`flex-1 rounded-card bg-sand-50/70 dark:bg-sand-950 ${listPad}`}>
-          {/* The comparison label only makes sense next to the Free card; beside
-              Lifetime in the modal an invisible copy keeps both lists level. */}
+          {/* Beside Free the label compares; beside Lifetime in the modal it names the list. */}
           {(showFree || pairUp) && (
             <p
-              aria-hidden={showFree ? undefined : true}
-              className={`text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500 ${showFree ? '' : 'invisible hidden md:block'}`}
+              className="text-[11px] font-semibold uppercase tracking-[0.12em] text-sand-600 dark:text-sand-500"
             >
-              EVERYTHING IN FREE, PLUS
+              {showFree ? 'EVERYTHING IN FREE, PLUS' : 'WHAT YOU GET'}
             </p>
           )}
-          <ul className={showFree ? 'mt-4 space-y-3' : pairUp ? 'space-y-3 md:mt-4' : 'space-y-3'}>
+          <ul className={showFree || pairUp ? 'mt-4 space-y-3' : 'space-y-3'}>
             {PREMIUM_FEATURES.map((feature) => (
               <li key={feature} className="flex items-start gap-3 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
                 <CircleCheck size={18} className="mt-0.5 shrink-0 text-accent" />

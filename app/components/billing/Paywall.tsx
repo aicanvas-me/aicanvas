@@ -125,7 +125,7 @@ export function Paywall({
       >
         {teaser}
       </pre>
-      <div className={`absolute inset-0 flex ${overlay} ${splitGround} @2xl:p-2`}>
+      <div className={`absolute inset-0 flex font-sans ${overlay} ${splitGround} @2xl:p-2`}>
         <div aria-hidden className={`relative hidden w-1/2 shrink-0 overflow-hidden rounded-card border @2xl:block ${artCard}`}>
           <AsciiArt subject="lock" />
         </div>

@@ -442,18 +442,20 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
           <div className="mt-10 grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
             <div className="relative flex flex-col lg:col-span-5">
               {/* Connecting dotted line */}
-              <div
-                aria-hidden
-                className="v3-dot-flow absolute bottom-16 left-[19px] top-6 w-px overflow-hidden"
-                style={{
-                  backgroundImage: 'radial-gradient(circle, color-mix(in srgb, var(--color-sand-500) 60%, transparent) 1px, transparent 1px)',
-                  backgroundSize: '1px 8px',
-                  animation: 'v3DotFlow 1.5s linear infinite',
-                }}
-              />
               <style>{`@keyframes v3DotFlow { from { background-position-y: 0 } to { background-position-y: 8px } } @media (prefers-reduced-motion: reduce) { .v3-dot-flow { animation: none !important } }`}</style>
               {STEPS.map((step, i) => (
-                <Reveal key={step.num} x={-20} y={0} delay={i * 0.12} className="flex items-start gap-5 py-5">
+                <Reveal key={step.num} x={-20} y={0} delay={i * 0.12} className="relative flex items-start gap-5 py-5">
+                  {i < STEPS.length - 1 && (
+                    <div
+                      aria-hidden
+                      className="v3-dot-flow absolute -bottom-5 left-[19px] top-[60px] w-px overflow-hidden"
+                      style={{
+                        backgroundImage: 'radial-gradient(circle, color-mix(in srgb, var(--color-sand-500) 60%, transparent) 1px, transparent 1px)',
+                        backgroundSize: '1px 8px',
+                        animation: 'v3DotFlow 1.5s linear infinite',
+                      }}
+                    />
+                  )}
                   <div className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-inset border border-sand-300 bg-sand-100 text-sand-700 shadow-[0_2px_10px_rgba(0,0,0,0.08)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
                     {step.icon}
                   </div>

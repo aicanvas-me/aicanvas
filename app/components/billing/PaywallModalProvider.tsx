@@ -117,7 +117,7 @@ function PaywallModalView({
         tabIndex={-1}
         // Wide enough for Monthly and Lifetime side by side when Lifetime is
         // on; one card otherwise.
-        className={`relative z-10 my-auto w-full ${lifetimeEnabled() ? 'max-w-3xl' : 'max-w-lg'} p-6 outline-none sm:p-8`}
+        className={`relative z-10 my-auto w-full ${lifetimeEnabled() ? 'max-w-4xl' : 'max-w-lg'} p-6 outline-none sm:p-8`}
       >
         <button
           type="button"

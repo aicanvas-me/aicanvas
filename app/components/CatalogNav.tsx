@@ -33,7 +33,7 @@ const iconData = iconsJson as IconMeta[]
 // the drawer and the rail never list different things.
 //
 // Both catalog lists follow one pattern, the one strong docs sidebars use:
-// sections, each a small-caps header with a count chip over a flat list of
+// sections, each a small-caps header over a flat list of
 // rows, each list with its own thin guide line. The Components tab has one
 // section per category, each component listed once, under its first
 // category; the Design systems tab has one row per system that opens to its
@@ -75,9 +75,6 @@ const SYSTEMS = [
     slug: 'andromeda-pro',
     name: 'Andromeda Pro',
     tier: 'pro',
-    // The rail says what is NEW, not what it costs: the tier is on the
-    // system's own page, and the licence word crowded out the name here.
-    badge: 'New',
     brain: true,
     // Pro's pages after the overview: Foundation, Components, Image Pack.
     // None carries the premium mark: the foundation is open, single
@@ -106,7 +103,6 @@ const SYSTEMS = [
     slug: 'andromeda',
     name: 'Andromeda Legacy',
     tier: 'mit',
-    badge: null,
     // Has a premium Brain page at /design-systems/<slug>/brain (rules +
     // foundations + per-component intelligence).
     brain: true,
@@ -195,6 +191,13 @@ function CountChip({ count }: { count: number }) {
   )
 }
 
+// The rail's NEW mark on a single row.
+function NewChip() {
+  return <SystemTierChip tier="new" className="!px-1" />
+}
+
+const NEW_PRO_TEMPLATES = new Set(['city-operations', 'ai-chat', 'fintech-landing'])
+
 function CatalogRow({
   href,
   label,
@@ -242,18 +245,22 @@ function Guided({ children }: { children: ReactNode }) {
 // its own guided list.
 // A labelled group, not a heading: the rail sits before the page's own H1, so
 // headings here would open every page's outline with the rail's sections. The
-// count is announced as its own phrase ("Widgets, 12") rather than run into
-// the label. A section can carry a count and no rows (children null): a
-// category whose components are all listed under earlier ones.
-function Section({ id, label, count, children }: { id: string; label: ReactNode; count: number; children: ReactNode }) {
+// count is announced as its own phrase ("Pages, 3") rather than run into the
+// label. A section can have no rows (children null): a category whose
+// components are all listed under earlier ones.
+function Section({ id, label, count, children }: { id: string; label: ReactNode; count?: number; children: ReactNode }) {
   return (
     <div role="group" aria-labelledby={id} className="mt-5">
       <p id={id} className={`mb-1 ${HEADING}`}>
         {label}
-        <span className="sr-only">, </span>
-        <CountChip count={count} />
+        {count !== undefined && (
+          <>
+            <span className="sr-only">, </span>
+            <CountChip count={count} />
+          </>
+        )}
       </p>
-      {count > 0 && children != null && <Guided>{children}</Guided>}
+      {count !== 0 && children != null && <Guided>{children}</Guided>}
     </div>
   )
 }
@@ -316,11 +323,6 @@ function DesignSystemsList({ onNavigate }: { onNavigate?: () => void }) {
                 <AndromedaIcon size={14} mono />
               </span>
               <span className="min-w-0 truncate font-semibold">{system.name}</span>
-              {system.badge && (
-                <span aria-hidden className="flex">
-                  <SystemTierChip tier="new" label={system.badge} className="!px-1" />
-                </span>
-              )}
               <ChevronDown
                 size={12}
                 aria-hidden
@@ -393,9 +395,9 @@ function SystemSections({
             active={pathname === `${root}/templates/${t.slug}`}
             onNavigate={onNavigate}
           >
-            {/* No mark on the row. The sr-only word still folds "Premium" into
-                the link's accessible name. */}
+            {/* The sr-only word folds "Premium" into the link's accessible name. */}
             <span className="sr-only">Premium</span>
+            {system.tier === 'pro' && NEW_PRO_TEMPLATES.has(t.slug) && <NewChip />}
           </CatalogRow>
         ))}
       </Section>
@@ -630,7 +632,7 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
           </Guided>
           {/* One section per category, in categories.ts order, listing the
               components no earlier category listed. The header links to the
-              category page and counts all of that page's components. */}
+              category page. No count: rows listed elsewhere would make it look short. */}
           {CATEGORIES.map((cat, ci) => {
             const all = CATEGORY_COMPONENTS[cat.label] ?? []
             const rows = all.filter((c) => firstCategoryIndex(c.slug) === ci)
@@ -639,7 +641,6 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
               <Section
                 key={cat.slug}
                 id={`${baseId}-category-${cat.slug}`}
-                count={all.length}
                 label={
                   <Link
                     href={`/components/category/${cat.slug}`}
@@ -664,7 +665,9 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
                         // would fetch pages nobody opens.
                         prefetch={false}
                         onNavigate={onNavigate}
-                      />
+                      >
+                        {cat.label === 'AI Agent UI' && <NewChip />}
+                      </CatalogRow>
                     ))
                   : null}
               </Section>
@@ -722,7 +725,7 @@ export function CatalogNav({ onNavigate, rail = false }: { onNavigate?: () => vo
   // the scrollbar starts below the switch and the switch never leaves view.
   //
   // The thin scrollbar (globals.css) takes width when the list scrolls, and
-  // the widest row, a system name with its NEW chip, has no slack to give:
+  // the widest row, a name with its NEW chip, has no slack to give:
   // it truncated the moment the bar appeared. A stable gutter keeps that strip
   // reserved whether or not the list scrolls, so every row has one width in
   // both states. The right-hand space then has to come from padding OR

@@ -49,6 +49,7 @@ import { premiumEnabled } from '../../../lib/flags'
 import { useEntitlement } from '../billing/useEntitlement'
 import { usePremiumStatus } from '../billing/usePremiumStatus'
 import { PremiumBadge } from '../billing/PremiumBadge'
+import { FreeBadge } from '../billing/FreeBadge'
 import { Paywall, type PaywallReason } from '../billing/Paywall'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
 import { RemixPanel } from '../../_components/RemixPanel'
@@ -470,7 +471,7 @@ export default function ComponentPageView({
     openAuthModal({
       mode: 'gate',
       next: '/components/' + slug,
-      title: 'Grab this component.',
+      title: 'Grab this free component.',
       subtitle: 'Sign in or create a free account to install with one command. Free and unlimited.',
     })
   }
@@ -528,6 +529,7 @@ export default function ComponentPageView({
                   Premium
                 </span>
               )}
+              {!premium && !designSystem && <FreeBadge />}
             </div>
             {headingSubtitle ? (
               <PageLead>{headingSubtitle}</PageLead>

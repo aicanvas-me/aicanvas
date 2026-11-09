@@ -31,6 +31,7 @@ import { Paywall } from '../../../components/billing/Paywall'
 import type { AndromedaPropTable } from '../../../lib/andromeda-props.generated'
 import { PropsTable } from '../../../components/PropsTable'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
+import { FreeBadge } from '../../../components/billing/FreeBadge'
 import { PageCrumbs } from '../../../components/PageCrumbs'
 
 type RelatedItem = { slug: string; name: string; image?: string; imageLight?: string }
@@ -243,7 +244,7 @@ export function AndromedaComponentView({
     openAuthModal({
       mode: 'gate',
       next: `/design-systems/andromeda/${slug}`,
-      title: 'Grab this component.',
+      title: 'Grab this free component.',
       subtitle: 'Sign in or create a free account to install with one command. Free and unlimited.',
     })
   }
@@ -267,7 +268,10 @@ export function AndromedaComponentView({
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="mb-8">
         <PageCrumbs />
-        <PageTitle gap="none" rank="section">{name}</PageTitle>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          <PageTitle gap="none" rank="section">{name}</PageTitle>
+          <FreeBadge />
+        </div>
         <PageLead>{description}</PageLead>
       </div>
 

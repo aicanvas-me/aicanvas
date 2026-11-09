@@ -177,7 +177,7 @@ export default function McpPage() {
             <section aria-labelledby="mcp-install" className="mx-auto mt-16 max-w-4xl sm:mt-24">
               <SectionHead
                 id="mcp-install"
-                eyebrow="Setup · Beta"
+                eyebrow="Setup"
                 title="Connect your AI agent"
                 sub="Add AI Canvas to your AI agent and sign in once in the browser. No key to copy."
               />

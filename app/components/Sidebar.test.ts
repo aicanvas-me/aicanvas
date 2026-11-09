@@ -284,13 +284,12 @@ describe('the catalog rail', () => {
       expect(g.getAttribute('aria-labelledby')).toBe(heading.id)
       expect(heading.querySelector('a')?.getAttribute('href')).toBe(`/components/category/${cat.slug}`)
       const all = CATEGORY_COMPONENTS[cat.label] ?? []
-      // The header's count is the category's count, the one its page shows.
-      expect(heading.textContent, cat.label).toBe(`${cat.label}, ${CATEGORY_COUNTS[cat.label] ?? 0}`)
+      expect(heading.textContent, cat.label).toBe(cat.label)
       expect(all.length, cat.label).toBe(CATEGORY_COUNTS[cat.label] ?? 0)
       // Its rows are the components it owns, in its own order.
       const rows = all.filter((r) => owner.get(r.slug) === cat.label)
       expect(
-        [...g.querySelectorAll('li a')].map((a) => [a.textContent, a.getAttribute('href')]),
+        [...g.querySelectorAll('li a')].map((a) => [a.textContent?.replace(/New$/, ''), a.getAttribute('href')]),
         cat.label,
       ).toEqual(rows.map((r) => [r.name, `/components/${r.slug}`]))
     })
@@ -337,17 +336,17 @@ describe('the catalog rail', () => {
         .map((b) => [b.textContent, b.getAttribute('aria-expanded')])
     }
     expect(systemButtons(rail('/design-systems/andromeda/system'))).toEqual([
-      ['Andromeda ProNew', 'false'],
+      ['Andromeda Pro', 'false'],
       ['Andromeda Legacy', 'true'],
     ])
     cleanup()
     expect(systemButtons(rail('/design-systems/andromeda-pro/foundation'))).toEqual([
-      ['Andromeda ProNew', 'true'],
+      ['Andromeda Pro', 'true'],
       ['Andromeda Legacy', 'false'],
     ])
     cleanup()
     expect(systemButtons(rail('/components'))).toEqual([
-      ['Andromeda ProNew', 'true'],
+      ['Andromeda Pro', 'true'],
       ['Andromeda Legacy', 'false'],
     ])
   })

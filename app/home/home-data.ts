@@ -27,10 +27,10 @@ const TEMPLATE_TABS = [
 // Free and premium mixed, and as many kinds of piece as possible.
 const WALL_SLUGS = [
   'fluid-simulation-hero', 'agent-cost-flow', 'perspective-showcase-hero', 'agent-feedback-loop',
-  'crypto-swap', 'scroll-wipe-gallery', 'ai-knowledge-map', '3d-gem-pricing-section',
-  'slice-type', 'mood-tracker', 'signature-pad', '3d-product-card',
-  'glass-ai-compose', 'ai-job-cards', 'sticker-wall', 'radial-cards',
-  'sphere-lines', 'polaroid-stack', 'charging-widget', 'traveldeck',
+  'crypto-swap', 'agent-composer', 'ai-knowledge-map', '3d-gem-pricing-section',
+  'tilted-coverflow', 'plan-runner', 'signature-pad', '3d-product-card',
+  'glass-ai-compose', 'ai-job-cards', 'change-review', 'radial-cards',
+  'sphere-lines', 'agent-checkpoint', 'tool-ledger', 'traveldeck',
 ]
 
 // The hero board's Line card, in this order; names missing from the icon set

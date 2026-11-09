@@ -99,8 +99,8 @@ export function ComponentWall({ items }: { items: WallItem[] }) {
           @keyframes v3-wall-up { from { transform: translateY(0) } to { transform: translateY(-50%) } }
           @keyframes v3-wall-down { from { transform: translateY(-50%) } to { transform: translateY(0) } }
           .v3-wall:hover .v3-wall-col, .v3-wall:focus-within .v3-wall-col,
-          .v3-wall[data-paused] .v3-wall-col, .v3-wall[data-off] .v3-wall-col { animation-play-state: paused }
-          .v3-wall-col:focus-within { animation: none }
+          .v3-wall[data-paused] .v3-wall-col, .v3-wall[data-off] .v3-wall-col { animation-play-state: paused !important }
+          .v3-wall-col:focus-within { animation: none !important }
           @media (prefers-reduced-motion: reduce) { .v3-wall-col { animation: none !important } }
         `}</style>
         <div className="grid h-full grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
