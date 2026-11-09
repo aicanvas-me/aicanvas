@@ -115,7 +115,8 @@ function stripMarkerBlock(text) {
       stripping = true
       return false
     }
-    if (stripping && /^\s*\/\//.test(line)) return false
+    // A `// npm install` line is the item's npm dependency list (getDeps), not marker text.
+    if (stripping && /^\s*\/\//.test(line) && !/^\/\/ npm install /.test(line)) return false
     stripping = false
     return true
   }).join('\n')
