@@ -23,6 +23,8 @@ import { BrandIcon } from './BrandIcon'
 import { UserMenu } from './auth/UserMenu'
 import { SignInCta } from './auth/SignInCta'
 
+const DRAWER_SEARCH_ID = 'mobile-drawer-search'
+
 // ─── MobileNav ────────────────────────────────────────────────────────────────
 
 // The phone's only navigation: the bar at the top and the drawer it opens. The
@@ -36,11 +38,12 @@ export function MobileNav() {
   const [open, setOpen] = useState(false)
 
   // Close the drawer on a real route change (pathname only, not searchParams:
-  // typing in search updates ?q= and would otherwise close it on every keystroke).
+  // typing in search updates ?q= and would otherwise close it on every keystroke),
+  // unless its search has focus: typing there moves the page to /components.
   const [seenPathname, setSeenPathname] = useState(pathname)
   if (pathname !== seenPathname) {
     setSeenPathname(pathname)
-    setOpen(false)
+    if (document.activeElement?.id !== DRAWER_SEARCH_ID) setOpen(false)
   }
 
   // Lock body scroll when drawer is open
@@ -132,6 +135,7 @@ export function MobileNav() {
                   />
                   <input
                     ref={searchInputRef}
+                    id={DRAWER_SEARCH_ID}
                     type="text"
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}

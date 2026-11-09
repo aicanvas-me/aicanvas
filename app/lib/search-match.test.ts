@@ -40,6 +40,11 @@ describe('matchesQuery', () => {
     expect(matchesQuery(CORPUS[1], ['dock', 'navigation'])).toBe(true)
   })
 
+  it('does not read words like constructor off the prototype', () => {
+    expect(matchesQuery(CORPUS[0], ['constructor'])).toBe(false)
+    expect(matchesQuery(CORPUS[0], ['__proto__'])).toBe(false)
+  })
+
   it('treats no words as matching everything', () => {
     expect(matchesQuery(CORPUS[0], [])).toBe(true)
   })

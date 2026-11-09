@@ -401,7 +401,7 @@ function SystemSections({
             onNavigate={onNavigate}
           >
             {/* The sr-only word folds "Premium" into the link's accessible name. */}
-            <span className="sr-only">Premium</span>
+            {system.tier === 'pro' && <span className="sr-only">Premium</span>}
             {system.tier === 'pro' && NEW_PRO_TEMPLATES.has(t.slug) && <NewChip />}
           </CatalogRow>
         ))}

@@ -25,7 +25,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'alert',
     name: 'Alert',
     description:
-      'Banner-style status component for inline messages. Default, accent, warning, fault — each with its own per-variant color set. Severity-aware ARIA (warning and fault announce assertively, the rest politely) and compound parts: AlertIcon, AlertContent, AlertTitle, AlertDescription.',
+      'Banner-style status component for inline messages. Default, accent, warning, fault, each with its own per-variant color set. Severity-aware ARIA (warning and fault announce assertively, the rest politely) and compound parts: AlertIcon, AlertContent, AlertTitle, AlertDescription.',
     sourceFile: 'Alert.tsx',
     image: heroShot('alert', 'dark'),
     imageLight: heroShot('alert', 'light'),
@@ -124,7 +124,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'heat-grid',
     name: 'Heat Grid',
     description:
-      'A 2-D matrix fill gauge — the cousin of ProgressBar. Cells fill from the bottom-centre outward in a widening pyramid as the value rises, with a dim-to-bright accent ramp toward the wave front. Scroll-gated fill, optional percentage readout.',
+      'A 2-D matrix fill gauge, the cousin of ProgressBar. Cells fill from the bottom-centre outward in a widening pyramid as the value rises, with a dim-to-bright accent ramp toward the wave front. Scroll-gated fill, optional percentage readout.',
     sourceFile: 'HeatGrid.tsx',
     image: heroShot('heat-grid', 'dark'),
     imageLight: heroShot('heat-grid', 'light'),
@@ -169,7 +169,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'media-card',
     name: 'Media Card',
     description:
-      'Image-backed content tile. A full-bleed photo under a soft bottom scrim, a mono code tag, title and meta, and one corner action — Play, a CTA, or none. Composes the Card frame with markers off, so the image carries the card identity.',
+      'Image-backed content tile. A full-bleed photo under a soft bottom scrim, a mono code tag, title and meta, and one corner action: Play, a CTA, or none. Composes the Card frame with markers off, so the image carries the card identity.',
     sourceFile: 'MediaCard.tsx',
     image: heroShot('media-card', 'dark'),
     imageLight: heroShot('media-card', 'light'),
@@ -187,7 +187,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'music-player',
     name: 'Music Player',
     description:
-      'Block-scale transport bar. Track identity, the full transport cluster, a scrub slider with elapsed and remaining readouts, and like, lyrics, and volume controls — assembled from Andromeda primitives, driven by props with a live demo fallback.',
+      'Block-scale transport bar. Track identity, the full transport cluster, a scrub slider with elapsed and remaining readouts, and like, lyrics, and volume controls, assembled from Andromeda primitives, driven by props with a live demo fallback.',
     sourceFile: 'MusicPlayer.tsx',
     image: heroShot('music-player', 'dark'),
     imageLight: heroShot('music-player', 'light'),
@@ -259,7 +259,7 @@ export const ANDROMEDA_COMPONENT_META: AndromedaComponentMeta[] = [
     slug: 'search-field',
     name: 'Search Field',
     description:
-      'Command-bar-style search input with optional ⌘-K shortcut chip. Five states — idle, hover, focus, text-inactive (placeholder), text-active (typed). Controlled or uncontrolled.',
+      'Command-bar-style search input with optional ⌘-K shortcut chip. Five states: idle, hover, focus, text-inactive (placeholder), text-active (typed). Controlled or uncontrolled.',
     sourceFile: 'SearchField.tsx',
     image: heroShot('search-field', 'dark'),
     imageLight: heroShot('search-field', 'light'),
@@ -462,7 +462,7 @@ export const ANDROMEDA_META = {
   name: 'Andromeda Legacy',
   tagline: 'Sci-fi blueprint design system',
   description:
-    'One typeface. Transparent surfaces over a void background. 1px corner brackets instead of card borders. Turquoise accent. A domain-agnostic visual language — works for fintech, crypto, AI, ops, dev tools, and anywhere an editorial, technical, high-density feel fits.',
+    'One typeface. Transparent surfaces over a void background. 1px corner brackets instead of card borders. Turquoise accent. A domain-agnostic visual language: works for fintech, crypto, AI, ops, dev tools, and anywhere an editorial, technical, high-density feel fits.',
   font: 'JetBrains Mono',
   accent: '#2DD4BF',
   void: '#0E0E0F',

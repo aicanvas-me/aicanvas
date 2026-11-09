@@ -25,6 +25,7 @@ import { trackInstall } from '../../../lib/track-install'
 import { track } from '../../../lib/analytics'
 import { useSession } from '../../../components/auth/SessionProvider'
 import { useInstallToken } from '../../../_lib/useInstallToken'
+import { ManualIconsCommand } from '../../../_components/ManualIconsCommand'
 import { useAuthModal } from '../../../components/auth/AuthModalProvider'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 import { Paywall } from '../../../components/billing/Paywall'
@@ -48,6 +49,7 @@ interface Props {
   // design-system component sees a "create a free account to install" CTA in
   // place of the runnable command. Reading the source (Code tab) stays public.
   freeAccountGate?: boolean
+  iconItems?: string[]
 }
 
 export function AndromedaComponentView({
@@ -57,6 +59,7 @@ export function AndromedaComponentView({
   related,
   propTables = [],
   freeAccountGate = false,
+  iconItems = [],
 }: Props) {
   const { preferences, user } = useSession()
   const { open: openAuthModal } = useAuthModal()
@@ -537,6 +540,7 @@ export function AndromedaComponentView({
                     folder beside it, plus any Andromeda component it renders.
                     The CLI tab installs all of them for you.
                   </p>
+                  <ManualIconsCommand items={iconItems} pkgManager={pkgManager} token={userToken} onBlocked={needsFreeAccount ? promptFreeAccount : undefined} />
                 </Step>
               </div>
             )}

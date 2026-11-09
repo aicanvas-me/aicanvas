@@ -60,6 +60,8 @@ export function ActionBar({
   weight,
   colour,
   style,
+  installToken,
+  exportReady = true,
 }: {
   name: string
   markup: string
@@ -68,6 +70,8 @@ export function ActionBar({
   // the user's pick, null for none (the icon keeps the text colour)
   colour: string | null
   style: IconStyle
+  installToken?: string | null
+  exportReady?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const [pngFailed, setPngFailed] = useState(false)
@@ -77,10 +81,11 @@ export function ActionBar({
   const menuId = useId()
   const router = useRouter()
   // A preview carries no vector: the SVG and PNG actions become the way to Premium.
-  const locked = isPreview(markup)
-  const prompt = agentPrompt(name, size, weight, style, colour)
+  const preview = isPreview(markup)
+  const locked = preview && exportReady
+  const prompt = agentPrompt(name, size, weight, style, colour, installToken)
   const jsx = iconJsxLine(name, size, weight, style, colour)
-  const svg = locked ? '' : buildSvg(markup, size, weight, colour, style)
+  const svg = preview ? '' : buildSvg(markup, size, weight, colour, style)
   const { copied, copy } = useCopied(prompt)
 
   const close = () => {
@@ -109,19 +114,21 @@ export function ActionBar({
 
   const items = [
     { label: 'Copy for agent', icon: Bot, action: () => copyText(prompt) },
-    { label: 'Copy install command', icon: SquareTerminal, action: () => copyText(iconInstallCommand(name, style)) },
+    { label: 'Copy install command', icon: SquareTerminal, action: () => copyText(iconInstallCommand(name, style, installToken)) },
     { label: 'Copy JSX', icon: Code, action: () => copyText(jsx) },
     ...(locked
       ? [{ label: 'SVG and PNG with Premium', icon: Download, action: () => router.push('/pricing') }]
-      : [
-          { label: 'Copy SVG', icon: Copy, action: () => copyText(svg) },
-          { label: 'Download SVG', icon: FileImage, action: () => downloadSvg(name, svg) },
-          {
-            label: 'Download PNG',
-            icon: Download,
-            action: () => downloadPng(name, svg, size).catch(() => setPngFailed(true)),
-          },
-        ]),
+      : preview
+        ? []
+        : [
+            { label: 'Copy SVG', icon: Copy, action: () => copyText(svg) },
+            { label: 'Download SVG', icon: FileImage, action: () => downloadSvg(name, svg) },
+            {
+              label: 'Download PNG',
+              icon: Download,
+              action: () => downloadPng(name, svg, size).catch(() => setPngFailed(true)),
+            },
+          ]),
   ]
 
   // Arrows stop here, natively too: the page's document listener walks icons on them.
@@ -213,7 +220,7 @@ export function ActionBar({
           SVG with Premium
         </Link>
       ) : (
-        <button type="button" onClick={() => downloadSvg(name, svg)} className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
+        <button type="button" disabled={preview} onClick={() => downloadSvg(name, svg)} className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
           <Download size={14} />
           SVG
         </button>

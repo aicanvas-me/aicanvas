@@ -12,10 +12,11 @@ import { CopyPage } from '@/app/components/CopyPage'
 import { PAGE_TOP, PageFrame } from '@/app/_components/DesignSystemPage'
 import { PageCrumbs } from '@/app/components/PageCrumbs'
 import { useCopied } from '@/app/components/useCopied'
+import { useInstallToken } from '@/app/_lib/useInstallToken'
 import { useTheme } from '@/app/components/ThemeProvider'
 import { RailFooter } from '@/app/components/RailFooter'
 import { ICON_CATEGORIES, ICON_CATEGORY_COUNTS, ICON_CATEGORY_LABELS, type IconCategorySlug } from '../_lib/categories'
-import { iconInstallCommand } from '../_lib/constants'
+import { iconInstallCommand, MASKED_INSTALL_TOKEN } from '../_lib/constants'
 import { DARK_PREVIEW_COLOUR, FIXED_WEIGHT, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 import { formatDate, iconLead, ICON_WEIGHTS, takesStroke, titleCase, type IconWeight } from '../_lib/icon-utils'
 import { fromIconQuery, toIconQuery } from '../_lib/settings-query'
@@ -107,7 +108,8 @@ export function IconDetail({
   const [previewSurface, setPreviewSurface] = useState<'dark' | 'light'>(theme)
   const siteColour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
   const previewColour = colourOverride ?? (previewSurface === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
-  const { data, loading } = useIconVariant(lineIcons, style)
+  const { data, loading, ready } = useIconVariant(lineIcons, style)
+  const installToken = useInstallToken()
   const markup = data[icon.name] ?? lineIcons[icon.name] ?? ''
   const categoryLabel = ICON_CATEGORY_LABELS[icon.category]
   const title = titleCase(icon.name)
@@ -261,8 +263,8 @@ export function IconDetail({
               </button>
             </div>
             <div aria-hidden className="my-2 h-px bg-sand-200 dark:bg-sand-800" />
-            <ActionBar name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} />
-            <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} />
+            <ActionBar name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} installToken={installToken} exportReady={ready} />
+            <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} installToken={installToken} exportReady={ready} />
           </div>
         </div>
 
@@ -310,7 +312,7 @@ export function IconDetail({
           </div>
         )}
 
-        <PropsReference name={icon.name} />
+        <PropsReference name={icon.name} installToken={installToken} />
         <CategoryLinks current={icon.category} />
       </PageFrame>
     </main>
@@ -328,7 +330,7 @@ const PROPS: { prop: string; type: string; fallback: string; note: string }[] = 
   { prop: 'className', type: 'string', fallback: '', note: 'Any utility class, passed to the svg.' },
 ]
 
-function PropsReference({ name }: { name: string }) {
+function PropsReference({ name, installToken }: { name: string; installToken: string | null }) {
   return (
     <section className="mt-14" aria-labelledby="icon-props">
       <h2 id="icon-props" className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Props</h2>
@@ -359,7 +361,7 @@ function PropsReference({ name }: { name: string }) {
         </table>
       </div>
       <p className="mt-3 text-xs text-sand-600 dark:text-sand-400">
-        Install this icon alone: <code className="break-all font-mono text-sand-900 dark:text-sand-50">{iconInstallCommand(name)}</code>
+        Install this icon alone: <code className="break-all font-mono text-sand-900 dark:text-sand-50">{iconInstallCommand(name, 'line', installToken && MASKED_INSTALL_TOKEN)}</code>
       </p>
     </section>
   )

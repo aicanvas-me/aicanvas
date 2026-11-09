@@ -94,7 +94,7 @@ Create a LetterSpan component that:
 3. Exposes span via forwardedRef so parent can collect all letter refs
 4. Styles: fontSize, fontWeight: 700, lineHeight: 1, textShadow, transform via CSS vars, willChange: 'transform'
 
-Wrap with motion(LetterSpanComponent) to enable Framer Motion.
+Wrap with motion.create(LetterSpanComponent) to enable Framer Motion.
 
 Main Playful component:
 1. Manages containerRef, lettersRef array (indexed continuously across both rows), mouseRef, animIdRef, aliveRef

@@ -409,7 +409,7 @@ export default function AndromedaShowcase({
         <Section
           title="Color Palette"
           kicker="Foundation · Colors"
-          description="Three brand hue palettes lead — accent (turquoise), orange (warning), red (fault) — each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. The foundational greys follow: surface, border, text. Every alpha sits in a single row at the seam between the two halves."
+          description="Three brand hue palettes lead: accent (turquoise), orange (warning), red (fault), each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. The foundational greys follow: surface, border, text. Every alpha sits in a single row at the seam between the two halves."
         >
           <Row label="Accent · Turquoise">
             {[
@@ -567,7 +567,7 @@ export default function AndromedaShowcase({
         <Section
           title="Typography"
           kicker="Foundation · Type"
-          description="JetBrains Mono is the only typeface. Both fontSans and fontMono resolve to it — the distinction exists only for backward compatibility. Hierarchy comes from size, weight, and letter-spacing, not from switching families."
+          description="JetBrains Mono is the only typeface. Both fontSans and fontMono resolve to it: the distinction exists only for backward compatibility. Hierarchy comes from size, weight, and letter-spacing, not from switching families."
         >
           <div style={{ marginBottom: tokens.spacing[5] }}>
             <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
@@ -633,7 +633,7 @@ export default function AndromedaShowcase({
         <Section
           title="Spacing"
           kicker="Foundation · Spacing"
-          description="A 4px-based scale. Token names track the px value: spacing.1 → 4px, spacing.4 → 16px. The scale skips 7, 9, and 11 — only the values the system actually uses are emitted, so the keys you have are the keys you should be reaching for."
+          description="A 4px-based scale. Token names track the px value: spacing.1 → 4px, spacing.4 → 16px. The scale skips 7, 9, and 11: only the values the system actually uses are emitted, so the keys you have are the keys you should be reaching for."
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {[
@@ -951,7 +951,7 @@ export default function AndromedaShowcase({
               <CardContent>
                 <CardDescription>
                   Sharp corners with bracket markers tucked into each corner. No
-                  perimeter stroke — the brackets are the frame.
+                  perimeter stroke: the brackets are the frame.
                 </CardDescription>
               </CardContent>
               <CardFooter>
@@ -1066,7 +1066,7 @@ export default function AndromedaShowcase({
         <Section
           title="Search Field"
           slug="search-field"
-          description="Command-bar-style search input with an optional ⌘-K shortcut chip. Five states — idle, hover, focus, text-inactive (placeholder), text-active (typed)."
+          description="Command-bar-style search input with an optional ⌘-K shortcut chip. Five states: idle, hover, focus, text-inactive (placeholder), text-active (typed)."
         >
           <div
             style={{
@@ -1131,7 +1131,7 @@ export default function AndromedaShowcase({
         <Section
           title="Heat Grid"
           slug="heat-grid"
-          description="2-D matrix fill gauge — the cousin of ProgressBar. Cells fill from the bottom-centre outward in a widening pyramid as the value rises, dim-to-bright toward the wave front. Scroll-gated fill, optional percentage readout, role=meter."
+          description="2-D matrix fill gauge, the cousin of ProgressBar. Cells fill from the bottom-centre outward in a widening pyramid as the value rises, dim-to-bright toward the wave front. Scroll-gated fill, optional percentage readout, role=meter."
         >
           <Row label="Value">
             <HeatGrid value={60} label="Window risk" />
@@ -1428,7 +1428,7 @@ export default function AndromedaShowcase({
           title="Alert"
           slug="alert"
           kicker="Component · Error"
-          description="Banner-style status component for inline messages. 4 variants — default, accent, warning, fault — each with its own per-variant color set. Severity-aware ARIA (warning and fault announce assertively, the rest politely) and compound parts: AlertIcon, AlertContent, AlertTitle, AlertDescription."
+          description="Banner-style status component for inline messages. 4 variants: default, accent, warning, fault, each with its own per-variant color set. Severity-aware ARIA (warning and fault announce assertively, the rest politely) and compound parts: AlertIcon, AlertContent, AlertTitle, AlertDescription."
         >
           <div
             style={{
@@ -1603,7 +1603,7 @@ export default function AndromedaShowcase({
           title="Media Card"
           slug="media-card"
           kicker="Component · Surfaces"
-          description="Image-backed content tile. A full-bleed photo under a soft bottom scrim, a mono code tag, title and meta, and one corner action — Play, a CTA arrow, or none. Composes the Card frame with markers off, so the image carries the card identity."
+          description="Image-backed content tile. A full-bleed photo under a soft bottom scrim, a mono code tag, title and meta, and one corner action: Play, a CTA arrow, or none. Composes the Card frame with markers off, so the image carries the card identity."
         >
           <div className="as-grid-2" style={{ display: 'grid', gap: tokens.spacing[5] }}>
             <MediaCard code="MIX-01" title="Your Mix" meta="3.4k plays" action="play" />
@@ -1633,7 +1633,7 @@ export default function AndromedaShowcase({
           title="Music Player"
           slug="music-player"
           kicker="Component · Composites"
-          description="Block-scale transport bar. Track identity, the full transport cluster, a scrub slider with elapsed and remaining readouts, and like, lyrics, and volume controls — assembled from Andromeda primitives, driven by props with a live demo fallback."
+          description="Block-scale transport bar. Track identity, the full transport cluster, a scrub slider with elapsed and remaining readouts, and like, lyrics, and volume controls, assembled from Andromeda primitives, driven by props with a live demo fallback."
         >
           <MusicPlayer />
         </Section>
@@ -1643,7 +1643,7 @@ export default function AndromedaShowcase({
           title="Planet"
           slug="planet"
           kicker="Component · Visualization"
-          description="3D particle sphere — every point lit on a Lambert ramp from accent.500 (shadow) to accent.200 (lit), with 1% accent.100 sparkles on the day side. Self-contained Three.js, transparent canvas. Drop into a Card for status / next-destination widgets."
+          description="3D particle sphere: every point lit on a Lambert ramp from accent.500 (shadow) to accent.200 (lit), with 1% accent.100 sparkles on the day side. Self-contained Three.js, transparent canvas. Drop into a Card for status / next-destination widgets."
         >
           <div className="as-grid-planet" style={{ display: 'grid', gap: tokens.spacing[5] }}>
             {/* Standalone planet — full canvas */}

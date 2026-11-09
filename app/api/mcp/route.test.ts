@@ -24,7 +24,7 @@ vi.mock('@/app/lib/mcp-oauth', async (importOriginal) => ({
   endConnection: oauth.endConnection,
 }))
 
-import { POST } from './route'
+import { GET, POST } from './route'
 import { getEntitlement } from '@/app/lib/entitlement'
 import { trackPull } from '@/app/lib/track-pull'
 
@@ -81,6 +81,13 @@ describe('hosted MCP: the door', () => {
     const res = await rpc('tools/list', {})
     expect(res.status).toBe(404)
     expect(mockedGetEntitlement).not.toHaveBeenCalled()
+  })
+
+  it('answers a signed-in GET with 405 instead of an empty stream', async () => {
+    asPlan('free')
+    const res = await GET(new Request('https://mcp.aicanvas.me/', { headers: { authorization: `Bearer ${TOKEN}` } }))
+    expect(res.status).toBe(405)
+    expect(res.headers.get('Allow')).toBe('POST')
   })
 
   it('asks for a credential with a 401 when none is sent', async () => {

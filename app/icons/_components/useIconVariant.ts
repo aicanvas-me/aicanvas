@@ -15,11 +15,17 @@ export function useIconVariant(initialLine: IconMarkupMap, style: IconStyle, loa
   const [loadedVariants, setLoadedVariants] = useState<Partial<Record<IconStyle, IconMarkupMap>>>({})
   const [failedStyles, setFailedStyles] = useState<IconStyle[]>([])
   const [lockedStyles, setLockedStyles] = useState<IconStyle[]>([])
+  const [seenStyle, setSeenStyle] = useState(style)
+  if (style !== seenStyle) {
+    setSeenStyle(style)
+    setFailedStyles([])
+  }
   const locked = lockedStyles.includes(style)
   const cached = loadedVariants[style] ?? sessionVariantCache.get(style)
-  const data = locked ? previewMap(style) : (cached ?? initialLine)
+  const data = cached ?? (style === 'line' ? initialLine : previewMap(style))
   const failed = failedStyles.includes(style)
-  const loading = style !== 'line' && !cached && !failed && !locked
+  const ready = style === 'line' || !!cached || locked
+  const loading = !ready && !failed
 
   useEffect(() => {
     let alive = true
@@ -59,5 +65,5 @@ export function useIconVariant(initialLine: IconMarkupMap, style: IconStyle, loa
     }
   }, [failedStyles, lockedStyles, loadFullLine, style])
 
-  return { data, loading }
+  return { data, loading, ready }
 }

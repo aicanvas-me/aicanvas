@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, useTransition } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 /**
  * The component-grid search box, shared by the desktop rail and the mobile
@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
  */
 export function useComponentSearch() {
   const router = useRouter()
+  const pathname = usePathname()
   const searchParams = useSearchParams()
   const urlQuery = searchParams.get('q') ?? ''
   const [searchValue, setSearchValue] = useState(urlQuery)
@@ -39,7 +40,7 @@ export function useComponentSearch() {
     if (searchValue === urlQuery) return
     const timer = setTimeout(() => {
       lastPushed.current = searchValue
-      const params = new URLSearchParams(searchParams.toString())
+      const params = new URLSearchParams(pathname === '/components' ? searchParams.toString() : '')
       if (searchValue) params.set('q', searchValue)
       else params.delete('q')
       const qs = params.toString()

@@ -80,7 +80,7 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
   )
 }
 
-const LetterSpan = motion(LetterSpanComponent)
+const LetterSpan = motion.create(LetterSpanComponent)
 
 const TEXT = 'GOOD VIBES'
 const INFLUENCE_RADIUS = 300

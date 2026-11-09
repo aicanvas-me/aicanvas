@@ -67,7 +67,7 @@ export default function RadialToolbar() {
   const [activeId,  setActive]= useState<string | null>(null)
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
 
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current

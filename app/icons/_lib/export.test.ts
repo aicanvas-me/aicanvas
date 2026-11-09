@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { agentPrompt, ALL_ICONS_INSTALL, iconImportLine, iconInstallCommand, iconJsxLine, PREMIUM_ICON_INSTALL_NOTE } from './constants'
+import { agentPrompt, ALL_ICONS_INSTALL, allIconsInstall, iconImportLine, iconInstallCommand, iconJsxLine, PREMIUM_ICON_INSTALL_NOTE } from './constants'
 import type { IconWeight } from './icon-utils'
 import { LINE_ICON_NOTICE } from '../../../scripts/lib/icon-notice.mjs'
 import { buildSvg } from './svg'
@@ -105,7 +105,7 @@ describe('icon registry install and import strings', () => {
     ['solid-duotone', '-solid-duotone', 'ImageSparkleSolidDuotone'],
   ]
   it.each(cases)('matches the %s registry item and package export', (style, suffix, component) => {
-    const install = `npx shadcn@latest add https://aicanvas.me/r/icon-image-sparkle${suffix}.json`
+    const install = `npx shadcn@latest add @aicanvas/icon-image-sparkle${suffix}`
     const importLine = `import { ${component} } from '@/components/icons/image-sparkle${suffix}'`
     expect(iconInstallCommand('image-sparkle', style)).toBe(install)
     expect(iconImportLine('image-sparkle', style)).toBe(importLine)
@@ -117,8 +117,14 @@ describe('icon registry install and import strings', () => {
     expect(prompt.includes(PREMIUM_ICON_INSTALL_NOTE)).toBe(style !== 'line')
   })
   it('defaults to Line for markdown and installs the full Line set', () => {
-    expect(iconInstallCommand('search')).toBe('npx shadcn@latest add https://aicanvas.me/r/icon-search.json')
+    expect(iconInstallCommand('search')).toBe('npx shadcn@latest add @aicanvas/icon-search')
     expect(iconImportLine('search')).toBe("import { Search } from '@/components/icons/search'")
-    expect(ALL_ICONS_INSTALL).toBe('npx shadcn@latest add https://aicanvas.me/r/icons.json')
+    expect(ALL_ICONS_INSTALL).toBe('npx shadcn@latest add @aicanvas/icons')
+  })
+  it('carries the token in a direct URL when signed in', () => {
+    const command = 'npx shadcn@latest add "https://aicanvas.me/r/icon-search-solid.json?token=aic_x"'
+    expect(iconInstallCommand('search', 'solid', 'aic_x')).toBe(command)
+    expect(agentPrompt('search', 24, 'regular', 'solid', null, 'aic_x')).toContain(command)
+    expect(allIconsInstall('aic_x')).toBe('npx shadcn@latest add "https://aicanvas.me/r/icons.json?token=aic_x"')
   })
 })

@@ -105,10 +105,7 @@ const SPRING = { type: 'spring' as const, stiffness: 280, damping: 26 }
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 function useIsDark(ref: React.RefObject<HTMLElement | null>) {
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window === 'undefined') return false
-    return document.documentElement.classList.contains('dark')
-  })
+  const [isDark, setIsDark] = useState(true)
 
   useIsomorphicLayoutEffect(() => {
     const el = ref.current

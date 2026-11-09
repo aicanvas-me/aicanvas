@@ -1,7 +1,7 @@
 'use client'
 
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
-import { iconImportLine, iconInstallCommand, iconJsxLine, PREMIUM_ICON_INSTALL_NOTE } from '../_lib/constants'
+import { iconImportLine, iconInstallCommand, iconJsxLine, MASKED_INSTALL_TOKEN, PREMIUM_ICON_INSTALL_NOTE } from '../_lib/constants'
 import type { IconWeight } from '../_lib/icon-utils'
 import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
@@ -54,6 +54,8 @@ export function CodeTabs({
   style,
   className = '',
   compact = false,
+  installToken,
+  exportReady = true,
 }: {
   name: string
   markup: string
@@ -64,6 +66,8 @@ export function CodeTabs({
   style: IconStyle
   className?: string
   compact?: boolean
+  installToken?: string | null
+  exportReady?: boolean
 }) {
   const [tab, setTab] = useState<CodeTab>('React')
   const id = useId()
@@ -73,9 +77,11 @@ export function CodeTabs({
       ? `${iconImportLine(name, style)}\n\n${iconJsxLine(name, size, weight, style, colour)}`
       : tab === 'SVG'
         ? isPreview(markup)
-          ? 'The SVG of this style comes with AI Canvas Premium.'
+          ? exportReady
+            ? 'The SVG of this style comes with AI Canvas Premium.'
+            : 'The SVG of this style has not loaded.'
           : buildSvg(markup, size, weight, colour, style)
-        : iconInstallCommand(name, style)
+        : iconInstallCommand(name, style, installToken && MASKED_INSTALL_TOKEN)
 
   const onKey = (event: KeyboardEvent, index: number) => {
     const targets: Record<string, number> = {

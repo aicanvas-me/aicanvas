@@ -115,7 +115,7 @@ export default function ParticleConstellation() {
   const mouseRef     = useRef<{ x: number; y: number } | null>(null)
   const webRef       = useRef<{ nodes: WebNode[]; strands: Strand[] } | null>(null)
   const rafRef       = useRef<number>(0)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
   const isDarkRef = useRef(typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
 
   useIsomorphicLayoutEffect(() => {

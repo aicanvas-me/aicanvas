@@ -105,7 +105,7 @@ Create a LetterSpan component that:
    - Expose span via forwardedRef so parent can collect all letter refs
 4. Styles: fontSize, fontWeight, fontStretch, fontFamily, fontStyle, lineHeight, letterSpacing, wordSpacing, transform via CSS vars
 
-Wrap with motion(LetterSpanComponent) to enable Framer Motion.
+Wrap with motion.create(LetterSpanComponent) to enable Framer Motion.
 
 Main ResponsiveLetters component:
 1. Manages containerRef, lettersRef array, mouseRef, animIdRef, aliveRef

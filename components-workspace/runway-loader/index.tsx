@@ -69,7 +69,7 @@ type Phase = 'taxiing' | 'takeoff' | 'resetting'
 
 export default function RunwayLoader() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
 
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current

@@ -37,7 +37,7 @@ export const SYNONYMS: Record<string, string[]> = {
 
 /** The word itself plus every word that stands for it. */
 export function wordVariants(word: string): string[] {
-  return [word, ...(SYNONYMS[word] ?? [])]
+  return [word, ...(Object.hasOwn(SYNONYMS, word) ? SYNONYMS[word] : [])]
 }
 
 const hasWord = (haystack: string, word: string) => wordVariants(word).some((v) => haystack.includes(v))

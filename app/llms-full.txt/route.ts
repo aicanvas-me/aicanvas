@@ -46,7 +46,7 @@ No account needed to read: every free component's complete source is inlined bel
     // components keep their full source here, unchanged.
     parts.push(
       c.badge === 'Premium'
-        ? `${head}\n\n_Premium component — source is gated. Preview, details, and install at ${SITE_URL}/components/${c.slug}._`
+        ? `${head}\n\n_Premium component: source is gated. Preview, details, and install at ${SITE_URL}/components/${c.slug}._`
         : `${head}\n\n\`\`\`tsx\n${c.code}\n\`\`\``,
     )
   }

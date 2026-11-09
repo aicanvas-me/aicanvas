@@ -236,7 +236,7 @@ function search(tab: Tab, query: string): Group[] {
   const all = toWords(query)
   // "pro" stays a search word when it is the whole query's subject alongside
   // others ("andromeda pro"); only on its own or next to plain words is it a tier.
-  const tierWord = all.find((w) => w in TIER_FILTER && !(w === 'pro' && all.includes('andromeda')))
+  const tierWord = all.find((w) => Object.hasOwn(TIER_FILTER, w) && !(w === 'pro' && all.includes('andromeda')))
   const want = tierWord ? TIER_FILTER[tierWord] : undefined
   const words = all.filter((w) => w !== tierWord)
   if (!want && words.length === 0) return groups.map((g) => (g.idle ? { ...g, items: g.idle } : g))

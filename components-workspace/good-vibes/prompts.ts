@@ -85,7 +85,7 @@ Create a LetterSpan component that:
 3. Uses useRef and useEffect to expose span via forwardedRef so parent can collect all letter refs
 4. Styles: fontSize, fontWeight, letterSpacing, fontFamily, lineHeight, transform via CSS vars
 
-Wrap with motion(LetterSpanComponent) to enable Framer Motion.
+Wrap with motion.create(LetterSpanComponent) to enable Framer Motion.
 
 Main GoodVibes component:
 1. Manages containerRef, lettersRef array, mouseRef, animIdRef, aliveRef

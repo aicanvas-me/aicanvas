@@ -1,8 +1,8 @@
 'use client';
 
 import { forwardRef } from 'react';
-import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
-import { Slot } from '@radix-ui/react-slot';
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react';
+import { Slot, Slottable } from '@radix-ui/react-slot';
 import { motion } from 'framer-motion';
 import type { HTMLMotionProps, TargetAndTransition, Transition } from 'framer-motion';
 import { cva } from 'class-variance-authority';
@@ -174,7 +174,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     return (
       <>
         <Slot ref={ref} className={baseClass} data-size={size} style={baseStyle} {...(props as ComponentPropsWithoutRef<'button'>)}>
-          {content}
+          {Icon ? <Icon size={iconSize} /> : null}
+          <Slottable>{children as ReactNode}</Slottable>
         </Slot>
         <style>{TOUCH_TARGET_STYLE}</style>
       </>

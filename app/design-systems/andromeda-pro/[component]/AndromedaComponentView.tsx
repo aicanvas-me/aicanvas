@@ -44,12 +44,14 @@ import { PropsTable } from '../../../components/PropsTable'
 import { RemixPanel } from '../../../_components/RemixPanel'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { PageCrumbs } from '../../../components/PageCrumbs'
+import { ManualIconsCommand } from '../../../_components/ManualIconsCommand'
 
 // Matches the Pro components index card's data shape (system/AndromedaGallery
 // GalleryItem) so [component]/page.tsx and this view share one contract.
 type RelatedItem = { slug: string; name: string; description: string; variants: number; states: number }
 
 interface Props {
+  iconItems?: string[]
   slug: string
   name: string
   description: string
@@ -104,6 +106,7 @@ export function AndromedaComponentView({
   description,
   related,
   propTables = [],
+  iconItems = [],
   remixPrompt = null,
   promptLocked = false,
 }: Props) {
@@ -812,6 +815,12 @@ export function AndromedaComponentView({
                     stylesheet. Without it, the component shows dark only. The CLI
                     tab installs all of it for you.
                   </p>
+                  <ManualIconsCommand
+                    items={iconItems}
+                    pkgManager={pkgManager}
+                    token={userToken}
+                    onBlocked={needsPremium ? () => openPaywallModal({ reason: 'premium-only' }) : undefined}
+                  />
                 </Step>
               </div>
             )}

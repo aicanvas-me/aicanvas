@@ -144,7 +144,6 @@ export default function ContactPage() {
                   id="name"
                   type="text"
                   required
-                  autoFocus
                   autoComplete="name"
                   maxLength={100}
                   placeholder="Your name"

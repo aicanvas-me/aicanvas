@@ -14,7 +14,7 @@ const MIN_SIZE   = 48
 
 export default function BlindPullToggle() {
   const [toggleDark, setToggleDark] = useState(true)
-  const [pageIsDark, setPageIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [pageIsDark, setPageIsDark] = useState(true)
   const [animating, setAnimating]   = useState(false)
   const [size, setSize]             = useState(MAX_SIZE)
   const sizeRef                     = useRef(MAX_SIZE)

@@ -94,7 +94,7 @@ export const commsLog = [
   { dir: 'alert', from: 'OBERON',    text: 'Heat shield within 12% of limit',time: 'T-3h'  },
   { dir: 'down',  from: 'KEPLER-2',  text: 'Imaging window closed',          time: 'T-4h'  },
   { dir: 'up',    from: 'ARES-1',    text: 'Override accepted by flight',    time: 'T-5h'  },
-  { dir: 'down',  from: 'VOYAGER-X', text: 'Heartbeat — partial frame',      time: 'T-5h 40m' },
+  { dir: 'down',  from: 'VOYAGER-X', text: 'Heartbeat: partial frame',       time: 'T-5h 40m' },
 ] as const;
 
 // ---- Telemetry: 24h time-series (sampled hourly to match altitudeData) ----

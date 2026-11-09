@@ -50,6 +50,8 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
     className,
     style,
     disabled,
+    onFocus,
+    onBlur,
     ...rest
   },
   ref,
@@ -162,10 +164,14 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(functi
           type="text"
           value={value}
           onChange={handleChange}
-          onFocus={() => setIsFocus(true)}
-          onBlur={() => {
+          onFocus={(e) => {
+            setIsFocus(true);
+            onFocus?.(e);
+          }}
+          onBlur={(e) => {
             setIsFocus(false);
             setIsHover(false);
+            onBlur?.(e);
           }}
           aria-label={ariaLabel ?? placeholder}
           disabled={disabled}

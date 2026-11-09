@@ -83,7 +83,7 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, textShadow, forwar
   )
 }
 
-const LetterSpan = motion(LetterSpanComponent)
+const LetterSpan = motion.create(LetterSpanComponent)
 
 
 const TEXT_ROW_1 = 'STAY'

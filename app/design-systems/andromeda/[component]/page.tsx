@@ -7,6 +7,7 @@ import {
 import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
 import { nextInOrder } from '../../../lib/related-order'
 import { AndromedaComponentView } from './AndromedaComponentView'
+import { iconItemsIn } from '../../../_lib/icon-items'
 
 export function generateStaticParams() {
   return ANDROMEDA_COMPONENTS.map((c) => ({ component: c.slug }))
@@ -66,6 +67,7 @@ export default async function AndromedaComponentPage({
       related={related}
       propTables={propTables}
       freeAccountGate={freeAccountGate}
+      iconItems={iconItemsIn(entry.code)}
     />
   )
 }

@@ -179,7 +179,7 @@ function TemplateCard({ t, lead }: { t: OverviewTemplate; lead: boolean }) {
         </div>
         <h3 className="mt-3 text-base font-bold text-sand-900 dark:text-sand-50">{t.name}</h3>
         <p className="mt-1 text-sm leading-relaxed text-sand-600 dark:text-sand-400">{t.blurb}</p>
-        <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-accent transition-colors group-hover:text-accent">
+        <span className="mt-auto inline-flex items-center gap-1.5 pt-4 text-sm font-semibold text-accent transition-colors group-hover:text-accent/70">
           View template
           <ArrowRight
             size="1em"

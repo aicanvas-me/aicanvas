@@ -180,8 +180,8 @@ export function OrderBook() {
           justifyContent: 'flex-end',
         }}
       >
-        {asks.map((row) => (
-          <DepthRow key={`ask-${row.p}`} row={row} side="ask" depth={row.a / askMax} />
+        {asks.map((row, i) => (
+          <DepthRow key={`ask-${row.p}-${i}`} row={row} side="ask" depth={row.a / askMax} />
         ))}
       </div>
 
@@ -236,8 +236,8 @@ export function OrderBook() {
 
       {/* Bids */}
       <div style={{ flex: '1 1 0', overflow: 'hidden' }}>
-        {bids.map((row) => (
-          <DepthRow key={`bid-${row.p}`} row={row} side="bid" depth={row.a / bidMax} />
+        {bids.map((row, i) => (
+          <DepthRow key={`bid-${row.p}-${i}`} row={row} side="bid" depth={row.a / bidMax} />
         ))}
       </div>
     </div>

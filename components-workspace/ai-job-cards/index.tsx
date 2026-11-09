@@ -160,7 +160,7 @@ function BrandLogo({ logo, isDark }: { logo: LogoKey; isDark: boolean }) {
 }
 
 function useIsDark(ref: React.RefObject<HTMLElement | null>) {
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
   useIsomorphicLayoutEffect(() => {
     const el = ref.current
     if (!el) return

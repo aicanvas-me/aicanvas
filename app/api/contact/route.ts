@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       from: CONTACT_FROM,
       to: [CONTACT_INBOX],
-      reply_to: `${name} <${email}>`,
+      reply_to: email,
       subject: `New contact: ${subject}`,
       html: emailHtml({ name, email, subject, message }),
       text: `New contact message from ${name} <${email}>\nSubject: ${subject}\n\n${message}\n\nReply to this email to answer ${name}.`,

@@ -83,7 +83,7 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, forwardedRef }: Le
   )
 }
 
-const LetterSpan = motion(LetterSpanComponent)
+const LetterSpan = motion.create(LetterSpanComponent)
 
 
 const TEXT = 'WHAT ?!'

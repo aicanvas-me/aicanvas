@@ -649,7 +649,7 @@ export default function AndromedaShowcase({
         <Section
           title="Color Palette"
           kicker="Foundation · Colors"
-          description="Four hue families lead: accent (blue), success (green), warning (amber), danger (red), each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. Every chip below paints the live token and prints what it resolved to, so this section reads the theme you are looking at rather than the dark one. Then the greys, which are one ladder of thirteen steps from 100 (page ground) to 1300 (strongest ink) — the surface, border and text rows after it are names pointing into that ladder, not more colours. Every alpha sits in a single row at the seam between the two halves."
+          description="Four hue families lead: accent (blue), success (green), warning (amber), danger (red), each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. Every chip below paints the live token and prints what it resolved to, so this section reads the theme you are looking at rather than the dark one. Then the greys, which are one ladder of thirteen steps from 100 (page ground) to 1300 (strongest ink): the surface, border and text rows after it are names pointing into that ladder, not more colours. Every alpha sits in a single row at the seam between the two halves."
         >
           {/* Swatch chips paint the LITERAL printed beneath them, not the
               themed property. A documentation chip whose fill came off the

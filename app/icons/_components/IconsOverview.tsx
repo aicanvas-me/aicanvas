@@ -13,15 +13,18 @@ import { PageCrumbs, useTopBarLeft } from '@/app/components/PageCrumbs'
 import { CopyPage } from '@/app/components/CopyPage'
 import { PAGE_TOP, PageFrame } from '@/app/_components/DesignSystemPage'
 import { copyText } from '@/app/components/useCopied'
+import { useInstallToken } from '@/app/_lib/useInstallToken'
 import { useTheme } from '@/app/components/ThemeProvider'
 import { ICON_CATEGORIES, ICON_CATEGORY_LABELS, ICON_COUNT, type IconCategorySlug } from '../_lib/categories'
 import {
   ALL_ICONS_INSTALL,
+  allIconsInstall,
   DARK_PREVIEW_COLOUR,
   DARK_TILE,
   FIXED_WEIGHT,
   LIGHT_PREVIEW_COLOUR,
   LIGHT_TILE,
+  MASKED_INSTALL_TOKEN,
 } from '../_lib/constants'
 import { ICON_WEIGHTS, takesStroke, type IconWeight } from '../_lib/icon-utils'
 import { overviewMarkdown } from '../_lib/markdown'
@@ -43,7 +46,6 @@ const GRID_MAX_SIZE = 64
 let metadataRequest: Promise<IconMeta[]> | null = null
 
 const INSTALL_PREFIX = ALL_ICONS_INSTALL.slice(0, ALL_ICONS_INSTALL.lastIndexOf(' '))
-const INSTALL_URL = ALL_ICONS_INSTALL.slice(ALL_ICONS_INSTALL.lastIndexOf(' ') + 1)
 
 type DownloadFormat = 'svg' | 'react'
 
@@ -139,6 +141,7 @@ function DownloadAll({
   }
 
   return (
+    <>
     <div ref={menuRef} className="relative shrink-0">
       <button
         type="button"
@@ -173,10 +176,13 @@ function DownloadAll({
           ))}
         </div>
       )}
-      <span aria-live="polite" className="absolute right-0 top-12 whitespace-nowrap text-xs text-sand-700 dark:text-sand-300">
-        {failed && !open ? 'Download failed, try again' : ''}
-      </span>
     </div>
+    {failed && !open && (
+      <p role="alert" className="text-xs text-sand-700 @min-[640px]:basis-full dark:text-sand-300">
+        Download failed, try again
+      </p>
+    )}
+    </>
   )
 }
 
@@ -202,6 +208,8 @@ export function IconsOverview({
   const [installCopied, setInstallCopied] = useState(false)
   const colour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
   const { data, loading } = useIconVariant(lineIcons, style, loadFullLine)
+  const installToken = useInstallToken()
+  const installShown = allIconsInstall(installToken && MASKED_INSTALL_TOKEN)
   const loadMetadata = useCallback(() => {
     metadataRequest ??= fetch('/icons/icon-data')
       .then((response) => {
@@ -282,7 +290,7 @@ export function IconsOverview({
   }
 
   const copyInstall = async () => {
-    const ok = await copyText(ALL_ICONS_INSTALL)
+    const ok = await copyText(allIconsInstall(installToken))
     if (!ok) return
     setInstallCopied(true)
     setTimeout(() => setInstallCopied(false), 2000)
@@ -314,20 +322,20 @@ export function IconsOverview({
           {/* The install row shares the toolbar's edges and its 40px height, and
               its terminal glyph sits on the search glyph's line below. */}
           <div className="@container mt-6">
-            <div className="flex flex-col gap-2 @min-[640px]:flex-row @min-[640px]:items-center">
+            <div className="flex flex-col gap-2 @min-[640px]:flex-row @min-[640px]:flex-wrap @min-[640px]:items-center">
               <button
                 type="button"
                 onClick={() => void copyInstall()}
                 aria-label="Copy the install command for every Line icon"
-                title={ALL_ICONS_INSTALL}
+                title={installShown}
                 className="group inline-flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-sand-200 bg-sand-100 pl-6 pr-1 text-left transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
               >
                 <SquareTerminal aria-hidden className="size-4 shrink-0 text-sand-600 dark:text-sand-400" />
                 <span className="min-w-0 flex-1 truncate font-mono text-xs">
-                  {/* The registry URL is the part worth reading; where the row is
+                  {/* The registry item is the part worth reading; where the row is
                       narrow it is all that shows, and the copy is still the whole command. */}
                   <span className="hidden text-sand-600 @min-[800px]:inline dark:text-sand-400">{INSTALL_PREFIX} </span>
-                  <span className="text-sand-900 dark:text-sand-50">{INSTALL_URL}</span>
+                  <span className="text-sand-900 dark:text-sand-50">{installShown.slice(INSTALL_PREFIX.length + 1)}</span>
                 </span>
                 <span className="inline-flex size-8 shrink-0 items-center justify-center gap-1.5 rounded-full text-xs font-semibold text-sand-700 transition-colors group-hover:bg-sand-200 group-hover:text-sand-900 sm:w-auto sm:px-3 dark:text-sand-300 dark:group-hover:bg-sand-800 dark:group-hover:text-sand-50">
                   {installCopied ? (

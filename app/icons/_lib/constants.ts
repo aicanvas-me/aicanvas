@@ -2,7 +2,11 @@ import { iconComponentName, iconFileName, takesStroke, type IconWeight } from '.
 import type { IconStyle } from './types'
 
 const REGISTRY_BASE = 'https://aicanvas.me'
-export const ALL_ICONS_INSTALL = `npx shadcn@latest add ${REGISTRY_BASE}/r/icons.json`
+export const MASKED_INSTALL_TOKEN = 'aic_••••••••'
+const installCommand = (item: string, token?: string | null) =>
+  `npx shadcn@latest add ${token ? `"${REGISTRY_BASE}/r/${item}.json?token=${token}"` : `@aicanvas/${item}`}`
+export const allIconsInstall = (token?: string | null) => installCommand('icons', token)
+export const ALL_ICONS_INSTALL = allIconsInstall()
 // Reuse the existing registry's premium install wording.
 export const PREMIUM_ICON_INSTALL_NOTE = 'Requires AI Canvas Premium to install.'
 export const DARK_PREVIEW_COLOUR = '#F4F4FA'
@@ -29,8 +33,8 @@ export const COLOUR_SWATCHES: { label: string; hex: string }[] = [
   { label: 'Pink', hex: '#DB4AA0' },
 ]
 
-export const iconInstallCommand = (name: string, style: IconStyle = 'line') =>
-  `npx shadcn@latest add ${REGISTRY_BASE}/r/icon-${iconFileName(name, style)}.json`
+export const iconInstallCommand = (name: string, style: IconStyle = 'line', token?: string | null) =>
+  installCommand(`icon-${iconFileName(name, style)}`, token)
 
 export const iconImportLine = (name: string, style: IconStyle = 'line') =>
   `import { ${iconComponentName(name, style)} } from '@/components/icons/${iconFileName(name, style)}'`
@@ -43,8 +47,8 @@ const namesWeight = (weight: IconWeight, style: IconStyle) => takesStroke(style)
 export const iconJsxLine = (name: string, size: number, weight: IconWeight, style: IconStyle, colour: string | null = null) =>
   `<${iconComponentName(name, style)} size={${size}}${namesWeight(weight, style) ? ` weight="${weight}"` : ''}${colour ? ` color="${colour}"` : ''} />`
 
-export function agentPrompt(name: string, size: number, weight: IconWeight, style: IconStyle, colour: string | null = null): string {
+export function agentPrompt(name: string, size: number, weight: IconWeight, style: IconStyle, colour: string | null = null, token?: string | null): string {
   const component = iconComponentName(name, style)
   const weightText = namesWeight(weight, style) ? ` in the ${weight} weight` : ''
-  return `Use the ${component} icon in the ${style} style at ${size}px${weightText}${colour ? `, in ${colour}` : ''}.${style === 'line' ? '' : ` ${PREMIUM_ICON_INSTALL_NOTE}`} If this project does not have the icon, install it with \`${iconInstallCommand(name, style)}\`. Import it with \`${iconImportLine(name, style)}\`, then render \`${iconJsxLine(name, size, weight, style, colour)}\`.`
+  return `Use the ${component} icon in the ${style} style at ${size}px${weightText}${colour ? `, in ${colour}` : ''}.${style === 'line' ? '' : ` ${PREMIUM_ICON_INSTALL_NOTE}`} If this project does not have the icon, install it with \`${iconInstallCommand(name, style, token)}\`. Import it with \`${iconImportLine(name, style)}\`, then render \`${iconJsxLine(name, size, weight, style, colour)}\`.`
 }

@@ -174,7 +174,7 @@ export function HomeClient({
               image: c.image,
               imageLight: 'imageLight' in c ? (c.imageLight as string | undefined) : undefined,
               href: `/design-systems/${sys.slug}/${c.slug}`,
-              badge: sys.label,
+              badge: sys.badgeTone === 'pro' ? sys.label : 'Free',
             })),
           ...sys.templates
             .filter((_, i) => matchesQuery(SYSTEM_TEXT[si].templates[i], tokens))
@@ -434,7 +434,7 @@ export function HomeClient({
             {/* "Did you mean?" chips */}
             {suggestions.length > 0 && (
               <div className="mt-6 w-full">
-                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-600">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   Did you mean
                 </p>
                 <div className="flex flex-wrap items-center justify-center gap-2">

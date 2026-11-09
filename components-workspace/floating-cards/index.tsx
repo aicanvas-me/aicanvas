@@ -66,7 +66,7 @@ function HotelsCounter({ target, active }: { target: number; active: boolean }) 
 
 export default function FloatingCards() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
   const [order, setOrder] = useState<[number, number, number]>([0, 1, 2])
   const [isShuffling, setIsShuffling] = useState(false)
   const [exitingCard, setExitingCard] = useState<number | null>(null)

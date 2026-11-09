@@ -75,6 +75,8 @@ async function handle(req: Request): Promise<Response> {
   }
   if (!ctx) return unauthorized(req, grantId ? 'ended_sign_in' : 'unknown_key')
 
+  if (req.method === 'GET') return new Response(null, { status: 405, headers: { Allow: 'POST' } })
+
   if (grantId) {
     const id = grantId
     ctx.disconnect = () => endConnection(id)
