@@ -352,8 +352,7 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
         </Link>
         .
         <span className="block">
-          New accounts include our product newsletter. Unsubscribe anytime,
-          free of charge.
+          Newsletter included. Unsubscribe anytime, free.
         </span>
       </p>
     </>
