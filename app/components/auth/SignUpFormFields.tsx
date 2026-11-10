@@ -225,7 +225,8 @@ export function SignUpFormFields({ next, onSwitchToSignIn, header }: Props) {
             </Link>
             .
             <span className="block">
-              Includes our product newsletter. Unsubscribe anytime.
+              Your account includes our product newsletter. Unsubscribe
+              anytime, free of charge.
             </span>
           </p>
         </>

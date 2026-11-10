@@ -110,7 +110,7 @@ export default function RefundPage() {
           </p>
           <p className={BODY}>
             If you are a consumer in the EU or the UK, you have the statutory
-            14-day right of withdrawal for a first purchase, as set out in
+            14-day right of withdrawal for a new purchase, as set out in
             Paddle&apos;s buyer terms. Where the law allows, that right ends
             once you have asked for access to begin and access has begun.
             Renewal payments carry no right of withdrawal. Your statutory

@@ -60,7 +60,9 @@ export function DeleteAccountSection() {
           <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Danger zone</h2>
           <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
             Permanently delete your AI Canvas account, your saved components,
-            install history, and preferences. This cannot be undone.
+            install history, and preferences. This cannot be undone. It does
+            not cancel a running subscription, so cancel that first, and it
+            ends Lifetime.
           </p>
 
           {!confirming ? (

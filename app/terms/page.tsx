@@ -317,7 +317,8 @@ export default function TermsPage() {
           <p className={BODY}>
             Any further liability for simple negligence is excluded. The limits
             in this section do not apply to the cases of unlimited liability
-            above.
+            above, and they do not shorten any statutory limitation period
+            where liability cannot be limited.
           </p>
         </section>
 
@@ -334,8 +335,8 @@ export default function TermsPage() {
             . Deletion removes your account and the data stored with it, except
             records we must keep by law. Deleting your account does not cancel
             a running subscription, so cancel it first. Lifetime is tied to
-            your account: deleting the account ends Lifetime, and it cannot be
-            restored.
+            your account: deleting the account ends Lifetime, and we are not
+            obliged to restore it.
           </p>
           <p className={BODY}>
             We may suspend or terminate accounts that breach these terms, and
@@ -344,7 +345,7 @@ export default function TermsPage() {
             possible. A free account we may also close at our reasonable
             discretion with at least 14 days&apos; notice by email. A paid
             subscription we may otherwise end only for the end of the period
-            already paid. Lifetime ends only as set out in the AI Canvas Premium
+            already paid. When Lifetime ends is set out in the AI Canvas Premium
             License. Before an account is closed you can ask us by email for a
             copy of your data.
           </p>

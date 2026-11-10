@@ -6,8 +6,8 @@ import { LegalArticle } from '../components/LegalArticle'
 // ─── /privacy ─────────────────────────────────────────────────────────────────
 // Datenschutzerklärung, the Art. 13 GDPR notice, held to what Art. 13 asks for:
 // controller, purposes with legal basis, recipients, transfers, retention,
-// rights. Recipients are named by type and country; only Paddle and Google are
-// named, because the visitor meets them directly.
+// rights. Recipients are named by type and country; Paddle and Google sign-in
+// are named, because the visitor meets them directly.
 //
 // A server component: the policy is static text, and LegalArticle is the one
 // client piece (its "On this page" list).
@@ -128,7 +128,9 @@ export default function PrivacyPage() {
               A new account includes our product newsletter. We use your email
               address (and, for Google sign-ins, your name) to send it until
               you unsubscribe, and we keep your subscription status. Legal
-              basis: § 7 (3) UWG. It covers AI Canvas&apos;s own products only.
+              basis: § 7 (3) UWG and Art. 6 (1)(f) GDPR, our legitimate interest
+              in telling members about our own products. It covers AI
+              Canvas&apos;s own products only.
               You can object at any time, at no cost, through the link in any
               newsletter or the toggle in{' '}
               <code className={CODE}>/account/settings</code>.
@@ -173,7 +175,7 @@ export default function PrivacyPage() {
         <section className={SECTION}>
           <h2 className={HEADING}>3. Who receives your data</h2>
           <ul className={`mt-4 ${LIST}`}>
-            <li>our hosting and site-statistics provider (USA);</li>
+            <li>our hosting and site-statistics providers (USA);</li>
             <li>
               our database and sign-in provider (USA; the data is stored in the
               EU);
@@ -190,7 +192,7 @@ export default function PrivacyPage() {
             </li>
             <li>
               <strong className={STRONG}>Google</strong>{' '}(Ireland and USA),
-              only if you choose to sign in with Google.
+              if you choose to sign in with Google.
             </li>
           </ul>
           <p className={BODY}>

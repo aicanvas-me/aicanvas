@@ -127,7 +127,8 @@ export function ClaimForm() {
         {submitting ? 'Sending…' : 'Email me my sign-in link'}
       </button>
       <p className="mt-3 text-center text-xs leading-relaxed text-sand-400">
-        Your account includes our product newsletter. Unsubscribe anytime.
+        Your account includes our product newsletter. Unsubscribe anytime,
+        free of charge.
       </p>
       {error && (
         <p role="alert" className="mt-3 text-left text-sm text-red-400">
