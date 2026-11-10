@@ -93,8 +93,8 @@ export default function TermsPage() {
             person.
           </p>
           <p className={BODY}>
-            You can cancel a subscription at any time from the customer portal
-            linked in your account settings; cancellation takes effect at the
+            You can cancel a subscription at any time in the Paddle customer
+            portal linked in your account settings; cancellation takes effect at the
             end of the current period and you keep access until then. Lifetime
             has nothing to cancel. If you buy Lifetime while a subscription is
             active, we cancel that subscription for the end of its current

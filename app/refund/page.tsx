@@ -80,10 +80,11 @@ export default function RefundPage() {
         <section className={SECTION}>
           <h2 className={HEADING}>3. Cancelling your subscription</h2>
           <p className={BODY}>
-            You can cancel at any time from the customer portal linked in your{' '}
-            <code className="rounded-chip border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-[0.8125rem] text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
-              /account/settings
-            </code>
+            You can cancel at any time in the Paddle customer portal, which
+            opens from Manage subscription in your{' '}
+            <Link href="/account/settings" className={LINK}>
+              account settings
+            </Link>
             , or without signing in on the{' '}
             <Link href="/kuendigen" className={LINK}>
               cancellation page
