@@ -44,36 +44,9 @@ export default function PrivacyPage() {
 
       <LegalArticle>
 
-        {/* ── 1. Controller ─────────────────────────────────────────────── */}
+        {/* ── 1. What we process and why ────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>1. Controller</h2>
-          {/* Art. 13(1)(a) GDPR requires the controller's IDENTITY here, not a
-              role label, and a link to the Impressum does not substitute for
-              it — the privacy policy must carry the name on its own. */}
-          <p className={BODY}>
-            The controller responsible for the processing of personal data on
-            this site is:
-          </p>
-          <p className={BODY}>
-            AI Canvas, Inhaber Alexandru-Daniel Tatu
-            <br />
-            c/o flexdienst – #21685
-            <br />
-            Kurt-Schumacher-Straße 74
-            <br />
-            67663 Kaiserslautern
-            <br />
-            Deutschland
-            <br />
-            <a href={`mailto:${CONTACT_EMAIL}`} className={LINK}>
-              {CONTACT_EMAIL}
-            </a>
-          </p>
-        </section>
-
-        {/* ── 2. What we process and why ────────────────────────────────── */}
-        <section className={SECTION}>
-          <h2 className={HEADING}>2. What we process and why</h2>
+          <h2 className={HEADING}>1. What we process and why</h2>
           <ul className={`mt-4 ${LIST}`}>
             <li>
               <strong className={STRONG}>Your account.</strong>{' '}
@@ -168,9 +141,9 @@ export default function PrivacyPage() {
           </p>
         </section>
 
-        {/* ── 3. Who receives your data ─────────────────────────────────── */}
+        {/* ── 2. Who receives your data ─────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>3. Who receives your data</h2>
+          <h2 className={HEADING}>2. Who receives your data</h2>
           <ul className={`mt-4 ${LIST}`}>
             <li>our hosting and site-statistics providers (USA);</li>
             <li>
@@ -200,9 +173,9 @@ export default function PrivacyPage() {
           </p>
         </section>
 
-        {/* ── 4. How long we keep it ────────────────────────────────────── */}
+        {/* ── 3. How long we keep it ────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>4. How long we keep it</h2>
+          <h2 className={HEADING}>3. How long we keep it</h2>
           <ul className={`mt-4 ${LIST}`}>
             <li>
               <strong className={STRONG}>Account data</strong>{' '}for as long
@@ -231,9 +204,9 @@ export default function PrivacyPage() {
           </ul>
         </section>
 
-        {/* ── 5. Cookies and local storage ──────────────────────────────── */}
+        {/* ── 4. Cookies and local storage ──────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>5. Cookies and local storage</h2>
+          <h2 className={HEADING}>4. Cookies and local storage</h2>
           <p className={BODY}>
             We set only cookies and local storage that are strictly necessary
             (§ 25 (2) TDDDG): to keep you signed in, to remember the light or
@@ -243,9 +216,9 @@ export default function PrivacyPage() {
           </p>
         </section>
 
-        {/* ── 6. Your rights ────────────────────────────────────────────── */}
+        {/* ── 5. Your rights ────────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>6. Your rights</h2>
+          <h2 className={HEADING}>5. Your rights</h2>
           <p className={BODY}>
             Under the GDPR you have the right to:
           </p>
@@ -283,13 +256,40 @@ export default function PrivacyPage() {
           </p>
         </section>
 
-        {/* ── 7. Changes ────────────────────────────────────────────────── */}
+        {/* ── 6. Changes ────────────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>7. Changes</h2>
+          <h2 className={HEADING}>6. Changes</h2>
           <p className={BODY}>
             We update this policy when our processing changes. The &ldquo;Last
             updated&rdquo; date at the top of this page shows the current
             version.
+          </p>
+        </section>
+
+        {/* ── 7. Controller and contact ─────────────────────────────────────────────── */}
+        <section className={SECTION}>
+          <h2 className={HEADING}>7. Controller and contact</h2>
+          {/* Art. 13(1)(a) GDPR requires the controller's IDENTITY here, not a
+              role label, and a link to the Impressum does not substitute for
+              it — the privacy policy must carry the name on its own. */}
+          <p className={BODY}>
+            The controller responsible for the processing of personal data on
+            this site is:
+          </p>
+          <p className={BODY}>
+            AI Canvas, Inhaber Alexandru-Daniel Tatu
+            <br />
+            c/o flexdienst – #21685
+            <br />
+            Kurt-Schumacher-Straße 74
+            <br />
+            67663 Kaiserslautern
+            <br />
+            Deutschland
+            <br />
+            <a href={`mailto:${CONTACT_EMAIL}`} className={LINK}>
+              {CONTACT_EMAIL}
+            </a>
           </p>
         </section>
 
