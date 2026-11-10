@@ -232,7 +232,7 @@ export default function TermsPage() {
             confirmation, magic links, password reset). Those are
             necessary to provide the account service. The legal basis for this
             processing is § 7 (3) UWG (existing-customer exception, as
-            interpreted by the ECJ in Case C-654/23).
+            interpreted by the ECJ in Case C-654/23) and Art. 6 (1)(f) GDPR.
           </p>
         </section>
 
@@ -335,8 +335,8 @@ export default function TermsPage() {
             . Deletion removes your account and the data stored with it, except
             records we must keep by law. Deleting your account does not cancel
             a running subscription, so cancel it first. Lifetime is tied to
-            your account: deleting the account ends Lifetime, and we are not
-            obliged to restore it.
+            your account and is deleted with it; we are not obliged to restore
+            it.
           </p>
           <p className={BODY}>
             We may suspend or terminate accounts that breach these terms, and

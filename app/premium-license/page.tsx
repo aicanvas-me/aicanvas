@@ -143,9 +143,11 @@ export default function PremiumLicensePage() {
             personal to you and cannot be transferred, sold, or shared. It ends
             early only if its payment is refunded in full, withdrawn, reversed,
             or charged back (Section 7.4), if this License is terminated for
-            breach (Section 7.3), if your account is closed for abuse, fraud,
-            or a serious breach of the Terms, or if you delete your account. A
-            partial refund does not end it. If we ever
+            breach (Section 7.3), if your account is closed under Section 9 of
+            the Terms for abuse, fraud, or another serious breach, or if you
+            delete your account: Lifetime is deleted with the account and we
+            are not obliged to restore it. A partial refund does not end it. If
+            we ever
             discontinue AI Canvas, we give at least 30 days&apos; notice by
             email, and the licence to your Installed Components continues.
           </p>
@@ -439,9 +441,12 @@ export default function PremiumLicensePage() {
             1.0 of 2026-07-01 it adds Lifetime (Section 2) and the Line Icons
             (Section 11), makes a Subscription personal to one developer and
             names more of what counts as a Premium Component (Section 1), adds
-            the machine-learning restriction (Section 4), and ends the licence
-            to components installed under a payment that is refunded in full
-            or withdrawn (Sections 7.2 and 7.4). It applies to Subscriptions
+            the machine-learning restriction (Section 4), lets the people who
+            work with you on an End Product work with the Installed Components
+            inside it (Section 3), ends the licence to components installed
+            under a payment that is refunded in full or withdrawn (Sections 7.2
+            and 7.4), and names the court for business customers (Section 13).
+            It applies to Subscriptions
             and Lifetime bought from its effective date; a Subscription started
             earlier stays under version 1.0 until we have told its holder about
             version 1.1 by email with 30 days&apos; notice. The version in
