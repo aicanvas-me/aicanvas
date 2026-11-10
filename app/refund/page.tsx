@@ -56,8 +56,7 @@ export default function RefundPage() {
           <h2 className={HEADING}>2. How billing works</h2>
           <p className={BODY}>
             Premium costs $8.99 per month as a subscription, or $125 once for
-            Lifetime. Yearly subscriptions started earlier at $49.99 per year
-            keep renewing on the same terms. Payment runs through{' '}
+            Lifetime. Payment runs through{' '}
             <a href="https://www.paddle.com" target="_blank" rel="noopener noreferrer" className={LINK}>
               Paddle.com
             </a>

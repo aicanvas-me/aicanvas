@@ -81,8 +81,7 @@ export default function TermsPage() {
           </h2>
           <p className={BODY}>
             Premium is sold as a subscription at $8.99 per month, or as
-            Lifetime for a one-time payment of $125. Yearly subscriptions
-            started earlier at $49.99 per year keep renewing on the same terms.
+            Lifetime for a one-time payment of $125.
             Payment runs through Paddle.com, our reseller and Merchant of
             Record. Paddle is the seller of record for these transactions and
             handles payment and applicable taxes; your purchase is also subject
