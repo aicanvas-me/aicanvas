@@ -36,7 +36,7 @@ export default function PremiumLicensePage() {
         title="AI Canvas Premium License"
         sub={
           <span className="block text-balance">
-            Version 1.1. Effective date: 2026-11-06. This License governs the
+            Version 1.1. Effective date: 2026-11-10. This License governs the
             AI Canvas Premium Components and, under Section 11, the Line icons.
             It is separate from, and no replacement for, the MIT License that
             covers the free, open-source AI Canvas registry.

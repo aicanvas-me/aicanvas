@@ -30,7 +30,7 @@ export default function RefundPage() {
         title="Refund & Cancellation Policy"
         sub={
           <span className="block text-balance">
-            Last updated: 2026-11-06. This policy applies to AI Canvas Premium: the subscription and Lifetime.
+            Last updated: 2026-11-10. This policy applies to AI Canvas Premium: the subscription and Lifetime.
           </span>
         }
       />
