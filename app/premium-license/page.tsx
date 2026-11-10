@@ -45,9 +45,8 @@ export default function PremiumLicensePage() {
       />
 
       <LegalArticle>
-        {/* The acceptance clause opens the licence, set apart so it is read
-            before the numbered sections. */}
-        <p className="mb-12 rounded-card border border-sand-200 bg-sand-100 px-5 py-4 leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
+        {/* The acceptance clause opens the licence, before the numbered sections. */}
+        <p className="mb-12 leading-relaxed text-sand-600 dark:text-sand-400">
           By installing or using any Premium Component, you agree to this License.
           A paid subscription or Lifetime is purchased and accepted through
           Paddle, our reseller and Merchant of Record, and this License applies

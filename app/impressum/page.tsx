@@ -139,7 +139,7 @@ export default function ImpressumPage() {
           {/* Ladungsfähige Anschrift via flexdienst (c/o). Lines 2-5 are fixed
               by the provider and must be reproduced verbatim, or post is not
               accepted. Only line 1 (the legal name) is ours to set. */}
-          <p className="mt-4 inline-block rounded-card border border-sand-200 bg-sand-100 px-5 py-4 leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
+          <p className={DE}>
             AI Canvas, Inhaber Alexandru-Daniel Tatu
             <br />
             c/o flexdienst – #21685

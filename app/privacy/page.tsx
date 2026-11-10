@@ -24,9 +24,6 @@ const LIST =
 const STRONG = 'font-semibold text-sand-900 dark:text-sand-200'
 const CODE =
   'rounded-chip border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-[0.8125rem] text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
-// A set-apart block: the controller's address, and the right to object.
-const BOX =
-  'mt-4 rounded-card border border-sand-200 bg-sand-100 px-5 py-4 leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
 
 export default function PrivacyPage() {
   return (
@@ -57,7 +54,7 @@ export default function PrivacyPage() {
             The controller responsible for the processing of personal data on
             this site is:
           </p>
-          <p className={`inline-block ${BOX}`}>
+          <p className={BODY}>
             AI Canvas, Inhaber Alexandru-Daniel Tatu
             <br />
             c/o flexdienst – #21685
@@ -273,7 +270,7 @@ export default function PrivacyPage() {
             fee for, requests that are manifestly unfounded or excessive
             (Art. 12 (5) GDPR).
           </p>
-          <p className={BOX}>
+          <p className={BODY}>
             <strong className={STRONG}>Right to object (Art. 21 GDPR).</strong>{' '}
             Where we process your data on the basis of a legitimate interest
             (Art. 6 (1)(f) GDPR), you may object at any time on grounds
