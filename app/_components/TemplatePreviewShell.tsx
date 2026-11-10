@@ -2,25 +2,27 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useRef, useState, type ComponentType, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
-import {
-  ArrowClockwise,
-  Broadcast,
-  Buildings,
-  CalendarBlank,
-  CaretUpDown,
-  Check,
-  ClipboardText,
-  Copy,
-  DeviceMobile,
-  Lightning,
-  Monitor,
-  Rocket,
-  Sparkle,
-  SquaresFour,
-  Terminal,
-} from '@phosphor-icons/react'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw'
+import type { SiteIcon } from '@/app/_icons'
+import { Broadcast } from '@/app/_icons/icons/broadcast'
+import { Buildings } from '@/app/_icons/icons/buildings'
+import { CalendarBlank } from '@/app/_icons/icons/calendar-blank'
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down'
+import { Check } from '@/app/_icons/icons/check'
+import { CircleDollarSign } from '@/app/_icons/icons/circle-dollar-sign'
+import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Smartphone } from '@/app/_icons/icons/smartphone'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { LogIn } from '@/app/_icons/icons/log-in'
+import { Monitor } from '@/app/_icons/icons/monitor'
+import { Rocket } from '@/app/_icons/icons/rocket'
+import { Sparkle } from '@/app/_icons/icons/sparkle'
+import { UserPlus } from '@/app/_icons/icons/user-plus'
+import { Grid2x2 } from '@/app/_icons/icons/grid-2x2'
+import { Terminal } from '@/app/_icons/icons/terminal'
 import { useInstallToken } from '../_lib/useInstallToken'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { copyText } from '../components/useCopied'
@@ -33,6 +35,7 @@ import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
 import dynamic from 'next/dynamic'
+import { BrandIcon } from '../components/BrandIcon'
 import { useTheme } from '../components/ThemeProvider'
 import { InstallCopiedToast } from './InstallCopiedToast'
 // The dot-grid standalone, reused as the mobile preview backdrop. Loaded
@@ -75,9 +78,9 @@ const DEVICES: Record<
   phone: { label: 'Mobile', width: 390 },
 }
 
-const DEVICE_ORDER: { key: Device; label: string; icon: ComponentType<{ weight?: 'regular'; size?: number }> }[] = [
+const DEVICE_ORDER: { key: Device; label: string; icon: SiteIcon }[] = [
   { key: 'desktop', label: 'Desktop', icon: Monitor },
-  { key: 'phone', label: 'Mobile', icon: DeviceMobile },
+  { key: 'phone', label: 'Mobile', icon: Smartphone },
 ]
 
 interface TemplatePreviewShellProps {
@@ -249,7 +252,7 @@ function FramePayload({ children }: { children: ReactNode }) {
            theme transition is untouched. */
         html:not([data-frame-light]) { color-scheme: dark; }
         html:not([data-frame-light]), html:not([data-frame-light]) body {
-          background: #0E0E0F !important;
+          background: var(--color-sand-950) !important;
           transition: none !important;
         }
         html[data-frame-light], html[data-frame-light] body {
@@ -267,7 +270,7 @@ function FramePayload({ children }: { children: ReactNode }) {
            :has() matches ancestors only, so the composition's own surfaces are
            untouched. */
         html:not([data-frame-light]) body *:has(.mc-frame-viewport) {
-          background: #0E0E0F !important;
+          background: var(--color-sand-950) !important;
           transition: none !important;
         }
         html[data-frame-light] body *:has(.mc-frame-viewport) {
@@ -347,7 +350,6 @@ function PreviewChrome({
         onDevice={setDevice}
         onReload={reload}
       />
-
       {/* Preview region */}
       <div className="relative min-h-0 flex-1">
         {/* Desktop: native, full-bleed. Kept mounted AND visible so the mobile
@@ -392,7 +394,7 @@ function PreviewChrome({
                   so dots in the margin still light up as you move the mouse. */}
               <div className="pointer-events-none absolute inset-0">
                 {/* Themed to match the page: a seamless page-ground backdrop,
-                    faint sand-neutral dots that light up to the olive accent
+                    faint sand-neutral dots that light up to the accent ink
                     near the cursor. Raw rgb values (a canvas can't read
                     Tailwind tokens); the token each value maps to is noted
                     inline below. The grid reads these live, so a toggle
@@ -402,7 +404,7 @@ function PreviewChrome({
                   colors={{
                     background: isDark ? '#0E0E0F' : '#F4F4FA', // sand-950 / sand-50 — matches the backdrop
                     dot: '123,123,125', //     sand-500 — faint neutral grid
-                    highlight: isDark ? '218,228,160' : '134,150,49', // olive-400 / olive-600 — accent, lit near the cursor
+                    highlight: isDark ? '244,244,250' : '27,27,28', // sand-50 / sand-900 — the ink accent, lit near the cursor
                     baseAlpha: 0.22,
                     peakAlpha: 0.95,
                   }}
@@ -421,7 +423,7 @@ function PreviewChrome({
                 // paints. It follows the site theme, as the frame's own
                 // document does (AndromedaThemeSync mirrors the parent).
                 style={{ width: DEVICES.phone.width, colorScheme: theme }}
-                className="relative h-full max-w-full shrink-0 rounded-2xl border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-800 dark:bg-sand-950"
+                className="relative h-full max-w-full shrink-0 rounded-section border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-800 dark:bg-sand-950"
                 initial={{ scale: reduce ? 1 : 0.985 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: reduce ? 0 : 0.28, ease: [0.22, 1, 0.36, 1] }}
@@ -452,17 +454,17 @@ function TopBar({
 }) {
   return (
     <header className="sticky top-0 z-50 flex h-14 shrink-0 items-center border-b border-sand-200 bg-sand-50/90 backdrop-blur dark:border-sand-800 dark:bg-sand-950/90">
-      {/* Logo block — mirrors the site Sidebar rail exactly (w-60, px-4, gap-2,
+      {/* Logo block — mirrors the site Sidebar rail exactly (w-64, px-4, gap-2,
           wordmark always shown) and carries the SAME full-height border-r the
           sidebar draws. Keeps the logo in the identical spot and makes the
           divider read as one continuous line with the rest of the site. */}
-      <div className="flex h-full w-auto shrink-0 items-center border-r border-sand-200 px-4 md:w-60 dark:border-sand-800">
+      <div className="flex h-full w-auto shrink-0 items-center border-r border-sand-200 px-4 md:w-64 dark:border-sand-800">
         <Link
           href="/"
           aria-label="AI Canvas home"
           className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50"
         >
-          <img src="/ai-canvas-icon.svg" alt="" width={20} height={17} className="shrink-0" />
+          <BrandIcon width={20} height={17} className="shrink-0" />
           {/* Icon-only below md so the narrow bar leaves room for the breadcrumb
               (otherwise the template name truncates to "An…"); wordmark returns
               at md, matching the site sidebar rail. */}
@@ -502,7 +504,7 @@ function TopBar({
             right-side buttons (~32px). Shown from md up; the cluster hides on a
             real phone, where you already see the responsive layout. The site
             theme toggle on the right moves every template preview with it. */}
-        <div className="hidden items-center gap-0.5 justify-self-center rounded-lg border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
+        <div className="hidden items-center gap-0.5 justify-self-center rounded-full border border-sand-200 bg-sand-100 p-0.5 md:flex dark:border-sand-800 dark:bg-sand-900">
           {DEVICE_ORDER.map(({ key, label, icon: Icon }) => {
             const active = device === key
             return (
@@ -512,13 +514,13 @@ function TopBar({
                 onClick={() => onDevice(key)}
                 aria-label={`${label} preview`}
                 aria-pressed={active}
-                className={`flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
+                className={`flex h-7 w-7 items-center justify-center rounded-full transition-colors ${
                   active
                     ? 'bg-sand-100 text-sand-900 shadow-sm dark:bg-sand-800 dark:text-sand-50'
                     : 'text-sand-600 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100'
                 }`}
               >
-                <Icon weight="regular" size={16} />
+                <Icon size={16} />
               </button>
             )
           })}
@@ -528,9 +530,9 @@ function TopBar({
             onClick={onReload}
             aria-label="Replay animation"
             title="Replay animation"
-            className="flex h-7 w-7 items-center justify-center rounded-md text-sand-600 transition-colors hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100"
+            className="flex h-7 w-7 items-center justify-center rounded-control text-sand-600 transition-colors hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100"
           >
-            <ArrowClockwise weight="regular" size={15} />
+            <RotateCw size={15} />
           </button>
         </div>
 
@@ -548,22 +550,25 @@ function TopBar({
   )
 }
 
-// ── Template switcher: the olive template crumb becomes a dropdown that jumps
+// ── Template switcher: the accent template crumb becomes a dropdown that jumps
 // to any sibling template of the same design system (the current one checked).
 // The full list comes from DESIGN_SYSTEM_META — client-safe, no registry pull.
-// Falls back to the plain olive label when the system has no other template.
+// Falls back to the plain accent label when the system has no other template.
 // ─────────────────────────────────────────────────────────────────────────────
 
 // One icon per template, keyed by the slug with its design-system prefix
 // stripped, so Legacy and Pro share the map. A template with no entry falls
 // back to the generic tile icon rather than leaving a ragged left edge.
-const TEMPLATE_ICONS: Record<string, ComponentType<{ weight?: 'regular'; size?: number; className?: string }>> = {
+const TEMPLATE_ICONS: Record<string, SiteIcon> = {
   'city-operations': Buildings,
   'mission-control': Rocket,
   'service-order': ClipboardText,
   'resource-planning': CalendarBlank,
   'signal-room': Broadcast,
   'ai-chat': Sparkle,
+  'fintech-landing': CircleDollarSign,
+  'sign-in': LogIn,
+  'sign-up': UserPlus,
 }
 
 function TemplateSwitcher({
@@ -597,9 +602,9 @@ function TemplateSwitcher({
     }
   }, [open])
 
-  // Nothing to switch to → keep the original static olive crumb.
+  // Nothing to switch to → keep the original static accent crumb.
   if (!systemSlug || siblings.length < 2) {
-    return <span className="truncate text-olive-600 dark:text-olive-500">{templateName}</span>
+    return <span className="truncate text-accent">{templateName}</span>
   }
 
   return (
@@ -610,10 +615,10 @@ function TemplateSwitcher({
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Switch template"
-        className="flex min-w-0 items-center gap-1 rounded-md text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-500 dark:hover:text-olive-300"
+        className="flex min-w-0 items-center gap-1 rounded-control text-accent transition-colors hover:text-accent/70"
       >
         <span className="truncate">{templateName}</span>
-        <CaretUpDown weight="regular" size={14} className="shrink-0 opacity-70" />
+        <ChevronsUpDown size={14} className="shrink-0 opacity-70" />
       </button>
 
       {/* Menu: left-anchored to the trigger, which sits ~150px in on mobile
@@ -621,13 +626,13 @@ function TemplateSwitcher({
           phone-width menu never runs off the right edge; desktop viewports keep
           the full 260px (100vw-170px is >260 there, so min() picks 260). */}
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-[min(260px,calc(100vw-170px))] overflow-hidden rounded-xl border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute left-0 top-full z-50 mt-2 w-[min(260px,calc(100vw-170px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           {siblings.map((t) => {
             const active = t.slug === templateSlug
             const folder = t.slug.startsWith(`${systemSlug}-`)
               ? t.slug.slice(systemSlug.length + 1)
               : t.slug
-            const Icon = TEMPLATE_ICONS[folder] ?? SquaresFour
+            const Icon = TEMPLATE_ICONS[folder] ?? Grid2x2
             return (
               <Link
                 key={t.slug}
@@ -636,21 +641,20 @@ function TemplateSwitcher({
                 onClick={() => setOpen(false)}
                 className={`flex items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
                   active
-                    ? 'font-semibold text-olive-600 dark:text-olive-400'
+                    ? 'font-semibold text-accent'
                     : 'text-sand-700 hover:bg-sand-50/70 dark:text-sand-300 dark:hover:bg-sand-800/70'
                 }`}
               >
                 <Icon
-                  weight="regular"
                   size={16}
-                  className={`shrink-0 ${active ? 'text-olive-600 dark:text-olive-400' : 'text-sand-600 dark:text-sand-500'}`}
+                  className={`shrink-0 ${active ? 'text-accent' : 'text-sand-600 dark:text-sand-500'}`}
                 />
                 <span className="truncate">{t.name}</span>
                 {/* Every row keeps its category, including the one you are on:
-                    the active row is already named by its olive colour and its
+                    the active row is already named by its accent colour and its
                     weight, so it needs no second marker. */}
                 {t.category && (
-                  <span className="ml-auto shrink-0 rounded-md bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
+                  <span className="ml-auto shrink-0 rounded-full bg-sand-200 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:bg-sand-700/50 dark:text-sand-400">
                     {t.category}
                   </span>
                 )}
@@ -663,7 +667,7 @@ function TemplateSwitcher({
   )
 }
 
-// ── Right cluster: Install (premium) / Unlock (free-anon) + auth ─────────────
+// ── Right cluster: Install / Unlock (a paid template, free-anon) + auth ──────
 
 function RightCluster({
   templateSlug,
@@ -678,8 +682,10 @@ function RightCluster({
   // premium / in-flight 'unknown' → Install; resolved free/anon → the small
   // "Unlock with Premium" CTA. Keeping Install up during 'unknown' avoids
   // flashing an upgrade at a paying customer mid-load; anon derives to
-  // 'not-premium' synchronously.
-  const canInstall = status !== 'not-premium'
+  // 'not-premium' synchronously. A free system's template installs on a free
+  // account, like its components, so its command is shown to everyone.
+  const free = getDesignSystemTemplateMeta(templateSlug)?.system.paid === false
+  const canInstall = free || status !== 'not-premium'
 
   return (
     <>
@@ -687,7 +693,7 @@ function RightCluster({
         <InstallButton templateSlug={templateSlug} systemName={systemName} description={description} />
       ) : (
         <Link href="/pricing" className={buttonClasses({ variant: 'primary', size: 'xs' })}>
-          <Lightning weight="regular" size={13} />
+          <Bolt size={13} />
           <span className="hidden sm:inline">Unlock with Premium</span>
           <span className="sm:hidden">Unlock</span>
         </Link>
@@ -718,8 +724,8 @@ function InstallButton({
   const ref = useRef<HTMLDivElement>(null)
 
   // Tokenized install for signed-in users so the registry attributes the pull
-  // to the account (templates are premium — a plain command would 402). The
-  // token is masked on screen; copy writes the real one.
+  // to the account (a plain command writes a placeholder). The token is masked
+  // on screen; copy writes the real one.
   const userToken = useInstallToken()
   const installReference = userToken
     ? `"https://aicanvas.me/r/${templateSlug}.json?token=${userToken}"`
@@ -780,19 +786,19 @@ function InstallButton({
     <div className="relative" ref={ref}>
       <InstallCopiedToast show={copied} />
       <Button variant="primary" size="xs" onClick={handleInstall}>
-        <Terminal weight="regular" size={13} />
+        <Terminal size={13} />
         Install
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-xl border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                   CLI install
                 </span>
-                <span className="rounded-md border border-olive-500/30 bg-olive-500/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+                <span className="rounded-full border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
                   One command
                 </span>
               </div>
@@ -804,24 +810,24 @@ function InstallButton({
               >
                 {copied ? (
                   <>
-                    <Check weight="regular" size={13} className="text-olive-600 dark:text-olive-400" />
+                    <Check size={13} className="text-success" />
                     Copied
                   </>
                 ) : (
                   <>
-                    <Copy weight="regular" size={13} />
+                    <Copy size={13} />
                     Copy Command
                   </>
                 )}
               </Button>
             </div>
-            <div className="rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3">
+            <div className="rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3">
               <code className="block break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
-                  <Check weight="bold" size={12} className="shrink-0 text-olive-600 dark:text-olive-400" />
+                  <Check size={12} className="shrink-0 text-accent" />
                   <p className="text-xs leading-relaxed text-sand-600 dark:text-sand-400">{line}</p>
                 </div>
               ))}

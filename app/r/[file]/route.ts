@@ -85,10 +85,12 @@ export async function GET(
     // UI/metering switch, not the thing standing between a free user and premium
     // bytes. Fail CLOSED on any entitlement error.
     let tier
+    let tokenUnknown = false
     try {
       const entitlement = await getEntitlement(req)
       tier = entitlement.tier
       userId = entitlement.userId
+      tokenUnknown = entitlement.tokenUnknown === true
     } catch (err) {
       console.error('[registry gate] entitlement error on premium content — failing closed:', err)
       return paymentJson({ error: 'temporarily-unavailable', message: 'Please retry shortly.' }, 503)
@@ -97,7 +99,7 @@ export async function GET(
       // Free / anon: don't 402 (shadcn renders that as a cryptic, misleading
       // error). Serve a 200 PLACEHOLDER item — the install succeeds and drops a
       // single clearly-labelled file pointing to /pricing. ZERO real source.
-      return contentType === 'brain' ? brainStub(body, slug) : premiumStub(body, slug)
+      return markTokenUnknown(contentType === 'brain' ? brainStub(body, slug) : premiumStub(body, slug), tokenUnknown)
     }
   }
 
@@ -113,15 +115,17 @@ export async function GET(
     (contentType === 'standalone' || contentType === 'design-system-component')
   ) {
     let tier
+    let tokenUnknown = false
     try {
       const entitlement = await getEntitlement(req)
       tier = entitlement.tier
       userId = entitlement.userId
+      tokenUnknown = entitlement.tokenUnknown === true
     } catch (err) {
       console.error('[registry gate] entitlement error on free content — failing open:', err)
       tier = 'free' // fail OPEN — free source is public anyway
     }
-    if (tier === 'anonymous') return freeAccountStub(body, slug)
+    if (tier === 'anonymous') return markTokenUnknown(freeAccountStub(body, slug), tokenUnknown)
   }
 
   // Token propagation: the shadcn CLI fetches each registryDependency URL
@@ -155,8 +159,10 @@ export async function GET(
   }
 
   // Every stub and refusal returned above, so this is real source going to a
-  // known account. Catalog files never resolve a caller and leave no note.
-  trackPull(userId, slug, contentType)
+  // known account. Catalog files never resolve a caller and leave no note, and
+  // neither does the MCP's token check before it hands out an install command
+  // (the install that follows is the pull). Tracking only: no access reads this.
+  if (req.headers.get('x-aicanvas-probe') !== '1') trackPull(userId, slug, contentType)
 
   return new NextResponse(outBody, {
     status: 200,
@@ -192,8 +198,8 @@ function premiumStub(realBody: string, slug: string): NextResponse {
   const msg =
     `"${title}" is premium AI Canvas content. ` +
     `This is a placeholder. Unlock the real source with an AI Canvas Premium ` +
-    `account at https://aicanvas.me/pricing. Already subscribed? Sign in and copy ` +
-    `your personal install command from https://aicanvas.me/account/settings`
+    `account at https://aicanvas.me/pricing. Already Premium? Sign in, open it on ` +
+    `aicanvas.me and copy its install command there: that command includes your token.`
   const stub =
     `const PREMIUM_NOTICE =\n` +
     `  ${JSON.stringify(msg)}\n\n` +
@@ -266,7 +272,7 @@ function brainStub(realBody: string, slug: string): NextResponse {
     '',
     '- Upgrade: https://aicanvas.me/pricing',
     `- See what is inside: https://aicanvas.me/design-systems/${system}/brain`,
-    '- Already subscribed? Your personal install command: https://aicanvas.me/account/settings',
+    `- Already Premium? Sign in at https://aicanvas.me/design-systems/${system}/brain/explore and press Copy Command: that command includes your token.`,
     '',
   ].join('\n')
   const target = `~/design-systems/${system}/BRAIN-LOCKED.md`
@@ -282,8 +288,8 @@ function brainStub(realBody: string, slug: string): NextResponse {
       `"${title}" is premium AI Canvas content. This install wrote a locked ` +
       `placeholder, not the real rules. Unlock it with Premium at ` +
       `https://aicanvas.me/pricing, then re-run the same command. Already ` +
-      `subscribed? Sign in and copy your personal install command from ` +
-      `https://aicanvas.me/account/settings`,
+      `Premium? Sign in at https://aicanvas.me/design-systems/${system}/brain/explore ` +
+      `and press Copy Command: that command includes your token.`,
     dependencies: [],
     registryDependencies: [],
     files: [{ path: `design-systems/${system}/BRAIN-LOCKED.md`, type: 'registry:file', target, content: md }],
@@ -313,9 +319,8 @@ function freeAccountStub(realBody: string, slug: string): NextResponse {
   }
   const msg =
     `Almost there! "${title}" is free with an AI Canvas account (free, unlimited installs). ` +
-    `Sign up at https://aicanvas.me/account/sign-up, then copy your personal install command ` +
-    `from the component page. Already have an account? Sign in and copy it from ` +
-    `https://aicanvas.me/account/settings`
+    `Sign up at https://aicanvas.me/account/sign-up, then open the component page and copy ` +
+    `its install command: that command includes your token. Already have an account? Sign in and do the same.`
   const stub =
     `const ACCOUNT_NOTICE =\n` +
     `  ${JSON.stringify(msg)}\n\n` +
@@ -363,6 +368,16 @@ function freeAccountStub(realBody: string, slug: string): NextResponse {
  */
 function freeAccountGateActive(): boolean {
   return process.env.FREE_ACCOUNT_GATE === 'on'
+}
+
+/**
+ * Tags a placeholder served to a token that matches no account (the user rotated it) with
+ * X-AICanvas-Token: unknown, so the MCP can say "your token changed" instead of "sign up".
+ * Only ever set on a placeholder: the bytes served are exactly the anonymous ones.
+ */
+function markTokenUnknown(res: NextResponse, tokenUnknown: boolean): NextResponse {
+  if (tokenUnknown) res.headers.set('X-AICanvas-Token', 'unknown')
+  return res
 }
 
 /** Enforce requires the premium UI flag, else blocked users would have no

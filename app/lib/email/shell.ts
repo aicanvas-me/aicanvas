@@ -5,7 +5,7 @@
 // it declares `color-scheme: light dark` so Apple Mail / iOS Mail render the dark
 // palette exactly while Gmail applies its own dark treatment. Net effect: the
 // recipient sees the email in whatever mode their mail client is set to, instead
-// of a forced dark card. The olive accent + wordmark stay constant in both modes.
+// of a forced dark card. The button is ink that flips with the mode, like the site's.
 //
 // The Supabase Auth templates (confirm signup / magic link / reset password /
 // change email / invite / reauthentication, plus the password-changed and
@@ -20,13 +20,10 @@ const FONT =
   "-apple-system,BlinkMacSystemFont,'Segoe UI',Manrope,Roboto,'Helvetica Neue',Arial,sans-serif"
 
 // Brand mark, hosted on ImageKit (email clients strip SVG; PNG is required).
-// ONE mark in both themes, matching the site: public/ai-canvas-icon.svg is
-// theme-agnostic, an olive gradient ring around two near-black faces. On a dark
-// card the faces recede and the ring reads as a hollow hexagon, exactly as in
-// the site's dark sidebar. An earlier light-faced variant for dark mode put
-// white inside the hexagon, which is not the mark. The "AI CANVAS" wordmark
-// sits beside it so branding survives if a client blocks images.
-const MARK = 'https://ik.imagekit.io/aitoolkit/email/mark-light.png'
+// ONE mark in both themes, the site's app icon: the near-white mark on a dark
+// rounded tile (app/icon.svg), so it reads on a light or a dark mail client.
+// The "AI CANVAS" wordmark sits beside it so branding survives blocked images.
+const MARK = 'https://ik.imagekit.io/aitoolkit/email/mark-tile.png'
 
 // Light = inline default (also what color-blind clients like Outlook show).
 // Dark = applied via the `.ac-*` classes in the <style> media query below.
@@ -84,7 +81,7 @@ export function emailShell(opts: {
   const buttonRow = button
     ? `<tr>
             <td style="padding-bottom:40px;">
-              <a href="${button.url}" style="display:inline-block;min-width:150px;text-align:center;background-color:#A8B94D;color:#1A1A19;font-size:14px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:8px;">${button.label}</a>
+              <a href="${button.url}" class="ac-btn" style="display:inline-block;min-width:150px;text-align:center;background-color:#1B1B1C;color:#F4F4FA;font-size:14px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:8px;">${button.label}</a>
             </td>
           </tr>`
     : ''
@@ -133,7 +130,8 @@ export function emailShell(opts: {
       .ac-body     { color:#9E9E98 !important; }
       .ac-divider  { border-color:#383836 !important; }
       .ac-footer, .ac-footer a { color:#7D7D78 !important; }
-      .ac-accent { color:#DAE4A0 !important; }
+      .ac-accent { color:#7DD3FC !important; }
+      .ac-btn    { background-color:#F4F4FA !important; color:#0E0E0F !important; }
     }
   </style>
 </head>
@@ -149,7 +147,7 @@ export function emailShell(opts: {
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
           <tr>
             <td style="padding-bottom:28px;">
-              <img src="${MARK}" width="33" height="28" alt="AI Canvas" style="vertical-align:middle;border:0;outline:none;display:inline-block;" />
+              <img src="${MARK}" width="28" height="28" alt="AI Canvas" style="vertical-align:middle;border:0;outline:none;display:inline-block;" />
               <span class="ac-wordmark" style="margin:0 0 0 10px;font-size:15px;font-weight:600;letter-spacing:0.08em;color:#1A1A19;text-transform:uppercase;vertical-align:middle;">AI Canvas</span>
             </td>
           </tr>

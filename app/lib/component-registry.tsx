@@ -1,4 +1,4 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import type { Tag, Platform } from '../components/ComponentCard'
 import { COMPONENT_COPY, ACCURATE_STACKS } from './component-copy'
 import type { DesignSystemSlug } from './design-system-meta'
@@ -178,6 +178,10 @@ export interface ComponentEntry {
   // kept only because renaming it means shipping the public repo and the vault
   // in lockstep. `image` is still the grid card and OG shot for every entry.
   staticPreview?: boolean
+  // Live preview box height in px for a card taller than the default box
+  // (480 from sm, 320 below). Mobile falls back to the desktop value.
+  previewHeight?: number
+  previewHeightMobile?: number
   // Label-only: shows "Premium block" instead of "Premium component" on the
   // detail page. Does not change `badge` (other surfaces key off badge ===
   // 'Premium' for real classification logic) or the grid/registry treatment —
@@ -190,6 +194,8 @@ export interface ComponentEntry {
   // tier toggle in the install drawer.
   designSystem?: DesignSystemSlug
   PreviewComponent: ComponentType
+  // Extra presets shown under the preview; premium standalones only, buyers never receive them.
+  Examples?: ComponentType<{ Frame: ComponentType<{ title: string; children: ReactNode }> }>
   code: string
   prompts: Partial<Record<Platform, string>>
   // Long-form copy + use-case chips for the per-component page. Lives in
@@ -211,7 +217,7 @@ export function isBlockEntry(entry: { isBlock?: boolean; tags: Tag[] }): boolean
 // (related grid, prev/next nav, etc).
 export type ComponentMeta = Pick<
   ComponentEntry,
-  'slug' | 'name' | 'description' | 'tags' | 'image' | 'badge'
+  'slug' | 'name' | 'description' | 'tags' | 'image' | 'badge' | 'dualTheme'
 >
 
 // Code strings are now auto-generated from source files — see component-codes.generated.ts

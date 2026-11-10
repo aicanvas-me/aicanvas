@@ -82,7 +82,7 @@ function emailHtml(f: {
     f.where ? row('Where', escapeHtml(f.where)) : '',
     row(
       'Reply to',
-      `<a href="mailto:${escapeHtml(f.email)}" style="color:#869631;text-decoration:none;">${escapeHtml(f.email)}</a>`,
+      `<a href="mailto:${escapeHtml(f.email)}" class="ac-heading" style="color:#1A1A19;text-decoration:underline;">${escapeHtml(f.email)}</a>`,
     ),
     `<p ${emailText('muted', label)}>Message</p>`,
     `<div ${emailText('primary', 'font-size:15px;line-height:1.6;white-space:pre-wrap;word-break:break-word;margin-bottom:24px;')}>${escapeHtml(f.message)}</div>`,

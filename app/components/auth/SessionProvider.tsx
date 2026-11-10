@@ -28,6 +28,8 @@ type SessionContextValue = {
   refreshSaved: () => Promise<void>
   toggleSaved: (slug: string, system: string | null) => Promise<void>
   updatePreferences: (next: Partial<Preferences>) => Promise<void>
+  /** The hosted MCP sign-in flag, read on the server; gates the Connect menu entry. */
+  showConnect: boolean
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null)
@@ -35,9 +37,11 @@ const SessionContext = createContext<SessionContextValue | null>(null)
 export function SessionProvider({
   children,
   initialUser,
+  showConnect = false,
 }: {
   children: ReactNode
   initialUser: User | null
+  showConnect?: boolean
 }) {
   const [user, setUser] = useState<User | null>(initialUser)
   const [savedSlugs, setSavedSlugs] = useState<Set<string>>(new Set())
@@ -139,7 +143,7 @@ export function SessionProvider({
 
   return (
     <SessionContext.Provider
-      value={{ user, savedSlugs, preferences, loading, refreshSaved, toggleSaved, updatePreferences }}
+      value={{ user, savedSlugs, preferences, loading, refreshSaved, toggleSaved, updatePreferences, showConnect }}
     >
       {children}
     </SessionContext.Provider>

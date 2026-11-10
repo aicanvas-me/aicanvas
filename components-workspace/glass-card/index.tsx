@@ -1,18 +1,21 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
-import { useRef } from 'react'
+import { useRef, type ComponentType } from 'react'
 import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion'
-import { ChartLineUp, Lightning, ShieldCheck, ArrowRight } from '@phosphor-icons/react'
-import type { Icon } from '@phosphor-icons/react'
+import { ChartLineUp } from '@/app/_icons/icons/chart-line-up'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { ShieldCheck } from '@/app/_icons/icons/shield-check'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import type { IconProps } from '@/app/_icons/IconBase'
 
 const BACKGROUND = 'https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%204%20(1).png?updatedAt=1775226802133'
 
 // color and gradient take 6-digit hex ("#RRGGBB, #RRGGBB"): alpha suffixes are appended.
-const CARDS: { title: string; subtitle: string; color: string; gradient: string; cta: string; Icon: Icon }[] = [
+const CARDS: { title: string; subtitle: string; color: string; gradient: string; cta: string; Icon: ComponentType<IconProps> }[] = [
   { title: 'Analytics',  subtitle: 'Real-time metrics and insights for your application.',    color: '#5B8FF9', gradient: '#5B8FF9, #A78BFA', cta: 'View Dashboard',    Icon: ChartLineUp },
-  { title: 'Automation', subtitle: 'Streamline your workflows with intelligent triggers.',     color: '#FF6BF5', gradient: '#FF6BF5, #FF6680', cta: 'Create Workflow',    Icon: Lightning    },
+  { title: 'Automation', subtitle: 'Streamline your workflows with intelligent triggers.',     color: '#FF6BF5', gradient: '#FF6BF5, #FF6680', cta: 'Create Workflow',    Icon: Bolt         },
   { title: 'Security',   subtitle: 'Enterprise-grade protection for your data.',              color: '#FF7B54', gradient: '#FF7B54, #FFBE0B', cta: 'View Report',        Icon: ShieldCheck  },
 ]
 
@@ -30,7 +33,7 @@ function GlassCardItem({
   color: string
   gradient: string
   cta: string
-  Icon: Icon
+  Icon: ComponentType<IconProps>
 }) {
   const cardRef = useRef<HTMLDivElement>(null)
   const mouseX = useMotionValue(0.5)
@@ -85,7 +88,7 @@ function GlassCardItem({
           whileHover={{ scale: 1.1, rotate: 5 }}
           transition={{ type: 'spring', stiffness: 400, damping: 15 }}
         >
-          <Icon size={22} weight="regular" style={{ color }} />
+          <Icon size={22} style={{ color }} />
         </motion.div>
 
         <h3 className="mb-2 text-base font-semibold text-white/90">{title}</h3>
@@ -113,7 +116,6 @@ function GlassCardItem({
           </span>
           <ArrowRight
             size={16}
-            weight="regular"
             style={{ color: 'rgba(255,255,255,0.55)' }}
           />
         </motion.button>

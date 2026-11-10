@@ -1,7 +1,7 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
 // v2 component: imported through the build-time shim.
-import { Compass } from '@phosphor-icons/react'
+import { Compass } from '@/app/_icons/icons/compass';
 import { Navbar, Button, tokens } from '../../../lib/andromeda-pro.generated'
 import { type MatrixSpec } from './types'
 
@@ -24,7 +24,7 @@ const brand = (
       whiteSpace: 'nowrap',
     }}
   >
-    <Compass size={tokens.iconSize.xl} weight="regular" aria-hidden />
+    <Compass size={tokens.iconSize.xl} aria-hidden />
     Andromeda
   </span>
 )

@@ -8,7 +8,7 @@ import { track } from '../../lib/analytics'
 import { GoogleSignInButton } from '../../account/GoogleSignInButton'
 import { PasswordInput } from '../../account/PasswordInput'
 import { Button } from '../Button'
-import { NerdToHero } from './NerdToHero'
+import { AuthHeading } from './AuthCard'
 
 // ─── SignUpFormFields ─────────────────────────────────────────────────────────
 // Sign-up form body, mirroring SignInFormFields. Shared between the standalone
@@ -21,9 +21,11 @@ import { NerdToHero } from './NerdToHero'
 type Props = {
   next: string
   onSwitchToSignIn?: () => void
+  // Replaces the heading, e.g. when an AI agent's sign-in opened the page.
+  header?: React.ReactNode
 }
 
-export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
+export function SignUpFormFields({ next, onSwitchToSignIn, header }: Props) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -72,15 +74,15 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
 
   return (
     <>
-      <NerdToHero />
+      {header ?? <AuthHeading title="Create your account." subtitle="Free and unlimited. Install any free component with one command and keep a collection of your own." />}
 
       {sent ? (
-        <div className="mt-6 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
+        <div className="mt-6 first:mt-0 rounded-inset border border-accent/30 bg-accent/10 p-4 text-sm text-sand-900 dark:text-sand-100">
           Confirmation email sent to <strong>{email}</strong>. Click the link
           inside to finish creating your account.
         </div>
       ) : existing ? (
-        <div className="mt-6 rounded-lg border border-olive-500/30 bg-olive-500/10 p-4 text-sm text-sand-900 dark:text-sand-100">
+        <div className="mt-6 first:mt-0 rounded-inset border border-accent/30 bg-accent/10 p-4 text-sm text-sand-900 dark:text-sand-100">
           <p>
             <strong>{email}</strong> already has an account. Sign in to continue,
             no password needed if you choose &ldquo;Email me a sign-in link.&rdquo;
@@ -91,14 +93,14 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               <button
                 type="button"
                 onClick={onSwitchToSignIn}
-                className="inline-flex h-9 items-center justify-center rounded-lg bg-olive-500 px-4 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
+                className="inline-flex h-9 items-center justify-center rounded-control bg-accent px-4 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/85"
               >
                 Sign in
               </button>
             ) : (
               <Link
                 href={`/account/sign-in?next=${encodeURIComponent(next)}`}
-                className="inline-flex h-9 items-center justify-center rounded-lg bg-olive-500 px-4 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
+                className="inline-flex h-9 items-center justify-center rounded-control bg-accent px-4 text-sm font-semibold text-accent-foreground transition-colors hover:bg-accent/85"
               >
                 Sign in
               </Link>
@@ -107,7 +109,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
         </div>
       ) : (
         <>
-          <div className="mt-6 space-y-3">
+          <div className="mt-6 space-y-3 first:mt-0">
             <GoogleSignInButton next={next} label="Sign up with Google" />
             <div className="flex items-center gap-3" aria-hidden="true">
               <span className="h-px flex-1 bg-sand-200 dark:bg-sand-800" />
@@ -139,7 +141,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
                     setEmail(e.target.value)
                     clearStatus()
                   }}
-                  className="w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
+                  className="w-full rounded-control border border-sand-200 bg-sand-100 px-3 py-2 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-accent focus:ring-2 focus:ring-accent/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500"
                 />
               </div>
 
@@ -165,7 +167,7 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               </div>
 
               {error && (
-                <div role="alert" className="rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
+                <div role="alert" className="rounded-inset border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-700 dark:text-red-300">
                   {error}
                 </div>
               )}
@@ -189,28 +191,23 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               <button
                 type="button"
                 onClick={onSwitchToSignIn}
-                className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
+                className="font-semibold text-accent hover:underline"
               >
                 Sign in
               </button>
             ) : (
               <Link
                 href={`/account/sign-in?next=${encodeURIComponent(next)}`}
-                className="font-semibold text-olive-600 hover:underline dark:text-olive-400"
+                className="font-semibold text-accent hover:underline"
               >
                 Sign in
               </Link>
             )}
           </p>
 
-          {/* Art. 13 GDPR notice — Terms + Privacy links cover the pre-
-              contract informational duties. Marketing-email language was
-              intentionally removed: AI Canvas only sends transactional mail
-              (sign-up confirm, password reset, account changes), so the
-              legal basis is Art. 6 (1)(b) GDPR / § 7 UWG carve-out and no
-              separate marketing notice is required. The Art. 8 age-16
-              confirmation was also dropped — developer-tool audience with
-              negligible under-16 risk. */}
+          {/* Terms + Privacy links cover the pre-contract information. The
+              newsletter line is the notice § 7 (3) UWG asks for at the moment
+              the address is collected: a new account is on the newsletter. */}
           <p className="mt-6 text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
             By continuing you agree to our{' '}
             <Link
@@ -227,6 +224,9 @@ export function SignUpFormFields({ next, onSwitchToSignIn }: Props) {
               Privacy Policy
             </Link>
             .
+            <span className="block">
+              Newsletter included. Unsubscribe anytime, free.
+            </span>
           </p>
         </>
       )}

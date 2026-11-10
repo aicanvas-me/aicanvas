@@ -15,14 +15,15 @@ function currentGitBranch(): string {
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  // Dev only: lets a cloudflared tunnel load the dev server's scripts (see MCP_PUBLIC_ORIGIN).
+  allowedDevOrigins: ['*.trycloudflare.com'],
   turbopack: {
     root: path.resolve(__dirname),
   },
-  // Barrel-optimize the big icon/animation packages so a `import { X } from
-  // '@phosphor-icons/react'` only pulls in X, not the whole barrel, off every
-  // page's shared bundle. Pure build-time transform, no behavior change.
+  // Barrel-optimize framer-motion so a named import only pulls in what it uses,
+  // off every page's shared bundle. Pure build-time transform, no behavior change.
   experimental: {
-    optimizePackageImports: ['@phosphor-icons/react', 'framer-motion'],
+    optimizePackageImports: ['framer-motion'],
   },
   env: {
     NEXT_PUBLIC_GIT_BRANCH: currentGitBranch(),
@@ -54,6 +55,10 @@ const nextConfig: NextConfig = {
     // The image pack's two Pro files are read with fs at request time from the
     // injected (gitignored) Andromeda Pro tree.
     "/api/andromeda-pro/image-pack/[file]": ["./design-systems/andromeda-pro/image-pack/*"],
+    // The paid icon styles' markup, read with fs and served only to Premium.
+    "/icons/style-data/[style]": ["./.icons-data/*.json"],
+    // Download all reads every style's markup and the shipped React files.
+    "/api/icons/download": ["./.icons-data/*.json", "./public/icons-data/line.json", "./registry-data/icon-*.json"],
   },
   async headers() {
     return [
@@ -66,11 +71,54 @@ const nextConfig: NextConfig = {
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
         ],
       },
+      {
+        // The AI agent consent screen: never framed (an Allow button under someone
+        // else's page is the click-jack), never cached, never leaked in a Referer.
+        source: "/oauth/:path*",
+        headers: [
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Cache-Control", value: "no-store" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      },
     ];
+  },
+  // Markdown twins for AI agents (app/md/*, built by lib/agent-markdown). Two
+  // ways in, both answered from the same static route: the `.md` URL that the
+  // page advertises with <link rel="alternate" type="text/markdown"> (Codex
+  // follows it), and the page URL itself with Accept: text/markdown (Claude
+  // Code, Cursor and Copilot send it alongside text/html; markdown wins the
+  // tie). beforeFiles, so the rewrite runs before the prerendered HTML page
+  // can answer. Browsers never send text/markdown, so they always get HTML.
+  async rewrites() {
+    const wantsMarkdown = [{ type: "header" as const, key: "accept", value: ".*text/markdown.*" }];
+    return {
+      beforeFiles: [
+        { source: "/index.md", destination: "/md/home" },
+        { source: "/", has: wantsMarkdown, destination: "/md/home" },
+        { source: "/mcp.md", destination: "/md/mcp" },
+        { source: "/mcp", has: wantsMarkdown, destination: "/md/mcp" },
+        { source: "/components.md", destination: "/md/components" },
+        { source: "/components/:slug.md", destination: "/md/components/:slug" },
+        { source: "/components", has: wantsMarkdown, destination: "/md/components" },
+        { source: "/components/:slug", has: wantsMarkdown, destination: "/md/components/:slug" },
+        // A system's own pages (system, brain, foundation...) share the
+        // :component shape; the twin answers those with the system overview.
+        { source: "/design-systems/:system.md", destination: "/md/design-systems/:system" },
+        { source: "/design-systems/:system/:component.md", destination: "/md/design-systems/:system/:component" },
+        { source: "/design-systems/:system", has: wantsMarkdown, destination: "/md/design-systems/:system" },
+        { source: "/design-systems/:system/:component", has: wantsMarkdown, destination: "/md/design-systems/:system/:component" },
+      ],
+      afterFiles: [],
+      fallback: [],
+    };
   },
   async redirects() {
     return [
       { source: "/r", destination: "/components", permanent: true },
+      // The hosted MCP docs live in the docs section; this keeps an early link working.
+      { source: "/mcp/docs", destination: "/docs/mcp", permanent: true },
       // The Lab is off the site. Its routes stay in the tree, so these two
       // redirects are the whole switch: temporary (307) rather than permanent,
       // so browsers and crawlers do not cache the move if the Lab comes back.

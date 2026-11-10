@@ -268,7 +268,7 @@ export function LabLogo({
         return (
           <motion.span
             key={d.key}
-            className="absolute rounded-full bg-olive-500"
+            className="absolute rounded-full bg-accent"
             style={{
               width: pixel,
               height: pixel,
@@ -322,7 +322,7 @@ export function LabLogo({
       {bubbles.map((b) => (
         <motion.span
           key={b.id}
-          className="absolute rounded-full bg-olive-500"
+          className="absolute rounded-full bg-accent"
           style={{
             width: b.size,
             height: b.size,

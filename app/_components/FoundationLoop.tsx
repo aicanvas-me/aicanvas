@@ -11,7 +11,7 @@
 // Andromeda spotlight — extracted so both render the exact same preview
 // instead of drifting copies. Renders in Andromeda's own visual language
 // (surface.base void, JetBrains Mono, turquoise/orange/red scales), not the
-// site's sand/olive tokens — intentional, since this IS a preview of the
+// site's sand/accent tokens — intentional, since this IS a preview of the
 // system.
 
 import { useState, useEffect, useRef } from 'react'

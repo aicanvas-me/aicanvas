@@ -3,7 +3,10 @@
 'use client'
 
 import { useState } from 'react'
-import { Gear, Keyboard, SignOut, UserCircle } from '@phosphor-icons/react'
+import { Gear } from '@/app/_icons/icons/gear';
+import { KeyboardIcon } from '@/app/_icons/icons/keyboard';
+import { LogOut } from '@/app/_icons/icons/log-out';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
 import { TopBar } from '../../../lib/andromeda-pro.generated'
 import { Button } from '../../../lib/andromeda-pro.generated'
 import { UserMenu } from '../../../lib/andromeda-pro.generated'
@@ -15,11 +18,11 @@ const LABELS = ['Overview', 'Requests', 'History']
 // Same rows, same avatar, same status as the UserMenu spec — the identity slot
 // must not read as a different product on the two pages that show it.
 const ITEMS = [
-  { id: 'profile', label: 'Profile', icon: UserCircle },
+  { id: 'profile', label: 'Profile', icon: CircleUser },
   { id: 'preferences', label: 'Preferences', icon: Gear },
-  { id: 'shortcuts', label: 'Keyboard shortcuts', icon: Keyboard },
+  { id: 'shortcuts', label: 'Keyboard shortcuts', icon: KeyboardIcon },
   { id: 'sep1', type: 'separator' },
-  { id: 'signout', label: 'Sign out', icon: SignOut, destructive: true },
+  { id: 'signout', label: 'Sign out', icon: LogOut, destructive: true },
 ]
 
 const SRC = SAMPLE_AVATARS.butterflyVisor.dark

@@ -1,6 +1,7 @@
 'use client'
 
 import { buttonClasses } from '../buttonClasses'
+import { AuthHeading } from './AuthCard'
 
 // ─── AuthGateScreen ──────────────────────────────────────────────────────────
 // Soft-pitch screen rendered by AuthModal when mode === 'gate'. Pitches the
@@ -22,12 +23,11 @@ type AuthGateScreenProps = {
 export function AuthGateScreen({ onChooseSignIn, onChooseSignUp, title, subtitle }: AuthGateScreenProps) {
   return (
     <div className="flex flex-col">
-      <h2 className="text-xl font-bold leading-tight tracking-tight text-sand-900 dark:text-sand-50">
-        {title ?? 'Sign in and unlock the canvas.'}
-      </h2>
-      <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-        {subtitle ?? 'Save what you love. AI Canvas is open core: a free MIT library plus an optional Premium tier.'}
-      </p>
+      <AuthHeading
+        as="h2"
+        title={title ?? 'Sign in and unlock the canvas.'}
+        subtitle={subtitle ?? 'Save what you love. AI Canvas is open core: a free MIT library plus an optional Premium tier.'}
+      />
 
       <div className="mt-7 flex flex-col gap-3">
         <button

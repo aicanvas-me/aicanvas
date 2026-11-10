@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/app/lib/supabase/server'
 import { createAdminClient } from '@/app/lib/supabase/admin'
 import { paddleApiBase } from '@/app/lib/paddle/server'
+import { grantLifetimePurchase, hasLifetimeItem, hasOneTimeItem, lifetimePriceId } from '@/lib/identity/lifetime'
 
 export const runtime = 'nodejs'
 
@@ -62,6 +63,25 @@ export async function POST(req: NextRequest) {
   }
 
   const admin = createAdminClient()
+
+  // A one-time purchase NEVER reaches the subscription row: a row with no
+  // period end is premium forever (tier.ts). Lifetime gets its own row, written
+  // the same way the webhook writes it (a refund that landed first stays
+  // applied); any other one-time transaction is acknowledged with no write. The
+  // webhook still sends the email and cancels an old subscription.
+  if (hasOneTimeItem(txn)) {
+    if (!hasLifetimeItem(txn, lifetimePriceId())) return NextResponse.json({ status: 'ignored' }, { status: 202 })
+    const granted = await grantLifetimePurchase(admin, {
+      userId: user.id,
+      transactionId,
+      customerId: typeof txn?.customer_id === 'string' ? txn.customer_id : null,
+    })
+    if ('error' in granted) {
+      console.error('[checkout/completed] lifetime grant failed:', granted.error)
+      return NextResponse.json({ error: 'write failed' }, { status: 500 })
+    }
+    return NextResponse.json({ ok: true, lifetime: true })
+  }
 
   // Ordering guard: never override NEWER authoritative webhook state (e.g. the
   // user paid, then canceled; replaying the success callback must not

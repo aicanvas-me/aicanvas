@@ -3,8 +3,11 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, Copy } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Code } from '@/app/_icons/icons/code'
 import { Step } from '../components/Step'
+import { buttonClasses } from '../components/buttonClasses'
 
 // ── Static config ────────────────────────────────────────────────────────────
 
@@ -17,13 +20,13 @@ const MASKED_TOKEN = 'aic_••••••••'
 // The install command / config bakes the account token in as an AICANVAS_TOKEN
 // env var so the MCP authenticates on first run (the README's intended flow).
 // `token` = real value (for copy), the masked form (for display), or '' when
-// signed out (plain command, browse-only). Claude Code has three --scope modes.
-function claudeCommand(scope: Scope, token: string) {
+// signed out (plain command, browse-only). User scope only: it lives in the home folder, out of git.
+export function claudeCommand(scope: Scope, token: string) {
   const env = token ? ` --env AICANVAS_TOKEN=${token}` : ''
   return `claude mcp add ${SERVER_NAME} --scope ${scope}${env} -- npx -y ${PACKAGE}`
 }
 // Codex has no --scope flag yet — its CLI registers the server globally.
-function codexCommand(token: string) {
+export function codexCommand(token: string) {
   const env = token ? ` --env AICANVAS_TOKEN=${token}` : ''
   return `codex mcp add ${SERVER_NAME}${env} -- npx -y ${PACKAGE}`
 }
@@ -40,13 +43,27 @@ function cursorConfig(token: string) {
 }`
 }
 
+// VS Code's user mcp.json: its own `servers` + `type` shape, not Cursor's `mcpServers`.
+function vscodeConfig(token: string) {
+  const env = token ? `,\n      "env": { "AICANVAS_TOKEN": "${token}" }` : ''
+  return `{
+  "servers": {
+    "${SERVER_NAME}": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "${PACKAGE}"]${env}
+    }
+  }
+}`
+}
+
 // Cursor one-click deep link — config is base64 of the INNER server object.
 // Without a token we use the prebuilt string; with one we rebuild it so the
 // deep link installs already authenticated. btoa runs client-side only (token
 // arrives after the client fetch), so no SSR base64 concerns.
 const CURSOR_CONFIG_B64 =
   'eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBhaWNhbnZhcy9tY3AiXX0='
-const CURSOR_DEEPLINK_BASE = `cursor://anysphere.cursor-deeplink/mcp/install?name=${SERVER_NAME}&config=${CURSOR_CONFIG_B64}`
+export const CURSOR_DEEPLINK_BASE = `cursor://anysphere.cursor-deeplink/mcp/install?name=${SERVER_NAME}&config=${CURSOR_CONFIG_B64}`
 function cursorDeeplink(token: string) {
   if (!token) return CURSOR_DEEPLINK_BASE
   const config = btoa(
@@ -55,7 +72,9 @@ function cursorDeeplink(token: string) {
   return `cursor://anysphere.cursor-deeplink/mcp/install?name=${SERVER_NAME}&config=${config}`
 }
 
-const TEST_PROMPT = `What's the best navbar component in AI Canvas? Install it for me.`
+const TEST_PROMPT = `Use the aicanvas MCP: what can you add to my app?`
+// VS Code hides MCP tools from the model unless the prompt tags the server with #.
+const VSCODE_TEST_PROMPT = `#aicanvas what can you add to my app?`
 
 // Geist Mono shapes `--` as a ligature/contextual alternate, which visually
 // swallows the space before it (e.g. `aicanvas--scope`). Disable ligatures so
@@ -65,18 +84,24 @@ const NO_LIGATURES = {
   fontFeatureSettings: '"liga" 0, "calt" 0',
 } as const
 
-type Tool = 'claude' | 'codex' | 'cursor'
-type Scope = 'user' | 'project' | 'local'
+// A file name or command inside a sentence. Bordered, so it reads on both the
+// card and the darker inset the steps sit on.
+export const INLINE_CODE =
+  'rounded-chip border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-xs text-sand-800 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-200'
+
+type Tool = 'claude' | 'codex' | 'vscode' | 'cursor'
+type Scope = 'user'
 
 const TOOL_META: Record<Tool, { label: string; ask: string }> = {
   claude: { label: 'Claude Code', ask: 'Claude' },
   codex: { label: 'Codex', ask: 'Codex' },
+  vscode: { label: 'VS Code', ask: 'Copilot' },
   cursor: { label: 'Cursor', ask: 'Cursor' },
 }
 
 // ── Brand marks ──────────────────────────────────────────────────────────────
 
-function ClaudeMark() {
+export function ClaudeMark() {
   return (
     <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden>
       <path d="M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z" />
@@ -84,7 +109,15 @@ function ClaudeMark() {
   )
 }
 
-function CodexMark() {
+export function ClaudeCodeMark() {
+  return (
+    <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden>
+      <path fillRule="evenodd" clipRule="evenodd" d="M20.998 10.949H24v3.102h-3v3.028h-1.487V20H18v-2.921h-1.487V20H15v-2.921H9V20H7.488v-2.921H6V20H4.487v-2.921H3V14.05H0V10.95h3V5h17.998v5.949zM6 10.949h1.488V8.102H6v2.847zm10.51 0H18V8.102h-1.49v2.847z" />
+    </svg>
+  )
+}
+
+export function CodexMark() {
   return (
     <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden>
       <path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0l-4.83-2.786A4.504 4.504 0 0 1 2.34 7.872zm16.597 3.855l-5.833-3.387L15.119 7.15a.076.076 0 0 1 .071 0l4.83 2.791a4.494 4.494 0 0 1-.676 8.105v-5.678a.79.79 0 0 0-.407-.667zm2.01-3.023l-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.83-2.787a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.135l-2.02-1.164a.08.08 0 0 1-.038-.057V6.075a4.5 4.5 0 0 1 7.375-3.453l-.142.08-4.778 2.758a.795.795 0 0 0-.393.681zm1.097-2.365l2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5z" />
@@ -92,7 +125,7 @@ function CodexMark() {
   )
 }
 
-function CursorMark() {
+export function CursorMark() {
   return (
     <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden>
       <path d="M11.503.131 1.891 5.678a.84.84 0 0 0-.42.726v11.188c0 .3.162.575.42.724l9.609 5.55a1 1 0 0 0 .998 0l9.61-5.55a.84.84 0 0 0 .42-.724V6.404a.84.84 0 0 0-.42-.726L12.497.131a1.01 1.01 0 0 0-.996 0M2.657 6.338h18.55c.263 0 .43.287.297.515L12.23 22.918c-.062.107-.229.064-.229-.06V12.335a.59.59 0 0 0-.295-.51l-9.11-5.257c-.109-.063-.064-.23.061-.23" />
@@ -101,51 +134,15 @@ function CursorMark() {
 }
 
 const TOOLS: { id: Tool; mark: React.ReactNode }[] = [
-  { id: 'claude', mark: <ClaudeMark /> },
+  { id: 'claude', mark: <ClaudeCodeMark /> },
   { id: 'codex', mark: <CodexMark /> },
+  { id: 'vscode', mark: <Code size={15} /> },
   { id: 'cursor', mark: <CursorMark /> },
-]
-
-const SCOPES: { id: Scope; label: string; desc: React.ReactNode }[] = [
-  {
-    id: 'user',
-    label: 'User',
-    desc: (
-      <>
-        Run this in any terminal. The MCP works in every project you open.
-        Install once, then forget it exists.
-      </>
-    ),
-  },
-  {
-    id: 'project',
-    label: 'Project',
-    desc: (
-      <>
-        Run this in your project root. Saved to{' '}
-        <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
-          .mcp.json
-        </code>{' '}
-        and shared through git, so everyone on the project gets it. Best for
-        teams.
-      </>
-    ),
-  },
-  {
-    id: 'local',
-    label: 'Local',
-    desc: (
-      <>
-        Run this in your project root. Only you see the MCP, and only in this
-        project.
-      </>
-    ),
-  },
 ]
 
 // ── Toast ────────────────────────────────────────────────────────────────────
 
-function useToast() {
+export function useToast() {
   const [message, setMessage] = useState<string | null>(null)
   useEffect(() => {
     if (!message) return
@@ -155,7 +152,7 @@ function useToast() {
   return { message, show: setMessage }
 }
 
-function Toast({ message }: { message: string | null }) {
+export function Toast({ message }: { message: string | null }) {
   return (
     <AnimatePresence>
       {message ? (
@@ -167,7 +164,7 @@ function Toast({ message }: { message: string | null }) {
           className="fixed inset-x-0 bottom-6 z-50 mx-auto flex w-fit items-center gap-2 rounded-full border border-sand-200 bg-sand-100/95 px-4 py-2.5 text-sm font-semibold text-sand-900 shadow-xl backdrop-blur dark:border-sand-700 dark:bg-sand-800/95 dark:text-sand-50"
           role="status"
         >
-          <Check weight="regular" size={15} className="text-olive-600 dark:text-olive-500" />
+          <Check size={15} className="text-success" />
           {message}
         </motion.div>
       ) : null}
@@ -177,7 +174,7 @@ function Toast({ message }: { message: string | null }) {
 
 // ── Code block with copy button (matches the per-component install style) ───
 
-function CodeBlock({
+export function CodeBlock({
   command,
   copied,
   onCopy,
@@ -192,20 +189,20 @@ function CodeBlock({
 }) {
   return (
     <div
-      className={`flex gap-3 rounded-lg bg-sand-200 dark:bg-sand-950 px-4 py-3.5 ${
+      className={`flex gap-3 rounded-inset border border-sand-200 bg-sand-100 py-3 pl-4 pr-2.5 dark:border-sand-800 dark:bg-sand-900 ${
         multiline ? 'items-start' : 'items-center justify-between'
       }`}
     >
       {multiline ? (
         <pre
-          className="min-w-0 flex-1 overflow-x-auto font-mono text-sm leading-relaxed text-sand-700 dark:text-sand-300"
+          className="min-w-0 flex-1 overflow-x-auto py-0.5 font-mono text-sm leading-relaxed text-sand-800 dark:text-sand-200"
           style={NO_LIGATURES}
         >
           {command}
         </pre>
       ) : (
         <code
-          className="block min-w-0 flex-1 overflow-x-auto font-mono text-sm text-sand-700 dark:text-sand-300"
+          className="block min-w-0 flex-1 overflow-x-auto py-0.5 font-mono text-sm text-sand-800 dark:text-sand-200"
           style={NO_LIGATURES}
         >
           {command}
@@ -214,13 +211,13 @@ function CodeBlock({
       <button
         type="button"
         onClick={onCopy}
-        className="shrink-0 rounded-md p-1.5 text-sand-600 dark:text-sand-500 transition-all hover:text-sand-800 dark:hover:text-sand-200 active:scale-90"
+        className="shrink-0 rounded-control p-2 text-sand-600 transition-all hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-90 dark:text-sand-400 dark:hover:bg-sand-800 dark:hover:text-sand-100"
         aria-label={`Copy ${label}`}
       >
         {copied ? (
-          <Check weight="regular" size={14} className="text-olive-500" />
+          <Check size={14} className="text-success" />
         ) : (
-          <Copy weight="regular" size={14} />
+          <Copy size={14} />
         )}
       </button>
     </div>
@@ -232,7 +229,6 @@ function CodeBlock({
 export function InstallCards() {
   const { message, show } = useToast()
   const [tool, setTool] = useState<Tool>('claude')
-  const [scope, setScope] = useState<Scope>('user')
   const [installCopied, setInstallCopied] = useState(false)
   const [testCopied, setTestCopied] = useState(false)
   const [userToken, setUserToken] = useState<string | null>(null)
@@ -269,25 +265,26 @@ export function InstallCards() {
 
   const isCodex = tool === 'codex'
   const isCursor = tool === 'cursor'
+  const isVscode = tool === 'vscode'
+  const testPrompt = isVscode ? VSCODE_TEST_PROMPT : TEST_PROMPT
   const { label: toolLabel, ask: askLabel } = TOOL_META[tool]
   // Masked for display, real value for the copy handler.
   const displayToken = userToken ? MASKED_TOKEN : ''
   const installCommandDisplay = isCodex
     ? codexCommand(displayToken)
-    : claudeCommand(scope, displayToken)
+    : claudeCommand('user', displayToken)
   const installCommandCopy = isCodex
     ? codexCommand(userToken ?? '')
-    : claudeCommand(scope, userToken ?? '')
+    : claudeCommand('user', userToken ?? '')
 
   return (
-    <section className="mt-2">
-      <h2 className="mb-3 text-lg font-bold text-sand-900 dark:text-sand-50">
-        How to install the MCP
-      </h2>
-      {/* Tabbed install widget — matches the per-component "Add to your project" */}
-      <div className="overflow-hidden rounded-xl border border-sand-200 dark:border-sand-800">
-        {/* Tool toggle — Claude Code / Codex / Cursor */}
-        <div className="flex gap-1.5 border-b border-sand-200 bg-sand-100 p-1.5 dark:border-sand-800 dark:bg-sand-900">
+    <div>
+      {/* Tabbed install widget, built like the pricing cards: the tool switch
+          on the card, the steps in the darker inset under it. The page owns
+          the section heading. */}
+      <div className="rounded-section border border-sand-200 bg-sand-100 p-2 dark:border-sand-800 dark:bg-sand-900">
+        {/* Tool toggle — Claude Code / Codex / VS Code / Cursor */}
+        <div className="isolate flex gap-1.5 p-1">
           {TOOLS.map((t) => {
             const active = tool === t.id
             return (
@@ -300,20 +297,22 @@ export function InstallCards() {
                   setTestCopied(false)
                 }}
                 aria-pressed={active}
-                className={`relative flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg px-2 py-2.5 text-xs font-semibold transition-colors sm:gap-2 sm:px-4 sm:text-sm ${
+                className={`relative flex min-w-0 flex-1 items-center justify-center gap-1.5 rounded-control px-2 py-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 sm:gap-2 sm:px-4 sm:text-sm ${
                   active
                     ? 'text-sand-900 dark:text-sand-50'
-                    : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
+                    : 'text-sand-600 hover:text-sand-900 dark:text-sand-400 dark:hover:text-sand-100'
                 }`}
               >
                 {active && (
                   <motion.span
                     layoutId="mcpToolHighlight"
-                    className="absolute inset-0 rounded-lg bg-sand-50 shadow-sm ring-1 ring-sand-300 dark:bg-sand-800 dark:ring-sand-700"
+                    className="absolute inset-0 rounded-control bg-sand-50 shadow-sm ring-1 ring-sand-300 dark:bg-sand-800 dark:ring-sand-700"
                     transition={{ type: 'spring', stiffness: 420, damping: 34 }}
                   />
                 )}
-                <span className="relative z-10 flex items-center justify-center gap-1.5 text-center leading-tight sm:gap-2">
+                {/* Mark over the label on phones: side by side, "Claude
+                    Code" breaks onto two lines in a third of the width. */}
+                <span className="relative z-10 flex flex-col items-center justify-center gap-1.5 whitespace-nowrap text-center leading-tight sm:flex-row sm:gap-2">
                   {t.mark}
                   {TOOL_META[t.id].label}
                 </span>
@@ -322,159 +321,127 @@ export function InstallCards() {
           })}
         </div>
 
-        {/* Scope tabs — Claude Code only (Codex/Cursor have no --scope) */}
-        {tool === 'claude' && (
-          <div className="flex overflow-x-auto border-b border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
-            {SCOPES.map((s) => {
-              const active = scope === s.id
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  onClick={() => setScope(s.id)}
-                  aria-pressed={active}
-                  className={`relative whitespace-nowrap px-4 py-2.5 text-sm font-semibold transition-colors ${
-                    active
-                      ? 'text-sand-900 dark:text-sand-50'
-                      : 'text-sand-600 hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300'
-                  }`}
-                >
-                  {s.label}
-                  {active && (
-                    <motion.span
-                      layoutId="mcpScopeUnderline"
-                      className="absolute inset-x-0 -bottom-px h-0.5 bg-sand-900 dark:h-px dark:bg-sand-50"
-                      transition={{ type: 'spring', stiffness: 420, damping: 34 }}
-                    />
-                  )}
-                </button>
-              )
-            })}
+        <div className="mt-2 overflow-hidden rounded-card bg-sand-50/70 dark:bg-sand-950">
+          {/* Steps */}
+          <div className="space-y-6 px-4 py-6 sm:px-7 sm:py-8">
+            <Step number={1}>
+              {isCursor ? (
+                <>
+                  <p className="mb-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                    Click → <span className="font-semibold">Install</span>
+                  </p>
+                  <a
+                    href={cursorDeeplink(userToken ?? '')}
+                    className={buttonClasses({ variant: 'primary', size: 'lg' })}
+                  >
+                    <CursorMark />
+                    Add to Cursor
+                  </a>
+                  <p className="mb-2.5 mt-5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                    Or add the <code className={INLINE_CODE}>aicanvas</code> entry to{' '}
+                    <code className={INLINE_CODE}>~/.cursor/mcp.json</code>:
+                  </p>
+                  <CodeBlock
+                    command={cursorConfig(displayToken)}
+                    copied={installCopied}
+                    onCopy={() =>
+                      copy(cursorConfig(userToken ?? ''), 'Config copied', setInstallCopied)
+                    }
+                    label="Cursor config"
+                    multiline
+                  />
+                </>
+              ) : isVscode ? (
+                <>
+                  <p className="mb-2.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                    Command Palette → <span className="font-semibold">MCP: Open User Configuration</span> → add the{' '}
+                    <code className={INLINE_CODE}>aicanvas</code> entry → works in every project
+                  </p>
+                  <CodeBlock
+                    command={vscodeConfig(displayToken)}
+                    copied={installCopied}
+                    onCopy={() =>
+                      copy(vscodeConfig(userToken ?? ''), 'Config copied', setInstallCopied)
+                    }
+                    label="VS Code config"
+                    multiline
+                  />
+                </>
+              ) : (
+                <>
+                  <p className="mb-2.5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                    Run this in any terminal → works in every project
+                  </p>
+                  <CodeBlock
+                    command={installCommandDisplay}
+                    copied={installCopied}
+                    onCopy={() =>
+                      copy(
+                        installCommandCopy,
+                        'Install command copied',
+                        setInstallCopied,
+                      )
+                    }
+                    label="install command"
+                  />
+                </>
+              )}
+              {tokenLoaded && (userToken ? (
+                <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  Your token is in it → full source. It lives in your home folder, out of git.
+                </p>
+              ) : (
+                <p className="mt-3 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  <Link
+                    href="/account/settings"
+                    className="font-medium text-sand-700 underline underline-offset-2 hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-50"
+                  >
+                    Sign in
+                  </Link>{' '}
+                  → your token goes in → full source. A free account works. Signed out, your agent can only browse.
+                </p>
+              ))}
+            </Step>
+
+            <Step number={2}>
+              {isCursor ? (
+                <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  Cursor Settings → <span className="font-semibold">Tools &amp; MCPs</span> →{' '}
+                  <code className={INLINE_CODE}>aicanvas</code> on
+                </p>
+              ) : isVscode ? (
+                <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  <span className="font-semibold">Start</span> above <code className={INLINE_CODE}>aicanvas</code> in
+                  mcp.json → it shows the tool count
+                </p>
+              ) : (
+                <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  Restart {toolLabel} → <code className={INLINE_CODE}>aicanvas</code> loads
+                </p>
+              )}
+            </Step>
+
+            <Step number={3} isLast>
+              <div className="mb-2.5 flex items-center gap-2">
+                <p className="text-sm leading-relaxed text-sand-600 dark:text-sand-400">
+                  Ask {askLabel}:
+                </p>
+                <span className="ml-auto shrink-0 rounded-full border border-sand-200 bg-sand-100 px-2 py-0.5 text-xs font-medium text-sand-600 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-400">
+                  Optional
+                </span>
+              </div>
+              <CodeBlock
+                command={testPrompt}
+                copied={testCopied}
+                onCopy={() => copy(testPrompt, 'Test prompt copied', setTestCopied)}
+                label="test prompt"
+              />
+            </Step>
           </div>
-        )}
-
-        {/* Steps */}
-        <div className="space-y-6 bg-sand-100 px-5 py-6 dark:bg-sand-900">
-          <Step number={1}>
-            {isCursor ? (
-              <>
-                <p className="mb-3 text-sm text-sand-600 dark:text-sand-400">
-                  One click installs it. The button opens Cursor with the config
-                  filled in, so you just enable it.
-                </p>
-                <a
-                  href={cursorDeeplink(userToken ?? '')}
-                  className="inline-flex items-center gap-2 rounded-lg bg-olive-500 px-4 py-2.5 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400"
-                >
-                  <CursorMark />
-                  Add to Cursor
-                </a>
-                <p className="mb-2.5 mt-5 text-sm text-sand-600 dark:text-sand-400">
-                  Or paste this into{' '}
-                  <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
-                    ~/.cursor/mcp.json
-                  </code>{' '}
-                  (global) or{' '}
-                  <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
-                    .cursor/mcp.json
-                  </code>{' '}
-                  (one project):
-                </p>
-                <CodeBlock
-                  command={cursorConfig(displayToken)}
-                  copied={installCopied}
-                  onCopy={() =>
-                    copy(cursorConfig(userToken ?? ''), 'Config copied', setInstallCopied)
-                  }
-                  label="Cursor config"
-                  multiline
-                />
-              </>
-            ) : (
-              <>
-                <p className="mb-2.5 text-sm text-sand-600 dark:text-sand-400">
-                  {isCodex ? (
-                    <>
-                      Run this in any terminal. Codex registers the MCP globally,
-                      so it works in every project. Its CLI has no per-project
-                      scope yet.
-                    </>
-                  ) : (
-                    SCOPES.find((s) => s.id === scope)!.desc
-                  )}
-                </p>
-                <CodeBlock
-                  command={installCommandDisplay}
-                  copied={installCopied}
-                  onCopy={() =>
-                    copy(
-                      installCommandCopy,
-                      'Install command copied',
-                      setInstallCopied,
-                    )
-                  }
-                  label="install command"
-                />
-              </>
-            )}
-            {tokenLoaded && (userToken ? (
-              <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">
-                Your token is baked into the command above, so installs can pull
-                source. View or rotate it in your{' '}
-                <Link
-                  href="/account/settings"
-                  className="font-medium text-sand-700 underline underline-offset-2 hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-50"
-                >
-                  account settings
-                </Link>
-                .
-              </p>
-            ) : (
-              <p className="mt-3 text-sm text-sand-600 dark:text-sand-400">
-                <Link
-                  href="/account/settings"
-                  className="font-medium text-sand-700 underline underline-offset-2 hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-50"
-                >
-                  Sign in
-                </Link>{' '}
-                to bake your token into the command (free or premium account).
-                Without it your agent can browse components but can&rsquo;t pull
-                their source.
-              </p>
-            ))}
-          </Step>
-
-          <Step number={2}>
-            <p className="text-sm text-sand-600 dark:text-sand-400">
-              {isCursor ? 'Reload the Cursor window.' : `Restart ${toolLabel}.`}{' '}
-              The{' '}
-              <code className="rounded bg-sand-50 px-1 py-0.5 font-mono text-xs text-sand-800 dark:bg-sand-800 dark:text-sand-200">
-                aicanvas
-              </code>{' '}
-              MCP loads automatically.
-            </p>
-          </Step>
-
-          <Step number={3} isLast>
-            <div className="mb-2.5 flex items-center gap-2">
-              <p className="text-sm text-sand-600 dark:text-sand-400">
-                Test it. Ask {askLabel}:
-              </p>
-              <span className="ml-auto shrink-0 rounded-full bg-sand-50 px-2 py-0.5 text-xs font-medium text-sand-600 dark:bg-sand-800 dark:text-sand-500">
-                Optional
-              </span>
-            </div>
-            <CodeBlock
-              command={TEST_PROMPT}
-              copied={testCopied}
-              onCopy={() => copy(TEST_PROMPT, 'Test prompt copied', setTestCopied)}
-              label="test prompt"
-            />
-          </Step>
         </div>
       </div>
 
       <Toast message={message} />
-    </section>
+    </div>
   )
 }

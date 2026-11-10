@@ -6,36 +6,33 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import Link from 'next/link'
 import { JetBrains_Mono } from 'next/font/google'
-import { SiteFooter } from '../../../components/SiteFooter'
-import { PageFrame, PageOverline, PageTitle, PageLead } from '../../../_components/DesignSystemPage'
-import {
-  MagnifyingGlass,
-  Bell,
-  Gear,
-  Pulse,
-  Users,
-  Database,
-  Compass,
-  Envelope,
-  EnvelopeOpen,
-  Warning,
-  Info,
-  ArrowUpRight,
-  ArrowClockwise,
-  Sliders,
-  Export,
-  EyeSlash,
-  Trash,
-  Pencil,
-  Copy,
-  Star,
-  ChartLine,
-  ChartBar,
-  Clock,
-  Keyboard,
-  SignOut,
-  UserCircle,
-} from '@phosphor-icons/react'
+import { PageFrame, PageTitle, PageLead } from '../../../_components/DesignSystemPage'
+import { Search } from '@/app/_icons/icons/search';
+import { Bell } from '@/app/_icons/icons/bell';
+import { Gear } from '@/app/_icons/icons/gear';
+import { Activity } from '@/app/_icons/icons/activity';
+import { Users } from '@/app/_icons/icons/users';
+import { Database } from '@/app/_icons/icons/database';
+import { Compass } from '@/app/_icons/icons/compass';
+import { Mail } from '@/app/_icons/icons/mail';
+import { MailOpen } from '@/app/_icons/icons/mail-open';
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
+import { InfoIcon } from '@/app/_icons/icons/info';
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right';
+import { RotateCw } from '@/app/_icons/icons/rotate-cw';
+import { SlidersVertical } from '@/app/_icons/icons/sliders-vertical';
+import { ShareIcon } from '@/app/_icons/icons/share';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
+import { Trash } from '@/app/_icons/icons/trash';
+import { Pen } from '@/app/_icons/icons/pen';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { Star } from '@/app/_icons/icons/star';
+import { ChartLine } from '@/app/_icons/icons/chart-line';
+import { ChartBar } from '@/app/_icons/icons/chart-bar';
+import { ClockIcon } from '@/app/_icons/icons/clock';
+import { KeyboardIcon } from '@/app/_icons/icons/keyboard';
+import { LogOut } from '@/app/_icons/icons/log-out';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
 import { tokens, light } from '../../../../design-systems/andromeda/tokens'
 import { subscribeToTheme } from '../../../../design-systems/andromeda/components/lib/theme'
 import { mq } from '../../../../design-systems/andromeda/components/lib/responsive'
@@ -107,6 +104,7 @@ import {
 import { MetricChart, Gauge, Waveform, MediaCard, DataTable, MusicPlayer } from '../../../lib/andromeda-v2.generated'
 import { ShowcaseInstall } from '../../../_components/ShowcaseInstall'
 import { ShowcaseInstallCard } from '../../../_components/ShowcaseInstallCard'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // Same JetBrains Mono setup as the dashboard page so the showcase
 // matches the design system's only font exactly.
@@ -229,7 +227,7 @@ function Section({
             style={andromedaVars() as CSSProperties}
           >
             Open {title}
-            <ArrowUpRight weight="regular" size={14} />
+            <ArrowUpRight size={14} />
           </Link>
         ) : null}
       </CardHeader>
@@ -319,8 +317,8 @@ export default function AndromedaShowcase({
     <ShowcaseInstall
       installs={[
         // MIT, and the registry serves it on the free lane, so the command is
-        // shown to everyone. "Everything" adds the templates and the brain,
-        // which are paid, so that one still leads to the paywall.
+        // shown to everyone. "Everything" also carries the brain, which is
+        // paid, so that one still leads to the paywall.
         { slug: 'andromeda', label: 'All components', free: true },
         { slug: 'andromeda-all', label: 'Everything' },
       ]}
@@ -384,12 +382,12 @@ export default function AndromedaShowcase({
         `}</style>
 
         {/* Page header — AI Canvas site style (Manrope), not the Andromeda mono
-            aesthetic of the demos below. Site sand/olive pairs so the header follows
+            aesthetic of the demos below. Site sand/accent pairs so the header follows
             the site theme like the rest of the page. */}
         {/* A div, not a header: the site bar is the page's banner landmark. */}
         <div style={{ marginBottom: tokens.spacing[6], fontFamily: "var(--font-sans), 'Manrope', system-ui, sans-serif" }}>
-          <PageOverline>Andromeda</PageOverline>
-          <PageTitle>System</PageTitle>
+          <PageCrumbs />
+          <PageTitle gap="none">System</PageTitle>
           <PageLead>
             Built for designers, developers, and teams who want a system, not a stylesheet. Tokens, components, templates, and a documented AI Brain that keeps everyone aligned.
           </PageLead>
@@ -411,7 +409,7 @@ export default function AndromedaShowcase({
         <Section
           title="Color Palette"
           kicker="Foundation · Colors"
-          description="Three brand hue palettes lead — accent (turquoise), orange (warning), red (fault) — each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. The foundational greys follow: surface, border, text. Every alpha sits in a single row at the seam between the two halves."
+          description="Three brand hue palettes lead: accent (turquoise), orange (warning), red (fault), each a 5-stop scale (100 lightest → 500 darkest) with a matching alpha. The foundational greys follow: surface, border, text. Every alpha sits in a single row at the seam between the two halves."
         >
           <Row label="Accent · Turquoise">
             {[
@@ -569,7 +567,7 @@ export default function AndromedaShowcase({
         <Section
           title="Typography"
           kicker="Foundation · Type"
-          description="JetBrains Mono is the only typeface. Both fontSans and fontMono resolve to it — the distinction exists only for backward compatibility. Hierarchy comes from size, weight, and letter-spacing, not from switching families."
+          description="JetBrains Mono is the only typeface. Both fontSans and fontMono resolve to it: the distinction exists only for backward compatibility. Hierarchy comes from size, weight, and letter-spacing, not from switching families."
         >
           <div style={{ marginBottom: tokens.spacing[5] }}>
             <div style={{ marginBottom: tokens.spacing[3], fontFamily: tokens.typography.fontMono, fontSize: tokens.typography.size.xs, color: c.text.faint, textTransform: 'uppercase', letterSpacing: tokens.typography.tracking.widest }}>
@@ -635,7 +633,7 @@ export default function AndromedaShowcase({
         <Section
           title="Spacing"
           kicker="Foundation · Spacing"
-          description="A 4px-based scale. Token names track the px value: spacing.1 → 4px, spacing.4 → 16px. The scale skips 7, 9, and 11 — only the values the system actually uses are emitted, so the keys you have are the keys you should be reaching for."
+          description="A 4px-based scale. Token names track the px value: spacing.1 → 4px, spacing.4 → 16px. The scale skips 7, 9, and 11: only the values the system actually uses are emitted, so the keys you have are the keys you should be reaching for."
         >
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             {[
@@ -795,10 +793,10 @@ export default function AndromedaShowcase({
                           ariaLabel="Requests options"
                           staticOpen
                           items={[
-                            { label: 'Refresh', icon: ArrowClockwise, onSelect: () => {} },
-                            { label: 'Export',  icon: Export,         onSelect: () => {} },
+                            { label: 'Refresh', icon: RotateCw, onSelect: () => {} },
+                            { label: 'Export',  icon: ShareIcon,         onSelect: () => {} },
                             { type: 'separator' },
-                            { label: 'Hide',    icon: EyeSlash,       onSelect: () => {} },
+                            { label: 'Hide',    icon: EyeOff,       onSelect: () => {} },
                           ]}
                         />
                       }
@@ -849,11 +847,11 @@ export default function AndromedaShowcase({
                     align="left"
                     staticOpen
                     items={[
-                      { label: 'Refresh',   icon: ArrowClockwise, onSelect: () => {} },
-                      { label: 'Configure', icon: Sliders,        onSelect: () => {} },
-                      { label: 'Export',    icon: Export,         onSelect: () => {} },
+                      { label: 'Refresh',   icon: RotateCw, onSelect: () => {} },
+                      { label: 'Configure', icon: SlidersVertical,        onSelect: () => {} },
+                      { label: 'Export',    icon: ShareIcon,         onSelect: () => {} },
                       { type: 'separator' },
-                      { label: 'Hide',      icon: EyeSlash,       onSelect: () => {} },
+                      { label: 'Hide',      icon: EyeOff,       onSelect: () => {} },
                     ]}
                   />
                 </div>
@@ -863,15 +861,15 @@ export default function AndromedaShowcase({
                     align="left"
                     staticOpen
                     items={[
-                      { label: 'Edit',   icon: Pencil,  onSelect: () => {} },
-                      { label: 'Copy',   icon: Copy,    onSelect: () => {} },
+                      { label: 'Edit',   icon: Pen,  onSelect: () => {} },
+                      { label: 'Copy',   icon: CopyIcon,    onSelect: () => {} },
                       {
                         label: 'Move to',
                         icon: ArrowUpRight,
                         submenu: [
                           { label: 'Starred', icon: Star,     onSelect: () => {} },
                           { label: 'Archive', icon: Database, onSelect: () => {} },
-                          { label: 'Snoozed', icon: Clock,    onSelect: () => {} },
+                          { label: 'Snoozed', icon: ClockIcon,    onSelect: () => {} },
                         ],
                       },
                       { type: 'separator' },
@@ -953,7 +951,7 @@ export default function AndromedaShowcase({
               <CardContent>
                 <CardDescription>
                   Sharp corners with bracket markers tucked into each corner. No
-                  perimeter stroke — the brackets are the frame.
+                  perimeter stroke: the brackets are the frame.
                 </CardDescription>
               </CardContent>
               <CardFooter>
@@ -1050,10 +1048,10 @@ export default function AndromedaShowcase({
             }}
           >
             <Input label="Callsign" placeholder="ENTER CALLSIGN" />
-            <Input label="Search" icon={MagnifyingGlass} placeholder="QUERY DATABASE" />
+            <Input label="Search" icon={Search} placeholder="QUERY DATABASE" />
             <Input
               label="Operator"
-              icon={Envelope}
+              icon={Mail}
               placeholder="OPERATOR@DOMAIN.COM"
             />
             <Input
@@ -1068,7 +1066,7 @@ export default function AndromedaShowcase({
         <Section
           title="Search Field"
           slug="search-field"
-          description="Command-bar-style search input with an optional ⌘-K shortcut chip. Five states — idle, hover, focus, text-inactive (placeholder), text-active (typed)."
+          description="Command-bar-style search input with an optional ⌘-K shortcut chip. Five states: idle, hover, focus, text-inactive (placeholder), text-active (typed)."
         >
           <div
             style={{
@@ -1101,7 +1099,7 @@ export default function AndromedaShowcase({
           >
             <CornerMarkers />
             <NavItem icon={Compass} label="Overview" active />
-            <NavItem icon={Pulse} label="Activity" />
+            <NavItem icon={Activity} label="Activity" />
             <NavItem icon={Users} label="Members" />
             <NavItem icon={Database} label="Logs" />
             <NavItem icon={Gear} label="Settings" />
@@ -1133,7 +1131,7 @@ export default function AndromedaShowcase({
         <Section
           title="Heat Grid"
           slug="heat-grid"
-          description="2-D matrix fill gauge — the cousin of ProgressBar. Cells fill from the bottom-centre outward in a widening pyramid as the value rises, dim-to-bright toward the wave front. Scroll-gated fill, optional percentage readout, role=meter."
+          description="2-D matrix fill gauge, the cousin of ProgressBar. Cells fill from the bottom-centre outward in a widening pyramid as the value rises, dim-to-bright toward the wave front. Scroll-gated fill, optional percentage readout, role=meter."
         >
           <Row label="Value">
             <HeatGrid value={60} label="Window risk" />
@@ -1430,7 +1428,7 @@ export default function AndromedaShowcase({
           title="Alert"
           slug="alert"
           kicker="Component · Error"
-          description="Banner-style status component for inline messages. 4 variants — default, accent, warning, fault — each with its own per-variant color set. Severity-aware ARIA (warning and fault announce assertively, the rest politely) and compound parts: AlertIcon, AlertContent, AlertTitle, AlertDescription."
+          description="Banner-style status component for inline messages. 4 variants: default, accent, warning, fault, each with its own per-variant color set. Severity-aware ARIA (warning and fault announce assertively, the rest politely) and compound parts: AlertIcon, AlertContent, AlertTitle, AlertDescription."
         >
           <div
             style={{
@@ -1445,28 +1443,28 @@ export default function AndromedaShowcase({
             }}
           >
             <Alert variant="default">
-              <AlertIcon><Info weight="light" /></AlertIcon>
+              <AlertIcon><InfoIcon size="1em" /></AlertIcon>
               <AlertContent>
                 <AlertTitle>System nominal</AlertTitle>
                 <AlertDescription>All systems reporting in.</AlertDescription>
               </AlertContent>
             </Alert>
             <Alert variant="accent">
-              <AlertIcon><Pulse weight="light" /></AlertIcon>
+              <AlertIcon><Activity size="1em" /></AlertIcon>
               <AlertContent>
                 <AlertTitle>New activity</AlertTitle>
                 <AlertDescription>Burst received from VHCL-04.</AlertDescription>
               </AlertContent>
             </Alert>
             <Alert variant="warning">
-              <AlertIcon><Warning weight="light" /></AlertIcon>
+              <AlertIcon><TriangleAlert size="1em" /></AlertIcon>
               <AlertContent>
                 <AlertTitle>Caution</AlertTitle>
                 <AlertDescription>Heat shield within 12% of operational limit.</AlertDescription>
               </AlertContent>
             </Alert>
             <Alert variant="fault">
-              <AlertIcon><Warning weight="light" /></AlertIcon>
+              <AlertIcon><TriangleAlert size="1em" /></AlertIcon>
               <AlertContent>
                 <AlertTitle>Connection lost</AlertTitle>
                 <AlertDescription>Reconnecting. ETA 8 seconds.</AlertDescription>
@@ -1482,7 +1480,7 @@ export default function AndromedaShowcase({
           description="Centered icon + uppercase mono title + sans description + optional action. Built on Card so it inherits the bracket motif."
         >
           <EmptyState>
-            <EmptyStateIcon><EnvelopeOpen weight="light" /></EmptyStateIcon>
+            <EmptyStateIcon><MailOpen size="1em" /></EmptyStateIcon>
             <EmptyStateTitle>No activity</EmptyStateTitle>
             <EmptyStateDescription>
               Awaiting signal from the deep-space array. The next pass is in
@@ -1605,7 +1603,7 @@ export default function AndromedaShowcase({
           title="Media Card"
           slug="media-card"
           kicker="Component · Surfaces"
-          description="Image-backed content tile. A full-bleed photo under a soft bottom scrim, a mono code tag, title and meta, and one corner action — Play, a CTA arrow, or none. Composes the Card frame with markers off, so the image carries the card identity."
+          description="Image-backed content tile. A full-bleed photo under a soft bottom scrim, a mono code tag, title and meta, and one corner action: Play, a CTA arrow, or none. Composes the Card frame with markers off, so the image carries the card identity."
         >
           <div className="as-grid-2" style={{ display: 'grid', gap: tokens.spacing[5] }}>
             <MediaCard code="MIX-01" title="Your Mix" meta="3.4k plays" action="play" />
@@ -1635,7 +1633,7 @@ export default function AndromedaShowcase({
           title="Music Player"
           slug="music-player"
           kicker="Component · Composites"
-          description="Block-scale transport bar. Track identity, the full transport cluster, a scrub slider with elapsed and remaining readouts, and like, lyrics, and volume controls — assembled from Andromeda primitives, driven by props with a live demo fallback."
+          description="Block-scale transport bar. Track identity, the full transport cluster, a scrub slider with elapsed and remaining readouts, and like, lyrics, and volume controls, assembled from Andromeda primitives, driven by props with a live demo fallback."
         >
           <MusicPlayer />
         </Section>
@@ -1645,7 +1643,7 @@ export default function AndromedaShowcase({
           title="Planet"
           slug="planet"
           kicker="Component · Visualization"
-          description="3D particle sphere — every point lit on a Lambert ramp from accent.500 (shadow) to accent.200 (lit), with 1% accent.100 sparkles on the day side. Self-contained Three.js, transparent canvas. Drop into a Card for status / next-destination widgets."
+          description="3D particle sphere: every point lit on a Lambert ramp from accent.500 (shadow) to accent.200 (lit), with 1% accent.100 sparkles on the day side. Self-contained Three.js, transparent canvas. Drop into a Card for status / next-destination widgets."
         >
           <div className="as-grid-planet" style={{ display: 'grid', gap: tokens.spacing[5] }}>
             {/* Standalone planet — full canvas */}
@@ -1748,7 +1746,7 @@ export default function AndromedaShowcase({
         >
           <Row label="Position · top (default)">
             <Tooltip label="Refresh">
-              <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+              <IconButton aria-label="Refresh" icon={RotateCw} />
             </Tooltip>
             <Tooltip label="Settings">
               <IconButton aria-label="Settings" icon={Gear} />
@@ -1757,7 +1755,7 @@ export default function AndromedaShowcase({
               <IconButton aria-label="Notifications" icon={Bell} />
             </Tooltip>
             <Tooltip label="Export">
-              <IconButton aria-label="Export" variant="outline" icon={Export} />
+              <IconButton aria-label="Export" variant="outline" icon={ShareIcon} />
             </Tooltip>
             <Tooltip label="Delete" >
               <IconButton aria-label="Delete" variant="destructive" icon={Trash} />
@@ -1765,7 +1763,7 @@ export default function AndromedaShowcase({
           </Row>
           <Row label="Position · bottom">
             <Tooltip label="Refresh" position="bottom">
-              <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+              <IconButton aria-label="Refresh" icon={RotateCw} />
             </Tooltip>
             <Tooltip label="Settings" position="bottom">
               <IconButton aria-label="Settings" icon={Gear} />
@@ -1787,7 +1785,7 @@ export default function AndromedaShowcase({
               }}
             >
               <Tooltip label="Refresh" portal>
-                <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+                <IconButton aria-label="Refresh" icon={RotateCw} />
               </Tooltip>
               <Tooltip label="Settings" portal>
                 <IconButton aria-label="Settings" icon={Gear} />
@@ -1843,11 +1841,11 @@ export default function AndromedaShowcase({
         >
           {(() => {
             const items = [
-              { id: 'profile',     label: 'Profile',             icon: UserCircle },
+              { id: 'profile',     label: 'Profile',             icon: CircleUser },
               { id: 'preferences', label: 'Preferences',         icon: Gear },
-              { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
+              { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: KeyboardIcon },
               { id: 'sep1',        type: 'separator' as const },
-              { id: 'signout',     label: 'Sign Out',            icon: SignOut },
+              { id: 'signout',     label: 'Sign Out',            icon: LogOut },
             ];
             return (
               <div
@@ -1902,11 +1900,11 @@ export default function AndromedaShowcase({
         >
           {(() => {
             const items = [
-              { id: 'profile',     label: 'Profile',             icon: UserCircle },
+              { id: 'profile',     label: 'Profile',             icon: CircleUser },
               { id: 'preferences', label: 'Preferences',         icon: Gear },
-              { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
+              { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: KeyboardIcon },
               { id: 'sep1',        type: 'separator' as const },
-              { id: 'signout',     label: 'Sign Out',            icon: SignOut },
+              { id: 'signout',     label: 'Sign Out',            icon: LogOut },
             ];
             return (
               <div
@@ -1961,7 +1959,6 @@ export default function AndromedaShowcase({
         {/* Bottom install card — the two packages, like the brain's card. */}
         <ShowcaseInstallCard />
       </PageFrame>
-      <SiteFooter />
     </div>
     </>
   )

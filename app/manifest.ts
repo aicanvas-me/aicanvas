@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: 'AI Canvas',
     short_name: 'AI Canvas',
     description:
-      'Open component marketplace: animated React components with source code and AI prompts. Open source and free to start.',
+      'Design systems, design rules, and React components for AI coding agents.',
     start_url: '/',
     display: 'standalone',
     background_color: '#0E0E0F',

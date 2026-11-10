@@ -73,8 +73,9 @@ const html = (chip, iconSvg) => `<!doctype html><html><head><meta charset="utf-8
 </body></html>`
 
 /**
- * The brand mark, olive gradient and dark facets exactly as the site paints it.
- * The chips around it are monochrome so the icon is the only colour in the row.
+ * The brand mark, the one near-white colour the site paints it in. The page is
+ * rendered in the dark colour scheme, so the file's light-background rule
+ * (ink) does not fire on the dark chip.
  */
 async function brandMark() {
   return (await readFile(join(ROOT, 'public', 'ai-canvas-icon.svg'), 'utf8'))
@@ -91,7 +92,7 @@ async function main() {
 
   await mkdir(OUT, { recursive: true })
   const browser = await chromium.launch()
-  const page = await browser.newPage({ deviceScaleFactor: SCALE })
+  const page = await browser.newPage({ deviceScaleFactor: SCALE, colorScheme: 'dark' })
 
   for (const chip of targets) {
     await page.setContent(html(chip, iconSvg), { waitUntil: 'networkidle' })

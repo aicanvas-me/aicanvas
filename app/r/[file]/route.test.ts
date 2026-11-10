@@ -54,14 +54,31 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     expect(res.status).toBe(200)
     expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
     // Steers the user to create a free account, and existing accounts to the
-    // tokened install command in settings.
+    // tokened install command on the component page.
     expect(body).toContain('account/sign-up')
-    expect(body).toContain('account/settings')
+    expect(body).toContain('copy its install command')
     // ZERO real source: the stub must not leak the component's actual code.
     expect(body).not.toContain('useState')
     expect(body).not.toContain('useEffect')
     // A stub is not a pull.
     expect(mockedTrackPull).not.toHaveBeenCalled()
+    // No token sent, so nothing to call stale.
+    expect(res.headers.get('X-AICanvas-Token')).toBeNull()
+  })
+
+  it('case 1b: gate ON + a token that matches no account → the same stub, tagged so the MCP can say it changed', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+    const anon = await (await call()).text()
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null, tokenUnknown: true })
+
+    const res = await call()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Token')).toBe('unknown')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
+    // Access is exactly anonymous: byte-for-byte the anonymous placeholder.
+    expect(await res.text()).toBe(anon)
   })
 
   it("case 2: gate ON + signed-in 'free' tier → REAL standalone source (the gap this closes)", async () => {
@@ -76,9 +93,22 @@ describe('GET /r/<free-standalone>.json — per-tier install gate', () => {
     // A signed-in free account gets the real, unstubbed source.
     expect(body).toContain('useState')
     expect(body).toContain('export default')
+    expect(res.headers.get('X-AICanvas-Token')).toBeNull()
     // Real source to a known account leaves exactly one note, with its kind.
     expect(mockedTrackPull).toHaveBeenCalledTimes(1)
     expect(mockedTrackPull).toHaveBeenCalledWith('u1', SLUG, 'standalone')
+  })
+
+  it("case 2b: the MCP's token check before an install command gets the source but leaves no note", async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+
+    const req = new NextRequest(`http://localhost/r/${FILE}`, { headers: { 'x-aicanvas-probe': '1' } })
+    const res = await GET(req, { params: Promise.resolve({ file: FILE }) })
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('standalone')
+    expect(mockedTrackPull).not.toHaveBeenCalled()
   })
 
   it('case 3: gate ON + premium tier → REAL standalone source', async () => {
@@ -153,7 +183,20 @@ describe.skipIf(!brainAvailable)('GET /r/andromeda-brain.json — mode-independe
     expect(item.files[0].target).toContain('BRAIN-LOCKED.md')
     expect(item.files[0].content).toContain('aicanvas.me/pricing')
     // A subscribed-but-untokened CLI must learn where its command lives.
-    expect(item.files[0].content).toContain('account/settings')
+    expect(item.files[0].content).toContain('Copy Command')
+    expect(res.headers.get('X-AICanvas-Token')).toBeNull()
+  })
+
+  it('a token that matches no account → the same locked placeholder, tagged so the MCP can say it changed', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+    const anon = await (await callBrain()).text()
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null, tokenUnknown: true })
+
+    const res = await callBrain()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Token')).toBe('unknown')
+    expect(await res.text()).toBe(anon)
   })
 
   it("signed-in 'free' tier → same locked placeholder", async () => {
@@ -194,16 +237,22 @@ describe.skipIf(!brainAvailable)('GET /r/andromeda-brain.json — mode-independe
   })
 })
 
-// Premium DESIGN-SYSTEM / TEMPLATE content must gate MODE-INDEPENDENTLY (never
-// hung off REGISTRY_ENFORCEMENT): a free/anon user gets the friendly stub, never
-// the real template source, regardless of the enforcement flag. mission-control
-// is generated from the committed examples/, so it is always present.
-const TEMPLATE_FILE = 'andromeda-mission-control.json'
-const templateAvailable = existsSync(join(process.cwd(), 'registry-data', TEMPLATE_FILE))
+// Templates follow their system's tier. An Andromeda Legacy template is MIT, so
+// it takes exactly the lane a Legacy component takes; an Andromeda Pro template
+// gates MODE-INDEPENDENTLY (never hung off REGISTRY_ENFORCEMENT): a free/anon
+// user gets the friendly stub, never the real source. The Legacy template is
+// generated from the committed examples/, so it is always present; the Pro one
+// only on a build with the vault injected.
+const LEGACY_TEMPLATE_FILE = 'andromeda-mission-control.json'
+const LEGACY_COMPONENT_FILE = 'andromeda-badge.json'
+const PRO_TEMPLATE_FILE = 'andromeda-pro-mission-control.json'
+const dataPath = (file: string) => join(process.cwd(), 'registry-data', file)
+const legacyAvailable = existsSync(dataPath(LEGACY_TEMPLATE_FILE)) && existsSync(dataPath(LEGACY_COMPONENT_FILE))
+const proTemplateAvailable = existsSync(dataPath(PRO_TEMPLATE_FILE))
 
-function callTemplate() {
-  const req = new NextRequest(`http://localhost/r/${TEMPLATE_FILE}`)
-  return GET(req, { params: Promise.resolve({ file: TEMPLATE_FILE }) })
+function callFile(file: string) {
+  const req = new NextRequest(`http://localhost/r/${file}`)
+  return GET(req, { params: Promise.resolve({ file }) })
 }
 
 // Component files get the JSX stub; every other file (tokens, lib) gets a
@@ -213,7 +262,60 @@ function isLockedStub(f: { path: string; content: string }) {
   return f.content.includes(expected) && !f.content.includes('import ')
 }
 
-describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-independent gate (no enforce flag needed)', () => {
+describe.skipIf(!legacyAvailable)('GET /r/<Andromeda Legacy template>.json: the free lane, like a Legacy component', () => {
+  it('gate ON + anonymous → the create-an-account stub, never a premium lock, no pull', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+
+    const res = await callFile(LEGACY_TEMPLATE_FILE)
+    const body = await res.text()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-account-required')
+    expect(res.headers.get('Cache-Control')).toBe('private, no-store')
+    expect(body).toContain('account/sign-up')
+    expect(body).not.toContain('aicanvas.me/pricing')
+    expect(body).not.toContain('useState')
+    expect(mockedTrackPull).not.toHaveBeenCalled()
+  })
+
+  it("gate ON + signed-in 'free' tier → the real MIT source, never shared-cached, counted like a component", async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    const real = JSON.parse(readFileSync(dataPath(LEGACY_TEMPLATE_FILE), 'utf8'))
+
+    const res = await callFile(LEGACY_TEMPLATE_FILE)
+    const item = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('design-system-component')
+    expect(res.headers.get('Cache-Control')).toBe('private, no-store')
+    expect(item.files.some(isLockedStub)).toBe(false)
+    expect(item.files.map((f: { content: string }) => f.content)).toEqual(real.files.map((f: { content: string }) => f.content))
+    expect(mockedTrackPull).toHaveBeenCalledWith('u1', 'andromeda-mission-control', 'design-system-component')
+  })
+
+  it('answers every caller with the same status, lane and cache policy as a Legacy component', async () => {
+    const cases = [
+      { gate: 'on', entitlement: { tier: 'anonymous', userId: null } },
+      { gate: 'on', entitlement: { tier: 'free', userId: 'u1' } },
+      { gate: 'on', entitlement: { tier: 'premium', userId: 'u1' } },
+      { gate: undefined, entitlement: { tier: 'anonymous', userId: null } },
+    ] as const
+    for (const c of cases) {
+      const shape = async (file: string) => {
+        if (c.gate) process.env.FREE_ACCOUNT_GATE = c.gate
+        else delete process.env.FREE_ACCOUNT_GATE
+        mockedGetEntitlement.mockResolvedValue(c.entitlement)
+        const res = await callFile(file)
+        return [res.status, res.headers.get('X-AICanvas-Content-Type'), res.headers.get('Cache-Control')]
+      }
+      expect(await shape(LEGACY_TEMPLATE_FILE), JSON.stringify(c)).toEqual(await shape(LEGACY_COMPONENT_FILE))
+    }
+  })
+})
+
+describe.skipIf(!proTemplateAvailable)('GET /r/<Andromeda Pro template>.json: mode-independent premium gate (no enforce flag needed)', () => {
   afterEach(() => {
     delete process.env.REGISTRY_ENFORCEMENT
   })
@@ -223,13 +325,14 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     delete process.env.REGISTRY_ENFORCEMENT
     mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
 
-    const res = await callTemplate()
+    const res = await callFile(PRO_TEMPLATE_FILE)
     const body = await res.text()
 
     expect(res.status).toBe(200) // never a cryptic 402
+    expect(res.headers.get('Cache-Control')).toBe('private, no-store')
     expect(body).toContain('aicanvas.me/pricing')
     // A subscribed-but-untokened CLI must learn where its command lives.
-    expect(body).toContain('account/settings')
+    expect(body).toContain('copy its install command')
     // EVERY file's content is the placeholder — zero real component source
     // (the real file paths remain, but their bodies are all stubbed out).
     const item = JSON.parse(body)
@@ -238,24 +341,27 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
     expect(item.files.every(isLockedStub)).toBe(true)
   })
 
-  it('signed-in free tier → same stub (no real source)', async () => {
+  it('signed-in free tier → the same premium stub, even with the free-account gate on', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
     mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
 
-    const res = await callTemplate()
+    const res = await callFile(PRO_TEMPLATE_FILE)
     const item = await res.json()
 
     expect(res.status).toBe(200)
     expect(item.files.every(isLockedStub)).toBe(true)
+    expect(mockedTrackPull).not.toHaveBeenCalled()
   })
 
   it('premium → the REAL template (registry deps to the components it uses)', async () => {
     mockedGetEntitlement.mockResolvedValue({ tier: 'premium', userId: 'u1' })
 
-    const res = await callTemplate()
+    const res = await callFile(PRO_TEMPLATE_FILE)
     const item = await res.json()
 
     expect(res.status).toBe(200)
-    expect(item.name).toBe('andromeda-mission-control')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('template')
+    expect(item.name).toBe('andromeda-pro-mission-control')
     expect(Array.isArray(item.registryDependencies)).toBe(true)
     expect(item.registryDependencies.length).toBeGreaterThan(1) // tokens + components it uses
     expect(JSON.stringify(item)).not.toContain('PremiumLocked') // real, not stubbed
@@ -264,11 +370,9 @@ describe.skipIf(!templateAvailable)('GET /r/<premium template>.json — mode-ind
   it('entitlement error → 503, fail CLOSED', async () => {
     mockedGetEntitlement.mockRejectedValue(new Error('db blip'))
 
-    const res = await callTemplate()
+    const res = await callFile(PRO_TEMPLATE_FILE)
 
     expect(res.status).toBe(503)
-    const body = await res.text()
-    expect(body).not.toContain('TelemetryRow')
   })
 })
 
@@ -325,7 +429,7 @@ describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle wi
     // The file says exactly what the terminal prints.
     expect(notice.content).toContain(item.docs)
     expect(notice.content).toContain('aicanvas.me/pricing')
-    expect(notice.content).toContain('account/settings')
+    expect(notice.content).toContain('copy its install command')
   })
 
   it("signed-in 'free' tier with a token → the same single notice, token never stamped", async () => {
@@ -387,5 +491,39 @@ describe.skipIf(!bundlesAvailable)('GET /r/andromeda-all.json: refused bundle wi
     expect(tokened.registryDependencies).toEqual(
       JSON.parse(raw).registryDependencies.map(expectedDep),
     )
+  })
+})
+
+// Icon items exist only where the icon library checkout was found at build time.
+const ICON_ITEMS = existsSync(join(process.cwd(), 'registry-data', 'icon-search-duotone.json'))
+
+describe.skipIf(!ICON_ITEMS)('GET /r/icon-*.json — Line free, the other styles paid', () => {
+  const get = (file: string) =>
+    GET(new NextRequest(`http://localhost/r/${file}`), { params: Promise.resolve({ file }) })
+
+  it('hands a signed-in free account the real Line icon', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    const res = await get('icon-search.json')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('standalone')
+    expect(await res.text()).toContain('createIcon(')
+  })
+
+  it('locks every paid style for a free account, with no geometry in the reply', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    for (const file of ['icon-search-duotone.json', 'icon-search-solid.json', 'icon-search-solid-duotone.json']) {
+      const res = await get(file)
+      const body = await res.text()
+      expect(res.headers.get('X-AICanvas-Content-Type'), file).toBe('premium-standalone')
+      expect(body, file).not.toContain('createIcon(')
+      expect(body, file).toContain('pricing')
+    }
+  })
+
+  it('hands a premium account the real paid style', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'premium', userId: 'u1' })
+    const res = await get('icon-search-duotone.json')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('premium-standalone')
+    const item = (await res.json()) as { files: { content: string }[] }
+    expect(item.files[0]?.content).toContain('createIcon("search", "duotone"')
   })
 })

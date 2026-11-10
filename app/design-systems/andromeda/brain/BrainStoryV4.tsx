@@ -21,23 +21,28 @@ import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { motion, useInView } from 'framer-motion'
 import Link from 'next/link'
 import { Rotate3d } from 'lucide-react'
-import { ArrowRight, Fire, Target, Gauge, Check, X as XIcon } from '@phosphor-icons/react'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right';
+import { Fire } from '@/app/_icons/icons/fire';
+import { Target } from '@/app/_icons/icons/target';
+import { Gauge } from '@/app/_icons/icons/gauge';
+import { Check } from '@/app/_icons/icons/check';
+import { X as XIcon } from '@/app/_icons/icons/x';
 import { buttonClasses } from '@/app/components/buttonClasses'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
-import { SiteFooter } from '@/app/components/SiteFooter'
 import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-brain-teaser.generated'
 import { useTheme, type Theme } from '@/app/components/ThemeProvider'
 import { BRAIN_GRAY } from '@/app/_lib/brain-colors'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP } from '@/app/_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '@/app/_components/DesignSystemPage'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
-// AI Canvas site palette: sand neutrals + olive accent, Manrope + mono fonts.
+// AI Canvas site palette: sand neutrals + neutral ink accent, Manrope + mono fonts.
 // One palette per site theme; the page reads them through CSS variables (see
 // brainVars below) so everything flips with the `dark` class on <html>. The
 // WebGL brain cannot read a variable and takes the literal for its theme.
 const PALETTE = {
-  dark:  { base: '#0E0E0F', node: '#9B9B9E', reason: '#B7B7BA', bright: '#F4F4FA', accent: '#DAE4A0', accentBtn: '#A8B94D', muted: '#7B7B7D', panel: '#1B1B1C', line: '#2D2D2E', lineSoft: 'rgba(45,45,46,0.6)', halo: 'rgba(0,0,0,0.9)', haloStrong: 'rgba(0,0,0,0.95)' },
-  light: { base: '#F4F4FA', node: '#575759', reason: '#373738', bright: '#1B1B1C', accent: '#869631', accentBtn: '#869631', muted: '#7B7B7D', panel: '#EEEEF3', line: '#DFDFE3', lineSoft: 'rgba(223,223,227,0.6)', halo: 'rgba(244,244,250,0.9)', haloStrong: 'rgba(244,244,250,0.95)' },
+  dark:  { base: '#0E0E0F', node: '#9B9B9E', reason: '#B7B7BA', bright: '#F4F4FA', accent: '#F4F4FA', accentBtn: '#F4F4FA', muted: '#7B7B7D', panel: '#1B1B1C', line: '#2D2D2E', lineSoft: 'rgba(45,45,46,0.6)', halo: 'rgba(0,0,0,0.9)', haloStrong: 'rgba(0,0,0,0.95)' },
+  light: { base: '#F4F4FA', node: '#575759', reason: '#373738', bright: '#1B1B1C', accent: '#1B1B1C', accentBtn: '#1B1B1C', muted: '#7B7B7D', panel: '#EEEEF3', line: '#DFDFE3', lineSoft: 'rgba(223,223,227,0.6)', halo: 'rgba(244,244,250,0.9)', haloStrong: 'rgba(244,244,250,0.95)' },
 } as const satisfies Record<Theme, Record<string, string>>
 type BrainColor = keyof typeof PALETTE.dark
 const C = Object.fromEntries((Object.keys(PALETTE.dark) as BrainColor[]).map((k) => [k, `var(--brain-${k})`])) as Record<BrainColor, string>
@@ -122,9 +127,9 @@ const GLOSS: Record<string, string> = {
 // diagram above already names the outcomes, and when these read as outcomes too
 // the page made the same three promises twice within a screen of each other.
 const BENEFITS = [
-  { label: 'Faster', icon: <Gauge weight="regular" size={18} />, body: 'It starts from decisions that are already written down, instead of trying options until one looks right.' },
-  { label: 'Accurate', icon: <Target weight="regular" size={18} />, body: 'It reaches for the components that already exist before it invents anything new.' },
-  { label: 'Efficient', icon: <Fire weight="regular" size={18} />, body: 'No tokens burned exploring ground the system already settled.' },
+  { label: 'Faster', icon: <Gauge size={18} />, body: 'It starts from decisions that are already written down, instead of trying options until one looks right.' },
+  { label: 'Accurate', icon: <Target size={18} />, body: 'It reaches for the components that already exist before it invents anything new.' },
+  { label: 'Efficient', icon: <Fire size={18} />, body: 'No tokens burned exploring ground the system already settled.' },
 ]
 
 // Classic workflow pains (left) vs what an AI-native system delivers (right).
@@ -347,10 +352,10 @@ function BrainFlow() {
           {/* The focal card. Painted the page ground, which on dark is the
               image's own background; on light the .brain-wire blend hides the
               image ground instead, so the artwork has no visible edge either way. */}
-          {/* Border stays 1px, as every card here is. Full-strength olive read
+          {/* Border stays 1px, as every card here is. A full-strength accent border read
               heavy beside the sand hairlines around it, so it is dialled back to
               a true hairline that still marks this as the focal card. */}
-          <div style={{ ...node, height: CARD_H, width: '100%', padding: `${CARD_PAD_TOP}px 0 ${CARD_PAD_BOTTOM}px`, alignItems: 'center', justifyContent: 'flex-start', background: C.base, borderColor: 'rgba(168,185,77,0.55)' }}>
+          <div style={{ ...node, height: CARD_H, width: '100%', padding: `${CARD_PAD_TOP}px 0 ${CARD_PAD_BOTTOM}px`, alignItems: 'center', justifyContent: 'flex-start', background: C.base, borderColor: 'color-mix(in srgb, var(--color-accent) 55%, transparent)' }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className="brain-wire"
@@ -839,9 +844,9 @@ export function BrainStoryV4() {
       <PageFrame className={PAGE_TOP}>
         {/* ── Hero, in the Pro brain hero's shape: left-aligned text block,
             then the stage below it as a bordered card ── */}
+        <PageCrumbs />
         <section aria-labelledby="brain-hero" className="max-w-3xl">
-          <PageOverline>Built for agents</PageOverline>
-          <div className="mt-3 flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <PageTitle id="brain-hero" gap="none">Andromeda AI Brain</PageTitle>
             <SystemTierChip tier="mit" />
           </div>
@@ -865,7 +870,7 @@ export function BrainStoryV4() {
             its background is the page base colour per theme (C.base), not a
             fixed dark ground. ── */}
         <div
-          className={`relative mt-10 h-[380px] overflow-hidden rounded-2xl border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
+          className={`relative mt-10 h-[380px] overflow-hidden rounded-section border border-sand-200 dark:border-sand-800 sm:h-[520px] ${PANEL_SHADOW}`}
           style={{ background: C.base }}
         >
           <div
@@ -903,7 +908,7 @@ export function BrainStoryV4() {
               {status === 'error' ? 'Scene unavailable' : loadProgress > 0 ? `Loading the AI Brain… ${loadProgress}%` : 'Loading the AI Brain…'}
             </div>
           )}
-          {/* drag affordance: a static rotate-3d icon (olive), at the box's
+          {/* drag affordance: a static rotate-3d icon (accent), at the box's
               bottom-right like Pro's stage. */}
           <div style={{ position: 'absolute', right: 16, bottom: 16, pointerEvents: 'none' }}>
             <Rotate3d size={26} color={C.accent} strokeWidth={1.5} />
@@ -1014,18 +1019,18 @@ export function BrainStoryV4() {
               <div className="cmp-cell cmp-left" style={{ borderRight: `1px solid ${C.line}`, borderBottom: `1px solid ${C.line}`, fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.muted }}>
                 Classic design system
               </div>
-              <div className="cmp-cell" style={{ borderBottom: `1px solid ${C.line}`, background: 'rgba(168,185,77,0.05)', fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>
+              <div className="cmp-cell" style={{ borderBottom: `1px solid ${C.line}`, background: 'color-mix(in srgb, var(--color-accent) 5%, transparent)', fontFamily: MONO, fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: C.accentBtn }}>
                 AI-native design system
               </div>
             </div>
             {COMPARE.map((row, i) => (
               <div key={i} className="cmp-grid">
                 <div className="cmp-cell cmp-left" style={{ borderRight: `1px solid ${C.line}`, borderTop: i === 0 ? 'none' : `1px solid ${C.line}` }}>
-                  <XIcon weight="regular" size={15} color={C.muted} style={{ flexShrink: 0, marginTop: 2 }} />
+                  <XIcon size={15} color={C.muted} style={{ flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 14, color: C.node, lineHeight: 1.5 }}>{row.classic}</span>
                 </div>
-                <div className="cmp-cell" style={{ borderTop: i === 0 ? 'none' : `1px solid ${C.line}`, background: 'rgba(168,185,77,0.05)' }}>
-                  <Check weight="regular" size={15} color={C.accentBtn} style={{ flexShrink: 0, marginTop: 2 }} />
+                <div className="cmp-cell" style={{ borderTop: i === 0 ? 'none' : `1px solid ${C.line}`, background: 'color-mix(in srgb, var(--color-accent) 5%, transparent)' }}>
+                  <Check size={15} color={C.accentBtn} style={{ flexShrink: 0, marginTop: 2 }} />
                   <span style={{ fontSize: 14, color: C.bright, lineHeight: 1.5 }}>{row.native}</span>
                 </div>
               </div>
@@ -1033,7 +1038,7 @@ export function BrainStoryV4() {
           </div>
           {/* A typed asterisk rather than a 16px icon: it reads as a footnote
               marker on the sentence, which is what it is. */}
-          <div style={{ marginTop: 20, border: `1px solid ${C.line}`, borderRadius: 16, padding: '16px 24px', background: 'rgba(168,185,77,0.05)' }}>
+          <div style={{ marginTop: 20, border: `1px solid ${C.line}`, borderRadius: 16, padding: '16px 24px', background: 'color-mix(in srgb, var(--color-accent) 5%, transparent)' }}>
             <p style={{ fontSize: 14, fontWeight: 600, color: C.accentBtn, lineHeight: 1.5, margin: 0 }}>
               <span style={{ marginRight: 6 }}>*</span>
               The agent builds fast and accurate. You stay in the loop, and you decide what ships.
@@ -1086,9 +1091,9 @@ export function BrainStoryV4() {
             two pages close the same way. The primary button stays premium-aware:
             a subscriber gets the reader, everyone else gets pricing. */}
         <Section className="mt-16 sm:mt-24" style={{ marginBottom: 8 }}>
-          <div className="relative overflow-hidden rounded-2xl border border-olive-500/20 bg-gradient-to-br from-olive-500/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-olive-500/10">
+          <div className="relative overflow-hidden rounded-section border border-accent/20 bg-gradient-to-br from-accent/8 via-transparent to-transparent p-8 text-center ring-1 ring-inset ring-accent/10">
             <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-              <div className="h-40 w-64 rounded-full bg-olive-500/10 blur-3xl" />
+              <div className="h-40 w-64 rounded-full bg-accent/10 blur-3xl" />
             </div>
             <p className="relative text-xs font-semibold uppercase tracking-wider text-sand-500 dark:text-sand-600">
               How to get it
@@ -1102,7 +1107,7 @@ export function BrainStoryV4() {
             <div className="relative mt-6 flex flex-wrap items-center justify-center gap-3">
               <Link href={ctaHref} className={buttonClasses({ variant: 'primary', size: 'lg' })}>
                 {ctaLabel}
-                <ArrowRight weight="regular" size={14} />
+                <ArrowRight size={14} />
               </Link>
               <Link href="/design-systems/andromeda" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
                 Explore Andromeda
@@ -1110,11 +1115,6 @@ export function BrainStoryV4() {
             </div>
           </div>
         </Section>
-      </PageFrame>
-
-      {/* footer, consistent with the content pages */}
-      <PageFrame className="pb-6" style={{ fontFamily: SANS }}>
-        <SiteFooter />
       </PageFrame>
     </div>
   )

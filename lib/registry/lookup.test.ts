@@ -6,15 +6,29 @@ import { classifyContent } from './content-type'
 // Regression for the launch-blocking bug where designSystemSlugs was built
 // from a registry flag nothing set, classifying every design-system
 // component as a free standalone.
+const LEGACY_TEMPLATES = [
+  'andromeda-mission-control',
+  'andromeda-service-order',
+  'andromeda-resource-planning',
+  'andromeda-signal-room',
+]
+const PRO_TEMPLATES = [
+  'andromeda-pro-ai-chat',
+  'andromeda-pro-city-operations',
+  'andromeda-pro-fintech-landing',
+  'andromeda-pro-mission-control',
+  'andromeda-pro-resource-planning',
+  'andromeda-pro-service-order',
+  'andromeda-pro-sign-in',
+  'andromeda-pro-sign-up',
+  'andromeda-pro-signal-room',
+]
+
 const manifest: GateManifest = {
-  systemSlugs: ['andromeda'],
+  systemSlugs: ['andromeda', 'andromeda-pro'],
+  paidSystemSlugs: ['andromeda-pro'],
   designSystemSlugs: ['andromeda-alert', 'andromeda-card', 'andromeda-table'],
-  templateSlugs: [
-    'andromeda-mission-control',
-    'andromeda-service-order',
-    'andromeda-resource-planning',
-    'andromeda-signal-room',
-  ],
+  templateSlugs: [...LEGACY_TEMPLATES, ...PRO_TEMPLATES],
   premiumSlugs: ['aurora-pricing-table'],
   brainSlugs: ['andromeda-brain'],
 }
@@ -27,9 +41,22 @@ describe('buildLookup + classifyContent (manifest-driven gate)', () => {
     expect(classifyContent('andromeda-card.json', lookup)).toBe('design-system-component')
   })
 
-  it('every template is gated, including signal-room', () => {
-    for (const t of manifest.templateSlugs) {
-      expect(classifyContent(t, lookup)).toBe('template')
+  it('every Andromeda Legacy template takes the free lane, including signal-room', () => {
+    for (const t of LEGACY_TEMPLATES) {
+      expect(classifyContent(t, lookup), t).toBe('design-system-component')
+    }
+  })
+
+  it('every Andromeda Pro template stays premium, including its signal-room', () => {
+    for (const t of PRO_TEMPLATES) {
+      expect(classifyContent(t, lookup), t).toBe('template')
+    }
+  })
+
+  it('a manifest with no paidSystemSlugs key still gates every Pro template', () => {
+    const old = buildLookup({ ...manifest, paidSystemSlugs: undefined })
+    for (const t of PRO_TEMPLATES) {
+      expect(classifyContent(t, old), t).toBe('template')
     }
   })
 

@@ -9,7 +9,7 @@
 
 - Preview background: `bg-sand-950` (always dark)
 - A large rounded-square button (80×80px, `border-radius: 22px`) — gradient dark surface, subtle inner highlight, drop shadow
-- Phosphor `Moon` or `Sun` icon (36px) centered inside
+- AI Canvas `Moon` or `Sun` icon (36px) centered inside
 - Below the button: a thin gradient cord line (2px × 44px) leading down to a small pull-dot (11px circle)
 
 ---

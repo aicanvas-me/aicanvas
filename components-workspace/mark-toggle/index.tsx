@@ -1,10 +1,11 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useCallback, useLayoutEffect, useEffect, useRef } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion'
-import { X, Check } from '@phosphor-icons/react'
+import { X } from '@/app/_icons/icons/x'
+import { Check } from '@/app/_icons/icons/check'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 
@@ -18,7 +19,7 @@ const MIN_TRACK_W = 48
 export default function MarkToggle() {
   const [isOn, setIsOn]             = useState(false)
   const [animating, setAnimating]   = useState(false)
-  const [pageIsDark, setPageIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [pageIsDark, setPageIsDark] = useState(true)
   const [trackW, setTrackW]         = useState(MAX_TRACK_W)
   const containerRef                = useRef<HTMLDivElement>(null)
   const isOnRef                     = useRef(false)

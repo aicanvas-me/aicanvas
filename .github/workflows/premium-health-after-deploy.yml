@@ -2,7 +2,7 @@ name: premium health after deploy
 
 # SUBSCRIBER SAFETY: after every push to main, confirm production is still serving
 # the pinned premium. If premium ever goes missing or degraded (e.g. GITHUB_PAT_PREMIUM
-# absent in Vercel), this job FAILS and GitHub emails you. It uses only the PUBLIC
+# absent in Vercel) or the icon set is missing (iconCount 0), this job FAILS and GitHub emails you. It uses only the PUBLIC
 # health endpoint and the tracked premium.lock.json — no secrets.
 
 on:
@@ -36,13 +36,26 @@ jobs:
             # the healthy value `false` as empty and would flip it to true (false alarm).
             deg="$(echo "$body" | jq -r '.degraded')"
             cnt="$(echo "$body" | jq -r '.premiumStandaloneCount // 0')"
-            last="premiumSha=$sha degraded=$deg count=$cnt"
+            icons="$(echo "$body" | jq -r '.iconCount // 0')"
+            last="premiumSha=$sha degraded=$deg count=$cnt iconCount=$icons"
             echo "health -> $last"
-            if [[ "$sha" == "$PIN" && "$deg" == "false" && "$cnt" -gt 0 ]]; then
-              echo "OK: production is serving pinned premium ($PIN), degraded:false, $cnt component(s)."
+            if [[ "$sha" == "$PIN" && "$deg" == "false" && "$cnt" -gt 0 && "$icons" -gt 0 ]]; then
+              echo "OK: production is serving pinned premium ($PIN), degraded:false, $cnt component(s), $icons icon(s)."
               exit 0
             fi
             sleep 20
           done
-          echo "::error title=Premium missing in production::Production is NOT serving the pinned premium ($PIN) [$last]. Paying subscribers may be on a free-only build. Check GITHUB_PAT_PREMIUM in Vercel Production and the latest deploy logs, then roll back if needed."
+          echo "::error title=Premium missing in production::Production is NOT serving the pinned premium ($PIN) with its icon set [$last]. Paying subscribers may be on a free-only build, or /icons is blank (iconCount 0). Check GITHUB_PAT_PREMIUM in Vercel Production and the latest deploy logs, then roll back if needed."
           exit 1
+      # Separate from the premium check above on purpose: a missing Lifetime
+      # price is fixed by setting the variable in Vercel, never by a rollback.
+      - name: Confirm the Lifetime price is configured
+        run: |
+          set -euo pipefail
+          body="$(curl -fsS "https://aicanvas.me/api/premium/health" || echo '{}')"
+          conf="$(echo "$body" | jq -r '.lifetimePriceConfigured')"
+          echo "lifetimePriceConfigured=$conf"
+          if [[ "$conf" != "true" ]]; then
+            echo "::error title=Lifetime price not configured::NEXT_PUBLIC_PADDLE_PRICE_LIFETIME is not set in Vercel Production. Lifetime purchases are not granted until it is: set it and redeploy."
+            exit 1
+          fi

@@ -14,7 +14,7 @@
  *   3. Writes that sha into the PUBLIC premium.lock.json, commits it, pushes public `main`
  *      — which is what Vercel auto-deploys.
  *   4. Polls https://aicanvas.me/api/premium/health until prod serves that EXACT sha,
- *      degraded:false, and the count matches the manifest. Only then reports success.
+ *      degraded:false, the count matches the manifest and iconCount > 0. Only then reports success.
  *
  * Usage:
  *   PREMIUM_LOCAL_PATH=/path/to/aicanvas-premium npm run publish-premium
@@ -105,6 +105,7 @@ if (NO_VERIFY) { ok('done (skipped health verification).'); process.exit(0) }
 step(`waiting for production to serve ${shortSha} (polling ${SITE}/api/premium/health)`)
 const DEADLINE = Date.now() + 8 * 60 * 1000 // 8 minutes
 let confirmed = false
+let iconCount = 0
 while (Date.now() < DEADLINE) {
   await new Promise((r) => setTimeout(r, 12000))
   let h
@@ -114,12 +115,14 @@ while (Date.now() < DEADLINE) {
   } catch { process.stdout.write('.'); continue }
   const shaOk = h.premiumSha === newSha && h.pinnedSha === newSha
   const countOk = manifestCount == null || h.premiumStandaloneCount === manifestCount
-  if (shaOk && h.degraded === false && countOk) { confirmed = true; break }
+  iconCount = h.iconCount ?? 0
+  const iconsOk = iconCount > 0
+  if (shaOk && h.degraded === false && countOk && iconsOk) { confirmed = true; break }
   process.stdout.write('.')
 }
 console.log('')
 if (confirmed) {
-  ok(`LIVE and verified: production serves premium@${shortSha}, degraded:false${manifestCount != null ? `, ${manifestCount} component(s)` : ''}.`)
+  ok(`LIVE and verified: production serves premium@${shortSha}, degraded:false${manifestCount != null ? `, ${manifestCount} component(s)` : ''}, ${iconCount} icon(s).`)
 } else {
-  die(`NOT confirmed within the timeout. The deploy may still be building — re-check ${SITE}/api/premium/health in a minute (look for premiumSha == ${shortSha}, degraded:false). Do NOT assume it's live until it matches.`)
+  die(`NOT confirmed within the timeout. The deploy may still be building — re-check ${SITE}/api/premium/health in a minute (look for premiumSha == ${shortSha}, degraded:false, iconCount > 0). Do NOT assume it's live until it matches.`)
 }

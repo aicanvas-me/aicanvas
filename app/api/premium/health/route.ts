@@ -22,6 +22,15 @@ try {
   /* no premium injected — free-only build */
 }
 
+// Same guard for the /icons data that scripts/icons-data.mjs writes from the vault.
+let iconCount = 0
+try {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  iconCount = (require('@/app/icons/_data/icons.generated.json') as unknown[]).length
+} catch {
+  /* no icon data generated */
+}
+
 /**
  * Public premium health surface: counts and mode ONLY, never source. After every
  * deploy premiumStandaloneCount should equal the manifest, `degraded` must be
@@ -39,6 +48,15 @@ try {
  * `brainFileCounts` is how many files each design-system brain bundled at build
  * time. The build already fails when a count differs from the manifest; this
  * shows the count prod actually carries. Numbers only, never file names.
+ *
+ * `iconCount` is how many icons the /icons pages list. 0 on production means the
+ * icon set never reached the build and /icons is blank.
+ *
+ * `lifetimePriceConfigured` says the Lifetime price id is set. It is separate
+ * from `degraded` on purpose: `degraded` drives the rollback, and a missing
+ * price is fixed by setting the variable, not by rolling back. The webhook
+ * answers 500 to a Lifetime purchase while it is missing, so Paddle keeps
+ * re-delivering until it is set.
  */
 export async function GET() {
   const lookup = loadContentLookup()
@@ -55,6 +73,8 @@ export async function GET() {
       pinnedSha: PREMIUM_BUILD.pinnedSha,
       deployedSha: PREMIUM_BUILD.appSha,
       brainFileCounts: PREMIUM_BUILD.brainFileCounts ?? {},
+      iconCount,
+      lifetimePriceConfigured: Boolean(process.env.NEXT_PUBLIC_PADDLE_PRICE_LIFETIME),
     },
     { headers: { 'Cache-Control': 'private, no-store' } },
   )

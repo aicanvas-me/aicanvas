@@ -40,7 +40,8 @@ function readTheme(el: HTMLElement | null): Theme {
 }
 
 function useTheme(rootRef: React.RefObject<HTMLElement | null>): Theme {
-  const [theme, setTheme] = useState<Theme>(() => readTheme(rootRef.current))
+  // Start dark like the server render; reading the page here breaks hydration.
+  const [theme, setTheme] = useState<Theme>('dark')
   useIsomorphicLayoutEffect(() => {
     const el = rootRef.current
     setTheme(readTheme(el))

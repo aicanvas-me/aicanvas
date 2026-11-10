@@ -5,19 +5,17 @@
 // "now playing" card is the active transmission.
 // ============================================================
 
-import {
-  SquaresFour,
-  MagnifyingGlass,
-  WaveSine,
-  Broadcast,
-  Heart,
-  Archive,
-} from '@phosphor-icons/react';
+import { Search } from '@/app/_icons/icons/search';
+import { Heart } from '@/app/_icons/icons/heart';
+import { Archive } from '@/app/_icons/icons/archive';
+import { LayoutGrid } from '@/app/_icons/icons/layout-grid';
+import { WaveSine } from '@/app/_icons/icons/wave-sine';
+import { Broadcast } from '@/app/_icons/icons/broadcast';
 
 // ---- Sidebar nav ----
 export const navItems = [
-  { id: 'library',    label: 'Library',    icon: SquaresFour      },
-  { id: 'search',     label: 'Search',     icon: MagnifyingGlass  },
+  { id: 'library',    label: 'Library',    icon: LayoutGrid      },
+  { id: 'search',     label: 'Search',     icon: Search  },
   { id: 'channels',   label: 'Channels',   icon: Broadcast        },
   { id: 'waveforms',  label: 'Waveforms',  icon: WaveSine         },
   { id: 'favourites', label: 'Favourites', icon: Heart            },

@@ -1,8 +1,17 @@
 'use client'
-import { initializePaddle, type CheckoutSettings, type Paddle } from '@paddle/paddle-js'
+import { initializePaddle, type CheckoutSettings, type Paddle, type PaddleEventData } from '@paddle/paddle-js'
 import { beacon } from '../analytics'
 
 let paddlePromise: Promise<Paddle | undefined> | null = null
+
+// Local UI only (spinner, totals). Runs after the activation handler below.
+const uiListeners = new Set<(e: PaddleEventData) => void>()
+export function subscribePaddleEvents(fn: (e: PaddleEventData) => void): () => void {
+  uiListeners.add(fn)
+  return () => {
+    uiListeners.delete(fn)
+  }
+}
 
 // Overlay lifecycle steps counted anonymously (event name only, no checkout
 // data) — makes abandonment and card failures visible next to completions.
@@ -15,7 +24,7 @@ const CHECKOUT_STEPS = new Set([
   'checkout.completed',
 ])
 
-/** Lazily initialize Paddle.js once (overlay checkout). */
+/** Lazily initialize Paddle.js once. */
 export function getPaddle(): Promise<Paddle | undefined> {
   if (!paddlePromise) {
     paddlePromise = initializePaddle({
@@ -56,6 +65,7 @@ export function getPaddle(): Promise<Paddle | undefined> {
               window.location.reload()
             })
         }
+        uiListeners.forEach((fn) => fn(e))
       },
     })
   }
@@ -66,13 +76,15 @@ export function getPaddle(): Promise<Paddle | undefined> {
 export const PRICES = {
   monthly: process.env.NEXT_PUBLIC_PADDLE_PRICE_MONTHLY ?? '',
   yearly: process.env.NEXT_PUBLIC_PADDLE_PRICE_YEARLY ?? '',
+  lifetime: process.env.NEXT_PUBLIC_PADDLE_PRICE_LIFETIME ?? '',
 }
 
-/** Shared overlay settings; showAddDiscounts:false hides the public discount box so promos stay targeted. */
+/** Overlay settings for payment links; showAddDiscounts:false hides the public discount box so promos stay targeted. */
 export const CHECKOUT_SETTINGS: CheckoutSettings = {
   displayMode: 'overlay',
   theme: 'light',
   showAddDiscounts: false,
 }
 
-export type BillingCycle = 'monthly' | 'yearly'
+/** What the buy button sells: a subscription cycle, or the one-time Lifetime. */
+export type BillingCycle = 'monthly' | 'yearly' | 'lifetime'

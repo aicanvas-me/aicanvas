@@ -3,7 +3,11 @@
 'use client'
 
 import { useState } from 'react'
-import { CaretDown, Check, Cpu, Lightning, Sparkle } from '@phosphor-icons/react'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down';
+import { Check } from '@/app/_icons/icons/check';
+import { Cpu } from '@/app/_icons/icons/cpu';
+import { Bolt } from '@/app/_icons/icons/bolt';
+import { Sparkle } from '@/app/_icons/icons/sparkle';
 // v2 component: imported through the build-time shim.
 import { Popover, PopoverContent, PopoverLabel, PopoverTrigger } from '../../../lib/andromeda-pro.generated'
 import { Item, ItemActions, ItemContent, ItemMedia, ItemTitle } from '../../../lib/andromeda-pro.generated'
@@ -12,7 +16,7 @@ import { tokens } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
 
 export const MODELS = [
-  { id: 'fast', label: 'Fast', icon: Lightning },
+  { id: 'fast', label: 'Fast', icon: Bolt },
   { id: 'balanced', label: 'Balanced', icon: Sparkle },
   { id: 'thorough', label: 'Thorough', icon: Cpu },
 ]
@@ -53,7 +57,7 @@ export function ModelPicker({
       <PopoverTrigger asChild aria-haspopup="menu">
         <Button variant="outline" size={size} icon={current.icon}>
           {current.label}
-          <CaretDown size={tokens.iconSize.sm} weight="regular" aria-hidden />
+          <ChevronDown size={tokens.iconSize.sm} aria-hidden />
         </Button>
       </PopoverTrigger>
       <PopoverContent side={side} align={align} role="menu" width={220} onKeyDown={walkRows}>
@@ -73,14 +77,14 @@ export function ModelPicker({
                 }}
               >
                 <ItemMedia>
-                  <Icon weight="regular" />
+                  <Icon size="1em" />
                 </ItemMedia>
                 <ItemContent>
                   <ItemTitle>{m.label}</ItemTitle>
                 </ItemContent>
                 {checked ? (
                   <ItemActions>
-                    <Check size={size === 'sm' ? tokens.iconSize.sm : tokens.iconSize.md} weight="regular" aria-hidden />
+                    <Check size={size === 'sm' ? tokens.iconSize.sm : tokens.iconSize.md} aria-hidden />
                   </ItemActions>
                 ) : null}
               </button>

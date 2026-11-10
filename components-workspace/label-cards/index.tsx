@@ -128,7 +128,7 @@ function LogoMark({ color, scale }: { color: string; scale: number }) {
 
 export default function LabelCards() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
   const [selected, setSelected] = useState<number | null>(null)
   const [containerW, setContainerW] = useState(480)
 

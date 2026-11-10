@@ -1,6 +1,6 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
-import { ArrowClockwise } from '@phosphor-icons/react'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw';
 import { Tooltip } from '../../../lib/andromeda-pro.generated'
 import { IconButton } from '../../../lib/andromeda-pro.generated'
 import type { MatrixSpec } from './types'
@@ -18,7 +18,7 @@ export const tooltip: MatrixSpec = {
   overflow: true,
   render: (_size, props) => (
     <Tooltip label="Refresh" {...props}>
-      <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+      <IconButton aria-label="Refresh" icon={RotateCw} />
     </Tooltip>
   ),
   // The four sides are the whole API surface. They look identical until the

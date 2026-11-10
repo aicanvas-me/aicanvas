@@ -17,7 +17,7 @@ const MIN_TRACK_W = 48
 export default function PillToggle() {
   const [isOn, setIsOn]             = useState(false)
   const [animating, setAnimating]   = useState(false)
-  const [pageIsDark, setPageIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [pageIsDark, setPageIsDark] = useState(true)
   const [trackW, setTrackW]         = useState(MAX_TRACK_W)
   const containerRef                = useRef<HTMLDivElement>(null)
   const isOnRef                     = useRef(false)

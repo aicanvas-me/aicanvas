@@ -20,7 +20,7 @@ export default function FlipCalendar() {
   const [flapping,      setFlapping     ] = useState(false)
   const currentRef = useRef(1)
   const rootRef    = useRef<HTMLDivElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
 
   const rotateX     = useMotionValue(0)
   const scanY       = useMotionValue(18)

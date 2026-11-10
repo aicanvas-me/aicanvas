@@ -1,6 +1,6 @@
 'use client'
 
-// npm install framer-motion @phosphor-icons/react
+// npm install framer-motion
 
 import { useEffect, useRef, useState } from 'react'
 import {
@@ -12,7 +12,7 @@ import {
   useTransform,
   type PanInfo,
 } from 'framer-motion'
-import { Check } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check'
 
 
 
@@ -156,7 +156,7 @@ function CardFace({
                   transition={{ duration: 0.12, ease: 'easeOut' }}
                   style={{ display: 'flex', alignItems: 'center', gap: isAdded ? 4 : 0 }}
                 >
-                  {isAdded && <Check size={14} weight="regular" aria-hidden="true" />}
+                  {isAdded && <Check size={14} aria-hidden="true" />}
                   {isAdded ? 'Added' : card.label}
                 </motion.span>
               </AnimatePresence>

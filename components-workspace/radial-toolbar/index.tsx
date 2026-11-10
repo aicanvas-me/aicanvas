@@ -1,19 +1,17 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
-import { useState, useLayoutEffect, useEffect, useRef } from 'react'
+import { useState, useLayoutEffect, useEffect, useRef, type ComponentType } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
-import {
-  X,
-  TextB,
-  TextItalic,
-  TextUnderline,
-  TextStrikethrough,
-  LinkSimple,
-  Palette,
-} from '@phosphor-icons/react'
+import type { IconProps } from '@/app/_icons/IconBase'
+import { X } from '@/app/_icons/icons/x'
+import { Bold } from '@/app/_icons/icons/bold'
+import { Italic } from '@/app/_icons/icons/italic'
+import { Underline } from '@/app/_icons/icons/underline'
+import { Strikethrough } from '@/app/_icons/icons/strikethrough'
+import { LinkSimple } from '@/app/_icons/icons/link-simple'
+import { Palette } from '@/app/_icons/icons/palette'
 
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
@@ -22,7 +20,7 @@ const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffec
 interface Tool {
   id: string
   label: string
-  Icon: PhosphorIcon
+  Icon: ComponentType<IconProps>
 }
 
 const CX = 120
@@ -34,10 +32,10 @@ const R_ICON = 78
 const GAP   = 0
 
 const TOOLS: Tool[] = [
-  { id: 'bold',    label: 'Bold',          Icon: TextB },
-  { id: 'italic',  label: 'Italic',        Icon: TextItalic },
-  { id: 'under',   label: 'Underline',     Icon: TextUnderline },
-  { id: 'strike',  label: 'Strikethrough', Icon: TextStrikethrough },
+  { id: 'bold',    label: 'Bold',          Icon: Bold },
+  { id: 'italic',  label: 'Italic',        Icon: Italic },
+  { id: 'under',   label: 'Underline',     Icon: Underline },
+  { id: 'strike',  label: 'Strikethrough', Icon: Strikethrough },
   { id: 'link',    label: 'Link',          Icon: LinkSimple },
   { id: 'color',   label: 'Color',         Icon: Palette },
 ]
@@ -69,7 +67,7 @@ export default function RadialToolbar() {
   const [activeId,  setActive]= useState<string | null>(null)
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
 
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current
@@ -169,7 +167,6 @@ export default function RadialToolbar() {
                   >
                     <tool.Icon
                       size={18}
-                      weight="regular"
                       color={isA ? (isDark ? '#ffffff' : '#110F0C') : isH ? (isDark ? '#e4e4e7' : '#2E2A24') : (isDark ? '#71717a' : '#9E9890')}
                     />
                   </motion.div>
@@ -229,7 +226,7 @@ export default function RadialToolbar() {
               transition={{ type: 'spring', stiffness: 260, damping: 24 }}
               style={{ display: 'flex' }}
             >
-              <X size={16} weight="regular" color={isDark ? '#a1a1aa' : '#4A453F'} />
+              <X size={16} color={isDark ? '#a1a1aa' : '#4A453F'} />
             </motion.span>
           )}
         </AnimatePresence>
@@ -254,7 +251,7 @@ export default function RadialToolbar() {
             exit={{    opacity: 0, y: 4,  scale: 0.95 }}
             transition={{ type: 'spring', stiffness: 500, damping: 30 }}
           >
-            <labelTool.Icon size={11} weight="regular" color={activeId === labelTool.id ? (isDark ? '#e4e4e7' : '#2E2A24') : (isDark ? '#71717a' : '#9E9890')} />
+            <labelTool.Icon size={11} color={activeId === labelTool.id ? (isDark ? '#e4e4e7' : '#2E2A24') : (isDark ? '#71717a' : '#9E9890')} />
             <span className="text-xs font-medium" style={{ color: isDark ? '#a1a1aa' : '#736D65' }}>{labelTool.label}</span>
             {activeId === labelTool.id && (
               <motion.span

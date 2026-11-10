@@ -8,8 +8,10 @@ import type {
   MouseEvent as ReactMouseEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { CaretRight, DotsThreeVertical } from '@phosphor-icons/react';
-import type { Icon } from '@phosphor-icons/react';
+import { ChevronRight } from '@/app/_icons/icons/chevron-right';
+import { EllipsisVertical } from '@/app/_icons/icons/ellipsis-vertical';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { tokens } from '../tokens';
 import { IconButton } from './IconButton';
 import { andromedaVars, inheritedThemeVars, themeColor } from './lib/utils';
@@ -17,7 +19,7 @@ import { andromedaVars, inheritedThemeVars, themeColor } from './lib/utils';
 /**
  * @typedef {object} MenuItem
  * @property {string}   [label] Text shown for the menu item.
- * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon] Icon rendered to the left of the label.
+ * @property {React.ComponentType<IconProps>} [icon] Icon rendered to the left of the label.
  * @property {() => void} [onSelect] Handler called when the item is chosen (ignored on items with a submenu).
  * @property {MenuItem[]} [submenu] Nested items opened as a flyout submenu.
  * @property {boolean}  [selected] Marks the item as the active choice, styling it accordingly.
@@ -44,7 +46,7 @@ import { andromedaVars, inheritedThemeVars, themeColor } from './lib/utils';
 
 type MenuItem = {
   label?: string;
-  icon?: Icon;
+  icon?: ComponentType<IconProps>;
   onSelect?: () => void;
   submenu?: MenuItem[];
   selected?: boolean;
@@ -266,9 +268,9 @@ function MenuItem({ item, onClose }: { item: MenuItem; onClose: () => void }) {
           transition: `background ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}, color ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}`,
         }}
       >
-        {Icon ? <Icon size={14} weight="regular" /> : <span style={{ width: '14px' }} />}
+        {Icon ? <Icon size={14} /> : <span style={{ width: '14px' }} />}
         <span style={{ flex: 1 }}>{item.label}</span>
-        {hasSub ? <CaretRight size={10} weight="bold" /> : null}
+        {hasSub ? <ChevronRight size={10} weight="bold" /> : null}
       </button>
 
       {hasSub && submenuOpen ? (
@@ -399,7 +401,7 @@ export const PanelMenu = forwardRef<HTMLDivElement, PanelMenuProps>(function Pan
         aria-expanded={open}
         variant="ghost"
         size="sm"
-        icon={DotsThreeVertical}
+        icon={EllipsisVertical}
         onClick={(e: ReactMouseEvent<HTMLButtonElement>) => {
           if (!open && !staticOpen) returnFocusRef.current = e.currentTarget;
           setOpen((o) => !o);

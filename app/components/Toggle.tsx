@@ -2,11 +2,12 @@
 
 import { forwardRef, useId, useState, type ChangeEvent, type CSSProperties, type InputHTMLAttributes } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Check, X } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check'
+import { X } from '@/app/_icons/icons/x'
 
 // Site-chrome Toggle — visual language adapted from the Mark Toggle standalone
 // (components-workspace/mark-toggle/index.tsx): iOS-style pill, sliding thumb,
-// X→Check icon morph. Re-skinned to the sand/olive site tokens and reshaped
+// X→Check icon morph. Re-skinned to the sand/accent site tokens and reshaped
 // into a controlled/uncontrolled switch with forwardRef.
 //
 // API mirrors the Andromeda Toggle so the mental model is consistent across
@@ -85,9 +86,9 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
             display: 'block',
             position: 'relative',
           }}
-          className={`shrink-0 rounded-lg border transition-colors duration-200 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-olive-500/40 ${
+          className={`shrink-0 rounded-full border transition-colors duration-200 ease-out peer-focus-visible:ring-2 peer-focus-visible:ring-accent/40 ${
             checked
-              ? 'border-olive-500 bg-olive-500/15'
+              ? 'border-accent bg-accent/15'
               : 'border-sand-200 bg-sand-100 dark:border-sand-700 dark:bg-sand-800'
           } ${disabled ? 'pointer-events-none opacity-50' : ''} ${className}`}
         >
@@ -105,9 +106,9 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
               justifyContent: 'center',
               overflow: 'hidden',
             }}
-            className={`rounded-md ${
+            className={`rounded-full ${
               checked
-                ? 'bg-olive-500'
+                ? 'bg-accent'
                 : 'bg-sand-400 dark:bg-sand-600'
             }`}
           >
@@ -121,7 +122,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
                   transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <Check size={ICON} weight="bold" className="text-sand-950" />
+                  <Check size={ICON} className="text-accent-foreground" />
                 </motion.span>
               ) : (
                 <motion.span
@@ -132,7 +133,7 @@ export const Toggle = forwardRef<HTMLInputElement, ToggleProps>(function Toggle(
                   transition={{ duration: 0.18, ease: [0.34, 1.56, 0.64, 1] }}
                   style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
-                  <X size={ICON} weight="bold" className="text-sand-50" />
+                  <X size={ICON} className="text-sand-50" />
                 </motion.span>
               )}
             </AnimatePresence>

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Heart } from '@/app/_icons/icons/heart'
 import { createClient } from '../../../lib/supabase/server'
 import type { SavedComponent } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
@@ -7,6 +8,7 @@ import { getAndromedaComponentMeta as getAndromedaProComponentMeta } from '../..
 import { resolveRetiredSlug } from '../itemHref'
 import { optimizeImageKitUrl } from '../../../lib/imagekit'
 import { buttonClasses } from '../../../components/buttonClasses'
+import { CARD } from '../../../components/PageKit'
 import { SavedList, type SavedRow } from './SavedList'
 
 export default async function SavedPage() {
@@ -34,13 +36,16 @@ export default async function SavedPage() {
 
   if (raw.length === 0) {
     return (
-      <div className="rounded-xl border border-sand-200 bg-sand-100 p-12 text-center dark:border-sand-800 dark:bg-sand-900">
+      <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
+        <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-card border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
+          <Heart size={22} />
+        </div>
         <p className="text-sm text-sand-600 dark:text-sand-400">
           You haven&apos;t saved anything yet.
         </p>
         <Link
           href="/components"
-          className={`mt-4 ${buttonClasses({ variant: 'primary', size: 'sm' })}`}
+          className={`mt-5 ${buttonClasses({ variant: 'primary', size: 'md' })}`}
         >
           Browse components
         </Link>

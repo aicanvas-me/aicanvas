@@ -1,5 +1,9 @@
 import { COMPONENTS } from '../lib/component-registry'
 import { SITE_URL } from '../lib/config'
+import { ICON_CATEGORIES } from '../icons/_lib/categories'
+import { icons } from '../icons/_lib/server-data'
+import { installTier } from '@/lib/registry/premium-gate'
+import { loadContentLookup } from '@/lib/registry/lookup'
 
 export const dynamic = 'force-static'
 
@@ -12,12 +16,12 @@ export function GET() {
 
   const intro = `# AI Canvas
 
-> AI Canvas is an open-core, shadcn-compatible registry of ${total} animated React components, design systems, and templates built with Tailwind CSS and Motion. The free library is MIT, and Premium components, design systems, and templates are proprietary. Many components ship with a comprehensive AI remix prompt, so developers can install the code directly or recreate their own variation in any AI builder. On free components that prompt is public in full; on premium components and blocks only part of it is public (the setup and the constants), and the rest of the build spec requires a Premium subscription.
+> AI Canvas is the design layer for AI coding agents: design systems your agent builds with and you reshape to your project, plus ${total} standalone React components and blocks that fit any of them, all installed as editable source with shadcn or MCP. The free components and Andromeda Legacy are MIT; Premium components, Andromeda Pro, its templates and the AI Brain are proprietary, and the Line icons are free under the AI Canvas Premium License, not MIT, with a one-line credit kept in the code. Many components include an AI remix prompt for recreating a variation in an AI builder. For free components, the full prompt is public. For premium components and blocks, the setup and constants are public, while the rest of the build specification requires Premium.
 
 ## Overview
-- [Homepage](${SITE_URL}): Browse all components.
-- [All components](${SITE_URL}/components): Full component list.
-- [About](${SITE_URL}/about): About AI Canvas.
+- [Homepage](${SITE_URL}): Design systems and standalone React components for AI coding agents.
+- [All components](${SITE_URL}/components): Browse ${total} standalone shadcn components and blocks for React.
+- [About](${SITE_URL}/about): Learn how AI Canvas works with Claude Code, Cursor, and Codex.
 - [Registry index](${SITE_URL}/r/registry.json): Machine-readable registry index.
 
 ## Install
@@ -42,9 +46,20 @@ No account needed to read: every free component's complete source is inlined bel
     // components keep their full source here, unchanged.
     parts.push(
       c.badge === 'Premium'
-        ? `${head}\n\n_Premium component — source is gated. Preview, details, and install at ${SITE_URL}/components/${c.slug}._`
+        ? `${head}\n\n_Premium component: source is gated. Preview, details, and install at ${SITE_URL}/components/${c.slug}._`
         : `${head}\n\n\`\`\`tsx\n${c.code}\n\`\`\``,
     )
+  }
+
+  // Names only, never geometry: install and usage notes are in llms.txt.
+  if (icons.length) {
+    const lookup = loadContentLookup()
+    const tier = (slug: string) => installTier(slug, lookup)
+    const byCategory = ICON_CATEGORIES.map(([slug, label]) => {
+      const names = icons.filter((icon) => icon.category === slug).map((icon) => icon.name)
+      return names.length ? `${label}: ${names.join(', ')}` : ''
+    }).filter(Boolean)
+    parts.push(`---\n\n## Icons\n\n${icons.length} React icons at ${SITE_URL}/icons, four styles each: Line (${tier('icon-search')}), Duotone, Solid and Solid duotone (${tier('icon-search-duotone')}). Install one with \`npx shadcn@latest add @aicanvas/icon-<name>\` (add -duotone, -solid or -solid-duotone for the other styles). Setup and usage: ${SITE_URL}/llms.txt\n\n${byCategory.join('\n\n')}`)
   }
 
   const body = parts.join('\n\n') + '\n'

@@ -1,61 +1,87 @@
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import type { ReactNode } from 'react'
-import { Lightning } from '@phosphor-icons/react/dist/ssr'
+import { Bolt } from '@/app/_icons/icons/bolt'
 import { createClient } from '../../lib/supabase/server'
-import { premiumEnabled } from '../../../lib/flags'
-import { isPremiumNow, type SubStatus } from '../../../lib/identity/tier'
+import { hostedMcpOAuthEnabled, premiumEnabled } from '../../../lib/flags'
+import { getPremiumForUser } from '../../../lib/identity/premium'
 import { EmailAvatar, photoFromUser } from '../../components/auth/EmailAvatar'
+import { PageShell } from '../../components/PageKit'
 import { AccountTabs } from './AccountTabs'
+import { ACCOUNT_PATH_HEADER } from '../../lib/account-path'
+import { safeNext } from '../../lib/safe-next'
 
 export default async function MemberLayout({ children }: { children: ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/account/sign-in?next=/account')
+  if (!user) {
+    const here = safeNext((await headers()).get(ACCOUNT_PATH_HEADER))
+    redirect(`/account/sign-in?next=${encodeURIComponent(here)}`)
+  }
 
   const email = user.email ?? 'Account'
 
-  // Real tier badge (flag-gated). RLS restricts this read to the owner's row.
+  // Real tier badge (flag-gated). RLS restricts the reads to the owner's rows.
+  // A failed read hides the badge: this layout wraps the portal and cancel
+  // access, so it must render even when the premium check throws.
   let showTier = false
   let isPremium = false
   if (premiumEnabled()) {
-    showTier = true
-    const { data: sub } = await supabase
-      .from('user_subscriptions')
-      .select('status, current_period_end')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    isPremium = sub
-      ? isPremiumNow(sub.status as SubStatus, sub.current_period_end ?? null)
-      : false
+    try {
+      isPremium = (await getPremiumForUser(supabase, user.id)).premium
+      showTier = true
+    } catch {
+      showTier = false
+    }
   }
 
+  // The site's page shell and the homepage's centred hero stack: avatar, the
+  // title with the tier beside it, the address under it, then the section
+  // switch. This layout stays mounted across the tabs, so the entrance plays
+  // once on the way in, not on every tab.
   return (
-    <>
-      <div className="mx-auto w-full max-w-4xl px-4 py-6 sm:px-6 sm:py-10">
-        <div className="mb-6 flex items-center gap-4 sm:mb-8">
-          <EmailAvatar email={email} photoUrl={photoFromUser(user)} className="h-12 w-12 shrink-0 text-xl sm:h-16 sm:w-16 sm:text-2xl" />
-          <div className="min-w-0">
-            <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-sand-900 dark:text-sand-50 sm:text-3xl">Your account</h1>
-              {showTier && (
-                isPremium ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-olive-500 px-2 py-0.5 text-[11px] font-semibold text-sand-950">
-                    <Lightning weight="regular" size={11} />
-                    Premium
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center rounded-full border border-sand-200 px-2 py-0.5 text-[11px] font-semibold text-sand-600 dark:border-sand-700 dark:text-sand-400">
-                    Free
-                  </span>
-                )
-              )}
-            </div>
-            <p className="mt-1 truncate text-sm text-sand-600 dark:text-sand-400">{email}</p>
+    <PageShell>
+      <div className="mx-auto w-full max-w-4xl">
+        <header className="flex flex-col items-center text-center">
+          <div className="aic-hero-rise" style={{ animationDelay: '0.1s' }}>
+            <EmailAvatar
+              email={email}
+              photoUrl={photoFromUser(user)}
+              className="h-16 w-16 text-2xl sm:h-20 sm:w-20 sm:text-3xl"
+            />
           </div>
+          <div
+            className="aic-hero-slide mt-5 flex flex-wrap items-center justify-center gap-x-3 gap-y-2"
+            style={{ animationDelay: '0.18s' }}
+          >
+            <h1 className="text-balance text-3xl font-extrabold tracking-tight text-sand-900 sm:text-[2.75rem] sm:leading-[1.1] dark:text-sand-50">
+              Your account
+            </h1>
+            {showTier && (
+              isPremium ? (
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-premium/10 px-3 py-1 text-xs font-semibold text-premium ring-1 ring-inset ring-premium/30">
+                  <Bolt size={12} />
+                  Premium
+                </span>
+              ) : (
+                <span className="inline-flex items-center rounded-full bg-free/10 px-3 py-1 text-xs font-semibold text-free ring-1 ring-inset ring-free/30">Free</span>
+              )
+            )}
+          </div>
+          <p
+            className="aic-hero-rise mt-3 max-w-full truncate text-base text-sand-600 dark:text-sand-400"
+            style={{ animationDelay: '0.26s' }}
+          >
+            {email}
+          </p>
+        </header>
+        <div className="aic-hero-rise mt-8 sm:mt-10" style={{ animationDelay: '0.34s' }}>
+          <AccountTabs showConnect={hostedMcpOAuthEnabled()} />
         </div>
-        <AccountTabs />
-        <div className="mt-6 sm:mt-8">{children}</div>
+        {/* The bottom padding stands in for the closing band other pages end
+            on, so the last card does not run into the footer rule. */}
+        <div className="mt-8 pb-12 sm:mt-12 sm:pb-20">{children}</div>
       </div>
-    </>
+    </PageShell>
   )
 }

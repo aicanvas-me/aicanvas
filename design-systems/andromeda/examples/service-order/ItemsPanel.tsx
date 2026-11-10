@@ -6,8 +6,7 @@
 //   3. Table       — checkbox + 9 product columns + per-row PanelMenu
 //
 // Selected row uses surface.active background plus an accent-300 left
-// edge bar; row hover uses surface.hover. Sortable columns get a
-// CaretUp/Down indicator on the active sort column.
+// edge bar; row hover uses surface.hover.
 // ============================================================
 
 'use client';
@@ -15,18 +14,16 @@
 import { useState } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import {
-  Funnel,
-  CaretUp,
-  CaretDown,
-  CaretUpDown,
-  Pencil,
-  Copy,
-  Export,
-  EyeSlash,
-  ArrowsClockwise,
-  Sliders,
-} from '@phosphor-icons/react';
+import { Funnel } from '@/app/_icons/icons/funnel';
+import { ChevronUp } from '@/app/_icons/icons/chevron-up';
+import { ChevronDown } from '@/app/_icons/icons/chevron-down';
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down';
+import { Pen } from '@/app/_icons/icons/pen';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { ShareIcon } from '@/app/_icons/icons/share';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
+import { Refresh } from '@/app/_icons/icons/refresh';
+import { SlidersVertical } from '@/app/_icons/icons/sliders-vertical';
 
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
@@ -181,7 +178,7 @@ function FilterRow({ chips, onRemoveChip }: { chips: string[]; onRemoveChip: (la
       }}
     >
       <InsetDivider />
-      <Funnel weight="regular" size={14} style={{ color: themeColor.text.muted, flexShrink: 0 }} />
+      <Funnel size={14} style={{ color: themeColor.text.muted, flexShrink: 0 }} />
       <span
         className="so-filter-label"
         style={{
@@ -230,13 +227,13 @@ function FilterRow({ chips, onRemoveChip }: { chips: string[]; onRemoveChip: (la
       </div>
 
       <Tooltip label="Refresh">
-        <IconButton aria-label="Refresh" variant="ghost" size="md" icon={ArrowsClockwise} />
+        <IconButton aria-label="Refresh" variant="ghost" size="md" icon={Refresh} />
       </Tooltip>
       <Tooltip label="Configure">
-        <IconButton aria-label="Configure" variant="ghost" size="md" icon={Sliders} />
+        <IconButton aria-label="Configure" variant="ghost" size="md" icon={SlidersVertical} />
       </Tooltip>
       <Tooltip label="Export">
-        <IconButton aria-label="Export" variant="ghost" size="md" icon={Export} />
+        <IconButton aria-label="Export" variant="ghost" size="md" icon={ShareIcon} />
       </Tooltip>
 
       <style>{`
@@ -260,9 +257,9 @@ function ColHeader({ children, align = 'left', sort }: {
 }) {
   // sort: 'asc' | 'desc' | 'sortable' | undefined
   const sortIcon =
-    sort === 'asc'  ? <CaretUp     weight="bold" size={10} /> :
-    sort === 'desc' ? <CaretDown   weight="bold" size={10} /> :
-    sort === 'sortable' ? <CaretUpDown weight="regular" size={10} /> :
+    sort === 'asc'  ? <ChevronUp weight="bold" size={10} /> :
+    sort === 'desc' ? <ChevronDown weight="bold" size={10} /> :
+    sort === 'sortable' ? <ChevronsUpDown size={10} /> :
     null;
 
   const sorted = sort === 'asc' || sort === 'desc';
@@ -472,11 +469,11 @@ export function ItemsPanel() {
                     <PanelMenu
                       ariaLabel={`Actions for ${r.id}`}
                       items={[
-                        { label: 'Edit',      icon: Pencil, onSelect: () => {} },
-                        { label: 'Duplicate', icon: Copy,   onSelect: () => {} },
-                        { label: 'Export',    icon: Export, onSelect: () => {} },
+                        { label: 'Edit',      icon: Pen, onSelect: () => {} },
+                        { label: 'Duplicate', icon: CopyIcon,   onSelect: () => {} },
+                        { label: 'Export',    icon: ShareIcon, onSelect: () => {} },
                         { type: 'separator' },
-                        { label: 'Hide',      icon: EyeSlash, destructive: true, onSelect: () => {} },
+                        { label: 'Hide',      icon: EyeOff, destructive: true, onSelect: () => {} },
                       ]}
                     />
                   </td>

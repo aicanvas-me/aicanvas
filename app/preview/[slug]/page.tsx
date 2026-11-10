@@ -17,9 +17,7 @@ export const metadata: Metadata = {
 // must stay on the server. As a client component this route bundled the entire
 // registry (source and all) into a browser-downloadable JS chunk. The live
 // <PreviewComponent /> is itself a client component and still hydrates fine;
-// only the source strings now stay server-side. The back button lives in its
-// own client child (BackButton) so its Phosphor icon — which calls
-// React.createContext at module load — never evaluates in this server module.
+// only the source strings now stay server-side.
 export default async function FullScreenPreview({
   params,
   searchParams,

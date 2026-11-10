@@ -3,8 +3,8 @@ import type { Platform } from '../../app/components/ComponentCard'
 export const prompts: Partial<Record<Platform, string>> = {
   'Claude Code': `Build a standalone React component called RadialCards.
 
-Stack: React + TypeScript + Framer Motion + @phosphor-icons/react. Single file, 'use client', default export, min-h-screen wrapper.
-// npm install framer-motion @phosphor-icons/react
+Stack: React + TypeScript + Framer Motion + AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Fire } from '@/components/icons/fire'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. Single file, 'use client', default export, min-h-screen wrapper.
+// npm install framer-motion
 
 --- LAYOUT ---
 7 health-metric cards arranged as a rotating flower. All cards share a single anchor at the canvas centre. Each card pivots from its bottom-left corner (transform-origin: 0% 100%), extends upward from the anchor, and is rotated by its hand-tuned slot angle so the bouquet fans out organically.
@@ -22,7 +22,7 @@ Each card is a two-layer structure:
   Outer shell: linear-gradient top→bottom from PASTEL to GRADIENT_END, border-radius 24px, no border. Box shadow: -8px 16px 32px rgba(0,0,0,0.12), -3px 6px 14px rgba(0,0,0,0.18).
   Padding: 12px 4px 4px 4px. Gap: 10px. Font: Manrope.
 
-  Header row: Phosphor icon (14px, weight="regular", color=DARK) + title text (12px, weight 500, #1a1a1a). 8px gap, 6px left padding.
+  Header row: icon (12px, color=DARK) + title text (12px, weight 500, #1a1a1a). 8px gap, 6px left padding.
 
   Inner panel: background #f7f7f5, border-radius 20px, padding 12px, inner shadow 0px 1px 12px rgba(0,0,0,0.25). Two rows:
     Top: pill (right-aligned), background DARK, white text 10px semibold, padding 5px 10px, border-radius 999px.
@@ -33,13 +33,13 @@ Sparkline: 4-point Catmull-Rom cubic bezier curve (smooth, no kinks). Area fill 
 --- 7 METRICS ---
 | # | Title     | Label      | Value  | Delta    | PASTEL  | GRADIENT_END | DARK    | Icon       | Sparkline (y, 0=top, 36=bottom) |
 |---|-----------|------------|--------|----------|---------|--------------|---------|------------|---------------------------------|
-| 0 | Steps     | TODAY      | 20.5K  | +5K      | #EAF6AE | #ACC13C      | #5C662A | Footprints | [28, 18, 10, 6]                 |
-| 1 | Calories  | BURNED     | 1,820  | +120     | #F9C8A7 | #D4783A      | #853C0B | Fire       | [30, 8, 20, 6]                  |
-| 2 | Sleep     | LAST NIGHT | 7h 42m | +18m     | #C1C2FA | #7B7DF0      | #363885 | Moon       | [22, 30, 14, 18]                |
-| 3 | Water     | TODAY      | 2.1 L  | +0.4 L   | #96D9F7 | #4BB8F0      | #085B80 | Drop       | [26, 14, 20, 4]                 |
-| 4 | Heart     | RESTING    | 72 BPM | −4       | #FBB1BE | #F07090      | #862334 | Heart      | [8, 22, 16, 28]                 |
-| 5 | Active    | THIS WEEK  | 48 min | +12 min  | #9BE6DD | #48C7B8      | #0B655B | Lightning  | [32, 20, 10, 4]                 |
-| 6 | Distance  | THIS WEEK  | 8.4 km | +1.2 km  | #FAD79C | #E8B040      | #875706 | Path       | [24, 12, 20, 6]                 |
+| 0 | Steps     | TODAY      | 20.5K  | +5K      | #EAF6AE | #ACC13C      | #5C662A | footprints | [28, 18, 10, 6]                 |
+| 1 | Calories  | BURNED     | 1,820  | +120     | #F9C8A7 | #D4783A      | #853C0B | fire       | [30, 8, 20, 6]                  |
+| 2 | Sleep     | LAST NIGHT | 7h 42m | +18m     | #C1C2FA | #7B7DF0      | #363885 | moon       | [22, 30, 14, 18]                |
+| 3 | Water     | TODAY      | 2.1 L  | +0.4 L   | #96D9F7 | #4BB8F0      | #085B80 | droplet    | [26, 14, 20, 4]                 |
+| 4 | Heart     | RESTING    | 72 BPM | −4       | #FBB1BE | #F07090      | #862334 | heart      | [8, 22, 16, 28]                 |
+| 5 | Active    | THIS WEEK  | 48 min | +12 min  | #9BE6DD | #48C7B8      | #0B655B | bolt       | [32, 20, 10, 4]                 |
+| 6 | Distance  | THIS WEEK  | 8.4 km | +1.2 km  | #FAD79C | #E8B040      | #875706 | route      | [24, 12, 20, 6]                 |
 
 --- CLICK INTERACTION ---
 engagedIndex: number | null, a single useState in parent.
@@ -75,7 +75,7 @@ Each card tracks a per-card cardRotation MotionValue with two modes:
 
   Lovable: `Build a standalone React component called RadialCards.
 
-Stack: React + TypeScript + Framer Motion + @phosphor-icons/react. Single file, 'use client', default export, min-h-screen wrapper.
+Stack: React + TypeScript + Framer Motion + AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Fire } from '@/components/icons/fire'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. Single file, 'use client', default export, min-h-screen wrapper.
 
 --- LAYOUT ---
 7 health-metric cards arranged as a rotating flower. All cards share a single anchor at the canvas centre. Each card pivots from its bottom-left corner (transform-origin: 0% 100%), extends upward from the anchor, and is rotated by its hand-tuned slot angle so the bouquet fans out organically.
@@ -93,7 +93,7 @@ Each card is a two-layer structure:
   Outer shell: linear-gradient top→bottom from PASTEL to GRADIENT_END, border-radius 24px, no border. Box shadow: -8px 16px 32px rgba(0,0,0,0.12), -3px 6px 14px rgba(0,0,0,0.18).
   Padding: 12px 4px 4px 4px. Gap: 10px. Font: Manrope.
 
-  Header row: Phosphor icon (14px, weight="regular", color=DARK) + title text (12px, weight 500, #1a1a1a). 8px gap, 6px left padding.
+  Header row: icon (12px, color=DARK) + title text (12px, weight 500, #1a1a1a). 8px gap, 6px left padding.
 
   Inner panel: background #f7f7f5, border-radius 20px, padding 12px, inner shadow 0px 1px 12px rgba(0,0,0,0.25). Two rows:
     Top: pill (right-aligned) — background DARK, white text 10px semibold, padding 5px 10px, border-radius 999px.
@@ -104,13 +104,13 @@ Sparkline: 4-point Catmull-Rom cubic bezier curve (smooth). Area fill with linea
 --- 7 METRICS ---
 | # | Title     | Label      | Value  | Delta    | PASTEL  | GRADIENT_END | DARK    | Icon       | Sparkline y-values |
 |---|-----------|------------|--------|----------|---------|--------------|---------|------------|--------------------|
-| 0 | Steps     | TODAY      | 20.5K  | +5K      | #EAF6AE | #ACC13C      | #5C662A | Footprints | [28, 18, 10, 6]    |
-| 1 | Calories  | BURNED     | 1,820  | +120     | #F9C8A7 | #D4783A      | #853C0B | Fire       | [30, 8, 20, 6]     |
-| 2 | Sleep     | LAST NIGHT | 7h 42m | +18m     | #C1C2FA | #7B7DF0      | #363885 | Moon       | [22, 30, 14, 18]   |
-| 3 | Water     | TODAY      | 2.1 L  | +0.4 L   | #96D9F7 | #4BB8F0      | #085B80 | Drop       | [26, 14, 20, 4]    |
-| 4 | Heart     | RESTING    | 72 BPM | −4       | #FBB1BE | #F07090      | #862334 | Heart      | [8, 22, 16, 28]    |
-| 5 | Active    | THIS WEEK  | 48 min | +12 min  | #9BE6DD | #48C7B8      | #0B655B | Lightning  | [32, 20, 10, 4]    |
-| 6 | Distance  | THIS WEEK  | 8.4 km | +1.2 km  | #FAD79C | #E8B040      | #875706 | Path       | [24, 12, 20, 6]    |
+| 0 | Steps     | TODAY      | 20.5K  | +5K      | #EAF6AE | #ACC13C      | #5C662A | footprints | [28, 18, 10, 6]    |
+| 1 | Calories  | BURNED     | 1,820  | +120     | #F9C8A7 | #D4783A      | #853C0B | fire       | [30, 8, 20, 6]     |
+| 2 | Sleep     | LAST NIGHT | 7h 42m | +18m     | #C1C2FA | #7B7DF0      | #363885 | moon       | [22, 30, 14, 18]   |
+| 3 | Water     | TODAY      | 2.1 L  | +0.4 L   | #96D9F7 | #4BB8F0      | #085B80 | droplet    | [26, 14, 20, 4]    |
+| 4 | Heart     | RESTING    | 72 BPM | −4       | #FBB1BE | #F07090      | #862334 | heart      | [8, 22, 16, 28]    |
+| 5 | Active    | THIS WEEK  | 48 min | +12 min  | #9BE6DD | #48C7B8      | #0B655B | bolt       | [32, 20, 10, 4]    |
+| 6 | Distance  | THIS WEEK  | 8.4 km | +1.2 km  | #FAD79C | #E8B040      | #875706 | route      | [24, 12, 20, 6]    |
 
 --- CLICK INTERACTION ---
 engagedIndex (useState) tracks which card is focused. Click to engage, click again or tap outside to release. Engaged card glides to canvas centre with centeringFactor spring (stiffness 140, damping 28, mass 1), lifts translateZ 120px, scales to 1.18×.
@@ -123,7 +123,7 @@ Background: dark #1A1A19 / light #F0F0E8 via theme detection.`,
 
   V0: `Build a standalone React component called RadialCards.
 
-Stack: React + TypeScript + Framer Motion + @phosphor-icons/react. Single file, 'use client', default export, min-h-screen wrapper.
+Stack: React + TypeScript + Framer Motion + AI Canvas icons (\`@/components/icons/<name>\`, e.g. \`import { Fire } from '@/components/icons/fire'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`. Single file, 'use client', default export, min-h-screen wrapper.
 
 --- LAYOUT ---
 7 health-metric cards arranged as a rotating flower. All cards share a single anchor at the canvas centre. Each card pivots from its bottom-left corner (transform-origin: 0% 100%), extends upward from the anchor, and is rotated by its hand-tuned slot angle so the bouquet fans out organically.
@@ -141,7 +141,7 @@ Each card is a two-layer structure:
   Outer shell: linear-gradient top→bottom from PASTEL to GRADIENT_END, border-radius 24px, no border. Box shadow: -8px 16px 32px rgba(0,0,0,0.12), -3px 6px 14px rgba(0,0,0,0.18).
   Padding: 12px 4px 4px 4px. Gap: 10px. Font: Manrope.
 
-  Header row: Phosphor icon (14px, weight="regular", color=DARK) + title text (12px, weight 500, #1a1a1a). 8px gap, 6px left padding.
+  Header row: icon (12px, color=DARK) + title text (12px, weight 500, #1a1a1a). 8px gap, 6px left padding.
 
   Inner panel: background #f7f7f5, border-radius 20px, padding 12px, inner shadow 0px 1px 12px rgba(0,0,0,0.25). Two rows:
     Top: pill (right-aligned) — background DARK, white text 10px semibold, padding 5px 10px, border-radius 999px.
@@ -152,13 +152,13 @@ Sparkline: 4-point Catmull-Rom cubic bezier curve (smooth). Area fill with linea
 --- 7 METRICS ---
 | # | Title     | Label      | Value  | Delta    | PASTEL  | GRADIENT_END | DARK    | Icon       | Sparkline y-values |
 |---|-----------|------------|--------|----------|---------|--------------|---------|------------|--------------------|
-| 0 | Steps     | TODAY      | 20.5K  | +5K      | #EAF6AE | #ACC13C      | #5C662A | Footprints | [28, 18, 10, 6]    |
-| 1 | Calories  | BURNED     | 1,820  | +120     | #F9C8A7 | #D4783A      | #853C0B | Fire       | [30, 8, 20, 6]     |
-| 2 | Sleep     | LAST NIGHT | 7h 42m | +18m     | #C1C2FA | #7B7DF0      | #363885 | Moon       | [22, 30, 14, 18]   |
-| 3 | Water     | TODAY      | 2.1 L  | +0.4 L   | #96D9F7 | #4BB8F0      | #085B80 | Drop       | [26, 14, 20, 4]    |
-| 4 | Heart     | RESTING    | 72 BPM | −4       | #FBB1BE | #F07090      | #862334 | Heart      | [8, 22, 16, 28]    |
-| 5 | Active    | THIS WEEK  | 48 min | +12 min  | #9BE6DD | #48C7B8      | #0B655B | Lightning  | [32, 20, 10, 4]    |
-| 6 | Distance  | THIS WEEK  | 8.4 km | +1.2 km  | #FAD79C | #E8B040      | #875706 | Path       | [24, 12, 20, 6]    |
+| 0 | Steps     | TODAY      | 20.5K  | +5K      | #EAF6AE | #ACC13C      | #5C662A | footprints | [28, 18, 10, 6]    |
+| 1 | Calories  | BURNED     | 1,820  | +120     | #F9C8A7 | #D4783A      | #853C0B | fire       | [30, 8, 20, 6]     |
+| 2 | Sleep     | LAST NIGHT | 7h 42m | +18m     | #C1C2FA | #7B7DF0      | #363885 | moon       | [22, 30, 14, 18]   |
+| 3 | Water     | TODAY      | 2.1 L  | +0.4 L   | #96D9F7 | #4BB8F0      | #085B80 | droplet    | [26, 14, 20, 4]    |
+| 4 | Heart     | RESTING    | 72 BPM | −4       | #FBB1BE | #F07090      | #862334 | heart      | [8, 22, 16, 28]    |
+| 5 | Active    | THIS WEEK  | 48 min | +12 min  | #9BE6DD | #48C7B8      | #0B655B | bolt       | [32, 20, 10, 4]    |
+| 6 | Distance  | THIS WEEK  | 8.4 km | +1.2 km  | #FAD79C | #E8B040      | #875706 | route      | [24, 12, 20, 6]    |
 
 --- CLICK INTERACTION ---
 engagedIndex (useState) tracks which card is focused. Click to engage, click again or tap outside to release. Engaged card glides to canvas centre with centeringFactor spring (stiffness 140, damping 28, mass 1), lifts translateZ 120px, scales to 1.18×.

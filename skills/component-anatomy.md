@@ -18,7 +18,7 @@ components-workspace/
 'use client'
 
 import { motion } from 'framer-motion'
-// import { IconName } from '@phosphor-icons/react'
+// import { Check } from '@/app/_icons/icons/check'
 
 export function MyComponent() {
   return (

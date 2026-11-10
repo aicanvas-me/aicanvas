@@ -12,7 +12,7 @@ The Reviewer checks this list on every review. The Supervisor logs here after ev
 
 ## #002 — Wrong icon weight
 - **Issue**: Used `weight="duotone"` on Phosphor icons instead of `weight="regular"`
-- **Rule**: Always use `weight="regular"` for all `@phosphor-icons/react` icons
+- **Rule**: Icons now come from the AI Canvas icon set (Line style, Regular weight by default; `weight` takes thin, light, regular, bold or extrabold)
 - **Affected files**: `components-workspace/CLAUDE.md` (fixed at setup)
 - **Detected**: Initial system setup
 

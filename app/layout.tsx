@@ -10,7 +10,8 @@ import { ThemeProvider } from './components/ThemeProvider'
 import { Sidebar } from './components/Sidebar'
 import { ScrollMemory } from './components/ScrollMemory'
 import { MobileNav } from './components/MobileNav'
-import { TopBar, TopBarProvider } from './components/TopBar'
+import { TopBar } from './components/TopBar'
+import { TopBarProvider } from './components/PageCrumbs'
 import { SessionProvider } from './components/auth/SessionProvider'
 import { AuthModalProvider } from './components/auth/AuthModalProvider'
 import { PaywallModalProvider } from './components/billing/PaywallModalProvider'
@@ -19,9 +20,10 @@ import { DevBranchBadge } from './components/DevBranchBadge'
 import { SiteBeacon } from './components/SiteBeacon'
 import { PaddlePaymentLink } from './components/billing/PaddlePaymentLink'
 import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
-import { GITHUB_URL, SITE_URL } from './lib/config'
+import { AI_CANVAS_DEFINITION, GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
 import { isFramedPayloadRequest } from './lib/frame'
+import { hostedMcpOAuthEnabled } from '../lib/flags'
 
 const manrope = Manrope({
   variable: '--font-manrope',
@@ -38,34 +40,33 @@ const geistMono = Geist_Mono({
 })
 
 const TOTAL = TOTAL_COMPONENTS
-const GLOBAL_DESCRIPTION = `Open-core registry of ${TOTAL} animated React components, design systems, and templates. The free library is MIT. Premium unlocks design systems, templates, and new components. Built with Tailwind CSS and Motion.`
+const GLOBAL_TITLE = 'AI Canvas: No More AI Slop. Design Systems for AI Agents'
+const GLOBAL_DESCRIPTION = `AI Canvas gives your AI agent design systems to build with and reshape, plus ${TOTAL} standalone React components that fit any of them. The free library is MIT; install with shadcn or MCP.`
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'AI Canvas - Animated React Components with AI Reproduction Prompts',
+    default: GLOBAL_TITLE,
     template: '%s | AI Canvas',
   },
   description: GLOBAL_DESCRIPTION,
   keywords: [
-    'animated react components',
     'react component library',
-    'framer motion components',
-    'tailwind css components',
+    'shadcn components',
+    'shadcn mcp',
     'shadcn registry',
-    'copy paste react components',
-    'UI components with AI prompts',
-    'react component AI prompt',
-    'V0 animated component',
-    'vibe coding UI components',
-    'free react UI components',
-    'open source animated components',
-    'animated UI kit',
+    'claude code ui',
+    'claude design skill',
+    'ai slop',
+    'standalone react components',
+    'design systems for AI agents',
+    'design rules for AI agents',
+    'react components for AI agents',
   ],
   openGraph: {
     type: 'website',
     siteName: 'AI Canvas',
-    title: 'AI Canvas - Animated React Components with AI Reproduction Prompts',
+    title: GLOBAL_TITLE,
     description: GLOBAL_DESCRIPTION,
     url: SITE_URL,
     locale: 'en_US',
@@ -80,7 +81,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'AI Canvas - Animated React Components with AI Reproduction Prompts',
+    title: GLOBAL_TITLE,
     description: GLOBAL_DESCRIPTION,
     images: ['/og-aug2026-aicanvas.me.png'],
   },
@@ -101,6 +102,7 @@ const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
   name: 'AI Canvas',
+  description: AI_CANVAS_DEFINITION,
   url: SITE_URL,
   logo: `${SITE_URL}/ai-canvas-icon-square.svg`,
   sameAs: [GITHUB_URL],
@@ -165,7 +167,9 @@ export default async function RootLayout({
         {/* No overflow-hidden and no scroll column: a framed template preview
             pans its own document, and the site's chrome is what owns that
             scroller on the full page. */}
-        <body className="h-full">{children}</body>
+        <body className="h-full">
+          {children}
+        </body>
       </html>
     )
   }
@@ -226,66 +230,71 @@ export default async function RootLayout({
         {process.env.NODE_ENV === 'development' && <script src="/pufi.js" defer />}
         {process.env.NODE_ENV === 'development' && <script src="/koko.js" defer />}
       </head>
-      <body className="flex h-full flex-col overflow-hidden bg-sand-50 dark:bg-sand-950 md:flex-row">
+      <body className="flex h-full flex-col overflow-hidden bg-sand-50 dark:bg-sand-950">
+        {/* First stop for keyboard users: the rail can carry over a hundred
+            links before the page itself. Hidden until focused. */}
+        <a
+          href="#page-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-3 focus:top-3 focus:z-[100] focus:rounded-control focus:bg-sand-50 focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-sand-900 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-accent/60 dark:focus:bg-sand-900 dark:focus:text-sand-50"
+        >
+          Skip to content
+        </a>
         <ThemeProvider initial={theme}>
-          <SessionProvider initialUser={user}>
-            <AuthModalProvider>
-             <PaywallModalProvider>
-             <TopBarProvider>
-              {/* Desktop sidebar — hidden on mobile */}
-              <Suspense fallback={null}>
-                <div className="hidden md:flex">
-                  <Sidebar promoteDS />
-                </div>
-              </Suspense>
-              {/* Mobile nav — visible only below md */}
-              <Suspense fallback={null}>
-                <MobileNav promoteDS />
-              </Suspense>
-              {/* Content area scrolls independently of the sidebar.
-                  .app-scroll-column (globals.css) reserves the scrollbar
-                  gutter so the visible width never shifts between auth
-                  states, and releases it on routes that clip themselves and
-                  own their own scroller — otherwise this column reserves a
-                  full-height strip it can never paint a bar in. In CSS rather
-                  than an inline style so the :has() release can out-specify
-                  it; an inline declaration would always win. */}
-              {/* md:scroll-pt-14 is the bar's height (h-14, drawn from md up). On
-                  a navigation Next scrolls the new page's root into view, and
-                  that root starts BELOW the sticky bar, so without the padding
-                  a page opened from a scrolled one lands 56px down with its
-                  first lines under the bar. */}
-              <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 md:scroll-pt-14 dark:bg-sand-950">
-                {/* The one top bar, above every page's content and never
-                    remounted: a navigation swaps only what is below it. It
-                    reads the URL, so it sits inside the same Suspense the
-                    sidebar needs. */}
-                <Suspense fallback={null}>
-                  <TopBar />
-                </Suspense>
-                {/* The page slot, sized to the column MINUS the bar. Page
-                    roots ask for min-h-full, and the column is a flex item of
-                    the full-height body, so without this wrapper that 100%
-                    resolved against the whole viewport and every short page
-                    scrolled by exactly the bar's height.
-                    min-h-0 is load-bearing: a flex item's automatic minimum is
-                    its content, which would grow this slot to the full page
-                    height, stop every overflow-hidden layout root below from
-                    clipping, and hand the scroll to this column instead of to
-                    the page that declares data-owns-scroll. A long page still
-                    scrolls: its overflow is visible and this column is the
-                    scroller. */}
-                <div className="flex min-h-0 flex-1 flex-col">{children}</div>
-              </div>
-              {/* Owns this column's scroll across navigations: a new page
-                  starts at its top, Back returns to where you were. */}
-              <ScrollMemory />
-              {/* Global auth dialog — toggles between sign-in and sign-up modes */}
-              <AuthModal />
-             </TopBarProvider>
-             </PaywallModalProvider>
-            </AuthModalProvider>
-          </SessionProvider>
+         <SessionProvider initialUser={user} showConnect={hostedMcpOAuthEnabled()}>
+           <AuthModalProvider>
+            <PaywallModalProvider>
+            <TopBarProvider>
+             {/* The one top bar, across the whole window above the rail and
+                 the content, drawn from md up and never remounted: a
+                 navigation swaps only what is below it. It reads the URL, so
+                 it sits inside a Suspense like the rail. */}
+             <Suspense fallback={null}>
+               <TopBar />
+             </Suspense>
+             {/* Mobile nav — visible only below md */}
+             <Suspense fallback={null}>
+               <MobileNav />
+             </Suspense>
+             {/* The rail and the content sit side by side under the bar.
+                 min-h-0 lets the row take the height the bar leaves and no
+                 more, so each of the two scrolls on its own. */}
+             <div className="flex min-h-0 flex-1">
+             {/* Desktop sidebar — hidden on mobile */}
+             <Suspense fallback={null}>
+               <div className="hidden md:flex">
+                 <Sidebar />
+               </div>
+             </Suspense>
+             {/* Content area scrolls independently of the sidebar.
+                 .app-scroll-column (globals.css) reserves the scrollbar
+                 gutter so the visible width never shifts between auth
+                 states, and releases it on routes that clip themselves and
+                 own their own scroller — otherwise this column reserves a
+                 full-height strip it can never paint a bar in. In CSS rather
+                 than an inline style so the :has() release can out-specify
+                 it; an inline declaration would always win. */}
+             <div className="app-scroll-column aic-page-scroll flex min-w-0 flex-1 flex-col overflow-x-hidden overflow-y-auto bg-sand-50 dark:bg-sand-950">
+               {/* The page slot. Page roots ask for min-h-full, and this
+                   wrapper is what that 100% resolves against.
+                   min-h-0 is load-bearing: a flex item's automatic minimum is
+                   its content, which would grow this slot to the full page
+                   height, stop every overflow-hidden layout root below from
+                   clipping, and hand the scroll to this column instead of to
+                   the page that declares data-owns-scroll. A long page still
+                   scrolls: its overflow is visible and this column is the
+                   scroller. */}
+               <div id="page-content" tabIndex={-1} className="flex min-h-0 flex-1 flex-col">{children}</div>
+             </div>
+             </div>
+             {/* Owns this column's scroll across navigations: a new page
+                 starts at its top, Back returns to where you were. */}
+             <ScrollMemory />
+             {/* Global auth dialog — toggles between sign-in and sign-up modes */}
+             <AuthModal />
+            </TopBarProvider>
+            </PaywallModalProvider>
+           </AuthModalProvider>
+         </SessionProvider>
         </ThemeProvider>
         {/* Two deliberate systems: Vercel Analytics keeps the visitors count
             and dashboard (per-day hash, disclosed in /privacy); SiteBeacon +

@@ -2,23 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  List,
-  X,
-  GithubLogo,
-  XLogo,
-  CaretDown,
-  DiamondsFour,
-  MagnifyingGlass,
-} from '@phosphor-icons/react'
+import { Menu } from '@/app/_icons/icons/menu'
+import { X } from '@/app/_icons/icons/x'
+import { Search } from '@/app/_icons/icons/search'
+import { GithubLogo, XLogo } from './BrandLogos'
 import { GITHUB_URL, X_URL } from '../lib/config'
-import type { ReactNode } from 'react'
-import { CATEGORIES, getCategoryByLabel } from '../lib/categories'
-import { DesignSystemsPole, TEMPLATE_LEAF_RE } from '../_components/DesignSystemsPole'
-import { CAPTURE_LEAF_RE } from './top-bar-crumbs'
-import { SecondaryNav } from './SecondaryNav'
+import { CatalogNav } from './CatalogNav'
+import { CAPTURE_LEAF_RE, FOCUS_ROUTE_RE, TEMPLATE_LEAF_RE } from './top-bar-crumbs'
+import { SecondaryNav, SectionTiles } from './SecondaryNav'
 import { useComponentSearch } from './useComponentSearch'
 import { Button } from './Button'
 import { buttonClasses } from './buttonClasses'
@@ -26,64 +19,31 @@ import { ThemeToggle } from './ThemeToggle'
 import { isPinnedDarkRoute } from '../lib/pinned-dark'
 import { SignedIn } from './auth/SignedIn'
 import { SignedOut } from './auth/SignedOut'
+import { BrandIcon } from './BrandIcon'
 import { UserMenu } from './auth/UserMenu'
 import { SignInCta } from './auth/SignInCta'
 
-// ── Tier structure (mirrors Sidebar — both read from the shared config) ──
-const COMPONENTS_LABELS = CATEGORIES.map((c) => c.label)
-
-type Section = {
-  title: string
-  icon: ReactNode
-  labels: readonly string[]
-  disabled?: boolean
-}
-
-// The Design Systems pole is rendered separately via the shared
-// DesignSystemsPole (same component the desktop Sidebar uses) so the mobile
-// drawer and the desktop rail never drift. Only the Components pole lives here.
-const SECTIONS: Section[] = [
-  { title: 'Components', icon: <DiamondsFour weight="regular" size={16} />, labels: COMPONENTS_LABELS },
-  // { title: 'SVGs', icon: <PenNib weight="regular" size={16} />, labels: [], disabled: true },
-]
+const DRAWER_SEARCH_ID = 'mobile-drawer-search'
 
 // ─── MobileNav ────────────────────────────────────────────────────────────────
 
-export function MobileNav({
-  promoteDS = false,
-}: {
-  // promoteDS: mirror the desktop Sidebar — cap Components to its first 4 (rest
-  // behind Show more) and auto-expand Andromeda's System/Brain/Templates.
-  promoteDS?: boolean
-}) {
+// The phone's only navigation: the bar at the top and the drawer it opens. The
+// drawer carries everything the desktop bar and rail do: search, the site's
+// sections (Docs, MCP, Pricing) as tiles, the catalog switch (CatalogNav,
+// shared with the rail), the info pages (SecondaryNav), the socials, the theme
+// and the account.
+export function MobileNav() {
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const isHome = pathname === '/components'
-  const categoryFromPath = pathname?.startsWith('/components/category/')
-    ? pathname.replace('/components/category/', '')
-    : null
-  const activeCategory = categoryFromPath
-    ? CATEGORIES.find((c) => c.slug === categoryFromPath)?.label ?? null
-    : isHome
-      ? (searchParams.get('category') ?? 'All Components')
-      : null
 
   const [open, setOpen] = useState(false)
-  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
-  // promoteDS caps Components to its first 4 categories; this reveals the rest.
-  const [showAllCats, setShowAllCats] = useState(false)
-  // Design Systems pole opens by default so Andromeda is one tap away (mirrors
-  // the desktop rail, where the DS pole is expanded out of the box).
-
-  const toggle = (title: string) =>
-    setCollapsed((prev) => ({ ...prev, [title]: !prev[title] }))
 
   // Close the drawer on a real route change (pathname only, not searchParams:
-  // typing in search updates ?q= and would otherwise close it on every keystroke).
+  // typing in search updates ?q= and would otherwise close it on every keystroke),
+  // unless its search has focus: typing there moves the page to /components.
   const [seenPathname, setSeenPathname] = useState(pathname)
   if (pathname !== seenPathname) {
     setSeenPathname(pathname)
-    setOpen(false)
+    if (document.activeElement?.id !== DRAWER_SEARCH_ID) setOpen(false)
   }
 
   // Lock body scroll when drawer is open
@@ -99,11 +59,13 @@ export function MobileNav({
   // The desktop Sidebar hides itself below md on every route, so this drawer
   // is the only mobile nav there is — it must stay visible everywhere.
   // Suppress it only where a route owns the full viewport: full-screen
-  // template leaves and the /lab subtree (LAB ships its own top bar).
+  // template leaves, the /lab subtree (LAB ships its own top bar) and the
+  // agent sign-in consent, as the desktop bar and rail do.
   const hideMobileNav =
     pathname?.startsWith('/lab') ||
     TEMPLATE_LEAF_RE.test(pathname ?? '') ||
-    CAPTURE_LEAF_RE.test(pathname ?? '')
+    CAPTURE_LEAF_RE.test(pathname ?? '') ||
+    FOCUS_ROUTE_RE.test(pathname ?? '')
   if (hideMobileNav) return null
 
   // On a route that pins itself dark, this drawer is the one piece of site
@@ -114,15 +76,14 @@ export function MobileNav({
   return (
     <div className={pinnedDark ? 'dark contents' : 'contents'}>
       {/* ── Mobile top bar ── */}
-      <div className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-sand-200 bg-sand-50 px-4 dark:border-sand-800 dark:bg-sand-950 md:hidden">
+      <div className="sticky top-0 z-30 flex h-16 items-center justify-between bg-sand-50 px-4 dark:bg-sand-950 md:hidden">
         <Link href="/" className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/ai-canvas-icon.svg" alt="" width={18} height={15} className="shrink-0" />
+          <BrandIcon width={18} height={15} className="shrink-0" />
           AI Canvas
         </Link>
 
         <Button variant="icon" size="md" onClick={() => setOpen(true)} aria-label="Open menu">
-          <List weight="regular" size={20} />
+          <Menu size={20} />
         </Button>
       </div>
 
@@ -151,50 +112,54 @@ export function MobileNav({
               className="fixed inset-y-0 left-0 z-50 flex w-72 flex-col bg-sand-50 shadow-2xl dark:bg-sand-950 md:hidden"
             >
               {/* Drawer header */}
-              <div className="flex h-16 shrink-0 items-center justify-between border-b border-sand-200 px-4 dark:border-sand-800">
+              <div className="flex h-16 shrink-0 items-center justify-between px-4">
                 <Link
                   href="/"
                   className="flex items-center gap-2 font-bold text-sand-900 dark:text-sand-50"
                   onClick={() => setOpen(false)}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/ai-canvas-icon.svg" alt="" width={18} height={15} className="shrink-0" />
+                  <BrandIcon width={18} height={15} className="shrink-0" />
                   AI Canvas
                 </Link>
                 <Button variant="icon" size="sm" onClick={() => setOpen(false)} aria-label="Close menu">
-                  <X weight="regular" size={18} />
+                  <X size={18} />
                 </Button>
               </div>
 
               {/* Search */}
               <div className="shrink-0 px-3 py-3">
                 <div className="relative">
-                  <MagnifyingGlass
-                    weight="regular"
+                  <Search
                     size={14}
                     className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sand-600 dark:text-sand-500"
                   />
                   <input
                     ref={searchInputRef}
+                    id={DRAWER_SEARCH_ID}
                     type="text"
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                     placeholder="Search..."
                     // 16px font-size prevents iOS Safari from auto-zooming on focus.
                     style={{ fontSize: 16 }}
-                    className="w-full rounded-lg border border-sand-200 bg-sand-100 py-1.5 pl-8 pr-8 text-sand-900 outline-none transition-colors placeholder:text-sand-600 hover:border-sand-300 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-600 dark:focus:border-olive-500 dark:focus:ring-olive-500/20"
+                    className="w-full rounded-control border border-sand-200 bg-sand-100 py-1.5 pl-8 pr-8 text-sand-900 outline-none transition-colors placeholder:text-sand-600 hover:border-sand-300 focus:border-accent focus:ring-2 focus:ring-accent/20 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-50 dark:placeholder:text-sand-500 dark:hover:border-sand-600"
                   />
                   {searchValue && (
                     <button
                       type="button"
                       onClick={clearSearch}
                       aria-label="Clear search"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-md p-0.5 text-sand-600 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-control p-0.5 text-sand-600 transition-colors hover:text-sand-700 dark:text-sand-500 dark:hover:text-sand-300"
                     >
-                      <X weight="regular" size={13} />
+                      <X size={13} />
                     </button>
                   )}
                 </div>
+              </div>
+
+              {/* The site's sections, one tap away above the long catalog list. */}
+              <div className="shrink-0 px-3 pb-2">
+                <SectionTiles pathname={pathname} onNavigate={() => setOpen(false)} />
               </div>
 
               {/* Navigation */}
@@ -207,143 +172,14 @@ export function MobileNav({
                     'linear-gradient(to bottom, transparent 0, #000 8px, #000 calc(100% - 16px), transparent 100%)',
                 }}
               >
-                {/* ── Design Systems pole (shared, identical to the desktop rail) ── */}
-                <DesignSystemsPole
-                  onNavigate={() => setOpen(false)}
-                />
-
-                {SECTIONS.map((section) => {
-                  const isCollapsed = collapsed[section.title] ?? false
-                  const isDisabled = section.disabled === true
-                  const isComponents = section.title === 'Components'
-                  // Promoted view shows the first 4 categories; rest behind Show
-                  // more. The category you are ON always rides along, so the
-                  // drawer never hides the page you are looking at.
-                  const catLabels =
-                    isComponents && promoteDS && !showAllCats
-                      ? section.labels.filter(
-                          (l, i) => i < 4 || l === activeCategory,
-                        )
-                      : section.labels
-                  // Count what is ACTUALLY hidden: the active category rides
-                  // along past the cap, so a plain length - 4 overcounts by one
-                  // whenever you are inside one of the capped categories. The
-                  // expanded state keeps the control so it can collapse back.
-                  const hiddenCatCount =
-                    isComponents && promoteDS
-                      ? section.labels.filter(
-                          (l, i) => i >= 4 && l !== activeCategory,
-                        ).length
-                      : 0
-                  const hasHiddenCats =
-                    isComponents && promoteDS && (showAllCats || hiddenCatCount > 0)
-
-                  return (
-                    <div key={section.title} className="mb-3">
-                      {section.title === 'Components' ? (
-                        <Link
-                          href="/components"
-                          onClick={() => setOpen(false)}
-                          className="mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100"
-                        >
-                          <span>{section.icon}</span>
-                          <span className="flex-1 whitespace-nowrap">Components &amp; Blocks</span>
-                        </Link>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => !isDisabled && toggle(section.title)}
-                          disabled={isDisabled}
-                          className={`mb-1 flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-semibold transition-colors ${
-                            isDisabled
-                              ? 'cursor-not-allowed text-sand-600/60 dark:text-sand-600/60'
-                              : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-300 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                          }`}
-                        >
-                          <span className={isDisabled ? 'opacity-40' : ''}>{section.icon}</span>
-                          <span className="flex-1 text-left">
-                            {section.title}
-                            {isDisabled && <span className="ml-1 text-xs font-normal text-sand-600 dark:text-sand-700">· soon</span>}
-                          </span>
-                          {!isDisabled && <CaretDown size={12} weight="regular" className={`shrink-0 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />}
-                        </button>
-                      )}
-
-                      {!isCollapsed && !isDisabled && (
-                        <div className="relative">
-                          {/* One vertical rail replaces the per-row elbow
-                              arrows, same as the desktop sidebar. */}
-                          <span aria-hidden className="pointer-events-none absolute bottom-1 left-[14px] top-1 w-px bg-sand-200 dark:bg-sand-800" />
-                        <ul className="space-y-0.5">
-                          {/* "All Components" is its own leaf here too, so the
-                              drawer and the desktop rail list the same rows. */}
-                          {isComponents && (
-                            <li>
-                              <Link
-                                href="/components"
-                                onClick={() => setOpen(false)}
-                                className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
-                                  activeCategory === 'All Components'
-                                    ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                                    : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                                }`}
-                              >
-                                <span aria-hidden className="w-3 shrink-0" />
-                                <span className="flex-1">All Components</span>
-                              </Link>
-                            </li>
-                          )}
-                          {catLabels.map((label) => {
-                            const isActive = label === activeCategory
-                            const cat = getCategoryByLabel(label)
-                            const href = cat
-                              ? `/components/category/${cat.slug}`
-                              : `/components?category=${encodeURIComponent(label)}`
-                            return (
-                              <li key={label}>
-                                <Link
-                                  href={href}
-                                  onClick={() => setOpen(false)}
-                                  className={`group flex items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium transition-colors ${
-                                    isActive
-                                      ? 'bg-sand-200/60 text-sand-900 dark:bg-sand-800 dark:text-sand-50'
-                                      : 'text-sand-700 hover:bg-sand-200/50 hover:text-sand-900 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-100'
-                                  }`}
-                                >
-                                  <span aria-hidden className="w-3 shrink-0" />
-                                  <span className="flex-1">{label}</span>
-                                </Link>
-                              </li>
-                            )
-                          })}
-                        </ul>
-                        </div>
-                      )}
-                      {/* Show more sits OUTSIDE the rail, same as the desktop
-                          sidebar: its caret shares the rail's column. */}
-                      {!isCollapsed && !isDisabled && hasHiddenCats && (
-                        <button
-                          type="button"
-                          onClick={() => setShowAllCats((v) => !v)}
-                          className="group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-sm font-medium text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-700 dark:text-sand-500 dark:hover:bg-sand-800/60 dark:hover:text-sand-300"
-                        >
-                          <CaretDown
-                            size={12}
-                            weight="regular"
-                            className={`shrink-0 transition-transform ${showAllCats ? '' : '-rotate-90'}`}
-                          />
-                          <span className="flex-1 text-left">
-                            {showAllCats ? 'Show less' : `Show ${hiddenCatCount} more`}
-                          </span>
-                        </button>
-                      )}
-                    </div>
-                  )
-                })}
-
-                <div className="mb-3 h-px bg-sand-200 dark:bg-sand-800" />
+                {/* The catalog switch and its list, the same control the
+                    desktop rail draws. */}
                 <div className="mb-3">
-                  <SecondaryNav pathname={pathname} variant="drawer" onNavigate={() => setOpen(false)} />
+                  <CatalogNav onNavigate={() => setOpen(false)} />
+                </div>
+
+                <div className="mb-3">
+                  <SecondaryNav pathname={pathname} onNavigate={() => setOpen(false)} />
                 </div>
               </nav>
 
@@ -356,7 +192,7 @@ export function MobileNav({
                   aria-label="GitHub repository"
                   className={buttonClasses({ variant: 'icon', size: 'md' })}
                 >
-                  <GithubLogo weight="regular" size={20} />
+                  <GithubLogo size={18} />
                 </a>
                 <a
                   href={X_URL}
@@ -365,14 +201,14 @@ export function MobileNav({
                   aria-label="X profile"
                   className={buttonClasses({ variant: 'icon', size: 'md' })}
                 >
-                  <XLogo weight="regular" size={20} />
+                  <XLogo size={17} />
                 </a>
                 {/* Far edge: a site setting, not a third social link. */}
                 <ThemeToggle className="ml-auto" size="md" />
               </div>
 
               {/* Auth row */}
-              <div className="shrink-0 border-t border-sand-200 px-3 py-3 dark:border-sand-800">
+              <div className="shrink-0 px-3 py-3">
                 <SignedIn>
                   <UserMenu />
                 </SignedIn>

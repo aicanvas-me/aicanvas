@@ -1,7 +1,7 @@
 'use client'
 
 // Foundation — the WHAT of the Andromeda token system, on site chrome
-// (sand/olive, Manrope), same editorial rhythm as the components gallery.
+// (sand/accent, Manrope), same editorial rhythm as the components gallery.
 // Swatches and bars are plain painted divs showing the primitive VALUES, which
 // is what this page is for. The one Andromeda component is the Badge inside
 // the shared layer cards.
@@ -10,13 +10,19 @@
 // shim, whose modules carry 'use client' — the same pattern the component
 // demos use. Everything here renders statically all the same.
 import { useRef } from 'react'
-import { ArrowUpRight, Crosshair, Eye, HandTap, Keyboard, ListChecks, Pause } from '@phosphor-icons/react'
-import { SiteFooter } from '../../../components/SiteFooter'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right'
+import { Crosshair } from '@/app/_icons/icons/crosshair'
+import { Eye } from '@/app/_icons/icons/eye'
+import { HandTap } from '@/app/_icons/icons/hand-tap'
+import { Keyboard } from '@/app/_icons/icons/keyboard'
+import { ListChecks } from '@/app/_icons/icons/list-checks'
+import { Pause } from '@/app/_icons/icons/pause'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../../_components/DesignSystemPage'
 import { SwatchTooltip } from './SwatchTooltip'
 import { LayerCards } from '../overview-b/FoundationLayers'
 import { tokens } from '../../../lib/andromeda-pro.generated'
 import { andromedaVars, andromedaLightVars } from '../../../lib/andromeda-pro-helpers.generated'
+import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // ── the theme channel ───────────────────────────────────────────────────────
 // Every swatch paints `var(--at-<name>, <dark value>)`. With no themed
@@ -296,8 +302,8 @@ export function FoundationView() {
   return (
     <PageFrame as="main" ref={mainRef} className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
       <SwatchTooltip root={mainRef} />
-      <PageOverline>Andromeda Pro · Foundation</PageOverline>
-      <PageTitle>The primitives</PageTitle>
+      <PageCrumbs />
+      <PageTitle gap="none">The primitives</PageTitle>
       <PageLead>
         Every Andromeda Pro component is built from the values on this page, read through
         three layers of tokens. This page is the what. The AI Brain teaches when and how to use
@@ -333,7 +339,7 @@ export function FoundationView() {
       <div className="space-y-5">
         {THEME_ORDER.map((theme) => (
           <ThemeBlock key={theme} theme={theme}>
-            <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
+            <div className="overflow-hidden rounded-section border border-sand-300 dark:border-sand-800">
               <div className="flex">
                 {NEUTRALS.map((n) => (
                   <div
@@ -374,7 +380,7 @@ export function FoundationView() {
             <div className="flex-1 space-y-3">
               {THEME_ORDER.map((theme) => (
                 <ThemeBlock key={theme} theme={theme}>
-                  <div className="flex h-12 overflow-hidden rounded-lg border border-sand-300 dark:border-sand-800">
+                  <div className="flex h-12 overflow-hidden rounded-card border border-sand-300 dark:border-sand-800">
                     {FAMILY_STOPS.map((stop) => (
                       <div
                         key={stop}
@@ -401,7 +407,7 @@ export function FoundationView() {
       <p className="mb-4 max-w-2xl text-sm text-sand-600 dark:text-sand-400">
         Components never read a primitive. They say what they mean, in eight role groups:
       </p>
-      <div className="overflow-hidden rounded-xl border border-sand-300 dark:border-sand-800">
+      <div className="overflow-hidden rounded-section border border-sand-300 dark:border-sand-800">
         {SEMANTIC_GROUPS.map(([name, what], i) => (
           <div
             key={name}
@@ -435,7 +441,7 @@ export function FoundationView() {
         Both columns are resolved from the same functions the site paints with, so they cannot
         drift from what you see.
       </p>
-      <div className="overflow-x-auto rounded-xl border border-sand-300 dark:border-sand-800">
+      <div className="overflow-x-auto rounded-card border border-sand-300 dark:border-sand-800">
         <div className="min-w-[44rem]">
           <div className="grid grid-cols-[13rem_repeat(4,1fr)] gap-x-4 border-b border-sand-300 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-sand-500 dark:border-sand-800">
             <span>Role</span>
@@ -458,7 +464,7 @@ export function FoundationView() {
                 <div key={c.name} className="flex items-center gap-2">
                   {/* dark ground on the left, light ground on the right, same swatch size */}
                   <span
-                    className="flex h-7 w-7 items-center justify-center rounded"
+                    className="flex h-7 w-7 items-center justify-center rounded-tag"
                     style={{ backgroundColor: DARK_GROUND }}
                     data-swatch={`${c.name} ${suffix} · dark ${c.darkStop}`}
                     data-swatch-value={c.dark}
@@ -466,7 +472,7 @@ export function FoundationView() {
                     <span className="h-3.5 w-3.5 rounded-sm" style={{ backgroundColor: c.dark }} />
                   </span>
                   <span
-                    className="flex h-7 w-7 items-center justify-center rounded"
+                    className="flex h-7 w-7 items-center justify-center rounded-tag"
                     style={{ backgroundColor: LIGHT_GROUND }}
                     data-swatch={`${c.name} ${suffix} · light ${c.lightStop}`}
                     data-swatch-value={c.light}
@@ -501,7 +507,7 @@ export function FoundationView() {
                 single column left most of the width empty. The first row of each
                 column keeps its top border off, and the right column carries a
                 divider so the pair still reads as one table. */}
-            <div className="grid grid-cols-1 overflow-hidden rounded-xl border border-sand-300 sm:grid-cols-2 dark:border-sand-800">
+            <div className="grid grid-cols-1 overflow-hidden rounded-section border border-sand-300 sm:grid-cols-2 dark:border-sand-800">
               {group.rows.map((r, i) => (
                 <div
                   key={r.token}
@@ -516,7 +522,7 @@ export function FoundationView() {
                     <span className="text-[11px] uppercase tracking-wider text-sand-500">same</span>
                   ) : null}
                   <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-tag"
                     style={{ background: DARK_GROUND }}
                     data-swatch={`${r.token} · dark`}
                     data-swatch-value={r.dark}
@@ -524,7 +530,7 @@ export function FoundationView() {
                     <span className="h-3 w-3 rounded-sm" style={{ background: r.dark }} />
                   </span>
                   <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-tag"
                     style={{ background: LIGHT_GROUND }}
                     data-swatch={`${r.token} · light`}
                     data-swatch-value={r.light}
@@ -557,7 +563,7 @@ export function FoundationView() {
           ['3.0 : 1', 'Large text and non-text', 'Display sizes, and the status icons, dots and borders, the chart lines and the focus ring. WCAG 1.4.3 and 1.4.11.'],
           ['10 : 1', 'Measured headroom', 'The script checks the 4.5 floor. Measured, the primary, secondary and muted text inks sit above 10:1 in both themes, past the 7:1 of AAA.'],
         ].map(([ratio, who, what]) => (
-          <div key={ratio} className="rounded-xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
+          <div key={ratio} className="rounded-section border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
             <p className="text-base font-bold tabular-nums text-sand-900 dark:text-sand-50">{ratio}</p>
             <p className="text-[13px] font-semibold text-sand-700 dark:text-sand-300">{who}</p>
             <p className="mt-1 text-[12px] leading-relaxed text-sand-500">{what}</p>
@@ -567,8 +573,8 @@ export function FoundationView() {
 
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {A11Y_PRACTICES.map(({ icon: Icon, title, body }) => (
-          <div key={title} className="rounded-xl border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
-            <Icon size={18} weight="regular" aria-hidden className="text-sand-600 dark:text-sand-400" />
+          <div key={title} className="rounded-section border border-sand-300 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900">
+            <Icon size={18} aria-hidden className="text-sand-600 dark:text-sand-400" />
             <p className="mt-3 text-[13px] font-semibold text-sand-900 dark:text-sand-50">{title}</p>
             <p className="mt-1 text-[12px] leading-relaxed text-sand-600 dark:text-sand-400">{body}</p>
           </div>
@@ -581,7 +587,7 @@ export function FoundationView() {
         One free, open-source face from Google Fonts carries every label, value and heading in
         the system.
       </p>
-      <div className="grid gap-6 rounded-xl border border-sand-300 p-5 sm:grid-cols-[auto_1fr] sm:gap-10 dark:border-sand-800">
+      <div className="grid gap-6 rounded-section border border-sand-300 p-5 sm:grid-cols-[auto_1fr] sm:gap-10 dark:border-sand-800">
         <p
           className="text-[96px] font-semibold leading-none text-sand-900 dark:text-sand-50"
           style={{ fontFamily: FACE }}
@@ -619,10 +625,10 @@ export function FoundationView() {
             href="https://fonts.google.com/specimen/Manrope"
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-5 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-olive-600 transition-colors hover:text-olive-800 dark:text-olive-400 dark:hover:text-olive-300"
+            className="mt-5 inline-flex items-center gap-1 self-start text-[13px] font-semibold text-accent transition-colors hover:text-accent/70"
           >
             Manrope on Google Fonts
-            <ArrowUpRight size={14} weight="regular" aria-hidden />
+            <ArrowUpRight size={14} aria-hidden />
           </a>
         </div>
       </div>
@@ -638,7 +644,7 @@ export function FoundationView() {
       {/* The specimen is the point, so it gets the flexible column and the
           numbers are pinned right. Wide on purpose: the row scrolls inside its
           own container rather than squeezing the display steps. */}
-      <div className="overflow-x-auto rounded-xl border border-sand-300 dark:border-sand-800">
+      <div className="overflow-x-auto rounded-card border border-sand-300 dark:border-sand-800">
         <div className="min-w-[46rem]">
           <div className="grid grid-cols-[7rem_1fr_9rem_9rem_8rem] gap-x-6 border-b border-sand-300 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-sand-500 dark:border-sand-800">
             <span>Step</span>
@@ -692,8 +698,6 @@ export function FoundationView() {
           )
         })}
       </div>
-
-      <SiteFooter />
     </PageFrame>
   )
 }

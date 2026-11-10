@@ -1,9 +1,11 @@
 'use client'
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { CaretDown, X, Check } from '@phosphor-icons/react'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
+import { X } from '@/app/_icons/icons/x'
+import { Check } from '@/app/_icons/icons/check'
 
 const MORPH = { type: 'spring' as const, stiffness: 320, damping: 30, mass: 1 }
 
@@ -128,7 +130,7 @@ export default function VoiceChatPill() {
 
         <span className="flex items-center gap-0.5 font-sans text-[14px] font-semibold text-[#f1f1f0] dark:text-[#1a1a18]">
           +{hiddenCount}
-          <CaretDown weight="bold" size={13} />
+          <ChevronDown weight="bold" size={13} />
         </span>
       </motion.button>
 

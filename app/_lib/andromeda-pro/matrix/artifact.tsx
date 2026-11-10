@@ -3,7 +3,11 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { ArrowsOut, ChartBar, Check, Copy, DownloadSimple } from '@phosphor-icons/react'
+import { Expand } from '@/app/_icons/icons/expand';
+import { ChartBar } from '@/app/_icons/icons/chart-bar';
+import { Check } from '@/app/_icons/icons/check';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { Download } from '@/app/_icons/icons/download';
 // v2 component: imported through the build-time shim.
 import {
   Artifact,
@@ -129,11 +133,11 @@ export function LiveArtifact({
             <ArtifactActions>
               {actions === 'all' ? (
                 <>
-                  <ArtifactAction label="Expand" icon={ArrowsOut} onClick={() => setExpanded(true)} />
-                  <ArtifactAction label="Download CSV" icon={DownloadSimple} hideBelow="sm" onClick={downloadRiskCsv} />
+                  <ArtifactAction label="Expand" icon={Expand} onClick={() => setExpanded(true)} />
+                  <ArtifactAction label="Download CSV" icon={Download} hideBelow="sm" onClick={downloadRiskCsv} />
                 </>
               ) : null}
-              <ArtifactAction label={copied ? 'Copied' : 'Copy table'} icon={copied ? Check : Copy} onClick={copy} />
+              <ArtifactAction label={copied ? 'Copied' : 'Copy table'} icon={copied ? Check : CopyIcon} onClick={copy} />
               {actions === 'all' ? <ArtifactClose onClick={() => setClosed(true)} /> : null}
             </ArtifactActions>
           )}
@@ -148,7 +152,7 @@ export function LiveArtifact({
             <ArtifactHeader icon={icon ? ChartBar : undefined}>
               {heading}
               <ArtifactActions>
-                <ArtifactAction label="Download CSV" icon={DownloadSimple} onClick={downloadRiskCsv} />
+                <ArtifactAction label="Download CSV" icon={Download} onClick={downloadRiskCsv} />
                 <ArtifactClose label="Close expanded view" onClick={() => setExpanded(false)} />
               </ArtifactActions>
             </ArtifactHeader>

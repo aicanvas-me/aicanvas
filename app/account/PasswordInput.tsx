@@ -1,7 +1,8 @@
 'use client'
 
 import { forwardRef, useState } from 'react'
-import { Eye, EyeSlash } from '@phosphor-icons/react'
+import { Eye } from '@/app/_icons/icons/eye'
+import { EyeOff } from '@/app/_icons/icons/eye-off'
 import { Button } from '../components/Button'
 
 // ─── PasswordInput ────────────────────────────────────────────────────────────
@@ -25,7 +26,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, Props>(function Passwo
         ref={ref}
         id={id}
         type={visible ? 'text' : 'password'}
-        className={`w-full rounded-lg border border-sand-200 bg-sand-100 px-3 py-2 pr-10 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-olive-500 focus:ring-2 focus:ring-olive-500/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 ${className}`}
+        className={`w-full rounded-control border border-sand-200 bg-sand-100 px-3 py-2 pr-10 text-base text-sand-900 outline-none transition-colors placeholder:text-sand-600 focus:border-accent focus:ring-2 focus:ring-accent/20 md:text-sm dark:border-sand-800 dark:bg-sand-950 dark:text-sand-50 dark:placeholder:text-sand-500 ${className}`}
         {...rest}
       />
       <Button
@@ -36,7 +37,7 @@ export const PasswordInput = forwardRef<HTMLInputElement, Props>(function Passwo
         tabIndex={-1}
         className="absolute right-2 top-1/2 -translate-y-1/2"
       >
-        {visible ? <EyeSlash weight="regular" size={16} /> : <Eye weight="regular" size={16} />}
+        {visible ? <EyeOff size={16} /> : <Eye size={16} />}
       </Button>
     </div>
   )

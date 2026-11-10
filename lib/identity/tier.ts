@@ -5,6 +5,9 @@ export type SubStatus =
 
 const PREMIUM_STATUSES: ReadonlySet<SubStatus> = new Set(['active', 'trialing'])
 
+/** Statuses where a Paddle subscription still exists and can bill or be managed. */
+export const LIVE_SUB_STATUSES: string[] = ['active', 'trialing', 'past_due', 'paused']
+
 /**
  * Pure: is this subscription state premium RIGHT NOW? Status alone is not
  * enough — if the final `canceled` webhook is ever dropped, a stale `active`

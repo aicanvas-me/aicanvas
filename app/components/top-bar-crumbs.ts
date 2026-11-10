@@ -4,14 +4,17 @@ import { COLLECTIONS } from '../lib/collections'
 import { COMPONENT_NAMES } from '../lib/component-nav.generated'
 import { ANDROMEDA_COMPONENT_META } from '../_lib/andromeda/andromeda-meta'
 import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from '../_lib/andromeda-pro/andromeda-meta'
+import iconsJson from '../icons/_data/icons.generated.json'
+import { ICON_CATEGORY_LABELS } from '../icons/_lib/categories'
+import { titleCase } from '../icons/_lib/icon-utils'
+import type { IconMeta } from '../icons/_lib/types'
 
-// The breadcrumb trail for the site top bar, derived from the URL alone.
-//
-// The bar is rendered once by the root layout and stays mounted across
-// navigations, so it cannot ask each page what to show: by the time a page
-// could tell it, the server HTML would already be out. Deriving the trail from
-// the pathname keeps the crumbs in the first byte and keeps every page free of
-// bar markup. Everything here is registry-free: names come from the generated
+// Typed so an empty generated file (a checkout without icon data) still compiles.
+const iconData = iconsJson as IconMeta[]
+
+// The breadcrumb trail of the crumb row above each catalog page's title
+// (PageCrumbs), derived from the URL alone, so every page draws the same row
+// from one place and the crumbs are in the first byte. Everything here is registry-free: names come from the generated
 // slug map and the two Andromeda meta lists, never from component-registry.
 
 // Template routes are full-screen compositions with no chrome at all; the
@@ -24,6 +27,10 @@ export const TEMPLATE_LEAF_RE = /^\/design-systems\/[^/]+\/templates\/[^/]+/
 // used to escape the chrome by living at the app root, which stopped being
 // true when the bar and the rail moved into the root layout.
 export const CAPTURE_LEAF_RE = /^\/andromeda-capture\//
+
+// Focus pages: one decision on an empty canvas, nothing to wander off to. The
+// agent sign-in consent screen is the one today.
+export const FOCUS_ROUTE_RE = /^\/oauth\//
 
 const SYSTEM_LABELS: Record<string, string> = {
   andromeda: 'Andromeda Legacy',
@@ -82,11 +89,13 @@ function prettify(seg: string): string {
 }
 
 const DESIGN_SYSTEMS: Crumb = { label: 'Design Systems' }
-const COMPONENTS: Crumb = { label: 'Components & Blocks', href: '/components' }
+// Leads with "Standalone": every surface naming this family says so, and the
+// crumb replaced the "Standalone: Components & Blocks" eyebrow above each title.
+const COMPONENTS: Crumb = { label: 'Standalone: Components & Blocks', href: '/components' }
 
-// Routes where the bar carries an install CTA between the theme toggle and
-// the user pill. The CTA itself is portalled in by the page; the bar only
-// provides the mount point, keyed by id.
+// Routes where the crumb row carries an install CTA on its right. The CTA
+// itself is portalled in by the page; the row only provides the mount point,
+// keyed by id.
 const INSTALL_SLOTS: Record<string, string> = {
   '/design-systems/andromeda/system': 'andromeda-install-slot',
   '/design-systems/andromeda-pro/foundation': 'andromeda-install-slot',
@@ -95,6 +104,7 @@ const INSTALL_SLOTS: Record<string, string> = {
 
 export function installSlotId(pathname: string): string | null {
   if (BRAIN_READER_RE.test(pathname)) return 'brain-install-slot'
+  if (/^\/icons(?:\/[^/]+)?\/?$/.test(pathname)) return 'icons-copy-page-slot'
   return INSTALL_SLOTS[pathname.replace(/\/$/, '') || '/'] ?? null
 }
 
@@ -105,20 +115,20 @@ const COMPONENT_LEAF_RE = /^\/components\/[^/]+$/
 /** How the offer pill behaves on a route, or null where it stays off. */
 export type OfferPillMode = 'link' | 'static'
 
-// Whether the offer pill sits in the middle of the bar on this route, and
+// Whether the offer pill sits on the right of the crumb row on this route, and
 // whether it is a control there.
 //
-// The routes that carry no bar at all (the lab, the cancellation flow,
-// template leaves, the capture canvas) never reach this, because the bar
-// returns before it is asked. Templates are therefore out without naming them.
+// Only the catalog pages draw the row; the lab, the cancellation flow,
+// template leaves and the capture canvas never do. Templates are therefore out
+// without naming them.
 //
-// A route mounting an install control says no outright: the right cluster is
-// wide enough there that a centred pill would run into it.
+// A route mounting an install control says no outright: the install control
+// owns the right of the row there.
 //
 // So does a single component's page, in all three families: the standalones,
 // Andromeda Legacy and Andromeda Pro. The crumb there is a trail ending in the
 // component's own name, which is as long as the name happens to be, and a
-// centred pill next to "Components & Blocks / Perspective Showcase Hero" reads
+// pill next to "Components & Blocks / Perspective Showcase Hero" reads
 // as clutter rather than as an offer. The design-system half of that test is
 // the same pattern the crumbs use, so a system's own leaf pages (the image
 // pack, for one) sit out too; they carry the same two-level crumb and the same
@@ -137,6 +147,21 @@ export function offerPillMode(pathname: string): OfferPillMode | null {
 
 export function buildTopBarCrumbs(pathname: string): Crumb[] | null {
   const path = pathname.length > 1 ? pathname.replace(/\/$/, '') : pathname
+
+  // ── Icons ──
+  if (path === '/icons') return [{ label: 'Icons' }]
+  const iconMatch = path.match(/^\/icons\/([^/]+)$/)
+  if (iconMatch) {
+    const icon = iconData.find((candidate) => candidate.name === iconMatch[1])
+    if (icon) {
+      const category = icon.category as keyof typeof ICON_CATEGORY_LABELS
+      return [
+        { label: 'Icons', href: '/icons' },
+        { label: ICON_CATEGORY_LABELS[category], href: `/icons?category=${category}` },
+        { label: titleCase(icon.name) },
+      ]
+    }
+  }
 
   // ── Components & Blocks ──
   if (path === '/components') return [{ label: 'Components & Blocks' }]

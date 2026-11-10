@@ -1,5 +1,5 @@
 'use client'
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useEffect, useRef, useState, type RefObject } from 'react'
 import {
@@ -10,7 +10,7 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion'
-import { CaretDown } from '@phosphor-icons/react'
+import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 
 const PHOTOS = [
   {
@@ -419,7 +419,7 @@ export default function ScrollWipeGallery() {
                 ease: [0.4, 0, 0.2, 1],
               }}
             >
-              <CaretDown size={16} weight="regular" />
+              <ChevronDown size={16} />
             </motion.span>
           </motion.div>
         </div>

@@ -2,7 +2,9 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Check, Copy, Lightning } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check'
+import { Copy } from '@/app/_icons/icons/copy'
+import { Bolt } from '@/app/_icons/icons/bolt'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { useInstallToken } from '../_lib/useInstallToken'
@@ -14,7 +16,7 @@ import { InstallCopiedToast } from './InstallCopiedToast'
 const PACKAGES = [
   { slug: 'andromeda-all', label: 'Everything' },
   // MIT source on the free lane: an account installs it, a subscription is not
-  // needed. "Everything" adds the templates and the brain, which are paid.
+  // needed. "Everything" adds the templates and the brain, and the brain is paid.
   { slug: 'andromeda', label: 'All components', free: true },
 ]
 const FREE_PACKAGE = PACKAGES.find((p) => p.free)!.slug
@@ -23,16 +25,16 @@ const FREE_PACKAGE = PACKAGES.find((p) => p.free)!.slug
 // the site's `dark` class, matching the brain's "Get the brain" card.
 const PALETTE = {
   light: {
-    'surface-base': '#F4F4FA', 'surface-raised': '#EEEEF3',
-    'text-primary': '#1B1B1C', 'text-secondary': '#575759', 'text-faint': '#7B7B7D',
-    'accent-400': '#A8B94D', 'accent-300': '#869631', 'accent-on': '#0E0E0F',
-    'border-subtle': '#DFDFE3', 'border-base': '#CACACD',
+    'surface-base': 'var(--color-sand-50)', 'surface-raised': 'var(--color-sand-100)',
+    'text-primary': 'var(--color-sand-900)', 'text-secondary': 'var(--color-sand-600)', 'text-faint': 'var(--color-sand-500)',
+    'accent-400': 'var(--color-accent)', 'accent-300': 'color-mix(in srgb, var(--color-accent) 85%, transparent)', 'accent-on': 'var(--color-accent-foreground)',
+    'border-subtle': 'var(--color-sand-200)', 'border-base': 'var(--color-sand-300)',
   },
   dark: {
-    'surface-base': '#0E0E0F', 'surface-raised': '#1B1B1C',
-    'text-primary': '#F4F4FA', 'text-secondary': '#9B9B9E', 'text-faint': '#7B7B7D',
-    'accent-400': '#A8B94D', 'accent-300': '#DAE4A0', 'accent-on': '#0E0E0F',
-    'border-subtle': '#2D2D2E', 'border-base': '#373738',
+    'surface-base': 'var(--color-sand-950)', 'surface-raised': 'var(--color-sand-900)',
+    'text-primary': 'var(--color-sand-50)', 'text-secondary': 'var(--color-sand-400)', 'text-faint': 'var(--color-sand-500)',
+    'accent-400': 'var(--color-accent)', 'accent-300': 'color-mix(in srgb, var(--color-accent) 85%, transparent)', 'accent-on': 'var(--color-accent-foreground)',
+    'border-subtle': 'var(--color-sand-800)', 'border-base': 'var(--color-sand-700)',
   },
 } as const
 type CardColor = keyof typeof PALETTE.dark
@@ -181,7 +183,7 @@ export function ShowcaseInstallCard() {
               cursor: 'pointer',
             }}
           >
-            {copied ? <Check weight="regular" size={14} /> : <Copy weight="regular" size={14} />}
+            {copied ? <Check size={14} /> : <Copy size={14} />}
             {copied ? 'Copied' : 'Copy Command'}
           </button>
         </>
@@ -203,7 +205,7 @@ export function ShowcaseInstallCard() {
             textDecoration: 'none',
           }}
         >
-          <Lightning weight="regular" size={14} />
+          <Bolt size={14} />
           Unlock with Premium
         </Link>
       )}

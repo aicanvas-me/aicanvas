@@ -145,11 +145,17 @@ SAVE BUTTON STATE MACHINE
   unmount.
 
 DUAL THEME (portable, no provider)
-Inline a card-wrapper-aware \`useTheme\` hook: it resolves the active theme from the
+Inline a card-wrapper-aware \`useTheme\` hook. Its state ALWAYS starts dark, matching
+the server render: \`const [theme, setTheme] = useState<Theme>('dark')\`. Never read the
+page theme during the first render (no lazy initializer touching the DOM): hydration
+keeps the server's colours, so a light page would stay painted dark. Read the real theme
+only after mount, inside an isomorphic layout effect
+(\`typeof window !== 'undefined' ? useLayoutEffect : useEffect\`): resolve it from the
 nearest \`[data-card-theme]\` ancestor when present (reading whether it has the \`dark\`
-class), otherwise falls back to the \`dark\` class on \`<html>\`. Keep it in sync with a
-MutationObserver watching the class attribute of BOTH \`<html>\` AND the card wrapper
-(when present); disconnect on cleanup. Use a useLayoutEffect that is isomorphic-safe.
+class), otherwise from the \`dark\` class on \`<html>\`; call setTheme with it right away.
+Keep it in sync with ONE MutationObserver watching \`<html>\` (attributeFilter
+\`['class']\`) AND the card wrapper when present (attributeFilter
+\`['class', 'data-card-theme']\`); disconnect on cleanup.
 This is what lets every inline hex branch per theme.
 
 MOTION / A11Y

@@ -2,7 +2,7 @@
 // overview, the curated "All" set, and the template cards. No React and no
 // Node APIs, so both the server page and the client overview can import it.
 import { DESIGN_SYSTEMS } from '../../../../scripts/lib/design-systems.config.mjs'
-import { optimizeImageKitUrl, TEMPLATE_ART_VERSION } from '../../../lib/imagekit'
+import { optimizeImageKitUrl, TEMPLATE_ART_BASE, TEMPLATE_ART_VERSION } from '../../../lib/imagekit'
 
 export type OverviewComponent = {
   slug: string
@@ -71,7 +71,7 @@ const TEMPLATE_BLURBS: Record<string, string> = {
 }
 
 // The card art slot for each template, a filename in ImageKit's
-// andromeda/templates/ folder. New art is a one-line edit here. An EMPTY string
+// andromeda/templates-2/ folder. New art is a one-line edit here. An EMPTY string
 // means "no art yet": the card keeps its dark fallback panel, because a URL
 // built from an empty filename resolves to the folder and paints a broken image.
 // A poster is the template's dark shot on its mat; the light twin is in
@@ -102,8 +102,6 @@ const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
   'andromeda-pro-ai-chat': 'Ai_chat_pro_light.png',
 }
 
-const ART_BASE = 'https://ik.imagekit.io/aitoolkit/andromeda/templates/'
-
 const pro = DESIGN_SYSTEMS.find((s: { slug: string }) => s.slug === 'andromeda-pro')
 
 // The card order of the template bento. The first one spans both columns, so
@@ -128,7 +126,7 @@ const LEAD_ART = new Set(['andromeda-pro-city-operations'])
 const artUrl = (slug: string, file: string | undefined) =>
   file
     ? optimizeImageKitUrl(
-        `${ART_BASE}${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`,
+        `${TEMPLATE_ART_BASE}${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`,
         LEAD_ART.has(slug) ? 'lead' : 'detail',
       )
     : null

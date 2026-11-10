@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@/app/lib/supabase/server'
 import { paddleApiBase } from '@/app/lib/paddle/server'
 import { mapSubscriptionFields } from '@/lib/identity/sub-mapping'
-import { isPremiumNow, type SubStatus } from '@/lib/identity/tier'
+import { isPremiumNow, LIVE_SUB_STATUSES, type SubStatus } from '@/lib/identity/tier'
 
 export const runtime = 'nodejs'
 
@@ -12,9 +12,11 @@ export const runtime = 'nodejs'
  * cancel are always current). Session-only like /api/me/entitlement — no
  * token/Bearer. Read-only: this route never writes to Supabase or Paddle.
  *
- * Returns DISPLAY FIELDS ONLY — never Paddle ids. Every failure path returns
- * { subscription: null } so the account page degrades to the plain status
- * line instead of showing a guess.
+ * Returns DISPLAY FIELDS ONLY — never Paddle ids. Every read failure returns
+ * { subscription: null, unavailable: true } so the account page degrades to the
+ * plain status line instead of showing a guess, and can tell "none" from
+ * "unknown". A live row we do not read details for (paused, past due, or a
+ * period end already passed) is "unknown" too: the portal can still manage it.
  */
 export async function GET() {
   try {
@@ -22,26 +24,29 @@ export async function GET() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ subscription: null }, { status: 401 })
 
-    const apiKey = process.env.PADDLE_API_KEY
-    if (!apiKey) return NextResponse.json({ subscription: null })
-
     // RLS owner-read. Only currently-premium users trigger a Paddle read.
     const { data: row, error } = await supabase
       .from('user_subscriptions')
       .select('paddle_subscription_id, status, current_period_end')
       .eq('user_id', user.id)
       .maybeSingle()
-    if (error || !row?.paddle_subscription_id) return NextResponse.json({ subscription: null })
+    if (error) return NextResponse.json({ subscription: null, unavailable: true })
+    if (!row?.paddle_subscription_id) return NextResponse.json({ subscription: null })
     if (!isPremiumNow(row.status as SubStatus, row.current_period_end ?? null)) {
-      return NextResponse.json({ subscription: null })
+      return LIVE_SUB_STATUSES.includes(row.status as string)
+        ? NextResponse.json({ subscription: null, unavailable: true })
+        : NextResponse.json({ subscription: null })
     }
+
+    const apiKey = process.env.PADDLE_API_KEY
+    if (!apiKey) return NextResponse.json({ subscription: null, unavailable: true })
 
     const res = await fetch(`${paddleApiBase()}/subscriptions/${row.paddle_subscription_id}`, {
       headers: { Authorization: `Bearer ${apiKey}` },
       cache: 'no-store',
       signal: AbortSignal.timeout(5000),
     })
-    if (!res.ok) return NextResponse.json({ subscription: null })
+    if (!res.ok) return NextResponse.json({ subscription: null, unavailable: true })
     const j = await res.json()
     const data = j?.data
 
@@ -63,6 +68,6 @@ export async function GET() {
       },
     })
   } catch {
-    return NextResponse.json({ subscription: null })
+    return NextResponse.json({ subscription: null, unavailable: true })
   }
 }

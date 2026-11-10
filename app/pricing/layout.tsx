@@ -1,7 +1,7 @@
 import { pageMetadata } from '../lib/page-metadata'
 
 const description =
-  'Free forever: every free component with one-command installs and AI remix prompts. Premium adds the closed-source components, blocks, design systems and templates.'
+  'Free: every free component, one-command installs, AI remix prompts. Premium: proprietary components and blocks, Andromeda Pro with its templates and AI Brain rules.'
 
 export const metadata = pageMetadata({
   title: 'Pricing',

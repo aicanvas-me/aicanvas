@@ -33,7 +33,7 @@ function emailHtml({ name, email, subject, message }: { name: string; email: str
   const label = 'margin:0 0 4px 0;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;'
 
   const bodyHtml = `<p ${emailText('muted', label)}>From</p>
-              <p ${emailText('primary', 'margin:0 0 18px 0;font-size:15px;')}>${safeName} &lt;<a href="mailto:${safeEmail}" style="color:#869631;text-decoration:none;">${safeEmail}</a>&gt;</p>
+              <p ${emailText('primary', 'margin:0 0 18px 0;font-size:15px;')}>${safeName} &lt;<a href="mailto:${safeEmail}" class="ac-heading" style="color:#1A1A19;text-decoration:underline;">${safeEmail}</a>&gt;</p>
               <p ${emailText('muted', label)}>Subject</p>
               <p ${emailText('primary', 'margin:0 0 18px 0;font-size:15px;')}>${safeSubject}</p>
               <p ${emailText('muted', label)}>Message</p>
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
     body: JSON.stringify({
       from: CONTACT_FROM,
       to: [CONTACT_INBOX],
-      reply_to: `${name} <${email}>`,
+      reply_to: email,
       subject: `New contact: ${subject}`,
       html: emailHtml({ name, email, subject, message }),
       text: `New contact message from ${name} <${email}>\nSubject: ${subject}\n\n${message}\n\nReply to this email to answer ${name}.`,

@@ -33,7 +33,7 @@ function getRandomChar(): string {
 
 export default function GlitchButton() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
 
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current

@@ -7,8 +7,9 @@ import type {
   MouseEvent as ReactMouseEvent,
 } from 'react';
 import { motion } from 'framer-motion';
-import { CaretUpDown } from '@phosphor-icons/react';
-import type { Icon } from '@phosphor-icons/react';
+import { ChevronsUpDown } from '@/app/_icons/icons/chevrons-up-down';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { tokens } from '../tokens';
 import { Avatar } from './Avatar';
 import { andromedaVars, themeColor } from './lib/utils';
@@ -45,7 +46,7 @@ function handleMenuKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
  * @typedef {object} UserMenuItem
  * @property {string}   [id]           Stable key for the row, falling back to its array index.
  * @property {string}   [label]        Text shown on the menu item, rendered uppercase.
- * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon] Icon component rendered before the label.
+ * @property {React.ComponentType<IconProps>} [icon] Icon component rendered before the label.
  * @property {() => void} [onSelect]   Handler called when the item is chosen; the menu closes after.
  * @property {boolean}  [destructive]  Renders the item in the destructive red color.
  * @property {'separator'} [type]      Set to 'separator' to render a divider instead of an item.
@@ -54,7 +55,7 @@ function handleMenuKeyDown(e: ReactKeyboardEvent<HTMLDivElement>) {
 export type UserMenuItem = {
   id?: string;
   label?: string;
-  icon?: Icon;
+  icon?: ComponentType<IconProps>;
   onSelect?: () => void;
   destructive?: boolean;
   type?: 'separator';
@@ -152,7 +153,7 @@ function UserMenuItemRow({ item, onClose }: { item: UserMenuItem; onClose: () =>
         transition: `background ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}, color ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}`,
       }}
     >
-      {Icon ? <Icon size={14} weight="regular" /> : <span style={{ width: '14px' }} />}
+      {Icon ? <Icon size={14} /> : <span style={{ width: '14px' }} />}
       <span style={{ flex: 1 }}>{item.label}</span>
     </button>
   );
@@ -342,7 +343,7 @@ export const UserMenu = forwardRef<HTMLDivElement, UserMenuProps>(function UserM
             transition: `color ${tokens.motion.duration.fast} ${tokens.motion.easing.standard}`,
           }}
         >
-          <CaretUpDown size={14} weight="regular" />
+          <ChevronsUpDown size={14} />
         </motion.span>
       </button>
 

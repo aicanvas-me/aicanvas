@@ -1,40 +1,57 @@
-'use client'
-
+import { Scale } from '@/app/_icons/icons/scale'
 import Link from 'next/link'
 import { CONTACT_EMAIL } from '../lib/config'
-import { SiteFooter } from '../components/SiteFooter'
+import { PageHero, PageShell } from '../components/PageKit'
+import { LegalArticle } from '../components/LegalArticle'
 
 // ─── /impressum ───────────────────────────────────────────────────────────────
 // § 5 DDG imprint. Bilingual: German (authoritative) first, English alongside
 // in a muted tone. Order: Haftung -> Urheberrecht -> Diensteanbieter -> Kontakt
 // -> Verantwortlicher (§ 18 MStV) -> Verbraucherstreitbeilegung.
+//
+// A server component: the imprint is static text, and LegalArticle is the one
+// client piece (its "On this page" list).
+
+const SECTION = 'mt-12 first:mt-0'
+const HEADING = 'break-words text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50'
+// German, the authoritative text.
+const DE = 'mt-4 leading-relaxed text-sand-600 dark:text-sand-400'
+// English, the companion: a step quieter, set in from a hairline rule so the
+// pair reads as one clause in two languages.
+const EN =
+  'mt-3 border-l-2 border-sand-200 pl-4 leading-relaxed text-sand-600 dark:border-sand-800 dark:text-sand-500'
+const LINK =
+  'font-medium text-accent underline-offset-4 hover:text-accent/70 hover:underline'
 
 export default function ImpressumPage() {
   return (
-    <div className="min-h-full bg-sand-50 dark:bg-sand-950">
-      <main className="relative mx-auto max-w-3xl px-4 pt-6 pb-8 sm:px-6 sm:pt-12">
-        <p className="mb-6 text-sm font-semibold md:hidden">
-          <span className="text-olive-600 dark:text-olive-500">/Impressum</span>
-        </p>
+    <PageShell>
+      <PageHero
+        size="md"
+        pill="Legal"
+        pillIcon={<Scale size={12} className="text-accent" aria-hidden />}
+        title="Impressum"
+        sub={
+          // Each line wraps at its slash, so the German sits over its English
+          // instead of a break landing mid-sentence.
+          <>
+            <span className="block">
+              <span className="inline-block text-balance">Angaben gemäß § 5 DDG. /</span>{' '}
+              <span className="inline-block text-balance">Information pursuant to § 5 DDG (German Digital Services Act).</span>
+            </span>
+            <span className="mt-3 block text-sm sm:text-base">
+              <span className="inline-block text-balance">Bei Abweichungen ist die deutsche Fassung maßgeblich. /</span>{' '}
+              <span className="inline-block text-balance">In case of discrepancies, the German version prevails.</span>
+            </span>
+          </>
+        }
+      />
 
-        <h1 className="text-3xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-4xl">
-          Impressum
-        </h1>
-        <p className="mt-3 text-sm text-sand-600 dark:text-sand-500">
-          Angaben gemäß § 5 DDG. / Information pursuant to § 5 DDG (German
-          Digital Services Act).
-        </p>
-        <p className="mt-2 text-sm text-sand-600 dark:text-sand-500">
-          Bei Abweichungen ist die deutsche Fassung maßgeblich. / In case of
-          discrepancies, the German version prevails.
-        </p>
-
+      <LegalArticle>
         {/* ── Haftung für Inhalte / Liability for content ────────────────── */}
-        <section className="mt-12">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
-            Haftung für Inhalte / Liability for content
-          </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>Haftung für Inhalte / Liability for content</h2>
+          <p className={DE}>
             Für die eigenen Inhalte auf diesen Seiten sind wir nach den
             allgemeinen Gesetzen verantwortlich. Die Regelungen der Artikel 4 bis
             8 der Verordnung (EU) 2022/2065 (Gesetz über digitale Dienste) in
@@ -43,7 +60,7 @@ export default function ImpressumPage() {
             umgehend entfernen; Hinweise nehmen wir unter der unten genannten
             E-Mail-Adresse entgegen.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-500">
+          <p className={EN}>
             We are responsible for our own content on these pages under general
             law. The provisions of Articles 4 to 8 of Regulation (EU) 2022/2065
             (Digital Services Act) in conjunction with § 7 DDG remain unaffected.
@@ -54,11 +71,9 @@ export default function ImpressumPage() {
         </section>
 
         {/* ── Haftung für Links / Liability for external links ───────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
-            Haftung für Links / Liability for external links
-          </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>Haftung für Links / Liability for external links</h2>
+          <p className={DE}>
             Unser Angebot enthält Links zu externen Websites Dritter, auf deren
             Inhalte wir keinen Einfluss haben. Deshalb können wir für diese
             fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte der
@@ -71,7 +86,7 @@ export default function ImpressumPage() {
             Bekanntwerden von Rechtsverletzungen werden wir derartige Links
             umgehend entfernen.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-500">
+          <p className={EN}>
             Our site contains links to external websites of third parties, on
             whose content we have no influence. We therefore cannot assume any
             liability for these external contents. The respective provider or
@@ -86,15 +101,15 @@ export default function ImpressumPage() {
         </section>
 
         {/* ── Urheberrecht / Copyright ───────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">Urheberrecht / Copyright</h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>Urheberrecht / Copyright</h2>
+          <p className={DE}>
             Die kostenlosen Komponenten und Blöcke im AI Canvas Registry stehen
             unter der MIT-Lizenz. Sie dürfen sie frei kopieren, ändern und
             einsetzen. Premium-Inhalte (Komponenten, Blöcke, Templates und
             Design-Systeme) stehen nicht unter der MIT-Lizenz, sondern
             unterliegen der{' '}
-            <Link href="/premium-license" className="text-olive-600 dark:text-olive-400 hover:underline">
+            <Link href="/premium-license" className={LINK}>
               AI Canvas Premium License
             </Link>
             . Die Website selbst (Layout, Texte, Branding) ist das Werk des
@@ -103,12 +118,12 @@ export default function ImpressumPage() {
             Bibliotheken) sind als solche gekennzeichnet und bleiben Eigentum des
             jeweiligen Rechteinhabers.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-500">
+          <p className={EN}>
             Free components and blocks published in the AI Canvas registry are
             released under the MIT licence. You are free to copy them, modify
             them, and ship them. Premium content (components, blocks, templates
             and design systems) is not MIT licensed and is governed by the{' '}
-            <Link href="/premium-license" className="text-olive-600 dark:text-olive-400 hover:underline">
+            <Link href="/premium-license" className={LINK}>
               AI Canvas Premium License
             </Link>
             . The website itself (page layout, written copy, branding) is the
@@ -119,14 +134,12 @@ export default function ImpressumPage() {
         </section>
 
         {/* ── Diensteanbieter / Service provider ─────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
-            Diensteanbieter / Service provider
-          </h2>
+        <section className={SECTION}>
+          <h2 className={HEADING}>Diensteanbieter / Service provider</h2>
           {/* Ladungsfähige Anschrift via flexdienst (c/o). Lines 2-5 are fixed
               by the provider and must be reproduced verbatim, or post is not
               accepted. Only line 1 (the legal name) is ours to set. */}
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+          <p className={DE}>
             AI Canvas, Inhaber Alexandru-Daniel Tatu
             <br />
             c/o flexdienst – #21685
@@ -137,53 +150,50 @@ export default function ImpressumPage() {
             <br />
             Deutschland
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
-            Wirtschafts-Identifikationsnummer gemäß § 139c AO: DE463630238-00001
+          {/* The number never breaks at its hyphen. */}
+          <p className={DE}>
+            Wirtschafts-Identifikationsnummer gemäß § 139c AO: <span className="whitespace-nowrap">DE463630238-00001</span>
           </p>
-          <p className="mt-1 leading-relaxed text-sand-600 dark:text-sand-500">
+          <p className={EN}>
             Business identification number pursuant to § 139c of the German
-            Fiscal Code (AO): DE463630238-00001
+            Fiscal Code (AO): <span className="whitespace-nowrap">DE463630238-00001</span>
           </p>
         </section>
 
         {/* ── Kontakt / Contact ──────────────────────────────────────────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">Kontakt / Contact</h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>Kontakt / Contact</h2>
+          <p className={DE}>
             E-Mail / Email:{' '}
-            <a href={`mailto:${CONTACT_EMAIL}`} className="text-olive-600 dark:text-olive-400 hover:underline">
+            <a href={`mailto:${CONTACT_EMAIL}`} className={LINK}>
               {CONTACT_EMAIL}
             </a>
           </p>
           <p className="mt-2 leading-relaxed text-sand-600 dark:text-sand-400">
             Kontaktformular / Contact form:{' '}
-            <a href="/contact" className="text-olive-600 dark:text-olive-400 hover:underline">
+            <a href="/contact" className={LINK}>
               aicanvas.me/contact
             </a>
           </p>
         </section>
 
         {/* ── Verantwortlich für den Inhalt / Responsible for content ─────── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
-            Verantwortlich für den Inhalt / Responsible for content
-          </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>Verantwortlich für den Inhalt / Responsible for content</h2>
+          <p className={DE}>
             Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV:
             AI Canvas, Inhaber Alexandru-Daniel Tatu (Anschrift wie oben).
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-500">
+          <p className={EN}>
             Responsible for the editorial content pursuant to § 18 (2) MStV:
             AI Canvas, Inhaber Alexandru-Daniel Tatu (address as above).
           </p>
         </section>
 
         {/* ── Verbraucherstreitbeilegung / Consumer dispute resolution ───── */}
-        <section className="mt-10">
-          <h2 className="text-lg font-bold text-sand-900 dark:text-sand-50">
-            Verbraucherstreitbeilegung / Consumer dispute resolution
-          </h2>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-400">
+        <section className={SECTION}>
+          <h2 className={HEADING}>Verbraucherstreitbeilegung / Consumer dispute resolution</h2>
+          <p className={DE}>
             Wir sind nicht verpflichtet und nicht bereit, an
             Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle im
             Sinne des § 36 VSBG teilzunehmen. Als Einzelunternehmer ohne
@@ -193,7 +203,7 @@ export default function ImpressumPage() {
             steht nicht mehr zur Verfügung; bitte wenden Sie sich bei Anliegen
             direkt per E-Mail an uns.
           </p>
-          <p className="mt-3 leading-relaxed text-sand-600 dark:text-sand-500">
+          <p className={EN}>
             We are not obliged and not willing to participate in
             dispute-resolution proceedings before a consumer arbitration board
             (Verbraucherschlichtungsstelle) within the meaning of § 36 VSBG. As a
@@ -204,9 +214,7 @@ export default function ImpressumPage() {
             email.
           </p>
         </section>
-
-        <SiteFooter />
-      </main>
-    </div>
+      </LegalArticle>
+    </PageShell>
   )
 }

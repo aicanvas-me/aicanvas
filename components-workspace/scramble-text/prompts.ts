@@ -70,7 +70,7 @@ const makeScrambled = (word: string): CharState[]. Maps each char to { display: 
 - Hint opacity: 45% (rgba(190,207,93,0.45))
 - Crosshair opacity: 35% (rgba(190,207,93,0.35))
 - Font size: charStyle's clamp(1.75rem, 9vw, 3.75rem), 28px up to 60px, for all word characters and prefix/suffix symbols
-- No Phosphor icons, no light/dark variants
+- No icons, no light/dark variants
 
 ## Typography
 - Font: GeistPixelGrid
@@ -131,7 +131,7 @@ const makeScrambled = (word: string): CharState[] — maps each char to { displa
 - Hint opacity: 45% (rgba(190,207,93,0.45))
 - Crosshair opacity: 35% (rgba(190,207,93,0.35))
 - Font size: charStyle's clamp(1.75rem, 9vw, 3.75rem), 28px up to 60px, for all word characters and prefix/suffix symbols
-- No Phosphor icons, no light/dark variants
+- No icons, no light/dark variants
 
 ## Typography
 - Font: GeistPixelGrid
@@ -192,7 +192,7 @@ const makeScrambled = (word: string): CharState[] — maps each char to { displa
 - Hint opacity: 45% (rgba(190,207,93,0.45))
 - Crosshair opacity: 35% (rgba(190,207,93,0.35))
 - Font size: charStyle's clamp(1.75rem, 9vw, 3.75rem), 28px up to 60px, for all word characters and prefix/suffix symbols
-- No Phosphor icons, no light/dark variants
+- No icons, no light/dark variants
 
 ## Typography
 - Font: GeistPixelGrid

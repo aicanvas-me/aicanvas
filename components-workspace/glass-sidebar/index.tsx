@@ -1,20 +1,18 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useEffect } from 'react'
 import { motion, useSpring, AnimatePresence } from 'framer-motion'
-import {
-  House,
-  MagnifyingGlass,
-  Folders,
-  Bell,
-  ChartLine,
-  Gear,
-  User,
-  ArrowRight,
-  ArrowLeft,
-} from '@phosphor-icons/react'
+import { House } from '@/app/_icons/icons/house'
+import { Search } from '@/app/_icons/icons/search'
+import { Folders } from '@/app/_icons/icons/folders'
+import { Bell } from '@/app/_icons/icons/bell'
+import { ChartLine } from '@/app/_icons/icons/chart-line'
+import { Gear } from '@/app/_icons/icons/gear'
+import { User } from '@/app/_icons/icons/user'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { ArrowLeft } from '@/app/_icons/icons/arrow-left'
 
 
 const COLLAPSED_WIDTH = 64
@@ -26,7 +24,7 @@ const TOGGLE_BUTTON_HEIGHT = 36
 // 6-digit hex only: two-digit alpha suffixes are appended to these colors.
 const NAV_ITEMS = [
   { icon: House,           label: 'Home',          color: '#3A86FF' },
-  { icon: MagnifyingGlass, label: 'Search',        color: '#B388FF' },
+  { icon: Search,          label: 'Search',        color: '#B388FF' },
   { icon: Folders,         label: 'Projects',      color: '#FFBE0B' },
   { icon: Bell,            label: 'Notifications', color: '#FF5C8A' },
   { icon: ChartLine,       label: 'Analytics',     color: '#06D6A0' },
@@ -108,7 +106,7 @@ function NavItemRow({
             transition: 'background 0.2s, border-color 0.2s',
           }}
         >
-          <Icon size={20} weight="regular" style={{ color: item.color }} />
+          <Icon size={20} style={{ color: item.color }} />
         </motion.div>
 
         <AnimatePresence>
@@ -217,7 +215,7 @@ export default function GlassSidebar() {
                     exit={{ opacity: 0, rotate: -90 }}
                     transition={{ duration: 0.18 }}
                   >
-                    <ArrowLeft size={18} weight="regular" className="text-white/70" />
+                    <ArrowLeft size={18} className="text-white/70" />
                   </motion.span>
                 ) : (
                   <motion.span
@@ -227,7 +225,7 @@ export default function GlassSidebar() {
                     exit={{ opacity: 0, rotate: 90 }}
                     transition={{ duration: 0.18 }}
                   >
-                    <ArrowRight size={18} weight="regular" className="text-white/70" />
+                    <ArrowRight size={18} className="text-white/70" />
                   </motion.span>
                 )}
               </AnimatePresence>

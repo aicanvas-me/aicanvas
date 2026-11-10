@@ -7,6 +7,7 @@ import {
 import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
 import { nextInOrder } from '../../../lib/related-order'
 import { AndromedaComponentView } from './AndromedaComponentView'
+import { iconItemsIn } from '../../../_lib/icon-items'
 
 export function generateStaticParams() {
   return ANDROMEDA_COMPONENTS.map((c) => ({ component: c.slug }))
@@ -23,7 +24,10 @@ export async function generateMetadata({
   return {
     title: `${entry.name} · Andromeda Design System`,
     description: entry.description,
-    alternates: { canonical: `/design-systems/andromeda/${entry.slug}` },
+    alternates: {
+      canonical: `/design-systems/andromeda/${entry.slug}`,
+      types: { 'text/markdown': `/design-systems/andromeda/${entry.slug}.md` },
+    },
   }
 }
 
@@ -38,7 +42,7 @@ export default async function AndromedaComponentPage({
 
   // The components after this one in sidebar order, wrapping around.
   const related = nextInOrder(ANDROMEDA_COMPONENTS, entry.slug).map(
-    (c) => ({ slug: c.slug, name: c.name, image: c.image }),
+    (c) => ({ slug: c.slug, name: c.name, image: c.image, imageLight: c.imageLight }),
   )
 
   // Prop tables parsed from the component's @typedef JSDoc at build time, keyed
@@ -63,6 +67,7 @@ export default async function AndromedaComponentPage({
       related={related}
       propTables={propTables}
       freeAccountGate={freeAccountGate}
+      iconItems={iconItemsIn(entry.code)}
     />
   )
 }

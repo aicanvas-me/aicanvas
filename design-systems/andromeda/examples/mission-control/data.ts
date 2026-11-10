@@ -2,22 +2,20 @@
 // MISSION CONTROL DEMO DATA
 // ============================================================
 
-import {
-  SquaresFour,
-  Pulse,
-  Rocket,
-  Radio,
-  Warning,
-  Wrench,
-} from '@phosphor-icons/react';
+import { Activity } from '@/app/_icons/icons/activity';
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
+import { Wrench } from '@/app/_icons/icons/wrench';
+import { LayoutGrid } from '@/app/_icons/icons/layout-grid';
+import { Rocket } from '@/app/_icons/icons/rocket';
+import { Radio } from '@/app/_icons/icons/radio';
 
 // ---- Sidebar nav ----
 export const navItems = [
-  { id: 'overview',    label: 'Overview',    icon: SquaresFour },
-  { id: 'telemetry',   label: 'Telemetry',   icon: Pulse       },
+  { id: 'overview',    label: 'Overview',    icon: LayoutGrid },
+  { id: 'telemetry',   label: 'Telemetry',   icon: Activity       },
   { id: 'vehicles',    label: 'Vehicles',    icon: Rocket      },
   { id: 'comms',       label: 'Comms',       icon: Radio       },
-  { id: 'anomalies',   label: 'Anomalies',   icon: Warning     },
+  { id: 'anomalies',   label: 'Anomalies',   icon: TriangleAlert     },
   { id: 'maintenance', label: 'Maintenance', icon: Wrench      },
 ];
 
@@ -96,7 +94,7 @@ export const commsLog = [
   { dir: 'alert', from: 'OBERON',    text: 'Heat shield within 12% of limit',time: 'T-3h'  },
   { dir: 'down',  from: 'KEPLER-2',  text: 'Imaging window closed',          time: 'T-4h'  },
   { dir: 'up',    from: 'ARES-1',    text: 'Override accepted by flight',    time: 'T-5h'  },
-  { dir: 'down',  from: 'VOYAGER-X', text: 'Heartbeat — partial frame',      time: 'T-5h 40m' },
+  { dir: 'down',  from: 'VOYAGER-X', text: 'Heartbeat: partial frame',       time: 'T-5h 40m' },
 ] as const;
 
 // ---- Telemetry: 24h time-series (sampled hourly to match altitudeData) ----

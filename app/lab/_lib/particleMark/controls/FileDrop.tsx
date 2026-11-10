@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { Image as ImageIcon } from '@phosphor-icons/react'
+import { Image as ImageIcon } from '@/app/_icons/icons/image'
 
 interface FileDropProps {
   accept: string
@@ -97,11 +97,11 @@ export function FileDrop({ accept, onFile, fileName, onClear }: FileDropProps) {
       }}
       className={`flex w-full items-center gap-2.5 rounded-lg border border-dashed px-3 py-2.5 text-left text-xs transition-colors ${
         dragOver
-          ? 'border-olive-500 bg-olive-500/10 text-sand-800 dark:text-sand-100'
+          ? 'border-accent bg-accent/10 text-sand-800 dark:text-sand-100'
           : 'border-sand-400 bg-sand-100/40 text-sand-600 hover:border-sand-500 hover:bg-sand-100 dark:border-sand-700 dark:bg-sand-800/40 dark:text-sand-400 dark:hover:border-sand-600 dark:hover:bg-sand-800/80'
       }`}
     >
-      <ImageIcon size={16} weight="regular" className="shrink-0" />
+      <ImageIcon size={16} className="shrink-0" />
       <span className="flex-1">Pick file or drop on canvas</span>
       <input
         ref={inputRef}

@@ -63,12 +63,23 @@ export function transformRootHeightClass(content) {
  * `startPos`, or -1 if there is none. A JSX return is distinguished from other
  * `return (` patterns (a useEffect cleanup `return () => {...}`) by requiring the
  * next non-whitespace, non-comment character after `(` to be `<`.
+ *
+ * The function's own return wins: a callback inside the body (a `.map` that
+ * returns JSX) comes first in the file, but only the body's top-level return sits
+ * two spaces in, before the function's closing `}` at column 0. Without one, the
+ * first JSX return is used.
  */
 export function findJSXReturnContentStart(content, startPos) {
-  const re = /return\s*\(/g
+  // A line that is only `}`: the body's end, not a destructured props list's `}: Props) {`.
+  const close = content.slice(startPos).search(/\n\}[ \t]*(\n|$)/)
+  const own = scanJSXReturn(content, startPos, /^ {2}return\s*\(/gm, close === -1 ? content.length : startPos + close)
+  return own !== -1 ? own : scanJSXReturn(content, startPos, /return\s*\(/g, content.length)
+}
+
+function scanJSXReturn(content, startPos, re, limit) {
   re.lastIndex = startPos
   let match
-  while ((match = re.exec(content)) !== null) {
+  while ((match = re.exec(content)) !== null && match.index < limit) {
     const afterParen = match.index + match[0].length
     let i = afterParen
     while (i < content.length) {
@@ -93,4 +104,10 @@ export function findJSXReturnContentStart(content, startPos) {
     }
   }
   return -1
+}
+
+// Our icons install flat in components/icons/ (scripts/icon-registry.mjs), so every
+// `@/app/_icons/...` import is rewritten to where an install puts it.
+export function toInstalledIconPaths(content) {
+  return content.replace(/(['"])@\/app\/_icons\/(?:icons\/)?/g, '$1@/components/icons/')
 }

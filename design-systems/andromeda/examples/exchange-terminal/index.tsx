@@ -5,14 +5,12 @@
 'use client';
 
 import { useState } from 'react';
-import {
-  Download,
-  Gear,
-  GridFour,
-  PlayCircle,
-  DotsThree,
-  List,
-} from '@phosphor-icons/react';
+import { Gear } from '@/app/_icons/icons/gear';
+import { MenuIcon } from '@/app/_icons/icons/menu';
+import { Download } from '@/app/_icons/icons/download';
+import { Grid2x2 } from '@/app/_icons/icons/grid-2x2';
+import { CirclePlay } from '@/app/_icons/icons/circle-play';
+import { Ellipsis } from '@/app/_icons/icons/ellipsis';
 import { motion } from 'framer-motion';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
@@ -132,7 +130,7 @@ function TopBar({ onMenu }: { onMenu: () => void }) {
       {/* Mobile nav trigger — hidden on desktop, shown ≤md via .ex-nav-trigger.
           Opens the shared Drawer holding the same nav menus. */}
       <span className="ex-nav-trigger" style={{ flexShrink: 0 }}>
-        <IconButton aria-label="Open navigation" variant="outline" size="md" icon={List} onClick={onMenu} />
+        <IconButton aria-label="Open navigation" variant="outline" size="md" icon={MenuIcon} onClick={onMenu} />
       </span>
 
       {/* Brand — Andromeda over the template name */}
@@ -167,7 +165,7 @@ function TopBar({ onMenu }: { onMenu: () => void }) {
 
       {/* App switcher — desktop only */}
       <span className="ex-app-switcher" style={{ display: 'inline-flex', flexShrink: 0 }}>
-        <IconButton aria-label="App grid" variant="outline" size="md" icon={GridFour} />
+        <IconButton aria-label="App grid" variant="outline" size="md" icon={Grid2x2} />
       </span>
 
       {/* Nav — desktop only; collapses into the Drawer ≤md */}
@@ -363,7 +361,7 @@ function PairHeader() {
             letterSpacing: tokens.typography.tracking.widest,
           }}
         >
-          <DotsThree weight="bold" size={10} />
+          <Ellipsis weight="bold" size={10} />
           {pair.longName}
         </span>
       </div>
@@ -445,7 +443,7 @@ function PairHeader() {
           flexShrink: 0,
         }}
       >
-        <PlayCircle weight="regular" size={15} />
+        <CirclePlay size={15} />
         Spot Tutorial
       </button>
     </div>

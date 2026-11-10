@@ -35,5 +35,5 @@ Full-width card, icon buttons stay 36px minimum tap target, filename truncates w
 - Files: `Brand reel.mp4` (8s), `Product demo.mp4` (12.5s), `Hero animation.mp4` (16s)
 - Simulate progress with `useEffect` + `setInterval` (80ms tick)
 - `useRef` for raw progress values to avoid stale closures
-- Phosphor icons: `Pause`, `Play`, `ArrowCounterClockwise`, `X`, `ArrowsOutSimple`, `ArrowsInSimple`
+- Icons: `Pause`, `Play`, `RotateCcw`, `X`, `Maximize`, `Minimize`
 - Inline `useDarkMode(ref)` hook for theme detection

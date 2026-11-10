@@ -1,9 +1,11 @@
 /**
- * Edge proxy — three responsibilities:
+ * Edge proxy — four responsibilities:
  *
  * 1. /r/* registry hits → log to PostHog (anonymous, fire-and-forget)
- * 2. Page requests → log an anonymous server-side $pageview (see below)
- * 3. Everything else → refresh the Supabase auth-session cookie
+ * 2. Agent reads of llms.txt and the markdown twins → log `agent_doc_hit`
+ *    (anonymous), and skip the session refresh like /r/*
+ * 3. Page requests → log an anonymous server-side $pageview (see below)
+ * 4. Everything else → refresh the Supabase auth-session cookie
  *
  * /r/* is fetched by the shadcn CLI and the AI Canvas MCP, both anonymous.
  * Running Supabase there would just waste cycles. Everything else may carry
@@ -12,7 +14,8 @@
  *
  * Pageviews are logged HERE, server-side, instead of via a client SDK, on
  * purpose: no cookie, no localStorage, no visitor identifier of any kind
- * (constant distinct_id), and the client IP never reaches the analytics
+ * (constant distinct_id for page views; agent reads share one id per tool
+ * family, never per visitor), and the client IP never reaches the analytics
  * store. We count events; we never fingerprint a visitor. This invariant
  * is load-bearing for the privacy policy — do not add a client analytics
  * SDK or a per-visitor id here.
@@ -23,9 +26,28 @@ import type { NextFetchEvent, NextRequest } from 'next/server'
 import { updateSession } from './app/lib/supabase/proxy'
 import { phCapture, posthogConfigured } from './app/lib/analytics-server'
 import { FRAME_HEADER, isFramePayload } from './app/lib/frame'
+import { ACCOUNT_PATH_HEADER } from './app/lib/account-path'
+import { agentFamilyOf, aiSourceOf, isAgentDocRequest } from './app/lib/ai-traffic'
+
+const MCP_OAUTH_PATHS = new Set(['/authorize', '/token', '/register', '/revoke'])
 
 export async function proxy(request: NextRequest, event: NextFetchEvent) {
   const { pathname } = request.nextUrl
+
+  // mcp.aicanvas.me is the hosted MCP, its sign-in endpoints and their discovery
+  // documents, nothing else. A page someone opens there goes to the site; anything else
+  // (a POST that missed) is a 404, never replayed across hosts.
+  if (request.nextUrl.hostname === 'mcp.aicanvas.me') {
+    if (pathname === '/') return NextResponse.rewrite(new URL('/api/mcp', request.url))
+    if (MCP_OAUTH_PATHS.has(pathname)) return NextResponse.rewrite(new URL(`/api/mcp/oauth${pathname}${request.nextUrl.search}`, request.url))
+    if (pathname.startsWith('/api/mcp') || pathname.startsWith('/.well-known/')) return NextResponse.next()
+    if (request.method !== 'GET' && request.method !== 'HEAD') return new NextResponse(null, { status: 404 })
+    // Set on a fixed URL: as a relative path, //host or /\host would leave aicanvas.me.
+    const site = new URL('https://aicanvas.me')
+    site.pathname = pathname
+    site.search = request.nextUrl.search
+    return NextResponse.redirect(site, 307)
+  }
 
   // Case-sensitive redirect: /MCP → /mcp. Next's redirects() matcher is
   // case-insensitive, so it would loop on lowercase /mcp.
@@ -51,12 +73,37 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
     return NextResponse.next()
   }
 
+  // The hosted MCP authenticates every request by its own header and never
+  // reads a cookie, so it skips the Supabase refresh hop too.
+  if (pathname.startsWith('/api/mcp') || pathname.startsWith('/.well-known/')) {
+    return NextResponse.next()
+  }
+
+  // An agent reading llms.txt or a markdown twin is its own event, never a
+  // page view: Claude Code asks for text/markdown AND text/html, so it would
+  // otherwise pass as a person loading the page.
+  const agentDoc = isAgentDocRequest(pathname, request.headers.get('accept') ?? '')
+
   try {
-    if (posthogConfigured && isPageview(request)) {
-      event.waitUntil(logPageview(request))
+    if (posthogConfigured) {
+      if (agentDoc) {
+        if (request.method === 'GET') event.waitUntil(logAgentDocHit(request))
+      } else if (isPageview(request)) {
+        event.waitUntil(logPageview(request))
+      }
     }
   } catch (err) {
     console.error('[proxy] pageview logging failed:', err)
+  }
+
+  // The machine-readable pages are public and shared-cached, and they read no
+  // session: skip the Supabase refresh (same as /r/ above), so a signed-in
+  // browser opening one never gets a Set-Cookie on a publicly cached response.
+  // The frame flag is still stripped: it may only ever be set by this proxy.
+  if (agentDoc) {
+    const headers = new Headers(request.headers)
+    headers.delete(FRAME_HEADER)
+    return NextResponse.next({ request: { headers } })
   }
 
   // Hand the preview-payload flag to the root layout (see app/lib/frame.ts).
@@ -64,6 +111,8 @@ export async function proxy(request: NextRequest, event: NextFetchEvent) {
   if (isFramePayload(request.nextUrl)) {
     request.headers.set(FRAME_HEADER, '1')
   }
+  request.headers.delete(ACCOUNT_PATH_HEADER)
+  if (pathname.startsWith('/account/')) request.headers.set(ACCOUNT_PATH_HEADER, pathname)
 
   return await updateSession(request)
 }
@@ -123,9 +172,37 @@ async function logPageview(request: NextRequest): Promise<void> {
     $referrer: referrer.split('?')[0],
     $referring_domain: referringDomain,
     nav: 'load',
+    // One allowlisted tag survives: links the MCP hands an agent carry ?ref=mcp, so the
+    // pricing visits it drives can be counted. A fixed value, never the query itself.
+    ...(request.nextUrl.searchParams.get('ref') === 'mcp' ? { source: 'mcp' } : {}),
+    // The AI assistant that sent the visit, as a fixed name (app/lib/ai-traffic.ts).
+    // utm_source is read only to match that list; the query is never stored.
+    ...withAiSource(aiSourceOf(referringDomain, request.nextUrl.searchParams.get('utm_source'))),
     country: request.headers.get('x-vercel-ip-country') ?? undefined,
     region: request.headers.get('x-vercel-ip-country-region') ?? undefined,
   })
+}
+
+function withAiSource(source: string | undefined): { ai_source?: string } {
+  return source ? { ai_source: source } : {}
+}
+
+// One shared bucket per tool family: no per-client id, no user-agent string.
+async function logAgentDocHit(request: NextRequest): Promise<void> {
+  const { pathname } = request.nextUrl
+  const agent = agentFamilyOf(request.headers.get('user-agent') ?? '')
+  await phCapture(
+    'agent_doc_hit',
+    {
+      path: pathname,
+      // 'file' = an llms file, a .md URL or the internal /md/ route; 'accept' = a page URL asked for in markdown.
+      via: pathname.endsWith('.md') || pathname.endsWith('.txt') || pathname.startsWith('/md/') ? 'file' : 'accept',
+      agent,
+      country: request.headers.get('x-vercel-ip-country') ?? undefined,
+      region: request.headers.get('x-vercel-ip-country-region') ?? undefined,
+    },
+    `agent:${agent}`,
+  )
 }
 
 async function logRegistryHit(request: NextRequest): Promise<void> {

@@ -10,7 +10,8 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { HexColorPicker, HexColorInput } from 'react-colorful'
-import { Eyedropper, Plus } from '@phosphor-icons/react'
+import { Pipette } from '@/app/_icons/icons/pipette'
+import { Plus } from '@/app/_icons/icons/plus'
 
 // Chromium-based browsers expose a screen-eyedropper. Feature-detected at
 // runtime so unsupported browsers (Firefox, Safari) hide the button.
@@ -107,7 +108,7 @@ export function ColorInput({
       aria-label={appearance === 'solid' ? 'Change colour' : 'Pick a custom colour'}
       title={appearance === 'solid' ? value : 'Custom colour'}
       className={`relative flex h-7 w-7 items-center justify-center rounded-full transition-all hover:scale-110 ${
-        active ? 'ring-2 ring-olive-500/60 ring-offset-1 ring-offset-sand-100 dark:ring-offset-sand-900' : ''
+        active ? 'ring-2 ring-accent/60 ring-offset-1 ring-offset-sand-100 dark:ring-offset-sand-900' : ''
       }`}
       style={{
         background:
@@ -120,8 +121,8 @@ export function ColorInput({
         <span className="absolute inset-[3px] rounded-full bg-sand-900 dark:bg-sand-950" />
       )}
       <Plus
-        size={appearance === 'solid' ? 14 : 12}
         weight="bold"
+        size={appearance === 'solid' ? 14 : 12}
         className="relative text-white"
         style={appearance === 'solid' ? { filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.6))' } : undefined}
       />
@@ -168,7 +169,7 @@ export function ColorInput({
               color={value}
               onChange={onChange}
               prefixed={false}
-              className="w-full flex-1 rounded-md border border-sand-300 bg-sand-100 px-2 py-1.5 font-mono text-xs uppercase text-sand-800 outline-none transition-colors focus:border-olive-500 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-100"
+              className="w-full flex-1 rounded-md border border-sand-300 bg-sand-100 px-2 py-1.5 font-mono text-xs uppercase text-sand-800 outline-none transition-colors focus:border-accent dark:border-sand-700 dark:bg-sand-800 dark:text-sand-100"
             />
             {eyedropperAvailable && (
               <button
@@ -178,7 +179,7 @@ export function ColorInput({
                 title="Pick from screen"
                 className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-sand-300 bg-sand-100 text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-50"
               >
-                <Eyedropper size={14} weight="regular" />
+                <Pipette size={14} />
               </button>
             )}
           </div>

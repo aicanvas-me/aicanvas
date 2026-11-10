@@ -1,13 +1,13 @@
 'use client'
 
-// npm install framer-motion next
+// npm install framer-motion
 // font: Science Gothic
 
 import React, { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Science_Gothic } from 'next/font/google'
 
-const scienceGothic = Science_Gothic({ subsets: ['latin'] })
+const FONT_FAMILY = "'Science Gothic', sans-serif"
+const FONT_URL = 'https://fonts.googleapis.com/css2?family=Science+Gothic:wght@100..900&display=swap'
 
 function useTheme(ref: React.RefObject<HTMLElement | null>) {
   const [theme, setTheme] = useState<'light' | 'dark'>('dark')
@@ -83,7 +83,7 @@ const LetterSpanComponent = ({ letter, textColor, fontFamily, textShadow, forwar
   )
 }
 
-const LetterSpan = motion(LetterSpanComponent)
+const LetterSpan = motion.create(LetterSpanComponent)
 
 
 const TEXT_ROW_1 = 'STAY'
@@ -222,14 +222,15 @@ export default function Playful() {
   return (
     <div
       ref={containerRef}
-      className={`flex min-h-screen w-full flex-col items-center justify-center px-6 sm:px-10 ${scienceGothic.className}`}
-      style={{ backgroundColor: bgColor }}
+      className={`flex min-h-screen w-full flex-col items-center justify-center px-6 sm:px-10`}
+      style={{ backgroundColor: bgColor, fontFamily: FONT_FAMILY }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
+      <style>{`@import url('${FONT_URL}');`}</style>
       <div className="flex flex-col items-center justify-center gap-2 sm:gap-4">
         <div className="flex flex-nowrap items-center justify-center gap-1 sm:gap-2">
           {TEXT_ROW_1.split('').map((letter, i) => (
@@ -241,7 +242,7 @@ export default function Playful() {
               }}
               textColor={textColor}
               textShadow={textShadow}
-              fontFamily={scienceGothic.style.fontFamily}
+              fontFamily={FONT_FAMILY}
             />
           ))}
         </div>
@@ -255,7 +256,7 @@ export default function Playful() {
               }}
               textColor={textColor}
               textShadow={textShadow}
-              fontFamily={scienceGothic.style.fontFamily}
+              fontFamily={FONT_FAMILY}
             />
           ))}
         </div>

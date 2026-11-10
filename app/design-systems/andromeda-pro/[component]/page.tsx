@@ -7,6 +7,7 @@ import {
 import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
 import { nextInOrder } from '../../../lib/related-order'
 import { AndromedaComponentView } from './AndromedaComponentView'
+import { iconItemsIn } from '../../../_lib/icon-items'
 import { AndromedaThemeWrap } from '../AndromedaThemeWrap'
 import { COMPONENT_COUNTS } from '../system/component-counts'
 import { firstSentence } from '../system/first-sentence'
@@ -53,7 +54,10 @@ export async function generateMetadata({
   return {
     title: `${entry.name} · Andromeda Pro Design System`,
     description: entry.description,
-    alternates: { canonical: `/design-systems/andromeda-pro/${entry.slug}` },
+    alternates: {
+      canonical: `/design-systems/andromeda-pro/${entry.slug}`,
+      types: { 'text/markdown': `/design-systems/andromeda-pro/${entry.slug}.md` },
+    },
   }
 }
 
@@ -138,6 +142,7 @@ export default async function AndromedaComponentPage({
         related={related}
         propTables={propTables}
         freeAccountGate={freeAccountGate}
+        iconItems={iconItemsIn(entry.code)}
         remixPrompt={remixPrompt}
         promptLocked={promptLocked}
       />

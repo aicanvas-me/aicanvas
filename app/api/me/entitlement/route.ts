@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/app/lib/supabase/server'
-import { isPremiumNow, type SubStatus } from '@/lib/identity/tier'
+import { getPremiumForUser } from '@/lib/identity/premium'
 
 export const runtime = 'nodejs'
 
@@ -10,7 +10,8 @@ export const runtime = 'nodejs'
  * not honor ?token=/Bearer — that would turn any leaked token into an
  * unauthenticated premium-status oracle. Errors are 503 (distinct from
  * anonymous) so the UI can show an unknown state instead of mislabeling a
- * premium user as free.
+ * premium user as free. `lifetime` tells the UI to show "You have Lifetime"
+ * instead of a buy button.
  */
 export async function GET() {
   try {
@@ -18,18 +19,12 @@ export async function GET() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ tier: 'anonymous' })
 
-    // RLS restricts the select to the caller's own row.
-    const { data: sub, error } = await supabase
-      .from('user_subscriptions')
-      .select('status, current_period_end')
-      .eq('user_id', user.id)
-      .maybeSingle()
-    if (error) return NextResponse.json({ tier: null }, { status: 503 })
-
-    const premium = sub
-      ? isPremiumNow(sub.status as SubStatus, sub.current_period_end ?? null)
-      : false
-    return NextResponse.json({ tier: premium ? 'premium' : 'free' })
+    // RLS restricts both reads to the caller's own rows. An unproven free answer
+    // throws into the 503 below, and so does an unknown Lifetime: a guess of "no"
+    // would offer the buy button to someone who already owns it.
+    const { premium, lifetime } = await getPremiumForUser(supabase, user.id)
+    if (lifetime === null) throw new Error('Lifetime read failed')
+    return NextResponse.json({ tier: premium ? 'premium' : 'free', lifetime })
   } catch {
     return NextResponse.json({ tier: null }, { status: 503 })
   }

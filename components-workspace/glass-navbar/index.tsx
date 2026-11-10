@@ -1,10 +1,11 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { List, X } from '@phosphor-icons/react'
+import { Menu } from '@/app/_icons/icons/menu'
+import { X } from '@/app/_icons/icons/x'
 
 const NAV_ITEMS = ['Products', 'About', 'Blog']
 
@@ -110,7 +111,7 @@ export default function GlassNavbar() {
             <AnimatePresence mode="wait" initial={false}>
               {menuOpen
                 ? <motion.span key="x"    initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}><X size={18} weight="bold" /></motion.span>
-                : <motion.span key="menu" initial={{ rotate:  90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}><List size={18} weight="bold" /></motion.span>
+                : <motion.span key="menu" initial={{ rotate:  90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: -90, opacity: 0 }} transition={{ duration: 0.15 }}><Menu size={18} weight="bold" /></motion.span>
               }
             </AnimatePresence>
           </motion.button>

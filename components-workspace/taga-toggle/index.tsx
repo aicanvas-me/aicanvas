@@ -18,7 +18,7 @@ const FACE_COLOR  = '#4A3F35'
 export default function TagaToggle() {
   const [isOn, setIsOn]             = useState(false)
   const [animating, setAnimating]   = useState(false)
-  const [pageIsDark, setPageIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [pageIsDark, setPageIsDark] = useState(true)
   const [trackW, setTrackW]         = useState(MAX_TRACK_W)
   const containerRef                = useRef<HTMLDivElement>(null)
   const isOnRef                     = useRef(false)

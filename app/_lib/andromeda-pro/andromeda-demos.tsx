@@ -13,47 +13,45 @@
 
 import { Fragment, useEffect, useRef, useState } from 'react'
 import { LayoutGroup } from 'framer-motion'
-import {
-  ArrowClockwise,
-  Bell,
-  BookOpen,
-  Calendar,
-  ChartBar,
-  ChartLine,
-  ChatCircle,
-  Clock,
-  Compass,
-  Copy,
-  Database,
-  DownloadSimple,
-  EnvelopeOpen,
-  Envelope,
-  Export,
-  EyeSlash,
-  FileCsv,
-  Funnel,
-  Gear,
-  GlobeSimple,
-  Info,
-  Keyboard,
-  MagnifyingGlass,
-  Pencil,
-  PencilSimple,
-  PlugsConnected,
-  Pulse,
-  PushPin,
-  SignOut,
-  Sliders,
-  Sparkle,
-  SpeakerHigh,
-  SpeakerSlash,
-  Star,
-  ThumbsUp,
-  Trash,
-  UserCircle,
-  Users,
-  Warning,
-} from '@phosphor-icons/react'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw';
+import { Bell } from '@/app/_icons/icons/bell';
+import { BookOpen } from '@/app/_icons/icons/book-open';
+import { ChartBar } from '@/app/_icons/icons/chart-bar';
+import { ChartLine } from '@/app/_icons/icons/chart-line';
+import { MessageCircle } from '@/app/_icons/icons/message-circle';
+import { ClockIcon } from '@/app/_icons/icons/clock';
+import { Compass } from '@/app/_icons/icons/compass';
+import { CopyIcon } from '@/app/_icons/icons/copy';
+import { Database } from '@/app/_icons/icons/database';
+import { Download } from '@/app/_icons/icons/download';
+import { MailOpen } from '@/app/_icons/icons/mail-open';
+import { Mail } from '@/app/_icons/icons/mail';
+import { ShareIcon } from '@/app/_icons/icons/share';
+import { EyeOff } from '@/app/_icons/icons/eye-off';
+import { FileSpreadsheet } from '@/app/_icons/icons/file-spreadsheet';
+import { Funnel } from '@/app/_icons/icons/funnel';
+import { Gear } from '@/app/_icons/icons/gear';
+import { InfoIcon } from '@/app/_icons/icons/info';
+import { KeyboardIcon } from '@/app/_icons/icons/keyboard';
+import { Search } from '@/app/_icons/icons/search';
+import { Pen } from '@/app/_icons/icons/pen';
+import { Pen2 } from '@/app/_icons/icons/pen-2';
+import { Activity } from '@/app/_icons/icons/activity';
+import { Pin } from '@/app/_icons/icons/pin';
+import { LogOut } from '@/app/_icons/icons/log-out';
+import { SlidersVertical } from '@/app/_icons/icons/sliders-vertical';
+import { Sparkle } from '@/app/_icons/icons/sparkle';
+import { Star } from '@/app/_icons/icons/star';
+import { ThumbsUp } from '@/app/_icons/icons/thumbs-up';
+import { Trash } from '@/app/_icons/icons/trash';
+import { CircleUser } from '@/app/_icons/icons/circle-user';
+import { Users } from '@/app/_icons/icons/users';
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
+import { Calendar } from '@/app/_icons/icons/calendar';
+import { GlobeSimple } from '@/app/_icons/icons/globe-simple';
+import { PlugsConnected } from '@/app/_icons/icons/plugs-connected';
+import { VolumeHigh } from '@/app/_icons/icons/volume-high';
+import { VolumeOff } from '@/app/_icons/icons/volume-off';
 
 import { tokens } from '../../lib/andromeda-pro.generated'
 import { Alert, AlertContent, AlertDescription, AlertIcon, AlertTitle } from '../../lib/andromeda-pro.generated'
@@ -256,14 +254,14 @@ function IconButtonDemo() {
       <Row label="Variants">
         <IconButton variant="default" aria-label="Notifications" icon={Bell} />
         <IconButton variant="outline" aria-label="Settings" icon={Gear} />
-        <IconButton variant="ghost" aria-label="Refresh" icon={ArrowClockwise} />
+        <IconButton variant="ghost" aria-label="Refresh" icon={RotateCw} />
         <IconButton variant="destructive" aria-label="Delete" icon={Trash} />
       </Row>
       <Row label="Pressed">
         <IconButton
           variant="outline"
           aria-label="Mute"
-          icon={muted ? SpeakerSlash : SpeakerHigh}
+          icon={muted ? VolumeOff : VolumeHigh}
           pressed={muted}
           onClick={() => setMuted((v) => !v)}
         />
@@ -308,10 +306,10 @@ function ButtonDemo() {
         <Button variant="link">Link</Button>
       </Row>
       <Row label="Pressed">
-        <Button variant="outline" icon={UserCircle} pressed={mine} onClick={() => setMine((v) => !v)}>
+        <Button variant="outline" icon={CircleUser} pressed={mine} onClick={() => setMine((v) => !v)}>
           Assigned to me
         </Button>
-        <Button variant="ghost" icon={Envelope} pressed={unread} onClick={() => setUnread((v) => !v)}>
+        <Button variant="ghost" icon={Mail} pressed={unread} onClick={() => setUnread((v) => !v)}>
           Unread
         </Button>
         <Readout>{shown} issues</Readout>
@@ -493,8 +491,8 @@ function InputDemo() {
         }}
       >
         <Input label="Display name" placeholder="Enter a display name" />
-        <Input label="Search" icon={MagnifyingGlass} placeholder="Search" />
-        <Input label="Email" icon={Envelope} placeholder="you@company.com" />
+        <Input label="Search" icon={Search} placeholder="Search" />
+        <Input label="Email" icon={Mail} placeholder="you@company.com" />
         <Input label="Validation" defaultValue="INVALID" error="Field cannot be empty" />
       </div>
     </div>
@@ -528,7 +526,7 @@ function SearchFieldDemo() {
 
 const NAV_ITEMS = [
   { icon: Compass, label: 'Overview' },
-  { icon: Pulse, label: 'Activity' },
+  { icon: Activity, label: 'Activity' },
   { icon: ChartLine, label: 'Reports' },
   { icon: Bell, label: 'Alerts' },
   { icon: Users, label: 'Members' },
@@ -643,7 +641,7 @@ function ChatList() {
             ref={(el) => {
               rows.current[chat.id] = el
             }}
-            icon={ChatCircle}
+            icon={MessageCircle}
             label={chat.title}
             selected={openId === chat.id}
             onClick={() => setOpenId(chat.id)}
@@ -654,13 +652,13 @@ function ChatList() {
                 items={[
                   {
                     label: 'Rename',
-                    icon: PencilSimple,
+                    icon: Pen2,
                     onSelect: () => {
                       renameDone.current = false
                       setRenamingId(chat.id)
                     },
                   },
-                  { label: chat.pinned ? 'Unpin' : 'Pin', icon: PushPin, onSelect: () => togglePin(chat.id) },
+                  { label: chat.pinned ? 'Unpin' : 'Pin', icon: Pin, onSelect: () => togglePin(chat.id) },
                 ]}
               />
             }
@@ -1144,7 +1142,7 @@ function TooltipDemo() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[8] }}>
       <Row label="Position · top (default)">
         <Tooltip label="Refresh">
-          <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+          <IconButton aria-label="Refresh" icon={RotateCw} />
         </Tooltip>
         <Tooltip label="Settings">
           <IconButton aria-label="Settings" icon={Gear} />
@@ -1155,7 +1153,7 @@ function TooltipDemo() {
       </Row>
       <Row label="Position · bottom">
         <Tooltip label="Refresh" position="bottom">
-          <IconButton aria-label="Refresh" icon={ArrowClockwise} />
+          <IconButton aria-label="Refresh" icon={RotateCw} />
         </Tooltip>
         <Tooltip label="Settings" position="bottom">
           <IconButton aria-label="Settings" icon={Gear} />
@@ -1291,14 +1289,14 @@ function ReceiptItem() {
   return (
     <Item variant="outline" size="sm">
       <ItemMedia>
-        <FileCsv weight="regular" />
+        <FileSpreadsheet size="1em" />
       </ItemMedia>
       <ItemContent>
         <ItemTitle>q3-pipeline-risk.csv</ItemTitle>
         <ItemDescription>3 rows · 4 KB</ItemDescription>
       </ItemContent>
       <ItemActions>
-        <IconButton size="sm" variant="ghost" icon={DownloadSimple} aria-label="Download q3-pipeline-risk.csv" onClick={downloadRiskCsv} />
+        <IconButton size="sm" variant="ghost" icon={Download} aria-label="Download q3-pipeline-risk.csv" onClick={downloadRiskCsv} />
       </ItemActions>
     </Item>
   )
@@ -1383,7 +1381,7 @@ function ConnectionsPopover() {
           return (
             <Item key={c.id} size="sm">
               <ItemMedia>
-                <Icon weight="regular" />
+                <Icon size="1em" />
               </ItemMedia>
               <ItemContent>
                 <ItemTitle>{c.label}</ItemTitle>
@@ -1399,7 +1397,7 @@ function ConnectionsPopover() {
         <PopoverLabel>Web</PopoverLabel>
         <Item size="sm">
           <ItemMedia>
-            <GlobeSimple weight="regular" />
+            <GlobeSimple size="1em" />
           </ItemMedia>
           <ItemContent>
             <ItemTitle>Search the web</ItemTitle>
@@ -1501,7 +1499,7 @@ function ItemDemo() {
             return (
               <Item key={c.id}>
                 <ItemMedia>
-                  <Icon weight="regular" />
+                  <Icon size="1em" />
                 </ItemMedia>
                 <ItemContent>
                   <ItemTitle>{c.label}</ItemTitle>
@@ -1519,14 +1517,14 @@ function ItemDemo() {
         <div style={{ width: 360, maxWidth: '100%' }}>
           <Item variant="outline">
             <ItemMedia variant="icon">
-              <FileCsv weight="regular" />
+              <FileSpreadsheet size="1em" />
             </ItemMedia>
             <ItemContent>
               <ItemTitle>q3-pipeline-risk.csv</ItemTitle>
               <ItemDescription>3 rows · written by the agent</ItemDescription>
             </ItemContent>
             <ItemActions>
-              <IconButton size="sm" variant="ghost" icon={DownloadSimple} aria-label="Download q3-pipeline-risk.csv" onClick={downloadRiskCsv} />
+              <IconButton size="sm" variant="ghost" icon={Download} aria-label="Download q3-pipeline-risk.csv" onClick={downloadRiskCsv} />
             </ItemActions>
           </Item>
         </div>
@@ -1538,7 +1536,7 @@ function ItemDemo() {
             <div style={{ width: 180 }}>
               <Item size={s} variant="outline">
                 <ItemMedia>
-                  <Database weight="regular" />
+                  <Database size="1em" />
                 </ItemMedia>
                 <ItemContent>
                   <ItemTitle>Warehouse</ItemTitle>
@@ -1625,7 +1623,7 @@ function NavbarBrand() {
         whiteSpace: 'nowrap',
       }}
     >
-      <Compass size={tokens.iconSize.xl} weight="regular" aria-hidden />
+      <Compass size={tokens.iconSize.xl} aria-hidden />
       Andromeda
     </span>
   )
@@ -1933,28 +1931,28 @@ function AlertDemo() {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: tokens.spacing[3], width: '100%', maxWidth: 640 }}>
       <Alert variant="default">
-        <AlertIcon><Info weight="light" /></AlertIcon>
+        <AlertIcon><InfoIcon size="1em" /></AlertIcon>
         <AlertContent>
           <AlertTitle>All good</AlertTitle>
           <AlertDescription>Every service is running normally.</AlertDescription>
         </AlertContent>
       </Alert>
       <Alert variant="accent">
-        <AlertIcon><Pulse weight="light" /></AlertIcon>
+        <AlertIcon><Activity size="1em" /></AlertIcon>
         <AlertContent>
           <AlertTitle>New activity</AlertTitle>
           <AlertDescription>3 new events in the last hour.</AlertDescription>
         </AlertContent>
       </Alert>
       <Alert variant="warning">
-        <AlertIcon><Warning weight="light" /></AlertIcon>
+        <AlertIcon><TriangleAlert size="1em" /></AlertIcon>
         <AlertContent>
           <AlertTitle>Caution</AlertTitle>
           <AlertDescription>Storage is at 88% of your limit.</AlertDescription>
         </AlertContent>
       </Alert>
       <Alert variant="fault">
-        <AlertIcon><Warning weight="light" /></AlertIcon>
+        <AlertIcon><TriangleAlert size="1em" /></AlertIcon>
         <AlertContent>
           <AlertTitle>Connection lost</AlertTitle>
           <AlertDescription>Reconnecting. ETA 8 seconds.</AlertDescription>
@@ -1967,7 +1965,7 @@ function AlertDemo() {
 function EmptyStateDemo() {
   return (
     <EmptyState>
-      <EmptyStateIcon><EnvelopeOpen weight="light" /></EmptyStateIcon>
+      <EmptyStateIcon><MailOpen size="1em" /></EmptyStateIcon>
       <EmptyStateTitle>No activity</EmptyStateTitle>
       <EmptyStateDescription>
         Nothing has happened in the last 30 days. New events arrive
@@ -2069,10 +2067,10 @@ function PanelHeaderDemo() {
               <PanelMenu
                 ariaLabel="Requests options"
                 items={[
-                  { label: 'Refresh', icon: ArrowClockwise, onSelect: () => {} },
-                  { label: 'Export',  icon: Export,         onSelect: () => {} },
+                  { label: 'Refresh', icon: RotateCw, onSelect: () => {} },
+                  { label: 'Export',  icon: ShareIcon,         onSelect: () => {} },
                   { type: 'separator' },
-                  { label: 'Hide',    icon: EyeSlash,       onSelect: () => {} },
+                  { label: 'Hide',    icon: EyeOff,       onSelect: () => {} },
                 ]}
               />
             }
@@ -2093,7 +2091,7 @@ function PanelHeaderDemo() {
               <PanelHeader
                 size={s}
                 title={{ sm: 'Capacity', md: 'Requests', lg: 'Fleet Overview' }[s]}
-                actions={<IconButton size={s} variant="ghost" aria-label={`Refresh (${s})`} icon={ArrowClockwise} />}
+                actions={<IconButton size={s} variant="ghost" aria-label={`Refresh (${s})`} icon={RotateCw} />}
               />
             </div>
           )}
@@ -2112,11 +2110,11 @@ function PanelMenuDemo() {
             align="left"
             defaultOpen
             items={[
-              { label: 'Refresh',   icon: ArrowClockwise, onSelect: () => {} },
-              { label: 'Configure', icon: Sliders,        onSelect: () => {} },
-              { label: 'Export',    icon: Export,         onSelect: () => {} },
+              { label: 'Refresh',   icon: RotateCw, onSelect: () => {} },
+              { label: 'Configure', icon: SlidersVertical,        onSelect: () => {} },
+              { label: 'Export',    icon: ShareIcon,         onSelect: () => {} },
               { type: 'separator' },
-              { label: 'Hide',      icon: EyeSlash,       onSelect: () => {} },
+              { label: 'Hide',      icon: EyeOff,       onSelect: () => {} },
             ]}
           />
         </Row>
@@ -2127,15 +2125,15 @@ function PanelMenuDemo() {
             align="left"
             defaultOpen
             items={[
-              { label: 'Edit', icon: Pencil, onSelect: () => {} },
-              { label: 'Copy', icon: Copy,   onSelect: () => {} },
+              { label: 'Edit', icon: Pen, onSelect: () => {} },
+              { label: 'Copy', icon: CopyIcon,   onSelect: () => {} },
               {
                 label: 'Move to',
                 icon: Database,
                 submenu: [
                   { label: 'Starred', icon: Star,     onSelect: () => {} },
                   { label: 'Archive', icon: Database, onSelect: () => {} },
-                  { label: 'Snoozed', icon: Clock,    onSelect: () => {} },
+                  { label: 'Snoozed', icon: ClockIcon,    onSelect: () => {} },
                 ],
               },
               { type: 'separator' },
@@ -2153,8 +2151,8 @@ function PanelMenuDemo() {
                 align="left"
                 ariaLabel={`Panel options (${s})`}
                 items={[
-                  { label: 'Refresh', icon: ArrowClockwise, onSelect: () => {} },
-                  { label: 'Export',  icon: Export,         onSelect: () => {} },
+                  { label: 'Refresh', icon: RotateCw, onSelect: () => {} },
+                  { label: 'Export',  icon: ShareIcon,         onSelect: () => {} },
                 ]}
               />
             )}
@@ -2315,11 +2313,11 @@ function DrawerDemo() {
 }
 
 const USER_MENU_ITEMS = [
-  { id: 'profile',     label: 'Profile',             icon: UserCircle },
+  { id: 'profile',     label: 'Profile',             icon: CircleUser },
   { id: 'preferences', label: 'Preferences',         icon: Gear },
-  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: Keyboard },
+  { id: 'shortcuts',   label: 'Keyboard Shortcuts',  icon: KeyboardIcon },
   { id: 'sep1',        type: 'separator' as const },
-  { id: 'signout',     label: 'Sign Out',            icon: SignOut },
+  { id: 'signout',     label: 'Sign Out',            icon: LogOut },
 ]
 
 const USER_AVATAR_SRC = SAMPLE_AVATARS.butterflyVisor.dark
@@ -2459,7 +2457,7 @@ function StrengthMeterDemo() {
 function SidebarDemo() {
   const items = [
     { icon: Compass, label: 'Overview', active: true },
-    { icon: Pulse, label: 'Activity' },
+    { icon: Activity, label: 'Activity' },
     { icon: ChartLine, label: 'Reports' },
     { icon: Bell, label: 'Alerts' },
     { icon: Users, label: 'Members' },

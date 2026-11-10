@@ -1,10 +1,15 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, type Ref } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, ChatCircle, Heart, ShieldCheck, X, ArrowUp } from '@phosphor-icons/react'
+import { Bell } from '@/app/_icons/icons/bell'
+import { MessageCircle } from '@/app/_icons/icons/message-circle'
+import { Heart } from '@/app/_icons/icons/heart'
+import { ShieldCheck } from '@/app/_icons/icons/shield-check'
+import { X } from '@/app/_icons/icons/x'
+import { ArrowUp } from '@/app/_icons/icons/arrow-up'
 
 interface Notification {
   id: number
@@ -19,7 +24,7 @@ interface Notification {
 const INITIAL_NOTIFICATIONS: Notification[] = [
   {
     id: 1,
-    icon: ChatCircle,
+    icon: MessageCircle,
     color: '#3A86FF',
     title: 'New Message',
     message: 'Alex sent you a photo',
@@ -113,7 +118,7 @@ function NotificationCard({
             border: `1px solid ${notification.color}22`,
           }}
         >
-          <Icon size={18} weight="regular" style={{ color: notification.color }} />
+          <Icon size={18} style={{ color: notification.color }} />
         </motion.div>
 
         <div className="min-w-0 flex-1">
@@ -133,7 +138,7 @@ function NotificationCard({
             background: 'rgba(255,255,255,0.06)',
           }}
         >
-          <X size={11} weight="regular" className="text-white/30" />
+          <X size={11} className="text-white/30" />
         </motion.button>
         <span className="text-[10px] text-white/25">{notification.time}</span>
       </div>
@@ -169,7 +174,7 @@ export default function GlassNotification() {
       >
         <div className="mb-1 flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
-            <Bell size={20} weight="regular" className="text-white/40" />
+            <Bell size={20} className="text-white/40" />
             <span className="text-sm font-semibold text-white/60">
               Notifications
             </span>

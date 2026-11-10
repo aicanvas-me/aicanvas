@@ -1,12 +1,12 @@
 'use client';
 
 import { forwardRef } from 'react';
-import type { ComponentPropsWithoutRef, CSSProperties, ElementType, ReactNode } from 'react';
-import { Slot } from '@radix-ui/react-slot';
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import type { Transition } from 'framer-motion';
 import { cva } from 'class-variance-authority';
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { cn, andromedaVars, easingArray } from './lib/utils';
 import { mq } from './lib/responsive';
 import { tokens } from '../tokens';
@@ -77,13 +77,12 @@ const navItemVariants = cva(
 
 /**
  * @typedef {object} NavItemProps
- * @property {React.ComponentType<{ size?: number, weight?: string }>} [icon]
+ * @property {React.ComponentType<IconProps>} [icon]
  *   Optional icon component rendered at 20px before the label.
  * @property {React.ReactNode} label Visible content of the nav row.
  * @property {boolean} [active=false] Marks the row as the current selection, applying accent text and the indicator dot.
  * @property {boolean} [mono=true] Renders the label in uppercase mono type; set false for sans.
- * @property {boolean} [asChild=false] Renders via Radix Slot, merging props onto the child instead of a native button.
- * @property {'button'|'submit'|'reset'} [type='button'] HTML button type; defaults to 'button' to avoid accidental form submits, and is omitted when asChild is set.
+ * @property {'button'|'submit'|'reset'} [type='button'] HTML button type; defaults to 'button' to avoid accidental form submits.
  * @property {string} [layoutGroupId='andromeda-navitem-indicator']
  *   Override only when two distinct nav lists share a viewport and you don't
  *   want the active dot to animate between them. To get the slide between
@@ -93,11 +92,10 @@ const navItemVariants = cva(
  */
 
 type NavItemOwnProps = {
-  icon?: PhosphorIcon;
+  icon?: ComponentType<IconProps>;
   label: ReactNode;
   active?: boolean;
   mono?: boolean;
-  asChild?: boolean;
   layoutGroupId?: string;
   className?: string;
   style?: CSSProperties;
@@ -113,7 +111,6 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavI
     label,
     active = false,
     mono = true,
-    asChild = false,
     layoutGroupId = 'andromeda-navitem-indicator',
     style,
     type = 'button',
@@ -121,13 +118,11 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavI
   },
   ref,
 ) {
-  const Comp: ElementType = asChild ? Slot : 'button';
-
   return (
     <>
-      <Comp
+      <button
         ref={ref}
-        type={asChild ? undefined : type}
+        type={type}
         data-active={active ? 'true' : 'false'}
         aria-current={active ? 'page' : undefined}
         className={cn(navItemVariants({ active, mono }), 'andromeda-navitem-touch', className)}
@@ -152,9 +147,9 @@ export const NavItem = forwardRef<HTMLButtonElement, NavItemProps>(function NavI
             }}
           />
         ) : null}
-        {Icon ? <Icon size={20} weight="regular" /> : null}
+        {Icon ? <Icon size={20} /> : null}
         <span>{label}</span>
-      </Comp>
+      </button>
       <style>{TOUCH_TARGET_STYLE}</style>
     </>
   );

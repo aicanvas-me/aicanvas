@@ -12,8 +12,9 @@ import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync, unlinkSy
 import { join, dirname, resolve, relative, sep, posix } from 'path'
 import { execSync } from 'child_process'
 import { createJiti } from 'jiti'
-import { transformRootHeightClass } from './lib/copy-paste-transform.mjs'
+import { toInstalledIconPaths, transformRootHeightClass } from './lib/copy-paste-transform.mjs'
 import { DESIGN_SYSTEMS, FREE_DS_PLACEHOLDER_SENTINEL } from './lib/design-systems.config.mjs'
+import { extractImportSpecifiers } from './lib/import-specifiers.mjs'
 import { reconcileLedger } from './lib/order-ledger.mjs'
 import { parseJsdocProps } from './lib/parse-jsdoc-props.mjs'
 
@@ -198,20 +199,6 @@ function toPackageName(spec) {
   return spec.split('/')[0]
 }
 
-// Match every quoted specifier reachable via `from '...'` (covers all variants
-// of `import` / `import type` / `export ... from`) plus bare side-effect
-// `import '...'` lines. The `from` keyword is unambiguous in JS/TS source so
-// false positives in code strings are extremely rare.
-function extractImportSpecifiers(content) {
-  const specs = []
-  const fromRe = /\bfrom\s+['"]([^'"]+)['"]/g
-  let m
-  while ((m = fromRe.exec(content)) !== null) specs.push(m[1])
-  const sideRe = /^\s*import\s+['"]([^'"]+)['"]/gm
-  while ((m = sideRe.exec(content)) !== null) specs.push(m[1])
-  return specs
-}
-
 function resolveImport(fromFile, spec) {
   const baseDir = dirname(fromFile)
   const candidate = resolve(baseDir, spec)
@@ -239,12 +226,13 @@ function resolveImport(fromFile, spec) {
  * @param {string[]} entries        Absolute paths to entry files
  * @param {string}   rootDirAbs     Absolute path to the system's root directory
  * @param {Set<string>} [excludedFiles=new Set()]  Files already shipped by deps
- * @returns {{ files: string[], npmDeps: string[] }}
+ * @returns {{ files: string[], npmDeps: string[], iconDeps: string[] }}
  */
 function walkDependencies(entries, rootDirAbs, excludedFiles = new Set()) {
   const shipped = new Set()
   const queue = entries.filter((f) => !excludedFiles.has(f))
   const npmDeps = new Set()
+  const iconDeps = new Set()
 
   while (queue.length > 0) {
     const file = queue.shift()
@@ -271,6 +259,8 @@ function walkDependencies(entries, rootDirAbs, excludedFiles = new Set()) {
         // Boundary: file is provided by a registry dep — record the edge and stop.
         if (excludedFiles.has(resolved)) continue
         queue.push(resolved)
+      } else if (iconItemFor(spec)) {
+        iconDeps.add(iconItemFor(spec))
       } else {
         const pkg = toPackageName(spec)
         if (!isProjectBuiltin(pkg)) npmDeps.add(pkg)
@@ -281,8 +271,26 @@ function walkDependencies(entries, rootDirAbs, excludedFiles = new Set()) {
   return {
     files: [...shipped].sort(),
     npmDeps: [...npmDeps].sort(),
+    iconDeps: [...iconDeps].sort(),
   }
 }
+
+// Our icons are not part of a system: an `@/app/_icons/...` import installs as
+// the icon's own registry item (scripts/icon-registry.mjs, components/icons/).
+function iconItemFor(spec, allowPaid = false) {
+  const m = spec.match(/^@\/app\/_icons\/(?:icons\/([a-z0-9-]+)|(IconBase))$/)
+  if (!m) return null
+  // A paid style would lock a free install; a premium item installs with premium.
+  if (!allowPaid && /-(duotone|solid|solid-duotone)$/.test(m[1] ?? '')) throw new Error(`generate-registry: ${spec} is a paid icon style`)
+  return m[1] ? `icon-${m[1]}` : 'icon-base'
+}
+
+// A standalone is one file, so its icons arrive as registryDependencies (none: no key).
+function standaloneIconDeps(content, allowPaid = false) {
+  const deps = [...new Set(extractImportSpecifiers(content).map((spec) => iconItemFor(spec, allowPaid)).filter(Boolean))]
+  return deps.length ? { registryDependencies: deps.sort().map(depUrl) } : {}
+}
+
 
 // Convert an absolute file path inside the system's rootDir into the registry
 // `path` / `target` (POSIX, forward slashes). Layout under rootDir is preserved
@@ -416,6 +424,7 @@ for (const dir of dirs) {
   // Make copy-paste ready: h-full → min-h-screen on the ROOT element only
   // (see scripts/lib/copy-paste-transform.mjs for why root-only)
   const copyPasteReady = transformRootHeightClass(content)
+  const iconDeps = standaloneIconDeps(content)
 
   // Build the registry item JSON
   const item = {
@@ -426,10 +435,11 @@ for (const dir of dirs) {
     description,
     author: 'aicanvas <https://aicanvas.me>',
     dependencies: deps,
+    ...iconDeps,
     files: [
       {
         path: `components/aicanvas/${name}.tsx`,
-        content: directiveFirst(copyPasteReady),
+        content: toInstalledIconPaths(directiveFirst(copyPasteReady)),
         type: 'registry:ui',
         target: `components/aicanvas/${name}.tsx`,
       },
@@ -446,6 +456,7 @@ for (const dir of dirs) {
     title,
     description,
     dependencies: deps,
+    ...iconDeps,
     files: [
       {
         path: `components/aicanvas/${name}.tsx`,
@@ -479,7 +490,7 @@ for (const slug of premiumSlugDirs) {
   let pmeta = {}
   try { pmeta = JSON.parse(readFileSync(join(premiumWsDir, slug, 'meta.json'), 'utf-8')) } catch { /* fall back below */ }
   if (!HIDDEN_SLUGS.has(slug)) {
-    premiumMetas.push({ slug, name: pmeta.name || toTitle(slug), description: pmeta.description || '', tags: pmeta.tags || [], image: pmeta.image, dependencies: getDeps(content) })
+    premiumMetas.push({ slug, name: pmeta.name || toTitle(slug), description: pmeta.description || '', tags: pmeta.tags || [], image: pmeta.image, dualTheme: pmeta.dualTheme === true, dependencies: getDeps(content) })
   }
   const item = {
     $schema: SCHEMA,
@@ -489,10 +500,11 @@ for (const slug of premiumSlugDirs) {
     description: pmeta.description || '',
     author: 'aicanvas <https://aicanvas.me>',
     dependencies: getDeps(content),
+    ...standaloneIconDeps(content, true),
     files: [
       {
         path: `components/aicanvas/${slug}.tsx`,
-        content: directiveFirst(transformRootHeightClass(content)),
+        content: toInstalledIconPaths(directiveFirst(transformRootHeightClass(content))),
         type: 'registry:ui',
         target: `components/aicanvas/${slug}.tsx`,
       },
@@ -543,7 +555,7 @@ function makeFile(fileAbs, rootDirAbs, slug) {
   const target = targetPathFor(fileAbs, rootDirAbs, slug)
   return {
     path: target,
-    content: directiveFirst(readFileSync(fileAbs, 'utf-8')),
+    content: toInstalledIconPaths(directiveFirst(readFileSync(fileAbs, 'utf-8'))),
     type: 'registry:lib',
     target,
   }
@@ -688,7 +700,7 @@ for (const ds of SYSTEMS) {
     title: `${ds.name} design system`,
     description: `Every ${ds.name} component (${systemFiles.length} files). Installs the foundation tokens automatically.`,
     author: 'aicanvas <https://aicanvas.me>',
-    registryDependencies: [depUrl(tokensSlug)],
+    registryDependencies: [depUrl(tokensSlug), ...systemWalk.iconDeps.map(depUrl)],
     ...dependencyFields(ds, systemWalk.npmDeps),
     files: systemFiles,
   }
@@ -811,7 +823,7 @@ for (const ds of SYSTEMS) {
         `${ds.name} ${compLabel} component. Install just this piece. Tokens and any sibling components are pulled in automatically.` +
         (itemEntries.length > 1 ? ' Includes a ready-made example.' : ''),
       author: 'aicanvas <https://aicanvas.me>',
-      registryDependencies: [...componentRegistryDeps].sort().map(depUrl),
+      registryDependencies: [...[...componentRegistryDeps].sort(), ...compWalk.iconDeps].map(depUrl),
       ...dependencyFields(ds, compWalk.npmDeps),
       files: compFiles,
     }
@@ -847,7 +859,7 @@ for (const ds of SYSTEMS) {
         usedComponentSlugs.add(dsComponentSlug(ds, relPosix, relPosix.split('/').pop()))
       }
     }
-    const templateDeps = [`${ds.slug}-tokens`, ...[...usedComponentSlugs].sort()].map(depUrl)
+    const templateDeps = [`${ds.slug}-tokens`, ...[...usedComponentSlugs].sort(), ...templateWalk.iconDeps].map(depUrl)
     // The install also writes what those components depend on (UserCard brings
     // Avatar), so the count follows the chain. A Set's loop visits what is added
     // during it, each component counts once, and tokens are not a component.
@@ -1082,9 +1094,9 @@ console.log(`Generated app/lib/standalone-props.generated.ts (${Object.keys(stan
 // The directory reviewer's #1 ask: the index must tell installers, BEFORE they
 // run `add`, whether an item resolves to real code anonymously. So append a
 // one-line gating note to every index description. Free items install with a
-// free account (source is public to read); design systems and templates are
-// premium. The token foundation installs anonymously (classified 'meta'), so it
-// carries no note. Classification MIRRORS classifyContent() in
+// free account (source is public to read); paid design systems, their templates
+// and the `-all` bundles are premium. The token foundation installs anonymously
+// (classified 'meta'), so it carries no note. Classification MIRRORS classifyContent() in
 // lib/registry/content-type.ts, reusing the gate manifest built above, so the
 // note can never drift from what app/r/[file]/route.ts actually serves. The note
 // goes on the INDEX only — per-slug item files already self-declare at fetch time
@@ -1101,7 +1113,12 @@ const gate = {
 }
 function gateNoteFor(name) {
   if (name === 'registry' || name === 'aicanvas-mcp') return null // meta
-  if (gate.templates.has(name)) return PREMIUM_GATE_NOTE
+  if (gate.templates.has(name)) {
+    // A free system's template rides its components' free lane; fail closed otherwise.
+    const paid = [...gate.paidSystems].some((s) => name.startsWith(`${s}-`))
+    const known = [...gate.systems].some((s) => name.startsWith(`${s}-`))
+    return known && !paid ? FREE_GATE_NOTE : PREMIUM_GATE_NOTE
+  }
   if (gate.brains.has(name)) return PREMIUM_GATE_NOTE
   for (const system of gate.systems) {
     // A PAID system's foundation is premium like the rest of it; only a free
@@ -1491,8 +1508,8 @@ const navTs =
     null,
     2,
   )}\n`
-writeFileSync('app/lib/component-nav.generated.ts', navTs)
-console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categoryCounts).length} categories, ${mcpComponents.length} total)`)
+// Written at the end of the metadata block below, once the grid order is known:
+// CATEGORY_COMPONENTS lists each category's components in that order.
 
 // ── Registry-free component metadata (grid + homepage) ────────────────────────
 // COMPONENT_META mirrors `COMPONENTS.map(toMeta)` exactly — same order
@@ -1530,6 +1547,9 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
       const entry = { slug: m.slug, name: m.name, description: m.description, tags: transformTags(m) }
       if (m.image) entry.image = m.image
       if (m.badge) entry.badge = m.badge
+      // Both themes means a light shot exists too, and the card shows it on a
+      // light site (lightShot in app/lib/imagekit.ts).
+      if (m.dualTheme) entry.dualTheme = true
       return entry
     })
   // Premium components are first-class listings — woven into the grid, search
@@ -1538,6 +1558,7 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
   const premiumMetaList = premiumMetas.map((m) => {
     const entry = { slug: m.slug, name: m.name, description: m.description, tags: transformTags(m), badge: 'Premium' }
     if (m.image) entry.image = m.image
+    if (m.dualTheme) entry.dualTheme = true
     return entry
   })
 
@@ -1625,6 +1646,45 @@ console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categor
     `export const COMPONENT_META: ComponentMeta[] = ${JSON.stringify(metaList, null, 2)}\n`
   writeFileSync('app/lib/component-meta.generated.ts', metaTs)
   console.log(`Generated app/lib/component-meta.generated.ts (${metaList.length} components)`)
+
+  // Every component by name under each category, for the rail's Components
+  // tab, in categories.ts order and, inside a category, in grid order. A
+  // component with two category tags is listed under both, as the category
+  // pages list it. Fail loudly if the lists and the counts the grid shows ever
+  // disagree: a component missing here has no way into the rail.
+  const catOrder = [...readFileSync('app/lib/categories.ts', 'utf-8').matchAll(/^\s*label: '([^']+)'/gm)].map((m) => m[1])
+  const categoryComponents = Object.fromEntries(
+    catOrder.map((label) => [
+      label,
+      metaList.filter((m) => m.tags.some((t) => t.accent && t.label === label)).map((m) => ({ slug: m.slug, name: m.name })),
+    ]),
+  )
+  const listed = new Set(Object.values(categoryComponents).flatMap((rows) => rows.map((r) => r.slug)))
+  const navProblems = []
+  if (listed.size !== mcpComponents.length) {
+    navProblems.push(`CATEGORY_COMPONENTS lists ${listed.size} components, TOTAL_COMPONENTS is ${mcpComponents.length}`)
+  }
+  for (const label of catOrder) {
+    if (categoryComponents[label].length !== (categoryCounts[label] ?? 0)) {
+      navProblems.push(`"${label}" lists ${categoryComponents[label].length}, CATEGORY_COUNTS says ${categoryCounts[label] ?? 0}`)
+    }
+  }
+  if (navProblems.length > 0) {
+    const msg = `generate-registry: rail component lists disagree with the grid:\n  ${navProblems.join('\n  ')}`
+    // The dev server tolerates a component still in progress (no category tag
+    // yet), as the copy check does; a build never does.
+    if (devServer) console.warn(msg)
+    else throw new Error(msg)
+  }
+
+  writeFileSync(
+    'app/lib/component-nav.generated.ts',
+    navTs +
+      '\n// Category label to its components (slug + display name), in categories.ts\n' +
+      '// order and grid order, for the rail\'s Components tab.\n' +
+      `export const CATEGORY_COMPONENTS: Record<string, { slug: string; name: string }[]> = ${JSON.stringify(categoryComponents, null, 2)}\n`,
+  )
+  console.log(`Generated app/lib/component-nav.generated.ts (${Object.keys(categoryCounts).length} categories, ${mcpComponents.length} total)`)
 }
 
 // ── Lint the shipped JSON for transform integrity ─────────────────────────────

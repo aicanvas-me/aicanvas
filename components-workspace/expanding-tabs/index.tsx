@@ -1,22 +1,20 @@
 'use client'
-// npm install framer-motion @phosphor-icons/react
+// npm install framer-motion
 
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import {
-  Bell,
-  CalendarBlank,
-  EnvelopeSimple,
-  MagnifyingGlass,
-} from '@phosphor-icons/react'
+import { Bell } from '@/app/_icons/icons/bell'
+import { CalendarBlank } from '@/app/_icons/icons/calendar-blank'
+import { Mail } from '@/app/_icons/icons/mail'
+import { Search } from '@/app/_icons/icons/search'
 
 const SPRING = { type: 'spring' as const, stiffness: 420, damping: 30, mass: 0.7 }
 
 const tabs = [
-  { label: 'Inbox', icon: EnvelopeSimple },
+  { label: 'Inbox', icon: Mail },
   { label: 'Calendar', icon: CalendarBlank },
   { label: 'Alerts', icon: Bell },
-  { label: 'Search', icon: MagnifyingGlass },
+  { label: 'Search', icon: Search },
 ]
 
 export default function ExpandingTabs() {
@@ -58,7 +56,7 @@ export default function ExpandingTabs() {
                 transition={SPRING}
                 className="flex shrink-0 items-center justify-center text-[#161618] dark:text-[#F3F3F4]"
               >
-                <Icon size="1.18em" weight="regular" aria-hidden="true" />
+                <Icon size="1.18em" aria-hidden="true" />
               </motion.span>
 
               <AnimatePresence initial={false}>

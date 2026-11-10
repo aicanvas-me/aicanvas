@@ -3,7 +3,9 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Database, FileCsv } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check';
+import { Database } from '@/app/_icons/icons/database';
+import { FileSpreadsheet } from '@/app/_icons/icons/file-spreadsheet';
 // v2 component: imported through the build-time shim.
 import { Item, ItemActions, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '../../../lib/andromeda-pro.generated'
 import { tokens } from '../../../lib/andromeda-pro.generated'
@@ -25,7 +27,7 @@ function CheckRow({ size, variant, checked: startChecked = false, active, disabl
         onClick={() => setChecked((c) => !c)}
       >
         <ItemMedia>
-          <Database weight="regular" />
+          <Database size="1em" />
         </ItemMedia>
         <ItemContent>
           <ItemTitle>Warehouse</ItemTitle>
@@ -33,7 +35,7 @@ function CheckRow({ size, variant, checked: startChecked = false, active, disabl
         </ItemContent>
         {checked ? (
           <ItemActions>
-            <Check size={size === 'sm' ? tokens.iconSize.sm : tokens.iconSize.md} weight="regular" aria-hidden />
+            <Check size={size === 'sm' ? tokens.iconSize.sm : tokens.iconSize.md} aria-hidden />
           </ItemActions>
         ) : null}
       </button>
@@ -47,7 +49,7 @@ function StaticRow({ size, variant, description, boxed }) {
   return (
     <Item size={size} variant={variant}>
       <ItemMedia variant={boxed ? 'icon' : 'plain'}>
-        <FileCsv weight="regular" />
+        <FileSpreadsheet size="1em" />
       </ItemMedia>
       <ItemContent>
         <ItemTitle>q3-pipeline-risk.csv</ItemTitle>

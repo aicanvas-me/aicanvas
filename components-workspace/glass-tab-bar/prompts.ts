@@ -1,7 +1,7 @@
 import type { Platform } from '../../app/components/ComponentCard'
 
 export const prompts: Partial<Record<Platform, string>> = {
-  'Claude Code': `// npm install framer-motion @phosphor-icons/react
+  'Claude Code': `// npm install framer-motion
 
 Root element: className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-[#1A1A19]"
 The source ships h-full because AI Canvas renders it inside a sized preview frame. A standalone paste needs min-h-screen, or an ancestor with a real height, or the root collapses and takes its absolute layers with it.
@@ -22,12 +22,12 @@ Write this as a single self-contained React client component. Inline everything.
 
 Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866\`, \`object-cover opacity-60\`, over \`bg-[#1A1A19]\`.
 
-Tabs (Phosphor, \`weight="regular"\`):
-- \`House\` / "Home" / #3A86FF
-- \`Compass\` / "Explore" / #FF7B54
-- \`PlusCircle\` / "Create" / #06D6A0
-- \`ChatCircle\` / "Messages" / #FF5C8A
-- \`User\` / "Profile" / #B388FF
+Tabs (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- \`house\` / "Home" / #3A86FF
+- \`compass\` / "Explore" / #FF7B54
+- \`circle-plus\` / "Create" / #06D6A0
+- \`message-circle\` / "Messages" / #FF5C8A
+- \`user\` / "Profile" / #B388FF
 
 Pill container: \`motion.div\` \`relative isolate flex w-[380px] items-center justify-around rounded-full px-5 py-2.5\`:
 - \`background: rgba(255,255,255,0.07)\`
@@ -63,12 +63,12 @@ Write this as a single self-contained React client component. Inline everything.
 
 Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866\`, \`object-cover opacity-60\`, over \`bg-[#1A1A19]\`.
 
-Tabs (Phosphor, \`weight="regular"\`):
-- \`House\` / "Home" / #3A86FF
-- \`Compass\` / "Explore" / #FF7B54
-- \`PlusCircle\` / "Create" / #06D6A0
-- \`ChatCircle\` / "Messages" / #FF5C8A
-- \`User\` / "Profile" / #B388FF
+Tabs (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- \`house\` / "Home" / #3A86FF
+- \`compass\` / "Explore" / #FF7B54
+- \`circle-plus\` / "Create" / #06D6A0
+- \`message-circle\` / "Messages" / #FF5C8A
+- \`user\` / "Profile" / #B388FF
 
 Pill container: \`motion.div\` \`relative isolate flex w-[380px] items-center justify-around rounded-full px-5 py-2.5\` —
 - \`background: rgba(255,255,255,0.07)\`
@@ -104,12 +104,12 @@ Write this as a single self-contained React client component. Inline everything.
 
 Background: \`<img>\` at \`https://ik.imagekit.io/aitoolkit/bg%20images/Ethereal%20Orange%20Flower%201%20(1).png?updatedAt=1775223702866\`, \`object-cover opacity-60\`, over \`bg-[#1A1A19]\`.
 
-Tabs (Phosphor, \`weight="regular"\`):
-- \`House\` / "Home" / #3A86FF
-- \`Compass\` / "Explore" / #FF7B54
-- \`PlusCircle\` / "Create" / #06D6A0
-- \`ChatCircle\` / "Messages" / #FF5C8A
-- \`User\` / "Profile" / #B388FF
+Tabs (AI Canvas icons, \`@/components/icons/<name>\`, e.g. \`import { House } from '@/components/icons/house'\`), Line style, Regular weight. Install each icon with \`npx shadcn@latest add https://aicanvas.me/r/icon-<name>.json\`.
+- \`house\` / "Home" / #3A86FF
+- \`compass\` / "Explore" / #FF7B54
+- \`circle-plus\` / "Create" / #06D6A0
+- \`message-circle\` / "Messages" / #FF5C8A
+- \`user\` / "Profile" / #B388FF
 
 Pill container: \`motion.div\` \`relative isolate flex w-[380px] items-center justify-around rounded-full px-5 py-2.5\` —
 - \`background: rgba(255,255,255,0.07)\`

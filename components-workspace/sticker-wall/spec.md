@@ -9,7 +9,7 @@ Visual:
 - Testimonial cards: quote text wrapped in the card. Short playful quotes (3–10 words ideal). Min text size 13px, max ~16px.
 - Emoji cards: same card frame, one large emoji centered (~2.5× text size). Emoji set like 🦆 ✨ 💛 ✌️ 🫶 🔥 🍊 🌱 — vary.
 - Seed: ~8 testimonial cards + ~6 emoji stickers scattered at random positions/rotations on first paint.
-- Input pinned at bottom-center: a rounded pill input + a submit button (e.g. "Add", with a small arrow/paperplane phosphor icon). The input does NOT participate in physics.
+- Input pinned at bottom-center: a rounded pill input + a submit button (e.g. "Add", with a small arrow or paper-plane icon). The input does NOT participate in physics.
 
 Behaviour:
 - matter.js rigid bodies: a rectangle per card, sized to its rendered dimensions.

@@ -11,14 +11,10 @@ const signInWithOtp = vi.fn()
 vi.mock('../../lib/supabase/client', () => ({
   createClient: () => ({ auth: { signInWithPassword, signInWithOtp } }),
 }))
-vi.mock('./TerminatorReveal', () => ({ TerminatorReveal: () => null }))
 vi.mock('../../account/GoogleSignInButton', () => ({ GoogleSignInButton: () => null }))
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => <a href={href}>{children}</a>,
 }))
-// The icon barrel is thousands of modules the form never needs in a test;
-// stubbing it keeps the import graph small. PasswordInput itself still renders.
-vi.mock('@phosphor-icons/react', () => ({ Eye: () => null, EyeSlash: () => null }))
 
 function mount(onSuccess: () => void = () => {}) {
   return render(<SignInFormFields next="/" onSuccess={onSuccess} />)

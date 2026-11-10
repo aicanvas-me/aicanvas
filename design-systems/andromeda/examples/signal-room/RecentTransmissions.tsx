@@ -13,7 +13,8 @@
 
 'use client';
 
-import { Play, Pause } from '@phosphor-icons/react';
+import { Play } from '@/app/_icons/icons/play';
+import { Pause } from '@/app/_icons/icons/pause';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import { Card } from '../../components/Card';

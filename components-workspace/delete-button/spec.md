@@ -25,8 +25,8 @@ Mobile:
 Tech notes:
 - Framer Motion AnimatePresence (mode="popLayout") + shared layout prop drives the morph between the three pill states
 - Two effects manage timers: one setInterval for the countdown (cleared on state change/unmount), one setTimeout for the auto-reset out of the deleted state (cleared on unmount)
-- Icons: Phosphor ArrowUUpLeft (undo) and Check (deleted badge), weight="regular"
-- No external state/animation libraries beyond framer-motion and @phosphor-icons/react
+- Icons: AI Canvas Undo and Check (deleted badge)
+- No external state/animation libraries beyond framer-motion
 
 Approval:
 - [x] Visual approved by user (per publish-prep task brief: "visual approved, reviewer passed")

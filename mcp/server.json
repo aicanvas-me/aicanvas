@@ -1,9 +1,9 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.aicanvas-me/aicanvas",
-  "description": "Browse and install 75+ free animated, shadcn-compatible React components from AI Canvas.",
+  "description": "Design systems your AI agent builds with and you reshape, plus standalone React components.",
   "status": "active",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "websiteUrl": "https://aicanvas.me",
   "repository": {
     "url": "https://github.com/aicanvas-me/aicanvas",
@@ -15,10 +15,16 @@
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "@aicanvas/mcp",
-      "version": "0.3.0",
+      "version": "0.3.1",
       "transport": {
         "type": "stdio"
       }
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.aicanvas.me"
     }
   ]
 }

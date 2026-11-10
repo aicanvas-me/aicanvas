@@ -1,6 +1,6 @@
 /**
  * Shoot the Andromeda TEMPLATE posters and upload them to ImageKit under
- * `andromeda/templates/`.
+ * `andromeda/templates-2/`.
  *
  * Every template is shot twice, once per theme, and each shot is laid on a mat
  * (see THEMES for the colour and why). The poster is a 1920×1080 canvas; the
@@ -79,7 +79,8 @@ if (!IMAGEKIT_PRIVATE && !DRY) {
   console.error('Missing IMAGEKIT_PRIVATE_KEY. Add it to .env.local.')
   process.exit(1)
 }
-const IMAGEKIT_FOLDER = '/andromeda/templates'
+// Change both: TEMPLATE_ART_BASE in app/lib/imagekit.ts.
+const IMAGEKIT_FOLDER = '/andromeda/templates-2'
 const TEMP_DIR = path.join(__dirname, '../.screenshots-tmp-templates')
 const VIEWPORT = { width: 1600, height: 900 } // the width the templates lay out in
 const CANVAS = { width: 1920, height: 1080 } // the poster
@@ -195,7 +196,7 @@ async function main() {
   }
   await rm(TEMP_DIR, { recursive: true, force: true })
 
-  console.log(`\n${ok} uploaded, ${fail} failed → https://ik.imagekit.io/aitoolkit/andromeda/templates/`)
+  console.log(`\n${ok} uploaded, ${fail} failed → https://ik.imagekit.io/aitoolkit/andromeda/templates-2/`)
 }
 
 main().catch((err) => {

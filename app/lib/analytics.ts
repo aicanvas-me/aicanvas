@@ -22,6 +22,7 @@ type EventMap = {
   // The Andromeda Brain's zip download, the one install path with no command.
   'Brain Download': Record<string, never>
   'Subscribe Click': { cycle: string }
+  'Lifetime Click': Record<string, never>
   'Paywall Shown': { reason: string }
   'Install Gate Shown': Record<string, never>
   'Sign Up': Record<string, never>
@@ -29,10 +30,6 @@ type EventMap = {
   'MCP Token Copy': { ok: boolean }
   'Manage Subscription Open': Record<string, never>
   'Checkout Step': { step: string }
-  // Business is not open yet. `open` counts who wanted it enough to ask, and
-  // `submit` counts who left an address, so the gap between the two is the
-  // honest read on demand before a line of seat code exists.
-  'Business Waitlist': { plan: string; step: 'open' | 'submit' }
   /** The founding-offer pill in the home-page top bar. Its own event rather
    *  than 'Subscribe Click': that one counts people opening the checkout, and
    *  folding a banner click into it would read as checkout intent it has not
@@ -54,6 +51,7 @@ export const BEACON_EVENTS = [
   'System Install Tier Click',
   'Brain Download',
   'Subscribe Click',
+  'Lifetime Click',
   'Paywall Shown',
   'Install Gate Shown',
   'Sign Up',
@@ -61,7 +59,6 @@ export const BEACON_EVENTS = [
   'MCP Token Copy',
   'Manage Subscription Open',
   'Checkout Step',
-  'Business Waitlist',
   'Offer Banner Click',
   'js_error',
   '$pageview',

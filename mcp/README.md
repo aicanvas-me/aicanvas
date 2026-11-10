@@ -15,7 +15,7 @@ AI:    [edits the file directly]
 
 ## What it exposes
 
-Thirteen tools, derived from the live [aicanvas.me](https://aicanvas.me) registry. Adding a component to the website auto-updates the MCP within minutes. The registry holds 80+ standalone components, plus the Andromeda design system with its own components and templates.
+The tools below are derived from the live [aicanvas.me](https://aicanvas.me) registry. Adding a component to the website auto-updates the MCP within minutes. The registry holds 80+ standalone components, plus the Andromeda design system with its own components and templates.
 
 | Tool | Purpose |
 |---|---|
@@ -24,6 +24,8 @@ Thirteen tools, derived from the live [aicanvas.me](https://aicanvas.me) registr
 | `search_components` | Fuzzy keyword search across standalone AND design-system components (slugs, names, descriptions, categories, tags). Ranked results. |
 | `get_component` | Full metadata plus complete `.tsx` source code for one component. Resolves both standalone slugs and design-system component slugs (e.g. `andromeda-heat-grid`). |
 | `get_install_command` | Get the `npx shadcn add @aicanvas/<slug>` command for any standalone or design-system component. |
+| `search_icons` | Keyword search across the AI Canvas icon set (name, tags, category), best match first. |
+| `get_icon_install` | The shadcn command that installs one icon as an editable file, with the exact import and JSX. Line is free with an account; Duotone, Solid and Solid duotone are Premium. |
 | `list_systems` | List the design systems available (e.g. Andromeda), with component and template counts. |
 | `get_system` | Every file for a whole design system, plus its shared tokens, its component install commands, and the dependency chain. |
 | `list_templates` | List the ready-made templates (complete example screens), optionally filtered by design system. |
@@ -112,7 +114,9 @@ args = ["-y", "@aicanvas/mcp"]
 
 Inside any of the AI editors above, ask:
 
-> "What categories of components does AI Canvas have?"
+> "Use the aicanvas MCP to list the component categories."
+
+Start prompts with "use the aicanvas MCP": agents often skip MCP tools unless you name them.
 
 You should see all 11 categories with counts. If you don't, check the host's MCP logs. Typically a "Failed to spawn process" or network error means npx couldn't fetch the package, or the host wasn't restarted after editing the config.
 
@@ -133,7 +137,7 @@ This opens a browser UI where you can call each tool by hand.
 
 ### Accounts and premium content
 
-Browsing metadata (`list_categories`, `list_components`, `search_components`, `list_systems`, `list_templates`, `get_install_command`) is free and needs no account. Pulling actual source (`get_component`, `get_system`, `get_template`) runs against a free AI Canvas account: set `AICANVAS_TOKEN` from your account and the website gives you the ready-made config. Without a token, a free-component source pull returns a short "create a free account" notice instead of the code, and premium content (full design systems and templates) returns HTTP 402 with an upgrade link at [aicanvas.me/pricing](https://aicanvas.me/pricing). Update anytime with `npx @aicanvas/mcp@latest`.
+Browsing metadata (`list_categories`, `list_components`, `search_components`, `list_systems`, `list_templates`, `get_install_command`) is free and needs no account. Pulling actual source (`get_component`, `get_system`, `get_template`) runs against a free AI Canvas account: set `AICANVAS_TOKEN` from your account and the website gives you the ready-made config. Without a token, a free-component source pull returns a short "create a free account" notice instead of the code, and premium content (Andromeda Pro, its templates, the AI Brain and full design-system installs) returns a placeholder file with an upgrade link to [aicanvas.me/pricing](https://aicanvas.me/pricing) instead of the source. Update anytime with `npx @aicanvas/mcp@latest`.
 
 ## How the registry stays fresh
 

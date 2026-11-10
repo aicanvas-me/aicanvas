@@ -5,12 +5,12 @@ import { rankRelated } from '../../lib/related-order'
 import COMPONENT_ORDER from '../../../component-order.json'
 import { STANDALONE_PROPS } from '../../lib/standalone-props.generated'
 import ComponentPageView from './ComponentPageView'
+import { ExampleFrame } from './ExampleFrame'
 import { HighlightedCode } from '../../components/HighlightedCode'
 import { GITHUB_URL, SITE_URL } from '../../lib/config'
 import { collectionsForComponent } from '../../lib/collections'
 import { buildBreadcrumbJsonLd } from '../../lib/page-metadata'
-import { classifyContent } from '@/lib/registry/content-type'
-import { loadContentLookup } from '@/lib/registry/lookup'
+import { classifyPremium } from '@/lib/registry/premium-gate'
 import { splitPromptAtPaywall } from '@/lib/registry/prompt-blocks'
 import { getSessionEntitlement } from '@/app/lib/entitlement'
 
@@ -27,6 +27,7 @@ export function generateStaticParams() {
 // 'Blocks' is deliberately absent: a block is a page section, so the plain
 // 'Animated' default reads better than naming it.
 const DESCRIPTOR_PREFIXES: Record<string, string> = {
+  'AI Agent UI': 'AI Agent UI',
   Backgrounds: 'Animated Background',
   Typography: 'Animated Text',
   Widgets: 'Animated Widget',
@@ -49,21 +50,6 @@ function computeTitle(entry: ComponentEntry): string {
   const category = accentTag?.label ?? ''
   const descriptor = DESCRIPTOR_PREFIXES[category] ?? 'Animated'
   return `${entry.name} - ${descriptor} React Component`
-}
-
-// A degraded lookup fails closed (treated as premium) so nothing ever claims
-// "Free and open source" over closed content.
-function classifyPremium(slug: string) {
-  const lookup = loadContentLookup()
-  const contentType = classifyContent(slug, lookup)
-  return {
-    contentType,
-    isPremium:
-      lookup.degraded === true ||
-      contentType === 'premium-standalone' ||
-      contentType === 'design-system' ||
-      contentType === 'template',
-  }
 }
 
 function computeMetaDescription(entry: ComponentEntry, isPremium: boolean): string {
@@ -99,14 +85,16 @@ export async function generateMetadata({
   return {
     title,
     description,
-    alternates: { canonical: url },
+    // The markdown twin (app/md/components/[slug]) is advertised here so an
+    // agent that fetched the HTML can follow it (Codex does).
+    alternates: { canonical: url, types: { 'text/markdown': `${url}.md` } },
     keywords: [
       `${entry.name.toLowerCase()} react`,
       `${entry.name.toLowerCase()} framer motion`,
       `${entry.name.toLowerCase()} component`,
       `${entry.name.toLowerCase()} ai prompt`,
       `${category.toLowerCase()} react component`,
-      'animated react component',
+      'standalone react component',
       'react component AI prompt',
       'shadcn registry',
       'copy paste react component',
@@ -157,18 +145,20 @@ function buildFaq(
   const stacks = entry.tags.filter((t) => !t.accent).map((t) => t.label)
   // Section-scale entries are blocks, not components (see isBlockEntry).
   const noun = isBlockEntry(entry) ? 'block' : 'component'
+  const usesIcons = entry.code.includes('@/components/icons/')
   const faq: { q: string; a: string }[] = [
     {
       q: `Is ${entry.name} free to use?`,
       a: isPremium
         ? `${entry.name} is a Premium AI Canvas ${noun}. Premium unlocks the full source code, the full remix prompt, and one-command installs for every Premium component, block, and template.`
-        : `Yes. ${entry.name} is part of the free AI Canvas library and is open source under the MIT license, so you can use it in personal and commercial projects.`,
+        : `Yes. ${entry.name} is part of the free AI Canvas library and is open source under the MIT license, so you can use it in personal and commercial projects.` +
+          (usesIcons ? ' Its icons come from the AI Canvas icon set and are free to use too.' : ''),
     },
     {
       q: `How do I install ${entry.name}?`,
       a: isPremium
         ? `Premium unlocks one-command installs: run the shadcn CLI with your AI Canvas token, or connect the AI Canvas MCP server and ask your AI editor to install it for you. Premium also unlocks the full remix prompt in the Remix panel.`
-        : `One command: npx shadcn@latest add ${SITE_URL}/r/${entry.slug}.json, free with a free AI Canvas account. Or connect the AI Canvas MCP server and ask your AI editor to install ${entry.name} for you. You can also copy the source straight from the Code tab, no account needed. It works in any React project with Tailwind CSS.`,
+        : `One command: npx shadcn@latest add ${SITE_URL}/r/${entry.slug}.json, free with a free AI Canvas account. Or connect the AI Canvas MCP server and ask your AI editor to install ${entry.name} for you. You can also copy the source straight from the Code tab, no account needed${usesIcons ? '; its icons install with the same free account' : ''}. It works in any React project with Tailwind CSS.`,
     },
     {
       q: `What is ${entry.name} built with?`,
@@ -207,6 +197,7 @@ function toMeta(c: (typeof COMPONENTS)[number]): ComponentMeta {
     description: c.description,
     tags: c.tags,
     image: c.image,
+    dualTheme: c.dualTheme,
   }
 }
 
@@ -219,7 +210,7 @@ export default async function Page({
   const entry = COMPONENTS.find((c) => c.slug === slug)
   if (!entry) notFound()
 
-  const { PreviewComponent } = entry
+  const { PreviewComponent, Examples } = entry
 
   // When the registry gate is enforcing (launch), source must NOT ship in the
   // page HTML — otherwise anyone reads it without a metered pull. The Code tab
@@ -285,6 +276,10 @@ export default async function Page({
     entry.code.match(/^\/\/ font-pkg: .+$/m)?.[0],
     entry.code.match(/^\/\/ npm install .+$/m)?.[0],
   ].filter(Boolean).join('\n')
+  const iconItems = [...new Set(
+    [...entry.code.matchAll(/from ['"]@\/components\/icons\/([A-Za-z0-9-]+)['"]/g)]
+      .map(([, name]) => (name === 'IconBase' ? 'icon-base' : `icon-${name}`)),
+  )].sort()
 
   // ── Related ──────────────────────────────────────────────────────────────
   // Pass the full pool of same-category siblings, most related then newest
@@ -370,16 +365,20 @@ export default async function Page({
         designSystem={entry.designSystem}
         premium={contentType === 'premium-standalone'}
         framedPreview={entry.staticPreview}
+        previewHeight={entry.previewHeight}
+        previewHeightMobile={entry.previewHeightMobile ?? entry.previewHeight}
         isBlock={isBlockEntry(entry)}
         related={related}
         highlightedCode={withholdSource ? undefined : <HighlightedCode code={entry.code} />}
         enforcing={enforcing || isPremium}
         freeAccountGate={freeAccountGate}
         codeDirectives={codeDirectives}
+        iconItems={iconItems}
         useCases={entry.useCases}
         about={entry.about}
         faq={faq}
         collections={collections}
+        examples={Examples ? <Examples Frame={ExampleFrame} /> : undefined}
       >
         <PreviewComponent />
       </ComponentPageView>

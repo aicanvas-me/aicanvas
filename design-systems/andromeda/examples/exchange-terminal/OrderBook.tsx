@@ -4,7 +4,8 @@
 
 'use client';
 
-import { Funnel, Printer } from '@phosphor-icons/react';
+import { Funnel } from '@/app/_icons/icons/funnel';
+import { PrinterIcon } from '@/app/_icons/icons/printer';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import { CornerMarkers } from '../../components/CornerMarkers';
@@ -91,7 +92,6 @@ function maxAmount(rows: (typeof asks)[number][]) {
 }
 
 // Two small coloured bars stacked — represents both / asks / bids view mode.
-// Used as `children` of IconButton (custom glyph, not a phosphor icon).
 function ModeIcon({ topColor, botColor }: { topColor: string; botColor: string }) {
   return (
     <span style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -151,7 +151,7 @@ export function OrderBook() {
           align="right"
         />
 
-        <IconButton aria-label="Print depth" variant="outline" size="sm" icon={Printer} />
+        <IconButton aria-label="Print depth" variant="outline" size="sm" icon={PrinterIcon} />
       </div>
 
       {/* Column headers */}
@@ -180,8 +180,8 @@ export function OrderBook() {
           justifyContent: 'flex-end',
         }}
       >
-        {asks.map((row) => (
-          <DepthRow key={`ask-${row.p}`} row={row} side="ask" depth={row.a / askMax} />
+        {asks.map((row, i) => (
+          <DepthRow key={`ask-${row.p}-${i}`} row={row} side="ask" depth={row.a / askMax} />
         ))}
       </div>
 
@@ -231,13 +231,13 @@ export function OrderBook() {
         >
           More
         </span>
-        <Funnel weight="regular" size={14} style={{ color: themeColor.accent[300] }} />
+        <Funnel size={14} style={{ color: themeColor.accent[300] }} />
       </div>
 
       {/* Bids */}
       <div style={{ flex: '1 1 0', overflow: 'hidden' }}>
-        {bids.map((row) => (
-          <DepthRow key={`bid-${row.p}`} row={row} side="bid" depth={row.a / bidMax} />
+        {bids.map((row, i) => (
+          <DepthRow key={`bid-${row.p}-${i}`} row={row} side="bid" depth={row.a / bidMax} />
         ))}
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '../lib/supabase/client'
+import { buttonClasses } from '../components/buttonClasses'
 
 // ─── ClaimForm ────────────────────────────────────────────────────────────────
 // The one claim path on /welcome: email in, one-time sign-in link out. This is
@@ -11,6 +12,7 @@ import { createClient } from '../lib/supabase/client'
 // magic link can only go to the address that owns the Premium account.
 // shouldCreateUser:false keeps account creation on the deliberate sign-up path,
 // and the sent-state copy stays neutral about whether the email has an account.
+// It fills the claim card it sits on: the page owns its width and spacing.
 
 export function ClaimForm() {
   const [email, setEmail] = useState('')
@@ -75,12 +77,12 @@ export function ClaimForm() {
 
   if (sent) {
     return (
-      <div className="mt-8 w-full max-w-sm">
+      <div className="w-full">
         <div
           ref={sentRef}
           tabIndex={-1}
           role="status"
-          className="rounded-lg border border-olive-500/30 bg-olive-500/10 px-4 py-3 text-left text-sm leading-relaxed text-sand-200 outline-none"
+          className="rounded-xl border border-accent/30 bg-accent/10 px-4 py-3.5 text-left text-sm leading-relaxed text-sand-200 outline-none"
         >
           Check your inbox. If an account exists for <strong className="text-sand-50">{email}</strong>,
           a one-time sign-in link is on its way. It expires in 1 hour.
@@ -91,7 +93,7 @@ export function ClaimForm() {
             setSent(false)
             setEmail('')
           }}
-          className="mt-3 text-xs text-sand-500 transition-colors hover:text-sand-300"
+          className="mt-3 rounded-md text-sm font-medium text-sand-400 transition-colors hover:text-sand-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           Use a different email
         </button>
@@ -100,7 +102,7 @@ export function ClaimForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-8 w-full max-w-sm">
+    <form onSubmit={handleSubmit} className="w-full">
       <label htmlFor="claim-email" className="sr-only">
         Email you used at checkout
       </label>
@@ -115,15 +117,18 @@ export function ClaimForm() {
           clearStatus()
         }}
         placeholder="Email you used at checkout"
-        className="h-11 w-full rounded-lg border border-sand-700 bg-sand-900 px-4 text-sm text-sand-100 placeholder:text-sand-500 focus:border-olive-500 focus:outline-none"
+        className="h-11 w-full rounded-control border border-sand-700 bg-sand-950 px-4 text-sm text-sand-100 transition-colors placeholder:text-sand-500 hover:border-sand-600 focus:border-accent focus:outline-none focus-visible:ring-2 focus-visible:ring-accent/25"
       />
       <button
         type="submit"
         disabled={submitting}
-        className="mt-3 inline-flex h-11 w-full items-center justify-center rounded-lg bg-olive-500 px-6 text-sm font-semibold text-sand-950 transition-colors hover:bg-olive-400 disabled:cursor-not-allowed disabled:opacity-60"
+        className={`mt-3 h-11 ${buttonClasses({ variant: 'primary', size: 'lg', fullWidth: true })}`}
       >
         {submitting ? 'Sending…' : 'Email me my sign-in link'}
       </button>
+      <p className="mt-3 text-center text-xs leading-relaxed text-sand-400">
+        Newsletter included. Unsubscribe anytime, free.
+      </p>
       {error && (
         <p role="alert" className="mt-3 text-left text-sm text-red-400">
           {error}

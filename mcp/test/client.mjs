@@ -7,10 +7,10 @@ import { spawn } from 'node:child_process'
 const SERVER = new URL('../dist/index.js', import.meta.url).pathname
 
 export class McpClient {
-  constructor({ registryBase, extraEnv = {}, timeoutMs = 15000 } = {}) {
+  constructor({ registryBase, extraEnv = {}, timeoutMs = 15000, server = SERVER } = {}) {
     const env = { ...process.env, ...extraEnv }
     if (registryBase) env.AICANVAS_REGISTRY_BASE = registryBase
-    this.proc = spawn('node', [SERVER], { stdio: ['pipe', 'pipe', 'pipe'], env })
+    this.proc = spawn('node', [server], { stdio: ['pipe', 'pipe', 'pipe'], env })
     this.timeoutMs = timeoutMs
     this.buf = ''
     this.pending = new Map()

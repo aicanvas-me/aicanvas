@@ -10,7 +10,7 @@ import { useReducedMotion, rowContainer, rowItem } from './lib/motion';
 import { mq } from './lib/responsive';
 import { IconButton } from './IconButton';
 import { Tooltip } from './Tooltip';
-import { Info } from '@phosphor-icons/react';
+import { InfoIcon } from '@/app/_icons/icons/info';
 
 type RowRecord = Record<string, ReactNode>;
 
@@ -422,7 +422,7 @@ export const DataTable = forwardRef<HTMLDivElement, DataTableProps>(function Dat
                       <IconButton
                         variant="ghost"
                         size="sm"
-                        icon={Info}
+                        icon={InfoIcon}
                         aria-label="More details"
                         // iOS Safari does not focus a tapped button, and the Tooltip opens on focus.
                         onClick={(event) => {

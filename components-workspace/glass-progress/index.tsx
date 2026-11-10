@@ -1,10 +1,10 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, useSpring, useMotionValueEvent, useReducedMotion } from 'framer-motion'
-import { ArrowClockwise } from '@phosphor-icons/react'
+import { RotateCw } from '@/app/_icons/icons/rotate-cw'
 
 
 const GLASS_BLUR = {
@@ -217,7 +217,7 @@ export default function GlassProgress() {
           }}
           aria-label="Replay animation"
         >
-          <ArrowClockwise size={18} weight="regular" className="text-white/50" />
+          <RotateCw size={18} className="text-white/50" />
         </motion.button>
       </div>
     </div>

@@ -49,7 +49,7 @@ function lerpAngle(current: number, target: number, speed: number): number {
 export default function NoiseField() {
   const containerRef = useRef<HTMLDivElement>(null)
   const canvasRef    = useRef<HTMLCanvasElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
   const isDarkRef   = useRef(isDark)
   const mouseRef    = useRef<{ x: number; y: number } | null>(null)
   const arrowsRef   = useRef<Arrow[]>([])

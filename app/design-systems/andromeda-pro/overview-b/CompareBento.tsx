@@ -11,7 +11,7 @@
 // a switch, a checkbox and a radio is Controls, not Toggle.
 
 import type { CSSProperties, ReactNode } from 'react'
-import { GearSix } from '@phosphor-icons/react'
+import { GearSix } from '@/app/_icons/icons/gear-six'
 import {
   Alert,
   AlertContent,

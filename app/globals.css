@@ -90,6 +90,33 @@
   --foreground: #1B1B1C;
 }
 
+/* Accent role values (the roles are named in the @theme block below). Same
+   two scopes as the dark variant: the site first, then a preview wrapper that
+   disagrees with it. Success: emerald-700 holds 5:1 on the light page,
+   emerald-400 glows on sand-950. Premium, Free and New follow the same split: a
+   deep step that reads on sand-50, a light step that glows on sand-950. The AI
+   Brain is part of Premium, so ai is the premium cyan. */
+:root,
+[data-card-theme="light"] {
+  --accent: var(--color-sand-900);
+  --accent-foreground: var(--color-sand-50);
+  --success: #047857;
+  --premium: var(--color-cyan-700);
+  --free: #B45309;
+  --new: #6D28D9;
+  --ai: var(--premium);
+}
+.dark,
+[data-card-theme="dark"] {
+  --accent: var(--color-sand-50);
+  --accent-foreground: var(--color-sand-950);
+  --success: #34D399;
+  --premium: var(--color-cyan-400);
+  --free: var(--color-ember-400);
+  --new: #B79CFF;
+  --ai: var(--premium);
+}
+
 /* Tell the browser which way the page leans, so every control it draws for us
    — scrollbars above all — comes out in the right palette without us styling
    it. This is what lets the custom scrollbar CSS stay deleted: a native bar on
@@ -138,7 +165,7 @@ html {
   --text-xxs: 0.625rem;
   --text-xxs--line-height: 0.875rem;
 
-  /* ── Sand scale — neutral cool gray (Phosphor-inspired) ── */
+  /* ── Sand scale — neutral cool gray ── */
   --color-sand-50:  #F4F4FA;
   --color-sand-100: #EEEEF3;
   --color-sand-200: #DFDFE3;
@@ -151,7 +178,33 @@ html {
   --color-sand-900: #1B1B1C;
   --color-sand-950: #0E0E0F;
 
-  /* ── Olive accent — primary (actions) ── */
+  /* ── Accent roles (site chrome) ──
+     The site's accent is NEUTRAL: the primary fill, links, focus rings and
+     selected marks are ink, near-black on light and near-white on dark. Every
+     site surface reads these roles, never a raw hue, so a colour change is one
+     edit to --accent below. Opacity modifiers (bg-accent/10, ring-accent/40)
+     tint from the same ink.
+       accent             fills, emphasised text and icons, borders, rings
+       accent-foreground  text and icons sitting ON an accent fill
+       success            confirmation only: copied, sent, saved (green)
+       premium            the Premium tier mark (cyan)
+       free               the Free / MIT tier mark (orange)
+       new                the New mark (purple)
+       ai                 the AI Brain marks, the premium cyan
+     These hues colour SMALL marks only: chips, tier icons, eyebrows, check
+     glyphs. Never a button, a fill behind text, or a heading. Error stays the
+     red family already in use. The values flip per theme in the :root / .dark
+     blocks above, under the same two scopes as the dark variant. */
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-premium: var(--premium);
+  --color-free: var(--free);
+  --color-new: var(--new);
+  --color-ai: var(--ai);
+
+  /* ── Olive — the former site accent. No site page uses it; kept for the
+     studio tools and the internal palette page. ── */
   --color-olive-400: #DAE4A0;
   --color-olive-500: #A8B94D;
   --color-olive-600: #869631;
@@ -167,16 +220,52 @@ html {
      higher-contrast 700) and this for its hover; dark mode never touches it. */
   --color-olive-800: #4A551A;
 
-  /* ── Ember accent — secondary (attention, rhythm) ── */
+  /* ── Ember — the Free mark on dark (the free role above). ── */
   --color-ember-400: #FFB574;
   --color-ember-500: #F59E42;
   --color-ember-600: #D97B1A;
 
-  /* ── Cyan accent — complementary, used sparingly for occasional highlights
-     (e.g. the "Updated" nav badge) so they read distinct from the olive. ── */
+  /* ── Cyan — the Premium mark: 400 on dark, 700 on light (the premium role). ── */
   --color-cyan-400: #7DD3FC;
   --color-cyan-500: #38BDF8;
   --color-cyan-600: #0284C7;
+  /* Light-theme text step for the cyan chips: 6:1 on sand-50 at 10px, where
+     600 reads 3.7:1. The same sky family as the steps above. */
+  --color-cyan-700: #0369A1;
+
+  /* ── Glow — the cool blue light on the homepage proof cards and their
+     tracing beam, the one lit colour that is not olive. ── */
+  --color-glow: #D6E2FF;
+}
+
+/* ── Corner radius roles (site chrome) ──
+   One value per role, so changing a line here reshapes every surface that
+   plays that role across the site. Not inline: the utilities read the
+   variables, so a value can also be overridden at runtime.
+     section      the big boxes: homepage chapters, bento cards, plan cards,
+                  call-to-action bands, the icons toolbar and tiles
+     shell        the outer frame of a double bezel (FAQ, catalog card,
+                  component preview); shell-inner is the frame inside it
+     card         a card or panel inside a section, menus and popovers
+     inset        media or a well inside a card, code blocks, alerts, tooltips,
+                  multi-line text areas
+     control      every control: buttons, text and search fields, tabs, nav
+                  rows, segmented pickers. Fully round (ruled 2026-10-29), so a
+                  box that only borrowed this size takes inset instead
+     chip         keyboard keys, inline code, logo chips, menu rows in a small menu
+     tag          tier labels and the tiniest marks
+   Pills and circles stay rounded-full: that shape is geometry, not a size.
+   Standalone components and the design systems keep their own radii; only
+   site chrome reads these. */
+@theme {
+  --radius-section: 1.5rem;
+  --radius-shell: 1.75rem;
+  --radius-shell-inner: calc(var(--radius-shell) - 0.375rem);
+  --radius-card: 1rem;
+  --radius-inset: 0.75rem;
+  --radius-control: calc(infinity * 1px);
+  --radius-chip: 0.375rem;
+  --radius-tag: 0.25rem;
 }
 
 body {
@@ -263,6 +352,13 @@ html[data-frame][data-frame-light] {
   ) {
   transition: none !important;
 }
+/* Site chrome that lives inside a preview wrapper (the Code tab: source,
+   paywall, its buttons) is not the component's animation, so it freezes with
+   the rest of the site and lands on the new theme at once. */
+.theme-switching [data-card-chrome],
+.theme-switching [data-card-chrome] * {
+  transition: none !important;
+}
 
 /* ── Theme-switch view transition ── */
 /* The only cross-page animation the site runs is the theme toggle's view
@@ -289,7 +385,7 @@ html[data-frame][data-frame-light] {
        app/design-systems/andromeda/layout.tsx, app/ideation/layout.tsx
      - it sets overflow on one axis (overflow-x-hidden), which computes the
        other axis to auto AND drops its flex auto-minimum to 0 so it shrinks
-       to the column rather than growing past it: app/home/HomePageClient.tsx
+       to the column rather than growing past it: app/home/HomePage.tsx
 
    Declared here rather than inline so the :has() override can win — an inline
    scrollbar-gutter on the column would beat any selector. */
@@ -301,7 +397,6 @@ html[data-frame][data-frame-light] {
 .app-scroll-column:has([data-owns-scroll]) {
   scrollbar-gutter: auto;
 }
-
 /* ── Fullscreen component preview: kill the phantom 80px of scroll ──
    The panel is `sm:inset-10`, so its height is 100vh MINUS 80px. Almost every
    component in the catalogue is authored `min-h-screen` (100vh) to be
@@ -371,6 +466,18 @@ html[data-frame][data-frame-light] {
     scrollbar-width: auto;
     scrollbar-color: auto;
   }
+  /* The sidebar catalog list: no thumb at rest, the usual thin thumb while it
+     scrolls (CatalogNav sets data-scrolling). The track stays reserved by its
+     stable gutter, so nothing shifts when the thumb appears. */
+  [data-catalog-list] {
+    scrollbar-color: transparent transparent;
+  }
+  [data-catalog-list][data-scrolling] {
+    scrollbar-color: var(--color-sand-300) transparent;
+  }
+  .dark [data-catalog-list][data-scrolling] {
+    scrollbar-color: var(--color-sand-800) transparent;
+  }
 }
 
 /* Step timeline connector — used by app/components/Step.tsx */
@@ -422,7 +529,7 @@ html[data-frame][data-frame-light] {
 
 /* Homepage proof pair — one beam of light tracing the OUTER edge of both cards
    as a single rectangle, ignoring the gap between them.
-   See app/home/HomePageClient.tsx.
+   See app/home/HomePage.tsx.
 
    An SVG rect with a travelling dash, not a positioned dot. Three reasons:
    the stroke follows the rounded corners exactly, dashoffset moves at a
@@ -514,4 +621,10 @@ html:not(.dark):not([data-frame]) .andromeda-theme-scope {
   --andromeda-theme-gradient-accent-sweep: radial-gradient(ellipse 80% 70% at 0% 0%, #DDF2EC 0%, #E9F5F1 25%, #FAFAFB 65%);
   --andromeda-theme-gradient-surface-soft: linear-gradient(180deg, #FFFFFF 0%, #F1F1F2 100%);
   --andromeda-theme-shadow-color: rgba(17, 17, 20, 0.16);
+}
+
+/* The skip link's target (app/layout.tsx) takes focus only so the next Tab
+   starts inside the page; it is a region, not a control, so no ring. */
+#page-content:focus {
+  outline: none;
 }

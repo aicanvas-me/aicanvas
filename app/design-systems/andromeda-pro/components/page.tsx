@@ -6,7 +6,6 @@
 // imported here, because this is a SERVER component and they would drag every
 // design-system component (three.js included) into an index page that renders
 // none of them.
-import { SiteFooter } from '../../../components/SiteFooter'
 import { ShowcaseInstall } from '../../../_components/ShowcaseInstall'
 import { ANDROMEDA_COMPONENT_META } from '../../../_lib/andromeda-pro/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../../scripts/lib/design-systems.config.mjs'
@@ -40,11 +39,8 @@ export default function ShowcasePage() {
 
   return (
     <>
-      <ShowcaseInstall installs={[{ slug: 'andromeda-pro', label: 'All components' }]} phoneFallback={false} />
+      <ShowcaseInstall installs={[{ slug: 'andromeda-pro', label: 'All components' }]} />
       <AndromedaGallery components={components} templateCount={andromeda?.templates.length ?? 0} />
-      <div className="mx-auto w-full max-w-6xl px-4 pb-10 sm:px-6">
-        <SiteFooter />
-      </div>
     </>
   )
 }

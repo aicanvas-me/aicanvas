@@ -2,7 +2,7 @@
 
 import { forwardRef } from 'react';
 import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react';
-import { X } from '@phosphor-icons/react';
+import { X } from '@/app/_icons/icons/x';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
 import { cn, andromedaVars } from './lib/utils';
@@ -104,7 +104,7 @@ export const Tag = forwardRef<HTMLSpanElement, TagProps>(function Tag(
           onClick={onClose}
           className={closeButtonClass}
         >
-          <X size={12} weight="regular" />
+          <X size={12} />
         </button>
       ) : null}
     </span>

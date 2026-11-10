@@ -1,6 +1,8 @@
 // @ts-nocheck — this spec AUTHORS JSX against untyped design-system
 // components. Data-only specs in this directory need no such line.
-import { Info, Pulse, Warning } from '@phosphor-icons/react'
+import { InfoIcon } from '@/app/_icons/icons/info';
+import { Activity } from '@/app/_icons/icons/activity';
+import { TriangleAlert } from '@/app/_icons/icons/triangle-alert';
 import {
   Alert,
   AlertIcon,
@@ -15,7 +17,7 @@ import type { MatrixSpec } from './types'
 const body = (Icon: unknown, title: string, description: string) => (
   <>
     <AlertIcon>
-      <Icon weight="light" />
+      <Icon size="1em" />
     </AlertIcon>
     <AlertContent>
       <AlertTitle>{title}</AlertTitle>
@@ -37,22 +39,22 @@ export const alert: MatrixSpec = {
     {
       label: 'Default',
       props: { variant: 'default' },
-      children: body(Info, 'All good', 'Every service is running normally.'),
+      children: body(InfoIcon, 'All good', 'Every service is running normally.'),
     },
     {
       label: 'Accent',
       props: { variant: 'accent' },
-      children: body(Pulse, 'New activity', '3 new events in the last hour.'),
+      children: body(Activity, 'New activity', '3 new events in the last hour.'),
     },
     {
       label: 'Warning',
       props: { variant: 'warning' },
-      children: body(Warning, 'Caution', 'Storage is at 88% of your limit.'),
+      children: body(TriangleAlert, 'Caution', 'Storage is at 88% of your limit.'),
     },
     {
       label: 'Fault',
       props: { variant: 'fault' },
-      children: body(Warning, 'Connection lost', 'Reconnecting. ETA 8 seconds.'),
+      children: body(TriangleAlert, 'Connection lost', 'Reconnecting. ETA 8 seconds.'),
     },
   ],
   // A banner is not interactive; the source declares no hover, focus or

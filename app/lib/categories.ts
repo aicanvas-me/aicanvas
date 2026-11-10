@@ -4,11 +4,6 @@
 // `title` and `description` drive per-category SEO metadata.
 // `h1` and `intro` are the on-page copy that appears above the grid.
 
-// The eyebrow above every components/blocks title. It leads with "Standalone"
-// because these are not part of any design system: each one drops into an app
-// that already has its own. The design systems have their own section.
-export const COMPONENTS_SECTION_OVERLINE = 'Standalone: Components & Blocks'
-
 export type Category = {
   label: string
   slug: string
@@ -19,6 +14,16 @@ export type Category = {
 }
 
 export const CATEGORIES: readonly Category[] = [
+  {
+    label: 'AI Agent UI',
+    slug: 'ai-agent-ui',
+    title: 'AI Agent UI Components for React, Tailwind & shadcn',
+    description:
+      'React components for AI agent products: plans, tool calls, reasoning traces, approvals, streaming answers and context meters. Tailwind CSS and Motion.',
+    h1: 'AI Agent UI Components for React',
+    intro:
+      'Components for the screens an AI agent works in: its plan, its tool calls, its reasoning, the answer as it streams and the moments it needs your approval. Built with Tailwind CSS and Motion, ready to install via the shadcn CLI.',
+  },
   {
     label: 'Cards & Modals',
     slug: 'cards-modals',

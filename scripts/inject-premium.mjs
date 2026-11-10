@@ -32,6 +32,7 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync
 import { join, dirname, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { FREE_DS_PLACEHOLDER_SENTINEL, DESIGN_SYSTEMS } from './lib/design-systems.config.mjs'
+import { ICONS_KEPT, ICON_PARTS, iconSetAction, isPinnedBuild } from './lib/icon-source.mjs'
 
 const ROOT = process.cwd()
 const TARGET = join(ROOT, 'components-workspace-premium')
@@ -114,7 +115,8 @@ function stripMarkerBlock(text) {
       stripping = true
       return false
     }
-    if (stripping && /^\s*\/\//.test(line)) return false
+    // A `// npm install` line is the item's npm dependency list (getDeps), not marker text.
+    if (stripping && /^\s*\/\//.test(line) && !/^\/\/ npm install /.test(line)) return false
     stripping = false
     return true
   }).join('\n')
@@ -1000,7 +1002,7 @@ mkdirSync(TARGET, { recursive: true })
 // ── 1. Resolve the source ──────────────────────────────────────────────────
 let source = process.env.PREMIUM_LOCAL_PATH || ''
 let tmpClone = ''
-if (!source && process.env.GITHUB_PAT_PREMIUM) {
+if (isPinnedBuild(process.env)) {
   tmpClone = '/tmp/aicanvas-premium-inject'
   rmSync(tmpClone, { recursive: true, force: true })
   const remote = `https://x-access-token:${process.env.GITHUB_PAT_PREMIUM}@github.com/aicanvas-me/aicanvas-premium.git`
@@ -1066,6 +1068,7 @@ if (!source) {
   // teaser modules must still exist — write both from the committed fallback.
   writeBrainTeaser(BRAIN_TEASER_MODULE, null)
   writeBrainTeaser(BRAIN_TEASER_PRO_MODULE, null)
+  rmSync(join(ROOT, ICONS_KEPT), { recursive: true, force: true })
   log('no PREMIUM_LOCAL_PATH and no GITHUB_PAT_PREMIUM — free-only build (skip).')
   process.exit(0)
 }
@@ -1146,7 +1149,11 @@ for (const slug of standalones) {
     writeFileSync(join(outDir, 'prompts.ts'), strippedPrompts)
   }
 
-  injected.push({ slug, meta, hasPrompts })
+  const examplesPath = join(srcDir, 'examples.tsx')
+  const hasExamples = existsSync(examplesPath)
+  if (hasExamples) writeFileSync(join(outDir, 'examples.tsx'), stripMarkerBlock(readFileSync(examplesPath, 'utf8')))
+
+  injected.push({ slug, meta, hasPrompts, hasExamples })
 }
 
 // ── 4. Bijection: manifest ⇄ injected folders ──────────────────────────────
@@ -1467,10 +1474,11 @@ const imports = [
 ]
 const decls = []
 const entries = []
-for (const { slug, meta, hasPrompts } of injected) {
+for (const { slug, meta, hasPrompts, hasExamples } of injected) {
   const v = ident(slug)
   if (hasPrompts) imports.push(`import { prompts as ${v}_p } from '../../components-workspace-premium/${slug}/prompts'`)
   decls.push(`const ${v} = dynamic(() => import('../../components-workspace-premium/${slug}'))`)
+  if (hasExamples) decls.push(`const ${v}_e = dynamic(() => import('../../components-workspace-premium/${slug}/examples'))`)
   const tags = JSON.stringify(meta.tags ?? [{ label: 'Cards', accent: true }])
   entries.push(
     '  {\n' +
@@ -1481,9 +1489,12 @@ for (const { slug, meta, hasPrompts } of injected) {
       (meta.image ? `    image: ${JSON.stringify(meta.image)},\n` : '') +
       (meta.dualTheme ? '    dualTheme: true,\n' : '') +
       (meta.staticPreview ? '    staticPreview: true,\n' : '') +
+      (Number.isFinite(meta.previewHeight) ? `    previewHeight: ${meta.previewHeight},\n` : '') +
+      (Number.isFinite(meta.previewHeightMobile) ? `    previewHeightMobile: ${meta.previewHeightMobile},\n` : '') +
       (meta.isBlock ? '    isBlock: true,\n' : '') +
       `    badge: 'Premium',\n` +
       `    PreviewComponent: ${v},\n` +
+      (hasExamples ? `    Examples: ${v}_e,\n` : '') +
       `    code: componentCodes[${JSON.stringify(slug)}] ?? '',\n` +
       `    prompts: ${hasPrompts ? `${v}_p` : '{}'},\n` +
       '  },',
@@ -1493,6 +1504,33 @@ const shim = [...imports, '', ...decls, '', 'export const PREMIUM_COMPONENTS: Co
 writeFileSync(SHIM, shim)
 
 writeBuildInfo(builtSha, brainFileCounts)
+
+// The icon set ships from the same vault checkout; keep the parts the icon scripts
+// read (scripts/lib/icon-source.mjs) before the clone goes. Only a pinned build fails here.
+rmSync(join(ROOT, ICONS_KEPT), { recursive: true, force: true })
+const pinnedIcons = isPinnedBuild(process.env)
+const iconsFailLoud = (why) => {
+  console.error(
+    `\n🚫 [inject-premium] ICON SET MISSING FROM THE PIN ${pinnedSha}: ${why}\n` +
+      '   The icon set must be in the pinned vault commit (icons/react/IconBase.tsx and its folders).\n' +
+      '   Without it /icons ships blank. Pin a vault commit that has icons/, do not ship.',
+  )
+  if (tmpClone) rmSync(tmpClone, { recursive: true, force: true })
+  process.exit(1)
+}
+try {
+  const icons = join(source, 'icons')
+  const action = iconSetAction({ pinned: pinnedIcons, iconsDir: icons })
+  if (action === 'fail') iconsFailLoud('icons/react/IconBase.tsx not found')
+  if (action === 'copy') {
+    for (const part of ICON_PARTS) {
+      if (existsSync(join(icons, part))) cpSync(join(icons, part), join(ROOT, ICONS_KEPT, part), { recursive: true })
+    }
+  }
+} catch (e) {
+  if (pinnedIcons) iconsFailLoud(`copy failed: ${e.message}`)
+  console.warn(`[inject-premium] icon source not kept: ${e.message}`)
+}
 
 if (tmpClone) rmSync(tmpClone, { recursive: true, force: true })
 log(

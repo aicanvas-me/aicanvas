@@ -12,7 +12,8 @@
 
 import type { CSSProperties, ReactNode } from 'react'
 import Link from 'next/link'
-import { ArrowDown, ArrowRight } from '@phosphor-icons/react'
+import { ArrowDown } from '@/app/_icons/icons/arrow-down'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { buttonClasses } from '../../../components/buttonClasses'
 import { Badge, tokens } from '../../../lib/andromeda-pro.generated'
 import { andromedaLightVars, andromedaVars } from '../../../lib/andromeda-pro-helpers.generated'
@@ -49,7 +50,7 @@ const ACTIVE_STOP: Record<Theme, number | undefined> = {
 const WELL_BASE: CSSProperties = {
   background: 'var(--andromeda-surface-base)',
   border: '1px solid var(--andromeda-border-base)',
-  borderRadius: 4,
+  borderRadius: 'var(--radius-inset)',
 }
 const WELL: Record<Theme, CSSProperties> = {
   dark: { ...(DARK_VARS as CSSProperties), ...WELL_BASE },
@@ -76,7 +77,7 @@ function LayerCard({
   // straight on the page ground it steps up to the surface instead.
   const surface = onPage ? 'bg-sand-100 dark:bg-sand-900' : 'bg-sand-50 dark:bg-sand-950'
   return (
-    <li className={`flex min-w-0 flex-col rounded-xl border border-sand-200 p-3 dark:border-sand-800 ${surface}`}>
+    <li className={`flex min-w-0 flex-col ${onPage ? 'rounded-section' : 'rounded-card'} border border-sand-200 p-3 dark:border-sand-800 ${surface}`}>
       {theme === 'site' ? (
         // No preview theme on this page: both wells are in the HTML and the
         // site's own dark class picks one, so the first paint is already right
@@ -106,8 +107,8 @@ function LayerCard({
 function Step() {
   return (
     <li aria-hidden className="flex items-center justify-center text-sand-400 dark:text-sand-600">
-      <ArrowDown weight="regular" className="size-4 lg:hidden" />
-      <ArrowRight weight="regular" className="hidden size-4 lg:block" />
+      <ArrowDown size="1em" className="size-4 lg:hidden" />
+      <ArrowRight size="1em" className="hidden size-4 lg:block" />
     </li>
   )
 }
@@ -197,7 +198,7 @@ export function LayerCards({
 
 export function FoundationLayers() {
   return (
-    <div className="mt-4 rounded-2xl border border-sand-200 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900 sm:p-5">
+    <div className="mt-4 rounded-section border border-sand-200 bg-sand-100 p-4 dark:border-sand-800 dark:bg-sand-900 sm:p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-base font-bold text-sand-900 dark:text-sand-50">Three layers under every component.</p>
@@ -210,7 +211,7 @@ export function FoundationLayers() {
           className={`${buttonClasses({ variant: 'outline', size: 'md' })} h-10 self-start sm:self-auto`}
         >
           See the foundation
-          <ArrowRight weight="regular" aria-hidden className="size-4" />
+          <ArrowRight size="1em" aria-hidden className="size-4" />
         </Link>
       </div>
       <LayerCards className="mt-5" />

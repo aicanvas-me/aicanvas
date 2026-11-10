@@ -19,10 +19,10 @@ import { OverviewB } from './overview-b/OverviewB'
 import { TEMPLATES, type Family, type OverviewComponent, type OverviewStats } from './overview-b/overview-data'
 
 export const metadata: Metadata = {
-  title: 'Andromeda Pro Design System for Any Product UI',
+  title: 'Andromeda Pro: Give Your AI Agent Taste, Not AI Slop',
   description:
-    `A complete, token-driven design system for any product UI. Around ${ANDROMEDA_COMPONENT_META.length} components and ${TEMPLATES.length} templates in light and dark, all live.`,
-  alternates: { canonical: '/design-systems/andromeda-pro' },
+    `No more AI slop. A complete design system your agent builds with and you reshape: around ${ANDROMEDA_COMPONENT_META.length} components and ${TEMPLATES.length} templates, light and dark.`,
+  alternates: { canonical: '/design-systems/andromeda-pro', types: { 'text/markdown': '/design-systems/andromeda-pro.md' } },
 }
 
 export default async function AndromedaPage() {

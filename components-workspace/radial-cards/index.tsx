@@ -1,9 +1,9 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useEffect, useRef, useState, type ComponentType, type RefObject } from 'react'
-import type { CSSProperties, PointerEvent as ReactPointerEvent } from 'react'
+import type { PointerEvent as ReactPointerEvent } from 'react'
 import {
   animate,
   motion,
@@ -14,7 +14,14 @@ import {
   useTransform,
   type MotionValue,
 } from 'framer-motion'
-import { Footprints, Fire, Moon, Drop, Heart, Lightning, Path } from '@phosphor-icons/react'
+import type { IconProps } from '@/app/_icons/IconBase'
+import { Footprints } from '@/app/_icons/icons/footprints'
+import { Fire } from '@/app/_icons/icons/fire'
+import { Moon } from '@/app/_icons/icons/moon'
+import { Droplet } from '@/app/_icons/icons/droplet'
+import { Heart } from '@/app/_icons/icons/heart'
+import { Bolt } from '@/app/_icons/icons/bolt'
+import { Route } from '@/app/_icons/icons/route'
 
 
 const SECONDS_PER_TURN = 45
@@ -66,12 +73,6 @@ const SLOT_ANGLES: readonly number[] = [
 const STAGE_SIZE = 'clamp(300px, 50vw, 560px)'
 
 
-type PhosphorIconProps = {
-  size?: number | string
-  weight?: 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone'
-  color?: string
-}
-
 type Metric = {
   title: string
   label: string
@@ -82,7 +83,7 @@ type Metric = {
   dark: string
   // Sparkline y positions, 0 (top) to 36 (bottom), not raw data values.
   sparkline: readonly number[]
-  Icon: ComponentType<PhosphorIconProps>
+  Icon: ComponentType<IconProps>
 }
 
 const METRICS: Metric[] = [
@@ -128,7 +129,7 @@ const METRICS: Metric[] = [
     gradientEnd: '#4BB8F0',
     dark: '#085B80',
     sparkline: [26, 14, 20, 4],
-    Icon: Drop,
+    Icon: Droplet,
   },
   {
     title: 'Heart',
@@ -150,7 +151,7 @@ const METRICS: Metric[] = [
     gradientEnd: '#48C7B8',
     dark: '#0B655B',
     sparkline: [32, 20, 10, 4],
-    Icon: Lightning,
+    Icon: Bolt,
   },
   {
     title: 'Distance',
@@ -161,7 +162,7 @@ const METRICS: Metric[] = [
     gradientEnd: '#E8B040',
     dark: '#875706',
     sparkline: [24, 12, 20, 6],
-    Icon: Path,
+    Icon: Route,
   },
 ]
 
@@ -387,8 +388,6 @@ function Card({
     return 1
   })
 
-  const restShadow =
-    '4px 6px 14px rgba(0,0,0,0.18), 12px 18px 40px rgba(0,0,0,0.22)'
   const liftedShadow =
     '8px 14px 26px rgba(0,0,0,0.30), 28px 36px 70px rgba(0,0,0,0.34)'
 
@@ -468,7 +467,7 @@ function Card({
                 flexShrink: 0,
               }}
             >
-              <metric.Icon size={12} weight="regular" color={metric.dark} />
+              <metric.Icon size={12} color={metric.dark} />
               <span
                 style={{
                   color: '#1a1a1a',

@@ -11,38 +11,33 @@ export type ButtonOptions = {
   iconOnly?: boolean
   fullWidth?: boolean
   tone?: 'outline' | 'solid'
-  /** Fully rounded instead of the default corner. Set here rather than
-   *  appended by the caller: two radius utilities in one class string are
-   *  settled by the order of the built stylesheet, not by the caller's, so an
-   *  appended `rounded-full` silently loses. */
-  pill?: boolean
 }
 
 const BASE = 'inline-flex items-center justify-center font-semibold transition-colors active:scale-95 disabled:cursor-not-allowed disabled:opacity-50'
-const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-olive-500/40'
+const FOCUS = 'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40'
 
 const LABEL_SIZES: Record<ButtonSize, string> = {
-  xs: 'gap-1.5 rounded-lg px-3 py-1.5 text-xs',
-  sm: 'gap-1.5 rounded-lg px-3.5 py-1.5 text-sm',
-  md: 'gap-2 rounded-lg px-4 py-2 text-sm',
-  lg: 'gap-2 rounded-lg px-5 py-2.5 text-sm',
+  xs: 'gap-1.5 rounded-control px-3 py-1.5 text-xs',
+  sm: 'gap-1.5 rounded-control px-3.5 py-1.5 text-sm',
+  md: 'gap-2 rounded-control px-4 py-2 text-sm',
+  lg: 'gap-2 rounded-control px-5 py-2.5 text-sm',
 }
 
 const ICON_SIZES: Record<ButtonSize, string> = {
-  xs: 'h-7 w-7 rounded-md',
-  sm: 'h-8 w-8 rounded-lg',
-  md: 'h-9 w-9 rounded-lg',
-  lg: 'h-10 w-10 rounded-lg',
+  xs: 'h-7 w-7 rounded-control',
+  sm: 'h-8 w-8 rounded-control',
+  md: 'h-9 w-9 rounded-control',
+  lg: 'h-10 w-10 rounded-control',
 }
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary:
-    'bg-olive-500 text-sand-950 hover:bg-olive-400',
-  // Soft olive: the "active tag" look (olive hairline + faint olive fill +
-  // olive text). Emphasized but lighter than solid primary — for a control you
+    'bg-accent text-accent-foreground hover:bg-accent/85',
+  // Soft accent: the "active tag" look (accent hairline + faint accent fill +
+  // accent text). Emphasized but lighter than solid primary — for a control you
   // want noticed without shouting.
   accent:
-    'border border-olive-600/40 bg-olive-500/10 text-olive-600 hover:border-olive-600/60 hover:bg-olive-500/20 dark:border-olive-500/25 dark:text-olive-400 dark:hover:border-olive-500/40',
+    'border border-accent/40 bg-accent/10 text-accent hover:border-accent/60 hover:bg-accent/20 dark:border-accent/25 dark:hover:border-accent/40',
   outline:
     'border border-sand-300 bg-transparent text-sand-700 hover:border-sand-400 hover:text-sand-900 dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100',
   icon:
@@ -65,18 +60,16 @@ export function buttonClasses({
   iconOnly = false,
   fullWidth = false,
   tone = 'solid',
-  pill = false,
 }: ButtonOptions = {}): string {
   const square = iconOnly || variant === 'icon'
   const base = square ? ICON_SIZES[size] : LABEL_SIZES[size]
-  const sizing = pill ? base.replace(/rounded-(?:md|lg)/, 'rounded-full') : base
 
   const skin = variant === 'destructive' ? DESTRUCTIVE_TONES[tone] : VARIANTS[variant]
 
   return [
     BASE,
     FOCUS,
-    sizing,
+    base,
     skin,
     fullWidth ? 'w-full' : '',
   ]

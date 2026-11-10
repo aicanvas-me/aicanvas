@@ -6,7 +6,8 @@
 // distance, ETA, bearing, classification — closed by a CTA pair.
 // ============================================================
 
-import { ArrowRight, MapTrifold } from '@phosphor-icons/react';
+import { ArrowRight } from '@/app/_icons/icons/arrow-right';
+import { MapIcon } from '@/app/_icons/icons/map';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
@@ -45,7 +46,7 @@ export function NextDestination() {
           <Badge variant="accent">LOCKED</Badge>
           <Button variant="ghost" size="sm">
             Map
-            <MapTrifold weight="regular" size={14} />
+            <MapIcon size={14} />
           </Button>
         </div>
       </CardHeader>
@@ -151,7 +152,7 @@ export function NextDestination() {
           <div className="mc-dest-cta" style={{ display: 'flex', flexWrap: 'wrap', gap: tokens.spacing[2], marginTop: tokens.spacing[2] }}>
             <Button variant="default" size="md">
               ENGAGE TRAJECTORY
-              <ArrowRight weight="regular" size={16} />
+              <ArrowRight size={16} />
             </Button>
             <Button variant="ghost" size="md">
               DETAILS

@@ -2,7 +2,7 @@
 
 import { forwardRef, useId, useState, useEffect } from 'react';
 import type { ChangeEvent, ComponentPropsWithoutRef } from 'react';
-import { Check } from '@phosphor-icons/react';
+import { Check } from '@/app/_icons/icons/check';
 
 function useSpacePopIn() {
   useEffect(() => {

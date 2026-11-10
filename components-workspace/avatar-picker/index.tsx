@@ -1,10 +1,10 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useState, useLayoutEffect, useEffect, useRef, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { Check } from '@phosphor-icons/react'
+import { Check } from '@/app/_icons/icons/check'
 const useIsomorphicLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect
 
 const CARD_W = 174
@@ -56,7 +56,6 @@ const SPRING = { type: 'spring' as const, stiffness: 280, damping: 26 }
 
 export default function AvatarPicker() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
 
   const [order, setOrder] = useState<number[]>([0, 1, 2, 3])
   const [selectedId, setSelectedId] = useState<number | null>(null)
@@ -67,14 +66,6 @@ export default function AvatarPicker() {
   const dismissing = useRef(false)
   const dragDelta = useRef(0)
   useIsomorphicLayoutEffect(() => { orderRef.current = order }, [order])
-
-  useIsomorphicLayoutEffect(() => {
-    const check = () => setIsDark(document.documentElement.classList.contains('dark'))
-    check()
-    const obs = new MutationObserver(check)
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
-    return () => obs.disconnect()
-  }, [])
 
   const dismiss = useCallback((dir: 'left' | 'right') => {
     if (dismissing.current) return
@@ -101,8 +92,6 @@ export default function AvatarPicker() {
     const frontId = orderRef.current[0]
     setSelectedId(prev => prev === frontId ? null : frontId)
   }, [])
-
-  const labelColor = isDark ? 'rgba(255,255,255,0.35)' : '#1a1a18'
 
   return (
     <div

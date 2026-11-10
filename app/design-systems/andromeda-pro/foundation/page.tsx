@@ -23,7 +23,6 @@ export default function FoundationPage() {
           { slug: 'andromeda-pro', label: 'All components' },
           { slug: 'andromeda-pro-all', label: 'Everything' },
         ]}
-        phoneFallback={false}
       />
       <FoundationView />
     </>

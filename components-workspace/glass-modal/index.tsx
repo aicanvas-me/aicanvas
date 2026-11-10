@@ -1,10 +1,12 @@
 'use client'
 
-// npm install @phosphor-icons/react framer-motion
+// npm install framer-motion
 
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { X, Check, ShieldCheck } from '@phosphor-icons/react'
+import { X } from '@/app/_icons/icons/x'
+import { Check } from '@/app/_icons/icons/check'
+import { ShieldCheck } from '@/app/_icons/icons/shield-check'
 
 export default function GlassModal() {
   const [open, setOpen] = useState(true)
@@ -95,7 +97,7 @@ export default function GlassModal() {
           className="absolute right-4 top-4 z-10 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full"
           style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.08)' }}
         >
-          <X size={14} weight="regular" className="text-white/60" />
+          <X size={14} className="text-white/60" />
         </motion.button>
 
         <div className="flex flex-col items-center px-8 pb-8 pt-10">
@@ -109,7 +111,7 @@ export default function GlassModal() {
               border: '1px solid #FFA03222',
             }}
           >
-            <ShieldCheck size={28} weight="regular" style={{ color: '#FFA032' }} />
+            <ShieldCheck size={28} style={{ color: '#FFA032' }} />
           </motion.div>
 
           <motion.h2
@@ -148,7 +150,7 @@ export default function GlassModal() {
                   className="flex h-5 w-5 items-center justify-center rounded-full"
                   style={{ background: 'rgba(255, 155, 50, 0.18)' }}
                 >
-                  <Check size={10} weight="regular" style={{ color: 'rgba(255, 155, 50, 1)' }} />
+                  <Check size={10} style={{ color: 'rgba(255, 155, 50, 1)' }} />
                 </div>
                 <span className="text-sm text-white/60">{feature}</span>
               </motion.div>

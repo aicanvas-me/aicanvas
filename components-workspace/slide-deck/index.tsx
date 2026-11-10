@@ -72,7 +72,7 @@ const OFFSCREEN = { x: 0, y: 30, scale: 0.88, opacity: 0 }
 
 export default function SlideDeck() {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
 
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current

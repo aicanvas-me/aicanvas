@@ -18,7 +18,8 @@
 
 import { createContext, useContext, useEffect, useId, useLayoutEffect, useMemo, useState, type ReactNode } from 'react'
 import { motion } from 'framer-motion'
-import { Moon, Sun } from '@phosphor-icons/react'
+import { Moon } from '@/app/_icons/icons/moon'
+import { Sun } from '@/app/_icons/icons/sun'
 import { andromedaLightVars } from '../../lib/andromeda-pro-helpers.generated'
 import { useTheme } from '../../components/ThemeProvider'
 
@@ -192,7 +193,7 @@ export function AndromedaThemeToggle({ className = '', label }: { className?: st
     <div
       role="group"
       aria-label="Theme"
-      className={`flex items-center gap-0.5 rounded-lg border border-sand-300 bg-sand-100 p-0.5 dark:border-sand-800 dark:bg-sand-900 ${className}`}
+      className={`flex items-center gap-0.5 rounded-control border border-sand-300 bg-sand-100 p-0.5 dark:border-sand-800 dark:bg-sand-900 ${className}`}
     >
       {label ? (
         <span className="px-2 text-[11px] font-semibold uppercase tracking-wider text-sand-500">
@@ -209,7 +210,7 @@ export function AndromedaThemeToggle({ className = '', label }: { className?: st
             aria-label={name}
             aria-pressed={active}
             title={name}
-            className={`relative flex h-7 w-7 items-center justify-center rounded-md transition-colors ${
+            className={`relative flex h-7 w-7 items-center justify-center rounded-control transition-colors ${
               active
                 ? 'text-sand-900 dark:text-sand-50'
                 : 'text-sand-500 hover:text-sand-800 dark:text-sand-400 dark:hover:text-sand-100'
@@ -220,10 +221,10 @@ export function AndromedaThemeToggle({ className = '', label }: { className?: st
                 aria-hidden
                 layoutId={chipId}
                 transition={{ type: 'spring', stiffness: 500, damping: 36 }}
-                className="absolute inset-0 rounded-md bg-sand-50 shadow-sm dark:bg-sand-800"
+                className="absolute inset-0 rounded-control bg-sand-50 shadow-sm dark:bg-sand-800"
               />
             ) : null}
-            <Icon weight="regular" size={16} className="relative" />
+            <Icon size={16} className="relative" />
           </button>
         )
       })}
@@ -239,7 +240,7 @@ export function AndromedaThemeDock() {
   const ctx = useContext(ThemeCtx)
   if (!ctx) return null
   return (
-    <div className="fixed bottom-16 right-5 z-40 rounded-lg shadow-lg">
+    <div className="fixed bottom-16 right-5 z-40 rounded-control shadow-lg">
       <AndromedaThemeToggle label="Theme" />
     </div>
   )

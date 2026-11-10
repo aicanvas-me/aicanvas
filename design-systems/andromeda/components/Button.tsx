@@ -1,13 +1,14 @@
 'use client';
 
 import { forwardRef } from 'react';
-import type { ComponentPropsWithoutRef, CSSProperties } from 'react';
-import { Slot } from '@radix-ui/react-slot';
+import type { ComponentPropsWithoutRef, CSSProperties, ReactNode } from 'react';
+import { Slot, Slottable } from '@radix-ui/react-slot';
 import { motion } from 'framer-motion';
 import type { HTMLMotionProps, TargetAndTransition, Transition } from 'framer-motion';
 import { cva } from 'class-variance-authority';
 import type { VariantProps } from 'class-variance-authority';
-import type { Icon } from '@phosphor-icons/react';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import { cn, andromedaVars, easingArray } from './lib/utils';
 import { useReducedMotion } from './lib/motion';
 import { mq } from './lib/responsive';
@@ -123,7 +124,7 @@ const buttonVariants = cva(
 
 type ButtonOwnProps = VariantProps<typeof buttonVariants> & {
   asChild?: boolean;
-  icon?: Icon;
+  icon?: ComponentType<IconProps>;
   style?: CSSProperties;
 };
 
@@ -134,7 +135,7 @@ export type ButtonProps = ButtonOwnProps & Omit<HTMLMotionProps<'button'>, keyof
  * @property {'default'|'outline'|'ghost'|'destructive'|'link'} [variant='default']
  * @property {'sm'|'md'|'lg'} [size='md']
  * @property {boolean} [asChild=false]  When true, renders the only child element with the button's props/styles.
- * @property {React.ComponentType<{ size?: number }>} [icon] Phosphor / Lucide icon component rendered before children.
+ * @property {React.ComponentType<IconProps>} [icon] Icon component rendered before children.
  * @property {React.ReactNode} [children]
  * @property {string} [className]
  * @property {React.CSSProperties} [style]
@@ -164,7 +165,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   const baseStyle = { ...andromedaVars(), ...style };
   const content = (
     <>
-      {Icon ? <Icon size={iconSize} weight="regular" /> : null}
+      {Icon ? <Icon size={iconSize} /> : null}
       {children}
     </>
   );
@@ -173,7 +174,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
     return (
       <>
         <Slot ref={ref} className={baseClass} data-size={size} style={baseStyle} {...(props as ComponentPropsWithoutRef<'button'>)}>
-          {content}
+          {Icon ? <Icon size={iconSize} /> : null}
+          <Slottable>{children as ReactNode}</Slottable>
         </Slot>
         <style>{TOUCH_TARGET_STYLE}</style>
       </>

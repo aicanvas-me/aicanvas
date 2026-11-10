@@ -5,7 +5,7 @@
 // grid lives at /design-systems/andromeda/system; the old preview URL
 // /design-systems/andromeda/overview 308-redirects (permanent) here (see next.config.ts).
 //
-// IDENTITY: pure AI Canvas — sand/olive tokens (Tailwind), Manrope (the site
+// IDENTITY: pure AI Canvas — sand/accent tokens (Tailwind), Manrope (the site
 // --font-sans default), and the site's button system (buttonClasses). It
 // deliberately does NOT use Andromeda's tokens/mono/turquoise; the page is AI
 // Canvas chrome that *presents* Andromeda. The scroll column (AndromedaContentColumn)
@@ -16,20 +16,27 @@ import { useState, useEffect, useRef } from 'react'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
-import { ArrowLeft, ArrowRight, ArrowUpRight, Lightning, Robot, Wrench, CaretDown } from '@phosphor-icons/react'
-import type { Icon as PhosphorIcon } from '@phosphor-icons/react'
+import { ArrowLeft } from '@/app/_icons/icons/arrow-left';
+import { ArrowRight } from '@/app/_icons/icons/arrow-right';
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right';
+import { BadgeCheckSolid } from '@/app/_icons/icons/badge-check-solid';
+import { Bot } from '@/app/_icons/icons/bot';
+import { Wrench } from '@/app/_icons/icons/wrench';
+import { ChevronDown } from '@/app/_icons/icons/chevron-down';
+import type { IconProps } from '@/app/_icons/IconBase';
+import type { ComponentType } from 'react';
 import type { Group, Mesh, WebGLRenderer } from 'three'
 import type { GLTF } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { Button } from '../../components/Button'
 import { buttonClasses } from '../../components/buttonClasses'
-import { SiteFooter } from '../../components/SiteFooter'
-import { optimizeImageKitUrl, TEMPLATE_ART_VERSION } from '../../lib/imagekit'
+import { optimizeImageKitUrl, TEMPLATE_ART_BASE, TEMPLATE_ART_VERSION } from '../../lib/imagekit'
 import { ANDROMEDA_META, ANDROMEDA_COMPONENT_META } from '../../_lib/andromeda/andromeda-meta'
 import { DESIGN_SYSTEMS } from '../../../scripts/lib/design-systems.config.mjs'
 import { FoundationLoop } from '../../_components/FoundationLoop'
 import { SystemTierChip } from '../../_components/SystemTierChip'
 import { BRAIN_GRAY } from '../../_lib/brain-colors'
-import { PageFrame, PageOverline, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../_components/DesignSystemPage'
+import { PageFrame, PageTitle, PageLead, PAGE_TOP, PAGE_BOTTOM } from '../../_components/DesignSystemPage'
+import { PageCrumbs } from '../../components/PageCrumbs'
 
 // Short blurbs for the four shipped templates — keyed by registry slug.
 const TEMPLATE_BLURBS: Record<string, string> = {
@@ -43,7 +50,7 @@ const TEMPLATE_BLURBS: Record<string, string> = {
     'A broadcast control room: now-transmitting, channel levels, mixes, and a transport bar.',
 }
 
-// Card art uploaded to ImageKit (andromeda/templates/). Names are underscored:
+// Card art uploaded to ImageKit (andromeda/templates-2/). Names are underscored:
 // ImageKit rewrites a space in an uploaded filename to an underscore, so a name
 // written with spaces here would 404 while the upload still reported success.
 const TEMPLATE_IMAGE_FILE: Record<string, string> = {
@@ -67,7 +74,7 @@ const TEMPLATE_IMAGE_FILE_LIGHT: Record<string, string> = {
 const templateArt = (file: string | undefined) =>
   file
     ? optimizeImageKitUrl(
-        `https://ik.imagekit.io/aitoolkit/andromeda/templates/${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`,
+        `${TEMPLATE_ART_BASE}${encodeURIComponent(file)}?v=${TEMPLATE_ART_VERSION}`,
         'detail',
       )
     : null
@@ -209,14 +216,14 @@ function ValueItem({
   children,
   delay = 0,
 }: {
-  icon: PhosphorIcon
+  icon: ComponentType<IconProps>
   heading: string
   children: ReactNode
   delay?: number
 }) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="vp-item relative rounded-2xl p-5" style={{ animationDelay: `${delay}ms` }}>
+    <div className="vp-item relative rounded-section p-5" style={{ animationDelay: `${delay}ms` }}>
       <svg className="vp-border pointer-events-none absolute inset-0 h-full w-full" aria-hidden="true">
         <rect className="vp-rect" />
       </svg>
@@ -230,12 +237,11 @@ function ValueItem({
           {/* Icon chip — same aesthetic as the home-page steps: neutral surface,
               1px border, soft drop shadow. Dark mode matches that section exactly;
               light mode gets the neutral equivalent. */}
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-sand-300 bg-sand-50 text-sand-600 shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
-            <Icon weight="regular" size={16} />
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-inset border border-sand-300 bg-sand-50 text-sand-600 shadow-[0_4px_16px_rgba(0,0,0,0.12)] dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300 dark:shadow-[0_4px_16px_rgba(0,0,0,0.4)]">
+            <Icon size={16} />
           </span>
           <span className="text-base font-bold text-sand-900 dark:text-sand-50">{heading}</span>
-          <CaretDown
-            weight="bold"
+          <ChevronDown weight="bold"
             size={15}
             className={`ml-auto shrink-0 text-sand-500 transition-transform duration-200 group-hover:text-sand-700 dark:group-hover:text-sand-300 ${open ? 'rotate-180' : ''}`}
           />
@@ -288,11 +294,11 @@ export function AndromedaOverview() {
   return (
     <PageFrame as="main" className={`${PAGE_TOP} ${PAGE_BOTTOM}`}>
       {/* ── Hero ────────────────────────────────────────────────────────── */}
+      <PageCrumbs />
       <header className="max-w-3xl">
-        <PageOverline>Design system</PageOverline>
         {/* The chip sits beside the h1, not inside it, so the heading stays
             the system's name alone. */}
-        <div className="mt-3 flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <PageTitle gap="none">{ANDROMEDA_META.name}</PageTitle>
           <SystemTierChip tier="mit" label="MIT License" />
         </div>
@@ -307,7 +313,7 @@ export function AndromedaOverview() {
             They sit below the header, so opening a card never moves the header. ── */}
       <section className="mt-10">
         <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
-          <ValueItem icon={Robot} heading="Build with an agent" delay={0}>
+          <ValueItem icon={Bot} heading="Build with an agent" delay={0}>
             Your AI agent installs Andromeda and builds on its real tokens and components. What it
             generates carries the same surfaces, framing, and spacing as everything else you ship, so
             new screens land already matching the system.
@@ -343,10 +349,10 @@ export function AndromedaOverview() {
       <motion.section className="mt-14" {...reveal}>
         <Link
           href="/design-systems/andromeda/system"
-          className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
+          className="group relative flex flex-col overflow-hidden rounded-section border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
         >
           <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">
-            <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-accent">
               System
             </span>
             <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
@@ -357,7 +363,7 @@ export function AndromedaOverview() {
               one page, live and interactive.
             </p>
             <div className="mt-1">
-              <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-olive-400`}>
+              <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-accent/85`}>
                 View the System
                 <ArrowUpRight weight="bold" size={15} />
               </span>
@@ -373,13 +379,13 @@ export function AndromedaOverview() {
       <motion.section className="mt-14" {...reveal}>
         <Link
           href="/design-systems/andromeda/brain"
-          className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
+          className="group relative flex flex-col overflow-hidden rounded-section border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700 sm:flex-row"
         >
           <div className="relative min-h-[280px] overflow-hidden sm:min-h-[360px] sm:w-1/2">
             <BrainWireframePreview />
           </div>
           <div className="flex flex-col justify-center gap-3 p-6 sm:w-1/2 sm:p-8">
-            <span className="text-xs font-semibold uppercase tracking-wider text-olive-600 dark:text-olive-400">
+            <span className="text-xs font-semibold uppercase tracking-wider text-accent">
               The AI Brain
             </span>
             <h2 className="text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
@@ -391,7 +397,7 @@ export function AndromedaOverview() {
               matches the system instead of a guess.
             </p>
             <div className="mt-1">
-              <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-olive-400`}>
+              <span className={`${buttonClasses({ variant: 'primary', size: 'md' })} group-hover:bg-accent/85`}>
                 Explore more
                 <ArrowUpRight weight="bold" size={15} />
               </span>
@@ -413,18 +419,17 @@ export function AndromedaOverview() {
             <Link
               key={t.slug}
               href={`/design-systems/andromeda/templates/${t.folder}`}
-              className="group relative flex flex-col overflow-hidden rounded-2xl border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl hover:shadow-sand-300/60 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:hover:shadow-2xl dark:hover:shadow-black/50"
+              className="group relative flex flex-col overflow-hidden rounded-section border border-sand-300 bg-sand-50 shadow-sm transition-all duration-200 hover:border-sand-400 hover:shadow-xl hover:shadow-sand-300/60 dark:border-sand-800 dark:bg-sand-950 dark:hover:border-sand-700 dark:hover:shadow-2xl dark:hover:shadow-black/50"
             >
               <div className="relative aspect-video overflow-hidden bg-sand-900">
-                {/* Premium badge — same Aceternity-style pill as premium
-                    component cards: a filled bolt at rest, slides open to the
-                    label on card hover. Templates are premium. */}
-                <div className="absolute left-3 top-3 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 text-olive-400 ring-1 ring-olive-500/40 backdrop-blur-sm">
-                  <Lightning weight="fill" size={14} className="shrink-0" />
+                {/* Free badge, the same pill the component grid gives these
+                    templates: the seal at rest, the label on card hover. */}
+                <div className="absolute left-3 top-3 z-10 flex items-center rounded-full bg-sand-950/85 p-1.5 text-sand-300 ring-1 ring-sand-500/40 backdrop-blur-sm">
+                  <BadgeCheckSolid size={14} className="shrink-0 text-ember-400" />
                   <span className="grid grid-cols-[0fr] transition-[grid-template-columns] duration-300 ease-out group-hover:grid-cols-[1fr]">
                     <span className="overflow-hidden">
                       <span className="block whitespace-nowrap pl-1.5 pr-0.5 text-[11px] font-semibold leading-3.5">
-                        Premium template
+                        Free
                       </span>
                     </span>
                   </span>
@@ -459,7 +464,7 @@ export function AndromedaOverview() {
                   />
                 ) : null}
               </div>
-              <div className="relative -mt-4 flex flex-1 flex-col gap-3 rounded-t-2xl bg-sand-50 p-5 shadow-[0_-8px_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[0_-8px_24px_rgba(0,0,0,0.25)]">
+              <div className="relative -mt-4 flex flex-1 flex-col gap-3 rounded-t-card bg-sand-50 p-5 shadow-[0_-8px_24px_rgba(0,0,0,0.10)] dark:bg-sand-900 dark:shadow-[0_-8px_24px_rgba(0,0,0,0.25)]">
                 <div>
                   <h3 className="font-bold text-sand-900 dark:text-sand-50">{t.name}</h3>
                   <p className="mt-1 line-clamp-2 text-sm font-normal text-sand-600 dark:text-sand-400">{t.blurb}</p>
@@ -467,7 +472,7 @@ export function AndromedaOverview() {
                 <div className="mt-auto pt-1">
                   <span className={`${buttonClasses({ variant: 'outline', size: 'md', fullWidth: true })} text-xs group-hover:border-sand-400 group-hover:text-sand-900 dark:group-hover:border-sand-600 dark:group-hover:text-sand-100`}>
                     View template
-                    <ArrowRight weight="regular" size={14} className="transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight size={14} className="transition-transform group-hover:translate-x-0.5" />
                   </span>
                 </div>
               </div>
@@ -497,7 +502,7 @@ export function AndromedaOverview() {
                 disabled={!compCanGoPrev}
                 aria-label="Previous components"
               >
-                <ArrowLeft weight="regular" size={15} />
+                <ArrowLeft size={15} />
               </Button>
               <Button
                 variant="outline"
@@ -507,7 +512,7 @@ export function AndromedaOverview() {
                 disabled={!compCanGoNext}
                 aria-label="Next components"
               >
-                <ArrowRight weight="regular" size={15} />
+                <ArrowRight size={15} />
               </Button>
             </div>
           )}
@@ -541,17 +546,30 @@ export function AndromedaOverview() {
                 >
                   <Link
                     href={`/design-systems/andromeda/${c.slug}`}
-                    className="group flex flex-col overflow-hidden rounded-xl border border-sand-300 bg-sand-50 transition-colors duration-200 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
+                    className="group flex flex-col overflow-hidden rounded-section border border-sand-300 bg-sand-50 transition-colors duration-200 hover:border-sand-400 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
                   >
                     <div className="relative aspect-video overflow-hidden bg-sand-950">
                       {c.image ? (
-                        <img
-                          src={optimizeImageKitUrl(c.image, 'card')}
-                          alt={c.name}
-                          loading="lazy"
-                          decoding="async"
-                          className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                        />
+                        <>
+                          <img
+                            src={optimizeImageKitUrl(c.image, 'card')}
+                            alt={c.name}
+                            loading="lazy"
+                            decoding="async"
+                            className={`absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110 ${
+                              c.imageLight ? 'hidden dark:block' : ''
+                            }`}
+                          />
+                          {c.imageLight ? (
+                            <img
+                              src={optimizeImageKitUrl(c.imageLight, 'card')}
+                              alt={c.name}
+                              loading="lazy"
+                              decoding="async"
+                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110 dark:hidden"
+                            />
+                          ) : null}
+                        </>
                       ) : (
                         <div
                           className="absolute inset-0"
@@ -571,8 +589,6 @@ export function AndromedaOverview() {
           </div>
         </div>
       </motion.section>
-
-      <SiteFooter />
     </PageFrame>
   )
 }

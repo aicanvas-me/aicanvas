@@ -23,7 +23,7 @@ export default function NoiseBg() {
   const canvasRef    = useRef<HTMLCanvasElement>(null)
   const mouseRef     = useRef<{ x: number; y: number } | null>(null)
   const isDarkRef = useRef(typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
-  const [isDark, setIsDark] = useState(() => typeof window !== 'undefined' ? document.documentElement.classList.contains('dark') : false)
+  const [isDark, setIsDark] = useState(true)
 
   useIsomorphicLayoutEffect(() => {
     const el = containerRef.current

@@ -13,7 +13,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { PushPin, X, ArrowUpRight } from '@phosphor-icons/react';
+import { Pin } from '@/app/_icons/icons/pin';
+import { X } from '@/app/_icons/icons/x';
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right';
 import { tokens } from '../../tokens';
 import { themeColor } from '../../components/lib/utils';
 import { mq } from '../../components/lib/responsive';
@@ -137,7 +139,7 @@ export function SlaPanel() {
           {slaRisk.title}
         </span>
         <div style={{ flex: 1 }} />
-        <Tooltip label="Pin"><IconButton aria-label="Pin"   variant="ghost" size="sm" icon={PushPin} /></Tooltip>
+        <Tooltip label="Pin"><IconButton aria-label="Pin"   variant="ghost" size="sm" icon={Pin} /></Tooltip>
         <Tooltip label="Close"><IconButton aria-label="Close" variant="ghost" size="sm" icon={X} /></Tooltip>
       </div>
 
