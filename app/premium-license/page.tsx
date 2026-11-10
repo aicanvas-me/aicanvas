@@ -68,10 +68,13 @@ export default function PremiumLicensePage() {
             </li>
             <li>
               <strong className={STRONG}>Premium Components:</strong>{' '}the
-              closed-source components, design systems, templates, and their
-              accompanying source code, assets, and documentation that we make
-              available only to subscribers and that are delivered through the
-              Premium install channel (CLI or MCP). The public, MIT-licensed
+              closed-source components, blocks, design systems, and templates,
+              the Duotone, Solid, and Solid duotone icon styles, the
+              design-system rule files written for AI agents, the full remix
+              prompts (Section 7.1), and their accompanying source code,
+              assets, and documentation that we make available only to
+              subscribers and that are delivered through the Premium install
+              channel (CLI, MCP, or download). The public, MIT-licensed
               registry components are not Premium Components. We use the single
               term &ldquo;Premium Components&rdquo; throughout this License to
               cover all of them.
@@ -87,15 +90,19 @@ export default function PremiumLicensePage() {
             </li>
             <li>
               <strong className={STRONG}>You, Licensee:</strong>{' '}the
-              individual or entity that holds the Subscription, or that uses
-              the Line Icons under Section 11.
+              person who holds the Subscription, or the individual or entity
+              that uses the Line Icons under Section 11. A Subscription is for
+              one person. Where a company buys it, it covers the one developer
+              the company names, and each further developer who installs needs
+              a Subscription of their own.
             </li>
             <li>
               <strong className={STRONG}>Installed Component:</strong>{' '}a
               specific Premium Component, in the version delivered to you, that
               you actually installed or downloaded through the Premium install
               channel while your Subscription was active and while the payment
-              for that period, or for Lifetime, had not been reversed.
+              for that period, or for Lifetime, had not been refunded in full,
+              withdrawn, or reversed.
             </li>
             <li>
               <strong className={STRONG}>End Product:</strong>{' '}an
@@ -130,11 +137,15 @@ export default function PremiumLicensePage() {
             Lifetime gives you the access right above for as long as AI Canvas
             exists, for one payment and with nothing to renew, including every
             Premium Component we release later. If AI Canvas continues under
-            another name, Lifetime continues with it. Lifetime is personal to you
-            and cannot be transferred, sold, or shared. It ends early only if its
-            payment is refunded in full, if its payment is reversed or charged
-            back (Section 7.4), or if this License is terminated for breach
-            (Section 7.3). A partial refund does not end it.
+            another name, Lifetime continues with it. Lifetime covers AI Canvas
+            Premium as delivered through the Premium install channel; products
+            or services we sell separately are not part of it. Lifetime is
+            personal to you and cannot be transferred, sold, or shared. It ends
+            early only if its payment is refunded in full, withdrawn, reversed,
+            or charged back (Section 7.4), or if this License is terminated for
+            breach (Section 7.3). A partial refund does not end it. If we ever
+            discontinue AI Canvas, we give at least 30 days&apos; notice by
+            email, and the licence to your Installed Components continues.
           </p>
           <p className={BODY}>
             <strong className={STRONG}>Component licence (perpetual, per
@@ -170,8 +181,10 @@ export default function PremiumLicensePage() {
           </ul>
           <p className={BODY}>
             You may keep using and shipping every End Product you built with an
-            Installed Component for as long as you like. There is no per-seat,
-            per-deployment, or per-End-User royalty.
+            Installed Component for as long as you like, and the people who
+            work with you on an End Product may work with the Installed
+            Components inside it. There is no per-deployment or per-End-User
+            royalty.
           </p>
         </section>
 
@@ -206,8 +219,13 @@ export default function PremiumLicensePage() {
             </li>
             <li>
               share your Subscription credentials or install token with anyone
-              outside your own use, or use them to install on behalf of a third
-              party as a way of giving that third party the Premium Components; or
+              else, or use them to install for another person or company as a
+              way of giving them the Premium Components;
+            </li>
+            <li>
+              use the Premium Components to train or fine-tune a
+              machine-learning model, or to build a dataset. Using an AI coding
+              tool to work on your own End Product is allowed; or
             </li>
             <li>
               remove or obscure any copyright, licence, or attribution notice in
@@ -271,14 +289,12 @@ export default function PremiumLicensePage() {
           <p className={BODY}>
             <strong className={STRONG}>7.2 What survives.</strong>{' '}
             Except on termination for breach under Section 7.3, and except where
-            payment is reversed or charged back under Section 7.4, the perpetual
-            licence in Section 3 to every Premium Component you installed while
-            your Subscription was active survives cancellation, non-renewal, and
-            refund. You may keep using and keep shipping those Installed
-            Components, and the End Products that contain them, indefinitely. A
-            refund returns your fee; it does not revoke the Section 3 licence to
-            anything you had already installed, and you are not required to remove
-            or stop shipping End Products you already built.
+            payment is refunded in full, withdrawn, reversed, or charged back
+            under Section 7.4, the perpetual licence in Section 3 to every
+            Premium Component you installed while your Subscription was active
+            survives cancellation and non-renewal. You may keep using and keep
+            shipping those Installed Components, and the End Products that
+            contain them, indefinitely. A partial refund does not affect it.
           </p>
           <p className={BODY}>
             <strong className={STRONG}>7.3 Termination for
@@ -292,15 +308,19 @@ export default function PremiumLicensePage() {
             in addition to any other remedies.
           </p>
           <p className={BODY}>
-            <strong className={STRONG}>7.4 Chargeback or payment
-            reversal.</strong>{' '}
-            No perpetual licence under Section 3 arises, and any such licence is
-            forfeited, for any order whose payment is later reversed, charged
+            <strong className={STRONG}>7.4 Full refund, withdrawal, chargeback,
+            or payment reversal.</strong>{' '}
+            No perpetual licence under Section 3 arises, and any such licence
+            ends, for any order whose payment is later refunded in full,
+            withdrawn under a statutory right of withdrawal, reversed, charged
             back, or otherwise undone. For the purposes of this License, your
             Subscription is not &ldquo;active&rdquo; during any period whose
-            payment is reversed, and Lifetime whose payment is reversed counts as
-            never active, so components installed in reliance on that payment do
-            not survive under Section 7.2.
+            payment is undone in one of these ways, and Lifetime whose payment
+            is undone counts as never active, so components installed in
+            reliance on that payment do not survive under Section 7.2: you must
+            stop using and distributing them. Components installed in periods
+            that stay paid are not affected, and a partial refund changes
+            nothing.
           </p>
           <p className={BODY}>
             <strong className={STRONG}>7.5 Survival of clauses.</strong>{' '}
@@ -413,12 +433,18 @@ export default function PremiumLicensePage() {
         <section className={SECTION}>
           <h2 className={HEADING}>12. Versioning</h2>
           <p className={BODY}>
-            This is AI Canvas Premium License version 1.1, which added Lifetime
-            (Section 2) and Section 11 to version 1.0 of 2026-07-01 and reduces
-            no right granted under it. The version in force
-            for a given Installed Component is the version current when you
-            installed it. A later version will not retroactively reduce the
-            perpetual licence you already hold to that Installed Component.
+            This is AI Canvas Premium License version 1.1. Compared with version
+            1.0 of 2026-07-01 it adds Lifetime (Section 2) and the Line Icons
+            (Section 11), makes a Subscription personal to one developer
+            (Section 1), and ends the licence to components installed under a
+            payment that is refunded in full or withdrawn (Sections 7.2 and
+            7.4). It applies to Subscriptions and Lifetime bought from its
+            effective date; a Subscription started earlier stays under version
+            1.0 until we have told its holder about version 1.1 by email with
+            30 days&apos; notice. The version in force for a given Installed
+            Component is the version current when you installed it. A later
+            version will not retroactively reduce the perpetual licence you
+            already hold to that Installed Component.
           </p>
         </section>
 
@@ -430,7 +456,9 @@ export default function PremiumLicensePage() {
             Germany, excluding the UN Convention on Contracts for the
             International Sale of Goods (CISG). If you are a consumer, the
             mandatory consumer-protection rules of your country of habitual
-            residence remain unaffected.
+            residence remain unaffected. If you are a merchant or a legal entity
+            under public law, the exclusive place of jurisdiction is our place
+            of business.
           </p>
         </section>
 

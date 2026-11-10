@@ -90,7 +90,8 @@ export default function TermsPage() {
             renews automatically at the end of each billing period until
             cancelled. Lifetime also requires an account, is paid once, never
             renews, and lasts as long as AI Canvas exists, as set out in the
-            AI Canvas Premium License.
+            AI Canvas Premium License. A subscription or Lifetime is for one
+            person.
           </p>
           <p className={BODY}>
             You can cancel a subscription at any time from the customer portal
@@ -98,11 +99,13 @@ export default function TermsPage() {
             end of the current period and you keep access until then. Lifetime
             has nothing to cancel. If you buy Lifetime while a subscription is
             active, we cancel that subscription for the end of its current
-            period, so you are not charged for it again. Because Premium is
-            digital content supplied immediately, by starting it you consent to
-            immediate performance and acknowledge that your EU/UK 14-day right
-            of withdrawal ends once access begins, except where the law provides
-            otherwise.
+            period, so you are not charged for it again. Purchases are
+            non-refundable, except where the law requires a refund; the{' '}
+            <Link href="/refund" className={LINK}>
+              Refund &amp; Cancellation Policy
+            </Link>{' '}
+            sets out the details, including the statutory right of withdrawal
+            for consumers in the EU and the UK.
           </p>
           <p className={BODY}>
             Premium Components, design systems, and templates are closed-source
@@ -114,8 +117,9 @@ export default function TermsPage() {
             access, updates, and new Premium Components; the licence to Premium
             Components you have already installed is perpetual and survives
             cancellation, so you may keep using and shipping them in your
-            projects, except where your payment is reversed or charged back or
-            the licence is terminated for breach. See &sect; 7 below.
+            projects. It ends where the payment for them is refunded in full,
+            withdrawn, reversed, or charged back, or where the licence is
+            terminated for breach. See &sect; 7b below.
           </p>
         </section>
 
@@ -128,8 +132,10 @@ export default function TermsPage() {
             You may create an account using a valid email address and a
             password, or by signing in with Google OAuth. You are responsible
             for keeping your credentials confidential and for any activity that
-            takes place under your account. We may suspend or terminate
-            accounts used for abuse, fraud, or to violate these terms.
+            takes place under your account. That includes what an AI agent does
+            after you connect it to your account: it acts as you. We may suspend
+            or terminate accounts used for abuse, fraud, or to violate these
+            terms.
           </p>
         </section>
 
@@ -154,7 +160,7 @@ export default function TermsPage() {
             <Link href="/premium-license" className={LINK}>
               AI Canvas Premium License
             </Link>{' '}
-            (see &sect; 2b and &sect; 7). The website chrome itself (page
+            (see &sect; 2b and &sect; 7b). The website chrome itself (page
             layout, navigation, branding, non-component code) is the
             Creator&apos;s copyright.
           </p>
@@ -166,12 +172,12 @@ export default function TermsPage() {
             4b. Trademarks &amp; independence
           </h2>
           <p className={BODY}>
-            AI Canvas is an independent project. It is not partnered with,
-            sponsored by, endorsed by, or an official integration of the
-            third-party tools, platforms, and brands referenced on the site,
-            including Claude Code, Lovable, V0, and shadcn. All product names,
-            logos, and trademarks are the property of their respective owners and
-            are used here only nominatively, to describe compatibility and
+            AI Canvas is an independent project. Unless we expressly say
+            otherwise, it is not partnered with, sponsored by, endorsed by, or
+            an official integration of the third-party tools, platforms, and
+            brands referenced on the site. All product names, logos, and
+            trademarks are the property of their respective owners and are used
+            here only nominatively, to describe compatibility and
             interoperability.
           </p>
         </section>
@@ -208,18 +214,18 @@ export default function TermsPage() {
             6. Marketing communications
           </h2>
           <p className={BODY}>
-            By creating an account you agree that we may send you occasional
-            emails about AI Canvas itself: new components, design-system
+            A new account includes our product newsletter: occasional emails
+            about AI Canvas itself, such as new components, design-system
             updates, MCP releases, and other product news directly related to
             the Service. We do not send marketing for third-party products and
             we do not share your email with third-party advertisers.
           </p>
           <p className={BODY}>
-            You can opt out at any time by:
+            You can object at any time, at no cost, by:
           </p>
           <ul className={`mt-4 ${LIST}`}>
-            <li>Toggling &ldquo;Marketing emails&rdquo; off in your account settings, or</li>
-            <li>Clicking the unsubscribe link at the bottom of any marketing email we send.</li>
+            <li>Toggling &ldquo;Product updates&rdquo; off in your account settings, or</li>
+            <li>Clicking the unsubscribe link at the bottom of any newsletter we send.</li>
           </ul>
           <p className={BODY}>
             Opting out does not affect transactional emails (sign-up
@@ -230,24 +236,28 @@ export default function TermsPage() {
           </p>
         </section>
 
-        {/* ── 7. Disclaimer of warranties ──────────────────────────────── */}
+        {/* ── 7. Warranties ────────────────────────────────────────────── */}
         <section className={SECTION}>
           <h2 className={HEADING}>
-            7. Disclaimer of warranties
+            7. Warranties
           </h2>
           <p className={BODY}>
-            AI Canvas is provided on an &ldquo;as is&rdquo; and &ldquo;as
-            available&rdquo; basis, without warranties of any kind, either
-            express or implied, including without limitation warranties of
-            merchantability, fitness for a particular purpose,
-            non-infringement, or availability. We do not warrant that the
-            service will be uninterrupted or error-free, or that components
-            published here are free of bugs, free of security issues, or
-            suitable for production use without further review.
+            Where you are a consumer, your statutory rights apply, including
+            the rights for digital products under §§ 327 ff. of the German
+            Civil Code (BGB). Nothing in these terms limits or excludes them.
           </p>
           <p className={BODY}>
-            You evaluate, test, and ship the components at your own risk. You
-            are responsible for deciding whether a component fits your
+            Beyond those mandatory rights, and to the extent the law allows,
+            AI Canvas is provided as it is. We do not separately warrant that
+            the Service will be uninterrupted or error-free, or that components
+            published here are free of bugs or security issues, or suitable for
+            production use without your own review. Our prompts, design-system
+            rules, and MCP tools guide AI tools made by other companies; what
+            those tools produce depends on them, and we do not promise a
+            particular result.
+          </p>
+          <p className={BODY}>
+            You are responsible for deciding whether a component fits your
             project, testing it in your context, complying with the licence
             that governs it (the MIT License for free components, the AI Canvas
             Premium License for Premium Components), and securing the
@@ -278,26 +288,36 @@ export default function TermsPage() {
             publicly publish the source of any Premium Component, nor use Premium
             Components to build a competing component library, template, theme,
             starter kit, or builder. The licence to Premium Components you have
-            already installed is perpetual and survives cancellation and refund,
-            except where your payment is reversed or charged back or the licence
-            is terminated for breach.
+            already installed is perpetual and survives cancellation. It ends
+            where the payment for them is refunded in full, withdrawn,
+            reversed, or charged back, or where the licence is terminated for
+            breach.
           </p>
         </section>
 
-        {/* ── 8. Limitation of liability ───────────────────────────────── */}
+        {/* ── 8. Liability ─────────────────────────────────────────────── */}
         <section className={SECTION}>
           <h2 className={HEADING}>
-            8. Limitation of liability
+            8. Liability
           </h2>
           <p className={BODY}>
-            To the maximum extent permitted by law, the Creator is not liable
-            for indirect, incidental, special, consequential, or punitive
-            damages, or any loss of profits, revenue, or data, arising out of
-            or in connection with your use of AI Canvas. Nothing in these
-            terms limits liability that cannot lawfully be limited, in
-            particular, liability for intent or gross negligence, or liability
-            under the German Product Liability Act
-            (Produkthaftungsgesetz) where applicable.
+            We are liable without limitation for: damages caused by intent or
+            gross negligence; injury to life, body, or health; liability under
+            the German Product Liability Act (Produkthaftungsgesetz); and any
+            matter we have given a guarantee for or fraudulently concealed.
+          </p>
+          <p className={BODY}>
+            For damage caused by simple negligence, we are liable only where we
+            breach an essential contractual obligation, meaning an obligation
+            whose fulfilment makes the proper performance of the contract
+            possible in the first place and on whose observance you may
+            regularly rely. In that case our liability is limited to the
+            foreseeable, contract-typical damage.
+          </p>
+          <p className={BODY}>
+            Any further liability for simple negligence is excluded. The limits
+            in this section do not apply to the cases of unlimited liability
+            above.
           </p>
         </section>
 
@@ -311,26 +331,32 @@ export default function TermsPage() {
             <code className={CODE}>
               /account/settings
             </code>
-            . Deletion is immediate and removes your account row, saved
-            components, install history, and preferences. We may terminate or
-            suspend accounts that breach these terms; in such cases we will
-            inform you by email where reasonably possible.
+            . Deletion removes your account and the data stored with it, except
+            records we must keep by law. Deleting your account does not cancel
+            a running subscription, so cancel it first. Lifetime is tied to
+            your account: deleting the account ends Lifetime, and it cannot be
+            restored.
           </p>
           <p className={BODY}>
-            Beyond breach-based termination, we may also terminate any account
-            at our reasonable discretion with at least 14 days&apos; notice by
-            email. For example, if an account no longer fits the
-            purpose of the Service. In serious cases (abuse, fraud, security
-            risk, repeated breach) we may terminate immediately. In either
-            case you can export your data before the account is closed.
+            We may suspend or terminate accounts that breach these terms, and
+            in serious cases (abuse, fraud, security risk, repeated breach) we
+            may do so immediately; we will inform you by email where reasonably
+            possible. A free account we may also close at our reasonable
+            discretion with at least 14 days&apos; notice by email. A paid
+            subscription we may otherwise end only for the end of the period
+            already paid. Lifetime ends only as set out in the AI Canvas Premium
+            License. Before an account is closed you can ask us by email for a
+            copy of your data.
           </p>
           <p className={BODY}>
             We may also modify, suspend, or discontinue all or part of the
-            Service at any time, including individual features,
-            components, or the registry itself. Where a change materially
-            affects existing accounts we will give reasonable notice, but we
-            do not commit to keeping any particular feature or to operating
-            AI Canvas for any minimum period.
+            Service, including individual features, components, or the registry
+            itself. Where a change materially affects existing accounts we will
+            give reasonable notice, but we do not commit to keeping any
+            particular feature or to operating AI Canvas for any minimum
+            period. If we ever discontinue AI Canvas as a whole, we will give
+            at least 30 days&apos; notice by email, and the licence to Premium
+            Components you have already installed continues.
           </p>
         </section>
 
@@ -338,15 +364,20 @@ export default function TermsPage() {
         <section className={SECTION}>
           <h2 className={HEADING}>10. Changes to these terms</h2>
           <p className={BODY}>
-            We may update these terms when the service materially changes
-            (new features, new processors, new legal requirements). The
-            &ldquo;Last updated&rdquo; date at the top of this page reflects
-            the most recent revision. For changes that materially affect
-            existing accounts we will notify you by email or by an in-product
-            notice before the change takes effect. Your continued use of AI
-            Canvas after a change to these terms means you accept the new
-            version. If you do not, your remedy is to delete your
-            account.
+            We may update these terms when the Service, the law, or our
+            providers change. The &ldquo;Last updated&rdquo; date at the top of
+            this page shows the current version. If a change matters for
+            existing accounts, we email you the new text at least 30 days
+            before it takes effect. If you do not object within those 30 days,
+            the new version applies to you from that date; the email says so
+            again. If you object, the previous version keeps applying to you,
+            and you can delete your account at any time.
+          </p>
+          <p className={BODY}>
+            A change never reduces what you have already paid for or the
+            licence to Premium Components you have already installed. A change
+            to the price of a running subscription needs your explicit
+            agreement.
           </p>
         </section>
 
@@ -354,17 +385,29 @@ export default function TermsPage() {
         <section className={SECTION}>
           <h2 className={HEADING}>11. Severability</h2>
           <p className={BODY}>
-            If any provision of these terms is found to be invalid or
-            unenforceable, the remaining provisions stay in full effect. The
-            invalid provision is replaced by a valid one that comes closest
-            to its purpose. This protects the rest of the agreement from
-            falling if one clause is later held void.
+            If any provision of these terms is or becomes invalid, the
+            remaining provisions stay in full effect. The invalid provision
+            falls away and the applicable statutory law applies in its place.
           </p>
         </section>
 
-        {/* ── 12. Contact ──────────────────────────────────────────────── */}
+        {/* ── 12. Governing law ────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>12. Contact</h2>
+          <h2 className={HEADING}>12. Governing law</h2>
+          <p className={BODY}>
+            These terms are governed by the law of the Federal Republic of
+            Germany, excluding the UN Convention on Contracts for the
+            International Sale of Goods (CISG). If you are a consumer, the
+            mandatory consumer-protection rules of your country of habitual
+            residence remain unaffected. If you are a merchant or a legal
+            entity under public law, the exclusive place of jurisdiction is our
+            place of business.
+          </p>
+        </section>
+
+        {/* ── 13. Contact ──────────────────────────────────────────────── */}
+        <section className={SECTION}>
+          <h2 className={HEADING}>13. Contact</h2>
           <p className={BODY}>
             Questions about these terms? Email{' '}
             <a

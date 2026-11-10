@@ -332,9 +332,9 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
       </p>
 
       {/* "By continuing…" footer covers both the email and Google sign-in
-          paths above; the sign-up form carries the same sentence. Kept short
-          enough for one line at the card's width; forcing nowrap would
-          overflow on a phone instead. */}
+          paths above; the sign-up form carries the same sentence. Google
+          sign-in can create an account from here, hence the newsletter line
+          (§ 7 (3) UWG: notice when the address is collected). */}
       <p className="mt-6 text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
         By continuing you agree to our{' '}
         <Link
@@ -351,6 +351,9 @@ export function SignInFormFields({ next, onSuccess, onSwitchToSignUp, initialErr
           Privacy Policy
         </Link>
         .
+        <span className="block">
+          New accounts include our product newsletter. Unsubscribe anytime.
+        </span>
       </p>
     </>
   )

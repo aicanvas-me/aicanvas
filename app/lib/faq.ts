@@ -290,7 +290,7 @@ export const SITE_FAQ: FaqEntry[] = [
         id: 'lifetime-meaning',
         category: 'plans',
         q: 'What does Lifetime mean?',
-        a: 'One payment of $125, plus VAT where applicable, gives you Premium for as long as AI Canvas exists: every premium component, design system and template, including every one we release later, with nothing to renew. Components you install stay yours. A full refund or a chargeback ends it. The full terms are in the Premium License.',
+        a: 'One payment of $125, plus VAT where applicable, gives you Premium for as long as AI Canvas exists: every premium component, design system and template, including every one we release later, with nothing to renew. Components you install stay yours. A full refund or a chargeback ends it, along with the licence to what you installed. The full terms are in the Premium License.',
         link: { label: 'Premium License', href: '/premium-license#lifetime' },
       }]
     : []),

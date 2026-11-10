@@ -85,9 +85,13 @@ export default function RefundPage() {
             <code className="rounded-chip border border-sand-200 bg-sand-100 px-1.5 py-0.5 font-mono text-[0.8125rem] text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300">
               /account/settings
             </code>
+            , or without signing in on the{' '}
+            <Link href="/kuendigen" className={LINK}>
+              cancellation page
+            </Link>
             . Cancellation stops future renewals and takes effect at the end of
             your current billing period: you keep Premium access until then, and
-            you are not charged again.
+            you are not charged again. The period already paid is not refunded.
           </p>
           <p className={BODY}>
             Lifetime has nothing to cancel. If you buy Lifetime while a
@@ -101,26 +105,31 @@ export default function RefundPage() {
         <section className={SECTION}>
           <h2 className={HEADING}>4. Refunds &amp; EU/UK right of withdrawal</h2>
           <p className={BODY}>
-            Premium is digital content that is made available immediately. By
-            starting a subscription or buying Lifetime you consent to immediate
-            performance and acknowledge that your EU/UK 14-day right of
-            withdrawal ends once access begins, except where the law provides
-            otherwise. Where a statutory right to a refund applies, it is
-            honoured.
+            Purchases are non-refundable, except where the law requires a
+            refund.
           </p>
           <p className={BODY}>
-            Beyond that, refund requests are handled by Paddle under its buyer
-            terms and at its discretion, for example an accidental charge or a
-            duplicate payment. To request a refund, contact us at{' '}
+            If you are a consumer in the EU or the UK, you have the statutory
+            14-day right of withdrawal for a first purchase, as set out in
+            Paddle&apos;s buyer terms. Where the law allows, that right ends
+            once you have asked for access to begin and access has begun.
+            Renewal payments carry no right of withdrawal. Your statutory
+            rights remain unaffected.
+          </p>
+          <p className={BODY}>
+            Refund and withdrawal requests are handled by Paddle, the seller of
+            record, under its buyer terms. Use the links in the receipt email
+            Paddle sent you, or write to{' '}
             <a href={`mailto:${CONTACT_EMAIL}`} className={LINK}>
               {CONTACT_EMAIL}
-            </a>{' '}
-            or reach Paddle directly through the receipt email Paddle sends after
-            purchase.
+            </a>
+            .
           </p>
           <p className={BODY}>
-            Lifetime follows these same rules. A full refund of a Lifetime
-            payment ends Lifetime access; a partial refund keeps it.
+            A full refund, a withdrawal, or a chargeback ends Premium access. It
+            also ends the licence to the Premium Components installed under that
+            payment: you may no longer use or distribute them. A partial refund
+            keeps both. Lifetime follows these same rules.
           </p>
         </section>
 
@@ -128,13 +137,13 @@ export default function RefundPage() {
         <section className={SECTION}>
           <h2 className={HEADING}>5. Billing questions &amp; disputes</h2>
           <p className={BODY}>
-            For any billing question, a wrong charge, or a dispute, email{' '}
+            For a billing question or a wrong charge, email{' '}
             <a href={`mailto:${CONTACT_EMAIL}`} className={LINK}>
               {CONTACT_EMAIL}
             </a>{' '}
-            first and we will sort it out quickly. As Merchant of Record, Paddle
-            also provides customer service for orders and processes any approved
-            refunds back to your original payment method.
+            before you dispute a charge with your bank. As Merchant of Record,
+            Paddle provides customer service for orders and pays refunds back
+            to the original payment method.
           </p>
         </section>
 
@@ -147,18 +156,18 @@ export default function RefundPage() {
           </p>
           <p className={BODY}>
             For Premium, the licence to Premium Components you have already
-            installed survives cancellation and refund: a refund returns your
-            fee, but it does not revoke what you already installed, so you may
-            keep using and shipping those components in your projects. This is
-            set out in the{' '}
+            installed survives cancellation: you may keep using and shipping
+            those components in your projects. This is set out in the{' '}
             <Link href="/premium-license" className={LINK}>
               AI Canvas Premium License
             </Link>
             . Cancelling stops future Premium access, including downloads,
             updates, new components, and the full remix prompts; it does not
-            reach back into code already in your project. This survival does not apply where your payment is reversed
-            or charged back, or where the licence is terminated for breach of
-            its terms (for example, redistributing or publishing the source).
+            reach back into code already in your project. The licence does not
+            survive a full refund, a withdrawal, or a chargeback of the payment
+            the components were installed under (Section 4), or termination for
+            breach of its terms (for example, redistributing or publishing the
+            source).
           </p>
         </section>
 

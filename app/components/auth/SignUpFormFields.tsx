@@ -205,14 +205,9 @@ export function SignUpFormFields({ next, onSwitchToSignIn, header }: Props) {
             )}
           </p>
 
-          {/* Art. 13 GDPR notice — Terms + Privacy links cover the pre-
-              contract informational duties. Marketing-email language was
-              intentionally removed: AI Canvas only sends transactional mail
-              (sign-up confirm, password reset, account changes), so the
-              legal basis is Art. 6 (1)(b) GDPR / § 7 UWG carve-out and no
-              separate marketing notice is required. The Art. 8 age-16
-              confirmation was also dropped — developer-tool audience with
-              negligible under-16 risk. */}
+          {/* Terms + Privacy links cover the pre-contract information. The
+              newsletter line is the notice § 7 (3) UWG asks for at the moment
+              the address is collected: a new account is on the newsletter. */}
           <p className="mt-6 text-center text-xs leading-relaxed text-sand-600 dark:text-sand-500">
             By continuing you agree to our{' '}
             <Link
@@ -229,6 +224,9 @@ export function SignUpFormFields({ next, onSwitchToSignIn, header }: Props) {
               Privacy Policy
             </Link>
             .
+            <span className="block">
+              Includes our product newsletter. Unsubscribe anytime.
+            </span>
           </p>
         </>
       )}
