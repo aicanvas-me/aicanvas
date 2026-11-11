@@ -35,7 +35,7 @@ export default function PrivacyPage() {
         title="Privacy Policy"
         sub={
           <span className="block text-balance">
-            Last updated: 2026-11-10. This policy describes how AI Canvas processes
+            Last updated: 2026-11-11. This policy describes how AI Canvas processes
             personal data, in line with the EU General Data Protection Regulation
             (GDPR / DSGVO) and the German Bundesdatenschutzgesetz (BDSG).
           </span>
