@@ -116,13 +116,18 @@ export default async function WelcomePage() {
                 </>
               }
             >
-              <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-                Explore Andromeda Pro
-                <ArrowRight size={14} />
-              </Link>
-              <Link href="/account" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-                View your account
-              </Link>
+              {/* The password card is the one next step when it shows. */}
+              {!offerPassword && (
+                <>
+                  <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
+                    Explore Andromeda Pro
+                    <ArrowRight size={14} />
+                  </Link>
+                  <Link href="/account" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
+                    View your account
+                  </Link>
+                </>
+              )}
             </PageHero>
             {offerPassword && <AddPasswordCard email={email} />}
             {hostedMcpOAuthEnabled() ? (
