@@ -2,20 +2,15 @@
 
 import { Info } from '@/app/_icons/icons/info'
 import { Mail } from '@/app/_icons/icons/mail'
-import { useCheckoutHandoff } from '../lib/checkout-handoff'
+import type { CheckoutHandoff } from '../lib/checkout-handoff'
 import { ClaimForm } from './ClaimForm'
 
-// The signed-out view's card: where the sign-in link went, what the email is
+// The signed-out buyer's card: where the sign-in link went, what the email is
 // called, and a new link when it does not show up. The address comes from this
-// tab's checkout; on another device or tab the buyer types it instead.
-export function LinkSentCard() {
-  const handoff = useCheckoutHandoff()
-  // Empty until the tab is read, so the card never swaps its content mid-rise.
-  if (handoff === undefined) return null
-  const email = handoff?.email ?? null
-  const subject = handoff
-    ? `Sign in to your AI Canvas ${handoff.lifetime ? 'Lifetime' : 'Premium'} account`
-    : null
+// tab's checkout; when Paddle gave none the buyer types it instead.
+export function LinkSentCard({ handoff }: { handoff: CheckoutHandoff }) {
+  const email = handoff.email
+  const subject = `Sign in to your AI Canvas ${handoff.lifetime ? 'Lifetime' : 'Premium'} account`
 
   return (
     <div
@@ -33,13 +28,7 @@ export function LinkSentCard() {
           </div>
         </div>
         <p className="mt-4 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
-          {subject ? (
-            <>
-              Look for <strong className="font-semibold text-sand-900 dark:text-sand-50">&ldquo;{subject}&rdquo;</strong> from AI Canvas.
-            </>
-          ) : (
-            'Look for the email from AI Canvas with a Sign in button.'
-          )}{' '}
+          Look for <strong className="font-semibold text-sand-900 dark:text-sand-50">&ldquo;{subject}&rdquo;</strong> from AI Canvas.
           The link works once, for 1 hour.
         </p>
         <p className="mt-5 mb-3 text-sm text-sand-600 dark:text-sand-400">

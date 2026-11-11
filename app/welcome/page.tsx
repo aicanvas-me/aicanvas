@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Bolt } from '@/app/_icons/icons/bolt'
@@ -10,8 +9,8 @@ import { StackedCards } from '../home/islands'
 import { getPremiumForUser } from '../../lib/identity/premium'
 import { createAdminClient } from '../lib/supabase/admin'
 import { createClient } from '../lib/supabase/server'
-import { ClaimForm } from './ClaimForm'
-import { LinkSentCard } from './LinkSentCard'
+import { ClaimCard, THANKS_CARDS, THANKS_PILL } from './parts'
+import { SignedOutWelcome } from './SignedOutWelcome'
 import { PremiumQuickstart } from './PremiumQuickstart'
 import { ConnectAgentCard } from '../mcp/ConnectAgentCard'
 import { hostedMcpOAuthEnabled } from '../../lib/flags'
@@ -22,35 +21,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-// Same visual language as the homepage hero: the tactile card stack, but every
-// card says thank you — this page only exists because someone just paid.
-const THANKS_CARDS = ['Thank you', 'Merci', 'Danke', 'Gracias', 'Grazie', 'ありがとう', '谢谢', 'Tack', '♥']
-
-// The claim surface: the pricing card's anatomy (the form on the card, a note
-// in the inset well under it), narrowed to the width of one email field. It
-// rises in right after the hero so the one thing to do here arrives with it.
-function ClaimCard({ note }: { note: ReactNode }) {
-  return (
-    <div
-      className="aic-hero-rise mx-auto mt-10 w-full max-w-md rounded-3xl border border-sand-200 bg-sand-100 p-2 text-left dark:border-sand-800 dark:bg-sand-900"
-      style={{ animationDelay: '0.42s' }}
-    >
-      <div className="px-4 pt-4 pb-5 sm:px-5 sm:pt-5">
-        <ClaimForm />
-      </div>
-      <div className="flex items-start gap-2.5 rounded-2xl bg-sand-50/70 px-4 py-4 text-sm leading-relaxed text-sand-600 sm:px-5 dark:bg-sand-950 dark:text-sand-400">
-        <Info size={16} className="mt-0.5 shrink-0 text-accent" />
-        <span>{note}</span>
-      </div>
-    </div>
-  )
-}
-
 // THE post-purchase page: every confirmed Paddle checkout lands here, signed-in
-// fast-path and anonymous pending-claim alike. Three views: no session gets the
-// "check your inbox" view (the webhook provisioned a passwordless account under
-// the checkout email and mails it a sign-in link), a premium session gets the
-// token-carrying install commands, a free session gets the mismatch view.
+// fast-path and anonymous pending-claim alike. Three views: no session gets
+// SignedOutWelcome ("check your inbox" for the tab that just paid, the new-link
+// form for anyone else), a premium session gets the token-carrying install
+// commands, a free session gets the mismatch view.
 // Deliberately NO OAuth here: a Google login under a different address creates
 // a fresh free account and shows a paying buyer the paywall. A new link is
 // self-service, so a lost or delayed email is never a lockout.
@@ -85,15 +60,21 @@ export default async function WelcomePage() {
     /* anonymous view */
   }
 
-  // The free view is a mismatch, not a purchase, so it does not say thanks.
-  const pill = tier !== 'free' ? 'Thank you for supporting AI Canvas' : undefined
+  if (tier === 'anonymous') {
+    return (
+      <PageShell>
+        <SignedOutWelcome />
+      </PageShell>
+    )
+  }
 
   return (
     <PageShell>
       {/* The homepage opens a step higher than the shell; the stack takes
-          that step back so the hero sits where it does on the homepage. */}
+          that step back so the hero sits where it does on the homepage. The
+          free view is a mismatch, not a purchase, so it says hello, not thanks. */}
       <div className="-mt-4">
-        <StackedCards cards={THANKS_CARDS} />
+        <StackedCards cards={tier === 'premium' ? THANKS_CARDS : undefined} />
       </div>
 
       {/* pb: no closing band here, so the views keep their own air above the
@@ -102,7 +83,7 @@ export default async function WelcomePage() {
         {tier === 'premium' ? (
           <>
             <PageHero
-              pill={pill}
+              pill={THANKS_PILL}
               title={
                 <>
                   You&rsquo;re <span className="text-accent">Premium</span>
@@ -157,17 +138,16 @@ export default async function WelcomePage() {
               </>
             )}
           </>
-        ) : tier === 'free' ? (
+        ) : (
           <>
             <PageHero
-              title="Almost there."
+              title={<>Premium isn&rsquo;t on this account.</>}
               sub={
                 <span className="block text-pretty sm:text-balance">
                   You&rsquo;re signed in{email ? (
                     <> as <strong className="font-semibold text-sand-900 dark:text-sand-50">{email}</strong></>
-                  ) : null}, and Premium isn&rsquo;t active on this account. Paid with
-                  a different email at checkout? Enter that address below and
-                  we&rsquo;ll send a sign-in link to your Premium account.
+                  ) : null}. Paid with a different email? Enter it below and
+                  we&rsquo;ll send a sign-in link to that account.
                 </span>
               }
             />
@@ -180,7 +160,7 @@ export default async function WelcomePage() {
               }
             />
             <p className="mt-8 text-center text-sm leading-relaxed text-sand-600 dark:text-sand-400">
-              No purchase yet?{' '}
+              Not a member yet?{' '}
               <Link href="/pricing" className="font-semibold text-accent transition-colors hover:text-accent/70">
                 See Premium plans
               </Link>
@@ -189,24 +169,6 @@ export default async function WelcomePage() {
                 Check billing
               </Link>
             </p>
-          </>
-        ) : (
-          <>
-            <PageHero
-              pill={pill}
-              title={
-                <>
-                  You&rsquo;re <span className="text-accent">Premium</span>. Check your inbox.
-                </>
-              }
-              sub={
-                <span className="block text-pretty sm:text-balance">
-                  We&rsquo;re emailing you a one-time sign-in link. Open it and
-                  you&rsquo;re in, no password needed.
-                </span>
-              }
-            />
-            <LinkSentCard />
           </>
         )}
       </div>
