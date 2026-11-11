@@ -55,13 +55,12 @@ export async function fetchPaddleCustomerEmail(customerId: string): Promise<Emai
  *  the sign-in CLAIM (vs the logged-in welcome) regardless of which event
  *  activates.
  *
- *  We deliberately DO NOT mint or email a one-time magic-link token here. The
- *  claim is the existing self-service sign-in (the buyer requests a fresh OTP),
- *  so there is no single-slot token a concurrent webhook delivery could
- *  invalidate — the previous design's created+activated race that could email a
- *  dead claim link is gone. generateLink is used ONLY to resolve an EXISTING
- *  user's id (its token is never sent). Returns 'transient' on a recoverable
- *  failure so the caller forces a Paddle retry instead of stranding the buyer.
+ *  Nothing here is emailed. The purchase email's sign-in link is minted later,
+ *  by signInLinkFor, after that email's send-once claim. An EXISTING user's id
+ *  is found by an admin lookup that mints nothing, because any new token
+ *  replaces the one a concurrent delivery already emailed. Returns 'transient'
+ *  on a recoverable failure so the caller forces a Paddle retry instead of
+ *  stranding the buyer.
  *
  *  SECURITY / ACCEPTED RESIDUAL: Paddle does not prove the buyer controls the
  *  email typed at one-off checkout, so this provisions an account from an
@@ -93,8 +92,11 @@ export async function provisionUserByEmail(
     console.error('[paddle provision] createUser failed (transient):', createErr?.message)
     return 'transient'
   }
-  // Email already has an account — resolve its id. generateLink returns the
-  // existing user; we use ONLY data.user.id (the token is irrelevant, never sent).
+  // Email already has an account: resolve its id without minting a token.
+  const found = await findUserIdByEmail(email)
+  if (found) return { userId: found, createdNew: false }
+  // Lookup failed: generateLink also returns the user, but mints a token that
+  // replaces any sign-in link already emailed (the buyer then asks /welcome).
   const { data: link, error: linkErr } = await admin.auth.admin.generateLink({
     type: 'magiclink',
     email,
@@ -105,6 +107,28 @@ export async function provisionUserByEmail(
     return 'transient'
   }
   return { userId: link.user.id, createdNew: false }
+}
+
+/** An account's id by email through Supabase Auth's admin user search (the
+ *  `filter` the dashboard uses: a substring match, so the exact address is
+ *  picked from the results). Mints nothing. null on any miss or failure, and
+ *  the caller falls back to its old resolve. */
+async function findUserIdByEmail(email: string): Promise<string | null> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SECRET_KEY
+  if (!url || !key) return null
+  try {
+    const res = await fetch(`${url}/auth/v1/admin/users?filter=${encodeURIComponent(email)}&per_page=50`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(10_000),
+    })
+    if (!res.ok) return null
+    const { users } = (await res.json()) as { users?: { id?: string; email?: string }[] }
+    const want = email.toLowerCase()
+    return users?.find((u) => u.email?.toLowerCase() === want)?.id ?? null
+  } catch {
+    return null
+  }
 }
 
 /** A one-time sign-in link for the purchase email, landing on /welcome. Call it
