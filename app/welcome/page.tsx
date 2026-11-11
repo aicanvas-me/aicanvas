@@ -134,15 +134,15 @@ export default async function WelcomePage() {
                 }
               >
                 <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-                  Browse Andromeda Pro
+                  Explore Andromeda Pro
                   <ArrowRight size={14} />
                 </Link>
-                <Link href="/components" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-                  All components
+                <Link href="/account" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
+                  View your account
                 </Link>
               </PageHero>
               {hostedMcpOAuthEnabled() ? (
-                <div className="mx-auto mt-10 w-full max-w-3xl text-left">
+                <div className="mx-auto mt-16 w-full max-w-3xl text-left sm:mt-24">
                   <ConnectAgentCard />
                 </div>
               ) : (
