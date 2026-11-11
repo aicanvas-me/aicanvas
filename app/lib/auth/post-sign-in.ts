@@ -47,6 +47,9 @@ export async function maybeSendWelcome(supabase: Pick<SupabaseClient, 'auth'>): 
     // existing user whose timestamp we can't read).
     if (Number.isNaN(createdMs) || createdMs < Date.parse(WELCOME_LAUNCH_ISO)) return // existing user
     if (user.user_metadata?.welcome_sent) return // already welcomed
+    // Made from a checkout email: the buyer already got the purchase email, and
+    // the free welcome ("grab any free component") is the wrong message for them.
+    if (user.user_metadata?.anon_provisioned) return
 
     const apiKey = process.env.RESEND_API_KEY
     if (!apiKey) return

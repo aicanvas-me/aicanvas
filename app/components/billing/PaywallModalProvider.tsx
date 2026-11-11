@@ -145,22 +145,21 @@ function PaywallModalView({
           <PaymentMethods />
         </div>
 
-        {/* Wrong-account net: a signed-in FREE user staring at this paywall may
-            have PAID under a different email (real case: OAuth sign-in with a
-            gmail address after checking out with hotmail). One line, shown only
-            when signed in, pointing at the claim flow on /welcome. */}
-        {user && (
-          <p className="mx-auto mt-4 max-w-md text-center text-xs leading-relaxed text-sand-400">
-            Paid with a different email?{' '}
-            <Link
-              href="/welcome"
-              onClick={onClose}
-              className="font-medium text-sand-50 transition-colors hover:text-sand-50/70"
-            >
-              Sign in with the address you used at checkout
-            </Link>
-          </p>
-        )}
+        {/* Already-paid net, pointing at the sign-in link form on /welcome. A
+            signed-in FREE user may have paid under a different email (real
+            case: Google sign-in with gmail after checking out with hotmail); a
+            signed-out visitor may be a buyer who never signed in, and would
+            otherwise pay twice. */}
+        <p className="mx-auto mt-4 max-w-md text-center text-xs leading-relaxed text-sand-400">
+          {user ? 'Paid with a different email?' : 'Already bought Premium?'}{' '}
+          <Link
+            href="/welcome"
+            onClick={onClose}
+            className="font-medium text-sand-50 transition-colors hover:text-sand-50/70"
+          >
+            {user ? 'Sign in with the address you used at checkout' : 'Sign in with the email you paid with'}
+          </Link>
+        </p>
       </div>
     </div>
   )

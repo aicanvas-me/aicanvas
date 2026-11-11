@@ -14,6 +14,19 @@ export function isLifetimeLive(row: { granted_at: string | null; revoked_at: str
   return row.granted_at != null && row.revoked_at == null
 }
 
+/** The Paddle subscription behind an account's Premium, or null when no
+ *  premium subscription is on it (yet). The checkout sign-in uses it to tie a
+ *  new account to the subscription that checkout bought. */
+export async function premiumSubscriptionId(client: Pick<SupabaseClient, 'from'>, userId: string): Promise<string | null> {
+  const { data, error } = await client
+    .from('user_subscriptions')
+    .select('status, current_period_end, paddle_subscription_id')
+    .eq('user_id', userId)
+    .maybeSingle()
+  if (error || !data || !isPremiumNow(data.status as SubStatus, data.current_period_end ?? null)) return null
+  return (data.paddle_subscription_id as string | null) ?? null
+}
+
 /**
  * THE premium check: a premium subscription OR a live Lifetime row. Every
  * premium decision goes through here so a Lifetime holder can never be read as

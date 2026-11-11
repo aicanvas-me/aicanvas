@@ -58,6 +58,11 @@ describe('maybeSendWelcome', () => {
     expect(calls).toEqual([])
   })
 
+  it('a buyer whose account was made from the checkout email never gets the free welcome', async () => {
+    await maybeSendWelcome(clientFor({ ...NEW_USER, user_metadata: { anon_provisioned: true } }))
+    expect(calls).toEqual([])
+  })
+
   it('no send when the flag cannot be claimed', async () => {
     markError = { message: 'boom' }
     await maybeSendWelcome(clientFor(NEW_USER))

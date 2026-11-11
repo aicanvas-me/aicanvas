@@ -11,7 +11,7 @@ import { Button } from '../Button'
 import { AccountMenuItems } from './AccountMenuItems'
 import { EmailAvatar, photoFromUser } from './EmailAvatar'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
-import { usePremiumStatus } from '../billing/usePremiumStatus'
+import { usePremiumDetails } from '../billing/usePremiumStatus'
 
 /**
  * Compact auth control for chrome that doesn't include the global sidebar
@@ -22,7 +22,7 @@ export function TopAuthPill() {
   const router = useRouter()
   const { open: openAuthModal } = useAuthModal()
   const { open: openPaywall } = usePaywallModal()
-  const status = usePremiumStatus()
+  const { status, lifetime } = usePremiumDetails()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -78,6 +78,7 @@ export function TopAuthPill() {
             </div>
             <AccountMenuItems
               showUpgrade={status === 'not-premium'}
+              plan={status === 'premium' ? (lifetime ? 'Lifetime' : 'Premium') : null}
               onUpgrade={() => { setOpen(false); openPaywall({ reason: 'upgrade' }) }}
               onNavigate={() => setOpen(false)}
               onSignOut={signOut}
