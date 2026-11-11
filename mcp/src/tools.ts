@@ -211,6 +211,7 @@ interface ShadcnRegistryItem {
   title: string
   description: string
   dependencies: string[]
+  registryDependencies?: string[]
   files: Array<{ path: string; content: string; type: string; target: string }>
 }
 
@@ -431,6 +432,23 @@ function iconComponent(name: string, style: IconStyle): string {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join('')
     .replace(/^(\d)/, 'Icon$1')
+}
+
+async function iconFilesOf(
+  ctx: ToolContext,
+  item: ShadcnRegistryItem,
+): Promise<{ files: Array<{ path: string; content: string }>; missing: string[] }> {
+  const slugs = (item.registryDependencies ?? []).flatMap((url) => url.match(/\/(icon-[a-z0-9-]+)\.json(?:\?|$)/)?.[1] ?? [])
+  if (!slugs.length) return { files: [], missing: [] }
+  const wanted = [...new Set(['icon-base', ...slugs])]
+  const items = await Promise.all(wanted.map((slug) => fetchComponentSource(ctx, slug).catch(() => null)))
+  const files = new Map<string, string>()
+  const missing: string[] = []
+  items.forEach((it, i) => {
+    if (!it?.files?.length) missing.push(wanted[i].replace(/^icon-/, ''))
+    else for (const f of it.files) files.set(f.path, f.content)
+  })
+  return { files: [...files].map(([path, content]) => ({ path, content })), missing }
 }
 
 function scoreIcon(query: string, icon: IconMeta): number {
@@ -1098,7 +1116,7 @@ export function createServer(
     {
       title: 'Get an AI Canvas component (full metadata + source code)',
       description:
-        'Return the complete record for a single component: metadata + the entire .tsx source code as a string. Use after the user picks one from a search/list result and wants to see the implementation, or before installing if they want to inspect first. The source is the exact file the CLI install would write into a project.',
+        'Return the complete record for a single component: metadata + the entire .tsx source code as a string, plus the AI Canvas icon files it imports. Use after the user picks one from a search/list result and wants to see the implementation, or before installing if they want to inspect first. The source is the exact file the CLI install would write into a project.',
       inputSchema: {
         slug: z
           .string()
@@ -1157,10 +1175,12 @@ export function createServer(
           }
         }
 
+        const icons = await iconFilesOf(ctx, source)
         const result = {
           ...forAccount(ctx, component!),
           filePath,
           code,
+          iconFiles: icons.files,
         }
 
         return {
@@ -1173,11 +1193,20 @@ export function createServer(
                 '',
                 `Categories: ${component!.categories.join(', ') || '(none)'}`,
                 `Dependencies: ${component!.dependencies.join(', ') || '(none)'}`,
+                `Icon files: ${icons.files.map((f) => f.path).join(', ') || '(none)'}`,
                 `Install: ${keyed(ctx, component!.installCommand)}`,
                 `Homepage: ${component!.homepageUrl}`,
                 '',
+                ...(icons.files.length || icons.missing.length
+                  ? [
+                      'Note: this component imports AI Canvas icons. A manual (non-CLI) write must ALSO write every icon file below at its path; the CLI install adds them automatically. Never swap in another icon set.' +
+                        (icons.missing.length ? ` Could not fetch: ${icons.missing.join(', ')}; install those with \`get_icon_install\`.` : ''),
+                      '',
+                    ]
+                  : []),
                 `--- ${filePath} ---`,
                 code,
+                ...icons.files.flatMap((f) => ['', `--- ${f.path} ---`, f.content]),
               ].join('\n'),
             ),
           ],

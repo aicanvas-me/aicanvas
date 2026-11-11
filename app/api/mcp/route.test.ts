@@ -258,6 +258,7 @@ describe('hosted MCP: a free account', () => {
     const r = await call('get_component', { slug: FREE_SLUG })
     expect(r.isError).toBeFalsy()
     expect(String(r.structuredContent!.code)).toContain('export default')
+    expect(r.structuredContent!.iconFiles).toEqual([])
     expect(vi.mocked(trackPull)).toHaveBeenCalledWith('user-1', FREE_SLUG, 'standalone')
   })
 
@@ -293,6 +294,14 @@ describe('hosted MCP: a premium account', () => {
     expect(r.content[0].text).not.toContain('(locked)')
     expect(String(r.structuredContent!.code)).toContain('export default')
     expect(String(r.structuredContent!.code)).not.toContain('PREMIUM_NOTICE')
+  })
+
+  it('hands over the icon files a premium component imports', async () => {
+    const r = await call('get_component', { slug: PREMIUM_SLUG })
+    const files = r.structuredContent!.iconFiles as Array<{ path: string; content: string }>
+    expect(files.map((f) => f.path)).toContain('components/icons/IconBase.tsx')
+    expect(files.length).toBeGreaterThan(1)
+    expect(files.every((f) => f.content.includes('export'))).toBe(true)
   })
 
   it('search reports nothing locked for a premium account', async () => {
