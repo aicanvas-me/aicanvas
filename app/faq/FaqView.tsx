@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { FaqHelpCard, FaqRows } from '../components/FaqRows'
+import { FaqHelpCard, FaqRows, type FaqRow } from '../components/FaqRows'
 import { EYEBROW, SUB } from '../components/PageKit'
 import { Reveal } from '../home/Reveal'
 import { LicenceStamp, OpenLock, SystemFill } from '../components/LoopArt'
@@ -14,14 +14,7 @@ const ART: Record<string, ReactNode> = {
   about: <LicenceStamp className="size-28" />,
 }
 
-export type FaqItem = {
-  q: string
-  a: string
-  // Optional in-answer link. `a` stays plain text (it powers the FAQPage
-  // JSON-LD), and the first occurrence of `link.label` inside `a` is rendered
-  // as an anchor. Add a link without ever breaking the structured data.
-  link?: { label: string; href: string }
-}
+export type FaqItem = FaqRow
 export type FaqCategory = {
   category: string
   slug: string
