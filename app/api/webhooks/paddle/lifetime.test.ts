@@ -213,6 +213,8 @@ describe('Lifetime purchase (transaction.completed)', () => {
     expect(buyerEmails().map((e) => e.subject)).toEqual(['Sign in to your AI Canvas Lifetime account'])
     // The email is the way in: it carries the one-time sign-in link to /welcome.
     expect(buyerEmails()[0].html).toContain(`/account/auth/confirm?token_hash=hash_${newId}&amp;type=email`)
+    expect(buyerEmails()[0].html).toContain('We created your AI Canvas account for')
+    expect(buyerEmails()[0].html).toContain('new-buyer@example.com')
   })
 
   it('a signed-out buyer whose email already has an account also gets the sign-in link', async () => {
@@ -223,6 +225,9 @@ describe('Lifetime purchase (transaction.completed)', () => {
     expect(life()[0].user_id).toBe(USER)
     expect(buyerEmails().map((e) => e.subject)).toEqual(['Sign in to your AI Canvas Lifetime account'])
     expect(buyerEmails()[0].html).toContain(`token_hash=hash_${USER}`)
+    // An account that already existed is never told "we created" it.
+    expect(buyerEmails()[0].html).toContain('Premium is now on your AI Canvas account')
+    expect(buyerEmails()[0].html).not.toContain('We created')
   })
 
   it('a signed-in buyer gets no sign-in link', async () => {

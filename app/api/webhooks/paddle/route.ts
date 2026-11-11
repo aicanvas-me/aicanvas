@@ -4,7 +4,7 @@ import { createAdminClient } from '@/app/lib/supabase/admin'
 import { mapSubscriptionFields } from '@/lib/identity/sub-mapping'
 import { welcomeToPremiumEmail, claimPremiumAccountEmail } from '@/app/lib/email/messages'
 import { NOREPLY_FROM } from '@/app/lib/config'
-import { fetchPaddleCustomerEmail, provisionUserByEmail, signInLinkFor } from '@/lib/identity/paddle-provision'
+import { claimAccountOf, fetchPaddleCustomerEmail, provisionUserByEmail, signInLinkFor } from '@/lib/identity/paddle-provision'
 import { phCapture } from '@/app/lib/analytics-server'
 import {
   applyLifetimeAdjustment,
@@ -303,7 +303,7 @@ async function handleSubscriptionEvent(admin: AdminClient, evt: PaddleEvent): Pr
           }
           // The link is minted after the claim above, so no delivery replaces it.
           const mail = user.user_metadata?.anon_provisioned || !data.custom_data?.user_id
-            ? claimPremiumAccountEmail({ signInUrl: await signInLinkFor(admin, user.email) })
+            ? claimPremiumAccountEmail({ signInUrl: await signInLinkFor(admin, user.email), account: claimAccountOf(user) })
             : welcomeToPremiumEmail()
           const sendRes = await fetch('https://api.resend.com/emails', {
             method: 'POST',

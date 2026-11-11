@@ -63,29 +63,37 @@ const WELCOME_LINK = `<a href="https://aicanvas.me/welcome" ${emailText('muted',
 function signInParts(signInUrl: string | null) {
   return signInUrl
     ? {
-        how: 'Press the button below to sign in, no password needed.',
         button: { label: 'Sign in to AI Canvas', url: escapeHtml(signInUrl) },
-        note: `The button works once, for 1 hour. After that, get a new link at ${WELCOME_LINK}.`,
+        note: `This button works once, within 1 hour. After that, get a new link at ${WELCOME_LINK}.`,
       }
     : {
-        how: 'Sign in with the email you used at checkout, no password needed.',
-        button: { label: 'Get your sign-in link', url: 'https://aicanvas.me/welcome' },
+        button: { label: 'Sign in to AI Canvas', url: 'https://aicanvas.me/welcome' },
         note: `${WELCOME_LINK} emails you a one-time sign-in link.`,
       }
+}
+
+/** Who the account is: "we created it" only for an account the checkout made
+ *  that was never signed into; anyone else already had it. */
+export type ClaimAccount = { email: string; created: boolean }
+function accountLine(a: ClaimAccount, forGood: boolean): string {
+  const who = `<strong ${emailText('primary')}>${escapeHtml(a.email)}</strong>`
+  return a.created
+    ? `We created your AI Canvas account for ${who}, with Premium on it${forGood ? ' for good' : ''}.`
+    : `Premium is now on your AI Canvas account, ${who}.`
 }
 
 /** Sent ONCE when a signed-out checkout activates a subscription. It carries a
  *  one-time sign-in link minted AFTER the send-once claim (welcome_claimed_at on
  *  the subscription row, in the Paddle webhook, shared with the welcome email so
  *  a buyer never gets both), so no second delivery can replace it. */
-export function claimPremiumAccountEmail(opts: { signInUrl: string | null }): { subject: string; html: string } {
+export function claimPremiumAccountEmail(opts: { signInUrl: string | null; account: ClaimAccount }): { subject: string; html: string } {
   const s = signInParts(opts.signInUrl)
   const html = emailShell({
     title: 'Sign in to your Premium account',
     heading: 'You just got <span class="ac-accent" style="color:#0369A1;">superpowers</span>.',
-    bodyHtml: `<p ${emailText('secondary', 'margin:0;font-size:15px;line-height:1.6;')}>Your payment went through and Premium is live on your account. ${s.how} Every design system, premium component and template is yours, including every new one the moment it ships.</p>`,
+    bodyHtml: `<p ${emailText('secondary', 'margin:0;font-size:15px;line-height:1.6;')}>Your payment went through. ${accountLine(opts.account, false)}</p>`,
     button: s.button,
-    footerNoteHtml: `${s.note} You can add a password later in your account settings. If you did not buy AI Canvas Premium, ignore this email.`,
+    footerNoteHtml: `${s.note} Didn&rsquo;t buy AI Canvas Premium? Ignore this email.`,
   })
   return { subject: 'Sign in to your AI Canvas Premium account', html }
 }
@@ -145,7 +153,8 @@ export function agentConnectedEmail(opts: {
  *  buyer's old subscription is set to cancel, the email says when it stops, so
  *  there is no separate cancel email. */
 export function lifetimeEmail(opts: {
-  claim: boolean
+  /** The signed-out buyer's account, for the claim variant; null otherwise. */
+  claim: ClaimAccount | null
   signInUrl?: string | null
   planStops: { plan: 'monthly' | 'annual' | null; effectiveAt: string | null } | null
 }): { subject: string; html: string } {
@@ -153,8 +162,8 @@ export function lifetimeEmail(opts: {
     `<p ${emailText(kind, `margin:${margin};font-size:${kind === 'muted' ? 13 : 15}px;line-height:1.6;`)}>${text}</p>`
   const s = signInParts(opts.signInUrl ?? null)
   const lead = opts.claim
-    ? `Your Lifetime payment went through and Premium is live on your account for good. ${s.how}`
-    : 'Your Lifetime payment went through and Premium is live on your account for good.'
+    ? `Your Lifetime payment went through. ${accountLine(opts.claim, true)}`
+    : 'Your Lifetime payment went through and Premium is live on your account for good. Every design system, premium component and template is yours, including every new one the moment it ships. One payment, nothing to renew.'
   let stops = ''
   if (opts.planStops) {
     const plan = opts.planStops.plan === 'annual' ? 'yearly' : opts.planStops.plan === 'monthly' ? 'monthly' : 'subscription'
@@ -167,10 +176,10 @@ export function lifetimeEmail(opts: {
   const html = emailShell({
     title: 'Premium is yours for life',
     heading: 'Premium is yours <span class="ac-accent" style="color:#0369A1;">for life</span>.',
-    bodyHtml: p(`${lead} Every design system, premium component and template is yours, including every new one the moment it ships. One payment, nothing to renew.`, 'secondary', stops ? '0 0 16px 0' : '0') + stops,
+    bodyHtml: p(lead, 'secondary', stops ? '0 0 16px 0' : '0') + stops,
     button: opts.claim ? s.button : { label: 'Use your powers', url: 'https://aicanvas.me/components' },
     footerNoteHtml: opts.claim
-      ? `${s.note} If you did not buy AI Canvas Lifetime, ignore this email.`
+      ? `${s.note} Didn&rsquo;t buy AI Canvas Lifetime? Ignore this email.`
       : 'Lifetime has no renewal and nothing to cancel.',
   })
   return {

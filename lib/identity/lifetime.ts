@@ -3,7 +3,7 @@ import type { createAdminClient } from '@/app/lib/supabase/admin'
 import { paddleApiBase } from '@/app/lib/paddle/server'
 import { NOREPLY_FROM } from '@/app/lib/config'
 import { lifetimeEmail } from '@/app/lib/email/messages'
-import { fetchPaddleCustomerEmail, provisionUserByEmail, signInLinkFor } from './paddle-provision'
+import { claimAccountOf, fetchPaddleCustomerEmail, provisionUserByEmail, signInLinkFor } from './paddle-provision'
 import { LIVE_SUB_STATUSES } from './tier'
 
 // Lifetime: a one-time Paddle price that grants Premium with no expiry. Rows
@@ -438,7 +438,7 @@ export async function sendLifetimeEmail(
     if (!claimed || claimed.length === 0) return
     const claim = signedOut || Boolean(user.user_metadata?.anon_provisioned)
     const signInUrl = claim ? await signInLinkFor(admin, user.email) : null
-    const mail = lifetimeEmail({ claim, signInUrl, planStops: scheduledCancel })
+    const mail = lifetimeEmail({ claim: claim ? claimAccountOf(user) : null, signInUrl, planStops: scheduledCancel })
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       signal: AbortSignal.timeout(10_000),

@@ -131,6 +131,16 @@ async function findUserIdByEmail(email: string): Promise<string | null> {
   }
 }
 
+/** Who the purchase email speaks to. "We created your account" holds only for an
+ *  account this checkout path made that nobody has signed into yet. */
+export function claimAccountOf(user: {
+  email?: string
+  last_sign_in_at?: string | null
+  user_metadata?: Record<string, unknown>
+}): { email: string; created: boolean } {
+  return { email: user.email ?? '', created: Boolean(user.user_metadata?.anon_provisioned) && !user.last_sign_in_at }
+}
+
 /** A one-time sign-in link for the purchase email, landing on /welcome. Call it
  *  only AFTER the email's send-once claim: a newer link replaces the older one,
  *  so a second minting would kill the link already sent. The link goes through
