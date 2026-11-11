@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { prepareCheckoutSignIn } from './checkout-signin'
+import { checkoutPasswordFor } from './paddle-provision'
 import { fakeSupabase } from './__fixtures__/fake-supabase'
 
 const TXN_ID = 'txn_01aaaaaaaaaaaaaaaaaaaaaaaa'
@@ -100,28 +101,24 @@ afterEach(() => {
 const claimRows = () => db.rows('billing_events').filter((r) => r.paddle_event_id === `checkout-signin:${TXN_ID}`)
 
 describe('prepareCheckoutSignIn', () => {
-  it('signs in the buyer of a fresh Lifetime purchase with a random password and keeps the account flags', async () => {
+  it('hands back the password the account was created with and writes nothing on the account', async () => {
     setup()
     const out = await prepareCheckoutSignIn(adminClient(), TXN_ID)
     expect(out.status).toBe('ready')
     if (out.status !== 'ready') return
     expect(out.email).toBe(EMAIL)
-    expect(out.password.length).toBeGreaterThanOrEqual(36)
+    expect(out.password).toBe(checkoutPasswordFor(EMAIL))
+    expect(out.password.length).toBeGreaterThanOrEqual(40)
     expect(claimRows()).toHaveLength(1)
-    expect(updateUserById).toHaveBeenCalledTimes(1)
-    const [id, attrs] = updateUserById.mock.calls[0]
-    expect(id).toBe(USER_ID)
-    expect(attrs.password).toBe(out.password)
-    expect(attrs.user_metadata).toMatchObject({ password_unknown: true, anon_provisioned: true })
+    // A password or metadata write would void the link in the purchase email.
+    expect(updateUserById).not.toHaveBeenCalled()
   })
 
-  it('refuses a second call for the same transaction and writes the password only once', async () => {
+  it('refuses a second call for the same transaction', async () => {
     setup()
-    const first = await prepareCheckoutSignIn(adminClient(), TXN_ID)
-    expect(first.status).toBe('ready')
-    const second = await prepareCheckoutSignIn(adminClient(), TXN_ID)
-    expect(second.status).toBe('refused')
-    expect(updateUserById).toHaveBeenCalledTimes(1)
+    expect((await prepareCheckoutSignIn(adminClient(), TXN_ID)).status).toBe('ready')
+    expect((await prepareCheckoutSignIn(adminClient(), TXN_ID)).status).toBe('refused')
+    expect(claimRows()).toHaveLength(1)
   })
 
   it('refuses an account that existed before the transaction started', async () => {
@@ -203,27 +200,31 @@ describe('prepareCheckoutSignIn', () => {
       expect((await prepareCheckoutSignIn(adminClient(), TXN_ID)).status).toBe('pending')
     })
 
+    it('refuses when the premium subscription on the account is another one', async () => {
+      setup({ txn: subTxn(), lifetime: null })
+      subRow({ paddle_subscription_id: 'sub_other' })
+      expect((await prepareCheckoutSignIn(adminClient(), TXN_ID)).status).toBe('refused')
+    })
+
     it('waits while the subscription row is missing', async () => {
       setup({ txn: subTxn(), lifetime: null })
       expect((await prepareCheckoutSignIn(adminClient(), TXN_ID)).status).toBe('pending')
     })
   })
 
-  it('refuses and sets no password when the one-time claim cannot be written', async () => {
+  it('refuses when the one-time claim cannot be written', async () => {
     setup()
     db.failing.add('billing_events:upsert')
     const err = vi.spyOn(console, 'error').mockImplementation(() => {})
     expect((await prepareCheckoutSignIn(adminClient(), TXN_ID)).status).toBe('refused')
     err.mockRestore()
-    expect(updateUserById).not.toHaveBeenCalled()
   })
 
-  it('refuses when Supabase rejects the password write', async () => {
+  it('refuses without the server secret and leaves the claim unused', async () => {
     setup()
-    updateUserById.mockResolvedValue({ data: null, error: { message: 'boom' } })
-    const err = vi.spyOn(console, 'error').mockImplementation(() => {})
-    expect((await prepareCheckoutSignIn(adminClient(), TXN_ID)).status).toBe('refused')
-    err.mockRestore()
-    expect(updateUserById).toHaveBeenCalledTimes(1)
+    delete process.env.SUPABASE_SECRET_KEY
+    searchAnswer = () => Response.json({ users: [{ id: USER_ID, email: EMAIL }] })
+    expect((await prepareCheckoutSignIn(adminClient(), TXN_ID)).status).not.toBe('ready')
+    expect(claimRows()).toHaveLength(0)
   })
 })

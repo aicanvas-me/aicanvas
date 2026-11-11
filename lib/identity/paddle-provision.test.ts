@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { provisionUserByEmail, signInLinkFor } from './paddle-provision'
+import { checkoutPasswordFor, provisionUserByEmail, signInLinkFor } from './paddle-provision'
 import { nextFromRedirectTo } from '@/app/lib/auth/email-link'
 
 // An account that already exists for the checkout email, and a spy on the one
@@ -70,5 +70,26 @@ describe('signInLinkFor', () => {
   it('is null when Supabase refuses, so the email points at /welcome instead', async () => {
     generateLink.mockResolvedValueOnce({ data: null, error: { message: 'no' }, opts: { email: '' } } as never)
     expect(await signInLinkFor(admin, 'buyer@example.com')).toBeNull()
+  })
+})
+
+describe('provisionUserByEmail for a new buyer', () => {
+  it('creates the account with the checkout password, marked as one its owner does not know', async () => {
+    const createUser = vi.fn(async () => ({ data: { user: { id: 'u_new' } }, error: null }))
+    const fresh = { auth: { admin: { createUser } } } as unknown as Parameters<typeof provisionUserByEmail>[0]
+    expect(await provisionUserByEmail(fresh, 'Buyer@Example.com')).toEqual({ userId: 'u_new', createdNew: true })
+    expect(createUser).toHaveBeenCalledWith({
+      email: 'Buyer@Example.com',
+      email_confirm: true,
+      password: checkoutPasswordFor('buyer@example.com'),
+      user_metadata: { anon_provisioned: true, password_unknown: true },
+    })
+  })
+
+  it('derives one password per address, only with the server secret', () => {
+    expect(checkoutPasswordFor('a@example.com')).toBe(checkoutPasswordFor('A@example.com'))
+    expect(checkoutPasswordFor('a@example.com')).not.toBe(checkoutPasswordFor('b@example.com'))
+    delete process.env.SUPABASE_SECRET_KEY
+    expect(checkoutPasswordFor('a@example.com')).toBeNull()
   })
 })

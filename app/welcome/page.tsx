@@ -57,8 +57,8 @@ export default async function WelcomePage() {
         .eq('user_id', user.id)
         .maybeSingle()
       token = (keyRow?.token ?? null) as string | null
-      // An account a checkout made, with no password its owner knows: one
-      // signed in right after paying holds a random one (password_unknown).
+      // An account a checkout made, with no password its owner knows: it is
+      // created with a hidden one (password_unknown) until they add their own.
       if (tier === 'premium' && user.user_metadata?.anon_provisioned) {
         const { data: hasPw } = await supabase.rpc('current_user_has_password')
         offerPassword = hasPw !== true || user.user_metadata?.password_unknown === true

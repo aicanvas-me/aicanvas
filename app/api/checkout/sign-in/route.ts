@@ -15,8 +15,22 @@ export const runtime = 'nodejs'
 const rateLimited = rateLimiter(30)
 const TXN_ID = /^txn_[a-z0-9]{10,64}$/i
 
+function originHost(origin: string | null): string | null {
+  try {
+    return origin ? new URL(origin).host : null
+  } catch {
+    return null
+  }
+}
+
 export async function POST(req: NextRequest) {
   if (!checkoutSignInEnabled()) return NextResponse.json({ status: 'refused' })
+  // Same-site JSON only, so another site cannot sign a visitor into an account
+  // it bought (a cross-site JSON post needs a preflight this route never grants).
+  const json = req.headers.get('content-type')?.startsWith('application/json')
+  if (!json || originHost(req.headers.get('origin')) !== req.nextUrl.host) {
+    return NextResponse.json({ status: 'refused' }, { status: 403 })
+  }
   const ip = ipFromHeaders(req.headers) ?? 'unknown'
   if (rateLimited(ip)) return NextResponse.json({ status: 'refused' }, { status: 429 })
 

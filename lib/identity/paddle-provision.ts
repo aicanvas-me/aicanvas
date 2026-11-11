@@ -1,4 +1,5 @@
 import 'server-only'
+import { createHmac } from 'node:crypto'
 import type { createAdminClient } from '@/app/lib/supabase/admin'
 import { SITE_URL } from '@/app/lib/config'
 import { paddleApiBase } from '@/app/lib/paddle/server'
@@ -62,26 +63,30 @@ export async function fetchPaddleCustomerEmail(customerId: string): Promise<Emai
  *  on a recoverable failure so the caller forces a Paddle retry instead of
  *  stranding the buyer.
  *
+ *  A NEW account is created with checkoutPasswordFor's password (marked
+ *  password_unknown), so the checkout sign-in can open it on the browser that
+ *  paid without writing the account later: a password write voids the link the
+ *  purchase email carries.
+ *
  *  SECURITY / ACCEPTED RESIDUAL: Paddle does not prove the buyer controls the
  *  email typed at one-off checkout, so this provisions an account from an
- *  attacker-controllable address. The DANGEROUS half is closed: the account is
- *  reachable ONLY through a one-time link mailed to that inbox (the purchase
- *  email's link from signInLinkFor below, or one the buyer requests on
- *  /welcome), so an attacker who pays with someone else's email gets no session
- *  and no premium. What remains is self-limiting griefing (each attempt costs a
- *  full payment): an unsolicited account/premium under a victim's address. Do
- *  NOT widen this: a sign-in link only ever goes to the account's own address,
- *  never back to the browser, and access is never granted without one. A fuller
- *  fix (defer account creation until the buyer proves mailbox control) is
- *  tracked for a tested pass. */
+ *  attacker-controllable address. An EXISTING account stays closed: it is
+ *  reachable only through a one-time link mailed to its inbox, so paying with
+ *  someone's email never opens their account. A NEW account is opened on the
+ *  browser that paid (lib/identity/checkout-signin.ts), so a stranger who pays
+ *  with another person's address holds that new account, and keeps it (session,
+ *  a password they add, the install token) if the owner later signs in with the
+ *  same address. Ruled by the maintainer 2026-11-11: "Accept risk". */
 export async function provisionUserByEmail(
   admin: AdminClient,
   email: string,
 ): Promise<{ userId: string; createdNew: boolean } | 'transient'> {
+  const password = checkoutPasswordFor(email)
   const { data: created, error: createErr } = await admin.auth.admin.createUser({
     email,
     email_confirm: true,
-    user_metadata: { anon_provisioned: true },
+    ...(password ? { password } : {}),
+    user_metadata: { anon_provisioned: true, ...(password ? { password_unknown: true } : {}) },
   })
   if (!createErr && created?.user?.id) return { userId: created.user.id, createdNew: true }
 
@@ -107,6 +112,16 @@ export async function provisionUserByEmail(
     return 'transient'
   }
   return { userId: link.user.id, createdNew: false }
+}
+
+/** The password a checkout account is created with, derived from the address
+ *  and the server's Supabase secret so the checkout sign-in can recompute it
+ *  instead of storing it. Nobody is shown it; the buyer adds their own. null
+ *  without the secret: the account then gets no password and no instant sign-in. */
+export function checkoutPasswordFor(email: string): string | null {
+  const key = process.env.SUPABASE_SECRET_KEY
+  if (!key) return null
+  return `${createHmac('sha256', key).update(`checkout-signin:v1:${email.toLowerCase()}`).digest('base64url')}Aa1!`
 }
 
 /** An account's id by email through Supabase Auth's admin user search (the

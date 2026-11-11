@@ -1,9 +1,8 @@
 import 'server-only'
-import { randomBytes } from 'node:crypto'
 import type { createAdminClient } from '@/app/lib/supabase/admin'
 import { checkedOutSignedOut, fetchPaddleTransaction, hasLifetimeItem, lifetimePriceId } from './lifetime'
-import { fetchPaddleCustomerEmail, findUserIdByEmail } from './paddle-provision'
-import { getPremiumForUser } from './premium'
+import { checkoutPasswordFor, fetchPaddleCustomerEmail, findUserIdByEmail } from './paddle-provision'
+import { premiumSubscriptionId } from './premium'
 
 // Signs in a brand-new buyer on the browser that just paid, so they never need
 // the email link. ONLY for an account this checkout created that nobody has
@@ -11,7 +10,7 @@ import { getPremiumForUser } from './premium'
 // inbox", so paying with someone's email never opens their existing account.
 // ACCEPTED RESIDUAL (his ruling 2026-11-11, "Accept risk"): a stranger who pays
 // with another person's address is signed in to the NEW account under it, and
-// keeps that session if the owner later signs in with the same address.
+// keeps that account if the owner later signs in with the same address.
 
 type AdminClient = ReturnType<typeof createAdminClient>
 
@@ -27,9 +26,8 @@ export type CheckoutSignIn =
 type Purchase = 'live' | 'pending' | 'refused'
 
 /** Is this transaction's access already on the account? Lifetime: its own row,
- *  granted and not revoked. A subscription: the one premium check, since on a
- *  brand-new account Premium can only come from this checkout. 'pending' while
- *  the webhook is still writing it. */
+ *  granted and not revoked. A subscription: the premium subscription on the
+ *  account is this transaction's. 'pending' while the webhook is still writing it. */
 async function purchaseOn(admin: AdminClient, txn: any, userId: string): Promise<Purchase> { // eslint-disable-line @typescript-eslint/no-explicit-any
   if (hasLifetimeItem(txn, lifetimePriceId())) {
     const { data, error } = await admin
@@ -42,8 +40,9 @@ async function purchaseOn(admin: AdminClient, txn: any, userId: string): Promise
     return data.granted_at ? 'live' : 'pending'
   }
   if (typeof txn?.subscription_id !== 'string' || !txn.subscription_id) return 'refused'
-  const state = await getPremiumForUser(admin, userId).catch(() => null)
-  return state?.premium ? 'live' : 'pending'
+  const subscriptionId = await premiumSubscriptionId(admin, userId)
+  if (!subscriptionId) return 'pending'
+  return subscriptionId === txn.subscription_id ? 'live' : 'refused'
 }
 
 /**
@@ -51,9 +50,10 @@ async function purchaseOn(admin: AdminClient, txn: any, userId: string): Promise
  * transaction is real, paid, fresh and was bought signed out; the account under
  * its checkout email was made by the webhook after this transaction started,
  * nobody has signed into it, and the purchase is already on it. Then a one-time
- * claim per transaction (billing_events' unique key), and a random password the
- * route signs in with and nobody ever sees. A password, not a link: minting a
- * link replaces the one the purchase email carries.
+ * claim per transaction (billing_events' unique key), and the password the
+ * account was created with (checkoutPasswordFor), which the route signs in with
+ * and nobody ever sees. Nothing on the account is written here: a new link or a
+ * password write would void the link the purchase email carries.
  * 'pending' means ask again shortly (the webhook is still working); 'refused'
  * means this buyer signs in from the email.
  */
@@ -81,6 +81,8 @@ export async function prepareCheckoutSignIn(admin: AdminClient, transactionId: s
 
   const purchase = await purchaseOn(admin, txn, userId)
   if (purchase !== 'live') return { status: purchase }
+  const password = checkoutPasswordFor(user.email)
+  if (!password) return { status: 'refused' }
 
   const { data: claimed, error: claimErr } = await admin
     .from('billing_events')
@@ -100,17 +102,5 @@ export async function prepareCheckoutSignIn(admin: AdminClient, transactionId: s
     return { status: 'refused' }
   }
   if (!claimed || claimed.length === 0) return { status: 'refused' }
-
-  // password_unknown: settings and /welcome offer "Add a password" instead of
-  // asking for a current password the buyer never had.
-  const password = `${randomBytes(24).toString('base64url')}Aa1!`
-  const { error: pwErr } = await admin.auth.admin.updateUserById(userId, {
-    password,
-    user_metadata: { ...(user.user_metadata ?? {}), password_unknown: true },
-  })
-  if (pwErr) {
-    console.error('[checkout sign-in] password write failed:', pwErr.message)
-    return { status: 'refused' }
-  }
   return { status: 'ready', email: user.email, password }
 }

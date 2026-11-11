@@ -16,8 +16,8 @@ import { CARD } from '../../../components/PageKit'
 //     unlocked / stolen but already-signed-in session can't silently rotate the
 //     password.
 //   • set — an account with no password its owner knows: OAuth-only (e.g.
-//     signed up with Google), or a buyer signed in right after paying, who holds
-//     a random one (password_unknown, cleared here). There's no current
+//     signed up with Google), or an account a checkout made, which holds a
+//     hidden one (password_unknown, cleared here). There's no current
 //     password to verify; updateUser({ password }) lets them sign in with email.
 //
 // Either path triggers Supabase's (now-enabled) "password changed" notification.
