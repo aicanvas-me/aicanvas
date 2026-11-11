@@ -64,6 +64,20 @@ export function AddPasswordCard({ email }: { email: string | null }) {
               your password. No email link needed.
             </p>
             <form onSubmit={handleSubmit} className="mt-4 space-y-3">
+              {/* Password managers pair a new password with the username field
+                  in its form; without one they save it to the wrong login. */}
+              {email && (
+                <input
+                  type="email"
+                  name="email"
+                  autoComplete="username"
+                  value={email}
+                  readOnly
+                  tabIndex={-1}
+                  aria-hidden
+                  className="sr-only"
+                />
+              )}
               <label htmlFor="welcome-password" className="sr-only">Password</label>
               <PasswordInput
                 id="welcome-password"
