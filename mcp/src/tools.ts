@@ -901,7 +901,13 @@ export function createServer(
   info: { version: string; instructions?: string },
 ): McpServer {
   const server = new McpServer(
-    { name: 'aicanvas', version: info.version },
+    {
+      name: 'aicanvas',
+      title: 'AI Canvas',
+      version: info.version,
+      websiteUrl: 'https://aicanvas.me',
+      icons: [{ src: 'https://aicanvas.me/mcp-logo-400.png', mimeType: 'image/png', sizes: ['400x400'] }],
+    },
     {
       capabilities: { tools: {}, logging: {} },
       ...(info.instructions ? { instructions: info.instructions } : {}),
