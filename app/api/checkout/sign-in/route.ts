@@ -4,6 +4,7 @@ import { createAdminClient } from '@/app/lib/supabase/admin'
 import { ipFromHeaders } from '@/app/lib/quota'
 import { rateLimiter } from '@/app/lib/rate-limit'
 import { checkoutSignInEnabled } from '@/lib/flags'
+import { SITE_URL } from '@/app/lib/config'
 import { prepareCheckoutSignIn } from '@/lib/identity/checkout-signin'
 
 export const runtime = 'nodejs'
@@ -28,7 +29,8 @@ export async function POST(req: NextRequest) {
   // Same-site JSON only, so another site cannot sign a visitor into an account
   // it bought (a cross-site JSON post needs a preflight this route never grants).
   const json = req.headers.get('content-type')?.startsWith('application/json')
-  if (!json || originHost(req.headers.get('origin')) !== req.nextUrl.host) {
+  const from = originHost(req.headers.get('origin'))
+  if (!json || !from || (from !== req.nextUrl.host && from !== new URL(SITE_URL).host)) {
     return NextResponse.json({ status: 'refused' }, { status: 403 })
   }
   const ip = ipFromHeaders(req.headers) ?? 'unknown'

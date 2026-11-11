@@ -92,4 +92,16 @@ describe('provisionUserByEmail for a new buyer', () => {
     delete process.env.SUPABASE_SECRET_KEY
     expect(checkoutPasswordFor('a@example.com')).toBeNull()
   })
+
+  it('makes the account without a password when the password policy refuses it', async () => {
+    const createUser = vi
+      .fn()
+      .mockResolvedValueOnce({ data: { user: null }, error: { code: 'weak_password', status: 422, message: 'weak' } })
+      .mockResolvedValueOnce({ data: { user: { id: 'u_new' } }, error: null })
+    const fresh = { auth: { admin: { createUser } } } as unknown as Parameters<typeof provisionUserByEmail>[0]
+    const err = vi.spyOn(console, 'error').mockImplementation(() => {})
+    expect(await provisionUserByEmail(fresh, 'buyer@example.com')).toEqual({ userId: 'u_new', createdNew: true })
+    err.mockRestore()
+    expect(createUser).toHaveBeenLastCalledWith({ email: 'buyer@example.com', email_confirm: true, user_metadata: { anon_provisioned: true } })
+  })
 })

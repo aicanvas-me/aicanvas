@@ -82,12 +82,20 @@ export async function provisionUserByEmail(
   email: string,
 ): Promise<{ userId: string; createdNew: boolean } | 'transient'> {
   const password = checkoutPasswordFor(email)
-  const { data: created, error: createErr } = await admin.auth.admin.createUser({
-    email,
-    email_confirm: true,
-    ...(password ? { password } : {}),
-    user_metadata: { anon_provisioned: true, ...(password ? { password_unknown: true } : {}) },
-  })
+  const create = (withPassword: boolean) =>
+    admin.auth.admin.createUser({
+      email,
+      email_confirm: true,
+      ...(withPassword && password ? { password } : {}),
+      user_metadata: { anon_provisioned: true, ...(withPassword && password ? { password_unknown: true } : {}) },
+    })
+  let { data: created, error: createErr } = await create(true)
+  // A password policy that refuses it is not "already exists": make the account
+  // without one (no instant sign-in, the email link still works).
+  if ((createErr as { code?: string } | null)?.code === 'weak_password') {
+    console.error('[paddle provision] checkout password refused by the password policy; account made without it')
+    ;({ data: created, error: createErr } = await create(false))
+  }
   if (!createErr && created?.user?.id) return { userId: created.user.id, createdNew: true }
 
   const errCode = (createErr as { code?: string } | null)?.code
