@@ -19,37 +19,37 @@ export function LinkSentCard() {
 
   return (
     <div
-      className="aic-hero-rise mx-auto mt-10 w-full max-w-md rounded-3xl border border-sand-800 bg-sand-900 p-2 text-left"
+      className="aic-hero-rise mx-auto mt-10 w-full max-w-md rounded-3xl border border-sand-200 bg-sand-100 p-2 text-left dark:border-sand-800 dark:bg-sand-900"
       style={{ animationDelay: '0.42s' }}
     >
       <div className="px-4 pt-4 pb-5 sm:px-5 sm:pt-5">
         <div className="flex items-center gap-3">
-          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-sand-800 text-sand-50">
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-sand-200 text-sand-900 dark:bg-sand-800 dark:text-sand-50">
             <Mail size={18} />
           </span>
           <div className="min-w-0">
-            <p className="text-sm text-sand-400">Sign-in link on its way to</p>
-            <p className="break-words font-semibold text-sand-50">{email ?? 'the email you used at checkout'}</p>
+            <p className="text-sm text-sand-600 dark:text-sand-400">Sign-in link on its way to</p>
+            <p className="break-words font-semibold text-sand-900 dark:text-sand-50">{email ?? 'the email you used at checkout'}</p>
           </div>
         </div>
-        <p className="mt-4 text-sm leading-relaxed text-sand-300">
+        <p className="mt-4 text-sm leading-relaxed text-sand-700 dark:text-sand-300">
           {subject ? (
             <>
-              Look for <strong className="font-semibold text-sand-50">&ldquo;{subject}&rdquo;</strong> from AI Canvas.
+              Look for <strong className="font-semibold text-sand-900 dark:text-sand-50">&ldquo;{subject}&rdquo;</strong> from AI Canvas.
             </>
           ) : (
             'Look for the email from AI Canvas with a Sign in button.'
           )}{' '}
           The link works once, for 1 hour.
         </p>
-        <p className="mt-5 mb-3 text-sm text-sand-400">
+        <p className="mt-5 mb-3 text-sm text-sand-600 dark:text-sand-400">
           {email
             ? 'Nothing after a minute? Check spam, or get a new link.'
             : 'Nothing after a minute? Enter the email you paid with for a new link.'}
         </p>
         <ClaimForm presetEmail={email ?? undefined} submitLabel="Send a new link" />
       </div>
-      <div className="flex items-start gap-2.5 rounded-2xl bg-sand-950 px-4 py-4 text-sm leading-relaxed text-sand-400 sm:px-5">
+      <div className="flex items-start gap-2.5 rounded-2xl bg-sand-50/70 px-4 py-4 text-sm leading-relaxed text-sand-600 sm:px-5 dark:bg-sand-950 dark:text-sand-400">
         <Info size={16} className="mt-0.5 shrink-0 text-accent" />
         <span>Your receipt comes in a separate email from Paddle, our payment provider.</span>
       </div>
