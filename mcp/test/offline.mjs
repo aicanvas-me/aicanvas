@@ -297,6 +297,18 @@ try {
     `code length ${gcSc?.code?.length}`,
   )
 
+  // A standalone hands over the icon files it imports, so an agent without a terminal can write them.
+  const gciRes = await call('get_component', { slug: 'delete-button' })
+  const gciPaths = (sc(gciRes)?.iconFiles ?? []).map((f) => f.path)
+  record(
+    'local: get_component(delete-button) returns its icon files and the icon runtime',
+    !gciRes?.result?.isError &&
+      ['components/icons/check.tsx', 'components/icons/undo.tsx', 'components/icons/IconBase.tsx'].every((p) => gciPaths.includes(p)) &&
+      (sc(gciRes)?.iconFiles ?? []).every((f) => f.content.length > 50) &&
+      gciRes.result.content[0].text.includes('--- components/icons/check.tsx ---'),
+    `isError=${gciRes?.result?.isError}, iconFiles=${JSON.stringify(gciPaths)}, text=${gciRes?.result?.content?.[0]?.text?.slice(0, 400)}`,
+  )
+
   // get_install_command → DS slug via systemComponents fallback
   const gicB = await call('get_install_command', { slug: 'andromeda-heat-grid' })
   const gicBSc = sc(gicB)
