@@ -109,7 +109,7 @@ function authorizeUrl(base: URL, clientId: string, extra: Record<string, string>
 }
 
 function pendingRequest(clientId: string, base = LOCAL) {
-  const outcome = authorize(authorizeUrl(base, clientId), 'DE')
+  const outcome = authorize(authorizeUrl(base, clientId))
   if (outcome.kind !== 'redirect') throw new Error(outcome.message)
   const request = readRequest(new URL(outcome.location).searchParams.get('request'))
   if (!request) throw new Error('no request')
@@ -122,7 +122,6 @@ async function connect(clientId = register()) {
   const res = await exchange(
     new URLSearchParams({ grant_type: 'authorization_code', code, code_verifier: VERIFIER, client_id: clientId, redirect_uri: CALLBACK }),
     new URL('http://localhost:3001/api/mcp/oauth/token'),
-    'DE',
   )
   return { clientId, code, res }
 }
@@ -130,7 +129,7 @@ async function connect(clientId = register()) {
 const TOKEN_URL = new URL('http://localhost:3001/api/mcp/oauth/token')
 const MCP_URL = new URL('http://localhost:3001/api/mcp')
 const refreshWith = (clientId: string, token: unknown) =>
-  exchange(new URLSearchParams({ grant_type: 'refresh_token', refresh_token: String(token), client_id: clientId }), TOKEN_URL, null)
+  exchange(new URLSearchParams({ grant_type: 'refresh_token', refresh_token: String(token), client_id: clientId }), TOKEN_URL)
 
 beforeEach(() => {
   process.env.MCP_OAUTH_SECRET = 's'.repeat(40)
@@ -182,34 +181,35 @@ describe('registration', () => {
 
 describe('authorization request', () => {
   it('never redirects for an unknown client or an unregistered return address', () => {
-    expect(authorize(authorizeUrl(LOCAL, 'nope.nope'), null).kind).toBe('error-page')
-    expect(authorize(authorizeUrl(LOCAL, register(), { redirect_uri: 'http://localhost:1/other' }), null).kind).toBe('error-page')
+    expect(authorize(authorizeUrl(LOCAL, 'nope.nope')).kind).toBe('error-page')
+    expect(authorize(authorizeUrl(LOCAL, register(), { redirect_uri: 'http://localhost:1/other' })).kind).toBe('error-page')
   })
 
   it('sends PKCE and resource errors back to the agent', () => {
-    const plain = authorize(authorizeUrl(LOCAL, register(), { code_challenge_method: 'plain' }), null)
+    const plain = authorize(authorizeUrl(LOCAL, register(), { code_challenge_method: 'plain' }))
     expect(plain.kind === 'redirect' && new URL(plain.location).searchParams.get('error')).toBe('invalid_request')
-    const other = authorize(authorizeUrl(LOCAL, register(), { resource: 'https://other.example' }), null)
+    const other = authorize(authorizeUrl(LOCAL, register(), { resource: 'https://other.example' }))
     expect(other.kind === 'redirect' && new URL(other.location).searchParams.get('error')).toBe('invalid_target')
   })
 
   it('accepts a resource with or without a trailing slash, never another path', () => {
-    const slash = authorize(authorizeUrl(LOCAL, register(), { resource: 'http://localhost:3001/api/mcp/' }), null)
+    const slash = authorize(authorizeUrl(LOCAL, register(), { resource: 'http://localhost:3001/api/mcp/' }))
     expect(slash.kind === 'redirect' && slash.location.includes('/oauth/consent?request=')).toBe(true)
-    const other = authorize(authorizeUrl(LOCAL, register(), { resource: 'http://localhost:3001/api/mcp/other' }), null)
+    const other = authorize(authorizeUrl(LOCAL, register(), { resource: 'http://localhost:3001/api/mcp/other' }))
     expect(other.kind === 'redirect' && new URL(other.location).searchParams.get('error')).toBe('invalid_target')
   })
 
   it('accepts the production address with or without its trailing slash', () => {
-    const outcome = authorize(authorizeUrl(PROD, register()), null)
+    const outcome = authorize(authorizeUrl(PROD, register()))
     expect(outcome.kind === 'redirect' && outcome.location.startsWith('https://aicanvas.me/oauth/consent?request=')).toBe(true)
   })
 
   it('signs the request for the consent page; tampered, expired or swapped blobs are refused', () => {
     const clientId = register()
-    const outcome = authorize(authorizeUrl(LOCAL, clientId), 'DE')
+    const outcome = authorize(authorizeUrl(LOCAL, clientId))
     const signed = outcome.kind === 'redirect' ? new URL(outcome.location).searchParams.get('request')! : ''
-    expect(readRequest(signed)).toMatchObject({ ru: CALLBACK, st: 'st-1', co: 'DE', res: 'http://localhost:3001/api/mcp' })
+    expect(readRequest(signed)).toMatchObject({ ru: CALLBACK, st: 'st-1', res: 'http://localhost:3001/api/mcp' })
+    expect(readRequest(signed)).not.toHaveProperty('co')
     // Flip a middle character: the last base64url character can carry only padding bits.
     const mid = Math.floor(signed.length / 2)
     expect(readRequest(signed.slice(0, mid) + (signed[mid] === 'A' ? 'B' : 'A') + signed.slice(mid + 1))).toBeNull()
@@ -237,7 +237,8 @@ describe('tokens', () => {
     const { res } = await connect()
     expect(res.status).toBe(200)
     expect(res.body).toMatchObject({ token_type: 'Bearer', expires_in: 3600 })
-    expect(res.connected).toMatchObject({ userId: 'user-1', browserCountry: 'DE', agentCountry: 'DE' })
+    expect(res.connected).toEqual({ userId: 'user-1', clientName: expect.any(String), redirectUri: CALLBACK })
+    expect(JSON.stringify(db.tables.mcp_grants)).not.toContain('country')
     const agent = await agentForAccessToken(String(res.body.access_token), MCP_URL)
     expect(agent).toMatchObject({ userId: 'user-1', key: 'aic_' + 'b'.repeat(48) })
     expect(JSON.stringify(db.tables.mcp_grants)).not.toContain(String(res.body.access_token))
@@ -248,7 +249,6 @@ describe('tokens', () => {
     const again = await exchange(
       new URLSearchParams({ grant_type: 'authorization_code', code, code_verifier: VERIFIER, client_id: clientId, redirect_uri: CALLBACK }),
       TOKEN_URL,
-      null,
     )
     expect(again.body.error).toBe('invalid_grant')
     expect(await agentForAccessToken(String(res.body.access_token), MCP_URL)).toBeNull()
@@ -258,7 +258,7 @@ describe('tokens', () => {
     const clientId = register()
     const code = new URL((await approve(pendingRequest(clientId), 'user-1'))!).searchParams.get('code')!
     const base = { grant_type: 'authorization_code', code, code_verifier: VERIFIER, client_id: clientId, redirect_uri: CALLBACK }
-    const tryWith = (over: Record<string, string>) => exchange(new URLSearchParams({ ...base, ...over }), TOKEN_URL, null)
+    const tryWith = (over: Record<string, string>) => exchange(new URLSearchParams({ ...base, ...over }), TOKEN_URL)
     expect((await tryWith({ code_verifier: 'w'.repeat(43) })).body.error).toBe('invalid_grant')
     expect((await tryWith({ client_id: register([CALLBACK], 'Another agent') })).body.error).toBe('invalid_grant')
     expect((await tryWith({ redirect_uri: 'http://localhost:1/callback' })).body.error).toBe('invalid_grant')
@@ -335,9 +335,9 @@ describe('redirect safety', () => {
 
   it('shows an error page instead of redirecting a bad request to a website', () => {
     const web = register(['https://agent.example/cb'])
-    const outcome = authorize(authorizeUrl(LOCAL, web, { redirect_uri: 'https://agent.example/cb', response_type: 'token' }), null)
+    const outcome = authorize(authorizeUrl(LOCAL, web, { redirect_uri: 'https://agent.example/cb', response_type: 'token' }))
     expect(outcome.kind).toBe('error-page')
-    const local = authorize(authorizeUrl(LOCAL, register(), { response_type: 'token' }), null)
+    const local = authorize(authorizeUrl(LOCAL, register(), { response_type: 'token' }))
     expect(local.kind).toBe('redirect')
   })
 })
@@ -349,7 +349,7 @@ describe('registrations outlive the signing secret', () => {
     const old = register()
     process.env.MCP_OAUTH_SECRET = 't'.repeat(40)
     expect(readClient(old)).toMatchObject({ n: 'Claude Code (aicanvas)', r: [CALLBACK] })
-    expect(authorize(authorizeUrl(LOCAL, old), null).kind).toBe('redirect')
+    expect(authorize(authorizeUrl(LOCAL, old)).kind).toBe('redirect')
   })
 
   it('refuses an unsigned one that breaks a rule, and garbage', () => {
@@ -362,7 +362,7 @@ describe('registrations outlive the signing secret', () => {
   it('cleans the name again and never takes a consent request as a client', () => {
     const zw = String.fromCharCode(0x200b)
     expect(readClient(forge({ n: `Claude${zw} Code`, r: [CALLBACK], iat: 1 }))?.n).toBe('Claude Code')
-    const outcome = authorize(authorizeUrl(LOCAL, register()), null)
+    const outcome = authorize(authorizeUrl(LOCAL, register()))
     const signed = outcome.kind === 'redirect' ? new URL(outcome.location).searchParams.get('request')! : ''
     expect(readClient(signed)).toBeNull()
   })

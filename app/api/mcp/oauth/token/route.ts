@@ -4,7 +4,7 @@ import { exchange, publicUrl } from '@/app/lib/mcp-oauth'
 import { ipFromHeaders } from '@/app/lib/quota'
 import { rateLimiter } from '@/app/lib/rate-limit'
 import { hostedMcpOAuthEnabled } from '@/lib/flags'
-import { country, json, notFound, preflight } from '../http'
+import { json, notFound, preflight } from '../http'
 
 export const runtime = 'nodejs'
 
@@ -24,7 +24,7 @@ export async function POST(req: Request): Promise<Response> {
   }
 
   try {
-    const result = await exchange(form, publicUrl(req), country(req))
+    const result = await exchange(form, publicUrl(req))
     const connected = result.connected
     if (connected) after(() => sendAgentConnectedNotice(connected))
     return json(result.status, result.body)

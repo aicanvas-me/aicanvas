@@ -21,7 +21,6 @@ export type ConnectedAgent = {
   connectedAt: string
   lastUsedAt: string | null
   staleRefreshAt: string | null
-  countryMismatch: string | null
 }
 
 const day = (iso: string) =>
@@ -117,10 +116,10 @@ export function ConnectedAgentsSection({ agents }: { agents: ConnectedAgent[] })
                     {busy === agent.id ? 'Disconnecting…' : 'Disconnect'}
                   </button>
                 </div>
-                {(agent.countryMismatch || agent.staleRefreshAt) && (
+                {agent.staleRefreshAt && (
                   <p className="mt-2 flex items-start gap-1.5 text-xs text-red-700 dark:text-red-400">
                     <TriangleAlert size={14} className="mt-0.5 shrink-0" />
-                    {agent.countryMismatch ?? `An old sign-in of this agent was used on ${day(agent.staleRefreshAt!)}.`}
+                    {`An old sign-in of this agent was used on ${day(agent.staleRefreshAt)}.`}
                   </p>
                 )}
               </li>

@@ -21,7 +21,7 @@ describe('renewalThanksEmail', () => {
 
 describe('agentConnectedEmail', () => {
   it('says an AI agent connected, escapes its self-given name, and links to the settings section', () => {
-    const { subject, html } = agentConnectedEmail({ agentName: '<b>Claude</b>', agentCountry: 'Germany', browserCountry: 'Germany' })
+    const { subject, html } = agentConnectedEmail({ agentName: '<b>Claude</b>' })
     expect(subject).toBe('An AI agent connected to your AI Canvas account')
     expect(html).toContain('&lt;b&gt;Claude&lt;/b&gt;')
     expect(html).not.toContain('<b>Claude</b>')
@@ -29,8 +29,8 @@ describe('agentConnectedEmail', () => {
     expect(html).not.toContain('while your browser was in')
   })
 
-  it('warns when the agent finished signing in from another country than the browser', () => {
-    const { html } = agentConnectedEmail({ agentName: 'x', agentCountry: 'Brazil', browserCountry: 'Germany' })
-    expect(html).toContain('It finished signing in from Brazil while your browser was in Germany.')
+  it('never names where the agent or the browser signed in from', () => {
+    const { html } = agentConnectedEmail({ agentName: 'x' })
+    expect(html).not.toMatch(/signed in from|your browser was in/)
   })
 })
