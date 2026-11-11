@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { Bolt } from '@/app/_icons/icons/bolt'
 import { Info } from '@/app/_icons/icons/info'
 import { PageHero, PageShell } from '../components/PageKit'
 import { buttonClasses } from '../components/buttonClasses'
@@ -115,17 +116,14 @@ export default async function WelcomePage() {
                   </>
                 }
                 sub={
-                  // The plan line sits on its own row; the token sentence is
-                  // balanced so its last word never sits alone at desktop width.
+                  // The plan line is a Premium chip on its own row; the token
+                  // sentence is balanced so its last word never sits alone.
                   <>
-                    <span className="block">
-                      {lifetime ? 'Lifetime' : 'Premium'} is live on{' '}
-                      {email ? (
-                        <strong className="font-semibold text-sand-50">{email}</strong>
-                      ) : (
-                        <>your account</>
-                      )}
-                      .
+                    <span className="mb-4 inline-flex max-w-full items-center gap-2 rounded-full bg-premium/10 px-3.5 py-1.5 text-sm ring-1 ring-inset ring-premium/30">
+                      <Bolt size={14} className="shrink-0 text-premium" />
+                      <span className="shrink-0 font-semibold text-premium">{lifetime ? 'Lifetime' : 'Premium'}</span>
+                      <span className="shrink-0 text-sand-300">is live on</span>
+                      <strong className="min-w-0 truncate font-semibold text-sand-50">{email ?? 'your account'}</strong>
                     </span>
                     <span className="block text-pretty sm:text-balance">
                       {token
