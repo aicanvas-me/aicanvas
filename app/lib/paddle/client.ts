@@ -2,7 +2,7 @@
 import { initializePaddle, type CheckoutSettings, type Paddle, type PaddleEventData } from '@paddle/paddle-js'
 import type { CheckoutEventsData } from '@paddle/paddle-js/types/checkout/events'
 import { beacon } from '../analytics'
-import { rememberCheckout } from '../checkout-handoff'
+import { forgetCheckout, rememberCheckout } from '../checkout-handoff'
 
 let paddlePromise: Promise<Paddle | undefined> | null = null
 
@@ -25,6 +25,26 @@ const CHECKOUT_STEPS = new Set([
   'checkout.closed',
   'checkout.completed',
 ])
+
+// A buyer whose payment just made a brand-new account is signed in on this
+// browser (app/api/checkout/sign-in). Asks every 2.5 s for up to 30 s while the
+// webhook makes the account; false sends the buyer to the email link instead.
+async function signInAfterCheckout(transactionId: string | undefined): Promise<boolean> {
+  if (!transactionId) return false
+  const until = Date.now() + 30_000
+  while (Date.now() < until) {
+    const res = await fetch('/api/checkout/sign-in', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ transactionId }),
+    }).catch(() => null)
+    const status = res?.ok ? (await res.json().catch(() => null))?.status : null
+    if (status === 'signed-in') return true
+    if (status !== 'pending') return false
+    await new Promise((r) => setTimeout(r, 2500))
+  }
+  return false
+}
 
 /** Lazily initialize Paddle.js once. */
 export function getPaddle(): Promise<Paddle | undefined> {
@@ -64,11 +84,11 @@ export function getPaddle(): Promise<Paddle | undefined> {
                   email: data?.customer?.email ?? null,
                   lifetime: Boolean(PRICES.lifetime) && (data?.items ?? []).some((i) => i.price_id === PRICES.lifetime),
                 })
+                if (await signInAfterCheckout(transactionId)) forgetCheckout()
               }
-              // Confirmed fast-path activation (signed-in) and anonymous
-              // pending-claim both land on /welcome — the state-aware
-              // post-purchase page: Premium quickstart (token + install
-              // command) for a live session, the claim form otherwise.
+              // Every outcome lands on /welcome, the state-aware post-purchase
+              // page: Premium for a session (signed in before paying, or just
+              // now), "check your inbox" for a buyer who signs in by email.
               window.location.href = '/welcome'
             })
             .catch(() => {

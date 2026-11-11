@@ -15,9 +15,10 @@ import { CARD } from '../../../components/PageKit'
 //     password and re-verify it (signInWithPassword) before updating, so an
 //     unlocked / stolen but already-signed-in session can't silently rotate the
 //     password.
-//   • set — an OAuth-only account (e.g. signed up with Google) with no password
-//     yet. There's no current password to verify; updateUser({ password }) ADDS
-//     an email+password identity so the user can also sign in with email later.
+//   • set — an account with no password its owner knows: OAuth-only (e.g.
+//     signed up with Google), or a buyer signed in right after paying, who holds
+//     a random one (password_unknown, cleared here). There's no current
+//     password to verify; updateUser({ password }) lets them sign in with email.
 //
 // Either path triggers Supabase's (now-enabled) "password changed" notification.
 
@@ -70,7 +71,7 @@ export function PasswordSection({ hasPassword, email }: Props) {
       }
     }
 
-    const { error: updateError } = await supabase.auth.updateUser({ password })
+    const { error: updateError } = await supabase.auth.updateUser({ password, data: { password_unknown: null } })
     setSubmitting(false)
     if (updateError) {
       setError(formatAuthError(updateError))
@@ -93,7 +94,7 @@ export function PasswordSection({ hasPassword, email }: Props) {
       <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-sand-600 dark:text-sand-400">
         {hasPassword
           ? 'Update the password you use to sign in.'
-          : 'You signed up with Google. Add a password so you can also sign in with your email.'}
+          : 'Add a password so you can also sign in with your email and password.'}
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 max-w-sm space-y-4">

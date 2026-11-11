@@ -11,6 +11,7 @@ import { createAdminClient } from '../lib/supabase/admin'
 import { createClient } from '../lib/supabase/server'
 import { ClaimCard, THANKS_CARDS, THANKS_PILL } from './parts'
 import { SignedOutWelcome } from './SignedOutWelcome'
+import { AddPasswordCard } from './AddPasswordCard'
 import { PremiumQuickstart } from './PremiumQuickstart'
 import { ConnectAgentCard } from '../mcp/ConnectAgentCard'
 import { hostedMcpOAuthEnabled } from '../../lib/flags'
@@ -38,6 +39,7 @@ export default async function WelcomePage() {
   let lifetime = false
   let email: string | null = null
   let token: string | null = null
+  let offerPassword = false
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -55,6 +57,12 @@ export default async function WelcomePage() {
         .eq('user_id', user.id)
         .maybeSingle()
       token = (keyRow?.token ?? null) as string | null
+      // An account a checkout made, with no password its owner knows: one
+      // signed in right after paying holds a random one (password_unknown).
+      if (tier === 'premium' && user.user_metadata?.anon_provisioned) {
+        const { data: hasPw } = await supabase.rpc('current_user_has_password')
+        offerPassword = hasPw !== true || user.user_metadata?.password_unknown === true
+      }
     }
   } catch {
     /* anonymous view */
@@ -116,6 +124,7 @@ export default async function WelcomePage() {
                 View your account
               </Link>
             </PageHero>
+            {offerPassword && <AddPasswordCard email={email} />}
             {hostedMcpOAuthEnabled() ? (
               <div className="mx-auto mt-16 w-full max-w-3xl text-left sm:mt-24">
                 <ConnectAgentCard />

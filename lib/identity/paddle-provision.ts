@@ -113,7 +113,7 @@ export async function provisionUserByEmail(
  *  `filter` the dashboard uses: a substring match, so the exact address is
  *  picked from the results). Mints nothing. null on any miss or failure, and
  *  the caller falls back to its old resolve. */
-async function findUserIdByEmail(email: string): Promise<string | null> {
+export async function findUserIdByEmail(email: string): Promise<string | null> {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL
   const key = process.env.SUPABASE_SECRET_KEY
   if (!url || !key) return null

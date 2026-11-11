@@ -42,7 +42,8 @@ export default async function SettingsPage() {
   // can't tell us (setting a password on a Google account doesn't add an
   // 'email' identity), so read encrypted_password via a self-scoped RPC.
   const { data: hasPw } = await supabase.rpc('current_user_has_password')
-  const hasPassword = hasPw === true
+  // A buyer signed in right after paying holds a random password nobody knows.
+  const hasPassword = hasPw === true && user.user_metadata?.password_unknown !== true
 
   // MCP access token — same RLS-scoped read the /api/me/token route uses.
   // Resilient: any error (e.g. table not migrated) falls back to null, and the

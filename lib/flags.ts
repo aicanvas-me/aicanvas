@@ -44,3 +44,10 @@ export function isLifetimeEnabled(raw: string | undefined): boolean {
 export function lifetimeEnabled(): boolean {
   return isLifetimeEnabled(process.env.NEXT_PUBLIC_LIFETIME_ENABLED)
 }
+
+/** Kill switch for signing in a brand-new buyer on the browser that paid
+ *  (app/api/checkout/sign-in). On unless CHECKOUT_SIGNIN=off; off sends every
+ *  signed-out buyer to the email link, as before. Server-only. */
+export function checkoutSignInEnabled(): boolean {
+  return process.env.CHECKOUT_SIGNIN !== 'off'
+}

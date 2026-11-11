@@ -31,6 +31,15 @@ function readFresh(): string | null {
   }
 }
 
+/** The browser that paid was signed in, so no one needs the address any more. */
+export function forgetCheckout(): void {
+  try {
+    sessionStorage.removeItem(KEY)
+  } catch {
+    /* storage off: nothing was kept */
+  }
+}
+
 const noSubscribe = () => () => {}
 
 /** undefined until the browser has been read (server render, hydration), then
