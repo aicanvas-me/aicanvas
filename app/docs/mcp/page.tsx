@@ -77,7 +77,7 @@ export default function McpDocsPage() {
       {hosted && (
         <>
           <H2 id="sign-in">Connect with sign-in</H2>
-          <P>Add this address to your agent. It speaks Streamable HTTP. Sign-in is in beta.</P>
+          <P>Add this address to your agent. It speaks Streamable HTTP.</P>
           <CopyBlock label="server address" code={HOSTED_MCP_URL} />
           <OL>
             <li>Add the address to your agent.</li>
