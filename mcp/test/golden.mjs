@@ -192,8 +192,6 @@ const CALLS = [
       ].join('\n'),
     },
   ],
-  ['compose_page', { brief: 'a CRM dashboard with a pipeline board and an activity feed' }],
-  ['compose_page', { brief: 'login screen, hero, pricing', system: 'andromeda' }],
   ['get_audit_checklist', {}],
   ['get_audit_checklist', { scope: 'component' }],
 ]

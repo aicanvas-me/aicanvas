@@ -93,7 +93,7 @@ const CALL_ROWS = [
   [
     'search_components("animated hero")',
     'get_system("andromeda-pro")',
-    'compose_page("crm dashboard")',
+    'list_systems()',
     'get_component("plan-runner")',
     'list_templates()',
     'list_categories()',

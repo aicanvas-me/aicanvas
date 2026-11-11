@@ -114,7 +114,7 @@ try {
   const toolsRes = await client.request('tools/list')
   record(
     'tools/list works without registry (schemas are local)',
-    Array.isArray(toolsRes?.result?.tools) && toolsRes.result.tools.length === 15,
+    Array.isArray(toolsRes?.result?.tools) && toolsRes.result.tools.length === 14,
     `got ${toolsRes?.result?.tools?.length} tools`,
   )
 
@@ -402,7 +402,7 @@ try {
   )
 
   // ── Prop tables + the workflow tools (get_component_props, validate_usage,
-  //    compose_page, get_audit_checklist) against the local aicanvas-props.json ──
+  //    get_audit_checklist) against the local aicanvas-props.json ──
   const gpBtn = sc(await call('get_component_props', { slug: 'andromeda-button-system' }))
   record(
     'local: get_component_props returns the Button table with variant',
@@ -511,120 +511,6 @@ try {
     'local: validate_usage honours a forced tag map',
     vuForced?.checked?.length === 1 && (vuForced?.issues ?? []).length === 0,
     JSON.stringify(vuForced)?.slice(0, 160),
-  )
-
-  const cp = sc(
-    await call('compose_page', {
-      brief: 'a mission control dashboard with a heat grid and a trend chart',
-      system: 'andromeda',
-    }),
-  )
-  record(
-    'local: compose_page picks the mission control template',
-    cp?.template?.slug === 'andromeda-mission-control',
-    `template ${JSON.stringify(cp?.template)}`,
-  )
-  record(
-    'local: compose_page maps parts to design-system components',
-    (cp?.sections ?? []).some((s) => s.pick?.slug === 'andromeda-heat-grid') &&
-      (cp?.sections ?? []).some((s) => s.pick?.slug === 'andromeda-trend-chart'),
-    JSON.stringify((cp?.sections ?? []).map((s) => [s.ask, s.pick?.slug])),
-  )
-  record(
-    'local: compose_page installs the shared tokens first',
-    cp?.install?.[0] === 'npx shadcn@latest add @aicanvas/andromeda-tokens',
-    JSON.stringify(cp?.install),
-  )
-  record(
-    'local: compose_page marks picks that have a documented API',
-    (cp?.sections ?? []).some((s) => s.pick?.hasProps === true),
-    JSON.stringify((cp?.sections ?? []).map((s) => s.pick?.hasProps)),
-  )
-  const cpLanding = sc(
-    await call('compose_page', {
-      brief: 'SaaS landing page for an AI note-taking app',
-    }),
-  )
-  record(
-    'local: compose_page infers standard landing-page sections for a one-part brief',
-    cpLanding?.pageType === 'landing' &&
-      (cpLanding?.sections ?? []).length > 3 &&
-      (cpLanding?.sections ?? []).some((s) => s.pick != null) &&
-      (cpLanding?.install ?? []).length > 0,
-    JSON.stringify({
-      pageType: cpLanding?.pageType,
-      sections: (cpLanding?.sections ?? []).map((s) => [s.ask, s.pick?.slug]),
-      install: cpLanding?.install,
-    }),
-  )
-  const cpDashboardParts = sc(
-    await call('compose_page', {
-      brief: 'a CRM dashboard with a pipeline board and an activity feed',
-    }),
-  )
-  record(
-    'local: compose_page leaves an explicit multi-part dashboard brief unchanged',
-    cpDashboardParts?.pageType === null &&
-      JSON.stringify((cpDashboardParts?.sections ?? []).map((s) => s.ask)) ===
-        JSON.stringify(['CRM dashboard', 'pipeline board', 'activity feed']),
-    JSON.stringify({ pageType: cpDashboardParts?.pageType, sections: cpDashboardParts?.sections }),
-  )
-  const cpVerb = sc(
-    await call('compose_page', {
-      brief: 'plan a CRM dashboard with a pipeline board and an activity feed',
-      system: 'andromeda',
-    }),
-  )
-  record(
-    'local: compose_page ignores instruction verbs and substring hits',
-    ['andromeda-service-order', 'andromeda-mission-control'].includes(cpVerb?.template?.slug) &&
-      (cpVerb?.sections ?? []).every((s) => s.pick == null) &&
-      (cpVerb?.gaps ?? []).length === 3,
-    JSON.stringify({ template: cpVerb?.template, picks: (cpVerb?.sections ?? []).map((s) => s.pick?.slug) }),
-  )
-  const cpMix = sc(
-    await call('compose_page', {
-      brief: 'an admin dashboard with a sidebar, stats cards, a data table and a chart',
-    }),
-  )
-  const mixSystems = new Set(
-    (cpMix?.sections ?? [])
-      .map((s) => s.pick?.slug)
-      .filter((x) => x && x.startsWith('andromeda'))
-      .map((x) => (x.startsWith('andromeda-pro-') ? 'andromeda-pro' : 'andromeda')),
-  )
-  record(
-    'local: compose_page keeps one design system per plan',
-    mixSystems.size === 1 && (cpMix?.install ?? []).filter((c) => c.endsWith('-tokens')).length === 1,
-    JSON.stringify({ systems: [...mixSystems], install: cpMix?.install }),
-  )
-  const cpLong = sc(
-    await call('compose_page', {
-      brief: 'p1, p2x, p3x, p4x, p5x, p6x, p7x, p8x, footer with newsletter signup, sticky nav',
-    }),
-  )
-  record(
-    'local: compose_page reports parts beyond the cap instead of dropping them',
-    (cpLong?.omitted ?? []).length === 2 && cpLong.omitted.includes('sticky nav'),
-    JSON.stringify(cpLong?.omitted),
-  )
-  const cpTwin = sc(await call('compose_page', { brief: 'a dark hero with a fluid simulation' }))
-  record(
-    'local: compose_page merges two parts that resolve to the same component',
-    (cpTwin?.sections ?? []).filter((s) => s.pick?.slug === 'fluid-simulation-hero').length === 1,
-    JSON.stringify((cpTwin?.sections ?? []).map((s) => [s.ask, s.pick?.slug])),
-  )
-  const cpGap = sc(await call('compose_page', { brief: 'a zorblax flibbertigibbet' }))
-  record(
-    'local: compose_page reports a part nothing covers as a gap',
-    cpGap?.gaps?.length === 1 && cpGap?.sections?.[0]?.pick === null,
-    JSON.stringify(cpGap)?.slice(0, 160),
-  )
-  const cpBad = await call('compose_page', { brief: 'a b c', system: 'no-such-system' })
-  record(
-    'local: compose_page on an unknown system is an error',
-    cpBad?.result?.isError === true,
-    JSON.stringify(cpBad?.result)?.slice(0, 120),
   )
 
   const ac = await call('get_audit_checklist', {})
