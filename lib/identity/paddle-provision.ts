@@ -65,14 +65,16 @@ export async function fetchPaddleCustomerEmail(customerId: string): Promise<Emai
  *
  *  SECURITY / ACCEPTED RESIDUAL: Paddle does not prove the buyer controls the
  *  email typed at one-off checkout, so this provisions an account from an
- *  attacker-controllable address. The DANGEROUS half is closed — the claim path
- *  is self-service OTP (no emailed token), so the account is reachable ONLY by
- *  whoever controls the inbox; an attacker who pays with someone else's email
- *  gets no session and no premium. What remains is self-limiting griefing (each
- *  attempt costs a full paid subscription): an unsolicited account/premium under
- *  a victim's address. Do NOT widen this (e.g. never email a one-time token to
- *  this address, never grant access without an OTP). A fuller fix (defer account
- *  creation until the buyer proves mailbox control) is tracked for a tested pass. */
+ *  attacker-controllable address. The DANGEROUS half is closed: the account is
+ *  reachable ONLY through a one-time link mailed to that inbox (the purchase
+ *  email's link from signInLinkFor below, or one the buyer requests on
+ *  /welcome), so an attacker who pays with someone else's email gets no session
+ *  and no premium. What remains is self-limiting griefing (each attempt costs a
+ *  full payment): an unsolicited account/premium under a victim's address. Do
+ *  NOT widen this: a sign-in link only ever goes to the account's own address,
+ *  never back to the browser, and access is never granted without one. A fuller
+ *  fix (defer account creation until the buyer proves mailbox control) is
+ *  tracked for a tested pass. */
 export async function provisionUserByEmail(
   admin: AdminClient,
   email: string,
@@ -103,4 +105,31 @@ export async function provisionUserByEmail(
     return 'transient'
   }
   return { userId: link.user.id, createdNew: false }
+}
+
+/** A one-time sign-in link for the purchase email, landing on /welcome. Call it
+ *  only AFTER the email's send-once claim: a newer link replaces the older one,
+ *  so a second minting would kill the link already sent. The link goes through
+ *  /account/auth/confirm like the template's, so it needs a Continue press and
+ *  lives as long as the project's email links (mailer_otp_exp, 1 hour on prod).
+ *  null on any failure: the email then points at /welcome instead. */
+export async function signInLinkFor(admin: AdminClient, email: string): Promise<string | null> {
+  try {
+    const callback = `${SITE_URL}/account/auth/callback?next=${encodeURIComponent('/welcome')}`
+    const { data, error } = await admin.auth.admin.generateLink({
+      type: 'magiclink',
+      email,
+      options: { redirectTo: callback },
+    })
+    const hash = data?.properties?.hashed_token
+    if (error || !hash) {
+      console.error('[paddle provision] sign-in link failed (non-fatal):', error?.message)
+      return null
+    }
+    // redirect_to stays LAST and raw: nextFromRedirectTo reads it as the tail.
+    return `${SITE_URL}/account/auth/confirm?token_hash=${encodeURIComponent(hash)}&type=email&redirect_to=${callback}`
+  } catch (e) {
+    console.error('[paddle provision] sign-in link failed (non-fatal):', e)
+    return null
+  }
 }

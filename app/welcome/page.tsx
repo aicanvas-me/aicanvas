@@ -6,9 +6,11 @@ import { Info } from '@/app/_icons/icons/info'
 import { PageHero, PageShell } from '../components/PageKit'
 import { buttonClasses } from '../components/buttonClasses'
 import { StackedCards } from '../home/islands'
-import { getSessionEntitlement } from '../lib/entitlement'
+import { getPremiumForUser } from '../../lib/identity/premium'
+import { createAdminClient } from '../lib/supabase/admin'
 import { createClient } from '../lib/supabase/server'
 import { ClaimForm } from './ClaimForm'
+import { LinkSentCard } from './LinkSentCard'
 import { PremiumQuickstart } from './PremiumQuickstart'
 import { ConnectAgentCard } from '../mcp/ConnectAgentCard'
 import { hostedMcpOAuthEnabled } from '../../lib/flags'
@@ -45,32 +47,36 @@ function ClaimCard({ note }: { note: ReactNode }) {
 
 // THE post-purchase page: every confirmed Paddle checkout lands here, signed-in
 // fast-path and anonymous pending-claim alike. Three views: no session gets the
-// claim form (the webhook provisioned a passwordless account under the checkout
-// email), a premium session gets the token-carrying install commands, a free
-// session gets the mismatch view. Deliberately NO OAuth on the claim form: a
-// Google login under a different address creates a fresh free account and shows
-// a paying buyer the paywall. Claiming is self-service, so a lost or delayed
-// claim email is never a lockout.
+// "check your inbox" view (the webhook provisioned a passwordless account under
+// the checkout email and mails it a sign-in link), a premium session gets the
+// token-carrying install commands, a free session gets the mismatch view.
+// Deliberately NO OAuth here: a Google login under a different address creates
+// a fresh free account and shows a paying buyer the paywall. A new link is
+// self-service, so a lost or delayed email is never a lockout.
 
 export default async function WelcomePage() {
-  // Fail SOFT to the claim view: this page must render for a buyer even when
-  // the session or subscription read hiccups — the claim form works either way.
+  // Fail SOFT to the signed-out view: this page must render for a buyer even
+  // when the session or subscription read hiccups; its new-link form works
+  // either way.
   let tier: 'anonymous' | 'free' | 'premium' = 'anonymous'
+  let lifetime = false
   let email: string | null = null
   let token: string | null = null
   try {
-    const ent = await getSessionEntitlement()
-    if (ent.userId) {
-      tier = ent.tier === 'premium' ? 'premium' : 'free'
-      const supabase = await createClient()
-      const { data: { user } } = await supabase.auth.getUser()
-      email = user?.email ?? null
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      // The same premium resolution getSessionEntitlement runs, plus Lifetime.
+      const state = await getPremiumForUser(createAdminClient(), user.id)
+      tier = state.premium ? 'premium' : 'free'
+      lifetime = state.lifetime === true
+      email = user.email ?? null
       // Same RLS-scoped read settings uses; resilient — a missing row just
       // renders the settings pointer instead of the token.
       const { data: keyRow } = await supabase
         .from('user_api_keys')
         .select('token')
-        .eq('user_id', ent.userId)
+        .eq('user_id', user.id)
         .maybeSingle()
       token = (keyRow?.token ?? null) as string | null
     }
@@ -104,14 +110,15 @@ export default async function WelcomePage() {
                 pill={pill}
                 title={
                   <>
-                    You&rsquo;re <span className="text-accent">Premium</span>.
+                    You&rsquo;re <span className="text-accent">Premium</span>
+                    {lifetime ? ' for life' : ''}.
                   </>
                 }
                 sub={
                   // balanced: the long token sentence otherwise leaves its last
                   // word alone on a third line at desktop width.
                   <span className="block text-pretty sm:text-balance">
-                    Premium is live on{' '}
+                    {lifetime ? 'Lifetime' : 'Premium'} is live on{' '}
                     {email ? (
                       <strong className="font-semibold text-sand-50">{email}</strong>
                     ) : (
@@ -193,18 +200,17 @@ export default async function WelcomePage() {
                 pill={pill}
                 title={
                   <>
-                    Payment received. You&rsquo;re <span className="text-accent">Premium</span>.
+                    You&rsquo;re <span className="text-accent">Premium</span>. Check your inbox.
                   </>
                 }
                 sub={
                   <span className="block text-pretty sm:text-balance">
-                    Your account is ready under the email you used at checkout. Enter
-                    that email and we&rsquo;ll send you a one-time sign-in link. No
-                    password needed.
+                    We&rsquo;re emailing you a one-time sign-in link. Open it and
+                    you&rsquo;re in, no password needed.
                   </span>
                 }
               />
-              <ClaimCard note="You can come back to this page and claim any time." />
+              <LinkSentCard />
             </>
           )}
         </div>

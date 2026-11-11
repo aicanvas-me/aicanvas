@@ -1,6 +1,8 @@
 'use client'
 import { initializePaddle, type CheckoutSettings, type Paddle, type PaddleEventData } from '@paddle/paddle-js'
+import type { CheckoutEventsData } from '@paddle/paddle-js/types/checkout/events'
 import { beacon } from '../analytics'
+import { rememberCheckout } from '../checkout-handoff'
 
 let paddlePromise: Promise<Paddle | undefined> | null = null
 
@@ -41,18 +43,27 @@ export function getPaddle(): Promise<Paddle | undefined> {
           beacon('Checkout Step', { step: e.name })
         }
         if (e?.name === 'checkout.completed') {
-          const transactionId = (e.data as { transaction_id?: string } | undefined)?.transaction_id
+          const data = e.data as CheckoutEventsData | undefined
+          const transactionId = data?.transaction_id
           fetch('/api/checkout/completed', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ transactionId }),
           })
-            .then((res) => {
+            .then(async (res) => {
               if (!res.ok) {
                 console.error('[paddle] activation deferred to webhook, status', res.status)
                 alert('Payment received. Your account is being activated, this can take a minute. Refresh shortly; contact support if it persists.')
                 window.location.reload()
                 return
+              }
+              // Signed out: /welcome names the address the sign-in link went to.
+              const body = await res.json().catch(() => null)
+              if (body?.status === 'pending-claim') {
+                rememberCheckout({
+                  email: data?.customer?.email ?? null,
+                  lifetime: Boolean(PRICES.lifetime) && (data?.items ?? []).some((i) => i.price_id === PRICES.lifetime),
+                })
               }
               // Confirmed fast-path activation (signed-in) and anonymous
               // pending-claim both land on /welcome — the state-aware

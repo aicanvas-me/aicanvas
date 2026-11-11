@@ -3,7 +3,7 @@ import type { createAdminClient } from '@/app/lib/supabase/admin'
 import { paddleApiBase } from '@/app/lib/paddle/server'
 import { NOREPLY_FROM } from '@/app/lib/config'
 import { lifetimeEmail } from '@/app/lib/email/messages'
-import { fetchPaddleCustomerEmail, provisionUserByEmail } from './paddle-provision'
+import { fetchPaddleCustomerEmail, provisionUserByEmail, signInLinkFor } from './paddle-provision'
 import { LIVE_SUB_STATUSES } from './tier'
 
 // Lifetime: a one-time Paddle price that grants Premium with no expiry. Rows
@@ -67,6 +67,13 @@ export type UserResolution = { userId: string } | 'transient' | 'unmatched'
  * same path an anonymous subscription takes). 'transient' means Paddle should
  * re-deliver; a read error is transient, never a reason to provision.
  */
+/** The checkout carried no signed-in user (custom_data.user_id is set only when
+ *  the buyer was signed in), so the buyer needs a way in from the email. */
+export function checkedOutSignedOut(txn: any): boolean {
+  const id = txn?.custom_data?.user_id
+  return !(typeof id === 'string' && UUID.test(id))
+}
+
 export async function resolveLifetimeUser(admin: AdminClient, txn: any): Promise<UserResolution> {
   const fromCheckout = txn?.custom_data?.user_id
   if (typeof fromCheckout === 'string' && UUID.test(fromCheckout)) return { userId: fromCheckout }
@@ -404,11 +411,14 @@ export async function applyLifetimeAdjustment(
  * together cannot both send. Not gated on the subscription welcome flag: a
  * former subscriber still gets it. Best effort: never throws, never fails the
  * webhook; a lost email is not a lockout (sign-in self-serves a fresh code).
+ * A buyer who checked out signed out (or an account made from a checkout email)
+ * gets the sign-in link in it, minted only after the claim so it is never replaced.
  */
 export async function sendLifetimeEmail(
   admin: AdminClient,
   row: LifetimeRow,
   scheduledCancel: ScheduledCancel | null,
+  signedOut: boolean,
 ): Promise<void> {
   try {
     const apiKey = process.env.RESEND_API_KEY
@@ -426,7 +436,9 @@ export async function sendLifetimeEmail(
       return
     }
     if (!claimed || claimed.length === 0) return
-    const mail = lifetimeEmail({ claim: Boolean(user.user_metadata?.anon_provisioned), planStops: scheduledCancel })
+    const claim = signedOut || Boolean(user.user_metadata?.anon_provisioned)
+    const signInUrl = claim ? await signInLinkFor(admin, user.email) : null
+    const mail = lifetimeEmail({ claim, signInUrl, planStops: scheduledCancel })
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       signal: AbortSignal.timeout(10_000),
@@ -568,7 +580,7 @@ export async function reconcileLifetime(
       if (out.inserted) stats.granted++
       if (out.live && !out.row.welcome_claimed_at) {
         const d1 = await cancelSubscriptionForLifetime(admin, out.row.user_id)
-        await sendLifetimeEmail(admin, out.row, d1.scheduledCancel)
+        await sendLifetimeEmail(admin, out.row, d1.scheduledCancel, checkedOutSignedOut(txn))
       }
     }
 

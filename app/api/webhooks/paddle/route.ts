@@ -4,11 +4,12 @@ import { createAdminClient } from '@/app/lib/supabase/admin'
 import { mapSubscriptionFields } from '@/lib/identity/sub-mapping'
 import { welcomeToPremiumEmail, claimPremiumAccountEmail } from '@/app/lib/email/messages'
 import { NOREPLY_FROM } from '@/app/lib/config'
-import { fetchPaddleCustomerEmail, provisionUserByEmail } from '@/lib/identity/paddle-provision'
+import { fetchPaddleCustomerEmail, provisionUserByEmail, signInLinkFor } from '@/lib/identity/paddle-provision'
 import { phCapture } from '@/app/lib/analytics-server'
 import {
   applyLifetimeAdjustment,
   cancelSubscriptionForLifetime,
+  checkedOutSignedOut,
   grantFromTransaction,
   sendLifetimeEmail,
 } from '@/lib/identity/lifetime'
@@ -114,7 +115,7 @@ async function handleLifetimeEvent(admin: AdminClient, evt: PaddleEvent): Promis
     // A duplicate delivery runs both again: the cancel checks Paddle first and
     // the email has its own send-once claim.
     const d1 = await cancelSubscriptionForLifetime(admin, userId)
-    await sendLifetimeEmail(admin, out.row, d1.scheduledCancel)
+    await sendLifetimeEmail(admin, out.row, d1.scheduledCancel, checkedOutSignedOut(data))
     if (out.inserted) await phCapture('Lifetime Purchased', {})
     return { res: NextResponse.json({ ok: true, lifetime: true }), userId }
   }
@@ -250,15 +251,14 @@ async function handleSubscriptionEvent(admin: AdminClient, evt: PaddleEvent): Pr
   // the user's premium_welcome_sent flag, the guard older deploys read, is
   // still honoured and written.
   //
-  // Which email: an `anon_provisioned` account (created here from the checkout
-  // email) has no session/password, so it gets the sign-in CLAIM email; everyone
-  // else (signed-in upgrade, or an email that already had an account) gets the
-  // plain welcome. anon_provisioned lives on the USER, so the correct email is
-  // chosen no matter which event flips the subscription active (a non-active
-  // event may have provisioned the row first). The send stays best-effort and
-  // never fails the webhook: a lost claim email is NOT a lockout, because
-  // /welcome already told the anonymous buyer to sign in with the email they
-  // paid with, and the sign-in page self-serves a fresh OTP on demand.
+  // Which email: a buyer who checked out signed out, or an `anon_provisioned`
+  // account (created here from the checkout email), gets the CLAIM email with
+  // a one-time sign-in link; a signed-in upgrade gets the plain welcome.
+  // anon_provisioned lives on the USER, so the correct email is chosen no
+  // matter which event flips the subscription active (a non-active event may
+  // have provisioned the row first). The send stays best-effort and never
+  // fails the webhook: a lost claim email is NOT a lockout, because /welcome
+  // mails a fresh link to the email the buyer paid with on request.
   //
   // We gate on 'active' only, NOT 'trialing' (which tier.ts also counts as
   // premium): AI Canvas sells no-trial plans, so a first activation never carries
@@ -301,8 +301,9 @@ async function handleSubscriptionEvent(admin: AdminClient, evt: PaddleEvent): Pr
           if (flagErr) {
             console.error('[paddle webhook] welcome flag write failed (non-fatal):', flagErr.message)
           }
-          const mail = user.user_metadata?.anon_provisioned
-            ? claimPremiumAccountEmail()
+          // The link is minted after the claim above, so no delivery replaces it.
+          const mail = user.user_metadata?.anon_provisioned || !data.custom_data?.user_id
+            ? claimPremiumAccountEmail({ signInUrl: await signInLinkFor(admin, user.email) })
             : welcomeToPremiumEmail()
           const sendRes = await fetch('https://api.resend.com/emails', {
             method: 'POST',
