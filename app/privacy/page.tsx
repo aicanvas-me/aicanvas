@@ -65,8 +65,8 @@ export default function PrivacyPage() {
               identifies your account to the CLI and the AI Canvas MCP), and a
               record of what we delivered to your account and when. If you
               connect an AI agent to your account, we keep its name, when it
-              connected and was last used, and the country it connected from,
-              and we email you when a new agent connects. Legal basis: Art. 6
+              connected and was last used, and we email you when a new agent
+              connects. Legal basis: Art. 6
               (1)(b) GDPR, and Art. 6 (1)(f) GDPR for the delivery record and
               the agent details: our legitimate interest in supporting members,
               improving the Service, and protecting accounts.

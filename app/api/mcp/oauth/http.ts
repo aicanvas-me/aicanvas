@@ -20,7 +20,3 @@ export function notFound(): Response {
 export function preflight(): Response {
   return new Response(null, { status: 204, headers: CORS })
 }
-
-export function country(req: Request): string | null {
-  return req.headers.get('x-vercel-ip-country')
-}

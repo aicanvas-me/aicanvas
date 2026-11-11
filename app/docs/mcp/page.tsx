@@ -159,7 +159,7 @@ export default function McpDocsPage() {
           <H2 id="what-we-store">What we store</H2>
           <P>
             For each connected agent, we store its name, the address it returns to after sign-in, when it connected, when it was last
-            used, and the country of the browser and the agent. Sign-in tokens are stored only as hashes. Disconnecting deletes the
+            used. Sign-in tokens are stored only as hashes. Disconnecting deletes the
             connection. Read the <A href="/privacy">Privacy Policy</A>.
           </P>
         </>
