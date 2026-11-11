@@ -47,7 +47,7 @@ export function AccountMenuItems({
         <button
           type="button"
           onClick={onUpgrade}
-          className={`${ROW} font-semibold text-accent`}
+          className={`${ROW} whitespace-nowrap font-semibold text-accent`}
         >
           <Bolt size={14} />
           Upgrade to Premium

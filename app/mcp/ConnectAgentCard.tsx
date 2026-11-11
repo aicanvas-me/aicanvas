@@ -110,12 +110,7 @@ export function ConnectAgentCard({
     <section>
       {heading && (
         <>
-          <div className="mb-2 flex items-center gap-2">
-            <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">{title}</h2>
-            <span className="rounded-full border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
-              Beta
-            </span>
-          </div>
+          <h2 className="mb-2 text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">{title}</h2>
           <p className="mb-5 text-sm leading-relaxed text-sand-600 dark:text-sand-400">
             Add AI Canvas to your AI agent and sign in once in the browser. No key to copy.
           </p>
