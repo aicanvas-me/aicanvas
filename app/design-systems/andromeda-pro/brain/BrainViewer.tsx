@@ -12,6 +12,7 @@ import { PageCrumbs, useTopBarInstallSlot } from '../../../components/PageCrumbs
 import { BrainWireframe } from '../overview-b/BrainWireframe'
 import { SystemTierChip } from '@/app/_components/SystemTierChip'
 import { useInstallToken } from '../../../_lib/useInstallToken'
+import { useKeepInViewport } from '../../../_lib/useKeepInViewport'
 import { useCopied } from '@/app/components/useCopied'
 import { InstallCopiedToast } from '@/app/_components/InstallCopiedToast'
 
@@ -609,6 +610,7 @@ function BrainInstallButton({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const panelRef = useKeepInViewport<HTMLDivElement>(open)
   const { cliCommand, cliCommandMasked } = useBrainInstallCommand()
   const { copied, copy: handleCopy, reset: resetCopied } = useCopied(cliCommand)
 
@@ -649,7 +651,7 @@ function BrainInstallButton({
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-300 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-300 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
