@@ -76,7 +76,7 @@ export async function fetchPaddleCustomerEmail(customerId: string): Promise<Emai
  *  browser that paid (lib/identity/checkout-signin.ts), so a stranger who pays
  *  with another person's address holds that new account, and keeps it (session,
  *  a password they add, the install token) if the owner later signs in with the
- *  same address. Ruled by the maintainer 2026-11-11: "Accept risk". */
+ *  same address. Accepted, ruled 2026-11-11. */
 export async function provisionUserByEmail(
   admin: AdminClient,
   email: string,

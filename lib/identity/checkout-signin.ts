@@ -8,7 +8,7 @@ import { premiumSubscriptionId } from './premium'
 // the email link. ONLY for an account this checkout created that nobody has
 // signed into: an address that already had an account still gets "check your
 // inbox", so paying with someone's email never opens their existing account.
-// ACCEPTED RESIDUAL (his ruling 2026-11-11, "Accept risk"): a stranger who pays
+// ACCEPTED RESIDUAL (ruled 2026-11-11): a stranger who pays
 // with another person's address is signed in to the NEW account under it, and
 // keeps that account if the owner later signs in with the same address.
 

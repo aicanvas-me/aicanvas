@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Info } from '@/app/_icons/icons/info'
 import { createClient } from '../lib/supabase/client'
 import { formatAuthError } from '../lib/auth-errors'
@@ -18,6 +18,12 @@ export function AddPasswordCard({ email }: { email: string | null }) {
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [done, setDone] = useState(false)
+  // The message replaces the focused form: focus follows it, so keyboard and
+  // screen-reader users land on the confirmation, as in ClaimForm.
+  const doneRef = useRef<HTMLParagraphElement>(null)
+  useEffect(() => {
+    if (done) doneRef.current?.focus()
+  }, [done])
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -42,7 +48,12 @@ export function AddPasswordCard({ email }: { email: string | null }) {
       <div className="relative px-4 pt-4 pb-5 sm:px-6 sm:pt-6">
         <h2 className="text-lg font-bold tracking-tight text-sand-900 dark:text-sand-50">Add a password</h2>
         {done ? (
-          <p role="status" className="mt-3 rounded-xl border border-accent/30 bg-accent/10 px-4 py-3.5 text-sm leading-relaxed text-sand-700 dark:text-sand-200">
+          <p
+            ref={doneRef}
+            tabIndex={-1}
+            role="status"
+            className="mt-3 rounded-xl border border-accent/30 bg-accent/10 px-4 py-3.5 text-sm leading-relaxed text-sand-700 outline-none dark:text-sand-200"
+          >
             Password saved. Next time, sign in with{' '}
             <strong className="break-words text-sand-900 dark:text-sand-50">{who}</strong> and this password.
           </p>

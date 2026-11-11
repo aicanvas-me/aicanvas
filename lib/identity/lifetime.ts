@@ -60,13 +60,6 @@ const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
 export type UserResolution = { userId: string } | 'transient' | 'unmatched'
 
-/**
- * Who bought it: custom_data.user_id (set at checkout when signed in), else a
- * subscription row with this Paddle customer, else an earlier Lifetime row with
- * this customer, else the checkout email (creates or links the account, the
- * same path an anonymous subscription takes). 'transient' means Paddle should
- * re-deliver; a read error is transient, never a reason to provision.
- */
 /** The checkout carried no signed-in user (custom_data.user_id is set only when
  *  the buyer was signed in), so the buyer needs a way in from the email. */
 export function checkedOutSignedOut(txn: any): boolean {
@@ -74,6 +67,13 @@ export function checkedOutSignedOut(txn: any): boolean {
   return !(typeof id === 'string' && UUID.test(id))
 }
 
+/**
+ * Who bought it: custom_data.user_id (set at checkout when signed in), else a
+ * subscription row with this Paddle customer, else an earlier Lifetime row with
+ * this customer, else the checkout email (creates or links the account, the
+ * same path an anonymous subscription takes). 'transient' means Paddle should
+ * re-deliver; a read error is transient, never a reason to provision.
+ */
 export async function resolveLifetimeUser(admin: AdminClient, txn: any): Promise<UserResolution> {
   const fromCheckout = txn?.custom_data?.user_id
   if (typeof fromCheckout === 'string' && UUID.test(fromCheckout)) return { userId: fromCheckout }
