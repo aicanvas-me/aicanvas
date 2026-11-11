@@ -115,20 +115,24 @@ export default async function WelcomePage() {
                   </>
                 }
                 sub={
-                  // balanced: the long token sentence otherwise leaves its last
-                  // word alone on a third line at desktop width.
-                  <span className="block text-pretty sm:text-balance">
-                    {lifetime ? 'Lifetime' : 'Premium'} is live on{' '}
-                    {email ? (
-                      <strong className="font-semibold text-sand-50">{email}</strong>
-                    ) : (
-                      <>your account</>
-                    )}
-                    .{' '}
-                    {token
-                      ? 'Every install command on this site now carries your personal token. Copy any of them, paste in your terminal, it just works.'
-                      : 'Everything is unlocked.'}
-                  </span>
+                  // The plan line sits on its own row; the token sentence is
+                  // balanced so its last word never sits alone at desktop width.
+                  <>
+                    <span className="block">
+                      {lifetime ? 'Lifetime' : 'Premium'} is live on{' '}
+                      {email ? (
+                        <strong className="font-semibold text-sand-50">{email}</strong>
+                      ) : (
+                        <>your account</>
+                      )}
+                      .
+                    </span>
+                    <span className="block text-pretty sm:text-balance">
+                      {token
+                        ? 'Every install command on this site now carries your personal token. Copy any of them, paste in your terminal, it just works.'
+                        : 'Everything is unlocked.'}
+                    </span>
+                  </>
                 }
               >
                 <Link href="/design-systems/andromeda-pro" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
