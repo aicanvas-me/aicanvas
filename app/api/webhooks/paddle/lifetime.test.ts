@@ -36,14 +36,23 @@ function purchase(opts: {
   customer?: string
   at?: string
   eventId?: string
+  origin?: string
+  sub?: string | null
+  totals?: Record<string, string>
+  discount?: string
 } = {}) {
   return envelope(
     'transaction.completed',
     {
       id: opts.txn ?? 'txn_1',
       status: 'completed',
+      origin: opts.origin ?? 'web',
       customer_id: opts.customer ?? 'ctm_1',
-      subscription_id: null,
+      subscription_id: opts.sub ?? null,
+      billed_at: opts.at ?? '2026-10-29T10:00:00Z',
+      currency_code: 'USD',
+      ...(opts.discount ? { discount_id: opts.discount } : {}),
+      details: { totals: opts.totals ?? { total: '14875', tax: '2375', earnings: '11706', currency_code: 'USD' } },
       custom_data: opts.userId === null ? null : { user_id: opts.userId ?? USER },
       items: [{ price: { id: opts.price ?? LIFETIME, billing_cycle: opts.cycle === undefined ? null : opts.cycle } }],
     },
@@ -500,7 +509,7 @@ describe('billing log and alerts', () => {
     db.rows('user_subscriptions').length = 0
     await post(purchase())
     await post(adjustment({ at: '2026-10-30T10:00:00Z' }))
-    const a = alerts().find((e) => e.subject.includes('Lifetime'))
+    const a = alerts().find((e) => e.subject.startsWith('[Billing] refund'))
     expect(a?.text).toContain('Lifetime was revoked by this adjustment')
   })
 
@@ -517,5 +526,65 @@ describe('billing log and alerts', () => {
   it('a log write failure never fails the webhook', async () => {
     db.failing.add('billing_events:upsert')
     expect((await post(sub('subscription.updated', { status: 'active' }, '2026-10-29T11:00:00Z'))).status).toBe(200)
+  })
+})
+
+describe('sale alert (transaction.completed from a checkout)', () => {
+  const sales = () => alerts().filter((a) => a.subject.startsWith('[Billing] New sale'))
+
+  it('a Lifetime purchase alerts once with plan, customer, amount and the transaction link', async () => {
+    const body = purchase({ eventId: 'evt_buy' })
+    await post(body)
+    await post(body)
+    await post(purchase({ eventId: 'evt_buy_again' }))
+    expect(sales()).toHaveLength(1)
+    expect(sales()[0].to).toEqual(['aicanvas.me@gmail.com'])
+    expect(sales()[0].subject).toBe('[Billing] New sale: Lifetime, 148.75 USD, buyer@example.com')
+    expect(sales()[0].text).toBe(
+      [
+        'Plan: Lifetime',
+        'Customer: buyer@example.com',
+        'Amount paid: 148.75 USD (tax 23.75 USD)',
+        "Earnings: 117.06 USD (after tax and Paddle's fee)",
+        'Paid at: 2026-10-29 10:00 UTC',
+        'Transaction: txn_1 (https://sandbox-vendors.paddle.com/transactions-v2/txn_1)',
+      ].join('\n'),
+    )
+    expect(db.rows('billing_events').find((r) => r.paddle_event_id === 'evt_buy')?.alert_key).toBe('sale:txn_1')
+  })
+
+  it('a new subscription alerts with its plan and subscription link; a renewal and a plan change do not', async () => {
+    paddleCustomers.ctm_sub = 'monthly@example.com'
+    await post(purchase({ txn: 'txn_m', price: 'pri_monthly', cycle: MONTHLY_CYCLE, sub: 'sub_9', userId: null, customer: 'ctm_sub', totals: { total: '1070', tax: '171', earnings: '795', currency_code: 'USD' } }))
+    await post(purchase({ txn: 'txn_r', price: 'pri_monthly', cycle: MONTHLY_CYCLE, sub: 'sub_9', origin: 'subscription_recurring' }))
+    await post(purchase({ txn: 'txn_u', price: 'pri_yearly', cycle: { interval: 'year', frequency: 1 }, sub: 'sub_9', origin: 'subscription_update' }))
+    expect(sales().map((a) => a.subject)).toEqual(['[Billing] New sale: Monthly, 10.70 USD, monthly@example.com'])
+    expect(sales()[0].text).toContain('Subscription: sub_9 (https://sandbox-vendors.paddle.com/subscriptions-v2/sub_9)')
+    expect(life()).toEqual([])
+  })
+
+  it('a discounted purchase names the discount, and a missing earnings figure is left out', async () => {
+    await post(purchase({ discount: 'dsc_1', totals: { total: '0', tax: '0', currency_code: 'EUR' } }))
+    expect(sales()[0].subject).toBe('[Billing] New sale: Lifetime, 0.00 EUR, buyer@example.com')
+    expect(sales()[0].text).toContain('Discount: dsc_1')
+    expect(sales()[0].text).not.toContain('Earnings')
+  })
+
+  it('a purchase that fails to grant sends no alert; the re-delivery that grants does', async () => {
+    process.env.NEXT_PUBLIC_PADDLE_PRICE_LIFETIME = ''
+    expect((await post(purchase({ eventId: 'evt_retry' }))).status).toBe(500)
+    expect(sales()).toEqual([])
+    process.env.NEXT_PUBLIC_PADDLE_PRICE_LIFETIME = LIFETIME
+    expect((await post(purchase({ eventId: 'evt_retry' }))).status).toBe(200)
+    expect(sales().map((a) => a.subject)).toEqual(['[Billing] New sale: Lifetime, 148.75 USD, buyer@example.com'])
+  })
+
+  it('a failed send leaves the sale alert for the re-send and never fails the webhook', async () => {
+    resendOk = false
+    expect((await post(purchase({ eventId: 'evt_down' }))).status).toBe(200)
+    const row = db.rows('billing_events').find((r) => r.paddle_event_id === 'evt_down')
+    expect(row?.alert_key).toBe('sale:txn_1')
+    expect(row?.alerted_at ?? null).toBeNull()
+    expect(life()).toHaveLength(1)
   })
 })

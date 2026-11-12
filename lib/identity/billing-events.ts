@@ -3,15 +3,17 @@ import type { createAdminClient } from '@/app/lib/supabase/admin'
 import { CONTACT_INBOX, NOREPLY_FROM } from '@/app/lib/config'
 import { paddleApiBase } from '@/app/lib/paddle/server'
 import { fetchPaddleCustomerEmail } from './paddle-provision'
+import { hasLifetimeItem, hasOneTimeItem, lifetimePriceId } from './lifetime'
 
 // Our own billing timeline and the maintainer's billing alerts.
 //
 // Every verified Paddle event is logged to billing_events (migration 0022)
 // before any other handling: the Paddle dashboard shows only the EFFECTIVE
 // cancel date, so without this there is no record of when a customer clicked
-// cancel. A cancel, a refund or chargeback status change and a failed payment
-// each send one plain-text email to CONTACT_INBOX. Alerts never change access
-// and never fail the webhook: every step here is try/catch and logs instead.
+// cancel. A purchase, a cancel, a refund or chargeback status change and a
+// failed payment each send one plain-text email to CONTACT_INBOX. Alerts never
+// change access and never fail the webhook: every step here is try/catch and
+// logs instead.
 
 type AdminClient = ReturnType<typeof createAdminClient>
 
@@ -46,6 +48,7 @@ export function summarizeEvent(evt: PaddleEvent): Record<string, unknown> {
   if (isTransactionEvent(evt.event_type)) {
     return {
       status: d.status ?? null,
+      origin: d.origin ?? null,
       price_ids: Array.isArray(d.items) ? d.items.map((i: any) => i?.price?.id ?? null) : [],
       amount: d.details?.totals?.total ?? null,
       currency: d.details?.totals?.currency_code ?? d.currency_code ?? null,
@@ -88,7 +91,11 @@ export async function logBillingEvent(admin: AdminClient, evt: PaddleEvent): Pro
   }
 }
 
-export type AlertKind = 'cancel_scheduled' | 'canceled' | 'adjustment' | 'past_due'
+export type AlertKind = 'sale' | 'cancel_scheduled' | 'canceled' | 'adjustment' | 'past_due'
+
+/** A checkout (web) or a transaction made in the dashboard or API (api). Every
+ *  other origin is a renewal or a change to an existing subscription. */
+const SALE_ORIGINS = new Set(['web', 'api'])
 
 /** Pure: does this event alert, and under which key. The key is unique in the
  *  table, so Paddle's double deliveries and its incidental subscription.updated
@@ -96,6 +103,9 @@ export type AlertKind = 'cancel_scheduled' | 'canceled' | 'adjustment' | 'past_d
 export function alertKeyFor(evt: PaddleEvent): { kind: AlertKind; key: string } | null {
   const d = evt.data ?? {}
   const t = evt.event_type
+  if (t === 'transaction.completed' && SALE_ORIGINS.has(d.origin) && d.id) {
+    return { kind: 'sale', key: `sale:${d.id}` }
+  }
   if (t === 'subscription.canceled' && d.status === 'canceled' && d.id) {
     return { kind: 'canceled', key: `canceled:${d.id}` }
   }
@@ -161,7 +171,27 @@ export function buildAlert(
   const lines: string[] = []
   let subject: string
 
-  if (kind === 'cancel_scheduled') {
+  if (kind === 'sale') {
+    const plan = hasLifetimeItem(d, lifetimePriceId()) ? 'Lifetime' : hasOneTimeItem(d) ? 'One-time' : planOf(d)
+    const totals = d.details?.totals ?? {}
+    const currency = totals.currency_code ?? d.currency_code
+    const amount = formatAmount(totals.total, currency)
+    subject = `[Billing] New sale: ${plan}, ${amount}, ${who}`
+    lines.push(
+      `Plan: ${plan}`,
+      `Customer: ${who}`,
+      `Amount paid: ${amount} (tax ${formatAmount(totals.tax, currency)})`,
+    )
+    if (typeof totals.earnings === 'string') {
+      lines.push(`Earnings: ${formatAmount(totals.earnings, currency)} (after tax and Paddle's fee)`)
+    }
+    if (d.discount_id) lines.push(`Discount: ${d.discount_id}`)
+    lines.push(
+      `Paid at: ${fmt(d.billed_at ?? evt.occurred_at)}`,
+      `Transaction: ${d.id} (${dash}/transactions-v2/${d.id})`,
+    )
+    if (d.subscription_id) lines.push(`Subscription: ${d.subscription_id} (${dash}/subscriptions-v2/${d.subscription_id})`)
+  } else if (kind === 'cancel_scheduled') {
     const upgrade = `USER UPGRADED FROM ${planOf(d).toUpperCase()} TO LIFETIME`
     subject = ctx.upgraded ? `[Billing] ${upgrade}: ${who}` : `[Billing] Cancel scheduled: ${planOf(d)}, ${who}`
     if (ctx.upgraded) lines.push(upgrade, '')
