@@ -102,13 +102,22 @@ describe('systemMarkdown', () => {
 describe('systemTemplateMarkdown', () => {
   const tpl = (installTier: string) => ({ folder: 'mission-control', registrySlug: 'x-mission-control', name: 'Mission Control', description: 'Telemetry.', installTier })
   const build = (paid: boolean, tier: string) =>
-    systemTemplateMarkdown({ system: { slug: 'x', name: 'X', paid }, template: tpl(tier), others: [], siteUrl: 'https://aicanvas.me' })
+    systemTemplateMarkdown({
+      system: { slug: 'x', name: 'X', paid },
+      template: tpl(tier),
+      others: [],
+      uses: [{ slug: 'card', registrySlug: 'x-card', name: 'Card', description: '' }],
+      iconCount: 2,
+      withTokens: true,
+      usage: { file: 'components/aicanvas/x/examples/mission-control/index.tsx', importLine: "import MissionControl from '@/components/aicanvas/x/examples/mission-control'", render: '<MissionControl />' },
+      siteUrl: 'https://aicanvas.me',
+    })
 
   it('a Premium template says so and publishes no source', () => {
     const md = build(true, 'premium')
     expect(md).toContain('License: Premium (proprietary)')
     expect(md).toContain('The source is Premium and is not published.')
-    expect(md).not.toContain('```tsx')
+    expect(md).not.toMatch(/^export /m)
   })
 
   it('a free template is MIT and points at the install for its source', () => {
@@ -116,6 +125,14 @@ describe('systemTemplateMarkdown', () => {
     expect(md).toContain('License: MIT')
     expect(md).toContain('Install with the command above to get the source.')
     expect(md).toContain('npx shadcn@latest add @aicanvas/x-mission-control')
+  })
+
+  it('lists what it installs and where the page lands', () => {
+    const md = build(false, 'free account')
+    expect(md).toContain('The page itself plus 1 X components:')
+    expect(md).toContain('[Card](https://aicanvas.me/design-systems/x/card.md)')
+    expect(md).toContain('Also the X tokens and 2 AI Canvas icons.')
+    expect(md).toContain("import MissionControl from '@/components/aicanvas/x/examples/mission-control'")
   })
 })
 

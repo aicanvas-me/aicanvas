@@ -19,6 +19,20 @@
 import { splitPromptAtPaywall } from '../registry/prompt-blocks'
 import type { PropTable } from '../../app/components/PropsTable'
 
+/** Where an install lands and how to import it (from the emitted registry item). */
+export interface Usage {
+  file: string
+  importLine: string
+  /** Set for a default export that renders with no required props. */
+  render?: string
+}
+
+export function usageSection(usage: Usage | null | undefined, what = 'It'): string | null {
+  if (!usage) return null
+  const code = usage.render ? `${usage.importLine}\n\n${usage.render}` : usage.importLine
+  return `## Use it\n\n${what} installs to \`${usage.file}\` (under \`src/\` if your project has one). With the usual \`@/\` alias:\n\n${fence(code, 'tsx')}`
+}
+
 export interface ComponentMarkdownInput {
   slug: string
   name: string
@@ -39,6 +53,7 @@ export interface ComponentMarkdownInput {
   enforcing: boolean
   /** FREE_ACCOUNT_GATE === 'on': free one-command installs need an account. */
   freeAccountGate: boolean
+  usage?: Usage | null
   siteUrl: string
 }
 
@@ -135,6 +150,9 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
   if (npm) install.push(`Peer dependencies:\n\n${fence(`npm install ${npm}`, 'bash')}`)
   if (fonts.length > 0) install.push(`Fonts: ${fonts.join('; ')}`)
   out.push(install.join('\n\n'))
+
+  const use = usageSection(input.usage)
+  if (use) out.push(use)
 
   const props = propsSection(input.propTables)
   if (props) out.push(props)

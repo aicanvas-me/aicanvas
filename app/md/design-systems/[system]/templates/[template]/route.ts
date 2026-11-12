@@ -1,6 +1,7 @@
 import { systemTemplateMarkdown } from '@/lib/agent-markdown/design-system'
 import { markdownResponse } from '@/lib/agent-markdown/response'
 import { systemInput, systemSlugs } from '../../../_systems'
+import { installedDependencies, installedUsage } from '../../../../_installed'
 
 // Markdown twin of /design-systems/<system>/templates/<template>. Static and
 // anonymous like every twin: the signed-out view, never the source.
@@ -21,11 +22,17 @@ export async function GET(
   const input = systemInput(system)
   const entry = input?.templates.find((t) => t.folder === template)
   if (!input || !entry) return new Response('Not found\n', { status: 404 })
+  const deps = installedDependencies(entry.registrySlug)
+  const bySlug = new Map(input.components.map((c) => [c.registrySlug, c]))
   return markdownResponse(
     systemTemplateMarkdown({
       system: { slug: system, name: input.name, paid: input.paid },
       template: entry,
       others: input.templates.filter((t) => t.folder !== template),
+      uses: deps.flatMap((d) => bySlug.get(d) ?? []),
+      iconCount: deps.filter((d) => d.startsWith('icon-')).length,
+      withTokens: deps.includes(`${system}-tokens`),
+      usage: installedUsage(entry.registrySlug, 'index'),
       siteUrl: input.siteUrl,
     }),
   )

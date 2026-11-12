@@ -6,6 +6,7 @@ import { SITE_URL } from '../../../lib/config'
 import { classifyPremium } from '@/lib/registry/premium-gate'
 import { componentMarkdown } from '@/lib/agent-markdown/component'
 import { markdownResponse } from '@/lib/agent-markdown/response'
+import { installedUsage } from '../../_installed'
 
 // Markdown twin of /components/[slug]. Reached through the rewrites in
 // next.config.ts (/components/<slug>.md, or Accept: text/markdown on the page
@@ -39,6 +40,7 @@ export async function GET(_request: Request, { params }: { params: Promise<{ slu
     isPremium: classifyPremium(slug).isPremium,
     enforcing: process.env.REGISTRY_ENFORCEMENT === 'enforce',
     freeAccountGate: process.env.FREE_ACCOUNT_GATE === 'on',
+    usage: installedUsage(slug),
     siteUrl: SITE_URL,
   })
 

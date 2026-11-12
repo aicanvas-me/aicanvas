@@ -11,7 +11,7 @@
  */
 import { splitProPromptAtPaywall } from '../registry/prompt-blocks'
 import type { PropTable } from '../../app/components/PropsTable'
-import { fence, propsSection } from './component'
+import { fence, propsSection, usageSection, type Usage } from './component'
 
 export interface SystemComponent {
   /** Page slug, e.g. `alert` (URL: /design-systems/<system>/<slug>). */
@@ -107,6 +107,7 @@ export interface SystemComponentInput {
   /** The full prompt from the bundle, or null. Only Pro pages have one. */
   prompt: string | null
   related: SystemComponent[]
+  usage?: Usage | null
   siteUrl: string
 }
 
@@ -148,6 +149,9 @@ export function systemComponentMarkdown(input: SystemComponentInput): string {
   install.push(`Token setup: the Install section of ${siteUrl}/llms.txt.`)
   out.push(install.join('\n\n'))
 
+  const use = usageSection(input.usage)
+  if (use) out.push(use)
+
   const props = propsSection(input.propTables)
   if (props) out.push(props)
 
@@ -171,6 +175,11 @@ export interface SystemTemplateInput {
   system: { slug: string; name: string; paid: boolean }
   template: SystemTemplate
   others: SystemTemplate[]
+  /** System components the template installs with it, in registry order. */
+  uses: SystemComponent[]
+  iconCount: number
+  withTokens: boolean
+  usage?: Usage | null
   siteUrl: string
 }
 
@@ -195,10 +204,24 @@ export function systemTemplateMarkdown(input: SystemTemplateInput): string {
       free
         ? `Needs a free AI Canvas account; signed out, the command writes a placeholder titled "(free account required)".`
         : `Requires Premium. Without a Premium token the command writes a placeholder instead of the template.`,
-      `It installs the page with the ${system.name} components it uses. Token setup: the Install section of ${siteUrl}/llms.txt.`,
+      `Token setup: the Install section of ${siteUrl}/llms.txt.`,
     ].join('\n\n'),
-    `## Source\n\n${free ? 'Install with the command above to get the source.' : `The source is Premium and is not published. Preview it at ${root}/templates/${template.folder}.`}`,
   ]
+  if (input.uses.length > 0) {
+    const parts = [
+      `## What it installs`,
+      `The page itself plus ${input.uses.length} ${system.name} components:`,
+      input.uses.map((u) => `- [${u.name}](${root}/${u.slug}.md) (\`${u.registrySlug}\`)`).join('\n'),
+    ]
+    const extras = [input.withTokens && `the ${system.name} tokens`, input.iconCount > 0 && `${input.iconCount} AI Canvas icons`].filter(Boolean)
+    if (extras.length > 0) parts.push(`Also ${extras.join(' and ')}.`)
+    out.push(parts.join('\n\n'))
+  }
+  const use = usageSection(input.usage, 'The page')
+  if (use) out.push(use)
+  out.push(
+    `## Source\n\n${free ? 'Install with the command above to get the source.' : `The source is Premium and is not published. Preview it at ${root}/templates/${template.folder}.`}`,
+  )
   if (input.others.length > 0) {
     out.push(
       `## More ${system.name} templates\n\n${input.others.map((o) => `- [${o.name}](${root}/templates/${o.folder}.md)`).join('\n')}`,
