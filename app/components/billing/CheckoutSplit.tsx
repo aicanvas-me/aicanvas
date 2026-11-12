@@ -26,11 +26,6 @@ function money(amount: number, currency: string) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount)
 }
 
-// The headline drops ".00" from a whole price, as the pricing cards do.
-function headline(amount: number, currency: string) {
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: amount % 1 ? 2 : 0 }).format(amount)
-}
-
 // Paddle's frame sits on the right and the order summary on the left. Inline
 // frames show no price, so the taxed totals come from Paddle's own events.
 export function CheckoutSplit({
@@ -164,14 +159,14 @@ export function CheckoutSplit({
               <p className="text-sm font-semibold text-sand-600 dark:text-sand-400">AI Canvas Premium, {plan.name}</p>
               <p className="mt-2 flex items-baseline gap-2">
                 <span className="text-4xl font-bold tracking-tight">
-                  {charged ? headline(charged.subtotal, charged.currency) : headline(plan.price, 'USD')}
+                  {charged ? money(charged.subtotal, charged.currency) : money(plan.price, 'USD')}
                 </span>
                 <span className="text-sm text-sand-600 dark:text-sand-400">
                   {plan.suffix}
                 </span>
               </p>
               <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">
-                {charged && charged.currency !== 'USD' ? `${headline(plan.price, 'USD')} ` : ''}+ VAT where applicable
+                {charged && charged.currency !== 'USD' ? `${money(plan.price, 'USD')} ` : ''}+ VAT where applicable
               </p>
 
               <dl aria-live="polite" className="mt-6 space-y-2 border-t border-sand-200 pt-5 text-sm dark:border-sand-800">
