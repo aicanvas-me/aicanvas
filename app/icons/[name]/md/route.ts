@@ -13,7 +13,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ name
   const look = { ...ICON_DEFAULTS, ...fromIconQuery(new URL(request.url).search) }
   const line = await readLineIcons()
   const svg = look.style === 'line' ? buildSvg(line[icon.name], look.size, look.weight, look.colour, 'line') : null
-  return new Response(iconMarkdown(icon, svg, look, process.env.FREE_ACCOUNT_GATE === 'on'), {
+  return new Response(iconMarkdown(icon, svg, look), {
     headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
   })
 }

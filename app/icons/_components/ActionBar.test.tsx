@@ -4,7 +4,7 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { LINE_ICON_NOTICE } from '../../../scripts/lib/icon-notice.mjs'
 import { ActionBar } from './ActionBar'
 
-const gate = vi.hoisted(() => ({ blocked: vi.fn(() => false), askForPremium: vi.fn(), masked: false, needsAccount: false }))
+const gate = vi.hoisted(() => ({ blocked: vi.fn(() => false), askForPremium: vi.fn(), masked: false }))
 vi.mock('./useInstallGate', () => ({ useInstallGate: () => gate }))
 
 const MARKUP = '<path d="M4 12h16" />'

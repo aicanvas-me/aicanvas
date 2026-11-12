@@ -46,6 +46,7 @@ import { buttonClasses } from '../buttonClasses'
 import { SaveButton } from '../SaveButton'
 import { HighlightedCodeView } from '../HighlightedCodeView'
 import { premiumEnabled } from '../../../lib/flags'
+import { PAID_ICON_STYLE } from '../../../lib/registry/content-type'
 import { useEntitlement } from '../billing/useEntitlement'
 import { usePremiumStatus } from '../billing/usePremiumStatus'
 import { PremiumBadge } from '../billing/PremiumBadge'
@@ -327,8 +328,8 @@ export default function ComponentPageView({
 
   async function copyIcons() {
     if (!iconsCommand) return
-    // Icon items install like any free item: an account first.
-    if (freeAccountGate && !user) { promptFreeAccount(); return }
+    // Line icons install with no account; a paid icon style still asks for one first.
+    if (freeAccountGate && !user && iconItems.some((item) => PAID_ICON_STYLE.test(item))) { promptFreeAccount(); return }
     if (!(await copyText(iconsCommand))) return
     setIconsCopied(true)
     setTimeout(() => setIconsCopied(false), 2000)

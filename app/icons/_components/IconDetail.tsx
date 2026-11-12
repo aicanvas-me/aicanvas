@@ -13,7 +13,7 @@ import { useInstallToken } from '@/app/_lib/useInstallToken'
 import { useTheme } from '@/app/components/ThemeProvider'
 import { RailFooter } from '@/app/components/RailFooter'
 import { ICON_CATEGORIES, ICON_CATEGORY_COUNTS, ICON_CATEGORY_LABELS, type IconCategorySlug } from '../_lib/categories'
-import { FREE_ICON_INSTALL_NOTE, iconInstallCommand, MASKED_INSTALL_TOKEN } from '../_lib/constants'
+import { iconInstallCommand, MASKED_INSTALL_TOKEN } from '../_lib/constants'
 import { DARK_PREVIEW_COLOUR, FIXED_WEIGHT, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
 import { iconLead, ICON_WEIGHTS, takesStroke, titleCase, type IconWeight } from '../_lib/icon-utils'
 import { fromIconQuery, SIZE_MAX, SIZE_MIN, SIZE_STEP, toIconQuery } from '../_lib/settings-query'
@@ -28,7 +28,6 @@ import { PreviewStage } from './PreviewStage'
 import { StylePicker } from './StylePicker'
 import { TuneSlider } from './TuneSlider'
 import { useIconVariant } from './useIconVariant'
-import { useInstallGate } from './useInstallGate'
 import { iconMarkdown } from '../_lib/markdown'
 import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
@@ -69,14 +68,12 @@ export function IconDetail({
   suggestions,
   previous,
   next,
-  freeAccountGate,
 }: {
   icon: IconMeta
   lineIcons: IconMarkupMap
   suggestions: IconWithMarkup[]
   previous?: IconWithMarkup
   next?: IconWithMarkup
-  freeAccountGate: boolean
 }) {
   const router = useRouter()
   const { theme } = useTheme()
@@ -96,7 +93,7 @@ export function IconDetail({
   const settings = { style, size, weight, colour: colourOverride }
   const isDefault = toIconQuery(settings, ICON_DEFAULTS) === ''
   const query = toIconQuery(settings, ICON_DEFAULTS)
-  const markdown = iconMarkdown(icon, !ready || isPreview(markup) ? null : buildSvg(markup, size, weight, colourOverride, style), settings, freeAccountGate)
+  const markdown = iconMarkdown(icon, !ready || isPreview(markup) ? null : buildSvg(markup, size, weight, colourOverride, style), settings)
 
   // The look arrives in the query (from the overview, a shared link or the
   // previous icon). Read on mount rather than through useSearchParams, which
@@ -228,8 +225,8 @@ export function IconDetail({
               </button>
             </div>
             <div aria-hidden className="my-2 h-px bg-sand-200 dark:bg-sand-800" />
-            <ActionBar name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} installToken={installToken} exportReady={ready} freeAccountGate={freeAccountGate} />
-            <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} installToken={installToken} exportReady={ready} freeAccountGate={freeAccountGate} />
+            <ActionBar name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} installToken={installToken} exportReady={ready} />
+            <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} installToken={installToken} exportReady={ready} />
           </div>
         </div>
 
@@ -277,7 +274,7 @@ export function IconDetail({
           </div>
         )}
 
-        <PropsReference name={icon.name} installToken={installToken} freeAccountGate={freeAccountGate} />
+        <PropsReference name={icon.name} installToken={installToken} />
         <CategoryLinks current={icon.category} />
       </PageFrame>
     </main>
@@ -295,8 +292,7 @@ const PROPS: { prop: string; type: string; fallback: string; note: string }[] = 
   { prop: 'className', type: 'string', fallback: '', note: 'Any utility class, passed to the svg.' },
 ]
 
-function PropsReference({ name, installToken, freeAccountGate }: { name: string; installToken: string | null; freeAccountGate: boolean }) {
-  const { needsAccount } = useInstallGate('line', freeAccountGate)
+function PropsReference({ name, installToken }: { name: string; installToken: string | null }) {
   return (
     <section className="mt-14" aria-labelledby="icon-props">
       <h2 id="icon-props" className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">Props</h2>
@@ -328,7 +324,6 @@ function PropsReference({ name, installToken, freeAccountGate }: { name: string;
       </div>
       <p className="mt-3 text-xs text-sand-600 dark:text-sand-400">
         Install this icon alone: <code className="break-all font-mono text-sand-900 dark:text-sand-50">{iconInstallCommand(name, 'line', installToken && MASKED_INSTALL_TOKEN)}</code>
-        {needsAccount && <> {FREE_ICON_INSTALL_NOTE}</>}
       </p>
     </section>
   )

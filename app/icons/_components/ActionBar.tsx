@@ -61,7 +61,6 @@ export function ActionBar({
   style,
   installToken,
   exportReady = true,
-  freeAccountGate = false,
 }: {
   name: string
   markup: string
@@ -72,7 +71,6 @@ export function ActionBar({
   style: IconStyle
   installToken?: string | null
   exportReady?: boolean
-  freeAccountGate?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const [pngFailed, setPngFailed] = useState(false)
@@ -80,7 +78,7 @@ export function ActionBar({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const menuId = useId()
-  const gate = useInstallGate(style, freeAccountGate)
+  const gate = useInstallGate(style)
   // A preview carries no vector: the SVG and PNG actions become the way to Premium.
   // While the style's vectors still load they wait, so a subscriber is never upsold.
   const preview = isPreview(markup)

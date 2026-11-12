@@ -12,6 +12,7 @@ import { loadContentLookup } from './lookup'
 export function installTier(slug: string, lookup: ContentLookup = loadContentLookup()): string {
   const type = classifyContent(slug, lookup)
   if (type === 'meta') return 'no account needed'
+  if (lookup.degraded !== true && type === 'free-icon') return 'no account needed'
   if (lookup.degraded !== true && (type === 'standalone' || type === 'design-system-component')) return 'free account'
   return 'Premium, requires an AI Canvas token'
 }

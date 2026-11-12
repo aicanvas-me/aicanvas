@@ -3,7 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { CodeTabs } from './CodeTabs'
 
-const gate = vi.hoisted(() => ({ blocked: () => false, askForPremium: () => {}, masked: false, needsAccount: false }))
+const gate = vi.hoisted(() => ({ blocked: () => false, askForPremium: () => {}, masked: false }))
 vi.mock('./useInstallGate', () => ({ useInstallGate: () => gate }))
 
 const MARKUP = '<path d="M4 12h16" />'
@@ -11,7 +11,6 @@ const MARKUP = '<path d="M4 12h16" />'
 afterEach(() => {
   cleanup()
   gate.masked = false
-  gate.needsAccount = false
 })
 
 function setup() {
@@ -70,11 +69,10 @@ describe('CodeTabs Install', () => {
     expect(text).toContain('Requires AI Canvas Premium to install.')
   })
 
-  it('keeps a free command readable and says it needs an account when signed out', () => {
-    gate.needsAccount = true
+  it('shows Line\'s command as it is, with no note', () => {
     render(<CodeTabs name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="line" />)
     const text = install()
     expect(text).toContain('npx shadcn@latest add @aicanvas/icon-arrow-right')
-    expect(text).toContain('Free account required.')
+    expect(text).not.toContain('Requires')
   })
 })

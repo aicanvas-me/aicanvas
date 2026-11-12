@@ -31,7 +31,6 @@ export default async function IconsPage({
       lineIcons={lineIcons}
       loadFullLine={!category}
       category={category}
-      freeAccountGate={process.env.FREE_ACCOUNT_GATE === 'on'}
     />
   )
 }

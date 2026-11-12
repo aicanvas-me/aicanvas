@@ -25,7 +25,7 @@ The tools below are derived from the live [aicanvas.me](https://aicanvas.me) reg
 | `get_component` | Full metadata plus complete `.tsx` source code for one component. Resolves both standalone slugs and design-system component slugs (e.g. `andromeda-heat-grid`). |
 | `get_install_command` | Get the `npx shadcn add @aicanvas/<slug>` command for any standalone or design-system component. |
 | `search_icons` | Keyword search across the AI Canvas icon set (name, tags, category), best match first. |
-| `get_icon_install` | The shadcn command that installs one icon as an editable file, with the exact import and JSX. Line is free with an account; Duotone, Solid and Solid duotone are Premium. |
+| `get_icon_install` | The shadcn command that installs one icon as an editable file, with the exact import and JSX. Line is free, no account needed; Duotone, Solid and Solid duotone are Premium. |
 | `list_systems` | List the design systems available (e.g. Andromeda), with component and template counts. |
 | `get_system` | Every file for a whole design system, plus its shared tokens, its component install commands, and the dependency chain. |
 | `list_templates` | List the ready-made templates (complete example screens), optionally filtered by design system. |

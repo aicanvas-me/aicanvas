@@ -1,7 +1,7 @@
 'use client'
 
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
-import { FREE_ICON_INSTALL_NOTE, iconImportLine, iconInstallCommand, iconJsxLine, MASKED_INSTALL_TOKEN, PREMIUM_ICON_INSTALL_NOTE } from '../_lib/constants'
+import { iconImportLine, iconInstallCommand, iconJsxLine, MASKED_INSTALL_TOKEN, PREMIUM_ICON_INSTALL_NOTE } from '../_lib/constants'
 import type { IconWeight } from '../_lib/icon-utils'
 import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
@@ -57,7 +57,6 @@ export function CodeTabs({
   compact = false,
   installToken,
   exportReady = true,
-  freeAccountGate = false,
 }: {
   name: string
   markup: string
@@ -70,11 +69,10 @@ export function CodeTabs({
   compact?: boolean
   installToken?: string | null
   exportReady?: boolean
-  freeAccountGate?: boolean
 }) {
   const [tab, setTab] = useState<CodeTab>('React')
   const id = useId()
-  const gate = useInstallGate(style, freeAccountGate)
+  const gate = useInstallGate(style)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const code =
     tab === 'React'
@@ -140,9 +138,9 @@ export function CodeTabs({
         <pre className={`${compact ? 'px-3 py-2 text-[11px] leading-5' : 'px-4 py-4 text-[12px] leading-6'} whitespace-pre-wrap break-words font-mono text-sand-800 dark:text-sand-200`}>
           <code><SyntaxCode code={code} enabled={tab !== 'Install' && !(tab === 'SVG' && isPreview(markup))} /></code>
         </pre>
-        {tab === 'Install' && (gate.masked || gate.needsAccount) && (
+        {tab === 'Install' && gate.masked && (
           <p className={`${compact ? 'px-3 pb-2' : 'px-4 pb-4'} text-xs text-sand-600 dark:text-sand-400`}>
-            {gate.masked ? PREMIUM_ICON_INSTALL_NOTE : FREE_ICON_INSTALL_NOTE}
+            {PREMIUM_ICON_INSTALL_NOTE}
           </p>
         )}
       </div>

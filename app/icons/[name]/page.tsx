@@ -39,7 +39,6 @@ export default async function IconPage({ params }: { params: Promise<{ name: str
       suggestions={suggestions.map((suggestion) => ({ ...suggestion, markup: line[suggestion.name] }))}
       previous={previousMeta ? { ...previousMeta, markup: line[previousMeta.name] } : undefined}
       next={nextMeta ? { ...nextMeta, markup: line[nextMeta.name] } : undefined}
-      freeAccountGate={process.env.FREE_ACCOUNT_GATE === 'on'}
     />
   )
 }
