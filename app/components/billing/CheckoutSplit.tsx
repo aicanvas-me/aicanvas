@@ -11,7 +11,7 @@ import { ShieldCheck } from '@/app/_icons/icons/shield-check'
 import { BrandIcon } from '../BrandIcon'
 import { buttonClasses } from '../buttonClasses'
 import { getPaddle, PRICES, subscribePaddleEvents, type BillingCycle } from '../../lib/paddle/client'
-import { LIFETIME_FEATURES, LIFETIME_PRICE, MONTHLY_PRICE, PREMIUM_FEATURES, YEARLY_PRICE, usd } from '../../lib/offer'
+import { LIFETIME_FEATURES, LIFETIME_PRICE, MONTHLY_PRICE, PREMIUM_FEATURES, YEARLY_PRICE } from '../../lib/offer'
 
 const PLANS = {
   monthly: { name: 'Monthly', price: MONTHLY_PRICE, suffix: '/ month', label: 'What you get', features: PREMIUM_FEATURES, terms: 'Renews monthly, cancel anytime' },
@@ -24,6 +24,11 @@ type Stage = 'loading' | 'ready' | 'completing' | 'error'
 
 function money(amount: number, currency: string) {
   return new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount)
+}
+
+// The headline drops ".00" from a whole price, as the pricing cards do.
+function headline(amount: number, currency: string) {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency, minimumFractionDigits: amount % 1 ? 2 : 0 }).format(amount)
 }
 
 // Paddle's frame sits on the right and the order summary on the left. Inline
@@ -47,7 +52,7 @@ export function CheckoutSplit({
   const frameRef = useRef<HTMLDivElement>(null)
   const plan = PLANS[cycle]
   const completing = stage === 'completing'
-  // Headline = Paddle's charge in the buyer's currency: renewal price, or Lifetime total
+  // Headline = Paddle's pre-tax price in the buyer's currency (renewal, or Lifetime)
   const charged = totals && {
     ...(cycle === 'lifetime' ? totals.totals : (totals.recurring_totals ?? totals.totals)),
     currency: totals.currency_code,
@@ -159,18 +164,15 @@ export function CheckoutSplit({
               <p className="text-sm font-semibold text-sand-600 dark:text-sand-400">AI Canvas Premium, {plan.name}</p>
               <p className="mt-2 flex items-baseline gap-2">
                 <span className="text-4xl font-bold tracking-tight">
-                  {charged ? money(charged.total, charged.currency) : usd(plan.price)}
+                  {charged ? headline(charged.subtotal, charged.currency) : headline(plan.price, 'USD')}
                 </span>
                 <span className="text-sm text-sand-600 dark:text-sand-400">
                   {plan.suffix}
-                  {charged && charged.tax > 0 ? ', tax included' : ''}
                 </span>
               </p>
-              {!(charged && charged.currency === 'USD' && charged.tax === 0) && (
-                <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">
-                  {charged ? `${usd(plan.price)} ` : ''}+ VAT where applicable
-                </p>
-              )}
+              <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">
+                {charged && charged.currency !== 'USD' ? `${headline(plan.price, 'USD')} ` : ''}+ VAT where applicable
+              </p>
 
               <dl aria-live="polite" className="mt-6 space-y-2 border-t border-sand-200 pt-5 text-sm dark:border-sand-800">
                 <div className="flex justify-between gap-4">
