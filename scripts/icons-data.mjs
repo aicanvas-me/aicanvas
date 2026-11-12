@@ -6,7 +6,7 @@
 // icons/ folder), PREMIUM_LOCAL_PATH/icons, then the .icons-source copy inject keeps.
 // With none it writes empty data, so the pages build and list no icons.
 //
-//   app/icons/_data/icons.generated.json    every icon: name, category, tags, added (added-dates.json), isNew
+//   app/icons/_data/icons.generated.json    every icon: name, category, tags, isNew
 //   public/icons-data/line.json             name -> inner SVG markup, the free style
 //   .icons-data/<style>.json                the same for each paid style, served only to Premium
 //                                           by app/icons/style-data/[style]/route.ts
@@ -15,7 +15,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { iconSourceCandidates, readAddedDates } from './lib/icon-source.mjs'
+import { iconSourceCandidates } from './lib/icon-source.mjs'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const STYLES = { line: 'svg', duotone: 'svg-duotone', solid: 'svg-solid', 'solid-duotone': 'svg-solid-duotone' }
@@ -49,11 +49,10 @@ const metaOf = (name) => {
 
 const fresh = new Set(JSON.parse(readFileSync(join(SRC, 'batch-4.json'), 'utf8')).icons.map((i) => i.name))
 const names = readdirSync(join(SRC, 'svg')).filter((f) => f.endsWith('.svg')).map((f) => f.slice(0, -4)).sort()
-const added = readAddedDates(SRC, names)
 
 const index = names.map((name) => {
   const { tags = [], category } = metaOf(name)
-  return { name, category, tags, added: added[name] ?? null, isNew: fresh.has(name) }
+  return { name, category, tags, isNew: fresh.has(name) }
 })
 
 mkdirSync(join(ROOT, 'app/icons/_data'), { recursive: true })

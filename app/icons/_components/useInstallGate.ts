@@ -4,9 +4,7 @@ import { usePaywallModal } from '@/app/components/billing/PaywallModalProvider'
 import { usePremiumStatus } from '@/app/components/billing/usePremiumStatus'
 import type { IconStyle } from '../_lib/types'
 
-// Line installs for everyone, no account. A paid style without Premium gets a
-// placeholder file from /r, not an error, so its install actions open the
-// upgrade box instead of copying a command that installs a stub.
+// Paid styles without Premium open the upgrade box; /r would install a placeholder.
 export function useInstallGate(style: IconStyle) {
   const premiumStatus = usePremiumStatus()
   const { open: openPaywallModal } = usePaywallModal()

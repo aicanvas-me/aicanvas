@@ -79,10 +79,10 @@ export function ActionBar({
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const menuId = useId()
   const gate = useInstallGate(style)
-  // A preview carries no vector: the SVG and PNG actions become the way to Premium.
-  // While the style's vectors still load they wait, so a subscriber is never upsold.
+  // A preview has no vector: file actions open the upgrade box, or wait while vectors load.
   const preview = isPreview(markup)
   const locked = preview && exportReady
+  const waiting = preview && !locked
   const prompt = agentPrompt(name, size, weight, style, colour, installToken)
   const jsx = iconJsxLine(name, size, weight, style, colour)
   const svg = preview ? '' : buildSvg(markup, size, weight, colour, style)
@@ -112,7 +112,6 @@ export function ActionBar({
     }
   }, [open])
 
-  // The file actions on a preview open the upgrade box; there is no file to give.
   const file = (action: () => unknown) => () => {
     if (locked) gate.askForPremium()
     else if (!preview) return action()
@@ -121,9 +120,9 @@ export function ActionBar({
     { label: 'Copy for agent', icon: Bot, action: () => gate.blocked() || copyText(prompt) },
     { label: 'Copy install command', icon: SquareTerminal, action: () => gate.blocked() || copyText(iconInstallCommand(name, style, installToken)) },
     { label: 'Copy JSX', icon: Code, action: () => copyText(jsx) },
-    { label: 'Copy SVG', icon: Copy, action: file(() => copyText(svg)) },
-    { label: 'Download SVG', icon: FileImage, action: file(() => downloadSvg(name, svg)) },
-    { label: 'Download PNG', icon: Download, action: file(() => downloadPng(name, svg, size).catch(() => setPngFailed(true))) },
+    { label: 'Copy SVG', icon: Copy, action: file(() => copyText(svg)), waits: true },
+    { label: 'Download SVG', icon: FileImage, action: file(() => downloadSvg(name, svg)), waits: true },
+    { label: 'Download PNG', icon: Download, action: file(() => downloadPng(name, svg, size).catch(() => setPngFailed(true))), waits: true },
   ]
 
   // Arrows stop here, natively too: the page's document listener walks icons on them.
@@ -193,12 +192,14 @@ export function ActionBar({
                 type="button"
                 role="menuitem"
                 tabIndex={-1}
+                aria-disabled={'waits' in item && waiting ? true : undefined}
                 onClick={() => {
+                  if ('waits' in item && waiting) return
                   setPngFailed(false)
                   void item.action()
                   close()
                 }}
-                className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50"
+                className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 aria-disabled:cursor-default aria-disabled:opacity-40 aria-disabled:hover:bg-transparent aria-disabled:hover:text-sand-700 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50 dark:aria-disabled:hover:text-sand-300"
               >
                 <item.icon size={15} aria-hidden />
                 {item.label}

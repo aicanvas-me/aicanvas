@@ -20,8 +20,7 @@ export function StylePicker({
 }) {
   const reduce = useReducedMotion()
   const refs = useRef<(HTMLButtonElement | null)[]>([])
-  // One layout group per mount: a shared layoutId made the pick fly in from
-  // where the previous page's picker sat whenever the next icon opened.
+  // A group per mount, so the pick never flies in from the previous page's picker.
   const [group] = useState(() => `icons-style-${++pickerMounts}`)
 
   const onKey = (event: KeyboardEvent, index: number) => {

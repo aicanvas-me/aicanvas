@@ -65,6 +65,7 @@ describe('CodeTabs Install', () => {
     render(<CodeTabs name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="solid" />)
     const text = install()
     expect(text).toContain('@aicanvas/••••••••••••')
+    expect(screen.getByText('••••••••••••').getAttribute('aria-hidden')).toBe('true')
     expect(text).not.toContain('arrow-right')
     expect(text).toContain('Requires AI Canvas Premium to install.')
   })

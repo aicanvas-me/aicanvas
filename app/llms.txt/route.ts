@@ -37,7 +37,7 @@ Component and design-system links below point at each page's markdown version (t
 ## Install
 Install command: \`npx shadcn@latest add @aicanvas/<component-name>\`. The @aicanvas registry is listed in the official shadcn directory, so the CLI resolves it with no extra setup.
 
-One-command installs require a free AI Canvas account. Signed out, the command still exits 0 but writes a small placeholder file titled "(free account required)" instead of the real component. Check for that title before reporting success. Premium components and every install marked Premium below additionally require Premium.
+One-command installs require a free AI Canvas account (Line icons excepted: no account needed). Signed out, the command still exits 0 but writes a small placeholder file titled "(free account required)" instead of the real component. Check for that title before reporting success. Premium components and every install marked Premium below additionally require Premium.
 
 To authenticate installs: sign in and copy your personal token from ${SITE_URL}/account/settings, set it as AICANVAS_TOKEN in .env.local, and configure the registry once in the project's components.json:
 

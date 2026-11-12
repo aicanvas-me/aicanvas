@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { iconMarkdown } from './markdown'
 import type { IconMeta } from './types'
 
-const icon: IconMeta = { name: 'arrow-up', category: 'arrows', tags: ['up'], added: '2026-10-01', isNew: false }
+const icon: IconMeta = { name: 'arrow-up', category: 'arrows', tags: ['up'], isNew: false }
 const line = { style: 'line', size: 48, weight: 'regular', colour: null } as const
 
 describe('iconMarkdown', () => {

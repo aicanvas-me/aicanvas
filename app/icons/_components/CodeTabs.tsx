@@ -84,7 +84,7 @@ export function CodeTabs({
             : 'The SVG of this style has not loaded.'
           : buildSvg(markup, size, weight, colour, style)
         : gate.masked
-          ? `npx shadcn@latest add @aicanvas/${'•'.repeat(12)}`
+          ? 'npx shadcn@latest add @aicanvas/'
           : iconInstallCommand(name, style, installToken && MASKED_INSTALL_TOKEN)
 
   const onKey = (event: KeyboardEvent, index: number) => {
@@ -136,7 +136,15 @@ export function CodeTabs({
         className={`${compact ? 'max-h-[86px]' : 'max-h-44 sm:max-h-36'} overflow-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-accent/40`}
       >
         <pre className={`${compact ? 'px-3 py-2 text-[11px] leading-5' : 'px-4 py-4 text-[12px] leading-6'} whitespace-pre-wrap break-words font-mono text-sand-800 dark:text-sand-200`}>
-          <code><SyntaxCode code={code} enabled={tab !== 'Install' && !(tab === 'SVG' && isPreview(markup))} /></code>
+          <code>
+            <SyntaxCode code={code} enabled={tab !== 'Install' && !(tab === 'SVG' && isPreview(markup))} />
+            {tab === 'Install' && gate.masked && (
+              <>
+                <span aria-hidden>{'•'.repeat(12)}</span>
+                <span className="sr-only">icon name, shown with Premium</span>
+              </>
+            )}
+          </code>
         </pre>
         {tab === 'Install' && gate.masked && (
           <p className={`${compact ? 'px-3 pb-2' : 'px-4 pb-4'} text-xs text-sand-600 dark:text-sand-400`}>

@@ -113,9 +113,7 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
   // free-metered.
   if (lookup.premiumSlugs.has(slug)) return 'premium-standalone'
 
-  // Line icons install with no account: each one, the icon-base runtime every
-  // style pulls in, and the whole Line set. Last, after every paid check, so it
-  // never opens a paid item.
+  // Line icons, icon-base and the Line set need no account; last, so no paid item opens.
   if (slug === 'icons' || slug.startsWith('icon-')) return 'free-icon'
 
   return 'standalone'

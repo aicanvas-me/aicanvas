@@ -6,9 +6,7 @@ import { SIZE_MAX } from '../_lib/settings-query'
 import { IconSvg } from './IconSvg'
 
 const PREVIEW_SIZES = [16, 20, 24, 32, 48]
-// The stage shows the picked size magnified in proportion to the largest one:
-// 72px fills the stage's shorter side, so every step of Size visibly changes
-// it on any screen and the icon never hits the edge and stops growing.
+// 72px fills the stage's shorter side; smaller sizes scale down from it.
 const stageSize = (size: number) => `calc(min(100cqw, 100cqh) * ${size / SIZE_MAX})`
 
 export function PreviewSizeStrip({
