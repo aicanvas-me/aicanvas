@@ -22,5 +22,3 @@ export const isPinnedBuild = (env) => !env.PREMIUM_LOCAL_PATH && Boolean(env.GIT
 // fails; dev and free-only builds go on without icons.
 export const iconSetAction = ({ pinned, iconsDir }) =>
   iconsDir && existsSync(join(iconsDir, 'react/IconBase.tsx')) ? 'copy' : pinned ? 'fail' : 'skip'
-
-

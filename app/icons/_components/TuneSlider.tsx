@@ -37,7 +37,7 @@ export function TuneSlider({
   disabledValue?: string
 }) {
   const t = Math.max(0, Math.min(1, (value - min) / (max - min)))
-  // 12px clear of each end, the 24px native thumb's span, so the needle sits under the pointer.
+  // Matches the 24px native thumb's travel, so the needle sits under the pointer.
   const position = `calc(12px + (100% - 24px) * ${t})`
   const display = disabled && disabledValue ? disabledValue : format(value)
   const hintId = useId()
