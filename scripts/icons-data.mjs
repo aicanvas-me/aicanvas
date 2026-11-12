@@ -6,19 +6,22 @@
 // icons/ folder), PREMIUM_LOCAL_PATH/icons, then the .icons-source copy inject keeps.
 // With none it writes empty data, so the pages build and list no icons.
 //
-//   app/icons/_data/icons.generated.json    every icon: name, category, tags, added (added-dates.json), isNew
+//   app/icons/_data/icons.generated.json    every icon: name, category, tags, isNew
 //   public/icons-data/line.json             name -> inner SVG markup, the free style
 //   .icons-data/<style>.json                the same for each paid style, served only to Premium
 //                                           by app/icons/style-data/[style]/route.ts
 //   public/icons-preview/<style>/<name>.png raster previews of the paid styles, no vectors
+//   public/icons-preview/<style>/<name>.large.webp  the same at 640px, for the big preview stage
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { iconSourceCandidates, readAddedDates } from './lib/icon-source.mjs'
+import { iconSourceCandidates } from './lib/icon-source.mjs'
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const STYLES = { line: 'svg', duotone: 'svg-duotone', solid: 'svg-solid', 'solid-duotone': 'svg-solid-duotone' }
 const PREVIEW_PX = 192
+// The stage draws a preview up to about 300px; 640 keeps it sharp on a 2x screen.
+const LARGE_PREVIEW_PX = 640
 const dataFile = (style) => (style === 'line' ? join(ROOT, 'public/icons-data/line.json') : join(ROOT, `.icons-data/${style}.json`))
 
 // Paid markup never stays public: drop the files earlier builds wrote there.
@@ -46,11 +49,10 @@ const metaOf = (name) => {
 
 const fresh = new Set(JSON.parse(readFileSync(join(SRC, 'batch-4.json'), 'utf8')).icons.map((i) => i.name))
 const names = readdirSync(join(SRC, 'svg')).filter((f) => f.endsWith('.svg')).map((f) => f.slice(0, -4)).sort()
-const added = readAddedDates(SRC, names)
 
 const index = names.map((name) => {
   const { tags = [], category } = metaOf(name)
-  return { name, category, tags, added: added[name] ?? null, isNew: fresh.has(name) }
+  return { name, category, tags, isNew: fresh.has(name) }
 })
 
 mkdirSync(join(ROOT, 'app/icons/_data'), { recursive: true })
@@ -66,8 +68,10 @@ for (const [style, dir] of Object.entries(STYLES)) {
     out[name] = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/\s*\n\s*/g, '').trim()
     if (style === 'line') return
     // White on transparent: the page tints it through a CSS mask, so the colour picker still works.
-    const sized = svg.replaceAll('currentColor', '#fff').replace(/width="24" height="24"/, `width="${PREVIEW_PX}" height="${PREVIEW_PX}"`)
-    await sharp(Buffer.from(sized)).png({ compressionLevel: 9 }).toFile(join(ROOT, `public/icons-preview/${style}/${name}.png`))
+    const white = svg.replaceAll('currentColor', '#fff')
+    const at = (px) => Buffer.from(white.replace(/width="24" height="24"/, `width="${px}" height="${px}"`))
+    await sharp(at(PREVIEW_PX)).png({ compressionLevel: 9 }).toFile(join(ROOT, `public/icons-preview/${style}/${name}.png`))
+    await sharp(at(LARGE_PREVIEW_PX)).webp({ lossless: true }).toFile(join(ROOT, `public/icons-preview/${style}/${name}.large.webp`))
   }))
   writeFileSync(dataFile(style), JSON.stringify(Object.fromEntries(names.map((name) => [name, out[name]]))))
 }

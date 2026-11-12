@@ -1,7 +1,5 @@
 'use client'
 
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useEffect, useId, useRef, useState, type KeyboardEvent } from 'react'
 import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { Check } from '@/app/_icons/icons/check'
@@ -18,6 +16,7 @@ import type { IconWeight } from '../_lib/icon-utils'
 import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
 import type { IconStyle } from '../_lib/types'
+import { useInstallGate } from './useInstallGate'
 
 function saveBlob(blob: Blob, filename: string) {
   const url = URL.createObjectURL(blob)
@@ -79,10 +78,11 @@ export function ActionBar({
   const triggerRef = useRef<HTMLButtonElement>(null)
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const menuId = useId()
-  const router = useRouter()
-  // A preview carries no vector: the SVG and PNG actions become the way to Premium.
+  const gate = useInstallGate(style)
+  // A preview has no vector: file actions open the upgrade box, or wait while vectors load.
   const preview = isPreview(markup)
   const locked = preview && exportReady
+  const waiting = preview && !locked
   const prompt = agentPrompt(name, size, weight, style, colour, installToken)
   const jsx = iconJsxLine(name, size, weight, style, colour)
   const svg = preview ? '' : buildSvg(markup, size, weight, colour, style)
@@ -112,23 +112,17 @@ export function ActionBar({
     }
   }, [open])
 
+  const file = (action: () => unknown) => () => {
+    if (locked) gate.askForPremium()
+    else if (!preview) return action()
+  }
   const items = [
-    { label: 'Copy for agent', icon: Bot, action: () => copyText(prompt) },
-    { label: 'Copy install command', icon: SquareTerminal, action: () => copyText(iconInstallCommand(name, style, installToken)) },
+    { label: 'Copy for agent', icon: Bot, action: () => gate.blocked() || copyText(prompt) },
+    { label: 'Copy install command', icon: SquareTerminal, action: () => gate.blocked() || copyText(iconInstallCommand(name, style, installToken)) },
     { label: 'Copy JSX', icon: Code, action: () => copyText(jsx) },
-    ...(locked
-      ? [{ label: 'SVG and PNG with Premium', icon: Download, action: () => router.push('/pricing') }]
-      : preview
-        ? []
-        : [
-            { label: 'Copy SVG', icon: Copy, action: () => copyText(svg) },
-            { label: 'Download SVG', icon: FileImage, action: () => downloadSvg(name, svg) },
-            {
-              label: 'Download PNG',
-              icon: Download,
-              action: () => downloadPng(name, svg, size).catch(() => setPngFailed(true)),
-            },
-          ]),
+    { label: 'Copy SVG', icon: Copy, action: file(() => copyText(svg)), waits: true },
+    { label: 'Download SVG', icon: FileImage, action: file(() => downloadSvg(name, svg)), waits: true },
+    { label: 'Download PNG', icon: Download, action: file(() => downloadPng(name, svg, size).catch(() => setPngFailed(true))), waits: true },
   ]
 
   // Arrows stop here, natively too: the page's document listener walks icons on them.
@@ -161,7 +155,9 @@ export function ActionBar({
       >
         <button
           type="button"
-          onClick={() => void copy()}
+          onClick={() => {
+            if (!gate.blocked()) void copy()
+          }}
           className="inline-flex h-8 flex-1 items-center justify-center gap-1.5 rounded-l-control sm:flex-none bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
         >
           {copied ? <Check size={14} /> : <Bot size={14} />}
@@ -196,12 +192,14 @@ export function ActionBar({
                 type="button"
                 role="menuitem"
                 tabIndex={-1}
+                aria-disabled={'waits' in item && waiting ? true : undefined}
                 onClick={() => {
+                  if ('waits' in item && waiting) return
                   setPngFailed(false)
                   void item.action()
                   close()
                 }}
-                className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50"
+                className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 aria-disabled:cursor-default aria-disabled:opacity-40 aria-disabled:hover:bg-transparent aria-disabled:hover:text-sand-700 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50 dark:aria-disabled:hover:bg-transparent dark:aria-disabled:hover:text-sand-300"
               >
                 <item.icon size={15} aria-hidden />
                 {item.label}
@@ -214,17 +212,15 @@ export function ActionBar({
         <Code size={14} />
         Copy JSX
       </button>
-      {locked ? (
-        <Link href="/pricing" className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
-          <Download size={14} />
-          SVG with Premium
-        </Link>
-      ) : (
-        <button type="button" disabled={preview} onClick={() => downloadSvg(name, svg)} className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}>
-          <Download size={14} />
-          SVG
-        </button>
-      )}
+      <button
+        type="button"
+        disabled={preview && !locked}
+        onClick={file(() => downloadSvg(name, svg))}
+        className={`h-8 ${buttonClasses({ variant: 'outline', size: 'xs' })}`}
+      >
+        <Download size={14} />
+        SVG
+      </button>
       {pngFailed && (
         <p role="alert" className="col-span-2 text-xs text-sand-700 sm:basis-full dark:text-sand-300">
           PNG download failed, try again

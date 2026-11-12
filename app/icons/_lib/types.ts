@@ -4,7 +4,6 @@ export type IconMeta = {
   name: string
   category: IconCategorySlug
   tags: string[]
-  added: string | null
   isNew: boolean
 }
 

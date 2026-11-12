@@ -6,20 +6,17 @@ import { useEffect, useState } from 'react'
 import { RotateCcw } from '@/app/_icons/icons/rotate-ccw'
 import { ArrowLeft } from '@/app/_icons/icons/arrow-left'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
-import { Check } from '@/app/_icons/icons/check'
-import { Copy } from '@/app/_icons/icons/copy'
 import { CopyPage } from '@/app/components/CopyPage'
 import { PAGE_TOP, PageFrame } from '@/app/_components/DesignSystemPage'
 import { PageCrumbs } from '@/app/components/PageCrumbs'
-import { useCopied } from '@/app/components/useCopied'
 import { useInstallToken } from '@/app/_lib/useInstallToken'
 import { useTheme } from '@/app/components/ThemeProvider'
 import { RailFooter } from '@/app/components/RailFooter'
 import { ICON_CATEGORIES, ICON_CATEGORY_COUNTS, ICON_CATEGORY_LABELS, type IconCategorySlug } from '../_lib/categories'
 import { iconInstallCommand, MASKED_INSTALL_TOKEN } from '../_lib/constants'
 import { DARK_PREVIEW_COLOUR, FIXED_WEIGHT, LIGHT_PREVIEW_COLOUR } from '../_lib/constants'
-import { formatDate, iconLead, ICON_WEIGHTS, takesStroke, titleCase, type IconWeight } from '../_lib/icon-utils'
-import { fromIconQuery, toIconQuery } from '../_lib/settings-query'
+import { iconLead, ICON_WEIGHTS, takesStroke, titleCase, type IconWeight } from '../_lib/icon-utils'
+import { fromIconQuery, SIZE_MAX, SIZE_MIN, SIZE_STEP, toIconQuery } from '../_lib/settings-query'
 import { ICON_DEFAULTS, isSeeded, storeSettings, storedSettings } from '../_lib/settings-store'
 import { ICON_GRID_CLASS } from '../_lib/tile-grid'
 import type { IconMarkupMap, IconMeta, IconStyle, IconWithMarkup } from '../_lib/types'
@@ -31,6 +28,9 @@ import { PreviewStage } from './PreviewStage'
 import { StylePicker } from './StylePicker'
 import { TuneSlider } from './TuneSlider'
 import { useIconVariant } from './useIconVariant'
+import { iconMarkdown } from '../_lib/markdown'
+import { isPreview } from '../_lib/preview'
+import { buildSvg } from '../_lib/svg'
 
 // The overview's tiles stop at 64px; a bigger pick here still draws the related
 // tiles at the size they were built for.
@@ -62,41 +62,18 @@ function AdjacentLink({ icon, direction, query }: { icon?: IconWithMarkup; direc
   )
 }
 
-function SlugChip({ name }: { name: string }) {
-  const { copied, copy } = useCopied(name)
-  return (
-    <button
-      type="button"
-      onClick={() => void copy()}
-      aria-label={`Copy the slug ${name}`}
-      title="Copy slug"
-      className="-mx-1.5 inline-flex h-6 items-center gap-1.5 rounded-chip px-1.5 font-mono text-[11px] text-sand-600 transition-colors hover:bg-sand-200/50 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-400 dark:hover:bg-sand-800/60 dark:hover:text-sand-50"
-    >
-      {name}
-      {copied ? (
-        <Check aria-hidden className="size-3 text-success" />
-      ) : (
-        <Copy aria-hidden className="size-3" />
-      )}
-      <span aria-live="polite" className="sr-only">{copied ? 'Slug copied' : ''}</span>
-    </button>
-  )
-}
-
 export function IconDetail({
   icon,
   lineIcons,
   suggestions,
   previous,
   next,
-  markdown,
 }: {
   icon: IconMeta
   lineIcons: IconMarkupMap
   suggestions: IconWithMarkup[]
   previous?: IconWithMarkup
   next?: IconWithMarkup
-  markdown: string
 }) {
   const router = useRouter()
   const { theme } = useTheme()
@@ -116,6 +93,7 @@ export function IconDetail({
   const settings = { style, size, weight, colour: colourOverride }
   const isDefault = toIconQuery(settings, ICON_DEFAULTS) === ''
   const query = toIconQuery(settings, ICON_DEFAULTS)
+  const markdown = iconMarkdown(icon, !ready || isPreview(markup) ? null : buildSvg(markup, size, weight, colourOverride, style), settings)
 
   // The look arrives in the query (from the overview, a shared link or the
   // previous icon). Read on mount rather than through useSearchParams, which
@@ -181,7 +159,7 @@ export function IconDetail({
           same edge as /components and every system page beside the rail. */}
       <PageFrame className={PAGE_TOP}>
         <PageCrumbs />
-        <CopyPage markdown={markdown} markdownHref={`/icons/${icon.name}/md`} />
+        <CopyPage markdown={markdown} markdownHref={`/icons/${icon.name}/md${query}`} />
         <header>
           <div className="flex items-start justify-between gap-4">
             <h1 className="min-w-0 break-words text-4xl font-extrabold tracking-tight text-sand-900 dark:text-sand-50 sm:text-5xl">{title}</h1>
@@ -191,22 +169,6 @@ export function IconDetail({
             </nav>
           </div>
           <p className="mt-2 text-base text-sand-700 dark:text-sand-300">{iconLead(icon, categoryLabel)}</p>
-          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-sand-600 dark:text-sand-400">
-            <Link
-              href={`/icons?category=${icon.category}`}
-              className="rounded-chip font-semibold text-sand-700 transition-colors hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-300 dark:hover:text-sand-50"
-            >
-              {categoryLabel}
-            </Link>
-            <span aria-hidden className="text-sand-500">·</span>
-            {icon.added && (
-              <>
-                <span>Added {formatDate(icon.added)}</span>
-                <span aria-hidden className="text-sand-500">·</span>
-              </>
-            )}
-            <SlugChip name={icon.name} />
-          </div>
         </header>
 
         {/* One shell, the overview toolbar's surface: the preview is a card set
@@ -230,9 +192,9 @@ export function IconDetail({
               label="Size"
               value={size}
               onChange={setSize}
-              min={16}
-              max={96}
-              step={4}
+              min={SIZE_MIN}
+              max={SIZE_MAX}
+              step={SIZE_STEP}
               format={(value) => `${value}px`}
               valueText={(value) => `${value} pixels`}
             />

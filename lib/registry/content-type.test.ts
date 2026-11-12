@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { classifyContent, type ContentLookup } from './content-type'
+import { STYLES as ICON_STYLES } from '../../scripts/icon-registry.mjs'
 
 const lookup: ContentLookup = {
   designSystemSlugs: new Set(['andromeda-card', 'andromeda-pro-card', 'andromeda-pro-burst']),
@@ -111,13 +112,24 @@ describe('classifyContent', () => {
     expect(classifyContent('andromeda-tokens', lookup)).toBe('meta')
   })
 
-  it('gates the three paid icon styles and keeps Line, the base and the Line set free', () => {
+  it('gates the three paid icon styles and opens Line, the base and the Line set to everyone', () => {
     for (const slug of ['icon-search-duotone', 'icon-search-solid', 'icon-search-solid-duotone', 'icon-heart-solid.json']) {
       expect(classifyContent(slug, lookup), slug).toBe('premium-standalone')
     }
     for (const slug of ['icon-search', 'icon-base', 'icons', 'icon-arrow-up-right']) {
-      expect(classifyContent(slug, lookup), slug).toBe('standalone')
+      expect(classifyContent(slug, lookup), slug).toBe('free-icon')
     }
+  })
+
+  it('locks every paid style the icon build writes, so a new style cannot fall into the free lane', () => {
+    for (const { suffix } of ICON_STYLES.filter((style: { suffix: string }) => style.suffix)) {
+      expect(classifyContent(`icon-search${suffix}`, lookup), suffix).toBe('premium-standalone')
+    }
+  })
+
+  it('never opens a premium item that happens to start with icon-', () => {
+    const withPremiumIcon = { ...lookup, premiumSlugs: new Set(['icon-morph']) }
+    expect(classifyContent('icon-morph', withPremiumIcon)).toBe('premium-standalone')
   })
 
   it('strips a .json suffix before classifying', () => {

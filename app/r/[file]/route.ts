@@ -53,7 +53,7 @@ export async function GET(
   // cached: a public CDN entry would let an anon request reuse a signed-in user's
   // real-source response and bypass the gate.
   const cacheControl =
-    contentType === 'meta'
+    contentType === 'meta' || contentType === 'free-icon'
       ? 'public, max-age=300'
       : premiumContent
         ? 'private, no-store'

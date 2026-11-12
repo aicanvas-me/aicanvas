@@ -7,6 +7,8 @@ export type ContentType =
   | 'template'
   | 'brain'
   | 'meta'
+  /** A Line icon, its shared IconBase runtime or the whole Line set: installs with no account. */
+  | 'free-icon'
 
 export interface ContentLookup {
   designSystemSlugs: Set<string>
@@ -36,7 +38,7 @@ export interface ContentLookup {
 // Catalog/index files the CLI and MCP need to browse — never gated.
 const META_SLUGS = new Set(['registry', 'aicanvas-mcp', 'aicanvas-props', 'icons-index'])
 
-const PAID_ICON_STYLE = /-(duotone|solid|solid-duotone)$/
+export const PAID_ICON_STYLE = /-(duotone|solid|solid-duotone)$/
 
 /**
  * Classify a registry slug (with or without a trailing `.json`).
@@ -110,6 +112,9 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
   // Premium-only standalones gate like a design system: binary access, never
   // free-metered.
   if (lookup.premiumSlugs.has(slug)) return 'premium-standalone'
+
+  // Line icons, icon-base and the Line set need no account; last, so no paid item opens.
+  if (slug === 'icons' || slug.startsWith('icon-')) return 'free-icon'
 
   return 'standalone'
 }

@@ -504,8 +504,28 @@ describe.skipIf(!ICON_ITEMS)('GET /r/icon-*.json — Line free, the other styles
   it('hands a signed-in free account the real Line icon', async () => {
     mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
     const res = await get('icon-search.json')
-    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('standalone')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('free-icon')
     expect(await res.text()).toContain('createIcon(')
+  })
+
+  it('hands anyone, signed out with the account gate on, the real Line icon, base and set', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+    for (const file of ['icon-search.json', 'icon-base.json', 'icons.json']) {
+      const res = await get(file)
+      const body = await res.text()
+      expect(res.headers.get('X-AICanvas-Content-Type'), file).toBe('free-icon')
+      expect(body, file).not.toContain('free account required')
+      expect(body, file).toContain(file === 'icon-base.json' ? 'IconBase' : 'createIcon(')
+    }
+  })
+
+  it('still locks a paid style for someone signed out', async () => {
+    process.env.FREE_ACCOUNT_GATE = 'on'
+    mockedGetEntitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
+    const res = await get('icon-search-solid.json')
+    expect(res.headers.get('X-AICanvas-Content-Type')).toBe('premium-standalone')
+    expect(await res.text()).not.toContain('createIcon(')
   })
 
   it('locks every paid style for a free account, with no geometry in the reply', async () => {

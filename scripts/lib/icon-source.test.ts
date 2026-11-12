@@ -2,7 +2,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
-import { ICON_PARTS, iconSetAction, iconSourceCandidates, isPinnedBuild, readAddedDates } from './icon-source.mjs'
+import { iconSetAction, iconSourceCandidates, isPinnedBuild } from './icon-source.mjs'
 
 let dir: string
 
@@ -62,31 +62,3 @@ describe('iconSetAction', () => {
   })
 })
 
-it('keeps added-dates.json with the copied icon parts', () => {
-  expect(ICON_PARTS).toContain('added-dates.json')
-})
-
-describe('readAddedDates', () => {
-  const writeDates = (dates: Record<string, unknown>) => writeFileSync(join(dir, 'added-dates.json'), JSON.stringify(dates))
-
-  it('takes every date from added-dates.json', () => {
-    writeDates({ search: '2026-10-03', map: '2026-10-17' })
-    expect(readAddedDates(dir, ['map', 'search'])).toEqual({ search: '2026-10-03', map: '2026-10-17' })
-  })
-
-  it('leaves an icon the file lacks unknown when there is no git history', () => {
-    writeDates({ search: '2026-10-03' })
-    const added = readAddedDates(dir, ['map', 'search'])
-    expect(added.search).toBe('2026-10-03')
-    expect(added.map ?? null).toBeNull()
-  })
-
-  it('drops a value that is not a YYYY-MM-DD day', () => {
-    writeDates({ search: 'soon', map: null, pin: '2026-10-25' })
-    expect(readAddedDates(dir, ['map', 'pin', 'search'])).toEqual({ pin: '2026-10-25' })
-  })
-
-  it('returns no dates for a kept copy with neither the file nor git', () => {
-    expect(readAddedDates(dir, ['search'])).toEqual({})
-  })
-})

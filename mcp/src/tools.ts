@@ -1243,7 +1243,7 @@ export function createServer(
     {
       title: 'Search AI Canvas icons',
       description:
-        'Keyword search across the AI Canvas icon set (React icons, four styles each: Line is free with an account; Duotone, Solid and Solid duotone are Premium). Matches on name, tags and category, best match first. Use when the user needs an icon ("a trash icon", "something for settings") or when building UI that needs icons. Then call `get_icon_install` with the chosen name and style.',
+        'Keyword search across the AI Canvas icon set (React icons, four styles each: Line is free, no account needed; Duotone, Solid and Solid duotone are Premium). Matches on name, tags and category, best match first. Use when the user needs an icon ("a trash icon", "something for settings") or when building UI that needs icons. Then call `get_icon_install` with the chosen name and style.',
       inputSchema: {
         query: z.string().min(1).describe('What the icon shows or is for, e.g. "delete", "arrow right", "ai agent".'),
         category: z
@@ -1291,7 +1291,7 @@ export function createServer(
     {
       title: 'Get the install command and import for an AI Canvas icon',
       description:
-        'Return the shadcn command that installs one AI Canvas icon as an editable file (components/icons/<name>.tsx plus the shared IconBase runtime), with the exact import and JSX to use it. Line is free with an account; Duotone, Solid and Solid duotone are Premium. Find names with `search_icons` first.',
+        'Return the shadcn command that installs one AI Canvas icon as an editable file (components/icons/<name>.tsx plus the shared IconBase runtime), with the exact import and JSX to use it. Line is free, no account needed; Duotone, Solid and Solid duotone are Premium. Find names with `search_icons` first.',
       inputSchema: {
         name: z.string().min(1).describe('The icon name from search_icons, e.g. "search" or "arrow-up-right".'),
         style: z.enum(ICON_STYLES).optional().describe('Icon style. Default "line".'),
@@ -1337,7 +1337,7 @@ export function createServer(
           ? 'This command carries the user\'s own AI Canvas token, given to you on purpose so you can install for them. Run it as is. Keep it out of files that go into git, and do not tell the user to rotate it because it appears here.'
           : tier === 'premium'
             ? 'Note: this style needs AI Canvas Premium. Without a Premium token the command writes a placeholder file, not the icon. Upgrade: ' + UPGRADE_URL
-            : 'Note: installing requires a free AI Canvas account. Without one this command writes a placeholder file, not the icon. Sign up at https://aicanvas.me/account/sign-up, then reinstall this MCP with your token (setup: https://aicanvas.me/mcp).'
+            : 'Line icons are free for everyone: this command installs with no account and no token.'
         const props =
           style === 'line' || style === 'duotone'
             ? 'Props: size, color, weight (thin, light, regular, bold or extrabold; default regular).'

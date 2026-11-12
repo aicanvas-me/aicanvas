@@ -77,7 +77,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'is-ai-canvas-free',
     category: 'getting-started',
     q: 'Is AI Canvas free?',
-    a: 'Yes. Browsing, previews, the MCP, the Line icons, saving favorites, and full remix prompts for free components cost nothing; public browsing, previews, and prompts need no account. A free account adds unlimited one-command installs forever, while Premium adds proprietary source and full prompts for premium items, Andromeda Pro, its templates, the AI Brain, the other three icon styles, and premium standalone components and blocks.',
+    a: 'Yes. Browsing, previews, the MCP, the Line icons, saving favorites, and full remix prompts for free components cost nothing; public browsing, previews, prompts and Line icon installs need no account. A free account adds unlimited one-command installs forever, while Premium adds proprietary source and full prompts for premium items, Andromeda Pro, its templates, the AI Brain, the other three icon styles, and premium standalone components and blocks.',
     links: [
       { label: 'MCP', href: '/mcp' },
       { label: 'Line icons', href: '/icons' },

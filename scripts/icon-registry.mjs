@@ -9,7 +9,7 @@ import { iconSourceCandidates } from './lib/icon-source.mjs'
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const REGISTRY_BASE = (process.env.AICANVAS_REGISTRY_BASE ?? 'https://aicanvas.me').replace(/\/+$/, '')
 const MARKER = ['AICANVAS', 'PREMIUM', 'DO', 'NOT', 'COMMIT'].join('-')
-const STYLES = [
+export const STYLES = [
   { suffix: '', label: 'Line' },
   { suffix: '-duotone', label: 'Duotone' },
   { suffix: '-solid', label: 'Solid' },

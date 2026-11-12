@@ -12,10 +12,10 @@ export type IconSettings = {
   colour: string | null
 }
 
-// The icon page's slider ranges.
-const SIZE_MIN = 16
-const SIZE_MAX = 96
-const SIZE_STEP = 4
+// The icon page's Size slider range.
+export const SIZE_MIN = 16
+export const SIZE_MAX = 72
+export const SIZE_STEP = 4
 // The one form the colour picker hands out: six uppercase hex digits.
 const COLOUR = /^#[0-9A-F]{6}$/
 

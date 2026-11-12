@@ -1,11 +1,17 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { CodeTabs } from './CodeTabs'
 
+const gate = vi.hoisted(() => ({ blocked: () => false, askForPremium: () => {}, masked: false }))
+vi.mock('./useInstallGate', () => ({ useInstallGate: () => gate }))
+
 const MARKUP = '<path d="M4 12h16" />'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  gate.masked = false
+})
 
 function setup() {
   render(<CodeTabs name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="line" />)
@@ -45,5 +51,29 @@ describe('CodeTabs', () => {
     const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })
     tabs[0].dispatchEvent(event)
     expect(event.defaultPrevented).toBe(true)
+  })
+})
+
+describe('CodeTabs Install', () => {
+  const install = () => {
+    fireEvent.click(screen.getByRole('tab', { name: 'Install' }))
+    return screen.getByRole('tabpanel').textContent ?? ''
+  }
+
+  it('shows dots and the Premium note until Premium is confirmed', () => {
+    gate.masked = true
+    render(<CodeTabs name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="solid" />)
+    const text = install()
+    expect(text).toContain('@aicanvas/••••••••••••')
+    expect(screen.getByText('••••••••••••').getAttribute('aria-hidden')).toBe('true')
+    expect(text).not.toContain('arrow-right')
+    expect(text).toContain('Requires AI Canvas Premium to install.')
+  })
+
+  it('shows Line\'s command as it is, with no note', () => {
+    render(<CodeTabs name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="line" />)
+    const text = install()
+    expect(text).toContain('npx shadcn@latest add @aicanvas/icon-arrow-right')
+    expect(text).not.toContain('Requires')
   })
 })

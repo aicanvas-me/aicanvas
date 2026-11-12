@@ -6,7 +6,11 @@ import type { IconMarkupMap, IconStyle } from './types'
 const PREFIX = 'aic-preview:'
 
 export const isPreview = (markup: string) => markup.startsWith(PREFIX)
-export const previewSrc = (markup: string) => markup.slice(PREFIX.length)
+// large: the 640px WebP beside each 192px PNG, for the big preview stage only
+export const previewSrc = (markup: string, large = false) => {
+  const src = markup.slice(PREFIX.length)
+  return large ? src.replace(/\.png$/, '.large.webp') : src
+}
 
 const maps = new Map<IconStyle, IconMarkupMap>()
 
