@@ -491,18 +491,19 @@ export const SITE_FAQ: FaqEntry[] = [
   },
 ]
 
-function pick(ids: string[]): FaqEntry[] {
+// `page` drops the links that point to the page the list sits on.
+function pick(ids: string[], page?: string): FaqEntry[] {
   return ids.map((id) => {
     const entry = SITE_FAQ.find((f) => f.id === id)
     if (!entry) throw new Error(`FAQ entry missing: ${id}`)
-    return entry
+    return page && entry.links ? { ...entry, links: entry.links.filter((l) => l.href !== page) } : entry
   })
 }
 
 export const HOME_FAQ = pick(['what-is-ai-canvas', 'is-ai-canvas-free', 'stop-ai-slop', 'reshape-design-system', 'install-a-component', 'ai-canvas-mcp-server', 'what-are-standalone-components', 'ai-canvas-icons', 'premium-includes', 'commercial-use'])
-export const PRICING_FAQ = pick([...(LIFETIME ? ['lifetime-meaning'] : []), 'payments-and-paddle', 'payment-security', 'taxes', 'refunds', 'who-is-ai-canvas-for', 'tool-affiliations'])
-export const BRAIN_FAQ = pick(['andromeda-pro-ai-brain', 'design-skill-for-claude-code', 'ai-brain-cursor-codex', 'stop-ai-slop', 'install-ai-brain'])
-export const MCP_FAQ = pick(['ai-canvas-mcp-server', 'mcp-supported-agents', 'mcp-agent-tools', 'works-with-shadcn', 'mcp-versus-shadcn-cli', 'is-mcp-free'])
+export const PRICING_FAQ = pick([...(LIFETIME ? ['lifetime-meaning'] : []), 'payments-and-paddle', 'payment-security', 'taxes', 'refunds', 'who-is-ai-canvas-for', 'tool-affiliations'], '/pricing')
+export const BRAIN_FAQ = pick(['andromeda-pro-ai-brain', 'design-skill-for-claude-code', 'ai-brain-cursor-codex', 'stop-ai-slop', 'install-ai-brain'], BRAIN)
+export const MCP_FAQ = pick(['ai-canvas-mcp-server', 'mcp-supported-agents', 'mcp-agent-tools', 'works-with-shadcn', 'mcp-versus-shadcn-cli', 'is-mcp-free'], '/mcp')
 
 /** /faq: the categories in order, each with its questions. */
 export const FAQ_PAGE_CATEGORIES = FAQ_CATEGORY_META.map((c) => ({
