@@ -37,6 +37,7 @@ import { ColourControl } from './ColourControl'
 import { IconTile } from './IconTile'
 import { StylePicker } from './StylePicker'
 import { TuneSlider } from './TuneSlider'
+import { useInstallGate } from './useInstallGate'
 import { useIconVariant } from './useIconVariant'
 
 // The grid's slider stops at 64; a bigger size picked on an icon page shows
@@ -191,11 +192,13 @@ export function IconsOverview({
   lineIcons,
   loadFullLine,
   category,
+  freeAccountGate,
 }: {
   icons: IconGridMeta[]
   lineIcons: IconMarkupMap
   loadFullLine: boolean
   category?: IconCategorySlug
+  freeAccountGate: boolean
 }) {
   const { theme } = useTheme()
   const [query, setQuery] = useState('')
@@ -210,6 +213,7 @@ export function IconsOverview({
   const { data, loading } = useIconVariant(lineIcons, style, loadFullLine)
   const installToken = useInstallToken()
   const installShown = allIconsInstall(installToken && MASKED_INSTALL_TOKEN)
+  const gate = useInstallGate('line', freeAccountGate)
   const loadMetadata = useCallback(() => {
     metadataRequest ??= fetch('/icons/icon-data')
       .then((response) => {
@@ -290,6 +294,7 @@ export function IconsOverview({
   }
 
   const copyInstall = async () => {
+    if (gate.blocked()) return
     const ok = await copyText(allIconsInstall(installToken))
     if (!ok) return
     setInstallCopied(true)
