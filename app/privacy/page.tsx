@@ -35,7 +35,7 @@ export default function PrivacyPage() {
         title="Privacy Policy"
         sub={
           <span className="block text-balance">
-            Last updated: 2026-11-11. This policy describes how AI Canvas processes
+            Last updated: 2026-11-12. This policy describes how AI Canvas processes
             personal data, in line with the EU General Data Protection Regulation
             (GDPR / DSGVO) and the German Bundesdatenschutzgesetz (BDSG).
           </span>
@@ -127,8 +127,9 @@ export default function PrivacyPage() {
               <strong className={STRONG}>Content from other servers.</strong>{' '}
               Some pages load images, fonts, and map data from the servers of
               specialised providers, the cancellation form loads a bot check,
-              and the checkout loads Paddle&apos;s payment frame when you start
-              a purchase. Your browser connects to these providers directly,
+              and pages with a buy button load Paddle&apos;s payment script as
+              the button comes into view, so the checkout opens quickly. Your
+              browser connects to these providers directly,
               so they receive your IP address and browser type. Legal basis:
               Art. 6 (1)(f) GDPR, our legitimate interest in delivering the
               site quickly and protecting it from abuse; Art. 6 (1)(b) GDPR
