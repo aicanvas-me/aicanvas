@@ -8,12 +8,12 @@ import { createClient } from '../../lib/supabase/client'
 import { AccountMenuItems } from './AccountMenuItems'
 import { EmailAvatar, photoFromUser } from './EmailAvatar'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
-import { usePremiumStatus } from '../billing/usePremiumStatus'
+import { usePremiumDetails } from '../billing/usePremiumStatus'
 
 export function UserMenu() {
   const { user } = useSession()
   const { open: openPaywall } = usePaywallModal()
-  const status = usePremiumStatus()
+  const { status, lifetime } = usePremiumDetails()
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -53,6 +53,7 @@ export function UserMenu() {
         <div className="absolute bottom-full left-0 right-0 mb-1 overflow-hidden rounded-section border border-sand-200 bg-sand-100 shadow-lg dark:border-sand-700 dark:bg-sand-900">
           <AccountMenuItems
             showUpgrade={status === 'not-premium'}
+            plan={status === 'premium' ? (lifetime ? 'Lifetime' : 'Premium') : null}
             onUpgrade={() => { setOpen(false); openPaywall({ reason: 'upgrade' }) }}
             onNavigate={() => setOpen(false)}
             onSignOut={signOut}

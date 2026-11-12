@@ -14,6 +14,7 @@ import { Button } from '../components/Button'
 import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { useInstallToken } from '../_lib/useInstallToken'
+import { useKeepInViewport } from '../_lib/useKeepInViewport'
 import { copyText } from '../components/useCopied'
 import { track } from '../lib/analytics'
 import { InstallCopiedToast } from './InstallCopiedToast'
@@ -60,6 +61,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
   const [copied, setCopied] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const active = installs.find((i) => i.slug === openSlug) ?? null
+  const panelRef = useKeepInViewport<HTMLDivElement>(active !== null)
 
   // Tokenized command so the registry attributes the pull to the account
   // (these are premium; a bare command would 402). Masked on screen; copy
@@ -144,7 +146,7 @@ function ShowcaseInstallButtons({ installs }: { installs: InstallAction[] }) {
       ))}
 
       {active && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">

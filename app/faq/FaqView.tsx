@@ -1,27 +1,11 @@
 'use client'
 
-import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { FaqHelpCard, FaqRows } from '../components/FaqRows'
+import { useEffect, useRef, useState } from 'react'
+import { FaqHelpCard, FaqRows, type FaqRow } from '../components/FaqRows'
 import { EYEBROW, SUB } from '../components/PageKit'
 import { Reveal } from '../home/Reveal'
-import { LicenceStamp, OpenLock, SystemFill } from '../components/LoopArt'
 
-// The categories that get a picture, each one about what its answers explain:
-// free means MIT, the system your agent extends, the licences.
-const ART: Record<string, ReactNode> = {
-  'getting-started': <OpenLock className="size-28" />,
-  'design-systems': <SystemFill className="size-28" />,
-  about: <LicenceStamp className="size-28" />,
-}
-
-export type FaqItem = {
-  q: string
-  a: string
-  // Optional in-answer link. `a` stays plain text (it powers the FAQPage
-  // JSON-LD), and the first occurrence of `link.label` inside `a` is rendered
-  // as an anchor. Add a link without ever breaking the structured data.
-  link?: { label: string; href: string }
-}
+export type FaqItem = FaqRow
 export type FaqCategory = {
   category: string
   slug: string
@@ -118,18 +102,13 @@ export function FaqView({ categories }: { categories: FaqCategory[] }) {
             // (top-10, under the bar, which sits above the scroll column).
             <section key={c.slug} id={c.slug} data-faq-category="" className="mt-16 scroll-mt-10 first:mt-0 sm:mt-20">
               <Reveal>
-                <div className="flex items-center justify-between gap-8">
-                  <div className="min-w-0">
-                    <h2
-                      className="text-balance text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"
-                    >
-                      {c.category}
-                    </h2>
-                    <p className={`mt-3 max-w-2xl ${SUB}`}>{c.blurb}</p>
-                  </div>
-                  {/* A few categories carry a small looping picture beside
-                      their intro, from sm up, so the long list has landmarks. */}
-                  {ART[c.slug] && <div aria-hidden className="hidden shrink-0 sm:block">{ART[c.slug]}</div>}
+                <div className="min-w-0">
+                  <h2
+                    className="text-balance text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"
+                  >
+                    {c.category}
+                  </h2>
+                  <p className={`mt-3 max-w-2xl ${SUB}`}>{c.blurb}</p>
                 </div>
                 <div className="mt-6 sm:mt-8">
                   {/* Several rows may stay open: a reader comparing two

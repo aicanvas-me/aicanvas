@@ -29,7 +29,7 @@ export function SiteSearch() {
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (e.key.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey)) {
+      if (e.key?.toLowerCase() === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault()
         setOpen((o) => !o)
       }

@@ -7,6 +7,7 @@ import { Plug } from '@/app/_icons/icons/plug'
 import { LogOut } from '@/app/_icons/icons/log-out'
 import { User } from '@/app/_icons/icons/user'
 import type { ReactNode } from 'react'
+import { PremiumBadge } from '../billing/PremiumBadge'
 import { useSession } from './SessionProvider'
 
 const LINKS: { href: string; label: string; icon: ReactNode }[] = [
@@ -30,11 +31,14 @@ function Rule() {
  *  TopAuthPill so the two menus cannot drift. */
 export function AccountMenuItems({
   showUpgrade,
+  plan,
   onUpgrade,
   onNavigate,
   onSignOut,
 }: {
   showUpgrade: boolean
+  /** A paid account's plan, shown in the slot a free account's Upgrade takes. */
+  plan?: 'Premium' | 'Lifetime' | null
   onUpgrade: () => void
   onNavigate: () => void
   onSignOut: () => void
@@ -43,11 +47,20 @@ export function AccountMenuItems({
   const links = showConnect ? [...LINKS.slice(0, 2), CONNECT_LINK, ...LINKS.slice(2)] : LINKS
   return (
     <div className="flex flex-col gap-0.5 p-1.5">
+      {plan && (
+        <>
+          <div className="flex items-center justify-between gap-2 px-3 py-2 text-sm text-sand-600 dark:text-sand-400">
+            Plan
+            <PremiumBadge label={plan} />
+          </div>
+          <Rule />
+        </>
+      )}
       {showUpgrade && (
         <button
           type="button"
           onClick={onUpgrade}
-          className={`${ROW} font-semibold text-accent`}
+          className={`${ROW} whitespace-nowrap font-semibold text-accent`}
         >
           <Bolt size={14} />
           Upgrade to Premium

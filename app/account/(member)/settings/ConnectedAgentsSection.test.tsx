@@ -12,7 +12,6 @@ const cursor: ConnectedAgent = {
   connectedAt: '2026-11-03T10:00:00Z',
   lastUsedAt: null,
   staleRefreshAt: null,
-  countryMismatch: null,
 }
 
 describe('ConnectedAgentsSection', () => {

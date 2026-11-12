@@ -129,7 +129,7 @@ export function fakeSupabase() {
         generateLink: async (attrs: { email: string }) => {
           const existing = Object.entries(users).find(([, u]) => u.email === attrs.email)
           return existing
-            ? { data: { user: { id: existing[0] } }, error: null }
+            ? { data: { user: { id: existing[0] }, properties: { hashed_token: `hash_${existing[0]}` } }, error: null }
             : { data: { user: null }, error: { message: 'no user' } }
         },
         updateUserById: async (id: string, attrs: { user_metadata: Record<string, unknown> }) => {

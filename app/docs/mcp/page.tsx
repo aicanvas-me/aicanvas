@@ -77,7 +77,7 @@ export default function McpDocsPage() {
       {hosted && (
         <>
           <H2 id="sign-in">Connect with sign-in</H2>
-          <P>Add this address to your agent. It speaks Streamable HTTP. Sign-in is in beta.</P>
+          <P>Add this address to your agent. It speaks Streamable HTTP.</P>
           <CopyBlock label="server address" code={HOSTED_MCP_URL} />
           <OL>
             <li>Add the address to your agent.</li>
@@ -158,8 +158,8 @@ export default function McpDocsPage() {
 
           <H2 id="what-we-store">What we store</H2>
           <P>
-            For each connected agent, we store its name, the address it returns to after sign-in, when it connected, when it was last
-            used, and the country of the browser and the agent. Sign-in tokens are stored only as hashes. Disconnecting deletes the
+            For each connected agent, we store its name, the address it returns to after sign-in, when it connected and when it was last
+            used. Sign-in tokens are stored only as hashes. Disconnecting deletes the
             connection. Read the <A href="/privacy">Privacy Policy</A>.
           </P>
         </>

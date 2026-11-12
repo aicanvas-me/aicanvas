@@ -4,6 +4,7 @@ import { useState, useCallback, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Check } from '@/app/_icons/icons/check';
 import { CopyIcon } from '@/app/_icons/icons/copy';
+import { ChevronDown } from '@/app/_icons/icons/chevron-down';
 import { Download } from '@/app/_icons/icons/download';
 import { Terminal } from '@/app/_icons/icons/terminal';
 import { zipSync, strToU8 } from 'fflate'
@@ -11,6 +12,7 @@ import { Button } from '../../../components/Button'
 import { PageCrumbs, useTopBarInstallSlot } from '../../../components/PageCrumbs'
 import { BrainRender } from './BrainRender'
 import { useInstallToken } from '../../../_lib/useInstallToken'
+import { useKeepInViewport } from '../../../_lib/useKeepInViewport'
 import { useCopied } from '@/app/components/useCopied'
 import { track } from '@/app/lib/analytics'
 import { InstallCopiedToast } from '@/app/_components/InstallCopiedToast'
@@ -499,34 +501,43 @@ export function BrainViewer({ files }: { files: BrainFile[] }) {
         {/* Mobile file picker — the right nav is hidden below md, so navigate
             the brain files from this dropdown instead. */}
         <div className="brain-mobile-nav brain-pad-x" style={{ padding: '16px 40px 0' }}>
-          <select
-            aria-label="AI Brain file"
-            value={activeFile.path}
-            onChange={(e) => {
-              const f = files.find((x) => x.path === e.target.value)
-              if (f) setActiveFile(f)
-            }}
-            style={{
-              width: '100%',
-              background: C.surface.raised,
-              color: C.text.primary,
-              border: `1px solid ${C.border.base}`,
-              borderRadius: 8,
-              padding: '10px 12px',
-              fontFamily: FONT,
-              fontSize: 14,
-            }}
-          >
-            {sections.map((section) => (
-              <optgroup key={section.id} label={section.label}>
-                {section.files.map((f) => (
-                  <option key={f.path} value={f.path}>
-                    {getDisplayName(f)}
-                  </option>
-                ))}
-              </optgroup>
-            ))}
-          </select>
+          <div style={{ position: 'relative' }}>
+            <select
+              aria-label="AI Brain file"
+              value={activeFile.path}
+              onChange={(e) => {
+                const f = files.find((x) => x.path === e.target.value)
+                if (f) setActiveFile(f)
+              }}
+              style={{
+                display: 'block',
+                width: '100%',
+                background: C.surface.raised,
+                color: C.text.primary,
+                border: `1px solid ${C.border.base}`,
+                borderRadius: 8,
+                padding: '10px 36px 10px 12px',
+                fontFamily: FONT,
+                fontSize: 14,
+                appearance: 'none',
+              }}
+            >
+              {sections.map((section) => (
+                <optgroup key={section.id} label={section.label}>
+                  {section.files.map((f) => (
+                    <option key={f.path} value={f.path}>
+                      {getDisplayName(f)}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
+            </select>
+            <ChevronDown
+              size={16}
+              aria-hidden
+              style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none', color: C.text.secondary }}
+            />
+          </div>
         </div>
 
         {/* Low-poly zone brain — INDEX ONLY, directly above the heading. */}
@@ -593,6 +604,7 @@ function BrainInstallButton({
 }) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const panelRef = useKeepInViewport<HTMLDivElement>(open)
   const { cliCommand, cliCommandMasked } = useBrainInstallCommand()
   const { copied, copy: handleCopy, reset: resetCopied } = useCopied(cliCommand)
 
@@ -633,7 +645,7 @@ function BrainInstallButton({
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-300 bg-sand-50 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">

@@ -292,7 +292,6 @@ export interface PendingRequest {
   ch: string // PKCE S256 challenge
   st?: string // state, echoed back
   res: string // resource
-  co: string | null // the browser's country at /authorize
   exp: number // ms
   nonce: string
 }
@@ -310,7 +309,7 @@ export type AuthorizeOutcome =
   | { kind: 'error-page'; reason: StopReason; message: string } // the redirect target is not trusted: never redirect
   | { kind: 'redirect'; location: string } // an error the agent can read, or the consent page
 
-export function authorize(url: URL, country: string | null): AuthorizeOutcome {
+export function authorize(url: URL): AuthorizeOutcome {
   const p = url.searchParams
   const clientId = p.get('client_id')
   const client = readClient(clientId)
@@ -357,7 +356,6 @@ export function authorize(url: URL, country: string | null): AuthorizeOutcome {
     ch: challenge,
     st: state,
     res: expected,
-    co: country,
     exp: Date.now() + REQUEST_TTL_MS,
     nonce: randomBytes(16).toString('base64url'),
   }
@@ -390,7 +388,6 @@ export async function approve(request: PendingRequest, userId: string): Promise<
       code_hash: hashToken(code),
       code_challenge: request.ch,
       code_expires_at: new Date(Date.now() + CODE_TTL_MS).toISOString(),
-      browser_country: request.co,
     })
   if (error) {
     if (error.code === '23505') return null
@@ -414,7 +411,7 @@ export interface TokenResponse {
   status: number
   body: Record<string, unknown>
   /** Set when a new connection was just made, so the route can email the person. */
-  connected?: { userId: string; clientName: string; redirectUri: string; browserCountry: string | null; agentCountry: string | null }
+  connected?: { userId: string; clientName: string; redirectUri: string }
 }
 
 const oauthError = (status: number, error: string, description: string): TokenResponse => ({
@@ -445,21 +442,21 @@ function pkceMatches(verifier: string, challenge: string): boolean {
   return computed.length === stored.length && timingSafeEqual(computed, stored)
 }
 
-export async function exchange(form: URLSearchParams, url: URL, agentCountry: string | null): Promise<TokenResponse> {
+export async function exchange(form: URLSearchParams, url: URL): Promise<TokenResponse> {
   const clientId = form.get('client_id')
   if (!readClient(clientId) || !clientId) return oauthError(401, 'invalid_client', 'Unknown client. Register again.')
   const grantType = form.get('grant_type')
-  if (grantType === 'authorization_code') return redeemCode(form, clientId, url, agentCountry)
+  if (grantType === 'authorization_code') return redeemCode(form, clientId, url)
   if (grantType === 'refresh_token') return refresh(form, clientId)
   return oauthError(400, 'unsupported_grant_type', 'Use authorization_code or refresh_token.')
 }
 
-async function redeemCode(form: URLSearchParams, clientId: string, url: URL, agentCountry: string | null): Promise<TokenResponse> {
+async function redeemCode(form: URLSearchParams, clientId: string, url: URL): Promise<TokenResponse> {
   const code = form.get('code') ?? ''
   const admin = createAdminClient()
   const { data: grant, error } = await admin
     .from('mcp_grants')
-    .select('id, user_id, client_id, client_name, redirect_uri, resource, code_challenge, code_expires_at, code_used_at, browser_country')
+    .select('id, user_id, client_id, client_name, redirect_uri, resource, code_challenge, code_expires_at, code_used_at')
     .eq('code_hash', hashToken(code))
     .maybeSingle()
   if (error) throw error
@@ -482,7 +479,7 @@ async function redeemCode(form: URLSearchParams, clientId: string, url: URL, age
   const tokens = issueTokens()
   const { data: claimed, error: claimError } = await admin
     .from('mcp_grants')
-    .update({ code_used_at: new Date().toISOString(), agent_country: agentCountry, ...tokens.columns })
+    .update({ code_used_at: new Date().toISOString(), ...tokens.columns })
     .eq('id', grant.id)
     .is('code_used_at', null)
     .select('id')
@@ -504,8 +501,6 @@ async function redeemCode(form: URLSearchParams, clientId: string, url: URL, age
       userId: grant.user_id,
       clientName: grant.client_name,
       redirectUri: grant.redirect_uri,
-      browserCountry: grant.browser_country,
-      agentCountry,
     },
   }
 }

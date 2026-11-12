@@ -17,6 +17,9 @@ const flagWrites: Record<string, unknown>[] = []
 const upserts: Record<string, unknown>[] = []
 const users: Record<string, { email: string; user_metadata: Record<string, unknown> }> = {}
 const createdUsers: string[] = []
+// Sign-in links minted for the claim email, by address.
+const linkCalls: string[] = []
+let linkFails = false
 // Every select().eq() the handler makes, as [table, column, value]. The reads
 // themselves ignore the filter; this is what proves which column was asked.
 const reads: unknown[][] = []
@@ -72,6 +75,11 @@ vi.mock('@/app/lib/supabase/admin', () => ({
           const snapshot = u ? { id, email: u.email, user_metadata: { ...u.user_metadata } } : null
           return new Promise((resolve) => setTimeout(() => resolve({ data: { user: snapshot }, error: null }), 5))
         },
+        generateLink: async (opts: { email: string }) => {
+          linkCalls.push(opts.email)
+          if (linkFails) return { data: null, error: { message: 'link failed' } }
+          return { data: { properties: { hashed_token: `hash_${linkCalls.length}` }, user: null }, error: null }
+        },
         updateUserById: async (id: string, attrs: { user_metadata: Record<string, unknown> }) => {
           flagWrites.push(attrs.user_metadata)
           if (flagFails) return { data: { user: null }, error: { message: 'flag write failed' } }
@@ -119,10 +127,13 @@ const fetchMock = vi.fn<(input: RequestInfo | URL, init?: RequestInit) => Promis
   async () => Response.json({ id: 'email_1' }),
 )
 
-function sentSubjects(): string[] {
+function sentEmails(): { subject: string; html: string }[] {
   return fetchMock.mock.calls
     .filter(([url]) => String(url).includes('api.resend.com'))
-    .map(([, init]) => (JSON.parse(String(init?.body)) as { subject: string }).subject)
+    .map(([, init]) => JSON.parse(String(init?.body)) as { subject: string; html: string })
+}
+function sentSubjects(): string[] {
+  return sentEmails().map((e) => e.subject)
 }
 
 beforeEach(() => {
@@ -135,6 +146,8 @@ beforeEach(() => {
   flagWrites.length = 0
   upserts.length = 0
   createdUsers.length = 0
+  linkCalls.length = 0
+  linkFails = false
   reads.length = 0
   for (const k of Object.keys(users)) delete users[k]
   users.u1 = { email: 'buyer@example.com', user_metadata: {} }
@@ -185,7 +198,35 @@ describe('POST /api/webhooks/paddle first-activation email', () => {
   it('an account provisioned at checkout gets the claim email instead of the welcome', async () => {
     users.u1.user_metadata = { anon_provisioned: true }
     expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
-    expect(sentSubjects()).toEqual(['Access your AI Canvas Premium account'])
+    expect(sentSubjects()).toEqual(['Sign in to your AI Canvas Premium account'])
+  })
+
+  it('the claim email carries the sign-in link itself, minted once even when two deliveries race', async () => {
+    users.u1.user_metadata = { anon_provisioned: true }
+    await Promise.all([post(event('2026-09-24T08:19:05.000Z')), post(event('2026-09-24T08:19:05.500Z'))])
+    expect(linkCalls).toEqual(['buyer@example.com'])
+    const [mail] = sentEmails()
+    expect(sentEmails()).toHaveLength(1)
+    expect(mail.html).toContain(
+      'https://aicanvas.me/account/auth/confirm?token_hash=hash_1&amp;type=email&amp;redirect_to=https://aicanvas.me/account/auth/callback?next=%2Fwelcome',
+    )
+    expect(mail.html).toContain('Sign in to AI Canvas')
+  })
+
+  it('a link that cannot be minted still sends the claim email, pointing at /welcome', async () => {
+    users.u1.user_metadata = { anon_provisioned: true }
+    linkFails = true
+    expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
+    const [mail] = sentEmails()
+    expect(mail.subject).toBe('Sign in to your AI Canvas Premium account')
+    expect(mail.html).toContain('href="https://aicanvas.me/welcome"')
+    expect(mail.html).not.toContain('token_hash')
+  })
+
+  it('a signed-in upgrade mints no sign-in link', async () => {
+    expect((await post(event('2026-09-24T08:19:05.000Z'))).status).toBe(200)
+    expect(sentSubjects()).toEqual(['You just got superpowers'])
+    expect(linkCalls).toEqual([])
   })
 
   it('a row that was already welcomed is never welcomed again', async () => {
@@ -319,7 +360,7 @@ describe('POST /api/webhooks/paddle anonymous checkout customer lookup', () => {
     })
     expect(row).toMatchObject({ user_id: 'u_new_1', status: 'active' })
     expect(users.u_new_1.user_metadata).toMatchObject({ anon_provisioned: true })
-    expect(sentSubjects()).toEqual(['Access your AI Canvas Premium account'])
+    expect(sentSubjects()).toEqual(['Sign in to your AI Canvas Premium account'])
   })
 
   it('PADDLE_API_KEY unset stays transient: 500, Paddle is never called, nothing provisioned', async () => {

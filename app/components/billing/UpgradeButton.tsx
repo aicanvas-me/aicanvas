@@ -1,8 +1,8 @@
 'use client'
 
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { CheckoutSplit } from './CheckoutSplit'
-import { PRICES, type BillingCycle } from '../../lib/paddle/client'
+import { getPaddle, PRICES, type BillingCycle } from '../../lib/paddle/client'
 import { useSession } from '../auth/SessionProvider'
 import { track } from '../../lib/analytics'
 import { checkoutComingSoon } from '../../../lib/flags'
@@ -34,6 +34,23 @@ export function UpgradeButton({
   const [open, setOpen] = useState(false)
   const [promo, setPromo] = useState<string>()
   const close = useCallback(() => setOpen(false), [])
+  const ref = useRef<HTMLButtonElement>(null)
+
+  // Paddle.js loads as a buy button nears the screen, so checkout skips that wait
+  useEffect(() => {
+    const el = ref.current
+    if (comingSoon || !el) return
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (!entries.some((e) => e.isIntersecting)) return
+        getPaddle()
+        observer.disconnect()
+      },
+      { rootMargin: '400px' },
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [comingSoon])
 
   function onClick() {
     if (comingSoon) return
@@ -53,6 +70,7 @@ export function UpgradeButton({
   return (
     <>
       <button
+        ref={ref}
         type="button"
         className={className}
         onClick={onClick}

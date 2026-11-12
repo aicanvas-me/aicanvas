@@ -6,39 +6,46 @@
 // trick animates the height, and reduced motion opens them without it.
 //
 // `multiple` keeps several rows open at once, for a reference page where a
-// reader compares two answers. An answer may carry one link: the first
-// occurrence of link.label inside `a` becomes an anchor, so `a` itself stays
-// plain text for the FAQPage JSON-LD.
+// reader compares two answers. An answer may carry links: the first
+// occurrence of each link.label inside `a` becomes an anchor, so `a` itself
+// stays plain text for the FAQPage JSON-LD.
 
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Plus } from '@/app/_icons/icons/plus'
 
-export type FaqRow = { q: string; a: string; link?: { label: string; href: string } }
+export type FaqLink = { label: string; href: string }
+export type FaqRow = { q: string; a: string; links?: FaqLink[] }
 
 const LINK =
   'font-medium text-accent underline decoration-accent/40 underline-offset-2 transition-colors hover:text-accent/70'
 
-function Answer({ a, link }: FaqRow) {
-  if (!link || !a.includes(link.label)) return <>{a}</>
-  const idx = a.indexOf(link.label)
-  const external = /^https?:/.test(link.href)
-  return (
-    <>
-      {a.slice(0, idx)}
-      {external ? (
-        <a href={link.href} target="_blank" rel="noopener noreferrer" className={LINK}>
-          {link.label}
+export function FaqAnswer({ a, links = [] }: FaqRow) {
+  const hits = links
+    .map((l) => ({ ...l, at: a.indexOf(l.label) }))
+    .filter((l) => l.at >= 0)
+    .sort((x, y) => x.at - y.at)
+  const parts: ReactNode[] = []
+  let from = 0
+  for (const l of hits) {
+    if (l.at < from) continue
+    parts.push(
+      a.slice(from, l.at),
+      /^https?:/.test(l.href) ? (
+        <a key={l.at} href={l.href} target="_blank" rel="noopener noreferrer" className={LINK}>
+          {l.label}
         </a>
       ) : (
-        <Link href={link.href} className={LINK}>
-          {link.label}
+        <Link key={l.at} href={l.href} className={LINK}>
+          {l.label}
         </Link>
-      )}
-      {a.slice(idx + link.label.length)}
-    </>
-  )
+      ),
+    )
+    from = l.at + l.label.length
+  }
+  parts.push(a.slice(from))
+  return <>{parts}</>
 }
 
 export function FaqRows({
@@ -101,7 +108,7 @@ export function FaqRows({
             >
               <div className={`overflow-hidden transition-[visibility] duration-300 ${on ? 'visible' : 'invisible'}`}>
                 <p className="px-5 pb-5 pr-12 text-base leading-relaxed text-sand-700 sm:px-7 sm:pr-16 dark:text-sand-300">
-                  <Answer {...item} />
+                  <FaqAnswer {...item} />
                 </p>
               </div>
             </div>

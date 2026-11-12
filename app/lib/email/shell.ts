@@ -55,7 +55,7 @@ export type EmailButton = { label: string; url: string }
 /** An email asks the reader for one thing: either follow an action, or copy a
  *  code. Offering both at once is a worse email, so the type refuses it. */
 type EmailAction =
-  /** Olive call-to-action (label and url — pre-escape any dynamic value). */
+  /** Call-to-action button (label and url — pre-escape any dynamic value). */
   | { button?: EmailButton; code?: never }
   /** One-time code, shown in a bordered box because it is read and retyped
    *  rather than clicked (plain text — pre-escape any dynamic value). */
@@ -76,12 +76,11 @@ export function emailShell(opts: {
 } & EmailAction): string {
   const { title, heading, bodyHtml, button, code, afterHtml, footerNoteHtml } = opts
 
-  // min-width keeps a short label ("Sign in") from shrinking to a stub next to
-  // the long ones; Outlook ignores it and falls back to the padding.
+  // Full width of the card, edge to edge, in every email.
   const buttonRow = button
     ? `<tr>
             <td style="padding-bottom:40px;">
-              <a href="${button.url}" class="ac-btn" style="display:inline-block;min-width:150px;text-align:center;background-color:#1B1B1C;color:#F4F4FA;font-size:14px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:8px;">${button.label}</a>
+              <a href="${button.url}" class="ac-btn" style="display:block;text-align:center;background-color:#1B1B1C;color:#F4F4FA;font-size:14px;font-weight:600;text-decoration:none;padding:14px 32px;border-radius:8px;">${button.label}</a>
             </td>
           </tr>`
     : ''

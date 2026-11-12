@@ -24,6 +24,7 @@ import { UserPlus } from '@/app/_icons/icons/user-plus'
 import { Grid2x2 } from '@/app/_icons/icons/grid-2x2'
 import { Terminal } from '@/app/_icons/icons/terminal'
 import { useInstallToken } from '../_lib/useInstallToken'
+import { useKeepInViewport } from '../_lib/useKeepInViewport'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { copyText } from '../components/useCopied'
 import { track } from '../lib/analytics'
@@ -722,6 +723,7 @@ function InstallButton({
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
+  const panelRef = useKeepInViewport<HTMLDivElement>(open)
 
   // Tokenized install for signed-in users so the registry attributes the pull
   // to the account (a plain command writes a placeholder). The token is masked
@@ -791,7 +793,7 @@ function InstallButton({
       </Button>
 
       {open && (
-        <div className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">

@@ -1,4 +1,5 @@
 import 'server-only'
+import { createHmac } from 'node:crypto'
 import type { createAdminClient } from '@/app/lib/supabase/admin'
 import { SITE_URL } from '@/app/lib/config'
 import { paddleApiBase } from '@/app/lib/paddle/server'
@@ -55,33 +56,46 @@ export async function fetchPaddleCustomerEmail(customerId: string): Promise<Emai
  *  the sign-in CLAIM (vs the logged-in welcome) regardless of which event
  *  activates.
  *
- *  We deliberately DO NOT mint or email a one-time magic-link token here. The
- *  claim is the existing self-service sign-in (the buyer requests a fresh OTP),
- *  so there is no single-slot token a concurrent webhook delivery could
- *  invalidate — the previous design's created+activated race that could email a
- *  dead claim link is gone. generateLink is used ONLY to resolve an EXISTING
- *  user's id (its token is never sent). Returns 'transient' on a recoverable
- *  failure so the caller forces a Paddle retry instead of stranding the buyer.
+ *  Nothing here is emailed. The purchase email's sign-in link is minted later,
+ *  by signInLinkFor, after that email's send-once claim. An EXISTING user's id
+ *  is found by an admin lookup that mints nothing, because any new token
+ *  replaces the one a concurrent delivery already emailed. Returns 'transient'
+ *  on a recoverable failure so the caller forces a Paddle retry instead of
+ *  stranding the buyer.
+ *
+ *  A NEW account is created with checkoutPasswordFor's password (marked
+ *  password_unknown), so the checkout sign-in can open it on the browser that
+ *  paid without writing the account later: a password write voids the link the
+ *  purchase email carries.
  *
  *  SECURITY / ACCEPTED RESIDUAL: Paddle does not prove the buyer controls the
  *  email typed at one-off checkout, so this provisions an account from an
- *  attacker-controllable address. The DANGEROUS half is closed — the claim path
- *  is self-service OTP (no emailed token), so the account is reachable ONLY by
- *  whoever controls the inbox; an attacker who pays with someone else's email
- *  gets no session and no premium. What remains is self-limiting griefing (each
- *  attempt costs a full paid subscription): an unsolicited account/premium under
- *  a victim's address. Do NOT widen this (e.g. never email a one-time token to
- *  this address, never grant access without an OTP). A fuller fix (defer account
- *  creation until the buyer proves mailbox control) is tracked for a tested pass. */
+ *  attacker-controllable address. An EXISTING account stays closed: it is
+ *  reachable only through a one-time link mailed to its inbox, so paying with
+ *  someone's email never opens their account. A NEW account is opened on the
+ *  browser that paid (lib/identity/checkout-signin.ts), so a stranger who pays
+ *  with another person's address holds that new account, and keeps it (session,
+ *  a password they add, the install token) if the owner later signs in with the
+ *  same address. Accepted, ruled 2026-11-11. */
 export async function provisionUserByEmail(
   admin: AdminClient,
   email: string,
 ): Promise<{ userId: string; createdNew: boolean } | 'transient'> {
-  const { data: created, error: createErr } = await admin.auth.admin.createUser({
-    email,
-    email_confirm: true,
-    user_metadata: { anon_provisioned: true },
-  })
+  const password = checkoutPasswordFor(email)
+  const create = (withPassword: boolean) =>
+    admin.auth.admin.createUser({
+      email,
+      email_confirm: true,
+      ...(withPassword && password ? { password } : {}),
+      user_metadata: { anon_provisioned: true, ...(withPassword && password ? { password_unknown: true } : {}) },
+    })
+  let { data: created, error: createErr } = await create(true)
+  // A password policy that refuses it is not "already exists": make the account
+  // without one (no instant sign-in, the email link still works).
+  if ((createErr as { code?: string } | null)?.code === 'weak_password') {
+    console.error('[paddle provision] checkout password refused by the password policy; account made without it')
+    ;({ data: created, error: createErr } = await create(false))
+  }
   if (!createErr && created?.user?.id) return { userId: created.user.id, createdNew: true }
 
   const errCode = (createErr as { code?: string } | null)?.code
@@ -91,8 +105,11 @@ export async function provisionUserByEmail(
     console.error('[paddle provision] createUser failed (transient):', createErr?.message)
     return 'transient'
   }
-  // Email already has an account — resolve its id. generateLink returns the
-  // existing user; we use ONLY data.user.id (the token is irrelevant, never sent).
+  // Email already has an account: resolve its id without minting a token.
+  const found = await findUserIdByEmail(email)
+  if (found) return { userId: found, createdNew: false }
+  // Lookup failed: generateLink also returns the user, but mints a token that
+  // replaces any sign-in link already emailed (the buyer then asks /welcome).
   const { data: link, error: linkErr } = await admin.auth.admin.generateLink({
     type: 'magiclink',
     email,
@@ -103,4 +120,73 @@ export async function provisionUserByEmail(
     return 'transient'
   }
   return { userId: link.user.id, createdNew: false }
+}
+
+/** The password a checkout account is created with, derived from the address
+ *  and the server's Supabase secret so the checkout sign-in can recompute it
+ *  instead of storing it. Nobody is shown it; the buyer adds their own. null
+ *  without the secret: the account then gets no password and no instant sign-in. */
+export function checkoutPasswordFor(email: string): string | null {
+  const key = process.env.SUPABASE_SECRET_KEY
+  if (!key) return null
+  return `${createHmac('sha256', key).update(`checkout-signin:v1:${email.toLowerCase()}`).digest('base64url')}Aa1!`
+}
+
+/** An account's id by email through Supabase Auth's admin user search (the
+ *  `filter` the dashboard uses: a substring match, so the exact address is
+ *  picked from the results). Mints nothing. null on any miss or failure, and
+ *  the caller falls back to its old resolve. */
+export async function findUserIdByEmail(email: string): Promise<string | null> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SECRET_KEY
+  if (!url || !key) return null
+  try {
+    const res = await fetch(`${url}/auth/v1/admin/users?filter=${encodeURIComponent(email)}&per_page=50`, {
+      headers: { apikey: key, Authorization: `Bearer ${key}` },
+      signal: AbortSignal.timeout(10_000),
+    })
+    if (!res.ok) return null
+    const { users } = (await res.json()) as { users?: { id?: string; email?: string }[] }
+    const want = email.toLowerCase()
+    return users?.find((u) => u.email?.toLowerCase() === want)?.id ?? null
+  } catch {
+    return null
+  }
+}
+
+/** Who the purchase email speaks to. "We created your account" holds only for an
+ *  account this checkout path made that nobody has signed into yet. */
+export function claimAccountOf(user: {
+  email?: string
+  last_sign_in_at?: string | null
+  user_metadata?: Record<string, unknown>
+}): { email: string; created: boolean } {
+  return { email: user.email ?? '', created: Boolean(user.user_metadata?.anon_provisioned) && !user.last_sign_in_at }
+}
+
+/** A one-time sign-in link for the purchase email, landing on /welcome. Call it
+ *  only AFTER the email's send-once claim: a newer link replaces the older one,
+ *  so a second minting would kill the link already sent. The link goes through
+ *  /account/auth/confirm like the template's, so it needs a Continue press and
+ *  lives as long as the project's email links (mailer_otp_exp, 1 hour on prod).
+ *  null on any failure: the email then points at /welcome instead. */
+export async function signInLinkFor(admin: AdminClient, email: string): Promise<string | null> {
+  try {
+    const callback = `${SITE_URL}/account/auth/callback?next=${encodeURIComponent('/welcome')}`
+    const { data, error } = await admin.auth.admin.generateLink({
+      type: 'magiclink',
+      email,
+      options: { redirectTo: callback },
+    })
+    const hash = data?.properties?.hashed_token
+    if (error || !hash) {
+      console.error('[paddle provision] sign-in link failed (non-fatal):', error?.message)
+      return null
+    }
+    // redirect_to stays LAST and raw: nextFromRedirectTo reads it as the tail.
+    return `${SITE_URL}/account/auth/confirm?token_hash=${encodeURIComponent(hash)}&type=email&redirect_to=${callback}`
+  } catch (e) {
+    console.error('[paddle provision] sign-in link failed (non-fatal):', e)
+    return null
+  }
 }

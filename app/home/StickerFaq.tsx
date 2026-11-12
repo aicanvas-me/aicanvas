@@ -11,10 +11,9 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Plus } from '@/app/_icons/icons/plus'
+import { FaqAnswer, type FaqRow } from '../components/FaqRows'
 
-export type FaqItem = { q: string; a: string }
-
-export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; eyebrow: string; title: string; sub: string }) {
+export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqRow[]; eyebrow: string; title: string; sub: string }) {
   const [open, setOpen] = useState<number | null>(0)
 
   return (
@@ -29,7 +28,8 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
         </div>
 
         <div className="mt-10 space-y-1.5 rounded-shell border border-sand-200 p-1.5 dark:border-sand-800">
-          {items.map(({ q, a }, i) => {
+          {items.map((item, i) => {
+            const { q } = item
             const on = open === i
             const id = `v3-faq-${i}`
             return (
@@ -62,7 +62,9 @@ export function StickerFaq({ items, eyebrow, title, sub }: { items: FaqItem[]; e
                   className={`grid transition-[grid-template-rows] duration-300 ease-out motion-reduce:transition-none ${on ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
                 >
                   <div className={`overflow-hidden transition-[visibility] duration-300 ${on ? 'visible' : 'invisible'}`}>
-                    <p className="px-5 pb-5 pr-12 text-base leading-relaxed text-sand-700 sm:px-7 sm:pr-16 dark:text-sand-300">{a}</p>
+                    <p className="px-5 pb-5 pr-12 text-base leading-relaxed text-sand-700 sm:px-7 sm:pr-16 dark:text-sand-300">
+                      <FaqAnswer {...item} />
+                    </p>
                   </div>
                 </div>
               </div>
