@@ -116,7 +116,8 @@ export function CheckoutSplit({
           variant: 'one-page',
           frameTarget: 'paddle-checkout-frame',
           frameInitialHeight: 520,
-          frameStyle: 'width: 100%; min-width: 286px; background-color: transparent; border: none',
+          // color-scheme light: a dark page otherwise paints a white backdrop behind the frame
+          frameStyle: 'width: 100%; min-width: 286px; background-color: transparent; border: none; color-scheme: light',
           theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
           showAddDiscounts: false,
         },
