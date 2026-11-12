@@ -109,7 +109,7 @@ export function PageCrumbs({ className = '' }: { className?: string }) {
         {override !== undefined ? override : crumbs ? <Breadcrumbs crumbs={crumbs} /> : null}
       </div>
       {(offerMode || slot) && (
-        <div className={`ml-auto flex shrink-0 items-center gap-2 ${slot ? 'max-md:order-first max-md:w-full max-md:justify-end' : ''}`}>
+        <div className={`ml-auto flex shrink-0 items-center gap-2 ${slot ? 'max-md:order-first max-md:min-h-8 max-md:w-full max-md:justify-end' : ''}`}>
           {offerMode && <OfferBanner mode={offerMode} />}
           {slot && <TopBarInstallSlot id={slot} />}
         </div>
