@@ -93,7 +93,7 @@ const CALL_ROWS = [
   [
     'search_components("animated hero")',
     'get_system("andromeda-pro")',
-    'compose_page("crm dashboard")',
+    'get_icon_install("check")',
     'get_component("plan-runner")',
     'list_templates()',
     'list_categories()',
@@ -219,7 +219,7 @@ export default function McpPage() {
                 Your agent works the catalog itself
               </h3>
               <p className="relative mx-auto mt-3 max-w-xl text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">
-                It searches, plans the page, pulls the source and checks the result, one tool call at a time.
+                It searches, pulls the source and checks the result, one tool call at a time.
               </p>
               <div className="relative mt-8 space-y-2">
                 {CALL_ROWS.map((calls, i) => (

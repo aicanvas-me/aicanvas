@@ -22,7 +22,6 @@ export const MCP_TOOLS = [
   'list_templates',
   'get_template',
   'validate_usage',
-  'compose_page',
   'get_audit_checklist',
   'search_icons',
   'get_icon_install',

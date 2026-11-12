@@ -32,12 +32,11 @@ The tools below are derived from the live [aicanvas.me](https://aicanvas.me) reg
 | `get_template` | Every file for a single template (a ready-made composition), with the registry dependencies it pulls in. |
 | `get_component_props` | The documented props of one component: name, type, required, default, description. Free, no account, far smaller than the source. |
 | `validate_usage` | Check a file's JSX against the documented props of the AI Canvas components it imports: unknown props, missing required props, values outside a prop's options, each with a line number. |
-| `compose_page` | Turn a one-line brief into a build plan: closest template, one component per part with alternatives, install order (tokens first), and the parts nothing covers. Plans only, generates no code. |
 | `get_audit_checklist` | The checklist to run on a finished page or component: install completeness, props, both themes, 320px layout, motion cleanup, keyboard and contrast, composition. |
 
 All tools are read-only. Nothing is mutated on AI Canvas's side.
 
-The workflow the last four tools are built for: `compose_page` to plan, `get_component_props` to read each API before writing JSX, `validate_usage` on the finished file, `get_audit_checklist` before calling it done.
+The workflow the last three tools are built for: `get_component_props` to read each API before writing JSX, `validate_usage` on the finished file, `get_audit_checklist` before calling it done.
 
 Standalone components and design-system components are kept in separate buckets. `list_components` and `list_categories` cover the 80+ standalones only, so the catalog stays clean. Design-system components are reached through `list_systems` / `get_system`, and are also resolvable by slug through `get_component`, `get_install_command`, and `search_components`.
 

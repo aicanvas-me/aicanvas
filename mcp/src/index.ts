@@ -22,7 +22,7 @@ import { createServer } from './tools.js'
 
 const REGISTRY_BASE =
   process.env.AICANVAS_REGISTRY_BASE ?? 'https://aicanvas.me/r'
-const MCP_VERSION = '0.3.1'
+const MCP_VERSION = '0.3.5'
 const USER_AGENT = `aicanvas-mcp/${MCP_VERSION}`
 // Optional per-user token (the website bakes it into the copied MCP config).
 // Identifies the account so free-component source pulls are authorized and any

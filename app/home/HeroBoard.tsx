@@ -61,7 +61,7 @@ const EASE: Transition['ease'] = [0.22, 1, 0.36, 1]
 // Real AI Canvas MCP tools. `marks` is the board card the call lights up.
 const CALLS: { fn: string; arg: string; result: string; marks?: string; mark?: string }[] = [
   { fn: 'get_system', arg: '"andromeda-pro"', result: 'Rules read', marks: 'andromeda-pro', mark: 'In use' },
-  { fn: 'compose_page', arg: '"run screen"', result: 'Plan ready' },
+  { fn: 'search_components', arg: '"plan"', result: 'Match found' },
   { fn: 'get_component', arg: '"plan-runner"', result: 'Added', marks: 'plan-runner', mark: 'Added' },
   { fn: 'validate_usage', arg: '"run-screen.tsx"', result: '0 issues' },
 ]
