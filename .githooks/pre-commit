@@ -7,6 +7,12 @@ set -euo pipefail
 #    source / generated shims / GitHub PATs from entering the public repo.
 node scripts/check-no-premium-leak.mjs --staged
 
+# 1b. Sitemap dates: refresh the committed date map when a dated source is staged.
+if git diff --cached --name-only | grep -qE '^(components-workspace|app)/'; then
+  node scripts/sitemap-dates.mjs --staged
+  git add app/lib/sitemap-dates.json
+fi
+
 # 2. Secret scan (gitleaks). Skipped only if gitleaks isn't installed.
 if ! command -v gitleaks >/dev/null 2>&1; then
   echo "⚠️  gitleaks not installed — secret scan SKIPPED."
