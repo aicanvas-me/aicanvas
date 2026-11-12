@@ -1,12 +1,16 @@
 import type { Metadata } from 'next'
+import { SITE_URL } from '@/app/lib/config'
+import { pageMetadata } from '@/app/lib/page-metadata'
 import { ICON_CATEGORIES, ICON_COUNT, isIconCategory } from './_lib/categories'
 import { icons, readLineIcons } from './_lib/server-data'
 import { IconsOverview } from './_components/IconsOverview'
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: `${ICON_COUNT} Icons for React and AI Agents`,
+  social: `AI Canvas Icons: ${ICON_COUNT} icons for React and AI agents`,
   description: `Browse ${ICON_COUNT} interface icons in four styles, customize their size, weight and colour, then copy SVG or React usage.`,
-}
+  url: `${SITE_URL}/icons`,
+})
 
 export default async function IconsPage({
   searchParams,

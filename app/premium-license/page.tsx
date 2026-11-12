@@ -8,7 +8,7 @@ import { LegalArticle } from '../components/LegalArticle'
 // The AI Canvas Premium License (a EULA). Versioned v1.1 on its own URL, mirroring
 // the convention used by paid component vendors (Tailwind Plus, CoreUI PRO, MUI).
 // The public Terms (§ 2b, § 4, § 7b) reference this page by link. It governs the
-// closed-source Premium Components, design systems, and templates, and the free
+// proprietary Premium Components, design systems, and templates, and the free
 // Line icons (§ 11). The free public registry stays MIT (LICENSE file). Operator
 // details live in /impressum.
 //
@@ -67,7 +67,7 @@ export default function PremiumLicensePage() {
             </li>
             <li>
               <strong className={STRONG}>Premium Components:</strong>{' '}the
-              closed-source components, blocks, design systems, and templates,
+              proprietary components, blocks, design systems, and templates,
               the Duotone, Solid, and Solid duotone icon styles, the
               design-system rule files written for AI agents, the full remix
               prompts (Section 7.1), and their accompanying source code,
