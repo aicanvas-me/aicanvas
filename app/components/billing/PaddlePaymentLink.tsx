@@ -7,7 +7,7 @@ import { CHECKOUT_SETTINGS, getPaddle } from '../../lib/paddle/client'
  * Completes Paddle default payment links (aicanvas.me?_ptxn=txn_...) — the URL
  * Paddle emails to checkout abandoners (recovery), to subscribers whose card
  * fails (dunning / payment-method update), and shows on every transaction in
- * the dashboard. Paddle.js otherwise only loads on upgrade-button click, so
+ * the dashboard. Paddle.js otherwise only loads once a buy button nears the screen, so
  * these links would land on a page where nothing listens and the checkout
  * would never open. Reads window.location instead of useSearchParams so the
  * root layout needs no Suspense boundary for it.
