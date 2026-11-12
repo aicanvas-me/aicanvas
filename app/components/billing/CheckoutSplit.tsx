@@ -19,7 +19,7 @@ const PLANS = {
   lifetime: { name: 'Lifetime', price: LIFETIME_PRICE, suffix: '/ one time', label: 'Everything in Monthly, plus', features: LIFETIME_FEATURES, terms: 'One payment, no subscription' },
 }
 
-type Totals = Pick<CheckoutEventsData, 'totals' | 'currency_code'>
+type Totals = Pick<CheckoutEventsData, 'totals' | 'recurring_totals' | 'currency_code'>
 type Stage = 'loading' | 'ready' | 'completing' | 'error'
 
 function money(amount: number, currency: string) {
@@ -47,6 +47,11 @@ export function CheckoutSplit({
   const frameRef = useRef<HTMLDivElement>(null)
   const plan = PLANS[cycle]
   const completing = stage === 'completing'
+  // Headline = Paddle's charge in the buyer's currency: renewal price, or Lifetime total
+  const charged = totals && {
+    ...(cycle === 'lifetime' ? totals.totals : (totals.recurring_totals ?? totals.totals)),
+    currency: totals.currency_code,
+  }
 
   // Capture phase: the paywall under this panel also closes on Escape, and
   // closing it would unmount the checkout.
@@ -72,7 +77,7 @@ export function CheckoutSplit({
     () =>
       subscribePaddleEvents((e) => {
         const data = e.data as CheckoutEventsData | undefined
-        if (data?.totals) setTotals({ totals: data.totals, currency_code: data.currency_code })
+        if (data?.totals) setTotals({ totals: data.totals, recurring_totals: data.recurring_totals, currency_code: data.currency_code })
         if (e.name === 'checkout.completed') setStage('completing')
         else if (e.name === 'checkout.loaded') setStage((s) => (s === 'completing' ? s : 'ready'))
         else if (e.name === 'checkout.error' || e.name === 'checkout.failed') {
@@ -153,8 +158,13 @@ export function CheckoutSplit({
             <div className="mt-8 md:my-auto md:py-10">
               <p className="text-sm font-semibold text-sand-600 dark:text-sand-400">AI Canvas Premium, {plan.name}</p>
               <p className="mt-2 flex items-baseline gap-2">
-                <span className="text-4xl font-bold tracking-tight">{usd(plan.price)}</span>
-                <span className="text-sm text-sand-600 dark:text-sand-400">{plan.suffix}</span>
+                <span className="text-4xl font-bold tracking-tight">
+                  {charged ? money(charged.total, charged.currency) : usd(plan.price)}
+                </span>
+                <span className="text-sm text-sand-600 dark:text-sand-400">
+                  {plan.suffix}
+                  {charged && charged.tax > 0 ? ', tax included' : ''}
+                </span>
               </p>
 
               <dl aria-live="polite" className="mt-6 space-y-2 border-t border-sand-200 pt-5 text-sm dark:border-sand-800">
