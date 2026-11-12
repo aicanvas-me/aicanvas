@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: '/og-aug2026-aicanvas.me.png',
+        url: '/og-nov2026-aicanvas.me.png',
         width: 2400,
         height: 1260,
         alt: 'AI Canvas: AI native components, design systems, blocks, templates and skills',
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: HOMEPAGE_TITLE,
     description: HOMEPAGE_DESCRIPTION,
-    images: ['/og-aug2026-aicanvas.me.png'],
+    images: ['/og-nov2026-aicanvas.me.png'],
   },
 }
 

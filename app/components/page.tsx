@@ -34,7 +34,7 @@ export async function generateMetadata({
       type: 'website',
       images: [
         {
-          url: '/og-aug2026-aicanvas.me.png',
+          url: '/og-nov2026-aicanvas.me.png',
           width: 2400,
           height: 1260,
           alt: 'AI Canvas: AI native components, design systems, blocks, templates and skills',
@@ -45,7 +45,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: INDEX_TITLE,
       description: INDEX_DESCRIPTION,
-      images: ['/og-aug2026-aicanvas.me.png'],
+      images: ['/og-nov2026-aicanvas.me.png'],
     },
   }
 }

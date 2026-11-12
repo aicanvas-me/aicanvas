@@ -3,7 +3,7 @@
 
 import type { Metadata } from 'next'
 
-const OG_IMAGE = '/og-aug2026-aicanvas.me.png'
+const OG_IMAGE = '/og-nov2026-aicanvas.me.png'
 const OG_ALT =
   'AI Canvas: AI native components, design systems, blocks, templates and skills'
 
