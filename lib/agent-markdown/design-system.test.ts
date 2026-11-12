@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { publicSystemPrompt, systemComponentMarkdown, systemMarkdown, type SystemInput } from './design-system'
+import { publicSystemPrompt, systemComponentMarkdown, systemMarkdown, systemTemplateMarkdown, type SystemInput } from './design-system'
 import { homeMarkdown, mcpMarkdown } from './site'
 
 const SCAFFOLD = [
@@ -96,6 +96,26 @@ describe('systemMarkdown', () => {
 
   it('leaves the brain out when the build did not ship it', () => {
     expect(systemMarkdown({ ...input, brain: undefined })).not.toContain('## AI Brain')
+  })
+})
+
+describe('systemTemplateMarkdown', () => {
+  const tpl = (installTier: string) => ({ folder: 'mission-control', registrySlug: 'x-mission-control', name: 'Mission Control', description: 'Telemetry.', installTier })
+  const build = (paid: boolean, tier: string) =>
+    systemTemplateMarkdown({ system: { slug: 'x', name: 'X', paid }, template: tpl(tier), others: [], siteUrl: 'https://aicanvas.me' })
+
+  it('a Premium template says so and publishes no source', () => {
+    const md = build(true, 'premium')
+    expect(md).toContain('License: Premium (proprietary)')
+    expect(md).toContain('The source is Premium and is not published.')
+    expect(md).not.toContain('```tsx')
+  })
+
+  it('a free template is MIT and points at the install for its source', () => {
+    const md = build(false, 'free account')
+    expect(md).toContain('License: MIT')
+    expect(md).toContain('Install with the command above to get the source.')
+    expect(md).toContain('npx shadcn@latest add @aicanvas/x-mission-control')
   })
 })
 

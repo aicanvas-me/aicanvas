@@ -166,3 +166,43 @@ export function systemComponentMarkdown(input: SystemComponentInput): string {
 
   return out.join('\n\n') + '\n'
 }
+
+export interface SystemTemplateInput {
+  system: { slug: string; name: string; paid: boolean }
+  template: SystemTemplate
+  others: SystemTemplate[]
+  siteUrl: string
+}
+
+// A template page shows no source either, so its twin is name, install and links only.
+export function systemTemplateMarkdown(input: SystemTemplateInput): string {
+  const { system, template, siteUrl } = input
+  const root = `${siteUrl}/design-systems/${system.slug}`
+  const free = template.installTier === 'free account'
+  const out: string[] = [
+    pointer(siteUrl, system.paid, 'A page template'),
+    `# ${template.name} (${system.name} template)`,
+    template.description,
+    [
+      `- Design system: [${system.name}](${root}.md)`,
+      `- License: ${free ? 'MIT' : 'Premium (proprietary)'}`,
+      `- Install slug: \`${template.registrySlug}\``,
+      `- Live preview: ${root}/templates/${template.folder}`,
+    ].join('\n'),
+    [
+      `## Install`,
+      fence(`npx shadcn@latest add @aicanvas/${template.registrySlug}`, 'bash'),
+      free
+        ? `Needs a free AI Canvas account; signed out, the command writes a placeholder titled "(free account required)".`
+        : `Requires Premium. Without a Premium token the command writes a placeholder instead of the template.`,
+      `It installs the page with the ${system.name} components it uses. Token setup: the Install section of ${siteUrl}/llms.txt.`,
+    ].join('\n\n'),
+    `## Source\n\n${free ? 'Install with the command above to get the source.' : `The source is Premium and is not published. Preview it at ${root}/templates/${template.folder}.`}`,
+  ]
+  if (input.others.length > 0) {
+    out.push(
+      `## More ${system.name} templates\n\n${input.others.map((o) => `- [${o.name}](${root}/templates/${o.folder}.md)`).join('\n')}`,
+    )
+  }
+  return out.join('\n\n') + '\n'
+}

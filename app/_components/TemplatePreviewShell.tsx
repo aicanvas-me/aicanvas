@@ -14,6 +14,7 @@ import { Check } from '@/app/_icons/icons/check'
 import { CircleDollarSign } from '@/app/_icons/icons/circle-dollar-sign'
 import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
 import { Copy } from '@/app/_icons/icons/copy'
+import { FileText } from '@/app/_icons/icons/file-text'
 import { Smartphone } from '@/app/_icons/icons/smartphone'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { LogIn } from '@/app/_icons/icons/log-in'
@@ -27,6 +28,7 @@ import { useInstallToken } from '../_lib/useInstallToken'
 import { useKeepInViewport } from '../_lib/useKeepInViewport'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { copyText } from '../components/useCopied'
+import { copyMarkdown } from '../components/CopyPage'
 import { track } from '../lib/analytics'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
@@ -722,8 +724,11 @@ function InstallButton({
   const { open: openPaywall } = usePaywallModal()
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [mdCopied, setMdCopied] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const panelRef = useKeepInViewport<HTMLDivElement>(open)
+  const pathname = usePathname() ?? ''
+  const markdownHref = /^\/design-systems\/[^/]+\/templates\/[^/]+$/.test(pathname) ? `${pathname}.md` : null
 
   // Tokenized install for signed-in users so the registry attributes the pull
   // to the account (a plain command writes a placeholder). The token is masked
@@ -835,6 +840,31 @@ function InstallButton({
               ))}
             </div>
           </div>
+          {markdownHref && (
+            <div className="flex items-center justify-between gap-2 border-t border-sand-200 px-3 py-2.5 dark:border-sand-800">
+              <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
+                For AI tools
+              </span>
+              <div className="flex items-center gap-1.5">
+                <Button
+                  variant="outline"
+                  size="xs"
+                  onClick={async () => {
+                    if (!(await copyMarkdown(undefined, markdownHref))) return
+                    setMdCopied(true)
+                    setTimeout(() => setMdCopied(false), 2000)
+                  }}
+                >
+                  {mdCopied ? <Check size={13} className="text-success" /> : <Copy size={13} />}
+                  {mdCopied ? 'Copied' : 'Copy as Markdown'}
+                </Button>
+                <Link href={markdownHref} target="_blank" className={buttonClasses({ variant: 'outline', size: 'xs' })}>
+                  <FileText size={13} />
+                  View
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

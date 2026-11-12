@@ -18,7 +18,7 @@ const read = (source: MarkdownSource) => (typeof source === 'function' ? source(
 
 // Without inline text the twin is fetched on click. Safari drops a clipboard write made
 // after an await, so the fetch goes inside the ClipboardItem to keep the click's permission.
-async function copyMarkdown(markdown: MarkdownSource | undefined, href: string | undefined): Promise<boolean> {
+export async function copyMarkdown(markdown: MarkdownSource | undefined, href: string | undefined): Promise<boolean> {
   if (markdown !== undefined) return copyText(read(markdown))
   if (!href) return false
   const text = () => fetch(href).then((r) => (r.ok ? r.text() : Promise.reject(new Error(String(r.status)))))

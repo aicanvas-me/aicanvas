@@ -105,6 +105,8 @@ const nextConfig: NextConfig = {
         { source: "/components/:slug", has: wantsMarkdown, destination: "/md/components/:slug" },
         // A system's own pages (system, brain, foundation...) share the
         // :component shape; the twin answers those with the system overview.
+        { source: "/design-systems/:system/templates/:template.md", destination: "/md/design-systems/:system/templates/:template" },
+        { source: "/design-systems/:system/templates/:template", has: wantsMarkdown, destination: "/md/design-systems/:system/templates/:template" },
         { source: "/design-systems/:system.md", destination: "/md/design-systems/:system" },
         { source: "/design-systems/:system/:component.md", destination: "/md/design-systems/:system/:component" },
         { source: "/design-systems/:system", has: wantsMarkdown, destination: "/md/design-systems/:system" },
