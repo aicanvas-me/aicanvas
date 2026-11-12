@@ -166,6 +166,11 @@ export function CheckoutSplit({
                   {charged && charged.tax > 0 ? ', tax included' : ''}
                 </span>
               </p>
+              {!(charged && charged.currency === 'USD' && charged.tax === 0) && (
+                <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">
+                  {charged ? `${usd(plan.price)} ` : ''}+ VAT where applicable
+                </p>
+              )}
 
               <dl aria-live="polite" className="mt-6 space-y-2 border-t border-sand-200 pt-5 text-sm dark:border-sand-800">
                 <div className="flex justify-between gap-4">
