@@ -2,8 +2,6 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { ICON_CATEGORY_LABELS } from '../_lib/categories'
 import { iconLead, titleCase } from '../_lib/icon-utils'
-import { iconMarkdown } from '../_lib/markdown'
-import { buildSvg } from '../_lib/svg'
 import { getIcon, icons, readLineIcons, suggestedIcons } from '../_lib/server-data'
 import { IconDetail } from '../_components/IconDetail'
 
@@ -33,7 +31,6 @@ export default async function IconPage({ params }: { params: Promise<{ name: str
   const index = categoryIcons.findIndex((candidate) => candidate.name === icon.name)
   const previousMeta = index > 0 ? categoryIcons[index - 1] : undefined
   const nextMeta = index < categoryIcons.length - 1 ? categoryIcons[index + 1] : undefined
-  const currentSvg = buildSvg(line[icon.name], 24, 'regular', null, 'line')
 
   return (
     <IconDetail
@@ -42,7 +39,7 @@ export default async function IconPage({ params }: { params: Promise<{ name: str
       suggestions={suggestions.map((suggestion) => ({ ...suggestion, markup: line[suggestion.name] }))}
       previous={previousMeta ? { ...previousMeta, markup: line[previousMeta.name] } : undefined}
       next={nextMeta ? { ...nextMeta, markup: line[nextMeta.name] } : undefined}
-      markdown={iconMarkdown(icon, currentSvg)}
+      freeAccountGate={process.env.FREE_ACCOUNT_GATE === 'on'}
     />
   )
 }

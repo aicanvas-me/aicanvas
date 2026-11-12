@@ -1,11 +1,12 @@
 'use client'
 
 import { useId, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
-import { iconImportLine, iconInstallCommand, iconJsxLine, MASKED_INSTALL_TOKEN, PREMIUM_ICON_INSTALL_NOTE } from '../_lib/constants'
+import { FREE_ICON_INSTALL_NOTE, iconImportLine, iconInstallCommand, iconJsxLine, MASKED_INSTALL_TOKEN, PREMIUM_ICON_INSTALL_NOTE } from '../_lib/constants'
 import type { IconWeight } from '../_lib/icon-utils'
 import { isPreview } from '../_lib/preview'
 import { buildSvg } from '../_lib/svg'
 import type { IconStyle } from '../_lib/types'
+import { useInstallGate } from './useInstallGate'
 
 type CodeTab = 'React' | 'SVG' | 'Install'
 const TABS: CodeTab[] = ['React', 'SVG', 'Install']
@@ -56,6 +57,7 @@ export function CodeTabs({
   compact = false,
   installToken,
   exportReady = true,
+  freeAccountGate = false,
 }: {
   name: string
   markup: string
@@ -68,9 +70,11 @@ export function CodeTabs({
   compact?: boolean
   installToken?: string | null
   exportReady?: boolean
+  freeAccountGate?: boolean
 }) {
   const [tab, setTab] = useState<CodeTab>('React')
   const id = useId()
+  const gate = useInstallGate(style, freeAccountGate)
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([])
   const code =
     tab === 'React'
@@ -81,7 +85,9 @@ export function CodeTabs({
             ? 'The SVG of this style comes with AI Canvas Premium.'
             : 'The SVG of this style has not loaded.'
           : buildSvg(markup, size, weight, colour, style)
-        : iconInstallCommand(name, style, installToken && MASKED_INSTALL_TOKEN)
+        : gate.masked
+          ? `npx shadcn@latest add @aicanvas/${'•'.repeat(12)}`
+          : iconInstallCommand(name, style, installToken && MASKED_INSTALL_TOKEN)
 
   const onKey = (event: KeyboardEvent, index: number) => {
     const targets: Record<string, number> = {
@@ -134,9 +140,9 @@ export function CodeTabs({
         <pre className={`${compact ? 'px-3 py-2 text-[11px] leading-5' : 'px-4 py-4 text-[12px] leading-6'} whitespace-pre-wrap break-words font-mono text-sand-800 dark:text-sand-200`}>
           <code><SyntaxCode code={code} enabled={tab !== 'Install' && !(tab === 'SVG' && isPreview(markup))} /></code>
         </pre>
-        {tab === 'Install' && style !== 'line' && (
+        {tab === 'Install' && (gate.masked || gate.needsAccount) && (
           <p className={`${compact ? 'px-3 pb-2' : 'px-4 pb-4'} text-xs text-sand-600 dark:text-sand-400`}>
-            {PREMIUM_ICON_INSTALL_NOTE}
+            {gate.masked ? PREMIUM_ICON_INSTALL_NOTE : FREE_ICON_INSTALL_NOTE}
           </p>
         )}
       </div>

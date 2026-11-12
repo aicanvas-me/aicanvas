@@ -9,6 +9,7 @@ export const allIconsInstall = (token?: string | null) => installCommand('icons'
 export const ALL_ICONS_INSTALL = allIconsInstall()
 // Reuse the existing registry's premium install wording.
 export const PREMIUM_ICON_INSTALL_NOTE = 'Requires AI Canvas Premium to install.'
+export const FREE_ICON_INSTALL_NOTE = 'Free account required. Signed out, this installs a placeholder file instead of the icon.'
 export const DARK_PREVIEW_COLOUR = '#F4F4FA'
 export const LIGHT_PREVIEW_COLOUR = '#1B1B1C'
 // The grid tiles' fills (sand-100, sand-900), for the colour picker's contrast note.

@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import type { IconWeight } from '../_lib/icon-utils'
+import { SIZE_MAX } from '../_lib/settings-query'
 import { IconSvg } from './IconSvg'
 
 const PREVIEW_SIZES = [16, 20, 24, 32, 48]
-// The stage shows the picked size magnified, so Size visibly grows and shrinks
-// the icon while the line stays true to that size: 4x up to 64 px, then a
-// gentler slope so 96 px still fits the stage (24 -> 96, 64 -> 256, 96 -> 304).
-const stageSize = (size: number) => Math.round(Math.min(size * 4, 160 + size * 1.5))
+// The stage shows the picked size magnified in proportion to the largest one:
+// 72px fills the stage's shorter side, so every step of Size visibly changes
+// it on any screen and the icon never hits the edge and stops growing.
+const stageSize = (size: number) => `calc(min(100cqw, 100cqh) * ${size / SIZE_MAX})`
 
 export function PreviewSizeStrip({
   markup,
@@ -103,8 +104,10 @@ export function PreviewStage({
         </div>
         {counter && <p className={surface === 'dark' ? 'text-xs text-white/45' : 'text-xs text-black/55'}>{counter}</p>}
       </div>
-      <div className="flex min-h-0 flex-1 items-center justify-center px-4 pb-4 pt-14">
-        <IconSvg className="max-h-full max-w-full" markup={markup} size={stageSize(size)} weight={weight} colour={colour} label={name} />
+      <div className="flex min-h-0 flex-1 px-4 pb-4 pt-14">
+        <div className="flex min-h-0 flex-1 items-center justify-center [container-type:size]">
+          <IconSvg markup={markup} size={stageSize(size)} weight={weight} colour={colour} label={name} large />
+        </div>
       </div>
       {showSizes && <PreviewSizeStrip markup={markup} weight={weight} colour={colour} surface={surface} embedded />}
     </section>

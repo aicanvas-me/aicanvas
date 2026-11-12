@@ -1,7 +1,7 @@
 'use client'
 
-import { Fragment, useRef, type KeyboardEvent } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { Fragment, useRef, useState, type KeyboardEvent } from 'react'
+import { LayoutGroup, motion, useReducedMotion } from 'framer-motion'
 import { ICON_STYLES } from '../_lib/icon-utils'
 import type { IconStyle } from '../_lib/types'
 
@@ -20,6 +20,9 @@ export function StylePicker({
 }) {
   const reduce = useReducedMotion()
   const refs = useRef<(HTMLButtonElement | null)[]>([])
+  // One layout group per mount: a shared layoutId made the pick fly in from
+  // where the previous page's picker sat whenever the next icon opened.
+  const [group] = useState(() => `icons-style-${++pickerMounts}`)
 
   const onKey = (event: KeyboardEvent, index: number) => {
     const targets: Record<string, number> = {
@@ -38,6 +41,7 @@ export function StylePicker({
   }
 
   return (
+    <LayoutGroup id={group}>
     <div
       role="radiogroup"
       aria-label="Icon style"
@@ -91,8 +95,11 @@ export function StylePicker({
         )
       })}
     </div>
+    </LayoutGroup>
   )
 }
+
+let pickerMounts = 0
 
 // A four-point sparkle drawn in each style, so a segment shows what it does
 // before it is picked. Inline, so it never waits on the premium style files.

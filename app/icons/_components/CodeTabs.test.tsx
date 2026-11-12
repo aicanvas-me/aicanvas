@@ -1,11 +1,18 @@
 // @vitest-environment jsdom
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { cleanup, fireEvent, render, screen } from '@testing-library/react'
 import { CodeTabs } from './CodeTabs'
 
+const gate = vi.hoisted(() => ({ blocked: () => false, askForPremium: () => {}, masked: false, needsAccount: false }))
+vi.mock('./useInstallGate', () => ({ useInstallGate: () => gate }))
+
 const MARKUP = '<path d="M4 12h16" />'
 
-afterEach(cleanup)
+afterEach(() => {
+  cleanup()
+  gate.masked = false
+  gate.needsAccount = false
+})
 
 function setup() {
   render(<CodeTabs name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="line" />)
@@ -45,5 +52,29 @@ describe('CodeTabs', () => {
     const event = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })
     tabs[0].dispatchEvent(event)
     expect(event.defaultPrevented).toBe(true)
+  })
+})
+
+describe('CodeTabs Install', () => {
+  const install = () => {
+    fireEvent.click(screen.getByRole('tab', { name: 'Install' }))
+    return screen.getByRole('tabpanel').textContent ?? ''
+  }
+
+  it('shows dots and the Premium note until Premium is confirmed', () => {
+    gate.masked = true
+    render(<CodeTabs name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="solid" />)
+    const text = install()
+    expect(text).toContain('@aicanvas/••••••••••••')
+    expect(text).not.toContain('arrow-right')
+    expect(text).toContain('Requires AI Canvas Premium to install.')
+  })
+
+  it('keeps a free command readable and says it needs an account when signed out', () => {
+    gate.needsAccount = true
+    render(<CodeTabs name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="line" />)
+    const text = install()
+    expect(text).toContain('npx shadcn@latest add @aicanvas/icon-arrow-right')
+    expect(text).toContain('Free account required.')
   })
 })

@@ -4,7 +4,8 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { LINE_ICON_NOTICE } from '../../../scripts/lib/icon-notice.mjs'
 import { ActionBar } from './ActionBar'
 
-vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }))
+const gate = vi.hoisted(() => ({ blocked: vi.fn(() => false), askForPremium: vi.fn(), masked: false, needsAccount: false }))
+vi.mock('./useInstallGate', () => ({ useInstallGate: () => gate }))
 
 const MARKUP = '<path d="M4 12h16" />'
 
@@ -12,6 +13,8 @@ afterEach(() => {
   cleanup()
   vi.restoreAllMocks()
   vi.useRealTimers()
+  gate.blocked.mockReset().mockReturnValue(false)
+  gate.askForPremium.mockReset()
 })
 
 function openMenu() {
@@ -115,5 +118,43 @@ describe('ActionBar downloads', () => {
     const { items } = openMenu()
     fireEvent.click(items.find((item) => item.textContent === 'Download PNG')!)
     await waitFor(() => expect(screen.getByRole('alert').textContent).toMatch(/PNG download failed/))
+  })
+})
+
+describe('ActionBar gate', () => {
+  const PREVIEW = 'aic-preview:/icons-preview/solid/arrow-right.png'
+
+  it('does not copy an install when the gate takes the click', async () => {
+    const writeText = vi.fn().mockResolvedValue(undefined)
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true })
+    gate.blocked.mockReturnValue(true)
+    render(<ActionBar name="arrow-right" markup={MARKUP} size={24} weight="regular" colour={null} style="line" />)
+    fireEvent.click(screen.getByRole('button', { name: 'Copy for agent' }))
+    fireEvent.click(screen.getByRole('button', { name: 'More copy and download options' }))
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Copy install command' }))
+    expect(gate.blocked).toHaveBeenCalledTimes(2)
+    fireEvent.click(screen.getByRole('button', { name: 'More copy and download options' }))
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Copy JSX' }))
+    await waitFor(() => expect(writeText).toHaveBeenCalledTimes(1))
+    expect(writeText.mock.calls[0][0]).toBe('<ArrowRight size={24} />')
+  })
+
+  it('gives a locked paid style the same labels as Line, each opening the upgrade box', () => {
+    render(<ActionBar name="arrow-right" markup={PREVIEW} size={24} weight="regular" colour={null} style="solid" />)
+    fireEvent.click(screen.getByRole('button', { name: 'SVG' }))
+    fireEvent.click(screen.getByRole('button', { name: 'More copy and download options' }))
+    expect(screen.getAllByRole('menuitem').map((item) => item.textContent)).toEqual([
+      'Copy for agent', 'Copy install command', 'Copy JSX', 'Copy SVG', 'Download SVG', 'Download PNG',
+    ])
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Download PNG' }))
+    expect(gate.askForPremium).toHaveBeenCalledTimes(2)
+  })
+
+  it('waits while a paid style still loads, so a subscriber is never upsold', () => {
+    render(<ActionBar name="arrow-right" markup={PREVIEW} size={24} weight="regular" colour={null} style="solid" exportReady={false} />)
+    expect(screen.getByRole('button', { name: 'SVG' })).toHaveProperty('disabled', true)
+    fireEvent.click(screen.getByRole('button', { name: 'More copy and download options' }))
+    fireEvent.click(screen.getByRole('menuitem', { name: 'Copy SVG' }))
+    expect(gate.askForPremium).not.toHaveBeenCalled()
   })
 })

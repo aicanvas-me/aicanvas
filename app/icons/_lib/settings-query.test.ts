@@ -37,9 +37,9 @@ describe('fromIconQuery', () => {
     expect(fromIconQuery('?style=LINE')).toEqual({})
   })
 
-  it('clamps the size to 16..96 and snaps it to 4px steps', () => {
+  it('clamps the size to 16..72 and snaps it to 4px steps', () => {
     expect(fromIconQuery('?size=4')).toEqual({ size: 16 })
-    expect(fromIconQuery('?size=500')).toEqual({ size: 96 })
+    expect(fromIconQuery('?size=500')).toEqual({ size: 72 })
     expect(fromIconQuery('?size=-20')).toEqual({ size: 16 })
     expect(fromIconQuery('?size=33')).toEqual({ size: 32 })
     expect(fromIconQuery('?size=35.5')).toEqual({ size: 36 })

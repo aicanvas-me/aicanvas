@@ -37,7 +37,8 @@ export function TuneSlider({
   disabledValue?: string
 }) {
   const t = Math.max(0, Math.min(1, (value - min) / (max - min)))
-  // Fill and needle stay clear of the round ends, the way the native thumb does.
+  // Fill and needle stay 12px clear of the round ends; the hidden native thumb is
+  // 24px wide, so it travels the same span and the needle sits under the pointer.
   const position = `calc(12px + (100% - 24px) * ${t})`
   const display = disabled && disabledValue ? disabledValue : format(value)
   const hintId = useId()
@@ -57,7 +58,7 @@ export function TuneSlider({
           aria-label={label}
           aria-valuetext={disabled && disabledValue ? disabledValue : valueText(value)}
           aria-describedby={showHint ? hintId : undefined}
-          className="peer absolute inset-0 z-10 h-full w-full cursor-ew-resize opacity-0 disabled:pointer-events-none"
+          className="peer absolute inset-0 z-10 h-full w-full cursor-ew-resize appearance-none opacity-0 disabled:pointer-events-none [&::-moz-range-thumb]:h-8 [&::-moz-range-thumb]:w-6 [&::-moz-range-thumb]:border-0 [&::-webkit-slider-thumb]:h-8 [&::-webkit-slider-thumb]:w-6 [&::-webkit-slider-thumb]:appearance-none"
         />
         <div className="relative flex h-8 items-center overflow-hidden rounded-full border border-sand-200 bg-sand-50 transition-colors peer-hover:border-sand-300 peer-focus-visible:ring-2 peer-focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-950 dark:peer-hover:border-sand-700">
           {/* Ticks run in the gap between label and value, so they never cross

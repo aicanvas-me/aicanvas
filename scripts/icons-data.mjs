@@ -11,6 +11,7 @@
 //   .icons-data/<style>.json                the same for each paid style, served only to Premium
 //                                           by app/icons/style-data/[style]/route.ts
 //   public/icons-preview/<style>/<name>.png raster previews of the paid styles, no vectors
+//   public/icons-preview/<style>/<name>.large.webp  the same at 640px, for the big preview stage
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -19,6 +20,8 @@ import { iconSourceCandidates, readAddedDates } from './lib/icon-source.mjs'
 const ROOT = fileURLToPath(new URL('..', import.meta.url))
 const STYLES = { line: 'svg', duotone: 'svg-duotone', solid: 'svg-solid', 'solid-duotone': 'svg-solid-duotone' }
 const PREVIEW_PX = 192
+// The stage draws a preview up to about 300px; 640 keeps it sharp on a 2x screen.
+const LARGE_PREVIEW_PX = 640
 const dataFile = (style) => (style === 'line' ? join(ROOT, 'public/icons-data/line.json') : join(ROOT, `.icons-data/${style}.json`))
 
 // Paid markup never stays public: drop the files earlier builds wrote there.
@@ -66,8 +69,10 @@ for (const [style, dir] of Object.entries(STYLES)) {
     out[name] = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '').replace(/\s*\n\s*/g, '').trim()
     if (style === 'line') return
     // White on transparent: the page tints it through a CSS mask, so the colour picker still works.
-    const sized = svg.replaceAll('currentColor', '#fff').replace(/width="24" height="24"/, `width="${PREVIEW_PX}" height="${PREVIEW_PX}"`)
-    await sharp(Buffer.from(sized)).png({ compressionLevel: 9 }).toFile(join(ROOT, `public/icons-preview/${style}/${name}.png`))
+    const white = svg.replaceAll('currentColor', '#fff')
+    const at = (px) => Buffer.from(white.replace(/width="24" height="24"/, `width="${px}" height="${px}"`))
+    await sharp(at(PREVIEW_PX)).png({ compressionLevel: 9 }).toFile(join(ROOT, `public/icons-preview/${style}/${name}.png`))
+    await sharp(at(LARGE_PREVIEW_PX)).webp({ lossless: true }).toFile(join(ROOT, `public/icons-preview/${style}/${name}.large.webp`))
   }))
   writeFileSync(dataFile(style), JSON.stringify(Object.fromEntries(names.map((name) => [name, out[name]]))))
 }

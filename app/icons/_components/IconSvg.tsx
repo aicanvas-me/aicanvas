@@ -8,16 +8,20 @@ export function IconSvg({
   colour = 'currentColor',
   className = '',
   label,
+  large = false,
 }: {
   markup: string
-  size: number
+  // pixels, or any CSS length when the box decides the size
+  size: number | string
   weight: IconWeight
   colour?: string
   className?: string
   label?: string
+  // a paid preview drawn big takes the sharp large raster
+  large?: boolean
 }) {
   if (isPreview(markup)) {
-    const mask = `url(${previewSrc(markup)}) center / contain no-repeat`
+    const mask = `url(${previewSrc(markup, large)}) center / contain no-repeat`
     return (
       <span
         className={`inline-block shrink-0 ${className}`}
@@ -31,14 +35,14 @@ export function IconSvg({
   return (
     <svg
       viewBox="0 0 24 24"
-      width={size}
-      height={size}
+      width={typeof size === 'number' ? size : undefined}
+      height={typeof size === 'number' ? size : undefined}
       fill="none"
       stroke="currentColor"
       strokeWidth={weightStroke(weight)}
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={{ color: colour }}
+      style={typeof size === 'number' ? { color: colour } : { color: colour, width: size, height: size }}
       className={className}
       role={label ? 'img' : undefined}
       aria-label={label}
