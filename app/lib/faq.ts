@@ -2,6 +2,7 @@ import { AI_CANVAS_DEFINITION, GITHUB_URL } from './config'
 import { BRAIN_TEASER } from './andromeda-pro-brain-teaser.generated'
 import type { FaqRow } from '../components/FaqRows'
 import { lifetimeEnabled } from '../../lib/flags'
+import { HOSTED_MCP_URL } from './hosted-mcp'
 
 // Every FAQ answer on the site, in one place. A question that appears on more
 // than one page (homepage, /faq, pricing, the AI Brain page) is ONE entry here,
@@ -151,7 +152,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'set-up-mcp',
     category: 'mcp',
     q: 'How do I set up the AI Canvas MCP?',
-    a: 'Add https://mcp.aicanvas.me to your agent as a remote MCP server and sign in once in the browser; there is no key to copy. The MCP page has the exact step for Claude Code, Claude, ChatGPT, Codex, VS Code, and Cursor, and the MCP docs cover sign-in fixes and running it locally.',
+    a: `Add ${HOSTED_MCP_URL} to your agent as a remote MCP server and sign in once in the browser; there is no key to copy. The MCP page has the exact step for Claude Code, Claude, ChatGPT, Codex, VS Code, and Cursor, and the MCP docs cover sign-in fixes and running it locally.`,
     links: [
       { label: 'MCP page', href: '/mcp' },
       { label: 'MCP docs', href: '/docs/mcp' },
