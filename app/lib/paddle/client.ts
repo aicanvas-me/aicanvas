@@ -98,10 +98,7 @@ export function getPaddle(): Promise<Paddle | undefined> {
         }
         uiListeners.forEach((fn) => fn(e))
       },
-    }).catch(() => {
-      paddlePromise = null // a failed load shows the error and is retried on the next call
-      return undefined
-    })
+    }).catch(() => undefined) // a failed load shows the checkout error, not a stuck spinner
   }
   return paddlePromise
 }
