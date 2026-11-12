@@ -72,7 +72,7 @@ export const HOSTED_INSTRUCTIONS = [
   'Answer any question about AI Canvas (what it has, how many, free or Premium) from these tools, not the website or a web search. The catalog has two parts: standalone components and blocks (list_components) and design systems with their own components (list_systems). A question about what AI Canvas has covers both.',
   '',
   'How to build with it:',
-  '1. Find: search_components for one part, or compose_page to plan a whole page from a brief.',
+  '1. Find: search_components.',
   '2. Read the API: get_component_props before writing JSX for a component you have not read.',
   '3. Install: get_install_command, then run the command it returns in the user\'s project. It needs a components.json; if the project has none, set up shadcn first. The command carries the user\'s own AI Canvas key on purpose: run it as is and keep it out of files that go into git.',
   '4. Check: validate_usage on every file that uses AI Canvas components, then get_audit_checklist.',

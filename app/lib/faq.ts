@@ -2,6 +2,7 @@ import { AI_CANVAS_DEFINITION, GITHUB_URL } from './config'
 import { BRAIN_TEASER } from './andromeda-pro-brain-teaser.generated'
 import type { FaqRow } from '../components/FaqRows'
 import { lifetimeEnabled } from '../../lib/flags'
+import { HOSTED_MCP_URL } from './hosted-mcp'
 
 // Every FAQ answer on the site, in one place. A question that appears on more
 // than one page (homepage, /faq, pricing, the AI Brain page) is ONE entry here,
@@ -151,7 +152,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'set-up-mcp',
     category: 'mcp',
     q: 'How do I set up the AI Canvas MCP?',
-    a: 'Add https://mcp.aicanvas.me to your agent as a remote MCP server and sign in once in the browser; there is no key to copy. The MCP page has the exact step for Claude Code, Claude, ChatGPT, Codex, VS Code, and Cursor, and the MCP docs cover sign-in fixes and running it locally.',
+    a: `Add ${HOSTED_MCP_URL} to your agent as a remote MCP server and sign in once in the browser; there is no key to copy. The MCP page has the exact step for Claude Code, Claude, ChatGPT, Codex, VS Code, and Cursor, and the MCP docs cover sign-in fixes and running it locally.`,
     links: [
       { label: 'MCP page', href: '/mcp' },
       { label: 'MCP docs', href: '/docs/mcp' },
@@ -168,7 +169,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'mcp-agent-tools',
     category: 'mcp',
     q: 'What can my agent do once it is connected?',
-    a: 'It gets tools to browse categories, search components and icons, inspect details, props and source, list design systems and templates, plan and check a page, and retrieve exact install commands. They only read, so nothing on AI Canvas changes; the one exception, disconnect, ends your own sign-in. The MCP docs list every tool.',
+    a: 'It gets tools to browse categories, search components and icons, inspect details, props and source, list design systems and templates, check a page, and retrieve exact install commands. They only read, so nothing on AI Canvas changes; the one exception, disconnect, ends your own sign-in. The MCP docs list every tool.',
     links: [{ label: 'MCP docs', href: '/docs/mcp' }],
   },
   {
@@ -490,18 +491,19 @@ export const SITE_FAQ: FaqEntry[] = [
   },
 ]
 
-function pick(ids: string[]): FaqEntry[] {
+// `page` drops the links that point to the page the list sits on.
+function pick(ids: string[], page?: string): FaqEntry[] {
   return ids.map((id) => {
     const entry = SITE_FAQ.find((f) => f.id === id)
     if (!entry) throw new Error(`FAQ entry missing: ${id}`)
-    return entry
+    return page && entry.links ? { ...entry, links: entry.links.filter((l) => l.href !== page) } : entry
   })
 }
 
 export const HOME_FAQ = pick(['what-is-ai-canvas', 'is-ai-canvas-free', 'stop-ai-slop', 'reshape-design-system', 'install-a-component', 'ai-canvas-mcp-server', 'what-are-standalone-components', 'ai-canvas-icons', 'premium-includes', 'commercial-use'])
-export const PRICING_FAQ = pick([...(LIFETIME ? ['lifetime-meaning'] : []), 'payments-and-paddle', 'payment-security', 'taxes', 'refunds', 'who-is-ai-canvas-for', 'tool-affiliations'])
-export const BRAIN_FAQ = pick(['andromeda-pro-ai-brain', 'design-skill-for-claude-code', 'ai-brain-cursor-codex', 'stop-ai-slop', 'install-ai-brain'])
-export const MCP_FAQ = pick(['ai-canvas-mcp-server', 'mcp-supported-agents', 'mcp-agent-tools', 'works-with-shadcn', 'mcp-versus-shadcn-cli', 'is-mcp-free'])
+export const PRICING_FAQ = pick([...(LIFETIME ? ['lifetime-meaning'] : []), 'payments-and-paddle', 'payment-security', 'taxes', 'refunds', 'who-is-ai-canvas-for', 'tool-affiliations'], '/pricing')
+export const BRAIN_FAQ = pick(['andromeda-pro-ai-brain', 'design-skill-for-claude-code', 'ai-brain-cursor-codex', 'stop-ai-slop', 'install-ai-brain'], BRAIN)
+export const MCP_FAQ = pick(['ai-canvas-mcp-server', 'mcp-supported-agents', 'mcp-agent-tools', 'works-with-shadcn', 'mcp-versus-shadcn-cli', 'is-mcp-free'], '/mcp')
 
 /** /faq: the categories in order, each with its questions. */
 export const FAQ_PAGE_CATEGORIES = FAQ_CATEGORY_META.map((c) => ({

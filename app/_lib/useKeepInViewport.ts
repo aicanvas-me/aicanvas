@@ -11,7 +11,7 @@ export function useKeepInViewport<T extends HTMLElement>(open: boolean) {
     const fit = () => {
       el.style.translate = ''
       const { left, right } = el.getBoundingClientRect()
-      const max = window.innerWidth - 12
+      const max = document.documentElement.clientWidth - 12
       const shift = left < 12 ? 12 - left : right > max ? max - right : 0
       if (shift) el.style.translate = `${shift}px 0`
     }

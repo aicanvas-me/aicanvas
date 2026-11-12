@@ -9,7 +9,7 @@
  *
  *   node test/golden.mjs                         # baseline: @aicanvas/mcp@latest from npm
  *   node test/golden.mjs --baseline <file.tgz>   # baseline: a packed tarball
- *   node test/golden.mjs --baseline @aicanvas/mcp@0.3.1
+ *   node test/golden.mjs --baseline @aicanvas/mcp@0.3.0
  *
  * Needs a built candidate (npx tsc) and registry-data/ from
  * `node scripts/generate-registry.mjs` at the repo root.
@@ -192,8 +192,6 @@ const CALLS = [
       ].join('\n'),
     },
   ],
-  ['compose_page', { brief: 'a CRM dashboard with a pipeline board and an activity feed' }],
-  ['compose_page', { brief: 'login screen, hero, pricing', system: 'andromeda' }],
   ['get_audit_checklist', {}],
   ['get_audit_checklist', { scope: 'component' }],
 ]

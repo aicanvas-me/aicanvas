@@ -158,7 +158,7 @@ export default function McpDocsPage() {
 
           <H2 id="what-we-store">What we store</H2>
           <P>
-            For each connected agent, we store its name, the address it returns to after sign-in, when it connected, when it was last
+            For each connected agent, we store its name, the address it returns to after sign-in, when it connected and when it was last
             used. Sign-in tokens are stored only as hashes. Disconnecting deletes the
             connection. Read the <A href="/privacy">Privacy Policy</A>.
           </P>
@@ -287,13 +287,12 @@ export default function McpDocsPage() {
           [<C key="4">get_template</C>, 'Every file of one template, with what it depends on.'],
         ]}
       />
-      <H3>Plan and check</H3>
+      <H3>Check</H3>
       <Table
         head={['Tool', 'What it does']}
         rows={[
-          [<C key="1">compose_page</C>, 'Turns a one-line brief into a build plan: template, components, install order. Writes no code.'],
-          [<C key="2">validate_usage</C>, 'Checks a file against the props of the components it uses, with line numbers.'],
-          [<C key="3">get_audit_checklist</C>, 'The checklist to run on a finished page: install, props, both themes, small screens, keyboard.'],
+          [<C key="1">validate_usage</C>, 'Checks a file against the props of the components it uses, with line numbers.'],
+          [<C key="2">get_audit_checklist</C>, 'The checklist to run on a finished page: install, props, both themes, small screens, keyboard.'],
         ]}
       />
       <H3>Install</H3>
@@ -322,7 +321,7 @@ export default function McpDocsPage() {
         </>
       )}
       <P>
-        The best order for a new page: <C>compose_page</C> to plan, <C>get_component_props</C> before writing each component,{' '}
+        The best order for a new page: <C>get_component_props</C> before writing each component,{' '}
         <C>validate_usage</C> on the finished file, <C>get_audit_checklist</C> before calling it done.
       </P>
 

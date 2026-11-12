@@ -102,15 +102,13 @@ export function FaqView({ categories }: { categories: FaqCategory[] }) {
             // (top-10, under the bar, which sits above the scroll column).
             <section key={c.slug} id={c.slug} data-faq-category="" className="mt-16 scroll-mt-10 first:mt-0 sm:mt-20">
               <Reveal>
-                <div className="flex items-center justify-between gap-8">
-                  <div className="min-w-0">
-                    <h2
-                      className="text-balance text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"
-                    >
-                      {c.category}
-                    </h2>
-                    <p className={`mt-3 max-w-2xl ${SUB}`}>{c.blurb}</p>
-                  </div>
+                <div className="min-w-0">
+                  <h2
+                    className="text-balance text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50"
+                  >
+                    {c.category}
+                  </h2>
+                  <p className={`mt-3 max-w-2xl ${SUB}`}>{c.blurb}</p>
                 </div>
                 <div className="mt-6 sm:mt-8">
                   {/* Several rows may stay open: a reader comparing two

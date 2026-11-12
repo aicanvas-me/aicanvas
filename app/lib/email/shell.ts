@@ -55,7 +55,7 @@ export type EmailButton = { label: string; url: string }
 /** An email asks the reader for one thing: either follow an action, or copy a
  *  code. Offering both at once is a worse email, so the type refuses it. */
 type EmailAction =
-  /** Olive call-to-action (label and url — pre-escape any dynamic value). */
+  /** Call-to-action button (label and url — pre-escape any dynamic value). */
   | { button?: EmailButton; code?: never }
   /** One-time code, shown in a bordered box because it is read and retyped
    *  rather than clicked (plain text — pre-escape any dynamic value). */
