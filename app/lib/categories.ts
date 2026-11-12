@@ -27,9 +27,9 @@ export const CATEGORIES: readonly Category[] = [
   {
     label: 'Cards & Modals',
     slug: 'cards-modals',
-    title: 'Animated React Cards and Modals: Free + Tailwind',
+    title: 'Animated React Cards and Modals: Tailwind + Motion',
     description:
-      'Free animated React cards and modal dialogs. Tailwind CSS and Motion. Copy-paste ready, installable via the shadcn CLI.',
+      'Animated React cards and modal dialogs, free and Premium. Tailwind CSS and Motion. Copy-paste ready, installable via the shadcn CLI.',
     h1: 'Animated React Cards and Modals',
     intro:
       'Animated card and modal dialog components for React. Built with Tailwind CSS and Motion, ready to copy and paste or install via the shadcn CLI.',
@@ -39,7 +39,7 @@ export const CATEGORIES: readonly Category[] = [
     slug: 'widgets',
     title: 'Animated React Widgets: Copy and Paste UI Elements',
     description:
-      'Free animated React widgets and UI elements. Built with Tailwind CSS and Motion. Copy-paste ready, installable via the shadcn CLI.',
+      'Animated React widgets and UI elements, free and Premium. Built with Tailwind CSS and Motion. Copy-paste ready, installable via the shadcn CLI.',
     h1: 'Animated React Widgets',
     intro:
       'Animated widgets and small UI elements for React. Built with Tailwind CSS and Motion, copy-paste ready or installable via the shadcn CLI.',
@@ -87,9 +87,9 @@ export const CATEGORIES: readonly Category[] = [
   {
     label: 'Inputs & Controls',
     slug: 'inputs-controls',
-    title: 'Animated React Inputs and Controls: Free + Motion',
+    title: 'Animated React Inputs and Controls: Tailwind + Motion',
     description:
-      'Free animated React input and control components. Tailwind CSS and Motion. Copy-paste ready, installable via the shadcn CLI.',
+      'Animated React input and control components, free and Premium. Tailwind CSS and Motion. Copy-paste ready, installable via the shadcn CLI.',
     h1: 'Animated React Inputs and Controls',
     intro:
       'Animated input and control components for React. Built with Tailwind CSS and Motion, ready to copy and paste or install via the shadcn CLI.',

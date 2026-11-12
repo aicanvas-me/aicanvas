@@ -52,18 +52,11 @@ function computeTitle(entry: ComponentEntry): string {
   return `${entry.name} - ${descriptor} React Component`
 }
 
-function computeMetaDescription(entry: ComponentEntry, isPremium: boolean): string {
-  const max = 150
-  const base = entry.description.length > max
+function computeMetaDescription(entry: ComponentEntry): string {
+  const max = 158
+  return entry.description.length > max
     ? entry.description.slice(0, max).replace(/\s+\S*$/, '').trim() + '…'
     : entry.description
-  // Free content keeps the open-source tail; premium content must never claim
-  // MIT / open source, so it gets a premium-accurate tail instead. The noun
-  // follows isBlock so a section-scale block is not called a component.
-  const tail = isPremium
-    ? `Install via shadcn CLI. Premium AI Canvas ${isBlockEntry(entry) ? 'block' : 'component'}.`
-    : 'Install via shadcn CLI. Free and open source.'
-  return `${base} | ${tail}`
 }
 
 export async function generateMetadata({
@@ -77,9 +70,8 @@ export async function generateMetadata({
 
   const accentTag = entry.tags.find((t) => t.accent)
   const category = accentTag?.label ?? 'Component'
-  const { isPremium } = classifyPremium(slug)
   const title = computeTitle(entry)
-  const description = computeMetaDescription(entry, isPremium)
+  const description = computeMetaDescription(entry)
   const url = `${SITE_URL}/components/${slug}`
 
   return {

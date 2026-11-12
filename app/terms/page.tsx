@@ -32,7 +32,7 @@ export default function TermsPage() {
         title="Terms & Conditions"
         sub={
           <span className="block text-balance">
-            Last updated: 2026-11-10. These terms govern your use of AI Canvas.
+            Last updated: 2026-11-12. These terms govern your use of AI Canvas.
           </span>
         }
       />
@@ -69,7 +69,7 @@ export default function TermsPage() {
             every free component publishes its full AI remix prompt. Premium
             components and blocks publish part of their prompt; the rest is part
             of Premium. Installing free components is free with a free
-            account; the closed-source premium components, blocks, design
+            account; the proprietary premium components, blocks, design
             systems and templates are part of Premium.
           </p>
         </section>
@@ -107,7 +107,7 @@ export default function TermsPage() {
             for consumers in the EU and the UK.
           </p>
           <p className={BODY}>
-            Premium Components, design systems, and templates are closed-source
+            Premium Components, design systems, and templates are proprietary
             and are licensed, not sold, under the separate{' '}
             <Link href="/premium-license" className={LINK}>
               AI Canvas Premium License

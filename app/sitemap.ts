@@ -8,15 +8,20 @@ import { ANDROMEDA_COMPONENT_META as ANDROMEDA_PRO_COMPONENT_META } from './_lib
 import { availableDesignSystems } from './lib/available-design-systems'
 import { DOC_PAGES } from './docs/_lib/nav'
 import { icons } from './icons/_lib/server-data'
+import SITEMAP_DATES from './lib/sitemap-dates.json'
 
-// No `lastModified`. Every entry used to emit `new Date()`, i.e. the build
-// timestamp, so all 154 URLs claimed to change on every deploy. Google only
-// trusts lastmod when it is verifiably accurate, and a value that is provably
-// wrong on every URL teaches it to ignore the field sitewide. Omitting it is
-// valid and honest. To restore a real signal, commit a per-slug date map
-// (generated from git history at authoring time, not at build time: Vercel
-// shallow-clones, so `git log` for a path is unreliable during a build).
+// Real per-page dates from git, written at commit time by scripts/sitemap-dates.mjs.
+// Never new Date(): a build-time date on every URL teaches Google to ignore lastmod.
+const DATES: Record<string, string> = SITEMAP_DATES
+
 export default function sitemap(): MetadataRoute.Sitemap {
+  return entries().map((entry) => {
+    const date = DATES[entry.url.slice(SITE_URL.length) || '/']
+    return date ? { ...entry, lastModified: date } : entry
+  })
+}
+
+function entries(): MetadataRoute.Sitemap {
   const componentPages: MetadataRoute.Sitemap = COMPONENTS.map((c) => ({
     url: `${SITE_URL}/components/${c.slug}`,
     changeFrequency: 'monthly',

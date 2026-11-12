@@ -30,7 +30,7 @@ export default function RefundPage() {
         title="Refund & Cancellation Policy"
         sub={
           <span className="block text-balance">
-            Last updated: 2026-11-10. This policy applies to AI Canvas Premium: the subscription and Lifetime.
+            Last updated: 2026-11-12. This policy applies to AI Canvas Premium: the subscription and Lifetime.
           </span>
         }
       />
@@ -46,7 +46,7 @@ export default function RefundPage() {
             optional paid{' '}
             <strong className="font-semibold text-sand-700 dark:text-sand-300">Premium</strong>
             , sold as a subscription or as Lifetime, a one-time purchase. Premium
-            unlocks the premium closed-source components, blocks, design systems
+            unlocks the premium proprietary components, blocks, design systems
             and templates.
           </p>
         </section>
