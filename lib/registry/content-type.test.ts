@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { classifyContent, type ContentLookup } from './content-type'
+import { STYLES as ICON_STYLES } from '../../scripts/icon-registry.mjs'
 
 const lookup: ContentLookup = {
   designSystemSlugs: new Set(['andromeda-card', 'andromeda-pro-card', 'andromeda-pro-burst']),
@@ -117,6 +118,12 @@ describe('classifyContent', () => {
     }
     for (const slug of ['icon-search', 'icon-base', 'icons', 'icon-arrow-up-right']) {
       expect(classifyContent(slug, lookup), slug).toBe('free-icon')
+    }
+  })
+
+  it('locks every paid style the icon build writes, so a new style cannot fall into the free lane', () => {
+    for (const { suffix } of ICON_STYLES.filter((style: { suffix: string }) => style.suffix)) {
+      expect(classifyContent(`icon-search${suffix}`, lookup), suffix).toBe('premium-standalone')
     }
   })
 
