@@ -169,7 +169,7 @@ export const SITE_FAQ: FaqEntry[] = [
     id: 'mcp-agent-tools',
     category: 'mcp',
     q: 'What can my agent do once it is connected?',
-    a: 'It gets tools to browse categories, search components and icons, inspect details, props and source, list design systems and templates, plan and check a page, and retrieve exact install commands. They only read, so nothing on AI Canvas changes; the one exception, disconnect, ends your own sign-in. The MCP docs list every tool.',
+    a: 'It gets tools to browse categories, search components and icons, inspect details, props and source, list design systems and templates, check a page, and retrieve exact install commands. They only read, so nothing on AI Canvas changes; the one exception, disconnect, ends your own sign-in. The MCP docs list every tool.',
     links: [{ label: 'MCP docs', href: '/docs/mcp' }],
   },
   {
