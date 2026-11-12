@@ -167,7 +167,7 @@ export function CheckoutSplit({
                 </span>
               </p>
               <p className="mt-1.5 text-xs text-sand-600 dark:text-sand-400">
-                {charged && charged.currency !== 'USD' ? `${money(plan.price, 'USD')} ` : ''}+ VAT where applicable
+                + VAT where applicable
               </p>
 
               <dl aria-live="polite" className="mt-6 space-y-2 border-t border-sand-200 pt-5 text-sm dark:border-sand-800">
