@@ -24,6 +24,7 @@ import { BoltSolid } from '@/app/_icons/icons/bolt-solid'
 import type { Tag, Platform } from '../ComponentCard'
 import { isStackLabel, STACK_ICONS, stackIconWidthForHeight, type Stack } from '../../lib/stack'
 import { PageCrumbs } from '../PageCrumbs'
+import { CopyPage } from '../CopyPage'
 import { RailFooter } from '../RailFooter'
 import { PropsTable, type PropTable } from '../PropsTable'
 import { Step } from '../Step'
@@ -523,6 +524,7 @@ export default function ComponentPageView({
                 200 tokens on each page carry a definitional answer. Falls
                 back to the plain description when there is no subtitle. */}
             <PageCrumbs />
+            <CopyPage markdownHref={`/components/${slug}.md`} />
             {/* The tier sits on the title's line so a paid page says so at first
                 glance; outside the h1, so the heading stays the name alone. */}
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2">

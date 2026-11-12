@@ -34,6 +34,7 @@ import { PropsTable } from '../../../components/PropsTable'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { FreeBadge } from '../../../components/billing/FreeBadge'
 import { PageCrumbs } from '../../../components/PageCrumbs'
+import { CopyPage } from '../../../components/CopyPage'
 
 type RelatedItem = { slug: string; name: string; image?: string; imageLight?: string }
 
@@ -271,6 +272,7 @@ export function AndromedaComponentView({
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="mb-8">
         <PageCrumbs />
+        <CopyPage markdownHref={`/design-systems/andromeda/${slug}.md`} />
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <PageTitle gap="none" rank="section">{name}</PageTitle>
           <FreeBadge />

@@ -349,6 +349,9 @@ describe('the crumb row above the title', () => {
       ['/design-systems/andromeda-pro/foundation', 'andromeda-install-slot'],
       ['/design-systems/andromeda/system', 'andromeda-install-slot'],
       ['/design-systems/andromeda-pro/brain/explore', 'brain-install-slot'],
+      ['/components/diamond-grid', 'copy-page-slot'],
+      ['/design-systems/andromeda/button', 'copy-page-slot'],
+      ['/design-systems/andromeda-pro/button', 'copy-page-slot'],
     ]) {
       const el = row(path)!
       const slot = el.querySelector(`#${id}`)

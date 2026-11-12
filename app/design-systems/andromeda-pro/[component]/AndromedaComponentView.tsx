@@ -44,6 +44,7 @@ import { PropsTable } from '../../../components/PropsTable'
 import { RemixPanel } from '../../../_components/RemixPanel'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { PageCrumbs } from '../../../components/PageCrumbs'
+import { CopyPage } from '../../../components/CopyPage'
 import { ManualIconsCommand } from '../../../_components/ManualIconsCommand'
 
 // Matches the Pro components index card's data shape (system/AndromedaGallery
@@ -373,6 +374,7 @@ export function AndromedaComponentView({
           read as invisible ink the moment the page ground went light. */}
       <div className="mb-8">
         <PageCrumbs />
+        <CopyPage markdownHref={`/design-systems/andromeda-pro/${slug}.md`} />
         <PageTitle gap="none" rank="section">{name}</PageTitle>
         <PageLead>{description}</PageLead>
       </div>
