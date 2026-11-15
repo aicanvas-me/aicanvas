@@ -35,6 +35,7 @@ import { trackInstall } from '../../../lib/track-install'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
 import { useSession } from '../../../components/auth/SessionProvider'
+import { useInstallToken } from '../../../_lib/useInstallToken'
 import { AndromedaComponentCard } from '../system/AndromedaComponentCard'
 import { Paywall, type PaywallReason } from '../../../components/billing/Paywall'
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
@@ -126,27 +127,8 @@ export function AndromedaComponentView({
   // target the right item.
   const registrySlug = andromedaRegistrySlug(slug)
 
-  // Personalized install: when signed in, the copied command carries the
-  // user's API token so the registry attributes the pull to the account.
-  // Signed out = plain @aicanvas command. The token route is resilient
-  // (returns null on any error), so this is a no-op fallback to the anonymous
-  // command rather than a break.
-  const [fetchedToken, setFetchedToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => { if (!cancelled) setFetchedToken(d?.token ?? null) })
-        .catch(() => {})
-    refresh()
-    // Re-fetch on focus so a token rotated in another tab isn't left stale here.
-    window.addEventListener('focus', refresh)
-    return () => { cancelled = true; window.removeEventListener('focus', refresh) }
-  }, [user])
-  // Signed-out derives to null at render — no setState in the effect body.
-  const userToken = user ? fetchedToken : null
+  // Signed in: the copied command carries the user's token. Signed out: plain @aicanvas.
+  const userToken = useInstallToken()
   // One lookup for the whole page: the preview, the fullscreen preview and the
   // coverage chips all render from the same declaration.
   const spec = SPEC_BY_SLUG[slug]
@@ -753,7 +735,7 @@ export function AndromedaComponentView({
                             : pkgManager === 'yarn'
                             ? `yarn dlx shadcn@latest add ${installReference}`
                             : `npx shadcn@latest add ${installReference}`
-                          navigator.clipboard.writeText(cmd)
+                          void copyText(cmd)
                           trackInstall(registrySlug, 'andromeda-pro', pkgManager)
                           showCliToast()
                         }}

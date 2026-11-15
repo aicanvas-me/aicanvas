@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import { PENDING_INSTALL_TOKEN, resolveInstallToken } from '../_lib/useInstallToken'
 
 /**
  * Write `text` to the clipboard, resolving to whether it worked. Never rejects:
@@ -10,6 +11,16 @@ import { useCallback, useState } from 'react'
  * time it reaches the error beacon.
  */
 export async function copyText(text: string): Promise<boolean> {
+  // ClipboardItem takes a promise, so Safari keeps the click's permission while the token loads.
+  if (text.includes(PENDING_INSTALL_TOKEN)) {
+    const ready = resolveInstallToken(text)
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ 'text/plain': ready.then((t) => new Blob([t], { type: 'text/plain' })) })])
+      return true
+    } catch {
+      text = await ready
+    }
+  }
   try {
     await navigator.clipboard.writeText(text)
     return true
