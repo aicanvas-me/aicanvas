@@ -130,7 +130,7 @@ export function AgentCopyButton({
                 setOpen(false)
                 void item.run().then((ok) => index === 0 && flash(ok))
               }}
-              className="flex w-full items-center gap-2 rounded-control px-3 py-2 text-left text-xs font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50"
+              className={`flex w-full items-center gap-2 rounded-control px-3 py-2 text-left ${size === 'sm' ? 'text-sm' : 'text-xs'} font-semibold text-sand-700 hover:bg-sand-200 hover:text-sand-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:text-sand-300 dark:hover:bg-sand-800 dark:hover:text-sand-50`}
             >
               <item.icon size={15} aria-hidden />
               {item.label}
