@@ -14,7 +14,7 @@ import { Check } from '@/app/_icons/icons/check'
 import { CircleDollarSign } from '@/app/_icons/icons/circle-dollar-sign'
 import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
 import { Copy } from '@/app/_icons/icons/copy'
-import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right'
+import { FileText } from '@/app/_icons/icons/file-text'
 import { Smartphone } from '@/app/_icons/icons/smartphone'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { LogIn } from '@/app/_icons/icons/log-in'
@@ -851,10 +851,10 @@ function InstallButton({
                 menu="down"
                 onCopy={handleAgentCopy}
                 items={[
-                  { label: 'Copy Markdown', icon: Copy, run: () => copyMarkdown(undefined, markdownHref) },
+                  { label: 'Copy as Markdown', icon: Copy, run: () => copyMarkdown(undefined, markdownHref) },
                   {
-                    label: 'View .md',
-                    icon: ArrowUpRight,
+                    label: 'View as Markdown',
+                    icon: FileText,
                     run: async () => {
                       window.open(markdownHref, '_blank', 'noopener')
                       return false
