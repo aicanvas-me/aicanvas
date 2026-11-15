@@ -107,8 +107,11 @@ describe('componentMarkdown', () => {
     const usage = { file: 'components/aicanvas/demo-card.tsx', importLine: "import DemoCard from '@/components/aicanvas/demo-card'", render: '<DemoCard />' }
     const base = { name: 'Demo Card', isPremium: false, isBlock: false, usage, command: 'npx shadcn@latest add @aicanvas/demo-card', withToken: false, hasProps: false, mdUrl: 'https://aicanvas.me/components/demo-card.md' }
     const text = componentAgentText(base)
-    expect(text).toContain('If `components/aicanvas/demo-card.tsx`')
-    expect(text).toContain('never overwrite it or rebuild it from scratch')
+    expect(text.startsWith('Add Demo Card to my project: a free, MIT-licensed standalone React + Tailwind component from AI Canvas.')).toBe(true)
+    expect(text).toContain('1. If `components/aicanvas/demo-card.tsx`')
+    expect(text).toContain('Never overwrite it or rebuild it from scratch')
+    expect(text).toContain('"(free account required)" or "(Premium, locked)", stop and tell me')
+    expect(text).toContain('4. Check it type-checks')
     expect(text).toContain('it takes no props')
     expect(text).not.toContain('token')
     expect(componentAgentText({ ...base, withToken: true, hasProps: true })).toContain('keep the token out of committed files')

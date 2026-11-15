@@ -48,22 +48,24 @@ export interface AgentTextInput {
   mdUrl: string
 }
 
-/** "Copy for agent": one instruction to install and use the item, never rebuild it. */
+/** "Copy for agent": numbered steps to install and use the item, never rebuild it. */
 export function componentAgentText(input: AgentTextInput): string {
   const { name, usage } = input
-  const run = `run \`${input.command}\`${input.withToken ? ' (keep the token out of committed files)' : ''}`
-  const out = [
-    `Use ${name}, a ${input.isPremium ? 'Premium' : 'free, MIT-licensed'} standalone React + Tailwind ${input.isBlock ? 'block' : 'component'} from AI Canvas.`,
+  const kind = `${input.isPremium ? 'a Premium' : 'a free, MIT-licensed'} standalone React + Tailwind ${input.isBlock ? 'block' : 'component'}`
+  const props = input.hasProps ? `its props are listed at ${input.mdUrl}` : 'it takes no props'
+  const steps = [
     usage
-      ? `If \`${usage.file}\` (under \`src/\` if the project has one) does not exist, ${run}; never overwrite it or rebuild it from scratch.`
-      : `If it is not installed yet, ${run}; never rebuild it from scratch.`,
+      ? `If \`${usage.file}\` (under \`src/\` if the project has one) exists, skip to step 3. Never overwrite it or rebuild it from scratch.`
+      : `If it is already installed, skip to step 3. Never overwrite it or rebuild it from scratch.`,
+    `Run \`${input.command}\`${input.withToken ? ' (keep the token out of committed files)' : ''}. No \`components.json\`? Run \`npx shadcn@latest init\` first. If the install writes a placeholder titled "(free account required)" or "(Premium, locked)", stop and tell me.`,
+    usage?.render
+      ? `Import it with \`${usage.importLine}\` (use this project's alias if it is not \`@/\`) and render \`${usage.render}\` where I ask; ${props}.`
+      : usage
+        ? `Import it with \`${usage.importLine}\` (use this project's alias if it is not \`@/\`) and use it where I ask; its props are listed at ${input.mdUrl}.`
+        : `Import it and use it where I ask; its props are listed at ${input.mdUrl}.`,
+    `Check it type-checks and renders with no console errors, and tell me anything you did differently.`,
   ]
-  if (usage?.render) {
-    out.push(`Import it with \`${usage.importLine}\`, then render \`${usage.render}\`${input.hasProps ? `; its props are listed at ${input.mdUrl}` : '; it takes no props'}.`)
-  } else if (usage) {
-    out.push(`Import it with \`${usage.importLine}\`; its props are listed at ${input.mdUrl}.`)
-  }
-  return out.join(' ')
+  return `Add ${name} to my project: ${kind} from AI Canvas.\n\n${steps.map((step, i) => `${i + 1}. ${step}`).join('\n')}`
 }
 
 export interface ComponentMarkdownInput {
