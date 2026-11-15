@@ -22,14 +22,17 @@ export async function GET(
   const input = systemInput(system)
   const entry = input?.templates.find((t) => t.folder === template)
   if (!input || !entry) return new Response('Not found\n', { status: 404 })
-  const deps = installedDependencies(entry.registrySlug)
   const bySlug = new Map(input.components.map((c) => [c.registrySlug, c]))
+  // The install also writes what its components depend on (User Card brings Avatar).
+  const all = new Set(installedDependencies(entry.registrySlug))
+  for (const d of all) if (bySlug.has(d)) installedDependencies(d).forEach((n) => all.add(n))
+  const deps = [...all]
   return markdownResponse(
     systemTemplateMarkdown({
       system: { slug: system, name: input.name, paid: input.paid },
       template: entry,
       others: input.templates.filter((t) => t.folder !== template),
-      uses: deps.flatMap((d) => bySlug.get(d) ?? []),
+      uses: deps.flatMap((d) => bySlug.get(d) ?? []).sort((a, b) => a.name.localeCompare(b.name)),
       iconCount: deps.filter((d) => d.startsWith('icon-')).length,
       withTokens: deps.includes(`${system}-tokens`),
       usage: installedUsage(entry.registrySlug, 'index'),
