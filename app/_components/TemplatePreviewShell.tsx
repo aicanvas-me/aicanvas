@@ -14,8 +14,8 @@ import { Check } from '@/app/_icons/icons/check'
 import { CircleDollarSign } from '@/app/_icons/icons/circle-dollar-sign'
 import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
 import { Copy } from '@/app/_icons/icons/copy'
-import { FileText } from '@/app/_icons/icons/file-text'
-import { AgentCopyButton } from '../components/AgentCopyButton'
+import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right'
+import { Bot } from '@/app/_icons/icons/bot'
 import { Smartphone } from '@/app/_icons/icons/smartphone'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { LogIn } from '@/app/_icons/icons/log-in'
@@ -740,6 +740,7 @@ function InstallButton({
   const { open: openPaywall } = usePaywallModal()
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
+  const [flashed, setFlashed] = useState<'agent' | 'md' | null>(null)
   const ref = useRef<HTMLDivElement>(null)
   const panelRef = useKeepInViewport<HTMLDivElement>(open)
   const pathname = usePathname() ?? ''
@@ -788,6 +789,12 @@ function InstallButton({
     setTimeout(() => setCopied(false), 2000)
   }
 
+  async function flashCopy(key: 'agent' | 'md', run: () => Promise<boolean>) {
+    if (!(await run())) return
+    setFlashed(key)
+    setTimeout(() => setFlashed((k) => (k === key ? null : k)), 2000)
+  }
+
   useEffect(() => {
     if (!open) return
     function onClick(e: MouseEvent) {
@@ -813,39 +820,25 @@ function InstallButton({
       </Button>
 
       {open && (
-        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
-                  CLI install
+            <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">Install {templateName}</p>
+            <button
+              type="button"
+              onClick={handleCopy}
+              aria-label="Copy install command"
+              className="flex w-full items-center gap-3 rounded-inset bg-sand-200 px-4 py-3 text-left ring-1 ring-transparent transition-colors hover:ring-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:bg-sand-950 dark:hover:ring-sand-700"
+            >
+              <code className="min-w-0 flex-1 break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
+              {copied ? (
+                <span className="flex shrink-0 items-center gap-1 text-xs font-semibold text-success">
+                  <Check size={13} />
+                  Copied
                 </span>
-                <span className="rounded-full border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
-                  One command
-                </span>
-              </div>
-              <Button
-                variant="outline"
-                size="xs"
-                onClick={handleCopy}
-                aria-label="Copy install command"
-              >
-                {copied ? (
-                  <>
-                    <Check size={13} className="text-success" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy size={13} />
-                    Copy Command
-                  </>
-                )}
-              </Button>
-            </div>
-            <div className="rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3">
-              <code className="block break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
-            </div>
+              ) : (
+                <Copy size={14} className="shrink-0 text-sand-600 dark:text-sand-400" />
+              )}
+            </button>
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
                 <div key={i} className="flex items-center gap-2">
@@ -856,34 +849,48 @@ function InstallButton({
             </div>
           </div>
           {markdownHref && (
-            <div className="flex items-center justify-between gap-2 border-t border-sand-200 px-3 py-2.5 dark:border-sand-800">
-              <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
-                For AI tools
-              </span>
-              {/* Opens down: the popover hangs from the top bar, so the room is below. */}
-              <AgentCopyButton
-                size="xs"
-                menu="down"
-                onCopy={async () => {
-                  const ok = await copyText(componentAgentText({
-                    name: templateName,
-                    isPremium: getDesignSystemTemplateMeta(templateSlug)?.system.paid !== false,
-                    isBlock: false,
-                    system: { name: systemName, template: true },
-                    usage: agentUsage,
-                    command: cliCommand,
-                    withToken: !!userToken,
-                    hasProps: false,
-                    mdUrl: `https://aicanvas.me${markdownHref}`,
-                  }))
-                  track('Agent Copy', { component: templateSlug, ok })
-                  return ok
-                }}
-                items={[
-                  { label: 'Copy as Markdown', icon: Copy, run: () => copyMarkdown(undefined, markdownHref) },
-                  { label: 'View as Markdown', icon: FileText, run: async () => { window.open(markdownHref, '_blank', 'noopener'); return false } },
-                ]}
-              />
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-sand-200 px-3 py-2.5 dark:border-sand-800">
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="xs"
+                  onClick={() => flashCopy('agent', async () => {
+                    const ok = await copyText(componentAgentText({
+                      name: templateName,
+                      isPremium: getDesignSystemTemplateMeta(templateSlug)?.system.paid !== false,
+                      isBlock: false,
+                      system: { name: systemName, template: true },
+                      usage: agentUsage,
+                      command: cliCommand,
+                      withToken: !!userToken,
+                      hasProps: false,
+                      mdUrl: `https://aicanvas.me${markdownHref}`,
+                    }))
+                    track('Agent Copy', { component: templateSlug, ok })
+                    return ok
+                  })}
+                >
+                  {flashed === 'agent' ? <Check size={13} className="text-success" /> : <Bot size={13} />}
+                  {flashed === 'agent' ? 'Copied' : 'Copy for agent'}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="xs"
+                  onClick={() => flashCopy('md', () => copyMarkdown(undefined, markdownHref))}
+                >
+                  {flashed === 'md' ? <Check size={13} className="text-success" /> : <Copy size={13} />}
+                  {flashed === 'md' ? 'Copied' : 'Copy Markdown'}
+                </Button>
+              </div>
+              <a
+                href={markdownHref}
+                target="_blank"
+                rel="noopener"
+                className="ml-auto inline-flex items-center gap-1 text-xs font-semibold text-sand-700 transition-colors hover:text-sand-900 dark:text-sand-300 dark:hover:text-sand-50"
+              >
+                View .md
+                <ArrowUpRight size={12} />
+              </a>
             </div>
           )}
         </div>
