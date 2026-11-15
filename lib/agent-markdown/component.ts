@@ -57,7 +57,9 @@ export function componentAgentText(input: AgentTextInput): string {
   const kind = input.system
     ? `${tier} ${input.system.template ? 'page template' : 'component'} of the ${input.system.name} design system`
     : `${tier} standalone React + Tailwind ${input.isBlock ? 'block' : 'component'}`
-  const props = input.hasProps ? `its props are listed at ${input.mdUrl}` : 'it takes no props'
+  const props = input.system && !input.system.template
+    ? `its props and an example are at ${input.mdUrl}`
+    : input.hasProps ? `its props are listed at ${input.mdUrl}` : 'it takes no props'
   const steps = [
     usage
       ? `If \`${usage.file}\` (under \`src/\` if the project has one) exists and is the real component, skip to step 3. Never rebuild it from scratch.`
@@ -66,8 +68,8 @@ export function componentAgentText(input: AgentTextInput): string {
     usage?.render
       ? `Import it with \`${usage.importLine}\` (use this project's alias if it is not \`@/\`) and render \`${usage.render}\` where I ask; ${props}.`
       : usage
-        ? `Import it with \`${usage.importLine}\` (use this project's alias if it is not \`@/\`) and use it where I ask; its props are listed at ${input.mdUrl}.`
-        : `Import it and use it where I ask; its props are listed at ${input.mdUrl}.`,
+        ? `Import it with \`${usage.importLine}\` (use this project's alias if it is not \`@/\`) and use it where I ask; ${props}.`
+        : `Import it and use it where I ask; ${props}.`,
     `Check it type-checks and renders with no console errors, and tell me anything you did differently.`,
   ]
   return `Add ${name} to my project: ${kind} from AI Canvas.\n\n${steps.map((step, i) => `${i + 1}. ${step}`).join('\n')}`

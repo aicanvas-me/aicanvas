@@ -1,6 +1,7 @@
 import { systemComponentMarkdown, systemMarkdown } from '@/lib/agent-markdown/design-system'
 import { markdownResponse } from '@/lib/agent-markdown/response'
 import { installedUsage } from '../../../_installed'
+import { USAGE_EXAMPLES } from '@/lib/agent-markdown/usage-examples'
 import { installTier } from '@/lib/registry/premium-gate'
 import { nextInOrder } from '@/app/lib/related-order'
 import { SITE_URL } from '@/app/lib/config'
@@ -53,6 +54,7 @@ export async function GET(
       prompt: systemPrompt(system, component),
       related: nextInOrder(components, component).slice(0, 5),
       usage: installedUsage(entry.registrySlug),
+      example: USAGE_EXAMPLES[`${system}/${entry.slug}`] ?? null,
       siteUrl: SITE_URL,
     }),
   )

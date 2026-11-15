@@ -140,6 +140,8 @@ export interface SystemComponentInput {
   prompt: string | null
   related: SystemComponent[]
   usage?: Usage | null
+  /** Import line(s) plus the smallest real JSX, from ./usage-examples. */
+  example?: string | null
   siteUrl: string
 }
 
@@ -183,6 +185,7 @@ export function systemComponentMarkdown(input: SystemComponentInput): string {
 
   const use = usageSection(input.usage)
   if (use) out.push(use)
+  if (input.example) out.push(`## Example\n\n${fence(input.example, 'tsx')}`)
 
   out.push(...partsAndVariants(component.name, input.propTables))
 
