@@ -18,7 +18,7 @@ import { Fullscreen } from '@/app/_icons/icons/fullscreen'
 import { X } from '@/app/_icons/icons/x'
 import { RotateCw } from '@/app/_icons/icons/rotate-cw'
 import { Terminal } from '@/app/_icons/icons/terminal'
-import { Bot } from '@/app/_icons/icons/bot'
+import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
 import { Sparkle } from '@/app/_icons/icons/sparkle'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { BoltSolid } from '@/app/_icons/icons/bolt-solid'
@@ -57,6 +57,7 @@ import { Paywall, type PaywallReason } from '../billing/Paywall'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
 import { RemixPanel } from '../../_components/RemixPanel'
 import { componentAgentText, type Usage } from '@/lib/agent-markdown/component'
+import { AgentCopyButton } from '../AgentCopyButton'
 import { lightShot, optimizeImageKitUrl } from '../../lib/imagekit'
 
 type FontFramework = 'html' | 'nextjs'
@@ -487,26 +488,33 @@ export default function ComponentPageView({
     })
   }
 
-  const [agentCopied, setAgentCopied] = useState(false)
+  // "Copy for agent" and its menu. The install pieces keep the page's gates:
+  // paywall for Premium without a subscription, sign-in for a gated free install.
+  const agentCommand = `npx shadcn@latest add ${userToken ? `"https://aicanvas.me/r/${slug}.json?token=${userToken}"` : `@aicanvas/${slug}`}`
+  const gated = () => {
+    if (needsPremium) { openPaywallModal({ reason: 'premium-only' }); return true }
+    if (needsFreeAccount) { promptFreeAccount(); return true }
+    return false
+  }
   async function copyForAgent() {
-    if (needsPremium) { openPaywallModal({ reason: 'premium-only' }); return }
-    if (needsFreeAccount) { promptFreeAccount(); return }
-    const text = componentAgentText({
+    if (gated()) return false
+    const ok = await copyText(componentAgentText({
       name,
       isPremium: !!premium,
       isBlock: !!isBlock,
       usage: agentUsage,
-      command: `npx shadcn@latest add ${userToken ? `"https://aicanvas.me/r/${slug}.json?token=${userToken}"` : `@aicanvas/${slug}`}`,
+      command: agentCommand,
       withToken: !!userToken,
       hasProps: propTables.some((t) => t.props.length > 0),
       mdUrl: `https://aicanvas.me/components/${slug}.md`,
-    })
-    const ok = await copyText(text)
+    }))
     track('Agent Copy', { component: slug, ok })
-    if (!ok) return
-    setAgentCopied(true)
-    setTimeout(() => setAgentCopied(false), 2000)
+    return ok
   }
+  const agentItems = [
+    { label: 'Copy install command', icon: SquareTerminal, run: async () => !gated() && copyText(agentCommand) },
+    ...(agentUsage ? [{ label: 'Copy import line', icon: Code, run: () => copyText(agentUsage.importLine) }] : []),
+  ]
 
   async function copyCli() {
     // Premium gate: non-premium visitors get the upgrade modal, not a copy.
@@ -965,14 +973,7 @@ export default function ComponentPageView({
                   </span>
                 )}
               </h2>
-              <button
-                type="button"
-                onClick={() => void copyForAgent()}
-                className="inline-flex h-8 items-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
-              >
-                {agentCopied ? <Check size={14} /> : <Bot size={14} />}
-                {agentCopied ? 'Copied' : 'Copy for agent'}
-              </button>
+              <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
               </div>
               <p className="mb-4 mt-1 text-sm text-sand-600 dark:text-sand-400">
                 One command adds this component to your project.

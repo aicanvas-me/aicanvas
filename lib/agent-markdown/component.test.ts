@@ -120,8 +120,8 @@ describe('componentMarkdown', () => {
   })
 
   it('names the free-account placeholder only when the gate is on', () => {
-    expect(componentMarkdown(input())).not.toContain('free account required')
-    expect(componentMarkdown(input({ freeAccountGate: true }))).toContain('(free account required)')
+    expect(componentMarkdown(input())).not.toContain('AccountRequired')
+    expect(componentMarkdown(input({ freeAccountGate: true }))).toContain('an `AccountRequired` notice')
   })
 
   it('escapes pipes in prop types so the table keeps its columns', () => {

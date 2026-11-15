@@ -174,11 +174,11 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
   const install: string[] = ['## Install', fence(`npx shadcn@latest add @aicanvas/${slug}`, 'bash')]
   if (isPremium) {
     install.push(
-      `Requires Premium. Set your AI Canvas token as AICANVAS_TOKEN and register the @aicanvas registry with it, as described in the Install section of ${siteUrl}/llms.txt. Without a Premium token the command writes a placeholder file instead of the ${noun}.`,
+      `Requires Premium. Set your AI Canvas token as AICANVAS_TOKEN and register the @aicanvas registry with it, as described in the Install section of ${siteUrl}/llms.txt. Without a Premium token the command writes a placeholder (a \`PremiumLocked\` notice) instead of the ${noun}.`,
     )
   } else if (input.freeAccountGate) {
     install.push(
-      `Needs a free AI Canvas account. Signed out, the command exits 0 but writes a placeholder file titled "(free account required)"; check for that title before reporting success. Token setup: the Install section of ${siteUrl}/llms.txt.`,
+      `Needs a free AI Canvas account. Signed out, the command exits 0 but writes a placeholder (an \`AccountRequired\` notice); check for it before reporting success. Token setup: the Install section of ${siteUrl}/llms.txt.`,
     )
   }
   install.push(

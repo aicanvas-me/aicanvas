@@ -48,8 +48,9 @@ describe('systemComponentMarkdown', () => {
     const md = systemComponentMarkdown(base)
     expect(md).toContain('npx shadcn@latest add @aicanvas/andromeda-pro-accordion')
     expect(md).toContain('Requires Premium.')
-    expect(md).toContain('## Remix prompt')
-    for (const gone of ['## 3. State', 'engineRef', 'data-secret-tree', '```tsx']) {
+    expect(md).toContain('## Remix prompt\n\nOnly when the user wants Accordion rebuilt from scratch')
+    // No prompt text at all, not even the public head.
+    for (const gone of ['## 1. Setup', '## 3. State', 'engineRef', 'data-secret-tree', '```tsx']) {
       expect(md).not.toContain(gone)
     }
   })
@@ -62,9 +63,23 @@ describe('systemComponentMarkdown', () => {
       installTier: 'free account',
       prompt: null,
     })
-    expect(md).toContain('(free account required)')
+    expect(md).toContain('an `AccountRequired` notice')
     expect(md).not.toContain('## Remix prompt')
     expect(md).toContain('License: MIT')
+    expect(md.split('\n\n')[1]).toContain('is a component of the free, MIT-licensed Andromeda Legacy design system from AI Canvas')
+  })
+
+  it('names the parts of a compound component and lists its union props as variants', () => {
+    const md = systemComponentMarkdown({
+      ...base,
+      prompt: null,
+      propTables: [
+        { table: 'Tabs', props: [{ name: 'size', type: "'sm'|'md'|'lg'", optional: true, default: "'md'", description: '' }] },
+        { table: 'TabsTrigger', props: [{ name: 'value', type: 'string', optional: false, default: '', description: '' }] },
+      ],
+    })
+    expect(md).toContain('## Parts\n\nAccordion is built from `Tabs` and `TabsTrigger`.')
+    expect(md).toContain("- `size` on `Tabs`: sm, md or lg (default 'md')")
   })
 })
 
