@@ -55,9 +55,9 @@ export function componentAgentText(input: AgentTextInput): string {
   const props = input.hasProps ? `its props are listed at ${input.mdUrl}` : 'it takes no props'
   const steps = [
     usage
-      ? `If \`${usage.file}\` (under \`src/\` if the project has one) exists, skip to step 3. Never overwrite it or rebuild it from scratch.`
-      : `If it is already installed, skip to step 3. Never overwrite it or rebuild it from scratch.`,
-    `Run \`${input.command}\`${input.withToken ? ' (keep the token out of committed files)' : ''}. No \`components.json\`? Run \`npx shadcn@latest init\` first. If the install writes a placeholder titled "(free account required)" or "(Premium, locked)", stop and tell me.`,
+      ? `If \`${usage.file}\` (under \`src/\` if the project has one) exists and is the real component, skip to step 3. Never rebuild it from scratch.`
+      : `If it is already installed and is the real component, skip to step 3. Never rebuild it from scratch.`,
+    `Run \`${input.command}\` (${input.withToken ? 'keep the token out of committed files; ' : ''}add \`--overwrite\` only to replace a placeholder from an earlier try). No \`components.json\`? Run \`npx shadcn@latest init\` first. If the new file is only an \`AccountRequired\` or \`PremiumLocked\` notice, stop and tell me.`,
     usage?.render
       ? `Import it with \`${usage.importLine}\` (use this project's alias if it is not \`@/\`) and render \`${usage.render}\` where I ask; ${props}.`
       : usage
