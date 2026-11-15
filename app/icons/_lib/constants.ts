@@ -48,7 +48,14 @@ export const iconJsxLine = (name: string, size: number, weight: IconWeight, styl
   `<${iconComponentName(name, style)} size={${size}}${namesWeight(weight, style) ? ` weight="${weight}"` : ''}${colour ? ` color="${colour}"` : ''} />`
 
 export function agentPrompt(name: string, size: number, weight: IconWeight, style: IconStyle, colour: string | null = null, token?: string | null): string {
-  const component = iconComponentName(name, style)
   const weightText = namesWeight(weight, style) ? ` in the ${weight} weight` : ''
-  return `Use the ${component} icon in the ${style} style at ${size}px${weightText}${colour ? `, in ${colour}` : ''}.${style === 'line' ? '' : ` ${PREMIUM_ICON_INSTALL_NOTE}`} If this project does not have the icon, install it with \`${iconInstallCommand(name, style, token)}\`. Import it with \`${iconImportLine(name, style)}\`, then render \`${iconJsxLine(name, size, weight, style, colour)}\`.`
+  const title = name.split('-').map((w) => w[0].toUpperCase() + w.slice(1)).join(' ')
+  const tier = style === 'line' ? 'a free' : 'a Premium'
+  const steps = [
+    `If \`components/icons/${iconFileName(name, style)}.tsx\` (under \`src/\` if the project has one) exists and is the real icon, skip to step 3. Never redraw it.`,
+    `Run \`${iconInstallCommand(name, style, token)}\` (${token ? 'keep the token out of committed files; ' : ''}add \`--overwrite\` only to replace a placeholder from an earlier try). No \`components.json\`? Run \`npx shadcn@latest init\` first.${style === 'line' ? '' : ` ${PREMIUM_ICON_INSTALL_NOTE}`} If the new file is only an \`AccountRequired\` or \`PremiumLocked\` notice, stop and tell me.`,
+    `Import it with \`${iconImportLine(name, style)}\` (use this project's alias if it is not \`@/\`) and render \`${iconJsxLine(name, size, weight, style, colour)}\` where I ask.`,
+    `Check it type-checks and renders with no console errors, and tell me anything you did differently.`,
+  ]
+  return `Add the ${title} icon to my project: ${tier} icon from AI Canvas, in the ${style} style at ${size}px${weightText}${colour ? `, in ${colour}` : ''}.\n\n${steps.map((step, i) => `${i + 1}. ${step}`).join('\n')}`
 }
