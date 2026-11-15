@@ -35,6 +35,10 @@ import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/D
 import { FreeBadge } from '../../../components/billing/FreeBadge'
 import { PageCrumbs } from '../../../components/PageCrumbs'
 import { CopyPage } from '../../../components/CopyPage'
+import { AgentCopyButton } from '../../../components/AgentCopyButton'
+import { componentAgentText, type Usage } from '@/lib/agent-markdown/component'
+import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
+import { Code as CodeIcon } from '@/app/_icons/icons/code'
 
 type RelatedItem = { slug: string; name: string; image?: string; imageLight?: string }
 
@@ -46,6 +50,8 @@ interface Props {
   // Prop tables parsed from the component's @typedef JSDoc at build time.
   // Empty for the few components without a @typedef block — section is hidden.
   propTables?: AndromedaPropTable[]
+  // Where the install lands and how to import it, for "Copy for agent".
+  agentUsage?: Usage | null
   // Account-gated install: when on, a signed-out visitor of this FREE
   // design-system component sees a "create a free account to install" CTA in
   // place of the runnable command. Reading the source (Code tab) stays public.
@@ -59,6 +65,7 @@ export function AndromedaComponentView({
   description,
   related,
   propTables = [],
+  agentUsage = null,
   freeAccountGate = false,
   iconItems = [],
 }: Props) {
@@ -253,6 +260,33 @@ export function AndromedaComponentView({
     })
   }
 
+  // "Copy for agent" and its menu, behind the same gate as the install copy.
+  const agentCommand = `npx shadcn@latest add ${installReference}`
+  const agentGated = () => {
+    if (needsFreeAccount) { promptFreeAccount(); return true }
+    return false
+  }
+  async function copyForAgent() {
+    if (agentGated()) return false
+    const ok = await copyText(componentAgentText({
+      name,
+      isPremium: false,
+      isBlock: false,
+      system: { name: 'Andromeda Legacy' },
+      usage: agentUsage,
+      command: agentCommand,
+      withToken: !!userToken,
+      hasProps: propTables.some((t) => t.props.length > 0),
+      mdUrl: `https://aicanvas.me/design-systems/andromeda/${slug}.md`,
+    }))
+    track('Agent Copy', { component: registrySlug, ok })
+    return ok
+  }
+  const agentItems = [
+    { label: 'Copy install command', icon: SquareTerminal, run: async () => !agentGated() && copyText(agentCommand) },
+    ...(agentUsage ? [{ label: 'Copy import line', icon: CodeIcon, run: () => copyText(agentUsage.importLine) }] : []),
+  ]
+
   async function copyCli() {
     // Soft gate: signed-out + gated → open the auth modal instead of copying.
     if (needsFreeAccount) {
@@ -379,9 +413,12 @@ export function AndromedaComponentView({
 
       {/* ── Installation ─────────────────────────────────────────────── */}
       <section className="mt-12">
-        <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
-          Add to your project
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+            Add to your project
+          </h2>
+          <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
+        </div>
         <p className="mb-4 mt-1 text-sm text-sand-500 dark:text-sand-400">
           One command adds this component to your project.
         </p>

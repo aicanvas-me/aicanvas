@@ -39,6 +39,8 @@ export interface AgentTextInput {
   name: string
   isPremium: boolean
   isBlock: boolean
+  /** Set for a design-system component or template; absent for a standalone. */
+  system?: { name: string; template?: boolean }
   usage: Usage | null
   /** The exact command the page copies for this viewer. */
   command: string
@@ -51,7 +53,10 @@ export interface AgentTextInput {
 /** "Copy for agent": numbered steps to install and use the item, never rebuild it. */
 export function componentAgentText(input: AgentTextInput): string {
   const { name, usage } = input
-  const kind = `${input.isPremium ? 'a Premium' : 'a free, MIT-licensed'} standalone React + Tailwind ${input.isBlock ? 'block' : 'component'}`
+  const tier = input.isPremium ? 'a Premium' : 'a free, MIT-licensed'
+  const kind = input.system
+    ? `${tier} ${input.system.template ? 'page template' : 'component'} of the ${input.system.name} design system`
+    : `${tier} standalone React + Tailwind ${input.isBlock ? 'block' : 'component'}`
   const props = input.hasProps ? `its props are listed at ${input.mdUrl}` : 'it takes no props'
   const steps = [
     usage

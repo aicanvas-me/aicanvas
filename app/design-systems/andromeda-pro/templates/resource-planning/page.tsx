@@ -3,6 +3,7 @@ import { ResourcePlanning } from '../../../../lib/andromeda-pro-examples.generat
 import { tokens } from '../../../../lib/andromeda-pro.generated'
 import { AndromedaThemeWrap } from '../../AndromedaThemeWrap'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
+import { installedUsage } from '../../../../md/_installed'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
 // routes matching TEMPLATE_LEAF_RE (see Sidebar) so the shell owns the full
@@ -28,6 +29,7 @@ export default async function ResourcePlanningTemplate({
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-pro-resource-planning"
+      agentUsage={installedUsage('andromeda-pro-resource-planning', 'index')}
       templateName="Resource Planning"
       systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"

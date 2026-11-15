@@ -45,6 +45,10 @@ import { RemixPanel } from '../../../_components/RemixPanel'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { PageCrumbs } from '../../../components/PageCrumbs'
 import { CopyPage } from '../../../components/CopyPage'
+import { AgentCopyButton } from '../../../components/AgentCopyButton'
+import { componentAgentText, type Usage } from '@/lib/agent-markdown/component'
+import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
+import { Code as CodeIcon } from '@/app/_icons/icons/code'
 import { ManualIconsCommand } from '../../../_components/ManualIconsCommand'
 
 // Matches the Pro components index card's data shape (system/AndromedaGallery
@@ -60,6 +64,8 @@ interface Props {
   // Prop tables parsed from the component's @typedef JSDoc at build time.
   // Empty for the few components without a @typedef block — section is hidden.
   propTables?: AndromedaPropTable[]
+  // Where the install lands and how to import it, for "Copy for agent".
+  agentUsage?: Usage | null
   // Unused by Andromeda Pro: this tier is paid-to-install for every component,
   // so there is no free-account gate here, only the
   // premium gate below. Kept only so this view's prop shape matches the
@@ -107,6 +113,7 @@ export function AndromedaComponentView({
   description,
   related,
   propTables = [],
+  agentUsage = null,
   iconItems = [],
   remixPrompt = null,
   promptLocked = false,
@@ -345,6 +352,33 @@ export function AndromedaComponentView({
     ? `"https://aicanvas.me/r/${registrySlug}.json?token=aic_••••••••"`
     : `@aicanvas/${registrySlug}`
   const cliCommand = `npx shadcn@latest add ${installReference}`
+
+  // "Copy for agent" and its menu, behind the same gate as the install copy.
+  const agentCommand = `npx shadcn@latest add ${installReference}`
+  const agentGated = () => {
+    if (needsPremium) { openPaywallModal({ reason: 'premium-only' }); return true }
+    return false
+  }
+  async function copyForAgent() {
+    if (agentGated()) return false
+    const ok = await copyText(componentAgentText({
+      name,
+      isPremium: true,
+      isBlock: false,
+      system: { name: 'Andromeda Pro' },
+      usage: agentUsage,
+      command: agentCommand,
+      withToken: !!userToken,
+      hasProps: propTables.some((t) => t.props.length > 0),
+      mdUrl: `https://aicanvas.me/design-systems/andromeda-pro/${slug}.md`,
+    }))
+    track('Agent Copy', { component: registrySlug, ok })
+    return ok
+  }
+  const agentItems = [
+    { label: 'Copy install command', icon: SquareTerminal, run: async () => !agentGated() && copyText(agentCommand) },
+    ...(agentUsage ? [{ label: 'Copy import line', icon: CodeIcon, run: () => copyText(agentUsage.importLine) }] : []),
+  ]
 
   async function copyCli() {
     // Premium gate: non-premium visitors get the upgrade modal, not a copy.
@@ -642,9 +676,12 @@ export function AndromedaComponentView({
 
       {/* ── Installation ─────────────────────────────────────────────── */}
       <section className="mt-12">
-        <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
-          Add to your project
-        </h2>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+            Add to your project
+          </h2>
+          <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
+        </div>
         <p className="mb-4 mt-1 text-sm text-sand-500 dark:text-sand-400">
           One command adds this component to your project.
         </p>

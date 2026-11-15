@@ -15,6 +15,7 @@ import { CircleDollarSign } from '@/app/_icons/icons/circle-dollar-sign'
 import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
 import { Copy } from '@/app/_icons/icons/copy'
 import { FileText } from '@/app/_icons/icons/file-text'
+import { Bot } from '@/app/_icons/icons/bot'
 import { Smartphone } from '@/app/_icons/icons/smartphone'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { LogIn } from '@/app/_icons/icons/log-in'
@@ -29,6 +30,7 @@ import { useKeepInViewport } from '../_lib/useKeepInViewport'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { copyText } from '../components/useCopied'
 import { copyMarkdown } from '../components/CopyPage'
+import { componentAgentText, type Usage } from '@/lib/agent-markdown/component'
 import { track } from '../lib/analytics'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
@@ -93,6 +95,7 @@ interface TemplatePreviewShellProps {
   systemHref: string // where the system-name crumb links, e.g. the showcase
   frame?: boolean // true when this render is the iframe payload (?frame=1); resolved from searchParams on the server by the page and passed in, so the framed HTML is bare from the very first paint (no chrome flash)
   description?: string[] // overrides the install-popover bullet copy
+  agentUsage?: Usage | null // where the install lands and how to import it, for "Copy for agent"
   children: ReactNode // the template composition
 }
 
@@ -312,6 +315,7 @@ function PreviewChrome({
   systemName,
   systemHref,
   description,
+  agentUsage,
   children,
 }: Omit<TemplatePreviewShellProps, 'children'> & { children: ReactNode }) {
   const pathname = usePathname() ?? ''
@@ -349,6 +353,7 @@ function PreviewChrome({
         systemName={systemName}
         systemHref={systemHref}
         description={description}
+        agentUsage={agentUsage}
         device={device}
         onDevice={setDevice}
         onReload={reload}
@@ -447,6 +452,7 @@ function TopBar({
   systemName,
   systemHref,
   description,
+  agentUsage,
   device,
   onDevice,
   onReload,
@@ -544,8 +550,10 @@ function TopBar({
           <ThemeToggle />
           <RightCluster
             templateSlug={templateSlug}
+            templateName={templateName}
             systemName={systemName}
             description={description}
+            agentUsage={agentUsage}
           />
         </div>
       </div>
@@ -674,12 +682,16 @@ function TemplateSwitcher({
 
 function RightCluster({
   templateSlug,
+  templateName,
   systemName,
   description,
+  agentUsage,
 }: {
   templateSlug: string
+  templateName: string
   systemName: string
   description?: string[]
+  agentUsage?: Usage | null
 }) {
   const status = usePremiumStatus()
   // premium / in-flight 'unknown' → Install; resolved free/anon → the small
@@ -693,7 +705,7 @@ function RightCluster({
   return (
     <>
       {canInstall ? (
-        <InstallButton templateSlug={templateSlug} systemName={systemName} description={description} />
+        <InstallButton templateSlug={templateSlug} templateName={templateName} systemName={systemName} description={description} agentUsage={agentUsage} />
       ) : (
         <Link href="/pricing" className={buttonClasses({ variant: 'primary', size: 'xs' })}>
           <Bolt size={13} />
@@ -714,17 +726,22 @@ function RightCluster({
 
 function InstallButton({
   templateSlug,
+  templateName,
   systemName,
   description,
+  agentUsage = null,
 }: {
   templateSlug: string
+  templateName: string
   systemName: string
   description?: string[]
+  agentUsage?: Usage | null
 }) {
   const { open: openPaywall } = usePaywallModal()
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const [mdCopied, setMdCopied] = useState(false)
+  const [agentCopied, setAgentCopied] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const panelRef = useKeepInViewport<HTMLDivElement>(open)
   const pathname = usePathname() ?? ''
@@ -846,6 +863,30 @@ function InstallButton({
                 For AI tools
               </span>
               <div className="flex items-center gap-1.5">
+                <Button
+                  variant="outline"
+                  size="xs"
+                  onClick={async () => {
+                    const ok = await copyText(componentAgentText({
+                      name: templateName,
+                      isPremium: getDesignSystemTemplateMeta(templateSlug)?.system.paid !== false,
+                      isBlock: false,
+                      system: { name: systemName, template: true },
+                      usage: agentUsage,
+                      command: cliCommand,
+                      withToken: !!userToken,
+                      hasProps: false,
+                      mdUrl: `https://aicanvas.me${markdownHref}`,
+                    }))
+                    track('Agent Copy', { component: templateSlug, ok })
+                    if (!ok) return
+                    setAgentCopied(true)
+                    setTimeout(() => setAgentCopied(false), 2000)
+                  }}
+                >
+                  {agentCopied ? <Check size={13} className="text-success" /> : <Bot size={13} />}
+                  {agentCopied ? 'Copied' : 'Copy for agent'}
+                </Button>
                 <Button
                   variant="outline"
                   size="xs"

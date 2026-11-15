@@ -7,6 +7,8 @@ import {
 import { ANDROMEDA_PROPS } from '../../../lib/andromeda-props.generated'
 import { nextInOrder } from '../../../lib/related-order'
 import { AndromedaComponentView } from './AndromedaComponentView'
+import { installedUsage } from '../../../md/_installed'
+import { andromedaRegistrySlug } from '../../../_lib/andromeda/andromeda-meta'
 import { iconItemsIn } from '../../../_lib/icon-items'
 
 export function generateStaticParams() {
@@ -66,6 +68,7 @@ export default async function AndromedaComponentPage({
       description={entry.description}
       related={related}
       propTables={propTables}
+      agentUsage={installedUsage(andromedaRegistrySlug(entry.slug))}
       freeAccountGate={freeAccountGate}
       iconItems={iconItemsIn(entry.code)}
     />

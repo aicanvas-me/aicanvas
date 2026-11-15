@@ -1,6 +1,7 @@
 import ResourcePlanning from '../../../../../design-systems/andromeda/examples/resource-planning'
 import { themeColor } from '../../../../../design-systems/andromeda/components/lib/utils'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
+import { installedUsage } from '../../../../md/_installed'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
 // routes matching TEMPLATE_LEAF_RE (see Sidebar) so the shell owns the full
@@ -25,6 +26,7 @@ export default async function ResourcePlanningTemplate({
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-resource-planning"
+      agentUsage={installedUsage('andromeda-resource-planning', 'index')}
       templateName="Resource Planning"
       systemName="Andromeda Legacy"
       systemHref="/design-systems/andromeda"

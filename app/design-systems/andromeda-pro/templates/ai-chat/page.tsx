@@ -3,6 +3,7 @@ import { AiChat } from '../../../../lib/andromeda-pro-examples.generated'
 import { tokens } from '../../../../lib/andromeda-pro.generated'
 import { AndromedaThemeWrap } from '../../AndromedaThemeWrap'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
+import { installedUsage } from '../../../../md/_installed'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
 // routes matching TEMPLATE_LEAF_RE (see Sidebar) so the shell owns the full
@@ -28,6 +29,7 @@ export default async function AiChatTemplate({
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-pro-ai-chat"
+      agentUsage={installedUsage('andromeda-pro-ai-chat', 'index')}
       templateName="AI Chat"
       systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"

@@ -3,6 +3,7 @@ import { FintechLanding } from '../../../../lib/andromeda-pro-examples.generated
 import { tokens } from '../../../../lib/andromeda-pro.generated'
 import { AndromedaThemeWrap } from '../../AndromedaThemeWrap'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
+import { installedUsage } from '../../../../md/_installed'
 
 // Distraction-free template, same shell as every Pro template (see the AI Chat
 // route for the full notes). The page scrolls inside its own root, so
@@ -19,6 +20,7 @@ export default async function FintechLandingTemplate({
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-pro-fintech-landing"
+      agentUsage={installedUsage('andromeda-pro-fintech-landing', 'index')}
       templateName="Fintech Landing"
       systemName="Andromeda Pro"
       systemHref="/design-systems/andromeda-pro"
