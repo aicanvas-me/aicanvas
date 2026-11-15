@@ -20,13 +20,20 @@ type AuthGateScreenProps = {
   subtitle?: string
 }
 
+// "free account" reads bold wherever a gate's pitch names it.
+function emphasise(text: string) {
+  return text.split(/(free account)/).map((part, i) =>
+    i % 2 ? <strong key={i} className="font-semibold text-sand-900 dark:text-sand-50">{part}</strong> : part,
+  )
+}
+
 export function AuthGateScreen({ onChooseSignIn, onChooseSignUp, title, subtitle }: AuthGateScreenProps) {
   return (
     <div className="flex flex-col">
       <AuthHeading
         as="h2"
         title={title ?? 'Sign in and unlock the canvas.'}
-        subtitle={subtitle ?? 'Save what you love. AI Canvas is open core: a free MIT library plus an optional Premium tier.'}
+        subtitle={emphasise(subtitle ?? 'Save what you love. AI Canvas is open core: a free MIT library plus an optional Premium tier.')}
       />
 
       <div className="mt-7 flex flex-col gap-3">
