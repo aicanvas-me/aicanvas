@@ -15,7 +15,7 @@ import { CircleDollarSign } from '@/app/_icons/icons/circle-dollar-sign'
 import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
 import { Copy } from '@/app/_icons/icons/copy'
 import { FileText } from '@/app/_icons/icons/file-text'
-import { Bot } from '@/app/_icons/icons/bot'
+import { AgentCopyButton } from '../components/AgentCopyButton'
 import { Smartphone } from '@/app/_icons/icons/smartphone'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { LogIn } from '@/app/_icons/icons/log-in'
@@ -740,8 +740,6 @@ function InstallButton({
   const { open: openPaywall } = usePaywallModal()
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [mdCopied, setMdCopied] = useState(false)
-  const [agentCopied, setAgentCopied] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const panelRef = useKeepInViewport<HTMLDivElement>(open)
   const pathname = usePathname() ?? ''
@@ -815,7 +813,7 @@ function InstallButton({
       </Button>
 
       {open && (
-        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
@@ -862,48 +860,30 @@ function InstallButton({
               <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
                 For AI tools
               </span>
-              <div className="flex items-center gap-1.5">
-                <Button
-                  variant="outline"
-                  size="xs"
-                  onClick={async () => {
-                    const ok = await copyText(componentAgentText({
-                      name: templateName,
-                      isPremium: getDesignSystemTemplateMeta(templateSlug)?.system.paid !== false,
-                      isBlock: false,
-                      system: { name: systemName, template: true },
-                      usage: agentUsage,
-                      command: cliCommand,
-                      withToken: !!userToken,
-                      hasProps: false,
-                      mdUrl: `https://aicanvas.me${markdownHref}`,
-                    }))
-                    track('Agent Copy', { component: templateSlug, ok })
-                    if (!ok) return
-                    setAgentCopied(true)
-                    setTimeout(() => setAgentCopied(false), 2000)
-                  }}
-                >
-                  {agentCopied ? <Check size={13} className="text-success" /> : <Bot size={13} />}
-                  {agentCopied ? 'Copied' : 'Copy for agent'}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="xs"
-                  onClick={async () => {
-                    if (!(await copyMarkdown(undefined, markdownHref))) return
-                    setMdCopied(true)
-                    setTimeout(() => setMdCopied(false), 2000)
-                  }}
-                >
-                  {mdCopied ? <Check size={13} className="text-success" /> : <Copy size={13} />}
-                  {mdCopied ? 'Copied' : 'Copy as Markdown'}
-                </Button>
-                <Link href={markdownHref} target="_blank" className={buttonClasses({ variant: 'outline', size: 'xs' })}>
-                  <FileText size={13} />
-                  View
-                </Link>
-              </div>
+              {/* Opens down: the popover hangs from the top bar, so the room is below. */}
+              <AgentCopyButton
+                size="xs"
+                menu="down"
+                onCopy={async () => {
+                  const ok = await copyText(componentAgentText({
+                    name: templateName,
+                    isPremium: getDesignSystemTemplateMeta(templateSlug)?.system.paid !== false,
+                    isBlock: false,
+                    system: { name: systemName, template: true },
+                    usage: agentUsage,
+                    command: cliCommand,
+                    withToken: !!userToken,
+                    hasProps: false,
+                    mdUrl: `https://aicanvas.me${markdownHref}`,
+                  }))
+                  track('Agent Copy', { component: templateSlug, ok })
+                  return ok
+                }}
+                items={[
+                  { label: 'Copy as Markdown', icon: Copy, run: () => copyMarkdown(undefined, markdownHref) },
+                  { label: 'View as Markdown', icon: FileText, run: async () => { window.open(markdownHref, '_blank', 'noopener'); return false } },
+                ]}
+              />
             </div>
           )}
         </div>

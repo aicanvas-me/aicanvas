@@ -8,13 +8,27 @@ import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 export interface AgentCopyItem {
   label: string
   icon: ComponentType<{ size?: number; 'aria-hidden'?: boolean }>
-  /** Resolves true once the text is on the clipboard; false when a gate opened instead. */
+  /** Resolves true once the text is on the clipboard; false when a gate or panel opened instead. */
   run: () => Promise<boolean>
 }
 
-// The split "Copy for agent" button: the main half copies the agent steps, the
-// caret lists the pieces (install command, import line). Same look as the icon pages.
-export function AgentCopyButton({ onCopy, items }: { onCopy: () => Promise<boolean>; items: AgentCopyItem[] }) {
+const SKIN =
+  'border border-sand-300 bg-transparent text-sand-700 transition-colors hover:border-sand-400 hover:text-sand-900 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-700 dark:text-sand-300 dark:hover:border-sand-600 dark:hover:text-sand-100'
+const SIZE = { xs: 'gap-1.5 px-3 py-1.5 text-xs', sm: 'gap-1.5 px-3.5 py-1.5 text-sm' }
+
+// The split "Copy for agent" button, the secondary action next to Copy Command:
+// the main half copies the agent steps, the caret lists the rest (install, import, remix).
+export function AgentCopyButton({
+  onCopy,
+  items,
+  size = 'sm',
+  menu = 'up',
+}: {
+  onCopy: () => Promise<boolean>
+  items: AgentCopyItem[]
+  size?: 'xs' | 'sm'
+  menu?: 'up' | 'down'
+}) {
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -22,6 +36,7 @@ export function AgentCopyButton({ onCopy, items }: { onCopy: () => Promise<boole
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([])
   const menuId = useId()
   const all: AgentCopyItem[] = [{ label: 'Copy for agent', icon: Bot, run: onCopy }, ...items]
+  const iconSize = size === 'sm' ? 15 : 13
 
   const flash = (ok: boolean) => {
     if (!ok) return
@@ -73,10 +88,14 @@ export function AgentCopyButton({ onCopy, items }: { onCopy: () => Promise<boole
       <button
         type="button"
         onClick={() => void onCopy().then(flash)}
-        className="inline-flex h-8 items-center gap-1.5 rounded-l-control bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+        className={`relative inline-flex items-center whitespace-nowrap rounded-l-control font-semibold ${SKIN} ${SIZE[size]}`}
       >
-        {copied ? <Check size={14} /> : <Bot size={14} />}
-        {copied ? 'Copied' : 'Copy for agent'}
+        {copied ? (
+          <Check size={iconSize} className="text-success max-[379px]:hidden" />
+        ) : (
+          <Bot size={iconSize} className="max-[379px]:hidden" />
+        )}
+        {copied ? 'Copied' : <><span className="sm:hidden">Agent</span><span className="hidden sm:inline">Copy for agent</span></>}
       </button>
       <button
         ref={triggerRef}
@@ -86,9 +105,9 @@ export function AgentCopyButton({ onCopy, items }: { onCopy: () => Promise<boole
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
         onClick={() => setOpen((value) => !value)}
-        className="inline-flex h-8 w-8 items-center justify-center rounded-r-control border-l border-accent-foreground/20 bg-accent text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+        className={`relative -ml-px inline-flex w-8 items-center justify-center rounded-r-control ${SKIN}`}
       >
-        <ChevronDown size={13} />
+        <ChevronDown size={13} className={`transition-transform ${open === (menu === 'down') ? 'rotate-180' : ''}`} />
       </button>
       {open && (
         <div
@@ -96,7 +115,7 @@ export function AgentCopyButton({ onCopy, items }: { onCopy: () => Promise<boole
           role="menu"
           aria-label="Copy options"
           onKeyDown={onMenuKey}
-          className="absolute right-0 top-10 z-50 w-56 rounded-section border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900"
+          className={`absolute right-0 z-50 w-56 rounded-section border border-sand-200 bg-sand-50 p-1.5 shadow-2xl dark:border-sand-700 dark:bg-sand-900 ${menu === 'up' ? 'bottom-full mb-2' : 'top-full mt-2'}`}
         >
           {all.map((item, index) => (
             <button

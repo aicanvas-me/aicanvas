@@ -514,6 +514,11 @@ export default function ComponentPageView({
   const agentItems = [
     { label: 'Copy install command', icon: SquareTerminal, run: async () => !gated() && copyText(agentCommand) },
     ...(agentUsage ? [{ label: 'Copy import line', icon: Code, run: () => copyText(agentUsage.importLine) }] : []),
+    ...(remixPrompt ? [{ label: 'Remix with AI', icon: Sparkle, run: async () => {
+      track('Remix Open', { component: slug })
+      setRemixOpen(true)
+      return false
+    } }] : []),
   ]
 
   async function copyCli() {
@@ -903,24 +908,9 @@ export default function ComponentPageView({
               {/* Save — signed out, opens the same soft-gate modal as Copy Command. */}
               <SaveButton slug={slug} system={designSystem ?? null} />
 
-              {/* Remix with AI — secondary action; opens the side panel with
-                  the full platform-agnostic prompt. Hidden entirely when the
-                  component has no prompt. Sits left of the primary Copy Command
-                  action. */}
-              {remixPrompt && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="whitespace-nowrap"
-                  onClick={() => {
-                    track('Remix Open', { component: slug })
-                    setRemixOpen(true)
-                  }}
-                >
-                  <Sparkle size={15} className="max-[379px]:hidden" />
-                  Remix<span className="hidden sm:inline"> with AI</span>
-                </Button>
-              )}
+              {/* Copy for agent — secondary action; its menu (opens up) holds the
+                  install command, the import line and Remix with AI. */}
+              <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
 
               {/* Copy Command — primary install action; copies the npx shadcn
                   command. The button and command stay visible at all times;
@@ -954,7 +944,6 @@ export default function ComponentPageView({
             }
             return (
             <section className="mt-12">
-              <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Add to your project
                 {premium && (
@@ -973,8 +962,6 @@ export default function ComponentPageView({
                   </span>
                 )}
               </h2>
-              <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
-              </div>
               <p className="mb-4 mt-1 text-sm text-sand-600 dark:text-sand-400">
                 One command adds this component to your project.
               </p>

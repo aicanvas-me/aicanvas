@@ -378,6 +378,11 @@ export function AndromedaComponentView({
   const agentItems = [
     { label: 'Copy install command', icon: SquareTerminal, run: async () => !agentGated() && copyText(agentCommand) },
     ...(agentUsage ? [{ label: 'Copy import line', icon: CodeIcon, run: () => copyText(agentUsage.importLine) }] : []),
+    ...(remixPrompt ? [{ label: 'Remix with AI', icon: Sparkle, run: async () => {
+      track('Remix Open', { component: registrySlug })
+      setRemixOpen(true)
+      return false
+    } }] : []),
   ]
 
   async function copyCli() {
@@ -583,23 +588,9 @@ export function AndromedaComponentView({
               item. */}
           <SaveButton slug={registrySlug} system="andromeda-pro" />
 
-          {/* Remix with AI — only when a prompt actually exists for this
-              component. No prompt, no button: an affordance that opens an
-              empty panel is worse than none. */}
-          {remixPrompt && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="whitespace-nowrap"
-              onClick={() => {
-                track('Remix Open', { component: registrySlug })
-                setRemixOpen(true)
-              }}
-            >
-              <Sparkle size={15} className="max-[379px]:hidden" />
-              Remix<span className="hidden sm:inline"> with AI</span>
-            </Button>
-          )}
+          {/* Copy for agent — its menu (opens up) holds the install command,
+              the import line and, when a prompt exists, Remix with AI. */}
+          <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
 
           {/* Copy Command — the button and command stay visible at all times; when
               the visitor isn't a confirmed subscriber, copyCli() opens the
@@ -676,12 +667,9 @@ export function AndromedaComponentView({
 
       {/* ── Installation ─────────────────────────────────────────────── */}
       <section className="mt-12">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
-            Add to your project
-          </h2>
-          <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
-        </div>
+        <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+          Add to your project
+        </h2>
         <p className="mb-4 mt-1 text-sm text-sand-500 dark:text-sand-400">
           One command adds this component to your project.
         </p>

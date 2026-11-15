@@ -397,6 +397,9 @@ export function AndromedaComponentView({
               retired standalone slug (andromeda-button). */}
           <SaveButton slug={registrySlug} system="andromeda" />
 
+          {/* Copy for agent — its menu (opens up) holds the install command and import line. */}
+          <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
+
           {/* Copy Command — the button and command stay visible at all times; when
               the install is account-gated and the visitor is signed out,
               copyCli() opens the auth modal instead of copying. */}
@@ -413,12 +416,9 @@ export function AndromedaComponentView({
 
       {/* ── Installation ─────────────────────────────────────────────── */}
       <section className="mt-12">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
-            Add to your project
-          </h2>
-          <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
-        </div>
+        <h2 className="text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
+          Add to your project
+        </h2>
         <p className="mb-4 mt-1 text-sm text-sand-500 dark:text-sand-400">
           One command adds this component to your project.
         </p>
