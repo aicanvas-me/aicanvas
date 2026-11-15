@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { History } from '@/app/_icons/icons/history'
 import { Gear } from '@/app/_icons/icons/gear'
-import { Heart } from '@/app/_icons/icons/heart'
+import { Bookmark } from '@/app/_icons/icons/bookmark'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { Plug } from '@/app/_icons/icons/plug'
 import { LogOut } from '@/app/_icons/icons/log-out'
@@ -11,7 +11,7 @@ import { PremiumBadge } from '../billing/PremiumBadge'
 import { useSession } from './SessionProvider'
 
 const LINKS: { href: string; label: string; icon: ReactNode }[] = [
-  { href: '/account/saved', label: 'Saved', icon: <Heart size={14} /> },
+  { href: '/account/saved', label: 'Saved', icon: <Bookmark size={14} /> },
   { href: '/account/history', label: 'Activity', icon: <History size={14} /> },
   { href: '/account/settings', label: 'Settings', icon: <Gear size={14} /> },
   { href: '/account', label: 'Profile', icon: <User size={14} /> },

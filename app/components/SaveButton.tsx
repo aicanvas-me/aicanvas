@@ -1,17 +1,16 @@
 'use client'
 
-import { Heart } from '@/app/_icons/icons/heart'
-import { HeartSolid } from '@/app/_icons/icons/heart-solid'
+import { Bookmark } from '@/app/_icons/icons/bookmark'
 import { usePathname } from 'next/navigation'
 import { useSession } from './auth/SessionProvider'
 import { useAuthModal } from './auth/AuthModalProvider'
 import { Button } from './Button'
 
 // ─── SaveButton ───────────────────────────────────────────────────────────────
-// Heart toggle for saving a component. Renders as a 32×32 icon-only Button
+// Bookmark toggle for saving a component. Renders as a 32×32 icon-only Button
 // from the unified system (size="sm") so it aligns with the sm label buttons
 // it sits next to in the component action bar. Saved-state styling (accent
-// heart) is layered on top via className.
+// filled bookmark) is layered on top via className.
 //
 // Always rendered, even signed out — clicking it while signed out opens the
 // same soft-gate modal the account-gated Copy Command uses (mirrors that
@@ -56,7 +55,7 @@ export function SaveButton({ slug, system = null, className = '', size = 15 }: S
       aria-pressed={saved}
       className={`${saved ? 'text-accent' : ''} ${className}`.trim()}
     >
-      {saved ? <HeartSolid size={size} /> : <Heart size={size} />}
+      <Bookmark size={size} className={saved ? 'fill-current' : undefined} />
     </Button>
   )
 }
