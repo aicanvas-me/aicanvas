@@ -40,9 +40,11 @@ export function useInstallToken(): string | null {
   return entry?.userId === user.id ? entry.token : PENDING_INSTALL_TOKEN
 }
 
-// Waits for the token, then fills it in; no token means the plain @aicanvas command.
-export async function resolveInstallToken(text: string): Promise<string> {
+// Waits for the token, then fills it in. No token: the caller's tokenless text,
+// or the plain @aicanvas command for the registry URL form.
+export async function resolveInstallToken(text: string, noTokenText?: string): Promise<string> {
   const token = await (latest ?? null)
   if (token) return text.replaceAll(PENDING_INSTALL_TOKEN, token)
+  if (noTokenText !== undefined) return noTokenText
   return text.replace(/"https:\/\/aicanvas\.me\/r\/([^"?]+)\.json\?token=aic_pending_install_token"/g, '@aicanvas/$1')
 }

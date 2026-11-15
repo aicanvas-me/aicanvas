@@ -8,6 +8,8 @@ import { Copy } from '@/app/_icons/icons/copy'
 import { Code } from '@/app/_icons/icons/code'
 import { Step } from '../components/Step'
 import { buttonClasses } from '../components/buttonClasses'
+import { copyText } from '../components/useCopied'
+import { PENDING_INSTALL_TOKEN, useInstallToken } from '../_lib/useInstallToken'
 
 // ── Static config ────────────────────────────────────────────────────────────
 
@@ -231,36 +233,23 @@ export function InstallCards() {
   const [tool, setTool] = useState<Tool>('claude')
   const [installCopied, setInstallCopied] = useState(false)
   const [testCopied, setTestCopied] = useState(false)
-  const [userToken, setUserToken] = useState<string | null>(null)
-  const [tokenLoaded, setTokenLoaded] = useState(false)
-
   // Signed-in user's API token, so the install command / config can bake it in
-  // (AICANVAS_TOKEN) and the MCP authenticates on first run. Fetched client-side
-  // so the /mcp page stays static. null = signed out (or no token yet).
-  // tokenLoaded gates the token note so a signed-in user never flashes "Sign in".
-  useEffect(() => {
-    let cancelled = false
-    fetch('/api/me/token')
-      .then((r) => r.json())
-      .then((d) => { if (!cancelled) setUserToken(d?.token ?? null) })
-      .catch(() => {})
-      .finally(() => { if (!cancelled) setTokenLoaded(true) })
-    return () => { cancelled = true }
-  }, [])
+  // (AICANVAS_TOKEN) and the MCP authenticates on first run. The shared hook
+  // stands in a placeholder while it loads; copyText swaps the real one in.
+  const userToken = useInstallToken()
+  const tokenLoaded = userToken !== PENDING_INSTALL_TOKEN
 
-  function copy(text: string, toast: string, setLocal: (v: boolean) => void) {
-    if (typeof navigator === 'undefined' || !navigator.clipboard) {
-      show('Copy not supported, copy it manually')
-      return
-    }
-    navigator.clipboard
-      .writeText(text)
-      .then(() => {
-        setLocal(true)
-        show(toast)
-        setTimeout(() => setLocal(false), 2000)
-      })
-      .catch(() => show('Copy failed, try again'))
+  // noTokenText is what lands on the clipboard if the token fetch comes back empty.
+  function copy(text: string, toast: string, setLocal: (v: boolean) => void, noTokenText?: string) {
+    void copyText(text, noTokenText).then((ok) => {
+      if (!ok) {
+        show('Copy failed, try again')
+        return
+      }
+      setLocal(true)
+      show(toast)
+      setTimeout(() => setLocal(false), 2000)
+    })
   }
 
   const isCodex = tool === 'codex'
@@ -331,7 +320,7 @@ export function InstallCards() {
                     Click → <span className="font-semibold">Install</span>
                   </p>
                   <a
-                    href={cursorDeeplink(userToken ?? '')}
+                    href={cursorDeeplink(tokenLoaded ? (userToken ?? '') : '')}
                     className={buttonClasses({ variant: 'primary', size: 'lg' })}
                   >
                     <CursorMark />
@@ -345,7 +334,7 @@ export function InstallCards() {
                     command={cursorConfig(displayToken)}
                     copied={installCopied}
                     onCopy={() =>
-                      copy(cursorConfig(userToken ?? ''), 'Config copied', setInstallCopied)
+                      copy(cursorConfig(userToken ?? ''), 'Config copied', setInstallCopied, cursorConfig(''))
                     }
                     label="Cursor config"
                     multiline
@@ -361,7 +350,7 @@ export function InstallCards() {
                     command={vscodeConfig(displayToken)}
                     copied={installCopied}
                     onCopy={() =>
-                      copy(vscodeConfig(userToken ?? ''), 'Config copied', setInstallCopied)
+                      copy(vscodeConfig(userToken ?? ''), 'Config copied', setInstallCopied, vscodeConfig(''))
                     }
                     label="VS Code config"
                     multiline
@@ -380,6 +369,7 @@ export function InstallCards() {
                         installCommandCopy,
                         'Install command copied',
                         setInstallCopied,
+                        isCodex ? codexCommand('') : claudeCommand('user', ''),
                       )
                     }
                     label="install command"

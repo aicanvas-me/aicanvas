@@ -10,10 +10,10 @@ import { PENDING_INSTALL_TOKEN, resolveInstallToken } from '../_lib/useInstallTo
  * that as an unhandled rejection indistinguishable from extension noise by the
  * time it reaches the error beacon.
  */
-export async function copyText(text: string): Promise<boolean> {
+export async function copyText(text: string, noTokenText?: string): Promise<boolean> {
   // ClipboardItem takes a promise, so Safari keeps the click's permission while the token loads.
   if (text.includes(PENDING_INSTALL_TOKEN)) {
-    const ready = resolveInstallToken(text)
+    const ready = resolveInstallToken(text, noTokenText)
     try {
       await navigator.clipboard.write([new ClipboardItem({ 'text/plain': ready.then((t) => new Blob([t], { type: 'text/plain' })) })])
       return true
