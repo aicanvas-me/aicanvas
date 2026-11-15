@@ -18,6 +18,7 @@ import { Fullscreen } from '@/app/_icons/icons/fullscreen'
 import { X } from '@/app/_icons/icons/x'
 import { RotateCw } from '@/app/_icons/icons/rotate-cw'
 import { Terminal } from '@/app/_icons/icons/terminal'
+import { Bot } from '@/app/_icons/icons/bot'
 import { Sparkle } from '@/app/_icons/icons/sparkle'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { BoltSolid } from '@/app/_icons/icons/bolt-solid'
@@ -55,6 +56,7 @@ import { FreeBadge } from '../billing/FreeBadge'
 import { Paywall, type PaywallReason } from '../billing/Paywall'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
 import { RemixPanel } from '../../_components/RemixPanel'
+import { componentAgentText, type Usage } from '@/lib/agent-markdown/component'
 import { lightShot, optimizeImageKitUrl } from '../../lib/imagekit'
 
 type FontFramework = 'html' | 'nextjs'
@@ -100,6 +102,8 @@ interface ComponentPageViewProps {
   // Prop tables parsed from the component's @typedef JSDoc at build time. Empty
   // for self-contained (propless) components, in which case the section hides.
   propTables?: PropTable[]
+  // Where the install lands and how to import it, for "Copy for agent".
+  agentUsage?: Usage | null
   related: ComponentMeta[]
   highlightedCode?: ReactNode
   enforcing?: boolean
@@ -134,6 +138,7 @@ const RELATED_IMG = 'absolute inset-0 h-full w-full object-cover transition-[tra
 export default function ComponentPageView({
   slug,
   propTables = [],
+  agentUsage = null,
   name,
   description,
   headingSubtitle,
@@ -480,6 +485,27 @@ export default function ComponentPageView({
       title: 'Grab this free component.',
       subtitle: 'Sign in or create a free account to install with one command. Free and unlimited.',
     })
+  }
+
+  const [agentCopied, setAgentCopied] = useState(false)
+  async function copyForAgent() {
+    if (needsPremium) { openPaywallModal({ reason: 'premium-only' }); return }
+    if (needsFreeAccount) { promptFreeAccount(); return }
+    const text = componentAgentText({
+      name,
+      isPremium: !!premium,
+      isBlock: !!isBlock,
+      usage: agentUsage,
+      command: `npx shadcn@latest add ${userToken ? `"https://aicanvas.me/r/${slug}.json?token=${userToken}"` : `@aicanvas/${slug}`}`,
+      withToken: !!userToken,
+      hasProps: propTables.some((t) => t.props.length > 0),
+      mdUrl: `https://aicanvas.me/components/${slug}.md`,
+    })
+    const ok = await copyText(text)
+    track('Agent Copy', { component: slug, ok })
+    if (!ok) return
+    setAgentCopied(true)
+    setTimeout(() => setAgentCopied(false), 2000)
   }
 
   async function copyCli() {
@@ -920,6 +946,7 @@ export default function ComponentPageView({
             }
             return (
             <section className="mt-12">
+              <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-sand-900 dark:text-sand-50">
                 Add to your project
                 {premium && (
@@ -938,6 +965,15 @@ export default function ComponentPageView({
                   </span>
                 )}
               </h2>
+              <button
+                type="button"
+                onClick={() => void copyForAgent()}
+                className="inline-flex h-8 items-center gap-1.5 rounded-control bg-accent px-3 text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/85 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              >
+                {agentCopied ? <Check size={14} /> : <Bot size={14} />}
+                {agentCopied ? 'Copied' : 'Copy for agent'}
+              </button>
+              </div>
               <p className="mb-4 mt-1 text-sm text-sand-600 dark:text-sand-400">
                 One command adds this component to your project.
               </p>

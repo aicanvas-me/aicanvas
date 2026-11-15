@@ -10,11 +10,12 @@
  *
  * The twin is always the SIGNED-OUT view of the page, never more: it is
  * served statically to anonymous agents and never reads an entitlement.
- *   - Free: full source (unless REGISTRY_ENFORCEMENT=enforce) and the full
- *     remix prompt, same as the page's server HTML.
- *   - Premium: no source, and only blocks 1 Setup + 2 Constants of the
- *     prompt (splitPromptAtPaywall). No recognisable scaffold = no prompt.
- * Anything the page withholds from a signed-out visitor must be withheld here.
+ *   - Free: full source (unless REGISTRY_ENFORCEMENT=enforce).
+ *   - Premium: no source.
+ * The remix prompt itself never goes in: it is most of the page's length and its
+ * "Create ..." steps can push an agent to rebuild instead of install, so the twin
+ * points to it in one line. Anything the page withholds from a signed-out visitor
+ * must be withheld here.
  */
 import { splitPromptAtPaywall } from '../registry/prompt-blocks'
 import type { PropTable } from '../../app/components/PropsTable'
@@ -27,10 +28,42 @@ export interface Usage {
   render?: string
 }
 
-export function usageSection(usage: Usage | null | undefined, what = 'It'): string | null {
+export function usageSection(usage: Usage | null | undefined, what = 'It', noProps = false): string | null {
   if (!usage) return null
   const code = usage.render ? `${usage.importLine}\n\n${usage.render}` : usage.importLine
-  return `## Use it\n\n${what} installs to \`${usage.file}\` (under \`src/\` if your project has one). With the usual \`@/\` alias:\n\n${fence(code, 'tsx')}`
+  const tail = noProps && usage.render ? '\n\nIt takes no props.' : ''
+  return `## Use it\n\n${what} installs to \`${usage.file}\` (under \`src/\` if your project has one). With the usual \`@/\` alias:\n\n${fence(code, 'tsx')}${tail}`
+}
+
+export interface AgentTextInput {
+  name: string
+  isPremium: boolean
+  isBlock: boolean
+  usage: Usage | null
+  /** The exact command the page copies for this viewer. */
+  command: string
+  withToken: boolean
+  hasProps: boolean
+  /** The page's Markdown twin, where the props are listed. */
+  mdUrl: string
+}
+
+/** "Copy for agent": one instruction to install and use the item, never rebuild it. */
+export function componentAgentText(input: AgentTextInput): string {
+  const { name, usage } = input
+  const run = `run \`${input.command}\`${input.withToken ? ' (keep the token out of committed files)' : ''}`
+  const out = [
+    `Use ${name}, a ${input.isPremium ? 'Premium' : 'free, MIT-licensed'} standalone React + Tailwind ${input.isBlock ? 'block' : 'component'} from AI Canvas.`,
+    usage
+      ? `If \`${usage.file}\` (under \`src/\` if the project has one) does not exist, ${run}; never overwrite it or rebuild it from scratch.`
+      : `If it is not installed yet, ${run}; never rebuild it from scratch.`,
+  ]
+  if (usage?.render) {
+    out.push(`Import it with \`${usage.importLine}\`, then render \`${usage.render}\`${input.hasProps ? `; its props are listed at ${input.mdUrl}` : '; it takes no props'}.`)
+  } else if (usage) {
+    out.push(`Import it with \`${usage.importLine}\`; its props are listed at ${input.mdUrl}.`)
+  }
+  return out.join(' ')
 }
 
 export interface ComponentMarkdownInput {
@@ -116,13 +149,15 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
 
   const out: string[] = []
 
-  // Agents truncate long fetches, so the way back to the index goes first.
-  // A standalone belongs to no design system; say so wherever it is named.
-  const kind = input.designSystem ? noun : `standalone ${noun} (part of no design system, works in any React + Tailwind app)`
-  out.push(
-    `> ${isPremium ? 'Premium' : 'Free, MIT-licensed'} ${kind} from AI Canvas. Index of every component and install setup: ${siteUrl}/llms.txt`,
-  )
+  // Name, then who it is in one sentence. Agents truncate long fetches, so the
+  // way back to the index stays at the top. A standalone belongs to no design system.
+  const kind = input.designSystem
+    ? `${noun} from AI Canvas (${siteUrl})`
+    : `standalone ${noun} from AI Canvas (${siteUrl}): it belongs to no design system and works in any React + Tailwind app`
   out.push(`# ${name}`)
+  out.push(
+    `${name} is a ${isPremium ? 'Premium' : 'free, MIT-licensed'} ${kind}. Index of every component and install setup: ${siteUrl}/llms.txt`,
+  )
   out.push(input.description)
 
   const facts = [
@@ -151,7 +186,7 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
   if (fonts.length > 0) install.push(`Fonts: ${fonts.join('; ')}`)
   out.push(install.join('\n\n'))
 
-  const use = usageSection(input.usage)
+  const use = usageSection(input.usage, 'It', !input.propTables.some((t) => t.props.length > 0))
   if (use) out.push(use)
 
   const props = propsSection(input.propTables)
@@ -173,10 +208,8 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
   }
 
   if (prompt) {
-    const intro = promptLocked
-      ? `The public part of the remix prompt: 1. Setup and 2. Constants. The rest of the build spec (state, markup, how it works) is part of Premium.`
-      : `One comprehensive, platform-agnostic prompt for rebuilding or remixing ${name} in any AI coding tool. For the exact ${noun}, install it with the command above.`
-    out.push(`## Remix prompt\n\n${intro}\n\n${fence(prompt, 'markdown')}`)
+    const which = promptLocked ? 'the public part of its remix prompt' : 'its remix prompt'
+    out.push(`## Remix prompt\n\nOnly when the user wants ${name} rebuilt from scratch instead of installed: ${which} is in the Remix panel at ${pageUrl}.`)
   }
 
   if (input.related.length > 0) {

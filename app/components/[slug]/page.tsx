@@ -5,6 +5,7 @@ import { rankRelated } from '../../lib/related-order'
 import COMPONENT_ORDER from '../../../component-order.json'
 import { STANDALONE_PROPS } from '../../lib/standalone-props.generated'
 import ComponentPageView from './ComponentPageView'
+import { installedUsage } from '../../md/_installed'
 import { ExampleFrame } from './ExampleFrame'
 import { HighlightedCode } from '../../components/HighlightedCode'
 import { GITHUB_URL, SITE_URL } from '../../lib/config'
@@ -342,6 +343,7 @@ export default async function Page({
       <ComponentPageView
         slug={slug}
         propTables={STANDALONE_PROPS[slug] ?? []}
+        agentUsage={installedUsage(slug)}
         name={entry.name}
         description={entry.description}
         headingSubtitle={headingSubtitle}

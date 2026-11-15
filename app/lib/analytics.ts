@@ -16,6 +16,7 @@ type EventMap = {
   // exactly like a copy button working perfectly.
   'Remix Prompt Copy': { component: string; ok: boolean }
   'CLI Copy': { component: string; ok: boolean }
+  'Agent Copy': { component: string; ok: boolean }
   'Install Tab Switch': { component: string; tab: 'cli' | 'manual' }
   'Fullscreen Open': { component: string }
   'System Install Tier Click': { component: string; system: string }
@@ -46,6 +47,7 @@ export const BEACON_EVENTS = [
   'Remix Open',
   'Remix Prompt Copy',
   'CLI Copy',
+  'Agent Copy',
   'Install Tab Switch',
   'Fullscreen Open',
   'System Install Tier Click',
