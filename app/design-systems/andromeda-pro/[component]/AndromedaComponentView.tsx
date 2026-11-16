@@ -119,7 +119,7 @@ export function AndromedaComponentView({
   remixPrompt = null,
   promptLocked = false,
 }: Props) {
-  const { preferences, user } = useSession()
+  const { preferences } = useSession()
   // The registry slug is normally `andromeda-pro-<metaSlug>`. The exceptions are
   // pages renamed for the docs (table-basic, chart-radar and the rest), whose
   // registry item keeps its source filename. Map the page's meta slug to the
@@ -343,17 +343,19 @@ export function AndromedaComponentView({
   }
   async function copyForAgent() {
     if (agentGated()) return false
-    const ok = await copyText(componentAgentText({
+    // The tokenless build is what lands if the token fetch comes back empty.
+    const agentText = (command: string, withToken: boolean) => componentAgentText({
       name,
       isPremium: true,
       isBlock: false,
       system: { name: 'Andromeda Pro' },
       usage: agentUsage,
-      command: agentCommand,
-      withToken: !!userToken,
+      command,
+      withToken,
       hasProps: propTables.some((t) => t.props.length > 0),
       mdUrl: `https://aicanvas.me/design-systems/andromeda-pro/${slug}.md`,
-    }))
+    })
+    const ok = await copyText(agentText(agentCommand, !!userToken), agentText(`npx shadcn@latest add @aicanvas/${registrySlug}`, false))
     track('Agent Copy', { component: registrySlug, ok })
     return ok
   }

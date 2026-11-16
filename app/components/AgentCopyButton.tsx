@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useId, useRef, useState, type ComponentType, type KeyboardEvent } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ComponentType, type KeyboardEvent } from 'react'
 import { Bot } from '@/app/_icons/icons/bot'
 import { Check } from '@/app/_icons/icons/check'
 import { ChevronDown } from '@/app/_icons/icons/chevron-down'
@@ -52,15 +52,38 @@ export function AgentCopyButton({
     }
     const escape = (event: globalThis.KeyboardEvent) => {
       if (event.key !== 'Escape') return
+      // Capture phase + stopPropagation: Escape closes only this menu, never a
+      // parent popover listening on the same document.
+      event.stopPropagation()
       setOpen(false)
       triggerRef.current?.focus()
     }
     document.addEventListener('mousedown', outside)
-    document.addEventListener('keydown', escape)
+    document.addEventListener('keydown', escape, true)
     return () => {
       document.removeEventListener('mousedown', outside)
-      document.removeEventListener('keydown', escape)
+      document.removeEventListener('keydown', escape, true)
     }
+  }, [open])
+
+  // The right-anchored 224px menu can start past the left edge of the viewport
+  // or of a clipping card on phones; shift it right just enough to stay inside.
+  const menuPanelRef = useRef<HTMLDivElement>(null)
+  useLayoutEffect(() => {
+    if (!open) return
+    const el = menuPanelRef.current
+    if (!el) return
+    el.style.transform = ''
+    let bound = 8
+    for (let p = el.parentElement; p; p = p.parentElement) {
+      const s = getComputedStyle(p)
+      if (s.overflowX !== 'visible' || s.overflowY !== 'visible') {
+        bound = Math.max(bound, p.getBoundingClientRect().left + 8)
+        break
+      }
+    }
+    const left = el.getBoundingClientRect().left
+    if (left < bound) el.style.transform = `translateX(${Math.round(bound - left)}px)`
   }, [open])
 
   const onMenuKey = (event: KeyboardEvent) => {
@@ -111,6 +134,7 @@ export function AgentCopyButton({
       </button>
       {open && (
         <div
+          ref={menuPanelRef}
           id={menuId}
           role="menu"
           aria-label="Copy options"

@@ -498,16 +498,18 @@ export default function ComponentPageView({
   }
   async function copyForAgent() {
     if (gated()) return false
-    const ok = await copyText(componentAgentText({
+    // The tokenless build is what lands if the token fetch comes back empty.
+    const agentText = (command: string, withToken: boolean) => componentAgentText({
       name,
       isPremium: !!premium,
       isBlock: !!isBlock,
       usage: agentUsage,
-      command: agentCommand,
-      withToken: !!userToken,
+      command,
+      withToken,
       hasProps: propTables.some((t) => t.props.length > 0),
       mdUrl: `https://aicanvas.me/components/${slug}.md`,
-    }))
+    })
+    const ok = await copyText(agentText(agentCommand, !!userToken), agentText(`npx shadcn@latest add @aicanvas/${slug}`, false))
     track('Agent Copy', { component: slug, ok })
     return ok
   }

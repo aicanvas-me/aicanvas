@@ -268,17 +268,19 @@ export function AndromedaComponentView({
   }
   async function copyForAgent() {
     if (agentGated()) return false
-    const ok = await copyText(componentAgentText({
+    // The tokenless build is what lands if the token fetch comes back empty.
+    const agentText = (command: string, withToken: boolean) => componentAgentText({
       name,
       isPremium: false,
       isBlock: false,
       system: { name: 'Andromeda Legacy' },
       usage: agentUsage,
-      command: agentCommand,
-      withToken: !!userToken,
+      command,
+      withToken,
       hasProps: propTables.some((t) => t.props.length > 0),
       mdUrl: `https://aicanvas.me/design-systems/andromeda/${slug}.md`,
-    }))
+    })
+    const ok = await copyText(agentText(agentCommand, !!userToken), agentText(`npx shadcn@latest add @aicanvas/${registrySlug}`, false))
     track('Agent Copy', { component: registrySlug, ok })
     return ok
   }

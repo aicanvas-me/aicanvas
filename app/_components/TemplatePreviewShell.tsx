@@ -789,17 +789,19 @@ function InstallButton({
   }
 
   async function handleAgentCopy() {
-    const ok = await copyText(componentAgentText({
+    // The tokenless build is what lands if the token fetch comes back empty.
+    const agentText = (command: string, withToken: boolean) => componentAgentText({
       name: templateName,
       isPremium: getDesignSystemTemplateMeta(templateSlug)?.system.paid !== false,
       isBlock: false,
       system: { name: systemName, template: true },
       usage: agentUsage,
-      command: cliCommand,
-      withToken: !!userToken,
+      command,
+      withToken,
       hasProps: false,
       mdUrl: `https://aicanvas.me${markdownHref}`,
-    }))
+    })
+    const ok = await copyText(agentText(cliCommand, !!userToken), agentText(`npx shadcn@latest add @aicanvas/${templateSlug}`, false))
     track('Agent Copy', { component: templateSlug, ok })
     return ok
   }
