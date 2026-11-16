@@ -119,7 +119,7 @@ export function CheckoutSplit({
           // color-scheme light: a dark page otherwise paints a white backdrop behind the frame
           frameStyle: 'width: 100%; min-width: 286px; background-color: transparent; border: none; color-scheme: light',
           theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
-          showAddDiscounts: false,
+          showAddDiscounts: true,
         },
       })
     })
