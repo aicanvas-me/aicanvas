@@ -18,12 +18,14 @@ import { Fullscreen } from '@/app/_icons/icons/fullscreen'
 import { X } from '@/app/_icons/icons/x'
 import { RotateCw } from '@/app/_icons/icons/rotate-cw'
 import { Terminal } from '@/app/_icons/icons/terminal'
+import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
 import { Sparkle } from '@/app/_icons/icons/sparkle'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { BoltSolid } from '@/app/_icons/icons/bolt-solid'
 import type { Tag, Platform } from '../ComponentCard'
 import { isStackLabel, STACK_ICONS, stackIconWidthForHeight, type Stack } from '../../lib/stack'
 import { PageCrumbs } from '../PageCrumbs'
+import { CopyPage } from '../CopyPage'
 import { RailFooter } from '../RailFooter'
 import { PropsTable, type PropTable } from '../PropsTable'
 import { Step } from '../Step'
@@ -54,6 +56,8 @@ import { FreeBadge } from '../billing/FreeBadge'
 import { Paywall, type PaywallReason } from '../billing/Paywall'
 import { usePaywallModal } from '../billing/PaywallModalProvider'
 import { RemixPanel } from '../../_components/RemixPanel'
+import { componentAgentText, type Usage } from '@/lib/agent-markdown/component'
+import { AgentCopyButton } from '../AgentCopyButton'
 import { lightShot, optimizeImageKitUrl } from '../../lib/imagekit'
 
 type FontFramework = 'html' | 'nextjs'
@@ -99,6 +103,8 @@ interface ComponentPageViewProps {
   // Prop tables parsed from the component's @typedef JSDoc at build time. Empty
   // for self-contained (propless) components, in which case the section hides.
   propTables?: PropTable[]
+  // Where the install lands and how to import it, for "Copy for agent".
+  agentUsage?: Usage | null
   related: ComponentMeta[]
   highlightedCode?: ReactNode
   enforcing?: boolean
@@ -133,6 +139,7 @@ const RELATED_IMG = 'absolute inset-0 h-full w-full object-cover transition-[tra
 export default function ComponentPageView({
   slug,
   propTables = [],
+  agentUsage = null,
   name,
   description,
   headingSubtitle,
@@ -481,6 +488,41 @@ export default function ComponentPageView({
     })
   }
 
+  // "Copy for agent" and its menu. The install pieces keep the page's gates:
+  // paywall for Premium without a subscription, sign-in for a gated free install.
+  const agentCommand = `npx shadcn@latest add ${userToken ? `"https://aicanvas.me/r/${slug}.json?token=${userToken}"` : `@aicanvas/${slug}`}`
+  const gated = () => {
+    if (needsPremium) { openPaywallModal({ reason: 'premium-only' }); return true }
+    if (needsFreeAccount) { promptFreeAccount(); return true }
+    return false
+  }
+  async function copyForAgent() {
+    if (gated()) return false
+    // The tokenless build is what lands if the token fetch comes back empty.
+    const agentText = (command: string, withToken: boolean) => componentAgentText({
+      name,
+      isPremium: !!premium,
+      isBlock: !!isBlock,
+      usage: agentUsage,
+      command,
+      withToken,
+      hasProps: propTables.some((t) => t.props.length > 0),
+      mdUrl: `https://aicanvas.me/components/${slug}.md`,
+    })
+    const ok = await copyText(agentText(agentCommand, !!userToken), agentText(`npx shadcn@latest add @aicanvas/${slug}`, false))
+    track('Agent Copy', { component: slug, ok })
+    return ok
+  }
+  const agentItems = [
+    { label: 'Copy install command', icon: SquareTerminal, run: async () => !gated() && copyText(agentCommand) },
+    ...(agentUsage ? [{ label: 'Copy import line', icon: Code, run: () => copyText(agentUsage.importLine) }] : []),
+    ...(remixPrompt ? [{ label: 'Remix with AI', icon: Sparkle, run: async () => {
+      track('Remix Open', { component: slug })
+      setRemixOpen(true)
+      return false
+    } }] : []),
+  ]
+
   async function copyCli() {
     // Premium gate: non-premium visitors get the upgrade modal, not a copy.
     if (needsPremium) {
@@ -523,6 +565,7 @@ export default function ComponentPageView({
                 200 tokens on each page carry a definitional answer. Falls
                 back to the plain description when there is no subtitle. */}
             <PageCrumbs />
+            <CopyPage markdownHref={`/components/${slug}.md`} />
             {/* The tier sits on the title's line so a paid page says so at first
                 glance; outside the h1, so the heading stays the name alone. */}
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -867,24 +910,9 @@ export default function ComponentPageView({
               {/* Save — signed out, opens the same soft-gate modal as Copy Command. */}
               <SaveButton slug={slug} system={designSystem ?? null} />
 
-              {/* Remix with AI — secondary action; opens the side panel with
-                  the full platform-agnostic prompt. Hidden entirely when the
-                  component has no prompt. Sits left of the primary Copy Command
-                  action. */}
-              {remixPrompt && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="whitespace-nowrap"
-                  onClick={() => {
-                    track('Remix Open', { component: slug })
-                    setRemixOpen(true)
-                  }}
-                >
-                  <Sparkle size={15} className="max-[379px]:hidden" />
-                  Remix<span className="hidden sm:inline"> with AI</span>
-                </Button>
-              )}
+              {/* Copy for agent — secondary action; its menu (opens up) holds the
+                  install command, the import line and Remix with AI. */}
+              <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
 
               {/* Copy Command — primary install action; copies the npx shadcn
                   command. The button and command stay visible at all times;

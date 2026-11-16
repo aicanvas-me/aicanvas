@@ -84,9 +84,11 @@ export function ActionBar({
   const locked = preview && exportReady
   const waiting = preview && !locked
   const prompt = agentPrompt(name, size, weight, style, colour, installToken)
+  // The tokenless variant: copyText falls back to it when the token fetch resolves empty.
+  const promptNoToken = agentPrompt(name, size, weight, style, colour, null)
   const jsx = iconJsxLine(name, size, weight, style, colour)
   const svg = preview ? '' : buildSvg(markup, size, weight, colour, style)
-  const { copied, copy } = useCopied(prompt)
+  const { copied, copy } = useCopied(prompt, 2000, promptNoToken)
 
   const close = () => {
     setOpen(false)
@@ -117,8 +119,8 @@ export function ActionBar({
     else if (!preview) return action()
   }
   const items = [
-    { label: 'Copy for agent', icon: Bot, action: () => gate.blocked() || copyText(prompt) },
-    { label: 'Copy install command', icon: SquareTerminal, action: () => gate.blocked() || copyText(iconInstallCommand(name, style, installToken)) },
+    { label: 'Copy for agent', icon: Bot, action: () => gate.blocked() || copyText(prompt, promptNoToken) },
+    { label: 'Copy install command', icon: SquareTerminal, action: () => gate.blocked() || copyText(iconInstallCommand(name, style, installToken), iconInstallCommand(name, style, null)) },
     { label: 'Copy JSX', icon: Code, action: () => copyText(jsx) },
     { label: 'Copy SVG', icon: Copy, action: file(() => copyText(svg)), waits: true },
     { label: 'Download SVG', icon: FileImage, action: file(() => downloadSvg(name, svg)), waits: true },

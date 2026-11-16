@@ -34,9 +34,18 @@ for (const e of readdirSync('components-workspace', { withFileTypes: true })) {
 }
 
 // Static routes, dated by the files beside their page.tsx (not nested routes).
+// Gitignored folders (dev scratch like app/studio) are not public routes: skip them.
+const ignored = (p) => {
+  try {
+    execFileSync('git', ['check-ignore', '-q', p])
+    return true
+  } catch {
+    return false
+  }
+}
 function walk(dir) {
   for (const e of readdirSync(dir, { withFileTypes: true })) {
-    if (e.isDirectory() && !/^[_[]/.test(e.name)) walk(join(dir, e.name))
+    if (e.isDirectory() && !/^[_[]/.test(e.name) && !ignored(join(dir, e.name))) walk(join(dir, e.name))
   }
   if (!existsSync(join(dir, 'page.tsx')) || dir === 'app') return
   const route = '/' + dir.split('/').slice(1).filter((s) => !s.startsWith('(')).join('/')

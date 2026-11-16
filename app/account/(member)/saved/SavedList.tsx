@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { useMemo, useState } from 'react'
 import { ChevronDown } from '@/app/_icons/icons/chevron-down'
 import { Check } from '@/app/_icons/icons/check'
-import { Heart } from '@/app/_icons/icons/heart'
+import { Bookmark } from '@/app/_icons/icons/bookmark'
 import { Plus } from '@/app/_icons/icons/plus'
 import { PinOff } from '@/app/_icons/icons/pin-off'
 import { X } from '@/app/_icons/icons/x'
@@ -195,7 +195,7 @@ function EmptyState() {
   return (
     <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
       <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-card border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
-        <Heart size={22} />
+        <Bookmark size={22} />
       </div>
       <p className="text-sm text-sand-600 dark:text-sand-400">
         You haven&apos;t saved anything yet.

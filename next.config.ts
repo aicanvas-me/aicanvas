@@ -59,6 +59,28 @@ const nextConfig: NextConfig = {
     "/icons/style-data/[style]": ["./.icons-data/*.json"],
     // Download all reads every style's markup and the shipped React files.
     "/api/icons/download": ["./.icons-data/*.json", "./public/icons-data/line.json", "./registry-data/icon-*.json"],
+    // Copy for agent reads each item's emitted registry JSON (app/md/_installed.ts)
+    // with fs at request time on these routes and their markdown twins; without
+    // an entry the read ENOENTs in production and the agent text loses the
+    // install path and import line.
+    "/components/[slug]": ["./registry-data/*.json"],
+    "/design-systems/andromeda/[component]": ["./registry-data/*.json"],
+    "/design-systems/andromeda/templates/mission-control": ["./registry-data/*.json"],
+    "/design-systems/andromeda/templates/signal-room": ["./registry-data/*.json"],
+    "/design-systems/andromeda/templates/service-order": ["./registry-data/*.json"],
+    "/design-systems/andromeda/templates/resource-planning": ["./registry-data/*.json"],
+    "/design-systems/andromeda-pro/templates/ai-chat": ["./registry-data/*.json"],
+    "/design-systems/andromeda-pro/templates/fintech-landing": ["./registry-data/*.json"],
+    "/design-systems/andromeda-pro/templates/sign-in": ["./registry-data/*.json"],
+    "/design-systems/andromeda-pro/templates/sign-up": ["./registry-data/*.json"],
+    "/design-systems/andromeda-pro/templates/city-operations": ["./registry-data/*.json"],
+    "/design-systems/andromeda-pro/templates/service-order": ["./registry-data/*.json"],
+    "/design-systems/andromeda-pro/templates/signal-room": ["./registry-data/*.json"],
+    "/design-systems/andromeda-pro/templates/resource-planning": ["./registry-data/*.json"],
+    "/design-systems/andromeda-pro/templates/mission-control": ["./registry-data/*.json"],
+    "/md/components/[slug]": ["./registry-data/*.json"],
+    "/md/design-systems/[system]/[component]": ["./registry-data/*.json"],
+    "/md/design-systems/[system]/templates/[template]": ["./registry-data/*.json"],
   },
   async headers() {
     return [
@@ -105,6 +127,8 @@ const nextConfig: NextConfig = {
         { source: "/components/:slug", has: wantsMarkdown, destination: "/md/components/:slug" },
         // A system's own pages (system, brain, foundation...) share the
         // :component shape; the twin answers those with the system overview.
+        { source: "/design-systems/:system/templates/:template.md", destination: "/md/design-systems/:system/templates/:template" },
+        { source: "/design-systems/:system/templates/:template", has: wantsMarkdown, destination: "/md/design-systems/:system/templates/:template" },
         { source: "/design-systems/:system.md", destination: "/md/design-systems/:system" },
         { source: "/design-systems/:system/:component.md", destination: "/md/design-systems/:system/:component" },
         { source: "/design-systems/:system", has: wantsMarkdown, destination: "/md/design-systems/:system" },

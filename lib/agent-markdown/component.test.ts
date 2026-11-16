@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { componentMarkdown, publicContent, fence, type ComponentMarkdownInput } from './component'
+import { componentAgentText, componentMarkdown, publicContent, fence, type ComponentMarkdownInput } from './component'
 
 const SCAFFOLD = [
   '## 1. Setup',
@@ -91,18 +91,37 @@ describe('componentMarkdown', () => {
     expect(md).not.toContain('no scaffold here')
   })
 
-  it('free document has the source, the full prompt and the llms.txt pointer first', () => {
+  it('free document opens with the name and who it is, carries the source, and points to the prompt', () => {
     const md = componentMarkdown(input())
-    expect(md.startsWith('> Free, MIT-licensed standalone component (part of no design system')).toBe(true)
-    expect(md).toContain('https://aicanvas.me/llms.txt')
+    const [title, identity] = md.split('\n\n')
+    expect(title.startsWith('# ')).toBe(true)
+    expect(identity).toContain('is a free, MIT-licensed standalone component from AI Canvas')
+    expect(identity).toContain('https://aicanvas.me/llms.txt')
     expect(md).toContain('SecretEngine')
-    expect(md).toContain('## 3. State')
     expect(md).toContain('npx shadcn@latest add @aicanvas/demo-card')
+    expect(md).toContain('## Remix prompt\n\nOnly when the user wants')
+    expect(md).not.toContain('## 3. State')
+  })
+
+  it('agent text installs only when missing, never rebuilds, and flags the token', () => {
+    const usage = { file: 'components/aicanvas/demo-card.tsx', importLine: "import DemoCard from '@/components/aicanvas/demo-card'", render: '<DemoCard />' }
+    const base = { name: 'Demo Card', isPremium: false, isBlock: false, usage, command: 'npx shadcn@latest add @aicanvas/demo-card', withToken: false, hasProps: false, mdUrl: 'https://aicanvas.me/components/demo-card.md' }
+    const text = componentAgentText(base)
+    expect(text.startsWith('Add Demo Card to my project: a free, MIT-licensed standalone React + Tailwind component from AI Canvas.')).toBe(true)
+    expect(text).toContain('1. If `components/aicanvas/demo-card.tsx`')
+    expect(text).toContain('exists and is the real component, skip to step 3. Never rebuild it from scratch.')
+    expect(text).toContain('only an `AccountRequired` or `PremiumLocked` notice, stop and tell me')
+    expect(text).toContain('add `--overwrite` only to replace a placeholder')
+    expect(text).toContain('4. Check it type-checks')
+    expect(text).toContain('it takes no props')
+    expect(text).not.toContain('token')
+    expect(componentAgentText({ ...base, withToken: true, hasProps: true })).toContain('keep the token out of committed files')
+    expect(componentAgentText({ ...base, hasProps: true })).toContain('its props are listed at https://aicanvas.me/components/demo-card.md')
   })
 
   it('names the free-account placeholder only when the gate is on', () => {
-    expect(componentMarkdown(input())).not.toContain('free account required')
-    expect(componentMarkdown(input({ freeAccountGate: true }))).toContain('(free account required)')
+    expect(componentMarkdown(input())).not.toContain('AccountRequired')
+    expect(componentMarkdown(input({ freeAccountGate: true }))).toContain('an `AccountRequired` notice')
   })
 
   it('escapes pipes in prop types so the table keeps its columns', () => {

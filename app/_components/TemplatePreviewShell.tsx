@@ -14,6 +14,7 @@ import { Check } from '@/app/_icons/icons/check'
 import { CircleDollarSign } from '@/app/_icons/icons/circle-dollar-sign'
 import { ClipboardText } from '@/app/_icons/icons/clipboard-text'
 import { Copy } from '@/app/_icons/icons/copy'
+import { FileText } from '@/app/_icons/icons/file-text'
 import { Smartphone } from '@/app/_icons/icons/smartphone'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { LogIn } from '@/app/_icons/icons/log-in'
@@ -27,11 +28,14 @@ import { useInstallToken } from '../_lib/useInstallToken'
 import { useKeepInViewport } from '../_lib/useKeepInViewport'
 import { usePaywallModal } from '../components/billing/PaywallModalProvider'
 import { copyText } from '../components/useCopied'
+import { copyMarkdown } from '../components/CopyPage'
+import { componentAgentText, type Usage } from '@/lib/agent-markdown/component'
 import { track } from '../lib/analytics'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
 import { TopAuthPill } from '../components/auth/TopAuthPill'
 import { ThemeToggle } from '../components/ThemeToggle'
 import { Button } from '../components/Button'
+import { AgentCopyButton } from '../components/AgentCopyButton'
 import { buttonClasses } from '../components/buttonClasses'
 import { INSTALL_CONTENTS } from '../lib/install-contents.generated'
 import { getDesignSystemTemplateMeta } from '../lib/design-system-meta'
@@ -91,6 +95,7 @@ interface TemplatePreviewShellProps {
   systemHref: string // where the system-name crumb links, e.g. the showcase
   frame?: boolean // true when this render is the iframe payload (?frame=1); resolved from searchParams on the server by the page and passed in, so the framed HTML is bare from the very first paint (no chrome flash)
   description?: string[] // overrides the install-popover bullet copy
+  agentUsage?: Usage | null // where the install lands and how to import it, for "Copy for agent"
   children: ReactNode // the template composition
 }
 
@@ -310,6 +315,7 @@ function PreviewChrome({
   systemName,
   systemHref,
   description,
+  agentUsage,
   children,
 }: Omit<TemplatePreviewShellProps, 'children'> & { children: ReactNode }) {
   const pathname = usePathname() ?? ''
@@ -347,6 +353,7 @@ function PreviewChrome({
         systemName={systemName}
         systemHref={systemHref}
         description={description}
+        agentUsage={agentUsage}
         device={device}
         onDevice={setDevice}
         onReload={reload}
@@ -445,6 +452,7 @@ function TopBar({
   systemName,
   systemHref,
   description,
+  agentUsage,
   device,
   onDevice,
   onReload,
@@ -542,8 +550,10 @@ function TopBar({
           <ThemeToggle />
           <RightCluster
             templateSlug={templateSlug}
+            templateName={templateName}
             systemName={systemName}
             description={description}
+            agentUsage={agentUsage}
           />
         </div>
       </div>
@@ -672,12 +682,16 @@ function TemplateSwitcher({
 
 function RightCluster({
   templateSlug,
+  templateName,
   systemName,
   description,
+  agentUsage,
 }: {
   templateSlug: string
+  templateName: string
   systemName: string
   description?: string[]
+  agentUsage?: Usage | null
 }) {
   const status = usePremiumStatus()
   // premium / in-flight 'unknown' → Install; resolved free/anon → the small
@@ -691,7 +705,7 @@ function RightCluster({
   return (
     <>
       {canInstall ? (
-        <InstallButton templateSlug={templateSlug} systemName={systemName} description={description} />
+        <InstallButton templateSlug={templateSlug} templateName={templateName} systemName={systemName} description={description} agentUsage={agentUsage} />
       ) : (
         <Link href="/pricing" className={buttonClasses({ variant: 'primary', size: 'xs' })}>
           <Bolt size={13} />
@@ -712,18 +726,24 @@ function RightCluster({
 
 function InstallButton({
   templateSlug,
+  templateName,
   systemName,
   description,
+  agentUsage = null,
 }: {
   templateSlug: string
+  templateName: string
   systemName: string
   description?: string[]
+  agentUsage?: Usage | null
 }) {
   const { open: openPaywall } = usePaywallModal()
   const [open, setOpen] = useState(false)
   const [copied, setCopied] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   const panelRef = useKeepInViewport<HTMLDivElement>(open)
+  const pathname = usePathname() ?? ''
+  const markdownHref = /^\/design-systems\/[^/]+\/templates\/[^/]+$/.test(pathname) ? `${pathname}.md` : null
 
   // Tokenized install for signed-in users so the registry attributes the pull
   // to the account (a plain command writes a placeholder). The token is masked
@@ -768,6 +788,24 @@ function InstallButton({
     setTimeout(() => setCopied(false), 2000)
   }
 
+  async function handleAgentCopy() {
+    // The tokenless build is what lands if the token fetch comes back empty.
+    const agentText = (command: string, withToken: boolean) => componentAgentText({
+      name: templateName,
+      isPremium: getDesignSystemTemplateMeta(templateSlug)?.system.paid !== false,
+      isBlock: false,
+      system: { name: systemName, template: true },
+      usage: agentUsage,
+      command,
+      withToken,
+      hasProps: false,
+      mdUrl: `https://aicanvas.me${markdownHref}`,
+    })
+    const ok = await copyText(agentText(cliCommand, !!userToken), agentText(`npx shadcn@latest add @aicanvas/${templateSlug}`, false))
+    track('Agent Copy', { component: templateSlug, ok })
+    return ok
+  }
+
   useEffect(() => {
     if (!open) return
     function onClick(e: MouseEvent) {
@@ -793,38 +831,11 @@ function InstallButton({
       </Button>
 
       {open && (
-        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] overflow-hidden rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
+        <div ref={panelRef} className="absolute right-0 top-full z-50 mt-2 w-[min(480px,calc(100vw-24px))] rounded-card border border-sand-200 bg-sand-100 shadow-2xl dark:border-sand-800 dark:bg-sand-900">
           <div className="space-y-3 p-3">
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
-                  CLI install
-                </span>
-                <span className="rounded-full border border-accent/30 bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-accent">
-                  One command
-                </span>
-              </div>
-              <Button
-                variant="outline"
-                size="xs"
-                onClick={handleCopy}
-                aria-label="Copy install command"
-              >
-                {copied ? (
-                  <>
-                    <Check size={13} className="text-success" />
-                    Copied
-                  </>
-                ) : (
-                  <>
-                    <Copy size={13} />
-                    Copy Command
-                  </>
-                )}
-              </Button>
-            </div>
-            <div className="rounded-inset bg-sand-200 dark:bg-sand-950 px-4 py-3">
-              <code className="block break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
+            <p className="text-sm font-semibold text-sand-900 dark:text-sand-50">Install {templateName}</p>
+            <div className="rounded-inset bg-sand-200 px-4 py-3 dark:bg-sand-950">
+              <code className="break-all font-mono text-xs text-sand-700 dark:text-sand-300">{cliCommandMasked}</code>
             </div>
             <div className="space-y-1.5">
               {bullets.map((line, i) => (
@@ -835,6 +846,35 @@ function InstallButton({
               ))}
             </div>
           </div>
+          {markdownHref && (
+            <div className="flex flex-wrap items-center justify-end gap-2 border-t border-sand-200 px-3 py-2.5 dark:border-sand-800">
+              <AgentCopyButton
+                size="xs"
+                menu="down"
+                onCopy={handleAgentCopy}
+                items={[
+                  { label: 'Copy as Markdown', icon: Copy, run: () => copyMarkdown(undefined, markdownHref) },
+                  {
+                    label: 'View as Markdown',
+                    icon: FileText,
+                    run: async () => {
+                      window.open(markdownHref, '_blank', 'noopener')
+                      return false
+                    },
+                  },
+                ]}
+              />
+              <Button
+                variant="primary"
+                size="xs"
+                onClick={handleCopy}
+                className="min-w-[122px] shrink-0 justify-center whitespace-nowrap"
+              >
+                {copied ? <Check size={13} /> : <Copy size={13} />}
+                {copied ? 'Copied' : 'Copy Command'}
+              </Button>
+            </div>
+          )}
         </div>
       )}
     </div>

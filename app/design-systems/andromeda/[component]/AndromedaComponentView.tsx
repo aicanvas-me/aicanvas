@@ -34,6 +34,11 @@ import { PropsTable } from '../../../components/PropsTable'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { FreeBadge } from '../../../components/billing/FreeBadge'
 import { PageCrumbs } from '../../../components/PageCrumbs'
+import { CopyPage } from '../../../components/CopyPage'
+import { AgentCopyButton } from '../../../components/AgentCopyButton'
+import { componentAgentText, type Usage } from '@/lib/agent-markdown/component'
+import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
+import { Code as CodeIcon } from '@/app/_icons/icons/code'
 
 type RelatedItem = { slug: string; name: string; image?: string; imageLight?: string }
 
@@ -45,6 +50,8 @@ interface Props {
   // Prop tables parsed from the component's @typedef JSDoc at build time.
   // Empty for the few components without a @typedef block — section is hidden.
   propTables?: AndromedaPropTable[]
+  // Where the install lands and how to import it, for "Copy for agent".
+  agentUsage?: Usage | null
   // Account-gated install: when on, a signed-out visitor of this FREE
   // design-system component sees a "create a free account to install" CTA in
   // place of the runnable command. Reading the source (Code tab) stays public.
@@ -58,6 +65,7 @@ export function AndromedaComponentView({
   description,
   related,
   propTables = [],
+  agentUsage = null,
   freeAccountGate = false,
   iconItems = [],
 }: Props) {
@@ -252,6 +260,35 @@ export function AndromedaComponentView({
     })
   }
 
+  // "Copy for agent" and its menu, behind the same gate as the install copy.
+  const agentCommand = `npx shadcn@latest add ${installReference}`
+  const agentGated = () => {
+    if (needsFreeAccount) { promptFreeAccount(); return true }
+    return false
+  }
+  async function copyForAgent() {
+    if (agentGated()) return false
+    // The tokenless build is what lands if the token fetch comes back empty.
+    const agentText = (command: string, withToken: boolean) => componentAgentText({
+      name,
+      isPremium: false,
+      isBlock: false,
+      system: { name: 'Andromeda Legacy' },
+      usage: agentUsage,
+      command,
+      withToken,
+      hasProps: propTables.some((t) => t.props.length > 0),
+      mdUrl: `https://aicanvas.me/design-systems/andromeda/${slug}.md`,
+    })
+    const ok = await copyText(agentText(agentCommand, !!userToken), agentText(`npx shadcn@latest add @aicanvas/${registrySlug}`, false))
+    track('Agent Copy', { component: registrySlug, ok })
+    return ok
+  }
+  const agentItems = [
+    { label: 'Copy install command', icon: SquareTerminal, run: async () => !agentGated() && copyText(agentCommand) },
+    ...(agentUsage ? [{ label: 'Copy import line', icon: CodeIcon, run: () => copyText(agentUsage.importLine) }] : []),
+  ]
+
   async function copyCli() {
     // Soft gate: signed-out + gated → open the auth modal instead of copying.
     if (needsFreeAccount) {
@@ -271,6 +308,7 @@ export function AndromedaComponentView({
       {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className="mb-8">
         <PageCrumbs />
+        <CopyPage markdownHref={`/design-systems/andromeda/${slug}.md`} />
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <PageTitle gap="none" rank="section">{name}</PageTitle>
           <FreeBadge />
@@ -360,6 +398,9 @@ export function AndromedaComponentView({
               saves under its override (andromeda-button-system), not the
               retired standalone slug (andromeda-button). */}
           <SaveButton slug={registrySlug} system="andromeda" />
+
+          {/* Copy for agent — its menu (opens up) holds the install command and import line. */}
+          <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
 
           {/* Copy Command — the button and command stay visible at all times; when
               the install is account-gated and the visitor is signed out,

@@ -35,6 +35,7 @@ import { trackInstall } from '../../../lib/track-install'
 import { track } from '../../../lib/analytics'
 import { copyText } from '../../../components/useCopied'
 import { useSession } from '../../../components/auth/SessionProvider'
+import { useInstallToken } from '../../../_lib/useInstallToken'
 import { AndromedaComponentCard } from '../system/AndromedaComponentCard'
 import { Paywall, type PaywallReason } from '../../../components/billing/Paywall'
 import { usePremiumStatus } from '../../../components/billing/usePremiumStatus'
@@ -44,6 +45,11 @@ import { PropsTable } from '../../../components/PropsTable'
 import { RemixPanel } from '../../../_components/RemixPanel'
 import { PageFrame, PageTitle, PageLead, PAGE_TOP } from '../../../_components/DesignSystemPage'
 import { PageCrumbs } from '../../../components/PageCrumbs'
+import { CopyPage } from '../../../components/CopyPage'
+import { AgentCopyButton } from '../../../components/AgentCopyButton'
+import { componentAgentText, type Usage } from '@/lib/agent-markdown/component'
+import { SquareTerminal } from '@/app/_icons/icons/square-terminal'
+import { Code as CodeIcon } from '@/app/_icons/icons/code'
 import { ManualIconsCommand } from '../../../_components/ManualIconsCommand'
 
 // Matches the Pro components index card's data shape (system/AndromedaGallery
@@ -59,6 +65,8 @@ interface Props {
   // Prop tables parsed from the component's @typedef JSDoc at build time.
   // Empty for the few components without a @typedef block — section is hidden.
   propTables?: AndromedaPropTable[]
+  // Where the install lands and how to import it, for "Copy for agent".
+  agentUsage?: Usage | null
   // Unused by Andromeda Pro: this tier is paid-to-install for every component,
   // so there is no free-account gate here, only the
   // premium gate below. Kept only so this view's prop shape matches the
@@ -106,11 +114,12 @@ export function AndromedaComponentView({
   description,
   related,
   propTables = [],
+  agentUsage = null,
   iconItems = [],
   remixPrompt = null,
   promptLocked = false,
 }: Props) {
-  const { preferences, user } = useSession()
+  const { preferences } = useSession()
   // The registry slug is normally `andromeda-pro-<metaSlug>`. The exceptions are
   // pages renamed for the docs (table-basic, chart-radar and the rest), whose
   // registry item keeps its source filename. Map the page's meta slug to the
@@ -118,27 +127,8 @@ export function AndromedaComponentView({
   // target the right item.
   const registrySlug = andromedaRegistrySlug(slug)
 
-  // Personalized install: when signed in, the copied command carries the
-  // user's API token so the registry attributes the pull to the account.
-  // Signed out = plain @aicanvas command. The token route is resilient
-  // (returns null on any error), so this is a no-op fallback to the anonymous
-  // command rather than a break.
-  const [fetchedToken, setFetchedToken] = useState<string | null>(null)
-  useEffect(() => {
-    if (!user) return
-    let cancelled = false
-    const refresh = () =>
-      fetch('/api/me/token')
-        .then((r) => r.json())
-        .then((d) => { if (!cancelled) setFetchedToken(d?.token ?? null) })
-        .catch(() => {})
-    refresh()
-    // Re-fetch on focus so a token rotated in another tab isn't left stale here.
-    window.addEventListener('focus', refresh)
-    return () => { cancelled = true; window.removeEventListener('focus', refresh) }
-  }, [user])
-  // Signed-out derives to null at render — no setState in the effect body.
-  const userToken = user ? fetchedToken : null
+  // Signed in: the copied command carries the user's token. Signed out: plain @aicanvas.
+  const userToken = useInstallToken()
   // One lookup for the whole page: the preview, the fullscreen preview and the
   // coverage chips all render from the same declaration.
   const spec = SPEC_BY_SLUG[slug]
@@ -345,6 +335,40 @@ export function AndromedaComponentView({
     : `@aicanvas/${registrySlug}`
   const cliCommand = `npx shadcn@latest add ${installReference}`
 
+  // "Copy for agent" and its menu, behind the same gate as the install copy.
+  const agentCommand = `npx shadcn@latest add ${installReference}`
+  const agentGated = () => {
+    if (needsPremium) { openPaywallModal({ reason: 'premium-only' }); return true }
+    return false
+  }
+  async function copyForAgent() {
+    if (agentGated()) return false
+    // The tokenless build is what lands if the token fetch comes back empty.
+    const agentText = (command: string, withToken: boolean) => componentAgentText({
+      name,
+      isPremium: true,
+      isBlock: false,
+      system: { name: 'Andromeda Pro' },
+      usage: agentUsage,
+      command,
+      withToken,
+      hasProps: propTables.some((t) => t.props.length > 0),
+      mdUrl: `https://aicanvas.me/design-systems/andromeda-pro/${slug}.md`,
+    })
+    const ok = await copyText(agentText(agentCommand, !!userToken), agentText(`npx shadcn@latest add @aicanvas/${registrySlug}`, false))
+    track('Agent Copy', { component: registrySlug, ok })
+    return ok
+  }
+  const agentItems = [
+    { label: 'Copy install command', icon: SquareTerminal, run: async () => !agentGated() && copyText(agentCommand) },
+    ...(agentUsage ? [{ label: 'Copy import line', icon: CodeIcon, run: () => copyText(agentUsage.importLine) }] : []),
+    ...(remixPrompt ? [{ label: 'Remix with AI', icon: Sparkle, run: async () => {
+      track('Remix Open', { component: registrySlug })
+      setRemixOpen(true)
+      return false
+    } }] : []),
+  ]
+
   async function copyCli() {
     // Premium gate: non-premium visitors get the upgrade modal, not a copy.
     if (needsPremium) {
@@ -373,6 +397,7 @@ export function AndromedaComponentView({
           read as invisible ink the moment the page ground went light. */}
       <div className="mb-8">
         <PageCrumbs />
+        <CopyPage markdownHref={`/design-systems/andromeda-pro/${slug}.md`} />
         <PageTitle gap="none" rank="section">{name}</PageTitle>
         <PageLead>{description}</PageLead>
       </div>
@@ -547,23 +572,9 @@ export function AndromedaComponentView({
               item. */}
           <SaveButton slug={registrySlug} system="andromeda-pro" />
 
-          {/* Remix with AI — only when a prompt actually exists for this
-              component. No prompt, no button: an affordance that opens an
-              empty panel is worse than none. */}
-          {remixPrompt && (
-            <Button
-              variant="outline"
-              size="sm"
-              className="whitespace-nowrap"
-              onClick={() => {
-                track('Remix Open', { component: registrySlug })
-                setRemixOpen(true)
-              }}
-            >
-              <Sparkle size={15} className="max-[379px]:hidden" />
-              Remix<span className="hidden sm:inline"> with AI</span>
-            </Button>
-          )}
+          {/* Copy for agent — its menu (opens up) holds the install command,
+              the import line and, when a prompt exists, Remix with AI. */}
+          <AgentCopyButton onCopy={copyForAgent} items={agentItems} />
 
           {/* Copy Command — the button and command stay visible at all times; when
               the visitor isn't a confirmed subscriber, copyCli() opens the
@@ -726,7 +737,7 @@ export function AndromedaComponentView({
                             : pkgManager === 'yarn'
                             ? `yarn dlx shadcn@latest add ${installReference}`
                             : `npx shadcn@latest add ${installReference}`
-                          navigator.clipboard.writeText(cmd)
+                          void copyText(cmd)
                           trackInstall(registrySlug, 'andromeda-pro', pkgManager)
                           showCliToast()
                         }}

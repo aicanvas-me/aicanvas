@@ -25,7 +25,7 @@ export function GET() {
 
 > AI Canvas is the design layer for AI coding agents: design systems your agent builds with and you reshape to your project, plus ${total} standalone React components and blocks that fit any of them, all installed as editable source with shadcn or MCP. The free components and Andromeda Legacy are MIT; Premium components, Andromeda Pro, its templates and the AI Brain are proprietary, and the Line icons are free under the AI Canvas Premium License, not MIT, with a one-line credit kept in the code. Many components include an AI remix prompt for recreating a variation in an AI builder. For free components, the full prompt is public. For premium components and blocks, the setup and constants are public, while the rest of the build specification requires Premium.
 
-Component and design-system links below point at each page's markdown version (the page URL plus \`.md\`): description, install command, props and, where the page shows one, the remix prompt. These pages also answer in markdown at their own URL when the request sends \`Accept: text/markdown\`: the home page (or ${SITE_URL}/index.md), /mcp (or ${SITE_URL}/mcp.md), /components, each /components/<slug>, each /design-systems/<system> and each /design-systems/<system>/<component>. Other pages, such as templates, answer in HTML only.
+Component, design-system and template links below point at each page's markdown version (the page URL plus \`.md\`): description, install command, where the files land, how to import it, props and, for design-system components, its parts and variants. A remix prompt (to rebuild an item from scratch instead of installing it) stays on the page itself; the markdown links to it. These pages also answer in markdown at their own URL when the request sends \`Accept: text/markdown\`: the home page (or ${SITE_URL}/index.md), /mcp (or ${SITE_URL}/mcp.md), /components, each /components/<slug>, each /design-systems/<system>, each /design-systems/<system>/<component> and each /design-systems/<system>/templates/<template>. Other pages answer in HTML only.
 
 ## Overview
 - [Homepage](${SITE_URL}): Design systems and standalone React components for AI coding agents.
@@ -101,7 +101,7 @@ Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes.
         const pageSlug = t.slug.replace(new RegExp(`^${s.slug}-`), '')
         const kind = t.category ? `${t.category} template` : 'template'
         const tier = installTier(t.slug)
-        return `  - [${t.name}](${SITE_URL}/design-systems/${s.slug}/templates/${pageSlug}): ${tier === 'free account' ? 'Free' : 'Premium'} ${kind} built entirely from ${s.name} components. Install (${tier}): \`npx shadcn@latest add @aicanvas/${t.slug}\``
+        return `  - [${t.name}](${SITE_URL}/design-systems/${s.slug}/templates/${pageSlug}.md): ${tier === 'free account' ? 'Free' : 'Premium'} ${kind} built entirely from ${s.name} components. Install (${tier}): \`npx shadcn@latest add @aicanvas/${t.slug}\``
       })
       // Every install the system offers, grouped under the tier the gate gives
       // it. The component form carries one real slug from the manifest, plus any

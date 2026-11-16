@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { Heart } from '@/app/_icons/icons/heart'
+import { Bookmark } from '@/app/_icons/icons/bookmark'
 import { createClient } from '../../../lib/supabase/server'
 import type { SavedComponent } from '../../../lib/supabase/types'
 import { COMPONENTS } from '../../../lib/component-registry'
@@ -38,7 +38,7 @@ export default async function SavedPage() {
     return (
       <div className={`${CARD} px-6 py-14 text-center sm:py-16`}>
         <div className="mx-auto mb-5 flex h-12 w-12 items-center justify-center rounded-card border border-sand-200 bg-sand-50 text-sand-600 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-400">
-          <Heart size={22} />
+          <Bookmark size={22} />
         </div>
         <p className="text-sm text-sand-600 dark:text-sand-400">
           You haven&apos;t saved anything yet.

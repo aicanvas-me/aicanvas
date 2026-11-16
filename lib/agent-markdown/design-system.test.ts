@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { publicSystemPrompt, systemComponentMarkdown, systemMarkdown, type SystemInput } from './design-system'
+import { publicSystemPrompt, systemComponentMarkdown, systemMarkdown, systemTemplateMarkdown, type SystemInput } from './design-system'
 import { homeMarkdown, mcpMarkdown } from './site'
 
 const SCAFFOLD = [
@@ -48,8 +48,9 @@ describe('systemComponentMarkdown', () => {
     const md = systemComponentMarkdown(base)
     expect(md).toContain('npx shadcn@latest add @aicanvas/andromeda-pro-accordion')
     expect(md).toContain('Requires Premium.')
-    expect(md).toContain('## Remix prompt')
-    for (const gone of ['## 3. State', 'engineRef', 'data-secret-tree', '```tsx']) {
+    expect(md).toContain('## Remix prompt\n\nOnly when the user wants Accordion rebuilt from scratch')
+    // No prompt text at all, not even the public head.
+    for (const gone of ['## 1. Setup', '## 3. State', 'engineRef', 'data-secret-tree', '```tsx']) {
       expect(md).not.toContain(gone)
     }
   })
@@ -62,9 +63,23 @@ describe('systemComponentMarkdown', () => {
       installTier: 'free account',
       prompt: null,
     })
-    expect(md).toContain('(free account required)')
+    expect(md).toContain('an `AccountRequired` notice')
     expect(md).not.toContain('## Remix prompt')
     expect(md).toContain('License: MIT')
+    expect(md.split('\n\n')[1]).toContain('is a component of the free, MIT-licensed Andromeda Legacy design system from AI Canvas')
+  })
+
+  it('names the parts of a compound component and lists its union props as variants', () => {
+    const md = systemComponentMarkdown({
+      ...base,
+      prompt: null,
+      propTables: [
+        { table: 'Tabs', props: [{ name: 'size', type: "'sm'|'md'|'lg'", optional: true, default: "'md'", description: '' }] },
+        { table: 'TabsTrigger', props: [{ name: 'value', type: 'string', optional: false, default: '', description: '' }] },
+      ],
+    })
+    expect(md).toContain('## Parts\n\nAccordion is built from `Tabs` and `TabsTrigger`.')
+    expect(md).toContain("- `size` on `Tabs`: sm, md or lg (default 'md')")
   })
 })
 
@@ -96,6 +111,43 @@ describe('systemMarkdown', () => {
 
   it('leaves the brain out when the build did not ship it', () => {
     expect(systemMarkdown({ ...input, brain: undefined })).not.toContain('## AI Brain')
+  })
+})
+
+describe('systemTemplateMarkdown', () => {
+  const tpl = (installTier: string) => ({ folder: 'mission-control', registrySlug: 'x-mission-control', name: 'Mission Control', description: 'Telemetry.', installTier })
+  const build = (paid: boolean, tier: string) =>
+    systemTemplateMarkdown({
+      system: { slug: 'x', name: 'X', paid },
+      template: tpl(tier),
+      others: [],
+      uses: [{ slug: 'card', registrySlug: 'x-card', name: 'Card', description: '' }],
+      iconCount: 2,
+      withTokens: true,
+      usage: { file: 'components/aicanvas/x/examples/mission-control/index.tsx', importLine: "import MissionControl from '@/components/aicanvas/x/examples/mission-control'", render: '<MissionControl />' },
+      siteUrl: 'https://aicanvas.me',
+    })
+
+  it('a Premium template says so and publishes no source', () => {
+    const md = build(true, 'premium')
+    expect(md).toContain('License: Premium (proprietary)')
+    expect(md).toContain('The source is Premium and is not published.')
+    expect(md).not.toMatch(/^export /m)
+  })
+
+  it('a free template is MIT and points at the install for its source', () => {
+    const md = build(false, 'free account')
+    expect(md).toContain('License: MIT')
+    expect(md).toContain('Install with the command above to get the source.')
+    expect(md).toContain('npx shadcn@latest add @aicanvas/x-mission-control')
+  })
+
+  it('lists what it installs and where the page lands', () => {
+    const md = build(false, 'free account')
+    expect(md).toContain('The page itself plus 1 X components:')
+    expect(md).toContain('[Card](https://aicanvas.me/design-systems/x/card.md)')
+    expect(md).toContain('Also the X tokens and 2 AI Canvas icons.')
+    expect(md).toContain("import MissionControl from '@/components/aicanvas/x/examples/mission-control'")
   })
 })
 

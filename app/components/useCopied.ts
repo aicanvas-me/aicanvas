@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import { PENDING_INSTALL_TOKEN, resolveInstallToken } from '../_lib/useInstallToken'
 
 /**
  * Write `text` to the clipboard, resolving to whether it worked. Never rejects:
@@ -9,7 +10,17 @@ import { useCallback, useState } from 'react'
  * that as an unhandled rejection indistinguishable from extension noise by the
  * time it reaches the error beacon.
  */
-export async function copyText(text: string): Promise<boolean> {
+export async function copyText(text: string, noTokenText?: string): Promise<boolean> {
+  // ClipboardItem takes a promise, so Safari keeps the click's permission while the token loads.
+  if (text.includes(PENDING_INSTALL_TOKEN)) {
+    const ready = resolveInstallToken(text, noTokenText)
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ 'text/plain': ready.then((t) => new Blob([t], { type: 'text/plain' })) })])
+      return true
+    } catch {
+      text = await ready
+    }
+  }
   try {
     await navigator.clipboard.writeText(text)
     return true
@@ -23,15 +34,15 @@ export async function copyText(text: string): Promise<boolean> {
  * the site follows. `reset` clears the state early, e.g. when a menu closes.
  * `copy` resolves to whether the write worked, so a caller can report it.
  */
-export function useCopied(text: string, ms = 2000) {
+export function useCopied(text: string, ms = 2000, noTokenText?: string) {
   const [copied, setCopied] = useState(false)
   const copy = useCallback(async () => {
-    const ok = await copyText(text)
+    const ok = await copyText(text, noTokenText)
     if (!ok) return false
     setCopied(true)
     setTimeout(() => setCopied(false), ms)
     return true
-  }, [text, ms])
+  }, [text, ms, noTokenText])
   const reset = useCallback(() => setCopied(false), [])
   return { copied, copy, reset }
 }

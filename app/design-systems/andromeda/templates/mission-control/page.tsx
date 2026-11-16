@@ -1,6 +1,7 @@
 import MissionControl from '../../../../../design-systems/andromeda/examples/mission-control'
 import { themeColor } from '../../../../../design-systems/andromeda/components/lib/utils'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
+import { installedUsage } from '../../../../md/_installed'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
 // routes matching TEMPLATE_LEAF_RE (see Sidebar + TopBar) so the shell
@@ -25,6 +26,7 @@ export default async function MissionControlTemplate({
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-mission-control"
+      agentUsage={installedUsage('andromeda-mission-control', 'index')}
       templateName="Mission Control"
       systemName="Andromeda Legacy"
       systemHref="/design-systems/andromeda"

@@ -1,6 +1,7 @@
 import ServiceOrder from '../../../../../design-systems/andromeda/examples/service-order'
 import { themeColor } from '../../../../../design-systems/andromeda/components/lib/utils'
 import { TemplatePreviewShell } from '../../../../_components/TemplatePreviewShell'
+import { installedUsage } from '../../../../md/_installed'
 
 // Distraction-free template. The Andromeda sidebar/topbar are suppressed for
 // routes matching TEMPLATE_LEAF_RE (see Sidebar) so the shell owns the full
@@ -25,6 +26,7 @@ export default async function ServiceOrderTemplate({
     <TemplatePreviewShell
       frame={frame}
       templateSlug="andromeda-service-order"
+      agentUsage={installedUsage('andromeda-service-order', 'index')}
       templateName="Service Order"
       systemName="Andromeda Legacy"
       systemHref="/design-systems/andromeda"

@@ -6,7 +6,7 @@ import { motion, useReducedMotion } from 'framer-motion'
 import { History } from '@/app/_icons/icons/history'
 import type { SiteIcon } from '@/app/_icons'
 import { Gear } from '@/app/_icons/icons/gear'
-import { Heart } from '@/app/_icons/icons/heart'
+import { Bookmark } from '@/app/_icons/icons/bookmark'
 import { Plug } from '@/app/_icons/icons/plug'
 import { User } from '@/app/_icons/icons/user'
 
@@ -15,7 +15,7 @@ import { User } from '@/app/_icons/icons/user'
 // just rendered two ways.
 
 const TABS: { href: string; label: string; Icon: SiteIcon }[] = [
-  { href: '/account/saved', label: 'Saved', Icon: Heart },
+  { href: '/account/saved', label: 'Saved', Icon: Bookmark },
   { href: '/account/history', label: 'Activity', Icon: History },
   { href: '/account/settings', label: 'Settings', Icon: Gear },
   { href: '/account', label: 'Profile', Icon: User },

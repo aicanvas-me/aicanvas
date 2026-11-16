@@ -105,7 +105,9 @@ const INSTALL_SLOTS: Record<string, string> = {
 export function installSlotId(pathname: string): string | null {
   if (BRAIN_READER_RE.test(pathname)) return 'brain-install-slot'
   if (/^\/icons(?:\/[^/]+)?\/?$/.test(pathname)) return 'icons-copy-page-slot'
-  return INSTALL_SLOTS[pathname.replace(/\/$/, '') || '/'] ?? null
+  const path = pathname.replace(/\/$/, '') || '/'
+  if (INSTALL_SLOTS[path]) return INSTALL_SLOTS[path]
+  return COMPONENT_LEAF_RE.test(path) || ANDROMEDA_COMPONENT_RE.test(path) ? 'copy-page-slot' : null
 }
 
 /** One standalone component's page. Category and collection pages sit a

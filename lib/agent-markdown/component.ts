@@ -10,14 +10,70 @@
  *
  * The twin is always the SIGNED-OUT view of the page, never more: it is
  * served statically to anonymous agents and never reads an entitlement.
- *   - Free: full source (unless REGISTRY_ENFORCEMENT=enforce) and the full
- *     remix prompt, same as the page's server HTML.
- *   - Premium: no source, and only blocks 1 Setup + 2 Constants of the
- *     prompt (splitPromptAtPaywall). No recognisable scaffold = no prompt.
- * Anything the page withholds from a signed-out visitor must be withheld here.
+ *   - Free: full source (unless REGISTRY_ENFORCEMENT=enforce).
+ *   - Premium: no source.
+ * The remix prompt itself never goes in: it is most of the page's length and its
+ * "Create ..." steps can push an agent to rebuild instead of install, so the twin
+ * points to it in one line. Anything the page withholds from a signed-out visitor
+ * must be withheld here.
  */
 import { splitPromptAtPaywall } from '../registry/prompt-blocks'
 import type { PropTable } from '../../app/components/PropsTable'
+
+/** Where an install lands and how to import it (from the emitted registry item). */
+export interface Usage {
+  file: string
+  importLine: string
+  /** Set for a default export that renders with no required props. */
+  render?: string
+}
+
+export function usageSection(usage: Usage | null | undefined, what = 'It', noProps = false): string | null {
+  if (!usage) return null
+  const code = usage.render ? `${usage.importLine}\n\n${usage.render}` : usage.importLine
+  const tail = noProps && usage.render ? '\n\nIt takes no props.' : ''
+  return `## Use it\n\n${what} installs to \`${usage.file}\` (under \`src/\` if your project has one). With the usual \`@/\` alias:\n\n${fence(code, 'tsx')}${tail}`
+}
+
+export interface AgentTextInput {
+  name: string
+  isPremium: boolean
+  isBlock: boolean
+  /** Set for a design-system component or template; absent for a standalone. */
+  system?: { name: string; template?: boolean }
+  usage: Usage | null
+  /** The exact command the page copies for this viewer. */
+  command: string
+  withToken: boolean
+  hasProps: boolean
+  /** The page's Markdown twin, where the props are listed. */
+  mdUrl: string
+}
+
+/** "Copy for agent": numbered steps to install and use the item, never rebuild it. */
+export function componentAgentText(input: AgentTextInput): string {
+  const { name, usage } = input
+  const tier = input.isPremium ? 'a Premium' : 'a free, MIT-licensed'
+  const kind = input.system
+    ? `${tier} ${input.system.template ? 'page template' : 'component'} of the ${input.system.name} design system`
+    : `${tier} standalone React + Tailwind ${input.isBlock ? 'block' : 'component'}`
+  const props = input.system && !input.system.template
+    ? `its props and an example are at ${input.mdUrl}`
+    : input.hasProps ? `its props are listed at ${input.mdUrl}` : 'it takes no props'
+  const steps = [
+    usage
+      ? `If \`${usage.file}\` (under \`src/\` if the project has one) exists and is the real component, skip to step 3. Never rebuild it from scratch.`
+      : `If it is already installed and is the real component, skip to step 3. Never rebuild it from scratch.`,
+    `Run \`${input.command}\` (${input.withToken ? 'keep the token out of committed files; ' : ''}add \`--overwrite\` only to replace a placeholder from an earlier try). No \`components.json\`? Run \`npx shadcn@latest init\` first. If the new file is only an \`AccountRequired\` or \`PremiumLocked\` notice, stop and tell me.`,
+    usage?.render
+      ? `Import it with \`${usage.importLine}\` (use this project's alias if it is not \`@/\`) and render \`${usage.render}\` where I ask; ${props}.`
+      : usage
+        ? `Import it with \`${usage.importLine}\` (use this project's alias if it is not \`@/\`) and use it where I ask; ${props}.`
+        : `Import it and use it where I ask; ${props}.`,
+    `Check it type-checks and renders with no console errors and in a sans-serif font (serif text means \`--font-sans\` in the global CSS points at itself: set it to the font the layout loads), and tell me anything you did differently.`,
+  ]
+  return `Add ${name} to my project: ${kind} from AI Canvas.\n\n${steps.map((step, i) => `${i + 1}. ${step}`).join('\n')}`
+}
 
 export interface ComponentMarkdownInput {
   slug: string
@@ -39,6 +95,7 @@ export interface ComponentMarkdownInput {
   enforcing: boolean
   /** FREE_ACCOUNT_GATE === 'on': free one-command installs need an account. */
   freeAccountGate: boolean
+  usage?: Usage | null
   siteUrl: string
 }
 
@@ -101,13 +158,15 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
 
   const out: string[] = []
 
-  // Agents truncate long fetches, so the way back to the index goes first.
-  // A standalone belongs to no design system; say so wherever it is named.
-  const kind = input.designSystem ? noun : `standalone ${noun} (part of no design system, works in any React + Tailwind app)`
-  out.push(
-    `> ${isPremium ? 'Premium' : 'Free, MIT-licensed'} ${kind} from AI Canvas. Index of every component and install setup: ${siteUrl}/llms.txt`,
-  )
+  // Name, then who it is in one sentence. Agents truncate long fetches, so the
+  // way back to the index stays at the top. A standalone belongs to no design system.
+  const kind = input.designSystem
+    ? `${noun} from AI Canvas (${siteUrl})`
+    : `standalone ${noun} from AI Canvas (${siteUrl}): it belongs to no design system and works in any React + Tailwind app`
   out.push(`# ${name}`)
+  out.push(
+    `${name} is a ${isPremium ? 'Premium' : 'free, MIT-licensed'} ${kind}. Index of every component and install setup: ${siteUrl}/llms.txt`,
+  )
   out.push(input.description)
 
   const facts = [
@@ -122,11 +181,11 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
   const install: string[] = ['## Install', fence(`npx shadcn@latest add @aicanvas/${slug}`, 'bash')]
   if (isPremium) {
     install.push(
-      `Requires Premium. Set your AI Canvas token as AICANVAS_TOKEN and register the @aicanvas registry with it, as described in the Install section of ${siteUrl}/llms.txt. Without a Premium token the command writes a placeholder file instead of the ${noun}.`,
+      `Requires Premium. Set your AI Canvas token as AICANVAS_TOKEN and register the @aicanvas registry with it, as described in the Install section of ${siteUrl}/llms.txt. Without a Premium token the command writes a placeholder (a \`PremiumLocked\` notice) instead of the ${noun}.`,
     )
   } else if (input.freeAccountGate) {
     install.push(
-      `Needs a free AI Canvas account. Signed out, the command exits 0 but writes a placeholder file titled "(free account required)"; check for that title before reporting success. Token setup: the Install section of ${siteUrl}/llms.txt.`,
+      `Needs a free AI Canvas account. Signed out, the command exits 0 but writes a placeholder (an \`AccountRequired\` notice); check for it before reporting success. Token setup: the Install section of ${siteUrl}/llms.txt.`,
     )
   }
   install.push(
@@ -135,6 +194,9 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
   if (npm) install.push(`Peer dependencies:\n\n${fence(`npm install ${npm}`, 'bash')}`)
   if (fonts.length > 0) install.push(`Fonts: ${fonts.join('; ')}`)
   out.push(install.join('\n\n'))
+
+  const use = usageSection(input.usage, 'It', !input.propTables.some((t) => t.props.length > 0))
+  if (use) out.push(use)
 
   const props = propsSection(input.propTables)
   if (props) out.push(props)
@@ -155,10 +217,8 @@ export function componentMarkdown(input: ComponentMarkdownInput): string {
   }
 
   if (prompt) {
-    const intro = promptLocked
-      ? `The public part of the remix prompt: 1. Setup and 2. Constants. The rest of the build spec (state, markup, how it works) is part of Premium.`
-      : `One comprehensive, platform-agnostic prompt for rebuilding or remixing ${name} in any AI coding tool. For the exact ${noun}, install it with the command above.`
-    out.push(`## Remix prompt\n\n${intro}\n\n${fence(prompt, 'markdown')}`)
+    const which = promptLocked ? 'the public part of its remix prompt' : 'its remix prompt'
+    out.push(`## Remix prompt\n\nOnly when the user wants ${name} rebuilt from scratch instead of installed: ${which} is in the Remix panel at ${pageUrl}.`)
   }
 
   if (input.related.length > 0) {
