@@ -41,6 +41,7 @@ export function cancellationReceiptEmail(r: CancelReceipt): { subject: string; h
   const endsEn = r.extraordinary
     ? `as soon as possible after we review your reason (at the latest ${periodEndEn})`
     : periodEndEn
+  const endsBoth = endsDe === endsEn ? endsDe : `${endsDe} / ${endsEn}`
   const plan = esc(r.plan)
   const label = 'margin:0 0 4px 0;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;font-weight:700;'
 
@@ -48,8 +49,10 @@ export function cancellationReceiptEmail(r: CancelReceipt): { subject: string; h
               <p ${emailText('muted', label)}>Eingang / Received</p>
               <p ${emailText('primary', 'margin:0 0 16px 0;font-size:15px;')}>${received}</p>
               <p ${emailText('muted', label)}>Vertrag endet / Subscription ends</p>
-              <p ${emailText('primary', 'margin:0 0 4px 0;font-size:15px;')}>${esc(endsDe)}</p>
-              <p ${emailText('muted', 'margin:0 0 18px 0;font-size:13px;line-height:1.5;')}>${esc(endsEn)}</p>
+              ${endsDe === endsEn
+                ? `<p ${emailText('primary', 'margin:0 0 18px 0;font-size:15px;')}>${esc(endsDe)}</p>`
+                : `<p ${emailText('primary', 'margin:0 0 4px 0;font-size:15px;')}>${esc(endsDe)}</p>
+              <p ${emailText('muted', 'margin:0 0 18px 0;font-size:13px;line-height:1.5;')}>${esc(endsEn)}</p>`}
               <p ${emailText('secondary', 'margin:0;font-size:14px;line-height:1.6;')}>Du behältst bis dahin vollen Zugang. / You keep full access until then.</p>`
 
   const html = emailShell({
@@ -66,7 +69,7 @@ export function cancellationReceiptEmail(r: CancelReceipt): { subject: string; h
 Wir haben deine Kündigung für ${r.plan} erhalten. / We received your cancellation for ${r.plan}.
 
 Eingang / Received: ${received}
-Vertrag endet / Subscription ends: ${endsDe} / ${endsEn}
+Vertrag endet / Subscription ends: ${endsBoth}
 
 Bestätige deine Kündigung / Confirm your cancellation:
 ${r.confirmUrl}
