@@ -34,15 +34,15 @@ export async function copyText(text: string, noTokenText?: string): Promise<bool
  * the site follows. `reset` clears the state early, e.g. when a menu closes.
  * `copy` resolves to whether the write worked, so a caller can report it.
  */
-export function useCopied(text: string, ms = 2000) {
+export function useCopied(text: string, ms = 2000, noTokenText?: string) {
   const [copied, setCopied] = useState(false)
   const copy = useCallback(async () => {
-    const ok = await copyText(text)
+    const ok = await copyText(text, noTokenText)
     if (!ok) return false
     setCopied(true)
     setTimeout(() => setCopied(false), ms)
     return true
-  }, [text, ms])
+  }, [text, ms, noTokenText])
   const reset = useCallback(() => setCopied(false), [])
   return { copied, copy, reset }
 }
