@@ -224,6 +224,7 @@ export function IconDetail({
                 <RotateCcw aria-hidden className="size-4" />
               </button>
             </div>
+            <p className="text-xs font-normal text-sand-600 dark:text-sand-400">Size, weight and colour apply to SVG downloads. In code, set them on each icon.</p>
             <div aria-hidden className="my-2 h-px bg-sand-200 dark:bg-sand-800" />
             <ActionBar name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} installToken={installToken} exportReady={ready} />
             <CodeTabs className="mt-2 min-h-[160px] flex-1" name={icon.name} markup={markup} size={size} weight={weight} colour={colourOverride} style={style} installToken={installToken} exportReady={ready} />

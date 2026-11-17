@@ -2,7 +2,7 @@ import 'server-only'
 
 import { strToU8, zipSync, type Zippable } from 'fflate'
 import { buildSvg } from './svg'
-import { iconFileName, takesStroke, type IconWeight } from './icon-utils'
+import { iconComponentName, iconFileName, takesStroke, type IconWeight } from './icon-utils'
 import type { IconStyle } from './types'
 
 export type ZipFormat = 'svg' | 'react'
@@ -29,34 +29,40 @@ function preset(input: IconZipInput) {
   return {
     style: input.style,
     format: input.format,
-    size: input.size,
-    weight: hasStroke ? input.weight : null,
-    colour: input.colour,
+    ...(input.format === 'svg' ? {
+      size: input.size,
+      weight: hasStroke ? input.weight : null,
+      colour: input.colour,
+    } : {}),
     count: input.names.length,
     generatedAt: new Date().toISOString(),
   }
 }
 
 function readme(input: IconZipInput): string {
+  if (input.format === 'react') {
+    const component = iconComponentName('search', input.style)
+    return [
+      `AI Canvas icons: React icon components and their shared IconBase runtime.`,
+      `Style: ${input.style}. Count: ${input.names.length} icons.`,
+      `Import example: import { ${component} } from '@/components/icons/${iconFileName('search', input.style)}'`,
+      `Set size, weight and colour in code: <${component} size={24}${takesStroke(input.style) ? ' weight="bold"' : ''} color="#336699" />`,
+      'The default size is 24. Weight applies only to Line and Duotone; solid styles have a fixed weight.',
+      'The export name is the PascalCase file name. Paid styles add Duotone / Solid / SolidDuotone. A name starting with a digit gets an Icon prefix.',
+      '<IconProvider> from IconBase sets defaults for the icons inside it.',
+      'See preset.json for the style, format, count and generation time of this export.',
+      'Licensed to AI Canvas Premium members: https://aicanvas.me/premium-license',
+      '',
+    ].join('\n')
+  }
   const colour = input.colour ?? 'currentColor'
   const weight = takesStroke(input.style) ? `${input.weight} weight` : 'fixed solid weight'
-  const contents =
-    input.format === 'react'
-      ? 'React icon components and their shared IconBase runtime'
-      : `${input.format.toUpperCase()} files for ${input.names.length} icons`
+  const contents = `${input.format.toUpperCase()} files for ${input.names.length} icons`
 
   return [
     `AI Canvas icons: ${contents}.`,
     `Preset: ${input.style} style, ${input.size}px, ${weight}, colour ${colour}.`,
-    input.format === 'react'
-      ? "Import example: import { Search } from '@/components/icons/search'"
-      : `Files are in the ${input.format}/ folder.`,
-    ...(input.format === 'react'
-      ? [
-          'The export name is the PascalCase file name. Paid styles add Duotone / Solid / SolidDuotone. A name starting with a digit gets an Icon prefix.',
-          '<IconProvider weight="..."> from IconBase sets defaults.',
-        ]
-      : []),
+    `Files are in the ${input.format}/ folder.`,
     'See preset.json for the machine-readable settings used for this export.',
     'Licensed to AI Canvas Premium members: https://aicanvas.me/premium-license',
     '',

@@ -26,7 +26,7 @@ import {
   LIGHT_TILE,
   MASKED_INSTALL_TOKEN,
 } from '../_lib/constants'
-import { ICON_WEIGHTS, takesStroke, type IconWeight } from '../_lib/icon-utils'
+import { ICON_STYLES, ICON_WEIGHTS, takesStroke, type IconWeight } from '../_lib/icon-utils'
 import { overviewMarkdown } from '../_lib/markdown'
 import { toIconQuery } from '../_lib/settings-query'
 import { ICON_DEFAULTS, storeSettings, storedSettings } from '../_lib/settings-store'
@@ -38,6 +38,7 @@ import { IconTile } from './IconTile'
 import { StylePicker } from './StylePicker'
 import { TuneSlider } from './TuneSlider'
 import { useIconVariant } from './useIconVariant'
+import { useInstallGate } from './useInstallGate'
 
 // The grid's slider stops at 64; a bigger size picked on an icon page shows
 // here at 64.
@@ -209,7 +210,9 @@ export function IconsOverview({
   const colour = colourOverride ?? (theme === 'dark' ? DARK_PREVIEW_COLOUR : LIGHT_PREVIEW_COLOUR)
   const { data, loading } = useIconVariant(lineIcons, style, loadFullLine)
   const installToken = useInstallToken()
-  const installShown = allIconsInstall(installToken && MASKED_INSTALL_TOKEN)
+  const gate = useInstallGate(style)
+  const styleLabel = ICON_STYLES.find((entry) => entry.id === style)!.label
+  const installShown = allIconsInstall(style, gate.masked || installToken ? MASKED_INSTALL_TOKEN : null)
   const loadMetadata = useCallback(() => {
     metadataRequest ??= fetch('/icons/icon-data')
       .then((response) => {
@@ -290,7 +293,8 @@ export function IconsOverview({
   }
 
   const copyInstall = async () => {
-    const ok = await copyText(allIconsInstall(installToken))
+    if (gate.blocked()) return
+    const ok = await copyText(allIconsInstall(style, installToken))
     if (!ok) return
     setInstallCopied(true)
     setTimeout(() => setInstallCopied(false), 2000)
@@ -326,7 +330,7 @@ export function IconsOverview({
               <button
                 type="button"
                 onClick={() => void copyInstall()}
-                aria-label="Copy the install command for every Line icon"
+                aria-label={`Copy the install command for every ${styleLabel} icon`}
                 title={installShown}
                 className="group inline-flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-sand-200 bg-sand-100 pl-6 pr-1 text-left transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
               >
@@ -337,6 +341,7 @@ export function IconsOverview({
                   <span className="hidden text-sand-600 @min-[800px]:inline dark:text-sand-400">{INSTALL_PREFIX} </span>
                   <span className="text-sand-900 dark:text-sand-50">{installShown.slice(INSTALL_PREFIX.length + 1)}</span>
                 </span>
+                <span className="shrink-0 text-xs text-sand-600 dark:text-sand-400">{styleLabel} · {ICON_COUNT} icons</span>
                 <span className="inline-flex size-8 shrink-0 items-center justify-center gap-1.5 rounded-full text-xs font-semibold text-sand-700 transition-colors group-hover:bg-sand-200 group-hover:text-sand-900 sm:w-auto sm:px-3 dark:text-sand-300 dark:group-hover:bg-sand-800 dark:group-hover:text-sand-50">
                   {installCopied ? (
                     <Check aria-hidden className="size-3.5 text-success" />
@@ -443,6 +448,7 @@ export function IconsOverview({
               </button>
             </div>
           </div>
+          <p className="px-4 pb-3 text-xs font-normal text-sand-600 dark:text-sand-400">Size, weight and colour apply to SVG downloads. In code, set them on each icon.</p>
         </section>
 
         {visible.length > 0 ? (

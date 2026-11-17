@@ -214,7 +214,8 @@ function premiumStub(realBody: string, slug: string): NextResponse {
   // system's tokens and lib files) gets the notice there as a plain module, so
   // a locked install still type-checks instead of breaking the project.
   const plainStub = `export const PREMIUM_NOTICE = ${JSON.stringify(msg)}\n`
-  const files = Array.isArray(parsed.files)
+  // A paid icon set gets the one notice below, not a stub over every icon and IconBase.
+  const files = slug.startsWith('icons-') ? [] : Array.isArray(parsed.files)
     ? (parsed.files as Array<Record<string, unknown>>).map((f) => ({
         ...f,
         content: /\.(tsx|jsx)$/.test(String(f.path ?? f.target ?? '')) ? stub : plainStub,

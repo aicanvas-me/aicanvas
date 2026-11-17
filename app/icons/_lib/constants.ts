@@ -5,8 +5,9 @@ const REGISTRY_BASE = 'https://aicanvas.me'
 export const MASKED_INSTALL_TOKEN = 'aic_••••••••'
 const installCommand = (item: string, token?: string | null) =>
   `npx shadcn@latest add ${token ? `"${REGISTRY_BASE}/r/${item}.json?token=${token}"` : `@aicanvas/${item}`}`
-export const allIconsInstall = (token?: string | null) => installCommand('icons', token)
-export const ALL_ICONS_INSTALL = allIconsInstall()
+export const allIconsInstall = (style: IconStyle, token?: string | null) =>
+  installCommand(style === 'line' ? 'icons' : `icons-${style}`, token)
+export const ALL_ICONS_INSTALL = allIconsInstall('line')
 // Reuse the existing registry's premium install wording.
 export const PREMIUM_ICON_INSTALL_NOTE = 'Requires AI Canvas Premium to install.'
 export const DARK_PREVIEW_COLOUR = '#F4F4FA'

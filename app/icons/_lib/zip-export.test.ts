@@ -1,6 +1,7 @@
 import { strFromU8, unzipSync } from 'fflate'
 import { describe, expect, it } from 'vitest'
 import { buildSvg } from './svg'
+import { iconComponentName, iconFileName, takesStroke } from './icon-utils'
 import { buildIconZip, zipFileName, type IconZipInput } from './zip-export'
 
 const MARKUP = {
@@ -64,11 +65,12 @@ describe('buildIconZip', () => {
     expect(new Date(saved.generatedAt as string).toISOString()).toBe(saved.generatedAt)
   })
 
-  it.each(['solid', 'solid-duotone'] as const)(
-    'keeps React sources byte-identical and nulls the weight for %s',
+  it.each(['line', 'duotone', 'solid', 'solid-duotone'] as const)(
+    'keeps React sources byte-identical and omits SVG settings for %s',
     async (style) => {
       const base = 'export const IconBase = "untouched"\n'
-      const suffix = style === 'solid' ? 'solid' : 'solid-duotone'
+      const alphaFile = `${iconFileName('alpha', style)}.tsx`
+      const betaFile = `${iconFileName('beta', style)}.tsx`
       const alpha = `export const Alpha = "${style}"\n`
       const beta = `export const Beta = "${style}"\n`
       const files = unzip(
@@ -76,12 +78,15 @@ describe('buildIconZip', () => {
           input({
             style,
             format: 'react',
+            size: 48,
+            weight: 'extrabold',
+            colour: '#abcdef',
             names: ['alpha', 'beta'],
             react: {
               base,
               files: {
-                [`beta-${suffix}.tsx`]: beta,
-                [`alpha-${suffix}.tsx`]: alpha,
+                [betaFile]: beta,
+                [alphaFile]: alpha,
               },
             },
           }),
@@ -90,25 +95,30 @@ describe('buildIconZip', () => {
 
       expect(Object.keys(files)).toEqual([
         'components/icons/IconBase.tsx',
-        `components/icons/alpha-${suffix}.tsx`,
-        `components/icons/beta-${suffix}.tsx`,
+        `components/icons/${alphaFile}`,
+        `components/icons/${betaFile}`,
         'preset.json',
         'README.txt',
       ])
       expect(strFromU8(files['components/icons/IconBase.tsx'])).toBe(base)
-      expect(strFromU8(files[`components/icons/alpha-${suffix}.tsx`])).toBe(alpha)
-      expect(strFromU8(files[`components/icons/beta-${suffix}.tsx`])).toBe(beta)
-      expect(json(files['preset.json'])).toMatchObject({
+      expect(strFromU8(files[`components/icons/${alphaFile}`])).toBe(alpha)
+      expect(strFromU8(files[`components/icons/${betaFile}`])).toBe(beta)
+      const saved = json(files['preset.json'])
+      expect(saved).toEqual({
         style,
         format: 'react',
-        size: 20,
-        weight: null,
-        colour: '#336699',
         count: 2,
+        generatedAt: expect.any(String),
       })
+      expect(new Date(saved.generatedAt as string).toISOString()).toBe(saved.generatedAt)
       const readme = strFromU8(files['README.txt'])
       expect(readme).not.toContain('\u2014')
-      expect(readme).toContain('<IconProvider weight="..."> from IconBase sets defaults.')
+      expect(readme).not.toMatch(/Preset:|48px|extrabold|#abcdef/)
+      expect(readme).toContain(`Style: ${style}. Count: 2 icons.`)
+      expect(readme).toContain(`import { ${iconComponentName('search', style)} } from '@/components/icons/${iconFileName('search', style)}'`)
+      expect(readme).toContain(`<${iconComponentName('search', style)} size={24}${takesStroke(style) ? ' weight="bold"' : ''} color="#336699" />`)
+      expect(readme).toContain('Weight applies only to Line and Duotone; solid styles have a fixed weight.')
+      expect(readme).toContain('<IconProvider> from IconBase sets defaults')
     },
   )
 

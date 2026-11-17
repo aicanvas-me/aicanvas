@@ -539,6 +539,27 @@ describe.skipIf(!ICON_ITEMS)('GET /r/icon-*.json — Line free, the other styles
     }
   })
 
+  it('locks a whole paid style set for a free account as one notice, never a stub per icon', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'free', userId: 'u1' })
+    for (const file of ['icons-duotone.json', 'icons-solid.json', 'icons-solid-duotone.json']) {
+      const res = await get(file)
+      const item = (await res.json()) as { files: { content: string; target: string }[] }
+      expect(res.headers.get('X-AICanvas-Content-Type'), file).toBe('premium-standalone')
+      expect(item.files, file).toHaveLength(1)
+      expect(item.files[0].target, file).toBe(`~/aicanvas-premium-locked/${file.replace('.json', '.md')}`)
+      expect(JSON.stringify(item), file).not.toContain('createIcon(')
+    }
+  })
+
+  it('hands a premium account every icon of a paid style set', async () => {
+    mockedGetEntitlement.mockResolvedValue({ tier: 'premium', userId: 'u1' })
+    const res = await get('icons-solid.json')
+    const item = (await res.json()) as { files: { path: string; content: string }[] }
+    expect(item.files[0].path).toBe('components/icons/IconBase.tsx')
+    expect(item.files.length).toBeGreaterThan(100)
+    expect(item.files.slice(1).every((f) => f.path.endsWith('-solid.tsx'))).toBe(true)
+  })
+
   it('hands a premium account the real paid style', async () => {
     mockedGetEntitlement.mockResolvedValue({ tier: 'premium', userId: 'u1' })
     const res = await get('icon-search-duotone.json')
