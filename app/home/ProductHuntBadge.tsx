@@ -7,7 +7,7 @@ import { track } from '../lib/analytics'
 // votes in any wording, so it only links to the launch; the ribbon carries the code.
 // It shows only during the launch day; ?ph=1 previews it at any time.
 
-const PH_URL = 'https://www.producthunt.com'
+const PH_URL = 'https://www.producthunt.com/posts/ai-canvas-3'
 const LIVE_FROM = Date.parse('2026-11-18T09:01:00+01:00')
 const LIVE_UNTIL = Date.parse('2026-11-19T09:00:00+01:00')
 
