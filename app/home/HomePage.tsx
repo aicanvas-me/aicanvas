@@ -32,6 +32,7 @@ import { StickerFaq } from './StickerFaq'
 import { ValueBento } from './ValueBento'
 import { Wordmark } from '../components/Wordmark'
 import { StageLight } from '../components/StageLight'
+import { ProductHuntBadge } from './ProductHuntBadge'
 
 interface Props {
   /** Every standalone, free and premium. */
@@ -127,6 +128,7 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
       <main className="relative mx-auto w-full min-w-0 max-w-7xl px-4 pt-12 pb-8 sm:px-6 sm:pt-20">
         {/* ── Hero ── */}
         <section className="mx-auto flex max-w-4xl flex-col items-center text-center">
+          <ProductHuntBadge />
           <span
             className="aic-hero-rise mb-5 inline-flex items-center rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300"
             style={{ animationDelay: '0.1s' }}
