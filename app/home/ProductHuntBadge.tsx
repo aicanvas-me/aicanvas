@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { track } from '../lib/analytics'
 
 // The Product Hunt launch badge above the hero. Product Hunt forbids asking for
-// votes in any wording, so this invites comments and carries the launch code.
+// votes in any wording, so it only links to the launch and carries its code.
 // It shows only during the launch day; ?ph=1 previews it at any time.
 
 const PH_URL = 'https://www.producthunt.com'
@@ -32,27 +32,28 @@ export function ProductHuntBadge() {
   if (!show) return null
 
   return (
-    <div className="aic-hero-rise mb-8 flex flex-col items-center gap-3" style={{ animationDelay: '0.05s' }}>
-      <a
-        href={PH_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        onClick={() => track('Product Hunt Badge Click', {})}
-        className="inline-flex items-center gap-3 rounded-control border border-sand-300 bg-sand-100 py-2 pl-2.5 pr-4 text-left transition-colors hover:border-sand-400 dark:border-sand-700 dark:bg-sand-900 dark:hover:border-sand-600"
-      >
-        <ProductHuntLogo />
-        <span className="flex flex-col leading-none">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
-            Live on
-          </span>
-          <span className="mt-1 text-lg font-bold text-sand-900 dark:text-sand-50">Product Hunt</span>
+    <a
+      href={PH_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={() => track('Product Hunt Badge Click', {})}
+      className="aic-hero-rise mb-8 inline-flex items-center gap-3 rounded-control border border-sand-300 bg-sand-100 py-2 pl-2.5 pr-4 text-left transition-colors hover:border-sand-400 dark:border-sand-700 dark:bg-sand-900 dark:hover:border-sand-600"
+      style={{ animationDelay: '0.05s' }}
+    >
+      <ProductHuntLogo />
+      <span className="flex flex-col leading-none">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
+          We launched today
         </span>
-      </a>
-      <p className="max-w-md text-sm leading-relaxed text-sand-700 dark:text-sand-300">
-        We launched today. Tell us where your agent still drifts.
-        <br />
-        Code <span className="font-semibold text-sand-900 dark:text-sand-50">ProductHunt</span>: 40% off Lifetime
-      </p>
-    </div>
+        <span className="mt-1 text-lg font-bold text-sand-900 dark:text-sand-50">Product Hunt</span>
+      </span>
+      <span aria-hidden className="h-8 w-px bg-sand-300 dark:bg-sand-700" />
+      <span className="flex flex-col leading-none">
+        <span className="text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
+          Code ProductHunt
+        </span>
+        <span className="mt-1 text-sm font-semibold text-sand-900 dark:text-sand-50">40% off Lifetime</span>
+      </span>
+    </a>
   )
 }
