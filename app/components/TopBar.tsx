@@ -28,7 +28,7 @@ const BAR_CLASS =
 // consent) are one decision alone. The sidebar hides on the same three.
 // /kuendigen still draws its own bar: that page is the legal cancellation
 // flow and is frozen as shipped, so the shell steps aside there.
-function isChromeless(pathname: string): boolean {
+export function isChromeless(pathname: string): boolean {
   return (
     pathname.startsWith('/lab') ||
     pathname === '/kuendigen' ||
