@@ -11,6 +11,7 @@ import { Sidebar } from './components/Sidebar'
 import { ScrollMemory } from './components/ScrollMemory'
 import { MobileNav } from './components/MobileNav'
 import { TopBar } from './components/TopBar'
+import { ProductHuntRibbon } from './components/ProductHuntRibbon'
 import { TopBarProvider } from './components/PageCrumbs'
 import { SessionProvider } from './components/auth/SessionProvider'
 import { AuthModalProvider } from './components/auth/AuthModalProvider'
@@ -244,6 +245,7 @@ export default async function RootLayout({
            <AuthModalProvider>
             <PaywallModalProvider>
             <TopBarProvider>
+             <ProductHuntRibbon />
              {/* The one top bar, across the whole window above the rail and
                  the content, drawn from md up and never remounted: a
                  navigation swaps only what is below it. It reads the URL, so

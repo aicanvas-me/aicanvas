@@ -36,6 +36,7 @@ type EventMap = {
    *  folding a banner click into it would read as checkout intent it has not
    *  earned. The pill only sends people to /pricing. */
   'Offer Banner Click': Record<string, never>
+  'Product Hunt Badge Click': Record<string, never>
 }
 
 // Runtime mirror of EventMap's keys plus the two events sent via beacon()
@@ -58,6 +59,7 @@ export const BEACON_EVENTS = [
   'Install Gate Shown',
   'Sign Up',
   'Search',
+  'Product Hunt Badge Click',
   'MCP Token Copy',
   'Manage Subscription Open',
   'Checkout Step',
