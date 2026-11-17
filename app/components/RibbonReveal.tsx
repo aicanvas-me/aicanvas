@@ -15,6 +15,17 @@ export function RibbonReveal({ children }: { children: ReactNode }) {
   const [shown, setShown] = useState(true)
   const last = useRef(new WeakMap<Element, number>())
   const lockedUntil = useRef(0)
+  const shownRef = useRef(true)
+
+  // A new page starts at its top, so the ribbon comes back with it.
+  const [pagePath, setPagePath] = useState(pathname)
+  if (pagePath !== pathname) {
+    setPagePath(pathname)
+    setShown(true)
+  }
+  useEffect(() => {
+    shownRef.current = shown
+  }, [shown])
 
   useEffect(() => {
     const onScroll = (e: Event) => {
@@ -27,10 +38,11 @@ export function RibbonReveal({ children }: { children: ReactNode }) {
       if (performance.now() < lockedUntil.current) return
       const next = top < 8 || el.scrollHeight - el.clientHeight < MIN_OVERFLOW ? true : top < prev
       if (Math.abs(top - prev) < 4 && next !== true) return
-      setShown((cur) => {
-        if (cur !== next) lockedUntil.current = performance.now() + 300
-        return next
-      })
+      if (next !== shownRef.current) {
+        shownRef.current = next
+        lockedUntil.current = performance.now() + 300
+        setShown(next)
+      }
     }
     document.addEventListener('scroll', onScroll, { capture: true, passive: true })
     return () => document.removeEventListener('scroll', onScroll, { capture: true })
