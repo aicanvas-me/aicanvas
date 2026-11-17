@@ -16,15 +16,14 @@ export function ProductHuntRibbon() {
   return (
     <Link
       href="/pricing"
-      className="flex shrink-0 items-center justify-center gap-2 bg-accent px-4 py-2 text-center text-xs font-semibold text-accent-foreground transition-colors hover:bg-accent/90 sm:text-sm"
+      className="flex shrink-0 items-center justify-center gap-2 bg-accent px-4 py-2 text-center text-xs font-semibold leading-4 text-accent-foreground transition-colors hover:bg-accent/90"
     >
       <svg viewBox="0 0 40 40" width={16} height={16} aria-hidden className="shrink-0">
         <circle cx="20" cy="20" r="20" fill="#FF6154" />
         <path fill="#fff" d="M22.667 20H17v-6h5.667a3 3 0 0 1 0 6m0-10H13v20h4v-6h5.667a7 7 0 1 0 0-14" />
       </svg>
       <span>
-        Product Hunt launch special: 40% off Lifetime with code{' '}
-        <span className="rounded-sm bg-accent-foreground/15 px-1.5 py-0.5 font-bold">ProductHunt</span>
+        Product Hunt launch special: 40% off Lifetime with code <span className="font-extrabold">ProductHunt</span>
       </span>
     </Link>
   )

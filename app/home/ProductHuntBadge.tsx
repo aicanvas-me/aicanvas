@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { track } from '../lib/analytics'
 
 // The Product Hunt launch badge above the hero. Product Hunt forbids asking for
-// votes in any wording, so it only links to the launch and carries its code.
+// votes in any wording, so it only links to the launch; the ribbon carries the code.
 // It shows only during the launch day; ?ph=1 previews it at any time.
 
 const PH_URL = 'https://www.producthunt.com'
@@ -41,18 +41,11 @@ export function ProductHuntBadge() {
       style={{ animationDelay: '0.05s' }}
     >
       <ProductHuntLogo />
-      <span className="flex flex-col leading-none">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
+      <span className="flex h-8 flex-col justify-between">
+        <span className="text-[10px] font-semibold uppercase leading-[10px] tracking-wider text-sand-600 dark:text-sand-400">
           We launched today
         </span>
-        <span className="mt-1 text-lg font-bold text-sand-900 dark:text-sand-50">Product Hunt</span>
-      </span>
-      <span aria-hidden className="h-8 w-px bg-sand-300 dark:bg-sand-700" />
-      <span className="flex flex-col leading-none">
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-sand-600 dark:text-sand-400">
-          Code ProductHunt
-        </span>
-        <span className="mt-1 text-sm font-semibold text-sand-900 dark:text-sand-50">40% off Lifetime</span>
+        <span className="text-base font-bold leading-4 text-sand-900 dark:text-sand-50">Product Hunt</span>
       </span>
     </a>
   )
