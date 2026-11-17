@@ -27,7 +27,7 @@ export function ProductHuntRibbon() {
         <path fill="#fff" d="M22.667 20H17v-6h5.667a3 3 0 0 1 0 6m0-10H13v20h4v-6h5.667a7 7 0 1 0 0-14" />
       </svg>
       <span>
-        Product Hunt launch special: 40% off Lifetime with code <span className="font-extrabold">ProductHunt</span>
+        Product Hunt launch special: 40% off Lifetime with code <span className="rounded-sm bg-accent-foreground/10 px-1.5 font-extrabold">ProductHunt</span>
       </span>
       <ArrowRight size={14} aria-hidden className="shrink-0" />
     </Link>
