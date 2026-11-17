@@ -212,7 +212,7 @@ export function IconsOverview({
   const installToken = useInstallToken()
   const gate = useInstallGate(style)
   const styleLabel = ICON_STYLES.find((entry) => entry.id === style)!.label
-  const installShown = allIconsInstall(style, gate.masked || installToken ? MASKED_INSTALL_TOKEN : null)
+  const installShown = allIconsInstall(style, !gate.masked && installToken ? MASKED_INSTALL_TOKEN : null)
   const loadMetadata = useCallback(() => {
     metadataRequest ??= fetch('/icons/icon-data')
       .then((response) => {
@@ -341,7 +341,10 @@ export function IconsOverview({
                   <span className="hidden text-sand-600 @min-[800px]:inline dark:text-sand-400">{INSTALL_PREFIX} </span>
                   <span className="text-sand-900 dark:text-sand-50">{installShown.slice(INSTALL_PREFIX.length + 1)}</span>
                 </span>
-                <span className="shrink-0 text-xs text-sand-600 dark:text-sand-400">{styleLabel} · {ICON_COUNT} icons</span>
+                <span className="hidden shrink-0 text-xs text-sand-600 dark:text-sand-400 @min-[560px]:inline">{styleLabel} · {ICON_COUNT} icons</span>
+                {gate.masked && (
+                  <span className="inline-flex h-7 items-center rounded-full bg-cyan-400/15 px-2.5 text-xs font-semibold text-cyan-400 dark:bg-cyan-700/10 dark:text-cyan-700">Premium</span>
+                )}
                 <span className="inline-flex size-8 shrink-0 items-center justify-center gap-1.5 rounded-full text-xs font-semibold text-sand-700 transition-colors group-hover:bg-sand-200 group-hover:text-sand-900 sm:w-auto sm:px-3 dark:text-sand-300 dark:group-hover:bg-sand-800 dark:group-hover:text-sand-50">
                   {installCopied ? (
                     <Check aria-hidden className="size-3.5 text-success" />
