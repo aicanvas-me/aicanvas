@@ -124,6 +124,8 @@ describe('classifyContent', () => {
   it('locks every paid style the icon build writes, so a new style cannot fall into the free lane', () => {
     for (const { suffix } of ICON_STYLES.filter((style: { suffix: string }) => style.suffix)) {
       expect(classifyContent(`icon-search${suffix}`, lookup), suffix).toBe('premium-standalone')
+      expect(classifyContent(`icons${suffix}`, lookup), `icons${suffix}`).toBe('premium-standalone')
+      expect(classifyContent(`icons${suffix}.json`, lookup), `icons${suffix}.json`).toBe('premium-standalone')
     }
   })
 

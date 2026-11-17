@@ -100,8 +100,8 @@ export function classifyContent(slugOrFile: string, lookup: ContentLookup): Cont
   }
 
   // Icons: the Line style is free; Duotone, Solid and Solid duotone are paid. The
-  // suffix alone decides, fail-closed: no free item may end in a paid style name.
-  if (slug.startsWith('icon-') && PAID_ICON_STYLE.test(slug)) return 'premium-standalone'
+  // suffix alone decides for one icon (icon-) and a whole style set (icons-), fail-closed.
+  if (/^icons?-/.test(slug) && PAID_ICON_STYLE.test(slug)) return 'premium-standalone'
 
   // Individual design-system components are FREE like standalones: the source is
   // public, and the one-command install just needs a free account (unlimited,
