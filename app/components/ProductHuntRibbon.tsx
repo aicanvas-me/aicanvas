@@ -1,10 +1,12 @@
 import Link from 'next/link'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
+import { RibbonReveal } from './RibbonReveal'
 
 // The Product Hunt launch offer, a thin ribbon above the top bar on every page.
 // It runs from the launch until the ProductHunt code expires in Paddle, and is
 // checked per request, so it appears and leaves without a deploy. Development
 // always shows it. It leads to /pricing, where the code is entered at checkout.
+// It slides away on scroll down and back on scroll up (RibbonReveal).
 
 const LIVE_FROM = Date.parse('2026-11-18T09:01:00+01:00')
 const LIVE_UNTIL = Date.parse('2026-11-30T23:59:59Z')
@@ -15,6 +17,7 @@ export function ProductHuntRibbon() {
   if (!live) return null
 
   return (
+    <RibbonReveal>
     <Link
       href="/pricing"
       className="flex shrink-0 items-center justify-center gap-2 bg-accent px-4 py-2 text-center text-xs font-semibold leading-4 text-accent-foreground transition-colors hover:bg-accent/90"
@@ -28,5 +31,6 @@ export function ProductHuntRibbon() {
       </span>
       <ArrowRight size={14} aria-hidden className="shrink-0" />
     </Link>
+    </RibbonReveal>
   )
 }
