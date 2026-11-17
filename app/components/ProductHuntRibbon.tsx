@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 
 // The Product Hunt launch offer, a thin ribbon above the top bar on every page.
 // It runs from the launch until the ProductHunt code expires in Paddle, and is
@@ -25,6 +26,7 @@ export function ProductHuntRibbon() {
       <span>
         Product Hunt launch special: 40% off Lifetime with code <span className="font-extrabold">ProductHunt</span>
       </span>
+      <ArrowRight size={14} aria-hidden className="shrink-0" />
     </Link>
   )
 }

@@ -129,13 +129,6 @@ export function HomePage({ total, freeTotal, pulls, templates, wall, heroIcons, 
         {/* ── Hero ── */}
         <section className="mx-auto flex max-w-4xl flex-col items-center text-center">
           <ProductHuntBadge />
-          <span
-            className="aic-hero-rise mb-5 inline-flex items-center rounded-full border border-sand-300 bg-sand-100 px-3 py-1 text-xs font-semibold text-sand-700 dark:border-sand-700 dark:bg-sand-900 dark:text-sand-300"
-            style={{ animationDelay: '0.1s' }}
-          >
-            No more AI slop.
-          </span>
-
           <h1
             className="aic-hero-slide text-balance text-3xl font-extrabold tracking-tight text-sand-900 sm:text-5xl dark:text-sand-50"
             style={{ animationDelay: '0.18s' }}
