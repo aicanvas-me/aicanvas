@@ -73,7 +73,7 @@ export function generateIconRegistry({
     .sort()
   const base = registryFile(sourceDir, 'IconBase.tsx', 'IconBase.tsx', ICON_RUNTIME_NOTICE)
   const items = [registryItem('icon-base', 'Icon base', 'Shared React runtime for AI Canvas icons.', [base])]
-  const lineFiles = [base]
+  const styleFiles = new Map(STYLES.map(({ suffix }) => [suffix, [base]]))
   const baseDependency = `${baseUrl.replace(/\/+$/, '')}/r/icon-base.json`
 
   for (const name of names) {
@@ -88,10 +88,12 @@ export function generateIconRegistry({
         [file],
         [baseDependency],
       ))
-      if (!suffix) lineFiles.push(file)
+      styleFiles.get(suffix).push(file)
     }
   }
-  items.push(registryItem('icons', 'Icons (Line)', `All ${names.length} Line icons and their shared React runtime.`, lineFiles))
+  for (const { suffix, label } of STYLES) {
+    items.push(registryItem(`icons${suffix}`, `Icons (${label})`, `All ${names.length} ${label} icons and their shared React runtime.`, styleFiles.get(suffix)))
+  }
 
   // The catalog the MCP and agents search: names, categories, tags, never geometry.
   const meta = existsSync(metaFile) ? JSON.parse(readFileSync(metaFile, 'utf8')) : []
@@ -112,7 +114,7 @@ export function generateIconRegistry({
     writeFileSync(join(outDir, `${item.name}.json`), JSON.stringify(item, null, 2) + '\n')
   }
   writeFileSync(join(outDir, 'icons-index.json'), JSON.stringify(catalog) + '\n')
-  console.log(`icon-registry: ${names.length} icons × ${STYLES.length} styles + base + Line set = ${items.length} items, + icons-index`)
+  console.log(`icon-registry: ${names.length} icons × ${STYLES.length} styles + base + ${STYLES.length} style sets = ${items.length} items, + icons-index`)
   return { iconCount: names.length, itemCount: items.length }
 }
 

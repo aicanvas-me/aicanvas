@@ -125,6 +125,11 @@ describe('icon registry install and import strings', () => {
     const command = 'npx shadcn@latest add "https://aicanvas.me/r/icon-search-solid.json?token=aic_x"'
     expect(iconInstallCommand('search', 'solid', 'aic_x')).toBe(command)
     expect(agentPrompt('search', 24, 'regular', 'solid', null, 'aic_x')).toContain(command)
-    expect(allIconsInstall('aic_x')).toBe('npx shadcn@latest add "https://aicanvas.me/r/icons.json?token=aic_x"')
+    expect(allIconsInstall('line', 'aic_x')).toBe('npx shadcn@latest add "https://aicanvas.me/r/icons.json?token=aic_x"')
+  })
+  it.each(['line', 'duotone', 'solid', 'solid-duotone'] as const)('installs the full %s set with or without a token', (style) => {
+    const item = style === 'line' ? 'icons' : `icons-${style}`
+    expect(allIconsInstall(style)).toBe(`npx shadcn@latest add @aicanvas/${item}`)
+    expect(allIconsInstall(style, 'aic_x')).toBe(`npx shadcn@latest add "https://aicanvas.me/r/${item}.json?token=aic_x"`)
   })
 })

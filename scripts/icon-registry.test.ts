@@ -68,14 +68,14 @@ afterEach(() => {
 })
 
 describe('icon registry generator', () => {
-  it('writes individual style items, a base, and a self-contained Line set without changing other outputs', () => {
+  it('writes individual style items, a base, and self-contained style sets without changing other outputs', () => {
     mkdirSync(outDir)
     const untouched = ['registry.json', '_manifest.json', 'existing-component.json']
     for (const filename of untouched) writeFileSync(join(outDir, filename), '{"keep":true}\n')
 
     expect(generateIconRegistry({ sourceDir, outDir, baseUrl: 'https://registry.example///' }))
-      .toEqual({ iconCount: 3, itemCount: 14 })
-    expect(readdirSync(outDir)).toHaveLength(18)
+      .toEqual({ iconCount: 3, itemCount: 17 })
+    expect(readdirSync(outDir)).toHaveLength(21)
     for (const filename of untouched) expect(readFileSync(join(outDir, filename), 'utf8')).toBe('{"keep":true}\n')
 
     const base = readItem('icon-base')
@@ -117,6 +117,25 @@ describe('icon registry generator', () => {
     expect(bundle.registryDependencies).toBeUndefined()
     expect(bundle).not.toHaveProperty('dependencies')
     expect(bundle.files).toEqual([base.files[0], ...[...NAMES].sort().map((name) => readItem(`icon-${name}`).files[0])])
+  })
+
+  it.each(STYLES.slice(1))('bundles only $style icons with the runtime and correct notices', ({ suffix, path }) => {
+    generateIconRegistry({ sourceDir, outDir })
+    const bundle = readItem(`icons${suffix}`)
+    expect(bundle.name).toBe(`icons${suffix}`)
+    expect(bundle.files).toHaveLength(NAMES.length + 1)
+    expect(bundle.registryDependencies).toBeUndefined()
+    expect(bundle.files).toEqual([
+      readItem('icon-base').files[0],
+      ...[...NAMES].sort().map((name) => readItem(`icon-${name}${suffix}`).files[0]),
+    ])
+    expect(bundle.files[0].content).toContain(ICON_RUNTIME_NOTICE)
+    for (const file of bundle.files.slice(1)) {
+      expect(file.target).toMatch(new RegExp(`${suffix}\\.tsx$`))
+      expect(file.content).toContain(path)
+      expect(file.content).not.toContain(STYLES[0].path)
+      expect(file.content).not.toContain(LINE_ICON_NOTICE)
+    }
   })
 
   it('strips only the specified lines and rewrites the runtime import in every shipped file', () => {
