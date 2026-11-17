@@ -330,7 +330,7 @@ export function IconsOverview({
               <button
                 type="button"
                 onClick={() => void copyInstall()}
-                aria-label={`Copy the install command for every ${styleLabel} icon`}
+                aria-label={`Copy the install command for every ${styleLabel} icon${gate.masked ? ', Premium' : ''}`}
                 title={installShown}
                 className="group inline-flex h-10 min-w-0 flex-1 items-center gap-2 rounded-full border border-sand-200 bg-sand-100 pl-6 pr-1 text-left transition-colors hover:border-sand-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 dark:border-sand-800 dark:bg-sand-900 dark:hover:border-sand-700"
               >
@@ -343,7 +343,7 @@ export function IconsOverview({
                 </span>
                 <span className="hidden shrink-0 text-xs text-sand-600 dark:text-sand-400 @min-[560px]:inline">{styleLabel} · {ICON_COUNT} icons</span>
                 {gate.masked && (
-                  <span className="inline-flex h-7 items-center rounded-full bg-cyan-400/15 px-2.5 text-xs font-semibold text-cyan-400 dark:bg-cyan-700/10 dark:text-cyan-700">Premium</span>
+                  <span className="inline-flex h-7 shrink-0 items-center rounded-full bg-premium/10 px-2.5 text-xs font-semibold text-premium">Premium</span>
                 )}
                 <span className="inline-flex size-8 shrink-0 items-center justify-center gap-1.5 rounded-full text-xs font-semibold text-sand-700 transition-colors group-hover:bg-sand-200 group-hover:text-sand-900 sm:w-auto sm:px-3 dark:text-sand-300 dark:group-hover:bg-sand-800 dark:group-hover:text-sand-50">
                   {installCopied ? (
