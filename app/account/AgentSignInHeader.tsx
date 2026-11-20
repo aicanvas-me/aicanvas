@@ -2,6 +2,7 @@ import { Bot } from '@/app/_icons/icons/bot'
 import { Bolt } from '@/app/_icons/icons/bolt'
 import { Download } from '@/app/_icons/icons/download'
 import { Plug } from '@/app/_icons/icons/plug'
+import { CopyLinkHint } from './CopyLinkHint'
 
 // The header of the sign-in and sign-up forms when an AI agent's sign-in opened them (the
 // next step is the consent screen): it says why the page is here and what signing in gives,
@@ -22,6 +23,7 @@ export function AgentSignInHeader({ mode }: { mode: 'sign-in' | 'sign-up' }) {
       <p className="mt-1.5 text-sm text-sand-600 dark:text-sand-400">
         {mode === 'sign-in' ? 'Sign in, then click Allow.' : 'Create your free account, then click Allow.'}
       </p>
+      <CopyLinkHint />
       {/* Why an account: installing needs one, it carries the plan, and it is a one-time step. */}
       <ul className="mt-5 space-y-2.5 border-t border-sand-200 pt-5 text-sm text-sand-700 dark:border-sand-800 dark:text-sand-300">
         {[
