@@ -211,9 +211,10 @@ function installInto({ skillsDir, dest, keep }: Plan, slug: string, version: str
       if (!isSymlink(from)) copyFileSync(from, to)
       else {
         const dir = (() => { try { return statSync(from).isDirectory() } catch { return false } })()
-        // A junction needs an absolute target: resolve it where the link lives now.
+        // A Windows junction needs an absolute target: resolve it where the link lives now.
         const link = readlinkSync(from)
-        const target = dir && !isAbsolute(link) ? resolve(dirname(from), link) : link
+        const junction = dir && process.platform === 'win32'
+        const target = junction && !isAbsolute(link) ? resolve(dirname(from), link) : link
         try { symlinkSync(target, to, dir ? 'junction' : 'file') } catch (e) {
           stop(`Could not carry over your link ${f} (${(e as Error).message}). Move it out, then run again.`)
         }
@@ -295,7 +296,7 @@ export async function runSkillCommand(argv: string[], opts: Options): Promise<nu
     if (!entries.some((e) => e.path === `${slug}/SKILL.md`)) stop('The download has no SKILL.md.')
     const files: Record<string, string> = {}
     for (const e of entries) files[safeParts(e.path, slug).join('/')] = sha256(e.data)
-    // Every target is checked before any is written, so a stop leaves all of them as they were.
+    // All targets are checked before any is written; a check that stops changes nothing.
     const plans = targets.map((t) => planInstall(t.dir, slug, files, flags.force === true))
     targets.forEach((t, i) => {
       const dest = installInto(plans[i], slug, version, entries, files)
