@@ -14,7 +14,7 @@ const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
 // Fixed timestamp so the same vault commit always yields the same zip bytes.
 const MTIME = new Date('2026-01-01T00:00:00Z')
 
-/** A missing or malformed `skills` key reads as no skills, so an older pin still builds. */
+/** A missing or malformed `skills` key reads as none, so an older pin still builds. */
 export function manifestSkills(manifest) {
   return Array.isArray(manifest?.skills) ? manifest.skills.filter((s) => typeof s === 'string') : []
 }
@@ -24,12 +24,13 @@ export function skillVersion(skillMd) {
 }
 
 /**
- * Zips each skill and returns { built: { slug: { version, sha256, bytes, files } }, problems: [] }.
- * A problem means a listed skill could not ship; the caller decides how loud to fail.
+ * Zips each skill. A problem means a listed skill could not ship; the caller decides how loud to fail.
+ * @returns {{ built: Record<string, { version: string | null, sha256: string, bytes: number, files: number }>, problems: string[] }}
  */
 export function buildSkillZips(source, root, slugs) {
   const out = join(root, SKILLS_DIR)
   rmSync(out, { recursive: true, force: true })
+  /** @type {Record<string, { version: string | null, sha256: string, bytes: number, files: number }>} */
   const built = {}
   const problems = []
   for (const slug of slugs) {

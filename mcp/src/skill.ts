@@ -47,14 +47,18 @@ class Stop extends Error {}
 const stop = (msg: string): never => { throw new Stop(msg) }
 const sha256 = (b: Buffer | Uint8Array) => createHash('sha256').update(b).digest('hex')
 
+const VALUE_FLAGS = ['token', 'agent', 'dir']
+
 function parseArgs(argv: string[]) {
   const flags: Record<string, string | true> = {}
   const rest: string[] = []
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]
-    if (a === '--force' || a === '--help' || a === '-h') flags[a.replace(/^-+/, '')] = true
-    else if (a.startsWith('--')) {
-      const [key, inline] = a.slice(2).split(/=(.*)/s)
+    if (a === '--force') flags.force = true
+    else if (a === '--help' || a === '-h') flags.help = true
+    else if (a.startsWith('-')) {
+      const [key, inline] = a.replace(/^-+/, '').split(/=(.*)/s)
+      if (!VALUE_FLAGS.includes(key)) stop(`Unknown option ${a}. Run: skill --help`)
       const value = inline ?? argv[++i]
       if (value === undefined || value.startsWith('--')) stop(`--${key} needs a value.`)
       flags[key] = value
@@ -71,12 +75,14 @@ function readToken(flag: string | true | undefined): string {
     } catch { return '' }
   }
   const token = (typeof flag === 'string' ? flag : '') || process.env.AICANVAS_TOKEN || fromEnvFile()
-  if (!token) stop('No token. Copy the install command from https://aicanvas.me/skills#whoosh (signed in as Premium), or pass --token aic_...')
+  if (!token) {
+    stop('No token. Copy the install command from https://aicanvas.me/skills#whoosh (signed in as Premium), or pass --token aic_...')
+  }
   if (!TOKEN_RE.test(token)) stop('That token does not look like an AI Canvas token (aic_ followed by 48 characters).')
   return token
 }
 
-/** Reads the zips our server builds: stored or deflated entries, no zip64, no encryption. */
+/** Reads the zips our server builds: stored or deflated, no zip64, no encryption. */
 export function unzip(buf: Buffer): Entry[] {
   let eocd = -1
   for (let i = buf.length - 22; i >= Math.max(0, buf.length - 22 - 65535); i--) {
@@ -106,7 +112,7 @@ export function unzip(buf: Buffer): Entry[] {
     if (buf.readUInt32LE(local) !== 0x04034b50) stop('The download is a damaged zip file.')
     const start = local + 30 + buf.readUInt16LE(local + 26) + buf.readUInt16LE(local + 28)
     const body = buf.subarray(start, start + size)
-    const data = method === 0 ? Buffer.from(body) : method === 8 ? inflateRawSync(body) : stop(`Unsupported zip method ${method}.`)
+    const data = method === 0 ? Buffer.from(body) : method === 8 ? inflateRawSync(body, { maxOutputLength: Math.max(raw, 1) }) : stop(`Unsupported zip method ${method}.`)
     if (data.length !== raw) stop('The download is a damaged zip file.')
     total += data.length
     if (total > MAX_BYTES) stop('The download is larger than any skill should be.')
@@ -115,7 +121,7 @@ export function unzip(buf: Buffer): Entry[] {
   return out
 }
 
-/** Zip path -> path parts under the skill folder; refuses anything that could land outside it. */
+/** Zip path to path parts inside the skill folder; refuses any that could escape it. */
 export function safeParts(zipPath: string, slug: string): string[] {
   const parts = zipPath.split('/')
   if (parts[0] !== slug || parts.length < 2) stop(`Unexpected file in the download: ${zipPath}`)
@@ -168,7 +174,12 @@ function installInto(skillsDir: string, slug: string, version: string | null, en
           stop(`You changed ${changed.length} file(s) in ${dest}:\n  ${changed.join('\n  ')}\nCopy your changes somewhere safe, then add --force to update.`)
         }
         // Files the user added (renders, their own notes) are not ours: carry them over.
-        keep = walk(dest).filter((f) => f !== MANIFEST && !Object.hasOwn(before.files, f) && !Object.hasOwn(files, f))
+        const added = walk(dest).filter((f) => f !== MANIFEST && !Object.hasOwn(before.files, f))
+        const clash = added.filter((f) => Object.hasOwn(files, f))
+        if (clash.length && !force) {
+          stop(`This version adds files where you have your own:\n  ${clash.join('\n  ')}\nMove them, or add --force to replace them.`)
+        }
+        keep = added.filter((f) => !Object.hasOwn(files, f))
       }
     }
   }
@@ -190,13 +201,22 @@ function installInto(skillsDir: string, slug: string, version: string | null, en
       const to = join(tmp, ...f.split('/'))
       mkdirSync(dirname(to), { recursive: true })
       // Copied, not moved: if the swap fails the old folder must still hold them.
-      if (isSymlink(from)) symlinkSync(readlinkSync(from), to)
-      else copyFileSync(from, to)
+      if (!isSymlink(from)) copyFileSync(from, to)
+      else {
+        const dir = (() => { try { return statSync(from).isDirectory() } catch { return false } })()
+        try { symlinkSync(readlinkSync(from), to, dir ? 'junction' : 'file') } catch (e) {
+          stop(`Could not carry over your link ${f} (${(e as Error).message}). Move it out, then run again.`)
+        }
+      }
     }
     writeFileSync(join(tmp, MANIFEST), JSON.stringify({ slug, version, files } satisfies Installed, null, 1) + '\n')
     if (existsSync(dest) || isSymlink(dest)) retryRename(dest, old)
     retryRename(tmp, dest)
   } catch (e) {
+    // A failed swap puts the previous install back where it was.
+    if (!existsSync(dest) && !isSymlink(dest) && (existsSync(old) || isSymlink(old))) {
+      try { retryRename(old, dest) } catch { console.error(`Your previous install is in ${old}`) }
+    }
     rmSync(tmp, { recursive: true, force: true })
     throw e
   }

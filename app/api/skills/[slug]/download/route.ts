@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic'
 // `Authorization: Bearer`; a signed-in browser session works too. Never cached.
 const NO_STORE = { 'Cache-Control': 'private, no-store', Vary: 'Cookie, Authorization' }
 const PRICING = 'https://aicanvas.me/pricing?ref=skill'
-// Each read is scoped to this folder: a free-form path makes the bundler trace the whole repo.
+// Reads stay in this folder: a free-form path makes the bundler trace the whole repo.
 const DIR = join(process.cwd(), 'skills-premium')
 
 type SkillInfo = { version: string | null; sha256: string; bytes: number }
@@ -37,7 +37,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
   try {
     skills = JSON.parse(await readFile(join(DIR, '_skills.json'), 'utf8'))
   } catch {
-    // No zips in this build (free-only or a failed inject): never a reason to tell a buyer "no such skill".
+    // No zips in this build (free-only or failed inject): never tell a buyer "no such skill".
     console.error('[skills download] skills-premium/_skills.json missing')
     return unavailable()
   }
@@ -54,7 +54,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
   }
   const { tier, userId, tokenUnknown } = entitlement
   if (tier === 'anonymous') {
-    // A well-formed token that resolved to nobody without being "unknown" is a failed key read.
+    // A well-formed token that resolved to nobody, not flagged unknown, is a failed key read.
     if (extractToken(req) && !tokenUnknown) return unavailable()
     if (tokenUnknown) {
       return fail(401, 'token-changed', 'This token no longer matches an account (it was rotated). Copy the current command from aicanvas.me/skills#' + slug + '.')

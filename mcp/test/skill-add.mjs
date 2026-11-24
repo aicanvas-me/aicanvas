@@ -10,9 +10,10 @@ import { spawnSync } from 'node:child_process'
 import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { zipSync, strToU8 } from 'fflate'
 
-const CLI = new URL('../dist/index.js', import.meta.url).pathname
+const CLI = fileURLToPath(new URL('../dist/index.js', import.meta.url))
 const TOKEN = 'aic_' + 'a'.repeat(48)
 const ROTATED = 'aic_' + 'b'.repeat(48)
 let pass = 0
@@ -128,6 +129,19 @@ try {
   r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'codex'], { CODEX_HOME: join(work, 'codex-home') })
   check('CODEX_HOME is honoured', r.code === 0 && existsSync(join(work, 'codex-home', 'skills', 'demo', 'SKILL.md')), r.out)
 
+  // A file the user added where a new version ships one: stop, --force replaces it.
+  writeFileSync(installed('NEWS.md'), 'my news')
+  served = { zip: skillZip('2.0.0', { 'demo/NEWS.md': strToU8('ours') }), version: '2.0.0', sha: null }
+  r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir])
+  check('a user file in the way stops the update', r.code === 1 && r.out.includes('NEWS.md'), r.out)
+  check('the user file is left alone', readFileSync(installed('NEWS.md'), 'utf8') === 'my news')
+  r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir, '--force'])
+  check('--force replaces it', r.code === 0 && readFileSync(installed('NEWS.md'), 'utf8') === 'ours', r.out)
+
+  r = await run(['add', 'demo', '-h'])
+  check('-h shows help, installs nothing', r.code === 0 && r.out.includes('skill add'), r.out)
+  r = await run(['add', 'demo', '--agnet', 'claude', '--token', TOKEN])
+  check('an unknown option is refused', r.code === 1 && r.out.includes('Unknown option'), r.out)
   r = await run(['remove', 'demo'])
   check('unknown action exits 1', r.code === 1)
   const help = spawnSync(process.execPath, [CLI, 'skill', '--help'], { encoding: 'utf8' })

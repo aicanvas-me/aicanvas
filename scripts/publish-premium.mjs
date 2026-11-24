@@ -121,7 +121,7 @@ while (Date.now() < DEADLINE) {
   iconCount = h.iconCount ?? 0
   const iconsOk = iconCount > 0
   // A deploy whose code predates paid skills reports no `skills` field: nothing to assert yet.
-  const skillsMissing = h.skills ? manifestSkills.filter((s) => !h.skills[s]) : []
+  const skillsMissing = h.skills ? manifestSkills.filter((s) => !Object.hasOwn(h.skills, s)) : []
   skillsLine = !h.skills ? (manifestSkills.length ? ', skills not reported by this deploy' : '')
     : `, skills ${Object.entries(h.skills).map(([s, v]) => `${s}@${v}`).join(' ') || 'none'}`
   if (shaOk && h.degraded === false && countOk && iconsOk && !skillsMissing.length) { confirmed = true; break }

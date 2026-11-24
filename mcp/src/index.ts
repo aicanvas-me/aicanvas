@@ -61,7 +61,7 @@ async function main() {
   // stdio transport runs forever — closes when host kills stdin
 }
 
-// `aicanvas-mcp skill add <name>` installs a paid agent skill; anything else starts the server.
+// `skill add <name>` installs a paid agent skill; anything else starts the server.
 if (process.argv[2] === 'skill') {
   import('./skill.js')
     .then((m) => m.runSkillCommand(process.argv.slice(3), { siteBase: SITE_BASE, userAgent: USER_AGENT }))

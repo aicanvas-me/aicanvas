@@ -68,8 +68,8 @@ jobs:
           body="$(curl -fsS "https://aicanvas.me/api/premium/health" || echo '{}')"
           echo "skills=$(echo "$body" | jq -c '.skills')"
           for s in whoosh; do
-            v="$(echo "$body" | jq -r --arg s "$s" '.skills[$s] // empty')"
-            if [[ -z "$v" ]]; then
+            has="$(echo "$body" | jq -r --arg s "$s" '(.skills // {}) | has($s)')"
+            if [[ "$has" != "true" ]]; then
               echo "::error title=Paid skill missing::Production does not serve the $s skill zip. Buyers get a 404 on skill add. Check the vault skills/$s folder and premium-manifest.json skills at the pin."
               exit 1
             fi
