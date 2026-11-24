@@ -67,6 +67,8 @@ const INJECTED_GENERATED =
   /^app\/lib\/(andromeda-(v2|pro|pro-examples|pro-helpers|pro-brain-teaser|brain-teaser)|premium-build-info)\.generated\.(ts|tsx)$/i
 // Inject's manifest stamp; brain bundles beside it are BRAIN_JSON below.
 const INJECTED_MANIFEST = /^registry-data\/_premium\.json$/i
+// Paid agent skill zips inject builds from the vault. Binary, so only this path check catches them.
+const INJECTED_SKILLS = /^skills-premium\//i
 // Assembled from parts so THIS file does not contain the literal marker (which
 // would make the content scan flag the guard itself). Keep in sync with inject.
 const MARKER = new RegExp(['AICANVAS', 'PREMIUM', 'DO', 'NOT', 'COMMIT'].join('-'))
@@ -159,6 +161,7 @@ for (const f of files) {
   if (INJECTED_SYSTEM.test(f)) violations.push(`injected vault design system: ${f} (vault-only, injected at build time)`)
   if (INJECTED_GENERATED.test(f)) violations.push(`injected build shim: ${f} (written by inject-premium.mjs, never tracked)`)
   if (INJECTED_MANIFEST.test(f)) violations.push(`injected premium manifest: ${f} (written by inject-premium.mjs, never tracked)`)
+  if (INJECTED_SKILLS.test(f)) violations.push(`paid agent skill zip: ${f} (written by inject-premium.mjs, never tracked)`)
   if (FREE_DS_INJECTED.has(f)) {
     violations.push(
       `build-time-injected free design-system component: ${f} ` +

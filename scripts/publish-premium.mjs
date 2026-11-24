@@ -55,9 +55,11 @@ ok(`premium main is clean @ ${shortSha}`)
 
 // manifest count, so we can assert prod serves the right number of components
 let manifestCount = null
+let manifestSkills = []
 try {
   const man = JSON.parse(readFileSync(join(PREMIUM, 'premium-manifest.json'), 'utf8'))
   manifestCount = Array.isArray(man.standalones) ? man.standalones.length : null
+  manifestSkills = Array.isArray(man.skills) ? man.skills : []
 } catch { /* non-fatal */ }
 
 // ── 2. Public must be on `main`; read the current pin ────────────────────────
@@ -106,6 +108,7 @@ step(`waiting for production to serve ${shortSha} (polling ${SITE}/api/premium/h
 const DEADLINE = Date.now() + 8 * 60 * 1000 // 8 minutes
 let confirmed = false
 let iconCount = 0
+let skillsLine = ''
 while (Date.now() < DEADLINE) {
   await new Promise((r) => setTimeout(r, 12000))
   let h
@@ -117,12 +120,16 @@ while (Date.now() < DEADLINE) {
   const countOk = manifestCount == null || h.premiumStandaloneCount === manifestCount
   iconCount = h.iconCount ?? 0
   const iconsOk = iconCount > 0
-  if (shaOk && h.degraded === false && countOk && iconsOk) { confirmed = true; break }
+  // A deploy whose code predates paid skills reports no `skills` field: nothing to assert yet.
+  const skillsMissing = h.skills ? manifestSkills.filter((s) => !h.skills[s]) : []
+  skillsLine = !h.skills ? (manifestSkills.length ? ', skills not reported by this deploy' : '')
+    : `, skills ${Object.entries(h.skills).map(([s, v]) => `${s}@${v}`).join(' ') || 'none'}`
+  if (shaOk && h.degraded === false && countOk && iconsOk && !skillsMissing.length) { confirmed = true; break }
   process.stdout.write('.')
 }
 console.log('')
 if (confirmed) {
-  ok(`LIVE and verified: production serves premium@${shortSha}, degraded:false${manifestCount != null ? `, ${manifestCount} component(s)` : ''}, ${iconCount} icon(s).`)
+  ok(`LIVE and verified: production serves premium@${shortSha}, degraded:false${manifestCount != null ? `, ${manifestCount} component(s)` : ''}, ${iconCount} icon(s)${skillsLine}.`)
 } else {
-  die(`NOT confirmed within the timeout. The deploy may still be building — re-check ${SITE}/api/premium/health in a minute (look for premiumSha == ${shortSha}, degraded:false, iconCount > 0). Do NOT assume it's live until it matches.`)
+  die(`NOT confirmed within the timeout. The deploy may still be building — re-check ${SITE}/api/premium/health in a minute (look for premiumSha == ${shortSha}, degraded:false, iconCount > 0${manifestSkills.length ? `, skills ${manifestSkills.join(', ')}` : ''}). Do NOT assume it's live until it matches.`)
 }

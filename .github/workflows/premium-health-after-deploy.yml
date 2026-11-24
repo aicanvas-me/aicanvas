@@ -47,6 +47,20 @@ jobs:
           done
           echo "::error title=Premium missing in production::Production is NOT serving the pinned premium ($PIN) with its icon set [$last]. Paying subscribers may be on a free-only build, or /icons is blank (iconCount 0). Check GITHUB_PAT_PREMIUM in Vercel Production and the latest deploy logs, then roll back if needed."
           exit 1
+      # Separate from the premium check above: a missing paid skill zip is a vault
+      # or manifest fix, never a rollback. Add a skill here once it is pinned.
+      - name: Confirm the paid agent skills are served
+        run: |
+          set -euo pipefail
+          body="$(curl -fsS "https://aicanvas.me/api/premium/health" || echo '{}')"
+          echo "skills=$(echo "$body" | jq -c '.skills')"
+          for s in whoosh; do
+            v="$(echo "$body" | jq -r --arg s "$s" '.skills[$s] // empty')"
+            if [[ -z "$v" ]]; then
+              echo "::error title=Paid skill missing::Production does not serve the $s skill zip. Buyers get a 404 on skill add. Check the vault skills/$s folder and premium-manifest.json skills at the pin."
+              exit 1
+            fi
+          done
       # Separate from the premium check above on purpose: a missing Lifetime
       # price is fixed by setting the variable in Vercel, never by a rollback.
       - name: Confirm the Lifetime price is configured
