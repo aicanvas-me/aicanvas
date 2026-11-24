@@ -4,13 +4,27 @@ export const SKILLS_MEDIA_BASE = '/skills/whoosh'
 const at = (file: string) => `${SKILLS_MEDIA_BASE}/${file}`
 
 export const HERO_FILM = {
-  desktop: at('reel-1080.mp4'),
-  mobile: at('reel-720.mp4'),
-  poster: at('reel-poster.webp'),
+  desktop: at('showreel-540.mp4'),
+  mobile: at('showreel-540.mp4'),
+  poster: at('showreel-poster.jpg'),
 }
 
+const tile = (id: string, label: string, tall = false) => ({
+  id,
+  src: at(`${id}-540.mp4`),
+  poster: at(`${id}-poster.jpg`),
+  label,
+  tall,
+})
+
+// The films that ship inside the skill, in page order. `tall` is the one 9:16 film.
 export const TILE_FILMS = [
-  { id: 'physics', src: at('physics-540.mp4'), poster: at('physics-poster.webp'), label: 'Physics · reel · 16:9', tall: false },
-  { id: 'relay', src: at('relay-540.mp4'), poster: at('relay-poster.webp'), label: 'Relay · product demo · 16:9', tall: false },
-  { id: 'lull', src: at('lull-540.mp4'), poster: at('lull-poster.webp'), label: 'Lull · ad · 9:16', tall: true },
-] as const
+  tile('product-launch', 'Product launch'),
+  tile('product-overview', 'Product overview'),
+  tile('feature-tour', 'Feature tour'),
+  tile('app-demo', 'App demo'),
+  tile('mobile-app-ad', 'Mobile app ad', true),
+  tile('showreel', 'Showreel'),
+  tile('camera-moves', 'Camera moves'),
+  tile('motion-showcase', 'Motion showcase'),
+]

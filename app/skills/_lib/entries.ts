@@ -12,6 +12,8 @@ export type SkillEntry = {
   hook: string
   body: string
   points: SkillPoint[]
+  // How a brief reaches the skill, main way first.
+  waysIn?: { title: string; body: string }[]
   worksWith: string[]
   worksWithNote?: string
   tryPrompt?: string
@@ -48,11 +50,19 @@ export const WHOOSH: SkillEntry = {
       body: 'Effects are timed to the motion. Films are cut on a beat grid, so your own music sits on top.',
     },
   ],
-  worksWith: ['Claude Code', 'Codex', 'Cursor', 'Gemini CLI', 'GitHub Copilot'],
+  waysIn: [
+    { title: 'Plain words', body: 'Say what you want in a sentence or two. This is the main way in.' },
+    {
+      title: 'A reference film',
+      body: 'Share a film you like. whoosh pulls frames from it and takes the pacing, camera, palette and type, never the content.',
+    },
+    { title: 'Your site or app', body: 'Or hand it your own site or app to work from.' },
+  ],
+  worksWith: ['Claude Code', 'Codex'],
   worksWithNote: 'and other agents that read SKILL.md',
   tryPrompt: 'Make a 15 second launch video for my app. The site is example.com.',
   requirements:
-    'Needs Node 20 or newer and ffmpeg. The first run sets up a headless browser, about 215 MB, and your agent does it for you.',
+    'Needs Node 20 or newer and ffmpeg. The first run sets up a headless browser, about 215 MB, in a per-user cache.',
 }
 
 export const MEMORYHD: SkillEntry = {

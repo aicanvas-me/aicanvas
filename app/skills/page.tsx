@@ -60,7 +60,9 @@ const SPECS = [
 ]
 
 export default function SkillsPage() {
-  const [physics, relay, lull] = TILE_FILMS
+  // The 9:16 film stands beside the first four; the rest run in a row under them.
+  const tall = TILE_FILMS.find((f) => f.tall)!
+  const wide = TILE_FILMS.filter((f) => !f.tall)
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
@@ -124,6 +126,24 @@ export default function SkillsPage() {
                   {FEATURED.hook}
                 </p>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">{FEATURED.body}</p>
+                {FEATURED.waysIn && (
+                  <>
+                    <p className={`mt-8 ${EYEBROW}`}>Three ways to brief it</p>
+                    <ol className="mt-3 grid gap-x-6 gap-y-4 sm:grid-cols-3">
+                      {FEATURED.waysIn.map((w, i) => (
+                        <li key={w.title} className="border-t border-sand-200 pt-3 dark:border-sand-800">
+                          <p className="text-base font-bold text-sand-900 dark:text-sand-50">
+                            <span className="mr-2 font-mono text-xs font-normal text-sand-600 dark:text-sand-400">
+                              {String(i + 1).padStart(2, '0')}
+                            </span>
+                            {w.title}
+                          </p>
+                          <p className="mt-1 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{w.body}</p>
+                        </li>
+                      ))}
+                    </ol>
+                  </>
+                )}
                 <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                   {FEATURED.points.map((p) => (
                     <div key={p.title}>
@@ -158,21 +178,32 @@ export default function SkillsPage() {
           <SectionHead
             id="skills-films"
             eyebrow="Made with whoosh"
-            title="Four films ship inside the skill"
-            sub="Each one is a single film.js your agent can read and learn from. The reel above is the first. Relay and Lull are made-up products."
+            title="Eight films ship inside the skill"
+            sub="Each one is a single film.js your agent can read and learn from."
           />
           <div className="mt-10 grid gap-4 lg:grid-cols-[1.58fr_1fr]">
             <div className="grid gap-4">
-              <Reveal>
-                <FilmTile {...physics} className="aspect-video" />
-              </Reveal>
-              <Reveal delay={0.08}>
-                <FilmTile {...relay} className="aspect-video" />
-              </Reveal>
+              {wide.slice(0, 2).map((f, i) => (
+                <Reveal key={f.id} delay={i * 0.08}>
+                  <FilmTile src={f.src} poster={f.poster} label={f.label} className="aspect-video" />
+                </Reveal>
+              ))}
             </div>
             <Reveal delay={0.16} className="mx-auto w-full max-w-xs lg:max-w-none">
-              <FilmTile {...lull} className="aspect-[9/16] lg:aspect-auto lg:h-full" />
+              <FilmTile
+                src={tall.src}
+                poster={tall.poster}
+                label={tall.label}
+                className="aspect-[9/16] lg:aspect-auto lg:h-full"
+              />
             </Reveal>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {wide.slice(2).map((f, i, all) => (
+              <Reveal key={f.id} delay={(i % 2) * 0.08} className={i === all.length - 1 && all.length % 2 ? 'sm:col-span-2' : undefined}>
+                <FilmTile src={f.src} poster={f.poster} label={f.label} className="aspect-video" />
+              </Reveal>
+            ))}
           </div>
         </section>
 
