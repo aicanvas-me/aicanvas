@@ -25,6 +25,7 @@ export const MCP_TOOLS = [
   'get_audit_checklist',
   'search_icons',
   'get_icon_install',
+  'get_skill_install',
 ] as const
 
 export const MCP_PACKAGE = '@aicanvas/mcp'

@@ -50,6 +50,9 @@ After that, every \`npx shadcn@latest add @aicanvas/<component-name>\` is authen
 ## MCP server
 AI agents can browse AI Canvas and get install commands through the official, read-only MCP server, [@aicanvas/mcp on npm](https://www.npmjs.com/package/@aicanvas/mcp). Run it with \`npx -y @aicanvas/mcp\` (stdio transport). It exposes read-only tools: ${MCP_TOOLS.join(', ')}. The documented props of every component are also served as one file at ${SITE_URL}/r/aicanvas-props.json. Setup guide: ${SITE_URL}/mcp.md
 
+## Agent skills
+- [whoosh](${SITE_URL}/skills/whoosh) (Premium): an agent skill that makes motion-graphics videos in code and renders them to mp4, with motion blur, physics and sound effects. Install it for Claude Code or Codex with \`npx -y @aicanvas/mcp@latest skill add whoosh --token <your token>\` (signed in as Premium, the page shows the command with the token filled in; the MCP tool get_skill_install returns it too). It installs into the user-level skills folder, never into a project. Licensed under the AI Canvas Premium License, not MIT.
+
 ## Read API
 Public JSON over plain GET: no key, no account, read-only, cached for 5 minutes. Use these to list and search the catalog without the MCP server.
 - [registry.json](${SITE_URL}/r/registry.json): The shadcn registry index. \`items[]\` lists every installable item with \`name\` (the install slug), \`type\` (\`registry:ui\` component, \`registry:block\` page section, \`registry:lib\` helper), \`title\`, \`description\`, \`dependencies\` and \`files\` (target paths only, no source).

@@ -308,6 +308,11 @@ export default function McpDocsPage() {
           [<C key="2">get_icon_install</C>, 'The shadcn command, import line and JSX for one icon in one style.'],
         ]}
       />
+      <H3>Skills</H3>
+      <Table
+        head={['Tool', 'What it does']}
+        rows={[[<C key="1">get_skill_install</C>, 'The one command that installs a Premium agent skill, such as whoosh, into Claude Code or Codex.']]}
+      />
       {hosted && (
         <>
           <H3>Account (sign-in only)</H3>
