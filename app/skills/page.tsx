@@ -109,8 +109,8 @@ export default function SkillsPage() {
               ))}
             </Reveal>
 
-            <div className="mt-10 grid gap-8 px-2 pb-4 sm:mt-14 sm:px-5 sm:pb-6 lg:grid-cols-12 lg:gap-12">
-              <div className="lg:col-span-7">
+            <div className="mt-10 grid gap-10 px-2 pb-4 sm:mt-14 sm:px-5 sm:pb-6">
+              <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={PILL}>{FEATURED.kind}</span>
                   <span className={FREE_CHIP}>Free</span>
@@ -126,7 +126,7 @@ export default function SkillsPage() {
                   {FEATURED.hook}
                 </p>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">{FEATURED.body}</p>
-                <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
                   {FEATURED.points.map((p) => (
                     <div key={p.title}>
                       <div className="flex h-10 w-10 items-center justify-center rounded-inset border border-sand-300 bg-sand-50 text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-200">
@@ -149,7 +149,7 @@ export default function SkillsPage() {
                   )}
                 </div>
               </div>
-              <div className="lg:col-span-5">
+              <div>
                 <InstallPanel entry={FEATURED} id={`${FEATURED.slug}-install`} />
               </div>
             </div>
@@ -192,7 +192,7 @@ export default function SkillsPage() {
           >
             {OTHERS.map((e, i) => (
               <Reveal key={e.slug} delay={(i % 3) * 0.08} className="h-full">
-                <EntryCard entry={e} wide={OTHERS.length === 1} />
+                <EntryCard entry={e} />
               </Reveal>
             ))}
           </div>

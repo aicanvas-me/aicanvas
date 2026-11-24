@@ -43,12 +43,12 @@ function RecallSnippet() {
 
 const VISUALS: Record<string, () => React.ReactNode> = { memoryhd: RecallSnippet }
 
-export function EntryCard({ entry, wide }: { entry: SkillEntry; wide: boolean }) {
+export function EntryCard({ entry }: { entry: SkillEntry }) {
   const live = entry.status === 'live'
   const Visual = VISUALS[entry.slug]
   return (
     <article id={entry.slug} className={`${CARD} scroll-mt-24 p-6 sm:p-8`}>
-      <div className={wide ? 'grid gap-8 md:grid-cols-2 md:items-center' : 'grid gap-6'}>
+      <div className="grid gap-8">
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className={PILL}>{entry.kind}</span>
