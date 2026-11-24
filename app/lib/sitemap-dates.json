@@ -12,7 +12,7 @@
   "/account/settings": "2026-11-11",
   "/account/sign-in": "2026-10-22",
   "/account/sign-up": "2026-10-11",
-  "/components": "2026-11-17",
+  "/components": "2026-11-24",
   "/components/_template": "2026-11-05",
   "/components/ai-job-cards": "2026-11-09",
   "/components/avatar-picker": "2026-11-03",
@@ -160,6 +160,7 @@
   "/pricing": "2026-11-05",
   "/privacy": "2026-11-12",
   "/refund": "2026-11-12",
+  "/skills": "2026-11-24",
   "/terms": "2026-11-12",
   "/welcome": "2026-11-12"
 }

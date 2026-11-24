@@ -9,6 +9,7 @@ const PAGES = new Set([
   '/home',
   '/pricing',
   '/mcp',
+  '/skills',
   '/faq',
   '/about',
   '/contact',

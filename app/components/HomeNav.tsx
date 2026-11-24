@@ -2,7 +2,7 @@
 
 // The top bar content of every page that draws the bar, the catalog routes
 // included, the way ui.shadcn.com does it: the logo on the left, and in the
-// centre the two systems, the component categories, Icons, MCP, and a More
+// centre the two systems, the component categories, Docs, Icons, Skills, MCP, and a More
 // menu that opens on Pricing and the info pages. The section you are in reads
 // in the primary text colour and carries aria-current: a page link on that
 // page, a menu button anywhere inside its section.
@@ -140,13 +140,14 @@ export function HomeLogo() {
   )
 }
 
-// Below lg the bar has no room for Icons and MCP beside More, so they fold
+// Below lg the bar has no room for Docs, Icons, Skills and MCP beside More, so they fold
 // into the More menu there. More itself shows at every width the bar draws:
 // the phone drawer is gone from md up, so More is the only way to Pricing and
 // the info pages on a tablet.
 const MORE_COMPACT: NavLink[] = [
   { label: 'Docs', href: '/docs' },
   { label: 'Icons', href: '/icons', prefetch: false },
+  { label: 'Skills', href: '/skills' },
   { label: 'MCP', href: '/mcp' },
   ...MORE,
 ]
@@ -165,6 +166,9 @@ export function HomeNav() {
         </Link>
         <Link href="/icons" prefetch={false} aria-current={isOn(pathname, '/icons') ? 'page' : undefined} className={ITEM}>
           Icons
+        </Link>
+        <Link href="/skills" aria-current={isOn(pathname, '/skills') ? 'page' : undefined} className={ITEM}>
+          Skills
         </Link>
         <Link href="/mcp" aria-current={pathname === '/mcp' ? 'page' : undefined} className={ITEM}>
           MCP
