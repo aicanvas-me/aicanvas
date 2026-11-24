@@ -4,14 +4,14 @@
  *
  * Token: --token, then AICANVAS_TOKEN, then AICANVAS_TOKEN in ./.env.local.
  * The token travels in an Authorization header, never in the address.
- * A reinstall updates the skill but stops before overwriting a file the user
- * changed (--force overwrites). Files the user added are carried over.
+ * A reinstall updates the skill but stops before overwriting a file the user changed,
+ * or added where the skill now ships one (--force overwrites). Other added files stay.
  */
 
 import { createHash } from 'node:crypto'
 import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, readlinkSync, renameSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
-import { dirname, join, relative, resolve, sep } from 'node:path'
+import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
 import { createInterface } from 'node:readline/promises'
 import { inflateRawSync } from 'node:zlib'
 
@@ -38,7 +38,7 @@ Options
   --token <aic_...>   your AI Canvas install token (or set AICANVAS_TOKEN)
   --agent <name>      claude, codex or all (asked when several are found)
   --dir <path>        install into this skills folder instead
-  --force             overwrite files you changed since the last install
+  --force             overwrite files you changed, or added where the skill ships one
 
 The skill goes into your user-level skills folder (for example ~/.claude/skills),
 never into a project. Running it again updates the skill.`
@@ -112,7 +112,9 @@ export function unzip(buf: Buffer): Entry[] {
     if (buf.readUInt32LE(local) !== 0x04034b50) stop('The download is a damaged zip file.')
     const start = local + 30 + buf.readUInt16LE(local + 26) + buf.readUInt16LE(local + 28)
     const body = buf.subarray(start, start + size)
-    const data = method === 0 ? Buffer.from(body) : method === 8 ? inflateRawSync(body, { maxOutputLength: Math.max(raw, 1) }) : stop(`Unsupported zip method ${method}.`)
+    if (raw > MAX_BYTES - total) stop('The download is larger than any skill should be.')
+    const cap = { maxOutputLength: Math.max(raw, 1) }
+    const data = method === 0 ? Buffer.from(body) : method === 8 ? inflateRawSync(body, cap) : stop(`Unsupported zip method ${method}.`)
     if (data.length !== raw) stop('The download is a damaged zip file.')
     total += data.length
     if (total > MAX_BYTES) stop('The download is larger than any skill should be.')
@@ -154,11 +156,11 @@ function retryRename(from: string, to: string) {
   }
 }
 
-function installInto(skillsDir: string, slug: string, version: string | null, entries: Entry[], force: boolean): string {
-  const dest = join(skillsDir, slug)
-  const files: Record<string, string> = {}
-  for (const e of entries) files[safeParts(e.path, slug).join('/')] = sha256(e.data)
+type Plan = { skillsDir: string; dest: string; keep: string[] }
 
+/** Checks one target and lists the user's files to carry over; writes nothing. */
+function planInstall(skillsDir: string, slug: string, files: Record<string, string>, force: boolean): Plan {
+  const dest = join(skillsDir, slug)
   let keep: string[] = []
   if (existsSync(dest) || isSymlink(dest)) {
     if (isSymlink(dest) || !statSync(dest).isDirectory()) {
@@ -175,15 +177,20 @@ function installInto(skillsDir: string, slug: string, version: string | null, en
         }
         // Files the user added (renders, their own notes) are not ours: carry them over.
         const added = walk(dest).filter((f) => f !== MANIFEST && !Object.hasOwn(before.files, f))
-        const clash = added.filter((f) => Object.hasOwn(files, f))
+        // Lower case: macOS and Windows disks treat news.md and NEWS.md as one file.
+        const shipped = new Set(Object.keys(files).map((f) => f.toLowerCase()))
+        const clash = added.filter((f) => shipped.has(f.toLowerCase()))
         if (clash.length && !force) {
           stop(`This version adds files where you have your own:\n  ${clash.join('\n  ')}\nMove them, or add --force to replace them.`)
         }
-        keep = added.filter((f) => !Object.hasOwn(files, f))
+        keep = added.filter((f) => !shipped.has(f.toLowerCase()))
       }
     }
   }
+  return { skillsDir, dest, keep }
+}
 
+function installInto({ skillsDir, dest, keep }: Plan, slug: string, version: string | null, entries: Entry[], files: Record<string, string>): string {
   mkdirSync(skillsDir, { recursive: true })
   const tmp = join(skillsDir, `.${slug}.new-${process.pid}`)
   const old = join(skillsDir, `.${slug}.old-${process.pid}`)
@@ -204,7 +211,10 @@ function installInto(skillsDir: string, slug: string, version: string | null, en
       if (!isSymlink(from)) copyFileSync(from, to)
       else {
         const dir = (() => { try { return statSync(from).isDirectory() } catch { return false } })()
-        try { symlinkSync(readlinkSync(from), to, dir ? 'junction' : 'file') } catch (e) {
+        // A junction needs an absolute target: resolve it where the link lives now.
+        const link = readlinkSync(from)
+        const target = dir && !isAbsolute(link) ? resolve(dirname(from), link) : link
+        try { symlinkSync(target, to, dir ? 'junction' : 'file') } catch (e) {
           stop(`Could not carry over your link ${f} (${(e as Error).message}). Move it out, then run again.`)
         }
       }
@@ -283,10 +293,14 @@ export async function runSkillCommand(argv: string[], opts: Options): Promise<nu
     const { zip, version } = await download(slug, token, opts)
     const entries = unzip(zip)
     if (!entries.some((e) => e.path === `${slug}/SKILL.md`)) stop('The download has no SKILL.md.')
-    for (const t of targets) {
-      const dest = installInto(t.dir, slug, version, entries, flags.force === true)
+    const files: Record<string, string> = {}
+    for (const e of entries) files[safeParts(e.path, slug).join('/')] = sha256(e.data)
+    // Every target is checked before any is written, so a stop leaves all of them as they were.
+    const plans = targets.map((t) => planInstall(t.dir, slug, files, flags.force === true))
+    targets.forEach((t, i) => {
+      const dest = installInto(plans[i], slug, version, entries, files)
       console.log(`Installed ${slug}${version ? ` ${version}` : ''} for ${t.label}: ${dest}`)
-    }
+    })
     const setup = join(targets[0].dir, slug, 'engine', 'setup.mjs')
     if (existsSync(setup)) console.log(`\nOne-time setup on this machine (your agent also runs it the first time):\n  node "${setup}"`)
     console.log(`\nLicensed under the AI Canvas Premium License: https://aicanvas.me/premium-license`)

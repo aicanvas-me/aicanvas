@@ -138,6 +138,23 @@ try {
   r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir, '--force'])
   check('--force replaces it', r.code === 0 && readFileSync(installed('NEWS.md'), 'utf8') === 'ours', r.out)
 
+  // Case only: a disk that ignores case sees one file.
+  writeFileSync(installed('notes.md'), 'mine, lower case')
+  served = { zip: skillZip('2.1.0', { 'demo/NOTES.md': strToU8('ours') }), version: '2.1.0', sha: null }
+  r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir])
+  check('a case-only clash stops the update', r.code === 1 && r.out.includes('notes.md'), r.out)
+
+  // With two targets, a stop in the second leaves the first untouched.
+  const two = { CLAUDE_CONFIG_DIR: join(work, 'cfg-a'), CODEX_HOME: join(work, 'cfg-b') }
+  served = { zip: skillZip('3.0.0'), version: '3.0.0', sha: null }
+  r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'], two)
+  check('two targets installed', r.code === 0, r.out)
+  writeFileSync(join(work, 'cfg-b', 'skills', 'demo', 'references', 'guide.md'), 'changed in b')
+  served = { zip: skillZip('3.1.0'), version: '3.1.0', sha: null }
+  r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'], two)
+  check('a stop in one target', r.code === 1 && r.out.includes('guide.md'), r.out)
+  check('leaves the other target as it was', readFileSync(join(work, 'cfg-a', 'skills', 'demo', 'references', 'guide.md'), 'utf8') === 'guide 3.0.0\n')
+
   r = await run(['add', 'demo', '-h'])
   check('-h shows help, installs nothing', r.code === 0 && r.out.includes('skill add'), r.out)
   r = await run(['add', 'demo', '--agnet', 'claude', '--token', TOKEN])

@@ -24,7 +24,8 @@ export function skillVersion(skillMd) {
 }
 
 /**
- * Zips each skill. A problem means a listed skill could not ship; the caller decides how loud to fail.
+ * Zips each skill. A problem is a listed skill that could not ship;
+ * the caller decides how loud to fail.
  * @returns {{ built: Record<string, { version: string | null, sha256: string, bytes: number, files: number }>, problems: string[] }}
  */
 export function buildSkillZips(source, root, slugs) {
