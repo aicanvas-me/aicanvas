@@ -20,13 +20,13 @@ import { TILE_FILMS } from './_lib/media'
 import { FilmStage } from './FilmStage'
 import { FilmTile } from './FilmTile'
 import { InstallPanel } from './InstallPanel'
-import { EntryCard, FREE_CHIP, WORKS_CHIP } from './EntryCard'
+import { EntryCard, WORKS_CHIP } from './EntryCard'
 
 export const metadata: Metadata = pageMetadata({
   title: 'AI Agent Skills and Plugins: whoosh, Videos Written in Code',
   social: 'AI Canvas skills and plugins for AI agents',
   description:
-    'Free, open-source skills and plugins for Claude Code, Codex, Cursor and other AI agents. Start with whoosh: your agent writes a film in code and renders an mp4.',
+    'Skills and plugins for Claude Code, Codex, Cursor and other AI agents. Start with whoosh: your agent writes a film in code and renders an mp4.',
   url: `${SITE_URL}/skills`,
 })
 
@@ -41,8 +41,6 @@ const jsonLd = {
   operatingSystem: 'Cross-platform',
   description: FEATURED.body,
   url: `${SITE_URL}/skills#${FEATURED.slug}`,
-  license: 'https://www.apache.org/licenses/LICENSE-2.0',
-  offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
   publisher: { '@type': 'Organization', name: 'AI Canvas', url: SITE_URL },
 }
 
@@ -76,7 +74,7 @@ export default function SkillsPage() {
           pill="Skills & plugins"
           pillIcon={<Puzzle size={12} className="text-accent" aria-hidden />}
           title="Teach your agent a new trick."
-          accent="Free, open-source skills and plugins."
+          accent="New abilities, one command away."
           sub="Each one gives your AI agent an ability it did not have yesterday. Install it with one command, then ask for what you want. First up is whoosh, which turns a sentence into a finished video."
         >
           <a href={`#${FEATURED.slug}-install`} className={buttonClasses({ variant: 'primary', size: 'lg' })}>
@@ -113,8 +111,6 @@ export default function SkillsPage() {
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={PILL}>{FEATURED.kind}</span>
-                  <span className={FREE_CHIP}>Free</span>
-                  <span className="text-xs font-semibold text-sand-600 dark:text-sand-400">{FEATURED.licence}</span>
                 </div>
                 <h2
                   id="whoosh-name"

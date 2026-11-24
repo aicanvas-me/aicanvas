@@ -17,7 +17,6 @@ export type SkillEntry = {
   install: { label: string; commands: string[] }[]
   tryPrompt?: string
   requirements?: string
-  licence: string
   repo?: string
 }
 
@@ -61,7 +60,6 @@ export const WHOOSH: SkillEntry = {
   tryPrompt: 'Make a 15 second launch video for my app. The site is example.com.',
   requirements:
     'Needs Node 20 or newer and ffmpeg. The first run sets up a headless browser, about 215 MB, and your agent does it for you.',
-  licence: 'Apache-2.0',
   repo: 'https://github.com/aicanvas-me/whoosh',
 }
 
@@ -82,7 +80,6 @@ export const MEMORYHD: SkillEntry = {
   ],
   worksWith: ['Claude Code'],
   install: [],
-  licence: 'Apache-2.0',
 }
 
 export const ENTRIES: SkillEntry[] = [WHOOSH, MEMORYHD]
@@ -108,10 +105,6 @@ export const SKILLS_FAQ: FaqRow[] = [
   {
     q: 'What is the difference between a skill and a plugin?',
     a: 'A skill is a set of instructions and tools your agent loads when a task calls for it. A plugin is a package for one agent, such as Claude Code, that can bundle skills, commands and hooks. Every entry on this page says which one it is.',
-  },
-  {
-    q: 'Is whoosh free?',
-    a: 'Yes. whoosh is free and open source under Apache-2.0. You install it from GitHub and need no AI Canvas account.',
   },
   {
     q: 'What does whoosh need on my machine?',

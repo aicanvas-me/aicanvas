@@ -6,8 +6,6 @@ import { Reveal } from '../home/Reveal'
 import { InstallPanel } from './InstallPanel'
 import type { SkillEntry } from './_lib/entries'
 
-export const FREE_CHIP =
-  'rounded-full border border-free/30 bg-free/10 px-2 py-0.5 text-xs font-semibold text-free'
 export const WORKS_CHIP =
   'rounded-chip border border-sand-200 bg-sand-50 px-2 py-1 text-xs font-semibold text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
 
@@ -52,14 +50,7 @@ export function EntryCard({ entry }: { entry: SkillEntry }) {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className={PILL}>{entry.kind}</span>
-            {live ? (
-              <>
-                <span className={FREE_CHIP}>Free</span>
-                <span className="text-xs font-semibold text-sand-600 dark:text-sand-400">{entry.licence}</span>
-              </>
-            ) : (
-              <span className={PILL}>Coming next</span>
-            )}
+            {!live && <span className={PILL}>Coming next</span>}
           </div>
           <h3 className="mt-4 text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">{entry.name}</h3>
           <p className="mt-2 text-lg font-bold text-sand-900 dark:text-sand-50">{entry.hook}</p>
@@ -78,9 +69,6 @@ export function EntryCard({ entry }: { entry: SkillEntry }) {
                 {w}
               </span>
             ))}
-            {!live && (
-              <span className="text-xs font-semibold text-sand-600 dark:text-sand-400">Free · {entry.licence}</span>
-            )}
           </div>
           {live && (
             <div className="mt-6 space-y-3">
