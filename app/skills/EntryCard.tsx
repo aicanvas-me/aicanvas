@@ -1,6 +1,4 @@
 import { Check } from '@/app/_icons/icons/check'
-import { ExternalLink } from '@/app/_icons/icons/external-link'
-import { buttonClasses } from '../components/buttonClasses'
 import { CARD, PILL } from '../components/PageKit'
 import { Reveal } from '../home/Reveal'
 import { InstallPanel } from './InstallPanel'
@@ -71,19 +69,8 @@ export function EntryCard({ entry }: { entry: SkillEntry }) {
             ))}
           </div>
           {live && (
-            <div className="mt-6 space-y-3">
-              {entry.install.length > 0 && <InstallPanel entry={entry} id={`${entry.slug}-install`} />}
-              {entry.repo && !entry.install.length && (
-                <a
-                  href={entry.repo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={buttonClasses({ variant: 'outline', size: 'md' })}
-                >
-                  View on GitHub
-                  <ExternalLink size={14} />
-                </a>
-              )}
+            <div className="mt-6">
+              <InstallPanel entry={entry} id={`${entry.slug}-install`} />
             </div>
           )}
         </div>

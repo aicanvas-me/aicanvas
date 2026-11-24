@@ -14,10 +14,8 @@ export type SkillEntry = {
   points: SkillPoint[]
   worksWith: string[]
   worksWithNote?: string
-  install: { label: string; commands: string[] }[]
   tryPrompt?: string
   requirements?: string
-  repo?: string
 }
 
 export const WHOOSH: SkillEntry = {
@@ -52,11 +50,6 @@ export const WHOOSH: SkillEntry = {
   ],
   worksWith: ['Claude Code', 'Codex', 'Cursor', 'Gemini CLI', 'GitHub Copilot'],
   worksWithNote: 'and other agents that read SKILL.md',
-  install: [
-    { label: 'Any agent', commands: ['npx skills add aicanvas-me/whoosh'] },
-    { label: 'Claude Code', commands: ['/plugin marketplace add aicanvas-me/whoosh', '/plugin install whoosh@whoosh'] },
-    { label: 'Gemini CLI', commands: ['gemini extensions install https://github.com/aicanvas-me/whoosh'] },
-  ],
   tryPrompt: 'Make a 15 second launch video for my app. The site is example.com.',
   requirements:
     'Needs Node 20 or newer and ffmpeg. The first run sets up a headless browser, about 215 MB, and your agent does it for you.',
@@ -78,7 +71,6 @@ export const MEMORYHD: SkillEntry = {
     { body: 'Plain files on your disk: no database, no daemon, no dependencies.' },
   ],
   worksWith: ['Claude Code'],
-  install: [],
 }
 
 export const ENTRIES: SkillEntry[] = [WHOOSH, MEMORYHD]
