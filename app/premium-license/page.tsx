@@ -8,8 +8,8 @@ import { LegalArticle } from '../components/LegalArticle'
 // The AI Canvas Premium License (a EULA). Versioned v1.1 on its own URL, mirroring
 // the convention used by paid component vendors (Tailwind Plus, CoreUI PRO, MUI).
 // The public Terms (§ 2b, § 4, § 7b) reference this page by link. It governs the
-// proprietary Premium Components, design systems, and templates, and the free
-// Line icons (§ 11). The free public registry stays MIT (LICENSE file). Operator
+// proprietary Premium Components, design systems, templates, and agent skills
+// (§ 12), and the free Line icons (§ 11). The free public registry stays MIT (LICENSE file). Operator
 // details live in /impressum.
 //
 // A server component: the licence is static text, and LegalArticle is the one
@@ -67,8 +67,8 @@ export default function PremiumLicensePage() {
             </li>
             <li>
               <strong className={STRONG}>Premium Components:</strong>{' '}the
-              proprietary components, blocks, design systems, and templates,
-              the Duotone, Solid, and Solid duotone icon styles, the
+              proprietary components, blocks, design systems, templates, and
+              agent skills, the Duotone, Solid, and Solid duotone icon styles, the
               design-system rule files written for AI agents, the full remix
               prompts (Section 7.1), and their accompanying source code,
               assets, and documentation that we make available only to
@@ -432,9 +432,52 @@ export default function PremiumLicensePage() {
           </p>
         </section>
 
-        {/* ── 12. Versioning ───────────────────────────────────────────── */}
+        {/* ── 12. Skills ───────────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>12. Versioning</h2>
+          <h2 className={HEADING}>12. Skills</h2>
+          <p className={BODY}>
+            <strong className={STRONG}>12.1</strong>{' '}
+            A Skill (such as whoosh) is a Premium Component. An Installed
+            Skill gets the perpetual licence in Section 3, like any Installed
+            Component.
+          </p>
+          <p className={BODY}>
+            <strong className={STRONG}>12.2</strong>{' '}
+            What you make with a Skill is yours. Videos, images and other
+            output it renders are not Premium Components. You may use, publish
+            and sell them, for yourself or for clients, without credit to us,
+            and they stay yours after your Subscription ends.
+          </p>
+          <p className={BODY}>
+            <strong className={STRONG}>12.3</strong>{' '}
+            You may change an Installed Skill for your own use, including the
+            films you or your agent write with it.
+          </p>
+          <p className={BODY}>
+            <strong className={STRONG}>12.4</strong>{' '}
+            You may not redistribute, publish, resell or share an Installed
+            Skill, or a changed copy of it, in whole or in a substantial part.
+            That includes putting it in a repository others can read, or inside
+            a template, course or another skill. Section 4 applies.
+          </p>
+          <p className={BODY}>
+            <strong className={STRONG}>12.5</strong>{' '}
+            Parts made by others keep their own licences, listed in the
+            Skill&apos;s <code>THIRD_PARTY_NOTICES.md</code>. For whoosh:
+            three.js and matter-js (MIT), Playwright (Apache-2.0) and the sound
+            effects (CC0). This License takes nothing away from what those
+            licences allow.
+          </p>
+          <p className={BODY}>
+            <strong className={STRONG}>12.6</strong>{' '}
+            When your Subscription ends, the versions you installed keep
+            working. You stop receiving updates and new Skills.
+          </p>
+        </section>
+
+        {/* ── 13. Versioning ───────────────────────────────────────────── */}
+        <section className={SECTION}>
+          <h2 className={HEADING}>13. Versioning</h2>
           <p className={BODY}>
             This is AI Canvas Premium License version 1.1. Compared with version
             1.0 of 2026-07-01 it adds Lifetime (Section 2) and the Line Icons
@@ -444,7 +487,7 @@ export default function PremiumLicensePage() {
             work with you on an End Product work with the Installed Components
             inside it (Section 3), ends the licence to components installed
             under a payment that is refunded in full or withdrawn (Sections 7.2
-            and 7.4), and names the court for business customers (Section 13).
+            and 7.4), and names the court for business customers (Section 14).
             It applies to Subscriptions
             and Lifetime bought from its effective date; a Subscription started
             earlier stays under version 1.0 until we have told its holder about
@@ -456,9 +499,9 @@ export default function PremiumLicensePage() {
           </p>
         </section>
 
-        {/* ── 13. Governing law ────────────────────────────────────────── */}
+        {/* ── 14. Governing law ────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>13. Governing law</h2>
+          <h2 className={HEADING}>14. Governing law</h2>
           <p className={BODY}>
             This License is governed by the law of the Federal Republic of
             Germany, excluding the UN Convention on Contracts for the
@@ -470,9 +513,9 @@ export default function PremiumLicensePage() {
           </p>
         </section>
 
-        {/* ── 14. Severability ─────────────────────────────────────────── */}
+        {/* ── 15. Severability ─────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>14. Severability</h2>
+          <h2 className={HEADING}>15. Severability</h2>
           <p className={BODY}>
             If any provision of this License is or becomes invalid, the remaining
             provisions stay in full effect. The invalid provision falls away and
@@ -480,9 +523,9 @@ export default function PremiumLicensePage() {
           </p>
         </section>
 
-        {/* ── 15. Contact ──────────────────────────────────────────────── */}
+        {/* ── 16. Contact ──────────────────────────────────────────────── */}
         <section className={SECTION}>
-          <h2 className={HEADING}>15. Contact</h2>
+          <h2 className={HEADING}>16. Contact</h2>
           <p className={BODY}>
             Questions about this License? Email{' '}
             <a href={`mailto:${CONTACT_EMAIL}`} className={LINK}>
