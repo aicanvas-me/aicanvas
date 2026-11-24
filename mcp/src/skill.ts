@@ -71,7 +71,7 @@ function readToken(flag: string | true | undefined): string {
     } catch { return '' }
   }
   const token = (typeof flag === 'string' ? flag : '') || process.env.AICANVAS_TOKEN || fromEnvFile()
-  if (!token) stop('No token. Copy the install command from https://aicanvas.me/skills (signed in), or pass --token aic_...')
+  if (!token) stop('No token. Copy the install command from https://aicanvas.me/skills#whoosh (signed in as Premium), or pass --token aic_...')
   if (!TOKEN_RE.test(token)) stop('That token does not look like an AI Canvas token (aic_ followed by 48 characters).')
   return token
 }
