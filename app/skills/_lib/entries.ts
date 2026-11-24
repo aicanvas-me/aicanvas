@@ -60,7 +60,6 @@ export const WHOOSH: SkillEntry = {
   tryPrompt: 'Make a 15 second launch video for my app. The site is example.com.',
   requirements:
     'Needs Node 20 or newer and ffmpeg. The first run sets up a headless browser, about 215 MB, and your agent does it for you.',
-  repo: 'https://github.com/aicanvas-me/whoosh',
 }
 
 export const MEMORYHD: SkillEntry = {

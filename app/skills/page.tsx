@@ -21,6 +21,7 @@ import { FilmStage } from './FilmStage'
 import { FilmTile } from './FilmTile'
 import { InstallPanel } from './InstallPanel'
 import { EntryCard, WORKS_CHIP } from './EntryCard'
+import { PremiumBadge } from '../components/billing/PremiumBadge'
 
 export const metadata: Metadata = pageMetadata({
   title: 'AI Agent Skills and Plugins: whoosh, Videos Written in Code',
@@ -111,6 +112,7 @@ export default function SkillsPage() {
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className={PILL}>{FEATURED.kind}</span>
+                  <PremiumBadge className="py-1 text-xs" />
                 </div>
                 <h2
                   id="whoosh-name"
