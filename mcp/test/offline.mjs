@@ -114,7 +114,7 @@ try {
   const toolsRes = await client.request('tools/list')
   record(
     'tools/list works without registry (schemas are local)',
-    Array.isArray(toolsRes?.result?.tools) && toolsRes.result.tools.length === 14,
+    Array.isArray(toolsRes?.result?.tools) && toolsRes.result.tools.length === 15,
     `got ${toolsRes?.result?.tools?.length} tools`,
   )
 
