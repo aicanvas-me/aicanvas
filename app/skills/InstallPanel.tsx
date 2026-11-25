@@ -121,7 +121,7 @@ export function InstallPanel({ entry, id }: { entry: SkillEntry; id: string }) {
       )}
 
       <p className={`mt-4 ${NOTE}`}>
-        Installs into your user skills folder for Claude Code or Codex, and works with any agent that reads SKILL.md. Run it again to update.{' '}
+        Installs into your user skills folder for Claude Code or Codex, and works with any agent that reads SKILL.md.{' '}
         {entry.requirements}{' '}
         <Link href="/premium-license" className={NOTE_LINK}>
           Licence
