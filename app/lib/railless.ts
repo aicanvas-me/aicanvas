@@ -9,7 +9,6 @@ const PAGES = new Set([
   '/home',
   '/pricing',
   '/mcp',
-  '/skills',
   '/faq',
   '/about',
   '/contact',
@@ -34,6 +33,7 @@ export function isRaillessRoute(pathname: string | null | undefined): boolean {
     PAGES.has(path) ||
     path === '/account' ||
     path.startsWith('/account/') ||
+    path.startsWith('/skills/') ||
     path === '/docs' ||
     path.startsWith('/docs/')
   )

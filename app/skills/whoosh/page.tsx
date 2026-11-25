@@ -1,30 +1,30 @@
 import type { Metadata } from 'next'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Puzzle } from '@/app/_icons/icons/puzzle'
-import { buttonClasses } from '../components/buttonClasses'
-import { FaqRows } from '../components/FaqRows'
-import { CtaBand, EYEBROW, PageHero, PageShell, PILL, SectionHead } from '../components/PageKit'
-import { StageLight } from '../components/StageLight'
-import { Reveal } from '../home/Reveal'
-import { SITE_URL } from '../lib/config'
-import { pageMetadata } from '../lib/page-metadata'
-import { faqJsonLd } from '../lib/faq'
-import { CRAFTS, ENTRIES, SKILLS_FAQ } from './_lib/entries'
-import { HERO_FILM, TILE_FILMS } from './_lib/media'
-import { FilmStage } from './FilmStage'
-import { FilmTile } from './FilmTile'
-import { InstallPanel } from './InstallPanel'
-import { Process } from './Process'
-import { WorkWays } from './WorkWays'
-import { EntryCard, WORKS_CHIP } from './EntryCard'
-import { PremiumBadge } from '../components/billing/PremiumBadge'
+import { buttonClasses } from '../../components/buttonClasses'
+import { FaqRows } from '../../components/FaqRows'
+import { CtaBand, EYEBROW, PageHero, PageShell, PILL, SectionHead } from '../../components/PageKit'
+import { StageLight } from '../../components/StageLight'
+import { Reveal } from '../../home/Reveal'
+import { SITE_URL } from '../../lib/config'
+import { pageMetadata } from '../../lib/page-metadata'
+import { faqJsonLd } from '../../lib/faq'
+import { CRAFTS, ENTRIES, SKILLS_FAQ } from '../_lib/entries'
+import { HERO_FILM, TILE_FILMS } from '../_lib/media'
+import { FilmStage } from '../FilmStage'
+import { FilmTile } from '../FilmTile'
+import { InstallPanel } from '../InstallPanel'
+import { Process } from '../Process'
+import { WorkWays } from '../WorkWays'
+import { EntryCard, WORKS_CHIP } from '../EntryCard'
+import { PremiumBadge } from '../../components/billing/PremiumBadge'
 
 export const metadata: Metadata = pageMetadata({
   title: 'AI Agent Skills and Plugins: whoosh, Videos Written in Code',
   social: 'AI Canvas skills and plugins for AI agents',
   description:
     'Skills and plugins for Claude Code, Codex and other AI agents. Start with whoosh: your agent writes a motion-graphics film in code and renders an mp4.',
-  url: `${SITE_URL}/skills`,
+  url: `${SITE_URL}/skills/whoosh`,
 })
 
 const FEATURED = ENTRIES.find((e) => e.featured)!
@@ -37,7 +37,7 @@ const jsonLd = {
   applicationCategory: 'DeveloperApplication',
   operatingSystem: 'Cross-platform',
   description: FEATURED.body,
-  url: `${SITE_URL}/skills#${FEATURED.slug}`,
+  url: `${SITE_URL}/skills/${FEATURED.slug}`,
   publisher: { '@type': 'Organization', name: 'AI Canvas', url: SITE_URL },
 }
 

@@ -99,7 +99,7 @@ export function InstallPanel({ entry, id }: { entry: SkillEntry; id: string }) {
               disabled={loading}
               onClick={() =>
                 open({
-                  next: `/skills#${id}`,
+                  next: `/skills/${entry.slug}#${id}`,
                   title: `Install ${entry.name}.`,
                   subtitle: `Sign in to install ${entry.name} in your agent.`,
                 })
