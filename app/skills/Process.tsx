@@ -194,7 +194,7 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
       return (
         <div className="space-y-3">
           <Agent cue={cue} delay={0}>
-            <Bar cue={cue} delay={0.1} seconds={0.9} label="draft · 960x540 · one to three minutes" />
+            <Bar cue={cue} delay={0.1} seconds={0.9} label="draft · 960x540 · low res" />
           </Agent>
           <You cue={cue} delay={1.2}>make the title bigger</You>
           <Agent cue={cue} delay={1.7}>

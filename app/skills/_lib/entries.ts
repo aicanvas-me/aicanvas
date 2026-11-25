@@ -50,7 +50,7 @@ export const WHOOSH: SkillEntry = {
     },
     {
       title: 'Drafts it, then renders 4K',
-      body: 'Your agent first renders a quick low-res draft with sound, in one to three minutes, so you can check it and ask for changes fast. Only after your yes does it render the final in HD or 4K at 60 fps.',
+      body: 'Your agent first renders a quick low-res draft with sound, so you can check it and ask for changes fast. Only after your yes does it render the final in HD or 4K at 60 fps.',
     },
   ],
   worksWith: ['Claude Code', 'Codex'],
