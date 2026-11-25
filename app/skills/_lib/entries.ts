@@ -34,7 +34,7 @@ export const WHOOSH: SkillEntry = {
     },
     {
       title: 'Asks once',
-      body: 'One short message, six questions, each with a default: purpose, format, length, the line to land, brand, sound. "You decide" is a full answer.',
+      body: 'One short message, seven questions, each with a default: purpose, format, feel, length, the line to land, brand, sound. It waits for your reply; "you decide" is a full answer.',
     },
     {
       title: 'Shows you the plan',

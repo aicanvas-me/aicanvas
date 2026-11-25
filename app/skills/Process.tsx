@@ -73,6 +73,7 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
             {[
               ['purpose', 'launch film'],
               ['format', '16:9'],
+              ['feel', 'fast and punchy'],
               ['length', '15 s'],
               ['the line', 'written from your site'],
               ['brand', 'taken from your site'],
