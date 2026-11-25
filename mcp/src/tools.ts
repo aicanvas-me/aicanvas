@@ -83,7 +83,7 @@ const SKILLS = {
   whoosh: {
     title: 'whoosh',
     summary: 'motion-graphics videos in code, rendered to mp4',
-    after: 'Then run the setup line the command prints, once per machine: it installs Playwright and headless Chromium into a per-user cache. Its sound effects ship with the skill. whoosh needs Node 20+ and ffmpeg.',
+    after: 'Then run the setup line the command prints, once per machine: it installs Playwright and headless Chromium into a per-user cache. The skill ships no audio: your agent fetches CC0 sound effects while it builds a video, or uses yours. whoosh needs Node 20+ and ffmpeg.',
   },
 } as const
 const SKILL_NAMES = Object.keys(SKILLS) as [keyof typeof SKILLS, ...(keyof typeof SKILLS)[]]

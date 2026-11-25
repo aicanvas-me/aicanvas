@@ -184,8 +184,11 @@ function planInstall(skillsDir: string, slug: string, files: Record<string, stri
       const before = readInstalled(dest)
       if (!before && !force) stop(`${dest} exists but was not installed by this command. Move it away, or add --force to replace it.`)
       if (before) {
+        // Deleted: restored. Unreadable, or now a link or folder: changed.
         const changed = Object.entries(before.files).filter(([f, h]) => {
-          try { return sha256(readFileSync(join(dest, ...f.split('/')))) !== h } catch { return false }
+          const p = join(dest, ...f.split('/'))
+          try { if (!lstatSync(p).isFile()) return true } catch { return false }
+          try { return sha256(readFileSync(p)) !== h } catch { return true }
         }).map(([f]) => f)
         if (changed.length && !force) {
           stop(`You changed ${changed.length} file(s) in ${dest}:\n  ${changed.join('\n  ')}\nCopy your changes somewhere safe, then add --force to update.`)
@@ -193,12 +196,14 @@ function planInstall(skillsDir: string, slug: string, files: Record<string, stri
         // Files the user added (renders, their own notes) are not ours: carry them over.
         const added = walk(dest).filter((f) => f !== MANIFEST && !Object.hasOwn(before.files, f))
         // Lower case: macOS and Windows disks treat news.md and NEWS.md as one file.
-        const shipped = new Set(Object.keys(files).map((f) => f.toLowerCase()))
-        const clash = added.filter((f) => shipped.has(f.toLowerCase()))
+        // A user path clashes where a shipped path equals it, sits inside it, or holds it.
+        const shipped = Object.keys(files).map((f) => f.toLowerCase())
+        const clashes = (f: string) => { const l = f.toLowerCase(); return shipped.some((s) => s === l || l.startsWith(s + '/') || s.startsWith(l + '/')) }
+        const clash = added.filter(clashes)
         if (clash.length && !force) {
           stop(`This version adds files where you have your own:\n  ${clash.join('\n  ')}\nMove them, or add --force to replace them.`)
         }
-        keep = added.filter((f) => !shipped.has(f.toLowerCase()))
+        keep = added.filter((f) => !clashes(f))
       }
     }
   }

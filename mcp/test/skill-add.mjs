@@ -7,7 +7,7 @@
 import { createServer } from 'node:http'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
-import { existsSync, mkdtempSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs'
+import { chmodSync, existsSync, lstatSync, mkdtempSync, mkdirSync, readFileSync, rmSync, symlinkSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -26,6 +26,7 @@ const skillZip = (version, extra = {}) => zipSync({
   'demo/references/guide.md': strToU8(`guide ${version}\n`),
   ...extra,
 })
+const isSymlink = (p) => lstatSync(p).isSymbolicLink()
 let served = { zip: skillZip('1.0.0'), version: '1.0.0', sha: null }
 const server = createServer((req, res) => {
   const auth = req.headers.authorization
@@ -155,6 +156,30 @@ try {
   served = { zip: skillZip('2.1.0', { 'demo/NOTES.md': strToU8('ours') }), version: '2.1.0', sha: null }
   r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir])
   check('a case-only clash stops the update', r.code === 1 && r.out.includes('notes.md'), r.out)
+
+  // A folder of the user's where a new version ships a file: stop, --force replaces it.
+  mkdirSync(installed('addon'), { recursive: true })
+  writeFileSync(installed('addon/my.md'), 'mine')
+  served = { zip: skillZip('2.2.0', { 'demo/addon': strToU8('ours') }), version: '2.2.0', sha: null }
+  r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir])
+  check('a user folder in the way stops the update', r.code === 1 && r.out.includes('addon/my.md'), r.out)
+  r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir, '--force'])
+  check('--force replaces the folder', r.code === 0 && readFileSync(installed('addon'), 'utf8') === 'ours', r.out)
+
+  // A shipped file that cannot be read, or became a dangling link, counts as changed.
+  served = { zip: skillZip('2.3.0'), version: '2.3.0', sha: null }
+  if (process.platform !== 'win32' && process.getuid?.() !== 0) {
+    chmodSync(installed('references/guide.md'), 0)
+    r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir])
+    chmodSync(installed('references/guide.md'), 0o644)
+    check('an unreadable file stops the update', r.code === 1 && r.out.includes('references/guide.md'), r.out)
+  }
+  rmSync(installed('engine/setup.mjs'))
+  symlinkSync(join(work, 'nowhere'), installed('engine/setup.mjs'))
+  r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir])
+  check('a dangling link stops the update', r.code === 1 && r.out.includes('engine/setup.mjs'), r.out)
+  r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir, '--force'])
+  check('--force restores the file', r.code === 0 && !isSymlink(installed('engine/setup.mjs')), r.out)
 
   // With two targets, a stop in the second leaves the first untouched.
   const two = { CLAUDE_CONFIG_DIR: join(work, 'cfg-a'), CODEX_HOME: join(work, 'cfg-b') }

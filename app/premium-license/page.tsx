@@ -464,9 +464,9 @@ export default function PremiumLicensePage() {
             <strong className={STRONG}>12.5</strong>{' '}
             Parts made by others keep their own licences, listed in the
             Skill&apos;s <code>THIRD_PARTY_NOTICES.md</code>. For whoosh:
-            three.js and matter-js (MIT), Playwright (Apache-2.0) and the sound
-            effects (CC0). This License takes nothing away from what those
-            licences allow.
+            three.js and matter-js (MIT), and Playwright (Apache-2.0), which
+            setup installs. whoosh ships no audio. This License takes nothing
+            away from what those licences allow.
           </p>
           <p className={BODY}>
             <strong className={STRONG}>12.6</strong>{' '}
