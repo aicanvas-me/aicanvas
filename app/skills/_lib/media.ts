@@ -9,6 +9,9 @@ export const HERO_FILM = {
   poster: at('showreel-poster.jpg'),
 }
 
+// The visitor's face in the chat mock-ups, cropped from one of our own photos.
+export const YOU_AVATAR = at('avatar-you.jpg')
+
 const tile = (id: string, label: string, tall = false, size = '540') => ({
   id,
   src: at(`${id}-${size}.mp4`),

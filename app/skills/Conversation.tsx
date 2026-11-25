@@ -7,8 +7,7 @@ import { Bot } from '@/app/_icons/icons/bot'
 import { Check } from '@/app/_icons/icons/check'
 import { LoaderCircle } from '@/app/_icons/icons/loader-circle'
 import { Paperclip } from '@/app/_icons/icons/paperclip'
-import { User } from '@/app/_icons/icons/user'
-import { TILE_FILMS } from './_lib/media'
+import { TILE_FILMS, YOU_AVATAR } from './_lib/media'
 
 const EASE = [0.16, 1, 0.3, 1] as const
 const HOLD_MS = 6000
@@ -173,8 +172,9 @@ function Row({ line, first, still }: { line: Line; first: boolean; still: boolea
         <div className="max-w-[85%] rounded-card rounded-br-sm bg-sand-900 px-3.5 py-2 text-[14px] font-semibold leading-relaxed text-sand-50 dark:bg-sand-200 dark:text-sand-900">
           {line.body(still)}
         </div>
-        <span className={AVATAR}>
-          <User size={14} />
+        <span className={`${AVATAR} overflow-hidden`}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- a ready-sized 160px avatar from R2 */}
+          <img src={YOU_AVATAR} alt="" width={28} height={28} className="h-full w-full object-cover" />
         </span>
       </div>
     )

@@ -5,7 +5,7 @@ import { useMedia } from '../home/useMedia'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Bot } from '@/app/_icons/icons/bot'
 import { Check } from '@/app/_icons/icons/check'
-import { User } from '@/app/_icons/icons/user'
+import { YOU_AVATAR } from './_lib/media'
 import { WHOOSH } from './_lib/entries'
 
 const STEP_MS = 3800
@@ -34,8 +34,9 @@ function You({ cue, delay, children }: { cue: Cue; delay: number; children: Reac
       <p className="max-w-[85%] rounded-card rounded-br-sm bg-sand-900 px-3 py-1.5 text-[13px] font-semibold text-sand-50 dark:bg-sand-200 dark:text-sand-900">
         {children}
       </p>
-      <span className={AVATAR}>
-        <User size={13} />
+      <span className={`${AVATAR} overflow-hidden`}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- a ready-sized 160px avatar from R2 */}
+        <img src={YOU_AVATAR} alt="" width={24} height={24} className="h-full w-full object-cover" />
       </span>
     </motion.div>
   )
