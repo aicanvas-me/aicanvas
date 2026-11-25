@@ -181,8 +181,8 @@ export default function SkillsPage() {
           <SectionHead
             id="skills-process"
             eyebrow="The process"
-            title="It asks, plans, and shows you a draft first"
-            sub="Six steps, in this order every time. It asks you once, and the long render waits for your yes."
+            title="Your agent asks, plans, and shows you a draft first"
+            sub="Six steps, in the same order every time. It asks once, waits for your answers, and saves the long render for your yes."
           />
           <Process />
           <p className="mx-auto mt-10 max-w-2xl text-center text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">
