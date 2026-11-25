@@ -109,7 +109,7 @@ export const WORK_WAYS: WorkWay[] = [
   },
   {
     id: 'film',
-    title: 'Bring a film you like',
+    title: 'Bring a video you like',
     body: 'Hand it a video file. It pulls 12 frames spread across it and takes the pacing, camera, palette and type. The idea, the words and the look stay yours.',
     example: 'Make ours feel like ~/Downloads/reference.mp4',
   },

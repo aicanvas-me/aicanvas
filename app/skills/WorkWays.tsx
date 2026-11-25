@@ -283,7 +283,7 @@ export function WorkWays() {
         ))}
       </ol>
       <p className="mt-6 text-center text-[15px] text-sand-600 dark:text-sand-400">
-        Mix them: a sentence, a film you like and your site can be one brief.
+        Mix them: a sentence, a video you like and your site can be one brief.
       </p>
     </>
   )

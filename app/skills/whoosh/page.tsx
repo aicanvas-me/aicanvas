@@ -172,7 +172,7 @@ export default function SkillsPage() {
             id="skills-ways"
             eyebrow="Working with whoosh"
             title="Start from whatever you have"
-            sub="A sentence, a film you like, your live product, your brand files. Your agent reads each one differently, and you can mix them."
+            sub="A sentence, a video you like, your live product, your brand files. Your agent reads each one differently, and you can mix them."
           />
           <WorkWays />
         </section>
@@ -192,7 +192,7 @@ export default function SkillsPage() {
             id="skills-conversation"
             eyebrow="A use case"
             title="One way to work with whoosh"
-            sub="A film you like and your website in, a 4K promo out. Your agent watches the film, reads your site, asks once, and shows you a draft before the final render."
+            sub="A video you like and your website in, a 4K promo out. Your agent watches the video, reads your site, asks once, and shows you a draft before the final render."
           />
           <Conversation />
         </section>

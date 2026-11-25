@@ -77,7 +77,7 @@ const LINES: Line[] = [
     who: 'you',
     body: () => (
       <>
-        Use whoosh and make a promo video for my company. Take the pacing from this film and the look from example.com.
+        Use whoosh and make a promo video for my company. Take the pacing from this video and the look from example.com.
         <span className="mt-2 flex items-center gap-1.5 font-mono text-[11px] opacity-70">
           <Paperclip size={12} />
           launch-ref.mp4
@@ -85,7 +85,7 @@ const LINES: Line[] = [
       </>
     ),
   },
-  { at: 1.6, who: 'agent', body: () => <Text>On it. Watching your film and reading your site first.</Text> },
+  { at: 1.6, who: 'agent', body: () => <Text>On it. Watching your video and reading your site first.</Text> },
   {
     at: 2.2,
     who: 'agent',
