@@ -4,11 +4,11 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Lock } from '@/app/_icons/icons/lock'
 import { LogIn } from '@/app/_icons/icons/log-in'
-import { CodeBlock, INLINE_CODE, Toast, useToast } from '../mcp/InstallCards'
+import { CodeBlock, Toast, useToast } from '../mcp/InstallCards'
 import { PENDING_INSTALL_TOKEN, useInstallToken } from '../_lib/useInstallToken'
 import { copyText } from '../components/useCopied'
 import { buttonClasses } from '../components/buttonClasses'
-import { CARD, EYEBROW } from '../components/PageKit'
+import { CARD } from '../components/PageKit'
 import { useSession } from '../components/auth/SessionProvider'
 import { useAuthModal } from '../components/auth/AuthModalProvider'
 import { usePremiumStatus } from '../components/billing/usePremiumStatus'
@@ -28,7 +28,7 @@ export function InstallPanel({ entry, id }: { entry: SkillEntry; id: string }) {
   const { open } = useAuthModal()
   const status = usePremiumStatus()
   const token = useInstallToken()
-  const [copied, setCopied] = useState<'command' | 'prompt' | null>(null)
+  const [copied, setCopied] = useState<'command' | null>(null)
   const toast = useToast()
 
   const cmd = `npx -y @aicanvas/mcp@latest skill add ${entry.slug} --token`
@@ -38,7 +38,7 @@ export function InstallPanel({ entry, id }: { entry: SkillEntry; id: string }) {
   const pending = !!user && status === 'unknown'
   const locked = !premium && !pending
 
-  const copy = async (which: 'command' | 'prompt', text: string, done: string, noTokenText?: string) => {
+  const copy = async (which: 'command', text: string, done: string, noTokenText?: string) => {
     if (!(await copyText(text, noTokenText))) {
       toast.show('Copy failed, try again')
       return
@@ -49,7 +49,8 @@ export function InstallPanel({ entry, id }: { entry: SkillEntry; id: string }) {
   }
 
   return (
-    <div id={id} className={`${CARD} scroll-mt-24 p-5 sm:p-6`}>
+    // Always drawn in the light theme, so on the dark page it is the one light surface and reads first.
+    <div id={id} data-card-theme="light" className={`${CARD} scroll-mt-24 p-5 shadow-xl shadow-black/10 sm:p-6`}>
       <h3 className="text-lg font-bold text-sand-900 dark:text-sand-50">Install</h3>
       <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">
         {premium
@@ -120,31 +121,11 @@ export function InstallPanel({ entry, id }: { entry: SkillEntry; id: string }) {
       )}
 
       <p className={`mt-4 ${NOTE}`}>
-        It installs into your user-level skills folder for Claude Code or Codex, never into a project. With both
-        installed it asks which one, or pass <code className={INLINE_CODE}>--agent claude|codex|all</code>. Run it
-        again to update. It stops before overwriting a file you changed.
-      </p>
-
-      {entry.tryPrompt && (
-        <>
-          <p className={`mt-7 mb-2 ${EYEBROW}`}>Then ask</p>
-          <CodeBlock
-            command={entry.tryPrompt}
-            label="prompt"
-            multiline
-            copied={copied === 'prompt'}
-            onCopy={() => copy('prompt', entry.tryPrompt!, 'Prompt copied')}
-          />
-        </>
-      )}
-
-      <p className={`mt-4 ${NOTE}`}>
+        Installs into your user skills folder for Claude Code or Codex. Run it again to update.{' '}
         {entry.requirements}{' '}
-        Licence:{' '}
         <Link href="/premium-license" className={NOTE_LINK}>
-          AI Canvas Premium License
+          Licence
         </Link>
-        , Section 12.
       </p>
 
       <Toast message={toast.message} />
