@@ -178,9 +178,9 @@ export function FilmStage() {
               onClick={() => seek(c.at)}
               aria-label={`Jump to chapter ${i + 1}, ${c.label}`}
               aria-current={on ? 'true' : undefined}
-              className="group min-w-0 rounded-chip pt-2.5 pb-1 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40"
+              className="group min-w-0 cursor-pointer rounded-chip pt-2.5 pb-1 text-left transition-transform duration-100 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/40 active:scale-[0.97]"
             >
-              <span className="relative block h-0.5 overflow-hidden rounded-full bg-sand-300 transition-colors group-hover:bg-sand-400 dark:bg-sand-800 dark:group-hover:bg-sand-700">
+              <span className="relative block h-0.5 origin-bottom overflow-hidden rounded-full bg-sand-300 transition-[transform,background-color] duration-150 ease-out group-hover:scale-y-[2] group-hover:bg-sand-500 group-active:scale-y-[2] group-active:bg-sand-600 dark:bg-sand-800 dark:group-hover:bg-sand-600 dark:group-active:bg-sand-500">
                 <span
                   ref={(el) => {
                     fills.current[i] = el
@@ -190,10 +190,15 @@ export function FilmStage() {
               </span>
               <span
                 className={`mt-2 hidden truncate font-mono text-[11px] tracking-wide transition-colors duration-150 sm:block ${
-                  on ? 'text-sand-900 dark:text-sand-50' : 'text-sand-600 dark:text-sand-400'
+                  on
+                    ? 'text-sand-900 dark:text-sand-50'
+                    : 'text-sand-600 group-hover:text-sand-900 dark:text-sand-400 dark:group-hover:text-sand-50'
                 }`}
               >
-                <span className="text-sand-600 dark:text-sand-400">{String(i + 1).padStart(2, '0')}</span> {c.label}
+                <span className="text-sand-600 transition-colors duration-150 group-hover:text-sand-700 dark:text-sand-400 dark:group-hover:text-sand-300">
+                  {String(i + 1).padStart(2, '0')}
+                </span>{' '}
+                {c.label}
               </span>
             </button>
           )
