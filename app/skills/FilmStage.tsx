@@ -133,7 +133,7 @@ export function FilmStage() {
           preload="metadata"
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
-          aria-label="whoosh reel: a prompt is typed and becomes a 15 second film"
+          aria-label="whoosh reel: a prompt is typed and becomes a 15 second video"
           className="h-full w-full object-cover"
         />
         {showBigPlay && (
@@ -151,7 +151,7 @@ export function FilmStage() {
             type="button"
             onClick={toggle}
             aria-pressed={playing}
-            aria-label={playing ? 'Pause film' : 'Play film'}
+            aria-label={playing ? 'Pause video' : 'Play video'}
             className={CONTROL}
           >
             {playing ? <Pause size={16} /> : <Play size={16} />}
