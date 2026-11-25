@@ -51,8 +51,8 @@ const SPECS = [
 ]
 
 export default function SkillsPage() {
-  // The 9:16 film stands beside the first four; the rest run in a row under them.
-  const tall = TILE_FILMS.find((f) => f.tall)!
+  // Each 9:16 film stands beside two wide ones, sides alternating; the rest run below.
+  const talls = TILE_FILMS.filter((f) => f.tall)
   const wide = TILE_FILMS.filter((f) => !f.tall)
   return (
     <>
@@ -135,25 +135,30 @@ export default function SkillsPage() {
             title="What your agent can make with whoosh"
             sub="Every film here is one film.js an AI agent wrote, rendered straight from code: no editing, no compositing, no timeline."
           />
-          <div className="mt-10 grid gap-4 lg:grid-cols-[1.58fr_1fr]">
-            <div className="grid gap-4">
-              {wide.slice(0, 2).map((f, i) => (
-                <Reveal key={f.id} delay={i * 0.08}>
-                  <FilmTile src={f.src} poster={f.poster} label={f.label} className="aspect-video" />
-                </Reveal>
-              ))}
+          {talls.map((tall, t) => (
+            <div
+              key={tall.id}
+              className={`${t ? 'mt-4' : 'mt-10'} grid gap-4 ${t % 2 ? 'lg:grid-cols-[1fr_1.58fr]' : 'lg:grid-cols-[1.58fr_1fr]'}`}
+            >
+              <div className={`grid gap-4 ${t % 2 ? 'lg:order-2' : ''}`}>
+                {wide.slice(t * 2, t * 2 + 2).map((f, i) => (
+                  <Reveal key={f.id} delay={i * 0.08}>
+                    <FilmTile src={f.src} poster={f.poster} label={f.label} className="aspect-video" />
+                  </Reveal>
+                ))}
+              </div>
+              <Reveal delay={0.16} className="mx-auto w-full max-w-xs lg:max-w-none">
+                <FilmTile
+                  src={tall.src}
+                  poster={tall.poster}
+                  label={tall.label}
+                  className="aspect-[9/16] lg:aspect-auto lg:h-full"
+                />
+              </Reveal>
             </div>
-            <Reveal delay={0.16} className="mx-auto w-full max-w-xs lg:max-w-none">
-              <FilmTile
-                src={tall.src}
-                poster={tall.poster}
-                label={tall.label}
-                className="aspect-[9/16] lg:aspect-auto lg:h-full"
-              />
-            </Reveal>
-          </div>
+          ))}
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {wide.slice(2).map((f, i, all) => (
+            {wide.slice(talls.length * 2).map((f, i, all) => (
               <Reveal key={f.id} delay={(i % 2) * 0.08} className={i === all.length - 1 && all.length % 2 ? 'sm:col-span-2' : undefined}>
                 <FilmTile src={f.src} poster={f.poster} label={f.label} className="aspect-video" />
               </Reveal>

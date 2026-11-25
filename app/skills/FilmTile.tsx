@@ -47,7 +47,7 @@ export function FilmTile({
   useEffect(() => {
     const v = video.current
     if (!v || still) return
-    // Off-screen films stay paused, so eight autoplaying tiles cost one screen's worth.
+    // Off-screen films stay paused, so the autoplaying tiles cost one screen's worth.
     const io = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause() },
       { rootMargin: '200px' },
