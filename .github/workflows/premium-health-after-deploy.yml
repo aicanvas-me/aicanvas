@@ -59,3 +59,18 @@ jobs:
             echo "::error title=Lifetime price not configured::NEXT_PUBLIC_PADDLE_PRICE_LIFETIME is not set in Vercel Production. Lifetime purchases are not granted until it is: set it and redeploy."
             exit 1
           fi
+      # Last, so it never hides the checks above. A missing paid skill zip is a vault
+      # or manifest fix, never a rollback; after a pin rollback to a commit without
+      # the skill this goes red by design. Add a skill here once it is pinned.
+      - name: Confirm the paid agent skills are served
+        run: |
+          set -euo pipefail
+          body="$(curl -fsS "https://aicanvas.me/api/premium/health" || echo '{}')"
+          echo "skills=$(echo "$body" | jq -c '.skills')"
+          for s in whoosh; do
+            has="$(echo "$body" | jq -r --arg s "$s" '(.skills // {}) | has($s)')"
+            if [[ "$has" != "true" ]]; then
+              echo "::error title=Paid skill missing::Production does not serve the $s skill zip. Buyers get a 404 on skill add. Check the vault skills/$s folder and premium-manifest.json skills at the pin."
+              exit 1
+            fi
+          done

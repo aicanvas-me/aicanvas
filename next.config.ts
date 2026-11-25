@@ -59,6 +59,8 @@ const nextConfig: NextConfig = {
     "/icons/style-data/[style]": ["./.icons-data/*.json"],
     // Download all reads every style's markup and the shipped React files.
     "/api/icons/download": ["./.icons-data/*.json", "./public/icons-data/line.json", "./registry-data/icon-*.json"],
+    // Paid agent skills: the zips inject builds from the vault, served only to Premium.
+    "/api/skills/[slug]/download": ["./skills-premium/*"],
     // Copy for agent reads each item's emitted registry JSON (app/md/_installed.ts)
     // with fs at request time on these routes and their markdown twins; without
     // an entry the read ENOENTs in production and the agent text loses the

@@ -33,6 +33,7 @@ import { join, dirname, resolve } from 'node:path'
 import { execSync } from 'node:child_process'
 import { FREE_DS_PLACEHOLDER_SENTINEL, DESIGN_SYSTEMS } from './lib/design-systems.config.mjs'
 import { ICONS_KEPT, ICON_PARTS, iconSetAction, isPinnedBuild } from './lib/icon-source.mjs'
+import { SKILLS_DIR, buildSkillZips, manifestSkills } from './lib/skill-zips.mjs'
 
 const ROOT = process.cwd()
 const TARGET = join(ROOT, 'components-workspace-premium')
@@ -89,7 +90,7 @@ if (!appSha) {
 // Stamp what actually got injected into a gitignored const the /api/premium/health
 // route imports — so prod can PROVE it is serving the intended premium commit,
 // and (via appSha) the intended APP commit.
-function writeBuildInfo(sha, brainFileCounts = {}) {
+function writeBuildInfo(sha, brainFileCounts = {}, skills = {}) {
   writeFileSync(
     BUILD_INFO,
     [
@@ -99,6 +100,8 @@ function writeBuildInfo(sha, brainFileCounts = {}) {
       `  pinnedSha: ${JSON.stringify(pinnedSha || null)},`,
       `  appSha: ${JSON.stringify(appSha || null)},`,
       `  brainFileCounts: ${JSON.stringify(brainFileCounts)} as Record<string, number>,`,
+      // Skill slug -> version actually zipped; the health route reports it apart from `degraded`.
+      `  skills: ${JSON.stringify(skills)} as Record<string, string | null>,`,
       '} as const',
       '',
     ].join('\n'),
@@ -1069,6 +1072,7 @@ if (!source) {
   writeBrainTeaser(BRAIN_TEASER_MODULE, null)
   writeBrainTeaser(BRAIN_TEASER_PRO_MODULE, null)
   rmSync(join(ROOT, ICONS_KEPT), { recursive: true, force: true })
+  rmSync(join(ROOT, SKILLS_DIR), { recursive: true, force: true })
   log('no PREMIUM_LOCAL_PATH and no GITHUB_PAT_PREMIUM — free-only build (skip).')
   process.exit(0)
 }
@@ -1503,7 +1507,21 @@ for (const { slug, meta, hasPrompts, hasExamples } of injected) {
 const shim = [...imports, '', ...decls, '', 'export const PREMIUM_COMPONENTS: ComponentEntry[] = [', ...entries, ']', ''].join('\n')
 writeFileSync(SHIM, shim)
 
-writeBuildInfo(builtSha, brainFileCounts)
+// ── 7. Paid agent skills: one zip each, served by app/api/skills/[slug]/download ──
+const { built: skillsBuilt, problems: skillProblems } = buildSkillZips(source, ROOT, manifestSkills(manifest))
+if (skillProblems.length) {
+  // A listed paid skill missing from a production build is a paying customer's download gone: fail loud.
+  const msg = '[inject-premium] skill zip problem(s):\n  ' + skillProblems.join('\n  ')
+  if (isPinnedBuild(process.env)) {
+    console.error('\n🚫 ' + msg + '\n   Fix the vault skills/ folder or the manifest, do not ship.')
+    if (tmpClone) rmSync(tmpClone, { recursive: true, force: true })
+    process.exit(1)
+  }
+  console.warn(msg)
+}
+for (const [slug, info] of Object.entries(skillsBuilt)) log(`zipped skill "${slug}" ${info.version}: ${info.files} files, ${info.bytes} bytes → ${SKILLS_DIR}/${slug}.zip`)
+
+writeBuildInfo(builtSha, brainFileCounts, Object.fromEntries(Object.entries(skillsBuilt).map(([slug, info]) => [slug, info.version])))
 
 // The icon set ships from the same vault checkout; keep the parts the icon scripts
 // read (scripts/lib/icon-source.mjs) before the clone goes. Only a pinned build fails here.

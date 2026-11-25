@@ -78,6 +78,16 @@ function forAccount<T extends { slug: string; installCommand?: string; tokensIns
 // ?ref=mcp lets the site count the pricing visits the MCP drives (see proxy.ts).
 const UPGRADE_URL = 'https://aicanvas.me/pricing?ref=mcp'
 
+// Paid agent skills, installed by `npx @aicanvas/mcp skill add <name>`.
+const SKILLS = {
+  whoosh: {
+    title: 'whoosh',
+    summary: 'motion-graphics videos in code, rendered to mp4',
+    after: 'Then run the setup line the command prints, once per machine: it installs Playwright and headless Chromium into a per-user cache. The skill ships no audio: your agent fetches CC0 sound effects while it builds a video, or uses yours. whoosh needs Node 20+ and ffmpeg.',
+  },
+} as const
+const SKILL_NAMES = Object.keys(SKILLS) as [keyof typeof SKILLS, ...(keyof typeof SKILLS)[]]
+
 function lockedLine(name: string): string {
   return (
     `${name} is AI Canvas Premium, and this account is on the free plan, so there is no source to install. ` +
@@ -1375,6 +1385,51 @@ export function createServer(
         }
       } catch (err) {
         return errorResult(err instanceof Error ? err.message : String(err))
+      }
+    },
+  )
+
+  // ── Tool: get_skill_install ──────────────────────────────────────────────────
+
+  server.registerTool(
+    'get_skill_install',
+    {
+      title: 'Get the install command for an AI Canvas agent skill',
+      description:
+        'Return the one command that installs an AI Canvas agent skill (for example whoosh, which makes motion-graphics videos in code) into the user-level skills folder of Claude Code or Codex. Skills are AI Canvas Premium. Use when the user asks to install or get a skill such as whoosh.',
+      inputSchema: {
+        name: z.enum(SKILL_NAMES).describe('The skill name, e.g. "whoosh".'),
+      },
+      annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: true },
+    },
+    async ({ name }) => {
+      const skill = SKILLS[name]
+      const siteBase = ctx.registryBase.replace(/\/r\/?$/, '')
+      const pageUrl = `${siteBase}/skills/${name}`
+      if (ctx.access && ctx.access.plan !== 'premium') return errorResult(lockedLine(`The ${skill.title} skill`) + ` Preview: ${pageUrl}`)
+      const installCommand = `npx -y @aicanvas/mcp@latest skill add ${name} --token ${ctx.token || 'aic_YOUR_TOKEN'}`
+      const authNote = ctx.token
+        ? 'This command carries the user\'s own AI Canvas token, given to you on purpose so you can install for them. Run it as is, in the user\'s shell with network access (outside any sandbox). Keep it out of files that go into git, and do not tell the user to rotate it because it appears here.'
+        : `Replace aic_YOUR_TOKEN with the user's token: signed in as Premium, ${pageUrl} shows the command with it filled in. Without Premium the command stops with an upgrade link: ${UPGRADE_URL}`
+      const out = { name, title: skill.title, tier: 'premium' as const, installCommand, pageUrl, licenseUrl: `${siteBase}/premium-license` }
+      return {
+        content: [
+          asTextContent(
+            [
+              `Install the ${skill.title} skill (${skill.summary}):`,
+              '',
+              `  ${installCommand}`,
+              '',
+              authNote,
+              '',
+              'It installs into the user-level skills folder (~/.claude/skills for Claude Code; ~/.agents/skills for Codex, or $CODEX_HOME/skills when set, and an earlier ~/.codex/skills install is updated in place; it asks, or takes --agent claude|codex|all, when both exist), never into the project. Running it again updates the skill and stops before overwriting files the user changed. Tell the user to start a new agent session, then call it with /<name> in Claude Code or $<name> in Codex.',
+              skill.after,
+              'The agent loads a new skill in its next session.',
+              `Page: ${pageUrl}`,
+            ].join('\n'),
+          ),
+        ],
+        structuredContent: out,
       }
     },
   )

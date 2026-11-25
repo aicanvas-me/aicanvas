@@ -26,6 +26,7 @@ The tools below are derived from the live [aicanvas.me](https://aicanvas.me) reg
 | `get_install_command` | Get the `npx shadcn add @aicanvas/<slug>` command for any standalone or design-system component. |
 | `search_icons` | Keyword search across the AI Canvas icon set (name, tags, category), best match first. |
 | `get_icon_install` | The shadcn command that installs one icon as an editable file, with the exact import and JSX. Line is free, no account needed; Duotone, Solid and Solid duotone are Premium. |
+| `get_skill_install` | The one command that installs a Premium agent skill (for example whoosh, motion-graphics videos in code) into the user-level skills folder of Claude Code or Codex. |
 | `list_systems` | List the design systems available (e.g. Andromeda), with component and template counts. |
 | `get_system` | Every file for a whole design system, plus its shared tokens, its component install commands, and the dependency chain. |
 | `list_templates` | List the ready-made templates (complete example screens), optionally filtered by design system. |
@@ -137,6 +138,16 @@ This opens a browser UI where you can call each tool by hand.
 ### Accounts and premium content
 
 Browsing metadata (`list_categories`, `list_components`, `search_components`, `list_systems`, `list_templates`, `get_install_command`) is free and needs no account. Pulling actual source (`get_component`, `get_system`, `get_template`) runs against a free AI Canvas account: set `AICANVAS_TOKEN` from your account and the website gives you the ready-made config. Without a token, a free-component source pull returns a short "create a free account" notice instead of the code, and premium content (Andromeda Pro, its templates, the AI Brain and full design-system installs) returns a placeholder file with an upgrade link to [aicanvas.me/pricing](https://aicanvas.me/pricing) instead of the source. Update anytime with `npx @aicanvas/mcp@latest`.
+
+### Install a Premium agent skill
+
+The same package installs AI Canvas agent skills, such as whoosh (motion-graphics videos in code), for Premium members:
+
+```bash
+npx -y @aicanvas/mcp@latest skill add whoosh --token aic_...
+```
+
+Signed in, the skill's page on aicanvas.me shows this command with your token filled in. The token can also come from `AICANVAS_TOKEN` or a `.env.local` in the current folder. The skill goes into your user-level skills folder (`~/.claude/skills` for Claude Code; for Codex `~/.agents/skills`, or `$CODEX_HOME/skills` when that is set, and an earlier install in `~/.codex/skills` is updated where it is; `--agent claude|codex|all` chooses when both exist, `--dir` names another folder), never into a project. Running it again updates the skill and stops before overwriting files you changed (`--force` overwrites). Skills are licensed under the [AI Canvas Premium License](https://aicanvas.me/premium-license), not MIT. With no arguments the package starts the MCP server as before.
 
 ## How the registry stays fresh
 

@@ -93,6 +93,7 @@ app/lib/standalone-props.generated.ts
 /registry-data/_premium.json
 app/lib/premium-registry.generated.tsx
 app/lib/premium-build-info.generated.ts
+/skills-premium/
 app/lib/component-copy.premium.generated.ts
 
 # Free v2 design-system components are ALSO build-time injected (vault-authored,

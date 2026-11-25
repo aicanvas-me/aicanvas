@@ -11,6 +11,7 @@ type BuildInfo = {
   pinnedSha: string | null
   appSha: string | null
   brainFileCounts?: Record<string, number>
+  skills?: Record<string, string | null>
 }
 let PREMIUM_BUILD: BuildInfo = { sha: null, pinnedSha: null, appSha: null }
 try {
@@ -52,6 +53,10 @@ try {
  * `iconCount` is how many icons the /icons pages list. 0 on production means the
  * icon set never reached the build and /icons is blank.
  *
+ * `skills` maps each paid agent skill the build zipped to its version
+ * (app/api/skills/[slug]/download). Separate from `degraded` for the same reason
+ * as the Lifetime price below: a missing skill zip is a vault or manifest fix.
+ *
  * `lifetimePriceConfigured` says the Lifetime price id is set. It is separate
  * from `degraded` on purpose: `degraded` drives the rollback, and a missing
  * price is fixed by setting the variable, not by rolling back. The webhook
@@ -74,6 +79,7 @@ export async function GET() {
       deployedSha: PREMIUM_BUILD.appSha,
       brainFileCounts: PREMIUM_BUILD.brainFileCounts ?? {},
       iconCount,
+      skills: PREMIUM_BUILD.skills ?? {},
       lifetimePriceConfigured: Boolean(process.env.NEXT_PUBLIC_PADDLE_PRICE_LIFETIME),
     },
     { headers: { 'Cache-Control': 'private, no-store' } },

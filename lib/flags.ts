@@ -51,3 +51,9 @@ export function lifetimeEnabled(): boolean {
 export function checkoutSignInEnabled(): boolean {
   return process.env.CHECKOUT_SIGNIN !== 'off'
 }
+
+/** Kill switch for paid agent skill downloads (app/api/skills/[slug]/download).
+ *  On unless SKILL_DOWNLOADS=off; off answers every download with a 503. Server-only. */
+export function skillDownloadsEnabled(): boolean {
+  return process.env.SKILL_DOWNLOADS !== 'off'
+}

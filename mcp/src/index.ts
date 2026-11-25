@@ -22,7 +22,8 @@ import { createServer } from './tools.js'
 
 const REGISTRY_BASE =
   process.env.AICANVAS_REGISTRY_BASE ?? 'https://aicanvas.me/r'
-const MCP_VERSION = '0.3.5'
+const SITE_BASE = (process.env.AICANVAS_SITE_BASE ?? REGISTRY_BASE.replace(/\/r\/?$/, '')).replace(/\/+$/, '')
+const MCP_VERSION = '0.4.0'
 const USER_AGENT = `aicanvas-mcp/${MCP_VERSION}`
 // Optional per-user token (the website bakes it into the copied MCP config).
 // Identifies the account so free-component source pulls are authorized and any
@@ -60,8 +61,15 @@ async function main() {
   // stdio transport runs forever — closes when host kills stdin
 }
 
-main().catch((err) => {
-  // stderr only — stdout is reserved for JSON-RPC
-  console.error('aicanvas-mcp fatal:', err)
-  process.exit(1)
-})
+// `skill add <name>` installs a paid agent skill; anything else starts the server.
+if (process.argv[2] === 'skill') {
+  import('./skill.js')
+    .then((m) => m.runSkillCommand(process.argv.slice(3), { siteBase: SITE_BASE, userAgent: USER_AGENT }))
+    .then((code) => process.exit(code))
+} else {
+  main().catch((err) => {
+    // stderr only — stdout is reserved for JSON-RPC
+    console.error('aicanvas-mcp fatal:', err)
+    process.exit(1)
+  })
+}
