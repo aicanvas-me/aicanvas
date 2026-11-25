@@ -185,10 +185,6 @@ export default function SkillsPage() {
             sub="Six steps, in the same order every time. It asks once, waits for your answers, and saves the long render for your yes."
           />
           <Process />
-          <p className="mx-auto mt-10 max-w-2xl text-center text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">
-            Why a draft first: your agent judges the film from contact sheets and 12-frame filmstrips, not full renders.
-            You judge it from a half-size draft that takes one to three minutes. The long 4K render runs once, after your yes.
-          </p>
         </section>
 
         <section aria-labelledby="skills-craft" className="mx-auto mt-20 max-w-6xl sm:mt-32">
