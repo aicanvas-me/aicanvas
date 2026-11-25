@@ -251,7 +251,8 @@ function installInto({ skillsDir, dest, keep }: Plan, slug: string, version: str
     rmSync(tmp, { recursive: true, force: true })
     throw e
   }
-  rmSync(old, { recursive: true, force: true })
+  // The new version is in place; a leftover old copy is only clutter.
+  try { rmSync(old, { recursive: true, force: true }) } catch { console.error(`Could not remove the previous copy in ${old}; delete it by hand.`) }
   return dest
 }
 
