@@ -1,12 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { useMedia } from '../home/useMedia'
-import { VolumeHigh } from '@/app/_icons/icons/volume-high'
 
-// An example film. Every tile plays muted and looping while it is on screen;
-// hovering or focusing one turns its sound on, and only that one. Reduced
-// motion keeps them still until the viewer presses a tile.
+// An example video. Every tile plays silent and looping while it is on screen;
+// only the hero has sound. Reduced motion keeps them still until a press plays one.
 export function FilmTile({
   src,
   poster,
@@ -25,7 +23,6 @@ export function FilmTile({
   framed?: boolean
 }) {
   const video = useRef<HTMLVideoElement>(null)
-  const [loud, setLoud] = useState(false)
   const still = useMedia('(prefers-reduced-motion: reduce)', false)
 
   useEffect(() => {
@@ -60,21 +57,16 @@ export function FilmTile({
     return () => io.disconnect()
   }, [still])
 
-  const sound = (on: boolean) => {
+  const toggle = () => {
     const v = video.current
     if (!v) return
-    if (on) document.querySelectorAll('video[data-film]').forEach((o) => { if (o !== v) (o as HTMLVideoElement).muted = true })
-    v.muted = !on
-    setLoud(on)
-    if (on) v.play().catch(() => {})
-    else if (still) v.pause()
+    if (v.paused) v.play().catch(() => {})
+    else v.pause()
   }
-  // Under reduced motion only a press starts a film; hover and focus leave it still.
-  const hover = (on: boolean) => { if (!still || !on) sound(on) }
 
   return (
     <div
-      className={`group relative overflow-hidden bg-sand-950 ${framed ? 'rounded-card ring-1 ring-sand-200 dark:ring-sand-800' : ''} ${className}`}
+      className={`relative overflow-hidden bg-sand-950 ${framed ? 'rounded-card ring-1 ring-sand-200 dark:ring-sand-800' : ''} ${className}`}
     >
       <video
         ref={video}
@@ -88,20 +80,16 @@ export function FilmTile({
         className="h-full w-full object-cover"
         aria-hidden
       />
-      <button
-        type="button"
-        aria-label={`${loud ? 'Mute' : 'Play sound for'} ${label}`}
-        aria-pressed={loud}
-        onClick={() => sound(!loud)}
-        onMouseEnter={() => hover(true)}
-        onMouseLeave={() => hover(false)}
-        onFocus={() => hover(true)}
-        onBlur={() => hover(false)}
-        className="absolute inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sand-50/60"
-      />
-      <span className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-2 rounded-chip bg-sand-950/60 px-2 py-1 font-mono text-[11px] text-sand-50/80">
+      {still && (
+        <button
+          type="button"
+          aria-label={`Play or pause ${label}`}
+          onClick={toggle}
+          className="absolute inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-sand-50/60"
+        />
+      )}
+      <span className="pointer-events-none absolute bottom-3 left-3 rounded-chip bg-sand-950/60 px-2 py-1 font-mono text-[11px] text-sand-50/80">
         {label}
-        <VolumeHigh size={13} className={`transition-opacity duration-150 ${loud ? 'opacity-100' : 'opacity-0'}`} />
       </span>
     </div>
   )

@@ -18,7 +18,7 @@ const AVATAR =
   'flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-sand-200 bg-sand-100 text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
 // The name behind the chat window, with the footer wordmark's grain.
 // The word is 3.54em wide, so 26cqw leaves it a margin inside its column. The window
-// covers the top quarter of the letters; they fade in from that edge.
+// covers the top third of the letters; they fade in from that edge.
 const MARK_SIZE = 'clamp(4rem, 26cqw, 22rem)'
 const GRAIN =
   "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E\")"
@@ -211,15 +211,15 @@ export function Conversation() {
   const count = still ? LINES.length : shown
   return (
     <div aria-hidden className="mt-10 [container-type:inline-size]">
-      <div className="relative" style={{ paddingBottom: `calc(${MARK_SIZE} * 0.615)` }}>
+      <div className="relative" style={{ paddingBottom: `calc(${MARK_SIZE} * 0.555)` }}>
         <style>{`
           .whoosh-mark {
-            background-image: ${GRAIN}, linear-gradient(to bottom, rgb(23 23 26 / 0) 25%, rgb(23 23 26 / 0.28) 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 25%, #000 75%);
-            mask-image: linear-gradient(to bottom, transparent 25%, #000 75%);
+            background-image: ${GRAIN}, linear-gradient(to bottom, rgb(23 23 26 / 0) 32%, rgb(23 23 26 / 0.28) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 32%, #000 78%);
+            mask-image: linear-gradient(to bottom, transparent 32%, #000 78%);
           }
           .dark .whoosh-mark {
-            background-image: ${GRAIN}, linear-gradient(to bottom, rgb(255 255 255 / 0) 25%, rgb(255 255 255 / 0.5) 100%);
+            background-image: ${GRAIN}, linear-gradient(to bottom, rgb(255 255 255 / 0) 32%, rgb(255 255 255 / 0.4) 100%);
           }
         `}</style>
         <p
