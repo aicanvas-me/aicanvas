@@ -29,6 +29,8 @@ export const metadata: Metadata = pageMetadata({
 
 const FEATURED = ENTRIES.find((e) => e.featured)!
 const OTHERS = ENTRIES.filter((e) => !e.featured)
+// With one entry coming, its hook and body head the section instead of a generic line.
+const SOLO = OTHERS.length === 1 ? OTHERS[0] : null
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -240,17 +242,17 @@ export default function SkillsPage() {
           <SectionHead
             id="skills-next"
             eyebrow="Coming next"
-            title="More on the way"
-            sub="Skills and plugins land here as they are released."
+            title={SOLO ? SOLO.hook : 'More on the way'}
+            sub={SOLO ? SOLO.body : 'Skills and plugins land here as they are released.'}
           />
           <div
             className={`mt-10 grid gap-4 ${
-              OTHERS.length >= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : OTHERS.length === 2 ? 'md:grid-cols-2' : 'mx-auto max-w-4xl'
+              OTHERS.length >= 3 ? 'sm:grid-cols-2 lg:grid-cols-3' : OTHERS.length === 2 ? 'md:grid-cols-2' : 'mx-auto max-w-5xl'
             }`}
           >
             {OTHERS.map((e, i) => (
               <Reveal key={e.slug} delay={(i % 3) * 0.08} className="h-full">
-                <EntryCard entry={e} />
+                <EntryCard entry={e} intro={!SOLO} />
               </Reveal>
             ))}
           </div>

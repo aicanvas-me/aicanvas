@@ -65,15 +65,12 @@ export const MEMORYHD: SkillEntry = {
   name: 'memoryHD',
   kind: 'Plugin',
   status: 'soon',
-  hook: 'Say "deploy". The deploy note is already there.',
-  body: 'A Claude Code plugin that makes remembering mechanical. Notes your agent wrote weeks ago come back the moment your words match them.',
+  hook: 'Tell Claude once.',
+  body: 'Not a design tool. memoryHD works on Claude Code itself: it keeps what you decide and brings it back the moment it matters, so you stop explaining twice and Claude stops repeating mistakes.',
   points: [
-    {
-      body: 'Recall on every message: a hook matches your words against a one-line index and adds up to three pointers, each stamped with its age.',
-    },
-    { body: 'Notes write themselves: when a conversation settles a decision, Claude saves that one fact and tells you in a line.' },
-    { body: 'You prune: /librarian proposes what has gone stale or duplicated, and you approve it item by item.' },
-    { body: 'Plain files on your disk: no database, no daemon, no dependencies.' },
+    { title: 'Writes its own notes', body: 'When a conversation settles something, Claude saves that one fact and tells you in a line.' },
+    { title: 'Remembers on every message', body: 'Your words match a note, and it is in front of Claude before it answers, with its age.' },
+    { title: 'Zero prompts', body: 'You never ask it to remember or look anything up. Plain files on your disk, no service.' },
   ],
   worksWith: ['Claude Code'],
 }

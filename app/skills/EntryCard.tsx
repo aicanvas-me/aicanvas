@@ -37,31 +37,39 @@ function RecallSnippet() {
   )
 }
 
-const VISUALS: Record<string, () => React.ReactNode> = { memoryhd: RecallSnippet }
+const VISUALS: Partial<Record<string, () => React.ReactNode>> = { memoryhd: RecallSnippet }
 
-export function EntryCard({ entry }: { entry: SkillEntry }) {
+// intro=false when the section heading already carries the hook and body.
+export function EntryCard({ entry, intro = true }: { entry: SkillEntry; intro?: boolean }) {
   const live = entry.status === 'live'
   const Visual = VISUALS[entry.slug]
   return (
     <article id={entry.slug} className={`${CARD} scroll-mt-24 p-6 sm:p-8`}>
-      <div className="grid gap-8">
+      <div className={`grid gap-8 ${Visual ? 'lg:grid-cols-[1fr_1.1fr] lg:items-center' : ''}`}>
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className={PILL}>{entry.kind}</span>
             {!live && <span className={PILL}>Coming next</span>}
           </div>
-          <h3 className="mt-4 text-3xl font-bold tracking-tight text-sand-900 dark:text-sand-50">{entry.name}</h3>
-          <p className="mt-2 text-lg font-bold text-sand-900 dark:text-sand-50">{entry.hook}</p>
-          <p className="mt-3 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{entry.body}</p>
-          <ul className="mt-5 space-y-2.5">
+          <h3 className="mt-4 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">{entry.name}</h3>
+          {intro && (
+            <>
+              <p className="mt-2 text-lg font-bold text-sand-900 dark:text-sand-50">{entry.hook}</p>
+              <p className="mt-3 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{entry.body}</p>
+            </>
+          )}
+          <ul className="mt-5 space-y-4">
             {entry.points.map((p) => (
-              <li key={p.body} className="flex gap-2.5 text-[15px] leading-relaxed text-sand-700 dark:text-sand-300">
+              <li key={p.body} className="flex gap-2.5">
                 <Check size={14} className="mt-1 shrink-0 text-success" aria-hidden />
-                <span>{p.body}</span>
+                <span>
+                  {p.title && <span className="block text-[15px] font-semibold text-sand-900 dark:text-sand-50">{p.title}</span>}
+                  <span className="block text-sm leading-relaxed text-sand-600 dark:text-sand-400">{p.body}</span>
+                </span>
               </li>
             ))}
           </ul>
-          <div className="mt-5 flex flex-wrap items-center gap-2">
+          <div className="mt-6 flex flex-wrap items-center gap-2">
             {entry.worksWith.map((w) => (
               <span key={w} className={WORKS_CHIP}>
                 {w}
