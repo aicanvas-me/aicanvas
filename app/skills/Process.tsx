@@ -1,6 +1,7 @@
 'use client'
 
-import { AnimatePresence, motion, useInView, useReducedMotion, type TargetAndTransition, type Transition } from 'framer-motion'
+import { AnimatePresence, motion, useInView, type TargetAndTransition, type Transition } from 'framer-motion'
+import { useMedia } from '../home/useMedia'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Bot } from '@/app/_icons/icons/bot'
 import { Check } from '@/app/_icons/icons/check'
@@ -220,7 +221,7 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
 export function Process() {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { margin: '-20% 0px' })
-  const still = useReducedMotion() ?? false
+  const still = useMedia('(prefers-reduced-motion: reduce)', false)
   const [step, setStep] = useState(0)
   const [held, setHeld] = useState(false)
   const playing = inView && !still && !held

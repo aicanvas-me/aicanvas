@@ -1,6 +1,7 @@
 'use client'
 
-import { motion, useInView, useReducedMotion, type Transition } from 'framer-motion'
+import { motion, useInView, type Transition } from 'framer-motion'
+import { useMedia } from '../home/useMedia'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { WORK_WAYS, type WorkWay } from './_lib/entries'
 
@@ -14,7 +15,7 @@ const CHIP =
 function useLoop() {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { margin: '-15% 0px' })
-  const still = useReducedMotion() ?? false
+  const still = useMedia('(prefers-reduced-motion: reduce)', false)
   const [cycle, setCycle] = useState(0)
   useEffect(() => {
     if (!inView || still) return
