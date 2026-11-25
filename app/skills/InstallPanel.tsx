@@ -54,9 +54,9 @@ export function InstallPanel({ entry, id }: { entry: SkillEntry; id: string }) {
       <h3 className="text-lg font-bold text-sand-900 dark:text-sand-50">Install</h3>
       <p className="mt-2 max-w-xl text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">
         {premium
-          ? 'Run this in any terminal. Your token is in it.'
+          ? 'Run this in any terminal, or paste it to your agent. Your token is in it.'
           : pending
-            ? 'One command in any terminal.'
+            ? 'One command for any terminal or your agent.'
             : `${entry.name} comes with AI Canvas Premium. One command installs it with your account token.`}
       </p>
 
