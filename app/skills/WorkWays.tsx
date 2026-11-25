@@ -54,7 +54,7 @@ function Stage({ children }: { children: (s: Scene) => ReactNode }) {
 
 function Sentence({ still, at }: Scene) {
   const text = WORK_WAYS[0].example
-  const chips = ['launch film', '16:9', '15 s', 'your line', 'brand from site', 'sound on']
+  const chips = ['launch video', '16:9', '15 s', 'your line', 'brand from site', 'sound on']
   return (
     <div className="flex h-full flex-col justify-center gap-5">
       <div className="rounded-inset border border-sand-200 bg-sand-100 px-3 py-2.5 font-mono text-[12px] text-sand-900 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-50">

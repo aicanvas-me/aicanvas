@@ -26,8 +26,8 @@ export const WHOOSH: SkillEntry = {
   kind: 'Skill',
   status: 'live',
   featured: true,
-  hook: 'Describe it. Your agent films it.',
-  body: 'Motion-graphics videos, written in code by your AI agent. Ask for a launch film, a product promo, an app demo or a reel. Your agent writes one film.js, checks its own frames and renders an mp4 on your machine, up to 4K at 60 fps.',
+  hook: 'Describe it. Your agent makes the video.',
+  body: 'Motion-graphics videos, written in code by your AI agent. Ask for a launch video, a product promo, an app demo or a reel. Your agent writes one film.js, checks its own frames and renders an mp4 on your machine, up to 4K at 60 fps.',
   // The skill's own path (SKILL.md, The path), in order.
   points: [
     {
@@ -105,7 +105,7 @@ export const WORK_WAYS: WorkWay[] = [
     id: 'sentence',
     title: 'Type a sentence',
     body: 'Describe the video you want. That is enough: your agent asks the rest, with a default for every question.',
-    example: 'Make a 15 second launch film for our invoice app.',
+    example: 'Make a 15 second launch video for our invoice app.',
   },
   {
     id: 'film',
@@ -117,7 +117,7 @@ export const WORK_WAYS: WorkWay[] = [
     id: 'site',
     title: 'Point at your site or app',
     body: 'It reads your product in a browser, or from screenshots and the repo, then rebuilds your interface and operates it on screen with your real words.',
-    example: 'Film our app. The site is example.com.',
+    example: 'Make a video of our app. The site is example.com.',
   },
   {
     id: 'brand',
@@ -179,7 +179,7 @@ export const CRAFTS: Craft[] = [
   {
     title: 'Direction',
     count: 'The judgment',
-    body: 'Finding the idea, story shapes by length, pacing, colour and type, a review checklist, and what makes a film look cheap.',
+    body: 'Finding the idea, story shapes by length, pacing, colour and type, a review checklist, and what makes a video look cheap.',
   },
 ]
 
@@ -202,10 +202,10 @@ export const SKILLS_FAQ: FaqRow[] = [
   },
   {
     q: 'Does whoosh use AI-generated footage?',
-    a: 'No. A whoosh film is JavaScript: one film.js that the engine renders frame by frame in a headless browser on your machine. It does not edit existing footage and it does not generate footage with a model.',
+    a: 'No. A whoosh video is JavaScript: one film.js that the engine renders frame by frame in a headless browser on your machine. It does not edit existing footage and it does not generate footage with a model.',
   },
   {
     q: 'Does whoosh add music?',
-    a: 'No. Sound is effects only, and the skill ships no audio files. While it builds a film, your agent fetches CC0 effects from Openverse or uses your own, and a film with no sounds renders silent. Films are cut on a beat grid, so you can lay your own music under them in any editor.',
+    a: 'No. Sound is effects only, and the skill ships no audio files. While it builds a video, your agent fetches CC0 effects from Openverse or uses your own, and a video with no sounds renders silent. Videos are cut on a beat grid, so you can lay your own music under them in any editor.',
   },
 ]

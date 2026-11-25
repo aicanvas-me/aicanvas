@@ -86,7 +86,7 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
     case 0:
       return (
         <div className="space-y-4">
-          <You cue={cue} delay={0}>Make a launch film for our invoice app. The site is example.com. What matters most: clients pay without being chased.</You>
+          <You cue={cue} delay={0}>Make a launch video for our invoice app. The site is example.com. What matters most: clients pay without being chased.</You>
           <Agent cue={cue} delay={0.7}>
             <Line cue={cue} delay={0.8} className={DIM}>reading example.com, the repo and the README</Line>
             <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2">
@@ -106,7 +106,7 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
                   <span className={`${MONO} ml-2`}>Inter, 800 and 400</span>
                 </span>
               </Field>
-              <Field cue={cue} delay={2.1} label="to film">
+              <Field cue={cue} delay={2.1} label="to show">
                 <span className="flex flex-wrap gap-1.5">
                   {['inbox', 'invoice', 'paid'].map((x) => (
                     <span key={x} className={`${MONO} rounded-chip border border-sand-200 px-2 dark:border-sand-800 ${INK}`}>{x}</span>
@@ -127,7 +127,7 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
             <Line cue={cue} delay={0.05} className={INK}>Before I start, seven questions:</Line>
             <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
               {[
-                ['purpose', 'launch film'],
+                ['purpose', 'launch video'],
                 ['format', '16:9'],
                 ['feel', 'fast and punchy'],
                 ['length', '15 s'],
@@ -210,7 +210,7 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
           <Agent cue={cue} delay={3.1}>
             <Bar cue={cue} delay={3.2} seconds={1.3} label="4k · 3840x2160 · 60 fps" />
             <Line cue={cue} delay={4.6} className={INK}>
-              {OK}film.mp4
+              {OK}video.mp4
             </Line>
           </Agent>
         </div>

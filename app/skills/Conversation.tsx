@@ -130,7 +130,7 @@ const LINES: Line[] = [
     who: 'agent',
     body: (still) => <Task still={still} after={1} label="Treatment written" detail="one idea, 6 scenes, your palette and type" />,
   },
-  { at: 9.2, who: 'agent', body: (still) => <Progress still={still} seconds={2.2} label="Building the film and checking every frame" /> },
+  { at: 9.2, who: 'agent', body: (still) => <Progress still={still} seconds={2.2} label="Building the video and checking every frame" /> },
   {
     at: 11.8,
     who: 'agent',

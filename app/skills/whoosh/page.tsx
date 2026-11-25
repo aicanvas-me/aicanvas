@@ -24,7 +24,7 @@ export const metadata: Metadata = pageMetadata({
   title: 'AI Agent Skills and Plugins: whoosh, Videos Written in Code',
   social: 'AI Canvas skills and plugins for AI agents',
   description:
-    'Skills and plugins for Claude Code, Codex and other AI agents. Start with whoosh: your agent writes a motion-graphics film in code and renders an mp4.',
+    'Skills and plugins for Claude Code, Codex and other AI agents. Start with whoosh: your agent writes a motion-graphics video in code and renders an mp4.',
   url: `${SITE_URL}/skills/whoosh`,
 })
 
@@ -134,7 +134,7 @@ export default function SkillsPage() {
             id="skills-films"
             eyebrow="Made with whoosh"
             title="What your agent can make with whoosh"
-            sub="Every film here is one film.js an AI agent wrote, rendered straight from code: no editing, no compositing, no timeline."
+            sub="Every video here is one film.js an AI agent wrote, rendered straight from code: no editing, no compositing, no timeline."
           />
           {talls.map((tall, t) => (
             <div
@@ -202,7 +202,7 @@ export default function SkillsPage() {
             id="skills-craft"
             eyebrow="Inside the skill"
             title="Your agent learns the craft"
-            sub="57 copy-ready motion recipes in seven families, plus the direction a motion designer works by. Your agent reads the ones a film needs and writes the scenes itself."
+            sub="57 copy-ready motion recipes in seven families, plus the direction a motion designer works by. Your agent reads the ones a video needs and writes the scenes itself."
           />
           <div className="mt-10 grid gap-4 md:grid-cols-2">
             {CRAFTS.filter((c) => c.clip).map((c, i) => (
