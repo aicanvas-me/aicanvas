@@ -15,6 +15,7 @@ import { FilmStage } from '../FilmStage'
 import { FilmTile } from '../FilmTile'
 import { InstallPanel } from '../InstallPanel'
 import { Process } from '../Process'
+import { Conversation } from '../Conversation'
 import { WorkWays } from '../WorkWays'
 import { EntryCard, KindPill, WorksWith } from '../EntryCard'
 import { PremiumBadge } from '../../components/billing/PremiumBadge'
@@ -184,6 +185,16 @@ export default function SkillsPage() {
             sub="Six steps, in the same order every time. It asks once, waits for your answers, and saves the long render for your yes."
           />
           <Process />
+        </section>
+
+        <section aria-labelledby="skills-conversation" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+          <SectionHead
+            id="skills-conversation"
+            eyebrow="The process"
+            title="One message in, a finished film out"
+            sub="Your agent watches your reference film, reads your site, asks once, and shows you a draft before the long render."
+          />
+          <Conversation />
         </section>
 
         <section aria-labelledby="skills-craft" className="mx-auto mt-20 max-w-6xl sm:mt-32">
