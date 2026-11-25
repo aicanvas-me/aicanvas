@@ -75,7 +75,7 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
     case 0:
       return (
         <div className="space-y-4">
-          <You cue={cue} delay={0}>Use the AI Canvas whoosh skill to make a launch film for our invoice app. The site is example.com.</You>
+          <You cue={cue} delay={0}>Make a launch film for our invoice app. The site is example.com. What matters most: clients pay without being chased.</You>
           <Agent cue={cue} delay={0.7}>
             <Line cue={cue} delay={0.8} className={DIM}>reading example.com, the repo and the README</Line>
             <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2">
