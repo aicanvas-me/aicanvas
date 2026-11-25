@@ -25,9 +25,24 @@ type Options = { siteBase: string; userAgent: string }
 type Entry = { path: string; data: Buffer }
 type Installed = { slug: string; version: string | null; files: Record<string, string> }
 
-const AGENTS: Record<string, { label: string; home: () => string }> = {
-  claude: { label: 'Claude Code', home: () => process.env.CLAUDE_CONFIG_DIR || join(homedir(), '.claude') },
-  codex: { label: 'Codex', home: () => process.env.CODEX_HOME || join(homedir(), '.codex') },
+const AGENTS: Record<string, { label: string; call: string; home: () => string; skills: (slug: string) => string }> = {
+  claude: {
+    label: 'Claude Code', call: '/',
+    home: () => process.env.CLAUDE_CONFIG_DIR || join(homedir(), '.claude'),
+    skills: () => join(process.env.CLAUDE_CONFIG_DIR || join(homedir(), '.claude'), 'skills'),
+  },
+  codex: {
+    label: 'Codex', call: '$',
+    home: () => process.env.CODEX_HOME || join(homedir(), '.codex'),
+    skills: codexSkills,
+  },
+}
+
+// Codex reads ~/.agents/skills; a set CODEX_HOME, or an earlier install in ~/.codex/skills, stays where it is.
+function codexSkills(slug: string): string {
+  if (process.env.CODEX_HOME) return join(process.env.CODEX_HOME, 'skills')
+  const earlier = join(homedir(), '.codex', 'skills')
+  return readInstalled(join(earlier, slug)) ? earlier : join(homedir(), '.agents', 'skills')
 }
 
 const HELP = `Install an AI Canvas Premium agent skill.
@@ -40,8 +55,8 @@ Options
   --dir <path>        install into this skills folder instead
   --force             overwrite files you changed, or added where the skill ships one
 
-The skill goes into your user-level skills folder (for example ~/.claude/skills),
-never into a project. Running it again updates the skill.`
+The skill goes into your user-level skills folder (~/.claude/skills for Claude Code,
+~/.agents/skills for Codex), never into a project. Running it again updates the skill.`
 
 class Stop extends Error {}
 const stop = (msg: string): never => { throw new Stop(msg) }
@@ -239,17 +254,17 @@ function isSymlink(p: string): boolean {
   try { return lstatSync(p).isSymbolicLink() } catch { return false }
 }
 
-async function chooseTargets(flags: Record<string, string | true>): Promise<{ label: string; dir: string }[]> {
+async function chooseTargets(flags: Record<string, string | true>, slug: string): Promise<{ label: string; call?: string; dir: string }[]> {
   if (typeof flags.dir === 'string') {
     return [{ label: flags.dir, dir: resolve(flags.dir.replace(/^~(?=$|[\\/])/, homedir())) }]
   }
-  const all = Object.entries(AGENTS).map(([id, a]) => ({ id, label: a.label, dir: join(a.home(), 'skills') }))
+  const all = Object.entries(AGENTS).map(([id, a]) => ({ id, label: a.label, call: a.call, home: a.home(), dir: a.skills(slug) }))
   if (typeof flags.agent === 'string') {
     if (flags.agent === 'all') return all
     const hit = all.find((a) => a.id === flags.agent)
     return hit ? [hit] : stop(`--agent must be ${Object.keys(AGENTS).join(', ')} or all.`)
   }
-  const found = all.filter((a) => existsSync(dirname(a.dir)))
+  const found = all.filter((a) => existsSync(a.home))
   if (found.length <= 1) return found.length ? found : [all[0]]
   const list = found.map((a, i) => `  ${i + 1}. ${a.label}  (${a.dir})`).join('\n')
   if (!process.stdin.isTTY) {
@@ -290,7 +305,7 @@ export async function runSkillCommand(argv: string[], opts: Options): Promise<nu
     if (action !== 'add' || !slug || rest.length > 2) stop(`Unknown command. ${HELP}`)
     if (!SLUG_RE.test(slug)) stop(`"${slug}" is not a skill name.`)
     const token = readToken(flags.token)
-    const targets = await chooseTargets(flags)
+    const targets = await chooseTargets(flags, slug)
     const { zip, version } = await download(slug, token, opts)
     const entries = unzip(zip)
     if (!entries.some((e) => e.path === `${slug}/SKILL.md`)) stop('The download has no SKILL.md.')
@@ -302,6 +317,8 @@ export async function runSkillCommand(argv: string[], opts: Options): Promise<nu
       const dest = installInto(plans[i], slug, version, entries, files)
       console.log(`Installed ${slug}${version ? ` ${version}` : ''} for ${t.label}: ${dest}`)
     })
+    const calls = targets.filter((t) => t.call).map((t) => `${t.call}${slug} in ${t.label}`)
+    if (calls.length) console.log(`\nStart a new session, then ask in your own words or call it: ${calls.join(', ')}.`)
     const setup = join(targets[0].dir, slug, 'engine', 'setup.mjs')
     if (existsSync(setup)) console.log(`\nOne-time setup on this machine (your agent also runs it the first time):\n  node "${setup}"`)
     console.log(`\nLicensed under the AI Canvas Premium License: https://aicanvas.me/premium-license`)

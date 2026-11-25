@@ -1422,7 +1422,7 @@ export function createServer(
               '',
               authNote,
               '',
-              'It installs into the user-level skills folder (~/.claude/skills or ~/.codex/skills; it asks, or takes --agent claude|codex|all, when both exist), never into the project. Running it again updates the skill and stops before overwriting files the user changed.',
+              'It installs into the user-level skills folder (~/.claude/skills for Claude Code, ~/.agents/skills for Codex; it asks, or takes --agent claude|codex|all, when both exist), never into the project. Running it again updates the skill and stops before overwriting files the user changed. Tell the user to start a new agent session, then call it with /<name> in Claude Code or $<name> in Codex.',
               skill.after,
               'The agent loads a new skill in its next session.',
               `Page: ${pageUrl}`,

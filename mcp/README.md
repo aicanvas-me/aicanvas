@@ -147,7 +147,7 @@ The same package installs AI Canvas agent skills, such as whoosh (motion-graphic
 npx -y @aicanvas/mcp@latest skill add whoosh --token aic_...
 ```
 
-Signed in, the skill's page on aicanvas.me shows this command with your token filled in. The token can also come from `AICANVAS_TOKEN` or a `.env.local` in the current folder. The skill goes into your user-level skills folder (`~/.claude/skills` or `~/.codex/skills`; `--agent claude|codex|all` chooses when both exist, `--dir` names another folder), never into a project. Running it again updates the skill and stops before overwriting files you changed (`--force` overwrites). Skills are licensed under the [AI Canvas Premium License](https://aicanvas.me/premium-license), not MIT. With no arguments the package starts the MCP server as before.
+Signed in, the skill's page on aicanvas.me shows this command with your token filled in. The token can also come from `AICANVAS_TOKEN` or a `.env.local` in the current folder. The skill goes into your user-level skills folder (`~/.claude/skills` for Claude Code, `~/.agents/skills` for Codex; `--agent claude|codex|all` chooses when both exist, `--dir` names another folder), never into a project. Running it again updates the skill and stops before overwriting files you changed (`--force` overwrites). Skills are licensed under the [AI Canvas Premium License](https://aicanvas.me/premium-license), not MIT. With no arguments the package starts the MCP server as before.
 
 ## How the registry stays fresh
 

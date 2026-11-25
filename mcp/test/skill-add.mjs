@@ -125,9 +125,21 @@ try {
   r = await run(['add', 'demo', '--token', TOKEN])
   check('several agents without a terminal: asks for --agent', r.code === 1 && r.out.includes('--agent'), r.out)
   r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'all'])
-  check('--agent all installs for both', r.code === 0 && existsSync(join(home, '.codex', 'skills', 'demo', 'SKILL.md')), r.out)
+  check('--agent all installs Codex into ~/.agents/skills', r.code === 0 && existsSync(join(home, '.agents', 'skills', 'demo', 'SKILL.md')), r.out)
+  check('nothing new in ~/.codex/skills', !existsSync(join(home, '.codex', 'skills', 'demo')))
+  check('says how to call it in each agent', r.out.includes('/demo in Claude Code') && r.out.includes('$demo in Codex'), r.out)
   r = await run(['add', 'demo', '--token', TOKEN, '--agent', 'codex'], { CODEX_HOME: join(work, 'codex-home') })
   check('CODEX_HOME is honoured', r.code === 0 && existsSync(join(work, 'codex-home', 'skills', 'demo', 'SKILL.md')), r.out)
+
+  // An install from before Codex moved to ~/.agents/skills keeps being updated where it is.
+  const home2 = join(work, 'home2'), earlier = join(home2, '.codex', 'skills')
+  const h2 = { HOME: home2, USERPROFILE: home2 }
+  mkdirSync(home2)
+  r = await run(['add', 'demo', '--token', TOKEN, '--dir', earlier], h2)
+  check('earlier Codex install made', r.code === 0, r.out)
+  r = await run(['add', 'demo', '--token', TOKEN], h2)
+  check('only Codex found: updates the earlier install', r.code === 0 && r.out.includes(join(earlier, 'demo')), r.out)
+  check('no second copy in ~/.agents/skills', !existsSync(join(home2, '.agents', 'skills', 'demo')))
 
   // A file the user added where a new version ships one: stop, --force replaces it.
   writeFileSync(installed('NEWS.md'), 'my news')
