@@ -1,5 +1,5 @@
-// One base for every film and poster, so moving the files is a one-line change.
-export const SKILLS_MEDIA_BASE = '/skills/whoosh'
+// One base for every film and poster on R2; v1 is immutable, a changed file means a v2 prefix.
+export const SKILLS_MEDIA_BASE = 'https://pub-110c83a6ed20459da515832c8bdb50c7.r2.dev/skills/whoosh/v1'
 
 const at = (file: string) => `${SKILLS_MEDIA_BASE}/${file}`
 
