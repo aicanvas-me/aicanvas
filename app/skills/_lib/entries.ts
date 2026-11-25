@@ -1,6 +1,6 @@
 import type { FaqRow } from '../../components/FaqRows'
 
-export type SkillPoint = { title?: string; body: string; icon?: 'wind' | 'shapes' | 'eye' | 'sound' }
+export type SkillPoint = { title?: string; body: string }
 
 export type SkillEntry = {
   slug: string
@@ -13,7 +13,7 @@ export type SkillEntry = {
   body: string
   points: SkillPoint[]
   // How a brief reaches the skill, main way first.
-  waysIn?: { title: string; body: string }[]
+  waysIn?: { title: string; body: string; example: string }[]
   worksWith: string[]
   worksWithNote?: string
   tryPrompt?: string
@@ -28,37 +28,40 @@ export const WHOOSH: SkillEntry = {
   featured: true,
   hook: 'Describe it. Your agent films it.',
   body: 'Motion-graphics videos, written in code by your AI agent. Ask for a launch film, a product promo, an app demo or a reel. Your agent writes one film.js, checks its own frames and renders an mp4 on your machine, up to 4K at 60 fps.',
+  // The skill's own path (SKILL.md, The path), shown as four steps.
   points: [
     {
-      icon: 'wind',
-      title: 'Real motion blur',
-      body: 'Each frame is sampled several times and averaged, the way a camera shutter does it.',
+      title: 'Finds the idea',
+      body: 'It finds the one true claim, then writes a treatment: palette, type and a beat sheet with every scene, its move and its words. You see it before any code.',
     },
     {
-      icon: 'shapes',
-      title: 'Springs, physics and 3D',
-      body: 'Spring motion, rigid bodies with matter.js and 3D with three.js, loaded only when a film asks for them.',
+      title: 'Writes one film.js',
+      body: 'Every frame is drawn from time alone, so renders are exact and repeatable. Real motion blur comes free: each frame is sampled and averaged like a camera shutter.',
     },
     {
-      icon: 'eye',
-      title: 'It checks its own work',
-      body: 'Your agent renders stills of every scene, reviews them, and hands you a draft. On your yes it renders the final.',
+      title: 'Reviews its own frames',
+      body: 'Contact sheets of every scene, filmstrips of the fastest moves, checks for text cut off or too small. It fixes what it sees and looks again.',
     },
     {
-      icon: 'sound',
-      title: 'Sound on cue',
-      body: 'Your agent finds CC0 effects on Openverse for each film and lands each one on a move, or uses your own. Films are cut on a beat grid, so music sits on top.',
+      title: 'Draft, then final',
+      body: 'A half-size draft in one to three minutes. On your yes, the final in HD or 4K at 60 fps, with sound on cue.',
     },
   ],
   waysIn: [
-    { title: 'Plain words', body: 'Describe the video in a sentence or two. That is enough to start.' },
+    {
+      title: 'Plain words',
+      body: 'Describe the video in a sentence or two. That is enough to start.',
+      example: 'Make a 15 second launch film for our invoice app.',
+    },
     {
       title: 'A reference film',
       body: 'Hand it a video you like. It reads 12 frames and borrows the pacing, camera, palette and type. The idea and the words stay yours.',
+      example: 'Make ours feel like ~/Downloads/reference.mp4',
     },
     {
       title: 'Your site or app',
       body: 'Point it at your product. It films how the product really looks, with your real words and numbers.',
+      example: 'Film our app. The site is example.com.',
     },
   ],
   worksWith: ['Claude Code', 'Codex'],

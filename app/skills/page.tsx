@@ -1,12 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import type { ReactNode } from 'react'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Puzzle } from '@/app/_icons/icons/puzzle'
-import { Wind } from '@/app/_icons/icons/wind'
-import { Shapes } from '@/app/_icons/icons/shapes'
-import { Eye } from '@/app/_icons/icons/eye'
-import { VolumeHigh } from '@/app/_icons/icons/volume-high'
 import { buttonClasses } from '../components/buttonClasses'
 import { FaqRows } from '../components/FaqRows'
 import { CtaBand, EYEBROW, PageHero, PageShell, PILL, SectionHead } from '../components/PageKit'
@@ -15,7 +10,7 @@ import { Reveal } from '../home/Reveal'
 import { SITE_URL } from '../lib/config'
 import { pageMetadata } from '../lib/page-metadata'
 import { faqJsonLd } from '../lib/faq'
-import { CRAFTS, ENTRIES, SKILLS_FAQ, type SkillPoint } from './_lib/entries'
+import { CRAFTS, ENTRIES, SKILLS_FAQ } from './_lib/entries'
 import { HERO_FILM, TILE_FILMS } from './_lib/media'
 import { FilmStage } from './FilmStage'
 import { FilmTile } from './FilmTile'
@@ -43,13 +38,6 @@ const jsonLd = {
   description: FEATURED.body,
   url: `${SITE_URL}/skills#${FEATURED.slug}`,
   publisher: { '@type': 'Organization', name: 'AI Canvas', url: SITE_URL },
-}
-
-const POINT_ICON: Record<NonNullable<SkillPoint['icon']>, ReactNode> = {
-  wind: <Wind size={18} />,
-  shapes: <Shapes size={18} />,
-  eye: <Eye size={18} />,
-  sound: <VolumeHigh size={18} />,
 }
 
 const SPECS = [
@@ -128,34 +116,47 @@ export default function SkillsPage() {
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">{FEATURED.body}</p>
                 {FEATURED.waysIn && (
                   <>
-                    <p className={`mt-8 ${EYEBROW}`}>Three ways to brief it</p>
-                    <ol className="mt-3 grid gap-x-6 gap-y-4 sm:grid-cols-3">
+                    <h3 className="mt-12 text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50">
+                      Brief it three ways
+                    </h3>
+                    <ol className="mt-5 grid gap-4 md:grid-cols-3">
                       {FEATURED.waysIn.map((w, i) => (
-                        <li key={w.title} className="border-t border-sand-200 pt-3 dark:border-sand-800">
-                          <p className="text-base font-bold text-sand-900 dark:text-sand-50">
-                            <span className="mr-2 font-mono text-xs font-normal text-sand-600 dark:text-sand-400">
-                              {String(i + 1).padStart(2, '0')}
+                        <li
+                          key={w.title}
+                          className="flex flex-col rounded-card border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900"
+                        >
+                          <span className="font-mono text-xs text-sand-600 dark:text-sand-400">
+                            {String(i + 1).padStart(2, '0')}
+                          </span>
+                          <p className="mt-3 text-lg font-bold text-sand-900 dark:text-sand-50">{w.title}</p>
+                          <p className="mt-1.5 flex-1 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{w.body}</p>
+                          <p className="mt-5 rounded-inset border border-sand-200 bg-sand-50 px-3 py-2.5 font-mono text-[12.5px] leading-relaxed text-sand-800 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-200">
+                            <span className="mr-2 select-none text-sand-600 dark:text-sand-400" aria-hidden>
+                              &gt;
                             </span>
-                            {w.title}
+                            {w.example}
                           </p>
-                          <p className="mt-1 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{w.body}</p>
                         </li>
                       ))}
                     </ol>
                   </>
                 )}
-                <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                  {FEATURED.points.map((p) => (
-                    <div key={p.title}>
-                      <div className="flex h-10 w-10 items-center justify-center rounded-inset border border-sand-300 bg-sand-50 text-sand-700 dark:border-sand-700 dark:bg-sand-800 dark:text-sand-200">
-                        {p.icon && POINT_ICON[p.icon]}
-                      </div>
-                      <h3 className="mt-3 text-base font-bold text-sand-900 dark:text-sand-50">{p.title}</h3>
-                      <p className="mt-1 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{p.body}</p>
-                    </div>
+                <h3 className="mt-14 text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50">
+                  Then it works like a motion studio
+                </h3>
+                <ol className="mt-6 grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
+                  {FEATURED.points.map((p, i) => (
+                    <li key={p.title}>
+                      <span className="block h-0.5 rounded-full bg-sand-900 dark:bg-sand-50" aria-hidden />
+                      <p className="mt-4 font-mono text-xs text-sand-600 dark:text-sand-400">
+                        Step {String(i + 1).padStart(2, '0')}
+                      </p>
+                      <p className="mt-1.5 text-lg font-bold text-sand-900 dark:text-sand-50">{p.title}</p>
+                      <p className="mt-1.5 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{p.body}</p>
+                    </li>
                   ))}
-                </div>
-                <p className={`mt-8 ${EYEBROW}`}>Works with</p>
+                </ol>
+                <p className={`mt-12 ${EYEBROW}`}>Works with</p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   {FEATURED.worksWith.map((w) => (
                     <span key={w} className={WORKS_CHIP}>
