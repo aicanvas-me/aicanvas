@@ -11,15 +11,37 @@ export function FilmTile({
   poster,
   label,
   className = '',
+  clip,
+  framed = true,
 }: {
   src: string
-  poster: string
+  poster?: string
   label: string
   className?: string
+  // Loop only this stretch of the film, in seconds.
+  clip?: { from: number; to: number }
+  // false when a card around the tile already draws the frame.
+  framed?: boolean
 }) {
   const video = useRef<HTMLVideoElement>(null)
   const [loud, setLoud] = useState(false)
   const [still, setStill] = useState(false)
+
+  useEffect(() => {
+    const v = video.current
+    if (!v || !clip) return
+    const { from, to } = clip
+    const wrap = () => { if (v.currentTime < from || v.currentTime >= to) v.currentTime = from }
+    // Checked on every painted frame, so the loop never shows the next chapter.
+    const tick = () => { wrap(); frame = v.requestVideoFrameCallback(tick) }
+    let frame = v.requestVideoFrameCallback(tick)
+    v.addEventListener('loadedmetadata', wrap)
+    if (v.readyState >= 1) wrap()
+    return () => {
+      v.cancelVideoFrameCallback(frame)
+      v.removeEventListener('loadedmetadata', wrap)
+    }
+  }, [clip])
 
   useEffect(() => {
     const v = video.current
@@ -45,7 +67,7 @@ export function FilmTile({
 
   return (
     <div
-      className={`group relative overflow-hidden rounded-card bg-sand-950 ring-1 ring-sand-200 dark:ring-sand-800 ${className}`}
+      className={`group relative overflow-hidden bg-sand-950 ${framed ? 'rounded-card ring-1 ring-sand-200 dark:ring-sand-800' : ''} ${className}`}
     >
       <video
         ref={video}

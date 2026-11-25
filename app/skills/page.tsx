@@ -15,8 +15,8 @@ import { Reveal } from '../home/Reveal'
 import { SITE_URL } from '../lib/config'
 import { pageMetadata } from '../lib/page-metadata'
 import { faqJsonLd } from '../lib/faq'
-import { ENTRIES, SKILLS_FAQ, type SkillPoint } from './_lib/entries'
-import { TILE_FILMS } from './_lib/media'
+import { CRAFTS, ENTRIES, SKILLS_FAQ, type SkillPoint } from './_lib/entries'
+import { HERO_FILM, TILE_FILMS } from './_lib/media'
 import { FilmStage } from './FilmStage'
 import { FilmTile } from './FilmTile'
 import { InstallPanel } from './InstallPanel'
@@ -55,8 +55,8 @@ const POINT_ICON: Record<NonNullable<SkillPoint['icon']>, ReactNode> = {
 const SPECS = [
   { n: '4K', label: 'max resolution' },
   { n: '60', label: 'frames per second' },
-  { n: '4', label: 'formats: 16:9, 9:16, 1:1, 4:5' },
-  { n: '8', label: 'example films to learn from' },
+  { n: '57', label: 'motion recipes inside' },
+  { n: '3D', label: 'three.js and physics built in' },
 ]
 
 export default function SkillsPage() {
@@ -171,6 +171,48 @@ export default function SkillsPage() {
                 <InstallPanel entry={FEATURED} id={`${FEATURED.slug}-install`} />
               </div>
             </div>
+          </div>
+        </section>
+
+        <section aria-labelledby="skills-craft" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+          <SectionHead
+            id="skills-craft"
+            eyebrow="Inside the skill"
+            title="Your agent learns the craft"
+            sub="57 copy-ready motion recipes in seven families, plus the direction a motion designer works by. Your agent reads the ones a film needs and writes the scenes itself."
+          />
+          <div className="mt-10 grid gap-4 md:grid-cols-2">
+            {CRAFTS.filter((c) => c.clip).map((c, i) => (
+              <Reveal key={c.title} delay={(i % 2) * 0.08} className="h-full">
+                <article className="flex h-full flex-col overflow-hidden rounded-card border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
+                  <FilmTile
+                    src={HERO_FILM.desktop}
+                    label={c.title}
+                    clip={c.clip}
+                    framed={false}
+                    className="aspect-video"
+                  />
+                  <div className="p-5 sm:p-6">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <h3 className="text-lg font-bold text-sand-900 dark:text-sand-50">{c.title}</h3>
+                      <span className="shrink-0 font-mono text-[11px] tracking-wide text-sand-600 dark:text-sand-400">{c.count}</span>
+                    </div>
+                    <p className="mt-2 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{c.body}</p>
+                  </div>
+                </article>
+              </Reveal>
+            ))}
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {CRAFTS.filter((c) => !c.clip).map((c, i) => (
+              <Reveal key={c.title} delay={(i % 4) * 0.06} className="h-full">
+                <article className="h-full rounded-card border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900">
+                  <span className="font-mono text-[11px] tracking-wide text-sand-600 dark:text-sand-400">{c.count}</span>
+                  <h3 className="mt-2 text-base font-bold text-sand-900 dark:text-sand-50">{c.title}</h3>
+                  <p className="mt-1.5 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{c.body}</p>
+                </article>
+              </Reveal>
+            ))}
           </div>
         </section>
 

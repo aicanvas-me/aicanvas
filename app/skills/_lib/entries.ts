@@ -101,6 +101,62 @@ export const REEL_CHAPTERS = [
   { label: 'End card', at: 13.55 },
 ]
 
+export type Craft = {
+  title: string
+  count: string
+  body: string
+  // A loop of the matching reel chapter, in seconds.
+  clip?: { from: number; to: number }
+}
+
+// What the skill teaches, from references/recipes.md and direction.md: 57 recipes in all.
+export const CRAFTS: Craft[] = [
+  {
+    title: 'Kinetic type',
+    count: '10 recipes',
+    body: 'Words that land on the beat: masked rises, one giant word that fills the frame, a strike-through, a word swapped in place, a typewriter with a human rhythm.',
+    clip: { from: 2.2, to: 4.55 },
+  },
+  {
+    title: 'Physics and springs',
+    count: '4 recipes',
+    body: 'Real rigid bodies with matter.js: drops that squash and settle, a pile of pills, confetti and sparks under gravity. Springs for anything that should overshoot.',
+    clip: { from: 4.55, to: 7.2 },
+  },
+  {
+    title: '3D and generative',
+    count: '8 recipes',
+    body: 'Lit three.js scenes, chrome and glossy objects, extruded logos, point clouds that morph between forms, flow fields and fields of blocks that breathe.',
+    clip: { from: 7.2, to: 9.55 },
+  },
+  {
+    title: 'Camera',
+    count: '12 recipes',
+    body: 'Crane in and out, dive into a tile, whip pan, dolly through layers, orbit a group, fly through a wall of cards, shake on the hit.',
+    clip: { from: 9.55, to: 12.15 },
+  },
+  {
+    title: 'A product on screen',
+    count: '12 recipes',
+    body: 'A cursor that travels and presses, spring toggles, counters and odometers, charts that draw, a 3D wall that lands on one card, a phone frame.',
+  },
+  {
+    title: 'Transitions',
+    count: '6 recipes',
+    body: 'Floods from a point, wipes on the beat, a theme flip, hard cuts, colour hits, container morphs.',
+  },
+  {
+    title: 'Light and finish',
+    count: '5 recipes',
+    body: 'Soft stage light, a light sweep across a card, glass panels, a vignette, handheld life on a held shot.',
+  },
+  {
+    title: 'Direction',
+    count: 'The judgment',
+    body: 'Finding the idea, story shapes by length, pacing, colour and type, a review checklist, and what makes a film look cheap.',
+  },
+]
+
 export const SKILLS_FAQ: FaqRow[] = [
   {
     q: 'What is an agent skill?',
