@@ -7,9 +7,10 @@ import { CtaBand, PageHero, PageShell, SectionHead } from '../../components/Page
 import { StageLight } from '../../components/StageLight'
 import { Reveal } from '../../home/Reveal'
 import { SITE_URL } from '../../lib/config'
-import { pageMetadata } from '../../lib/page-metadata'
+import { buildBreadcrumbJsonLd, pageMetadata } from '../../lib/page-metadata'
+import { MONTHLY_PRICE } from '../../lib/offer'
 import { faqJsonLd } from '../../lib/faq'
-import { CRAFTS, ENTRIES, SKILLS_FAQ } from '../_lib/entries'
+import { CRAFTS, ENTRIES, REEL_LENGTH, SKILLS_FAQ } from '../_lib/entries'
 import { HERO_FILM, TILE_FILMS } from '../_lib/media'
 import { FilmStage } from '../FilmStage'
 import { FilmTile } from '../FilmTile'
@@ -20,12 +21,17 @@ import { WorkWays } from '../WorkWays'
 import { EntryCard, KindPill, WorksWith } from '../EntryCard'
 import { PremiumBadge } from '../../components/billing/PremiumBadge'
 
+const PAGE_URL = `${SITE_URL}/skills/whoosh`
+const DESCRIPTION =
+  'whoosh is an agent skill for Claude Code and Codex. Your agent writes a motion-graphics video in code and renders an mp4 on your machine, up to 4K at 60 fps.'
+
 export const metadata: Metadata = pageMetadata({
-  title: 'AI Agent Skills and Plugins: whoosh, Videos Written in Code',
-  social: 'AI Canvas skills and plugins for AI agents',
-  description:
-    'Skills and plugins for Claude Code, Codex and other AI agents. Start with whoosh: your agent writes a motion-graphics video in code and renders an mp4.',
-  url: `${SITE_URL}/skills/whoosh`,
+  title: 'whoosh: Motion Graphics Videos for Claude Code and Codex',
+  social: 'whoosh: your AI agent makes the video',
+  description: DESCRIPTION,
+  url: PAGE_URL,
+  image: { url: HERO_FILM.poster, width: 960, height: 540 },
+  imageAlt: 'A frame from the whoosh showreel, a motion-graphics video rendered from code',
 })
 
 const FEATURED = ENTRIES.find((e) => e.featured)!
@@ -33,16 +39,43 @@ const OTHERS = ENTRIES.filter((e) => !e.featured)
 // With one entry coming, its hook and body head the section instead of a generic line.
 const SOLO = OTHERS.length === 1 ? OTHERS[0] : null
 
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: FEATURED.name,
-  applicationCategory: 'DeveloperApplication',
-  operatingSystem: 'Cross-platform',
-  description: FEATURED.body,
-  url: `${SITE_URL}/skills/${FEATURED.slug}`,
-  publisher: { '@type': 'Organization', name: 'AI Canvas', url: SITE_URL },
-}
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: FEATURED.name,
+    applicationCategory: 'DeveloperApplication',
+    applicationSubCategory: 'AI agent skill',
+    operatingSystem: 'macOS, Windows, Linux',
+    softwareRequirements: 'Node 20 or newer, ffmpeg',
+    description: FEATURED.body,
+    url: PAGE_URL,
+    image: HERO_FILM.poster,
+    offers: {
+      '@type': 'Offer',
+      price: MONTHLY_PRICE,
+      priceCurrency: 'USD',
+      description: 'Included with AI Canvas Premium',
+      url: `${SITE_URL}/pricing`,
+    },
+    publisher: { '@type': 'Organization', name: 'AI Canvas', url: SITE_URL },
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'VideoObject',
+    name: 'whoosh showreel',
+    description: 'A motion-graphics video an AI agent wrote in code with whoosh and rendered to mp4: type, physics, 3D and camera moves.',
+    thumbnailUrl: HERO_FILM.poster,
+    contentUrl: HERO_FILM.desktop,
+    uploadDate: '2026-11-25T09:24:32Z',
+    duration: `PT${REEL_LENGTH}S`,
+  },
+  buildBreadcrumbJsonLd([
+    { name: 'AI Canvas', item: SITE_URL },
+    { name: 'Skills', item: `${SITE_URL}/skills` },
+    { name: 'whoosh', item: PAGE_URL },
+  ]),
+]
 
 const SPECS = [
   { n: '3D', label: 'three.js and physics built in' },

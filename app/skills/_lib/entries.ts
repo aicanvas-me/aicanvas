@@ -190,7 +190,8 @@ export const SKILLS_FAQ: FaqRow[] = [
   },
   {
     q: 'Who can install whoosh?',
-    a: 'whoosh comes with AI Canvas Premium and Lifetime, at no extra price. Sign in, copy the install command with your token in it, and run it in any terminal.',
+    a: 'whoosh comes with AI Canvas Premium and Lifetime, at no extra price. Sign in, copy the install command with your token in it, and run it in any terminal or paste it to your agent.',
+    links: [{ label: 'Premium', href: '/pricing' }],
   },
   {
     q: 'What is the difference between a skill and a plugin?',
@@ -198,7 +199,11 @@ export const SKILLS_FAQ: FaqRow[] = [
   },
   {
     q: 'What does whoosh need on my machine?',
-    a: 'Node 20 or newer and ffmpeg. A one-time setup installs Playwright and headless Chromium, about 215 MB, into a per-user cache. Your agent runs it for you on first use. In a sandboxed agent, such as Codex in its default sandbox, approve its commands to run outside the sandbox so it can start the browser.',
+    a: 'macOS, Windows or Linux, with Node 20 or newer and ffmpeg. A one-time setup installs Playwright and headless Chromium, about 215 MB, into a per-user cache. Your agent runs it for you on first use. In a sandboxed agent, such as Codex in its default sandbox, approve its commands to run outside the sandbox so it can start the browser.',
+  },
+  {
+    q: 'Which formats can whoosh render?',
+    a: 'An mp4 in 16:9, 9:16, 1:1 or 4:5. Your agent first renders a half-size draft for you to check, then the final in 1080p or 4K at 60 fps, with real motion blur.',
   },
   {
     q: 'Does whoosh use AI-generated footage?',
@@ -207,5 +212,27 @@ export const SKILLS_FAQ: FaqRow[] = [
   {
     q: 'Does whoosh add music?',
     a: 'No. Sound is effects only, and the skill ships no audio files. While it builds a video, your agent fetches CC0 effects from Openverse or uses your own, and a video with no sounds renders silent. Videos are cut on a beat grid, so you can lay your own music under them in any editor.',
+  },
+  {
+    q: 'Can I change a video after it renders?',
+    a: 'Yes. Every video is a folder with one film.js and a treatment.md that explains it. Ask your agent for a change and it edits the code and renders again, or open film.js and edit it yourself.',
+  },
+  {
+    q: 'Can I use the videos commercially?',
+    a: 'Yes. What you make with whoosh is yours. You may use, publish and sell the videos, for yourself or for clients, without credit to us, and they stay yours after your subscription ends. The skill itself may not be shared or resold.',
+    links: [{ label: 'Premium License, Section 12', href: '/premium-license' }],
+  },
+  {
+    q: 'Do my files leave my machine?',
+    a: 'whoosh renders on your machine and offline: the page loads local files only and blocks any web request. The one download is the Google Fonts a video uses, the first time it renders. Your agent sends what it reads to its own model provider, as it does for any task.',
+  },
+  {
+    q: 'How do I update whoosh?',
+    a: 'Run the install command again. It updates the skill in place, and stops first if you changed any of its files, so your edits are never overwritten without your say.',
+  },
+  {
+    q: 'What happens to whoosh if I cancel Premium?',
+    a: 'The versions you installed keep working, and every video you made stays yours. You stop receiving updates and new skills.',
+    links: [{ label: 'Premium License', href: '/premium-license' }],
   },
 ]

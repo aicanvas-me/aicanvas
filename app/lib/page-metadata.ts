@@ -17,12 +17,15 @@ export function pageMetadata({
   description,
   url,
   imageAlt = OG_ALT,
+  image = { url: OG_IMAGE, width: 2400, height: 1260 },
 }: {
   title: Metadata['title']
   social: string
   description: string
   url: string
   imageAlt?: string
+  // A page with its own picture, such as a film poster, shares that instead of the site card.
+  image?: { url: string; width: number; height: number }
 }): Metadata {
   return {
     title,
@@ -33,20 +36,13 @@ export function pageMetadata({
       description,
       url,
       type: 'website',
-      images: [
-        {
-          url: OG_IMAGE,
-          width: 2400,
-          height: 1260,
-          alt: imageAlt,
-        },
-      ],
+      images: [{ ...image, alt: imageAlt }],
     },
     twitter: {
       card: 'summary_large_image',
       title: social,
       description,
-      images: [OG_IMAGE],
+      images: [image.url],
     },
   }
 }
