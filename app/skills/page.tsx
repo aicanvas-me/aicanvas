@@ -140,7 +140,7 @@ export default function SkillsPage() {
             id="skills-films"
             eyebrow="Made with whoosh"
             title="What your agent can make with whoosh"
-            sub="Every film here is one film.js an AI agent wrote, rendered straight from code: no editing, no compositing, no timeline. All eight ship inside the skill, so your agent starts from the one closest to your job."
+            sub="Every film here is one film.js an AI agent wrote, rendered straight from code: no editing, no compositing, no timeline."
           />
           <div className="mt-10 grid gap-4 lg:grid-cols-[1.58fr_1fr]">
             <div className="grid gap-4">
