@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useMedia } from '../home/useMedia'
 import { Play } from '@/app/_icons/icons/play'
 import { Pause } from '@/app/_icons/icons/pause'
 import { VolumeHigh } from '@/app/_icons/icons/volume-high'
@@ -16,23 +17,25 @@ const CHAPTERS = REEL_CHAPTERS.map((c, i) => ({
 const CONTROL =
   'flex h-9 w-9 items-center justify-center rounded-full bg-sand-950/60 text-sand-50 ring-1 ring-sand-50/15 transition-colors hover:bg-sand-950/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sand-50/60'
 
+const never = () => () => {}
+const saveData = () => !!(navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
+
 // The hero film: plays muted while half of it is in view, never on its own for
 // reduced motion or data saver, and drives the chapter rail under it.
 export function FilmStage() {
   const video = useRef<HTMLVideoElement>(null)
   const fills = useRef<(HTMLSpanElement | null)[]>([])
-  const [src, setSrc] = useState<string | null>(null)
   const [playing, setPlaying] = useState(false)
   const [muted, setMuted] = useState(true)
-  const [manual, setManual] = useState(false)
   const [current, setCurrent] = useState(0)
 
-  useEffect(() => {
-    setSrc(window.matchMedia('(min-width: 1024px)').matches ? HERO_FILM.desktop : HERO_FILM.mobile)
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData
-    setManual(reduce || !!saveData)
-  }, [])
+  // No film on the server: the browser picks the size once it knows the screen.
+  const client = useSyncExternalStore(never, () => true, () => false)
+  const wide = useMedia('(min-width: 1024px)', false)
+  const src = client ? (wide ? HERO_FILM.desktop : HERO_FILM.mobile) : null
+  const reduce = useMedia('(prefers-reduced-motion: reduce)', false)
+  const lowData = useSyncExternalStore(never, saveData, () => false)
+  const manual = reduce || lowData
 
   // Autoplay in view, pause out of view. A visitor who paused keeps it paused.
   const userPaused = useRef(false)

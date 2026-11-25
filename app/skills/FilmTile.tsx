@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useMedia } from '../home/useMedia'
 import { VolumeHigh } from '@/app/_icons/icons/volume-high'
 
 // An example film. Every tile plays muted and looping while it is on screen;
@@ -25,7 +26,7 @@ export function FilmTile({
 }) {
   const video = useRef<HTMLVideoElement>(null)
   const [loud, setLoud] = useState(false)
-  const [still, setStill] = useState(false)
+  const still = useMedia('(prefers-reduced-motion: reduce)', false)
 
   useEffect(() => {
     const v = video.current
@@ -45,8 +46,7 @@ export function FilmTile({
 
   useEffect(() => {
     const v = video.current
-    if (!v) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { setStill(true); return }
+    if (!v || still) return
     // Off-screen films stay paused, so eight autoplaying tiles cost one screen's worth.
     const io = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) v.play().catch(() => {}); else v.pause() },
@@ -54,7 +54,7 @@ export function FilmTile({
     )
     io.observe(v)
     return () => io.disconnect()
-  }, [])
+  }, [still])
 
   const sound = (on: boolean) => {
     const v = video.current
