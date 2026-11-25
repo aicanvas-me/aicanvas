@@ -57,9 +57,9 @@ export async function GET(req: Request, { params }: { params: Promise<{ slug: st
     // A well-formed token that resolved to nobody, not flagged unknown, is a failed key read.
     if (extractToken(req) && !tokenUnknown) return unavailable()
     if (tokenUnknown) {
-      return fail(401, 'token-changed', 'This token no longer matches an account (it was rotated). Copy the current command from aicanvas.me/skills#' + slug + '.')
+      return fail(401, 'token-changed', 'This token no longer matches an account (it was rotated). Copy the current command from aicanvas.me/skills/' + slug + '.')
     }
-    return fail(401, 'sign-in-required', 'This skill is part of AI Canvas Premium. Sign in and copy the install command from aicanvas.me/skills#' + slug + '.', { upgrade: PRICING })
+    return fail(401, 'sign-in-required', 'This skill is part of AI Canvas Premium. Sign in and copy the install command from aicanvas.me/skills/' + slug + '.', { upgrade: PRICING })
   }
   if (tier !== 'premium') {
     return fail(403, 'premium-required', 'This skill is part of AI Canvas Premium. Upgrade to install it.', { upgrade: PRICING })

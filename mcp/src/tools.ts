@@ -1405,7 +1405,7 @@ export function createServer(
     async ({ name }) => {
       const skill = SKILLS[name]
       const siteBase = ctx.registryBase.replace(/\/r\/?$/, '')
-      const pageUrl = `${siteBase}/skills#${name}`
+      const pageUrl = `${siteBase}/skills/${name}`
       if (ctx.access && ctx.access.plan !== 'premium') return errorResult(lockedLine(`The ${skill.title} skill`) + ` Preview: ${pageUrl}`)
       const installCommand = `npx -y @aicanvas/mcp@latest skill add ${name} --token ${ctx.token || 'aic_YOUR_TOKEN'}`
       const authNote = ctx.token
