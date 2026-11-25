@@ -77,6 +77,7 @@ export const MEMORYHD: SkillEntry = {
     { title: 'Writes its own notes', body: 'When a conversation settles something, Claude saves that one fact and tells you in a line.' },
     { title: 'Remembers on every message', body: 'Your words match a note, and it is in front of Claude before it answers, with its age.' },
     { title: 'Zero prompts', body: 'You never ask it to remember or look anything up. Plain files on your disk, no service.' },
+    { title: 'A librarian built in', body: 'An agent that audits the notes, finds the stale and the duplicated, and cleans up with your OK.' },
   ],
   worksWith: ['Claude Code'],
 }

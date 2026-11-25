@@ -1,6 +1,5 @@
 import { Check } from '@/app/_icons/icons/check'
 import { CARD, EYEBROW, PILL } from '../components/PageKit'
-import { Reveal } from '../home/Reveal'
 import { InstallPanel } from './InstallPanel'
 import { ClaudeCodeMark, ClaudeMark, CodexMark } from '../mcp/InstallCards'
 import type { SkillEntry } from './_lib/entries'
@@ -61,46 +60,12 @@ export function WorksWith({ entry }: { entry: SkillEntry }) {
   )
 }
 
-// memoryHD's visual: what a recall looks like when the words match.
-function RecallSnippet() {
-  return (
-    <div
-      role="img"
-      aria-label="Example of memoryHD recalling two notes"
-      className="overflow-x-auto rounded-inset border border-sand-200 bg-sand-50 p-4 font-mono text-[12px] leading-relaxed text-sand-700 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-300"
-    >
-      <Reveal y={6}>
-        <p className="whitespace-pre text-sand-900 dark:text-sand-50">you  how do we deploy again?</p>
-      </Reveal>
-      <Reveal y={6} delay={0.15} className="mt-3">
-        <p className="whitespace-pre">{'<memory-recall>'}</p>
-        <p className="whitespace-pre">[deploy-runbook] deploy, ship, release, roll back</p>
-        <p className="whitespace-pre">
-          {'  deploy-runbook.md '}
-          <span className="text-sand-600 dark:text-sand-400">(4 days ago)</span>
-        </p>
-      </Reveal>
-      <Reveal y={6} delay={0.3}>
-        <p className="whitespace-pre">[old-config] env vars, secrets, ports</p>
-        <p className="whitespace-pre">
-          {'  old-config.md '}
-          <span className="text-sand-600 dark:text-sand-400">(stale, 240 days old, verify first)</span>
-        </p>
-      </Reveal>
-    </div>
-  )
-}
-
-const VISUALS: Partial<Record<string, () => React.ReactNode>> = { memoryhd: RecallSnippet }
-
 // intro=false when the section heading already carries the hook and body.
 export function EntryCard({ entry, intro = true }: { entry: SkillEntry; intro?: boolean }) {
   const live = entry.status === 'live'
-  const Visual = VISUALS[entry.slug]
   return (
     <article id={entry.slug} className={`${CARD} scroll-mt-24 p-6 sm:p-8`}>
-      <div className={`grid gap-8 ${Visual ? 'lg:grid-cols-[1fr_1.1fr] lg:items-center' : ''}`}>
-        <div>
+      <div>
           <div className="flex flex-wrap items-center gap-2">
             <span className={PILL}>{entry.kind}</span>
             {!live && <span className={PILL}>Coming next</span>}
@@ -112,7 +77,7 @@ export function EntryCard({ entry, intro = true }: { entry: SkillEntry; intro?: 
               <p className="mt-3 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{entry.body}</p>
             </>
           )}
-          <ul className="mt-5 space-y-4">
+          <ul className="mt-6 grid gap-x-10 gap-y-5 sm:grid-cols-2">
             {entry.points.map((p) => (
               <li key={p.body} className="flex gap-2.5">
                 <Check size={14} className="mt-1 shrink-0 text-success" aria-hidden />
@@ -131,8 +96,6 @@ export function EntryCard({ entry, intro = true }: { entry: SkillEntry; intro?: 
               <InstallPanel entry={entry} id={`${entry.slug}-install`} />
             </div>
           )}
-        </div>
-        {Visual && <Visual />}
       </div>
     </article>
   )
