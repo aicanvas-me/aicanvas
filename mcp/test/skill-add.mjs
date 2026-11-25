@@ -173,6 +173,11 @@ try {
     r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir])
     chmodSync(installed('references/guide.md'), 0o644)
     check('an unreadable file stops the update', r.code === 1 && r.out.includes('references/guide.md'), r.out)
+    // A folder the user cannot enter: lstat fails with EACCES, not ENOENT, so it is not 'deleted'.
+    chmodSync(installed('references'), 0o644)
+    r = await run(['add', 'demo', '--token', TOKEN, '--dir', dir])
+    chmodSync(installed('references'), 0o755)
+    check('a file that cannot be looked up stops the update', r.code === 1 && r.out.includes('references/guide.md'), r.out)
   }
   rmSync(installed('engine/setup.mjs'))
   symlinkSync(join(work, 'nowhere'), installed('engine/setup.mjs'))

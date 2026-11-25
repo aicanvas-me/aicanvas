@@ -187,7 +187,7 @@ function planInstall(skillsDir: string, slug: string, files: Record<string, stri
         // Deleted: restored. Unreadable, or now a link or folder: changed.
         const changed = Object.entries(before.files).filter(([f, h]) => {
           const p = join(dest, ...f.split('/'))
-          try { if (!lstatSync(p).isFile()) return true } catch { return false }
+          try { if (!lstatSync(p).isFile()) return true } catch (e) { return (e as NodeJS.ErrnoException).code !== 'ENOENT' }
           try { return sha256(readFileSync(p)) !== h } catch { return true }
         }).map(([f]) => f)
         if (changed.length && !force) {
