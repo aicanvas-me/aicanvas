@@ -16,6 +16,12 @@ const DIM = 'text-sand-600 dark:text-sand-400'
 const INK = 'text-sand-900 dark:text-sand-50'
 const AVATAR =
   'flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-sand-200 bg-sand-100 text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
+// The name behind the chat window, with the footer wordmark's grain.
+// The word is 3.54em wide, so 26cqw leaves it a margin inside its column. The window
+// covers the top quarter of the letters; they fade in from that edge.
+const MARK_SIZE = 'clamp(4rem, 26cqw, 22rem)'
+const GRAIN =
+  "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E\")"
 const DRAFT = TILE_FILMS.find((f) => f.id === 'product-launch')!
 
 // A task row: a spinner while it works, a check once `after` seconds have passed.
@@ -204,31 +210,50 @@ export function Conversation() {
 
   const count = still ? LINES.length : shown
   return (
-    <div
-      ref={ref}
-      aria-hidden
-      className="mx-auto mt-10 flex h-[36rem] max-w-3xl flex-col overflow-hidden rounded-card border border-sand-200 bg-sand-50 sm:h-[34rem] dark:border-sand-800 dark:bg-sand-950"
-    >
-      <div className="flex items-center justify-between border-b border-sand-200 px-4 py-2.5 dark:border-sand-800">
-        <span className={`${MONO} ${DIM}`}>/whoosh</span>
-        <span className={`${MONO} ${DIM}`}>your agent</span>
-      </div>
-      {/* Anchored to the bottom: each new message pushes the older ones up and out of view. */}
-      <div className="flex flex-1 flex-col justify-end gap-3.5 overflow-hidden p-4 sm:p-6">
-        <AnimatePresence initial={false}>
-          {LINES.slice(0, count).map((line, i) => (
-            <motion.div
-              key={`${cycle}-${i}`}
-              layout={still ? false : 'position'}
-              initial={still ? false : { opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, transition: { duration: 0.25 } }}
-              transition={{ duration: 0.4, ease: EASE }}
-            >
-              <Row line={line} first={line.who === 'agent' && LINES[i - 1]?.who !== 'agent'} still={still} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+    <div aria-hidden className="mt-10 [container-type:inline-size]">
+      <div className="relative" style={{ paddingBottom: `calc(${MARK_SIZE} * 0.615)` }}>
+        <style>{`
+          .whoosh-mark {
+            background-image: ${GRAIN}, linear-gradient(to bottom, rgb(23 23 26 / 0) 25%, rgb(23 23 26 / 0.28) 100%);
+            -webkit-mask-image: linear-gradient(to bottom, transparent 25%, #000 75%);
+            mask-image: linear-gradient(to bottom, transparent 25%, #000 75%);
+          }
+          .dark .whoosh-mark {
+            background-image: ${GRAIN}, linear-gradient(to bottom, rgb(255 255 255 / 0) 25%, rgb(255 255 255 / 0.5) 100%);
+          }
+        `}</style>
+        <p
+          className="whoosh-mark pointer-events-none absolute inset-x-0 bottom-0 select-none whitespace-nowrap bg-clip-text text-center font-extrabold leading-[0.82] tracking-[-0.055em] text-transparent [-webkit-background-clip:text]"
+          style={{ fontSize: MARK_SIZE }}
+        >
+          whoosh
+        </p>
+        <div
+          ref={ref}
+          className="relative mx-auto flex h-[36rem] max-w-3xl flex-col overflow-hidden rounded-card border border-sand-200 bg-sand-50 sm:h-[34rem] dark:border-sand-800 dark:bg-sand-950"
+        >
+          <div className="flex items-center justify-between border-b border-sand-200 px-4 py-2.5 dark:border-sand-800">
+            <span className={`${MONO} ${DIM}`}>/whoosh</span>
+            <span className={`${MONO} ${DIM}`}>your agent</span>
+          </div>
+          {/* Anchored to the bottom: each new message pushes the older ones up and out of view. */}
+          <div className="flex flex-1 flex-col justify-end gap-3.5 overflow-hidden p-4 sm:p-6">
+            <AnimatePresence initial={false}>
+              {LINES.slice(0, count).map((line, i) => (
+                <motion.div
+                  key={`${cycle}-${i}`}
+                  layout={still ? false : 'position'}
+                  initial={still ? false : { opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, transition: { duration: 0.25 } }}
+                  transition={{ duration: 0.4, ease: EASE }}
+                >
+                  <Row line={line} first={line.who === 'agent' && LINES[i - 1]?.who !== 'agent'} still={still} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
       </div>
     </div>
   )
