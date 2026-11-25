@@ -27,7 +27,7 @@ export const WHOOSH: SkillEntry = {
   status: 'live',
   featured: true,
   hook: 'Describe it. Your agent films it.',
-  body: 'Motion-graphics videos, written in code by your AI agent. Ask for a launch film, a promo, an app demo or a reel. Your agent writes one film.js, reviews its own frames and renders an mp4.',
+  body: 'Motion-graphics videos, written in code by your AI agent. Ask for a launch film, a product promo, an app demo or a reel. Your agent writes one film.js, checks its own frames and renders an mp4 on your machine, up to 4K at 60 fps.',
   points: [
     {
       icon: 'wind',
@@ -46,17 +46,20 @@ export const WHOOSH: SkillEntry = {
     },
     {
       icon: 'sound',
-      title: 'Sound included',
-      body: 'Effects are timed to the motion. Films are cut on a beat grid, so your own music sits on top.',
+      title: 'Sound on cue',
+      body: 'Your agent finds CC0 effects on Openverse for each film and lands each one on a move, or uses your own. Films are cut on a beat grid, so music sits on top.',
     },
   ],
   waysIn: [
-    { title: 'Plain words', body: 'Say what you want in a sentence or two. This is the main way in.' },
+    { title: 'Plain words', body: 'Describe the video in a sentence or two. That is enough to start.' },
     {
       title: 'A reference film',
-      body: 'Share a film you like. whoosh pulls frames from it and takes the pacing, camera, palette and type, never the content.',
+      body: 'Hand it a video you like. It reads 12 frames and borrows the pacing, camera, palette and type. The idea and the words stay yours.',
     },
-    { title: 'Your site or app', body: 'Or hand it your own site or app to work from.' },
+    {
+      title: 'Your site or app',
+      body: 'Point it at your product. It films how the product really looks, with your real words and numbers.',
+    },
   ],
   worksWith: ['Claude Code', 'Codex'],
   worksWithNote: 'and other agents that read SKILL.md',
@@ -101,7 +104,11 @@ export const REEL_CHAPTERS = [
 export const SKILLS_FAQ: FaqRow[] = [
   {
     q: 'What is an agent skill?',
-    a: 'A skill is a folder with a SKILL.md file that teaches an AI agent how to do one job. whoosh follows the open Agent Skills format, so it loads in Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot and other agents that read SKILL.md.',
+    a: 'A skill is a folder with a SKILL.md file that teaches an AI agent how to do one job. whoosh follows the open Agent Skills format, so it loads in Claude Code, Codex, Cursor, Gemini CLI, GitHub Copilot and other agents that read SKILL.md. The install command sets it up for Claude Code and Codex.',
+  },
+  {
+    q: 'Who can install whoosh?',
+    a: 'whoosh comes with AI Canvas Premium and Lifetime, at no extra price. Sign in, copy the install command with your token in it, and run it in any terminal.',
   },
   {
     q: 'What is the difference between a skill and a plugin?',
@@ -109,7 +116,7 @@ export const SKILLS_FAQ: FaqRow[] = [
   },
   {
     q: 'What does whoosh need on my machine?',
-    a: 'Node 20 or newer and ffmpeg. A one-time setup installs Playwright and headless Chromium, about 215 MB, into a per-user cache. Your agent runs it for you on first use.',
+    a: 'Node 20 or newer and ffmpeg. A one-time setup installs Playwright and headless Chromium, about 215 MB, into a per-user cache. Your agent runs it for you on first use. In a sandboxed agent, such as Codex in its default sandbox, approve its commands to run outside the sandbox so it can start the browser.',
   },
   {
     q: 'Does whoosh use AI-generated footage?',
@@ -117,6 +124,6 @@ export const SKILLS_FAQ: FaqRow[] = [
   },
   {
     q: 'Does whoosh add music?',
-    a: 'Sound is effects only: 96 CC0 sounds timed to the motion. Films are cut on a beat grid, so you can add your own music in any editor.',
+    a: 'No. Sound is effects only, and the skill ships no audio files. While it builds a film, your agent fetches CC0 effects from Openverse or uses your own, and a film with no sounds renders silent. Films are cut on a beat grid, so you can lay your own music under them in any editor.',
   },
 ]

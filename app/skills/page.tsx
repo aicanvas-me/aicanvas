@@ -27,7 +27,7 @@ export const metadata: Metadata = pageMetadata({
   title: 'AI Agent Skills and Plugins: whoosh, Videos Written in Code',
   social: 'AI Canvas skills and plugins for AI agents',
   description:
-    'Skills and plugins for Claude Code, Codex, Cursor and other AI agents. Start with whoosh: your agent writes a film in code and renders an mp4.',
+    'Skills and plugins for Claude Code, Codex and other AI agents. Start with whoosh: your agent writes a motion-graphics film in code and renders an mp4.',
   url: `${SITE_URL}/skills`,
 })
 
@@ -55,8 +55,8 @@ const POINT_ICON: Record<NonNullable<SkillPoint['icon']>, ReactNode> = {
 const SPECS = [
   { n: '4K', label: 'max resolution' },
   { n: '60', label: 'frames per second' },
-  { n: '3', label: 'formats: 16:9, 9:16, 1:1' },
-  { n: '96', label: 'sound effects, all CC0' },
+  { n: '4', label: 'formats: 16:9, 9:16, 1:1, 4:5' },
+  { n: '8', label: 'example films to learn from' },
 ]
 
 export default function SkillsPage() {
@@ -78,7 +78,7 @@ export default function SkillsPage() {
           pillIcon={<Puzzle size={12} className="text-accent" aria-hidden />}
           title="Teach your agent a new trick."
           accent="New abilities, one command away."
-          sub="Each one gives your AI agent an ability it did not have yesterday. Install it with one command, then ask for what you want. First up is whoosh, which turns a sentence into a finished video."
+          sub="Each one teaches your AI agent a job it could not do yesterday. Install it with one command, then just ask. First up is whoosh: one sentence in, a finished video out."
         >
           <a href={`#${FEATURED.slug}-install`} className={buttonClasses({ variant: 'primary', size: 'lg' })}>
             Install whoosh
@@ -179,7 +179,7 @@ export default function SkillsPage() {
             id="skills-films"
             eyebrow="Made with whoosh"
             title="Eight films ship inside the skill"
-            sub="Each one is a single film.js your agent can read and learn from."
+            sub="Each ships as code: a film.js and the treatment behind it. Your agent learns the craft from them, then makes a film of its own."
           />
           <div className="mt-10 grid gap-4 lg:grid-cols-[1.58fr_1fr]">
             <div className="grid gap-4">
