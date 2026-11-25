@@ -15,6 +15,8 @@ import { HERO_FILM, TILE_FILMS } from './_lib/media'
 import { FilmStage } from './FilmStage'
 import { FilmTile } from './FilmTile'
 import { InstallPanel } from './InstallPanel'
+import { Process } from './Process'
+import { WorkWays } from './WorkWays'
 import { EntryCard, WORKS_CHIP } from './EntryCard'
 import { PremiumBadge } from '../components/billing/PremiumBadge'
 
@@ -114,49 +116,7 @@ export default function SkillsPage() {
                   {FEATURED.hook}
                 </p>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">{FEATURED.body}</p>
-                {FEATURED.waysIn && (
-                  <>
-                    <h3 className="mt-12 text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50">
-                      Brief it three ways
-                    </h3>
-                    <ol className="mt-5 grid gap-4 md:grid-cols-3">
-                      {FEATURED.waysIn.map((w, i) => (
-                        <li
-                          key={w.title}
-                          className="flex flex-col rounded-card border border-sand-200 bg-sand-100 p-5 dark:border-sand-800 dark:bg-sand-900"
-                        >
-                          <span className="font-mono text-xs text-sand-600 dark:text-sand-400">
-                            {String(i + 1).padStart(2, '0')}
-                          </span>
-                          <p className="mt-3 text-lg font-bold text-sand-900 dark:text-sand-50">{w.title}</p>
-                          <p className="mt-1.5 flex-1 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{w.body}</p>
-                          <p className="mt-5 rounded-inset border border-sand-200 bg-sand-50 px-3 py-2.5 font-mono text-[12.5px] leading-relaxed text-sand-800 dark:border-sand-800 dark:bg-sand-950 dark:text-sand-200">
-                            <span className="mr-2 select-none text-sand-600 dark:text-sand-400" aria-hidden>
-                              &gt;
-                            </span>
-                            {w.example}
-                          </p>
-                        </li>
-                      ))}
-                    </ol>
-                  </>
-                )}
-                <h3 className="mt-14 text-2xl font-bold tracking-tight text-sand-900 sm:text-3xl dark:text-sand-50">
-                  Then it works like a motion studio
-                </h3>
-                <ol className="mt-6 grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-                  {FEATURED.points.map((p, i) => (
-                    <li key={p.title}>
-                      <span className="block h-0.5 rounded-full bg-sand-900 dark:bg-sand-50" aria-hidden />
-                      <p className="mt-4 font-mono text-xs text-sand-600 dark:text-sand-400">
-                        Step {String(i + 1).padStart(2, '0')}
-                      </p>
-                      <p className="mt-1.5 text-lg font-bold text-sand-900 dark:text-sand-50">{p.title}</p>
-                      <p className="mt-1.5 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{p.body}</p>
-                    </li>
-                  ))}
-                </ol>
-                <p className={`mt-12 ${EYEBROW}`}>Works with</p>
+                <p className={`mt-8 ${EYEBROW}`}>Works with</p>
                 <div className="mt-3 flex flex-wrap items-center gap-2">
                   {FEATURED.worksWith.map((w) => (
                     <span key={w} className={WORKS_CHIP}>
@@ -173,6 +133,30 @@ export default function SkillsPage() {
               </div>
             </div>
           </div>
+        </section>
+
+        <section aria-labelledby="skills-ways" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+          <SectionHead
+            id="skills-ways"
+            eyebrow="Working with whoosh"
+            title="Start from whatever you have"
+            sub="A sentence, a film you like, your live product, your brand files. Your agent reads each one differently, and you can mix them."
+          />
+          <WorkWays />
+        </section>
+
+        <section aria-labelledby="skills-process" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+          <SectionHead
+            id="skills-process"
+            eyebrow="The process"
+            title="It asks, plans, and shows you a draft first"
+            sub="Six steps, in this order every time. It asks you once, and the long render waits for your yes."
+          />
+          <Process />
+          <p className="mx-auto mt-10 max-w-2xl text-center text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">
+            Why a draft first: your agent judges the film from contact sheets and 12-frame filmstrips, not full renders.
+            You judge it from a half-size draft that takes one to three minutes. The long 4K render runs once, after your yes.
+          </p>
         </section>
 
         <section aria-labelledby="skills-craft" className="mx-auto mt-20 max-w-6xl sm:mt-32">

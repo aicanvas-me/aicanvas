@@ -12,8 +12,6 @@ export type SkillEntry = {
   hook: string
   body: string
   points: SkillPoint[]
-  // How a brief reaches the skill, main way first.
-  waysIn?: { title: string; body: string; example: string }[]
   worksWith: string[]
   worksWithNote?: string
   tryPrompt?: string
@@ -28,40 +26,31 @@ export const WHOOSH: SkillEntry = {
   featured: true,
   hook: 'Describe it. Your agent films it.',
   body: 'Motion-graphics videos, written in code by your AI agent. Ask for a launch film, a product promo, an app demo or a reel. Your agent writes one film.js, checks its own frames and renders an mp4 on your machine, up to 4K at 60 fps.',
-  // The skill's own path (SKILL.md, The path), shown as four steps.
+  // The skill's own path (SKILL.md, The path), in order.
   points: [
     {
-      title: 'Finds the idea',
-      body: 'It finds the one true claim, then writes a treatment: palette, type and a beat sheet with every scene, its move and its words. You see it before any code.',
+      title: 'Reads your subject',
+      body: 'It looks for the one true claim, your real numbers and how the product looks. It never invents a feature, a number or a customer.',
     },
     {
-      title: 'Writes one film.js',
-      body: 'Every frame is drawn from time alone, so renders are exact and repeatable. Real motion blur comes free: each frame is sampled and averaged like a camera shutter.',
+      title: 'Asks once',
+      body: 'One short message, six questions, each with a default: purpose, format, length, the line to land, brand, sound. "You decide" is a full answer.',
     },
     {
-      title: 'Reviews its own frames',
-      body: 'Contact sheets of every scene, filmstrips of the fastest moves, checks for text cut off or too small. It fixes what it sees and looks again.',
+      title: 'Shows you the plan',
+      body: 'Before any code, a treatment: the idea in one sentence, 3 to 5 colours, the type, and a beat sheet with one row per scene.',
     },
     {
-      title: 'Draft, then final',
-      body: 'A half-size draft in one to three minutes. On your yes, the final in HD or 4K at 60 fps, with sound on cue.',
-    },
-  ],
-  waysIn: [
-    {
-      title: 'Plain words',
-      body: 'Describe the video in a sentence or two. That is enough to start.',
-      example: 'Make a 15 second launch film for our invoice app.',
+      title: 'Builds one film.js',
+      body: 'Two or three scenes at a time, then it looks at its own frames before writing more.',
     },
     {
-      title: 'A reference film',
-      body: 'Hand it a video you like. It reads 12 frames and borrows the pacing, camera, palette and type. The idea and the words stay yours.',
-      example: 'Make ours feel like ~/Downloads/reference.mp4',
+      title: 'Reviews like an art director',
+      body: 'Contact sheets of every scene, 12-frame filmstrips of the fastest moves and every cut, a check for text cut off or too small. It repeats until clean.',
     },
     {
-      title: 'Your site or app',
-      body: 'Point it at your product. It films how the product really looks, with your real words and numbers.',
-      example: 'Film our app. The site is example.com.',
+      title: 'Draft, your yes, then 4K',
+      body: 'A half-size draft with sound in one to three minutes, and a note on what it could not judge. Only on your yes does it render HD or 4K at 60 fps.',
     },
   ],
   worksWith: ['Claude Code', 'Codex'],
@@ -102,6 +91,36 @@ export const REEL_CHAPTERS = [
   { label: 'Camera', at: 9.55 },
   { label: 'Specs', at: 12.15 },
   { label: 'End card', at: 13.55 },
+]
+
+export type WorkWay = { id: 'sentence' | 'film' | 'site' | 'brand'; title: string; body: string; example: string }
+
+// What a brief can be made of (SKILL.md steps 1 and 2). Brand answers the questions; it is not a fourth way in.
+export const WORK_WAYS: WorkWay[] = [
+  {
+    id: 'sentence',
+    title: 'Type a sentence',
+    body: 'Describe the video you want. That is enough to start: every question it asks next comes with a default.',
+    example: 'Make a 15 second launch film for our invoice app.',
+  },
+  {
+    id: 'film',
+    title: 'Bring a film you like',
+    body: 'Hand it a video file. It pulls 12 frames spread across it and takes the pacing, camera, palette and type. The idea, the words and the look stay yours.',
+    example: 'Make ours feel like ~/Downloads/reference.mp4',
+  },
+  {
+    id: 'site',
+    title: 'Point at your site or app',
+    body: 'It reads your product in a browser, or from screenshots and the repo, then rebuilds your interface and operates it on screen with your real words.',
+    example: 'Film our app. The site is example.com.',
+  },
+  {
+    id: 'brand',
+    title: 'Hand it your brand',
+    body: 'Give it your colours, a font file and a logo. Say nothing and it takes them from your site.',
+    example: 'Use assets/Brand.woff2 and our logo.svg.',
+  },
 ]
 
 export type Craft = {
