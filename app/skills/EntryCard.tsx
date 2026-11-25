@@ -1,4 +1,7 @@
 import { Check } from '@/app/_icons/icons/check'
+import { Hourglass } from '@/app/_icons/icons/hourglass'
+import { Plug } from '@/app/_icons/icons/plug'
+import { Puzzle } from '@/app/_icons/icons/puzzle'
 import { CARD, EYEBROW, PILL } from '../components/PageKit'
 import { InstallPanel } from './InstallPanel'
 import { ClaudeCodeMark, ClaudeMark, CodexMark } from '../mcp/InstallCards'
@@ -6,6 +9,15 @@ import type { SkillEntry } from './_lib/entries'
 
 export const WORKS_CHIP =
   'inline-flex items-center gap-1.5 rounded-chip border border-sand-200 bg-sand-50 px-2 py-1 text-xs font-semibold text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
+
+export function KindPill({ kind }: { kind: SkillEntry['kind'] }) {
+  return (
+    <span className={PILL}>
+      {kind === 'Plugin' ? <Plug size={12} /> : <Puzzle size={12} />}
+      {kind}
+    </span>
+  )
+}
 
 // Claude marks keep Claude's own orange; the OpenAI mark takes the ink.
 const CLAUDE_ORANGE = 'text-[#D97757] [&>svg]:size-3.5'
@@ -66,11 +78,18 @@ export function EntryCard({ entry, intro = true }: { entry: SkillEntry; intro?: 
   return (
     <article id={entry.slug} className={`${CARD} scroll-mt-24 p-6 sm:p-8`}>
       <div>
-          <div className="flex flex-wrap items-center gap-2">
-            <span className={PILL}>{entry.kind}</span>
-            {!live && <span className={PILL}>Coming next</span>}
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <KindPill kind={entry.kind} />
+              <h3 className="mt-4 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">{entry.name}</h3>
+            </div>
+            {!live && (
+              <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-new/10 px-2.5 py-1 text-xs font-semibold text-new ring-1 ring-inset ring-new/30">
+                <Hourglass size={12} />
+                Coming next
+              </span>
+            )}
           </div>
-          <h3 className="mt-4 text-2xl font-bold tracking-tight text-sand-900 dark:text-sand-50">{entry.name}</h3>
           {intro && (
             <>
               <p className="mt-2 text-lg font-bold text-sand-900 dark:text-sand-50">{entry.hook}</p>
@@ -88,7 +107,8 @@ export function EntryCard({ entry, intro = true }: { entry: SkillEntry; intro?: 
               </li>
             ))}
           </ul>
-          <div className="mt-6">
+          <div className="mt-8 flex flex-wrap items-center gap-3 border-t border-sand-200 pt-5 dark:border-sand-800">
+            <span className={EYEBROW}>Works with</span>
             <AgentChips entry={entry} />
           </div>
           {live && (

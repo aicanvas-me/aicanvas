@@ -3,7 +3,7 @@ import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Puzzle } from '@/app/_icons/icons/puzzle'
 import { buttonClasses } from '../../components/buttonClasses'
 import { FaqRows } from '../../components/FaqRows'
-import { CtaBand, PageHero, PageShell, PILL, SectionHead } from '../../components/PageKit'
+import { CtaBand, PageHero, PageShell, SectionHead } from '../../components/PageKit'
 import { StageLight } from '../../components/StageLight'
 import { Reveal } from '../../home/Reveal'
 import { SITE_URL } from '../../lib/config'
@@ -16,7 +16,7 @@ import { FilmTile } from '../FilmTile'
 import { InstallPanel } from '../InstallPanel'
 import { Process } from '../Process'
 import { WorkWays } from '../WorkWays'
-import { EntryCard, WorksWith } from '../EntryCard'
+import { EntryCard, KindPill, WorksWith } from '../EntryCard'
 import { PremiumBadge } from '../../components/billing/PremiumBadge'
 
 export const metadata: Metadata = pageMetadata({
@@ -104,7 +104,7 @@ export default function SkillsPage() {
             <div className="mt-10 grid gap-10 px-2 pb-4 sm:mt-14 sm:px-5 sm:pb-6">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className={PILL}>{FEATURED.kind}</span>
+                  <KindPill kind={FEATURED.kind} />
                   <PremiumBadge className="py-1 text-xs" />
                 </div>
                 <h2
