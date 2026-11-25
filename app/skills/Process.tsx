@@ -68,6 +68,16 @@ function Bar({ cue, delay, seconds, label }: { cue: Cue; delay: number; seconds:
   )
 }
 
+// A display:contents wrapper cannot fade, so each grid cell carries its own cue.
+function Field({ cue, delay, label, children }: { cue: Cue; delay: number; label: string; children: ReactNode }) {
+  return (
+    <>
+      <motion.span className={`${MONO} ${DIM}`} {...cue(delay)}>{label}</motion.span>
+      <motion.span {...cue(delay)}>{children}</motion.span>
+    </>
+  )
+}
+
 const OK = <Check size={13} className="mr-1.5 inline -translate-y-px text-success" />
 
 function Panel({ step, cue }: { step: number; cue: Cue }) {
@@ -79,33 +89,29 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
           <Agent cue={cue} delay={0.7}>
             <Line cue={cue} delay={0.8} className={DIM}>reading example.com, the repo and the README</Line>
             <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2">
-              <motion.div className="contents" {...cue(1.2)}>
-                <span className={`${MONO} ${DIM}`}>the claim</span>
+              <Field cue={cue} delay={1.2} label="the claim">
                 <span className={`${MONO} ${INK}`}>&quot;the invoice that gets itself paid&quot;</span>
-              </motion.div>
-              <motion.div className="contents" {...cue(1.5)}>
-                <span className={`${MONO} ${DIM}`}>colours</span>
+              </Field>
+              <Field cue={cue} delay={1.5} label="colours">
                 <span className="flex gap-1.5">
                   {['bg-sand-900 dark:bg-sand-50', 'bg-sand-600', 'bg-sand-300 dark:bg-sand-700', 'border border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900'].map((c) => (
                     <span key={c} className={`h-4 w-4 rounded-full ${c}`} />
                   ))}
                 </span>
-              </motion.div>
-              <motion.div className="contents" {...cue(1.8)}>
-                <span className={`${MONO} ${DIM}`}>type</span>
+              </Field>
+              <Field cue={cue} delay={1.8} label="type">
                 <span className={INK}>
                   <span className="text-lg font-extrabold leading-none">Aa</span>
                   <span className={`${MONO} ml-2`}>Inter, 800 and 400</span>
                 </span>
-              </motion.div>
-              <motion.div className="contents" {...cue(2.1)}>
-                <span className={`${MONO} ${DIM}`}>to film</span>
+              </Field>
+              <Field cue={cue} delay={2.1} label="to film">
                 <span className="flex flex-wrap gap-1.5">
                   {['inbox', 'invoice', 'paid'].map((x) => (
                     <span key={x} className={`${MONO} rounded-chip border border-sand-200 px-2 dark:border-sand-800 ${INK}`}>{x}</span>
                   ))}
                 </span>
-              </motion.div>
+              </Field>
             </div>
             <Line cue={cue} delay={2.5} className={INK}>
               {OK}only real words and numbers, nothing invented
@@ -128,10 +134,9 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
                 ['brand', 'taken from your site'],
                 ['sound', 'effects on the motion'],
               ].map(([q, d], i) => (
-                <motion.div key={q} className="contents" {...cue(0.2 + i * 0.12)}>
-                  <span className={`${MONO} ${DIM}`}>{q}</span>
+                <Field key={q} cue={cue} delay={0.2 + i * 0.12} label={q}>
                   <span className={`${MONO} ${INK}`}>{d}</span>
-                </motion.div>
+                </Field>
               ))}
             </div>
           </Agent>
