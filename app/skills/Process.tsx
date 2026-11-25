@@ -31,7 +31,7 @@ const AVATAR = 'flex h-6 w-6 shrink-0 items-center justify-center rounded-full b
 function You({ cue, delay, children }: { cue: Cue; delay: number; children: ReactNode }) {
   return (
     <motion.div className="flex items-end justify-end gap-2" {...cue(delay)}>
-      <p className="max-w-[85%] rounded-card rounded-br-sm bg-sand-900 px-3 py-1.5 text-[13px] font-semibold text-sand-50 dark:bg-sand-50 dark:text-sand-900">
+      <p className="max-w-[85%] rounded-card rounded-br-sm bg-sand-900 px-3 py-1.5 text-[13px] font-semibold text-sand-50 dark:bg-sand-200 dark:text-sand-900">
         {children}
       </p>
       <span className={AVATAR}>

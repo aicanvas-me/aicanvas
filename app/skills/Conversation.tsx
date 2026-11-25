@@ -170,7 +170,7 @@ function Row({ line, first, still }: { line: Line; first: boolean; still: boolea
   if (line.who === 'you')
     return (
       <div className="flex items-end justify-end gap-2.5">
-        <div className="max-w-[85%] rounded-card rounded-br-sm bg-sand-900 px-3.5 py-2 text-[14px] font-semibold leading-relaxed text-sand-50 dark:bg-sand-50 dark:text-sand-900">
+        <div className="max-w-[85%] rounded-card rounded-br-sm bg-sand-900 px-3.5 py-2 text-[14px] font-semibold leading-relaxed text-sand-50 dark:bg-sand-200 dark:text-sand-900">
           {line.body(still)}
         </div>
         <span className={AVATAR}>
