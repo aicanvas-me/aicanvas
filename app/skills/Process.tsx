@@ -287,7 +287,7 @@ export function Process() {
         className="flex min-h-[22rem] flex-col overflow-hidden rounded-card border border-sand-200 bg-sand-50 lg:self-start dark:border-sand-800 dark:bg-sand-950"
       >
         <div className="flex items-center justify-between border-b border-sand-200 px-4 py-2.5 dark:border-sand-800">
-          <span className={`${MONO} ${DIM}`}>whoosh</span>
+          <span className={`${MONO} ${DIM}`}>/whoosh</span>
           <span className={`${MONO} ${DIM}`}>
             step {step + 1} of {STEPS.length}
           </span>
