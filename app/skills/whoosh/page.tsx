@@ -3,7 +3,7 @@ import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Puzzle } from '@/app/_icons/icons/puzzle'
 import { buttonClasses } from '../../components/buttonClasses'
 import { FaqRows } from '../../components/FaqRows'
-import { CtaBand, EYEBROW, PageHero, PageShell, PILL, SectionHead } from '../../components/PageKit'
+import { CtaBand, PageHero, PageShell, PILL, SectionHead } from '../../components/PageKit'
 import { StageLight } from '../../components/StageLight'
 import { Reveal } from '../../home/Reveal'
 import { SITE_URL } from '../../lib/config'
@@ -16,7 +16,7 @@ import { FilmTile } from '../FilmTile'
 import { InstallPanel } from '../InstallPanel'
 import { Process } from '../Process'
 import { WorkWays } from '../WorkWays'
-import { EntryCard, WORKS_CHIP } from '../EntryCard'
+import { EntryCard, WorksWith } from '../EntryCard'
 import { PremiumBadge } from '../../components/billing/PremiumBadge'
 
 export const metadata: Metadata = pageMetadata({
@@ -117,16 +117,8 @@ export default function SkillsPage() {
                   {FEATURED.hook}
                 </p>
                 <p className="mt-4 max-w-xl text-base leading-relaxed text-sand-600 dark:text-sand-400">{FEATURED.body}</p>
-                <p className={`mt-8 ${EYEBROW}`}>Works with</p>
-                <div className="mt-3 flex flex-wrap items-center gap-2">
-                  {FEATURED.worksWith.map((w) => (
-                    <span key={w} className={WORKS_CHIP}>
-                      {w}
-                    </span>
-                  ))}
-                  {FEATURED.worksWithNote && (
-                    <span className="text-xs font-semibold text-sand-600 dark:text-sand-400">{FEATURED.worksWithNote}</span>
-                  )}
+                <div className="mt-8">
+                  <WorksWith entry={FEATURED} />
                 </div>
               </div>
               <div>

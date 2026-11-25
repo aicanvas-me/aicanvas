@@ -14,6 +14,8 @@ export type SkillEntry = {
   points: SkillPoint[]
   worksWith: string[]
   worksWithNote?: string
+  // The models the skill gives its best results with, grouped by maker.
+  bestWith?: { maker: 'claude' | 'gpt'; models: string[] }[]
   tryPrompt?: string
   requirements?: string
 }
@@ -55,6 +57,10 @@ export const WHOOSH: SkillEntry = {
   ],
   worksWith: ['Claude Code', 'Codex'],
   worksWithNote: 'and other agents that read SKILL.md',
+  bestWith: [
+    { maker: 'claude', models: ['Claude Opus', 'Claude Fable'] },
+    { maker: 'gpt', models: ['GPT Astra', 'GPT Sol'] },
+  ],
   tryPrompt: 'Make a 15 second launch video for my app. The site is example.com.',
   requirements:
     'Needs Node 20 or newer and ffmpeg. The first run sets up a headless browser, about 215 MB, in a per-user cache.',
