@@ -8,6 +8,7 @@ import { User } from '@/app/_icons/icons/user'
 import { WHOOSH } from './_lib/entries'
 
 const STEP_MS = 3800
+const LAST_STEP_MS = 5800
 const EASE = [0.16, 1, 0.3, 1] as const
 const STEPS = WHOOSH.points
 const MONO = 'font-mono text-[12px] leading-relaxed'
@@ -191,14 +192,18 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
       )
     default:
       return (
-        <div className="space-y-4">
+        <div className="space-y-3">
           <Agent cue={cue} delay={0}>
-            <Bar cue={cue} delay={0.1} seconds={1} label="draft · 960x540 · 30 fps · one to three minutes" />
+            <Bar cue={cue} delay={0.1} seconds={0.9} label="draft · 960x540 · one to three minutes" />
           </Agent>
-          <You cue={cue} delay={1.3}>yes</You>
+          <You cue={cue} delay={1.2}>make the title bigger</You>
           <Agent cue={cue} delay={1.7}>
-            <Bar cue={cue} delay={1.8} seconds={1.6} label="4k · 3840x2160 · 60 fps" />
-            <Line cue={cue} delay={3.4} className={INK}>
+            <Bar cue={cue} delay={1.8} seconds={0.6} label="draft 2 · title bigger" />
+          </Agent>
+          <You cue={cue} delay={2.7}>yes</You>
+          <Agent cue={cue} delay={3.1}>
+            <Bar cue={cue} delay={3.2} seconds={1.3} label="4k · 3840x2160 · 60 fps" />
+            <Line cue={cue} delay={4.6} className={INK}>
               {OK}film.mp4
             </Line>
           </Agent>
@@ -217,7 +222,7 @@ export function Process() {
 
   useEffect(() => {
     if (!playing) return
-    const id = setTimeout(() => setStep((s) => (s + 1) % STEPS.length), STEP_MS)
+    const id = setTimeout(() => setStep((s) => (s + 1) % STEPS.length), step === STEPS.length - 1 ? LAST_STEP_MS : STEP_MS)
     return () => clearTimeout(id)
   }, [playing, step])
 
@@ -250,7 +255,7 @@ export function Process() {
                       className="absolute inset-0 origin-top bg-sand-900 dark:bg-sand-50"
                       initial={{ scaleY: 0 }}
                       animate={{ scaleY: 1 }}
-                      transition={{ duration: STEP_MS / 1000, ease: 'linear' }}
+                      transition={{ duration: (i === STEPS.length - 1 ? LAST_STEP_MS : STEP_MS) / 1000, ease: 'linear' }}
                     />
                   )}
                 </span>

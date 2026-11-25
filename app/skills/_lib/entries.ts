@@ -49,8 +49,8 @@ export const WHOOSH: SkillEntry = {
       body: 'Contact sheets of every scene, 12-frame filmstrips of the fastest moves and every cut, a check for text cut off or too small. It repeats until clean.',
     },
     {
-      title: 'Draft first, 4K on your yes',
-      body: 'A half-size draft with sound in one to three minutes, with a note on what it could not judge. HD or 4K at 60 fps comes only after your yes.',
+      title: 'Drafts it, then renders 4K',
+      body: 'Your agent first renders a quick low-res draft with sound, in one to three minutes, so you can check it and ask for changes fast. Only after your yes does it render the final in HD or 4K at 60 fps.',
     },
   ],
   worksWith: ['Claude Code', 'Codex'],
