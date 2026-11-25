@@ -322,6 +322,13 @@ export const SITE_FAQ: FaqEntry[] = [
     links: [{ label: 'Andromeda Pro AI Brain', href: BRAIN }],
   },
   {
+    id: 'whoosh-video-skill',
+    category: 'ai-design-skills',
+    q: 'Can my AI agent make a video?',
+    a: 'Yes, with whoosh, an agent skill that comes with Premium. Your agent writes a motion-graphics video in code, such as a launch video or a product promo, and renders an mp4 on your machine, up to 4K at 60 fps. It works in Claude Code, Codex and other agents that read SKILL.md.',
+    links: [{ label: 'whoosh', href: '/skills/whoosh' }],
+  },
+  {
     id: 'what-install-means',
     category: 'plans',
     q: 'What does install mean here?',

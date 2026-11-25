@@ -145,6 +145,8 @@ const nextConfig: NextConfig = {
       { source: "/r", destination: "/components", permanent: true },
       // The hosted MCP docs live in the docs section; this keeps an early link working.
       { source: "/mcp/docs", destination: "/docs/mcp", permanent: true },
+      // One skill so far, so /skills opens it; temporary, as /skills becomes the skills index later.
+      { source: "/skills", destination: "/skills/whoosh", permanent: false },
       // The Lab is off the site. Its routes stay in the tree, so these two
       // redirects are the whole switch: temporary (307) rather than permanent,
       // so browsers and crawlers do not cache the move if the Lab comes back.

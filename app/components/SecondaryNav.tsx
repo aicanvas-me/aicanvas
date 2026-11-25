@@ -5,6 +5,7 @@ import { Mail } from '@/app/_icons/icons/mail'
 import { Info } from '@/app/_icons/icons/info'
 import { PiggyBank } from '@/app/_icons/icons/piggy-bank'
 import { CircleQuestion } from '@/app/_icons/icons/circle-question'
+import { Puzzle } from '@/app/_icons/icons/puzzle'
 import type { ReactNode } from 'react'
 
 // The Model Context Protocol's own mark, drawn from the official asset rather
@@ -43,10 +44,11 @@ type NavItem = {
 // next.config.ts) and nothing links to it.
 //
 // Two groups. The site's sections open the drawer, as tiles under the search,
-// so a phone reaches Docs, MCP and Pricing in one tap instead of scrolling past
+// so a phone reaches Docs, Skills, MCP and Pricing in one tap instead of scrolling past
 // the whole catalog. The info pages close it, as rows, the way a footer would.
 const SECTIONS: NavItem[] = [
   { label: 'Docs', href: '/docs', icon: <BookOpenText size={18} />, match: 'prefix' },
+  { label: 'Skills', href: '/skills', icon: <Puzzle size={18} />, match: 'prefix' },
   { label: 'MCP', href: '/mcp', icon: <McpMark size={18} />, match: 'exact' },
   { label: 'Pricing', href: '/pricing', icon: <PiggyBank size={18} />, match: 'exact' },
 ]
@@ -64,18 +66,18 @@ const IDLE =
 const isActive = (pathname: string | null, { href, match }: NavItem) =>
   match === 'prefix' ? !!pathname?.startsWith(href) : match === 'exact' ? pathname === href : false
 
-/** The mobile drawer's site sections (Docs, MCP, Pricing) as three tiles. The
+/** The mobile drawer's site sections (Docs, Skills, MCP, Pricing) as four tiles. The
  *  desktop bar carries the same pages in its nav. */
 export function SectionTiles({ pathname, onNavigate }: { pathname: string | null; onNavigate?: () => void }) {
   return (
-    <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-cols-4 gap-2">
       {SECTIONS.map((item) => (
         <Link
           key={item.href}
           href={item.href}
           onClick={onNavigate}
           aria-current={isActive(pathname, item) ? 'page' : undefined}
-          className={`flex flex-col items-center gap-1.5 rounded-card border px-2 py-3 text-xs font-semibold transition-colors ${
+          className={`flex flex-col items-center gap-1.5 rounded-card border px-1 py-3 text-xs font-semibold transition-colors ${
             isActive(pathname, item)
               ? `border-sand-300 dark:border-sand-700 ${ACTIVE}`
               : `border-sand-200 dark:border-sand-800 ${IDLE}`

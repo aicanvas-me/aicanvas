@@ -121,6 +121,11 @@ function entries(): MetadataRoute.Sitemap {
       priority: 0.7,
     },
     {
+      url: `${SITE_URL}/skills/whoosh`,
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
+    {
       url: `${SITE_URL}/icons`,
       changeFrequency: 'weekly',
       priority: 0.8,
