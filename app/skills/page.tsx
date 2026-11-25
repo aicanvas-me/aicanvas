@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { ArrowRight } from '@/app/_icons/icons/arrow-right'
 import { Puzzle } from '@/app/_icons/icons/puzzle'
 import { buttonClasses } from '../components/buttonClasses'
@@ -234,6 +233,13 @@ export default function SkillsPage() {
           </div>
         </section>
 
+        <CtaBand eyebrow="Ready when you are" title="Your next video is one sentence away.">
+          <a href={`#${FEATURED.slug}-install`} className={buttonClasses({ variant: 'primary', size: 'lg' })}>
+            Install whoosh
+            <ArrowRight size={14} />
+          </a>
+        </CtaBand>
+
         <section id="next" aria-labelledby="skills-next" className="mx-auto mt-20 max-w-6xl scroll-mt-24 sm:mt-32">
           <SectionHead
             id="skills-next"
@@ -261,15 +267,6 @@ export default function SkillsPage() {
           </div>
         </section>
 
-        <CtaBand eyebrow="Keep building" title="Your agent can build the interface too.">
-          <Link href="/components" className={buttonClasses({ variant: 'primary', size: 'lg' })}>
-            Browse components
-            <ArrowRight size={14} />
-          </Link>
-          <Link href="/mcp" className={buttonClasses({ variant: 'outline', size: 'lg' })}>
-            Connect the MCP
-          </Link>
-        </CtaBand>
       </PageShell>
     </>
   )
