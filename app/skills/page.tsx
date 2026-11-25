@@ -135,6 +135,39 @@ export default function SkillsPage() {
           </div>
         </section>
 
+        <section aria-labelledby="skills-films" className="mx-auto mt-20 max-w-6xl sm:mt-32">
+          <SectionHead
+            id="skills-films"
+            eyebrow="Made with whoosh"
+            title="Written by an agent. Shipped to you as code."
+            sub="Every film below is one film.js an AI agent wrote with whoosh. All eight ship inside the skill with their treatments, so your agent starts from the one closest to your job, then makes its own."
+          />
+          <div className="mt-10 grid gap-4 lg:grid-cols-[1.58fr_1fr]">
+            <div className="grid gap-4">
+              {wide.slice(0, 2).map((f, i) => (
+                <Reveal key={f.id} delay={i * 0.08}>
+                  <FilmTile src={f.src} poster={f.poster} label={f.label} className="aspect-video" />
+                </Reveal>
+              ))}
+            </div>
+            <Reveal delay={0.16} className="mx-auto w-full max-w-xs lg:max-w-none">
+              <FilmTile
+                src={tall.src}
+                poster={tall.poster}
+                label={tall.label}
+                className="aspect-[9/16] lg:aspect-auto lg:h-full"
+              />
+            </Reveal>
+          </div>
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            {wide.slice(2).map((f, i, all) => (
+              <Reveal key={f.id} delay={(i % 2) * 0.08} className={i === all.length - 1 && all.length % 2 ? 'sm:col-span-2' : undefined}>
+                <FilmTile src={f.src} poster={f.poster} label={f.label} className="aspect-video" />
+              </Reveal>
+            ))}
+          </div>
+        </section>
+
         <section aria-labelledby="skills-ways" className="mx-auto mt-20 max-w-6xl sm:mt-32">
           <SectionHead
             id="skills-ways"
@@ -196,39 +229,6 @@ export default function SkillsPage() {
                   <h3 className="mt-2 text-base font-bold text-sand-900 dark:text-sand-50">{c.title}</h3>
                   <p className="mt-1.5 text-[15px] leading-relaxed text-sand-600 dark:text-sand-400">{c.body}</p>
                 </article>
-              </Reveal>
-            ))}
-          </div>
-        </section>
-
-        <section aria-labelledby="skills-films" className="mx-auto mt-20 max-w-6xl sm:mt-32">
-          <SectionHead
-            id="skills-films"
-            eyebrow="Made with whoosh"
-            title="Eight films ship inside the skill"
-            sub="Each ships as code: a film.js and the treatment behind it. Your agent learns the craft from them, then makes a film of its own."
-          />
-          <div className="mt-10 grid gap-4 lg:grid-cols-[1.58fr_1fr]">
-            <div className="grid gap-4">
-              {wide.slice(0, 2).map((f, i) => (
-                <Reveal key={f.id} delay={i * 0.08}>
-                  <FilmTile src={f.src} poster={f.poster} label={f.label} className="aspect-video" />
-                </Reveal>
-              ))}
-            </div>
-            <Reveal delay={0.16} className="mx-auto w-full max-w-xs lg:max-w-none">
-              <FilmTile
-                src={tall.src}
-                poster={tall.poster}
-                label={tall.label}
-                className="aspect-[9/16] lg:aspect-auto lg:h-full"
-              />
-            </Reveal>
-          </div>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            {wide.slice(2).map((f, i, all) => (
-              <Reveal key={f.id} delay={(i % 2) * 0.08} className={i === all.length - 1 && all.length % 2 ? 'sm:col-span-2' : undefined}>
-                <FilmTile src={f.src} poster={f.poster} label={f.label} className="aspect-video" />
               </Reveal>
             ))}
           </div>
