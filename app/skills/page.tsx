@@ -139,8 +139,8 @@ export default function SkillsPage() {
           <SectionHead
             id="skills-films"
             eyebrow="Made with whoosh"
-            title="Written by an agent. Shipped to you as code."
-            sub="Every film below is one film.js an AI agent wrote with whoosh. All eight ship inside the skill with their treatments, so your agent starts from the one closest to your job, then makes its own."
+            title="What your agent can make with whoosh"
+            sub="Every film here is one film.js an AI agent wrote, rendered straight from code: no editing, no compositing, no timeline. All eight ship inside the skill, so your agent starts from the one closest to your job."
           />
           <div className="mt-10 grid gap-4 lg:grid-cols-[1.58fr_1fr]">
             <div className="grid gap-4">
