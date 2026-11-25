@@ -203,7 +203,7 @@ export default function SkillsPage() {
               <Reveal key={c.title} delay={(i % 2) * 0.08} className="h-full">
                 <article className="flex h-full flex-col overflow-hidden rounded-card border border-sand-200 bg-sand-100 dark:border-sand-800 dark:bg-sand-900">
                   <FilmTile
-                    src={HERO_FILM.desktop}
+                    src={HERO_FILM.mobile}
                     label={c.title}
                     clip={c.clip}
                     framed={false}

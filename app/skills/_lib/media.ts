@@ -4,7 +4,7 @@ export const SKILLS_MEDIA_BASE = 'https://pub-110c83a6ed20459da515832c8bdb50c7.r
 const at = (file: string) => `${SKILLS_MEDIA_BASE}/${file}`
 
 export const HERO_FILM = {
-  desktop: at('showreel-540.mp4'),
+  desktop: at('showreel-1080.mp4'),
   mobile: at('showreel-540.mp4'),
   poster: at('showreel-poster.jpg'),
 }
