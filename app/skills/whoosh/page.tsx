@@ -190,9 +190,9 @@ export default function SkillsPage() {
         <section aria-labelledby="skills-conversation" className="mx-auto mt-20 max-w-6xl sm:mt-32">
           <SectionHead
             id="skills-conversation"
-            eyebrow="The process"
-            title="One message in, a finished film out"
-            sub="Your agent watches your reference film, reads your site, asks once, and shows you a draft before the long render."
+            eyebrow="A use case"
+            title="One way to work with whoosh"
+            sub="A film you like and your website in, a 4K promo out. Your agent watches the film, reads your site, asks once, and shows you a draft before the final render."
           />
           <Conversation />
         </section>
