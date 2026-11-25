@@ -53,10 +53,10 @@ const POINT_ICON: Record<NonNullable<SkillPoint['icon']>, ReactNode> = {
 }
 
 const SPECS = [
+  { n: '3D', label: 'three.js and physics built in' },
+  { n: '57', label: 'motion recipes inside' },
   { n: '4K', label: 'max resolution' },
   { n: '60', label: 'frames per second' },
-  { n: '57', label: 'motion recipes inside' },
-  { n: '3D', label: 'three.js and physics built in' },
 ]
 
 export default function SkillsPage() {
