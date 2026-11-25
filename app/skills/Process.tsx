@@ -2,7 +2,9 @@
 
 import { AnimatePresence, motion, useInView, useReducedMotion, type TargetAndTransition, type Transition } from 'framer-motion'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { Bot } from '@/app/_icons/icons/bot'
 import { Check } from '@/app/_icons/icons/check'
+import { User } from '@/app/_icons/icons/user'
 import { WHOOSH } from './_lib/entries'
 
 const STEP_MS = 3800
@@ -22,14 +24,29 @@ function Line({ cue, delay, children, className = '' }: { cue: Cue; delay: numbe
   )
 }
 
+const AVATAR = 'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-sand-200 bg-sand-100 text-sand-700 dark:border-sand-800 dark:bg-sand-900 dark:text-sand-300'
+
 function You({ cue, delay, children }: { cue: Cue; delay: number; children: ReactNode }) {
   return (
-    <motion.p
-      className="ml-auto w-fit rounded-card rounded-br-sm bg-sand-900 px-3 py-1.5 text-[13px] font-semibold text-sand-50 dark:bg-sand-50 dark:text-sand-900"
-      {...cue(delay)}
-    >
-      {children}
-    </motion.p>
+    <motion.div className="flex items-end justify-end gap-2" {...cue(delay)}>
+      <p className="max-w-[85%] rounded-card rounded-br-sm bg-sand-900 px-3 py-1.5 text-[13px] font-semibold text-sand-50 dark:bg-sand-50 dark:text-sand-900">
+        {children}
+      </p>
+      <span className={AVATAR}>
+        <User size={13} />
+      </span>
+    </motion.div>
+  )
+}
+
+function Agent({ cue, delay, children }: { cue: Cue; delay: number; children: ReactNode }) {
+  return (
+    <div className="flex gap-2.5">
+      <motion.span className={AVATAR} {...cue(delay)}>
+        <Bot size={13} />
+      </motion.span>
+      <div className="min-w-0 flex-1 space-y-2 pt-0.5">{children}</div>
+    </div>
   )
 }
 
@@ -56,42 +73,74 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
   switch (step) {
     case 0:
       return (
-        <div className="space-y-2">
-          <Line cue={cue} delay={0} className={DIM}>reading example.com, the repo and the README</Line>
-          {['found the one true claim', 'kept the real numbers and words', 'noted the palette, type and UI'].map((t, i) => (
-            <Line key={t} cue={cue} delay={0.5 + i * 0.35} className={INK}>
-              {OK}
-              {t}
+        <div className="space-y-4">
+          <You cue={cue} delay={0}>Use the AI Canvas whoosh skill to make a launch film for our invoice app. The site is example.com.</You>
+          <Agent cue={cue} delay={0.7}>
+            <Line cue={cue} delay={0.8} className={DIM}>reading example.com, the repo and the README</Line>
+            <div className="grid grid-cols-[auto_1fr] items-center gap-x-4 gap-y-2">
+              <motion.div className="contents" {...cue(1.2)}>
+                <span className={`${MONO} ${DIM}`}>the claim</span>
+                <span className={`${MONO} ${INK}`}>&quot;the invoice that gets itself paid&quot;</span>
+              </motion.div>
+              <motion.div className="contents" {...cue(1.5)}>
+                <span className={`${MONO} ${DIM}`}>colours</span>
+                <span className="flex gap-1.5">
+                  {['bg-sand-900 dark:bg-sand-50', 'bg-sand-600', 'bg-sand-300 dark:bg-sand-700', 'border border-sand-300 bg-sand-100 dark:border-sand-700 dark:bg-sand-900'].map((c) => (
+                    <span key={c} className={`h-4 w-4 rounded-full ${c}`} />
+                  ))}
+                </span>
+              </motion.div>
+              <motion.div className="contents" {...cue(1.8)}>
+                <span className={`${MONO} ${DIM}`}>type</span>
+                <span className={INK}>
+                  <span className="text-lg font-extrabold leading-none">Aa</span>
+                  <span className={`${MONO} ml-2`}>Inter, 800 and 400</span>
+                </span>
+              </motion.div>
+              <motion.div className="contents" {...cue(2.1)}>
+                <span className={`${MONO} ${DIM}`}>to film</span>
+                <span className="flex flex-wrap gap-1.5">
+                  {['inbox', 'invoice', 'paid'].map((x) => (
+                    <span key={x} className={`${MONO} rounded-chip border border-sand-200 px-2 dark:border-sand-800 ${INK}`}>{x}</span>
+                  ))}
+                </span>
+              </motion.div>
+            </div>
+            <Line cue={cue} delay={2.5} className={INK}>
+              {OK}only real words and numbers, nothing invented
             </Line>
-          ))}
+          </Agent>
         </div>
       )
     case 1:
       return (
-        <div className="space-y-3">
-          <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
-            {[
-              ['purpose', 'launch film'],
-              ['format', '16:9'],
-              ['feel', 'fast and punchy'],
-              ['length', '15 s'],
-              ['the line', 'written from your site'],
-              ['brand', 'taken from your site'],
-              ['sound', 'effects on the motion'],
-            ].map(([q, d], i) => (
-              <motion.div key={q} className="contents" {...cue(0.1 + i * 0.12)}>
-                <span className={`${MONO} ${DIM}`}>{q}</span>
-                <span className={`${MONO} ${INK}`}>{d}</span>
-              </motion.div>
-            ))}
-          </div>
-          <You cue={cue} delay={1.3}>you decide</You>
+        <div className="space-y-4">
+          <Agent cue={cue} delay={0}>
+            <Line cue={cue} delay={0.05} className={INK}>Before I start, seven questions:</Line>
+            <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1">
+              {[
+                ['purpose', 'launch film'],
+                ['format', '16:9'],
+                ['feel', 'fast and punchy'],
+                ['length', '15 s'],
+                ['the line', 'written from your site'],
+                ['brand', 'taken from your site'],
+                ['sound', 'effects on the motion'],
+              ].map(([q, d], i) => (
+                <motion.div key={q} className="contents" {...cue(0.2 + i * 0.12)}>
+                  <span className={`${MONO} ${DIM}`}>{q}</span>
+                  <span className={`${MONO} ${INK}`}>{d}</span>
+                </motion.div>
+              ))}
+            </div>
+          </Agent>
+          <You cue={cue} delay={1.5}>you decide</You>
         </div>
       )
     case 2:
       return (
-        <div className="space-y-2">
-          <Line cue={cue} delay={0} className={DIM}>treatment.md</Line>
+        <Agent cue={cue} delay={0}>
+          <Line cue={cue} delay={0.05} className={DIM}>treatment.md</Line>
           <Line cue={cue} delay={0.25} className={INK}>idea: the invoice that gets itself paid</Line>
           {[
             ['0.0 s', 'the pain, already moving'],
@@ -104,31 +153,27 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
               <span className={INK}>{b}</span>
             </Line>
           ))}
-        </div>
+        </Agent>
       )
     case 3:
       return (
-        <div className="space-y-2">
-          <Line cue={cue} delay={0} className={DIM}>film.js</Line>
+        <Agent cue={cue} delay={0}>
+          <Line cue={cue} delay={0.05} className={DIM}>film.js</Line>
           <div className="grid grid-cols-3 gap-2">
-            {['hook', 'claim', 'product'].map((s, i) => (
-              <motion.div
-                key={s}
-                className="rounded-inset border border-sand-200 p-2 dark:border-sand-800"
-                {...cue(0.3 + i * 0.25)}
-              >
+            {['hook', 'claim', 'product'].map((x, i) => (
+              <motion.div key={x} className="rounded-inset border border-sand-200 p-2 dark:border-sand-800" {...cue(0.3 + i * 0.25)}>
                 <p className={`${MONO} ${DIM}`}>scene {i + 1}</p>
-                <p className={`${MONO} ${INK}`}>{s}</p>
+                <p className={`${MONO} ${INK}`}>{x}</p>
               </motion.div>
             ))}
           </div>
           <Line cue={cue} delay={1.3} className={DIM}>looking at its own frames before writing more</Line>
-        </div>
+        </Agent>
       )
     case 4:
       return (
-        <div className="space-y-2.5">
-          <Line cue={cue} delay={0} className={DIM}>check: 2 notes, text too close to the edge</Line>
+        <Agent cue={cue} delay={0}>
+          <Line cue={cue} delay={0.05} className={DIM}>check: 2 notes, text too close to the edge</Line>
           <div className="grid grid-cols-9 gap-1">
             {Array.from({ length: 9 }, (_, i) => (
               <motion.span key={i} className="aspect-video rounded-sm bg-sand-200 dark:bg-sand-800" {...cue(0.3 + i * 0.07)} />
@@ -142,17 +187,21 @@ function Panel({ step, cue }: { step: number; cue: Cue }) {
           <Line cue={cue} delay={1.9} className={INK}>
             {OK}check: clean
           </Line>
-        </div>
+        </Agent>
       )
     default:
       return (
-        <div className="space-y-3">
-          <Bar cue={cue} delay={0.1} seconds={1} label="draft · 960x540 · 30 fps · one to three minutes" />
+        <div className="space-y-4">
+          <Agent cue={cue} delay={0}>
+            <Bar cue={cue} delay={0.1} seconds={1} label="draft · 960x540 · 30 fps · one to three minutes" />
+          </Agent>
           <You cue={cue} delay={1.3}>yes</You>
-          <Bar cue={cue} delay={1.8} seconds={1.6} label="4k · 3840x2160 · 60 fps" />
-          <Line cue={cue} delay={3.4} className={INK}>
-            {OK}film.mp4
-          </Line>
+          <Agent cue={cue} delay={1.7}>
+            <Bar cue={cue} delay={1.8} seconds={1.6} label="4k · 3840x2160 · 60 fps" />
+            <Line cue={cue} delay={3.4} className={INK}>
+              {OK}film.mp4
+            </Line>
+          </Agent>
         </div>
       )
   }
@@ -230,7 +279,7 @@ export function Process() {
 
       <div
         aria-hidden
-        className="flex min-h-[18rem] flex-col overflow-hidden rounded-card border border-sand-200 bg-sand-50 lg:self-start dark:border-sand-800 dark:bg-sand-950"
+        className="flex min-h-[22rem] flex-col overflow-hidden rounded-card border border-sand-200 bg-sand-50 lg:self-start dark:border-sand-800 dark:bg-sand-950"
       >
         <div className="flex items-center justify-between border-b border-sand-200 px-4 py-2.5 dark:border-sand-800">
           <span className={`${MONO} ${DIM}`}>whoosh</span>
