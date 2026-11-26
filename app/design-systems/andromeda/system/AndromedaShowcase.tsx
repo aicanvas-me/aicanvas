@@ -5,7 +5,7 @@
 
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react'
 import Link from 'next/link'
-import { JetBrains_Mono } from 'next/font/google'
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 import { PageFrame, PageTitle, PageLead } from '../../../_components/DesignSystemPage'
 import { Search } from '@/app/_icons/icons/search';
 import { Bell } from '@/app/_icons/icons/bell';
@@ -108,12 +108,6 @@ import { PageCrumbs } from '../../../components/PageCrumbs'
 
 // Same JetBrains Mono setup as the dashboard page so the showcase
 // matches the design system's only font exactly.
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
-
 // Organic demo telemetry for the Trend Chart — deterministic (no Math.random)
 // so SSR and client agree. Real day-to-day variance: allocated wanders, used
 // tracks at a varying fraction so the gap weaves, reserved holds roughly flat.

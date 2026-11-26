@@ -1,5 +1,5 @@
 import { preload } from 'react-dom'
-import { JetBrains_Mono } from 'next/font/google'
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 import { BRAIN_TEASER } from '@/app/lib/andromeda-pro-brain-teaser.generated'
 import { BrainStoryV4 } from './BrainStoryV4'
 import { BRAIN_FAQ_JSON_LD } from './brain-faq'
@@ -7,8 +7,6 @@ import { BRAIN_FAQ_JSON_LD } from './brain-faq'
 // The Andromeda Pro Brain landing: the public marketing story. Anyone can view
 // it (it renders only the structure teaser, never brain content). The reader
 // with the real rule files lives at the gated child route ./explore/page.tsx.
-const jbm = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
-
 const total = BRAIN_TEASER.totalFiles
 
 export const metadata = {
@@ -22,7 +20,7 @@ export default function AndromedaBrainLandingPage() {
   preload('/models/brain.glb', { as: 'fetch', crossOrigin: 'anonymous' })
 
   return (
-    <div className={jbm.variable}>
+    <div className={jetbrainsMono.variable}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(BRAIN_FAQ_JSON_LD) }} />
       <BrainStoryV4 />
     </div>

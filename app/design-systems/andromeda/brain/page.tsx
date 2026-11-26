@@ -1,12 +1,10 @@
 import { preload } from 'react-dom'
-import { JetBrains_Mono } from 'next/font/google'
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 import { BrainStoryV4 } from './BrainStoryV4'
 
 // The Andromeda Brain LANDING — the public marketing story. Anyone can view it
 // (it renders only the structure teaser, never brain content). The reader with
 // the real rule files lives at the gated child route ./explore/page.tsx.
-const jbm = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
-
 export const metadata = {
   title: 'The Andromeda AI Brain: Design Rules for On-Brand UI',
   description:
@@ -19,7 +17,7 @@ export default function AndromedaBrainLandingPage() {
   preload('/models/brain.glb', { as: 'fetch', crossOrigin: 'anonymous' })
 
   return (
-    <div className={jbm.variable}>
+    <div className={jetbrainsMono.variable}>
       <BrainStoryV4 />
     </div>
   )

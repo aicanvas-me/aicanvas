@@ -23,7 +23,7 @@
 
 import { Fragment, useRef, type ReactNode } from 'react'
 import Link from 'next/link'
-import { JetBrains_Mono } from 'next/font/google'
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 import { ArrowUpRight } from '@/app/_icons/icons/arrow-up-right'
 import { tokens } from '../../../../lib/andromeda-pro.generated'
 import { mq } from '../../../../lib/andromeda-pro-helpers.generated'
@@ -59,12 +59,6 @@ import { PageCrumbs } from '../../../../components/PageCrumbs'
 
 // Same JetBrains Mono setup as the dashboard page so the showcase
 // matches the design system's only font exactly.
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
-
 // ─── Layout helpers ──────────────────────────────────────────────────────────
 // Local to this page — they exist only to keep the JSX below readable, not
 // to abstract anything reusable.

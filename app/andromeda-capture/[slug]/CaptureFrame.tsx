@@ -7,15 +7,9 @@
 //   [data-capture-frame] — the exact element the screenshot script grabs
 //   [data-capture-ready] — present once measured, scaled, and fonts loaded
 import { useEffect, useRef, useState } from 'react'
-import { JetBrains_Mono } from 'next/font/google'
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 import { AndromedaDemo } from '../../_lib/andromeda-pro/andromeda-demos'
 import { tokens } from '../../lib/andromeda-pro.generated'
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
 
 const FRAME_W = 1280
 const FRAME_H = 720

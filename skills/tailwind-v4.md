@@ -79,7 +79,7 @@ The `@variant dark` in CSS expands `dark:` utilities to target `.dark` ancestors
 
 ## Font usage
 
-Font is loaded via `next/font/google` as `--font-manrope` and registered in `@theme inline` as `--font-sans`.
+Font is self-hosted from `app/_fonts/` via `next/font/local` as `--font-manrope` and registered in `@theme inline` as `--font-sans`.
 
 ```tsx
 // Use font-sans for all text — do not import or reference fonts directly

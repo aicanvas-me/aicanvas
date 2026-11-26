@@ -4,16 +4,10 @@
 // frame carries the Legacy theme scope, so the site `theme` cookie (set by the
 // script) picks light or dark exactly as on the component pages.
 import { useEffect, useState } from 'react'
-import { JetBrains_Mono } from 'next/font/google'
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 import { notFound, useSearchParams } from 'next/navigation'
 import { themeColor } from '@/design-systems/andromeda/components/lib/utils'
 import { Pose, hasPose } from './legacy-poses'
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
 
 const GROUND = themeColor.surface.base
 const SCREEN = `body{transform:scale(0.72);border-radius:12px;outline:1px solid ${themeColor.border.base};}`

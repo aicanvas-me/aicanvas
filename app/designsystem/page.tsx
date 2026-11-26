@@ -242,7 +242,7 @@ export default function DesignSystemPage() {
       <section className="mb-16">
         <SectionTitle>Typography</SectionTitle>
         <p className="mb-6 text-sm text-sand-600 dark:text-sand-400">
-          Font: <span className="font-semibold text-sand-700 dark:text-sand-200">Manrope</span>, loaded via next/font/google and registered as <code className="rounded bg-sand-100 px-1.5 py-0.5 font-mono text-xs dark:bg-sand-800">--font-sans</code>
+          Font: <span className="font-semibold text-sand-700 dark:text-sand-200">Manrope</span>, self-hosted via next/font/local and registered as <code className="rounded bg-sand-100 px-1.5 py-0.5 font-mono text-xs dark:bg-sand-800">--font-sans</code>
         </p>
         <div className="flex flex-col gap-6">
           {TYPOGRAPHY.map((t) => (

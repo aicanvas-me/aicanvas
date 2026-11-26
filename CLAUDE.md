@@ -35,7 +35,7 @@ This repository is public. A leaked secret is exposed the moment it is committed
 - **Styling**: Tailwind CSS v4 (configured via CSS `@theme inline`, no `tailwind.config.ts`)
 - **Animations**: Framer Motion (required for all animated components)
 - **Icons**: AI Canvas icons, one file per icon (`import { Check } from '@/app/_icons/icons/check'`, installed as `@/components/icons/check`); Line style, a new name is added to `app/_icons/site-icons.json` first
-- **Font**: Manrope (loaded via `next/font/google`, registered as `--font-sans`)
+- **Font**: Manrope (self-hosted from `app/_fonts/` via `next/font/local`, registered as `--font-sans`)
 - **3D**: Three.js (optional, only when truly needed)
 
 ## Design system (site chrome)

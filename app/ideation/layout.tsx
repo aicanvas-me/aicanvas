@@ -1,15 +1,9 @@
 import { type ReactNode } from 'react'
-import { JetBrains_Mono } from 'next/font/google'
+import { jetbrainsMono } from '@/app/_fonts/jetbrains-mono'
 
 // Make JetBrains Mono available throughout the ideation subtree so any
 // Andromeda preview that references the --font-jetbrains-mono variable
 // resolves correctly without each page re-declaring the font loader.
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
-
 // The /ideation subtree is the internal dev playground — keep every route
 // under it out of search indexes (it mirrors shipped pages). Pairs with the
 // Disallow: /ideation/ in app/robots.ts.

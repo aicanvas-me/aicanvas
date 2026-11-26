@@ -1,11 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Manrope } from 'next/font/google'
+import { manrope } from '@/app/_fonts/site'
 import './globals.css'
 import { Button } from './components/Button'
-
-const manrope = Manrope({ variable: '--font-manrope', subsets: ['latin'], weight: ['400', '600', '700'] })
 
 export default function GlobalError({ error }: { error: Error & { digest?: string } }) {
   useEffect(() => {
