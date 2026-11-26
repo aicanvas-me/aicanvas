@@ -18,7 +18,7 @@ jobs:
   verify-premium-live:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Confirm production serves the pinned premium
         run: |
           set -euo pipefail
