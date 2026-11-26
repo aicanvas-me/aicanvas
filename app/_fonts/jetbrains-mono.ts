@@ -2,7 +2,7 @@
 import localFont from 'next/font/local'
 import styles from './jetbrains-mono.module.css'
 
-// Google's own files, split by script: each one loads only when a page uses its range.
+// Google's own files, one per script: latin preloads, the rest load only when used.
 
 const jetbrainsMonoCyrillicExt = localFont({
   src: './jetbrains-mono/cyrillic-ext.woff2',

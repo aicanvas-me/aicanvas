@@ -106,8 +106,6 @@ import { ShowcaseInstall } from '../../../_components/ShowcaseInstall'
 import { ShowcaseInstallCard } from '../../../_components/ShowcaseInstallCard'
 import { PageCrumbs } from '../../../components/PageCrumbs'
 
-// Same JetBrains Mono setup as the dashboard page so the showcase
-// matches the design system's only font exactly.
 // Organic demo telemetry for the Trend Chart — deterministic (no Math.random)
 // so SSR and client agree. Real day-to-day variance: allocated wanders, used
 // tracks at a varying fraction so the gap weaves, reserved holds roughly flat.

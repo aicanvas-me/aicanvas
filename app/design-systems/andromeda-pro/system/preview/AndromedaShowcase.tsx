@@ -57,8 +57,6 @@ import { ShowcaseInstall } from '../../../../_components/ShowcaseInstall'
 import { ShowcaseInstallCard } from '../../../../_components/ShowcaseInstallCard'
 import { PageCrumbs } from '../../../../components/PageCrumbs'
 
-// Same JetBrains Mono setup as the dashboard page so the showcase
-// matches the design system's only font exactly.
 // ─── Layout helpers ──────────────────────────────────────────────────────────
 // Local to this page — they exist only to keep the JSX below readable, not
 // to abstract anything reusable.
