@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { afterEach, describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { supabaseConfigured } from './configured'
 
 // A clone with no Supabase keys has to serve the catalog, and three files build a
@@ -36,6 +36,21 @@ describe('the keyless-clone guard', () => {
     expect(supabaseConfigured()).toBe(false)
     set('', '')
     expect(supabaseConfigured()).toBe(false)
+  })
+
+  it('says so in the production logs when a key is missing', async () => {
+    // Serving every visitor signed out is survivable; doing it silently is not.
+    const err = vi.spyOn(console, 'error').mockImplementation(() => {})
+    set(undefined, undefined)
+    vi.stubEnv('NODE_ENV', 'production')
+    const fresh = await import('./configured?loud')
+    expect(fresh.supabaseConfigured()).toBe(false)
+    expect(err).toHaveBeenCalledOnce()
+    expect(String(err.mock.calls[0][0])).toContain('signed out')
+    fresh.supabaseConfigured()
+    expect(err, 'once per process, not once per render').toHaveBeenCalledOnce()
+    vi.unstubAllEnvs()
+    err.mockRestore()
   })
 
   it.each(GUARDED)('%s asks before it builds a client', (file) => {
