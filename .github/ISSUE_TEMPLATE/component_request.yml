@@ -1,6 +1,6 @@
 name: Component request
 description: Suggest a component or block for the library
-labels: ["component request"]
+labels: ["enhancement"]
 body:
   - type: input
     id: name

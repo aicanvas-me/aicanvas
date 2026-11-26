@@ -8,7 +8,7 @@
 
 ## Checklist
 
-- [ ] `npm run lint`, `npx tsc --noEmit` and `npm test` pass locally
+- [ ] `npx tsc --noEmit` and `npm test` pass locally
 - [ ] Works in light and dark
 - [ ] Checked on a phone width (375px) if anything visual changed
 - [ ] A new component has its `prompts.ts` and a `app/lib/component-registry.tsx` entry

@@ -85,35 +85,41 @@ is the default target, not a requirement.
 
 ## What's inside
 
-| | Free, MIT, in this repo | Premium, proprietary |
+| | Free | Premium, proprietary |
 | --- | --- | --- |
-| **Standalone components and blocks** | 78 | 20 |
-| **Design systems** | Andromeda Legacy: 39 components, 4 templates | Andromeda Pro: 69 components, 9 templates |
-| **Icons** | Line style, 820 icons | Duotone, Solid, Solid duotone |
-| **Remix prompts** | One per free component | One per Premium component |
+| **Standalone components and blocks** | 78, MIT, in this repo | 20 |
+| **Design systems** | Andromeda Legacy: 39 components, 4 templates, MIT, in this repo | Andromeda Pro: 69 components, 9 templates |
+| **Icons** | Line style, 820 icons, free with a credit line | Duotone, Solid, Solid duotone |
+| **Remix prompts** | One per free component | Behind the Premium gate |
+
+The icons are the one free thing that is not MIT and not in this repo: they are
+drawn in a private source and served through the registry, free to install with a
+one-line credit in your code.
 
 Premium pays for the free library, and the free library stays free: MIT means you
-can use it in commercial work, change it, and ship it without attribution. The
-Premium lane is a separate, closed-source catalog, never a crippled free tier.
+can use it in commercial work, change it and ship it, with no credit in your app
+and no permission to ask. The MIT notice travels with the code, as MIT requires.
+The Premium lane is a separate, closed-source catalog, not a crippled free tier.
 
 ## Components by category
 
 Every row links to the live catalog, where each component has a running preview,
-its full source and its remix prompt.
+its full source and its remix prompt. A component can sit in two categories, so
+the column does not add up to 78.
 
 | Category | Free | What's in it |
 | --- | --- | --- |
 | [Cards & Modals](https://aicanvas.me/components/category/cards-modals) | 17 | Card stacks, decks, dialogs, drag-to-browse galleries |
 | [Glass](https://aicanvas.me/components/category/glass) | 17 | A full glassmorphism set: dock, modal, navbar, player, tabs |
 | [Backgrounds](https://aicanvas.me/components/category/backgrounds) | 14 | Canvas and WebGL fields: waves, noise, particles, grids |
-| [Widgets](https://aicanvas.me/components/category/widgets) | 12 | Self-contained pieces: clocks, charging, swap, signature pad |
+| [Widgets](https://aicanvas.me/components/category/widgets) | 12 | Clocks, calendars, players, meters, a signature pad, a token swap |
 | [Typography](https://aicanvas.me/components/category/typography) | 10 | Scramble, blur reveal, kinetic and variable-weight text |
 | [Buttons & Toggles](https://aicanvas.me/components/category/buttons-toggles) | 8 | Theme toggles, glitch and magnetic buttons, switches |
 | [Blocks](https://aicanvas.me/components/category/blocks) | 7 | Whole page sections: job cards, task boards, wipe galleries |
-| [Navigation](https://aicanvas.me/components/category/navigation) | 6 | Tab bars, docks, radial toolbars, navbars |
-| [Inputs & Controls](https://aicanvas.me/components/category/inputs-controls) | 5 | AI composers, sliders, pickers |
-| [3D & Shaders](https://aicanvas.me/components/category/3d-shaders) | 4 | Three.js spheres, lines and shader surfaces |
-| [Notifications](https://aicanvas.me/components/category/notifications) | 3 | Toasts and notification stacks |
+| [Navigation](https://aicanvas.me/components/category/navigation) | 6 | Navbars, tab bars, docks, sidebars, user menus |
+| [Inputs & Controls](https://aicanvas.me/components/category/inputs-controls) | 5 | AI composers, sliders, steppers, search bars, radial toolbars |
+| [3D & Shaders](https://aicanvas.me/components/category/3d-shaders) | 4 | A Three.js particle sphere, halo type, a cube carousel |
+| [Notifications](https://aicanvas.me/components/category/notifications) | 3 | Toasts, notification cards, tag stacks |
 
 <p align="center">
   <a href="https://aicanvas.me/components/tilted-coverflow"><img src="https://ik.imagekit.io/aitoolkit/tilted-coverflow.png" width="48%" alt="Tilted Coverflow: 3D coverflow card carousel of seven tilted photos, drag or arrows to focus any card" /></a>
@@ -168,7 +174,7 @@ Plain-text surfaces, no MCP needed:
 | --- | --- |
 | [`/llms.txt`](https://aicanvas.me/llms.txt) | The whole catalog as a map, for a model to read in one request |
 | [`/llms-full.txt`](https://aicanvas.me/llms-full.txt) | Every page's content, flattened |
-| `/components/<slug>.md` | Any page as Markdown. Add `.md` to any URL |
+| `/components/<slug>.md` | A page as Markdown. Add `.md` to a component, catalog or design-system URL |
 | Remix prompts | One comprehensive, platform-agnostic prompt per component. Paste it into any AI tool to rebuild that component your way |
 
 More: [MCP docs](https://aicanvas.me/docs/mcp) ·
@@ -230,15 +236,16 @@ one-command `npx shadcn add` install.
 
 **Does it work outside Next.js?**
 Yes. Components are plain React and TypeScript with Tailwind and Framer Motion.
-A few load their display font through `next/font/google`; outside Next.js, swap
-that import for your own font loader.
+A few pull a display font from Google Fonts with a CSS `@import`; swap that line
+if you self-host your fonts.
 
 **Do I get a dependency or real code?**
 Real code, copied into your project. There is nothing to keep in sync.
 
 **Can I use it commercially?**
-Yes, the free library is MIT: commercial use, modification, no attribution
-required. Premium is licensed separately, see [License](#license).
+Yes, the free library is MIT: commercial use, modification, no credit in your
+app. Keep the MIT notice with the code. Premium is licensed separately, see
+[License](#license).
 
 **How do I keep components up to date?**
 You do not have to. Once installed, the code is yours. Re-run the install
@@ -258,6 +265,7 @@ find it.
 ## License
 
 The free library is MIT. Use it in personal and commercial projects, modify it
-freely, and ship it without attribution. See [LICENSE](./LICENSE). Premium
+freely, and ship it with no credit in your app, keeping the MIT notice with the
+code. See [LICENSE](./LICENSE). Premium
 components, design systems and templates are proprietary under the AI Canvas
 Premium License. Security reports: [SECURITY.md](./SECURITY.md).

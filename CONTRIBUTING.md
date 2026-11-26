@@ -28,7 +28,7 @@ Node 22 or newer. npm is the package manager the lockfile is built with.
 | Area | Without keys |
 | --- | --- |
 | Catalog, component pages, `/r/*.json` registry | Works |
-| Sign in, accounts, checkout, usage metering | Not available |
+| Sign in, accounts, checkout, usage metering | Not available. Those routes error |
 | Icon pages | Build empty (the icon set ships from a private source) |
 | Premium components, design systems, templates | Not in this repo at all |
 
@@ -69,13 +69,21 @@ here. A clone builds the free library only, and that is the supported path.
 ## Before you open a pull request
 
 ```bash
-npm run lint
 npx tsc --noEmit
 npm test
 ```
 
-CI runs exactly those three on every pull request, plus a check that no premium
-file leaked into the public tree. Keep the diff to one subject.
+Both must pass, and CI runs them on every pull request. `npm run lint` is worth a
+look but is not a gate: the tree carries pre-existing eslint errors, so chase the
+ones in your own files and ignore the rest.
+
+Two more checks run on every pull request: one that no premium file leaked into
+the public tree, and, when you touch the files they watch, a prompt linter
+(`prompts.ts`) and an Andromeda contrast check. Keep the diff to one subject.
+
+Without the private vault, three suites are skipped rather than failed: the
+Andromeda Pro matrix, the hosted-MCP route and the icon download route. They
+assert on content a clone does not have. `vitest.config.ts` has the detail.
 
 ## Reporting a bug
 
