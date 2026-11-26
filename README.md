@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://aicanvas.me">
-    <img width="100%" alt="AI Canvas: design systems, components and icons your AI agent builds with, installed as editable source with shadcn or MCP" src="assets/readme-banner.jpg" />
+    <img width="100%" alt="AI agents finally design badass interfaces. Design systems, components and icons, installed as real source with one command." src="assets/readme-banner.jpg" />
   </a>
 </p>
 
@@ -8,9 +8,9 @@
 
 <p align="center">
   <strong>Finished components, not headless primitives.</strong><br />
-  Complete React design systems for Claude, Codex, Cursor or any AI agent, plus
-  <strong>78 free MIT components and blocks</strong> that fit any of them,
-  installed as real source code in your project, never as a dependency.
+  A complete React design system for Claude, Codex, Cursor or any AI agent, plus
+  <strong>78 free MIT components and blocks</strong> that fit it or any other
+  stack, installed as real source code in your project, never as a dependency.
 </p>
 
 <p align="center">
@@ -45,8 +45,9 @@ Starting a new project? `npx shadcn@latest init` first, then add.
 
 **Signed out, that command writes a placeholder file instead of the component.**
 The CLI install is tied to a free AI Canvas account, and the setup below takes a
-minute. Reading and copying the code needs no account at all: every component
-page shows its full source, and every free component is in this repo under
+minute. Two things need no account at all: the Line icons install signed out
+(`npx shadcn@latest add @aicanvas/icon-search`), and reading or copying the
+source is free to everyone, on every component page and in this repo under
 [`components-workspace/`](./components-workspace).
 
 <details>
@@ -77,7 +78,7 @@ Full details: [Installation](https://aicanvas.me/docs/installation) and
 
 ### Requirements
 
-Tailwind CSS **v4**, React 19 and Framer Motion. Components are written against
+Tailwind CSS **v4**, React 19, and Framer Motion for most components. Written against
 Tailwind v4 tokens and will not render correctly on v3. The Next.js App Router
 is the default target, not a requirement.
 
@@ -89,12 +90,14 @@ is the default target, not a requirement.
 | **Design systems** | Andromeda Legacy: 39 components, 4 templates, MIT, in this repo | Andromeda Pro: 69 components, 9 templates |
 | **Icons** | Line style, 820 icons, free with a credit line | Duotone, Solid, Solid duotone |
 | **Remix prompts** | One per free component | The setup is public, the rest needs Premium |
+| **AI Brain**, the rules an agent reads before it builds | Premium, for both systems | Premium |
+| **Agent skills** | — | Premium, installed through the MCP server |
 
 The icons are the one free thing that is not MIT and not in this repo: they are
-drawn in a private source and served through the registry. Free to install, with
-two conditions: keep the AI Canvas notice at the top of each icon file, and name
-AI Canvas in your credits or licence file when you publish your source. Full
-terms: [Licensing](https://aicanvas.me/docs/licensing) and the
+drawn in a private source and served through the registry. They install with no
+account at all, and when you publish your source, name AI Canvas in your credits
+or licence file. Full terms:
+[Licensing](https://aicanvas.me/docs/licensing) and the
 [Premium License](https://aicanvas.me/premium-license).
 [Pricing](https://aicanvas.me/pricing) covers what Premium costs.
 
@@ -125,6 +128,9 @@ Premium items, which the column does not count.
 | [3D & Shaders](https://aicanvas.me/components/category/3d-shaders) | 4 | A Three.js particle sphere, halo type, a cube carousel |
 | [Notifications](https://aicanvas.me/components/category/notifications) | 3 | Toasts, notification cards, tag stacks |
 
+The catalog carries a twelfth category, AI Agent UI, with 11 components. Every
+one of them is Premium, so it has no row here.
+
 <p align="center">
   <a href="https://aicanvas.me/components/tilted-coverflow"><img src="https://ik.imagekit.io/aitoolkit/tilted-coverflow.png" width="48%" alt="Tilted Coverflow: 3D coverflow card carousel of seven tilted photos, drag or arrows to focus any card" /></a>
   <a href="https://aicanvas.me/components/crypto-swap"><img src="https://ik.imagekit.io/aitoolkit/crypto-swap.png?v=2" width="48%" alt="Crypto Swap: token-swap widget with live exchange rates, price impact and an animated swap button" /></a>
@@ -145,15 +151,17 @@ an agent can build a whole screen instead of pasting one card.
 npx shadcn@latest add @aicanvas/andromeda          # the free system, 39 components
 ```
 
-Same free account as a single component, and the same placeholder when signed out.
+Same free account as a single component. Signed out it writes 42 placeholder
+files you then have to delete, so sign in first.
 
 **Andromeda Legacy** is MIT and lives in
 [`design-systems/andromeda/`](./design-systems/andromeda): tokens, components,
-utilities and four templates. **Andromeda Pro** is the Premium rebuild with 69
+utilities, and four templates under `examples/`. **Andromeda Pro** is the Premium rebuild with 69
 components, nine templates, light and dark.
 
-Each system ships an **AI Brain**: the written rules an agent reads before it
-writes a line, so what it builds matches the system instead of guessing.
+Each system has an **AI Brain**: the written rules an agent reads before it
+writes a line, so what it builds matches the system instead of guessing. The
+Brain is Premium for both systems, the free one included.
 [Read more](https://aicanvas.me/docs/ai-brain).
 
 ## For AI agents
@@ -170,9 +178,11 @@ Or in any MCP config:
 { "mcpServers": { "aicanvas": { "command": "npx", "args": ["-y", "@aicanvas/mcp"] } } }
 ```
 
-Works with Claude Code, Codex, Cursor and any MCP-compatible editor. The server
-is read-only and fetches the live registry at runtime, so new components reach
-your agent shortly after they ship.
+Works with Claude Code, Codex, Cursor and any MCP-compatible editor. Every tool
+on the server only reads, and it fetches the live registry at runtime, so new
+components reach your agent shortly after they ship. The one thing that writes is
+the package's own `skill add` command, which installs a Premium agent skill into
+your skills folder when you run it yourself.
 
 Plain-text surfaces, no MCP needed:
 
@@ -180,7 +190,7 @@ Plain-text surfaces, no MCP needed:
 | --- | --- |
 | [`/llms.txt`](https://aicanvas.me/llms.txt) | The whole catalog as a map, for a model to read in one request |
 | [`/llms-full.txt`](https://aicanvas.me/llms-full.txt) | Every page's content, flattened |
-| `/components/<slug>.md` | A page as Markdown. Add `.md` to a component, catalog or design-system URL |
+| `/components/<slug>.md` | A page as Markdown. Add `.md` to the catalog, a component, a design system or a template (not to a category) |
 | Remix prompts | One comprehensive, platform-agnostic prompt per component. Paste it into any AI tool to rebuild that component your way |
 
 More: [MCP docs](https://aicanvas.me/docs/mcp) ·
@@ -196,8 +206,9 @@ More: [MCP docs](https://aicanvas.me/docs/mcp) ·
   in sync, and nothing changes under you.
 - **Built for agents, readable by humans.** A design system with written rules, a
   registry the CLI understands, an MCP server, and one remix prompt per piece.
-- **Animated by default.** Framer Motion and Tailwind v4 throughout, Three.js
-  where a piece is genuinely 3D.
+- **Animated by default.** Framer Motion for anything that animates in the DOM,
+  canvas or WebGL for the 15 that paint their own pixels, Three.js where a piece
+  is genuinely 3D. Tailwind v4 throughout.
 
 ## Repository layout
 
@@ -270,8 +281,9 @@ find it.
 
 ## License
 
-The free library is MIT. Use it in personal and commercial projects, modify it
-freely, and ship it with no credit in your app, keeping the MIT notice with the
-code. See [LICENSE](./LICENSE). Premium
+[LICENSE](./LICENSE) is MIT and covers this repository: the components, the free
+design system and the site code you are reading. Use it in personal and
+commercial projects, modify it freely, and ship it with no credit in your app,
+keeping the MIT notice with the code. Premium
 components, design systems and templates are proprietary under the AI Canvas
 Premium License. Security reports: [SECURITY.md](./SECURITY.md).

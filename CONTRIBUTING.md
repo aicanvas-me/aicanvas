@@ -43,7 +43,7 @@ here. A clone builds the free library only, and that is the supported path.
 | Path | What's there |
 | --- | --- |
 | `components-workspace/<slug>/` | One free component: `index.tsx`, `prompts.ts`, often a `spec.md` |
-| `design-systems/andromeda/` | Andromeda Legacy, the free design system: tokens, components, utilities, templates |
+| `design-systems/andromeda/` | Andromeda Legacy, the free design system: tokens, components, utilities, and four templates under `examples/` |
 | `app/` | The aicanvas.me website (Next.js App Router) |
 | `app/lib/component-registry.tsx` | The catalog index. Append-only: slugs are a public contract |
 | `scripts/generate-registry.mjs` | Builds the shadcn registry JSON from the sources above |
@@ -59,7 +59,8 @@ here. A clone builds the free library only, and that is the supported path.
    React component, Tailwind v4 classes, Framer Motion for anything that moves,
    and it has to work in both light and dark.
 3. Every component ships one platform-agnostic remix prompt in `prompts.ts`.
-   `npm run lint:prompts` checks the shape.
+   `npm run lint:prompts` reports on every prompt and always exits 0;
+   `node scripts/lint-prompts.mjs --strict <slug>` is the one that fails.
 4. Register it in `app/lib/component-registry.tsx`. Never rename or delete an
    existing entry.
 5. Keep shipped component code close to comment-free. Buyers copy these files
@@ -75,8 +76,9 @@ npm test
 ```
 
 All three, in that order: without `npm run generate` the typecheck fails on
-modules that do not exist yet. CI runs exactly this sequence on every pull
-request. `npm run lint` is worth a
+modules that do not exist yet. On a cold clone the typecheck takes several
+minutes with no output until it finishes. CI runs exactly this sequence on every
+pull request. `npm run lint` is worth a
 look but is not a gate: the tree carries pre-existing eslint errors, so chase the
 ones in your own files and ignore the rest.
 
@@ -84,11 +86,11 @@ Three more checks guard the tree: one that no premium file leaked, on every pull
 request, and two that run when you touch the files they watch, a prompt linter
 (`prompts.ts`) and an Andromeda contrast check. Keep the diff to one subject.
 
-Without the private vault, the suites that read it do not run: the Andromeda Pro
-matrix and tone rules and the icon download route are excluded (vitest prints a
-line saying so), and the hosted-MCP suite skips its premium cases and keeps the
-rest. Nothing fails for content a clone cannot have. `vitest.config.ts` has the
-detail.
+Without the private vault, the cases that read it do not run: the Andromeda Pro
+suites are excluded (vitest prints a line naming them), and the hosted-MCP, icon
+and registry suites skip their premium cases and keep the rest, which is why a
+clone's run reports skips. Nothing fails for content a clone cannot have.
+`vitest.config.ts` has the detail.
 
 ## Reporting a bug
 

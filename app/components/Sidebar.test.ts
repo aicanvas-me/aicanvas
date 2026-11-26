@@ -207,8 +207,8 @@ describe('the catalog rail', () => {
   const selectedTab = (aside: HTMLElement) =>
     within(aside).getAllByRole('tab').find((t) => t.getAttribute('aria-selected') === 'true')?.getAttribute('aria-label')
 
-  // Renders the whole rail for three routes: room for a busy machine.
-  it('carries no search, no logo, no site-page links and no rules', { timeout: 60_000 }, () => {
+  // Renders the whole rail for three routes; vitest.config.ts carries the budget.
+  it('carries no search, no logo, no site-page links and no rules', () => {
     for (const path of ['/components', '/components/category/widgets', '/design-systems/andromeda-pro']) {
       const aside = rail(path)
       expect(aside.querySelector('input'), path).toBeNull()

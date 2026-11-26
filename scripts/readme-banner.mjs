@@ -139,13 +139,15 @@ try {
     await p.setContent(page(s, font), { waitUntil: 'networkidle' })
     const blank = await p.$$eval('.card img', (els) => els.filter((e) => !e.naturalWidth).length)
     if (bad.length || blank) {
-      console.error(`readme-banner: ${blank} tile(s) did not render${bad.length ? ':\n  ' + bad.join('\n  ') : ''}`)
-      process.exit(1)
+      throw new Error(`readme-banner: ${blank} tile(s) did not render${bad.length ? ':\n  ' + bad.join('\n  ') : ''}`)
     }
     await p.screenshot({ path: join(OUT, `${s.file}.jpg`), type: 'jpeg', quality: 86 })
     await ctx.close()
     console.log(`readme-banner: assets/${s.file}.jpg (${s.width}x${s.height} at ${SCALE}x, ${TILES.length} tiles)`)
   }
+} catch (err) {
+  console.error(String(err instanceof Error ? err.message : err))
+  process.exitCode = 1
 } finally {
   await browser.close()
 }
