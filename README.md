@@ -45,10 +45,11 @@ Starting a new project? `npx shadcn@latest init` first, then add.
 
 **Signed out, that command writes a placeholder file instead of the component.**
 The CLI install is tied to a free AI Canvas account, and the setup below takes a
-minute. Two things need no account at all: the Line icons install signed out
-(`npx shadcn@latest add @aicanvas/icon-search`), and reading or copying the
-source is free to everyone, on every component page and in this repo under
-[`components-workspace/`](./components-workspace).
+minute. Signed out you can still install every Line icon
+(`npx shadcn@latest add @aicanvas/icon-search`, or `@aicanvas/icons` for all 820)
+and the design-system foundation (`@aicanvas/andromeda-tokens`), and reading or
+copying source is free to everyone, on every component page and in this repo
+under [`components-workspace/`](./components-workspace).
 
 <details>
 <summary><strong>Set up the registry once</strong></summary>
@@ -90,13 +91,14 @@ is the default target, not a requirement.
 | **Design systems** | Andromeda Legacy: 39 components, 4 templates, MIT, in this repo | Andromeda Pro: 69 components, 9 templates |
 | **Icons** | Line style, 820 icons, free with a credit line | Duotone, Solid, Solid duotone |
 | **Remix prompts** | One per free component | The setup is public, the rest needs Premium |
-| **AI Brain**, the rules an agent reads before it builds | Premium, for both systems | Premium |
-| **Agent skills** | — | Premium, installed through the MCP server |
+| **AI Brain**, the rules an agent reads before it builds | Andromeda Legacy's own rules file, in this repo | The installable Brain, for both systems |
+| **[Agent skills](https://aicanvas.me/skills)** | — | Premium, installed through the MCP server |
 
 The icons are the one free thing that is not MIT and not in this repo: they are
 drawn in a private source and served through the registry. They install with no
-account at all, and when you publish your source, name AI Canvas in your credits
-or licence file. Full terms:
+account at all, on two conditions: keep the one-line AI Canvas notice at the top
+of each icon file, and name AI Canvas in your credits or licence file when you
+publish your source. Full terms:
 [Licensing](https://aicanvas.me/docs/licensing) and the
 [Premium License](https://aicanvas.me/premium-license).
 [Pricing](https://aicanvas.me/pricing) covers what Premium costs.
@@ -156,12 +158,16 @@ files you then have to delete, so sign in first.
 
 **Andromeda Legacy** is MIT and lives in
 [`design-systems/andromeda/`](./design-systems/andromeda): tokens, components,
-utilities, and four templates under `examples/`. **Andromeda Pro** is the Premium rebuild with 69
+utilities, and four templates under `examples/` (which holds a fifth that is not
+published). **Andromeda Pro** is the Premium rebuild with 69
 components, nine templates, light and dark.
 
 Each system has an **AI Brain**: the written rules an agent reads before it
-writes a line, so what it builds matches the system instead of guessing. The
-Brain is Premium for both systems, the free one included.
+writes a line, so what it builds matches the system instead of guessing.
+Andromeda Legacy's rules are in this repo at
+[`design-systems/andromeda/rules.md`](./design-systems/andromeda/rules.md), MIT
+like the rest of it. The *installable* Brain, the one the CLI and the MCP server
+hand to an agent, is Premium for both systems.
 [Read more](https://aicanvas.me/docs/ai-brain).
 
 ## For AI agents
@@ -216,7 +222,7 @@ This repo is the real product: the website **and** the free component library.
 
 | Path | What's there |
 | --- | --- |
-| [`components-workspace/<slug>/`](./components-workspace) | Each free component: `index.tsx` source and its `prompts.ts` remix prompt, plus a `spec.md` on many |
+| [`components-workspace/<slug>/`](./components-workspace) | Each free component: `index.tsx` source and its `prompts.ts` remix prompt, plus a `spec.md` on many, and a `_template` to copy |
 | [`design-systems/andromeda/`](./design-systems/andromeda) | The free Andromeda Legacy source: tokens, components, utilities |
 | [`app/`](./app) | The aicanvas.me website (Next.js App Router) |
 | [`app/lib/component-registry.tsx`](./app/lib/component-registry.tsx) | The catalog index. Append-only: slugs are a public contract |

@@ -87,8 +87,12 @@ const cachedRegistryPulls = unstable_cache(
  * `revalidateTag('registry-pulls')` can force a refresh early.
  */
 export async function getRegistryPulls(): Promise<number> {
-  // No key is the normal state of a clone, not a fault: one quiet line, no stack.
-  if (!process.env.POSTHOG_PERSONAL_API_KEY) return FALLBACK_PULLS
+  // No key is the normal state of a clone, not a fault: one line, no stack. The
+  // line matters because the homepage renders the fallback as a real figure.
+  if (!process.env.POSTHOG_PERSONAL_API_KEY) {
+    console.info('[registry-stats] no POSTHOG_PERSONAL_API_KEY, the homepage shows the fallback figure')
+    return FALLBACK_PULLS
+  }
   try {
     return await cachedRegistryPulls()
   } catch (err) {

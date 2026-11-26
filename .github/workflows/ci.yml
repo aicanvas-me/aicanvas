@@ -33,7 +33,7 @@ jobs:
       # committed: tsc and the tests read the generated files.
       - run: npm run generate
 
-      - run: npx tsc --noEmit
+      - run: npm run typecheck
 
       - run: npm test
 

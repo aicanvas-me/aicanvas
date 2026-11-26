@@ -43,7 +43,7 @@ here. A clone builds the free library only, and that is the supported path.
 | Path | What's there |
 | --- | --- |
 | `components-workspace/<slug>/` | One free component: `index.tsx`, `prompts.ts`, often a `spec.md` |
-| `design-systems/andromeda/` | Andromeda Legacy, the free design system: tokens, components, utilities, and four templates under `examples/` |
+| `design-systems/andromeda/` | Andromeda Legacy, the free design system: tokens, components, utilities, `rules.md` (its design rules) and four templates under `examples/` |
 | `app/` | The aicanvas.me website (Next.js App Router) |
 | `app/lib/component-registry.tsx` | The catalog index. Append-only: slugs are a public contract |
 | `scripts/generate-registry.mjs` | Builds the shadcn registry JSON from the sources above |
@@ -70,15 +70,14 @@ here. A clone builds the free library only, and that is the supported path.
 ## Before you open a pull request
 
 ```bash
-npm run generate     # the generated files tsc and the tests read
-npx tsc --noEmit
+npm run generate     # the generated files the typecheck and the tests read
+npm run typecheck
 npm test
 ```
 
 All three, in that order: without `npm run generate` the typecheck fails on
-modules that do not exist yet. On a cold clone the typecheck takes several
-minutes with no output until it finishes. CI runs exactly this sequence on every
-pull request. `npm run lint` is worth a
+modules that do not exist yet. The typecheck is the slow one and prints nothing
+until it is done. CI runs exactly this sequence on every pull request. `npm run lint` is worth a
 look but is not a gate: the tree carries pre-existing eslint errors, so chase the
 ones in your own files and ignore the rest.
 

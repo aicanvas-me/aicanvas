@@ -13,6 +13,7 @@
     "start": "next start",
     "publish-premium": "node scripts/publish-premium.mjs",
     "lint": "eslint",
+    "typecheck": "NODE_OPTIONS=--max-old-space-size=4096 tsc --noEmit",
     "pretest": "node scripts/site-icons.mjs",
     "test": "vitest run",
     "test:watch": "vitest",

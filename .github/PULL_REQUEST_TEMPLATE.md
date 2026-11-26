@@ -8,7 +8,7 @@
 
 ## Checklist
 
-- [ ] `npm run generate`, then `npx tsc --noEmit` and `npm test`, pass locally
+- [ ] `npm run generate`, then `npm run typecheck` and `npm test`, pass locally
 - [ ] Works in light and dark
 - [ ] Checked on a phone width (375px) if anything visual changed
 - [ ] A new component has its `prompts.ts` and an `app/lib/component-registry.tsx` entry
