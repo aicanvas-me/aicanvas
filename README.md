@@ -92,7 +92,7 @@ is the default target, not a requirement.
 | **Icons** | Line style, 820 icons, free with a credit line | Duotone, Solid, Solid duotone |
 | **Remix prompts** | One per free component | The setup is public, the rest needs Premium |
 | **AI Brain**, the rules an agent reads before it builds | Andromeda Legacy's own rules file, in this repo | The installable Brain, for both systems |
-| **[Agent skills](https://aicanvas.me/skills)** | — | Premium, installed through the MCP server |
+| **[Agent skills](https://aicanvas.me/skills)** | None | Premium, installed through the MCP server |
 
 The icons are the one free thing that is not MIT and not in this repo: they are
 drawn in a private source and served through the registry. They install with no
