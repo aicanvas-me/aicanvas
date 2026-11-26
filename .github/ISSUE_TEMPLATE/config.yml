@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Browse the catalog
+    url: https://aicanvas.me
+    about: Every component, its full source and its remix prompt.
+  - name: Documentation
+    url: https://aicanvas.me/docs
+    about: Installation, the shadcn registry, the MCP server, licensing.
+  - name: Security issue
+    url: https://github.com/aicanvas-me/aicanvas/security/advisories/new
+    about: Report privately. Never in a public issue.
