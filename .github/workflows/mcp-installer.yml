@@ -1,0 +1,31 @@
+# The @aicanvas/mcp skill installer runs on buyers' machines, so its tests run on
+# every OS they use. Safe to fail: GitHub Actions cannot block a Vercel deploy.
+name: mcp-installer
+
+on:
+  pull_request:
+    paths: ['mcp/**', '.github/workflows/mcp-installer.yml']
+  push:
+    paths: ['mcp/**', '.github/workflows/mcp-installer.yml']
+  workflow_dispatch:
+
+jobs:
+  skill-add:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [20, 22]
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        working-directory: mcp
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - run: npm ci
+      # tsc directly: the build script's chmod does not exist in the shell npm uses on Windows.
+      - run: npx tsc
+      - run: node test/skill-add.mjs
