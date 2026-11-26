@@ -75,6 +75,8 @@ async function fetchRegistryPulls(): Promise<number> {
 }
 
 /** Only ever holds a real, successful value — see the throw contract above. */
+let warnedNoKey = false
+
 const cachedRegistryPulls = unstable_cache(
   fetchRegistryPulls,
   ['registry-pulls'],
@@ -87,6 +89,16 @@ const cachedRegistryPulls = unstable_cache(
  * `revalidateTag('registry-pulls')` can force a refresh early.
  */
 export async function getRegistryPulls(): Promise<number> {
+  // No key is the normal state of a clone, not a fault: one line per process, no
+  // stack. The line matters because the homepage renders the fallback as a real
+  // figure.
+  if (!process.env.POSTHOG_PERSONAL_API_KEY) {
+    if (!warnedNoKey) {
+      warnedNoKey = true
+      console.info('[registry-stats] no POSTHOG_PERSONAL_API_KEY, the homepage shows the fallback figure')
+    }
+    return FALLBACK_PULLS
+  }
   try {
     return await cachedRegistryPulls()
   } catch (err) {

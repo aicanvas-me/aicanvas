@@ -1,0 +1,46 @@
+name: Bug report
+description: Something in a component, the registry or the site is broken
+labels: ["bug"]
+body:
+  - type: input
+    id: slug
+    attributes:
+      label: Component
+      description: The slug, as in the install command or the page URL. Leave blank if it is the site or the CLI itself.
+      placeholder: task-cards
+  - type: textarea
+    id: what
+    attributes:
+      label: What happens
+      description: What you expected, and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction
+      description: Steps, a code snippet, or a link to a minimal repo or sandbox. A reproduction gets a fix far faster than a description.
+  - type: dropdown
+    id: how
+    attributes:
+      label: How did you install it
+      options:
+        - shadcn CLI
+        - AI Canvas MCP
+        - Copied the source from the component page
+        - Not installed, the site itself is broken
+    validations:
+      required: true
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: React, Tailwind and (if you use it) Next.
+      placeholder: React 19.2, Tailwind 4.1, Next 16.2
+    validations:
+      required: true
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else
+      description: Console output, a screenshot, the browser, whether it only happens in one theme.

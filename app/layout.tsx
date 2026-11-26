@@ -23,6 +23,7 @@ import { PaddlePaymentLink } from './components/billing/PaddlePaymentLink'
 import { TOTAL_COMPONENTS } from './lib/component-nav.generated'
 import { AI_CANVAS_DEFINITION, GITHUB_URL, SITE_URL } from './lib/config'
 import { createClient } from './lib/supabase/server'
+import { supabaseConfigured } from './lib/supabase/configured'
 import { isFramedPayloadRequest } from './lib/frame'
 import { hostedMcpOAuthEnabled } from '../lib/flags'
 
@@ -161,8 +162,9 @@ export default async function RootLayout({
     )
   }
 
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = supabaseConfigured()
+    ? (await (await createClient()).auth.getUser()).data.user
+    : null
 
   // The visitor's site theme, read server-side so the very first byte already
   // carries the right class. Dark is the default: no cookie means dark, which

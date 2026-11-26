@@ -230,7 +230,7 @@ describe('the global top bar', () => {
   }
 
   // Renders the whole bar for every route below: room for a busy machine.
-  it('draws the main navigation on the homepage and on every catalog route', { timeout: 20_000 }, () => {
+  it('draws the main navigation on the homepage and on every catalog route', () => {
     for (const path of ['/', '/pricing', ...CATALOG]) {
       const header = bar(path)
       expect(header, path).not.toBeNull()
@@ -239,24 +239,25 @@ describe('the global top bar', () => {
       // jsdom applies no CSS, so both More menus are in the list: the compact
       // one shown below lg, then the wide one from lg up.
       const items = [...nav.querySelectorAll('button, a')].map((el) => el.textContent?.trim())
-      expect(items, path).toEqual(['Design systems', 'Components & blocks', 'Docs', 'Icons', 'MCP', 'More', 'More'])
+      expect(items, path).toEqual(['Design systems', 'Components & blocks', 'Docs', 'Icons', 'Skills', 'MCP', 'More', 'More'])
       cleanup()
     }
   })
 
-  it('shows Docs, Icons, MCP and the wide More from lg, and folds them into a compact More below lg', () => {
+  it('shows Docs, Icons, Skills, MCP and the wide More from lg, and folds them into a compact More below lg', () => {
     const header = bar('/components')!
     const nav = within(header).getByRole('navigation', { name: 'Main' })
     const icons = within(nav).getByRole('link', { name: 'Icons' })
     expect(icons.parentElement?.className).toBe('hidden lg:contents')
     expect(within(nav).getByRole('link', { name: 'Docs' }).parentElement).toBe(icons.parentElement)
     expect(within(nav).getByRole('link', { name: 'MCP' }).parentElement).toBe(icons.parentElement)
+    expect(within(nav).getByRole('link', { name: 'Skills' }).parentElement).toBe(icons.parentElement)
     const [compact, wide] = within(nav).getAllByRole('button', { name: 'More' })
     expect(compact.parentElement?.parentElement?.className).toBe('lg:hidden')
     expect(wide.parentElement?.parentElement?.className).toBe('hidden lg:block')
     fireEvent.click(compact)
     const links = [...header.querySelectorAll('ul a')].map((a) => a.getAttribute('href'))
-    expect(links).toEqual(['/docs', '/icons', '/mcp', '/pricing', '/about', '/faq', '/contact', '/feedback'])
+    expect(links).toEqual(['/docs', '/icons', '/skills', '/mcp', '/pricing', '/about', '/faq', '/contact', '/feedback'])
   })
 
   it('links Icons to /icons and MCP to /mcp, and Pricing is no longer a top-level link', () => {

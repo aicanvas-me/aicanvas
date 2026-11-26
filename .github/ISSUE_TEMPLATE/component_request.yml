@@ -1,0 +1,35 @@
+name: Component request
+description: Suggest a component or block for the library
+labels: ["enhancement"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: What is it
+      description: One line. A name and what it does.
+      placeholder: A file upload drop zone with per-file progress
+    validations:
+      required: true
+  - type: textarea
+    id: use
+    attributes:
+      label: What would you build with it
+      description: The screen or product you need it for. This decides whether it gets built, and how.
+    validations:
+      required: true
+  - type: textarea
+    id: refs
+    attributes:
+      label: References
+      description: Links, screenshots or a video of something close to what you mean. Reference is for layout and behaviour, the look stays AI Canvas.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Size
+      options:
+        - A single component
+        - A block, several components composed into a page section
+        - A whole template or screen
+        - Not sure
+    validations:
+      required: true

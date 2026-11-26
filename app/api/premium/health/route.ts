@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { loadContentLookup } from '@/lib/registry/lookup'
 import { premiumEnabled } from '@/lib/flags'
+import { supabaseConfigured } from '@/app/lib/supabase/configured'
 
 export const runtime = 'nodejs'
 
@@ -81,6 +82,10 @@ export async function GET() {
       iconCount,
       skills: PREMIUM_BUILD.skills ?? {},
       lifetimePriceConfigured: Boolean(process.env.NEXT_PUBLIC_PADDLE_PRICE_LIFETIME),
+      // False means the Supabase keys are missing and every visitor, subscriber
+      // included, is being served signed out. The page still renders, so this is
+      // the only place a check can see it.
+      authConfigured: supabaseConfigured(),
     },
     { headers: { 'Cache-Control': 'private, no-store' } },
   )

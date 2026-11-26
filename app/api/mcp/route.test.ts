@@ -32,6 +32,11 @@ const mockedGetEntitlement = vi.mocked(getEntitlement)
 const TOKEN = 'aic_' + 'c'.repeat(48)
 const FREE_SLUG = 'peel-corner-reveal'
 const PREMIUM_SLUG = 'filter-menu'
+// The premium cases read the real registry-data/<premium slug>.json, which the
+// vault injects. A clone still runs every door, token and free-account case.
+const premiumInjected = existsSync(join(process.cwd(), 'registry-data', `${PREMIUM_SLUG}.json`))
+const itPremium = premiumInjected ? it : it.skip
+const describePremium = premiumInjected ? describe : describe.skip
 
 function rpc(method: string, params: unknown, auth: string | null = `Bearer ${TOKEN}`, url = 'https://mcp.aicanvas.me/') {
   const headers: Record<string, string> = {
@@ -219,7 +224,7 @@ describe('hosted MCP: AI agent sign-in', () => {
 describe('hosted MCP: a free account', () => {
   beforeEach(() => asPlan('free'))
 
-  it('labels premium items locked and free items included, with no command on a locked one', async () => {
+  itPremium('labels premium items locked and free items included, with no command on a locked one', async () => {
     const r = await call('list_components', { limit: 200 })
     const items = r.structuredContent!.components as Array<{ slug: string; access: string; installCommand?: string }>
     const premium = items.find((c) => c.slug === PREMIUM_SLUG)!
@@ -230,7 +235,7 @@ describe('hosted MCP: a free account', () => {
     expect(free.installCommand).toContain(`token=${TOKEN}`)
   })
 
-  it('returns a preview and an upgrade line for a locked component, never a placeholder as source', async () => {
+  itPremium('returns a preview and an upgrade line for a locked component, never a placeholder as source', async () => {
     const r = await call('get_component', { slug: PREMIUM_SLUG })
     expect(r.isError).toBeFalsy()
     expect(r.content[0].text).toContain('(locked)')
@@ -238,7 +243,7 @@ describe('hosted MCP: a free account', () => {
     expect(r.structuredContent!.code).toBeUndefined()
   })
 
-  it('search says how many results are locked and offers the upgrade', async () => {
+  itPremium('search says how many results are locked and offers the upgrade', async () => {
     const r = await call('search_components', { query: PREMIUM_SLUG.replace(/-/g, ' '), limit: 50 })
     const locked = r.structuredContent!.locked as number
     expect(locked).toBeGreaterThan(0)
@@ -247,7 +252,7 @@ describe('hosted MCP: a free account', () => {
     expect(r.content[0].text).toContain('Next: show the user')
   })
 
-  it('refuses an install command for a locked component', async () => {
+  itPremium('refuses an install command for a locked component', async () => {
     const r = await call('get_install_command', { slug: PREMIUM_SLUG })
     expect(r.isError).toBe(true)
     expect(r.content[0].text).toContain('https://aicanvas.me/pricing')
@@ -285,7 +290,7 @@ describe('hosted MCP: a free account', () => {
   })
 })
 
-describe('hosted MCP: a premium account', () => {
+describePremium('hosted MCP: a premium account', () => {
   beforeEach(() => asPlan('premium'))
 
   it('gets the real source of a premium component', async () => {

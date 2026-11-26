@@ -1,3 +1,5 @@
+import { existsSync } from 'node:fs'
+import { join } from 'node:path'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 
 vi.mock('@/app/lib/entitlement', () => ({ getEntitlement: vi.fn() }))
@@ -21,6 +23,11 @@ beforeEach(() => {
   build.mockClear()
 })
 
+// The ZIP build and the category narrowing read the icon set the vault builds;
+// the 401, 403 and 503 gates do not, and they are the cases worth running in CI.
+const iconsBuilt = existsSync(join(process.cwd(), '.icons-source'))
+const itIcons = iconsBuilt ? it : it.skip
+
 describe('POST /api/icons/download', () => {
   it('refuses a signed-out caller with 401 and a free account with 403, building nothing', async () => {
     entitlement.mockResolvedValue({ tier: 'anonymous', userId: null })
@@ -36,7 +43,7 @@ describe('POST /api/icons/download', () => {
     expect(build).not.toHaveBeenCalled()
   })
 
-  it('builds the ZIP for Premium with the paid markup and an attachment name, never shared-cached', async () => {
+  itIcons('builds the ZIP for Premium with the paid markup and an attachment name, never shared-cached', async () => {
     entitlement.mockResolvedValue({ tier: 'premium', userId: 'u2' })
     const res = await post(SETTINGS)
     expect(res.status).toBe(200)
@@ -47,7 +54,7 @@ describe('POST /api/icons/download', () => {
     expect(input.markup[input.names[0]]).toBeTruthy()
   })
 
-  it('narrows to a category and hands React the shipped registry files', async () => {
+  itIcons('narrows to a category and hands React the shipped registry files', async () => {
     entitlement.mockResolvedValue({ tier: 'premium', userId: 'u2' })
     await post({ ...SETTINGS, format: 'react', style: 'duotone', category: 'arrows' })
     const input = build.mock.calls[0][0]

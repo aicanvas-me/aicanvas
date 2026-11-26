@@ -1,0 +1,42 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  # Never cancel a run on main: ci is the only types-and-tests gate there, and a
+  # cancelled check is not a pass.
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: types and tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Registry JSON, component source strings and icon data are generated, not
+      # committed: tsc and the tests read the generated files.
+      - run: npm run generate
+
+      - run: npm run typecheck
+
+      - run: npm test
+
+      # `npm run lint` is not a gate: the tree carries pre-existing eslint errors
+      # that predate this workflow, so it would fail every pull request on work
+      # the author never touched. Keep your own files clean instead.
