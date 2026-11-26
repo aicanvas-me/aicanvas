@@ -1,6 +1,7 @@
 /**
  * `aicanvas-mcp skill add <slug>`: installs a paid AI Canvas agent skill into the
- * user-level skills folder of each chosen agent, never into a project.
+ * user-level skills folder of every agent found (or the one --agent names), never
+ * into a project. It never asks: an agent's shell has no terminal to answer in.
  *
  * Token: --token, then AICANVAS_TOKEN, then AICANVAS_TOKEN in ./.env.local.
  * The token travels in an Authorization header, never in the address.
@@ -12,7 +13,6 @@ import { createHash } from 'node:crypto'
 import { copyFileSync, existsSync, lstatSync, mkdirSync, readFileSync, readdirSync, readlinkSync, renameSync, rmSync, statSync, symlinkSync, writeFileSync } from 'node:fs'
 import { homedir } from 'node:os'
 import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path'
-import { createInterface } from 'node:readline/promises'
 import { inflateRawSync } from 'node:zlib'
 
 const TOKEN_RE = /^aic_[0-9a-f]{48}$/
@@ -25,14 +25,14 @@ type Options = { siteBase: string; userAgent: string }
 type Entry = { path: string; data: Buffer }
 type Installed = { slug: string; version: string | null; files: Record<string, string> }
 
-const AGENTS: Record<string, { label: string; call: string; home: () => string; skills: (slug: string) => string }> = {
+const AGENTS: Record<string, { label: string; call: string; reload: string; home: () => string; skills: (slug: string) => string }> = {
   claude: {
-    label: 'Claude Code', call: '/',
+    label: 'Claude Code', call: '/', reload: 'run /reload-skills in Claude Code (or restart it)',
     home: () => process.env.CLAUDE_CONFIG_DIR || join(homedir(), '.claude'),
     skills: () => join(process.env.CLAUDE_CONFIG_DIR || join(homedir(), '.claude'), 'skills'),
   },
   codex: {
-    label: 'Codex', call: '$',
+    label: 'Codex', call: '$', reload: 'restart Codex',
     home: () => process.env.CODEX_HOME || join(homedir(), '.codex'),
     skills: codexSkills,
   },
@@ -51,7 +51,7 @@ const HELP = `Install an AI Canvas Premium agent skill.
 
 Options
   --token <aic_...>   your AI Canvas install token (or set AICANVAS_TOKEN)
-  --agent <name>      claude, codex or all (asked when several are found)
+  --agent <name>      claude, codex or all (default: every agent found)
   --dir <path>        install into this skills folder instead
   --force             overwrite files you changed, or added where the skill ships one
 
@@ -61,6 +61,10 @@ The skill goes into your user-level skills folder (~/.claude/skills for Claude C
 class Stop extends Error {}
 const stop = (msg: string): never => { throw new Stop(msg) }
 const sha256 = (b: Buffer | Uint8Array) => createHash('sha256').update(b).digest('hex')
+// Codex sets CODEX_SANDBOX in its sandbox, which blocks the network and the home folder.
+const sandboxHint = () => process.env.CODEX_SANDBOX
+  ? 'Codex\'s sandbox is probably blocking this install. Run the same command again with approval to run outside the sandbox, or run it in your own terminal.'
+  : 'If an agent runs this in a sandbox, run the same command again outside the sandbox, or in your own terminal.'
 
 const VALUE_FLAGS = ['token', 'agent', 'dir']
 
@@ -260,28 +264,18 @@ function isSymlink(p: string): boolean {
   try { return lstatSync(p).isSymbolicLink() } catch { return false }
 }
 
-async function chooseTargets(flags: Record<string, string | true>, slug: string): Promise<{ label: string; call?: string; dir: string }[]> {
+function chooseTargets(flags: Record<string, string | true>, slug: string): { id?: string; label: string; call?: string; reload?: string; dir: string }[] {
   if (typeof flags.dir === 'string') {
     return [{ label: flags.dir, dir: resolve(flags.dir.replace(/^~(?=$|[\\/])/, homedir())) }]
   }
-  const all = Object.entries(AGENTS).map(([id, a]) => ({ id, label: a.label, call: a.call, home: a.home(), dir: a.skills(slug) }))
+  const all = Object.entries(AGENTS).map(([id, a]) => ({ id, label: a.label, call: a.call, reload: a.reload, home: a.home(), dir: a.skills(slug) }))
   if (typeof flags.agent === 'string') {
     if (flags.agent === 'all') return all
     const hit = all.find((a) => a.id === flags.agent)
     return hit ? [hit] : stop(`--agent must be ${Object.keys(AGENTS).join(', ')} or all.`)
   }
   const found = all.filter((a) => existsSync(a.home))
-  if (found.length <= 1) return found.length ? found : [all[0]]
-  const list = found.map((a, i) => `  ${i + 1}. ${a.label}  (${a.dir})`).join('\n')
-  if (!process.stdin.isTTY) {
-    stop(`Found several agents:\n${list}\nRun the command again with --agent ${found.map((a) => a.id).join(', --agent ')} or --agent all.`)
-  }
-  const rl = createInterface({ input: process.stdin, output: process.stdout })
-  const answer = (await rl.question(`Found several agents:\n${list}\n  ${found.length + 1}. All of them\nInstall for which? [${found.length + 1}] `)).trim()
-  rl.close()
-  const n = answer === '' ? found.length + 1 : Number(answer)
-  if (n === found.length + 1) return found
-  return found[n - 1] ? [found[n - 1]] : stop('No agent chosen; nothing installed.')
+  return found.length ? found : [all[0]]
 }
 
 async function download(slug: string, token: string, opts: Options) {
@@ -290,7 +284,8 @@ async function download(slug: string, token: string, opts: Options) {
   try {
     res = await fetch(url, { headers: { Authorization: `Bearer ${token}`, 'User-Agent': opts.userAgent, Accept: 'application/zip' } })
   } catch (e) {
-    return stop(`Could not reach ${opts.siteBase}: ${(e as Error).message}`)
+    const cause = ((e as Error).cause as { code?: string } | undefined)?.code
+    return stop(`Could not reach ${opts.siteBase} (${cause ?? (e as Error).message}). Check the connection.\n${sandboxHint()}`)
   }
   if (!res.ok) {
     const body = (await res.json().catch(() => null)) as { message?: string; upgrade?: string } | null
@@ -311,24 +306,42 @@ export async function runSkillCommand(argv: string[], opts: Options): Promise<nu
     if (action !== 'add' || !slug || rest.length > 2) stop(`Unknown command. ${HELP}`)
     if (!SLUG_RE.test(slug)) stop(`"${slug}" is not a skill name.`)
     const token = readToken(flags.token)
-    const targets = await chooseTargets(flags, slug)
+    const targets = chooseTargets(flags, slug)
     const { zip, version } = await download(slug, token, opts)
     const entries = unzip(zip)
     if (!entries.some((e) => e.path === `${slug}/SKILL.md`)) stop('The download has no SKILL.md.')
     const files: Record<string, string> = {}
     for (const e of entries) files[safeParts(e.path, slug).join('/')] = sha256(e.data)
-    // All targets are checked before any is written; a check that stops changes nothing.
-    const plans = targets.map((t) => planInstall(t.dir, slug, files, flags.force === true))
-    targets.forEach((t, i) => {
-      const dest = installInto(plans[i], slug, version, entries, files)
-      console.log(`Installed ${slug}${version ? ` ${version}` : ''} for ${t.label}: ${dest}`)
-    })
-    const calls = targets.filter((t) => t.call).map((t) => `${t.call}${slug} in ${t.label}`)
-    if (calls.length) console.log(`\nStart a new session, then ask in your own words or call it: ${calls.join(', ')}.`)
-    const setup = join(targets[0].dir, slug, 'engine', 'setup.mjs')
+    // Each agent on its own: a stop in one leaves the others installing.
+    const done: typeof targets = []
+    const skipped: { id?: string; label: string; why: string }[] = []
+    let blocked = false
+    for (const t of targets) {
+      try {
+        const dest = installInto(planInstall(t.dir, slug, files, flags.force === true), slug, version, entries, files)
+        console.log(`Installed ${slug}${version ? ` ${version}` : ''} for ${t.label}: ${dest}`)
+        done.push(t)
+      } catch (e) {
+        if (e instanceof Stop) { skipped.push({ id: t.id, label: t.label, why: e.message }); continue }
+        const code = (e as NodeJS.ErrnoException).code
+        if (code === 'EPERM' || code === 'EACCES' || code === 'EROFS') blocked = true
+        skipped.push({ id: t.id, label: t.label, why: `Could not install into ${t.dir}: ${(e as Error).message}` })
+      }
+    }
+    const report = skipped.map((s) => (targets.length > 1 ? `Not installed for ${s.label}:\n${s.why}` : s.why))
+    if (blocked) report.push(sandboxHint())
+    if (skipped.some((s) => s.why.includes('--force'))) report.push('Ask the user before adding --force: it overwrites their changes in every agent it installs for.')
+    if (!done.length) stop(report.join('\n\n'))
+    const calls = done.filter((t) => t.call).map((t) => `${t.call}${slug} in ${t.label}`)
+    const reloads = done.flatMap((t) => (t.reload ? [t.reload] : []))
+    if (calls.length) console.log(`\nReady now: ask in your own words, or call ${calls.join(' or ')}. If it does not show up, ${reloads.join(', or ')}.`)
+    const setup = join(done[0].dir, slug, 'engine', 'setup.mjs')
     if (existsSync(setup)) console.log(`\nOne-time setup on this machine (your agent also runs it the first time):\n  node "${setup}"`)
     console.log(`\nLicensed under the AI Canvas Premium License: https://aicanvas.me/premium-license`)
-    return 0
+    if (report.length) console.error(`\nInstalled for ${done.length} of ${targets.length} agents.\n\n${report.join('\n\n')}`)
+    // The agent running this must get its own copy; a skip there is a failure for it.
+    const caller = process.env.CLAUDECODE ? 'claude' : process.env.CODEX_SANDBOX ? 'codex' : null
+    return skipped.some((s) => s.id && s.id === caller) ? 1 : 0
   } catch (e) {
     if (e instanceof Stop) { console.error(e.message); return 1 }
     console.error(`skill add failed: ${(e as Error).message}`)
